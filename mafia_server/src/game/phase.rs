@@ -11,18 +11,17 @@ pub enum PhaseType {
     Night
 }
 
-pub struct PhaseState {
-    phase_type : PhaseType,
-    time_length : PhaseTime,
-}
-
 pub struct PhaseStateMachine {
     number: u8, // Hopefully nobody is having more than 256 days anyway
     time_remaining: PhaseTime,
-    current_state: PhaseState,
+    current_state: PhaseType,
 }
 
 impl PhaseType {
+    pub fn get_length(&self) {
+        todo!();    // Sammy knows the time lengths I'm sure
+    }
+
     pub fn start(&self) {
         // Match phase type and do stuff
     }
