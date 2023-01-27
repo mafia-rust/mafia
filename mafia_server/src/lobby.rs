@@ -1,6 +1,6 @@
+use crate::game::Game;
 
-pub(crate) mod Lobby;
-pub(crate) struct Lobby{
+pub struct Lobby {
 
     //the idea behind the lobby thing is that it  allows players to connect before the game started
     //therefore, the game gets created and then starts at the same time
