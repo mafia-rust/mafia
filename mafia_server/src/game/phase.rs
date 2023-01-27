@@ -14,7 +14,7 @@ pub enum PhaseType {
 pub struct Phase {
     phase_type : PhaseType,
     number: u8, // Hopefully nobody is having more than 256 days anyway
-    length : Duration,
+    length : PhaseTime,
 }
 
 impl Phase {
