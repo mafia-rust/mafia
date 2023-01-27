@@ -2,6 +2,7 @@ use super::player::PlayerID;
 
 pub enum RoleData {
     Sheriff,
+    
     Veteran{
         alerts_remaining: u8
     },
@@ -12,7 +13,6 @@ pub enum RoleData {
 
     Doctor, 
 
-    Mayor{revealed: bool},
     Escort,
 
     Godfather,

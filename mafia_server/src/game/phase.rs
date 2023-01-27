@@ -2,7 +2,7 @@
 pub type PhaseTime = std::time::Duration;
 
 pub enum PhaseType {
-    Morning, 
+    Morning,
     Discussion, 
     Voting, 
     Testimony, 
@@ -11,13 +11,18 @@ pub enum PhaseType {
     Night
 }
 
-pub struct Phase {
+pub struct PhaseState {
     phase_type : PhaseType,
-    number: u8, // Hopefully nobody is having more than 256 days anyway
-    length : PhaseTime,
+    time_length : PhaseTime,
 }
 
-impl Phase {
+pub struct PhaseStateMachine {
+    number: u8, // Hopefully nobody is having more than 256 days anyway
+    time_remaining: PhaseTime,
+    current_state: PhaseState,
+}
+
+impl PhaseType {
     pub fn start(&self) {
         // Match phase type and do stuff
     }
