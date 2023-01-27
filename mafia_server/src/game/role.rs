@@ -2,37 +2,20 @@ use super::player::PlayerID;
 
 pub enum RoleData {
     Sheriff,
-    Lookout,
-    Investigator,
-    Spy,
-    Veteran,
-    Vigilante {
-        bullets_left: u8, 
+    Veteran{
+        alerts_remaining: u8
+    },
+    Vigilante{
+        bullets_remaining: u8, 
         killed_townie: bool
     },
-    Doctor,
-    Bodyguard,
-    Mayor {
-        revealed: bool,
-    },
-    Medium,
+
+    Doctor, 
+
+    Mayor{revealed: bool},
     Escort,
-    Transporter,
+
     Godfather,
-    Mafioso,
-    Consort,
-    Blackmailer,
-    Consigliere,
-    Framer,
-    Disguiser,
-    Janitor,
-    Forger,
-    Jester,
-    Executioner {
-        target: PlayerID,
-    },
-    Witch,
-    Arsonist,
-    Werewolf,
-    Vampire,
+
+    Consort, Consigliere,
 }
