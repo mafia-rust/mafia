@@ -11,7 +11,7 @@ create_role! {
 
     // etc.
 
-    role-specific data: {
+    ROLE_SPECIFIC_DATA: {
         bullets_remaining: u8 = 1,
         killed_townie: bool = false
     }

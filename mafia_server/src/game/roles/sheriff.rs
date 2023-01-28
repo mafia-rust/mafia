@@ -11,9 +11,5 @@ create_role! {
 
     // etc.
 
-    role-specific data: {}
-}
-
-fn a() {
-    <Sheriff as Role>::RoleData::new();
+    ROLE_SPECIFIC_DATA: {}
 }

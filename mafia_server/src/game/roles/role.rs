@@ -24,7 +24,7 @@ macro_rules! create_role {
 
         // ...
 
-        role-specific data: {
+        ROLE_SPECIFIC_DATA: {
             $($data_ident:ident: $data_type:ty = $data_default:expr),*
         }
     ) => {
