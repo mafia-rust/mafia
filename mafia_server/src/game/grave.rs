@@ -1,8 +1,8 @@
-use super::player::Player;
+use super::player::PlayerID;
 use super::phase::Phase;
 
 pub struct Grave {
-    player: Player,
+    player: PlayerID,
     ////shown_role  : String?enum ShownRole?
     shown_will : String,
 

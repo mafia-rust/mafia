@@ -11,10 +11,14 @@ pub enum PhaseType {
     Night
 }
 
-pub struct PhaseStateMachine {
+pub struct Phase {
+    phase_type: PhaseType,
     number: u8, // Hopefully nobody is having more than 256 days anyway
+}
+
+pub struct PhaseStateMachine {
     time_remaining: PhaseTime,
-    current_state: PhaseType,
+    current_state: Phase,
 }
 
 impl PhaseType {
