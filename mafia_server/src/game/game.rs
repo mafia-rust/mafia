@@ -1,8 +1,9 @@
 use std::collections::HashMap;
 use super::grave::Grave;
-use super::phase::Phase;
+use super::phase::PhaseStateMachine;
 use super::player::Player;
 use super::player::PlayerID;
+use super::roles::Role;
 
 pub struct Game {
     players: Vec<Player>,   // PlayerID is the index into this vec
@@ -13,6 +14,5 @@ pub struct Game {
     //Investigator Results
     //other settings
 
-    //these next 2 might want to be both combined into a single struct
-    phase : Phase,
+    phase_machine : PhaseStateMachine,
 }

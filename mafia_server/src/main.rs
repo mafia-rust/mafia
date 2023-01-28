@@ -4,7 +4,6 @@ fn main() {
     println!("Hello, world!");
 
     let lobbies: Vec<Lobby>;    // Multiple lobbies? For what?
-
 }
 
 
