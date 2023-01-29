@@ -1,32 +1,71 @@
-use std::collections::HashMap;
+
 use mafia_server::lobby::Lobby;
+use tokio_tungstenite::WebSocketStream;
 
-type LobbyName = String;
+use std::{
+    net::SocketAddr,
+    sync::{Arc, Mutex},
+    collections::{HashSet, HashMap},
+};
 
-fn main() {
+use futures_util::{StreamExt, TryStreamExt, future};
+
+use tokio::net::{TcpListener, TcpStream};
+
+#[tokio::main]
+async fn main()->Result<(), ()>{
     println!("Hello, world!");
 
-    let mut lobbies = HashMap::new();    // Multiple lobbies? For what?
-    lobbies.insert("test".to_string(), Lobby::new());
+    let clients = HashMap<WebSocketStream<>>    //JACK HELP ME PLEASE!
+
+    let server_future = create_ws_server();
+
+
+
+    let lobby = Lobby::new().await;
+
+    
+    server_future.await;
+    Ok(())
 }
 
 
 
-/*
-    options for internet communication.
-    Option 1: 
-        What i did last time, have different set message types.
-        Each message type allows you to run a function on the other machine.
-        Very generic
+async fn create_ws_server(){
 
-    Option 2:
-        Syncronize values across both. 
-        Have a way to just say, i want these 2 values to be in sync, then whenever it changes on the server, it updates the clients.
-        This requires the concept of a machine to own a value.
-            If the server owns the value then it gets to change it
-            If the client owns the value then it gets to change it
+    // Server address
+    let addr = "127.0.0.1:8081";
 
-    Option 3:
-        Both. Do both of them at the same time.
+    // Create the event loop and TCP listener we'll accept connections on.
+    let listener = TcpListener::bind(&addr).await.expect("address and port should be valid. Should be 127.0.0.1:8081");
+    println!("Listening on: {}", addr);
 
-*/
+    // Handle each incoming connection in a separate task
+    while let Ok((stream, addr)) = listener.accept().await {
+        tokio::spawn(handle_connection(stream, addr));
+    }
+}
+
+async fn handle_connection(raw_stream: TcpStream, addr: SocketAddr) {
+    println!("Incoming TCP connection from: {}", addr);
+
+    // Upgrade the raw stream to a WebSocket stream
+    let ws_stream = tokio_tungstenite::accept_async(raw_stream).await
+        .expect("Error during the WebSocket handshake occurred");
+
+    println!("WebSocket connection established: {}", addr);
+
+    //messaging this client over websocket
+    let (outgoing, incoming) = ws_stream.split();
+
+    // print incoming messages
+    let print_incoming = incoming.try_for_each(|msg| {
+        println!("Received a message from {}:\n{}", addr, msg.to_text().unwrap());
+        future::ok(())
+    });
+
+    //pin_mut!(broadcast_incoming);
+    print_incoming.await;
+
+    println!("{} disconnected", &addr);
+}
