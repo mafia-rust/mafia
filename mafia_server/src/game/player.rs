@@ -1,18 +1,17 @@
-use super::roles::Role;
-use super::roles::RoleData;
+use super::role::Role;
 
-pub type PlayerID = u8;
+pub type PlayerID = usize;
 
 pub struct Player {
     name : String,
-    role_data : Box<dyn RoleData>,
+    role_data : Role,
 }
 
 impl Player {
-    pub fn new<R: Role + 'static>(name : String) -> Self {
+    pub fn new(name : String, role: Role) -> Self {
         Player {
             name,
-            role_data : Box::new(R::RoleData::new()),
+            role_data : role,
         }
     }
 
