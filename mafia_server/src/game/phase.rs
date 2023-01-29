@@ -1,6 +1,7 @@
 // This is a placeholder for now
 pub type PhaseTime = std::time::Duration;
 
+#[derive(Clone, Copy)]
 pub enum PhaseType {
     Morning,
     Discussion, 
@@ -11,14 +12,27 @@ pub enum PhaseType {
     Night
 }
 
+#[derive(Clone, Copy)]
 pub struct Phase {
     phase_type: PhaseType,
     number: u8, // Hopefully nobody is having more than 256 days anyway
 }
 
 pub struct PhaseStateMachine {
-    time_remaining: PhaseTime,
-    current_state: Phase,
+    pub time_remaining: PhaseTime,
+    pub current_state: Phase,
+}
+
+impl PhaseStateMachine {
+    pub const fn new() -> Self {
+        Self {
+            time_remaining: PhaseTime::from_secs(0),
+            current_state: Phase {
+                phase_type: PhaseType::Morning,
+                number: 0,
+            },
+        }
+    }
 }
 
 impl PhaseType {

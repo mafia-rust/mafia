@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 tokio-tungstenite = "0.18.0"
+lazy_static = "1.4.0"
