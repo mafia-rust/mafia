@@ -3,12 +3,21 @@
 pub mod game;
 pub mod lobby;
 
+#[macro_use]
 pub mod prelude {
     pub type Result<T> = std::result::Result<T, MafiaError>;
 
     pub enum MafiaError {
         Generic(String) // TODO: remove this eventually
     }
+
+    macro_rules! err {
+        (generic, $($arg:tt)*) => {
+            MafiaError::Generic(format!($($arg)*))
+        }
+    }
+
+    pub(crate) use err;
 }
 
 // TODO: remove if we never use this
@@ -30,4 +39,6 @@ pub mod macros {
             }
         };
     }
+    
+    pub(crate) use enum_str;
 }
