@@ -7,3 +7,7 @@ edition = "2021"
 
 [dependencies]
 tokio-tungstenite = "0.18.0"
+futures-channel = "0.3.25"
+futures-util = "*"
+tokio = { version = "1", features = ["full"] }
+tokio-native-tls = "0.3.0"

@@ -1,10 +1,15 @@
+use std::collections::HashMap;
 use mafia_server::lobby::Lobby;
+
+type LobbyName = String;
 
 fn main() {
     println!("Hello, world!");
 
-    let lobbies: Vec<Lobby>;    // Multiple lobbies? For what?
+    let mut lobbies = HashMap::new();    // Multiple lobbies? For what?
+    lobbies.insert("test".to_string(), Lobby::new());
 }
+
 
 
 /*
