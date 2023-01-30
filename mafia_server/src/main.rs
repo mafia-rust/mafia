@@ -1,5 +1,7 @@
 
-use mafia_server::lobby::Lobby;
+use mafia_server::lobby::{Lobby, self};
+use mafia_server::connection::Connection;
+
 use tokio_tungstenite::WebSocketStream;
 
 use std::{
@@ -16,13 +18,13 @@ use tokio::net::{TcpListener, TcpStream};
 async fn main()->Result<(), ()>{
     println!("Hello, world!");
 
-    let clients = HashMap<WebSocketStream<>>    //JACK HELP ME PLEASE!
+    let mut lobbies = vec![];
+    let mut clients: vec![];
 
     let server_future = create_ws_server();
 
-
-
-    let lobby = Lobby::new().await;
+    lobbies.push(Lobby::new());
+    clients.push()
 
     
     server_future.await;
@@ -64,7 +66,8 @@ async fn handle_connection(raw_stream: TcpStream, addr: SocketAddr) {
         future::ok(())
     });
 
-    //pin_mut!(broadcast_incoming);
+
+    futures_util::pin_mut!(print_incoming);
     print_incoming.await;
 
     println!("{} disconnected", &addr);
