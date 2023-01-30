@@ -3,7 +3,7 @@ macro_rules! make_role_enum {
     (
         $(
             $name:ident : $file:ident $({
-                $($data_ident:ident: $data_type:ty),*
+                $($data_ident:ident: $data_type:ty = $data_def:expr),*
             })?
         ),*
     ) => {
@@ -11,31 +11,79 @@ macro_rules! make_role_enum {
         use super::Game;
         $(mod $file;)*
 
+        #[derive(Clone, Copy)]
         pub enum Role {
+            $($name),*
+        }
+
+        #[derive(Clone, Copy)]
+        pub enum RoleData {
             $($name $({
                 $($data_ident: $data_type),*
             })?),*
         }
 
         impl Role {
+            pub fn default_data(&self) -> RoleData {
+                match self {
+                    $(Role::$name => RoleData::$name$({
+                        $($data_ident: $data_def),*
+                    })?),*
+                }
+            }
+
+            pub fn is_suspicious(&self) -> bool {
+                match self {
+                    $(Role::$name => $file::SUS),*
+                }
+            }
+
+            pub fn is_witchable(&self) -> bool {
+                match self {
+                    $(Role::$name => $file::WITCHABLE),*
+                }
+            }
+
+            pub fn get_defense(&self) -> u8 {
+                match self {
+                    $(Role::$name => $file::DEFENSE),*
+                }
+            }
+
+            pub fn is_roleblockable(&self) -> bool {
+                match self {
+                    $(Role::$name => $file::ROLEBLOCKABLE),*
+                }
+            }
+
             pub fn do_night_action(&mut self, source: PlayerID, game: &mut Game) {
                 match self {
-                    $(Role::$name{ .. } => $file::do_night_action(source, game)),*
+                    $(Role::$name => $file::do_night_action(source, game)),*
                 }
             }
             pub fn do_day_action(&mut self, source: PlayerID, game: &mut Game) {
                 match self {
-                    $(Role::$name{ .. } => $file::do_day_action(source, game)),*
+                    $(Role::$name => $file::do_day_action(source, game)),*
                 }
             }
             pub fn can_night_target(&self, source: PlayerID, target: PlayerID, game: &Game) -> bool {
                 match self {
-                    $(Role::$name{ .. } => $file::can_night_target(source, target, game)),*
+                    $(Role::$name => $file::can_night_target(source, target, game)),*
                 }
             }
             pub fn can_day_target(&self, source: PlayerID, target: PlayerID, game: &Game) -> bool {
                 match self {
-                    $(Role::$name{ .. } => $file::can_day_target(source, target, game)),*
+                    $(Role::$name => $file::can_day_target(source, target, game)),*
+                }
+            }
+        }
+
+        impl RoleData {
+            pub fn role(&self) -> Role {
+                match self {
+                    $(RoleData::$name$({
+                        $($data_ident: _),*
+                    })? => Role::$name),*
                 }
             }
         }
@@ -44,6 +92,11 @@ macro_rules! make_role_enum {
 macro_rules! create_role {
     (
         $name:ident
+
+        defense: $defense:expr;
+        roleblockable: $roleblockable:expr;
+        witchable: $witchable:expr;
+        sus: $sus:expr;
 
         fn do_night_action(actor: &mut Player, game: &mut Game) 
             $do_night_action:block
@@ -62,6 +115,11 @@ macro_rules! create_role {
     ) => {
         use crate::game::player::{PlayerID, Player};
         use crate::game::Game;
+
+        pub(super) const SUS: bool = $sus;
+        pub(super) const WITCHABLE: bool = $witchable;
+        pub(super) const DEFENSE: u8 = $defense;
+        pub(super) const ROLEBLOCKABLE: bool = $roleblockable;
 
         pub(super) fn do_night_action(actor: PlayerID, game: &mut Game) {
             let actor = game.get_player_mut(actor);
