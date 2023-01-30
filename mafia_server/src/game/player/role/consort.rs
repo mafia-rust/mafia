@@ -1,6 +1,11 @@
 use super::*;
 
-create_role! { Sheriff
+create_role! { Consort
+
+    defense: 0;
+    roleblockable: false;
+    witchable: true;
+    sus: true;
 
     fn do_night_action(actor: &mut Player, game: &mut Game) {
         todo!()

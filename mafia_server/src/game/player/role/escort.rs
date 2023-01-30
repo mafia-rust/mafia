@@ -1,6 +1,11 @@
 use super::*;
 
-create_role! { Doctor
+create_role! { Escort
+
+    defense: 0;
+    roleblockable: false;
+    witchable: true;
+    sus: false;
 
     fn do_night_action(actor: &mut Player, game: &mut Game) {
         todo!()

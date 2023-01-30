@@ -1,17 +1,17 @@
-use super::role::Role;
+use super::role::{Role, RoleData};
 
 pub type PlayerID = usize;
 
 pub struct Player {
     name : String,
-    role_data : Role,
+    role_data : RoleData,
 }
 
 impl Player {
     pub fn new(name : String, role: Role) -> Self {
         Player {
             name,
-            role_data : role,
+            role_data : role.default_data(),
         }
     }
 

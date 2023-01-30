@@ -10,10 +10,10 @@ make_role_enum! {
     Godfather : godfather,
     Sheriff : sheriff,
     Veteran : veteran {
-        alerts_remaining: u8
+        alerts_remaining: u8 = 1
     },
     Vigilante : vigilante {
-        bullets_remaining: u8,
-        killed_townie: bool
+        bullets_remaining: u8 = 1,
+        killed_townie: bool = false
     }
 }

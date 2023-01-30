@@ -1,6 +1,11 @@
 use super::*;
 
-create_role! { Godfather
+create_role! { Veteran
+
+    defense: 2;
+    roleblockable: false;
+    witchable: false;
+    sus: false;
 
     fn do_night_action(actor: &mut Player, game: &mut Game) {
         todo!()
