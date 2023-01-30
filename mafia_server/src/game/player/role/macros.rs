@@ -8,7 +8,7 @@ macro_rules! make_role_enum {
         ),*
     ) => {
         use super::player::PlayerID;
-        use super::Game;
+        use crate::game::Game;
         $(mod $file;)*
 
         #[derive(Clone, Copy)]
