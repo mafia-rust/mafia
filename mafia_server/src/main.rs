@@ -22,7 +22,6 @@ async fn main()->Result<(), ()>{
     let server_future = create_ws_server("127.0.0.1:8081", clients);
 
     lobbies.push(Lobby::new());
-
     
     server_future.await;
     Ok(())

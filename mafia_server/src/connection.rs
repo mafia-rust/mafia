@@ -1,16 +1,19 @@
 use std::net::SocketAddr;
+use std::sync::Arc;
 
 //use futures_channel::mpsc::{self, UnboundedSender, UnboundedReceiver};
 use tokio::net::TcpStream;
+use tokio::sync::Mutex;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio_tungstenite::{WebSocketStream, tungstenite::Message};
 
 pub struct Connection{
     tx: UnboundedSender<Message>,
-    rx: UnboundedReceiver<Message>,
+    //rx: UnboundedReceiver<Message>,
+
     address: SocketAddr,
-    //lobby
-    //player
+
+    listeners: Arc<Mutex<Vec<fn(&Message)>>>
 }
 impl Connection{
     pub fn new(
@@ -20,8 +23,31 @@ impl Connection{
     )->Self{
 
         tx.send(Message::Text("Connection Established!!".to_owned()));
-    
-        Self { tx, rx, address }
+
+        let listeners: Arc<Mutex<Vec<fn(&Message)>>> = Arc::new(Mutex::new(vec![
+            |m: &Message|{
+                println!("{}", m.to_string());
+            }
+        ]));
+
+        let thread_listeners = listeners.clone();
+
+        tokio::spawn(async move{    
+            loop  {
+                if let Some(m) = rx.recv().await {
+                    for l in thread_listeners.lock().await.iter(){
+                        l(&m);
+                    }
+                } else {
+                    break;
+                };
+            }
+        });
+
+        Self { tx, address, listeners }
+    }
+
+    pub async fn add_listener(&mut self, listener: fn(&Message)){
+        self.listeners.lock().await.push(listener);
     }
 }
-
