@@ -1,21 +1,45 @@
 // This is a placeholder for now
 pub type PhaseTime = std::time::Duration;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
+#[repr(u8)]
 pub enum PhaseType {
     Morning,
-    Discussion, 
-    Voting, 
-    Testimony, 
-    Judgement, 
-    FinalWords, 
-    Night
+    Discussion,
+    Voting,
+    Testimony,
+    Judgement,
+    FinalWords,
+    Night,
+}
+
+impl From<PhaseType> for u8 {
+    fn from(phase_type: PhaseType) -> Self {
+        phase_type as u8
+    }
+}
+
+impl PhaseType {
+    pub fn is_day(&self) -> bool {
+        match self {
+            PhaseType::Morning | PhaseType::Discussion | 
+            PhaseType::Voting | PhaseType::Testimony | 
+            PhaseType::Judgement | PhaseType::FinalWords => true,
+            PhaseType::Night => false,
+        }
+    }
 }
 
 #[derive(Clone, Copy)]
 pub struct Phase {
-    phase_type: PhaseType,
-    number: u8, // Hopefully nobody is having more than 256 days anyway
+    pub phase_type: PhaseType,
+    pub number: u8, // Hopefully nobody is having more than 256 days anyway
+}
+
+impl Phase {
+    pub fn is_day(&self) -> bool {
+        self.phase_type.is_day()
+    }
 }
 
 pub struct PhaseStateMachine {
