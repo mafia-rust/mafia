@@ -1,6 +1,6 @@
 use std::{ops::{Deref, DerefMut}};
 use crate::game::phase::PhaseType;
-use super::Player;
+use super::player::Player;
 
 type ResetFunction<T> = fn(&Player) -> T;
 

@@ -1,6 +1,6 @@
 
 use mafia_server::lobby::Lobby;
-use mafia_server::connection::Connection;
+use mafia_server::network::connection::Connection;
 use std::{
     net::SocketAddr,
     sync::{Arc, Mutex},
@@ -12,8 +12,11 @@ use futures_util::{future::{self}, StreamExt, TryStreamExt, SinkExt};
 use tokio::sync::mpsc;
 use tokio::net::{TcpListener, TcpStream};
 
+
 #[tokio::main]
 async fn main()->Result<(), ()>{
+
+
     println!("Hello, world!");
 
     let mut lobbies = vec![];
@@ -24,7 +27,7 @@ async fn main()->Result<(), ()>{
     lobbies.push(Lobby::new());
     
     server_future.await;
-    Ok(())
+    return Ok(());
 }
 
 

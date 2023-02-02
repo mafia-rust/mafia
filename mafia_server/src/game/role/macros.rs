@@ -7,7 +7,7 @@ macro_rules! make_role_enum {
             })?
         ),*
     ) => {
-        use super::player::PlayerID;
+        use crate::game::player::PlayerID;
         use crate::game::Game;
         $(mod $file;)*
 

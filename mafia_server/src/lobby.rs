@@ -1,4 +1,4 @@
-use crate::{game::{Game, player::PlayerID}, connection::Connection};
+use crate::{game::{Game, player::PlayerID}, network::connection::Connection};
 
 pub struct Lobby {
     game: Option<Game>,

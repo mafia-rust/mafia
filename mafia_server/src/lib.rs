@@ -2,7 +2,7 @@
 
 pub mod game;
 pub mod lobby;
-pub mod connection;
+pub mod network;
 
 #[macro_use]
 pub mod prelude {

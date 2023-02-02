@@ -1,8 +1,9 @@
 use crate::game::Game;
 use crate::game::phase::{Phase, PhaseType};
+use crate::game::role::{Role, RoleData};
 
-use super::role::{Role, RoleData};
-use super::reset_variables::{PhaseResetting};
+
+use crate::game::phase_resetting::PhaseResetting;
 
 pub type PlayerID = usize;
 
@@ -18,12 +19,13 @@ pub struct Player {
     attacked:       PhaseResetting<bool>,
     roleblocked:    PhaseResetting<bool>,
     defense:        PhaseResetting<u8>,
-    attack:         PhaseResetting<u8>,
     suspicious:     PhaseResetting<bool>,
     disguised_as:   PhaseResetting<PlayerID>,
 
     // Morning
     // TODO
+    
+
 }
 
 impl Player {
@@ -39,7 +41,6 @@ impl Player {
             attacked:       PhaseResetting::new(false, |_| false, PhaseType::Night),
             roleblocked:    PhaseResetting::new(false, |_| false, PhaseType::Night),
             defense:        PhaseResetting::new(role.get_defense(), |p| p.get_role().get_defense(), PhaseType::Night),
-            attack:         PhaseResetting::new(0, |_| 0, PhaseType::Night),
             suspicious:     PhaseResetting::new(role.is_suspicious(), |p| p.get_role().is_suspicious(), PhaseType::Night),
             disguised_as:   PhaseResetting::new(id, |p| p.id, PhaseType::Night),
         }

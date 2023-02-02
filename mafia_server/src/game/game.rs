@@ -6,7 +6,6 @@ use crate::prelude::*;
 use super::grave::Grave;
 use super::phase::{Phase, PhaseStateMachine};
 use super::player::{Player, PlayerID};
-use crate::game::player::role::Role;
 
 lazy_static!(
     pub static ref GAME: Arc<Mutex<Game>> = Arc::new(Mutex::new(Game {

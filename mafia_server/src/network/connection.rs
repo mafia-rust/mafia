@@ -1,7 +1,6 @@
 use std::net::SocketAddr;
 use std::sync::Arc;
 
-//use futures_channel::mpsc::{self, UnboundedSender, UnboundedReceiver};
 use tokio::net::TcpStream;
 use tokio::sync::Mutex;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
@@ -32,15 +31,11 @@ impl Connection{
 
         let thread_listeners = listeners.clone();
 
-        tokio::spawn(async move{    
-            loop  {
-                if let Some(m) = rx.recv().await {
-                    for l in thread_listeners.lock().await.iter(){
-                        l(&m);
-                    }
-                } else {
-                    break;
-                };
+        tokio::spawn(async move{
+            while let Some(m) = rx.recv().await {
+                for l in thread_listeners.lock().await.iter(){
+                    l(&m);
+                }
             }
         });
 
@@ -49,5 +44,8 @@ impl Connection{
 
     pub async fn add_listener(&mut self, listener: fn(&Message)){
         self.listeners.lock().await.push(listener);
+    }
+    pub async fn remove_all_listeners(&mut self){
+        *self.listeners.lock().await = vec![];
     }
 }
