@@ -5,7 +5,7 @@ create_role! { ConsigliereFunnyMonkry
     defense: 0;
     roleblockable: true;
     witchable: true;
-    sus: true;
+    suspicious: true;
 
     fn do_night_action(actor: &mut Player, game: &mut Game) {
         todo!()

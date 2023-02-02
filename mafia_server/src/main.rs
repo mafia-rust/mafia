@@ -1,16 +1,10 @@
 
-use mafia_server::lobby::Lobby;
+use mafia_server::{lobby::Lobby, network::websocket_listener::create_ws_server};
 use mafia_server::network::connection::Connection;
 use std::{
     net::SocketAddr,
-    sync::{Arc, Mutex},
+    sync::{Arc, Mutex}, collections::HashMap,
 };
-
-use futures_util::{future::{self}, StreamExt, TryStreamExt, SinkExt};
-//use futures_channel::mpsc;
-
-use tokio::sync::mpsc;
-use tokio::net::{TcpListener, TcpStream};
 
 
 #[tokio::main]
@@ -19,77 +13,50 @@ async fn main()->Result<(), ()>{
 
     println!("Hello, world!");
 
-    let mut lobbies = vec![];
-    let clients: Arc<Mutex<Vec<Connection>>> = Arc::new(Mutex::new(vec![]));
+    let mut lobbies = HashMap::new();
+    let clients: Arc<Mutex<HashMap<SocketAddr, Connection>>> = Arc::new(Mutex::new(HashMap::new()));
 
     let server_future = create_ws_server("127.0.0.1:8081", clients);
 
-    lobbies.push(Lobby::new());
-    
+    lobbies.insert("0", Lobby::new());
+    let lobby = lobbies.get("0").expect("lobby 0 should be set by previous line");
+
     server_future.await;
     return Ok(());
 }
 
 
 
-async fn create_ws_server(address: &str, clients: Arc<Mutex<Vec<Connection>>>){
 
-    // Create the event loop and TCP listener we'll accept connections on.
-    let listener = TcpListener::bind(&address).await.expect("address and port should be valid. Should be 127.0.0.1:8081");  //panic if address is invalid
 
-    println!("Listening on: {}", address);
 
-    // Handle each incoming connection in a separate task
-    while let Ok((stream, addr)) = listener.accept().await {
-        tokio::spawn(handle_connection(stream, addr, clients.clone()));
-    }
 
-    //this thread will never close i guess
-}
+//use this for room codes
 
-async fn handle_connection(raw_stream: TcpStream, addr: SocketAddr, clients: Arc<Mutex<Vec<Connection>>>) {
-    println!("Incoming TCP connection from: {}", addr);
 
-    // Upgrade the raw stream to a WebSocket stream
-    let ws_stream = tokio_tungstenite::accept_async(raw_stream).await.unwrap(); //if handshake doesnt work panic
+/**
+Converts x to any radix
+# Panics
+radix < 2 || radix > 36
+# Example
+```
+format_radix(7, 2) == "111";
+format_radix(366, 10) == "366";
+format_radix(36*36*36*36 - 1, 36) == "zzzz";
+```
+*/
+fn format_radix(mut x: u32, radix: u32) -> String {
+    let mut result = vec![];
 
-    println!("WebSocket connection established: {}\n", addr);
-    
+    loop {
+        let m = x % radix;
+        x = x / radix;
 
-    //2 unboundeds, one for sending through this thread to clients, other for client sending through this thread
-    let (transmitter_to_client, mut reciever_to_client) = mpsc::unbounded_channel();
-    let (transmitter_from_client, reciever_from_client) = mpsc::unbounded_channel();
-
-    //messaging this client over websocket
-    let (mut to_client, from_client) = ws_stream.split();
-
-    //make unbounded things actually route to websockets
-    //let send_to_client = reciever_to_client.map(Ok).forward(to_client);
-    let send_to_client = tokio::spawn(async move {
-
-        loop  {
-            if let Some(m) = reciever_to_client.recv().await {
-                to_client.send(m).await.unwrap();
-            } else {
-                break;
-            };
+        // will panic if you use a bad radix (< 2 or > 36).
+        result.push(std::char::from_digit(m, radix).unwrap());
+        if x == 0 {
+            break;
         }
-
-    });
-
-    let recieve_from_client = from_client.try_for_each(|msg|{
-        transmitter_from_client.send(msg).unwrap();
-
-        future::ok(())
-    });
-
-    //create connection struct and give it ways to communicate with client
-    clients.lock().unwrap().push(
-        Connection::new(transmitter_to_client, reciever_from_client, addr)
-    );
-
-    futures_util::pin_mut!(send_to_client, recieve_from_client);    //no clue what this does but example code told me to do it
-    future::select(send_to_client, recieve_from_client).await;  //when both are complete then that means its disconnected
-
-    println!("{} disconnected", &addr);
+    }
+    result.into_iter().rev().collect()
 }

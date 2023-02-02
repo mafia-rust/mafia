@@ -12,7 +12,14 @@ pub struct Connection{
 
     address: SocketAddr,
 
-    listeners: Arc<Mutex<Vec<fn(&Message)>>>
+    listeners: Arc<Mutex<Vec<fn(&Message)>>>,
+    
+    
+}
+impl core::fmt::Debug for Connection {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Connection").field("tx", &self.tx).field("address", &self.address).finish()
+    }
 }
 impl Connection{
     pub fn new(

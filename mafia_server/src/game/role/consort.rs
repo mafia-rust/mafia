@@ -5,7 +5,7 @@ create_role! { Consort
     defense: 0;
     roleblockable: false;
     witchable: true;
-    sus: true;
+    suspicious: true;
 
     fn do_night_action(actor: &mut Player, game: &mut Game) {
         todo!()

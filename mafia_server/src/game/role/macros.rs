@@ -34,7 +34,7 @@ macro_rules! make_role_enum {
 
             pub fn is_suspicious(&self) -> bool {
                 match self {
-                    $(Role::$name => $file::SUS),*
+                    $(Role::$name => $file::SUSPICIOUS),*
                 }
             }
 
@@ -96,7 +96,7 @@ macro_rules! create_role {
         defense: $defense:expr;
         roleblockable: $roleblockable:expr;
         witchable: $witchable:expr;
-        sus: $sus:expr;
+        suspicious: $sus:expr;
 
         fn do_night_action(actor: &mut Player, game: &mut Game) 
             $do_night_action:block
@@ -116,7 +116,7 @@ macro_rules! create_role {
         use crate::game::player::{PlayerID, Player};
         use crate::game::Game;
 
-        pub(super) const SUS: bool = $sus;
+        pub(super) const SUSPICIOUS: bool = $sus;
         pub(super) const WITCHABLE: bool = $witchable;
         pub(super) const DEFENSE: u8 = $defense;
         pub(super) const ROLEBLOCKABLE: bool = $roleblockable;

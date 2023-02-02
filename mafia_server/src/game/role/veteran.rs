@@ -5,7 +5,7 @@ create_role! { Veteran
     defense: 0;
     roleblockable: false;
     witchable: false;
-    sus: false;
+    suspicious: false;
 
     fn do_night_action(actor: &mut Player, game: &mut Game) {
         todo!()

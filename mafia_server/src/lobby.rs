@@ -4,6 +4,8 @@ pub struct Lobby {
     game: Option<Game>,
 }
 
+type LobbyID = String;
+
 impl Lobby{
     pub fn new()->Lobby{
 

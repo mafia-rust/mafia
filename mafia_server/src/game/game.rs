@@ -9,8 +9,8 @@ use super::player::{Player, PlayerID};
 
 lazy_static!(
     pub static ref GAME: Arc<Mutex<Game>> = Arc::new(Mutex::new(Game {
-        players: Vec::new(),
-        graves: Vec::new(),
+        players: Vec::new(),    //keep as vec because each player has a number like in real game
+        graves: Vec::new(),     //order of graves
         phase_machine: PhaseStateMachine::new(),
     }));
 );
