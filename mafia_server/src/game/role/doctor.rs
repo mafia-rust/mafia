@@ -2,7 +2,6 @@ use super::*;
 
 create_role! { Doctor
 
-    // TODO i dont actually know any of these values
     defense: 0;
     roleblockable: true;
     witchable: true;
