@@ -1,8 +1,6 @@
 use crate::game::Game;
 use crate::game::phase::{Phase, PhaseType};
 use crate::game::role::{Role, RoleData};
-
-
 use crate::game::phase_resetting::PhaseResetting;
 
 pub type PlayerID = usize;
@@ -24,8 +22,6 @@ pub struct Player {
 
     // Morning
     // TODO
-    
-
 }
 
 impl Player {

@@ -2,7 +2,6 @@
 pub type PhaseTime = std::time::Duration;
 
 #[derive(Clone, Copy, PartialEq)]
-#[repr(u8)]
 pub enum PhaseType {
     Morning,
     Discussion,
@@ -13,20 +12,9 @@ pub enum PhaseType {
     Night,
 }
 
-impl From<PhaseType> for u8 {
-    fn from(phase_type: PhaseType) -> Self {
-        phase_type as u8
-    }
-}
-
 impl PhaseType {
     pub fn is_day(&self) -> bool {
-        match self {
-            PhaseType::Morning | PhaseType::Discussion | 
-            PhaseType::Voting | PhaseType::Testimony | 
-            PhaseType::Judgement | PhaseType::FinalWords => true,
-            PhaseType::Night => false,
-        }
+        matches!(self, PhaseType::Night)
     }
 }
 
@@ -49,10 +37,11 @@ pub struct PhaseStateMachine {
 
 impl PhaseStateMachine {
     pub const fn new() -> Self {
+        let phase_type = PhaseType::Morning;
         Self {
-            time_remaining: PhaseTime::from_secs(0),
+            time_remaining: phase_type.get_length(),
             current_state: Phase {
-                phase_type: PhaseType::Morning,
+                phase_type,
                 number: 0,
             },
         }
@@ -60,7 +49,7 @@ impl PhaseStateMachine {
 }
 
 impl PhaseType {
-    pub fn get_length(&self) {
+    pub const fn get_length(&self) -> PhaseTime {
         todo!();    // Sammy knows the time lengths I'm sure
     }
 

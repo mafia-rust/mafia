@@ -1,7 +1,6 @@
 use super::*;
 
 create_role! { Consort
-
     defense: 0;
     roleblockable: false;
     witchable: true;

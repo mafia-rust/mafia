@@ -1,7 +1,6 @@
 use super::*;
 
 create_role! { Veteran
-
     defense: 0;
     roleblockable: false;
     witchable: false;

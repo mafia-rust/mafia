@@ -19,10 +19,8 @@ pub struct Game {
     pub players: Vec<Player>,   // PlayerID is the index into this vec
     pub graves: Vec<Grave>,
 
-    //RoleList
-    //PhaseTimes
-    //Investigator Results
-    //other settings
+    // pub role_list: Vec<Role>,
+    // pub invesigator_results: TODO
 
     pub phase_machine : PhaseStateMachine,
 }

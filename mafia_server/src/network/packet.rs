@@ -1,14 +1,16 @@
 
-enum ToClientPacket{
+enum ToClientPacket {
     PreLobby(PreLobbyToClientPacket),
     Lobby(LobbyToClientPacket),
     Game(GameToClientPacket),
 }
-enum PreLobbyToClientPacket{
+
+enum PreLobbyToClientPacket {
     AcceptJoin,
     AcceptHost,
 }
-enum LobbyToClientPacket{
+
+enum LobbyToClientPacket {
     GameStarted,
     PlayerNames,
     Kicked,
@@ -16,11 +18,10 @@ enum LobbyToClientPacket{
     PhaseTimes,
     InvestigatorResults
 }
-enum GameToClientPacket{
 
-
-    ////////All of these are just for syncronizing variables between the 2 so client can see what their doing
-    Phase,   //how much time is left with this
+// All of these are just for synchronizing variables between the 2 so client can see what their doing
+enum GameToClientPacket {
+    Phase,   // Time remaining in phase
     PlayerOnTrial,
 
     NewChatMessage,
@@ -43,30 +44,30 @@ enum GameToClientPacket{
     //a way to syncronise the entire game for someone who joined late
 }
 
-
-
-
-enum ToServerPacket{
+enum ToServerPacket {
     PreLobby(PreLobbyToServerPacket),
     Lobby(LobbyToServerPacket),
     Game(GameToServerPacket)
 }
-enum PreLobbyToServerPacket{
-    Join{
+
+enum PreLobbyToServerPacket {
+    Join {
         name: String,
     },
-    Host{
+    Host {
         name: String,
     }
 }
-enum LobbyToServerPacket{
+
+enum LobbyToServerPacket {
     Start,
     Kick,
     RoleList,
     PhaseTimes,
     InvestigatorResults,
 }
-enum GameToServerPacket{
+
+enum GameToServerPacket {
     Vote,   //Accusation
     Target,
     DayTarget,

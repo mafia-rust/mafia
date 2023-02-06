@@ -6,7 +6,7 @@ pub struct Lobby {
 
 type LobbyID = String;
 
-impl Lobby{
+impl Lobby {
     pub fn new() -> Lobby {
         Self { 
             game: None,

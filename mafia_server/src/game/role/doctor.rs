@@ -1,7 +1,6 @@
 use super::*;
 
 create_role! { Doctor
-
     defense: 0;
     roleblockable: true;
     witchable: true;

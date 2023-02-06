@@ -1,7 +1,6 @@
 use super::*;
 
 create_role! { ConsigliereFunnyMonkry
-
     defense: 0;
     roleblockable: true;
     witchable: true;

@@ -14,7 +14,7 @@ pub async fn create_ws_server(
     address: &str, 
     clients: Arc<Mutex<HashMap<SocketAddr, Connection>>>,
     mut event_listener: Box<impl ConnectionEventListener + Send + 'static>,
-){
+) {
     let event_listener = Arc::new(Mutex::new(*event_listener));
 
     // Create the event loop and TCP listener we'll accept connections on.
@@ -33,9 +33,9 @@ pub async fn create_ws_server(
 pub async fn handle_connection(
     raw_stream: TcpStream, 
     addr: SocketAddr, 
-    clients: Arc<Mutex<HashMap<SocketAddr, Connection>>>, 
+    clients_mutex: Arc<Mutex<HashMap<SocketAddr, Connection>>>, 
     mut listener: Arc<Mutex<impl ConnectionEventListener>>
-){
+) {
     //println!("Incoming TCP connection from: {}", addr);
 
     // Upgrade the raw stream to a WebSocket stream
@@ -51,55 +51,51 @@ pub async fn handle_connection(
 
     //create connection struct and give it ways to communicate with client
     {
-        let mut clients_unlocked1 = clients.lock().unwrap();
-        clients_unlocked1.insert(
+        let mut clients = clients_mutex.lock().unwrap();
+        clients.insert(
             addr.clone(),
             Connection::new(transmitter_to_client, addr)
         ); 
     }
     
-    //route between unbounded senders and websockets
+    // route between unbounded senders and websockets
     let send_to_client = tokio::spawn(async move {
-        loop  {
-            if let Some(m) = reciever_to_client.recv().await {
-                to_client.send(m).await.unwrap();
-            } else {
-                to_client.close();
-                break;
-            };
+        while let Some(m) = reciever_to_client.recv().await {
+            to_client.send(m).await.unwrap();
         }
+        to_client.close();
     });
+
     let recieve_from_client = from_client.try_for_each(|message|{
+        let clients = clients_mutex.lock().unwrap();
+        let connection = clients.get(&addr).unwrap();
 
-        let clients_unlocked2 = clients.lock().unwrap();
-        let connection = clients_unlocked2.get(&addr).unwrap();
-
-        listener.clone().lock().unwrap().on_message(&clients_unlocked2, connection, &message);
+        // @Jack-Papel: @ItsSammyM why clone here?
+        listener.clone().lock().unwrap().on_message(&clients, connection, &message);
             
         future::ok(())
     });
 
     {
-        let mut clients_unlocked3 = clients.lock().unwrap();
-        let connection = clients_unlocked3.get(&addr).unwrap();
+        let mut clients = clients_mutex.lock().unwrap();
+        let connection = clients.get(&addr).unwrap();
 
-        listener.lock().unwrap().on_connect(&clients_unlocked3, connection);
+        listener.lock().unwrap().on_connect(&clients, connection);
     }
     
-
-    
-    futures_util::pin_mut!(send_to_client, recieve_from_client);    //no clue what this does but example code told me to do it
+    // @ItsSammyM: No clue what this does but example code told me to do it
+    futures_util::pin_mut!(send_to_client, recieve_from_client);
     future::select(send_to_client, recieve_from_client).await;
 
-    //when both are complete then that means its disconnected
+    // When both are complete then that means it's disconnected
     {
-        let mut clients_unlocked4 = clients.lock().unwrap();
-        let connection = clients_unlocked4.get(&addr).unwrap();
+        let mut clients = clients_mutex.lock().unwrap();
+        let connection = clients.get(&addr).unwrap();
         
-        listener.lock().unwrap().on_disconnect(&clients_unlocked4, connection);
-        clients_unlocked4.remove(&addr);
+        listener.lock().unwrap().on_disconnect(&clients, connection);
+        clients.remove(&addr);
     }
     
 
-    //println!("{} disconnected", &addr);
+    // println!("{} disconnected", &addr);
 }

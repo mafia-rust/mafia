@@ -17,49 +17,44 @@ async fn main() -> Result<(), ()> {
     // let mut lobbies = HashMap::new();
     // lobbies.insert("0", Lobby::new());
 
-    let listener = Listener{
+    let listener = Listener {
         lobby: Lobby::new()
     };
 
     let server_future = create_ws_server("127.0.0.1:8081", clients, Box::new(listener));
 
     server_future.await;
-    
+
     Ok(())
 }
-struct Listener{
+
+struct Listener {
     lobby: Lobby,
 }
+
 impl ConnectionEventListener for Listener {
     fn on_connect(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection) {
-        println!("connected: {}", connection.get_adress());
+        println!("connected: {}", connection.get_address());
     }
 
     fn on_disconnect(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection) {
-        println!("disconnected: {}", connection.get_adress());
+        println!("disconnected: {}", connection.get_address());
     }
 
     fn on_message(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection, message: &Message) {
-        println!("{}: {}", message, connection.get_adress());
+        println!("{}: {}", message, connection.get_address());
     }
 }
 
-
-
-//use this for room codes
-
-
-/**
-Converts x to any radix
-# Panics
-radix < 2 || radix > 36
-# Example
-```
-format_radix(7, 2) == "111";
-format_radix(366, 10) == "366";
-format_radix(36*36*36*36 - 1, 36) == "zzzz";
-```
-*/
+// TODO: @ItsSammyM Move this, also use for room codes
+///
+/// Converts x to any radix
+/// # Example
+/// ```
+/// assert_eq!(format_radix(7, 2), "111");
+/// assert_eq!(format_radix(366, 10), "366");
+/// assert_eq!(format_radix(36*36*36*36 - 1, 36), "zzzz");
+/// ```
 fn format_radix(mut x: u32, radix: u32) -> String {
     let mut result = vec![];
 
@@ -67,7 +62,7 @@ fn format_radix(mut x: u32, radix: u32) -> String {
         let m = x % radix;
         x = x / radix;
 
-        // will panic if you use a bad radix (< 2 or > 36).
+        // TODO: @Jack-Papel Change to return result
         result.push(std::char::from_digit(m, radix).unwrap());
         if x == 0 {
             break;

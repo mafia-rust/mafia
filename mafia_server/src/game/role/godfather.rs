@@ -1,7 +1,6 @@
 use super::*;
 
 create_role! { Godfather
-
     defense: 1;
     roleblockable: true;
     witchable: true;
