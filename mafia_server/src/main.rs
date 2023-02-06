@@ -14,11 +14,11 @@ async fn main()->Result<(), ()>{
 
     let clients: Arc<Mutex<HashMap<SocketAddr, Connection>>> = Arc::new(Mutex::new(HashMap::new()));
 
-    let mut lobbies = HashMap::new();
-    lobbies.insert("0", Lobby::new());
+    // let mut lobbies = HashMap::new();
+    // lobbies.insert("0", Lobby::new());
 
     let listener = Listener{
-        lobbies
+        lobby: Lobby::new()
     };
 
     let server_future = create_ws_server("127.0.0.1:8081", clients, Box::new(listener));
@@ -27,7 +27,7 @@ async fn main()->Result<(), ()>{
     return Ok(());
 }
 struct Listener{
-    lobbies: HashMap<&'static str, Lobby>,
+    lobby: Lobby,
 }
 impl ConnectionEventListener for Listener {
     fn on_connect(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection) {
@@ -42,10 +42,6 @@ impl ConnectionEventListener for Listener {
         println!("{}: {}", message, connection.get_adress());
     }
 }
-
-
-
-
 
 
 
