@@ -11,3 +11,4 @@ futures-util = "*"
 tokio = { version = "1", features = ["full"] }
 tokio-native-tls = "0.3.0"
 lazy_static = "1.4.0"
+serde_json = "1.0"

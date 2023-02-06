@@ -38,3 +38,10 @@ pub trait ConnectionEventListener {
     fn on_disconnect(&mut self, clients: &HashMap<SocketAddr, Connection>, connection: &Connection);
     fn on_message(&mut self, clients: &HashMap<SocketAddr, Connection>, connection: &Connection, message: &Message);
 }
+
+unsafe fn any_as_u8_slice<T: Sized>(p: &T) -> &[u8] {
+    ::core::slice::from_raw_parts(
+        (p as *const T) as *const u8,
+        ::core::mem::size_of::<T>(),
+    )
+}

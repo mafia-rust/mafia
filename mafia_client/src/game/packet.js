@@ -1,4 +1,5 @@
 
+/*
 enum ToClientPacket{
     PreLobby(PreLobbyToClientPacket),
     Lobby(LobbyToClientPacket),
@@ -75,3 +76,28 @@ enum GameToServerPacket{
     SendMessage,
     SaveWill,
 }
+*/
+
+/*
+Examples of how these will look in json, maybe
+
+List of packets
+{
+    [
+        {
+            type: "LobbyToServer",
+            sub_type: "Kick"
+            packet: {
+                PlayerID: 7
+            }
+        },
+        {
+            GameToServer: {
+                DayTarget: {
+                    PlayerID: 2
+                }
+            }
+        }
+    ]
+}
+*/
