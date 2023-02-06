@@ -9,7 +9,7 @@ use std::{
 
 
 #[tokio::main]
-async fn main()->Result<(), ()>{
+async fn main() -> Result<(), ()> {
     println!("Hello, world!");
 
     let clients: Arc<Mutex<HashMap<SocketAddr, Connection>>> = Arc::new(Mutex::new(HashMap::new()));
@@ -24,7 +24,8 @@ async fn main()->Result<(), ()>{
     let server_future = create_ws_server("127.0.0.1:8081", clients, Box::new(listener));
 
     server_future.await;
-    return Ok(());
+    
+    Ok(())
 }
 struct Listener{
     lobby: Lobby,

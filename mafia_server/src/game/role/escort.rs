@@ -23,7 +23,7 @@ create_role! { Escort
         todo!()
     }
 
-    fn convert_targets_to_visits(targets: &Vec<PlayerID>, game: &Game) -> Vec<Visit> {
+    fn convert_targets_to_visits(targets: &[PlayerID], game: &Game) -> Vec<Visit> {
         todo!()
     }
 }

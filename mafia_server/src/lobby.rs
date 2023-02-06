@@ -7,12 +7,9 @@ pub struct Lobby {
 type LobbyID = String;
 
 impl Lobby{
-    pub fn new()->Lobby{
-
-        let new = Self { 
+    pub fn new() -> Lobby {
+        Self { 
             game: None,
-        };
-
-        new
+        }
     }
 }

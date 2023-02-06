@@ -110,7 +110,7 @@ macro_rules! create_role {
         fn can_day_target(actor: &Player, target: &Player, game: &Game) -> bool
             $can_day_target:block
 
-        fn convert_targets_to_visits(targets: &Vec<PlayerID>, game: &Game) -> Vec<Visit>
+        fn convert_targets_to_visits(targets: &[PlayerID], game: &Game) -> Vec<Visit>
             $convert_targets_to_visits:block
     ) => {
         use crate::game::player::{PlayerID, Player};
@@ -145,7 +145,7 @@ macro_rules! create_role {
             $can_target
         }
 
-        pub(super) fn convert_targets_to_visits(targets: &Vec<PlayerID>, game: &Game) /*-> Vec<Visit>*/
+        pub(super) fn convert_targets_to_visits(targets: &[PlayerID], game: &Game) /*-> Vec<Visit>*/
             $convert_targets_to_visits
     };
 }

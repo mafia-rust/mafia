@@ -29,11 +29,11 @@ pub struct Game {
 
 impl Game {
     pub fn get_player(&self, id: PlayerID) -> Result<&Player> {
-        self.players.get(id).ok_or(err!(generic, "Failed to get player {}", id))
+        self.players.get(id).ok_or_else(|| err!(generic, "Failed to get player {}", id))
     }
 
     pub fn get_player_mut(&mut self, id: PlayerID) -> Result<&mut Player> {
-        self.players.get_mut(id).ok_or(err!(generic, "Failed to get player {}", id))
+        self.players.get_mut(id).ok_or_else(|| err!(generic, "Failed to get player {}", id))
     }
 
     pub fn get_current_phase(&self) -> Phase {
