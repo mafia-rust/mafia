@@ -1,20 +1,14 @@
+use std::collections::HashMap;
 use std::net::SocketAddr;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use tokio::net::TcpStream;
-use tokio::sync::Mutex;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio_tungstenite::{WebSocketStream, tungstenite::Message};
 
 pub struct Connection{
     tx: UnboundedSender<Message>,
-    //rx: UnboundedReceiver<Message>,
-
     address: SocketAddr,
-
-    listeners: Arc<Mutex<Vec<fn(&Message)>>>,
-    
-    
 }
 impl core::fmt::Debug for Connection {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -24,35 +18,23 @@ impl core::fmt::Debug for Connection {
 impl Connection{
     pub fn new(
         tx : UnboundedSender<Message>,
-        mut rx : UnboundedReceiver<Message>,
-        address: SocketAddr
+        address: SocketAddr,
     )->Self{
 
         tx.send(Message::Text("Connection Established!!".to_owned()));
 
-        let listeners: Arc<Mutex<Vec<fn(&Message)>>> = Arc::new(Mutex::new(vec![
-            |m: &Message|{
-                println!("{}", m.to_string());
-            }
-        ]));
-
-        let thread_listeners = listeners.clone();
-
-        tokio::spawn(async move{
-            while let Some(m) = rx.recv().await {
-                for l in thread_listeners.lock().await.iter(){
-                    l(&m);
-                }
-            }
-        });
-
-        Self { tx, address, listeners }
+        Self { tx, address }
     }
+    pub fn get_adress(&self)->&SocketAddr{
+        &self.address
+    }
+    pub fn send(&self, message: Message){
+        self.tx.send(message);
+    }
+}
 
-    pub async fn add_listener(&mut self, listener: fn(&Message)){
-        self.listeners.lock().await.push(listener);
-    }
-    pub async fn remove_all_listeners(&mut self){
-        *self.listeners.lock().await = vec![];
-    }
+pub trait ConnectionEventListener {
+    fn on_connect(&mut self, clients: &HashMap<SocketAddr, Connection>, connection: &Connection);
+    fn on_disconnect(&mut self, clients: &HashMap<SocketAddr, Connection>, connection: &Connection);
+    fn on_message(&mut self, clients: &HashMap<SocketAddr, Connection>, connection: &Connection, message: &Message);
 }

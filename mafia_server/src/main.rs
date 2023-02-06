@@ -1,6 +1,7 @@
 
 use mafia_server::{lobby::Lobby, network::websocket_listener::create_ws_server};
-use mafia_server::network::connection::Connection;
+use mafia_server::network::connection::{Connection, ConnectionEventListener};
+use tokio_tungstenite::tungstenite::Message;
 use std::{
     net::SocketAddr,
     sync::{Arc, Mutex}, collections::HashMap,
@@ -9,20 +10,37 @@ use std::{
 
 #[tokio::main]
 async fn main()->Result<(), ()>{
-
-
     println!("Hello, world!");
 
-    let mut lobbies = HashMap::new();
     let clients: Arc<Mutex<HashMap<SocketAddr, Connection>>> = Arc::new(Mutex::new(HashMap::new()));
 
-    let server_future = create_ws_server("127.0.0.1:8081", clients);
-
+    let mut lobbies = HashMap::new();
     lobbies.insert("0", Lobby::new());
-    let lobby = lobbies.get("0").expect("lobby 0 should be set by previous line");
+
+    let listener = Listener{
+        lobbies
+    };
+
+    let server_future = create_ws_server("127.0.0.1:8081", clients, Box::new(listener));
 
     server_future.await;
     return Ok(());
+}
+struct Listener{
+    lobbies: HashMap<&'static str, Lobby>,
+}
+impl ConnectionEventListener for Listener {
+    fn on_connect(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection) {
+        println!("connected: {}", connection.get_adress());
+    }
+
+    fn on_disconnect(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection) {
+        println!("disconnected: {}", connection.get_adress());
+    }
+
+    fn on_message(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection, message: &Message) {
+        println!("{}: {}", message, connection.get_adress());
+    }
 }
 
 
