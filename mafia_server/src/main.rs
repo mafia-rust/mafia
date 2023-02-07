@@ -8,6 +8,12 @@ use std::{
 };
 
 
+///
+/// The Main function
+/// 
+/// # Examples
+/// ![image](https://user-images.githubusercontent.com/64770632/217148805-aa33cad8-f1b8-45ff-954c-c57e5fdb54c9.png)
+/// 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
     println!("Hello, world!");
