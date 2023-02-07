@@ -1,10 +1,10 @@
 use super::*;
 
 create_role! { Escort
-    defense: 0;
-    roleblockable: false;
-    witchable: true;
-    suspicious: false;
+    let defense: 0;
+    let roleblockable: false;
+    let witchable: true;
+    let suspicious: false;
 
     fn do_night_action(actor: &mut Player, game: &mut Game) {
         todo!()

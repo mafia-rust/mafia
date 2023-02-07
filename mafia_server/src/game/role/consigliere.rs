@@ -1,10 +1,10 @@
 use super::*;
 
 create_role! { ConsigliereFunnyMonkry
-    defense: 0;
-    roleblockable: true;
-    witchable: true;
-    suspicious: true;
+    let defense: 0;
+    let roleblockable: true;
+    let witchable: true;
+    let suspicious: true;
 
     fn do_night_action(actor: &mut Player, game: &mut Game) {
         todo!()

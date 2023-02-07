@@ -1,10 +1,10 @@
 use super::*;
 
 create_role! { Doctor
-    defense: 0;
-    roleblockable: true;
-    witchable: true;
-    suspicious: false;
+    let defense: 0;
+    let roleblockable: true;
+    let witchable: true;
+    let suspicious: false;
 
     fn do_night_action(actor: &mut Player, game: &mut Game) {
         todo!()
