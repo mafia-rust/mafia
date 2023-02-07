@@ -6,7 +6,7 @@ pub enum ChatMessage {
         msg: Option<String>,
     },
     Player {
-        player_id: String,
+        name: String,
         msg: String,
     },
 }
