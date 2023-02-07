@@ -1,27 +1,33 @@
+use std::collections::HashMap;
 
-enum ToClientPacket {
-    PreLobby(PreLobbyToClientPacket),
-    Lobby(LobbyToClientPacket),
-    Game(GameToClientPacket),
-}
+use tokio_tungstenite::tungstenite::Message;
+use serde::{Deserialize, Serialize};
 
-enum PreLobbyToClientPacket {
+use crate::game::player::PlayerID;
+
+#[derive(Serialize, Debug)]
+pub enum ToClientPacket{
+
+    //#region h
     AcceptJoin,
     AcceptHost,
-}
-
-enum LobbyToClientPacket {
+    //#endregion
+    
+    //#region Lobby
     GameStarted,
-    PlayerNames,
+    Players{
+        names: HashMap<PlayerID, String>
+    },
     Kicked,
-    RoleList,
-    PhaseTimes,
-    InvestigatorResults
-}
 
-// All of these are just for synchronizing variables between the 2 so client can see what their doing
-enum GameToClientPacket {
-    Phase,   // Time remaining in phase
+    PhaseTimesSetting,
+    RoleList,
+    InvestigatorResults,
+    //#endregion
+
+
+    ////////All of these are just for syncronizing variables between the 2 so client can see what their doing
+    Phase,   //how much time is left with this
     PlayerOnTrial,
 
     NewChatMessage,
@@ -35,39 +41,30 @@ enum GameToClientPacket {
 
     ChatGroups,
 
-    RoleList,
-    InvestigatorResults,
-
-    Players,
     PlayerButtons,
 
     //a way to syncronise the entire game for someone who joined late
+    //#endregion
 }
 
-enum ToServerPacket {
-    PreLobby(PreLobbyToServerPacket),
-    Lobby(LobbyToServerPacket),
-    Game(GameToServerPacket)
-}
 
-enum PreLobbyToServerPacket {
-    Join {
-        name: String,
+#[derive(Deserialize, Debug)]
+pub enum ToServerPacket{
+
+    Join,
+    Host,
+
+    //
+    SetName{
+        name: String
     },
-    Host {
-        name: String,
-    }
-}
-
-enum LobbyToServerPacket {
-    Start,
+    StartGame,
     Kick,
-    RoleList,
-    PhaseTimes,
-    InvestigatorResults,
-}
+    SetRoleList,
+    SetPhaseTimes,
+    SetInvestigatorResults,
 
-enum GameToServerPacket {
+    //
     Vote,   //Accusation
     Target,
     DayTarget,

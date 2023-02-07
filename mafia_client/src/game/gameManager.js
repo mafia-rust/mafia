@@ -3,12 +3,11 @@ import { create_gameState } from "./gameState";
 console.log("gameManager open");
 
 let gameManager = create_gameManager();
-gameManager.Server.open();
+//gameManager.Server.open();
 
 function create_gameManager(){
 
     
-
     return {
         //ws: ws,
         lobbyName: null,
@@ -17,6 +16,17 @@ function create_gameManager(){
         Server : create_server(),
 
         gameState : create_gameState(),
+
+        host_button : () => {
+            gameManager.Server.send("\"Host\"");
+        },
+        join_button: () => {
+            gameManager.Server.send("\"Join\"");
+        },
+
+        messageListener: (serverMessage)=>{
+            console.log(serverMessage);
+        },
     }
 }
 function create_server(){
@@ -26,14 +36,17 @@ function create_server(){
         ws: null,
 
         openListener : (event)=>{
-            Server.ws.send("Hello to Server");
+            //Server.ws.send("Hello to Server");
         },
         closeListener : (event)=>{
             console.log(event);
         },
         messageListener: (event)=>{
             console.log("Server: "+event.data);
-            
+
+            gameManager.messageListener(
+                JSON.parse(event.data)
+            );
         },
 
         open : ()=>{
@@ -48,10 +61,12 @@ function create_server(){
                 Server.messageListener(event);
             });
         },
-        send : ()=>{
-            Server.ws.send("Hello");
+        send : (packets)=>{
+            Server.ws.send(packets);
         },
         close : ()=>{
+            if(Server.ws==null) return;
+            
             Server.ws.close();
             Server.ws.removeEventListener("close", Server.closeListener);
             Server.ws.removeEventListener("message", Server.messageListener);
@@ -64,3 +79,35 @@ function create_server(){
 }
 
 export default gameManager;
+
+
+/*
+rust side code of packets i need to make
+pub enum ToServerPacket{
+    
+    Join
+    Host
+
+    //
+    StartGame,
+    Kick,
+    SetRoleList,
+    SetPhaseTimes,
+    SetInvestigatorResults,
+
+    //
+    Vote,   //Accusation
+    Target,
+    DayTarget,
+    Judgement,  //Vote
+    Whisper,
+    SendMessage,
+    SaveWill,
+}
+*/
+
+/*
+"Join": {
+    "name": "Sammy"
+}
+*/

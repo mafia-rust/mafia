@@ -1,6 +1,5 @@
 import React from "react";
-import { JoinGameMenu } from "./openMenus/JoinGameMenu";
-import { LobbyMenu } from "./openMenus/LobbyMenu";
+import { StartMenu } from "./openMenus/StartMenu";
 import gameManager from "./game/gameManager";
 import "./index.css"
 
@@ -10,7 +9,7 @@ export class Main extends React.Component {
         super(props);
 
         this.state = {
-            panels: [<JoinGameMenu/>, <LobbyMenu/>, ]
+            panels: [<StartMenu/>,]
         };
     }
     componentDidMount() {
