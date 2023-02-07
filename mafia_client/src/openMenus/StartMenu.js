@@ -1,4 +1,6 @@
 import React from "react";
+import {Main} from "../Main";
+import { JoinGameMenu } from "./JoinGameMenu";
 
 export class StartMenu extends React.Component {
     constructor(props) {
@@ -15,7 +17,9 @@ export class StartMenu extends React.Component {
     render(){return(<div>
         Mafia<br/>
         <br/>
-        <button style={{width: "90%"}}>Play</button><br/>
+        <button style={{width: "90%"}} onClick={()=>{
+            Main.instance.setState({panels : [<JoinGameMenu/>]});
+        }}>Play</button><br/>
         <br/>
         <button style={{width: "90%"}}>Login</button><br/>
     </div>)}

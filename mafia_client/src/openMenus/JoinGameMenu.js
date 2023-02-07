@@ -1,4 +1,5 @@
 import React from "react";
+import gameManager from "../game/gameManager";
 import namesJson from "../names"
 
 export class JoinGameMenu extends React.Component {
@@ -6,7 +7,6 @@ export class JoinGameMenu extends React.Component {
         super(props);
 
         this.state = {
-            nameValue: "",
             roomCodeValue: "",
         };
     }
@@ -22,6 +22,35 @@ export class JoinGameMenu extends React.Component {
     }
     componentWillUnmount() {
     }
+    
+    button(host){
+
+        gameManager.Server.close();
+        gameManager.Server.open();
+        //wait for server to open
+
+        // TODO fix this garbage thing to wait
+        setTimeout(()=>{
+            switch(host){
+                case true:
+                    this.hostGameButton();
+                    break;
+                case false:
+                    this.joinGameButton();
+                    break;
+                default:
+                    break;
+            }
+        },1000);
+
+        
+    }
+    joinGameButton(){
+        gameManager.join_button();
+    }
+    hostGameButton(){
+        gameManager.host_button();
+    }
 
     render(){return(<div>
         Room Code<br/>
@@ -29,14 +58,9 @@ export class JoinGameMenu extends React.Component {
             onChange={(e)=>{this.setState({roomCodeValue: e.target.value})}}
         /><br/>
         <br/>
-        Name<br/>
-        <input type="text" value={this.state.nameValue} 
-            onChange={(e)=>{this.setState({nameValue: e.target.value})}}
-        /><br/>
         <br/>
+        <button style={{width: "90%"}} onClick={()=>{this.button(false)}}>Join Lobby</button><br/>
         <br/>
-        <button style={{width: "90%"}}>Join Lobby</button><br/>
-        <br/>
-        <button style={{width: "90%"}}>New Lobby</button><br/>
+        <button style={{width: "90%"}} onClick={()=>{this.button(true)}}>New Lobby</button><br/>
     </div>)}
 }

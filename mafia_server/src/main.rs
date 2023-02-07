@@ -1,6 +1,7 @@
 
 use mafia_server::{lobby::Lobby, network::websocket_listener::create_ws_server};
 use mafia_server::network::connection::{Connection, ConnectionEventListener};
+use mafia_server::network::packet::{ToClientPacket, ToServerPacket};
 use tokio_tungstenite::tungstenite::Message;
 use std::{
     net::SocketAddr,
@@ -22,6 +23,10 @@ async fn main() -> Result<(), ()> {
 
     // let mut lobbies = HashMap::new();
     // lobbies.insert("0", Lobby::new());
+    // println!("{:?}", serde_json::ser::to_string(&ToClientPacket::Players { names: collection!{
+    //     0 => "Sammy".to_owned(),
+    //     1 => "Gerrit".to_owned()
+    // } }));
 
     let listener = Listener {
         lobby: Lobby::new()
@@ -52,15 +57,22 @@ impl ConnectionEventListener for Listener {
     }
 }
 
-// TODO: @ItsSammyM Move this, also use for room codes
-///
-/// Converts x to any radix
-/// # Example
-/// ```
-/// assert_eq!(format_radix(7, 2), "111");
-/// assert_eq!(format_radix(366, 10), "366");
-/// assert_eq!(format_radix(36*36*36*36 - 1, 36), "zzzz");
-/// ```
+
+
+//use this for room codes
+
+
+/**
+Converts x to any radix
+# Panics
+radix < 2 || radix > 36
+# Example
+```
+format_radix(7, 2) == "111";
+format_radix(366, 10) == "366";
+format_radix(36*36*36*36 - 1, 36) == "zzzz";
+```
+*/
 fn format_radix(mut x: u32, radix: u32) -> String {
     let mut result = vec![];
 

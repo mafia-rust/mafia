@@ -5,6 +5,7 @@ export class LobbyMenu extends React.Component {
         super(props);
 
         this.state = {
+            nameValue: "",
             
         };
     }
@@ -24,8 +25,13 @@ export class LobbyMenu extends React.Component {
     </div>)}
 
     render(){return(<div>
-        {this.state.name}<br/>
-        <br/>
+        
+        Name<br/>
+        {this.state.nameValue}<br/>
+        <input type="text" value={this.state.nameValue} 
+            onChange={(e)=>{this.setState({nameValue: e.target.value})}}
+        /><br/>
+
         {this.renderSettings()}
         {this.renderRolePicker()}
         {this.renderPlayers()}
