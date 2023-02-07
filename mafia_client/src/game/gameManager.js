@@ -18,14 +18,16 @@ function create_gameManager(){
         gameState : create_gameState(),
 
         host_button : () => {
-            gameManager.Server.send("\"Host\"");
+            gameManager.Server.send("Host");
         },
         join_button: () => {
-            gameManager.Server.send("\"Join\"");
+            gameManager.Server.send("Join");
         },
 
         messageListener: (serverMessage)=>{
             console.log(serverMessage);
+
+            //need to do rust match statement here
         },
     }
 }

@@ -6,6 +6,8 @@ use tokio::net::TcpStream;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio_tungstenite::{WebSocketStream, tungstenite::Message};
 
+use super::packet::ToClientPacket;
+
 #[derive(Debug)]
 pub struct Connection {
     tx: UnboundedSender<Message>,
@@ -14,8 +16,6 @@ pub struct Connection {
 
 impl Connection {
     pub fn new(tx: UnboundedSender<Message>, address: SocketAddr) -> Self {
-        tx.send(Message::Text("Connection Established!!".to_owned()));
-
         Self { tx, address }
     }
 
@@ -23,8 +23,10 @@ impl Connection {
         &self.address
     }
 
-    pub fn send(&self, message: Message) {
-        self.tx.send(message);
+    pub fn send(&self, message: ToClientPacket) {
+        self.tx.send(Message::Text(
+            ToClientPacket::AcceptHost.to_json_string()
+        ));
     }
 }
 
