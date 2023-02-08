@@ -37,8 +37,6 @@ pub async fn handle_connection(
     mut listener: Arc<Mutex<impl ConnectionEventListener>>
 ) {
     //println!("Incoming TCP connection from: {}", addr);
-
-    // Upgrade the raw stream to a WebSocket stream
     let ws_stream = tokio_tungstenite::accept_async(raw_stream).await.unwrap(); //if handshake doesnt work panic
     //println!("WebSocket connection established: {}\n", addr);
     
@@ -70,8 +68,7 @@ pub async fn handle_connection(
         let clients = clients_mutex.lock().unwrap();
         let connection = clients.get(&addr).unwrap();
 
-        // @Jack-Papel: @ItsSammyM why clone here?
-        listener.clone().lock().unwrap().on_message(&clients, connection, &message);
+        listener.lock().unwrap().on_message(&clients, connection, &message);
             
         future::ok(())
     });
@@ -83,8 +80,7 @@ pub async fn handle_connection(
         listener.lock().unwrap().on_connect(&clients, connection);
     }
     
-    // @ItsSammyM: No clue what this does but example code told me to do it
-    futures_util::pin_mut!(send_to_client, recieve_from_client);
+    futures_util::pin_mut!(send_to_client, recieve_from_client);//pinmut needed for select
     future::select(send_to_client, recieve_from_client).await;
 
     // When both are complete then that means it's disconnected
@@ -95,7 +91,5 @@ pub async fn handle_connection(
         listener.lock().unwrap().on_disconnect(&clients, connection);
         clients.remove(&addr);
     }
-    
-
     // println!("{} disconnected", &addr);
 }

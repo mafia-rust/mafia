@@ -1,4 +1,5 @@
 import React from "react";
+import gameManager from "../game/gameManager";
 
 export class LobbyMenu extends React.Component {
     constructor(props) {
@@ -6,12 +7,21 @@ export class LobbyMenu extends React.Component {
 
         this.state = {
             nameValue: "",
-            
+
+            listener : {func : ()=>{
+                this.setState({
+                    nameValue : gameManager.myName,
+                })
+            }},
         };
+
+        
     }
     componentDidMount() {
+        gameManager.addStateListner(this.state.listener);
     }
     componentWillUnmount() {
+        gameManager.removeStateListner(this.state.listener);
     }
 
     renderSettings(){return(<div>
@@ -27,11 +37,16 @@ export class LobbyMenu extends React.Component {
     render(){return(<div>
         
         Name<br/>
-        {this.state.nameValue}<br/>
+        {(()=>{
+            if(this.state.nameValue)
+                return(<div>{this.state.nameValue}<br/></div>);
+        })()}
         <input type="text" value={this.state.nameValue} 
             onChange={(e)=>{this.setState({nameValue: e.target.value})}}
         /><br/>
 
+        <button onClick={()=>{gameManager.setName_button(this.state.nameValue)}}>Set Name</button>
+        <br/>
         {this.renderSettings()}
         {this.renderRolePicker()}
         {this.renderPlayers()}

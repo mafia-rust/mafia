@@ -10,11 +10,19 @@ pub enum ToClientPacket{
 
     //#region h
     AcceptJoin,
-    AcceptHost,
+    RejectJoin{
+        reason: String
+    },
+    AcceptHost{
+        room_code: String
+    },
     //#endregion
     
     //#region Lobby
     GameStarted,
+    YourName{
+        name: String,
+    },
     Players{
         names: HashMap<PlayerID, String>
     },

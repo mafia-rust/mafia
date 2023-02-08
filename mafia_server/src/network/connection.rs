@@ -24,9 +24,7 @@ impl Connection {
     }
 
     pub fn send(&self, message: ToClientPacket) {
-        self.tx.send(Message::Text(
-            ToClientPacket::AcceptHost.to_json_string()
-        ));
+        self.tx.send(Message::text(message.to_json_string()));
     }
 }
 

@@ -1,4 +1,6 @@
 import { create_gameState } from "./gameState";
+import { Main } from "../Main";
+import { LobbyMenu } from "../openMenus/LobbyMenu";
 
 console.log("gameManager open");
 
@@ -8,14 +10,29 @@ let gameManager = create_gameManager();
 function create_gameManager(){
 
     
-    return {
+    let gameManager = {
         //ws: ws,
-        lobbyName: null,
+        roomCode: null,
         myName: null,
 
         Server : create_server(),
 
         gameState : create_gameState(),
+
+        listeners : [],
+        addStateListner : (listener)=>{
+            gameManager.listeners.push(listener);
+        },
+        removeStateListner : (listener)=>{
+            gameManager.listeners.splice(gameManager.listeners.indexOf(listener));
+        },
+        invokeStateListners : ()=>{
+            for(let i = 0; i < gameManager.listeners.length; i++){
+                if(gameManager.listeners[i].listener){
+                    gameManager.listeners[i].func();
+                }
+            }
+        },
 
         host_button : () => {
             gameManager.Server.send("Host");
@@ -23,13 +40,50 @@ function create_gameManager(){
         join_button: () => {
             gameManager.Server.send("Join");
         },
+        setName_button: (name)=>{
+            if(name)
+                gameManager.Server.send(`{SetName:{name:"${name}"}}`);
+        },
 
         messageListener: (serverMessage)=>{
-            console.log(serverMessage);
 
-            //need to do rust match statement here
+            let type;
+            if(typeof(serverMessage)==="string"){
+                type = serverMessage;
+            }else{
+                //object, THIS ASSUMES THAT SERVER MESSAGE IS AN OBJECT WITH AT LEAST 1 KEY
+                type = Object.keys(serverMessage)[0];
+                serverMessage = serverMessage[type];
+            }
+
+
+            //In each of the cases, ensure that your not interpreting anything as an object when it isnt.
+            //on the rust side, this is an enum called ToClientPacket
+            switch(type){
+                case "AcceptJoin":
+                    Main.instance.setState({panels : [<LobbyMenu/>]});
+                break;
+                case "RejectJoin":
+                    let reason = serverMessage.reason
+                    console.log(reason);
+                    
+                break;
+                case "AcceptHost":
+                    gameManager.roomCode = serverMessage.room_code;
+
+                    Main.instance.setState({panels : [<LobbyMenu/>]});
+                break;
+                case"YourName":
+                    gameManager.myName = serverMessage.name;
+                    gameManager.invokeStateListners();
+                break;
+                default:
+                    console.log("incoming_message response not implemented "+type);
+                break;
+            }
         },
     }
+    return gameManager;
 }
 function create_server(){
  

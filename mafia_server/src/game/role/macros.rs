@@ -1,6 +1,9 @@
 extern crate proc_macro;
 use proc_macro::TokenStream;
 
+//TODO jack please add a get_current_chat_groups() that can acess the player, roledata, role, and gamestate
+//PLEASE!!!!!!!!
+
 macro_rules! make_role_enum {
     (
         $(
@@ -172,4 +175,12 @@ macro_rules! parse_role_function {
         pub(super) fn convert_targets_to_visits($targets: &[PlayerID], $game: &Game) -> Vec<Visit>
             $convert_targets_to_visits
     };
+    //JACK PLEASE TODO PLEASE PLEASE JACK PLEASE
+    // (
+    // get_current_chat_groups($targets:ident, $game:ident)
+    //         $get_current_chat_groups:block
+    // ) => {
+    //     pub(super) fn get_current_chat_groups($targets: &[PlayerID], $game: &Game) -> Vec<Visit>
+    //         $convert_targets_to_visits
+    // };
 }
