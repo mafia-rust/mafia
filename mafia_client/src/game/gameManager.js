@@ -35,14 +35,14 @@ function create_gameManager(){
         },
 
         host_button : () => {
-            gameManager.Server.send("Host");
+            gameManager.Server.send(`"Host"`);
         },
         join_button: () => {
-            gameManager.Server.send("Join");
+            gameManager.Server.send(`"Join"`);
         },
         setName_button: (name)=>{
             if(name)
-                gameManager.Server.send(`{SetName:{name:"${name}"}}`);
+                gameManager.Server.send(`{"SetName":{"name":"${name}"}}`);
         },
 
         messageListener: (serverMessage)=>{
@@ -65,7 +65,7 @@ function create_gameManager(){
                 break;
                 case "RejectJoin":
                     let reason = serverMessage.reason
-                    console.log(reason);
+                    alert(reason);
                     
                 break;
                 case "AcceptHost":

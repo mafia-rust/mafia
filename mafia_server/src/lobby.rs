@@ -1,5 +1,8 @@
 use std::{collections::HashMap, net::SocketAddr};
 
+use tokio::sync::mpsc::UnboundedSender;
+use tokio_tungstenite::tungstenite::Message;
+
 use crate::{game::{Game, player::PlayerID}, network::{connection::Connection, packet::ToServerPacket}};
 
 pub struct Lobby {
@@ -16,10 +19,11 @@ impl Lobby {
             player_names: HashMap::new(),
         }
     }
-    pub fn on_client_message(player: PlayerID, incoming_packet: ToServerPacket){
+    pub fn on_client_message(&mut self, send: UnboundedSender<Message>, player_id: PlayerID, incoming_packet: ToServerPacket){
         match incoming_packet {
             ToServerPacket::SetName { name } => {
-
+                self.player_names.insert(player_id, name);
+                println!("It worked")
             },
             ToServerPacket::StartGame => todo!(),
             ToServerPacket::Kick => todo!(),

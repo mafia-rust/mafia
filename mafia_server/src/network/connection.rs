@@ -22,7 +22,9 @@ impl Connection {
     pub fn get_address(&self) -> &SocketAddr {
         &self.address
     }
-
+    pub fn get_sender(&self) -> UnboundedSender<Message> {
+        self.tx.clone()
+    }
     pub fn send(&self, message: ToClientPacket) {
         self.tx.send(Message::text(message.to_json_string()));
     }

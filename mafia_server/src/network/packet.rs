@@ -60,7 +60,7 @@ impl ToClientPacket {
     }
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub enum ToServerPacket{
 
     Join,
@@ -84,4 +84,9 @@ pub enum ToServerPacket{
     Whisper,
     SendMessage,
     SaveWill,
+}
+impl ToServerPacket {
+    pub fn to_json_string(&self)->String{
+        serde_json::to_string(&self).unwrap()
+    }
 }

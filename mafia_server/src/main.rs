@@ -1,15 +1,18 @@
 
-use mafia_server::lobby;
-use mafia_server::{lobby::Lobby, network::websocket_listener::create_ws_server};
-use mafia_server::network::connection::{Connection, ConnectionEventListener};
-use mafia_server::network::packet::{ToClientPacket, ToServerPacket};
-use mafia_server::game::Game;
-use serde_json::json;
+use mafia_server::{
+    lobby::Lobby,
+    network::{
+        websocket_listener::create_ws_server,
+        connection::{Connection, ConnectionEventListener},
+        packet::{ToClientPacket, ToServerPacket}
+    },
+};
+use serde_json::Value;
 use tokio_tungstenite::tungstenite::Message;
-use std::hash::Hash;
 use std::{
     net::SocketAddr,
-    sync::{Arc, Mutex}, collections::HashMap,
+    sync::{Arc, Mutex}, 
+    collections::HashMap,
 };
 
 
@@ -21,7 +24,7 @@ use std::{
 /// 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
-    println!("Hello, world!");
+    println!("Hello, world!");    
 
     let clients: Arc<Mutex<HashMap<SocketAddr, Connection>>> = Arc::new(Mutex::new(HashMap::new()));
 
@@ -58,44 +61,50 @@ impl ConnectionEventListener for Listener {
     fn on_message(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection, message: &Message) {
         println!("{}, addr:{}", message, connection.get_address());
 
-        let json_value = json!(message.to_string());
-        let incoming_packet = serde_json::value::from_value::<ToServerPacket>(json_value);
+        match serde_json::from_str::<Value>(message.to_string().as_str()){
+            Ok(json_value)=>{
+                let incoming_packet = serde_json::value::from_value::<ToServerPacket>(json_value.clone());
 
-        match incoming_packet{
-            Ok(incoming_packet) => {
-                match incoming_packet {
-                    ToServerPacket::Join => {
-                        connection.send(
-                            ToClientPacket::AcceptJoin
-                        );
+                match incoming_packet{
+                    Ok(incoming_packet) => {
+                        match incoming_packet {
+                            ToServerPacket::Join => {
+                                connection.send(
+                                    ToClientPacket::AcceptJoin
+                                );
 
-                        let mut max_id = 0usize;
-                        for id in self.player_ids.values().into_iter(){
-                            max_id = id.clone();
-                        }
-                        self.player_ids.insert(connection.get_address().clone(), max_id+1);
+                                let mut max_id = 0usize;
+                                for id in self.player_ids.values().into_iter(){
+                                    max_id = id.clone();
+                                }
+                                self.player_ids.insert(connection.get_address().clone(), max_id+1);
 
-                    },
-                    ToServerPacket::Host => {
-                        connection.send(
-                            ToClientPacket::AcceptHost{
-                                room_code: "temp_room_code".to_string(),
+                            },
+                            ToServerPacket::Host => {
+                                connection.send(
+                                    ToClientPacket::AcceptHost{
+                                        room_code: "temp_room_code".to_string(),
+                                    }
+                                );
+
+                                self.player_ids.insert(connection.get_address().clone(), 1);
+
+                            },
+                            _ => {
+                                let player_id = self.player_ids.get(connection.get_address()).unwrap();
+                                self.lobby.on_client_message(connection.get_sender(), player_id.clone(), incoming_packet);
                             }
-                        );
-
-                        self.player_ids.insert(connection.get_address().clone(), 1);
-
+                        }
+                    
+                    
                     },
-                    _ => {
-                        println!("Unhandled incoming_packet: {:?}", incoming_packet);
-                        todo!();
-                    }
+                    Err(_err)=>{
+                        println!("Json failed to get packet from value: val:{}, err:{}", json_value, _err);
+                    },
                 }
-            
-            
-            },
+            }
             Err(_err)=>{
-                //println!("Json failed to parse: {}", err)
+                println!("Json failed to get value from string:: str:{}, err:{}", message.to_string(), _err);
             },
         }
     }
@@ -117,6 +126,7 @@ assert_eq!(format_radix(366, 10), "366");
 assert_eq!(format_radix(36*36*36*36 - 1, 36), "zzzz");
 ```
 */
+#[allow(unused)]
 fn format_radix(mut x: u32, radix: u32) -> Option<String> {
     let mut result = vec![];
 
