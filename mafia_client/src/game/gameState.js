@@ -1,5 +1,9 @@
 export function create_gameState(){
     return {
+        myName: null,
+
+        chatMessages : [],  //string + chat messages
+
         //players
         //  name
         //  buttons

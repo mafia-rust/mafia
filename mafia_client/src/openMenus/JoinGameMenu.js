@@ -1,6 +1,5 @@
 import React from "react";
 import gameManager from "../game/gameManager";
-import namesJson from "../names"
 
 export class JoinGameMenu extends React.Component {
     constructor(props) {
@@ -11,14 +10,6 @@ export class JoinGameMenu extends React.Component {
         };
     }
     componentDidMount() {
-        //generate random name
-        this.setState({nameValue: 
-            namesJson.defaultNames[
-                Math.floor(
-                    Math.random()*namesJson.defaultNames.length
-                )
-            ]
-        });
     }
     componentWillUnmount() {
     }
@@ -56,6 +47,10 @@ export class JoinGameMenu extends React.Component {
         Room Code<br/>
         <input type="text" value={this.state.roomCodeValue} 
             onChange={(e)=>{this.setState({roomCodeValue: e.target.value})}}
+            onKeyUp={(e)=>{
+                if(e.key === 'Enter')
+                    gameManager.setName_button(this.state.nameFieldValue);
+            }}
         /><br/>
         <br/>
         <br/>

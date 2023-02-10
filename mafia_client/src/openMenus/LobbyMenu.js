@@ -6,16 +6,15 @@ export class LobbyMenu extends React.Component {
         super(props);
 
         this.state = {
-            nameValue: "",
+            nameFieldValue: "",
 
             listener : {func : ()=>{
                 this.setState({
-                    nameValue : gameManager.myName,
+                    nameValue : gameManager.gameState.myName,
                 })
             }},
         };
-
-        
+                
     }
     componentDidMount() {
         gameManager.addStateListner(this.state.listener);
@@ -23,7 +22,7 @@ export class LobbyMenu extends React.Component {
     componentWillUnmount() {
         gameManager.removeStateListner(this.state.listener);
     }
-
+ 
     renderSettings(){return(<div>
         Settings
     </div>)}
@@ -35,22 +34,24 @@ export class LobbyMenu extends React.Component {
     </div>)}
 
     render(){return(<div>
-        
         Name<br/>
         {(()=>{
             if(this.state.nameValue)
                 return(<div>{this.state.nameValue}<br/></div>);
         })()}
-        <input type="text" value={this.state.nameValue} 
-            onChange={(e)=>{this.setState({nameValue: e.target.value})}}
+        <input type="text" value={this.state.nameFieldValue}
+            onChange={(e)=>{this.setState({nameFieldValue: e.target.value})}}
+            onKeyUp={(e)=>{
+                if(e.key === 'Enter')
+                    gameManager.setName_button(this.state.nameFieldValue);
+            }}
         /><br/>
-
-        <button onClick={()=>{gameManager.setName_button(this.state.nameValue)}}>Set Name</button>
+        <button onClick={()=>{gameManager.setName_button(this.state.nameFieldValue)}}>Set Name</button><br/>
         <br/>
         {this.renderSettings()}
         {this.renderRolePicker()}
         {this.renderPlayers()}
         <br/>
-        <button style={{width: "90%"}}>Start</button><br/>
+        <button style={{width: "90%"}} onClick={()=>{gameManager.startGame_button()}}>Start</button><br/>
     </div>)}
 }

@@ -19,7 +19,7 @@ pub enum ToClientPacket{
     //#endregion
     
     //#region Lobby
-    GameStarted,
+    OpenGameMenu,
     YourName{
         name: String,
     },

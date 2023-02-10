@@ -1,6 +1,7 @@
 import { create_gameState } from "./gameState";
 import { Main } from "../Main";
 import { LobbyMenu } from "../openMenus/LobbyMenu";
+import { PlayerListMenu } from "../gameMenus/PlayerListMenu";
 
 console.log("gameManager open");
 
@@ -11,9 +12,7 @@ function create_gameManager(){
 
     
     let gameManager = {
-        //ws: ws,
         roomCode: null,
-        myName: null,
 
         Server : create_server(),
 
@@ -28,7 +27,7 @@ function create_gameManager(){
         },
         invokeStateListners : ()=>{
             for(let i = 0; i < gameManager.listeners.length; i++){
-                if(gameManager.listeners[i].listener){
+                if(gameManager.listeners[i].func){
                     gameManager.listeners[i].func();
                 }
             }
@@ -43,6 +42,9 @@ function create_gameManager(){
         setName_button: (name)=>{
             if(name)
                 gameManager.Server.send(`{"SetName":{"name":"${name}"}}`);
+        },
+        startGame_button: ()=>{
+            gameManager.Server.send(`"StartGame"`);
         },
 
         messageListener: (serverMessage)=>{
@@ -74,13 +76,19 @@ function create_gameManager(){
                     Main.instance.setState({panels : [<LobbyMenu/>]});
                 break;
                 case"YourName":
-                    gameManager.myName = serverMessage.name;
-                    gameManager.invokeStateListners();
+                    gameManager.gameState.myName = serverMessage.name;
+                break;
+                case "OpenGameMenu":
+                    Main.instance.setState({panels : [<PlayerListMenu/>]})
                 break;
                 default:
                     console.log("incoming_message response not implemented "+type);
                 break;
             }
+
+
+            
+            gameManager.invokeStateListners();
         },
     }
     return gameManager;
@@ -159,11 +167,5 @@ pub enum ToServerPacket{
     Whisper,
     SendMessage,
     SaveWill,
-}
-*/
-
-/*
-"Join": {
-    "name": "Sammy"
 }
 */
