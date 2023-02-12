@@ -16,7 +16,7 @@ lazy_static!(
 );
 
 pub struct Game {
-    pub players: Vec<Player>,   // PlayerID is the index into this vec
+    pub players: Vec<Player>,   // PlayerIndex is the index into this vec
     pub graves: Vec<Grave>,
 
     // pub role_list: Vec<Role>,
@@ -26,12 +26,12 @@ pub struct Game {
 }
 
 impl Game {
-    pub fn get_player(&self, id: PlayerIndex) -> Result<&Player> {
-        self.players.get(id).ok_or_else(|| err!(generic, "Failed to get player {}", id))
+    pub fn get_player(&self, index: PlayerIndex) -> Result<&Player> {
+        self.players.get(index).ok_or_else(|| err!(generic, "Failed to get player {}", index))
     }
 
-    pub fn get_player_mut(&mut self, id: PlayerIndex) -> Result<&mut Player> {
-        self.players.get_mut(id).ok_or_else(|| err!(generic, "Failed to get player {}", id))
+    pub fn get_player_mut(&mut self, index: PlayerIndex) -> Result<&mut Player> {
+        self.players.get_mut(index).ok_or_else(|| err!(generic, "Failed to get player {}", index))
     }
 
     pub fn get_current_phase(&self) -> Phase {

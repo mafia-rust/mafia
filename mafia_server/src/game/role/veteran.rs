@@ -22,7 +22,7 @@ create_role! { Veteran
         todo!()
     }
 
-    fn convert_targets_to_visits(targets: &[PlayerID], game: &Game) -> Vec<Visit> {
+    fn convert_targets_to_visits(targets: &[PlayerIndex], game: &Game) -> Vec<Visit> {
         todo!()
     }
     

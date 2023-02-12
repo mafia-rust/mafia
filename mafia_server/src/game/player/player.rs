@@ -7,7 +7,7 @@ pub type PlayerIndex = usize;
 
 pub struct Player {
     name: String,
-    id: PlayerIndex,
+    index: PlayerIndex,
     role_data: RoleData,
     alive: bool,
 
@@ -25,10 +25,10 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn new(name: String, id: PlayerIndex, role: Role) -> Self {
+    pub fn new(name: String, index: PlayerIndex, role: Role) -> Self {
         Player {
             name,
-            id,
+            index,
             role_data: role.default_data(),
             alive: true,
 
@@ -38,7 +38,7 @@ impl Player {
             roleblocked:    PhaseResetting::new(false, |_| false, PhaseType::Night),
             defense:        PhaseResetting::new(role.get_defense(), |p| p.get_role().get_defense(), PhaseType::Night),
             suspicious:     PhaseResetting::new(role.is_suspicious(), |p| p.get_role().is_suspicious(), PhaseType::Night),
-            disguised_as:   PhaseResetting::new(id, |p| p.id, PhaseType::Night),
+            disguised_as:   PhaseResetting::new(index, |p| p.index, PhaseType::Night),
         }
     }
 

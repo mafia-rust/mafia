@@ -90,9 +90,9 @@ impl ConnectionEventListener for Listener {
                                 self.players.insert(connection.get_address().clone(), (0, 0));
                             },
                             _ => {
-                                let player_id = self.players.get(connection.get_address()).unwrap();
+                                let player_index = self.players.get(connection.get_address()).unwrap();
                                 self.lobbies.get_mut(0).unwrap()
-                                    .on_client_message(connection.get_sender(), player_id.0.clone(), incoming_packet);
+                                    .on_client_message(connection.get_sender(), player_index.0.clone(), incoming_packet);
                             }
                         }
                     
