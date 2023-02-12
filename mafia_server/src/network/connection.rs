@@ -14,6 +14,19 @@ pub struct Connection {
     address: SocketAddr,
 }
 
+impl Eq for Connection{
+
+}
+impl PartialEq for Connection{
+    fn ne(&self, other: &Self) -> bool {
+        !self.eq(other)
+    }
+
+    fn eq(&self, other: &Self) -> bool {
+        self.address == other.address
+    }
+}
+
 impl Connection {
     pub fn new(tx: UnboundedSender<Message>, address: SocketAddr) -> Self {
         Self { tx, address }

@@ -1,11 +1,13 @@
 
 use mafia_server::{
     lobby::Lobby,
+    lobby::LobbyID,
     network::{
         websocket_listener::create_ws_server,
         connection::{Connection, ConnectionEventListener},
         packet::{ToClientPacket, ToServerPacket}
     },
+    game::player::PlayerID
 };
 use serde_json::Value;
 use tokio_tungstenite::tungstenite::Message;
@@ -37,15 +39,16 @@ async fn main() -> Result<(), ()> {
     Ok(())
 }
 
+
 struct Listener {
-    lobby: Lobby,
-    player_ids: HashMap<SocketAddr, usize>,
+    lobbies: Vec<Lobby>,
+    players: HashMap<SocketAddr, (PlayerID, LobbyID)>,
 }
 impl Listener{
     fn new()->Self{
         Self{
-            lobby: Lobby::new(),
-            player_ids: HashMap::new(),
+            lobbies: Vec::new(),
+            players: HashMap::new(),
         }
     }
 }
@@ -73,12 +76,8 @@ impl ConnectionEventListener for Listener {
                                     ToClientPacket::AcceptJoin
                                 );
 
-                                let mut max_id = 0usize;
-                                for id in self.player_ids.values().into_iter(){
-                                    max_id = id.clone();
-                                }
-                                self.player_ids.insert(connection.get_address().clone(), max_id+1);
-
+                                //add player
+                                self.players.insert(connection.get_address().clone(), (0, 0));
                             },
                             ToServerPacket::Host => {
                                 connection.send(
@@ -87,12 +86,13 @@ impl ConnectionEventListener for Listener {
                                     }
                                 );
 
-                                self.player_ids.insert(connection.get_address().clone(), 1);
-
+                                //add player
+                                self.players.insert(connection.get_address().clone(), (0, 0));
                             },
                             _ => {
-                                let player_id = self.player_ids.get(connection.get_address()).unwrap();
-                                self.lobby.on_client_message(connection.get_sender(), player_id.clone(), incoming_packet);
+                                let player_id = self.players.get(connection.get_address()).unwrap();
+                                self.lobbies.get_mut(0).unwrap()
+                                    .on_client_message(connection.get_sender(), player_id.0.clone(), incoming_packet);
                             }
                         }
                     

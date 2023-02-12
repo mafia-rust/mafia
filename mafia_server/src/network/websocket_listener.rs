@@ -83,7 +83,7 @@ pub async fn handle_connection(
     futures_util::pin_mut!(send_to_client, recieve_from_client);//pinmut needed for select
     future::select(send_to_client, recieve_from_client).await;
 
-    // When both are complete then that means it's disconnected
+    // When either are complete then that means it's disconnected
     {
         let mut clients = clients_mutex.lock().unwrap();
         let connection = clients.get(&addr).unwrap();
