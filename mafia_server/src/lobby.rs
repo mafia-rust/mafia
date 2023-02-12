@@ -27,8 +27,10 @@ impl Lobby {
             },
             ToServerPacket::StartGame => {
                 for player in self.player_names.iter(){
-                    player.0.send(Message::Text(ToClientPacket::OpenGameMenu.to_json_string()));
-                    //send.send(Message::Text(ToClientPacket::OpenGameMenu.to_json_string()));
+                    if(self.game.is_none()){
+                        player.0.send(Message::Text(ToClientPacket::OpenGameMenu.to_json_string()));
+                        self.game = Some(Game::new(self.player_names.clone()))
+                    }
                 }
                 
             },
@@ -37,7 +39,9 @@ impl Lobby {
             ToServerPacket::SetPhaseTimes => todo!(),
             ToServerPacket::SetInvestigatorResults => todo!(),
             _ => {
-
+                if self.game.is_some(){ //TODO jack please jack help please jack plz
+                    self.game.as_mut().unwrap().on_client_message(player_index, incoming_packet);
+                }
             }
         }
     }
