@@ -25,4 +25,8 @@ create_role! { Vigilante
     fn convert_targets_to_visits(targets: &[PlayerID], game: &Game) -> Vec<Visit> {
         todo!()
     }
+    
+    fn get_current_chat_groups(player: Player, game: &Game) -> Vec<Visit> {
+        todo!()
+    }
 }

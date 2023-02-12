@@ -3,19 +3,21 @@ mod macros;
 
 // Creates the Role enum
 make_role_enum! {
-    Consigliere : consigliere,
-    Consort : consort,
-    Doctor : doctor,
+    // Consigliere : consigliere,
+    // Consort : consort,
+    // Doctor : doctor,
     Escort : escort,
-    Godfather : godfather,
+    // Godfather : godfather,
     Sheriff : sheriff,
-    Veteran : veteran {
-        alerts_remaining: u8 = 3
-    },
-    Vigilante : vigilante {
-        bullets_remaining: u8 = 3,
-        killed_townie: bool = false
-    }
+    // Veteran : veteran {
+    //     alerts_remaining: u8 = 3
+    // },
+    // Vigilante : vigilante {
+    //     bullets_remaining: u8 = 3,
+    //     killed_townie: bool = false
+    // }
+    Lookout : lookout,
+    Mafioso : mafioso
 }
 
 /*

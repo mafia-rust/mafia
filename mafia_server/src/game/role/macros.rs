@@ -14,6 +14,7 @@ macro_rules! make_role_enum {
     ) => {
         use crate::game::player::PlayerID;
         use crate::game::Game;
+        use crate::game::chat::ChatGroup;
         $(mod $file;)*
 
         #[derive(Clone, Copy)]
@@ -79,6 +80,11 @@ macro_rules! make_role_enum {
             pub fn can_day_target(&self, source: PlayerID, target: PlayerID, game: &Game) -> bool {
                 match self {
                     $(Role::$name => $file::can_day_target(source, target, game)),*
+                }
+            }
+            pub fn get_current_chat_groups(&self, source: PlayerID, game: &Game) -> Vec<ChatGroup> {
+                match self {
+                    $(Role::$name => $file::get_current_chat_groups(source, game)),*
                 }
             }
         }
@@ -175,12 +181,13 @@ macro_rules! parse_role_function {
         pub(super) fn convert_targets_to_visits($targets: &[PlayerID], $game: &Game) -> Vec<Visit>
             $convert_targets_to_visits
     };
-    //JACK PLEASE TODO PLEASE PLEASE JACK PLEASE
-    // (
-    // get_current_chat_groups($targets:ident, $game:ident)
-    //         $get_current_chat_groups:block
-    // ) => {
-    //     pub(super) fn get_current_chat_groups($targets: &[PlayerID], $game: &Game) -> Vec<Visit>
-    //         $convert_targets_to_visits
-    // };
+    (
+        get_current_chat_groups($player:ident, $game:ident)
+            $get_current_chat_groups:block
+    ) => {
+        pub(super) fn get_current_chat_groups($player: PlayerID, $game: &Game) -> Vec<ChatGroup> {
+            let $player = $game.get_player($player);
+            $get_current_chat_groups
+        }
+    };
 }
