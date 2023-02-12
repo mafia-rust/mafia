@@ -3,11 +3,11 @@ use crate::game::phase::{Phase, PhaseType};
 use crate::game::role::{Role, RoleData};
 use crate::game::phase_resetting::PhaseResetting;
 
-pub type PlayerID = usize;
+pub type PlayerIndex = usize;
 
 pub struct Player {
     name: String,
-    id: PlayerID,
+    id: PlayerIndex,
     role_data: RoleData,
     alive: bool,
 
@@ -18,14 +18,14 @@ pub struct Player {
     roleblocked:    PhaseResetting<bool>,
     defense:        PhaseResetting<u8>,
     suspicious:     PhaseResetting<bool>,
-    disguised_as:   PhaseResetting<PlayerID>,
+    disguised_as:   PhaseResetting<PlayerIndex>,
 
     // Morning
     // TODO
 }
 
 impl Player {
-    pub fn new(name: String, id: PlayerID, role: Role) -> Self {
+    pub fn new(name: String, id: PlayerIndex, role: Role) -> Self {
         Player {
             name,
             id,

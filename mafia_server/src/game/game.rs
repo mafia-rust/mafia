@@ -5,7 +5,7 @@ use lazy_static::lazy_static;
 use crate::prelude::*;
 use super::grave::Grave;
 use super::phase::{Phase, PhaseStateMachine};
-use super::player::{Player, PlayerID};
+use super::player::{Player, PlayerIndex};
 
 lazy_static!(
     pub static ref GAME: Arc<Mutex<Game>> = Arc::new(Mutex::new(Game {
@@ -26,11 +26,11 @@ pub struct Game {
 }
 
 impl Game {
-    pub fn get_player(&self, id: PlayerID) -> Result<&Player> {
+    pub fn get_player(&self, id: PlayerIndex) -> Result<&Player> {
         self.players.get(id).ok_or_else(|| err!(generic, "Failed to get player {}", id))
     }
 
-    pub fn get_player_mut(&mut self, id: PlayerID) -> Result<&mut Player> {
+    pub fn get_player_mut(&mut self, id: PlayerIndex) -> Result<&mut Player> {
         self.players.get_mut(id).ok_or_else(|| err!(generic, "Failed to get player {}", id))
     }
 

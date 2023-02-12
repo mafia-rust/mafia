@@ -3,14 +3,14 @@ use std::{collections::HashMap, net::SocketAddr};
 use tokio::sync::mpsc::UnboundedSender;
 use tokio_tungstenite::tungstenite::Message;
 
-use crate::{game::{Game, player::PlayerID}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket}}};
+use crate::{game::{Game, player::PlayerIndex}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket}}};
 
 pub struct Lobby {
     game: Option<Game>,
     player_names: Vec<(UnboundedSender<Message>, String)>,  //index = id - 1;
 }
 
-pub type LobbyID = usize;
+pub type LobbyIndex = usize;
 
 impl Lobby {
     pub fn new() -> Lobby {
@@ -19,7 +19,7 @@ impl Lobby {
             player_names: Vec::new(),
         }
     }
-    pub fn on_client_message(&mut self, send: UnboundedSender<Message>, player_id: PlayerID, incoming_packet: ToServerPacket){
+    pub fn on_client_message(&mut self, send: UnboundedSender<Message>, player_id: PlayerIndex, incoming_packet: ToServerPacket){
         match incoming_packet {
             ToServerPacket::SetName { name } => {
                 self.player_names.insert(player_id, (send.clone(), name.clone()));

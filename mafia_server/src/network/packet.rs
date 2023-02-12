@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use tokio_tungstenite::tungstenite::Message;
 use serde::{Deserialize, Serialize};
 
-use crate::game::player::PlayerID;
+use crate::game::player::PlayerIndex;
 
 #[derive(Serialize, Debug)]
 pub enum ToClientPacket{
@@ -24,7 +24,7 @@ pub enum ToClientPacket{
         name: String,
     },
     Players{
-        names: HashMap<PlayerID, String>
+        names: HashMap<PlayerIndex, String>
     },
     Kicked,
 

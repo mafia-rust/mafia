@@ -1,13 +1,13 @@
 
 use mafia_server::{
     lobby::Lobby,
-    lobby::LobbyID,
+    lobby::LobbyIndex,
     network::{
         websocket_listener::create_ws_server,
         connection::{Connection, ConnectionEventListener},
         packet::{ToClientPacket, ToServerPacket}
     },
-    game::player::PlayerID
+    game::player::PlayerIndex
 };
 use serde_json::Value;
 use tokio_tungstenite::tungstenite::Message;
@@ -42,7 +42,7 @@ async fn main() -> Result<(), ()> {
 
 struct Listener {
     lobbies: Vec<Lobby>,
-    players: HashMap<SocketAddr, (PlayerID, LobbyID)>,
+    players: HashMap<SocketAddr, (PlayerIndex, LobbyIndex)>,
 }
 impl Listener{
     fn new()->Self{

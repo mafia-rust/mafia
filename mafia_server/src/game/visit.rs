@@ -1,7 +1,7 @@
-use super::player::PlayerID;
+use super::player::PlayerIndex;
 
 pub struct Visit {
-    target: PlayerID,
+    target: PlayerIndex,
 
     astral: bool,
     attack: bool,

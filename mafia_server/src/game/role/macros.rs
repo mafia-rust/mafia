@@ -12,7 +12,7 @@ macro_rules! make_role_enum {
             })?
         ),*
     ) => {
-        use crate::game::player::PlayerID;
+        use crate::game::player::PlayerIndex;
         use crate::game::Game;
         use crate::game::chat::ChatGroup;
         $(mod $file;)*
@@ -62,27 +62,27 @@ macro_rules! make_role_enum {
                 }
             }
 
-            pub fn do_night_action(&mut self, source: PlayerID, game: &mut Game) {
+            pub fn do_night_action(&mut self, source: PlayerIndex, game: &mut Game) {
                 match self {
                     $(Role::$name => $file::do_night_action(source, game)),*
                 }
             }
-            pub fn do_day_action(&mut self, source: PlayerID, game: &mut Game) {
+            pub fn do_day_action(&mut self, source: PlayerIndex, game: &mut Game) {
                 match self {
                     $(Role::$name => $file::do_day_action(source, game)),*
                 }
             }
-            pub fn can_night_target(&self, source: PlayerID, target: PlayerID, game: &Game) -> bool {
+            pub fn can_night_target(&self, source: PlayerIndex, target: PlayerIndex, game: &Game) -> bool {
                 match self {
                     $(Role::$name => $file::can_night_target(source, target, game)),*
                 }
             }
-            pub fn can_day_target(&self, source: PlayerID, target: PlayerID, game: &Game) -> bool {
+            pub fn can_day_target(&self, source: PlayerIndex, target: PlayerIndex, game: &Game) -> bool {
                 match self {
                     $(Role::$name => $file::can_day_target(source, target, game)),*
                 }
             }
-            pub fn get_current_chat_groups(&self, source: PlayerID, game: &Game) -> Vec<ChatGroup> {
+            pub fn get_current_chat_groups(&self, source: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
                 match self {
                     $(Role::$name => $file::get_current_chat_groups(source, game)),*
                 }
@@ -109,7 +109,7 @@ macro_rules! create_role {
 
         $(fn $func:ident($($arg:ident: $arg_type:ty),*) $(-> $ret:ty)? $body:block)*
     ) => {
-        use crate::game::player::{PlayerID, Player};
+        use crate::game::player::{PlayerIndex, Player};
         use crate::game::visit::Visit;
         use crate::game::Game;
 
@@ -139,7 +139,7 @@ macro_rules! parse_role_function {
         do_night_action($actor:ident, $game:ident) 
             $do_night_action:block
     ) => {
-        pub(super) fn do_night_action(actor: PlayerID, $game: &mut Game) {
+        pub(super) fn do_night_action(actor: PlayerIndex, $game: &mut Game) {
             let $actor = $game.get_player_mut(actor);
             $do_night_action
         }
@@ -148,7 +148,7 @@ macro_rules! parse_role_function {
         can_night_target($actor:ident, $target:ident, $game:ident)
             $can_target:block
     ) => {
-        pub(super) fn can_night_target(actor: PlayerID, target: PlayerID, $game: &Game) -> bool {
+        pub(super) fn can_night_target(actor: PlayerIndex, target: PlayerIndex, $game: &Game) -> bool {
             let $actor = $game.get_player(actor);
             let $target = $game.get_player(target);
             $can_target
@@ -158,7 +158,7 @@ macro_rules! parse_role_function {
         do_day_action($actor:ident, $target:ident, $game:ident) 
             $do_day_action:block
     ) => {
-        pub(super) fn do_day_action(actor: PlayerID, $game: &mut Game) {
+        pub(super) fn do_day_action(actor: PlayerIndex, $game: &mut Game) {
             let $actor = $game.get_player_mut(actor);
             let $target = todo!();
             $do_day_action
@@ -168,7 +168,7 @@ macro_rules! parse_role_function {
         can_day_target($actor:ident, $target:ident, $game:ident)
             $can_day_target:block
     ) => {
-        pub(super) fn can_day_target(actor: PlayerID, target: PlayerID, $game: &Game) -> bool {
+        pub(super) fn can_day_target(actor: PlayerIndex, target: PlayerIndex, $game: &Game) -> bool {
             let $actor = $game.get_player(actor);
             let $target = $game.get_player(target);
             $can_day_target
@@ -178,14 +178,14 @@ macro_rules! parse_role_function {
         convert_targets_to_visits($targets:ident, $game:ident)
             $convert_targets_to_visits:block
     ) => {
-        pub(super) fn convert_targets_to_visits($targets: &[PlayerID], $game: &Game) -> Vec<Visit>
+        pub(super) fn convert_targets_to_visits($targets: &[PlayerIndex], $game: &Game) -> Vec<Visit>
             $convert_targets_to_visits
     };
     (
         get_current_chat_groups($player:ident, $game:ident)
             $get_current_chat_groups:block
     ) => {
-        pub(super) fn get_current_chat_groups($player: PlayerID, $game: &Game) -> Vec<ChatGroup> {
+        pub(super) fn get_current_chat_groups($player: PlayerIndex, $game: &Game) -> Vec<ChatGroup> {
             let $player = $game.get_player($player);
             $get_current_chat_groups
         }
