@@ -23,9 +23,19 @@ pub struct Player {
     roleblocked:    PhaseResetting<bool>,
     defense:        PhaseResetting<u8>,
     suspicious:     PhaseResetting<bool>,
+
+    janitor_cleaned: PhaseResetting<bool>,
+    forger: PhaseResetting<Option<(Role, String)>>, //this is new, maybe a bad idea? I dotn know, in old code this was ShownRole, ShownWill, ShownNote,
     disguised_as:   PhaseResetting<PlayerIndex>,
 
-    // Morning
+    targets: PhaseResetting<Vec<PlayerIndex>>,
+
+    chosen_targets:   PhaseResetting<Vec<PlayerIndex>>, //Vec is not copy
+
+    //Voting
+    chosen_vote: PhaseResetting<PlayerIndex>,
+    //judgement
+    chosen_judgement: PhaseResetting<Verdict>  //need judgement enum
     // TODO
 }
 
@@ -45,7 +55,15 @@ impl Player {
             roleblocked:    PhaseResetting::new(false, |_| false, PhaseType::Night),
             defense:        PhaseResetting::new(role.get_defense(), |p| p.get_role().get_defense(), PhaseType::Night),
             suspicious:     PhaseResetting::new(role.is_suspicious(), |p| p.get_role().is_suspicious(), PhaseType::Night),
+
             disguised_as:   PhaseResetting::new(index, |p| p.index, PhaseType::Night),
+            janitor_cleaned:PhaseResetting::new(false, |_| false, PhaseType::Night),
+            forger: todo!(),
+            chosen_targets: PhaseResetting::new(vec![], |_| vec![], PhaseType::Night),
+            targets: todo!(),
+
+            chosen_vote: todo!(),
+            chosen_judgement: todo!(),
         }
     }
 

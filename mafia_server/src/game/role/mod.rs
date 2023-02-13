@@ -25,7 +25,7 @@ v = visit
 +2: Transporter(Swaps, v, v)
 +3: Witch(Swap, v, av) 
 +4: Escort/Consort(Roleblock, v)
-+5: Godfather("witch mafioso if not rbd, unwitch self", av)
++5: Godfather("witch mafioso if not rbd, clear targets on self", av)
 +6: Doctor(Heal, v) Bodyguard("Witch attacker", v) //all attacks should happen after this
 +7: Blackmailer, Arsonist(Douse&visitors, v&nv), Framer(Frame&visitors, v&nv), Disguiser("Swap", v, v) Werewolf("unframe", nv) Forger(Frame, v) Janitor(Frame, v)   //investigations happen after this
 +8: Invest, Sheriff, Lookout, Tracker, Consig
