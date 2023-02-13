@@ -4,13 +4,13 @@ use super::player::Player;
 
 type ResetFunction<T> = fn(&Player) -> T;
 
-pub struct PhaseResetting<T: Copy> {
+pub struct PhaseResetting<T: Clone> {
     value: T,
     default: ResetFunction<T>,
     reset_phase: PhaseType,
 }
 
-impl<T: Copy> PhaseResetting<T> {
+impl<T: Clone> PhaseResetting<T> {
     pub fn new(initial: T, default: ResetFunction<T>, reset_phase: PhaseType) -> Self {
         PhaseResetting {
             value: initial,
@@ -26,7 +26,7 @@ impl<T: Copy> PhaseResetting<T> {
     }
 }
 
-impl<T: Copy> Deref for PhaseResetting<T> {
+impl<T: Clone> Deref for PhaseResetting<T> {
     type Target = T;
 
     fn deref(&self) -> &Self::Target {
@@ -34,7 +34,7 @@ impl<T: Copy> Deref for PhaseResetting<T> {
     }
 }
 
-impl<T: Copy> DerefMut for PhaseResetting<T> {
+impl<T: Clone> DerefMut for PhaseResetting<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.value
     }

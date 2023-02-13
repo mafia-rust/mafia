@@ -14,6 +14,8 @@ create_role! { Sheriff
     }
 
     fn can_night_target(actor: &Player, target: &Player, game: &Game) -> bool {
+        let actor = actor.unwrap();
+        let target = target.unwrap();
         actor != target && actor.alive && target.alive
     }
 

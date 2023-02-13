@@ -8,6 +8,7 @@ pub mod network;
 pub mod prelude {
     pub type Result<T> = std::result::Result<T, MafiaError>;
 
+    #[derive(Debug)]
     pub enum MafiaError {
         Generic(String) // TODO: remove this eventually
     }

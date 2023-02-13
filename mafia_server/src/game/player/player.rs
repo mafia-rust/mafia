@@ -25,17 +25,15 @@ pub struct Player {
     suspicious:     PhaseResetting<bool>,
 
     janitor_cleaned: PhaseResetting<bool>,
-    forger: PhaseResetting<Option<(Role, String)>>, //this is new, maybe a bad idea? I dotn know, in old code this was ShownRole, ShownWill, ShownNote,
+    //forger: PhaseResetting<Option<(Role, String)>>, //this is new, maybe a bad idea? I dotn know, in old code this was ShownRole, ShownWill, ShownNote,
     disguised_as:   PhaseResetting<PlayerIndex>,
 
-    targets: PhaseResetting<Vec<PlayerIndex>>,
-
-    chosen_targets:   PhaseResetting<Vec<PlayerIndex>>, //Vec is not copy
+    targets: PhaseResetting<Vec<PlayerIndex>>,//vec is not copy
 
     //Voting
-    chosen_vote: PhaseResetting<PlayerIndex>,
+    chosen_vote: PhaseResetting<Option<PlayerIndex>>,
     //judgement
-    chosen_judgement: PhaseResetting<Verdict>  //need judgement enum
+    chosen_judgement: PhaseResetting<i32>  //need judgement enum TODO verdict
     // TODO
 }
 
@@ -58,12 +56,14 @@ impl Player {
 
             disguised_as:   PhaseResetting::new(index, |p| p.index, PhaseType::Night),
             janitor_cleaned:PhaseResetting::new(false, |_| false, PhaseType::Night),
-            forger: todo!(),
-            chosen_targets: PhaseResetting::new(vec![], |_| vec![], PhaseType::Night),
-            targets: todo!(),
+            //forger: todo!(),
 
-            chosen_vote: todo!(),
-            chosen_judgement: todo!(),
+            targets: PhaseResetting::new(vec![], |_| vec![], PhaseType::Night),
+
+            //Vote
+            chosen_vote: PhaseResetting::new(None, |_| None, PhaseType::Voting),
+            //Judgement
+            chosen_judgement: PhaseResetting::new(0, |_| 0, PhaseType::Judgement),  //TODO enum not i32
         }
     }
 
