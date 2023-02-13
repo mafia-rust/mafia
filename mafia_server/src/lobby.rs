@@ -7,7 +7,7 @@ use crate::{game::{Game, player::PlayerIndex}, network::{connection::Connection,
 
 pub struct Lobby {
     game: Option<Game>,
-    player_names: Vec<(UnboundedSender<Message>, String)>,
+    player_names: Vec<(UnboundedSender<ToClientPacket>, String)>,
 }
 
 pub type LobbyIndex = usize;
@@ -19,16 +19,16 @@ impl Lobby {
             player_names: Vec::new(),
         }
     }
-    pub fn on_client_message(&mut self, send: UnboundedSender<Message>, player_index: PlayerIndex, incoming_packet: ToServerPacket){
+    pub fn on_client_message(&mut self, send: UnboundedSender<ToClientPacket>, player_index: PlayerIndex, incoming_packet: ToServerPacket){
         match incoming_packet {
             ToServerPacket::SetName { name } => {
                 self.player_names.insert(player_index, (send.clone(), name.clone()));
-                send.send(Message::text(ToClientPacket::YourName { name }.to_json_string()));
+                send.send(ToClientPacket::YourName { name });
             },
             ToServerPacket::StartGame => {
                 for player in self.player_names.iter(){
                     if(self.game.is_none()){
-                        player.0.send(Message::Text(ToClientPacket::OpenGameMenu.to_json_string()));
+                        player.0.send(ToClientPacket::OpenGameMenu);
                         self.game = Some(Game::new(self.player_names.clone()))
                     }
                 }

@@ -44,7 +44,9 @@ pub enum ToClientPacket{
     YourVoting,
     YourJudgement,
     YourWhispering,
-    YourRole,
+    YourRole{
+        
+    },
     YourWill,
 
     ChatGroups,

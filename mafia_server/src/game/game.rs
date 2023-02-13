@@ -4,7 +4,7 @@ use lazy_static::lazy_static;
 use tokio::sync::mpsc::UnboundedSender;
 use tokio_tungstenite::tungstenite::Message;
 
-use crate::network::packet::ToServerPacket;
+use crate::network::packet::{ToServerPacket, ToClientPacket};
 use crate::prelude::*;
 use super::grave::Grave;
 use super::phase::{Phase, PhaseStateMachine};
@@ -29,14 +29,14 @@ pub struct Game {
 }
 
 impl Game {
-    pub fn new(players_sender_and_name: Vec<(UnboundedSender<Message>, String)>)->Self{
+    pub fn new(players_sender_and_name: Vec<(UnboundedSender<ToClientPacket>, String)>)->Self{
 
         let mut players = Vec::new();
 
         //create players
         for player_index in 0..players_sender_and_name.len(){
             let (sender, name) = players_sender_and_name.get(player_index).expect("index should exist because for loop");
-            players.push(Player::new(name.clone(), player_index, super::role::Role::Sheriff));  //TODO sheriff!
+            players.push(Player::new(player_index, name.clone(), sender.clone(), super::role::Role::Sheriff));  //TODO sheriff!
         }
 
         //send to players all game information stuff

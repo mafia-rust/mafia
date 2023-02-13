@@ -10,7 +10,7 @@ use super::packet::ToClientPacket;
 
 #[derive(Debug)]
 pub struct Connection {
-    tx: UnboundedSender<Message>,
+    tx: UnboundedSender<ToClientPacket>,
     address: SocketAddr,
 }
 
@@ -28,18 +28,18 @@ impl PartialEq for Connection{
 }
 
 impl Connection {
-    pub fn new(tx: UnboundedSender<Message>, address: SocketAddr) -> Self {
+    pub fn new(tx: UnboundedSender<ToClientPacket>, address: SocketAddr) -> Self {
         Self { tx, address }
     }
 
     pub fn get_address(&self) -> &SocketAddr {
         &self.address
     }
-    pub fn get_sender(&self) -> UnboundedSender<Message> {
+    pub fn get_sender(&self) -> UnboundedSender<ToClientPacket> {
         self.tx.clone()
     }
     pub fn send(&self, message: ToClientPacket) {
-        self.tx.send(Message::text(message.to_json_string()));
+        self.tx.send(message);
     }
 }
 

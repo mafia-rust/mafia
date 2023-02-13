@@ -29,7 +29,7 @@ macro_rules! make_role_enum {
             })?),*
         }
 
-        impl Role {
+        impl Role { //TODO default_data needs to take gamestate and work for executioner
             pub fn default_data(&self) -> RoleData {
                 match self {
                     $(Role::$name => RoleData::$name$({
