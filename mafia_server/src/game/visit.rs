@@ -1,8 +1,9 @@
 use super::player::PlayerIndex;
 
+#[derive(Clone)]
 pub struct Visit {
-    target: PlayerIndex,
+    pub target: PlayerIndex,
 
-    astral: bool,
-    attack: bool,
+    pub astral: bool,
+    pub attack: bool,
 }

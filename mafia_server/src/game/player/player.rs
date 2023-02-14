@@ -4,37 +4,45 @@ use crate::game::Game;
 use crate::game::phase::{Phase, PhaseType};
 use crate::game::role::{Role, RoleData};
 use crate::game::phase_resetting::PhaseResetting;
+use crate::game::visit::Visit;
 use crate::network::packet::ToClientPacket;
 
 pub type PlayerIndex = usize;
 
 pub struct Player {
-    name: String,
-    index: PlayerIndex,
-    role_data: RoleData,
-    alive: bool,
+    pub name: String,
+    pub index: PlayerIndex,
+    pub role_data: RoleData,
+    pub alive: bool,
 
     sender: UnboundedSender<ToClientPacket>,
 
     // Night phase variables
-    alive_tonight:  PhaseResetting<bool>,
-    died:           PhaseResetting<bool>,
-    attacked:       PhaseResetting<bool>,
-    roleblocked:    PhaseResetting<bool>,
-    defense:        PhaseResetting<u8>,
-    suspicious:     PhaseResetting<bool>,
+    pub alive_tonight:  PhaseResetting<bool>,
+    pub died:           PhaseResetting<bool>,
+    pub attacked:       PhaseResetting<bool>,
+    pub roleblocked:    PhaseResetting<bool>,
+    pub defense:        PhaseResetting<u8>,
+    pub suspicious:     PhaseResetting<bool>,
 
-    janitor_cleaned: PhaseResetting<bool>,
+    pub janitor_cleaned: PhaseResetting<bool>,
     //forger: PhaseResetting<Option<(Role, String)>>, //this is new, maybe a bad idea? I dotn know, in old code this was ShownRole, ShownWill, ShownNote,
-    disguised_as:   PhaseResetting<PlayerIndex>,
+    pub disguised_as:   PhaseResetting<PlayerIndex>,
 
-    targets: PhaseResetting<Vec<PlayerIndex>>,//vec is not copy
+    pub chosen_targets: PhaseResetting<Vec<PlayerIndex>>,//vec is not copy
+    pub visits: PhaseResetting<Vec<Visit>>,
 
     //Voting
-    chosen_vote: PhaseResetting<Option<PlayerIndex>>,
+    pub chosen_vote: PhaseResetting<Option<PlayerIndex>>,
     //judgement
-    chosen_judgement: PhaseResetting<i32>  //need judgement enum TODO verdict
+    pub chosen_judgement: PhaseResetting<i32>  //need judgement enum TODO verdict
     // TODO
+}
+
+impl PartialEq for Player {
+    fn eq(&self, other: &Self) -> bool {
+        self.index == other.index
+    }
 }
 
 impl Player {
@@ -58,12 +66,14 @@ impl Player {
             janitor_cleaned:PhaseResetting::new(false, |_| false, PhaseType::Night),
             //forger: todo!(),
 
-            targets: PhaseResetting::new(vec![], |_| vec![], PhaseType::Night),
+            chosen_targets: PhaseResetting::new(vec![], |_| vec![], PhaseType::Night),
+            visits:         PhaseResetting::new(vec![], |_| vec![], PhaseType::Night),  
 
             //Vote
-            chosen_vote: PhaseResetting::new(None, |_| None, PhaseType::Voting),
+            chosen_vote:    PhaseResetting::new(None, |_| None, PhaseType::Voting),
             //Judgement
-            chosen_judgement: PhaseResetting::new(0, |_| 0, PhaseType::Judgement),  //TODO enum not i32
+            chosen_judgement: PhaseResetting::new(0, |_| 0, PhaseType::Judgement),//TODO enum not i32
+            
         }
     }
 
