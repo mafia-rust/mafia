@@ -5,6 +5,7 @@ pub(crate) mod phase_resetting;
 pub(crate) mod chat;
 pub(crate) mod role;
 pub(crate) mod visit;
+pub(crate) mod vote;
 
 #[allow(clippy::module_inception)]
 mod game;
