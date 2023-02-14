@@ -140,7 +140,7 @@ macro_rules! parse_role_function {
             $do_night_action:block
     ) => {
         pub(super) fn do_night_action(actor: PlayerIndex, $game: &mut Game) {
-            let $actor = $game.get_player_mut(actor);
+            // let $actor = $game.get_player_mut(actor).unwrap();
             $do_night_action
         }
     };
@@ -149,8 +149,8 @@ macro_rules! parse_role_function {
             $can_target:block
     ) => {
         pub(super) fn can_night_target(actor: PlayerIndex, target: PlayerIndex, $game: &Game) -> bool {
-            let $actor = $game.get_player(actor);
-            let $target = $game.get_player(target);
+            let $actor = $game.get_player(actor).unwrap();
+            let $target = $game.get_player(target).unwrap();
             $can_target
         }
     };
@@ -159,7 +159,7 @@ macro_rules! parse_role_function {
             $do_day_action:block
     ) => {
         pub(super) fn do_day_action(actor: PlayerIndex, $game: &mut Game) {
-            let $actor = $game.get_player_mut(actor);
+            let $actor = $game.get_player_mut(actor).unwrap();
             let $target = todo!();
             $do_day_action
         }
@@ -169,8 +169,8 @@ macro_rules! parse_role_function {
             $can_day_target:block
     ) => {
         pub(super) fn can_day_target(actor: PlayerIndex, target: PlayerIndex, $game: &Game) -> bool {
-            let $actor = $game.get_player(actor);
-            let $target = $game.get_player(target);
+            let $actor = $game.get_player(actor).unwrap();
+            let $target = $game.get_player(target).unwrap();
             $can_day_target
         }
     };
@@ -186,7 +186,7 @@ macro_rules! parse_role_function {
             $get_current_chat_groups:block
     ) => {
         pub(super) fn get_current_chat_groups($player: PlayerIndex, $game: &Game) -> Vec<ChatGroup> {
-            let $player = $game.get_player($player);
+            let $player = $game.get_player($player).unwrap();
             $get_current_chat_groups
         }
     };

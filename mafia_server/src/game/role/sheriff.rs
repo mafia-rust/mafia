@@ -6,17 +6,16 @@ create_role! { Sheriff
     let witchable: true;
     let suspicious: false;
 
-    fn do_night_action(actor: &mut Player, game: &mut Game) {
+    fn do_night_action(actor: PlayerIndex, game: &mut Game) {
 
-        // if let Some(target) = actor.targets.get(0){
-        //     target.suspicious
-        // }
+
+        if let Some(visit) = game.get_player(actor).unwrap().visits.get(0){
+            let sus = &game.get_player(visit.target).unwrap().suspicious;
+        }
     }
 
     fn can_night_target(actor: &Player, target: &Player, game: &Game) -> bool {
-        let actor = actor.unwrap();
-        let target = target.unwrap();
-        actor != target && actor.alive && target.alive
+        *actor != *target && actor.alive && target.alive
     }
 
     fn do_day_action(actor: &mut Player, target: &mut Player, game: &mut Game) {
@@ -32,11 +31,11 @@ create_role! { Sheriff
         //TODO is there a way we can make this a "default" function. Because this function is going to be exaactly the same for many roles, so are other functions.
         //Even transporter it should stay the same, because we will just loop a certain number of times
         //we could just copy and paste
-        let visits = Vec::new();
+        let mut visits = Vec::new();
 
         if let Some(target) = targets.get(0) {
             visits.push(
-                Visit{ target, astral: false, attack: false }
+                Visit{ target: *target, astral: false, attack: false }
             );
         }
         
