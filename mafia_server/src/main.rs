@@ -42,7 +42,7 @@ async fn main() -> Result<(), ()> {
 
 struct Listener {
     lobbies: Vec<Lobby>,
-    players: HashMap<SocketAddr, (PlayerIndex, LobbyIndex)>,
+    players: HashMap<SocketAddr, Option<(LobbyIndex, PlayerIndex)>>,
 }
 impl Listener{
     fn new()->Self{
@@ -55,10 +55,16 @@ impl Listener{
 impl ConnectionEventListener for Listener {
     fn on_connect(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection) {
         println!("connected: {}", connection.get_address());
+
+        //add player
+        self.players.insert(connection.get_address().clone(), None);
     }
 
     fn on_disconnect(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection) {
         println!("disconnected: {}", connection.get_address());
+
+        //remove player
+        self.players.remove(connection.get_address());
     }
 
     fn on_message(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection, message: &Message) {
@@ -75,9 +81,13 @@ impl ConnectionEventListener for Listener {
                                 connection.send(
                                     ToClientPacket::AcceptJoin
                                 );
-
-                                //add player
-                                self.players.insert(connection.get_address().clone(), (0, 0));
+                                //add to lobby
+                                if let Some(player) = self.players.get_mut(connection.get_address()){
+                                    player = Some((0, 0));
+                                    self.lobbies
+                                        .get(player.unwrap().0).unwrap()
+                                        .on_client_message(connection.get_sender(), player.unwrap().1, incoming_packet);
+                                }
                             },
                             ToServerPacket::Host => {
                                 connection.send(
@@ -86,13 +96,20 @@ impl ConnectionEventListener for Listener {
                                     }
                                 );
 
-                                //add player
-                                self.players.insert(connection.get_address().clone(), (0, 0));
+                                //add to lobby for right now
+                                if let Some(player) = self.players.get_mut(connection.get_address()){
+                                    player = Some((0, 0));
+                                    self.lobbies
+                                        .get_mut(player.unwrap().0).unwrap()
+                                        .on_client_message(connection.get_sender(), player.unwrap().1, incoming_packet);
+                                }
                             },
                             _ => {
-                                let player_index = self.players.get(connection.get_address()).unwrap();
-                                self.lobbies.get_mut(0).unwrap()
-                                    .on_client_message(connection.get_sender(), player_index.0.clone(), incoming_packet);
+                                if let Some(player) = self.players.get_mut(connection.get_address()){
+                                    
+                                    self.lobbies.get_mut(player.unwrap().0).unwrap()
+                                        .on_client_message(connection.get_sender(), player.unwrap().1, incoming_packet);
+                                }
                             }
                         }
                     

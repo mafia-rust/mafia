@@ -27,14 +27,17 @@ impl Lobby {
             },
             ToServerPacket::StartGame => {
                 for player in self.player_names.iter(){
+
                     if(self.game.is_none()){
                         player.0.send(ToClientPacket::OpenGameMenu);
                         self.game = Some(Game::new(self.player_names.clone()))
                     }
+
                 }
+            },
+            ToServerPacket::Kick => {
                 
             },
-            ToServerPacket::Kick => todo!(),
             ToServerPacket::SetRoleList => todo!(),
             ToServerPacket::SetPhaseTimes => todo!(),
             ToServerPacket::SetInvestigatorResults => todo!(),
