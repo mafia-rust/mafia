@@ -10,23 +10,12 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build_client:
-    name: Build Client
-    runs-on: ubuntu-latest
-    steps:
-      run: cd mafia-client
-    - uses: actions/checkout@v3
-    - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
   build_server:
     name: Build Server
     runs-on: ubuntu-latest
     steps:
-      run: cd mafia-server
     - uses: actions/checkout@v3
     - name: Build
-      run: cargo build --verbose
+      run: cd mafia-server && cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
