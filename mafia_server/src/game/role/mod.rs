@@ -3,14 +3,17 @@ mod macros;
 
 // Creates the Role enum
 make_role_enum! {
-    Escort : escort,
     Sheriff : sheriff,
-    Vigilante : vigilante {
-        bullets_remaining: u8 = 3,
-        killed_townie: bool = false
+
+    Doctor : doctor,
+
+    Veteran : veteran {
+        alerts_remaining: u8 = 3
     },
-    Lookout : lookout,
-    Mafioso : mafioso
+
+    Mafioso : mafioso,
+    
+    Consort : consort
 }
 
 /*

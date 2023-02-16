@@ -82,10 +82,10 @@ impl ConnectionEventListener for Listener {
                                     ToClientPacket::AcceptJoin
                                 );
                                 //add to lobby
-                                if let Some(player) = self.players.get_mut(connection.get_address()){
+                                if let Some(&mut mut player) = self.players.get_mut(connection.get_address()){
                                     player = Some((0, 0));
                                     self.lobbies
-                                        .get(player.unwrap().0).unwrap()
+                                        .get_mut(player.unwrap().0).unwrap()
                                         .on_client_message(connection.get_sender(), player.unwrap().1, incoming_packet);
                                 }
                             },
@@ -97,8 +97,8 @@ impl ConnectionEventListener for Listener {
                                 );
 
                                 //add to lobby for right now
-                                if let Some(player) = self.players.get_mut(connection.get_address()){
-                                    player = Some((0, 0));
+                                if let Some(&mut mut player) = self.players.get_mut(connection.get_address()){
+                                    player =  Some((0, 0));
                                     self.lobbies
                                         .get_mut(player.unwrap().0).unwrap()
                                         .on_client_message(connection.get_sender(), player.unwrap().1, incoming_packet);

@@ -1,6 +1,7 @@
 use crate::game::{phase::Phase, grave::Grave, role::Role, player::{PlayerIndex, Player}, vote::Verdict};
 use super::night_message::NightInformationMessage;
 
+#[derive(Clone)]
 pub enum MessageSender {
     Player(PlayerIndex),
     Jailor,
@@ -8,6 +9,7 @@ pub enum MessageSender {
 }
 
 // Determines message color
+#[derive(Clone)]
 pub enum ChatMessage {
     Normal(MessageSender, String, ChatGroup),
     Whisper(PlayerIndex, String),
@@ -34,6 +36,7 @@ pub enum ChatMessage {
     MayorRevealed(PlayerIndex),
 }
 
+#[derive(Clone)]
 pub enum ChatGroup {
     All,
     Mafia,

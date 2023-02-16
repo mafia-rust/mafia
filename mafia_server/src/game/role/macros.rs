@@ -111,6 +111,7 @@ macro_rules! create_role {
     ) => {
         use crate::game::player::{PlayerIndex, Player};
         use crate::game::visit::Visit;
+        use crate::game::role_list::FactionAlignment;
         use crate::game::Game;
 
         $(parse_role_item! {$item_name: $item_value})*
@@ -132,6 +133,9 @@ macro_rules! parse_role_item {
     (suspicious: $sus:expr) => {
         pub(super) const SUSPICIOUS: bool = $sus;
     };
+    (faction_alignment: $faction_alignment:expr) => {
+        pub(super) const FACTION_ALIGNMENT: FactionAlignment = $faction_alignment;
+    };
 }
 
 macro_rules! parse_role_function {
@@ -139,8 +143,7 @@ macro_rules! parse_role_function {
         do_night_action($actor:ident, $game:ident) 
             $do_night_action:block
     ) => {
-        pub(super) fn do_night_action(actor: PlayerIndex, $game: &mut Game) {
-            // let $actor = $game.get_player_mut(actor).unwrap();
+        pub(super) fn do_night_action($actor: PlayerIndex, $game: &mut Game) {
             $do_night_action
         }
     };

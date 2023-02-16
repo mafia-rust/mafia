@@ -21,7 +21,7 @@ impl PhaseType {
 #[derive(Clone, Copy)]
 pub struct Phase {
     pub phase_type: PhaseType,
-    pub number: u8, // Hopefully nobody is having more than 256 days anyway
+    pub day_number: u8, // Hopefully nobody is having more than 256 days anyway
 }
 
 impl Phase {
@@ -42,7 +42,7 @@ impl PhaseStateMachine {
             time_remaining: phase_type.get_length(),
             current_state: Phase {
                 phase_type,
-                number: 0,
+                day_number: 0,
             },
         }
     }

@@ -1,6 +1,7 @@
 use crate::game::player::PlayerIndex;
 use crate::game::role::Role;
 
+#[derive(Clone)]
 pub enum NightInformationMessage {
     RoleBlocked { immune : bool },
     Attacked { survived: bool },
