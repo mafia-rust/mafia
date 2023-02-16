@@ -16,6 +16,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build
-      run: cd mafia-server && cargo build --verbose
+      run: cd mafia_server && cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
