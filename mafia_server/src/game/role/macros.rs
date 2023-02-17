@@ -15,7 +15,9 @@ macro_rules! make_role_enum {
         use crate::game::player::PlayerIndex;
         use crate::game::Game;
         use crate::game::chat::ChatGroup;
+        use crate::game::role_list::FactionAlignment;
         $(mod $file;)*
+
 
         #[derive(Clone, Copy)]
         pub enum Role {
@@ -30,6 +32,10 @@ macro_rules! make_role_enum {
         }
 
         impl Role { //TODO default_data needs to take gamestate and work for executioner
+            pub fn values() -> Vec<Role> {
+                return vec![$(Role::$name),*];
+            }
+
             pub fn default_data(&self) -> RoleData {
                 match self {
                     $(Role::$name => RoleData::$name$({
@@ -61,6 +67,15 @@ macro_rules! make_role_enum {
                     $(Role::$name => $file::ROLEBLOCKABLE),*
                 }
             }
+
+            pub fn get_faction_alignment(&self) -> FactionAlignment {
+                match self {
+                    $(Role::$name => $file::FACTION_ALIGNMENT),*
+                }
+            }
+
+
+            //Above is constants
 
             pub fn do_night_action(&mut self, source: PlayerIndex, game: &mut Game) {
                 match self {

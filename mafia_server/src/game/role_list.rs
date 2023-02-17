@@ -1,5 +1,6 @@
 use super::role::Role;
 
+#[derive(Debug, PartialEq)]
 pub enum Faction{
     Mafia,
     Town,
@@ -32,6 +33,7 @@ impl Faction{
         }
     }
 }
+#[derive(Debug, PartialEq)]
 pub enum FactionAlignment{
     MafiaKilling,
     MafiaDeception,
@@ -81,10 +83,21 @@ pub enum RoleListEntry{
     Any
 }
 impl RoleListEntry{
-    // pub fn get_random_role()->Role{
-        
-    // }
-    // pub fn get_possible_roles()->Role{
-
-    // }
+    pub fn get_random_role(&self) -> Role {
+        let roles = self.get_possible_roles();
+        *roles.get(rand::random::<usize>() % roles.len()).expect("unreachable!")
+    }
+    pub fn get_possible_roles(&self) -> Vec<Role> {
+        match self {
+            RoleListEntry::Exact(r) => vec![r.clone()],
+            RoleListEntry::FactionAlignment(fa) => 
+                Role::values().into_iter().filter(|r|{
+                    r.get_faction_alignment() == *fa
+                }).collect(),
+            RoleListEntry::Faction(f) => Role::values().into_iter().filter(|r|{
+                r.get_faction_alignment().faction() == *f
+            }).collect(),
+            RoleListEntry::Any => Role::values(),
+        }
+    }
 }
