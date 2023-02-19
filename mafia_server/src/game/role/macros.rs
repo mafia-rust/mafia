@@ -19,12 +19,12 @@ macro_rules! make_role_enum {
         $(mod $file;)*
 
 
-        #[derive(Clone, Copy)]
+        #[derive(Clone, Copy, PartialEq, Debug)]
         pub enum Role {
             $($name),*
         }
 
-        #[derive(Clone, Copy)]
+        #[derive(Clone, Copy, PartialEq, Debug)]
         pub enum RoleData {
             $($name $({
                 $($data_ident: $data_type),*

@@ -54,10 +54,14 @@ pub enum FactionAlignment{
 impl FactionAlignment{
     pub fn faction(&self)->Faction{
         match self {
-            Self::MafiaKilling | Self::MafiaDeception | Self::MafiaSupport => Faction::Mafia,
-            Self::TownInvestigative | Self::TownProtective | Self::TownKilling | Self::TownSupport => Faction::Town,
-            Self::NeutralEvil | Self::NeutralKilling | Self::NeutralBenign | Self::NeutralChaos => Faction::Neutral,
-            Self::CovenEvil => Faction::Coven,
+            Self::MafiaKilling | Self::MafiaDeception | Self::MafiaSupport 
+                => Faction::Mafia,
+            Self::TownInvestigative | Self::TownProtective | Self::TownKilling | Self::TownSupport 
+                => Faction::Town,
+            Self::NeutralEvil | Self::NeutralKilling | Self::NeutralBenign | Self::NeutralChaos 
+                => Faction::Neutral,
+            Self::CovenEvil 
+                => Faction::Coven,
         }
     }
 }
@@ -66,16 +70,22 @@ pub struct RoleList{
     role_list: Vec<RoleListEntry>
 }
 impl RoleList{
-    // pub fn create_random_roles(&self)->Vec<Role>{
-    //     //length of out vec will be same as in vec
-    // }
-    // pub fn get_all_possible_roles(&self)->Vec<Role>{
-    //     //if executioner then add jester
-    //     //if there could be mafioso at beginning then add godfather
-    //     //if any mafia(besides godfather) then add mafioso
-
-    // }
+    pub fn create_random_roles(&mut self)->Vec<Role>{
+        //length of out vec will be same as in vec
+        let mut out = Vec::new();
+        for entry in self.role_list.iter_mut(){
+            out.push(entry.get_random_role());
+        }
+        out
+    }
+    pub fn get_all_possible_roles(&self)->Vec<Role>{
+        //if executioner then add jester
+        //if there could be mafioso at beginning then add godfather
+        //if any mafia(besides godfather) then add mafioso
+        todo!()
+    }
 }
+#[derive(Debug, PartialEq)]
 pub enum RoleListEntry{
     Exact(Role),
     FactionAlignment(FactionAlignment),
@@ -83,9 +93,23 @@ pub enum RoleListEntry{
     Any
 }
 impl RoleListEntry{
-    pub fn get_random_role(&self) -> Role {
+    pub fn get_random_role(&mut self) -> Role {
         let roles = self.get_possible_roles();
-        *roles.get(rand::random::<usize>() % roles.len()).expect("unreachable!")
+
+        match roles.get(rand::random::<usize>() % roles.len()) {
+            Some(role) => role.clone(),
+            None => {
+                //if cant find role and was any, crash
+                if *self == RoleListEntry::Any{
+                    panic!("No roles in get_possible_roles");
+                }
+                //if cant find role then try again with any
+                else{
+                    *self = RoleListEntry::Any;
+                    self.get_random_role()
+                }
+            },
+        }
     }
     pub fn get_possible_roles(&self) -> Vec<Role> {
         match self {

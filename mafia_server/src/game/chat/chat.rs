@@ -1,4 +1,4 @@
-use crate::game::{phase::Phase, grave::Grave, role::Role, player::{PlayerIndex, Player}, vote::Verdict};
+use crate::game::{phase::Phase, grave::Grave, role::{Role, RoleData}, player::{PlayerIndex, Player}, vote::Verdict};
 use super::night_message::NightInformationMessage;
 
 #[derive(Clone)]
@@ -34,6 +34,9 @@ pub enum ChatMessage {
     TargetCleared { targeter: PlayerIndex },
     /* Role-specific */
     MayorRevealed(PlayerIndex),
+    JailorDecideExecuteYou,
+
+    RoleData(RoleData)  //Tell executioner their target, other things. TODO
 }
 
 #[derive(Clone)]
