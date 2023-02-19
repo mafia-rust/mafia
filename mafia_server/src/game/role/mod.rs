@@ -13,26 +13,23 @@ macro_rules! make_role_enum {
         $(mod $file;)*
 
 
-        #[derive(Clone, Copy)]
+        #[derive(Clone, Copy, PartialEq, Debug)]
         pub enum Role {
             $($name),*
         }
 
-        #[derive(Clone, Copy)]
+        #[derive(Clone, Copy, PartialEq, Debug)]
         pub enum RoleData {
             $($name $({
                 $($data_ident: $data_type),*
             })?),*
         }
 
-        impl Role {
+        impl Role { //TODO default_data needs to take gamestate and work for executioner
             pub fn values() -> Vec<Role> {
                 return vec![$(Role::$name),*];
             }
 
-            /* Constants */
-
-            // TODO: Make method, which takes Game as parameter
             pub fn default_data(&self) -> RoleData {
                 match self {
                     $(Role::$name => RoleData::$name$({
@@ -71,7 +68,8 @@ macro_rules! make_role_enum {
                 }
             }
 
-            /* methods */
+
+            //Above is constants
 
             pub fn do_night_action(&mut self, source: PlayerIndex, game: &mut Game) {
                 match self {
