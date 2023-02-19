@@ -1,5 +1,116 @@
-#[macro_use]
-mod macros;
+macro_rules! make_role_enum {
+    (
+        $(
+            $name:ident : $file:ident $({
+                $($data_ident:ident: $data_type:ty = $data_def:expr),*
+            })?
+        ),*
+    ) => {
+        use crate::game::player::PlayerIndex;
+        use crate::game::Game;
+        use crate::game::chat::ChatGroup;
+        use crate::game::role_list::FactionAlignment;
+        $(mod $file;)*
+
+
+        #[derive(Clone, Copy)]
+        pub enum Role {
+            $($name),*
+        }
+
+        #[derive(Clone, Copy)]
+        pub enum RoleData {
+            $($name $({
+                $($data_ident: $data_type),*
+            })?),*
+        }
+
+        impl Role {
+            pub fn values() -> Vec<Role> {
+                return vec![$(Role::$name),*];
+            }
+
+            /* Constants */
+
+            // TODO: Make method, which takes Game as parameter
+            pub fn default_data(&self) -> RoleData {
+                match self {
+                    $(Role::$name => RoleData::$name$({
+                        $($data_ident: $data_def),*
+                    })?),*
+                }
+            }
+
+            pub fn is_suspicious(&self) -> bool {
+                match self {
+                    $(Role::$name => $file::SUSPICIOUS),*
+                }
+            }
+
+            pub fn is_witchable(&self) -> bool {
+                match self {
+                    $(Role::$name => $file::WITCHABLE),*
+                }
+            }
+
+            pub fn get_defense(&self) -> u8 {
+                match self {
+                    $(Role::$name => $file::DEFENSE),*
+                }
+            }
+
+            pub fn is_roleblockable(&self) -> bool {
+                match self {
+                    $(Role::$name => $file::ROLEBLOCKABLE),*
+                }
+            }
+
+            pub fn get_faction_alignment(&self) -> FactionAlignment {
+                match self {
+                    $(Role::$name => $file::FACTION_ALIGNMENT),*
+                }
+            }
+
+            /* methods */
+
+            pub fn do_night_action(&mut self, source: PlayerIndex, game: &mut Game) {
+                match self {
+                    $(Role::$name => $file::do_night_action(source, game)),*
+                }
+            }
+            pub fn do_day_action(&mut self, source: PlayerIndex, game: &mut Game) {
+                match self {
+                    $(Role::$name => $file::do_day_action(source, game)),*
+                }
+            }
+            pub fn can_night_target(&self, source: PlayerIndex, target: PlayerIndex, game: &Game) -> bool {
+                match self {
+                    $(Role::$name => $file::can_night_target(source, target, game)),*
+                }
+            }
+            pub fn can_day_target(&self, source: PlayerIndex, target: PlayerIndex, game: &Game) -> bool {
+                match self {
+                    $(Role::$name => $file::can_day_target(source, target, game)),*
+                }
+            }
+            pub fn get_current_chat_groups(&self, source: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
+                match self {
+                    $(Role::$name => $file::get_current_chat_groups(source, game)),*
+                }
+            }
+        }
+
+        impl RoleData {
+            pub fn role(&self) -> Role {
+                match self {
+                    $(RoleData::$name$({
+                        $($data_ident: _),*
+                    })? => Role::$name),*
+                }
+            }
+        }
+    }
+}
 
 // Creates the Role enum
 make_role_enum! {
