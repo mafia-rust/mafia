@@ -6,6 +6,7 @@ use crate::game::phase::{Phase, PhaseType};
 use crate::game::role::{Role, RoleData};
 use crate::game::phase_resetting::PhaseResetting;
 use crate::game::visit::Visit;
+use crate::game::vote::Verdict;
 use crate::network::packet::ToClientPacket;
 
 pub type PlayerIndex = usize;
@@ -29,22 +30,22 @@ pub struct Player {
     pub defense:        PhaseResetting<u8>,
     pub suspicious:     PhaseResetting<bool>,
 
-    pub janitor_cleaned: PhaseResetting<bool>,
+    pub janitor_cleaned:PhaseResetting<bool>,
     //forger: PhaseResetting<Option<(Role, String)>>, //this is new, maybe a bad idea? I dotn know, in old code this was ShownRole, ShownWill, ShownNote,
     pub disguised_as:   PhaseResetting<PlayerIndex>,
 
-    pub chosen_targets: PhaseResetting<Vec<PlayerIndex>>,//vec is not copy
-    pub visits: PhaseResetting<Vec<Visit>>,
+    pub chosen_targets: PhaseResetting<Vec<PlayerIndex>>,
+    pub visits:         PhaseResetting<Vec<Visit>>,
 
     //Voting
-    pub chosen_vote: PhaseResetting<Option<PlayerIndex>>,
-    //judgement
-    pub chosen_judgement: PhaseResetting<i32>  //need judgement enum TODO verdict
-    // TODO
+    pub chosen_vote:    PhaseResetting<Option<PlayerIndex>>,
+    pub verdict:        PhaseResetting<Verdict>
 }
 
 impl Player {
     pub fn new(index: PlayerIndex, name: String, sender: UnboundedSender<ToClientPacket>, role: Role) -> Self {
+        // Cry? Maybe? Want to cry about this unwrap? That's unfortunate. I'm sorry.
+        macro_rules! this {($g:ident) => {$g.get_player(index).unwrap()}};
         Player {
             name,
             index,
@@ -56,25 +57,23 @@ impl Player {
 
             sender,
 
-            alive_tonight:  PhaseResetting::new(true,  |p| p.alive, PhaseType::Night),
-            died:           PhaseResetting::new(false, |_| false, PhaseType::Night),
-            attacked:       PhaseResetting::new(false, |_| false, PhaseType::Night),
-            roleblocked:    PhaseResetting::new(false, |_| false, PhaseType::Night),
-            defense:        PhaseResetting::new(role.get_defense(), |p| p.get_role().get_defense(), PhaseType::Night),
-            suspicious:     PhaseResetting::new(role.is_suspicious(), |p| p.get_role().is_suspicious(), PhaseType::Night),
+            alive_tonight:  PhaseResetting::new(PhaseType::Night, &move |g| this!(g).alive),
+            died:           PhaseResetting::new(PhaseType::Night, &move |_| false),
+            attacked:       PhaseResetting::new(PhaseType::Night, &move |_| false),
+            roleblocked:    PhaseResetting::new(PhaseType::Night, &move |_| false),
+            defense:        PhaseResetting::new(PhaseType::Night, &move |g| this!(g).get_role().get_defense()),
+            suspicious:     PhaseResetting::new(PhaseType::Night, &move |g| this!(g).get_role().is_suspicious()),
 
-            disguised_as:   PhaseResetting::new(index, |p| p.index, PhaseType::Night),
-            janitor_cleaned:PhaseResetting::new(false, |_| false, PhaseType::Night),
+            disguised_as:   PhaseResetting::new(PhaseType::Night, &move |_| index),
+            janitor_cleaned:PhaseResetting::new(PhaseType::Night, &move |_| false),
             //forger: todo!(),
 
-            chosen_targets: PhaseResetting::new(vec![], |_| vec![], PhaseType::Night),
-            visits:         PhaseResetting::new(vec![], |_| vec![], PhaseType::Night),  
+            chosen_targets: PhaseResetting::new(PhaseType::Night, &move |_| vec![]),
+            visits:         PhaseResetting::new(PhaseType::Night, &move |_| vec![]),  
 
-            //Vote
-            chosen_vote:    PhaseResetting::new(None, |_| None, PhaseType::Voting),
-            //Judgement
-            chosen_judgement: PhaseResetting::new(0, |_| 0, PhaseType::Judgement),//TODO enum not i32
-            
+            //Voting
+            chosen_vote:    PhaseResetting::new(PhaseType::Voting, &move |_| None),
+            verdict:        PhaseResetting::new(PhaseType::Judgement, &move |_| Verdict::Abstain),
         }
     }
 

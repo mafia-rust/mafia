@@ -1,32 +1,39 @@
 use std::{ops::{Deref, DerefMut}};
 use crate::game::phase::PhaseType;
-use super::player::Player;
+use super::{player::Player, Game};
 
-type ResetFunction<T> = fn(&Player) -> T;
+type ResetFunction<T> = dyn Fn(Game) -> T;
 
-pub struct PhaseResetting<T: Clone> {
+pub struct PhaseResetting<T: Clone + Default> {
     value: T,
-    default: ResetFunction<T>,
-    reset_phase: PhaseType,
+    reset: *const ResetFunction<T>, // This makes it so that Game and Player can't be sent across threads
+                                    // But we don't really need that anyway.
+    phase: PhaseType
 }
 
-impl<T: Clone> PhaseResetting<T> {
-    pub fn new(initial: T, default: ResetFunction<T>, reset_phase: PhaseType) -> Self {
-        PhaseResetting {
-            value: initial,
-            default,
-            reset_phase,
+impl<'a, T: Clone + Default> PhaseResetting<T> {
+    pub fn new(phase: PhaseType, reset: &ResetFunction<T>) -> Self {
+        PhaseResetting { 
+            value: T::default(), // This will get changed immediately anyway
+            reset, 
+            phase
         }
     }
 
-    pub fn reset(&mut self, player: &Player, phase: PhaseType) {
-        if self.reset_phase == phase {
-            self.value = (self.default)(player);
-        }
+    pub fn get(&self) -> T {
+        self.value.clone()
+    }
+
+    pub fn set(&mut self, value: T) {
+        self.value = value;
+    }
+
+    pub fn reset(&mut self, game: Game) {
+        unsafe { self.value = (*(self.reset))(game); }
     }
 }
 
-impl<T: Clone> Deref for PhaseResetting<T> {
+impl<'a, T: Clone + Default> Deref for PhaseResetting<T> {
     type Target = T;
 
     fn deref(&self) -> &Self::Target {
@@ -34,7 +41,7 @@ impl<T: Clone> Deref for PhaseResetting<T> {
     }
 }
 
-impl<T: Clone> DerefMut for PhaseResetting<T> {
+impl<'a, T: Clone + Default> DerefMut for PhaseResetting<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.value
     }

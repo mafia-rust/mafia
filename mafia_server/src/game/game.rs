@@ -10,14 +10,6 @@ use super::grave::Grave;
 use super::phase::{Phase, PhaseStateMachine};
 use super::player::{Player, PlayerIndex};
 
-lazy_static!(
-    pub static ref GAME: Arc<Mutex<Game>> = Arc::new(Mutex::new(Game {
-        players: Vec::new(),    //keep as vec because each player has a number like in real game
-        graves: Vec::new(),     //order of graves
-        phase_machine: PhaseStateMachine::new(),
-    }));
-);
-
 pub struct Game {
     pub players: Vec<Player>,   // PlayerIndex is the index into this vec, should be unchanging as game goes on
     pub graves: Vec<Grave>,
