@@ -133,18 +133,32 @@ nv = no visit
 av = astral visit
 v = visit
 
+Highest importance
 +1: Jester(Kill, av) Vigilante(Suicide, nv) Arsonist(Clear self, nv) Vampire(Choose Leader, nv) Witch(Activate sheild, nv) Veteran(Decide, av) Retributionist(Decide and witch, av, av) //non transportable or witchable
+Non roleblockable Swaps
 +2: Transporter(Swaps, v, v)
 +3: Witch(Swap, v, av) 
+RB
 +4: Escort/Consort(Roleblock, v)
-+5: Godfather("witch mafioso if not rbd, clear targets on self", av)
+Swaps
++5: Godfather("witch mafioso if theyre not rbd, clear targets on self", av)
 +6: Doctor(Heal, v) Bodyguard("Witch attacker", v) //all attacks should happen after this
-+7: Blackmailer, Arsonist(Douse&visitors, v&nv), Framer(Frame&visitors, v&nv), Disguiser("Swap", v, v) Werewolf("unframe", nv) Forger(Frame, v) Janitor(Frame, v)   //investigations happen after this
+Deception
++7: Blackmailer, Arsonist(Douse&visitors, v&nv), Framer(Frame&visitors, v&nv), Disguiser("Swap", v, v) Werewolf("unframe", nv) Forger(Frame, v) Janitor(Clean, v)   //investigations happen after this
+Investigation
 +8: Invest, Sheriff, Lookout, Tracker, Consig
-+9: Mafioso/Godfather/Sk/Ww/Vet/Vig/Vamp/Arso/Bg/Vig("Kill")
+Kills
++9: Mafioso/Godfather/Sk/Ww/Vet/Vig/Vamp/Arso/Bg/Vig("Kill & make grave")
+Notify
 +10: Doc(Notify both, nv) Bg(Notify both, nv) Janitor(notify, nv), Forger(notify, nv) Vamp(Inform Leader & new vamp, nv) Arsonist(Inform who is doused, nv)
-+11: Exe/Amne/Vamp(Convert), spy(bug, v)
+Convert + bug
++11: Amne/Vamp(Convert), spy(bug, v)
 +12: Witch(bug)
+
+After night is over OR priority 20
++20
+    Exe convert
+    mafioso convert
 
 */
 

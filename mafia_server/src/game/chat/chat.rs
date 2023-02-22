@@ -21,13 +21,14 @@ pub enum ChatMessage {
     PhaseChange(Phase),
     /* Trial */
     RequiredVotes(usize),
+    TrialsLeft(u8),
     Voted { voter: PlayerIndex, votee: PlayerIndex },
     VoteCleared { voter: PlayerIndex },
     PlayerOnTrial(PlayerIndex),
     JudgementVote(PlayerIndex),
     JudgementVerdict(PlayerIndex, Verdict),
     JudgementResults { innocent: usize, guilty: usize },
-    NoTrialsLeft,
+    
     /* Misc */
     BroadcastWhisper { whisperer: PlayerIndex, whisperee: PlayerIndex },
     Targeted { targeter: PlayerIndex, target: PlayerIndex },
@@ -44,6 +45,10 @@ pub enum ChatGroup {
     All,
     Mafia,
     Dead,
-    Jail,
-    None,
+    Vampire,
+    Coven,
+    //Jail
+    //Seance
+    //Whisper
+    //Pirate, 
 }

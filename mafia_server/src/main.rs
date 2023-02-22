@@ -9,6 +9,7 @@ use mafia_server::{
     },
     game::player::PlayerIndex
 };
+use serde::de::value::Error;
 use serde_json::Value;
 use tokio_tungstenite::tungstenite::Message;
 use std::{
@@ -38,7 +39,6 @@ async fn main() -> Result<(), ()> {
 
     Ok(())
 }
-
 
 struct Listener {
     lobbies: Vec<Lobby>,
@@ -70,60 +70,53 @@ impl ConnectionEventListener for Listener {
     fn on_message(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection, message: &Message) {
         println!("{}, addr:{}", message, connection.get_address());
 
-        match serde_json::from_str::<Value>(message.to_string().as_str()){
-            Ok(json_value)=>{
-                let incoming_packet = serde_json::value::from_value::<ToServerPacket>(json_value.clone());
+        self.handle_message(_clients, connection, message);
+    }
+}
+impl Listener{
+    fn handle_message(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection, message: &Message) -> Result<(), serde_json::Error> {
 
-                match incoming_packet{
-                    Ok(incoming_packet) => {
-                        match incoming_packet {
-                            ToServerPacket::Join => {
-                                connection.send(
-                                    ToClientPacket::AcceptJoin
-                                );
-                                //add to lobby
-                                if let Some(&mut mut player) = self.players.get_mut(connection.get_address()){
-                                    player = Some((0, 0));
-                                    self.lobbies
-                                        .get_mut(player.unwrap().0).unwrap()
-                                        .on_client_message(connection.get_sender(), player.unwrap().1, incoming_packet);
-                                }
-                            },
-                            ToServerPacket::Host => {
-                                connection.send(
-                                    ToClientPacket::AcceptHost{
-                                        room_code: "temp_room_code".to_string(),
-                                    }
-                                );
+        let json_value = serde_json::from_str::<Value>(message.to_string().as_str())?;
+        let incoming_packet = serde_json::value::from_value::<ToServerPacket>(json_value.clone())?;
 
-                                //add to lobby for right now
-                                if let Some(&mut mut player) = self.players.get_mut(connection.get_address()){
-                                    player =  Some((0, 0));
-                                    self.lobbies
-                                        .get_mut(player.unwrap().0).unwrap()
-                                        .on_client_message(connection.get_sender(), player.unwrap().1, incoming_packet);
-                                }
-                            },
-                            _ => {
-                                if let Some(player) = self.players.get_mut(connection.get_address()){
-                                    
-                                    self.lobbies.get_mut(player.unwrap().0).unwrap()
-                                        .on_client_message(connection.get_sender(), player.unwrap().1, incoming_packet);
-                                }
-                            }
-                        }
+        match incoming_packet {
+            ToServerPacket::Join => {
+                connection.send(
+                    ToClientPacket::AcceptJoin
+                );
+                //add to lobby
+                if let Some(&mut mut player) = self.players.get_mut(connection.get_address()){
+                    player = Some((0, 0));
+                    self.lobbies
+                        .get_mut(player.unwrap().0).unwrap()
+                        .on_client_message(connection.get_sender(), player.unwrap().1, incoming_packet);
+                }
+            },
+            ToServerPacket::Host => {
+                connection.send(
+                    ToClientPacket::AcceptHost{
+                        room_code: "temp_room_code".to_string(),
+                    }
+                );
+
+                //add to lobby for right now
+                if let Some(&mut mut player) = self.players.get_mut(connection.get_address()){
+                    player =  Some((0, 0));
+                    self.lobbies
+                        .get_mut(player.unwrap().0).unwrap()
+                        .on_client_message(connection.get_sender(), player.unwrap().1, incoming_packet);
+                }
+            },
+            _ => {
+                if let Some(player) = self.players.get_mut(connection.get_address()){
                     
-                    
-                    },
-                    Err(_err)=>{
-                        println!("Json failed to get packet from value: val:{}, err:{}", json_value, _err);
-                    },
+                    self.lobbies.get_mut(player.unwrap().0).unwrap()
+                        .on_client_message(connection.get_sender(), player.unwrap().1, incoming_packet);
                 }
             }
-            Err(_err)=>{
-                println!("Json failed to get value from string:: str:{}, err:{}", message.to_string(), _err);
-            },
         }
+    
+        Ok(())
     }
 }
 
@@ -158,3 +151,5 @@ fn format_radix(mut x: u32, radix: u32) -> Option<String> {
     }
     Some(result.into_iter().rev().collect())
 }
+
+
