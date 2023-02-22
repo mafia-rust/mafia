@@ -22,30 +22,30 @@ pub struct Player {
     chat_messages: Vec<ChatMessage>,
     queued_chat_messages: Vec<ChatMessage>,
 
-    // Night phase variables
-    pub alive_tonight:  PhaseResetting<bool>,
-    pub died:           PhaseResetting<bool>,
-    pub attacked:       PhaseResetting<bool>,
-    pub roleblocked:    PhaseResetting<bool>,
-    pub defense:        PhaseResetting<u8>,
-    pub suspicious:     PhaseResetting<bool>,
+    //PHASE RESETTING VARIABLES
 
-    pub janitor_cleaned:PhaseResetting<bool>,
-    //forger: PhaseResetting<Option<(Role, String)>>, //this is new, maybe a bad idea? I dotn know, in old code this was ShownRole, ShownWill, ShownNote,
-    pub disguised_as:   PhaseResetting<PlayerIndex>,
+    // Night phase variables TODO possibly rename these variables, maybe not?
+    pub alive_tonight:  bool,
+    pub died:           bool,
+    pub attacked:       bool,
+    pub roleblocked:    bool,
+    pub defense:        u8,    
+    pub suspicious:     bool,
 
-    pub chosen_targets: PhaseResetting<Vec<PlayerIndex>>,
-    pub visits:         PhaseResetting<Vec<Visit>>,
+    pub janitor_cleaned:bool,
+    //forger: Option<(Role, String)>, //this is new, maybe a bad idea? I dotn know, in old code this was ShownRole, ShownWill, ShownNote,
+    pub disguised_as:   PlayerIndex,
+
+    pub chosen_targets: Vec<PlayerIndex>,
+    pub visits:         Vec<Visit>,
 
     //Voting
-    pub chosen_vote:    PhaseResetting<Option<PlayerIndex>>,
-    pub verdict:        PhaseResetting<Verdict>
+    pub chosen_vote:    Option<PlayerIndex>,
+    pub verdict:        Verdict
 }
 
 impl Player {
     pub fn new(index: PlayerIndex, name: String, sender: UnboundedSender<ToClientPacket>, role: Role) -> Self {
-        // Cry? Maybe? Want to cry about this unwrap? That's unfortunate. I'm sorry.
-        macro_rules! this {($g:ident) => {$g.get_player(index).unwrap()}};
         Player {
             name,
             index,
@@ -57,23 +57,23 @@ impl Player {
 
             sender,
 
-            alive_tonight:  PhaseResetting::new(PhaseType::Night, &move |g| this!(g).alive),
-            died:           PhaseResetting::new(PhaseType::Night, &move |_| false),
-            attacked:       PhaseResetting::new(PhaseType::Night, &move |_| false),
-            roleblocked:    PhaseResetting::new(PhaseType::Night, &move |_| false),
-            defense:        PhaseResetting::new(PhaseType::Night, &move |g| this!(g).get_role().get_defense()),
-            suspicious:     PhaseResetting::new(PhaseType::Night, &move |g| this!(g).get_role().is_suspicious()),
+            alive_tonight:  true,
+            died:           false,
+            attacked:       false,
+            roleblocked:    false,
+            defense:        role.get_defense(),
+            suspicious:     role.is_suspicious(),
 
-            disguised_as:   PhaseResetting::new(PhaseType::Night, &move |_| index),
-            janitor_cleaned:PhaseResetting::new(PhaseType::Night, &move |_| false),
+            disguised_as:   index,
+            janitor_cleaned:false,
             //forger: todo!(),
 
-            chosen_targets: PhaseResetting::new(PhaseType::Night, &move |_| vec![]),
-            visits:         PhaseResetting::new(PhaseType::Night, &move |_| vec![]),  
+            chosen_targets: vec![],
+            visits:         vec![],  
 
             //Voting
-            chosen_vote:    PhaseResetting::new(PhaseType::Voting, &move |_| None),
-            verdict:        PhaseResetting::new(PhaseType::Judgement, &move |_| Verdict::Abstain),
+            chosen_vote:    None,
+            verdict:        Verdict::Abstain,
         }
     }
 
@@ -97,6 +97,27 @@ impl Player {
         //recursive
         
         //self.queued_chat_messages.pop()
+    }
+
+    pub fn set_night(&mut self){
+        self.alive_tonight = self.alive;
+        self.died =          false;
+        self.attacked =      false;
+        self.roleblocked =   false;
+        self.defense =       self.get_role().get_defense();
+        self.suspicious =    self.get_role().is_suspicious();
+
+        self.disguised_as =  self.index;
+        self.janitor_cleaned=false;
+        //forger: todo!(),
+
+        self.chosen_targets= vec![];
+        self.visits=         vec![];  
+
+    }
+    pub fn set_voting(&mut self){
+        self.chosen_vote = None;
+        self.verdict = Verdict::Abstain;
     }
 }
 

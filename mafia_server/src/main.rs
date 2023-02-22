@@ -70,7 +70,9 @@ impl ConnectionEventListener for Listener {
     fn on_message(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection, message: &Message) {
         println!("{}, addr:{}", message, connection.get_address());
 
-        self.handle_message(_clients, connection, message);
+        if let Err(k) = self.handle_message(_clients, connection, message){
+            println!("Error: {}", k);
+        }    
     }
 }
 impl Listener{
