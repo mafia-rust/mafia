@@ -8,7 +8,7 @@ pub enum PhaseType {
     Voting,
     Testimony,
     Judgement,
-    FinalWords,
+    Evening,
     Night,
 }
 

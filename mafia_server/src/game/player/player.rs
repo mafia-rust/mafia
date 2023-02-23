@@ -9,6 +9,9 @@ use crate::game::visit::Visit;
 use crate::game::vote::Verdict;
 use crate::network::packet::ToClientPacket;
 
+use super::voting_variables::VotingVariables;
+use super::night_variables::NightVariables;
+
 pub type PlayerIndex = usize;
 
 pub struct Player {
@@ -20,65 +23,28 @@ pub struct Player {
     sender: UnboundedSender<ToClientPacket>,
 
     chat_messages: Vec<ChatMessage>,
-    queued_chat_messages: Vec<ChatMessage>,
+    queued_chat_messages: Vec<ChatMessage>, 
 
-    //PHASE RESETTING VARIABLES
-
-    // Night phase variables TODO possibly rename these variables, maybe not?
-    pub alive_tonight:  bool,
-    pub died:           bool,
-    pub attacked:       bool,
-    pub roleblocked:    bool,
-    pub defense:        u8,    
-    pub suspicious:     bool,
-
-    pub janitor_cleaned:bool,
-    //forger: Option<(Role, String)>, //this is new, maybe a bad idea? I dotn know, in old code this was ShownRole, ShownWill, ShownNote,
-    pub disguised_as:   PlayerIndex,
-
-    pub chosen_targets: Vec<PlayerIndex>,
-    pub visits:         Vec<Visit>,
-
-    //Voting
-    pub chosen_vote:    Option<PlayerIndex>,
-    pub verdict:        Verdict
+    night_variables: NightVariables,
+    voting_variables: VotingVariables,
 }
 
 impl Player {
     pub fn new(index: PlayerIndex, name: String, sender: UnboundedSender<ToClientPacket>, role: Role) -> Self {
-        Player {
+        Self {
             name,
             index,
             role_data: role.default_data(),
             alive: true,
 
+            sender,
             chat_messages: Vec::new(),
+
             queued_chat_messages: Vec::new(),
 
-            sender,
-
-            alive_tonight:  true,
-            died:           false,
-            attacked:       false,
-            roleblocked:    false,
-            defense:        role.get_defense(),
-            suspicious:     role.is_suspicious(),
-
-            disguised_as:   index,
-            janitor_cleaned:false,
-            //forger: todo!(),
-
-            chosen_targets: vec![],
-            visits:         vec![],  
-
-            //Voting
-            chosen_vote:    None,
-            verdict:        Verdict::Abstain,
+            night_variables: NightVariables::new(),
+            voting_variables: VotingVariables::new(),
         }
-    }
-
-    pub fn send(&self, packet: ToClientPacket){
-        self.sender.send(packet);
     }
 
     pub fn get_name(&self) -> &str {
@@ -93,31 +59,35 @@ impl Player {
         self.chat_messages.push(message.clone());
         self.queued_chat_messages.push(message);
     }
-    pub fn send_chat_messages(&mut self){
-        //recursive
+    
+    pub fn reset_phase_variables(&mut self, phase: PhaseType){
+        match phase {
+            PhaseType::Morning => {},
+            PhaseType::Discussion => {},
+            PhaseType::Voting => self.voting_variables.reset(),
+            PhaseType::Testimony => {},
+            PhaseType::Judgement => {},
+            PhaseType::Evening => {},
+            PhaseType::Night => self.voting_variables.reset(),
+        }
+    }
+
+
+    //sync server client
+    pub fn send(&self, packet: ToClientPacket){
+        self.sender.send(packet);
+    }
+    ///call this repeadedly
+    pub fn syncromize_server_to_client(&mut self){
+        self.send_chat_messages();
+    }
+    fn send_chat_messages(&mut self){
+        if self.queued_chat_messages.len() == 0{
+            return;
+        }
+        
         
         //self.queued_chat_messages.pop()
-    }
-
-    pub fn set_night(&mut self){
-        self.alive_tonight = self.alive;
-        self.died =          false;
-        self.attacked =      false;
-        self.roleblocked =   false;
-        self.defense =       self.get_role().get_defense();
-        self.suspicious =    self.get_role().is_suspicious();
-
-        self.disguised_as =  self.index;
-        self.janitor_cleaned=false;
-        //forger: todo!(),
-
-        self.chosen_targets= vec![];
-        self.visits=         vec![];  
-
-    }
-    pub fn set_voting(&mut self){
-        self.chosen_vote = None;
-        self.verdict = Verdict::Abstain;
     }
 }
 
