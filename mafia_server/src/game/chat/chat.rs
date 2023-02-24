@@ -36,6 +36,7 @@ pub enum ChatMessage {
     BroadcastWhisper { whisperer: PlayerIndex, whisperee: PlayerIndex },    //Sammy whispered to Tyler
     Targeted { targeter: PlayerIndex, target: PlayerIndex },                //Sammy targeted Jack
     TargetCleared { targeter: PlayerIndex },                                //Sammy cleared targets
+    
     /* Role-specific */
     MayorRevealed(PlayerIndex), //Sammy revealed as mayor
     JailorDecideExecuteYou,     //Jailor has decided to execute you

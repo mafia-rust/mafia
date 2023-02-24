@@ -7,8 +7,8 @@ pub(crate) mod role;
 pub(crate) mod visit;
 pub(crate) mod vote;
 pub(crate) mod role_list;
+pub(crate) mod settings;
 
 #[allow(clippy::module_inception)]
 mod game;
-mod settings;
 pub use game::*;

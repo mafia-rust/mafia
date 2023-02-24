@@ -7,6 +7,7 @@ export class LobbyMenu extends React.Component {
 
         this.state = {
             nameFieldValue: "",
+            nameValue: "",
 
             listener : {func : ()=>{
                 this.setState({
@@ -23,17 +24,7 @@ export class LobbyMenu extends React.Component {
         gameManager.removeStateListner(this.state.listener);
     }
  
-    renderSettings(){return(<div>
-        Settings
-    </div>)}
-    renderRolePicker(){return(<div>
-        Role List
-    </div>)}
-    renderPlayers(){return(<div>
-        Players
-    </div>)}
-
-    render(){return(<div>
+    renderName(){return(<div>
         Name<br/>
         {(()=>{
             if(this.state.nameValue)
@@ -48,6 +39,19 @@ export class LobbyMenu extends React.Component {
         /><br/>
         <button onClick={()=>{gameManager.setName_button(this.state.nameFieldValue)}}>Set Name</button><br/>
         <br/>
+    </div>)}
+    renderSettings(){return(<div>
+        Settings
+    </div>)}
+    renderRolePicker(){return(<div>
+        Role List
+    </div>)}
+    renderPlayers(){return(<div>
+        Players
+    </div>)}
+
+    render(){return(<div>
+        {this.renderName()}
         {this.renderSettings()}
         {this.renderRolePicker()}
         {this.renderPlayers()}

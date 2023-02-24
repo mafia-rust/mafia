@@ -2,6 +2,7 @@ import { create_gameState } from "./gameState";
 import { Main } from "../Main";
 import { LobbyMenu } from "../openMenus/LobbyMenu";
 import { PlayerListMenu } from "../gameMenus/PlayerListMenu";
+import { StartMenu } from "../openMenus/StartMenu";
 
 console.log("gameManager open");
 
@@ -41,7 +42,11 @@ function create_gameManager(){
         },
         setName_button: (name)=>{
             if(name)
-                gameManager.Server.send(`{"SetName":{"name":"${name}"}}`);
+                gameManager.Server.send(JSON.stringify({
+                    "SetName":{
+                        "name":name
+                    }
+                }, null, false));
         },
         startGame_button: ()=>{
             gameManager.Server.send(`"StartGame"`);
@@ -104,6 +109,8 @@ function create_server(){
         },
         closeListener : (event)=>{
             console.log(event);
+
+            Main.instance.setState({panels: [<StartMenu/>]});
         },
         messageListener: (event)=>{
             console.log("Server: "+event.data);

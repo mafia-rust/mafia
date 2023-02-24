@@ -10,15 +10,16 @@ macro_rules! make_role_enum {
         use crate::game::Game;
         use crate::game::chat::ChatGroup;
         use crate::game::role_list::FactionAlignment;
+        use serde::{Serialize, Deserialize};
         $(mod $file;)*
 
 
-        #[derive(Clone, Copy, PartialEq, Debug)]
+        #[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
         pub enum Role {
             $($name),*
         }
 
-        #[derive(Clone, Copy, PartialEq, Debug)]
+        #[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
         pub enum RoleData {
             $($name $({
                 $($data_ident: $data_type),*

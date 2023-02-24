@@ -1,3 +1,5 @@
+
+
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use lazy_static::lazy_static;
@@ -6,11 +8,7 @@ use tokio_tungstenite::tungstenite::Message;
 
 use crate::network::packet::{ToServerPacket, ToClientPacket};
 use crate::prelude::*;
-use super::grave::Grave;
-use super::phase::{PhaseStateMachine, PhaseType};
-use super::player::{Player, PlayerIndex};
-use super::role_list::RoleList;
-use super::settings::Settings;
+use super::{phase::{PhaseStateMachine, PhaseType}, player::{Player, PlayerIndex}, role_list::RoleList, settings::Settings, grave::Grave};
 
 pub struct Game {
     pub settings : Settings,
@@ -40,7 +38,7 @@ impl Game {
         Self{
             players,
             graves: Vec::new(),
-            phase_machine: PhaseStateMachine::new(settings.phase_times),
+            phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
 
             player_on_trial: None,

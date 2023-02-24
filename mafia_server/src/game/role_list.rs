@@ -1,6 +1,8 @@
+use serde::{Serialize, Deserialize};
+
 use super::role::Role;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub enum Faction{
     Mafia,
     Town,
@@ -33,7 +35,7 @@ impl Faction{
         }
     }
 }
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub enum FactionAlignment{
     MafiaKilling,
     MafiaDeception,
@@ -66,8 +68,9 @@ impl FactionAlignment{
     }
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RoleList{
-    role_list: Vec<RoleListEntry>
+    pub role_list: Vec<RoleListEntry>
 }
 impl RoleList{
     pub fn create_random_roles(&mut self)->Vec<Role>{
@@ -85,7 +88,9 @@ impl RoleList{
         todo!()
     }
 }
-#[derive(Debug, PartialEq)]
+
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum RoleListEntry{
     Exact(Role),
     FactionAlignment(FactionAlignment),

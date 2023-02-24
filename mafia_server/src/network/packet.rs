@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use tokio_tungstenite::tungstenite::Message;
 use serde::{Deserialize, Serialize};
 
-use crate::game::player::PlayerIndex;
+use crate::{game::{player::PlayerIndex, role_list::RoleList, settings::{InvestigatorResults, PhaseTimeSettings}}, lobby::LobbyIndex};
 
 #[derive(Serialize, Debug)]
 pub enum ToClientPacket{
@@ -20,9 +20,7 @@ pub enum ToClientPacket{
     
     //#region Lobby
     OpenGameMenu,
-    YourName{
-        name: String,
-    },
+    YourName{name:String},
     Players{
         names: HashMap<PlayerIndex, String>
     },
@@ -65,25 +63,25 @@ impl ToClientPacket {
 #[derive(Deserialize, Serialize, Debug)]
 pub enum ToServerPacket{
 
-    Join,
+    Join{
+        lobby_index: LobbyIndex
+    },
     Host,
 
     //
-    SetName{
-        name: String
-    },
+    SetName{name: String},
     StartGame,
-    Kick,
-    SetRoleList,
-    SetPhaseTimes,
-    SetInvestigatorResults,
+    Kick(PlayerIndex),
+    SetRoleList(RoleList),
+    SetPhaseTimes(PhaseTimeSettings),
+    SetInvestigatorResults(InvestigatorResults),
 
     //
     Vote,   //Accusation
     Target,
     DayTarget,
     Judgement,  //Vote
-    Whisper,
+    // Whisper,
     SendMessage,
     SaveWill,
 }

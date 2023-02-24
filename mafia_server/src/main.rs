@@ -9,7 +9,6 @@ use mafia_server::{
     },
     game::player::PlayerIndex
 };
-use rand::seq::SliceRandom;
 use serde_json::Value;
 use tokio_tungstenite::tungstenite::Message;
 use std::{
@@ -82,38 +81,50 @@ impl Listener{
         let incoming_packet = serde_json::value::from_value::<ToServerPacket>(json_value.clone())?;
 
         match incoming_packet {
-            ToServerPacket::Join => {
-                connection.send(
-                    ToClientPacket::AcceptJoin
-                );
+            ToServerPacket::Join{ lobby_index } => {
+                
                 //add to lobby
-                if let Some(&mut mut player) = self.players.get_mut(connection.get_address()){
-                    player = Some((0, 0));
-                    self.lobbies
-                        .get_mut(player.unwrap().0).unwrap()
-                        .on_client_message(connection.get_sender(), player.unwrap().1, incoming_packet);
+                if let Some(player) = self.players.get_mut(connection.get_address()){
+
+                    if let Some(lobby) = self.lobbies.get_mut(lobby_index){
+
+                        let player_index = lobby.add_new_player((connection.get_sender(), "".to_string()));
+
+                        *player = Some((lobby_index, player_index));
+
+                        connection.send(ToClientPacket::AcceptJoin);
+                    }else{
+                        connection.send(ToClientPacket::RejectJoin { reason: "Lobby does not exist".to_string() });
+                    }
+                }else{
+                    connection.send(ToClientPacket::RejectJoin { reason: "Player does not exist".to_string() });
                 }
             },
             ToServerPacket::Host => {
-                connection.send(
-                    ToClientPacket::AcceptHost{
-                        room_code: "temp_room_code".to_string(),
-                    }
-                );
 
-                //add to lobby for right now
-                if let Some(&mut mut player) = self.players.get_mut(connection.get_address()){
-                    player =  Some((0, 0));
-                    self.lobbies
-                        .get_mut(player.unwrap().0).unwrap()
-                        .on_client_message(connection.get_sender(), player.unwrap().1, incoming_packet);
+                if let Some(player) = self.players.get_mut(connection.get_address()){
+                    let mut lobby = Lobby::new();
+
+                    let player_index = lobby.add_new_player((connection.get_sender(), "".to_string()));
+                    self.lobbies.push(lobby);
+
+                    *player = Some((self.lobbies.len() - 1, player_index));
+
+                    connection.send(
+                        ToClientPacket::AcceptHost{
+                            room_code: "temp_room_code".to_string(),
+                        }
+                    );
                 }
             },
             _ => {
                 if let Some(player) = self.players.get_mut(connection.get_address()){
-                    
-                    self.lobbies.get_mut(player.unwrap().0).unwrap()
-                        .on_client_message(connection.get_sender(), player.unwrap().1, incoming_packet);
+                    if let Some( (lobby_index, player_index) ) = player {
+                        
+                        self.lobbies.get_mut(*lobby_index).unwrap()
+                            .on_client_message(connection.get_sender(), *player_index, incoming_packet);
+
+                    }
                 }
             }
         }
