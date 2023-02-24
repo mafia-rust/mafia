@@ -2,7 +2,7 @@ use crate::game::{visit::Visit, vote::Verdict};
 
 use super::{PlayerIndex, Player};
 
-pub struct NightVariables{
+pub struct PlayerNightVariables{
     pub alive_tonight:  bool,
     pub died:           bool,
     pub attacked:       bool,
@@ -17,7 +17,7 @@ pub struct NightVariables{
     pub chosen_targets: Vec<PlayerIndex>,
     pub visits:         Vec<Visit>,
 }
-impl NightVariables{
+impl PlayerNightVariables{
     pub fn new()->Self{
         Self{
             alive_tonight:  true,

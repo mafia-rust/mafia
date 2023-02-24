@@ -2,12 +2,12 @@ use crate::game::vote::Verdict;
 
 use super::{Player, PlayerIndex};
 
-pub struct VotingVariables{
+pub struct PlayerVotingVariables{
     //Voting
     pub chosen_vote:    Option<PlayerIndex>,
     pub verdict:        Verdict,
 }
-impl VotingVariables{
+impl PlayerVotingVariables{
     pub fn new()->Self{
         Self{
             chosen_vote : None,

@@ -1,16 +1,20 @@
 use tokio::sync::mpsc::UnboundedSender;
 
-use crate::game::Game;
-use crate::game::chat::ChatMessage;
-use crate::game::phase::{Phase, PhaseType};
-use crate::game::role::{Role, RoleData};
-use crate::game::phase_resetting::PhaseResetting;
-use crate::game::visit::Visit;
-use crate::game::vote::Verdict;
-use crate::network::packet::ToClientPacket;
+use crate::{
+    game::{
+        Game, chat::ChatMessage, 
+        phase_resetting::PhaseResetting, visit::Visit, vote::Verdict,
+        phase::{
+            PhaseType
+        }, 
+        role::{
+            Role, RoleData
+        }, 
+    }, 
+    network::packet::ToClientPacket
+};
 
-use super::voting_variables::VotingVariables;
-use super::night_variables::NightVariables;
+use super::{player_voting_variables::PlayerVotingVariables, player_night_variables::PlayerNightVariables};
 
 pub type PlayerIndex = usize;
 
@@ -25,8 +29,8 @@ pub struct Player {
     chat_messages: Vec<ChatMessage>,
     queued_chat_messages: Vec<ChatMessage>, 
 
-    night_variables: NightVariables,
-    voting_variables: VotingVariables,
+    night_variables: PlayerNightVariables,
+    voting_variables: PlayerVotingVariables,
 }
 
 impl Player {
@@ -42,8 +46,8 @@ impl Player {
 
             queued_chat_messages: Vec::new(),
 
-            night_variables: NightVariables::new(),
-            voting_variables: VotingVariables::new(),
+            night_variables: PlayerNightVariables::new(),
+            voting_variables: PlayerVotingVariables::new(),
         }
     }
 

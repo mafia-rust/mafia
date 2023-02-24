@@ -10,4 +10,5 @@ pub(crate) mod role_list;
 
 #[allow(clippy::module_inception)]
 mod game;
+mod settings;
 pub use game::*;

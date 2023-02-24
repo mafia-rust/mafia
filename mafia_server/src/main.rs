@@ -9,7 +9,7 @@ use mafia_server::{
     },
     game::player::PlayerIndex
 };
-use serde::de::value::Error;
+use rand::seq::SliceRandom;
 use serde_json::Value;
 use tokio_tungstenite::tungstenite::Message;
 use std::{

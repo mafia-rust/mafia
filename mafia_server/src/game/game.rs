@@ -7,21 +7,25 @@ use tokio_tungstenite::tungstenite::Message;
 use crate::network::packet::{ToServerPacket, ToClientPacket};
 use crate::prelude::*;
 use super::grave::Grave;
-use super::phase::{Phase, PhaseStateMachine};
+use super::phase::{PhaseStateMachine, PhaseType};
 use super::player::{Player, PlayerIndex};
+use super::role_list::RoleList;
+use super::settings::Settings;
 
 pub struct Game {
+    pub settings : Settings,
+
     pub players: Vec<Player>,   // PlayerIndex is the index into this vec, should be unchanging as game goes on
     pub graves: Vec<Grave>,
 
-    // pub role_list: Vec<Role>,
-    // pub invesigator_results: TODO
-
     pub phase_machine : PhaseStateMachine,
+
+    pub player_on_trial: Option<PlayerIndex>,   //Morning
+    pub trials_left: u8,                //Morning
 }
 
 impl Game {
-    pub fn new(players_sender_and_name: Vec<(UnboundedSender<ToClientPacket>, String)>)->Self{
+    pub fn new(settings: Settings, players_sender_and_name: Vec<(UnboundedSender<ToClientPacket>, String)>)->Self{
 
         let mut players = Vec::new();
 
@@ -36,7 +40,11 @@ impl Game {
         Self{
             players,
             graves: Vec::new(),
-            phase_machine: PhaseStateMachine::new(),
+            phase_machine: PhaseStateMachine::new(settings.phase_times),
+            settings,
+
+            player_on_trial: None,
+            trials_left: 0,
         }
     }
     pub fn get_player(&self, index: PlayerIndex) -> Result<&Player> {
@@ -47,11 +55,26 @@ impl Game {
         self.players.get_mut(index).ok_or_else(|| err!(generic, "Failed to get player {}", index))
     }
 
-    pub fn get_current_phase(&self) -> Phase {
+    pub fn get_current_phase(&self) -> PhaseType {
         self.phase_machine.current_state
     }
 
     pub fn on_client_message(&mut self, player_index: PlayerIndex, incoming_packet : ToServerPacket){
 
+    }
+
+    pub fn reset(&mut self, phase: PhaseType){
+        match phase {
+            PhaseType::Morning => {
+                self.player_on_trial = None;
+                self.trials_left = 3;
+            },
+            PhaseType::Discussion => {},
+            PhaseType::Voting => {},
+            PhaseType::Testimony => {},
+            PhaseType::Judgement => {},
+            PhaseType::Evening => {},
+            PhaseType::Night => {},
+        }
     }
 }

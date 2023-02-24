@@ -1,5 +1,5 @@
 #[allow(clippy::module_inception)]
 mod player;
-mod voting_variables;
-mod night_variables;
+mod player_voting_variables;
+mod player_night_variables;
 pub use player::*;
