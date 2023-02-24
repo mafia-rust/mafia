@@ -1,13 +1,13 @@
-pub(crate) mod grave;
-pub(crate) mod phase;
+pub mod grave;
+pub mod phase;
 pub mod player;
-pub(crate) mod phase_resetting;
-pub(crate) mod chat;
-pub(crate) mod role;
-pub(crate) mod visit;
-pub(crate) mod vote;
-pub(crate) mod role_list;
-pub(crate) mod settings;
+pub mod phase_resetting;
+pub mod chat;
+pub mod role;
+pub mod visit;
+pub mod vote;
+pub mod role_list;
+pub mod settings;
 
 #[allow(clippy::module_inception)]
 mod game;

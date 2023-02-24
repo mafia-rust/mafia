@@ -40,6 +40,8 @@ function create_gameManager(){
         join_button: () => {
             gameManager.Server.send(`"Join"`);
         },
+
+
         setName_button: (name)=>{
             if(name)
                 gameManager.Server.send(JSON.stringify({
@@ -50,6 +52,21 @@ function create_gameManager(){
         },
         startGame_button: ()=>{
             gameManager.Server.send(`"StartGame"`);
+        },
+        phaseTimes_button: (morning, discussion, voting, testimony, judgement, evening, night)=>{
+            gameManager.Server.send(JSON.stringify({
+                "SetPhaseTimes":{
+                    "phase_times":{
+                        "morning": {"secs":morning, "nanos":0},
+                        "discussion": {"secs":discussion, "nanos":0},
+                        "voting": {"secs":voting, "nanos":0},
+                        "testimony": {"secs":testimony, "nanos":0},
+                        "judgement": {"secs":judgement, "nanos":0},
+                        "evening": {"secs":evening, "nanos":0},
+                        "night": {"secs":night, "nanos":0},
+                    }
+                }
+            }, null, false))
         },
 
         messageListener: (serverMessage)=>{

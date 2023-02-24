@@ -10,20 +10,14 @@ pub enum ToClientPacket{
 
     //#region h
     AcceptJoin,
-    RejectJoin{
-        reason: String
-    },
-    AcceptHost{
-        room_code: String
-    },
+    RejectJoin{reason: String},
+    AcceptHost{room_code: String},
     //#endregion
     
     //#region Lobby
     OpenGameMenu,
     YourName{name:String},
-    Players{
-        names: HashMap<PlayerIndex, String>
-    },
+    Players{names: HashMap<PlayerIndex, String>},
     Kicked,
 
     PhaseTimesSetting,
@@ -73,7 +67,7 @@ pub enum ToServerPacket{
     StartGame,
     Kick(PlayerIndex),
     SetRoleList(RoleList),
-    SetPhaseTimes(PhaseTimeSettings),
+    SetPhaseTimes{phase_times: PhaseTimeSettings},
     SetInvestigatorResults(InvestigatorResults),
 
     //

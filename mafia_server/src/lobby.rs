@@ -44,7 +44,7 @@ impl Lobby {
                 
             },
             ToServerPacket::SetRoleList(role_list) => todo!(),
-            ToServerPacket::SetPhaseTimes(phase_times) => todo!(),
+            ToServerPacket::SetPhaseTimes{phase_times} => todo!(),
             ToServerPacket::SetInvestigatorResults(invest_results) => todo!(),
             _ => {
                 if self.game.is_some(){ //TODO jack please jack help please jack plz

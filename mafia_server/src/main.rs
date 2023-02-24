@@ -7,7 +7,7 @@ use mafia_server::{
         connection::{Connection, ConnectionEventListener},
         packet::{ToClientPacket, ToServerPacket}
     },
-    game::player::PlayerIndex
+    game::{player::PlayerIndex, settings::{Settings}}
 };
 use serde_json::Value;
 use tokio_tungstenite::tungstenite::Message;
@@ -27,6 +27,9 @@ use std::{
 #[tokio::main]
 async fn main() -> Result<(), ()> {
     println!("Hello, world!");    
+    let p = serde_json::to_string_pretty(&Settings::new(1));
+    println!("{}", p.unwrap());
+
 
     let clients: Arc<Mutex<HashMap<SocketAddr, Connection>>> = Arc::new(Mutex::new(HashMap::new()));
 
