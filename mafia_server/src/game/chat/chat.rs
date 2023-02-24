@@ -1,4 +1,4 @@
-use crate::game::{phase::Phase, grave::Grave, role::{Role, RoleData}, player::{PlayerIndex, Player}, vote::Verdict};
+use crate::game::{grave::Grave, role::{Role, RoleData}, player::{PlayerIndex, Player}, vote::Verdict, phase::PhaseType};
 use super::night_message::NightInformationMessage;
 
 #[derive(Clone)]
@@ -15,27 +15,31 @@ pub enum ChatMessage {
     Whisper(PlayerIndex, String),
     /* System */
     Debug(String), // TODO: Remove. This is only for testing.
-    RoleAssignment(Role),
-    PlayerDied(Grave),
+
+    RoleAssignment(Role),   //you are this role
+    PlayerDied(Grave),      //this player died this is their role
     GameOver/*(WinState)*/,
-    PhaseChange(Phase),
+    PhaseChange(PhaseType, u8),
     /* Trial */
-    RequiredVotes(usize),
-    TrialsLeft(u8),
+    TrialInformation{required_votes: usize, trials_left: u8},
+
     Voted { voter: PlayerIndex, votee: PlayerIndex },
     VoteCleared { voter: PlayerIndex },
-    PlayerOnTrial(PlayerIndex),
-    JudgementVote(PlayerIndex),
-    JudgementVerdict(PlayerIndex, Verdict),
-    JudgementResults { innocent: usize, guilty: usize },
+
+    PlayerOnTrial(PlayerIndex),     //This  player is on trial
+
+    JudgementVote(PlayerIndex),             //Sammy voted
+    JudgementVerdict(PlayerIndex, Verdict), //Sammy voted innocent
+    JudgementResults {player_on_trial: PlayerIndex, innocent: usize, guilty: usize },    //Sammy was voted innocent with these many votes
     
     /* Misc */
-    BroadcastWhisper { whisperer: PlayerIndex, whisperee: PlayerIndex },
-    Targeted { targeter: PlayerIndex, target: PlayerIndex },
-    TargetCleared { targeter: PlayerIndex },
+    BroadcastWhisper { whisperer: PlayerIndex, whisperee: PlayerIndex },    //Sammy whispered to Tyler
+    Targeted { targeter: PlayerIndex, target: PlayerIndex },                //Sammy targeted Jack
+    TargetCleared { targeter: PlayerIndex },                                //Sammy cleared targets
     /* Role-specific */
-    MayorRevealed(PlayerIndex),
-    JailorDecideExecuteYou,
+    MayorRevealed(PlayerIndex), //Sammy revealed as mayor
+    JailorDecideExecuteYou,     //Jailor has decided to execute you
+    MediumSeanceYou,       //You are being seanced by the medium
 
     RoleData(RoleData)  //Tell executioner their target, other things. TODO
 }

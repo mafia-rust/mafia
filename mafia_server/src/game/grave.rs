@@ -1,5 +1,4 @@
 use super::player::PlayerIndex;
-use super::phase::Phase;
 use super::role::Role;
 
 #[derive(Clone)]
