@@ -3,7 +3,7 @@ use std::{collections::HashMap, net::SocketAddr};
 use tokio::sync::mpsc::UnboundedSender;
 use tokio_tungstenite::tungstenite::Message;
 
-use crate::{game::{Game, player::{PlayerIndex, Player}, settings::Settings, role_list}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket}}};
+use crate::{game::{Game, player::{PlayerIndex, Player}, settings::{Settings, InvestigatorResults}, role_list}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket}}};
 
 pub struct Lobby {
     game: Option<Game>,
@@ -40,12 +40,12 @@ impl Lobby {
 
                 }
             },
-            ToServerPacket::Kick(player_index) => {
+            ToServerPacket::Kick{player_index} => {
                 
             },
-            ToServerPacket::SetRoleList(role_list) => todo!(),
+            ToServerPacket::SetRoleList{role_list} => todo!(),
             ToServerPacket::SetPhaseTimes{phase_times} => todo!(),
-            ToServerPacket::SetInvestigatorResults(invest_results) => todo!(),
+            ToServerPacket::SetInvestigatorResults{investigator_results} => todo!(),
             _ => {
                 if self.game.is_some(){ //TODO jack please jack help please jack plz
                     self.game.as_mut().unwrap().on_client_message(player_index, incoming_packet);

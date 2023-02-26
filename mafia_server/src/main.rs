@@ -36,7 +36,7 @@ async fn main() -> Result<(), ()> {
     let listener = Listener::new();
 
     let server_future = create_ws_server("127.0.0.1:8081", clients, Box::new(listener));
-
+    
     server_future.await;
 
     Ok(())

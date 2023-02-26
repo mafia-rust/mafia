@@ -1,9 +1,11 @@
 use std::time::Duration;
 
+use serde::{Serialize, Deserialize};
+
 use super::{settings::PhaseTimeSettings, Game};
 
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug, Eq, Serialize, Deserialize)]
 pub enum PhaseType {
     Morning,
     Discussion,

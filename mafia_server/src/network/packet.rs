@@ -3,18 +3,17 @@ use std::collections::HashMap;
 use tokio_tungstenite::tungstenite::Message;
 use serde::{Deserialize, Serialize};
 
-use crate::{game::{player::PlayerIndex, role_list::RoleList, settings::{InvestigatorResults, PhaseTimeSettings}}, lobby::LobbyIndex};
+use crate::{game::{player::PlayerIndex, role_list::RoleList, settings::{InvestigatorResults, PhaseTimeSettings}, vote::Verdict, phase::PhaseType}, lobby::LobbyIndex};
 
 #[derive(Serialize, Debug)]
 pub enum ToClientPacket{
 
-    //#region h
+    //Pre lobby
     AcceptJoin,
     RejectJoin{reason: String},
     AcceptHost{room_code: String},
-    //#endregion
     
-    //#region Lobby
+    //Lobby
     OpenGameMenu,
     YourName{name:String},
     Players{names: HashMap<PlayerIndex, String>},
@@ -23,12 +22,11 @@ pub enum ToClientPacket{
     PhaseTimesSetting,
     RoleList,
     InvestigatorResults,
-    //#endregion
 
-
-    ////////All of these are just for syncronizing variables between the 2 so client can see what their doing
-    Phase,   //how much time is left with this
-    PlayerOnTrial,
+    //Game
+    //All of these are just for syncronizing variables between the 2 so client can see what their doing
+    Phase{phase: PhaseType, seconds_left: u64},   //Time left & PhaseType
+    PlayerOnTrial{player_index: PlayerIndex},  //Player index
 
     NewChatMessage,
 
@@ -36,9 +34,7 @@ pub enum ToClientPacket{
     YourVoting,
     YourJudgement,
     YourWhispering,
-    YourRole{
-        
-    },
+    YourRole{},
     YourWill,
 
     ChatGroups,
@@ -57,27 +53,29 @@ impl ToClientPacket {
 #[derive(Deserialize, Serialize, Debug)]
 pub enum ToServerPacket{
 
+    //Pre Lobby
     Join{
         lobby_index: LobbyIndex
     },
     Host,
 
-    //
+    //Lobby
     SetName{name: String},
     StartGame,
-    Kick(PlayerIndex),
-    SetRoleList(RoleList),
+    Kick{player_index: PlayerIndex},
+    SetRoleList{role_list: RoleList},
     SetPhaseTimes{phase_times: PhaseTimeSettings},
-    SetInvestigatorResults(InvestigatorResults),
+    SetInvestigatorResults{investigator_results: InvestigatorResults},
 
-    //
-    Vote,   //Accusation
-    Target,
-    DayTarget,
-    Judgement,  //Vote
-    // Whisper,
-    SendMessage,
-    SaveWill,
+    //Game
+    Vote{player_index: PlayerIndex},   //Accusation
+    Judgement{verdict: Verdict},  //Vote
+    Target{player_index: Vec<PlayerIndex>},
+    DayTarget{player_index:  PlayerIndex},
+
+    SendMessage{text: String},
+    SendWhisper{player_index: PlayerIndex, text: String},
+    SaveWill{will: String},
 }
 impl ToServerPacket {
     pub fn to_json_string(&self)->String{
