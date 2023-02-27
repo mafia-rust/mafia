@@ -3,51 +3,56 @@ use std::collections::HashMap;
 use tokio_tungstenite::tungstenite::Message;
 use serde::{Deserialize, Serialize};
 
-use crate::{game::{player::PlayerIndex, role_list::RoleList, settings::{InvestigatorResults, PhaseTimeSettings}, vote::Verdict, phase::PhaseType}, lobby::LobbyIndex};
+use crate::{game::{player::PlayerIndex, role_list::RoleList, settings::{InvestigatorResults, PhaseTimeSettings}, vote::Verdict, phase::PhaseType, chat::{ChatMessage, ChatGroup}, role::Role}, lobby::LobbyIndex};
 
 #[derive(Serialize, Debug)]
 pub enum ToClientPacket{
 
-    //Pre lobby
+        //Pre lobby
     AcceptJoin,
     RejectJoin{reason: String},
     AcceptHost{room_code: String},
     
-    //Lobby
+        //Lobby
     OpenGameMenu,
     YourName{name:String},
     Players{names: HashMap<PlayerIndex, String>},
     Kicked,
 
-    PhaseTimesSetting,
-    RoleList,
-    InvestigatorResults,
+    RoleList{role_list: RoleList},
+    PhaseTimes{phase_times: PhaseTimeSettings},
+    InvestigatorResults{investigator_results: InvestigatorResults},
 
-    //Game
-    //All of these are just for syncronizing variables between the 2 so client can see what their doing
+        //Game
+    //Syncronize
     Phase{phase: PhaseType, seconds_left: u64},   //Time left & PhaseType
     PlayerOnTrial{player_index: PlayerIndex},  //Player index
+    YourWill{will: String},
+    YourRole{role: Role},
+    
+    PlayerButtons{buttons: Vec<PlayerButtons>},
 
-    NewChatMessage,
+    //YourChatGroups{chat_groups: Vec<ChatGroup>},
 
-    YourTarget,
+    //Run function
+    AddChatMessages{chat_messages: Vec<ChatMessage>},
+
+    YourTarget{player_indices: Vec<PlayerIndex>},
     YourVoting,
     YourJudgement,
-    YourWhispering,
-    YourRole{},
-    YourWill,
-
-    ChatGroups,
-
-    PlayerButtons,
 
     //a way to syncronise the entire game for someone who joined late
-    //#endregion
 }
 impl ToClientPacket {
     pub fn to_json_string(&self)->String{
         serde_json::to_string(&self).unwrap()
     }
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PlayerButtons{
+    pub vote: bool,
+    pub target: bool,
+    pub day_target: bool,
 }
 
 #[derive(Deserialize, Serialize, Debug)]

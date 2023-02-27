@@ -11,7 +11,7 @@ use crate::{
             Role, RoleData
         }, 
     }, 
-    network::packet::ToClientPacket
+    network::packet::{ToClientPacket, PlayerButtons}
 };
 
 use super::{player_voting_variables::PlayerVotingVariables, player_night_variables::PlayerNightVariables};
@@ -84,15 +84,43 @@ impl Player {
     ///call this repeadedly
     pub fn syncromize_server_to_client(&mut self){
         self.send_chat_messages();
+        // self.send_available_buttons();
     }
+    
     fn send_chat_messages(&mut self){
-        if self.queued_chat_messages.len() == 0{
+        if self.queued_chat_messages.len() == 0{    //redundant with the next if in the send. possibly delete this
             return;
         }
         
+        let mut chat_messages_out = vec![];
+        //get the first 5 messages and send them
+        for i in 0..5{
+            let msg_option = self.queued_chat_messages.get(i);
+            if let Some(msg) = msg_option{
+                chat_messages_out.push(msg.clone());
+            }else{ break; }
+        }
         
-        //self.queued_chat_messages.pop()
+        if chat_messages_out.len() > 0{
+            self.send(ToClientPacket::AddChatMessages { chat_messages: chat_messages_out });
+        }
+
+        self.send_chat_messages();
     }
+    
+    fn send_available_buttons(&mut self, game: &Game){
+
+        //TODO maybe find a way to check to see if we should send this like i do in chat messages
+        
+        self.send(ToClientPacket::PlayerButtons { buttons: game.players.iter().map(|player|{
+            PlayerButtons{
+                vote: false,
+                target: self.get_role().can_night_target(self.index, player.index, game),
+                day_target: self.get_role().can_day_target(self.index, player.index, game),
+            }
+        }).collect() });
+    }
+
 }
 
 impl PartialEq for Player {

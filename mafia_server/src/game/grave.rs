@@ -1,7 +1,9 @@
+use serde::{Serialize, Deserialize};
+
 use super::player::PlayerIndex;
 use super::role::Role;
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Grave {
     player: PlayerIndex,
 
@@ -13,21 +15,21 @@ pub struct Grave {
     day_number: u8,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum GraveRole {
     Cleaned,
     Stoned,
     Role(Role),
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum GraveKiller {
     Lynching, 
     Mafia,
     Role(Role)
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum GravePhase {
     Day, Night
 }

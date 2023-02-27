@@ -1,7 +1,9 @@
+use serde::{Serialize, Deserialize};
+
 use crate::game::player::PlayerIndex;
 use crate::game::role::Role;
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum NightInformationMessage {
     RoleBlocked { immune : bool },
     Attacked { survived: bool },

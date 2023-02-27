@@ -1,7 +1,9 @@
+use serde::{Serialize, Deserialize};
+
 use crate::game::{grave::Grave, role::{Role, RoleData}, player::{PlayerIndex, Player}, vote::Verdict, phase::PhaseType};
 use super::night_message::NightInformationMessage;
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum MessageSender {
     Player(PlayerIndex),
     Jailor,
@@ -9,7 +11,7 @@ pub enum MessageSender {
 }
 
 // Determines message color
-#[derive(Clone)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum ChatMessage {
     Normal(MessageSender, String, ChatGroup),
     Whisper(PlayerIndex, String),
@@ -45,7 +47,7 @@ pub enum ChatMessage {
     RoleData(RoleData)  //Tell executioner their target, other things. TODO
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum ChatGroup {
     All,
     Mafia,
