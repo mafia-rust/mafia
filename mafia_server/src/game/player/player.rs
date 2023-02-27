@@ -29,8 +29,8 @@ pub struct Player {
     chat_messages: Vec<ChatMessage>,
     queued_chat_messages: Vec<ChatMessage>, 
 
-    night_variables: PlayerNightVariables,
-    voting_variables: PlayerVotingVariables,
+    pub night_variables: PlayerNightVariables,
+    pub voting_variables: PlayerVotingVariables,
 }
 
 impl Player {
@@ -63,6 +63,11 @@ impl Player {
         self.chat_messages.push(message.clone());
         self.queued_chat_messages.push(message);
     }
+    pub fn add_chat_messages(&mut self, messages: Vec<ChatMessage>){
+        for message in messages.into_iter(){
+            self.add_chat_message(message);
+        }
+    }
     
     pub fn reset_phase_variables(&mut self, phase: PhaseType){
         match phase {
@@ -76,6 +81,12 @@ impl Player {
         }
     }
 
+    //Night helper functions
+    pub fn roleblock(&mut self){
+        self.night_variables.roleblocked = true;
+        self.night_variables.night_messages.push(ChatMessage::Debug("Roleblocked".to_string()))
+    }
+
 
     //sync server client
     pub fn send(&self, packet: ToClientPacket){
@@ -87,17 +98,25 @@ impl Player {
         // self.send_available_buttons();
     }
     
+    fn requeue_chat_messages(&mut self){
+        for msg in self.chat_messages.iter(){
+            self.queued_chat_messages.push(msg.clone());
+        }
+    }
+    
     fn send_chat_messages(&mut self){
         if self.queued_chat_messages.len() == 0{    //redundant with the next if in the send. possibly delete this
             return;
         }
         
         let mut chat_messages_out = vec![];
-        //get the first 5 messages and send them
-        for i in 0..5{
-            let msg_option = self.queued_chat_messages.get(i);
+
+        //get the first 5
+        for _ in 0..5{
+            let msg_option = self.queued_chat_messages.get(0);
             if let Some(msg) = msg_option{
                 chat_messages_out.push(msg.clone());
+                self.queued_chat_messages.remove(0);
             }else{ break; }
         }
         
@@ -108,17 +127,16 @@ impl Player {
         self.send_chat_messages();
     }
     
-    fn send_available_buttons(&mut self, game: &Game){
+    fn send_available_buttons(&mut self, game: &mut Game){
 
         //TODO maybe find a way to check to see if we should send this like i do in chat messages
-        
         self.send(ToClientPacket::PlayerButtons { buttons: game.players.iter().map(|player|{
             PlayerButtons{
                 vote: false,
                 target: self.get_role().can_night_target(self.index, player.index, game),
                 day_target: self.get_role().can_day_target(self.index, player.index, game),
             }
-        }).collect() });
+        }).collect()});
     }
 
 }

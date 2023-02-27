@@ -1,6 +1,6 @@
 use super::player::PlayerIndex;
 
-#[derive(Clone)]
+//#[derive(Clone)]
 pub struct Visit {
     pub target: PlayerIndex,
 

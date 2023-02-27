@@ -8,7 +8,6 @@ export class PlayerListMenu extends React.Component {
         this.state = {
             listener : {func : ()=>{
                 this.setState({
-                    
                 })
             }},
         };
@@ -22,17 +21,17 @@ export class PlayerListMenu extends React.Component {
         gameManager.removeStateListner(this.state.listener);
     }
 
-    renderPlayer(playerName){return(<div key={playerName}>
-        {playerName}<br/>
+    renderPlayer(playerIndex){return(<div key={playerIndex}>
+        {playerIndex}:<br/>
         <button>Target</button><button>Whisper</button><button>Vote</button><button>DayTarget</button> 
     </div>)}
     renderPlayers(){return<div>
-        {this.renderPlayer("Cotton Mather")}
+        {/* {this.renderPlayer("Cotton Mather")}
         <br/>
         {this.renderPlayer("Johnathan Williams")}
         <br/>
         {this.renderPlayer("Sammy")}
-        <br/>
+        <br/> */}
     </div>}
 
     render(){return(<div>

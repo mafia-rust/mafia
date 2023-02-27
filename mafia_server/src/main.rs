@@ -9,6 +9,7 @@ use mafia_server::{
     },
     game::{player::PlayerIndex, settings::{Settings}}
 };
+use serde::{Serialize, Deserialize};
 use serde_json::Value;
 use tokio_tungstenite::tungstenite::Message;
 use std::{
@@ -16,8 +17,30 @@ use std::{
     sync::{Arc, Mutex}, 
     collections::HashMap,
 };
-
-
+/*
+#[derive(Serialize, Deserialize)]
+enum Test{
+    Amongus1(i8),
+    Amongus(i8, bool),
+    Tos,
+    Mafia{lol: bool}
+}
+{
+    "Amongus1": 6
+}
+{
+    "Amongus": [
+        6,
+        true
+    ]
+}
+"Tos"
+{
+    "Mafia": {
+        "lol": false
+    }
+}
+*/
 ///
 /// The Main function
 /// 
@@ -27,8 +50,10 @@ use std::{
 #[tokio::main]
 async fn main() -> Result<(), ()> {
     println!("Hello, world!");    
-    let p = serde_json::to_string_pretty(&Settings::new(1));
-    println!("{}", p.unwrap());
+    // println!("{}", serde_json::to_string_pretty(&Test::Amongus1(6)).unwrap());
+    // println!("{}", serde_json::to_string_pretty(&Test::Amongus(6, true)).unwrap());
+    // println!("{}", serde_json::to_string_pretty(&Test::Tos).unwrap());
+    // println!("{}", serde_json::to_string_pretty(&Test::Mafia{lol: false}).unwrap());
 
 
     let clients: Arc<Mutex<HashMap<SocketAddr, Connection>>> = Arc::new(Mutex::new(HashMap::new()));

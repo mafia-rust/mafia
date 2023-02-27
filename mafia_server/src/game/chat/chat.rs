@@ -13,25 +13,25 @@ pub enum MessageSender {
 // Determines message color
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum ChatMessage {
-    Normal(MessageSender, String, ChatGroup),
-    Whisper(PlayerIndex, String),
+    Normal{message_sender: MessageSender, text: String, chat_group: ChatGroup},
+    Whisper{from_player_index: PlayerIndex, to_player_index: PlayerIndex, text: String},
     /* System */
     Debug(String), // TODO: Remove. This is only for testing.
 
-    RoleAssignment(Role),   //you are this role
-    PlayerDied(Grave),      //this player died this is their role
+    RoleAssignment{role: Role},   //you are this role
+    PlayerDied{grave: Grave},      //this player died this is their role
     GameOver/*(WinState)*/,
-    PhaseChange(PhaseType, u8),
+    PhaseChange{phase_type: PhaseType, day_number: u8},
     /* Trial */
     TrialInformation{required_votes: usize, trials_left: u8},
 
     Voted { voter: PlayerIndex, votee: PlayerIndex },
     VoteCleared { voter: PlayerIndex },
 
-    PlayerOnTrial(PlayerIndex),     //This  player is on trial
+    PlayerOnTrial{player_index: PlayerIndex},     //This  player is on trial
 
-    JudgementVote(PlayerIndex),             //Sammy voted
-    JudgementVerdict(PlayerIndex, Verdict), //Sammy voted innocent
+    JudgementVote{voter_player_index: PlayerIndex},             //Sammy voted
+    JudgementVerdict{voter_player_index: PlayerIndex, verdict: Verdict}, //Sammy voted innocent
     JudgementResults {player_on_trial: PlayerIndex, innocent: usize, guilty: usize },    //Sammy was voted innocent with these many votes
     
     /* Misc */
@@ -40,11 +40,11 @@ pub enum ChatMessage {
     TargetCleared { targeter: PlayerIndex },                                //Sammy cleared targets
     
     /* Role-specific */
-    MayorRevealed(PlayerIndex), //Sammy revealed as mayor
+    MayorRevealed{player_index: PlayerIndex}, //Sammy revealed as mayor
     JailorDecideExecuteYou,     //Jailor has decided to execute you
     MediumSeanceYou,       //You are being seanced by the medium
 
-    RoleData(RoleData)  //Tell executioner their target, other things. TODO
+    RoleData{role_data: RoleData}  //Tell executioner their target, other things. TODO
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

@@ -16,7 +16,7 @@ pub enum ToClientPacket{
         //Lobby
     OpenGameMenu,
     YourName{name:String},
-    Players{names: HashMap<PlayerIndex, String>},
+    Players{names: Vec<String>},
     Kicked,
 
     RoleList{role_list: RoleList},
@@ -31,6 +31,7 @@ pub enum ToClientPacket{
     YourRole{role: Role},
     
     PlayerButtons{buttons: Vec<PlayerButtons>},
+    PlayerVotes{voted_for_player: Vec<usize>}, //map from playerindex to num_voted_for that player
 
     //YourChatGroups{chat_groups: Vec<ChatGroup>},
 
@@ -38,8 +39,8 @@ pub enum ToClientPacket{
     AddChatMessages{chat_messages: Vec<ChatMessage>},
 
     YourTarget{player_indices: Vec<PlayerIndex>},
-    YourVoting,
-    YourJudgement,
+    YourVoting{player_index: PlayerIndex},
+    YourJudgement{verdict: Verdict},
 
     //a way to syncronise the entire game for someone who joined late
 }

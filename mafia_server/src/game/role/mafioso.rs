@@ -23,7 +23,7 @@ pub(super) fn do_day_action(actor: PlayerIndex, game: &mut Game) {
 pub(super) fn can_day_target(actor: PlayerIndex, target: PlayerIndex, game: &Game) -> bool {
     todo!();
 }
-pub(super) fn convert_targets_to_visits(targets: &[PlayerIndex], game: &Game) -> Vec<Visit> {
+pub(super) fn convert_targets_to_visits(actor: PlayerIndex, targets: Vec<PlayerIndex>, game: &Game) -> Vec<Visit> {
     todo!();
 }
 pub(super) fn get_current_chat_groups(player: PlayerIndex, game: &Game) -> Vec<ChatGroup> {

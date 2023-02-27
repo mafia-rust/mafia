@@ -1,8 +1,8 @@
-use std::time::Duration;
+use std::{time::Duration, io::Seek};
 
 use serde::{Serialize, Deserialize};
 
-use super::{settings::PhaseTimeSettings, Game};
+use super::{settings::PhaseTimeSettings, Game, player::{Player, PlayerIndex, self}};
 
 
 #[derive(Clone, Copy, PartialEq, Debug, Eq, Serialize, Deserialize)]
@@ -32,7 +32,7 @@ impl PhaseStateMachine {
             current_state,
         }
     }
-    pub fn tick(&mut self, game: &Game, time_passed: Duration){
+    pub fn tick(&mut self, game: &mut Game, time_passed: Duration){
         self.time_remaining -= time_passed;
         
         if self.time_remaining > Duration::ZERO{
@@ -40,11 +40,11 @@ impl PhaseStateMachine {
         }
 
         //call end
-        self.current_state = self.current_state.end();
+        self.current_state = self.current_state.end(game);
         //fix time
         self.time_remaining += self.current_state.get_length(&game.settings.phase_times);
         //call start
-        self.current_state.start();
+        self.current_state.start(game);
     }
 }
 
@@ -61,30 +61,67 @@ impl PhaseType {
         }
     }
 
-    pub fn start(&self) {
+    pub fn start(&mut self, game: &mut Game) {
         // Match phase type and do stuff
         match self {
-            PhaseType::Morning => todo!(),
-            PhaseType::Discussion => todo!(),
-            PhaseType::Voting => todo!(),
-            PhaseType::Testimony => todo!(),
-            PhaseType::Judgement => todo!(),
-            PhaseType::Evening => todo!(),
-            PhaseType::Night => todo!(),
+            PhaseType::Morning => {},
+            PhaseType::Discussion => {},
+            PhaseType::Voting => {},
+            PhaseType::Testimony => {},
+            PhaseType::Judgement => {},
+            PhaseType::Evening => {},
+            PhaseType::Night => {},
         }
     }
 
     ///returns the next phase
-    pub fn end(&self) -> PhaseType {
+    pub fn end(&mut self, game: &mut Game) -> PhaseType {
         // Match phase type and do stuff
         match self {
-            PhaseType::Morning => todo!(),
-            PhaseType::Discussion => todo!(),
-            PhaseType::Voting => todo!(),
-            PhaseType::Testimony => todo!(),
-            PhaseType::Judgement => todo!(),
-            PhaseType::Evening => todo!(),
-            PhaseType::Night => todo!(),
+            PhaseType::Morning => {
+                return Self::Discussion;
+            },
+            PhaseType::Discussion => {
+                return Self::Voting;   
+            },
+            PhaseType::Voting => {
+                return Self::Night;
+            },
+            PhaseType::Testimony => {
+                return Self::Judgement;
+            },
+            PhaseType::Judgement => {
+                return Self::Evening;
+            },
+            PhaseType::Evening => {
+                return Self::Night;
+            },
+            PhaseType::Night => {
+
+                //get visits
+                for player_index in 0..game.players.len(){
+                    let player = &mut game.players[player_index];
+
+                    let targets: Vec<PlayerIndex> = player.night_variables.chosen_targets.clone();
+
+                    player.get_role().convert_targets_to_visits(player.index, targets, game);
+                }
+
+                //Night actions -- main loop
+                for priority in 0..12{
+                    for player_index in 0..game.players.len(){
+                        //impossible panic when getting player
+                        game.players[player_index].get_role().do_night_action(player_index, game);
+                    }
+                }
+
+                //queue night messages
+                for player in game.players.iter_mut(){
+                    player.add_chat_messages(player.night_variables.night_messages.clone());
+                }
+
+                return Self::Morning;
+            },
         }
     }
 

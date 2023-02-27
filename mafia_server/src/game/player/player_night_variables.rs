@@ -1,4 +1,4 @@
-use crate::game::{visit::Visit, vote::Verdict};
+use crate::game::{visit::Visit, vote::Verdict, chat::{night_message::NightInformationMessage, ChatMessage}};
 
 use super::{PlayerIndex, Player};
 
@@ -16,6 +16,8 @@ pub struct PlayerNightVariables{
 
     pub chosen_targets: Vec<PlayerIndex>,
     pub visits:         Vec<Visit>,
+
+    pub night_messages: Vec<ChatMessage>,
 }
 impl PlayerNightVariables{
     pub fn new()->Self{
@@ -33,6 +35,8 @@ impl PlayerNightVariables{
 
             chosen_targets: vec![],
             visits:         vec![],
+
+            night_messages: vec![],
         }
     }
     pub fn reset(&mut self, index: PlayerIndex, player: Player){
@@ -49,5 +53,7 @@ impl PlayerNightVariables{
 
         self.chosen_targets= vec![];
         self.visits=         vec![];
+
+        self.night_messages= vec![];
     }
 }

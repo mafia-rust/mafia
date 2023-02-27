@@ -1,4 +1,4 @@
-import { create_gameState } from "./gameState";
+import { create_gameState, create_player } from "./gameState";
 import { Main } from "../Main";
 import { LobbyMenu } from "../openMenus/LobbyMenu";
 import { PlayerListMenu } from "../gameMenus/PlayerListMenu";
@@ -97,12 +97,30 @@ function create_gameManager(){
 
                     Main.instance.setState({panels : [<LobbyMenu/>]});
                 break;
-                case"YourName":
-                    gameManager.gameState.myName = serverMessage.name;
-                break;
                 case "OpenGameMenu":
                     Main.instance.setState({panels : [<PlayerListMenu/>]})
                 break;
+                case"YourName":
+                    gameManager.gameState.myName = serverMessage.name;
+                break;
+                case"Players":
+                    // gameManager.gameState.players = [];
+                    
+                    for(let i = 0; i < serverMessage.names.length; i++){
+                        if(gameManager.gameState.players.length > i){
+                            gameManager.gameState.players[i].name = serverMessage[i];
+                        }else{
+                            //if this player index isnt in the list, create a new player and then sync
+                            gameManager.gameState.players.push(create_player());
+                            gameManager.gameState.players[i].name = serverMessage[i];
+                        }
+                    }
+                break;
+                case"Kicked":
+                    gameManager.gameState = create_gameState();
+                    Main.instance.setState({panels : [<StartMenu/>]})
+                break;
+
                 default:
                     console.log("incoming_message response not implemented "+type);
                 break;

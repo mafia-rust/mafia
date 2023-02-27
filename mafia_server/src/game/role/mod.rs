@@ -7,6 +7,7 @@ macro_rules! make_role_enum {
         ),*
     ) => {
         use crate::game::player::PlayerIndex;
+        use crate::game::visit::Visit;
         use crate::game::Game;
         use crate::game::chat::ChatGroup;
         use crate::game::role_list::FactionAlignment;
@@ -72,12 +73,12 @@ macro_rules! make_role_enum {
 
             //Above is constants
 
-            pub fn do_night_action(&mut self, source: PlayerIndex, game: &mut Game) {
+            pub fn do_night_action(&self, source: PlayerIndex, game: &mut Game) {
                 match self {
                     $(Role::$name => $file::do_night_action(source, game)),*
                 }
             }
-            pub fn do_day_action(&mut self, source: PlayerIndex, game: &mut Game) {
+            pub fn do_day_action(&self, source: PlayerIndex, game: &mut Game) {
                 match self {
                     $(Role::$name => $file::do_day_action(source, game)),*
                 }
@@ -90,6 +91,11 @@ macro_rules! make_role_enum {
             pub fn can_day_target(&self, source: PlayerIndex, target: PlayerIndex, game: &Game) -> bool {
                 match self {
                     $(Role::$name => $file::can_day_target(source, target, game)),*
+                }
+            }
+            pub fn convert_targets_to_visits(&self, source: PlayerIndex, targets: Vec<PlayerIndex>, game: &Game) -> Vec<Visit> {
+                match self {
+                    $(Role::$name => $file::convert_targets_to_visits(source, targets, game)),*
                 }
             }
             pub fn get_current_chat_groups(&self, source: PlayerIndex, game: &Game) -> Vec<ChatGroup> {

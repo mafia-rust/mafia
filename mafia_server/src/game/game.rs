@@ -45,12 +45,12 @@ impl Game {
             trials_left: 0,
         }
     }
-    pub fn get_player(&self, index: PlayerIndex) -> Result<&Player> {
-        self.players.get(index).ok_or_else(|| err!(generic, "Failed to get player {}", index))
+    pub fn get_player(&self, index: PlayerIndex) -> Option<&Player> {
+        self.players.get(index)
     }
 
-    pub fn get_player_mut(&mut self, index: PlayerIndex) -> Result<&mut Player> {
-        self.players.get_mut(index).ok_or_else(|| err!(generic, "Failed to get player {}", index))
+    pub fn get_player_mut(&mut self, index: PlayerIndex) -> Option<&mut Player> {
+        self.players.get_mut(index)
     }
 
     pub fn get_current_phase(&self) -> PhaseType {

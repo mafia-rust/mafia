@@ -6,8 +6,9 @@ use crate::game::role::Role;
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum NightInformationMessage {
     RoleBlocked { immune : bool },
-    Attacked { survived: bool },
     TargetSurvivedAttack,
+    YouSurvivedAttack,
+    YouDied,
 
     /* Role-specific */
     
