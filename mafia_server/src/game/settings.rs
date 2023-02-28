@@ -8,29 +8,13 @@ use super::{role_list::{RoleList, RoleListEntry}, role::Role, player::{Player, P
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Settings{
     pub role_list: RoleList,
-
     pub invesigator_results: InvestigatorResults,
-
     pub phase_times: PhaseTimeSettings,
     // pub excluded_roles: Vec<Role>,
 }
-impl Settings{
-    pub fn new(player_count : PlayerIndex)->Self {
-        Self { 
-            role_list: RoleList{
-                role_list: vec![RoleListEntry::Any],
-            }, 
-            invesigator_results: InvestigatorResults::default(),
-            phase_times: PhaseTimeSettings { 
-                morning: Duration::from_secs(5), 
-                discussion: Duration::from_secs(45), 
-                voting: Duration::from_secs(30), 
-                testimony: Duration::from_secs(20), 
-                judgement: Duration::from_secs(20), 
-                evening: Duration::from_secs(10), 
-                night: Duration::from_secs(37) 
-            },
-        }
+impl Default for Settings{
+    fn default() -> Self {
+        Self { role_list: Default::default(), invesigator_results: Default::default(), phase_times: Default::default() }
     }
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -43,7 +27,19 @@ pub struct PhaseTimeSettings{
     pub evening: Duration,
     pub night: Duration,
 }
-
+impl Default for PhaseTimeSettings{
+    fn default() -> Self {
+        Self { 
+            morning: Duration::from_secs(5), 
+            discussion: Duration::from_secs(45), 
+            voting: Duration::from_secs(30), 
+            testimony: Duration::from_secs(20), 
+            judgement: Duration::from_secs(20), 
+            evening: Duration::from_secs(10), 
+            night: Duration::from_secs(37) 
+        }
+    }
+}
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct InvestigatorResults{
     results: Vec<Vec<Role>>,

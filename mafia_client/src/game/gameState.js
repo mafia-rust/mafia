@@ -10,10 +10,12 @@ export function create_gameState(){
         //chatHistory
         //roleList
         
-        //playerOnTrial
-        //phase
-        //  timeLeft
+        playerOnTrial: null,
+        phase: null,
+        secondsLeft: 0,
 
+        will: "",
+        role: null,
         //my own data
             //My own role
             //who ive targeted
@@ -31,7 +33,7 @@ export function create_player(){
         buttons: {
             dayTarget: false,
             target: false,
-            vote: false
+            vote: false,
         },
         numVoted: 0,
         alive:true,

@@ -46,6 +46,7 @@ export class LobbyMenu extends React.Component {
     }
 
     phaseTimes_button() {
+        //TODO Errors for some reason, this  is undefined?
         gameManager.phaseTimes_button(
             Number(this.state.morningTimeField),
             Number(this.state.discussionTimeField),
@@ -59,12 +60,9 @@ export class LobbyMenu extends React.Component {
  
     renderName(){return(<div>
         Name<br/>
-        {(()=>{
-            if(this.state.nameSynced)
-                return(<div>{this.state.nameSynced}<br/></div>);
-        })()}
+        {this.state.nameSynced}<br/>
         <input type="text" value={this.state.nameField}
-            onChange={(e)=>{this.setState({nameFieldValue: e.target.value})}}
+            onChange={(e)=>{this.setState({nameField: e.target.value})}}
             onKeyUp={(e)=>{
                 if(e.key === 'Enter')
                     gameManager.setName_button(this.state.nameField);

@@ -3,6 +3,8 @@ use serde::{Serialize, Deserialize};
 use crate::game::player::PlayerIndex;
 use crate::game::role::Role;
 
+use super::ChatMessage;
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum NightInformationMessage {
     RoleBlocked { immune : bool },
@@ -14,14 +16,13 @@ pub enum NightInformationMessage {
     
     SheriffResult { suspicious: bool },
 
-    LookoutResult(Box<[PlayerIndex]>),
+    LookoutResult{players: Vec<PlayerIndex>},
 
-    InvestigatorResult(/*InvestigativeResult*/),
+    InvestigatorResult{roles: Vec<Role>},
 
-    SpyMafiaVisit(Box<[PlayerIndex]>),
-    SpyBug(Box<NightInformationMessage>),
+    SpyMafiaVisit{players: Vec<PlayerIndex>},
+    SpyBug{message: Box<ChatMessage>},
 
-    VeteranAlertsLeft(usize),
     VeteranAttacked,
 
     VigilanteSuicide,
@@ -41,7 +42,7 @@ pub enum NightInformationMessage {
 
     ConsigliereResult(Role),
 
-    FramerFramed(Box<[PlayerIndex]>),
+    FramerFramed(Vec<PlayerIndex>),
 
 
     JanitorResult { role: Role, will: String },
@@ -50,7 +51,8 @@ pub enum NightInformationMessage {
 
     WitchTargetImmune,
     WitchedYou { immune: bool },
-    WitchBug(Box<NightInformationMessage>),
+    WitchBug{message: Box<ChatMessage>},
 
     ArsonistCleanedSelf,
+    ArsonistDousedPlayers{players: Vec<PlayerIndex>},
 }

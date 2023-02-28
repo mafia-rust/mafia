@@ -88,7 +88,11 @@ impl RoleList{
         todo!()
     }
 }
-
+impl Default for RoleList{
+    fn default() -> Self {
+        Self { role_list: Vec::new() }
+    }
+}
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum RoleListEntry{

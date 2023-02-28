@@ -6,7 +6,7 @@ use lazy_static::lazy_static;
 use tokio::sync::mpsc::UnboundedSender;
 use tokio_tungstenite::tungstenite::Message;
 
-use crate::network::packet::{ToServerPacket, ToClientPacket};
+use crate::network::packet::{ToServerPacket, ToClientPacket, self};
 use crate::prelude::*;
 use super::{phase::{PhaseStateMachine, PhaseType}, player::{Player, PlayerIndex}, role_list::RoleList, settings::Settings, grave::Grave};
 
@@ -25,17 +25,16 @@ pub struct Game {
 impl Game {
     pub fn new(settings: Settings, players_sender_and_name: Vec<(UnboundedSender<ToClientPacket>, String)>)->Self{
 
+
         let mut players = Vec::new();
 
         //create players
         for player_index in 0..players_sender_and_name.len(){
-            let (sender, name) = players_sender_and_name.get(player_index).expect("index should exist because for loop");
+            let (sender, name) = &players_sender_and_name[player_index];
             players.push(Player::new(player_index, name.clone(), sender.clone(), super::role::Role::Sheriff));  //TODO sheriff!
         }
 
-        //send to players all game information stuff
-
-        Self{
+        let game = Self{
             players,
             graves: Vec::new(),
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
@@ -43,22 +42,17 @@ impl Game {
 
             player_on_trial: None,
             trials_left: 0,
-        }
-    }
-    pub fn get_player(&self, index: PlayerIndex) -> Option<&Player> {
-        self.players.get(index)
-    }
+        };
 
-    pub fn get_player_mut(&mut self, index: PlayerIndex) -> Option<&mut Player> {
-        self.players.get_mut(index)
+        //send to players all game information stuff
+        let player_names: Vec<String> = game.players.iter().map(|p|{return p.name.clone()}).collect();
+        game.send_to_all(ToClientPacket::Players { names: player_names });
+        
+        game
     }
 
     pub fn get_current_phase(&self) -> PhaseType {
         self.phase_machine.current_state
-    }
-
-    pub fn on_client_message(&mut self, player_index: PlayerIndex, incoming_packet : ToServerPacket){
-
     }
 
     pub fn reset(&mut self, phase: PhaseType){
@@ -75,4 +69,14 @@ impl Game {
             PhaseType::Night => {},
         }
     }
+
+    pub fn on_client_message(&mut self, player_index: PlayerIndex, incoming_packet : ToServerPacket){
+
+    }
+    pub fn send_to_all(&self, packet: ToClientPacket){
+        for player in self.players.iter(){
+            player.send(packet.clone());
+        }
+    }
+    
 }

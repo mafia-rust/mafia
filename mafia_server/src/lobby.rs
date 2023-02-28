@@ -7,6 +7,7 @@ use crate::{game::{Game, player::{PlayerIndex, Player}, settings::{Settings, Inv
 
 pub struct Lobby {
     game: Option<Game>,
+    settings: Settings,
     player_names: Vec<(UnboundedSender<ToClientPacket>, String)>,
 }
 
@@ -16,6 +17,7 @@ impl Lobby {
     pub fn new() -> Lobby {
         Self { 
             game: None, 
+            settings: Settings::default(),
             player_names: Vec::new(),
         }
     }
@@ -26,18 +28,24 @@ impl Lobby {
     pub fn on_client_message(&mut self, send: UnboundedSender<ToClientPacket>, player_index: PlayerIndex, incoming_packet: ToServerPacket){
         match incoming_packet {
             ToServerPacket::SetName{ name } => {
-                self.player_names.insert(player_index, (send.clone(), name.clone()));
+
+                if let Some(mut player_name) = self.player_names.get_mut(player_index){
+                    player_name = &mut (send.clone(), name.clone());
+                }
+                let mut name = name.trim().to_string();
+                // if name.len() == 0{
+                //     name
+                // }
                 send.send(ToClientPacket::YourName{name});
             },
             ToServerPacket::StartGame => {
+                    
+                if(self.game.is_none()){
+                    self.game = Some(Game::new(self.settings.clone(), self.player_names.clone()));
+                }
+
                 for player in self.player_names.iter(){
-
-                    let settings = Settings::new(self.player_names.len());
-                    if(self.game.is_none()){
-                        player.0.send(ToClientPacket::OpenGameMenu);
-                        self.game = Some(Game::new(settings, self.player_names.clone()))
-                    }
-
+                    player.0.send(ToClientPacket::OpenGameMenu);
                 }
             },
             ToServerPacket::Kick{player_index} => {

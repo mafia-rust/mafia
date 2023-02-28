@@ -97,6 +97,9 @@ function create_gameManager(){
 
                     Main.instance.setState({panels : [<LobbyMenu/>]});
                 break;
+
+                //InLobby/Game
+
                 case "OpenGameMenu":
                     Main.instance.setState({panels : [<PlayerListMenu/>]})
                 break;
@@ -104,15 +107,14 @@ function create_gameManager(){
                     gameManager.gameState.myName = serverMessage.name;
                 break;
                 case"Players":
-                    // gameManager.gameState.players = [];
                     
                     for(let i = 0; i < serverMessage.names.length; i++){
                         if(gameManager.gameState.players.length > i){
-                            gameManager.gameState.players[i].name = serverMessage[i];
+                            gameManager.gameState.players[i].name = serverMessage.names[i];
                         }else{
                             //if this player index isnt in the list, create a new player and then sync
                             gameManager.gameState.players.push(create_player());
-                            gameManager.gameState.players[i].name = serverMessage[i];
+                            gameManager.gameState.players[i].name = serverMessage.names[i];
                         }
                     }
                 break;
@@ -120,9 +122,22 @@ function create_gameManager(){
                     gameManager.gameState = create_gameState();
                     Main.instance.setState({panels : [<StartMenu/>]})
                 break;
-
+                case"Phase":
+                    gameManager.gameState.phase = serverMessage.phase;
+                    gameManager.gameState.secondsLeft = serverMessage.seconds_left;
+                break;
+                case"PlayerOnTrial":
+                    gameManager.gameState.playerOnTrial = serverMessage.player_index;
+                break;
+                case"YourWill":
+                    gameManager.gameState.will = serverMessage.will;
+                break;
+                case"YourRole":
+                    gameManager.gameState.role = serverMessage.role;
+                break;
                 default:
                     console.log("incoming_message response not implemented "+type);
+                    console.log(serverMessage);
                 break;
             }
 
