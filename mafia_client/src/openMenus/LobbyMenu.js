@@ -20,7 +20,7 @@ export class LobbyMenu extends React.Component {
             nightTimeField: "37",
 
 
-            nameSynced: "",
+            nameSynced: gameManager.gameState.myName,
 
             morningTimeSynced : 5,
             discussionTimeSynced: 45, 
@@ -32,7 +32,7 @@ export class LobbyMenu extends React.Component {
 
             listener : {func : ()=>{
                 this.setState({
-                    nameValueSynced : gameManager.gameState.myName,
+                    nameSynced : gameManager.gameState.myName,
                 })
             }},
         };

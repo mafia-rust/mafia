@@ -116,7 +116,7 @@ impl Listener{
 
                     if let Some(lobby) = self.lobbies.get_mut(lobby_index){
 
-                        let player_index = lobby.add_new_player((connection.get_sender(), "".to_string()));
+                        let player_index = lobby.add_new_player(connection.get_sender());
 
                         *player = Some((lobby_index, player_index));
 
@@ -133,7 +133,7 @@ impl Listener{
                 if let Some(player) = self.players.get_mut(connection.get_address()){
                     let mut lobby = Lobby::new();
 
-                    let player_index = lobby.add_new_player((connection.get_sender(), "".to_string()));
+                    let player_index = lobby.add_new_player(connection.get_sender());
                     self.lobbies.push(lobby);
 
                     *player = Some((self.lobbies.len() - 1, player_index));
@@ -159,38 +159,6 @@ impl Listener{
     
         Ok(())
     }
-}
-
-
-
-//use this for room codes
-
-
-/**
-Converts x to any radix
-# Panics
-radix < 2 || radix > 36
-# Example
-```
-assert_eq!(format_radix(7, 2), "111");
-assert_eq!(format_radix(366, 10), "366");
-assert_eq!(format_radix(36*36*36*36 - 1, 36), "zzzz");
-```
-*/
-#[allow(unused)]
-fn format_radix(mut x: u32, radix: u32) -> Option<String> {
-    let mut result = vec![];
-
-    loop {
-        let m = x % radix;
-        x = x / radix;
-        
-        result.push(std::char::from_digit(m, radix)?);
-        if x == 0 {
-            break;
-        }
-    }
-    Some(result.into_iter().rev().collect())
 }
 
 

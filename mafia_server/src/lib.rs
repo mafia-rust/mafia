@@ -44,3 +44,42 @@ pub mod macros {
     
     pub(crate) use enum_str;
 }
+pub mod utils{
+    /**
+    Converts x to any radix
+    # Panics
+    radix < 2 || radix > 36
+    # Example
+    ```
+    assert_eq!(format_radix(7, 2), "111");
+    assert_eq!(format_radix(366, 10), "366");
+    assert_eq!(format_radix(36*36*36*36 - 1, 36), "zzzz");
+    ```
+    */
+    #[allow(unused)]
+    fn format_radix(mut x: u32, radix: u32) -> Option<String> {
+        let mut result = vec![];
+
+        loop {
+            let m = x % radix;
+            x = x / radix;
+            
+            result.push(std::char::from_digit(m, radix)?);
+            if x == 0 {
+                break;
+            }
+        }
+        Some(result.into_iter().rev().collect())
+    }
+
+    pub fn trim_whitespace(s: &str) -> String {
+        let mut new_str = s.trim().to_owned();
+        let mut prev = ' '; // The initial value doesn't really matter
+        new_str.retain(|ch| {
+            let result = ch != ' ' || prev != ' ';
+            prev = ch;
+            result
+        });
+        new_str
+    }
+}

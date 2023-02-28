@@ -43,7 +43,7 @@ function create_gameManager(){
 
 
         setName_button: (name)=>{
-            if(name)
+            // if(name)
                 gameManager.Server.send(JSON.stringify({
                     "SetName":{
                         "name":name
