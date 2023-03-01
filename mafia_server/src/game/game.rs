@@ -30,7 +30,7 @@ impl Game {
         //create players
         for player_index in 0..players_sender_and_name.len(){
             let (sender, name) = &players_sender_and_name[player_index];
-            players.push(Player::new(player_index, name.clone(), sender.clone(), super::role::Role::Consort));  //TODO sheriff!
+            players.push(Player::new(player_index as u8, name.clone(), sender.clone(), super::role::Role::Consort));  //TODO sheriff!
         }
 
         let game = Self{
@@ -59,6 +59,19 @@ impl Game {
         // })
         
         game
+    }
+
+    pub fn get_player(&self, index: PlayerIndex)->Option<&Player>{
+        self.players.get(index as usize)
+    }
+    pub fn get_player_mut(&mut self, index: PlayerIndex)->Option<&mut Player>{
+        self.players.get_mut(index as usize)
+    }
+    pub fn get_unchecked_player(&self, index: PlayerIndex)->&Player{
+        self.players.get(index as usize).unwrap()
+    }
+    pub fn get_unchecked_mut_player(&mut self, index: PlayerIndex)->&mut Player{
+        self.players.get_mut(index as usize).unwrap()
     }
 
     pub fn get_current_phase(&self) -> PhaseType {

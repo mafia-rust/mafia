@@ -73,9 +73,9 @@ macro_rules! make_role_enum {
 
             //Above is constants
 
-            pub fn do_night_action(&self, source: PlayerIndex, game: &mut Game) {
+            pub fn do_night_action(&self, source: PlayerIndex, priority: i8, game: &mut Game) {
                 match self {
-                    $(Role::$name => $file::do_night_action(source, game)),*
+                    $(Role::$name => $file::do_night_action(source, priority, game)),*
                 }
             }
             pub fn do_day_action(&self, source: PlayerIndex, game: &mut Game) {

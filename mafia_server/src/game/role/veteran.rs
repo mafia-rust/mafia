@@ -11,7 +11,7 @@ pub(super) const SUSPICIOUS: bool = false;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownKilling;
 
 
-pub(super) fn do_night_action(actor: PlayerIndex, game: &mut Game) {
+pub(super) fn do_night_action(actor: PlayerIndex, priority: i8, game: &mut Game) {
     todo!();
 }
 pub(super) fn can_night_target(actor: PlayerIndex, target: PlayerIndex, game: &Game) -> bool {

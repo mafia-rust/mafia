@@ -16,7 +16,7 @@ use crate::{
 
 use super::{player_voting_variables::PlayerVotingVariables, player_night_variables::PlayerNightVariables};
 
-pub type PlayerIndex = usize;
+pub type PlayerIndex = u8;
 
 pub struct Player {
     pub name: String,

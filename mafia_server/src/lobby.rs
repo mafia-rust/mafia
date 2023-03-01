@@ -40,7 +40,7 @@ impl Lobby {
     }
     pub fn add_new_player(&mut self, sender: UnboundedSender<ToClientPacket>)->PlayerIndex{
         self.player_names.push((sender.clone(),"".to_owned()));
-        let newest_player_index = self.player_names.len() - 1;
+        let newest_player_index = (self.player_names.len() - 1) as u8;
         self.simulate_message(newest_player_index, ToServerPacket::SetName { name: "".to_string() });
         sender.send(ToClientPacket::Players { names: self.player_names.iter().map(|p|{
             p.1.clone()
@@ -48,7 +48,7 @@ impl Lobby {
         newest_player_index
     }
     pub fn simulate_message(&mut self, player_sender: PlayerIndex, packet: ToServerPacket){
-        self.on_client_message(self.player_names[player_sender].0.clone(), player_sender, packet);
+        self.on_client_message(self.player_names[player_sender as usize].0.clone(), player_sender, packet);
     }
     pub fn on_client_message(&mut self, send: UnboundedSender<ToClientPacket>, player_index: PlayerIndex, incoming_packet: ToServerPacket){
         match incoming_packet {
@@ -75,7 +75,7 @@ impl Lobby {
                 }
 
 
-                if let Some(mut player_name) = self.player_names.get_mut(player_index){
+                if let Some(mut player_name) = self.player_names.get_mut(player_index as usize){
                     player_name.1 = name.clone();
                 }
                 
