@@ -50,12 +50,6 @@ enum Test{
 /// 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
-    println!("Hello, world!");    
-    // println!("{}", serde_json::to_string_pretty(&Test::Amongus1(6)).unwrap());
-    // println!("{}", serde_json::to_string_pretty(&Test::Amongus(6, true)).unwrap());
-    // println!("{}", serde_json::to_string_pretty(&Test::Tos).unwrap());
-    // println!("{}", serde_json::to_string_pretty(&Test::Mafia{lol: false}).unwrap());
-
 
     let clients: Arc<Mutex<HashMap<SocketAddr, Connection>>> = Arc::new(Mutex::new(HashMap::new()));
 
