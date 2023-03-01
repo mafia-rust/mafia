@@ -25,7 +25,7 @@ pub enum ChatMessage {
     /* Trial */
     TrialInformation{required_votes: usize, trials_left: u8},
 
-    Voted { voter: PlayerIndex, votee: PlayerIndex },
+    Voted { voter: PlayerIndex, votee: PlayerIndex },   //TODO maybe change this to Voted { voter: PlayerIndex, votee: Option<PlayerIndex> }, and remove VoteCleared
     VoteCleared { voter: PlayerIndex },
 
     PlayerOnTrial{player_index: PlayerIndex},     //This  player is on trial
@@ -36,7 +36,7 @@ pub enum ChatMessage {
     
     /* Misc */
     BroadcastWhisper { whisperer: PlayerIndex, whisperee: PlayerIndex },    //Sammy whispered to Tyler
-    Targeted { targeter: PlayerIndex, target: PlayerIndex },                //Sammy targeted Jack
+    Targeted { targeter: PlayerIndex, target: PlayerIndex },                //Sammy targeted Jack   //TODO maybe change this to Targeted { targeter: PlayerIndex, target: Option<PlayerIndex> }, and remove VoteCleared
     TargetCleared { targeter: PlayerIndex },                                //Sammy cleared targets
     NightInformationMessage{ night_information: NightInformationMessage },
 

@@ -2,7 +2,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     game::{
-        Game, chat::ChatMessage, 
+        Game, chat::{ChatMessage, night_message::NightInformationMessage}, 
         visit::Visit, vote::Verdict,
         phase::{
             PhaseType
@@ -84,7 +84,7 @@ impl Player {
     //Night helper functions
     pub fn roleblock(&mut self){
         self.night_variables.roleblocked = true;
-        self.night_variables.night_messages.push(ChatMessage::Debug("Roleblocked".to_string()))
+        self.night_variables.night_messages.push(ChatMessage::NightInformationMessage { night_information: NightInformationMessage::RoleBlocked { immune: false }});
     }
 
 

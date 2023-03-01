@@ -12,6 +12,10 @@ pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaSu
 
 
 pub(super) fn do_night_action(actor_index: PlayerIndex, priority: i8, game: &mut Game) {
+    if priority != 4{
+        return;
+    }
+    
     if let Some(visit) = game.get_unchecked_player(actor_index).night_variables.visits.first(){
         let target_index = visit.target;
         let target = game.get_unchecked_mut_player(target_index);
