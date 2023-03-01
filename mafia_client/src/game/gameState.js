@@ -6,9 +6,7 @@ export function create_gameState(){
 
         players: [],
         
-
-        //chatHistory
-        //roleList
+        roleList: [],
         
         playerOnTrial: null,
         phase: null,
@@ -16,6 +14,16 @@ export function create_gameState(){
 
         will: "",
         role: null,
+
+        phaseTimes: {
+            morning: 0,
+            discussion: 0,
+            voting: 0,
+            testimony: 0,
+            judgement: 0,
+            evening: 0,
+            night: 0,
+        }
         //my own data
             //My own role
             //who ive targeted

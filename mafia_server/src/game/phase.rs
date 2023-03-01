@@ -24,7 +24,7 @@ pub struct PhaseStateMachine {
 
 impl PhaseStateMachine {
     pub fn new(times: PhaseTimeSettings) -> Self {
-        let current_state = PhaseType::Morning;
+        let current_state = PhaseType::Evening;
 
         Self {
             time_remaining: current_state.get_length(&times),

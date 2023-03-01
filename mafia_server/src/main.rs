@@ -122,10 +122,11 @@ impl Listener{
 
                         connection.send(ToClientPacket::AcceptJoin);
                     }else{
-                        connection.send(ToClientPacket::RejectJoin { reason: "Lobby does not exist".to_string() });
+                        
+                        connection.send(ToClientPacket::RejectJoin { reason: format!("Lobby does not exist:{}",lobby_index) });
                     }
                 }else{
-                    connection.send(ToClientPacket::RejectJoin { reason: "Player does not exist".to_string() });
+                    connection.send(ToClientPacket::RejectJoin { reason: format!("Player does not exist:{}",connection.get_address()) });
                 }
             },
             ToServerPacket::Host => {
@@ -140,7 +141,7 @@ impl Listener{
 
                     connection.send(
                         ToClientPacket::AcceptHost{
-                            room_code: "temp_room_code".to_string(),
+                            room_code: (self.lobbies.len() - 1).to_string(),
                         }
                     );
                 }

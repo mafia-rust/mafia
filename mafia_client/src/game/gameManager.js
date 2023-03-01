@@ -38,7 +38,11 @@ function create_gameManager(){
             gameManager.Server.send(`"Host"`);
         },
         join_button: () => {
-            gameManager.Server.send(`"Join"`);
+            gameManager.Server.send(JSON.stringify({
+                "Join":{
+                    "lobby_index":gameManager.roomCode
+                }
+            },null,false));
         },
 
 
@@ -100,14 +104,11 @@ function create_gameManager(){
 
                 //InLobby/Game
 
-                case "OpenGameMenu":
-                    Main.instance.setState({panels : [<PlayerListMenu/>]})
-                break;
+                
                 case"YourName":
                     gameManager.gameState.myName = serverMessage.name;
                 break;
                 case"Players":
-                    
                     for(let i = 0; i < serverMessage.names.length; i++){
                         if(gameManager.gameState.players.length > i){
                             gameManager.gameState.players[i].name = serverMessage.names[i];
@@ -122,6 +123,18 @@ function create_gameManager(){
                     gameManager.gameState = create_gameState();
                     Main.instance.setState({panels : [<StartMenu/>]})
                 break;
+                case "OpenGameMenu":
+                    Main.instance.setState({panels : [<PlayerListMenu/>]})
+                break;
+                case"PhaseTimes":
+                    gameManager.gameState.phaseTimes.morning    = serverMessage.phase_times.morning.secs;
+                    gameManager.gameState.phaseTimes.discussion = serverMessage.phase_times.discussion.secs;
+                    gameManager.gameState.phaseTimes.voting     = serverMessage.phase_times.voting.secs;
+                    gameManager.gameState.phaseTimes.testimony  = serverMessage.phase_times.testimony.secs;
+                    gameManager.gameState.phaseTimes.judgement  = serverMessage.phase_times.judgement.secs;
+                    gameManager.gameState.phaseTimes.evening    = serverMessage.phase_times.evening.secs;
+                    gameManager.gameState.phaseTimes.night      = serverMessage.phase_times.night.secs;
+                break;
                 case"Phase":
                     gameManager.gameState.phase = serverMessage.phase;
                     gameManager.gameState.secondsLeft = serverMessage.seconds_left;
@@ -135,6 +148,18 @@ function create_gameManager(){
                 case"YourRole":
                     gameManager.gameState.role = serverMessage.role;
                 break;
+                case"PlayerButtons":
+                    for(let i = 0; i < gameManager.gameState.players.length && i < serverMessage.buttons.length; i++){
+                        gameManager.gameState.players[i].buttons.vote = serverMessage.buttons[i].vote;
+                        gameManager.gameState.players[i].buttons.target = serverMessage.buttons[i].target;
+                        gameManager.gameState.players[i].buttons.dayTarget = serverMessage.buttons[i].day_target;
+                    }
+                break;
+                case"AddChatMessages":{
+                    for(let i = 0; i < serverMessage.chat_messages.length; i++){
+                        gameManager.gameState.chatMessages.push(serverMessage.chat_messages[i]);
+                    }
+                }
                 default:
                     console.log("incoming_message response not implemented "+type);
                     console.log(serverMessage);

@@ -1,4 +1,6 @@
 import React from "react";
+import gameManager from "../game/gameManager";
+import { create_gameState } from "../game/gameState";
 import {Main} from "../Main";
 import { JoinGameMenu } from "./JoinGameMenu";
 
@@ -18,6 +20,7 @@ export class StartMenu extends React.Component {
         Mafia<br/>
         <br/>
         <button style={{width: "90%"}} onClick={()=>{
+            gameManager.gameState = create_gameState();
             Main.instance.setState({panels : [<JoinGameMenu/>]});
         }}>Play</button><br/>
         <br/>

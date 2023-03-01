@@ -79,8 +79,6 @@ export class PlayerListMenu extends React.Component {
     </div>}
 
     render(){return(<div>
-
         {this.renderPlayers()}
-        
     </div>)}
 }

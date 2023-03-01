@@ -39,55 +39,53 @@ impl Lobby {
         }
     }
     pub fn add_new_player(&mut self, sender: UnboundedSender<ToClientPacket>)->PlayerIndex{
-        self.player_names.push((sender,"".to_owned()));
+        self.player_names.push((sender.clone(),"".to_owned()));
         let newest_player_index = self.player_names.len() - 1;
         self.simulate_message(newest_player_index, ToServerPacket::SetName { name: "".to_string() });
+        sender.send(ToClientPacket::Players { names: self.player_names.iter().map(|p|{
+            p.1.clone()
+        }).collect() });
         newest_player_index
     }
     pub fn simulate_message(&mut self, player_sender: PlayerIndex, packet: ToServerPacket){
         self.on_client_message(self.player_names[player_sender].0.clone(), player_sender, packet);
-        
     }
     pub fn on_client_message(&mut self, send: UnboundedSender<ToClientPacket>, player_index: PlayerIndex, incoming_packet: ToServerPacket){
         match incoming_packet {
             ToServerPacket::SetName{ name } => {
+                
+                //fix it up
+                let mut name = trim_whitespace(name.trim());
 
-                //define recusive closure
-                struct MakeValid<'s> { func: &'s dyn Fn(&MakeValid, String) -> String }
-                let make_valid = MakeValid {
-                    func: &|make_valid, mut name|{
-                        
-                        //fix it up
-                        name = trim_whitespace(name.trim());
+                //if its invlaid then give you a random name
+                if name.len() == 0 {
 
-                        //if its empty then give you a random name
-                        if name.len() == 0 {
-                            name = self.random_names[rand::random::<usize>()%self.random_names.len()].clone();
-                        }
+                    let availabe_random_names: Vec<&String> = self.random_names.iter().filter(|name|{
+                        !self.player_names.iter().map(|(_,n)|{
+                            n.clone()
+                        }).collect::<Vec<String>>().contains(name)
+                    }).collect();
 
-                        //check if someone else has the same
-                        let mut taken = true;
-                        for (_, other_name) in self.player_names.iter(){
-                            if name == *other_name{
-                                taken = false;
-                                break;
-                            }
-                        }
-                        
-                        if !taken{
-                            name = (make_valid.func)(make_valid, name);
-                        }
-                        return name;
+                    //If there are 32 players in the lobby this will crash TODO
+                    if availabe_random_names.len() > 0{
+                        panic!("RAN OUT OF NAMES")
+                    }else{
+                        name = availabe_random_names[rand::random::<usize>()%availabe_random_names.len()].clone();
                     }
-                };
+                }
 
-                let name = (make_valid.func)(&make_valid, name);
 
                 if let Some(mut player_name) = self.player_names.get_mut(player_index){
-                    player_name = &mut (send.clone(), name.clone());
+                    player_name.1 = name.clone();
                 }
                 
                 send.send(ToClientPacket::YourName{name});
+                for (sender, _) in self.player_names.iter(){
+                    sender.send(ToClientPacket::Players { names: self.player_names.iter().map(|p|{
+                        p.1.clone()
+                    }).collect() });
+                }
+                
             },
             ToServerPacket::StartGame => {
                     
@@ -103,11 +101,15 @@ impl Lobby {
                 
             },
             ToServerPacket::SetRoleList{role_list} => todo!(),
-            ToServerPacket::SetPhaseTimes{phase_times} => todo!(),
+            ToServerPacket::SetPhaseTimes{phase_times} => {
+                self.settings.phase_times = phase_times.clone();
+
+                send.send(ToClientPacket::PhaseTimes { phase_times });
+            },
             ToServerPacket::SetInvestigatorResults{investigator_results} => todo!(),
             _ => {
-                if self.game.is_some(){ //TODO jack please jack help please jack plz
-                    self.game.as_mut().unwrap().on_client_message(player_index, incoming_packet);
+                if let Some(game) = &mut self.game{
+                    game.on_client_message(player_index, incoming_packet)
                 }
             }
         }

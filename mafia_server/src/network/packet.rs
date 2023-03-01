@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use tokio_tungstenite::tungstenite::Message;
 use serde::{Deserialize, Serialize};
 
-use crate::{game::{player::PlayerIndex, role_list::RoleList, settings::{InvestigatorResults, PhaseTimeSettings}, vote::Verdict, phase::PhaseType, chat::{ChatMessage, ChatGroup}, role::Role}, lobby::LobbyIndex};
+use crate::{game::{player::{PlayerIndex, Player}, role_list::RoleList, settings::{InvestigatorResults, PhaseTimeSettings}, vote::Verdict, phase::PhaseType, chat::{ChatMessage, ChatGroup}, role::Role, Game}, lobby::LobbyIndex};
 
 #[derive(Serialize, Debug, Clone)]
 pub enum ToClientPacket{
@@ -57,6 +57,22 @@ pub struct PlayerButtons{
     pub vote: bool,
     pub target: bool,
     pub day_target: bool,
+}
+impl PlayerButtons{
+    pub fn from_target(game: &Game, actor_index: PlayerIndex, target_index: PlayerIndex)->Self{
+        Self{
+            vote: actor_index != target_index && game.phase_machine.current_state == PhaseType::Voting,
+            target: game.players[actor_index].get_role().can_night_target(actor_index, target_index, game),
+            day_target: game.players[actor_index].get_role().can_day_target(actor_index, target_index, game),
+        }
+    }
+    pub fn from(game: &Game, actor_index: PlayerIndex)->Vec<Self>{
+        let mut out = Vec::new();
+        for target in game.players.iter(){
+            out.push(Self::from_target(game, actor_index, target.index));
+        }
+        out
+    }
 }
 
 #[derive(Deserialize, Debug, Clone)]

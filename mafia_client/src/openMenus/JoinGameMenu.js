@@ -37,6 +37,7 @@ export class JoinGameMenu extends React.Component {
         
     }
     joinGameButton(){
+        gameManager.roomCode = Number(this.state.roomCodeValue);
         gameManager.join_button();
     }
     hostGameButton(){
@@ -49,7 +50,7 @@ export class JoinGameMenu extends React.Component {
             onChange={(e)=>{this.setState({roomCodeValue: e.target.value})}}
             onKeyUp={(e)=>{
                 if(e.key === 'Enter')
-                    gameManager.setName_button(this.state.nameFieldValue);
+                    gameManager.roomCode = Number(this.state.roomCodeValue);
             }}
         /><br/>
         <br/>

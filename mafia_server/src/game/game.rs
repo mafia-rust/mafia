@@ -6,7 +6,7 @@ use lazy_static::lazy_static;
 use tokio::sync::mpsc::UnboundedSender;
 use tokio_tungstenite::tungstenite::Message;
 
-use crate::network::packet::{ToServerPacket, ToClientPacket, self};
+use crate::network::packet::{ToServerPacket, ToClientPacket, self, PlayerButtons};
 use crate::prelude::*;
 use super::{phase::{PhaseStateMachine, PhaseType}, player::{Player, PlayerIndex}, role_list::RoleList, settings::Settings, grave::Grave};
 
@@ -25,13 +25,12 @@ pub struct Game {
 impl Game {
     pub fn new(settings: Settings, players_sender_and_name: Vec<(UnboundedSender<ToClientPacket>, String)>)->Self{
 
-
         let mut players = Vec::new();
 
         //create players
         for player_index in 0..players_sender_and_name.len(){
             let (sender, name) = &players_sender_and_name[player_index];
-            players.push(Player::new(player_index, name.clone(), sender.clone(), super::role::Role::Sheriff));  //TODO sheriff!
+            players.push(Player::new(player_index, name.clone(), sender.clone(), super::role::Role::Consort));  //TODO sheriff!
         }
 
         let game = Self{
@@ -47,6 +46,17 @@ impl Game {
         //send to players all game information stuff
         let player_names: Vec<String> = game.players.iter().map(|p|{return p.name.clone()}).collect();
         game.send_to_all(ToClientPacket::Players { names: player_names });
+        for player in game.players.iter(){
+            player.send(ToClientPacket::PlayerButtons { buttons: 
+                PlayerButtons::from(&game, player.index)
+            });
+        }
+
+        //start clock TODO
+        //call phase tick stuff
+        // tokio::spawn(||{
+        //     game.phase_machine
+        // })
         
         game
     }
