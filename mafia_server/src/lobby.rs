@@ -1,25 +1,35 @@
 use std::{collections::HashMap, net::SocketAddr, fs};
 
+use futures_util::pending;
 use serde::__private::de::{Content, self};
 use tokio::sync::mpsc::UnboundedSender;
 use tokio_tungstenite::tungstenite::Message;
 
-use crate::{game::{Game, player::{PlayerIndex, Player}, settings::{Settings, InvestigatorResults}, role_list}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket}}, utils::trim_whitespace};
+use crate::{
+    game::{Game, player::{PlayerIndex, Player}, 
+    settings::{Settings, InvestigatorResults}, 
+    role_list}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket}, listener::ArbitraryPlayerID}, 
+    utils::trim_whitespace
+};
 
 pub struct Lobby {
     lobby_state: LobbyState,
-
-    random_names: Vec<String>
+    random_names: Vec<String>,
 }
 enum LobbyState{
     Lobby{
         settings: Settings,
-        players: Vec<(UnboundedSender<ToClientPacket>, String)>,
+        players: HashMap<ArbitraryPlayerID, LobbyPlayer>,
     },
-    Game(Game)
+    Game{
+        game: Game,
+        players: HashMap<ArbitraryPlayerID, PlayerIndex>,
+    }
 }
-
-pub type LobbyIndex = usize;
+pub struct LobbyPlayer{
+    pub sender: UnboundedSender<ToClientPacket>,
+    pub name: String,
+}
 
 impl Lobby {
     pub fn new() -> Lobby {
@@ -41,95 +51,83 @@ impl Lobby {
         Self { 
             lobby_state: LobbyState::Lobby{
                 settings: Settings::default(),
-                players: Vec::new()
+                players: HashMap::new()
             }, 
-            random_names
+            random_names,
         }
     }
-    pub fn add_new_player(&mut self, sender: UnboundedSender<ToClientPacket>)->PlayerIndex{
+    pub fn add_new_player(&mut self, sender: UnboundedSender<ToClientPacket>)->ArbitraryPlayerID{
 
         match &mut self.lobby_state {
             LobbyState::Lobby { settings, players } => {
-                players.push((sender.clone(),"".to_owned()));
 
-                //////////////////////////////////
-                let availabe_random_names: Vec<&String> = self.random_names.iter().filter(|name|{
-                    !players.iter().map(|(_,n)|{
-                        n.clone()
-                    }).collect::<Vec<String>>().contains(name)
-                }).collect();
+                let name = Self::validate_name(&self.random_names, players, "".to_string());
+                
+                sender.send(ToClientPacket::YourName { name: name.clone() });
 
-                //If there are 32 players in the lobby this will crash TODO
-                if availabe_random_names.len() > 0{
-                    todo!("RAN OUT OF NAMES")
-                }else{
-                    let name = availabe_random_names[rand::random::<usize>()%availabe_random_names.len()].clone();
-                    sender.send(ToClientPacket::YourName{name});
-                }
-                ////////////////////////////////////////
+                let player = LobbyPlayer{
+                    sender,
+                    name: name,
+                };                
+                
+                
+                let newest_player_arbitrary_id = players.len() as ArbitraryPlayerID;
+
+                players.insert(
+                    newest_player_arbitrary_id,  
+                    player
+                );
 
 
-                sender.send(ToClientPacket::Players { names: players.iter().map(|p|{
-                    p.1.clone()
-                }).collect() });
+                Self::send_players(players);
 
-                let newest_player_index = (players.len() - 1) as u8;
-                newest_player_index
+                newest_player_arbitrary_id
             },
-            LobbyState::Game(game) => {
+            LobbyState::Game{ game, players } => {
                 todo!()
             },
         }
         
 
     }
-    pub fn on_client_message(&mut self, send: UnboundedSender<ToClientPacket>, player_index: PlayerIndex, incoming_packet: ToServerPacket){
+    pub fn on_client_message(&mut self, send: UnboundedSender<ToClientPacket>, player_arbitrary_id: ArbitraryPlayerID, incoming_packet: ToServerPacket){
         match incoming_packet {
             ToServerPacket::SetName{ name } => {
                 if let LobbyState::Lobby { settings, players } = &mut self.lobby_state{
-                    //fix it up
-                    let mut name = trim_whitespace(name.trim());
-                    //TODO make names max length 30
 
-                    //if its invlaid then give you a random name
-                    if name.len() == 0 {
-
-                        let availabe_random_names: Vec<&String> = self.random_names.iter().filter(|name|{
-                            !players.iter().map(|(_,n)|{
-                                n.clone()
-                            }).collect::<Vec<String>>().contains(name)
-                        }).collect();
-
-                        //If there are 32 players in the lobby this will crash TODO
-                        if availabe_random_names.len() > 0{
-                            todo!("RAN OUT OF NAMES")
-                        }else{
-                            name = availabe_random_names[rand::random::<usize>()%availabe_random_names.len()].clone();
-                        }
-                    }
-
-
-                    if let Some(mut player_name) = players.get_mut(player_index as usize){
-                        player_name.1 = name.clone();
+                    let name = Self::validate_name(&self.random_names, players, name.clone());
+                    if let Some(mut player) = players.get_mut(&player_arbitrary_id){
+                        player.name = name.clone();
                     }
                     
                     send.send(ToClientPacket::YourName{name});
-                    for (sender, _) in players.iter(){
-                        sender.send(ToClientPacket::Players { names: players.iter().map(|p|{
-                            p.1.clone()
-                        }).collect() });
-                    }
-                }               
+
+                    Self::send_players(players);
+                }
             },
             ToServerPacket::StartGame => {           
                 if let LobbyState::Lobby { settings, players } = &mut self.lobby_state{
                     
-                    for player in players.iter(){
-                        player.0.send(ToClientPacket::OpenGameMenu);
+                    for (_, player) in players.iter(){
+                        player.sender.send(ToClientPacket::OpenGameMenu);
                     }
 
-                    //why does it let me do this?? double borrow of lobby_state
-                    self.lobby_state = LobbyState::Game(Game::new(settings.clone(), players.clone()))
+
+                    let mut player_indices = HashMap::new();
+                    let mut game_players = Vec::new();
+                    
+                    let mut i = 0;
+                    for (a_id, lobby_player) in players.drain() {
+
+                        player_indices.insert(a_id, i);
+                        game_players.push(lobby_player);
+                        i+=1;
+                    }
+
+                    self.lobby_state = LobbyState::Game{
+                        game: Game::new(settings.clone(), game_players),
+                        players: player_indices,
+                    }
                 }
             },
             ToServerPacket::Kick{player_index} => {
@@ -144,10 +142,41 @@ impl Lobby {
             },
             ToServerPacket::SetInvestigatorResults{investigator_results} => todo!(),
             _ => {
-                if let LobbyState::Game(game) = &mut self.lobby_state{
-                    game.on_client_message(player_index, incoming_packet)
+                if let LobbyState::Game { game, players } = &mut self.lobby_state{
+                    game.on_client_message(players.get(&player_arbitrary_id).unwrap().clone(), incoming_packet)
                 }
             }
+        }
+    }
+
+
+    fn validate_name(random_names: &Vec<String>, players: &mut HashMap<ArbitraryPlayerID, LobbyPlayer>, mut name: String)->String{
+
+        name = trim_whitespace(name.trim());
+
+        if name.len() > 0 {
+            return name;
+        }
+
+        let availabe_random_names: Vec<&String> = random_names.iter().filter(|name|{
+        
+            !players.iter().map(|(_,n)|{
+                n.name.clone()
+            }).collect::<Vec<String>>().contains(name)
+        
+        }).collect();
+
+        //If there are 32 players in the lobby this will crash TODO
+        if availabe_random_names.len() > 0 {
+            return availabe_random_names[rand::random::<usize>()%availabe_random_names.len()].clone();
+        }
+        todo!()
+    }
+    fn send_players(players: &mut HashMap<ArbitraryPlayerID, LobbyPlayer>){
+        for (_, player) in players.iter(){
+            player.sender.send(ToClientPacket::Players { names: players.iter().map(|p|{
+                p.1.name.clone()
+            }).collect() });
         }
     }
 }

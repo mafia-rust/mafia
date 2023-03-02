@@ -3,7 +3,19 @@ use std::collections::HashMap;
 use tokio_tungstenite::tungstenite::Message;
 use serde::{Deserialize, Serialize};
 
-use crate::{game::{player::{PlayerIndex, Player}, role_list::RoleList, settings::{InvestigatorResults, PhaseTimeSettings}, vote::Verdict, phase::PhaseType, chat::{ChatMessage, ChatGroup}, role::Role, Game}, lobby::LobbyIndex};
+use crate::{
+    game::{
+        player::{PlayerIndex, Player},
+        role_list::RoleList,
+        settings::{InvestigatorResults, PhaseTimeSettings},
+        vote::Verdict, phase::PhaseType, 
+        chat::{ChatMessage, ChatGroup},
+        role::Role, 
+        Game
+    },
+};
+
+use super::listener::RoomCode;
 
 #[derive(Serialize, Debug, Clone)]
 pub enum ToClientPacket{
@@ -80,7 +92,7 @@ pub enum ToServerPacket{
 
     //Pre Lobby
     Join{
-        lobby_index: LobbyIndex
+        room_code: RoomCode
     },
     Host,
 

@@ -6,6 +6,7 @@ use lazy_static::lazy_static;
 use tokio::sync::mpsc::UnboundedSender;
 use tokio_tungstenite::tungstenite::Message;
 
+use crate::lobby::LobbyPlayer;
 use crate::network::packet::{ToServerPacket, ToClientPacket, self, PlayerButtons};
 use crate::prelude::*;
 use super::{phase::{PhaseStateMachine, PhaseType}, player::{Player, PlayerIndex}, role_list::RoleList, settings::Settings, grave::Grave};
@@ -23,14 +24,13 @@ pub struct Game {
 }
 
 impl Game {
-    pub fn new(settings: Settings, players_sender_and_name: Vec<(UnboundedSender<ToClientPacket>, String)>)->Self{
+    pub fn new(settings: Settings, lobby_players: Vec<LobbyPlayer>)->Self{
 
         let mut players = Vec::new();
 
         //create players
-        for player_index in 0..players_sender_and_name.len(){
-            let (sender, name) = &players_sender_and_name[player_index];
-            players.push(Player::new(player_index as u8, name.clone(), sender.clone(), super::role::Role::Consort));  //TODO sheriff!
+        for player_index in 0..lobby_players.len(){
+            players.push(Player::new(player_index as u8, lobby_players[player_index].name.clone(), lobby_players[player_index].sender.clone(), super::role::Role::Consort));  //TODO role
         }
 
         let game = Self{

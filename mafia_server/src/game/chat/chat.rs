@@ -25,8 +25,7 @@ pub enum ChatMessage {
     /* Trial */
     TrialInformation{required_votes: usize, trials_left: u8},
 
-    Voted { voter: PlayerIndex, votee: PlayerIndex },   //TODO maybe change this to Voted { voter: PlayerIndex, votee: Option<PlayerIndex> }, and remove VoteCleared
-    VoteCleared { voter: PlayerIndex },
+    Voted { voter: PlayerIndex, votee: Option<PlayerIndex> },
 
     PlayerOnTrial{player_index: PlayerIndex},     //This  player is on trial
 
@@ -36,13 +35,12 @@ pub enum ChatMessage {
     
     /* Misc */
     BroadcastWhisper { whisperer: PlayerIndex, whisperee: PlayerIndex },    //Sammy whispered to Tyler
-    Targeted { targeter: PlayerIndex, target: PlayerIndex },                //Sammy targeted Jack   //TODO maybe change this to Targeted { targeter: PlayerIndex, target: Option<PlayerIndex> }, and remove VoteCleared
-    TargetCleared { targeter: PlayerIndex },                                //Sammy cleared targets
+    Targeted { targeter: PlayerIndex, target: Option<PlayerIndex> },        //Sammy targeted Jack
     NightInformationMessage{ night_information: NightInformationMessage },
 
     /* Role-specific */
     MayorRevealed{player_index: PlayerIndex}, //Sammy revealed as mayor
-    MayorCantWhisper,   //you can whisper as or to a revealed mayor
+    MayorCantWhisper,   //you cant whisper as or to a revealed mayor
     JailorDecideExecuteYou,     //Jailor has decided to execute you
     MediumSeanceYou,       //You are being seanced by the medium
 

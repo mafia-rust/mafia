@@ -40,7 +40,7 @@ function create_gameManager(){
         join_button: () => {
             gameManager.Server.send(JSON.stringify({
                 "Join":{
-                    "lobby_index":gameManager.roomCode
+                    "room_code":gameManager.roomCode
                 }
             },null,false));
         },
