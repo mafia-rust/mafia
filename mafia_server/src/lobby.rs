@@ -1,4 +1,4 @@
-use std::{collections::HashMap, net::SocketAddr, fs};
+use std::{collections::HashMap, net::SocketAddr, fs, time::Duration};
 
 use futures_util::pending;
 use serde::__private::de::{Content, self};
@@ -148,7 +148,11 @@ impl Lobby {
             }
         }
     }
-
+    pub fn tick(&mut self, time_passed: Duration){
+        if let LobbyState::Game { game, players } = &mut self.lobby_state {
+            game.tick(time_passed)
+        }
+    }
 
     fn validate_name(random_names: &Vec<String>, players: &mut HashMap<ArbitraryPlayerID, LobbyPlayer>, mut name: String)->String{
 

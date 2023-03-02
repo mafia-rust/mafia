@@ -2,6 +2,7 @@
 
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
+use std::time::Duration;
 use lazy_static::lazy_static;
 use tokio::sync::mpsc::UnboundedSender;
 use tokio_tungstenite::tungstenite::Message;
@@ -93,6 +94,10 @@ impl Game {
         }
     }
 
+    pub fn tick(&mut self, time_passed: Duration){
+        self.phase_machine.tick(self, time_passed);
+    }
+
     pub fn on_client_message(&mut self, player_index: PlayerIndex, incoming_packet : ToServerPacket){
 
     }
@@ -101,5 +106,7 @@ impl Game {
             player.send(packet.clone());
         }
     }
+
+    
     
 }

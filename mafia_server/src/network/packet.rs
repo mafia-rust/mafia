@@ -29,7 +29,7 @@ pub enum ToClientPacket{
     //Syncronize
     YourName{name:String},
     Players{names: Vec<String>},
-    Kicked,
+    Kicked{reason: String},
     // 
     OpenGameMenu,
 
