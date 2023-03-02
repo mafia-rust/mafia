@@ -132,6 +132,8 @@ make_role_enum! {
     Consort : consort
 }
 
+type Priority = i8;
+
 /*
 Proposed Priorities:
 

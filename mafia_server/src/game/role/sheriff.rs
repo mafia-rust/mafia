@@ -6,6 +6,8 @@ use crate::game::role_list::FactionAlignment;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
+use super::Priority;
+
 pub(super) const DEFENSE: u8 = 0;
 pub(super) const ROLEBLOCKABLE: bool = true;
 pub(super) const WITCHABLE: bool = true;
@@ -13,7 +15,7 @@ pub(super) const SUSPICIOUS: bool = false;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownInvestigative;
 
 
-pub(super) fn do_night_action(actor_index: PlayerIndex, priority: i8, game: &mut Game) {
+pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game: &mut Game) {
     if priority != 8{
         return;
     }

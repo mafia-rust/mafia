@@ -4,6 +4,8 @@ use crate::game::role_list::FactionAlignment;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
+use super::Priority;
+
 pub(super) const DEFENSE: u8 = 0;
 pub(super) const ROLEBLOCKABLE: bool = true;
 pub(super) const WITCHABLE: bool = true;
@@ -11,7 +13,7 @@ pub(super) const SUSPICIOUS: bool = true;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaKilling;
 
 
-pub(super) fn do_night_action(actor: PlayerIndex, priority: i8, game: &mut Game) {
+pub(super) fn do_night_action(actor: PlayerIndex, priority: Priority, game: &mut Game) {
     todo!();
 }
 pub(super) fn can_night_target(actor: PlayerIndex, target: PlayerIndex, game: &Game) -> bool {

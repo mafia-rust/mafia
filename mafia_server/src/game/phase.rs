@@ -111,7 +111,7 @@ impl PhaseType {
                 for priority in 0..12{
                     for player_index in 0..game.players.len(){
                         //impossible panic when getting player
-                        game.players[player_index].get_role().do_night_action(player_index as u8, priority, game);
+                        game.players[player_index].get_role().do_night_action(player_index as PlayerIndex, priority, game);
                     }
                 }
 
