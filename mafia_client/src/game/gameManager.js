@@ -3,14 +3,15 @@ import { Main } from "../Main";
 import { LobbyMenu } from "../openMenus/LobbyMenu";
 import { PlayerListMenu } from "../gameMenus/PlayerListMenu";
 import { StartMenu } from "../openMenus/StartMenu";
+import gameManager from "../index.js";
 
-console.log("gameManager open");
 
-let gameManager = create_gameManager();
+//let gameManager = create_gameManager();
 //gameManager.Server.open();
 
-function create_gameManager(){
+export function create_gameManager(){
 
+    console.log("gameManager created");
     
     let gameManager = {
         roomCode: null,
@@ -73,6 +74,38 @@ function create_gameManager(){
             }, null, false))
         },
 
+        judgement_button: (judgement)=>{
+            if(judgement===1) judgement="Innocent";
+            if(judgement===-1) judgement="Guilty";
+            if(judgement===0) judgement="Abstain";
+            gameManager.Server.send(JSON.stringify({
+                "Judgement":{
+                    "verdict":judgement
+                }
+            }, null, false))
+        },
+        vote_button: (votee_index)=>{
+            gameManager.Server.send(JSON.stringify({
+                "Vote":{
+                    "player_index":votee_index
+                }
+            }, null, false));
+        },
+        target_button: (target_index_list)=>{
+            gameManager.Server.send(JSON.stringify({
+                "Target":{
+                    "player_index_list":target_index_list
+                }
+            }, null, false))
+        },
+        dayTarget_button: (target_index)=>{
+            gameManager.Server.send(JSON.stringify({
+                "DayTarget":{
+                    "player_index":target_index
+                }
+            }, null, false))
+        },
+
         messageListener: (serverMessage)=>{
 
             let type;
@@ -94,11 +127,9 @@ function create_gameManager(){
                 case "RejectJoin":
                     let reason = serverMessage.reason
                     alert(reason);
-                    
                 break;
                 case "AcceptHost":
                     gameManager.roomCode = serverMessage.room_code;
-
                     Main.instance.setState({panels : [<LobbyMenu/>]});
                 break;
 
@@ -107,6 +138,9 @@ function create_gameManager(){
                 
                 case"YourName":
                     gameManager.gameState.myName = serverMessage.name;
+                break;
+                case"YourPlayerIndex":
+                    gameManager.gameState.myIndex = serverMessage.player_index;
                 break;
                 case"Players":
                     for(let i = 0; i < serverMessage.names.length; i++){
@@ -137,6 +171,7 @@ function create_gameManager(){
                 break;
                 case"Phase":
                     gameManager.gameState.phase = serverMessage.phase;
+                    gameManager.gameState.dayNumber = serverMessage.day_number;
                     gameManager.gameState.secondsLeft = serverMessage.seconds_left;
                 break;
                 case"PlayerOnTrial":
@@ -155,11 +190,11 @@ function create_gameManager(){
                         gameManager.gameState.players[i].buttons.dayTarget = serverMessage.buttons[i].day_target;
                     }
                 break;
-                case"AddChatMessages":{
+                case"AddChatMessages":
                     for(let i = 0; i < serverMessage.chat_messages.length; i++){
                         gameManager.gameState.chatMessages.push(serverMessage.chat_messages[i]);
                     }
-                }
+                break;
                 default:
                     console.log("incoming_message response not implemented "+type);
                     console.log(serverMessage);
@@ -168,6 +203,17 @@ function create_gameManager(){
 
 
             
+            gameManager.invokeStateListners();
+        },
+    
+        tick : (timePassedms)=>{
+            
+            gameManager.gameState.secondsLeft -= Math.round(timePassedms / 1000);
+            if(gameManager.gameState.secondsLeft < 0)
+                gameManager.gameState.secondsLeft = 0;
+            
+
+
             gameManager.invokeStateListners();
         },
     }
@@ -224,7 +270,7 @@ function create_server(){
     return Server;
 }
 
-export default gameManager;
+// export default gameManager;
 
 
 /*

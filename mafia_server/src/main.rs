@@ -3,7 +3,7 @@ use mafia_server::{
     network::{
         websocket_listener::create_ws_server,
         connection::{Connection},
-        listener::Listener
+        listener::Listener, packet::{ToClientPacket, ToServerPacket}
     },
 };
 use std::{
@@ -35,6 +35,14 @@ enum Test{
         "lol": false
     }
 }
+
+
+print!("{}", ToClientPacket::YourVoting { player_index: Some(4) }.to_json_string());
+{"YourVoting":{"player_index":4}}
+
+print!("{}", ToClientPacket::YourVoting { player_index: None }.to_json_string());
+{"YourVoting":{"player_index":null}}
+
 */
 ///
 /// The Main function

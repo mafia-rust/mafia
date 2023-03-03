@@ -32,20 +32,6 @@ impl PhaseStateMachine {
             current_state,
         }
     }
-    pub fn tick(&mut self, game: &mut Game, time_passed: Duration){
-        self.time_remaining -= time_passed;
-        
-        if self.time_remaining > Duration::ZERO{
-            return;
-        }
-
-        //call end
-        self.current_state = self.current_state.end(game);
-        //fix time
-        self.time_remaining += self.current_state.get_length(&game.settings.phase_times);
-        //call start
-        self.current_state.start(game);
-    }
 }
 
 impl PhaseType {
@@ -61,9 +47,9 @@ impl PhaseType {
         }
     }
 
-    pub fn start(&mut self, game: &mut Game) {
+    pub fn start(game: &mut Game) {
         // Match phase type and do stuff
-        match self {
+        match game.phase_machine.current_state {
             PhaseType::Morning => {},
             PhaseType::Discussion => {},
             PhaseType::Voting => {},
@@ -75,10 +61,11 @@ impl PhaseType {
     }
 
     ///returns the next phase
-    pub fn end(&mut self, game: &mut Game) -> PhaseType {
+    pub fn end(game: &mut Game) -> PhaseType {
         // Match phase type and do stuff
-        match self {
+        match game.phase_machine.current_state {
             PhaseType::Morning => {
+                game.phase_machine.day_number+=1;
                 return Self::Discussion;
             },
             PhaseType::Discussion => {

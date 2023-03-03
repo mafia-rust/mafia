@@ -1,5 +1,5 @@
 import React from "react";
-import gameManager from "../game/gameManager";
+import gameManager from "../index.js";
 
 export class JoinGameMenu extends React.Component {
     constructor(props) {

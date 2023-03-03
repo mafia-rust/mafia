@@ -33,10 +33,12 @@ impl Listener{
         let frame_period = Duration::new(1, 0);
 
         tokio::spawn(async move {
-            for (_, lobby) in threaded_lobbies.lock().unwrap().iter_mut(){
-                lobby.tick(frame_period);
+            loop {
+                for (_, lobby) in threaded_lobbies.lock().unwrap().iter_mut(){
+                    lobby.tick(frame_period);
+                }
+                tokio::time::sleep(frame_period).await;
             }
-            tokio::time::sleep(frame_period)
         });
         out
     }

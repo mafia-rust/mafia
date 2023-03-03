@@ -1,4 +1,4 @@
-use crate::game::vote::Verdict;
+use crate::game::verdict::Verdict;
 
 use super::{Player, PlayerIndex};
 

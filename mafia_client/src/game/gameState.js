@@ -1,6 +1,7 @@
 export function create_gameState(){
     return {
         myName: null,
+        myIndex: null,
 
         chatMessages : [],  //string + chat messages
 
@@ -9,8 +10,10 @@ export function create_gameState(){
         roleList: [],
         
         playerOnTrial: null,
+
         phase: null,
         secondsLeft: 0,
+        dayNumber: 1,
 
         will: "",
         role: null,
@@ -23,7 +26,10 @@ export function create_gameState(){
             judgement: 0,
             evening: 0,
             night: 0,
-        }
+        },
+
+        targets: [],
+
         //my own data
             //My own role
             //who ive targeted

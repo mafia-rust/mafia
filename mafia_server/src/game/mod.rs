@@ -4,7 +4,7 @@ pub mod player;
 pub mod chat;
 pub mod role;
 pub mod visit;
-pub mod vote;
+pub mod verdict;
 pub mod role_list;
 pub mod settings;
 

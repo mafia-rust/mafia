@@ -3,7 +3,7 @@ use tokio::sync::mpsc::UnboundedSender;
 use crate::{
     game::{
         Game, chat::{ChatMessage, night_message::NightInformationMessage}, 
-        visit::Visit, vote::Verdict,
+        visit::Visit, verdict::Verdict,
         phase::{
             PhaseType
         }, 
@@ -93,7 +93,7 @@ impl Player {
         self.sender.send(packet);
     }
     ///call this repeadedly
-    pub fn syncromize_server_to_client(&mut self){
+    pub fn tick(&mut self){
         self.send_chat_messages();
         // self.send_available_buttons();
     }

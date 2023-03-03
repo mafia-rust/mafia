@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 
-use crate::game::{grave::Grave, role::{Role, RoleData}, player::{PlayerIndex, Player}, vote::Verdict, phase::PhaseType};
+use crate::game::{grave::Grave, role::{Role, RoleData}, player::{PlayerIndex, Player}, verdict::Verdict, phase::PhaseType};
 use super::night_message::NightInformationMessage;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

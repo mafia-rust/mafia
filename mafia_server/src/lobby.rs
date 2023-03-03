@@ -1,4 +1,4 @@
-use std::{collections::HashMap, net::SocketAddr, fs, time::Duration};
+use std::{collections::HashMap, net::SocketAddr, fs, time::Duration, hash::Hash};
 
 use futures_util::pending;
 use serde::__private::de::{Content, self};
@@ -113,7 +113,7 @@ impl Lobby {
                     }
 
 
-                    let mut player_indices = HashMap::new();
+                    let mut player_indices: HashMap<ArbitraryPlayerID,PlayerIndex> = HashMap::new();
                     let mut game_players = Vec::new();
                     
                     let mut i = 0;
@@ -137,7 +137,8 @@ impl Lobby {
             ToServerPacket::SetPhaseTimes{phase_times} => {
                 if let LobbyState::Lobby{ settings, players } = &mut self.lobby_state{
                     settings.phase_times = phase_times.clone();
-                    send.send(ToClientPacket::PhaseTimes { phase_times });
+                    
+                    Self::send_to_all(players, ToClientPacket::PhaseTimes { phase_times });
                 }
             },
             ToServerPacket::SetInvestigatorResults{investigator_results} => todo!(),
@@ -181,6 +182,11 @@ impl Lobby {
             player.sender.send(ToClientPacket::Players { names: players.iter().map(|p|{
                 p.1.name.clone()
             }).collect() });
+        }
+    }
+    fn send_to_all(players: &mut HashMap<ArbitraryPlayerID, LobbyPlayer>, packet: ToClientPacket){
+        for player in players.iter(){
+            player.1.sender.send(packet.clone());
         }
     }
 }

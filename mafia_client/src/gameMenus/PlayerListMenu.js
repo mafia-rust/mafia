@@ -1,5 +1,5 @@
 import React from "react";
-import gameManager from "../game/gameManager";
+import gameManager from "../index.js";
 
 export class PlayerListMenu extends React.Component {
     constructor(props) {
@@ -26,13 +26,13 @@ export class PlayerListMenu extends React.Component {
 
     renderPlayer(playerIndex){
         
-        let player = gameManager.gameState.players[playerIndex];
-        let canWhisper = gameManager.gameState.phase !== "Night" && gameManager.gameState.phase !== null;
+        let player = this.state.gameState.players[playerIndex];
+        let canWhisper = this.state.gameState.phase !== "Night" && gameManager.gameState.phase !== null && this.state.gameState.myIndex !== playerIndex;
 
-        let buttonCount = player.buttons.dayTarget + player.buttons.target + player.buttons.vote + canWhisper;
+        // let buttonCount = player.buttons.dayTarget + player.buttons.target + player.buttons.vote + canWhisper;
 
         return(<div key={playerIndex}>
-            {playerIndex}:{this.state.gameState.players[playerIndex].name}<br/>
+            {playerIndex}:{player.name}<br/>
 
             <div style={{
                 display: "grid",
@@ -43,22 +43,36 @@ export class PlayerListMenu extends React.Component {
 
                 //gridGap: "5px",
             }}>
-                {(()=>{if(player.buttons.target){<button style={{
-                    gridColumn: 1,                    
-                    // overflowX: "hidden",
-                }}>Target</button>}})()}
-                {(()=>{if(player.buttons.vote){<button style={{
-                    gridColumn: 2,                    
-                    // overflowX: "hidden",
-                }}>Vote</button>}})()}
-                {(()=>{if(player.buttons.dayTarget){<button style={{
-                    gridColumn: 3,                    
-                    // overflowX: "hidden",
-                }}>DayTarget</button>}})()}
-                {(()=>{if(player.buttons.canWhisper){<button style={{
-                    gridColumn: 4,                    
-                    // overflowX: "hidden",
-                }}>Whisper</button>}})()}
+                {(()=>{if(player.buttons.target){return(<button style={{
+                        gridColumn: 2,
+                        // overflowX: "hidden",
+                    }}
+                    onClick={()=>{
+                        gameManager.gameState.targets.push(playerIndex);
+                        gameManager.target_button(this.state.gameState.targets);
+                    }}
+                >Target</button>)}})()}
+                {(()=>{if(player.buttons.vote){return(<button style={{
+                        gridColumn: 3,                    
+                        // overflowX: "hidden",
+                    }}
+                    onClick={()=>{gameManager.vote_button(playerIndex)}}
+                >Vote</button>)}})()}
+                {(()=>{if(player.buttons.dayTarget){return(<button style={{
+                        gridColumn: 4,                    
+                        // overflowX: "hidden",
+                    }}
+                    onClick={()=>{gameManager.dayTarget_button(playerIndex)}}
+                >DayTarget</button>)}})()}
+                {(()=>{if(canWhisper){return(<button style={{
+                    gridColumn: 5,                    
+                    // overflowX "hidden",
+                }}>Whisper</button>)}})()}
+
+                <div style={{
+                    gridColumn: 6,                    
+                    // overflowX "hidden",
+                }}></div>
             </div>
 
             

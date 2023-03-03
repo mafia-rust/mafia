@@ -3,17 +3,15 @@ use std::collections::HashMap;
 use tokio_tungstenite::tungstenite::Message;
 use serde::{Deserialize, Serialize};
 
-use crate::{
-    game::{
+use crate::game::{
         player::{PlayerIndex, Player},
         role_list::RoleList,
         settings::{InvestigatorResults, PhaseTimeSettings},
-        vote::Verdict, phase::PhaseType, 
+        verdict::Verdict, phase::PhaseType, 
         chat::{ChatMessage, ChatGroup},
         role::Role, 
         Game
-    },
-};
+    };
 
 use super::listener::RoomCode;
 
@@ -27,7 +25,8 @@ pub enum ToClientPacket{
     
         //Lobby
     //Syncronize
-    YourName{name:String},
+    YourName{name: String},
+    YourPlayerIndex{player_index: PlayerIndex},
     Players{names: Vec<String>},
     Kicked{reason: String},
     // 
@@ -39,7 +38,7 @@ pub enum ToClientPacket{
 
         //Game
     //Syncronize
-    Phase{phase: PhaseType, seconds_left: u64},   //Time left & PhaseType
+    Phase{phase: PhaseType, day_number: u8, seconds_left: u64},   //Time left & PhaseType
     PlayerOnTrial{player_index: PlayerIndex},  //Player index
     YourWill{will: String},
     YourRole{role: Role},
@@ -48,7 +47,7 @@ pub enum ToClientPacket{
     PlayerVotes{voted_for_player: Vec<usize>}, //map from playerindex to num_voted_for that player
 
     YourTarget{player_indices: Vec<PlayerIndex>},
-    YourVoting{player_index: PlayerIndex},
+    YourVoting{player_index: Option<PlayerIndex>},
     YourJudgement{verdict: Verdict},
     //YourChatGroups{chat_groups: Vec<ChatGroup>},
 
@@ -105,9 +104,9 @@ pub enum ToServerPacket{
     SetInvestigatorResults{investigator_results: InvestigatorResults},
 
     //Game
-    Vote{player_index: PlayerIndex},   //Accusation
+    Vote{player_index: Option<PlayerIndex>},   //Accusation
     Judgement{verdict: Verdict},  //Vote
-    Target{player_index: Vec<PlayerIndex>},
+    Target{player_index_list: Vec<PlayerIndex>},
     DayTarget{player_index:  PlayerIndex},
 
     SendMessage{text: String},

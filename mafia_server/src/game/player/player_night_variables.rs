@@ -1,4 +1,4 @@
-use crate::game::{visit::Visit, vote::Verdict, chat::{night_message::NightInformationMessage, ChatMessage}};
+use crate::game::{visit::Visit, verdict::Verdict, chat::{night_message::NightInformationMessage, ChatMessage}};
 
 use super::{PlayerIndex, Player};
 

@@ -1,5 +1,5 @@
 import React from "react";
-import gameManager from "../game/gameManager";
+import gameManager from "../index.js";
 import { create_gameState } from "../game/gameState";
 import {Main} from "../Main";
 import { JoinGameMenu } from "./JoinGameMenu";
