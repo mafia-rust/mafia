@@ -2,7 +2,7 @@ use std::{time::Duration, io::Seek};
 
 use serde::{Serialize, Deserialize};
 
-use super::{settings::PhaseTimeSettings, Game, player::{Player, PlayerIndex, self}};
+use super::{settings::PhaseTimeSettings, Game, player::{Player, PlayerIndex, self}, chat::{ChatGroup, ChatMessage}, game};
 
 
 #[derive(Clone, Copy, PartialEq, Debug, Eq, Serialize, Deserialize)]
@@ -65,25 +65,34 @@ impl PhaseType {
         // Match phase type and do stuff
         match game.phase_machine.current_state {
             PhaseType::Morning => {
-                game.phase_machine.day_number+=1;
+                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Morning, day_number: game.phase_machine.day_number });
+
                 return Self::Discussion;
             },
             PhaseType::Discussion => {
+                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Discussion, day_number: game.phase_machine.day_number });
                 return Self::Voting;   
             },
             PhaseType::Voting => {
+                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Voting, day_number: game.phase_machine.day_number });
                 return Self::Night;
             },
             PhaseType::Testimony => {
+                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Testimony, day_number: game.phase_machine.day_number });
+                //TODO should be impossible for there to be no player on trial
+                game.add_chat_group(ChatGroup::All, ChatMessage::PlayerOnTrial { player_index: game.player_on_trial.unwrap() });
                 return Self::Judgement;
             },
             PhaseType::Judgement => {
+                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Judgement, day_number: game.phase_machine.day_number });
                 return Self::Evening;
             },
             PhaseType::Evening => {
+                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Evening, day_number: game.phase_machine.day_number });
                 return Self::Night;
             },
             PhaseType::Night => {
+                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: game.phase_machine.day_number });
 
                 //get visits
                 for player_index in 0..game.players.len(){
@@ -107,6 +116,8 @@ impl PhaseType {
                     player.add_chat_messages(player.night_variables.night_messages.clone());
                 }
 
+
+                game.phase_machine.day_number+=1;
                 return Self::Morning;
             },
         }

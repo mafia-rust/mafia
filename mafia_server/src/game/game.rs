@@ -11,7 +11,7 @@ use tokio_tungstenite::tungstenite::Message;
 use crate::lobby::LobbyPlayer;
 use crate::network::packet::{ToServerPacket, ToClientPacket, self, PlayerButtons};
 use crate::prelude::*;
-use super::chat::ChatMessage;
+use super::chat::{ChatMessage, ChatGroup};
 use super::{phase::{PhaseStateMachine, PhaseType}, player::{Player, PlayerIndex}, role_list::RoleList, settings::Settings, grave::Grave};
 
 pub struct Game {
@@ -150,49 +150,70 @@ impl Game {
         self.jump_to_phase_no_end(phase);
     }
 
-    pub fn on_client_message(&mut self, player_index: PlayerIndex, incoming_packet : ToServerPacket){
+    pub fn add_chat_group(&mut self, group: ChatGroup, message: ChatMessage){
+        let mut message = message.clone();
+        if let ChatMessage::Normal { message_sender, text, chat_group } = &mut message {
+            *chat_group = group.clone();
+        }
+        for i in 0..self.players.len(){
+            let player = self.get_unchecked_player(i as u8);
+            let role = player.get_role();
+
+            role.get_current_chat_groups(player.index, self).contains(&group);
+            let player = self.get_unchecked_mut_player(i as u8);
+            player.add_chat_message(message.clone());
+        }
+    }
+    pub fn add_many_chat_group(&mut self, group: ChatGroup, messages: Vec<ChatMessage>){
+        for message in messages.into_iter(){
+            self.add_chat_group(group.clone(), message);
+        }
+    }
+
+    pub fn on_client_message(&mut self, player_index: PlayerIndex, incoming_packet: ToServerPacket){
         match incoming_packet {
             ToServerPacket::Vote { player_index: player_voted_index } => {
 
                 //Set vote
                 let player = self.get_unchecked_mut_player(player_index);
                 player.voting_variables.chosen_vote = player_voted_index;
-                // player.add_chat_message(ChatMessage::Voted { voter: player.index, votee: player_voted_index });
-                player.send(ToClientPacket::YourVoting { player_index: player_voted_index });
-                //TODO Add vote messages to chat
-                //Need a method for send all players in a chat a message
 
+                player.send(ToClientPacket::YourVoting { player_index: player_voted_index });
+                let chat_message = ChatMessage::Voted { voter: player.index, votee: player_voted_index };
+                self.add_chat_group(ChatGroup::All, chat_message);
 
 
                 //get all votes on people
                 let mut living_players_count = 0;
-                let mut votes_on_players: HashMap<PlayerIndex, u8> = HashMap::new();
+                let mut voted_for_player: Vec<u8> = Vec::new();
+
+                for _ in self.players.iter(){
+                    voted_for_player.push(0);
+                }
 
                 for player in self.players.iter(){
                     if player.alive{
                         living_players_count+=1;
+
                         if let Some(player_voted) = player.voting_variables.chosen_vote{
-                            if let Some(num_votes) = votes_on_players.get_mut(&player_voted){
+                            if let Some(num_votes) = voted_for_player.get_mut(player_voted as usize){
                                 *num_votes+=1;
-                            }else {
-                                votes_on_players.insert(player_voted, 1);
                             }
                         }
                     }
                 }
-                todo!() //need to convert hashmap votes_on_players to vec
-                self.send_to_all(ToClientPacket::PlayerVotes { voted_for_player: () });
-
-
 
                 //if someone was voted
-                let mut player_voted: Option<PlayerIndex> = None;
-                for (player_index, num_votes) in votes_on_players.drain(){
+                let mut player_voted = None;
+                for player_index in 0..voted_for_player.len(){
+                    let num_votes = voted_for_player[player_index];
                     if num_votes > (living_players_count / 2){
-                        player_voted = Some(player_index);
+                        player_voted = Some(player_index as u8);
                         break;
                     }
                 }
+                
+                self.send_to_all(ToClientPacket::PlayerVotes { voted_for_player });
 
                 if let Some(player_voted_index) = player_voted{
                     self.player_on_trial = player_voted;
@@ -216,6 +237,4 @@ impl Game {
         }
     }
 
-    
-    
 }

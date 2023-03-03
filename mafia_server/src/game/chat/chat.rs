@@ -44,10 +44,10 @@ pub enum ChatMessage {
     JailorDecideExecuteYou,     //Jailor has decided to execute you
     MediumSeanceYou,       //You are being seanced by the medium
 
-    RoleData{role_data: RoleData}  //Tell executioner their target, other things. TODO
+    RoleData{role_data: RoleData},  //Tell executioner their target, other things. TODO
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub enum ChatGroup {
     All,
     Mafia,

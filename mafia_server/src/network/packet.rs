@@ -44,7 +44,7 @@ pub enum ToClientPacket{
     YourRole{role: Role},
     
     PlayerButtons{buttons: Vec<PlayerButtons>},
-    PlayerVotes{voted_for_player: Vec<usize>}, //map from playerindex to num_voted_for that player
+    PlayerVotes{voted_for_player: Vec<u8>}, //map from playerindex to num_voted_for that player
 
     YourTarget{player_indices: Vec<PlayerIndex>},
     YourVoting{player_index: Option<PlayerIndex>},
