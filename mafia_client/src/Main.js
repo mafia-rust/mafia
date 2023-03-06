@@ -1,6 +1,6 @@
 import React from "react";
-import { StartMenu } from "./openMenus/StartMenu";
 import "./index.css"
+import { StartMenu } from "./openMenus/StartMenu";
 import { PhaseRowMenu } from "./gameMenus/PhaseRowMenu";
 
 export class Main extends React.Component {
@@ -17,18 +17,17 @@ export class Main extends React.Component {
         Main.instance = this;
     }
     componentWillUnmount() {
-        Main.instance = undefined;
+        //Main.instance = undefined;
     }
 
     render(){return(<div style={{
         height: "100vh"
     }}>
-        {this.renderNavigation()}
-        {this.renderGrid()}
+        {this.renderNavigation(this.state.navigationRows)}
+        {this.renderGrid(this.state.panels)}
     </div>)}
 
-    renderNavigation(){return(
-    <div style={{
+    renderNavigation(navigationRows){return(<div style={{
         display: "grid",
 
         gridAutoColumns: "1fr",
@@ -41,28 +40,27 @@ export class Main extends React.Component {
         gridGap: "5px",
     }}>
         {
-            this.state.navigationRows.map((panel, index)=>{
+            navigationRows.map((row, index)=>{
                 return(<div
-                    key={index}
-                    style={{
-                        gridColumn: 1,
-                        gridRow: (index+1),
-                        
-                        overflowX: "hidden",
-                        overflowY: "hidden",
+                key={index}
+                style={{
+                    gridColumn: 1,
+                    gridRow: (index+1),
+                    
+                    overflowX: "hidden",
+                    overflowY: "hidden",
 
-                        height : "100%",
-                        width: "100%",
-                        
-                        backgroundColor: "green",
-                    }}
-                >
-                    {panel}
+                    height : "100%",
+                    width: "100%",
+                    
+                    backgroundColor: "green",
+                }}>
+                    {row}
                 </div>)
             })
         }
     </div>)}
-    renderGrid(){return(<div style={{
+    renderGrid(panels){return(<div style={{
         display: "grid",
 
         gridAutoColumns: "1fr",
@@ -75,7 +73,7 @@ export class Main extends React.Component {
         gridGap: "5px",
     }}>
         {
-            this.state.panels.map((panel, index)=>{
+            panels.map((panel, index)=>{
                 return (<div 
                 key={index}
                 style={{

@@ -59,7 +59,10 @@ pub async fn handle_connection(
     // route between unbounded senders and websockets
     let send_to_client = tokio::spawn(async move {
         while let Some(m) = reciever_to_client.recv().await {
-            to_client.send(Message::text(m.to_json_string())).await.unwrap();
+            match to_client.send(Message::text(m.to_json_string())).await{
+                Ok(_) => {},
+                Err(_) => {break;},
+            }
         }
         to_client.close();
     });

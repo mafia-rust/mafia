@@ -120,9 +120,8 @@ impl Player {
             }else{ break; }
         }
         
-        if chat_messages_out.len() > 0{
-            self.send(ToClientPacket::AddChatMessages { chat_messages: chat_messages_out });
-        }
+        self.send(ToClientPacket::AddChatMessages { chat_messages: chat_messages_out });
+        
 
         self.send_chat_messages();
     }

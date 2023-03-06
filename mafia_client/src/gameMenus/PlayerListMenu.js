@@ -7,21 +7,19 @@ export class PlayerListMenu extends React.Component {
 
         this.state = {
             gameState : gameManager.gameState,
-
-            listener : {func : ()=>{
-                this.setState({
-                    gameState: gameManager.gameState
-                })
-            }},
         };
-                
+        this.listener = ()=>{
+            this.setState({
+                gameState: gameManager.gameState
+            })
+        };  
     }
 
     componentDidMount() {
-        gameManager.addStateListner(this.state.listener);
+        gameManager.addStateListener(this.listener);
     }
     componentWillUnmount() {
-        gameManager.removeStateListner(this.state.listener);
+        gameManager.removeStateListener(this.listener);
     }
 
     renderPlayer(playerIndex){

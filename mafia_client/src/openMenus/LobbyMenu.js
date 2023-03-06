@@ -21,19 +21,20 @@ export class LobbyMenu extends React.Component {
             gameState: gameManager.gameState,
             roomCode: gameManager.roomCode,
 
-            listener : {func : ()=>{
-                this.setState({
-                    roomCode : gameManager.roomCode,
-                    gameState : gameManager.gameState,
-                })
-            }},
+            
+        };
+        this.listener = ()=>{
+            this.setState({
+                roomCode : gameManager.roomCode,
+                gameState : gameManager.gameState,
+            })
         };
     }
     componentDidMount() {
-        gameManager.addStateListner(this.state.listener);
+        gameManager.addStateListener(this.listener);
     }
     componentWillUnmount() {
-        gameManager.removeStateListner(this.state.listener);
+        gameManager.removeStateListener(this.listener);
     }
 
     phaseTimes_button() {

@@ -44,6 +44,7 @@ pub enum ToClientPacket{
     YourRole{role: Role},
     
     PlayerButtons{buttons: Vec<PlayerButtons>},
+    PlayerAlive{alive: Vec<bool>},
     PlayerVotes{voted_for_player: Vec<u8>}, //map from playerindex to num_voted_for that player
 
     YourTarget{player_indices: Vec<PlayerIndex>},
@@ -61,6 +62,32 @@ pub enum ToClientPacket{
 impl ToClientPacket {
     pub fn to_json_string(&self)->String{
         serde_json::to_string(&self).unwrap()
+    }
+    pub fn new_PlayerVotes(game: &mut Game)->ToClientPacket{
+        let mut voted_for_player: Vec<u8> = Vec::new();
+
+        for _ in game.players.iter(){
+            voted_for_player.push(0);
+        }
+
+        for player in game.players.iter(){
+            if player.alive{
+                if let Some(player_voted) = player.voting_variables.chosen_vote{
+                    if let Some(num_votes) = voted_for_player.get_mut(player_voted as usize){
+                        *num_votes+=1;
+                    }
+                }
+            }
+        }
+
+        ToClientPacket::PlayerVotes { voted_for_player }
+    }
+    pub fn new_PlayerAlive(game: &mut Game)->ToClientPacket{
+        let mut alive = Vec::new();
+        for player in game.players.iter(){
+            alive.push(player.alive);
+        }
+        ToClientPacket::PlayerAlive { alive }
     }
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]

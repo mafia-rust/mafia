@@ -2,7 +2,9 @@ use std::{time::Duration, io::Seek};
 
 use serde::{Serialize, Deserialize};
 
-use super::{settings::PhaseTimeSettings, Game, player::{Player, PlayerIndex, self}, chat::{ChatGroup, ChatMessage}, game};
+use crate::network::packet::ToClientPacket;
+
+use super::{settings::PhaseTimeSettings, Game, player::{Player, PlayerIndex, self}, chat::{ChatGroup, ChatMessage}, game, verdict::Verdict};
 
 
 #[derive(Clone, Copy, PartialEq, Debug, Eq, Serialize, Deserialize)]
@@ -50,13 +52,45 @@ impl PhaseType {
     pub fn start(game: &mut Game) {
         // Match phase type and do stuff
         match game.phase_machine.current_state {
-            PhaseType::Morning => {},
-            PhaseType::Discussion => {},
-            PhaseType::Voting => {},
-            PhaseType::Testimony => {},
-            PhaseType::Judgement => {},
-            PhaseType::Evening => {},
-            PhaseType::Night => {},
+            PhaseType::Morning => {
+                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Morning, day_number: game.phase_machine.day_number });
+
+            },
+            PhaseType::Discussion => {
+                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Discussion, day_number: game.phase_machine.day_number });
+                
+            },
+            PhaseType::Voting => {
+                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Voting, day_number: game.phase_machine.day_number });
+
+                let required_votes = (game.players.iter().filter(|p|p.alive).collect::<Vec<&Player>>().len()/2)+1;
+                game.add_chat_group(ChatGroup::All, ChatMessage::TrialInformation { required_votes, trials_left: game.trials_left });
+                
+                for player in game.players.iter_mut(){
+                    player.voting_variables.chosen_vote = None;
+                    player.send(ToClientPacket::YourVoting { player_index: player.voting_variables.chosen_vote });
+                }
+                let packet = ToClientPacket::new_PlayerVotes(game);
+                game.send_to_all(packet);
+            },
+            PhaseType::Testimony => {
+                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Testimony, day_number: game.phase_machine.day_number });
+                //TODO should be impossible for there to be no player on trial therefore unwrap
+                game.add_chat_group(ChatGroup::All, ChatMessage::PlayerOnTrial { player_index: game.player_on_trial.unwrap() });
+                game.send_to_all(ToClientPacket::PlayerOnTrial { player_index: game.player_on_trial.unwrap() });
+            },
+            PhaseType::Judgement => {
+                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Judgement, day_number: game.phase_machine.day_number });
+
+            },
+            PhaseType::Evening => {
+                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Evening, day_number: game.phase_machine.day_number });
+                
+            },
+            PhaseType::Night => {
+                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: game.phase_machine.day_number });
+
+            },
         }
     }
 
@@ -65,35 +99,36 @@ impl PhaseType {
         // Match phase type and do stuff
         match game.phase_machine.current_state {
             PhaseType::Morning => {
-                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Morning, day_number: game.phase_machine.day_number });
-
                 return Self::Discussion;
             },
             PhaseType::Discussion => {
-                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Discussion, day_number: game.phase_machine.day_number });
                 return Self::Voting;   
             },
-            PhaseType::Voting => {
-                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Voting, day_number: game.phase_machine.day_number });
+            PhaseType::Voting => {                
                 return Self::Night;
             },
             PhaseType::Testimony => {
-                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Testimony, day_number: game.phase_machine.day_number });
-                //TODO should be impossible for there to be no player on trial
-                game.add_chat_group(ChatGroup::All, ChatMessage::PlayerOnTrial { player_index: game.player_on_trial.unwrap() });
                 return Self::Judgement;
             },
             PhaseType::Judgement => {
-                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Judgement, day_number: game.phase_machine.day_number });
+                
+                let mut innocent = 0;   let mut guilty = 0;
+                for player in game.players.iter(){
+                    match player.voting_variables.verdict{
+                        Verdict::Innocent => innocent += 1,
+                        Verdict::Abstain => {},
+                        Verdict::Guilty => guilty += 1,
+                    }
+                }
+                game.add_chat_group(ChatGroup::All, ChatMessage::TrialVerdict { player_on_trial: game.player_on_trial.unwrap(), innocent, guilty });
+
                 return Self::Evening;
             },
             PhaseType::Evening => {
-                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Evening, day_number: game.phase_machine.day_number });
                 return Self::Night;
             },
             PhaseType::Night => {
-                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: game.phase_machine.day_number });
-
+                
                 //get visits
                 for player_index in 0..game.players.len(){
                     let player = &mut game.players[player_index];

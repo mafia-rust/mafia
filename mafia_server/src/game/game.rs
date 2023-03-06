@@ -105,22 +105,8 @@ impl Game {
         }
 
         if self.phase_machine.time_remaining <= Duration::ZERO{
-            
-            //call end
-            self.phase_machine.current_state = PhaseType::end(self);
-
-            //fix time
-            self.phase_machine.time_remaining += self.phase_machine.current_state.get_length(&self.settings.phase_times);
-            //call start
-            PhaseType::start(self);
-
-            //stuff that runs only when phase switches
-            self.send_to_all(ToClientPacket::Phase { phase: self.get_current_phase(), day_number: self.phase_machine.day_number, seconds_left: self.phase_machine.time_remaining.as_secs() });
-            for player in self.players.iter(){
-                player.send(ToClientPacket::PlayerButtons{
-                    buttons: PlayerButtons::from(self, player.index) 
-                });
-            }
+            let new_phase = PhaseType::end(self);
+            self.jump_to_phase(new_phase);
         }
         
         self.phase_machine.time_remaining = match self.phase_machine.time_remaining.checked_sub(time_passed){
@@ -128,7 +114,7 @@ impl Game {
             None => Duration::ZERO,
         };
     }
-    fn jump_to_phase_no_end(&mut self, phase: PhaseType){
+    fn jump_to_phase(&mut self, phase: PhaseType){
         self.phase_machine.current_state = phase;
         //fix time
         self.phase_machine.time_remaining += self.phase_machine.current_state.get_length(&self.settings.phase_times);
@@ -136,18 +122,16 @@ impl Game {
         PhaseType::start(self);
 
         //stuff that runs only when phase switches
-        self.send_to_all(ToClientPacket::Phase { phase: self.get_current_phase(), day_number: self.phase_machine.day_number, seconds_left: self.phase_machine.time_remaining.as_secs() });
+        let mut alive = Vec::new();
+        //stuff that runs only when phase switches
         for player in self.players.iter(){
             player.send(ToClientPacket::PlayerButtons{
                 buttons: PlayerButtons::from(self, player.index) 
             });
+            alive.push(player.alive);
         }
-    }
-    fn jump_to_phase(&mut self, phase: PhaseType){
-        //call end
-        // self.phase_machine.current_state = 
-        PhaseType::end(self);
-        self.jump_to_phase_no_end(phase);
+        self.send_to_all(ToClientPacket::Phase { phase: self.get_current_phase(), day_number: self.phase_machine.day_number, seconds_left: self.phase_machine.time_remaining.as_secs() });
+        self.send_to_all(ToClientPacket::PlayerAlive { alive });
     }
 
     pub fn add_chat_group(&mut self, group: ChatGroup, message: ChatMessage){
@@ -219,7 +203,7 @@ impl Game {
                     self.player_on_trial = player_voted;
 
                     self.send_to_all(ToClientPacket::PlayerOnTrial { player_index: player_voted_index } );
-                    self.jump_to_phase_no_end(PhaseType::Judgement);
+                    self.jump_to_phase(PhaseType::Judgement);
                 }
             },
             ToServerPacket::Judgement { verdict } => {},

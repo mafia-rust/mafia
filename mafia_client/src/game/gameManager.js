@@ -4,6 +4,8 @@ import { LobbyMenu } from "../openMenus/LobbyMenu";
 import { PlayerListMenu } from "../gameMenus/PlayerListMenu";
 import { StartMenu } from "../openMenus/StartMenu";
 import gameManager from "../index.js";
+import { ChatMenu } from "../gameMenus/ChatMenu";
+import { PhaseRowMenu } from "../gameMenus/PhaseRowMenu";
 
 
 //let gameManager = create_gameManager();
@@ -21,16 +23,16 @@ export function create_gameManager(){
         gameState : create_gameState(),
 
         listeners : [],
-        addStateListner : (listener)=>{
+        addStateListener : (listener)=>{
             gameManager.listeners.push(listener);
         },
-        removeStateListner : (listener)=>{
+        removeStateListener : (listener)=>{
             gameManager.listeners.splice(gameManager.listeners.indexOf(listener));
         },
-        invokeStateListners : ()=>{
+        invokeStateListeners : ()=>{
             for(let i = 0; i < gameManager.listeners.length; i++){
-                if(gameManager.listeners[i].func){
-                    gameManager.listeners[i].func();
+                if(typeof(gameManager.listeners[i])==="function"){
+                    gameManager.listeners[i]();
                 }
             }
         },
@@ -82,7 +84,7 @@ export function create_gameManager(){
                 "Judgement":{
                     "verdict":judgement
                 }
-            }, null, false))
+            }, null, false));
         },
         vote_button: (votee_index)=>{
             gameManager.Server.send(JSON.stringify({
@@ -96,14 +98,14 @@ export function create_gameManager(){
                 "Target":{
                     "player_index_list":target_index_list
                 }
-            }, null, false))
+            }, null, false));
         },
         dayTarget_button: (target_index)=>{
             gameManager.Server.send(JSON.stringify({
                 "DayTarget":{
                     "player_index":target_index
                 }
-            }, null, false))
+            }, null, false));
         },
 
         messageListener: (serverMessage)=>{
@@ -158,7 +160,10 @@ export function create_gameManager(){
                     Main.instance.setState({panels : [<StartMenu/>]})
                 break;
                 case "OpenGameMenu":
-                    Main.instance.setState({panels : [<PlayerListMenu/>]})
+                    Main.instance.setState({
+                        panels : [<ChatMenu/>, <PlayerListMenu/>],
+                        navigationRows : [<PhaseRowMenu/>]
+                    });
                 break;
                 case"PhaseTimes":
                     gameManager.gameState.phaseTimes.morning    = serverMessage.phase_times.morning.secs;
@@ -190,6 +195,16 @@ export function create_gameManager(){
                         gameManager.gameState.players[i].buttons.dayTarget = serverMessage.buttons[i].day_target;
                     }
                 break;
+                case"PlayerAlive":
+                    for(let i = 0; i < gameManager.gameState.players.length && i < serverMessage.alive.length; i++){
+                        gameManager.gameState.players[i].alive = serverMessage.alive[i];
+                    }
+                break;
+                case"PlayerVotes":
+                    for(let i = 0; i < gameManager.gameState.players.length && i < serverMessage.voted_for_player.length; i++){
+                        gameManager.gameState.players[i].numVoted = serverMessage.voted_for_player[i];
+                    }
+                break;
                 case"AddChatMessages":
                     for(let i = 0; i < serverMessage.chat_messages.length; i++){
                         gameManager.gameState.chatMessages.push(serverMessage.chat_messages[i]);
@@ -203,18 +218,15 @@ export function create_gameManager(){
 
 
             
-            gameManager.invokeStateListners();
+            gameManager.invokeStateListeners();
         },
     
         tick : (timePassedms)=>{
-            
-            gameManager.gameState.secondsLeft -= Math.round(timePassedms / 1000);
+            console.log("tick");
+            gameManager.gameState.secondsLeft = Math.round(gameManager.gameState.secondsLeft - timePassedms/1000)
             if(gameManager.gameState.secondsLeft < 0)
                 gameManager.gameState.secondsLeft = 0;
-            
-
-
-            gameManager.invokeStateListners();
+            gameManager.invokeStateListeners();
         },
     }
     return gameManager;

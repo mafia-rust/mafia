@@ -49,7 +49,7 @@ export function create_player(){
             target: false,
             vote: false,
         },
-        numVoted: 0,
+        numVoted: null,
         alive:true,
     }
 }

@@ -31,7 +31,7 @@ pub enum ChatMessage {
 
     JudgementVote{voter_player_index: PlayerIndex},             //Sammy voted
     JudgementVerdict{voter_player_index: PlayerIndex, verdict: Verdict}, //Sammy voted innocent
-    JudgementResults {player_on_trial: PlayerIndex, innocent: usize, guilty: usize },    //Sammy was voted innocent with these many votes
+    TrialVerdict {player_on_trial: PlayerIndex, innocent: usize, guilty: usize },    //Sammy was voted innocent with these many votes
     
     /* Misc */
     BroadcastWhisper { whisperer: PlayerIndex, whisperee: PlayerIndex },    //Sammy whispered to Tyler

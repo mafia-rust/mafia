@@ -6,22 +6,19 @@ export class PhaseRowMenu extends React.Component {
         super(props);
 
         this.state = {
-            gameState : gameManager.gameState,
-
-            listener : {func : ()=>{
-                this.setState({
-                    gameState: gameManager.gameState
-                })
-            }},
+            gameState: gameManager.gameState,
         };
-                
+        this.listener = () => {
+            this.setState({
+                gameState: {...gameManager.gameState}
+            }); // update the component state with the new copy
+        };
     }
-
     componentDidMount() {
-        gameManager.addStateListner(this.state.listener);
+        gameManager.addStateListener(this.listener);
     }
     componentWillUnmount() {
-        gameManager.removeStateListner(this.state.listener);
+        gameManager.removeStateListener(this.listener);
     }
     renderPhaseSpecific(){
         switch(this.state.gameState.phase){
@@ -34,7 +31,7 @@ export class PhaseRowMenu extends React.Component {
                 {this.state.gameState.playerOnTrial}:{this.state.gameState.players[this.state.gameState.playerOnTrial].name}
                 <div
                     style={{
-                        display:"grid",                        
+                        display:"grid",
                         gridAutoColumns: "1fr",
                     }}
                 >
@@ -48,6 +45,8 @@ export class PhaseRowMenu extends React.Component {
             return(<div>
                 <button onClick={()=>{gameManager.target_button([]);}}>Reset Targets</button>
             </div>);
+            default:
+            return null;
         }
     }
     render(){return(<div>
