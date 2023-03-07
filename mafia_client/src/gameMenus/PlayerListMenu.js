@@ -7,6 +7,7 @@ export class PlayerListMenu extends React.Component {
 
         this.state = {
             gameState : gameManager.gameState,
+            hideDead: false,
         };
         this.listener = ()=>{
             this.setState({
@@ -22,24 +23,31 @@ export class PlayerListMenu extends React.Component {
     }
 
     renderPhaseSpecific(){
-        
         switch(this.state.gameState.phase){
             case"Voting":
             return(<div>
-                <button onClick={()=>{gameManager.vote_button(null);}}>Reset Vote</button>
+                <button onClick={()=>{
+                    gameManager.vote_button(null);
+                }}>Reset Vote</button>
             </div>);
             case"Night":
+            let targetString = "";
+            for(let i = 0; i < this.state.gameState.targets.length; i++){
+                targetString+=this.state.gameState.players[this.state.gameState.targets[i]]+", ";
+            }
             return(<div>
-                <button onClick={()=>{gameManager.target_button([]);}}>Reset Targets</button>
+                <div>{targetString}</div>
+                <button onClick={()=>{
+                    gameManager.target_button([]);
+                }}>Reset Targets</button>
             </div>);
             default:
             return null;
         }
     }
 
-    renderPlayer(playerIndex){
+    renderPlayer(player, playerIndex){
         
-        let player = this.state.gameState.players[playerIndex];
         let canWhisper = this.state.gameState.phase !== "Night" && gameManager.gameState.phase !== null && this.state.gameState.myIndex !== playerIndex;
 
         // let buttonCount = player.buttons.dayTarget + player.buttons.target + player.buttons.vote + canWhisper;
@@ -61,8 +69,7 @@ export class PlayerListMenu extends React.Component {
                         // overflowX: "hidden",
                     }}
                     onClick={()=>{
-                        gameManager.gameState.targets.push(playerIndex);
-                        gameManager.target_button(this.state.gameState.targets);
+                        gameManager.target_button([...gameManager.gameState.targets, playerIndex]);
                     }}
                 >Target</button>)}})()}
                 {(()=>{if(player.buttons.vote){return(<button style={{
@@ -93,8 +100,11 @@ export class PlayerListMenu extends React.Component {
     }
     renderPlayers(){return<div>
         {
-            this.state.gameState.players.map((player, index)=>{
-                return this.renderPlayer(index);
+            this.state.gameState.players.map((player, playerIndex)=>{
+                if(!this.state.hideDead || player.alive){
+                    return this.renderPlayer(player, playerIndex);
+                }
+                return null;
             }, this)
         }
         {/* {this.renderPlayer("Cotton Mather")}

@@ -51,7 +51,6 @@ export function create_gameManager(){
             },null,false));
         },
 
-
         setName_button: (name)=>{
             // if(name)
                 gameManager.Server.send(JSON.stringify({
@@ -210,6 +209,15 @@ export function create_gameManager(){
                 break;
                 case"YourRole":
                     gameManager.gameState.role = serverMessage.role;
+                break;
+                case"YourTarget":
+                    gameManager.gameState.targets = serverMessage.player_indices;
+                break;
+                case"YourVoting":
+                    gameManager.gameState.voted = serverMessage.player_index;
+                break;
+                case"YourJudgement":
+                    gameManager.gameState.judgement = serverMessage.verdict;
                 break;
                 case"AddChatMessages":
                     for(let i = 0; i < serverMessage.chat_messages.length; i++){

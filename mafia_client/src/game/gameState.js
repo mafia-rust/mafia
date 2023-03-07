@@ -4,21 +4,29 @@ export function create_gameState(){
         myIndex: null,
 
         chatMessages : [],  //string + chat messages
-
-        players: [],
         graves: [],
-        
-        roleList: [],
+        players: [],
         
         playerOnTrial: null,
-
         phase: null,
         secondsLeft: 0,
         dayNumber: 1,
 
-        will: "",
         role: null,
 
+        will: "",
+        targets: [],
+        voted: null,
+        judgement: null, //String, Innocent, Guilty, Abstained
+
+
+        //my own data
+            //My own role
+            //who ive voted
+            //wheater ive voted innocent or guilty
+            //what chats im currently talking to
+        
+        roleList: [],
         phaseTimes: {
             morning: 0,
             discussion: 0,
@@ -28,15 +36,6 @@ export function create_gameState(){
             evening: 0,
             night: 0,
         },
-
-        targets: [],
-
-        //my own data
-            //My own role
-            //who ive targeted
-            //who ive voted
-            //wheater ive voted innocent or guilty
-            //what chats im currently talking to
     }
 }
 
@@ -61,7 +60,7 @@ export function create_grave(){
         playerIndex: null,
     
         role: "",
-        killer: "",
+        killer: [],
         will: "",
     
         diedPhase: "",

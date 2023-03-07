@@ -33,7 +33,14 @@ impl Game {
 
         //create players
         for player_index in 0..lobby_players.len(){
-            players.push(Player::new(player_index as u8, lobby_players[player_index].name.clone(), lobby_players[player_index].sender.clone(), super::role::Role::Consort));  //TODO role
+            players.push(
+                Player::new(
+                    player_index as u8,
+                    lobby_players[player_index].name.clone(),
+                    lobby_players[player_index].sender.clone(),
+                    super::role::Role::Sheriff
+                )
+            );  //TODO role
         }
 
         let game = Self{
@@ -218,8 +225,13 @@ impl Game {
                 }
             },
             ToServerPacket::Judgement { verdict } => {},
-            ToServerPacket::Target { player_index_list } => {},
-            ToServerPacket::DayTarget { player_index } => {},
+            ToServerPacket::Target { player_index_list } => {
+                let player = self.get_unchecked_mut_player(player_index);
+                player.night_variables.chosen_targets = player_index_list.clone();
+                player.send(ToClientPacket::YourTarget { player_indices: player_index_list });
+            },
+            ToServerPacket::DayTarget { player_index } => {
+            },
             ToServerPacket::SendMessage { text } => {},
             ToServerPacket::SendWhisper { player_index, text } => {},
             ToServerPacket::SaveWill { will } => {},

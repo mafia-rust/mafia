@@ -100,7 +100,7 @@ impl PlayerButtons{
     pub fn from_target(game: &Game, actor_index: PlayerIndex, target_index: PlayerIndex)->Self{
         Self{
             vote: actor_index != target_index && game.phase_machine.current_state == PhaseType::Voting,
-            target: game.get_unchecked_player(actor_index).get_role().can_night_target(actor_index, target_index, game),
+            target: game.get_unchecked_player(actor_index).get_role().can_night_target(actor_index, target_index, game) && game.get_current_phase() == PhaseType::Night,
             day_target: game.get_unchecked_player(actor_index).get_role().can_day_target(actor_index, target_index, game),
         }
     }
