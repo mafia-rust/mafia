@@ -1,7 +1,7 @@
 import React from "react";
 import gameManager from "../index.js";
 
-export class ChatMenu extends React.Component {
+export class GraveyardMenu extends React.Component {
     constructor(props) {
         super(props);
 
@@ -11,8 +11,8 @@ export class ChatMenu extends React.Component {
         this.listener = ()=>{
             this.setState({
                 gameState: gameManager.gameState
-            });
-        };
+            })
+        };  
     }
     componentDidMount() {
         gameManager.addStateListener(this.listener);
@@ -20,16 +20,18 @@ export class ChatMenu extends React.Component {
     componentWillUnmount() {
         gameManager.removeStateListener(this.listener);
     }
-    renderChatMessage(msg, i) {
-        return(<div key={i}>
-            {JSON.stringify(msg)}
-        </div>);
+    renderGrave(grave, index){
+        return(<div>
+            {JSON.stringify(grave)}
+        </div>)
+    }
+    renderExtendedGrave(){
+        //this is supposed to be for rendering will when a button is pressed to extend it
     }
     render(){return(<div>
-        {this.state.gameState.chatMessages.map((msg, i)=>{
-            return this.renderChatMessage(msg, i);
+        {this.state.gameState.graves.map((grave, index)=>{
+            return this.renderGrave(grave, index);
+            
         }, this)}
     </div>)}
 }
-
-

@@ -1,7 +1,7 @@
 import React from "react";
 import "./index.css"
 import { StartMenu } from "./openMenus/StartMenu";
-import { PhaseRowMenu } from "./gameMenus/PhaseRowMenu";
+import { TitleMenu } from "./openMenus/TitleMenu";
 
 export class Main extends React.Component {
     static instance;
@@ -9,8 +9,8 @@ export class Main extends React.Component {
         super(props);
 
         this.state = {
-            navigationRows: [<PhaseRowMenu/>],
-            panels: [<StartMenu/>]
+            rows: [<TitleMenu/>],
+            panels: [<StartMenu/>],
         };
     }
     componentDidMount() {
@@ -23,39 +23,39 @@ export class Main extends React.Component {
     render(){return(<div style={{
         height: "100vh"
     }}>
-        {this.renderNavigation(this.state.navigationRows)}
+        {this.renderNavigation(this.state.rows)}
         {this.renderGrid(this.state.panels)}
     </div>)}
 
-    renderNavigation(navigationRows){return(<div style={{
+    renderNavigation(panels){return(<div style={{
         display: "grid",
 
         gridAutoColumns: "1fr",
         gridAutoRows: "1fr",
-        
+
         height: "10%",
         width: "100%",
+
+        overflowY:"hidden",
 
         backgroundColor: "black",
         gridGap: "5px",
     }}>
         {
-            navigationRows.map((row, index)=>{
-                return(<div
+            panels.map((panel, index)=>{
+                return (<div 
                 key={index}
                 style={{
-                    gridColumn: 1,
-                    gridRow: (index+1),
+                    gridColumn: (index+1),
+                    gridRow: 1,
                     
                     overflowX: "hidden",
-                    overflowY: "hidden",
-
                     height : "100%",
                     width: "100%",
                     
                     backgroundColor: "green",
                 }}>
-                    {row}
+                    {panel}
                 </div>)
             })
         }

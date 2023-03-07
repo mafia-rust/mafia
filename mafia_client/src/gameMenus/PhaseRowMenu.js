@@ -10,7 +10,7 @@ export class PhaseRowMenu extends React.Component {
         };
         this.listener = () => {
             this.setState({
-                gameState: {...gameManager.gameState}
+                gameState: gameManager.gameState
             }); // update the component state with the new copy
         };
     }
@@ -22,10 +22,7 @@ export class PhaseRowMenu extends React.Component {
     }
     renderPhaseSpecific(){
         switch(this.state.gameState.phase){
-            case"Voting":
-            return(<div>
-                <button onClick={()=>{gameManager.vote_button(null);}}>Reset Vote</button>
-            </div>);
+            
             case"Judgement":
             return(<div>
                 {this.state.gameState.playerOnTrial}:{this.state.gameState.players[this.state.gameState.playerOnTrial].name}
@@ -40,10 +37,6 @@ export class PhaseRowMenu extends React.Component {
                     <button style={{gridColumn: 4}} onClick={()=>{gameManager.judgement_button(1)}}>Innocent</button>
                     <div style={{gridColumn: 5}}></div>
                 </div>
-            </div>);
-            case"Night":
-            return(<div>
-                <button onClick={()=>{gameManager.target_button([]);}}>Reset Targets</button>
             </div>);
             default:
             return null;

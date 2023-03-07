@@ -53,42 +53,40 @@ impl PhaseType {
         // Match phase type and do stuff
         match game.phase_machine.current_state {
             PhaseType::Morning => {
-                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Morning, day_number: game.phase_machine.day_number });
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Morning, day_number: game.phase_machine.day_number });
 
             },
             PhaseType::Discussion => {
-                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Discussion, day_number: game.phase_machine.day_number });
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Discussion, day_number: game.phase_machine.day_number });
                 
             },
             PhaseType::Voting => {
-                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Voting, day_number: game.phase_machine.day_number });
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Voting, day_number: game.phase_machine.day_number });
 
                 let required_votes = (game.players.iter().filter(|p|p.alive).collect::<Vec<&Player>>().len()/2)+1;
-                game.add_chat_group(ChatGroup::All, ChatMessage::TrialInformation { required_votes, trials_left: game.trials_left });
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialInformation { required_votes, trials_left: game.trials_left });
                 
-                for player in game.players.iter_mut(){
-                    player.voting_variables.chosen_vote = None;
-                    player.send(ToClientPacket::YourVoting { player_index: player.voting_variables.chosen_vote });
-                }
+
                 let packet = ToClientPacket::new_PlayerVotes(game);
                 game.send_to_all(packet);
             },
             PhaseType::Testimony => {
-                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Testimony, day_number: game.phase_machine.day_number });
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Testimony, day_number: game.phase_machine.day_number });
+                
                 //TODO should be impossible for there to be no player on trial therefore unwrap
-                game.add_chat_group(ChatGroup::All, ChatMessage::PlayerOnTrial { player_index: game.player_on_trial.unwrap() });
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerOnTrial { player_index: game.player_on_trial.unwrap() });
                 game.send_to_all(ToClientPacket::PlayerOnTrial { player_index: game.player_on_trial.unwrap() });
             },
             PhaseType::Judgement => {
-                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Judgement, day_number: game.phase_machine.day_number });
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Judgement, day_number: game.phase_machine.day_number });
 
             },
             PhaseType::Evening => {
-                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Evening, day_number: game.phase_machine.day_number });
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Evening, day_number: game.phase_machine.day_number });
                 
             },
             PhaseType::Night => {
-                game.add_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: game.phase_machine.day_number });
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: game.phase_machine.day_number });
 
             },
         }
@@ -120,7 +118,7 @@ impl PhaseType {
                         Verdict::Guilty => guilty += 1,
                     }
                 }
-                game.add_chat_group(ChatGroup::All, ChatMessage::TrialVerdict { player_on_trial: game.player_on_trial.unwrap(), innocent, guilty });
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialVerdict { player_on_trial: game.player_on_trial.unwrap(), innocent, guilty });
 
                 return Self::Evening;
             },

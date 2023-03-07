@@ -1,4 +1,4 @@
-import { create_gameState, create_player } from "./gameState";
+import { create_gameState, create_grave, create_player } from "./gameState";
 import { Main } from "../Main";
 import { LobbyMenu } from "../openMenus/LobbyMenu";
 import { PlayerListMenu } from "../gameMenus/PlayerListMenu";
@@ -6,6 +6,9 @@ import { StartMenu } from "../openMenus/StartMenu";
 import gameManager from "../index.js";
 import { ChatMenu } from "../gameMenus/ChatMenu";
 import { PhaseRowMenu } from "../gameMenus/PhaseRowMenu";
+import { TitleMenu } from "../openMenus/TitleMenu";
+import { WillMenu } from "../gameMenus/WillMenu";
+import { GraveyardMenu } from "../gameMenus/GraveyardMenu";
 
 
 //let gameManager = create_gameManager();
@@ -157,12 +160,15 @@ export function create_gameManager(){
                 break;
                 case"Kicked":
                     gameManager.gameState = create_gameState();
-                    Main.instance.setState({panels : [<StartMenu/>]})
+                    Main.instance.setState({
+                        rows: [<TitleMenu/>],
+                        panels : [<StartMenu/>]
+                    })
                 break;
                 case "OpenGameMenu":
                     Main.instance.setState({
-                        panels : [<ChatMenu/>, <PlayerListMenu/>],
-                        navigationRows : [<PhaseRowMenu/>]
+                        panels : [<GraveyardMenu/> ,<ChatMenu/>, <PlayerListMenu/>, <WillMenu/>],
+                        rows : [<PhaseRowMenu/>]
                     });
                 break;
                 case"PhaseTimes":
@@ -182,12 +188,6 @@ export function create_gameManager(){
                 case"PlayerOnTrial":
                     gameManager.gameState.playerOnTrial = serverMessage.player_index;
                 break;
-                case"YourWill":
-                    gameManager.gameState.will = serverMessage.will;
-                break;
-                case"YourRole":
-                    gameManager.gameState.role = serverMessage.role;
-                break;
                 case"PlayerButtons":
                     for(let i = 0; i < gameManager.gameState.players.length && i < serverMessage.buttons.length; i++){
                         gameManager.gameState.players[i].buttons.vote = serverMessage.buttons[i].vote;
@@ -205,10 +205,27 @@ export function create_gameManager(){
                         gameManager.gameState.players[i].numVoted = serverMessage.voted_for_player[i];
                     }
                 break;
+                case"YourWill":
+                    gameManager.gameState.will = serverMessage.will;
+                break;
+                case"YourRole":
+                    gameManager.gameState.role = serverMessage.role;
+                break;
                 case"AddChatMessages":
                     for(let i = 0; i < serverMessage.chat_messages.length; i++){
                         gameManager.gameState.chatMessages.push(serverMessage.chat_messages[i]);
                     }
+                break;
+                case"AddGrave":
+                    let grave = create_grave();
+                    grave.playerIndex = serverMessage.grave.player_index;
+                    grave.role =        serverMessage.grave.role;
+                    grave.killer =      serverMessage.grave.killer;
+                    grave.will =        serverMessage.grave.will;
+                    grave.diedPhase =   serverMessage.grave.died_phase;
+                    grave.dayNumber =   serverMessage.grave.day_number;
+
+                    gameManager.gameState.graves.push(grave);
                 break;
                 default:
                     console.log("incoming_message response not implemented "+type);

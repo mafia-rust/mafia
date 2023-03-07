@@ -14,12 +14,27 @@ export class PlayerListMenu extends React.Component {
             })
         };  
     }
-
     componentDidMount() {
         gameManager.addStateListener(this.listener);
     }
     componentWillUnmount() {
         gameManager.removeStateListener(this.listener);
+    }
+
+    renderPhaseSpecific(){
+        
+        switch(this.state.gameState.phase){
+            case"Voting":
+            return(<div>
+                <button onClick={()=>{gameManager.vote_button(null);}}>Reset Vote</button>
+            </div>);
+            case"Night":
+            return(<div>
+                <button onClick={()=>{gameManager.target_button([]);}}>Reset Targets</button>
+            </div>);
+            default:
+            return null;
+        }
     }
 
     renderPlayer(playerIndex){
@@ -91,6 +106,8 @@ export class PlayerListMenu extends React.Component {
     </div>}
 
     render(){return(<div>
+        {this.renderPhaseSpecific()}
+        <br/>
         {this.renderPlayers()}
     </div>)}
 }

@@ -17,8 +17,6 @@ export class StartMenu extends React.Component {
     }
 
     render(){return(<div>
-        Mafia<br/>
-        <br/>
         <button style={{width: "90%"}} onClick={()=>{
             gameManager.gameState = create_gameState();
             Main.instance.setState({panels : [<JoinGameMenu/>]});

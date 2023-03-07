@@ -71,7 +71,7 @@ export class LobbyMenu extends React.Component {
         
     </div>)}
 
-    renderTimeSettings(){return(<div style={{textAlign: "center"}}>
+    renderTimeSettings(){return(<div>
         <button onClick={()=>{this.phaseTimes_button()}}>Set Time Settings</button><br/>
         
         <div style={{display:"grid",gridAutoColumns:"1fr", gridAutoRows:"1fr"}}>

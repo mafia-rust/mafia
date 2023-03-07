@@ -10,7 +10,7 @@ use crate::game::{
         verdict::Verdict, phase::PhaseType, 
         chat::{ChatMessage, ChatGroup},
         role::Role, 
-        Game
+        Game, grave::Grave
     };
 
 use super::listener::RoomCode;
@@ -40,13 +40,14 @@ pub enum ToClientPacket{
     //Syncronize
     Phase{phase: PhaseType, day_number: u8, seconds_left: u64},   //Time left & PhaseType
     PlayerOnTrial{player_index: PlayerIndex},  //Player index
-    YourWill{will: String},
-    YourRole{role: Role},
-    
+
+        
     PlayerButtons{buttons: Vec<PlayerButtons>},
     PlayerAlive{alive: Vec<bool>},
     PlayerVotes{voted_for_player: Vec<u8>}, //map from playerindex to num_voted_for that player
 
+    YourWill{will: String},
+    YourRole{role: Role},
     YourTarget{player_indices: Vec<PlayerIndex>},
     YourVoting{player_index: Option<PlayerIndex>},
     YourJudgement{verdict: Verdict},
@@ -54,8 +55,7 @@ pub enum ToClientPacket{
 
     //Run function
     AddChatMessages{chat_messages: Vec<ChatMessage>},
-
-    
+    AddGrave{grave: Grave}    
 
     //a way to syncronise the entire game for someone who joined late
 }

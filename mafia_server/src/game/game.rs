@@ -106,7 +106,13 @@ impl Game {
 
         if self.phase_machine.time_remaining <= Duration::ZERO{
             let new_phase = PhaseType::end(self);
-            self.jump_to_phase(new_phase);
+            //reset
+            for player in self.players.iter_mut(){
+                player.reset_phase_variables(new_phase);
+            }
+            self.reset(new_phase);
+            //start next phase
+            self.jump_to_phase(new_phase);  //phase start is called here
         }
         
         self.phase_machine.time_remaining = match self.phase_machine.time_remaining.checked_sub(time_passed){
@@ -134,7 +140,7 @@ impl Game {
         self.send_to_all(ToClientPacket::PlayerAlive { alive });
     }
 
-    pub fn add_chat_group(&mut self, group: ChatGroup, message: ChatMessage){
+    pub fn add_message_to_chat_group(&mut self, group: ChatGroup, message: ChatMessage){
         let mut message = message.clone();
         if let ChatMessage::Normal { message_sender, text, chat_group } = &mut message {
             *chat_group = group.clone();
@@ -147,10 +153,15 @@ impl Game {
             let player = self.get_unchecked_mut_player(i as u8);
             player.add_chat_message(message.clone());
         }
+
+        //send messages to player
+        for player in self.players.iter_mut(){
+            player.send_chat_messages();
+        }
     }
-    pub fn add_many_chat_group(&mut self, group: ChatGroup, messages: Vec<ChatMessage>){
+    pub fn add_messages_to_chat_group(&mut self, group: ChatGroup, messages: Vec<ChatMessage>){
         for message in messages.into_iter(){
-            self.add_chat_group(group.clone(), message);
+            self.add_message_to_chat_group(group.clone(), message);
         }
     }
 
@@ -164,7 +175,7 @@ impl Game {
 
                 player.send(ToClientPacket::YourVoting { player_index: player_voted_index });
                 let chat_message = ChatMessage::Voted { voter: player.index, votee: player_voted_index };
-                self.add_chat_group(ChatGroup::All, chat_message);
+                self.add_message_to_chat_group(ChatGroup::All, chat_message);
 
 
                 //get all votes on people

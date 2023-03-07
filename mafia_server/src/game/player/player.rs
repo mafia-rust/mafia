@@ -73,7 +73,10 @@ impl Player {
         match phase {
             PhaseType::Morning => {},
             PhaseType::Discussion => {},
-            PhaseType::Voting => self.voting_variables.reset(),
+            PhaseType::Voting => {
+                self.voting_variables.reset();
+                self.send(ToClientPacket::YourVoting { player_index: self.voting_variables.chosen_vote });
+            },
             PhaseType::Testimony => {},
             PhaseType::Judgement => {},
             PhaseType::Evening => {},
@@ -94,7 +97,7 @@ impl Player {
     }
     ///call this repeadedly
     pub fn tick(&mut self){
-        self.send_chat_messages();
+        // self.send_chat_messages();
         // self.send_available_buttons();
     }
     
@@ -104,8 +107,9 @@ impl Player {
         }
     }
     
-    fn send_chat_messages(&mut self){
-        if self.queued_chat_messages.len() == 0{    //redundant with the next if in the send. possibly delete this
+    pub fn send_chat_messages(&mut self){
+        
+        if self.queued_chat_messages.len() == 0 {
             return;
         }
         

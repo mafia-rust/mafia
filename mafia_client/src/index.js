@@ -7,14 +7,14 @@ import { create_gameManager } from './game/gameManager';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 let gameManager = create_gameManager();
-// let time_period = 1000;
-// let recurse = ()=>{
-//   setTimeout(()=>{
-//     gameManager.tick(time_period);
-//     recurse();
-//   },time_period);
-// };
-// recurse();
+let time_period = 1000;
+let recurse = ()=>{
+  setTimeout(()=>{
+    gameManager.tick(time_period);
+    recurse();
+  },time_period);
+};
+recurse();
 
 export default gameManager;
 

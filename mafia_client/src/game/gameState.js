@@ -6,6 +6,7 @@ export function create_gameState(){
         chatMessages : [],  //string + chat messages
 
         players: [],
+        graves: [],
         
         roleList: [],
         
@@ -53,3 +54,19 @@ export function create_player(){
         alive:true,
     }
 }
+
+
+export function create_grave(){
+    return{
+        playerIndex: null,
+    
+        role: "",
+        killer: "",
+        will: "",
+    
+        diedPhase: "",
+        dayNumber: null,
+    }
+}
+
+
