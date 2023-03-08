@@ -110,6 +110,29 @@ export function create_gameManager(){
             }, null, false));
         },
 
+        saveWill_button: (will)=>{
+            gameManager.Server.send(JSON.stringify({
+                "SaveWill":{
+                    "will":will
+                }
+            }, null, false));
+        },
+        sendMessage_button: (text)=>{
+            gameManager.Server.send(JSON.stringify({
+                "SendMessage":{
+                    "text":text
+                }
+            }, null, false));
+        },
+        sendWhisper_button: (playerIndex, text)=>{
+            gameManager.Server.send(JSON.stringify({
+                "SendWhisper":{
+                    "player_index":playerIndex,
+                    "text":text
+                }
+            }, null, false));
+        },
+
         messageListener: (serverMessage)=>{
 
             let type;
@@ -271,7 +294,7 @@ function create_server(){
             Main.instance.setState({panels: [<StartMenu/>]});
         },
         messageListener: (event)=>{
-            console.log("Server: "+event.data);
+            // console.log("Server: "+event.data);
 
             gameManager.messageListener(
                 JSON.parse(event.data)

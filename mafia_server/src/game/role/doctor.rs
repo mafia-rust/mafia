@@ -17,7 +17,10 @@ pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game
     todo!();
 }
 pub(super) fn can_night_target(actor_index: PlayerIndex, target_index: PlayerIndex, game: &Game) -> bool {
-    actor_index != target_index && game.get_unchecked_player(actor_index).alive && game.get_unchecked_player(target_index).alive
+    actor_index != target_index &&
+    game.get_unchecked_player(actor_index).night_variables.chosen_targets.len() < 1 &&
+    game.get_unchecked_player(actor_index).alive &&
+    game.get_unchecked_player(target_index).alive
 }
 pub(super) fn do_day_action(actor_index: PlayerIndex, game: &mut Game) {
     

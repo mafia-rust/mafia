@@ -33,7 +33,7 @@ export class Main extends React.Component {
         gridAutoColumns: "1fr",
         gridAutoRows: "1fr",
 
-        height: "10%",
+        height: "15%",
         width: "100%",
 
         overflowY:"hidden",
@@ -66,7 +66,7 @@ export class Main extends React.Component {
         gridAutoColumns: "1fr",
         gridAutoRows: "1fr",
 
-        height: "90%",
+        height: "85%",
         width: "100%",
 
         backgroundColor: "black",

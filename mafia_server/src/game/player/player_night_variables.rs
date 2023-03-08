@@ -1,6 +1,6 @@
-use crate::game::{visit::Visit, verdict::Verdict, chat::{night_message::NightInformationMessage, ChatMessage}};
+use crate::game::{visit::Visit, verdict::Verdict, chat::{night_message::NightInformation, ChatMessage}, Game, role::Role};
 
-use super::{PlayerIndex, Player};
+use super::{PlayerIndex, Player, player};
 
 pub struct PlayerNightVariables{
     pub alive_tonight:  bool,
@@ -39,15 +39,15 @@ impl PlayerNightVariables{
             night_messages: vec![],
         }
     }
-    pub fn reset(&mut self, index: PlayerIndex, player: Player){
+    pub fn reset(&mut self, role: Role, player_index: PlayerIndex){
         self.alive_tonight=  true;
         self.died=           false;
         self.attacked=       false;
         self.roleblocked=    false;
-        self.defense=        player.get_role().get_defense();
-        self.suspicious=     player.get_role().is_suspicious();
+        self.defense=        role.get_defense();
+        self.suspicious=     role.is_suspicious();
 
-        self.disguised_as=   index;
+        self.disguised_as=   player_index;
         self.janitor_cleaned=false;
         //forger= todo!();
 

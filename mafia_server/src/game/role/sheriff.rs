@@ -1,5 +1,5 @@
 use crate::game::chat::{ChatGroup, ChatMessage};
-use crate::game::chat::night_message::NightInformationMessage;
+use crate::game::chat::night_message::NightInformation;
 use crate::game::phase::PhaseType;
 use crate::game::player::{Player, PlayerIndex};
 use crate::game::role_list::FactionAlignment;
@@ -24,14 +24,16 @@ pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game
         let target_index = visit.target;
         let target = game.get_unchecked_mut_player(target_index);
         
-        let message = ChatMessage::NightInformationMessage { 
-            night_information: NightInformationMessage::SheriffResult { suspicious: target.night_variables.suspicious } 
+        let message = ChatMessage::NightInformation { 
+            night_information: NightInformation::SheriffResult { suspicious: target.night_variables.suspicious } 
         };
+        
         game.get_unchecked_mut_player(actor_index).night_variables.night_messages.push( message );
     }
 }
 pub(super) fn can_night_target(actor_index: PlayerIndex, target_index: PlayerIndex, game: &Game) -> bool {
     actor_index != target_index &&
+    game.get_unchecked_player(actor_index).night_variables.chosen_targets.len() < 1 &&
     game.get_unchecked_player(actor_index).alive && 
     game.get_unchecked_player(target_index).alive
 }

@@ -27,6 +27,7 @@ pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game
 pub(super) fn can_night_target(actor_index: PlayerIndex, target_index: PlayerIndex, game: &Game) -> bool {
     
     actor_index != target_index && 
+    game.get_unchecked_player(actor_index).night_variables.chosen_targets.len() < 1 &&
     game.get_unchecked_player(actor_index).alive &&
     game.get_unchecked_player(target_index).alive &&
     Faction::Mafia != game.get_unchecked_player(target_index).get_role().get_faction_alignment().faction()

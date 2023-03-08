@@ -111,13 +111,16 @@ impl PhaseType {
             PhaseType::Judgement => {
                 
                 let mut innocent = 0;   let mut guilty = 0;
+                let mut messages = Vec::new();
                 for player in game.players.iter(){
                     match player.voting_variables.verdict{
                         Verdict::Innocent => innocent += 1,
                         Verdict::Abstain => {},
                         Verdict::Guilty => guilty += 1,
                     }
+                    messages.push(ChatMessage::JudgementVerdict { voter_player_index: player.index, verdict: player.voting_variables.verdict.clone() });
                 }
+                game.add_messages_to_chat_group(ChatGroup::All, messages);
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialVerdict { player_on_trial: game.player_on_trial.unwrap(), innocent, guilty });
 
                 return Self::Evening;
@@ -129,24 +132,25 @@ impl PhaseType {
                 
                 //get visits
                 for player_index in 0..game.players.len(){
-                    let player = &mut game.players[player_index];
+                    let player = game.get_unchecked_mut_player(player_index as PlayerIndex);
 
                     let targets: Vec<PlayerIndex> = player.night_variables.chosen_targets.clone();
-
-                    player.get_role().convert_targets_to_visits(player.index, targets, game);
+                    let role = player.get_role();
+                    let visits = role.convert_targets_to_visits(player.index, targets, game);
+                    game.get_unchecked_mut_player(player_index as PlayerIndex).night_variables.visits = visits;
                 }
 
                 //Night actions -- main loop
                 for priority in 0..12{
                     for player_index in 0..game.players.len(){
-                        //impossible panic when getting player
-                        game.players[player_index].get_role().do_night_action(player_index as PlayerIndex, priority, game);
+                        game.get_unchecked_mut_player(player_index as PlayerIndex).get_role().do_night_action(player_index as PlayerIndex, priority, game);
                     }
                 }
 
                 //queue night messages
                 for player in game.players.iter_mut(){
                     player.add_chat_messages(player.night_variables.night_messages.clone());
+                    player.send_chat_messages();
                 }
 
 
@@ -157,7 +161,7 @@ impl PhaseType {
     }
 
     pub fn is_day(&self) -> bool {
-        matches!(self, PhaseType::Night)
+        return Self::Night != *self;
     }
 
 }

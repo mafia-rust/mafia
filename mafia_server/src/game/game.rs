@@ -11,7 +11,7 @@ use tokio_tungstenite::tungstenite::Message;
 use crate::lobby::LobbyPlayer;
 use crate::network::packet::{ToServerPacket, ToClientPacket, self, PlayerButtons};
 use crate::prelude::*;
-use super::chat::{ChatMessage, ChatGroup};
+use super::chat::{ChatMessage, ChatGroup, MessageSender};
 use super::{phase::{PhaseStateMachine, PhaseType}, player::{Player, PlayerIndex}, role_list::RoleList, settings::Settings, grave::Grave};
 
 pub struct Game {
@@ -149,16 +149,16 @@ impl Game {
 
     pub fn add_message_to_chat_group(&mut self, group: ChatGroup, message: ChatMessage){
         let mut message = message.clone();
+
+        //if normal message, then correct chat group
         if let ChatMessage::Normal { message_sender, text, chat_group } = &mut message {
             *chat_group = group.clone();
         }
-        for i in 0..self.players.len(){
-            let player = self.get_unchecked_player(i as u8);
-            let role = player.get_role();
 
-            role.get_current_chat_groups(player.index, self).contains(&group);
-            let player = self.get_unchecked_mut_player(i as u8);
-            player.add_chat_message(message.clone());
+        //add messages
+        let players = group.all_players_in_group(self);
+        for player_index in players.into_iter(){
+            self.get_unchecked_mut_player(player_index).add_chat_message(message.clone());
         }
 
         //send messages to player
@@ -176,11 +176,22 @@ impl Game {
         match incoming_packet {
             ToServerPacket::Vote { player_index: player_voted_index } => {
 
+                if self.phase_machine.current_state != PhaseType::Voting{
+                    return;
+                }
+
                 //Set vote
                 let player = self.get_unchecked_mut_player(player_index);
+                
+                player.send(ToClientPacket::YourVoting { player_index: player_voted_index });
+
+                if player.voting_variables.chosen_vote == player_voted_index {
+                    return;
+                }
+                
                 player.voting_variables.chosen_vote = player_voted_index;
 
-                player.send(ToClientPacket::YourVoting { player_index: player_voted_index });
+                
                 let chat_message = ChatMessage::Voted { voter: player.index, votee: player_voted_index };
                 self.add_message_to_chat_group(ChatGroup::All, chat_message);
 
@@ -224,19 +235,84 @@ impl Game {
                     self.jump_to_phase(PhaseType::Judgement);
                 }
             },
-            ToServerPacket::Judgement { verdict } => {},
+            ToServerPacket::Judgement { verdict } => {
+                if self.phase_machine.current_state != PhaseType::Judgement{
+                    return;
+                }
+
+                let player = self.get_unchecked_mut_player(player_index);
+                
+                player.send(ToClientPacket::YourJudgement { verdict: verdict.clone() });
+                if player.voting_variables.verdict == verdict {
+                    return;
+                }
+                player.voting_variables.verdict = verdict.clone();
+                self.add_message_to_chat_group(ChatGroup::All, ChatMessage::JudgementVote { voter_player_index: player_index });
+            },
             ToServerPacket::Target { player_index_list } => {
+                //TODO can target????
+                //TODO Send you targeted someone message in correct chat.
+                if self.phase_machine.current_state != PhaseType::Night{
+                    return;
+                }
+
                 let player = self.get_unchecked_mut_player(player_index);
                 player.night_variables.chosen_targets = player_index_list.clone();
                 player.send(ToClientPacket::YourTarget { player_indices: player_index_list });
             },
             ToServerPacket::DayTarget { player_index } => {
+                //TODO can daytarget???
+                //TODO
             },
-            ToServerPacket::SendMessage { text } => {},
-            ToServerPacket::SendWhisper { player_index, text } => {},
-            ToServerPacket::SaveWill { will } => {},
+            ToServerPacket::SendMessage { text } => {
+                let player = self.get_unchecked_mut_player(player_index);
+                
+                for chat_group in player.get_role().get_current_chat_groups(player_index, self){
+                    self.add_message_to_chat_group(
+                        chat_group.clone(),
+                        //TODO message sender, Jailor & medium
+                        ChatMessage::Normal { message_sender: MessageSender::Player(player_index) , text: text.clone(), chat_group }
+                    );
+                }
+            },
+            ToServerPacket::SendWhisper { player_index: whispered_to_player_index, text } => {
+
+                //ensure its day and your not whispering yourself
+                if !self.get_current_phase().is_day() || whispered_to_player_index == player_index {
+                    return;
+                }
+        
+                self.add_message_to_chat_group(ChatGroup::All, ChatMessage::BroadcastWhisper { whisperer: player_index, whisperee: whispered_to_player_index });
+                let message = ChatMessage::Whisper { 
+                    from_player_index: player_index, 
+                    to_player_index: whispered_to_player_index, 
+                    text 
+                };
+        
+                let to_player = self.get_unchecked_mut_player(whispered_to_player_index);
+                to_player.add_chat_message(message.clone());
+
+                let from_player = self.get_unchecked_mut_player(player_index);
+                from_player.add_chat_message(message);
+                
+
+                //TODO, send to blackmailer
+            },
+            ToServerPacket::SaveWill { will } => {
+                let player = self.get_unchecked_mut_player(player_index);
+                player.will = will.clone();
+                player.send(ToClientPacket::YourWill { will });
+            },
             _ => unreachable!()
         }
+        
+        let packet = ToClientPacket::PlayerButtons { buttons: PlayerButtons::from(self, player_index)};
+        self.get_unchecked_mut_player(player_index).send(packet);
+
+        for player in self.players.iter_mut(){
+            player.send_chat_messages();
+        }
+
     }
     pub fn send_to_all(&self, packet: ToClientPacket){
         for player in self.players.iter(){

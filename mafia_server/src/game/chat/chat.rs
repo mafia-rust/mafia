@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 
-use crate::game::{grave::Grave, role::{Role, RoleData}, player::{PlayerIndex, Player}, verdict::Verdict, phase::PhaseType};
-use super::night_message::NightInformationMessage;
+use crate::game::{grave::Grave, role::{Role, RoleData}, player::{PlayerIndex, Player}, verdict::Verdict, phase::PhaseType, Game, role_list::{FactionAlignment, Faction}};
+use super::night_message::NightInformation;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum MessageSender {
@@ -36,7 +36,7 @@ pub enum ChatMessage {
     /* Misc */
     BroadcastWhisper { whisperer: PlayerIndex, whisperee: PlayerIndex },    //Sammy whispered to Tyler
     Targeted { targeter: PlayerIndex, target: Option<PlayerIndex> },        //Sammy targeted Jack
-    NightInformationMessage{ night_information: NightInformationMessage },
+    NightInformation{ night_information: NightInformation },
 
     /* Role-specific */
     MayorRevealed{player_index: PlayerIndex}, //Sammy revealed as mayor
@@ -58,4 +58,26 @@ pub enum ChatGroup {
     //Seance
     //Whisper
     //Pirate, 
+}
+impl ChatGroup{
+    pub fn player_in_group(&self, game: &Game, playerIndex: PlayerIndex)->bool{
+        let player = game.get_unchecked_player(playerIndex);
+        match *self {
+            ChatGroup::All => true,
+            ChatGroup::Dead => !player.alive,   //or medium
+
+            ChatGroup::Mafia => player.get_role().get_faction_alignment().faction() == Faction::Mafia,
+            ChatGroup::Vampire => false,    //vampire
+            ChatGroup::Coven => false,
+        }
+    }
+    pub fn all_players_in_group(&self, game: &Game)->Vec<PlayerIndex>{
+        let mut out = Vec::new();
+        for player in game.players.iter(){
+            if self.player_in_group(game, player.index){
+                out.push(player.index);
+            }
+        }
+        out
+    }
 }

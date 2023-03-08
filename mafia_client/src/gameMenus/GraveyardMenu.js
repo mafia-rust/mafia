@@ -24,7 +24,7 @@ export class GraveyardMenu extends React.Component {
     renderGrave(grave, graveIndex){
         return(<div key={graveIndex}>
             {grave.diedPhase} {grave.dayNumber}<br/>
-            {grave.playerIndex}:{this.gameState.players[grave.playerIndex]}<br/>
+            {grave.playerIndex+1}:{this.gameState.players[grave.playerIndex]}<br/>
             {grave.role} killed by {(()=>{
                 let outString = "";
                 for(let i = 0; i < grave.killer.length; i++){

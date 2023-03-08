@@ -25,7 +25,11 @@ export class PlayerListMenu extends React.Component {
     renderPhaseSpecific(){
         switch(this.state.gameState.phase){
             case"Voting":
+            let votedString = "";
+            if(this.state.gameState.voted!=null)
+                votedString = this.state.gameState.players[this.state.gameState.voted].name
             return(<div>
+                <div>{votedString}</div>
                 <button onClick={()=>{
                     gameManager.vote_button(null);
                 }}>Reset Vote</button>
@@ -33,7 +37,7 @@ export class PlayerListMenu extends React.Component {
             case"Night":
             let targetString = "";
             for(let i = 0; i < this.state.gameState.targets.length; i++){
-                targetString+=this.state.gameState.players[this.state.gameState.targets[i]]+", ";
+                targetString+=this.state.gameState.players[this.state.gameState.targets[i]].name+", ";
             }
             return(<div>
                 <div>{targetString}</div>
@@ -53,7 +57,7 @@ export class PlayerListMenu extends React.Component {
         // let buttonCount = player.buttons.dayTarget + player.buttons.target + player.buttons.vote + canWhisper;
 
         return(<div key={playerIndex}>
-            {playerIndex}:{player.name}<br/>
+            {playerIndex+1}:{player.name}<br/>
 
             <div style={{
                 display: "grid",
@@ -64,30 +68,30 @@ export class PlayerListMenu extends React.Component {
 
                 //gridGap: "5px",
             }}>
-                {(()=>{if(player.buttons.target){return(<button style={{
+                {((player)=>{if(player.buttons.target){return(<button style={{
                         gridColumn: 2,
                         // overflowX: "hidden",
                     }}
                     onClick={()=>{
                         gameManager.target_button([...gameManager.gameState.targets, playerIndex]);
                     }}
-                >Target</button>)}})()}
-                {(()=>{if(player.buttons.vote){return(<button style={{
+                >Target</button>)}})(player)}
+                {((player)=>{if(player.buttons.vote){return(<button style={{
                         gridColumn: 3,                    
                         // overflowX: "hidden",
                     }}
                     onClick={()=>{gameManager.vote_button(playerIndex)}}
-                >Vote</button>)}})()}
-                {(()=>{if(player.buttons.dayTarget){return(<button style={{
+                >Vote</button>)}})(player)}
+                {((player)=>{if(player.buttons.dayTarget){return(<button style={{
                         gridColumn: 4,                    
                         // overflowX: "hidden",
                     }}
                     onClick={()=>{gameManager.dayTarget_button(playerIndex)}}
-                >DayTarget</button>)}})()}
-                {(()=>{if(canWhisper){return(<button style={{
+                >DayTarget</button>)}})(player)}
+                {((player)=>{if(canWhisper){return(<button style={{
                     gridColumn: 5,                    
                     // overflowX "hidden",
-                }}>Whisper</button>)}})()}
+                }}>Whisper</button>)}})(player)}
 
                 <div style={{
                     gridColumn: 6,                    
@@ -98,26 +102,20 @@ export class PlayerListMenu extends React.Component {
             
         </div>)
     }
-    renderPlayers(){return<div>
+    renderPlayers(players){return<div>
         {
-            this.state.gameState.players.map((player, playerIndex)=>{
+            players.map((player, playerIndex)=>{
                 if(!this.state.hideDead || player.alive){
                     return this.renderPlayer(player, playerIndex);
                 }
                 return null;
             }, this)
         }
-        {/* {this.renderPlayer("Cotton Mather")}
-        <br/>
-        {this.renderPlayer("Johnathan Williams")}
-        <br/>
-        {this.renderPlayer("Sammy")}
-        <br/> */}
     </div>}
 
     render(){return(<div>
         {this.renderPhaseSpecific()}
         <br/>
-        {this.renderPlayers()}
+        {this.renderPlayers(this.state.gameState.players)}
     </div>)}
 }

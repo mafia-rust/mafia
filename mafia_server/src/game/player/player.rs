@@ -2,7 +2,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     game::{
-        Game, chat::{ChatMessage, night_message::NightInformationMessage}, 
+        Game, chat::{ChatMessage, night_message::NightInformation}, 
         visit::Visit, verdict::Verdict,
         phase::{
             PhaseType
@@ -23,6 +23,7 @@ pub struct Player {
     pub index: PlayerIndex,
     pub role_data: RoleData,
     pub alive: bool,
+    pub will: String,
 
     sender: UnboundedSender<ToClientPacket>,
 
@@ -40,6 +41,7 @@ impl Player {
             index,
             role_data: role.default_data(),
             alive: true,
+            will: "".to_string(),
 
             sender,
             chat_messages: Vec::new(),
@@ -75,21 +77,32 @@ impl Player {
             PhaseType::Discussion => {},
             PhaseType::Voting => {
                 self.voting_variables.reset();
-                self.send(ToClientPacket::YourVoting { player_index: self.voting_variables.chosen_vote });
+                self.send(ToClientPacket::YourVoting { player_index: self.voting_variables.chosen_vote.clone() });
+                self.send(ToClientPacket::YourJudgement { verdict: self.voting_variables.verdict.clone() });
             },
             PhaseType::Testimony => {},
             PhaseType::Judgement => {},
             PhaseType::Evening => {},
-            PhaseType::Night => self.voting_variables.reset(),
+            PhaseType::Night => {
+                self.night_variables.reset(self.get_role(), self.index);
+                self.send(ToClientPacket::YourTarget { player_indices: self.night_variables.chosen_targets.clone() });
+            }
         }
     }
 
     //Night helper functions
-    pub fn roleblock(&mut self){
-        self.night_variables.roleblocked = true;
-        self.night_variables.night_messages.push(ChatMessage::NightInformationMessage { night_information: NightInformationMessage::RoleBlocked { immune: false }});
-    }
+    ///returns true if they were roleblocked by you
+    pub fn roleblock(&mut self)->bool{
 
+        if self.get_role().is_roleblockable() {
+            self.night_variables.roleblocked = true;
+            self.night_variables.night_messages.push(ChatMessage::NightInformation { night_information: NightInformation::RoleBlocked { immune: false }});
+            return true;
+        }else{
+            self.night_variables.night_messages.push(ChatMessage::NightInformation { night_information: NightInformation::RoleBlocked { immune: true }});
+            return false;
+        }
+    }
 
     //sync server client
     pub fn send(&self, packet: ToClientPacket){

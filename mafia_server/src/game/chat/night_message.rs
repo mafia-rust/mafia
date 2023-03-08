@@ -6,7 +6,7 @@ use crate::game::role::Role;
 use super::ChatMessage;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub enum NightInformationMessage {
+pub enum NightInformation {
     RoleBlocked { immune : bool },
     TargetSurvivedAttack,
     YouSurvivedAttack,
