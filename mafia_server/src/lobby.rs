@@ -36,10 +36,10 @@ impl Lobby {
 
         //TODO it crashes and also loads the file every time a new lobby is made this is obviously bad
         let mut default_names: Vec<String> = 
-            fs::read_to_string(".\\resources\\random_names\\default_names.csv").expect("Should have been able to read the file").lines()
+            fs::read_to_string("./resources/random_names/default_names.csv").expect("Should have been able to read the file").lines()
             .map(|s|{s.to_string()}).collect();
         let mut extra_names: Vec<String> = 
-            fs::read_to_string(".\\resources\\random_names\\extra_names.csv").expect("Should have been able to read the file").lines()
+            fs::read_to_string("./resources/random_names/extra_names.csv").expect("Should have been able to read the file").lines()
             .map(|s|{s.to_string()}).collect();
 
         let mut random_names = Vec::new();
