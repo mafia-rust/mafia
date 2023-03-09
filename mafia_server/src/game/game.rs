@@ -176,7 +176,7 @@ impl Game {
         match incoming_packet {
             ToServerPacket::Vote { player_index: player_voted_index } => {
 
-                if self.phase_machine.current_state != PhaseType::Voting{
+                if self.phase_machine.current_state != PhaseType::Voting || (player_voted_index.is_some() && self.players.len() <= player_voted_index.unwrap() as usize){
                     return;
                 }
 
@@ -256,9 +256,18 @@ impl Game {
                     return;
                 }
 
+                self.get_unchecked_mut_player(player_index).night_variables.chosen_targets = vec![];
+                let role = self.get_unchecked_mut_player(player_index).get_role();
+
+                for target_index in player_index_list {
+                    if role.can_night_target(player_index, target_index, self) {
+                        self.get_unchecked_mut_player(player_index).night_variables.chosen_targets.push(target_index);
+                    }
+                }
+
                 let player = self.get_unchecked_mut_player(player_index);
-                player.night_variables.chosen_targets = player_index_list.clone();
-                player.send(ToClientPacket::YourTarget { player_indices: player_index_list });
+
+                player.send(ToClientPacket::YourTarget { player_indices: player.night_variables.chosen_targets.clone() });
             },
             ToServerPacket::DayTarget { player_index } => {
                 //TODO can daytarget???
@@ -277,11 +286,11 @@ impl Game {
             },
             ToServerPacket::SendWhisper { player_index: whispered_to_player_index, text } => {
 
-                //ensure its day and your not whispering yourself
-                if !self.get_current_phase().is_day() || whispered_to_player_index == player_index {
+                //ensure its day and your not whispering yourself and the other player exists
+                if !self.get_current_phase().is_day() || whispered_to_player_index == player_index || self.players.len() <= whispered_to_player_index as usize{
                     return;
                 }
-        
+
                 self.add_message_to_chat_group(ChatGroup::All, ChatMessage::BroadcastWhisper { whisperer: player_index, whisperee: whispered_to_player_index });
                 let message = ChatMessage::Whisper { 
                     from_player_index: player_index, 

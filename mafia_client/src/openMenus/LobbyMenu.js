@@ -5,9 +5,7 @@ export class LobbyMenu extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            showTimeSettings: false,
-            
+        this.state = {            
             nameField: "",
 
             morningTimeField : "5",
@@ -62,13 +60,8 @@ export class LobbyMenu extends React.Component {
         <button onClick={()=>{gameManager.setName_button(this.state.nameField)}}>Set Name</button><br/>
     </div>)}
     renderSettings(){return(<div>
-        {(()=>{
-            if(this.state.showTimeSettings)
-                return this.renderTimeSettings();
-            else
-                return (<button onClick={()=>{this.setState({showTimeSettings: true})}}>Time Settings<br/></button>)
-        })()}
-        
+        {this.renderTimeSettings()}
+        {this.renderRolePicker()}
     </div>)}
 
     renderTimeSettings(){return(<div>
@@ -141,12 +134,10 @@ export class LobbyMenu extends React.Component {
                         this.phaseTimes_button();}}
             />
         </div>
-
-        <button onClick={()=>{this.setState({showTimeSettings : false})}}>Close Time Settings</button><br/>
     </div>)}
 
     renderRolePicker(){return(<div>
-        Role List
+        <RolePicker/>
     </div>)}
     renderPlayers(){return(<div>
         {this.state.gameState.players.map((player, i)=>{
@@ -154,17 +145,99 @@ export class LobbyMenu extends React.Component {
         })}
     </div>)}
 
-    render(){return(<div>
-        Room Code: "{this.state.roomCode}"<br/>
-        <br/>
-        {this.renderName()}
+    render(){return(<div style={{
+        display: "grid",
+        gridAutoColumns: "1fr"
+    }}>
+        <div style={{
+            gridColumn: 1
+        }}>
+            Room Code: "{this.state.roomCode}"<br/>
+            <button style={{width: "90%"}} onClick={()=>{gameManager.startGame_button()}}>Start</button><br/>
+            <br/>
+            {this.renderName()}
+            <br/>
+            {this.renderPlayers()}
+            <br/>
+        </div>
+        <div style={{
+            gridColumn: 2
+        }}>
         <br/>
         {this.renderSettings()}
         <br/>
-        {this.renderRolePicker()}
-        <br/>
-        {this.renderPlayers()}
-        <br/>
-        <button style={{width: "90%"}} onClick={()=>{gameManager.startGame_button()}}>Start</button><br/>
+        </div>
+
     </div>)}
+}
+
+
+
+class RolePicker extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        faction: '',
+        alignment: '',
+        role: ''
+      };
+  
+      this.handleFactionChange = this.handleFactionChange.bind(this);
+      this.handleAlignmentChange = this.handleAlignmentChange.bind(this);
+      this.handleRoleChange = this.handleRoleChange.bind(this);
+    }
+  
+    handleFactionChange(event) {
+      this.setState({ faction: event.target.value });
+      this.setState({ alignment: '' });
+      this.setState({ role: '' });
+    }
+  
+    handleAlignmentChange(event) {
+      this.setState({ alignment: event.target.value });
+      this.setState({ role: '' });
+    }
+  
+    handleRoleChange(event) {
+      this.setState({ role: event.target.value });
+    }
+  
+    render() {
+      const factions = ['Faction 1', 'Faction 2', 'Faction 3'];
+      const alignments = ['Alignment 1', 'Alignment 2', 'Alignment 3'];
+      const roles = ['Role 1', 'Role 2', 'Role 3'];
+  
+      return (
+        <div>
+          <h2>Role Picker</h2>
+          <form>
+            <label>
+              Faction:
+              <select value={this.state.faction} onChange={this.handleFactionChange}>
+                <option value="">Select Faction</option>
+                {factions.map(faction => <option key={faction} value={faction}>{faction}</option>)}
+              </select>
+            </label>
+            {this.state.faction && !this.state.alignment &&
+              <label>
+                Alignment:
+                <select value={this.state.alignment} onChange={this.handleAlignmentChange}>
+                  <option value="">Select Alignment</option>
+                  {alignments.map(alignment => <option key={alignment} value={alignment}>{alignment}</option>)}
+                </select>
+              </label>
+            }
+            {(this.state.faction && this.state.alignment) || (!this.state.faction && !this.state.alignment) &&
+              <label>
+                Role:
+                <select value={this.state.role} onChange={this.handleRoleChange}>
+                  <option value="">Select Role</option>
+                  {roles.map(role => <option key={role} value={role}>{role}</option>)}
+                </select>
+              </label>
+            }
+          </form>
+        </div>
+      );
+    }
 }

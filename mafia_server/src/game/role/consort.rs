@@ -14,7 +14,7 @@ pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaSu
 
 
 pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game: &mut Game) {
-    if priority != 4{
+    if priority != 4 {
         return;
     }
     
