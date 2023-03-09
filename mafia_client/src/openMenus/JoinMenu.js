@@ -1,7 +1,7 @@
 import React from "react";
 import gameManager from "../index.js";
 
-export class JoinGameMenu extends React.Component {
+export class JoinMenu extends React.Component {
     constructor(props) {
         super(props);
 
@@ -13,37 +13,21 @@ export class JoinGameMenu extends React.Component {
     }
     componentWillUnmount() {
     }
-    
-    button(host){
-
-        gameManager.Server.close();
-        gameManager.Server.open();
-        //wait for server to open
-
-        // TODO fix this garbage thing to wait
-        setTimeout(()=>{
-            switch(host){
-                case true:
-                    this.hostGameButton();
-                    break;
-                case false:
-                    this.joinGameButton();
-                    break;
-                default:
-                    break;
-            }
-        },1000);
-
-        
-    }
     joinGameButton(){
         gameManager.roomCode = Number(this.state.roomCodeValue);
-        gameManager.join_button();
+        gameManager.Server.close();
+        gameManager.Server.open();
+        // Wait for server to open
+        
+        setTimeout(gameManager.join_button);
     }
     hostGameButton(){
-        gameManager.host_button();
+        gameManager.Server.close();
+        gameManager.Server.open();
+        // Wait for server to open
+        
+        setTimeout(gameManager.host_button);
     }
-
     render(){return(<div>
         Room Code<br/>
         <input type="text" value={this.state.roomCodeValue} 
@@ -52,11 +36,7 @@ export class JoinGameMenu extends React.Component {
                 if(e.key === 'Enter')
                     gameManager.roomCode = Number(this.state.roomCodeValue);
             }}
-        /><br/>
-        <br/>
-        <br/>
+        />
         <button style={{width: "90%"}} onClick={()=>{this.button(false)}}>Join Lobby</button><br/>
-        <br/>
-        <button style={{width: "90%"}} onClick={()=>{this.button(true)}}>New Lobby</button><br/>
     </div>)}
 }

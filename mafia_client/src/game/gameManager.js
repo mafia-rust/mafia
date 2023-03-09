@@ -1,14 +1,14 @@
 import { create_gameState, create_grave, create_player } from "./gameState";
 import { Main } from "../Main";
-import { LobbyMenu } from "../openMenus/LobbyMenu";
+import { LobbyMenu } from "../openMenus/lobby/LobbyMenu";
 import { PlayerListMenu } from "../gameMenus/PlayerListMenu";
 import { StartMenu } from "../openMenus/StartMenu";
 import gameManager from "../index.js";
 import { ChatMenu } from "../gameMenus/ChatMenu";
 import { PhaseRowMenu } from "../gameMenus/PhaseRowMenu";
-import { TitleMenu } from "../openMenus/TitleMenu";
 import { WillMenu } from "../gameMenus/WillMenu";
 import { GraveyardMenu } from "../gameMenus/GraveyardMenu";
+import { GameScreen } from "../gameMenus/GameScreen";
 
 
 //let gameManager = create_gameManager();
@@ -182,15 +182,12 @@ export function create_gameManager(){
                 break;
                 case"Kicked":
                     gameManager.gameState = create_gameState();
-                    Main.instance.setState({
-                        rows: [<TitleMenu/>],
-                        panels : [<StartMenu/>]
-                    })
+                    Main.instance.setContent(<StartMenu/>)
                 break;
                 case "OpenGameMenu":
-                    Main.instance.setState({
+                    GameScreen.instance.setState({
+                        header : <PhaseRowMenu/>,
                         panels : [<GraveyardMenu/> ,<ChatMenu/>, <PlayerListMenu/>, <WillMenu/>],
-                        rows : [<PhaseRowMenu/>]
                     });
                 break;
                 case"PhaseTimes":
