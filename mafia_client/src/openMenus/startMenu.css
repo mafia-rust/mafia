@@ -1,26 +1,7 @@
-/* Create a centered title and place a floating login button in the top-right */
-.header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
+.sm-header {
     height: 58vh;
-    background-color: #282c34;
-    color: white;
 }
-.title {
-    font-size: 440%;
-    font-weight: bold;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    margin: 0;
-    width: 100%;
-    justify-content: center;
-    align-self: center;
-    /* Center self vertically */
-    top: 50%;
-}
-.login-button {
+.sm-login-button {
     margin: 0;
     width: 10vh;
     height: 6vh;
@@ -29,14 +10,14 @@
     right: 5%;
     top: 5%;
 }
-.button-area {
+.sm-button-area {
     display: block;
     justify-content: center;
     align-items: center;
     width: 100%;
     height: 33vh;
 }
-.join-host-button {
+.sm-join-host-button {
     margin: 2vh 2vh;
     width: 50vh;
     max-width: 90vw;
@@ -44,17 +25,4 @@
     min-height: 2rem;
     justify-content: center;
     top: 30%;
-}
-.credits {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 5vh;
-    background-color: #282c34;
-    color: white;
-    font-size: 80%;
-    font-weight: bold;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }

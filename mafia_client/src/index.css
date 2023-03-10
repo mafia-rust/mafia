@@ -12,6 +12,56 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-size: 102%;
-    
+
+    color: white;
 }
-  
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #282c34;
+    width: 100%;
+}
+.header-text {
+    font-size: 440%;
+    font-weight: bold;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    margin: 0;
+    width: 100%;
+    justify-content: center;
+    align-self: center;
+    /* Center self vertically */
+    top: 50%;
+}
+.button {
+    justify-content: center;
+    background-color: white;
+    color: black;
+}
+.credits {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 5vh;
+    background-color: #282c34;
+    font-size: 80%;
+    font-weight: bold;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+.input-box {
+    width: 100%;
+    display: block;
+}
+.input-box-label {
+    align-self: left;
+    left: 2vh;
+}
+.input-field {
+    min-height: 2rem;
+    width: 100%;
+    margin: 2vh 2vh;
+    color: black;
+}

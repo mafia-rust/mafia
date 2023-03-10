@@ -1,0 +1,15 @@
+.jm-header {
+    height: 28vh;
+}
+.jm-header-text {
+    font-size: 325%;
+}
+.jm-input-column {
+    height: 72vh;
+    width: 60vw;
+    max-width: 90vw;
+    align-self: center;
+}
+.jm-button {
+    width: 100%;
+}
