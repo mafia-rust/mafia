@@ -4,14 +4,14 @@ use tokio_tungstenite::tungstenite::Message;
 use serde::{Deserialize, Serialize};
 
 use crate::game::{
-        player::{PlayerIndex, Player},
-        role_list::RoleList,
-        settings::{InvestigatorResults, PhaseTimeSettings},
-        verdict::Verdict, phase::PhaseType, 
-        chat::{ChatMessage, ChatGroup},
-        role::Role, 
-        Game, grave::Grave
-    };
+    player::{PlayerIndex, Player},
+    role_list::RoleList,
+    settings::{InvestigatorResults, PhaseTimeSettings},
+    verdict::Verdict, phase::PhaseType, 
+    chat::{ChatMessage, ChatGroup},
+    role::Role, 
+    Game, grave::Grave
+};
 
 use super::listener::RoomCode;
 
@@ -20,7 +20,7 @@ pub enum ToClientPacket{
     
         //Pre lobby
     AcceptJoin,
-    RejectJoin{reason: String},
+    RejectJoin{reason: RejectJoinReason},
     AcceptHost{room_code: String},
     
         //Lobby
@@ -90,6 +90,14 @@ impl ToClientPacket {
         ToClientPacket::PlayerAlive { alive }
     }
 }
+
+#[derive(Serialize, Debug, Clone, Copy)]
+pub enum RejectJoinReason {
+    GameAlreadyStarted,
+    RoomFull,
+    InvalidRoomCode,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PlayerButtons{
     pub vote: bool,

@@ -142,13 +142,28 @@ export function create_gameManager(){
 
             //In each of the cases, ensure that your not interpreting anything as an object when it isnt.
             //on the rust side, this is an enum called ToClientPacket
-            switch(type){
+            switch(type) {
                 case "AcceptJoin":
                     Main.instance.setContent(<LobbyMenu/>);
                 break;
                 case "RejectJoin":
-                    let reason = serverMessage.reason
-                    alert(reason);
+                    switch(serverMessage.reason) {
+                        case "InvalidRoomCode":
+                            alert("Couldn't join: No lobby has that room code!");
+                        break;
+                        case "GameAlreadyStarted":
+                            alert("Couldn't join: That game has already begun!");
+                        break;
+                        case "RoomFull":
+                            alert("Couldn't join: That lobby is full!");
+                        break;
+                        default:
+                            alert("Couldn't join lobby for an unknown reason!");
+                            console.log("incoming_message response not implemented "+type+": "+serverMessage.reason);
+                            console.log(serverMessage);
+                        break;
+                    }
+                    Main.instance.setContent(<StartMenu/>);
                 break;
                 case "AcceptHost":
                     gameManager.roomCode = serverMessage.room_code;

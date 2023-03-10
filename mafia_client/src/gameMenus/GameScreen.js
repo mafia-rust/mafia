@@ -64,15 +64,7 @@ export class GameScreen extends React.Component {
                     
                     backgroundColor: "green",
                 }}>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
                     {panel}
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
                 </div>)
             })
         }
