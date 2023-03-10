@@ -7,7 +7,7 @@ export class LobbySettingsPane extends React.Component {
         super(props);
 
         this.state = {
-            morningTimeField : "5",
+            morningTimeField: "5",
             discussionTimeField: "45", 
             votingTimeField: "30", 
             testimonyTimeField: "20", 
@@ -40,76 +40,44 @@ export class LobbySettingsPane extends React.Component {
     </div>)}
 
     renderTimeSettings(){return(<div>
-        <button onClick={()=>{this.phaseTimesButton()}}>Set Time Settings</button>
+        <button className="button lm-set-time-button" onClick={this.phaseTimesButton}>Set Time Settings</button>
         
-        <div style={{display:"grid",gridAutoColumns:"1fr", gridAutoRows:"1fr"}}>
-            
-            <div style={{gridColumn:"1"}}></div>
-            <div style={{gridColumn:"4"}}></div>
-
-            <div style={{gridColumn:"2", gridRow:"1"}}>Morning<br/>{gameManager.gameState.phaseTimes.morning}</div>
-            <input type="text" value={this.state.morningTimeField}
-                style={{gridColumn:"3", gridRow:"1"}}
-                onChange={(e)=>{this.setState({morningTimeField: e.target.value})}}
-                onKeyUp={(e)=>{
-                    if(e.key === 'Enter')
-                        this.phaseTimesButton();
-                }}
-            />
-            <div style={{gridColumn:"2", gridRow:"2"}}>Discussion<br/>{gameManager.gameState.phaseTimes.discussion}</div>
-            <input type="text" value={this.state.discussionTimeField}
-                style={{gridColumn:"3", gridRow:"2"}}
-                onChange={(e)=>{this.setState({discussionTimeField: e.target.value})}}
-                onKeyUp={(e)=>{
-                    if(e.key === 'Enter')
-                        this.phaseTimesButton();
-                }}
-            />
-            <div style={{gridColumn:"2", gridRow:"3"}}>Voting<br/>{gameManager.gameState.phaseTimes.voting}</div>
-            <input type="text" value={this.state.votingTimeField}
-                style={{gridColumn:"3", gridRow:"3"}}
-                onChange={(e)=>{this.setState({votingTimeField: e.target.value})}}
-                onKeyUp={(e)=>{
-                    if(e.key === 'Enter')
-                        this.phaseTimesButton();  
-                }}
-            />
-            <div style={{gridColumn:"2", gridRow:"4"}}>Testimony<br/>{gameManager.gameState.phaseTimes.testimony}</div>
-            <input type="text" value={this.state.testimonyTimeField}
-                style={{gridColumn:"3", gridRow:"4"}}
-                onChange={(e)=>{this.setState({testimonyTimeField: e.target.value})}}
-                onKeyUp={(e)=>{
-                    if(e.key === 'Enter')
-                        this.phaseTimesButton();
-                }}
-            />
-            <div style={{gridColumn:"2", gridRow:"5"}}>Judgement<br/>{gameManager.gameState.phaseTimes.judgement}</div>
-            <input type="text" value={this.state.judgementTimeField}
-                style={{gridColumn:"3", gridRow:"5"}}
-                onChange={(e)=>{this.setState({judgementTimeField: e.target.value})}}
-                onKeyUp={(e)=>{
-                    if(e.key === 'Enter')
-                        this.phaseTimesButton();
-                }}
-            />
-            <div style={{gridColumn:"2", gridRow:"6"}}>Evening<br/>{gameManager.gameState.phaseTimes.evening}</div>
-            <input type="text" value={this.state.eveningTimeField}
-                style={{gridColumn:"3", gridRow:"6"}}
-                onChange={(e)=>{this.setState({eveningTimeField: e.target.value})}}
-                onKeyUp={(e)=>{
-                    if(e.key === 'Enter')
-                        this.phaseTimesButton();}}
-            />
-            <div style={{gridColumn:"2", gridRow:"7"}}>Night<br/>{gameManager.gameState.phaseTimes.night}</div>
-            <input type="text" value={this.state.nightTimeField}
-                style={{gridColumn:"3", gridRow:"7"}}
-                onChange={(e)=>{this.setState({nightTimeField: e.target.value})}}
-                onKeyUp={(e)=>{
-                    if(e.key === 'Enter')
-                        this.phaseTimesButton();}}
-            />
+        <div className="lm-time-select-region">
+            {this.renderTimePicker("Morning", this.state.morningTimeField, 
+                (val) => { this.setState({morningTimeField: val}) }
+            )}
+            {this.renderTimePicker("Discussion", this.state.discussionTimeField, 
+                (val) => { this.setState({discussionTimeField: val}) }
+            )}
+            {this.renderTimePicker("Voting", this.state.votingTimeField, 
+                (val) => { this.setState({votingTimeField: val}) }
+            )}
+            {this.renderTimePicker("Testimony", this.state.testimonyTimeField, 
+                (val) => { this.setState({testimonyTimeField: val}) }
+            )}
+            {this.renderTimePicker("Judgement", this.state.judgementTimeField, 
+                (val) => { this.setState({judgementTimeField: val}) }
+            )}
+            {this.renderTimePicker("Evening", this.state.eveningTimeField, 
+                (val) => { this.setState({eveningTimeField: val}) }
+            )}
+            {this.renderTimePicker("Night", this.state.nightTimeField, 
+                (val) => { this.setState({nightTimeField: val}) }
+            )}
         </div>
     </div>)}
+
+    renderTimePicker(name, value, setter) {return <div className="input-box">
+        <div className="input-box-label">{name}</div>
+        <input type="text" value={value}
+            className="input-field"
+            onChange={(e)=>{setter(e.target.value)}}
+            onKeyUp={(e)=>{
+                if(e.key === 'Enter')
+                    this.phaseTimesButton();
+            }}
+        />
+    </div>}
 
     renderRolePicker(){return(<div>
         <RolePicker/>

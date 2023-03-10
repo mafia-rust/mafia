@@ -9,6 +9,7 @@ import { PhaseRowMenu } from "../gameMenus/PhaseRowMenu";
 import { WillMenu } from "../gameMenus/WillMenu";
 import { GraveyardMenu } from "../gameMenus/GraveyardMenu";
 import { GameScreen } from "../gameMenus/GameScreen";
+import { LoadingMenu } from "../openMenus/LoadingMenu";
 
 
 //let gameManager = create_gameManager();
@@ -149,7 +150,7 @@ export function create_gameManager(){
             //on the rust side, this is an enum called ToClientPacket
             switch(type){
                 case "AcceptJoin":
-                    Main.instance.setState({panels : [<LobbyMenu/>]});
+                    Main.instance.setContent(<LobbyMenu/>);
                 break;
                 case "RejectJoin":
                     let reason = serverMessage.reason
@@ -157,7 +158,7 @@ export function create_gameManager(){
                 break;
                 case "AcceptHost":
                     gameManager.roomCode = serverMessage.room_code;
-                    Main.instance.setState({panels : [<LobbyMenu/>]});
+                    Main.instance.setContent(<LobbyMenu/>);
                 break;
 
                 //InLobby/Game
@@ -185,10 +186,14 @@ export function create_gameManager(){
                     Main.instance.setContent(<StartMenu/>)
                 break;
                 case "OpenGameMenu":
-                    GameScreen.instance.setState({
-                        header : <PhaseRowMenu/>,
-                        panels : [<GraveyardMenu/> ,<ChatMenu/>, <PlayerListMenu/>, <WillMenu/>],
-                    });
+                    Main.instance.setContent(<GameScreen/>);
+                    
+                    setTimeout(()=>{ // Wait for GameScreen to mount. Hopefully won't take longer than 1s.
+                        GameScreen.instance.setState({
+                            header : <PhaseRowMenu/>,
+                            content : [<GraveyardMenu/> ,<ChatMenu/>, <PlayerListMenu/>, <WillMenu/>],
+                        }
+                    )}, 1000);
                 break;
                 case"PhaseTimes":
                     gameManager.gameState.phaseTimes.morning    = serverMessage.phase_times.morning.secs;
@@ -288,7 +293,7 @@ function create_server(){
         closeListener : (event)=>{
             console.log(event);
 
-            Main.instance.setState({panels: [<StartMenu/>]});
+            GameScreen.instance.setState({content: [<StartMenu/>]});
         },
         messageListener: (event)=>{
             // console.log("Server: "+event.data);

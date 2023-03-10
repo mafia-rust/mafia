@@ -8,7 +8,7 @@ export class GameScreen extends React.Component {
 
         this.state = {
             header: undefined,
-            content: undefined,
+            content: [],
         };
     }
     componentDidMount() {
@@ -22,16 +22,11 @@ export class GameScreen extends React.Component {
         height: "100vh"
     }}>
         {this.renderHeader(this.state.header)}
-        {this.renderGrid(this.state.content)}
+        {this.renderContent(this.state.content)}
     </div>)}
 
-    renderHeader(header){return(<div class="header">
-        <div style={{
-            height : "100%",
-            width: "100%",
-        }}>
-            {header}
-        </div>
+    renderHeader(header){return(<div>
+        {header}
     </div>)}
     renderContent(content){return(<div style={{
         display: "grid",

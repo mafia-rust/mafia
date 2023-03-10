@@ -2,10 +2,10 @@ import React from "react";
 import gameManager from "../index.js";
 import { create_gameState } from "../game/gameState";
 import {Main} from "../Main";
-import { JoinMenu } from "./JoinMenu";
 import "../index.css"
 import "./startMenu.css"
-import { LobbyMenu } from "./lobby/LobbyMenu.js";
+import { LoadingMenu } from "./LoadingMenu.js";
+import { JoinMenu } from "./JoinMenu.js";
 
 export class StartMenu extends React.Component {
     constructor(props) {
@@ -25,13 +25,15 @@ export class StartMenu extends React.Component {
     }
     hostGameButton(){
         gameManager.gameState = create_gameState();
+        
+        Main.instance.setContent(<LoadingMenu value="Starting server..."/>);
 
         gameManager.Server.close();
         gameManager.Server.open();
-        // Wait for server to open
-        setTimeout(gameManager.host_button);
 
-        Main.instance.setContent(<LobbyMenu/>);
+        // Wait for server to open
+        setTimeout(gameManager.host_button, 1000);
+        // Lobby menu opens when AcceptHost packet is recieved
     }
     render(){return(<div>
         <div className="header sm-header">
@@ -40,9 +42,9 @@ export class StartMenu extends React.Component {
         </div>
 
         <div className="sm-button-area">
-            <button className="button sm-join-host-button" onClick={this.joinGameButton}>
+            <button className="button sm-join-host-button" onClick={()=>{this.joinGameButton()}}>
                 {Main.instance?.isLoggedIn() ? "Join" : "Join as guest"}</button>
-            <button className="button sm-join-host-button" onClick={this.hostGameButton}>
+            <button className="button sm-join-host-button" onClick={()=>{this.hostGameButton()}}>
                 {Main.instance?.isLoggedIn() ? "Host" : "Host as guest"}</button>
         </div>
 

@@ -2,6 +2,8 @@ import React from "react";
 import gameManager from "../index.js";
 import "../index.css";
 import "./joinMenu.css";
+import { LoadingMenu } from "./LoadingMenu.js";
+import { Main } from "../Main.js";
 
 export class JoinMenu extends React.Component {
     constructor(props) {
@@ -23,14 +25,18 @@ export class JoinMenu extends React.Component {
         this.setState({name: name})
     }
     joinGameButton(){
+        // erm... >.<
         gameManager.roomCode = Number(this.state.roomCode);
         gameManager.name = this.state.name;
 
+        Main.instance.setContent(<LoadingMenu value="Connecting..."/>);
+
         gameManager.Server.close();
         gameManager.Server.open();
+
         // Wait for server to open
-        
-        setTimeout(gameManager.join_button);
+        setTimeout(gameManager.join_button, 1000);
+        setTimeout(()=>{gameManager.setName_button(this.state.name)}, 1000)
     }
     render(){return(<div style={{display: "flex", flexDirection: "column"}}>
         <div className="header jm-header">

@@ -30,3 +30,11 @@
     margin-left: 4vw;
     width:unset;
 }
+.lm-time-select-region {
+    /* Copy here whatever isaac did for join menu input column */
+}
+.lm-set-time-button {
+    height: 2vh;
+    min-height: 2rem;
+    padding: 0 2%;
+}
