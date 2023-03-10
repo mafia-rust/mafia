@@ -32,13 +32,6 @@ export class JoinMenu extends React.Component {
         
         setTimeout(gameManager.join_button);
     }
-    // hostGameButton(){
-    //     gameManager.Server.close();
-    //     gameManager.Server.open();
-    //     // Wait for server to open
-        
-    //     setTimeout(gameManager.host_button);
-    // }
     render(){return(<div style={{display: "flex", flexDirection: "column"}}>
         <div className="header jm-header">
             <h1 className="header-text jm-header-text">Join Game</h1>

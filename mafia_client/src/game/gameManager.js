@@ -62,7 +62,7 @@ export function create_gameManager(){
         startGame_button: ()=>{
             gameManager.Server.send(`"StartGame"`);
         },
-        phaseTimes_button: (morning, discussion, voting, testimony, judgement, evening, night)=>{
+        phaseTimesButton: (morning, discussion, voting, testimony, judgement, evening, night)=>{
             gameManager.Server.send(JSON.stringify({
                 "SetPhaseTimes":{
                     "phase_times":{

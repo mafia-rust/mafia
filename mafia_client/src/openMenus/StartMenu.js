@@ -5,6 +5,7 @@ import {Main} from "../Main";
 import { JoinMenu } from "./JoinMenu";
 import "../index.css"
 import "./startMenu.css"
+import { LobbyMenu } from "./lobby/LobbyMenu.js";
 
 export class StartMenu extends React.Component {
     constructor(props) {
@@ -18,6 +19,20 @@ export class StartMenu extends React.Component {
     }
     componentWillUnmount() {
     }
+    joinGameButton(){
+        gameManager.gameState = create_gameState();
+        Main.instance.setContent(<JoinMenu/>);
+    }
+    hostGameButton(){
+        gameManager.gameState = create_gameState();
+
+        gameManager.Server.close();
+        gameManager.Server.open();
+        // Wait for server to open
+        setTimeout(gameManager.host_button);
+
+        Main.instance.setContent(<LobbyMenu/>);
+    }
     render(){return(<div>
         <div className="header sm-header">
             <h1 className="header-text">Mafia</h1>
@@ -25,14 +40,10 @@ export class StartMenu extends React.Component {
         </div>
 
         <div className="sm-button-area">
-            <button className="button sm-join-host-button" onClick={()=>{
-                gameManager.gameState = create_gameState();
-                Main.instance.setContent(<JoinMenu/>);
-            }}>{Main.instance?.isLoggedIn() ? "Join" : "Join as guest"}</button>
-            <button className="button sm-join-host-button" onClick={()=>{
-                // Create gamestate, generate lobby,
-                // and enter LobbyMenu screen
-            }}>{Main.instance?.isLoggedIn() ? "Host" : "Host as guest"}</button>
+            <button className="button sm-join-host-button" onClick={this.joinGameButton}>
+                {Main.instance?.isLoggedIn() ? "Join" : "Join as guest"}</button>
+            <button className="button sm-join-host-button" onClick={this.hostGameButton}>
+                {Main.instance?.isLoggedIn() ? "Host" : "Host as guest"}</button>
         </div>
 
         <p className="credits">Mafia, made by Sammy Maselli, Jack Papel, and add your name here</p>

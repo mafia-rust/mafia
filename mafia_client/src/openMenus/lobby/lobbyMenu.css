@@ -1,0 +1,32 @@
+.lm-player-list-pane {
+    width: 30vw;
+    margin: 0 2vw;
+}
+.lm-name-box {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+.lm-settings-pane {
+    width: 60vw;
+    margin: 0 2vw;
+}
+.lm-start-button {
+    margin: 0;
+    width: 20vh;
+    height: 8vh;
+    justify-content: center;
+    margin-right: 4vw;
+}
+.lm-header {
+    height: 18vh;
+    text-align: left;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+}
+.lm-header-text {
+    font-size: 325%;
+    margin-left: 4vw;
+    width:unset;
+}
