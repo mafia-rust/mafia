@@ -1,5 +1,11 @@
 import React from "react";
 import "../index.css"
+import { LoadingMenu } from "../openMenus/LoadingMenu";
+import { PhaseRowMenu } from "./PhaseRowMenu";
+import { GraveyardMenu } from "./GraveyardMenu";
+import { ChatMenu } from "./ChatMenu";
+import { PlayerListMenu } from "./PlayerListMenu";
+import { WillMenu } from "./WillMenu";
 
 export class GameScreen extends React.Component {
     static instance;
@@ -7,12 +13,16 @@ export class GameScreen extends React.Component {
         super(props);
 
         this.state = {
-            header: undefined,
-            content: [],
+            header: <LoadingMenu/>,
+            content: [<LoadingMenu/>],
         };
     }
     componentDidMount() {
         GameScreen.instance = this;
+        this.setState({
+            header : <PhaseRowMenu/>,
+            content : [<GraveyardMenu/> ,<ChatMenu/>, <PlayerListMenu/>, <WillMenu/>],
+        });
     }
     componentWillUnmount() {
         //GameScreen.instance = undefined;

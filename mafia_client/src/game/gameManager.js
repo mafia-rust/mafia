@@ -1,15 +1,9 @@
 import { create_gameState, create_grave, create_player } from "./gameState";
 import { Main } from "../Main";
 import { LobbyMenu } from "../openMenus/lobby/LobbyMenu";
-import { PlayerListMenu } from "../gameMenus/PlayerListMenu";
 import { StartMenu } from "../openMenus/StartMenu";
 import gameManager from "../index.js";
-import { ChatMenu } from "../gameMenus/ChatMenu";
-import { PhaseRowMenu } from "../gameMenus/PhaseRowMenu";
-import { WillMenu } from "../gameMenus/WillMenu";
-import { GraveyardMenu } from "../gameMenus/GraveyardMenu";
 import { GameScreen } from "../gameMenus/GameScreen";
-import { LoadingMenu } from "../openMenus/LoadingMenu";
 
 
 //let gameManager = create_gameManager();
@@ -187,13 +181,6 @@ export function create_gameManager(){
                 break;
                 case "OpenGameMenu":
                     Main.instance.setContent(<GameScreen/>);
-                    
-                    setTimeout(()=>{ // Wait for GameScreen to mount. Hopefully won't take longer than 1s.
-                        GameScreen.instance.setState({
-                            header : <PhaseRowMenu/>,
-                            content : [<GraveyardMenu/> ,<ChatMenu/>, <PlayerListMenu/>, <WillMenu/>],
-                        }
-                    )}, 1000);
                 break;
                 case"PhaseTimes":
                     gameManager.gameState.phaseTimes.morning    = serverMessage.phase_times.morning.secs;
@@ -293,7 +280,7 @@ function create_server(){
         closeListener : (event)=>{
             console.log(event);
 
-            GameScreen.instance.setState({content: [<StartMenu/>]});
+            Main.instance.setContent(<StartMenu/>);
         },
         messageListener: (event)=>{
             // console.log("Server: "+event.data);
