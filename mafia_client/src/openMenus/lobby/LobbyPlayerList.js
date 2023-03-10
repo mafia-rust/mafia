@@ -25,14 +25,16 @@ export class LobbyPlayerList extends React.Component {
     </div>)}
  
     renderName(){return(<div className="input-box lm-name-box">
-        <input type="text" value={this.state.name}
+        <input className="input-field" type="text" value={this.state.name}
             onChange={(e)=>{this.setState({name: e.target.value})}}
             onKeyUp={(e)=>{
                 if(e.key === 'Enter')
                     gameManager.setName_button(this.state.name);
             }}
         />
-        <button onClick={()=>{gameManager.setName_button(this.state.name)}}>Set Name</button><br/>
+        <button className="button" onClick={()=>{
+            gameManager.setName_button(this.state.name)
+        }}>Set Name</button>
     </div>)}
 
     renderPlayers(){return(<div>
