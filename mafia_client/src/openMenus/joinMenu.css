@@ -8,8 +8,13 @@
     height: 72vh;
     width: 60vw;
     max-width: 90vw;
-    align-self: center;
+    margin: 0 auto; 
+    justify-content: center; 
+    align-items: center; 
 }
+
 .jm-button {
-    width: 100%;
+    width: 50%;
+    position: absolute;
+    left: 25%;
 }

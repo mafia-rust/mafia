@@ -11,7 +11,7 @@
     sans-serif; */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-size: 102%;
+    font-size: 102%; 
 
     color: white;
 }
@@ -58,10 +58,12 @@
 .input-box-label {
     align-self: left;
     left: 2vh;
+    padding-top: 30px;
 }
 .input-field {
     min-height: 2rem;
     width: 100%;
-    margin: 2vh 2vh;
+    border: 1px solid #282c34;
+    border-radius: 0.5rem;
     color: black;
 }
