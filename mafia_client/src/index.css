@@ -35,9 +35,12 @@
     top: 50%;
 }
 .button {
+    margin-top: 15px;
     justify-content: center;
     background-color: white;
     color: black;
+    border-radius: 0.75rem;
+
 }
 .credits {
     display: flex;
@@ -59,6 +62,7 @@
     align-self: left;
     left: 2vh;
     padding-top: 30px;
+    padding-bottom: 10px;
 }
 .input-field {
     min-height: 2rem;
