@@ -11,7 +11,7 @@ export class JoinMenu extends React.Component {
 
         this.state = {
             roomCode: "",
-            name: "",
+            name: Main.instance?.isLoggedIn() ? Main.instance?.getUser()?.name : "",
         };
     }
     componentDidMount() {
