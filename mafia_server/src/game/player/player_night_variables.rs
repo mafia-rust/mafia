@@ -1,7 +1,12 @@
-use crate::game::{visit::Visit, verdict::Verdict, chat::{night_message::NightInformation, ChatMessage}, Game, role::Role};
+use std::default;
+
+use crate::game::{
+    visit::Visit, verdict::Verdict, Game, role::Role, 
+    chat::{night_message::NightInformation, ChatMessage}, 
+    grave::{GraveRole, GraveDeathCause, GraveKiller}
+};
 
 use super::{PlayerIndex, Player, player};
-
 pub struct PlayerNightVariables{
     pub alive_tonight:  bool,
     pub died:           bool,
@@ -10,14 +15,40 @@ pub struct PlayerNightVariables{
     pub defense:        u8,    
     pub suspicious:     bool,
 
-    pub janitor_cleaned:bool,
-    //forger: Option<(Role, String)>, //this is new, maybe a bad idea? I dotn know, in old code this was ShownRole, ShownWill, ShownNote,
     pub disguised_as:   PlayerIndex,
 
     pub chosen_targets: Vec<PlayerIndex>,
     pub visits:         Vec<Visit>,
 
     pub night_messages: Vec<ChatMessage>,
+
+    pub grave_role: GraveRole,
+    pub grave_killers: Vec<GraveKiller>,
+    pub grave_will: String
+
+}
+impl Default for PlayerNightVariables{
+    fn default() -> Self {
+        Self{
+            alive_tonight:  true,
+            died:           false,
+            attacked:       false,
+            roleblocked:    false,
+            defense:        0,
+            suspicious:     false,
+
+            disguised_as:   0,
+
+            chosen_targets: vec![],
+            visits:         vec![],
+
+            night_messages: vec![],
+
+            grave_role: GraveRole::Role(Role::Sheriff), //This should not be a problem because we reset immedietly on creation
+            grave_killers: vec![],
+            grave_will: "".to_string()
+        }
+    }
 }
 impl PlayerNightVariables{
     pub fn new()->Self{
@@ -30,30 +61,37 @@ impl PlayerNightVariables{
             suspicious:     false,
 
             disguised_as:   0,
-            janitor_cleaned:false,
-            //forger: todo!(),
 
             chosen_targets: vec![],
             visits:         vec![],
 
             night_messages: vec![],
+
+            grave_role: GraveRole::Role(Role::Sheriff), //This should not be a problem because we reset immedietly on creation
+            grave_killers: vec![],
+            grave_will: "".to_string()
         }
     }
-    pub fn reset(&mut self, role: Role, player_index: PlayerIndex){
-        self.alive_tonight=  true;
-        self.died=           false;
-        self.attacked=       false;
-        self.roleblocked=    false;
-        self.defense=        role.get_defense();
-        self.suspicious=     role.is_suspicious();
+    pub fn reset(game: &Game, player_index: PlayerIndex)->Self{
+        let player = game.get_unchecked_player(player_index);
+        return Self{
+            alive_tonight:  player.alive,
+            died:           false,
+            attacked:       false,
+            roleblocked:    false,
+            defense:        player.get_role().get_defense(),
+            suspicious:     player.get_role().is_suspicious(),
 
-        self.disguised_as=   player_index;
-        self.janitor_cleaned=false;
-        //forger= todo!();
+            disguised_as:   player_index,
 
-        self.chosen_targets= vec![];
-        self.visits=         vec![];
+            chosen_targets: vec![],
+            visits:         vec![],
 
-        self.night_messages= vec![];
+            night_messages: vec![],
+
+            grave_role: GraveRole::Role(player.get_role()),
+            grave_killers: vec![],
+            grave_will: player.will.clone(),
+        };
     }
 }

@@ -27,7 +27,7 @@ pub enum NightInformation {
 
     VigilanteSuicide,
 
-    DoctorHealed,
+    DoctorHealed,   //"Someone attacked you but a doctor nursed you back to health"
     DoctorHealedYou,
 
     BodyguardProtected,
