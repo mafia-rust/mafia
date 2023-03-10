@@ -48,6 +48,6 @@ export class StartMenu extends React.Component {
                 {Main.instance?.isLoggedIn() ? "Host" : "Host as guest"}</button>
         </div>
 
-        <p className="credits">Mafia, made by Sammy Maselli, Jack Papel, and add your name here</p>
+        <p className="credits">Mafia, made by Sammy Maselli, Jack Papel, Isaac Worsencroft<br></br> and add your name here</p>
     </div>)}
 }
