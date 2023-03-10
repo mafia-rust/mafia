@@ -6,10 +6,12 @@ use mafia_server::{
         listener::Listener, packet::{ToClientPacket, ToServerPacket}
     },
 };
+use serde::Deserialize;
+use serde_json::Value;
 use std::{
     net::SocketAddr,
     sync::{Arc, Mutex}, 
-    collections::HashMap,
+    collections::HashMap, fs,
 };
 
 /*
@@ -53,16 +55,29 @@ print!("{}", ToClientPacket::YourVoting { player_index: None }.to_json_string())
 #[tokio::main]
 async fn main() -> Result<(), ()> {
 
+    let config_string: String = fs::read_to_string("./resources/config.json").expect("Should have been able to read the file");
+
+    let config = serde_json::value::from_value::<Config>(
+        serde_json::from_str::<Value>(&config_string).unwrap()
+    ).unwrap();
+
+
     let clients: Arc<Mutex<HashMap<SocketAddr, Connection>>> = Arc::new(Mutex::new(HashMap::new()));
 
     let listener = Listener::new();
 
-    let server_future = create_ws_server("127.0.0.1:8081", clients, Box::new(listener));
+    let address_string = config.local_ip + ":" + &config.port;
+    let server_future = create_ws_server(&address_string, clients, Box::new(listener));    
     
     server_future.await;
 
     Ok(())
 }
-
+#[derive(Deserialize)]
+struct Config{
+    local_ip: String,
+    port: String
+}
+// serde_json::to_string(&self).unwrap()
 
 

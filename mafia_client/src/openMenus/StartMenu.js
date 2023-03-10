@@ -32,7 +32,7 @@ export class StartMenu extends React.Component {
         gameManager.Server.open();
 
         // Wait for server to open
-        setTimeout(gameManager.host_button, 1000);
+        setTimeout(gameManager.host_button, 5000);  //TODO
         // Lobby menu opens when AcceptHost packet is recieved
     }
     render(){return(<div>

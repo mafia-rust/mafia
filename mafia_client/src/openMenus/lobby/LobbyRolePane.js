@@ -7,6 +7,7 @@ export class LobbyRolePane extends React.Component {
     //     super(props);
     // }
     render(){return(<div>
+        <button>Set Role List</button>
         <RolePicker/>
     </div>);}
 

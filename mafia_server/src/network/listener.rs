@@ -7,9 +7,6 @@ use crate::lobby::Lobby;
 
 use super::{connection::{ConnectionEventListener, Connection}, packet::{ToServerPacket, ToClientPacket, RejectJoinReason}};
 
-
-
-
 pub type ArbitraryPlayerID = u32;
 pub type RoomCode = usize;
 

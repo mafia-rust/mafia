@@ -18,7 +18,7 @@ pub async fn create_ws_server(
     let event_listener = Arc::new(Mutex::new(*event_listener));
 
     // Create the event loop and TCP listener we'll accept connections on.
-    let listener = TcpListener::bind(&address).await.expect("address and port should be valid. Should be 127.0.0.1:8081");  //panic if address is invalid
+    let listener = TcpListener::bind(&address).await.expect(&format!("address and port should be valid. Address was:{}",address));  //panic if address is invalid
 
     println!("Listening on: {}\n", address);
 
