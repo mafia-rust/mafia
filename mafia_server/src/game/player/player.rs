@@ -71,21 +71,26 @@ impl Player {
         }
     }
     
-    pub fn reset_phase_variables(&mut self, phase: PhaseType){
+    pub fn reset_phase_variables(game: &mut Game, player_index: PlayerIndex, phase: PhaseType){
         match phase {
             PhaseType::Morning => {},
             PhaseType::Discussion => {},
             PhaseType::Voting => {
-                self.voting_variables.reset();
-                self.send(ToClientPacket::YourVoting { player_index: self.voting_variables.chosen_vote.clone() });
-                self.send(ToClientPacket::YourJudgement { verdict: self.voting_variables.verdict.clone() });
+                let player = game.get_unchecked_mut_player(player_index);
+                player.voting_variables.reset();
+                player.send(ToClientPacket::YourVoting { player_index: player.voting_variables.chosen_vote.clone() });
+                player.send(ToClientPacket::YourJudgement { verdict: player.voting_variables.verdict.clone() });
             },
             PhaseType::Testimony => {},
             PhaseType::Judgement => {},
             PhaseType::Evening => {},
             PhaseType::Night => {
-                self.night_variables.reset(self.get_role(), self.index);
-                self.send(ToClientPacket::YourTarget { player_indices: self.night_variables.chosen_targets.clone() });
+                let new_night_variables =  PlayerNightVariables::reset(game, player_index);
+
+                let player = game.get_unchecked_mut_player(player_index);
+
+                player.night_variables =new_night_variables;
+                player.send(ToClientPacket::YourTarget { player_indices: player.night_variables.chosen_targets.clone() });
             }
         }
     }
@@ -93,7 +98,6 @@ impl Player {
     //Night helper functions
     ///returns true if they were roleblocked by you
     pub fn roleblock(&mut self)->bool{
-
         if self.get_role().is_roleblockable() {
             self.night_variables.roleblocked = true;
             self.night_variables.night_messages.push(ChatMessage::NightInformation { night_information: NightInformation::RoleBlocked { immune: false }});

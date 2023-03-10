@@ -11,7 +11,9 @@ use tokio_tungstenite::tungstenite::Message;
 use crate::lobby::LobbyPlayer;
 use crate::network::packet::{ToServerPacket, ToClientPacket, self, PlayerButtons};
 use crate::prelude::*;
+use super::chat::night_message::NightInformation;
 use super::chat::{ChatMessage, ChatGroup, MessageSender};
+use super::grave::{GraveRole, GraveKiller};
 use super::{phase::{PhaseStateMachine, PhaseType}, player::{Player, PlayerIndex}, role_list::RoleList, settings::Settings, grave::Grave};
 
 pub struct Game {
@@ -114,8 +116,8 @@ impl Game {
         if self.phase_machine.time_remaining <= Duration::ZERO{
             let new_phase = PhaseType::end(self);
             //reset
-            for player in self.players.iter_mut(){
-                player.reset_phase_variables(new_phase);
+            for player_index in 0..self.players.len(){
+                Player::reset_phase_variables(self, player_index as PlayerIndex, new_phase);
             }
             self.reset(new_phase);
             //start next phase
@@ -329,4 +331,23 @@ impl Game {
         }
     }
 
+    ///returns true if attack overpowered defense and they are now dead.
+    pub fn try_night_kill(&mut self, player_index: PlayerIndex, grave_killer: GraveKiller, attack: u8)->bool{
+        let player = self.get_unchecked_mut_player(player_index);
+
+        player.night_variables.attacked = true;
+
+        if player.night_variables.defense > attack {
+            player.add_chat_message(ChatMessage::NightInformation { night_information: NightInformation::YouSurvivedAttack });
+            return false;
+        }
+        
+        //die
+        player.night_variables.night_messages.push(ChatMessage::NightInformation { night_information: NightInformation::YouDied });
+        player.night_variables.died = true;
+        player.alive = false;
+        player.night_variables.grave_killers.push(grave_killer);
+
+        true
+    }
 }
