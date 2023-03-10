@@ -5,7 +5,7 @@ use tokio_tungstenite::tungstenite::Message;
 
 use crate::lobby::Lobby;
 
-use super::{connection::{ConnectionEventListener, Connection}, packet::{ToServerPacket, ToClientPacket}};
+use super::{connection::{ConnectionEventListener, Connection}, packet::{ToServerPacket, ToClientPacket, RejectJoinReason}};
 
 
 
@@ -75,22 +75,17 @@ impl Listener{
 
         match incoming_packet {
             ToServerPacket::Join{ room_code } => {
-                
-                //add to lobby
-                if let Some(player) = self.players.get_mut(connection.get_address()){
-                    if let Some(lobby) = self.lobbies.lock().unwrap().get_mut(&room_code){
+                let Some(player) = self.players.get_mut(connection.get_address()) else {
+                    unreachable!("Player should have been added to the hashmap!");
+                };
+                if let Some(lobby) = self.lobbies.lock().unwrap().get_mut(&room_code) {
 
-                        let player_arbitrary_id: ArbitraryPlayerID = lobby.add_new_player(connection.get_sender());
+                    let player_arbitrary_id: ArbitraryPlayerID = lobby.add_new_player(connection.get_sender());
+                    *player = Some((room_code, player_arbitrary_id));
 
-                        *player = Some((room_code, player_arbitrary_id));
-
-                        connection.send(ToClientPacket::AcceptJoin);
-                    }else{
-                        
-                        connection.send(ToClientPacket::RejectJoin { reason: format!("Lobby does not exist:{}",room_code) });
-                    }
-                }else{
-                    connection.send(ToClientPacket::RejectJoin { reason: format!("Player does not exist:{}",connection.get_address()) });
+                    connection.send(ToClientPacket::AcceptJoin);
+                } else {
+                    connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::InvalidRoomCode });
                 }
             },
             ToServerPacket::Host => {

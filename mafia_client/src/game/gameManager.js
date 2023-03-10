@@ -1,13 +1,8 @@
 import { create_gameState, create_grave, create_player } from "./gameState";
 import { Main } from "../Main";
 import { LobbyMenu } from "../openMenus/lobby/LobbyMenu";
-import { PlayerListMenu } from "../gameMenus/PlayerListMenu";
 import { StartMenu } from "../openMenus/StartMenu";
 import gameManager from "../index.js";
-import { ChatMenu } from "../gameMenus/ChatMenu";
-import { PhaseRowMenu } from "../gameMenus/PhaseRowMenu";
-import { WillMenu } from "../gameMenus/WillMenu";
-import { GraveyardMenu } from "../gameMenus/GraveyardMenu";
 import { GameScreen } from "../gameMenus/GameScreen";
 
 
@@ -62,7 +57,7 @@ export function create_gameManager(){
         startGame_button: ()=>{
             gameManager.Server.send(`"StartGame"`);
         },
-        phaseTimes_button: (morning, discussion, voting, testimony, judgement, evening, night)=>{
+        phaseTimesButton: (morning, discussion, voting, testimony, judgement, evening, night)=>{
             gameManager.Server.send(JSON.stringify({
                 "SetPhaseTimes":{
                     "phase_times":{
@@ -147,17 +142,32 @@ export function create_gameManager(){
 
             //In each of the cases, ensure that your not interpreting anything as an object when it isnt.
             //on the rust side, this is an enum called ToClientPacket
-            switch(type){
+            switch(type) {
                 case "AcceptJoin":
-                    Main.instance.setState({panels : [<LobbyMenu/>]});
+                    Main.instance.setContent(<LobbyMenu/>);
                 break;
                 case "RejectJoin":
-                    let reason = serverMessage.reason
-                    alert(reason);
+                    switch(serverMessage.reason) {
+                        case "InvalidRoomCode":
+                            alert("Couldn't join: No lobby has that room code!");
+                        break;
+                        case "GameAlreadyStarted":
+                            alert("Couldn't join: That game has already begun!");
+                        break;
+                        case "RoomFull":
+                            alert("Couldn't join: That lobby is full!");
+                        break;
+                        default:
+                            alert("Couldn't join lobby for an unknown reason!");
+                            console.log("incoming_message response not implemented "+type+": "+serverMessage.reason);
+                            console.log(serverMessage);
+                        break;
+                    }
+                    Main.instance.setContent(<StartMenu/>);
                 break;
                 case "AcceptHost":
                     gameManager.roomCode = serverMessage.room_code;
-                    Main.instance.setState({panels : [<LobbyMenu/>]});
+                    Main.instance.setContent(<LobbyMenu/>);
                 break;
 
                 //InLobby/Game
@@ -185,10 +195,7 @@ export function create_gameManager(){
                     Main.instance.setContent(<StartMenu/>)
                 break;
                 case "OpenGameMenu":
-                    GameScreen.instance.setState({
-                        header : <PhaseRowMenu/>,
-                        panels : [<GraveyardMenu/> ,<ChatMenu/>, <PlayerListMenu/>, <WillMenu/>],
-                    });
+                    Main.instance.setContent(<GameScreen/>);
                 break;
                 case"PhaseTimes":
                     gameManager.gameState.phaseTimes.morning    = serverMessage.phase_times.morning.secs;
@@ -288,7 +295,7 @@ function create_server(){
         closeListener : (event)=>{
             console.log(event);
 
-            Main.instance.setState({panels: [<StartMenu/>]});
+            Main.instance.setContent(<StartMenu/>);
         },
         messageListener: (event)=>{
             // console.log("Server: "+event.data);

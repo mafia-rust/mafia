@@ -1,5 +1,11 @@
 import React from "react";
 import "../index.css"
+import { LoadingMenu } from "../openMenus/LoadingMenu";
+import { PhaseRowMenu } from "./PhaseRowMenu";
+import { GraveyardMenu } from "./GraveyardMenu";
+import { ChatMenu } from "./ChatMenu";
+import { PlayerListMenu } from "./PlayerListMenu";
+import { WillMenu } from "./WillMenu";
 
 export class GameScreen extends React.Component {
     static instance;
@@ -7,12 +13,16 @@ export class GameScreen extends React.Component {
         super(props);
 
         this.state = {
-            header: undefined,
-            content: undefined,
+            header: <LoadingMenu/>,
+            content: [<LoadingMenu/>],
         };
     }
     componentDidMount() {
         GameScreen.instance = this;
+        this.setState({
+            header : <PhaseRowMenu/>,
+            content : [<GraveyardMenu/> ,<ChatMenu/>, <PlayerListMenu/>, <WillMenu/>],
+        });
     }
     componentWillUnmount() {
         //GameScreen.instance = undefined;
@@ -22,16 +32,11 @@ export class GameScreen extends React.Component {
         height: "100vh"
     }}>
         {this.renderHeader(this.state.header)}
-        {this.renderGrid(this.state.content)}
+        {this.renderContent(this.state.content)}
     </div>)}
 
-    renderHeader(header){return(<div class="header">
-        <div style={{
-            height : "100%",
-            width: "100%",
-        }}>
-            {header}
-        </div>
+    renderHeader(header){return(<div>
+        {header}
     </div>)}
     renderContent(content){return(<div style={{
         display: "grid",
@@ -59,15 +64,7 @@ export class GameScreen extends React.Component {
                     
                     backgroundColor: "green",
                 }}>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
                     {panel}
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
                 </div>)
             })
         }
