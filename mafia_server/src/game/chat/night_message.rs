@@ -14,11 +14,6 @@ pub enum NightInformation {
 
     /* Role-specific */
     
-    SheriffResult { suspicious: bool },
-
-    LookoutResult{players: Vec<PlayerIndex>},
-
-    InvestigatorResult{roles: Vec<Role>},
 
     SpyMafiaVisit{players: Vec<PlayerIndex>},
     SpyBug{message: Box<ChatMessage>},
@@ -40,14 +35,16 @@ pub enum NightInformation {
 
     Blackmailed,
 
-    ConsigliereResult(Role),
-
-    FramerFramed(Vec<PlayerIndex>),
-
+    FramerFramedPlayers{players: Vec<PlayerIndex>},
 
     JanitorResult { role: Role, will: String },
-
     ForgerResult { role: Role, will: String },
+    ConsigliereResult{ role: Role },
+    
+    SheriffResult { suspicious: bool },
+    LookoutResult{players: Vec<PlayerIndex>},
+    InvestigatorResult{roles: Vec<Role>},
+
 
     WitchTargetImmune,
     WitchedYou { immune: bool },

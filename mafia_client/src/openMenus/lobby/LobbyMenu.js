@@ -1,29 +1,17 @@
 import React from "react";
 import gameManager from "../../index.js";
 import {LobbyPlayerList} from "./LobbyPlayerList.js";
-import {LobbySettingsPane} from "./LobbySettingsPane.js";
+import { LobbyPhaseTimePane } from "./LobbyPhaseTimePane.js";
+import { LobbyRolePane } from "./LobbyRolePane.js";
 import "./lobbyMenu.css";
 
 export class LobbyMenu extends React.Component {
     constructor(props) {
         super(props);
-
-        this.state = {
-            playerList: undefined,
-            settings: undefined,
-        };
-        this.listener = ()=>{
-            this.setState({
-                playerList: <LobbyPlayerList/>,
-                settings: <LobbySettingsPane/>,
-            })
-        };
     }
     componentDidMount() {
-        gameManager.addStateListener(this.listener);
     }
     componentWillUnmount() {
-        gameManager.removeStateListener(this.listener);
     }
 
     render(){return(<div style={{
@@ -38,8 +26,15 @@ export class LobbyMenu extends React.Component {
             display: "flex",
             flexDirection: "row",
         }}>
-            {this.state.playerList}
-            {this.state.settings}
+            <LobbyPlayerList/>
+            <div style={{
+                display: "flex",
+                flexDirection: "column",
+            }}>
+                <LobbyPhaseTimePane/>
+                <LobbyRolePane/>
+            </div>
+            
         </div>
     </div>)}
 }
