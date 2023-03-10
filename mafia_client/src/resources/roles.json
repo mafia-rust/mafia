@@ -22,5 +22,17 @@
         "witchable": true,
         "victoryGroup": "Mafia",
         "maxCount": null
+    },
+    "Mafioso": {
+        "description": "Target a player to kill them",
+        "advancedDescription": "A Godfather could force you to target someone else. You will know if your target had defense and survived. You have a basic attack.",
+        "faction": "Mafia",
+        "alignment": "Killing",
+        "suspicious": true,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "victoryGroup": "Mafia",
+        "maxCount": null
     }
 }

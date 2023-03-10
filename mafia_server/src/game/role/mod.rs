@@ -161,15 +161,22 @@ Kills
 Notify
 +10: Doc(Notify both, nv) Bg(Notify both, nv) Janitor(notify, nv), Forger(notify, nv) Vamp(Inform Leader & new vamp, nv) Arsonist(Inform who is doused, nv)
 Convert + bug
-+11: Amne/Vamp(Convert), spy(bug, v)
++11: spy(bug, v)
 +12: Witch(bug)
 
-After night is over OR priority 20
-+20
+//graves made
+
+After night is over
     Exe convert
     mafioso convert
-
+    Amne(Convert)
+    Vamp(Convert)
 */
+
+
+
+
+
 
 /*
 Old Priorities:
