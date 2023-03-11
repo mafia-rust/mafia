@@ -10,7 +10,13 @@ export class LobbyPlayerList extends React.Component {
             name: "",
 
             // Player list
+            gameState: gameManager.gameState
         };
+        this.listener = ()=>{
+            this.setState({
+                gameState: gameManager.gameState
+            });
+        }
     }
     componentDidMount() {
         gameManager.addStateListener(this.listener);
@@ -38,8 +44,8 @@ export class LobbyPlayerList extends React.Component {
     </div>)}
 
     renderPlayers(){return(<div>
-        {gameManager.gameState.players.map((player, i)=>{
-            return(<div key={i}>{player.name}<br/></div>)
+        {this.state.gameState.players.map((player, i)=>{
+            return(<div key={i}>{i+1}:{player.name}<br/></div>)
         })}
     </div>)}
 }

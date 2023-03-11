@@ -27,10 +27,10 @@ export function create_gameManager(){
         removeStateListener : (listener)=>{
             gameManager.listeners.splice(gameManager.listeners.indexOf(listener));
         },
-        invokeStateListeners : ()=>{
+        invokeStateListeners : (type=null)=>{
             for(let i = 0; i < gameManager.listeners.length; i++){
                 if(typeof(gameManager.listeners[i])==="function"){
-                    gameManager.listeners[i]();
+                    gameManager.listeners[i](type);
                 }
             }
         },
@@ -71,6 +71,15 @@ export function create_gameManager(){
                     }
                 }
             }, null, false))
+        },
+        roleList_button: (roleListEntries)=>{
+            gameManager.Server.send(JSON.stringify({
+                "SetRoleList":{
+                    "role_list": {
+                        "role_list": roleListEntries
+                    }
+                }
+            }, null, false));
         },
 
         judgement_button: (judgement)=>{
@@ -137,7 +146,7 @@ export function create_gameManager(){
             gameManager.gameState.secondsLeft = Math.round(gameManager.gameState.secondsLeft - timePassedms/1000)
             if(gameManager.gameState.secondsLeft < 0)
                 gameManager.gameState.secondsLeft = 0;
-            gameManager.invokeStateListeners();
+            gameManager.invokeStateListeners("tick");
         },
     }
     return gameManager;

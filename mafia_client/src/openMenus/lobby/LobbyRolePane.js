@@ -1,24 +1,96 @@
 import React from "react";
+import gameManager from "../..";
 import ROLES from "../../resources/roles.json"
 // import gameManager from "../../index.js";
 
+
 export class LobbyRolePane extends React.Component {
-    // constructor(props){
-    //     super(props);
-    // }
+    constructor(props){
+        super(props);
+
+        this.state = {
+            gameState: gameManager.gameState,
+            roleList: [],
+            rolePickers: []
+        }
+
+        this.listener = (type)=>{
+            if(type==="RoleList"){
+                this.setState({
+                    //TODO change the drop downs to match gamestate
+                });
+            }else{
+                let newRolePickers = this.state.rolePickers;
+                if(this.state.gameState.players.length < this.state.rolePickers.length){
+                    newRolePickers = []  
+                }
+
+                for(let i = 0; i < this.state.gameState.players.length; i++){
+                    if(i >= this.state.rolePickers.length)
+                        newRolePickers.push(<div key={i}><RolePicker index={i} onChange={
+                            (index, value)=>{this.onChangeRolePicker(index, value)}
+                        }/></div>);
+                }
+                ////
+
+                let newRoleList = this.state.roleList;
+                if(this.state.gameState.players.length < this.state.roleList.length){
+                    newRoleList = []  
+                }
+
+                for(let i = 0; i < this.state.gameState.players.length; i++){
+                    if(i >= this.state.roleList.length)
+                        newRoleList.push(createRoleListEntry_Any());
+                }
+
+                ////
+                this.setState({
+                    rolePickers: newRolePickers,
+                    roleList: newRoleList,
+                    gameState: gameManager.gameState
+                });
+            }
+        };  
+    }
+    componentDidMount() {
+        gameManager.addStateListener(this.listener);
+    }
+    componentWillUnmount() {
+        gameManager.removeStateListener(this.listener);
+    }
+
     render(){return(<div>
-        <button>Set Role List</button>
-        <RolePicker/>
+        Role List
+        {this.renderList()}
     </div>);}
 
+    renderList(){
+        return<div>
+            {this.state.rolePickers}
+        </div>
+    }
+
+    onChangeRolePicker(index, value){
+        let newList = this.state.roleList;
+        newList[index] = value;
+        this.setState({
+            roleList: newList
+        });
+        gameManager.roleList_button(this.state.roleList);
+    }
 }
 
+///props.index
+///props.onChange
 class RolePicker extends React.Component {
     constructor(props) {
       super(props);
         this.state = {
             faction: "Any",
-            alignment: null
+            alignment: "Random",
+            
+            index: props.index,
+            onChange: props.onChange
         };
     }
     allFactions(){
@@ -52,19 +124,57 @@ class RolePicker extends React.Component {
     }
     render() {
         return (<div>
-            <select onChange={(e)=>{this.setState({faction: e.target.value})}}>
+            <select value={this.state.faction} onChange={(e)=>{
+                if(e.target.value === "Any"){
+                    this.props.onChange(this.state.index, createRoleListEntry_Any());
+                }else{
+                    this.props.onChange(this.state.index, createRoleListEntry_Faction(e.target.value));
+                }
+                this.setState({faction: e.target.value});
+            }}>
                 {this.allFactions().map((faction)=>{
                     return <option key={faction}>{faction}</option>
                 }).concat([<option key={"Any"}>Any</option>])}
             </select>
-            <select>
-                {
-                    (this.state.faction !== "Any") && 
-                    this.allAlignments(this.state.faction).map((alignment)=>{
-                        return <option key={alignment}>{alignment}</option>
-                    }).concat([<option key={"Random"}>Random</option>]) 
-                }
-            </select>
+            { 
+                (this.state.faction !== "Any") &&  
+                <select value={this.state.alignment} onChange={(e)=>{
+                    if(Object.keys(ROLES).includes(e.target.value)){
+                        this.props.onChange(this.state.index, createRoleListEntry_Exact(e.target.value));
+                    }else if("Random" === e.target.value){
+                        this.props.onChange(this.state.index, createRoleListEntry_Faction(this.state.faction));
+                    }else{
+                        this.props.onChange(this.state.index, createRoleListEntry_FactionAlignment(this.state.faction, e.target.value));
+                    }
+                    this.setState({alignment: e.target.value})
+                }}>
+                    {
+                        this.allAlignments(this.state.faction).map((alignment)=>{
+                            return <option key={alignment}>{alignment}</option>
+                        }).concat([<option key={"Random"}>Random</option>]) 
+                    }
+                </select>
+            }
         </div>);
     }
+}
+
+
+function createRoleListEntry_Exact(role){
+    return {
+        "Exact":role
+    };
+}
+function createRoleListEntry_FactionAlignment(faction, alignment){
+    return {
+        "FactionAlignment":faction+alignment
+    };
+}
+function createRoleListEntry_Faction(faction){
+    return {
+        "Faction":faction
+    };
+}
+function createRoleListEntry_Any(){
+    return "Any";
 }

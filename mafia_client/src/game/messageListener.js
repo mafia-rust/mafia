@@ -84,6 +84,9 @@ export function messageListener(serverMessage){
             gameManager.gameState.phaseTimes.evening    = serverMessage.phase_times.evening.secs;
             gameManager.gameState.phaseTimes.night      = serverMessage.phase_times.night.secs;
         break;
+        case "RoleList":
+            gameManager.gameState.roleList = serverMessage.role_list.role_list;
+        break;
         case"Phase":
             gameManager.gameState.phase = serverMessage.phase;
             gameManager.gameState.dayNumber = serverMessage.day_number;
@@ -148,7 +151,7 @@ export function messageListener(serverMessage){
 
 
     
-    gameManager.invokeStateListeners();
+    gameManager.invokeStateListeners(type);
 }
 
 

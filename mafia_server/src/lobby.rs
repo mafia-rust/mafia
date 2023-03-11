@@ -7,7 +7,7 @@ use tokio_tungstenite::tungstenite::Message;
 
 use crate::{
     game::{Game, player::{PlayerIndex, Player}, 
-    settings::{Settings, InvestigatorResults}, 
+    settings::{Settings, InvestigatorResults, self}, 
     role_list}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket}, listener::ArbitraryPlayerID}, 
     utils::trim_whitespace
 };
@@ -135,7 +135,6 @@ impl Lobby {
             ToServerPacket::Kick{player_index} => {
                 todo!()// cant kick because then all player_index's would need to change and all players would be pointing to the wrong indeices
             },
-            ToServerPacket::SetRoleList{role_list} => todo!(),
             ToServerPacket::SetPhaseTimes{phase_times} => {
                 if let LobbyState::Lobby{ settings, players } = &mut self.lobby_state{
                     settings.phase_times = phase_times.clone();
@@ -143,6 +142,13 @@ impl Lobby {
                     Self::send_to_all(players, ToClientPacket::PhaseTimes { phase_times });
                 }
             },
+            ToServerPacket::SetRoleList { role_list } => {
+                if let LobbyState::Lobby{ settings, players } = &mut self.lobby_state{
+                    settings.role_list = role_list.clone();
+                    
+                    Self::send_to_all(players, ToClientPacket::RoleList { role_list });
+                }
+            }
             ToServerPacket::SetInvestigatorResults{investigator_results} => todo!(),
             _ => {
                 if let LobbyState::Game { game, players } = &mut self.lobby_state{

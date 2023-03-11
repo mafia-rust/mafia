@@ -15,10 +15,25 @@ export class LobbyPhaseTimePane extends React.Component {
             eveningTimeField: "10", 
             nightTimeField: "37",
         };
+        this.listener = (type)=>{
+            if(type==="PhaseTimes")
+                this.setState({
+
+                    morningTimeField: gameManager.gameState.phaseTimes.morning,
+                    discussionTimeField: gameManager.gameState.phaseTimes.discussion, 
+                    votingTimeField: gameManager.gameState.phaseTimes.voting, 
+                    testimonyTimeField: gameManager.gameState.phaseTimes.testimony, 
+                    judgementTimeField: gameManager.gameState.phaseTimes.judgement, 
+                    eveningTimeField: gameManager.gameState.phaseTimes.evening, 
+                    nightTimeField: gameManager.gameState.phaseTimes.night,
+                });
+        }
     }
     componentDidMount() {
+        gameManager.addStateListener(this.listener);
     }
     componentWillUnmount() {
+        gameManager.removeStateListener(this.listener);
     }
 
     phaseTimesButton() {
@@ -35,7 +50,7 @@ export class LobbyPhaseTimePane extends React.Component {
     }
 
     render(){return(<div className="lm-settings-pane">
-        <button className="button lm-set-time-button" onClick={this.phaseTimesButton}>Set Time Settings</button>
+        <button className="button lm-set-time-button" onClick={()=>{this.phaseTimesButton()}}>Set Time Settings</button>
         
         <div className="lm-time-select-region">
             {this.renderTimePicker("Morning", this.state.morningTimeField, 
