@@ -1,4 +1,5 @@
 use crate::game::chat::ChatGroup;
+use crate::game::phase::PhaseType;
 use crate::game::player::{Player, PlayerIndex};
 use crate::game::role_list::FactionAlignment;
 use crate::game::visit::Visit;
@@ -11,6 +12,7 @@ pub(super) const ROLEBLOCKABLE: bool = true;
 pub(super) const WITCHABLE: bool = true;
 pub(super) const SUSPICIOUS: bool = false;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownProtective;
+pub(super) const MAXIUMUM_COUNT: Option<u8> = None;
 
 
 pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game: &mut Game) {
@@ -49,4 +51,6 @@ pub(super) fn get_current_chat_groups(actor_index: PlayerIndex, game: &Game) -> 
         crate::game::phase::PhaseType::Evening => vec![ChatGroup::All],
         crate::game::phase::PhaseType::Night => vec![],
     }
+}
+pub fn on_phase_start(actor_index: PlayerIndex, phase: PhaseType, game: &Game){
 }

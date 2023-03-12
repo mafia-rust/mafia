@@ -11,6 +11,7 @@ macro_rules! make_role_enum {
         use crate::game::Game;
         use crate::game::chat::ChatGroup;
         use crate::game::role_list::FactionAlignment;
+        use crate::game::phase::PhaseType;
         use serde::{Serialize, Deserialize};
         $(mod $file;)*
 
@@ -70,37 +71,46 @@ macro_rules! make_role_enum {
                 }
             }
 
-
+            pub fn get_maximum_count(&self) -> Option<u8> {
+                match self {
+                    $(Role::$name => $file::MAXIUMUM_COUNT),*
+                }
+            }
             //Above is constants
 
-            pub fn do_night_action(&self, source: PlayerIndex, priority: i8, game: &mut Game) {
+            pub fn do_night_action(&self, actor_index: PlayerIndex, priority: i8, game: &mut Game) {
                 match self {
-                    $(Role::$name => $file::do_night_action(source, priority, game)),*
+                    $(Role::$name => $file::do_night_action(actor_index, priority, game)),*
                 }
             }
-            pub fn do_day_action(&self, source: PlayerIndex, game: &mut Game) {
+            pub fn do_day_action(&self, actor_index: PlayerIndex, game: &mut Game) {
                 match self {
-                    $(Role::$name => $file::do_day_action(source, game)),*
+                    $(Role::$name => $file::do_day_action(actor_index, game)),*
                 }
             }
-            pub fn can_night_target(&self, source: PlayerIndex, target: PlayerIndex, game: &Game) -> bool {
+            pub fn can_night_target(&self, actor_index: PlayerIndex, target: PlayerIndex, game: &Game) -> bool {
                 match self {
-                    $(Role::$name => $file::can_night_target(source, target, game)),*
+                    $(Role::$name => $file::can_night_target(actor_index, target, game)),*
                 }
             }
-            pub fn can_day_target(&self, source: PlayerIndex, target: PlayerIndex, game: &Game) -> bool {
+            pub fn can_day_target(&self, actor_index: PlayerIndex, target: PlayerIndex, game: &Game) -> bool {
                 match self {
-                    $(Role::$name => $file::can_day_target(source, target, game)),*
+                    $(Role::$name => $file::can_day_target(actor_index, target, game)),*
                 }
             }
-            pub fn convert_targets_to_visits(&self, source: PlayerIndex, targets: Vec<PlayerIndex>, game: &Game) -> Vec<Visit> {
+            pub fn convert_targets_to_visits(&self, actor_index: PlayerIndex, targets: Vec<PlayerIndex>, game: &Game) -> Vec<Visit> {
                 match self {
-                    $(Role::$name => $file::convert_targets_to_visits(source, targets, game)),*
+                    $(Role::$name => $file::convert_targets_to_visits(actor_index, targets, game)),*
                 }
             }
-            pub fn get_current_chat_groups(&self, source: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
+            pub fn get_current_chat_groups(&self, actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
                 match self {
-                    $(Role::$name => $file::get_current_chat_groups(source, game)),*
+                    $(Role::$name => $file::get_current_chat_groups(actor_index, game)),*
+                }
+            }
+            pub fn on_phase_start(&self, actor_index: PlayerIndex, phase: PhaseType, game: &Game){
+                match self{
+                    $(Role::$name => $file::on_phase_start(actor_index, phase, game)),*
                 }
             }
         }
@@ -124,7 +134,8 @@ make_role_enum! {
     Doctor : doctor,
 
     Veteran : veteran {
-        alerts_remaining: u8 = 3
+        alerts_remaining: u8 = 3,
+        alerting_tonight: bool = false
     },
 
     Mafioso : mafioso,

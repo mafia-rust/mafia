@@ -1,6 +1,7 @@
 use crate::game::chat::night_message::NightInformation;
 use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::grave::GraveKiller;
+use crate::game::phase::PhaseType;
 use crate::game::player::{Player, PlayerIndex};
 use crate::game::role_list::{FactionAlignment, Faction};
 use crate::game::visit::Visit;
@@ -13,12 +14,12 @@ pub(super) const ROLEBLOCKABLE: bool = true;
 pub(super) const WITCHABLE: bool = true;
 pub(super) const SUSPICIOUS: bool = true;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaKilling;
+pub(super) const MAXIUMUM_COUNT: Option<u8> = Some(1);
 
 
 pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game: &mut Game) {
-    if priority != 9 {
-        return;
-    }
+    if game.get_unchecked_player(actor_index).night_variables.roleblocked {return;}
+    if priority != 9 {return;}
     
     if let Some(visit) = game.get_unchecked_player(actor_index).night_variables.visits.first(){
         let target_index = visit.target;
@@ -26,7 +27,7 @@ pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game
 
         let killed = game.try_night_kill(target_index, GraveKiller::Mafia, 1);
 
-        if killed {
+        if !killed {
             let actor = game.get_unchecked_mut_player(actor_index);
             actor.add_chat_message(ChatMessage::NightInformation{ 
                 night_information: NightInformation::TargetSurvivedAttack 
@@ -68,4 +69,6 @@ pub(super) fn get_current_chat_groups(actor_index: PlayerIndex, game: &Game) -> 
         crate::game::phase::PhaseType::Evening => vec![ChatGroup::All],
         crate::game::phase::PhaseType::Night => vec![ChatGroup::Mafia],
     }
+}
+pub fn on_phase_start(actor_index: PlayerIndex, phase: PhaseType, game: &Game){
 }

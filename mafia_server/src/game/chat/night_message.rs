@@ -18,7 +18,8 @@ pub enum NightInformation {
     SpyMafiaVisit{players: Vec<PlayerIndex>},
     SpyBug{message: Box<ChatMessage>},
 
-    VeteranAttacked,
+    VeteranAttackedYou,
+    VeteranAttackedVisitor,
 
     VigilanteSuicide,
 

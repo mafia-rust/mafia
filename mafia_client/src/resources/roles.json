@@ -11,17 +11,17 @@
         "victoryGroup": "Town",
         "maxCount": null
     },
-    "Consort": {
-        "description": "Target a player to roleblock them",
-        "advancedDescription": "A roleblock prevents the target player from performing their night ability. This works the same as the Escort. Some roles can not be roleblocked.",
-        "faction": "Mafia",
-        "alignment": "Support",
-        "suspicious": true,
+    "Veteran": {
+        "description": "Target yourself to alert and kill everyone who visited you",
+        "advancedDescription": "You will know if you attack someone, and if they survived. You have a powerfull attack on alert. You have basic defense while on alert",
+        "faction": "Town",
+        "alignment": "Killing",
+        "suspicious": false,
         "roleblockable": false,
         "defense": 0,
-        "witchable": true,
-        "victoryGroup": "Mafia",
-        "maxCount": null
+        "witchable": false,
+        "victoryGroup": "Town",
+        "maxCount": 1
     },
     "Mafioso": {
         "description": "Target a player to kill them",
@@ -30,6 +30,18 @@
         "alignment": "Killing",
         "suspicious": true,
         "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "victoryGroup": "Mafia",
+        "maxCount": 1
+    },
+    "Consort": {
+        "description": "Target a player to roleblock them",
+        "advancedDescription": "A roleblock prevents the target player from performing their night ability. This works the same as the Escort. Some roles can not be roleblocked.",
+        "faction": "Mafia",
+        "alignment": "Support",
+        "suspicious": true,
+        "roleblockable": false,
         "defense": 0,
         "witchable": true,
         "victoryGroup": "Mafia",

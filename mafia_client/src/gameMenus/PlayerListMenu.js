@@ -25,26 +25,26 @@ export class PlayerListMenu extends React.Component {
     renderPhaseSpecific(){
         switch(this.state.gameState.phase){
             case"Voting":
-            let votedString = "";
-            if(this.state.gameState.voted!=null)
-                votedString = this.state.gameState.players[this.state.gameState.voted].name
-            return(<div>
-                <div>{votedString}</div>
-                <button onClick={()=>{
-                    gameManager.vote_button(null);
-                }}>Reset Vote</button>
-            </div>);
+                let votedString = "";
+                if(this.state.gameState.voted!=null)
+                    votedString = this.state.gameState.players[this.state.gameState.voted].name
+                return(<div>
+                    <div>{votedString}</div>
+                    <button onClick={()=>{
+                        gameManager.vote_button(null);
+                    }}>Reset Vote</button>
+                </div>);
             case"Night":
-            let targetString = "";
-            for(let i = 0; i < this.state.gameState.targets.length; i++){
-                targetString+=this.state.gameState.players[this.state.gameState.targets[i]].name+", ";
-            }
-            return(<div>
-                <div>{targetString}</div>
-                <button onClick={()=>{
-                    gameManager.target_button([]);
-                }}>Reset Targets</button>
-            </div>);
+                let targetString = "";
+                for(let i = 0; i < this.state.gameState.targets.length; i++){
+                    targetString+=this.state.gameState.targets[i]+":"+this.state.gameState.players[this.state.gameState.targets[i]].name+", ";
+                }
+                return(<div>
+                    <div>{targetString}</div>
+                    <button onClick={()=>{
+                        gameManager.target_button([]);
+                    }}>Reset Targets</button>
+                </div>);
             default:
             return null;
         }

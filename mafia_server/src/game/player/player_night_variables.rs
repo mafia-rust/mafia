@@ -94,4 +94,9 @@ impl PlayerNightVariables{
             grave_will: player.will.clone(),
         };
     }
+    pub fn increase_defense_to(&mut self, defense: u8){
+        if self.defense < defense{
+            self.defense = defense;
+        }
+    }
 }

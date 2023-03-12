@@ -13,12 +13,12 @@ pub(super) const ROLEBLOCKABLE: bool = true;
 pub(super) const WITCHABLE: bool = true;
 pub(super) const SUSPICIOUS: bool = false;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownInvestigative;
+pub(super) const MAXIUMUM_COUNT: Option<u8> = None;
 
 
 pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game: &mut Game) {
-    if priority != 8{
-        return;
-    }
+    if game.get_unchecked_player(actor_index).night_variables.roleblocked {return;}
+    if priority != 8 {return;}
 
     if let Some(visit) = game.get_unchecked_player(actor_index).night_variables.visits.first(){
         let target_index = visit.target;
@@ -64,4 +64,6 @@ pub(super) fn get_current_chat_groups(actor_index: PlayerIndex, game: &Game) -> 
         crate::game::phase::PhaseType::Evening => vec![ChatGroup::All],
         crate::game::phase::PhaseType::Night => vec![],
     }
+}
+pub fn on_phase_start(actor_index: PlayerIndex, phase: PhaseType, game: &Game){
 }

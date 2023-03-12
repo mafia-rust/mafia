@@ -14,6 +14,8 @@ use crate::prelude::*;
 use super::chat::night_message::NightInformation;
 use super::chat::{ChatMessage, ChatGroup, MessageSender};
 use super::grave::{GraveRole, GraveKiller};
+use super::role_list::RoleListEntry;
+use super::settings;
 use super::{phase::{PhaseStateMachine, PhaseType}, player::{Player, PlayerIndex}, role_list::RoleList, settings::Settings, grave::Grave};
 
 pub struct Game {
@@ -31,25 +33,32 @@ pub struct Game {
 impl Game {
     pub fn new(settings: Settings, lobby_players: Vec<LobbyPlayer>)->Self{
 
-        let mut players = Vec::new();
+        //create role list
+        let mut settings = settings.clone();
+        let roles = settings.role_list.create_random_roles();
+        
 
         //create players
+        let mut players = Vec::new();
         for player_index in 0..lobby_players.len(){
             players.push(
                 Player::new(
                     player_index as u8,
                     lobby_players[player_index].name.clone(),
                     lobby_players[player_index].sender.clone(),
-                    super::role::Role::Sheriff
+                    match roles.get(player_index){
+                        Some(role) => *role,
+                        None => RoleListEntry::Any.get_random_role(),
+                    }
                 )
-            );  //TODO role
+            );
         }
 
         let game = Self{
             players,
             graves: Vec::new(),
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
-            settings,
+            settings: settings.clone(),
 
             player_on_trial: None,
             trials_left: 0,
@@ -58,6 +67,9 @@ impl Game {
         //send to players all game information stuff
         let player_names: Vec<String> = game.players.iter().map(|p|{return p.name.clone()}).collect();
         game.send_to_all(ToClientPacket::Players { names: player_names });
+        game.send_to_all(ToClientPacket::RoleList { 
+            role_list: settings.role_list.clone() 
+        });
         game.send_to_all(ToClientPacket::Phase { 
             phase: game.get_current_phase(), 
             seconds_left: game.phase_machine.time_remaining.as_secs(), 
@@ -66,6 +78,7 @@ impl Game {
             
         for player in game.players.iter(){
             player.send(ToClientPacket::YourPlayerIndex { player_index: player.index });
+            player.send(ToClientPacket::YourRole { role: player.get_role() });
             player.send(ToClientPacket::PlayerButtons { buttons: 
                 PlayerButtons::from(&game, player.index)
             });

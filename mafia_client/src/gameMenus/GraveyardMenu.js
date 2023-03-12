@@ -46,6 +46,7 @@ export class GraveyardMenu extends React.Component {
         return(<div>{grave.will}</div>);
     }
     render(){return(<div>
+        {this.state.gameState.role}
         {this.state.gameState.graves.map((grave, graveIndex)=>{
             return this.renderGrave(grave, graveIndex);
         }, this)}

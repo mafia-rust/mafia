@@ -1,4 +1,5 @@
 use crate::game::chat::ChatGroup;
+use crate::game::phase::PhaseType;
 use crate::game::player::{Player, PlayerIndex};
 use crate::game::role_list::{FactionAlignment, Faction};
 use crate::game::visit::Visit;
@@ -11,12 +12,11 @@ pub(super) const ROLEBLOCKABLE: bool = false;
 pub(super) const WITCHABLE: bool = true;
 pub(super) const SUSPICIOUS: bool = true;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaSupport;
+pub(super) const MAXIUMUM_COUNT: Option<u8> = None;
 
 
 pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game: &mut Game) {
-    if priority != 4 {
-        return;
-    }
+    if priority != 4 {return;}
     
     if let Some(visit) = game.get_unchecked_player(actor_index).night_variables.visits.first(){
         let target_index = visit.target;
@@ -59,4 +59,6 @@ pub(super) fn get_current_chat_groups(actor_index: PlayerIndex, game: &Game) -> 
         crate::game::phase::PhaseType::Evening => vec![ChatGroup::All],
         crate::game::phase::PhaseType::Night => vec![ChatGroup::Mafia],
     }
+}
+pub fn on_phase_start(actor_index: PlayerIndex, phase: PhaseType, game: &Game){
 }
