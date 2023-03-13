@@ -91,27 +91,20 @@ function getChatString(message) {
     // console.log(message);
     if(message.Normal !== undefined){
         if(message.Normal.message_sender.Player !== undefined){
-            return "("+(message.Normal.message_sender.Player+1)+")"+
-            gameManager.gameState.players[message.Normal.message_sender.Player].name+": "+
+            return getPlayerString(message.Normal.message_sender.Player)+": "+
             message.Normal.text;
         }
     }
     if(message.Whisper !== undefined){
         return ""+
-        "From ("+(message.Whisper.from_player_index+1)+")"+
-        gameManager.gameState.players[message.Whisper.from_player_index].name+
-        " to ("+
-        (message.Whisper.to_player_index+1)+")"+
-        gameManager.gameState.players[message.Whisper.to_player_index].name+": "+
+        "From "+getPlayerString(message.Whisper.from_player_index)+
+        " to "+getPlayerString(message.Whisper.to_player_index)+": "+
         message.Whisper.text;
     }
     if(message.BroadcastWhisper!==undefined){
         return ""+
-        "("+(message.BroadcastWhisper.whisperer+1)+")"+
-        gameManager.gameState.players[message.BroadcastWhisper.whisperer].name+
-        " is whispering to ("+
-        (message.BroadcastWhisper.whisperee+1)+")"+
-        gameManager.gameState.players[message.BroadcastWhisper.whisperee].name;
+        getPlayerString(message.BroadcastWhisper.whisperer)+" is whispering to "+
+        getPlayerString(message.BroadcastWhisper.whisperee);
     }
     if(message.PhaseChange!==undefined){
         return ""+
@@ -129,7 +122,7 @@ function getChatString(message) {
     }
     if (message.MayorRevealed !== undefined) {
         return "" +
-        gameManager.gameState.players[message.MayorRevealed.player_index].name+
+        getPlayerString(message.MayorRevealed.player_index)+
         " has revealed as mayor!";
     }
     if (message.MayorCantWhisper !== undefined) {
@@ -183,6 +176,10 @@ function getNightInformationString(message){
     }
 
     return JSON.stringify(message);
+}
+function getPlayerString(playerIndex){
+    return "("+(playerIndex+1)+")"+
+    gameManager.gameState.players[playerIndex].name;
 }
 
 
