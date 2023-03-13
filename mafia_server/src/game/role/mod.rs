@@ -9,6 +9,7 @@ macro_rules! make_role_enum {
         use crate::game::player::PlayerIndex;
         use crate::game::visit::Visit;
         use crate::game::Game;
+        use crate::game::victory_group::VictoryGroup;
         use crate::game::chat::ChatGroup;
         use crate::game::role_list::FactionAlignment;
         use crate::game::phase::PhaseType;
@@ -76,6 +77,12 @@ macro_rules! make_role_enum {
                     $(Role::$name => $file::MAXIUMUM_COUNT),*
                 }
             }
+            
+            pub fn get_victory_group(&self) -> VictoryGroup {
+                match self {
+                    $(Role::$name => $file::VICTORY_GROUP),*
+                }
+            }
             //Above is constants
 
             pub fn do_night_action(&self, actor_index: PlayerIndex, priority: i8, game: &mut Game) {
@@ -108,7 +115,7 @@ macro_rules! make_role_enum {
                     $(Role::$name => $file::get_current_chat_groups(actor_index, game)),*
                 }
             }
-            pub fn on_phase_start(&self, actor_index: PlayerIndex, phase: PhaseType, game: &Game){
+            pub fn on_phase_start(&self, actor_index: PlayerIndex, phase: PhaseType, game: &mut Game){
                 match self{
                     $(Role::$name => $file::on_phase_start(actor_index, phase, game)),*
                 }
@@ -131,7 +138,10 @@ macro_rules! make_role_enum {
 make_role_enum! {
     Sheriff : sheriff,
 
-    Doctor : doctor,
+    Doctor : doctor {
+        self_heals_remaining: u8 = 1,
+        target_healed_index: Option<PlayerIndex> = None
+    },
 
     Veteran : veteran {
         alerts_remaining: u8 = 3,

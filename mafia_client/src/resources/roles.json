@@ -1,14 +1,26 @@
 {
     "Sheriff": {
         "description": "Target a player to find out if they're innocent or suspicious",
-        "advancedDescription": "What you see isn't always true. A player could look suspicious if they're framed, disguised, transported, or otherwise. A Godfather will also look innocent even though they're evil.",
+        "advancedDescription": "A player could wrongly look suspicious if they're framed, disguised, transported, or otherwise. A Godfather will also look innocent even though they're evil.",
         "faction": "Town",
         "alignment": "Investigative",
         "suspicious": false,
         "roleblockable": true,
         "defense": 0,
         "witchable": true,
-        "victoryGroup": "Town",
+        "victoryGroup": "Faction",
+        "maxCount": null
+    },
+    "Doctor": {
+        "description": "Target a player to save them from death.",
+        "advancedDescription": "You will grant your target with a powerfull defense. Both you and your target will know if you saved them from an attack.",
+        "faction": "Town",
+        "alignment": "Protective",
+        "suspicious": false,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "victoryGroup": "Faction",
         "maxCount": null
     },
     "Veteran": {
@@ -20,7 +32,7 @@
         "roleblockable": false,
         "defense": 0,
         "witchable": false,
-        "victoryGroup": "Town",
+        "victoryGroup": "Faction",
         "maxCount": 1
     },
     "Mafioso": {
@@ -32,7 +44,7 @@
         "roleblockable": true,
         "defense": 0,
         "witchable": true,
-        "victoryGroup": "Mafia",
+        "victoryGroup": "Faction",
         "maxCount": 1
     },
     "Consort": {
@@ -44,7 +56,7 @@
         "roleblockable": false,
         "defense": 0,
         "witchable": true,
-        "victoryGroup": "Mafia",
+        "victoryGroup": "Faction",
         "maxCount": null
     }
 }

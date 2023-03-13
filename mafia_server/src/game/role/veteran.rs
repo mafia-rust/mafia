@@ -4,6 +4,7 @@ use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::{Player, PlayerIndex, self};
 use crate::game::role_list::FactionAlignment;
+use crate::game::victory_group::VictoryGroup;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
@@ -15,19 +16,20 @@ pub(super) const WITCHABLE: bool = false;
 pub(super) const SUSPICIOUS: bool = false;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownKilling;
 pub(super) const MAXIUMUM_COUNT: Option<u8> = Some(1);
+pub(super) const VICTORY_GROUP: VictoryGroup = VictoryGroup::Faction;
 
 pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game: &mut Game) {
     match priority {
         1 => {
-            let RoleData::Veteran { alerts_remaining, mut alerting_tonight } = game.get_unchecked_mut_player(actor_index).role_data else {unreachable!()};
-
+            let RoleData::Veteran { alerts_remaining, alerting_tonight } = game.get_unchecked_mut_player(actor_index).role_data else {unreachable!()};
             if alerts_remaining > 0 {
                 if let Some(visit) = game.get_unchecked_player(actor_index).night_variables.visits.get(0){
-                    alerting_tonight = visit.target == actor_index;
+                    if visit.target == actor_index{
+                        game.get_unchecked_mut_player(actor_index).night_variables.increase_defense_to(1);
+                        game.get_unchecked_mut_player(actor_index).role_data = RoleData::Veteran { alerts_remaining: alerts_remaining-1, alerting_tonight: true };
+                    }
                 }
-                game.get_unchecked_mut_player(actor_index).night_variables.increase_defense_to(1);
             }
-            
         }
         9 => {
             let RoleData::Veteran { alerts_remaining, alerting_tonight } = game.get_unchecked_player(actor_index).role_data else {unreachable!()};
@@ -102,11 +104,9 @@ pub(super) fn get_current_chat_groups(actor_index: PlayerIndex, game: &Game) -> 
         crate::game::phase::PhaseType::Night => vec![],
     }
 }
-pub fn on_phase_start(actor_index: PlayerIndex, phase: PhaseType, game: &Game){
-    let actor = game.get_unchecked_player(actor_index);
-    if let RoleData::Veteran { alerts_remaining, mut alerting_tonight } = actor.role_data {
-        alerting_tonight = false;
-    }else{
-        unreachable!()
-    }
+pub fn on_phase_start(actor_index: PlayerIndex, phase: PhaseType, game: &mut Game){
+    let actor = game.get_unchecked_mut_player(actor_index);
+    if let RoleData::Veteran { alerts_remaining, alerting_tonight } = &mut actor.role_data {
+        *alerting_tonight = false;
+    }else{unreachable!()}
 }

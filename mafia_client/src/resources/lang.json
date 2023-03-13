@@ -1,0 +1,15 @@
+{
+    "chatmessage.night.RoleBlocked_immune": "Someone tried to roleblock you but you are immune.",
+    "chatmessage.night.RoleBlocked": "You have been roleblocked.",
+    "chatmessage.night.TargetSurvivedAttack": "Your target had defense and survived.",
+    "chatmessage.night.YouDied":"You died!",
+    "chatmessage.night.SpyMafiaVisit":"The mafia visited \\",
+    "chatmessage.night.SpyBug":"Your bug captured \\",
+    "chatmessage.night.VeteranAttackedYou":"You were attacked by the veteran you visited.",
+    "chatmessage.night.VeteranAttackedVisitor":"You attacked a visitor.",
+    "chatmessage.night.VigilanteSuicide":"You committed suicide over the guilt of killing an innocnet person",
+    "chatmessage.night.DoctorHealed":"You healed your target while they got attacked.",
+    "chatmessage.night.DoctorHealedYou":"A doctor healed you while you got attacked.",
+    "chatmessage.night.SheriffResult_suspicious":"Your target seems to be suspicious.",
+    "chatmessage.night.SheriffResult_innocent":"Your target seems to be innocent."
+}

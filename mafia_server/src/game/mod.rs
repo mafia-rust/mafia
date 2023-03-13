@@ -7,6 +7,7 @@ pub mod visit;
 pub mod verdict;
 pub mod role_list;
 pub mod settings;
+pub mod victory_group;
 
 #[allow(clippy::module_inception)]
 mod game;

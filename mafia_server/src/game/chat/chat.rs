@@ -15,6 +15,7 @@ pub enum MessageSender {
 pub enum ChatMessage {
     Normal{message_sender: MessageSender, text: String, chat_group: ChatGroup},
     Whisper{from_player_index: PlayerIndex, to_player_index: PlayerIndex, text: String},
+    BroadcastWhisper { whisperer: PlayerIndex, whisperee: PlayerIndex },    //Sammy whispered to Tyler
     /* System */
     Debug(String), // TODO: Remove. This is only for testing.
 
@@ -34,7 +35,6 @@ pub enum ChatMessage {
     TrialVerdict {player_on_trial: PlayerIndex, innocent: usize, guilty: usize },    //Sammy was voted innocent with these many votes
     
     /* Misc */
-    BroadcastWhisper { whisperer: PlayerIndex, whisperee: PlayerIndex },    //Sammy whispered to Tyler
     Targeted { targeter: PlayerIndex, target: Option<PlayerIndex> },        //Sammy targeted Jack
     NightInformation{ night_information: NightInformation },
 

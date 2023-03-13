@@ -1,11 +1,14 @@
-use crate::game::chat::ChatGroup;
+
+use crate::game::chat::night_message::NightInformation;
+use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::PhaseType;
 use crate::game::player::{Player, PlayerIndex};
 use crate::game::role_list::FactionAlignment;
+use crate::game::victory_group::VictoryGroup;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::Priority;
+use super::{Priority, RoleData};
 
 pub(super) const DEFENSE: u8 = 0;
 pub(super) const ROLEBLOCKABLE: bool = true;
@@ -13,10 +16,35 @@ pub(super) const WITCHABLE: bool = true;
 pub(super) const SUSPICIOUS: bool = false;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownProtective;
 pub(super) const MAXIUMUM_COUNT: Option<u8> = None;
+pub(super) const VICTORY_GROUP: VictoryGroup = VictoryGroup::Faction;
 
 
 pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game: &mut Game) {
-    todo!();
+    if game.get_unchecked_player(actor_index).night_variables.roleblocked {return}
+
+    match priority {
+        6 => {
+            let Some(visit) = game.get_unchecked_player(actor_index).night_variables.visits.first() else {return};
+            let target_index: PlayerIndex = visit.target.clone();
+            let RoleData::Doctor{self_heals_remaining, target_healed_index } = &mut game.get_unchecked_mut_player(actor_index).role_data else {unreachable!()};
+            
+            if actor_index == target_index {
+                *self_heals_remaining -= 1;
+            }
+            *target_healed_index = Some(target_index);
+            game.get_unchecked_mut_player(target_index).night_variables.increase_defense_to(2);
+        }
+        10 => {
+            let RoleData::Doctor{self_heals_remaining, target_healed_index } = game.get_unchecked_player(actor_index).role_data else {unreachable!()};
+            if let Some(target_healed_index) = target_healed_index {
+                if game.get_unchecked_player(target_healed_index).night_variables.attacked{
+                    game.get_unchecked_mut_player(actor_index).add_chat_message(ChatMessage::NightInformation { night_information: NightInformation::DoctorHealed });
+                    game.get_unchecked_mut_player(target_healed_index).add_chat_message(ChatMessage::NightInformation { night_information: NightInformation::DoctorHealedYou });
+                }
+            }
+        }
+        _ => {}
+    }
 }
 pub(super) fn can_night_target(actor_index: PlayerIndex, target_index: PlayerIndex, game: &Game) -> bool {
     actor_index != target_index &&
@@ -52,5 +80,9 @@ pub(super) fn get_current_chat_groups(actor_index: PlayerIndex, game: &Game) -> 
         crate::game::phase::PhaseType::Night => vec![],
     }
 }
-pub fn on_phase_start(actor_index: PlayerIndex, phase: PhaseType, game: &Game){
+pub fn on_phase_start(actor_index: PlayerIndex, phase: PhaseType, game: &mut Game){
+    let actor = game.get_unchecked_mut_player(actor_index);
+    if let  RoleData::Doctor{self_heals_remaining, target_healed_index } = &mut actor.role_data {
+        *target_healed_index = None;
+    }else{unreachable!()}
 }

@@ -350,7 +350,7 @@ impl Game {
 
         player.night_variables.attacked = true;
 
-        if player.night_variables.defense > attack {
+        if player.night_variables.defense >= attack {
             player.add_chat_message(ChatMessage::NightInformation { night_information: NightInformation::YouSurvivedAttack });
             return false;
         }
