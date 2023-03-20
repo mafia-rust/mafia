@@ -2,8 +2,7 @@ import lang from "../resources/lang.json";
 import gameManager from "..";
 
 export function translate(langKey, ...valuesList){
-    let string = lang[langKey];
-    let out = string;
+    let out = lang[langKey];
     for(let i = 0; i < valuesList.length; i++){
         out = out.replace("\\"+(i), valuesList[i]);
     }
@@ -66,7 +65,7 @@ export function getChatString(message) {
     }
     if(message.PhaseChange!==undefined){
         return translate("chatmessage.PhaseChange",
-            message.PhaseChange.phase_type,
+            lang["phase."+message.PhaseChange.phase_type],
             message.PhaseChange.day_number
         );
     }

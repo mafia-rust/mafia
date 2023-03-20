@@ -22,6 +22,7 @@ export class GraveyardMenu extends React.Component {
     componentWillUnmount() {
         gameManager.removeStateListener(this.listener);
     }
+
     renderGrave(grave, graveIndex){
         return(<div key={graveIndex}>
             {grave.diedPhase} {grave.dayNumber}<br/>
@@ -44,6 +45,17 @@ export class GraveyardMenu extends React.Component {
     }
     renderExtendedGrave(grave, graveIndex){
         return(<div>{grave.will}</div>);
+    }
+
+    renderRoleList(){
+        return<div>
+
+        </div>
+    }
+    renderRoleListEntry(){
+        return <div>
+            <button></button>
+        </div>
     }
     render(){return(<div>
         {getPlayerString(gameManager.gameState.myIndex)}: {this.state.gameState.role}

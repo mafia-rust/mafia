@@ -1,4 +1,5 @@
 import React from "react";
+import { getPlayerString, translate } from "../game/lang.js";
 import gameManager from "../index.js";
 
 export class PhaseRowMenu extends React.Component {
@@ -25,22 +26,23 @@ export class PhaseRowMenu extends React.Component {
             
             case"Judgement":
             //TODO make buttons light up if they are clicked
-            //TODO no buttons if you are on trial
             return(<div>
-                {this.state.gameState.playerOnTrial+1}:{this.state.gameState.players[this.state.gameState.playerOnTrial].name}
+                {getPlayerString(this.state.gameState.playerOnTrial)}
                 {(()=>{
                 if(this.state.gameState.playerOnTrial !== this.state.gameState.myIndex)
-                return(<div
-                    style={{
-                        display:"grid",
-                        gridAutoColumns: "1fr",
-                    }}
-                >
-                    <button style={{gridColumn: 2}} onClick={()=>{gameManager.judgement_button(-1)}}>Guilty</button>
-                    <button style={{gridColumn: 3}} onClick={()=>{gameManager.judgement_button(0)}}>Abstain</button>
-                    <button style={{gridColumn: 4}} onClick={()=>{gameManager.judgement_button(1)}}>Innocent</button>
-                    <div style={{gridColumn: 5}}></div>
-                </div>);})()}
+                    return(<div>
+                        {translate("verdict."+this.state.gameState.judgement)}
+                    <div
+                        style={{
+                            display:"grid",
+                            gridAutoColumns: "1fr",
+                        }}
+                    >
+                        <button style={{gridColumn: 2}} onClick={()=>{gameManager.judgement_button(-1)}}>{translate("verdict.Guilty")}</button>
+                        <button style={{gridColumn: 3}} onClick={()=>{gameManager.judgement_button(0)}}>{translate("verdict.Abstain")}</button>
+                        <button style={{gridColumn: 4}} onClick={()=>{gameManager.judgement_button(1)}}>{translate("verdict.Innocent")}</button>
+                        <div style={{gridColumn: 5}}></div>
+                    </div></div>);})()}
             </div>);
             default:
             return null;
@@ -48,7 +50,7 @@ export class PhaseRowMenu extends React.Component {
     }
     render(){return(<div>
         <br/>
-        {this.state.gameState.phase} {this.state.gameState.dayNumber}<br/>
+        {translate("phase."+this.state.gameState.phase)} {this.state.gameState.dayNumber}<br/>
         {this.state.gameState.secondsLeft}<br/>
         {this.renderPhaseSpecific()}<br/>
     </div>)}

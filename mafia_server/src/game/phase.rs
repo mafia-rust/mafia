@@ -55,7 +55,7 @@ impl PhaseType {
             PhaseType::Morning => {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Morning, day_number: game.phase_machine.day_number });
 
-                //generate grave
+                //generate & add graves
                 for player_index in 0..game.players.len(){
                     if game.get_unchecked_player(player_index as PlayerIndex).night_variables.died {
                         //generate grave
@@ -64,9 +64,14 @@ impl PhaseType {
                         game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied { grave: new_grave });
                     }
                 }
-
-
                 //convert roles
+                
+                //tell whos alive
+                let mut alive = vec![];
+                for player in game.players.iter(){
+                    alive.push(player.alive);
+                }
+                game.send_to_all(ToClientPacket::PlayerAlive { alive });
             },
             PhaseType::Discussion => {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Discussion, day_number: game.phase_machine.day_number });
@@ -135,6 +140,13 @@ impl PhaseType {
                 game.add_messages_to_chat_group(ChatGroup::All, messages);
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialVerdict { player_on_trial: game.player_on_trial.unwrap(), innocent, guilty });
 
+                //tell whos alive
+                let mut alive = vec![];
+                for player in game.players.iter(){
+                    alive.push(player.alive);
+                }
+                game.send_to_all(ToClientPacket::PlayerAlive { alive });
+                
                 return Self::Evening;
             },
             PhaseType::Evening => {

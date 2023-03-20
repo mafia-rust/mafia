@@ -19,9 +19,37 @@
     "role.Consort.description":"Target a player to roleblock them",
     "role.Consort.advancedDescription":"A roleblock prevents the target player from performing their night ability. This works the same as the Escort. Some roles can not be roleblocked.",
 
+    "FactionAlignment.Faction.Town": "Town",
+    "FactionAlignment.Faction.Mafia": "Mafia",
+    "FactionAlignment.Faction.Neutral": "Neutral",
+    "FactionAlignment.Faction.Coven": "Coven",
+    "FactionAlignment.Faction.Random": "Any",
+
+    "FactionAlignment.Alignment.Killing": "Killing",
+    "FactionAlignment.Alignment.Investigative": "Investigative",
+    "FactionAlignment.Alignment.Protective": "Protective",
+    "FactionAlignment.Alignment.Support": "Support",
+    "FactionAlignment.Alignment.Deception": "Deception",
+    "FactionAlignment.Alignment.Evil": "Evil",
+    "FactionAlignment.Alignment.Chaos": "Chaos",
+    "FactionAlignment.Alignment.Random": "Random",
+
     "verdict.Guilty": "guilty",
     "verdict.Innocent": "innocent",
     "verdict.Abstain": "abstain",
+
+    "phase.Morning": "Morning",
+    "phase.Discussion": "Discussion",
+    "phase.Voting": "Voting",
+    "phase.Testimony": "Testimony",
+    "phase.Judgement": "Judgement",
+    "phase.Evening": "Evening",
+    "phase.Night": "Night",
+
+    "button.Whisper":"Whisper",
+    "button.Vote":"Vote",
+    "button.Target":"Target",
+    "button.DayTarget":"DayTarget",
 
     "chatmessage.Normal":"\\0: \\1",
     "chatmessage.Whisper":"From \\0 to \\1: \\2",

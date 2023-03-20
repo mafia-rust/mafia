@@ -107,7 +107,7 @@ pub struct PlayerButtons{
 impl PlayerButtons{
     pub fn from_target(game: &Game, actor_index: PlayerIndex, target_index: PlayerIndex)->Self{
         Self{
-            vote: actor_index != target_index && game.phase_machine.current_state == PhaseType::Voting && game.get_unchecked_player(actor_index).voting_variables.chosen_vote == None,
+            vote: actor_index != target_index && game.phase_machine.current_state == PhaseType::Voting && game.get_unchecked_player(actor_index).voting_variables.chosen_vote == None && game.get_unchecked_player(actor_index).alive && game.get_unchecked_player(target_index).alive,
             target: game.get_unchecked_player(actor_index).get_role().can_night_target(actor_index, target_index, game) && game.get_current_phase() == PhaseType::Night,
             day_target: game.get_unchecked_player(actor_index).get_role().can_day_target(actor_index, target_index, game),
         }

@@ -1,5 +1,5 @@
 import React from "react";
-import { getPlayerString } from "../game/lang.js";
+import { getPlayerString, translate } from "../game/lang.js";
 import gameManager from "../index.js";
 
 export class PlayerListMenu extends React.Component {
@@ -82,23 +82,23 @@ export class PlayerListMenu extends React.Component {
                     onClick={()=>{
                         gameManager.target_button([...gameManager.gameState.targets, playerIndex]);
                     }}
-                >Target</button>)}})(player)}
+                >{translate("button.Target")}</button>)}})(player)}
                 {((player)=>{if(player.buttons.vote){return(<button style={{
                         gridColumn: 3,                    
                         // overflowX: "hidden",
                     }}
                     onClick={()=>{gameManager.vote_button(playerIndex)}}
-                >Vote</button>)}})(player)}
+                >{translate("button.Vote")}</button>)}})(player)}
                 {((player)=>{if(player.buttons.dayTarget){return(<button style={{
                         gridColumn: 4,                    
                         // overflowX: "hidden",
                     }}
                     onClick={()=>{gameManager.dayTarget_button(playerIndex)}}
-                >DayTarget</button>)}})(player)}
+                >{translate("button.DayTarget")}</button>)}})(player)}
                 {((player)=>{if(canWhisper){return(<button style={{
                     gridColumn: 5,                    
                     // overflowX "hidden",
-                }}>Whisper</button>)}})(player)}
+                }}>{translate("button.Whisper")}</button>)}})(player)}
 
                 <div style={{
                     gridColumn: 6,                    
