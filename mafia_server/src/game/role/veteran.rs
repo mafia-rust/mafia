@@ -48,7 +48,7 @@ pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game
                     });
 
                     //Kill
-                    let killed = game.try_night_kill(player_index, GraveKiller::Role(Role::Veteran), 2);
+                    let killed = Player::try_night_kill(game, player_index, GraveKiller::Role(Role::Veteran), 2);
                     
                     let actor = game.get_unchecked_mut_player(actor_index);
                     actor.add_chat_message(ChatMessage::NightInformation{ 

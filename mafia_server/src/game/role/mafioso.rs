@@ -27,7 +27,7 @@ pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game
         let target_index = visit.target;
         
 
-        let killed = game.try_night_kill(target_index, GraveKiller::Mafia, 1);
+        let killed = Player::try_night_kill(game, target_index, GraveKiller::Mafia, 1);
 
         if !killed {
             let actor = game.get_unchecked_mut_player(actor_index);

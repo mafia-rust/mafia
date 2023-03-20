@@ -9,7 +9,7 @@ use crate::{
         }, 
         role::{
             Role, RoleData
-        }, 
+        }, grave::GraveKiller, 
     }, 
     network::packet::{ToClientPacket, PlayerButtons}
 };
@@ -107,6 +107,34 @@ impl Player {
             return false;
         }
     }
+    ///returns true if attack overpowered defense and/or they are now dead.
+    pub fn try_night_kill(game: &mut Game, player_index: PlayerIndex, grave_killer: GraveKiller, attack: u8)->bool{
+        let player = game.get_unchecked_mut_player(player_index);
+        if !player.alive {return true;}
+
+        player.night_variables.attacked = true;
+
+        if player.night_variables.defense >= attack {
+            player.add_chat_message(ChatMessage::NightInformation { night_information: NightInformation::YouSurvivedAttack });
+            return false;
+        }
+        
+        //die
+        player.night_variables.night_messages.push(ChatMessage::NightInformation { night_information: NightInformation::YouDied });
+        player.night_variables.died = true;
+        player.alive = false;
+        player.night_variables.grave_killers.push(grave_killer);
+
+        true
+    }
+    /// swap this persons role, sending them the role chat message, and associated changes
+    /// # Panics
+    /// player_index does not exist
+    pub fn set_role(&mut self, role: RoleData){
+        self.role_data = role;
+        self.add_chat_message(ChatMessage::RoleAssignment { role: role.role()});
+        self.send(ToClientPacket::YourRole { role });
+    }
 
     //sync server client
     pub fn send(&self, packet: ToClientPacket){
@@ -158,7 +186,6 @@ impl Player {
             }
         }).collect()});
     }
-
 }
 
 impl PartialEq for Player {

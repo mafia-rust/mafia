@@ -1,4 +1,5 @@
 import React from "react";
+import { getPlayerString } from "../game/lang.js";
 import gameManager from "../index.js";
 
 export class PlayerListMenu extends React.Component {
@@ -26,27 +27,33 @@ export class PlayerListMenu extends React.Component {
         switch(this.state.gameState.phase){
             case"Voting":
                 let votedString = "";
-                if(this.state.gameState.voted!=null)
-                    votedString = this.state.gameState.players[this.state.gameState.voted].name
-                return(<div>
-                    <div>{votedString}</div>
-                    <button onClick={()=>{
-                        gameManager.vote_button(null);
-                    }}>Reset Vote</button>
-                </div>);
-            case"Night":
-                let targetString = "";
-                for(let i = 0; i < this.state.gameState.targets.length; i++){
-                    targetString+=this.state.gameState.targets[i]+":"+this.state.gameState.players[this.state.gameState.targets[i]].name+", ";
+                if(this.state.gameState.voted!=null){
+                    votedString = this.state.gameState.players[this.state.gameState.voted].name;
+                    return(<div>
+                        <div>{votedString}</div>
+                        <button onClick={()=>{
+                            gameManager.vote_button(null);
+                        }}>Reset Vote</button>
+                    </div>);
                 }
-                return(<div>
-                    <div>{targetString}</div>
-                    <button onClick={()=>{
-                        gameManager.target_button([]);
-                    }}>Reset Targets</button>
-                </div>);
+                return null;
+            case"Night":
+                let targetStringList = [];
+                for(let i = 0; i < this.state.gameState.targets.length; i++){
+                    targetStringList.push(getPlayerString(this.state.gameState.targets[i]));
+                }
+
+                if(targetStringList.length>0){
+                    return(<div>
+                        <div>{targetStringList.join(", ")+"."}</div>
+                        <button onClick={()=>{
+                            gameManager.target_button([]);
+                        }}>Reset Targets</button>
+                    </div>);
+                }
+                return null;
             default:
-            return null;
+                return null;
         }
     }
 
@@ -57,7 +64,7 @@ export class PlayerListMenu extends React.Component {
         // let buttonCount = player.buttons.dayTarget + player.buttons.target + player.buttons.vote + canWhisper;
 
         return(<div key={playerIndex}>
-            {playerIndex+1}:{player.name}<br/>
+            {getPlayerString(playerIndex)}<br/>
 
             <div style={{
                 display: "grid",

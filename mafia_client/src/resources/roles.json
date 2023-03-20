@@ -1,7 +1,5 @@
 {
     "Sheriff": {
-        "description": "Target a player to find out if they're innocent or suspicious",
-        "advancedDescription": "A player could wrongly look suspicious if they're framed, disguised, transported, or otherwise. A Godfather will also look innocent even though they're evil.",
         "faction": "Town",
         "alignment": "Investigative",
         "suspicious": false,
@@ -12,8 +10,6 @@
         "maxCount": null
     },
     "Doctor": {
-        "description": "Target a player to save them from death.",
-        "advancedDescription": "You will grant your target with a powerfull defense. Both you and your target will know if you saved them from an attack.",
         "faction": "Town",
         "alignment": "Protective",
         "suspicious": false,
@@ -24,8 +20,6 @@
         "maxCount": null
     },
     "Veteran": {
-        "description": "Target yourself to alert and kill everyone who visited you",
-        "advancedDescription": "You will know if you attack someone, and if they survived. You have a powerfull attack on alert. You have basic defense while on alert",
         "faction": "Town",
         "alignment": "Killing",
         "suspicious": false,
@@ -36,8 +30,6 @@
         "maxCount": 1
     },
     "Mafioso": {
-        "description": "Target a player to kill them",
-        "advancedDescription": "A Godfather could force you to target someone else. You will know if your target had defense and survived. You have a basic attack.",
         "faction": "Mafia",
         "alignment": "Killing",
         "suspicious": true,
@@ -48,8 +40,6 @@
         "maxCount": 1
     },
     "Consort": {
-        "description": "Target a player to roleblock them",
-        "advancedDescription": "A roleblock prevents the target player from performing their night ability. This works the same as the Escort. Some roles can not be roleblocked.",
         "faction": "Mafia",
         "alignment": "Support",
         "suspicious": true,

@@ -116,7 +116,11 @@ export function messageListener(serverMessage){
             gameManager.gameState.will = serverMessage.will;
         break;
         case"YourRole":
-            gameManager.gameState.role = serverMessage.role;
+            if(typeof(serverMessage.role)==="string"){
+                gameManager.gameState.role = serverMessage.role;
+            }else{
+                gameManager.gameState.role = Object.keys(serverMessage.role)[0];
+            }
         break;
         case"YourTarget":
             gameManager.gameState.targets = serverMessage.player_indices;
@@ -136,7 +140,7 @@ export function messageListener(serverMessage){
             let grave = create_grave();
             grave.playerIndex = serverMessage.grave.player_index;
             grave.role =        serverMessage.grave.role;
-            grave.killer =      serverMessage.grave.killer;
+            grave.death_cause =      serverMessage.grave.death_cause;
             grave.will =        serverMessage.grave.will;
             grave.diedPhase =   serverMessage.grave.died_phase;
             grave.dayNumber =   serverMessage.grave.day_number;

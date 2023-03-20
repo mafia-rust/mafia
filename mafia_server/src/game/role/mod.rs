@@ -29,7 +29,7 @@ macro_rules! make_role_enum {
             })?),*
         }
 
-        impl Role { //TODO default_data needs to take gamestate and work for executioner
+        impl Role {  
             pub fn values() -> Vec<Role> {
                 return vec![$(Role::$name),*];
             }
@@ -41,43 +41,38 @@ macro_rules! make_role_enum {
                     })?),*
                 }
             }
-
+            
+            //from file
             pub fn is_suspicious(&self) -> bool {
                 match self {
                     $(Role::$name => $file::SUSPICIOUS),*
                 }
             }
-
             pub fn is_witchable(&self) -> bool {
                 match self {
                     $(Role::$name => $file::WITCHABLE),*
                 }
             }
-
             pub fn get_defense(&self) -> u8 {
                 match self {
                     $(Role::$name => $file::DEFENSE),*
                 }
             }
-
             pub fn is_roleblockable(&self) -> bool {
                 match self {
                     $(Role::$name => $file::ROLEBLOCKABLE),*
                 }
             }
-
             pub fn get_faction_alignment(&self) -> FactionAlignment {
                 match self {
                     $(Role::$name => $file::FACTION_ALIGNMENT),*
                 }
             }
-
             pub fn get_maximum_count(&self) -> Option<u8> {
                 match self {
                     $(Role::$name => $file::MAXIUMUM_COUNT),*
                 }
             }
-            
             pub fn get_victory_group(&self) -> VictoryGroup {
                 match self {
                     $(Role::$name => $file::VICTORY_GROUP),*
@@ -148,7 +143,9 @@ make_role_enum! {
         alerting_tonight: bool = false
     },
 
-    Mafioso : mafioso,
+    Mafioso : mafioso {
+        original: bool = true
+    },
     
     Consort : consort
 }

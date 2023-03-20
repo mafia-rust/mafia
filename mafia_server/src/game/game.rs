@@ -41,17 +41,17 @@ impl Game {
         //create players
         let mut players = Vec::new();
         for player_index in 0..lobby_players.len(){
-            players.push(
-                Player::new(
-                    player_index as u8,
-                    lobby_players[player_index].name.clone(),
-                    lobby_players[player_index].sender.clone(),
-                    match roles.get(player_index){
-                        Some(role) => *role,
-                        None => RoleListEntry::Any.get_random_role(),
-                    }
-                )
+            let mut new_player = Player::new(         
+                player_index as u8,
+                lobby_players[player_index].name.clone(),
+                lobby_players[player_index].sender.clone(),
+                match roles.get(player_index){
+                    Some(role) => *role,
+                    None => RoleListEntry::Any.get_random_role(),
+                }
             );
+            new_player.set_role(new_player.role_data);
+            players.push(new_player);
         }
 
         let game = Self{
@@ -78,7 +78,6 @@ impl Game {
             
         for player in game.players.iter(){
             player.send(ToClientPacket::YourPlayerIndex { player_index: player.index });
-            player.send(ToClientPacket::YourRole { role: player.get_role() });
             player.send(ToClientPacket::PlayerButtons { buttons: 
                 PlayerButtons::from(&game, player.index)
             });
@@ -189,7 +188,7 @@ impl Game {
 
     pub fn on_client_message(&mut self, player_index: PlayerIndex, incoming_packet: ToServerPacket){
         match incoming_packet {
-            ToServerPacket::Vote { player_index: player_voted_index } => {
+            ToServerPacket::Vote { player_index: mut player_voted_index } => {
 
                 if self.phase_machine.current_state != PhaseType::Voting || (player_voted_index.is_some() && self.players.len() <= player_voted_index.unwrap() as usize){
                     return;
@@ -197,6 +196,9 @@ impl Game {
 
                 //Set vote
                 let player = self.get_unchecked_mut_player(player_index);
+
+                //if player being voted for is dead then no
+                if !player.alive { player_voted_index = None; }
                 
                 player.send(ToClientPacket::YourVoting { player_index: player_voted_index });
 
@@ -247,7 +249,7 @@ impl Game {
                     self.player_on_trial = player_voted;
 
                     self.send_to_all(ToClientPacket::PlayerOnTrial { player_index: player_voted_index } );
-                    self.jump_to_phase(PhaseType::Judgement);
+                    self.jump_to_phase(PhaseType::Testimony);
                 }
             },
             ToServerPacket::Judgement { verdict } => {
@@ -344,23 +346,4 @@ impl Game {
         }
     }
 
-    ///returns true if attack overpowered defense and they are now dead.
-    pub fn try_night_kill(&mut self, player_index: PlayerIndex, grave_killer: GraveKiller, attack: u8)->bool{
-        let player = self.get_unchecked_mut_player(player_index);
-
-        player.night_variables.attacked = true;
-
-        if player.night_variables.defense >= attack {
-            player.add_chat_message(ChatMessage::NightInformation { night_information: NightInformation::YouSurvivedAttack });
-            return false;
-        }
-        
-        //die
-        player.night_variables.night_messages.push(ChatMessage::NightInformation { night_information: NightInformation::YouDied });
-        player.night_variables.died = true;
-        player.alive = false;
-        player.night_variables.grave_killers.push(grave_killer);
-
-        true
-    }
 }
