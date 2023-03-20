@@ -1,5 +1,5 @@
 import React from "react";
-import { getPlayerString } from "../game/lang.js";
+import { getPlayerString, translate } from "../game/lang.js";
 import gameManager from "../index.js";
 
 export class GraveyardMenu extends React.Component {
@@ -49,18 +49,64 @@ export class GraveyardMenu extends React.Component {
 
     renderRoleList(){
         return<div>
-
+            {
+                this.state.gameState.roleList.map((entry, index)=>{
+                    return this.renderRoleListEntry(entry, index)
+                }, this)
+            }
         </div>
     }
-    renderRoleListEntry(){
-        return <div>
-            <button></button>
-        </div>
+    renderRoleListEntry(roleListEntry, index){
+        if(roleListEntry==="Any"){
+            return <div key={index}>
+                <button>{translate("FactionAlignment.Faction.Random")}</button>
+            </div>
+        }
+        if(roleListEntry.Exact !== undefined){
+            let role = roleListEntry.Exact.Role;
+            return <div key={index}>
+                <button>{translate("role."+role+".name")}</button>
+            </div>
+        }
+        if(roleListEntry.FactionAlignment !== undefined){
+            let factionAlignment = roleListEntry.FactionAlignment;
+            
+            //get faction and alignment strings seperated
+            let faction = null;
+            let alignment = null;
+            
+            
+            if(factionAlignment.includes("Town")) faction = "Town";
+            if(factionAlignment.includes("Mafia")) faction = "Mafia";
+            if(factionAlignment.includes("Neutral")) faction = "Neutral";
+            if(factionAlignment.includes("Coven")) faction = "Coven";
+
+            if(factionAlignment.includes("Killing")) alignment = "Killing";
+            if(factionAlignment.includes("Investigative")) alignment = "Investigative";
+            if(factionAlignment.includes("Protective")) alignment = "Protective";
+            if(factionAlignment.includes("Support")) alignment = "Support";
+            if(factionAlignment.includes("Deception")) alignment = "Deception";
+            if(factionAlignment.includes("Evil")) alignment = "Evil";
+            if(factionAlignment.includes("Chaos")) alignment = "Chaos";
+
+            return <div key={index}>
+                <button>{translate("FactionAlignment.Faction."+faction)} {translate("FactionAlignment.Alignment."+alignment)}</button>
+            </div>
+        }
+        if(roleListEntry.Faction !== undefined){
+            let faction = roleListEntry.Faction;
+            return <div key={index}>
+                <button>{translate("FactionAlignment.Faction."+faction)} {translate("FactionAlignment.Alignment.Random")}</button>
+            </div>
+        }
+        console.log("uncaught rolelistentry type: "+roleListEntry);
+        return null;
     }
     render(){return(<div>
         {getPlayerString(gameManager.gameState.myIndex)}: {this.state.gameState.role}
         {/* {this.state.gameState.graves.map((grave, graveIndex)=>{
             return this.renderGrave(grave, graveIndex);
         }, this)} */}
+        {this.renderRoleList()}
     </div>)}
 }

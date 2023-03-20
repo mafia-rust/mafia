@@ -7,17 +7,17 @@ export function create_gameState(){
         graves: [],
         players: [],
         
-        playerOnTrial: null,
-        phase: null,
+        playerOnTrial: null,    //Number:: player_index
+        phase: null,    //String
         secondsLeft: 0,
         dayNumber: 1,
 
-        role: null,
+        role: null, //String::
 
         will: "",
-        targets: [],
-        voted: null,
-        judgement: null, //String, Innocent, Guilty, Abstained
+        targets: [],    //Vec<PlayerIndex>
+        voted: null, //Number:: player_index
+        judgement: null, //String:: Innocent, Guilty, Abstained
 
 
         //my own data
@@ -26,7 +26,7 @@ export function create_gameState(){
             //wheater ive voted innocent or guilty
             //what chats im currently talking to
         
-        roleList: [],
+        roleList: [],   //Vec<RoleListEntry>
         phaseTimes: {
             morning: 0,
             discussion: 0,

@@ -60,8 +60,8 @@ pub enum ChatGroup {
     //Pirate, 
 }
 impl ChatGroup{
-    pub fn player_in_group(&self, game: &Game, playerIndex: PlayerIndex)->bool{
-        let player = game.get_unchecked_player(playerIndex);
+    pub fn player_in_group(&self, game: &Game, player_index: PlayerIndex)->bool{
+        let player = game.get_unchecked_player(player_index);
         match *self {
             ChatGroup::All => true,
             ChatGroup::Dead => !player.alive,   //or medium

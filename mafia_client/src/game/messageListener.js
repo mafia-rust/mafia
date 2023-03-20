@@ -85,6 +85,7 @@ export function messageListener(serverMessage){
             gameManager.gameState.phaseTimes.night      = serverMessage.phase_times.night.secs;
         break;
         case "RoleList":
+            //list of role list entriy
             gameManager.gameState.roleList = serverMessage.role_list.role_list;
         break;
         case"Phase":

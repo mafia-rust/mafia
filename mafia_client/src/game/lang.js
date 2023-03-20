@@ -3,6 +3,10 @@ import gameManager from "..";
 
 export function translate(langKey, ...valuesList){
     let out = lang[langKey];
+    if(out===undefined||out===null){
+        console.log("Error: Attempted to use non existant lang key: "+langKey);
+        return langKey;
+    }
     for(let i = 0; i < valuesList.length; i++){
         out = out.replace("\\"+(i), valuesList[i]);
     }
