@@ -75,6 +75,10 @@ export function messageListener(serverMessage){
         case "OpenGameMenu":
             Main.instance.setContent(<GameScreen/>);
         break;
+        case "RoleList":
+            //list of role list entriy
+            gameManager.gameState.roleList = serverMessage.role_list.role_list;
+        break;
         case"PhaseTimes":
             gameManager.gameState.phaseTimes.morning    = serverMessage.phase_times.morning.secs;
             gameManager.gameState.phaseTimes.discussion = serverMessage.phase_times.discussion.secs;
@@ -84,9 +88,8 @@ export function messageListener(serverMessage){
             gameManager.gameState.phaseTimes.evening    = serverMessage.phase_times.evening.secs;
             gameManager.gameState.phaseTimes.night      = serverMessage.phase_times.night.secs;
         break;
-        case "RoleList":
-            //list of role list entriy
-            gameManager.gameState.roleList = serverMessage.role_list.role_list;
+        case"InvestigatorResults":
+            gameManager.gameState.investigatorResults = serverMessage.investigator_results.results;
         break;
         case"Phase":
             gameManager.gameState.phase = serverMessage.phase;

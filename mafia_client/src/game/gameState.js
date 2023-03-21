@@ -27,6 +27,7 @@ export function create_gameState(){
             //what chats im currently talking to
         
         roleList: [],   //Vec<RoleListEntry>
+        investigatorResults: [],   //Vec<Vec<Role>>
         phaseTimes: {
             morning: 0,
             discussion: 0,
