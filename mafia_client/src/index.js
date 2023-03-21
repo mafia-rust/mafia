@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { Main } from './Main';
+import { Main } from './Main.tsx';
 import { create_gameManager } from './game/gameManager';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

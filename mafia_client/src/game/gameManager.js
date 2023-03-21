@@ -1,5 +1,5 @@
 import { create_gameState } from "./gameState";
-import { Main } from "../Main";
+import { Main } from "../Main.tsx";
 import { StartMenu } from "../openMenus/StartMenu";
 import gameManager from "../index.js";
 import { messageListener } from "./messageListener";

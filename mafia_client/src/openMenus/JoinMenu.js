@@ -3,7 +3,7 @@ import gameManager from "../index.js";
 import "../index.css";
 import "./joinMenu.css";
 import { LoadingMenu } from "./LoadingMenu.js";
-import { Main } from "../Main.js";
+import { Main } from "../Main.tsx";
 import { translate } from "../game/lang.js";
 
 export class JoinMenu extends React.Component {
