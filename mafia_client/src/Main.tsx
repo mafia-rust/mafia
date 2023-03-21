@@ -2,9 +2,14 @@ import React from "react";
 import "./index.css"
 import { StartMenu } from "./openMenus/StartMenu";
 
-export class Main extends React.Component {
-    static instance;
-    constructor(props) {
+type MainState = {
+    content: JSX.Element,
+    user: null,
+}
+
+export class Main extends React.Component<any, MainState> {
+    static instance: Main;
+    constructor(props: any) {
         super(props);
 
         this.state = {
@@ -32,7 +37,7 @@ export class Main extends React.Component {
             {this.state.content}
         </div>)
     }
-    setContent(content){
+    setContent(content: JSX.Element){
         this.setState({content : content});
     }
 }
