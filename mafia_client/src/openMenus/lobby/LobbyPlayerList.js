@@ -1,6 +1,6 @@
 import React from "react";
 import { translate, getPlayerString } from "../../game/lang.js";
-import gameManager from "../../index.js";
+import gameManager from "../../index";
 import "./lobbyMenu.css";
 
 export class LobbyPlayerList extends React.Component {

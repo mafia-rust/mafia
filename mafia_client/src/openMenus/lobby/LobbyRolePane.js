@@ -1,7 +1,7 @@
 import React from "react";
 import gameManager from "../..";
 import ROLES from "../../resources/roles.json"
-// import gameManager from "../../index.js";
+// import gameManager from "../../index";
 
 
 export class LobbyRolePane extends React.Component {

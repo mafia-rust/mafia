@@ -1,6 +1,6 @@
 import React from "react";
 import { getPlayerString, translate } from "../game/lang.js";
-import gameManager from "../index.js";
+import gameManager from "../index";
 
 export class PlayerListMenu extends React.Component {
     constructor(props) {

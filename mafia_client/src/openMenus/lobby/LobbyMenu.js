@@ -1,5 +1,5 @@
 import React from "react";
-import gameManager from "../../index.js";
+import gameManager from "../../index";
 import {LobbyPlayerList} from "./LobbyPlayerList.js";
 import { LobbyPhaseTimePane } from "./LobbyPhaseTimePane.js";
 import { LobbyRolePane } from "./LobbyRolePane.js";

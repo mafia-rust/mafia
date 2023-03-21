@@ -1,9 +1,9 @@
 
 import { create_gameState, create_grave, create_player } from "./gameState";
-import { Main } from "../Main.tsx";
+import { Main } from "../Main";
 import { LobbyMenu } from "../openMenus/lobby/LobbyMenu";
 import { StartMenu } from "../openMenus/StartMenu";
-import gameManager from "../index.js";
+import gameManager from "../index";
 import { GameScreen } from "../gameMenus/GameScreen";
 
 export function messageListener(serverMessage){

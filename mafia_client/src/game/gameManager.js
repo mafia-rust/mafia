@@ -1,7 +1,7 @@
 import { create_gameState } from "./gameState";
-import { Main } from "../Main.tsx";
+import { Main } from "../Main";
 import { StartMenu } from "../openMenus/StartMenu";
-import gameManager from "../index.js";
+import gameManager from "../index";
 import { messageListener } from "./messageListener";
 import CONFIG from "../resources/config.json"
 

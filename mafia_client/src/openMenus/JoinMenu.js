@@ -1,9 +1,9 @@
 import React from "react";
-import gameManager from "../index.js";
+import gameManager from "../index";
 import "../index.css";
 import "./joinMenu.css";
 import { LoadingMenu } from "./LoadingMenu.js";
-import { Main } from "../Main.tsx";
+import { Main } from "../Main";
 import { translate } from "../game/lang.js";
 
 export class JoinMenu extends React.Component {

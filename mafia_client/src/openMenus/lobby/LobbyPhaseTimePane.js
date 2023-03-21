@@ -1,6 +1,6 @@
 import React from "react";
 import { translate } from "../../game/lang.js";
-import gameManager from "../../index.js";
+import gameManager from "../../index";
 import "./lobbyMenu.css";
 
 export class LobbyPhaseTimePane extends React.Component {

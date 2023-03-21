@@ -1,6 +1,6 @@
 import React from "react";
 import { translate } from "../game/lang.js";
-import gameManager from "../index.js";
+import gameManager from "../index";
 
 export class WikiMenu extends React.Component {
     constructor(props) {

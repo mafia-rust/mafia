@@ -1,7 +1,7 @@
 import React from "react";
-import gameManager from "../index.js";
+import gameManager from "../index";
 import { create_gameState } from "../game/gameState";
-import {Main} from "../Main.tsx";
+import {Main} from "../Main";
 import "../index.css"
 import "./startMenu.css"
 import { LoadingMenu } from "./LoadingMenu.js";

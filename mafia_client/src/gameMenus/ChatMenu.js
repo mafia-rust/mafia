@@ -1,6 +1,6 @@
 import React from "react";
 import { getChatString } from "../game/lang.js";
-import gameManager from "../index.js";
+import gameManager from "../index";
 
 export class ChatMenu extends React.Component {
     constructor(props) {

@@ -1,5 +1,5 @@
 import React from "react";
-import gameManager from "../index.js";
+import gameManager from "../index";
 
 export class WillMenu extends React.Component {
     constructor(props) {
