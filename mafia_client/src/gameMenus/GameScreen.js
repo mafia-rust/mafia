@@ -1,6 +1,6 @@
 import React from "react";
 import "../index.css"
-import { LoadingMenu } from "../openMenus/LoadingMenu";
+import * as LoadingScreen from "../openMenus/LoadingScreen";
 import { PhaseRowMenu } from "./PhaseRowMenu";
 import { GraveyardMenu } from "./GraveyardMenu";
 import { ChatMenu } from "./ChatMenu";
@@ -13,8 +13,8 @@ export class GameScreen extends React.Component {
         super(props);
 
         this.state = {
-            header: <LoadingMenu/>,
-            content: [<LoadingMenu/>],
+            header: LoadingScreen.create(),
+            content: [LoadingScreen.create()],
         };
     }
     componentDidMount() {

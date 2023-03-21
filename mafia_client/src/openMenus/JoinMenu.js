@@ -2,7 +2,7 @@ import React from "react";
 import gameManager from "../index";
 import "../index.css";
 import "./joinMenu.css";
-import { LoadingMenu } from "./LoadingMenu.js";
+import * as LoadingScreen from "./LoadingScreen";
 import { Main } from "../Main";
 import { translate } from "../game/lang.js";
 
@@ -30,7 +30,7 @@ export class JoinMenu extends React.Component {
         gameManager.roomCode = Number(this.state.roomCode);
         gameManager.name = this.state.name;
 
-        Main.instance.setContent(<LoadingMenu value={translate("menu.loading.join")}/>);
+        Main.instance.setContent(LoadingScreen.create(LoadingScreen.Type.Join));
 
         gameManager.Server.close();
         gameManager.Server.open();

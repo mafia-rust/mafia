@@ -4,7 +4,7 @@ import { create_gameState } from "../game/gameState";
 import {Main} from "../Main";
 import "../index.css"
 import "./startMenu.css"
-import { LoadingMenu } from "./LoadingMenu.js";
+import * as LoadingScreen from "./LoadingScreen";
 import { JoinMenu } from "./JoinMenu.js";
 import { translate } from "../game/lang.js";
 
@@ -25,7 +25,7 @@ export class StartMenu extends React.Component {
     hostGameButton(){
         gameManager.gameState = create_gameState();
         
-        Main.instance.setContent(<LoadingMenu value={translate("menu.loading.host")}/>);
+        Main.instance.setContent(LoadingScreen.create(LoadingScreen.Type.Host));
 
         gameManager.Server.close();
         gameManager.Server.open();
