@@ -4,6 +4,7 @@ import "../index.css";
 import "./joinMenu.css";
 import { LoadingMenu } from "./LoadingMenu.js";
 import { Main } from "../Main.js";
+import { translate } from "../game/lang.js";
 
 export class JoinMenu extends React.Component {
     constructor(props) {
@@ -29,7 +30,7 @@ export class JoinMenu extends React.Component {
         gameManager.roomCode = Number(this.state.roomCode);
         gameManager.name = this.state.name;
 
-        Main.instance.setContent(<LoadingMenu value="Connecting..."/>);
+        Main.instance.setContent(<LoadingMenu value={translate("menu.loading.join")}/>);
 
         gameManager.Server.close();
         gameManager.Server.open();
@@ -40,11 +41,13 @@ export class JoinMenu extends React.Component {
     }
     render(){return(<div style={{display: "flex", flexDirection: "column"}}>
         <div className="header jm-header">
-            <h1 className="header-text jm-header-text">Join Game</h1>
+            <h1 className="header-text jm-header-text">
+                {translate("menu.join.title")}
+            </h1>
         </div>
         <div className="jm-input-column">
             <div className="input-box">
-                <h3 className="input-box-label">Room code</h3>
+                <h3 className="input-box-label">{translate("menu.join.field.room_code")}</h3>
                 <input className="input-field" type="text" value={this.state.roomCode} 
                     onChange={(e)=>{this.setRoomCode(e.target.value)}}
                     onKeyUp={(e)=>{
@@ -54,7 +57,7 @@ export class JoinMenu extends React.Component {
                 />
             </div>
             <div className="input-box">
-                <h3 className="input-box-label">Name</h3>
+                <h3 className="input-box-label">{translate("menu.join.field.name")}</h3>
                 <input className="input-field" type="text" value={this.state.name} 
                     onChange={(e)=>{this.setName(e.target.value)}}
                     onKeyUp={(e)=>{
@@ -63,7 +66,9 @@ export class JoinMenu extends React.Component {
                     }}
                 />
             </div>
-            <button className="button jm-button" onClick={()=>{this.joinGameButton()}}>Join Lobby</button>
+            <button className="button jm-button" onClick={()=>{this.joinGameButton()}}>
+                {translate("menu.join.button.join")}
+            </button>
         </div>
     </div>)}
 }

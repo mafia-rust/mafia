@@ -1,4 +1,5 @@
 import React from "react";
+import { translate, getPlayerString } from "../../game/lang.js";
 import gameManager from "../../index.js";
 import "./lobbyMenu.css";
 
@@ -40,12 +41,12 @@ export class LobbyPlayerList extends React.Component {
         />
         <button className="button" onClick={()=>{
             gameManager.setName_button(this.state.name)
-        }}>Set Name</button>
+        }}>{translate("menu.lobby.button.set_name")}</button>
     </div>)}
 
     renderPlayers(){return(<div>
-        {this.state.gameState.players.map((player, i)=>{
-            return(<div key={i}>{i+1}:{player.name}<br/></div>)
+        {this.state.gameState.players.map((_, i)=>{
+            return(<div key={i}>{getPlayerString(i)}</div>)
         })}
     </div>)}
 }

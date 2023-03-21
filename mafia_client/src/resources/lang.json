@@ -1,4 +1,29 @@
 {
+    "menu.start.title": "Mafia",
+    "menu.start.button.join.logged_in": "Join",
+    "menu.start.button.join.logged_out": "Join as Guest",
+    "menu.start.button.host.logged_in": "Host",
+    "menu.start.button.host.logged_out": "Host as Guest",
+    "menu.start.button.login": "Log in",
+    "menu.start.button.logout": "Log out",
+    "menu.start.credits": "Mafia, made by Samuel Maselli, Jack Papel, and Isaac Worsencroft",
+
+    "menu.join.title": "Join Game",
+    "menu.join.button.join": "Join Lobby",
+    "menu.join.field.room_code": "Room code",
+    "menu.join.field.name": "Name",
+
+    "menu.lobby.title": "Lobby \\0",
+    "menu.lobby.button.start": "Start Game",
+    "menu.lobby.field.name": "Name",
+    "menu.lobby.button.set_name": "Set Name",
+    "menu.lobby.button.set_time_settings": "Set Time Settings",
+    "menu.lobby.player": "\\0: (\\1)",
+
+    "menu.loading.host": "Starting Server...",
+    "menu.loading.join": "Connecting...",
+    "menu.loading.default": "Loading...",
+
     "role.Sheriff.name": "Sheriff",
     "role.Sheriff.description": "Target a player to find out if they're innocent or suspicious",
     "role.Sheriff.advancedDescription": "A player could wrongly look suspicious if they're framed, disguised, transported, or otherwise. A Godfather will also look innocent even though they're evil.",

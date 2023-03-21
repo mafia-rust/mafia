@@ -1,4 +1,5 @@
 import React from "react";
+import { translate } from "../../game/lang.js";
 import gameManager from "../../index.js";
 import "./lobbyMenu.css";
 
@@ -50,7 +51,9 @@ export class LobbyPhaseTimePane extends React.Component {
     }
 
     render(){return(<div className="lm-settings-pane">
-        <button className="button lm-set-time-button" onClick={()=>{this.phaseTimesButton()}}>Set Time Settings</button>
+        <button className="button lm-set-time-button" onClick={()=>{this.phaseTimesButton()}}>
+            {translate("menu.lobby.button.set_time_settings")}
+        </button>
         
         <div className="lm-time-select-region">
             {this.renderTimePicker("Morning", this.state.morningTimeField, 
@@ -76,8 +79,9 @@ export class LobbyPhaseTimePane extends React.Component {
             )}
         </div>
     </div>)}
+
     renderTimePicker(name, value, setter) {return <div className="input-box">
-        <div className="input-box-label">{name}</div>
+        <div className="input-box-label">{translate("phase." + name)}</div>
         <input type="text" value={value}
             className="input-field"
             onChange={(e)=>{setter(e.target.value)}}
