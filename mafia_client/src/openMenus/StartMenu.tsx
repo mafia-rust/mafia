@@ -9,12 +9,10 @@ import { JoinMenu } from "./JoinMenu.js";
 import { translate } from "../game/lang.js";
 
 export class StartMenu extends React.Component {
-    constructor(props) {
+    constructor(props: any) {
         super(props);
 
-        this.state = {
-            // User
-        };
+        this.state = {};
     }
     componentDidMount() {
     }
