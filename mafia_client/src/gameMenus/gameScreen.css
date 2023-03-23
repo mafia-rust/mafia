@@ -46,14 +46,15 @@
   .gm-button {
     margin-top: 0.25rem;
     margin-bottom: .25rem;
-    padding-left: .125rem;
-    padding-right: .125rem;
+    padding-left: .25rem;
+    padding-right: .25rem;
     margin-left: .125rem;
     margin-right: .125rem;
     justify-content: center;
     align-items: center;
     width : fit-content;
-    height: 15%;
+    height: fit-content;
+    border-radius: .5rem;
     background-color: rgb(183, 224, 242);
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     color: black;

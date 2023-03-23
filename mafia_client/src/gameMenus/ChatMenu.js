@@ -78,7 +78,8 @@ export class ChatMenu extends React.Component {
           style={{ height: this.calcInputHeight(this.state.chatField) }}
         />
         <button
-          className="chat-send-button"
+          className="gm-button"
+          
           onClick={this.sendChatField}
         >
           Send
