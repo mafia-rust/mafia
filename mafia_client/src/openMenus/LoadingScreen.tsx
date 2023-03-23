@@ -8,7 +8,7 @@ export const enum Type {
     Default = "default"
 }
 //uses the index.css files' loader class to create loading dots after 
-//the text "Loading" or "Joining" or "Hosting"
+//the text passed from lang.json
 export function create(value: Type = Type.Default) {
     return <div className="header" style={{height: "100%"}}>
     <h1 className="header-text">
