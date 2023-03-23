@@ -26,6 +26,7 @@
 }
 
 .chat-messages div {
+  font-size: 85%;
   margin-bottom: 5px;
   border: #4caf50 1px solid;
   border-radius: 5px;
@@ -51,7 +52,7 @@
   overflow-wrap: break-word;
   width: 97%;
   max-width: 97%;
-  resize: vertical;
+  resize: none;
   line-height: 16px;
   min-height: 100%;
   height: fit-content;
