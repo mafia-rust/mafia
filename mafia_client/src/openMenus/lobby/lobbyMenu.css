@@ -38,3 +38,39 @@
     min-height: 2rem;
     padding: 0 2%;
 }
+
+.role-picker-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+}
+
+.role-picker-container {
+    display: inline-block;
+    margin: 10px;
+    font-size: 1rem;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .role-picker-container select {
+    border: none;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #000;
+    padding: 5px;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+    margin-right: 5px;
+    font-size: 1rem;
+  }
+  
+  .role-picker-container select:focus {
+    outline: none;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+  }
+  
+  .role-picker-container select option {
+    background-color: #fff;
+    color: #000;
+  }
+  

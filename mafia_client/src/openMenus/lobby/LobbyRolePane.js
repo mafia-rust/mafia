@@ -1,6 +1,8 @@
 import React from "react";
 import gameManager from "../..";
 import ROLES from "../../resources/roles.json"
+
+import "..//../index.css";
 // import gameManager from "../../index";
 
 
@@ -82,83 +84,106 @@ export class LobbyRolePane extends React.Component {
 
 ///props.index
 ///props.onChange
+
 class RolePicker extends React.Component {
-    constructor(props) {
-      super(props);
-        this.state = {
-            faction: "Any",
-            alignment: "Random",
-            
-            index: props.index,
-            onChange: props.onChange
-        };
+  constructor(props) {
+    super(props);
+    this.state = {
+      faction: "Any",
+      alignment: "Random",
+      index: props.index,
+      onChange: props.onChange,
+    };
+  }
+
+  allFactions() {
+    let factions = [];
+
+    for (let role in ROLES) {
+      if (!factions.includes(ROLES[role].faction)) {
+        factions.push(ROLES[role].faction);
+      }
     }
-    allFactions(){
-        let factions = [];
 
-        for(let role in ROLES){
-            if( !factions.includes(ROLES[role].faction) ){
-                factions.push(ROLES[role].faction);
-            }
-        }
+    return factions;
+  }
 
-        return factions;
+  allAlignments(faction) {
+    let alignments = [];
+    let roles = [];
+
+    for (let role in ROLES) {
+      if (ROLES[role].faction !== faction) continue;
+
+      if (!alignments.includes(ROLES[role].alignment)) {
+        alignments.push(ROLES[role].alignment);
+      }
+      if (!roles.includes(role)) {
+        roles.push(role);
+      }
     }
-    allAlignments(faction){
-        let alignments = [];
-        let roles = [];
 
-        for(let role in ROLES){
-            if(ROLES[role].faction !== faction) 
-                continue;
+    return alignments.concat(roles);
+  }
 
-            if( !alignments.includes(ROLES[role].alignment) ){
-                alignments.push(ROLES[role].alignment);
+  render() {
+    return (
+      <div className="role-picker-container">
+        <select
+          value={this.state.faction}
+          onChange={(e) => {
+            if (e.target.value === "Any") {
+              this.props.onChange(this.state.index, createRoleListEntry_Any());
+            } else {
+              this.props.onChange(
+                this.state.index,
+                createRoleListEntry_Faction(e.target.value)
+              );
             }
-            if( !roles.includes(role) ){
-                roles.push(role);
-            }
-        }
-
-        return alignments.concat(roles);
-    }
-    render() {
-        return (<div>
-            <select value={this.state.faction} onChange={(e)=>{
-                if(e.target.value === "Any"){
-                    this.props.onChange(this.state.index, createRoleListEntry_Any());
-                }else{
-                    this.props.onChange(this.state.index, createRoleListEntry_Faction(e.target.value));
-                }
-                this.setState({faction: e.target.value});
-            }}>
-                {this.allFactions().map((faction)=>{
-                    return <option key={faction}>{faction}</option>
-                }).concat([<option key={"Any"}>Any</option>])}
-            </select>
-            { 
-                (this.state.faction !== "Any") &&  
-                <select value={this.state.alignment} onChange={(e)=>{
-                    if(Object.keys(ROLES).includes(e.target.value)){
-                        this.props.onChange(this.state.index, createRoleListEntry_Exact(e.target.value));
-                    }else if("Random" === e.target.value){
-                        this.props.onChange(this.state.index, createRoleListEntry_Faction(this.state.faction));
-                    }else{
-                        this.props.onChange(this.state.index, createRoleListEntry_FactionAlignment(this.state.faction, e.target.value));
-                    }
-                    this.setState({alignment: e.target.value})
-                }}>
-                    {
-                        this.allAlignments(this.state.faction).map((alignment)=>{
-                            return <option key={alignment}>{alignment}</option>
-                        }).concat([<option key={"Random"}>Random</option>]) 
-                    }
-                </select>
-            }
-        </div>);
-    }
+            this.setState({ faction: e.target.value });
+          }}
+        >
+          {this.allFactions().map((faction) => {
+            return <option key={faction}>{faction}</option>;
+          }).concat([<option key={"Any"}>Any</option>])}
+        </select>
+        {this.state.faction !== "Any" && (
+          <select
+            value={this.state.alignment}
+            onChange={(e) => {
+              if (Object.keys(ROLES).includes(e.target.value)) {
+                this.props.onChange(
+                  this.state.index,
+                  createRoleListEntry_Exact(e.target.value)
+                );
+              } else if ("Random" === e.target.value) {
+                this.props.onChange(
+                  this.state.index,
+                  createRoleListEntry_Faction(this.state.faction)
+                );
+              } else {
+                this.props.onChange(
+                  this.state.index,
+                  createRoleListEntry_FactionAlignment(
+                    this.state.faction,
+                    e.target.value
+                  )
+                );
+              }
+              this.setState({ alignment: e.target.value });
+            }}
+          >
+            {this.allAlignments(this.state.faction)
+              .map((alignment) => {
+                return <option key={alignment}>{alignment}</option>;
+              })
+              .concat([<option key={"Random"}>Random</option>])}
+          </select>
+        )}
+      </div>
+    );
+  }
 }
-
 
 function createRoleListEntry_Exact(role){
     return {
