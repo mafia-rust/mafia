@@ -1,5 +1,5 @@
 import React from "react";
-import { translate } from "../../game/lang.js";
+import { translate } from "../../game/lang";
 import gameManager from "../../index";
 import "./lobbyMenu.css";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { getChatString } from "../game/lang.js";
+import { getChatString } from "../game/lang";
 import gameManager from "../index";
 import "./gameScreen.css";
 import "./chatMenu.css"

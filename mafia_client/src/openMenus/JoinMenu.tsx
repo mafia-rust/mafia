@@ -4,7 +4,7 @@ import "../index.css";
 import "./joinMenu.css";
 import * as LoadingScreen from "./LoadingScreen";
 import { Main } from "../Main";
-import { translate } from "../game/lang.js";
+import { translate } from "../game/lang";
 
 type JoinMenuState = {
     roomCode: string,

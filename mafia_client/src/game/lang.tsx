@@ -1,9 +1,11 @@
-import lang from "../resources/lang.json";
+import langJson from "../resources/lang.json";
 import gameManager from "..";
 
-export function translate(langKey, ...valuesList){
-    let out = lang[langKey];
-    if(out===undefined||out===null){
+let lang: Map<string, string> = new Map<string, string>(Object.entries(langJson));
+
+export function translate(langKey: string, ...valuesList: any[]): string {
+    let out = lang.get(langKey);
+    if(out===undefined){
         console.log("Error: Attempted to use non existant lang key: "+langKey);
         return langKey;
     }
@@ -13,7 +15,7 @@ export function translate(langKey, ...valuesList){
     return out;
 }
 
-export function getPlayerString(playerIndex){
+export function getPlayerString(playerIndex: number): string {
     if(gameManager.gameState.players[playerIndex] === undefined){
         return "";
     }
@@ -21,7 +23,7 @@ export function getPlayerString(playerIndex){
     gameManager.gameState.players[playerIndex].name;
 }
 
-export function getChatString(message) {
+export function getChatString(message: any): string {
     if(message.Normal !== undefined){
         if(message.Normal.message_sender.Player !== undefined){
             return translate("chatmessage.Normal", 
@@ -53,8 +55,8 @@ export function getChatString(message) {
 
         role = message.RoleAssignment.role
 
-        name = lang["role."+role+".name"];
-        description = lang["role."+role+".description"];
+        name = lang.get("role."+role+".name");
+        description = lang.get("role."+role+".description");
 
         return translate("chatmessage.RoleAssignment", name, description);
     }
@@ -69,7 +71,7 @@ export function getChatString(message) {
     }
     if(message.PhaseChange!==undefined){
         return translate("chatmessage.PhaseChange",
-            lang["phase."+message.PhaseChange.phase_type],
+            lang.get("phase."+message.PhaseChange.phase_type),
             message.PhaseChange.day_number
         );
     }
@@ -103,12 +105,12 @@ export function getChatString(message) {
     if(message.JudgementVerdict!==undefined){
         return translate("chatmessage.JudgementVerdict",
             getPlayerString(message.JudgementVerdict.voter_player_index),
-            lang["verdict."+message.JudgementVerdict.verdict]
+            lang.get("verdict."+message.JudgementVerdict.verdict)
         );
     }
     if(message.TrialVerdict!==undefined){
         return translate("chatmessage.TrialVerdict",
-            message.TrialVerdict.innocent>=message.TrialVerdict.guilty?lang["verdict.Innocent"]:lang["verdict.Guilty"],
+            message.TrialVerdict.innocent>=message.TrialVerdict.guilty?lang.get("verdict.Innocent"):lang.get("verdict.Guilty"),
             message.TrialVerdict.innocent,
             message.TrialVerdict.guilty
         );
@@ -135,7 +137,7 @@ export function getChatString(message) {
     return translate("chatmessage."+message);
     // return JSON.stringify(message);
 }
-export function getNightInformationString(message){
+export function getNightInformationString(message: any){
 
     if (message.RoleBlocked !== undefined) {
         if (message.RoleBlocked.immune) {

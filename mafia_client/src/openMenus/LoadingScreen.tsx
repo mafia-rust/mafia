@@ -1,6 +1,6 @@
 import React from "react";
 import "../index.css"
-import { translate } from "../game/lang.js";
+import { translate } from "../game/lang";
 
 export const enum Type {
     Host = "host",
@@ -8,7 +8,7 @@ export const enum Type {
     Default = "default"
 }
 //uses the index.css files' loader class to create loading dots after 
-//the text passed from lang.json
+//the text passed from langon
 export function create(value: Type = Type.Default) {
     return <div className="header" style={{height: "100%"}}>
     <h1 className="header-text">

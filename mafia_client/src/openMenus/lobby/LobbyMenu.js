@@ -4,7 +4,7 @@ import {LobbyPlayerList} from "./LobbyPlayerList.js";
 import { LobbyPhaseTimePane } from "./LobbyPhaseTimePane.js";
 import { LobbyRolePane } from "./LobbyRolePane.js";
 import "./lobbyMenu.css";
-import { translate } from "../../game/lang.js";
+import { translate } from "../../game/lang";
 
 export class LobbyMenu extends React.Component {
     render(){return(<div style={{
