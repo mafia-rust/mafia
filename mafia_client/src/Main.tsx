@@ -1,10 +1,11 @@
 import React from "react";
 import "./index.css"
 import { StartMenu } from "./openMenus/StartMenu";
+import { UserData } from "./user";
 
 type MainState = {
     content: JSX.Element,
-    user: null,
+    user: UserData | null,
 }
 
 export class Main extends React.Component<any, MainState> {
@@ -23,8 +24,11 @@ export class Main extends React.Component<any, MainState> {
     componentWillUnmount() {
         //Main.instance = undefined;
     }
-    isLoggedIn() {
+    isLoggedIn(): boolean {
         return this.state?.user != null;
+    }
+    getUser(): UserData {
+        return this.state?.user!;
     }
     render(){return(
         <div style={{
