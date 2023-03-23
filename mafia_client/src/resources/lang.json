@@ -20,9 +20,9 @@
     "menu.lobby.button.set_time_settings": "Set Time Settings",
     "menu.lobby.player": "\\0: (\\1)",
 
-    "menu.loading.host": "Starting Server...",
-    "menu.loading.join": "Connecting...",
-    "menu.loading.default": "Loading...",
+    "menu.loading.host": "Starting Server",
+    "menu.loading.join": "Connecting to Server",
+    "menu.loading.default": "Loading",
 
     "role.Sheriff.name": "Sheriff",
     "role.Sheriff.description": "Target a player to find out if they're innocent or suspicious",
