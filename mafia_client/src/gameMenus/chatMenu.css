@@ -18,6 +18,11 @@
   background-color: #282c34;
   color: #fff;
   height: calc(100% - 110px);
+  /*subtracts the hight of the chat message box from the hight*/
+  max-height: calc(100% - 110px); 
+  overflow-y: auto; 
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
 }
 
 .chat-messages div {
@@ -29,7 +34,8 @@
  * the cursor will start on the left side of the input box 
  */
 .chat-input {
-  position: relative;
+  position: sticky;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -79,4 +85,11 @@
 .chat-input input[type="text"]:focus {
   outline: none;
   box-shadow: 0 0 5px #4caf50;
+}
+
+.chat-messages::-webkit-scrollbar { 
+  display: none;  /* Safari and Chrome */
+}
+.chat-input::-webkit-scrollbar { 
+  display: none;  /* Safari and Chrome */
 }
