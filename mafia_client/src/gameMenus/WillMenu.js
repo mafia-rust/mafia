@@ -32,7 +32,7 @@ export class WillMenu extends React.Component {
         value={this.state.willFeild}
         onChange={(e)=>{this.setState({willFeild : e.target.value});}} 
         style={{minWidth:"98%", minHeight:"80%", textAlign:"left"}} ></textarea><br/>
-        <button onClick={()=>{gameManager.saveWill_button(this.state.willFeild)}}>Save</button>
-        <button onClick={()=>{gameManager.sendMessage_button(this.state.gameState.will)}}>Post</button>
+        <button className="gm-button" onClick={()=>{gameManager.saveWill_button(this.state.willFeild)}}>Save</button>
+        <button className="gm-button" onClick={()=>{gameManager.sendMessage_button(this.state.gameState.will)}}>Post</button>
     </div>)}
 }

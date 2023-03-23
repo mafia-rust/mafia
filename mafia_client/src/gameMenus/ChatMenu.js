@@ -79,7 +79,6 @@ export class ChatMenu extends React.Component {
         />
         <button
           className="gm-button"
-          
           onClick={this.sendChatField}
         >
           Send
