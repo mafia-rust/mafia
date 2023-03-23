@@ -1,0 +1,6 @@
+.player-list-menu {
+    display: grid;
+    grid-auto-columns: 1fr;
+    width: 100%;
+  }
+  

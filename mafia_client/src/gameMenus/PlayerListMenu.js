@@ -1,7 +1,8 @@
 import React from "react";
 import { getPlayerString, translate } from "../game/lang.js";
 import gameManager from "../index";
-
+import "./playerListMenu.css"
+import "./gameScreen.css"
 export class PlayerListMenu extends React.Component {
     constructor(props) {
         super(props);
@@ -31,7 +32,7 @@ export class PlayerListMenu extends React.Component {
                     votedString = this.state.gameState.players[this.state.gameState.voted].name;
                     return(<div>
                         <div>{votedString}</div>
-                        <button onClick={()=>{
+                        <button class="button gm-button" onClick={()=>{
                             gameManager.vote_button(null);
                         }}>Reset Vote</button>
                     </div>);
@@ -46,7 +47,7 @@ export class PlayerListMenu extends React.Component {
                 if(targetStringList.length>0){
                     return(<div>
                         <div>{targetStringList.join(", ")+"."}</div>
-                        <button onClick={()=>{
+                        <button class="button gm-button" onClick={()=>{
                             gameManager.target_button([]);
                         }}>Reset Targets</button>
                     </div>);
@@ -66,44 +67,18 @@ export class PlayerListMenu extends React.Component {
         return(<div key={playerIndex}>
             {getPlayerString(playerIndex)}<br/>
 
-            <div style={{
-                display: "grid",
-
-                gridAutoColumns: "1fr",
-
-                width: "100%",
-
-                //gridGap: "5px",
-            }}>
-                {((player)=>{if(player.buttons.target){return(<button style={{
-                        gridColumn: 2,
-                        // overflowX: "hidden",
-                    }}
-                    onClick={()=>{
+            <div>
+                {((player)=>{if(player.buttons.target){return(<button class="button gm-button" onClick={()=>{
                         gameManager.target_button([...gameManager.gameState.targets, playerIndex]);
                     }}
                 >{translate("button.Target")}</button>)}})(player)}
-                {((player)=>{if(player.buttons.vote){return(<button style={{
-                        gridColumn: 3,                    
-                        // overflowX: "hidden",
-                    }}
-                    onClick={()=>{gameManager.vote_button(playerIndex)}}
+                {((player)=>{if(player.buttons.vote){return(<button class="button gm-button" onClick={()=>{gameManager.vote_button(playerIndex)}}
                 >{translate("button.Vote")}</button>)}})(player)}
-                {((player)=>{if(player.buttons.dayTarget){return(<button style={{
-                        gridColumn: 4,                    
-                        // overflowX: "hidden",
-                    }}
-                    onClick={()=>{gameManager.dayTarget_button(playerIndex)}}
+                {((player)=>{if(player.buttons.dayTarget){return(<button class="button gm-button" onClick={()=>{gameManager.dayTarget_button(playerIndex)}}
                 >{translate("button.DayTarget")}</button>)}})(player)}
-                {((player)=>{if(canWhisper){return(<button style={{
-                    gridColumn: 5,                    
-                    // overflowX "hidden",
-                }}>{translate("button.Whisper")}</button>)}})(player)}
+                {((player)=>{if(canWhisper){return(<button class="button gm-button">{translate("button.Whisper")}</button>)}})(player)}
 
-                <div style={{
-                    gridColumn: 6,                    
-                    // overflowX "hidden",
-                }}></div>
+                <div></div>
             </div>
 
             

@@ -42,4 +42,21 @@
     color: white;
 
   }
+
+  .gm-button {
+    margin-top: 0.25rem;
+    margin-bottom: .25rem;
+    padding-left: .125rem;
+    padding-right: .125rem;
+    margin-left: .125rem;
+    margin-right: .125rem;
+    justify-content: center;
+    align-items: center;
+    width : fit-content;
+    height: 15%;
+    background-color: rgb(183, 224, 242);
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: black;
+    font-weight: bold;
+  }
   
