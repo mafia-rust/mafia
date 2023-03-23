@@ -2,9 +2,9 @@
 
 .chat-menu {
   height: calc(100% - 60px);
-  width: 105%;
+  width: 100%;
   display: flex;
-  margin-left: 5%;
+  margin-top: 0%;
   flex-direction: column;
   justify-content: space-between;
 }
@@ -27,6 +27,8 @@
 
 .chat-messages div {
   margin-bottom: 5px;
+  border: #4caf50 1px solid;
+  border-radius: 5px;
 }
 
 /*styles the chat input so that the text will roll over to the next 
@@ -39,13 +41,15 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 10px;
+  padding: 12px;
+  margin-right: 6%;
+  margin-left: 0%;
   background-color: #20232a;
   text-align: left;
   white-space: initial;
   overflow-wrap: break-word;
-  width: 100%;
-  max-width: 100%;
+  width: 93%;
+  max-width: 93%;
   resize: vertical;
   line-height: 16px;
   height: fit-content;
@@ -56,6 +60,7 @@
   overflow-x: hidden;
   overflow-y: auto;
   border: none;
+  
   border-radius: 5px;
   background-color: #282c34;
   color: #fff;
