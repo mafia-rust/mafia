@@ -1,0 +1,23 @@
+.will-menu textarea {
+    min-width: 98%;
+    min-height: 40%;
+    height : 60%;
+    width : 98%;
+    max-height: 80%;
+    max-width: 98%;
+    resize: vedrtical;
+    border: 1px solid #000;
+    border-radius: 5%;
+
+    }
+.textarea-text{
+    font-size: 0.85rem;
+    font-weight: bold;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    margin: 0;
+    width: 100%;
+    justify-content: center;
+    align-self: center;
+    letter-spacing: .075rem;
+    color : black;
+    }
