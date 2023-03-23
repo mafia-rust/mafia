@@ -7,14 +7,6 @@ import "./lobbyMenu.css";
 import { translate } from "../../game/lang.js";
 
 export class LobbyMenu extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-    componentDidMount() {
-    }
-    componentWillUnmount() {
-    }
-
     render(){return(<div style={{
         display: "flex",
         flexDirection: "column",

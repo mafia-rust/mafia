@@ -5,7 +5,7 @@ import {Main} from "../Main";
 import "../index.css"
 import "./startMenu.css"
 import * as LoadingScreen from "./LoadingScreen";
-import { JoinMenu } from "./JoinMenu.js";
+import { JoinMenu } from "./JoinMenu";
 import { translate } from "../game/lang.js";
 
 export class StartMenu extends React.Component {

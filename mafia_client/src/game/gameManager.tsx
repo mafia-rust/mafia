@@ -206,9 +206,6 @@ function create_server(){
     return Server;
 }
 
-
-
-export { GameManager };
 // export default gameManager;
 
 
