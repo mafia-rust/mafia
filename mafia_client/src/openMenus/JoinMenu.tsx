@@ -56,8 +56,22 @@ export class JoinMenu extends React.Component<any, JoinMenuState> {
                 <input className="input-field" type="text" value={this.state.roomCode} 
                     onChange={(e)=>{this.setRoomCode(e.target.value)}}
                     onKeyUp={(e)=>{
-                        if(e.key === 'Enter')
+                        if(e.key === 'Enter') {
                             gameManager.roomCode = this.state.roomCode;
+                            this.joinGameButton();
+                        }
+                    }}
+                />
+            </div>
+            <div className="input-box">
+                <h3 className="input-box-label">{translate("menu.join.field.name")}</h3>
+                <input className="input-field" type="text" value={this.state.name} 
+                    onChange={(e)=>{this.setName(e.target.value)}}
+                    onKeyUp={(e)=>{
+                        if(e.key === 'Enter') {
+                            gameManager.name = this.state.name;
+                            this.joinGameButton();
+                        }
                     }}
                 />
             </div>

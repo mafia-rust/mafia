@@ -7,9 +7,6 @@ import CONFIG from "../resources/config.json"
 import { GameManager, Server } from "./gameManager.d";
 import React from "react";
 
-//let gameManager = create_gameManager();
-//gameManager.Server.open();
-
 export function create_gameManager(): GameManager {
 
     console.log("gameManager created");
@@ -44,7 +41,7 @@ export function create_gameManager(): GameManager {
         join_button: () => {
             gameManager.Server.send(JSON.stringify({
                 "Join":{
-                    "room_code":gameManager.roomCode
+                    "room_code": Number(gameManager.roomCode!)
                 }
             }));
         },
