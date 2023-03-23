@@ -1,0 +1,29 @@
+.game-screen {
+    height: 100vh;
+  }
+  
+  .game-screen-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 15%;
+    background-color: #1c1c1c;
+  }
+  
+  .game-screen-content {
+    display: grid;
+    grid-auto-columns: 1fr;
+    grid-auto-rows: 1fr;
+    height: 85%;
+    width: 100%;
+    background-color: black;
+    grid-gap: 5px;
+  }
+  
+  .game-screen-panel {
+    overflow-x: hidden;
+    height: 100%;
+    width: 100%;
+    background-color: green;
+  }
+  
