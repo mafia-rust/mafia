@@ -1,0 +1,82 @@
+/* gameScreen.css */
+
+.chat-menu {
+  height: calc(100% - 60px);
+  width: 105%;
+  display: flex;
+  margin-left: 5%;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.chat-messages {
+  /*the chat messages can not be moved by a long message being typed*/
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 5px;
+  background-color: #282c34;
+  color: #fff;
+  height: calc(100% - 110px);
+}
+
+.chat-messages div {
+  margin-bottom: 5px;
+}
+
+/*styles the chat input so that the text will roll over to the next 
+ * line if it is too long to fit on one line 
+ * the cursor will start on the left side of the input box 
+ */
+.chat-input {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #20232a;
+  text-align: left;
+  white-space: initial;
+  overflow-wrap: break-word;
+  width: 100%;
+  max-width: 100%;
+  resize: vertical;
+  line-height: 16px;
+  height: fit-content;
+}
+
+.chat-input input[type="text"] {
+  position: absolute;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: none;
+  border-radius: 5px;
+  background-color: #282c34;
+  color: #fff;
+  cursor: text;
+  word-wrap: break-word; /* wrap long words onto the next line */
+}
+
+.chat-input .width-machine {
+  visibility: hidden;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.chat-input button {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4caf50;
+  color: #fff;
+  cursor: pointer;
+}
+
+.chat-input button:hover {
+  background-color: #5cbf62;
+}
+
+.chat-input input[type="text"]:focus {
+  outline: none;
+  box-shadow: 0 0 5px #4caf50;
+}
