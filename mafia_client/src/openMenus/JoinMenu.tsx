@@ -6,28 +6,33 @@ import * as LoadingScreen from "./LoadingScreen";
 import { Main } from "../Main";
 import { translate } from "../game/lang.js";
 
-export class JoinMenu extends React.Component {
-    constructor(props) {
+type JoinMenuState = {
+    roomCode: string,
+    name: string,
+}
+
+export class JoinMenu extends React.Component<any, JoinMenuState> {
+    constructor(props: any) {
         super(props);
 
         this.state = {
             roomCode: "",
-            name: Main.instance?.isLoggedIn() ? Main.instance?.getUser()?.name : "",
+            name: Main.instance?.isLoggedIn() ? Main.instance?.getUser()?.getAccountName() : "",
         };
     }
     componentDidMount() {
     }
     componentWillUnmount() {
     }
-    setRoomCode(code) {
+    setRoomCode(code: string) {
         this.setState({roomCode: code})
     }
-    setName(name) {
+    setName(name: string) {
         this.setState({name: name})
     }
     joinGameButton(){
         // erm... >.<
-        gameManager.roomCode = Number(this.state.roomCode);
+        gameManager.roomCode = this.state.roomCode;
         gameManager.name = this.state.name;
 
         Main.instance.setContent(LoadingScreen.create(LoadingScreen.Type.Join));
@@ -52,7 +57,7 @@ export class JoinMenu extends React.Component {
                     onChange={(e)=>{this.setRoomCode(e.target.value)}}
                     onKeyUp={(e)=>{
                         if(e.key === 'Enter')
-                            gameManager.roomCode = Number(this.state.roomCode);
+                            gameManager.roomCode = this.state.roomCode;
                     }}
                 />
             </div>
