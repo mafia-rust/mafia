@@ -5,7 +5,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-
 def make_host(driver):
     # wait for the Host button to be clickable
     wait = WebDriverWait(driver, 10)
