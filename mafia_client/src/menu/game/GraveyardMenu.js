@@ -1,26 +1,26 @@
 import React from "react";
-import { getPlayerString, translate } from "../game/lang";
-import gameManager from "../index";
+import { getPlayerString, translate } from "@game/lang";
+import GAME_MANAGER from "@";
 
-export class GraveyardMenu extends React.Component {
+export default class GraveyardMenu extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            gameState : gameManager.gameState,
+            gameState : GAME_MANAGER.gameState,
             expandedGraves: [],    //list of graveIndexs of what graves should be showing its will 
         };
         this.listener = ()=>{
             this.setState({
-                gameState: gameManager.gameState
+                gameState: GAME_MANAGER.gameState
             })
         };  
     }
     componentDidMount() {
-        gameManager.addStateListener(this.listener);
+        GAME_MANAGER.addStateListener(this.listener);
     }
     componentWillUnmount() {
-        gameManager.removeStateListener(this.listener);
+        GAME_MANAGER.removeStateListener(this.listener);
     }
 
     renderGrave(grave, graveIndex){
@@ -103,7 +103,7 @@ export class GraveyardMenu extends React.Component {
         return null;
     }
     render(){return(<div>
-        {getPlayerString(gameManager.gameState.myIndex)}: {this.state.gameState.role}
+        {getPlayerString(GAME_MANAGER.gameState.myIndex)}: {this.state.gameState.role}
         {/* {this.state.gameState.graves.map((grave, graveIndex)=>{
             return this.renderGrave(grave, graveIndex);
         }, this)} */}

@@ -1,31 +1,31 @@
 import React from "react";
-import { getChatString } from "../game/lang";
-import gameManager from "../index";
+import { getChatString } from "@game/lang";
+import GAME_MANAGER from "@";
 import "./gameScreen.css";
 import "./chatMenu.css"
 
-export class ChatMenu extends React.Component {
+export default class ChatMenu extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      gameState: gameManager.gameState,
+      gameState: GAME_MANAGER.gameState,
       chatField: "",
     };
 
     this.listener = () => {
       this.setState({
-        gameState: gameManager.gameState
+        gameState: GAME_MANAGER.gameState
       });
     };
   }
 
   componentDidMount() {
-    gameManager.addStateListener(this.listener);
+    GAME_MANAGER.addStateListener(this.listener);
   }
 
   componentWillUnmount() {
-    gameManager.removeStateListener(this.listener);
+    GAME_MANAGER.removeStateListener(this.listener);
   }
 
   handleInputChange = (event) => {
@@ -48,12 +48,12 @@ export class ChatMenu extends React.Component {
       try {
         const playerIndex = Number(text[2]) - 1;
         const message = text.substring(3);
-        gameManager.sendWhisper_button(playerIndex, message);
+        GAME_MANAGER.sendWhisper_button(playerIndex, message);
       } catch (e) {
-        gameManager.sendMessage_button(text);
+        GAME_MANAGER.sendMessage_button(text);
       }
     } else {
-      gameManager.sendMessage_button(text);
+      GAME_MANAGER.sendMessage_button(text);
     }
     this.setState({
       chatField: ""

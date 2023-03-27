@@ -1,26 +1,26 @@
 import React from "react";
-import { translate } from "../game/lang";
-import gameManager from "../index";
+import translate from "@game/lang";
+import GAME_MANAGER from "@";
 
-export class WikiMenu extends React.Component {
+export default class WikiMenu extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            gameState : gameManager.gameState,
+            gameState : GAME_MANAGER.gameState,
             roles: [], //List of roles to display
         };
         this.listener = ()=>{
             this.setState({
-                gameState: gameManager.gameState,
+                gameState: GAME_MANAGER.gameState,
             })
         };  
     }
     componentDidMount() {
-        gameManager.addStateListener(this.listener);
+        GAME_MANAGER.addStateListener(this.listener);
     }
     componentWillUnmount() {
-        gameManager.removeStateListener(this.listener);
+        GAME_MANAGER.removeStateListener(this.listener);
     }
     renderRole(role, index){
         return <div key={index}>

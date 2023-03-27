@@ -1,9 +1,9 @@
-import langJson from "../resources/lang.json";
-import gameManager from "..";
+import langJson from "@resources/lang.json";
+import GAME_MANAGER from "@";
 
 let lang: Map<string, string> = new Map<string, string>(Object.entries(langJson));
 
-export function translate(langKey: string, ...valuesList: any[]): string {
+export default function translate(langKey: string, ...valuesList: any[]): string {
     let out = lang.get(langKey);
     if(out===undefined){
         console.log("Error: Attempted to use non existant lang key: "+langKey);
@@ -16,11 +16,11 @@ export function translate(langKey: string, ...valuesList: any[]): string {
 }
 
 export function getPlayerString(playerIndex: number): string {
-    if(gameManager.gameState.players[playerIndex] === undefined){
+    if(GAME_MANAGER.gameState.players[playerIndex] === undefined){
         return "";
     }
     return "("+(playerIndex+1)+") "+
-    gameManager.gameState.players[playerIndex].name;
+    GAME_MANAGER.gameState.players[playerIndex].name;
 }
 
 export function getChatString(message: any): string {

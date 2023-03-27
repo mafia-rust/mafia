@@ -1,9 +1,9 @@
 import { create_gameState } from "./gameState";
-import { Main } from "../Main";
-import { StartMenu } from "../openMenus/StartMenu";
-import gameManager from "../index";
-import { messageListener } from "./messageListener";
-import CONFIG from "../resources/config.json"
+import Anchor from "@menu/Anchor";
+import StartMenu from "@menu/main/StartMenu";
+import GAME_MANAGER from "@";
+import messageListener from "./messageListener";
+import CONFIG from "@resources/config.json"
 import { GameManager, Server } from "./gameManager.d";
 import React from "react";
 
@@ -163,12 +163,12 @@ function create_server(){
         closeListener : (event: any)=>{
             console.log(event);
 
-            Main.instance.setContent(<StartMenu/>);
+            Anchor.instance.setContent(<StartMenu/>);
         },
         messageListener: (event: any)=>{
             // console.log("Server: "+event.data);
 
-            gameManager.messageListener(
+            GAME_MANAGER.messageListener(
                 JSON.parse(event.data)
             );
         },
@@ -203,6 +203,8 @@ function create_server(){
     return Server;
 }
 
+
+export { GameManager };
 // export default gameManager;
 
 

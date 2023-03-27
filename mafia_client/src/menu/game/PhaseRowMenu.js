@@ -1,25 +1,25 @@
 import React from "react";
-import { getPlayerString, translate } from "../game/lang";
-import gameManager from "../index";
+import { getPlayerString, translate } from "@game/lang";
+import GAME_MANAGER from "@";
 
-export class PhaseRowMenu extends React.Component {
+export default class PhaseRowMenu extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            gameState: gameManager.gameState,
+            gameState: GAME_MANAGER.gameState,
         };
         this.listener = () => {
             this.setState({
-                gameState: gameManager.gameState
+                gameState: GAME_MANAGER.gameState
             }); // update the component state with the new copy
         };
     }
     componentDidMount() {
-        gameManager.addStateListener(this.listener);
+        GAME_MANAGER.addStateListener(this.listener);
     }
     componentWillUnmount() {
-        gameManager.removeStateListener(this.listener);
+        GAME_MANAGER.removeStateListener(this.listener);
     }
     renderPhaseSpecific(){
         switch(this.state.gameState.phase){
@@ -38,9 +38,9 @@ export class PhaseRowMenu extends React.Component {
                             gridAutoColumns: "1fr",
                         }}
                     >
-                        <button style={{gridColumn: 2}} onClick={()=>{gameManager.judgement_button(-1)}}>{translate("verdict.Guilty")}</button>
-                        <button style={{gridColumn: 3}} onClick={()=>{gameManager.judgement_button(0)}}>{translate("verdict.Abstain")}</button>
-                        <button style={{gridColumn: 4}} onClick={()=>{gameManager.judgement_button(1)}}>{translate("verdict.Innocent")}</button>
+                        <button style={{gridColumn: 2}} onClick={()=>{GAME_MANAGER.judgement_button(-1)}}>{translate("verdict.Guilty")}</button>
+                        <button style={{gridColumn: 3}} onClick={()=>{GAME_MANAGER.judgement_button(0)}}>{translate("verdict.Abstain")}</button>
+                        <button style={{gridColumn: 4}} onClick={()=>{GAME_MANAGER.judgement_button(1)}}>{translate("verdict.Innocent")}</button>
                         <div style={{gridColumn: 5}}></div>
                     </div></div>);})()}
             </div>);

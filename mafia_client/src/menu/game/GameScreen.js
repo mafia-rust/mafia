@@ -1,14 +1,14 @@
 import React from "react";
-import "../index.css";
-import * as LoadingScreen from "../openMenus/LoadingScreen";
-import { PhaseRowMenu } from "./PhaseRowMenu";
-import { GraveyardMenu } from "./GraveyardMenu";
-import { ChatMenu } from "./ChatMenu";
-import { PlayerListMenu } from "./PlayerListMenu";
-import { WillMenu } from "./WillMenu";
+import "@/index.css";
+import * as LoadingScreen from "@menu/LoadingScreen";
+import PhaseRowMenu from "./PhaseRowMenu";
+import GraveyardMenu from "./GraveyardMenu";
+import ChatMenu from "./ChatMenu";
+import PlayerListMenu from "./PlayerListMenu";
+import WillMenu from "./WillMenu";
 import "./gameScreen.css";
 
-export class GameScreen extends React.Component {
+export default class GameScreen extends React.Component {
     static instance;
 
     constructor(props) {

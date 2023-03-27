@@ -1,48 +1,48 @@
 import React from "react";
-import gameManager from "../index";
-import "../index.css";
-import "./joinMenu.css";
-import * as LoadingScreen from "./LoadingScreen";
-import { Main } from "../Main";
-import { translate } from "../game/lang";
+import GAME_MANAGER from "@/index";
+import "@/index.css";
+import "@menu/main/joinMenu.css";
+import Anchor from "@menu/Anchor";
+import * as LoadingScreen from "@menu/LoadingScreen";
+import translate from "@game/lang";
 
-type JoinMenuState = {
+interface JoinMenuState {
     roomCode: string,
     name: string,
 }
 
-export class JoinMenu extends React.Component<any, JoinMenuState> {
+export default class JoinMenu extends React.Component<any, JoinMenuState> {
     constructor(props: any) {
         super(props);
 
         this.state = {
             roomCode: "",
-            name: Main.instance?.isLoggedIn() ? Main.instance?.getUser()?.getAccountName() : "",
+            name: /* logged in ? username : */ "",
         };
     }
     componentDidMount() {
     }
     componentWillUnmount() {
     }
-    setRoomCode(code: string) {
+    private setRoomCode(code: string) {
         this.setState({roomCode: code})
     }
-    setName(name: string) {
+    private setName(name: string) {
         this.setState({name: name})
     }
     joinGameButton(){
         // erm... >.<
-        gameManager.roomCode = this.state.roomCode;
-        gameManager.name = this.state.name;
+        GAME_MANAGER.roomCode = this.state.roomCode;
+        GAME_MANAGER.name = this.state.name;
 
-        Main.instance.setContent(LoadingScreen.create(LoadingScreen.Type.Join));
+        Anchor.setContent(LoadingScreen.create(LoadingScreen.Type.Join));
 
-        gameManager.Server.close();
-        gameManager.Server.open();
+        GAME_MANAGER.Server.close();
+        GAME_MANAGER.Server.open();
 
         // Wait for server to open
-        setTimeout(gameManager.join_button, 1000);
-        setTimeout(()=>{gameManager.setName_button(this.state.name)}, 1000)
+        setTimeout(GAME_MANAGER.join_button, 1000);
+        setTimeout(()=>{GAME_MANAGER.setName_button(this.state.name)}, 1000)
     }
     render(){return(<div style={{display: "flex", flexDirection: "column"}}>
         <div className="header jm-header">
@@ -57,7 +57,7 @@ export class JoinMenu extends React.Component<any, JoinMenuState> {
                     onChange={(e)=>{this.setRoomCode(e.target.value)}}
                     onKeyUp={(e)=>{
                         if(e.key === 'Enter') {
-                            gameManager.roomCode = this.state.roomCode;
+                            GAME_MANAGER.roomCode = this.state.roomCode;
                             this.joinGameButton();
                         }
                     }}
@@ -69,7 +69,7 @@ export class JoinMenu extends React.Component<any, JoinMenuState> {
                     onChange={(e)=>{this.setName(e.target.value)}}
                     onKeyUp={(e)=>{
                         if(e.key === 'Enter') {
-                            gameManager.name = this.state.name;
+                            GAME_MANAGER.name = this.state.name;
                             this.joinGameButton();
                         }
                     }}

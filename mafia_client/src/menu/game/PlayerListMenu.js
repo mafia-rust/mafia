@@ -1,27 +1,28 @@
 import React from "react";
-import { getPlayerString, translate } from "../game/lang";
-import gameManager from "../index";
+import { getPlayerString, translate } from "@game/lang";
+import GAME_MANAGER from "@";
 import "./playerListMenu.css"
 import "./gameScreen.css"
-export class PlayerListMenu extends React.Component {
+
+export default class PlayerListMenu extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            gameState : gameManager.gameState,
+            gameState : GAME_MANAGER.gameState,
             hideDead: false,
         };
         this.listener = ()=>{
             this.setState({
-                gameState: gameManager.gameState
+                gameState: GAME_MANAGER.gameState
             })
         };  
     }
     componentDidMount() {
-        gameManager.addStateListener(this.listener);
+        GAME_MANAGER.addStateListener(this.listener);
     }
     componentWillUnmount() {
-        gameManager.removeStateListener(this.listener);
+        GAME_MANAGER.removeStateListener(this.listener);
     }
 
     renderPhaseSpecific(){
@@ -33,7 +34,7 @@ export class PlayerListMenu extends React.Component {
                     return(<div>
                         <div>{votedString}</div>
                         <button class="button gm-button" onClick={()=>{
-                            gameManager.vote_button(null);
+                            GAME_MANAGER.vote_button(null);
                         }}>Reset Vote</button>
                     </div>);
                 }
@@ -48,7 +49,7 @@ export class PlayerListMenu extends React.Component {
                     return(<div>
                         <div>{targetStringList.join(", ")+"."}</div>
                         <button class="button gm-button" onClick={()=>{
-                            gameManager.target_button([]);
+                            GAME_MANAGER.target_button([]);
                         }}>Reset Targets</button>
                     </div>);
                 }
@@ -60,7 +61,7 @@ export class PlayerListMenu extends React.Component {
 
     renderPlayer(player, playerIndex){
         
-        let canWhisper = this.state.gameState.phase !== "Night" && gameManager.gameState.phase !== null && this.state.gameState.myIndex !== playerIndex;
+        let canWhisper = this.state.gameState.phase !== "Night" && GAME_MANAGER.gameState.phase !== null && this.state.gameState.myIndex !== playerIndex;
 
         // let buttonCount = player.buttons.dayTarget + player.buttons.target + player.buttons.vote + canWhisper;
 
@@ -69,12 +70,12 @@ export class PlayerListMenu extends React.Component {
 
             <div>
                 {((player)=>{if(player.buttons.target){return(<button class="button gm-button" onClick={()=>{
-                        gameManager.target_button([...gameManager.gameState.targets, playerIndex]);
+                        GAME_MANAGER.target_button([...GAME_MANAGER.gameState.targets, playerIndex]);
                     }}
                 >{translate("button.Target")}</button>)}})(player)}
-                {((player)=>{if(player.buttons.vote){return(<button class="button gm-button" onClick={()=>{gameManager.vote_button(playerIndex)}}
+                {((player)=>{if(player.buttons.vote){return(<button class="button gm-button" onClick={()=>{GAME_MANAGER.vote_button(playerIndex)}}
                 >{translate("button.Vote")}</button>)}})(player)}
-                {((player)=>{if(player.buttons.dayTarget){return(<button class="button gm-button" onClick={()=>{gameManager.dayTarget_button(playerIndex)}}
+                {((player)=>{if(player.buttons.dayTarget){return(<button class="button gm-button" onClick={()=>{GAME_MANAGER.dayTarget_button(playerIndex)}}
                 >{translate("button.DayTarget")}</button>)}})(player)}
                 {((player)=>{if(canWhisper){return(<button class="button gm-button">{translate("button.Whisper")}</button>)}})(player)}
 

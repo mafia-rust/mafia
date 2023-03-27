@@ -1,21 +1,21 @@
 import React from "react";
-import gameManager from "../../index";
-import {LobbyPlayerList} from "./LobbyPlayerList.js";
-import { LobbyPhaseTimePane } from "./LobbyPhaseTimePane.js";
-import { LobbyRolePane } from "./LobbyRolePane.js";
+import GAME_MANAGER from "@";
+import LobbyPlayerList from "./LobbyPlayerList";
+import LobbyPhaseTimePane from "./LobbyPhaseTimePane";
+import LobbyRolePane from "./LobbyRolePane";
 import "./lobbyMenu.css";
-import { translate } from "../../game/lang";
+import translate from "@game/lang";
 
-export class LobbyMenu extends React.Component {
+export default class LobbyMenu extends React.Component {
     render(){return(<div style={{
         display: "flex",
         flexDirection: "column",
     }}>
         <div className="header lm-header">
             <h1 className="header-text lm-header-text">
-                {translate("menu.lobby.title", gameManager.roomCode)}
+                {translate("menu.lobby.title", GAME_MANAGER.roomCode)}
             </h1>
-            <button className="button lm-start-button" onClick={gameManager.startGame_button}>
+            <button className="button lm-start-button" onClick={GAME_MANAGER.startGame_button}>
                 {translate("menu.lobby.button.start")}
             </button>
         </div>
