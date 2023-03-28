@@ -1,5 +1,5 @@
 import React from "react";
-import { getPlayerString, translate } from "@game/lang";
+import translate from "@game/lang";
 import GAME_MANAGER from "@";
 
 export default class PhaseRowMenu extends React.Component {
@@ -27,7 +27,7 @@ export default class PhaseRowMenu extends React.Component {
             case"Judgement":
             //TODO make buttons light up if they are clicked
             return(<div>
-                {getPlayerString(this.state.gameState.playerOnTrial)}
+                {GAME_MANAGER.getPlayer(this.state.gameState.playerOnTrial)}
                 {(()=>{
                 if(this.state.gameState.playerOnTrial !== this.state.gameState.myIndex)
                     return(<div>

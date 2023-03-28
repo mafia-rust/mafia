@@ -1,5 +1,5 @@
 import React from "react";
-import { translate, getPlayerString } from "@game/lang";
+import translate from "@game/lang";
 import GAME_MANAGER from "@";
 import "./lobbyMenu.css";
 
@@ -46,7 +46,7 @@ export default class LobbyPlayerList extends React.Component {
 
     renderPlayers(){return(<div>
         {this.state.gameState.players.map((_, i)=>{
-            return(<div key={i}>{getPlayerString(i)}</div>)
+            return(<div key={i}>{GAME_MANAGER.getPlayer(i)}</div>)
         })}
     </div>)}
 }

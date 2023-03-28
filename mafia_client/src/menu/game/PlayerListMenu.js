@@ -1,5 +1,5 @@
 import React from "react";
-import { getPlayerString, translate } from "@game/lang";
+import translate from "@game/lang";
 import GAME_MANAGER from "@";
 import "./playerListMenu.css"
 import "./gameScreen.css"
@@ -42,7 +42,7 @@ export default class PlayerListMenu extends React.Component {
             case"Night":
                 let targetStringList = [];
                 for(let i = 0; i < this.state.gameState.targets.length; i++){
-                    targetStringList.push(getPlayerString(this.state.gameState.targets[i]));
+                    targetStringList.push(GAME_MANAGER.getPlayer(this.state.gameState.targets[i]));
                 }
 
                 if(targetStringList.length>0){
@@ -66,7 +66,7 @@ export default class PlayerListMenu extends React.Component {
         // let buttonCount = player.buttons.dayTarget + player.buttons.target + player.buttons.vote + canWhisper;
 
         return(<div key={playerIndex}>
-            {getPlayerString(playerIndex)}<br/>
+            {GAME_MANAGER.getPlayer(playerIndex)}<br/>
 
             <div>
                 {((player)=>{if(player.buttons.target){return(<button class="button gm-button" onClick={()=>{

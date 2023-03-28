@@ -1,5 +1,5 @@
 import React from "react";
-import { getPlayerString, translate } from "@game/lang";
+import translate from "@game/lang";
 import GAME_MANAGER from "@";
 
 export default class GraveyardMenu extends React.Component {
@@ -103,7 +103,7 @@ export default class GraveyardMenu extends React.Component {
         return null;
     }
     render(){return(<div>
-        {getPlayerString(GAME_MANAGER.gameState.myIndex)}: {this.state.gameState.role}
+        {GAME_MANAGER.getPlayer(GAME_MANAGER.gameState.myIndex)}: {this.state.gameState.role}
         {/* {this.state.gameState.graves.map((grave, graveIndex)=>{
             return this.renderGrave(grave, graveIndex);
         }, this)} */}
