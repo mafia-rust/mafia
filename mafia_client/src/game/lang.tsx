@@ -15,6 +15,7 @@ export default function translate(langKey: string, ...valuesList: any[]): string
     return out;
 }
 
+// TODO, make message union type (& make an interface) & make getChatString a method
 export function getChatString(message: any): string {
     if(message.Normal !== undefined){
         if(message.Normal.message_sender.Player !== undefined){
@@ -130,6 +131,8 @@ export function getChatString(message: any): string {
     return translate("chatmessage."+message);
     // return JSON.stringify(message);
 }
+
+// TODO make night information message union type (& make an interface) and make this a method
 export function getNightInformationString(message: any){
 
     if (message.RoleBlocked !== undefined) {
