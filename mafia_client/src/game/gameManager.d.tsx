@@ -43,7 +43,7 @@ export interface GameManager {
 
 export declare function create_gameManager(): GameManager;
 
-export type Server = {
+export interface Server {
     ws: any,
 
     openListener(event: any): void;

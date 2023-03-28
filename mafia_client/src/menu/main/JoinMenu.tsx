@@ -1,10 +1,10 @@
 import React from "react";
-import GAME_MANAGER from "@/index";
-import "@/index.css";
-import "@menu/main/joinMenu.css";
-import Anchor from "@menu/Anchor";
-import * as LoadingScreen from "@menu/LoadingScreen";
-import translate from "@game/lang";
+import GAME_MANAGER from "../../index";
+import "../../index.css";
+import "../main/joinMenu.css";
+import Anchor from "..//Anchor";
+import * as LoadingScreen from "..//LoadingScreen";
+import translate from "../../game/lang";
 
 interface JoinMenuState {
     roomCode: string,

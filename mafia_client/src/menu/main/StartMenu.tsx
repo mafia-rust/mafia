@@ -1,12 +1,12 @@
 import React from "react";
-import gameManager from "@";
-import { create_gameState } from "@game/gameState";
-import Anchor from "@menu/Anchor";
-import "@/index.css"
+import GAME_MANAGER from "../../index";
+import { create_gameState } from "../../game/gameState";
+import Anchor from "../Anchor";
+import "../../index.css"
 import "./startMenu.css"
-import * as LoadingScreen from "@menu/LoadingScreen";
+import * as LoadingScreen from "../LoadingScreen";
 import JoinMenu from "./JoinMenu";
-import translate from "@game/lang";
+import translate from "../../game/lang";
 
 export default class StartMenu extends React.Component {
     render(){
@@ -32,20 +32,20 @@ export default class StartMenu extends React.Component {
     </div>)}
 
     private joinGameButton() {
-        gameManager.gameState = create_gameState();
+        GAME_MANAGER.gameState = create_gameState();
         Anchor.setContent(<JoinMenu/>);
     }
     
     private hostGameButton() {
-        gameManager.gameState = create_gameState();
+        GAME_MANAGER.gameState = create_gameState();
         
         Anchor.setContent(LoadingScreen.create(LoadingScreen.Type.Host));
 
-        gameManager.Server.close();
-        gameManager.Server.open();
+        GAME_MANAGER.Server.close();
+        GAME_MANAGER.Server.open();
 
         // Wait for server to open
-        setTimeout(gameManager.host_button, 5000);  //TODO
+        setTimeout(GAME_MANAGER.host_button, 5000);  //TODO
         // Lobby menu opens when AcceptHost packet is recieved
     }
 }

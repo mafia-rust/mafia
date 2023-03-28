@@ -1,5 +1,5 @@
-import langJson from "@resources/lang.json";
-import GAME_MANAGER from "@";
+import langJson from "../resources/lang.json";
+import GAME_MANAGER from "../index";
 
 let lang: Map<string, string> = new Map<string, string>(Object.entries(langJson));
 

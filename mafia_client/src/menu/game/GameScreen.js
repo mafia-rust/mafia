@@ -1,6 +1,6 @@
 import React from "react";
-import "@/index.css";
-import * as LoadingScreen from "@menu/LoadingScreen";
+import "../../index.css";
+import * as LoadingScreen from "../LoadingScreen";
 import PhaseRowMenu from "./PhaseRowMenu";
 import GraveyardMenu from "./GraveyardMenu";
 import ChatMenu from "./ChatMenu";

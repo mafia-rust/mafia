@@ -1,5 +1,5 @@
 import React from "react";
-import GAME_MANAGER from "@";
+import GAME_MANAGER from "../../index";
 import "./willMenu.css"
 
 export default class WillMenu extends React.Component {

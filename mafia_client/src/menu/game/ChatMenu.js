@@ -1,6 +1,6 @@
 import React from "react";
-import { getChatString } from "@game/lang";
-import GAME_MANAGER from "@";
+import { getChatString } from "../../game/lang";
+import GAME_MANAGER from "../../index";
 import "./gameScreen.css";
 import "./chatMenu.css"
 

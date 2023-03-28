@@ -1,10 +1,10 @@
 
 import { create_gameState, create_grave, create_player } from "./gameState";
-import Anchor from "@menu/Anchor";
-import LobbyMenu from "@menu/lobby/LobbyMenu";
-import StartMenu from "@menu/main/StartMenu";
-import GAME_MANAGER from "@";
-import GameScreen from "@menu/game/GameScreen";
+import Anchor from "../menu/Anchor";
+import LobbyMenu from "../menu/lobby/LobbyMenu";
+import StartMenu from "../menu/main/StartMenu";
+import GAME_MANAGER from "../index";
+import GameScreen from "../menu/game/GameScreen";
 
 export default function messageListener(serverMessage){
 

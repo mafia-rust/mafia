@@ -1,7 +1,7 @@
 import React from "react";
-import GAME_MANAGER from "@";
-import ROLES from "@resources/roles.json"
-import "@/index.css";
+import GAME_MANAGER from "../../index";
+import ROLES from "../../resources/roles.json"
+import "../../index.css";
 
 
 export default class LobbyRolePane extends React.Component {

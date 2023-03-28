@@ -1,6 +1,6 @@
 import React from "react";
-import translate from "@game/lang";
-import GAME_MANAGER from "@";
+import translate from "../../game/lang";
+import GAME_MANAGER from "../../index";
 import "./playerListMenu.css"
 import "./gameScreen.css"
 

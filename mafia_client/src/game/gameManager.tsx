@@ -1,12 +1,12 @@
 import { create_gameState } from "./gameState";
-import Anchor from "@menu/Anchor";
-import StartMenu from "@menu/main/StartMenu";
-import GAME_MANAGER from "@";
+import Anchor from "../menu/Anchor";
+import StartMenu from "../menu/main/StartMenu";
+import GAME_MANAGER from "../index";
 import messageListener from "./messageListener";
-import CONFIG from "@resources/config.json"
-import { GameManager, Server } from "./gameManager.d";
+import CONFIG from "../resources/config.json"
 import React from "react";
 import { Player } from "./gameState.d";
+import { GameManager, Server } from "./gameManager.d";
 
 export function create_gameManager(): GameManager {
 
@@ -209,7 +209,7 @@ function create_server(){
 }
 
 
-export { GameManager };
+export type { GameManager, Server } from "./gameManager.d";
 // export default gameManager;
 
 

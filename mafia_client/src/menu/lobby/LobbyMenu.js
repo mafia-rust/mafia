@@ -1,10 +1,10 @@
 import React from "react";
-import GAME_MANAGER from "@";
+import GAME_MANAGER from "../../index";
 import LobbyPlayerList from "./LobbyPlayerList";
 import LobbyPhaseTimePane from "./LobbyPhaseTimePane";
 import LobbyRolePane from "./LobbyRolePane";
 import "./lobbyMenu.css";
-import translate from "@game/lang";
+import translate from "../../game/lang";
 
 export default class LobbyMenu extends React.Component {
     render(){return(<div style={{

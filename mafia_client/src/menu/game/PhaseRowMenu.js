@@ -1,6 +1,6 @@
 import React from "react";
-import translate from "@game/lang";
-import GAME_MANAGER from "@";
+import translate from "../../game/lang";
+import GAME_MANAGER from "../../index";
 
 export default class PhaseRowMenu extends React.Component {
     constructor(props) {
