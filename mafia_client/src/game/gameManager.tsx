@@ -1,11 +1,12 @@
 import { create_gameState } from "./gameState";
-import { Main } from "../Main";
-import { StartMenu } from "../openMenus/StartMenu";
-import gameManager from "../index";
-import { messageListener } from "./messageListener";
+import Anchor from "../menu/Anchor";
+import StartMenu from "../menu/main/StartMenu";
+import GAME_MANAGER from "../index";
+import messageListener from "./messageListener";
 import CONFIG from "../resources/config.json"
-import { GameManager, Server } from "./gameManager.d";
 import React from "react";
+import { Player } from "./gameState.d";
+import { GameManager, Server } from "./gameManager.d";
 
 export function create_gameManager(): GameManager {
 
@@ -21,13 +22,13 @@ export function create_gameManager(): GameManager {
         gameState : create_gameState(),
 
         listeners : [],
-        addStateListener : (listener)=>{
+        addStateListener(listener) {
             gameManager.listeners.push(listener);
         },
-        removeStateListener : (listener)=>{
+        removeStateListener(listener) {
             gameManager.listeners.splice(gameManager.listeners.indexOf(listener));
         },
-        invokeStateListeners : (type=null)=>{
+        invokeStateListeners(type=null) {
             for(let i = 0; i < gameManager.listeners.length; i++){
                 if(typeof(gameManager.listeners[i])==="function"){
                     gameManager.listeners[i](type);
@@ -35,10 +36,10 @@ export function create_gameManager(): GameManager {
             }
         },
 
-        host_button : () => {
+        host_button() {
             gameManager.Server.send(`"Host"`);
         },
-        join_button: () => {
+        join_button() {
             gameManager.Server.send(JSON.stringify({
                 "Join":{
                     "room_code": Number(gameManager.roomCode!)
@@ -46,7 +47,7 @@ export function create_gameManager(): GameManager {
             }));
         },
 
-        setName_button: (name)=>{
+        setName_button(name) {
             // if(name)
                 gameManager.Server.send(JSON.stringify({
                     "SetName":{
@@ -54,10 +55,10 @@ export function create_gameManager(): GameManager {
                     }
                 }));
         },
-        startGame_button: ()=>{
+        startGame_button() {
             gameManager.Server.send(`"StartGame"`);
         },
-        phaseTimesButton: (morning: number, discussion: number, voting: number, testimony: number, judgement: number, evening: number, night: number)=>{
+        phaseTimesButton(morning: number, discussion: number, voting: number, testimony: number, judgement: number, evening: number, night: number) {
             gameManager.Server.send(JSON.stringify({
                 "SetPhaseTimes":{
                     "phase_times":{
@@ -72,7 +73,7 @@ export function create_gameManager(): GameManager {
                 }
             }))
         },
-        roleList_button: (roleListEntries)=>{
+        roleList_button(roleListEntries) {
             gameManager.Server.send(JSON.stringify({
                 "SetRoleList":{
                     "role_list": {
@@ -82,7 +83,7 @@ export function create_gameManager(): GameManager {
             }));
         },
 
-        judgement_button: (judgement)=>{
+        judgement_button(judgement) {
             if(judgement===1) judgement="Innocent";
             if(judgement===-1) judgement="Guilty";
             if(judgement===0) judgement="Abstain";
@@ -92,21 +93,21 @@ export function create_gameManager(): GameManager {
                 }
             }));
         },
-        vote_button: (votee_index)=>{
+        vote_button(votee_index) {
             gameManager.Server.send(JSON.stringify({
                 "Vote":{
                     "player_index":votee_index
                 }
             }));
         },
-        target_button: (target_index_list)=>{
+        target_button(target_index_list) {
             gameManager.Server.send(JSON.stringify({
                 "Target":{
                     "player_index_list":target_index_list
                 }
             }));
         },
-        dayTarget_button: (target_index)=>{
+        dayTarget_button(target_index) {
             gameManager.Server.send(JSON.stringify({
                 "DayTarget":{
                     "player_index":target_index
@@ -114,21 +115,21 @@ export function create_gameManager(): GameManager {
             }));
         },
 
-        saveWill_button: (will)=>{
+        saveWill_button(will) {
             gameManager.Server.send(JSON.stringify({
                 "SaveWill":{
                     "will":will
                 }
             }));
         },
-        sendMessage_button: (text)=>{
+        sendMessage_button(text) {
             gameManager.Server.send(JSON.stringify({
                 "SendMessage":{
                     "text":text
                 }
             }));
         },
-        sendWhisper_button: (playerIndex, text)=>{
+        sendWhisper_button(playerIndex, text) {
             gameManager.Server.send(JSON.stringify({
                 "SendWhisper":{
                     "player_index":playerIndex,
@@ -137,17 +138,21 @@ export function create_gameManager(): GameManager {
             }));
         },
         
-        messageListener: (serverMessage)=>{
+        messageListener(serverMessage) {
             messageListener(serverMessage);
         },
     
-        tick : (timePassedms)=>{
+        tick(timePassedms) {
             console.log("tick");
             gameManager.gameState.secondsLeft = Math.round(gameManager.gameState.secondsLeft - timePassedms/1000)
             if(gameManager.gameState.secondsLeft < 0)
                 gameManager.gameState.secondsLeft = 0;
             gameManager.invokeStateListeners("tick");
         },
+
+        getPlayer(playerIndex: number): Player {
+            return this.gameState.players[playerIndex];
+        }
     }
     return gameManager;
 }
@@ -163,12 +168,12 @@ function create_server(){
         closeListener : (event: any)=>{
             console.log(event);
 
-            Main.instance.setContent(<StartMenu/>);
+            Anchor.setContent(<StartMenu/>);
         },
         messageListener: (event: any)=>{
             // console.log("Server: "+event.data);
 
-            gameManager.messageListener(
+            GAME_MANAGER.messageListener(
                 JSON.parse(event.data)
             );
         },
@@ -203,6 +208,8 @@ function create_server(){
     return Server;
 }
 
+
+export type { GameManager, Server } from "./gameManager.d";
 // export default gameManager;
 
 

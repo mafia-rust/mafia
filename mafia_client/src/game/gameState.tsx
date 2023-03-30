@@ -1,7 +1,9 @@
-export function create_gameState(){
+import GameState, { Player } from "./gameState.d"
+
+export function create_gameState(): GameState {
     return {
-        myName: null,
-        myIndex: null,
+        myName: undefined,
+        myIndex: undefined,
 
         chatMessages : [],  //string + chat messages
         graves: [],
@@ -18,13 +20,6 @@ export function create_gameState(){
         targets: [],    //Vec<PlayerIndex>
         voted: null, //Number:: player_index
         judgement: null, //String:: Innocent, Guilty, Abstained
-
-
-        //my own data
-            //My own role
-            //who ive voted
-            //wheater ive voted innocent or guilty
-            //what chats im currently talking to
         
         roleList: [],   //Vec<RoleListEntry>
         investigatorResults: [],   //Vec<Vec<Role>>
@@ -40,11 +35,10 @@ export function create_gameState(){
     }
 }
 
-export function create_player(){
+export function create_player(): Player {
     return{
-        //players
-        //  suffixes
         name: "",
+        index: undefined,
         buttons: {
             dayTarget: false,
             target: false,
@@ -52,9 +46,12 @@ export function create_player(){
         },
         numVoted: null,
         alive:true,
+
+        toString() {
+            return "("+(this.index === undefined ? "?" : this.index + 1)+") " + this.name;
+        }
     }
 }
-
 
 export function create_grave(){
     return{

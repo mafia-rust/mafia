@@ -1,26 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { Main } from './Main';
-import { create_gameManager } from './game/gameManager';
+import Anchor from './menu/Anchor';
+import { GameManager, create_gameManager } from './game/gameManager';
 
-const root = ReactDOM.createRoot(document.getElementById('root')!);
+const ROOT = ReactDOM.createRoot(document.getElementById('root')!);
 
-let gameManager = create_gameManager();
-let time_period = 1000;
-let recurse = ()=>{
-  setTimeout(()=>{
-    gameManager.tick(time_period);
-    recurse();
-  },time_period);
-};
-recurse();
+const GAME_MANAGER: GameManager = create_gameManager();
+export default GAME_MANAGER;
 
-export default gameManager;
+const TIME_PERIOD = 1000;
 
-root.render(
+setInterval(() => {
+  GAME_MANAGER.tick(TIME_PERIOD);
+}, TIME_PERIOD);
+
+ROOT.render(
   <React.StrictMode>
-    <Main/>
+    <Anchor/>
   </React.StrictMode>
 );
 // // If you want to start measuring performance in your app, pass a function

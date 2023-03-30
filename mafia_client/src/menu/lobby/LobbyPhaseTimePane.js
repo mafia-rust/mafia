@@ -1,9 +1,9 @@
 import React from "react";
-import { translate } from "../../game/lang";
-import gameManager from "../../index";
+import translate from "../../game/lang";
+import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
 
-export class LobbyPhaseTimePane extends React.Component {
+export default class LobbyPhaseTimePane extends React.Component {
     constructor(props) {
         super(props);
 
@@ -20,26 +20,26 @@ export class LobbyPhaseTimePane extends React.Component {
             if(type==="PhaseTimes")
                 this.setState({
 
-                    morningTimeField: gameManager.gameState.phaseTimes.morning,
-                    discussionTimeField: gameManager.gameState.phaseTimes.discussion, 
-                    votingTimeField: gameManager.gameState.phaseTimes.voting, 
-                    testimonyTimeField: gameManager.gameState.phaseTimes.testimony, 
-                    judgementTimeField: gameManager.gameState.phaseTimes.judgement, 
-                    eveningTimeField: gameManager.gameState.phaseTimes.evening, 
-                    nightTimeField: gameManager.gameState.phaseTimes.night,
+                    morningTimeField: GAME_MANAGER.gameState.phaseTimes.morning,
+                    discussionTimeField: GAME_MANAGER.gameState.phaseTimes.discussion, 
+                    votingTimeField: GAME_MANAGER.gameState.phaseTimes.voting, 
+                    testimonyTimeField: GAME_MANAGER.gameState.phaseTimes.testimony, 
+                    judgementTimeField: GAME_MANAGER.gameState.phaseTimes.judgement, 
+                    eveningTimeField: GAME_MANAGER.gameState.phaseTimes.evening, 
+                    nightTimeField: GAME_MANAGER.gameState.phaseTimes.night,
                 });
         }
     }
     componentDidMount() {
-        gameManager.addStateListener(this.listener);
+        GAME_MANAGER.addStateListener(this.listener);
     }
     componentWillUnmount() {
-        gameManager.removeStateListener(this.listener);
+        GAME_MANAGER.removeStateListener(this.listener);
     }
 
     phaseTimesButton() {
         //TODO Errors for some reason, this  is undefined?
-        gameManager.phaseTimesButton(
+        GAME_MANAGER.phaseTimesButton(
             Number(this.state.morningTimeField),
             Number(this.state.discussionTimeField),
             Number(this.state.votingTimeField),

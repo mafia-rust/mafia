@@ -1,9 +1,9 @@
 import React from "react";
-import { translate, getPlayerString } from "../../game/lang";
-import gameManager from "../../index";
+import translate from "../../game/lang";
+import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
 
-export class LobbyPlayerList extends React.Component {
+export default class LobbyPlayerList extends React.Component {
     constructor(props) {
         super(props);
 
@@ -11,19 +11,19 @@ export class LobbyPlayerList extends React.Component {
             name: "",
 
             // Player list
-            gameState: gameManager.gameState
+            gameState: GAME_MANAGER.gameState
         };
         this.listener = ()=>{
             this.setState({
-                gameState: gameManager.gameState
+                gameState: GAME_MANAGER.gameState
             });
         }
     }
     componentDidMount() {
-        gameManager.addStateListener(this.listener);
+        GAME_MANAGER.addStateListener(this.listener);
     }
     componentWillUnmount() {
-        gameManager.removeStateListener(this.listener);
+        GAME_MANAGER.removeStateListener(this.listener);
     }
     
     render(){return(<div className="lm-player-list-pane">
@@ -36,17 +36,17 @@ export class LobbyPlayerList extends React.Component {
             onChange={(e)=>{this.setState({name: e.target.value})}}
             onKeyUp={(e)=>{
                 if(e.key === 'Enter')
-                    gameManager.setName_button(this.state.name);
+                    GAME_MANAGER.setName_button(this.state.name);
             }}
         />
         <button className="button" onClick={()=>{
-            gameManager.setName_button(this.state.name)
+            GAME_MANAGER.setName_button(this.state.name)
         }}>{translate("menu.lobby.button.set_name")}</button>
     </div>)}
 
     renderPlayers(){return(<div>
         {this.state.gameState.players.map((_, i)=>{
-            return(<div key={i}>{getPlayerString(i)}</div>)
+            return(<div key={i}>{GAME_MANAGER.getPlayer(i)}</div>)
         })}
     </div>)}
 }

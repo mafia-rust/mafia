@@ -1,17 +1,15 @@
 import React from "react";
-import gameManager from "../..";
+import GAME_MANAGER from "../../index";
 import ROLES from "../../resources/roles.json"
-
-import "..//../index.css";
-// import gameManager from "../../index";
+import "../../index.css";
 
 
-export class LobbyRolePane extends React.Component {
+export default class LobbyRolePane extends React.Component {
     constructor(props){
         super(props);
 
         this.state = {
-            gameState: gameManager.gameState,
+            gameState: GAME_MANAGER.gameState,
             roleList: [],
             rolePickers: []
         }
@@ -49,16 +47,16 @@ export class LobbyRolePane extends React.Component {
                 this.setState({
                     rolePickers: newRolePickers,
                     roleList: newRoleList,
-                    gameState: gameManager.gameState
+                    gameState: GAME_MANAGER.gameState
                 });
             }
         };  
     }
     componentDidMount() {
-        gameManager.addStateListener(this.listener);
+        GAME_MANAGER.addStateListener(this.listener);
     }
     componentWillUnmount() {
-        gameManager.removeStateListener(this.listener);
+        GAME_MANAGER.removeStateListener(this.listener);
     }
 
     render(){return(<div>
@@ -78,7 +76,7 @@ export class LobbyRolePane extends React.Component {
         this.setState({
             roleList: newList
         });
-        gameManager.roleList_button(this.state.roleList);
+        GAME_MANAGER.roleList_button(this.state.roleList);
     }
 }
 
