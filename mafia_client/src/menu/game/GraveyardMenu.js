@@ -103,7 +103,7 @@ export default class GraveyardMenu extends React.Component {
         return null;
     }
     render(){return(<div>
-        {GAME_MANAGER.getPlayer(GAME_MANAGER.gameState.myIndex)}: {this.state.gameState.role}
+        {GAME_MANAGER.getPlayer(GAME_MANAGER.gameState.myIndex).toString()}: {this.state.gameState.role}
         {/* {this.state.gameState.graves.map((grave, graveIndex)=>{
             return this.renderGrave(grave, graveIndex);
         }, this)} */}

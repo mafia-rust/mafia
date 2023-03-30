@@ -46,7 +46,7 @@ export default class LobbyPlayerList extends React.Component {
 
     renderPlayers(){return(<div>
         {this.state.gameState.players.map((_, i)=>{
-            return(<div key={i}>{GAME_MANAGER.getPlayer(i)}</div>)
+            return(<div key={i}>{GAME_MANAGER.getPlayer(i).toString()}</div>)
         })}
     </div>)}
 }

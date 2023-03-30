@@ -35,10 +35,10 @@ export function create_gameState(): GameState {
     }
 }
 
-export function create_player(): Player {
+export function create_player(name: string, index: number): Player {
     return{
-        name: "",
-        index: undefined,
+        name: name,
+        index: index,
         buttons: {
             dayTarget: false,
             target: false,
@@ -48,7 +48,7 @@ export function create_player(): Player {
         alive:true,
 
         toString() {
-            return "("+(this.index === undefined ? "?" : this.index + 1)+") " + this.name;
+            return "("+(this.index + 1)+") " + this.name;
         }
     }
 }

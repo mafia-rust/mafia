@@ -41,7 +41,7 @@ export default interface GameState {
 
 export interface Player {
     name: string,
-    index: number | undefined
+    index: number
     buttons: {
         dayTarget: boolean,
         target: boolean,

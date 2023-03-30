@@ -42,7 +42,7 @@ export default class PlayerListMenu extends React.Component {
             case"Night":
                 let targetStringList = [];
                 for(let i = 0; i < this.state.gameState.targets.length; i++){
-                    targetStringList.push(GAME_MANAGER.getPlayer(this.state.gameState.targets[i]));
+                    targetStringList.push(GAME_MANAGER.getPlayer(this.state.gameState.targets[i]).toString());
                 }
 
                 if(targetStringList.length>0){
@@ -66,7 +66,7 @@ export default class PlayerListMenu extends React.Component {
         // let buttonCount = player.buttons.dayTarget + player.buttons.target + player.buttons.vote + canWhisper;
 
         return(<div key={playerIndex}>
-            {GAME_MANAGER.getPlayer(playerIndex)}<br/>
+            {GAME_MANAGER.getPlayer(playerIndex).toString()}<br/>
 
             <div>
                 {((player)=>{if(player.buttons.target){return(<button class="button gm-button" onClick={()=>{

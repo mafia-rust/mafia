@@ -22,7 +22,7 @@ export default function messageListener(serverMessage){
     //on the rust side, this is an enum called ToClientPacket
     switch(type) {
         case "AcceptJoin":
-            Anchor.instance.setContent(<LobbyMenu/>);
+            Anchor.setContent(<LobbyMenu/>);
         break;
         case "RejectJoin":
             switch(serverMessage.reason) {
@@ -41,11 +41,11 @@ export default function messageListener(serverMessage){
                     console.log(serverMessage);
                 break;
             }
-            Anchor.instance.setContent(<StartMenu/>);
+            Anchor.setContent(<StartMenu/>);
         break;
         case "AcceptHost":
             GAME_MANAGER.roomCode = serverMessage.room_code;
-            Anchor.instance.setContent(<LobbyMenu/>);
+            Anchor.setContent(<LobbyMenu/>);
         break;
 
         //InLobby/Game
@@ -63,17 +63,16 @@ export default function messageListener(serverMessage){
                     GAME_MANAGER.gameState.players[i].name = serverMessage.names[i];
                 }else{
                     //if this player index isnt in the list, create a new player and then sync
-                    GAME_MANAGER.gameState.players.push(create_player());
-                    GAME_MANAGER.gameState.players[i].name = serverMessage.names[i];
+                    GAME_MANAGER.gameState.players.push(create_player(serverMessage.names[i], i));
                 }
             }
         break;
         case"Kicked":
             GAME_MANAGER.gameState = create_gameState();
-            Anchor.instance.setContent(<StartMenu/>)
+            Anchor.setContent(<StartMenu/>)
         break;
         case "OpenGameMenu":
-            Anchor.instance.setContent(<GameScreen/>);
+            Anchor.setContent(<GameScreen/>);
         break;
         case "RoleList":
             //list of role list entriy

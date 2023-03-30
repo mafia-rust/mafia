@@ -27,7 +27,7 @@ export default class PhaseRowMenu extends React.Component {
             case"Judgement":
             //TODO make buttons light up if they are clicked
             return(<div>
-                {GAME_MANAGER.getPlayer(this.state.gameState.playerOnTrial)}
+                {GAME_MANAGER.getPlayer(this.state.gameState.playerOnTrial).toString()}
                 {(()=>{
                 if(this.state.gameState.playerOnTrial !== this.state.gameState.myIndex)
                     return(<div>
