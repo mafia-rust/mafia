@@ -30,6 +30,8 @@
   margin-bottom: 5px;
   border: #4caf50 1px solid;
   border-radius: 5px;
+  padding-left: 0.1%;
+  padding-right: 0.1%;
 }
 
 /*styles the chat input so that the text will roll over to the next 
