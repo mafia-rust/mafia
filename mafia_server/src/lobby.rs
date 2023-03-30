@@ -179,11 +179,13 @@ impl Lobby {
         
         }).collect();
 
-        //If there are 32 players in the lobby this will crash TODO
         if availabe_random_names.len() > 0 {
             return availabe_random_names[rand::random::<usize>()%availabe_random_names.len()].clone();
+        } else {
+            // Awesome name generator
+            // TODO make this better, or don't.
+            return players.len().to_string()
         }
-        todo!()
     }
     fn send_players(players: &mut HashMap<ArbitraryPlayerID, LobbyPlayer>){
         for (_, player) in players.iter(){

@@ -55,7 +55,9 @@ def get_options():
             options.auto_start = True
         elif opt in ("-d", "--driver"):
             if arg in ("Firefox", "firefox", "ff", "Mozilla", "mozilla"):
-                options.driver = webdriver.Firefox()
+                fo = webdriver.firefox.options.Options()
+                fo.set_preference("dom.popup_maximum", 129)
+                options.driver = webdriver.Firefox(options=fo)
             elif arg in ("Chrome", "chrome", "Chromium", "chromium", "Google", "google"):
                 options.driver = webdriver.Chrome()
             else:
