@@ -1,6 +1,7 @@
 import React from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
+import ForgerMenu from "./ForgerMenu";
 import "./willMenu.css"
 
 export default class WillMenu extends React.Component {
@@ -25,21 +26,21 @@ export default class WillMenu extends React.Component {
     }
     render() {return (<div>
         <div class= "will-menu textarea">
-            {translate("menu.willMenu.will")}
+            {translate("menu.will.will")}
             <br/>
             <textarea 
                 class="textarea-text"
                 onKeyPress={(e) => {
                     if(e.code === "Enter") {
-                        gameManager.saveWill_button(this.state.willFeild)
+                        GAME_MANAGER.saveWill_button(this.state.willFeild)
                     }
                 }}
                 value={this.state.willFeild}
                 onChange={(e)=>{this.setState({willFeild : e.target.value});}}>
             </textarea>
             <br/>
-            <button className="gm-button" onClick={()=>{gameManager.saveWill_button(this.state.willFeild)}}>{translate("menu.willMenu.save")}</button>
-            <button className="gm-button" onClick={()=>{gameManager.sendMessage_button(this.state.gameState.will)}}>{translate("menu.willMenu.post")}</button>
+            <button className="gm-button" onClick={()=>{GAME_MANAGER.saveWill_button(this.state.willFeild)}}>{translate("menu.will.save")}</button>
+            <button className="gm-button" onClick={()=>{GAME_MANAGER.sendMessage_button(this.state.gameState.will)}}>{translate("menu.will.post")}</button>
         </div>
 
         <div>

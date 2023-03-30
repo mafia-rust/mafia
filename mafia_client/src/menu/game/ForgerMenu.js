@@ -1,26 +1,26 @@
 import React from "react";
 import GAME_MANAGER from "../..";
 
-export class ForgerMenu extends React.Component {
+export default class ForgerMenu extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            gameState : gameManager.gameState,
+            gameState : GAME_MANAGER.gameState,
         };
         this.listener = ()=>{
             this.setState({
-                gameState: gameManager.gameState,
+                gameState: GAME_MANAGER.gameState,
             })
         };  
     }
 
     componentDidMount() {
-        gameManager.addStateListener(this.listener);
+        GAME_MANAGER.addStateListener(this.listener);
     }
 
     componentWillUnmount() {
-        gameManager.removeStateListener(this.listener);
+        GAME_MANAGER.removeStateListener(this.listener);
     }
 
     render() {

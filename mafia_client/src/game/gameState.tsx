@@ -2,8 +2,8 @@ import GameState, { Player } from "./gameState.d"
 
 export function create_gameState(): GameState {
     return {
-        myName: undefined,
-        myIndex: undefined,
+        myName: null,
+        myIndex: null,
 
         chatMessages : [],  //string + chat messages
         graves: [],

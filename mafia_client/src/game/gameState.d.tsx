@@ -1,7 +1,7 @@
 
 export default interface GameState {
-    myName: string | undefined,
-    myIndex: number | undefined,
+    myName: string | null,
+    myIndex: number | null,
 
     chatMessages : any[],  //string + chat messages
     graves: any[],
