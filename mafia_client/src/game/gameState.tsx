@@ -58,7 +58,7 @@ export function create_grave(){
         playerIndex: null,
     
         role: "",
-        killer: [],
+        death_cause: [],
         will: "",
     
         diedPhase: "",

@@ -5,8 +5,9 @@ import LobbyMenu from "../menu/lobby/LobbyMenu";
 import StartMenu from "../menu/main/StartMenu";
 import GAME_MANAGER from "../index";
 import GameScreen from "../menu/game/GameScreen";
+import React from "react";
 
-export default function messageListener(serverMessage){
+export default function messageListener(serverMessage: any){
 
     let type;
     if(typeof(serverMessage)==="string"){
@@ -143,7 +144,7 @@ export default function messageListener(serverMessage){
             let grave = create_grave();
             grave.playerIndex = serverMessage.grave.player_index;
             grave.role =        serverMessage.grave.role;
-            grave.death_cause =      serverMessage.grave.death_cause;
+            grave.death_cause = serverMessage.grave.death_cause;
             grave.will =        serverMessage.grave.will;
             grave.diedPhase =   serverMessage.grave.died_phase;
             grave.dayNumber =   serverMessage.grave.day_number;
