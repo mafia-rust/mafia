@@ -17,8 +17,9 @@ mafia_client/node_modules
 mafia_client/.pnp
 mafia_client/.pnp.js
 
-# testing
+# Testing
 mafia_client/coverage
+geckodriver.log
 
 # production
 mafia_client/build
