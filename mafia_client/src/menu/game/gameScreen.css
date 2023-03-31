@@ -1,16 +1,16 @@
 .game-screen {
     height: 100vh;
-  }
-  
-  .game-screen-header {
+}
+
+.game-screen-header {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 15%;
     background-color: #1c1c1c;
-  }
-  
-  .game-screen-content {
+}
+
+.game-screen-content {
     display: grid;
     grid-auto-columns: 1fr;
     grid-auto-rows: 1fr;
@@ -18,46 +18,43 @@
     width: 100%;
     background-color: rgba(0, 0, 0, 0);
     grid-gap: 5px;
-    
-  }
-  
-  .game-screen-panel {
+}
+
+.game-screen-panel {
     overflow-x: hidden;
     height: 100%;
     width: 100%;
     background-color: green;
     border-radius: 0.75rem;
-  }
+}
 
-  .game-screen-panel-header {
+.game-screen-panel-header {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 15%;
     background-color: #1c1c1c;
-  }
+}
 
-  .game-screen-panel-text {
+.game-screen-panel-text {
     font-size: 1.5rem;
     color: white;
+}
 
-  }
-
-  .gm-button {
-    margin-top: 0.25rem;
-    margin-bottom: .25rem;
-    padding-left: .25rem;
-    padding-right: .25rem;
-    margin-left: .125rem;
-    margin-right: .125rem;
-    justify-content: center;
-    align-items: center;
-    width : fit-content;
-    height: fit-content;
-    border-radius: .5rem;
-    background-color: rgb(183, 224, 242);
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    color: black;
-    font-weight: bold;
-  }
-  
+.gm-button {
+margin-top: 0.25rem;
+margin-bottom: .25rem;
+padding-left: .25rem;
+padding-right: .25rem;
+margin-left: .125rem;
+margin-right: .125rem;
+justify-content: center;
+align-items: center;
+width : fit-content;
+height: fit-content;
+border-radius: .5rem;
+background-color: rgb(183, 224, 242);
+font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+color: black;
+font-weight: bold;
+}

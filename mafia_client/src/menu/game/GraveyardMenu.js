@@ -47,15 +47,13 @@ export default class GraveyardMenu extends React.Component {
         return(<div>{grave.will}</div>);
     }
 
-    renderRoleList(){
-        return<div>
-            {
-                this.state.gameState.roleList.map((entry, index)=>{
-                    return this.renderRoleListEntry(entry, index)
-                }, this)
-            }
-        </div>
-    }
+    renderRoleList(){return<div>
+        {
+            this.state.gameState.roleList.map((entry, index)=>{
+                return this.renderRoleListEntry(entry, index)
+            }, this)
+        }
+    </div>}
     renderRoleListEntry(roleListEntry, index){
         if(roleListEntry==="Any"){
             return <div key={index}>
