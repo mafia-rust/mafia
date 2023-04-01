@@ -1,4 +1,4 @@
-use crate::{lobby::Lobby, network::connection::{Connection, ConnectionEventListener, self}};
+use crate::{lobby::Lobby, network::connection::{Connection, ConnectionEventListener, self}, log};
 use tokio_tungstenite::tungstenite::{client, Message};
 use std::{
     net::SocketAddr,
@@ -19,8 +19,11 @@ pub async fn create_ws_server(
 
     // Create the event loop and TCP listener we'll accept connections on.
     let listener = TcpListener::bind(&address).await.expect(&format!("address and port should be valid. Address was:{}",address));  //panic if address is invalid
-
-    println!("Listening on: {}\n", address);
+    
+    print!("\x1B[2J\x1B[1;1H"); // Clear terminal
+    println!("{}", log::notice("Mafia Server started!\n"));
+    println!("Listening on: {}\n", log::important(address));
+    println!("Log output:");
 
     // Handle each incoming connection in a separate task
     while let Ok((stream, addr)) = listener.accept().await {

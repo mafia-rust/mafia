@@ -3,7 +3,7 @@ use std::{net::SocketAddr, collections::HashMap, sync::{Mutex, Arc}, time::Durat
 use serde_json::Value;
 use tokio_tungstenite::tungstenite::Message;
 
-use crate::lobby::Lobby;
+use crate::{lobby::Lobby, log};
 
 use super::{connection::{ConnectionEventListener, Connection}, packet::{ToServerPacket, ToClientPacket, RejectJoinReason}};
 
@@ -43,24 +43,27 @@ impl Listener{
 
 impl ConnectionEventListener for Listener {
     fn on_connect(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection) {
-        println!("connected: {}", connection.get_address());
+        println!("{}\t{}", log::important("CONNECTED:   "), connection.get_address());
 
         //add player
         self.players.insert(connection.get_address().clone(), None);
     }
 
     fn on_disconnect(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection) {
-        println!("disconnected: {}", connection.get_address());
+        println!("{}\t{}", log::important("DISCONNECTED:"), connection.get_address());
 
         //remove player
         self.players.remove(connection.get_address());
     }
 
     fn on_message(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection, message: &Message) {
-        println!("{}, addr:{}", message, connection.get_address());
+        if message.is_empty() {
+            return; // They either disconnected, or sent nothing.
+        }
+        println!("[{}]\t{}", log::notice(&connection.get_address().to_string()), message);
 
         if let Err(k) = self.handle_message(_clients, connection, message){
-            println!("Error: {}", k);
+            println!("[{}]\t{}:\n{}", log::error(&connection.get_address().to_string()), log::error("ERROR"), k);
         }    
     }
 }

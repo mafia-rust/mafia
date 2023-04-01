@@ -45,6 +45,8 @@ pub mod macros {
     pub(crate) use enum_str;
 }
 pub mod utils{
+    use std::fmt::Display;
+
     /**
     Converts x to any radix
     # Panics
@@ -81,5 +83,18 @@ pub mod utils{
             result
         });
         new_str
+    }
+
+}
+
+pub mod log {
+    pub fn important(str: &str) -> String {
+        format!("\x1b[0;1;93m{str}\x1b[0m")
+    }
+    pub fn error(str: &str) -> String {
+        format!("\x1b[0;1;91m{str}\x1b[0m")
+    }
+    pub fn notice(str: &str) -> String {
+        format!("\x1b[0;32m{str}\x1b[0m")
     }
 }
