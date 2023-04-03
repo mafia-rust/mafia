@@ -33,7 +33,7 @@ pub enum ToClientPacket{
     OpenGameMenu,
 
     RoleList{role_list: RoleList},
-    PhaseTimes{phase_times: PhaseTimeSettings},
+    PhaseTime{phase: PhaseType, time: u64},
     InvestigatorResults{investigator_results: InvestigatorResults},
 
         //Game
@@ -135,7 +135,7 @@ pub enum ToServerPacket{
     StartGame,
     Kick{player_index: PlayerIndex},
     SetRoleList{role_list: RoleList},
-    SetPhaseTimes{phase_times: PhaseTimeSettings},
+    SetPhaseTime{phase: PhaseType, time: u64},
     SetInvestigatorResults{investigator_results: InvestigatorResults},
 
     //Game

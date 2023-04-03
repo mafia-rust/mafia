@@ -8,7 +8,7 @@ use tokio_tungstenite::tungstenite::Message;
 use crate::{
     game::{Game, player::{PlayerIndex, Player}, 
     settings::{Settings, InvestigatorResults, self}, 
-    role_list}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket}, listener::ArbitraryPlayerID}, 
+    role_list, phase::PhaseType}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket}, listener::ArbitraryPlayerID}, 
     utils::trim_whitespace
 };
 
@@ -135,11 +135,20 @@ impl Lobby {
             ToServerPacket::Kick{player_index} => {
                 todo!()// cant kick because then all player_index's would need to change and all players would be pointing to the wrong indeices
             },
-            ToServerPacket::SetPhaseTimes{phase_times} => {
+            ToServerPacket::SetPhaseTime{phase, time} => {
                 if let LobbyState::Lobby{ settings, players } = &mut self.lobby_state{
-                    settings.phase_times = phase_times.clone();
+                    let ref mut phase_time = match phase {
+                        PhaseType::Morning => settings.phase_times.morning,
+                        PhaseType::Discussion => settings.phase_times.discussion,
+                        PhaseType::Evening => settings.phase_times.evening,
+                        PhaseType::Judgement => settings.phase_times.judgement,
+                        PhaseType::Night => settings.phase_times.night,
+                        PhaseType::Testimony => settings.phase_times.testimony,
+                        PhaseType::Voting => settings.phase_times.voting,
+                    };
+                    *phase_time = Duration::from_secs(time);
                     
-                    Self::send_to_all(players, ToClientPacket::PhaseTimes { phase_times });
+                    Self::send_to_all(players, ToClientPacket::PhaseTime { phase, time });
                 }
             },
             ToServerPacket::SetRoleList { role_list } => {

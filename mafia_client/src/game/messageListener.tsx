@@ -80,14 +80,8 @@ export default function messageListener(serverMessage: any){
             //list of role list entriy
             GAME_MANAGER.gameState.roleList = serverMessage.role_list.role_list;
         break;
-        case"PhaseTimes":
-            GAME_MANAGER.gameState.phaseTimes[Phase.Morning]    = serverMessage.phase_times.morning.secs;
-            GAME_MANAGER.gameState.phaseTimes[Phase.Discussion] = serverMessage.phase_times.discussion.secs;
-            GAME_MANAGER.gameState.phaseTimes[Phase.Voting]     = serverMessage.phase_times.voting.secs;
-            GAME_MANAGER.gameState.phaseTimes[Phase.Testimony]  = serverMessage.phase_times.testimony.secs;
-            GAME_MANAGER.gameState.phaseTimes[Phase.Judgement]  = serverMessage.phase_times.judgement.secs;
-            GAME_MANAGER.gameState.phaseTimes[Phase.Evening]    = serverMessage.phase_times.evening.secs;
-            GAME_MANAGER.gameState.phaseTimes[Phase.Night]      = serverMessage.phase_times.night.secs;
+        case"PhaseTime":
+            GAME_MANAGER.gameState.phaseTimes[serverMessage.phase as Phase] = serverMessage.time;
         break;
         case"InvestigatorResults":
             GAME_MANAGER.gameState.investigatorResults = serverMessage.investigator_results.results;

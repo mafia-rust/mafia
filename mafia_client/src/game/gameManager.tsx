@@ -58,20 +58,15 @@ export function create_gameManager(): GameManager {
         startGame_button() {
             gameManager.Server.send(`"StartGame"`);
         },
-        phaseTimesButton(phaseTimes: PhaseTimes) {
-            gameManager.Server.send(JSON.stringify({
-                "SetPhaseTimes":{
-                    "phase_times":{
-                        "morning": {"secs": phaseTimes[Phase.Morning], "nanos": 0},
-                        "discussion": {"secs": phaseTimes[Phase.Discussion], "nanos": 0},
-                        "voting": {"secs": phaseTimes[Phase.Voting], "nanos": 0},
-                        "testimony": {"secs": phaseTimes[Phase.Testimony], "nanos": 0},
-                        "judgement": {"secs": phaseTimes[Phase.Judgement], "nanos": 0},
-                        "evening": {"secs": phaseTimes[Phase.Evening], "nanos": 0},
-                        "night": {"secs": phaseTimes[Phase.Night], "nanos": 0},
+        phaseTimeButton(phase: Phase, time: number) {
+            if (isValidPhaseTime(time)) {
+                gameManager.Server.send(JSON.stringify({
+                    "SetPhaseTime":{
+                        "phase": phase,
+                        "time": time
                     }
-                }
-            }))
+                }))
+            }
         },
         roleList_button(roleListEntries) {
             gameManager.Server.send(JSON.stringify({
@@ -208,6 +203,9 @@ function create_server(){
     return Server;
 }
 
+export function isValidPhaseTime(time: number) {
+    return Number.isSafeInteger(time) && time <= 1000 && 0 <= time;
+}
 
 export type { GameManager, Server } from "./gameManager.d";
 // export default gameManager;

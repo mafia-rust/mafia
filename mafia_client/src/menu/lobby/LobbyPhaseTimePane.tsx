@@ -1,4 +1,5 @@
 import React from "react";
+import { isValidPhaseTime } from "../../game/gameManager";
 import { Phase, PhaseTimes } from "../../game/gameState.d";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
@@ -20,7 +21,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimes> 
         };
 
         this.listener = (type)=>{
-            if(type==="PhaseTimes")
+            if(type==="PhaseTime")
                 this.setState(GAME_MANAGER.gameState.phaseTimes);
         }
     }
@@ -29,11 +30,6 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimes> 
     }
     componentWillUnmount() {
         GAME_MANAGER.removeStateListener(this.listener);
-    }
-
-    phaseTimesButton() {
-        //TODO Errors for some reason, this  is undefined?
-        GAME_MANAGER.phaseTimesButton(this.state);
     }
 
     render(){return(<div className="lm-settings-pane">
@@ -53,13 +49,15 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimes> 
         <input type="text" value={this.state[phase]}
             className="input-field"
             onChange={(e)=>{ 
+                let value = Number(e.target.value);
                 this.setState({
-                    [phase]: Number(e.target.value)
+                    [phase]: isValidPhaseTime(value) ? value : this.state[phase]
                 } as Pick<PhaseTimes, keyof PhaseTimes>)
+                GAME_MANAGER.phaseTimeButton(phase, value);
             }}
             onKeyUp={(e)=>{
                 if(e.key === 'Enter')
-                    this.phaseTimesButton();
+                    GAME_MANAGER.phaseTimeButton(phase, this.state[phase]);
             }}
         />
     </div>}

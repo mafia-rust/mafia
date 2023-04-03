@@ -24,13 +24,13 @@ export function create_gameState(): GameState {
         roleList: [],   //Vec<RoleListEntry>
         investigatorResults: [],   //Vec<Vec<Role>>
         phaseTimes: {
-            [Phase.Morning]: 0,
-            [Phase.Discussion]: 0,
-            [Phase.Voting]: 0,
-            [Phase.Testimony]: 0,
-            [Phase.Judgement]: 0,
-            [Phase.Evening]: 0,
-            [Phase.Night]: 0,
+            [Phase.Morning]: 5,
+            [Phase.Discussion]: 45, 
+            [Phase.Voting]: 30, 
+            [Phase.Testimony]: 20, 
+            [Phase.Judgement]: 20, 
+            [Phase.Evening]: 10, 
+            [Phase.Night]: 37,
         },
     }
 }
