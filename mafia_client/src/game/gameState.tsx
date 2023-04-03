@@ -1,4 +1,4 @@
-import GameState, { Player } from "./gameState.d"
+import GameState, { Phase, Player } from "./gameState.d"
 
 export function create_gameState(): GameState {
     return {
@@ -24,13 +24,13 @@ export function create_gameState(): GameState {
         roleList: [],   //Vec<RoleListEntry>
         investigatorResults: [],   //Vec<Vec<Role>>
         phaseTimes: {
-            morning: 0,
-            discussion: 0,
-            voting: 0,
-            testimony: 0,
-            judgement: 0,
-            evening: 0,
-            night: 0,
+            [Phase.Morning]: 0,
+            [Phase.Discussion]: 0,
+            [Phase.Voting]: 0,
+            [Phase.Testimony]: 0,
+            [Phase.Judgement]: 0,
+            [Phase.Evening]: 0,
+            [Phase.Night]: 0,
         },
     }
 }

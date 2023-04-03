@@ -28,15 +28,26 @@ export default interface GameState {
     
     roleList: any[],   //Vec<RoleListEntry>
     investigatorResults: any[],   //Vec<Vec<Role>>
-    phaseTimes: {
-        morning: number,
-        discussion: number,
-        voting: number,
-        testimony: number,
-        judgement: number,
-        evening: number,
-        night: number,
-    },
+    phaseTimes: PhaseTimes
+}
+
+export const enum Phase {
+    Morning = "Morning",
+    Discussion = "Discussion",
+    Voting = "Voting",
+    Testimony = "Testimony",
+    Judgement = "Judgement",
+    Evening = "Evening",
+    Night = "Night",
+}
+export interface PhaseTimes {
+    [Phase.Morning]: number,
+    [Phase.Discussion]: number,
+    [Phase.Voting]: number,
+    [Phase.Testimony]: number,
+    [Phase.Judgement]: number,
+    [Phase.Evening]: number,
+    [Phase.Night]: number,
 }
 
 export interface Player {

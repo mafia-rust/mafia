@@ -6,6 +6,7 @@ import StartMenu from "../menu/main/StartMenu";
 import GAME_MANAGER from "../index";
 import GameScreen from "../menu/game/GameScreen";
 import React from "react";
+import { Phase } from "./gameState.d";
 
 export default function messageListener(serverMessage: any){
 
@@ -80,13 +81,13 @@ export default function messageListener(serverMessage: any){
             GAME_MANAGER.gameState.roleList = serverMessage.role_list.role_list;
         break;
         case"PhaseTimes":
-            GAME_MANAGER.gameState.phaseTimes.morning    = serverMessage.phase_times.morning.secs;
-            GAME_MANAGER.gameState.phaseTimes.discussion = serverMessage.phase_times.discussion.secs;
-            GAME_MANAGER.gameState.phaseTimes.voting     = serverMessage.phase_times.voting.secs;
-            GAME_MANAGER.gameState.phaseTimes.testimony  = serverMessage.phase_times.testimony.secs;
-            GAME_MANAGER.gameState.phaseTimes.judgement  = serverMessage.phase_times.judgement.secs;
-            GAME_MANAGER.gameState.phaseTimes.evening    = serverMessage.phase_times.evening.secs;
-            GAME_MANAGER.gameState.phaseTimes.night      = serverMessage.phase_times.night.secs;
+            GAME_MANAGER.gameState.phaseTimes[Phase.Morning]    = serverMessage.phase_times.morning.secs;
+            GAME_MANAGER.gameState.phaseTimes[Phase.Discussion] = serverMessage.phase_times.discussion.secs;
+            GAME_MANAGER.gameState.phaseTimes[Phase.Voting]     = serverMessage.phase_times.voting.secs;
+            GAME_MANAGER.gameState.phaseTimes[Phase.Testimony]  = serverMessage.phase_times.testimony.secs;
+            GAME_MANAGER.gameState.phaseTimes[Phase.Judgement]  = serverMessage.phase_times.judgement.secs;
+            GAME_MANAGER.gameState.phaseTimes[Phase.Evening]    = serverMessage.phase_times.evening.secs;
+            GAME_MANAGER.gameState.phaseTimes[Phase.Night]      = serverMessage.phase_times.night.secs;
         break;
         case"InvestigatorResults":
             GAME_MANAGER.gameState.investigatorResults = serverMessage.investigator_results.results;

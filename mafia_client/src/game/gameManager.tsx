@@ -5,7 +5,7 @@ import GAME_MANAGER from "../index";
 import messageListener from "./messageListener";
 import CONFIG from "../resources/config.json"
 import React from "react";
-import { Player } from "./gameState.d";
+import { Phase, PhaseTimes, Player } from "./gameState.d";
 import { GameManager, Server } from "./gameManager.d";
 
 export function create_gameManager(): GameManager {
@@ -58,17 +58,17 @@ export function create_gameManager(): GameManager {
         startGame_button() {
             gameManager.Server.send(`"StartGame"`);
         },
-        phaseTimesButton(morning: number, discussion: number, voting: number, testimony: number, judgement: number, evening: number, night: number) {
+        phaseTimesButton(phaseTimes: PhaseTimes) {
             gameManager.Server.send(JSON.stringify({
                 "SetPhaseTimes":{
                     "phase_times":{
-                        "morning": {"secs":morning, "nanos":0},
-                        "discussion": {"secs":discussion, "nanos":0},
-                        "voting": {"secs":voting, "nanos":0},
-                        "testimony": {"secs":testimony, "nanos":0},
-                        "judgement": {"secs":judgement, "nanos":0},
-                        "evening": {"secs":evening, "nanos":0},
-                        "night": {"secs":night, "nanos":0},
+                        "morning": {"secs": phaseTimes[Phase.Morning], "nanos": 0},
+                        "discussion": {"secs": phaseTimes[Phase.Discussion], "nanos": 0},
+                        "voting": {"secs": phaseTimes[Phase.Voting], "nanos": 0},
+                        "testimony": {"secs": phaseTimes[Phase.Testimony], "nanos": 0},
+                        "judgement": {"secs": phaseTimes[Phase.Judgement], "nanos": 0},
+                        "evening": {"secs": phaseTimes[Phase.Evening], "nanos": 0},
+                        "night": {"secs": phaseTimes[Phase.Night], "nanos": 0},
                     }
                 }
             }))

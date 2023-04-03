@@ -1,4 +1,4 @@
-import GameState, { Player } from "./gameState.d";
+import GameState, { PhaseTimes, Player } from "./gameState.d";
 
 export interface GameManager {
     roomCode: string | null,
@@ -15,15 +15,7 @@ export interface GameManager {
     join_button(): void;
     setName_button(name: string): void;
     startGame_button(): void;
-    phaseTimesButton(
-        morning: number, 
-        discussion: number, 
-        voting: number, 
-        testimony: number, 
-        judgement: number, 
-        evening: number, 
-        night: number
-    ): void;
+    phaseTimesButton(phaseTimes: PhaseTimes): void;
     roleList_button(roleListEntries: any): void;
     
     judgement_button(judgement: any): void;
