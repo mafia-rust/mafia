@@ -100,5 +100,20 @@
     83.33%{-webkit-mask-position: 0% 0%  ,50% 0%  ,100% 100%}
     100%  {-webkit-mask-position: 0% 0%  ,50% 0%  ,100% 0%  }
 }
-      
-      
+
+.dropdown {
+    margin-top: 0.5rem;
+    justify-content: center;
+    background-color: white;
+    color: black;
+    border-radius: 0.75rem;
+    min-height: 2rem;
+}
+
+option {
+    margin-top: 0.5rem;
+    justify-content: center;
+    background-color: white;
+    color: black;
+    min-height: 2rem;
+}

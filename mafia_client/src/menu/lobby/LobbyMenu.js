@@ -24,10 +24,7 @@ export default class LobbyMenu extends React.Component {
             flexDirection: "row",
         }}>
             <LobbyPlayerList/>
-            <div style={{
-                display: "flex",
-                flexDirection: "column",
-            }}>
+            <div className="lm-settings-column">
                 <LobbyPhaseTimePane/>
                 <LobbyRolePane/>
             </div>

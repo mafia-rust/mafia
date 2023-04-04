@@ -1,0 +1,38 @@
+{
+    "Classic": {
+        "Morning": 5,
+        "Discussion": 45,
+        "Voting": 30,
+        "Testimony": 20,
+        "Judgement": 20,
+        "Evening": 7,
+        "Night": 37
+    },
+    "Short": {
+        "Morning": 20,
+        "Discussion": 120,
+        "Voting": 80,
+        "Testimony": 30,
+        "Judgement": 30,
+        "Evening": 10,
+        "Night": 96
+    },
+    "Lightning": {
+        "Morning": 0,
+        "Discussion": 0,
+        "Voting": 10,
+        "Testimony": 0,
+        "Judgement": 10,
+        "Evening": 0,
+        "Night": 10
+    },
+    "Long": {
+        "Morning": 15,
+        "Discussion": 240,
+        "Voting": 30,
+        "Testimony": 30,
+        "Judgement": 30,
+        "Evening": 13,
+        "Night": 90
+    }
+}

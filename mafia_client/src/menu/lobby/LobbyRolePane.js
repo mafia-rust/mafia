@@ -128,6 +128,7 @@ class RolePicker extends React.Component {
     return (
       <div className="role-picker-container">
         <select
+          className="dropdown"
           value={this.state.faction}
           onChange={(e) => {
             if (e.target.value === "Any") {
@@ -147,6 +148,7 @@ class RolePicker extends React.Component {
         </select>
         {this.state.faction !== "Any" && (
           <select
+            className="dropdown"
             value={this.state.alignment}
             onChange={(e) => {
               if (Object.keys(ROLES).includes(e.target.value)) {
