@@ -55,7 +55,7 @@
     min-height: 4rem;
 }
 .lm-subsection-header-text {
-
+    font-size: 125%;
 }
 .lm-time-input-box {
     display: flex;
