@@ -17,7 +17,7 @@
     width:unset;
     text-align: left;
 }
-.lm-settings-pane {
+.lm-settings-subsection {
     width: 60vw;
     margin: 0 2vw;
     display: flex;
@@ -43,7 +43,7 @@
     margin-left: 4vw;
     width:unset;
 }
-.lm-settings-subsection {
+.lm-settings-subsection-inner {
     width: 70%;
 }
 .lm-subsection-header {

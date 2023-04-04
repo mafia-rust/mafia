@@ -49,12 +49,12 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
         GAME_MANAGER.removeStateListener(this.listener);
     }
 
-    render(){return(<div className="lm-settings-pane">
+    render(){return(<div className="lm-settings-subsection">
         <div className="lm-subsection-header">
             <h2 className="lm-subsection-header-text">Time settings:</h2>
             {this.renderTimeModeDropdown()}
         </div>
-        <div className="lm-settings-subsection lm-time-select-region">
+        <div className="lm-settings-subsection-inner lm-time-select-region">
             {this.renderTimePicker(Phase.Morning)}
             {this.renderTimePicker(Phase.Discussion)}
             {this.renderTimePicker(Phase.Voting)}
