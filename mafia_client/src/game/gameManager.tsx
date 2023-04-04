@@ -10,7 +10,7 @@ import { GameManager, Server } from "./gameManager.d";
 
 export function create_gameManager(): GameManager {
 
-    console.log("gameManager created");
+    console.log("Game manager created.");
     
     let gameManager: GameManager = {
         roomCode: null,
@@ -161,13 +161,9 @@ function create_server(){
             //Server.ws.send("Hello to Server");
         },
         closeListener : (event: any)=>{
-            console.log(event);
-
             Anchor.setContent(<StartMenu/>);
         },
         messageListener: (event: any)=>{
-            // console.log("Server: "+event.data);
-
             GAME_MANAGER.messageListener(
                 JSON.parse(event.data)
             );
@@ -176,18 +172,22 @@ function create_server(){
         open : ()=>{
             let address = CONFIG.server_ip + ":" + CONFIG.port;
             Server.ws = new WebSocket("ws://"+address);   //TODO
-            Server.ws.addEventListener("open", (event: any)=>{
+            Server.ws.addEventListener("open", (event: Event)=>{
                 Server.openListener(event);
             });
-            Server.ws.addEventListener("close", (event: any)=>{
+            Server.ws.addEventListener("close", (event: Event)=>{
                 Server.closeListener(event);
             });
-            Server.ws.addEventListener("message", (event: any)=>{
+            Server.ws.addEventListener("message", (event: Event)=>{
                 Server.messageListener(event);
             });
         },
         send : (packets)=>{
-            Server.ws.send(packets);
+            if (Server.ws === null) {
+                console.log("Attempted to send packet to null websocket!");
+            } else {
+                Server.ws.send(packets);
+            }
         },
         close : ()=>{
             if(Server.ws==null) return;
