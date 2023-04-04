@@ -25,6 +25,7 @@ export default class LobbyMenu extends React.Component {
         }}>
             <LobbyPlayerList/>
             <div className="lm-settings-column">
+                <h2 className="lm-settings-header">Game settings</h2>
                 <LobbyPhaseTimePane/>
                 <LobbyRolePane/>
             </div>

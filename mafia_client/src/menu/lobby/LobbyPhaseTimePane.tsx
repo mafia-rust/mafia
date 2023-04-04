@@ -50,11 +50,11 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
     }
 
     render(){return(<div className="lm-settings-pane">
-        <div className="lm-time-select-header">
-            <h2 className="lm-time-select-header-text">Time settings:</h2>
+        <div className="lm-subsection-header">
+            <h2 className="lm-subsection-header-text">Time settings:</h2>
             {this.renderTimeModeDropdown()}
         </div>
-        <div className="lm-time-select-region">
+        <div className="lm-settings-subsection lm-time-select-region">
             {this.renderTimePicker(Phase.Morning)}
             {this.renderTimePicker(Phase.Discussion)}
             {this.renderTimePicker(Phase.Voting)}
@@ -81,6 +81,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
                 }
             }}
         >{
+            // TODO lang
             this.state.mode == "Custom" ? <option key={"Custom"}>{"Custom"}</option> : null
         }{
             Object.keys(phaseTimesJson)
@@ -88,10 +89,10 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
         }</select>
     }
 
-    renderTimePicker(phase: Phase) {return <div className="input-box">
-        <div className="input-box-label">{translate("phase." + phase)}</div>
+    renderTimePicker(phase: Phase) {return <div className="input-box lm-time-input-box">
+        <div className="input-box-label">{translate("phase." + phase)}:</div>
         <input type="text" value={this.state.phaseTimes[phase]}
-            className="input-field"
+            className="input-field lm-time-input-field"
             onChange={(e)=>{ 
                 let value = Number(e.target.value);
                 if (isValidPhaseTime(value)) {

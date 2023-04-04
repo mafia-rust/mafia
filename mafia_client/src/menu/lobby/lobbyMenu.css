@@ -11,9 +11,18 @@
     display: flex;
     flex-direction: column;
 }
+.lm-settings-header {
+    font-size: 175%;
+    margin-left: 2vw;
+    width:unset;
+    text-align: left;
+}
 .lm-settings-pane {
     width: 60vw;
     margin: 0 2vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .lm-start-button {
     margin: 0;
@@ -34,15 +43,30 @@
     margin-left: 4vw;
     width:unset;
 }
-.lm-time-select-region {
-    /* Copy here whatever isaac did for join menu input column */
+.lm-settings-subsection {
+    width: 70%;
 }
-.lm-set-time-button {
-    height: 2vh;
-    min-height: 2rem;
-    padding: 0 2%;
+.lm-subsection-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    min-height: 4rem;
 }
+.lm-subsection-header-text {
 
+}
+.lm-time-input-box {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.lm-time-input-field {
+    width: 30%;
+    height: 2rem;
+}
 .role-picker-container {
     display: flex;
     align-items: center;
