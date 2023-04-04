@@ -19,15 +19,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
     constructor(props: {}) {
         super(props);
 
-        let initialPhaseTimes = {
-            [Phase.Morning]: 5,
-            [Phase.Discussion]: 45, 
-            [Phase.Voting]: 30, 
-            [Phase.Testimony]: 20, 
-            [Phase.Judgement]: 20, 
-            [Phase.Evening]: 10, 
-            [Phase.Night]: 37,
-        }
+        let initialPhaseTimes = PHASE_TIME_MODES.get("Classic")!;
 
         this.state = {
             mode: this.determineModeFromPhaseTimes(initialPhaseTimes),

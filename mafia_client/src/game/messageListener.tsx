@@ -1,7 +1,7 @@
 
 import { create_gameState, create_grave, create_player } from "./gameState";
 import Anchor from "../menu/Anchor";
-import LobbyMenu from "../menu/lobby/LobbyMenu";
+import * as LobbyMenu from "../menu/lobby/LobbyMenu";
 import StartMenu from "../menu/main/StartMenu";
 import GAME_MANAGER from "../index";
 import GameScreen from "../menu/game/GameScreen";
@@ -24,7 +24,7 @@ export default function messageListener(serverMessage: any){
     //on the rust side, this is an enum called ToClientPacket
     switch(type) {
         case "AcceptJoin":
-            Anchor.setContent(<LobbyMenu/>);
+            Anchor.setContent(LobbyMenu.create());
         break;
         case "RejectJoin":
             switch(serverMessage.reason) {
@@ -47,7 +47,7 @@ export default function messageListener(serverMessage: any){
         break;
         case "AcceptHost":
             GAME_MANAGER.roomCode = serverMessage.room_code;
-            Anchor.setContent(<LobbyMenu/>);
+            Anchor.setContent(LobbyMenu.create());
         break;
 
         //InLobby/Game
