@@ -2,20 +2,25 @@ import React from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
+import { Player } from "../../game/gameState.d";
 
-export default class LobbyPlayerList extends React.Component {
-    constructor(props) {
+interface PlayerListState {
+    name: string,
+    players: Player[]
+}
+
+export default class LobbyPlayerList extends React.Component<any, PlayerListState> {
+    listener: ()=>void;
+    constructor(props: any) {
         super(props);
 
         this.state = {            
             name: "",
-
-            // Player list
-            gameState: GAME_MANAGER.gameState
+            players: GAME_MANAGER.gameState.players
         };
         this.listener = ()=>{
             this.setState({
-                gameState: GAME_MANAGER.gameState
+                players: GAME_MANAGER.gameState.players
             });
         }
     }
@@ -30,7 +35,7 @@ export default class LobbyPlayerList extends React.Component {
         {this.renderName()}
         {this.renderPlayers()}
     </div>)}
- 
+
     renderName(){return(<div className="input-box lm-name-box">
         <input className="input-field" type="text" value={this.state.name}
             onChange={(e)=>{this.setState({name: e.target.value})}}
@@ -45,8 +50,8 @@ export default class LobbyPlayerList extends React.Component {
     </div>)}
 
     renderPlayers(){return(<div>
-        {this.state.gameState.players.map((_, i)=>{
-            return(<div key={i}>{GAME_MANAGER.getPlayer(i).toString()}</div>)
+        {this.state.players.map((player, i)=>{
+            return(<div key={i}>{player.toString()}</div>)
         })}
     </div>)}
 }
