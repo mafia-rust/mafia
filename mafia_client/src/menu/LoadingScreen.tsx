@@ -13,8 +13,8 @@ export function create(value: Type = Type.Default) {
     return <div className="header" style={{height: "100%"}}>
     <h1 className="header-text">
         {translate("menu.loading." + value)}
-        <br></br>
-        <br></br>
+        <br/>
+        <br/>
         <span className="loading-dots"></span>
     </h1>
 </div>}

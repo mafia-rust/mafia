@@ -8,14 +8,14 @@
         "Evening": 7,
         "Night": 37
     },
-    "Short": {
-        "Morning": 10,
-        "Discussion": 90,
-        "Voting": 60,
-        "Testimony": 30,
-        "Judgement": 40,
-        "Evening": 14,
-        "Night": 74
+    "Lightning": {
+        "Morning": 0,
+        "Discussion": 0,
+        "Voting": 10,
+        "Testimony": 0,
+        "Judgement": 10,
+        "Evening": 0,
+        "Night": 10
     },
     "Rapid": {
         "Morning": 3,
@@ -26,22 +26,13 @@
         "Evening": 4,
         "Night": 19
     },
-    "Lightning": {
-        "Morning": 0,
-        "Discussion": 0,
-        "Voting": 10,
-        "Testimony": 0,
-        "Judgement": 10,
-        "Evening": 0,
-        "Night": 10
-    },
     "Long": {
         "Morning": 10,
-        "Discussion": 120,
+        "Discussion": 90,
         "Voting": 60,
         "Testimony": 30,
         "Judgement": 40,
-        "Evening": 28,
-        "Night": 90
+        "Evening": 14,
+        "Night": 74
     }
 }
