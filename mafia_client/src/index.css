@@ -15,6 +15,8 @@
     font-size: 102%; 
 
     color: white;
+
+    cursor: default;
 }
 
 .header {
@@ -35,15 +37,37 @@
     align-self: center;
     /* Center self vertically */
     top: 50%;
-    letter-spacing: .333rem;
 }
 
-.button {
+input, button, select {
+    border: thin solid #000;
+    border-radius: 0.75rem;
+    min-height: 2rem;
     margin-top: 0.5rem;
     justify-content: center;
     background-color: white;
     color: black;
-    border-radius: 0.75rem;
+}
+
+button, select {
+    cursor: pointer;
+}
+
+button:hover, input:hover, select:hover, option:hover {
+    border: thin solid #bbbbbb;
+    background-color: white;
+    color: black;
+}
+
+button:focus, select:focus, input:focus, option:focus {
+    outline: none;
+}
+
+option {
+    margin-top: 0.5rem;
+    justify-content: center;
+    background-color: white;
+    color: black;
     min-height: 2rem;
 }
 
@@ -60,22 +84,10 @@
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
-.input-box {
+input {
     width: 100%;
     display: block;
-}
-
-.input-box-label {
-    align-self: left;
-    left: 2vh;
-}
-
-.input-field {
-    min-height: 2rem;
-    width: 100%;
-    border: 1px solid #282c34;
-    border-radius: 0.5rem;
-    color: black;
+    cursor: text;
 }
 
 .loading-dots {
@@ -97,21 +109,4 @@
     66.67%{-webkit-mask-position: 0% 0%  ,50% 100%,100% 100%}
     83.33%{-webkit-mask-position: 0% 0%  ,50% 0%  ,100% 100%}
     100%  {-webkit-mask-position: 0% 0%  ,50% 0%  ,100% 0%  }
-}
-
-.dropdown {
-    margin-top: 0.5rem;
-    justify-content: center;
-    background-color: white;
-    color: black;
-    border-radius: 0.75rem;
-    min-height: 2rem;
-}
-
-option {
-    margin-top: 0.5rem;
-    justify-content: center;
-    background-color: white;
-    color: black;
-    min-height: 2rem;
 }
