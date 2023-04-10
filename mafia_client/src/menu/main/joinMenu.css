@@ -5,12 +5,6 @@
     font-size: 325%;
 }
 .jm-input-column {
-    height: 72vh;
-    width: 60vw;
-    max-width: 90vw;
-    margin: 0 auto; 
-    justify-content: center; 
-    align-items: center; 
 }
 
 .jm-button {
