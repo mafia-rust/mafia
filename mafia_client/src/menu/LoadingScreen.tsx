@@ -10,11 +10,11 @@ export const enum Type {
 //uses the index.css files' loader class to create loading dots after 
 //the text passed from langon
 export function create(value: Type = Type.Default) {
-    return <div className="header" style={{height: "100%"}}>
-    <h1 className="header-text">
+    return <header style={{height: "100%"}}>
+    <h1>
         {translate("menu.loading." + value)}
         <br/>
         <br/>
         <span className="loading-dots"></span>
     </h1>
-</div>}
+</header>}

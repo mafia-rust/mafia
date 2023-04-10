@@ -19,7 +19,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
     constructor(props: {}) {
         super(props);
 
-        let initialPhaseTimes = PHASE_TIME_MODES.get("Classic")!;
+        let initialPhaseTimes = {...PHASE_TIME_MODES.get("Classic")!};
 
         this.state = {
             mode: this.determineModeFromPhaseTimes(initialPhaseTimes),
@@ -41,12 +41,12 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
         GAME_MANAGER.removeStateListener(this.listener);
     }
 
-    render(){return(<div className="lm-settings-subsection">
-        <div className="lm-subsection-header">
-            <h2 className="lm-subsection-header-text">Time settings:</h2>
+    render(){return(<section>
+        <header>
+            <h2>Time settings:</h2>
             {this.renderTimeModeDropdown()}
-        </div>
-        <div className="lm-settings-subsection-inner lm-time-select-region">
+        </header>
+        <div className="input-column">
             {this.renderTimePicker(Phase.Morning)}
             {this.renderTimePicker(Phase.Discussion)}
             {this.renderTimePicker(Phase.Voting)}
@@ -55,11 +55,10 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
             {this.renderTimePicker(Phase.Evening)}
             {this.renderTimePicker(Phase.Night)}
         </div>
-    </div>)}
+    </section>)}
 
     renderTimeModeDropdown() {
         return <select 
-            className="dropdown lm-time-select-dropdown"
             value={this.state.mode.toString()}
             onChange={(e) => {
                 let mode = e.target.value as PhaseTimeMode;
@@ -81,29 +80,32 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
         }</select>
     }
 
-    renderTimePicker(phase: Phase) {return <div className="input-box lm-time-input-box">
-        <div className="input-box-label">{translate("phase." + phase)}:</div>
-        <input type="text" value={this.state.phaseTimes[phase]}
-            className="input-field lm-time-input-field"
-            onChange={(e)=>{ 
-                let value = Number(e.target.value);
-                if (isValidPhaseTime(value)) {
-                    let newPhaseTimes = this.state.phaseTimes;
-                    newPhaseTimes[phase] = value;
+    renderTimePicker(phase: Phase) {
+        let phaseKey = "phase." + phase;
+        return <div className="lm-time-input-box">
+            <label htmlFor={phaseKey}>{translate(phaseKey)}:</label>
+            <input name={phaseKey} type="text" value={this.state.phaseTimes[phase]}
+                onChange={(e)=>{ 
+                    let value = Number(e.target.value);
 
-                    this.setState({
-                        mode: this.determineModeFromPhaseTimes(newPhaseTimes),
-                        phaseTimes: newPhaseTimes
-                    })
-                }
-                GAME_MANAGER.phaseTimeButton(phase, value);
-            }}
-            onKeyUp={(e)=>{
-                if(e.key === 'Enter')
-                    GAME_MANAGER.phaseTimeButton(phase, this.state.phaseTimes[phase]);
-            }}
-        />
-    </div>}
+                    if (isValidPhaseTime(value)) {
+                        let newPhaseTimes = this.state.phaseTimes;
+                        newPhaseTimes[phase] = value;
+
+                        this.setState({
+                            mode: this.determineModeFromPhaseTimes(newPhaseTimes),
+                            phaseTimes: {...newPhaseTimes}
+                        });
+                    }
+                    GAME_MANAGER.phaseTimeButton(phase, value);
+                }}
+                onKeyUp={(e)=>{
+                    if(e.key === 'Enter')
+                        GAME_MANAGER.phaseTimeButton(phase, this.state.phaseTimes[phase]);
+                }}
+            />
+        </div>
+    }
     
     determineModeFromPhaseTimes(phaseTimes: PhaseTimes): PhaseTimeMode {
         for (let [mode, times] of PHASE_TIME_MODES) {
@@ -118,6 +120,6 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
         if (mode === "Custom") {
             return this.state.phaseTimes;
         }
-        return PHASE_TIME_MODES.get(mode.toString()) as PhaseTimes;
+        return {...PHASE_TIME_MODES.get(mode.toString())} as PhaseTimes;
     }
 }

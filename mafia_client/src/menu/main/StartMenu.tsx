@@ -12,23 +12,23 @@ export default class StartMenu extends React.Component {
     render(){
         let logged_in = false /* TODO */;
         return(<div>
-        <div className="header sm-header">
-            <h1 className="header-text">{translate("menu.start.title")}</h1>
-            <button className="button sm-login-button">
+        <header className="sm-header">
+            <h1>{translate("menu.start.title")}</h1>
+            <button className="sm-login-button">
                 {translate("menu.start.button." + (logged_in ? "logout" : "login"))}
             </button><br/>
-        </div>
+        </header>
 
         <div className="sm-button-area">
-            <button className="button sm-join-host-button" onClick={()=>{this.joinGameButton()}}>
+            <button className="sm-join-host-button" onClick={()=>{this.joinGameButton()}}>
                 {translate("menu.start.button.join." + (logged_in ? "logged_out" : "logged_in"))}
             </button>
-            <button className="button sm-join-host-button" onClick={()=>{this.hostGameButton()}}>
+            <button className="sm-join-host-button" onClick={()=>{this.hostGameButton()}}>
                 {translate("menu.start.button.host." + (logged_in ? "logged_out" : "logged_in"))}
             </button>
         </div>
 
-        <p className="credits">{translate("menu.start.credits")}</p>
+        <footer className="credits">{translate("menu.start.credits")}</footer>
     </div>)}
 
     private joinGameButton() {

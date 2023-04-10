@@ -11,25 +11,25 @@ export function create() {
         display: "flex",
         flexDirection: "column",
     }}>
-        <div className="header lm-header">
-            <h1 className="header-text lm-header-text">
+        <header className="lm-header">
+            <h1 className="lm-header-text">
                 {translate("menu.lobby.title", GAME_MANAGER.roomCode)}
             </h1>
-            <button className="button lm-start-button" onClick={GAME_MANAGER.startGame_button}>
+            <button className="lm-start-button" onClick={GAME_MANAGER.startGame_button}>
                 {translate("menu.lobby.button.start")}
             </button>
-        </div>
-        <div style={{
+        </header>
+        <main style={{
             display: "flex",
             flexDirection: "row",
         }}>
             <LobbyPlayerList/>
-            <div className="lm-settings-column">
-                <h2 className="lm-settings-header">Game settings</h2>
+            <div className="lm-settings">
+                <h2>Game settings</h2>
                 <LobbyPhaseTimePane/>
                 <LobbyRolePane/>
             </div>
 
-        </div>
+        </main>
     </div>
 }

@@ -36,22 +36,22 @@ export default class LobbyPlayerList extends React.Component<any, PlayerListStat
         {this.renderPlayers()}
     </div>)}
 
-    renderName(){return(<div className="input-box lm-name-box">
-        <input className="input-field" type="text" value={this.state.name}
+    renderName(){return(<div className="lm-name-box">
+        <input type="text" value={this.state.name}
             onChange={(e)=>{this.setState({name: e.target.value})}}
             onKeyUp={(e)=>{
                 if(e.key === 'Enter')
                     GAME_MANAGER.setName_button(this.state.name);
             }}
         />
-        <button className="button" onClick={()=>{
+        <button onClick={()=>{
             GAME_MANAGER.setName_button(this.state.name)
         }}>{translate("menu.lobby.button.set_name")}</button>
     </div>)}
 
-    renderPlayers(){return(<div>
+    renderPlayers(){return(<ol>
         {this.state.players.map((player, i)=>{
-            return(<div key={i}>{player.toString()}</div>)
+            return(<li key={i}>{player.toString()}</li>)
         })}
-    </div>)}
+    </ol>)}
 }

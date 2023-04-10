@@ -45,15 +45,15 @@ export default class JoinMenu extends React.Component<any, JoinMenuState> {
         setTimeout(()=>{GAME_MANAGER.setName_button(this.state.name)}, 1000)
     }
     render(){return(<div style={{display: "flex", flexDirection: "column"}}>
-        <div className="header jm-header">
-            <h1 className="header-text jm-header-text">
+        <header className="jm-header">
+            <h1 className="jm-header-text">
                 {translate("menu.join.title")}
             </h1>
-        </div>
-        <div className="jm-input-column">
-            <div className="input-box">
-                <h3 className="input-box-label">{translate("menu.join.field.room_code")}</h3>
-                <input className="input-field" type="text" value={this.state.roomCode} 
+        </header>
+        <form className="input-column">
+            <div>
+                <label htmlFor="roomcode">{translate("menu.join.field.room_code")}</label>
+                <input name="roomcode" type="text" value={this.state.roomCode} 
                     onChange={(e)=>{this.setRoomCode(e.target.value)}}
                     onKeyUp={(e)=>{
                         if(e.key === 'Enter') {
@@ -63,9 +63,9 @@ export default class JoinMenu extends React.Component<any, JoinMenuState> {
                     }}
                 />
             </div>
-            <div className="input-box">
-                <h3 className="input-box-label">{translate("menu.join.field.name")}</h3>
-                <input className="input-field" type="text" value={this.state.name} 
+            <div>
+                <label htmlFor="name">{translate("menu.join.field.name")}</label>
+                <input name="name" type="text" value={this.state.name} 
                     onChange={(e)=>{this.setName(e.target.value)}}
                     onKeyUp={(e)=>{
                         if(e.key === 'Enter') {
@@ -75,9 +75,9 @@ export default class JoinMenu extends React.Component<any, JoinMenuState> {
                     }}
                 />
             </div>
-            <button className="button jm-button" onClick={()=>{this.joinGameButton()}}>
+            <button className="jm-button" onClick={()=>{this.joinGameButton()}}>
                 {translate("menu.join.button.join")}
             </button>
-        </div>
+        </form>
     </div>)}
 }
