@@ -36,16 +36,15 @@ export default class StartMenu extends React.Component {
         Anchor.setContent(<JoinMenu/>);
     }
     
-    private hostGameButton() {
+    private async hostGameButton() {
         GAME_MANAGER.gameState = create_gameState();
         
         Anchor.setContent(LoadingScreen.create(LoadingScreen.Type.Host));
 
         GAME_MANAGER.Server.close();
-        GAME_MANAGER.Server.open();
+        await GAME_MANAGER.Server.open();
 
-        // Wait for server to open
-        setTimeout(GAME_MANAGER.host_button, 5000);  //TODO
+        GAME_MANAGER.host_button();
         // Lobby menu opens when AcceptHost packet is recieved
     }
 }
