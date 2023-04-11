@@ -6,7 +6,7 @@ import messageListener from "./messageListener";
 import CONFIG from "../resources/config.json"
 import React from "react";
 import { Phase, PhaseTimes, Player } from "./gameState.d";
-import { GameManager, Server } from "./gameManager.d";
+import { GameManager, Server, StateListener } from "./gameManager.d";
 
 export function create_gameManager(): GameManager {
 
@@ -40,11 +40,27 @@ export function create_gameManager(): GameManager {
             gameManager.Server.send(`"Host"`);
         },
         join_button() {
+            let completePromise: () => void;
+            let promise = new Promise<void>((resolver) => {
+                completePromise = resolver;
+            });
+            
+            let setName: StateListener = (type: any) => {
+                if (type==="AcceptJoin") {
+                    completePromise();
+                    // This listener shouldn't stick around
+                    GAME_MANAGER.removeStateListener(setName);
+                }
+            };
+            GAME_MANAGER.addStateListener(setName);
+
             gameManager.Server.send(JSON.stringify({
                 "Join":{
                     "room_code": Number(gameManager.roomCode!)
                 }
             }));
+
+            return promise;
         },
 
         setName_button(name) {
@@ -172,7 +188,14 @@ function create_server(){
         open : ()=>{
             let address = CONFIG.server_ip + ":" + CONFIG.port;
             Server.ws = new WebSocket("ws://"+address);   //TODO
+
+            let completePromise: () => void;
+            let promise = new Promise<void>((resolver) => {
+                completePromise = resolver;
+            });
+
             Server.ws.addEventListener("open", (event: Event)=>{
+                completePromise();
                 Server.openListener(event);
             });
             Server.ws.addEventListener("close", (event: Event)=>{
@@ -181,6 +204,8 @@ function create_server(){
             Server.ws.addEventListener("message", (event: Event)=>{
                 Server.messageListener(event);
             });
+            
+            return promise;
         },
         send : (packets)=>{
             if (Server.ws === null) {

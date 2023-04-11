@@ -9,7 +9,7 @@ export interface Server {
     closeListener(event: Event): void;
     messageListener(event: Event): void;
 
-    open(): void;
+    open(): Promise<void>;
     send(packets: string | ArrayBufferLike | Blob | ArrayBufferView): void;
     close(): void;
 }
@@ -17,19 +17,21 @@ export interface Server {
 // TODO make this better
 type Judgement = "Innocent" | "Guilty" | "Abstain" | -1 | 0 | 1;
 
+export type StateListener = (type: any) => void;
+
 export interface GameManager {
     roomCode: string | null,
     name: string | undefined,
     Server: Server,
     gameState: GameState,
-    listeners: EventListener[],
+    listeners: StateListener[],
 
-    addStateListener(listener: EventListener): void;
-    removeStateListener(listener: EventListener): void;
+    addStateListener(listener: StateListener): void;
+    removeStateListener(listener: StateListener): void;
     invokeStateListeners(type: any): void;
 
     host_button(): void;
-    join_button(): void;
+    join_button(): Promise<void>;
     setName_button(name: string): void;
     startGame_button(): void;
     phaseTimeButton(phase: Phase, time: number): void;
