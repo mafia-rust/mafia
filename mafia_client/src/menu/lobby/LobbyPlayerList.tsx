@@ -10,7 +10,7 @@ interface PlayerListState {
 }
 
 export default class LobbyPlayerList extends React.Component<any, PlayerListState> {
-    listener: ()=>void;
+    listener: (type: any)=>void;
     constructor(props: any) {
         super(props);
 
@@ -18,7 +18,12 @@ export default class LobbyPlayerList extends React.Component<any, PlayerListStat
             name: "",
             players: GAME_MANAGER.gameState.players
         };
-        this.listener = ()=>{
+        this.listener = (type)=>{
+            if (type === "YourName") {
+                this.setState({
+                    name: GAME_MANAGER.gameState.myName!
+                })
+            }
             this.setState({
                 players: GAME_MANAGER.gameState.players
             });
