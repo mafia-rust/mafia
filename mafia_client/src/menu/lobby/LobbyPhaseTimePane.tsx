@@ -6,7 +6,7 @@ import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
 import phaseTimesJson from "../../resources/phasetimes.json";
 
-const PHASE_TIME_MODES = new Map<string, PhaseTimes>(Object.entries(phaseTimesJson));
+const PHASE_TIME_MODES: ReadonlyMap<string, PhaseTimes> = new Map(Object.entries(phaseTimesJson));
 type PhaseTimeMode = string;
 
 type PhaseTimePaneState = {
