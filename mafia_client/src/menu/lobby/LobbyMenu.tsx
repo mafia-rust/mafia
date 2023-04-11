@@ -15,7 +15,7 @@ export function create() {
             <h1>
                 {translate("menu.lobby.title", GAME_MANAGER.roomCode)}
             </h1>
-            <button className="lm-start-button" onClick={GAME_MANAGER.startGame_button}>
+            <button className="lm-start-button" accessKey="s" onClick={GAME_MANAGER.startGame_button}>
                 {translate("menu.lobby.button.start")}
             </button>
         </header>
