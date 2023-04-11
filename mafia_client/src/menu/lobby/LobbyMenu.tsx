@@ -12,17 +12,14 @@ export function create() {
         flexDirection: "column",
     }}>
         <header className="lm-header">
-            <h1 className="lm-header-text">
+            <h1>
                 {translate("menu.lobby.title", GAME_MANAGER.roomCode)}
             </h1>
             <button className="lm-start-button" onClick={GAME_MANAGER.startGame_button}>
                 {translate("menu.lobby.button.start")}
             </button>
         </header>
-        <main style={{
-            display: "flex",
-            flexDirection: "row",
-        }}>
+        <main className="lm-main">
             <LobbyPlayerList/>
             <div className="lm-settings">
                 <h2>Game settings</h2>

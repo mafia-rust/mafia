@@ -100,13 +100,37 @@ TODO cleanup
     width: 100%;
 }
 
-/* .role-picker-container select:focus {
-    outline: none;
-    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+.lm-main {
+    display: flex;
+    flex-direction: row;
 }
 
-.role-picker-container select option {
-    background-color: #fff;
-    color: #000;
-} */
-
+/* custom css for touch targets, i.e. mobile devices */
+@media (pointer:coarse) {
+    .lm-header {
+        text-align: center;
+        flex-direction: column-reverse;
+        height: 20vh;
+    }
+    .lm-header > h1 {
+        margin-left: unset;
+        margin-bottom: 2vh;
+    }
+    .lm-main {
+        flex-direction: column;
+    }
+    .lm-player-list-pane {
+        width: 92vw;
+        margin: 0 4vw;
+    }
+    .lm-settings {
+        width: 92vw;
+        margin: 5vh 4vw 0vh;
+    }
+    .lm-start-button {
+        width: 60vw;
+        height: 30%;
+        margin-top: 5%;
+        margin-right: unset;
+    }
+}
