@@ -49,7 +49,8 @@ export default class LobbyPlayerList extends React.Component<any, PlayerListStat
                     GAME_MANAGER.setName_button(this.state.name);
             }}
         />
-        <button onClick={()=>{
+
+        <button className="lm-set-name-button" onClick={()=>{
             GAME_MANAGER.setName_button(this.state.name)
         }}>{translate("menu.lobby.button.set_name")}</button>
     </div>)}

@@ -18,7 +18,7 @@
     margin-right: 4vw;
 }
 /*
-Left panel
+Left panel (player list)
 */
 .lm-player-list-pane {
     width: 30vw;
@@ -42,6 +42,11 @@ Left panel
     display: flex;
     justify-content: space-around;
     flex-direction: row;
+}
+.lm-set-name-button {
+    width: 30%;
+    height: 100%;
+    margin-left: .75rem;
 }
 /*
 Right panel
