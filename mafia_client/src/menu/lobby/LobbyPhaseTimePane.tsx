@@ -41,20 +41,19 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
         GAME_MANAGER.removeStateListener(this.listener);
     }
 
-    render(){return(<section>
+    render()
+    //if the edit button is pressed, then the time settings are editable, othereise they are not
+    //and the time durations are not displayed 
+
+    {return(<section>
         <header>
             <h2>Time settings:</h2>
+            <div className="settings-controls">
             {this.renderTimeModeDropdown()}
+            {this.renderEditButon()}
+            </div>
         </header>
-        <div className="input-column">
-            {this.renderTimePicker(Phase.Morning)}
-            {this.renderTimePicker(Phase.Discussion)}
-            {this.renderTimePicker(Phase.Voting)}
-            {this.renderTimePicker(Phase.Testimony)}
-            {this.renderTimePicker(Phase.Judgement)}
-            {this.renderTimePicker(Phase.Evening)}
-            {this.renderTimePicker(Phase.Night)}
-        </div>
+        {this.state.mode == "Custom" ? this.renderInputColumn() : null}
     </section>)}
 
     renderTimeModeDropdown() {
@@ -78,6 +77,28 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
             Object.keys(phaseTimesJson)
                 .map((phase) => {return <option key={phase}>{phase}</option>})
         }</select>
+    }
+
+    //renders the edit button that when preesed sets PhaseTimeMode to "Custom"
+    renderEditButon() {
+        return <button className="lm-edit-button" onClick={() => {
+            this.setState({
+                mode: "Custom"
+            });
+        }}>Edit</button>
+
+    }
+
+    renderInputColumn() {
+        return <div className="input-column">
+        {this.renderTimePicker(Phase.Morning)}
+        {this.renderTimePicker(Phase.Discussion)}
+        {this.renderTimePicker(Phase.Voting)}
+        {this.renderTimePicker(Phase.Testimony)}
+        {this.renderTimePicker(Phase.Judgement)}
+        {this.renderTimePicker(Phase.Evening)}
+        {this.renderTimePicker(Phase.Night)}
+        </div>
     }
 
     renderTimePicker(phase: Phase) {

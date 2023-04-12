@@ -61,6 +61,13 @@ Right panel
     font-size: 175%;
     text-align: left;
 }
+.settings-controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    width: 60%;
+    align-items: right;
+}
 .lm-settings section {
     width: 100%;
     display: flex;
@@ -78,6 +85,11 @@ Right panel
 }
 .lm-time-input-box input {
     width: 30%;
+}
+.lm-edit-button {
+    width: 5rem;
+    height: 100%;
+    margin-left: 1rem;
 }
 /*
 TODO cleanup
