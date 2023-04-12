@@ -7,7 +7,7 @@
 }
 .lm-header > h1 {
     font-size: 325%;
-    margin-left: 4vw;
+    margin-left: 5vw;
     width:unset;
 }
 .lm-start-button {
@@ -56,6 +56,7 @@ Right panel
     margin: 0 2vw;
     display: flex;
     flex-direction: column;
+    margin-right: 1vw;
 }
 .lm-settings h2 {
     font-size: 175%;
@@ -65,7 +66,7 @@ Right panel
     display: flex;
     flex-direction: row;
     justify-content: right;
-    width: 60%;
+    width: fit-content;
     align-items: right;
 }
 .lm-settings section {
@@ -149,5 +150,9 @@ TODO cleanup
         height: 30%;
         margin-top: 5%;
         margin-right: unset;
+    }
+    .lm-edit-button {
+        width: 5rem;
+        height: 100%;
     }
 }
