@@ -154,7 +154,7 @@ export function create_gameManager(): GameManager {
         },
     
         tick(timePassedms) {
-            console.log("tick");
+            //console.log("tick");
             gameManager.gameState.secondsLeft = Math.round(gameManager.gameState.secondsLeft - timePassedms/1000)
             if(gameManager.gameState.secondsLeft < 0)
                 gameManager.gameState.secondsLeft = 0;

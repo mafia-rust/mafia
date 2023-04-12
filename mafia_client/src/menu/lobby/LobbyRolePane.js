@@ -24,22 +24,27 @@ export default class LobbyRolePane extends React.Component {
                     let roleListEntry = GAME_MANAGER.gameState.roleList[i];
                     let newAlignment = undefined;
                     let newFaction = undefined;
-
+                    //if the faction and the role exist then use the role
                     if(roleListEntry.Exact){
                         newFaction = roleListEntry.Exact;
                         newAlignment = roleListEntry.Exact;
-
-                    }else if(roleListEntry.Faction){
+                    }
+                    //if no role exists then use the faction
+                    else if(roleListEntry.Faction){
                         newFaction = roleListEntry.Faction;
                         newAlignment = "Random";
 
-                    }else if(roleListEntry.FactionAlignment){
-
-                        // newAlignment = roleListEntry.FactionAlignment;
-                        // newFaction = roleListEntry.FactionAlignment;
-
-                    }else if(roleListEntry == "Any"){
+                    } else if (roleListEntry === "Any") {
                         newFaction = "Any";
+                        newAlignment = "Random";
+                    } else if (roleListEntry.FactionAlignment) {
+                        newFaction = roleListEntry.FactionAlignment;
+                        newAlignment = roleListEntry.FactionAlignment;
+                    } else if (roleListEntry.Faction) {
+                        newFaction = roleListEntry.Faction;
+                        newAlignment = "Random";
+                    } else {
+                        console.log("ERROR roleListEntry is not valid");
                     }
 
                     console.log(newFaction +" -- "+ newAlignment);
@@ -247,3 +252,6 @@ function createRoleListEntry_Faction(faction){
 function createRoleListEntry_Any(){
     return "Any";
 }
+
+
+  
