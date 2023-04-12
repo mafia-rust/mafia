@@ -146,8 +146,9 @@ class RolePicker extends React.Component {
         console.log("Role picker" + props.faction + " -- " + props.alignment);
 
         this.state = {
-            faction: props.faction!==undefined?props.faction:"Any",
-            alignment: props.alignment!==undefined?props.alignment:"Random",
+            faction: props.faction !== undefined ? props.faction : "Any",
+            alignment: props.alignment !== undefined ? props.alignment : "Random",
+            role: "Any",
             index: props.index,
             onChange: props.onChange,
         };
@@ -173,65 +174,109 @@ class RolePicker extends React.Component {
             if (!alignments.includes(ROLES[role].alignment)) {
                 alignments.push(ROLES[role].alignment);
             }
-            if (!roles.includes(role)) {
-                roles.push(role);
-            }
+            //if (!roles.includes(role)) {
+            //    roles.push(role);
+            //}
         }
 
         return alignments.concat(roles);
     }
-    render(){return(<div className="role-picker-container">
-        <select
-            className="dropdown"
-            defaultValue={this.state.faction}
-            onChange={(e) => {
-                if (e.target.value === "Any") {
-                    this.props.onChange(this.state.index, createRoleListEntry_Any());
-                } else {
-                    this.props.onChange(
-                        this.state.index,
-                        createRoleListEntry_Faction(e.target.value)
-                    );
-                }
-                this.setState({ faction: e.target.value });
-            }}
-        >
-            {this.allFactions().map((faction) => {
-                return <option key={faction}>{faction}</option>;
-            }).concat([<option key={"Any"}>Any</option>])}
-        </select>
 
-        {this.state.faction !== "Any" && (<select
-            className="dropdown"
-            defaultValue={this.state.alignment}
-            onChange={(e) => {
-                if (Object.keys(ROLES).includes(e.target.value)) {
-                    this.props.onChange(
-                        this.state.index,
-                        createRoleListEntry_Exact(e.target.value)
+    allRoles(faction, alignment) {
+        let roles = [];
+
+        for (let role in ROLES) {
+            if (ROLES[role].faction !== faction) continue;
+            if (ROLES[role].alignment !== alignment && alignment !== "Random") continue;
+
+            roles.push(role);
+        }
+
+        return roles;
+    }
+    render() {
+        const { faction, alignment, role } = this.state;
+        const factions = this.allFactions();
+        const alignments = this.allAlignments(faction);
+      
+        const isAlignmentVisible = faction !== "Any";
+        const isRoleVisible = alignment !== "Random";
+      
+        return (
+          <div>
+            <div className="role-picker-container">
+              <select
+                className="dropdown"
+                value={faction}
+                onChange={(e) => {
+                  const newFaction = e.target.value;
+                  const newAlignment = newFaction !== "Any" ? "Random" : "Any";
+                  const newRole = "Random"; // Reset role dropdown to "Random" when faction or alignment changes
+      
+                  this.setState(
+                    { faction: newFaction, alignment: newAlignment, role: newRole },
+                    () => this.state.onChange(this.state.index, this.state)
+                  );
+                }}
+              >
+                <option value="Any">Any</option>
+                {factions.map((faction, i) => (
+                  <option key={i} value={faction}>
+                    {faction}
+                  </option>
+                ))}
+              </select>
+      
+              {isAlignmentVisible && (
+                <select
+                  className="dropdown"
+                  value={alignment}
+                  onChange={(e) => {
+                    const newAlignment = e.target.value;
+                    const newRole = "Random"; // Reset role dropdown to "Random" when alignment changes
+      
+                    this.setState(
+                      { alignment: newAlignment, role: newRole },
+                      () => this.state.onChange(this.state.index, this.state)
                     );
-                } else if ("Random" === e.target.value) {
-                    this.props.onChange(
-                        this.state.index,
-                        createRoleListEntry_Faction(this.state.faction)
+                  }}
+                >
+                  <option value="Random">Random</option>
+                  {alignments.map((alignment, i) => (
+                    <option key={i} value={alignment}>
+                      {alignment}
+                    </option>
+                  ))}
+                </select>
+              )}
+      
+              {isRoleVisible && (
+                <select
+                  className="dropdown"
+                  value={role}
+                  onChange={(e) => {
+                    const newRole = e.target.value;
+      
+                    this.setState({ role: newRole }, () =>
+                      this.state.onChange(this.state.index, this.state)
                     );
-                } else {
-                    this.props.onChange(
-                        this.state.index,
-                        createRoleListEntry_FactionAlignment(
-                            this.state.faction,
-                            e.target.value
-                        )
-                    );
-                }
-                this.setState({ alignment: e.target.value });
-            }}
-        >
-            {this.allAlignments(this.state.faction).map((alignment) => {
-                return <option key={alignment}>{alignment}</option>;
-            }).concat([<option key={"Random"}>Random</option>])}
-        </select>)}
-    </div>);}
+                  }}
+                >
+                  <option value="Random">Random</option>
+                  {this.allRoles(faction, alignment).map((role, i) => (
+                    <option key={i} value={role}>
+                      {role}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+      
+            <div>{this.state.rolePickers}</div>
+          </div>
+        );
+      }
+                      
 }
 
 function createRoleListEntry_Exact(role){
@@ -252,6 +297,3 @@ function createRoleListEntry_Faction(faction){
 function createRoleListEntry_Any(){
     return "Any";
 }
-
-
-  
