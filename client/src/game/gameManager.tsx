@@ -5,7 +5,7 @@ import GAME_MANAGER from "../index";
 import messageListener from "./messageListener";
 import CONFIG from "../resources/config.json"
 import React from "react";
-import { Phase, PhaseTimes, Player } from "./gameState.d";
+import { Phase, Player } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
 
 export function create_gameManager(): GameManager {

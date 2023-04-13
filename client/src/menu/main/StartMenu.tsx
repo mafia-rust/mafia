@@ -14,16 +14,16 @@ export default class StartMenu extends React.Component {
         return(<div>
         <header className="sm-header">
             <h1>{translate("menu.start.title")}</h1>
-            <button className="sm-login-button" accessKey="l">
+            <button className="sm-login-button">
                 {translate("menu.start.button." + (logged_in ? "logout" : "login"))}
             </button><br/>
         </header>
 
         <div className="sm-button-area">
-            <button className="sm-join-host-button" accessKey="j" onClick={()=>{this.joinGameButton()}}>
+            <button className="sm-join-host-button" onClick={()=>{this.joinGameButton()}}>
                 {translate("menu.start.button.join." + (logged_in ? "logged_out" : "logged_in"))}
             </button>
-            <button className="sm-join-host-button" accessKey="h" onClick={()=>{this.hostGameButton()}}>
+            <button className="sm-join-host-button" onClick={()=>{this.hostGameButton()}}>
                 {translate("menu.start.button.host." + (logged_in ? "logged_out" : "logged_in"))}
             </button>
         </div>

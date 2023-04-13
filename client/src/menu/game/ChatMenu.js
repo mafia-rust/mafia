@@ -4,15 +4,15 @@ import GAME_MANAGER from "../../index";
 import "./gameScreen.css";
 import "./chatMenu.css"
 
-var setChatField = function (value) {
-    //this doesnt work because this is not the ChatMenu class
-    // this.setState({
-    //     chatField: value
-    // });
-    //so instead
-    document.getElementsByClassName("chat-input")[0].value = value;
+// var setChatField = function (value) {
+//     //this doesnt work because this is not the ChatMenu class
+//     // this.setState({
+//     //     chatField: value
+//     // });
+//     //so instead
+//     document.getElementsByClassName("chat-input")[0].value = value;
     
-};
+// };
 
 export default class ChatMenu extends React.Component {
     constructor(props) {

@@ -53,7 +53,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
             {this.renderEditButon()}
             </div>
         </header>
-        {this.state.mode == "Custom" ? this.renderInputColumn() : null}
+        {this.state.mode === "Custom" ? this.renderInputColumn() : null}
     </section>)}
 
     renderTimeModeDropdown() {
@@ -72,7 +72,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
             }}
         >{
             // TODO lang
-            this.state.mode == "Custom" ? <option key={"Custom"}>{"Custom"}</option> : null
+            this.state.mode === "Custom" ? <option key={"Custom"}>{"Custom"}</option> : null
         }{
             Object.keys(phaseTimesJson)
                 .map((phase) => {return <option key={phase}>{phase}</option>})
