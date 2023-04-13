@@ -35,7 +35,7 @@ impl Default for PhaseTimeSettings{
             voting: Duration::from_secs(30), 
             testimony: Duration::from_secs(20), 
             judgement: Duration::from_secs(20), 
-            evening: Duration::from_secs(10), 
+            evening: Duration::from_secs(7), 
             night: Duration::from_secs(37) 
         }
     }
