@@ -50,7 +50,7 @@ export default class JoinMenu extends React.Component<any, JoinMenuState> {
                 {translate("menu.join.title")}
             </h1>
         </header>
-        <form className="input-column">
+        <div className="input-column">
             <div>
                 <label htmlFor="roomcode">{translate("menu.join.field.room_code")}</label>
                 <input name="roomcode" type="text" value={this.state.roomCode} 
@@ -78,6 +78,6 @@ export default class JoinMenu extends React.Component<any, JoinMenuState> {
             <button className="jm-button" onClick={()=>{this.joinGameButton()}}>
                 {translate("menu.join.button.join")}
             </button>
-        </form>
+        </div>
     </div>)}
 }

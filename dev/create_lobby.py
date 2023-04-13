@@ -1,50 +1,38 @@
 from dataclasses import dataclass
 from selenium import webdriver
-import time
 from sys import argv
 import getopt
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-
-def make_host(driver):
-    # wait for the Host button to be clickable
-    wait = WebDriverWait(driver, 10)
-    host_button = wait.until(EC.element_to_be_clickable(
-        (By.XPATH, "//button[contains(text(), 'Host')]")
-    ))
-    host_button.click()
-    wait.until(EC.element_to_be_clickable(
-        (By.XPATH, "//button[contains(text(), 'Start Game')]")
-    ))
+def button(text: str) -> any:
+    return (By.XPATH, f"//button[contains(text(), '{text}')]")
 
 
-def make_reg_players(driver):
-    # wait for the Host button to be clickable
-    wait = WebDriverWait(driver, 10)
-    host_button = wait.until(EC.element_to_be_clickable(
-        (By.XPATH, "//button[contains(text(), 'Join')]")
-    ))
+def host_game(wait: WebDriverWait) -> None:
+    """ Hosts a lobby using the current window """
+    wait.until(EC.element_to_be_clickable(button("Host"))).click()
 
-    host_button.click()
-    #wait till page contains changes 
-    wait = WebDriverWait(driver, 10)
-    host_button = wait.until(EC.element_to_be_clickable(
-        (By.XPATH, "//button[contains(text(), 'Join Lobby')]")
-    ))
+    # Make sure the lobby actually starts
+    wait.until(EC.element_to_be_clickable(button("Start Game")))
 
-    host_button.click()
+
+def join_game(wait: WebDriverWait) -> None:
+    """ Connects the current window to the game """
+    wait.until(EC.element_to_be_clickable(button("Join"))).click()
+    wait.until(EC.element_to_be_clickable(button("Join Lobby"))).click()
 
 
 @dataclass
 class Options:
-    driver = None
-    players = 16
-    auto_start = False
+    driver: WebDriver = None
+    players: int = 16
+    auto_start: bool = False
 
 
-def get_options():
+def get_options() -> Options:
     """ Parses options from the command line """
 
     options = Options()
@@ -83,21 +71,25 @@ def main():
     options = get_options()
 
     driver = options.driver
-    # navigate to the Mafia game page
+    wait = WebDriverWait(driver, timeout=10)
+
+    # TODO, make address part of Options
     driver.get("http://localhost:3000/")
-    # wait for the page to load
     
-    make_host(driver)
-    #makes a new tab and runs the make_reg_players function for each player
+    # Make the first tab the host
+    host_game(wait)
+    
+    # Makes the rest of the players
     for i in range(options.players-1):
-        driver.execute_script("window.open('');")
+        driver.execute_script("window.open('http://localhost:3000/');")
         driver.switch_to.window(driver.window_handles[i+1])
-        driver.get("http://localhost:3000/")
-        make_reg_players(driver)
+        join_game(wait)
+
+    # Switch back to host tab
     driver.switch_to.window(driver.window_handles[0])
-    
-    while(True):
-        time.sleep(5)
+
+    if options.auto_start:
+        wait.until(EC.element_to_be_clickable(button("Start Game"))).click()
 
 
 if __name__ == "__main__":
