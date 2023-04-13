@@ -13,24 +13,24 @@ Cargo.lock
 
 #Mafia Client
 # dependencies
-mafia_client/node_modules
-mafia_client/.pnp
-mafia_client/.pnp.js
+client/node_modules
+client/.pnp
+client/.pnp.js
 
 # Testing
-mafia_client/coverage
+client/coverage
 geckodriver.log
 
 # production
-mafia_client/build
+client/build
 
 # misc
-mafia_client/.DS_Store
-mafia_client/.env.local
-mafia_client/.env.development.local
-mafia_client/.env.test.local
-mafia_client/.env.production.local
+client/.DS_Store
+client/.env.local
+client/.env.development.local
+client/.env.test.local
+client/.env.production.local
 
-mafia_client/npm-debug.log*
-mafia_client/yarn-debug.log*
-mafia_client/yarn-error.log*
+client/npm-debug.log*
+client/yarn-debug.log*
+client/yarn-error.log*
