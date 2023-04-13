@@ -1,5 +1,5 @@
 import React from "react";
-import "..//index.css"
+import "../index.css"
 import translate from "../game/lang";
 
 export const enum Type {

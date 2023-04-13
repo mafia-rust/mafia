@@ -1,9 +1,9 @@
 import React from "react";
 import GAME_MANAGER from "../../index";
 import "../../index.css";
-import "../main/joinMenu.css";
-import Anchor from "..//Anchor";
-import * as LoadingScreen from "..//LoadingScreen";
+import "./joinMenu.css";
+import Anchor from "../Anchor";
+import * as LoadingScreen from "../LoadingScreen";
 import translate from "../../game/lang";
 
 interface JoinMenuState {
