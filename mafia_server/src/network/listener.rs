@@ -79,11 +79,16 @@ impl Listener{
                     unreachable!("Player should have been added to the hashmap!");
                 };
                 if let Some(lobby) = self.lobbies.lock().unwrap().get_mut(&room_code) {
-
-                    let player_arbitrary_id: ArbitraryPlayerID = lobby.add_new_player(connection.get_sender());
-                    *player = Some((room_code, player_arbitrary_id));
-
-                    connection.send(ToClientPacket::AcceptJoin);
+                    match lobby.join_player(connection.get_sender()) {
+                        Ok(player_arbitrary_id) => {
+                            *player = Some((room_code, player_arbitrary_id));
+        
+                            connection.send(ToClientPacket::AcceptJoin);
+                        },
+                        Err(reason) => {
+                            connection.send(ToClientPacket::RejectJoin { reason });
+                        }
+                    }
                 } else {
                     connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::InvalidRoomCode });
                 }
@@ -107,16 +112,20 @@ impl Listener{
                 let mut lobby = Lobby::new();
                 
                 if let Some(player) = self.players.get_mut(connection.get_address()){
-                    
-                    let player_index = lobby.add_new_player(connection.get_sender());
-                    
-                    *player = Some((new_room_code, player_index));
-
-                    connection.send(
-                        ToClientPacket::AcceptHost{
-                            room_code: new_room_code.to_string(),
+                    match lobby.join_player(connection.get_sender()) {
+                        Ok(player_index) => {
+                            *player = Some((new_room_code, player_index));
+        
+                            connection.send(
+                                ToClientPacket::AcceptHost{
+                                    room_code: new_room_code.to_string(),
+                                }
+                            );
+                        },
+                        Err(reason) => {
+                            connection.send(ToClientPacket::RejectJoin { reason });
                         }
-                    );
+                    }
                 }
 
                 self.lobbies.lock().unwrap().insert(new_room_code, lobby);

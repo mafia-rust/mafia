@@ -8,7 +8,7 @@ use tokio_tungstenite::tungstenite::Message;
 use crate::{
     game::{Game, player::{PlayerIndex, Player}, 
     settings::{Settings, InvestigatorResults, self}, 
-    role_list, phase::PhaseType}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket}, listener::ArbitraryPlayerID}, 
+    role_list, phase::PhaseType}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket, RejectJoinReason}, listener::ArbitraryPlayerID}, 
     utils::trim_whitespace
 };
 
@@ -56,11 +56,10 @@ impl Lobby {
             random_names,
         }
     }
-    pub fn add_new_player(&mut self, sender: UnboundedSender<ToClientPacket>)->ArbitraryPlayerID{
-
+    pub fn join_player(&mut self, sender: UnboundedSender<ToClientPacket>)-> Result<ArbitraryPlayerID, RejectJoinReason>{
         match &mut self.lobby_state {
-            LobbyState::Lobby { settings, players } => {
-
+            LobbyState::Lobby { players, .. } => {
+                // TODO, move this somewhere else
                 let name = Self::validate_name(&self.random_names, players, "".to_string());
                 
                 sender.send(ToClientPacket::YourName { name: name.clone() });
@@ -81,16 +80,13 @@ impl Lobby {
 
                 Self::send_players(players);
 
-                newest_player_arbitrary_id
+                Ok(newest_player_arbitrary_id)
             },
-            LobbyState::Game{ game, players } => {
-                //todo!()
-                println!("CANT JOIN STARTED GAME!");
-                0
-            },
+            LobbyState::Game{ .. } => {
+                // TODO, handle rejoining
+                Err(RejectJoinReason::GameAlreadyStarted)
+            }
         }
-        
-
     }
     pub fn on_client_message(&mut self, send: UnboundedSender<ToClientPacket>, player_arbitrary_id: ArbitraryPlayerID, incoming_packet: ToServerPacket){
         match incoming_packet {
