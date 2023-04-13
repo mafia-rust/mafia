@@ -3,17 +3,17 @@
 set /a tabs=0
 set SERVER_PORT=
 
-REM Check if mafia_server is running on localhost:3000
+REM Check if server is running on localhost:3000
 powershell -Command "Test-NetConnection -ComputerName 'localhost' -Port 3000 -InformationLevel Quiet" > nul
 if %ERRORLEVEL% EQU 0 (
   set SERVER_PORT=3000
 )
 
-REM Find port number of mafia_server.exe process using netstat
+REM Find port number of server.exe process using netstat
 if not defined SERVER_PORT (
   for /f "tokens=1,2,3" %%a in ('netstat -ano ^| find "LISTENING" ^| find "127.0.0.1"') do (
       for /f "tokens=1,2" %%x in ('tasklist /FI "PID eq %%c" /FO CSV /NH') do (
-          if "%%y" == "mafia_server.exe" (
+          if "%%y" == "server.exe" (
               set SERVER_PORT=%%b
           )
       )
