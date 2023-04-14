@@ -7,22 +7,24 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-def button(text: str) -> any:
-    return (By.XPATH, f"//button[contains(text(), '{text}')]")
+def wait_for_button(driver: WebDriver, text: str) -> any:
+    return WebDriverWait(driver, timeout=10).until(EC.element_to_be_clickable(
+        (By.XPATH, f"//button[contains(text(), '{text}')]")
+    ))
 
 
-def host_game(wait: WebDriverWait) -> None:
+def host_game(driver: WebDriver) -> None:
     """ Hosts a lobby using the current window """
-    wait.until(EC.element_to_be_clickable(button("Host"))).click()
+    wait_for_button(driver, "Host").click()
 
     # Make sure the lobby actually starts
-    wait.until(EC.element_to_be_clickable(button("Start Game")))
+    wait_for_button(driver, "Start Game")
 
 
-def join_game(wait: WebDriverWait) -> None:
+def join_game(driver: WebDriver) -> None:
     """ Connects the current window to the game """
-    wait.until(EC.element_to_be_clickable(button("Join"))).click()
-    wait.until(EC.element_to_be_clickable(button("Join Lobby"))).click()
+    wait_for_button(driver, "Join").click()
+    wait_for_button(driver, "Join Lobby").click()
 
 
 @dataclass
@@ -30,6 +32,7 @@ class Options:
     driver: WebDriver = None
     players: int = 16
     auto_start: bool = False
+    server_address: str = "http://localhost:3000/"
 
 
 def get_options() -> Options:
@@ -37,10 +40,12 @@ def get_options() -> Options:
 
     options = Options()
 
-    opts, _ = getopt.getopt(argv[1:], "ad:p:", ["autostart", "driver=", "players="])
+    opts, _ = getopt.getopt(argv[1:], "sa:d:p:", ["autostart", "address=", "driver=", "players="])
     for opt, arg in opts:
-        if opt in ("-a", "--autostart"):
+        if opt in ("-s", "--autostart"):
             options.auto_start = True
+        elif opt in ("-a", "--address"):
+            options.server_address = arg
         elif opt in ("-d", "--driver"):
             if arg in ("Firefox", "firefox", "ff", "Mozilla", "mozilla"):
                 fo = webdriver.firefox.options.Options()
@@ -71,25 +76,23 @@ def main():
     options = get_options()
 
     driver = options.driver
-    wait = WebDriverWait(driver, timeout=10)
 
-    # TODO, make address part of Options
-    driver.get("http://localhost:3000/")
+    driver.get(options.server_address)
     
     # Make the first tab the host
-    host_game(wait)
+    host_game(driver)
     
     # Makes the rest of the players
     for i in range(options.players-1):
-        driver.execute_script("window.open('http://localhost:3000/');")
+        driver.execute_script(f"window.open('{options.server_address}');")
         driver.switch_to.window(driver.window_handles[i+1])
-        join_game(wait)
+        join_game(driver)
 
     # Switch back to host tab
     driver.switch_to.window(driver.window_handles[0])
 
     if options.auto_start:
-        wait.until(EC.element_to_be_clickable(button("Start Game"))).click()
+        wait_for_button("Start Game").click()
 
 
 if __name__ == "__main__":
