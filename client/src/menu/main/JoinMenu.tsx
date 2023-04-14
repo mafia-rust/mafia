@@ -51,30 +51,26 @@ export default class JoinMenu extends React.Component<any, JoinMenuState> {
             </h1>
         </header>
         <div className="input-column">
-            <div>
-                <label htmlFor="roomcode">{translate("menu.join.field.room_code")}</label>
-                <input name="roomcode" type="text" value={this.state.roomCode} 
-                    onChange={(e)=>{this.setRoomCode(e.target.value)}}
-                    onKeyUp={(e)=>{
-                        if(e.key === 'Enter') {
-                            GAME_MANAGER.roomCode = this.state.roomCode;
-                            this.joinGameButton();
-                        }
-                    }}
-                />
-            </div>
-            <div>
-                <label htmlFor="name">{translate("menu.join.field.name")}</label>
-                <input name="name" type="text" value={this.state.name} 
-                    onChange={(e)=>{this.setName(e.target.value)}}
-                    onKeyUp={(e)=>{
-                        if(e.key === 'Enter') {
-                            GAME_MANAGER.name = this.state.name;
-                            this.joinGameButton();
-                        }
-                    }}
-                />
-            </div>
+            <label htmlFor="roomcode">{translate("menu.join.field.room_code")}</label>
+            <input name="roomcode" type="text" value={this.state.roomCode} 
+                onChange={(e)=>{this.setRoomCode(e.target.value)}}
+                onKeyUp={(e)=>{
+                    if(e.key === 'Enter') {
+                        GAME_MANAGER.roomCode = this.state.roomCode;
+                        this.joinGameButton();
+                    }
+                }}
+            />
+            <label htmlFor="name">{translate("menu.join.field.name")}</label>
+            <input name="name" type="text" value={this.state.name} 
+                onChange={(e)=>{this.setName(e.target.value)}}
+                onKeyUp={(e)=>{
+                    if(e.key === 'Enter') {
+                        GAME_MANAGER.name = this.state.name;
+                        this.joinGameButton();
+                    }
+                }}
+            />
             <button className="jm-button" onClick={()=>{this.joinGameButton()}}>
                 {translate("menu.join.button.join")}
             </button>
