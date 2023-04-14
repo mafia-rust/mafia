@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import NoReturn
 from selenium import webdriver
 from sys import argv
 import getopt
@@ -11,6 +12,25 @@ def wait_for_button(driver: WebDriver, text: str) -> any:
     return WebDriverWait(driver, timeout=10).until(EC.element_to_be_clickable(
         (By.XPATH, f"//button[contains(text(), '{text}')]")
     ))
+
+
+def exit_error(error: str = None) -> NoReturn:
+    if error is not None: print(error)
+
+    print(f"""Usage: python3 create_lobby.py [OPTIONS]
+
+Options:
+    -h --help            : Show this help menu
+    -s --autostart       : Automatically start the game after all the clients have 
+                           connected
+    -a --address addr    : Connect to the specified address, rather than the 
+                           default (https://localhost:3000/)
+    -d --driver driver   : Specify the driver to use. Chrome and Firefox are 
+                           supported
+    -p --players players : Specify the number of players to connect to the game. 
+                           The default is 16
+""")
+    exit(1)
 
 
 def host_game(driver: WebDriver) -> None:
@@ -40,10 +60,15 @@ def get_options() -> Options:
 
     options = Options()
 
-    opts, _ = getopt.getopt(argv[1:], "sa:d:p:", ["autostart", "address=", "driver=", "players="])
+    try:
+        opts, _ = getopt.getopt(argv[1:], "hsa:d:p:", ["help", "autostart", "address=", "driver=", "players="])
+    except getopt.GetoptError as error:
+        exit_error("Error: " + error.msg)
     for opt, arg in opts:
         if opt in ("-s", "--autostart"):
             options.auto_start = True
+        elif opt in ("-h", "--help"):
+            exit_error()
         elif opt in ("-a", "--address"):
             options.server_address = arg
         elif opt in ("-d", "--driver"):
@@ -54,17 +79,14 @@ def get_options() -> Options:
             elif arg in ("Chrome", "chrome", "Chromium", "chromium", "Google", "google"):
                 options.driver = webdriver.Chrome()
             else:
-                print(f"Unknown web driver: {arg}")
-                exit(1)
+                exit_error(f"Unknown web driver: {arg}")
         elif opt in ("-p", "--players"):
             if arg.isnumeric():
                 options.players = int(arg)
             else:
-                print(f"Expected integer number of players. Got: {arg}")
-                exit(1)
+                exit_error(f"Expected integer number of players. Got: {arg}")
         else:
-            print(f"Unknown flag: {opt}")
-            exit(1)
+            exit_error(f"Unknown flag: {opt}")
 
     if options.driver is None:
         options.driver = webdriver.Chrome()
