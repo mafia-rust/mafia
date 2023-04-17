@@ -15,9 +15,6 @@ on:
       - '!client/public/**'
       - '!client/src/resources/**'
 
-env:
-  CARGO_TERM_COLOR: always
-
 jobs:
   build_client:
     name: Build Client
