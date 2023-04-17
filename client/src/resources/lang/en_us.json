@@ -1,4 +1,6 @@
 {
+    "language": "English (United States)",
+
     "menu.start.title": "Mafia",
     "menu.start.button.join.logged_in": "Join",
     "menu.start.button.join.logged_out": "Join as Guest",

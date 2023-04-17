@@ -1,7 +1,12 @@
-import langJson from "../resources/lang.json";
 import GAME_MANAGER from "../index";
 
-let lang: Map<string, string> = new Map<string, string>(Object.entries(langJson));
+let lang: ReadonlyMap<string, string>;
+switchLanguage("en_us");
+
+export function switchLanguage(language: string) {
+    let json = require("../resources/lang/" + language + ".json");
+    lang = new Map<string, string>(Object.entries(json))
+}
 
 export default function translate(langKey: string, ...valuesList: any[]): string {
     let out = lang.get(langKey);
