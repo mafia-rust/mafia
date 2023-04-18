@@ -29,7 +29,7 @@ export function create_gameState(): GameState {
             [Phase.Voting]: 30, 
             [Phase.Testimony]: 20, 
             [Phase.Judgement]: 20, 
-            [Phase.Evening]: 10, 
+            [Phase.Evening]: 7, 
             [Phase.Night]: 37,
         },
     }

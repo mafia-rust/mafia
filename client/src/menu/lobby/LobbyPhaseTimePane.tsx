@@ -11,6 +11,7 @@ type PhaseTimeMode = string;
 
 type PhaseTimePaneState = {
     mode: PhaseTimeMode,
+    advancedEditing: boolean,
     phaseTimes: PhaseTimes
 }
 
@@ -23,6 +24,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
 
         this.state = {
             mode: this.determineModeFromPhaseTimes(initialPhaseTimes),
+            advancedEditing: false,
             phaseTimes: initialPhaseTimes
         };
 
@@ -41,19 +43,15 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
         GAME_MANAGER.removeStateListener(this.listener);
     }
 
-    render()
-    //if the edit button is pressed, then the time settings are editable, othereise they are not
-    //and the time durations are not displayed 
-
-    {return(<section>
+    render() {return(<section>
         <header>
             <h2>Time settings:</h2>
             <div className="settings-controls">
-            {this.renderTimeModeDropdown()}
-            {this.renderEditButon()}
+                {this.renderTimeModeDropdown()}
+                {this.renderEditButton()}
             </div>
         </header>
-        {this.state.mode === "Custom" ? this.renderInputColumn() : null}
+        {this.state.advancedEditing ? this.renderInputColumn() : null}
     </section>)}
 
     renderTimeModeDropdown() {
@@ -79,25 +77,25 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
         }</select>
     }
 
-    //renders the edit button that when preesed sets PhaseTimeMode to "Custom"
-    renderEditButon() {
-        return <button className="lm-edit-button" onClick={() => {
-            this.setState({
-                mode: "Custom"
-            });
-        }}>Edit</button>
-
+    renderEditButton() {
+        return <button className="lm-edit-button" 
+            onClick={() => {
+                this.setState({
+                    advancedEditing: !this.state.advancedEditing
+                });
+            }}
+        >{this.state.advancedEditing ? "Hide" : "Advanced"}</button>
     }
 
     renderInputColumn() {
         return <div className="input-column">
-        {this.renderTimePicker(Phase.Morning)}
-        {this.renderTimePicker(Phase.Discussion)}
-        {this.renderTimePicker(Phase.Voting)}
-        {this.renderTimePicker(Phase.Testimony)}
-        {this.renderTimePicker(Phase.Judgement)}
-        {this.renderTimePicker(Phase.Evening)}
-        {this.renderTimePicker(Phase.Night)}
+            {this.renderTimePicker(Phase.Morning)}
+            {this.renderTimePicker(Phase.Discussion)}
+            {this.renderTimePicker(Phase.Voting)}
+            {this.renderTimePicker(Phase.Testimony)}
+            {this.renderTimePicker(Phase.Judgement)}
+            {this.renderTimePicker(Phase.Evening)}
+            {this.renderTimePicker(Phase.Night)}
         </div>
     }
 
