@@ -16,6 +16,7 @@ pub struct Lobby {
     lobby_state: LobbyState,
     random_names: Vec<String>,
 }
+
 enum LobbyState{
     Lobby{
         settings: Settings,
@@ -24,7 +25,8 @@ enum LobbyState{
     Game{
         game: Game,
         players: HashMap<ArbitraryPlayerID, PlayerIndex>,
-    }
+    },
+    Closed
 }
 pub struct LobbyPlayer{
     pub sender: UnboundedSender<ToClientPacket>,
@@ -52,7 +54,7 @@ impl Lobby {
             lobby_state: LobbyState::Lobby{
                 settings: Settings::default(),
                 players: HashMap::new()
-            }, 
+            },
             random_names,
         }
     }
@@ -63,7 +65,7 @@ impl Lobby {
                 let name = Self::validate_name(&self.random_names, players, "".to_string());
                 
                 sender.send(ToClientPacket::YourName { name: name.clone() });
-                // "Catch player up" on lobby settings
+                // TODO "Catch player up" on lobby settings
 
                 let player = LobbyPlayer{
                     sender,
@@ -86,6 +88,18 @@ impl Lobby {
             LobbyState::Game{ .. } => {
                 // TODO, handle rejoining
                 Err(RejectJoinReason::GameAlreadyStarted)
+            }
+            LobbyState::Closed => {
+                Err(RejectJoinReason::InvalidRoomCode)
+            }
+        }
+    }
+    pub fn disconnect_player(&mut self, id: ArbitraryPlayerID) {
+        if let LobbyState::Lobby { ref mut players, .. } = &mut self.lobby_state {
+            players.remove(&id);
+
+            if players.len() == 0 {
+                self.lobby_state = LobbyState::Closed;
             }
         }
     }
@@ -175,9 +189,17 @@ impl Lobby {
             }
         }
     }
+
+    pub fn is_closed(&self) -> bool {
+        match &self.lobby_state {
+            LobbyState::Closed => true,
+            _ => false
+        }
+    }
+
     pub fn tick(&mut self, time_passed: Duration){
         if let LobbyState::Game { game, players } = &mut self.lobby_state {
-            game.tick(time_passed)
+            game.tick(time_passed);
         }
     }
 
