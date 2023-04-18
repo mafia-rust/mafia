@@ -56,7 +56,9 @@ pub enum ToClientPacket{
 
     //Run function
     AddChatMessages{chat_messages: Vec<ChatMessage>},
-    AddGrave{grave: Grave}    
+    AddGrave{grave: Grave},
+
+    GameOver{reason: GameOverReason},
 
     //a way to syncronise the entire game for someone who joined late
 }
@@ -103,6 +105,12 @@ pub enum RejectJoinReason {
 pub enum RejectStartReason {
     GameEndsInstantly,
     ZeroTimeGame,
+}
+
+#[derive(Serialize, Debug, Clone, Copy)]
+pub enum GameOverReason {
+    ReachedMaxDay,
+    /*TODO Winner { who won? }*/
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

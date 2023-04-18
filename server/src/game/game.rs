@@ -9,7 +9,7 @@ use tokio::sync::mpsc::UnboundedSender;
 use tokio_tungstenite::tungstenite::Message;
 
 use crate::lobby::LobbyPlayer;
-use crate::network::packet::{ToServerPacket, ToClientPacket, self, PlayerButtons};
+use crate::network::packet::{ToServerPacket, ToClientPacket, self, PlayerButtons, GameOverReason};
 use crate::prelude::*;
 use super::chat::night_message::NightInformation;
 use super::chat::{ChatMessage, ChatGroup, MessageSender};
@@ -123,6 +123,12 @@ impl Game {
         //Stuff that runs every tick
         for player in self.players.iter_mut(){
             player.tick()
+        }
+
+        if self.phase_machine.day_number == 255 {
+            self.send_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
+            // TODO, clean up the lobby. Stop the ticking
+            return;
         }
 
         while self.phase_machine.time_remaining <= Duration::ZERO{

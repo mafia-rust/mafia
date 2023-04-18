@@ -1,7 +1,7 @@
-use std::{net::SocketAddr, collections::HashMap, sync::{Mutex, Arc}, time::Duration};
+use std::{net::SocketAddr, collections::HashMap, sync::{Mutex, Arc}, time::{Duration, SystemTime, Instant}};
 
 use serde_json::Value;
-use tokio_tungstenite::tungstenite::Message;
+use tokio_tungstenite::tungstenite::{Message, protocol::frame};
 
 use crate::{lobby::Lobby, log};
 
@@ -27,14 +27,20 @@ impl Listener{
         };
 
         let threaded_lobbies = out.lobbies.clone();
-        let frame_period = Duration::new(1, 0);
+        let frame_period = Duration::from_secs(1);
 
         tokio::spawn(async move {
+            let mut last_tick = tokio::time::Instant::now();
             loop {
+                let dt = last_tick.elapsed();
                 for (_, lobby) in threaded_lobbies.lock().unwrap().iter_mut(){
-                    lobby.tick(frame_period);
+                    lobby.tick(dt);
                 }
-                tokio::time::sleep(frame_period).await;
+
+                last_tick = tokio::time::Instant::now();
+                if let Some(sleep_time) = frame_period.checked_sub(dt) {
+                    tokio::time::sleep(frame_period).await;
+                } // Else, the last tick took super long. Don't wait any more.
             }
         });
         out

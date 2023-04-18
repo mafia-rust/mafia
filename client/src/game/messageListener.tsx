@@ -54,7 +54,7 @@ export default function messageListener(serverMessage: any){
                     alert("Couldn't start: There must be at least one phase!");
                 break;
                 default:
-                    alert("Couldn't join lobby for an unknown reason!");
+                    alert("Couldn't start lobby for an unknown reason!");
                     console.log("incoming_message response not implemented "+type+": "+serverMessage.reason);
                     console.log(serverMessage);
                 break;
@@ -160,6 +160,18 @@ export default function messageListener(serverMessage: any){
             grave.dayNumber =   serverMessage.grave.day_number;
 
             GAME_MANAGER.gameState.graves.push(grave);
+        break;
+        case"GameOver":
+            switch(serverMessage.reason) {
+                case "ReachedMaxDay":
+                    alert("Game Over: Reached the maximum day!");
+                break;
+                default:
+                    alert("Game ended for an unknown reason!");
+                    console.log("incoming_message response not implemented "+type+": "+serverMessage.reason);
+                    console.log(serverMessage);
+                break;
+            }
         break;
         default:
             console.log("incoming_message response not implemented "+type);
