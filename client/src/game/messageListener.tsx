@@ -45,6 +45,21 @@ export default function messageListener(serverMessage: any){
             }
             Anchor.setContent(<StartMenu/>);
         break;
+        case "RejectStart":
+            switch(serverMessage.reason) {
+                case "GameEndsInstantly":
+                    alert("Couldn't start: Game would end instantly!");
+                break;
+                case "ZeroTimeGame":
+                    alert("Couldn't start: There must be at least one phase!");
+                break;
+                default:
+                    alert("Couldn't join lobby for an unknown reason!");
+                    console.log("incoming_message response not implemented "+type+": "+serverMessage.reason);
+                    console.log(serverMessage);
+                break;
+            }
+        break;
         case "AcceptHost":
             GAME_MANAGER.roomCode = serverMessage.room_code;
             Anchor.setContent(LobbyMenu.create());

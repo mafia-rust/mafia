@@ -29,6 +29,7 @@ pub enum ToClientPacket{
     YourPlayerIndex{player_index: PlayerIndex},
     Players{names: Vec<String>},
     Kicked{reason: String},
+    RejectStart{reason: RejectStartReason},
     // 
     OpenGameMenu,
 
@@ -96,6 +97,12 @@ pub enum RejectJoinReason {
     GameAlreadyStarted,
     RoomFull,
     InvalidRoomCode,
+}
+
+#[derive(Serialize, Debug, Clone, Copy)]
+pub enum RejectStartReason {
+    GameEndsInstantly,
+    ZeroTimeGame,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

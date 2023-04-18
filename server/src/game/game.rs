@@ -125,7 +125,7 @@ impl Game {
             player.tick()
         }
 
-        if self.phase_machine.time_remaining <= Duration::ZERO{
+        while self.phase_machine.time_remaining <= Duration::ZERO{
             let new_phase = PhaseType::end(self);
             //reset
             for player_index in 0..self.players.len(){

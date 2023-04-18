@@ -8,7 +8,7 @@ use tokio_tungstenite::tungstenite::Message;
 use crate::{
     game::{Game, player::{PlayerIndex, Player}, 
     settings::{Settings, InvestigatorResults, self}, 
-    role_list, phase::PhaseType}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket, RejectJoinReason}, listener::ArbitraryPlayerID}, 
+    role_list, phase::PhaseType}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket, RejectJoinReason, RejectStartReason}, listener::ArbitraryPlayerID}, 
     utils::trim_whitespace
 };
 
@@ -63,6 +63,7 @@ impl Lobby {
                 let name = Self::validate_name(&self.random_names, players, "".to_string());
                 
                 sender.send(ToClientPacket::YourName { name: name.clone() });
+                // "Catch player up" on lobby settings
 
                 let player = LobbyPlayer{
                     sender,
@@ -103,8 +104,19 @@ impl Lobby {
                     Self::send_players(players);
                 }
             },
-            ToServerPacket::StartGame => {           
+            ToServerPacket::StartGame => {
                 if let LobbyState::Lobby { settings, players } = &mut self.lobby_state{
+                    if (settings.phase_times.evening.is_zero() &&
+                        settings.phase_times.morning.is_zero() &&
+                        settings.phase_times.discussion.is_zero() &&
+                        settings.phase_times.voting.is_zero() &&
+                        settings.phase_times.judgement.is_zero() &&
+                        settings.phase_times.testimony.is_zero() &&
+                        settings.phase_times.night.is_zero()
+                    ) {
+                        send.send(ToClientPacket::RejectStart { reason: RejectStartReason::ZeroTimeGame });
+                        return;
+                    }
                     
                     for (_, player) in players.iter(){
                         player.sender.send(ToClientPacket::OpenGameMenu);
@@ -133,16 +145,17 @@ impl Lobby {
             },
             ToServerPacket::SetPhaseTime{phase, time} => {
                 if let LobbyState::Lobby{ settings, players } = &mut self.lobby_state{
-                    let ref mut phase_time = match phase {
-                        PhaseType::Morning => settings.phase_times.morning,
-                        PhaseType::Discussion => settings.phase_times.discussion,
-                        PhaseType::Evening => settings.phase_times.evening,
-                        PhaseType::Judgement => settings.phase_times.judgement,
-                        PhaseType::Night => settings.phase_times.night,
-                        PhaseType::Testimony => settings.phase_times.testimony,
-                        PhaseType::Voting => settings.phase_times.voting,
+                    let phase_time = Duration::from_secs(time);
+
+                    match phase {
+                        PhaseType::Morning => { settings.phase_times.morning = phase_time; }
+                        PhaseType::Discussion => { settings.phase_times.discussion = phase_time; }
+                        PhaseType::Evening => { settings.phase_times.evening = phase_time; }
+                        PhaseType::Judgement => { settings.phase_times.judgement = phase_time; }
+                        PhaseType::Night => { settings.phase_times.night = phase_time; }
+                        PhaseType::Testimony => { settings.phase_times.testimony = phase_time; }
+                        PhaseType::Voting => { settings.phase_times.voting = phase_time; }
                     };
-                    *phase_time = Duration::from_secs(time);
                     
                     Self::send_to_all(players, ToClientPacket::PhaseTime { phase, time });
                 }
