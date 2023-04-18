@@ -54,9 +54,11 @@ export function create_gameManager(): GameManager {
             };
             GAME_MANAGER.addStateListener(setName);
 
+            let actual_code: number | null = parseInt(gameManager.roomCode!, 18);
+
             gameManager.Server.send(JSON.stringify({
                 "Join":{
-                    "room_code": Number(gameManager.roomCode!)
+                    "room_code": actual_code == null ? 0 : actual_code
                 }
             }));
 

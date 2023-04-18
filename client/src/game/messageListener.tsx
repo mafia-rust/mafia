@@ -37,6 +37,9 @@ export default function messageListener(serverMessage: any){
                 case "RoomFull":
                     alert("Couldn't join: That lobby is full!");
                 break;
+                case "ServerBusy":
+                    alert("Couldn't join: The server is busy. Try again later!");
+                break;
                 default:
                     alert("Couldn't join lobby for an unknown reason!");
                     console.log("incoming_message response not implemented "+type+": "+serverMessage.reason);
@@ -61,7 +64,7 @@ export default function messageListener(serverMessage: any){
             }
         break;
         case "AcceptHost":
-            GAME_MANAGER.roomCode = serverMessage.room_code;
+            GAME_MANAGER.roomCode = (parseInt(serverMessage.room_code)).toString(18);
             Anchor.setContent(LobbyMenu.create());
         break;
 

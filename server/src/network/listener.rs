@@ -1,5 +1,6 @@
 use std::{net::SocketAddr, collections::HashMap, sync::{Mutex, Arc}, time::{Duration, SystemTime, Instant}};
 
+use rand::random;
 use serde_json::Value;
 use tokio_tungstenite::tungstenite::{Message, protocol::frame};
 
@@ -79,6 +80,7 @@ impl ConnectionEventListener for Listener {
             if let Some( (room_code, arbitrary_player_id) ) = disconnected_player { //if the player claims to be in a lobby
                 if let Some(lobby) = self.lobbies.lock().unwrap().get_mut(&room_code){ //if the lobby that player is in exists
                     lobby.disconnect_player(arbitrary_player_id);
+                    
                 }
             }
         } else {
@@ -124,10 +126,14 @@ impl Listener{
                 }
             },
             ToServerPacket::Host => {
+                let mut existing_lobbies = self.lobbies.lock().unwrap();
 
-                //TODO
-                //Find unused room code
-                let new_room_code: RoomCode = 0;
+                let Some(new_room_code) = ((random::<u16>() as usize)..usize::MAX).find(
+                    |code| !existing_lobbies.contains_key(code)
+                ) else {
+                    connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::ServerBusy });
+                    return Ok(());
+                };
 
                 //Make sure there are no players who have joined the game under this roomcode, If so, send them back to startmenu and remove them from lobby
                 for (addr, route_opt) in self.players.iter_mut(){
@@ -160,7 +166,7 @@ impl Listener{
 
                 println!("{}\t{}", log::important("LOBBY CREATED:"), new_room_code);
 
-                self.lobbies.lock().unwrap().insert(new_room_code, lobby);
+                existing_lobbies.insert(new_room_code, lobby);
             },
             _ => {
                 if let Some(player) = self.players.get_mut(connection.get_address()){   //if the player exists

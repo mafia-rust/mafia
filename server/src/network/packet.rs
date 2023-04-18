@@ -99,6 +99,7 @@ pub enum RejectJoinReason {
     GameAlreadyStarted,
     RoomFull,
     InvalidRoomCode,
+    ServerBusy,
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
