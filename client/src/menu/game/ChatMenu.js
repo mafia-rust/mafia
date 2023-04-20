@@ -4,17 +4,14 @@ import GAME_MANAGER from "../../index";
 import "./gameScreen.css";
 import "./chatMenu.css"
 
-// var setChatField = function (value) {
-//     //this doesnt work because this is not the ChatMenu class
-//     // this.setState({
-//     //     chatField: value
-//     // });
-//     //so instead
-//     document.getElementsByClassName("chat-input")[0].value = value;
-    
-// };
-
 export default class ChatMenu extends React.Component {
+    static prependWhisper(playerIndex) {
+        ChatMenu.instance.setState({
+            chatField: "/w" + (playerIndex + 1) + " " + ChatMenu.instance.state.chatField,
+        });
+    }
+    static instance = null;
+
     constructor(props) {
         super(props);
 
@@ -32,6 +29,7 @@ export default class ChatMenu extends React.Component {
 
     componentDidMount() {
         GAME_MANAGER.addStateListener(this.listener);
+        ChatMenu.instance = this;
     }
 
     componentWillUnmount() {
@@ -40,7 +38,7 @@ export default class ChatMenu extends React.Component {
 
     handleInputChange = (event) => {
         const value = event.target.value.trimStart();
-        this.setState({
+        ChatMenu.instance.setState({
             chatField: value
         });
     };
@@ -48,12 +46,12 @@ export default class ChatMenu extends React.Component {
     handleInputKeyPress(event){
         if (event.code === "Enter") {
             event.preventDefault();
-            this.sendChatField();
+            ChatMenu.instance.sendChatField();
         }
     };
 
     sendChatField(){
-        const text = this.state.chatField.trim();
+        const text = ChatMenu.instance.state.chatField.trim();
         if (text.startsWith("/w")) {
             try {
                 const playerIndex = Number(text[2]) - 1;
@@ -65,7 +63,7 @@ export default class ChatMenu extends React.Component {
         } else {
             GAME_MANAGER.sendMessage_button(text);
         }
-        this.setState({
+        ChatMenu.instance.setState({
             chatField: ""
         });
     };

@@ -50,8 +50,16 @@ export default class PhaseRowMenu extends React.Component {
     }
     render(){return(<div>
         <br/>
-        {translate("phase."+this.state.gameState.phase)} {this.state.gameState.dayNumber}<br/>
+        {this.renderPhaseName()}
         {this.state.gameState.secondsLeft}<br/>
         {this.renderPhaseSpecific()}<br/>
     </div>)}
+    renderPhaseName(){
+        if(this.state.gameState.phase){
+            return(<div>
+                {translate("phase."+this.state.gameState.phase)} {this.state.gameState.dayNumber}<br/> 
+            </div>);
+        }
+        return null;
+    }
 }

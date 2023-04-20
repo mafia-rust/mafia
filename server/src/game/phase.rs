@@ -103,8 +103,29 @@ impl PhaseType {
                 
             },
             PhaseType::Night => {
-                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: game.phase_machine.day_number });
+                //ensure mafia can kill
+                //search for mafia godfather or mafioso
+                let mut main_mafia_killing_exists = false;
+                for player in game.players.iter(){
+                    if player.get_role() == Role::Mafioso { 
+                        main_mafia_killing_exists = true;
+                        break;
+                    }
+                }
+                //TODO for now just convert the first person we see to mafioso
+                //later set an order for roles
+                //ambusher should be converted first
+                if !main_mafia_killing_exists{
+                    for player in game.players.iter_mut(){
 
+                        if player.get_role().get_faction_alignment().faction() == Faction::Mafia {
+                            player.set_role(RoleData::Mafioso { original: false });
+                            break;
+                        }
+                    }
+                }
+
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: game.phase_machine.day_number });
             },
         }
     }
@@ -153,29 +174,6 @@ impl PhaseType {
                 return Self::Night;
             },
             PhaseType::Night => {
-                
-                //ensure mafia can kill
-                //search for mafia godfather or mafioso
-                let mut main_mafia_killing_exists = false;
-                for player in game.players.iter(){
-                    if player.get_role() == Role::Mafioso { 
-                        main_mafia_killing_exists = true;
-                        break;
-                    }
-                }
-                //TODO for now just convert the first person we see to mafioso
-                //later set an order for roles
-                //ambusher should be converted first
-                if !main_mafia_killing_exists{
-                    for player in game.players.iter_mut(){
-
-                        if player.get_role().get_faction_alignment().faction() == Faction::Mafia {
-                            player.set_role(RoleData::Mafioso { original: false });
-                            break;
-                        }
-                    }
-                }
-
 
                 //MAIN NIGHT CODE
 

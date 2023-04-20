@@ -3,6 +3,7 @@ import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import "./playerListMenu.css"
 import "./gameScreen.css"
+import ChatMenu from "./ChatMenu";
 
 export default class PlayerListMenu extends React.Component {
     constructor(props) {
@@ -33,7 +34,7 @@ export default class PlayerListMenu extends React.Component {
                     votedString = this.state.gameState.players[this.state.gameState.voted].name;
                     return(<div>
                         <div>{votedString}</div>
-                        <button class="button gm-button" onClick={()=>{
+                        <button className="button gm-button" onClick={()=>{
                             GAME_MANAGER.vote_button(null);
                         }}>Reset Vote</button>
                     </div>);
@@ -48,7 +49,7 @@ export default class PlayerListMenu extends React.Component {
                 if(targetStringList.length>0){
                     return(<div>
                         <div>{targetStringList.join(", ")+"."}</div>
-                        <button class="button gm-button" onClick={()=>{
+                        <button className="button gm-button" onClick={()=>{
                             GAME_MANAGER.target_button([]);
                         }}>Reset Targets</button>
                     </div>);
@@ -69,15 +70,17 @@ export default class PlayerListMenu extends React.Component {
             {GAME_MANAGER.getPlayer(playerIndex).toString()}<br/>
 
             <div>
-                {((player)=>{if(player.buttons.target){return(<button class="button gm-button" onClick={()=>{
+                {((player)=>{if(player.buttons.target){return(<button className="button gm-button" onClick={()=>{
                         GAME_MANAGER.target_button([...GAME_MANAGER.gameState.targets, playerIndex]);
                     }}
                 >{translate("button.Target")}</button>)}})(player)}
-                {((player)=>{if(player.buttons.vote){return(<button class="button gm-button" onClick={()=>{GAME_MANAGER.vote_button(playerIndex)}}
+                {((player)=>{if(player.buttons.vote){return(<button className="button gm-button" onClick={()=>{GAME_MANAGER.vote_button(playerIndex)}}
                 >{translate("button.Vote")}</button>)}})(player)}
-                {((player)=>{if(player.buttons.dayTarget){return(<button class="button gm-button" onClick={()=>{GAME_MANAGER.dayTarget_button(playerIndex)}}
+                {((player)=>{if(player.buttons.dayTarget){return(<button className="button gm-button" onClick={()=>{GAME_MANAGER.dayTarget_button(playerIndex)}}
                 >{translate("button.DayTarget")}</button>)}})(player)}
-                {((player)=>{if(canWhisper){return(<button class="button gm-button">{translate("button.Whisper")}</button>)}})(player)}
+                {((player)=>{if(canWhisper){return(<button className="button gm-button" onClick={()=>{
+                    ChatMenu.prependWhisper(playerIndex)
+                }}>{translate("button.Whisper")}</button>)}})(player)}
 
                 <div></div>
             </div>

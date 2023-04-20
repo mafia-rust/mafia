@@ -25,11 +25,11 @@ export default class WillMenu extends React.Component {
         GAME_MANAGER.removeStateListener(this.listener);
     }
     render() {return (<div>
-        <div class= "will-menu textarea">
+        <div className= "will-menu textarea">
             {translate("menu.will.will")}
             <br/>
             <textarea 
-                class="textarea-text"
+                className="textarea-text"
                 onKeyPress={(e) => {
                     if(e.code === "Enter") {
                         GAME_MANAGER.saveWill_button(this.state.willFeild)

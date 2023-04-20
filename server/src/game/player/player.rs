@@ -142,7 +142,7 @@ impl Player {
     }
     ///call this repeadedly
     pub fn tick(&mut self){
-        // self.send_chat_messages();
+        self.send_chat_messages();
         // self.send_available_buttons();
     }
     

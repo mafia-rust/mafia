@@ -16,9 +16,9 @@ setInterval(() => {
 }, TIME_PERIOD);
 
 ROOT.render(
-  <React.StrictMode>
-    <Anchor/>
-  </React.StrictMode>
+    <React.StrictMode>
+        <Anchor/>
+    </React.StrictMode>
 );
 // // If you want to start measuring performance in your app, pass a function
 // // to log results (for example: reportWebVitals(console.log))

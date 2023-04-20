@@ -12,6 +12,7 @@ export default function translate(langKey: string, ...valuesList: any[]): string
     let out = lang.get(langKey);
     if(out===undefined){
         console.log("Error: Attempted to use non existant lang key: "+langKey);
+        console.trace();
         return langKey;
     }
     for(let i = 0; i < valuesList.length; i++){
