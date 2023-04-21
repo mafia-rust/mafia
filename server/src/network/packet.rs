@@ -28,10 +28,10 @@ pub enum ToClientPacket{
     YourName{name: String},
     YourPlayerIndex{player_index: PlayerIndex},
     Players{names: Vec<String>},
-    Kicked{reason: String},
+    Kicked,
     RejectStart{reason: RejectStartReason},
     // 
-    OpenGameMenu,
+    StartGame,
 
     RoleList{role_list: RoleList},
     PhaseTime{phase: PhaseType, time: u64},
@@ -139,11 +139,8 @@ impl PlayerButtons{
 
 #[derive(Deserialize, Debug, Clone)]
 pub enum ToServerPacket{
-
     //Pre Lobby
-    Join{
-        room_code: RoomCode
-    },
+    Join{room_code: RoomCode},
     Host,
 
     //Lobby
@@ -164,8 +161,3 @@ pub enum ToServerPacket{
     SendWhisper{player_index: PlayerIndex, text: String},
     SaveWill{will: String},
 }
-// impl ToServerPacket {
-//     pub fn to_json_string(&self)->String{
-//         serde_json::to_string(&self).unwrap()
-//     }
-// }

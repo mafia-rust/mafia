@@ -133,7 +133,7 @@ impl Lobby {
                     }
                     
                     for (_, player) in players.iter(){
-                        player.sender.send(ToClientPacket::OpenGameMenu);
+                        player.sender.send(ToClientPacket::StartGame);
                     }
 
 

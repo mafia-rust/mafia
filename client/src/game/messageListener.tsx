@@ -91,7 +91,7 @@ export default function messageListener(serverMessage: any){
             GAME_MANAGER.gameState = create_gameState();
             Anchor.setContent(<StartMenu/>)
         break;
-        case "OpenGameMenu":
+        case "StartGame":
             Anchor.setContent(<GameScreen/>);
         break;
         case "RoleList":
