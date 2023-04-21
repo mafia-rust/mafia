@@ -113,6 +113,18 @@ impl Listener{
         match incoming_packet {
             ToServerPacket::Join{ room_code } => {
                 let mut all_lobbies = self.lobbies.lock().unwrap();
+                
+                #[cfg(debug_assertions)] 'HANDLE_DEBUG_LOBBY: {
+                    const DEBUG_ROOM_CODE: RoomCode = 4426; // "dbg" in base 18
+                    
+                    if room_code != DEBUG_ROOM_CODE || all_lobbies.contains_key(&DEBUG_ROOM_CODE){
+                        // Let player connect normally
+                        break 'HANDLE_DEBUG_LOBBY;
+                    } 
+                    // Player wants to connect to debug lobby, and it doesn't exist.
+
+                    all_lobbies.insert(DEBUG_ROOM_CODE, Lobby::new());
+                }
 
                 let Some(lobby) = all_lobbies.get_mut(&room_code) else {
                     connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::InvalidRoomCode });
