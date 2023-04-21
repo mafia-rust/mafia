@@ -8,6 +8,7 @@ use crate::{lobby::Lobby, log};
 
 use super::{connection::{ConnectionEventListener, Connection}, packet::{ToServerPacket, ToClientPacket, RejectJoinReason}};
 
+// TODO, rename to PregameID or IntermediaryID
 pub type ArbitraryPlayerID = u32;
 pub type RoomCode = usize;
 

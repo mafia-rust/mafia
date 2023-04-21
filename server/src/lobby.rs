@@ -9,11 +9,12 @@ use crate::{
     game::{Game, player::{PlayerIndex, Player}, 
     settings::{Settings, InvestigatorResults, self}, 
     role_list, phase::PhaseType}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket, RejectJoinReason, RejectStartReason}, listener::ArbitraryPlayerID}, 
-    utils::trim_whitespace
+    utils::trim_whitespace, log
 };
 
 pub struct Lobby {
     lobby_state: LobbyState,
+    // TODO remove
     random_names: Vec<String>,
 }
 
@@ -66,24 +67,19 @@ impl Lobby {
                 
                 sender.send(ToClientPacket::YourName { name: name.clone() });
                 // TODO "Catch player up" on lobby settings
+                
+                let arbitrary_player_id = players.len() as ArbitraryPlayerID;
 
-                let player = LobbyPlayer{
+                let player = LobbyPlayer {
                     sender,
-                    name: name,
-                };                
-                
-                
-                let newest_player_arbitrary_id = players.len() as ArbitraryPlayerID;
+                    name,
+                };
 
-                players.insert(
-                    newest_player_arbitrary_id,  
-                    player
-                );
+                players.insert(arbitrary_player_id, player);
 
+                self.send_players();
 
-                Self::send_players(players);
-
-                Ok(newest_player_arbitrary_id)
+                Ok(arbitrary_player_id)
             },
             LobbyState::Game{ .. } => {
                 // TODO, handle rejoining
@@ -106,86 +102,93 @@ impl Lobby {
     pub fn on_client_message(&mut self, send: UnboundedSender<ToClientPacket>, player_arbitrary_id: ArbitraryPlayerID, incoming_packet: ToServerPacket){
         match incoming_packet {
             ToServerPacket::SetName{ name } => {
-                if let LobbyState::Lobby { settings, players } = &mut self.lobby_state{
+                let LobbyState::Lobby { settings, players } = &mut self.lobby_state else {
+                    println!("{} {}", log::error("Player tried to set name before joining a lobby!"), player_arbitrary_id);
+                    return;
+                };
 
-                    let name = Self::validate_name(&self.random_names, players, name.clone());
-                    if let Some(mut player) = players.get_mut(&player_arbitrary_id){
-                        player.name = name.clone();
-                    }
-                    
-                    send.send(ToClientPacket::YourName{name});
-
-                    Self::send_players(players);
+                let name = Self::validate_name(&self.random_names, players, name.clone());
+                if let Some(mut player) = players.get_mut(&player_arbitrary_id){
+                    player.name = name.clone();
                 }
+                
+                send.send(ToClientPacket::YourName{name});
+
+                self.send_players();
             },
             ToServerPacket::StartGame => {
-                if let LobbyState::Lobby { settings, players } = &mut self.lobby_state{
-                    if (settings.phase_times.evening.is_zero() &&
-                        settings.phase_times.morning.is_zero() &&
-                        settings.phase_times.discussion.is_zero() &&
-                        settings.phase_times.voting.is_zero() &&
-                        settings.phase_times.judgement.is_zero() &&
-                        settings.phase_times.testimony.is_zero() &&
-                        settings.phase_times.night.is_zero()
-                    ) {
-                        send.send(ToClientPacket::RejectStart { reason: RejectStartReason::ZeroTimeGame });
-                        return;
-                    }
-                    
-                    for (_, player) in players.iter(){
-                        player.sender.send(ToClientPacket::StartGame);
-                    }
-
-
-                    let mut player_indices: HashMap<ArbitraryPlayerID,PlayerIndex> = HashMap::new();
-                    let mut game_players = Vec::new();
-                    
-                    let mut i = 0;
-                    for (a_id, lobby_player) in players.drain() {
-
-                        player_indices.insert(a_id, i);
-                        game_players.push(lobby_player);
-                        i+=1;
-                    }
-
-                    self.lobby_state = LobbyState::Game{
-                        game: Game::new(settings.clone(), game_players),
-                        players: player_indices,
-                    }
+                let LobbyState::Lobby { settings, players } = &mut self.lobby_state else {
+                    println!("{} {}", log::error("Player tried to start game before joining a lobby!"), player_arbitrary_id);
+                    return;
+                };
+                
+                if (settings.phase_times.evening.is_zero() &&
+                    settings.phase_times.morning.is_zero() &&
+                    settings.phase_times.discussion.is_zero() &&
+                    settings.phase_times.voting.is_zero() &&
+                    settings.phase_times.judgement.is_zero() &&
+                    settings.phase_times.testimony.is_zero() &&
+                    settings.phase_times.night.is_zero()
+                ) {
+                    send.send(ToClientPacket::RejectStart { reason: RejectStartReason::ZeroTimeGame });
+                    return;
                 }
+
+                let mut player_indices: HashMap<ArbitraryPlayerID,PlayerIndex> = HashMap::new();
+                let mut game_players = Vec::new();
+                
+                for (index, (arbitrary_player_id, lobby_player)) in players.drain().enumerate() {
+                    player_indices.insert(arbitrary_player_id, index as u8);
+                    game_players.push(lobby_player);
+                }
+
+                self.lobby_state = LobbyState::Game{
+                    game: Game::new(settings.clone(), game_players),
+                    players: player_indices,
+                };
+                
+                self.send_to_all(ToClientPacket::StartGame);
             },
             ToServerPacket::Kick{player_index} => {
                 todo!()// cant kick because then all player_index's would need to change and all players would be pointing to the wrong indeices
             },
             ToServerPacket::SetPhaseTime{phase, time} => {
-                if let LobbyState::Lobby{ settings, players } = &mut self.lobby_state{
-                    let phase_time = Duration::from_secs(time);
+                let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
+                    println!("{} {}", log::error("Player tried to set phase time settings before joining a lobby!"), player_arbitrary_id);
+                    return;
+                };
 
-                    match phase {
-                        PhaseType::Morning => { settings.phase_times.morning = phase_time; }
-                        PhaseType::Discussion => { settings.phase_times.discussion = phase_time; }
-                        PhaseType::Evening => { settings.phase_times.evening = phase_time; }
-                        PhaseType::Judgement => { settings.phase_times.judgement = phase_time; }
-                        PhaseType::Night => { settings.phase_times.night = phase_time; }
-                        PhaseType::Testimony => { settings.phase_times.testimony = phase_time; }
-                        PhaseType::Voting => { settings.phase_times.voting = phase_time; }
-                    };
-                    
-                    Self::send_to_all(players, ToClientPacket::PhaseTime { phase, time });
-                }
+                let phase_time = Duration::from_secs(time);
+
+                match phase {
+                    PhaseType::Morning => { settings.phase_times.morning = phase_time; }
+                    PhaseType::Discussion => { settings.phase_times.discussion = phase_time; }
+                    PhaseType::Evening => { settings.phase_times.evening = phase_time; }
+                    PhaseType::Judgement => { settings.phase_times.judgement = phase_time; }
+                    PhaseType::Night => { settings.phase_times.night = phase_time; }
+                    PhaseType::Testimony => { settings.phase_times.testimony = phase_time; }
+                    PhaseType::Voting => { settings.phase_times.voting = phase_time; }
+                };
+                
+                self.send_to_all(ToClientPacket::PhaseTime { phase, time });
             },
             ToServerPacket::SetRoleList { role_list } => {
-                if let LobbyState::Lobby{ settings, players } = &mut self.lobby_state{
-                    settings.role_list = role_list.clone();
-                    
-                    Self::send_to_all(players, ToClientPacket::RoleList { role_list });
-                }
+                let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
+                    println!("{} {}", log::error("Player tried to set role list settings before joining a lobby!"), player_arbitrary_id);
+                    return;
+                };
+                settings.role_list = role_list.clone();
+                
+                self.send_to_all(ToClientPacket::RoleList { role_list });
             }
             ToServerPacket::SetInvestigatorResults{investigator_results} => todo!(),
             _ => {
-                if let LobbyState::Game { game, players } = &mut self.lobby_state{
-                    game.on_client_message(players.get(&player_arbitrary_id).unwrap().clone(), incoming_packet)
-                }
+                let LobbyState::Game { game, players } = &mut self.lobby_state else {
+                    println!("{} {}", log::error("Player tried to set investigator results settings before joining a lobby!"), player_arbitrary_id);
+                    return;
+                };
+
+                game.on_client_message(players.get(&player_arbitrary_id).unwrap().clone(), incoming_packet)
             }
         }
     }
@@ -227,16 +230,35 @@ impl Lobby {
             return players.len().to_string()
         }
     }
-    fn send_players(players: &mut HashMap<ArbitraryPlayerID, LobbyPlayer>){
-        for (_, player) in players.iter(){
-            player.sender.send(ToClientPacket::Players { names: players.iter().map(|p|{
-                p.1.name.clone()
-            }).collect() });
-        }
+    fn send_players(&self){
+        let packet = match &self.lobby_state {
+            LobbyState::Lobby { players, .. } => ToClientPacket::Players { 
+                names: players.iter().map(|p| {
+                    p.1.name.clone()
+                }).collect() 
+            },
+            LobbyState::Game { game, players } => ToClientPacket::Players { 
+                names: players.iter().map(|p| {
+                    game.get_player(*p.1).unwrap().name.clone()
+                }).collect() 
+            },
+            LobbyState::Closed => {return;}
+        };
+        self.send_to_all(packet);
     }
-    fn send_to_all(players: &mut HashMap<ArbitraryPlayerID, LobbyPlayer>, packet: ToClientPacket){
-        for player in players.iter(){
-            player.1.sender.send(packet.clone());
+    fn send_to_all(&self, packet: ToClientPacket){
+        match &self.lobby_state {
+            LobbyState::Lobby { players, .. } => {
+                for player in players.iter() {
+                    player.1.sender.send(packet.clone());
+                }
+            }
+            LobbyState::Game { game, players } => {
+                for player in players.iter() {
+                    game.get_unchecked_player(*player.1).send(packet.clone());
+                }
+            }
+            LobbyState::Closed => {}
         }
     }
 }
