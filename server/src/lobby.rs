@@ -1,6 +1,7 @@
 use std::{collections::HashMap, net::SocketAddr, fs, time::Duration, hash::Hash};
 
 use futures_util::pending;
+use lazy_static::lazy_static;
 use serde::__private::de::{Content, self};
 use tokio::sync::mpsc::UnboundedSender;
 use tokio_tungstenite::tungstenite::Message;
@@ -14,8 +15,6 @@ use crate::{
 
 pub struct Lobby {
     lobby_state: LobbyState,
-    // TODO remove
-    random_names: Vec<String>,
 }
 
 enum LobbyState{
@@ -34,10 +33,8 @@ pub struct LobbyPlayer{
     pub name: String,
 }
 
-impl Lobby {
-    pub fn new() -> Lobby {
-
-        //TODO it crashes and also loads the file every time a new lobby is made this is obviously bad
+lazy_static!(
+    static ref RANDOM_NAMES: Vec<String> = {
         let mut default_names: Vec<String> = 
             fs::read_to_string("./resources/random_names/default_names.csv").expect("Should have been able to read the file").lines()
             .map(|s|{s.to_string()}).collect();
@@ -49,21 +46,24 @@ impl Lobby {
         random_names.append(&mut default_names);
         random_names.append(&mut extra_names);
 
-        
+        random_names
+    };
+);
 
+impl Lobby {
+    pub fn new() -> Lobby {
         Self { 
             lobby_state: LobbyState::Lobby{
                 settings: Settings::default(),
                 players: HashMap::new()
-            },
-            random_names,
+            }
         }
     }
     pub fn join_player(&mut self, sender: UnboundedSender<ToClientPacket>)-> Result<ArbitraryPlayerID, RejectJoinReason>{
         match &mut self.lobby_state {
             LobbyState::Lobby { players, .. } => {
                 // TODO, move this somewhere else
-                let name = Self::validate_name(&self.random_names, players, "".to_string());
+                let name = Self::validate_name(players, "".to_string());
                 
                 sender.send(ToClientPacket::YourName { name: name.clone() });
                 // TODO "Catch player up" on lobby settings
@@ -107,7 +107,7 @@ impl Lobby {
                     return;
                 };
 
-                let name = Self::validate_name(&self.random_names, players, name.clone());
+                let name = Self::validate_name(players, name.clone());
                 if let Some(mut player) = players.get_mut(&player_arbitrary_id){
                     player.name = name.clone();
                 }
@@ -206,24 +206,24 @@ impl Lobby {
         }
     }
 
-    fn validate_name(random_names: &Vec<String>, players: &mut HashMap<ArbitraryPlayerID, LobbyPlayer>, mut name: String)->String{
-
+    fn validate_name(players: &mut HashMap<ArbitraryPlayerID, LobbyPlayer>, mut name: String) -> String {
         name = trim_whitespace(name.trim());
 
-        if name.len() > 0 {
+        if name.len() > 0 && !players.values()
+            .map(|p| &p.name)
+            .any(|existing_name| matches!(&name, existing_name))
+        {
             return name;
         }
 
-        let availabe_random_names: Vec<&String> = random_names.iter().filter(|name|{
-        
-            !players.iter().map(|(_,n)|{
-                n.name.clone()
-            }).collect::<Vec<String>>().contains(name)
-        
+        let available_random_names: Vec<&String> = RANDOM_NAMES.iter().filter(|name| {
+            !players.values()
+                .map(|p| &p.name)
+                .any(|player| matches!(player, name))
         }).collect();
 
-        if availabe_random_names.len() > 0 {
-            return availabe_random_names[rand::random::<usize>()%availabe_random_names.len()].clone();
+        if available_random_names.len() > 0 {
+            return available_random_names[rand::random::<usize>()%available_random_names.len()].clone();
         } else {
             // Awesome name generator
             // TODO make this better, or don't.
