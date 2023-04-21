@@ -64,7 +64,7 @@ export default function messageListener(serverMessage: any){
             }
         break;
         case "AcceptHost":
-            GAME_MANAGER.roomCode = (parseInt(serverMessage.room_code)).toString(18);
+            GAME_MANAGER.roomCode = serverMessage.room_code.toString(18);
             Anchor.setContent(LobbyMenu.create());
         break;
 

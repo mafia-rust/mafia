@@ -21,7 +21,7 @@ pub enum ToClientPacket{
         //Pre lobby
     AcceptJoin,
     RejectJoin{reason: RejectJoinReason},
-    AcceptHost{room_code: String},
+    AcceptHost{room_code: RoomCode},
     
         //Lobby
     //Syncronize
