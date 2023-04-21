@@ -28,6 +28,8 @@ enum LobbyState{
     },
     Closed
 }
+
+#[derive(Clone)]
 pub struct LobbyPlayer{
     pub sender: UnboundedSender<ToClientPacket>,
     pub name: String,
@@ -35,16 +37,17 @@ pub struct LobbyPlayer{
 
 lazy_static!(
     static ref RANDOM_NAMES: Vec<String> = {
-        let mut default_names: Vec<String> = 
-            fs::read_to_string("./resources/random_names/default_names.csv").expect("Should have been able to read the file").lines()
-            .map(|s|{s.to_string()}).collect();
-        let mut extra_names: Vec<String> = 
-            fs::read_to_string("./resources/random_names/extra_names.csv").expect("Should have been able to read the file").lines()
-            .map(|s|{s.to_string()}).collect();
-
         let mut random_names = Vec::new();
-        random_names.append(&mut default_names);
-        random_names.append(&mut extra_names);
+        random_names.append(&mut 
+            include_str!("../resources/random_names/default_names.csv").lines()
+                .map(str::to_string)
+                .collect()
+        );
+        random_names.append(&mut 
+            include_str!("../resources/random_names/extra_names.csv").lines()
+                .map(str::to_string)
+                .collect()
+        );
 
         random_names
     };
@@ -107,7 +110,10 @@ impl Lobby {
                     return;
                 };
 
-                let name = Self::validate_name(players, name.clone());
+                let mut other_players = players.clone();
+                other_players.remove(&player_arbitrary_id);
+                
+                let name = Self::validate_name(&other_players, name.clone());
                 if let Some(mut player) = players.get_mut(&player_arbitrary_id){
                     player.name = name.clone();
                 }
@@ -206,7 +212,7 @@ impl Lobby {
         }
     }
 
-    fn validate_name(players: &mut HashMap<ArbitraryPlayerID, LobbyPlayer>, mut name: String) -> String {
+    fn validate_name(players: &HashMap<ArbitraryPlayerID, LobbyPlayer>, mut name: String) -> String {
         name = trim_whitespace(name.trim());
 
         if name.len() > 0 && !players.values()
@@ -219,7 +225,7 @@ impl Lobby {
         let available_random_names: Vec<&String> = RANDOM_NAMES.iter().filter(|name| {
             !players.values()
                 .map(|p| &p.name)
-                .any(|player| matches!(player, name))
+                .any(|player| !matches!(player, name))
         }).collect();
 
         if available_random_names.len() > 0 {
