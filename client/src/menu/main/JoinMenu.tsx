@@ -31,7 +31,6 @@ export default class JoinMenu extends React.Component<any, JoinMenuState> {
         this.setState({name: name})
     }
     async joinGameButton(){
-        // erm... >.<
         GAME_MANAGER.roomCode = this.state.roomCode;
         GAME_MANAGER.name = this.state.name;
 
@@ -42,7 +41,9 @@ export default class JoinMenu extends React.Component<any, JoinMenuState> {
         
         await GAME_MANAGER.join_button();
         
-        GAME_MANAGER.setName_button(this.state.name);
+        if (this.state.name && this.state.name !== " ") {
+            GAME_MANAGER.setName_button(this.state.name);
+        }
     }
     render(){return(<div style={{display: "flex", flexDirection: "column"}}>
         <header className="jm-header">
