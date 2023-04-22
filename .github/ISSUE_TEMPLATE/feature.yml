@@ -1,5 +1,6 @@
 name: Feature
 description: A feature this project should have
+title: "[Feature] "
 labels: [Enhancement]
 body:
   - type: textarea
