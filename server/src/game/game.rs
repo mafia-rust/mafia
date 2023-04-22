@@ -298,6 +298,10 @@ impl Game {
             },
             ToServerPacket::SendMessage { text } => {
                 let player = self.get_unchecked_mut_player(player_index);
+
+                if text.replace("\n", "").replace("\r", "").trim().is_empty() {
+                    return;
+                }
                 
                 for chat_group in player.get_role().get_current_chat_groups(player_index, self){
                     self.add_message_to_chat_group(
@@ -311,6 +315,10 @@ impl Game {
 
                 //ensure its day and your not whispering yourself and the other player exists
                 if !self.get_current_phase().is_day() || whispered_to_player_index == player_index || self.players.len() <= whispered_to_player_index as usize{
+                    return;
+                }
+                
+                if text.replace("\n", "").replace("\r", "").trim().is_empty() {
                     return;
                 }
 

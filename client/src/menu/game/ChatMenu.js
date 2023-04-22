@@ -65,7 +65,9 @@ export default class ChatMenu extends React.Component {
                 GAME_MANAGER.sendMessage_button(text);                
             }
         } else {
-            GAME_MANAGER.sendMessage_button(text);
+            if (text.replace("\n", "").replace("\r", "").trim() !== "") {
+                GAME_MANAGER.sendMessage_button(text);
+            }
         }
         ChatMenu.instance.setState({
             chatField: ""
