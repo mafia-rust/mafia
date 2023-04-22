@@ -1,0 +1,33 @@
+name: Bug
+description: Report a bug
+title: "[Bug] "
+labels: [Bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Bug
+      description: Write about the bug here
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console output
+      description: |
+        Please copy and paste the console logs from the event. If you don't know what these are, don't worry about it.
+      value: |
+        None provided
+      render: js
+    validations:
+      required: false
+  - type: textarea
+    id: tasklist
+    attributes:
+      label: Task list
+      description: What are the blocking issues or tasks needed in order to implement this?
+      value: |
+        - [ ] ...
+        - [ ] Fix this bug
+    validations:
+      required: true
