@@ -54,8 +54,12 @@ export default class ChatMenu extends React.Component {
         const text = ChatMenu.instance.state.chatField.trim();
         if (text.startsWith("/w")) {
             try {
-                const playerIndex = Number(text[2]) - 1;
-                const message = text.substring(3);
+                const indexOfFirstSpace = text.indexOf(' ');
+                const playerIndex = parseInt(text.substring(2, indexOfFirstSpace)) - 1;
+                if (isNaN(playerIndex)) {
+                    throw "hi";
+                }
+                const message = text.substring(indexOfFirstSpace + 1);
                 GAME_MANAGER.sendWhisper_button(playerIndex, message);
             } catch (e) {
                 GAME_MANAGER.sendMessage_button(text);                
