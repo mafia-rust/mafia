@@ -1,9 +1,19 @@
 import React from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
+import GameState from "../../game/gameState.d";
 
-export default class PhaseRowMenu extends React.Component {
-    constructor(props) {
+type PhaseRowMenuProps = {
+    phase: string | null,
+}
+type PhaseRowMenuState = {
+    gameState: GameState,
+}
+
+export default class PhaseRowMenu extends React.Component<PhaseRowMenuProps, PhaseRowMenuState> {
+    listener: () => void;
+    
+    constructor(props: PhaseRowMenuProps) {
         super(props);
 
         this.state = {
@@ -53,7 +63,17 @@ export default class PhaseRowMenu extends React.Component {
         {this.renderPhaseName()}
         {this.state.gameState.secondsLeft}<br/>
         {this.renderPhaseSpecific()}<br/>
+        {this.renderMenuButtons()}
     </div>)}
+    //Will Menu, Playerlist Menu, Rolelist/Graveyard menu, Wiki Menu
+    renderMenuButtons(){
+        return <div>
+            {/* <button onClick={()=>{GAME_MANAGER.menu_button("Will")}}>{translate("menu.will")}</button>
+            <button onClick={()=>{GAME_MANAGER.menu_button("Playerlist")}}>{translate("menu.playerlist")}</button>
+            <button onClick={()=>{GAME_MANAGER.menu_button("Rolelist")}}>{translate("menu.rolelist")}</button>
+            <button onClick={()=>{GAME_MANAGER.menu_button("Wiki")}}>{translate("menu.wiki")}</button> */}
+        </div>
+    }
     renderPhaseName(){
         if(this.state.gameState.phase){
             return(<div>

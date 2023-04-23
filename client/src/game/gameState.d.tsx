@@ -63,3 +63,23 @@ export interface Player {
 
     toString(): string
 }
+export interface Grave {
+    player: Number,
+
+    role: GraveRole,
+    death_cause: GraveDeathCause,
+    will: String,
+
+    died_phase: GravePhase,
+    day_number: Number,
+}
+
+type GraveRole = "Cleaned" | "Stoned" | Role;
+type GraveDeathCause = "Lynching" | GraveKiller[];
+type GraveKiller = "Mafia" | Role;
+type Role = string;
+
+export enum GravePhase {
+    Day, 
+    Night
+}

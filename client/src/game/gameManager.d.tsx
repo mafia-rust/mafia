@@ -27,6 +27,7 @@ export interface GameManager {
     listeners: StateListener[],
 
     addStateListener(listener: StateListener): void;
+    addAndCallStateListener(listener: StateListener): void;
     removeStateListener(listener: StateListener): void;
     invokeStateListeners(type: any): void;
 

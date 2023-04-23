@@ -25,6 +25,10 @@ export function create_gameManager(): GameManager {
         addStateListener(listener) {
             gameManager.listeners.push(listener);
         },
+        addAndCallStateListener(listener): void {
+            gameManager.listeners.push(listener);
+            listener(null);
+        },
         removeStateListener(listener) {
             gameManager.listeners.splice(gameManager.listeners.indexOf(listener));
         },

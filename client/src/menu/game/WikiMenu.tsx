@@ -1,14 +1,27 @@
-import React from "react";
+import React, { Key } from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
+import GameState from "../../game/gameState.d";
 
-export default class WikiMenu extends React.Component {
-    constructor(props) {
+
+interface WikiMenuProps {
+    role: string | null,
+}
+interface WikiMenuState {
+    gameState: GameState,
+    role: string | null,
+}
+
+
+export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuState> {
+    listener: () => void;
+    
+    constructor(props : WikiMenuProps) {
         super(props);
 
         this.state = {
             gameState : GAME_MANAGER.gameState,
-            roles: [], //List of roles to display
+            role: props.role, //List of roles to display
         };
         this.listener = ()=>{
             this.setState({
@@ -22,28 +35,32 @@ export default class WikiMenu extends React.Component {
     componentWillUnmount() {
         GAME_MANAGER.removeStateListener(this.listener);
     }
-    renderRole(role, index){
-        return <div key={index}>
+    renderRole(role: string){
+        return <div>
             <button>{translate("role."+role+".name")}</button>
         </div>
-    }
-    renderRoleExtra(){
-
     }
     renderInvestigativeResults(){
         return <div>
             {this.state.gameState.investigatorResults.map((result, index)=>{
+                //for every investigative result
                 return <div key={index}>
-                    {result.map((role, index2)=>{
+                    {result.map((role: string, index2: React.Key | null | undefined)=>{
+                        //for every role in invest result
                         return <div key={index2} style={{display:"flex"}}>
                             <button>{translate("role."+role+".name")}</button>
                         </div>
                     }, this)}
                 </div>
+
             }, this)}
         </div>
     }
     render(){return(<div style={{height: "100%", overflowX:"hidden"}}>
+        {translate("menu.wiki.wiki")}
+        {/* TODO, rolepicker code here*/}
+        {this.state.role?this.renderRole(this.state.role):null}
+        {this.renderInvestigativeResults()}
         
     </div>)}
 }
