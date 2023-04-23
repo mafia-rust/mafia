@@ -1,12 +1,12 @@
 
-import { create_gameState, create_grave, create_player } from "./gameState";
+import { create_gameState, create_player } from "./gameState";
 import Anchor from "../menu/Anchor";
 import * as LobbyMenu from "../menu/lobby/LobbyMenu";
 import StartMenu from "../menu/main/StartMenu";
 import GAME_MANAGER from "../index";
 import GameScreen from "../menu/game/GameScreen";
 import React from "react";
-import { Phase } from "./gameState.d";
+import { Grave, GraveDeathCause, GravePhase, GraveRole, Phase, PlayerIndex } from "./gameState.d";
 
 export default function messageListener(serverMessage: any){
 
@@ -154,13 +154,14 @@ export default function messageListener(serverMessage: any){
             }
         break;
         case"AddGrave":
-            let grave = create_grave();
-            grave.playerIndex = serverMessage.grave.player_index;
-            grave.role =        serverMessage.grave.role;
-            grave.death_cause = serverMessage.grave.death_cause;
-            grave.will =        serverMessage.grave.will;
-            grave.diedPhase =   serverMessage.grave.died_phase;
-            grave.dayNumber =   serverMessage.grave.day_number;
+            let grave: Grave = {
+                playerIndex : serverMessage.grave.player_index as PlayerIndex,
+                role :        serverMessage.grave.role as GraveRole,
+                deathCause :  serverMessage.grave.death_cause as GraveDeathCause,
+                will :        serverMessage.grave.will as string,
+                diedPhase :   serverMessage.grave.died_phase as GravePhase,
+                dayNumber :   serverMessage.grave.day_number as number,
+            };
 
             GAME_MANAGER.gameState.graves.push(grave);
         break;

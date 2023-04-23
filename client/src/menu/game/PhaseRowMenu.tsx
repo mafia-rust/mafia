@@ -1,10 +1,10 @@
 import React from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
-import GameState from "../../game/gameState.d";
+import GameState, { Phase } from "../../game/gameState.d";
 
 type PhaseRowMenuProps = {
-    phase: string | null,
+    phase: Phase | null,
 }
 type PhaseRowMenuState = {
     gameState: GameState,
@@ -34,26 +34,33 @@ export default class PhaseRowMenu extends React.Component<PhaseRowMenuProps, Pha
     renderPhaseSpecific(){
         switch(this.state.gameState.phase){
             
-            case"Judgement":
+            case Phase.Judgement:
             //TODO make buttons light up if they are clicked
-            return(<div>
-                {GAME_MANAGER.getPlayer(this.state.gameState.playerOnTrial).toString()}
-                {(()=>{
-                if(this.state.gameState.playerOnTrial !== this.state.gameState.myIndex)
-                    return(<div>
-                        {translate("verdict."+this.state.gameState.judgement)}
-                    <div
-                        style={{
-                            display:"grid",
-                            gridAutoColumns: "1fr",
-                        }}
-                    >
-                        <button style={{gridColumn: 2}} onClick={()=>{GAME_MANAGER.judgement_button(-1)}}>{translate("verdict.Guilty")}</button>
-                        <button style={{gridColumn: 3}} onClick={()=>{GAME_MANAGER.judgement_button(0)}}>{translate("verdict.Abstain")}</button>
-                        <button style={{gridColumn: 4}} onClick={()=>{GAME_MANAGER.judgement_button(1)}}>{translate("verdict.Innocent")}</button>
-                        <div style={{gridColumn: 5}}></div>
-                    </div></div>);})()}
-            </div>);
+            if(this.state.gameState.playerOnTrial !== null){
+                return(<div>
+                    {GAME_MANAGER.getPlayer(this.state.gameState.playerOnTrial!)?.toString()}
+                    {(()=>{
+                    if(this.state.gameState.playerOnTrial !== this.state.gameState.myIndex)
+                        return(<div>
+                            {translate("verdict."+this.state.gameState.judgement)}
+                        <div
+                            style={{
+                                display:"grid",
+                                gridAutoColumns: "1fr",
+                            }}
+                        >
+                            <button style={{gridColumn: 2}} onClick={()=>{GAME_MANAGER.judgement_button(-1)}}>{translate("verdict.Guilty")}</button>
+                            <button style={{gridColumn: 3}} onClick={()=>{GAME_MANAGER.judgement_button(0)}}>{translate("verdict.Abstain")}</button>
+                            <button style={{gridColumn: 4}} onClick={()=>{GAME_MANAGER.judgement_button(1)}}>{translate("verdict.Innocent")}</button>
+                            <div style={{gridColumn: 5}}></div>
+                        </div></div>);})()}
+                </div>);
+            }else{
+                return(<div>
+                    ERROR NO PLAYER ON TRIAL FOUND IN JUDGEMENT PHASE
+                </div>);
+            }
+            
             default:
             return null;
         }

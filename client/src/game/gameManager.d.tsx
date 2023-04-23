@@ -1,4 +1,4 @@
-import GameState, { Phase, PhaseTimes, Player } from "./gameState.d";
+import GameState, { Phase, PhaseTimes, Player, PlayerIndex } from "./gameState.d";
 
 export type ServerMessage = any;
 
@@ -45,12 +45,13 @@ export interface GameManager {
     saveWill_button(will: string): void;
     sendMessage_button(text: string): void;
     sendWhisper_button(playerIndex: number, text: string): void;
+    
+    getPlayer(playerIndex: PlayerIndex): Player | null;
 
     messageListener(serverMessage: ServerMessage): void;
 
     tick(timePassedms: number): void;
 
-    getPlayer(playerIndex: number): Player | null;
 }
 
 export declare function create_gameManager(): GameManager;

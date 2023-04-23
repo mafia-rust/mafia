@@ -7,7 +7,7 @@ type AnchorState = {
 }
 
 export default class Anchor extends React.Component<any, AnchorState> {
-    private static instance: Anchor;
+    public static instance: Anchor;
 
     constructor(props: any) {
         super(props);
@@ -33,4 +33,5 @@ export default class Anchor extends React.Component<any, AnchorState> {
     public static setContent(content: JSX.Element){
         Anchor.instance.setState({content : content});
     }
+    
 }

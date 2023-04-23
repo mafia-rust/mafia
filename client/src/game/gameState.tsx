@@ -53,17 +53,4 @@ export function create_player(name: string, index: number): Player {
     }
 }
 
-export function create_grave(){
-    return{
-        playerIndex: null,
-    
-        role: "",
-        death_cause: [],
-        will: "",
-    
-        diedPhase: "",
-        dayNumber: null,
-    }
-}
-
 

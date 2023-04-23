@@ -57,7 +57,7 @@ export default class ChatMenu extends React.Component {
                 const indexOfFirstSpace = text.indexOf(' ');
                 const playerIndex = parseInt(text.substring(2, indexOfFirstSpace)) - 1;
                 if (isNaN(playerIndex)) {
-                    throw "hi";
+                    throw new Error("Invalid player index");
                 }
                 const message = text.substring(indexOfFirstSpace + 1);
                 GAME_MANAGER.sendWhisper_button(playerIndex, message);

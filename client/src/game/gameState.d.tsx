@@ -1,36 +1,35 @@
 
 export default interface GameState {
     myName: string | null,
-    myIndex: number | null,
+    myIndex: PlayerIndex | null,
 
     chatMessages : any[],  //string + chat messages
-    graves: any[],
+    graves: Grave[],
     players: Player[],
     
-    playerOnTrial: number | null,    //Number:: player_index
-    phase: string | null,    //String
+    playerOnTrial: PlayerIndex | null,    //Number:: player_index
+    phase: Phase | null,    //String
     secondsLeft: number,
     dayNumber: number,
 
-    role: string | null, //String::
+    role: Role | null, //String::
 
     will: string,
-    targets: number[],    //Vec<PlayerIndex>
-    voted: number | null, //Number:: player_index
-    judgement: string | null, //String:: Innocent, Guilty, Abstained
-
-
-    //my own data
-        //My own role
-        //who ive voted
-        //wheater ive voted innocent or guilty
-        //what chats im currently talking to
+    targets: PlayerIndex[],    //Vec<PlayerIndex>
+    voted: PlayerIndex | null, //Number:: player_index
+    judgement: Verdict | null, //String:: Innocent, Guilty, Abstained
     
     roleList: any[],   //Vec<RoleListEntry>
-    investigatorResults: any[],   //Vec<Vec<Role>>
+    investigatorResults: Role[][],
     phaseTimes: PhaseTimes
 }
 
+export type PlayerIndex = number;
+export const enum Verdict {
+    Innocent = "Innocent",
+    Guilty = "Guilty",
+    Abstain = "Abstain",
+}
 export const enum Phase {
     Morning = "Morning",
     Discussion = "Discussion",
@@ -64,20 +63,20 @@ export interface Player {
     toString(): string
 }
 export interface Grave {
-    player: Number,
+    playerIndex: PlayerIndex,
 
     role: GraveRole,
-    death_cause: GraveDeathCause,
+    deathCause: GraveDeathCause,
     will: String,
 
-    died_phase: GravePhase,
-    day_number: Number,
+    diedPhase: GravePhase,
+    dayNumber: number,
 }
 
-type GraveRole = "Cleaned" | "Stoned" | Role;
-type GraveDeathCause = "Lynching" | GraveKiller[];
-type GraveKiller = "Mafia" | Role;
-type Role = string;
+export type GraveRole = "Cleaned" | "Stoned" | Role;
+export type GraveDeathCause = "Lynching" | GraveKiller[];
+export type GraveKiller = "Mafia" | Role;
+export type Role = string;
 
 export enum GravePhase {
     Day, 
