@@ -1,3 +1,4 @@
+import { RoleListEntry } from "../menu/lobby/LobbyRolePane"
 
 export default interface GameState {
     myName: string | null,
@@ -19,7 +20,7 @@ export default interface GameState {
     voted: PlayerIndex | null, //Number:: player_index
     judgement: Verdict | null, //String:: Innocent, Guilty, Abstained
     
-    roleList: any[],   //Vec<RoleListEntry>
+    roleList: RoleListEntry[],   //Vec<RoleListEntry>
     investigatorResults: Role[][],
     phaseTimes: PhaseTimes
 }

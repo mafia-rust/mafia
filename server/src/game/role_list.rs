@@ -96,9 +96,18 @@ impl Default for RoleList{
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum RoleListEntry{
-    Exact(Role),
-    FactionAlignment(FactionAlignment),
-    Faction(Faction),
+    Exact {
+        faction: Faction,
+        faction_alignment: FactionAlignment,
+        role: Role,
+    },
+    FactionAlignment {
+        faction: Faction,
+        faction_alignment: FactionAlignment,
+    },
+    Faction {
+        faction: Faction,
+    },
     Any
 }
 impl RoleListEntry{
@@ -122,13 +131,13 @@ impl RoleListEntry{
     }
     pub fn get_possible_roles(&self) -> Vec<Role> {
         match self {
-            RoleListEntry::Exact(r) => vec![r.clone()],
-            RoleListEntry::FactionAlignment(fa) => 
-                Role::values().into_iter().filter(|r|{
-                    r.get_faction_alignment() == *fa
+            RoleListEntry::Exact {role, .. } => vec![role.clone()],
+            RoleListEntry::FactionAlignment { faction_alignment, .. } => 
+                Role::values().into_iter().filter(|role|{
+                    role.get_faction_alignment() == *faction_alignment
                 }).collect(),
-            RoleListEntry::Faction(f) => Role::values().into_iter().filter(|r|{
-                r.get_faction_alignment().faction() == *f
+            RoleListEntry::Faction { faction, .. } => Role::values().into_iter().filter(|role|{
+                role.get_faction_alignment().faction() == *faction
             }).collect(),
             RoleListEntry::Any => Role::values(),
         }
