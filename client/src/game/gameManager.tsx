@@ -5,7 +5,7 @@ import GAME_MANAGER from "../index";
 import messageListener from "./messageListener";
 import CONFIG from "../resources/config.json"
 import React from "react";
-import { Phase, Player, Verdict } from "./gameState.d";
+import { Phase, Player, RoleListEntry, Verdict } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
 import GameScreen from "../menu/game/GameScreen";
 
@@ -91,7 +91,7 @@ export function create_gameManager(): GameManager {
                 }))
             }
         },
-        sendSetRoleListPacket(roleListEntries) {
+        sendSetRoleListPacket(roleListEntries: RoleListEntry[]) {
             gameManager.Server.send(JSON.stringify({
                 "SetRoleList":{
                     "role_list": {
