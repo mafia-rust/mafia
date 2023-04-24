@@ -80,7 +80,7 @@ export default class GraveyardMenu extends React.Component<any, GraveyardMenuSta
             </div>
         }
         if(roleListEntry.Faction !== undefined){
-            let faction = roleListEntry.Faction;
+            let faction = roleListEntry.Faction.faction;
             return <div key={index}>
                 <button>{translate("FactionAlignment.Faction."+faction)} {translate("FactionAlignment.Alignment.Random")}</button>
             </div>
