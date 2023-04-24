@@ -3,7 +3,7 @@ use std::time::Duration;
 use rand::seq::SliceRandom;
 use serde::{Serialize, Deserialize};
 
-use super::{role_list::{RoleList, RoleListEntry}, role::Role, player::{Player, PlayerIndex}};
+use super::{role_list::{RoleList, RoleListEntry}, role::Role, player::{Player, PlayerIndex}, phase::PhaseType};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Settings{
@@ -26,6 +26,19 @@ pub struct PhaseTimeSettings{
     pub judgement: Duration,
     pub evening: Duration,
     pub night: Duration,
+}
+impl PhaseTimeSettings {
+    pub fn get_time_for(&self, phase: PhaseType) -> Duration {
+        match phase {
+            PhaseType::Discussion => self.discussion,
+            PhaseType::Evening => self.evening,
+            PhaseType::Judgement => self.judgement,
+            PhaseType::Morning => self.morning,
+            PhaseType::Night => self.night,
+            PhaseType::Testimony => self.testimony,
+            PhaseType::Voting => self.voting
+        }
+    }
 }
 impl Default for PhaseTimeSettings{
     fn default() -> Self {

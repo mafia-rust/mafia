@@ -92,42 +92,16 @@ Right panel
     height: 100%;
     margin-left: 1rem;
 }
-/*
-TODO cleanup
-*/
-.role-picker-container {
+
+.lm-role-picker-container {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 16px;
+    flex-direction: row;
+    justify-content: space-evenly;
 }
 
-.role-picker-container {
-    display: inline-block;
-    margin: 10px;
-    font-size: 1rem;
-    font-family: 'Arial', sans-serif;
-    width: 100%;
+.lm-role-picker-container select {
+    flex-grow: 1;
 }
-
-/*styles the role list drop downs*/
-.role-picker-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-  
-  .role-picker-container select {
-    flex: 1;
-    margin: 0 0.125em;
-    width: calc(100% / var(--select-count));
-  }
-  
-  @media (max-width: 768px) {
-    .role-picker-container select {
-      width: calc(100% / (var(--select-count) + 1));
-    }
-  }
 
 .lm-main {
     display: flex;

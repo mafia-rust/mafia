@@ -9,7 +9,7 @@ use tokio_tungstenite::tungstenite::Message;
 use crate::{
     game::{Game, player::{PlayerIndex, Player}, 
     settings::{Settings, InvestigatorResults, self}, 
-    role_list, phase::PhaseType}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket, RejectJoinReason, RejectStartReason}, listener::ArbitraryPlayerID}, 
+    role_list::{self, RoleList, RoleListEntry}, phase::PhaseType}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket, RejectJoinReason, RejectStartReason}, listener::ArbitraryPlayerID}, 
     utils::trim_whitespace, log
 };
 
@@ -62,14 +62,39 @@ impl Lobby {
             }
         }
     }
+
+    /// Catches the sender up with the current lobby settings
+    pub fn inform_player(sender: UnboundedSender<ToClientPacket>, settings: &Settings) {
+        sender.send(ToClientPacket::InvestigatorResults { 
+            investigator_results: settings.invesigator_results.clone() 
+        });
+        for phase in [
+            PhaseType::Discussion, 
+            PhaseType::Evening, 
+            PhaseType::Judgement, 
+            PhaseType::Morning,
+            PhaseType::Night,
+            PhaseType::Testimony,
+            PhaseType::Voting
+        ] {
+            sender.send(ToClientPacket::PhaseTime { 
+                phase, 
+                time: settings.phase_times.get_time_for(phase).as_secs() 
+            });
+        }
+        sender.send(ToClientPacket::RoleList { role_list: settings.role_list.clone() });
+    }
+
     pub fn join_player(&mut self, sender: UnboundedSender<ToClientPacket>)-> Result<ArbitraryPlayerID, RejectJoinReason>{
         match &mut self.lobby_state {
-            LobbyState::Lobby { players, .. } => {
+            LobbyState::Lobby { players, settings } => {
                 // TODO, move this somewhere else
                 let name = Self::validate_name(players, "".to_string());
                 
                 sender.send(ToClientPacket::YourName { name: name.clone() });
-                // TODO "Catch player up" on lobby settings
+                // Add a role list entry
+                settings.role_list.role_list.push(RoleListEntry::Any);
+                Self::inform_player(sender.clone(), settings);
                 
                 let arbitrary_player_id = players.len() as ArbitraryPlayerID;
 
@@ -80,7 +105,11 @@ impl Lobby {
 
                 players.insert(arbitrary_player_id, player);
 
+                let role_list = settings.role_list.clone();
+
+                // Make sure everybody is on the same page
                 self.send_players();
+                self.send_to_all(ToClientPacket::RoleList { role_list });
 
                 Ok(arbitrary_player_id)
             },

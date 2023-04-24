@@ -1,5 +1,3 @@
-import { RoleListEntry } from "../menu/lobby/LobbyRolePane"
-
 export default interface GameState {
     myName: string | null,
     myIndex: PlayerIndex | null,
@@ -63,6 +61,21 @@ export interface Player {
 
     toString(): string
 }
+
+export type RoleListEntry = "Any" | {
+    "Exact"?: {
+        role: string,
+        faction_alignment: string,
+        faction: string,
+    },
+    "FactionAlignment"?: {
+        faction_alignment: string,
+        faction: string,
+    },
+    "Faction"?: {
+        faction: string,
+    }
+};
 export interface Grave {
     playerIndex: PlayerIndex,
 
