@@ -7,22 +7,59 @@ import ChatMenu from "./ChatMenu";
 import PlayerListMenu from "./PlayerListMenu";
 import WillMenu from "./WillMenu";
 import "./gameScreen.css";
+import GAME_MANAGER from "../..";
+import GameState from "../../game/gameState.d";
 
-export default class GameScreen extends React.Component {
-    static instance;
 
-    constructor(props) {
+type GameScreenProps = {
+    
+}
+type GameScreenState = {
+    gameState: GameState,
+    header: JSX.Element,
+    content: JSX.Element[],
+}
+
+export default class GameScreen extends React.Component<GameScreenProps, GameScreenState> {
+    static instance: GameScreen;
+    listener: () => void;
+
+    constructor(props: GameScreenProps) {
         super(props);
         this.state = {
             header: LoadingScreen.create(),
             content: [LoadingScreen.create()],
+            gameState: GAME_MANAGER.gameState,
         };
+
+        this.listener = ()=>{
+            this.setState({
+                gameState: GAME_MANAGER.gameState,
+            })
+        }
     }
+
+    openOrCloseMenu(menu: JSX.Element) {
+        for(let i = 0; i < this.state.content.length; i++) {
+            if(this.state.content[i].type === menu.type) {
+                this.state.content.splice(i, 1);
+                this.setState({
+                    content: this.state.content,
+                });
+                return;
+            }
+        }
+        this.state.content.push(menu);
+        this.setState({
+            content: [...this.state.content],
+        });
+    }
+            
 
     componentDidMount() {
         GameScreen.instance = this;
         this.setState({
-            header: <PhaseRowMenu/>,
+            header: <PhaseRowMenu phase={this.state.gameState.phase}/>,
             content: [
                 <GraveyardMenu/>,
                 <ChatMenu/>,
@@ -30,9 +67,11 @@ export default class GameScreen extends React.Component {
                 <WillMenu/>
             ],
         });
+        GAME_MANAGER.addStateListener(this.listener);
     }
 
     componentWillUnmount() {
+        GAME_MANAGER.removeStateListener(this.listener);
         //GameScreen.instance = undefined;
     }
 
@@ -45,7 +84,7 @@ export default class GameScreen extends React.Component {
         );
     }
 
-    renderHeader(header) {
+    renderHeader(header: JSX.Element) {
         return (
             <div className="game-screen-header">
                 {header}
@@ -53,7 +92,7 @@ export default class GameScreen extends React.Component {
         );
     }
 
-    renderContent(content) {
+    renderContent(content: JSX.Element[]) {
         return (
             <div className="game-screen-content">
                 {content.map((panel, index) => {

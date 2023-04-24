@@ -5,8 +5,9 @@ import GAME_MANAGER from "../index";
 import messageListener from "./messageListener";
 import CONFIG from "../resources/config.json"
 import React from "react";
-import { Phase, Player } from "./gameState.d";
+import { Phase, Player, Verdict } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
+import GameScreen from "../menu/game/GameScreen";
 
 export function create_gameManager(): GameManager {
 
@@ -40,10 +41,10 @@ export function create_gameManager(): GameManager {
             }
         },
 
-        host_button() {
+        sendHostPacket() {
             gameManager.Server.send(`"Host"`);
         },
-        join_button() {
+        sendJoinPacket() {
             let completePromise: () => void;
             let promise = new Promise<void>((resolver) => {
                 completePromise = resolver;
@@ -69,7 +70,7 @@ export function create_gameManager(): GameManager {
             return promise;
         },
 
-        setName_button(name) {
+        sendSetNamePacket(name) {
             // if(name)
                 gameManager.Server.send(JSON.stringify({
                     "SetName":{
@@ -77,7 +78,7 @@ export function create_gameManager(): GameManager {
                     }
                 }));
         },
-        startGame_button() {
+        sendStartGamePacket() {
             gameManager.Server.send(`"StartGame"`);
         },
         phaseTimeButton(phase: Phase, time: number) {
@@ -90,7 +91,7 @@ export function create_gameManager(): GameManager {
                 }))
             }
         },
-        roleList_button(roleListEntries) {
+        sendSetRoleListPacket(roleListEntries) {
             gameManager.Server.send(JSON.stringify({
                 "SetRoleList":{
                     "role_list": {
@@ -100,31 +101,28 @@ export function create_gameManager(): GameManager {
             }));
         },
 
-        judgement_button(judgement) {
-            if(judgement===1) judgement="Innocent";
-            if(judgement===-1) judgement="Guilty";
-            if(judgement===0) judgement="Abstain";
+        sendJudgementPacket(judgement: Verdict) {
             gameManager.Server.send(JSON.stringify({
                 "Judgement":{
-                    "verdict":judgement
+                    "verdict":judgement as string
                 }
             }));
         },
-        vote_button(votee_index) {
+        sendVotePacket(votee_index) {
             gameManager.Server.send(JSON.stringify({
                 "Vote":{
                     "player_index":votee_index
                 }
             }));
         },
-        target_button(target_index_list) {
+        sendTargetPacket(target_index_list) {
             gameManager.Server.send(JSON.stringify({
                 "Target":{
                     "player_index_list":target_index_list
                 }
             }));
         },
-        dayTarget_button(target_index) {
+        sendDayTargetPacket(target_index) {
             gameManager.Server.send(JSON.stringify({
                 "DayTarget":{
                     "player_index":target_index
@@ -132,21 +130,21 @@ export function create_gameManager(): GameManager {
             }));
         },
 
-        saveWill_button(will) {
+        sendSaveWillPacket(will) {
             gameManager.Server.send(JSON.stringify({
                 "SaveWill":{
                     "will":will
                 }
             }));
         },
-        sendMessage_button(text) {
+        sendSendMessagePacket(text) {
             gameManager.Server.send(JSON.stringify({
                 "SendMessage":{
                     "text":text
                 }
             }));
         },
-        sendWhisper_button(playerIndex, text) {
+        sendSendWhisperPacket(playerIndex, text) {
             gameManager.Server.send(JSON.stringify({
                 "SendWhisper":{
                     "player_index":playerIndex,
@@ -161,7 +159,6 @@ export function create_gameManager(): GameManager {
     
         tick(timePassedms) {
             //console.log("tick");
-            console.log(Anchor.instance?.state.content);
             gameManager.gameState.secondsLeft = Math.round(gameManager.gameState.secondsLeft - timePassedms/1000)
             if(gameManager.gameState.secondsLeft < 0)
                 gameManager.gameState.secondsLeft = 0;

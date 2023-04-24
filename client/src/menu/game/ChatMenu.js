@@ -60,13 +60,13 @@ export default class ChatMenu extends React.Component {
                     throw new Error("Invalid player index");
                 }
                 const message = text.substring(indexOfFirstSpace + 1);
-                GAME_MANAGER.sendWhisper_button(playerIndex, message);
+                GAME_MANAGER.sendSendWhisperPacket(playerIndex, message);
             } catch (e) {
-                GAME_MANAGER.sendMessage_button(text);                
+                GAME_MANAGER.sendSendMessagePacket(text);                
             }
         } else {
             if (text.replace("\n", "").replace("\r", "").trim() !== "") {
-                GAME_MANAGER.sendMessage_button(text);
+                GAME_MANAGER.sendSendMessagePacket(text);
             }
         }
         ChatMenu.instance.setState({

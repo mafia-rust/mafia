@@ -31,20 +31,20 @@ export interface GameManager {
     removeStateListener(listener: StateListener): void;
     invokeStateListeners(type: any): void;
 
-    host_button(): void;
-    join_button(): Promise<void>;
-    setName_button(name: string): void;
-    startGame_button(): void;
+    sendHostPacket(): void;
+    sendJoinPacket(): Promise<void>;
+    sendSetNamePacket(name: string): void;
+    sendStartGamePacket(): void;
     phaseTimeButton(phase: Phase, time: number): void;
-    roleList_button(roleListEntries: any): void;
+    sendSetRoleListPacket(roleListEntries: any): void;
     
-    judgement_button(judgement: Judgement): void;
-    vote_button(votee_index: number): void;
-    target_button(target_index_list: number[]): void;
-    dayTarget_button(target_index: number): void;
-    saveWill_button(will: string): void;
-    sendMessage_button(text: string): void;
-    sendWhisper_button(playerIndex: number, text: string): void;
+    sendJudgementPacket(judgement: Judgement): void;
+    sendVotePacket(votee_index: number): void;
+    sendTargetPacket(target_index_list: number[]): void;
+    sendDayTargetPacket(target_index: number): void;
+    sendSaveWillPacket(will: string): void;
+    sendSendMessagePacket(text: string): void;
+    sendSendWhisperPacket(playerIndex: number, text: string): void;
     
     getPlayer(playerIndex: PlayerIndex): Player | null;
 

@@ -2,6 +2,11 @@ import React from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import GameState, { Phase } from "../../game/gameState.d";
+import GameScreen from "./GameScreen";
+import WillMenu from "./WillMenu";
+import PlayerListMenu from "./PlayerListMenu";
+import GraveyardMenu from "./GraveyardMenu";
+import WikiMenu from "./WikiMenu";
 
 type PhaseRowMenuProps = {
     phase: Phase | null,
@@ -49,9 +54,9 @@ export default class PhaseRowMenu extends React.Component<PhaseRowMenuProps, Pha
                                 gridAutoColumns: "1fr",
                             }}
                         >
-                            <button style={{gridColumn: 2}} onClick={()=>{GAME_MANAGER.judgement_button(-1)}}>{translate("verdict.Guilty")}</button>
-                            <button style={{gridColumn: 3}} onClick={()=>{GAME_MANAGER.judgement_button(0)}}>{translate("verdict.Abstain")}</button>
-                            <button style={{gridColumn: 4}} onClick={()=>{GAME_MANAGER.judgement_button(1)}}>{translate("verdict.Innocent")}</button>
+                            <button style={{gridColumn: 2}} onClick={()=>{GAME_MANAGER.sendJudgementPacket(-1)}}>{translate("verdict.Guilty")}</button>
+                            <button style={{gridColumn: 3}} onClick={()=>{GAME_MANAGER.sendJudgementPacket(0)}}>{translate("verdict.Abstain")}</button>
+                            <button style={{gridColumn: 4}} onClick={()=>{GAME_MANAGER.sendJudgementPacket(1)}}>{translate("verdict.Innocent")}</button>
                             <div style={{gridColumn: 5}}></div>
                         </div></div>);})()}
                 </div>);
@@ -72,13 +77,12 @@ export default class PhaseRowMenu extends React.Component<PhaseRowMenuProps, Pha
         {this.renderPhaseSpecific()}<br/>
         {this.renderMenuButtons()}
     </div>)}
-    //Will Menu, Playerlist Menu, Rolelist/Graveyard menu, Wiki Menu
     renderMenuButtons(){
         return <div>
-            {/* <button onClick={()=>{GAME_MANAGER.menu_button("Will")}}>{translate("menu.will")}</button>
-            <button onClick={()=>{GAME_MANAGER.menu_button("Playerlist")}}>{translate("menu.playerlist")}</button>
-            <button onClick={()=>{GAME_MANAGER.menu_button("Rolelist")}}>{translate("menu.rolelist")}</button>
-            <button onClick={()=>{GAME_MANAGER.menu_button("Wiki")}}>{translate("menu.wiki")}</button> */}
+            <button onClick={()=>{GameScreen.instance.openOrCloseMenu(<WillMenu/>)}}>{translate("menu.will.title")}</button>
+            <button onClick={()=>{GameScreen.instance.openOrCloseMenu(<PlayerListMenu/>)}}>{translate("menu.playerList.title")}</button>
+            <button onClick={()=>{GameScreen.instance.openOrCloseMenu(<GraveyardMenu/>)}}>{translate("menu.graveyard.title")}</button>
+            <button onClick={()=>{GameScreen.instance.openOrCloseMenu(<WikiMenu role={null}/>)}}>{translate("menu.wiki.title")}</button>
         </div>
     }
     renderPhaseName(){

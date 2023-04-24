@@ -35,7 +35,7 @@ export default class PlayerListMenu extends React.Component {
                     return(<div>
                         <div>{votedString}</div>
                         <button className="button gm-button" onClick={()=>{
-                            GAME_MANAGER.vote_button(null);
+                            GAME_MANAGER.sendVotePacket(null);
                         }}>Reset Vote</button>
                     </div>);
                 }
@@ -50,7 +50,7 @@ export default class PlayerListMenu extends React.Component {
                     return(<div>
                         <div>{targetStringList.join(", ")+"."}</div>
                         <button className="button gm-button" onClick={()=>{
-                            GAME_MANAGER.target_button([]);
+                            GAME_MANAGER.sendTargetPacket([]);
                         }}>Reset Targets</button>
                     </div>);
                 }
@@ -71,12 +71,12 @@ export default class PlayerListMenu extends React.Component {
 
             <div>
                 {((player)=>{if(player.buttons.target){return(<button className="button gm-button" onClick={()=>{
-                        GAME_MANAGER.target_button([...GAME_MANAGER.gameState.targets, playerIndex]);
+                        GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.gameState.targets, playerIndex]);
                     }}
                 >{translate("button.Target")}</button>)}})(player)}
-                {((player)=>{if(player.buttons.vote){return(<button className="button gm-button" onClick={()=>{GAME_MANAGER.vote_button(playerIndex)}}
+                {((player)=>{if(player.buttons.vote){return(<button className="button gm-button" onClick={()=>{GAME_MANAGER.sendVotePacket(playerIndex)}}
                 >{translate("button.Vote")}</button>)}})(player)}
-                {((player)=>{if(player.buttons.dayTarget){return(<button className="button gm-button" onClick={()=>{GAME_MANAGER.dayTarget_button(playerIndex)}}
+                {((player)=>{if(player.buttons.dayTarget){return(<button className="button gm-button" onClick={()=>{GAME_MANAGER.sendDayTargetPacket(playerIndex)}}
                 >{translate("button.DayTarget")}</button>)}})(player)}
                 {((player)=>{if(canWhisper){return(<button className="button gm-button" onClick={()=>{
                     ChatMenu.prependWhisper(playerIndex)
@@ -100,6 +100,16 @@ export default class PlayerListMenu extends React.Component {
     </div>}
 
     render(){return(<div>
+        
+        {translate("menu.playerList.title")}
+
+        <button className="button gm-button" onClick={()=>{
+            this.setState({
+                hideDead: !this.state.hideDead
+            })
+        }}>LANG TODO hide dead</button>
+        <br/>
+        <br/>
         {this.renderPhaseSpecific()}
         <br/>
         {this.renderPlayers(this.state.gameState.players)}

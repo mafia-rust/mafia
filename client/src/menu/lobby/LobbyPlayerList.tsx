@@ -46,12 +46,12 @@ export default class LobbyPlayerList extends React.Component<any, PlayerListStat
             onChange={(e)=>{this.setState({name: e.target.value})}}
             onKeyUp={(e)=>{
                 if(e.key === 'Enter')
-                    GAME_MANAGER.setName_button(this.state.name);
+                    GAME_MANAGER.sendSetNamePacket(this.state.name);
             }}
         />
 
         <button className="lm-set-name-button" onClick={()=>{
-            GAME_MANAGER.setName_button(this.state.name)
+            GAME_MANAGER.sendSetNamePacket(this.state.name)
         }}>{translate("menu.lobby.button.set_name")}</button>
     </div>)}
 

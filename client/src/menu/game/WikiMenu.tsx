@@ -57,7 +57,7 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
         </div>
     }
     render(){return(<div style={{height: "100%", overflowX:"hidden"}}>
-        {translate("menu.wiki.wiki")}
+        {translate("menu.wiki.title")}
         {/* TODO, rolepicker code here*/}
         {this.state.role?this.renderRole(this.state.role):null}
         {this.renderInvestigativeResults()}

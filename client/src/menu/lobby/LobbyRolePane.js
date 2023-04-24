@@ -131,7 +131,7 @@ export default class LobbyRolePane extends React.Component {
         this.setState({
             roleList: newList
         });
-        GAME_MANAGER.roleList_button(this.state.roleList);
+        GAME_MANAGER.sendSetRoleListPacket(this.state.roleList);
     }
 }
 

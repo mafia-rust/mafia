@@ -37,6 +37,10 @@
     "menu.wiki.title": "Wiki",
     "menu.wiki.investigatorResults": "Investigator Results",
 
+    "menu.playerList.title": "Player List",
+
+    "menu.graveyard.title": "Graveyard",
+
     "role.Sheriff.name": "Sheriff",
     "role.Sheriff.description": "Target a player to find out if they're innocent or suspicious",
     "role.Sheriff.advancedDescription": "A player could wrongly look suspicious if they're framed, disguised, transported, or otherwise. A Godfather will also look innocent even though they're evil.",

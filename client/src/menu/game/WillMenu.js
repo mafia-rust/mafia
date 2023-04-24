@@ -32,15 +32,15 @@ export default class WillMenu extends React.Component {
                 className="textarea-text"
                 onKeyPress={(e) => {
                     if(e.code === "Enter") {
-                        GAME_MANAGER.saveWill_button(this.state.willFeild)
+                        GAME_MANAGER.sendSaveWillPacket(this.state.willFeild)
                     }
                 }}
                 value={this.state.willFeild}
                 onChange={(e)=>{this.setState({willFeild : e.target.value});}}>
             </textarea>
             <br/>
-            <button className="gm-button" onClick={()=>{GAME_MANAGER.saveWill_button(this.state.willFeild)}}>{translate("menu.will.save")}</button>
-            <button className="gm-button" onClick={()=>{GAME_MANAGER.sendMessage_button(this.state.gameState.will)}}>{translate("menu.will.post")}</button>
+            <button className="gm-button" onClick={()=>{GAME_MANAGER.sendSaveWillPacket(this.state.willFeild)}}>{translate("menu.will.save")}</button>
+            <button className="gm-button" onClick={()=>{GAME_MANAGER.sendSendMessagePacket(this.state.gameState.will)}}>{translate("menu.will.post")}</button>
         </div>
 
         <div>

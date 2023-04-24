@@ -44,7 +44,7 @@ export default class StartMenu extends React.Component {
         GAME_MANAGER.Server.close();
         await GAME_MANAGER.Server.open();
 
-        GAME_MANAGER.host_button();
+        GAME_MANAGER.sendHostPacket();
         // Lobby menu opens when AcceptHost packet is recieved
     }
 }

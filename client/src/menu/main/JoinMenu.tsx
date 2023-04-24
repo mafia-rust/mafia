@@ -39,10 +39,10 @@ export default class JoinMenu extends React.Component<any, JoinMenuState> {
         GAME_MANAGER.Server.close();
         await GAME_MANAGER.Server.open();
         
-        await GAME_MANAGER.join_button();
+        await GAME_MANAGER.sendJoinPacket();
         
         if (this.state.name && this.state.name !== " ") {
-            GAME_MANAGER.setName_button(this.state.name);
+            GAME_MANAGER.sendSetNamePacket(this.state.name);
         }
     }
     render(){return(<div style={{display: "flex", flexDirection: "column"}}>
