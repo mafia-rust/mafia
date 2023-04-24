@@ -1,7 +1,7 @@
 import React from "react";
-import translate from "../../game/lang";
-import GAME_MANAGER from "../../index";
-import GameState, { Grave, RoleListEntry } from "../../game/gameState.d";
+import translate from "../../../game/lang";
+import GAME_MANAGER from "../../../index";
+import GameState, { Grave, RoleListEntry } from "../../../game/gameState.d";
 
 interface GraveyardMenuState {
     gameState: GameState,

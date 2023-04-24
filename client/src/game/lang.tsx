@@ -26,8 +26,9 @@ export function getChatString(message: any): string {
     if(message.Normal !== undefined){
         if(message.Normal.message_sender.Player !== undefined){
             let playerIndex = message.Normal.message_sender.Player;
-            return translate("chatmessage.Normal", 
-                GAME_MANAGER.getPlayer(playerIndex), 
+            return translate("chatmessage.Normal",
+                GAME_MANAGER.gameState.players[playerIndex],
+                //GAME_MANAGER.getPlayer(playerIndex), 
                 message.Normal.text
             );
         }else{
@@ -36,15 +37,19 @@ export function getChatString(message: any): string {
     }
     if(message.Whisper !== undefined){
         return translate("chatmessage.Whisper", 
-            GAME_MANAGER.getPlayer(message.Whisper.from_player_index), 
-            GAME_MANAGER.getPlayer(message.Whisper.to_player_index),
+            GAME_MANAGER.gameState.players[message.Whisper.from_player_index],
+            GAME_MANAGER.gameState.players[message.Whisper.to_player_index],
+            // GAME_MANAGER.getPlayer(message.Whisper.from_player_index), 
+            // GAME_MANAGER.getPlayer(message.Whisper.to_player_index),
             message.Whisper.text
         );
     }
     if(message.BroadcastWhisper!==undefined){
         return translate("chatmessage.BroadcastWhisper",
-            GAME_MANAGER.getPlayer(message.BroadcastWhisper.whisperer),
-            GAME_MANAGER.getPlayer(message.BroadcastWhisper.whisperee)
+            GAME_MANAGER.gameState.players[message.BroadcastWhisper.whisperer],
+            GAME_MANAGER.gameState.players[message.BroadcastWhisper.whisperee],
+            // GAME_MANAGER.getPlayer(message.BroadcastWhisper.whisperer),
+            // GAME_MANAGER.getPlayer(message.BroadcastWhisper.whisperee)
         );
     }
     if(message.RoleAssignment!==undefined){
@@ -63,7 +68,8 @@ export function getChatString(message: any): string {
     if(message.PlayerDied!==undefined){
         //TODO, role doesnt work properly
         return translate("chatmessage.PlayerDied",
-            GAME_MANAGER.getPlayer(message.PlayerDied.grave.player),
+            GAME_MANAGER.gameState.players[message.PlayerDied.grave.player],
+            // GAME_MANAGER.getPlayer(message.PlayerDied.grave.player),
             message.PlayerDied.grave.role,
             "UNINPLEMENTED",
             message.PlayerDied.grave.will
@@ -84,27 +90,33 @@ export function getChatString(message: any): string {
     if(message.Voted!==undefined){
         if(message.Voted.votee==null){
             return translate("chatmessage.Voted_null",
-                GAME_MANAGER.getPlayer(message.Voted.voter)
+                GAME_MANAGER.gameState.players[message.Voted.voter],
+                // GAME_MANAGER.getPlayer(message.Voted.voter)
             );
         }
         return translate("chatmessage.Voted",
-            GAME_MANAGER.getPlayer(message.Voted.voter),
-            GAME_MANAGER.getPlayer(message.Voted.votee),
+            GAME_MANAGER.gameState.players[message.Voted.voter],
+            GAME_MANAGER.gameState.players[message.Voted.votee],
+            // GAME_MANAGER.getPlayer(message.Voted.voter),
+            // GAME_MANAGER.getPlayer(message.Voted.votee),
         );
     }
     if(message.PlayerOnTrial!==undefined){
         return translate("chatmessage.PlayerOnTrial",
-            GAME_MANAGER.getPlayer(message.PlayerOnTrial.player_index)
+            GAME_MANAGER.gameState.players[message.PlayerOnTrial.player_index],
+            // GAME_MANAGER.getPlayer(message.PlayerOnTrial.player_index)
         );
     }
     if(message.JudgementVote!==undefined){
         return translate("chatmessage.JudgementVote",
-            GAME_MANAGER.getPlayer(message.JudgementVote.voter_player_index)
+            GAME_MANAGER.gameState.players[message.JudgementVote.voter_player_index],
+            // GAME_MANAGER.getPlayer(message.JudgementVote.voter_player_index)
         );
     }
     if(message.JudgementVerdict!==undefined){
         return translate("chatmessage.JudgementVerdict",
-            GAME_MANAGER.getPlayer(message.JudgementVerdict.voter_player_index),
+            GAME_MANAGER.gameState.players[message.JudgementVerdict.voter_player_index],
+            // GAME_MANAGER.getPlayer(message.JudgementVerdict.voter_player_index),
             lang.get("verdict."+message.JudgementVerdict.verdict)
         );
     }
@@ -121,17 +133,21 @@ export function getChatString(message: any): string {
     if(message.Targeted!==undefined){
         if(message.Targeted.target!==null){
             return translate("chatmessage.Targeted",
-                GAME_MANAGER.getPlayer(message.Targeted.targeter),
-                GAME_MANAGER.getPlayer(message.Targeted.target)
+                GAME_MANAGER.gameState.players[message.Targeted.targeter],
+                GAME_MANAGER.gameState.players[message.Targeted.target],
+                // GAME_MANAGER.getPlayer(message.Targeted.targeter),
+                // GAME_MANAGER.getPlayer(message.Targeted.target)
             );
         }
         return translate("chatmessage.Targeted_null",
-            GAME_MANAGER.getPlayer(message.Targeted.targeter)
+            GAME_MANAGER.gameState.players[message.Targeted.targeter],
+            // GAME_MANAGER.getPlayer(message.Targeted.targeter)
         );
     }
     if(message.MayorRevealed !== undefined) {
         return translate("chatmessage.MayorRevealed",
-            GAME_MANAGER.getPlayer(message.MayorRevealed.player_index)
+            GAME_MANAGER.gameState.players[message.MayorRevealed.player_index],
+            // GAME_MANAGER.getPlayer(message.MayorRevealed.player_index)
         );
     }
     return translate("chatmessage."+message);

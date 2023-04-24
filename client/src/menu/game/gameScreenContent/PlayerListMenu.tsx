@@ -1,12 +1,22 @@
 import React from "react";
-import translate from "../../game/lang";
-import GAME_MANAGER from "../../index";
+import translate from "../../../game/lang";
+import GAME_MANAGER from "../../../index";
 import "./playerListMenu.css"
-import "./gameScreen.css"
+import "./../gameScreen.css"
 import ChatMenu from "./ChatMenu";
+import GameState, { Player, PlayerIndex } from "../../../game/gameState.d";
 
-export default class PlayerListMenu extends React.Component {
-    constructor(props) {
+interface PlayerListMenuProps {
+}
+interface PlayerListMenuState {
+    gameState: GameState,
+    hideDead: boolean,
+}
+
+export default class PlayerListMenu extends React.Component<PlayerListMenuProps, PlayerListMenuState> {
+    listener: () => void;
+
+    constructor(props: PlayerListMenuProps) {
         super(props);
 
         this.state = {
@@ -41,10 +51,9 @@ export default class PlayerListMenu extends React.Component {
                 }
                 return null;
             case"Night":
-                let targetStringList = [];
-                for(let i = 0; i < this.state.gameState.targets.length; i++){
-                    targetStringList.push(GAME_MANAGER.getPlayer(this.state.gameState.targets[i]).toString());
-                }
+                let targetStringList = this.state.gameState.targets.map((playerIndex: PlayerIndex)=>{
+                    return this.state.gameState.players[playerIndex].toString();
+                });
 
                 if(targetStringList.length>0){
                     return(<div>
@@ -60,26 +69,39 @@ export default class PlayerListMenu extends React.Component {
         }
     }
 
-    renderPlayer(player, playerIndex){
+    renderPlayer(player: Player){
         
-        let canWhisper = this.state.gameState.phase !== "Night" && GAME_MANAGER.gameState.phase !== null && this.state.gameState.myIndex !== playerIndex;
+        let canWhisper = 
+            this.state.gameState.phase !== "Night" && 
+            GAME_MANAGER.gameState.phase !== null && 
+            this.state.gameState.myIndex !== player.index;
 
         // let buttonCount = player.buttons.dayTarget + player.buttons.target + player.buttons.vote + canWhisper;
 
-        return(<div key={playerIndex}>
-            {GAME_MANAGER.getPlayer(playerIndex).toString()}<br/>
+        return(<div key={player.index}>
+            {player.toString()}<br/>
 
             <div>
-                {((player)=>{if(player.buttons.target){return(<button className="button gm-button" onClick={()=>{
-                        GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.gameState.targets, playerIndex]);
-                    }}
-                >{translate("button.Target")}</button>)}})(player)}
-                {((player)=>{if(player.buttons.vote){return(<button className="button gm-button" onClick={()=>{GAME_MANAGER.sendVotePacket(playerIndex)}}
-                >{translate("button.Vote")}</button>)}})(player)}
-                {((player)=>{if(player.buttons.dayTarget){return(<button className="button gm-button" onClick={()=>{GAME_MANAGER.sendDayTargetPacket(playerIndex)}}
+                {((player)=>{if(player.buttons.target){return(
+                    <button className="button gm-button" onClick={()=>{
+                        GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.gameState.targets, player.index]);
+                    }}>{translate("button.Target")}</button>
+                )}})(player)}
+
+                {((player)=>{if(player.buttons.vote){return(
+                    <button className="button gm-button" onClick={()=>{
+                        GAME_MANAGER.sendVotePacket(player.index)}}
+                    >{translate("button.Vote")}</button>
+                )}})(player)}
+
+                {((player)=>{if(player.buttons.dayTarget){return(
+                    <button className="button gm-button" onClick={()=>{
+                        GAME_MANAGER.sendDayTargetPacket(player.index)}}
                 >{translate("button.DayTarget")}</button>)}})(player)}
-                {((player)=>{if(canWhisper){return(<button className="button gm-button" onClick={()=>{
-                    ChatMenu.prependWhisper(playerIndex)
+
+                {((player)=>{if(canWhisper){return(
+                    <button className="button gm-button" onClick={()=>{
+                        ChatMenu.prependWhisper(player.index)
                 }}>{translate("button.Whisper")}</button>)}})(player)}
 
                 <div></div>
@@ -88,11 +110,11 @@ export default class PlayerListMenu extends React.Component {
             
         </div>)
     }
-    renderPlayers(players){return<div>
+    renderPlayers(players: Player[]){return<div>
         {
-            players.map((player, playerIndex)=>{
+            players.map((player)=>{
                 if(!this.state.hideDead || player.alive){
-                    return this.renderPlayer(player, playerIndex);
+                    return this.renderPlayer(player);
                 }
                 return null;
             }, this)
