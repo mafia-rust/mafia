@@ -87,12 +87,18 @@ export interface Grave {
     dayNumber: number,
 }
 
-export type GraveRole = "Cleaned" | "Stoned" | Role;
-export type GraveDeathCause = "Lynching" | GraveKiller[];
+export type GraveRole = "Cleaned" | "Stoned" | {
+    Role: Role
+};
+export type GraveDeathCause = "Lynching" | {
+    Killers: {
+        killers: GraveKiller[]
+    }
+};
 export type GraveKiller = "Mafia" | Role;
 export type Role = string;
 
 export enum GravePhase {
-    Day, 
-    Night
+    Day = "Day", 
+    Night = "Night"
 }

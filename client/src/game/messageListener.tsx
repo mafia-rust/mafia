@@ -155,7 +155,7 @@ export default function messageListener(serverMessage: any){
         break;
         case"AddGrave":
             let grave: Grave = {
-                playerIndex : serverMessage.grave.player_index as PlayerIndex,
+                playerIndex : serverMessage.grave.player as PlayerIndex,
                 role :        serverMessage.grave.role as GraveRole,
                 deathCause :  serverMessage.grave.death_cause as GraveDeathCause,
                 will :        serverMessage.grave.will as string,

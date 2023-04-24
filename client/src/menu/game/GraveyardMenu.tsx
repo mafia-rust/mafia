@@ -29,15 +29,24 @@ export default class GraveyardMenu extends React.Component<any, GraveyardMenuSta
     }
 
     renderGrave(grave: Grave, graveIndex: number){
+        let deathCauseString: string;
+        if(grave.deathCause === "Lynching"){
+            deathCauseString = "a lynching.";
+        } else  {
+            deathCauseString = grave.deathCause.Killers.killers.join() + ".";
+        }
+
+        let graveRoleString: string;
+        if (grave.role === "Cleaned" || grave.role === "Stoned") {
+            graveRoleString = grave.role;
+        } else {
+            graveRoleString = grave.role.Role;
+        }
+
         return(<div key={graveIndex}>
-            {grave.diedPhase} {grave.dayNumber}<br/>
-            {grave.playerIndex+1}:{this.state.gameState.players[grave.playerIndex]?.toString()}<br/>
-            {grave.role} killed by {(()=>{
-                if(grave.deathCause === "Lynching"){
-                    return <div>{"a lynching."}</div>
-                }
-                return <div>{grave.deathCause?.join() + "."}</div>
-            })()}
+            {grave.diedPhase.toString()} {grave.dayNumber}<br/>
+            {this.state.gameState.players[grave.playerIndex]?.toString()}<br/>
+            {graveRoleString} killed by {deathCauseString}
         </div>)
     }
 
