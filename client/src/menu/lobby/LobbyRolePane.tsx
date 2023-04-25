@@ -3,13 +3,14 @@ import GAME_MANAGER from "../../index";
 import { RoleListEntry } from "../../game/gameState.d";
 import "../../index.css";
 import RolePicker from "../RolePicker";
+import { StateEventType } from "../../game/net/gameManager.d";
 
 interface RolePaneState {
     roleList: RoleListEntry[]
 }
 
 export default class LobbyRolePane extends React.Component<any, RolePaneState> {
-    listener: (type: any) => void;
+    listener: (type: StateEventType) => void;
 
     constructor(props: any){
         super(props);
@@ -18,8 +19,8 @@ export default class LobbyRolePane extends React.Component<any, RolePaneState> {
             roleList: [...GAME_MANAGER.gameState.roleList]
         }
 
-        this.listener = (type: any) => {
-            if (type === "RoleList") {
+        this.listener = (type) => {
+            if (type === "roleList") {
                 this.setState({
                     roleList: [...GAME_MANAGER.gameState.roleList]
                 })

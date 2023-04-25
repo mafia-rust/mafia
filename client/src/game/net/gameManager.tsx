@@ -1,13 +1,13 @@
-import { create_gameState } from "./gameState";
-import Anchor from "../menu/Anchor";
-import StartMenu from "../menu/main/StartMenu";
-import GAME_MANAGER from "../index";
-import messageListener from "./messageListener";
-import CONFIG from "../resources/config.json"
+import { create_gameState as createGameState } from "../gameState";
+import Anchor from "../../menu/Anchor";
+import StartMenu from "../../menu/main/StartMenu";
+import GAME_MANAGER from "../../index";
+import messageListener from "../net/messageListener";
+import CONFIG from "../../resources/config.json"
 import React from "react";
-import { Phase, Player, RoleListEntry, Verdict } from "./gameState.d";
+import { Phase, Player, RoleListEntry, Verdict } from "../gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
-import GameScreen from "../menu/game/GameScreen";
+import { ToClientPacket, ToServerPacket } from "./packet";
 
 export function create_gameManager(): GameManager {
 
@@ -18,9 +18,9 @@ export function create_gameManager(): GameManager {
 
         name: undefined,
 
-        Server : create_server(),
+        server : createServer(),
 
-        gameState : create_gameState(),
+        gameState : createGameState(),
 
         listeners : [],
         addStateListener(listener) {
@@ -28,12 +28,12 @@ export function create_gameManager(): GameManager {
         },
         addAndCallStateListener(listener): void {
             gameManager.listeners.push(listener);
-            listener(null);
+            listener();
         },
         removeStateListener(listener) {
             gameManager.listeners.splice(gameManager.listeners.indexOf(listener));
         },
-        invokeStateListeners(type=null) {
+        invokeStateListeners(type) {
             for(let i = 0; i < gameManager.listeners.length; i++){
                 if(typeof(gameManager.listeners[i])==="function"){
                     gameManager.listeners[i](type);
@@ -42,7 +42,7 @@ export function create_gameManager(): GameManager {
         },
 
         sendHostPacket() {
-            gameManager.Server.send(`"Host"`);
+            this.server.sendPacket({type: "host"});
         },
         sendJoinPacket() {
             let completePromise: () => void;
@@ -61,96 +61,84 @@ export function create_gameManager(): GameManager {
 
             let actual_code: number | null = parseInt(gameManager.roomCode!, 18);
 
-            gameManager.Server.send(JSON.stringify({
-                "Join":{
-                    "room_code": actual_code == null ? 0 : actual_code
-                }
-            }));
+            this.server.sendPacket({
+                type: "join",
+                roomCode: actual_code == null ? 0 : actual_code
+            });
 
             return promise;
         },
 
         sendSetNamePacket(name) {
-            // if(name)
-                gameManager.Server.send(JSON.stringify({
-                    "SetName":{
-                        "name":name
-                    }
-                }));
+            this.server.sendPacket({
+                type: "setName",
+                name: name
+            });
         },
         sendStartGamePacket() {
-            gameManager.Server.send(`"StartGame"`);
+            this.server.sendPacket({
+                type: "startGame"
+            });
         },
         phaseTimeButton(phase: Phase, time: number) {
             if (isValidPhaseTime(time)) {
-                gameManager.Server.send(JSON.stringify({
-                    "SetPhaseTime":{
-                        "phase": phase,
-                        "time": time
-                    }
-                }))
+                this.server.sendPacket({
+                    type: "setPhaseTime",
+                    phase: phase,
+                    time: time
+                });
             }
         },
         sendSetRoleListPacket(roleListEntries: RoleListEntry[]) {
-            gameManager.Server.send(JSON.stringify({
-                "SetRoleList":{
-                    "role_list": {
-                        "role_list": roleListEntries
-                    }
-                }
-            }));
+            this.server.sendPacket({
+                type: "setRoleList",
+                roleList: roleListEntries
+            });
         },
 
         sendJudgementPacket(judgement: Verdict) {
-            gameManager.Server.send(JSON.stringify({
-                "Judgement":{
-                    "verdict":judgement as string
-                }
-            }));
+            this.server.sendPacket({
+                type: "judgement",
+                verdict: judgement
+            });
         },
-        sendVotePacket(votee_index) {
-            gameManager.Server.send(JSON.stringify({
-                "Vote":{
-                    "player_index":votee_index
-                }
-            }));
+        sendVotePacket(voteeIndex) {
+            this.server.sendPacket({
+                type: "vote",
+                playerIndex: voteeIndex
+            });
         },
-        sendTargetPacket(target_index_list) {
-            gameManager.Server.send(JSON.stringify({
-                "Target":{
-                    "player_index_list":target_index_list
-                }
-            }));
+        sendTargetPacket(targetIndexList) {
+            this.server.sendPacket({
+                type: "target",
+                playerIndexList: targetIndexList
+            });
         },
-        sendDayTargetPacket(target_index) {
-            gameManager.Server.send(JSON.stringify({
-                "DayTarget":{
-                    "player_index":target_index
-                }
-            }));
+        sendDayTargetPacket(targetIndex) {
+            this.server.sendPacket({
+                type: "dayTarget",
+                playerIndex: targetIndex
+            });
         },
 
         sendSaveWillPacket(will) {
-            gameManager.Server.send(JSON.stringify({
-                "SaveWill":{
-                    "will":will
-                }
-            }));
+            this.server.sendPacket({
+                type: "saveWill",
+                will: will
+            });
         },
         sendSendMessagePacket(text) {
-            gameManager.Server.send(JSON.stringify({
-                "SendMessage":{
-                    "text":text
-                }
-            }));
+            this.server.sendPacket({
+                type: "sendMessage",
+                text: text
+            });
         },
         sendSendWhisperPacket(playerIndex, text) {
-            gameManager.Server.send(JSON.stringify({
-                "SendWhisper":{
-                    "player_index":playerIndex,
-                    "text":text
-                }
-            }));
+            this.server.sendPacket({
+                type: "sendWhisper",
+                playerIndex: playerIndex,
+                text: text
+            });
         },
         
         messageListener(serverMessage) {
@@ -167,21 +155,20 @@ export function create_gameManager(): GameManager {
     }
     return gameManager;
 }
-function create_server(){
- 
+function createServer(){
 
     let Server: Server = {
         ws: null,
 
-        openListener : (event: any)=>{
+        openListener : ()=>{
             //Server.ws.send("Hello to Server");
         },
-        closeListener : (event: any)=>{
+        closeListener : ()=>{
             Anchor.setContent(<StartMenu/>);
         },
         messageListener: (event: any)=>{
             GAME_MANAGER.messageListener(
-                JSON.parse(event.data)
+                JSON.parse(event.data) as ToClientPacket
             );
         },
 
@@ -207,11 +194,11 @@ function create_server(){
             
             return promise;
         },
-        send : (packets)=>{
+        sendPacket : (packet: ToServerPacket)=>{
             if (Server.ws === null) {
                 console.log("Attempted to send packet to null websocket!");
             } else {
-                Server.ws.send(packets);
+                Server.ws.send(JSON.stringify(packet));
             }
         },
         close : ()=>{

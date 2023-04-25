@@ -14,7 +14,7 @@ use crate::prelude::*;
 use super::chat::night_message::NightInformation;
 use super::chat::{ChatMessage, ChatGroup, MessageSender};
 use super::grave::{GraveRole, GraveKiller};
-use super::role_list::RoleListEntry;
+use super::role_list::{RoleListEntry, create_random_roles};
 use super::settings;
 use super::{phase::{PhaseStateMachine, PhaseType}, player::{Player, PlayerIndex}, role_list::RoleList, settings::Settings, grave::Grave};
 
@@ -35,7 +35,7 @@ impl Game {
 
         //create role list
         let mut settings = settings.clone();
-        let roles = settings.role_list.create_random_roles();
+        let roles = create_random_roles(&settings.role_list);
         
 
         //create players

@@ -3,6 +3,7 @@ import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
 import { Player } from "../../game/gameState.d";
+import { StateEventType } from "../../game/net/gameManager.d";
 
 interface PlayerListState {
     name: string,
@@ -10,7 +11,7 @@ interface PlayerListState {
 }
 
 export default class LobbyPlayerList extends React.Component<any, PlayerListState> {
-    listener: (type: any)=>void;
+    listener: (type: StateEventType)=>void;
     constructor(props: any) {
         super(props);
 
@@ -19,7 +20,7 @@ export default class LobbyPlayerList extends React.Component<any, PlayerListStat
             players: GAME_MANAGER.gameState.players
         };
         this.listener = (type)=>{
-            if (type === "YourName") {
+            if (type === "yourName") {
                 this.setState({
                     name: GAME_MANAGER.gameState.myName!
                 })

@@ -1,7 +1,7 @@
 import React from "react";
 import { getChatString } from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
-import "./../gameScreen.css";
+import "../gameScreen.css";
 import "./chatMenu.css"
 import GameState, { PlayerIndex } from "../../../game/gameState.d";
 

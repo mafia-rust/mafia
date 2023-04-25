@@ -68,50 +68,44 @@ impl FactionAlignment{
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RoleList{
-    pub role_list: Vec<RoleListEntry>
+pub type RoleList = Vec<RoleListEntry>;
+
+pub fn create_random_roles(role_list: &RoleList) -> Vec<Role> {
+    role_list.iter()
+        .map(RoleListEntry::get_random_role)
+        .collect()
 }
-impl RoleList{
-    pub fn create_random_roles(&mut self)->Vec<Role>{
-        //length of out vec will be same as in vec
-        let mut out = Vec::new();
-        for entry in self.role_list.iter_mut(){
-            out.push(entry.get_random_role());
-        }
-        out
-    }
-    pub fn get_all_possible_roles(&self)->Vec<Role>{
-        //if executioner then add jester
-        //if there could be mafioso at beginning then add godfather
-        //if any mafia(besides godfather) then add mafioso
-        todo!()
-    }
-}
-impl Default for RoleList{
-    fn default() -> Self {
-        Self { role_list: Vec::new() }
-    }
+
+pub fn get_all_possible_roles(role_list: &RoleList) -> Vec<Role> {
+    //if executioner then add jester
+    //if there could be mafioso at beginning then add godfather
+    //if any mafia(besides godfather) then add mafioso
+    todo!()
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-pub enum RoleListEntry{
+#[serde(tag = "type", rename_all = "camelCase")]
+pub enum RoleListEntry {
+    #[serde(rename_all = "camelCase")]
     Exact {
         faction: Faction,
         faction_alignment: FactionAlignment,
         role: Role,
     },
+    #[serde(rename_all = "camelCase")]
     FactionAlignment {
         faction: Faction,
         faction_alignment: FactionAlignment,
     },
+    #[serde(rename_all = "camelCase")]
     Faction {
         faction: Faction,
     },
     Any
 }
+
 impl RoleListEntry{
-    pub fn get_random_role(&mut self) -> Role {
+    pub fn get_random_role(&self) -> Role {
         let roles = self.get_possible_roles();
 
         match roles.get(rand::random::<usize>() % roles.len()) {
@@ -123,8 +117,7 @@ impl RoleListEntry{
                 }
                 //if cant find role then try again with any
                 else{
-                    *self = RoleListEntry::Any;
-                    self.get_random_role()
+                    RoleListEntry::Any.get_random_role()
                 }
             },
         }

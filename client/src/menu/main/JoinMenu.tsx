@@ -36,8 +36,8 @@ export default class JoinMenu extends React.Component<any, JoinMenuState> {
 
         Anchor.setContent(LoadingScreen.create(LoadingScreen.Type.Join));
 
-        GAME_MANAGER.Server.close();
-        await GAME_MANAGER.Server.open();
+        GAME_MANAGER.server.close();
+        await GAME_MANAGER.server.open();
         
         await GAME_MANAGER.sendJoinPacket();
         

@@ -5,7 +5,9 @@ use super::player::PlayerIndex;
 use super::role::Role;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Grave {
+    #[serde(rename = "playerIndex")]
     player: PlayerIndex,
 
     role: GraveRole,
@@ -17,25 +19,33 @@ pub struct Grave {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[serde(tag = "type", content = "role")]
 pub enum GraveRole {
     Cleaned,
     Stoned,
     Role(Role),
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[serde(tag = "type", content = "killers")]
 pub enum GraveDeathCause {
     Lynching,
-    Killers{killers: Vec<GraveKiller>}
+    Killers(Vec<GraveKiller>)
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[serde(tag = "type", content = "role")]
 pub enum GraveKiller {
     Mafia,
     Role(Role)
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub enum GravePhase {
-    Day, Night
+    Day, 
+    Night
 }
 
 impl Grave{
@@ -46,7 +56,7 @@ impl Grave{
         Grave { 
             player: player_index, 
             role: player.night_variables.grave_role.clone(),
-            death_cause: GraveDeathCause::Killers {killers: player.night_variables.grave_killers.clone()}, 
+            death_cause: GraveDeathCause::Killers(player.night_variables.grave_killers.clone()), 
             will: player.night_variables.grave_will.clone(),
             died_phase: GravePhase::Night, 
             day_number: game.phase_machine.day_number

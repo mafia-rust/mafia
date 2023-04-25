@@ -1,10 +1,11 @@
 import React from "react";
-import { isValidPhaseTime } from "../../game/gameManager";
+import { isValidPhaseTime } from "../../game/net/gameManager";
 import { Phase, PhaseTimes } from "../../game/gameState.d";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
 import phaseTimesJson from "../../resources/phasetimes.json";
+import { StateEventType } from "../../game/net/gameManager.d";
 
 const PHASE_TIME_MODES: ReadonlyMap<string, PhaseTimes> = new Map(Object.entries(phaseTimesJson));
 type PhaseTimeMode = string;
@@ -16,7 +17,7 @@ type PhaseTimePaneState = {
 }
 
 export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePaneState> {
-    listener: (type: any) => void;
+    listener: (type: StateEventType) => void;
     constructor(props: {}) {
         super(props);
 
@@ -29,7 +30,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
         };
 
         this.listener = (type)=>{
-            if(type==="PhaseTime")
+            if(type==="phaseTime")
                 this.setState({
                     mode: this.determineModeFromPhaseTimes(GAME_MANAGER.gameState.phaseTimes),
                     phaseTimes: GAME_MANAGER.gameState.phaseTimes

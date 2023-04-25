@@ -1,4 +1,5 @@
-import GameState, { Phase, PhaseTimes, Player, PlayerIndex, RoleListEntry } from "./gameState.d";
+import GameState, { Phase, PhaseTimes, Player, PlayerIndex, RoleListEntry } from "../gameState.d";
+import { ToClientPacket, ToServerPacket } from "./packet";
 
 export type ServerMessage = any;
 
@@ -10,26 +11,27 @@ export interface Server {
     messageListener(event: Event): void;
 
     open(): Promise<void>;
-    send(packets: string | ArrayBufferLike | Blob | ArrayBufferView): void;
+    sendPacket(packets: ToServerPacket): void;
     close(): void;
 }
 
 // TODO make this better
 type Judgement = "Innocent" | "Guilty" | "Abstain" | -1 | 0 | 1;
 
-export type StateListener = (type: any) => void;
+export type StateEventType = ToClientPacket["type"] | undefined | "tick";
+export type StateListener = (type?: StateEventType) => void;
 
 export interface GameManager {
     roomCode: string | null,
     name: string | undefined,
-    Server: Server,
+    server: Server,
     gameState: GameState,
     listeners: StateListener[],
 
     addStateListener(listener: StateListener): void;
     addAndCallStateListener(listener: StateListener): void;
     removeStateListener(listener: StateListener): void;
-    invokeStateListeners(type: any): void;
+    invokeStateListeners(type?: StateEventType): void;
 
     sendHostPacket(): void;
     sendJoinPacket(): Promise<void>;
@@ -46,7 +48,7 @@ export interface GameManager {
     sendSendMessagePacket(text: string): void;
     sendSendWhisperPacket(playerIndex: number, text: string): void;
     
-    messageListener(serverMessage: ServerMessage): void;
+    messageListener(serverMessage: ToClientPacket): void;
 
     tick(timePassedms: number): void;
 
