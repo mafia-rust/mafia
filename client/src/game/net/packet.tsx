@@ -58,7 +58,7 @@ export type ToClientPacket = {
     alive: [boolean]
 } | {
     type: "playerVotes",
-    voted_for_player: [number]
+    votedForPlayer: [number]
 } | {
     type: "yourWill",
     will: string

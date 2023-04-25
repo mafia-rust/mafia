@@ -111,8 +111,8 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "playerVotes":
-            for(let i = 0; i < GAME_MANAGER.gameState.players.length && i < packet.voted_for_player.length; i++){
-                GAME_MANAGER.gameState.players[i].numVoted = packet.voted_for_player[i];
+            for(let i = 0; i < GAME_MANAGER.gameState.players.length && i < packet.votedForPlayer.length; i++){
+                GAME_MANAGER.gameState.players[i].numVoted = packet.votedForPlayer[i];
             }
         break;
         case "yourWill":

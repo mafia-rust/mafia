@@ -28,12 +28,12 @@ export function create_gameManager(): GameManager {
         },
         addAndCallStateListener(listener): void {
             gameManager.listeners.push(listener);
-            listener(null);
+            listener();
         },
         removeStateListener(listener) {
             gameManager.listeners.splice(gameManager.listeners.indexOf(listener));
         },
-        invokeStateListeners(type=null) {
+        invokeStateListeners(type) {
             for(let i = 0; i < gameManager.listeners.length; i++){
                 if(typeof(gameManager.listeners[i])==="function"){
                     gameManager.listeners[i](type);

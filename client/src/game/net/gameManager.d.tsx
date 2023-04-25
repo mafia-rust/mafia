@@ -18,7 +18,8 @@ export interface Server {
 // TODO make this better
 type Judgement = "Innocent" | "Guilty" | "Abstain" | -1 | 0 | 1;
 
-export type StateListener = (type: any) => void;
+export type StateEventType = ToClientPacket["type"] | undefined | "tick";
+export type StateListener = (type?: StateEventType) => void;
 
 export interface GameManager {
     roomCode: string | null,
@@ -30,7 +31,7 @@ export interface GameManager {
     addStateListener(listener: StateListener): void;
     addAndCallStateListener(listener: StateListener): void;
     removeStateListener(listener: StateListener): void;
-    invokeStateListeners(type: any): void;
+    invokeStateListeners(type?: StateEventType): void;
 
     sendHostPacket(): void;
     sendJoinPacket(): Promise<void>;
