@@ -3,9 +3,17 @@ import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import ForgerMenu from "./ForgerMenu";
 import "./willMenu.css"
+import GameState from "../../../game/gameState.d";
+import { StateListener } from "../../../game/net/gameManager.d";
 
-export default class WillMenu extends React.Component {
-    constructor(props) {
+interface WillMenuState {
+    gameState : GameState,
+    willFeild: string,
+}
+
+export default class WillMenu extends React.Component<{}, WillMenuState> {
+    listener: StateListener
+    constructor(props: {}) {
         super(props);
 
         this.state = {
