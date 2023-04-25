@@ -90,13 +90,13 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
 
     renderInputColumn() {
         return <div className="input-column">
-            {this.renderTimePicker(Phase.Morning)}
-            {this.renderTimePicker(Phase.Discussion)}
-            {this.renderTimePicker(Phase.Voting)}
-            {this.renderTimePicker(Phase.Testimony)}
-            {this.renderTimePicker(Phase.Judgement)}
-            {this.renderTimePicker(Phase.Evening)}
-            {this.renderTimePicker(Phase.Night)}
+            {this.renderTimePicker("morning")}
+            {this.renderTimePicker("discussion")}
+            {this.renderTimePicker("voting")}
+            {this.renderTimePicker("testimony")}
+            {this.renderTimePicker("judgement")}
+            {this.renderTimePicker("evening")}
+            {this.renderTimePicker("night")}
         </div>
     }
 

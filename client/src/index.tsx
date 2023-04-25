@@ -2,11 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import Anchor from './menu/Anchor';
-import { GameManager, create_gameManager } from './game/net/gameManager';
+import { GameManager, createGameManager } from './game/net/gameManager';
 
 const ROOT = ReactDOM.createRoot(document.getElementById('root')!);
 
-const GAME_MANAGER: GameManager = create_gameManager();
+const GAME_MANAGER: GameManager = createGameManager();
 export default GAME_MANAGER;
 
 const TIME_PERIOD = 1000;

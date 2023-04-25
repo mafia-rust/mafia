@@ -38,9 +38,9 @@ export interface GameManager {
     sendSetRoleListPacket(roleListEntries: RoleListEntry[]): void;
     
     sendJudgementPacket(judgement: Verdict): void;
-    sendVotePacket(votee_index: PlayerIndex| null): void;
-    sendTargetPacket(target_index_list: number[]): void;
-    sendDayTargetPacket(target_index: number): void;
+    sendVotePacket(voteeIndex: PlayerIndex| null): void;
+    sendTargetPacket(targetIndexList: number[]): void;
+    sendDayTargetPacket(targetIndex: number): void;
     sendSaveWillPacket(will: string): void;
     sendSendMessagePacket(text: string): void;
     sendSendWhisperPacket(playerIndex: number, text: string): void;
@@ -51,4 +51,4 @@ export interface GameManager {
 
 }
 
-export declare function create_gameManager(): GameManager;
+export declare function createGameManager(): GameManager;
