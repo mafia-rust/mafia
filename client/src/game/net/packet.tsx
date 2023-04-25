@@ -37,7 +37,7 @@ export type ToClientPacket = {
     time: number
 } | {
     type: "investigatorResults",
-    investigatorResults: Role[][]
+    investigatorResults: {results: Role[][]}
 } |
 // Game
 {

@@ -1,15 +1,15 @@
 import React, { Key } from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
-import GameState from "../../../game/gameState.d";
+import GameState, { Role } from "../../../game/gameState.d";
 
 
 interface WikiMenuProps {
-    role: string | null,
+    role: Role | null,
 }
 interface WikiMenuState {
     gameState: GameState,
-    role: string | null,
+    role: Role | null,
 }
 
 
@@ -21,7 +21,7 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
 
         this.state = {
             gameState : GAME_MANAGER.gameState,
-            role: props.role, //List of roles to display
+            role: props.role,
         };
         this.listener = ()=>{
             this.setState({
@@ -44,7 +44,7 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
         return <div>
             {this.state.gameState.investigatorResults.map((result, index)=>{
                 //for every investigative result
-                return <div key={index}>
+                return <div key={index} style={{display:"flex"}}>
                     {result.map((role: string, index2: React.Key | null | undefined)=>{
                         //for every role in invest result
                         return <div key={index2} style={{display:"flex"}}>
@@ -61,6 +61,5 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
         {/* TODO, rolepicker code here*/}
         {this.state.role?this.renderRole(this.state.role):null}
         {this.renderInvestigativeResults()}
-        
     </div>)}
 }

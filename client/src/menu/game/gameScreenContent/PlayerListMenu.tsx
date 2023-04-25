@@ -55,7 +55,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                     return this.state.gameState.players[playerIndex].toString();
                 });
 
-                if(targetStringList.length>0){
+                if(targetStringList.length > 0){
                     return(<div>
                         <div>{targetStringList.join(", ")+"."}</div>
                         <button className="button gm-button" onClick={()=>{

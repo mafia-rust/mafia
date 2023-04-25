@@ -24,7 +24,8 @@ pub struct PlayerNightVariables{
 
     pub grave_role: GraveRole,
     pub grave_killers: Vec<GraveKiller>,
-    pub grave_will: String
+    pub grave_will: String,
+    pub grave_death_notes: Vec<String>
 
 }
 impl Default for PlayerNightVariables{
@@ -46,7 +47,8 @@ impl Default for PlayerNightVariables{
 
             grave_role: GraveRole::Role(Role::Sheriff), //This should not be a problem because we reset immedietly on creation
             grave_killers: vec![],
-            grave_will: "".to_string()
+            grave_will: "".to_string(),
+            grave_death_notes: vec![],
         }
     }
 }
@@ -69,7 +71,8 @@ impl PlayerNightVariables{
 
             grave_role: GraveRole::Role(Role::Sheriff), //This should not be a problem because we reset immedietly on creation
             grave_killers: vec![],
-            grave_will: "".to_string()
+            grave_will: "".to_string(),
+            grave_death_notes: vec![],
         }
     }
     pub fn reset(game: &Game, player_index: PlayerIndex)->Self{
@@ -92,6 +95,7 @@ impl PlayerNightVariables{
             grave_role: GraveRole::Role(player.get_role()),
             grave_killers: vec![],
             grave_will: player.will.clone(),
+            grave_death_notes: vec![],
         };
     }
     pub fn increase_defense_to(&mut self, defense: u8){

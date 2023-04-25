@@ -89,7 +89,7 @@ export default function messageListener(packet: ToClientPacket){
             GAME_MANAGER.gameState.phaseTimes[packet.phase] = packet.time;
         break;
         case "investigatorResults":
-            GAME_MANAGER.gameState.investigatorResults = packet.investigatorResults;
+            GAME_MANAGER.gameState.investigatorResults = packet.investigatorResults.results;
         break;
         case "phase":
             GAME_MANAGER.gameState.phase = packet.phase;
