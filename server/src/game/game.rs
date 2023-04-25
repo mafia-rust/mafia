@@ -307,7 +307,7 @@ impl Game {
                     self.add_message_to_chat_group(
                         chat_group.clone(),
                         //TODO message sender, Jailor & medium
-                        ChatMessage::Normal { message_sender: MessageSender::Player(player_index) , text: text.clone(), chat_group }
+                        ChatMessage::Normal { message_sender: MessageSender::Player {player: player_index} , text: text.clone(), chat_group }
                     );
                 }
             },

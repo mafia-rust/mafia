@@ -38,7 +38,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
 
     renderPhaseSpecific(){
         switch(this.state.gameState.phase){
-            case"Voting":
+            case "voting":
                 let votedString = "";
                 if(this.state.gameState.voted!=null){
                     votedString = this.state.gameState.players[this.state.gameState.voted].name;
@@ -50,7 +50,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                     </div>);
                 }
                 return null;
-            case"Night":
+            case "night":
                 let targetStringList = this.state.gameState.targets.map((playerIndex: PlayerIndex)=>{
                     return this.state.gameState.players[playerIndex].toString();
                 });
@@ -72,7 +72,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     renderPlayer(player: Player){
         
         let canWhisper = 
-            this.state.gameState.phase !== "Night" && 
+            this.state.gameState.phase !== "night" && 
             GAME_MANAGER.gameState.phase !== null && 
             this.state.gameState.myIndex !== player.index;
 

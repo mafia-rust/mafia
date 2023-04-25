@@ -40,7 +40,7 @@ export default class PhaseRowMenu extends React.Component<PhaseRowMenuProps, Pha
     renderPhaseSpecific(){
         switch(this.state.gameState.phase){
             
-            case Phase.Judgement:
+            case "judgement":
             //TODO make buttons light up if they are clicked
             if(this.state.gameState.playerOnTrial !== null){
                 return(<div>
