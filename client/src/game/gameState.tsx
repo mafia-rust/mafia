@@ -1,4 +1,4 @@
-import GameState, { Phase, Player } from "./gameState.d"
+import GameState, { Player } from "./gameState.d"
 
 export const ROLES: ReadonlyMap<string, any> = new Map(Object.entries(require("../resources/roles.json")));
 

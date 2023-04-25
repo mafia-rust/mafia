@@ -1,4 +1,4 @@
-import React, { Key } from "react";
+import React from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import GameState, { Role } from "../../../game/gameState.d";

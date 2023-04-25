@@ -7,11 +7,8 @@ interface RolePickerProps {
     onChange: (value: RoleListEntry) => void
 }
 
+// Can convert to function component
 export default class RolePicker extends React.Component<RolePickerProps> {
-    constructor(props: RolePickerProps) {
-        super(props);
-    }
-
     render() {
         let selectors: JSX.Element[] = [];
         
@@ -173,7 +170,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
 
 function getFaction(roleListEntry: RoleListEntry): string {
     if (roleListEntry.type === "any") {
-        throw "Couldn't find a faction for Any"
+        throw Error("Couldn't find a faction for Any")
     } else {
         return roleListEntry.faction;
     }
@@ -181,7 +178,7 @@ function getFaction(roleListEntry: RoleListEntry): string {
 
 function getAlignment(roleListEntry: RoleListEntry): string {
     if (roleListEntry.type === "any" || roleListEntry.type === "faction") {
-        throw "Couldn't find an alignment for " + roleListEntry;
+        throw Error("Couldn't find an alignment for " + roleListEntry);
     } else {
         let factionAlignment = roleListEntry.factionAlignment;
         return factionAlignment.replace(roleListEntry.faction, "");
@@ -190,7 +187,7 @@ function getAlignment(roleListEntry: RoleListEntry): string {
 
 function allFactions(): string[] {
     let factions: string[] = [];
-    for (let [_, role] of ROLES) {
+    for (let [, role] of ROLES) {
         let faction = role.faction;
         if (!factions.includes(faction)) {
             factions.push(faction);
@@ -203,7 +200,7 @@ function allFactions(): string[] {
 function allAlignments(faction: string): string[] {
     let alignments: string[] = [];
 
-    for (let [_, role] of ROLES) {
+    for (let [, role] of ROLES) {
         if (role.faction !== faction) continue;
 
         if (!alignments.includes(role.alignment)) {
