@@ -6,7 +6,6 @@ import StartMenu from "../../menu/main/StartMenu";
 import GAME_MANAGER from "../../index";
 import GameScreen from "../../menu/game/GameScreen";
 import React from "react";
-import { Grave, GraveDeathCause, GravePhase, GraveRole, Phase, PlayerIndex } from "../gameState.d";
 import { ToClientPacket } from "./packet";
 
 export default function messageListener(packet: ToClientPacket){
@@ -87,7 +86,7 @@ export default function messageListener(packet: ToClientPacket){
             GAME_MANAGER.gameState.roleList = packet.roleList;
         break;
         case "phaseTime":
-            GAME_MANAGER.gameState.phaseTimes[packet.phase as Phase] = packet.time;
+            GAME_MANAGER.gameState.phaseTimes[packet.phase] = packet.time;
         break;
         case "investigatorResults":
             GAME_MANAGER.gameState.investigatorResults = packet.investigatorResults;
@@ -140,16 +139,7 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "addGrave":
-            let grave: Grave = {
-                playerIndex : packet.grave.playerIndex as PlayerIndex,
-                role :        packet.grave.role as GraveRole,
-                deathCause :  packet.grave.deathCause as GraveDeathCause,
-                will :        packet.grave.will as string,
-                diedPhase :   packet.grave.diedPhase as GravePhase,
-                dayNumber :   packet.grave.dayNumber as number,
-            };
-
-            GAME_MANAGER.gameState.graves.push(grave);
+            GAME_MANAGER.gameState.graves.push(packet.grave);
         break;
         case "gameOver":
             switch(packet.reason) {
@@ -158,7 +148,7 @@ export default function messageListener(packet: ToClientPacket){
                 break;
                 default:
                     alert("Game ended for an unknown reason!");
-                    console.log("incoming_message response not implemented "+packet.type+": "+packet.reason);
+                    console.log("incoming_message response not implemented " + packet.type + ": " + packet.reason);
                     console.log(packet);
                 break;
             }

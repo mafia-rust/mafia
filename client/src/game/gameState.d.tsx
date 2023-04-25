@@ -1,3 +1,5 @@
+import { Grave } from "./grave";
+
 export default interface GameState {
     myName: string | null,
     myIndex: PlayerIndex | null,
@@ -62,53 +64,22 @@ export interface Player {
     toString(): string
 }
 
+export type Role = string;
+export type Faction = string;
+export type FactionAlignment = string;
+
 export type RoleListEntry = {
     type: "any"
 } | {
     type: "faction"
-    faction: string,
+    faction: Faction,
 } | {
     type: "factionAlignment"
-    faction: string,
-    factionAlignment: string,
+    faction: Faction,
+    factionAlignment: FactionAlignment,
 } | {
     type: "exact"
-    faction: string,
-    factionAlignment: string,
-    role: string,
+    faction: Faction,
+    factionAlignment: FactionAlignment,
+    role: Role,
 };
-export interface Grave {
-    playerIndex: PlayerIndex,
-
-    role: GraveRole,
-    deathCause: GraveDeathCause,
-    will: String,
-
-    diedPhase: GravePhase,
-    dayNumber: number,
-}
-
-export type GraveRole = {
-    type: "cleaned" | "stoned"
-} |  {
-    type: "role"
-    role: Role
-};
-export type GraveDeathCause = {
-    type: "lynching"
-} | {
-    type: "killers"
-    killers: GraveKiller[]
-};
-export type GraveKiller = {
-    type: "mafia"
-} | {
-    type: "role"
-    role: Role
-};
-export type Role = string;
-
-export enum GravePhase {
-    Day = "Day", 
-    Night = "Night"
-}
