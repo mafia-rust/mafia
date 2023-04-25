@@ -32,23 +32,23 @@ export const enum Verdict {
     Guilty = "Guilty",
     Abstain = "Abstain",
 }
-export const enum Phase {
-    Morning = "Morning",
-    Discussion = "Discussion",
-    Voting = "Voting",
-    Testimony = "Testimony",
-    Judgement = "Judgement",
-    Evening = "Evening",
-    Night = "Night",
-}
+export type Phase = 
+    | "morning"
+    | "discussion"
+    | "voting"
+    | "testimony"
+    | "judgement"
+    | "evening"
+    | "night"
+
 export interface PhaseTimes {
-    [Phase.Morning]: number,
-    [Phase.Discussion]: number,
-    [Phase.Voting]: number,
-    [Phase.Testimony]: number,
-    [Phase.Judgement]: number,
-    [Phase.Evening]: number,
-    [Phase.Night]: number,
+    "morning": number,
+    "discussion": number,
+    "voting": number,
+    "testimony": number,
+    "judgement": number,
+    "evening": number,
+    "night": number,
 }
 
 export interface Player {

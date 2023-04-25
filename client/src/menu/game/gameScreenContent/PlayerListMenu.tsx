@@ -85,24 +85,24 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 {((player)=>{if(player.buttons.target){return(
                     <button className="button gm-button" onClick={()=>{
                         GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.gameState.targets, player.index]);
-                    }}>{translate("button.Target")}</button>
+                    }}>{translate("button.target")}</button>
                 )}})(player)}
 
                 {((player)=>{if(player.buttons.vote){return(
                     <button className="button gm-button" onClick={()=>{
                         GAME_MANAGER.sendVotePacket(player.index)}}
-                    >{translate("button.Vote")}</button>
+                    >{translate("button.vote")}</button>
                 )}})(player)}
 
                 {((player)=>{if(player.buttons.dayTarget){return(
                     <button className="button gm-button" onClick={()=>{
                         GAME_MANAGER.sendDayTargetPacket(player.index)}}
-                >{translate("button.DayTarget")}</button>)}})(player)}
+                >{translate("button.dayTarget")}</button>)}})(player)}
 
                 {((player)=>{if(canWhisper){return(
                     <button className="button gm-button" onClick={()=>{
                         ChatMenu.prependWhisper(player.index)
-                }}>{translate("button.Whisper")}</button>)}})(player)}
+                }}>{translate("button.whisper")}</button>)}})(player)}
 
                 <div></div>
             </div>

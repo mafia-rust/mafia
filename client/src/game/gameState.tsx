@@ -26,13 +26,13 @@ export function createGameState(): GameState {
         roleList: [],
         investigatorResults: [],
         phaseTimes: {
-            [Phase.Morning]: 5,
-            [Phase.Discussion]: 45, 
-            [Phase.Voting]: 30, 
-            [Phase.Testimony]: 20, 
-            [Phase.Judgement]: 20, 
-            [Phase.Evening]: 7, 
-            [Phase.Night]: 37,
+            morning: 5,
+            discussion: 45, 
+            voting: 30, 
+            testimony: 20, 
+            judgement: 20, 
+            evening: 7, 
+            night: 37,
         },
     }
 }
