@@ -62,19 +62,20 @@ export interface Player {
     toString(): string
 }
 
-export type RoleListEntry = "Any" | {
-    "Exact"?: {
-        role: string,
-        faction_alignment: string,
-        faction: string,
-    },
-    "FactionAlignment"?: {
-        faction_alignment: string,
-        faction: string,
-    },
-    "Faction"?: {
-        faction: string,
-    }
+export type RoleListEntry = {
+    type: "any"
+} | {
+    type: "faction"
+    faction: string,
+} | {
+    type: "factionAlignment"
+    faction: string,
+    factionAlignment: string,
+} | {
+    type: "exact"
+    faction: string,
+    factionAlignment: string,
+    role: string,
 };
 export interface Grave {
     playerIndex: PlayerIndex,
@@ -87,15 +88,24 @@ export interface Grave {
     dayNumber: number,
 }
 
-export type GraveRole = "Cleaned" | "Stoned" | {
-    Role: Role
+export type GraveRole = {
+    type: "cleaned" | "stoned"
+} |  {
+    type: "role"
+    role: Role
 };
-export type GraveDeathCause = "Lynching" | {
-    Killers: {
-        killers: GraveKiller[]
-    }
+export type GraveDeathCause = {
+    type: "lynching"
+} | {
+    type: "killers"
+    killers: GraveKiller[]
 };
-export type GraveKiller = "Mafia" | Role;
+export type GraveKiller = {
+    type: "mafia"
+} | {
+    type: "role"
+    role: Role
+};
 export type Role = string;
 
 export enum GravePhase {

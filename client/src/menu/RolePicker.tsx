@@ -14,7 +14,8 @@ export default class RolePicker extends React.Component<RolePickerProps> {
 
     render() {
         let selectors: JSX.Element[] = [];
-        if (this.props.roleListEntry === "Any"){
+        
+        if (this.props.roleListEntry.type === "any") {
             selectors = [
                 <select 
                     key="faction" 
@@ -26,7 +27,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     })
                 } </select>
             ];
-        } else if (this.props.roleListEntry.Faction !== undefined) {
+        } else if (this.props.roleListEntry.type === "faction" ) {
             let faction = getFaction(this.props.roleListEntry);
             selectors = [
                 <select
@@ -48,7 +49,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     })
                 } </select>
             ]
-        } else if (this.props.roleListEntry.FactionAlignment !== undefined) {
+        } else if (this.props.roleListEntry.type === "factionAlignment") {
             let faction = getFaction(this.props.roleListEntry);
             let alignment = getAlignment(this.props.roleListEntry);
             selectors = [
@@ -104,7 +105,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                 } </select>,
                 <select
                     key="exact"
-                    value={this.props.roleListEntry.Exact?.role}
+                    value={this.props.roleListEntry.role}
                     onChange={(e)=>{this.updateRolePicker("exact", e.target.value)}}
                 > {
                     allRoles(faction, alignment).map((faction: string, key) => {
@@ -113,6 +114,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                 } </select>
             ]
         }
+        
         return <div className="lm-role-picker-container">
             {selectors}
         </div>
@@ -123,46 +125,43 @@ export default class RolePicker extends React.Component<RolePickerProps> {
         switch (selector) {
             case "faction":
                 if (value === "Any") {
-                    roleListEntry = "Any"
+                    roleListEntry = {
+                        type: "any"
+                    }
                 } else {
                     roleListEntry = {
-                        Faction: {
-                            faction: value
-                        }
+                        type: "faction",
+                        faction: value
                     }
                 }
             break;
             case "alignment":
                 if (value === "Random") {
                     roleListEntry = {
-                        Faction: {
-                            faction: getFaction(this.props.roleListEntry)
-                        }
+                        type: "faction",
+                        faction: getFaction(this.props.roleListEntry)
                     }
                 } else {
                     roleListEntry = {
-                        FactionAlignment: {
-                            faction: getFaction(this.props.roleListEntry),
-                            faction_alignment: getFaction(this.props.roleListEntry) + value
-                        }
+                        type: "factionAlignment",
+                        faction: getFaction(this.props.roleListEntry),
+                        factionAlignment: getFaction(this.props.roleListEntry) + value
                     }
                 }
             break;
             case "exact":
                 if (value === "Random") {
                     roleListEntry = {
-                        FactionAlignment: {
-                            faction: getFaction(this.props.roleListEntry),
-                            faction_alignment: getFaction(this.props.roleListEntry) + getAlignment(this.props.roleListEntry)
-                        }
+                        type: "factionAlignment",
+                        faction: getFaction(this.props.roleListEntry),
+                        factionAlignment: getFaction(this.props.roleListEntry) + getAlignment(this.props.roleListEntry)
                     }
                 } else {
                     roleListEntry = {
-                        Exact: {
-                            faction: getFaction(this.props.roleListEntry),
-                            faction_alignment: getFaction(this.props.roleListEntry) + getAlignment(this.props.roleListEntry),
-                            role: value
-                        }
+                        type: "exact",
+                        faction: getFaction(this.props.roleListEntry),
+                        factionAlignment: getFaction(this.props.roleListEntry) + getAlignment(this.props.roleListEntry),
+                        role: value
                     }
                 }
             break;
@@ -173,23 +172,19 @@ export default class RolePicker extends React.Component<RolePickerProps> {
 }
 
 function getFaction(roleListEntry: RoleListEntry): string {
-    if (roleListEntry === "Any") {
+    if (roleListEntry.type === "any") {
         throw "Couldn't find a faction for Any"
     } else {
-        return Object.entries(roleListEntry)[0][1].faction;
+        return roleListEntry.faction;
     }
 }
 
 function getAlignment(roleListEntry: RoleListEntry): string {
-    if (roleListEntry === "Any") {
-        throw "Couldn't find an alignment for Any"
-    } else if (roleListEntry.Faction !== undefined) {
-        throw "Couldn't find an alignment for " + roleListEntry.Faction;
+    if (roleListEntry.type === "any" || roleListEntry.type === "faction") {
+        throw "Couldn't find an alignment for " + roleListEntry;
     } else {
-        let faction_alignment: string = (Object.entries(roleListEntry)[0][1] as any).faction_alignment;
-        let faction: string = Object.entries(roleListEntry)[0][1].faction;
-        let alignment = faction_alignment.replace(faction, "");
-        return alignment;
+        let factionAlignment = roleListEntry.factionAlignment;
+        return factionAlignment.replace(roleListEntry.faction, "");
     }
 }
 

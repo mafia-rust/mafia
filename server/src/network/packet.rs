@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use crate::game::{
     player::{PlayerIndex, Player},
     role_list::RoleList,
-    settings::{InvestigatorResults, PhaseTimeSettings},
+    settings::{investigator_results::InvestigatorResultSettings, PhaseTimeSettings},
     verdict::Verdict, phase::PhaseType, 
     chat::{ChatMessage, ChatGroup},
     role::{Role, RoleData}, 
@@ -16,16 +16,20 @@ use crate::game::{
 use super::listener::RoomCode;
 
 #[derive(Serialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+#[serde(tag = "type")]
 pub enum ToClientPacket{
     
         //Pre lobby
     AcceptJoin,
     RejectJoin{reason: RejectJoinReason},
+    #[serde(rename_all = "camelCase")]
     AcceptHost{room_code: RoomCode},
     
         //Lobby
     //Syncronize
     YourName{name: String},
+    #[serde(rename_all = "camelCase")]
     YourPlayerIndex{player_index: PlayerIndex},
     Players{names: Vec<String>},
     Kicked,
@@ -33,28 +37,36 @@ pub enum ToClientPacket{
     // 
     StartGame,
 
+    #[serde(rename_all = "camelCase")]
     RoleList{role_list: RoleList},
     PhaseTime{phase: PhaseType, time: u64},
-    InvestigatorResults{investigator_results: InvestigatorResults},
+    #[serde(rename_all = "camelCase")]
+    InvestigatorResults{investigator_results: InvestigatorResultSettings},
 
         //Game
     //Syncronize
+    #[serde(rename_all = "camelCase")]
     Phase{phase: PhaseType, day_number: u8, seconds_left: u64},   //Time left & PhaseType
+    #[serde(rename_all = "camelCase")]
     PlayerOnTrial{player_index: PlayerIndex},  //Player index
 
         
     PlayerButtons{buttons: Vec<PlayerButtons>},
     PlayerAlive{alive: Vec<bool>},
+    #[serde(rename_all = "camelCase")]
     PlayerVotes{voted_for_player: Vec<u8>}, //map from playerindex to num_voted_for that player
 
     YourWill{will: String},
     YourRole{role: RoleData},
+    #[serde(rename_all = "camelCase")]
     YourTarget{player_indices: Vec<PlayerIndex>},
+    #[serde(rename_all = "camelCase")]
     YourVoting{player_index: Option<PlayerIndex>},
     YourJudgement{verdict: Verdict},
     //YourChatGroups{chat_groups: Vec<ChatGroup>},
 
     //Run function
+    #[serde(rename_all = "camelCase")]
     AddChatMessages{chat_messages: Vec<ChatMessage>},
     AddGrave{grave: Grave},
 
@@ -95,6 +107,7 @@ impl ToClientPacket {
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum RejectJoinReason {
     GameAlreadyStarted,
     RoomFull,
@@ -103,18 +116,21 @@ pub enum RejectJoinReason {
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum RejectStartReason {
     GameEndsInstantly,
     ZeroTimeGame,
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum GameOverReason {
     ReachedMaxDay,
     /*TODO Winner { who won? }*/
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct PlayerButtons{
     pub vote: bool,
     pub target: bool,
@@ -138,26 +154,35 @@ impl PlayerButtons{
 }
 
 #[derive(Deserialize, Debug, Clone)]
+#[serde(tag = "type", rename_all = "camelCase")]
 pub enum ToServerPacket{
     //Pre Lobby
+    #[serde(rename_all = "camelCase")]
     Join{room_code: RoomCode},
     Host,
 
     //Lobby
     SetName{name: String},
     StartGame,
+    #[serde(rename_all = "camelCase")]
     Kick{player_index: PlayerIndex},
+    #[serde(rename_all = "camelCase")]
     SetRoleList{role_list: RoleList},
     SetPhaseTime{phase: PhaseType, time: u64},
-    SetInvestigatorResults{investigator_results: InvestigatorResults},
+    #[serde(rename_all = "camelCase")]
+    SetInvestigatorResults{investigator_results: InvestigatorResultSettings},
 
     //Game
+    #[serde(rename_all = "camelCase")]
     Vote{player_index: Option<PlayerIndex>},   //Accusation
     Judgement{verdict: Verdict},  //Vote
+    #[serde(rename_all = "camelCase")]
     Target{player_index_list: Vec<PlayerIndex>},
+    #[serde(rename_all = "camelCase")]
     DayTarget{player_index:  PlayerIndex},
 
     SendMessage{text: String},
+    #[serde(rename_all = "camelCase")]
     SendWhisper{player_index: PlayerIndex, text: String},
     SaveWill{will: String},
 }

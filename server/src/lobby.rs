@@ -8,7 +8,7 @@ use tokio_tungstenite::tungstenite::Message;
 
 use crate::{
     game::{Game, player::{PlayerIndex, Player}, 
-    settings::{Settings, InvestigatorResults, self}, 
+    settings::{Settings, investigator_results::InvestigatorResultSettings, self}, 
     role_list::{self, RoleList, RoleListEntry}, phase::PhaseType}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket, RejectJoinReason, RejectStartReason}, listener::ArbitraryPlayerID}, 
     utils::trim_whitespace, log
 };
@@ -93,7 +93,7 @@ impl Lobby {
                 
                 sender.send(ToClientPacket::YourName { name: name.clone() });
                 // Add a role list entry
-                settings.role_list.role_list.push(RoleListEntry::Any);
+                settings.role_list.push(RoleListEntry::Any);
                 Self::inform_player(sender.clone(), settings);
                 
                 let arbitrary_player_id = players.len() as ArbitraryPlayerID;

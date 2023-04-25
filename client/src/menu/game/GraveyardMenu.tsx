@@ -30,17 +30,19 @@ export default class GraveyardMenu extends React.Component<any, GraveyardMenuSta
 
     renderGrave(grave: Grave, graveIndex: number){
         let deathCauseString: string;
-        if(grave.deathCause === "Lynching"){
+        if(grave.deathCause.type === "lynching"){
             deathCauseString = "a lynching.";
         } else  {
-            deathCauseString = grave.deathCause.Killers.killers.join() + ".";
+            deathCauseString = grave.deathCause.killers.map((killer)=>{
+                return killer.type === "role" ? killer.role : killer.type;
+            }).join() + ".";
         }
 
         let graveRoleString: string;
-        if (grave.role === "Cleaned" || grave.role === "Stoned") {
-            graveRoleString = grave.role;
+        if (grave.role.type === "role") {
+            graveRoleString = grave.role.role;
         } else {
-            graveRoleString = grave.role.Role;
+            graveRoleString = grave.role.type;
         }
 
         return(<div key={graveIndex}>
@@ -58,35 +60,30 @@ export default class GraveyardMenu extends React.Component<any, GraveyardMenuSta
         }
     </div>}
     renderRoleListEntry(roleListEntry: RoleListEntry, index: number){
-        if(roleListEntry==="Any"){
+        if(roleListEntry.type === "any"){
             return <div key={index}>
                 <button>{translate("FactionAlignment.Faction.Random")}</button>
             </div>
-        }
-        if(roleListEntry.Exact !== undefined){
-            let role = roleListEntry.Exact.role;
+        } else if(roleListEntry.type === "exact"){
+            let role = roleListEntry.role;
             return <div key={index}>
                 <button>{translate("role."+role+".name")}</button>
             </div>
-        }
-        if(roleListEntry.FactionAlignment !== undefined){
-            let factionAlignment = roleListEntry.FactionAlignment.faction_alignment;
+        } else if(roleListEntry.type === "factionAlignment"){
+            let factionAlignment = roleListEntry.factionAlignment;
             
-            let faction = roleListEntry.FactionAlignment.faction;
+            let faction = roleListEntry.faction;
             let alignment = factionAlignment.replace(faction, "");
 
             return <div key={index}>
                 <button>{translate("FactionAlignment.Faction."+faction)} {translate("FactionAlignment.Alignment."+alignment)}</button>
             </div>
-        }
-        if(roleListEntry.Faction !== undefined){
-            let faction = roleListEntry.Faction.faction;
+        } else {
+            let faction = roleListEntry.faction;
             return <div key={index}>
                 <button>{translate("FactionAlignment.Faction."+faction)} {translate("FactionAlignment.Alignment.Random")}</button>
             </div>
         }
-        console.log("uncaught rolelistentry type: "+roleListEntry);
-        return null;
     }
     render(){return(<div>
         {this.state.gameState.players[this.state.gameState.myIndex!]?.toString()}: {this.state.gameState.role}
