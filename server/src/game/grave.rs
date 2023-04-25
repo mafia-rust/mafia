@@ -1,3 +1,5 @@
+use std::vec;
+
 use serde::{Serialize, Deserialize};
 
 use super::Game;
@@ -13,6 +15,7 @@ pub struct Grave {
     role: GraveRole,
     death_cause: GraveDeathCause,
     will: String,
+    death_notes: Vec<String>,
 
     died_phase: GravePhase,
     day_number: u8,
@@ -51,15 +54,17 @@ pub enum GravePhase {
 impl Grave{
     pub fn from_player_night(game: &mut Game, player_index: PlayerIndex)->Grave{
 
+        let day_number = game.phase_machine.day_number.clone();
         let player = game.get_unchecked_mut_player(player_index);
 
         Grave { 
             player: player_index, 
             role: player.night_variables.grave_role.clone(),
-            death_cause: GraveDeathCause::Killers(player.night_variables.grave_killers.clone()), 
+            death_cause: GraveDeathCause::Killers(player.night_variables.grave_killers.clone()),
             will: player.night_variables.grave_will.clone(),
             died_phase: GravePhase::Night, 
-            day_number: game.phase_machine.day_number
+            day_number,
+            death_notes: player.night_variables.grave_death_notes.clone()
         }
     }
     pub fn from_player_lynch(game: &mut Game, player_index: PlayerIndex)->Grave{
@@ -72,7 +77,8 @@ impl Grave{
             death_cause: GraveDeathCause::Lynching, 
             will: player.will.clone(), 
             died_phase: GravePhase::Day, 
-            day_number: game.phase_machine.day_number
+            day_number: game.phase_machine.day_number,
+            death_notes: vec![]
         }
     }
 }
