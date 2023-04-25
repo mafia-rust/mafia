@@ -53,7 +53,7 @@ export default class LobbyPlayerList extends React.Component<any, PlayerListStat
 
         <button className="lm-set-name-button" onClick={()=>{
             GAME_MANAGER.sendSetNamePacket(this.state.name)
-        }}>{translate("menu.lobby.button.set_name")}</button>
+        }}>{translate("menu.lobby.button.setName")}</button>
     </div>)}
 
     renderPlayers(){return(<ol>

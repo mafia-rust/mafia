@@ -4,23 +4,23 @@ export default interface GameState {
     myName: string | null,
     myIndex: PlayerIndex | null,
 
-    chatMessages : any[],  //string + chat messages
+    chatMessages : any[],
     graves: Grave[],
     players: Player[],
     
-    playerOnTrial: PlayerIndex | null,    //Number:: player_index
-    phase: Phase | null,    //String
+    playerOnTrial: PlayerIndex | null,
+    phase: Phase | null,
     secondsLeft: number,
     dayNumber: number,
 
-    role: Role | null, //String::
+    role: Role | null,
 
     will: string,
-    targets: PlayerIndex[],    //Vec<PlayerIndex>
-    voted: PlayerIndex | null, //Number:: player_index
-    judgement: Verdict | null, //String:: Innocent, Guilty, Abstained
+    targets: PlayerIndex[],
+    voted: PlayerIndex | null,
+    judgement: Verdict | null,
     
-    roleList: RoleListEntry[],   //Vec<RoleListEntry>
+    roleList: RoleListEntry[],
     investigatorResults: Role[][],
     phaseTimes: PhaseTimes
 }

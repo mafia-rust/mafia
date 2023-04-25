@@ -2,29 +2,29 @@ import GameState, { Phase, Player } from "./gameState.d"
 
 export const ROLES: ReadonlyMap<string, any> = new Map(Object.entries(require("../resources/roles.json")));
 
-export function create_gameState(): GameState {
+export function createGameState(): GameState {
     return {
         myName: null,
         myIndex: null,
 
-        chatMessages : [],  //string + chat messages
+        chatMessages : [],
         graves: [],
         players: [],
         
-        playerOnTrial: null,    //Number:: player_index
-        phase: null,    //String
+        playerOnTrial: null,
+        phase: null,
         secondsLeft: 0,
         dayNumber: 1,
 
-        role: null, //String::
+        role: null,
 
         will: "",
-        targets: [],    //Vec<PlayerIndex>
-        voted: null, //Number:: player_index
-        judgement: null, //String:: Innocent, Guilty, Abstained
+        targets: [],
+        voted: null,
+        judgement: null,
         
-        roleList: [],   //Vec<RoleListEntry>
-        investigatorResults: [],   //Vec<Vec<Role>>
+        roleList: [],
+        investigatorResults: [],
         phaseTimes: {
             [Phase.Morning]: 5,
             [Phase.Discussion]: 45, 
@@ -37,7 +37,7 @@ export function create_gameState(): GameState {
     }
 }
 
-export function create_player(name: string, index: number): Player {
+export function createPlayer(name: string, index: number): Player {
     return{
         name: name,
         index: index,

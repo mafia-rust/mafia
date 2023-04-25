@@ -2,24 +2,24 @@
     "language": "English (United States)",
 
     "menu.start.title": "Mafia",
-    "menu.start.button.join.logged_in": "Join",
-    "menu.start.button.join.logged_out": "Join as Guest",
-    "menu.start.button.host.logged_in": "Host",
-    "menu.start.button.host.logged_out": "Host as Guest",
+    "menu.start.button.join.loggedIn": "Join",
+    "menu.start.button.join.loggedOut": "Join as Guest",
+    "menu.start.button.host.loggedIn": "Host",
+    "menu.start.button.host.loggedOut": "Host as Guest",
     "menu.start.button.login": "Log in",
     "menu.start.button.logout": "Log out",
     "menu.start.credits": "Mafia, made by Samuel Maselli, Jack Papel, and Isaac Worsencroft",
 
     "menu.join.title": "Join Game",
     "menu.join.button.join": "Join Lobby",
-    "menu.join.field.room_code": "Room code",
+    "menu.join.field.roomCode": "Room code",
     "menu.join.field.name": "Name",
 
     "menu.lobby.title": "Lobby \\0",
     "menu.lobby.button.start": "Start Game",
     "menu.lobby.field.name": "Name",
-    "menu.lobby.button.set_name": "Set Name",
-    "menu.lobby.button.set_time_settings": "Set Time Settings",
+    "menu.lobby.button.setName": "Set Name",
+    "menu.lobby.button.setTimeSettings": "Set Time Settings",
     "menu.lobby.player": "\\0: (\\1)",
 
     "menu.loading.host": "Starting Server",
@@ -103,13 +103,13 @@
 
     "chatmessage.TrialInformation":"\\0 votes are needed to put someone on trial. There's \\1 trials left today.",
     "chatmessage.Voted":"\\0 voted for \\1.",
-    "chatmessage.Voted_null":"\\0 changed their mind.",
+    "chatmessage.VotedNull":"\\0 changed their mind.",
     "chatmessage.PlayerOnTrial":"\\0 is on trial.",
     "chatmessage.JudgementVote":"\\0 has voted.",
     "chatmessage.JudgementVerdict":"\\0 decided \\1.",
     "chatmessage.TrialVerdict":"\\0 was voted \\1 with \\2 innocent votes and \\3 guilty votes.",
     "chatmessage.Targeted":"\\0 targeted \\1",
-    "chatmessage.Targeted_null":"\\0 reset their targets",
+    "chatmessage.TargetedNull":"\\0 reset their targets",
 
     "chatmessage.MayorRevealed":"\\0 has revealed as mayor!",
     "chatmessage.MayorCantWhisper":"You can't whisper as or to a revealed mayor.",
@@ -117,7 +117,7 @@
     "chatmessage.MediumSeanceYou":"You're being seanced by the medium!",
 
 
-    "chatmessage.night.RoleBlocked_immune": "Someone tried to roleblock you but you are immune.",
+    "chatmessage.night.RoleBlockedImmune": "Someone tried to roleblock you but you are immune.",
     "chatmessage.night.RoleBlocked": "You've been roleblocked.",
     "chatmessage.night.TargetSurvivedAttack": "Your target had defense and survived the attack.",
     "chatmessage.night.YouDied":"You died!",
@@ -128,6 +128,6 @@
     "chatmessage.night.VigilanteSuicide":"You committed suicide over the guilt of killing an innocnet person.",
     "chatmessage.night.DoctorHealed":"You healed your target while they got attacked.",
     "chatmessage.night.DoctorHealedYou":"A doctor healed you while you got attacked.",
-    "chatmessage.night.SheriffResult_suspicious":"Your target seems to be suspicious.",
-    "chatmessage.night.SheriffResult_innocent":"Your target seems to be innocent."
+    "chatmessage.night.SheriffResult.suspicious":"Your target seems to be suspicious.",
+    "chatmessage.night.SheriffResult.innocent":"Your target seems to be innocent."
 }
