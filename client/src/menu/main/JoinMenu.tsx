@@ -52,7 +52,7 @@ export default class JoinMenu extends React.Component<any, JoinMenuState> {
             </h1>
         </header>
         <div className="input-column">
-            <label htmlFor="roomcode">{translate("menu.join.field.room_code")}</label>
+            <label htmlFor="roomcode">{translate("menu.join.field.roomCode")}</label>
             <input name="roomcode" type="text" value={this.state.roomCode} 
                 onChange={(e)=>{this.setRoomCode(e.target.value)}}
                 onKeyUp={(e)=>{

@@ -1,5 +1,5 @@
 
-import { create_gameState, create_player } from "../gameState";
+import { createGameState, createPlayer } from "../gameState";
 import Anchor from "../../menu/Anchor";
 import * as LobbyMenu from "../../menu/lobby/LobbyMenu";
 import StartMenu from "../../menu/main/StartMenu";
@@ -29,7 +29,7 @@ export default function messageListener(packet: ToClientPacket){
                 break;
                 default:
                     alert("Couldn't join lobby for an unknown reason!");
-                    console.log("incoming_message response not implemented " + packet.type + ": " + packet.reason);
+                    console.log("incoming message response not implemented " + packet.type + ": " + packet.reason);
                     console.log(packet);
                 break;
             }
@@ -45,7 +45,7 @@ export default function messageListener(packet: ToClientPacket){
                 break;
                 default:
                     alert("Couldn't start lobby for an unknown reason!");
-                    console.log("incoming_message response not implemented " + packet.type + ": " + packet.reason);
+                    console.log("incoming message response not implemented " + packet.type + ": " + packet.reason);
                     console.log(packet);
                 break;
             }
@@ -70,12 +70,12 @@ export default function messageListener(packet: ToClientPacket){
                     GAME_MANAGER.gameState.players[i].name = packet.names[i];
                 }else{
                     //if this player index isnt in the list, create a new player and then sync
-                    GAME_MANAGER.gameState.players.push(create_player(packet.names[i], i));
+                    GAME_MANAGER.gameState.players.push(createPlayer(packet.names[i], i));
                 }
             }
         break;
         case "kicked":
-            GAME_MANAGER.gameState = create_gameState();
+            GAME_MANAGER.gameState = createGameState();
             Anchor.setContent(<StartMenu/>)
         break;
         case "startGame":
@@ -148,13 +148,13 @@ export default function messageListener(packet: ToClientPacket){
                 break;
                 default:
                     alert("Game ended for an unknown reason!");
-                    console.log("incoming_message response not implemented " + packet.type + ": " + packet.reason);
+                    console.log("incoming message response not implemented " + packet.type + ": " + packet.reason);
                     console.log(packet);
                 break;
             }
         break;
         default:
-            console.log("incoming_message response not implemented " + packet);
+            console.log("incoming message response not implemented " + packet);
             console.log(packet);
         break;
     }

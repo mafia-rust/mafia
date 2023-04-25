@@ -1,5 +1,6 @@
 import { Phase, PlayerIndex, Role, RoleListEntry, Verdict } from "../gameState.d"
 import { Grave } from "../grave"
+import { ChatMessage } from "./chatMessage"
 
 export type ToClientPacket = {
     type: "acceptJoin",
@@ -80,7 +81,7 @@ export type ToClientPacket = {
     verdict: Verdict
 } | {
     type: "addChatMessages",
-    chatMessages: [any]
+    chatMessages: ChatMessage[]
 } | {
     type: "addGrave",
     grave: Grave

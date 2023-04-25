@@ -8,6 +8,7 @@ use super::{settings::PhaseTimeSettings, Game, player::{Player, PlayerIndex, sel
 
 
 #[derive(Clone, Copy, PartialEq, Debug, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub enum PhaseType {
     Morning,
     Discussion,

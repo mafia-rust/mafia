@@ -1,26 +1,27 @@
 import { Grave } from "./grave";
+import { ChatMessage } from "./net/chatMessage";
 
 export default interface GameState {
     myName: string | null,
     myIndex: PlayerIndex | null,
 
-    chatMessages : any[],  //string + chat messages
+    chatMessages : ChatMessage[],
     graves: Grave[],
     players: Player[],
     
-    playerOnTrial: PlayerIndex | null,    //Number:: player_index
-    phase: Phase | null,    //String
+    playerOnTrial: PlayerIndex | null,
+    phase: Phase | null,
     secondsLeft: number,
     dayNumber: number,
 
-    role: Role | null, //String::
+    role: Role | null,
 
     will: string,
-    targets: PlayerIndex[],    //Vec<PlayerIndex>
-    voted: PlayerIndex | null, //Number:: player_index
-    judgement: Verdict | null, //String:: Innocent, Guilty, Abstained
+    targets: PlayerIndex[],
+    voted: PlayerIndex | null,
+    judgement: Verdict | null,
     
-    roleList: RoleListEntry[],   //Vec<RoleListEntry>
+    roleList: RoleListEntry[],
     investigatorResults: Role[][],
     phaseTimes: PhaseTimes
 }
@@ -31,23 +32,23 @@ export const enum Verdict {
     Guilty = "Guilty",
     Abstain = "Abstain",
 }
-export const enum Phase {
-    Morning = "Morning",
-    Discussion = "Discussion",
-    Voting = "Voting",
-    Testimony = "Testimony",
-    Judgement = "Judgement",
-    Evening = "Evening",
-    Night = "Night",
-}
+export type Phase = 
+    | "morning"
+    | "discussion"
+    | "voting"
+    | "testimony"
+    | "judgement"
+    | "evening"
+    | "night"
+
 export interface PhaseTimes {
-    [Phase.Morning]: number,
-    [Phase.Discussion]: number,
-    [Phase.Voting]: number,
-    [Phase.Testimony]: number,
-    [Phase.Judgement]: number,
-    [Phase.Evening]: number,
-    [Phase.Night]: number,
+    "morning": number,
+    "discussion": number,
+    "voting": number,
+    "testimony": number,
+    "judgement": number,
+    "evening": number,
+    "night": number,
 }
 
 export interface Player {

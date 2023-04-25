@@ -4,6 +4,7 @@ import GAME_MANAGER from "../../../index";
 import "../gameScreen.css";
 import "./chatMenu.css"
 import GameState, { PlayerIndex } from "../../../game/gameState.d";
+import { ChatMessage } from "../../../game/net/chatMessage";
 
 interface ChatMenuProps {
 }
@@ -116,7 +117,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         </div>
     );}
 
-    renderChatMessage(msg: string, i: number) {return (
+    renderChatMessage(msg: ChatMessage, i: number) {return (
         <div key={i} className="chat-message">
             {getChatString(msg)}
         </div>

@@ -1,4 +1,4 @@
-import { create_gameState as createGameState } from "../gameState";
+import { createGameState as createGameState } from "../gameState";
 import Anchor from "../../menu/Anchor";
 import StartMenu from "../../menu/main/StartMenu";
 import GAME_MANAGER from "../../index";
@@ -9,7 +9,7 @@ import { Phase, Player, RoleListEntry, Verdict } from "../gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 
-export function create_gameManager(): GameManager {
+export function createGameManager(): GameManager {
 
     console.log("Game manager created.");
     
@@ -59,11 +59,11 @@ export function create_gameManager(): GameManager {
             };
             GAME_MANAGER.addStateListener(setName);
 
-            let actual_code: number | null = parseInt(gameManager.roomCode!, 18);
+            let actualCode: number | null = parseInt(gameManager.roomCode!, 18);
 
             this.server.sendPacket({
                 type: "join",
-                roomCode: actual_code == null ? 0 : actual_code
+                roomCode: actualCode == null ? 0 : actualCode
             });
 
             return promise;
@@ -173,7 +173,7 @@ function createServer(){
         },
 
         open : ()=>{
-            let address = CONFIG.server_ip + ":" + CONFIG.port;
+            let address = CONFIG.serverIP + ":" + CONFIG.port;
             Server.ws = new WebSocket("ws://"+address);   //TODO
 
             let completePromise: () => void;
