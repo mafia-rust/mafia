@@ -1,7 +1,7 @@
 import React from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
-import GameState, { Phase } from "../../game/gameState.d";
+import GameState, { Phase, Verdict } from "../../game/gameState.d";
 import GameScreen from "./GameScreen";
 import PlayerListMenu from "./gameScreenContent/PlayerListMenu";
 import GraveyardMenu from "./gameScreenContent/GraveyardMenu";
@@ -57,15 +57,16 @@ export default class PhaseRowMenu extends React.Component<PhaseRowMenuProps, Pha
                                 gridAutoColumns: "1fr",
                             }}
                         >
-                            <button style={{gridColumn: 2}} onClick={()=>{GAME_MANAGER.sendJudgementPacket(-1)}}>{translate("verdict.Guilty")}</button>
-                            <button style={{gridColumn: 3}} onClick={()=>{GAME_MANAGER.sendJudgementPacket(0)}}>{translate("verdict.Abstain")}</button>
-                            <button style={{gridColumn: 4}} onClick={()=>{GAME_MANAGER.sendJudgementPacket(1)}}>{translate("verdict.Innocent")}</button>
+                            <button style={{gridColumn: 2}} onClick={()=>{GAME_MANAGER.sendJudgementPacket(Verdict.Guilty)}}>{translate("verdict.Guilty")}</button>
+                            <button style={{gridColumn: 3}} onClick={()=>{GAME_MANAGER.sendJudgementPacket(Verdict.Abstain)}}>{translate("verdict.Abstain")}</button>
+                            <button style={{gridColumn: 4}} onClick={()=>{GAME_MANAGER.sendJudgementPacket(Verdict.Innocent)}}>{translate("verdict.Innocent")}</button>
                             <div style={{gridColumn: 5}}></div>
                         </div></div>);})()}
                 </div>);
             }else{
-                return(<div>
-                    ERROR NO PLAYER ON TRIAL FOUND IN JUDGEMENT PHASE
+                //TODO lang or fix
+                return(<div> 
+                    ERROR NO PLAYER ON TRIAL FOUND IN JUDGEMENT PHASE TODO 
                 </div>);
             }
             
