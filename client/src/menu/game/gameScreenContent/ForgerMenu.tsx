@@ -1,8 +1,10 @@
 import React from "react";
 import GAME_MANAGER from "../../../index";
+import { StateListener } from "../../../game/net/gameManager.d";
 
-export default class ForgerMenu extends React.Component {
-    constructor(props) {
+export default class ForgerMenu extends React.Component<{}, {}> {
+    listener: StateListener
+    constructor(props: {}) {
         super(props);
 
         this.state = {
