@@ -23,7 +23,10 @@ jobs:
   build_server:
     name: Build Server
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
     steps:
       - uses: actions/checkout@v3
       - name: Build
-        run: cd server && cargo build --verbose
+        run: cargo build --verbose
