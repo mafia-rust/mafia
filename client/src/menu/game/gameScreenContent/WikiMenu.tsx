@@ -1,7 +1,7 @@
 import React, { Key } from "react";
-import translate from "../../game/lang";
-import GAME_MANAGER from "../../index";
-import GameState from "../../game/gameState.d";
+import translate from "../../../game/lang";
+import GAME_MANAGER from "../../../index";
+import GameState from "../../../game/gameState.d";
 
 
 interface WikiMenuProps {

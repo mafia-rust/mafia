@@ -152,10 +152,6 @@ export function create_gameManager(): GameManager {
                 gameManager.gameState.secondsLeft = 0;
             gameManager.invokeStateListeners("tick");
         },
-
-        getPlayer(playerIndex: number): Player {
-            return this.gameState.players[playerIndex];
-        }
     }
     return gameManager;
 }

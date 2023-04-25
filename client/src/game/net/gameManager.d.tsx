@@ -41,15 +41,13 @@ export interface GameManager {
     sendSetRoleListPacket(roleListEntries: RoleListEntry[]): void;
     
     sendJudgementPacket(judgement: Judgement): void;
-    sendVotePacket(votee_index: number): void;
+    sendVotePacket(votee_index: PlayerIndex| null): void;
     sendTargetPacket(target_index_list: number[]): void;
     sendDayTargetPacket(target_index: number): void;
     sendSaveWillPacket(will: string): void;
     sendSendMessagePacket(text: string): void;
     sendSendWhisperPacket(playerIndex: number, text: string): void;
     
-    getPlayer(playerIndex: PlayerIndex): Player | null;
-
     messageListener(serverMessage: ToClientPacket): void;
 
     tick(timePassedms: number): void;

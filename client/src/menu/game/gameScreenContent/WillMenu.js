@@ -1,6 +1,6 @@
 import React from "react";
-import translate from "../../game/lang";
-import GAME_MANAGER from "../../index";
+import translate from "../../../game/lang";
+import GAME_MANAGER from "../../../index";
 import ForgerMenu from "./ForgerMenu";
 import "./willMenu.css"
 

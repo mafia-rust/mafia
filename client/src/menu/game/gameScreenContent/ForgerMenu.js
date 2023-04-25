@@ -1,5 +1,5 @@
 import React from "react";
-import GAME_MANAGER from "../..";
+import GAME_MANAGER from "../../../index";
 
 export default class ForgerMenu extends React.Component {
     constructor(props) {

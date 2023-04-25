@@ -1,18 +1,32 @@
 import React from "react";
-import { getChatString } from "../../game/lang";
-import GAME_MANAGER from "../../index";
+import { getChatString } from "../../../game/lang";
+import GAME_MANAGER from "../../../index";
 import "./gameScreen.css";
 import "./chatMenu.css"
+import GameState, { PlayerIndex } from "../../../game/gameState.d";
 
-export default class ChatMenu extends React.Component {
-    static prependWhisper(playerIndex) {
-        ChatMenu.instance.setState({
-            chatField: "/w" + (playerIndex + 1) + " " + ChatMenu.instance.state.chatField,
+interface ChatMenuProps {
+}
+
+interface ChatMenuState {
+    gameState: GameState,
+    chatField: string,
+}
+
+export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuState> {
+    static prependWhisper(playerIndex: PlayerIndex) {
+        
+        if(ChatMenu.instance === null)
+            return;
+        ChatMenu.instance!.setState({
+            chatField: "/w" + (playerIndex + 1) + " " + ChatMenu.instance!.state.chatField,
         });
     }
-    static instance = null;
 
-    constructor(props) {
+    static instance: ChatMenu | null = null;
+    listener: () => void;
+
+    constructor(props: ChatMenuProps) {
         super(props);
 
         this.state = {
@@ -36,21 +50,24 @@ export default class ChatMenu extends React.Component {
         GAME_MANAGER.removeStateListener(this.listener);
     }
 
-    handleInputChange = (event) => {
-        const value = event.target.value.trimStart();
+    handleInputChange = (event: { target: { value: string; }; }) => {
+        const value = event.target.value.trim();
+        if(ChatMenu.instance === null) return;
         ChatMenu.instance.setState({
             chatField: value
         });
     };
 
-    handleInputKeyPress(event){
+    handleInputKeyPress(event: { code: string; preventDefault: () => void; }){
         if (event.code === "Enter") {
             event.preventDefault();
+            if(ChatMenu.instance === null) return;
             ChatMenu.instance.sendChatField();
         }
     };
 
     sendChatField(){
+        if(ChatMenu.instance === null) return;
         const text = ChatMenu.instance.state.chatField.trim();
         if (text.startsWith("/w")) {
             try {
@@ -74,7 +91,7 @@ export default class ChatMenu extends React.Component {
         });
     };
 
-    calcInputHeight = (value) => {
+    calcInputHeight = (value: string) => {
         const numberOfLineBreaks = (value.match(/\n/g) || []).length;
         // min-height + lines x line-height + padding + border
         const newHeight = 20 + numberOfLineBreaks * 20 + 12 + 2;
@@ -99,7 +116,7 @@ export default class ChatMenu extends React.Component {
         </div>
     );}
 
-    renderChatMessage(msg, i) {return (
+    renderChatMessage(msg: string, i: number) {return (
         <div key={i} className="chat-message">
             {getChatString(msg)}
         </div>

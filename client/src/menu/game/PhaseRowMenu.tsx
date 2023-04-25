@@ -3,10 +3,11 @@ import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import GameState, { Phase } from "../../game/gameState.d";
 import GameScreen from "./GameScreen";
-import WillMenu from "./WillMenu";
-import PlayerListMenu from "./PlayerListMenu";
-import GraveyardMenu from "./GraveyardMenu";
-import WikiMenu from "./WikiMenu";
+import PlayerListMenu from "./gameScreenContent/PlayerListMenu";
+import GraveyardMenu from "./gameScreenContent/GraveyardMenu";
+import WikiMenu from "./gameScreenContent/WikiMenu";
+import WillMenu from "./gameScreenContent/WillMenu";
+
 
 type PhaseRowMenuProps = {
     phase: Phase | null,
@@ -43,7 +44,9 @@ export default class PhaseRowMenu extends React.Component<PhaseRowMenuProps, Pha
             //TODO make buttons light up if they are clicked
             if(this.state.gameState.playerOnTrial !== null){
                 return(<div>
-                    {GAME_MANAGER.getPlayer(this.state.gameState.playerOnTrial!)?.toString()}
+                    {
+                        this.state.gameState.players[this.state.gameState.playerOnTrial!]?.toString()
+                    }
                     {(()=>{
                     if(this.state.gameState.playerOnTrial !== this.state.gameState.myIndex)
                         return(<div>
