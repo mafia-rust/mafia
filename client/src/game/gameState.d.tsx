@@ -1,10 +1,11 @@
 import { Grave } from "./grave";
+import { ChatMessage } from "./net/chatMessage";
 
 export default interface GameState {
     myName: string | null,
     myIndex: PlayerIndex | null,
 
-    chatMessages : any[],
+    chatMessages : ChatMessage[],
     graves: Grave[],
     players: Player[],
     
