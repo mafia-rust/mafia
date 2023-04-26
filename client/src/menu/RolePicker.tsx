@@ -16,7 +16,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
             selectors = [
                 <select 
                     key="faction" 
-                    value="Any"
+                    value="any"
                     onChange={(e)=>{this.updateRolePicker("faction", e.target.value)}}
                 > {
                     allFactions().map((faction: string, key) => {
@@ -38,7 +38,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                 } </select>,
                 <select
                     key="alignment"
-                    value={"Random"}
+                    value={"random"}
                     onChange={(e)=>{this.updateRolePicker("alignment", e.target.value)}}
                 > {
                     allAlignments(faction).map((faction: string, key) => {
@@ -46,7 +46,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     })
                 } </select>
             ]
-        } else if (this.props.roleListEntry.type === "factionAlignment") {
+        } else if (this.props.roleListEntry.type === "alignment") {
             let faction = getFaction(this.props.roleListEntry);
             let alignment = getAlignment(this.props.roleListEntry);
             selectors = [
@@ -70,7 +70,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                 } </select>,
                 <select
                     key="exact"
-                    value={"Random"}
+                    value={"random"}
                     onChange={(e)=>{this.updateRolePicker("exact", e.target.value)}}
                 > {
                     allRoles(faction, alignment).map((faction: string, key) => {
@@ -121,7 +121,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
         let roleListEntry = this.props.roleListEntry;
         switch (selector) {
             case "faction":
-                if (value === "Any") {
+                if (value === "any") {
                     roleListEntry = {
                         type: "any"
                     }
@@ -133,31 +133,31 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                 }
             break;
             case "alignment":
-                if (value === "Random") {
+                if (value === "random") {
                     roleListEntry = {
                         type: "faction",
                         faction: getFaction(this.props.roleListEntry)
                     }
                 } else {
                     roleListEntry = {
-                        type: "factionAlignment",
+                        type: "alignment",
                         faction: getFaction(this.props.roleListEntry),
-                        factionAlignment: getFaction(this.props.roleListEntry) + value
+                        alignment: value
                     }
                 }
             break;
             case "exact":
-                if (value === "Random") {
+                if (value === "random") {
                     roleListEntry = {
-                        type: "factionAlignment",
+                        type: "alignment",
                         faction: getFaction(this.props.roleListEntry),
-                        factionAlignment: getFaction(this.props.roleListEntry) + getAlignment(this.props.roleListEntry)
+                        alignment: getAlignment(this.props.roleListEntry)
                     }
                 } else {
                     roleListEntry = {
                         type: "exact",
                         faction: getFaction(this.props.roleListEntry),
-                        factionAlignment: getFaction(this.props.roleListEntry) + getAlignment(this.props.roleListEntry),
+                        alignment: getAlignment(this.props.roleListEntry),
                         role: value
                     }
                 }
@@ -170,7 +170,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
 
 function getFaction(roleListEntry: RoleListEntry): string {
     if (roleListEntry.type === "any") {
-        throw Error("Couldn't find a faction for Any")
+        throw Error("Couldn't find a faction for any")
     } else {
         return roleListEntry.faction;
     }
@@ -180,8 +180,7 @@ function getAlignment(roleListEntry: RoleListEntry): string {
     if (roleListEntry.type === "any" || roleListEntry.type === "faction") {
         throw Error("Couldn't find an alignment for " + roleListEntry);
     } else {
-        let factionAlignment = roleListEntry.factionAlignment;
-        return factionAlignment.replace(roleListEntry.faction, "");
+        return roleListEntry.alignment;
     }
 }
 
@@ -193,7 +192,7 @@ function allFactions(): string[] {
             factions.push(faction);
         }
     }
-    factions.push("Any");
+    factions.push("any");
     return factions;
 }
 
@@ -208,7 +207,7 @@ function allAlignments(faction: string): string[] {
         }
     }
 
-    alignments.push("Random");
+    alignments.push("random");
     return alignments;
 }
 
@@ -217,11 +216,11 @@ function allRoles(faction: string, alignment: string): string[] {
 
     for (let [name, role] of ROLES) {
         if (role.faction !== faction) continue;
-        if (role.alignment !== alignment && alignment !== "Random") continue;
+        if (role.alignment !== alignment && alignment !== "random") continue;
 
         roles.push(name);
     }
 
-    roles.push("Random");
+    roles.push("random");
     return roles;
 }

@@ -1,52 +1,52 @@
 {
-    "Sheriff": {
-        "faction": "Town",
-        "alignment": "Investigative",
+    "sheriff": {
+        "faction": "town",
+        "alignment": "investigative",
         "suspicious": false,
         "roleblockable": true,
         "defense": 0,
         "witchable": true,
-        "victoryGroup": "Faction",
+        "victoryGroup": "faction",
         "maxCount": null
     },
-    "Doctor": {
-        "faction": "Town",
-        "alignment": "Protective",
+    "doctor": {
+        "faction": "town",
+        "alignment": "protective",
         "suspicious": false,
         "roleblockable": true,
         "defense": 0,
         "witchable": true,
-        "victoryGroup": "Faction",
+        "victoryGroup": "faction",
         "maxCount": null
     },
-    "Veteran": {
-        "faction": "Town",
-        "alignment": "Killing",
+    "veteran": {
+        "faction": "town",
+        "alignment": "killing",
         "suspicious": false,
         "roleblockable": false,
         "defense": 0,
         "witchable": false,
-        "victoryGroup": "Faction",
+        "victoryGroup": "faction",
         "maxCount": 1
     },
-    "Mafioso": {
-        "faction": "Mafia",
-        "alignment": "Killing",
+    "mafioso": {
+        "faction": "mafia",
+        "alignment": "killing",
         "suspicious": true,
         "roleblockable": true,
         "defense": 0,
         "witchable": true,
-        "victoryGroup": "Faction",
+        "victoryGroup": "faction",
         "maxCount": 1
     },
-    "Consort": {
-        "faction": "Mafia",
-        "alignment": "Support",
+    "consort": {
+        "faction": "mafia",
+        "alignment": "support",
         "suspicious": true,
         "roleblockable": false,
         "defense": 0,
         "witchable": true,
-        "victoryGroup": "Faction",
+        "victoryGroup": "faction",
         "maxCount": null
     }
 }

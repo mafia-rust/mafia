@@ -66,10 +66,8 @@ export type ToClientPacket = {
     will: string
 } | {
     type: "yourRole",
-    role: {
-        0: Role
-        /* OTHER FIELDS TODO */
-    }
+    role: Role
+    /* OTHER FIELDS TODO */
 } | {
     type: "yourTarget",
     playerIndices: [PlayerIndex]

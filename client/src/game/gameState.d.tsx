@@ -67,7 +67,7 @@ export interface Player {
 
 export type Role = string;
 export type Faction = string;
-export type FactionAlignment = string;
+export type Alignment = string;
 
 export type RoleListEntry = {
     type: "any"
@@ -75,12 +75,12 @@ export type RoleListEntry = {
     type: "faction"
     faction: Faction,
 } | {
-    type: "factionAlignment"
+    type: "alignment"
     faction: Faction,
-    factionAlignment: FactionAlignment,
+    alignment: Alignment,
 } | {
     type: "exact"
     faction: Faction,
-    factionAlignment: FactionAlignment,
+    alignment: Alignment,
     role: Role,
 };
