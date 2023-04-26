@@ -118,11 +118,7 @@ export default function messageListener(packet: ToClientPacket){
             GAME_MANAGER.gameState.will = packet.will;
         break;
         case "yourRole":
-            if(typeof(packet.role)==="string"){
-                GAME_MANAGER.gameState.role = packet.role;
-            }else{
-                GAME_MANAGER.gameState.role = Object.keys(packet.role)[0];
-            }
+            GAME_MANAGER.gameState.role = packet.role;
         break;
         case "yourTarget":
             GAME_MANAGER.gameState.targets = packet.playerIndices;

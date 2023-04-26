@@ -27,6 +27,7 @@ macro_rules! make_role_enum {
         #[serde(rename_all = "camelCase")]
         #[serde(tag = "role")]
         pub enum RoleData {
+            #[serde(rename_all = "camelCase")]
             $($name $({
                 $($data_ident: $data_type),*
             })?),*
