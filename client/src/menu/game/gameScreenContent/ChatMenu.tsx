@@ -15,6 +15,8 @@ interface ChatMenuState {
 }
 
 export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuState> {
+    buttomOfPage: HTMLBRElement | null;
+
     static prependWhisper(playerIndex: PlayerIndex) {
         
         if(ChatMenu.instance === null)
@@ -29,6 +31,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
 
     constructor(props: ChatMenuProps) {
         super(props);
+        this.buttomOfPage = null;
 
         this.state = {
             gameState: GAME_MANAGER.gameState,
@@ -50,6 +53,23 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     componentWillUnmount() {
         GAME_MANAGER.removeStateListener(this.listener);
     }
+
+    componentDidUpdate() {
+        if(this.bottomIsInViewport(500))   //used to be 500
+            this.scrollToBottom();
+    }
+
+    scrollToBottom() {
+        this.buttomOfPage?.scrollIntoView({ behavior: "smooth" });
+    }
+    bottomIsInViewport(offset = 0) {
+        if (!this.buttomOfPage) return false;
+        const top = this.buttomOfPage.getBoundingClientRect().top;
+        //if top is between 0 and height then true
+        //else false
+        return (top + offset) >= 0 && (top - offset) <= window.innerHeight;
+    }
+
 
     handleInputChange = (event: { target: { value: string; }; }) => {
         //turns all 2 spaces into 1 space. turn all tabs into 1 space. turn all new lines into 1 space
@@ -131,6 +151,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
                 {this.state.gameState.chatMessages.map((msg, i) => {
                     return this.renderChatMessage(msg, i);
                 })}
+                <br ref={(el) => { this.buttomOfPage = el; }}/>
             </div>
             {this.renderTextInput()}
         </div>
