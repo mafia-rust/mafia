@@ -18,9 +18,15 @@ export function createGameManager(): GameManager {
 
         name: undefined,
 
-        server : createServer(),
+        willMenuOpen: false,
+        wikiMenuOpen: false,
+        graveyardMenuOpen: false,
+        playerListMenuOpen: false,
 
         gameState : createGameState(),
+
+        server : createServer(),
+
 
         listeners : [],
         addStateListener(listener) {

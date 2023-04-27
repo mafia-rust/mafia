@@ -9,7 +9,15 @@ import WillMenu from "./gameScreenContent/WillMenu";
 import "./gameScreen.css";
 import GAME_MANAGER from "../..";
 import GameState from "../../game/gameState.d";
+import WikiMenu from "./gameScreenContent/WikiMenu";
 
+
+export enum ContentMenus {
+    GraveyardMenu = "GraveyardMenu",
+    PlayerListMenu = "PlayerListMenu",
+    WillMenu = "WillMenu",
+    WikiMenu = "WikiMenu",
+}
 
 type GameScreenProps = {
     
@@ -26,6 +34,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
 
     constructor(props: GameScreenProps) {
         super(props);
+        GameScreen.instance = this;
         this.state = {
             header: LoadingScreen.create(),
             content: [LoadingScreen.create()],
@@ -38,28 +47,73 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
             })
         }
     }
-
-    openOrCloseMenu(menu: JSX.Element) {
+    
+    openMenu(menu: ContentMenus) {
+        switch(menu) {
+            case ContentMenus.GraveyardMenu:
+                this.state.content.push(<GraveyardMenu/>);
+                this.setState({
+                    content: this.state.content,
+                });
+                GAME_MANAGER.graveyardMenuOpen = true;
+                break;
+            case ContentMenus.PlayerListMenu:
+                this.state.content.push(<PlayerListMenu/>);
+                this.setState({
+                    content: this.state.content,
+                });
+                GAME_MANAGER.playerListMenuOpen = true;
+                break;
+            case ContentMenus.WillMenu:
+                this.state.content.push(<WillMenu/>);
+                this.setState({
+                    content: this.state.content,
+                });
+                GAME_MANAGER.willMenuOpen = true;
+                break;
+            case ContentMenus.WikiMenu:
+                this.state.content.push(<WikiMenu role={null}/>);
+                this.setState({
+                    content: this.state.content,
+                });
+                GAME_MANAGER.wikiMenuOpen = true;
+                break;
+        }
+        GAME_MANAGER.invokeStateListeners();
+    }
+    closeMenu(menu: ContentMenus) {
         for(let i = 0; i < this.state.content.length; i++) {
-            if(this.state.content[i].type === menu.type) {
+            if(this.state.content[i].type.name === menu.toString()) {
                 this.state.content.splice(i, 1);
                 this.setState({
                     content: this.state.content,
                 });
-                return;
+                switch(menu) {
+                    case ContentMenus.GraveyardMenu:
+                        GAME_MANAGER.graveyardMenuOpen = false;
+                        break;
+                    case ContentMenus.PlayerListMenu:
+                        GAME_MANAGER.playerListMenuOpen = false;
+                        break;
+                    case ContentMenus.WillMenu:
+                        GAME_MANAGER.willMenuOpen = false;
+                        break;
+                    case ContentMenus.WikiMenu:
+                        GAME_MANAGER.wikiMenuOpen = false;
+                        break;
+                }
+                break;
             }
         }
-        this.state.content.push(menu);
-        this.setState({
-            content: [...this.state.content],
-        });
+        GAME_MANAGER.invokeStateListeners();
     }
-            
 
     componentDidMount() {
         GameScreen.instance = this;
         this.setState({
-            header: <PhaseRowMenu phase={this.state.gameState.phase}/>,
+            header: <PhaseRowMenu 
+                phase={this.state.gameState.phase}
+            />,
             content: [
                 <GraveyardMenu/>,
                 <ChatMenu/>,

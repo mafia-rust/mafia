@@ -5,6 +5,7 @@ import "./playerListMenu.css"
 import "./../gameScreen.css"
 import ChatMenu from "./ChatMenu";
 import GameState, { Player, PlayerIndex } from "../../../game/gameState.d";
+import GameScreen, { ContentMenus } from "../GameScreen";
 
 interface PlayerListMenuProps {
 }
@@ -123,7 +124,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
 
     render(){return(<div>
         
-        {translate("menu.playerList.title")}
+        <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.PlayerListMenu)}}>{translate("menu.playerList.title")}</button>
 
         <button className="button gm-button" onClick={()=>{
             this.setState({
