@@ -23,7 +23,7 @@ export default class LobbyRolePane extends React.Component<any, RolePaneState> {
             if (type === "roleList") {
                 this.setState({
                     roleList: [...GAME_MANAGER.gameState.roleList]
-                })
+                });
             }
         };  
     }
@@ -45,7 +45,7 @@ export default class LobbyRolePane extends React.Component<any, RolePaneState> {
             this.state.roleList.map((_, index) => {
                 return <RolePicker
                     roleListEntry={this.state.roleList[index]}
-                    onChange={(value: RoleListEntry) => {this.onChangeRolePicker(index, value)}}
+                    onChange={(value: RoleListEntry) => {this.onChangeRolePicker(index, value);}}
                     key={index}
                 />
             })
