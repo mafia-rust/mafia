@@ -11,7 +11,7 @@ interface PlayerListMenuProps {
 }
 interface PlayerListMenuState {
     gameState: GameState,
-    hideDead: boolean,
+    hideNoAction: boolean,
 }
 
 export default class PlayerListMenu extends React.Component<PlayerListMenuProps, PlayerListMenuState> {
@@ -22,7 +22,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
 
         this.state = {
             gameState : GAME_MANAGER.gameState,
-            hideDead: false,
+            hideNoAction: false,
         };
         this.listener = ()=>{
             this.setState({
@@ -70,19 +70,12 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         }
     }
 
-    renderPlayer(player: Player){
-        
-        let canWhisper = 
-            this.state.gameState.phase !== "night" && 
-            GAME_MANAGER.gameState.phase !== null && 
-            this.state.gameState.myIndex !== player.index;
-
-        // let buttonCount = player.buttons.dayTarget + player.buttons.target + player.buttons.vote + canWhisper;
+    renderPlayer(player: Player, whisperButton: boolean){
 
         return(<div key={player.index}>
             {player.toString()}<br/>
 
-            <div>
+            <div style={{display: "flex"}}>
                 {((player)=>{if(player.buttons.target){return(
                     <button className="button gm-button" onClick={()=>{
                         GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.gameState.targets, player.index]);
@@ -100,7 +93,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         GAME_MANAGER.sendDayTargetPacket(player.index)}}
                 >{translate("button.dayTarget")}</button>)}})(player)}
 
-                {((player)=>{if(canWhisper){return(
+                {((player)=>{if(whisperButton){return(
                     <button className="button gm-button" onClick={()=>{
                         ChatMenu.prependWhisper(player.index)
                 }}>{translate("button.whisper")}</button>)}})(player)}
@@ -111,26 +104,50 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
             
         </div>)
     }
-    renderPlayers(players: Player[]){return<div>
-        {
-            players.map((player)=>{
-                if(!this.state.hideDead || player.alive){
-                    return this.renderPlayer(player);
-                }
-                return null;
-            }, this)
+    renderPlayers(players: Player[]){
+        
+        let playersHTML = [];
+        for(let i = 0; i < players.length; i++){
+            
+            let canWhisper = 
+                GAME_MANAGER.gameState.phase !== "night" && 
+                GAME_MANAGER.gameState.myIndex !== players[i].index;
+
+            if(
+                !this.state.hideNoAction || (this.state.hideNoAction && (
+                    players[i].buttons.dayTarget || 
+                    players[i].buttons.target || 
+                    players[i].buttons.vote || 
+                    canWhisper
+                )))
+                    playersHTML.push(this.renderPlayer(players[i], canWhisper));
         }
-    </div>}
+        
+
+        return<div>
+        {
+            playersHTML
+        }
+        </div>
+    }
 
     render(){return(<div>
         
         <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.PlayerListMenu)}}>{translate("menu.playerList.title")}</button>
-
-        <button className="button gm-button" onClick={()=>{
-            this.setState({
-                hideDead: !this.state.hideDead
-            })
-        }}>LANG TODO hide dead</button>
+        <br/>
+        
+        <label>
+            <input type="checkbox" className="button gm-button" 
+                checked={this.state.hideNoAction}
+                onChange={(checked)=>{
+                    this.setState({
+                        hideNoAction: checked.target.checked
+                    }); 
+                }
+            }/>
+            LANG TODO HIDENOACTION
+        </label>
+        
         <br/>
         <br/>
         {this.renderPhaseSpecific()}
