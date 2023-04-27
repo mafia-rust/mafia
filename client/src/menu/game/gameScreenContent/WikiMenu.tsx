@@ -1,7 +1,8 @@
-import React, { Key } from "react";
+import React from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import GameState, { Role } from "../../../game/gameState.d";
+import GameScreen, { ContentMenus } from "../GameScreen";
 
 
 interface WikiMenuProps {
@@ -57,9 +58,11 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
         </div>
     }
     render(){return(<div style={{height: "100%", overflowX:"hidden"}}>
-        {translate("menu.wiki.title")}
+        <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.WikiMenu)}}>{translate("menu.wiki.title")}</button>
+        
         {/* TODO, rolepicker code here*/}
         {this.state.role?this.renderRole(this.state.role):null}
+        {translate("menu.wiki.investigatorResults")}
         {this.renderInvestigativeResults()}
     </div>)}
 }

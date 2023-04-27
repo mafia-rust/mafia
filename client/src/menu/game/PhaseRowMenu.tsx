@@ -2,11 +2,7 @@ import React from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import GameState, { Phase, Verdict } from "../../game/gameState.d";
-import GameScreen from "./GameScreen";
-import PlayerListMenu from "./gameScreenContent/PlayerListMenu";
-import GraveyardMenu from "./gameScreenContent/GraveyardMenu";
-import WikiMenu from "./gameScreenContent/WikiMenu";
-import WillMenu from "./gameScreenContent/WillMenu";
+import GameScreen, { ContentMenus as GameScreenContentMenus } from "./GameScreen";
 
 
 type PhaseRowMenuProps = {
@@ -14,6 +10,11 @@ type PhaseRowMenuProps = {
 }
 type PhaseRowMenuState = {
     gameState: GameState,
+
+    willMenuOpen: boolean,
+    playerListMenuOpen: boolean,
+    graveyardMenuOpen: boolean,
+    wikiMenuOpen: boolean,
 }
 
 export default class PhaseRowMenu extends React.Component<PhaseRowMenuProps, PhaseRowMenuState> {
@@ -24,11 +25,21 @@ export default class PhaseRowMenu extends React.Component<PhaseRowMenuProps, Pha
 
         this.state = {
             gameState: GAME_MANAGER.gameState,
+
+            willMenuOpen: true,
+            playerListMenuOpen: true,
+            graveyardMenuOpen: true,
+            wikiMenuOpen: true,
         };
         this.listener = () => {
             this.setState({
-                gameState: GAME_MANAGER.gameState
-            }); // update the component state with the new copy
+                gameState: GAME_MANAGER.gameState,
+
+                willMenuOpen: GAME_MANAGER.willMenuOpen,
+                playerListMenuOpen: GAME_MANAGER.playerListMenuOpen,
+                graveyardMenuOpen: GAME_MANAGER.graveyardMenuOpen,
+                wikiMenuOpen: GAME_MANAGER.wikiMenuOpen,
+            });
         };
     }
     componentDidMount() {
@@ -83,10 +94,33 @@ export default class PhaseRowMenu extends React.Component<PhaseRowMenuProps, Pha
     </div>)}
     renderMenuButtons(){
         return <div>
-            <button onClick={()=>{GameScreen.instance.openOrCloseMenu(<WillMenu/>)}}>{translate("menu.will.title")}</button>
-            <button onClick={()=>{GameScreen.instance.openOrCloseMenu(<PlayerListMenu/>)}}>{translate("menu.playerList.title")}</button>
-            <button onClick={()=>{GameScreen.instance.openOrCloseMenu(<GraveyardMenu/>)}}>{translate("menu.graveyard.title")}</button>
-            <button onClick={()=>{GameScreen.instance.openOrCloseMenu(<WikiMenu role={null}/>)}}>{translate("menu.wiki.title")}</button>
+            {(()=>
+                this.state.willMenuOpen?null:
+                    <button onClick={()=>{
+                        GameScreen.instance.openMenu(GameScreenContentMenus.WillMenu)
+                    }}>{translate("menu.will.title")}</button>
+            )()}
+            {(()=>
+                this.state.playerListMenuOpen?null:
+                    <button onClick={()=>{
+                        GameScreen.instance.openMenu(GameScreenContentMenus.PlayerListMenu)
+                    
+                    }}>{translate("menu.playerList.title")}</button>
+            )()}
+            {(()=>
+                this.state.graveyardMenuOpen?null:
+                    <button onClick={()=>{
+                        GameScreen.instance.openMenu(GameScreenContentMenus.GraveyardMenu)
+                    
+                    }}>{translate("menu.graveyard.title")}</button>
+            )()}
+            {(()=>
+                this.state.wikiMenuOpen?null:
+                    <button onClick={()=>{
+                        GameScreen.instance.openMenu(GameScreenContentMenus.WikiMenu)
+                    
+                    }}>{translate("menu.wiki.title")}</button>
+            )()}
         </div>
     }
     renderPhaseName(){

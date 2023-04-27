@@ -21,8 +21,15 @@ export type StateListener = (type?: StateEventType) => void;
 export interface GameManager {
     roomCode: string | null,
     name: string | undefined,
-    server: Server,
+
+    willMenuOpen: boolean,
+    wikiMenuOpen: boolean,
+    graveyardMenuOpen: boolean,
+    playerListMenuOpen: boolean,
+    
     gameState: GameState,
+
+    server: Server,
     listeners: StateListener[],
 
     addStateListener(listener: StateListener): void;

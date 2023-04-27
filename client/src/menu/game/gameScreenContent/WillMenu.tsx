@@ -2,6 +2,7 @@ import React from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import ForgerMenu from "./ForgerMenu";
+import GameScreen, { ContentMenus } from "../GameScreen";
 import "./willMenu.css"
 import GameState from "../../../game/gameState.d";
 import { StateListener } from "../../../game/net/gameManager.d";
@@ -33,8 +34,9 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
         GAME_MANAGER.removeStateListener(this.listener);
     }
     render() {return (<div>
+        <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.WillMenu)}}>{translate("menu.will.title")}</button>
+            
         <div className= "will-menu textarea">
-            {translate("menu.will.will")}
             <br/>
             <textarea 
                 className="textarea-text"

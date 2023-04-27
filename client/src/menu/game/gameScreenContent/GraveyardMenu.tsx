@@ -3,6 +3,7 @@ import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import GameState, { RoleListEntry } from "../../../game/gameState.d";
 import { Grave } from "../../../game/grave";
+import GameScreen, { ContentMenus } from "../GameScreen";
 
 interface GraveyardMenuState {
     gameState: GameState,
@@ -87,6 +88,8 @@ export default class GraveyardMenu extends React.Component<any, GraveyardMenuSta
         }
     }
     render(){return(<div>
+        <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.GraveyardMenu)}}>{translate("menu.graveyard.title")}</button>
+            
         {this.state.gameState.players[this.state.gameState.myIndex!]?.toString()}: {this.state.gameState.role}
         {this.state.gameState.graves.map((grave, graveIndex)=>{
             return this.renderGrave(grave, graveIndex);
