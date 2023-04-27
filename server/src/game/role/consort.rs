@@ -2,7 +2,7 @@ use crate::game::chat::ChatGroup;
 use crate::game::phase::PhaseType;
 use crate::game::player::{Player, PlayerIndex};
 use crate::game::role_list::{FactionAlignment, Faction};
-use crate::game::victory_group::VictoryGroup;
+use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
@@ -14,7 +14,7 @@ pub(super) const WITCHABLE: bool = true;
 pub(super) const SUSPICIOUS: bool = true;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaSupport;
 pub(super) const MAXIUMUM_COUNT: Option<u8> = None;
-pub(super) const VICTORY_GROUP: VictoryGroup = VictoryGroup::Faction;
+pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Faction;
 
 
 pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game: &mut Game) {
