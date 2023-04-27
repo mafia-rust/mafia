@@ -5,6 +5,8 @@ use std::hash::Hash;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use lazy_static::lazy_static;
+use rand::seq::SliceRandom;
+use rand::thread_rng;
 use tokio::sync::mpsc::UnboundedSender;
 use tokio_tungstenite::tungstenite::Message;
 
@@ -35,7 +37,8 @@ impl Game {
 
         //create role list
         let mut settings = settings.clone();
-        let roles = create_random_roles(&settings.role_list);
+        let mut roles = create_random_roles(&settings.role_list);
+        roles.shuffle(&mut thread_rng());
         
 
         //create players
@@ -53,6 +56,8 @@ impl Game {
             new_player.set_role(new_player.role_data);
             players.push(new_player);
         }
+        drop(roles);
+        //just to make sure the order of roles is not used anywhere else for secuity from our own stupidity  
 
         let game = Self{
             players,
