@@ -36,6 +36,7 @@
 
     "menu.wiki.title": "Wiki",
     "menu.wiki.investigatorResults": "Investigator Results",
+    "menu.wiki.noRole": "No role selected",
 
     "menu.playerList.title": "Player List",
 
@@ -75,6 +76,8 @@
     "FactionAlignment.Alignment.Evil": "Evil",
     "FactionAlignment.Alignment.Chaos": "Chaos",
     "FactionAlignment.Alignment.Random": "Random",
+    "FactionAlignment.Alignment.Utility": "Utility",
+    "FactionAlignment.Alignment.Power": "Power",
 
     "verdict.guilty": "guilty",
     "verdict.innocent": "innocent",

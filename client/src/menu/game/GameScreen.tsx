@@ -72,7 +72,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                 GAME_MANAGER.willMenuOpen = true;
                 break;
             case ContentMenus.WikiMenu:
-                this.state.content.push(<WikiMenu role={null}/>);
+                this.state.content.push(<WikiMenu role={{type: "any"}}/>);
                 this.setState({
                     content: this.state.content,
                 });
