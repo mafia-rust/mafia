@@ -52,7 +52,9 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     }
 
     handleInputChange = (event: { target: { value: string; }; }) => {
-        const value = event.target.value.trim();
+        //turns all 2 spaces into 1 space. turn all tabs into 1 space. turn all new lines into 1 space
+        const value = event.target.value.replace(/  +/g, ' ').replace(/\t/g, ' ').replace(/\n/g, ' ');
+
         if(ChatMenu.instance === null) return;
         ChatMenu.instance.setState({
             chatField: value
