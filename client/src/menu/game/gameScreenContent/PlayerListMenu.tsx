@@ -135,11 +135,19 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         
         <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.PlayerListMenu)}}>{translate("menu.playerList.title")}</button>
         <br/>
-        <button className="button gm-button" onClick={()=>{
-            this.setState({
-                hideNoAction: !this.state.hideNoAction
-            })
-        }}>LANG TODO hideNoAction</button>
+        
+        <label>
+            <input type="checkbox" className="button gm-button" 
+                checked={this.state.hideNoAction}
+                onChange={(checked)=>{
+                    this.setState({
+                        hideNoAction: checked.target.checked
+                    }); 
+                }
+            }/>
+            LANG TODO HIDENOACTION
+        </label>
+        
         <br/>
         <br/>
         {this.renderPhaseSpecific()}
