@@ -35,7 +35,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
     }
     render() {return (<div>
         <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.WillMenu)}}>{translate("menu.will.title")}</button>
-            
+        <br/>
         <div className= "will-menu textarea">
             <br/>
             <textarea 

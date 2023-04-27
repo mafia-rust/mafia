@@ -89,7 +89,7 @@ export default class GraveyardMenu extends React.Component<any, GraveyardMenuSta
     }
     render(){return(<div>
         <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.GraveyardMenu)}}>{translate("menu.graveyard.title")}</button>
-            
+        <br/>
         {this.state.gameState.players[this.state.gameState.myIndex!]?.toString()}: {this.state.gameState.role}
         {this.state.gameState.graves.map((grave, graveIndex)=>{
             return this.renderGrave(grave, graveIndex);

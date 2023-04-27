@@ -1,7 +1,7 @@
 import React from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
-import GameState, { Role, RoleListEntry } from "../../../game/gameState.d";
+import GameState, { RoleListEntry } from "../../../game/gameState.d";
 import GameScreen, { ContentMenus } from "../GameScreen";
 import RolePicker from "../../RolePicker";
 
@@ -79,7 +79,7 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
     }
     render(){return(<div style={{height: "100%", overflowX:"hidden"}}>
         <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.WikiMenu)}}>{translate("menu.wiki.title")}</button>
-        
+        <br/>
         <RolePicker roleListEntry={this.state.roleListEntry} onChange={(value)=>{this.onChangeRolePicker(value);}}/>
         <br/>
         {this.renderRole(this.state.roleListEntry)}
