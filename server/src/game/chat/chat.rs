@@ -18,16 +18,33 @@ pub enum MessageSender {
 #[serde(tag = "type")]
 pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
-    Normal{message_sender: MessageSender, text: String, chat_group: ChatGroup},
+    Normal{
+        message_sender: MessageSender, 
+        text: String, 
+        chat_group: ChatGroup
+    },
+
     #[serde(rename_all = "camelCase")]
-    Whisper{from_player_index: PlayerIndex, to_player_index: PlayerIndex, text: String},
-    BroadcastWhisper { whisperer: PlayerIndex, whisperee: PlayerIndex },    //Sammy whispered to Tyler
+    Whisper{
+        from_player_index: PlayerIndex, 
+        to_player_index: PlayerIndex, 
+        text: String
+    },
+
+    //Sammy whispered to Tyler
+    BroadcastWhisper {
+        whisperer: PlayerIndex, 
+        whisperee: PlayerIndex 
+    },
+        
     /* System */
     Debug{text: String}, // TODO: Remove. This is only for testing.
 
     RoleAssignment{role: Role},   //you are this role
     PlayerDied{grave: Grave},      //this player died this is their role
     GameOver/*(WinState)*/,
+
+
     #[serde(rename_all = "camelCase")]
     PhaseChange{
         #[serde(rename = "phase")]
@@ -36,24 +53,54 @@ pub enum ChatMessage {
     },
     /* Trial */
     #[serde(rename_all = "camelCase")]
-    TrialInformation{required_votes: usize, trials_left: u8},
+    TrialInformation{
+        required_votes: usize, 
+        trials_left: u8
+    },
 
-    Voted { voter: PlayerIndex, votee: Option<PlayerIndex> },
+    Voted {
+        voter: PlayerIndex, 
+        votee: Option<PlayerIndex> 
+    },
 
+    //Geneveive is on trial
     #[serde(rename_all = "camelCase")]
-    PlayerOnTrial{player_index: PlayerIndex},     //This  player is on trial
+    PlayerOnTrial{
+        player_index: PlayerIndex
+    },
 
+    //Sammy voted
     #[serde(rename_all = "camelCase")]
-    JudgementVote{voter_player_index: PlayerIndex},             //Sammy voted
+    JudgementVote{
+        voter_player_index: PlayerIndex
+    },
+
+    //Sammy voted innocent
     #[serde(rename_all = "camelCase")]
-    JudgementVerdict{voter_player_index: PlayerIndex, verdict: Verdict}, //Sammy voted innocent
+    JudgementVerdict{
+        voter_player_index: PlayerIndex, 
+        verdict: Verdict
+    },
+
+    //Sammy was voted innocent with these many votes
     #[serde(rename_all = "camelCase")]
-    TrialVerdict {player_on_trial: PlayerIndex, innocent: usize, guilty: usize },    //Sammy was voted innocent with these many votes
+    TrialVerdict {
+        player_on_trial: PlayerIndex, 
+        innocent: usize, 
+        guilty: usize 
+    },
     
     /* Misc */
-    Targeted { targeter: PlayerIndex, target: Option<PlayerIndex> },        //Sammy targeted Jack
+    //Sammy targeted Jack
+    Targeted {
+        targeter: PlayerIndex,
+        target: Option<PlayerIndex> 
+    },
+
     #[serde(rename_all = "camelCase")]
-    NightInformation{ night_information: NightInformation },
+    NightInformation{
+        night_information: NightInformation
+    },
 
     /* Role-specific */
     #[serde(rename_all = "camelCase")]
@@ -61,9 +108,15 @@ pub enum ChatMessage {
     MayorCantWhisper,   //you cant whisper as or to a revealed mayor
     JailorDecideExecuteYou,     //Jailor has decided to execute you
     MediumSeanceYou,       //You are being seanced by the medium
+    JesterWon, //The jester will get their revenge from the grave
+    ExecutionerWon, //You got your target lynched
+
+    #[serde(rename_all = "camelCase")]
+    PlayerWithNecronomicon{player_index: PlayerIndex}, //Sammy has the necronomicon
 
     #[serde(rename_all = "camelCase")]
     RoleData{role_data: RoleData},  //Tell executioner their target, other things. TODO
+
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]

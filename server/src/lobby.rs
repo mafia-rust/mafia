@@ -293,7 +293,7 @@ impl Lobby {
             }
             LobbyState::Game { game, players } => {
                 for player in players.iter() {
-                    game.get_unchecked_player(*player.1).send(packet.clone());
+                    game.get_unchecked_player(*player.1).send_packet(packet.clone());
                 }
             }
             LobbyState::Closed => {}

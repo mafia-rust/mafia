@@ -71,19 +71,19 @@ impl Game {
 
         //send to players all game information stuff
         let player_names: Vec<String> = game.players.iter().map(|p|{return p.name.clone()}).collect();
-        game.send_to_all(ToClientPacket::Players { names: player_names });
-        game.send_to_all(ToClientPacket::RoleList { 
+        game.send_packet_to_all(ToClientPacket::Players { names: player_names });
+        game.send_packet_to_all(ToClientPacket::RoleList { 
             role_list: settings.role_list.clone() 
         });
-        game.send_to_all(ToClientPacket::Phase { 
+        game.send_packet_to_all(ToClientPacket::Phase { 
             phase: game.get_current_phase(), 
             seconds_left: game.phase_machine.time_remaining.as_secs(), 
             day_number: game.phase_machine.day_number 
         });
             
         for player in game.players.iter(){
-            player.send(ToClientPacket::YourPlayerIndex { player_index: player.index });
-            player.send(ToClientPacket::PlayerButtons { buttons: 
+            player.send_packet(ToClientPacket::YourPlayerIndex { player_index: player.index });
+            player.send_packet(ToClientPacket::PlayerButtons { buttons: 
                 PlayerButtons::from(&game, player.index)
             });
         }
@@ -91,6 +91,7 @@ impl Game {
         game
     }
 
+//getting players
     pub fn get_player(&self, index: PlayerIndex)->Option<&Player>{
         self.players.get(index as usize)
     }
@@ -104,11 +105,11 @@ impl Game {
         self.players.get_mut(index as usize).unwrap()
     }
 
+//phase state machine stuff
     pub fn get_current_phase(&self) -> PhaseType {
         self.phase_machine.current_state
     }
-
-    pub fn reset(&mut self, phase: PhaseType){
+    pub fn reset_phase_start(&mut self, phase: PhaseType){
         match phase {
             PhaseType::Morning => {
                 self.player_on_trial = None;
@@ -130,28 +131,36 @@ impl Game {
             player.tick()
         }
 
+        //if max day is reached, end game
         if self.phase_machine.day_number == 255 {
-            self.send_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
+            self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
             // TODO, clean up the lobby. Stop the ticking
             return;
         }
 
+        //check if phase is over and start next phase
         while self.phase_machine.time_remaining <= Duration::ZERO{
             let new_phase = PhaseType::end(self);
-            //reset
+
+
+            //reset variables
             for player_index in 0..self.players.len(){
-                Player::reset_phase_variables(self, player_index as PlayerIndex, new_phase);
+                Player::reset_phase_start(self, player_index as PlayerIndex, new_phase);
             }
-            self.reset(new_phase);
+
+            self.reset_phase_start(new_phase);
+            
             //start next phase
             self.jump_to_phase(new_phase);  //phase start is called here
         }
         
+        //subtract time for actual tick
         self.phase_machine.time_remaining = match self.phase_machine.time_remaining.checked_sub(time_passed){
             Some(out) => out,
             None => Duration::ZERO,
         };
     }
+
     fn jump_to_phase(&mut self, phase: PhaseType){
         self.phase_machine.current_state = phase;
         //fix time
@@ -163,15 +172,16 @@ impl Game {
         let mut alive = Vec::new();
         //stuff that runs only when phase switches
         for player in self.players.iter(){
-            player.send(ToClientPacket::PlayerButtons{
+            player.send_packet(ToClientPacket::PlayerButtons{
                 buttons: PlayerButtons::from(self, player.index) 
             });
             alive.push(player.alive);
         }
-        self.send_to_all(ToClientPacket::Phase { phase: self.get_current_phase(), day_number: self.phase_machine.day_number, seconds_left: self.phase_machine.time_remaining.as_secs() });
-        self.send_to_all(ToClientPacket::PlayerAlive { alive });
+        self.send_packet_to_all(ToClientPacket::Phase { phase: self.get_current_phase(), day_number: self.phase_machine.day_number, seconds_left: self.phase_machine.time_remaining.as_secs() });
+        self.send_packet_to_all(ToClientPacket::PlayerAlive { alive });
     }
 
+//sending chat messages
     pub fn add_message_to_chat_group(&mut self, group: ChatGroup, message: ChatMessage){
         let mut message = message.clone();
 
@@ -211,7 +221,7 @@ impl Game {
                 //if player being voted for is dead then no
                 if !player.alive { player_voted_index = None; }
                 
-                player.send(ToClientPacket::YourVoting { player_index: player_voted_index });
+                player.send_packet(ToClientPacket::YourVoting { player_index: player_voted_index });
 
                 if player.voting_variables.chosen_vote == player_voted_index {
                     return;
@@ -254,12 +264,12 @@ impl Game {
                     }
                 }
                 
-                self.send_to_all(ToClientPacket::PlayerVotes { voted_for_player });
+                self.send_packet_to_all(ToClientPacket::PlayerVotes { voted_for_player });
 
                 if let Some(player_voted_index) = player_voted{
                     self.player_on_trial = player_voted;
 
-                    self.send_to_all(ToClientPacket::PlayerOnTrial { player_index: player_voted_index } );
+                    self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_voted_index } );
                     self.jump_to_phase(PhaseType::Testimony);
                 }
             },
@@ -270,7 +280,7 @@ impl Game {
 
                 let player = self.get_unchecked_mut_player(player_index);
                 
-                player.send(ToClientPacket::YourJudgement { verdict: verdict.clone() });
+                player.send_packet(ToClientPacket::YourJudgement { verdict: verdict.clone() });
                 if player.voting_variables.verdict == verdict {
                     return;
                 }
@@ -295,7 +305,7 @@ impl Game {
 
                 let player = self.get_unchecked_mut_player(player_index);
 
-                player.send(ToClientPacket::YourTarget { player_indices: player.night_variables.chosen_targets.clone() });
+                player.send_packet(ToClientPacket::YourTarget { player_indices: player.night_variables.chosen_targets.clone() });
             },
             ToServerPacket::DayTarget { player_index } => {
                 //TODO can daytarget???
@@ -346,22 +356,22 @@ impl Game {
             ToServerPacket::SaveWill { will } => {
                 let player = self.get_unchecked_mut_player(player_index);
                 player.will = will.clone();
-                player.send(ToClientPacket::YourWill { will });
+                player.send_packet(ToClientPacket::YourWill { will });
             },
             _ => unreachable!()
         }
         
         let packet = ToClientPacket::PlayerButtons { buttons: PlayerButtons::from(self, player_index)};
-        self.get_unchecked_mut_player(player_index).send(packet);
+        self.get_unchecked_mut_player(player_index).send_packet(packet);
 
         for player in self.players.iter_mut(){
             player.send_chat_messages();
         }
 
     }
-    pub fn send_to_all(&self, packet: ToClientPacket){
+    pub fn send_packet_to_all(&self, packet: ToClientPacket){
         for player in self.players.iter(){
-            player.send(packet.clone());
+            player.send_packet(packet.clone());
         }
     }
 

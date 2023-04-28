@@ -71,15 +71,15 @@ impl Player {
         }
     }
     
-    pub fn reset_phase_variables(game: &mut Game, player_index: PlayerIndex, phase: PhaseType){
+    pub fn reset_phase_start(game: &mut Game, player_index: PlayerIndex, phase: PhaseType){
         match phase {
             PhaseType::Morning => {},
             PhaseType::Discussion => {},
             PhaseType::Voting => {
                 let player = game.get_unchecked_mut_player(player_index);
                 player.voting_variables.reset();
-                player.send(ToClientPacket::YourVoting { player_index: player.voting_variables.chosen_vote.clone() });
-                player.send(ToClientPacket::YourJudgement { verdict: player.voting_variables.verdict.clone() });
+                player.send_packet(ToClientPacket::YourVoting { player_index: player.voting_variables.chosen_vote.clone() });
+                player.send_packet(ToClientPacket::YourJudgement { verdict: player.voting_variables.verdict.clone() });
             },
             PhaseType::Testimony => {},
             PhaseType::Judgement => {},
@@ -90,7 +90,7 @@ impl Player {
                 let player = game.get_unchecked_mut_player(player_index);
 
                 player.night_variables =new_night_variables;
-                player.send(ToClientPacket::YourTarget { player_indices: player.night_variables.chosen_targets.clone() });
+                player.send_packet(ToClientPacket::YourTarget { player_indices: player.night_variables.chosen_targets.clone() });
             }
         }
     }
@@ -133,11 +133,11 @@ impl Player {
     pub fn set_role(&mut self, role: RoleData){
         self.role_data = role;
         self.add_chat_message(ChatMessage::RoleAssignment { role: role.role()});
-        self.send(ToClientPacket::YourRole { role });
+        self.send_packet(ToClientPacket::YourRole { role });
     }
 
     //sync server client
-    pub fn send(&self, packet: ToClientPacket){
+    pub fn send_packet(&self, packet: ToClientPacket){
         self.sender.send(packet);
     }
     ///call this repeadedly
@@ -169,7 +169,7 @@ impl Player {
             }else{ break; }
         }
         
-        self.send(ToClientPacket::AddChatMessages { chat_messages: chat_messages_out });
+        self.send_packet(ToClientPacket::AddChatMessages { chat_messages: chat_messages_out });
         
 
         self.send_chat_messages();
@@ -178,7 +178,7 @@ impl Player {
     fn send_available_buttons(&mut self, game: &mut Game){
 
         //TODO maybe find a way to check to see if we should send this like i do in chat messages
-        self.send(ToClientPacket::PlayerButtons { buttons: game.players.iter().map(|player|{
+        self.send_packet(ToClientPacket::PlayerButtons { buttons: game.players.iter().map(|player|{
             PlayerButtons{
                 vote: false,
                 target: self.get_role().can_night_target(self.index, player.index, game),
