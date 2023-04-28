@@ -9,7 +9,7 @@ macro_rules! make_role_enum {
         use crate::game::player::PlayerIndex;
         use crate::game::visit::Visit;
         use crate::game::Game;
-        use crate::game::victory_group::VictoryGroup;
+        use crate::game::end_game_condition::EndGameCondition;
         use crate::game::chat::ChatGroup;
         use crate::game::role_list::FactionAlignment;
         use crate::game::phase::PhaseType;
@@ -73,9 +73,9 @@ macro_rules! make_role_enum {
                     $(Role::$name => $file::MAXIUMUM_COUNT),*
                 }
             }
-            pub fn get_victory_group(&self) -> VictoryGroup {
+            pub fn get_end_game_condition(&self) -> EndGameCondition {
                 match self {
-                    $(Role::$name => $file::VICTORY_GROUP),*
+                    $(Role::$name => $file::END_GAME_CONDITION),*
                 }
             }
             //Above is constants
