@@ -3,10 +3,11 @@ use crate::game::phase::PhaseType;
 use crate::game::player::{Player, PlayerIndex};
 use crate::game::role_list::{FactionAlignment, Faction};
 use crate::game::end_game_condition::EndGameCondition;
+use crate::game::team::Team;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::Priority;
+use super::{Priority};
 
 pub(super) const DEFENSE: u8 = 0;
 pub(super) const ROLEBLOCKABLE: bool = false;
@@ -15,6 +16,7 @@ pub(super) const SUSPICIOUS: bool = true;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaSupport;
 pub(super) const MAXIUMUM_COUNT: Option<u8> = None;
 pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Faction;
+pub(super) const TEAM: Option<Team> = Some(Team::Faction);
 
 
 pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game: &mut Game) {
@@ -47,7 +49,7 @@ pub(super) fn convert_targets_to_visits(actor_index: PlayerIndex, targets: Vec<P
         Vec::new()
     }
 }
-pub(super) fn get_current_chat_groups(actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
+pub(super) fn get_current_send_chat_groups(actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
     if !game.get_unchecked_player(actor_index).alive{
         return vec![ChatGroup::Dead];
     }

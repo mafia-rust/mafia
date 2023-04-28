@@ -119,21 +119,25 @@ pub enum ChatMessage {
 
 }
 
+
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum ChatGroup {
     All,
-    Mafia,
     Dead,
+
+    Mafia,
     Vampire,
     Coven,
+
     //Jail
     //Seance
     //Whisper
     //Pirate, 
 }
 impl ChatGroup{
-    pub fn player_in_group(&self, game: &Game, player_index: PlayerIndex)->bool{
+    pub fn player_recieve_from_chat_group(&self, player_index: PlayerIndex, game: &Game)->bool{
         let player = game.get_unchecked_player(player_index);
         match *self {
             ChatGroup::All => true,
@@ -141,13 +145,13 @@ impl ChatGroup{
 
             ChatGroup::Mafia => player.get_role().get_faction_alignment().faction() == Faction::Mafia,
             ChatGroup::Vampire => false,    //vampire
-            ChatGroup::Coven => false,
+            ChatGroup::Coven => player.get_role().get_faction_alignment().faction() == Faction::Mafia,
         }
     }
     pub fn all_players_in_group(&self, game: &Game)->Vec<PlayerIndex>{
         let mut out = Vec::new();
         for player in game.players.iter(){
-            if self.player_in_group(game, player.index){
+            if self.player_recieve_from_chat_group(player.index, game){
                 out.push(player.index);
             }
         }

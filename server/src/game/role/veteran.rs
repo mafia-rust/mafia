@@ -7,6 +7,7 @@ use crate::game::role_list::FactionAlignment;
 use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::Game;
+use crate::game::team::Team;
 
 use super::{Priority, RoleData, Role};
 
@@ -17,6 +18,7 @@ pub(super) const SUSPICIOUS: bool = false;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownKilling;
 pub(super) const MAXIUMUM_COUNT: Option<u8> = Some(1);
 pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Faction;
+pub(super) const TEAM: Option<Team> = None;
 
 pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game: &mut Game) {
     match priority {
@@ -89,7 +91,7 @@ pub(super) fn convert_targets_to_visits(actor: PlayerIndex, targets: Vec<PlayerI
         Vec::new()
     }
 }
-pub(super) fn get_current_chat_groups(actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
+pub(super) fn get_current_send_chat_groups(actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
     if !game.get_unchecked_player(actor_index).alive{
         return vec![ChatGroup::Dead];
     }

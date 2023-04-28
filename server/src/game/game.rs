@@ -318,7 +318,7 @@ impl Game {
                     return;
                 }
                 
-                for chat_group in player.get_role().get_current_chat_groups(player_index, self){
+                for chat_group in player.get_role().get_current_send_chat_groups(player_index, self){
                     self.add_message_to_chat_group(
                         chat_group.clone(),
                         //TODO message sender, Jailor & medium

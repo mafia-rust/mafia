@@ -6,7 +6,7 @@
         "roleblockable": true,
         "defense": 0,
         "witchable": true,
-        "victoryGroup": "Faction",
+        "endGameCondition": "Faction",
         "maxCount": null
     },
     "Doctor": {
@@ -16,7 +16,7 @@
         "roleblockable": true,
         "defense": 0,
         "witchable": true,
-        "victoryGroup": "Faction",
+        "endGameCondition": "Faction",
         "maxCount": null
     },
     "Veteran": {
@@ -26,7 +26,7 @@
         "roleblockable": false,
         "defense": 0,
         "witchable": false,
-        "victoryGroup": "Faction",
+        "endGameCondition": "Faction",
         "maxCount": 1
     },
     "Mafioso": {
@@ -36,7 +36,7 @@
         "roleblockable": true,
         "defense": 0,
         "witchable": true,
-        "victoryGroup": "Faction",
+        "endGameCondition": "Faction",
         "maxCount": 1
     },
     "Consort": {
@@ -46,7 +46,7 @@
         "roleblockable": false,
         "defense": 0,
         "witchable": true,
-        "victoryGroup": "Faction",
+        "endGameCondition": "Faction",
         "maxCount": null
     }
 }

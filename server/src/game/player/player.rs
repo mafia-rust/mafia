@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
@@ -25,6 +27,8 @@ pub struct Player {
     pub alive: bool,
     pub will: String,
 
+    pub role_label: HashMap<PlayerIndex, Role>,   //when you can see someone elses role in the playerlist, dead players and teammates
+
     sender: UnboundedSender<ToClientPacket>,
 
     chat_messages: Vec<ChatMessage>,
@@ -42,6 +46,8 @@ impl Player {
             role_data: role.default_data(),
             alive: true,
             will: "".to_string(),
+
+            role_label: HashMap::new(),
 
             sender,
             chat_messages: Vec::new(),
@@ -193,8 +199,4 @@ impl PartialEq for Player {
         self.index == other.index
     }
 }
-
-
-
-
 

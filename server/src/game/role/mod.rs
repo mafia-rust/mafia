@@ -13,6 +13,7 @@ macro_rules! make_role_enum {
         use crate::game::chat::ChatGroup;
         use crate::game::role_list::FactionAlignment;
         use crate::game::phase::PhaseType;
+        use crate::game::team::Team;
         use serde::{Serialize, Deserialize};
         $(mod $file;)*
 
@@ -78,6 +79,11 @@ macro_rules! make_role_enum {
                     $(Role::$name => $file::END_GAME_CONDITION),*
                 }
             }
+            pub fn get_team(&self) -> Option<Team> {
+                match self {
+                    $(Role::$name => $file::TEAM),*
+                }
+            }
             //Above is constants
 
             pub fn do_night_action(&self, actor_index: PlayerIndex, priority: i8, game: &mut Game) {
@@ -105,9 +111,9 @@ macro_rules! make_role_enum {
                     $(Role::$name => $file::convert_targets_to_visits(actor_index, targets, game)),*
                 }
             }
-            pub fn get_current_chat_groups(&self, actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
+            pub fn get_current_send_chat_groups(&self, actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
                 match self {
-                    $(Role::$name => $file::get_current_chat_groups(actor_index, game)),*
+                    $(Role::$name => $file::get_current_send_chat_groups(actor_index, game)),*
                 }
             }
             pub fn on_phase_start(&self, actor_index: PlayerIndex, phase: PhaseType, game: &mut Game){
@@ -151,6 +157,8 @@ make_role_enum! {
 }
 
 type Priority = i8;
+
+
 
 /*
 Proposed Priorities:
