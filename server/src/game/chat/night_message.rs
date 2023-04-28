@@ -9,7 +9,7 @@ use super::ChatMessage;
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum NightInformation {
-    RoleBlocked { immune : bool },
+    RoleBlocked { immune : bool },  //you were roleblocked
     TargetSurvivedAttack,
     YouSurvivedAttack,
     YouDied,
@@ -18,6 +18,7 @@ pub enum NightInformation {
     
 
     SpyMafiaVisit{players: Vec<PlayerIndex>},
+    SpyCovenVisit{players: Vec<PlayerIndex>},
     SpyBug{message: Box<ChatMessage>},
 
     VeteranAttackedYou,
@@ -33,10 +34,13 @@ pub enum NightInformation {
 
     Transported,
 
+    RetributionistBug{message: Box<ChatMessage>},
+    NecromancerBug{message: Box<ChatMessage>},
+
     GodfatherForcedMafioso,
     GodfatherForcedYou,
 
-    Blackmailed,
+    Silenced,
 
     FramerFramedPlayers{players: Vec<PlayerIndex>},
 
@@ -50,9 +54,10 @@ pub enum NightInformation {
 
 
     WitchTargetImmune,
-    WitchedYou { immune: bool },
+    WitchedYou { immune: bool },    //you were witched
     WitchBug{message: Box<ChatMessage>},
 
     ArsonistCleanedSelf,
     ArsonistDousedPlayers{players: Vec<PlayerIndex>},
+    ArsonistWasDoused,  //you were doused in gas (only arsonists recieve this message)
 }

@@ -61,7 +61,7 @@ impl PhaseType {
                     if game.get_unchecked_player(player_index as PlayerIndex).night_variables.died {
                         //generate grave
                         let new_grave = Grave::from_player_night(game, player_index as PlayerIndex);
-                        game.send_to_all(ToClientPacket::AddGrave{grave: new_grave.clone()});
+                        game.send_packet_to_all(ToClientPacket::AddGrave{grave: new_grave.clone()});
                         game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied { grave: new_grave });
                     }
                 }
@@ -72,7 +72,7 @@ impl PhaseType {
                 for player in game.players.iter(){
                     alive.push(player.alive);
                 }
-                game.send_to_all(ToClientPacket::PlayerAlive { alive });
+                game.send_packet_to_all(ToClientPacket::PlayerAlive { alive });
             },
             PhaseType::Discussion => {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Discussion, day_number: game.phase_machine.day_number });
@@ -86,14 +86,14 @@ impl PhaseType {
                 
 
                 let packet = ToClientPacket::new_PlayerVotes(game);
-                game.send_to_all(packet);
+                game.send_packet_to_all(packet);
             },
             PhaseType::Testimony => {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Testimony, day_number: game.phase_machine.day_number });
                 
                 //TODO should be impossible for there to be no player on trial therefore unwrap
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerOnTrial { player_index: game.player_on_trial.unwrap() });
-                game.send_to_all(ToClientPacket::PlayerOnTrial { player_index: game.player_on_trial.unwrap() });
+                game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: game.player_on_trial.unwrap() });
             },
             PhaseType::Judgement => {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Judgement, day_number: game.phase_machine.day_number });
@@ -167,7 +167,7 @@ impl PhaseType {
                 for player in game.players.iter(){
                     alive.push(player.alive);
                 }
-                game.send_to_all(ToClientPacket::PlayerAlive { alive });
+                game.send_packet_to_all(ToClientPacket::PlayerAlive { alive });
                 
                 return Self::Evening;
             },
