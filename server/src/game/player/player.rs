@@ -27,7 +27,7 @@ pub struct Player {
     pub alive: bool,
     pub will: String,
 
-    pub role_label: HashMap<PlayerIndex, Role>,   //when you can see someone elses role in the playerlist, dead players and teammates
+    pub role_label: HashMap<PlayerIndex, Role>,   //when you can see someone elses role in the playerlist, dead players and teammates, mayor
 
     sender: UnboundedSender<ToClientPacket>,
 
