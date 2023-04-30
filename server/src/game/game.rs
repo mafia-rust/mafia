@@ -70,12 +70,12 @@ impl Game {
 
         //set up role data
         for player_index in 0..(game.players.len() as PlayerIndex){
-            let role_data_copy = game.get_unchecked_mut_player(player_index).role_data;
+            let role_data_copy = game.get_unchecked_mut_player(player_index).role_data().clone();
             Player::set_role(&mut game, player_index, role_data_copy);
         }
 
         //send to players all game information stuff
-        let player_names: Vec<String> = game.players.iter().map(|p|{return p.name.clone()}).collect();
+        let player_names: Vec<String> = game.players.iter().map(|p|{return p.name().clone()}).collect();
         game.send_packet_to_all(ToClientPacket::Players { names: player_names });
         game.send_packet_to_all(ToClientPacket::RoleList { 
             role_list: settings.role_list.clone() 
@@ -108,6 +108,7 @@ impl Game {
     pub fn get_unchecked_mut_player(&mut self, index: PlayerIndex)->&mut Player{
         self.players.get_mut(index as usize).unwrap()
     }
+
     pub fn get_current_phase(&self) -> PhaseType {
         self.phase_machine.current_state
     }
@@ -281,7 +282,7 @@ impl Game {
                 }
 
                 self.get_unchecked_mut_player(player_index).night_variables.chosen_targets = vec![];
-                let role = self.get_unchecked_mut_player(player_index).get_role();
+                let role = self.get_unchecked_mut_player(player_index).role();
 
                 for target_index in player_index_list {
                     if role.can_night_target(player_index, target_index, self) {
@@ -304,7 +305,7 @@ impl Game {
                     return;
                 }
                 
-                for chat_group in player.get_role().get_current_send_chat_groups(player_index, self){
+                for chat_group in player.role().get_current_send_chat_groups(player_index, self){
                     self.add_message_to_chat_group(
                         chat_group.clone(),
                         //TODO message sender, Jailor & medium
@@ -341,8 +342,7 @@ impl Game {
             },
             ToServerPacket::SaveWill { will } => {
                 let player = self.get_unchecked_mut_player(player_index);
-                player.will = will.clone();
-                player.send_packet(ToClientPacket::YourWill { will });
+                player.set_will(will);
             },
             _ => unreachable!()
         }

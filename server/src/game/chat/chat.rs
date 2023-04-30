@@ -143,9 +143,9 @@ impl ChatGroup{
             ChatGroup::All => true,
             ChatGroup::Dead => !player.alive,   //or medium
 
-            ChatGroup::Mafia => player.get_role().get_faction_alignment().faction() == Faction::Mafia,
+            ChatGroup::Mafia => player.role().get_faction_alignment().faction() == Faction::Mafia,
             ChatGroup::Vampire => false,    //vampire
-            ChatGroup::Coven => player.get_role().get_faction_alignment().faction() == Faction::Coven,
+            ChatGroup::Coven => player.role().get_faction_alignment().faction() == Faction::Coven,
         }
     }
     pub fn all_players_in_group(&self, game: &Game)->Vec<PlayerIndex>{

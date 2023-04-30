@@ -27,18 +27,22 @@ pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game
         6 => {
             let Some(visit) = game.get_unchecked_player(actor_index).night_variables.visits.first() else {return};
             let target_index: PlayerIndex = visit.target.clone();
-            let RoleData::Doctor{self_heals_remaining, target_healed_index } = &mut game.get_unchecked_mut_player(actor_index).role_data else {unreachable!()};
+            let RoleData::Doctor{mut self_heals_remaining, mut target_healed_index } = game.get_unchecked_player(actor_index).role_data().clone() else {unreachable!()};
             
             if actor_index == target_index {
-                *self_heals_remaining -= 1;
+                self_heals_remaining -= 1;
             }
-            *target_healed_index = Some(target_index);
+            target_healed_index = Some(target_index);
             game.get_unchecked_mut_player(target_index).night_variables.increase_defense_to(2);
+
+            game.get_unchecked_mut_player(actor_index).set_role_data(RoleData::Doctor{self_heals_remaining, target_healed_index});
         }
         10 => {
-            let RoleData::Doctor{self_heals_remaining, target_healed_index } = game.get_unchecked_player(actor_index).role_data else {unreachable!()};
+            let RoleData::Doctor{self_heals_remaining, target_healed_index } = game.get_unchecked_player(actor_index).role_data().clone() else {unreachable!()};
+            
             if let Some(target_healed_index) = target_healed_index {
                 if game.get_unchecked_player(target_healed_index).night_variables.attacked{
+                    
                     game.get_unchecked_mut_player(actor_index).add_chat_message(ChatMessage::NightInformation { night_information: NightInformation::DoctorHealed });
                     game.get_unchecked_mut_player(target_healed_index).add_chat_message(ChatMessage::NightInformation { night_information: NightInformation::DoctorHealedYou });
                 }
@@ -67,9 +71,9 @@ pub(super) fn get_current_send_chat_groups(actor_index: PlayerIndex, game: &Game
 }
 pub(super) fn on_phase_start(actor_index: PlayerIndex, phase: PhaseType, game: &mut Game){
     let actor = game.get_unchecked_mut_player(actor_index);
-    if let  RoleData::Doctor{self_heals_remaining, target_healed_index } = &mut actor.role_data {
-        *target_healed_index = None;
-    }else{unreachable!()}
+    let RoleData::Doctor{self_heals_remaining, mut target_healed_index } = actor.role_data().clone() else {unreachable!()};
+    target_healed_index = None;
+    game.get_unchecked_mut_player(actor_index).set_role_data(RoleData::Doctor{self_heals_remaining, target_healed_index});
 }
 pub(super) fn on_role_creation(actor_index: PlayerIndex, game: &mut Game){
     crate::game::role::common_role::on_role_creation(actor_index, game);

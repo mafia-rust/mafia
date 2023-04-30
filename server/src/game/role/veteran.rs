@@ -22,18 +22,23 @@ pub(super) const TEAM: Option<Team> = None;
 pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game: &mut Game) {
     match priority {
         1 => {
-            let RoleData::Veteran { alerts_remaining, alerting_tonight } = game.get_unchecked_mut_player(actor_index).role_data else {unreachable!()};
-            if alerts_remaining > 0 {
+            let RoleData::Veteran { alerts_remaining, alerting_tonight } = game.get_unchecked_player(actor_index).role_data() else {unreachable!()};
+            
+            if *alerts_remaining > 0 {
                 if let Some(visit) = game.get_unchecked_player(actor_index).night_variables.visits.get(0){
                     if visit.target == actor_index{
                         game.get_unchecked_mut_player(actor_index).night_variables.increase_defense_to(1);
-                        game.get_unchecked_mut_player(actor_index).role_data = RoleData::Veteran { alerts_remaining: alerts_remaining-1, alerting_tonight: true };
+                        
+                        let RoleData::Veteran { mut alerts_remaining, mut alerting_tonight } = game.get_unchecked_player(actor_index).role_data().clone() else {unreachable!()};
+                        alerts_remaining -= 1;
+                        alerting_tonight = true;
+                        game.get_unchecked_mut_player(actor_index).set_role_data(RoleData::Veteran{alerts_remaining, alerting_tonight });
                     }
                 }
             }
         }
         9 => {
-            let RoleData::Veteran { alerts_remaining, alerting_tonight } = game.get_unchecked_player(actor_index).role_data else {unreachable!()};
+            let RoleData::Veteran { alerts_remaining, alerting_tonight } = game.get_unchecked_player(actor_index).role_data() else {unreachable!()};
             
             if !alerting_tonight {return}
 
@@ -68,14 +73,11 @@ pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game
     }
 }
 pub(super) fn can_night_target(actor_index: PlayerIndex, target_index: PlayerIndex, game: &Game) -> bool {
-    if let RoleData::Veteran { alerts_remaining, alerting_tonight } = game.get_unchecked_player(actor_index).role_data{
-        actor_index == target_index &&
-        alerts_remaining > 0 &&
-        game.get_unchecked_player(actor_index).night_variables.chosen_targets.len() < 1 &&
-        game.get_unchecked_player(actor_index).alive
-    }else{
-        unreachable!()
-    }
+    let RoleData::Veteran { alerts_remaining, alerting_tonight } = game.get_unchecked_player(actor_index).role_data() else {unreachable!();};
+    actor_index == target_index &&
+    *alerts_remaining > 0 &&
+    game.get_unchecked_player(actor_index).night_variables.chosen_targets.len() < 1 &&
+    game.get_unchecked_player(actor_index).alive
 }
 pub(super) fn do_day_action(actor_index: PlayerIndex, game: &mut Game) {
 
@@ -91,9 +93,14 @@ pub(super) fn get_current_send_chat_groups(actor_index: PlayerIndex, game: &Game
 }
 pub(super) fn on_phase_start(actor_index: PlayerIndex, phase: PhaseType, game: &mut Game){
     let actor = game.get_unchecked_mut_player(actor_index);
-    if let RoleData::Veteran { alerts_remaining, alerting_tonight } = &mut actor.role_data {
-        *alerting_tonight = false;
-    }else{unreachable!()}
+    
+    let RoleData::Veteran { alerts_remaining, mut alerting_tonight } = actor.role_data().clone() else {unreachable!();};
+    
+    alerting_tonight = false;
+
+    game.get_unchecked_mut_player(actor_index).set_role_data(RoleData::Veteran{alerts_remaining, alerting_tonight });
+        
+    
 }
 pub(super) fn on_role_creation(actor_index: PlayerIndex, game: &mut Game){
     crate::game::role::common_role::on_role_creation(actor_index, game);

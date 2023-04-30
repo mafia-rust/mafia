@@ -8,9 +8,9 @@ pub(super) fn can_night_target(actor_index: PlayerIndex, target_index: PlayerInd
     game.get_unchecked_player(actor_index).alive &&
     game.get_unchecked_player(target_index).alive &&
     (
-        game.get_unchecked_player(actor_index).get_role().get_team() == None ||
+        game.get_unchecked_player(actor_index).role().get_team() == None ||
         (
-            game.get_unchecked_player(actor_index).get_role().get_team() != game.get_unchecked_player(target_index).get_role().get_team()
+            game.get_unchecked_player(actor_index).role().get_team() != game.get_unchecked_player(target_index).role().get_team()
         )
     )
     
@@ -42,11 +42,11 @@ pub(super) fn get_current_send_chat_groups(actor_index: PlayerIndex, game: &Game
 
 pub(super) fn on_role_creation(actor_index: PlayerIndex, game: &mut Game){
 
-    let actor_role = game.get_unchecked_mut_player(actor_index).get_role();
+    let actor_role = game.get_unchecked_mut_player(actor_index).role();
 
 
     //set a role tag for themselves
-    game.get_unchecked_mut_player(actor_index).role_labels.insert(actor_index, actor_role);
+    game.get_unchecked_mut_player(actor_index).insert_role_label(actor_index, actor_role);
 
     //if they are on a team. set tags for their teammates
     if actor_role.get_team().is_some(){
@@ -55,10 +55,10 @@ pub(super) fn on_role_creation(actor_index: PlayerIndex, game: &mut Game){
             if actor_index == other_index {
                 continue;
             }
-            let other_role = game.get_unchecked_mut_player(other_index).get_role();
+            let other_role = game.get_unchecked_mut_player(other_index).role();
 
             if actor_role.get_team() == other_role.get_team() {
-                game.get_unchecked_mut_player(actor_index).role_labels.insert(other_index, other_role);
+                game.get_unchecked_mut_player(actor_index).insert_role_label(other_index, other_role);
             }
         }
     }

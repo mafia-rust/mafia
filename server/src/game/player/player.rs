@@ -21,13 +21,13 @@ use super::{player_voting_variables::PlayerVotingVariables, player_night_variabl
 pub type PlayerIndex = u8;
 
 pub struct Player {
-    pub name: String,
+    name: String,
     pub index: PlayerIndex,
-    pub role_data: RoleData,
+    role_data: RoleData,
     pub alive: bool,
-    pub will: String,
+    will: String,
 
-    pub role_labels: HashMap<PlayerIndex, Role>,   //when you can see someone elses role in the playerlist, dead players and teammates, mayor
+    role_labels: HashMap<PlayerIndex, Role>,   //when you can see someone elses role in the playerlist, dead players and teammates, mayor
 
     sender: UnboundedSender<ToClientPacket>,
 
@@ -59,19 +59,42 @@ impl Player {
         }
     }
 
-    pub fn get_name(&self) -> &str {
+    pub fn name(&self) -> &String {
         &self.name
     }
-    pub fn get_role(&self) -> Role {
+    
+    pub fn role(&self) -> Role {
         self.role_data.role()
     }
+    pub fn role_data(&self) -> &RoleData{
+        &self.role_data
+    }
+    pub fn set_role_data(&mut self, new_role_data: RoleData){
+        self.role_data = new_role_data;
+        self.send_packet(ToClientPacket::YourRole { role: self.role_data });
+    }
 
+    pub fn will(&self)->&String{
+        &self.will
+    }
+    pub fn set_will(&mut self, will: String){
+        self.will = will;
+        self.send_packet(ToClientPacket::YourWill { will: self.will.clone() });
+    }
+     
+    pub fn role_labels(&self)->&HashMap<PlayerIndex, Role>{
+        &self.role_labels
+    }  
+    pub fn insert_role_label(&mut self, key: PlayerIndex, value: Role){
+        self.role_labels.insert(key, value);
+        self.send_packet(ToClientPacket::PlayerRoleLabels { role_labels: self.role_labels.clone() });
+    }
 
     //Night helper functions
 
     ///returns true if they were roleblocked by you
     pub fn roleblock(&mut self)->bool{
-        if self.get_role().is_roleblockable() {
+        if self.role().is_roleblockable() {
             self.night_variables.roleblocked = true;
             self.night_variables.night_messages.push(ChatMessage::NightInformation { night_information: NightInformation::RoleBlocked { immune: false }});
             return true;
@@ -103,12 +126,11 @@ impl Player {
     /// swap this persons role, sending them the role chat message, and associated changes
     pub fn set_role(game: &mut Game, player_index: PlayerIndex, new_role_data: RoleData){
 
-        game.get_unchecked_mut_player(player_index).role_data = new_role_data;
-        game.get_unchecked_mut_player(player_index).role_data.role().on_role_creation(player_index, game);
+        
+        game.get_unchecked_mut_player(player_index).set_role_data(new_role_data);
+        game.get_unchecked_mut_player(player_index).role().on_role_creation(player_index, game);
         game.get_unchecked_mut_player(player_index).add_chat_message(ChatMessage::RoleAssignment { role: new_role_data.role()});
-        game.get_unchecked_mut_player(player_index).send_packet(ToClientPacket::YourRole { role: new_role_data });
     }
-
 
 
     pub fn add_chat_message(&mut self, message: ChatMessage) {
@@ -187,8 +209,8 @@ impl Player {
         self.send_packet(ToClientPacket::PlayerButtons { buttons: game.players.iter().map(|player|{
             PlayerButtons{
                 vote: false,
-                target: self.get_role().can_night_target(self.index, player.index, game),
-                day_target: self.get_role().can_day_target(self.index, player.index, game),
+                target: self.role().can_night_target(self.index, player.index, game),
+                day_target: self.role().can_day_target(self.index, player.index, game),
             }
         }).collect()});
     }

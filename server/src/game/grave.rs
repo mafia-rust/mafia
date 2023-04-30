@@ -73,9 +73,9 @@ impl Grave{
 
         Grave { 
             player: player_index, 
-            role: GraveRole::Role(player.get_role()), 
+            role: GraveRole::Role(player.role()), 
             death_cause: GraveDeathCause::Lynching, 
-            will: player.will.clone(), 
+            will: player.will().clone(), 
             died_phase: GravePhase::Day, 
             day_number: game.phase_machine.day_number,
             death_notes: vec![]

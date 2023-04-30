@@ -49,7 +49,7 @@
         "endGameCondition": "Faction",
         "maxCount": null
     },
-    "Coven Leader": {
+    "CovenLeader": {
         "faction": "Coven",
         "alignment": "Power",
         "suspicious": true,

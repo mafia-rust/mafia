@@ -108,7 +108,7 @@ impl PhaseType {
                 //search for mafia godfather or mafioso
                 let mut main_mafia_killing_exists = false;
                 for player in game.players.iter(){
-                    if player.get_role() == Role::Mafioso { 
+                    if player.role() == Role::Mafioso { 
                         main_mafia_killing_exists = true;
                         break;
                     }
@@ -119,7 +119,7 @@ impl PhaseType {
                 if !main_mafia_killing_exists{
                     for player_index in 0..(game.players.len() as PlayerIndex){
 
-                        if game.get_unchecked_player(player_index).get_role().get_faction_alignment().faction() == Faction::Mafia {
+                        if game.get_unchecked_player(player_index).role().get_faction_alignment().faction() == Faction::Mafia {
                             Player::set_role(game, player_index, RoleData::Mafioso);
                             break;
                         }
@@ -198,7 +198,7 @@ impl PhaseType {
                     let player = game.get_unchecked_mut_player(player_index as PlayerIndex);
 
                     let targets: Vec<PlayerIndex> = player.night_variables.chosen_targets.clone();
-                    let role = player.get_role();
+                    let role = player.role();
                     let visits = role.convert_targets_to_visits(player.index, targets, game);
                     game.get_unchecked_mut_player(player_index as PlayerIndex).night_variables.visits = visits;
                 }
@@ -206,7 +206,7 @@ impl PhaseType {
                 //Night actions -- main loop
                 for priority in 0..12{
                     for player_index in 0..game.players.len(){
-                        game.get_unchecked_mut_player(player_index as PlayerIndex).get_role().do_night_action(player_index as PlayerIndex, priority, game);
+                        game.get_unchecked_mut_player(player_index as PlayerIndex).role().do_night_action(player_index as PlayerIndex, priority, game);
                     }
                 }
 
