@@ -43,7 +43,6 @@ macro_rules! make_role_enum {
                 }
             }
             
-            //from file
             pub fn is_suspicious(&self) -> bool {
                 match self {
                     $(Role::$name => $file::SUSPICIOUS),*
@@ -84,7 +83,6 @@ macro_rules! make_role_enum {
                     $(Role::$name => $file::TEAM),*
                 }
             }
-            //Above is constants
 
             pub fn do_night_action(&self, actor_index: PlayerIndex, priority: i8, game: &mut Game) {
                 match self {
@@ -121,6 +119,11 @@ macro_rules! make_role_enum {
                     $(Role::$name => $file::on_phase_start(actor_index, phase, game)),*
                 }
             }
+            pub fn on_role_creation(&self, actor_index: PlayerIndex, game: &mut Game){
+                match self{
+                    $(Role::$name => $file::on_role_creation(actor_index, game)),*
+                }
+            }
         }
 
         impl RoleData {
@@ -135,7 +138,7 @@ macro_rules! make_role_enum {
     }
 }
 
-mod common_role;
+
 // Creates the Role enum
 make_role_enum! {
     Sheriff : sheriff,
@@ -158,6 +161,7 @@ make_role_enum! {
 }
 
 type Priority = i8;
+mod common_role;
 
 
 /*

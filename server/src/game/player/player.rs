@@ -27,7 +27,7 @@ pub struct Player {
     pub alive: bool,
     pub will: String,
 
-    pub role_label: HashMap<PlayerIndex, Role>,   //when you can see someone elses role in the playerlist, dead players and teammates, mayor
+    pub role_labels: HashMap<PlayerIndex, Role>,   //when you can see someone elses role in the playerlist, dead players and teammates, mayor
 
     sender: UnboundedSender<ToClientPacket>,
 
@@ -47,7 +47,7 @@ impl Player {
             alive: true,
             will: "".to_string(),
 
-            role_label: HashMap::new(),
+            role_labels: HashMap::new(),
 
             sender,
             chat_messages: Vec::new(),
@@ -101,10 +101,12 @@ impl Player {
         true
     }
     /// swap this persons role, sending them the role chat message, and associated changes
-    pub fn set_role(&mut self, role: RoleData){
-        self.role_data = role;
-        self.add_chat_message(ChatMessage::RoleAssignment { role: role.role()});
-        self.send_packet(ToClientPacket::YourRole { role });
+    pub fn set_role(game: &mut Game, player_index: PlayerIndex, new_role_data: RoleData){
+
+        game.get_unchecked_mut_player(player_index).role_data = new_role_data;
+        game.get_unchecked_mut_player(player_index).role_data.role().on_role_creation(player_index, game);
+        game.get_unchecked_mut_player(player_index).add_chat_message(ChatMessage::RoleAssignment { role: new_role_data.role()});
+        game.get_unchecked_mut_player(player_index).send_packet(ToClientPacket::YourRole { role: new_role_data });
     }
 
 

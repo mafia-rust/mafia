@@ -8,7 +8,6 @@ use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
 use crate::game::Game;
-
 use super::{Priority, RoleData};
 
 pub(super) const DEFENSE: u8 = 0;
@@ -71,4 +70,7 @@ pub(super) fn on_phase_start(actor_index: PlayerIndex, phase: PhaseType, game: &
     if let  RoleData::Doctor{self_heals_remaining, target_healed_index } = &mut actor.role_data {
         *target_healed_index = None;
     }else{unreachable!()}
+}
+pub(super) fn on_role_creation(actor_index: PlayerIndex, game: &mut Game){
+    crate::game::role::common_role::on_role_creation(actor_index, game);
 }

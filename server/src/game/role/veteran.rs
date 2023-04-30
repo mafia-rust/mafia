@@ -8,7 +8,6 @@ use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::team::Team;
-
 use super::{Priority, RoleData, Role};
 
 pub(super) const DEFENSE: u8 = 0;
@@ -95,4 +94,7 @@ pub(super) fn on_phase_start(actor_index: PlayerIndex, phase: PhaseType, game: &
     if let RoleData::Veteran { alerts_remaining, alerting_tonight } = &mut actor.role_data {
         *alerting_tonight = false;
     }else{unreachable!()}
+}
+pub(super) fn on_role_creation(actor_index: PlayerIndex, game: &mut Game){
+    crate::game::role::common_role::on_role_creation(actor_index, game);
 }

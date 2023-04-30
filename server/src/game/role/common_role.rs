@@ -16,7 +16,7 @@ pub(super) fn can_night_target(actor_index: PlayerIndex, target_index: PlayerInd
     
 }
 
-pub fn convert_targets_to_visits(actor_index: PlayerIndex, targets: Vec<PlayerIndex>, game: &Game, astral: bool, attack: bool) -> Vec<Visit> {
+pub(super) fn convert_targets_to_visits(actor_index: PlayerIndex, targets: Vec<PlayerIndex>, game: &Game, astral: bool, attack: bool) -> Vec<Visit> {
     if targets.len() > 0{
         vec![Visit{ target: targets[0], astral: false, attack: false }]
     }else{
@@ -24,7 +24,7 @@ pub fn convert_targets_to_visits(actor_index: PlayerIndex, targets: Vec<PlayerIn
     }
 }
 
-pub fn get_current_send_chat_groups(actor_index: PlayerIndex, game: &Game, night_chat_groups: Vec<ChatGroup>) -> Vec<ChatGroup> {
+pub(super) fn get_current_send_chat_groups(actor_index: PlayerIndex, game: &Game, night_chat_groups: Vec<ChatGroup>) -> Vec<ChatGroup> {
     if !game.get_unchecked_player(actor_index).alive{
         return vec![ChatGroup::Dead];
     }
@@ -39,6 +39,31 @@ pub fn get_current_send_chat_groups(actor_index: PlayerIndex, game: &Game, night
         crate::game::phase::PhaseType::Night => night_chat_groups,
     }
 }
+
+pub(super) fn on_role_creation(actor_index: PlayerIndex, game: &mut Game){
+
+    let actor_role = game.get_unchecked_mut_player(actor_index).get_role();
+
+
+    //set a role tag for themselves
+    game.get_unchecked_mut_player(actor_index).role_labels.insert(actor_index, actor_role);
+
+    //if they are on a team. set tags for their teammates
+    if actor_role.get_team().is_some(){
+
+        for other_index in 0..(game.players.len() as PlayerIndex){
+            if actor_index == other_index {
+                continue;
+            }
+            let other_role = game.get_unchecked_mut_player(other_index).get_role();
+
+            if actor_role.get_team() == other_role.get_team() {
+                game.get_unchecked_mut_player(actor_index).role_labels.insert(other_index, other_role);
+            }
+        }
+    }
+}
+
 
 
 

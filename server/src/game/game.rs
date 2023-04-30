@@ -53,13 +53,12 @@ impl Game {
                     None => RoleListEntry::Any.get_random_role(),
                 }
             );
-            new_player.set_role(new_player.role_data);
             players.push(new_player);
         }
         drop(roles);
         //just to make sure the order of roles is not used anywhere else for secuity from our own stupidity  
 
-        let game = Self{
+        let mut game = Self{
             players,
             graves: Vec::new(),
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
@@ -68,6 +67,12 @@ impl Game {
             player_on_trial: None,
             trials_left: 0,
         };
+
+        //set up role data
+        for player_index in 0..(game.players.len() as PlayerIndex){
+            let role_data_copy = game.get_unchecked_mut_player(player_index).role_data;
+            Player::set_role(&mut game, player_index, role_data_copy);
+        }
 
         //send to players all game information stuff
         let player_names: Vec<String> = game.players.iter().map(|p|{return p.name.clone()}).collect();

@@ -85,7 +85,7 @@ impl PhaseType {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialInformation { required_votes, trials_left: game.trials_left });
                 
 
-                let packet = ToClientPacket::new_PlayerVotes(game);
+                let packet = ToClientPacket::new_player_votes(game);
                 game.send_packet_to_all(packet);
             },
             PhaseType::Testimony => {
@@ -117,10 +117,10 @@ impl PhaseType {
                 //later set an order for roles
                 //ambusher should be converted first
                 if !main_mafia_killing_exists{
-                    for player in game.players.iter_mut(){
+                    for player_index in 0..(game.players.len() as PlayerIndex){
 
-                        if player.get_role().get_faction_alignment().faction() == Faction::Mafia {
-                            player.set_role(RoleData::Mafioso);
+                        if game.get_unchecked_player(player_index).get_role().get_faction_alignment().faction() == Faction::Mafia {
+                            Player::set_role(game, player_index, RoleData::Mafioso);
                             break;
                         }
                     }

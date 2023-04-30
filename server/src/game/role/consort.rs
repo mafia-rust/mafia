@@ -6,7 +6,6 @@ use crate::game::end_game_condition::EndGameCondition;
 use crate::game::team::Team;
 use crate::game::visit::Visit;
 use crate::game::Game;
-
 use super::{Priority};
 
 pub(super) const DEFENSE: u8 = 0;
@@ -45,3 +44,8 @@ pub(super) fn get_current_send_chat_groups(actor_index: PlayerIndex, game: &Game
 }
 pub(super) fn on_phase_start(actor_index: PlayerIndex, phase: PhaseType, game: &mut Game){
 }
+pub(super) fn on_role_creation(actor_index: PlayerIndex, game: &mut Game){
+    crate::game::role::common_role::on_role_creation(actor_index, game);
+}
+
+
