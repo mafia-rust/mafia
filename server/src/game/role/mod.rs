@@ -135,6 +135,7 @@ macro_rules! make_role_enum {
     }
 }
 
+mod common_role;
 // Creates the Role enum
 make_role_enum! {
     Sheriff : sheriff,
@@ -149,17 +150,52 @@ make_role_enum! {
         alerting_tonight: bool = false
     },
 
-    Mafioso : mafioso {
-        original: bool = true
-    },
+    Mafioso : mafioso,
     
-    Consort : consort
+    Consort : consort,
+
+    CovenLeader : coven_leader
 }
 
 type Priority = i8;
 
 
+/*
+New Proposed priorities:
 
+1 Top Priority
+    Jester(Kill), Arsonist(Clear self), All decidedes ( Vet decide)
+
+3 Swaps
+    Transporter(Swap)
+4 Controlls
+    Witch(Swap), Retributionist(Swap) Necromancer(Swap)
+2 Roleblock
+    Escort Poisoner(roleblock)
+
+
+7 Deception
+    VoodooMaster, Arsonist(Douse), Janitor(Clean), Forger(Yea), Disguiser, Werewolf(Make slef inno or sus) HexMaster(Hex) Poisoner(Poison), Illusioner
+4
+    Bodyguard(Swap)
+5 Heal
+    Doctor, PotionMaster(Heal), Veteran(Heal self) Bodyguard(Heal self)
+
+    
+6 Kill
+    CovenLeader, Necronomicon, Arsonist(Ignite) HexMaster(Kill) Veteran(Kill) Poisoner(Kill)
+8 Investigative
+    Sheriff, Investigator, Lookout, Tracker, PotionMaster(Investigate), Spy(Mafia/Coven visits) 
+    Janitor(Who died) Bodyguard(Notif) Doctor(Notif) Arsonist(Who visited me)
+
+9
+    Spy(Bug) 
+10
+    Witch(Bug)
+    
+
+
+ */
 /*
 Proposed Priorities:
 

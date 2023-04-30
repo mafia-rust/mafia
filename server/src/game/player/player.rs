@@ -62,46 +62,13 @@ impl Player {
     pub fn get_name(&self) -> &str {
         &self.name
     }
-
     pub fn get_role(&self) -> Role {
         self.role_data.role()
     }
 
-    pub fn add_chat_message(&mut self, message: ChatMessage) {
-        self.chat_messages.push(message.clone());
-        self.queued_chat_messages.push(message);
-    }
-    pub fn add_chat_messages(&mut self, messages: Vec<ChatMessage>){
-        for message in messages.into_iter(){
-            self.add_chat_message(message);
-        }
-    }
-    
-    pub fn reset_phase_start(game: &mut Game, player_index: PlayerIndex, phase: PhaseType){
-        match phase {
-            PhaseType::Morning => {},
-            PhaseType::Discussion => {},
-            PhaseType::Voting => {
-                let player = game.get_unchecked_mut_player(player_index);
-                player.voting_variables.reset();
-                player.send_packet(ToClientPacket::YourVoting { player_index: player.voting_variables.chosen_vote.clone() });
-                player.send_packet(ToClientPacket::YourJudgement { verdict: player.voting_variables.verdict.clone() });
-            },
-            PhaseType::Testimony => {},
-            PhaseType::Judgement => {},
-            PhaseType::Evening => {},
-            PhaseType::Night => {
-                let new_night_variables =  PlayerNightVariables::reset(game, player_index);
-
-                let player = game.get_unchecked_mut_player(player_index);
-
-                player.night_variables =new_night_variables;
-                player.send_packet(ToClientPacket::YourTarget { player_indices: player.night_variables.chosen_targets.clone() });
-            }
-        }
-    }
 
     //Night helper functions
+
     ///returns true if they were roleblocked by you
     pub fn roleblock(&mut self)->bool{
         if self.get_role().is_roleblockable() {
@@ -134,30 +101,62 @@ impl Player {
         true
     }
     /// swap this persons role, sending them the role chat message, and associated changes
-    /// # Panics
-    /// player_index does not exist
     pub fn set_role(&mut self, role: RoleData){
         self.role_data = role;
         self.add_chat_message(ChatMessage::RoleAssignment { role: role.role()});
         self.send_packet(ToClientPacket::YourRole { role });
     }
 
-    //sync server client
-    pub fn send_packet(&self, packet: ToClientPacket){
-        self.sender.send(packet);
+
+
+    pub fn add_chat_message(&mut self, message: ChatMessage) {
+        self.chat_messages.push(message.clone());
+        self.queued_chat_messages.push(message);
     }
-    ///call this repeadedly
+    pub fn add_chat_messages(&mut self, messages: Vec<ChatMessage>){
+        for message in messages.into_iter(){
+            self.add_chat_message(message);
+        }
+    }
+    
+
     pub fn tick(&mut self){
         self.send_chat_messages();
         // self.send_available_buttons();
     }
+    pub fn reset_phase_start(game: &mut Game, player_index: PlayerIndex, phase: PhaseType){
+        match phase {
+            PhaseType::Morning => {},
+            PhaseType::Discussion => {},
+            PhaseType::Voting => {
+                let player = game.get_unchecked_mut_player(player_index);
+                player.voting_variables.reset();
+                player.send_packet(ToClientPacket::YourVoting { player_index: player.voting_variables.chosen_vote.clone() });
+                player.send_packet(ToClientPacket::YourJudgement { verdict: player.voting_variables.verdict.clone() });
+            },
+            PhaseType::Testimony => {},
+            PhaseType::Judgement => {},
+            PhaseType::Evening => {},
+            PhaseType::Night => {
+                let new_night_variables =  PlayerNightVariables::reset(game, player_index);
+
+                let player = game.get_unchecked_mut_player(player_index);
+
+                player.night_variables =new_night_variables;
+                player.send_packet(ToClientPacket::YourTarget { player_indices: player.night_variables.chosen_targets.clone() });
+            }
+        }
+    }
+
     
+    pub fn send_packet(&self, packet: ToClientPacket){
+        self.sender.send(packet);
+    }
     fn requeue_chat_messages(&mut self){
         for msg in self.chat_messages.iter(){
             self.queued_chat_messages.push(msg.clone());
         }
     }
-    
     pub fn send_chat_messages(&mut self){
         
         if self.queued_chat_messages.len() == 0 {
@@ -180,7 +179,6 @@ impl Player {
 
         self.send_chat_messages();
     }
-    
     fn send_available_buttons(&mut self, game: &mut Game){
 
         //TODO maybe find a way to check to see if we should send this like i do in chat messages

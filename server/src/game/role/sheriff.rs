@@ -36,10 +36,7 @@ pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game
     }
 }
 pub(super) fn can_night_target(actor_index: PlayerIndex, target_index: PlayerIndex, game: &Game) -> bool {
-    actor_index != target_index &&
-    game.get_unchecked_player(actor_index).night_variables.chosen_targets.len() < 1 &&
-    game.get_unchecked_player(actor_index).alive && 
-    game.get_unchecked_player(target_index).alive
+    crate::game::role::common_role::can_night_target(actor_index, target_index, game)
 }
 pub(super) fn do_day_action(actor_index: PlayerIndex, game: &mut Game) {
     
@@ -48,26 +45,10 @@ pub(super) fn can_day_target(actor_index: PlayerIndex, target_index: PlayerIndex
     false
 }
 pub(super) fn convert_targets_to_visits(actor_index: PlayerIndex, targets: Vec<PlayerIndex>, game: &Game) -> Vec<Visit> {
-    if targets.len() > 0{
-        vec![Visit{ target: targets[0], astral: false, attack: false }]
-    }else{
-        Vec::new()
-    }
+    crate::game::role::common_role::convert_targets_to_visits(actor_index, targets, game, false, false)
 }
 pub(super) fn get_current_send_chat_groups(actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
-    if !game.get_unchecked_player(actor_index).alive{
-        return vec![ChatGroup::Dead];
-    }
-
-    match game.phase_machine.current_state {
-        crate::game::phase::PhaseType::Morning => vec![],
-        crate::game::phase::PhaseType::Discussion => vec![ChatGroup::All],
-        crate::game::phase::PhaseType::Voting => vec![ChatGroup::All],
-        crate::game::phase::PhaseType::Testimony => {if game.player_on_trial == Some(actor_index) {vec![ChatGroup::All]} else {vec![]}},
-        crate::game::phase::PhaseType::Judgement => vec![ChatGroup::All],
-        crate::game::phase::PhaseType::Evening => vec![ChatGroup::All],
-        crate::game::phase::PhaseType::Night => vec![],
-    }
+    crate::game::role::common_role::get_current_send_chat_groups(actor_index, game, vec![])
 }
-pub fn on_phase_start(actor_index: PlayerIndex, phase: PhaseType, game: &mut Game){
+pub(super) fn on_phase_start(actor_index: PlayerIndex, phase: PhaseType, game: &mut Game){
 }

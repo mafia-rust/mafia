@@ -2,7 +2,7 @@ use std::{time::Duration, io::Seek};
 
 use serde::{Serialize, Deserialize};
 
-use crate::network::packet::ToClientPacket;
+use crate::network::packet::{ToClientPacket, PlayerButtons};
 
 use super::{settings::PhaseTimeSettings, Game, player::{Player, PlayerIndex, self}, chat::{ChatGroup, ChatMessage}, game, verdict::Verdict, grave::Grave, role::{Role, RoleData}, role_list::Faction};
 
@@ -120,7 +120,7 @@ impl PhaseType {
                     for player in game.players.iter_mut(){
 
                         if player.get_role().get_faction_alignment().faction() == Faction::Mafia {
-                            player.set_role(RoleData::Mafioso { original: false });
+                            player.set_role(RoleData::Mafioso);
                             break;
                         }
                     }
@@ -129,6 +129,21 @@ impl PhaseType {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: game.phase_machine.day_number });
             },
         }
+
+        //every phase
+        let mut alive = Vec::new();
+        for player in game.players.iter(){
+            player.send_packet(ToClientPacket::PlayerButtons{
+                buttons: PlayerButtons::from(game, player.index) 
+            });
+            alive.push(player.alive);
+        }
+        game.send_packet_to_all(ToClientPacket::Phase { 
+            phase: game.get_current_phase(), 
+            day_number: game.phase_machine.day_number, 
+            seconds_left: game.phase_machine.time_remaining.as_secs() 
+        });
+        game.send_packet_to_all(ToClientPacket::PlayerAlive { alive });
     }
 
     ///returns the next phase
@@ -136,16 +151,16 @@ impl PhaseType {
         // Match phase type and do stuff
         match game.phase_machine.current_state {
             PhaseType::Morning => {
-                return Self::Discussion;
+                Self::Discussion
             },
             PhaseType::Discussion => {
-                return Self::Voting;   
+                Self::Voting 
             },
             PhaseType::Voting => {                
-                return Self::Night;
+                Self::Night
             },
             PhaseType::Testimony => {
-                return Self::Judgement;
+                Self::Judgement
             },
             PhaseType::Judgement => {
                 
@@ -169,10 +184,10 @@ impl PhaseType {
                 }
                 game.send_packet_to_all(ToClientPacket::PlayerAlive { alive });
                 
-                return Self::Evening;
+                Self::Evening
             },
             PhaseType::Evening => {
-                return Self::Night;
+                Self::Night
             },
             PhaseType::Night => {
 
@@ -203,7 +218,7 @@ impl PhaseType {
 
 
                 game.phase_machine.day_number+=1;
-                return Self::Morning;
+                Self::Morning
             },
         }
     }

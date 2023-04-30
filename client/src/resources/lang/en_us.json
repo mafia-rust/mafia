@@ -62,6 +62,11 @@
     "role.Consort.description":"Target a player to roleblock them",
     "role.Consort.advancedDescription":"A roleblock prevents the target player from performing their night ability. This works the same as the Escort. Some roles can not be roleblocked.",
     
+    "role.Coven Leader.name": "Coven Leader",
+    "role.Coven Leader.description":"",
+    "role.Coven Leader.advancedDescription":"",
+    
+
     "FactionAlignment.Faction.Town": "Town",
     "FactionAlignment.Faction.Mafia": "Mafia",
     "FactionAlignment.Faction.Neutral": "Neutral",

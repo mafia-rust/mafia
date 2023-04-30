@@ -48,5 +48,15 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": null
+    },
+    "Coven Leader": {
+        "faction": "Coven",
+        "alignment": "Power",
+        "suspicious": true,
+        "roleblockable": true,
+        "defense": 1,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": 1
     }
 }
