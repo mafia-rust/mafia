@@ -66,13 +66,6 @@ impl PhaseType {
                     }
                 }
                 //convert roles
-                
-                //tell whos alive
-                let mut alive = vec![];
-                for player in game.players.iter(){
-                    alive.push(player.alive);
-                }
-                game.send_packet_to_all(ToClientPacket::PlayerAlive { alive });
             },
             PhaseType::Discussion => {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Discussion, day_number: game.phase_machine.day_number });
@@ -81,7 +74,7 @@ impl PhaseType {
             PhaseType::Voting => {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Voting, day_number: game.phase_machine.day_number });
 
-                let required_votes = (game.players.iter().filter(|p|p.alive).collect::<Vec<&Player>>().len()/2)+1;
+                let required_votes = (game.players.iter().filter(|p|*p.alive()).collect::<Vec<&Player>>().len()/2)+1;
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialInformation { required_votes, trials_left: game.trials_left });
                 
 
@@ -119,7 +112,7 @@ impl PhaseType {
                 if !main_mafia_killing_exists{
                     for player_index in 0..(game.players.len() as PlayerIndex){
 
-                        if game.get_unchecked_player(player_index).role().get_faction_alignment().faction() == Faction::Mafia {
+                        if game.get_unchecked_player(player_index).role().faction_alignment().faction() == Faction::Mafia {
                             Player::set_role(game, player_index, RoleData::Mafioso);
                             break;
                         }
@@ -131,19 +124,16 @@ impl PhaseType {
         }
 
         //every phase
-        let mut alive = Vec::new();
         for player in game.players.iter(){
-            player.send_packet(ToClientPacket::PlayerButtons{
-                buttons: PlayerButtons::from(game, player.index) 
+            player.send_packet(ToClientPacket::YourButtons{
+                buttons: PlayerButtons::from(game, player.index().clone()) 
             });
-            alive.push(player.alive);
         }
         game.send_packet_to_all(ToClientPacket::Phase { 
             phase: game.get_current_phase(), 
             day_number: game.phase_machine.day_number, 
             seconds_left: game.phase_machine.time_remaining.as_secs() 
         });
-        game.send_packet_to_all(ToClientPacket::PlayerAlive { alive });
     }
 
     ///returns the next phase
@@ -172,17 +162,10 @@ impl PhaseType {
                         Verdict::Abstain => {},
                         Verdict::Guilty => guilty += 1,
                     }
-                    messages.push(ChatMessage::JudgementVerdict { voter_player_index: player.index, verdict: player.voting_variables.verdict.clone() });
+                    messages.push(ChatMessage::JudgementVerdict { voter_player_index: player.index().clone(), verdict: player.voting_variables.verdict.clone() });
                 }
                 game.add_messages_to_chat_group(ChatGroup::All, messages);
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialVerdict { player_on_trial: game.player_on_trial.unwrap(), innocent, guilty });
-
-                //tell whos alive
-                let mut alive = vec![];
-                for player in game.players.iter(){
-                    alive.push(player.alive);
-                }
-                game.send_packet_to_all(ToClientPacket::PlayerAlive { alive });
                 
                 Self::Evening
             },
@@ -199,7 +182,7 @@ impl PhaseType {
 
                     let targets: Vec<PlayerIndex> = player.night_variables.chosen_targets.clone();
                     let role = player.role();
-                    let visits = role.convert_targets_to_visits(player.index, targets, game);
+                    let visits = role.convert_targets_to_visits(player.index().clone(), targets, game);
                     game.get_unchecked_mut_player(player_index as PlayerIndex).night_variables.visits = visits;
                 }
 

@@ -138,21 +138,16 @@ pub enum ChatGroup {
 }
 impl ChatGroup{
     pub fn player_recieve_from_chat_group(&self, player_index: PlayerIndex, game: &Game)->bool{
-        let player = game.get_unchecked_player(player_index);
-        match *self {
-            ChatGroup::All => true,
-            ChatGroup::Dead => !player.alive,   //or medium
+        let role = game.get_unchecked_player(player_index).role();
 
-            ChatGroup::Mafia => player.role().get_faction_alignment().faction() == Faction::Mafia,
-            ChatGroup::Vampire => false,    //vampire
-            ChatGroup::Coven => player.role().get_faction_alignment().faction() == Faction::Coven,
-        }
+        role.get_current_recieve_chat_groups(player_index, game).contains(self)
     }
+
     pub fn all_players_in_group(&self, game: &Game)->Vec<PlayerIndex>{
         let mut out = Vec::new();
         for player in game.players.iter(){
-            if self.player_recieve_from_chat_group(player.index, game){
-                out.push(player.index);
+            if self.player_recieve_from_chat_group(*player.index(), game){
+                out.push(player.index().clone());
             }
         }
         out

@@ -133,10 +133,10 @@ impl RoleListEntry{
             RoleListEntry::Exact {role, .. } => vec![role.clone()],
             RoleListEntry::FactionAlignment { faction_alignment, .. } => 
                 Role::values().into_iter().filter(|role|{
-                    role.get_faction_alignment() == *faction_alignment
+                    role.faction_alignment() == *faction_alignment
                 }).collect(),
             RoleListEntry::Faction { faction, .. } => Role::values().into_iter().filter(|role|{
-                role.get_faction_alignment().faction() == *faction
+                role.faction_alignment().faction() == *faction
             }).collect(),
             RoleListEntry::Any => Role::values(),
         }

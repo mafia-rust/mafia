@@ -54,8 +54,8 @@ pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game
 pub(super) fn can_night_target(actor_index: PlayerIndex, target_index: PlayerIndex, game: &Game) -> bool {
     actor_index != target_index &&
     game.get_unchecked_player(actor_index).night_variables.chosen_targets.len() < 1 &&
-    game.get_unchecked_player(actor_index).alive &&
-    game.get_unchecked_player(target_index).alive
+    *game.get_unchecked_player(actor_index).alive() &&
+    *game.get_unchecked_player(target_index).alive()
 }
 pub(super) fn do_day_action(actor_index: PlayerIndex, game: &mut Game) {
     
@@ -68,6 +68,9 @@ pub(super) fn convert_targets_to_visits(actor_index: PlayerIndex, targets: Vec<P
 }
 pub(super) fn get_current_send_chat_groups(actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
     crate::game::role::common_role::get_current_send_chat_groups(actor_index, game, vec![])
+}
+pub(super) fn get_current_recieve_chat_groups(actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
+    crate::game::role::common_role::get_current_recieve_chat_groups(actor_index, game)
 }
 pub(super) fn on_phase_start(actor_index: PlayerIndex, phase: PhaseType, game: &mut Game){
     let actor = game.get_unchecked_mut_player(actor_index);

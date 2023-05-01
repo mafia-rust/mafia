@@ -87,9 +87,8 @@ impl Game {
         });
             
         for player in game.players.iter(){
-            player.send_packet(ToClientPacket::YourPlayerIndex { player_index: player.index });
-            player.send_packet(ToClientPacket::PlayerButtons { buttons: 
-                PlayerButtons::from(&game, player.index)
+            player.send_packet(ToClientPacket::YourButtons { buttons: 
+                PlayerButtons::from(&game, player.index().clone())
             });
         }
         
@@ -206,7 +205,7 @@ impl Game {
                 let player = self.get_unchecked_mut_player(player_index);
 
                 //if player being voted for is dead then no
-                if !player.alive { player_voted_index = None; }
+                if !player.alive() { player_voted_index = None; }
                 
                 player.send_packet(ToClientPacket::YourVoting { player_index: player_voted_index });
 
@@ -217,7 +216,7 @@ impl Game {
                 player.voting_variables.chosen_vote = player_voted_index;
 
                 
-                let chat_message = ChatMessage::Voted { voter: player.index, votee: player_voted_index };
+                let chat_message = ChatMessage::Voted { voter: *player.index(), votee: player_voted_index };
                 self.add_message_to_chat_group(ChatGroup::All, chat_message);
 
 
@@ -230,7 +229,7 @@ impl Game {
                 }
 
                 for player in self.players.iter(){
-                    if player.alive{
+                    if *player.alive(){
                         living_players_count+=1;
 
                         if let Some(player_voted) = player.voting_variables.chosen_vote{
@@ -347,7 +346,7 @@ impl Game {
             _ => unreachable!()
         }
         
-        let packet = ToClientPacket::PlayerButtons { buttons: PlayerButtons::from(self, player_index)};
+        let packet = ToClientPacket::YourButtons { buttons: PlayerButtons::from(self, player_index)};
         self.get_unchecked_mut_player(player_index).send_packet(packet);
 
         for player in self.players.iter_mut(){

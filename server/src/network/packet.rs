@@ -51,12 +51,14 @@ pub enum ToClientPacket{
     PlayerOnTrial{player_index: PlayerIndex},  //Player index
 
         
-    PlayerButtons{buttons: Vec<PlayerButtons>},
-    PlayerRoleLabels{role_labels: HashMap<PlayerIndex, Role>},
+    
     PlayerAlive{alive: Vec<bool>},
     #[serde(rename_all = "camelCase")]
     PlayerVotes{voted_for_player: Vec<u8>}, //map from playerindex to num_voted_for that player
 
+    YourButtons{buttons: Vec<PlayerButtons>},
+    #[serde(rename_all = "camelCase")]
+    YouRoleLabels{role_labels: HashMap<PlayerIndex, Role>},
     YourWill{will: String},
     YourRole{role: RoleData},
     #[serde(rename_all = "camelCase")]
@@ -87,7 +89,7 @@ impl ToClientPacket {
         }
 
         for player in game.players.iter(){
-            if player.alive{
+            if *player.alive(){
                 if let Some(player_voted) = player.voting_variables.chosen_vote{
                     if let Some(num_votes) = voted_for_player.get_mut(player_voted as usize){
                         *num_votes+=1;
@@ -97,13 +99,6 @@ impl ToClientPacket {
         }
 
         ToClientPacket::PlayerVotes { voted_for_player }
-    }
-    pub fn new_player_alive(game: &mut Game)->ToClientPacket{
-        let mut alive = Vec::new();
-        for player in game.players.iter(){
-            alive.push(player.alive);
-        }
-        ToClientPacket::PlayerAlive { alive }
     }
 }
 
@@ -140,7 +135,7 @@ pub struct PlayerButtons{
 impl PlayerButtons{
     pub fn from_target(game: &Game, actor_index: PlayerIndex, target_index: PlayerIndex)->Self{
         Self{
-            vote: actor_index != target_index && game.phase_machine.current_state == PhaseType::Voting && game.get_unchecked_player(actor_index).voting_variables.chosen_vote == None && game.get_unchecked_player(actor_index).alive && game.get_unchecked_player(target_index).alive,
+            vote: actor_index != target_index && game.phase_machine.current_state == PhaseType::Voting && game.get_unchecked_player(actor_index).voting_variables.chosen_vote == None && *game.get_unchecked_player(actor_index).alive() && *game.get_unchecked_player(target_index).alive(),
             target: game.get_unchecked_player(actor_index).role().can_night_target(actor_index, target_index, game) && game.get_current_phase() == PhaseType::Night,
             day_target: game.get_unchecked_player(actor_index).role().can_day_target(actor_index, target_index, game),
         }
@@ -148,7 +143,7 @@ impl PlayerButtons{
     pub fn from(game: &Game, actor_index: PlayerIndex)->Vec<Self>{
         let mut out = Vec::new();
         for target in game.players.iter(){
-            out.push(Self::from_target(game, actor_index, target.index));
+            out.push(Self::from_target(game, actor_index, target.index().clone()));
         }
         out
     }

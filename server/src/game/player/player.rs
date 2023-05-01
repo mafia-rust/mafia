@@ -16,18 +16,17 @@ use crate::{
     network::packet::{ToClientPacket, PlayerButtons}
 };
 
-use super::{player_voting_variables::PlayerVotingVariables, player_night_variables::PlayerNightVariables};
+use super::{player_voting_variables::PlayerVotingVariables, player_night_variables::PlayerNightVariables, PlayerIndex};
 
-pub type PlayerIndex = u8;
 
 pub struct Player {
-    name: String,
-    pub index: PlayerIndex,
-    role_data: RoleData,
-    pub alive: bool,
-    will: String,
+    pub(super) name: String,
+    pub(super) index: PlayerIndex,
+    pub(super) role_data: RoleData,
+    pub(super) alive: bool,
+    pub(super) will: String,
 
-    role_labels: HashMap<PlayerIndex, Role>,   //when you can see someone elses role in the playerlist, dead players and teammates, mayor
+    pub(super) role_labels: HashMap<PlayerIndex, Role>,   //when you can see someone elses role in the playerlist, dead players and teammates, mayor
 
     sender: UnboundedSender<ToClientPacket>,
 
@@ -40,7 +39,7 @@ pub struct Player {
 
 impl Player {
     pub fn new(index: PlayerIndex, name: String, sender: UnboundedSender<ToClientPacket>, role: Role) -> Self {
-        Self {
+        let p = Self {
             name,
             index,
             role_data: role.default_data(),
@@ -56,45 +55,17 @@ impl Player {
 
             night_variables: PlayerNightVariables::new(),
             voting_variables: PlayerVotingVariables::new(),
-        }
+        };
+        p.send_packet(ToClientPacket::YourPlayerIndex { player_index: p.index().clone() });
+        p
     }
 
-    pub fn name(&self) -> &String {
-        &self.name
-    }
-    
-    pub fn role(&self) -> Role {
-        self.role_data.role()
-    }
-    pub fn role_data(&self) -> &RoleData{
-        &self.role_data
-    }
-    pub fn set_role_data(&mut self, new_role_data: RoleData){
-        self.role_data = new_role_data;
-        self.send_packet(ToClientPacket::YourRole { role: self.role_data });
-    }
-
-    pub fn will(&self)->&String{
-        &self.will
-    }
-    pub fn set_will(&mut self, will: String){
-        self.will = will;
-        self.send_packet(ToClientPacket::YourWill { will: self.will.clone() });
-    }
-     
-    pub fn role_labels(&self)->&HashMap<PlayerIndex, Role>{
-        &self.role_labels
-    }  
-    pub fn insert_role_label(&mut self, key: PlayerIndex, value: Role){
-        self.role_labels.insert(key, value);
-        self.send_packet(ToClientPacket::PlayerRoleLabels { role_labels: self.role_labels.clone() });
-    }
 
     //Night helper functions
 
     ///returns true if they were roleblocked by you
     pub fn roleblock(&mut self)->bool{
-        if self.role().is_roleblockable() {
+        if self.role().roleblockable() {
             self.night_variables.roleblocked = true;
             self.night_variables.night_messages.push(ChatMessage::NightInformation { night_information: NightInformation::RoleBlocked { immune: false }});
             return true;
@@ -206,7 +177,7 @@ impl Player {
     fn send_available_buttons(&mut self, game: &mut Game){
 
         //TODO maybe find a way to check to see if we should send this like i do in chat messages
-        self.send_packet(ToClientPacket::PlayerButtons { buttons: game.players.iter().map(|player|{
+        self.send_packet(ToClientPacket::YourButtons { buttons: game.players.iter().map(|player|{
             PlayerButtons{
                 vote: false,
                 target: self.role().can_night_target(self.index, player.index, game),

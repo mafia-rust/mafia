@@ -99,7 +99,7 @@ export default function messageListener(packet: ToClientPacket){
         case "playerOnTrial":
             GAME_MANAGER.gameState.playerOnTrial = packet.playerIndex;
         break;
-        case "playerButtons":
+        case "yourButtons":
             for(let i = 0; i < GAME_MANAGER.gameState.players.length && i < packet.buttons.length; i++){
                 GAME_MANAGER.gameState.players[i].buttons = packet.buttons[i];
             }

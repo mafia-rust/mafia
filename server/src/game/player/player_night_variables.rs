@@ -82,8 +82,8 @@ impl PlayerNightVariables{
             died:           false,
             attacked:       false,
             roleblocked:    false,
-            defense:        player.role().get_defense(),
-            suspicious:     player.role().is_suspicious(),
+            defense:        player.role().defense(),
+            suspicious:     player.role().suspicious(),
 
             disguised_as:   player_index,
 

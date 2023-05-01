@@ -43,42 +43,42 @@ macro_rules! make_role_enum {
                 }
             }
             
-            pub fn is_suspicious(&self) -> bool {
+            pub fn suspicious(&self) -> bool {
                 match self {
                     $(Role::$name => $file::SUSPICIOUS),*
                 }
             }
-            pub fn is_witchable(&self) -> bool {
+            pub fn witchable(&self) -> bool {
                 match self {
                     $(Role::$name => $file::WITCHABLE),*
                 }
             }
-            pub fn get_defense(&self) -> u8 {
+            pub fn defense(&self) -> u8 {
                 match self {
                     $(Role::$name => $file::DEFENSE),*
                 }
             }
-            pub fn is_roleblockable(&self) -> bool {
+            pub fn roleblockable(&self) -> bool {
                 match self {
                     $(Role::$name => $file::ROLEBLOCKABLE),*
                 }
             }
-            pub fn get_faction_alignment(&self) -> FactionAlignment {
+            pub fn faction_alignment(&self) -> FactionAlignment {
                 match self {
                     $(Role::$name => $file::FACTION_ALIGNMENT),*
                 }
             }
-            pub fn get_maximum_count(&self) -> Option<u8> {
+            pub fn maximum_count(&self) -> Option<u8> {
                 match self {
                     $(Role::$name => $file::MAXIUMUM_COUNT),*
                 }
             }
-            pub fn get_end_game_condition(&self) -> EndGameCondition {
+            pub fn end_game_condition(&self) -> EndGameCondition {
                 match self {
                     $(Role::$name => $file::END_GAME_CONDITION),*
                 }
             }
-            pub fn get_team(&self) -> Option<Team> {
+            pub fn team(&self) -> Option<Team> {
                 match self {
                     $(Role::$name => $file::TEAM),*
                 }
@@ -112,6 +112,11 @@ macro_rules! make_role_enum {
             pub fn get_current_send_chat_groups(&self, actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
                 match self {
                     $(Role::$name => $file::get_current_send_chat_groups(actor_index, game)),*
+                }
+            }
+            pub fn get_current_recieve_chat_groups(&self, actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
+                match self {
+                    $(Role::$name => $file::get_current_recieve_chat_groups(actor_index, game)),*
                 }
             }
             pub fn on_phase_start(&self, actor_index: PlayerIndex, phase: PhaseType, game: &mut Game){
