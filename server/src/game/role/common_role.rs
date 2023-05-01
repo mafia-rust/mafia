@@ -66,22 +66,18 @@ pub(super) fn on_role_creation(actor_index: PlayerIndex, game: &mut Game){
 
     let actor_role = game.get_unchecked_mut_player(actor_index).role();
 
-
     //set a role tag for themselves
     game.get_unchecked_mut_player(actor_index).insert_role_label(actor_index, actor_role);
 
     //if they are on a team. set tags for their teammates
-    if actor_role.team().is_some(){
+    for other_index in 0..(game.players.len() as PlayerIndex){
+        if actor_index == other_index{
+            continue;
+        }
+        let other_role = game.get_unchecked_mut_player(other_index).role();
 
-        for other_index in 0..(game.players.len() as PlayerIndex){
-            if actor_index == other_index {
-                continue;
-            }
-            let other_role = game.get_unchecked_mut_player(other_index).role();
-
-            if actor_role.team() == other_role.team() {
-                game.get_unchecked_mut_player(actor_index).insert_role_label(other_index, other_role);
-            }
+        if Team::same_team(actor_role, other_role) {
+            game.get_unchecked_mut_player(other_index).insert_role_label(actor_index, actor_role);
         }
     }
 }

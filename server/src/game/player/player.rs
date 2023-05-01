@@ -97,7 +97,6 @@ impl Player {
     /// swap this persons role, sending them the role chat message, and associated changes
     pub fn set_role(game: &mut Game, player_index: PlayerIndex, new_role_data: RoleData){
 
-        
         game.get_unchecked_mut_player(player_index).set_role_data(new_role_data);
         game.get_unchecked_mut_player(player_index).role().on_role_creation(player_index, game);
         game.get_unchecked_mut_player(player_index).add_chat_message(ChatMessage::RoleAssignment { role: new_role_data.role()});

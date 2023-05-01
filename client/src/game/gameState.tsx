@@ -48,6 +48,7 @@ export function createPlayer(name: string, index: number): Player {
         },
         numVoted: null,
         alive:true,
+        roleLabel: null,
 
         toString() {
             return "("+(this.index + 1)+") " + this.name;

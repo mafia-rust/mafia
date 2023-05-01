@@ -49,6 +49,12 @@ export type ToClientPacket = {
     type: "playerOnTrial",
     playerIndex: PlayerIndex
 } | {
+    type: "playerAlive", 
+    alive: [boolean]
+} | {
+    type: "playerVotes",
+    votedForPlayer: [number]
+} | {
     type: "yourButtons", 
     buttons: [{
         dayTarget: boolean,
@@ -56,11 +62,8 @@ export type ToClientPacket = {
         vote: boolean,
     }]
 } | {
-    type: "playerAlive", 
-    alive: [boolean]
-} | {
-    type: "playerVotes",
-    votedForPlayer: [number]
+    type: "yourRoleLabels",
+    roleLabels: Map<number, Role>
 } | {
     type: "yourWill",
     will: string
