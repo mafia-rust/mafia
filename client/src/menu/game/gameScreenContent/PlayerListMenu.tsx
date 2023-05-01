@@ -73,7 +73,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     renderPlayer(player: Player, whisperButton: boolean){
 
         return(<div key={player.index}>
-            {player.toString()} {"("+player.roleLabel+")"}<br/>
+            {player.toString()} { player.roleLabel==null?"":("("+player.roleLabel+")") }<br/>
 
             <div style={{display: "flex"}}>
                 {((player)=>{if(player.buttons.target){return(

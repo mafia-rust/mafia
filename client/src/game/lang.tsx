@@ -127,9 +127,9 @@ export function getChatString(message: ChatMessage): string {
 export function getNightInformationString(info: NightInformation){
     switch (info.type) {
         case "roleBlocked":
-            return translate("chatmessage.night.roleBlocked" + info.immune ? ".immune" : "");
+            return translate("chatmessage.night.roleBlocked" + (info.immune ? ".immune" : ""));
         case "sheriffResult":
-            return translate("chatmessage.night.sheriffResult." + info.suspicious ? "suspicious" : "innocent");
+            return translate("chatmessage.night.sheriffResult." + (info.suspicious ? "suspicious" : "innocent"));
         default:
             return translate("chatmessage.night."+info.type);
     }
