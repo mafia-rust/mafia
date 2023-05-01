@@ -131,6 +131,6 @@ export function getNightInformationString(info: NightInformation){
         case "sheriffResult":
             return translate("chatmessage.night.sheriffResult." + info.suspicious ? "suspicious" : "innocent");
         default:
-            return translate("chatmessage.night."+info);
+            return translate("chatmessage.night."+info.type);
     }
 }
