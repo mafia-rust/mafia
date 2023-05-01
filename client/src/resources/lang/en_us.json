@@ -106,7 +106,7 @@
     "chatmessage.broadcastWhisper":"\\0 is whispering to \\1.",
 
     "chatmessage.roleAssignment":"Your role is \\0. \\1.",
-    "chatmessage.playerDied":"\\0 died. Their role was the \\1. They died to \\2. Their will stated the following: \\3",
+    "chatmessage.playerDied":"\\0 died. Their role was the \\1. They died to \\2. Their will stated the following: \\3.",
     "chatmessage.phaseChange":"\\0 \\1",
 
     "chatmessage.trialInformation":"\\0 votes are needed to put someone on trial. There's \\1 trials left today.",
@@ -116,8 +116,8 @@
     "chatmessage.judgementVote":"\\0 has voted.",
     "chatmessage.judgementVerdict":"\\0 decided \\1.",
     "chatmessage.trialVerdict":"\\0 was voted \\1 with \\2 innocent votes and \\3 guilty votes.",
-    "chatmessage.targeted":"\\0 targeted \\1",
-    "chatmessage.targetedNull":"\\0 reset their targets",
+    "chatmessage.targeted":"\\0 targeted \\1.",
+    "chatmessage.targetedNull":"\\0 reset their targets.",
 
     "chatmessage.mayorRevealed":"\\0 has revealed as mayor!",
     "chatmessage.mayorCantWhisper":"You can't whisper as or to a revealed mayor.",
@@ -128,6 +128,7 @@
     "chatmessage.night.roleBlockedImmune": "Someone tried to roleblock you but you are immune.",
     "chatmessage.night.roleBlocked": "You've been roleblocked.",
     "chatmessage.night.targetSurvivedAttack": "Your target had defense and survived the attack.",
+    "chatmessage.night.youSurvivedAttack": "You were attacked but had defense and survived.",
     "chatmessage.night.youDied":"You died!",
     "chatmessage.night.spyMafiaVisit":"The mafia visited these players: \\0",
     "chatmessage.night.spyBug":"Your bug captured: \\0",
