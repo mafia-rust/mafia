@@ -18,10 +18,10 @@ export function createGameManager(): GameManager {
 
         name: undefined,
 
-        willMenuOpen: false,
+        willMenuOpen: true,
         wikiMenuOpen: false,
-        graveyardMenuOpen: false,
-        playerListMenuOpen: false,
+        graveyardMenuOpen: true,
+        playerListMenuOpen: true,
 
         gameState : createGameState(),
 
