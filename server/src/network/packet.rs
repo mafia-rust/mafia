@@ -58,7 +58,7 @@ pub enum ToClientPacket{
 
     YourButtons{buttons: Vec<PlayerButtons>},
     #[serde(rename_all = "camelCase")]
-    YouRoleLabels{role_labels: HashMap<PlayerIndex, Role>},
+    YourRoleLabels{role_labels: HashMap<PlayerIndex, Role>},
     YourWill{will: String},
     YourRole{role: RoleData},
     #[serde(rename_all = "camelCase")]

@@ -52,7 +52,7 @@ impl Player{
     }  
     pub fn insert_role_label(&mut self, key: PlayerIndex, value: Role){
         self.role_labels.insert(key, value);
-        self.send_packet(ToClientPacket::YouRoleLabels { role_labels: self.role_labels.clone() });
+        self.send_packet(ToClientPacket::YourRoleLabels { role_labels: self.role_labels.clone() });
     }
 
 }

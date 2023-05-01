@@ -7,6 +7,7 @@ import GAME_MANAGER from "../../index";
 import GameScreen from "../../menu/game/GameScreen";
 import React from "react";
 import { ToClientPacket } from "./packet";
+import { Role } from "../gameState.d";
 
 export default function messageListener(packet: ToClientPacket){
     switch(packet.type) {
@@ -99,11 +100,6 @@ export default function messageListener(packet: ToClientPacket){
         case "playerOnTrial":
             GAME_MANAGER.gameState.playerOnTrial = packet.playerIndex;
         break;
-        case "yourButtons":
-            for(let i = 0; i < GAME_MANAGER.gameState.players.length && i < packet.buttons.length; i++){
-                GAME_MANAGER.gameState.players[i].buttons = packet.buttons[i];
-            }
-        break;
         case "playerAlive":
             for(let i = 0; i < GAME_MANAGER.gameState.players.length && i < packet.alive.length; i++){
                 GAME_MANAGER.gameState.players[i].alive = packet.alive[i];
@@ -112,6 +108,17 @@ export default function messageListener(packet: ToClientPacket){
         case "playerVotes":
             for(let i = 0; i < GAME_MANAGER.gameState.players.length && i < packet.votedForPlayer.length; i++){
                 GAME_MANAGER.gameState.players[i].numVoted = packet.votedForPlayer[i];
+            }
+        break;
+        case "yourButtons":
+            for(let i = 0; i < GAME_MANAGER.gameState.players.length && i < packet.buttons.length; i++){
+                GAME_MANAGER.gameState.players[i].buttons = packet.buttons[i];
+            }
+        break;
+        case "yourRoleLabels":
+            // let roleLabels: any = packet.roleLabels;
+            for (const [key, value] of Object.entries(packet.roleLabels)) { 
+                GAME_MANAGER.gameState.players[key as unknown as number].roleLabel = value as Role;
             }
         break;
         case "yourWill":

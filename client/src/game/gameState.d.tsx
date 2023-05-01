@@ -61,6 +61,7 @@ export interface Player {
     },
     numVoted: number | null,
     alive: boolean,
+    roleLabel: Role | null,
 
     toString(): string
 }

@@ -30,6 +30,13 @@ export default class GraveyardMenu extends React.Component<any, GraveyardMenuSta
         GAME_MANAGER.removeStateListener(this.listener);
     }
 
+    renderGraves(){
+        return <div>
+            {this.state.gameState.graves.map((grave, graveIndex)=>{
+                return this.renderGrave(grave, graveIndex);
+            }, this)}
+        </div>
+    }
     renderGrave(grave: Grave, graveIndex: number){
         let deathCauseString: string;
         if(grave.deathCause.type === "lynching"){
@@ -47,11 +54,15 @@ export default class GraveyardMenu extends React.Component<any, GraveyardMenuSta
             graveRoleString = grave.role.type;
         }
 
-        return(<div key={graveIndex}>
-            {grave.diedPhase.toString()} {grave.dayNumber}<br/>
+        // return(<div key={graveIndex}>
+        //     {grave.diedPhase.toString()} {grave.dayNumber}<br/>
+        //     {this.state.gameState.players[grave.playerIndex]?.toString()}<br/>
+        //     {"("+graveRoleString+")"} killed by {deathCauseString}
+        // </div>)
+        return(<button key={graveIndex}>
             {this.state.gameState.players[grave.playerIndex]?.toString()}<br/>
-            {graveRoleString} killed by {deathCauseString}
-        </div>)
+            {"("+graveRoleString+")"}
+        </button>);
     }
 
     renderRoleList(){return<div>
@@ -78,22 +89,21 @@ export default class GraveyardMenu extends React.Component<any, GraveyardMenuSta
             let alignment = factionAlignment.replace(faction, "");
 
             return <div key={index}>
-                <button>{translate("FactionAlignment.Faction."+faction)} {translate("FactionAlignment.Alignment."+alignment)}</button>
+                <button>{translate("FactionAlignment.Faction."+faction)}<br/>{translate("FactionAlignment.Alignment."+alignment)}</button>
             </div>
         } else {
             let faction = roleListEntry.faction;
             return <div key={index}>
-                <button>{translate("FactionAlignment.Faction."+faction)} {translate("FactionAlignment.Alignment.Random")}</button>
+                <button>{translate("FactionAlignment.Faction."+faction)}<br/>{translate("FactionAlignment.Alignment.Random")}</button>
             </div>
         }
     }
     render(){return(<div>
         <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.GraveyardMenu)}}>{translate("menu.graveyard.title")}</button>
         <br/>
-        {this.state.gameState.players[this.state.gameState.myIndex!]?.toString()}: {this.state.gameState.role}
-        {this.state.gameState.graves.map((grave, graveIndex)=>{
-            return this.renderGrave(grave, graveIndex);
-        }, this)}
-        {this.renderRoleList()}
+        <div style={{display: "flex"}}>
+            {this.renderRoleList()}
+            {this.renderGraves()}
+        </div>        
     </div>)}
 }
