@@ -82,8 +82,8 @@ impl PlayerNightVariables{
             died:           false,
             attacked:       false,
             roleblocked:    false,
-            defense:        player.get_role().get_defense(),
-            suspicious:     player.get_role().is_suspicious(),
+            defense:        player.role().defense(),
+            suspicious:     player.role().suspicious(),
 
             disguised_as:   player_index,
 
@@ -92,9 +92,9 @@ impl PlayerNightVariables{
 
             night_messages: vec![],
 
-            grave_role: GraveRole::Role(player.get_role()),
+            grave_role: GraveRole::Role(player.role()),
             grave_killers: vec![],
-            grave_will: player.will.clone(),
+            grave_will: player.will().clone(),
             grave_death_notes: vec![],
         };
     }

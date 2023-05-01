@@ -49,7 +49,7 @@ export type ToClientPacket = {
     type: "playerOnTrial",
     playerIndex: PlayerIndex
 } | {
-    type: "playerButtons", 
+    type: "yourButtons", 
     buttons: [{
         dayTarget: boolean,
         target: boolean,

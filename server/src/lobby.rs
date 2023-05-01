@@ -277,7 +277,7 @@ impl Lobby {
             },
             LobbyState::Game { game, players } => ToClientPacket::Players { 
                 names: players.iter().map(|p| {
-                    game.get_player(*p.1).unwrap().name.clone()
+                    game.get_player(*p.1).unwrap().name().clone()
                 }).collect() 
             },
             LobbyState::Closed => {return;}

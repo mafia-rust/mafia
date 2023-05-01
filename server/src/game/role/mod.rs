@@ -13,6 +13,7 @@ macro_rules! make_role_enum {
         use crate::game::chat::ChatGroup;
         use crate::game::role_list::FactionAlignment;
         use crate::game::phase::PhaseType;
+        use crate::game::team::Team;
         use serde::{Serialize, Deserialize};
         $(mod $file;)*
 
@@ -42,43 +43,46 @@ macro_rules! make_role_enum {
                 }
             }
             
-            //from file
-            pub fn is_suspicious(&self) -> bool {
+            pub fn suspicious(&self) -> bool {
                 match self {
                     $(Role::$name => $file::SUSPICIOUS),*
                 }
             }
-            pub fn is_witchable(&self) -> bool {
+            pub fn witchable(&self) -> bool {
                 match self {
                     $(Role::$name => $file::WITCHABLE),*
                 }
             }
-            pub fn get_defense(&self) -> u8 {
+            pub fn defense(&self) -> u8 {
                 match self {
                     $(Role::$name => $file::DEFENSE),*
                 }
             }
-            pub fn is_roleblockable(&self) -> bool {
+            pub fn roleblockable(&self) -> bool {
                 match self {
                     $(Role::$name => $file::ROLEBLOCKABLE),*
                 }
             }
-            pub fn get_faction_alignment(&self) -> FactionAlignment {
+            pub fn faction_alignment(&self) -> FactionAlignment {
                 match self {
                     $(Role::$name => $file::FACTION_ALIGNMENT),*
                 }
             }
-            pub fn get_maximum_count(&self) -> Option<u8> {
+            pub fn maximum_count(&self) -> Option<u8> {
                 match self {
                     $(Role::$name => $file::MAXIUMUM_COUNT),*
                 }
             }
-            pub fn get_end_game_condition(&self) -> EndGameCondition {
+            pub fn end_game_condition(&self) -> EndGameCondition {
                 match self {
                     $(Role::$name => $file::END_GAME_CONDITION),*
                 }
             }
-            //Above is constants
+            pub fn team(&self) -> Option<Team> {
+                match self {
+                    $(Role::$name => $file::TEAM),*
+                }
+            }
 
             pub fn do_night_action(&self, actor_index: PlayerIndex, priority: i8, game: &mut Game) {
                 match self {
@@ -105,14 +109,24 @@ macro_rules! make_role_enum {
                     $(Role::$name => $file::convert_targets_to_visits(actor_index, targets, game)),*
                 }
             }
-            pub fn get_current_chat_groups(&self, actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
+            pub fn get_current_send_chat_groups(&self, actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
                 match self {
-                    $(Role::$name => $file::get_current_chat_groups(actor_index, game)),*
+                    $(Role::$name => $file::get_current_send_chat_groups(actor_index, game)),*
+                }
+            }
+            pub fn get_current_recieve_chat_groups(&self, actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
+                match self {
+                    $(Role::$name => $file::get_current_recieve_chat_groups(actor_index, game)),*
                 }
             }
             pub fn on_phase_start(&self, actor_index: PlayerIndex, phase: PhaseType, game: &mut Game){
                 match self{
                     $(Role::$name => $file::on_phase_start(actor_index, phase, game)),*
+                }
+            }
+            pub fn on_role_creation(&self, actor_index: PlayerIndex, game: &mut Game){
+                match self{
+                    $(Role::$name => $file::on_role_creation(actor_index, game)),*
                 }
             }
         }
@@ -129,6 +143,7 @@ macro_rules! make_role_enum {
     }
 }
 
+
 // Creates the Role enum
 make_role_enum! {
     Sheriff : sheriff,
@@ -143,15 +158,53 @@ make_role_enum! {
         alerting_tonight: bool = false
     },
 
-    Mafioso : mafioso {
-        original: bool = true
-    },
+    Mafioso : mafioso,
     
-    Consort : consort
+    Consort : consort,
+
+    CovenLeader : coven_leader
 }
 
 type Priority = i8;
+mod common_role;
 
+
+/*
+New Proposed priorities:
+
+1 Top Priority
+    Jester(Kill), Arsonist(Clear self), All decidedes ( Vet decide)
+
+3 Swaps
+    Transporter(Swap)
+4 Controlls
+    Witch(Swap), Retributionist(Swap) Necromancer(Swap)
+2 Roleblock
+    Escort Poisoner(roleblock)
+
+
+7 Deception
+    VoodooMaster, Arsonist(Douse), Janitor(Clean), Forger(Yea), Disguiser, Werewolf(Make slef inno or sus) HexMaster(Hex) Poisoner(Poison), Illusioner
+4
+    Bodyguard(Swap)
+5 Heal
+    Doctor, PotionMaster(Heal), Veteran(Heal self) Bodyguard(Heal self)
+
+    
+6 Kill
+    CovenLeader, Necronomicon, Arsonist(Ignite) HexMaster(Kill) Veteran(Kill) Poisoner(Kill)
+8 Investigative
+    Sheriff, Investigator, Lookout, Tracker, PotionMaster(Investigate), Spy(Mafia/Coven visits) 
+    Janitor(Who died) Bodyguard(Notif) Doctor(Notif) Arsonist(Who visited me)
+
+9
+    Spy(Bug) 
+10
+    Witch(Bug)
+    
+
+
+ */
 /*
 Proposed Priorities:
 

@@ -2,7 +2,7 @@ use std::{time::Duration, io::Seek};
 
 use serde::{Serialize, Deserialize};
 
-use crate::network::packet::ToClientPacket;
+use crate::network::packet::{ToClientPacket, PlayerButtons};
 
 use super::{settings::PhaseTimeSettings, Game, player::{Player, PlayerIndex, self}, chat::{ChatGroup, ChatMessage}, game, verdict::Verdict, grave::Grave, role::{Role, RoleData}, role_list::Faction};
 
@@ -66,13 +66,6 @@ impl PhaseType {
                     }
                 }
                 //convert roles
-                
-                //tell whos alive
-                let mut alive = vec![];
-                for player in game.players.iter(){
-                    alive.push(player.alive);
-                }
-                game.send_packet_to_all(ToClientPacket::PlayerAlive { alive });
             },
             PhaseType::Discussion => {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Discussion, day_number: game.phase_machine.day_number });
@@ -81,11 +74,11 @@ impl PhaseType {
             PhaseType::Voting => {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Voting, day_number: game.phase_machine.day_number });
 
-                let required_votes = (game.players.iter().filter(|p|p.alive).collect::<Vec<&Player>>().len()/2)+1;
+                let required_votes = (game.players.iter().filter(|p|*p.alive()).collect::<Vec<&Player>>().len()/2)+1;
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialInformation { required_votes, trials_left: game.trials_left });
                 
 
-                let packet = ToClientPacket::new_PlayerVotes(game);
+                let packet = ToClientPacket::new_player_votes(game);
                 game.send_packet_to_all(packet);
             },
             PhaseType::Testimony => {
@@ -108,7 +101,7 @@ impl PhaseType {
                 //search for mafia godfather or mafioso
                 let mut main_mafia_killing_exists = false;
                 for player in game.players.iter(){
-                    if player.get_role() == Role::Mafioso { 
+                    if player.role() == Role::Mafioso { 
                         main_mafia_killing_exists = true;
                         break;
                     }
@@ -117,10 +110,10 @@ impl PhaseType {
                 //later set an order for roles
                 //ambusher should be converted first
                 if !main_mafia_killing_exists{
-                    for player in game.players.iter_mut(){
+                    for player_index in 0..(game.players.len() as PlayerIndex){
 
-                        if player.get_role().get_faction_alignment().faction() == Faction::Mafia {
-                            player.set_role(RoleData::Mafioso { original: false });
+                        if game.get_unchecked_player(player_index).role().faction_alignment().faction() == Faction::Mafia {
+                            Player::set_role(game, player_index, RoleData::Mafioso);
                             break;
                         }
                     }
@@ -129,6 +122,18 @@ impl PhaseType {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: game.phase_machine.day_number });
             },
         }
+
+        //every phase
+        for player in game.players.iter(){
+            player.send_packet(ToClientPacket::YourButtons{
+                buttons: PlayerButtons::from(game, player.index().clone()) 
+            });
+        }
+        game.send_packet_to_all(ToClientPacket::Phase { 
+            phase: game.get_current_phase(), 
+            day_number: game.phase_machine.day_number, 
+            seconds_left: game.phase_machine.time_remaining.as_secs() 
+        });
     }
 
     ///returns the next phase
@@ -136,16 +141,16 @@ impl PhaseType {
         // Match phase type and do stuff
         match game.phase_machine.current_state {
             PhaseType::Morning => {
-                return Self::Discussion;
+                Self::Discussion
             },
             PhaseType::Discussion => {
-                return Self::Voting;   
+                Self::Voting 
             },
             PhaseType::Voting => {                
-                return Self::Night;
+                Self::Night
             },
             PhaseType::Testimony => {
-                return Self::Judgement;
+                Self::Judgement
             },
             PhaseType::Judgement => {
                 
@@ -157,22 +162,15 @@ impl PhaseType {
                         Verdict::Abstain => {},
                         Verdict::Guilty => guilty += 1,
                     }
-                    messages.push(ChatMessage::JudgementVerdict { voter_player_index: player.index, verdict: player.voting_variables.verdict.clone() });
+                    messages.push(ChatMessage::JudgementVerdict { voter_player_index: player.index().clone(), verdict: player.voting_variables.verdict.clone() });
                 }
                 game.add_messages_to_chat_group(ChatGroup::All, messages);
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialVerdict { player_on_trial: game.player_on_trial.unwrap(), innocent, guilty });
-
-                //tell whos alive
-                let mut alive = vec![];
-                for player in game.players.iter(){
-                    alive.push(player.alive);
-                }
-                game.send_packet_to_all(ToClientPacket::PlayerAlive { alive });
                 
-                return Self::Evening;
+                Self::Evening
             },
             PhaseType::Evening => {
-                return Self::Night;
+                Self::Night
             },
             PhaseType::Night => {
 
@@ -183,15 +181,15 @@ impl PhaseType {
                     let player = game.get_unchecked_mut_player(player_index as PlayerIndex);
 
                     let targets: Vec<PlayerIndex> = player.night_variables.chosen_targets.clone();
-                    let role = player.get_role();
-                    let visits = role.convert_targets_to_visits(player.index, targets, game);
+                    let role = player.role();
+                    let visits = role.convert_targets_to_visits(player.index().clone(), targets, game);
                     game.get_unchecked_mut_player(player_index as PlayerIndex).night_variables.visits = visits;
                 }
 
                 //Night actions -- main loop
                 for priority in 0..12{
                     for player_index in 0..game.players.len(){
-                        game.get_unchecked_mut_player(player_index as PlayerIndex).get_role().do_night_action(player_index as PlayerIndex, priority, game);
+                        game.get_unchecked_mut_player(player_index as PlayerIndex).role().do_night_action(player_index as PlayerIndex, priority, game);
                     }
                 }
 
@@ -203,7 +201,7 @@ impl PhaseType {
 
 
                 game.phase_machine.day_number+=1;
-                return Self::Morning;
+                Self::Morning
             },
         }
     }
