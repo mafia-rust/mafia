@@ -47,19 +47,19 @@
 }
 .chat-messages .playerOnTrial{
     color: #fff;
-    background-color: #3ab302;
+    background-color: #fbd206;
 }
 .chat-messages .judgementVote {
     color: #fff;
-    background-color: #3ab302;
+    background-color: #cc89d6;
 }
 .chat-messages .judgementVerdict {
     color: #fff;
-    background-color: #3ab302;
+    background-color: #feaf8a;
 }
 .chat-messages .trialVerdict {
     color: #fff;
-    background-color: #3ab302;
+    background-color: #feaf8a;
 }
 .chat-messages .roleAssignment {
     color: #fff;
