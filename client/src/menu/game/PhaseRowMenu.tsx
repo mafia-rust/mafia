@@ -86,10 +86,13 @@ export default class PhaseRowMenu extends React.Component<PhaseRowMenuProps, Pha
         }
     }
     render(){return(<div>
-        <br/>
-        {this.renderPhaseName()}
-        {this.state.gameState.secondsLeft}<br/>
-        {this.renderPhaseSpecific()}<br/>
+        {this.renderPhase()}
+        {(()=>{
+            if(this.state.gameState.myIndex !== null){
+                return this.state.gameState.players[this.state.gameState.myIndex].toString() + " (" + this.state.gameState.players[this.state.gameState.myIndex].roleLabel + ")"
+            }
+        })()}
+        {this.renderPhaseSpecific()}
         {this.renderMenuButtons()}
     </div>)}
     renderMenuButtons(){
@@ -123,10 +126,10 @@ export default class PhaseRowMenu extends React.Component<PhaseRowMenuProps, Pha
             )()}
         </div>
     }
-    renderPhaseName(){
+    renderPhase(){
         if(this.state.gameState.phase){
             return(<div>
-                {translate("phase."+this.state.gameState.phase)} {this.state.gameState.dayNumber}<br/> 
+                {translate("phase."+this.state.gameState.phase)} {this.state.gameState.dayNumber}⏳{this.state.gameState.secondsLeft}
             </div>);
         }
         return null;

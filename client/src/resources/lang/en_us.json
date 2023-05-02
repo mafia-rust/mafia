@@ -85,9 +85,9 @@
     "FactionAlignment.Alignment.Utility": "Utility",
     "FactionAlignment.Alignment.Power": "Power",
 
-    "verdict.guilty": "guilty",
-    "verdict.innocent": "innocent",
-    "verdict.abstain": "abstain",
+    "verdict.Guilty": "guilty",
+    "verdict.Innocent": "innocent",
+    "verdict.Abstain": "abstain",
 
     "phase.morning": "Morning",
     "phase.discussion": "Discussion",
