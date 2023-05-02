@@ -140,10 +140,12 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     );}
 
     renderChatMessage(msg: ChatMessage, i: number) {return (
-        <div key={i} className="chat-message">
+        //gets the type of chat message and adds it as a subclassName to the chat-message
+        <div key={i} className={"chat-message " + msg.type}>
             {getChatString(msg)}
         </div>
     );}
+    //renders the chat menu with each chat message having the subclassName of chat-message
 
     render(){return (
         <div className="chat-menu">
@@ -156,4 +158,5 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
             {this.renderTextInput()}
         </div>
     );}
+    
 }

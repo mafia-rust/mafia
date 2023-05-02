@@ -21,6 +21,73 @@
     overflow-y: auto; 
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
     scrollbar-width: none;  /* Firefox */
+    
+}
+/*defines the colors for the difrent types of chat messages*/
+/*defines the subtypes of the chat-message class*/
+.chat-messages .normal {
+    color: #b00000;
+    background-color: #282c34;
+}
+.chat-messages .wissper {
+    color: #fff;
+    background-color: #afb7c7;
+}
+.chat-messages .broadcastWhisper {
+    color: #fff;
+    background-color: #afb7c7;
+}
+.chat-messages .trialInformation {
+    color: #fff;
+    background-color: #3ab302;
+}
+.chat-messages .voted {
+    color: #fff;
+    background-color: #3ab302;
+}
+.chat-messages .playerOnTrial{
+    color: #fff;
+    background-color: #3ab302;
+}
+.chat-messages .judgementVote {
+    color: #fff;
+    background-color: #3ab302;
+}
+.chat-messages .judgementVerdict {
+    color: #fff;
+    background-color: #3ab302;
+}
+.chat-messages .trialVerdict {
+    color: #fff;
+    background-color: #3ab302;
+}
+.chat-messages .roleAssignment {
+    color: #fff;
+    background-color: #3ab302;
+}
+.chat-messages .playerDied {
+    color: #fff;
+    background-color: #3ab302;
+}
+.chat-messages .gameOver {
+    color: #000000;
+    background-color: #ff0000;
+}
+.chat-messages .phaseChange {
+    color: #fff;
+    background-color: #afb7c7;
+}
+.chat-messages .targeted {
+    color: #fff;
+    background-color: #3ab302;
+}
+.chat-messages .nightInformation {
+    color: #fff;
+    background-color: #3ab302;
+}
+.chat-messages .mayorRevealed {
+    color: #fff;
+    background-color: #3ab302;
 }
 
 .chat-messages div {
