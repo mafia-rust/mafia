@@ -38,14 +38,14 @@ export default class GraveyardMenu extends React.Component<any, GraveyardMenuSta
         </div>
     }
     renderGrave(grave: Grave, graveIndex: number){
-        let deathCauseString: string;
-        if(grave.deathCause.type === "lynching"){
-            deathCauseString = "a lynching.";
-        } else  {
-            deathCauseString = grave.deathCause.killers.map((killer)=>{
-                return killer.type === "role" ? killer.role : killer.type;
-            }).join() + ".";
-        }
+        // let deathCauseString: string;
+        // if(grave.deathCause.type === "lynching"){
+        //     deathCauseString = "a lynching.";
+        // } else  {
+        //     deathCauseString = grave.deathCause.killers.map((killer)=>{
+        //         return killer.type === "role" ? killer.role : killer.type;
+        //     }).join() + ".";
+        // }
 
         let graveRoleString: string;
         if (grave.role.type === "role") {
