@@ -243,21 +243,31 @@ impl Lobby {
 
     fn validate_name(players: &HashMap<ArbitraryPlayerID, LobbyPlayer>, mut name: String) -> String {
         name = trim_whitespace(name.trim());
-        if !RANDOM_NAMES.contains(&name) {
-            name.truncate(20);
-        }
+        name.truncate(30);
 
-        if name.len() > 0 && !players.values()
-            .map(|p| &p.name)
+        //if valid then return
+        if name.len() > 0 && !players.values().map(|p| &p.name)
             .any(|existing_name| matches!(&name, existing_name))
         {
             return name;
         }
+        drop(name);
 
-        let available_random_names: Vec<&String> = RANDOM_NAMES.iter().filter(|name| {
+        //otherwise 
+        let available_random_names: Vec<&String> = RANDOM_NAMES.iter().filter(|new_random_name| {
             !players.values()
                 .map(|p| &p.name)
-                .any(|player| !matches!(player, name))
+                .any(|existing_name|{
+                        let mut new_random_name = trim_whitespace(new_random_name.trim());
+                        new_random_name.truncate(30);
+
+                        
+                        let mut existing_name = trim_whitespace(existing_name.trim());
+                        existing_name.truncate(30);
+
+                        new_random_name == existing_name
+                    }
+                )
         }).collect();
 
         if available_random_names.len() > 0 {
