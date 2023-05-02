@@ -133,6 +133,12 @@ export function createGameManager(): GameManager {
                 will: will
             });
         },
+        sendSaveNotesPacket(notes) {
+            this.server.sendPacket({
+                type: "saveNotes",
+                notes: notes
+            });
+        },
         sendSendMessagePacket(text) {
             this.server.sendPacket({
                 type: "sendMessage",

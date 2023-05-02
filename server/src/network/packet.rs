@@ -56,10 +56,11 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     PlayerVotes{voted_for_player: Vec<u8>}, //map from playerindex to num_voted_for that player
 
-    YourButtons{buttons: Vec<PlayerButtons>},
+    YourButtons{buttons: Vec<YourButtons>},
     #[serde(rename_all = "camelCase")]
     YourRoleLabels{role_labels: HashMap<PlayerIndex, Role>},
     YourWill{will: String},
+    YourNotes{notes: String},
     YourRole{role: RoleData},
     #[serde(rename_all = "camelCase")]
     YourTarget{player_indices: Vec<PlayerIndex>},
@@ -127,12 +128,12 @@ pub enum GameOverReason {
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct PlayerButtons{
+pub struct YourButtons{
     pub vote: bool,
     pub target: bool,
     pub day_target: bool,
 }
-impl PlayerButtons{
+impl YourButtons{
     pub fn from_target(game: &Game, actor_index: PlayerIndex, target_index: PlayerIndex)->Self{
         Self{
             vote: actor_index != target_index && game.phase_machine.current_state == PhaseType::Voting && game.get_unchecked_player(actor_index).voting_variables.chosen_vote == None && *game.get_unchecked_player(actor_index).alive() && *game.get_unchecked_player(target_index).alive(),
@@ -181,4 +182,5 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SendWhisper{player_index: PlayerIndex, text: String},
     SaveWill{will: String},
+    SaveNotes{notes: String},
 }

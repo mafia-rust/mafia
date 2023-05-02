@@ -44,7 +44,14 @@ impl Player{
     }
     pub fn set_will(&mut self, will: String){
         self.will = will;
-        self.send_packet(ToClientPacket::YourWill { will: self.will.clone() });
+        self.send_packet(ToClientPacket::YourWill { will: self.will().clone() });
+    }
+    pub fn notes(&self)->&String{
+        &self.notes
+    }
+    pub fn set_notes(&mut self, notes: String){
+        self.notes = notes;
+        self.send_packet(ToClientPacket::YourNotes { notes: self.notes().clone() })
     }
      
     pub fn role_labels(&self)->&HashMap<PlayerIndex, Role>{

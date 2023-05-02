@@ -15,7 +15,7 @@ interface ChatMenuState {
 }
 
 export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuState> {
-    buttomOfPage: HTMLBRElement | null;
+    bottomOfPage: HTMLBRElement | null;
 
     static prependWhisper(playerIndex: PlayerIndex) {
         
@@ -31,7 +31,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
 
     constructor(props: ChatMenuProps) {
         super(props);
-        this.buttomOfPage = null;
+        this.bottomOfPage = null;
 
         this.state = {
             gameState: GAME_MANAGER.gameState,
@@ -60,11 +60,11 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     }
 
     scrollToBottom() {
-        this.buttomOfPage?.scrollIntoView({ behavior: "smooth" });
+        this.bottomOfPage?.scrollIntoView({ behavior: "smooth" });
     }
     bottomIsInViewport(offset = 0) {
-        if (!this.buttomOfPage) return false;
-        const top = this.buttomOfPage.getBoundingClientRect().top;
+        if (!this.bottomOfPage) return false;
+        const top = this.bottomOfPage.getBoundingClientRect().top;
         //if top is between 0 and height then true
         //else false
         return (top + offset) >= 0 && (top - offset) <= window.innerHeight;
@@ -134,7 +134,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
                 className="gm-button"
                 onClick={this.sendChatField}
                 >
-                Send
+                Send LANG TODO
             </button>
         </div>
     );}
@@ -151,7 +151,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
                 {this.state.gameState.chatMessages.map((msg, i) => {
                     return this.renderChatMessage(msg, i);
                 })}
-                <br ref={(el) => { this.buttomOfPage = el; }}/>
+                <br ref={(el) => { this.bottomOfPage = el; }}/>
             </div>
             {this.renderTextInput()}
         </div>

@@ -19,6 +19,7 @@ export function createGameState(): GameState {
         role: null,
 
         will: "",
+        notes: "",
         targets: [],
         voted: null,
         judgement: null,

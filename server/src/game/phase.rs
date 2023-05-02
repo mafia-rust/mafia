@@ -2,7 +2,7 @@ use std::{time::Duration, io::Seek};
 
 use serde::{Serialize, Deserialize};
 
-use crate::network::packet::{ToClientPacket, PlayerButtons};
+use crate::network::packet::{ToClientPacket, YourButtons};
 
 use super::{settings::PhaseTimeSettings, Game, player::{Player, PlayerIndex, self}, chat::{ChatGroup, ChatMessage}, game, verdict::Verdict, grave::Grave, role::{Role, RoleData}, role_list::Faction};
 
@@ -126,7 +126,7 @@ impl PhaseType {
         //every phase
         for player in game.players.iter(){
             player.send_packet(ToClientPacket::YourButtons{
-                buttons: PlayerButtons::from(game, player.index().clone()) 
+                buttons: YourButtons::from(game, player.index().clone()) 
             });
         }
         game.send_packet_to_all(ToClientPacket::Phase { 
