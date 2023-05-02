@@ -49,6 +49,7 @@ export interface GameManager {
     sendTargetPacket(targetIndexList: number[]): void;
     sendDayTargetPacket(targetIndex: number): void;
     sendSaveWillPacket(will: string): void;
+    sendSaveNotesPacket(notes: string): void;
     sendSendMessagePacket(text: string): void;
     sendSendWhisperPacket(playerIndex: number, text: string): void;
     

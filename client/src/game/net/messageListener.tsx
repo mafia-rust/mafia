@@ -116,13 +116,15 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "yourRoleLabels":
-            // let roleLabels: any = packet.roleLabels;
             for (const [key, value] of Object.entries(packet.roleLabels)) { 
-                GAME_MANAGER.gameState.players[key as unknown as number].roleLabel = value as Role;
+                GAME_MANAGER.gameState.players[Number.parseInt(key)].roleLabel = value as Role;
             }
         break;
         case "yourWill":
             GAME_MANAGER.gameState.will = packet.will;
+        break;
+        case "yourNotes":
+            GAME_MANAGER.gameState.notes = packet.notes;
         break;
         case "yourRole":
             if(typeof(packet.role)==="string"){

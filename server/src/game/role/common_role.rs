@@ -7,19 +7,15 @@ pub(super) fn can_night_target(actor_index: PlayerIndex, target_index: PlayerInd
     game.get_unchecked_player(actor_index).night_variables.chosen_targets.len() < 1 &&
     *game.get_unchecked_player(actor_index).alive() &&
     *game.get_unchecked_player(target_index).alive() &&
-    (
-        !Team::same_team(
-            game.get_unchecked_player(actor_index).role(), 
-            game.get_unchecked_player(target_index).role()
-        )
-        
+    !Team::same_team(
+        game.get_unchecked_player(actor_index).role(), 
+        game.get_unchecked_player(target_index).role()
     )
-    
 }
 
 pub(super) fn convert_targets_to_visits(actor_index: PlayerIndex, targets: Vec<PlayerIndex>, game: &Game, astral: bool, attack: bool) -> Vec<Visit> {
     if targets.len() > 0{
-        vec![Visit{ target: targets[0], astral: false, attack: false }]
+        vec![Visit{ target: targets[0], astral, attack }]
     }else{
         Vec::new()
     }

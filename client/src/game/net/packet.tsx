@@ -63,10 +63,13 @@ export type ToClientPacket = {
     }]
 } | {
     type: "yourRoleLabels",
-    roleLabels: Map<number, Role>
+    roleLabels: Map<PlayerIndex, Role>
 } | {
     type: "yourWill",
     will: string
+} | {
+    type: "yourNotes",
+    notes: string
 } | {
     type: "yourRole",
     role: {
@@ -92,7 +95,7 @@ export type ToClientPacket = {
     type: "gameOver",
     reason: string /* TODO GameOverReason */
 }
-
+    //////////////////////////////////////////////////////////////////////////////////////////////////
 export type ToServerPacket = {
     type: "join", 
     roomCode: number
@@ -144,4 +147,7 @@ export type ToServerPacket = {
 } | {
     type: "saveWill", 
     will: String
+} | {
+    type: "saveNotes", 
+    notes: String
 }

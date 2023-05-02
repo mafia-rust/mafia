@@ -17,6 +17,7 @@ export default interface GameState {
     role: Role | null,
 
     will: string,
+    notes: string,
     targets: PlayerIndex[],
     voted: PlayerIndex | null,
     judgement: Verdict | null,

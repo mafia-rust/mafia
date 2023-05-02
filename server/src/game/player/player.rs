@@ -13,7 +13,7 @@ use crate::{
             Role, RoleData
         }, grave::GraveKiller, 
     }, 
-    network::packet::{ToClientPacket, PlayerButtons}
+    network::packet::{ToClientPacket, YourButtons}
 };
 
 use super::{player_voting_variables::PlayerVotingVariables, player_night_variables::PlayerNightVariables, PlayerIndex};
@@ -25,6 +25,7 @@ pub struct Player {
     pub(super) role_data: RoleData,
     pub(super) alive: bool,
     pub(super) will: String,
+    pub(super) notes: String,
 
     pub(super) role_labels: HashMap<PlayerIndex, Role>,   //when you can see someone elses role in the playerlist, dead players and teammates, mayor
 
@@ -45,6 +46,7 @@ impl Player {
             role_data: role.default_data(),
             alive: true,
             will: "".to_string(),
+            notes: "".to_string(),
 
             role_labels: HashMap::new(),
 
@@ -177,7 +179,7 @@ impl Player {
 
         //TODO maybe find a way to check to see if we should send this like i do in chat messages
         self.send_packet(ToClientPacket::YourButtons { buttons: game.players.iter().map(|player|{
-            PlayerButtons{
+            YourButtons{
                 vote: false,
                 target: self.role().can_night_target(self.index, player.index, game),
                 day_target: self.role().can_day_target(self.index, player.index, game),

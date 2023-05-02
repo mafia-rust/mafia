@@ -6,15 +6,6 @@ macro_rules! make_role_enum {
             })?
         ),*
     ) => {
-        use crate::game::player::PlayerIndex;
-        use crate::game::visit::Visit;
-        use crate::game::Game;
-        use crate::game::end_game_condition::EndGameCondition;
-        use crate::game::chat::ChatGroup;
-        use crate::game::role_list::FactionAlignment;
-        use crate::game::phase::PhaseType;
-        use crate::game::team::Team;
-        use serde::{Serialize, Deserialize};
         $(mod $file;)*
 
 
@@ -144,6 +135,15 @@ macro_rules! make_role_enum {
 }
 
 
+use crate::game::player::PlayerIndex;
+use crate::game::visit::Visit;
+use crate::game::Game;
+use crate::game::end_game_condition::EndGameCondition;
+use crate::game::chat::ChatGroup;
+use crate::game::role_list::FactionAlignment;
+use crate::game::phase::PhaseType;
+use crate::game::team::Team;
+use serde::{Serialize, Deserialize};
 // Creates the Role enum
 make_role_enum! {
     Sheriff : sheriff,
