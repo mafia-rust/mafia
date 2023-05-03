@@ -36,9 +36,6 @@ pub enum ChatMessage {
         whisperer: PlayerIndex, 
         whisperee: PlayerIndex 
     },
-        
-    /* System */
-    Debug{text: String}, // TODO: Remove. This is only for testing.
 
     RoleAssignment{role: Role},   //you are this role
     PlayerDied{grave: Grave},      //this player died this is their role
