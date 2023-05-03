@@ -4,7 +4,7 @@ use crate::game::{chat::ChatGroup, player::PlayerIndex, Game, visit::Visit, team
 pub(super) fn can_night_target(actor_index: PlayerIndex, target_index: PlayerIndex, game: &Game) -> bool {
     
     actor_index != target_index &&
-    game.get_unchecked_player(actor_index).night_variables.chosen_targets.len() < 1 &&
+    game.get_unchecked_player(actor_index).chosen_targets().len() < 1 &&
     *game.get_unchecked_player(actor_index).alive() &&
     *game.get_unchecked_player(target_index).alive() &&
     !Team::same_team(

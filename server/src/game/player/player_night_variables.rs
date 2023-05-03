@@ -17,7 +17,7 @@ pub struct PlayerNightVariables{
 
     pub disguised_as:   PlayerIndex,
 
-    pub chosen_targets: Vec<PlayerIndex>,
+    chosen_targets: Vec<PlayerIndex>,
     pub visits:         Vec<Visit>,
 
     pub night_messages: Vec<ChatMessage>,
@@ -102,5 +102,15 @@ impl PlayerNightVariables{
         if self.defense < defense{
             self.defense = defense;
         }
+    }
+
+
+
+    //accessors
+    pub(super) fn chosen_targets(&self)->&Vec<PlayerIndex>{
+        &self.chosen_targets
+    }
+    pub(super) fn set_chosen_targets(&mut self, chosen_targets: Vec<PlayerIndex>){
+        self.chosen_targets = chosen_targets
     }
 }

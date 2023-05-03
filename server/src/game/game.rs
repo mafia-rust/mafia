@@ -81,7 +81,7 @@ impl Game {
             role_list: settings.role_list.clone() 
         });
         game.send_packet_to_all(ToClientPacket::Phase { 
-            phase: game.get_current_phase(), 
+            phase: game.current_phase(), 
             seconds_left: game.phase_machine.time_remaining.as_secs(), 
             day_number: game.phase_machine.day_number 
         });
@@ -108,7 +108,7 @@ impl Game {
         self.players.get_mut(index as usize).unwrap()
     }
 
-    pub fn get_current_phase(&self) -> PhaseType {
+    pub fn current_phase(&self) -> PhaseType {
         self.phase_machine.current_state
     }
 

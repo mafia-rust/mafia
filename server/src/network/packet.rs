@@ -91,8 +91,8 @@ impl ToClientPacket {
 
         for player in game.players.iter(){
             if *player.alive(){
-                if let Some(player_voted) = player.voting_variables.chosen_vote{
-                    if let Some(num_votes) = voted_for_player.get_mut(player_voted as usize){
+                if let Some(player_voted) = player.chosen_vote(){
+                    if let Some(num_votes) = voted_for_player.get_mut(*player_voted as usize){
                         *num_votes+=1;
                     }
                 }
@@ -136,9 +136,17 @@ pub struct YourButtons{
 impl YourButtons{
     pub fn from_target(game: &Game, actor_index: PlayerIndex, target_index: PlayerIndex)->Self{
         Self{
-            vote: actor_index != target_index && game.phase_machine.current_state == PhaseType::Voting && game.get_unchecked_player(actor_index).voting_variables.chosen_vote == None && *game.get_unchecked_player(actor_index).alive() && *game.get_unchecked_player(target_index).alive(),
-            target: game.get_unchecked_player(actor_index).role().can_night_target(actor_index, target_index, game) && game.get_current_phase() == PhaseType::Night,
-            day_target: game.get_unchecked_player(actor_index).role().can_day_target(actor_index, target_index, game),
+            vote: 
+            actor_index != target_index &&
+                game.phase_machine.current_state == PhaseType::Voting &&
+                *game.get_unchecked_player(actor_index).chosen_vote() == None && 
+                *game.get_unchecked_player(actor_index).alive() && *game.get_unchecked_player(target_index).alive(),
+
+            target: 
+                game.get_unchecked_player(actor_index).role().can_night_target(actor_index, target_index, game) && 
+                game.current_phase() == PhaseType::Night,
+            day_target: 
+                game.get_unchecked_player(actor_index).role().can_day_target(actor_index, target_index, game),
         }
     }
     pub fn from(game: &Game, actor_index: PlayerIndex)->Vec<Self>{

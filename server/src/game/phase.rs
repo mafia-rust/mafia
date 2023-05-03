@@ -130,7 +130,7 @@ impl PhaseType {
             });
         }
         game.send_packet_to_all(ToClientPacket::Phase { 
-            phase: game.get_current_phase(), 
+            phase: game.current_phase(), 
             day_number: game.phase_machine.day_number, 
             seconds_left: game.phase_machine.time_remaining.as_secs() 
         });
@@ -157,12 +157,12 @@ impl PhaseType {
                 let mut innocent = 0;   let mut guilty = 0;
                 let mut messages = Vec::new();
                 for player in game.players.iter(){
-                    match player.voting_variables.verdict{
+                    match *player.verdict(){
                         Verdict::Innocent => innocent += 1,
                         Verdict::Abstain => {},
                         Verdict::Guilty => guilty += 1,
                     }
-                    messages.push(ChatMessage::JudgementVerdict { voter_player_index: player.index().clone(), verdict: player.voting_variables.verdict.clone() });
+                    messages.push(ChatMessage::JudgementVerdict { voter_player_index: player.index().clone(), verdict: player.verdict().clone() });
                 }
                 game.add_messages_to_chat_group(ChatGroup::All, messages);
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialVerdict { player_on_trial: game.player_on_trial.unwrap(), innocent, guilty });
@@ -180,7 +180,7 @@ impl PhaseType {
                 for player_index in 0..game.players.len(){
                     let player = game.get_unchecked_mut_player(player_index as PlayerIndex);
 
-                    let targets: Vec<PlayerIndex> = player.night_variables.chosen_targets.clone();
+                    let targets: Vec<PlayerIndex> = player.chosen_targets().clone();
                     let role = player.role();
                     let visits = role.convert_targets_to_visits(player.index().clone(), targets, game);
                     game.get_unchecked_mut_player(player_index as PlayerIndex).night_variables.visits = visits;
