@@ -42,8 +42,6 @@ pub enum NightInformation {
 
     Silenced,
 
-    FramerFramedPlayers{players: Vec<PlayerIndex>},
-
     JanitorResult { role: Role, will: String },
     ForgerResult { role: Role, will: String },
     ConsigliereResult{ role: Role },
@@ -51,13 +49,11 @@ pub enum NightInformation {
     SheriffResult { suspicious: bool },
     LookoutResult{players: Vec<PlayerIndex>},
     InvestigatorResult{roles: Vec<Role>},
-
-
+ 
     WitchTargetImmune,
     WitchedYou { immune: bool },    //you were witched
     WitchBug{message: Box<ChatMessage>},
 
-    ArsonistCleanedSelf,
-    ArsonistDousedPlayers{players: Vec<PlayerIndex>},
+    ArsonistCleanedSelf,    //You cleaned the gas off yourself
     ArsonistWasDoused,  //you were doused in gas (only arsonists recieve this message)
 }

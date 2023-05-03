@@ -102,11 +102,11 @@
     "button.dayTarget":"DayTarget",
 
     "chatmessage.normal":"\\0: \\1",
-    "chatmessage.whisper":"From \\0 to \\1: \\2",
-    "chatmessage.broadcastWhisper":"\\0 is whispering to \\1.",
+    "chatmessage.whisper":"\\0 whispered to \\1: \\2",
+    "chatmessage.broadcastWhisper":"\\0 whispered to \\1.",
 
     "chatmessage.roleAssignment":"Your role is \\0. \\1.",
-    "chatmessage.playerDied":"\\0 died. Their role was the \\1. They died to \\2. Their will stated the following: \\3.",
+    "chatmessage.playerDied":"\\0 died. Their role was the \\1. They died to \\2. Their will stated the following: \\3",
     "chatmessage.phaseChange":"\\0 \\1",
 
     "chatmessage.trialInformation":"\\0 votes are needed to put someone on trial. There's \\1 trials left today.",
