@@ -29,13 +29,13 @@ pub struct Player {
 
     pub(super) role_labels: HashMap<PlayerIndex, Role>,   //when you can see someone elses role in the playerlist, dead players and teammates, mayor
 
-    sender: UnboundedSender<ToClientPacket>,
+    pub(super) sender: UnboundedSender<ToClientPacket>,
 
-    chat_messages: Vec<ChatMessage>,
-    queued_chat_messages: Vec<ChatMessage>, 
+    pub(super) chat_messages: Vec<ChatMessage>,
+    pub(super) queued_chat_messages: Vec<ChatMessage>, 
 
     pub night_variables: PlayerNightVariables,
-    pub voting_variables: PlayerVotingVariables,
+    pub(super) voting_variables: PlayerVotingVariables,
 }
 
 impl Player {
@@ -125,8 +125,8 @@ impl Player {
             PhaseType::Morning => {},
             PhaseType::Discussion => {},
             PhaseType::Voting => {
+                Player::reset_voting_variables(game, player_index);
                 let player = game.get_unchecked_mut_player(player_index);
-                player.voting_variables.reset();
                 player.send_packet(ToClientPacket::YourVoting { player_index: player.voting_variables.chosen_vote.clone() });
                 player.send_packet(ToClientPacket::YourJudgement { verdict: player.voting_variables.verdict.clone() });
             },
@@ -139,7 +139,7 @@ impl Player {
                 let player = game.get_unchecked_mut_player(player_index);
 
                 player.night_variables =new_night_variables;
-                player.send_packet(ToClientPacket::YourTarget { player_indices: player.night_variables.chosen_targets.clone() });
+                player.send_packet(ToClientPacket::YourTarget { player_indices: player.chosen_targets().clone() });
             }
         }
     }

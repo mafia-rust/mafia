@@ -76,7 +76,7 @@ pub(super) fn can_night_target(actor_index: PlayerIndex, target_index: PlayerInd
     let RoleData::Veteran { alerts_remaining, alerting_tonight } = game.get_unchecked_player(actor_index).role_data() else {unreachable!();};
     actor_index == target_index &&
     *alerts_remaining > 0 &&
-    game.get_unchecked_player(actor_index).night_variables.chosen_targets.len() < 1 &&
+    game.get_unchecked_player(actor_index).chosen_targets().len() < 1 &&
     *game.get_unchecked_player(actor_index).alive()
 }
 pub(super) fn do_day_action(actor_index: PlayerIndex, game: &mut Game) {
