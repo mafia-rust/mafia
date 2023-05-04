@@ -1,8 +1,8 @@
-use super::player::PlayerIndex;
+use super::player::PlayerReference;
 
 //#[derive(Clone)]
 pub struct Visit {
-    pub target: PlayerIndex,
+    pub target: PlayerReference,
 
     pub astral: bool,
     pub attack: bool,

@@ -1,7 +1,7 @@
 use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::chat::night_message::NightInformation;
 use crate::game::phase::PhaseType;
-use crate::game::player::{Player, PlayerIndex};
+use crate::game::player::{Player, PlayerIndex, PlayerReference};
 use crate::game::role_list::FactionAlignment;
 use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
@@ -19,7 +19,7 @@ pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Factio
 pub(super) const TEAM: Option<Team> = None;
 
 
-pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game: &mut Game) {
+pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
     if game.get_unchecked_player(actor_index).night_variables.roleblocked {return;}
     if priority != 8 {return;}
 
@@ -34,26 +34,26 @@ pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game
         game.get_unchecked_mut_player(actor_index).night_variables.night_messages.push( message );
     }
 }
-pub(super) fn can_night_target(actor_index: PlayerIndex, target_index: PlayerIndex, game: &Game) -> bool {
+pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
     crate::game::role::common_role::can_night_target(actor_index, target_index, game)
 }
-pub(super) fn do_day_action(actor_index: PlayerIndex, game: &mut Game) {
+pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference) {
     
 }
-pub(super) fn can_day_target(actor_index: PlayerIndex, target_index: PlayerIndex, game: &Game) -> bool {
+pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target: PlayerIndex) -> bool {
     false
 }
-pub(super) fn convert_targets_to_visits(actor_index: PlayerIndex, targets: Vec<PlayerIndex>, game: &Game) -> Vec<Visit> {
+pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
     crate::game::role::common_role::convert_targets_to_visits(actor_index, targets, game, false, false)
 }
-pub(super) fn get_current_send_chat_groups(actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
-    crate::game::role::common_role::get_current_send_chat_groups(actor_index, game, vec![])
+pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
 }
-pub(super) fn get_current_recieve_chat_groups(actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
-    crate::game::role::common_role::get_current_recieve_chat_groups(actor_index, game)
+pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
 }
-pub(super) fn on_phase_start(actor_index: PlayerIndex, phase: PhaseType, game: &mut Game){
+pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
 }
-pub(super) fn on_role_creation(actor_index: PlayerIndex, game: &mut Game){
-    crate::game::role::common_role::on_role_creation(actor_index, game);
+pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){
+    crate::game::role::common_role::on_role_creation(game, actor_ref);
 }

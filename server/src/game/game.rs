@@ -29,7 +29,7 @@ pub struct Game {
 
     pub phase_machine : PhaseStateMachine,
 
-    pub player_on_trial: Option<PlayerIndex>,   //Morning
+    pub player_on_trial: Option<PlayerReference>,   //Morning
     pub trials_left: u8,                //Morning
 }
 

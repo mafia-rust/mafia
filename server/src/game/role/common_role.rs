@@ -3,26 +3,26 @@ use crate::game::{chat::ChatGroup, player::{PlayerIndex, PlayerReference}, Game,
 
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
     
-    actor_index != target_index &&
-    game.get_unchecked_player(actor_index).chosen_targets().len() < 1 &&
-    *game.get_unchecked_player(actor_index).alive() &&
-    *game.get_unchecked_player(target_index).alive() &&
+    actor_ref != target_ref &&
+    actor_ref.deref(game).chosen_targets().len() < 1 &&
+    *actor_ref.deref(game).alive() &&
+    *target_ref.deref(game).alive() &&
     !Team::same_team(
-        game.get_unchecked_player(actor_index).role(), 
-        game.get_unchecked_player(target_index).role()
+        actor_ref.deref(game).role(), 
+        target_ref.deref(game).role()
     )
 }
 
-pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference, targets: Vec<PlayerReference>, astral: bool, attack: bool) -> Vec<Visit> {
-    if targets.len() > 0{
-        vec![Visit{ target: targets[0], astral, attack }]
+pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, astral: bool, attack: bool) -> Vec<Visit> {
+    if target_refs.len() > 0{
+        vec![Visit{ target: target_refs[0], astral, attack }]
     }else{
         Vec::new()
     }
 }
 
-pub(super) fn get_current_send_chat_groups(game: &Game, actor_index: PlayerReference, night_chat_groups: Vec<ChatGroup>) -> Vec<ChatGroup> {
-    if !game.get_unchecked_player(actor_index).alive(){
+pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference, night_chat_groups: Vec<ChatGroup>) -> Vec<ChatGroup> {
+    if !actor_ref.deref(game).alive(){
         return vec![ChatGroup::Dead];
     }
 
@@ -36,21 +36,19 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_index: PlayerRefer
         crate::game::phase::PhaseType::Night => night_chat_groups,
     }
 }
-pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_index: PlayerReference) -> Vec<ChatGroup> {
-    let player = game.get_unchecked_player(actor_index);
-
+pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
     let mut out = Vec::new();
 
     out.push(ChatGroup::All);
 
-    if !game.get_unchecked_player(actor_index).alive(){
+    if !actor_ref.deref(game).alive(){
         out.push(ChatGroup::Dead);
     }
 
-    if game.get_unchecked_player(actor_index).role().faction_alignment().faction() == Faction::Mafia {
+    if actor_ref.deref(game).role().faction_alignment().faction() == Faction::Mafia {
         out.push(ChatGroup::Mafia);
     }
-    if game.get_unchecked_player(actor_index).role().faction_alignment().faction() == Faction::Coven {
+    if actor_ref.deref(game).role().faction_alignment().faction() == Faction::Coven {
         out.push(ChatGroup::Coven);
     }
 
@@ -58,22 +56,22 @@ pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_index: PlayerRe
 }
 
 
-pub(super) fn on_role_creation(actor_index: PlayerIndex, game: &mut Game){
+pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){
 
-    let actor_role = game.get_unchecked_mut_player(actor_index).role();
+    let actor_role = actor_ref.deref(game).role();
 
     //set a role tag for themselves
-    game.get_unchecked_mut_player(actor_index).insert_role_label(actor_index, actor_role);
+    actor_ref.deref(game).insert_role_label(*actor_ref.index(), actor_role);
 
     //if they are on a team. set tags for their teammates
-    for other_index in 0..(game.players.len() as PlayerIndex){
-        if actor_index == other_index{
+    for other_ref in PlayerReference::all_players(game){
+        if actor_ref == other_ref{
             continue;
         }
-        let other_role = game.get_unchecked_mut_player(other_index).role();
+        let other_role = other_ref.deref(game).role();
 
         if Team::same_team(actor_role, other_role) {
-            game.get_unchecked_mut_player(other_index).insert_role_label(actor_index, actor_role);
+            other_ref.deref_mut(game).insert_role_label(*actor_ref.index(), actor_role);
         }
     }
 }
