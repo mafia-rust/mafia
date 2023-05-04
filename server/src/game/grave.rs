@@ -3,7 +3,7 @@ use std::vec;
 use serde::{Serialize, Deserialize};
 
 use super::Game;
-use super::player::PlayerIndex;
+use super::player::{PlayerIndex, PlayerReference};
 use super::role::Role;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -52,13 +52,13 @@ pub enum GravePhase {
 }
 
 impl Grave{
-    pub fn from_player_night(game: &mut Game, player_index: PlayerIndex)->Grave{
+    pub fn from_player_night(game: &mut Game, player_ref: PlayerReference)->Grave{
 
         let day_number = game.phase_machine.day_number.clone();
-        let player = game.get_unchecked_mut_player(player_index);
+        let player = player_ref.deref(game);
 
         Grave { 
-            player: player_index, 
+            player: *player_ref.index(), 
             role: player.night_variables.grave_role.clone(),
             death_cause: GraveDeathCause::Killers(player.night_variables.grave_killers.clone()),
             will: player.night_variables.grave_will.clone(),
@@ -67,12 +67,12 @@ impl Grave{
             death_notes: player.night_variables.grave_death_notes.clone()
         }
     }
-    pub fn from_player_lynch(game: &mut Game, player_index: PlayerIndex)->Grave{
+    pub fn from_player_lynch(game: &mut Game, player_ref: PlayerReference)->Grave{
 
-        let player = game.get_unchecked_mut_player(player_index);
+        let player = player_ref.deref(game);
 
         Grave { 
-            player: player_index, 
+            player: *player_ref.index(), 
             role: GraveRole::Role(player.role()), 
             death_cause: GraveDeathCause::Lynching, 
             will: player.will().clone(), 

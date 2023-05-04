@@ -6,7 +6,7 @@ use crate::game::{
     grave::{GraveRole, GraveDeathCause, GraveKiller}
 };
 
-use super::{PlayerIndex, Player, player};
+use super::{PlayerIndex, Player, player, PlayerReference};
 pub struct PlayerNightVariables{
     pub alive_tonight:  bool,
     pub died:           bool,
@@ -15,9 +15,9 @@ pub struct PlayerNightVariables{
     pub defense:        u8,    
     pub suspicious:     bool,
 
-    pub disguised_as:   PlayerIndex,
+    pub disguised_as:   PlayerReference,
 
-    chosen_targets: Vec<PlayerIndex>,
+    chosen_targets: Vec<PlayerReference>,
     pub visits:         Vec<Visit>,
 
     pub night_messages: Vec<ChatMessage>,
@@ -75,8 +75,8 @@ impl PlayerNightVariables{
             grave_death_notes: vec![],
         }
     }
-    pub fn reset(game: &Game, player_index: PlayerIndex)->Self{
-        let player = game.get_unchecked_player(player_index);
+    pub fn reset(game: &Game, player_ref: PlayerReference)->Self{
+        let player = player_ref.deref(game);
         return Self{
             alive_tonight:  player.alive,
             died:           false,
@@ -85,7 +85,7 @@ impl PlayerNightVariables{
             defense:        player.role().defense(),
             suspicious:     player.role().suspicious(),
 
-            disguised_as:   player_index,
+            disguised_as:   player_ref,
 
             chosen_targets: vec![],
             visits:         vec![],
@@ -107,10 +107,10 @@ impl PlayerNightVariables{
 
 
     //accessors
-    pub(super) fn chosen_targets(&self)->&Vec<PlayerIndex>{
+    pub(super) fn chosen_targets(&self)->&Vec<PlayerReference>{
         &self.chosen_targets
     }
-    pub(super) fn set_chosen_targets(&mut self, chosen_targets: Vec<PlayerIndex>){
+    pub(super) fn set_chosen_targets(&mut self, chosen_targets: Vec<PlayerReference>){
         self.chosen_targets = chosen_targets
     }
 }

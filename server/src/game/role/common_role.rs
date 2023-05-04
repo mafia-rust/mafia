@@ -1,7 +1,7 @@
-use crate::game::{chat::ChatGroup, player::PlayerIndex, Game, visit::Visit, team::Team, role_list::Faction};
+use crate::game::{chat::ChatGroup, player::{PlayerIndex, PlayerReference}, Game, visit::Visit, team::Team, role_list::Faction};
 
 
-pub(super) fn can_night_target(actor_index: PlayerIndex, target_index: PlayerIndex, game: &Game) -> bool {
+pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
     
     actor_index != target_index &&
     game.get_unchecked_player(actor_index).chosen_targets().len() < 1 &&
@@ -13,7 +13,7 @@ pub(super) fn can_night_target(actor_index: PlayerIndex, target_index: PlayerInd
     )
 }
 
-pub(super) fn convert_targets_to_visits(actor_index: PlayerIndex, targets: Vec<PlayerIndex>, game: &Game, astral: bool, attack: bool) -> Vec<Visit> {
+pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference, targets: Vec<PlayerReference>, astral: bool, attack: bool) -> Vec<Visit> {
     if targets.len() > 0{
         vec![Visit{ target: targets[0], astral, attack }]
     }else{
@@ -21,7 +21,7 @@ pub(super) fn convert_targets_to_visits(actor_index: PlayerIndex, targets: Vec<P
     }
 }
 
-pub(super) fn get_current_send_chat_groups(actor_index: PlayerIndex, game: &Game, night_chat_groups: Vec<ChatGroup>) -> Vec<ChatGroup> {
+pub(super) fn get_current_send_chat_groups(game: &Game, actor_index: PlayerReference, night_chat_groups: Vec<ChatGroup>) -> Vec<ChatGroup> {
     if !game.get_unchecked_player(actor_index).alive(){
         return vec![ChatGroup::Dead];
     }
@@ -36,7 +36,7 @@ pub(super) fn get_current_send_chat_groups(actor_index: PlayerIndex, game: &Game
         crate::game::phase::PhaseType::Night => night_chat_groups,
     }
 }
-pub(super) fn get_current_recieve_chat_groups(actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
+pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_index: PlayerReference) -> Vec<ChatGroup> {
     let player = game.get_unchecked_player(actor_index);
 
     let mut out = Vec::new();

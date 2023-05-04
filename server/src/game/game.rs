@@ -16,14 +16,15 @@ use crate::prelude::*;
 use super::chat::night_message::NightInformation;
 use super::chat::{ChatMessage, ChatGroup, MessageSender};
 use super::grave::{GraveRole, GraveKiller};
+use super::player::PlayerReference;
 use super::role_list::{RoleListEntry, create_random_roles};
 use super::settings;
-use super::{phase::{PhaseStateMachine, PhaseType}, player::{Player, PlayerIndex}, role_list::RoleList, settings::Settings, grave::Grave};
+use super::{player::{PlayerIndex, Player}, phase::{PhaseStateMachine, PhaseType}, role_list::RoleList, settings::Settings, grave::Grave};
 
 pub struct Game {
     pub settings : Settings,
 
-    pub players: Vec<Player>,   // PlayerIndex is the index into this vec, should be unchanging as game goes on
+    pub players: Box<[Player]>,   // PlayerIndex is the index into this vec, should be unchanging as game goes on
     pub graves: Vec<Grave>,
 
     pub phase_machine : PhaseStateMachine,
@@ -57,9 +58,8 @@ impl Game {
         }
         drop(roles);
         //just to make sure the order of roles is not used anywhere else for secuity from our own stupidity  
-
         let mut game = Self{
-            players,
+            players: players.into_boxed_slice(),
             graves: Vec::new(),
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings: settings.clone(),
@@ -69,9 +69,9 @@ impl Game {
         };
 
         //set up role data
-        for player_index in 0..(game.players.len() as PlayerIndex){
-            let role_data_copy = game.get_unchecked_mut_player(player_index).role_data().clone();
-            Player::set_role(&mut game, player_index, role_data_copy);
+        for player_ref in PlayerReference::all_players(&game){
+            let role_data_copy = player_ref.deref(&game).role_data().clone();
+            Player::set_role(&mut game, player_ref, role_data_copy);
         }
 
         //send to players all game information stuff
@@ -86,27 +86,27 @@ impl Game {
             day_number: game.phase_machine.day_number 
         });
             
-        for player in game.players.iter(){
-            player.send_packet(ToClientPacket::YourButtons { buttons: 
-                YourButtons::from(&game, player.index().clone())
+        for player_ref in PlayerReference::all_players(&game){
+            player_ref.deref(&game).send_packet(ToClientPacket::YourButtons { buttons: 
+                YourButtons::from(&game, player_ref)
             });
         }
         
         game
     }
 
-    pub fn get_player(&self, index: PlayerIndex)->Option<&Player>{
-        self.players.get(index as usize)
-    }
-    pub fn get_player_mut(&mut self, index: PlayerIndex)->Option<&mut Player>{
-        self.players.get_mut(index as usize)
-    }
-    pub fn get_unchecked_player(&self, index: PlayerIndex)->&Player{
-        self.players.get(index as usize).unwrap()
-    }
-    pub fn get_unchecked_mut_player(&mut self, index: PlayerIndex)->&mut Player{
-        self.players.get_mut(index as usize).unwrap()
-    }
+    // pub fn get_player(&self, index: PlayerIndex)->Option<&Player>{
+    //     self.players.get(index as usize)
+    // }
+    // pub fn get_player_mut(&mut self, index: PlayerIndex)->Option<&mut Player>{
+    //     self.players.get_mut(index as usize)
+    // }
+    // pub fn get_unchecked_player(&self, index: PlayerIndex)->&Player{
+    //     self.players.get(index as usize).unwrap()
+    // }
+    // pub fn get_unchecked_mut_player(&mut self, index: PlayerIndex)->&mut Player{
+    //     self.players.get_mut(index as usize).unwrap()
+    // }
 
     pub fn current_phase(&self) -> PhaseType {
         self.phase_machine.current_state
@@ -132,8 +132,8 @@ impl Game {
             let new_phase = PhaseType::end(self);
 
             //reset variables
-            for player_index in 0..self.players.len(){
-                Player::reset_phase_start(self, player_index as PlayerIndex, new_phase);
+            for player_ref in PlayerReference::all_players(self){
+                Player::reset_phase_start(self, player_ref, new_phase);
             }
             self.reset_phase_start(new_phase);
             
@@ -178,8 +178,8 @@ impl Game {
 
         //add messages
         let players = group.all_players_in_group(self);
-        for player_index in players.into_iter(){
-            self.get_unchecked_mut_player(player_index).add_chat_message(message.clone());
+        for player_ref in PlayerReference::all_players(self){
+            player_ref.deref(self).add_chat_message(message.clone());
         }
 
         //send messages to player

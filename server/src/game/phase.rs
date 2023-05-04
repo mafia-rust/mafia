@@ -4,7 +4,7 @@ use serde::{Serialize, Deserialize};
 
 use crate::network::packet::{ToClientPacket, YourButtons};
 
-use super::{settings::PhaseTimeSettings, Game, player::{Player, PlayerIndex, self}, chat::{ChatGroup, ChatMessage}, game, verdict::Verdict, grave::Grave, role::{Role, RoleData}, role_list::Faction};
+use super::{settings::PhaseTimeSettings, Game, player::{Player, PlayerIndex, self, PlayerReference}, chat::{ChatGroup, ChatMessage}, game, verdict::Verdict, grave::Grave, role::{Role, RoleData}, role_list::Faction};
 
 
 #[derive(Clone, Copy, PartialEq, Debug, Eq, Serialize, Deserialize)]
@@ -57,15 +57,13 @@ impl PhaseType {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Morning, day_number: game.phase_machine.day_number });
 
                 //generate & add graves
-                for player_index in 0..game.players.len(){
-                    if game.get_unchecked_player(player_index as PlayerIndex).night_variables.died {
-                        //generate grave
-                        let new_grave = Grave::from_player_night(game, player_index as PlayerIndex);
+                for player_ref in PlayerReference::all_players(game){
+                    if player_ref.deref(game).night_variables.died{
+                        let new_grave = Grave::from_player_night(game, player_ref);
                         game.send_packet_to_all(ToClientPacket::AddGrave{grave: new_grave.clone()});
                         game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied { grave: new_grave });
                     }
                 }
-                //convert roles
             },
             PhaseType::Discussion => {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Discussion, day_number: game.phase_machine.day_number });
@@ -110,10 +108,9 @@ impl PhaseType {
                 //later set an order for roles
                 //ambusher should be converted first
                 if !main_mafia_killing_exists{
-                    for player_index in 0..(game.players.len() as PlayerIndex){
-
-                        if game.get_unchecked_player(player_index).role().faction_alignment().faction() == Faction::Mafia {
-                            Player::set_role(game, player_index, RoleData::Mafioso);
+                    for player_ref in PlayerReference::all_players(game){
+                        if player_ref.deref(game).role().faction_alignment().faction() == Faction::Mafia{
+                            Player::set_role(game, player_ref, RoleData::Mafioso);
                             break;
                         }
                     }
@@ -124,9 +121,9 @@ impl PhaseType {
         }
 
         //every phase
-        for player in game.players.iter(){
-            player.send_packet(ToClientPacket::YourButtons{
-                buttons: YourButtons::from(game, player.index().clone()) 
+        for player_ref in PlayerReference::all_players(game){
+            player_ref.deref(game).send_packet(ToClientPacket::YourButtons{
+                buttons: YourButtons::from(game, player_ref) 
             });
         }
         game.send_packet_to_all(ToClientPacket::Phase { 
@@ -177,19 +174,18 @@ impl PhaseType {
                 //MAIN NIGHT CODE
 
                 //get visits
-                for player_index in 0..game.players.len(){
-                    let player = game.get_unchecked_mut_player(player_index as PlayerIndex);
-
-                    let targets: Vec<PlayerIndex> = player.chosen_targets().clone();
+                for player_ref in PlayerReference::all_players(game){
+                    let player = player_ref.deref_mut(game);
                     let role = player.role();
-                    let visits = role.convert_targets_to_visits(player.index().clone(), targets, game);
-                    game.get_unchecked_mut_player(player_index as PlayerIndex).night_variables.visits = visits;
+                    let visits = role.convert_targets_to_visits(game, player_ref, player.chosen_targets().clone());
+                    player.night_variables.visits = visits;
+
                 }
 
                 //Night actions -- main loop
                 for priority in 0..12{
-                    for player_index in 0..game.players.len(){
-                        game.get_unchecked_mut_player(player_index as PlayerIndex).role().do_night_action(player_index as PlayerIndex, priority, game);
+                    for player_ref in PlayerReference::all_players(game){
+                        player_ref.deref_mut(game).role().do_night_action(game, player_ref, priority);
                     }
                 }
 

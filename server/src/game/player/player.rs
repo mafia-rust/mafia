@@ -16,7 +16,7 @@ use crate::{
     network::packet::{ToClientPacket, YourButtons}
 };
 
-use super::{player_voting_variables::PlayerVotingVariables, player_night_variables::PlayerNightVariables, PlayerIndex};
+use super::{player_voting_variables::PlayerVotingVariables, player_night_variables::PlayerNightVariables, PlayerIndex, PlayerReference};
 
 
 pub struct Player {
@@ -77,8 +77,8 @@ impl Player {
         }
     }
     ///returns true if attack overpowered defense and/or they are now dead.
-    pub fn try_night_kill(game: &mut Game, player_index: PlayerIndex, grave_killer: GraveKiller, attack: u8)->bool{
-        let player = game.get_unchecked_mut_player(player_index);
+    pub fn try_night_kill(game: &mut Game, player_ref: PlayerReference, grave_killer: GraveKiller, attack: u8)->bool{
+        let player = player_ref.deref_mut(game);
         if !player.alive {return true;}
 
         player.night_variables.attacked = true;
@@ -97,11 +97,11 @@ impl Player {
         true
     }
     /// swap this persons role, sending them the role chat message, and associated changes
-    pub fn set_role(game: &mut Game, player_index: PlayerIndex, new_role_data: RoleData){
+    pub fn set_role(game: &mut Game, player_ref: PlayerReference, new_role_data: RoleData){
 
-        game.get_unchecked_mut_player(player_index).set_role_data(new_role_data);
-        game.get_unchecked_mut_player(player_index).role().on_role_creation(player_index, game);
-        game.get_unchecked_mut_player(player_index).add_chat_message(ChatMessage::RoleAssignment { role: new_role_data.role()});
+        player_ref.deref(game).set_role_data(new_role_data);
+        player_ref.deref(game).role().on_role_creation(game,player_ref);
+        player_ref.deref(game).add_chat_message(ChatMessage::RoleAssignment { role: new_role_data.role()});
     }
 
 
@@ -120,26 +120,32 @@ impl Player {
         self.send_chat_messages();
         // self.send_available_buttons();
     }
-    pub fn reset_phase_start(game: &mut Game, player_index: PlayerIndex, phase: PhaseType){
+    pub fn reset_phase_start(game: &mut Game, player_ref: PlayerReference, phase: PhaseType){
         match phase {
             PhaseType::Morning => {},
             PhaseType::Discussion => {},
             PhaseType::Voting => {
-                Player::reset_voting_variables(game, player_index);
-                let player = game.get_unchecked_mut_player(player_index);
-                player.send_packet(ToClientPacket::YourVoting { player_index: player.voting_variables.chosen_vote.clone() });
-                player.send_packet(ToClientPacket::YourJudgement { verdict: player.voting_variables.verdict.clone() });
+                Player::reset_voting_variables(game, player_ref);
+                let player = player_ref.deref(game);
+                player.send_packet(ToClientPacket::YourVoting { 
+                    player_index: PlayerReference::ref_option_to_index(player_ref.deref(game).chosen_vote())
+                });
+                player.send_packet(ToClientPacket::YourJudgement { 
+                    verdict: *player_ref.deref(game).verdict() 
+                });
             },
             PhaseType::Testimony => {},
             PhaseType::Judgement => {},
             PhaseType::Evening => {},
             PhaseType::Night => {
-                let new_night_variables =  PlayerNightVariables::reset(game, player_index);
+                let new_night_variables =  PlayerNightVariables::reset(game, player_ref);
 
-                let player = game.get_unchecked_mut_player(player_index);
+                let player = player_ref.deref(game);
 
-                player.night_variables =new_night_variables;
-                player.send_packet(ToClientPacket::YourTarget { player_indices: player.chosen_targets().clone() });
+                player.night_variables = new_night_variables;
+                player.send_packet(ToClientPacket::YourTarget { 
+                    player_indices: PlayerReference::ref_vec_to_index(player_ref.deref(game).chosen_targets()) 
+                });
             }
         }
     }
@@ -175,14 +181,14 @@ impl Player {
 
         self.send_chat_messages();
     }
-    fn send_available_buttons(&mut self, game: &mut Game){
+    fn send_available_buttons(game: &mut Game, player_ref: PlayerReference){
 
         //TODO maybe find a way to check to see if we should send this like i do in chat messages
-        self.send_packet(ToClientPacket::YourButtons { buttons: game.players.iter().map(|player|{
+        player_ref.deref(game).send_packet(ToClientPacket::YourButtons { buttons: PlayerReference::all_players(game).iter().map(|other_player_ref|{
             YourButtons{
                 vote: false,
-                target: self.role().can_night_target(self.index, player.index, game),
-                day_target: self.role().can_day_target(self.index, player.index, game),
+                target: player_ref.deref(game).role().can_night_target(&game, player_ref, *other_player_ref),
+                day_target: player_ref.deref(game).role().can_day_target(&game, player_ref, *other_player_ref),
             }
         }).collect()});
     }

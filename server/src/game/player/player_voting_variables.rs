@@ -1,10 +1,10 @@
 use crate::{game::{verdict::Verdict, Game}, prelude::MafiaError, network::packet::ToClientPacket};
 
-use super::{Player, PlayerIndex};
+use super::{Player, PlayerReference};
 
 pub struct PlayerVotingVariables{
     //Voting
-    pub chosen_vote:    Option<PlayerIndex>,
+    pub chosen_vote:    Option<PlayerReference>,
     pub verdict:        Verdict,
 }
 impl PlayerVotingVariables{
