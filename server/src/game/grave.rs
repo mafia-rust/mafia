@@ -59,12 +59,12 @@ impl Grave{
 
         Grave { 
             player: *player_ref.index(), 
-            role: player.night_variables.grave_role.clone(),
-            death_cause: GraveDeathCause::Killers(player.night_variables.grave_killers.clone()),
-            will: player.night_variables.grave_will.clone(),
+            role: player.night_grave_role().clone(),
+            death_cause: GraveDeathCause::Killers(player.night_grave_killers().clone()),
+            will: player.night_grave_will().clone(),
             died_phase: GravePhase::Night, 
             day_number,
-            death_notes: player.night_variables.grave_death_notes.clone()
+            death_notes: player.night_grave_death_notes().clone()
         }
     }
     pub fn from_player_lynch(game: &mut Game, player_ref: PlayerReference)->Grave{

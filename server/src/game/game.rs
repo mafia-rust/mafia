@@ -179,7 +179,7 @@ impl Game {
         //add messages
         let players = group.all_players_in_group(self);
         for player_ref in PlayerReference::all_players(self){
-            player_ref.deref(self).add_chat_message(message.clone());
+            player_ref.deref_mut(self).add_chat_message(message.clone());
         }
 
         //send messages to player

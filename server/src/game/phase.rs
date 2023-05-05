@@ -58,7 +58,7 @@ impl PhaseType {
 
                 //generate & add graves
                 for player_ref in PlayerReference::all_players(game){
-                    if player_ref.deref(game).night_variables.died{
+                    if *player_ref.deref(game).night_died(){
                         let new_grave = Grave::from_player_night(game, player_ref);
                         game.send_packet_to_all(ToClientPacket::AddGrave{grave: new_grave.clone()});
                         game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied { grave: new_grave });
@@ -177,10 +177,9 @@ impl PhaseType {
 
                 //get visits
                 for player_ref in PlayerReference::all_players(game){
-                    let player = player_ref.deref_mut(game);
-                    let role = player.role();
-                    let visits = role.convert_targets_to_visits(game, player_ref, player.chosen_targets().clone());
-                    player.night_variables.visits = visits;
+                    let role = player_ref.deref(game).role();
+                    let visits = role.convert_targets_to_visits(game, player_ref, player_ref.deref(game).chosen_targets().clone());
+                    player_ref.deref_mut(game).set_night_visits(visits);
 
                 }
 
@@ -193,8 +192,7 @@ impl PhaseType {
 
                 //queue night messages
                 for player in game.players.iter_mut(){
-                    player.add_chat_messages(player.night_variables.night_messages.clone());
-                    player.send_chat_messages();
+                    player.add_chat_messages(player.night_messages().clone());
                 }
 
 

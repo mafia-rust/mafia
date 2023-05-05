@@ -20,18 +20,18 @@ pub(super) const TEAM: Option<Team> = None;
 
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-    if actor_ref.deref(game).night_variables.roleblocked {return;}
+    if *actor_ref.deref(game).night_roleblocked() {return;}
     if priority != 8 {return;}
 
-    if let Some(visit) = actor_ref.deref(game).night_variables.visits.first(){
+    if let Some(visit) = actor_ref.deref(game).night_visits().first(){
         let target_ref = visit.target;
         let target = target_ref.deref(game);
         
         let message = ChatMessage::NightInformation { 
-            night_information: NightInformation::SheriffResult { suspicious: target.night_variables.suspicious } 
+            night_information: NightInformation::SheriffResult { suspicious: *target.night_suspicious() } 
         };
         
-        actor_ref.deref(game).night_variables.night_messages.push( message );
+        actor_ref.deref_mut(game).push_night_messages( message );
     }
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -40,7 +40,7 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
 pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference) {
     
 }
-pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target: PlayerIndex) -> bool {
+pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
     false
 }
 pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {

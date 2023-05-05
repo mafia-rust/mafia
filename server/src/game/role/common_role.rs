@@ -61,7 +61,7 @@ pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){
     let actor_role = actor_ref.deref(game).role();
 
     //set a role tag for themselves
-    actor_ref.deref(game).insert_role_label(*actor_ref.index(), actor_role);
+    actor_ref.deref_mut(game).insert_role_label(actor_ref, actor_role);
 
     //if they are on a team. set tags for their teammates
     for other_ref in PlayerReference::all_players(game){
@@ -71,7 +71,7 @@ pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){
         let other_role = other_ref.deref(game).role();
 
         if Team::same_team(actor_role, other_role) {
-            other_ref.deref_mut(game).insert_role_label(*actor_ref.index(), actor_role);
+            other_ref.deref_mut(game).insert_role_label(actor_ref, actor_role);
         }
     }
 }

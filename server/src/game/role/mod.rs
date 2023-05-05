@@ -14,7 +14,7 @@ macro_rules! make_role_enum {
             $($name),*
         }
 
-        #[derive(Clone, PartialEq, Debug, Serialize, Deserialize)]
+        #[derive(Clone, PartialEq, Debug)]
         pub enum RoleData {
             $($name $({
                 $($data_ident: $data_type),*

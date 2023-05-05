@@ -21,10 +21,10 @@ pub(super) const TEAM: Option<Team> = Some(Team::Faction);
 
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-    if actor_ref.deref(game).night_variables.roleblocked {return}
+    if *actor_ref.deref(game).night_roleblocked() {return}
     if priority != 9 {return}
     
-    if let Some(visit) = actor_ref.deref(game).night_variables.visits.first(){
+    if let Some(visit) = actor_ref.deref(game).night_visits().first(){
         let target_index = visit.target;
         
 
@@ -44,7 +44,7 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
 pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference) {
 
 }
-pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target: PlayerIndex) -> bool {
+pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
     false
 }
 pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {

@@ -21,29 +21,29 @@ pub(super) const TEAM: Option<Team> = None;
 
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-    if actor_ref.deref(game).night_variables.roleblocked {return}
+    if *actor_ref.deref(game).night_roleblocked() {return}
 
     match priority {
         6 => {
-            let Some(visit) = actor_ref.deref(game).night_variables.visits.first() else {return};
+            let Some(visit) = actor_ref.deref(game).night_visits().first() else {return};
             let target_ref: PlayerReference = visit.target.clone();
-            let RoleData::Doctor{mut self_heals_remaining, target_healed_ref } = actor_ref.deref(game).role_data().clone() else {unreachable!()};
+            let RoleData::Doctor{mut self_heals_remaining, mut target_healed_ref } = actor_ref.deref_mut(game).role_data().clone() else {unreachable!()};
             
             if actor_ref == target_ref {
                 self_heals_remaining -= 1;
             }
             target_healed_ref = Some(target_ref);
-            target_ref.deref_mut(game).night_variables.increase_defense_to(2);
+            target_ref.deref_mut(game).increase_defense_to(2);
 
-            actor_ref.deref(game).set_role_data(RoleData::Doctor{self_heals_remaining, target_healed_ref});
+            actor_ref.deref_mut(game).set_role_data(RoleData::Doctor{self_heals_remaining, target_healed_ref});
         }
         10 => {
             let RoleData::Doctor{self_heals_remaining, target_healed_ref } = actor_ref.deref(game).role_data().clone() else {unreachable!()};
             
             if let Some(target_healed_ref) = target_healed_ref {
-                if target_healed_ref.deref(game).night_variables.attacked{
+                if *target_healed_ref.deref(game).night_attacked(){
                     
-                    actor_ref.deref(game).add_chat_message(ChatMessage::NightInformation { night_information: NightInformation::DoctorHealed });
+                    actor_ref.deref_mut(game).add_chat_message(ChatMessage::NightInformation { night_information: NightInformation::DoctorHealed });
                     target_healed_ref.deref_mut(game).add_chat_message(ChatMessage::NightInformation { night_information: NightInformation::DoctorHealedYou });
                 }
             }
@@ -60,7 +60,7 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
 pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference) {
     
 }
-pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target: PlayerIndex) -> bool {
+pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target: PlayerReference) -> bool {
     false
 }
 pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {

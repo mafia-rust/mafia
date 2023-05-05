@@ -122,8 +122,8 @@ impl Game {
                     text 
                 };
         
-                whisperee_ref.deref(self).add_chat_message(message.clone());
-                player_ref.deref(self).add_chat_message(message);
+                whisperee_ref.deref_mut(self).add_chat_message(message.clone());
+                player_ref.deref_mut(self).add_chat_message(message);
 
                 //TODO, send to blackmailer
             },

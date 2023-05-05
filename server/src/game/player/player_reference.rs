@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use serde::Serialize;
 
 use crate::game::Game;
@@ -5,7 +7,7 @@ use crate::game::Game;
 use super::Player;
 
 pub type PlayerIndex = u8;
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]
 pub struct PlayerReference {
     index: PlayerIndex
 }
@@ -14,10 +16,10 @@ impl PlayerReference{
         if !((index as usize) < game.players.len()) { return Err(());} 
         Ok(PlayerReference { index })
     }
-    pub fn deref(&self, game: &Game)->&Player{
+    pub fn deref<'a>(&self, game: &'a Game)->&'a Player{
         &game.players[self.index as usize]
     }
-    pub fn deref_mut(&self, game: &mut Game)->&mut Player{
+    pub fn deref_mut<'a>(&self, game: &'a mut Game)->&'a mut Player{
         &mut game.players[self.index as usize]
     }
     pub fn index(&self)->&PlayerIndex{
@@ -34,6 +36,12 @@ impl PlayerReference{
     pub fn ref_vec_to_index(ref_vec: &Vec<PlayerReference>)->Vec<PlayerIndex>{
         ref_vec.into_iter().map(|p|p.index().clone()).collect()
     }
+    pub fn ref_map_to_index<T>(ref_map: HashMap<PlayerReference, T>)->HashMap<PlayerIndex, T>{
+        ref_map.into_iter().map(|(k,v)|{
+            (*k.index(), v)
+        }).collect()
+    }
+    
     pub fn index_option_to_ref(game: &Game, index_option: &Option<PlayerIndex>)->Result<Option<PlayerReference>, ()>{
         match index_option{
             Some(index) => {
@@ -66,10 +74,5 @@ impl PlayerReference{
             out.push(PlayerReference::new(game, player_index as PlayerIndex).unwrap()); //TODO, unwrap here
         }
         out
-    }
-}
-impl Serialize for PlayerReference{
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer{
-        self.index.serialize(serializer)
     }
 }

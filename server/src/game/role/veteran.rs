@@ -25,9 +25,9 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
             let RoleData::Veteran { alerts_remaining, alerting_tonight } = actor_ref.deref(game).role_data() else {unreachable!()};
             
             if *alerts_remaining > 0 {
-                if let Some(visit) = actor_ref.deref(game).night_variables.visits.get(0){
+                if let Some(visit) = actor_ref.deref(game).night_visits().first(){
                     if visit.target == actor_ref{
-                        actor_ref.deref_mut(game).night_variables.increase_defense_to(1);
+                        actor_ref.deref_mut(game).increase_defense_to(1);
                         
                         let RoleData::Veteran { mut alerts_remaining, mut alerting_tonight } = actor_ref.deref(game).role_data().clone() else {unreachable!()};
                         alerts_remaining -= 1;
@@ -43,9 +43,9 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
             if !alerting_tonight {return}
 
             for other_player_ref in PlayerReference::all_players(game){
-                for visit_index in 0..other_player_ref.deref(game).night_variables.visits.len(){
+                for visit_index in 0..other_player_ref.deref(game).night_visits().len(){
                     
-                    let visit = other_player_ref.deref(game).night_variables.visits.get(visit_index).unwrap();
+                    let visit = other_player_ref.deref(game).night_visits().get(visit_index).unwrap();
 
                     if visit.target!=actor_ref || visit.astral {continue}
 
@@ -56,13 +56,12 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
                     //Kill
                     let killed = Player::try_night_kill(game, other_player_ref, GraveKiller::Role(Role::Veteran), 2);
                     
-                    let actor = other_player_ref.deref_mut(game);
-                    actor.add_chat_message(ChatMessage::NightInformation{ 
+                    actor_ref.deref_mut(game).add_chat_message(ChatMessage::NightInformation{ 
                         night_information: NightInformation::VeteranAttackedVisitor 
                     });
 
                     if !killed {
-                        actor.add_chat_message(ChatMessage::NightInformation{ 
+                        actor_ref.deref_mut(game).add_chat_message(ChatMessage::NightInformation{ 
                             night_information: NightInformation::TargetSurvivedAttack 
                         });
                     }
@@ -82,7 +81,7 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
 pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference) {
 
 }
-pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target: PlayerIndex) -> bool {
+pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target: PlayerReference) -> bool {
     false
 }
 pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {

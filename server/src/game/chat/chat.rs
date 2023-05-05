@@ -111,8 +111,8 @@ pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
     PlayerWithNecronomicon{player_index: PlayerIndex}, //Sammy has the necronomicon
 
-    #[serde(rename_all = "camelCase")]
-    RoleData{role_data: RoleData},  //Tell executioner their target, other things. TODO
+    // #[serde(rename_all = "camelCase")]
+    // RoleData{role_data: RoleData},  //Tell executioner their target, other things. TODO
 
 }
 

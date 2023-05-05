@@ -61,7 +61,7 @@ pub enum ToClientPacket{
     YourRoleLabels{role_labels: HashMap<PlayerIndex, Role>},
     YourWill{will: String},
     YourNotes{notes: String},
-    YourRole{role: RoleData},
+    YourRole{role: Role},
     #[serde(rename_all = "camelCase")]
     YourTarget{player_indices: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
