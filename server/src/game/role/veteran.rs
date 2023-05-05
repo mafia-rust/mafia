@@ -2,7 +2,7 @@ use crate::game::chat::night_message::NightInformation;
 use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
-use crate::game::player::{Player, PlayerIndex, self, PlayerReference};
+use crate::game::player::{Player, PlayerReference};
 use crate::game::role_list::FactionAlignment;
 use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;

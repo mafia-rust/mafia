@@ -5,7 +5,7 @@ use serde::{Serialize, Deserialize};
 
 use self::investigator_results::InvestigatorResultSettings;
 
-use super::{role_list::{RoleList, RoleListEntry}, role::Role, player::{Player, PlayerIndex}, phase::PhaseType};
+use super::{role_list::{RoleList, RoleListEntry}, role::Role, player::Player, phase::PhaseType};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Settings{

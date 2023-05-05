@@ -4,7 +4,7 @@ use serde::{Serialize, Deserialize};
 
 use crate::network::packet::{ToClientPacket, YourButtons};
 
-use super::{settings::PhaseTimeSettings, Game, player::{Player, PlayerIndex, self, PlayerReference}, chat::{ChatGroup, ChatMessage}, game, verdict::Verdict, grave::Grave, role::{Role, RoleData}, role_list::Faction};
+use super::{settings::PhaseTimeSettings, Game, player::{Player, self, PlayerReference}, chat::{ChatGroup, ChatMessage}, game, verdict::Verdict, grave::Grave, role::{Role, RoleData}, role_list::Faction};
 
 
 #[derive(Clone, Copy, PartialEq, Debug, Eq, Serialize, Deserialize)]

@@ -1,4 +1,4 @@
-use crate::game::{chat::ChatGroup, player::{PlayerIndex, PlayerReference}, Game, visit::Visit, team::Team, role_list::Faction};
+use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, team::Team, role_list::Faction};
 
 
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {

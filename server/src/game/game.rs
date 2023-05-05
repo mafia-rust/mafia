@@ -19,18 +19,22 @@ use super::grave::{GraveRole, GraveKiller};
 use super::player::PlayerReference;
 use super::role_list::{RoleListEntry, create_random_roles};
 use super::settings;
-use super::{player::{PlayerIndex, Player}, phase::{PhaseStateMachine, PhaseType}, role_list::RoleList, settings::Settings, grave::Grave};
+use super::player::Player;
+use super::phase::{PhaseStateMachine, PhaseType};
+use super::role_list::RoleList;
+use super::settings::Settings;
+use super::grave::Grave;
 
 pub struct Game {
     pub settings : Settings,
 
-    pub players: Box<[Player]>,   // PlayerIndex is the index into this vec, should be unchanging as game goes on
+    pub players: Box<[Player]>,
     pub graves: Vec<Grave>,
 
     pub phase_machine : PhaseStateMachine,
 
-    pub player_on_trial: Option<PlayerReference>,   //Morning
-    pub trials_left: u8,                //Morning
+    pub player_on_trial: Option<PlayerReference>,   //resets on morning
+    pub trials_left: u8,    //resets on morning
 }
 
 impl Game {
@@ -94,19 +98,6 @@ impl Game {
         
         game
     }
-
-    // pub fn get_player(&self, index: PlayerIndex)->Option<&Player>{
-    //     self.players.get(index as usize)
-    // }
-    // pub fn get_player_mut(&mut self, index: PlayerIndex)->Option<&mut Player>{
-    //     self.players.get_mut(index as usize)
-    // }
-    // pub fn get_unchecked_player(&self, index: PlayerIndex)->&Player{
-    //     self.players.get(index as usize).unwrap()
-    // }
-    // pub fn get_unchecked_mut_player(&mut self, index: PlayerIndex)->&mut Player{
-    //     self.players.get_mut(index as usize).unwrap()
-    // }
 
     pub fn current_phase(&self) -> PhaseType {
         self.phase_machine.current_state
