@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 
-use crate::game::{grave::Grave, role::{Role, RoleData}, player::{PlayerIndex, Player}, verdict::Verdict, phase::PhaseType, Game, role_list::{FactionAlignment, Faction}};
+use crate::game::{grave::Grave, role::{Role, RoleData}, player::{PlayerIndex, Player, PlayerReference}, verdict::Verdict, phase::PhaseType, Game, role_list::{FactionAlignment, Faction}};
 use super::night_message::NightInformation;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -111,8 +111,8 @@ pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
     PlayerWithNecronomicon{player_index: PlayerIndex}, //Sammy has the necronomicon
 
-    #[serde(rename_all = "camelCase")]
-    RoleData{role_data: RoleData},  //Tell executioner their target, other things. TODO
+    // #[serde(rename_all = "camelCase")]
+    // RoleData{role_data: RoleData},  //Tell executioner their target, other things. TODO
 
 }
 
@@ -134,17 +134,17 @@ pub enum ChatGroup {
     //Pirate, 
 }
 impl ChatGroup{
-    pub fn player_recieve_from_chat_group(&self, player_index: PlayerIndex, game: &Game)->bool{
-        let role = game.get_unchecked_player(player_index).role();
+    pub fn player_recieve_from_chat_group(&self, game: &Game, player_ref: PlayerReference)->bool{
+        let role = player_ref.deref(game).role();
 
-        role.get_current_recieve_chat_groups(player_index, game).contains(self)
+        role.get_current_recieve_chat_groups(game, player_ref).contains(self)
     }
 
-    pub fn all_players_in_group(&self, game: &Game)->Vec<PlayerIndex>{
+    pub fn all_players_in_group(&self, game: &Game)->Vec<PlayerReference>{
         let mut out = Vec::new();
-        for player in game.players.iter(){
-            if self.player_recieve_from_chat_group(*player.index(), game){
-                out.push(player.index().clone());
+        for player_ref in PlayerReference::all_players(game){
+            if self.player_recieve_from_chat_group(game, player_ref){
+                out.push(player_ref);
             }
         }
         out

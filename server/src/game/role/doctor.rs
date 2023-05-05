@@ -2,7 +2,7 @@
 use crate::game::chat::night_message::NightInformation;
 use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::PhaseType;
-use crate::game::player::{Player, PlayerIndex};
+use crate::game::player::{Player, PlayerReference};
 use crate::game::role_list::FactionAlignment;
 use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
@@ -20,64 +20,64 @@ pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Factio
 pub(super) const TEAM: Option<Team> = None;
 
 
-pub(super) fn do_night_action(actor_index: PlayerIndex, priority: Priority, game: &mut Game) {
-    if game.get_unchecked_player(actor_index).night_variables.roleblocked {return}
+pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    if *actor_ref.deref(game).night_roleblocked() {return}
 
     match priority {
         6 => {
-            let Some(visit) = game.get_unchecked_player(actor_index).night_variables.visits.first() else {return};
-            let target_index: PlayerIndex = visit.target.clone();
-            let RoleData::Doctor{mut self_heals_remaining, mut target_healed_index } = game.get_unchecked_player(actor_index).role_data().clone() else {unreachable!()};
+            let Some(visit) = actor_ref.deref(game).night_visits().first() else {return};
+            let target_ref: PlayerReference = visit.target.clone();
+            let RoleData::Doctor{mut self_heals_remaining, mut target_healed_ref } = actor_ref.deref_mut(game).role_data().clone() else {unreachable!()};
             
-            if actor_index == target_index {
+            if actor_ref == target_ref {
                 self_heals_remaining -= 1;
             }
-            target_healed_index = Some(target_index);
-            game.get_unchecked_mut_player(target_index).night_variables.increase_defense_to(2);
+            target_healed_ref = Some(target_ref);
+            target_ref.deref_mut(game).increase_defense_to(2);
 
-            game.get_unchecked_mut_player(actor_index).set_role_data(RoleData::Doctor{self_heals_remaining, target_healed_index});
+            actor_ref.deref_mut(game).set_role_data(RoleData::Doctor{self_heals_remaining, target_healed_ref});
         }
         10 => {
-            let RoleData::Doctor{self_heals_remaining, target_healed_index } = game.get_unchecked_player(actor_index).role_data().clone() else {unreachable!()};
+            let RoleData::Doctor{self_heals_remaining, target_healed_ref } = actor_ref.deref(game).role_data().clone() else {unreachable!()};
             
-            if let Some(target_healed_index) = target_healed_index {
-                if game.get_unchecked_player(target_healed_index).night_variables.attacked{
+            if let Some(target_healed_ref) = target_healed_ref {
+                if *target_healed_ref.deref(game).night_attacked(){
                     
-                    game.get_unchecked_mut_player(actor_index).add_chat_message(ChatMessage::NightInformation { night_information: NightInformation::DoctorHealed });
-                    game.get_unchecked_mut_player(target_healed_index).add_chat_message(ChatMessage::NightInformation { night_information: NightInformation::DoctorHealedYou });
+                    actor_ref.deref_mut(game).push_night_messages(ChatMessage::NightInformation { night_information: NightInformation::DoctorHealed });
+                    target_healed_ref.deref_mut(game).push_night_messages(ChatMessage::NightInformation { night_information: NightInformation::DoctorHealedYou });
                 }
             }
         }
         _ => {}
     }
 }
-pub(super) fn can_night_target(actor_index: PlayerIndex, target_index: PlayerIndex, game: &Game) -> bool {
-    actor_index != target_index &&
-    game.get_unchecked_player(actor_index).chosen_targets().len() < 1 &&
-    *game.get_unchecked_player(actor_index).alive() &&
-    *game.get_unchecked_player(target_index).alive()
+pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+    actor_ref != target_ref &&
+    actor_ref.deref(game).chosen_targets().len() < 1 &&
+    *actor_ref.deref(game).alive() &&
+    *target_ref.deref(game).alive()
 }
-pub(super) fn do_day_action(actor_index: PlayerIndex, game: &mut Game) {
+pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference) {
     
 }
-pub(super) fn can_day_target(actor_index: PlayerIndex, target_index: PlayerIndex, game: &Game) -> bool {
+pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target: PlayerReference) -> bool {
     false
 }
-pub(super) fn convert_targets_to_visits(actor_index: PlayerIndex, targets: Vec<PlayerIndex>, game: &Game) -> Vec<Visit> {
-    crate::game::role::common_role::convert_targets_to_visits(actor_index, targets, game, false, false)
+pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, false)
 }
-pub(super) fn get_current_send_chat_groups(actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
-    crate::game::role::common_role::get_current_send_chat_groups(actor_index, game, vec![])
+pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
 }
-pub(super) fn get_current_recieve_chat_groups(actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
-    crate::game::role::common_role::get_current_recieve_chat_groups(actor_index, game)
+pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
 }
-pub(super) fn on_phase_start(actor_index: PlayerIndex, phase: PhaseType, game: &mut Game){
-    let actor = game.get_unchecked_mut_player(actor_index);
-    let RoleData::Doctor{self_heals_remaining, mut target_healed_index } = actor.role_data().clone() else {unreachable!()};
+pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
+    let actor = actor_ref.deref_mut(game);
+    let RoleData::Doctor{self_heals_remaining, target_healed_ref: mut target_healed_index } = actor.role_data().clone() else {unreachable!()};
     target_healed_index = None;
-    game.get_unchecked_mut_player(actor_index).set_role_data(RoleData::Doctor{self_heals_remaining, target_healed_index});
+    actor.set_role_data(RoleData::Doctor{self_heals_remaining, target_healed_ref: target_healed_index});
 }
-pub(super) fn on_role_creation(actor_index: PlayerIndex, game: &mut Game){
-    crate::game::role::common_role::on_role_creation(actor_index, game);
+pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){
+    crate::game::role::common_role::on_role_creation(game, actor_ref);
 }

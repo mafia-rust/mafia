@@ -14,7 +14,7 @@ macro_rules! make_role_enum {
             $($name),*
         }
 
-        #[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
+        #[derive(Clone, PartialEq, Debug)]
         pub enum RoleData {
             $($name $({
                 $($data_ident: $data_type),*
@@ -75,49 +75,49 @@ macro_rules! make_role_enum {
                 }
             }
 
-            pub fn do_night_action(&self, actor_index: PlayerIndex, priority: i8, game: &mut Game) {
+            pub fn do_night_action(&self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
                 match self {
-                    $(Role::$name => $file::do_night_action(actor_index, priority, game)),*
+                    $(Role::$name => $file::do_night_action(game, actor_ref, priority)),*
                 }
             }
-            pub fn do_day_action(&self, actor_index: PlayerIndex, game: &mut Game) {
+            pub fn do_day_action(&self, game: &mut Game, actor_ref: PlayerReference) {
                 match self {
-                    $(Role::$name => $file::do_day_action(actor_index, game)),*
+                    $(Role::$name => $file::do_day_action(game, actor_ref)),*
                 }
             }
-            pub fn can_night_target(&self, actor_index: PlayerIndex, target: PlayerIndex, game: &Game) -> bool {
+            pub fn can_night_target(&self,  game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
                 match self {
-                    $(Role::$name => $file::can_night_target(actor_index, target, game)),*
+                    $(Role::$name => $file::can_night_target(game, actor_ref, target_ref)),*
                 }
             }
-            pub fn can_day_target(&self, actor_index: PlayerIndex, target: PlayerIndex, game: &Game) -> bool {
+            pub fn can_day_target(&self,  game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
                 match self {
-                    $(Role::$name => $file::can_day_target(actor_index, target, game)),*
+                    $(Role::$name => $file::can_day_target(game, actor_ref, target_ref)),*
                 }
             }
-            pub fn convert_targets_to_visits(&self, actor_index: PlayerIndex, targets: Vec<PlayerIndex>, game: &Game) -> Vec<Visit> {
+            pub fn convert_targets_to_visits(&self,  game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
                 match self {
-                    $(Role::$name => $file::convert_targets_to_visits(actor_index, targets, game)),*
+                    $(Role::$name => $file::convert_targets_to_visits(game, actor_ref, target_refs)),*
                 }
             }
-            pub fn get_current_send_chat_groups(&self, actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
+            pub fn get_current_send_chat_groups(&self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
                 match self {
-                    $(Role::$name => $file::get_current_send_chat_groups(actor_index, game)),*
+                    $(Role::$name => $file::get_current_send_chat_groups(game, actor_ref)),*
                 }
             }
-            pub fn get_current_recieve_chat_groups(&self, actor_index: PlayerIndex, game: &Game) -> Vec<ChatGroup> {
+            pub fn get_current_recieve_chat_groups(&self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
                 match self {
-                    $(Role::$name => $file::get_current_recieve_chat_groups(actor_index, game)),*
+                    $(Role::$name => $file::get_current_recieve_chat_groups(game, actor_ref)),*
                 }
             }
-            pub fn on_phase_start(&self, actor_index: PlayerIndex, phase: PhaseType, game: &mut Game){
+            pub fn on_phase_start(&self,  game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
                 match self{
-                    $(Role::$name => $file::on_phase_start(actor_index, phase, game)),*
+                    $(Role::$name => $file::on_phase_start(game, actor_ref, phase)),*
                 }
             }
-            pub fn on_role_creation(&self, actor_index: PlayerIndex, game: &mut Game){
+            pub fn on_role_creation(&self,  game: &mut Game, actor_ref: PlayerReference){
                 match self{
-                    $(Role::$name => $file::on_role_creation(actor_index, game)),*
+                    $(Role::$name => $file::on_role_creation(game, actor_ref)),*
                 }
             }
         }
@@ -135,7 +135,7 @@ macro_rules! make_role_enum {
 }
 
 
-use crate::game::player::PlayerIndex;
+use crate::game::player::{PlayerIndex, PlayerReference};
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::end_game_condition::EndGameCondition;
@@ -150,7 +150,7 @@ make_role_enum! {
 
     Doctor : doctor {
         self_heals_remaining: u8 = 1,
-        target_healed_index: Option<PlayerIndex> = None
+        target_healed_ref: Option<PlayerReference> = None
     },
 
     Veteran : veteran {

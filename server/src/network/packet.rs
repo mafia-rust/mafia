@@ -4,7 +4,7 @@ use tokio_tungstenite::tungstenite::Message;
 use serde::{Deserialize, Serialize};
 
 use crate::game::{
-    player::{PlayerIndex, Player},
+    player::{PlayerIndex, Player, PlayerReference},
     role_list::RoleList,
     settings::{investigator_results::InvestigatorResultSettings, PhaseTimeSettings},
     verdict::Verdict, phase::PhaseType, 
@@ -61,7 +61,7 @@ pub enum ToClientPacket{
     YourRoleLabels{role_labels: HashMap<PlayerIndex, Role>},
     YourWill{will: String},
     YourNotes{notes: String},
-    YourRole{role: RoleData},
+    YourRole{role: Role},
     #[serde(rename_all = "camelCase")]
     YourTarget{player_indices: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
@@ -89,10 +89,10 @@ impl ToClientPacket {
             voted_for_player.push(0);
         }
 
-        for player in game.players.iter(){
-            if *player.alive(){
-                if let Some(player_voted) = player.chosen_vote(){
-                    if let Some(num_votes) = voted_for_player.get_mut(*player_voted as usize){
+        for player_ref in PlayerReference::all_players(game){
+            if *player_ref.deref(game).alive(){
+                if let Some(player_voted_ref) = player_ref.deref(game).chosen_vote(){
+                    if let Some(num_votes) = voted_for_player.get_mut(*player_voted_ref.index() as usize){
                         *num_votes+=1;
                     }
                 }
@@ -134,25 +134,26 @@ pub struct YourButtons{
     pub day_target: bool,
 }
 impl YourButtons{
-    pub fn from_target(game: &Game, actor_index: PlayerIndex, target_index: PlayerIndex)->Self{
+    pub fn from_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference)->Self{
         Self{
             vote: 
-            actor_index != target_index &&
+            actor_ref != target_ref &&
                 game.phase_machine.current_state == PhaseType::Voting &&
-                *game.get_unchecked_player(actor_index).chosen_vote() == None && 
-                *game.get_unchecked_player(actor_index).alive() && *game.get_unchecked_player(target_index).alive(),
+                *actor_ref.deref(game).chosen_vote() == None && 
+                *actor_ref.deref(game).alive() && *target_ref.deref(game).alive(),
 
             target: 
-                game.get_unchecked_player(actor_index).role().can_night_target(actor_index, target_index, game) && 
+                actor_ref.deref(game).role().can_night_target(game, actor_ref, target_ref) && 
                 game.current_phase() == PhaseType::Night,
             day_target: 
-                game.get_unchecked_player(actor_index).role().can_day_target(actor_index, target_index, game),
+                actor_ref.deref(game).role().can_day_target(game, actor_ref, target_ref),
         }
     }
-    pub fn from(game: &Game, actor_index: PlayerIndex)->Vec<Self>{
+    pub fn from(game: &Game, actor_ref: PlayerReference)->Vec<Self>{
         let mut out = Vec::new();
-        for target in game.players.iter(){
-            out.push(Self::from_target(game, actor_index, target.index().clone()));
+
+        for target_ref in PlayerReference::all_players(game){
+            out.push(Self::from_target(game, actor_ref, target_ref));
         }
         out
     }
