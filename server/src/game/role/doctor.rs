@@ -43,8 +43,8 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
             if let Some(target_healed_ref) = target_healed_ref {
                 if *target_healed_ref.deref(game).night_attacked(){
                     
-                    actor_ref.deref_mut(game).add_chat_message(ChatMessage::NightInformation { night_information: NightInformation::DoctorHealed });
-                    target_healed_ref.deref_mut(game).add_chat_message(ChatMessage::NightInformation { night_information: NightInformation::DoctorHealedYou });
+                    actor_ref.deref_mut(game).push_night_messages(ChatMessage::NightInformation { night_information: NightInformation::DoctorHealed });
+                    target_healed_ref.deref_mut(game).push_night_messages(ChatMessage::NightInformation { night_information: NightInformation::DoctorHealedYou });
                 }
             }
         }

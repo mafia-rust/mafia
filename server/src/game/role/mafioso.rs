@@ -32,7 +32,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
 
         if !killed {
             let actor = actor_ref.deref_mut(game);
-            actor.add_chat_message(ChatMessage::NightInformation{ 
+            actor.push_night_messages(ChatMessage::NightInformation{ 
                 night_information: NightInformation::TargetSurvivedAttack 
             });
         }

@@ -49,19 +49,19 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
 
                     if visit.target!=actor_ref || visit.astral {continue}
 
-                    other_player_ref.deref_mut(game).add_chat_message(ChatMessage::NightInformation{ 
+                    other_player_ref.deref_mut(game).push_night_messages(ChatMessage::NightInformation{ 
                         night_information: NightInformation::VeteranAttackedYou 
                     });
 
                     //Kill
                     let killed = Player::try_night_kill(game, other_player_ref, GraveKiller::Role(Role::Veteran), 2);
                     
-                    actor_ref.deref_mut(game).add_chat_message(ChatMessage::NightInformation{ 
+                    actor_ref.deref_mut(game).push_night_messages(ChatMessage::NightInformation{ 
                         night_information: NightInformation::VeteranAttackedVisitor 
                     });
 
                     if !killed {
-                        actor_ref.deref_mut(game).add_chat_message(ChatMessage::NightInformation{ 
+                        actor_ref.deref_mut(game).push_night_messages(ChatMessage::NightInformation{ 
                             night_information: NightInformation::TargetSurvivedAttack 
                         });
                     }
