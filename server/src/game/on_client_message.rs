@@ -60,11 +60,10 @@ impl Game {
                     }
                 }
                 
+                if let Some(player_voted_ref_unwrap) = player_voted_ref{
+                    self.player_on_trial = player_voted_ref;
 
-                if let Some(player_voted_index) = player_voted{
-                    self.player_on_trial = player_voted;
-
-                    self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_voted_index } );
+                    self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: *player_voted_ref_unwrap.index() } );
                     self.jump_to_start_phase(PhaseType::Testimony);
                 }
             },

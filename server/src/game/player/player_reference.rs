@@ -1,3 +1,5 @@
+use serde::Serialize;
+
 use crate::game::Game;
 
 use super::Player;
@@ -64,5 +66,10 @@ impl PlayerReference{
             out.push(PlayerReference::new(game, player_index as PlayerIndex).unwrap()); //TODO, unwrap here
         }
         out
+    }
+}
+impl Serialize for PlayerReference{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer{
+        self.index.serialize(serializer)
     }
 }

@@ -30,7 +30,7 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         crate::game::phase::PhaseType::Morning => vec![],
         crate::game::phase::PhaseType::Discussion => vec![ChatGroup::All],
         crate::game::phase::PhaseType::Voting => vec![ChatGroup::All],
-        crate::game::phase::PhaseType::Testimony => {if game.player_on_trial == Some(actor_index) {vec![ChatGroup::All]} else {vec![]}},
+        crate::game::phase::PhaseType::Testimony => {if game.player_on_trial == Some(actor_ref) {vec![ChatGroup::All]} else {vec![]}},
         crate::game::phase::PhaseType::Judgement => vec![ChatGroup::All],
         crate::game::phase::PhaseType::Evening => vec![ChatGroup::All],
         crate::game::phase::PhaseType::Night => night_chat_groups,

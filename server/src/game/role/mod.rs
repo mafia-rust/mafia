@@ -14,7 +14,7 @@ macro_rules! make_role_enum {
             $($name),*
         }
 
-        #[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
+        #[derive(Clone, PartialEq, Debug, Serialize, Deserialize)]
         pub enum RoleData {
             $($name $({
                 $($data_ident: $data_type),*
@@ -150,7 +150,7 @@ make_role_enum! {
 
     Doctor : doctor {
         self_heals_remaining: u8 = 1,
-        target_healed_index: Option<PlayerIndex> = None
+        target_healed_ref: Option<PlayerReference> = None
     },
 
     Veteran : veteran {

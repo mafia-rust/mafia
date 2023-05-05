@@ -83,8 +83,10 @@ impl PhaseType {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Testimony, day_number: game.phase_machine.day_number });
                 
                 //TODO should be impossible for there to be no player on trial therefore unwrap
-                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerOnTrial { player_index: game.player_on_trial.unwrap() });
-                game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: game.player_on_trial.unwrap() });
+                game.add_message_to_chat_group(ChatGroup::All, 
+                    ChatMessage::PlayerOnTrial { player_index: game.player_on_trial.unwrap().index().clone() }
+                );
+                game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: game.player_on_trial.unwrap().index().clone() });
             },
             PhaseType::Judgement => {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Judgement, day_number: game.phase_machine.day_number });
@@ -162,7 +164,7 @@ impl PhaseType {
                     messages.push(ChatMessage::JudgementVerdict { voter_player_index: player.index().clone(), verdict: player.verdict().clone() });
                 }
                 game.add_messages_to_chat_group(ChatGroup::All, messages);
-                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialVerdict { player_on_trial: game.player_on_trial.unwrap(), innocent, guilty });
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialVerdict { player_on_trial: game.player_on_trial.unwrap().index().clone(), innocent, guilty });
                 
                 Self::Evening
             },

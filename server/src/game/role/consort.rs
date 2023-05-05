@@ -21,9 +21,9 @@ pub(super) const TEAM: Option<Team> = Some(Team::Faction);
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
     if priority != 4 {return;}
     
-    if let Some(visit) = game.get_unchecked_player(actor_index).night_variables.visits.first(){
-        let target_index = visit.target;
-        let target = game.get_unchecked_mut_player(target_index);
+    if let Some(visit) = actor_ref.deref(game).night_variables.visits.first(){
+        let target_ref = visit.target;
+        let target = target_ref.deref_mut(game);
         target.roleblock();
     }
 }
@@ -37,7 +37,7 @@ pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target: Pl
     false
 }
 pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-    crate::game::role::common_role::convert_targets_to_visits(&game, actor_ref, target_refs, false, false)
+    crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, false)
 }
 pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
     crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Mafia])
