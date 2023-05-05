@@ -1,4 +1,4 @@
-use crate::game::verdict::Verdict;
+use crate::{game::{verdict::Verdict, Game}, prelude::MafiaError, network::packet::ToClientPacket};
 
 use super::{Player, PlayerIndex};
 

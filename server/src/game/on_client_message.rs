@@ -1,6 +1,6 @@
 use crate::network::packet::{ToServerPacket, ToClientPacket, YourButtons};
 
-use super::{Game, player::PlayerIndex, phase::PhaseType, chat::{ChatGroup, ChatMessage, MessageSender}};
+use super::{Game, player::{PlayerIndex, Player}, phase::PhaseType, chat::{ChatGroup, ChatMessage, MessageSender}};
 
 
 
@@ -10,28 +10,10 @@ impl Game {
         match incoming_packet {
             ToServerPacket::Vote { player_index: mut player_voted_index } => {
 
-                if self.phase_machine.current_state != PhaseType::Voting || (player_voted_index.is_some() && self.players.len() <= player_voted_index.unwrap() as usize){
-                    return;
-                }
 
-                //Set vote
-                let player = self.get_unchecked_mut_player(player_index);
+                let vote_changed_succesfully = Player::set_chosen_vote(self, player_index, player_voted_index);
 
-                //if player being voted for is dead then no
-                if !player.alive() { player_voted_index = None; }
-                
-                player.send_packet(ToClientPacket::YourVoting { player_index: player_voted_index });
-
-                if player.voting_variables.chosen_vote == player_voted_index {
-                    return;
-                }
-                
-                player.voting_variables.chosen_vote = player_voted_index;
-
-                
-                let chat_message = ChatMessage::Voted { voter: *player.index(), votee: player_voted_index };
-                self.add_message_to_chat_group(ChatGroup::All, chat_message);
-
+                if !vote_changed_succesfully {return;}
 
                 //get all votes on people
                 let mut living_players_count = 0;
@@ -45,13 +27,15 @@ impl Game {
                     if *player.alive(){
                         living_players_count+=1;
 
-                        if let Some(player_voted) = player.voting_variables.chosen_vote{
-                            if let Some(num_votes) = voted_for_player.get_mut(player_voted as usize){
+                        if let Some(player_voted) = player.chosen_vote(){
+                            if let Some(num_votes) = voted_for_player.get_mut(*player_voted as usize){
                                 *num_votes+=1;
                             }
                         }
                     }
                 }
+                
+                self.send_packet_to_all(ToClientPacket::PlayerVotes { voted_for_player: voted_for_player.clone() });
 
                 //if someone was voted
                 let mut player_voted = None;
@@ -63,7 +47,6 @@ impl Game {
                     }
                 }
                 
-                self.send_packet_to_all(ToClientPacket::PlayerVotes { voted_for_player });
 
                 if let Some(player_voted_index) = player_voted{
                     self.player_on_trial = player_voted;
@@ -73,38 +56,11 @@ impl Game {
                 }
             },
             ToServerPacket::Judgement { verdict } => {
-                if self.phase_machine.current_state != PhaseType::Judgement{
-                    return;
-                }
-
-                let player = self.get_unchecked_mut_player(player_index);
-                
-                player.send_packet(ToClientPacket::YourJudgement { verdict: verdict.clone() });
-                if player.voting_variables.verdict == verdict {
-                    return;
-                }
-                player.voting_variables.verdict = verdict.clone();
-                self.add_message_to_chat_group(ChatGroup::All, ChatMessage::JudgementVote { voter_player_index: player_index });
+                Player::set_verdict(self, player_index, verdict);
             },
             ToServerPacket::Target { player_index_list } => {
-                //TODO can target????
                 //TODO Send you targeted someone message in correct chat.
-                if self.phase_machine.current_state != PhaseType::Night{
-                    return;
-                }
-
-                self.get_unchecked_mut_player(player_index).night_variables.chosen_targets = vec![];
-                let role = self.get_unchecked_mut_player(player_index).role();
-
-                for target_index in player_index_list {
-                    if role.can_night_target(player_index, target_index, self) {
-                        self.get_unchecked_mut_player(player_index).night_variables.chosen_targets.push(target_index);
-                    }
-                }
-
-                let player = self.get_unchecked_mut_player(player_index);
-
-                player.send_packet(ToClientPacket::YourTarget { player_indices: player.night_variables.chosen_targets.clone() });
+                Player::set_chosen_targets(self, player_index, player_index_list);
             },
             ToServerPacket::DayTarget { player_index } => {
                 //TODO can daytarget???
@@ -128,7 +84,7 @@ impl Game {
             ToServerPacket::SendWhisper { player_index: whispered_to_player_index, text } => {
 
                 //ensure its day and your not whispering yourself and the other player exists
-                if !self.get_current_phase().is_day() || whispered_to_player_index == player_index || self.players.len() <= whispered_to_player_index as usize{
+                if !self.current_phase().is_day() || whispered_to_player_index == player_index || self.players.len() <= whispered_to_player_index as usize{
                     return;
                 }
                 
