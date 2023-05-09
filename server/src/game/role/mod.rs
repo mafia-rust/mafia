@@ -174,33 +174,37 @@ New Proposed priorities:
 
 1 Top Priority
     Jester(Kill), Arsonist(Clear self), All decidedes ( Vet decide)
+    Ritualist, Doomsayer?
 
 3 Swaps
     Transporter(Swap)
-4 Controlls
+5 Controlls
     Witch(Swap), Retributionist(Swap) Necromancer(Swap)
-2 Roleblock
+6 Roleblock
     Escort Poisoner(roleblock)
 
 
 7 Deception
-    VoodooMaster, Arsonist(Douse), Janitor(Clean), Forger(Yea), Disguiser, Werewolf(Make slef inno or sus) HexMaster(Hex) Poisoner(Poison), Illusioner
-4
+    Arsonist(Douse), Janitor(Clean), Forger(Yea), Disguiser, Werewolf(Make slef inno or sus) 
+    HexMaster(Hex), Enchanter(Alter/Enchant), Poisoner(Poison), Illusionist, Dreamweaver(Choose to dreamweave), VoodooMaster, Medusa
+    Shroud(make harmful)
+8 Deception Effected Swaps
+    Trickster(Swap)
+9
     Bodyguard(Swap)
-5 Heal
-    Doctor, PotionMaster(Heal), Veteran(Heal self) Bodyguard(Heal self)
+10 Heal
+    Doctor, PotionMaster(Heal), Veteran(Heal self) Bodyguard(Heal self), PotionMaser(protect), Trapper(Build/Place/Protect)
 
     
-6 Kill
-    CovenLeader, Necronomicon, Arsonist(Ignite) HexMaster(Kill) Veteran(Kill) Poisoner(Kill)
-8 Investigative
-    Sheriff, Investigator, Lookout, Tracker, PotionMaster(Investigate), Spy(Mafia/Coven visits) 
-    Janitor(Who died) Bodyguard(Notif) Doctor(Notif) Arsonist(Who visited me)
-
-9
-    Spy(Bug) 
-10
-    Witch(Bug)
+11 Kill
+    Ambusher CovenLeader, Necronomicon, Arsonist(Ignite) HexMaster(Kill) Veteran(Kill) Poisoner(Kill) PotionMaser(kill) Trapper(kill)
+    Jinx, Shroud(kill)
+12 Investigative
+    Sheriff, Investigator, Lookout, Tracker, Trapper(Investigate)
+    Spy(Mafia/Coven visits + bug), Seer, Psychic, Coroner, Wildling
+    Janitor(Who died) Bodyguard(Notif) Doctor(Notif) Arsonist(Who visited me) PotionMaser(reveal)
+13
+    Witch(steal messages)
     
 
 
