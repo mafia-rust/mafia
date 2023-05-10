@@ -58,7 +58,7 @@ impl PhaseType {
 
                 //generate & add graves
                 for player_ref in PlayerReference::all_players(game){
-                    if *player_ref.deref(game).night_died(){
+                    if *player_ref.night_died(game){
                         let new_grave = Grave::from_player_night(game, player_ref);
                         game.send_packet_to_all(ToClientPacket::AddGrave{grave: new_grave.clone()});
                         game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied { grave: new_grave });
@@ -72,7 +72,8 @@ impl PhaseType {
             PhaseType::Voting => {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Voting, day_number: game.phase_machine.day_number });
 
-                let required_votes = (game.players.iter().filter(|p|*p.alive()).collect::<Vec<&Player>>().len()/2)+1;
+                let required_votes = 1+
+                    (PlayerReference::all_players(game).iter().filter(|p|*p.alive(game)).collect::<Vec<&PlayerReference>>().len()/2);
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialInformation { required_votes, trials_left: game.trials_left });
                 
 
@@ -100,8 +101,8 @@ impl PhaseType {
                 //ensure mafia can kill
                 //search for mafia godfather or mafioso
                 let mut main_mafia_killing_exists = false;
-                for player in game.players.iter(){
-                    if player.role() == Role::Mafioso { 
+                for player_ref in PlayerReference::all_players(game){
+                    if player_ref.role(game) == Role::Mafioso { 
                         main_mafia_killing_exists = true;
                         break;
                     }
@@ -111,8 +112,8 @@ impl PhaseType {
                 //ambusher should be converted first
                 if !main_mafia_killing_exists{
                     for player_ref in PlayerReference::all_players(game){
-                        if player_ref.deref(game).role().faction_alignment().faction() == Faction::Mafia{
-                            Player::set_role(game, player_ref, RoleData::Mafioso);
+                        if player_ref.role(game).faction_alignment().faction() == Faction::Mafia{
+                            player_ref.set_role(game, RoleData::Mafioso);
                             break;
                         }
                     }
@@ -124,7 +125,7 @@ impl PhaseType {
 
         //every phase
         for player_ref in PlayerReference::all_players(game){
-            player_ref.deref(game).send_packet(ToClientPacket::YourButtons{
+            player_ref.send_packet(game, ToClientPacket::YourButtons{
                 buttons: YourButtons::from(game, player_ref) 
             });
         }
@@ -155,13 +156,13 @@ impl PhaseType {
                 
                 let mut innocent = 0;   let mut guilty = 0;
                 let mut messages = Vec::new();
-                for player in game.players.iter(){
-                    match *player.verdict(){
+                for player_ref in PlayerReference::all_players(game){
+                    match *player_ref.verdict(game){
                         Verdict::Innocent => innocent += 1,
                         Verdict::Abstain => {},
                         Verdict::Guilty => guilty += 1,
                     }
-                    messages.push(ChatMessage::JudgementVerdict { voter_player_index: player.index().clone(), verdict: player.verdict().clone() });
+                    messages.push(ChatMessage::JudgementVerdict { voter_player_index: *player_ref.index(), verdict: *player_ref.verdict(game) });
                 }
                 game.add_messages_to_chat_group(ChatGroup::All, messages);
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialVerdict { player_on_trial: game.player_on_trial.unwrap().index().clone(), innocent, guilty });
@@ -177,22 +178,22 @@ impl PhaseType {
 
                 //get visits
                 for player_ref in PlayerReference::all_players(game){
-                    let role = player_ref.deref(game).role();
-                    let visits = role.convert_targets_to_visits(game, player_ref, player_ref.deref(game).chosen_targets().clone());
-                    player_ref.deref_mut(game).set_night_visits(visits);
+                    let role = player_ref.role(game);
+                    let visits = role.convert_targets_to_visits(game, player_ref, player_ref.chosen_targets(game).clone());
+                    player_ref.set_night_visits(game, visits);
 
                 }
 
                 //Night actions -- main loop
                 for priority in 0..12{
                     for player_ref in PlayerReference::all_players(game){
-                        player_ref.deref_mut(game).role().do_night_action(game, player_ref, priority);
+                        player_ref.role(game).do_night_action(game, player_ref, priority);
                     }
                 }
 
                 //queue night messages
-                for player in game.players.iter_mut(){
-                    player.add_chat_messages(player.night_messages().clone());
+                for player_ref in PlayerReference::all_players(game){
+                    player_ref.add_chat_messages(game, player_ref.night_messages(game).clone());
                 }
 
 

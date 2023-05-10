@@ -74,24 +74,27 @@ impl Game {
 
         //set up role data
         for player_ref in PlayerReference::all_players(&game){
-            let role_data_copy = player_ref.deref(&game).role_data().clone();
-            Player::set_role(&mut game, player_ref, role_data_copy);
+            let role_data_copy = player_ref.role_data(&game).clone();
+            player_ref.set_role(&mut game, role_data_copy);
+            player_ref.send_packet(&game, ToClientPacket::YourPlayerIndex { player_index: *player_ref.index() })
         }
 
         //send to players all game information stuff
-        let player_names: Vec<String> = game.players.iter().map(|p|{return p.name().clone()}).collect();
-        game.send_packet_to_all(ToClientPacket::Players { names: player_names });
+
+        game.send_packet_to_all(ToClientPacket::Players { 
+            names: PlayerReference::all_players(&game).iter().map(|p|{return *p.name(&game)}).collect() 
+        });
         game.send_packet_to_all(ToClientPacket::RoleList { 
             role_list: settings.role_list.clone() 
         });
         game.send_packet_to_all(ToClientPacket::Phase { 
-            phase: game.current_phase(), 
+            phase: game.current_phase(),
             seconds_left: game.phase_machine.time_remaining.as_secs(), 
             day_number: game.phase_machine.day_number 
         });
             
         for player_ref in PlayerReference::all_players(&game){
-            player_ref.deref(&game).send_packet(ToClientPacket::YourButtons { buttons: 
+            player_ref.send_packet(&game, ToClientPacket::YourButtons { buttons: 
                 YourButtons::from(&game, player_ref)
             });
         }
@@ -113,8 +116,8 @@ impl Game {
             return;
         }
 
-        for player in self.players.iter_mut(){
-            player.tick()
+        for player_ref in PlayerReference::all_players(self){
+            player_ref.tick(self)
         }
 
 
@@ -124,7 +127,7 @@ impl Game {
 
             //reset variables
             for player_ref in PlayerReference::all_players(self){
-                Player::reset_phase_start(self, player_ref, new_phase);
+                player_ref.reset_phase_start(self, new_phase);
             }
             self.reset_phase_start(new_phase);
             
@@ -170,12 +173,12 @@ impl Game {
         //add messages
         let players = group.all_players_in_group(self);
         for player_ref in PlayerReference::all_players(self){
-            player_ref.deref_mut(self).add_chat_message(message.clone());
+            player_ref.add_chat_message(self, message.clone());
         }
 
         //send messages to player
-        for player in self.players.iter_mut(){
-            player.send_chat_messages();
+        for player_ref in PlayerReference::all_players(self){
+            player_ref.send_chat_messages(self);
         }
     }
     pub fn add_messages_to_chat_group(&mut self, group: ChatGroup, messages: Vec<ChatMessage>){
@@ -185,8 +188,8 @@ impl Game {
     }
 
     pub fn send_packet_to_all(&self, packet: ToClientPacket){
-        for player in self.players.iter(){
-            player.send_packet(packet.clone());
+        for player_ref in PlayerReference::all_players(self){
+            player_ref.send_packet(self, packet.clone());
         }
     }
 

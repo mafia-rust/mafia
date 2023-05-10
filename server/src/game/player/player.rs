@@ -54,7 +54,7 @@ pub(super) struct PlayerNightVariables{
 }
 impl Player {
     pub fn new(index: PlayerIndex, name: String, sender: UnboundedSender<ToClientPacket>, role: Role) -> Self {
-        let p = Self {
+        Self {
             name,
             index,
             role_data: role.default_data(),
@@ -93,15 +93,6 @@ impl Player {
                 chosen_vote : None,
                 verdict : Verdict::Abstain,
             }
-        };
-        p.send_packet(ToClientPacket::YourPlayerIndex { player_index: p.index().clone() });
-        p
+        }
     }
 }
-
-impl PartialEq for Player {
-    fn eq(&self, other: &Self) -> bool {
-        self.index == other.index
-    }
-}
-

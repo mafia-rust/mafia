@@ -4,54 +4,52 @@ use super::{Player, PlayerReference};
 
 
 
-impl Player{
+impl PlayerReference{
     ///returns true if they were roleblocked by you
-    pub fn roleblock(&mut self)->bool{
-        if self.role().roleblockable() {
-            self.set_night_roleblocked(true);
-            self.push_night_messages(
+    pub fn roleblock(&self, game: &mut Game)->bool{
+        if self.role(game).roleblockable() {
+            self.set_night_roleblocked(game, true);
+            self.push_night_messages(game,
                 ChatMessage::NightInformation { night_information: NightInformation::RoleBlocked { immune: false }}
             );
             return true;
         }else{
-            self.push_night_messages(
+            self.push_night_messages(game,
                 ChatMessage::NightInformation { night_information: NightInformation::RoleBlocked { immune: true }}
             );
             return false;
         }
     }
     ///returns true if attack overpowered defense.
-    pub fn try_night_kill(game: &mut Game, player_ref: PlayerReference, grave_killer: GraveKiller, attack: u8)->bool{
-        let player = player_ref.deref_mut(game);
+    pub fn try_night_kill(&self, game: &mut Game, grave_killer: GraveKiller, attack: u8)->bool{
+        self.set_night_attacked(game, true);
 
-        player.set_night_attacked(true);
-
-        if *player.night_defense() >= attack {
-            player.push_night_messages(
+        if *self.night_defense(game) >= attack {
+            self.push_night_messages(game,
                 ChatMessage::NightInformation { night_information: NightInformation::YouSurvivedAttack }
             );
             return false;
         }
         
         //die
-        player.push_night_messages(ChatMessage::NightInformation { night_information: NightInformation::YouDied });
-        player.set_night_died(true);
-        Player::set_alive(game, player_ref, false);
-        player_ref.deref_mut(game).push_night_grave_killers(grave_killer);
+        self.push_night_messages(game, ChatMessage::NightInformation { night_information: NightInformation::YouDied });
+        self.set_night_died(game, true);
+        self.set_alive(game, false);
+        self.push_night_grave_killers(game, grave_killer);
 
         true
     }
     /// swap this persons role, sending them the role chat message, and associated changes
-    pub fn set_role(game: &mut Game, player_ref: PlayerReference, new_role_data: RoleData){
+    pub fn set_role(&self, game: &mut Game, new_role_data: RoleData){
 
-        player_ref.deref_mut(game).set_role_data(new_role_data);
-        player_ref.deref(game).role().on_role_creation(game,player_ref);
-        let chat_message = ChatMessage::RoleAssignment { role: player_ref.deref(game).role()};
-        player_ref.deref_mut(game).add_chat_message(chat_message);
+        self.set_role_data(game, new_role_data);
+        self.role(game).on_role_creation(game, *self);
+        let chat_message = ChatMessage::RoleAssignment { role: self.role(game)};
+        self.add_chat_message(game, chat_message);
     }
-    pub fn increase_defense_to(&mut self, defense: u8){
-        if self.night_variables.defense < defense{
-            self.night_variables.defense = defense;
+    pub fn increase_defense_to(&self, game: &mut Game, defense: u8){
+        if *self.night_defense(game) < defense{
+            self.set_night_defense(game, defense);
         }
     }
     
