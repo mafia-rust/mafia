@@ -5,14 +5,14 @@ use super::{Player, PlayerIndex, PlayerReference};
 
 
 impl PlayerReference{
-    pub fn name(&self, game: &Game) -> &String {
+    pub fn name<'a>(&self, game: &'a Game) -> &'a String {
         &self.deref(game).name
     }
     
     pub fn role(&self, game: &Game) -> Role {
         self.deref(game).role_data.role()
     }
-    pub fn role_data(&self, game: &Game) -> &RoleData{
+    pub fn role_data<'a>(&self, game: &'a Game) -> &'a RoleData{
         &self.deref(game).role_data
     }
     pub fn set_role_data(&self, game: &mut Game, new_role_data: RoleData){
@@ -20,7 +20,7 @@ impl PlayerReference{
         self.send_packet(game, ToClientPacket::YourRole { role: self.deref(game).role_data.role() });
     }
 
-    pub fn alive(&self, game: &Game)->&bool{
+    pub fn alive<'a>(&self, game: &'a Game)->&'a bool{
         &self.deref(game).alive
     }
     pub fn set_alive(&self, game: &mut Game, alive: bool){
@@ -33,7 +33,7 @@ impl PlayerReference{
         game.send_packet_to_all(ToClientPacket::PlayerAlive { alive: alive_players });
     }
 
-    pub fn will(&self, game: &Game)->&String{
+    pub fn will<'a>(&self, game: &'a Game)->&'a String{
         &self.deref(game).will
     }
     pub fn set_will(&self, game: &mut Game, will: String){
@@ -41,7 +41,7 @@ impl PlayerReference{
         self.send_packet(game, ToClientPacket::YourWill { will: self.deref(game).will.clone() });
     }
     
-    pub fn notes(&self, game: &Game)->&String{
+    pub fn notes<'a>(&self, game: &'a  Game)->&'a String{
         &self.deref(game).notes
     }
     pub fn set_notes(&self, game: &mut Game, notes: String){
@@ -49,7 +49,7 @@ impl PlayerReference{
         self.send_packet(game, ToClientPacket::YourNotes { notes: self.deref(game).notes.clone() })
     }
      
-    pub fn role_labels(&self, game: &Game)->&HashMap<PlayerReference, Role>{
+    pub fn role_labels<'a>(&self, game: &'a Game)->&'a HashMap<PlayerReference, Role>{
         &self.deref(game).role_labels
     }  
     pub fn insert_role_label(&self, game: &mut Game, key: PlayerReference, value: Role){
@@ -59,7 +59,7 @@ impl PlayerReference{
 
     pub fn add_chat_message(&self, game: &mut Game, message: ChatMessage) {
         self.deref_mut(game).chat_messages.push(message.clone());
-        self.deref(game).queued_chat_messages.push(message);
+        self.deref_mut(game).queued_chat_messages.push(message);
     }
     pub fn add_chat_messages(&self, game: &mut Game, messages: Vec<ChatMessage>){
         for message in messages.into_iter(){
@@ -68,7 +68,7 @@ impl PlayerReference{
     }
 
     //VOTING
-    pub fn chosen_vote(&self, game: &Game)->&Option<PlayerReference>{
+    pub fn chosen_vote<'a>(&self, game: &'a Game)->&'a Option<PlayerReference>{
         &self.deref(game).voting_variables.chosen_vote
     }
     /// returns true if players vote was changed
@@ -104,7 +104,7 @@ impl PlayerReference{
     }
 
     
-    pub fn verdict(&self, game: &Game)->&Verdict{
+    pub fn verdict<'a>(&self, game: &'a Game)->&'a Verdict{
         &self.deref(game).voting_variables.verdict
     }
     pub fn set_verdict(&self, game: &mut Game, verdict: Verdict)->bool{
@@ -123,56 +123,56 @@ impl PlayerReference{
     }
 
     //NIGHT
-    pub fn night_alive_tonight(&self, game: &Game)->&bool{
+    pub fn night_alive_tonight<'a>(&self, game: &'a Game)->&'a bool{
         &self.deref(game).night_variables.alive_tonight
     }
     pub fn set_night_alive_tonight(&self, game: &mut Game, alive_tonight: bool){
-        self.deref(game).night_variables.alive_tonight = alive_tonight;
+        self.deref_mut(game).night_variables.alive_tonight = alive_tonight;
     }
     
-    pub fn night_died(&self, game: &Game)->&bool{
+    pub fn night_died<'a>(&self, game: &'a Game)->&'a bool{
         &self.deref(game).night_variables.died
     }
     pub fn set_night_died(&self, game: &mut Game, died: bool){
-        self.deref(game).night_variables.died = died;
+        self.deref_mut(game).night_variables.died = died;
     }
 
-    pub fn night_attacked(&self, game: &Game)->&bool{
+    pub fn night_attacked<'a>(&self, game: &'a Game)->&'a bool{
         &self.deref(game).night_variables.attacked
     }
     pub fn set_night_attacked(&self, game: &mut Game, attacked: bool){
-        self.deref(game).night_variables.attacked = attacked;
+        self.deref_mut(game).night_variables.attacked = attacked;
     }
 
-    pub fn night_roleblocked(&self, game: &Game)->&bool{
+    pub fn night_roleblocked<'a>(&self, game: &'a Game)->&'a bool{
         &self.deref(game).night_variables.roleblocked
     }
     pub fn set_night_roleblocked(&self, game: &mut Game, roleblocked: bool){
-        self.deref(game).night_variables.roleblocked = roleblocked;
+        self.deref_mut(game).night_variables.roleblocked = roleblocked;
     }
 
-    pub fn night_defense(&self, game: &Game)->&u8{
+    pub fn night_defense<'a>(&self, game: &'a Game)->&'a u8{
         &self.deref(game).night_variables.defense
     }
     pub fn set_night_defense(&self, game: &mut Game, defense: u8){
-        self.deref(game).night_variables.defense = defense;
+        self.deref_mut(game).night_variables.defense = defense;
     }
 
-    pub fn night_suspicious(&self, game: &Game)->&bool{
+    pub fn night_suspicious<'a>(&self, game: &'a Game)->&'a bool{
         &self.deref(game).night_variables.suspicious
     }
     pub fn set_night_suspicious(&self, game: &mut Game, suspicious: bool){
-        self.deref(game).night_variables.suspicious = suspicious;
+        self.deref_mut(game).night_variables.suspicious = suspicious;
     }
 
-    pub fn night_disguised_as(&self, game: &Game)->&Option<PlayerReference>{
+    pub fn night_disguised_as<'a>(&self, game: &'a Game)->&'a Option<PlayerReference>{
         &self.deref(game).night_variables.disguised_as
     }
     pub fn set_night_disguised_as(&self, game: &mut Game, disguised_as: Option<PlayerReference>){
-        self.deref(game).night_variables.disguised_as = disguised_as;
+        self.deref_mut(game).night_variables.disguised_as = disguised_as;
     }
     
-    pub fn chosen_targets(&self, game: &Game)->&Vec<PlayerReference>{
+    pub fn chosen_targets<'a>(&self, game: &'a Game)->&'a Vec<PlayerReference>{
         &self.deref(game).night_variables.chosen_targets
     }
     pub fn set_chosen_targets(&self, game: &mut Game, chosen_targets: Vec<PlayerReference>){
@@ -201,14 +201,14 @@ impl PlayerReference{
         self.send_packet(game, packet);
     }
 
-    pub fn night_visits(&self, game: &Game)->&Vec<Visit>{
+    pub fn night_visits<'a>(&self, game: &'a Game)->&'a Vec<Visit>{
         &self.deref(game).night_variables.visits
     }
     pub fn set_night_visits(&self, game: &mut Game, visits: Vec<Visit>){
         self.deref_mut(game).night_variables.visits = visits;
     }
 
-    pub fn night_messages(&self, game: &Game)->&Vec<ChatMessage>{
+    pub fn night_messages<'a>(&self, game: &'a Game)->&'a Vec<ChatMessage>{
         &self.deref(game).night_variables.messages
     }
     pub fn push_night_messages(&self, game: &mut Game, message: ChatMessage){
@@ -218,14 +218,14 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.messages = messages;
     }
 
-    pub fn night_grave_role(&self, game: &Game)->&GraveRole{
+    pub fn night_grave_role<'a>(&self, game: &'a Game)->&'a GraveRole{
         &self.deref(game).night_variables.grave_role
     }
     pub fn set_night_grave_role(&self, game: &mut Game, grave_role: GraveRole){
         self.deref_mut(game).night_variables.grave_role = grave_role;
     }
 
-    pub fn night_grave_killers(&self, game: &Game)->&Vec<GraveKiller>{
+    pub fn night_grave_killers<'a>(&self, game: &'a Game)->&'a Vec<GraveKiller>{
         &self.deref(game).night_variables.grave_killers
     }
     pub fn push_night_grave_killers(&self, game: &mut Game, grave_killer: GraveKiller){
@@ -235,14 +235,14 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.grave_killers = grave_killers;
     }
 
-    pub fn night_grave_will(&self, game: &Game)->&String{
+    pub fn night_grave_will<'a>(&self, game: &'a Game)->&'a String{
         &self.deref(game).night_variables.grave_will
     }
     pub fn set_night_grave_will(&self, game: &mut Game, grave_will: String){
         self.deref_mut(game).night_variables.grave_will = grave_will;
     }
 
-    pub fn night_grave_death_notes(&self, game: &Game)->&Vec<String>{
+    pub fn night_grave_death_notes<'a>(&self, game: &'a Game)->&'a Vec<String>{
         &self.deref(game).night_variables.grave_death_notes
     }
     pub fn push_night_grave_death_notes(&self, game: &mut Game, death_note: String){

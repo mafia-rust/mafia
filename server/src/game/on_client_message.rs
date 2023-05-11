@@ -24,7 +24,7 @@ impl Game {
                     Err(_) => break 'packet_match,
                 };
 
-                let vote_changed_succesfully = Player::set_chosen_vote(self, player_ref, player_voted_ref);
+                let vote_changed_succesfully = player_ref.set_chosen_vote(self, player_voted_ref);
 
                 if !vote_changed_succesfully {break 'packet_match;}
 
@@ -36,11 +36,11 @@ impl Game {
                     voted_for_player.push(0);
                 }
 
-                for player in self.players.iter(){
-                    if *player.alive(){
+                for player_ref in PlayerReference::all_players(self){
+                    if *player_ref.alive(self){
                         living_players_count+=1;
 
-                        if let Some(player_voted) = player.chosen_vote(){
+                        if let Some(player_voted) = player_ref.chosen_vote(self){
                             if let Some(num_votes) = voted_for_player.get_mut(*player_voted.index() as usize){
                                 *num_votes+=1;
                             }
@@ -68,7 +68,7 @@ impl Game {
                 }
             },
             ToServerPacket::Judgement { verdict } => {
-                Player::set_verdict(self, player_ref, verdict);
+                player_ref.set_verdict(self, verdict);
             },
             ToServerPacket::Target { player_index_list } => {
                 //TODO Send you targeted someone message in correct chat.
@@ -78,20 +78,19 @@ impl Game {
                         break 'packet_match;
                     },
                 };
-                Player::set_chosen_targets(self, player_ref, target_ref_list);
+                player_ref.set_chosen_targets(self, target_ref_list);
             },
             ToServerPacket::DayTarget { player_index } => {
                 //TODO can daytarget???
                 //TODO
             },
             ToServerPacket::SendMessage { text } => {
-                let player = player_ref.deref(self);
 
                 if text.replace("\n", "").replace("\r", "").trim().is_empty() {
                     break 'packet_match;
                 }
                 
-                for chat_group in player.role().get_current_send_chat_groups(self, player_ref){
+                for chat_group in player_ref.role(self).get_current_send_chat_groups(self, player_ref){
                     self.add_message_to_chat_group(
                         chat_group.clone(),
                         //TODO message sender, Jailor & medium
@@ -122,25 +121,25 @@ impl Game {
                     text 
                 };
         
-                whisperee_ref.deref_mut(self).add_chat_message(message.clone());
-                player_ref.deref_mut(self).add_chat_message(message);
+                whisperee_ref.add_chat_message(self, message.clone());
+                player_ref.add_chat_message(self, message);
 
                 //TODO, send to blackmailer
             },
             ToServerPacket::SaveWill { will } => {
-                player_ref.deref_mut(self).set_will(will);
+                player_ref.set_will(self, will);
             },
             ToServerPacket::SaveNotes { notes } => {
-                player_ref.deref_mut(self).set_notes(notes);
+                player_ref.set_notes(self, notes);
             },
             _ => unreachable!()
         }}
         
         let packet = ToClientPacket::YourButtons { buttons: YourButtons::from(self, player_ref)};
-        player_ref.deref(self).send_packet(packet);
+        player_ref.send_packet(self, packet);
 
-        for player in self.players.iter_mut(){
-            player.send_chat_messages();
+        for player_ref in PlayerReference::all_players(self){
+            player_ref.send_chat_messages(self);
         }
 
     }

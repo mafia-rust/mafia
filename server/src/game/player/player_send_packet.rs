@@ -9,9 +9,9 @@ impl PlayerReference{
         self.deref(game).sender.send(packet);
     }
     fn requeue_chat_messages(&self, game: &mut Game){
-        for msg in self.deref(game).chat_messages.iter(){
-            self.deref_mut(game).queued_chat_messages.push(msg.clone());
-        }
+        for msg in self.deref(game).chat_messages.clone().into_iter(){
+            self.deref_mut(game).queued_chat_messages.push(msg);
+        };
     }
     pub fn send_chat_messages(&self, game: &mut Game){
         

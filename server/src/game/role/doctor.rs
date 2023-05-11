@@ -21,30 +21,30 @@ pub(super) const TEAM: Option<Team> = None;
 
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-    if *actor_ref.deref(game).night_roleblocked() {return}
+    if *actor_ref.night_roleblocked(game) {return}
 
     match priority {
         6 => {
-            let Some(visit) = actor_ref.deref(game).night_visits().first() else {return};
+            let Some(visit) = actor_ref.night_visits(game).first() else {return};
             let target_ref: PlayerReference = visit.target.clone();
-            let RoleData::Doctor{mut self_heals_remaining, mut target_healed_ref } = actor_ref.deref_mut(game).role_data().clone() else {unreachable!()};
+            let RoleData::Doctor{mut self_heals_remaining, mut target_healed_ref } = actor_ref.role_data(game).clone() else {unreachable!()};
             
             if actor_ref == target_ref {
                 self_heals_remaining -= 1;
             }
             target_healed_ref = Some(target_ref);
-            target_ref.deref_mut(game).increase_defense_to(2);
+            target_ref.increase_defense_to(game, 2);
 
-            actor_ref.deref_mut(game).set_role_data(RoleData::Doctor{self_heals_remaining, target_healed_ref});
+            actor_ref.set_role_data(game, RoleData::Doctor{self_heals_remaining, target_healed_ref});
         }
         10 => {
-            let RoleData::Doctor{self_heals_remaining, target_healed_ref } = actor_ref.deref(game).role_data().clone() else {unreachable!()};
+            let RoleData::Doctor{self_heals_remaining, target_healed_ref } = actor_ref.role_data(game).clone() else {unreachable!()};
             
             if let Some(target_healed_ref) = target_healed_ref {
-                if *target_healed_ref.deref(game).night_attacked(){
+                if *target_healed_ref.night_attacked(game){
                     
-                    actor_ref.deref_mut(game).push_night_messages(ChatMessage::NightInformation { night_information: NightInformation::DoctorHealed });
-                    target_healed_ref.deref_mut(game).push_night_messages(ChatMessage::NightInformation { night_information: NightInformation::DoctorHealedYou });
+                    actor_ref.push_night_messages(game, ChatMessage::NightInformation { night_information: NightInformation::DoctorHealed });
+                    target_healed_ref.push_night_messages(game, ChatMessage::NightInformation { night_information: NightInformation::DoctorHealedYou });
                 }
             }
         }
@@ -53,9 +53,9 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
     actor_ref != target_ref &&
-    actor_ref.deref(game).chosen_targets().len() < 1 &&
-    *actor_ref.deref(game).alive() &&
-    *target_ref.deref(game).alive()
+    actor_ref.chosen_targets(game).len() < 1 &&
+    *actor_ref.alive(game) &&
+    *target_ref.alive(game)
 }
 pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference) {
     
@@ -73,10 +73,9 @@ pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerRefe
     crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
 }
 pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
-    let actor = actor_ref.deref_mut(game);
-    let RoleData::Doctor{self_heals_remaining, target_healed_ref: mut target_healed_index } = actor.role_data().clone() else {unreachable!()};
+    let RoleData::Doctor{self_heals_remaining, target_healed_ref: mut target_healed_index } = actor_ref.role_data(game).clone() else {unreachable!()};
     target_healed_index = None;
-    actor.set_role_data(RoleData::Doctor{self_heals_remaining, target_healed_ref: target_healed_index});
+    actor_ref.set_role_data(game, RoleData::Doctor{self_heals_remaining, target_healed_ref: target_healed_index});
 }
 pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){
     crate::game::role::common_role::on_role_creation(game, actor_ref);

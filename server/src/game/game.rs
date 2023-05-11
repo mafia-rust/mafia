@@ -82,7 +82,7 @@ impl Game {
         //send to players all game information stuff
 
         game.send_packet_to_all(ToClientPacket::Players { 
-            names: PlayerReference::all_players(&game).iter().map(|p|{return *p.name(&game)}).collect() 
+            names: PlayerReference::all_players(&game).iter().map(|p|{return p.name(&game).clone()}).collect() 
         });
         game.send_packet_to_all(ToClientPacket::RoleList { 
             role_list: settings.role_list.clone() 

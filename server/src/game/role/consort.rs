@@ -21,10 +21,9 @@ pub(super) const TEAM: Option<Team> = Some(Team::Faction);
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
     if priority != 4 {return;}
     
-    if let Some(visit) = actor_ref.deref(game).night_visits().first(){
+    if let Some(visit) = actor_ref.night_visits(game).first(){
         let target_ref = visit.target;
-        let target = target_ref.deref_mut(game);
-        target.roleblock();
+        target_ref.roleblock(game);
     }
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {

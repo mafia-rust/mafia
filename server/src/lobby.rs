@@ -7,7 +7,7 @@ use tokio::sync::mpsc::UnboundedSender;
 use tokio_tungstenite::tungstenite::Message;
 
 use crate::{
-    game::{Game, player::{PlayerIndex, Player}, 
+    game::{Game, player::{PlayerIndex, Player, PlayerReference}, 
     settings::{Settings, investigator_results::InvestigatorResultSettings, self}, 
     role_list::{self, RoleList, RoleListEntry}, phase::PhaseType}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket, RejectJoinReason, RejectStartReason}, listener::ArbitraryPlayerID}, 
     utils::trim_whitespace, log
@@ -286,8 +286,8 @@ impl Lobby {
                 }).collect() 
             },
             LobbyState::Game { game, players } => ToClientPacket::Players { 
-                names: players.iter().map(|p| {
-                    game.players[*p.1 as usize].name().clone()
+                names: PlayerReference::all_players(game).iter().map(|p| {
+                    p.name(game).clone()
                 }).collect() 
             },
             LobbyState::Closed => {return;}
@@ -302,8 +302,8 @@ impl Lobby {
                 }
             }
             LobbyState::Game { game, players } => {
-                for player in players.iter() {
-                    game.players[*player.1 as usize].send_packet(packet.clone());
+                for player_ref in PlayerReference::all_players(game){
+                    player_ref.send_packet(game, packet.clone());
                 }
             }
             LobbyState::Closed => {}

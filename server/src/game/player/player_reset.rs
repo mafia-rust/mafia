@@ -1,7 +1,7 @@
 
 
 use crate::{game::{phase::PhaseType, Game, verdict::Verdict, grave::GraveRole}, network::packet::ToClientPacket};
-use super::{PlayerReference, Player};
+use super::{PlayerReference};
 
 impl PlayerReference{
     pub fn tick(&self, game: &mut Game){
