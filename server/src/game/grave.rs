@@ -41,6 +41,7 @@ pub enum GraveDeathCause {
 #[serde(tag = "type", content = "role")]
 pub enum GraveKiller {
     Mafia,
+    Coven,
     Role(Role)
 }
 

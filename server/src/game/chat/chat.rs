@@ -103,6 +103,7 @@ pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
     MayorRevealed{player_index: PlayerIndex}, //Sammy revealed as mayor
     MayorCantWhisper,   //you cant whisper as or to a revealed mayor
+    Jailed,             //you have been jailed
     JailorDecideExecuteYou,     //Jailor has decided to execute you
     MediumSeanceYou,       //You are being seanced by the medium
     JesterWon, //The jester will get their revenge from the grave
@@ -128,7 +129,7 @@ pub enum ChatGroup {
     Vampire,
     Coven,
 
-    //Jail
+    Jail,
     //Seance
     //Whisper
     //Pirate, 

@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::network::packet::{ToServerPacket, ToClientPacket, YourButtons};
 
 use super::{Game, player::{PlayerIndex, Player, PlayerReference, self}, phase::PhaseType, chat::{ChatGroup, ChatMessage, MessageSender}};
@@ -30,33 +32,34 @@ impl Game {
 
                 //get all votes on people
                 let mut living_players_count = 0;
-                let mut voted_for_player: Vec<u8> = Vec::new();
+                let mut voted_for_player: HashMap<PlayerIndex, u8> = HashMap::new();
 
-                for _ in self.players.iter(){
-                    voted_for_player.push(0);
-                }
 
                 for player_ref in PlayerReference::all_players(self){
                     if *player_ref.alive(self){
                         living_players_count+=1;
 
                         if let Some(player_voted) = player_ref.chosen_vote(self){
-                            if let Some(num_votes) = voted_for_player.get_mut(*player_voted.index() as usize){
+                            if let Some(num_votes) = voted_for_player.get_mut(player_voted.index()){
                                 *num_votes+=1;
+                            }else{
+                                voted_for_player.insert(*player_voted.index(), 1);
                             }
                         }
                     }
                 }
                 
                 self.send_packet_to_all(ToClientPacket::PlayerVotes { voted_for_player: voted_for_player.clone() });
+                
 
                 //if someone was voted
                 let mut player_voted = None;
-                for player_index in 0..voted_for_player.len(){
-                    let num_votes = voted_for_player[player_index];
-                    if num_votes > (living_players_count / 2){
-                        player_voted = Some(player_index as u8);
-                        break;
+                for player_index in 0..(voted_for_player.len() as PlayerIndex){
+                    if let Some(num_votes) = voted_for_player.get(&player_index){
+                        if *num_votes >= 1+(living_players_count / 2){
+                            player_voted = Some(player_index as u8);
+                            break;
+                        }
                     }
                 }
                 
@@ -80,9 +83,14 @@ impl Game {
                 };
                 player_ref.set_chosen_targets(self, target_ref_list);
             },
-            ToServerPacket::DayTarget { player_index } => {
-                //TODO can daytarget???
-                //TODO
+            ToServerPacket::DayTarget { player_index } => {               
+                let target_ref = match PlayerReference::new(self, player_index){
+                    Ok(target_ref) => target_ref,
+                    Err(_) => break 'packet_match,
+                };
+                if player_ref.role(self).can_day_target(self, player_ref, target_ref){
+                    player_ref.role(self).do_day_action(self, player_ref, target_ref);
+                }
             },
             ToServerPacket::SendMessage { text } => {
 

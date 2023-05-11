@@ -80,9 +80,9 @@ macro_rules! make_role_enum {
                     $(Role::$name => $file::do_night_action(game, actor_ref, priority)),*
                 }
             }
-            pub fn do_day_action(&self, game: &mut Game, actor_ref: PlayerReference) {
+            pub fn do_day_action(&self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
                 match self {
-                    $(Role::$name => $file::do_day_action(game, actor_ref)),*
+                    $(Role::$name => $file::do_day_action(game, actor_ref, target_ref)),*
                 }
             }
             pub fn can_night_target(&self,  game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -146,6 +146,10 @@ use crate::game::team::Team;
 use serde::{Serialize, Deserialize};
 // Creates the Role enum
 make_role_enum! {
+    Jailor : jailor {
+        jailed_target_ref: Option<PlayerReference> = None
+    },
+
     Sheriff : sheriff,
 
     Doctor : doctor {
@@ -164,16 +168,48 @@ make_role_enum! {
 
     CovenLeader : coven_leader
 }
+// type Priority = i8;
+macro_rules! make_priority_enum {
+    (
+        $($name:ident),*
+    )=>{
+        #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+        pub enum Priority {
+            $($name,)*
+        }
+        impl Priority {
+            pub fn values() -> Vec<Self> {
+                return vec![$(Self::$name),*];
+            }
+        }
+    }
+}
+make_priority_enum! {
+    TopPriority,
+    Unswappable,
+    Transporter,
+    Control,
+    Necromancy,
+    Roleblock,
+    Deception,
+    Trickster,
+    Bodyguard,
+    Heal,
+    Kill,
+    Investigative,
+    StealMessages
+}
 
-type Priority = i8;
 mod common_role;
 
 
 /*
 New Proposed priorities:
 
-1 Top Priority
-    Jester(Kill), Arsonist(Clear self), All decidedes ( Vet decide)
+1 Top
+    Jailor, Jester(Kill), Vigilante(Suicide)
+1 Unswappable
+    Arsonist(Clear self), All decidedes (Vet decide)
     Ritualist, Doomsayer?
 
 3 Swaps
@@ -181,11 +217,11 @@ New Proposed priorities:
 5 Controlls
     Witch(Swap), Retributionist(Swap) Necromancer(Swap)
 6 Roleblock
-    Escort Poisoner(roleblock)
+    Escort Consort Poisoner(roleblock)
 
 
 7 Deception
-    Arsonist(Douse), Janitor(Clean), Forger(Yea), Disguiser, Werewolf(Make slef inno or sus) 
+    Arsonist(Douse), Janitor(Clean), Forger(Yea), Disguiser, Werewolf(Make slef inno or sus)
     HexMaster(Hex), Enchanter(Alter/Enchant), Poisoner(Poison), Illusionist, Dreamweaver(Choose to dreamweave), VoodooMaster, Medusa
     Shroud(make harmful)
 8 Deception Effected Swaps
@@ -193,12 +229,11 @@ New Proposed priorities:
 9
     Bodyguard(Swap)
 10 Heal
-    Doctor, PotionMaster(Heal), Veteran(Heal self) Bodyguard(Heal self), PotionMaser(protect), Trapper(Build/Place/Protect)
+    Doctor, PotionMaster(Heal), Veteran(Heal self) Bodyguard(Heal self), PotionMaser(protect), Trapper(Build/Place/Protect), Crusader(Heal)
 
-    
 11 Kill
     Ambusher CovenLeader, Necronomicon, Arsonist(Ignite) HexMaster(Kill) Veteran(Kill) Poisoner(Kill) PotionMaser(kill) Trapper(kill)
-    Jinx, Shroud(kill)
+    Jinx, Shroud(kill), Crusader(Kill) Jailor(Kill)
 12 Investigative
     Sheriff, Investigator, Lookout, Tracker, Trapper(Investigate)
     Spy(Mafia/Coven visits + bug), Seer, Psychic, Coroner, Wildling

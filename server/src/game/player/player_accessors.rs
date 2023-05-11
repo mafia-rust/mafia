@@ -80,11 +80,13 @@ impl PlayerReference{
         let your_voting_packet: Option<PlayerIndex>;
 
         if game.current_phase() != PhaseType::Voting || !self.deref(game).alive{
+            self.deref_mut(game).voting_variables.chosen_vote = None;
             return false;
         }
         
         if let Some(chosen_vote) = chosen_vote {
             if chosen_vote == *self || !chosen_vote.deref(game).alive{
+                self.deref_mut(game).voting_variables.chosen_vote = None;
                 return false;
             }
 
@@ -252,7 +254,17 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.grave_death_notes = grave_death_notes;
     }
 
-
+    pub fn night_jailed<'a>(&self, game: &'a Game)->&'a bool{
+        &self.deref(game).night_variables.jailed
+    }
+    ///add chat message saying that they were jailed, and sends packet
+    pub fn set_night_jailed(&self, game: &mut Game, jailed: bool){
+        self.deref_mut(game).night_variables.jailed = jailed;
+        if jailed == true {
+            self.send_packet(game, ToClientPacket::YourJailed);
+            self.add_chat_message(game, ChatMessage::Jailed);
+        }
+    }
 }
 
 

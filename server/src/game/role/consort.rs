@@ -1,4 +1,5 @@
-use crate::game::chat::ChatGroup;
+use crate::game::chat::night_message::NightInformation;
+use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::PhaseType;
 use crate::game::player::{Player, PlayerReference};
 use crate::game::role_list::{FactionAlignment, Faction};
@@ -19,17 +20,24 @@ pub(super) const TEAM: Option<Team> = Some(Team::Faction);
 
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-    if priority != 4 {return;}
+    if *actor_ref.night_jailed(game) {return;}
+    if priority != Priority::Roleblock {return;}
     
     if let Some(visit) = actor_ref.night_visits(game).first(){
         let target_ref = visit.target;
-        target_ref.roleblock(game);
+        if *target_ref.night_jailed(game) {
+            actor_ref.push_night_messages(game, ChatMessage::NightInformation{ 
+                night_information: NightInformation::TargetJailed 
+            });
+        }else{
+            target_ref.roleblock(game);
+        }
     }
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
     crate::game::role::common_role::can_night_target(game, actor_ref, target_ref)
 }
-pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference) {
+pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
     
 }
 pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {

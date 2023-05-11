@@ -1,9 +1,12 @@
 use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, team::Team, role_list::Faction};
 
+use super::Role;
+
 
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
     
     actor_ref != target_ref &&
+    !*actor_ref.night_jailed(game) &&
     actor_ref.chosen_targets(game).len() < 1 &&
     *actor_ref.alive(game) &&
     *target_ref.alive(game) &&
@@ -33,7 +36,13 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         crate::game::phase::PhaseType::Testimony => {if game.player_on_trial == Some(actor_ref) {vec![ChatGroup::All]} else {vec![]}},
         crate::game::phase::PhaseType::Judgement => vec![ChatGroup::All],
         crate::game::phase::PhaseType::Evening => vec![ChatGroup::All],
-        crate::game::phase::PhaseType::Night => night_chat_groups,
+        crate::game::phase::PhaseType::Night => {
+            if *actor_ref.night_jailed(game){
+                return vec![ChatGroup::Jail];
+            }else{
+                night_chat_groups
+            }
+        },
     }
 }
 pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
@@ -50,6 +59,9 @@ pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerRefe
     }
     if actor_ref.role(game).faction_alignment().faction() == Faction::Coven {
         out.push(ChatGroup::Coven);
+    }
+    if actor_ref.role(game) == Role::Jailor || *actor_ref.night_jailed(game){
+        out.push(ChatGroup::Jail);
     }
 
     out

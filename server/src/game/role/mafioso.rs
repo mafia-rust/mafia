@@ -21,12 +21,17 @@ pub(super) const TEAM: Option<Team> = Some(Team::Faction);
 
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    if *actor_ref.night_jailed(game) {return;}
     if *actor_ref.night_roleblocked(game) {return}
-    if priority != 9 {return}
+    if priority != Priority::Kill {return}
     
     if let Some(visit) = actor_ref.night_visits(game).first(){
-
         let target_ref = visit.target;
+        if *target_ref.night_jailed(game){
+            actor_ref.push_night_messages(game, ChatMessage::NightInformation { night_information: NightInformation::TargetJailed });
+            return
+        }
+
         let killed = target_ref.try_night_kill(game, GraveKiller::Mafia, 1);
 
         if !killed {
@@ -39,7 +44,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
     crate::game::role::common_role::can_night_target(game, actor_ref, target_ref)
 }
-pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference) {
+pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
 
 }
 pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {

@@ -9,6 +9,16 @@
         "endGameCondition": "Faction",
         "maxCount": null
     },
+    "Jailor":{
+        "faction": "Town",
+        "alignment": "Power",
+        "suspicious": false,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": 1
+    },
     "Doctor": {
         "faction": "Town",
         "alignment": "Protective",

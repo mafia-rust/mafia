@@ -10,7 +10,9 @@ impl PlayerReference{
     }
     pub fn reset_phase_start(&self, game: &mut Game, phase: PhaseType){
         match phase {
-            PhaseType::Morning => {},
+            PhaseType::Morning => {
+                self.set_night_jailed(game, false);
+            },
             PhaseType::Discussion => {},
             PhaseType::Voting => {
                 
