@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use serde::Serialize;
 
-use crate::game::Game;
+use crate::game::{Game, role::{Role, RoleData}, chat::ChatMessage, verdict::Verdict, visit::Visit};
 
 use super::Player;
 
@@ -65,7 +65,6 @@ impl PlayerReference{
         }
         Ok(out)
     }
-
 
 
     pub fn all_players(game: &Game)->Vec<PlayerReference>{

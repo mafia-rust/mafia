@@ -90,8 +90,8 @@ impl ToClientPacket {
         }
 
         for player_ref in PlayerReference::all_players(game){
-            if *player_ref.deref(game).alive(){
-                if let Some(player_voted_ref) = player_ref.deref(game).chosen_vote(){
+            if *player_ref.alive(game){
+                if let Some(player_voted_ref) = player_ref.chosen_vote(game){
                     if let Some(num_votes) = voted_for_player.get_mut(*player_voted_ref.index() as usize){
                         *num_votes+=1;
                     }
@@ -139,14 +139,14 @@ impl YourButtons{
             vote: 
             actor_ref != target_ref &&
                 game.phase_machine.current_state == PhaseType::Voting &&
-                *actor_ref.deref(game).chosen_vote() == None && 
-                *actor_ref.deref(game).alive() && *target_ref.deref(game).alive(),
+                *actor_ref.chosen_vote(game) == None && 
+                *actor_ref.alive(game) && *target_ref.alive(game),
 
             target: 
-                actor_ref.deref(game).role().can_night_target(game, actor_ref, target_ref) && 
+                actor_ref.role(game).can_night_target(game, actor_ref, target_ref) && 
                 game.current_phase() == PhaseType::Night,
             day_target: 
-                actor_ref.deref(game).role().can_day_target(game, actor_ref, target_ref),
+                actor_ref.role(game).can_day_target(game, actor_ref, target_ref),
         }
     }
     pub fn from(game: &Game, actor_ref: PlayerReference)->Vec<Self>{

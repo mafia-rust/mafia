@@ -21,18 +21,16 @@ pub(super) const TEAM: Option<Team> = Some(Team::Faction);
 
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-    if *actor_ref.deref(game).night_roleblocked() {return}
+    if *actor_ref.night_roleblocked(game) {return}
     if priority != 9 {return}
     
-    if let Some(visit) = actor_ref.deref(game).night_visits().first(){
-        let target_index = visit.target;
-        
+    if let Some(visit) = actor_ref.night_visits(game).first(){
 
-        let killed = Player::try_night_kill(game, target_index, GraveKiller::Mafia, 1);
+        let target_ref = visit.target;
+        let killed = target_ref.try_night_kill(game, GraveKiller::Mafia, 1);
 
         if !killed {
-            let actor = actor_ref.deref_mut(game);
-            actor.push_night_messages(ChatMessage::NightInformation{ 
+            actor_ref.push_night_messages(game, ChatMessage::NightInformation{ 
                 night_information: NightInformation::TargetSurvivedAttack 
             });
         }

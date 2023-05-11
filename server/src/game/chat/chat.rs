@@ -135,7 +135,7 @@ pub enum ChatGroup {
 }
 impl ChatGroup{
     pub fn player_recieve_from_chat_group(&self, game: &Game, player_ref: PlayerReference)->bool{
-        let role = player_ref.deref(game).role();
+        let role = player_ref.role(game);
 
         role.get_current_recieve_chat_groups(game, player_ref).contains(self)
     }

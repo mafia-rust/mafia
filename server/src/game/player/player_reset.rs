@@ -1,48 +1,41 @@
+
+
 use crate::{game::{phase::PhaseType, Game, verdict::Verdict, grave::GraveRole}, network::packet::ToClientPacket};
+use super::{PlayerReference};
 
-use super::{PlayerReference, Player};
-
-
-
-
-impl Player{
-    pub fn tick(&mut self){
-        self.send_chat_messages();
+impl PlayerReference{
+    pub fn tick(&self, game: &mut Game){
+        self.send_chat_messages(game);
         // self.send_available_buttons();
     }
-    pub fn reset_phase_start(game: &mut Game, player_ref: PlayerReference, phase: PhaseType){
+    pub fn reset_phase_start(&self, game: &mut Game, phase: PhaseType){
         match phase {
             PhaseType::Morning => {},
             PhaseType::Discussion => {},
             PhaseType::Voting => {
-                Player::set_chosen_vote(game, player_ref, None);
-                Player::set_verdict(game, player_ref, Verdict::Abstain);
+                
+                self.set_chosen_vote(game, None);
+                self.set_verdict(game, Verdict::Abstain);
             },
             PhaseType::Testimony => {},
             PhaseType::Judgement => {},
             PhaseType::Evening => {},
             PhaseType::Night => {
 
-                let player = player_ref.deref_mut(game);
-
-                player.night_variables.alive_tonight=  *player.alive();
-                player.night_variables.died=           false;
-                player.night_variables.attacked=       false;
-                player.night_variables.roleblocked=    false;
-                player.night_variables.defense=        player.role().defense();
-                player.night_variables.suspicious=     player.role().suspicious();
-                player.night_variables.disguised_as=   None;
-                player.night_variables.chosen_targets= vec![];
-                player.night_variables.visits=         vec![];
-                player.night_variables.messages= vec![];
-                player.night_variables.grave_role= GraveRole::Role(player.role());
-                player.night_variables.grave_killers= vec![];
-                player.night_variables.grave_will= player.will().clone();   //THIS NEEDS TO BE SET RIGHT BEFORE THEY DIE
-                player.night_variables.grave_death_notes= vec![];
-                
-                player_ref.deref(game).send_packet(ToClientPacket::YourTarget { 
-                    player_indices: PlayerReference::ref_vec_to_index(player_ref.deref(game).chosen_targets()) 
-                });
+                self.set_night_alive_tonight(game,   *self.alive(game));
+                self.set_night_died(game,            false);
+                self.set_night_attacked(game,        false);
+                self.set_night_roleblocked(game,     false);
+                self.set_night_defense(game,         self.role(game).defense());
+                self.set_night_suspicious(game,      self.role(game).suspicious());
+                self.set_night_disguised_as(game,    None);
+                self.set_chosen_targets(game,  vec![]);
+                self.set_night_visits(game,          vec![]);
+                self.set_night_messages(game,  vec![]);
+                self.set_night_grave_role(game,  GraveRole::Role(self.role(game)));
+                self.set_night_grave_killers(game,  vec![]);
+                self.set_night_grave_will(game,  self.will(game).clone());   //THIS NEEDS TO BE SET RIGHT BEFORE THEY DIE
+                self.set_night_grave_death_notes(game,  vec![]);
             }
         }
     }

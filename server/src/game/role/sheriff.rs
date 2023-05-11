@@ -20,18 +20,16 @@ pub(super) const TEAM: Option<Team> = None;
 
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-    if *actor_ref.deref(game).night_roleblocked() {return;}
+    if *actor_ref.night_roleblocked(game) {return;}
     if priority != 8 {return;}
 
-    if let Some(visit) = actor_ref.deref(game).night_visits().first(){
-        let target_ref = visit.target;
-        let target = target_ref.deref(game);
+    if let Some(visit) = actor_ref.night_visits(game).first(){
         
         let message = ChatMessage::NightInformation { 
-            night_information: NightInformation::SheriffResult { suspicious: *target.night_suspicious() } 
+            night_information: NightInformation::SheriffResult { suspicious: *visit.target.night_suspicious(game) } 
         };
         
-        actor_ref.deref_mut(game).push_night_messages( message );
+        actor_ref.push_night_messages(game, message);
     }
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {

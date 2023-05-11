@@ -55,27 +55,24 @@ impl Grave{
     pub fn from_player_night(game: &mut Game, player_ref: PlayerReference)->Grave{
 
         let day_number = game.phase_machine.day_number.clone();
-        let player = player_ref.deref(game);
 
         Grave { 
             player: *player_ref.index(), 
-            role: player.night_grave_role().clone(),
-            death_cause: GraveDeathCause::Killers(player.night_grave_killers().clone()),
-            will: player.night_grave_will().clone(),
+            role: player_ref.night_grave_role(game).clone(),
+            death_cause: GraveDeathCause::Killers(player_ref.night_grave_killers(game).clone()),
+            will: player_ref.night_grave_will(game).clone(),
             died_phase: GravePhase::Night, 
             day_number,
-            death_notes: player.night_grave_death_notes().clone()
+            death_notes: player_ref.night_grave_death_notes(game).clone()
         }
     }
     pub fn from_player_lynch(game: &mut Game, player_ref: PlayerReference)->Grave{
 
-        let player = player_ref.deref(game);
-
         Grave { 
             player: *player_ref.index(), 
-            role: GraveRole::Role(player.role()), 
+            role: GraveRole::Role(player_ref.role(game)), 
             death_cause: GraveDeathCause::Lynching, 
-            will: player.will().clone(), 
+            will: player_ref.will(game).clone(), 
             died_phase: GravePhase::Day, 
             day_number: game.phase_machine.day_number,
             death_notes: vec![]
