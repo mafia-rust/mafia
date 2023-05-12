@@ -1,11 +1,12 @@
 
 
-use crate::{game::{phase::PhaseType, Game, verdict::Verdict, grave::GraveRole}, network::packet::ToClientPacket};
+use crate::{game::{phase::PhaseType, Game, verdict::Verdict, grave::GraveRole}, network::packet::ToClientPacket, log};
 use super::{PlayerReference};
 
 impl PlayerReference{
     pub fn tick(&self, game: &mut Game){
         self.send_chat_messages(game);
+        
         // self.send_available_buttons();
     }
     pub fn reset_phase_start(&self, game: &mut Game, phase: PhaseType){

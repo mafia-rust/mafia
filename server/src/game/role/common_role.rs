@@ -37,7 +37,7 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         crate::game::phase::PhaseType::Judgement => vec![ChatGroup::All],
         crate::game::phase::PhaseType::Evening => vec![ChatGroup::All],
         crate::game::phase::PhaseType::Night => {
-            if *actor_ref.night_jailed(game){
+            if *actor_ref.night_jailed(game) || actor_ref.role(game) == Role::Jailor{
                 return vec![ChatGroup::Jail];
             }else{
                 night_chat_groups

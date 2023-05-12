@@ -23,8 +23,6 @@ pub(super) const TEAM: Option<Team> = None;
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
     match priority{
         Priority::TopPriority=>{
-            
-            //else nobody is jailed
         }
         Priority::Kill=>{
             if *actor_ref.night_roleblocked(game) {return}
@@ -69,7 +67,7 @@ pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference,
     crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, true)
 }
 pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-    crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Jail])
+    crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
 }
 pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
     crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
@@ -82,13 +80,10 @@ pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, phase:
             if let Some(jailed_ref) = jailed_target_ref {
                 jailed_ref.clone().set_night_jailed(game, true);
             }
-        },
-        PhaseType::Morning=>{
             actor_ref.set_role_data(game, RoleData::Jailor{ jailed_target_ref: None });
         },
         _=>{}
     }
-    
 }
 pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){
     crate::game::role::common_role::on_role_creation(game, actor_ref);

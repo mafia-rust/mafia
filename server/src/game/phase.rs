@@ -122,21 +122,6 @@ impl PhaseType {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: game.phase_machine.day_number });
             },
         }
-
-        //every phase
-        for player_ref in PlayerReference::all_players(game){
-            player_ref.reset_phase_start(game, game.phase_machine.current_state);
-
-            player_ref.send_packet(game, ToClientPacket::YourButtons{
-                buttons: YourButtons::from(game, player_ref) 
-            });
-            
-        }
-        game.send_packet_to_all(ToClientPacket::Phase { 
-            phase: game.current_phase(), 
-            day_number: game.phase_machine.day_number, 
-            seconds_left: game.phase_machine.time_remaining.as_secs() 
-        });
     }
 
     ///returns the next phase
