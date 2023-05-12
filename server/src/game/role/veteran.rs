@@ -20,8 +20,10 @@ pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Factio
 pub(super) const TEAM: Option<Team> = None;
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    if *actor_ref.night_jailed(game) {return;}
+    
     match priority {
-        1 => {
+        Priority::Unswappable => {
             let RoleData::Veteran { alerts_remaining, alerting_tonight } = actor_ref.role_data(game) else {unreachable!()};
             
             if *alerts_remaining > 0 {
@@ -37,7 +39,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
                 }
             }
         }
-        9 => {
+        Priority::Kill => {
             let RoleData::Veteran { alerts_remaining, alerting_tonight } = actor_ref.role_data(game) else {unreachable!()};
             
             if !alerting_tonight {return}
@@ -48,6 +50,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
                     let visit = other_player_ref.night_visits(game).get(visit_index).unwrap();
 
                     if visit.target!=actor_ref || visit.astral {continue}
+                    if *other_player_ref.night_jailed(game){continue;}  //Attacking Jailed Player?
 
                     other_player_ref.push_night_messages(game, ChatMessage::NightInformation{ 
                         night_information: NightInformation::VeteranAttackedYou 
@@ -78,7 +81,7 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
     actor_ref.chosen_targets(game).len() < 1 &&
     *actor_ref.alive(game)
 }
-pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference) {
+pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
 
 }
 pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target: PlayerReference) -> bool {

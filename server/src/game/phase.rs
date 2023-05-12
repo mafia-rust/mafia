@@ -4,7 +4,7 @@ use serde::{Serialize, Deserialize};
 
 use crate::network::packet::{ToClientPacket, YourButtons};
 
-use super::{settings::PhaseTimeSettings, Game, player::{Player, self, PlayerReference}, chat::{ChatGroup, ChatMessage}, game, verdict::Verdict, grave::Grave, role::{Role, RoleData}, role_list::Faction};
+use super::{settings::PhaseTimeSettings, Game, player::{Player, self, PlayerReference}, chat::{ChatGroup, ChatMessage}, game, verdict::Verdict, grave::Grave, role::{Role, RoleData, Priority}, role_list::Faction};
 
 
 #[derive(Clone, Copy, PartialEq, Debug, Eq, Serialize, Deserialize)]
@@ -122,18 +122,6 @@ impl PhaseType {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: game.phase_machine.day_number });
             },
         }
-
-        //every phase
-        for player_ref in PlayerReference::all_players(game){
-            player_ref.send_packet(game, ToClientPacket::YourButtons{
-                buttons: YourButtons::from(game, player_ref) 
-            });
-        }
-        game.send_packet_to_all(ToClientPacket::Phase { 
-            phase: game.current_phase(), 
-            day_number: game.phase_machine.day_number, 
-            seconds_left: game.phase_machine.time_remaining.as_secs() 
-        });
     }
 
     ///returns the next phase
@@ -185,7 +173,7 @@ impl PhaseType {
                 }
 
                 //Night actions -- main loop
-                for priority in 0..12{
+                for priority in Priority::values(){
                     for player_ref in PlayerReference::all_players(game){
                         player_ref.role(game).do_night_action(game, player_ref, priority);
                     }

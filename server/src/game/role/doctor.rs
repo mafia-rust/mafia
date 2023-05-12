@@ -21,12 +21,18 @@ pub(super) const TEAM: Option<Team> = None;
 
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    if *actor_ref.night_jailed(game) {return;}
     if *actor_ref.night_roleblocked(game) {return}
 
     match priority {
-        6 => {
+        Priority::Heal => {
             let Some(visit) = actor_ref.night_visits(game).first() else {return};
-            let target_ref: PlayerReference = visit.target.clone();
+            let target_ref = visit.target.clone();
+            if *target_ref.night_jailed(game){
+                actor_ref.push_night_messages(game, ChatMessage::NightInformation { night_information: NightInformation::TargetJailed });
+                return
+            }
+
             let RoleData::Doctor{mut self_heals_remaining, mut target_healed_ref } = actor_ref.role_data(game).clone() else {unreachable!()};
             
             if actor_ref == target_ref {
@@ -37,7 +43,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
 
             actor_ref.set_role_data(game, RoleData::Doctor{self_heals_remaining, target_healed_ref});
         }
-        10 => {
+        Priority::Investigative => {
             let RoleData::Doctor{self_heals_remaining, target_healed_ref } = actor_ref.role_data(game).clone() else {unreachable!()};
             
             if let Some(target_healed_ref) = target_healed_ref {
@@ -57,10 +63,10 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
     *actor_ref.alive(game) &&
     *target_ref.alive(game)
 }
-pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference) {
+pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
     
 }
-pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target: PlayerReference) -> bool {
+pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
     false
 }
 pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {

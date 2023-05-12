@@ -125,13 +125,24 @@ impl Game {
         while self.phase_machine.time_remaining <= Duration::ZERO{
             let new_phase = PhaseType::end(self);
 
-            //reset variables
+            //player reset
             for player_ref in PlayerReference::all_players(self){
                 player_ref.reset_phase_start(self, new_phase);
+                player_ref.role(&self).on_phase_start(self, player_ref, new_phase);
             }
+
+            //game reset
             self.reset_phase_start(new_phase);
             
+            //phase start
             self.jump_to_start_phase(new_phase);
+
+            for player_ref in PlayerReference::all_players(self){
+                player_ref.send_packet(self, ToClientPacket::YourButtons{
+                    buttons: YourButtons::from(self, player_ref) 
+                });
+            }
+            
         }
         
         //subtract time for actual tick
@@ -160,6 +171,12 @@ impl Game {
         self.phase_machine.time_remaining += self.phase_machine.current_state.get_length(&self.settings.phase_times);
         //call start
         PhaseType::start(self);
+
+        self.send_packet_to_all(ToClientPacket::Phase { 
+            phase: phase, 
+            day_number: self.phase_machine.day_number, 
+            seconds_left: self.phase_machine.time_remaining.as_secs() 
+        });
     }
 
     pub fn add_message_to_chat_group(&mut self, group: ChatGroup, message: ChatMessage){
@@ -171,13 +188,8 @@ impl Game {
         }
 
         //add messages
-        let players = group.all_players_in_group(self);
-        for player_ref in PlayerReference::all_players(self){
+        for player_ref in group.all_players_in_group(self){
             player_ref.add_chat_message(self, message.clone());
-        }
-
-        //send messages to player
-        for player_ref in PlayerReference::all_players(self){
             player_ref.send_chat_messages(self);
         }
     }

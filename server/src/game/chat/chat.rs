@@ -103,6 +103,7 @@ pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
     MayorRevealed{player_index: PlayerIndex}, //Sammy revealed as mayor
     MayorCantWhisper,   //you cant whisper as or to a revealed mayor
+    Jailed,             //you have been jailed
     JailorDecideExecuteYou,     //Jailor has decided to execute you
     MediumSeanceYou,       //You are being seanced by the medium
     JesterWon, //The jester will get their revenge from the grave
@@ -128,16 +129,14 @@ pub enum ChatGroup {
     Vampire,
     Coven,
 
-    //Jail
+    Jail,
     //Seance
     //Whisper
     //Pirate, 
 }
 impl ChatGroup{
     pub fn player_recieve_from_chat_group(&self, game: &Game, player_ref: PlayerReference)->bool{
-        let role = player_ref.role(game);
-
-        role.get_current_recieve_chat_groups(game, player_ref).contains(self)
+        player_ref.role(game).get_current_recieve_chat_groups(game, player_ref).contains(self)
     }
 
     pub fn all_players_in_group(&self, game: &Game)->Vec<PlayerReference>{

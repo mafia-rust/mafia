@@ -15,7 +15,7 @@ pub enum NightInformation {
     YouDied,
 
     /* Role-specific */
-    
+    TargetJailed,
 
     SpyMafiaVisit{players: Vec<PlayerIndex>},
     SpyCovenVisit{players: Vec<PlayerIndex>},

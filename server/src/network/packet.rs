@@ -54,8 +54,9 @@ pub enum ToClientPacket{
     
     PlayerAlive{alive: Vec<bool>},
     #[serde(rename_all = "camelCase")]
-    PlayerVotes{voted_for_player: Vec<u8>}, //map from playerindex to num_voted_for that player
+    PlayerVotes{voted_for_player: HashMap<PlayerIndex, u8>}, //map from playerindex to num_voted_for that player
 
+    YourJailed,
     YourButtons{buttons: Vec<YourButtons>},
     #[serde(rename_all = "camelCase")]
     YourRoleLabels{role_labels: HashMap<PlayerIndex, Role>},
@@ -83,17 +84,16 @@ impl ToClientPacket {
         serde_json::to_string(&self).unwrap()
     }
     pub fn new_player_votes(game: &mut Game)->ToClientPacket{
-        let mut voted_for_player: Vec<u8> = Vec::new();
+        let mut voted_for_player: HashMap<PlayerIndex, u8> = HashMap::new();
 
-        for _ in game.players.iter(){
-            voted_for_player.push(0);
-        }
 
         for player_ref in PlayerReference::all_players(game){
             if *player_ref.alive(game){
-                if let Some(player_voted_ref) = player_ref.chosen_vote(game){
-                    if let Some(num_votes) = voted_for_player.get_mut(*player_voted_ref.index() as usize){
+                if let Some(player_voted) = player_ref.chosen_vote(game){
+                    if let Some(num_votes) = voted_for_player.get_mut(player_voted.index()){
                         *num_votes+=1;
+                    }else{
+                        voted_for_player.insert(*player_voted.index(), 1);
                     }
                 }
             }
@@ -146,7 +146,8 @@ impl YourButtons{
                 actor_ref.role(game).can_night_target(game, actor_ref, target_ref) && 
                 game.current_phase() == PhaseType::Night,
             day_target: 
-                actor_ref.role(game).can_day_target(game, actor_ref, target_ref),
+                actor_ref.role(game).can_day_target(game, actor_ref, target_ref) &&
+                game.current_phase().is_day(),
         }
     }
     pub fn from(game: &Game, actor_ref: PlayerReference)->Vec<Self>{
