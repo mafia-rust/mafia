@@ -29,7 +29,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
             let Some(visit) = actor_ref.night_visits(game).first() else {return};
             let target_ref = visit.target.clone();
             if *target_ref.night_jailed(game){
-                actor_ref.push_night_messages(game, ChatMessage::NightInformation { night_information: NightInformation::TargetJailed });
+                actor_ref.push_night_messages(game, NightInformation::TargetJailed);
                 return
             }
 
@@ -49,8 +49,8 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
             if let Some(target_healed_ref) = target_healed_ref {
                 if *target_healed_ref.night_attacked(game){
                     
-                    actor_ref.push_night_messages(game, ChatMessage::NightInformation { night_information: NightInformation::DoctorHealed });
-                    target_healed_ref.push_night_messages(game, ChatMessage::NightInformation { night_information: NightInformation::DoctorHealedYou });
+                    actor_ref.push_night_messages(game, NightInformation::DoctorHealed);
+                    target_healed_ref.push_night_messages(game, NightInformation::DoctorHealedYou);
                 }
             }
         }

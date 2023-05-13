@@ -34,9 +34,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
                     let killed = target_ref.try_night_kill(game, GraveKiller::Role(Role::Jailor), 3);
         
                     if !killed {
-                        actor_ref.push_night_messages(game, ChatMessage::NightInformation{ 
-                            night_information: NightInformation::TargetSurvivedAttack 
-                        });
+                        actor_ref.push_night_messages(game, NightInformation::TargetSurvivedAttack);
                     }
                 }
             }

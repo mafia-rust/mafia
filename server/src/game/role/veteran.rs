@@ -52,21 +52,21 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
                     if visit.target!=actor_ref || visit.astral {continue}
                     if *other_player_ref.night_jailed(game){continue;}  //Attacking Jailed Player?
 
-                    other_player_ref.push_night_messages(game, ChatMessage::NightInformation{ 
-                        night_information: NightInformation::VeteranAttackedYou 
-                    });
+                    other_player_ref.push_night_messages(game,
+                        NightInformation::VeteranAttackedYou 
+                    );
 
                     //Kill
                     let killed = other_player_ref.try_night_kill(game, GraveKiller::Role(Role::Veteran), 2);
                     
-                    actor_ref.push_night_messages(game, ChatMessage::NightInformation{ 
-                        night_information: NightInformation::VeteranAttackedVisitor 
-                    });
+                    actor_ref.push_night_messages(game, 
+                        NightInformation::VeteranAttackedVisitor 
+                    );
 
                     if !killed {
-                        actor_ref.push_night_messages(game, ChatMessage::NightInformation{ 
-                            night_information: NightInformation::TargetSurvivedAttack 
-                        });
+                        actor_ref.push_night_messages(game,
+                            NightInformation::TargetSurvivedAttack 
+                        );
                     }
                 }
             }

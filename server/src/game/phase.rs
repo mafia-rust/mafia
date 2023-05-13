@@ -4,7 +4,7 @@ use serde::{Serialize, Deserialize};
 
 use crate::network::packet::{ToClientPacket, YourButtons};
 
-use super::{settings::PhaseTimeSettings, Game, player::{Player, self, PlayerReference}, chat::{ChatGroup, ChatMessage}, game, verdict::Verdict, grave::Grave, role::{Role, RoleData, Priority}, role_list::Faction};
+use super::{settings::PhaseTimeSettings, Game, player::{Player, self, PlayerReference}, chat::{ChatGroup, ChatMessage, night_message::NightInformation}, game, verdict::Verdict, grave::Grave, role::{Role, RoleData, Priority}, role_list::Faction};
 
 
 #[derive(Clone, Copy, PartialEq, Debug, Eq, Serialize, Deserialize)]
@@ -219,7 +219,7 @@ impl PhaseType {
 
                 //queue night messages
                 for player_ref in PlayerReference::all_players(game){
-                    player_ref.add_chat_messages(game, player_ref.night_messages(game).clone());
+                    player_ref.add_chat_messages(game, NightInformation::to_chat_message_vec(player_ref.night_messages(game)));
                 }
 
 

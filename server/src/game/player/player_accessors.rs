@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{game::{role::{RoleData, Role}, Game, phase::PhaseType, verdict::Verdict, chat::{ChatGroup, ChatMessage}, visit::Visit, grave::{GraveRole, GraveKiller}}, network::packet::ToClientPacket};
+use crate::{game::{role::{RoleData, Role}, Game, phase::PhaseType, verdict::Verdict, chat::{ChatGroup, ChatMessage, night_message::NightInformation}, visit::Visit, grave::{GraveRole, GraveKiller}}, network::packet::ToClientPacket};
 use super::{Player, PlayerIndex, PlayerReference};
 
 
@@ -210,13 +210,13 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.visits = visits;
     }
 
-    pub fn night_messages<'a>(&self, game: &'a Game)->&'a Vec<ChatMessage>{
+    pub fn night_messages<'a>(&self, game: &'a Game)->&'a Vec<NightInformation>{
         &self.deref(game).night_variables.messages
     }
-    pub fn push_night_messages(&self, game: &mut Game, message: ChatMessage){
+    pub fn push_night_messages(&self, game: &mut Game, message: NightInformation){
         self.deref_mut(game).night_variables.messages.push(message);
     }
-    pub fn set_night_messages(&self, game: &mut Game, messages: Vec<ChatMessage>){
+    pub fn set_night_messages(&self, game: &mut Game, messages: Vec<NightInformation>){
         self.deref_mut(game).night_variables.messages = messages;
     }
 

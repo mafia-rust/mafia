@@ -27,12 +27,10 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
     if let Some(visit) = actor_ref.night_visits(game).first(){
         
         if *visit.target.night_jailed(game){
-            actor_ref.push_night_messages(game, ChatMessage::NightInformation { night_information: NightInformation::TargetJailed });
+            actor_ref.push_night_messages(game, NightInformation::TargetJailed );
             return
         }
-        let message = ChatMessage::NightInformation { 
-            night_information: NightInformation::SheriffResult { suspicious: *visit.target.night_suspicious(game) } 
-        };
+        let message = NightInformation::SheriffResult { suspicious: *visit.target.night_suspicious(game)};
         
         actor_ref.push_night_messages(game, message);
     }
