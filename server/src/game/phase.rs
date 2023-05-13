@@ -159,14 +159,14 @@ impl PhaseType {
                 Self::Evening
             },
             PhaseType::Evening => {
-                //TODO should be impossible for there to be no player on trial therefore unwrap
-                let player_on_trial = game.player_on_trial.unwrap();
-
-                let grave = Grave::from_player_lynch(game, player_on_trial);
-                game.send_packet_to_all(ToClientPacket::AddGrave{grave: grave.clone()});
-                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied {
-                    grave
-                });
+                if let Some(player_on_trial) = game.player_on_trial{
+                    let grave = Grave::from_player_lynch(game, player_on_trial);
+                    game.send_packet_to_all(ToClientPacket::AddGrave{grave: grave.clone()});
+                    game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied {
+                        grave
+                    });
+                    player_on_trial.set_alive(game, false);
+                }
 
 
                 Self::Night
