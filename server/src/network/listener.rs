@@ -32,7 +32,7 @@ impl Listener{
         };
 
         let threaded_lobbies = out.lobbies.clone();
-        const DESIRED_FRAME_TIME: Duration = Duration::from_secs(1);
+        const DESIRED_FRAME_TIME: Duration = Duration::from_millis(980);
 
         tokio::spawn(async move {
             let mut last_tick = tokio::time::Instant::now();
@@ -43,6 +43,8 @@ impl Listener{
                     let mut closed_lobbies = Vec::new();
                     
                     delta_time = last_tick.elapsed();
+                    last_tick = tokio::time::Instant::now();
+
                     for (key, lobby) in lobbies.iter_mut() {
                         if lobby.is_closed() {
                             closed_lobbies.push(*key);
@@ -50,7 +52,6 @@ impl Listener{
                             lobby.tick(delta_time);
                         }
                     }
-                    last_tick = tokio::time::Instant::now();
 
                     // Remove closed lobbies
                     for key in closed_lobbies {
@@ -60,7 +61,7 @@ impl Listener{
                 }
 
                 // Calculate sleep time based on the last frame time
-                tokio::time::sleep(DESIRED_FRAME_TIME.saturating_sub(delta_time)).await;
+                tokio::time::sleep(DESIRED_FRAME_TIME).await;
             }
         });
         out
@@ -69,7 +70,7 @@ impl Listener{
 
 impl ConnectionEventListener for Listener {
     fn on_connect(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection) {
-        println!("{}\t{}", log::important("CONNECTED:   "), connection.get_address());
+        println!("{}\t{}", log::important("CONNECTED:"), connection.get_address());
 
         self.players.insert(connection.get_address().clone(), PlayerLocation::OutsideLobby);
     }
