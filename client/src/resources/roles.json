@@ -9,6 +9,16 @@
         "endGameCondition": "Faction",
         "maxCount": null
     },
+    "Investigator": {
+        "faction": "Town",
+        "alignment": "Investigative",
+        "suspicious": false,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": null
+    },
     "Jailor":{
         "faction": "Town",
         "alignment": "Power",

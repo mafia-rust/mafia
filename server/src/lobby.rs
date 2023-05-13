@@ -8,7 +8,7 @@ use tokio_tungstenite::tungstenite::Message;
 
 use crate::{
     game::{Game, player::{PlayerIndex, Player, PlayerReference}, 
-    settings::{Settings, investigator_results::InvestigatorResultSettings, self}, 
+    settings::{Settings, self}, 
     role_list::{self, RoleList, RoleListEntry}, phase::PhaseType}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket, RejectJoinReason, RejectStartReason}, listener::ArbitraryPlayerID}, 
     utils::trim_whitespace, log
 };
@@ -65,9 +65,6 @@ impl Lobby {
 
     /// Catches the sender up with the current lobby settings
     pub fn inform_player(sender: UnboundedSender<ToClientPacket>, settings: &Settings) {
-        sender.send(ToClientPacket::InvestigatorResults { 
-            investigator_results: settings.invesigator_results.clone() 
-        });
         for phase in [
             PhaseType::Discussion, 
             PhaseType::Evening, 
@@ -216,7 +213,6 @@ impl Lobby {
                 
                 self.send_to_all(ToClientPacket::RoleList { role_list });
             }
-            ToServerPacket::SetInvestigatorResults{investigator_results} => todo!(),
             _ => {
                 let LobbyState::Game { game, players } = &mut self.lobby_state else {
                     println!("{} {}", log::error("Player tried to set investigator results settings before joining a lobby!"), player_arbitrary_id);

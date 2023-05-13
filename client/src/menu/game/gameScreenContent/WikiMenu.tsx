@@ -49,9 +49,13 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
         if (role.type === "exact"){
             return <div>
                 <div>
-                    {translate("role."+role.role+".name")}<br/><br/>
-                    {translate("role."+role.role+".description")}<br/><br/>
-                    {translate("role."+role.role+".advancedDescription")}<br/><br/>
+                    <div>{translate("role."+role.role+".name")}</div>
+                    <br/>
+                    {translate("menu.wiki.abilities")}
+                    {this.renderRoleText(translate("role."+role.role+".abilities"))}
+                    <br/>
+                    {translate("menu.wiki.attributes")}
+                    {this.renderRoleText(translate("role."+role.role+".attributes"))}
                 </div>
             </div>
         } else {
@@ -60,22 +64,14 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
             </div>
         }
     }
-    renderInvestigativeResults(){
-        return <div>
-            {this.state.gameState.investigatorResults.map((result, index)=>{
-                //for every investigative result
-                //TODO this flex box isnt working
-                return <div key={index} style={{display:"flex"}}>
-                    {result.map((role: string, index2: React.Key | null | undefined)=>{
-                        //for every role in invest result
-                        return <div key={index2}>
-                            <button>{translate("role."+role+".name")}</button>
-                        </div>
-                    }, this)}
-                </div>
-
-            }, this)}
-        </div>
+    renderRoleText(string: string): JSX.Element{
+        let split = string.split("*");
+        let out = [];
+        for(let i = 1; i < split.length; i++){
+            out.push(<li>{split[i]}</li>);
+            // out.push(<br/>);
+        }
+        return <div>{out}</div>
     }
     render(){return(<div style={{height: "100%", overflowX:"hidden"}}>
         <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.WikiMenu)}}>{translate("menu.wiki.title")}</button>
@@ -83,8 +79,8 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
         <RolePicker roleListEntry={this.state.roleListEntry} onChange={(value)=>{this.onChangeRolePicker(value);}}/>
         <br/>
         {this.renderRole(this.state.roleListEntry)}
+        TODO priorties list of ALL ROLES with collapsable sections
+        TODO list of all night message strings
         <br/>
-        {translate("menu.wiki.investigatorResults")}
-        {this.renderInvestigativeResults()}
     </div>)}
 }

@@ -6,7 +6,7 @@ macro_rules! make_role_enum {
             })?
         ),*
     ) => {
-        $(mod $file;)*
+        $(pub(crate) mod $file;)*
 
 
         #[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
@@ -151,6 +151,7 @@ make_role_enum! {
     },
 
     Sheriff : sheriff,
+    Investigator : investigator,
 
     Doctor : doctor {
         self_heals_remaining: u8 = 1,
