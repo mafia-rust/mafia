@@ -57,3 +57,13 @@ pub enum NightInformation {
     ArsonistCleanedSelf,    //You cleaned the gas off yourself
     ArsonistWasDoused,  //you were doused in gas (only arsonists recieve this message)
 }
+
+impl NightInformation{
+    pub fn to_chat_message(&self)->ChatMessage{
+        ChatMessage::NightInformation{night_information: self.clone()}
+    }
+    pub fn to_chat_message_vec(vec: &Vec<Self>)->Vec<ChatMessage>{
+        vec.into_iter().map(|x| x.to_chat_message()).collect()
+    }
+}
+

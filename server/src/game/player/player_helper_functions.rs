@@ -10,12 +10,12 @@ impl PlayerReference{
         if self.role(game).roleblockable() {
             self.set_night_roleblocked(game, true);
             self.push_night_messages(game,
-                ChatMessage::NightInformation { night_information: NightInformation::RoleBlocked { immune: false }}
+                NightInformation::RoleBlocked { immune: false }
             );
             return true;
         }else{
             self.push_night_messages(game,
-                ChatMessage::NightInformation { night_information: NightInformation::RoleBlocked { immune: true }}
+                NightInformation::RoleBlocked { immune: true }
             );
             return false;
         }
@@ -26,13 +26,13 @@ impl PlayerReference{
 
         if *self.night_defense(game) >= attack {
             self.push_night_messages(game,
-                ChatMessage::NightInformation { night_information: NightInformation::YouSurvivedAttack }
+                NightInformation::YouSurvivedAttack
             );
             return false;
         }
         
         //die
-        self.push_night_messages(game, ChatMessage::NightInformation { night_information: NightInformation::YouDied });
+        self.push_night_messages(game, NightInformation::YouDied);
         self.set_night_died(game, true);
         self.set_alive(game, false);
         self.push_night_grave_killers(game, grave_killer);

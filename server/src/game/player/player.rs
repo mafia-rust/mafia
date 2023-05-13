@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use tokio::sync::mpsc::UnboundedSender;
 
-use crate::{game::{role::{RoleData, Role}, chat::ChatMessage, visit::Visit, grave::{GraveRole, GraveKiller}, verdict::Verdict}, network::packet::ToClientPacket};
+use crate::{game::{role::{RoleData, Role}, chat::{ChatMessage, night_message::NightInformation}, visit::Visit, grave::{GraveRole, GraveKiller}, verdict::Verdict}, network::packet::ToClientPacket};
 
 use super::{PlayerIndex, PlayerReference};
 
@@ -46,7 +46,7 @@ pub(super) struct PlayerNightVariables{
     pub(super) chosen_targets: Vec<PlayerReference>,
     pub(super) visits:         Vec<Visit>,
 
-    pub(super) messages: Vec<ChatMessage>,
+    pub(super) messages: Vec<NightInformation>,
 
     pub(super) grave_role: GraveRole,
     pub(super) grave_killers: Vec<GraveKiller>,

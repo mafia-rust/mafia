@@ -28,16 +28,14 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
     if let Some(visit) = actor_ref.night_visits(game).first(){
         let target_ref = visit.target;
         if *target_ref.night_jailed(game){
-            actor_ref.push_night_messages(game, ChatMessage::NightInformation { night_information: NightInformation::TargetJailed });
+            actor_ref.push_night_messages(game, NightInformation::TargetJailed);
             return
         }
 
         let killed = target_ref.try_night_kill(game, GraveKiller::Mafia, 1);
 
         if !killed {
-            actor_ref.push_night_messages(game, ChatMessage::NightInformation{ 
-                night_information: NightInformation::TargetSurvivedAttack 
-            });
+            actor_ref.push_night_messages(game,NightInformation::TargetSurvivedAttack);
         }
     }
 }
