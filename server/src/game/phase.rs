@@ -142,7 +142,8 @@ impl PhaseType {
             },
             PhaseType::Judgement => {
                 
-                let mut innocent = 0;   let mut guilty = 0;
+                let mut innocent = 0;
+                let mut guilty = 0;
                 let mut messages = Vec::new();
                 for player_ref in PlayerReference::all_players(game){
                     match *player_ref.verdict(game){
@@ -153,16 +154,53 @@ impl PhaseType {
                     messages.push(ChatMessage::JudgementVerdict { voter_player_index: *player_ref.index(), verdict: player_ref.verdict(game).clone() });
                 }
                 game.add_messages_to_chat_group(ChatGroup::All, messages);
-                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialVerdict { player_on_trial: game.player_on_trial.unwrap().index().clone(), innocent, guilty });
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialVerdict{ 
+                        player_on_trial: game.player_on_trial.unwrap().index().clone(), 
+                        innocent, guilty 
+                });
+
+                game.trials_left-=1;
                 
-                Self::Evening
+                if innocent < guilty  {
+                    Self::Evening
+                }else if game.trials_left <= 0 {
+                    //TODO send no trials left
+                    Self::Evening
+                }else{
+                    Self::Voting
+                }
             },
             PhaseType::Evening => {
+                if let Some(player_on_trial) = game.player_on_trial{
+                    let mut guilty = 0;
+                    let mut innocent = 0;
+                    for player_ref in PlayerReference::all_players(game){
+                        match *player_ref.verdict(game){
+                            Verdict::Innocent => innocent += 1,
+                            Verdict::Abstain => {},
+                            Verdict::Guilty => guilty += 1,
+                        }
+                    }
+                    if innocent < guilty {
+                        let grave = Grave::from_player_lynch(game, player_on_trial);
+                        game.send_packet_to_all(ToClientPacket::AddGrave{grave: grave.clone()});
+                        game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied {
+                            grave
+                        });
+                        player_on_trial.set_alive(game, false);
+                    }
+                }
+
                 Self::Night
             },
             PhaseType::Night => {
 
                 //MAIN NIGHT CODE
+
+                //get wills
+                for player_ref in PlayerReference::all_players(game){
+                    player_ref.set_night_grave_will(game, player_ref.will(game).clone());
+                }
 
                 //get visits
                 for player_ref in PlayerReference::all_players(game){

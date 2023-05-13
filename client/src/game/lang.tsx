@@ -56,9 +56,9 @@ export function getChatString(message: ChatMessage): string {
         case "playerDied":
             //TODO, role doesnt work properly
             return translate("chatmessage.playerDied",
-                GAME_MANAGER.gameState.players[message.grave.playerIndex],
-                message.grave.role,
-                "UNINPLEMENTED",
+                GAME_MANAGER.gameState.players[message.grave.playerIndex].toString(),
+                JSON.stringify(message.grave.role),
+                JSON.stringify(message.grave.deathCause),
                 message.grave.will
             );
         case "phaseChange":
@@ -97,6 +97,7 @@ export function getChatString(message: ChatMessage): string {
             );
         case "trialVerdict":
             return translate("chatmessage.trialVerdict",
+                GAME_MANAGER.gameState.players[GAME_MANAGER.gameState.playerOnTrial!].toString(),
                 message.innocent>=message.guilty?translate("verdict.innocent"):translate("verdict.guilty"),
                 message.innocent,
                 message.guilty
