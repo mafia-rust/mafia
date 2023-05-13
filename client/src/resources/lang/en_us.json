@@ -36,40 +36,45 @@
     "menu.will.post": "Post",
 
     "menu.wiki.title": "Wiki",
-    "menu.wiki.investigatorResults": "Investigator Results",
     "menu.wiki.noRole": "No role selected",
+    "menu.wiki.abilities": "Abilities",
+    "menu.wiki.attributes": "Attributes",
 
     "menu.playerList.title": "Player List",
 
     "menu.graveyard.title": "Graveyard",
 
     "role.Jailor.name": "Jailor",
-    "role.Jailor.description":"",
-    "role.Jailor.advancedDescription":"",
+    "role.Jailor.abilities":"*Choose one player to jail during the day*You can execute your prisoners up to three times",
+    "role.Jailor.attributes":"*You may anonymously talk with your prisoner at night*If you execute a town member, you forfiet further executes*Jailed players are immune to all attacks, frames, transports, douses and more*Jailed players can't use their ability",
 
     "role.Sheriff.name": "Sheriff",
-    "role.Sheriff.description": "Target a player to find out if they're innocent or suspicious",
-    "role.Sheriff.advancedDescription": "A player could wrongly look suspicious if they're framed, disguised, transported, or otherwise. A Godfather will also look innocent even though they're evil.",
+    "role.Sheriff.abilities": "*Target a player to find out if they're innocent or suspicious",
+    "role.Sheriff.attributes": "*Frames, Douses, Hexes, and Enchants can make your target look suspicious wrongly",
+
+    "role.Investigator.name": "Investigator",
+    "role.Investigator.abilities": "*Target a player to find a clue to their role",
+    "role.Investigator.attributes": "*There are specific clues for each role. You can find them in the wiki",
 
     "role.Doctor.name": "Doctor",
-    "role.Doctor.description":"Target a player to save them from death",
-    "role.Doctor.advancedDescription":"You will grant your target with a powerfull defense. Both you and your target will know if you saved them from an attack.",
+    "role.Doctor.abilities":"*Target a player to save them from death",
+    "role.Doctor.attributes":"*You give your target powerfull defense*You and your target will know they were attacked",
     
     "role.Veteran.name": "Veteran",
-    "role.Veteran.description":"Target yourself to alert and kill everyone who visited you",
-    "role.Veteran.advancedDescription":"You will know if you attack someone, and if they survived. You have a powerfull attack on alert. You have basic defense while on alert.",
+    "role.Veteran.abilities":"*Target yourself to alert, killing everyone who visits you",
+    "role.Veteran.attributes":"*You will know if you attack someone*You have a powerfull attack*You have basic defense while on alert",
     
     "role.Mafioso.name": "Mafioso",
-    "role.Mafioso.description":"Target a player to kill them",
-    "role.Mafioso.advancedDescription":"A Godfather could force you to target someone else. You will know if your target had defense and survived. You have a basic attack. If the mafia has no Mafioso, a memeber of the mafia will become the Mafioso at the start of night.",
+    "role.Mafioso.abilities":"*Target a player to kill them",
+    "role.Mafioso.attributes":"*A Godfather can force you to target someone else*You have a basic attack*If the mafia has no Mafioso, a memeber of the mafia will become the Mafioso at the start of night",
 
     "role.Consort.name": "Consort",
-    "role.Consort.description":"Target a player to roleblock them",
-    "role.Consort.advancedDescription":"A roleblock prevents the target player from performing their night ability. This works the same as the Escort. Some roles can not be roleblocked.",
+    "role.Consort.abilities":"*Target a player to roleblock them",
+    "role.Consort.attributes":"*Roleblocking a player prevents them from using parts of their ability*You can talk with the other mafia at night",
     
     "role.CovenLeader.name": "Coven Leader",
-    "role.CovenLeader.description":"",
-    "role.CovenLeader.advancedDescription":"",
+    "role.CovenLeader.abilities":"",
+    "role.CovenLeader.attributes":"",
     
 
     "FactionAlignment.Faction.Town": "Town",
@@ -110,7 +115,7 @@
     "chatmessage.whisper":"\\0 whispered to \\1: \\2",
     "chatmessage.broadcastWhisper":"\\0 whispered to \\1.",
 
-    "chatmessage.roleAssignment":"Your role is \\0. \\1.",
+    "chatmessage.roleAssignment":"Your role is \\0.",
     "chatmessage.playerDied":"\\0 (\\1) died. They died to \\2. Their will stated this: \\3",
     "chatmessage.phaseChange":"\\0 \\1",
 
@@ -135,7 +140,8 @@
     "chatmessage.night.targetSurvivedAttack": "Your target had defense and survived the attack.",
     "chatmessage.night.youSurvivedAttack": "You were attacked but had defense and survived.",
     "chatmessage.night.youDied":"You died!",
-    "chatmessage.night.spyMafiaVisit":"The mafia visited these players: \\0",
+    "chatmessage.night.spyMafiaVisit":"The mafia visited: \\0",
+    "chatmessage.night.spyCovenVisit":"The coven visited: \\0",
     "chatmessage.night.spyBug":"Your bug captured: \\0",
     "chatmessage.night.veteranAttackedYou":"You were attacked by the veteran you visited.",
     "chatmessage.night.veteranAttackedVisitor":"You attacked a visitor.",

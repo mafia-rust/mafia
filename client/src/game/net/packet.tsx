@@ -118,10 +118,7 @@ export type ToServerPacket = {
     type: "setPhaseTime", 
     phase: Phase, 
     time: number
-} | {
-    type: "setInvestigatorResults", 
-    investigatorResults: Role[][]
-} |
+} | 
 //Game
 { //Accusation
     type: "vote", 

@@ -56,7 +56,7 @@ print!("{}", ToClientPacket::YourVoting { player_index: None }.to_json_string())
 #[tokio::main]
 async fn main() -> Result<(), ()> {
 
-    let config_string: String = fs::read_to_string("./resources/config.json").expect("Should have been able to read the file");
+    let config_string: String = fs::read_to_string("./resources/config.json").expect("Should have read the config file");
 
     let config = serde_json::value::from_value::<Config>(
         serde_json::from_str::<Value>(&config_string).unwrap()

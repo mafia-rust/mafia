@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use crate::game::{
     player::{PlayerIndex, Player, PlayerReference},
     role_list::RoleList,
-    settings::{investigator_results::InvestigatorResultSettings, PhaseTimeSettings},
+    settings::PhaseTimeSettings,
     verdict::Verdict, phase::PhaseType, 
     chat::{ChatMessage, ChatGroup},
     role::{Role, RoleData}, 
@@ -40,8 +40,6 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     RoleList{role_list: RoleList},
     PhaseTime{phase: PhaseType, time: u64},
-    #[serde(rename_all = "camelCase")]
-    InvestigatorResults{investigator_results: InvestigatorResultSettings},
 
         //Game
     //Syncronize
@@ -176,8 +174,6 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SetRoleList{role_list: RoleList},
     SetPhaseTime{phase: PhaseType, time: u64},
-    #[serde(rename_all = "camelCase")]
-    SetInvestigatorResults{investigator_results: InvestigatorResultSettings},
 
     //Game
     #[serde(rename_all = "camelCase")]

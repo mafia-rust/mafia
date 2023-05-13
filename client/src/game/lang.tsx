@@ -50,9 +50,8 @@ export function getChatString(message: ChatMessage): string {
         case "roleAssignment":
             let role = message.role;
             let name = translate("role."+role+".name")
-            let description = translate("role."+role+".description");
             
-            return translate("chatmessage.roleAssignment", name, description);
+            return translate("chatmessage.roleAssignment", name);
         case "playerDied":
             //TODO, role doesnt work properly
             return translate("chatmessage.playerDied",

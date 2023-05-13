@@ -2,6 +2,7 @@ use serde::{Serialize, Deserialize};
 
 use crate::game::player::PlayerIndex;
 use crate::game::role::Role;
+use crate::game::role::investigator::InvestigativeResult;
 
 use super::ChatMessage;
 
@@ -48,7 +49,7 @@ pub enum NightInformation {
     
     SheriffResult { suspicious: bool },
     LookoutResult{players: Vec<PlayerIndex>},
-    InvestigatorResult{roles: Vec<Role>},
+    InvestigatorResult{result: InvestigativeResult},
  
     WitchTargetImmune,
     WitchedYou { immune: bool },    //you were witched
