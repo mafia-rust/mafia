@@ -142,7 +142,8 @@ impl PhaseType {
             },
             PhaseType::Judgement => {
                 
-                let mut innocent = 0;   let mut guilty = 0;
+                let mut innocent = 0;
+                let mut guilty = 0;
                 let mut messages = Vec::new();
                 for player_ref in PlayerReference::all_players(game){
                     match *player_ref.verdict(game){
@@ -158,11 +159,26 @@ impl PhaseType {
                 Self::Evening
             },
             PhaseType::Evening => {
+                //TODO should be impossible for there to be no player on trial therefore unwrap
+                let player_on_trial = game.player_on_trial.unwrap();
+
+                let grave = Grave::from_player_lynch(game, player_on_trial);
+                game.send_packet_to_all(ToClientPacket::AddGrave{grave: grave.clone()});
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied {
+                    grave
+                });
+
+
                 Self::Night
             },
             PhaseType::Night => {
 
                 //MAIN NIGHT CODE
+
+                //get wills
+                for player_ref in PlayerReference::all_players(game){
+                    player_ref.set_night_grave_will(game, player_ref.will(game).clone());
+                }
 
                 //get visits
                 for player_ref in PlayerReference::all_players(game){
