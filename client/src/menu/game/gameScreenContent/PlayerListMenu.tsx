@@ -47,7 +47,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         <div>{votedString}</div>
                         <button className="button gm-button" onClick={()=>{
                             GAME_MANAGER.sendVotePacket(null);
-                        }}>Reset Vote</button>
+                        }}>Reset Vote LANG</button>
                     </div>);
                 }
                 return null;
@@ -61,7 +61,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         <div>{targetStringList.join(", ")+"."}</div>
                         <button className="button gm-button" onClick={()=>{
                             GAME_MANAGER.sendTargetPacket([]);
-                        }}>Reset Targets</button>
+                        }}>Reset Targets LANG</button>
                     </div>);
                 }
                 return null;

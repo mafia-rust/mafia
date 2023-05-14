@@ -28,6 +28,9 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
     if !actor_ref.alive(game){
         return vec![ChatGroup::Dead];
     }
+    if *actor_ref.night_silenced(game){
+        return vec![];
+    }
 
     match game.phase_machine.current_state {
         crate::game::phase::PhaseType::Morning => vec![],
