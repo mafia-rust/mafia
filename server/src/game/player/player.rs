@@ -43,6 +43,7 @@ pub(super) struct PlayerNightVariables{
 
     pub(super) disguised_as:   Option<PlayerReference>,
     pub(super) doused:         bool,
+    pub(super) silenced:       bool,
 
     pub(super) chosen_targets: Vec<PlayerReference>,
     pub(super) visits:         Vec<Visit>,
@@ -82,6 +83,7 @@ impl Player {
 
                 disguised_as:   None,
                 doused:         false,
+                silenced:       false,
 
                 chosen_targets: vec![],
                 visits:         vec![],

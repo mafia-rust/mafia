@@ -54,6 +54,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     PlayerVotes{voted_for_player: HashMap<PlayerIndex, u8>}, //map from playerindex to num_voted_for that player
 
+    YourSilenced,
     YourJailed,
     YourButtons{buttons: Vec<YourButtons>},
     #[serde(rename_all = "camelCase")]

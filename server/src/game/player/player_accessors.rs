@@ -78,14 +78,15 @@ impl PlayerReference{
     pub fn set_chosen_vote(&self, game: &mut Game, chosen_vote: Option<PlayerReference>)->bool{
 
         let your_voting_packet: Option<PlayerIndex>;
-
-        if game.current_phase() != PhaseType::Voting || !self.deref(game).alive{
-            self.deref_mut(game).voting_variables.chosen_vote = None;
-            return false;
-        }
         
         if let Some(chosen_vote) = chosen_vote {
-            if chosen_vote == *self || !chosen_vote.deref(game).alive{
+            if(
+                chosen_vote == *self || 
+                !self.deref(game).alive ||
+                !chosen_vote.deref(game).alive ||
+                game.current_phase() != PhaseType::Voting ||
+                *self.night_silenced(game)
+            ){
                 self.deref_mut(game).voting_variables.chosen_vote = None;
                 return false;
             }
@@ -263,6 +264,17 @@ impl PlayerReference{
         if jailed == true {
             self.send_packet(game, ToClientPacket::YourJailed);
             self.add_chat_message(game, ChatMessage::Jailed);
+        }
+    }
+
+    pub fn night_silenced<'a>(&self, game: &'a Game)->&'a bool{
+        &self.deref(game).night_variables.silenced
+    }
+    pub fn set_night_silenced(&self, game: &mut Game, silenced: bool){
+        self.deref_mut(game).night_variables.silenced = silenced;
+        if silenced == true {
+            self.send_packet(game, ToClientPacket::YourSilenced);
+            self.push_night_messages(game, NightInformation::Silenced);
         }
     }
 }

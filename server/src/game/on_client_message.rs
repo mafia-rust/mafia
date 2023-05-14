@@ -116,12 +116,13 @@ impl Game {
                     Err(_) => break 'packet_match,
                 };
 
-                //ensure its day and your not whispering yourself and the other player exists
-                if !self.current_phase().is_day() || whisperee_ref == sender_player_ref{
-                    break 'packet_match;
-                }
                 
-                if text.replace("\n", "").replace("\r", "").trim().is_empty() {
+                if(
+                    !self.current_phase().is_day() || 
+                    whisperee_ref == sender_player_ref || 
+                    !sender_player_ref.role(self).get_current_send_chat_groups(self, sender_player_ref).contains(&ChatGroup::All) ||
+                    text.replace("\n", "").replace("\r", "").trim().is_empty()
+                ){
                     break 'packet_match;
                 }
 
