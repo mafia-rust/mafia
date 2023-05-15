@@ -44,20 +44,19 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
             });
         };
     }
-
     componentDidMount() {
         GAME_MANAGER.addStateListener(this.listener);
         ChatMenu.instance = this;
     }
-
     componentWillUnmount() {
         GAME_MANAGER.removeStateListener(this.listener);
     }
-
     componentDidUpdate() {
         if(this.bottomIsInViewport(500))   //used to be 500
             this.scrollToBottom();
     }
+
+
 
     scrollToBottom() {
         this.bottomOfPage?.scrollIntoView({ behavior: "smooth" });
@@ -85,7 +84,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         if (event.code === "Enter") {
             event.preventDefault();
             if(ChatMenu.instance === null) return;
-            ChatMenu.instance.sendChatField();
+                ChatMenu.instance.sendChatField();
         }
     };
 
@@ -114,40 +113,31 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         });
     };
 
-    calcInputHeight = (value: string) => {
-        const numberOfLineBreaks = (value.match(/\n/g) || []).length;
-        // min-height + lines x line-height + padding + border
-        const newHeight = 20 + numberOfLineBreaks * 20 + 12 + 2;
-        return newHeight;
-    };
+    
+
+    renderChatMessage(msg: ChatMessage, i: number) {return (
+        <div key={i}>
+            {getChatString(msg)}
+        </div>
+    );}
 
     renderTextInput() {return (
-        <div className="chat-input-container">
+        <div>
             <textarea
-                className="chat-input"
+                style={{color:"black"}}
                 value={this.state.chatField}
                 onChange={this.handleInputChange}
                 onKeyPress={this.handleInputKeyPress}
-                style={{ height: this.calcInputHeight(this.state.chatField) }}
             />
-            <button
-                className="gm-button"
-                onClick={this.sendChatField}
-                >
+            <button onClick={this.sendChatField} >
                 Send LANG TODO
             </button>
         </div>
     );}
 
-    renderChatMessage(msg: ChatMessage, i: number) {return (
-        <div key={i} className="chat-message">
-            {getChatString(msg)}
-        </div>
-    );}
-
-    render(){return (
-        <div className="chat-menu">
-            <div className="chat-messages">
+    render(){return(
+        <div>
+            <div>
                 {this.state.gameState.chatMessages.map((msg, i) => {
                     return this.renderChatMessage(msg, i);
                 })}
@@ -155,5 +145,5 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
             </div>
             {this.renderTextInput()}
         </div>
-    );}
+    )}
 }

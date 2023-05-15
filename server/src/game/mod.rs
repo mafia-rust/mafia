@@ -9,6 +9,7 @@ pub mod role_list;
 pub mod settings;
 pub mod end_game_condition;
 pub mod team;
+pub mod available_buttons;
 pub mod on_client_message;
 
 #[allow(clippy::module_inception)]

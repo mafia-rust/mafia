@@ -167,7 +167,9 @@ make_role_enum! {
     
     Consort : consort,
 
-    CovenLeader : coven_leader
+    CovenLeader : coven_leader,
+
+    VoodooMaster : voodoo_master
 }
 // type Priority = i8;
 macro_rules! make_priority_enum {
