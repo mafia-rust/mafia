@@ -10,7 +10,7 @@ use crate::game::{
     verdict::Verdict, phase::PhaseType, 
     chat::{ChatMessage, ChatGroup},
     role::{Role, RoleData}, 
-    Game, grave::Grave
+    Game, grave::Grave, available_buttons::AvailableButtons
 };
 
 use super::listener::RoomCode;
@@ -56,7 +56,7 @@ pub enum ToClientPacket{
 
     YourSilenced,
     YourJailed,
-    YourButtons{buttons: Vec<YourButtons>},
+    YourButtons{buttons: Vec<AvailableButtons>},
     #[serde(rename_all = "camelCase")]
     YourRoleLabels{role_labels: HashMap<PlayerIndex, Role>},
     YourWill{will: String},
@@ -123,40 +123,6 @@ pub enum RejectStartReason {
 pub enum GameOverReason {
     ReachedMaxDay,
     /*TODO Winner { who won? }*/
-}
-
-#[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct YourButtons{
-    pub vote: bool,
-    pub target: bool,
-    pub day_target: bool,
-}
-impl YourButtons{
-    pub fn from_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference)->Self{
-        Self{
-            vote: 
-            actor_ref != target_ref &&
-                game.phase_machine.current_state == PhaseType::Voting &&
-                *actor_ref.chosen_vote(game) == None && 
-                *actor_ref.alive(game) && *target_ref.alive(game),
-
-            target: 
-                actor_ref.role(game).can_night_target(game, actor_ref, target_ref) && 
-                game.current_phase() == PhaseType::Night,
-            day_target: 
-                actor_ref.role(game).can_day_target(game, actor_ref, target_ref) &&
-                game.current_phase().is_day(),
-        }
-    }
-    pub fn from(game: &Game, actor_ref: PlayerReference)->Vec<Self>{
-        let mut out = Vec::new();
-
-        for target_ref in PlayerReference::all_players(game){
-            out.push(Self::from_target(game, actor_ref, target_ref));
-        }
-        out
-    }
 }
 
 #[derive(Deserialize, Debug, Clone)]

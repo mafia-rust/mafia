@@ -57,7 +57,7 @@ pub enum FactionAlignment{
     CovenPower,
     CovenKilling,
     CovenUtility,
-    CovenDeception
+    CovenDeception,
 }
 impl FactionAlignment{
     pub fn faction(&self)->Faction{

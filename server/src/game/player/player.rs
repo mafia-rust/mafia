@@ -2,7 +2,19 @@ use std::collections::HashMap;
 
 use tokio::sync::mpsc::UnboundedSender;
 
-use crate::{game::{role::{RoleData, Role}, chat::{ChatMessage, night_message::NightInformation}, visit::Visit, grave::{GraveRole, GraveKiller}, verdict::Verdict}, network::packet::ToClientPacket};
+use crate::{
+    game::{
+        role::{RoleData, Role}, 
+        chat::{
+            ChatMessage, 
+            night_message::NightInformation
+        }, 
+        visit::Visit, 
+        grave::{GraveRole, GraveKiller}, 
+        verdict::Verdict, available_buttons::AvailableButtons
+    }, 
+    network::packet::{ToClientPacket}
+};
 
 use super::{PlayerIndex, PlayerReference};
 
@@ -21,8 +33,10 @@ pub struct Player {
     pub(super) role_labels: HashMap<PlayerReference, Role>,   //when you can see someone elses role in the playerlist, dead players and teammates, mayor
 
 
-    pub(super) chat_messages: Vec<ChatMessage>,
-    pub(super) queued_chat_messages: Vec<ChatMessage>, 
+    pub(super) chat_messages: Vec<ChatMessage>, //all messages
+    pub(super) queued_chat_messages: Vec<ChatMessage>, //messages that have yet to have been sent to the client
+
+    pub(super) last_sent_buttons: Vec<AvailableButtons>,
 
     pub(super) voting_variables: PlayerVotingVariables,
     pub(super) night_variables: PlayerNightVariables,
@@ -68,9 +82,11 @@ impl Player {
             role_labels: HashMap::new(),
 
             sender,
-            chat_messages: Vec::new(),
 
+            chat_messages: Vec::new(),
             queued_chat_messages: Vec::new(),
+            
+            last_sent_buttons: Vec::new(),
 
             night_variables: PlayerNightVariables{
                 alive_tonight:  true,
@@ -98,7 +114,7 @@ impl Player {
             voting_variables: PlayerVotingVariables{
                 chosen_vote : None,
                 verdict : Verdict::Abstain,
-            }
+            },
         }
     }
 }

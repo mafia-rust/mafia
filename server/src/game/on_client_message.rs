@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::network::packet::{ToServerPacket, ToClientPacket, YourButtons};
+use crate::network::packet::{ToServerPacket, ToClientPacket};
 
 use super::{Game, player::{PlayerIndex, Player, PlayerReference, self}, phase::PhaseType, chat::{ChatGroup, ChatMessage, MessageSender}};
 
@@ -147,11 +147,8 @@ impl Game {
             _ => unreachable!()
         }}
         
-        let packet = ToClientPacket::YourButtons { buttons: YourButtons::from(self, sender_player_ref)};
-        sender_player_ref.send_packet(self, packet);
-
         for player_ref in PlayerReference::all_players(self){
-            player_ref.send_chat_messages(self);
+            player_ref.send_repeating_data(self)
         }
 
     }

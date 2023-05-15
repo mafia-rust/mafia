@@ -10,6 +10,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::team::Team;
 use super::Priority;
+use super::Role;
 
 pub(super) const DEFENSE: u8 = 0;
 pub(super) const ROLEBLOCKABLE: bool = true;
@@ -25,7 +26,7 @@ pub enum InvestigativeResult{
     VigilanteVeteranMafiosoPirateAmbusher,
     MediumJanitorRetributionistNecromancerTrapper,
     AmnesiacMedusaPsychic,
-    SpyBlackmailerJailor,
+    SpyBlackmailerJailorVoodooMaster,
     SheriffExecutionerWerewolf,
     FramerVampireJesterHexMaster,
     LookoutForgerWitchCovenLeader,
@@ -49,14 +50,21 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
 
         //TODO, Frames, Hexes, Douses, Enchants
         let result = match visit.target.role(game){
-            super::Role::Jailor => InvestigativeResult::SpyBlackmailerJailor,
-            super::Role::Sheriff => InvestigativeResult::SheriffExecutionerWerewolf,
-            super::Role::Investigator => InvestigativeResult::InvestigatorConsigliereMayor,
-            super::Role::Doctor => InvestigativeResult::DoctorDisguiserSerialKiller,
-            super::Role::Veteran => InvestigativeResult::VigilanteVeteranMafiosoPirateAmbusher,
-            super::Role::Mafioso => InvestigativeResult::VigilanteVeteranMafiosoPirateAmbusher,
-            super::Role::Consort => InvestigativeResult::EscortTransportConsortHypnotist,
-            super::Role::CovenLeader => InvestigativeResult::LookoutForgerWitchCovenLeader,
+            Role::Jailor => InvestigativeResult::SpyBlackmailerJailorVoodooMaster,
+            Role::VoodooMaster => InvestigativeResult::SpyBlackmailerJailorVoodooMaster,
+
+            Role::Sheriff => InvestigativeResult::SheriffExecutionerWerewolf,
+
+            Role::Investigator => InvestigativeResult::InvestigatorConsigliereMayor,
+
+            Role::Doctor => InvestigativeResult::DoctorDisguiserSerialKiller,
+
+            Role::Veteran => InvestigativeResult::VigilanteVeteranMafiosoPirateAmbusher,
+            Role::Mafioso => InvestigativeResult::VigilanteVeteranMafiosoPirateAmbusher,
+
+            Role::Consort => InvestigativeResult::EscortTransportConsortHypnotist,
+
+            Role::CovenLeader => InvestigativeResult::LookoutForgerWitchCovenLeader,
         };
 
         let message = NightInformation::InvestigatorResult { result };

@@ -35,7 +35,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
         GAME_MANAGER.removeStateListener(this.listener);
     }
     renderWillInput(){
-        return (<div className= "will-menu textarea">
+        return (<div className= "will-menu">
             <br/>
             {translate("menu.will.will")}
             <textarea 
@@ -53,7 +53,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
         </div>)
     }
     renderNotesInput(){
-        return (<div className= "will-menu textarea">
+        return (<div className= "will-menu">
             <br/>
             {translate("menu.will.notes")}
             <textarea 

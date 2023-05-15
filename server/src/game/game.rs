@@ -11,8 +11,9 @@ use tokio::sync::mpsc::UnboundedSender;
 use tokio_tungstenite::tungstenite::Message;
 
 use crate::lobby::LobbyPlayer;
-use crate::network::packet::{ToServerPacket, ToClientPacket, self, YourButtons, GameOverReason};
+use crate::network::packet::{ToServerPacket, ToClientPacket, GameOverReason};
 use crate::prelude::*;
+use super::available_buttons::AvailableButtons;
 use super::chat::night_message::NightInformation;
 use super::chat::{ChatMessage, ChatGroup, MessageSender};
 use super::grave::{GraveRole, GraveKiller};
@@ -95,7 +96,7 @@ impl Game {
             
         for player_ref in PlayerReference::all_players(&game){
             player_ref.send_packet(&game, ToClientPacket::YourButtons { buttons: 
-                YourButtons::from(&game, player_ref)
+                AvailableButtons::from_player(&game, player_ref)
             });
         }
         
@@ -136,12 +137,6 @@ impl Game {
             
             //phase start
             self.jump_to_start_phase(new_phase);
-
-            for player_ref in PlayerReference::all_players(self){
-                player_ref.send_packet(self, ToClientPacket::YourButtons{
-                    buttons: YourButtons::from(self, player_ref) 
-                });
-            }
             
         }
         
