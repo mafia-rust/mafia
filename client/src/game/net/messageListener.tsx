@@ -10,6 +10,8 @@ import { ToClientPacket } from "./packet";
 import { Role } from "../gameState.d";
 
 export default function messageListener(packet: ToClientPacket){
+
+    console.log(packet);
     switch(packet.type) {
         case "acceptJoin":
             Anchor.setContent(LobbyMenu.create());

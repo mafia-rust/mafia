@@ -71,37 +71,54 @@ impl PlayerReference{
     pub fn chosen_vote<'a>(&self, game: &'a Game)->&'a Option<PlayerReference>{
         &self.deref(game).voting_variables.chosen_vote
     }
-    /// returns true if players vote was changed
+    /// returns true if players vote was changed and packet was sent
     /// ### checks
-    /// Phase == Voting
-    /// chosen_vote player exists if its voting a player
+    /// - Phase == Voting
+    /// - player is alive
+    /// - player is not silenced
+    /// - player is not voting itself
+    /// - player is not voting a dead player
     pub fn set_chosen_vote(&self, game: &mut Game, chosen_vote: Option<PlayerReference>)->bool{
 
-        let your_voting_packet: Option<PlayerIndex>;
+        
+
+        if(
+            chosen_vote == self.deref(game).voting_variables.chosen_vote ||
+            !self.deref(game).alive ||
+            *self.night_silenced(game) ||
+            game.current_phase() != PhaseType::Voting
+        ){
+            self.deref_mut(game).voting_variables.chosen_vote = None;
+            self.send_packet(game, ToClientPacket::YourVoting { 
+                player_index: None
+            });
+            return false;
+        }
         
         if let Some(chosen_vote) = chosen_vote {
             if(
-                chosen_vote == *self || 
-                !self.deref(game).alive ||
-                !chosen_vote.deref(game).alive ||
-                game.current_phase() != PhaseType::Voting ||
-                *self.night_silenced(game)
+                chosen_vote == *self ||
+                !chosen_vote.deref(game).alive
             ){
                 self.deref_mut(game).voting_variables.chosen_vote = None;
+                self.send_packet(game, ToClientPacket::YourVoting { 
+                    player_index: None
+                });
                 return false;
             }
-
-            your_voting_packet = Some(chosen_vote.index().clone());
-        }else{
-            your_voting_packet = None;
         }
         
         self.deref_mut(game).voting_variables.chosen_vote = chosen_vote;
-        self.send_packet(game, ToClientPacket::YourVoting { player_index: your_voting_packet });
-
-        game.add_message_to_chat_group(ChatGroup::All, 
-            ChatMessage::Voted { voter: *self.index(), votee: PlayerReference::ref_option_to_index(&chosen_vote) }
-        );
+        self.send_packet(game, ToClientPacket::YourVoting { 
+            player_index: PlayerReference::ref_option_to_index(self.chosen_vote(game)) 
+        });
+        
+        if chosen_vote.is_some(){
+            game.add_message_to_chat_group(ChatGroup::All, ChatMessage::Voted{
+                voter: *self.index(), 
+                votee: PlayerReference::ref_option_to_index(&chosen_vote)
+            });
+        }
         
         true
     }

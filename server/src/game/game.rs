@@ -117,11 +117,6 @@ impl Game {
             return;
         }
 
-        for player_ref in PlayerReference::all_players(self){
-            player_ref.tick(self)
-        }
-
-
         //check if phase is over and start next phase
         while self.phase_machine.time_remaining <= Duration::ZERO{
             let new_phase = PhaseType::end(self);
@@ -138,6 +133,10 @@ impl Game {
             //phase start
             self.jump_to_start_phase(new_phase);
             
+        }
+
+        for player_ref in PlayerReference::all_players(self){
+            player_ref.tick(self)
         }
         
         //subtract time for actual tick
