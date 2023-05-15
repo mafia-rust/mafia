@@ -1,9 +1,7 @@
 
 *{
     text-align: center;
-    vertical-align: top;
 
-    padding: 0;
     margin: 0;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 
@@ -14,25 +12,6 @@
     color: white;
 
     cursor: default;
-}
-
-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #282c34;
-    width: 100%;
-}
-
-header > h1 {
-    font-size: 440%;
-    font-weight: bold;
-    margin: 0;
-    width: 100%;
-    justify-content: center;
-    align-self: center;
-    top: 50%;
 }
 
 input, button, select {
@@ -53,52 +32,4 @@ option {
     background-color: white;
     color: black;
     min-height: 2rem;
-}
-
-.credits {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 5vh;
-    background-color: #282c34;
-    font-size: 80%;
-    font-weight: bold;
-}
-
-.input-column {
-    height: 100%;
-    width: 70%;
-    max-width: 90%;
-    margin: 0 auto; 
-    justify-content: center; 
-    align-items: center; 
-}
-
-input {
-    width: 100%;
-    display: block;
-    cursor: text;
-}
-
-.loading-dots {
-    display: inline-block;
-    width: 60px;
-    aspect-ratio: 8/5;
-    --_g: no-repeat radial-gradient(#000 68%,#0000 71%);
-    mask: var(--_g),var(--_g),var(--_g);
-    mask-size: 25% 40%;
-    background: white;
-    animation: load 2s infinite;
-}
-
-@keyframes load {
-    0%    {mask-position: 0% 0%  ,50% 0%  ,100% 0%  }
-    16.67%{mask-position: 0% 100%,50% 0%  ,100% 0%  }
-    33.33%{mask-position: 0% 100%,50% 100%,100% 0%  }
-    50%   {mask-position: 0% 100%,50% 100%,100% 100%}
-    66.67%{mask-position: 0% 0%  ,50% 100%,100% 100%}
-    83.33%{mask-position: 0% 0%  ,50% 0%  ,100% 100%}
-    100%  {mask-position: 0% 0%  ,50% 0%  ,100% 0%  }
 }

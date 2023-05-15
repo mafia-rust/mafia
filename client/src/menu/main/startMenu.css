@@ -25,3 +25,22 @@
     justify-content: center;
     top: 30%;
 }
+
+header > h1 {
+    font-size: 440%;
+    font-weight: bold;
+    margin: 0;
+    width: 100%;
+    justify-content: center;
+    align-self: center;
+    top: 50%;
+}
+
+header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #282c34;
+    width: 100%;
+}

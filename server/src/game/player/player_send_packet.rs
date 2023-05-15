@@ -10,9 +10,7 @@ impl PlayerReference{
     }
     pub fn send_repeating_data(&self, game: &mut Game){
         self.send_chat_messages(game);
-        
-        let packet = ToClientPacket::YourButtons { buttons: AvailableButtons::from_player(game, *self)};
-        self.send_packet(game, packet);
+        self.send_available_buttons(game);
     }
 
     pub fn send_chat_messages(&self, game: &mut Game){

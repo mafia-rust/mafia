@@ -141,3 +141,21 @@ Right panel
         height: 100%;
     }
 }
+
+header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #282c34;
+    width: 100%;
+}
+
+.input-column {
+    height: 100%;
+    width: 70%;
+    max-width: 90%;
+    margin: 0 auto; 
+    justify-content: center; 
+    align-items: center; 
+}
