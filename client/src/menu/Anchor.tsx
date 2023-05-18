@@ -1,6 +1,7 @@
 import React from "react";
 import "../index.css"
 import StartMenu from "./main/StartMenu";
+import "./anchor.css"
 
 type AnchorState = {
     content: JSX.Element,
@@ -26,13 +27,7 @@ export default class Anchor extends React.Component<any, AnchorState> {
         Anchor.instance = this;
     }
     render(){return(
-        <div style={{
-            overflowX: "hidden",
-            height : "100vh",
-            width: "100%",
-
-            backgroundColor: "#282c34",
-        }}>
+        <div className="anchor">
             {this.state.content}
         </div>)
     }

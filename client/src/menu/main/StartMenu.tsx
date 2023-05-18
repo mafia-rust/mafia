@@ -14,7 +14,6 @@ type StartMenuState = {
 
 export default class StartMenu extends React.Component<any, StartMenuState> {
     render(){
-        let loggedIn = false /* TODO */;
         
         if(this.props.roomCode != null) {
             GAME_MANAGER.gameState = createGameState();

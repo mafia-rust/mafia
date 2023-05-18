@@ -16,7 +16,9 @@ button, input, select, option, textarea {
     border-radius: 0.4rem;
     padding: .75%;
     margin: .75%;
-    background-color: black;
+    background-color: rgb(20, 15, 26);
+    border-color: rgb(15, 9, 24);
+    border-width: .13rem;
     color: white;
 }
 

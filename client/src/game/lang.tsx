@@ -1,3 +1,4 @@
+import React from "react";
 import GAME_MANAGER from "../index";
 import { ChatMessage, NightInformation } from "./net/chatMessage";
 
@@ -134,3 +135,55 @@ export function getNightInformationString(info: NightInformation){
             return translate("chatmessage.night."+info.type);
     }
 }
+
+export function colorText(string: string, stringsToColor: {string: string, color: string}[]): JSX.Element[]{
+
+    type ColorOrNot = string | {string: string, color: string};
+
+    let finalOutList: ColorOrNot[] = [];
+    finalOutList.push(string);
+
+    for(let i in stringsToColor){
+        for(let j in finalOutList){
+
+            if(typeof finalOutList[j] !== "string"){
+                continue;
+            }
+
+            let stringSplit = (finalOutList[j] as string).split(RegExp(stringsToColor[i].string, "gi"));
+            let outList: ColorOrNot[] = []; 
+
+            for(let k in stringSplit){
+                outList.push(stringSplit[k]);
+                outList.push({string: stringsToColor[i].string, color: stringsToColor[i].color});
+            }
+            outList.pop();
+
+            //inject outlist into finaloutlist at position j, without using splice
+            finalOutList = 
+                finalOutList.slice(0, Number(j))
+                .concat(outList)
+                .concat(finalOutList.slice(Number(j)+1));
+        }
+    }
+    
+
+
+    //turn into jsx
+    let outJsxList = [];
+    for(let i in finalOutList){
+        if(typeof finalOutList[i] === "string"){
+            outJsxList.push(<span key={i}>{finalOutList[i] as string}</span>);
+        }else if(typeof finalOutList[i] === "object"){
+            outJsxList.push(
+            <span key={i} style={
+                {color: (finalOutList[i] as {string: string, color: string}).color as string}
+            }>
+                {(finalOutList[i] as {string: string, color: string}).string as string}
+            </span>);
+        }
+    }
+
+    return outJsxList;
+}
+
