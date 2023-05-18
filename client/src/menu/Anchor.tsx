@@ -12,9 +12,15 @@ export default class Anchor extends React.Component<any, AnchorState> {
     constructor(props: any) {
         super(props);
 
-        this.state = {
-            content: <StartMenu/>,
-        };
+        if(props.code == null) {
+            this.state = {
+                content: <StartMenu/>,
+            };
+        } else {
+            this.state = {
+                content: <StartMenu roomCode={props.code}/>,
+            }
+        }
     }
     componentDidMount() {
         Anchor.instance = this;

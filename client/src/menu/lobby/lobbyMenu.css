@@ -7,9 +7,13 @@
     display: flex;
     flex-direction: row;
 }
-.lm > header h1{
+.lm > header input{
     font-size: 300%;
     margin-right: 2%;
+    background: none;
+    border: none;
+    max-width: 2em;
+    text-align: left;
 }
 .lm > header button{
     align-items: left;

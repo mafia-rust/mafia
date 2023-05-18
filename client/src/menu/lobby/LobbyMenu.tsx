@@ -9,12 +9,18 @@ import translate from "../../game/lang";
 export function create() {
     return <div className="lm">
         <header>
-            <h1>
-                {translate("menu.lobby.title", GAME_MANAGER.roomCode!)}
-            </h1>
+            <input type="text" disabled value={GAME_MANAGER.roomCode!} id="lobbyRoomCode" />
+            <button onClick={() => {
+                let code = new URL(window.location.href);
+                code.searchParams.set("code", GAME_MANAGER.roomCode!);
+                navigator.clipboard.writeText(code.toString());
+            }}>
+                {translate("menu.lobby.button.copy")}
+            </button>
             <button onClick={()=>{GAME_MANAGER.sendStartGamePacket()}}>
                 {translate("menu.lobby.button.start")}
             </button>
+            
         </header>
 
         <main>

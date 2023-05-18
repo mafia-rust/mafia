@@ -7,6 +7,9 @@ import { GameManager, createGameManager } from './game/net/gameManager';
 const ROOT = ReactDOM.createRoot(document.getElementById('root')!);
 
 const GAME_MANAGER: GameManager = createGameManager();
+
+let code = (new URL(window.location.href)).searchParams.get("code");
+
 export default GAME_MANAGER;
 
 const TIME_PERIOD = 1000;
@@ -15,9 +18,10 @@ setInterval(() => {
   GAME_MANAGER.tick(TIME_PERIOD);
 }, TIME_PERIOD);
 
+
 ROOT.render(
     <React.StrictMode>
-        <Anchor/>
+        <Anchor code={code} />
     </React.StrictMode>
 );
 // // If you want to start measuring performance in your app, pass a function
