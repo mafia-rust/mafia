@@ -1,5 +1,6 @@
 .will-menu textarea {
     width: calc(100% - 10px);
-    resize: vertical;
+    resize: none;
     text-align: left;
+    height: 17em;
 }

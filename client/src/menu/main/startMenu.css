@@ -18,4 +18,5 @@
 .sm > div > button{
     margin: 1%;
     width: 20%;
+    min-width: fit-content;
 }

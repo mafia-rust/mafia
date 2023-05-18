@@ -16,13 +16,6 @@ export function createGameManager(): GameManager {
     let gameManager: GameManager = {
         roomCode: null,
 
-        name: undefined,
-
-        willMenuOpen: true,
-        wikiMenuOpen: false,
-        graveyardMenuOpen: true,
-        playerListMenuOpen: true,
-
         gameState : createGameState(),
 
         server : createServer(),
@@ -232,30 +225,3 @@ export function isValidPhaseTime(time: number) {
 }
 
 export type { GameManager, Server } from "./gameManager.d";
-// export default gameManager;
-
-
-/*
-rust side code of packets i need to make
-pub enum ToServerPacket{
-    
-    Join
-    Host
-
-    //
-    StartGame,
-    Kick,
-    SetRoleList,
-    SetPhaseTimes,
-    SetInvestigatorResults,
-
-    //
-    Vote,   //Accusation
-    Target,
-    DayTarget,
-    Judgement,  //Vote
-    Whisper,
-    SendMessage,
-    SaveWill,
-}
-*/

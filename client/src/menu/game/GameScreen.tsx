@@ -1,6 +1,6 @@
 import React from "react";
 import * as LoadingScreen from "../LoadingScreen";
-import PhaseRowMenu from "./PhaseRowMenu";
+import HeaderMenu from "./HeaderMenu";
 import GraveyardMenu from "./gameScreenContent/GraveyardMenu";
 import ChatMenu from "./gameScreenContent/ChatMenu";
 import PlayerListMenu from "./gameScreenContent/PlayerListMenu";
@@ -55,28 +55,24 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                 this.setState({
                     content: this.state.content,
                 });
-                GAME_MANAGER.graveyardMenuOpen = true;
                 break;
             case ContentMenus.PlayerListMenu:
                 this.state.content.push(<PlayerListMenu/>);
                 this.setState({
                     content: this.state.content,
                 });
-                GAME_MANAGER.playerListMenuOpen = true;
                 break;
             case ContentMenus.WillMenu:
                 this.state.content.push(<WillMenu/>);
                 this.setState({
                     content: this.state.content,
                 });
-                GAME_MANAGER.willMenuOpen = true;
                 break;
             case ContentMenus.WikiMenu:
                 this.state.content.push(<WikiMenu role={{type: "any"}}/>);
                 this.setState({
                     content: this.state.content,
                 });
-                GAME_MANAGER.wikiMenuOpen = true;
                 break;
         }
         GAME_MANAGER.invokeStateListeners();
@@ -88,30 +84,23 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                 this.setState({
                     content: this.state.content,
                 });
-                switch(menu) {
-                    case ContentMenus.GraveyardMenu:
-                        GAME_MANAGER.graveyardMenuOpen = false;
-                        break;
-                    case ContentMenus.PlayerListMenu:
-                        GAME_MANAGER.playerListMenuOpen = false;
-                        break;
-                    case ContentMenus.WillMenu:
-                        GAME_MANAGER.willMenuOpen = false;
-                        break;
-                    case ContentMenus.WikiMenu:
-                        GAME_MANAGER.wikiMenuOpen = false;
-                        break;
-                }
                 break;
             }
         }
         GAME_MANAGER.invokeStateListeners();
     }
+    menusOpen() : ContentMenus[] {
+        let out: ContentMenus[] = [];
+        for(let i = 0; i < this.state.content.length; i++) {
+            out.push(this.state.content[i].type.name);
+        }
+        return out;
+    }
 
     componentDidMount() {
         GameScreen.instance = this;
         this.setState({
-            header: <PhaseRowMenu 
+            header: <HeaderMenu 
                 phase={this.state.gameState.phase}
             />,
             content: [

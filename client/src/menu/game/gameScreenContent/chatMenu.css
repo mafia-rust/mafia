@@ -35,7 +35,6 @@
     width: calc(100% - 10px);
     text-align: left;
     color: white;
-    text: white;
     background-color: white;
     /* text refuses to come up white for some reason TODO */
 }
