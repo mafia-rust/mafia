@@ -37,28 +37,30 @@ export default class LobbyPlayerList extends React.Component<any, PlayerListStat
         GAME_MANAGER.removeStateListener(this.listener);
     }
     
-    render(){return(<div className="lm-player-list-pane">
-        {this.renderName()}
-        {this.renderPlayers()}
-    </div>)}
+    renderName(){return(
+        <div className="name-box">
+            <button onClick={()=>{
+                GAME_MANAGER.sendSetNamePacket(this.state.name)
+            }}>{translate("menu.lobby.button.setName")}</button>
 
-    renderName(){return(<div className="lm-name-box">
-        <input type="text" value={this.state.name}
-            onChange={(e)=>{this.setState({name: e.target.value})}}
-            onKeyUp={(e)=>{
-                if(e.key === 'Enter')
-                    GAME_MANAGER.sendSetNamePacket(this.state.name);
-            }}
-        />
-
-        <button className="lm-set-name-button" onClick={()=>{
-            GAME_MANAGER.sendSetNamePacket(this.state.name)
-        }}>{translate("menu.lobby.button.setName")}</button>
-    </div>)}
+            <input type="text" value={this.state.name}
+                onChange={(e)=>{this.setState({name: e.target.value})}}
+                onKeyUp={(e)=>{
+                    if(e.key === 'Enter')
+                        GAME_MANAGER.sendSetNamePacket(this.state.name);
+                }}
+            />
+        </div>
+    )}
 
     renderPlayers(){return(<ol>
         {this.state.players.map((player, i)=>{
             return(<li key={i}>{player.toString()}</li>)
         })}
     </ol>)}
+
+    render(){return(<section>
+        {this.renderName()}
+        {this.renderPlayers()}
+    </section>)}
 }

@@ -1,17 +1,5 @@
-.textarea {
-    min-width: 98%;
-    min-height: 40%;
-    height : 60%;
-    width : 98%;
-    max-height: 80%;
-    max-width: 98%;
+.will-menu textarea {
+    width: calc(100% - 10px);
     resize: vertical;
-    border: 1px solid #000;
-}
-.textarea-text{
-    width: 100%;
-    align-self: left;
-    color : black;
     text-align: left;
-    padding: 1%;
 }

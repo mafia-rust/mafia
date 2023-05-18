@@ -7,22 +7,21 @@ import "./lobbyMenu.css";
 import translate from "../../game/lang";
 
 export function create() {
-    return <div style={{
-        display: "flex",
-        flexDirection: "column",
-    }}>
-        <header className="lm-header">
+    return <div className="lm">
+        <header>
             <h1>
                 {translate("menu.lobby.title", GAME_MANAGER.roomCode!)}
             </h1>
-            <button className="lm-start-button" onClick={()=>{GAME_MANAGER.sendStartGamePacket()}}>
+            <button onClick={()=>{GAME_MANAGER.sendStartGamePacket()}}>
                 {translate("menu.lobby.button.start")}
             </button>
         </header>
-        <main className="lm-main">
-            <LobbyPlayerList/>
-            <div className="lm-settings">
-                <h2>Game settings</h2>
+
+        <main>
+            <div className="left">
+                <LobbyPlayerList/>
+            </div>
+            <div className="right">
                 <LobbyPhaseTimePane/>
                 <LobbyRolePane/>
             </div>

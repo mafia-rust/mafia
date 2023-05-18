@@ -35,11 +35,11 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
         GAME_MANAGER.removeStateListener(this.listener);
     }
     renderWillInput(){
-        return (<div className= "will-menu">
-            <br/>
+        return (<div>
             {translate("menu.will.will")}
-            <textarea 
-                className="textarea-text"
+            <button onClick={()=>{GAME_MANAGER.sendSaveWillPacket(this.state.willFeild)}}>{translate("menu.will.save")}</button>
+            <button onClick={()=>{GAME_MANAGER.sendSendMessagePacket(this.state.gameState.will)}}>{translate("menu.will.post")}</button>
+            <textarea
                 onKeyPress={(e) => {
                     if(e.code === "Enter") {
                         GAME_MANAGER.sendSaveWillPacket(this.state.willFeild)
@@ -48,16 +48,14 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
                 value={this.state.willFeild}
                 onChange={(e)=>{this.setState({willFeild : e.target.value});}}>
             </textarea>
-            <button className="gm-button" onClick={()=>{GAME_MANAGER.sendSaveWillPacket(this.state.willFeild)}}>{translate("menu.will.save")}</button>
-            <button className="gm-button" onClick={()=>{GAME_MANAGER.sendSendMessagePacket(this.state.gameState.will)}}>{translate("menu.will.post")}</button>
         </div>)
     }
     renderNotesInput(){
-        return (<div className= "will-menu">
-            <br/>
+        return (<div>
             {translate("menu.will.notes")}
-            <textarea 
-                className="textarea-text"
+            <button onClick={()=>{GAME_MANAGER.sendSaveNotesPacket(this.state.notesFeild)}}>{translate("menu.will.save")}</button>
+            <button onClick={()=>{GAME_MANAGER.sendSendMessagePacket(this.state.gameState.notes)}}>{translate("menu.will.post")}</button>
+            <textarea
                 onKeyPress={(e) => {
                     if(e.code === "Enter") {
                         GAME_MANAGER.sendSaveNotesPacket(this.state.notesFeild)
@@ -66,13 +64,10 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
                 value={this.state.notesFeild}
                 onChange={(e)=>{this.setState({notesFeild : e.target.value});}}>
             </textarea>
-            <button className="gm-button" onClick={()=>{GAME_MANAGER.sendSaveNotesPacket(this.state.notesFeild)}}>{translate("menu.will.save")}</button>
-            <button className="gm-button" onClick={()=>{GAME_MANAGER.sendSendMessagePacket(this.state.gameState.notes)}}>{translate("menu.will.post")}</button>
         </div>)
     }
-    render() {return (<div>
+    render() {return (<div className="will-menu">
         <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.WillMenu)}}>{translate("menu.will.title")}</button>
-        <br/>
         {this.renderWillInput()}
         {this.renderNotesInput()}
     </div>);}

@@ -34,24 +34,6 @@ export default class LobbyRolePane extends React.Component<any, RolePaneState> {
         GAME_MANAGER.removeStateListener(this.listener);
     }
 
-    render(){return(<section>
-        <header>
-            <h2>Role list:</h2>
-            <div className="settings-controls">
-                {/* TODO, role list presets */}
-            </div>
-        </header>
-        <div className="input-column"> {
-            this.state.roleList.map((_, index) => {
-                return <RolePicker
-                    roleListEntry={this.state.roleList[index]}
-                    onChange={(value: RoleListEntry) => {this.onChangeRolePicker(index, value);}}
-                    key={index}
-                />
-            })
-        } </div>
-    </section>)}
-
     onChangeRolePicker(index: number, value: RoleListEntry){
         let roleList = [...this.state.roleList];
         roleList[index] = value;
@@ -62,4 +44,22 @@ export default class LobbyRolePane extends React.Component<any, RolePaneState> {
 
         GAME_MANAGER.sendSetRoleListPacket(roleList);
     }
+
+    render(){return(<section>
+        <header>
+            <h2>Role list:</h2>
+            <div>
+                {/* TODO, role list presets */}
+            </div>
+        </header>
+        <div> {
+            this.state.roleList.map((_, index) => {
+                return <RolePicker
+                    roleListEntry={this.state.roleList[index]}
+                    onChange={(value: RoleListEntry) => {this.onChangeRolePicker(index, value);}}
+                    key={index}
+                />
+            })
+        } </div>
+    </section>)}
 }

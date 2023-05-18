@@ -14,22 +14,14 @@
     cursor: default;
 }
 
-input, button, select {
+button, input, select, option, textarea {
     border-radius: 0.4rem;
     padding: .75%;
     margin: .75%;
-    background-color: white;
-    color: black;
+    background-color: black;
+    color: white;
 }
 
-button:hover, input:hover, select:hover, option:hover {
-    background-color: lightgray;
-}
-
-option {
-    margin-top: 0.5rem;
-    justify-content: center;
-    background-color: white;
-    color: black;
-    min-height: 2rem;
+button:hover, input:hover, select:hover, option:hover textarea:hover{
+    background-color: rgb(36, 36, 36);
 }

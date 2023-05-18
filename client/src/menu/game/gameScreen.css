@@ -1,60 +1,27 @@
 .game-screen {
     height: 100vh;
-}
-
-.game-screen-header {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 15%;
-    background-color: #1c1c1c;
+    flex-direction: column;
 }
 
-.game-screen-content {
+.game-screen .header {
+    height: fit-content;
+    border-bottom: black solid 1px;
+}
+
+.game-screen .content {
     display: flex;
-    grid-auto-columns: 1fr;
-    grid-auto-rows: 1fr;
-    height: 85%;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0);
-    grid-gap: 5px;
+    flex-direction: row;
+    flex: 1 1 0px;
+    height: 1vh;
 }
 
-.game-screen-panel {
-    overflow-x: hidden;
-    overflow-y: hidden;
+.game-screen .content > div {
+    flex: 1 1 0px;
     height: 100%;
+    max-height: 100%;
     width: 100%;
-    background-color: rgb(0, 120, 156);
+    max-width: 100%;
+    border-left: black solid 1px;
+    border-right: black solid 1px;
 }
-
-/* .game-screen-panel-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 15%;
-    background-color: #1c1c1c;
-} */
-
-/* .game-screen-panel-text {
-    font-size: 1.5rem;
-    color: white;
-} */
-
-/* .gm-button {
-margin-top: 0.25rem;
-margin-bottom: .25rem;
-padding-left: .25rem;
-padding-right: .25rem;
-margin-left: .125rem;
-margin-right: .125rem;
-justify-content: center;
-align-items: center;
-width : fit-content;
-height: fit-content;
-border-radius: .5rem;
-background-color: rgb(183, 224, 242);
-font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-color: black;
-font-weight: bold;
-} */

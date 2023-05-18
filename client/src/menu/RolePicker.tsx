@@ -1,4 +1,5 @@
 import React from "react";
+import "./rolePicker.css";
 import { RoleListEntry } from "../game/gameState.d";
 import { ROLES } from "../game/gameState";
 
@@ -112,7 +113,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
             ]
         }
         
-        return <div className="lm-role-picker-container">
+        return <div className="role-picker">
             {selectors}
         </div>
     }

@@ -1,0 +1,9 @@
+.role-picker {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 100%;
+}
+.role-picker select{
+    width: 100%;
+}

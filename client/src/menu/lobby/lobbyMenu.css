@@ -1,161 +1,53 @@
-.lm-header {
-    height: 18vh;
-    text-align: left;
-    align-items: center;
+
+.lm {
+    display: block;
+    padding: 2%;
+}
+.lm > header {
     display: flex;
     flex-direction: row;
 }
-.lm-header > h1 {
-    font-size: 325%;
-    margin-left: 5vw;
-    width:unset;
+.lm > header h1{
+    font-size: 300%;
+    margin-right: 2%;
 }
-.lm-start-button {
-    margin: 0;
-    width: 20vh;
-    height: 8vh;
-    justify-content: center;
-    margin-right: 4vw;
-}
-/*
-Left panel (player list)
-*/
-.lm-player-list-pane {
-    width: 30vw;
-    margin: 0 2vw;
-}
-.lm-player-list-pane ol {
-    display: flex;
-    flex-direction: column;
-    margin-top: 1rem;
-    width: 100%;
-    height: 100%;
-    list-style: none;
-}
-.lm-player-list-pane ol > li {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-.lm-name-box {
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-    flex-direction: row;
-}
-.lm-set-name-button {
-    width: 30%;
-    height: 100%;
-    margin-left: .75rem;
-}
-/*
-Right panel
-*/
-.lm-settings {
-    width: 60vw;
-    margin: 0 2vw;
-    display: flex;
-    flex-direction: column;
-    margin-right: 1vw;
-}
-.lm-settings h2 {
-    font-size: 175%;
-    text-align: left;
-}
-.settings-controls {
-    display: flex;
-    flex-direction: row;
-    justify-content: right;
-    width: fit-content;
-    align-items: right;
-}
-.lm-settings section {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-.lm-settings section header h2 {
-    font-size: 125%;
-}
-.lm-time-input-box {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-.lm-time-input-box input {
-    width: 30%;
-}
-.lm-edit-button {
-    width: 6rem;
-    height: 100%;
-    margin-left: 1rem;
+.lm > header button{
+    align-items: left;
 }
 
-.lm-role-picker-container {
+.lm > main {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
 }
-
-.lm-role-picker-container select {
-    flex-grow: 1;
-}
-
-.lm-main {
-    display: flex;
-    flex-direction: row;
-}
-
-/* custom css for touch targets, i.e. mobile devices */
-@media (pointer:coarse) {
-    .lm-header {
-        text-align: center;
-        flex-direction: column-reverse;
-        height: 20vh;
-    }
-    .lm-header > h1 {
-        margin-left: unset;
-        margin-bottom: 2vh;
-    }
-    .lm-main {
-        flex-direction: column;
-    }
-    .lm-player-list-pane {
-        width: 92vw;
-        margin: 0 4vw;
-    }
-    .lm-settings {
-        width: 92vw;
-        margin: 5vh 4vw 0vh;
-    }
-    .lm-start-button {
-        width: 60vw;
-        height: 30%;
-        margin-top: 5%;
-        margin-right: unset;
-    }
-    .lm-edit-button {
-        width: 5rem;
-        height: 100%;
-    }
-}
-
-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #282c34;
+.lm > main > div {
     width: 100%;
 }
 
-.input-column {
-    height: 100%;
-    width: 70%;
-    max-width: 90%;
-    margin: 0 auto; 
-    justify-content: center; 
-    align-items: center; 
+.lm input {
+    width: 100%;
 }
+
+.lm .left .name-box {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 4%;
+}
+
+
+
+.lm .right .time {
+    margin-bottom: 5%;
+}
+.lm .right .time-picker {
+    display: flex;
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+.lm .right .time-picker {
+    display: flex;
+    margin-left: 2%;
+    margin-right: 2%;
+}
+

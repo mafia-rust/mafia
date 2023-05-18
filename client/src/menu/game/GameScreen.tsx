@@ -1,16 +1,16 @@
 import React from "react";
-import "../../index.css";
 import * as LoadingScreen from "../LoadingScreen";
 import PhaseRowMenu from "./PhaseRowMenu";
 import GraveyardMenu from "./gameScreenContent/GraveyardMenu";
 import ChatMenu from "./gameScreenContent/ChatMenu";
 import PlayerListMenu from "./gameScreenContent/PlayerListMenu";
 import WillMenu from "./gameScreenContent/WillMenu";
-import "./gameScreen.css";
 import GAME_MANAGER from "../..";
 import GameState from "../../game/gameState.d";
 import WikiMenu from "./gameScreenContent/WikiMenu";
 
+import "../../index.css";
+import "./gameScreen.css";
 
 export enum ContentMenus {
     GraveyardMenu = "GraveyardMenu",
@@ -126,7 +126,6 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
 
     componentWillUnmount() {
         GAME_MANAGER.removeStateListener(this.listener);
-        //GameScreen.instance = undefined;
     }
 
     render() {
@@ -140,7 +139,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
 
     renderHeader(header: JSX.Element) {
         return (
-            <div className="game-screen-header">
+            <div className="header">
                 {header}
             </div>
         );
@@ -148,17 +147,10 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
 
     renderContent(content: JSX.Element[]) {
         return (
-            <div className="game-screen-content">
+            <div className="content">
                 {content.map((panel, index) => {
                     return (
-                        <div
-                            key={index}
-                            className="game-screen-panel"
-                            style={{
-                                gridColumn: index + 1,
-                                gridRow: 1,
-                            }}
-                        >
+                        <div key={index}>
                             {panel}
                         </div>
                     );

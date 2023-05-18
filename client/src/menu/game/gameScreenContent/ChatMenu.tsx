@@ -1,5 +1,5 @@
 import React from "react";
-import { getChatString } from "../../../game/lang";
+import translate, { getChatString } from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import "../gameScreen.css";
 import "./chatMenu.css"
@@ -122,26 +122,26 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     );}
 
     renderTextInput() {return (
-        <div>
+        <div className="send-section">
             <textarea
                 style={{color:"black"}}
                 value={this.state.chatField}
                 onChange={this.handleInputChange}
                 onKeyPress={this.handleInputKeyPress}
             />
-            <button onClick={this.sendChatField} >
-                Send LANG TODO
+            <button onClick={this.sendChatField}>
+                {translate("menu.chat.button.send")}
             </button>
         </div>
     );}
 
     render(){return(
-        <div>
-            <div>
-                {this.state.gameState.chatMessages.map((msg, i) => {
+        <div className="chat-menu">
+            <div className="message-section">
+                {this.state.gameState.chatMessages.reverse().map((msg, i) => {
                     return this.renderChatMessage(msg, i);
                 })}
-                <br ref={(el) => { this.bottomOfPage = el; }}/>
+                {/* <br ref={(el) => { this.bottomOfPage = el; }}/> */}
             </div>
             {this.renderTextInput()}
         </div>
