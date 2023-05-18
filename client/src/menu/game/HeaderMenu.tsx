@@ -3,42 +3,28 @@ import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import GameState, { Phase, Verdict } from "../../game/gameState.d";
 import GameScreen, { ContentMenus as GameScreenContentMenus } from "./GameScreen";
+import "./headerMenu.css";
 
 
-type PhaseRowMenuProps = {
+type HeaderMenuProps = {
     phase: Phase | null,
 }
-type PhaseRowMenuState = {
+type HeaderMenuState = {
     gameState: GameState,
-
-    willMenuOpen: boolean,
-    playerListMenuOpen: boolean,
-    graveyardMenuOpen: boolean,
-    wikiMenuOpen: boolean,
 }
 
-export default class PhaseRowMenu extends React.Component<PhaseRowMenuProps, PhaseRowMenuState> {
+export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderMenuState> {
     listener: () => void;
     
-    constructor(props: PhaseRowMenuProps) {
+    constructor(props: HeaderMenuProps) {
         super(props);
 
         this.state = {
             gameState: GAME_MANAGER.gameState,
-
-            willMenuOpen: true,
-            playerListMenuOpen: true,
-            graveyardMenuOpen: true,
-            wikiMenuOpen: true,
         };
         this.listener = () => {
             this.setState({
                 gameState: GAME_MANAGER.gameState,
-
-                willMenuOpen: GAME_MANAGER.willMenuOpen,
-                playerListMenuOpen: GAME_MANAGER.playerListMenuOpen,
-                graveyardMenuOpen: GAME_MANAGER.graveyardMenuOpen,
-                wikiMenuOpen: GAME_MANAGER.wikiMenuOpen,
             });
         };
     }
@@ -85,40 +71,31 @@ export default class PhaseRowMenu extends React.Component<PhaseRowMenuProps, Pha
             return null;
         }
     }
-    render(){return(<div>
-        {this.renderPhase()}
-        {(()=>{
-            if(this.state.gameState.myIndex !== null){
-                return this.state.gameState.players[this.state.gameState.myIndex].toString() + " (" + this.state.gameState.players[this.state.gameState.myIndex].roleLabel + ")"
-            }
-        })()}
-        {this.renderPhaseSpecific()}
-        {this.renderMenuButtons()}
-    </div>)}
+    
     renderMenuButtons(){
-        return <div>
+        return <div className="menu-buttons">
             {(()=>
-                this.state.willMenuOpen?null:
+                GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WillMenu)?null:
                     <button onClick={()=>{
                         GameScreen.instance.openMenu(GameScreenContentMenus.WillMenu)
                     }}>{translate("menu.will.title")}</button>
             )()}
             {(()=>
-                this.state.playerListMenuOpen?null:
+                GameScreen.instance.menusOpen().includes(GameScreenContentMenus.PlayerListMenu)?null:
                     <button onClick={()=>{
                         GameScreen.instance.openMenu(GameScreenContentMenus.PlayerListMenu)
                     
                     }}>{translate("menu.playerList.title")}</button>
             )()}
             {(()=>
-                this.state.graveyardMenuOpen?null:
+                GameScreen.instance.menusOpen().includes(GameScreenContentMenus.GraveyardMenu)?null:
                     <button onClick={()=>{
                         GameScreen.instance.openMenu(GameScreenContentMenus.GraveyardMenu)
                     
                     }}>{translate("menu.graveyard.title")}</button>
             )()}
             {(()=>
-                this.state.wikiMenuOpen?null:
+                GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WikiMenu)?null:
                     <button onClick={()=>{
                         GameScreen.instance.openMenu(GameScreenContentMenus.WikiMenu)
                     
@@ -134,4 +111,15 @@ export default class PhaseRowMenu extends React.Component<PhaseRowMenuProps, Pha
         }
         return null;
     }
+
+    render(){return(<div className="header-menu">
+        {this.renderPhase()}
+        {(()=>{
+            if(this.state.gameState.myIndex !== null){
+                return this.state.gameState.players[this.state.gameState.myIndex].toString() + " (" + this.state.gameState.players[this.state.gameState.myIndex].roleLabel + ")"
+            }
+        })()}
+        {this.renderPhaseSpecific()}
+        {this.renderMenuButtons()}
+    </div>)}
 }

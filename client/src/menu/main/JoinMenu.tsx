@@ -32,7 +32,6 @@ export default class JoinMenu extends React.Component<any, JoinMenuState> {
     }
     async joinGameButton(){
         GAME_MANAGER.roomCode = this.state.roomCode;
-        GAME_MANAGER.name = this.state.name;
 
         Anchor.setContent(LoadingScreen.create(LoadingScreen.Type.Join));
 
@@ -72,7 +71,6 @@ export default class JoinMenu extends React.Component<any, JoinMenuState> {
                         onChange={(e)=>{this.setName(e.target.value)}}
                         onKeyUp={(e)=>{
                             if(e.key === 'Enter') {
-                                GAME_MANAGER.name = this.state.name;
                                 this.joinGameButton();
                             }
                         }}

@@ -10,7 +10,7 @@ export function create() {
     return <div className="lm">
         <header>
             <h1>
-                {translate("menu.lobby.title", GAME_MANAGER.roomCode!)}
+                {GAME_MANAGER.roomCode!}
             </h1>
             <button onClick={()=>{GAME_MANAGER.sendStartGamePacket()}}>
                 {translate("menu.lobby.button.start")}
