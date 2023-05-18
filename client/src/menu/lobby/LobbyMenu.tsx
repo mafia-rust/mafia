@@ -16,7 +16,7 @@ export function create() {
                 navigator.clipboard.writeText(code.toString());
             }}>
                 {translate("menu.lobby.button.copy")}
-            </button>
+            </button> 
             <button onClick={()=>{GAME_MANAGER.sendStartGamePacket()}}>
                 {translate("menu.lobby.button.start")}
             </button>

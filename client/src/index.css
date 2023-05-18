@@ -7,11 +7,9 @@
 
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-size: 102%; 
+    font-size: 102%;
 
     color: white;
-
-    cursor: default;
 }
 
 button, input, select, option, textarea {
