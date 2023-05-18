@@ -3,6 +3,7 @@ import "../index.css"
 import "./loadingScreen.css"
 import translate from "../game/lang";
 
+// LANG TODO: translate
 export const enum Type {
     Host = "host",
     Join = "join",

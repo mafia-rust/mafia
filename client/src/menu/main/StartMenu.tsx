@@ -8,9 +8,19 @@ import * as LoadingScreen from "../LoadingScreen";
 import JoinMenu from "./JoinMenu";
 import translate from "../../game/lang";
 
-export default class StartMenu extends React.Component {
+type StartMenuState = {
+    roomCode: string
+} 
+
+export default class StartMenu extends React.Component<any, StartMenuState> {
     render(){
         let loggedIn = false /* TODO */;
+        
+        if(this.props.roomCode != null) {
+            GAME_MANAGER.gameState = createGameState();
+            return(<JoinMenu roomCode={this.props.roomCode} />);
+        }
+        
         return(<div className="sm">
             
         <header >
@@ -29,7 +39,7 @@ export default class StartMenu extends React.Component {
 
     private joinGameButton() {
         GAME_MANAGER.gameState = createGameState();
-        Anchor.setContent(<JoinMenu/>);
+        Anchor.setContent(<JoinMenu />);
     }
     
     private async hostGameButton() {

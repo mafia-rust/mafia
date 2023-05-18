@@ -16,7 +16,7 @@ export default class JoinMenu extends React.Component<any, JoinMenuState> {
         super(props);
 
         this.state = {
-            roomCode: "",
+            roomCode: this.props.roomCode != null ? this.props.roomCode : "",
             name: /* logged in ? username : */ "",
         };
     }
