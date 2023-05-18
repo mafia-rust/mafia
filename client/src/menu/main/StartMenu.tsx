@@ -11,24 +11,20 @@ import translate from "../../game/lang";
 export default class StartMenu extends React.Component {
     render(){
         let loggedIn = false /* TODO */;
-        return(<div>
-        <header className="sm-header">
+        return(<div className="sm">
+            
+        <header >
             <h1>{translate("menu.start.title")}</h1>
-            <button className="sm-login-button">
-                {translate("menu.start.button." + (loggedIn ? "logout" : "login"))}
-            </button><br/>
         </header>
 
-        <div className="sm-button-area">
-            <button className="sm-join-host-button" onClick={()=>{this.joinGameButton()}}>
-                {translate("menu.start.button.join." + (loggedIn ? "loggedIn" : "loggedOut"))}
+        <div>
+            <button onClick={()=>{this.joinGameButton()}}>
+                {translate("menu.start.button.join")}
             </button>
-            <button className="sm-join-host-button" onClick={()=>{this.hostGameButton()}}>
-                {translate("menu.start.button.host." + (loggedIn ? "loggedIn" : "loggedOut"))}
+            <button onClick={()=>{this.hostGameButton()}}>
+                {translate("menu.start.button.host")}
             </button>
         </div>
-
-        <footer className="credits">{translate("menu.start.credits")}</footer>
     </div>)}
 
     private joinGameButton() {

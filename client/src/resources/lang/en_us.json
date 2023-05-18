@@ -2,10 +2,8 @@
     "language": "English (United States)",
 
     "menu.start.title": "Mafia",
-    "menu.start.button.join.loggedIn": "Join",
-    "menu.start.button.join.loggedOut": "Join as Guest",
-    "menu.start.button.host.loggedIn": "Host",
-    "menu.start.button.host.loggedOut": "Host as Guest",
+    "menu.start.button.join": "Join",
+    "menu.start.button.host": "Host",
     "menu.start.button.login": "Log in",
     "menu.start.button.logout": "Log out",
     "menu.start.credits": "Mafia, made by Samuel Maselli, Jack Papel, and Isaac Worsencroft",
@@ -27,6 +25,7 @@
     "menu.loading.default": "Loading",
 
     "menu.chat.title": "Chat",
+    "menu.chat.button.send": "Send",
     "menu.chat.placeHolder": "Enter message",
     
     "menu.will.title": "Will",
@@ -41,6 +40,7 @@
     "menu.wiki.attributes": "Attributes",
 
     "menu.playerList.title": "Player List",
+    "menu.playerList.button.showAll": "Show All",
 
     "menu.graveyard.title": "Graveyard",
 

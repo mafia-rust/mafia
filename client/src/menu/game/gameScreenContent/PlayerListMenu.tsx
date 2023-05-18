@@ -11,7 +11,7 @@ interface PlayerListMenuProps {
 }
 interface PlayerListMenuState {
     gameState: GameState,
-    hideNoAction: boolean,
+    showAllPlayers: boolean,
 }
 
 export default class PlayerListMenu extends React.Component<PlayerListMenuProps, PlayerListMenuState> {
@@ -22,7 +22,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
 
         this.state = {
             gameState : GAME_MANAGER.gameState,
-            hideNoAction: false,
+            showAllPlayers: false,
         };
         this.listener = ()=>{
             this.setState({
@@ -114,7 +114,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 GAME_MANAGER.gameState.myIndex !== players[i].index;
 
             if(
-                !this.state.hideNoAction || (this.state.hideNoAction && (
+                this.state.showAllPlayers || (!this.state.showAllPlayers && (
                     players[i].buttons.dayTarget || 
                     players[i].buttons.target || 
                     players[i].buttons.vote || 
@@ -137,15 +137,15 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         <br/>
         
         <label>
-            <input type="checkbox" className="button gm-button" 
-                checked={this.state.hideNoAction}
+            <input type="checkbox"
+                checked={this.state.showAllPlayers}
                 onChange={(checked)=>{
                     this.setState({
-                        hideNoAction: checked.target.checked
+                        showAllPlayers: checked.target.checked
                     }); 
                 }
             }/>
-            LANG TODO HIDENOACTION
+            {translate("menu.playerList.button.showAll")}
         </label>
         
         <br/>

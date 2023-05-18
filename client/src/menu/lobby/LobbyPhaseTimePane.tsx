@@ -44,16 +44,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
         GAME_MANAGER.removeStateListener(this.listener);
     }
 
-    render() {return(<section>
-        <header>
-            <h2>Time settings:</h2>
-            <div className="settings-controls">
-                {this.renderTimeModeDropdown()}
-                {this.renderEditButton()}
-            </div>
-        </header>
-        {this.state.advancedEditing ? this.renderInputColumn() : null}
-    </section>)}
+    
 
     renderTimeModeDropdown() {
         return <select 
@@ -89,7 +80,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
     }
 
     renderInputColumn() {
-        return <div className="input-column">
+        return <div>
             {this.renderTimePicker("morning")}
             {this.renderTimePicker("discussion")}
             {this.renderTimePicker("voting")}
@@ -102,7 +93,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
 
     renderTimePicker(phase: Phase) {
         let phaseKey = "phase." + phase;
-        return <div className="lm-time-input-box">
+        return <div className="time-picker">
             <label htmlFor={phaseKey}>{translate(phaseKey)}:</label>
             <input name={phaseKey} type="text" value={this.state.phaseTimes[phase]}
                 onChange={(e)=>{ 
@@ -142,4 +133,15 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
         }
         return {...PHASE_TIME_MODES.get(mode.toString())} as PhaseTimes;
     }
+
+    render() {return(<section className="time">
+        <header>
+            <h2>Times:</h2>
+            <div>
+                {this.renderTimeModeDropdown()}
+                {this.renderEditButton()}
+            </div>
+        </header>
+        {this.state.advancedEditing ? this.renderInputColumn() : null}
+    </section>)}
 }

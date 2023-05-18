@@ -1,11 +1,27 @@
-.jm-header {
-    height: 28vh;
+
+.jm {
+    display: "flex";
+    flex-direction: "column";
 }
-.jm-header-text {
-    font-size: 325%;
+.jm header {
+    margin-top: 10%;
+    margin-bottom: 2%;
 }
-.jm-button {
+.jm h1 {
+    font-size: 425%;
+}
+
+.jm > div{
+    display: "flex";
+    flex-direction: "row";
+    justify-content: "space-around";
+    margin-bottom: 2%;
+}
+.jm > div > section > input{
+    height: 50%;
+    width: 20%;
+}
+.jm button {
+    margin: 2%;
     width: 50%;
-    position: absolute;
-    left: 25%;
 }
