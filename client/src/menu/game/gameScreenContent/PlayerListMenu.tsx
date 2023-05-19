@@ -133,9 +133,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
 
     render(){return(<div>
         
-        <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.PlayerListMenu)}}>{translate("menu.playerList.title")}</button>
-        <br/>
-        
+        <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.PlayerListMenu)}}>{translate("menu.playerList.title")}</button>        
         <label>
             <input type="checkbox"
                 checked={this.state.showAllPlayers}
@@ -147,11 +145,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
             }/>
             {translate("menu.playerList.button.showAll")}
         </label>
-        
-        <br/>
-        <br/>
         {this.renderPhaseSpecific()}
-        <br/>
         {this.renderPlayers(this.state.gameState.players)}
     </div>)}
 }

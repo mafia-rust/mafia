@@ -1,0 +1,10 @@
+.graveyard-menu > div{
+    display: flex;
+    justify-content: space-evenly;
+}
+.graveyard-menu > div > div{
+    flex: 1 1 0;
+}
+.graveyard-menu > div button{
+    width: 100%;
+}
