@@ -73,7 +73,6 @@ impl PlayerReference{
     }
     /// returns true if players vote was changed and packet was sent
     /// ### checks
-    /// - Phase == Voting
     /// - player is alive
     /// - player is not silenced
     /// - player is not voting itself
@@ -85,8 +84,7 @@ impl PlayerReference{
         if(
             chosen_vote == self.deref(game).voting_variables.chosen_vote ||
             !self.deref(game).alive ||
-            *self.night_silenced(game) ||
-            game.current_phase() != PhaseType::Voting
+            *self.night_silenced(game)
         ){
             self.deref_mut(game).voting_variables.chosen_vote = None;
             self.send_packet(game, ToClientPacket::YourVoting { 
@@ -198,9 +196,6 @@ impl PlayerReference{
     pub fn set_chosen_targets(&self, game: &mut Game, chosen_targets: Vec<PlayerReference>){
         //TODO can target????
         //TODO Send you targeted someone message in correct chat.
-        if game.phase_machine.current_state != PhaseType::Night{
-            return;
-        }
 
         self.deref_mut(game).night_variables.chosen_targets = vec![];
 
