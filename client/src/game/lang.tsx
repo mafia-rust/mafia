@@ -1,6 +1,7 @@
 import React from "react";
 import GAME_MANAGER from "../index";
 import { ChatMessage, NightInformation } from "./net/chatMessage";
+import ROLES from "../resources/roles.json";
 
 let lang: ReadonlyMap<string, string>;
 switchLanguage("en_us");
@@ -30,7 +31,7 @@ export function getChatString(message: ChatMessage): string {
             if(message.messageSender.type === "player"){
                 let playerIndex = message.messageSender.player;
                 return translate("chatmessage.normal",
-                    GAME_MANAGER.gameState.players[playerIndex],
+                    GAME_MANAGER.gameState.players[playerIndex].toString(),
                     message.text
                 );
             } else {
@@ -39,14 +40,14 @@ export function getChatString(message: ChatMessage): string {
             }
         case "whisper":
             return translate("chatmessage.whisper", 
-                GAME_MANAGER.gameState.players[message.fromPlayerIndex],
-                GAME_MANAGER.gameState.players[message.toPlayerIndex],
+                GAME_MANAGER.gameState.players[message.fromPlayerIndex].toString(),
+                GAME_MANAGER.gameState.players[message.toPlayerIndex].toString(),
                 message.text
             );
         case "broadcastWhisper":
             return translate("chatmessage.broadcastWhisper",
-                GAME_MANAGER.gameState.players[message.whisperer],
-                GAME_MANAGER.gameState.players[message.whisperee],
+                GAME_MANAGER.gameState.players[message.whisperer].toString(),
+                GAME_MANAGER.gameState.players[message.whisperee].toString(),
             );
         case "roleAssignment":
             let role = message.role;
@@ -136,26 +137,29 @@ export function getNightInformationString(info: NightInformation){
     }
 }
 
-export function colorText(string: string, stringsToColor: {string: string, color: string}[]): JSX.Element[]{
+function styleSubstring(string: string, stringsToStyle: {string: string, style: React.CSSProperties}[]): JSX.Element[]{
 
-    type ColorOrNot = string | {string: string, color: string};
+    type StyledOrNot = string | {string: string, style: React.CSSProperties};
 
-    let finalOutList: ColorOrNot[] = [];
+    let finalOutList: StyledOrNot[] = [];
     finalOutList.push(string);
 
-    for(let i in stringsToColor){
+    for(let i in stringsToStyle){
         for(let j in finalOutList){
 
             if(typeof finalOutList[j] !== "string"){
                 continue;
             }
 
-            let stringSplit = (finalOutList[j] as string).split(RegExp(stringsToColor[i].string, "gi"));
-            let outList: ColorOrNot[] = []; 
+            
+            const regEscape = (v: string) => v.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+
+            let stringSplit = (finalOutList[j] as string).split(RegExp(regEscape(stringsToStyle[i].string), "gi"));
+            let outList: StyledOrNot[] = []; 
 
             for(let k in stringSplit){
-                outList.push(stringSplit[k]);
-                outList.push({string: stringsToColor[i].string, color: stringsToColor[i].color});
+                if(stringSplit[k] !== "") outList.push(stringSplit[k]);
+                outList.push({string: stringsToStyle[i].string, style: stringsToStyle[i].style});
             }
             outList.pop();
 
@@ -177,9 +181,9 @@ export function colorText(string: string, stringsToColor: {string: string, color
         }else if(typeof finalOutList[i] === "object"){
             outJsxList.push(
             <span key={i} style={
-                {color: (finalOutList[i] as {string: string, color: string}).color as string}
+                (finalOutList[i] as {string: string, style: string}).style as React.CSSProperties
             }>
-                {(finalOutList[i] as {string: string, color: string}).string as string}
+                {(finalOutList[i] as {string: string, style: string}).string as string}
             </span>);
         }
     }
@@ -187,3 +191,65 @@ export function colorText(string: string, stringsToColor: {string: string, color
     return outJsxList;
 }
 
+export function styleText(string: string): JSX.Element[]{
+    let stringsToStyle: {string: string, style: React.CSSProperties}[] = [];
+
+    for(let role in (ROLES as any)){
+        let roleObject = (ROLES as any)[role];
+
+        switch(roleObject.faction){
+            case "Coven":
+                stringsToStyle.push({string:translate("role."+role+".name"), style:{
+                    color: "magenta"
+                }});
+                break;
+            case "Town":
+                stringsToStyle.push({string:translate("role."+role+".name"), style:{
+                    color: "lime"
+                }});
+                break;
+            case "Mafia":
+                stringsToStyle.push({string:translate("role."+role+".name"), style:{
+                    color: "red"
+                }});
+                break;
+        }
+    }
+
+    stringsToStyle = stringsToStyle.concat(
+        GAME_MANAGER.gameState.players.map((player)=>{
+            return {string:player.toString(), style:{
+                fontStyle: "italic",
+                fontWeight: "bold"
+            }};
+        })
+    );
+
+    stringsToStyle = stringsToStyle.concat([
+        {string:translate("verdict.guilty"), style:{color:"red"}},
+        {string:translate("verdict.innocent"), style:{color:"lime"}},
+        {string:translate("verdict.abstain"), style:{color:"cyan"}},
+        
+        {string:translate("FactionAlignment.Faction.Town"), style:{color:"lime"}},
+        {string:translate("FactionAlignment.Faction.Mafia"), style:{color:"red"}},
+        {string:translate("FactionAlignment.Faction.Neutral"), style:{color:"cyan"}},
+        {string:translate("FactionAlignment.Faction.Coven"), style:{color:"magenta"}},
+        {string:translate("FactionAlignment.Faction.Random"), style:{color:"lightblue"}},
+
+        {string:translate("FactionAlignment.Alignment.Killing"), style:{color:"lightblue"}},
+        {string:translate("FactionAlignment.Alignment.Investigative"), style:{color:"lightblue"}},
+        {string:translate("FactionAlignment.Alignment.Protective"), style:{color:"lightblue"}},
+        {string:translate("FactionAlignment.Alignment.Support"), style:{color:"lightblue"}},
+        {string:translate("FactionAlignment.Alignment.Deception"), style:{color:"lightblue"}},
+        {string:translate("FactionAlignment.Alignment.Evil"), style:{color:"lightblue"}},
+        {string:translate("FactionAlignment.Alignment.Chaos"), style:{color:"lightblue"}},
+        {string:translate("FactionAlignment.Alignment.Random"), style:{color:"lightblue"}},
+        {string:translate("FactionAlignment.Alignment.Utility"), style:{color:"lightblue"}},
+        {string:translate("FactionAlignment.Alignment.Power"), style:{color:"lightblue"}},
+
+    ]);
+
+    
+
+    return styleSubstring(string, stringsToStyle);
+}

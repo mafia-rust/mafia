@@ -1,5 +1,5 @@
 import React from "react";
-import translate from "../../../game/lang";
+import translate, { styleText } from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import GameState, { RoleListEntry } from "../../../game/gameState.d";
 import { Grave } from "../../../game/grave";
@@ -61,7 +61,7 @@ export default class GraveyardMenu extends React.Component<any, GraveyardMenuSta
         // </div>)
         return(<button key={graveIndex}>
             {this.state.gameState.players[grave.playerIndex]?.toString()}<br/>
-            {"("+graveRoleString+")"}
+            {styleText("("+graveRoleString+")")}
         </button>);
     }
 
@@ -75,12 +75,12 @@ export default class GraveyardMenu extends React.Component<any, GraveyardMenuSta
     renderRoleListEntry(roleListEntry: RoleListEntry, index: number){
         if(roleListEntry.type === "any"){
             return <div key={index}>
-                <button>{translate("FactionAlignment.Faction.Random")}</button>
+                <button>{styleText(translate("FactionAlignment.Faction.Random"))}</button>
             </div>
         } else if(roleListEntry.type === "exact"){
             let role = roleListEntry.role;
             return <div key={index}>
-                <button>{translate("role."+role+".name")}</button>
+                <button>{styleText(translate("role."+role+".name"))}</button>
             </div>
         } else if(roleListEntry.type === "factionAlignment"){
             let factionAlignment = roleListEntry.factionAlignment;
@@ -89,17 +89,17 @@ export default class GraveyardMenu extends React.Component<any, GraveyardMenuSta
             let alignment = factionAlignment.replace(faction, "");
 
             return <div key={index}>
-                <button>{translate("FactionAlignment.Faction."+faction)}<br/>{translate("FactionAlignment.Alignment."+alignment)}</button>
+                <button>{styleText(translate("FactionAlignment.Faction."+faction))}<br/>{styleText(translate("FactionAlignment.Alignment."+alignment))}</button>
             </div>
         } else {
             let faction = roleListEntry.faction;
             return <div key={index}>
-                <button>{translate("FactionAlignment.Faction."+faction)}<br/>{translate("FactionAlignment.Alignment.Random")}</button>
+                <button>{styleText(translate("FactionAlignment.Faction."+faction))}<br/>{styleText(translate("FactionAlignment.Alignment.Random"))}</button>
             </div>
         }
     }
     render(){return(<div>
-        <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.GraveyardMenu)}}>{translate("menu.graveyard.title")}</button>
+        <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.GraveyardMenu)}}>{styleText(translate("menu.graveyard.title"))}</button>
         <br/>
         <div style={{display: "flex"}}>
             {this.renderRoleList()}

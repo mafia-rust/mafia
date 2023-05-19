@@ -1,5 +1,5 @@
 import React from "react";
-import translate, { colorText, getChatString } from "../../../game/lang";
+import translate, { styleText, getChatString } from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import "../gameScreen.css";
 import "./chatMenu.css"
@@ -117,7 +117,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
 
     renderChatMessage(msg: ChatMessage, i: number) {return (
         <div key={i}>
-            {colorText(getChatString(msg), [{string:"Guilty", color:"red"}, {string:"Innocent", color:"lime"}])}
+            {styleText(getChatString(msg))}
         </div>
     );}
 
