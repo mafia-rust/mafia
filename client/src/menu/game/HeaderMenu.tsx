@@ -1,5 +1,5 @@
 import React from "react";
-import translate from "../../game/lang";
+import translate, { styleText } from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import GameState, { Phase, Verdict } from "../../game/gameState.d";
 import GameScreen, { ContentMenus as GameScreenContentMenus } from "./GameScreen";
@@ -47,16 +47,16 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                     {(()=>{
                     if(this.state.gameState.playerOnTrial !== this.state.gameState.myIndex)
                         return(<div>
-                            {translate("verdict."+this.state.gameState.judgement)}
+                            {styleText(translate("verdict."+this.state.gameState.judgement?.toLowerCase()))}
                         <div
                             style={{
                                 display:"grid",
                                 gridAutoColumns: "1fr",
                             }}
                         >
-                            <button style={{gridColumn: 2}} onClick={()=>{GAME_MANAGER.sendJudgementPacket(Verdict.Guilty)}}>{translate("verdict.Guilty")}</button>
-                            <button style={{gridColumn: 3}} onClick={()=>{GAME_MANAGER.sendJudgementPacket(Verdict.Abstain)}}>{translate("verdict.Abstain")}</button>
-                            <button style={{gridColumn: 4}} onClick={()=>{GAME_MANAGER.sendJudgementPacket(Verdict.Innocent)}}>{translate("verdict.Innocent")}</button>
+                            <button style={{gridColumn: 2}} onClick={()=>{GAME_MANAGER.sendJudgementPacket(Verdict.Guilty)}}>{styleText(translate("verdict.guilty"))}</button>
+                            <button style={{gridColumn: 3}} onClick={()=>{GAME_MANAGER.sendJudgementPacket(Verdict.Abstain)}}>{styleText(translate("verdict.abstain"))}</button>
+                            <button style={{gridColumn: 4}} onClick={()=>{GAME_MANAGER.sendJudgementPacket(Verdict.Innocent)}}>{styleText(translate("verdict.innocent"))}</button>
                             <div style={{gridColumn: 5}}></div>
                         </div></div>);})()}
                 </div>);
@@ -116,7 +116,8 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
         {this.renderPhase()}
         {(()=>{
             if(this.state.gameState.myIndex !== null){
-                return this.state.gameState.players[this.state.gameState.myIndex].toString() + " (" + this.state.gameState.players[this.state.gameState.myIndex].roleLabel + ")"
+                return styleText(this.state.gameState.players[this.state.gameState.myIndex].toString() +
+                 " (" + translate("role."+this.state.gameState.players[this.state.gameState.myIndex].roleLabel+".name") + ")");
             }
         })()}
         {this.renderPhaseSpecific()}

@@ -78,5 +78,15 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": 1
+    },
+    "VoodooMaster": {
+        "faction": "Coven",
+        "alignment": "Utility",
+        "suspicious": true,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": 1
     }
 }

@@ -8,11 +8,13 @@
     flex-direction: row;
 }
 .lm > header input{
-    font-size: 300%;
+    font-size: 3em;
     margin-right: 2%;
     background: none;
     border: none;
-    max-width: 2em;
+    max-width: 3em;
+    padding:0;
+    margin: 0;
     text-align: left;
 }
 .lm > header button{

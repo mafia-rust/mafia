@@ -60,6 +60,7 @@ impl PhaseType {
                 for player_ref in PlayerReference::all_players(game){
                     if *player_ref.night_died(game){
                         let new_grave = Grave::from_player_night(game, player_ref);
+                        game.graves.push(new_grave.clone());
                         game.send_packet_to_all(ToClientPacket::AddGrave{grave: new_grave.clone()});
                         game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied { grave: new_grave });
                     }
@@ -185,8 +186,9 @@ impl PhaseType {
                         let grave = Grave::from_player_lynch(game, player_on_trial);
                         game.send_packet_to_all(ToClientPacket::AddGrave{grave: grave.clone()});
                         game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied {
-                            grave
+                            grave: grave.clone()
                         });
+                        game.graves.push(grave);
                         player_on_trial.set_alive(game, false);
                     }
                 }

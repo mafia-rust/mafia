@@ -76,6 +76,10 @@
     "role.CovenLeader.name": "Coven Leader",
     "role.CovenLeader.abilities":"",
     "role.CovenLeader.attributes":"",
+
+    "role.VoodooMaster.name": "Voodoo Master",
+    "role.VoodooMaster.abilities":"",
+    "role.VoodooMaster.attributes":"",
     
 
     "FactionAlignment.Faction.Town": "Town",
@@ -134,7 +138,6 @@
     "chatmessage.mayorCantWhisper":"You can't whisper as or to a revealed mayor.",
     "chatmessage.jailorDecideExecuteYou":"The Jailor decided to execute you!",
     "chatmessage.mediumSeanceYou":"You're being seanced by the medium!",
-
 
     "chatmessage.night.roleBlockedImmune": "Someone tried to roleblock you but you are immune.",
     "chatmessage.night.roleBlocked": "You've been roleblocked.",
