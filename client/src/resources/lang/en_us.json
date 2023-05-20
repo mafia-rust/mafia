@@ -120,11 +120,11 @@
     "chatmessage.whisper":"\\0 whispered to \\1: \\2",
     "chatmessage.broadcastWhisper":"\\0 whispered to \\1.",
 
-    "chatmessage.roleAssignment":"Your role is \\0.",
+    "chatmessage.roleAssignment":"Your role is \\0",
     "chatmessage.playerDied":"\\0 (\\1) died. They died to \\2. Their will stated this: \\3",
     "chatmessage.phaseChange":"\\0 \\1",
 
-    "chatmessage.trialInformation":"\\0 votes are needed to put someone on trial. There's \\1 trials left today.",
+    "chatmessage.trialInformation":"\\0 votes needed for the \\1 trials left today.",
     "chatmessage.voted":"\\0 voted for \\1.",
     "chatmessage.votedNull":"\\0 changed their mind.",
     "chatmessage.playerOnTrial":"\\0 is on trial.",

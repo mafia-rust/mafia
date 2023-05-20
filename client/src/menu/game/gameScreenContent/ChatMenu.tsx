@@ -1,5 +1,5 @@
 import React from "react";
-import translate, { styleText, getChatString } from "../../../game/lang";
+import translate, { getChatElement } from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import "../gameScreen.css";
 import "./chatMenu.css"
@@ -116,9 +116,9 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     
 
     renderChatMessage(msg: ChatMessage, i: number) {return (
-        <div key={i}>
-            {styleText(getChatString(msg))}
-        </div>
+        // <div key={i}>
+            getChatElement(msg)
+        // </div>
     );}
 
     renderTextInput() {return (
