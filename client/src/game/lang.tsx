@@ -25,103 +25,103 @@ export default function translate(langKey: string, ...valuesList: any[]): string
 }
 
 // TODO, make message union type (& make an interface) & make getChatString a method
-export function getChatString(message: ChatMessage): string {
+export function getChatElement(message: ChatMessage): JSX.Element {
     switch (message.type) {
         case "normal":
             if(message.messageSender.type === "player"){
                 let playerIndex = message.messageSender.player;
-                return translate("chatmessage.normal",
+                return <span>{styleText(translate("chatmessage.normal",
                     GAME_MANAGER.gameState.players[playerIndex].toString(),
                     message.text
-                );
+                ))}</span>;
             } else {
                 //TODO
-                return "";
+                return <span></span>;
             }
         case "whisper":
-            return translate("chatmessage.whisper", 
+            return <span>{styleText(translate("chatmessage.whisper", 
                 GAME_MANAGER.gameState.players[message.fromPlayerIndex].toString(),
                 GAME_MANAGER.gameState.players[message.toPlayerIndex].toString(),
                 message.text
-            );
+            ), {color:"turquoise"})}</span>;
         case "broadcastWhisper":
-            return translate("chatmessage.broadcastWhisper",
+            return <span>{styleText(translate("chatmessage.broadcastWhisper",
                 GAME_MANAGER.gameState.players[message.whisperer].toString(),
                 GAME_MANAGER.gameState.players[message.whisperee].toString(),
-            );
+            ), {color:"turquoise"})}</span>;
         case "roleAssignment":
             let role = message.role;
             let name = translate("role."+role+".name")
             
-            return translate("chatmessage.roleAssignment", name);
+            return <span style={{textAlign:"center"}}>{styleText(translate("chatmessage.roleAssignment", name), {color:"yellow"})}</span>;
         case "playerDied":
             //TODO, role doesnt work properly
-            return translate("chatmessage.playerDied",
+            return <span>{styleText(translate("chatmessage.playerDied",
                 GAME_MANAGER.gameState.players[message.grave.playerIndex].toString(),
                 JSON.stringify(message.grave.role),
                 JSON.stringify(message.grave.deathCause),
                 message.grave.will
-            );
+            ), {color:"yellow"})}</span>;
         case "phaseChange":
-            return translate("chatmessage.phaseChange",
+            return <span style={{textAlign:"center"}}>{styleText(translate("chatmessage.phaseChange",
                 translate("phase."+message.phase),
                 message.dayNumber
-            );
+            ), {color:"yellow"})}</span>;
         case "trialInformation":
-            return translate("chatmessage.trialInformation",
+            return <span>{styleText(translate("chatmessage.trialInformation",
                 message.requiredVotes,
                 message.trialsLeft
-            );
+            ), {color:"orange"})}</span>;
         case "voted":
             if (message.votee !== undefined) {
-                return translate("chatmessage.voted",
+                return <span>{styleText(translate("chatmessage.voted",
                     GAME_MANAGER.gameState.players[message.voter],
                     GAME_MANAGER.gameState.players[message.votee],
-                );
+                ), {color:"orange"})}</span>;
             } else {
-                return translate("chatmessage.voted.cleared",
+                return <span>{styleText(translate("chatmessage.voted.cleared",
                     GAME_MANAGER.gameState.players[message.voter],
-                );
+                ), {color:"orange"})}</span>;
             }
         case "playerOnTrial":
-            return translate("chatmessage.playerOnTrial",
+            return <span>{styleText(translate("chatmessage.playerOnTrial",
                 GAME_MANAGER.gameState.players[message.playerIndex],
-            );
+            ), {color:"yellow"})}</span>;
         case "judgementVote":
-            return translate("chatmessage.judgementVote",
+            return <span>{styleText(translate("chatmessage.judgementVote",
                 GAME_MANAGER.gameState.players[message.voterPlayerIndex],
-            );
+            ), {color:"orange"})}</span>;
         case "judgementVerdict":
-            return translate("chatmessage.judgementVerdict",
+            return <span>{styleText(translate("chatmessage.judgementVerdict",
                 GAME_MANAGER.gameState.players[message.voterPlayerIndex],
                 translate("verdict."+message.verdict)
-            );
+            ), {color:"orange"})}</span>;
         case "trialVerdict":
-            return translate("chatmessage.trialVerdict",
+            return <span>{styleText(translate("chatmessage.trialVerdict",
                 GAME_MANAGER.gameState.players[GAME_MANAGER.gameState.playerOnTrial!].toString(),
                 message.innocent>=message.guilty?translate("verdict.innocent"):translate("verdict.guilty"),
                 message.innocent,
                 message.guilty
-            );
+            ), {color:"yellow"})}</span>;
         case "nightInformation":
-            return getNightInformationString(message.nightInformation);
+            return <span>{getNightInformationString(message.nightInformation)}</span>;
         case "targeted":
             if (message.target !== undefined) {
-                return translate("chatmessage.targeted",
+                return <span>{styleText(translate("chatmessage.targeted",
                     GAME_MANAGER.gameState.players[message.targeter],
                     GAME_MANAGER.gameState.players[message.target],
-                );
+                ), {color:"orange"})}</span>;
             } else {
-                return translate("chatmessage.targeted.cleared",
+                return <span>{styleText(translate("chatmessage.targeted.cleared",
                     GAME_MANAGER.gameState.players[message.targeter],
-                );
+                ), {color:"orange"})}</span>;
             }
         case "mayorRevealed":
-            return translate("chatmessage.mayorRevealed",
+            return <span>{styleText(translate("chatmessage.mayorRevealed",
                 GAME_MANAGER.gameState.players[message.playerIndex],
-            );
+            ), {color:"violet"})}</span>;
         default:
-            return translate("chatmessage."+message);
+            return <span>{styleText(translate("chatmessage."+message))}</span>;
     }
 }
 
@@ -137,7 +137,7 @@ export function getNightInformationString(info: NightInformation){
     }
 }
 
-function styleSubstring(string: string, stringsToStyle: {string: string, style: React.CSSProperties}[]): JSX.Element[]{
+function styleSubstring(string: string, stringsToStyle: {string: string, style: React.CSSProperties}[], defaultStyle: React.CSSProperties = {}): JSX.Element[]{
 
     type StyledOrNot = string | {string: string, style: React.CSSProperties};
 
@@ -177,7 +177,14 @@ function styleSubstring(string: string, stringsToStyle: {string: string, style: 
     let outJsxList = [];
     for(let i in finalOutList){
         if(typeof finalOutList[i] === "string"){
-            outJsxList.push(<span key={i}>{finalOutList[i] as string}</span>);
+
+            outJsxList.push(
+            <span key={i} style={
+                defaultStyle
+            }>
+                {finalOutList[i] as string}
+            </span>);
+
         }else if(typeof finalOutList[i] === "object"){
             outJsxList.push(
             <span key={i} style={
@@ -191,7 +198,7 @@ function styleSubstring(string: string, stringsToStyle: {string: string, style: 
     return outJsxList;
 }
 
-export function styleText(string: string): JSX.Element[]{
+export function styleText(string: string, defaultStyle: React.CSSProperties = {}): JSX.Element[]{
     let stringsToStyle: {string: string, style: React.CSSProperties}[] = [];
 
     for(let role in (ROLES as any)){
@@ -251,5 +258,5 @@ export function styleText(string: string): JSX.Element[]{
 
     
 
-    return styleSubstring(string, stringsToStyle);
+    return styleSubstring(string, stringsToStyle, defaultStyle);
 }

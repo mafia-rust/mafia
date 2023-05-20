@@ -29,8 +29,8 @@ export default class Anchor extends React.Component<any, AnchorState> {
     render(){return(
         <div className="anchor">
             {this.state.content}
-        </div>)
-    }
+    </div>);}
+
     public static setContent(content: JSX.Element){
         Anchor.instance.setState({content : content});
     }
