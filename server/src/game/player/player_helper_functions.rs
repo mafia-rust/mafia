@@ -33,6 +33,10 @@ impl PlayerReference{
         
         //die
         self.push_night_messages(game, NightInformation::YouDied);
+
+        if !self.alive(game){
+            return true;
+        }
         self.set_night_died(game, true);
         self.set_alive(game, false);
         self.push_night_grave_killers(game, grave_killer);
