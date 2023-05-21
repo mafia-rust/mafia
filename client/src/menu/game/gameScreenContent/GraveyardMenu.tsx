@@ -6,11 +6,13 @@ import { Grave } from "../../../game/grave";
 import GameScreen, { ContentMenus } from "../GameScreen";
 import "./graveyardMenu.css";
 
-interface GraveyardMenuState {
+type GraveyardMenuProps = {
+}
+type GraveyardMenuState = {
     gameState: GameState,
 }
 
-export default class GraveyardMenu extends React.Component<any, GraveyardMenuState> {
+export default class GraveyardMenu extends React.Component<GraveyardMenuProps, GraveyardMenuState> {
     listener: () => void;
     constructor(props: any) {
         super(props);
@@ -92,7 +94,9 @@ export default class GraveyardMenu extends React.Component<any, GraveyardMenuSta
         }
     }
     render(){return(<div className="graveyard-menu">
-        <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.GraveyardMenu)}}>{styleText(translate("menu.graveyard.title"))}</button>
+        <button onClick={()=>{
+            GameScreen.instance.closeMenu(ContentMenus.GraveyardMenu)
+        }}>{styleText(translate("menu.graveyard.title"))}</button>
         <div>
             {this.renderRoleList()}
             {this.renderGraves()}

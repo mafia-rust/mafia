@@ -1,5 +1,4 @@
 import React from "react";
-import * as LoadingScreen from "../LoadingScreen";
 import HeaderMenu from "./HeaderMenu";
 import GraveyardMenu from "./gameScreenContent/GraveyardMenu";
 import ChatMenu from "./gameScreenContent/ChatMenu";
@@ -36,18 +35,32 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         super(props);
         GameScreen.instance = this;
         this.state = {
-            header: LoadingScreen.create(),
-            content: [LoadingScreen.create()],
+            header: <HeaderMenu 
+                phase={GAME_MANAGER.gameState.phase}
+            />,
+            content: [
+                <GraveyardMenu/>,
+                <ChatMenu/>,
+                <PlayerListMenu/>,
+                <WillMenu/>
+            ],
             gameState: GAME_MANAGER.gameState,
         };
 
         this.listener = ()=>{
             this.setState({
                 gameState: GAME_MANAGER.gameState,
-            })
+            });
         }
     }
-    
+    componentDidMount() {
+        GameScreen.instance = this;
+        GAME_MANAGER.addStateListener(this.listener);
+    }
+    componentWillUnmount() {
+        GAME_MANAGER.removeStateListener(this.listener);
+    }
+
     openMenu(menu: ContentMenus) {
         switch(menu) {
             case ContentMenus.GraveyardMenu:
@@ -95,27 +108,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
             out.push(this.state.content[i].type.name);
         }
         return out;
-    }
-
-    componentDidMount() {
-        GameScreen.instance = this;
-        this.setState({
-            header: <HeaderMenu 
-                phase={this.state.gameState.phase}
-            />,
-            content: [
-                <GraveyardMenu/>,
-                <ChatMenu/>,
-                <PlayerListMenu/>,
-                <WillMenu/>
-            ],
-        });
-        GAME_MANAGER.addStateListener(this.listener);
-    }
-
-    componentWillUnmount() {
-        GAME_MANAGER.removeStateListener(this.listener);
-    }
+    }    
 
     render() {
         return (

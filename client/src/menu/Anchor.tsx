@@ -1,7 +1,6 @@
 import React from "react";
-import "../index.css"
-import StartMenu from "./main/StartMenu";
-import "./anchor.css"
+import "../index.css";
+import "./anchor.css";
 
 type AnchorProps = {
     content: JSX.Element,

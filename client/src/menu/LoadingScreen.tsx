@@ -15,8 +15,6 @@ export function create(value: Type = Type.Default) {
     return <header style={{height: "100%"}}>
     <h1>
         {translate("menu.loading." + value)}
-        <br/>
-        <br/>
         <span className="loading-dots"></span>
     </h1>
 </header>}
