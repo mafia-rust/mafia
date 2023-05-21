@@ -15,7 +15,6 @@
 
     "menu.lobby.title": "Lobby \\0",
     "menu.lobby.button.start": "Start Game",
-    "menu.lobby.button.copy": "Copy Link",
     "menu.lobby.field.name": "Name",
     "menu.lobby.button.setName": "Set Name",
     "menu.lobby.button.setTimeSettings": "Set Time Settings",

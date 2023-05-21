@@ -242,8 +242,8 @@ impl Lobby {
         name.truncate(30);
 
         //if valid then return
-        if name.len() > 0 && !players.values().map(|p| &p.name)
-            .any(|existing_name| matches!(&name, existing_name))
+        if name.len() > 0 && !players.values()
+            .any(|existing_player| name == *existing_player.name)
         {
             return name;
         }

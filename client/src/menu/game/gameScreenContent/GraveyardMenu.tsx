@@ -63,8 +63,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
         //     {"("+graveRoleString+")"} killed by {deathCauseString}
         // </div>)
         return(<button key={graveIndex}>
-            {this.state.gameState.players[grave.playerIndex]?.toString()}<br/>
-            {styleText("("+translate("role."+graveRoleString+".name")+")")}
+            {this.state.gameState.players[grave.playerIndex]?.toString()} {styleText("("+translate("role."+graveRoleString+".name")+")")}
         </button>);
     }
 
@@ -87,10 +86,10 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             let faction = roleListEntry.faction;
             let alignment = factionAlignment.replace(faction, "");
 
-            return <button key={index}>{styleText(translate("FactionAlignment.Faction."+faction))}<br/>{styleText(translate("FactionAlignment.Alignment."+alignment))}</button>
+            return <button key={index}>{styleText(translate("FactionAlignment.Faction."+faction))} {styleText(translate("FactionAlignment.Alignment."+alignment))}</button>
         } else {
             let faction = roleListEntry.faction;
-            return <button key={index}>{styleText(translate("FactionAlignment.Faction."+faction))}<br/>{styleText(translate("FactionAlignment.Alignment.Random"))}</button>
+            return <button key={index}>{styleText(translate("FactionAlignment.Faction."+faction))} {styleText(translate("FactionAlignment.Alignment.Random"))}</button>
         }
     }
     render(){return(<div className="graveyard-menu">

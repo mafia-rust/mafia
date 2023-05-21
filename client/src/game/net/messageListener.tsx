@@ -1,7 +1,7 @@
 
 import { createGameState, createPlayer } from "../gameState";
 import Anchor from "../../menu/Anchor";
-import * as LobbyMenu from "../../menu/lobby/LobbyMenu";
+import LobbyMenu from "../../menu/lobby/LobbyMenu";
 import StartMenu from "../../menu/main/StartMenu";
 import GAME_MANAGER from "../../index";
 import GameScreen from "../../menu/game/GameScreen";
@@ -14,7 +14,7 @@ export default function messageListener(packet: ToClientPacket){
     console.log(packet);
     switch(packet.type) {
         case "acceptJoin":
-            Anchor.setContent(LobbyMenu.create());
+            Anchor.setContent(<LobbyMenu/>);
         break;
         case "rejectJoin":
             switch(packet.reason) {
@@ -55,7 +55,7 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "acceptHost":
             GAME_MANAGER.roomCode = packet.roomCode.toString(18);
-            Anchor.setContent(LobbyMenu.create());
+            Anchor.setContent(<LobbyMenu/>);
         break;
 
         //InLobby/Game
