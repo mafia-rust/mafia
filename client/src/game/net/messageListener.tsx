@@ -145,9 +145,7 @@ export default function messageListener(packet: ToClientPacket){
             GAME_MANAGER.gameState.judgement = packet.verdict;
         break;
         case "addChatMessages":
-            for(let i = 0; i < packet.chatMessages.length; i++){
-                GAME_MANAGER.gameState.chatMessages.push(packet.chatMessages[i]);
-            }
+            GAME_MANAGER.gameState.chatMessages = GAME_MANAGER.gameState.chatMessages.concat(packet.chatMessages);
         break;
         case "addGrave":
             GAME_MANAGER.gameState.graves.push(packet.grave);

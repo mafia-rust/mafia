@@ -15,8 +15,6 @@ interface ChatMenuState {
 }
 
 export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuState> {
-    bottomOfPage: HTMLBRElement | null;
-
     static prependWhisper(playerIndex: PlayerIndex) {
         
         if(ChatMenu.instance === null)
@@ -27,22 +25,28 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     }
 
     static instance: ChatMenu | null = null;
+    messageSection: HTMLDivElement | null;
     listener: () => void;
 
     constructor(props: ChatMenuProps) {
         super(props);
-        this.bottomOfPage = null;
-
+        
         this.state = {
             gameState: GAME_MANAGER.gameState,
             chatField: "",
         };
 
         this.listener = () => {
+            let atTop = this.messageSection !== null && this.messageSection.scrollTop >= this.messageSection.scrollHeight - this.messageSection.clientHeight - 100;            
             this.setState({
                 gameState: GAME_MANAGER.gameState
+            }, () => {
+                if(this.messageSection !== null && atTop){
+                    this.messageSection.scrollTop = this.messageSection.scrollHeight;
+                }
             });
         };
+        this.messageSection = null;
     }
     componentDidMount() {
         GAME_MANAGER.addStateListener(this.listener);
@@ -52,21 +56,6 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         GAME_MANAGER.removeStateListener(this.listener);
     }
     componentDidUpdate() {
-        if(this.bottomIsInViewport(500))   //used to be 500
-            this.scrollToBottom();
-    }
-
-
-
-    scrollToBottom() {
-        this.bottomOfPage?.scrollIntoView({ behavior: "smooth" });
-    }
-    bottomIsInViewport(offset = 0) {
-        if (!this.bottomOfPage) return false;
-        const top = this.bottomOfPage.getBoundingClientRect().top;
-        //if top is between 0 and height then true
-        //else false
-        return (top + offset) >= 0 && (top - offset) <= window.innerHeight;
     }
 
 
@@ -79,7 +68,6 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
             chatField: value
         });
     };
-
     handleInputKeyPress(event: { code: string; preventDefault: () => void; }){
         if (event.code === "Enter") {
             event.preventDefault();
@@ -87,7 +75,6 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
                 ChatMenu.instance.sendChatField();
         }
     };
-
     sendChatField(){
         if(ChatMenu.instance === null) return;
         const text = ChatMenu.instance.state.chatField.trim();
@@ -116,14 +103,11 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         });
     };
 
-    
-
     renderChatMessage(msg: ChatMessage, i: number) {return (
         // <div key={i}>
             getChatElement(msg)
         // </div>
     );}
-
     renderTextInput() {return (
         <div className="send-section">
             <textarea
@@ -137,14 +121,14 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
             </button>
         </div>
     );}
-
     render(){return(
         <div className="chat-menu">
-            <div className="message-section">
-                {this.state.gameState.chatMessages.map((msg, i) => {
-                    return this.renderChatMessage(msg, i);
-                })}
-                {/* <br ref={(el) => { this.bottomOfPage = el; }}/> */}
+            <div className="message-section" ref={(el) => { this.messageSection = el; }}>
+                <div className="message-list">
+                    {this.state.gameState.chatMessages.map((msg, i) => {
+                        return this.renderChatMessage(msg, i);
+                    })}
+                </div>
             </div>
             {this.renderTextInput()}
         </div>
