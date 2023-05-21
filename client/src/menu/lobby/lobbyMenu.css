@@ -32,6 +32,11 @@
     flex-direction: row;
     justify-content: space-evenly;
 }
+@media only screen and (max-width: 600px) {
+    .lm > main {
+        flex-direction: column;
+    }
+}
 .lm > main > div {
     width: 100%;
 }
@@ -39,6 +44,10 @@
 .lm input {
     width: 100%;
     margin: .5%;
+}
+
+.lm .left {
+    margin-bottom: 4%;
 }
 
 .lm .left .name-box {

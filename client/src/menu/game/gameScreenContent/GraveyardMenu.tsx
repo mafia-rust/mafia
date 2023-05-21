@@ -76,7 +76,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
     </div>}
     renderRoleListEntry(roleListEntry: RoleListEntry, index: number){
         if(roleListEntry.type === "any"){
-            return <button key={index}>{styleText(translate("FactionAlignment.Faction.Random"))}</button>
+            return <button key={index}>{styleText(translate("faction.Random"))}</button>
         } else if(roleListEntry.type === "exact"){
             let role = roleListEntry.role;
             return <button key={index}>{styleText(translate("role."+role+".name"))}</button>
@@ -86,10 +86,10 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             let faction = roleListEntry.faction;
             let alignment = factionAlignment.replace(faction, "");
 
-            return <button key={index}>{styleText(translate("FactionAlignment.Faction."+faction))} {styleText(translate("FactionAlignment.Alignment."+alignment))}</button>
+            return <button key={index}>{styleText(translate("faction."+faction))} {styleText(translate("alignment."+alignment))}</button>
         } else {
             let faction = roleListEntry.faction;
-            return <button key={index}>{styleText(translate("FactionAlignment.Faction."+faction))} {styleText(translate("FactionAlignment.Alignment.Random"))}</button>
+            return <button key={index}>{styleText(translate("faction."+faction))} {styleText(translate("alignment.Random"))}</button>
         }
     }
     render(){return(<div className="graveyard-menu">

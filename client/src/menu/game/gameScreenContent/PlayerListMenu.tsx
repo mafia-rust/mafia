@@ -106,7 +106,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     }
     renderPlayers(players: Player[]){
         
-        let playersHTML = [];
+        let playersHTML: JSX.Element[] = [];
         for(let i = 0; i < players.length; i++){
             
             let canWhisper = 
@@ -124,14 +124,10 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         }
         
 
-        return<div>
-        {
-            playersHTML
-        }
-        </div>
+        return<div>{playersHTML}</div>
     }
 
-    render(){return(<div>
+    render(){return(<div className=".player-list-menu">
         
         <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.PlayerListMenu)}}>{translate("menu.playerList.title")}</button>        
         <label>
@@ -140,7 +136,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 onChange={(checked)=>{
                     this.setState({
                         showAllPlayers: checked.target.checked
-                    }); 
+                    });
                 }
             }/>
             {translate("menu.playerList.button.showAll")}

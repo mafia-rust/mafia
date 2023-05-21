@@ -25,27 +25,27 @@ export default function translate(langKey: string, ...valuesList: any[]): string
 }
 
 // TODO, make message union type (& make an interface) & make getChatString a method
-export function getChatElement(message: ChatMessage): JSX.Element {
+export function getChatElement(message: ChatMessage, key: number): JSX.Element {
     switch (message.type) {
         case "normal":
             if(message.messageSender.type === "player"){
                 let playerIndex = message.messageSender.player;
-                return <span>{styleText(translate("chatmessage.normal",
+                return <span key={key}>{styleText(translate("chatmessage.normal",
                     GAME_MANAGER.gameState.players[playerIndex].toString(),
                     message.text
                 ))}</span>;
             } else {
                 //TODO
-                return <span></span>;
+                return <span key={key}></span>;
             }
         case "whisper":
-            return <span>{styleText(translate("chatmessage.whisper", 
+            return <span key={key}>{styleText(translate("chatmessage.whisper", 
                 GAME_MANAGER.gameState.players[message.fromPlayerIndex].toString(),
                 GAME_MANAGER.gameState.players[message.toPlayerIndex].toString(),
                 message.text
             ), {color:"turquoise"})}</span>;
         case "broadcastWhisper":
-            return <span>{styleText(translate("chatmessage.broadcastWhisper",
+            return <span key={key}>{styleText(translate("chatmessage.broadcastWhisper",
                 GAME_MANAGER.gameState.players[message.whisperer].toString(),
                 GAME_MANAGER.gameState.players[message.whisperee].toString(),
             ), {color:"turquoise"})}</span>;
@@ -53,75 +53,75 @@ export function getChatElement(message: ChatMessage): JSX.Element {
             let role = message.role;
             let name = translate("role."+role+".name")
             
-            return <span style={{textAlign:"center"}}>{styleText(translate("chatmessage.roleAssignment", name), {color:"yellow"})}</span>;
+            return <span key={key} style={{textAlign:"center"}}>{styleText(translate("chatmessage.roleAssignment", name), {color:"yellow"})}</span>;
         case "playerDied":
             //TODO, role doesnt work properly
-            return <span>{styleText(translate("chatmessage.playerDied",
+            return <span key={key} >{styleText(translate("chatmessage.playerDied",
                 GAME_MANAGER.gameState.players[message.grave.playerIndex].toString(),
                 JSON.stringify(message.grave.role),
                 JSON.stringify(message.grave.deathCause),
                 message.grave.will
             ), {color:"yellow"})}</span>;
         case "phaseChange":
-            return <span style={{textAlign:"center"}}>{styleText(translate("chatmessage.phaseChange",
+            return <span key={key} style={{textAlign:"center"}}>{styleText(translate("chatmessage.phaseChange",
                 translate("phase."+message.phase),
                 message.dayNumber
             ), {color:"yellow"})}</span>;
         case "trialInformation":
-            return <span>{styleText(translate("chatmessage.trialInformation",
+            return <span key={key}>{styleText(translate("chatmessage.trialInformation",
                 message.requiredVotes,
                 message.trialsLeft
             ), {color:"orange"})}</span>;
         case "voted":
             if (message.votee !== undefined) {
-                return <span>{styleText(translate("chatmessage.voted",
+                return <span key={key}>{styleText(translate("chatmessage.voted",
                     GAME_MANAGER.gameState.players[message.voter],
                     GAME_MANAGER.gameState.players[message.votee],
                 ), {color:"orange"})}</span>;
             } else {
-                return <span>{styleText(translate("chatmessage.voted.cleared",
+                return <span key={key}>{styleText(translate("chatmessage.voted.cleared",
                     GAME_MANAGER.gameState.players[message.voter],
                 ), {color:"orange"})}</span>;
             }
         case "playerOnTrial":
-            return <span>{styleText(translate("chatmessage.playerOnTrial",
+            return <span key={key}>{styleText(translate("chatmessage.playerOnTrial",
                 GAME_MANAGER.gameState.players[message.playerIndex],
             ), {color:"yellow"})}</span>;
         case "judgementVote":
-            return <span>{styleText(translate("chatmessage.judgementVote",
+            return <span key={key}>{styleText(translate("chatmessage.judgementVote",
                 GAME_MANAGER.gameState.players[message.voterPlayerIndex],
             ), {color:"orange"})}</span>;
         case "judgementVerdict":
-            return <span>{styleText(translate("chatmessage.judgementVerdict",
+            return <span key={key}>{styleText(translate("chatmessage.judgementVerdict",
                 GAME_MANAGER.gameState.players[message.voterPlayerIndex],
                 translate("verdict."+message.verdict)
             ), {color:"orange"})}</span>;
         case "trialVerdict":
-            return <span>{styleText(translate("chatmessage.trialVerdict",
+            return <span key={key}>{styleText(translate("chatmessage.trialVerdict",
                 GAME_MANAGER.gameState.players[GAME_MANAGER.gameState.playerOnTrial!].toString(),
                 message.innocent>=message.guilty?translate("verdict.innocent"):translate("verdict.guilty"),
                 message.innocent,
                 message.guilty
             ), {color:"yellow"})}</span>;
         case "nightInformation":
-            return <span>{getNightInformationString(message.nightInformation)}</span>;
+            return <span key={key}>{getNightInformationString(message.nightInformation)}</span>;
         case "targeted":
             if (message.target !== undefined) {
-                return <span>{styleText(translate("chatmessage.targeted",
+                return <span key={key}>{styleText(translate("chatmessage.targeted",
                     GAME_MANAGER.gameState.players[message.targeter],
                     GAME_MANAGER.gameState.players[message.target],
                 ), {color:"orange"})}</span>;
             } else {
-                return <span>{styleText(translate("chatmessage.targeted.cleared",
+                return <span key={key}>{styleText(translate("chatmessage.targeted.cleared",
                     GAME_MANAGER.gameState.players[message.targeter],
                 ), {color:"orange"})}</span>;
             }
         case "mayorRevealed":
-            return <span>{styleText(translate("chatmessage.mayorRevealed",
+            return <span key={key}>{styleText(translate("chatmessage.mayorRevealed",
                 GAME_MANAGER.gameState.players[message.playerIndex],
             ), {color:"violet"})}</span>;
         default:
-            return <span>{styleText(translate("chatmessage."+message))}</span>;
+            return <span key={key}>{styleText(translate("chatmessage."+message))}</span>;
     }
 }
 
@@ -237,22 +237,22 @@ export function styleText(string: string, defaultStyle: React.CSSProperties = {}
         {string:translate("verdict.innocent"), style:{color:"lime"}},
         {string:translate("verdict.abstain"), style:{color:"cyan"}},
         
-        {string:translate("FactionAlignment.Faction.Town"), style:{color:"lime"}},
-        {string:translate("FactionAlignment.Faction.Mafia"), style:{color:"red"}},
-        {string:translate("FactionAlignment.Faction.Neutral"), style:{color:"cyan"}},
-        {string:translate("FactionAlignment.Faction.Coven"), style:{color:"magenta"}},
-        {string:translate("FactionAlignment.Faction.Random"), style:{color:"lightblue"}},
+        {string:translate("faction.Town"), style:{color:"lime"}},
+        {string:translate("faction.Mafia"), style:{color:"red"}},
+        {string:translate("faction.Neutral"), style:{color:"cyan"}},
+        {string:translate("faction.Coven"), style:{color:"magenta"}},
+        {string:translate("faction.Random"), style:{color:"lightblue"}},
 
-        {string:translate("FactionAlignment.Alignment.Killing"), style:{color:"lightblue"}},
-        {string:translate("FactionAlignment.Alignment.Investigative"), style:{color:"lightblue"}},
-        {string:translate("FactionAlignment.Alignment.Protective"), style:{color:"lightblue"}},
-        {string:translate("FactionAlignment.Alignment.Support"), style:{color:"lightblue"}},
-        {string:translate("FactionAlignment.Alignment.Deception"), style:{color:"lightblue"}},
-        {string:translate("FactionAlignment.Alignment.Evil"), style:{color:"lightblue"}},
-        {string:translate("FactionAlignment.Alignment.Chaos"), style:{color:"lightblue"}},
-        {string:translate("FactionAlignment.Alignment.Random"), style:{color:"lightblue"}},
-        {string:translate("FactionAlignment.Alignment.Utility"), style:{color:"lightblue"}},
-        {string:translate("FactionAlignment.Alignment.Power"), style:{color:"lightblue"}},
+        {string:translate("alignment.Killing"), style:{color:"lightblue"}},
+        {string:translate("alignment.Investigative"), style:{color:"lightblue"}},
+        {string:translate("alignment.Protective"), style:{color:"lightblue"}},
+        {string:translate("alignment.Support"), style:{color:"lightblue"}},
+        {string:translate("alignment.Deception"), style:{color:"lightblue"}},
+        {string:translate("alignment.Evil"), style:{color:"lightblue"}},
+        {string:translate("alignment.Chaos"), style:{color:"lightblue"}},
+        {string:translate("alignment.Random"), style:{color:"lightblue"}},
+        {string:translate("alignment.Utility"), style:{color:"lightblue"}},
+        {string:translate("alignment.Power"), style:{color:"lightblue"}},
 
     ]);
 

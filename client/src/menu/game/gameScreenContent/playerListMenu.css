@@ -1,6 +1,6 @@
 .player-list-menu {
-    display: grid;
-    grid-auto-columns: 1fr;
     width: 100%;
+    max-width: 100%;
+    overflow-y: scroll;
 }
   
