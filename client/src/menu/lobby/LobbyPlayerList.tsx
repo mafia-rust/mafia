@@ -6,7 +6,7 @@ import { Player } from "../../game/gameState.d";
 import { StateEventType } from "../../game/net/gameManager.d";
 
 interface PlayerListState {
-    name: string,
+    enteredName: string,
     players: Player[]
 }
 
@@ -15,16 +15,11 @@ export default class LobbyPlayerList extends React.Component<any, PlayerListStat
     constructor(props: any) {
         super(props);
 
-        this.state = {            
-            name: "",
+        this.state = {     
+            enteredName: "",
             players: GAME_MANAGER.gameState.players
         };
         this.listener = (type)=>{
-            if (type === "yourName") {
-                this.setState({
-                    name: GAME_MANAGER.gameState.myName!
-                })
-            }
             this.setState({
                 players: GAME_MANAGER.gameState.players
             });
@@ -40,24 +35,25 @@ export default class LobbyPlayerList extends React.Component<any, PlayerListStat
     renderName(){return(
         <div className="name-box">
             <button onClick={()=>{
-                GAME_MANAGER.sendSetNamePacket(this.state.name)
+                GAME_MANAGER.sendSetNamePacket(this.state.enteredName)
             }}>{translate("menu.lobby.button.setName")}</button>
 
-            <input type="text" value={this.state.name}
-                onChange={(e)=>{this.setState({name: e.target.value})}}
+
+            <input type="text" value={this.state.enteredName}
+                onChange={(e)=>{this.setState({enteredName: e.target.value})}}
                 onKeyUp={(e)=>{
                     if(e.key === 'Enter')
-                        GAME_MANAGER.sendSetNamePacket(this.state.name);
+                        GAME_MANAGER.sendSetNamePacket(this.state.enteredName);
                 }}
             />
         </div>
     )}
 
-    renderPlayers(){return(<ol>
+    renderPlayers(){return(<div>
         {this.state.players.map((player, i)=>{
-            return(<li key={i}>{player.toString()}</li>)
+            return(<div key={i}>{player.toString()}</div>)
         })}
-    </ol>)}
+    </div>)}
 
     render(){return(<section>
         {this.renderName()}
