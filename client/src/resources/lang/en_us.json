@@ -81,7 +81,15 @@
     "role.VoodooMaster.attributes":"",
 
     "role.Random.name":"Random",
+
+    "grave.role.cleaned": "Cleaned",
+    "grave.role.stoned": "Stoned",
     
+    "grave.deathCause.lynched": "Lynched",
+
+    "grave.killer.mafia": "Mafia",
+    "grave.killer.coven": "Coven",
+    "grave.killer.suicide": "Suicide",
 
     "faction.Town": "Town",
     "faction.Mafia": "Mafia",

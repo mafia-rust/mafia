@@ -26,6 +26,10 @@ export type GraveDeathCause = {
 export type GraveKiller = {
     type: "mafia"
 } | {
+    type: "coven"
+} | {
+    type: "suicide"
+} | {
     type: "role"
     role: Role
 };
