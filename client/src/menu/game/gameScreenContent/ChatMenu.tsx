@@ -22,7 +22,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         if(ChatMenu.instance === null)
             return;
         ChatMenu.instance!.setState({
-            chatField: "/w" + (playerIndex + 1) + " " + ChatMenu.instance!.state.chatField,
+            chatField: "/w " + (playerIndex + 1) + " " + ChatMenu.instance!.state.chatField,
         });
     }
 
@@ -93,12 +93,15 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         const text = ChatMenu.instance.state.chatField.trim();
         if (text.startsWith("/w")) {
             try {
-                const indexOfFirstSpace = text.indexOf(' ');
-                const playerIndex = parseInt(text.substring(2, indexOfFirstSpace)) - 1;
+                let textSplit = text.split(' ');
+                if(textSplit.length < 2){
+                    throw new Error("Invalid whisper");
+                }
+                const playerIndex = parseInt(textSplit[1]) - 1;
                 if (isNaN(playerIndex)) {
                     throw new Error("Invalid player index");
                 }
-                const message = text.substring(indexOfFirstSpace + 1);
+                const message = text.substring(textSplit[0].length + textSplit[1].length + 2);
                 GAME_MANAGER.sendSendWhisperPacket(playerIndex, message);
             } catch (e) {
                 GAME_MANAGER.sendSendMessagePacket(text);                
@@ -138,7 +141,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     render(){return(
         <div className="chat-menu">
             <div className="message-section">
-                {this.state.gameState.chatMessages.reverse().map((msg, i) => {
+                {this.state.gameState.chatMessages.map((msg, i) => {
                     return this.renderChatMessage(msg, i);
                 })}
                 {/* <br ref={(el) => { this.bottomOfPage = el; }}/> */}

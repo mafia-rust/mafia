@@ -16,7 +16,7 @@ type StartMenuState = {
 export default class StartMenu extends React.Component<StartMenuProps, StartMenuState> {
     private joinGameButton() {
         GAME_MANAGER.gameState = createGameState();
-        Anchor.setContent(<JoinMenu roomCode={null} />);
+        Anchor.setContent(<JoinMenu roomCode={null}/>);
     }
     
     private async hostGameButton() {

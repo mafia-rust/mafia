@@ -30,7 +30,9 @@ export function createGameManager(): GameManager {
             listener();
         },
         removeStateListener(listener) {
-            gameManager.listeners.splice(gameManager.listeners.indexOf(listener));
+            let index = gameManager.listeners.indexOf(listener);
+            if(index !== -1)
+                gameManager.listeners.splice(index, 1);
         },
         invokeStateListeners(type) {
             for(let i = 0; i < gameManager.listeners.length; i++){
