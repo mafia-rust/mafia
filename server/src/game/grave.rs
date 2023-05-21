@@ -26,7 +26,7 @@ pub struct Grave {
 #[serde(tag = "type", content = "role")]
 pub enum GraveRole {
     Cleaned,
-    Stoned,
+    Petrified,
     Role(Role),
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -42,13 +42,14 @@ pub enum GraveDeathCause {
 pub enum GraveKiller {
     Mafia,
     Coven,
+    Suicide,
     Role(Role)
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum GravePhase {
-    Day, 
+    Day,
     Night
 }
 

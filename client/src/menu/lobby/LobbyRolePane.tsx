@@ -25,7 +25,7 @@ export default class LobbyRolePane extends React.Component<any, RolePaneState> {
                     roleList: [...GAME_MANAGER.gameState.roleList]
                 });
             }
-        };  
+        };
     }
     componentDidMount() {
         GAME_MANAGER.addStateListener(this.listener);

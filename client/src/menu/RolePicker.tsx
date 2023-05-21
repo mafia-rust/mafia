@@ -2,6 +2,7 @@ import React from "react";
 import "./rolePicker.css";
 import { RoleListEntry } from "../game/gameState.d";
 import { ROLES } from "../game/gameState";
+import translate, { styleText } from "../game/lang";
 
 interface RolePickerProps {
     roleListEntry: RoleListEntry,
@@ -21,7 +22,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     onChange={(e)=>{this.updateRolePicker("faction", e.target.value)}}
                 > {
                     allFactions().map((faction: string, key) => {
-                        return <option key={key}> {faction} </option>
+                        return <option key={key}> {translate("faction."+faction)} </option>
                     })
                 } </select>
             ];
@@ -34,7 +35,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     onChange={(e)=>{this.updateRolePicker("faction", e.target.value)}}
                 > {
                     allFactions().map((faction: string, key) => {
-                        return <option key={key}> {faction} </option>
+                        return <option key={key}> {translate("faction."+faction)} </option>
                     })
                 } </select>,
                 <select
@@ -42,8 +43,8 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     value={"Random"}
                     onChange={(e)=>{this.updateRolePicker("alignment", e.target.value)}}
                 > {
-                    allAlignments(faction).map((faction: string, key) => {
-                        return <option key={key}> {faction} </option>
+                    allAlignments(faction).map((alignment: string, key) => {
+                        return <option key={key}> {translate("alignment."+alignment)} </option>
                     })
                 } </select>
             ]
@@ -57,7 +58,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     onChange={(e)=>{this.updateRolePicker("faction", e.target.value)}}
                 > {
                     allFactions().map((faction: string, key) => {
-                        return <option key={key}> {faction} </option>
+                        return <option key={key}> {translate("faction."+faction)} </option>
                     })
                 } </select>,
                 <select
@@ -65,8 +66,8 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     value={alignment}
                     onChange={(e)=>{this.updateRolePicker("alignment", e.target.value)}}
                 > {
-                    allAlignments(faction).map((faction: string, key) => {
-                        return <option key={key}> {faction} </option>
+                    allAlignments(faction).map((alignment: string, key) => {
+                        return <option key={key}> {translate("alignment."+alignment)} </option>
                     })
                 } </select>,
                 <select
@@ -74,8 +75,8 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     value={"Random"}
                     onChange={(e)=>{this.updateRolePicker("exact", e.target.value)}}
                 > {
-                    allRoles(faction, alignment).map((faction: string, key) => {
-                        return <option key={key}> {faction} </option>
+                    allRoles(faction, alignment).map((role: string, key) => {
+                        return <option key={key}> {translate(`role.${role}.name`)} </option>
                     })
                 } </select>
             ]
@@ -89,7 +90,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     onChange={(e)=>{this.updateRolePicker("faction", e.target.value)}}
                 > {
                     allFactions().map((faction: string, key) => {
-                        return <option key={key}> {faction} </option>
+                        return <option key={key}> {translate("faction."+faction)}</option>
                     })
                 } </select>,
                 <select
@@ -98,7 +99,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     onChange={(e)=>{this.updateRolePicker("alignment", e.target.value)}}
                 > {
                     allAlignments(faction).map((alignment: string, key) => {
-                        return <option key={key}> {alignment} </option>
+                        return <option key={key}> {translate("alignment."+alignment)} </option>
                     })
                 } </select>,
                 <select
@@ -106,8 +107,8 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     value={this.props.roleListEntry.role}
                     onChange={(e)=>{this.updateRolePicker("exact", e.target.value)}}
                 > {
-                    allRoles(faction, alignment).map((faction: string, key) => {
-                        return <option key={key}> {faction} </option>
+                    allRoles(faction, alignment).map((role: string, key) => {
+                        return <option key={key}> {translate(`role.${role}.name`)} </option>
                     })
                 } </select>
             ]
@@ -194,7 +195,7 @@ function allFactions(): string[] {
             factions.push(faction);
         }
     }
-    factions.push("Any");
+    factions.push("Random");
     return factions;
 }
 

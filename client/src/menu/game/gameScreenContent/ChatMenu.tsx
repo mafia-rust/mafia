@@ -103,9 +103,9 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         });
     };
 
-    renderChatMessage(msg: ChatMessage, i: number) {return (
+    renderChatMessage(msg: ChatMessage, index: number) {return (
         // <div key={i}>
-            getChatElement(msg)
+            getChatElement(msg, index)
         // </div>
     );}
     renderTextInput() {return (
@@ -125,8 +125,8 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         <div className="chat-menu">
             <div className="message-section" ref={(el) => { this.messageSection = el; }}>
                 <div className="message-list">
-                    {this.state.gameState.chatMessages.map((msg, i) => {
-                        return this.renderChatMessage(msg, i);
+                    {this.state.gameState.chatMessages.map((msg, index) => {
+                        return this.renderChatMessage(msg, index);
                     })}
                 </div>
             </div>
