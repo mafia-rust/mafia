@@ -3,24 +3,22 @@ import "../index.css"
 import StartMenu from "./main/StartMenu";
 import "./anchor.css"
 
+type AnchorProps = {
+    content: JSX.Element,
+}
 type AnchorState = {
     content: JSX.Element,
 }
 
-export default class Anchor extends React.Component<any, AnchorState> {
+
+export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     private static instance: Anchor;
 
     constructor(props: any) {
         super(props);
 
-        if(props.code == null) {
-            this.state = {
-                content: <StartMenu/>,
-            };
-        } else {
-            this.state = {
-                content: <StartMenu roomCode={props.code}/>,
-            }
+        this.state = {
+            content: this.props.content,
         }
     }
     componentDidMount() {

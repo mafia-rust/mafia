@@ -6,12 +6,15 @@ import Anchor from "../Anchor";
 import * as LoadingScreen from "../LoadingScreen";
 import translate from "../../game/lang";
 
-interface JoinMenuState {
+type JoinMenuProps = {
+    roomCode: string | null,
+}
+type JoinMenuState = {
     roomCode: string,
     name: string,
 }
 
-export default class JoinMenu extends React.Component<any, JoinMenuState> {
+export default class JoinMenu extends React.Component<JoinMenuProps, JoinMenuState> {
     constructor(props: any) {
         super(props);
 

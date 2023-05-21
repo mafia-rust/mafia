@@ -3,25 +3,32 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import Anchor from './menu/Anchor';
 import { GameManager, createGameManager } from './game/net/gameManager';
+import { createGameState } from './game/gameState';
+import StartMenu from './menu/main/StartMenu';
+import JoinMenu from './menu/main/JoinMenu';
+
 
 const ROOT = ReactDOM.createRoot(document.getElementById('root')!);
-
 const GAME_MANAGER: GameManager = createGameManager();
-
-let code = (new URL(window.location.href)).searchParams.get("code");
-
-export default GAME_MANAGER;
-
 const TIME_PERIOD = 1000;
+export default GAME_MANAGER;
 
 setInterval(() => {
   GAME_MANAGER.tick(TIME_PERIOD);
 }, TIME_PERIOD);
 
 
+let anchorMenu = <StartMenu/>;
+let roomCode = (new URL(window.location.href)).searchParams.get("code");
+if(roomCode != null) {
+    GAME_MANAGER.gameState = createGameState();
+    anchorMenu = <JoinMenu roomCode={roomCode}/>;
+}
+
+
 ROOT.render(
     <React.StrictMode>
-        <Anchor code={code} />
+        <Anchor content={anchorMenu} />
     </React.StrictMode>
 );
 // // If you want to start measuring performance in your app, pass a function

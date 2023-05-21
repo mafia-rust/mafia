@@ -8,37 +8,15 @@ import * as LoadingScreen from "../LoadingScreen";
 import JoinMenu from "./JoinMenu";
 import translate from "../../game/lang";
 
+type StartMenuProps = {
+}
 type StartMenuState = {
-    roomCode: string
 } 
 
-export default class StartMenu extends React.Component<any, StartMenuState> {
-    render(){
-        
-        if(this.props.roomCode != null) {
-            GAME_MANAGER.gameState = createGameState();
-            return(<JoinMenu roomCode={this.props.roomCode} />);
-        }
-        
-        return(<div className="sm">
-            
-        <header >
-            <h1>{translate("menu.start.title")}</h1>
-        </header>
-
-        <div>
-            <button onClick={()=>{this.joinGameButton()}}>
-                {translate("menu.start.button.join")}
-            </button>
-            <button onClick={()=>{this.hostGameButton()}}>
-                {translate("menu.start.button.host")}
-            </button>
-        </div>
-    </div>)}
-
+export default class StartMenu extends React.Component<StartMenuProps, StartMenuState> {
     private joinGameButton() {
         GAME_MANAGER.gameState = createGameState();
-        Anchor.setContent(<JoinMenu />);
+        Anchor.setContent(<JoinMenu roomCode={null} />);
     }
     
     private async hostGameButton() {
@@ -52,4 +30,19 @@ export default class StartMenu extends React.Component<any, StartMenuState> {
         GAME_MANAGER.sendHostPacket();
         // Lobby menu opens when AcceptHost packet is recieved
     }
+
+    render(){return(<div className="sm">
+        <header>
+            <h1>{translate("menu.start.title")}</h1>
+        </header>
+
+        <div>
+            <button onClick={()=>{this.joinGameButton()}}>
+                {translate("menu.start.button.join")}
+            </button>
+            <button onClick={()=>{this.hostGameButton()}}>
+                {translate("menu.start.button.host")}
+            </button>
+        </div>
+    </div>)}
 }
