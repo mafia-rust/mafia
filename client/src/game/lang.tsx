@@ -56,10 +56,31 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             return <span key={key} style={{textAlign:"center"}}>{styleText(translate("chatmessage.roleAssignment", name), {color:"yellow"})}</span>;
         case "playerDied":
             //TODO, role doesnt work properly
-            return <span key={key} >{styleText(translate("chatmessage.playerDied",
+            let graveRole: string;
+            if (message.grave.role.type === "role") {
+                graveRole = translate(`role.${message.grave.role.role}.name`);
+            } else {
+                graveRole = translate(`grave.role.${message.grave.role.type}`);
+            }
+            let deathCause: string;
+            if (message.grave.deathCause.type === "lynching") {
+                deathCause = translate("grave.deathCause.lynching")
+            } else {
+                let killers: string[] = [];
+                for (let killer of message.grave.deathCause.killers) {
+                    if (killer.type === "role") {
+                        killers.push(translate(`role.${killer.role}.name`))
+                    } else {
+                        killers.push(translate(`grave.killer.${killer.type}`))
+                    }
+                }
+                deathCause = killers.join();
+            }
+
+            return <span key={key}>{styleText(translate("chatmessage.playerDied",
                 GAME_MANAGER.gameState.players[message.grave.playerIndex].toString(),
-                JSON.stringify(message.grave.role),
-                JSON.stringify(message.grave.deathCause),
+                graveRole,
+                deathCause,
                 message.grave.will
             ), {color:"yellow"})}</span>;
         case "phaseChange":
