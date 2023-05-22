@@ -1,6 +1,42 @@
 .player-list-menu {
     width: 100%;
     max-width: 100%;
-    overflow-y: scroll;
 }
-  
+.player-list-menu .player{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    border: 1px solid rgb(55, 42, 63);
+    border-radius: 10px;
+    background-color: rgb(8, 10, 37);
+    padding-top: .5%;
+    padding-bottom: .5%;
+}
+.player-list-menu .player .buttons{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+
+}
+.player-list-menu .player .buttons > div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    min-width: 33%;
+}
+.player-list-menu .vote{
+    grid-column: 4;
+}
+.player-list-menu .target{
+    grid-column: 3;
+}
+.player-list-menu .day-target{
+    grid-column: 2;
+}
+.player-list-menu .filter{
+    grid-column: 1;
+}
+

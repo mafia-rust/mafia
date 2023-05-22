@@ -10,13 +10,13 @@
 .chat-menu .message-section {
     display: grid;
     height: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 .chat-menu .message-list {
     width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: end;
+    /* justify-content: end; */
 }
 .chat-menu .message-list > * {
     text-align: left;
@@ -24,12 +24,15 @@
 }
 .chat-menu .send-section {
     display: flex;
+    flex-direction: column;
+    border-top: 1px solid #000000;
+}
+.chat-menu .send-section > div{
+    display: flex;
     flex-direction: row;
     align-items: center;
-    margin-top: 5px;
-    border-top: 1px solid black;
 }
-.chat-menu .send-section > button{
+.chat-menu .send-section button{
     height: 92%;
 }
 .chat-menu textarea {

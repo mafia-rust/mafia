@@ -12,6 +12,7 @@ interface ChatMenuProps {
 interface ChatMenuState {
     gameState: GameState,
     chatField: string,
+    filterFunction: ((message: ChatMessage) => boolean) | null,
 }
 
 export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuState> {
@@ -21,6 +22,13 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
             return;
         ChatMenu.instance!.setState({
             chatField: "/w " + (playerIndex + 1) + " " + ChatMenu.instance!.state.chatField,
+        });
+    }
+    static setFilterFunction(func: null | ((message: ChatMessage) => boolean)) {
+        if(ChatMenu.instance === null)
+            return;
+        ChatMenu.instance!.setState({
+            filterFunction: func,
         });
     }
 
@@ -34,6 +42,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         this.state = {
             gameState: GAME_MANAGER.gameState,
             chatField: "",
+            filterFunction: null,
         };
 
         this.listener = () => {
@@ -103,30 +112,35 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         });
     };
 
-    renderChatMessage(msg: ChatMessage, index: number) {return (
-        // <div key={i}>
-            getChatElement(msg, index)
-        // </div>
-    );}
     renderTextInput() {return (
         <div className="send-section">
-            <textarea
-                style={{color:"black"}}
-                value={this.state.chatField}
-                onChange={this.handleInputChange}
-                onKeyPress={this.handleInputKeyPress}
-            />
-            <button onClick={this.sendChatField}>
-                {translate("menu.chat.button.send")}
-            </button>
+            {(()=>{
+                if(this.state.filterFunction === null) return null;
+                return <button onClick={()=>ChatMenu.setFilterFunction(null)}>
+                    {translate("menu.chat.clearFilter")}
+                </button>
+            })()}
+            <div>
+                <textarea
+                    style={{color:"black"}}
+                    value={this.state.chatField}
+                    onChange={this.handleInputChange}
+                    onKeyPress={this.handleInputKeyPress}
+                />
+                <button onClick={this.sendChatField}>
+                    {translate("menu.chat.button.send")}
+                </button>
+            </div>
         </div>
     );}
     render(){return(
         <div className="chat-menu">
             <div className="message-section" ref={(el) => { this.messageSection = el; }}>
                 <div className="message-list">
-                    {this.state.gameState.chatMessages.map((msg, index) => {
-                        return this.renderChatMessage(msg, index);
+                    {this.state.gameState.chatMessages.filter((msg)=>
+                        this.state.filterFunction?this.state.filterFunction(msg):true
+                    ).map((msg, index) => {
+                        return getChatElement(msg, index);
                     })}
                 </div>
             </div>
@@ -134,3 +148,41 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         </div>
     )}
 }
+
+/**
+ * Traverse any props.children to get their combined text content.
+ *
+ * This does not add whitespace for readability: `<p>Hello <em>world</em>!</p>`
+ * yields `Hello world!` as expected, but `<p>Hello</p><p>world</p>` returns
+ * `Helloworld`, just like https://mdn.io/Node/textContent does.
+ *
+ * NOTE: This may be very dependent on the internals of React.
+ */
+export function textContent(elem: React.ReactElement | string): string {
+    if (!elem) {
+      return '';
+    }
+    if (typeof elem === 'string') {
+      return elem;
+    }
+    // Debugging for basic content shows that props.children, if any, is either a
+    // ReactElement, or a string, or an Array with any combination. Like for
+    // `<p>Hello <em>world</em>!</p>`:
+    //
+    //   $$typeof: Symbol(react.element)
+    //   type: "p"
+    //   props:
+    //     children:
+    //       - "Hello "
+    //       - $$typeof: Symbol(react.element)
+    //         type: "em"
+    //         props:
+    //           children: "world"
+    //       - "!"
+    const children = elem.props && elem.props.children;
+    if (children instanceof Array) {
+      return children.map(textContent).join('');
+    }
+    return textContent(children);
+}
+

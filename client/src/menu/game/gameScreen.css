@@ -24,6 +24,11 @@
     height: 1vh;
     /* setting this to 1vh */
 }
+.game-screen .content > div{
+    /* overflow-y: scroll; */
+    overflow-x: hidden;
+    overflow-y:auto;
+}
 
 .game-screen .content > div {
     flex-grow: 1;

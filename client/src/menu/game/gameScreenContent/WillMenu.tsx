@@ -35,7 +35,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
         GAME_MANAGER.removeStateListener(this.listener);
     }
     renderWillInput(){
-        return (<div>
+        return (<div className="textarea-section">
             {translate("menu.will.will")}
             <button onClick={()=>{GAME_MANAGER.sendSaveWillPacket(this.state.willFeild)}}>{translate("menu.will.save")}</button>
             <button onClick={()=>{GAME_MANAGER.sendSendMessagePacket(this.state.gameState.will)}}>{translate("menu.will.post")}</button>
@@ -51,7 +51,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
         </div>)
     }
     renderNotesInput(){
-        return (<div>
+        return (<div className="textarea-section">
             {translate("menu.will.notes")}
             <button onClick={()=>{GAME_MANAGER.sendSaveNotesPacket(this.state.notesFeild)}}>{translate("menu.will.save")}</button>
             <button onClick={()=>{GAME_MANAGER.sendSendMessagePacket(this.state.gameState.notes)}}>{translate("menu.will.post")}</button>
@@ -68,7 +68,9 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
     }
     render() {return (<div className="will-menu">
         <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.WillMenu)}}>{translate("menu.will.title")}</button>
-        {this.renderWillInput()}
-        {this.renderNotesInput()}
+        <section>
+            {this.renderWillInput()}
+            {this.renderNotesInput()}
+        </section>
     </div>);}
 }

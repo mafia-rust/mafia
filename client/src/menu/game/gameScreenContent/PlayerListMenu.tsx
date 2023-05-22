@@ -1,11 +1,12 @@
 import React from "react";
-import translate from "../../../game/lang";
+import translate, { getChatElement, styleText } from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import "./playerListMenu.css"
 import "./../gameScreen.css"
-import ChatMenu from "./ChatMenu";
+import ChatMenu, { textContent } from "./ChatMenu";
 import GameState, { Player, PlayerIndex } from "../../../game/gameState.d";
 import GameScreen, { ContentMenus } from "../GameScreen";
+import { ChatMessage } from "../../../game/net/chatMessage";
 
 interface PlayerListMenuProps {
 }
@@ -70,64 +71,64 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         }
     }
 
-    renderPlayer(player: Player, whisperButton: boolean){
+    renderPlayer(player: Player){
 
-        return(<div key={player.index}>
-            {player.toString()} { player.roleLabel==null?"":("("+player.roleLabel+")") }<br/>
+        return(<div className="player" key={player.index}>
+            <button onClick={()=>ChatMenu.prependWhisper(player.index)}>
+                {styleText(player.toString()+(player.roleLabel==null?"":("("+translate("role."+player.roleLabel+".name")+")")))}
+            </button>
 
-            <div style={{display: "flex"}}>
-                {((player)=>{if(player.buttons.target){return(
-                    <button className="button gm-button" onClick={()=>{
-                        GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.gameState.targets, player.index]);
-                    }}>{translate("button.target")}</button>
-                )}})(player)}
-
-                {((player)=>{if(player.buttons.vote){return(
-                    <button className="button gm-button" onClick={()=>{
-                        GAME_MANAGER.sendVotePacket(player.index)}}
-                    >{translate("button.vote")}</button>
-                )}})(player)}
-
-                {((player)=>{if(player.buttons.dayTarget){return(
-                    <button className="button gm-button" onClick={()=>{
-                        GAME_MANAGER.sendDayTargetPacket(player.index)}}
-                >{translate("button.dayTarget")}</button>)}})(player)}
-
-                {((player)=>{if(whisperButton){return(
-                    <button className="button gm-button" onClick={()=>{
-                        ChatMenu.prependWhisper(player.index)
-                }}>{translate("button.whisper")}</button>)}})(player)}
-
-                <div></div>
+            <div className="buttons">
+                <div className="filter">
+                    <button onClick={()=>{
+                        ChatMenu.setFilterFunction(
+                            (message: ChatMessage) => {
+                                return textContent(getChatElement(message, 0)).includes(player.name) || 
+                                message.type === "phaseChange"
+                            }
+                        );
+                    }}>{translate("menu.playerList.button.filter")}</button>
+                </div>
+                <div className="day-target">
+                    {((player)=>{if(player.buttons.dayTarget){return(
+                        <button onClick={()=>{
+                            GAME_MANAGER.sendDayTargetPacket(player.index)}}
+                    >{translate("menu.playerList.button.dayTarget")}</button>)}})(player)}
+                </div>
+                <div className="target">
+                    {((player)=>{if(player.buttons.target){return(
+                        <button onClick={()=>{
+                            GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.gameState.targets, player.index]);
+                        }}>{translate("menu.playerList.button.target")}</button>
+                    )}})(player)}
+                </div>
+                <div className="vote">
+                    {((player)=>{if(player.buttons.vote){return(
+                        <button onClick={()=>{
+                            GAME_MANAGER.sendVotePacket(player.index)}}
+                        >{translate("menu.playerList.button.vote")}</button>
+                    )}})(player)}
+                </div>
             </div>
 
             
         </div>)
     }
     renderPlayers(players: Player[]){
-        
-        let playersHTML: JSX.Element[] = [];
-        for(let i = 0; i < players.length; i++){
-            
-            let canWhisper = 
-                GAME_MANAGER.gameState.phase !== "night" && 
-                GAME_MANAGER.gameState.myIndex !== players[i].index;
-
-            if(
-                this.state.showAllPlayers || (!this.state.showAllPlayers && (
-                    players[i].buttons.dayTarget || 
-                    players[i].buttons.target || 
-                    players[i].buttons.vote || 
-                    canWhisper
-                )))
-                    playersHTML.push(this.renderPlayer(players[i], canWhisper));
-        }
-        
-
-        return<div>{playersHTML}</div>
+        return<div className="player-list">{
+            players.map((player: Player)=>{
+            if(this.state.showAllPlayers || (!this.state.showAllPlayers && (
+                player.buttons.dayTarget ||
+                player.buttons.target ||
+                player.buttons.vote))){
+                return this.renderPlayer(player);
+            }else{
+                return null;
+            }
+        })}</div>
     }
 
-    render(){return(<div className=".player-list-menu">
+    render(){return(<div className="player-list-menu">
         
         <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.PlayerListMenu)}}>{translate("menu.playerList.title")}</button>        
         <label>
