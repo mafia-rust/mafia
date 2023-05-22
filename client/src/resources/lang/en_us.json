@@ -27,6 +27,7 @@
     "menu.chat.title": "Chat",
     "menu.chat.button.send": "Send",
     "menu.chat.placeHolder": "Enter message",
+    "menu.chat.clearFilter": "Clear Filter",
     
     "menu.will.title": "Will",
     "menu.will.will": "Will",
@@ -41,8 +42,14 @@
 
     "menu.playerList.title": "Player List",
     "menu.playerList.button.showAll": "Show All",
+    "menu.playerList.button.whisper":"Whisper",
+    "menu.playerList.button.vote":"Vote",
+    "menu.playerList.button.target":"Target",
+    "menu.playerList.button.dayTarget":"DayTarget",
+    "menu.playerList.button.filter":"Filter",
 
     "menu.graveyard.title": "Graveyard",
+
 
     "role.Jailor.name": "Jailor",
     "role.Jailor.abilities":"*Choose one player to jail during the day*You can execute your prisoners up to three times",
@@ -111,11 +118,6 @@
     "phase.judgement": "Judgement",
     "phase.evening": "Evening",
     "phase.night": "Night",
-
-    "button.whisper":"Whisper",
-    "button.vote":"Vote",
-    "button.target":"Target",
-    "button.dayTarget":"DayTarget",
 
     "chatmessage.normal":"\\0: \\1",
     "chatmessage.whisper":"\\0 whispered to \\1: \\2",
