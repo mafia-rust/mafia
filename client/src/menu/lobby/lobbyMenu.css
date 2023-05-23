@@ -16,13 +16,13 @@
     margin: 0;
 }
 .lm > header h1{
-    font-size: 2em;
+    font-size: 2rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 .lm > header button{
-    font-size: 1.5em;
+    font-size: 1.5rem;
     margin: .5%;
     padding: .5%;
 }

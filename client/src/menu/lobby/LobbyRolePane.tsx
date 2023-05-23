@@ -3,7 +3,7 @@ import GAME_MANAGER from "../../index";
 import { RoleListEntry } from "../../game/gameState.d";
 import "../../index.css";
 import RolePicker from "../RolePicker";
-import { StateEventType } from "../../game/net/gameManager.d";
+import { StateEventType } from "../../game/gameManager.d";
 
 interface RolePaneState {
     roleList: RoleListEntry[]

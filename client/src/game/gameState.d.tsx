@@ -1,5 +1,6 @@
 import { Grave } from "./grave";
-import { ChatMessage } from "./net/chatMessage";
+import { ChatMessage } from "./chatMessage";
+import ROLES from "./../resources/roles.json";
 
 export default interface GameState {
     myName: string | null,
@@ -67,22 +68,120 @@ export interface Player {
     toString(): string
 }
 
+//TODO convert all of this to enum
 export type Role = string;
-export type Faction = string;
-export type FactionAlignment = string;
+export function getFactionFromRole(role: Role): Faction {
+    return getFactionFromFactionAlignment(getFactionAlignmentFromRole(role));
+}
+export function getFactionAlignmentFromRole(role: Role): FactionAlignment {
+    return ROLES[role as keyof typeof ROLES].factionAlignment as FactionAlignment;
+}
 
-export type RoleListEntry = {
-    type: "any"
+// export type Faction = "town"|"mafia"|"neutral"|"coven";
+export const FACTIONS = ["town", "mafia", "neutral", "coven"] as const;
+export type Faction = typeof FACTIONS[number]
+export function getAllFactionAlignments(faction: Faction): FactionAlignment[] {
+
+    switch(faction){
+        case "town": return [
+            "townPower", "townKilling", "townProtective", "townInvestigative", "townSupport"
+        ];
+        case "mafia": return [
+            "mafiaKilling", "mafiaDeception", "mafiaSupport"
+        ];
+        case "neutral": return [
+            "neutralKilling", "neutralEvil", "neutralChaos"
+        ];
+        case "coven": return [
+            "covenPower", "covenKilling", "covenUtility", "covenDeception"
+        ];
+    }
+    throw new Error("Invalid faction: "+faction);
+}
+
+export const FACTION_ALIGNMENTS = [
+    "townPower",
+    "townKilling",
+    "townProtective",
+    "townInvestigative",
+    "townSupport",
+
+    "mafiaKilling",
+    "mafiaDeception",
+    "mafiaSupport",
+
+    "neutralKilling",
+    "neutralEvil",
+    "neutralChaos",
+
+    "covenPower",
+    "covenKilling",
+    "covenUtility",
+    "covenDeception"
+] as const;
+export type FactionAlignment = typeof FACTION_ALIGNMENTS[number]
+
+export function getAllRolesFromFactionAlignment(factionAlignment: FactionAlignment): Role[] {
+    return (ROLES as any).filter(
+        (role: { factionAlignment: FactionAlignment; }) => role.factionAlignment === factionAlignment
+    );
+}
+export function getFactionFromFactionAlignment(factionAlignment: FactionAlignment): Faction {
+    switch(factionAlignment){
+        case "townPower": return "town";
+        case "townKilling": return "town";
+        case "townProtective": return "town";
+        case "townInvestigative": return "town";
+        case "townSupport": return "town";
+
+        case "mafiaKilling": return "mafia";
+        case "mafiaDeception": return "mafia";
+        case "mafiaSupport": return "mafia";
+
+        case "neutralKilling": return "neutral";
+        case "neutralEvil": return "neutral";
+        case "neutralChaos": return "neutral";
+
+        case "covenPower": return "coven";
+        case "covenKilling": return "coven";
+        case "covenUtility": return "coven";
+        case "covenDeception": return "coven";
+    }
+}
+export function getAlignmentStringFromFactionAlignment(factionAlignment: FactionAlignment): string {
+    //make first letter lowercase
+    let alignment = factionAlignment.replace(getFactionFromFactionAlignment(factionAlignment).toString(), "");
+    return alignment.charAt(0).toLowerCase() + alignment.slice(1);
+}
+
+
+export type RoleListEntry={
+    type: "any",
 } | {
-    type: "faction"
+    type: "faction",
     faction: Faction,
 } | {
-    type: "factionAlignment"
-    faction: Faction,
+    type: "factionAlignment",
     factionAlignment: FactionAlignment,
 } | {
-    type: "exact"
-    faction: Faction,
-    factionAlignment: FactionAlignment,
+    type: "exact",
     role: Role,
 };
+export type RoleListEntryType = "any"|"faction"|"factionAlignment"|"exact";
+
+export function getFactionFromRoleListEntry(roleListEntry: RoleListEntry): Faction | null {
+    switch(roleListEntry.type){
+        case "any": return null;
+        case "faction": return roleListEntry.faction;
+        case "factionAlignment": return getFactionFromFactionAlignment(roleListEntry.factionAlignment);
+        case "exact": return getFactionFromRole(roleListEntry.role);
+    }
+}
+export function getFactionAlignmentFromRoleListEntry(roleListEntry: RoleListEntry): FactionAlignment | null {
+    switch(roleListEntry.type){
+        case "any": return null;
+        case "faction": return null;
+        case "factionAlignment": return roleListEntry.factionAlignment;
+        case "exact": return getFactionAlignmentFromRole(roleListEntry.role);
+    }
+}

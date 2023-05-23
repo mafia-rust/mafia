@@ -1,6 +1,6 @@
 
 
-use crate::{network::packet::ToClientPacket, game::{Game, available_buttons::AvailableButtons}};
+use crate::{game::{Game, available_buttons::AvailableButtons}, packet::ToClientPacket};
 
 use super::{Player, PlayerReference};
 

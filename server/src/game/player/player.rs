@@ -12,8 +12,7 @@ use crate::{
         visit::Visit, 
         grave::{GraveRole, GraveKiller}, 
         verdict::Verdict, available_buttons::AvailableButtons
-    }, 
-    network::packet::{ToClientPacket}
+    }, packet::ToClientPacket,
 };
 
 use super::{PlayerIndex, PlayerReference};

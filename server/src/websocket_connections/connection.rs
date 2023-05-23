@@ -6,7 +6,7 @@ use tokio::net::TcpStream;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio_tungstenite::{WebSocketStream, tungstenite::Message};
 
-use super::packet::ToClientPacket;
+use crate::packet::ToClientPacket;
 
 #[derive(Debug)]
 pub struct Connection {

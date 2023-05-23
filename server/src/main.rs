@@ -1,11 +1,10 @@
 
 use mafia_server::{
-    network::{
+    websocket_connections::{
         websocket_listener::create_ws_server,
         connection::{Connection},
-        listener::Listener, 
         // packet::{ToClientPacket, ToServerPacket}
-    },
+    }, listener::Listener,
 };
 use serde::Deserialize;
 use serde_json::Value;

@@ -1,7 +1,5 @@
 import GameState, { Player, Verdict } from "./gameState.d"
 
-export const ROLES: ReadonlyMap<string, any> = new Map(Object.entries(require("../resources/roles.json")));
-
 export function createGameState(): GameState {
     return {
         myName: null,

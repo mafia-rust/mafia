@@ -1,11 +1,11 @@
 import React from "react";
-import { isValidPhaseTime } from "../../game/net/gameManager";
+import { isValidPhaseTime } from "../../game/gameManager";
 import { Phase, PhaseTimes } from "../../game/gameState.d";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
 import phaseTimesJson from "../../resources/phasetimes.json";
-import { StateEventType } from "../../game/net/gameManager.d";
+import { StateEventType } from "../../game/gameManager.d";
 
 const PHASE_TIME_MODES: ReadonlyMap<string, PhaseTimes> = new Map(Object.entries(phaseTimesJson));
 type PhaseTimeMode = string;

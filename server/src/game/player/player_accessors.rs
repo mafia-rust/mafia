@@ -1,6 +1,19 @@
 use std::collections::HashMap;
 
-use crate::{game::{role::{RoleData, Role}, Game, phase::PhaseType, verdict::Verdict, chat::{ChatGroup, ChatMessage, night_message::NightInformation}, visit::Visit, grave::{GraveRole, GraveKiller}}, network::packet::ToClientPacket};
+use crate::{
+    game::{
+        role::{RoleData, Role}, 
+        Game, 
+        phase::PhaseType, 
+        verdict::Verdict, 
+        chat::{
+            ChatGroup, 
+            ChatMessage, 
+            night_message::NightInformation
+        }, 
+        visit::Visit, 
+        grave::{GraveRole, GraveKiller}}, packet::ToClientPacket, 
+    };
 use super::{Player, PlayerIndex, PlayerReference};
 
 

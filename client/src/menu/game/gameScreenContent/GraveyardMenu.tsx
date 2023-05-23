@@ -1,7 +1,7 @@
 import React from "react";
 import translate, { styleText } from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
-import GameState, { RoleListEntry } from "../../../game/gameState.d";
+import GameState, { RoleListEntry, getAlignmentStringFromFactionAlignment, getFactionFromFactionAlignment } from "../../../game/gameState.d";
 import { Grave } from "../../../game/grave";
 import GameScreen, { ContentMenus } from "../GameScreen";
 import "./graveyardMenu.css";
@@ -75,21 +75,19 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
         }
     </div>}
     renderRoleListEntry(roleListEntry: RoleListEntry, index: number){
-        if(roleListEntry.type === "any"){
-            return <button key={index}>{styleText(translate("faction.Random"))}</button>
-        } else if(roleListEntry.type === "exact"){
-            let role = roleListEntry.role;
-            return <button key={index}>{styleText(translate("role."+role+".name"))}</button>
-        } else if(roleListEntry.type === "factionAlignment"){
-            let factionAlignment = roleListEntry.factionAlignment;
-            
-            let faction = roleListEntry.faction;
-            let alignment = factionAlignment.replace(faction, "");
-
-            return <button key={index}>{styleText(translate("faction."+faction))} {styleText(translate("alignment."+alignment))}</button>
-        } else {
-            let faction = roleListEntry.faction;
-            return <button key={index}>{styleText(translate("faction."+faction))} {styleText(translate("alignment.Random"))}</button>
+        switch(roleListEntry.type){
+            case "any":
+                return <button key={index}>{styleText(translate("any"))}</button>
+            case "faction":
+                return <button key={index}>
+                    {styleText(translate("faction."+roleListEntry.faction.toString()))} {styleText(translate("any"))}
+                </button>
+            case "factionAlignment":
+                return <button key={index}>
+                    {styleText(translate("faction."+getFactionFromFactionAlignment(roleListEntry.factionAlignment)))} {styleText(translate("alignment."+getAlignmentStringFromFactionAlignment(roleListEntry.factionAlignment)))}
+                </button>
+            case "exact":
+                return <button key={index}>{styleText(translate("role."+roleListEntry.role+".name"))}</button>
         }
     }
     render(){return(<div className="graveyard-menu">

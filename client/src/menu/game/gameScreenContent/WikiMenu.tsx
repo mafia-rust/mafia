@@ -7,7 +7,7 @@ import RolePicker from "../../RolePicker";
 
 
 interface WikiMenuProps {
-    role: RoleListEntry,
+    roleListEntry: RoleListEntry | null,
 }
 interface WikiMenuState {
     gameState: GameState,
@@ -23,7 +23,7 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
 
         this.state = {
             gameState : GAME_MANAGER.gameState,
-            roleListEntry: {type: "any"},
+            roleListEntry: (this.props.roleListEntry!==null ? this.props.roleListEntry : {type: "any"}),
         };
         this.listener = ()=>{
             this.setState({
@@ -68,8 +68,7 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
         let split = string.split("*");
         let out = [];
         for(let i = 1; i < split.length; i++){
-            out.push(<li>{split[i]}</li>);
-            // out.push(<br/>);
+            out.push(<li key={i}>{split[i]}</li>);
         }
         return <div>{out}</div>
     }
@@ -79,6 +78,7 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
         <RolePicker roleListEntry={this.state.roleListEntry} onChange={(value)=>{this.onChangeRolePicker(value);}}/>
         <br/>
         {this.renderRole(this.state.roleListEntry)}
+        <br/>
         TODO priorties list of ALL ROLES with collapsable sections
         TODO list of all night message strings
         <br/>

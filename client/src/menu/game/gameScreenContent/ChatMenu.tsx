@@ -4,7 +4,7 @@ import GAME_MANAGER from "../../../index";
 import "../gameScreen.css";
 import "./chatMenu.css"
 import GameState, { PlayerIndex } from "../../../game/gameState.d";
-import { ChatMessage } from "../../../game/net/chatMessage";
+import { ChatMessage } from "../../../game/chatMessage";
 
 interface ChatMenuProps {
 }

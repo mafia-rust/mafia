@@ -7,10 +7,14 @@ use tokio::sync::mpsc::UnboundedSender;
 use tokio_tungstenite::tungstenite::Message;
 
 use crate::{
-    game::{Game, player::{PlayerIndex, Player, PlayerReference}, 
-    settings::{Settings, self}, 
-    role_list::{self, RoleList, RoleListEntry}, phase::PhaseType}, network::{connection::Connection, packet::{ToServerPacket, ToClientPacket, RejectJoinReason, RejectStartReason}, listener::ArbitraryPlayerID}, 
-    utils::trim_whitespace, log
+    game::{
+        Game, 
+        player::{PlayerIndex, Player, PlayerReference}, 
+        settings::{Settings, self}, 
+        role_list::{self, RoleList, RoleListEntry}, 
+        phase::PhaseType
+    },
+    utils::trim_whitespace, log, listener::ArbitraryPlayerID, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}
 };
 
 pub struct Lobby {

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::network::packet::{ToServerPacket, ToClientPacket};
+use crate::packet::{ToServerPacket, ToClientPacket};
 
 use super::{Game, player::{PlayerIndex, Player, PlayerReference, self}, phase::PhaseType, chat::{ChatGroup, ChatMessage, MessageSender}};
 

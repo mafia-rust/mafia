@@ -1,4 +1,4 @@
-use crate::{lobby::Lobby, network::connection::{Connection, ConnectionEventListener, self}, log};
+use crate::{lobby::Lobby, websocket_connections::connection::{Connection, ConnectionEventListener, self}, log};
 use tokio_tungstenite::tungstenite::{client, Message};
 use std::{
     net::SocketAddr,

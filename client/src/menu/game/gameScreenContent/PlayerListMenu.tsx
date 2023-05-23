@@ -6,7 +6,7 @@ import "./../gameScreen.css"
 import ChatMenu, { textContent } from "./ChatMenu";
 import GameState, { Player, PlayerIndex } from "../../../game/gameState.d";
 import GameScreen, { ContentMenus } from "../GameScreen";
-import { ChatMessage } from "../../../game/net/chatMessage";
+import { ChatMessage } from "../../../game/chatMessage";
 
 interface PlayerListMenuProps {
 }

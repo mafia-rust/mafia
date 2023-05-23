@@ -1,13 +1,13 @@
 
-import { createGameState, createPlayer } from "../gameState";
-import Anchor from "../../menu/Anchor";
-import LobbyMenu from "../../menu/lobby/LobbyMenu";
-import StartMenu from "../../menu/main/StartMenu";
-import GAME_MANAGER from "../../index";
-import GameScreen from "../../menu/game/GameScreen";
+import { createGameState, createPlayer } from "./gameState";
+import Anchor from "./../menu/Anchor";
+import LobbyMenu from "./../menu/lobby/LobbyMenu";
+import StartMenu from "./../menu/main/StartMenu";
+import GAME_MANAGER from "./../index";
+import GameScreen from "./../menu/game/GameScreen";
 import React from "react";
 import { ToClientPacket } from "./packet";
-import { Role } from "../gameState.d";
+import { Role } from "./gameState.d";
 
 export default function messageListener(packet: ToClientPacket){
 
@@ -89,7 +89,7 @@ export default function messageListener(packet: ToClientPacket){
             GAME_MANAGER.gameState.roleList = packet.roleList;
         break;
         case "phaseTime":
-            GAME_MANAGER.gameState.phaseTimes[packet.phase] = packet.time;
+            GAME_MANAGER.gameState.phaseTimes[packet.phase as keyof typeof GAME_MANAGER.gameState.phaseTimes] = packet.time;
         break;
         case "investigatorResults":
             GAME_MANAGER.gameState.investigatorResults = packet.investigatorResults.results;

@@ -3,7 +3,7 @@ import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
 import { Player } from "../../game/gameState.d";
-import { StateEventType } from "../../game/net/gameManager.d";
+import { StateEventType } from "../../game/gameManager.d";
 
 interface PlayerListState {
     enteredName: string,
