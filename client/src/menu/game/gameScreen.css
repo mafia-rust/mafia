@@ -7,7 +7,7 @@
 
 .game-screen .header {
     height: fit-content;
-    border-bottom: black solid 1px;
+    border: var(--primary-border-color) solid 2px;
 
     flex-grow: 0;
     flex-basis: 0px;
@@ -39,6 +39,6 @@
     max-height: 100%;
     width: 100%;
     max-width: 100%;
-    border-left: black solid 1px;
-    border-right: black solid 1px;
+    border-left: var(--primary-border-color) solid 1px;
+    border-right: var(--primary-border-color) solid 1px;
 }

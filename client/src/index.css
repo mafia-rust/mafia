@@ -1,5 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
+:root{
+    --background-color: #240046;
+
+
+    --primary-color: #412075;
+    --secondary-color: #360861;
+
+    /* --primary-border-color: rgb(0, 0, 0); */
+    --primary-border-color: #CC3D00;
+    /* --secondary-border-color: rgb(149, 91, 185); */
+    --secondary-border-color: #FF6D00;
+
+    --hover-color: #532a94;
+}
+
 *{
     text-align: center;
 
@@ -15,18 +30,25 @@
     color: white;
 }
 
+
+
 button, input, select, option, textarea {
     border-radius: 0.4rem;
-    padding: .75%;
     margin: .75%;
-    background-color: rgb(20, 15, 26);
-    border-color: rgb(15, 9, 24);
+    background-color: var(--secondary-color);
+    border-color: var(--primary-border-color);
     border-width: .13rem;
     color: white;
 }
+button {
+    background-color: var(--primary-color);
+}
+option {
+    background-color: var(--background-color);
+}
 
 button:hover, input:hover, select:hover, option:hover textarea:hover{
-    background-color: rgb(36, 36, 36);
+    background-color: var(--hover-color);
 }
 
 

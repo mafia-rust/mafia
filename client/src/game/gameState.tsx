@@ -1,4 +1,4 @@
-import GameState, { Player, Verdict } from "./gameState.d"
+import GameState, { Player } from "./gameState.d"
 
 export function createGameState(): GameState {
     return {

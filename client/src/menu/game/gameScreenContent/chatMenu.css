@@ -25,7 +25,7 @@
 .chat-menu .send-section {
     display: flex;
     flex-direction: column;
-    border-top: 1px solid #000000;
+    border-top: 1px solid var(--primary-border-color);
 }
 .chat-menu .send-section > div{
     display: flex;
@@ -40,7 +40,7 @@
     width: 100%;
     margin: 1%;
     text-align: left;
-    color: white;
+    /* color: white; */
     background-color: white;
     /* text refuses to come up white for some reason TODO */
 }

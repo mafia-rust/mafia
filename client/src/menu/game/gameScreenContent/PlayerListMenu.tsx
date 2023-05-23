@@ -74,21 +74,22 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     renderPlayer(player: Player){
 
         return(<div className="player" key={player.index}>
-            <button onClick={()=>ChatMenu.prependWhisper(player.index)}>
-                {styleText(player.toString()+(player.roleLabel==null?"":("("+translate("role."+player.roleLabel+".name")+")")))}
-            </button>
+            <div className="top">
+                <button className="whisper" onClick={()=>ChatMenu.prependWhisper(player.index)}>
+                    {styleText(player.toString()+" "+(player.roleLabel==null?"":("("+translate("role."+player.roleLabel+".name")+")")))}
+                </button>
+                <button className="filter" onClick={()=>{
+                    ChatMenu.setFilterFunction(
+                        (message: ChatMessage) => {
+                            return textContent(getChatElement(message, 0)).includes(player.name) || 
+                            message.type === "phaseChange"
+                        }
+                    );
+                }}>{translate("menu.playerList.button.filter")}</button>
+            </div>
+            
 
             <div className="buttons">
-                <div className="filter">
-                    <button onClick={()=>{
-                        ChatMenu.setFilterFunction(
-                            (message: ChatMessage) => {
-                                return textContent(getChatElement(message, 0)).includes(player.name) || 
-                                message.type === "phaseChange"
-                            }
-                        );
-                    }}>{translate("menu.playerList.button.filter")}</button>
-                </div>
                 <div className="day-target">
                     {((player)=>{if(player.buttons.dayTarget){return(
                         <button onClick={()=>{
