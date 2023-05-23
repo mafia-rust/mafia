@@ -92,7 +92,7 @@
     "grave.role.cleaned": "Cleaned",
     "grave.role.stoned": "Stoned",
     
-    "grave.deathCause.lynched": "Lynched",
+    "grave.deathCause.lynching": "Lynching",
 
     "grave.killer.mafia": "Mafia",
     "grave.killer.coven": "Coven",
@@ -147,8 +147,11 @@
 
     "chatmessage.mayorRevealed":"\\0 has revealed as mayor!",
     "chatmessage.mayorCantWhisper":"You can't whisper as or to a revealed mayor.",
+    "chatmessage.jailed":"You were jailed!",
     "chatmessage.jailorDecideExecuteYou":"The Jailor decided to execute you!",
     "chatmessage.mediumSeanceYou":"You're being seanced by the medium!",
+    "chatmessage.jesterWon":"The jester will get their revenge from the grave!",
+    "chatmessage.executionerWon":"The executioner got their target lynched!",
 
     "chatmessage.night.roleBlockedImmune": "Someone tried to roleblock you but you are immune.",
     "chatmessage.night.roleBlocked": "You've been roleblocked.",
