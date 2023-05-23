@@ -20,7 +20,7 @@ export function createGameState(): GameState {
         notes: "",
         targets: [],
         voted: null,
-        judgement: Verdict.Abstain,
+        judgement: "abstain",
         
         roleList: [],
         investigatorResults: [],

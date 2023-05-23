@@ -29,11 +29,7 @@ export default interface GameState {
 }
 
 export type PlayerIndex = number;
-export const enum Verdict {
-    Innocent = "Innocent",
-    Guilty = "Guilty",
-    Abstain = "Abstain",
-}
+export type Verdict = "innocent"|"guilty"|"abstain";
 export type Phase = 
     | "morning"
     | "discussion"

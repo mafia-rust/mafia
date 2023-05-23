@@ -20,6 +20,7 @@ setInterval(() => {
 
 let anchorMenu = <StartMenu/>;
 let roomCode = (new URL(window.location.href)).searchParams.get("code");
+window.history.replaceState({}, document.title, window.location.pathname);
 if(roomCode != null) {
     GAME_MANAGER.gameState = createGameState();
     anchorMenu = <JoinMenu roomCode={roomCode}/>;

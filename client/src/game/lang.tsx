@@ -15,7 +15,8 @@ export function switchLanguage(language: string) {
 export default function translate(langKey: string, ...valuesList: any[]): string {
     let out = lang.get(langKey);
     if(out===undefined){
-        throw new Error("Attempted to use non existant lang key: "+langKey);
+        console.error("Attempted to use non existant lang key: "+langKey);
+        return "ERROR: "+langKey;
     }
     for(let i = 0; i < valuesList.length; i++){
         out = out.replace("\\"+(i), valuesList[i]);
