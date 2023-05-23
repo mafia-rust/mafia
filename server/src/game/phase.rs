@@ -143,20 +143,28 @@ impl PhaseType {
             },
             PhaseType::Judgement => {
                 
+                let player_on_trial = game.player_on_trial.expect("Cant be in judgement without player on trial");
+
                 let mut innocent = 0;
                 let mut guilty = 0;
                 let mut messages = Vec::new();
                 for player_ref in PlayerReference::all_players(game){
+                    if(!*player_ref.alive(game) || player_ref == player_on_trial){
+                        continue;
+                    }
                     match *player_ref.verdict(game){
                         Verdict::Innocent => innocent += 1,
                         Verdict::Abstain => {},
                         Verdict::Guilty => guilty += 1,
                     }
-                    messages.push(ChatMessage::JudgementVerdict { voter_player_index: *player_ref.index(), verdict: player_ref.verdict(game).clone() });
+                    messages.push(ChatMessage::JudgementVerdict{
+                        voter_player_index: *player_ref.index(),
+                        verdict: player_ref.verdict(game).clone()
+                    });
                 }
                 game.add_messages_to_chat_group(ChatGroup::All, messages);
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialVerdict{ 
-                        player_on_trial: game.player_on_trial.unwrap().index().clone(), 
+                        player_on_trial: player_on_trial.index().clone(), 
                         innocent, guilty 
                 });
 

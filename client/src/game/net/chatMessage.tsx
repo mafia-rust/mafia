@@ -18,9 +18,6 @@ export type ChatMessage = {
 } | 
 // System
 {
-    type: "debug", 
-    text: String
-} | {
     type: "roleAssignment", 
     role: Role
 } | {
@@ -74,9 +71,18 @@ export type ChatMessage = {
 } | {
     type: "mayorCantWhisper"
 } | {
+    type: "jailed"
+} | {
     type: "jailorDecideExecuteYou"
 } | {
     type: "mediumSeanceYou"
+} | {
+    type: "jesterWon"
+} | {
+    type: "executionerWon"
+} | {
+    type: "playerWithNecronomicon",
+    playerIndex: PlayerIndex
 } | {
     type: "roleData", 
     roleData: Role | {

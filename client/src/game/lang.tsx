@@ -115,7 +115,7 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
         case "judgementVerdict":
             return <span key={key}>{styleText(translate("chatmessage.judgementVerdict",
                 GAME_MANAGER.gameState.players[message.voterPlayerIndex],
-                translate("verdict."+message.verdict)
+                translate("verdict."+message.verdict.toLowerCase())
             ), {color:"orange"})}</span>;
         case "trialVerdict":
             return <span key={key}>{styleText(translate("chatmessage.trialVerdict",
@@ -125,7 +125,7 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                 message.guilty
             ), {color:"yellow"})}</span>;
         case "nightInformation":
-            return <span key={key}>{getNightInformationString(message.nightInformation)}</span>;
+            return <span key={key}>{styleText(getNightInformationString(message.nightInformation), {color:"green"})}</span>;
         case "targeted":
             if (message.target !== undefined) {
                 return <span key={key}>{styleText(translate("chatmessage.targeted",
@@ -141,7 +141,11 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             return <span key={key}>{styleText(translate("chatmessage.mayorRevealed",
                 GAME_MANAGER.gameState.players[message.playerIndex],
             ), {color:"violet"})}</span>;
+        case "jailed":
+            return <span key={key}>{styleText(translate("chatmessage.jailed"), {color:"violet"})}</span>;
         default:
+            console.error("Unknown message type: "+message.type);
+            console.error(message);
             return <span key={key}>{styleText(translate("chatmessage."+message))}</span>;
     }
 }
