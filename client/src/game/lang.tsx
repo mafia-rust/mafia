@@ -261,6 +261,7 @@ export function styleText(string: string, defaultStyle: React.CSSProperties = {}
         {string:translate("verdict.guilty"), style:{color:"red"}},
         {string:translate("verdict.innocent"), style:{color:"lime"}},
         {string:translate("verdict.abstain"), style:{color:"cyan"}},
+        {string:translate("suspicious"), style:{color:"red"}},
         
         {string:translate("faction.town"), style:{color:"lime"}},
         {string:translate("faction.mafia"), style:{color:"red"}},

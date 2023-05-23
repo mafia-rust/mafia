@@ -58,7 +58,8 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
     }
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    actor_ref != target_ref &&
+    let RoleData::Doctor { self_heals_remaining, target_healed_ref } = actor_ref.role_data(game) else {unreachable!();};
+    ((actor_ref == target_ref && *self_heals_remaining > 0) || actor_ref != target_ref) &&
     actor_ref.chosen_targets(game).len() < 1 &&
     *actor_ref.alive(game) &&
     *target_ref.alive(game)

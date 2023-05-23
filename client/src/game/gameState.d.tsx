@@ -64,7 +64,6 @@ export interface Player {
     toString(): string
 }
 
-//TODO convert all of this to enum
 export type Role = string;
 export function getFactionFromRole(role: Role): Faction {
     return getFactionFromFactionAlignment(getFactionAlignmentFromRole(role));
