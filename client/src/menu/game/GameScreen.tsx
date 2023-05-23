@@ -82,7 +82,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                 });
                 break;
             case ContentMenus.WikiMenu:
-                this.state.content.push(<WikiMenu role={{type: "any"}}/>);
+                this.state.content.push(<WikiMenu roleListEntry={null}/>);
                 this.setState({
                     content: this.state.content,
                 });

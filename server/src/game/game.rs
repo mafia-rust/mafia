@@ -11,7 +11,7 @@ use tokio::sync::mpsc::UnboundedSender;
 use tokio_tungstenite::tungstenite::Message;
 
 use crate::lobby::LobbyPlayer;
-use crate::network::packet::{ToServerPacket, ToClientPacket, GameOverReason};
+use crate::packet::{ToClientPacket, GameOverReason};
 use crate::prelude::*;
 use super::available_buttons::AvailableButtons;
 use super::chat::night_message::NightInformation;
@@ -56,7 +56,7 @@ impl Game {
                 lobby_players[player_index].sender.clone(),
                 match roles.get(player_index){
                     Some(role) => *role,
-                    None => RoleListEntry::Any.get_random_role(),
+                    None => RoleListEntry::Any.get_random_role(&roles),
                 }
             );
             players.push(new_player);

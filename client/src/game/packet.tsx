@@ -1,5 +1,5 @@
-import { Phase, PlayerIndex, Role, RoleListEntry, Verdict } from "../gameState.d"
-import { Grave } from "../grave"
+import { Phase, PlayerIndex, Role, RoleListEntry, Verdict } from "./gameState.d"
+import { Grave } from "./grave"
 import { ChatMessage } from "./chatMessage"
 
 export type ToClientPacket = {

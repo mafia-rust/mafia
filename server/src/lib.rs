@@ -1,8 +1,10 @@
 #![allow(unused)]   // TODO remove this eventually
 
 pub mod game;
+pub mod websocket_connections;
+pub mod listener;
 pub mod lobby;
-pub mod network;
+pub mod packet;
 
 #[macro_use]
 pub mod prelude {

@@ -4,7 +4,7 @@ import GAME_MANAGER from "../../../index";
 import GameScreen, { ContentMenus } from "../GameScreen";
 import "./willMenu.css"
 import GameState from "../../../game/gameState.d";
-import { StateListener } from "../../../game/net/gameManager.d";
+import { StateListener } from "../../../game/gameManager.d";
 
 interface WillMenuState {
     gameState : GameState,

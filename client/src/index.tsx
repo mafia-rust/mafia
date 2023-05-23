@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import Anchor from './menu/Anchor';
-import { GameManager, createGameManager } from './game/net/gameManager';
+import { GameManager, createGameManager } from './game/gameManager';
 import { createGameState } from './game/gameState';
 import StartMenu from './menu/main/StartMenu';
 import JoinMenu from './menu/main/JoinMenu';

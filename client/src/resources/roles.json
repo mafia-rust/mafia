@@ -1,7 +1,6 @@
 {
-    "Sheriff": {
-        "faction": "Town",
-        "alignment": "Investigative",
+    "sheriff": {
+        "factionAlignment": "townInvestigative",
         "suspicious": false,
         "roleblockable": true,
         "defense": 0,
@@ -9,9 +8,8 @@
         "endGameCondition": "Faction",
         "maxCount": null
     },
-    "Investigator": {
-        "faction": "Town",
-        "alignment": "Investigative",
+    "investigator": {
+        "factionAlignment": "townInvestigative",
         "suspicious": false,
         "roleblockable": true,
         "defense": 0,
@@ -19,9 +17,8 @@
         "endGameCondition": "Faction",
         "maxCount": null
     },
-    "Jailor":{
-        "faction": "Town",
-        "alignment": "Power",
+    "jailor":{
+        "factionAlignment": "townPower",
         "suspicious": false,
         "roleblockable": true,
         "defense": 0,
@@ -29,9 +26,8 @@
         "endGameCondition": "Faction",
         "maxCount": 1
     },
-    "Doctor": {
-        "faction": "Town",
-        "alignment": "Protective",
+    "doctor": {
+        "factionAlignment": "townProtective",
         "suspicious": false,
         "roleblockable": true,
         "defense": 0,
@@ -39,9 +35,8 @@
         "endGameCondition": "Faction",
         "maxCount": null
     },
-    "Veteran": {
-        "faction": "Town",
-        "alignment": "Killing",
+    "veteran": {
+        "factionAlignment": "townKilling",
         "suspicious": false,
         "roleblockable": false,
         "defense": 0,
@@ -49,9 +44,8 @@
         "endGameCondition": "Faction",
         "maxCount": 1
     },
-    "Mafioso": {
-        "faction": "Mafia",
-        "alignment": "Killing",
+    "mafioso": {
+        "factionAlignment": "mafiaKilling",
         "suspicious": true,
         "roleblockable": true,
         "defense": 0,
@@ -59,9 +53,8 @@
         "endGameCondition": "Faction",
         "maxCount": 1
     },
-    "Consort": {
-        "faction": "Mafia",
-        "alignment": "Support",
+    "consort": {
+        "factionAlignment": "mafiaSupport",
         "suspicious": true,
         "roleblockable": false,
         "defense": 0,
@@ -69,9 +62,8 @@
         "endGameCondition": "Faction",
         "maxCount": null
     },
-    "CovenLeader": {
-        "faction": "Coven",
-        "alignment": "Power",
+    "covenLeader": {
+        "factionAlignment": "covenPower",
         "suspicious": true,
         "roleblockable": true,
         "defense": 1,
@@ -79,9 +71,8 @@
         "endGameCondition": "Faction",
         "maxCount": 1
     },
-    "VoodooMaster": {
-        "faction": "Coven",
-        "alignment": "Utility",
+    "voodooMaster": {
+        "factionAlignment": "covenUtility",
         "suspicious": true,
         "roleblockable": true,
         "defense": 0,

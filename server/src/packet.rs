@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use tokio_tungstenite::tungstenite::Message;
 use serde::{Deserialize, Serialize};
 
-use crate::game::{
+use crate::{game::{
     player::{PlayerIndex, Player, PlayerReference},
     role_list::RoleList,
     settings::PhaseTimeSettings,
@@ -11,9 +11,7 @@ use crate::game::{
     chat::{ChatMessage, ChatGroup},
     role::{Role, RoleData}, 
     Game, grave::Grave, available_buttons::AvailableButtons
-};
-
-use super::listener::RoomCode;
+}, listener::RoomCode};
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]

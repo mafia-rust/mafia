@@ -1,11 +1,11 @@
-import { createGameState } from "../gameState";
-import Anchor from "../../menu/Anchor";
-import StartMenu from "../../menu/main/StartMenu";
-import GAME_MANAGER from "../../index";
-import messageListener from "../net/messageListener";
-import CONFIG from "../../resources/config.json"
+import { createGameState } from "./gameState";
+import Anchor from "./../menu/Anchor";
+import StartMenu from "./../menu/main/StartMenu";
+import GAME_MANAGER from "./../index";
+import messageListener from "./messageListener";
+import CONFIG from "./../resources/config.json"
 import React from "react";
-import { Phase, RoleListEntry, Verdict } from "../gameState.d";
+import { Phase, RoleListEntry, Verdict } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 

@@ -1,7 +1,8 @@
 import React from "react";
 import GAME_MANAGER from "../index";
-import { ChatMessage, NightInformation } from "./net/chatMessage";
+import { ChatMessage, NightInformation } from "./chatMessage";
 import ROLES from "../resources/roles.json";
+import { FactionAlignment, Player, getFactionFromFactionAlignment } from "./gameState.d";
 
 let lang: ReadonlyMap<string, string>;
 switchLanguage("en_us");
@@ -14,9 +15,7 @@ export function switchLanguage(language: string) {
 export default function translate(langKey: string, ...valuesList: any[]): string {
     let out = lang.get(langKey);
     if(out===undefined){
-        console.log("Error: Attempted to use non existant lang key: "+langKey);
-        console.trace();
-        return langKey;
+        throw new Error("Attempted to use non existant lang key: "+langKey);
     }
     for(let i = 0; i < valuesList.length; i++){
         out = out.replace("\\"+(i), valuesList[i]);
@@ -226,21 +225,21 @@ function styleSubstring(string: string, stringsToStyle: {string: string, style: 
 export function styleText(string: string, defaultStyle: React.CSSProperties = {}): JSX.Element[]{
     let stringsToStyle: {string: string, style: React.CSSProperties}[] = [];
 
-    for(let role in (ROLES as any)){
-        let roleObject = (ROLES as any)[role];
+    for(let role in ROLES){
+        let roleObject = ROLES[role as keyof typeof ROLES];
 
-        switch(roleObject.faction){
-            case "Coven":
+        switch(getFactionFromFactionAlignment(roleObject.factionAlignment as FactionAlignment)){
+            case "coven":
                 stringsToStyle.push({string:translate("role."+role+".name"), style:{
                     color: "magenta"
                 }});
                 break;
-            case "Town":
+            case "town":
                 stringsToStyle.push({string:translate("role."+role+".name"), style:{
                     color: "lime"
                 }});
                 break;
-            case "Mafia":
+            case "mafia":
                 stringsToStyle.push({string:translate("role."+role+".name"), style:{
                     color: "red"
                 }});
@@ -249,7 +248,7 @@ export function styleText(string: string, defaultStyle: React.CSSProperties = {}
     }
 
     stringsToStyle = stringsToStyle.concat(
-        GAME_MANAGER.gameState.players.map((player)=>{
+        GAME_MANAGER.gameState.players.map((player: Player)=>{
             return {string:player.toString(), style:{
                 fontStyle: "italic",
                 fontWeight: "bold"
@@ -262,23 +261,22 @@ export function styleText(string: string, defaultStyle: React.CSSProperties = {}
         {string:translate("verdict.innocent"), style:{color:"lime"}},
         {string:translate("verdict.abstain"), style:{color:"cyan"}},
         
-        {string:translate("faction.Town"), style:{color:"lime"}},
-        {string:translate("faction.Mafia"), style:{color:"red"}},
-        {string:translate("faction.Neutral"), style:{color:"cyan"}},
-        {string:translate("faction.Coven"), style:{color:"magenta"}},
-        {string:translate("faction.Random"), style:{color:"lightblue"}},
+        {string:translate("faction.town"), style:{color:"lime"}},
+        {string:translate("faction.mafia"), style:{color:"red"}},
+        {string:translate("faction.neutral"), style:{color:"cyan"}},
+        {string:translate("faction.coven"), style:{color:"magenta"}},
 
-        {string:translate("alignment.Killing"), style:{color:"lightblue"}},
-        {string:translate("alignment.Investigative"), style:{color:"lightblue"}},
-        {string:translate("alignment.Protective"), style:{color:"lightblue"}},
-        {string:translate("alignment.Support"), style:{color:"lightblue"}},
-        {string:translate("alignment.Deception"), style:{color:"lightblue"}},
-        {string:translate("alignment.Evil"), style:{color:"lightblue"}},
-        {string:translate("alignment.Chaos"), style:{color:"lightblue"}},
-        {string:translate("alignment.Random"), style:{color:"lightblue"}},
-        {string:translate("alignment.Utility"), style:{color:"lightblue"}},
-        {string:translate("alignment.Power"), style:{color:"lightblue"}},
-
+        {string:translate("alignment.killing"), style:{color:"lightblue"}},
+        {string:translate("alignment.investigative"), style:{color:"lightblue"}},
+        {string:translate("alignment.protective"), style:{color:"lightblue"}},
+        {string:translate("alignment.support"), style:{color:"lightblue"}},
+        {string:translate("alignment.deception"), style:{color:"lightblue"}},
+        {string:translate("alignment.evil"), style:{color:"lightblue"}},
+        {string:translate("alignment.chaos"), style:{color:"lightblue"}},
+        {string:translate("alignment.utility"), style:{color:"lightblue"}},
+        {string:translate("alignment.power"), style:{color:"lightblue"}},
+        
+        {string:translate("any"), style:{color:"lightblue"}}
     ]);
 
     

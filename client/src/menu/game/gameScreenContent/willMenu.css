@@ -4,10 +4,10 @@
 .will-menu textarea {
     box-sizing: border-box;
     justify-content: center;
-    margin-left: .1em;
-    margin-right: .1em;
+    margin-left: .1rem;
+    margin-right: .1rem;
     resize: none;
     text-align: left;
-    height: 19em;
-    width: calc(100% - .2em);
+    height: 19rem;
+    width: calc(100% - .2rem);
 }

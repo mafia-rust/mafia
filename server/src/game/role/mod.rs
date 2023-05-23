@@ -10,6 +10,7 @@ macro_rules! make_role_enum {
 
 
         #[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
+        #[serde(rename_all = "camelCase")]
         pub enum Role {
             $($name),*
         }
@@ -171,12 +172,14 @@ make_role_enum! {
 
     VoodooMaster : voodoo_master
 }
-// type Priority = i8;
+
+
 macro_rules! make_priority_enum {
     (
         $($name:ident),*
     )=>{
         #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+        #[serde(rename_all = "camelCase")]
         pub enum Priority {
             $($name,)*
         }

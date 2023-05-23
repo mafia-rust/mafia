@@ -4,9 +4,7 @@ use rand::random;
 use serde_json::Value;
 use tokio_tungstenite::tungstenite::{Message, protocol::frame};
 
-use crate::{lobby::Lobby, log};
-
-use super::{connection::{ConnectionEventListener, Connection}, packet::{ToServerPacket, ToClientPacket, RejectJoinReason}};
+use crate::{lobby::Lobby, log, websocket_connections::connection::{ConnectionEventListener, Connection}, packet::{ToServerPacket, ToClientPacket, RejectJoinReason}};
 
 // TODO, rename to PregameID or IntermediaryID
 pub type ArbitraryPlayerID = u32;

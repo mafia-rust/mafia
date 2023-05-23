@@ -1,4 +1,4 @@
-import GameState, { Phase, PhaseTimes, Player, PlayerIndex, RoleListEntry, Verdict } from "../gameState.d";
+import GameState, { Phase, PhaseTimes, Player, PlayerIndex, RoleListEntry, Verdict } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 
 export type ServerMessage = any;
