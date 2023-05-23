@@ -1,7 +1,7 @@
 import React from "react";
 import translate, { styleText } from "../../game/lang";
 import GAME_MANAGER from "../../index";
-import GameState, { Phase, Verdict } from "../../game/gameState.d";
+import GameState, { Phase } from "../../game/gameState.d";
 import GameScreen, { ContentMenus as GameScreenContentMenus } from "./GameScreen";
 import "./headerMenu.css";
 
@@ -54,9 +54,9 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                                 gridAutoColumns: "1fr",
                             }}
                         >
-                            <button style={{gridColumn: 2}} onClick={()=>{GAME_MANAGER.sendJudgementPacket(Verdict.Guilty)}}>{styleText(translate("verdict.guilty"))}</button>
-                            <button style={{gridColumn: 3}} onClick={()=>{GAME_MANAGER.sendJudgementPacket(Verdict.Abstain)}}>{styleText(translate("verdict.abstain"))}</button>
-                            <button style={{gridColumn: 4}} onClick={()=>{GAME_MANAGER.sendJudgementPacket(Verdict.Innocent)}}>{styleText(translate("verdict.innocent"))}</button>
+                            <button style={{gridColumn: 2}} onClick={()=>{GAME_MANAGER.sendJudgementPacket("guilty")}}>{styleText(translate("verdict.guilty"))}</button>
+                            <button style={{gridColumn: 3}} onClick={()=>{GAME_MANAGER.sendJudgementPacket("abstain")}}>{styleText(translate("verdict.abstain"))}</button>
+                            <button style={{gridColumn: 4}} onClick={()=>{GAME_MANAGER.sendJudgementPacket("innocent")}}>{styleText(translate("verdict.innocent"))}</button>
                             <div style={{gridColumn: 5}}></div>
                         </div></div>);})()}
                 </div>);
