@@ -70,7 +70,7 @@ pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference,
     crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, false)
 }
 pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-    crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
+    crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Mafia])
 }
 pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
     crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)

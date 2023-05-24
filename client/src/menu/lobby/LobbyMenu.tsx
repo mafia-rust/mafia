@@ -34,11 +34,13 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
     render() {
         return <div className="lm">
             <header>
-                {/* <input type="text" disabled/>  supposedly required for clipboard TODO */}
+                {/* <input type="text" disabled/>   */}
+                {/* supposedly required for clipboard TODO */}
                 <button onClick={() => {
                     let code = new URL(window.location.href);
                     code.searchParams.set("code", GAME_MANAGER.roomCode!);
-                    navigator.clipboard.writeText(code.toString());
+                    if (navigator.clipboard)
+                        navigator.clipboard.writeText(code.toString());
                 }}>
                     {GAME_MANAGER.roomCode!}
                 </button> 

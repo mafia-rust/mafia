@@ -45,10 +45,13 @@
     "menu.wiki.defense": "This role has \\0 defense by default",
 
     "menu.playerList.title": "Player List",
-    "menu.playerList.button.showAll": "Show All",
+    "menu.playerList.button.hideUnusable": "Hide Unusable",
+    "menu.playerList.button.hideDead": "Hide Dead",
     "menu.playerList.button.whisper":"Whisper",
     "menu.playerList.button.vote":"Vote",
+    "menu.playerList.button.resetVote":"Reset Vote",
     "menu.playerList.button.target":"Target",
+    "menu.playerList.button.resetTargets":"Reset Targets",
     "menu.playerList.button.dayTarget":"DayTarget",
     "menu.playerList.button.filter":"Filter",
 
@@ -119,13 +122,13 @@
     "alignment.power": "Power",
 
     "suspicious": "Suspicious",
-
+    "dead": "Dead",
     "any": "Any",
     "none": "None",
     "defense": "Defense",
     "attack": "Attack",
     "basic": "Basic",
-    "powerfull": "Powerfull",
+    "powerful": "Powerful",
     "unstoppable": "Unstoppable",
     "invincible": "Invincible",
 
@@ -172,6 +175,7 @@
     "chatmessage.night.targetSurvivedAttack": "Your target had defense and survived the attack.",
     "chatmessage.night.youSurvivedAttack": "You were attacked but had defense and survived.",
     "chatmessage.night.youDied":"You died!",
+    "chatmessage.night.targetJailed":"Your ability failed because your target was jailed!",
     "chatmessage.night.spyMafiaVisit":"The mafia visited: \\0",
     "chatmessage.night.spyCovenVisit":"The coven visited: \\0",
     "chatmessage.night.spyBug":"Your bug captured: \\0",
