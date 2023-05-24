@@ -1,0 +1,16 @@
+name: Mafia Update Pusher
+on:
+  push:
+    branches:
+      - production
+
+jobs:
+  ping-url:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Mafia Update Pusher
+        env:
+          ENDPOINT: ${{ secrets.MUM_ENDPOINT }}
+        run: |
+          curl -I -s -L $ENDPOINT

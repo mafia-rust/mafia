@@ -80,7 +80,7 @@ impl ConnectionEventListener for Listener {
             if let PlayerLocation::InLobby { room_code, player_id } = disconnected_player {
                 // If the lobby actually exists
                 if let Some(lobby) = self.lobbies.lock().unwrap().get_mut(&room_code){
-                    lobby.disconnect_player(player_id);
+                    lobby.disconnect_player_from_lobby(player_id);
                 }
             }
         } else {
@@ -113,25 +113,13 @@ impl Listener{
         match incoming_packet {
             ToServerPacket::Join{ room_code } => {
                 let mut all_lobbies = self.lobbies.lock().unwrap();
-                
-                #[cfg(debug_assertions)] 'HANDLE_DEBUG_LOBBY: {
-                    const DEBUG_ROOM_CODE: RoomCode = 4426; // "dbg" in base 18
-                    
-                    if room_code != DEBUG_ROOM_CODE || all_lobbies.contains_key(&DEBUG_ROOM_CODE){
-                        // Let player connect normally
-                        break 'HANDLE_DEBUG_LOBBY;
-                    } 
-                    // Player wants to connect to debug lobby, and it doesn't exist.
-
-                    all_lobbies.insert(DEBUG_ROOM_CODE, Lobby::new());
-                }
 
                 let Some(lobby) = all_lobbies.get_mut(&room_code) else {
                     connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::InvalidRoomCode });
                     return Ok(());
                 };
 
-                match lobby.join_player(connection.get_sender()) {
+                match lobby.connect_player_to_lobby(connection.get_sender()) {
                     Ok(player_id) => {
                         *sender_player_location = PlayerLocation::InLobby { room_code, player_id };
         
@@ -154,7 +142,7 @@ impl Listener{
 
                 let mut lobby = Lobby::new();
                 
-                match lobby.join_player(connection.get_sender()) {
+                match lobby.connect_player_to_lobby(connection.get_sender()) {
                     Ok(player_id) => {
                         *sender_player_location = PlayerLocation::InLobby { room_code, player_id };
         

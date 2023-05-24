@@ -1,7 +1,7 @@
 import React from "react";
 import translate, { styleText } from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
-import GameState, { RoleListEntry } from "../../../game/gameState.d";
+import GameState, { FactionAlignment, RoleListEntry, getFactionFromFactionAlignment } from "../../../game/gameState.d";
 import GameScreen, { ContentMenus } from "../GameScreen";
 import RolePicker from "../../RolePicker";
 import ROLES from "../../../resources/roles.json";
@@ -45,11 +45,11 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
     }
 
 
-    renderRole(role: RoleListEntry){
-        if (role.type === "exact"){
+    renderRole(roleListEntry: RoleListEntry){
+        if (roleListEntry.type === "exact"){
 
             let defenseString = "";
-            switch(ROLES[role.role as keyof typeof ROLES].defense){
+            switch(ROLES[roleListEntry.role as keyof typeof ROLES].defense){
                 case 0:
                     defenseString = translate("none");
                     break;
@@ -66,22 +66,38 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
 
             return <div>
                 <div>
-                    <div>{styleText(translate("role."+role.role+".name"))}</div>
+                    <div>{styleText(translate("role."+roleListEntry.role+".name"))}</div>
                     <br/>
                     {styleText(translate("menu.wiki.abilities"))}
-                    {this.renderRoleText(translate("role."+role.role+".abilities"))}
+                    {this.renderRoleText(translate("role."+roleListEntry.role+".abilities"))}
                     <br/>
                     {styleText(translate("menu.wiki.attributes"))}
-                    {this.renderRoleText(translate("role."+role.role+".attributes"))}
+                    {this.renderRoleText(translate("role."+roleListEntry.role+".attributes"))}
                     <br/>
-                    {styleText(translate("menu.wiki.maxCount", ROLES[role.role as keyof typeof ROLES].maxCount))}<br/>
-                    {styleText(translate("menu.wiki.suspicious", ROLES[role.role as keyof typeof ROLES].suspicious?"suspicious":"innocent"))}<br/>
+                    {styleText(translate("menu.wiki.maxCount", ROLES[roleListEntry.role as keyof typeof ROLES].maxCount))}<br/>
+                    {styleText(translate("menu.wiki.suspicious", ROLES[roleListEntry.role as keyof typeof ROLES].suspicious?"suspicious":"innocent"))}<br/>
                     {styleText(translate("menu.wiki.defense", defenseString))}<br/>
                 </div>
             </div>
-        } else {
+        } else if(roleListEntry.type === "faction"){
             return <div>
-                {translate("menu.wiki.noRole")}
+                {Object.keys(ROLES).map((key)=>{
+                    if(getFactionFromFactionAlignment(ROLES[key as keyof typeof ROLES].factionAlignment as FactionAlignment) === roleListEntry.faction)
+                        return <section key={key}>{styleText(translate("role."+key+".name"))}</section>
+                })}
+            </div>
+        } else if(roleListEntry.type === "factionAlignment"){
+            return <div>
+                {Object.keys(ROLES).map((key)=>{
+                    if(ROLES[key as keyof typeof ROLES].factionAlignment === roleListEntry.factionAlignment)
+                        return <section key={key}>{styleText(translate("role."+key+".name"))}</section>
+                })}
+            </div>
+        }else {
+            return <div>
+                {Object.keys(ROLES).map((key)=>{
+                    return <section key={key}>{styleText(translate("role."+key+".name"))}</section>
+                })}
             </div>
         }
     }
