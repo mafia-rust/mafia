@@ -26,7 +26,6 @@ macro_rules! make_role_enum {
             pub fn values() -> Vec<Role> {
                 return vec![$(Role::$name),*];
             }
-
             pub fn default_data(&self) -> RoleData {
                 match self {
                     $(Role::$name => RoleData::$name$({
@@ -152,7 +151,6 @@ make_role_enum! {
     },
 
     Sheriff : sheriff,
-    Investigator : investigator,
 
     Doctor : doctor {
         self_heals_remaining: u8 = 1,
@@ -164,9 +162,16 @@ make_role_enum! {
         alerting_tonight: bool = false
     },
 
+    Escort : escort,
+
     Mafioso : mafioso,
     
     Consort : consort,
+
+    Janitor : janitor {
+        cleans_remaining: u8 = 3,
+        cleaned_ref: Option<PlayerReference> = None
+    },
 
     CovenLeader : coven_leader,
 

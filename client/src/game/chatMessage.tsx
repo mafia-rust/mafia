@@ -144,16 +144,12 @@ export type NightInformation = {
 } | {
     type: "godfatherForcedYou"
 } | {
-    type: "blackmailed"
+    type: "silenced"
 } | {
     type: "framerFramedPlayers", 
     players: PlayerIndex[]
 } | {
-    type: "janitorResult", 
-    role: Role, 
-    will: String 
-} | {
-    type: "forgerResult", 
+    type: "playerRoleAndWill", 
     role: Role, 
     will: String 
 } | {

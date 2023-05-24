@@ -8,15 +8,6 @@
         "endGameCondition": "Faction",
         "maxCount": null
     },
-    "investigator": {
-        "factionAlignment": "townInvestigative",
-        "suspicious": false,
-        "roleblockable": true,
-        "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
-        "maxCount": null
-    },
     "jailor":{
         "factionAlignment": "townPower",
         "suspicious": false,
@@ -44,6 +35,15 @@
         "endGameCondition": "Faction",
         "maxCount": 1
     },
+    "escort": {
+        "factionAlignment": "townSupport",
+        "suspicious": false,
+        "roleblockable": false,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": null
+    },
     "mafioso": {
         "factionAlignment": "mafiaKilling",
         "suspicious": true,
@@ -61,6 +61,15 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": null
+    },
+    "janitor": {
+        "factionAlignment": "mafiaDeception",
+        "suspicious": true,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": 1
     },
     "covenLeader": {
         "factionAlignment": "covenPower",

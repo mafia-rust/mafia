@@ -1,10 +1,10 @@
 import React from "react";
-import translate from "../../../game/lang";
+import translate, { styleText } from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import GameState, { RoleListEntry } from "../../../game/gameState.d";
 import GameScreen, { ContentMenus } from "../GameScreen";
 import RolePicker from "../../RolePicker";
-
+import ROLES from "../../../resources/roles.json";
 
 interface WikiMenuProps {
     roleListEntry: RoleListEntry | null,
@@ -47,15 +47,36 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
 
     renderRole(role: RoleListEntry){
         if (role.type === "exact"){
+
+            let defenseString = "";
+            switch(ROLES[role.role as keyof typeof ROLES].defense){
+                case 0:
+                    defenseString = translate("none");
+                    break;
+                case 1:
+                    defenseString = translate("basic");
+                    break;
+                case 2:
+                    defenseString = translate("powerful");
+                    break;
+                case 3:
+                    defenseString = translate("invincible");
+                    break;
+            }
+
             return <div>
                 <div>
-                    <div>{translate("role."+role.role+".name")}</div>
+                    <div>{styleText(translate("role."+role.role+".name"))}</div>
                     <br/>
-                    {translate("menu.wiki.abilities")}
+                    {styleText(translate("menu.wiki.abilities"))}
                     {this.renderRoleText(translate("role."+role.role+".abilities"))}
                     <br/>
-                    {translate("menu.wiki.attributes")}
+                    {styleText(translate("menu.wiki.attributes"))}
                     {this.renderRoleText(translate("role."+role.role+".attributes"))}
+                    <br/>
+                    {styleText(translate("menu.wiki.maxCount", ROLES[role.role as keyof typeof ROLES].maxCount))}<br/>
+                    {styleText(translate("menu.wiki.suspicious", ROLES[role.role as keyof typeof ROLES].suspicious?"suspicious":"innocent"))}<br/>
+                    {styleText(translate("menu.wiki.defense", defenseString))}<br/>
                 </div>
             </div>
         } else {

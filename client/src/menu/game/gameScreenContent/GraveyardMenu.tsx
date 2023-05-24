@@ -52,9 +52,9 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
 
         let graveRoleString: string;
         if (grave.role.type === "role") {
-            graveRoleString = grave.role.role;
+            graveRoleString = translate(`role.${grave.role.role}.name`);
         } else {
-            graveRoleString = grave.role.type;
+            graveRoleString = translate(`grave.role.${grave.role.type}`);
         }
 
         // return(<div key={graveIndex}>
@@ -63,7 +63,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
         //     {"("+graveRoleString+")"} killed by {deathCauseString}
         // </div>)
         return(<button key={graveIndex}>
-            {this.state.gameState.players[grave.playerIndex]?.toString()} {styleText("("+translate("role."+graveRoleString+".name")+")")}
+            {this.state.gameState.players[grave.playerIndex]?.toString()} {styleText("("+graveRoleString+")")}
         </button>);
     }
 

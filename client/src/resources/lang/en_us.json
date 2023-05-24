@@ -39,6 +39,10 @@
     "menu.wiki.noRole": "No role selected",
     "menu.wiki.abilities": "Abilities",
     "menu.wiki.attributes": "Attributes",
+    
+    "menu.wiki.maxCount": "There can only be \\0 of this role in a game",
+    "menu.wiki.suspicious": "This role looks \\0 to the Sheriff",
+    "menu.wiki.defense": "This role has \\0 defense by default",
 
     "menu.playerList.title": "Player List",
     "menu.playerList.button.showAll": "Show All",
@@ -58,13 +62,13 @@
     "role.sheriff.abilities": "*Target a player to find out if they're innocent or suspicious",
     "role.sheriff.attributes": "*Frames, Douses, Hexes, and Enchants can make your target look suspicious wrongly",
 
-    "role.investigator.name": "Investigator",
-    "role.investigator.abilities": "*Target a player to find a clue to their role",
-    "role.investigator.attributes": "*There are specific clues for each role. You can find them in the wiki",
-
     "role.doctor.name": "Doctor",
     "role.doctor.abilities":"*Target a player to save them from death",
     "role.doctor.attributes":"*You give your target powerfull defense*You and your target will know they were attacked",
+
+    "role.escort.name": "Escort",
+    "role.escort.abilities":"*Target a player to roleblock them",
+    "role.escort.attributes":"*Roleblocking a player prevents them from using parts of their ability",
     
     "role.veteran.name": "Veteran",
     "role.veteran.abilities":"*Target yourself to alert, killing everyone who visits you",
@@ -77,6 +81,10 @@
     "role.consort.name": "Consort",
     "role.consort.abilities":"*Target a player to roleblock them",
     "role.consort.attributes":"*Roleblocking a player prevents them from using parts of their ability*You can talk with the other mafia at night",
+    
+    "role.janitor.name": "Janitor",
+    "role.janitor.abilities":"*Target a player on the night they die to clean them",
+    "role.janitor.attributes":"*Cleaning a player erases information from their grave*You will know the role and will of a player you clean, but it wont show up in the graveyard",
     
     "role.covenLeader.name": "Coven Leader",
     "role.covenLeader.abilities":"",
@@ -110,8 +118,16 @@
     "alignment.utility": "Utility",
     "alignment.power": "Power",
 
-    "any": "Any",
     "suspicious": "Suspicious",
+
+    "any": "Any",
+    "none": "None",
+    "defense": "Defense",
+    "attack": "Attack",
+    "basic": "Basic",
+    "powerfull": "Powerfull",
+    "unstoppable": "Unstoppable",
+    "invincible": "Invincible",
 
     "verdict.guilty": "Guilty",
     "verdict.innocent": "Innocent",
@@ -164,6 +180,8 @@
     "chatmessage.night.vigilanteSuicide":"You committed suicide over the guilt of killing an innocnet person.",
     "chatmessage.night.doctorHealed":"You healed your target while they got attacked.",
     "chatmessage.night.doctorHealedYou":"A doctor healed you while you got attacked.",
+    "chatmessage.night.silenced": "You were silenced! You can not speak or communicate in any way until at least the start of the next day!",
+    "chatmessage.night.playersRoleAndWill": "Your targets role was \\0 and their will stated this: \\1",
     "chatmessage.night.sheriffResult.suspicious":"Your target seems to be suspicious.",
     "chatmessage.night.sheriffResult.innocent":"Your target seems to be innocent."
 }

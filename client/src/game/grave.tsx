@@ -12,7 +12,7 @@ export interface Grave {
 }
 
 export type GraveRole = {
-    type: "cleaned" | "stoned"
+    type: "cleaned" | "petrified"
 } |  {
     type: "role"
     role: Role
