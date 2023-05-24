@@ -68,11 +68,12 @@ export default function messageListener(packet: ToClientPacket){
             GAME_MANAGER.gameState.myIndex = packet.playerIndex;
         break;
         case "players":
+            GAME_MANAGER.gameState.players = [];
             for(let i = 0; i < packet.names.length; i++){
                 if(GAME_MANAGER.gameState.players.length > i){
                     GAME_MANAGER.gameState.players[i].name = packet.names[i];
                 }else{
-                    //if this player index isnt in the list, create a new player and then sync
+                    //if this player index isnt in the already made list, create a new player and then sync
                     GAME_MANAGER.gameState.players.push(createPlayer(packet.names[i], i));
                 }
             }

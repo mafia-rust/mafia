@@ -67,97 +67,30 @@ impl Lobby {
         }
     }
 
-    /// Catches the sender up with the current lobby settings
-    pub fn inform_player(sender: UnboundedSender<ToClientPacket>, settings: &Settings) {
-        for phase in [
-            PhaseType::Discussion, 
-            PhaseType::Evening, 
-            PhaseType::Judgement, 
-            PhaseType::Morning,
-            PhaseType::Night,
-            PhaseType::Testimony,
-            PhaseType::Voting
-        ] {
-            sender.send(ToClientPacket::PhaseTime { 
-                phase, 
-                time: settings.phase_times.get_time_for(phase).as_secs() 
-            });
-        }
-        sender.send(ToClientPacket::RoleList { role_list: settings.role_list.clone() });
-    }
-
-    pub fn join_player(&mut self, sender: UnboundedSender<ToClientPacket>)-> Result<ArbitraryPlayerID, RejectJoinReason>{
-        match &mut self.lobby_state {
-            LobbyState::Lobby { players, settings } => {
-                // TODO, move this somewhere else
-                let name = Self::validate_name(players, "".to_string());
-                
-                sender.send(ToClientPacket::YourName { name: name.clone() });
-                // Add a role list entry
-                settings.role_list.push(RoleListEntry::Any);
-                Self::inform_player(sender.clone(), settings);
-                
-                let arbitrary_player_id = players.len() as ArbitraryPlayerID;
-
-                let player = LobbyPlayer {
-                    sender,
-                    name,
-                };
-
-                players.insert(arbitrary_player_id, player);
-
-                let role_list = settings.role_list.clone();
-
-                // Make sure everybody is on the same page
-                self.send_players();
-                self.send_to_all(ToClientPacket::RoleList { role_list });
-
-                Ok(arbitrary_player_id)
-            },
-            LobbyState::Game{ .. } => {
-                // TODO, handle rejoining
-                Err(RejectJoinReason::GameAlreadyStarted)
-            }
-            LobbyState::Closed => {
-                Err(RejectJoinReason::InvalidRoomCode)
-            }
-        }
-    }
-    pub fn disconnect_player(&mut self, id: ArbitraryPlayerID) {
-        if let LobbyState::Lobby { ref mut players, .. } = &mut self.lobby_state {
-            players.remove(&id);
-            
-            // self.send_players();
-            // self.send_to_all(ToClientPacket::RoleList { role_list });
-
-            if players.len() == 0 {
-                self.lobby_state = LobbyState::Closed;
-            }
-        }
-    }
+    
     pub fn on_client_message(&mut self, send: UnboundedSender<ToClientPacket>, player_arbitrary_id: ArbitraryPlayerID, incoming_packet: ToServerPacket){
         match incoming_packet {
             ToServerPacket::SetName{ name } => {
                 let LobbyState::Lobby { settings, players } = &mut self.lobby_state else {
-                    println!("{} {}", log::error("Player tried to set name before joining a lobby!"), player_arbitrary_id);
+                    println!("{} {}", log::error("ToServerPacket::SetName can not be used outside of LobbyState::Lobby"), player_arbitrary_id);
                     return;
                 };
 
                 let mut other_players = players.clone();
                 other_players.remove(&player_arbitrary_id);
                 
-                let name = Self::validate_name(&other_players, name.clone());
+                let name = validate_name(&other_players, name.clone());
                 if let Some(mut player) = players.get_mut(&player_arbitrary_id){
                     player.name = name.clone();
                 }
                 
                 send.send(ToClientPacket::YourName{name});
 
-                self.send_players();
+                Self::send_players_lobby(players);
             },
             ToServerPacket::StartGame => {
                 let LobbyState::Lobby { settings, players } = &mut self.lobby_state else {
-                    println!("{} {}", log::error("Player tried to start game before joining a lobby!"), player_arbitrary_id);
+                    println!("{} {}", log::error("ToServerPacket::StartGame can not be used outside of LobbyState::Lobby"), player_arbitrary_id);
                     return;
                 };
                 
@@ -189,11 +122,11 @@ impl Lobby {
                 self.send_to_all(ToClientPacket::StartGame);
             },
             ToServerPacket::Kick{player_index} => {
-                todo!()// cant kick because then all player_index's would need to change and all players would be pointing to the wrong indeices
+
             },
             ToServerPacket::SetPhaseTime{phase, time} => {
                 let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
-                    println!("{} {}", log::error("Player tried to set phase time settings before joining a lobby!"), player_arbitrary_id);
+                    println!("{} {}", log::error("ToServerPacket::SetPhaseTime can not be used outside of LobbyState::Lobby"), player_arbitrary_id);
                     return;
                 };
 
@@ -213,7 +146,7 @@ impl Lobby {
             },
             ToServerPacket::SetRoleList { role_list } => {
                 let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
-                    println!("{} {}", log::error("Player tried to set role list settings before joining a lobby!"), player_arbitrary_id);
+                    println!("{} {}", log::error("ToServerPacket::SetRoleList can not be used outside of LobbyState::Lobby"), player_arbitrary_id);
                     return;
                 };
                 settings.role_list = role_list.clone();
@@ -222,7 +155,7 @@ impl Lobby {
             }
             _ => {
                 let LobbyState::Game { game, players } = &mut self.lobby_state else {
-                    println!("{} {}", log::error("Player tried to set investigator results settings before joining a lobby!"), player_arbitrary_id);
+                    println!("{} {:?}", log::error("ToServerPacket not implemented for lobby was sent during lobby: "), incoming_packet);
                     return;
                 };
 
@@ -231,6 +164,52 @@ impl Lobby {
         }
     }
 
+    pub fn connect_player_to_lobby(&mut self, sender: UnboundedSender<ToClientPacket>)-> Result<ArbitraryPlayerID, RejectJoinReason>{
+        match &mut self.lobby_state {
+            LobbyState::Lobby { players, settings } => {
+                // TODO, move this somewhere else
+                let name = validate_name(players, "".to_string());
+                
+                sender.send(ToClientPacket::YourName { name: name.clone() });
+
+                // Add a role list entry
+                settings.role_list.push(RoleListEntry::Any);
+                
+                let arbitrary_player_id = players.len() as ArbitraryPlayerID;
+
+                players.insert(arbitrary_player_id, LobbyPlayer{sender:sender.clone(),name,});
+
+                // Make sure everybody is on the same page
+                Self::send_players_lobby(players);
+                Self::send_settings(&sender, settings);
+
+                Ok(arbitrary_player_id)
+            },
+            LobbyState::Game{ .. } => {
+                // TODO, handle rejoining
+                Err(RejectJoinReason::GameAlreadyStarted)
+            }
+            LobbyState::Closed => {
+                Err(RejectJoinReason::InvalidRoomCode)
+            }
+        }
+    }
+    pub fn disconnect_player_from_lobby(&mut self, id: ArbitraryPlayerID) {
+        if let LobbyState::Lobby { players, settings  } = &mut self.lobby_state {
+            players.remove(&id);
+            
+            if players.len() == 0 {
+                self.lobby_state = LobbyState::Closed;
+                return;
+            }
+            
+            Self::send_players_lobby(players);
+            for player in players.iter(){
+                Self::send_settings(&player.1.sender, settings)
+            }
+        }
+    }
+    
     pub fn is_closed(&self) -> bool {
         match &self.lobby_state {
             LobbyState::Closed => true,
@@ -243,60 +222,48 @@ impl Lobby {
             game.tick(time_passed);
         }
     }
-
-    fn validate_name(players: &HashMap<ArbitraryPlayerID, LobbyPlayer>, mut name: String) -> String {
-        name = trim_whitespace(name.trim());
-        name.truncate(30);
-
-        //if valid then return
-        if name.len() > 0 && !players.values()
-            .any(|existing_player| name == *existing_player.name)
-        {
-            return name;
+    
+    /// Catches the sender up with the current lobby settings
+    pub fn send_settings(sender: &UnboundedSender<ToClientPacket>, settings: &Settings) {
+        for phase in [
+            PhaseType::Morning,
+            PhaseType::Discussion, 
+            PhaseType::Voting,
+            PhaseType::Testimony,
+            PhaseType::Judgement,
+            PhaseType::Evening, 
+            PhaseType::Night,
+        ] {
+            sender.send(ToClientPacket::PhaseTime { 
+                phase, 
+                time: settings.phase_times.get_time_for(phase).as_secs() 
+            });
         }
-        drop(name);
-
-        //otherwise 
-        let available_random_names: Vec<&String> = RANDOM_NAMES.iter().filter(|new_random_name| {
-            !players.values()
-                .map(|p| &p.name)
-                .any(|existing_name|{
-                        let mut new_random_name = trim_whitespace(new_random_name.trim());
-                        new_random_name.truncate(30);
-
-                        
-                        let mut existing_name = trim_whitespace(existing_name.trim());
-                        existing_name.truncate(30);
-
-                        new_random_name == existing_name
-                    }
-                )
-        }).collect();
-
-        if available_random_names.len() > 0 {
-            return available_random_names[rand::random::<usize>()%available_random_names.len()].clone();
-        } else {
-            // Awesome name generator
-            // TODO make this better, or don't.
-            return players.len().to_string()
-        }
+        sender.send(ToClientPacket::RoleList { role_list: settings.role_list.clone() });
     }
-    fn send_players(&self){
-        let packet = match &self.lobby_state {
-            LobbyState::Lobby { players, .. } => ToClientPacket::Players { 
-                names: players.iter().map(|p| {
-                    p.1.name.clone()
-                }).collect() 
-            },
-            LobbyState::Game { game, players } => ToClientPacket::Players { 
-                names: PlayerReference::all_players(game).iter().map(|p| {
-                    p.name(game).clone()
-                }).collect() 
-            },
-            LobbyState::Closed => {return;}
+
+
+    fn send_players_lobby(players: &HashMap<ArbitraryPlayerID, LobbyPlayer>){
+        let packet = ToClientPacket::Players { 
+            names: players.iter().map(|p| {
+                p.1.name.clone()
+            }).collect() 
         };
-        self.send_to_all(packet);
+        for player in players.iter() {
+            player.1.sender.send(packet.clone());
+        }
     }
+    fn send_players_game(game: &Game, players: &HashMap<ArbitraryPlayerID, PlayerIndex>){
+        let packet = ToClientPacket::Players { 
+            names: PlayerReference::all_players(game).into_iter().map(|p| {
+                p.name(game).clone()
+            }).collect() 
+        };
+        for player_ref in PlayerReference::all_players(game){
+            player_ref.send_packet(game, packet.clone());
+        }
+    }
+
     fn send_to_all(&self, packet: ToClientPacket){
         match &self.lobby_state {
             LobbyState::Lobby { players, .. } => {
@@ -311,5 +278,44 @@ impl Lobby {
             }
             LobbyState::Closed => {}
         }
+    }
+}
+
+
+fn validate_name(players: &HashMap<ArbitraryPlayerID, LobbyPlayer>, mut name: String) -> String {
+    name = trim_whitespace(name.trim());
+    name.truncate(30);
+
+    //if valid then return
+    if name.len() > 0 && !players.values()
+        .any(|existing_player| name == *existing_player.name)
+    {
+        return name;
+    }
+    drop(name);
+
+    //otherwise 
+    let available_random_names: Vec<&String> = RANDOM_NAMES.iter().filter(|new_random_name| {
+        !players.values()
+            .map(|p| &p.name)
+            .any(|existing_name|{
+                    let mut new_random_name = trim_whitespace(new_random_name.trim());
+                    new_random_name.truncate(30);
+
+                    
+                    let mut existing_name = trim_whitespace(existing_name.trim());
+                    existing_name.truncate(30);
+
+                    new_random_name == existing_name
+                }
+            )
+    }).collect();
+
+    if available_random_names.len() > 0 {
+        return available_random_names[rand::random::<usize>()%available_random_names.len()].clone();
+    } else {
+        // Awesome name generator
+        // TODO make this better, or don't.
+        return players.len().to_string()
     }
 }

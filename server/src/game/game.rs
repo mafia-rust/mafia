@@ -73,6 +73,10 @@ impl Game {
             trials_left: 0,
         };
 
+        game.send_packet_to_all(ToClientPacket::Players { 
+            names: PlayerReference::all_players(&game).iter().map(|p|{return p.name(&game).clone()}).collect() 
+        });
+
         //set up role data
         for player_ref in PlayerReference::all_players(&game){
             let role_data_copy = player_ref.role_data(&game).clone();
@@ -82,9 +86,7 @@ impl Game {
 
         //send to players all game information stuff
 
-        game.send_packet_to_all(ToClientPacket::Players { 
-            names: PlayerReference::all_players(&game).iter().map(|p|{return p.name(&game).clone()}).collect() 
-        });
+        
         game.send_packet_to_all(ToClientPacket::RoleList { 
             role_list: settings.role_list.clone() 
         });
