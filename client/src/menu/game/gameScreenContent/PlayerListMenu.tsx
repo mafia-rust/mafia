@@ -12,7 +12,8 @@ interface PlayerListMenuProps {
 }
 interface PlayerListMenuState {
     gameState: GameState,
-    showAllPlayers: boolean,
+    hideUnusable: boolean,
+    hideDead: boolean,
 }
 
 export default class PlayerListMenu extends React.Component<PlayerListMenuProps, PlayerListMenuState> {
@@ -23,7 +24,8 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
 
         this.state = {
             gameState : GAME_MANAGER.gameState,
-            showAllPlayers: false,
+            hideUnusable: false,
+            hideDead: true,
         };
         this.listener = ()=>{
             this.setState({
@@ -48,7 +50,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         <div>{votedString}</div>
                         <button className="button gm-button" onClick={()=>{
                             GAME_MANAGER.sendVotePacket(null);
-                        }}>Reset Vote LANG</button>
+                        }}>{translate("menu.playerList.button.resetVote")}</button>
                     </div>);
                 }
                 return null;
@@ -62,7 +64,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         <div>{targetStringList.join(", ")+"."}</div>
                         <button className="button gm-button" onClick={()=>{
                             GAME_MANAGER.sendTargetPacket([]);
-                        }}>Reset Targets LANG</button>
+                        }}>{translate("menu.playerList.button.resetTargets")}</button>
                     </div>);
                 }
                 return null;
@@ -76,7 +78,11 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         return(<div className="player" key={player.index}>
             <div className="top">
                 <button className="whisper" onClick={()=>ChatMenu.prependWhisper(player.index)}>
-                    {styleText(player.toString()+" "+(player.roleLabel==null?"":("("+translate("role."+player.roleLabel+".name")+")")))}
+                    {styleText(
+                        player.toString()+
+                        (player.roleLabel==null?"":(" ("+translate("role."+player.roleLabel+".name")+")"))+
+                        (player.alive?"":" ("+translate("dead")+")")
+                    )}
                 </button>
                 <button className="filter" onClick={()=>{
                     ChatMenu.setFilterFunction(
@@ -118,10 +124,12 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     renderPlayers(players: Player[]){
         return<div className="player-list">{
             players.map((player: Player)=>{
-            if(this.state.showAllPlayers || (!this.state.showAllPlayers && (
-                player.buttons.dayTarget ||
-                player.buttons.target ||
-                player.buttons.vote))){
+            if(
+                (!this.state.hideUnusable || (this.state.hideUnusable && 
+                    (player.buttons.dayTarget || player.buttons.target || player.buttons.vote)
+                    )
+                ) && (!this.state.hideDead || player.alive)
+                ){
                 return this.renderPlayer(player);
             }else{
                 return null;
@@ -134,14 +142,25 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.PlayerListMenu)}}>{translate("menu.playerList.title")}</button>        
         <label>
             <input type="checkbox"
-                checked={this.state.showAllPlayers}
+                checked={this.state.hideUnusable}
                 onChange={(checked)=>{
                     this.setState({
-                        showAllPlayers: checked.target.checked
+                        hideUnusable: checked.target.checked
                     });
                 }
             }/>
-            {translate("menu.playerList.button.showAll")}
+            {translate("menu.playerList.button.hideUnusable")}
+        </label>
+        <label>
+            <input type="checkbox"
+                checked={this.state.hideDead}
+                onChange={(checked)=>{
+                    this.setState({
+                        hideDead: checked.target.checked
+                    });
+                }
+            }/>
+            {translate("menu.playerList.button.hideDead")}
         </label>
         {this.renderPhaseSpecific()}
         {this.renderPlayers(this.state.gameState.players)}

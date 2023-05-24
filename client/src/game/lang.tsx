@@ -300,6 +300,8 @@ export function styleText(string: string, defaultStyle: React.CSSProperties = {}
         {string:translate("powerful"), style:{color:"lightblue"}},
         {string:translate("unstoppable"), style:{color:"lightblue"}},
         {string:translate("invincible"), style:{color:"lightblue"}},
+        {string:translate("dead"), style:{fontStyle: "italic", color:"gray"}},
+
         {string:translate("menu.wiki.abilities"), style:{color:"lightblue"}},
         {string:translate("menu.wiki.attributes"), style:{color:"lightblue"}},
     ]);

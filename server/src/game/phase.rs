@@ -103,7 +103,7 @@ impl PhaseType {
                 //search for mafia godfather or mafioso
                 let mut main_mafia_killing_exists = false;
                 for player_ref in PlayerReference::all_players(game){
-                    if player_ref.role(game) == Role::Mafioso { 
+                    if player_ref.role(game) == Role::Mafioso && *player_ref.alive(game) { 
                         main_mafia_killing_exists = true;
                         break;
                     }

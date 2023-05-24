@@ -42,8 +42,8 @@ impl PlayerReference{
         self.deref_mut(game).alive = alive;
 
         let mut alive_players = vec![];
-        for player in game.players.iter(){
-            alive_players.push(self.deref(game).alive.clone());
+        for player in PlayerReference::all_players(game){
+            alive_players.push(player.deref(game).alive.clone());
         }
         game.send_packet_to_all(ToClientPacket::PlayerAlive { alive: alive_players });
     }
