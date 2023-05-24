@@ -76,7 +76,10 @@ pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, phase:
     match phase{
         PhaseType::Night=>{
             if let Some(jailed_ref) = jailed_target_ref {
-                jailed_ref.clone().set_night_jailed(game, true);
+                let jailed_ref = jailed_ref.clone();
+                jailed_ref.set_night_jailed(game, true);
+                actor_ref.add_chat_message(game, 
+                    ChatMessage::JailedTarget{ player_index: *jailed_ref.index() });
             }
             actor_ref.set_role_data(game, RoleData::Jailor{ jailed_target_ref: None });
         },

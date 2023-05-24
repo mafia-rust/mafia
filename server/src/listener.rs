@@ -84,7 +84,7 @@ impl ConnectionEventListener for Listener {
                 }
             }
         } else {
-            println!("{} {}", log::error("Tried to disconnect an already disconnected player!"), connection.get_address())
+            println!("{} {}", log::error("Tried to disconnect a non existant player!"), connection.get_address())
         }
     }
 

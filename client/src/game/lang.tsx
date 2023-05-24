@@ -24,7 +24,6 @@ export default function translate(langKey: string, ...valuesList: any[]): string
     return out;
 }
 
-// TODO, make message union type (& make an interface) & make getChatString a method
 export function getChatElement(message: ChatMessage, key: number): JSX.Element {
     switch (message.type) {
         case "normal":
@@ -98,7 +97,7 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             return <span key={key} style={{textAlign:"center"}}>{styleText(translate("chatmessage.phaseChange",
                 translate("phase."+message.phase),
                 message.dayNumber
-            ), {color:"yellow"})}</span>;
+            ), {color:"yellow", textDecoration:"underline"})}</span>;
         case "trialInformation":
             return <span key={key}>{styleText(translate("chatmessage.trialInformation",
                 message.requiredVotes,
@@ -138,10 +137,10 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
         case "nightInformation":
             return <span key={key}>{styleText(getNightInformationString(message.nightInformation), {color:"green"})}</span>;
         case "targeted":
-            if (message.target !== undefined) {
+            if (message.targets.length > 0) {
                 return <span key={key}>{styleText(translate("chatmessage.targeted",
                     GAME_MANAGER.gameState.players[message.targeter],
-                    GAME_MANAGER.gameState.players[message.target],
+                    message.targets.map((target) => GAME_MANAGER.gameState.players[target].toString()).join(", ")
                 ), {color:"orange"})}</span>;
             } else {
                 return <span key={key}>{styleText(translate("chatmessage.targeted.cleared",
@@ -152,7 +151,11 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             return <span key={key}>{styleText(translate("chatmessage.mayorRevealed",
                 GAME_MANAGER.gameState.players[message.playerIndex],
             ), {color:"violet"})}</span>;
-        case "jailed":
+        case "jailedTarget":
+            return <span key={key}>{styleText(translate("chatmessage.night.jailedTarget", 
+                GAME_MANAGER.gameState.players[message.playerIndex]), 
+            {color:"violet"})}</span>;
+        case "jailedYou":
             return <span key={key}>{styleText(translate("chatmessage.jailed"), {color:"violet"})}</span>;
         default:
             console.error("Unknown message type: "+message.type);

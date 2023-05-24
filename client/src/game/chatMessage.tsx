@@ -59,7 +59,7 @@ export type ChatMessage = {
 {
     type: "targeted", 
     targeter: PlayerIndex, 
-    target: PlayerIndex | undefined
+    targets: PlayerIndex[]
 } | {
     type: "nightInformation", 
     nightInformation: NightInformation 
@@ -71,7 +71,10 @@ export type ChatMessage = {
 } | {
     type: "mayorCantWhisper"
 } | {
-    type: "jailed"
+    type: "jailedYou"
+} | {
+    type: "jailedTarget"
+    playerIndex: PlayerIndex
 } | {
     type: "jailorDecideExecuteYou"
 } | {

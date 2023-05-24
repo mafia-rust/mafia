@@ -41,6 +41,7 @@ export default class LobbyPlayerList extends React.Component<any, PlayerListStat
 
             <input type="text" value={this.state.enteredName}
                 onChange={(e)=>{this.setState({enteredName: e.target.value})}}
+                placeholder={translate("menu.lobby.field.namePlaceholder")}
                 onKeyUp={(e)=>{
                     if(e.key === 'Enter')
                         GAME_MANAGER.sendSetNamePacket(this.state.enteredName);
