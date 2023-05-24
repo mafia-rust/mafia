@@ -1,4 +1,5 @@
 use crate::{lobby::Lobby, websocket_connections::connection::{Connection, ConnectionEventListener, self}, log};
+use tokio_native_tls::{TlsAcceptor, native_tls::{self, Identity}};
 use tokio_tungstenite::tungstenite::{client, Message};
 use std::{
     net::SocketAddr,
@@ -20,6 +21,10 @@ pub async fn create_ws_server(
     // Create the event loop and TCP listener we'll accept connections on.
     let listener = TcpListener::bind(&address).await.expect(&format!("address and port should be valid. Address was:{}",address));  //panic if address is invalid
     
+    
+    // let identity = Identity::from_pkcs12(include_bytes!("../cert.pfx"), "password").unwrap();
+    // let acceptor = native_tls::TlsAcceptor::new(identity)
+
     print!("\x1B[2J\x1B[1;1H"); // Clear terminal
     println!("{}", log::notice("Mafia Server started!\n"));
     println!("Listening on: {}\n", log::important(address));

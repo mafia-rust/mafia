@@ -209,16 +209,12 @@ impl PlayerReference{
         &self.deref(game).night_variables.chosen_targets
     }
     pub fn set_chosen_targets(&self, game: &mut Game, chosen_targets: Vec<PlayerReference>){
-        //TODO can target????
-        //TODO Send you targeted someone message in correct chat.
-
         self.deref_mut(game).night_variables.chosen_targets = vec![];
 
         let role = self.deref(game).role_data.role();
 
         for target_ref in chosen_targets {
             if role.can_night_target(game, self.clone(), target_ref){
-
                 self.deref_mut(game).night_variables.chosen_targets.push(target_ref);
             }
         }
@@ -290,7 +286,7 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.jailed = jailed;
         if jailed == true {
             self.send_packet(game, ToClientPacket::YourJailed);
-            self.add_chat_message(game, ChatMessage::Jailed);
+            self.add_chat_message(game, ChatMessage::JailedYou);
         }
     }
 

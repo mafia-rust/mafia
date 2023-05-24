@@ -126,6 +126,9 @@ impl Lobby {
     pub fn disconnect_player(&mut self, id: ArbitraryPlayerID) {
         if let LobbyState::Lobby { ref mut players, .. } = &mut self.lobby_state {
             players.remove(&id);
+            
+            // self.send_players();
+            // self.send_to_all(ToClientPacket::RoleList { role_list });
 
             if players.len() == 0 {
                 self.lobby_state = LobbyState::Closed;

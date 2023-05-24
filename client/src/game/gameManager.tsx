@@ -180,8 +180,10 @@ function createServer(){
         },
 
         open : ()=>{
-            let address = CONFIG.serverIP + ":" + CONFIG.port;
-            Server.ws = new WebSocket("ws://"+address);   //TODO
+            // let address = CONFIG.serverIP + ":" + CONFIG.port;
+            // Server.ws = new WebSocket("ws://"+address);   //TODO
+            let address = CONFIG.address;
+            Server.ws = new WebSocket(address);
 
             let completePromise: () => void;
             let promise = new Promise<void>((resolver) => {

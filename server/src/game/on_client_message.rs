@@ -76,15 +76,35 @@ impl Game {
             ToServerPacket::Judgement { verdict } => {
                 sender_player_ref.set_verdict(self, verdict);
             },
-            ToServerPacket::Target { player_index_list } => {
-                //TODO Send you targeted someone message in correct chat.
+            ToServerPacket::Target { player_index_list }=>{
                 let target_ref_list = match PlayerReference::index_vec_to_ref(self, &player_index_list){
                     Ok(target_ref_list) => target_ref_list,
                     Err(_) => {
                         break 'packet_match;
                     },
                 };
-                sender_player_ref.set_chosen_targets(self, target_ref_list);
+                sender_player_ref.set_chosen_targets(self, target_ref_list.clone());
+                
+                //Send targeted message to chat groups
+                sender_player_ref.role(self)
+                .get_current_send_chat_groups(self, sender_player_ref)
+                .into_iter().for_each(|chat_group | {
+                    self.add_message_to_chat_group(
+                        chat_group.clone(),
+                        ChatMessage::Targeted { 
+                            targeter: *sender_player_ref.index(), 
+                            targets: PlayerReference::ref_vec_to_index(&target_ref_list)
+                        }
+                    );
+                });
+                //if no chat groups then send to self at least
+                if sender_player_ref.role(self)
+                .get_current_send_chat_groups(self, sender_player_ref).len() == 0{
+                    sender_player_ref.add_chat_message(self, ChatMessage::Targeted { 
+                        targeter: *sender_player_ref.index(), 
+                        targets: PlayerReference::ref_vec_to_index(&target_ref_list)
+                    });
+                }
             },
             ToServerPacket::DayTarget { player_index } => {               
                 let target_ref = match PlayerReference::new(self, player_index){

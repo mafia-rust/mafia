@@ -38,14 +38,13 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
         switch(this.state.gameState.phase){
             
             case "judgement":
-            //TODO make buttons light up if they are clicked
+            //TODO make buttons light up if they are clicked instead of showing what you voted seperately
             if(this.state.gameState.playerOnTrial !== null){
                 return(<div>
-                    {
-                        this.state.gameState.players[this.state.gameState.playerOnTrial!]?.toString()
-                    }
+                    {this.state.gameState.players[this.state.gameState.playerOnTrial!]?.toString()}
                     {(()=>{
-                    if(this.state.gameState.playerOnTrial !== this.state.gameState.myIndex)
+                    if( this.state.gameState.playerOnTrial !== this.state.gameState.myIndex && 
+                        this.state.gameState.players[this.state.gameState.myIndex!].alive)
                         return(<div>
                             {styleText(translate("verdict."+this.state.gameState.judgement?.toLowerCase()))}
                         <div
