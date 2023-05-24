@@ -30,13 +30,24 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
         case "normal":
             if(message.messageSender.type === "player"){
                 let playerIndex = message.messageSender.player;
-                return <span key={key}>{styleText(translate("chatmessage.normal",
-                    GAME_MANAGER.gameState.players[playerIndex].toString(),
-                    message.text
-                ))}</span>;
+                if(message.chatGroup !== "dead"){
+                    return <span key={key}>{styleText(translate("chatmessage.normal",
+                        GAME_MANAGER.gameState.players[playerIndex].toString(),
+                        message.text
+                    ))}</span>;
+                }else{
+                    return <span key={key}>{styleText(translate("chatmessage.normal",
+                        GAME_MANAGER.gameState.players[playerIndex].toString(),
+                        message.text
+                    ), {color:"grey"})}</span>;
+                }
+                
             } else {
-                //TODO
-                return <span key={key}></span>;
+                //TODO, this only works because jailor and medium are the only options
+                return <span key={key}>{styleText(translate("chatmessage.normal",
+                    translate("role."+message.messageSender.type+".name"),
+                    message.text
+                ), {color:"turquoise"})}</span>;
             }
         case "whisper":
             return <span key={key}>{styleText(translate("chatmessage.whisper", 
@@ -56,11 +67,11 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             return <span key={key} style={{textAlign:"center"}}>{styleText(translate("chatmessage.roleAssignment", name), {color:"yellow"})}</span>;
         case "playerDied":
             //TODO, role doesnt work properly
-            let graveRole: string;
+            let graveRoleString: string;
             if (message.grave.role.type === "role") {
-                graveRole = translate(`role.${message.grave.role.role}.name`);
+                graveRoleString = translate(`role.${message.grave.role.role}.name`);
             } else {
-                graveRole = translate(`grave.role.${message.grave.role.type}`);
+                graveRoleString = translate(`grave.role.${message.grave.role.type}`);
             }
             let deathCause: string;
             if (message.grave.deathCause.type === "lynching") {
@@ -79,7 +90,7 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
 
             return <span key={key}>{styleText(translate("chatmessage.playerDied",
                 GAME_MANAGER.gameState.players[message.grave.playerIndex].toString(),
-                graveRole,
+                graveRoleString,
                 deathCause,
                 message.grave.will
             ), {color:"yellow"})}</span>;
@@ -157,6 +168,8 @@ export function getNightInformationString(info: NightInformation){
             return translate("chatmessage.night.roleBlocked" + (info.immune ? ".immune" : ""));
         case "sheriffResult":
             return translate("chatmessage.night.sheriffResult." + (info.suspicious ? "suspicious" : "innocent"));
+        case "playerRoleAndWill":
+            return translate("chatmessage.night.playersRoleAndWill", translate("role."+info.role+".name"), info.will);
         default:
             return translate("chatmessage.night."+info.type);
     }
@@ -261,8 +274,11 @@ export function styleText(string: string, defaultStyle: React.CSSProperties = {}
         {string:translate("verdict.guilty"), style:{color:"red"}},
         {string:translate("verdict.innocent"), style:{color:"lime"}},
         {string:translate("verdict.abstain"), style:{color:"cyan"}},
+
+        {string:translate("grave.role.cleaned"), style:{fontStyle: "italic", fontWeight: "bold"}},
+        {string:translate("grave.role.petrified"), style:{fontStyle: "italic", fontWeight: "bold"}},
         {string:translate("suspicious"), style:{color:"red"}},
-        
+
         {string:translate("faction.town"), style:{color:"lime"}},
         {string:translate("faction.mafia"), style:{color:"red"}},
         {string:translate("faction.neutral"), style:{color:"cyan"}},
@@ -277,8 +293,15 @@ export function styleText(string: string, defaultStyle: React.CSSProperties = {}
         {string:translate("alignment.chaos"), style:{color:"lightblue"}},
         {string:translate("alignment.utility"), style:{color:"lightblue"}},
         {string:translate("alignment.power"), style:{color:"lightblue"}},
-        
-        {string:translate("any"), style:{color:"lightblue"}}
+
+        {string:translate("any"), style:{color:"lightblue"}},
+        {string:translate("none"), style:{color:"lightblue"}},
+        {string:translate("basic"), style:{color:"lightblue"}},
+        {string:translate("powerful"), style:{color:"lightblue"}},
+        {string:translate("unstoppable"), style:{color:"lightblue"}},
+        {string:translate("invincible"), style:{color:"lightblue"}},
+        {string:translate("menu.wiki.abilities"), style:{color:"lightblue"}},
+        {string:translate("menu.wiki.attributes"), style:{color:"lightblue"}},
     ]);
 
     

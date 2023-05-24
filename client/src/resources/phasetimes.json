@@ -9,12 +9,12 @@
         "night": 37
     },
     "Lightning": {
-        "morning": 0,
-        "discussion": 0,
+        "morning": 1,
+        "discussion": 1,
         "voting": 10,
-        "testimony": 0,
+        "testimony": 1,
         "judgement": 10,
-        "evening": 0,
+        "evening": 1,
         "night": 10
     },
     "Rapid": {
