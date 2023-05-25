@@ -171,6 +171,8 @@ export function getNightInformationString(info: NightInformation){
             return translate("chatmessage.night.roleBlocked" + (info.immune ? ".immune" : ""));
         case "sheriffResult":
             return translate("chatmessage.night.sheriffResult." + (info.suspicious ? "suspicious" : "innocent"));
+        case "lookoutResult":
+            return translate("chatmessage.night.lookoutResult", (info.players.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", ")));
         case "playerRoleAndWill":
             return translate("chatmessage.night.playersRoleAndWill", translate("role."+info.role+".name"), info.will);
         default:

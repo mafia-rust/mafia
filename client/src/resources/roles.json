@@ -1,4 +1,13 @@
 {
+    "jailor":{
+        "factionAlignment": "townPower",
+        "suspicious": false,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": 1
+    },
     "sheriff": {
         "factionAlignment": "townInvestigative",
         "suspicious": false,
@@ -8,14 +17,14 @@
         "endGameCondition": "Faction",
         "maxCount": null
     },
-    "jailor":{
-        "factionAlignment": "townPower",
+    "lookout": {
+        "factionAlignment": "townInvestigative",
         "suspicious": false,
         "roleblockable": true,
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": 1
+        "maxCount": null
     },
     "doctor": {
         "factionAlignment": "townProtective",
