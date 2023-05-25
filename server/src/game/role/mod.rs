@@ -15,11 +15,15 @@ macro_rules! make_role_enum {
             $($name),*
         }
 
-        #[derive(Clone, PartialEq, Debug)]
+        #[derive(Clone, PartialEq, Debug, Serialize, Deserialize)]
+        #[serde(tag = "role", rename_all = "camelCase")]
         pub enum RoleData {
-            $($name $({
-                $($data_ident: $data_type),*
-            })?),*
+            $(
+                #[serde(rename_all = "camelCase")]
+                $name $({
+                    $($data_ident: $data_type),*
+                }
+            )?),*
         }
 
         impl Role {  

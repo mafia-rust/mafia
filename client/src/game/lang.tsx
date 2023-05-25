@@ -94,7 +94,7 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                 message.grave.will
             ), {color:"yellow"})}</span>;
         case "phaseChange":
-            return <span key={key} style={{textAlign:"center"}}>{styleText(translate("chatmessage.phaseChange",
+            return <span key={key} style={{textAlign:"center", backgroundColor:"var(--primary-color)"}}>{styleText(translate("chatmessage.phaseChange",
                 translate("phase."+message.phase),
                 message.dayNumber
             ), {color:"yellow", textDecoration:"underline"})}</span>;
@@ -149,14 +149,14 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             }
         case "mayorRevealed":
             return <span key={key}>{styleText(translate("chatmessage.mayorRevealed",
-                GAME_MANAGER.gameState.players[message.playerIndex],
+                GAME_MANAGER.gameState.players[message.playerIndex].toString(),
             ), {color:"violet"})}</span>;
         case "jailedTarget":
-            return <span key={key}>{styleText(translate("chatmessage.night.jailedTarget", 
-                GAME_MANAGER.gameState.players[message.playerIndex]), 
-            {color:"violet"})}</span>;
+            return <span key={key}>{styleText(translate("chatmessage.jailedTarget", 
+                GAME_MANAGER.gameState.players[message.playerIndex].toString(),
+            ), {color:"violet"})}</span>;
         case "jailedYou":
-            return <span key={key}>{styleText(translate("chatmessage.jailed"), {color:"violet"})}</span>;
+            return <span key={key}>{styleText(translate("chatmessage.jailedYou"), {color:"violet"})}</span>;
         default:
             console.error("Unknown message type: "+message.type);
             console.error(message);
@@ -180,7 +180,18 @@ export function getNightInformationString(info: NightInformation){
     }
 }
 
-function styleSubstring(string: string, stringsToStyle: {string: string, style: React.CSSProperties}[], defaultStyle: React.CSSProperties = {}): JSX.Element[]{
+
+
+
+function styleSubstring(
+        string: string, 
+        stringsToStyle: {
+            string: string, 
+            style: React.CSSProperties,
+            className:string|undefined,
+        }[], 
+        defaultStyle: React.CSSProperties = {}, 
+    ): JSX.Element[]{
 
     type StyledOrNot = string | {string: string, style: React.CSSProperties};
 
@@ -230,7 +241,9 @@ function styleSubstring(string: string, stringsToStyle: {string: string, style: 
 
         }else if(typeof finalOutList[i] === "object"){
             outJsxList.push(
-            <span key={i} style={
+            <span key={i}
+                className={(finalOutList[i] as {string: string, style: string, className: string|undefined}).className}
+                style={
                 (finalOutList[i] as {string: string, style: string}).style as React.CSSProperties
             }>
                 {(finalOutList[i] as {string: string, style: string}).string as string}
@@ -242,7 +255,16 @@ function styleSubstring(string: string, stringsToStyle: {string: string, style: 
 }
 
 export function styleText(string: string, defaultStyle: React.CSSProperties = {}): JSX.Element[]{
-    let stringsToStyle: {string: string, style: React.CSSProperties}[] = [];
+    let stringsToStyle: {string: string, style: React.CSSProperties, className:string|undefined}[] = [];
+
+    stringsToStyle = stringsToStyle.concat(
+        GAME_MANAGER.gameState.players.map((player: Player)=>{
+            return {string:player.toString(), style:{
+                fontStyle: "italic",
+                fontWeight: "bold"
+            }, className: undefined};
+        })
+    );
 
     for(let role in ROLES){
         let roleObject = ROLES[role as keyof typeof ROLES];
@@ -251,64 +273,55 @@ export function styleText(string: string, defaultStyle: React.CSSProperties = {}
             case "coven":
                 stringsToStyle.push({string:translate("role."+role+".name"), style:{
                     color: "magenta"
-                }});
+                }, className: undefined});
                 break;
             case "town":
                 stringsToStyle.push({string:translate("role."+role+".name"), style:{
                     color: "lime"
-                }});
+                }, className: undefined});
                 break;
             case "mafia":
                 stringsToStyle.push({string:translate("role."+role+".name"), style:{
                     color: "red"
-                }});
+                }, className: undefined});
                 break;
         }
     }
 
-    stringsToStyle = stringsToStyle.concat(
-        GAME_MANAGER.gameState.players.map((player: Player)=>{
-            return {string:player.toString(), style:{
-                fontStyle: "italic",
-                fontWeight: "bold"
-            }};
-        })
-    );
-
     stringsToStyle = stringsToStyle.concat([
-        {string:translate("verdict.guilty"), style:{color:"red"}},
-        {string:translate("verdict.innocent"), style:{color:"lime"}},
-        {string:translate("verdict.abstain"), style:{color:"cyan"}},
+        {string:translate("verdict.guilty"), style:{color:"red"}, className:undefined},
+        {string:translate("verdict.innocent"), style:{color:"lime"}, className:undefined},
+        {string:translate("verdict.abstain"), style:{color:"cyan"}, className:undefined},
 
-        {string:translate("grave.role.cleaned"), style:{fontStyle: "italic", fontWeight: "bold"}},
-        {string:translate("grave.role.petrified"), style:{fontStyle: "italic", fontWeight: "bold"}},
-        {string:translate("suspicious"), style:{color:"red"}},
+        {string:translate("grave.role.cleaned"), style:{fontStyle: "italic", fontWeight: "bold"}, className:undefined},
+        {string:translate("grave.role.petrified"), style:{fontStyle: "italic", fontWeight: "bold"}, className:undefined},
+        {string:translate("suspicious"), style:{color:"red"}, className:undefined},
 
-        {string:translate("faction.town"), style:{color:"lime"}},
-        {string:translate("faction.mafia"), style:{color:"red"}},
-        {string:translate("faction.neutral"), style:{color:"cyan"}},
-        {string:translate("faction.coven"), style:{color:"magenta"}},
+        {string:translate("faction.town"), style:{color:"lime"}, className:undefined},
+        {string:translate("faction.mafia"), style:{color:"red"}, className:undefined},
+        {string:translate("faction.neutral"), style:{color:"cyan"}, className:undefined},
+        {string:translate("faction.coven"), style:{color:"magenta"}, className:undefined},
 
-        {string:translate("alignment.killing"), style:{color:"lightblue"}},
-        {string:translate("alignment.investigative"), style:{color:"lightblue"}},
-        {string:translate("alignment.protective"), style:{color:"lightblue"}},
-        {string:translate("alignment.support"), style:{color:"lightblue"}},
-        {string:translate("alignment.deception"), style:{color:"lightblue"}},
-        {string:translate("alignment.evil"), style:{color:"lightblue"}},
-        {string:translate("alignment.chaos"), style:{color:"lightblue"}},
-        {string:translate("alignment.utility"), style:{color:"lightblue"}},
-        {string:translate("alignment.power"), style:{color:"lightblue"}},
+        {string:translate("alignment.killing"), style:{color:"lightblue"}, className:undefined},
+        {string:translate("alignment.investigative"), style:{color:"lightblue"}, className:undefined},
+        {string:translate("alignment.protective"), style:{color:"lightblue"}, className:undefined},
+        {string:translate("alignment.support"), style:{color:"lightblue"}, className:undefined},
+        {string:translate("alignment.deception"), style:{color:"lightblue"}, className:undefined},
+        {string:translate("alignment.evil"), style:{color:"lightblue"}, className:undefined},
+        {string:translate("alignment.chaos"), style:{color:"lightblue"}, className:undefined},
+        {string:translate("alignment.utility"), style:{color:"lightblue"}, className:undefined},
+        {string:translate("alignment.power"), style:{color:"lightblue"}, className:undefined},
 
-        {string:translate("any"), style:{color:"lightblue"}},
-        {string:translate("none"), style:{color:"lightblue"}},
-        {string:translate("basic"), style:{color:"lightblue"}},
-        {string:translate("powerful"), style:{color:"lightblue"}},
-        {string:translate("unstoppable"), style:{color:"lightblue"}},
-        {string:translate("invincible"), style:{color:"lightblue"}},
-        {string:translate("dead"), style:{fontStyle: "italic", color:"gray"}},
+        {string:translate("any"), style:{color:"lightblue"}, className:undefined},
+        {string:translate("none"), style:{color:"lightblue"}, className:undefined},
+        {string:translate("basic"), style:{color:"lightblue"}, className:undefined},
+        {string:translate("powerful"), style:{color:"lightblue"}, className:undefined},
+        {string:translate("unstoppable"), style:{color:"lightblue"}, className:undefined},
+        {string:translate("invincible"), style:{color:"lightblue"}, className:undefined},
+        {string:translate("dead"), style:{fontStyle: "italic", color:"gray"}, className:undefined},
 
-        {string:translate("menu.wiki.abilities"), style:{color:"lightblue"}},
-        {string:translate("menu.wiki.attributes"), style:{color:"lightblue"}},
+        {string:translate("menu.wiki.abilities"), style:{color:"lightblue"}, className:undefined},
+        {string:translate("menu.wiki.attributes"), style:{color:"lightblue"}, className:undefined},
     ]);
 
     

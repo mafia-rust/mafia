@@ -56,6 +56,7 @@
     "menu.playerList.button.filter":"Filter",
 
     "menu.graveyard.title": "Graveyard",
+    "menu.graveyard.killedBy": "Killed by",
 
     "role.jailor.name": "Jailor",
     "role.jailor.abilities":"*Choose one player to jail during the day*You can execute your prisoners up to three times",
@@ -107,11 +108,7 @@
 
     "grave.role.cleaned": "Cleaned",
     "grave.role.petrified": "Petrified",
-    
     "grave.deathCause.lynching": "Lynching",
-
-    "grave.killer.mafia": "Mafia",
-    "grave.killer.coven": "Coven",
     "grave.killer.suicide": "Suicide",
 
     "faction.town": "Town",
@@ -129,7 +126,9 @@
     "alignment.utility": "Utility",
     "alignment.power": "Power",
 
+    "day": "Day",
     "suspicious": "Suspicious",
+    "suicide": "Suicide",
     "dead": "Dead",
     "any": "Any",
     "none": "None",

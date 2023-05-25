@@ -1,3 +1,6 @@
 .header-menu .menu-buttons button{
     margin: .2%;
 }
+.header-menu{
+    background-color: var(--secondary-color);
+}

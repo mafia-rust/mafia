@@ -61,6 +61,8 @@ pub enum ToClientPacket{
     YourNotes{notes: String},
     YourRole{role: Role},
     #[serde(rename_all = "camelCase")]
+    YourRoleData{role_data: RoleData},
+    #[serde(rename_all = "camelCase")]
     YourTarget{player_indices: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
     YourVoting{player_index: Option<PlayerIndex>},

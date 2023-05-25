@@ -284,7 +284,7 @@ impl Lobby {
 
 fn validate_name(players: &HashMap<ArbitraryPlayerID, LobbyPlayer>, mut name: String) -> String {
     name = trim_whitespace(name.trim());
-    name.truncate(30);
+    name.truncate(20);
 
     //if valid then return
     if name.len() > 0 && !players.values()

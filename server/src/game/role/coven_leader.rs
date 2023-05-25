@@ -32,7 +32,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
         if *target_ref.night_jailed(game) {
             actor_ref.push_night_messages(game, NightInformation::TargetJailed);
         }else {
-            let killed = target_ref.try_night_kill(game, GraveKiller::Coven, 1);
+            let killed = target_ref.try_night_kill(game, GraveKiller::Faction(Faction::Coven), 1);
 
             if !killed {
                 actor_ref.push_night_messages(game, NightInformation::TargetSurvivedAttack);

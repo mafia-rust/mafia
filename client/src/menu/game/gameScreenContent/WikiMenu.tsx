@@ -84,6 +84,7 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
                 {Object.keys(ROLES).map((key)=>{
                     if(getFactionFromFactionAlignment(ROLES[key as keyof typeof ROLES].factionAlignment as FactionAlignment) === roleListEntry.faction)
                         return <section key={key}>{styleText(translate("role."+key+".name"))}</section>
+                    return null;
                 })}
             </div>
         } else if(roleListEntry.type === "factionAlignment"){
@@ -91,6 +92,7 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
                 {Object.keys(ROLES).map((key)=>{
                     if(ROLES[key as keyof typeof ROLES].factionAlignment === roleListEntry.factionAlignment)
                         return <section key={key}>{styleText(translate("role."+key+".name"))}</section>
+                    return null;
                 })}
             </div>
         }else {
@@ -109,7 +111,7 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
         }
         return <div>{out}</div>
     }
-    render(){return(<div style={{height: "100%", overflowX:"hidden"}}>
+    render(){return(<div>
         <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.WikiMenu)}}>{translate("menu.wiki.title")}</button>
         <br/>
         <RolePicker roleListEntry={this.state.roleListEntry} onChange={(value)=>{this.onChangeRolePicker(value);}}/>

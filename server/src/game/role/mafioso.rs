@@ -32,7 +32,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
             return
         }
 
-        let killed = target_ref.try_night_kill(game, GraveKiller::Mafia, 1);
+        let killed = target_ref.try_night_kill(game, GraveKiller::Faction(Faction::Mafia), 1);
 
         if !killed {
             actor_ref.push_night_messages(game,NightInformation::TargetSurvivedAttack);

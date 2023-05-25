@@ -103,6 +103,7 @@ pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
     MayorRevealed{player_index: PlayerIndex}, //Sammy revealed as mayor
     MayorCantWhisper,   //you cant whisper as or to a revealed mayor
+    #[serde(rename_all = "camelCase")]
     JailedTarget{player_index: PlayerIndex}, //You jailed Sammy
     JailedYou,             //you have been jailed
     JailorDecideExecuteYou,     //Jailor has decided to execute you

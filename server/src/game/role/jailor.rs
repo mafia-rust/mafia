@@ -48,6 +48,7 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
     let RoleData::Jailor{ jailed_target_ref, executions_remaining } = actor_ref.role_data(game) else {unreachable!()};
 
     target_ref.night_jailed(game).clone() && 
+    actor_ref.chosen_targets(game).len() == 0 &&
     actor_ref != target_ref && 
     *actor_ref.alive(game) && 
     *target_ref.alive(game) && 

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
 use crate::game::{Game, role::{Role, RoleData}, chat::ChatMessage, verdict::Verdict, visit::Visit};
 
@@ -73,5 +73,19 @@ impl PlayerReference{
             out.push(PlayerReference::new(game, player_index as PlayerIndex).unwrap()); //TODO, unwrap here
         }
         out
+    }
+}
+
+
+impl Serialize for PlayerReference {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {
+        serializer.serialize_u8(self.index)
+    }
+}
+impl<'a> Deserialize<'a> for PlayerReference {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error> where D: serde::Deserializer<'a> {
+        Ok(PlayerReference {
+            index: u8::deserialize(deserializer)?
+        })
     }
 }

@@ -29,10 +29,12 @@ impl PlayerReference{
         &self.deref(game).role_data
     }
     pub fn set_role_data(&self, game: &mut Game, new_role_data: RoleData){
+        
         if(self.deref(game).role_data.role() == new_role_data.role()){
             self.send_packet(game, ToClientPacket::YourRole { role: self.deref(game).role_data.role() });
         }
         self.deref_mut(game).role_data = new_role_data;
+        self.send_packet(game, ToClientPacket::YourRoleData { role_data: self.deref(game).role_data.clone() } );
     }
 
     pub fn alive<'a>(&self, game: &'a Game)->&'a bool{

@@ -1,4 +1,4 @@
-import { PlayerIndex, Role } from "./gameState.d";
+import { Faction, PlayerIndex, Role } from "./gameState.d";
 
 export interface Grave {
     playerIndex: PlayerIndex,
@@ -24,9 +24,8 @@ export type GraveDeathCause = {
     killers: GraveKiller[]
 };
 export type GraveKiller = {
-    type: "mafia"
-} | {
-    type: "coven"
+    type: "faction"
+    role: Faction
 } | {
     type: "suicide"
 } | {
@@ -34,7 +33,4 @@ export type GraveKiller = {
     role: Role
 };
 
-export enum GravePhase {
-    Day = "Day", 
-    Night = "Night"
-}
+export type GravePhase = "day" | "night"

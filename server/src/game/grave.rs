@@ -5,6 +5,7 @@ use serde::{Serialize, Deserialize};
 use super::Game;
 use super::player::{PlayerIndex, PlayerReference};
 use super::role::Role;
+use super::role_list::Faction;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -40,10 +41,9 @@ pub enum GraveDeathCause {
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type", content = "role")]
 pub enum GraveKiller {
-    Mafia,
-    Coven,
+    Faction(Faction),
+    Role(Role),
     Suicide,
-    Role(Role)
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
