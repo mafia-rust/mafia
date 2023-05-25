@@ -44,6 +44,15 @@
         "endGameCondition": "Faction",
         "maxCount": null
     },
+    "medium": {
+        "factionAlignment": "townSupport",
+        "suspicious": false,
+        "roleblockable": false,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": null
+    },
     "mafioso": {
         "factionAlignment": "mafiaKilling",
         "suspicious": true,

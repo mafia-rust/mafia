@@ -72,6 +72,11 @@
     "role.escort.name": "Escort",
     "role.escort.abilities":"*Target a player to roleblock them",
     "role.escort.attributes":"*Roleblocking a player prevents them from using parts of their ability",
+
+    
+    "role.medium.name": "Medium",
+    "role.medium.abilities":"*You can talk with the dead during the night",
+    "role.medium.attributes":"*You can talk to other mediums during the night as well",
     
     "role.veteran.name": "Veteran",
     "role.veteran.abilities":"*Target yourself to alert, killing everyone who visits you",
