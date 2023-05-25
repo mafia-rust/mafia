@@ -164,6 +164,7 @@ make_role_enum! {
     },
 
     Escort : escort,
+    Medium : medium,
 
     Mafioso : mafioso,
     
