@@ -2,7 +2,7 @@ name: Mafia Update Pusher
 on:
   push:
     branches:
-      - production
+      - main
 
 jobs:
   ping-url:
