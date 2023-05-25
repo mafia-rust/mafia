@@ -147,6 +147,7 @@ use serde::{Serialize, Deserialize};
 // Creates the Role enum
 make_role_enum! {
     Jailor : jailor {
+        executions_remaining: u8 = 3,
         jailed_target_ref: Option<PlayerReference> = None
     },
 
@@ -218,7 +219,7 @@ mod common_role;
 New Proposed priorities:
 
 1 Top
-    Jailor, Jester(Kill), Vigilante(Suicide)
+    Jester(Kill), Vigilante(Suicide)
 1 Unswappable
     Arsonist(Clear self), All decidedes (Vet decide)
     Ritualist, Doomsayer?

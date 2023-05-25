@@ -59,7 +59,7 @@
 
     "role.jailor.name": "Jailor",
     "role.jailor.abilities":"*Choose one player to jail during the day*You can execute your prisoners up to three times",
-    "role.jailor.attributes":"*You may anonymously talk with your prisoner at night*If you execute a town member, you forfiet further executes*Jailed players are immune to all attacks, frames, transports, douses and more*Jailed players can't use their ability",
+    "role.jailor.attributes":"*You may anonymously talk with your prisoner at night*If you execute a town member, you forfiet the ability to jail prisoners*Jailed players are immune to all attacks, frames, transports, douses and more*Jailed players can't use their ability",
 
     "role.sheriff.name": "Sheriff",
     "role.sheriff.abilities": "*Target a player to find out if they're innocent or suspicious",
