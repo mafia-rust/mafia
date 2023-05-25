@@ -152,6 +152,7 @@ make_role_enum! {
     },
 
     Sheriff : sheriff,
+    Lookout : lookout,
 
     Doctor : doctor {
         self_heals_remaining: u8 = 1,

@@ -64,6 +64,10 @@
     "role.sheriff.name": "Sheriff",
     "role.sheriff.abilities": "*Target a player to find out if they're innocent or suspicious",
     "role.sheriff.attributes": "*Frames, Douses, Hexes, and Enchants can make your target look suspicious wrongly",
+    
+    "role.lookout.name": "Lookout",
+    "role.lookout.abilities": "*Target a player to find everyone who targeted them",
+    "role.lookout.attributes": "*You can not see astral visits",
 
     "role.doctor.name": "Doctor",
     "role.doctor.abilities":"*Target a player to save them from death",
@@ -73,7 +77,6 @@
     "role.escort.abilities":"*Target a player to roleblock them",
     "role.escort.attributes":"*Roleblocking a player prevents them from using parts of their ability",
 
-    
     "role.medium.name": "Medium",
     "role.medium.abilities":"*You can talk with the dead during the night",
     "role.medium.attributes":"*You can talk to other mediums during the night as well",
@@ -182,8 +185,8 @@
     "chatmessage.night.youSurvivedAttack": "You were attacked but had defense and survived.",
     "chatmessage.night.youDied":"You died!",
     "chatmessage.night.targetJailed":"Your ability failed because your target was jailed!",
-    "chatmessage.night.spyMafiaVisit":"The mafia visited: \\0",
-    "chatmessage.night.spyCovenVisit":"The coven visited: \\0",
+    "chatmessage.night.spyMafiaVisit":"The mafia visited: \\0.",
+    "chatmessage.night.spyCovenVisit":"The coven visited: \\0.",
     "chatmessage.night.spyBug":"Your bug captured: \\0",
     "chatmessage.night.veteranAttackedYou":"You were attacked by the veteran you visited.",
     "chatmessage.night.veteranAttackedVisitor":"You attacked a visitor.",
@@ -193,5 +196,6 @@
     "chatmessage.night.silenced": "You were silenced! You can not speak or communicate in any way until at least the start of the next day!",
     "chatmessage.night.playersRoleAndWill": "Your targets role was \\0 and their will stated this: \\1",
     "chatmessage.night.sheriffResult.suspicious":"Your target seems to be suspicious.",
-    "chatmessage.night.sheriffResult.innocent":"Your target seems to be innocent."
+    "chatmessage.night.sheriffResult.innocent":"Your target seems to be innocent.",
+    "chatmessage.night.lookoutResult":"Your target was visited by \\0."
 }
