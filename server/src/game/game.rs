@@ -164,7 +164,7 @@ impl Game {
     pub fn jump_to_start_phase(&mut self, phase: PhaseType){
         self.phase_machine.current_state = phase;
         //fix time
-        self.phase_machine.time_remaining += self.phase_machine.current_state.get_length(&self.settings.phase_times);
+        self.phase_machine.time_remaining = self.phase_machine.current_state.get_length(&self.settings.phase_times);
         //call start
         PhaseType::start(self);
 

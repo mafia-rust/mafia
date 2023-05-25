@@ -40,6 +40,20 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         GAME_MANAGER.removeStateListener(this.listener);
     }
 
+    renderRoleSpecific(){
+        switch(this.state.gameState.roleData?.role){
+            case "jailor":
+                return(<div>
+                    {this.state.gameState.roleData.jailedTargetRef==null?
+                        translate("none"):
+                        this.state.gameState.players[this.state.gameState.roleData.jailedTargetRef].toString()
+                    }
+                    {this.state.gameState.roleData.executionsRemaining}
+                    
+                </div>);
+
+        }
+    }
     renderPhaseSpecific(){
         switch(this.state.gameState.phase){
             case "voting":
@@ -162,6 +176,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
             }/>
             {translate("menu.playerList.button.hideDead")}
         </label>
+        {this.renderRoleSpecific()}
         {this.renderPhaseSpecific()}
         {this.renderPlayers(this.state.gameState.players)}
     </div>)}

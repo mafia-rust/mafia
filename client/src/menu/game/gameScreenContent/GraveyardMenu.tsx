@@ -10,6 +10,7 @@ type GraveyardMenuProps = {
 }
 type GraveyardMenuState = {
     gameState: GameState,
+    extendedGraveIndex: number | null
 }
 
 export default class GraveyardMenu extends React.Component<GraveyardMenuProps, GraveyardMenuState> {
@@ -19,6 +20,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
 
         this.state = {
             gameState : GAME_MANAGER.gameState,
+            extendedGraveIndex: null
         };
         this.listener = ()=>{
             this.setState({
@@ -41,14 +43,33 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
         </div>
     }
     renderGrave(grave: Grave, graveIndex: number){
-        // let deathCauseString: string;
-        // if(grave.deathCause.type === "lynching"){
-        //     deathCauseString = "a lynching.";
-        // } else  {
-        //     deathCauseString = grave.deathCause.killers.map((killer)=>{
-        //         return killer.type === "role" ? killer.role : killer.type;
-        //     }).join() + ".";
-        // }
+        let graveRoleString: string;
+        if (grave.role.type === "role") {
+            graveRoleString = translate(`role.${grave.role.role}.name`);
+        } else {
+            graveRoleString = translate(`grave.role.${grave.role.type}`);
+        }
+
+        return(<button key={graveIndex} onClick={()=>{this.setState({extendedGraveIndex:graveIndex})}}>
+            {this.state.gameState.players[grave.playerIndex]?.toString()} {styleText("("+graveRoleString+")")}
+        </button>);
+    }
+    renderGraveExtended(grave: Grave){
+        let deathCauseString: string;
+        if(grave.deathCause.type === "lynching"){
+            deathCauseString = translate("grave.deathCause.lynching");
+        } else  {
+            deathCauseString = grave.deathCause.killers.map((killer)=>{
+                switch(killer.type){
+                    case "role":
+                        return translate("role."+killer.role+".name");
+                    case "faction":
+                        return translate("faction."+killer.role);
+                    default:
+                        return translate(killer.type);
+                }
+            }).join() + ".";
+        }
 
         let graveRoleString: string;
         if (grave.role.type === "role") {
@@ -57,22 +78,19 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             graveRoleString = translate(`grave.role.${grave.role.type}`);
         }
 
-        // return(<div key={graveIndex}>
-        //     {grave.diedPhase.toString()} {grave.dayNumber}<br/>
-        //     {this.state.gameState.players[grave.playerIndex]?.toString()}<br/>
-        //     {"("+graveRoleString+")"} killed by {deathCauseString}
-        // </div>)
-        return(<button key={graveIndex}>
-            {this.state.gameState.players[grave.playerIndex]?.toString()} {styleText("("+graveRoleString+")")}
+        let diedPhaseString = grave.diedPhase === "day" ? translate("day") : translate("phase.night");
+        return(<button onClick={()=>{this.setState({extendedGraveIndex:null})}}>
+            {styleText(diedPhaseString+" "+grave.dayNumber)} <br/>
+            {styleText(this.state.gameState.players[grave.playerIndex]?.toString()+" ("+graveRoleString+")")}<br/>
+            {styleText(translate("menu.graveyard.killedBy")+" "+deathCauseString)}<br/>
+            {grave.will}
         </button>);
     }
 
     renderRoleList(){return<div>
-        {
-            this.state.gameState.roleList.map((entry, index)=>{
-                return this.renderRoleListEntry(entry, index)
-            }, this)
-        }
+        {this.state.gameState.roleList.map((entry, index)=>{
+            return this.renderRoleListEntry(entry, index)
+        }, this)}
     </div>}
     renderRoleListEntry(roleListEntry: RoleListEntry, index: number){
         switch(roleListEntry.type){
@@ -97,6 +115,9 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
         <div>
             {this.renderRoleList()}
             {this.renderGraves()}
-        </div>        
+        </div>
+        <div>
+            {this.state.extendedGraveIndex!==null?this.renderGraveExtended(this.state.gameState.graves[this.state.extendedGraveIndex]):null}
+        </div>
     </div>)}
 }

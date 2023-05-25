@@ -15,6 +15,7 @@ export function createGameState(): GameState {
         dayNumber: 1,
 
         role: null,
+        roleData: null,
 
         will: "",
         notes: "",

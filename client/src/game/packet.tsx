@@ -1,4 +1,4 @@
-import { Phase, PlayerIndex, Role, RoleListEntry, Verdict } from "./gameState.d"
+import { Phase, PlayerIndex, Role, RoleData, RoleListEntry, Verdict } from "./gameState.d"
 import { Grave } from "./grave"
 import { ChatMessage } from "./chatMessage"
 
@@ -76,6 +76,9 @@ export type ToClientPacket = {
         0: Role
         /* OTHER FIELDS TODO */
     }
+} | {
+    type: "yourRoleData",
+    roleData: RoleData
 } | {
     type: "yourTarget",
     playerIndices: [PlayerIndex]

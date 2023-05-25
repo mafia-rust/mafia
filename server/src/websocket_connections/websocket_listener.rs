@@ -45,7 +45,9 @@ pub async fn handle_connection(
     mut listener: Arc<Mutex<impl ConnectionEventListener>>
 ) {
     //println!("Incoming TCP connection from: {}", addr);
-    let ws_stream = tokio_tungstenite::accept_async(raw_stream).await.unwrap(); //if handshake doesnt work panic
+    let ws_stream = tokio_tungstenite::accept_async(raw_stream).await.expect(
+        "Error during the websocket handshake occurred"
+    ); //if handshake doesnt work panic
     //println!("WebSocket connection established: {}\n", addr);
     
     //sending to client mpsc

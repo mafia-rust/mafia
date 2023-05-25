@@ -122,7 +122,6 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
             })()}
             <div>
                 <textarea
-                    style={{color:"black"}}
                     value={this.state.chatField}
                     onChange={this.handleInputChange}
                     onKeyPress={this.handleInputKeyPress}

@@ -16,6 +16,7 @@ export default interface GameState {
     dayNumber: number,
 
     role: Role | null,
+    roleData: RoleData | null,
 
     will: string,
     notes: string,
@@ -30,14 +31,7 @@ export default interface GameState {
 
 export type PlayerIndex = number;
 export type Verdict = "innocent"|"guilty"|"abstain";
-export type Phase = 
-    | "morning"
-    | "discussion"
-    | "voting"
-    | "testimony"
-    | "judgement"
-    | "evening"
-    | "night"
+export type Phase = "morning" | "discussion" | "voting" | "testimony" | "judgement" | "evening" | "night"
 
 export interface PhaseTimes {
     "morning": number,
@@ -64,6 +58,40 @@ export interface Player {
     toString(): string
 }
 
+export type RoleData = {
+    role: "jailor",
+    executionsRemaining: number,
+    jailedTargetRef: number | null
+} | {
+    role: "sheriff"
+} | {
+    role: "lookout"
+} | {
+    role: "doctor",
+    selfHealsRemaining: number,
+    // targetHealedRef: number | null
+} | {
+    role:"veteran"
+    alertsRemaining: number,
+    // alertingTonight: boolean
+} | {
+    role:"escort"
+} | {
+    role:"medium"
+} | {
+    role:"mafioso"
+} | {
+    role:"consort"
+} | {
+    role:"janitor"
+    cleansRemaining: number,
+    // cleaned_ref: Option<PlayerReference> = None
+} | {
+    role:"covenLeader"
+} | {
+    role:"voodooMaster"
+}
+
 export type Role = string;
 export function getFactionFromRole(role: Role): Faction {
     return getFactionFromFactionAlignment(getFactionAlignmentFromRole(role));
@@ -72,11 +100,9 @@ export function getFactionAlignmentFromRole(role: Role): FactionAlignment {
     return ROLES[role as keyof typeof ROLES].factionAlignment as FactionAlignment;
 }
 
-// export type Faction = "town"|"mafia"|"neutral"|"coven";
 export const FACTIONS = ["town", "mafia", "neutral", "coven"] as const;
 export type Faction = typeof FACTIONS[number]
 export function getAllFactionAlignments(faction: Faction): FactionAlignment[] {
-
     switch(faction){
         case "town": return [
             "townPower", "townKilling", "townProtective", "townInvestigative", "townSupport"
@@ -91,28 +117,13 @@ export function getAllFactionAlignments(faction: Faction): FactionAlignment[] {
             "covenPower", "covenKilling", "covenUtility", "covenDeception"
         ];
     }
-    throw new Error("Invalid faction: "+faction);
 }
 
 export const FACTION_ALIGNMENTS = [
-    "townPower",
-    "townKilling",
-    "townProtective",
-    "townInvestigative",
-    "townSupport",
-
-    "mafiaKilling",
-    "mafiaDeception",
-    "mafiaSupport",
-
-    "neutralKilling",
-    "neutralEvil",
-    "neutralChaos",
-
-    "covenPower",
-    "covenKilling",
-    "covenUtility",
-    "covenDeception"
+    "townPower","townKilling","townProtective","townInvestigative","townSupport",
+    "mafiaKilling","mafiaDeception","mafiaSupport",
+    "neutralKilling","neutralEvil","neutralChaos",
+    "covenPower","covenKilling","covenUtility","covenDeception"
 ] as const;
 export type FactionAlignment = typeof FACTION_ALIGNMENTS[number]
 
