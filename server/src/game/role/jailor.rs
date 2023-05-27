@@ -23,7 +23,6 @@ pub(super) const TEAM: Option<Team> = None;
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
     match priority{
         Priority::Kill=>{
-            if *actor_ref.night_roleblocked(game) {return}
             
             if let Some(visit) = actor_ref.night_visits(game).first(){
 

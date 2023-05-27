@@ -94,7 +94,7 @@ impl PlayerReference{
     /// - player is not silenced
     /// - player is not voting itself
     /// - player is not voting a dead player
-    pub fn set_chosen_vote(&self, game: &mut Game, chosen_vote: Option<PlayerReference>)->bool{
+    pub fn set_chosen_vote(&self, game: &mut Game, chosen_vote: Option<PlayerReference>, send_chat_message: bool)->bool{
 
         
 
@@ -128,7 +128,7 @@ impl PlayerReference{
             player_index: PlayerReference::ref_option_to_index(self.chosen_vote(game)) 
         });
         
-        if chosen_vote.is_some(){
+        if send_chat_message {
             game.add_message_to_chat_group(ChatGroup::All, ChatMessage::Voted{
                 voter: *self.index(), 
                 votee: PlayerReference::ref_option_to_index(&chosen_vote)

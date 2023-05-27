@@ -97,9 +97,9 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             return <span key={key} style={{textAlign:"center", backgroundColor:"var(--primary-color)"}}>{styleText(translate("chatmessage.phaseChange",
                 translate("phase."+message.phase),
                 message.dayNumber
-            ), {color:"yellow", textDecoration:"underline"})}</span>;
+            ), {color:"yellow", textDecoration:"underline"})}</span >;
         case "trialInformation":
-            return <span key={key}>{styleText(translate("chatmessage.trialInformation",
+             return <span key={key}>{styleText(translate("chatmessage.trialInformation",
                 message.requiredVotes,
                 message.trialsLeft
             ), {color:"orange"})}</span>;

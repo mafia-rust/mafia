@@ -24,7 +24,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
     //TODO NECRONOMICON
     
     if *actor_ref.night_jailed(game) {return;}
-    if *actor_ref.night_roleblocked(game) {return}
+
     if priority != Priority::Deception {return}
     
     if let Some(visit) = actor_ref.night_visits(game).first(){

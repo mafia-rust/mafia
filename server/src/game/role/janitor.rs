@@ -23,7 +23,7 @@ pub(super) const TEAM: Option<Team> = Some(Team::Faction);
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
     if *actor_ref.night_jailed(game) {return}
-    if *actor_ref.night_roleblocked(game) {return}
+
 
     let RoleData::Janitor { cleans_remaining, cleaned_ref } = actor_ref.role_data(game) else {unreachable!()};
     let cleans_remaining = cleans_remaining.to_owned();

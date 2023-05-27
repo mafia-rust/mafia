@@ -22,7 +22,7 @@ pub(super) const TEAM: Option<Team> = None;
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
     if *actor_ref.night_jailed(game) {return;}
-    if *actor_ref.night_roleblocked(game) {return}
+
 
     match priority {
         Priority::Heal => {

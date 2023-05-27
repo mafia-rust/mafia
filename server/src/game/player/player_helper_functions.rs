@@ -9,6 +9,7 @@ impl PlayerReference{
     pub fn roleblock(&self, game: &mut Game)->bool{
         if self.role(game).roleblockable() {
             self.set_night_roleblocked(game, true);
+            self.set_night_visits(game, vec![]);
             self.push_night_messages(game,
                 NightInformation::RoleBlocked { immune: false }
             );
