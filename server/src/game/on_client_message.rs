@@ -26,7 +26,7 @@ impl Game {
                     Err(_) => break 'packet_match,
                 };
 
-                let vote_changed_succesfully = sender_player_ref.set_chosen_vote(self, player_voted_ref);
+                let vote_changed_succesfully = sender_player_ref.set_chosen_vote(self, player_voted_ref, true);
 
                 if !vote_changed_succesfully {break 'packet_match;}
 
@@ -136,9 +136,9 @@ impl Game {
                     Err(_) => break 'packet_match,
                 };
 
-                
                 if(
                     !self.current_phase().is_day() || 
+                    *whisperee_ref.alive(self) != *sender_player_ref.alive(self) ||
                     whisperee_ref == sender_player_ref || 
                     !sender_player_ref.role(self).get_current_send_chat_groups(self, sender_player_ref).contains(&ChatGroup::All) ||
                     text.replace("\n", "").replace("\r", "").trim().is_empty()

@@ -208,7 +208,9 @@ make_priority_enum! {
     Transporter,
     Control,
     Necromancy,
+
     Roleblock,
+
     Deception,
     Trickster,
     Bodyguard,
@@ -262,6 +264,9 @@ New Proposed priorities:
 
 
  */
+
+
+
 /*
 Proposed Priorities:
 
@@ -300,9 +305,6 @@ After night is over
     Amne(Convert)
     Vamp(Convert)
 */
-
-
-
 
 
 
