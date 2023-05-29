@@ -23,6 +23,7 @@ pub struct Listener {
     players: HashMap<SocketAddr, PlayerLocation>,
 }
 impl Listener{
+    #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
         let out = Self {
             lobbies: Arc::new(Mutex::new(HashMap::new())),
@@ -70,7 +71,7 @@ impl ConnectionEventListener for Listener {
     fn on_connect(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection) {
         println!("{}\t{}", log::important("CONNECTED:"), connection.get_address());
 
-        self.players.insert(connection.get_address().clone(), PlayerLocation::OutsideLobby);
+        self.players.insert(*connection.get_address(), PlayerLocation::OutsideLobby);
     }
 
     fn on_disconnect(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection) {
@@ -103,7 +104,7 @@ impl Listener{
     fn handle_message(&mut self, clients: &HashMap<SocketAddr, Connection>, connection: &Connection, message: &Message) -> Result<(), serde_json::Error> {
 
         let json_value = serde_json::from_str::<Value>(message.to_string().as_str())?;
-        let incoming_packet = serde_json::value::from_value::<ToServerPacket>(json_value.clone())?;
+        let incoming_packet = serde_json::value::from_value::<ToServerPacket>(json_value)?;
 
         let Some(sender_player_location) = self.players.get_mut(connection.get_address()) else {
             println!("{} {}", log::error("Received packet from unconnected player!"), connection.get_address());
@@ -160,7 +161,7 @@ impl Listener{
             _ => {
                 if let PlayerLocation::InLobby { room_code, player_id } = sender_player_location {
                     if let Some(lobby) = self.lobbies.lock().unwrap().get_mut(room_code){
-                        lobby.on_client_message(connection.get_sender(), player_id.clone(), incoming_packet);
+                        lobby.on_client_message(connection.get_sender(), *player_id, incoming_packet);
                     } else {
                         //Player is in a lobby that doesnt exist   
                         todo!()

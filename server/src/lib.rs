@@ -66,7 +66,7 @@ pub mod utils{
 
         loop {
             let m = x % radix;
-            x = x / radix;
+            x /= radix;
             
             result.push(std::char::from_digit(m, radix)?);
             if x == 0 {
