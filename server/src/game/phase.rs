@@ -65,6 +65,9 @@ impl PhaseType {
                         game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied { grave: new_grave });
                     }
                 }
+
+                game.phase_machine.day_number+=1;   //day_number packet gets sent right after morning starts
+                
             },
             PhaseType::Discussion => {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Discussion, day_number: game.phase_machine.day_number });
@@ -233,7 +236,6 @@ impl PhaseType {
                 }
 
 
-                game.phase_machine.day_number+=1;
                 Self::Morning
             },
         }
