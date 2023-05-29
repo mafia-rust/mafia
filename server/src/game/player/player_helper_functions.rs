@@ -13,19 +13,19 @@ impl PlayerReference{
             self.push_night_messages(game,
                 NightInformation::RoleBlocked { immune: false }
             );
-            return true;
-        }else{
+            true
+        } else {
             self.push_night_messages(game,
                 NightInformation::RoleBlocked { immune: true }
             );
-            return false;
+            false
         }
     }
     ///returns true if attack overpowered defense.
     pub fn try_night_kill(&self, game: &mut Game, grave_killer: GraveKiller, attack: u8)->bool{
         self.set_night_attacked(game, true);
 
-        if *self.night_defense(game) >= attack {
+        if self.night_defense(game) >= attack {
             self.push_night_messages(game,
                 NightInformation::YouSurvivedAttack
             );
@@ -53,7 +53,7 @@ impl PlayerReference{
         self.add_chat_message(game, chat_message);
     }
     pub fn increase_defense_to(&self, game: &mut Game, defense: u8){
-        if *self.night_defense(game) < defense{
+        if self.night_defense(game) < defense {
             self.set_night_defense(game, defense);
         }
     }

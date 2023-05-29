@@ -3,7 +3,7 @@ use std::{ops::Add, iter::Sum};
 use serde::{Serialize, Deserialize};
 
 #[repr(isize)]
-#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum Verdict {
     Innocent = 1,

@@ -26,7 +26,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
     if let Some(visit) = actor_ref.night_visits(game).first() {
 
         let target_ref = visit.target;
-        if *target_ref.night_jailed(game){
+        if target_ref.night_jailed(game){
             let killed = target_ref.try_night_kill(game, GraveKiller::Role(Role::Jailor), 3);
 
             if !killed {
@@ -42,11 +42,11 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
     let RoleData::Jailor{ jailed_target_ref, executions_remaining } = actor_ref.role_data(game) else {unreachable!()};
 
-    *target_ref.night_jailed(game) && 
+    target_ref.night_jailed(game) && 
     actor_ref.chosen_targets(game).is_empty() &&
     actor_ref != target_ref && 
-    *actor_ref.alive(game) && 
-    *target_ref.alive(game) && 
+    actor_ref.alive(game) && 
+    target_ref.alive(game) && 
     *executions_remaining > 0
 }
 pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
@@ -66,7 +66,7 @@ pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target_ref
     let RoleData::Jailor{ jailed_target_ref, executions_remaining } = actor_ref.role_data(game) else {unreachable!()};
     
     actor_ref != target_ref &&
-    *actor_ref.alive(game) && *target_ref.alive(game) &&
+    actor_ref.alive(game) && target_ref.alive(game) &&
     *executions_remaining > 0
 }
 pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
@@ -86,7 +86,7 @@ pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, phase:
     if let Some(jailed_ref) = jailed_target_ref.to_owned() {
         jailed_ref.set_night_jailed(game, true);
         actor_ref.add_chat_message(game, 
-            ChatMessage::JailedTarget{ player_index: *jailed_ref.index() });
+            ChatMessage::JailedTarget{ player_index: jailed_ref.index() });
     }
     actor_ref.set_role_data(game, RoleData::Jailor{ jailed_target_ref: None, executions_remaining });
 }

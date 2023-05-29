@@ -59,7 +59,7 @@ impl Grave{
         let day_number = game.phase_machine.day_number.clone();
 
         Grave { 
-            player: *player_ref.index(), 
+            player: player_ref.index(), 
             role: player_ref.night_grave_role(game).clone(),
             death_cause: GraveDeathCause::Killers(player_ref.night_grave_killers(game).clone()),
             will: player_ref.night_grave_will(game).clone(),
@@ -71,7 +71,7 @@ impl Grave{
     pub fn from_player_lynch(game: &mut Game, player_ref: PlayerReference)->Grave{
 
         Grave { 
-            player: *player_ref.index(), 
+            player: player_ref.index(), 
             role: GraveRole::Role(player_ref.role(game)), 
             death_cause: GraveDeathCause::Lynching, 
             will: player_ref.will(game).clone(), 

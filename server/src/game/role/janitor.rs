@@ -22,7 +22,7 @@ pub(super) const TEAM: Option<Team> = Some(Team::Faction);
 
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-    if *actor_ref.night_jailed(game) {return}
+    if actor_ref.night_jailed(game) {return}
 
 
     let RoleData::Janitor { cleans_remaining, cleaned_ref } = actor_ref.role_data(game) else {unreachable!()};
@@ -34,7 +34,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
             let Some(visit) = actor_ref.night_visits(game).first() else{return};
 
             let target_ref = visit.target;
-            if *target_ref.night_jailed(game) {
+            if target_ref.night_jailed(game) {
                 actor_ref.push_night_messages(game, NightInformation::TargetJailed);
             }else{
                 target_ref.set_night_grave_role(game, GraveRole::Cleaned);
@@ -45,7 +45,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
         Priority::Investigative=>{
             let RoleData::Janitor { cleans_remaining, cleaned_ref } = actor_ref.role_data(game) else {unreachable!()};
             if let Some(cleaned_ref) = cleaned_ref {
-                if *cleaned_ref.night_died(game) {
+                if cleaned_ref.night_died(game) {
                     actor_ref.push_night_messages(game, NightInformation::PlayerRoleAndWill{
                         role: cleaned_ref.role(game),
                         will: cleaned_ref.will(game).to_string(),

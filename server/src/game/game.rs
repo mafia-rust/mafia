@@ -81,7 +81,7 @@ impl Game {
         for player_ref in PlayerReference::all_players(&game){
             let role_data_copy = player_ref.role_data(&game).clone();
             player_ref.set_role(&mut game, role_data_copy);
-            player_ref.send_packet(&game, ToClientPacket::YourPlayerIndex { player_index: *player_ref.index() })
+            player_ref.send_packet(&game, ToClientPacket::YourPlayerIndex { player_index: player_ref.index() })
         }
 
         //send to players all game information stuff

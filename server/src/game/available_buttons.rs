@@ -16,8 +16,8 @@ impl AvailableButtons{
             vote: 
             actor_ref != target_ref &&
                 game.phase_machine.current_state == PhaseType::Voting &&
-                *actor_ref.chosen_vote(game) == None && 
-                *actor_ref.alive(game) && *target_ref.alive(game),
+                actor_ref.chosen_vote(game) == None && 
+                actor_ref.alive(game) && target_ref.alive(game),
 
             target: 
                 actor_ref.role(game).can_night_target(game, actor_ref, target_ref) && 

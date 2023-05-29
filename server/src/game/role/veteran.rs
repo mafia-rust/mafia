@@ -20,7 +20,7 @@ pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Factio
 pub(super) const TEAM: Option<Team> = None;
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-    if *actor_ref.night_jailed(game) {return;}
+    if actor_ref.night_jailed(game) {return;}
     
     match priority {
         Priority::Unswappable => {
@@ -50,7 +50,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
                     let visit = other_player_ref.night_visits(game).get(visit_index).unwrap();
 
                     if visit.target!=actor_ref || visit.astral {continue}
-                    if *other_player_ref.night_jailed(game){continue;}  //Attacking Jailed Player?
+                    if other_player_ref.night_jailed(game){continue;}  //Attacking Jailed Player?
 
                     other_player_ref.push_night_messages(game,
                         NightInformation::VeteranAttackedYou 
@@ -79,7 +79,7 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
     actor_ref == target_ref &&
     *alerts_remaining > 0 &&
     actor_ref.chosen_targets(game).is_empty() &&
-    *actor_ref.alive(game)
+    actor_ref.alive(game)
 }
 pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
 

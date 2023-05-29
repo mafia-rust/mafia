@@ -36,15 +36,15 @@ impl Game {
 
 
                 for any_player_ref in PlayerReference::all_players(self){
-                    if *any_player_ref.alive(self){
+                    if any_player_ref.alive(self){
                         living_players_count+=1;
 
                         if let Some(any_player_voted_ref) = any_player_ref.chosen_vote(self){
 
-                            if let Some(num_votes) = voted_for_player.get_mut(any_player_voted_ref){
+                            if let Some(num_votes) = voted_for_player.get_mut(&any_player_voted_ref){
                                 *num_votes+=1;
                             }else{
-                                voted_for_player.insert(*any_player_voted_ref, 1);
+                                voted_for_player.insert(any_player_voted_ref, 1);
                             }
                         }
                     }
@@ -69,7 +69,7 @@ impl Game {
                 if let Some(next_player_on_trial_unwrap) = next_player_on_trial{
                     self.player_on_trial = next_player_on_trial;
 
-                    self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: *next_player_on_trial_unwrap.index() } );
+                    self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: next_player_on_trial_unwrap.index() } );
                     self.jump_to_start_phase(PhaseType::Testimony);
                 }
             },
@@ -92,7 +92,7 @@ impl Game {
                     self.add_message_to_chat_group(
                         chat_group.clone(),
                         ChatMessage::Targeted { 
-                            targeter: *sender_player_ref.index(), 
+                            targeter: sender_player_ref.index(), 
                             targets: PlayerReference::ref_vec_to_index(&target_ref_list)
                         }
                     );
@@ -101,7 +101,7 @@ impl Game {
                 if sender_player_ref.role(self)
                 .get_current_send_chat_groups(self, sender_player_ref).len() == 0{
                     sender_player_ref.add_chat_message(self, ChatMessage::Targeted { 
-                        targeter: *sender_player_ref.index(), 
+                        targeter: sender_player_ref.index(), 
                         targets: PlayerReference::ref_vec_to_index(&target_ref_list)
                     });
                 }
@@ -138,7 +138,7 @@ impl Game {
 
                 if(
                     !self.current_phase().is_day() || 
-                    *whisperee_ref.alive(self) != *sender_player_ref.alive(self) ||
+                    whisperee_ref.alive(self) != sender_player_ref.alive(self) ||
                     whisperee_ref == sender_player_ref || 
                     !sender_player_ref.role(self).get_current_send_chat_groups(self, sender_player_ref).contains(&ChatGroup::All) ||
                     text.replace("\n", "").replace("\r", "").trim().is_empty()

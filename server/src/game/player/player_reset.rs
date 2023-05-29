@@ -28,8 +28,7 @@ impl PlayerReference{
             PhaseType::Judgement => {},
             PhaseType::Evening => {},
             PhaseType::Night => {
-
-                self.set_night_alive_tonight(game,   *self.alive(game));
+                self.set_night_alive_tonight(game,   self.alive(game));
                 self.set_night_died(game,            false);
                 self.set_night_attacked(game,        false);
                 self.set_night_roleblocked(game,     false);
