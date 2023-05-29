@@ -27,7 +27,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
 
     let RoleData::Janitor { cleans_remaining, cleaned_ref } = actor_ref.role_data(game) else {unreachable!()};
     let cleans_remaining = cleans_remaining.to_owned();
-    if(cleans_remaining <= 0){return}
+    if(cleans_remaining == 0){return}
 
     match priority {
         Priority::Deception=>{

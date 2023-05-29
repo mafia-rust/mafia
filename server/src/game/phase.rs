@@ -86,9 +86,9 @@ impl PhaseType {
                 
                 //TODO should be impossible for there to be no player on trial therefore unwrap
                 game.add_message_to_chat_group(ChatGroup::All, 
-                    ChatMessage::PlayerOnTrial { player_index: game.player_on_trial.unwrap().index().clone() }
+                    ChatMessage::PlayerOnTrial { player_index: *game.player_on_trial.unwrap().index() }
                 );
-                game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: game.player_on_trial.unwrap().index().clone() });
+                game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: *game.player_on_trial.unwrap().index() });
             },
             PhaseType::Judgement => {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Judgement, day_number: game.phase_machine.day_number });
@@ -164,15 +164,16 @@ impl PhaseType {
                 }
                 game.add_messages_to_chat_group(ChatGroup::All, messages);
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialVerdict{ 
-                        player_on_trial: player_on_trial.index().clone(), 
+                        player_on_trial: *player_on_trial.index(), 
                         innocent, guilty 
                 });
 
                 game.trials_left-=1;
                 
-                if innocent < guilty  {
+                #[allow(clippy::if_same_then_else)] // TODO: Remove
+                if innocent < guilty {
                     Self::Evening
-                }else if game.trials_left <= 0 {
+                } else if game.trials_left == 0 {
                     //TODO send no trials left
                     Self::Evening
                 }else{
@@ -240,7 +241,7 @@ impl PhaseType {
     }
 
     pub fn is_day(&self) -> bool {
-        return Self::Night != *self;
+        *self != Self::Night
     }
 
 }
