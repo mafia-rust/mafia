@@ -78,7 +78,7 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
     let RoleData::Veteran { alerts_remaining, alerting_tonight } = actor_ref.role_data(game) else {unreachable!();};
     actor_ref == target_ref &&
     *alerts_remaining > 0 &&
-    actor_ref.chosen_targets(game).len() < 1 &&
+    actor_ref.chosen_targets(game).is_empty() &&
     *actor_ref.alive(game)
 }
 pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {

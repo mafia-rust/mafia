@@ -7,7 +7,7 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
     
     actor_ref != target_ref &&
     !*actor_ref.night_jailed(game) &&
-    actor_ref.chosen_targets(game).len() < 1 &&
+    actor_ref.chosen_targets(game).is_empty() &&
     *actor_ref.alive(game) &&
     *target_ref.alive(game) &&
     !Team::same_team(
@@ -17,9 +17,9 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
 }
 
 pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, astral: bool, attack: bool) -> Vec<Visit> {
-    if target_refs.len() > 0{
+    if !target_refs.is_empty() {
         vec![Visit{ target: target_refs[0], astral, attack }]
-    }else{
+    } else {
         Vec::new()
     }
 }
@@ -41,8 +41,8 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         crate::game::phase::PhaseType::Evening => vec![ChatGroup::All],
         crate::game::phase::PhaseType::Night => {
             if *actor_ref.night_jailed(game) || actor_ref.role(game) == Role::Jailor{
-                return vec![ChatGroup::Jail];
-            }else{
+                vec![ChatGroup::Jail]
+            } else {
                 night_chat_groups
             }
         },
