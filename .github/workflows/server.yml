@@ -28,5 +28,13 @@ jobs:
         working-directory: ./server
     steps:
       - uses: actions/checkout@v3
-      - name: Build
+      - name: Install cargo-audit
+        run: cargo install cargo-audit
+      - name: Builds
         run: cargo build --verbose
+      # - name: Test
+      #   run: cargo test --verbose
+      - name: Clippy
+        run: cargo clippy --verbose -- -D warnings
+      - name: Audit
+        run: cargo audit

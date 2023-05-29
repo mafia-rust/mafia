@@ -11,9 +11,13 @@ pub type PlayerIndex = u8;
 pub struct PlayerReference {
     index: PlayerIndex
 }
+
+#[derive(Debug)]
+pub struct InvalidPlayerReferenceError;
+
 impl PlayerReference{
-    pub fn new(game: &Game, index: PlayerIndex)->Result<PlayerReference, ()>{
-        if !((index as usize) < game.players.len()) { return Err(());} 
+    pub fn new(game: &Game, index: PlayerIndex) -> Result<PlayerReference, InvalidPlayerReferenceError>{
+        if (index as usize) >= game.players.len() { return Err(InvalidPlayerReferenceError);} 
         Ok(PlayerReference { index })
     }
     pub fn deref<'a>(&self, game: &'a Game)->&'a Player{
@@ -22,45 +26,33 @@ impl PlayerReference{
     pub fn deref_mut<'a>(&self, game: &'a mut Game)->&'a mut Player{
         &mut game.players[self.index as usize]
     }
-    pub fn index(&self)->&PlayerIndex{
-        &self.index
+    pub fn index(&self) -> PlayerIndex {
+        self.index
     }
 
-    pub fn ref_option_to_index(option: &Option<PlayerReference>)->Option<PlayerIndex>{
-        if let Some(reference) = option {
-            Some(reference.index().clone())
-        }else{
-            None
-        }
+    pub fn ref_option_to_index(option: &Option<PlayerReference>) -> Option<PlayerIndex>{
+        option.as_ref().map(PlayerReference::index)
     }
-    pub fn ref_vec_to_index(ref_vec: &Vec<PlayerReference>)->Vec<PlayerIndex>{
-        ref_vec.into_iter().map(|p|p.index().clone()).collect()
+    pub fn ref_vec_to_index(ref_vec: &[PlayerReference]) -> Vec<PlayerIndex>{
+        ref_vec.iter().map(PlayerReference::index).collect()
     }
-    pub fn ref_map_to_index<T>(ref_map: HashMap<PlayerReference, T>)->HashMap<PlayerIndex, T>{
-        ref_map.into_iter().map(|(k,v)|{
-            (*k.index(), v)
+    pub fn ref_map_to_index<T>(ref_map: HashMap<PlayerReference, T>) -> HashMap<PlayerIndex, T> {
+        ref_map.into_iter().map(|(player_ref, value)| {
+            (player_ref.index(), value)
         }).collect()
     }
     
-    pub fn index_option_to_ref(game: &Game, index_option: &Option<PlayerIndex>)->Result<Option<PlayerReference>, ()>{
-        match index_option{
-            Some(index) => {
-                match PlayerReference::new(game, *index){
-                    Ok(player_ref) => Ok(Option::Some(player_ref)),
-                    Err(_) => Err(()),
-                }
-            },
-            None => Ok(None),
-        }
+    pub fn index_option_to_ref(game: &Game, index_option: &Option<PlayerIndex>)->Result<Option<PlayerReference>, InvalidPlayerReferenceError>{
+        index_option
+            .map(|index| PlayerReference::new(game, index))
+            .transpose()
     }
-    pub fn index_vec_to_ref(game: &Game, index_vec: &Vec<PlayerIndex>)->Result<Vec<PlayerReference>, ()>{
+    pub fn index_vec_to_ref(game: &Game, index_vec: &Vec<PlayerIndex>)->Result<Vec<PlayerReference>, InvalidPlayerReferenceError>{
         let mut out = Vec::new();
         for index in index_vec{
             out.push(match Self::new(game, *index){
                 Ok(player_ref) => player_ref,
-                Err(_) => {
-                    return Err(());
-                },
+                Err(e) => return Err(e),
             });
         }
         Ok(out)

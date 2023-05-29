@@ -6,10 +6,10 @@ use super::Role;
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
     
     actor_ref != target_ref &&
-    !*actor_ref.night_jailed(game) &&
-    actor_ref.chosen_targets(game).len() < 1 &&
-    *actor_ref.alive(game) &&
-    *target_ref.alive(game) &&
+    !actor_ref.night_jailed(game) &&
+    actor_ref.chosen_targets(game).is_empty() &&
+    actor_ref.alive(game) &&
+    target_ref.alive(game) &&
     !Team::same_team(
         actor_ref.role(game), 
         target_ref.role(game)
@@ -17,9 +17,9 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
 }
 
 pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, astral: bool, attack: bool) -> Vec<Visit> {
-    if target_refs.len() > 0{
+    if !target_refs.is_empty() {
         vec![Visit{ target: target_refs[0], astral, attack }]
-    }else{
+    } else {
         Vec::new()
     }
 }
@@ -28,7 +28,7 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
     if !actor_ref.alive(game){
         return vec![ChatGroup::Dead];
     }
-    if *actor_ref.night_silenced(game){
+    if actor_ref.night_silenced(game){
         return vec![];
     }
 
@@ -40,9 +40,9 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         crate::game::phase::PhaseType::Judgement => vec![ChatGroup::All],
         crate::game::phase::PhaseType::Evening => vec![ChatGroup::All],
         crate::game::phase::PhaseType::Night => {
-            if *actor_ref.night_jailed(game) || actor_ref.role(game) == Role::Jailor{
-                return vec![ChatGroup::Jail];
-            }else{
+            if actor_ref.night_jailed(game) || actor_ref.role(game) == Role::Jailor{
+                vec![ChatGroup::Jail]
+            } else {
                 night_chat_groups
             }
         },
@@ -63,7 +63,7 @@ pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerRefe
     if actor_ref.role(game).faction_alignment().faction() == Faction::Coven {
         out.push(ChatGroup::Coven);
     }
-    if actor_ref.role(game) == Role::Jailor || *actor_ref.night_jailed(game){
+    if actor_ref.role(game) == Role::Jailor || actor_ref.night_jailed(game){
         out.push(ChatGroup::Jail);
     }
 

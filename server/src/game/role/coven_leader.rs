@@ -23,13 +23,13 @@ pub(super) const TEAM: Option<Team> = Some(Team::Faction);
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
     //TODO NECRONOMICON
     
-    if *actor_ref.night_jailed(game) {return;}
+    if actor_ref.night_jailed(game) {return;}
 
     if priority != Priority::Kill {return}
     
     if let Some(visit) = actor_ref.night_visits(game).first(){
         let target_ref = visit.target;
-        if *target_ref.night_jailed(game) {
+        if target_ref.night_jailed(game) {
             actor_ref.push_night_messages(game, NightInformation::TargetJailed);
         }else {
             let killed = target_ref.try_night_kill(game, GraveKiller::Faction(Faction::Coven), 1);

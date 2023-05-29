@@ -18,10 +18,6 @@ impl Eq for Connection{
 
 }
 impl PartialEq for Connection{
-    fn ne(&self, other: &Self) -> bool {
-        !self.eq(other)
-    }
-
     fn eq(&self, other: &Self) -> bool {
         self.address == other.address
     }

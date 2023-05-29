@@ -19,7 +19,8 @@ pub async fn create_ws_server(
     let event_listener = Arc::new(Mutex::new(*event_listener));
 
     // Create the event loop and TCP listener we'll accept connections on.
-    let listener = TcpListener::bind(&address).await.expect(&format!("address and port should be valid. Address was:{}",address));  //panic if address is invalid
+    let listener = TcpListener::bind(&address).await
+        .unwrap_or_else(|_| panic!("Invalid address: {address}"));  //panic if address is invalid
     
     
     // let identity = Identity::from_pkcs12(include_bytes!("../cert.pfx"), "password").unwrap();
@@ -60,10 +61,7 @@ pub async fn handle_connection(
     //create connection struct and give it ways to communicate with client
     {
         let mut clients = clients_mutex.lock().unwrap();
-        clients.insert(
-            addr.clone(),
-            Connection::new(transmitter_to_client, addr)
-        ); 
+        clients.insert(addr, Connection::new(transmitter_to_client, addr)); 
     }
     
     // route between unbounded senders and websockets

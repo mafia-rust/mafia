@@ -36,15 +36,15 @@ impl Game {
 
 
                 for any_player_ref in PlayerReference::all_players(self){
-                    if *any_player_ref.alive(self){
+                    if any_player_ref.alive(self){
                         living_players_count+=1;
 
                         if let Some(any_player_voted_ref) = any_player_ref.chosen_vote(self){
 
-                            if let Some(num_votes) = voted_for_player.get_mut(any_player_voted_ref){
+                            if let Some(num_votes) = voted_for_player.get_mut(&any_player_voted_ref){
                                 *num_votes+=1;
                             }else{
-                                voted_for_player.insert(*any_player_voted_ref, 1);
+                                voted_for_player.insert(any_player_voted_ref, 1);
                             }
                         }
                     }
@@ -60,7 +60,7 @@ impl Game {
                 //if someone was voted
                 let mut next_player_on_trial = None;
                 for (player_with_votes_ref, num_votes) in voted_for_player.iter(){
-                    if *num_votes >= 1+(living_players_count / 2){
+                    if *num_votes > (living_players_count / 2){
                         next_player_on_trial = Some(*player_with_votes_ref);
                         break;
                     }
@@ -69,7 +69,7 @@ impl Game {
                 if let Some(next_player_on_trial_unwrap) = next_player_on_trial{
                     self.player_on_trial = next_player_on_trial;
 
-                    self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: *next_player_on_trial_unwrap.index() } );
+                    self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: next_player_on_trial_unwrap.index() } );
                     self.jump_to_start_phase(PhaseType::Testimony);
                 }
             },
@@ -90,18 +90,17 @@ impl Game {
                 .get_current_send_chat_groups(self, sender_player_ref)
                 .into_iter().for_each(|chat_group| {
                     self.add_message_to_chat_group(
-                        chat_group.clone(),
+                        chat_group,
                         ChatMessage::Targeted { 
-                            targeter: *sender_player_ref.index(), 
+                            targeter: sender_player_ref.index(), 
                             targets: PlayerReference::ref_vec_to_index(&target_ref_list)
                         }
                     );
                 });
                 //if no chat groups then send to self at least
-                if sender_player_ref.role(self)
-                .get_current_send_chat_groups(self, sender_player_ref).len() == 0{
+                if sender_player_ref.role(self).get_current_send_chat_groups(self, sender_player_ref).is_empty(){
                     sender_player_ref.add_chat_message(self, ChatMessage::Targeted { 
-                        targeter: *sender_player_ref.index(), 
+                        targeter: sender_player_ref.index(), 
                         targets: PlayerReference::ref_vec_to_index(&target_ref_list)
                     });
                 }
@@ -117,7 +116,7 @@ impl Game {
             },
             ToServerPacket::SendMessage { text } => {
 
-                if text.replace("\n", "").replace("\r", "").trim().is_empty() {
+                if text.replace(['\n', '\r'], "").trim().is_empty() {
                     break 'packet_match;
                 }
                 
@@ -138,10 +137,10 @@ impl Game {
 
                 if(
                     !self.current_phase().is_day() || 
-                    *whisperee_ref.alive(self) != *sender_player_ref.alive(self) ||
+                    whisperee_ref.alive(self) != sender_player_ref.alive(self) ||
                     whisperee_ref == sender_player_ref || 
                     !sender_player_ref.role(self).get_current_send_chat_groups(self, sender_player_ref).contains(&ChatGroup::All) ||
-                    text.replace("\n", "").replace("\r", "").trim().is_empty()
+                    text.replace(['\n', '\r'], "").trim().is_empty()
                 ){
                     break 'packet_match;
                 }

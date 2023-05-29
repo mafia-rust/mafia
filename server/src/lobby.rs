@@ -58,6 +58,7 @@ lazy_static!(
 );
 
 impl Lobby {
+    #[allow(clippy::new_without_default)]
     pub fn new() -> Lobby {
         Self { 
             lobby_state: LobbyState::Lobby{
@@ -79,7 +80,7 @@ impl Lobby {
                 let mut other_players = players.clone();
                 other_players.remove(&player_arbitrary_id);
                 
-                let name = validate_name(&other_players, name.clone());
+                let name = validate_name(&other_players, name);
                 if let Some(mut player) = players.get_mut(&player_arbitrary_id){
                     player.name = name.clone();
                 }
@@ -159,7 +160,7 @@ impl Lobby {
                     return;
                 };
 
-                game.on_client_message(players.get(&player_arbitrary_id).unwrap().clone(), incoming_packet)
+                game.on_client_message(*players.get(&player_arbitrary_id).unwrap(), incoming_packet)
             }
         }
     }
@@ -198,7 +199,7 @@ impl Lobby {
         if let LobbyState::Lobby { players, settings  } = &mut self.lobby_state {
             players.remove(&id);
             
-            if players.len() == 0 {
+            if players.is_empty() {
                 self.lobby_state = LobbyState::Closed;
                 return;
             }
@@ -211,10 +212,7 @@ impl Lobby {
     }
     
     pub fn is_closed(&self) -> bool {
-        match &self.lobby_state {
-            LobbyState::Closed => true,
-            _ => false
-        }
+        matches!(self.lobby_state, LobbyState::Closed)
     }
 
     pub fn tick(&mut self, time_passed: Duration){
@@ -287,7 +285,7 @@ fn validate_name(players: &HashMap<ArbitraryPlayerID, LobbyPlayer>, mut name: St
     name.truncate(20);
 
     //if valid then return
-    if name.len() > 0 && !players.values()
+    if !name.is_empty() && !players.values()
         .any(|existing_player| name == *existing_player.name)
     {
         return name;
@@ -311,11 +309,11 @@ fn validate_name(players: &HashMap<ArbitraryPlayerID, LobbyPlayer>, mut name: St
             )
     }).collect();
 
-    if available_random_names.len() > 0 {
-        return available_random_names[rand::random::<usize>()%available_random_names.len()].clone();
-    } else {
+    if available_random_names.is_empty() {
         // Awesome name generator
         // TODO make this better, or don't.
-        return players.len().to_string()
+        players.len().to_string()
+    } else {
+        available_random_names[rand::random::<usize>()%available_random_names.len()].clone()
     }
 }

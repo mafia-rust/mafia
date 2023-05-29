@@ -39,21 +39,20 @@ pub struct Game {
 }
 
 impl Game {
-    pub fn new(settings: Settings, lobby_players: Vec<LobbyPlayer>)->Self{
+    pub fn new(mut settings: Settings, lobby_players: Vec<LobbyPlayer>)->Self{
 
         //create role list
-        let mut settings = settings.clone();
         let mut roles = create_random_roles(&settings.role_list);
         roles.shuffle(&mut thread_rng());
         
 
         //create players
         let mut players = Vec::new();
-        for player_index in 0..lobby_players.len(){
+        for (player_index, player) in lobby_players.iter().enumerate() {
             let mut new_player = Player::new(         
                 player_index as u8,
-                lobby_players[player_index].name.clone(),
-                lobby_players[player_index].sender.clone(),
+                player.name.clone(),
+                player.sender.clone(),
                 match roles.get(player_index){
                     Some(role) => *role,
                     None => RoleListEntry::Any.get_random_role(&roles),
@@ -81,14 +80,14 @@ impl Game {
         for player_ref in PlayerReference::all_players(&game){
             let role_data_copy = player_ref.role_data(&game).clone();
             player_ref.set_role(&mut game, role_data_copy);
-            player_ref.send_packet(&game, ToClientPacket::YourPlayerIndex { player_index: *player_ref.index() })
+            player_ref.send_packet(&game, ToClientPacket::YourPlayerIndex { player_index: player_ref.index() })
         }
 
         //send to players all game information stuff
 
         
         game.send_packet_to_all(ToClientPacket::RoleList { 
-            role_list: settings.role_list.clone() 
+            role_list: settings.role_list
         });
         game.send_packet_to_all(ToClientPacket::Phase { 
             phase: game.current_phase(),
@@ -126,7 +125,7 @@ impl Game {
             //player reset
             for player_ref in PlayerReference::all_players(self){
                 player_ref.reset_phase_start(self, new_phase);
-                player_ref.role(&self).on_phase_start(self, player_ref, new_phase);
+                player_ref.role(self).on_phase_start(self, player_ref, new_phase);
             }
 
             //game reset
@@ -169,15 +168,13 @@ impl Game {
         PhaseType::start(self);
 
         self.send_packet_to_all(ToClientPacket::Phase { 
-            phase: phase, 
+            phase, 
             day_number: self.phase_machine.day_number, 
             seconds_left: self.phase_machine.time_remaining.as_secs() 
         });
     }
 
-    pub fn add_message_to_chat_group(&mut self, group: ChatGroup, message: ChatMessage){
-        let mut message = message.clone();
-
+    pub fn add_message_to_chat_group(&mut self, group: ChatGroup, mut message: ChatMessage){
         //if normal message, then correct chat group
         if let ChatMessage::Normal { message_sender, text, chat_group } = &mut message {
             *chat_group = group.clone();

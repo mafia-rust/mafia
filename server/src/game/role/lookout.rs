@@ -20,13 +20,13 @@ pub(super) const TEAM: Option<Team> = None;
 
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-    if *actor_ref.night_jailed(game) {return;}
+    if actor_ref.night_jailed(game) {return;}
 
     if priority != Priority::Investigative {return;}
 
     if let Some(visit) = actor_ref.night_visits(game).first(){
         
-        if *visit.target.night_jailed(game){
+        if visit.target.night_jailed(game){
             actor_ref.push_night_messages(game, NightInformation::TargetJailed );
             return
         }
@@ -34,7 +34,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
         let message = NightInformation::LookoutResult { players: 
             PlayerReference::all_players(game).iter().filter(|player_ref|{
                 player_ref.night_visits(game).iter().any(|other_visit| other_visit.target == visit.target)
-            }).map(|player_ref| *player_ref.index()).collect()
+            }).map(PlayerReference::index).collect()
         };
         
         actor_ref.push_night_messages(game, message);

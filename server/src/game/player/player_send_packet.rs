@@ -15,7 +15,7 @@ impl PlayerReference{
 
     pub fn send_chat_messages(&self, game: &mut Game){
         
-        if self.deref(game).queued_chat_messages.len() == 0 {
+        if self.deref(game).queued_chat_messages.is_empty() {
             return;
         }
         

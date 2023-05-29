@@ -58,7 +58,7 @@ impl PhaseType {
 
                 //generate & add graves
                 for player_ref in PlayerReference::all_players(game){
-                    if *player_ref.night_died(game){
+                    if player_ref.night_died(game) {
                         let new_grave = Grave::from_player_night(game, player_ref);
                         game.graves.push(new_grave.clone());
                         game.send_packet_to_all(ToClientPacket::AddGrave{grave: new_grave.clone()});
@@ -77,7 +77,7 @@ impl PhaseType {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Voting, day_number: game.phase_machine.day_number });
 
                 let required_votes = 1+
-                    (PlayerReference::all_players(game).iter().filter(|p|*p.alive(game)).collect::<Vec<&PlayerReference>>().len()/2);
+                    (PlayerReference::all_players(game).iter().filter(|p| p.alive(game)).collect::<Vec<&PlayerReference>>().len()/2);
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialInformation { required_votes, trials_left: game.trials_left });
                 
 
@@ -89,9 +89,9 @@ impl PhaseType {
                 
                 //TODO should be impossible for there to be no player on trial therefore unwrap
                 game.add_message_to_chat_group(ChatGroup::All, 
-                    ChatMessage::PlayerOnTrial { player_index: game.player_on_trial.unwrap().index().clone() }
+                    ChatMessage::PlayerOnTrial { player_index: game.player_on_trial.unwrap().index() }
                 );
-                game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: game.player_on_trial.unwrap().index().clone() });
+                game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: game.player_on_trial.unwrap().index() });
             },
             PhaseType::Judgement => {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Judgement, day_number: game.phase_machine.day_number });
@@ -106,7 +106,7 @@ impl PhaseType {
                 //search for mafia godfather or mafioso
                 let mut main_mafia_killing_exists = false;
                 for player_ref in PlayerReference::all_players(game){
-                    if player_ref.role(game) == Role::Mafioso && *player_ref.alive(game) { 
+                    if player_ref.role(game) == Role::Mafioso && player_ref.alive(game) { 
                         main_mafia_killing_exists = true;
                         break;
                     }
@@ -152,30 +152,31 @@ impl PhaseType {
                 let mut guilty = 0;
                 let mut messages = Vec::new();
                 for player_ref in PlayerReference::all_players(game){
-                    if(!*player_ref.alive(game) || player_ref == player_on_trial){
+                    if(!player_ref.alive(game) || player_ref == player_on_trial){
                         continue;
                     }
-                    match *player_ref.verdict(game){
+                    match player_ref.verdict(game){
                         Verdict::Innocent => innocent += 1,
                         Verdict::Abstain => {},
                         Verdict::Guilty => guilty += 1,
                     }
                     messages.push(ChatMessage::JudgementVerdict{
-                        voter_player_index: *player_ref.index(),
-                        verdict: player_ref.verdict(game).clone()
+                        voter_player_index: player_ref.index(),
+                        verdict: player_ref.verdict(game)
                     });
                 }
                 game.add_messages_to_chat_group(ChatGroup::All, messages);
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialVerdict{ 
-                        player_on_trial: player_on_trial.index().clone(), 
+                        player_on_trial: player_on_trial.index(), 
                         innocent, guilty 
                 });
 
                 game.trials_left-=1;
                 
-                if innocent < guilty  {
+                #[allow(clippy::if_same_then_else)] // TODO: Remove
+                if innocent < guilty {
                     Self::Evening
-                }else if game.trials_left <= 0 {
+                } else if game.trials_left == 0 {
                     //TODO send no trials left
                     Self::Evening
                 }else{
@@ -187,7 +188,7 @@ impl PhaseType {
                     let mut guilty = 0;
                     let mut innocent = 0;
                     for player_ref in PlayerReference::all_players(game){
-                        match *player_ref.verdict(game){
+                        match player_ref.verdict(game) {
                             Verdict::Innocent => innocent += 1,
                             Verdict::Abstain => {},
                             Verdict::Guilty => guilty += 1,
@@ -242,7 +243,7 @@ impl PhaseType {
     }
 
     pub fn is_day(&self) -> bool {
-        return Self::Night != *self;
+        *self != Self::Night
     }
 
 }
