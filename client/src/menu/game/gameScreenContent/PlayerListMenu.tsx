@@ -91,6 +91,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
 
         return(<div className="player" key={player.index}>
             <div className="top">
+                {player.numVoted?player.numVoted:null}
                 <button className="whisper" onClick={()=>ChatMenu.prependWhisper(player.index)}>
                     {styleText(
                         player.toString()+

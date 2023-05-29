@@ -88,7 +88,7 @@ impl Game {
                 //Send targeted message to chat groups
                 sender_player_ref.role(self)
                 .get_current_send_chat_groups(self, sender_player_ref)
-                .into_iter().for_each(|chat_group | {
+                .into_iter().for_each(|chat_group| {
                     self.add_message_to_chat_group(
                         chat_group.clone(),
                         ChatMessage::Targeted { 
