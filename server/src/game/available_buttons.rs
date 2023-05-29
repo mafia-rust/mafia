@@ -16,7 +16,7 @@ impl AvailableButtons{
             vote: 
             actor_ref != target_ref &&
                 game.phase_machine.current_state == PhaseType::Voting &&
-                actor_ref.chosen_vote(game) == None && 
+                actor_ref.chosen_vote(game).is_none() && 
                 actor_ref.alive(game) && target_ref.alive(game),
 
             target: 

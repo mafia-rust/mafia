@@ -5,19 +5,11 @@ use serde::{Serialize, Deserialize};
 
 use super::{role_list::{RoleList, RoleListEntry}, role::Role, player::Player, phase::PhaseType};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct Settings{
     pub role_list: RoleList,
     pub phase_times: PhaseTimeSettings,
     // pub excluded_roles: Vec<Role>,
-}
-impl Default for Settings{
-    fn default() -> Self {
-        Self { 
-            role_list: Default::default(), 
-            phase_times: Default::default()
-        }
-    }
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PhaseTimeSettings{

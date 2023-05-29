@@ -159,7 +159,7 @@ impl PhaseType {
                     }
                     messages.push(ChatMessage::JudgementVerdict{
                         voter_player_index: player_ref.index(),
-                        verdict: player_ref.verdict(game).clone()
+                        verdict: player_ref.verdict(game)
                     });
                 }
                 game.add_messages_to_chat_group(ChatGroup::All, messages);

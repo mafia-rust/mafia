@@ -55,8 +55,7 @@ pub enum GravePhase {
 
 impl Grave{
     pub fn from_player_night(game: &mut Game, player_ref: PlayerReference)->Grave{
-
-        let day_number = game.phase_machine.day_number.clone();
+        let day_number = game.phase_machine.day_number;
 
         Grave { 
             player: player_ref.index(), 
