@@ -70,7 +70,7 @@ impl Game {
                     self.player_on_trial = next_player_on_trial;
 
                     self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: next_player_on_trial_unwrap.index() } );
-                    self.jump_to_start_phase(PhaseType::Testimony);
+                    self.start_phase(PhaseType::Testimony);
                 }
             },
             ToServerPacket::Judgement { verdict } => {

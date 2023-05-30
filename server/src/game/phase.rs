@@ -123,7 +123,10 @@ impl PhaseType {
                     }
                 }
 
-                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: game.phase_machine.day_number });
+                game.add_message_to_chat_group(
+                    ChatGroup::All, 
+                    ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: game.phase_machine.day_number }
+                );
             },
         }
     }

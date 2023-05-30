@@ -79,14 +79,17 @@ pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerRefe
     crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
 }
 pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
-    let RoleData::Jailor{ jailed_target_ref, executions_remaining } = actor_ref.role_data(game) else {unreachable!()};
-    let executions_remaining = *executions_remaining;
+
     if phase != PhaseType::Night { return; }
 
+    let RoleData::Jailor{ jailed_target_ref, executions_remaining } = actor_ref.role_data(game) else {unreachable!()};
+    let executions_remaining = *executions_remaining;
+    
     if let Some(jailed_ref) = jailed_target_ref.to_owned() {
         jailed_ref.set_night_jailed(game, true);
         actor_ref.add_chat_message(game, 
-            ChatMessage::JailedTarget{ player_index: jailed_ref.index() });
+            ChatMessage::JailedTarget{ player_index: jailed_ref.index() }
+        );
     }
     actor_ref.set_role_data(game, RoleData::Jailor{ jailed_target_ref: None, executions_remaining });
 }

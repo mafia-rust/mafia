@@ -23,7 +23,6 @@ pub(super) const TEAM: Option<Team> = None;
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
     if actor_ref.night_jailed(game) {return;}
 
-
     match priority {
         Priority::Heal => {
             let Some(visit) = actor_ref.night_visits(game).first() else {return};
@@ -59,7 +58,9 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
     let RoleData::Doctor { self_heals_remaining, target_healed_ref } = actor_ref.role_data(game) else {unreachable!();};
+    
     ((actor_ref == target_ref && *self_heals_remaining > 0) || actor_ref != target_ref) &&
+    !actor_ref.night_jailed(game) &&
     actor_ref.chosen_targets(game).is_empty() &&
     actor_ref.alive(game) &&
     target_ref.alive(game)
