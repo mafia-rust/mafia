@@ -1,7 +1,6 @@
 use std::{collections::HashMap, net::SocketAddr, fs, time::Duration, hash::Hash};
 
 use futures_util::pending;
-use lazy_static::lazy_static;
 use serde::__private::de::{Content, self};
 use tokio::sync::mpsc::UnboundedSender;
 use tokio_tungstenite::tungstenite::Message;
@@ -14,7 +13,7 @@ use crate::{
         role_list::{self, RoleList, RoleListEntry}, 
         phase::PhaseType
     },
-    utils::trim_whitespace, log, listener::ArbitraryPlayerID, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}
+    log, listener::ArbitraryPlayerID, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}
 };
 
 pub struct Lobby {
@@ -39,24 +38,6 @@ pub struct LobbyPlayer{
     pub name: String,
 }
 
-lazy_static!(
-    static ref RANDOM_NAMES: Vec<String> = {
-        let mut random_names = Vec::new();
-        random_names.append(&mut 
-            include_str!("../resources/random_names/default_names.csv").lines()
-                .map(str::to_string)
-                .collect()
-        );
-        random_names.append(&mut 
-            include_str!("../resources/random_names/extra_names.csv").lines()
-                .map(str::to_string)
-                .collect()
-        );
-
-        random_names
-    };
-);
-
 impl Lobby {
     #[allow(clippy::new_without_default)]
     pub fn new() -> Lobby {
@@ -80,7 +61,7 @@ impl Lobby {
                 let mut other_players = players.clone();
                 other_players.remove(&player_arbitrary_id);
                 
-                let name = validate_name(&other_players, name);
+                let name = name_validation::sanitize_name(name, &other_players);
                 if let Some(mut player) = players.get_mut(&player_arbitrary_id){
                     player.name = name.clone();
                 }
@@ -169,7 +150,7 @@ impl Lobby {
         match &mut self.lobby_state {
             LobbyState::Lobby { players, settings } => {
                 // TODO, move this somewhere else
-                let name = validate_name(players, "".to_string());
+                let name = name_validation::sanitize_name("".to_string(), players);
                 
                 sender.send(ToClientPacket::YourName { name: name.clone() });
 
@@ -279,41 +260,80 @@ impl Lobby {
     }
 }
 
+mod name_validation {
+    use std::collections::HashMap;
+    use crate::listener::ArbitraryPlayerID;
+    use super::LobbyPlayer;
+    use lazy_static::lazy_static;
 
-fn validate_name(players: &HashMap<ArbitraryPlayerID, LobbyPlayer>, mut name: String) -> String {
-    name = trim_whitespace(name.trim());
-    name.truncate(20);
+    lazy_static!(
+        static ref RANDOM_NAMES: Vec<String> = {
+            let mut random_names = Vec::new();
+            random_names.append(&mut 
+                include_str!("../resources/random_names/default_names.csv").lines()
+                    .map(str::to_string)
+                    .collect()
+            );
+            random_names.append(&mut 
+                include_str!("../resources/random_names/extra_names.csv").lines()
+                    .map(str::to_string)
+                    .collect()
+            );
+    
+            random_names
+        };
+    );
 
-    //if valid then return
-    if !name.is_empty() && !players.values()
-        .any(|existing_player| name == *existing_player.name)
-    {
-        return name;
+    fn trim_whitespace(s: &str) -> String {
+        let mut new_str = s.trim().to_owned();
+        let mut prev = ' '; // The initial value doesn't really matter
+        new_str.retain(|ch| {
+            let result = ch != ' ' || prev != ' ';
+            prev = ch;
+            result
+        });
+        new_str
     }
-    drop(name);
 
-    //otherwise 
-    let available_random_names: Vec<&String> = RANDOM_NAMES.iter().filter(|new_random_name| {
-        !players.values()
-            .map(|p| &p.name)
-            .any(|existing_name|{
-                    let mut new_random_name = trim_whitespace(new_random_name.trim());
-                    new_random_name.truncate(30);
-
-                    
-                    let mut existing_name = trim_whitespace(existing_name.trim());
-                    existing_name.truncate(30);
-
-                    new_random_name == existing_name
-                }
-            )
-    }).collect();
-
-    if available_random_names.is_empty() {
-        // Awesome name generator
-        // TODO make this better, or don't.
-        players.len().to_string()
-    } else {
-        available_random_names[rand::random::<usize>()%available_random_names.len()].clone()
+    ///
+    /// If the desired name is invalid or taken, this generates a random acceptable name.
+    /// Otherwise, this trims and returns the input name.
+    /// 
+    pub fn sanitize_name(mut desired_name: String, players: &HashMap<ArbitraryPlayerID, LobbyPlayer>) -> String {
+        desired_name = trim_whitespace(desired_name.trim());
+        desired_name.truncate(20);
+    
+        //if valid then return
+        if !desired_name.is_empty() && !players.values()
+            .any(|existing_player| desired_name == *existing_player.name)
+        {
+            return desired_name;
+        }
+        drop(desired_name);
+    
+        //otherwise 
+        let available_random_names: Vec<&String> = RANDOM_NAMES.iter().filter(|new_random_name| {
+            !players.values()
+                .map(|p| &p.name)
+                .any(|existing_name|{
+                        let mut new_random_name = trim_whitespace(new_random_name.trim());
+                        new_random_name.truncate(30);
+    
+                        
+                        let mut existing_name = trim_whitespace(existing_name.trim());
+                        existing_name.truncate(30);
+    
+                        new_random_name == existing_name
+                    }
+                )
+        }).collect();
+    
+        if available_random_names.is_empty() {
+            // Awesome name generator
+            // TODO make this better, or don't.
+            players.len().to_string()
+        } else {
+            available_random_names[rand::random::<usize>()%available_random_names.len()].clone()
+        }
     }
 }
