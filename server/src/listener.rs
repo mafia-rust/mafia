@@ -85,7 +85,7 @@ impl ConnectionEventListener for Listener {
                 }
             }
         } else {
-            println!("{} {}", log::error("Tried to disconnect a non existant player!"), connection.get_address())
+            println!("{} {}", log::error("Tried to disconnect a non existent player!"), connection.get_address())
         }
     }
 
@@ -102,9 +102,7 @@ impl ConnectionEventListener for Listener {
 }
 impl Listener{
     fn handle_message(&mut self, clients: &HashMap<SocketAddr, Connection>, connection: &Connection, message: &Message) -> Result<(), serde_json::Error> {
-
-        let json_value = serde_json::from_str::<Value>(message.to_string().as_str())?;
-        let incoming_packet = serde_json::value::from_value::<ToServerPacket>(json_value)?;
+        let incoming_packet = serde_json::from_str::<ToServerPacket>(message.to_string().as_str())?;
 
         let Some(sender_player_location) = self.players.get_mut(connection.get_address()) else {
             println!("{} {}", log::error("Received packet from unconnected player!"), connection.get_address());

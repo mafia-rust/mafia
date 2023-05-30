@@ -1,3 +1,19 @@
+//! 
+//! Examples of how serde serializes enum variants:
+//! ```
+//! #[derive(Serialize, Deserialize)]
+//! enum Test{
+//!     Unit(i8),           // {"Unit": 6}
+//!     Tuple(i8, bool),    // {"Tuple": [6, true]}
+//!     Zero,               // "Zero"
+//!     Struct{field: bool} // {"Struct": {"field": false}}
+//! }
+//! ```
+//! Options:
+//! Some(4).to_json_string()    // 4
+//! None.to_json_string()       // null
+//! 
+
 use std::collections::HashMap;
 
 use tokio_tungstenite::tungstenite::Message;
