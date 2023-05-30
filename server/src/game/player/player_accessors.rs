@@ -282,11 +282,29 @@ impl PlayerReference{
     }
     ///add chat message saying that they were jailed, and sends packet
     pub fn set_night_jailed(&self, game: &mut Game, jailed: bool){
-        self.deref_mut(game).night_variables.jailed = jailed;
         if jailed {
             self.send_packet(game, ToClientPacket::YourJailed);
-            self.add_chat_message(game, ChatMessage::JailedYou);
+            
+            let mut message_sent = false;
+            for chat_group in self.role(game).get_current_send_chat_groups(game, *self){
+                match chat_group {
+                    ChatGroup::All | ChatGroup::Dead | ChatGroup::Jail => {},
+                    ChatGroup::Mafia | ChatGroup::Vampire | ChatGroup::Coven => {
+                        game.add_message_to_chat_group(
+                            chat_group, 
+                            ChatMessage::JailedSomeone { player_index: self.index() }
+                        );
+                        message_sent = true;
+                    },
+                }
+            }
+            if message_sent {
+                self.add_chat_message(game, 
+                    ChatMessage::JailedSomeone { player_index: self.index() }
+                );
+            }
         }
+        self.deref_mut(game).night_variables.jailed = jailed;
     }
 
     pub fn night_silenced(&self, game: &Game) -> bool {

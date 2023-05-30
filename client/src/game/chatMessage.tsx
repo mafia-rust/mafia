@@ -71,7 +71,8 @@ export type ChatMessage = {
 } | {
     type: "mayorCantWhisper"
 } | {
-    type: "jailedYou"
+    type: "jailedSomeone",
+    playerIndex: PlayerIndex
 } | {
     type: "jailedTarget"
     playerIndex: PlayerIndex

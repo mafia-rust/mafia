@@ -64,7 +64,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
                     case "role":
                         return translate("role."+killer.role+".name");
                     case "faction":
-                        return translate("faction."+killer.role);
+                        return translate("faction."+killer.faction);
                     default:
                         return translate(killer.type);
                 }

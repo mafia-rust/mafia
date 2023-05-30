@@ -25,7 +25,7 @@ export type GraveDeathCause = {
 };
 export type GraveKiller = {
     type: "faction"
-    role: Faction
+    faction: Faction
 } | {
     type: "suicide"
 } | {
