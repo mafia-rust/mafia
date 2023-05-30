@@ -19,7 +19,6 @@ pub(super) const MAXIUMUM_COUNT: Option<u8> = Some(1);
 pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Faction;
 pub(super) const TEAM: Option<Team> = None;
 
-
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
     if priority != Priority::Kill { return; } 
 
@@ -34,6 +33,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
             }
 
             let RoleData::Jailor{ jailed_target_ref, executions_remaining } = actor_ref.role_data(game) else {unreachable!()};
+
             let executions_remaining = if target_ref.role(game).faction_alignment().faction() == Faction::Town { 0 } else { *executions_remaining - 1 };
             actor_ref.set_role_data(game, RoleData::Jailor{jailed_target_ref: None, executions_remaining});
         }

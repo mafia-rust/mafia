@@ -78,9 +78,11 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             } else {
                 let killers: string[] = [];
                 for (let killer of message.grave.deathCause.killers) {
-                    if (killer.type === "role") {
+                    if(killer.type === "role") {
                         killers.push(translate(`role.${killer.role}.name`))
-                    } else {
+                    }else if(killer.type === "faction") {
+                        killers.push(translate(`faction.${killer.faction}`))
+                    }else{
                         killers.push(translate(`grave.killer.${killer.type}`))
                     }
                 }
@@ -152,11 +154,13 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                 GAME_MANAGER.gameState.players[message.playerIndex].toString(),
             ), {color:"violet"})}</span>;
         case "jailedTarget":
-            return <span key={key}>{styleText(translate("chatmessage.jailedTarget", 
+            return <span key={key}>{styleText(translate("chatmessage.jailedTarget",
                 GAME_MANAGER.gameState.players[message.playerIndex].toString(),
             ), {color:"violet"})}</span>;
-        case "jailedYou":
-            return <span key={key}>{styleText(translate("chatmessage.jailedYou"), {color:"violet"})}</span>;
+        case "jailedSomeone":
+            return <span key={key}>{styleText(translate("chatmessage.jailedSomeone",
+                GAME_MANAGER.gameState.players[message.playerIndex].toString()
+            ), {color:"violet"})}</span>;
         default:
             console.error("Unknown message type: "+message.type);
             console.error(message);

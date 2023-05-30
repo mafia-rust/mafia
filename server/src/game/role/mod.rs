@@ -8,7 +8,6 @@ macro_rules! make_role_enum {
     ) => {
         $(pub(crate) mod $file;)*
 
-
         #[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
         #[serde(rename_all = "camelCase")]
         pub enum Role {
@@ -89,12 +88,12 @@ macro_rules! make_role_enum {
                     $(Role::$name => $file::do_day_action(game, actor_ref, target_ref)),*
                 }
             }
-            pub fn can_night_target(&self,  game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+            pub fn can_night_target(&self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
                 match self {
                     $(Role::$name => $file::can_night_target(game, actor_ref, target_ref)),*
                 }
             }
-            pub fn can_day_target(&self,  game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+            pub fn can_day_target(&self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
                 match self {
                     $(Role::$name => $file::can_day_target(game, actor_ref, target_ref)),*
                 }
@@ -184,7 +183,6 @@ make_role_enum! {
 
     VoodooMaster : voodoo_master
 }
-
 
 macro_rules! make_priority_enum {
     (
