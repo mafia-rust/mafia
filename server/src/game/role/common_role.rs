@@ -1,4 +1,4 @@
-use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, team::Team, role_list::Faction};
+use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, team::Team, role_list::Faction, phase::PhaseType};
 
 use super::Role;
 
@@ -33,14 +33,20 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
     }
 
     match game.phase_machine.current_state {
-        crate::game::phase::PhaseType::Morning => vec![],
-        crate::game::phase::PhaseType::Discussion => vec![ChatGroup::All],
-        crate::game::phase::PhaseType::Voting => vec![ChatGroup::All],
-        crate::game::phase::PhaseType::Testimony => {if game.player_on_trial == Some(actor_ref) {vec![ChatGroup::All]} else {vec![]}},
-        crate::game::phase::PhaseType::Judgement => vec![ChatGroup::All],
-        crate::game::phase::PhaseType::Evening => vec![ChatGroup::All],
-        crate::game::phase::PhaseType::Night => {
-            if actor_ref.night_jailed(game) || actor_ref.role(game) == Role::Jailor{
+        PhaseType::Morning => vec![],
+        PhaseType::Discussion => vec![ChatGroup::All],
+        PhaseType::Voting => vec![ChatGroup::All],
+        PhaseType::Testimony => {
+            if game.player_on_trial == Some(actor_ref) {
+                vec![ChatGroup::All]
+            } else {
+                vec![]
+            }
+        },
+        PhaseType::Judgement => vec![ChatGroup::All],
+        PhaseType::Evening => vec![ChatGroup::All],
+        PhaseType::Night => {
+            if actor_ref.night_jailed(game) || actor_ref.role(game) == Role::Jailor {
                 vec![ChatGroup::Jail]
             } else {
                 night_chat_groups

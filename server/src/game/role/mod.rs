@@ -181,7 +181,9 @@ make_role_enum! {
 
     CovenLeader : coven_leader,
 
-    VoodooMaster : voodoo_master
+    VoodooMaster : voodoo_master,
+
+    Jester : jester
 }
 
 macro_rules! make_priority_enum {

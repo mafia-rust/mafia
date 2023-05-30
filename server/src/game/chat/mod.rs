@@ -57,6 +57,7 @@ pub enum ChatMessage {
         trials_left: u8
     },
 
+    #[serde(rename_all = "camelCase")]
     Voted {
         voter: PlayerIndex, 
         votee: Option<PlayerIndex> 
@@ -91,6 +92,7 @@ pub enum ChatMessage {
     
     /* Misc */
     //Sammy targeted Jack
+    #[serde(rename_all = "camelCase")]
     Targeted {
         targeter: PlayerIndex,
         targets: Vec<PlayerIndex> 
@@ -107,6 +109,7 @@ pub enum ChatMessage {
     MayorCantWhisper,   //you cant whisper as or to a revealed mayor
     #[serde(rename_all = "camelCase")]
     JailedTarget{player_index: PlayerIndex}, //You jailed Sammy
+    #[serde(rename_all = "camelCase")]
     JailedSomeone{player_index: PlayerIndex}, //you have been jailed
     JailorDecideExecuteYou,     //Jailor has decided to execute you
     MediumSeanceYou,       //You are being seanced by the medium

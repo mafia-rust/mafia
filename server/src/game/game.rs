@@ -118,21 +118,11 @@ impl Game {
         }
 
         //check if phase is over and start next phase
-        while self.phase_machine.time_remaining <= Duration::ZERO{
+        while self.phase_machine.time_remaining <= Duration::ZERO {
+
             let new_phase = PhaseType::end(self);
 
-            //player reset
-            for player_ref in PlayerReference::all_players(self){
-                player_ref.reset_phase_start(self, new_phase);
-                player_ref.role(self).on_phase_start(self, player_ref, new_phase);
-            }
-
-            //game reset
-            self.reset_phase_start(new_phase);
-            
-            //phase start
-            self.jump_to_start_phase(new_phase);
-            
+            self.start_phase(new_phase);
         }
 
         for player_ref in PlayerReference::all_players(self){
@@ -145,6 +135,7 @@ impl Game {
             None => Duration::ZERO,
         };
     }
+
     pub fn reset_phase_start(&mut self, phase: PhaseType){
         match phase {
             PhaseType::Morning => {
@@ -159,17 +150,29 @@ impl Game {
             PhaseType::Night => {},
         }
     }
-    pub fn jump_to_start_phase(&mut self, phase: PhaseType){
+    pub fn start_phase(&mut self, phase: PhaseType){
+
         self.phase_machine.current_state = phase;
-        //fix time
+
+        //player reset
+        for player_ref in PlayerReference::all_players(self){
+            player_ref.reset_phase_start(self, phase);
+            player_ref.role(self).on_phase_start(self, player_ref, phase);
+        }
+
+        //game reset
+        self.reset_phase_start(phase);
+
+        //set timer
         self.phase_machine.time_remaining = self.phase_machine.current_state.get_length(&self.settings.phase_times);
+
         //call start
         PhaseType::start(self);
 
         self.send_packet_to_all(ToClientPacket::Phase { 
-            phase, 
-            day_number: self.phase_machine.day_number, 
-            seconds_left: self.phase_machine.time_remaining.as_secs() 
+            phase,
+            day_number: self.phase_machine.day_number,
+            seconds_left: self.phase_machine.time_remaining.as_secs()
         });
     }
 
