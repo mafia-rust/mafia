@@ -124,6 +124,8 @@ impl PlayerReference{
         self.send_packet(game, ToClientPacket::YourVoting { 
             player_index: self.chosen_vote(game).as_ref().map(PlayerReference::index)
         });
+        let player_votes_packet = ToClientPacket::new_player_votes(game);
+        game.send_packet_to_all(player_votes_packet);
         
         if send_chat_message {
             game.add_message_to_chat_group(ChatGroup::All, ChatMessage::Voted{
@@ -139,19 +141,20 @@ impl PlayerReference{
     pub fn verdict(&self, game: &Game) -> Verdict{
         self.deref(game).voting_variables.verdict
     }
-    pub fn set_verdict(&self, game: &mut Game, verdict: Verdict)->bool{
-        if game.current_phase() != PhaseType::Judgement{
-            return false;
-        }
-                
+    pub fn set_verdict(&self, game: &mut Game, verdict: Verdict, send_chat_message: bool){
+        
+        
         self.send_packet(game, ToClientPacket::YourJudgement { verdict });
-        if self.verdict(game) == verdict {
-            return false;
-        }
         self.deref_mut(game).voting_variables.verdict = verdict;
-        game.add_message_to_chat_group(ChatGroup::All, ChatMessage::JudgementVote { voter_player_index: self.index() });
 
-        true
+        if send_chat_message {
+            game.add_message_to_chat_group(
+                ChatGroup::All, 
+                ChatMessage::JudgementVote{ 
+                    voter_player_index: self.index() 
+                }
+            );
+        }
     }
 
     //NIGHT

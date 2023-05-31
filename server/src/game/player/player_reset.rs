@@ -13,16 +13,15 @@ impl PlayerReference{
     pub fn tick(&self, game: &mut Game){
         self.send_repeating_data(game);
     }
-    pub fn reset_phase_start(&self, game: &mut Game, phase: PhaseType){
+    pub fn on_phase_start(&self, game: &mut Game, phase: PhaseType){
         match phase {
             PhaseType::Morning => {
                 self.set_night_jailed(game, false);
             },
             PhaseType::Discussion => {},
             PhaseType::Voting => {
-                
                 self.set_chosen_vote(game, None, false);
-                self.set_verdict(game, Verdict::Abstain);
+                self.set_verdict(game, Verdict::Abstain, false);
             },
             PhaseType::Testimony => {},
             PhaseType::Judgement => {},
@@ -35,7 +34,7 @@ impl PlayerReference{
                 self.set_night_defense(game,         self.role(game).defense());
                 self.set_night_suspicious(game,      self.role(game).suspicious());
                 self.set_night_disguised_as(game,    None);
-                self.set_chosen_targets(game,  vec![]);
+                self.set_chosen_targets(game,   vec![]);
                 self.set_night_visits(game,          vec![]);
                 self.set_night_messages(game,  vec![]);
                 self.set_night_grave_role(game,  GraveRole::Role(self.role(game)));

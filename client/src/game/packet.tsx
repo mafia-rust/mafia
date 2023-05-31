@@ -53,7 +53,7 @@ export type ToClientPacket = {
     alive: [boolean]
 } | {
     type: "playerVotes",
-    votedForPlayer: [number]
+    votedForPlayer: Map<PlayerIndex, number>
 } | {
     type: "yourButtons", 
     buttons: [{

@@ -1,4 +1,6 @@
 
+use rand::seq::SliceRandom;
+
 use crate::game::chat::night_message::NightInformation;
 use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::grave::{Grave, GraveRole};
@@ -23,29 +25,37 @@ pub(super) const TEAM: Option<Team> = None;
 
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    if priority != Priority::TopPriority {return;}
     if actor_ref.night_alive_tonight(game) {return;}
+
     if game.player_on_trial != Some(actor_ref) {return;}
+    
+    let all_killable_players: Vec<PlayerReference> = PlayerReference::all_players(game)
+        .into_iter()
+        .filter(|player_ref|{
+            player_ref.night_alive_tonight(game) &&
+            *player_ref != actor_ref &&
+            player_ref.verdict(game) == Verdict::Guilty
+        }).collect();
 
-    match priority {
-        Priority::TopPriority=>{
+    let visit: Visit = match actor_ref.night_visits(game).first() {
+        Some(v) => v.clone(),
+        None => {
+            //get random player from list
+            let target_ref = all_killable_players.choose(&mut rand::thread_rng());
 
-            let all_killable_players = PlayerReference::all_players(game)
-                .iter()
-                .filter(|player_ref|{
-                    player_ref.night_alive_tonight(game) &&
-                    **player_ref != actor_ref &&
-                    player_ref.verdict(game) == Verdict::Guilty
-                });
-
-            let Some(visit) = actor_ref.night_visits(game).first() else {
-                return;
-            };
-
-            let target_ref = visit.target;
-            actor_ref.try_night_kill(game, crate::game::grave::GraveKiller::Role(super::Role::Jester), 3);
+            let Some(target_ref) = target_ref else {return};
+            Visit{
+                target: *target_ref,
+                astral: true,
+                attack: true,
+            }
         },
-        _ => {}
-    }
+    };
+
+    let target_ref = visit.target;
+    actor_ref.try_night_kill(game, crate::game::grave::GraveKiller::Role(super::Role::Jester), 3);
+
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
     actor_ref != target_ref &&

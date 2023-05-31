@@ -136,7 +136,7 @@ impl Game {
         };
     }
 
-    pub fn reset_phase_start(&mut self, phase: PhaseType){
+    pub fn on_phase_start(&mut self, phase: PhaseType){
         match phase {
             PhaseType::Morning => {
                 self.player_on_trial = None;
@@ -153,21 +153,21 @@ impl Game {
     pub fn start_phase(&mut self, phase: PhaseType){
 
         self.phase_machine.current_state = phase;
+        self.phase_machine.time_remaining = self.phase_machine.current_state.get_length(&self.settings.phase_times);
+
+        PhaseType::start(self); //THIS WAS RECENTLY MOVED BEFORE THE ON_PHASE_STARTS, PRAY THAT IT WONT CAUSE PROBLEMS
+
 
         //player reset
         for player_ref in PlayerReference::all_players(self){
-            player_ref.reset_phase_start(self, phase);
+            player_ref.on_phase_start(self, phase);
             player_ref.role(self).on_phase_start(self, player_ref, phase);
         }
 
         //game reset
-        self.reset_phase_start(phase);
+        self.on_phase_start(phase);
 
-        //set timer
-        self.phase_machine.time_remaining = self.phase_machine.current_state.get_length(&self.settings.phase_times);
 
-        //call start
-        PhaseType::start(self);
 
         self.send_packet_to_all(ToClientPacket::Phase { 
             phase,

@@ -51,7 +51,7 @@ export interface Player {
         target: boolean,
         vote: boolean,
     },
-    numVoted: number | null,
+    numVoted: number,
     alive: boolean,
     roleLabel: Role | null,
 

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::packet::{ToServerPacket, ToClientPacket};
 
-use super::{Game, player::{PlayerIndex, Player, PlayerReference, self}, phase::PhaseType, chat::{ChatGroup, ChatMessage, MessageSender}};
+use super::{Game, player::{PlayerIndex, Player, PlayerReference, self}, phase::PhaseType, chat::{ChatGroup, ChatMessage, MessageSender}, game};
 
 
 
@@ -74,7 +74,9 @@ impl Game {
                 }
             },
             ToServerPacket::Judgement { verdict } => {
-                sender_player_ref.set_verdict(self, verdict);
+                if self.current_phase() != PhaseType::Judgement {break 'packet_match;}
+                
+                sender_player_ref.set_verdict(self, verdict, true);
             },
             ToServerPacket::Target { player_index_list }=>{
                 let target_ref_list = match PlayerReference::index_vec_to_ref(self, &player_index_list){
