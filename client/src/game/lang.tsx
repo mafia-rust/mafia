@@ -72,6 +72,7 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             } else {
                 graveRoleString = translate(`grave.role.${message.grave.role.type}`);
             }
+
             let deathCause: string;
             if (message.grave.deathCause.type === "lynching") {
                 deathCause = translate("grave.deathCause.lynching")
@@ -79,9 +80,9 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                 let killers: string[] = [];
                 for (let killer of message.grave.deathCause.killers) {
                     if(killer.type === "role") {
-                        killers.push(translate(`role.${killer.role}.name`))
+                        killers.push(translate(`role.${killer.value}.name`))
                     }else if(killer.type === "faction") {
-                        killers.push(translate(`faction.${killer.faction}`))
+                        killers.push(translate(`faction.${killer.value}`))
                     }else{
                         killers.push(translate(`grave.killer.${killer.type}`))
                     }
@@ -106,7 +107,7 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                 message.trialsLeft
             ), {color:"orange"})}</span>;
         case "voted":
-            if (message.votee !== undefined) {
+            if (message.votee !== null) {
                 return <span key={key}>{styleText(translate("chatmessage.voted",
                     GAME_MANAGER.gameState.players[message.voter],
                     GAME_MANAGER.gameState.players[message.votee],
@@ -185,9 +186,7 @@ export function getNightInformationString(info: NightInformation){
 }
 
 
-
-
-function styleSubstring(
+function styleSubstrings(
         string: string, 
         stringsToStyle: {
             string: string, 
@@ -197,34 +196,65 @@ function styleSubstring(
         defaultStyle: React.CSSProperties = {}, 
     ): JSX.Element[]{
 
-    type StyledOrNot = string | {string: string, style: React.CSSProperties};
+    type StyledOrNot = {
+        type: "string"
+        string: string 
+    } | {
+        type: "styled"
+        string: string
+        style: React.CSSProperties
+    } | {
+        type: "br"
+    }
 
     let finalOutList: StyledOrNot[] = [];
-    finalOutList.push(string);
+
+    //add in br
+    string.split("\n").forEach((v, i, a) => {
+        finalOutList.push({type: "string", string: v});
+        if(i !== a.length-1) 
+            finalOutList.push({type: "br"});
+    });
+
 
     for(let i in stringsToStyle){
         for(let j in finalOutList){
 
-            if(typeof finalOutList[j] !== "string"){
+            let current = finalOutList[j];
+            if(current === undefined){
+                continue;
+            }
+            if(current.type !== "string"){
                 continue;
             }
 
             
             const regEscape = (v: string) => v.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 
-            let stringSplit = (finalOutList[j] as string).split(RegExp(regEscape(stringsToStyle[i].string), "gi"));
-            let outList: StyledOrNot[] = []; 
+            let currentStringSplit = current.string.split(RegExp(regEscape(stringsToStyle[i].string), "gi"));
 
-            for(let k in stringSplit){
-                if(stringSplit[k] !== "") outList.push(stringSplit[k]);
-                outList.push({string: stringsToStyle[i].string, style: stringsToStyle[i].style});
+
+            let currentOutList: StyledOrNot[] = []; 
+
+            for(let str of currentStringSplit){
+                if(str !== "")
+                    currentOutList.push({
+                        type: "string",
+                        string: str
+                    });
+
+                currentOutList.push({
+                    type: "styled",
+                    string: stringsToStyle[i].string, 
+                    style: stringsToStyle[i].style
+                });
             }
-            outList.pop();
+            currentOutList.pop();
 
             //inject outlist into finaloutlist at position j, without using splice
             finalOutList = 
                 finalOutList.slice(0, Number(j))
-                .concat(outList)
+                .concat(currentOutList)
                 .concat(finalOutList.slice(Number(j)+1));
         }
     }
@@ -234,23 +264,21 @@ function styleSubstring(
     //turn into jsx
     let outJsxList = [];
     for(let i in finalOutList){
-        if(typeof finalOutList[i] === "string"){
+        let current = finalOutList[i];
 
+        if(current.type === "br"){
+            outJsxList.push(<br key={i}/>);
+        }else if(current.type === "string"){
             outJsxList.push(
-            <span key={i} style={
-                defaultStyle
-            }>
-                {finalOutList[i] as string}
+            <span key={i} style={defaultStyle}>
+                {current.string}
             </span>);
-
-        }else if(typeof finalOutList[i] === "object"){
+        }else if(current.type === "styled"){
             outJsxList.push(
             <span key={i}
-                className={(finalOutList[i] as {string: string, style: string, className: string|undefined}).className}
-                style={
-                (finalOutList[i] as {string: string, style: string}).style as React.CSSProperties
-            }>
-                {(finalOutList[i] as {string: string, style: string}).string as string}
+                style={current.style}
+            >
+                {current.string}
             </span>);
         }
     }
@@ -260,6 +288,7 @@ function styleSubstring(
 
 export function styleText(string: string, defaultStyle: React.CSSProperties = {}): JSX.Element[]{
     let stringsToStyle: {string: string, style: React.CSSProperties, className:string|undefined}[] = [];
+
 
     stringsToStyle = stringsToStyle.concat(
         GAME_MANAGER.gameState.players.map((player: Player)=>{
@@ -328,7 +357,5 @@ export function styleText(string: string, defaultStyle: React.CSSProperties = {}
         {string:translate("menu.wiki.attributes"), style:{color:"lightblue"}, className:undefined},
     ]);
 
-    
-
-    return styleSubstring(string, stringsToStyle, defaultStyle);
+    return styleSubstrings(string, stringsToStyle, defaultStyle);
 }

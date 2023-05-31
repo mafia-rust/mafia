@@ -38,7 +38,7 @@ export type ChatMessage = {
 } | {
     type: "voted", 
     voter: PlayerIndex, 
-    votee: PlayerIndex | undefined 
+    votee: PlayerIndex | null 
 } | {
     type: "playerOnTrial", 
     playerIndex: PlayerIndex

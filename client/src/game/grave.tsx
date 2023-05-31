@@ -5,7 +5,7 @@ export interface Grave {
 
     role: GraveRole,
     deathCause: GraveDeathCause,
-    will: String,
+    will: string,
 
     diedPhase: GravePhase,
     dayNumber: number,
@@ -25,12 +25,12 @@ export type GraveDeathCause = {
 };
 export type GraveKiller = {
     type: "faction"
-    faction: Faction
+    value: Faction
 } | {
     type: "suicide"
 } | {
     type: "role"
-    role: Role
+    value: Role
 };
 
 export type GravePhase = "day" | "night"

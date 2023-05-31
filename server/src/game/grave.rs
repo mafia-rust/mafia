@@ -39,7 +39,7 @@ pub enum GraveDeathCause {
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-#[serde(tag = "type", content = "role")]
+#[serde(tag = "type", content = "value")]
 pub enum GraveKiller {
     Faction(Faction),
     Role(Role),

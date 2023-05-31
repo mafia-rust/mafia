@@ -62,9 +62,9 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             deathCauseString = grave.deathCause.killers.map((killer)=>{
                 switch(killer.type){
                     case "role":
-                        return translate("role."+killer.role+".name");
+                        return translate("role."+killer.value+".name");
                     case "faction":
-                        return translate("faction."+killer.faction);
+                        return translate("faction."+killer.value);
                     default:
                         return translate(killer.type);
                 }
@@ -83,7 +83,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             {styleText(diedPhaseString+" "+grave.dayNumber)} <br/>
             {styleText(this.state.gameState.players[grave.playerIndex]?.toString()+" ("+graveRoleString+")")}<br/>
             {styleText(translate("menu.graveyard.killedBy")+" "+deathCauseString)}<br/>
-            {grave.will}
+            <div className="will-area">{styleText(grave.will)}</div>
         </button>);
     }
 

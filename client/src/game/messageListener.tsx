@@ -109,8 +109,11 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "playerVotes":
-            for(let i = 0; i < GAME_MANAGER.gameState.players.length && i < packet.votedForPlayer.length; i++){
-                GAME_MANAGER.gameState.players[i].numVoted = packet.votedForPlayer[i];
+            for(let i = 0; i < GAME_MANAGER.gameState.players.length; i++){
+                GAME_MANAGER.gameState.players[i].numVoted = 0;
+            }
+            for(let [playerIndex, numVoted] of Object.entries(packet.votedForPlayer)){
+                GAME_MANAGER.gameState.players[Number.parseInt(playerIndex)].numVoted = numVoted;
             }
         break;
         case "yourButtons":

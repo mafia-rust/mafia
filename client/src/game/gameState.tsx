@@ -46,7 +46,7 @@ export function createPlayer(name: string, index: number): Player {
             target: false,
             vote: false,
         },
-        numVoted: null,
+        numVoted: 0,
         alive:true,
         roleLabel: null,
 
