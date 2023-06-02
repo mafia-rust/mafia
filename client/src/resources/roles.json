@@ -35,6 +35,15 @@
         "endGameCondition": "Faction",
         "maxCount": null
     },
+    "bodyguard": {
+        "factionAlignment": "townProtective",
+        "suspicious": false,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": null
+    },
     "vigilante": {
         "factionAlignment": "townKilling",
         "suspicious": false,
@@ -97,6 +106,15 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": 1
+    },
+    "framer": {
+        "factionAlignment": "mafiaDeception",
+        "suspicious": true,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": null
     },
     "covenLeader": {
         "factionAlignment": "covenPower",

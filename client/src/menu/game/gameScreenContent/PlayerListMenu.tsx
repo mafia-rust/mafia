@@ -52,6 +52,8 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 return styleText(jailedString+" "+this.state.gameState.roleData.executionsRemaining);
             case "doctor":
                 return styleText(""+this.state.gameState.roleData.selfHealsRemaining);
+            case "bodyguard":
+                return styleText(""+this.state.gameState.roleData.selfShieldsRemaining);
             case "vigilante":
                 if(this.state.gameState.roleData.willSuicide)
                     return styleText(translate("grave.killer.suicide"));

@@ -69,7 +69,9 @@ export type RoleData = {
 } | {
     role: "doctor",
     selfHealsRemaining: number,
-    // targetHealedRef: number | null
+} | {
+    role: "bodyguard",
+    selfShieldsRemaining: number,
 } | {
     role: "vigilante",
     bulletsRemaining: number,
@@ -77,7 +79,6 @@ export type RoleData = {
 } | {
     role:"veteran"
     alertsRemaining: number,
-    // alertingTonight: boolean
 } | {
     role:"escort"
 } | {
@@ -89,7 +90,6 @@ export type RoleData = {
 } | {
     role:"janitor"
     cleansRemaining: number,
-    // cleaned_ref: Option<PlayerReference> = None
 } | {
     role:"covenLeader"
 } | {
