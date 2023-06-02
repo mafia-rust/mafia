@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
-use crate::packet::{ToServerPacket, ToClientPacket};
+use crate::{packet::{ToServerPacket, ToClientPacket}, strings::{trim_new_line, trim_whitespace}};
 
-use super::{Game, player::{PlayerIndex, Player, PlayerReference, self}, phase::PhaseType, chat::{ChatGroup, ChatMessage, MessageSender}, game};
+use super::{Game, player::{PlayerIndex, Player, PlayerReference, self}, phase::PhaseType, chat::{ChatGroup, ChatMessage, MessageSender}, game, role::Role};
 
 
 
@@ -123,10 +123,25 @@ impl Game {
                 }
                 
                 for chat_group in sender_player_ref.role(self).get_current_send_chat_groups(self, sender_player_ref){
+
+                    let message_sender = 
+                    if sender_player_ref.role(self) == Role::Jailor && chat_group == ChatGroup::Jail {
+                        MessageSender::Jailor
+                    } else if sender_player_ref.role(self) == Role::Medium && sender_player_ref.alive(self) && chat_group == ChatGroup::Dead{
+                        MessageSender::Medium
+                    } else {
+                        MessageSender::Player {player: sender_player_index}
+                    };
+
                     self.add_message_to_chat_group(
                         chat_group.clone(),
                         //TODO message sender, Jailor & medium
-                        ChatMessage::Normal { message_sender: MessageSender::Player {player: sender_player_index} , text: text.clone(), chat_group }
+
+                        ChatMessage::Normal{
+                            message_sender,
+                            text: trim_whitespace(&trim_new_line(&text.clone())), 
+                            chat_group
+                        }
                     );
                 }
             },

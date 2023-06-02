@@ -3,4 +3,26 @@
 }
 .header-menu{
     background-color: var(--secondary-color);
+    justify-content: center;
+}
+.header-menu .judgement-specific{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.header-menu .judgement-specific > div{
+    background-color: var(--background-color);
+    border: 1px solid var(--primary-border-color);
+    border-radius: 10px;
+    padding: .1em .3em;
+}
+.header-menu .verdict-buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content:center;    
+}
+.header-menu .verdict-buttons > button{
+    width: max-content;
+    padding: .1em 1em;
+    margin: .1em;
 }

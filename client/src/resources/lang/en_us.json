@@ -82,6 +82,10 @@
     "role.medium.abilities":"*You can talk with the dead during the night",
     "role.medium.attributes":"*You can talk to other mediums during the night as well",
     
+    "role.vigilante.name": "Vigilante",
+    "role.vigilante.abilities":"*Target a player to shoot them",
+    "role.vigilante.attributes":"*You have three bullets*You can't shoot night 1*If you shoot a town member, you will commit suicide the next night*Your suicide deals an unstoppable attack towards yourself*You have a basic attack",
+
     "role.veteran.name": "Veteran",
     "role.veteran.abilities":"*Target yourself to alert, killing everyone who visits you",
     "role.veteran.attributes":"*You will know if you attack someone*You have a powerfull attack*You have basic defense while on alert",
@@ -105,6 +109,10 @@
     "role.voodooMaster.name": "Voodoo Master",
     "role.voodooMaster.abilities":"",
     "role.voodooMaster.attributes":"",
+
+    "role.jester.name": "Jester",
+    "role.jester.abilities":"*Get lynched to win*After you are lynched, you can kill a player who didn't vote innocent",
+    "role.jester.attributes":"*If you target nobody, you will kill a random player*You have an unstoppable attack",
 
     "grave.role.cleaned": "Cleaned",
     "grave.role.petrified": "Petrified",

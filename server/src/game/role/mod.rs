@@ -162,6 +162,10 @@ make_role_enum! {
         target_healed_ref: Option<PlayerReference> = None
     },
 
+    Vigilante : vigilante {
+        bullets_remaining: u8 = 3,
+        will_suicide: bool = false
+    },
     Veteran : veteran {
         alerts_remaining: u8 = 3,
         alerting_tonight: bool = false

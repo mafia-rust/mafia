@@ -37,14 +37,17 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
     renderWillInput(){
         return (<div className="textarea-section">
             {translate("menu.will.will")}
-            <button onClick={()=>{GAME_MANAGER.sendSaveWillPacket(this.state.willFeild)}}>{translate("menu.will.save")}</button>
+            <button 
+                onClick={()=>{GAME_MANAGER.sendSaveWillPacket(this.state.willFeild)}}
+                style={{borderColor: this.state.gameState.will === this.state.willFeild ? undefined : "yellow"}}
+            >{translate("menu.will.save")}</button>
             <button onClick={()=>{GAME_MANAGER.sendSendMessagePacket(this.state.gameState.will)}}>{translate("menu.will.post")}</button>
             <textarea
-                onKeyPress={(e) => {
-                    if(e.code === "Enter") {
-                        GAME_MANAGER.sendSaveWillPacket(this.state.willFeild)
-                    }
-                }}
+                // onKeyPress={(e) => {
+                //     if(e.code === "Enter") {
+                //         GAME_MANAGER.sendSaveWillPacket(this.state.willFeild)
+                //     }
+                // }}
                 value={this.state.willFeild}
                 onChange={(e)=>{this.setState({willFeild : e.target.value});}}>
             </textarea>
@@ -53,14 +56,17 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
     renderNotesInput(){
         return (<div className="textarea-section">
             {translate("menu.will.notes")}
-            <button onClick={()=>{GAME_MANAGER.sendSaveNotesPacket(this.state.notesFeild)}}>{translate("menu.will.save")}</button>
+            <button 
+                onClick={()=>{GAME_MANAGER.sendSaveNotesPacket(this.state.notesFeild)}}
+                style={{borderColor: this.state.gameState.notes === this.state.notesFeild ? undefined : "yellow"}}
+            >{translate("menu.will.save")}</button>
             <button onClick={()=>{GAME_MANAGER.sendSendMessagePacket(this.state.gameState.notes)}}>{translate("menu.will.post")}</button>
             <textarea
-                onKeyPress={(e) => {
-                    if(e.code === "Enter") {
-                        GAME_MANAGER.sendSaveNotesPacket(this.state.notesFeild)
-                    }
-                }}
+                // onKeyPress={(e) => {
+                //     if(e.code === "Enter") {
+                //         GAME_MANAGER.sendSaveNotesPacket(this.state.notesFeild)
+                //     }
+                // }}
                 value={this.state.notesFeild}
                 onChange={(e)=>{this.setState({notesFeild : e.target.value});}}>
             </textarea>
