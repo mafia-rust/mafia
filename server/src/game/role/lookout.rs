@@ -32,9 +32,10 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
         }
         
         let message = NightInformation::LookoutResult { players: 
-            PlayerReference::all_players(game).iter().filter(|player_ref|{
-                player_ref.night_visits(game).iter().any(|other_visit| other_visit.target == visit.target)
-            }).map(PlayerReference::index).collect()
+            PlayerReference::all_players(game).into_iter().filter(|player_ref|{
+                player_ref.night_appeared_visits(game).iter().any(|other_visit| other_visit.target == visit.target) && //if they visited your target
+                *player_ref != actor_ref //and they are not you
+            }).map(|player_ref|player_ref.index()).collect()
         };
         
         actor_ref.push_night_messages(game, message);

@@ -52,7 +52,7 @@
     "menu.playerList.button.resetVote":"Clear Vote",
     "menu.playerList.button.target":"Target",
     "menu.playerList.button.resetTargets":"Clear Targets",
-    "menu.playerList.button.dayTarget":"Day Target",
+    "menu.playerList.button.dayTarget":"Special",
     "menu.playerList.button.filter":"Filter",
 
     "menu.graveyard.title": "Graveyard",
@@ -68,11 +68,15 @@
     
     "role.lookout.name": "Lookout",
     "role.lookout.abilities": "*Target a player to find everyone who targeted them",
-    "role.lookout.attributes": "*You can not see astral visits",
+    "role.lookout.attributes": "*You can not see astral visits*You can never see yourself visit",
 
     "role.doctor.name": "Doctor",
-    "role.doctor.abilities":"*Target a player to save them from death",
-    "role.doctor.attributes":"*You give your target powerfull defense*You and your target will know they were attacked",
+    "role.doctor.abilities":"*Target a player to save them from death*Target yourself one time to save yourself",
+    "role.doctor.attributes":"*You give your target powerfull defense*You and your target will know if they were attacked and saved",
+
+    "role.bodyguard.name": "Bodyguard",
+    "role.bodyguard.abilities":"*Target a player to guard them, killing their attacker, but getting attacked yourself*Target yourself one time to protect yourself",
+    "role.bodyguard.attributes":"*When you guard yourself, you gain powerfull defense*You and your target will know if they were attacked and protected*You will redirect attacks from your target onto yourself, and you will attack those players back",
 
     "role.escort.name": "Escort",
     "role.escort.abilities":"*Target a player to roleblock them",
@@ -102,6 +106,10 @@
     "role.janitor.abilities":"*Target a player on the night they die to clean them",
     "role.janitor.attributes":"*Cleaning a player erases information from their grave*You will know the role and will of a player you clean, but it wont show up in the graveyard",
     
+    "role.framer.name": "Framer",
+    "role.framer.abilities":"*Target two players to frame the first one",
+    "role.framer.attributes":"*Lookouts and trackers will see that your first target visited your second target*Psychics will see framed players as evil*Seers will see framed players as mafia*Sheriffs will see framed players as suspicious*You can only pick non mafia memebers for your first target, but anyone as your second target",
+
     "role.covenLeader.name": "Coven Leader",
     "role.covenLeader.abilities":"",
     "role.covenLeader.attributes":"",

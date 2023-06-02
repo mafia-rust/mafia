@@ -161,6 +161,11 @@ make_role_enum! {
         self_heals_remaining: u8 = 1,
         target_healed_ref: Option<PlayerReference> = None
     },
+    Bodyguard : bodyguard {
+        self_shields_remaining: u8 = 1,
+        redirected_player_refs: Vec<PlayerReference> = Vec::new(),
+        target_protected_ref: Option<PlayerReference> = None
+    },
 
     Vigilante : vigilante {
         bullets_remaining: u8 = 3,
@@ -182,6 +187,7 @@ make_role_enum! {
         cleans_remaining: u8 = 3,
         cleaned_ref: Option<PlayerReference> = None
     },
+    Framer : framer,
 
     CovenLeader : coven_leader,
 
@@ -214,10 +220,11 @@ make_priority_enum! {
     Necromancy,
 
     Roleblock,
-
     Deception,
+
     Trickster,
     Bodyguard,
+
     Heal,
     Kill,
     Investigative,
@@ -230,104 +237,39 @@ mod common_role;
 /*
 New Proposed priorities:
 
-1 Top
+Top
     Jester(Kill), Vigilante(Suicide)
-1 Unswappable
+Unswappable
     Arsonist(Clear self), All decidedes (Vet decide)
     Ritualist, Doomsayer?
-
-3 Swaps
+Transporter
     Transporter(Swap)
-5 Controlls
-    Witch(Swap), Retributionist(Swap) Necromancer(Swap)
-6 Roleblock
+Controlls
+    Witch(Swap), 
+cromany,
+    Retributionist(Swap) Necromancer(Swap)
+Roleblock
     Escort Consort Poisoner(roleblock)
-
-
-7 Deception
-    Arsonist(Douse), Janitor(Clean), Forger(Yea), Disguiser, Werewolf(Make slef inno or sus)
+Deception
+    Arsonist(Douse), Janitor(Clean), Forger(Yea), Framer(Frame), Werewolf(Make slef inno or sus)
     HexMaster(Hex), Enchanter(Alter/Enchant), Poisoner(Poison), Illusionist, Dreamweaver(Choose to dreamweave), VoodooMaster, Medusa
     Shroud(make harmful)
-8 Deception Effected Swaps
+Trickster
     Trickster(Swap)
-9
+Bodyguard
     Bodyguard(Swap)
-10 Heal
+Heal
     Doctor, PotionMaster(Heal), Veteran(Heal self) Bodyguard(Heal self), PotionMaser(protect), Trapper(Build/Place/Protect), Crusader(Heal)
-
-11 Kill
+Kill
     Ambusher CovenLeader, Necronomicon, Arsonist(Ignite) HexMaster(Kill) Veteran(Kill) Poisoner(Kill) PotionMaser(kill) Trapper(kill)
     Jinx, Shroud(kill), Crusader(Kill) Jailor(Kill)
-12 Investigative
+Investigative
     Sheriff, Investigator, Lookout, Tracker, Trapper(Investigate)
     Spy(Mafia/Coven visits + bug), Seer, Psychic, Coroner, Wildling
     Janitor(Who died) Bodyguard(Notif) Doctor(Notif) Arsonist(Who visited me) PotionMaser(reveal)
-13
+StealMessages
     Witch(steal messages)
     
 
 
- */
-
-
-
-/*
-Proposed Priorities:
-
-Visit objects created key:
-nv = no visit
-av = astral visit
-v = visit
-
-Highest importance
-+1: Jester(Kill, av) Vigilante(Suicide, nv) Arsonist(Clear self, nv) Vampire(Choose Leader, nv) Witch(Activate sheild, nv) Veteran(Decide, av) Retributionist(Decide and witch, av, av) //non transportable or witchable
-Non roleblockable Swaps
-+2: Transporter(Swaps, v, v)
-+3: Witch(Swap, v, av) 
-RB
-+4: Escort/Consort(Roleblock, v)
-Swaps
-+5: Godfather("witch mafioso if theyre not rbd, clear targets on self", av)
-+6: Doctor(Heal, v) Bodyguard("Witch attacker", v) //all attacks should happen after this
-Deception
-+7: Blackmailer, Arsonist(Douse&visitors, v&nv), Framer(Frame&visitors, v&nv), Disguiser("Swap", v, v) Werewolf("unframe", nv) Forger(Frame, v) Janitor(Clean, v)   //investigations happen after this
-Investigation
-+8: Invest, Sheriff, Lookout, Tracker, Consig
-Kills
-+9: Mafioso/Godfather/Sk/Ww/Vet/Vig/Vamp/Arso/Bg/Vig("Kill & make grave")
-Notify
-+10: Doc(Notify both, nv) Bg(Notify both, nv) Janitor(notify, nv), Forger(notify, nv) Vamp(Inform Leader & new vamp, nv) Arsonist(Inform who is doused, nv)
-Convert + bug
-+11: spy(bug, v)
-+12: Witch(bug)
-
-//graves made
-
-After night is over
-    Exe convert
-    mafioso convert
-    Amne(Convert)
-    Vamp(Convert)
-*/
-
-
-
-/*
-Old Priorities:
-
--12: Veteran(Decides Alert) Vigilante(Suicide) Jester(Kill) Arsonist(Clean self) Vampire(Choose Leader)
--10: Transporter(Swaps)
--8: Witch(Swaps, Activate sheild)
--7: Retributionist(Choose to revive)
--6: Escort / Consort(Roleblock)
--4: Godfather(Swap mafioso target and clear self)
--2 bodyguard(swap)
-0: visits happen here
-+2: Doctor(Heal), Blackmailer(Decide), Crusader(Heal), Arsonist(Douse), Framer, Disguiser Werewolf(innos themself)
-+4: Sheriff, Invest, Consig, Lookout, Tracker, Arsonist(Find who visited)
-+6: Mafioso/Godfather, SerialKiller, Werewolf, Veteran, Vampire, Arsonist, Crusader, Bodyguard, Vigilante (All kill)
-+8: Forger(Change info), Janitor(Clean & info), Doctor(Notify) Bodyguard(Notify) 
-+10: Spy(Collect info) Vampire(Inform of leader) Arsonist(Inform who is doused)
-+11: Amnesiac(Convert) Vampire(Convert) Executioner(convert)
-+12: Witch(Steal info & Remove sheild)
 */

@@ -69,7 +69,9 @@ export type RoleData = {
 } | {
     role: "doctor",
     selfHealsRemaining: number,
-    // targetHealedRef: number | null
+} | {
+    role: "bodyguard",
+    selfShieldsRemaining: number,
 } | {
     role: "vigilante",
     bulletsRemaining: number,
