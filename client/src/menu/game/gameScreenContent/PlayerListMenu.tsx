@@ -43,15 +43,23 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     renderRoleSpecific(){
         switch(this.state.gameState.roleData?.role){
             case "jailor":
-                return(<div>
-                    {this.state.gameState.roleData.jailedTargetRef==null?
-                        translate("none"):
-                        this.state.gameState.players[this.state.gameState.roleData.jailedTargetRef].toString()
-                    }
-                    {this.state.gameState.roleData.executionsRemaining}
-                    
-                </div>);
+                if(this.state.gameState.phase==="night")
+                    return styleText(""+this.state.gameState.roleData.executionsRemaining);
 
+                let jailedString = this.state.gameState.roleData.jailedTargetRef!=null?
+                    this.state.gameState.players[this.state.gameState.roleData.jailedTargetRef].toString():
+                    translate("none");
+                return styleText(jailedString+" "+this.state.gameState.roleData.executionsRemaining);
+            case "doctor":
+                return styleText(""+this.state.gameState.roleData.selfHealsRemaining);
+            case "vigilante":
+                if(this.state.gameState.roleData.willSuicide)
+                    return styleText(translate("grave.killer.suicide"));
+                return styleText(""+this.state.gameState.roleData.bulletsRemaining);
+            case "veteran":
+                return styleText(""+this.state.gameState.roleData.alertsRemaining);
+            case "janitor":
+                return styleText(""+this.state.gameState.roleData.cleansRemaining);
         }
     }
     renderPhaseSpecific(){
@@ -136,9 +144,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         >{translate("menu.playerList.button.vote")}</button>
                     )}})(player)}
                 </div>
-            </div>
-
-            
+            </div>            
         </div>)
     }
     renderPlayers(players: Player[]){
@@ -182,8 +188,8 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
             }/>
             {translate("menu.playerList.button.hideDead")}
         </label>
-        {this.renderRoleSpecific()}
-        {this.renderPhaseSpecific()}
+        <div className="role-specific">{this.renderRoleSpecific()}</div>
+        <div className="phase-specific">{this.renderPhaseSpecific()}</div>
         {this.renderPlayers(this.state.gameState.players)}
     </div>)}
 }

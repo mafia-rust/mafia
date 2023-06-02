@@ -35,6 +35,15 @@
         "endGameCondition": "Faction",
         "maxCount": null
     },
+    "vigilante": {
+        "factionAlignment": "townKilling",
+        "suspicious": false,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": null
+    },
     "veteran": {
         "factionAlignment": "townKilling",
         "suspicious": false,
@@ -106,5 +115,14 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": 1
+    },
+    "jester": {
+        "factionAlignment": "neutralEvil",
+        "suspicious": false,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "None",
+        "maxCount": null
     }
 }

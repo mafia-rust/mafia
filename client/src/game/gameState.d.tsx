@@ -71,6 +71,10 @@ export type RoleData = {
     selfHealsRemaining: number,
     // targetHealedRef: number | null
 } | {
+    role: "vigilante",
+    bulletsRemaining: number,
+    willSuicide: boolean,
+} | {
     role:"veteran"
     alertsRemaining: number,
     // alertingTonight: boolean

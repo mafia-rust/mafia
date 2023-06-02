@@ -54,7 +54,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
     };
 
     let target_ref = visit.target;
-    actor_ref.try_night_kill(game, crate::game::grave::GraveKiller::Role(super::Role::Jester), 3);
+    target_ref.try_night_kill(game, crate::game::grave::GraveKiller::Role(super::Role::Jester), 3);
 
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -62,6 +62,7 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
     actor_ref.chosen_targets(game).is_empty() &&
     !actor_ref.alive(game) &&
     target_ref.alive(game) &&
+    target_ref.verdict(game) != Verdict::Innocent &&
     game.player_on_trial == Some(actor_ref)
 }
 pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {

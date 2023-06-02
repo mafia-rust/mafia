@@ -318,6 +318,11 @@ export function styleText(string: string, defaultStyle: React.CSSProperties = {}
                     color: "red"
                 }, className: undefined});
                 break;
+            case "neutral":
+                stringsToStyle.push({string:translate("role."+role+".name"), style:{
+                    color: "orange"
+                }, className: undefined});
+                break;
         }
     }
 
@@ -332,7 +337,7 @@ export function styleText(string: string, defaultStyle: React.CSSProperties = {}
 
         {string:translate("faction.town"), style:{color:"lime"}, className:undefined},
         {string:translate("faction.mafia"), style:{color:"red"}, className:undefined},
-        {string:translate("faction.neutral"), style:{color:"cyan"}, className:undefined},
+        {string:translate("faction.neutral"), style:{color:"orange"}, className:undefined},
         {string:translate("faction.coven"), style:{color:"magenta"}, className:undefined},
 
         {string:translate("alignment.killing"), style:{color:"lightblue"}, className:undefined},
@@ -355,6 +360,8 @@ export function styleText(string: string, defaultStyle: React.CSSProperties = {}
 
         {string:translate("menu.wiki.abilities"), style:{color:"lightblue"}, className:undefined},
         {string:translate("menu.wiki.attributes"), style:{color:"lightblue"}, className:undefined},
+
+        {string:translate("grave.killer.suicide"), style:{color:"lightblue"}, className:undefined}
     ]);
 
     return styleSubstrings(string, stringsToStyle, defaultStyle);

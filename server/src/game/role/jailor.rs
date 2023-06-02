@@ -73,7 +73,13 @@ pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference,
     crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, true)
 }
 pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-    crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
+    crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, 
+        if PlayerReference::all_players(game).into_iter().any(|p|p.night_jailed(game)) {
+            vec![ChatGroup::Jail]
+        }else{
+            vec![]
+        }
+    )
 }
 pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
     crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
@@ -86,10 +92,13 @@ pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, phase:
     let executions_remaining = *executions_remaining;
     
     if let Some(jailed_ref) = jailed_target_ref.to_owned() {
-        jailed_ref.set_night_jailed(game, true);
-        actor_ref.add_chat_message(game, 
-            ChatMessage::JailedTarget{ player_index: jailed_ref.index() }
-        );
+        if jailed_ref.alive(game){
+    
+            jailed_ref.set_night_jailed(game, true);
+            actor_ref.add_chat_message(game, 
+                ChatMessage::JailedTarget{ player_index: jailed_ref.index() }
+            );
+        }
     }
     actor_ref.set_role_data(game, RoleData::Jailor{ jailed_target_ref: None, executions_remaining });
 }

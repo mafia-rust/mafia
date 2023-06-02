@@ -34,11 +34,6 @@ export default class LobbyPlayerList extends React.Component<any, PlayerListStat
     
     renderName(){return(
         <div className="name-box">
-            <button onClick={()=>{
-                GAME_MANAGER.sendSetNamePacket(this.state.enteredName)
-            }}>{translate("menu.lobby.button.setName")}</button>
-
-
             <input type="text" value={this.state.enteredName}
                 onChange={(e)=>{this.setState({enteredName: e.target.value})}}
                 placeholder={translate("menu.lobby.field.namePlaceholder")}
@@ -47,6 +42,9 @@ export default class LobbyPlayerList extends React.Component<any, PlayerListStat
                         GAME_MANAGER.sendSetNamePacket(this.state.enteredName);
                 }}
             />
+            <button onClick={()=>{
+                GAME_MANAGER.sendSetNamePacket(this.state.enteredName)
+            }}>{translate("menu.lobby.button.setName")}</button>
         </div>
     )}
 

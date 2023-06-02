@@ -262,7 +262,7 @@ impl Lobby {
 
 mod name_validation {
     use std::collections::HashMap;
-    use crate::listener::ArbitraryPlayerID;
+    use crate::{listener::ArbitraryPlayerID, strings::{trim_whitespace, trim_new_line}};
     use super::LobbyPlayer;
     use lazy_static::lazy_static;
 
@@ -283,17 +283,6 @@ mod name_validation {
             random_names
         };
     );
-
-    fn trim_whitespace(s: &str) -> String {
-        let mut new_str = s.trim().to_owned();
-        let mut prev = ' '; // The initial value doesn't really matter
-        new_str.retain(|ch| {
-            let result = ch != ' ' || prev != ' ';
-            prev = ch;
-            result
-        });
-        new_str
-    }
 
     ///
     /// If the desired name is invalid or taken, this generates a random acceptable name.
@@ -316,11 +305,11 @@ mod name_validation {
             !players.values()
                 .map(|p| &p.name)
                 .any(|existing_name|{
-                        let mut new_random_name = trim_whitespace(new_random_name.trim());
+                        let mut new_random_name = trim_whitespace(&trim_new_line(new_random_name.trim()));
                         new_random_name.truncate(30);
     
                         
-                        let mut existing_name = trim_whitespace(existing_name.trim());
+                        let mut existing_name = trim_whitespace(&trim_new_line(existing_name.trim()));
                         existing_name.truncate(30);
     
                         new_random_name == existing_name

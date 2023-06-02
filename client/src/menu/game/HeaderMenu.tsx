@@ -40,24 +40,29 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             case "judgement":
             //TODO make buttons light up if they are clicked instead of showing what you voted seperately
             if(this.state.gameState.playerOnTrial !== null){
-                return(<div>
+                return(<div className="judgement-specific">
+                    <div>
                     {this.state.gameState.players[this.state.gameState.playerOnTrial!]?.toString()}
                     {(()=>{
-                    if( this.state.gameState.playerOnTrial !== this.state.gameState.myIndex && 
-                        this.state.gameState.players[this.state.gameState.myIndex!].alive)
-                        return(<div>
-                            {styleText(translate("verdict."+this.state.gameState.judgement?.toLowerCase()))}
-                        <div
-                            style={{
-                                display:"grid",
-                                gridAutoColumns: "1fr",
-                            }}
-                        >
-                            <button style={{gridColumn: 2}} onClick={()=>{GAME_MANAGER.sendJudgementPacket("guilty")}}>{styleText(translate("verdict.guilty"))}</button>
-                            <button style={{gridColumn: 3}} onClick={()=>{GAME_MANAGER.sendJudgementPacket("abstain")}}>{styleText(translate("verdict.abstain"))}</button>
-                            <button style={{gridColumn: 4}} onClick={()=>{GAME_MANAGER.sendJudgementPacket("innocent")}}>{styleText(translate("verdict.innocent"))}</button>
-                            <div style={{gridColumn: 5}}></div>
-                        </div></div>);})()}
+                        if( this.state.gameState.playerOnTrial !== this.state.gameState.myIndex && 
+                            this.state.gameState.players[this.state.gameState.myIndex!].alive)
+
+                            return(<div className="verdict-buttons">
+                                <button
+                                    onClick={()=>{GAME_MANAGER.sendJudgementPacket("guilty")}}
+                                    style={{borderColor: this.state.gameState.judgement === "guilty"?"yellow":undefined}}
+                                >{styleText(translate("verdict.guilty"))}</button>
+                                <button 
+                                    onClick={()=>{GAME_MANAGER.sendJudgementPacket("abstain")}}
+                                    style={{borderColor: this.state.gameState.judgement === "abstain"?"yellow":undefined}}
+                                >{styleText(translate("verdict.abstain"))}</button>
+                                <button 
+                                    onClick={()=>{GAME_MANAGER.sendJudgementPacket("innocent")}}
+                                    style={{borderColor: this.state.gameState.judgement === "innocent"?"yellow":undefined}}
+                                >{styleText(translate("verdict.innocent"))}</button>
+                            </div>);
+                    })()}
+                    </div>
                 </div>);
             }else{
                 //TODO lang or fix
