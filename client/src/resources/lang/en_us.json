@@ -86,6 +86,10 @@
     "role.medium.abilities":"*You can talk with the dead during the night",
     "role.medium.attributes":"*You can talk to other mediums during the night as well",
     
+    "role.retributionist.name": "Retributionist",
+    "role.retributionist.abilities":"*Force a dead player to use their ability on a living one",
+    "role.retributionist.attributes":"*Your ability only works on townies who can only target one player*You cant use the same person two times",
+    
     "role.vigilante.name": "Vigilante",
     "role.vigilante.abilities":"*Target a player to shoot them",
     "role.vigilante.attributes":"*You have three bullets*You can't shoot night 1*If you shoot a town member, you will commit suicide the next night*Your suicide deals an unstoppable attack towards yourself*You have a basic attack",
@@ -100,7 +104,11 @@
 
     "role.consort.name": "Consort",
     "role.consort.abilities":"*Target a player to roleblock them",
-    "role.consort.attributes":"*Roleblocking a player prevents them from using parts of their ability*You can talk with the other mafia at night",
+    "role.consort.attributes":"*Roleblocking a player prevents them from using parts of their ability",
+    
+    "role.blackmailer.name": "Blackmailer",
+    "role.blackmailer.abilities":"*Target a player to silence them for the next day",
+    "role.blackmailer.attributes":"*Silenced players can not talk or vote",
     
     "role.janitor.name": "Janitor",
     "role.janitor.abilities":"*Target a player on the night they die to clean them",
@@ -108,7 +116,7 @@
     
     "role.framer.name": "Framer",
     "role.framer.abilities":"*Target two players to frame the first one",
-    "role.framer.attributes":"*Lookouts and trackers will see that your first target visited your second target*Psychics will see framed players as evil*Seers will see framed players as mafia*Sheriffs will see framed players as suspicious*You can only pick non mafia memebers for your first target, but anyone as your second target",
+    "role.framer.attributes":"*You can only pick non mafia memebers for your first target, but anyone as your second target*Your second visit is astral*Lookouts and trackers will see that your first target visited your second target*Psychics will see framed players as evil*Seers will see framed players as mafia*Sheriffs will see framed players as suspicious",
 
     "role.covenLeader.name": "Coven Leader",
     "role.covenLeader.abilities":"",
@@ -120,7 +128,7 @@
 
     "role.jester.name": "Jester",
     "role.jester.abilities":"*Get lynched to win*After you are lynched, you can kill a player who didn't vote innocent",
-    "role.jester.attributes":"*If you target nobody, you will kill a random player*You have an unstoppable attack",
+    "role.jester.attributes":"*If you target nobody, you will kill a random player*You have an unstoppable astral attack",
 
     "grave.role.cleaned": "Cleaned",
     "grave.role.petrified": "Petrified",

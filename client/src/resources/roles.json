@@ -80,6 +80,15 @@
         "endGameCondition": "Faction",
         "maxCount": null
     },
+    "retributionist": {
+        "factionAlignment": "townSupport",
+        "suspicious": false,
+        "roleblockable": false,
+        "defense": 0,
+        "witchable": false,
+        "endGameCondition": "Faction",
+        "maxCount": 1
+    },
     "mafioso": {
         "factionAlignment": "mafiaKilling",
         "suspicious": true,
@@ -93,6 +102,15 @@
         "factionAlignment": "mafiaSupport",
         "suspicious": true,
         "roleblockable": false,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": null
+    },
+    "blackmailer": {
+        "factionAlignment": "mafiaSupport",
+        "suspicious": true,
+        "roleblockable": true,
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
