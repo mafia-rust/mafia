@@ -84,9 +84,13 @@ export type RoleData = {
 } | {
     role:"medium"
 } | {
+    role:"retributionist"
+} | {
     role:"mafioso"
 } | {
     role:"consort"
+} | {
+    role:"blackmailer"
 } | {
     role:"janitor"
     cleansRemaining: number,

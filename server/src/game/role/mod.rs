@@ -178,10 +178,14 @@ make_role_enum! {
 
     Escort : escort,
     Medium : medium,
+    Retributionist : retributionist {
+        used_bodies: Vec<PlayerReference> = vec![]
+    },
 
     Mafioso : mafioso,
     
     Consort : consort,
+    Blackmailer : blackmailer,
 
     Janitor : janitor {
         cleans_remaining: u8 = 3,
@@ -246,12 +250,13 @@ Transporter
     Transporter(Swap)
 Controlls
     Witch(Swap), 
-cromany,
+Necromany,
     Retributionist(Swap) Necromancer(Swap)
 Roleblock
     Escort Consort Poisoner(roleblock)
 Deception
-    Arsonist(Douse), Janitor(Clean), Forger(Yea), Framer(Frame), Werewolf(Make slef inno or sus)
+    Arsonist(Douse), Werewolf(Make slef inno or sus)
+    Blackmailer, Janitor(Clean), Forger(Yea)
     HexMaster(Hex), Enchanter(Alter/Enchant), Poisoner(Poison), Illusionist, Dreamweaver(Choose to dreamweave), VoodooMaster, Medusa
     Shroud(make harmful)
 Trickster
@@ -269,6 +274,8 @@ Investigative
     Janitor(Who died) Bodyguard(Notif) Doctor(Notif) Arsonist(Who visited me) PotionMaser(reveal)
 StealMessages
     Witch(steal messages)
+    Retributionist(steal messages)
+    Necromancer(steal messages)
     
 
 
