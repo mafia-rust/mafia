@@ -1,8 +1,7 @@
-use std::{net::SocketAddr, collections::HashMap, sync::{Mutex, Arc}, time::{Duration, SystemTime, Instant}};
+use std::{net::SocketAddr, collections::HashMap, sync::{Mutex, Arc}, time::Duration};
 
 use rand::random;
-use serde_json::Value;
-use tokio_tungstenite::tungstenite::{Message, protocol::frame};
+use tokio_tungstenite::tungstenite::Message;
 
 use crate::{lobby::Lobby, log, websocket_connections::connection::{ConnectionEventListener, Connection}, packet::{ToServerPacket, ToClientPacket, RejectJoinReason}};
 
@@ -95,13 +94,13 @@ impl ConnectionEventListener for Listener {
         }
         println!("[{}]\t{}", log::notice(&connection.get_address().to_string()), message);
 
-        if let Err(k) = self.handle_message(_clients, connection, message){
+        if let Err(k) = self.handle_message(connection, message){
             println!("[{}]\t{}:\n{}", log::error(&connection.get_address().to_string()), log::error("SERDE ERROR"), k);
         }    
     }
 }
 impl Listener{
-    fn handle_message(&mut self, clients: &HashMap<SocketAddr, Connection>, connection: &Connection, message: &Message) -> Result<(), serde_json::Error> {
+    fn handle_message(&mut self, connection: &Connection, message: &Message) -> Result<(), serde_json::Error> {
         let incoming_packet = serde_json::from_str::<ToServerPacket>(message.to_string().as_str())?;
 
         let Some(sender_player_location) = self.players.get_mut(connection.get_address()) else {
@@ -118,7 +117,7 @@ impl Listener{
                     return Ok(());
                 };
 
-                match lobby.connect_player_to_lobby(connection.get_sender()) {
+                match lobby.connect_player_to_lobby(&connection.get_sender()) {
                     Ok(player_id) => {
                         *sender_player_location = PlayerLocation::InLobby { room_code, player_id };
         
@@ -141,7 +140,7 @@ impl Listener{
 
                 let mut lobby = Lobby::new();
                 
-                match lobby.connect_player_to_lobby(connection.get_sender()) {
+                match lobby.connect_player_to_lobby(&connection.get_sender()) {
                     Ok(player_id) => {
                         *sender_player_location = PlayerLocation::InLobby { room_code, player_id };
         
@@ -160,7 +159,7 @@ impl Listener{
                 if let PlayerLocation::InLobby { room_code, player_id } = sender_player_location {
                     //TODO unwrap here
                     if let Some(lobby) = self.lobbies.lock().unwrap().get_mut(room_code){
-                        lobby.on_client_message(connection.get_sender(), *player_id, incoming_packet);
+                        lobby.on_client_message(connection, *player_id, incoming_packet);
                     } else {
                         //Player is in a lobby that doesnt exist   
                         todo!()

@@ -1,10 +1,10 @@
-use std::{time::Duration, io::Seek};
+use std::time::Duration;
 
 use serde::{Serialize, Deserialize};
 
 use crate::packet::ToClientPacket;
 
-use super::{settings::PhaseTimeSettings, Game, player::{Player, self, PlayerReference}, chat::{ChatGroup, ChatMessage, night_message::NightInformation}, game, verdict::Verdict, grave::Grave, role::{Role, RoleData, Priority}, role_list::Faction};
+use super::{settings::PhaseTimeSettings, Game, player::PlayerReference, chat::{ChatGroup, ChatMessage, night_message::NightInformation}, verdict::Verdict, grave::Grave, role::{Role, RoleData, Priority}, role_list::Faction};
 
 
 #[derive(Clone, Copy, PartialEq, Debug, Eq, Serialize, Deserialize)]
@@ -157,7 +157,7 @@ impl PhaseType {
                 let mut guilty = 0;
                 let mut messages = Vec::new();
                 for player_ref in PlayerReference::all_players(game){
-                    if(!player_ref.alive(game) || player_ref == player_on_trial){
+                    if !player_ref.alive(game) || player_ref == player_on_trial {
                         continue;
                     }
                     match player_ref.verdict(game){

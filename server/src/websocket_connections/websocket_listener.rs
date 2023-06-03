@@ -1,6 +1,5 @@
-use crate::{lobby::Lobby, websocket_connections::connection::{Connection, ConnectionEventListener, self}, log, listener::Listener};
-use tokio_native_tls::{TlsAcceptor, native_tls::{self, Identity}};
-use tokio_tungstenite::tungstenite::{client, Message};
+use crate::{websocket_connections::connection::{Connection, ConnectionEventListener}, log, listener::Listener};
+use tokio_tungstenite::tungstenite::Message;
 use std::{
     net::SocketAddr,
     sync::{Arc, Mutex}, collections::HashMap,
@@ -37,7 +36,7 @@ pub async fn handle_connection(
     raw_stream: TcpStream, 
     addr: SocketAddr, 
     clients_mutex: Arc<Mutex<HashMap<SocketAddr, Connection>>>, 
-    mut listener: Arc<Mutex<impl ConnectionEventListener>>
+    listener: Arc<Mutex<impl ConnectionEventListener>>
 ) {
     let ws_stream = tokio_tungstenite::accept_async(raw_stream).await
         .expect("Failed to accept websocket handshake");
@@ -62,7 +61,7 @@ pub async fn handle_connection(
                 Err(_) => {break;},
             }
         }
-        to_client.close();
+        to_client.close().await.unwrap();
     });
 
     let recieve_from_client = from_client.try_for_each(|message|{
@@ -75,7 +74,7 @@ pub async fn handle_connection(
     });
 
     {
-        let mut clients = clients_mutex.lock().unwrap();
+        let clients = clients_mutex.lock().unwrap();
         let connection = clients.get(&addr).unwrap();
 
         listener.lock().unwrap().on_connect(&clients, connection);

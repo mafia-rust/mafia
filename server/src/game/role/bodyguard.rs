@@ -1,9 +1,9 @@
 
 use crate::game::chat::night_message::NightInformation;
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::ChatGroup;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
-use crate::game::player::{Player, PlayerReference};
+use crate::game::player::PlayerReference;
 use crate::game::role_list::FactionAlignment;
 use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
@@ -35,7 +35,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
             }
 
             if actor_ref == target_ref {
-                let RoleData::Bodyguard{mut self_shields_remaining, mut target_protected_ref, redirected_player_refs } = actor_ref.role_data(game).clone() else {unreachable!()};
+                let RoleData::Bodyguard{mut self_shields_remaining, target_protected_ref, redirected_player_refs } = actor_ref.role_data(game).clone() else {unreachable!()};
                 self_shields_remaining -= 1;
                 target_ref.increase_defense_to(game, 2);
                 actor_ref.set_role_data(game, RoleData::Bodyguard{self_shields_remaining, target_protected_ref, redirected_player_refs });
@@ -64,10 +64,10 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
                 }
 
                 if attackers.is_empty() {return;}
-                let RoleData::Bodyguard{mut self_shields_remaining, mut target_protected_ref, mut redirected_player_refs } = actor_ref.role_data(game).clone() else {unreachable!()};
-                target_protected_ref = Some(target_ref);
+                let RoleData::Bodyguard{self_shields_remaining, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
+                let target_protected_ref = Some(target_ref);
 
-                redirected_player_refs = Vec::new();
+                let mut redirected_player_refs = Vec::new();
                 for attacker_ref in attackers {
                     if attacker_ref.night_jailed(game) {continue;}
                     let mut was_redirected = false;
@@ -90,14 +90,14 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
             }
         },
         Priority::Kill => {
-            let RoleData::Bodyguard{ self_shields_remaining, redirected_player_refs, target_protected_ref } = actor_ref.role_data(game).clone() else {unreachable!()};
+            let RoleData::Bodyguard{redirected_player_refs, ..} = actor_ref.role_data(game).clone() else {unreachable!()};
             
             for redirected_player_ref in redirected_player_refs {
                 redirected_player_ref.try_night_kill(game, GraveKiller::Role(Role::Bodyguard), 2);
             }
         }
         Priority::Investigative => {
-            let RoleData::Bodyguard{ self_shields_remaining, redirected_player_refs, target_protected_ref } = actor_ref.role_data(game).clone() else {unreachable!()};
+            let RoleData::Bodyguard{target_protected_ref, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
             
             if let Some(target_protected_ref) = target_protected_ref {
                 actor_ref.push_night_messages(game, NightInformation::BodyguardProtected);
@@ -108,7 +108,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
     }
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    let RoleData::Bodyguard { self_shields_remaining, target_protected_ref, redirected_player_refs } = actor_ref.role_data(game) else {unreachable!();};
+    let RoleData::Bodyguard { self_shields_remaining, .. } = actor_ref.role_data(game) else {unreachable!();};
     
     ((actor_ref == target_ref && *self_shields_remaining > 0) || actor_ref != target_ref) &&
     !actor_ref.night_jailed(game) &&
@@ -116,10 +116,10 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
     actor_ref.alive(game) &&
     target_ref.alive(game)
 }
-pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
+pub(super) fn do_day_action(_game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
     
 }
-pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+pub(super) fn can_day_target(_game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
     false
 }
 pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
@@ -131,10 +131,10 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
 pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
     crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
 }
-pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
-    let RoleData::Bodyguard{ self_shields_remaining, mut redirected_player_refs, mut target_protected_ref } = actor_ref.role_data(game).clone() else {unreachable!()};
-    redirected_player_refs = Vec::new();
-    target_protected_ref = None;
+pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
+    let RoleData::Bodyguard{ self_shields_remaining, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
+    let redirected_player_refs = Vec::new();
+    let target_protected_ref = None;
     actor_ref.set_role_data(game, RoleData::Bodyguard{ self_shields_remaining, redirected_player_refs, target_protected_ref });
 }
 pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){

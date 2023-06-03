@@ -2,7 +2,7 @@ use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::chat::night_message::NightInformation;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
-use crate::game::player::{Player, PlayerReference};
+use crate::game::player::PlayerReference;
 use crate::game::role_list::{FactionAlignment, Faction};
 use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
@@ -32,7 +32,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
                 actor_ref.push_night_messages(game, NightInformation::TargetSurvivedAttack);
             }
 
-            let RoleData::Jailor{ jailed_target_ref, executions_remaining } = actor_ref.role_data(game) else {unreachable!()};
+            let RoleData::Jailor{ executions_remaining, .. } = actor_ref.role_data(game) else {unreachable!()};
 
             let executions_remaining = if target_ref.role(game).faction_alignment().faction() == Faction::Town { 0 } else { *executions_remaining - 1 };
             actor_ref.set_role_data(game, RoleData::Jailor{jailed_target_ref: None, executions_remaining});
@@ -40,7 +40,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
     }
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    let RoleData::Jailor{ jailed_target_ref, executions_remaining } = actor_ref.role_data(game) else {unreachable!()};
+    let RoleData::Jailor{ executions_remaining, .. } = actor_ref.role_data(game) else {unreachable!()};
 
     target_ref.night_jailed(game) && 
     actor_ref.chosen_targets(game).is_empty() &&
@@ -63,7 +63,7 @@ pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference, target_
     }
 }
 pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    let RoleData::Jailor{ jailed_target_ref, executions_remaining } = actor_ref.role_data(game) else {unreachable!()};
+    let RoleData::Jailor{ executions_remaining, .. } = actor_ref.role_data(game) else {unreachable!()};
     
     actor_ref != target_ref &&
     actor_ref.alive(game) && target_ref.alive(game) &&

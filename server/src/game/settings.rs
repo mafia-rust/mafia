@@ -1,9 +1,8 @@
 use std::time::Duration;
 
-use rand::seq::SliceRandom;
 use serde::{Serialize, Deserialize};
 
-use super::{role_list::{RoleList, RoleListEntry}, role::Role, player::Player, phase::PhaseType};
+use super::{role_list::RoleList, phase::PhaseType};
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct Settings{

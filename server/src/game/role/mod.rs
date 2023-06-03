@@ -138,7 +138,7 @@ macro_rules! make_role_enum {
 }
 
 
-use crate::game::player::{PlayerIndex, PlayerReference};
+use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::end_game_condition::EndGameCondition;
