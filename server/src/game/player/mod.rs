@@ -55,10 +55,11 @@ pub(super) struct PlayerNightVariables{
     pub(super) attacked:       bool,
     pub(super) jailed:         bool,
     pub(super) roleblocked:    bool,
-    pub(super) defense:        u8,    
-    pub(super) suspicious:     bool,
+    pub(super) defense:        u8,
 
-    pub(super) disguised_as:   Option<PlayerReference>,
+    pub(super) appeard_suspicious:     bool,
+    pub(super) appeared_visits: Vec<Visit>,
+
     pub(super) silenced:       bool,
 
     pub(super) chosen_targets: Vec<PlayerReference>,
@@ -96,9 +97,9 @@ impl Player {
                 jailed:         false,
                 roleblocked:    false,
                 defense:        0,
-                suspicious:     false,
+                appeard_suspicious:false,
+                appeared_visits: vec![],
 
-                disguised_as:   None,
                 silenced:       false,
 
                 chosen_targets: vec![],
@@ -109,7 +110,7 @@ impl Player {
                 grave_role: GraveRole::Role(Role::Sheriff), //This should not be a problem because we reset immedietly on creation
                 grave_killers: vec![],
                 grave_will: "".to_string(),
-                grave_death_notes: vec![]
+                grave_death_notes: vec![],
             },
             voting_variables: PlayerVotingVariables{
                 chosen_vote : None,

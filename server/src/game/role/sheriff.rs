@@ -30,7 +30,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
             actor_ref.push_night_messages(game, NightInformation::TargetJailed );
             return
         }
-        let message = NightInformation::SheriffResult { suspicious: visit.target.night_suspicious(game)};
+        let message = NightInformation::SheriffResult { suspicious: visit.target.night_appeared_suspicious(game)};
         
         actor_ref.push_night_messages(game, message);
     }

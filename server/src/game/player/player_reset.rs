@@ -27,8 +27,8 @@ impl PlayerReference{
                 self.set_night_attacked(game,        false);
                 self.set_night_roleblocked(game,     false);
                 self.set_night_defense(game,         self.role(game).defense());
-                self.set_night_suspicious(game,      self.role(game).suspicious());
-                self.set_night_disguised_as(game,    None);
+                self.set_night_appeared_suspicious(game,      self.role(game).suspicious());
+                self.set_night_appeared_visits(game,  vec![]);
                 self.set_chosen_targets(game,   vec![]);
                 self.set_night_visits(game,          vec![]);
                 self.set_night_messages(game,  vec![]);

@@ -186,18 +186,18 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.defense = defense;
     }
 
-    pub fn night_suspicious(&self, game: &Game) -> bool {
-        self.deref(game).night_variables.suspicious
+    pub fn night_appeared_suspicious(&self, game: &Game) -> bool {
+        self.deref(game).night_variables.appeard_suspicious
     }
-    pub fn set_night_suspicious(&self, game: &mut Game, suspicious: bool){
-        self.deref_mut(game).night_variables.suspicious = suspicious;
+    pub fn set_night_appeared_suspicious(&self, game: &mut Game, suspicious: bool){
+        self.deref_mut(game).night_variables.appeard_suspicious = suspicious;
     }
 
-    pub fn night_disguised_as(&self, game: &Game) -> Option<PlayerReference> {
-        self.deref(game).night_variables.disguised_as
+    pub fn night_appeared_visits<'a>(&self, game: &'a Game) -> &'a Vec<Visit>{
+        &self.deref(game).night_variables.appeared_visits
     }
-    pub fn set_night_disguised_as(&self, game: &mut Game, disguised_as: Option<PlayerReference>){
-        self.deref_mut(game).night_variables.disguised_as = disguised_as;
+    pub fn set_night_appeared_visits(&self, game: &mut Game, appeared_visits: Vec<Visit>){
+        self.deref_mut(game).night_variables.appeared_visits = appeared_visits;
     }
     
     pub fn chosen_targets<'a>(&self, game: &'a Game) -> &'a Vec<PlayerReference>{
