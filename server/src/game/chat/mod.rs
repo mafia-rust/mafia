@@ -2,7 +2,7 @@ pub mod night_message;
 
 use serde::{Serialize, Deserialize};
 
-use crate::game::{grave::Grave, role::{Role, RoleData}, player::{PlayerIndex, Player, PlayerReference}, verdict::Verdict, phase::PhaseType, Game, role_list::{FactionAlignment, Faction}};
+use crate::game::{grave::Grave, role::Role, player::{PlayerIndex, PlayerReference}, verdict::Verdict, phase::PhaseType, Game};
 use self::night_message::NightInformation;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -142,14 +142,14 @@ pub enum ChatGroup {
     //Pirate, 
 }
 impl ChatGroup{
-    pub fn player_recieve_from_chat_group(&self, game: &Game, player_ref: PlayerReference)->bool{
+    pub fn player_receive_from_chat_group(&self, game: &Game, player_ref: PlayerReference)->bool{
         player_ref.role(game).get_current_recieve_chat_groups(game, player_ref).contains(self)
     }
 
     pub fn all_players_in_group(&self, game: &Game)->Vec<PlayerReference>{
         let mut out = Vec::new();
         for player_ref in PlayerReference::all_players(game){
-            if self.player_recieve_from_chat_group(game, player_ref){
+            if self.player_receive_from_chat_group(game, player_ref){
                 out.push(player_ref);
             }
         }

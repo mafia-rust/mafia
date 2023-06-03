@@ -1,7 +1,6 @@
-use crate::game::chat::{ChatGroup, ChatMessage};
-use crate::game::chat::night_message::NightInformation;
+use crate::game::chat::ChatGroup;
 use crate::game::phase::PhaseType;
-use crate::game::player::{Player, PlayerReference};
+use crate::game::player::PlayerReference;
 use crate::game::role_list::FactionAlignment;
 use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
@@ -19,19 +18,19 @@ pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Factio
 pub(super) const TEAM: Option<Team> = None;
 
 
-pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+pub(super) fn do_night_action(_game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {
 
 }
-pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+pub(super) fn can_night_target(_game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
     false
 }
-pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
+pub(super) fn do_day_action(_game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
     //TODO ADD SEANCE
 }
-pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+pub(super) fn can_day_target(_game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
     false
 }
-pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+pub(super) fn convert_targets_to_visits(_game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
     vec![]
 }
 pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
@@ -44,7 +43,7 @@ pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerRefe
     }
     out
 }
-pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
+pub(super) fn on_phase_start(_game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType){
 }
 pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){
     crate::game::role::common_role::on_role_creation(game, actor_ref)

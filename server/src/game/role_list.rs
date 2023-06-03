@@ -136,6 +136,7 @@ pub fn create_random_roles(role_list: &RoleList) -> Vec<Role> {
     }
     taken_roles
 }
+#[allow(unused)]
 pub fn get_all_possible_roles(role_list: &RoleList) -> Vec<Role> {
     //if executioner then add jester
     //if there could be mafioso at beginning then add godfather
@@ -210,9 +211,9 @@ impl RoleListEntry{
         possible_roles.into_iter().filter(|potential_role|{
             let Some(potantial_role_max_count) = potential_role.maximum_count() else {return true};
             
-            (taken_roles.iter().filter(|taken_role|{
+            taken_roles.iter().filter(|taken_role|{
                 *taken_role == potential_role
-            }).count() < potantial_role_max_count.into())
+            }).count() < potantial_role_max_count.into()
         }).collect()
     }
 }

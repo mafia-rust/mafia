@@ -1,31 +1,26 @@
-use std::{collections::HashMap, net::SocketAddr, fs, time::Duration, hash::Hash};
-
-use futures_util::pending;
-use serde::__private::de::{Content, self};
-use tokio::sync::mpsc::UnboundedSender;
-use tokio_tungstenite::tungstenite::Message;
+use std::{collections::HashMap, time::Duration};
 
 use crate::{
     game::{
         Game, 
-        player::{PlayerIndex, Player, PlayerReference}, 
-        settings::{Settings, self}, 
-        role_list::{self, RoleList, RoleListEntry}, 
+        player::{PlayerIndex, PlayerReference}, 
+        settings::Settings, 
+        role_list::RoleListEntry, 
         phase::PhaseType
     },
-    log, listener::ArbitraryPlayerID, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}
+    log, listener::ArbitraryPlayerID, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}, websocket_connections::connection::{Connection, ClientSender}
 };
 
 pub struct Lobby {
     lobby_state: LobbyState,
 }
 
-enum LobbyState{
-    Lobby{
+enum LobbyState {
+    Lobby {
         settings: Settings,
         players: HashMap<ArbitraryPlayerID, LobbyPlayer>,
     },
-    Game{
+    Game {
         game: Game,
         players: HashMap<ArbitraryPlayerID, PlayerIndex>,
     },
@@ -34,8 +29,14 @@ enum LobbyState{
 
 #[derive(Clone)]
 pub struct LobbyPlayer{
-    pub sender: UnboundedSender<ToClientPacket>,
+    pub sender: ClientSender,
     pub name: String,
+}
+
+impl LobbyPlayer {
+    pub fn send(&self, message: ToClientPacket) {
+        self.sender.send(message, &self.name)
+    }
 }
 
 impl Lobby {
@@ -50,10 +51,10 @@ impl Lobby {
     }
 
     
-    pub fn on_client_message(&mut self, send: UnboundedSender<ToClientPacket>, player_arbitrary_id: ArbitraryPlayerID, incoming_packet: ToServerPacket){
+    pub fn on_client_message(&mut self, send: &Connection, player_arbitrary_id: ArbitraryPlayerID, incoming_packet: ToServerPacket){
         match incoming_packet {
             ToServerPacket::SetName{ name } => {
-                let LobbyState::Lobby { settings, players } = &mut self.lobby_state else {
+                let LobbyState::Lobby { players, .. } = &mut self.lobby_state else {
                     println!("{} {}", log::error("ToServerPacket::SetName can not be used outside of LobbyState::Lobby"), player_arbitrary_id);
                     return;
                 };
@@ -76,14 +77,12 @@ impl Lobby {
                     return;
                 };
                 
-                if (settings.phase_times.evening.is_zero() &&
-                    settings.phase_times.morning.is_zero() &&
-                    settings.phase_times.discussion.is_zero() &&
-                    settings.phase_times.voting.is_zero() &&
-                    settings.phase_times.judgement.is_zero() &&
-                    settings.phase_times.testimony.is_zero() &&
-                    settings.phase_times.night.is_zero()
-                ) {
+                if [
+                    settings.phase_times.evening, settings.phase_times.morning,
+                    settings.phase_times.discussion, settings.phase_times.voting,
+                    settings.phase_times.judgement, settings.phase_times.testimony,
+                    settings.phase_times.night
+                ].iter().all(Duration::is_zero) {
                     send.send(ToClientPacket::RejectStart { reason: RejectStartReason::ZeroTimeGame });
                     return;
                 }
@@ -103,12 +102,12 @@ impl Lobby {
                 
                 self.send_to_all(ToClientPacket::StartGame);
             },
-            ToServerPacket::Kick{player_index} => {
-
+            ToServerPacket::Kick{..} => {
+                //TODO
             },
             ToServerPacket::SetPhaseTime{phase, time} => {
-                let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
-                    println!("{} {}", log::error("ToServerPacket::SetPhaseTime can not be used outside of LobbyState::Lobby"), player_arbitrary_id);
+                let LobbyState::Lobby{ settings, .. } = &mut self.lobby_state else {
+                    println!("{} {}", log::error("Attempted to change phase time outside of the lobby menu!"), player_arbitrary_id);
                     return;
                 };
 
@@ -127,8 +126,8 @@ impl Lobby {
                 self.send_to_all(ToClientPacket::PhaseTime { phase, time });
             },
             ToServerPacket::SetRoleList { role_list } => {
-                let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
-                    println!("{} {}", log::error("ToServerPacket::SetRoleList can not be used outside of LobbyState::Lobby"), player_arbitrary_id);
+                let LobbyState::Lobby{ settings, .. } = &mut self.lobby_state else {
+                    println!("{} {}", log::error("Can't modify game settings outside of the lobby menu"), player_arbitrary_id);
                     return;
                 };
                 settings.role_list = role_list.clone();
@@ -146,24 +145,26 @@ impl Lobby {
         }
     }
 
-    pub fn connect_player_to_lobby(&mut self, sender: UnboundedSender<ToClientPacket>)-> Result<ArbitraryPlayerID, RejectJoinReason>{
+    pub fn connect_player_to_lobby(&mut self, send: &ClientSender)-> Result<ArbitraryPlayerID, RejectJoinReason>{
         match &mut self.lobby_state {
             LobbyState::Lobby { players, settings } => {
                 // TODO, move this somewhere else
                 let name = name_validation::sanitize_name("".to_string(), players);
                 
-                sender.send(ToClientPacket::YourName { name: name.clone() });
+                send.send(ToClientPacket::YourName { name: name.clone() }, &name);
 
                 // Add a role list entry
                 settings.role_list.push(RoleListEntry::Any);
                 
                 let arbitrary_player_id = players.len() as ArbitraryPlayerID;
 
-                players.insert(arbitrary_player_id, LobbyPlayer{sender:sender.clone(),name,});
+                let new_player = LobbyPlayer { sender: send.clone(), name };
+                Self::send_settings(&new_player, settings);
+
+                players.insert(arbitrary_player_id, new_player);
 
                 // Make sure everybody is on the same page
                 Self::send_players_lobby(players);
-                Self::send_settings(&sender, settings);
 
                 Ok(arbitrary_player_id)
             },
@@ -187,7 +188,7 @@ impl Lobby {
             
             Self::send_players_lobby(players);
             for player in players.iter(){
-                Self::send_settings(&player.1.sender, settings)
+                Self::send_settings(player.1, settings)
             }
         }
     }
@@ -197,13 +198,13 @@ impl Lobby {
     }
 
     pub fn tick(&mut self, time_passed: Duration){
-        if let LobbyState::Game { game, players } = &mut self.lobby_state {
+        if let LobbyState::Game { game, .. } = &mut self.lobby_state {
             game.tick(time_passed);
         }
     }
     
     /// Catches the sender up with the current lobby settings
-    pub fn send_settings(sender: &UnboundedSender<ToClientPacket>, settings: &Settings) {
+    pub fn send_settings(player: &LobbyPlayer, settings: &Settings) {
         for phase in [
             PhaseType::Morning,
             PhaseType::Discussion, 
@@ -213,12 +214,12 @@ impl Lobby {
             PhaseType::Evening, 
             PhaseType::Night,
         ] {
-            sender.send(ToClientPacket::PhaseTime { 
+            player.send(ToClientPacket::PhaseTime { 
                 phase, 
                 time: settings.phase_times.get_time_for(phase).as_secs() 
             });
         }
-        sender.send(ToClientPacket::RoleList { role_list: settings.role_list.clone() });
+        player.send(ToClientPacket::RoleList { role_list: settings.role_list.clone() });
     }
 
 
@@ -229,9 +230,10 @@ impl Lobby {
             }).collect() 
         };
         for player in players.iter() {
-            player.1.sender.send(packet.clone());
+            player.1.send(packet.clone());
         }
     }
+    #[allow(unused)]
     fn send_players_game(game: &Game, players: &HashMap<ArbitraryPlayerID, PlayerIndex>){
         let packet = ToClientPacket::Players { 
             names: PlayerReference::all_players(game).into_iter().map(|p| {
@@ -247,10 +249,10 @@ impl Lobby {
         match &self.lobby_state {
             LobbyState::Lobby { players, .. } => {
                 for player in players.iter() {
-                    player.1.sender.send(packet.clone());
+                    player.1.send(packet.clone());
                 }
             }
-            LobbyState::Game { game, players } => {
+            LobbyState::Game { game, .. } => {
                 for player_ref in PlayerReference::all_players(game){
                     player_ref.send_packet(game, packet.clone());
                 }

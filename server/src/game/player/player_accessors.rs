@@ -4,7 +4,6 @@ use crate::{
     game::{
         role::{RoleData, Role}, 
         Game, 
-        phase::PhaseType, 
         verdict::Verdict, 
         chat::{
             ChatGroup, 
@@ -14,7 +13,7 @@ use crate::{
         visit::Visit, 
         grave::{GraveRole, GraveKiller}}, packet::ToClientPacket, 
     };
-use super::{Player, PlayerIndex, PlayerReference};
+use super::PlayerReference;
 
 
 impl PlayerReference{
@@ -30,7 +29,7 @@ impl PlayerReference{
     }
     pub fn set_role_data(&self, game: &mut Game, new_role_data: RoleData){
         
-        if(self.deref(game).role_data.role() == new_role_data.role()){
+        if self.deref(game).role_data.role() == new_role_data.role() {
             self.send_packet(game, ToClientPacket::YourRole { role: self.deref(game).role_data.role() });
         }
         self.deref_mut(game).role_data = new_role_data;
@@ -95,11 +94,8 @@ impl PlayerReference{
     /// - player is not voting itself
     /// - player is not voting a dead player
     pub fn set_chosen_vote(&self, game: &mut Game, chosen_vote: Option<PlayerReference>, send_chat_message: bool) -> bool{
-        if(
-            chosen_vote == self.deref(game).voting_variables.chosen_vote ||
-            !self.deref(game).alive ||
-            self.night_silenced(game)
-        ){
+        if chosen_vote == self.deref(game).voting_variables.chosen_vote ||
+            !self.deref(game).alive || self.night_silenced(game) {
             self.deref_mut(game).voting_variables.chosen_vote = None;
             self.send_packet(game, ToClientPacket::YourVoting { 
                 player_index: None
@@ -108,10 +104,7 @@ impl PlayerReference{
         }
         
         if let Some(chosen_vote) = chosen_vote {
-            if(
-                chosen_vote == *self ||
-                !chosen_vote.deref(game).alive
-            ){
+            if chosen_vote == *self || !chosen_vote.deref(game).alive {
                 self.deref_mut(game).voting_variables.chosen_vote = None;
                 self.send_packet(game, ToClientPacket::YourVoting { 
                     player_index: None

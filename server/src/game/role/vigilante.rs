@@ -1,9 +1,9 @@
 
 use crate::game::chat::night_message::NightInformation;
-use crate::game::chat::{ChatGroup, ChatMessage};
-use crate::game::grave::{Grave, GraveRole, GraveKiller};
+use crate::game::chat::ChatGroup;
+use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
-use crate::game::player::{Player, PlayerReference};
+use crate::game::player::PlayerReference;
 use crate::game::role_list::{FactionAlignment, Faction};
 use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
@@ -26,7 +26,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
 
     match priority{
         Priority::TopPriority => {
-            let RoleData::Vigilante { bullets_remaining, will_suicide  } = actor_ref.role_data(game) else {unreachable!()};
+            let RoleData::Vigilante { will_suicide, .. } = actor_ref.role_data(game) else {unreachable!()};
             if *will_suicide {
                 actor_ref.try_night_kill(game, GraveKiller::Suicide, 3);
             }
@@ -64,10 +64,10 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
     let RoleData::Vigilante { bullets_remaining, will_suicide  } = actor_ref.role_data(game) else {unreachable!()};
     crate::game::role::common_role::can_night_target(game, actor_ref, target_ref) && *bullets_remaining > 0 && !*will_suicide && game.phase_machine.day_number != 1
 }
-pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
+pub(super) fn do_day_action(_game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
     
 }
-pub(super) fn can_day_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+pub(super) fn can_day_target(_game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
     false
 }
 pub(super) fn convert_targets_to_visits(game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
@@ -79,7 +79,7 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
 pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
     crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
 }
-pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
+pub(super) fn on_phase_start(_game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType){
 }
 pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){
     crate::game::role::common_role::on_role_creation(game, actor_ref);

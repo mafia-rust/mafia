@@ -1,12 +1,10 @@
-
-
 use crate::{game::{Game, available_buttons::AvailableButtons}, packet::ToClientPacket};
 
-use super::{Player, PlayerReference};
+use super::PlayerReference;
 
 impl PlayerReference{
     pub fn send_packet(&self, game: &Game, packet: ToClientPacket){
-        self.deref(game).sender.send(packet);
+        self.deref(game).sender.send(packet, &format!("Player {}", self.index()));
     }
     pub fn send_repeating_data(&self, game: &mut Game){
         self.send_chat_messages(game);
@@ -35,6 +33,7 @@ impl PlayerReference{
 
         self.send_chat_messages(game);
     }
+    #[allow(unused)]
     fn requeue_chat_messages(&self, game: &mut Game){
         for msg in self.deref(game).chat_messages.clone().into_iter(){
             self.deref_mut(game).queued_chat_messages.push(msg);

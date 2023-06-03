@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
-use crate::{packet::{ToServerPacket, ToClientPacket}, strings::{trim_new_line, trim_whitespace}};
+use crate::{packet::{ToServerPacket, ToClientPacket}, strings::{trim_new_line, trim_whitespace}, log};
 
-use super::{Game, player::{PlayerIndex, Player, PlayerReference, self}, phase::PhaseType, chat::{ChatGroup, ChatMessage, MessageSender}, game, role::Role};
+use super::{Game, player::{PlayerIndex, PlayerReference}, phase::PhaseType, chat::{ChatGroup, ChatMessage, MessageSender}, role::Role};
 
 
 
@@ -13,13 +13,13 @@ impl Game {
         let sender_player_ref = match PlayerReference::new(self, sender_player_index){
             Ok(sender_player_ref) => sender_player_ref,
             Err(_) => {
-                println!("Bad player index sent message");
+                println!("{} Recieved message from invalid player index: {}", log::error("ERROR: "), sender_player_index);
                 return;
             }
         };
 
         'packet_match: {match incoming_packet {
-            ToServerPacket::Vote { player_index: mut player_voted_index } => {
+            ToServerPacket::Vote { player_index: player_voted_index } => {
 
                 let player_voted_ref = match PlayerReference::index_option_to_ref(self, &player_voted_index){
                     Ok(player_voted_ref) => player_voted_ref,
@@ -152,13 +152,12 @@ impl Game {
                     Err(_) => break 'packet_match,
                 };
 
-                if(
-                    !self.current_phase().is_day() || 
+                if !self.current_phase().is_day() || 
                     whisperee_ref.alive(self) != sender_player_ref.alive(self) ||
                     whisperee_ref == sender_player_ref || 
                     !sender_player_ref.role(self).get_current_send_chat_groups(self, sender_player_ref).contains(&ChatGroup::All) ||
                     text.replace(['\n', '\r'], "").trim().is_empty()
-                ){
+                {
                     break 'packet_match;
                 }
 
