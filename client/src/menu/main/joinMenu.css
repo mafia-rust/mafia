@@ -1,10 +1,12 @@
 
 .jm {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
     display: "flex";
     flex-direction: "column";
 }
 .jm header {
-    margin-top: 10%;
     margin-bottom: 2%;
 }
 .jm h1 {
