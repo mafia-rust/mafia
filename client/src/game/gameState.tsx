@@ -32,6 +32,7 @@ export function createGameState(): GameState {
             testimony: 20, 
             judgement: 20, 
             evening: 7, 
+            finalWords: 7,
             night: 37,
         },
     }

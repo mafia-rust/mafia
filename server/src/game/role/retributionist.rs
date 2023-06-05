@@ -91,12 +91,9 @@ pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerRefe
     crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
 }
 pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
-    match phase {
-        PhaseType::Night => {
-            let RoleData::Retributionist { used_bodies, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
-            actor_ref.set_role_data(game, RoleData::Retributionist { used_bodies, currently_used_player: None });
-        },
-        _ => {}
+    if phase == PhaseType::Night {
+        let RoleData::Retributionist { used_bodies, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
+        actor_ref.set_role_data(game, RoleData::Retributionist { used_bodies, currently_used_player: None });
     }
 }
 pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){

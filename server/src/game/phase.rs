@@ -16,18 +16,31 @@ pub enum PhaseType {
     Testimony,
     Judgement,
     Evening,
+    FinalWords,
+    Night,
+}
+
+#[derive(Clone)]
+pub enum PhaseState {
+    Morning,
+    Discussion,
+    Voting { trials_left: u8 },
+    Testimony { trials_left: u8, player_on_trial: PlayerReference },
+    Judgement { trials_left: u8, player_on_trial: PlayerReference },
+    FinalWords { player_on_trial: PlayerReference },
+    Evening,
     Night,
 }
 
 pub struct PhaseStateMachine {
     pub time_remaining: Duration,
-    pub current_state: PhaseType,
+    pub current_state: PhaseState,
     pub day_number: u8, // Hopefully nobody is having more than 256 days anyway
 }
 
 impl PhaseStateMachine {
     pub fn new(times: PhaseTimeSettings) -> Self {
-        let current_state = PhaseType::Evening;
+        let current_state = PhaseState::Evening;
 
         Self {
             time_remaining: current_state.get_length(&times),
@@ -37,25 +50,30 @@ impl PhaseStateMachine {
     }
 }
 
-impl PhaseType {
-    pub const fn get_length(&self, times: &PhaseTimeSettings) -> Duration {
+impl PhaseState {
+    pub const fn get_type(&self) -> PhaseType {
         match self {
-            PhaseType::Morning => times.morning,
-            PhaseType::Discussion => times.discussion,
-            PhaseType::Voting => times.voting,
-            PhaseType::Testimony => times.testimony,
-            PhaseType::Judgement => times.judgement,
-            PhaseType::Evening => times.evening,
-            PhaseType::Night => times.night,
+            PhaseState::Morning => PhaseType::Morning,
+            PhaseState::Discussion => PhaseType::Discussion,
+            PhaseState::Voting {..} => PhaseType::Voting,
+            PhaseState::Testimony {..} => PhaseType::Testimony,
+            PhaseState::Judgement {..} => PhaseType::Judgement,
+            PhaseState::Evening => PhaseType::Evening,
+            PhaseState::FinalWords {..} => PhaseType::FinalWords,
+            PhaseState::Night => PhaseType::Night,
         }
     }
-
+    
     pub fn start(game: &mut Game) {
         // Match phase type and do stuff
-        match game.phase_machine.current_state {
-            PhaseType::Morning => {
-                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Morning, day_number: game.phase_machine.day_number });
-
+        game.add_message_to_chat_group(ChatGroup::All, 
+            ChatMessage::PhaseChange { 
+                phase_type: game.current_phase().get_type(), 
+                day_number: game.phase_machine.day_number 
+            }
+        );
+        match game.current_phase().clone() {
+            PhaseState::Morning => {
                 //generate & add graves
                 for player_ref in PlayerReference::all_players(game){
                     if player_ref.night_died(game) {
@@ -73,40 +91,22 @@ impl PhaseType {
 
                 game.phase_machine.day_number+=1;   //day_number packet gets sent right after morning starts
             },
-            PhaseType::Discussion => {
-                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Discussion, day_number: game.phase_machine.day_number });
-                
-            },
-            PhaseType::Voting => {
-                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Voting, day_number: game.phase_machine.day_number });
-
+            PhaseState::Voting { trials_left } => {
                 let required_votes = 1+
                     (PlayerReference::all_players(game).iter().filter(|p| p.alive(game)).collect::<Vec<&PlayerReference>>().len()/2);
-                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialInformation { required_votes, trials_left: game.trials_left });
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialInformation { required_votes, trials_left });
                 
 
                 let packet = ToClientPacket::new_player_votes(game);
                 game.send_packet_to_all(packet);
             },
-            PhaseType::Testimony => {
-                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Testimony, day_number: game.phase_machine.day_number });
-                
-                //TODO should be impossible for there to be no player on trial therefore unwrap
-                let player_on_trial_index = game.player_on_trial.unwrap().index();
+            PhaseState::Testimony { player_on_trial, .. } => {
                 game.add_message_to_chat_group(ChatGroup::All, 
-                    ChatMessage::PlayerOnTrial { player_index: player_on_trial_index }
+                    ChatMessage::PlayerOnTrial { player_index: player_on_trial.index() }
                 );
-                game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial_index });
+                game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() });
             },
-            PhaseType::Judgement => {
-                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Judgement, day_number: game.phase_machine.day_number });
-
-            },
-            PhaseType::Evening => {
-                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Evening, day_number: game.phase_machine.day_number });
-                
-            },
-            PhaseType::Night => {
+            PhaseState::Night => {
                 //ensure mafia can kill
                 //search for mafia godfather or mafioso
                 let mut main_mafia_killing_exists = false;
@@ -130,34 +130,31 @@ impl PhaseType {
                         }
                     }
                 }
-
-                game.add_message_to_chat_group(
-                    ChatGroup::All, 
-                    ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: game.phase_machine.day_number }
-                );
             },
+            PhaseState::Discussion
+            | PhaseState::Judgement { .. } 
+            | PhaseState::Evening
+            | PhaseState::FinalWords { .. } => {}
         }
     }
-
+    
     ///returns the next phase
-    pub fn end(game: &mut Game) -> PhaseType {
+    pub fn end(game: &mut Game) -> PhaseState {
         // Match phase type and do stuff
-        match game.phase_machine.current_state {
-            PhaseType::Morning => {
+        match game.current_phase() {
+            PhaseState::Morning => {
                 Self::Discussion
             },
-            PhaseType::Discussion => {
-                Self::Voting 
+            PhaseState::Discussion => {
+                Self::Voting { trials_left: 3 }
             },
-            PhaseType::Voting => {                
+            PhaseState::Voting {..} => {                
                 Self::Night
             },
-            PhaseType::Testimony => {
-                Self::Judgement
+            &PhaseState::Testimony { trials_left, player_on_trial } => {
+                Self::Judgement { trials_left, player_on_trial }
             },
-            PhaseType::Judgement => {
-                let player_on_trial = game.player_on_trial.expect("Cant be in judgement without player on trial");
-
+            &PhaseState::Judgement { trials_left, player_on_trial } => {
                 let mut innocent = 0;
                 let mut guilty = 0;
                 let mut messages = Vec::new();
@@ -180,48 +177,46 @@ impl PhaseType {
                         player_on_trial: player_on_trial.index(), 
                         innocent, guilty 
                 });
-
-                game.trials_left-=1;
                 
-                #[allow(clippy::if_same_then_else)] // TODO: Remove
                 if innocent < guilty {
-                    Self::Evening
-                } else if game.trials_left == 0 {
+                    Self::FinalWords { player_on_trial }
+                } else if trials_left == 0 {
                     //TODO send no trials left
                     Self::Evening
                 }else{
-                    Self::Voting
+                    Self::Voting { trials_left }
                 }
             },
-            PhaseType::Evening => {
-                if let Some(player_on_trial) = game.player_on_trial{
-                    let mut guilty = 0;
-                    let mut innocent = 0;
-                    for player_ref in PlayerReference::all_players(game){
-                        match player_ref.verdict(game) {
-                            Verdict::Innocent => innocent += 1,
-                            Verdict::Abstain => {},
-                            Verdict::Guilty => guilty += 1,
-                        }
+            PhaseState::Evening => {
+                Self::Night
+            }
+            &PhaseState::FinalWords { player_on_trial } => {
+                let mut guilty = 0;
+                let mut innocent = 0;
+                for player_ref in PlayerReference::all_players(game){
+                    match player_ref.verdict(game) {
+                        Verdict::Innocent => innocent += 1,
+                        Verdict::Abstain => {},
+                        Verdict::Guilty => guilty += 1,
                     }
-                    if innocent < guilty {
-                        player_on_trial.set_alive(game, false);
+                }
+                if innocent < guilty {
+                    player_on_trial.set_alive(game, false);
 
-                        let new_grave = Grave::from_player_lynch(game, player_on_trial);
-                        game.graves.push(new_grave.clone());
-                        game.send_packet_to_all(ToClientPacket::AddGrave{grave: new_grave.clone()});
-                        game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied { grave: new_grave.clone() });
-                        if let Some(role) = new_grave.role.get_role(){
-                            for other_player_ref in PlayerReference::all_players(game){
-                                other_player_ref.insert_role_label(game, player_on_trial, role);
-                            }
+                    let new_grave = Grave::from_player_lynch(game, player_on_trial);
+                    game.graves.push(new_grave.clone());
+                    game.send_packet_to_all(ToClientPacket::AddGrave{grave: new_grave.clone()});
+                    game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied { grave: new_grave.clone() });
+                    if let Some(role) = new_grave.role.get_role(){
+                        for other_player_ref in PlayerReference::all_players(game){
+                            other_player_ref.insert_role_label(game, player_on_trial, role);
                         }
                     }
                 }
 
                 Self::Night
             },
-            PhaseType::Night => {
+            PhaseState::Night => {
 
                 //MAIN NIGHT CODE
 
@@ -257,8 +252,24 @@ impl PhaseType {
         }
     }
 
+    pub const fn get_length(&self, times: &PhaseTimeSettings) -> Duration {
+        match self {
+            PhaseState::Morning => times.morning,
+            PhaseState::Discussion => times.discussion,
+            PhaseState::Voting {..} => times.voting,
+            PhaseState::Testimony {..} => times.testimony,
+            PhaseState::Judgement {..} => times.judgement,
+            PhaseState::Evening => times.evening,
+            PhaseState::FinalWords {..} => times.final_words,
+            PhaseState::Night => times.night,
+        }
+    }
+    
     pub fn is_day(&self) -> bool {
-        *self != Self::Night
+        self.get_type() != PhaseType::Night
     }
 
+    pub fn is_night(&self) -> bool {
+        self.get_type() == PhaseType::Night
+    }
 }

@@ -15,14 +15,14 @@ impl AvailableButtons{
         Self{
             vote: 
                 actor_ref != target_ref &&
-                game.phase_machine.current_state == PhaseType::Voting &&
+                game.current_phase().get_type() == PhaseType::Voting &&
                 actor_ref.chosen_vote(game).is_none() && 
                 !actor_ref.night_silenced(game) &&
                 actor_ref.alive(game) && target_ref.alive(game),
 
             target: 
                 actor_ref.role(game).can_night_target(game, actor_ref, target_ref) && 
-                game.current_phase() == PhaseType::Night,
+                !game.current_phase().is_day(),
 
             day_target: 
                 actor_ref.role(game).can_day_target(game, actor_ref, target_ref) &&

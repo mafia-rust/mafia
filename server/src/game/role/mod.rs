@@ -198,7 +198,9 @@ make_role_enum! {
 
     VoodooMaster : voodoo_master,
 
-    Jester : jester
+    Jester : jester {
+        lynched_yesterday: bool = false
+    }
 }
 
 macro_rules! make_priority_enum {

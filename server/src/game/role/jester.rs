@@ -2,8 +2,9 @@
 use rand::seq::SliceRandom;
 
 use crate::game::chat::ChatGroup;
-use crate::game::phase::PhaseType;
+use crate::game::phase::{PhaseType, PhaseState};
 use crate::game::player::PlayerReference;
+use crate::game::role::RoleData;
 use crate::game::role_list::FactionAlignment;
 use crate::game::end_game_condition::EndGameCondition;
 use crate::game::verdict::Verdict;
@@ -23,10 +24,11 @@ pub(super) const TEAM: Option<Team> = None;
 
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    let &RoleData::Jester { lynched_yesterday } = actor_ref.role_data(game) else { unreachable!() };
     if priority != Priority::TopPriority {return;}
     if actor_ref.night_alive_tonight(game) {return;}
 
-    if game.player_on_trial != Some(actor_ref) {return;}
+    if !lynched_yesterday {return}
     
     let all_killable_players: Vec<PlayerReference> = PlayerReference::all_players(game)
         .into_iter()
@@ -56,12 +58,14 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
 
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+    let &RoleData::Jester { lynched_yesterday } = actor_ref.role_data(game) else { unreachable!() };
+
     actor_ref != target_ref &&
     actor_ref.chosen_targets(game).is_empty() &&
     !actor_ref.alive(game) &&
     target_ref.alive(game) &&
     target_ref.verdict(game) != Verdict::Innocent &&
-    game.player_on_trial == Some(actor_ref)
+    lynched_yesterday
 }
 pub(super) fn do_day_action(_game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
     
@@ -78,7 +82,18 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
 pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
     crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
 }
-pub(super) fn on_phase_start(_game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType){
+pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
+    match game.current_phase() {
+        &PhaseState::FinalWords { player_on_trial } => {
+            if player_on_trial == actor_ref {
+                actor_ref.set_role_data(game, RoleData::Jester { lynched_yesterday: true })
+            }
+        }
+        PhaseState::Morning => {
+            actor_ref.set_role_data(game, RoleData::Jester { lynched_yesterday: false })
+        }
+        _ => {}
+    }
 }
 pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){
     crate::game::role::common_role::on_role_creation(game, actor_ref);
