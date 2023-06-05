@@ -82,31 +82,79 @@ impl Game {
 
         
         for player_ref in PlayerReference::all_players(&game){
-            game.send_start_game_information(player_ref)
+            game.send_join_game_information(player_ref)
         }
         game
     }
 
-    pub fn send_start_game_information(&mut self, player_ref: PlayerReference){
-        player_ref.send_packet(self, ToClientPacket::YourRoleData { role_data: player_ref.role_data(self).clone() });
-        player_ref.send_packet(self, 
+    pub fn send_join_game_information(&mut self, player_ref: PlayerReference){
+
+
+        //GENERAL GAME
+        player_ref.send_packets(self, vec![
             ToClientPacket::Players{ 
                 names: PlayerReference::all_players(&self).iter().map(|p|{return p.name(&self).clone()}).collect()
+            },
+            ToClientPacket::RoleList {role_list: self.settings.role_list.clone()},
+            ToClientPacket::Phase { 
+                phase: self.current_phase(),
+                seconds_left: self.phase_machine.time_remaining.as_secs(), 
+                day_number: self.phase_machine.day_number 
+            },
+            ToClientPacket::PlayerAlive{
+                alive: PlayerReference::all_players(self).into_iter().map(|p|p.alive(self)).collect()
             }
-        );
+        ]);
 
-        player_ref.send_packet(self, ToClientPacket::YourPlayerIndex { player_index: player_ref.index() });
-        player_ref.send_packet(self, ToClientPacket::RoleList {role_list: self.settings.role_list.clone()});
-        player_ref.send_packet(self, ToClientPacket::Phase { 
-            phase: self.current_phase(),
-            seconds_left: self.phase_machine.time_remaining.as_secs(), 
-            day_number: self.phase_machine.day_number 
+        if let Some(player_on_trial) = self.player_on_trial{
+            player_ref.send_packet(self, ToClientPacket::PlayerOnTrial{
+                player_index: player_on_trial.index()
+            });
+        }
+        let votes_packet = ToClientPacket::new_player_votes(self);
+        player_ref.send_packet(self, votes_packet);
+        for grave in self.graves.iter(){
+            player_ref.send_packet(self, ToClientPacket::AddGrave { grave: grave.clone() });
+        }
+
+
+
+        //PLAYER SPECIFIC
+
+        let mut packets: Vec<ToClientPacket> = vec![];
+        packets.push(ToClientPacket::YourName{
+            name: player_ref.name(self).clone()
         });
+        packets.push(ToClientPacket::YourPlayerIndex { 
+            player_index: player_ref.index() 
+        });
+        packets.push(ToClientPacket::YourRoleData{
+            role_data: player_ref.role_data(self).clone()
+        });
+        packets.push(ToClientPacket::YourRoleLabels { role_labels: PlayerReference::ref_map_to_index(player_ref.role_labels(self).clone()) });
+        packets.push(ToClientPacket::YourTarget{
+            player_indices: PlayerReference::ref_vec_to_index(player_ref.chosen_targets(self))
+        });
+        packets.push(ToClientPacket::YourJudgement{
+            verdict: player_ref.verdict(self)
+        });
+        packets.push(ToClientPacket::YourVoting{ 
+            player_index: PlayerReference::ref_option_to_index(&player_ref.chosen_vote(self))
+        });
+        packets.push(ToClientPacket::YourWill{
+            will: player_ref.will(self).clone()
+        });
+        packets.push(ToClientPacket::YourNotes{
+            notes: player_ref.notes(self).clone()
+        });
+        player_ref.send_packets(self, packets);
         
-        player_ref.send_packet(self, ToClientPacket::YourRoleLabels { role_labels: PlayerReference::ref_map_to_index(player_ref.role_labels(self).clone()) });
 
         let buttons = AvailableButtons::from_player(&self, player_ref);
         player_ref.send_packet(self, ToClientPacket::YourButtons{buttons});
+
+        
+        
     }
 
     pub fn current_phase(&self) -> PhaseType {

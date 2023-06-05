@@ -185,7 +185,7 @@ impl Lobby {
                         
                         send.send(ToClientPacket::AcceptJoin{in_game: true});
                         
-                        game.send_start_game_information(player_ref);
+                        game.send_join_game_information(player_ref);
                         
                         return Ok(new_id);
                     }
