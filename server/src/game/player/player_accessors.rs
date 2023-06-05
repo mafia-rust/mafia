@@ -94,6 +94,7 @@ impl PlayerReference{
     /// - player is not voting itself
     /// - player is not voting a dead player
     pub fn set_chosen_vote(&self, game: &mut Game, chosen_vote: Option<PlayerReference>, send_chat_message: bool) -> bool{
+
         if chosen_vote == self.deref(game).voting_variables.chosen_vote ||
             !self.deref(game).alive || self.night_silenced(game) {
             self.deref_mut(game).voting_variables.chosen_vote = None;

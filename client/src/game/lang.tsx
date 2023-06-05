@@ -35,12 +35,11 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                         message.text
                     ))}</span>;
                 }else{
-                    return <span key={key}>{styleText(translate("chatmessage.normal",
+                    return <span key={key} style={{backgroundColor:"black", borderRadius: "5px"}}>{styleText(translate("chatmessage.normal",
                         GAME_MANAGER.gameState.players[playerIndex].toString(),
                         message.text
                     ), {color:"grey"})}</span>;
                 }
-                
             } else {
                 //TODO, this only works because jailor and medium are the only options
                 return <span key={key}>{styleText(translate("chatmessage.normal",

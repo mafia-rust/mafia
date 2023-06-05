@@ -69,15 +69,14 @@ impl Listener{
 impl ConnectionEventListener for Listener {
     fn on_connect(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection) {
         println!("{}\t{}", log::important("CONNECTED:"), connection.get_address());
-
         self.players.insert(*connection.get_address(), PlayerLocation::OutsideLobby);
     }
 
     fn on_disconnect(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection) {
         println!("{}\t{}", log::important("DISCONNECTED:"), connection.get_address());
 
-        if let Some(disconnected_player) = self.players.remove(connection.get_address()) {
-            if let PlayerLocation::InLobby { room_code, player_id } = disconnected_player {
+        if let Some(disconnected_player_location) = self.players.remove(connection.get_address()) {
+            if let PlayerLocation::InLobby { room_code, player_id } = disconnected_player_location {
                 // If the lobby actually exists
                 if let Some(lobby) = self.lobbies.lock().unwrap().get_mut(&room_code){
                     lobby.disconnect_player_from_lobby(player_id);
@@ -99,6 +98,7 @@ impl ConnectionEventListener for Listener {
         }    
     }
 }
+
 impl Listener{
     fn handle_message(&mut self, connection: &Connection, message: &Message) -> Result<(), serde_json::Error> {
         let incoming_packet = serde_json::from_str::<ToServerPacket>(message.to_string().as_str())?;
@@ -121,7 +121,7 @@ impl Listener{
                     Ok(player_id) => {
                         *sender_player_location = PlayerLocation::InLobby { room_code, player_id };
         
-                        connection.send(ToClientPacket::AcceptJoin);
+                        // connection.send(ToClientPacket::AcceptJoin{in_game: false});
                     },
                     Err(reason) => {
                         connection.send(ToClientPacket::RejectJoin { reason });

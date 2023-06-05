@@ -4,6 +4,7 @@ import { ChatMessage } from "./chatMessage"
 
 export type ToClientPacket = {
     type: "acceptJoin",
+    inGame: boolean
 } | {
     type: "rejectJoin",
     reason: string /* TODO RejectJoinReason */

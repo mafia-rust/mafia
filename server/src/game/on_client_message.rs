@@ -56,7 +56,6 @@ impl Game {
                     }
                 );
                 
-
                 //if someone was voted
                 let mut next_player_on_trial = None;
                 for (player_with_votes_ref, num_votes) in voted_for_player.iter(){

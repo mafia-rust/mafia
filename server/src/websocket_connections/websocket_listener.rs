@@ -2,7 +2,8 @@ use crate::{websocket_connections::connection::{Connection, ConnectionEventListe
 use tokio_tungstenite::tungstenite::Message;
 use std::{
     net::SocketAddr,
-    sync::{Arc, Mutex}, collections::HashMap,
+    sync::{Arc, Mutex},
+    collections::HashMap,
 };
 
 use futures_util::{future, StreamExt, TryStreamExt, SinkExt};
@@ -33,9 +34,9 @@ pub async fn create_ws_server(address: &str) {
 }
 
 pub async fn handle_connection(
-    raw_stream: TcpStream, 
-    addr: SocketAddr, 
-    clients_mutex: Arc<Mutex<HashMap<SocketAddr, Connection>>>, 
+    raw_stream: TcpStream,
+    addr: SocketAddr,
+    clients_mutex: Arc<Mutex<HashMap<SocketAddr, Connection>>>,
     listener: Arc<Mutex<impl ConnectionEventListener>>
 ) {
     let ws_stream = tokio_tungstenite::accept_async(raw_stream).await
@@ -50,7 +51,7 @@ pub async fn handle_connection(
     // Add connection to the hashmap to keep track
     {
         let mut clients = clients_mutex.lock().unwrap();
-        clients.insert(addr, Connection::new(transmitter_to_client, addr)); 
+        clients.insert(addr, Connection::new(transmitter_to_client, addr));
     }
     
     // Route MPSC packets to client via TCP
@@ -61,7 +62,13 @@ pub async fn handle_connection(
                 Err(_) => {break;},
             }
         }
-        to_client.close().await.unwrap();
+        
+        match to_client.close().await {
+            Ok(_) => {},
+            Err(err) => {
+                println!("Error closing connection: {}", err);
+            },
+        }
     });
 
     let recieve_from_client = from_client.try_for_each(|message|{
@@ -69,7 +76,7 @@ pub async fn handle_connection(
         let connection = clients.get(&addr).unwrap();
 
         listener.lock().unwrap().on_message(&clients, connection, &message);
-            
+
         future::ok(())
     });
 

@@ -20,28 +20,39 @@ pub(super) const TEAM: Option<Team> = None;
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
     if actor_ref.night_jailed(game) {return;}
-
-    if priority != Priority::Necromancy {return;}
     
     let retributionist_visits = actor_ref.night_visits(game).clone();
     let Some(first_visit) = retributionist_visits.get(0) else {return};
     let Some(second_visit) = retributionist_visits.get(1) else {return};
 
     if first_visit.target.alive(game) {return;}
-    
-    first_visit.target.set_night_visits(
-        game,
-        first_visit.target.role(game).convert_targets_to_visits(game,
-            first_visit.target, vec![second_visit.target]
-        )
-    );
 
-    let RoleData::Retributionist { mut used_bodies } = actor_ref.role_data(game).clone() else {unreachable!()};
-    used_bodies.push(first_visit.target);
-    actor_ref.set_role_data(game, RoleData::Retributionist { used_bodies });
+    match priority{
+        Priority::Necromancy => {
+            first_visit.target.set_night_visits(
+                game,
+                first_visit.target.role(game).convert_targets_to_visits(game,
+                    first_visit.target, vec![second_visit.target]
+                )
+            );
+
+            let RoleData::Retributionist { mut used_bodies, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
+            used_bodies.push(first_visit.target);
+            actor_ref.set_role_data(game, RoleData::Retributionist { used_bodies, currently_used_player: Some(first_visit.target) });
+        },
+        Priority::StealMessages => {
+            let RoleData::Retributionist { currently_used_player, .. } = actor_ref.role_data(game) else {unreachable!()};
+            if let Some(currently_used_player) = currently_used_player {
+                for message in currently_used_player.night_messages(game).clone() {
+                    actor_ref.push_night_messages(game, message.clone());
+                }
+            }
+        },
+        _ => {}
+    }
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    let RoleData::Retributionist { used_bodies } = actor_ref.role_data(game) else {unreachable!()};
+    let RoleData::Retributionist { used_bodies, .. } = actor_ref.role_data(game) else {unreachable!()};
 
     !actor_ref.night_jailed(game) &&
     actor_ref.alive(game) &&
@@ -79,7 +90,14 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
 pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
     crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
 }
-pub(super) fn on_phase_start(_game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType){
+pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
+    match phase {
+        PhaseType::Night => {
+            let RoleData::Retributionist { used_bodies, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
+            actor_ref.set_role_data(game, RoleData::Retributionist { used_bodies, currently_used_player: None });
+        },
+        _ => {}
+    }
 }
 pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){
     crate::game::role::common_role::on_role_creation(game, actor_ref);

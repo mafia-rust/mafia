@@ -1,10 +1,22 @@
-use crate::{game::{Game, available_buttons::AvailableButtons}, packet::ToClientPacket};
+use crate::{game::{Game, available_buttons::AvailableButtons}, packet::ToClientPacket, websocket_connections::connection::ClientSender};
 
 use super::PlayerReference;
 
 impl PlayerReference{
+    pub fn disconnect(&self, game: &mut Game){
+        self.deref_mut(game).sender = None;
+    }
+    pub fn connect(&self, game: &mut Game, sender: ClientSender){
+        self.deref_mut(game).sender = Some(sender);
+        self.requeue_chat_messages(game);
+    }
+    pub fn is_connected(&self, game: &Game)->bool{
+        self.deref(game).sender.is_some()
+    }
     pub fn send_packet(&self, game: &Game, packet: ToClientPacket){
-        self.deref(game).sender.send(packet, &format!("Player {}", self.index()));
+        if let Some(sender) = &self.deref(game).sender{
+            sender.send(packet);
+        }
     }
     pub fn send_repeating_data(&self, game: &mut Game){
         self.send_chat_messages(game);

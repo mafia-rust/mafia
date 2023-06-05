@@ -121,7 +121,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
         {(()=>{
             if(this.state.gameState.myIndex !== null){
                 return styleText(this.state.gameState.players[this.state.gameState.myIndex].toString() +
-                 " (" + translate("role."+this.state.gameState.players[this.state.gameState.myIndex].roleLabel+".name") + ")");
+                 " (" + translate("role."+this.state.gameState.role+".name") + ")");
             }
         })()}
         {this.renderPhaseSpecific()}

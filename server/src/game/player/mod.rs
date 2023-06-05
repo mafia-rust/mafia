@@ -19,13 +19,13 @@ use crate::{
         visit::Visit, 
         grave::{GraveRole, GraveKiller}, 
         verdict::Verdict, available_buttons::AvailableButtons
-    }, websocket_connections::connection::ClientSender,
+    },
+    websocket_connections::connection::ClientSender,
 };
 
 
 pub struct Player {
-    pub(super) sender: ClientSender,
-
+    pub(super) sender: Option<ClientSender>,
 
     pub(super) name: String,
     pub(super) role_data: RoleData,
@@ -43,7 +43,6 @@ pub struct Player {
 
     pub(super) voting_variables: PlayerVotingVariables,
     pub(super) night_variables: PlayerNightVariables,
-
 }
 pub(super) struct PlayerVotingVariables{
     pub(super) chosen_vote:    Option<PlayerReference>,
@@ -75,6 +74,8 @@ pub(super) struct PlayerNightVariables{
 impl Player {
     pub fn new(name: String, sender: ClientSender, role: Role) -> Self {
         Self {
+            sender: Some(sender),
+
             name,
             role_data: role.default_data(),
             alive: true,
@@ -83,13 +84,16 @@ impl Player {
 
             role_labels: HashMap::new(),
 
-            sender,
 
             chat_messages: Vec::new(),
             queued_chat_messages: Vec::new(),
             
             last_sent_buttons: Vec::new(),
 
+            voting_variables: PlayerVotingVariables{
+                chosen_vote : None,
+                verdict : Verdict::Abstain,
+            },
             night_variables: PlayerNightVariables{
                 alive_tonight:  true,
                 died:           false,
@@ -111,10 +115,6 @@ impl Player {
                 grave_killers: vec![],
                 grave_will: "".to_string(),
                 grave_death_notes: vec![],
-            },
-            voting_variables: PlayerVotingVariables{
-                chosen_vote : None,
-                verdict : Verdict::Abstain,
             },
         }
     }

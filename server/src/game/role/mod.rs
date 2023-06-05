@@ -179,6 +179,7 @@ make_role_enum! {
     Escort : escort,
     Medium : medium,
     Retributionist : retributionist {
+        currently_used_player: Option<PlayerReference> = None,
         used_bodies: Vec<PlayerReference> = vec![]
     },
 

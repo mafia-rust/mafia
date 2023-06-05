@@ -16,20 +16,12 @@ export default class LobbyRolePane extends React.Component<any, RolePaneState> {
         super(props);
 
         this.state = {
-            roleList: [...GAME_MANAGER.gameState.roleList]
+            roleList: GAME_MANAGER.gameState.roleList
         }
 
-        this.listener = (type) => {
-            console.log();
-            let roleList: RoleListEntry[] = [];
-            for(let i = 0; i < GAME_MANAGER.gameState.players.length; i++){
-                if(i < GAME_MANAGER.gameState.roleList.length){
-                    roleList.push(GAME_MANAGER.gameState.roleList[i]);
-                }else
-                    roleList.push({type:"any"});
-            }
+        this.listener = () => {
             this.setState({
-                roleList: roleList
+                roleList: GAME_MANAGER.gameState.roleList
             });
         };
     }

@@ -25,7 +25,7 @@ impl Connection {
         self.tx.clone()
     }
     pub fn send(&self, message: ToClientPacket) {
-        self.tx.send(message, &self.address.to_string());
+        self.tx.send(message);
     }
 }
 
@@ -48,9 +48,16 @@ pub struct ClientSender {
 }
 
 impl ClientSender {
-    pub fn send(&self, message: ToClientPacket, identifier: &str) {
-        if let Err(err) = self.tx.send(message) {
-            println!("{} Failed to send {:?} to {}", log::error("ERROR:"), err.0, identifier)
+    /// Send a message to the client.
+    /// Returns true if the message was sent successfully.
+    pub fn send(&self, message: ToClientPacket)->bool
+    {
+        let result = self.tx.send(message);
+        if let Err(err) = result {
+            println!("{} Failed to send {:?}", log::error("ERROR:"), err.0);
+            false
+        }else{
+            true
         }
     }
 }
