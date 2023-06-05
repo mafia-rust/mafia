@@ -72,36 +72,41 @@ impl Game {
             trials_left: 0,
         };
 
-        game.send_packet_to_all(ToClientPacket::Players { 
-            names: PlayerReference::all_players(&game).iter().map(|p|{return p.name(&game).clone()}).collect() 
-        });
+
 
         //set up role data
         for player_ref in PlayerReference::all_players(&game){
             let role_data_copy = player_ref.role_data(&game).clone();
             player_ref.set_role(&mut game, role_data_copy);
-            player_ref.send_packet(&game, ToClientPacket::YourPlayerIndex { player_index: player_ref.index() })
         }
 
-        //send to players all game information stuff
-
         
-        game.send_packet_to_all(ToClientPacket::RoleList { 
-            role_list: settings.role_list
-        });
-        game.send_packet_to_all(ToClientPacket::Phase { 
-            phase: game.current_phase(),
-            seconds_left: game.phase_machine.time_remaining.as_secs(), 
-            day_number: game.phase_machine.day_number 
-        });
-            
         for player_ref in PlayerReference::all_players(&game){
-            player_ref.send_packet(&game, ToClientPacket::YourButtons { buttons: 
-                AvailableButtons::from_player(&game, player_ref)
-            });
+            game.send_start_game_information(player_ref)
         }
-        
         game
+    }
+
+    pub fn send_start_game_information(&mut self, player_ref: PlayerReference){
+        player_ref.send_packet(self, ToClientPacket::YourRoleData { role_data: player_ref.role_data(self).clone() });
+        player_ref.send_packet(self, 
+            ToClientPacket::Players{ 
+                names: PlayerReference::all_players(&self).iter().map(|p|{return p.name(&self).clone()}).collect()
+            }
+        );
+
+        player_ref.send_packet(self, ToClientPacket::YourPlayerIndex { player_index: player_ref.index() });
+        player_ref.send_packet(self, ToClientPacket::RoleList {role_list: self.settings.role_list.clone()});
+        player_ref.send_packet(self, ToClientPacket::Phase { 
+            phase: self.current_phase(),
+            seconds_left: self.phase_machine.time_remaining.as_secs(), 
+            day_number: self.phase_machine.day_number 
+        });
+        
+        player_ref.send_packet(self, ToClientPacket::YourRoleLabels { role_labels: PlayerReference::ref_map_to_index(player_ref.role_labels(self).clone()) });
+
+        let buttons = AvailableButtons::from_player(&self, player_ref);
+        player_ref.send_packet(self, ToClientPacket::YourButtons{buttons});
     }
 
     pub fn current_phase(&self) -> PhaseType {
@@ -195,7 +200,7 @@ impl Game {
         }
     }
 
-    pub fn send_packet_to_all(&self, packet: ToClientPacket){
+    pub fn send_packet_to_all(&mut self, packet: ToClientPacket){
         for player_ref in PlayerReference::all_players(self){
             player_ref.send_packet(self, packet.clone());
         }

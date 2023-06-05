@@ -130,13 +130,17 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                     {((player)=>{if(player.buttons.dayTarget){return(
                         <button onClick={()=>{
                             GAME_MANAGER.sendDayTargetPacket(player.index)}}
-                    >{translate("menu.playerList.button.dayTarget")}</button>)}})(player)}
+                    >{
+                        translate("role."+this.state.gameState.role+".dayTarget")
+                    }</button>)}})(player)}
                 </div>
                 <div className="target">
                     {((player)=>{if(player.buttons.target){return(
                         <button onClick={()=>{
                             GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.gameState.targets, player.index]);
-                        }}>{translate("menu.playerList.button.target")}</button>
+                        }}>{
+                            translate("role."+this.state.gameState.role+".target")
+                        }</button>
                     )}})(player)}
                 </div>
                 <div className="vote">

@@ -35,7 +35,7 @@ pub struct LobbyPlayer{
 
 impl LobbyPlayer {
     pub fn send(&self, message: ToClientPacket) {
-        self.sender.send(message, &self.name)
+        self.sender.send(message);
     }
 }
 
@@ -151,25 +151,46 @@ impl Lobby {
                 // TODO, move this somewhere else
                 let name = name_validation::sanitize_name("".to_string(), players);
                 
-                send.send(ToClientPacket::YourName { name: name.clone() }, &name);
-
-                // Add a role list entry
-                settings.role_list.push(RoleListEntry::Any);
+                send.send(ToClientPacket::YourName { name: name.clone() });
                 
-                let arbitrary_player_id = players.len() as ArbitraryPlayerID;
-
                 let new_player = LobbyPlayer { sender: send.clone(), name };
-                Self::send_settings(&new_player, settings);
-
+                let arbitrary_player_id = players.len() as ArbitraryPlayerID;
                 players.insert(arbitrary_player_id, new_player);
+
+                settings.role_list.push(RoleListEntry::Any);
 
                 // Make sure everybody is on the same page
                 Self::send_players_lobby(players);
-
+                for player in players.iter(){
+                    Self::send_settings(player.1, settings)
+                }
+                send.send(ToClientPacket::AcceptJoin{in_game: false});
                 Ok(arbitrary_player_id)
             },
-            LobbyState::Game{ .. } => {
-                // TODO, handle rejoining
+            LobbyState::Game{ game, players } => {
+
+                for player_ref in PlayerReference::all_players(&game){
+                    if !player_ref.is_connected(&game){
+                        //loop through all arbitrary player ids and find the first one that isn't connected
+                        let arbitrary_player_ids: Vec<ArbitraryPlayerID> = players.iter().map(|(id, _)|*id).collect();
+                        let mut new_id: ArbitraryPlayerID = 0;
+                        for id in arbitrary_player_ids {
+                            if id >= new_id {
+                                new_id = id + 1;
+                            }
+                        }
+
+                        players.insert(new_id, player_ref.index());
+                        player_ref.connect(game, send.clone());
+                        
+                        send.send(ToClientPacket::AcceptJoin{in_game: true});
+                        
+                        game.send_start_game_information(player_ref);
+                        
+                        return Ok(new_id);
+                    }
+                }
+
                 Err(RejectJoinReason::GameAlreadyStarted)
             }
             LobbyState::Closed => {
@@ -178,18 +199,34 @@ impl Lobby {
         }
     }
     pub fn disconnect_player_from_lobby(&mut self, id: ArbitraryPlayerID) {
-        if let LobbyState::Lobby { players, settings  } = &mut self.lobby_state {
-            players.remove(&id);
+        match &mut self.lobby_state {
+            LobbyState::Lobby {players, settings} => {
+                players.remove(&id);
             
-            if players.is_empty() {
-                self.lobby_state = LobbyState::Closed;
-                return;
-            }
-            
-            Self::send_players_lobby(players);
-            for player in players.iter(){
-                Self::send_settings(player.1, settings)
-            }
+                if players.is_empty() {
+                    self.lobby_state = LobbyState::Closed;
+                    return;
+                }
+
+                settings.role_list.pop();
+
+                Self::send_players_lobby(players);
+                for player in players.iter(){
+                    Self::send_settings(player.1, settings)
+                }
+            },
+            LobbyState::Game {game, players} => {
+                // game.on_client_disconnect(*players.get(&id).unwrap());
+                //TODO proper disconnect from game
+                let player_index = players.get(&id);
+                if let Some(player_index) = player_index {
+                    if let Ok(player_ref) = PlayerReference::new(game, *player_index) {
+                        player_ref.disconnect(game);
+                    }
+                }
+                players.remove(&id);
+            },
+            LobbyState::Closed => {}
         }
     }
     
@@ -234,7 +271,7 @@ impl Lobby {
         }
     }
     #[allow(unused)]
-    fn send_players_game(game: &Game, players: &HashMap<ArbitraryPlayerID, PlayerIndex>){
+    fn send_players_game(game: &mut Game, players: &HashMap<ArbitraryPlayerID, PlayerIndex>){
         let packet = ToClientPacket::Players { 
             names: PlayerReference::all_players(game).into_iter().map(|p| {
                 p.name(game).clone()
@@ -245,8 +282,8 @@ impl Lobby {
         }
     }
 
-    fn send_to_all(&self, packet: ToClientPacket){
-        match &self.lobby_state {
+    fn send_to_all(&mut self, packet: ToClientPacket){
+        match &mut self.lobby_state {
             LobbyState::Lobby { players, .. } => {
                 for player in players.iter() {
                     player.1.send(packet.clone());
@@ -289,10 +326,9 @@ mod name_validation {
 
     const MAX_NAME_LENGTH: usize = 20;
 
-    ///
+    /// Sanitizes a player name.
     /// If the desired name is invalid or taken, this generates a random acceptable name.
     /// Otherwise, this trims and returns the input name.
-    /// 
     pub fn sanitize_name(mut desired_name: String, players: &HashMap<ArbitraryPlayerID, LobbyPlayer>) -> String {
         desired_name = desired_name.trim().to_string()
             .trim_newline()

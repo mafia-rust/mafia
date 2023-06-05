@@ -47,6 +47,7 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
     actor_ref != target_ref && 
     actor_ref.alive(game) && 
     target_ref.alive(game) && 
+    game.phase_machine.day_number > 1 &&
     *executions_remaining > 0
 }
 pub(super) fn do_day_action(game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {

@@ -52,7 +52,7 @@
     "menu.playerList.button.resetVote":"Clear Vote",
     "menu.playerList.button.target":"Target",
     "menu.playerList.button.resetTargets":"Clear Targets",
-    "menu.playerList.button.dayTarget":"Special",
+    "menu.playerList.button.dayTarget":"Day Target",
     "menu.playerList.button.filter":"Filter",
 
     "menu.graveyard.title": "Graveyard",
@@ -61,74 +61,110 @@
     "role.jailor.name": "Jailor",
     "role.jailor.abilities":"*Choose one player to jail during the day*You can execute your prisoners up to three times",
     "role.jailor.attributes":"*You may anonymously talk with your prisoner at night*If you execute a town member, you forfiet the ability to jail prisoners*Jailed players are immune to all attacks, frames, transports, douses and more*Jailed players can't use their ability",
+    "role.jailor.target": "Execute",
+    "role.jailor.dayTarget": "Jail",
 
     "role.sheriff.name": "Sheriff",
-    "role.sheriff.abilities": "*Target a player to find out if they're innocent or suspicious",
+    "role.sheriff.abilities": "*Interrogate a player to find out if they're innocent or suspicious",
     "role.sheriff.attributes": "*Frames, Douses, Hexes, and Enchants can make your target look suspicious wrongly",
-    
+    "role.sheriff.target": "Interrogate",
+    "role.sheriff.dayTarget": "Special",
+
     "role.lookout.name": "Lookout",
-    "role.lookout.abilities": "*Target a player to find everyone who targeted them",
+    "role.lookout.abilities": "*Watch a player to find everyone who visited them",
     "role.lookout.attributes": "*You can not see astral visits*You can never see yourself visit",
+    "role.lookout.target": "Watch",
+    "role.lookout.dayTarget": "Special",
 
     "role.doctor.name": "Doctor",
     "role.doctor.abilities":"*Target a player to save them from death*Target yourself one time to save yourself",
     "role.doctor.attributes":"*You give your target powerfull defense*You and your target will know if they were attacked and saved",
+    "role.doctor.target": "Heal",
+    "role.doctor.dayTarget": "Special",
 
     "role.bodyguard.name": "Bodyguard",
     "role.bodyguard.abilities":"*Target a player to guard them, killing their attacker, but getting attacked yourself*Target yourself one time to protect yourself",
     "role.bodyguard.attributes":"*When you guard yourself, you gain powerfull defense*You and your target will know if they were attacked and protected*You will redirect attacks from your target onto yourself, and you will attack those players back",
+    "role.bodyguard.target": "Protect",
+    "role.bodyguard.dayTarget": "Special",
 
     "role.escort.name": "Escort",
     "role.escort.abilities":"*Target a player to roleblock them",
     "role.escort.attributes":"*Roleblocking a player prevents them from using parts of their ability",
+    "role.escort.target": "Role block",
+    "role.escort.dayTarget": "Special",
 
     "role.medium.name": "Medium",
     "role.medium.abilities":"*You can talk with the dead during the night",
     "role.medium.attributes":"*You can talk to other mediums during the night as well",
-    
+    "role.medium.target": "Target",
+    "role.medium.dayTarget": "Seance",
+
     "role.retributionist.name": "Retributionist",
     "role.retributionist.abilities":"*Force a dead player to use their ability on a living one",
     "role.retributionist.attributes":"*Your ability only works on townies who can only target one player*You cant use the same person two times",
-    
+    "role.retributionist.target": "Target",
+    "role.retributionist.dayTarget": "Special",
+
     "role.vigilante.name": "Vigilante",
-    "role.vigilante.abilities":"*Target a player to shoot them",
+    "role.vigilante.abilities":"*Shoot suspicious looking players",
     "role.vigilante.attributes":"*You have three bullets*You can't shoot night 1*If you shoot a town member, you will commit suicide the next night*Your suicide deals an unstoppable attack towards yourself*You have a basic attack",
+    "role.vigilante.target": "Shoot",
+    "role.vigilante.dayTarget": "Special",
 
     "role.veteran.name": "Veteran",
     "role.veteran.abilities":"*Target yourself to alert, killing everyone who visits you",
     "role.veteran.attributes":"*You will know if you attack someone*You have a powerfull attack*You have basic defense while on alert",
-    
+    "role.veteran.target": "Alert",
+    "role.veteran.dayTarget": "Special",
+
     "role.mafioso.name": "Mafioso",
     "role.mafioso.abilities":"*Target a player to kill them",
     "role.mafioso.attributes":"*A Godfather can force you to target someone else*You have a basic attack*If the mafia has no Mafioso, a memeber of the mafia will become the Mafioso at the start of night",
+    "role.mafioso.target": "Kill",
+    "role.mafioso.dayTarget": "Special",
 
     "role.consort.name": "Consort",
     "role.consort.abilities":"*Target a player to roleblock them",
     "role.consort.attributes":"*Roleblocking a player prevents them from using parts of their ability",
+    "role.consort.target": "Role block",
+    "role.consort.dayTarget": "Special",
     
     "role.blackmailer.name": "Blackmailer",
-    "role.blackmailer.abilities":"*Target a player to silence them for the next day",
+    "role.blackmailer.abilities":"*Blackmail a player to silence them for the next day",
     "role.blackmailer.attributes":"*Silenced players can not talk or vote",
+    "role.blackmailer.target": "Silence",
+    "role.blackmailer.dayTarget": "Special",
     
     "role.janitor.name": "Janitor",
-    "role.janitor.abilities":"*Target a player on the night they die to clean them",
+    "role.janitor.abilities":"*Clean a player on the night they die",
     "role.janitor.attributes":"*Cleaning a player erases information from their grave*You will know the role and will of a player you clean, but it wont show up in the graveyard",
-    
+    "role.janitor.target": "Clean",
+    "role.janitor.dayTarget": "Special",
+
     "role.framer.name": "Framer",
     "role.framer.abilities":"*Target two players to frame the first one",
     "role.framer.attributes":"*You can only pick non mafia memebers for your first target, but anyone as your second target*Your second visit is astral*Lookouts and trackers will see that your first target visited your second target*Psychics will see framed players as evil*Seers will see framed players as mafia*Sheriffs will see framed players as suspicious",
+    "role.framer.target": "Target",
+    "role.framer.dayTarget": "Special",
 
     "role.covenLeader.name": "Coven Leader",
     "role.covenLeader.abilities":"",
     "role.covenLeader.attributes":"",
+    "role.covenLeader.target": "Kill",
+    "role.covenLeader.dayTarget": "Toggle Power",
 
     "role.voodooMaster.name": "Voodoo Master",
     "role.voodooMaster.abilities":"",
     "role.voodooMaster.attributes":"",
+    "role.voodooMaster.target": "Silence",
+    "role.voodooMaster.dayTarget": "Special",
 
     "role.jester.name": "Jester",
-    "role.jester.abilities":"*Get lynched to win*After you are lynched, you can kill a player who didn't vote innocent",
-    "role.jester.attributes":"*If you target nobody, you will kill a random player*You have an unstoppable astral attack",
+    "role.jester.abilities":"*Get lynched to win*After you are lynched, you can haunt a player who didn't vote innocent",
+    "role.jester.attributes":"*If you haunt nobody, you will haunt a random player*Haunting is an unstoppable astral attack",
+    "role.jester.target": "Haunt",
+    "role.jester.dayTarget": "Special",
 
     "grave.role.cleaned": "Cleaned",
     "grave.role.petrified": "Petrified",

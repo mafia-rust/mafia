@@ -33,7 +33,8 @@ use crate::{game::{
 pub enum ToClientPacket{
     
         //Pre lobby
-    AcceptJoin,
+    #[serde(rename_all = "camelCase")]
+    AcceptJoin{in_game: bool},
     RejectJoin{reason: RejectJoinReason},
     #[serde(rename_all = "camelCase")]
     AcceptHost{room_code: RoomCode},

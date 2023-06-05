@@ -62,7 +62,12 @@ impl PhaseType {
                         let new_grave = Grave::from_player_night(game, player_ref);
                         game.graves.push(new_grave.clone());
                         game.send_packet_to_all(ToClientPacket::AddGrave{grave: new_grave.clone()});
-                        game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied { grave: new_grave });
+                        game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied { grave: new_grave.clone() });
+                        if let Some(role) = new_grave.role.get_role(){
+                            for other_player_ref in PlayerReference::all_players(game){
+                                other_player_ref.insert_role_label(game, player_ref, role);
+                            }
+                        }
                     }
                 }
 
@@ -200,13 +205,17 @@ impl PhaseType {
                         }
                     }
                     if innocent < guilty {
-                        let grave = Grave::from_player_lynch(game, player_on_trial);
-                        game.send_packet_to_all(ToClientPacket::AddGrave{grave: grave.clone()});
-                        game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied {
-                            grave: grave.clone()
-                        });
-                        game.graves.push(grave);
                         player_on_trial.set_alive(game, false);
+
+                        let new_grave = Grave::from_player_lynch(game, player_on_trial);
+                        game.graves.push(new_grave.clone());
+                        game.send_packet_to_all(ToClientPacket::AddGrave{grave: new_grave.clone()});
+                        game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied { grave: new_grave.clone() });
+                        if let Some(role) = new_grave.role.get_role(){
+                            for other_player_ref in PlayerReference::all_players(game){
+                                other_player_ref.insert_role_label(game, player_on_trial, role);
+                            }
+                        }
                     }
                 }
 

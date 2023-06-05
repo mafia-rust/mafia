@@ -11,15 +11,15 @@ use super::role_list::Faction;
 #[serde(rename_all = "camelCase")]
 pub struct Grave {
     #[serde(rename = "playerIndex")]
-    player: PlayerIndex,
+    pub player: PlayerIndex,
 
-    role: GraveRole,
-    death_cause: GraveDeathCause,
-    will: String,
-    death_notes: Vec<String>,
+    pub role: GraveRole,
+    pub death_cause: GraveDeathCause,
+    pub will: String,
+    pub death_notes: Vec<String>,
 
-    died_phase: GravePhase,
-    day_number: u8,
+    pub died_phase: GravePhase,
+    pub day_number: u8,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -29,6 +29,14 @@ pub enum GraveRole {
     Cleaned,
     Petrified,
     Role(Role),
+}
+impl GraveRole{
+    pub fn get_role(&self)->Option<Role>{
+        match self {
+            GraveRole::Role(role) => Some(role.clone()),
+            _ => None
+        }
+    }
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

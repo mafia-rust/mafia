@@ -14,9 +14,10 @@ impl AvailableButtons{
     pub fn from_player_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference)->Self{
         Self{
             vote: 
-            actor_ref != target_ref &&
+                actor_ref != target_ref &&
                 game.phase_machine.current_state == PhaseType::Voting &&
                 actor_ref.chosen_vote(game).is_none() && 
+                !actor_ref.night_silenced(game) &&
                 actor_ref.alive(game) && target_ref.alive(game),
 
             target: 

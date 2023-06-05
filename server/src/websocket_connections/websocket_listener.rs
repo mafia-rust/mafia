@@ -2,7 +2,8 @@ use crate::{websocket_connections::{connection::Connection, ForceLock}, log, lis
 use tokio_tungstenite::tungstenite::Message;
 use std::{
     net::SocketAddr,
-    sync::{Arc, Mutex}, collections::HashMap,
+    sync::{Arc, Mutex},
+    collections::HashMap,
 };
 
 use futures_util::{future, StreamExt, TryStreamExt, SinkExt};

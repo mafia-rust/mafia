@@ -14,7 +14,11 @@ export default function messageListener(packet: ToClientPacket){
     console.log(packet);
     switch(packet.type) {
         case "acceptJoin":
-            Anchor.setContent(<LobbyMenu/>);
+            if(packet.inGame){
+                Anchor.setContent(<GameScreen/>);
+            }else{
+                Anchor.setContent(<LobbyMenu/>);
+            }
         break;
         case "rejectJoin":
             switch(packet.reason) {
@@ -140,6 +144,7 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "yourRoleData":
+            GAME_MANAGER.gameState.role = packet.roleData.role;
             GAME_MANAGER.gameState.roleData = packet.roleData;
         break;
         case "yourTarget":
