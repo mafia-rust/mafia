@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{packet::{ToServerPacket, ToClientPacket}, strings::{trim_new_line, trim_whitespace}, log};
+use crate::{packet::{ToServerPacket, ToClientPacket}, strings::TidyableString, log};
 
 use super::{Game, player::{PlayerIndex, PlayerReference}, phase::PhaseType, chat::{ChatGroup, ChatMessage, MessageSender}, role::Role};
 
@@ -65,10 +65,10 @@ impl Game {
                     }
                 }
                 
-                if let Some(next_player_on_trial_unwrap) = next_player_on_trial{
-                    self.player_on_trial = next_player_on_trial;
+                if let Some(next_player_on_trial) = next_player_on_trial {
+                    self.player_on_trial = Some(next_player_on_trial);
 
-                    self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: next_player_on_trial_unwrap.index() } );
+                    self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: next_player_on_trial.index() } );
                     self.start_phase(PhaseType::Testimony);
                 }
             },
@@ -138,7 +138,7 @@ impl Game {
 
                         ChatMessage::Normal{
                             message_sender,
-                            text: trim_whitespace(&trim_new_line(&text.clone())), 
+                            text: text.trim_newline().trim_whitespace(), 
                             chat_group
                         }
                     );

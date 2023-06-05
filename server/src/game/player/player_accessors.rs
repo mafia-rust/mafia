@@ -280,7 +280,7 @@ impl PlayerReference{
     ///add chat message saying that they were jailed, and sends packet
     pub fn set_night_jailed(&self, game: &mut Game, jailed: bool){
         if jailed {
-            self.send_packet(game, ToClientPacket::YourJailed);
+            self.send_packet(game, ToClientPacket::YouAreJailed);
 
             let mut message_sent = false;
             for chat_group in self.role(game).get_current_send_chat_groups(game, *self){
@@ -310,7 +310,7 @@ impl PlayerReference{
     pub fn set_night_silenced(&self, game: &mut Game, silenced: bool){
         self.deref_mut(game).night_variables.silenced = silenced;
         if silenced {
-            self.send_packet(game, ToClientPacket::YourSilenced);
+            self.send_packet(game, ToClientPacket::YouAreSilenced);
             self.push_night_messages(game, NightInformation::Silenced);
         }
     }

@@ -22,16 +22,16 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "rejectJoin":
             switch(packet.reason) {
-                case "InvalidRoomCode":
+                case "INVALID_ROOM_CODE":
                     alert("Couldn't join: No lobby has that room code!");
                 break;
-                case "GameAlreadyStarted":
+                case "GAME_ALREADY_STARTED":
                     alert("Couldn't join: That game has already begun!");
                 break;
-                case "RoomFull":
+                case "ROOM_FULL":
                     alert("Couldn't join: That lobby is full!");
                 break;
-                case "ServerBusy":
+                case "SERVER_BUSY":
                     alert("Couldn't join: The server is busy. Try again later!");
                 break;
                 default:

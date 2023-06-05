@@ -1,8 +1,6 @@
-use std::collections::HashMap;
 use std::net::SocketAddr;
 
 use tokio::sync::mpsc::UnboundedSender;
-use tokio_tungstenite::tungstenite::Message;
 
 use crate::log;
 use crate::packet::ToClientPacket;
@@ -35,12 +33,6 @@ impl PartialEq for Connection{
     }
 }
 impl Eq for Connection {}
-
-pub trait ConnectionEventListener {
-    fn on_connect(&mut self, clients: &HashMap<SocketAddr, Connection>, connection: &Connection);
-    fn on_disconnect(&mut self, clients: &HashMap<SocketAddr, Connection>, connection: &Connection);
-    fn on_message(&mut self, clients: &HashMap<SocketAddr, Connection>, connection: &Connection, message: &Message);
-}
 
 #[derive(Debug, Clone)]
 pub struct ClientSender {

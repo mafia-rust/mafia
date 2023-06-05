@@ -46,7 +46,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
             for other_player_ref in PlayerReference::all_players(game){
                 for visit_index in 0..other_player_ref.night_visits(game).len(){
                     
-                    let visit = other_player_ref.night_visits(game).get(visit_index).unwrap();
+                    let visit = &other_player_ref.night_visits(game)[visit_index];
 
                     if visit.target!=actor_ref || visit.astral {continue}
                     if other_player_ref.night_jailed(game){continue;}  //Attacking Jailed Player?

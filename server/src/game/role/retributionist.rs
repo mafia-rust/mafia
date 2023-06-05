@@ -60,7 +60,7 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
         actor_ref.chosen_targets(game).is_empty() &&
         !target_ref.alive(game) &&
         target_ref.role(game).faction_alignment().faction() == Faction::Town &&
-        !used_bodies.into_iter().any(|p| *p == target_ref)
+        !used_bodies.iter().any(|p| *p == target_ref)
     ) || (
         actor_ref != target_ref &&
         actor_ref.chosen_targets(game).len() == 1 &&

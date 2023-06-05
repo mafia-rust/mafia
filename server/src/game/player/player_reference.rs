@@ -18,7 +18,10 @@ pub struct InvalidPlayerReferenceError;
 impl PlayerReference{
     pub fn new(game: &Game, index: PlayerIndex) -> Result<PlayerReference, InvalidPlayerReferenceError>{
         if (index as usize) >= game.players.len() { return Err(InvalidPlayerReferenceError);} 
-        Ok(PlayerReference { index })
+        Ok(PlayerReference::new_unchecked(index))
+    }
+    fn new_unchecked(index: PlayerIndex) -> PlayerReference {
+        PlayerReference { index }
     }
     pub fn deref<'a>(&self, game: &'a Game)->&'a Player{
         &game.players[self.index as usize]
@@ -58,11 +61,11 @@ impl PlayerReference{
         Ok(out)
     }
 
-
     pub fn all_players(game: &Game)->Vec<PlayerReference>{
         let mut out = Vec::new();
         for player_index in 0..game.players.len(){
-            out.push(PlayerReference::new(game, player_index as PlayerIndex).unwrap()); //TODO, unwrap here
+            // Guaranteed to be safe
+            out.push(PlayerReference::new_unchecked(player_index as PlayerIndex));
         }
         out
     }

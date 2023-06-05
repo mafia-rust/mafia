@@ -200,6 +200,10 @@ function createServer(){
             Server.ws.addEventListener("message", (event: Event)=>{
                 Server.messageListener(event);
             });
+            Server.ws.addEventListener("error", (event: Event)=> {
+                alert("Failed to connect to server. Contact an admin to see if it is online.");
+                Anchor.setContent(<StartMenu/>);
+            })
             
             return promise;
         },

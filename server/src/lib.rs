@@ -16,28 +16,43 @@ pub mod log {
     }
 }
 pub mod strings{
-    ///removes multiple whitespace in a row.
-    pub fn trim_whitespace(s: &str) -> String {
-        let mut new_str = s.trim().to_owned();
-        let mut prev = ' '; // The initial value doesn't really matter
-        new_str.retain(|ch| {
-            //if theyre not both spaces, keep the character
-            let result = ch != ' ' || prev != ' ';
-            prev = ch;
-            result
-        });
-        new_str
+    pub trait TidyableString {
+        fn trim_whitespace(&self) -> Self;
+        fn trim_newline(&self) -> Self;
+        fn truncate(&self, max_chars: usize) -> Self;
     }
-    ///removes multiple whitespace in a row.
-    pub fn trim_new_line(s: &str) -> String {
-        let mut new_str = s.trim().to_owned();
-        let mut prev = ' '; // The initial value doesn't really matter
-        new_str.retain(|ch| {
-            //if theyre not both spaces, keep the character
-            let result = ch != '\n' || prev != '\n';
-            prev = ch;
-            result
-        });
-        new_str
+    impl TidyableString for String {
+        /// Removes multiple whitespace in a row.
+        fn trim_whitespace(&self) -> String {
+            let mut new_str = self.trim().to_owned();
+            let mut prev = ' '; // The initial value doesn't really matter
+            new_str.retain(|ch| {
+                //if theyre not both spaces, keep the character
+                let result = ch != ' ' || prev != ' ';
+                prev = ch;
+                result
+            });
+            new_str
+        }
+        /// Removes newlines
+        fn trim_newline(&self) -> String {
+            let mut new_str = self.trim().to_owned();
+            let mut prev = ' '; // The initial value doesn't really matter
+            new_str.retain(|ch| {
+                //if theyre not both spaces, keep the character
+                let result = ch != '\n' || prev != '\n';
+                prev = ch;
+                result
+            });
+            new_str
+        }
+        /// Truncates to a given number of unicode characters, rather than rust's [`String::truncate`]
+        /// which truncates to a given number of unicode codepoints.
+        fn truncate(&self, max_chars: usize) -> String {
+            match self.char_indices().nth(max_chars) {
+                None => self.clone(),
+                Some((idx, _)) => self[..idx].to_string(),
+            }
+        }
     }
 }

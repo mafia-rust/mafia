@@ -92,10 +92,11 @@ impl PhaseType {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Testimony, day_number: game.phase_machine.day_number });
                 
                 //TODO should be impossible for there to be no player on trial therefore unwrap
+                let player_on_trial_index = game.player_on_trial.unwrap().index();
                 game.add_message_to_chat_group(ChatGroup::All, 
-                    ChatMessage::PlayerOnTrial { player_index: game.player_on_trial.unwrap().index() }
+                    ChatMessage::PlayerOnTrial { player_index: player_on_trial_index }
                 );
-                game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: game.player_on_trial.unwrap().index() });
+                game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial_index });
             },
             PhaseType::Judgement => {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseChange { phase_type: PhaseType::Judgement, day_number: game.phase_machine.day_number });
@@ -155,7 +156,6 @@ impl PhaseType {
                 Self::Judgement
             },
             PhaseType::Judgement => {
-                
                 let player_on_trial = game.player_on_trial.expect("Cant be in judgement without player on trial");
 
                 let mut innocent = 0;
