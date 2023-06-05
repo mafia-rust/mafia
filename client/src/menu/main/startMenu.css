@@ -1,5 +1,9 @@
+.sm {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
 .sm header {
-    margin-top: 8%;
     align-items: center;
     margin-bottom: 5%;
 }
