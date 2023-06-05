@@ -1,4 +1,4 @@
-use crate::{game::{Game, available_buttons::AvailableButtons}, packet::ToClientPacket, websocket_connections::connection::ClientSender};
+use crate::{game::{Game, available_buttons::AvailableButtons}, packet::{ToClientPacket}, websocket_connections::connection::ClientSender};
 
 use super::PlayerReference;
 
@@ -16,6 +16,11 @@ impl PlayerReference{
     pub fn send_packet(&self, game: &Game, packet: ToClientPacket){
         if let Some(sender) = &self.deref(game).sender{
             sender.send(packet);
+        }
+    }
+    pub fn send_packets(&self, game: &Game, packets: Vec<ToClientPacket>){
+        for packet in packets{
+            self.send_packet(game, packet);
         }
     }
     pub fn send_repeating_data(&self, game: &mut Game){
