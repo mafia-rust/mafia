@@ -64,6 +64,7 @@ pub async fn handle_connection(
 
             match to_client.send(Message::text(json_message)).await {
                 Ok(_) => {},
+                Err(tokio_tungstenite::tungstenite::Error::ConnectionClosed) => break,
                 Err(err) => {
                     println!("{} while sending packet. {}", log::error("Error"), err);
                     break

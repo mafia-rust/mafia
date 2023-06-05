@@ -41,6 +41,8 @@ pub struct ClientSender {
 
 impl ClientSender {
     pub fn send(&self, message: ToClientPacket, identifier: &str) {
+        if self.tx.is_closed() {return}
+
         if let Err(err) = self.tx.send(message) {
             println!("{} Failed to send {:?} to {}", log::error("ERROR:"), err.0, identifier)
         }
