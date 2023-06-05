@@ -3,7 +3,7 @@ use std::{net::SocketAddr, collections::HashMap, sync::{Mutex, Arc}, time::Durat
 use rand::random;
 use tokio_tungstenite::tungstenite::Message;
 
-use crate::{lobby::Lobby, log, websocket_connections::connection::{ConnectionEventListener, Connection}, packet::{ToServerPacket, ToClientPacket, RejectJoinReason}};
+use crate::{lobby::Lobby, log, websocket_connections::connection::{Connection}, packet::{ToServerPacket, ToClientPacket, RejectJoinReason}};
 
 // TODO, rename to PregameID or IntermediaryID
 pub type ArbitraryPlayerID = u32;
