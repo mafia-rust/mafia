@@ -140,7 +140,7 @@ impl Lobby {
                     return;
                 };
 
-                game.on_client_message(*players.get(&player_arbitrary_id).unwrap(), incoming_packet)
+                game.on_client_message(players[&player_arbitrary_id], incoming_packet)
             }
         }
     }
@@ -264,9 +264,10 @@ impl Lobby {
 
 mod name_validation {
     use std::collections::HashMap;
-    use crate::{listener::ArbitraryPlayerID, strings::{trim_whitespace, trim_new_line}};
+    use crate::{listener::ArbitraryPlayerID, strings::TidyableString};
     use super::LobbyPlayer;
     use lazy_static::lazy_static;
+    use rand::seq::SliceRandom;
 
     lazy_static!(
         static ref RANDOM_NAMES: Vec<String> = {
@@ -286,45 +287,50 @@ mod name_validation {
         };
     );
 
+    const MAX_NAME_LENGTH: usize = 20;
+
     ///
     /// If the desired name is invalid or taken, this generates a random acceptable name.
     /// Otherwise, this trims and returns the input name.
     /// 
     pub fn sanitize_name(mut desired_name: String, players: &HashMap<ArbitraryPlayerID, LobbyPlayer>) -> String {
-        desired_name = trim_whitespace(desired_name.trim());
-        desired_name.truncate(20);
+        desired_name = desired_name.trim().to_string()
+            .trim_newline()
+            .trim_whitespace()
+            .truncate(MAX_NAME_LENGTH);
     
-        //if valid then return
-        if !desired_name.is_empty() && !players.values()
-            .any(|existing_player| desired_name == *existing_player.name)
-        {
-            return desired_name;
-        }
-        drop(desired_name);
-    
-        //otherwise 
-        let available_random_names: Vec<&String> = RANDOM_NAMES.iter().filter(|new_random_name| {
-            !players.values()
-                .map(|p| &p.name)
-                .any(|existing_name|{
-                        let mut new_random_name = trim_whitespace(&trim_new_line(new_random_name.trim()));
-                        new_random_name.truncate(30);
-    
-                        
-                        let mut existing_name = trim_whitespace(&trim_new_line(existing_name.trim()));
-                        existing_name.truncate(30);
-    
-                        new_random_name == existing_name
-                    }
-                )
-        }).collect();
-    
-        if available_random_names.is_empty() {
-            // Awesome name generator
-            // TODO make this better, or don't.
-            players.len().to_string()
+        let name_already_taken = players.values().any(|existing_player| desired_name == *existing_player.name);
+        
+        if !desired_name.is_empty() && !name_already_taken {
+            desired_name
         } else {
-            available_random_names[rand::random::<usize>()%available_random_names.len()].clone()
+            generate_random_name(&players.values().map(|p| p.name.as_str()).collect::<Vec<&str>>())
+        }
+    }
+
+    pub fn generate_random_name(taken_names: &[&str]) -> String{
+        let available_random_names = RANDOM_NAMES.iter().filter(|new_random_name| {
+            !taken_names.iter()
+                .any(|existing_name| {
+                    let new_random_name = new_random_name.trim().to_string()
+                        .trim_newline()
+                        .trim_whitespace()
+                        .truncate(MAX_NAME_LENGTH);
+
+                    let existing_name = existing_name.trim().to_string()
+                        .trim_newline()
+                        .trim_whitespace()
+                        .truncate(MAX_NAME_LENGTH);
+
+                    new_random_name == existing_name
+                })
+        }).collect::<Vec<&String>>();
+    
+        if let Some(random_name) = available_random_names.choose(&mut rand::thread_rng()) {
+            (*random_name).clone()
+        } else {
+            // This name generator sucks, but at least it works.
+            (taken_names.len()).to_string()
         }
     }
 }

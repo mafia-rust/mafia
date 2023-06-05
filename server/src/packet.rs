@@ -25,7 +25,7 @@ use crate::{game::{
     chat::ChatMessage,
     role::{Role, RoleData}, 
     Game, grave::Grave, available_buttons::AvailableButtons
-}, listener::RoomCode};
+}, listener::RoomCode, log};
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -93,8 +93,11 @@ pub enum ToClientPacket{
     //a way to syncronise the entire game for someone who joined late
 }
 impl ToClientPacket {
-    pub fn to_json_string(&self)->String{
-        serde_json::to_string(&self).unwrap()
+    pub fn to_json_string(&self) -> Result<String, serde_json::Error> {
+        serde_json::to_string(self).map_err(|err|{
+            println!("{} while parsing JSON string: {:?}", log::error(&format!("{} error", err)), self);
+            err
+        })
     }
     pub fn new_player_votes(game: &mut Game)->ToClientPacket{
         let mut voted_for_player: HashMap<PlayerIndex, u8> = HashMap::new();

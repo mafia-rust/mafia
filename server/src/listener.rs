@@ -3,7 +3,7 @@ use std::{net::SocketAddr, collections::HashMap, sync::{Mutex, Arc}, time::Durat
 use rand::random;
 use tokio_tungstenite::tungstenite::Message;
 
-use crate::{lobby::Lobby, log, websocket_connections::connection::{ConnectionEventListener, Connection}, packet::{ToServerPacket, ToClientPacket, RejectJoinReason}};
+use crate::{lobby::Lobby, log, websocket_connections::connection::Connection, packet::{ToServerPacket, ToClientPacket, RejectJoinReason}};
 
 // TODO, rename to PregameID or IntermediaryID
 pub type ArbitraryPlayerID = u32;
@@ -18,18 +18,19 @@ enum PlayerLocation {
 }
 
 pub struct Listener {
-    lobbies: Arc<Mutex<HashMap<RoomCode, Lobby>>>,
+    lobbies: HashMap<RoomCode, Lobby>,
     players: HashMap<SocketAddr, PlayerLocation>,
 }
 impl Listener{
     #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
-        let out = Self {
-            lobbies: Arc::new(Mutex::new(HashMap::new())),
+        Self {
+            lobbies: HashMap::new(),
             players: HashMap::new(),
-        };
+        }
+    }
 
-        let threaded_lobbies = out.lobbies.clone();
+    pub fn start(listener: Arc<Mutex<Self>>) {
         const DESIRED_FRAME_TIME: Duration = Duration::from_millis(980);
 
         tokio::spawn(async move {
@@ -37,13 +38,13 @@ impl Listener{
             loop {
                 let delta_time;
                 { // Tick, and remove completed lobbies
-                    let mut lobbies = threaded_lobbies.lock().unwrap();
+                    let Ok(mut listener) = listener.lock() else {return};
                     let mut closed_lobbies = Vec::new();
                     
                     delta_time = last_tick.elapsed();
                     last_tick = tokio::time::Instant::now();
 
-                    for (key, lobby) in lobbies.iter_mut() {
+                    for (key, lobby) in listener.lobbies.iter_mut() {
                         if lobby.is_closed() {
                             closed_lobbies.push(*key);
                         } else {
@@ -54,7 +55,7 @@ impl Listener{
                     // Remove closed lobbies
                     for key in closed_lobbies {
                         println!("{}\t{}", log::important("LOBBY CLOSED:"), key);
-                        lobbies.remove(&key);
+                        listener.lobbies.remove(&key);
                     }
                 }
 
@@ -62,24 +63,23 @@ impl Listener{
                 tokio::time::sleep(DESIRED_FRAME_TIME).await;
             }
         });
-        out
     }
 }
 
-impl ConnectionEventListener for Listener {
-    fn on_connect(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection) {
+impl Listener {
+    pub fn on_connect(&mut self, connection: &Connection) {
         println!("{}\t{}", log::important("CONNECTED:"), connection.get_address());
 
         self.players.insert(*connection.get_address(), PlayerLocation::OutsideLobby);
     }
 
-    fn on_disconnect(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection) {
+    pub fn on_disconnect(&mut self, connection: &Connection) {
         println!("{}\t{}", log::important("DISCONNECTED:"), connection.get_address());
 
         if let Some(disconnected_player) = self.players.remove(connection.get_address()) {
             if let PlayerLocation::InLobby { room_code, player_id } = disconnected_player {
                 // If the lobby actually exists
-                if let Some(lobby) = self.lobbies.lock().unwrap().get_mut(&room_code){
+                if let Some(lobby) = self.lobbies.get_mut(&room_code){
                     lobby.disconnect_player_from_lobby(player_id);
                 }
             }
@@ -88,7 +88,7 @@ impl ConnectionEventListener for Listener {
         }
     }
 
-    fn on_message(&mut self, _clients: &HashMap<SocketAddr, Connection>, connection: &Connection, message: &Message) {
+    pub fn on_message(&mut self, connection: &Connection, message: &Message) {
         if message.is_empty() {
             return; // They either disconnected, or sent nothing.
         }
@@ -98,8 +98,6 @@ impl ConnectionEventListener for Listener {
             println!("[{}]\t{}:\n{}", log::error(&connection.get_address().to_string()), log::error("SERDE ERROR"), k);
         }    
     }
-}
-impl Listener{
     fn handle_message(&mut self, connection: &Connection, message: &Message) -> Result<(), serde_json::Error> {
         let incoming_packet = serde_json::from_str::<ToServerPacket>(message.to_string().as_str())?;
 
@@ -110,9 +108,7 @@ impl Listener{
 
         match incoming_packet {
             ToServerPacket::Join{ room_code } => {
-                let mut all_lobbies = self.lobbies.lock().unwrap();
-
-                let Some(lobby) = all_lobbies.get_mut(&room_code) else {
+                let Some(lobby) = self.lobbies.get_mut(&room_code) else {
                     connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::InvalidRoomCode });
                     return Ok(());
                 };
@@ -129,10 +125,8 @@ impl Listener{
                 }
             },
             ToServerPacket::Host => {
-                let mut existing_lobbies = self.lobbies.lock().unwrap();
-
                 let Some(room_code) = ((random::<u16>() as usize)..usize::MAX).find(
-                    |code| !existing_lobbies.contains_key(code)
+                    |code| !self.lobbies.contains_key(code)
                 ) else {
                     connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::ServerBusy });
                     return Ok(());
@@ -153,12 +147,11 @@ impl Listener{
 
                 println!("{}\t{}", log::important("LOBBY CREATED:"), room_code);
 
-                existing_lobbies.insert(room_code, lobby);
+                self.lobbies.insert(room_code, lobby);
             },
             _ => {
                 if let PlayerLocation::InLobby { room_code, player_id } = sender_player_location {
-                    //TODO unwrap here
-                    if let Some(lobby) = self.lobbies.lock().unwrap().get_mut(room_code){
+                    if let Some(lobby) = self.lobbies.get_mut(room_code){
                         lobby.on_client_message(connection, *player_id, incoming_packet);
                     } else {
                         //Player is in a lobby that doesnt exist   
@@ -171,5 +164,3 @@ impl Listener{
         Ok(())
     }
 }
-
-
