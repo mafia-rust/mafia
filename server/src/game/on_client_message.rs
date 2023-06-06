@@ -137,7 +137,7 @@ impl Game {
 
                         ChatMessage::Normal{
                             message_sender,
-                            text: text.trim_newline().trim_whitespace(), 
+                            text: text.trim_newline().trim_whitespace().truncate(400), 
                             chat_group
                         }
                     );
