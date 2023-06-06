@@ -309,23 +309,25 @@ function styleSubstrings(
 
     //turn into jsx
     let outJsxList = [];
-    let lines = 0;
+    let shouldIndent = false;
     for(let [i, current] of finalOutList.entries()){
         if(current.type === "br"){
-            lines++;
+            shouldIndent = true;
             outJsxList.push(<br key={i}/>);
         }else if(current.type === "string"){
             outJsxList.push(
-            <span key={i} style={lines === 0 ? defaultStyle : {...defaultStyle, ...indentStyle}}>
+            <span key={i} style={shouldIndent ? {...defaultStyle, ...indentStyle} : defaultStyle }>
                 {current.string}
             </span>);
+            shouldIndent = false;
         }else if(current.type === "styled"){
             outJsxList.push(
             <span key={i}
-                style={lines === 0 ? current.style : {...current.style, ...indentStyle}}
+                style={shouldIndent ? {...current.style, ...indentStyle} : current.style }
             >
                 {current.string}
             </span>);
+            shouldIndent = false;
         }
     }
 

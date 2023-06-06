@@ -335,7 +335,8 @@ mod name_validation {
         desired_name = desired_name.trim().to_string()
             .trim_newline()
             .trim_whitespace()
-            .truncate(MAX_NAME_LENGTH);
+            .truncate(MAX_NAME_LENGTH)
+            .truncate_lines(1);
     
         let name_already_taken = players.values().any(|existing_player| desired_name == *existing_player.name);
         
@@ -353,12 +354,14 @@ mod name_validation {
                     let new_random_name = new_random_name.trim().to_string()
                         .trim_newline()
                         .trim_whitespace()
-                        .truncate(MAX_NAME_LENGTH);
+                        .truncate(MAX_NAME_LENGTH)
+                        .truncate_lines(1);
 
                     let existing_name = existing_name.trim().to_string()
                         .trim_newline()
                         .trim_whitespace()
-                        .truncate(MAX_NAME_LENGTH);
+                        .truncate(MAX_NAME_LENGTH)
+                        .truncate_lines(1);
 
                     new_random_name == existing_name
                 })

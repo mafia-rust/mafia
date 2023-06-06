@@ -20,6 +20,7 @@ pub mod strings{
         fn trim_whitespace(&self) -> Self;
         fn trim_newline(&self) -> Self;
         fn truncate(&self, max_chars: usize) -> Self;
+        fn truncate_lines(&self, max_lines: usize) -> Self;
     }
     impl TidyableString for String {
         /// Removes multiple whitespace in a row.
@@ -53,6 +54,16 @@ pub mod strings{
                 None => self.clone(),
                 Some((idx, _)) => self[..idx].to_string(),
             }
+        }
+        /// Truncates to a given number of lines
+        fn truncate_lines(&self, max_lines: usize) -> String {
+            let out: String = self.lines()
+                .take(max_lines)
+                .map(|str| str.to_string() + "\n")
+                .collect();
+
+            // Remove trailing newline
+            out[0..(out.len().saturating_sub(1))].to_string()
         }
     }
 }
