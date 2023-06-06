@@ -23,6 +23,8 @@ use crate::{
     websocket_connections::connection::ClientSender,
 };
 
+use super::tag::Tag;
+
 
 pub struct Player {
     pub(super) sender: Option<ClientSender>,
@@ -34,6 +36,7 @@ pub struct Player {
     pub(super) notes: String,
 
     pub(super) role_labels: HashMap<PlayerReference, Role>,   //when you can see someone elses role in the playerlist, dead players and teammates, mayor
+    pub(super) player_tags: HashMap<PlayerReference, Vec<Tag>>,
 
 
     pub(super) chat_messages: Vec<ChatMessage>, //all messages
@@ -83,6 +86,7 @@ impl Player {
             notes: "".to_string(),
 
             role_labels: HashMap::new(),
+            player_tags: HashMap::new(),
 
 
             chat_messages: Vec::new(),
