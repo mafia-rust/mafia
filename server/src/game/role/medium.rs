@@ -38,7 +38,7 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
 }
 pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
     let mut out = crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref);
-    if game.current_phase() == PhaseType::Night && actor_ref.alive(game) {
+    if game.current_phase().is_night() && actor_ref.alive(game) {
         out.push(ChatGroup::Dead);
     }
     out

@@ -23,9 +23,11 @@ use chat::{ChatMessage, ChatGroup};
 use player::PlayerReference;
 use role_list::{RoleListEntry, create_random_roles};
 use player::Player;
-use phase::{PhaseStateMachine, PhaseType};
+use phase::PhaseStateMachine;
 use settings::Settings;
 use grave::Grave;
+
+use self::phase::PhaseState;
 
 pub struct Game {
     pub settings : Settings,
@@ -33,10 +35,7 @@ pub struct Game {
     pub players: Box<[Player]>,
     pub graves: Vec<Grave>,
 
-    pub phase_machine : PhaseStateMachine,
-
-    pub player_on_trial: Option<PlayerReference>,   //resets on morning
-    pub trials_left: u8,    //resets on morning
+    phase_machine : PhaseStateMachine,
 }
 
 impl Game {
@@ -66,10 +65,7 @@ impl Game {
             players: players.into_boxed_slice(),
             graves: Vec::new(),
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
-            settings: settings.clone(),
-
-            player_on_trial: None,
-            trials_left: 0,
+            settings,
         };
 
 
@@ -80,7 +76,6 @@ impl Game {
             player_ref.set_role(&mut game, role_data_copy);
         }
 
-        
         for player_ref in PlayerReference::all_players(&game){
             game.send_join_game_information(player_ref)
         }
@@ -93,11 +88,11 @@ impl Game {
         //GENERAL GAME
         player_ref.send_packets(self, vec![
             ToClientPacket::Players{ 
-                names: PlayerReference::all_players(&self).iter().map(|p|{return p.name(&self).clone()}).collect()
+                names: PlayerReference::all_players(self).iter().map(|p|{return p.name(self).clone()}).collect()
             },
             ToClientPacket::RoleList {role_list: self.settings.role_list.clone()},
             ToClientPacket::Phase { 
-                phase: self.current_phase(),
+                phase: self.current_phase().get_type(),
                 seconds_left: self.phase_machine.time_remaining.as_secs(), 
                 day_number: self.phase_machine.day_number 
             },
@@ -106,7 +101,9 @@ impl Game {
             }
         ]);
 
-        if let Some(player_on_trial) = self.player_on_trial{
+        if let PhaseState::Testimony { player_on_trial, .. }
+            | PhaseState::Judgement { player_on_trial, .. }
+            | PhaseState::FinalWords { player_on_trial } = self.current_phase() {
             player_ref.send_packet(self, ToClientPacket::PlayerOnTrial{
                 player_index: player_on_trial.index()
             });
@@ -121,44 +118,43 @@ impl Game {
 
         //PLAYER SPECIFIC
 
-        let mut packets: Vec<ToClientPacket> = vec![];
-        packets.push(ToClientPacket::YourName{
-            name: player_ref.name(self).clone()
-        });
-        packets.push(ToClientPacket::YourPlayerIndex { 
-            player_index: player_ref.index() 
-        });
-        packets.push(ToClientPacket::YourRoleData{
-            role_data: player_ref.role_data(self).clone()
-        });
-        packets.push(ToClientPacket::YourRoleLabels { role_labels: PlayerReference::ref_map_to_index(player_ref.role_labels(self).clone()) });
-        packets.push(ToClientPacket::YourTarget{
-            player_indices: PlayerReference::ref_vec_to_index(player_ref.chosen_targets(self))
-        });
-        packets.push(ToClientPacket::YourJudgement{
-            verdict: player_ref.verdict(self)
-        });
-        packets.push(ToClientPacket::YourVoting{ 
-            player_index: PlayerReference::ref_option_to_index(&player_ref.chosen_vote(self))
-        });
-        packets.push(ToClientPacket::YourWill{
-            will: player_ref.will(self).clone()
-        });
-        packets.push(ToClientPacket::YourNotes{
-            notes: player_ref.notes(self).clone()
-        });
-        player_ref.send_packets(self, packets);
+        player_ref.send_packets(self, vec![
+            ToClientPacket::YourName{
+                name: player_ref.name(self).clone()
+            },
+            ToClientPacket::YourPlayerIndex { 
+                player_index: player_ref.index() 
+            },
+            ToClientPacket::YourRoleData{
+                role_data: player_ref.role_data(self).clone()
+            },
+            ToClientPacket::YourRoleLabels { 
+                role_labels: PlayerReference::ref_map_to_index(player_ref.role_labels(self).clone()) 
+            },
+            ToClientPacket::YourTarget{
+                player_indices: PlayerReference::ref_vec_to_index(player_ref.chosen_targets(self))
+            },
+            ToClientPacket::YourJudgement{
+                verdict: player_ref.verdict(self)
+            },
+            ToClientPacket::YourVoting{ 
+                player_index: PlayerReference::ref_option_to_index(&player_ref.chosen_vote(self))
+            },
+            ToClientPacket::YourWill{
+                will: player_ref.will(self).clone()
+            },
+            ToClientPacket::YourNotes{
+                notes: player_ref.notes(self).clone()
+            }
+        ]);
         
 
-        let buttons = AvailableButtons::from_player(&self, player_ref);
+        let buttons = AvailableButtons::from_player(self, player_ref);
         player_ref.send_packet(self, ToClientPacket::YourButtons{buttons});
-
-        
-        
     }
 
-    pub fn current_phase(&self) -> PhaseType {
-        self.phase_machine.current_state
+    pub fn current_phase(&self) -> &PhaseState {
+        &self.phase_machine.current_state
     }
 
     //phase state machine
@@ -174,7 +170,7 @@ impl Game {
         //check if phase is over and start next phase
         while self.phase_machine.time_remaining <= Duration::ZERO {
 
-            let new_phase = PhaseType::end(self);
+            let new_phase = PhaseState::end(self);
 
             self.start_phase(new_phase);
         }
@@ -184,47 +180,40 @@ impl Game {
         }
         
         //subtract time for actual tick
-        self.phase_machine.time_remaining = match self.phase_machine.time_remaining.checked_sub(time_passed){
-            Some(out) => out,
-            None => Duration::ZERO,
-        };
+        self.phase_machine.time_remaining = self.phase_machine.time_remaining.saturating_sub(time_passed);
     }
 
-    pub fn on_phase_start(&mut self, phase: PhaseType){
-        match phase {
-            PhaseType::Morning => {
-                self.player_on_trial = None;
-                self.trials_left = 3;
-            },
-            PhaseType::Discussion => {},
-            PhaseType::Voting => {},
-            PhaseType::Testimony => {},
-            PhaseType::Judgement => {},
-            PhaseType::Evening => {},
-            PhaseType::Night => {},
+    pub fn on_phase_start(&mut self){
+        match self.current_phase() {
+            PhaseState::Morning => {},
+            PhaseState::Discussion => {},
+            PhaseState::Voting {..} => {},
+            &PhaseState::Testimony {..} => {},
+            &PhaseState::Judgement {..} => {},
+            PhaseState::Evening => {},
+            PhaseState::FinalWords {..} => {},
+            PhaseState::Night => {},
         }
     }
-    pub fn start_phase(&mut self, phase: PhaseType){
+    pub fn start_phase(&mut self, phase: PhaseState){
 
         self.phase_machine.current_state = phase;
-        self.phase_machine.time_remaining = self.phase_machine.current_state.get_length(&self.settings.phase_times);
+        self.phase_machine.time_remaining = self.current_phase().get_length(&self.settings.phase_times);
 
-        PhaseType::start(self); //THIS WAS RECENTLY MOVED BEFORE THE ON_PHASE_STARTS, PRAY THAT IT WONT CAUSE PROBLEMS
+        PhaseState::start(self); //THIS WAS RECENTLY MOVED BEFORE THE ON_PHASE_STARTS, PRAY THAT IT WONT CAUSE PROBLEMS
 
 
         //player reset
         for player_ref in PlayerReference::all_players(self){
-            player_ref.on_phase_start(self, phase);
-            player_ref.role(self).on_phase_start(self, player_ref, phase);
+            player_ref.on_phase_start(self, self.current_phase().get_type());
+            player_ref.role(self).on_phase_start(self, player_ref, self.current_phase().get_type());
         }
 
         //game reset
-        self.on_phase_start(phase);
-
-
+        self.on_phase_start();
 
         self.send_packet_to_all(ToClientPacket::Phase { 
-            phase,
+            phase: self.current_phase().get_type(),
             day_number: self.phase_machine.day_number,
             seconds_left: self.phase_machine.time_remaining.as_secs()
         });

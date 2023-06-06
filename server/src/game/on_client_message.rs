@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::{packet::{ToServerPacket, ToClientPacket}, strings::TidyableString, log};
 
-use super::{Game, player::{PlayerIndex, PlayerReference}, phase::PhaseType, chat::{ChatGroup, ChatMessage, MessageSender}, role::Role};
+use super::{Game, player::{PlayerIndex, PlayerReference}, phase::{PhaseType, PhaseState}, chat::{ChatGroup, ChatMessage, MessageSender}, role::Role};
 
 
 
@@ -20,6 +20,7 @@ impl Game {
 
         'packet_match: {match incoming_packet {
             ToServerPacket::Vote { player_index: player_voted_index } => {
+                let &PhaseState::Voting { trials_left } = self.current_phase() else {break 'packet_match};
 
                 let player_voted_ref = match PlayerReference::index_option_to_ref(self, &player_voted_index){
                     Ok(player_voted_ref) => player_voted_ref,
@@ -65,15 +66,13 @@ impl Game {
                     }
                 }
                 
-                if let Some(next_player_on_trial) = next_player_on_trial {
-                    self.player_on_trial = Some(next_player_on_trial);
-
-                    self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: next_player_on_trial.index() } );
-                    self.start_phase(PhaseType::Testimony);
+                if let Some(player_on_trial) = next_player_on_trial {
+                    self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
+                    self.start_phase(PhaseState::Testimony { trials_left, player_on_trial });
                 }
             },
             ToServerPacket::Judgement { verdict } => {
-                if self.current_phase() != PhaseType::Judgement {break 'packet_match;}
+                if self.current_phase().get_type() != PhaseType::Judgement {break 'packet_match;}
                 
                 sender_player_ref.set_verdict(self, verdict, true);
             },

@@ -81,7 +81,7 @@ impl Lobby {
                     settings.phase_times.evening, settings.phase_times.morning,
                     settings.phase_times.discussion, settings.phase_times.voting,
                     settings.phase_times.judgement, settings.phase_times.testimony,
-                    settings.phase_times.night
+                    settings.phase_times.night,
                 ].iter().all(Duration::is_zero) {
                     send.send(ToClientPacket::RejectStart { reason: RejectStartReason::ZeroTimeGame });
                     return;
@@ -117,6 +117,7 @@ impl Lobby {
                     PhaseType::Morning => { settings.phase_times.morning = phase_time; }
                     PhaseType::Discussion => { settings.phase_times.discussion = phase_time; }
                     PhaseType::Evening => { settings.phase_times.evening = phase_time; }
+                    PhaseType::FinalWords => { settings.phase_times.final_words = phase_time; }
                     PhaseType::Judgement => { settings.phase_times.judgement = phase_time; }
                     PhaseType::Night => { settings.phase_times.night = phase_time; }
                     PhaseType::Testimony => { settings.phase_times.testimony = phase_time; }
@@ -169,8 +170,8 @@ impl Lobby {
             },
             LobbyState::Game{ game, players } => {
 
-                for player_ref in PlayerReference::all_players(&game){
-                    if !player_ref.is_connected(&game){
+                for player_ref in PlayerReference::all_players(game){
+                    if !player_ref.is_connected(game){
                         //loop through all arbitrary player ids and find the first one that isn't connected
                         let arbitrary_player_ids: Vec<ArbitraryPlayerID> = players.iter().map(|(id, _)|*id).collect();
                         let mut new_id: ArbitraryPlayerID = 0;
@@ -249,6 +250,7 @@ impl Lobby {
             PhaseType::Testimony,
             PhaseType::Judgement,
             PhaseType::Evening, 
+            PhaseType::FinalWords, 
             PhaseType::Night,
         ] {
             player.send(ToClientPacket::PhaseTime { 

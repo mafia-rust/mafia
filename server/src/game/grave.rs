@@ -33,7 +33,7 @@ pub enum GraveRole {
 impl GraveRole{
     pub fn get_role(&self)->Option<Role>{
         match self {
-            GraveRole::Role(role) => Some(role.clone()),
+            GraveRole::Role(role) => Some(*role),
             _ => None
         }
     }

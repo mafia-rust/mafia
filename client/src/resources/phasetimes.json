@@ -6,6 +6,7 @@
         "testimony": 20,
         "judgement": 20,
         "evening": 7,
+        "finalWords": 7,
         "night": 37
     },
     "Lightning": {
@@ -15,6 +16,7 @@
         "testimony": 1,
         "judgement": 10,
         "evening": 1,
+        "finalWords": 1,
         "night": 10
     },
     "Rapid": {
@@ -24,6 +26,7 @@
         "testimony": 10,
         "judgement": 10,
         "evening": 4,
+        "finalWords": 4,
         "night": 19
     },
     "Long": {
@@ -33,6 +36,7 @@
         "testimony": 30,
         "judgement": 40,
         "evening": 14,
+        "finalWords": 14,
         "night": 74
     }
 }
