@@ -188,6 +188,8 @@
 
     "day": "Day",
     "suspicious": "Suspicious",
+    "suspicious.shorthand": "sus",
+    "innocent.shorthand": "inno",
     "suicide": "Suicide",
     "dead": "Dead",
     "any": "Any",
@@ -257,5 +259,10 @@
     "chatmessage.night.playersRoleAndWill": "Your targets role was \\0 and their will stated this: \\1",
     "chatmessage.night.sheriffResult.suspicious":"Your target seems to be suspicious.",
     "chatmessage.night.sheriffResult.innocent":"Your target seems to be innocent.",
-    "chatmessage.night.lookoutResult":"Your target was visited by \\0."
+    "chatmessage.night.lookoutResult":"Your target was visited by \\0.",
+
+    "pride.gay":"GAY",
+    "pride.trans":"TRANS",
+
+    "kys":"KILL YOURSELF"
 }

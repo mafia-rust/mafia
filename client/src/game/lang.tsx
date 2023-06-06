@@ -233,7 +233,6 @@ function styleSubstrings(
     stringsToStyle: {
         string: string, 
         style: React.CSSProperties,
-        className:string|undefined,
     }[], 
     styleOverride: {
         defaultStyle?: React.CSSProperties, 
@@ -279,7 +278,7 @@ function styleSubstrings(
             
             const regEscape = (v: string) => v.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 
-            let currentStringSplit = current.string.split(RegExp(regEscape(stringsToStyle[i].string), "gi"));
+            let currentStringSplit = current.string.split(RegExp("\\b" + regEscape(stringsToStyle[i].string) + "\\b", "gi"));
 
 
             let currentOutList: StyledOrNot[] = []; 
@@ -334,6 +333,7 @@ function styleSubstrings(
     return outJsxList;
 }
 
+// TODO: stringsToStyle should be calculated ONCE, statically, rather than every time this function is called.
 export function styleText(
     string: string, 
     styleOverride: {
@@ -341,15 +341,32 @@ export function styleText(
         indentStyle?: React.CSSProperties
     } = {}
 ): JSX.Element[]{
-    let stringsToStyle: {string: string, style: React.CSSProperties, className:string|undefined}[] = [];
+    let stringsToStyle: {string: string, style: React.CSSProperties}[] = [];
 
+    // Use sparingly!
+    let gradient = (colors: string): React.CSSProperties => {
+        return {
+            backgroundImage: `linear-gradient(to left, ${colors})`,
+            backgroundClip: "text",
+            color: "rgba(255,255,255,.2)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "rgba(255,255,255,.2)"
+        }
+    };
+
+    const EVIL: React.CSSProperties = { color: "red" };
+    const GOOD: React.CSSProperties = { color: "lime" };
+    const MAGIC: React.CSSProperties = { color: "magenta" };
+    const NEUTRAL: React.CSSProperties = { color: "orange" };
+    const INFO: React.CSSProperties = { color: "lightblue" };
+    const HIDDEN: React.CSSProperties = { fontStyle: "italic", fontWeight: "bold" };
 
     stringsToStyle = stringsToStyle.concat(
         GAME_MANAGER.gameState.players.map((player: Player)=>{
             return {string:player.toString(), style:{
                 fontStyle: "italic",
                 fontWeight: "bold"
-            }, className: undefined};
+            }};
         })
     );
 
@@ -358,64 +375,66 @@ export function styleText(
 
         switch(getFactionFromFactionAlignment(roleObject.factionAlignment as FactionAlignment)){
             case "coven":
-                stringsToStyle.push({string:translate("role."+role+".name"), style:{
-                    color: "magenta"
-                }, className: undefined});
+                stringsToStyle.push({string:translate("role."+role+".name"), style:MAGIC});
                 break;
             case "town":
-                stringsToStyle.push({string:translate("role."+role+".name"), style:{
-                    color: "lime"
-                }, className: undefined});
+                stringsToStyle.push({string:translate("role."+role+".name"), style:GOOD});
                 break;
             case "mafia":
-                stringsToStyle.push({string:translate("role."+role+".name"), style:{
-                    color: "red"
-                }, className: undefined});
+                stringsToStyle.push({string:translate("role."+role+".name"), style:EVIL});
                 break;
             case "neutral":
-                stringsToStyle.push({string:translate("role."+role+".name"), style:{
-                    color: "orange"
-                }, className: undefined});
+                stringsToStyle.push({string:translate("role."+role+".name"), style:NEUTRAL});
                 break;
         }
     }
 
     stringsToStyle = stringsToStyle.concat([
-        {string:translate("verdict.guilty"), style:{color:"red"}, className:undefined},
-        {string:translate("verdict.innocent"), style:{color:"lime"}, className:undefined},
-        {string:translate("verdict.abstain"), style:{color:"cyan"}, className:undefined},
+        {string:translate("verdict.guilty"), style:EVIL},
+        {string:translate("verdict.innocent"), style:GOOD},
+        {string:translate("innocent.shorthand"), style:GOOD},
+        {string:translate("verdict.abstain"), style:{color:"cyan"}},
 
-        {string:translate("grave.role.cleaned"), style:{fontStyle: "italic", fontWeight: "bold"}, className:undefined},
-        {string:translate("grave.role.petrified"), style:{fontStyle: "italic", fontWeight: "bold"}, className:undefined},
-        {string:translate("suspicious"), style:{color:"red"}, className:undefined},
+        {string:translate("grave.role.cleaned"), style:HIDDEN},
+        {string:translate("grave.role.petrified"), style:HIDDEN},
+        {string:translate("suspicious"), style:EVIL},
+        {string:translate("suspicious.shorthand"), style:EVIL},
 
-        {string:translate("faction.town"), style:{color:"lime"}, className:undefined},
-        {string:translate("faction.mafia"), style:{color:"red"}, className:undefined},
-        {string:translate("faction.neutral"), style:{color:"orange"}, className:undefined},
-        {string:translate("faction.coven"), style:{color:"magenta"}, className:undefined},
+        {string:translate("faction.town"), style:GOOD},
+        {string:translate("faction.mafia"), style:EVIL},
+        {string:translate("faction.neutral"), style:NEUTRAL},
+        {string:translate("faction.coven"), style:MAGIC},
 
-        {string:translate("alignment.killing"), style:{color:"lightblue"}, className:undefined},
-        {string:translate("alignment.investigative"), style:{color:"lightblue"}, className:undefined},
-        {string:translate("alignment.protective"), style:{color:"lightblue"}, className:undefined},
-        {string:translate("alignment.support"), style:{color:"lightblue"}, className:undefined},
-        {string:translate("alignment.deception"), style:{color:"lightblue"}, className:undefined},
-        {string:translate("alignment.evil"), style:{color:"lightblue"}, className:undefined},
-        {string:translate("alignment.chaos"), style:{color:"lightblue"}, className:undefined},
-        {string:translate("alignment.utility"), style:{color:"lightblue"}, className:undefined},
-        {string:translate("alignment.power"), style:{color:"lightblue"}, className:undefined},
+        {string:translate("alignment.killing"), style:INFO},
+        {string:translate("alignment.investigative"), style:INFO},
+        {string:translate("alignment.protective"), style:INFO},
+        {string:translate("alignment.support"), style:INFO},
+        {string:translate("alignment.deception"), style:INFO},
+        {string:translate("alignment.evil"), style:INFO},
+        {string:translate("alignment.chaos"), style:INFO},
+        {string:translate("alignment.utility"), style:INFO},
+        {string:translate("alignment.power"), style:INFO},
 
-        {string:translate("any"), style:{color:"lightblue"}, className:undefined},
-        {string:translate("none"), style:{color:"lightblue"}, className:undefined},
-        {string:translate("basic"), style:{color:"lightblue"}, className:undefined},
-        {string:translate("powerful"), style:{color:"lightblue"}, className:undefined},
-        {string:translate("unstoppable"), style:{color:"lightblue"}, className:undefined},
-        {string:translate("invincible"), style:{color:"lightblue"}, className:undefined},
-        {string:translate("dead"), style:{fontStyle: "italic", color:"gray"}, className:undefined},
+        {string:translate("any"), style:INFO},
+        {string:translate("none"), style:INFO},
+        {string:translate("basic"), style:INFO},
+        {string:translate("powerful"), style:INFO},
+        {string:translate("unstoppable"), style:INFO},
+        {string:translate("invincible"), style:INFO},
+        {string:translate("dead"), style:{fontStyle: "italic", color:"gray"}},
 
-        {string:translate("menu.wiki.abilities"), style:{color:"lightblue"}, className:undefined},
-        {string:translate("menu.wiki.attributes"), style:{color:"lightblue"}, className:undefined},
+        {string:translate("menu.wiki.abilities"), style:INFO},
+        {string:translate("menu.wiki.attributes"), style:INFO},
 
-        {string:translate("grave.killer.suicide"), style:{color:"lightblue"}, className:undefined}
+        {string:translate("grave.killer.suicide"), style:INFO},
+
+        // Special values:
+
+        {string:translate("kys"), style:gradient("violet, indigo, cyan, green, yellow, orange, red")},
+        
+        // Happy pride month!
+        {string:translate("pride.gay"), style:gradient("violet, indigo, cyan, green, yellow, orange, red")},
+        {string:translate("pride.trans"), style:gradient("cyan, pink, white, pink, cyan")},
     ]);
 
     return styleSubstrings(string, stringsToStyle, styleOverride);
