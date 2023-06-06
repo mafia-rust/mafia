@@ -217,7 +217,7 @@
     "chatmessage.broadcastWhisper":"\\0 whispered to \\1.",
 
     "chatmessage.roleAssignment":"Your role is \\0",
-    "chatmessage.playerDied":"\\0 (\\1) died and was killed by \\2. Their will stated: \\3",
+    "chatmessage.playerDied":"\\0 (\\1) died and was killed by \\2. Their will stated:\n\\3",
     "chatmessage.phaseChange":"\\0 \\1",
 
     "chatmessage.trialInformation":"\\0 votes needed for the \\1 trials left today.",

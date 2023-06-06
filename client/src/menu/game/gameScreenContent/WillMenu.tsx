@@ -41,7 +41,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
                 onClick={()=>{GAME_MANAGER.sendSaveWillPacket(this.state.willFeild)}}
                 style={{borderColor: this.state.gameState.will === this.state.willFeild ? undefined : "yellow"}}
             >{translate("menu.will.save")}</button>
-            <button onClick={()=>{GAME_MANAGER.sendSendMessagePacket(this.state.gameState.will)}}>{translate("menu.will.post")}</button>
+            <button onClick={()=>{GAME_MANAGER.sendSendMessagePacket('\n' + this.state.gameState.will)}}>{translate("menu.will.post")}</button>
             <textarea
                 // onKeyPress={(e) => {
                 //     if(e.code === "Enter") {
