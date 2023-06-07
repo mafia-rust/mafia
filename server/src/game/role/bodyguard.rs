@@ -9,7 +9,7 @@ use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
 use crate::game::Game;
-use super::{Priority, RoleData, Role};
+use super::{Priority, RoleState, Role};
 
 pub(super) const DEFENSE: u8 = 0;
 pub(super) const ROLEBLOCKABLE: bool = true;
@@ -35,10 +35,10 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
             }
 
             if actor_ref == target_ref {
-                let RoleData::Bodyguard{mut self_shields_remaining, target_protected_ref, redirected_player_refs } = actor_ref.role_data(game).clone() else {unreachable!()};
+                let RoleState::Bodyguard{mut self_shields_remaining, target_protected_ref, redirected_player_refs } = actor_ref.role_data(game).clone() else {unreachable!()};
                 self_shields_remaining -= 1;
                 target_ref.increase_defense_to(game, 2);
-                actor_ref.set_role_data(game, RoleData::Bodyguard{self_shields_remaining, target_protected_ref, redirected_player_refs });
+                actor_ref.set_role_data(game, RoleState::Bodyguard{self_shields_remaining, target_protected_ref, redirected_player_refs });
             }
         },
         Priority::Bodyguard => {
@@ -64,7 +64,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
                 }
 
                 if attackers.is_empty() {return;}
-                let RoleData::Bodyguard{self_shields_remaining, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
+                let RoleState::Bodyguard{self_shields_remaining, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
                 let target_protected_ref = Some(target_ref);
 
                 let mut redirected_player_refs = Vec::new();
@@ -86,18 +86,18 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
                 }
 
                 
-                actor_ref.set_role_data(game, RoleData::Bodyguard{self_shields_remaining, target_protected_ref, redirected_player_refs});
+                actor_ref.set_role_data(game, RoleState::Bodyguard{self_shields_remaining, target_protected_ref, redirected_player_refs});
             }
         },
         Priority::Kill => {
-            let RoleData::Bodyguard{redirected_player_refs, ..} = actor_ref.role_data(game).clone() else {unreachable!()};
+            let RoleState::Bodyguard{redirected_player_refs, ..} = actor_ref.role_data(game).clone() else {unreachable!()};
             
             for redirected_player_ref in redirected_player_refs {
                 redirected_player_ref.try_night_kill(game, GraveKiller::Role(Role::Bodyguard), 2);
             }
         }
         Priority::Investigative => {
-            let RoleData::Bodyguard{target_protected_ref, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
+            let RoleState::Bodyguard{target_protected_ref, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
             
             if let Some(target_protected_ref) = target_protected_ref {
                 actor_ref.push_night_messages(game, NightInformation::BodyguardProtected);
@@ -108,7 +108,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
     }
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    let RoleData::Bodyguard { self_shields_remaining, .. } = actor_ref.role_data(game) else {unreachable!();};
+    let RoleState::Bodyguard { self_shields_remaining, .. } = actor_ref.role_data(game) else {unreachable!();};
     
     ((actor_ref == target_ref && *self_shields_remaining > 0) || actor_ref != target_ref) &&
     !actor_ref.night_jailed(game) &&
@@ -132,10 +132,10 @@ pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerRefe
     crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
 }
 pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
-    let RoleData::Bodyguard{ self_shields_remaining, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
+    let RoleState::Bodyguard{ self_shields_remaining, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
     let redirected_player_refs = Vec::new();
     let target_protected_ref = None;
-    actor_ref.set_role_data(game, RoleData::Bodyguard{ self_shields_remaining, redirected_player_refs, target_protected_ref });
+    actor_ref.set_role_data(game, RoleState::Bodyguard{ self_shields_remaining, redirected_player_refs, target_protected_ref });
 }
 pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){
     crate::game::role::common_role::on_role_creation(game, actor_ref);

@@ -9,7 +9,7 @@ use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
 use crate::game::Game;
-use super::{Priority, RoleData, Role};
+use super::{Priority, RoleState, Role};
 
 pub(super) const DEFENSE: u8 = 0;
 pub(super) const ROLEBLOCKABLE: bool = true;
@@ -26,14 +26,14 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
 
     match priority{
         Priority::TopPriority => {
-            let RoleData::Vigilante { will_suicide, .. } = actor_ref.role_data(game) else {unreachable!()};
+            let RoleState::Vigilante { will_suicide, .. } = actor_ref.role_data(game) else {unreachable!()};
             if *will_suicide {
                 actor_ref.try_night_kill(game, GraveKiller::Suicide, 3);
             }
         },
         Priority::Kill => {
             
-            let RoleData::Vigilante { mut bullets_remaining, mut will_suicide  } = actor_ref.role_data(game).clone() else {unreachable!()};
+            let RoleState::Vigilante { mut bullets_remaining, mut will_suicide  } = actor_ref.role_data(game).clone() else {unreachable!()};
             if bullets_remaining < 1 || will_suicide || game.phase_machine.day_number == 1 {return;}
 
             if let Some(visit) = actor_ref.night_visits(game).first(){
@@ -53,7 +53,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
                     will_suicide = true;
                 }
 
-                actor_ref.set_role_data(game, RoleData::Vigilante { bullets_remaining, will_suicide });
+                actor_ref.set_role_data(game, RoleState::Vigilante { bullets_remaining, will_suicide });
             }
         },
         _ => {}
@@ -61,7 +61,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
 
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    let RoleData::Vigilante { bullets_remaining, will_suicide  } = actor_ref.role_data(game) else {unreachable!()};
+    let RoleState::Vigilante { bullets_remaining, will_suicide  } = actor_ref.role_data(game) else {unreachable!()};
     crate::game::role::common_role::can_night_target(game, actor_ref, target_ref) && *bullets_remaining > 0 && !*will_suicide && game.phase_machine.day_number != 1
 }
 pub(super) fn do_day_action(_game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {

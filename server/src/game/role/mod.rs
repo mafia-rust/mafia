@@ -1,9 +1,9 @@
 macro_rules! make_role_enum {
     (
         $(
-            $name:ident : $file:ident $({
+            $name:ident : $file:ident {
                 $($data_ident:ident: $data_type:ty = $data_def:expr),*
-            })?
+            }
         ),*
     ) => {
         $(pub(crate) mod $file;)*
@@ -16,22 +16,32 @@ macro_rules! make_role_enum {
 
         #[derive(Clone, PartialEq, Debug, Serialize, Deserialize)]
         #[serde(tag = "role", rename_all = "camelCase")]
-        pub enum RoleData {
-            $(
-                #[serde(rename_all = "camelCase")]
-                $name $({
-                    $($data_ident: $data_type),*
-                }
-            )?),*
+        pub enum RoleState {
+            $($name($name)),*
         }
+
+        $(
+            #[serde(rename_all = "camelCase")]
+            #[derive(Clone, PartialEq, Debug, Serialize, Deserialize)]
+            pub struct $name {
+                $($data_ident: $data_type),*
+            }
+            impl Default for &name {
+                fn default() -> Self {
+                    Self{
+                        $($data_ident : $data_def),*
+                    }
+                }
+            }
+        )*
 
         impl Role {  
             pub fn values() -> Vec<Role> {
                 return vec![$(Role::$name),*];
             }
-            pub fn default_data(&self) -> RoleData {
+            pub fn default_data(&self) -> RoleState {
                 match self {
-                    $(Role::$name => RoleData::$name$({
+                    $(Role::$name => RoleState::$name$({
                         $($data_ident: $data_def),*
                     })?),*
                 }
@@ -125,10 +135,10 @@ macro_rules! make_role_enum {
             }
         }
 
-        impl RoleData {
+        impl RoleState {
             pub fn role(&self) -> Role {
                 match self {
-                    $(RoleData::$name$({
+                    $(RoleState::$name$({
                         $($data_ident: _),*
                     })? => Role::$name),*
                 }
@@ -154,8 +164,8 @@ make_role_enum! {
         jailed_target_ref: Option<PlayerReference> = None
     },
 
-    Sheriff : sheriff,
-    Lookout : lookout,
+    Sheriff : sheriff {},
+    Lookout : lookout {},
 
     Doctor : doctor {
         self_heals_remaining: u8 = 1,
@@ -176,27 +186,27 @@ make_role_enum! {
         alerting_tonight: bool = false
     },
 
-    Escort : escort,
-    Medium : medium,
+    Escort : escort {},
+    Medium : medium {},
     Retributionist : retributionist {
         currently_used_player: Option<PlayerReference> = None,
         used_bodies: Vec<PlayerReference> = vec![]
     },
 
-    Mafioso : mafioso,
+    Mafioso : mafioso {},
     
-    Consort : consort,
-    Blackmailer : blackmailer,
+    Consort : consort {},
+    Blackmailer : blackmailer {},
 
     Janitor : janitor {
         cleans_remaining: u8 = 3,
         cleaned_ref: Option<PlayerReference> = None
     },
-    Framer : framer,
+    Framer : framer {},
 
-    CovenLeader : coven_leader,
+    CovenLeader : coven_leader {},
 
-    VoodooMaster : voodoo_master,
+    VoodooMaster : voodoo_master {},
 
     Jester : jester {
         lynched_yesterday: bool = false

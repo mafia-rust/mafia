@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::{
     game::{
-        role::{RoleData, Role}, 
+        role::{RoleState, Role}, 
         Game, 
         verdict::Verdict, 
         chat::{
@@ -24,16 +24,16 @@ impl PlayerReference{
     pub fn role(&self, game: &Game) -> Role {
         self.deref(game).role_data.role()
     }
-    pub fn role_data<'a>(&self, game: &'a Game) -> &'a RoleData{
+    pub fn role_data<'a>(&self, game: &'a Game) -> &'a RoleState{
         &self.deref(game).role_data
     }
-    pub fn set_role_data(&self, game: &mut Game, new_role_data: RoleData){
+    pub fn set_role_data(&self, game: &mut Game, new_role_data: RoleState){
         
         if self.deref(game).role_data.role() == new_role_data.role() {
             self.send_packet(game, ToClientPacket::YourRole { role: self.deref(game).role_data.role() });
         }
         self.deref_mut(game).role_data = new_role_data;
-        self.send_packet(game, ToClientPacket::YourRoleData { role_data: self.deref(game).role_data.clone() } );
+        self.send_packet(game, ToClientPacket::YourRoleState { role_data: self.deref(game).role_data.clone() } );
     }
 
     pub fn alive(&self, game: &Game) -> bool{

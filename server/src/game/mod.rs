@@ -125,7 +125,7 @@ impl Game {
             ToClientPacket::YourPlayerIndex { 
                 player_index: player_ref.index() 
             },
-            ToClientPacket::YourRoleData{
+            ToClientPacket::YourRoleState{
                 role_data: player_ref.role_data(self).clone()
             },
             ToClientPacket::YourRoleLabels { 

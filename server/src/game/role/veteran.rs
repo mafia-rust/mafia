@@ -8,7 +8,7 @@ use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::team::Team;
-use super::{Priority, RoleData, Role};
+use super::{Priority, RoleState, Role};
 
 pub(super) const DEFENSE: u8 = 0;
 pub(super) const ROLEBLOCKABLE: bool = false;
@@ -24,22 +24,22 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
     
     match priority {
         Priority::Unswappable => {
-            let RoleData::Veteran { alerts_remaining, .. } = actor_ref.role_data(game) else {unreachable!()};
+            let RoleState::Veteran { alerts_remaining, .. } = actor_ref.role_data(game) else {unreachable!()};
             
             if *alerts_remaining > 0 {
                 if let Some(visit) = actor_ref.night_visits(game).first(){
                     if visit.target == actor_ref{
                         actor_ref.increase_defense_to(game, 1);
                         
-                        let RoleData::Veteran { mut alerts_remaining, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
+                        let RoleState::Veteran { mut alerts_remaining, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
                         alerts_remaining -= 1;
-                        actor_ref.set_role_data(game, RoleData::Veteran { alerts_remaining, alerting_tonight: true });
+                        actor_ref.set_role_data(game, RoleState::Veteran { alerts_remaining, alerting_tonight: true });
                     }
                 }
             }
         }
         Priority::Kill => {
-            let RoleData::Veteran { alerting_tonight, .. } = actor_ref.role_data(game) else {unreachable!()};
+            let RoleState::Veteran { alerting_tonight, .. } = actor_ref.role_data(game) else {unreachable!()};
             
             if !alerting_tonight {return}
 
@@ -74,7 +74,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
     }
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    let RoleData::Veteran { alerts_remaining, .. } = actor_ref.role_data(game) else {unreachable!();};
+    let RoleState::Veteran { alerts_remaining, .. } = actor_ref.role_data(game) else {unreachable!();};
     actor_ref == target_ref &&
     !actor_ref.night_jailed(game) &&
     *alerts_remaining > 0 &&
@@ -97,9 +97,9 @@ pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerRefe
     crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
 }
 pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
-    let RoleData::Veteran { alerts_remaining, .. } = actor_ref.role_data(game).clone() else {unreachable!();};
+    let RoleState::Veteran { alerts_remaining, .. } = actor_ref.role_data(game).clone() else {unreachable!();};
 
-    actor_ref.set_role_data(game, RoleData::Veteran { alerts_remaining, alerting_tonight: false });   
+    actor_ref.set_role_data(game, RoleState::Veteran { alerts_remaining, alerting_tonight: false });   
 }
 pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){
     crate::game::role::common_role::on_role_creation(game, actor_ref);

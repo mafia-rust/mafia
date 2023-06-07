@@ -6,7 +6,7 @@ use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::team::Team;
-use super::{Priority, RoleData};
+use super::{Priority, RoleState};
 
 pub(super) const DEFENSE: u8 = 0;
 pub(super) const ROLEBLOCKABLE: bool = true;
@@ -36,12 +36,12 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
                 )
             );
 
-            let RoleData::Retributionist { mut used_bodies, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
+            let RoleState::Retributionist { mut used_bodies, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
             used_bodies.push(first_visit.target);
-            actor_ref.set_role_data(game, RoleData::Retributionist { used_bodies, currently_used_player: Some(first_visit.target) });
+            actor_ref.set_role_data(game, RoleState::Retributionist { used_bodies, currently_used_player: Some(first_visit.target) });
         },
         Priority::StealMessages => {
-            let RoleData::Retributionist { currently_used_player, .. } = actor_ref.role_data(game) else {unreachable!()};
+            let RoleState::Retributionist { currently_used_player, .. } = actor_ref.role_data(game) else {unreachable!()};
             if let Some(currently_used_player) = currently_used_player {
                 for message in currently_used_player.night_messages(game).clone() {
                     actor_ref.push_night_messages(game, message.clone());
@@ -52,7 +52,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
     }
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    let RoleData::Retributionist { used_bodies, .. } = actor_ref.role_data(game) else {unreachable!()};
+    let RoleState::Retributionist { used_bodies, .. } = actor_ref.role_data(game) else {unreachable!()};
 
     !actor_ref.night_jailed(game) &&
     actor_ref.alive(game) &&
@@ -92,8 +92,8 @@ pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerRefe
 }
 pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
     if phase == PhaseType::Night {
-        let RoleData::Retributionist { used_bodies, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
-        actor_ref.set_role_data(game, RoleData::Retributionist { used_bodies, currently_used_player: None });
+        let RoleState::Retributionist { used_bodies, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
+        actor_ref.set_role_data(game, RoleState::Retributionist { used_bodies, currently_used_player: None });
     }
 }
 pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){

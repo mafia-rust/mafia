@@ -8,7 +8,7 @@ use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
 use crate::game::Game;
-use super::{Priority, RoleData};
+use super::{Priority, RoleState};
 
 pub(super) const DEFENSE: u8 = 0;
 pub(super) const ROLEBLOCKABLE: bool = true;
@@ -32,7 +32,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
                 return
             }
 
-            let RoleData::Doctor{mut self_heals_remaining, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
+            let RoleState::Doctor{mut self_heals_remaining, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
             
             if actor_ref == target_ref {
                 self_heals_remaining -= 1;
@@ -40,10 +40,10 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
             let target_healed_ref = Some(target_ref);
             target_ref.increase_defense_to(game, 2);
 
-            actor_ref.set_role_data(game, RoleData::Doctor{self_heals_remaining, target_healed_ref});
+            actor_ref.set_role_data(game, RoleState::Doctor{self_heals_remaining, target_healed_ref});
         }
         Priority::Investigative => {
-            let RoleData::Doctor{target_healed_ref, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
+            let RoleState::Doctor{target_healed_ref, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
             
             if let Some(target_healed_ref) = target_healed_ref {
                 if target_healed_ref.night_attacked(game){
@@ -57,7 +57,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
     }
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    let RoleData::Doctor { self_heals_remaining, .. } = actor_ref.role_data(game) else {unreachable!();};
+    let RoleState::Doctor { self_heals_remaining, .. } = actor_ref.role_data(game) else {unreachable!();};
     
     ((actor_ref == target_ref && *self_heals_remaining > 0) || actor_ref != target_ref) &&
     !actor_ref.night_jailed(game) &&
@@ -81,9 +81,9 @@ pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerRefe
     crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
 }
 pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
-    let RoleData::Doctor{self_heals_remaining, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
+    let RoleState::Doctor{self_heals_remaining, .. } = actor_ref.role_data(game).clone() else {unreachable!()};
     let target_healed_index = None;
-    actor_ref.set_role_data(game, RoleData::Doctor{self_heals_remaining, target_healed_ref: target_healed_index});
+    actor_ref.set_role_data(game, RoleState::Doctor{self_heals_remaining, target_healed_ref: target_healed_index});
 }
 pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){
     crate::game::role::common_role::on_role_creation(game, actor_ref);

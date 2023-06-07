@@ -4,7 +4,7 @@ use serde::{Serialize, Deserialize};
 
 use crate::packet::ToClientPacket;
 
-use super::{settings::PhaseTimeSettings, Game, player::PlayerReference, chat::{ChatGroup, ChatMessage, night_message::NightInformation}, verdict::Verdict, grave::Grave, role::{Role, RoleData, Priority}, role_list::Faction};
+use super::{settings::PhaseTimeSettings, Game, player::PlayerReference, chat::{ChatGroup, ChatMessage, night_message::NightInformation}, verdict::Verdict, grave::Grave, role::{Role, RoleState, Priority}, role_list::Faction};
 
 
 #[derive(Clone, Copy, PartialEq, Debug, Eq, Serialize, Deserialize)]
@@ -125,7 +125,7 @@ impl PhaseState {
                 if !main_mafia_killing_exists{
                     for player_ref in PlayerReference::all_players(game){
                         if player_ref.role(game).faction_alignment().faction() == Faction::Mafia && player_ref.alive(game){
-                            player_ref.set_role(game, RoleData::Mafioso);
+                            player_ref.set_role(game, RoleState::Mafioso);
                             break;
                         }
                     }

@@ -16,7 +16,7 @@ export default interface GameState {
     dayNumber: number,
 
     role: Role | null,
-    roleData: RoleData | null,
+    roleData: RoleState | null,
 
     will: string,
     notes: string,
@@ -59,7 +59,7 @@ export interface Player {
     toString(): string
 }
 
-export type RoleData = {
+export type RoleState = {
     role: "jailor",
     executionsRemaining: number,
     jailedTargetRef: number | null

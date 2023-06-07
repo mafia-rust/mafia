@@ -4,7 +4,7 @@ use rand::seq::SliceRandom;
 use crate::game::chat::ChatGroup;
 use crate::game::phase::{PhaseType, PhaseState};
 use crate::game::player::PlayerReference;
-use crate::game::role::RoleData;
+use crate::game::role::RoleState;
 use crate::game::role_list::FactionAlignment;
 use crate::game::end_game_condition::EndGameCondition;
 use crate::game::verdict::Verdict;
@@ -24,7 +24,7 @@ pub(super) const TEAM: Option<Team> = None;
 
 
 pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-    let &RoleData::Jester { lynched_yesterday } = actor_ref.role_data(game) else { unreachable!() };
+    let &RoleState::Jester { lynched_yesterday } = actor_ref.role_data(game) else { unreachable!() };
     if priority != Priority::TopPriority {return;}
     if actor_ref.night_alive_tonight(game) {return;}
 
@@ -58,7 +58,7 @@ pub(super) fn do_night_action(game: &mut Game, actor_ref: PlayerReference, prior
 
 }
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    let &RoleData::Jester { lynched_yesterday } = actor_ref.role_data(game) else { unreachable!() };
+    let &RoleState::Jester { lynched_yesterday } = actor_ref.role_data(game) else { unreachable!() };
 
     actor_ref != target_ref &&
     actor_ref.chosen_targets(game).is_empty() &&
@@ -86,11 +86,11 @@ pub(super) fn on_phase_start(game: &mut Game, actor_ref: PlayerReference, _phase
     match game.current_phase() {
         &PhaseState::FinalWords { player_on_trial } => {
             if player_on_trial == actor_ref {
-                actor_ref.set_role_data(game, RoleData::Jester { lynched_yesterday: true })
+                actor_ref.set_role_data(game, RoleState::Jester { lynched_yesterday: true })
             }
         }
         PhaseState::Morning => {
-            actor_ref.set_role_data(game, RoleData::Jester { lynched_yesterday: false })
+            actor_ref.set_role_data(game, RoleState::Jester { lynched_yesterday: false })
         }
         _ => {}
     }

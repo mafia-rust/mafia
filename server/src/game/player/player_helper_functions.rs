@@ -1,4 +1,4 @@
-use crate::game::{chat::{ChatMessage, night_message::NightInformation}, Game, grave::GraveKiller, role::RoleData};
+use crate::game::{chat::{ChatMessage, night_message::NightInformation}, Game, grave::GraveKiller, role::RoleState};
 
 use super::PlayerReference;
 
@@ -45,7 +45,7 @@ impl PlayerReference{
         true
     }
     /// swap this persons role, sending them the role chat message, and associated changes
-    pub fn set_role(&self, game: &mut Game, new_role_data: RoleData){
+    pub fn set_role(&self, game: &mut Game, new_role_data: RoleState){
 
         self.set_role_data(game, new_role_data);
         self.role(game).on_role_creation(game, *self);

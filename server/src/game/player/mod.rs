@@ -11,7 +11,7 @@ use std::collections::HashMap;
 
 use crate::{
     game::{
-        role::{RoleData, Role}, 
+        role::{RoleState, Role}, 
         chat::{
             ChatMessage, 
             night_message::NightInformation
@@ -28,7 +28,7 @@ pub struct Player {
     pub(super) sender: Option<ClientSender>,
 
     pub(super) name: String,
-    pub(super) role_data: RoleData,
+    pub(super) role_data: RoleState,
     pub(super) alive: bool,
     pub(super) will: String,
     pub(super) notes: String,

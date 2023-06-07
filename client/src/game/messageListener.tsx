@@ -143,7 +143,7 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.gameState.role = Object.keys(packet.role)[0];
             }
         break;
-        case "yourRoleData":
+        case "yourRoleState":
             GAME_MANAGER.gameState.role = packet.roleData.role;
             GAME_MANAGER.gameState.roleData = packet.roleData;
         break;
