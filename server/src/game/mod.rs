@@ -11,6 +11,7 @@ pub mod end_game_condition;
 pub mod team;
 pub mod available_buttons;
 pub mod on_client_message;
+pub mod tag;
 
 use std::time::Duration;
 use rand::seq::SliceRandom;

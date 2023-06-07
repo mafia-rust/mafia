@@ -183,6 +183,7 @@ make_role_enum! {
         used_bodies: Vec<PlayerReference> = vec![]
     },
 
+    //Mafia
     Mafioso : mafioso,
     
     Consort : consort,
@@ -194,9 +195,14 @@ make_role_enum! {
     },
     Framer : framer,
 
-    CovenLeader : coven_leader,
+    //Coven
+    CovenLeader : coven_leader {
+        necronomicon: bool = false
+    },
 
-    VoodooMaster : voodoo_master,
+    VoodooMaster : voodoo_master {
+        necronomicon: bool = false
+    },
 
     Jester : jester {
         lynched_yesterday: bool = false
