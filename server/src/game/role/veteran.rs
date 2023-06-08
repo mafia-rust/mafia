@@ -15,7 +15,7 @@ pub(super) const ROLEBLOCKABLE: bool = false;
 pub(super) const WITCHABLE: bool = false;
 pub(super) const SUSPICIOUS: bool = false;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownKilling;
-pub(super) const MAXIUMUM_COUNT: Option<u8> = Some(1);
+pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Faction;
 pub(super) const TEAM: Option<Team> = None;
 

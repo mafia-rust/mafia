@@ -9,20 +9,20 @@ use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::team::Team;
-use super::{Priority, RoleFunctions};
+use super::{Priority, RoleStateImpl};
+
+pub(super) const SUSPICIOUS: bool = false;
+pub(super) const WITCHABLE: bool = true;
+pub(super) const DEFENSE: u8 = 0;
+pub(super) const ROLEBLOCKABLE: bool = true;
+pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownInvestigative;
+pub(super) const MAXIMUM_COUNT: Option<u8> = None;
+pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Faction;
+pub(super) const TEAM: Option<Team> = None;
 
 #[derive(Clone, PartialEq, Debug, Serialize, Deserialize, Default)]
 pub struct Sheriff;
-impl RoleFunctions for Sheriff {
-    fn suspicious() -> bool { false }
-    fn witchable() -> bool { true }
-    fn defense() -> u8 {0}
-    fn roleblockable() -> bool {true}
-    fn faction_alignment() -> FactionAlignment { FactionAlignment::TownInvestigative }
-    fn maximum_count() -> Option<u8> { None }
-    fn end_game_condition() -> EndGameCondition { EndGameCondition::Faction }
-    fn team() -> Option<Team> { None }
-
+impl RoleStateImpl for Sheriff {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return;}
 

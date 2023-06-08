@@ -4,7 +4,7 @@ use serde::{Serialize, Deserialize};
 
 use crate::packet::ToClientPacket;
 
-use super::{settings::PhaseTimeSettings, Game, player::PlayerReference, chat::{ChatGroup, ChatMessage, night_message::NightInformation}, verdict::Verdict, grave::Grave, role::{Role, RoleState, Priority}, role_list::Faction};
+use super::{settings::PhaseTimeSettings, Game, player::PlayerReference, chat::{ChatGroup, ChatMessage, night_message::NightInformation}, verdict::Verdict, grave::Grave, role::{Role, RoleStateImpl, Priority}, role_list::Faction};
 
 
 #[derive(Clone, Copy, PartialEq, Debug, Eq, Serialize, Deserialize)]
@@ -125,7 +125,7 @@ impl PhaseState {
                 if !main_mafia_killing_exists{
                     for player_ref in PlayerReference::all_players(game){
                         if player_ref.role(game).faction_alignment().faction() == Faction::Mafia && player_ref.alive(game){
-                            player_ref.set_role(game, RoleState::Mafioso);
+                            player_ref.set_role(game, Role::Mafioso);
                             break;
                         }
                     }
@@ -227,8 +227,8 @@ impl PhaseState {
 
                 //get visits
                 for player_ref in PlayerReference::all_players(game){
-                    let role = player_ref.role(game);
-                    let visits = role.convert_targets_to_visits(game, player_ref, player_ref.chosen_targets(game).clone());
+                    let role_state = player_ref.role_state(game).get_role_functions();
+                    let visits = role_state.convert_targets_to_visits(game, player_ref, player_ref.chosen_targets(game).clone());
                     player_ref.set_night_visits(game, visits.clone());
                     player_ref.set_night_appeared_visits(game, visits);
 
@@ -237,7 +237,7 @@ impl PhaseState {
                 //Night actions -- main loop
                 for priority in Priority::values(){
                     for player_ref in PlayerReference::all_players(game){
-                        player_ref.role(game).do_night_action(game, player_ref, priority);
+                        player_ref.role_state(game).get_role_functions().do_night_action(game, player_ref, priority);
                     }
                 }
 

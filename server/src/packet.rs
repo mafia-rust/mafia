@@ -76,7 +76,7 @@ pub enum ToClientPacket{
     YourNotes{notes: String},
     YourRole{role: Role},
     #[serde(rename_all = "camelCase")]
-    YourRoleState{role_data: RoleState},
+    YourRoleState{role_state: RoleState},
     #[serde(rename_all = "camelCase")]
     YourTarget{player_indices: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]

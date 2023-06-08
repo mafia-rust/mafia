@@ -18,7 +18,7 @@ pub(super) const ROLEBLOCKABLE: bool = true;
 pub(super) const WITCHABLE: bool = true;
 pub(super) const SUSPICIOUS: bool = false;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::NeutralEvil;
-pub(super) const MAXIUMUM_COUNT: Option<u8> = None;
+pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::None;
 pub(super) const TEAM: Option<Team> = None;
 

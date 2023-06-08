@@ -19,7 +19,6 @@ macro_rules! make_role_enum {
         ),*
     ) => {
         $(pub(crate) mod $file;)*
-        // $(use crate::game::role::$file::$name;)*
 
         #[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
         #[serde(rename_all = "camelCase")]
@@ -27,25 +26,68 @@ macro_rules! make_role_enum {
             $($name),*
         }
         impl Role {
-            pub fn values()->Vec<Role>{
+            pub fn values() -> Vec<Role> {
                 return vec![$(Role::$name),*];
             }
-            pub fn get_default_role_functions(&self)->RoleState{
+            pub fn default_state(&self) -> RoleState {
                 match self {
-                    $(Self::$name => $file::$name::default()),*
+                    $(Self::$name => RoleState::$name($file::$name::default())),*
+                }
+            }
+            pub fn suspicious(&self) -> bool {
+                match self {
+                    $($name => $file::SUSPICIOUS),*
+                }
+            }
+            pub fn defense(&self) -> u8 {
+                match self {
+                    $($name => $file::DEFENSE),*
+                }
+            }
+            pub fn witchable(&self) -> bool {
+                match self {
+                    $($name => $file::WITCHABLE),*
+                }
+            }
+            pub fn roleblockable(&self) -> bool {
+                match self {
+                    $($name => $file::ROLEBLOCKABLE),*
+                }
+            }
+            pub fn maximum_count(&self) -> Option<u8> {
+                match self {
+                    $($name => $file::MAXIMUM_COUNT),*
+                }
+            }
+            pub fn faction_alignment(&self) -> FactionAlignment {
+                match self {
+                    $($name => $file::FACTION_ALIGNMENT),*
+                }
+            }
+            pub fn end_game_condition(&self) -> EndGameCondition {
+                match self {
+                    $($name => $file::END_GAME_CONDITION),*
+                }
+            }
+            pub fn team(&self) -> Option<Team> {
+                match self {
+                    $($name => $file::TEAM),*
                 }
             }
         }
 
-        #[derive(Clone, PartialEq, Debug, Serialize, Deserialize)]
+        // This does not need to implement Deserialize or PartialEq!
+        // Use Role for those things!
+        #[derive(Clone, Debug, Serialize)]
         #[serde(tag = "role", rename_all = "camelCase")]
         pub enum RoleState {
             $($name($file::$name)),*
         }
-        impl RoleState{
-            pub fn get_role_functions(&self)->impl RoleFunctions{
+        impl RoleState {
+            // TODO: remove this. See below comment
+            pub fn get_role_functions(&self) -> Box<dyn RoleStateImpl> {
                 match self {
-                    $(Self::$name(role_struct) => role_struct),*
+                    $(Self::$name(role_struct) => Box::new(*role_struct)),*
                 }
             }
             pub fn role(&self) -> Role {
@@ -55,61 +97,64 @@ macro_rules! make_role_enum {
                     ),*
                 }
             }
+            /*
+            TODO: add these functions that call the inner rolestate impl and remove get_role_functions
+            fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority);
+            fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference);
+            fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool;
+            fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool;
+            fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit>;
+            fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
+            fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
+            fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType);
+            fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference);
+            */
         }
     }
 }
 
-pub trait RoleFunctions {
-    fn suspicious() -> bool;
-    fn defense() -> u8;
-    fn witchable() -> bool;
-    fn roleblockable() -> bool;
-    fn maximum_count() -> Option<u8>;
-    fn faction_alignment(&self) -> FactionAlignment;
-    fn end_game_condition() -> EndGameCondition;
-    fn team() -> Option<Team>;
-
+pub trait RoleStateImpl {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority);
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference);
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool;
     fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool;
-    fn convert_targets_to_visits(self,  game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit>;
-    fn get_current_send_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
-    fn get_current_recieve_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
-    fn on_phase_start(self,  game: &mut Game, actor_ref: PlayerReference, phase: PhaseType);
-    fn on_role_creation(self,  game: &mut Game, actor_ref: PlayerReference);
+    fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit>;
+    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
+    fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
+    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType);
+    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference);
 }
 
 // Creates the Role enum
 make_role_enum! {
     Jailor : jailor,
 
-    Sheriff : sheriff,
-    Lookout : lookout,
+    // Sheriff : sheriff,
+    // Lookout : lookout,
 
-    Doctor : doctor,
-    Bodyguard : bodyguard,
+    // Doctor : doctor,
+    // Bodyguard : bodyguard,
 
-    Vigilante : vigilante,
-    Veteran : veteran,
+    Vigilante : vigilante
+    // Veteran : veteran,
 
-    Escort : escort,
-    Medium : medium,
-    Retributionist : retributionist,
+    // Escort : escort,
+    // Medium : medium,
+    // Retributionist : retributionist,
 
-    Mafioso : mafioso,
+    // Mafioso : mafioso,
     
-    Consort : consort,
-    Blackmailer : blackmailer,
+    // Consort : consort,
+    // Blackmailer : blackmailer,
 
-    Janitor : janitor,
-    Framer : framer,
+    // Janitor : janitor,
+    // Framer : framer,
 
-    CovenLeader : coven_leader,
+    // CovenLeader : coven_leader,
 
-    VoodooMaster : voodoo_master,
+    // VoodooMaster : voodoo_master,
 
-    Jester : jester
+    // Jester : jester
 }
 
 macro_rules! make_priority_enum {

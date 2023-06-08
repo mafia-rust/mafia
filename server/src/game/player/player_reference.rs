@@ -20,7 +20,7 @@ impl PlayerReference{
         if (index as usize) >= game.players.len() { return Err(InvalidPlayerReferenceError);} 
         Ok(PlayerReference::new_unchecked(index))
     }
-    fn new_unchecked(index: PlayerIndex) -> PlayerReference {
+    pub fn new_unchecked(index: PlayerIndex) -> PlayerReference {
         PlayerReference { index }
     }
     pub fn deref<'a>(&self, game: &'a Game)->&'a Player{

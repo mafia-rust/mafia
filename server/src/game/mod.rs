@@ -72,7 +72,7 @@ impl Game {
 
         //set up role data
         for player_ref in PlayerReference::all_players(&game){
-            let role_data_copy = player_ref.role_data(&game).clone();
+            let role_data_copy = player_ref.role_state(&game).clone();
             player_ref.set_role(&mut game, role_data_copy);
         }
 
@@ -125,8 +125,8 @@ impl Game {
             ToClientPacket::YourPlayerIndex { 
                 player_index: player_ref.index() 
             },
-            ToClientPacket::YourRoleState{
-                role_data: player_ref.role_data(self).clone()
+            ToClientPacket::YourRoleState {
+                role_state: player_ref.role_state(self).clone()
             },
             ToClientPacket::YourRoleLabels { 
                 role_labels: PlayerReference::ref_map_to_index(player_ref.role_labels(self).clone()) 
@@ -206,7 +206,7 @@ impl Game {
         //player reset
         for player_ref in PlayerReference::all_players(self){
             player_ref.on_phase_start(self, self.current_phase().get_type());
-            player_ref.role(self).on_phase_start(self, player_ref, self.current_phase().get_type());
+            player_ref.role_state(self).get_role_functions().on_phase_start(self, player_ref, self.current_phase().get_type());
         }
 
         //game reset
