@@ -86,19 +86,19 @@ impl Game {
                 sender_player_ref.set_chosen_targets(self, target_ref_list.clone());
                 
                 //Send targeted message to chat groups
-                sender_player_ref.role_state(self).get_role_functions()
-                .get_current_send_chat_groups(self, sender_player_ref)
-                .into_iter().for_each(|chat_group| {
-                    self.add_message_to_chat_group(
-                        chat_group,
-                        ChatMessage::Targeted { 
-                            targeter: sender_player_ref.index(), 
-                            targets: PlayerReference::ref_vec_to_index(&target_ref_list)
-                        }
-                    );
-                });
+                sender_player_ref.role_state(self)
+                    .get_current_send_chat_groups(self, sender_player_ref)
+                    .into_iter().for_each(|chat_group| {
+                        self.add_message_to_chat_group(
+                            chat_group,
+                            ChatMessage::Targeted { 
+                                targeter: sender_player_ref.index(), 
+                                targets: PlayerReference::ref_vec_to_index(&target_ref_list)
+                            }
+                        );
+                    });
                 //if no chat groups then send to self at least
-                if sender_player_ref.role_state(self).get_role_functions().get_current_send_chat_groups(self, sender_player_ref).is_empty(){
+                if sender_player_ref.role_state(self).get_current_send_chat_groups(self, sender_player_ref).is_empty(){
                     sender_player_ref.add_chat_message(self, ChatMessage::Targeted { 
                         targeter: sender_player_ref.index(), 
                         targets: PlayerReference::ref_vec_to_index(&target_ref_list)
@@ -110,8 +110,8 @@ impl Game {
                     Ok(target_ref) => target_ref,
                     Err(_) => break 'packet_match,
                 };
-                if sender_player_ref.role_state(self).get_role_functions().can_day_target(self, sender_player_ref, target_ref){
-                    sender_player_ref.role_state(self).get_role_functions().do_day_action(self, sender_player_ref, target_ref);
+                if sender_player_ref.role_state(self).can_day_target(self, sender_player_ref, target_ref){
+                    sender_player_ref.role_state(self).do_day_action(self, sender_player_ref, target_ref);
                 }
             },
             ToServerPacket::SendMessage { text } => {
@@ -120,8 +120,9 @@ impl Game {
                     break 'packet_match;
                 }
                 
-                for chat_group in sender_player_ref.role_state(self).get_role_functions().get_current_send_chat_groups(self, sender_player_ref){
+                for chat_group in sender_player_ref.role_state(self).get_current_send_chat_groups(self, sender_player_ref){
 
+                    //TODO possibly move message_sender
                     let message_sender = 
                     if sender_player_ref.role(self) == Role::Jailor && chat_group == ChatGroup::Jail {
                         MessageSender::Jailor
@@ -153,7 +154,7 @@ impl Game {
                 if !self.current_phase().is_day() || 
                     whisperee_ref.alive(self) != sender_player_ref.alive(self) ||
                     whisperee_ref == sender_player_ref || 
-                    !sender_player_ref.role_state(self).get_role_functions().get_current_send_chat_groups(self, sender_player_ref).contains(&ChatGroup::All) ||
+                    !sender_player_ref.role_state(self).get_current_send_chat_groups(self, sender_player_ref).contains(&ChatGroup::All) ||
                     text.replace(['\n', '\r'], "").trim().is_empty()
                 {
                     break 'packet_match;

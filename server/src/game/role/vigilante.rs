@@ -1,5 +1,5 @@
 
-use serde::{Serialize, Deserialize};
+use serde::Serialize;
 
 use crate::game::chat::night_message::NightInformation;
 use crate::game::chat::ChatGroup;
@@ -11,7 +11,7 @@ use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
 use crate::game::Game;
-use super::{Priority, RoleStateImpl, Role};
+use super::{Priority, RoleStateImpl, Role, RoleState};
 
 pub(super) const SUSPICIOUS: bool = false;
 pub(super) const WITCHABLE: bool = true;
@@ -32,7 +32,7 @@ impl Default for Vigilante {
     }
 }
 impl RoleStateImpl for Vigilante {
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return}
 
         match priority{
@@ -57,11 +57,11 @@ impl RoleStateImpl for Vigilante {
 
                     if !killed {
                         actor_ref.push_night_messages(game,NightInformation::TargetSurvivedAttack);
-                    }else if target_ref.role(game).get_default_role_functions().get_role_functions().faction_alignment().faction() == Faction::Town {
+                    }else if target_ref.role(game).faction_alignment().faction() == Faction::Town {
                         self.will_suicide = true;
                     }
 
-                    actor_ref.set_role_data(game, self);
+                    actor_ref.set_role_data(game, RoleState::Vigilante(self));
                 }
             },
             _ => {}

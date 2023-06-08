@@ -206,7 +206,7 @@ impl Game {
         //player reset
         for player_ref in PlayerReference::all_players(self){
             player_ref.on_phase_start(self, self.current_phase().get_type());
-            player_ref.role_state(self).get_role_functions().on_phase_start(self, player_ref, self.current_phase().get_type());
+            player_ref.role_state(self).on_phase_start(self, player_ref, self.current_phase().get_type());
         }
 
         //game reset

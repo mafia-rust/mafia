@@ -48,7 +48,7 @@ impl PlayerReference{
     pub fn set_role(&self, game: &mut Game, new_role_data: RoleState){
 
         self.set_role_data(game, new_role_data);
-        self.role_state(game).get_role_functions().on_role_creation(game, *self);
+        self.role_state(game).on_role_creation(game, *self);
         let chat_message = ChatMessage::RoleAssignment { role: self.role(game)};
         self.add_chat_message(game, chat_message);
     }

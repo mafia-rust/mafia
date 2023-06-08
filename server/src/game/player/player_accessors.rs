@@ -27,7 +27,7 @@ impl PlayerReference{
     pub fn role_state<'a>(&self, game: &'a Game) -> &'a RoleState {
         &self.deref(game).role_state
     }
-    pub fn set_role_data(&self, game: &mut Game, new_role_data: RoleState ){
+    pub fn set_role_data(&self, game: &mut Game, new_role_data: RoleState){
         
         if self.deref(game).role_state.role() == new_role_data.role() {
             self.send_packet(game, ToClientPacket::YourRole { role: self.deref(game).role_state.role() });
@@ -210,7 +210,7 @@ impl PlayerReference{
         let role_state = self.deref(game).role_state;
 
         for target_ref in chosen_targets {
-            if role_state.get_role_functions().can_night_target(game, *self, target_ref){
+            if role_state.can_night_target(game, *self, target_ref){
                 self.deref_mut(game).night_variables.chosen_targets.push(target_ref);
             }
         }
@@ -283,7 +283,7 @@ impl PlayerReference{
             self.send_packet(game, ToClientPacket::YouAreJailed);
 
             let mut message_sent = false;
-            for chat_group in self.role_state(game).get_role_functions().get_current_send_chat_groups(game, *self){
+            for chat_group in self.role_state(game).get_current_send_chat_groups(game, *self){
                 match chat_group {
                     ChatGroup::All | ChatGroup::Dead | ChatGroup::Jail => {},
                     ChatGroup::Mafia | ChatGroup::Vampire | ChatGroup::Coven => {

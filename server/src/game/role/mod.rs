@@ -84,10 +84,9 @@ macro_rules! make_role_enum {
             $($name($file::$name)),*
         }
         impl RoleState {
-            // TODO: remove this. See below comment
-            pub fn get_role_functions(&self) -> Box<dyn RoleStateImpl> {
+            pub fn get_inner_role_state(&self) -> Box<&dyn RoleStateImpl> {
                 match self {
-                    $(Self::$name(role_struct) => Box::new(*role_struct)),*
+                    $(Self::$name(role_struct) => Box::new(role_struct)),*
                 }
             }
             pub fn role(&self) -> Role {
@@ -97,8 +96,8 @@ macro_rules! make_role_enum {
                     ),*
                 }
             }
-            /*
-            TODO: add these functions that call the inner rolestate impl and remove get_role_functions
+
+            // TODO: add these functions that call the inner rolestate impl and remove get_role_functions
             fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority);
             fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference);
             fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool;
@@ -108,7 +107,7 @@ macro_rules! make_role_enum {
             fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
             fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType);
             fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference);
-            */
+            
         }
     }
 }
@@ -116,11 +115,15 @@ macro_rules! make_role_enum {
 pub trait RoleStateImpl {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority);
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference);
+
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool;
     fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool;
+
     fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit>;
+
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
     fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
+
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType);
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference);
 }

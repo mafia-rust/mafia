@@ -37,7 +37,7 @@ impl Default for Jailor {
 }
 
 impl RoleStateImpl for Jailor {
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill { return; } 
     
         if let Some(visit) = actor_ref.night_visits(game).first() {
@@ -45,26 +45,25 @@ impl RoleStateImpl for Jailor {
             let target_ref = visit.target;
             if target_ref.night_jailed(game){
                 let killed = target_ref.try_night_kill(game, GraveKiller::Role(Role::Jailor), 3);
-    
+
                 if !killed {
                     actor_ref.push_night_messages(game, NightInformation::TargetSurvivedAttack);
                 }
-    
-                let executions_remaining = if target_ref.role(game).faction_alignment().faction() == Faction::Town { 0 } else { self.executions_remaining - 1 };
-                actor_ref.set_role_data(game, Jailor{ jailed_target_ref: None, executions_remaining });
+
+                self.executions_remaining = if target_ref.role(game).faction_alignment().faction() == Faction::Town { 0 } else { self.executions_remaining - 1 };
+                self.jailed_target_ref = None;
+                actor_ref.set_role_data(game, RoleState::Jailor(self));
             }
         }
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        let RoleState::Jailor{ executions_remaining, .. } = actor_ref.role_data(game) else {unreachable!()};
-    
         target_ref.night_jailed(game) && 
         actor_ref.chosen_targets(game).is_empty() &&
         actor_ref != target_ref && 
         actor_ref.alive(game) && 
         target_ref.alive(game) && 
         game.phase_machine.day_number > 1 &&
-        *executions_remaining > 0
+        self.executions_remaining > 0
     }
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
         if let Some(old_target_ref) = self.jailed_target_ref {
@@ -77,12 +76,10 @@ impl RoleStateImpl for Jailor {
             actor_ref.set_role_data(game, RoleState::Jailor(Jailor { jailed_target_ref: Some(target_ref), executions_remaining: self.executions_remaining }))
         }
     }
-    fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        let RoleState::Jailor{ executions_remaining, .. } = actor_ref.role_data(game) else {unreachable!()};
-        
+    fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {        
         actor_ref != target_ref &&
         actor_ref.alive(game) && target_ref.alive(game) &&
-        *executions_remaining > 0
+        self.executions_remaining > 0
     }
     fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, true)
@@ -99,14 +96,11 @@ impl RoleStateImpl for Jailor {
     fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
     }
-    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
+    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
     
-        if phase != PhaseType::Night { return; }
-    
-        let RoleState::Jailor{ jailed_target_ref, executions_remaining } = actor_ref.role_data(game) else {unreachable!()};
-        let executions_remaining = *executions_remaining;
+        if phase != PhaseType::Night{return;}
         
-        if let Some(jailed_ref) = jailed_target_ref.to_owned() {
+        if let Some(jailed_ref) = self.jailed_target_ref {
             if jailed_ref.alive(game){
         
                 jailed_ref.set_night_jailed(game, true);
@@ -115,7 +109,8 @@ impl RoleStateImpl for Jailor {
                 );
             }
         }
-        actor_ref.set_role_data(game, RoleState::Jailor{ jailed_target_ref: None, executions_remaining });
+        self.jailed_target_ref = None;
+        actor_ref.set_role_data(game, RoleState::Jailor(self));
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
         crate::game::role::common_role::on_role_creation(game, actor_ref);
