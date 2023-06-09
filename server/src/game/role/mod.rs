@@ -98,15 +98,33 @@ macro_rules! make_role_enum {
             }
 
             // TODO: add these functions that call the inner rolestate impl and remove get_role_functions
-            fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority);
-            fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference);
-            fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool;
-            fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool;
-            fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit>;
-            fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
-            fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
-            fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType);
-            fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference);
+            pub fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority){
+                self.get_inner_role_state().do_night_action(game, actor_ref, priority)
+            }
+            pub fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference){
+                self.get_inner_role_state().do_day_action(game, actor_ref, target_ref)
+            }
+            pub fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool{
+                self.get_inner_role_state().can_night_target(game, actor_ref, target_ref)
+            }
+            pub fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool{
+                self.get_inner_role_state().can_night_target(game, actor_ref, target_ref)
+            }
+            pub fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit>{
+                self.get_inner_role_state().convert_targets_to_visits(game, actor_ref, target_refs)
+            }
+            pub fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>{
+                self.get_inner_role_state().get_current_send_chat_groups(game, actor_ref)
+            }
+            pub fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>{
+                self.get_inner_role_state().get_current_recieve_chat_groups(game, actor_ref)
+            }
+            pub fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
+                self.get_inner_role_state().on_phase_start(game, actor_ref, phase)
+            }
+            pub fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
+                self.get_inner_role_state().on_role_creation(game, actor_ref)
+            }
             
         }
     }
