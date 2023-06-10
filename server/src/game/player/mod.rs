@@ -111,7 +111,8 @@ impl Player {
 
                 messages: vec![],
 
-                grave_role: GraveRole::Role(Role::Sheriff), //This should not be a problem because we reset immedietly on creation
+                //TODO make this jester just incase
+                grave_role: GraveRole::Role(Role::Vigilante), //This should not be a problem because we reset immedietly on creation
                 grave_killers: vec![],
                 grave_will: "".to_string(),
                 grave_death_notes: vec![],

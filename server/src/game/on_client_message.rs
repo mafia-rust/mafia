@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::{packet::{ToServerPacket, ToClientPacket}, strings::TidyableString, log};
 
-use super::{Game, player::{PlayerIndex, PlayerReference}, phase::{PhaseType, PhaseState}, chat::{ChatGroup, ChatMessage, MessageSender}, role::Role};
+use super::{Game, player::{PlayerIndex, PlayerReference}, phase::{PhaseType, PhaseState}, chat::{ChatGroup, ChatMessage, MessageSender}};
 
 
 
@@ -86,8 +86,7 @@ impl Game {
                 sender_player_ref.set_chosen_targets(self, target_ref_list.clone());
                 
                 //Send targeted message to chat groups
-                sender_player_ref.role_state(self)
-                    .get_current_send_chat_groups(self, sender_player_ref)
+                sender_player_ref.role_state_get_current_send_chat_groups(self)
                     .into_iter().for_each(|chat_group| {
                         self.add_message_to_chat_group(
                             chat_group,
@@ -98,7 +97,7 @@ impl Game {
                         );
                     });
                 //if no chat groups then send to self at least
-                if sender_player_ref.role_state(self).get_current_send_chat_groups(self, sender_player_ref).is_empty(){
+                if sender_player_ref.role_state_get_current_send_chat_groups(self).is_empty(){
                     sender_player_ref.add_chat_message(self, ChatMessage::Targeted { 
                         targeter: sender_player_ref.index(), 
                         targets: PlayerReference::ref_vec_to_index(&target_ref_list)
@@ -110,8 +109,8 @@ impl Game {
                     Ok(target_ref) => target_ref,
                     Err(_) => break 'packet_match,
                 };
-                if sender_player_ref.role_state(self).can_day_target(self, sender_player_ref, target_ref){
-                    sender_player_ref.role_state(self).do_day_action(self, sender_player_ref, target_ref);
+                if sender_player_ref.role_state_can_day_target(self, target_ref){
+                    sender_player_ref.role_state_do_day_action(self, target_ref);
                 }
             },
             ToServerPacket::SendMessage { text } => {
@@ -120,15 +119,16 @@ impl Game {
                     break 'packet_match;
                 }
                 
-                for chat_group in sender_player_ref.role_state(self).get_current_send_chat_groups(self, sender_player_ref){
+                for chat_group in sender_player_ref.role_state_get_current_send_chat_groups(self){
 
                     //TODO possibly move message_sender
                     let message_sender = 
-                    if sender_player_ref.role(self) == Role::Jailor && chat_group == ChatGroup::Jail {
-                        MessageSender::Jailor
-                    } else if sender_player_ref.role(self) == Role::Medium && sender_player_ref.alive(self) && chat_group == ChatGroup::Dead{
-                        MessageSender::Medium
-                    } else {
+                    // if sender_player_ref.role(self) == Role::Jailor && chat_group == ChatGroup::Jail {
+                    //     MessageSender::Jailor
+                    // } else if sender_player_ref.role(self) == Role::Medium && sender_player_ref.alive(self) && chat_group == ChatGroup::Dead{
+                    //     MessageSender::Medium
+                    // } else 
+                    {
                         MessageSender::Player {player: sender_player_index}
                     };
 
@@ -154,7 +154,7 @@ impl Game {
                 if !self.current_phase().is_day() || 
                     whisperee_ref.alive(self) != sender_player_ref.alive(self) ||
                     whisperee_ref == sender_player_ref || 
-                    !sender_player_ref.role_state(self).get_current_send_chat_groups(self, sender_player_ref).contains(&ChatGroup::All) ||
+                    !sender_player_ref.role_state_get_current_send_chat_groups(self).contains(&ChatGroup::All) ||
                     text.replace(['\n', '\r'], "").trim().is_empty()
                 {
                     break 'packet_match;

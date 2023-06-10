@@ -143,7 +143,7 @@ pub enum ChatGroup {
 }
 impl ChatGroup{
     pub fn player_receive_from_chat_group(&self, game: &Game, player_ref: PlayerReference)->bool{
-        player_ref.role(game).get_current_recieve_chat_groups(game, player_ref).contains(self)
+        player_ref.role_state_get_current_recieve_chat_groups(game).contains(self)
     }
 
     pub fn all_players_in_group(&self, game: &Game)->Vec<PlayerReference>{

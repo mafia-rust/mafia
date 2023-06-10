@@ -36,42 +36,42 @@ macro_rules! make_role_enum {
             }
             pub fn suspicious(&self) -> bool {
                 match self {
-                    $($name => $file::SUSPICIOUS),*
+                    $(Self::$name => $file::SUSPICIOUS),*
                 }
             }
             pub fn defense(&self) -> u8 {
                 match self {
-                    $($name => $file::DEFENSE),*
+                    $(Self::$name => $file::DEFENSE),*
                 }
             }
             pub fn witchable(&self) -> bool {
                 match self {
-                    $($name => $file::WITCHABLE),*
+                    $(Self::$name => $file::WITCHABLE),*
                 }
             }
             pub fn roleblockable(&self) -> bool {
                 match self {
-                    $($name => $file::ROLEBLOCKABLE),*
+                    $(Self::$name => $file::ROLEBLOCKABLE),*
                 }
             }
             pub fn maximum_count(&self) -> Option<u8> {
                 match self {
-                    $($name => $file::MAXIMUM_COUNT),*
+                    $(Self::$name => $file::MAXIMUM_COUNT),*
                 }
             }
             pub fn faction_alignment(&self) -> FactionAlignment {
                 match self {
-                    $($name => $file::FACTION_ALIGNMENT),*
+                    $(Self::$name => $file::FACTION_ALIGNMENT),*
                 }
             }
             pub fn end_game_condition(&self) -> EndGameCondition {
                 match self {
-                    $($name => $file::END_GAME_CONDITION),*
+                    $(Self::$name => $file::END_GAME_CONDITION),*
                 }
             }
             pub fn team(&self) -> Option<Team> {
                 match self {
-                    $($name => $file::TEAM),*
+                    $(Self::$name => $file::TEAM),*
                 }
             }
         }
@@ -84,48 +84,88 @@ macro_rules! make_role_enum {
             $($name($file::$name)),*
         }
         impl RoleState {
-            pub fn get_inner_role_state(&self) -> Box<&dyn RoleStateImpl> {
-                match self {
-                    $(Self::$name(role_struct) => Box::new(role_struct)),*
-                }
-            }
             pub fn role(&self) -> Role {
                 match self {
                     $(
-                        Self::$name(role_struct) => Role::$name
+                        Self::$name(_role_struct) => Role::$name
                     ),*
                 }
             }
+        }
 
-            // TODO: add these functions that call the inner rolestate impl and remove get_role_functions
-            pub fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority){
-                self.get_inner_role_state().do_night_action(game, actor_ref, priority)
+        impl PlayerReference{
+            pub fn role_state_do_night_action(self, game: &mut Game, priority: Priority){
+                let role_state = self.role_state(game).clone();
+                match role_state {
+                    $(
+                        Self::$name(role_struct) => role_struct.clone().do_night_action(game, self, priority)
+                    ),*
+                }
             }
-            pub fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference){
-                self.get_inner_role_state().do_day_action(game, actor_ref, target_ref)
+            pub fn role_state_do_day_action(self, game: &mut Game, target_ref: PlayerReference){
+                let role_state = self.role_state(game).clone();
+                match role_state {
+                    $(
+                        Self::$name(role_struct) => role_struct.clone().do_day_action(game, self, target_ref)
+                    ),*
+                }
             }
-            pub fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool{
-                self.get_inner_role_state().can_night_target(game, actor_ref, target_ref)
+            pub fn role_state_can_night_target(self, game: &Game, target_ref: PlayerReference) -> bool{
+                let role_state = self.role_state(game).clone();
+                match role_state {
+                    $(
+                        Self::$name(role_struct) => role_struct.clone().can_night_target(game, self, target_ref)
+                    ),*
+                }
             }
-            pub fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool{
-                self.get_inner_role_state().can_night_target(game, actor_ref, target_ref)
+            pub fn role_state_can_day_target(self, game: &Game, target_ref: PlayerReference) -> bool{
+                let role_state = self.role_state(game).clone();
+                match role_state {
+                    $(
+                        Self::$name(role_struct) => role_struct.clone().can_night_target(game, self, target_ref)
+                    ),*
+                }
             }
-            pub fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit>{
-                self.get_inner_role_state().convert_targets_to_visits(game, actor_ref, target_refs)
+            pub fn role_state_convert_targets_to_visits(self, game: &Game, target_refs: Vec<PlayerReference>) -> Vec<Visit>{
+                let role_state = self.role_state(game).clone();
+                match role_state {
+                    $(
+                        Self::$name(role_struct) => role_struct.clone().convert_targets_to_visits(game, self, target_refs)
+                    ),*
+                }
             }
-            pub fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>{
-                self.get_inner_role_state().get_current_send_chat_groups(game, actor_ref)
+            pub fn role_state_get_current_send_chat_groups(self, game: &Game) -> Vec<ChatGroup>{
+                let role_state = self.role_state(game).clone();
+                match role_state {
+                    $(
+                        Self::$name(role_struct) => role_struct.clone().get_current_send_chat_groups(game, self)
+                    ),*
+                }
             }
-            pub fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>{
-                self.get_inner_role_state().get_current_recieve_chat_groups(game, actor_ref)
+            pub fn role_state_get_current_recieve_chat_groups(self, game: &Game) -> Vec<ChatGroup>{
+                let role_state = self.role_state(game).clone();
+                match role_state {
+                    $(
+                        Self::$name(role_struct) => role_struct.clone().get_current_recieve_chat_groups(game, self)
+                    ),*
+                }
             }
-            pub fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
-                self.get_inner_role_state().on_phase_start(game, actor_ref, phase)
+            pub fn role_state_on_phase_start(self, game: &mut Game, phase: PhaseType){
+                let role_state = self.role_state(game).clone();
+                match role_state {
+                    $(
+                        Self::$name(role_struct) => role_struct.clone().on_phase_start(game, self, phase)
+                    ),*
+                }
             }
-            pub fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
-                self.get_inner_role_state().on_role_creation(game, actor_ref)
+            pub fn role_state_on_role_creation(self, game: &mut Game){
+                let role_state = self.role_state(game).clone();
+                match role_state {
+                    $(
+                        Self::$name(role_struct) => role_struct.clone().on_role_creation(game, self)
+                    ),*
+                }
             }
-            
         }
     }
 }

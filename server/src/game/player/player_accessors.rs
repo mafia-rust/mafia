@@ -210,7 +210,7 @@ impl PlayerReference{
         let role_state = self.deref(game).role_state;
 
         for target_ref in chosen_targets {
-            if role_state.can_night_target(game, *self, target_ref){
+            if self.role_state_can_night_target(game, target_ref){
                 self.deref_mut(game).night_variables.chosen_targets.push(target_ref);
             }
         }
@@ -283,7 +283,7 @@ impl PlayerReference{
             self.send_packet(game, ToClientPacket::YouAreJailed);
 
             let mut message_sent = false;
-            for chat_group in self.role_state(game).get_current_send_chat_groups(game, *self){
+            for chat_group in self.role_state_get_current_send_chat_groups(game){
                 match chat_group {
                     ChatGroup::All | ChatGroup::Dead | ChatGroup::Jail => {},
                     ChatGroup::Mafia | ChatGroup::Vampire | ChatGroup::Coven => {

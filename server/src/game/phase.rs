@@ -8,8 +8,7 @@ use super::{
     settings::PhaseTimeSettings,
     Game, player::PlayerReference,
     chat::{ChatGroup, ChatMessage, night_message::NightInformation},
-    verdict::Verdict, grave::Grave, role::{Role, Priority},
-    role_list::Faction
+    verdict::Verdict, grave::Grave, role::Priority,
 };
 
 
@@ -116,27 +115,27 @@ impl PhaseState {
                 //TODO move this potentially
                 //ensure mafia can kill
                 //search for mafia godfather or mafioso
-                let mut main_mafia_killing_exists = false;
+                // let mut main_mafia_killing_exists = false;
 
 
-                for player_ref in PlayerReference::all_players(game){
-                    if player_ref.role(game) == Role::Mafioso && player_ref.alive(game) { 
-                        main_mafia_killing_exists = true;
-                        break;
-                    }
-                }
+                // for player_ref in PlayerReference::all_players(game){
+                //     if player_ref.role(game) == Role::Mafioso && player_ref.alive(game) { 
+                //         main_mafia_killing_exists = true;
+                //         break;
+                //     }
+                // }
 
-                //TODO for now just convert the first person we see to mafioso
-                //later set an order for roles
-                //ambusher should be converted first
-                if !main_mafia_killing_exists{
-                    for player_ref in PlayerReference::all_players(game){
-                        if player_ref.role(game).faction_alignment().faction() == Faction::Mafia && player_ref.alive(game){
-                            player_ref.set_role(game, Role::Mafioso);
-                            break;
-                        }
-                    }
-                }
+                // //TODO for now just convert the first person we see to mafioso
+                // //later set an order for roles
+                // //ambusher should be converted first
+                // if !main_mafia_killing_exists{
+                //     for player_ref in PlayerReference::all_players(game){
+                //         if player_ref.role(game).faction_alignment().faction() == Faction::Mafia && player_ref.alive(game){
+                //             player_ref.set_role(game, Role::Mafioso);
+                //             break;
+                //         }
+                //     }
+                // }
             },
             PhaseState::Discussion
             | PhaseState::Judgement { .. } 
@@ -234,8 +233,7 @@ impl PhaseState {
 
                 //get visits
                 for player_ref in PlayerReference::all_players(game){
-                    let role_state = player_ref.role_state(game);
-                    let visits = role_state.convert_targets_to_visits(game, player_ref, player_ref.chosen_targets(game).clone());
+                    let visits = player_ref.role_state_convert_targets_to_visits(game, player_ref.chosen_targets(game).clone());
                     player_ref.set_night_visits(game, visits.clone());
                     player_ref.set_night_appeared_visits(game, visits);
 
@@ -244,7 +242,7 @@ impl PhaseState {
                 //Night actions -- main loop
                 for priority in Priority::values(){
                     for player_ref in PlayerReference::all_players(game){
-                        player_ref.role_state(game).do_night_action(game, player_ref, priority);
+                        player_ref.role_state_do_night_action(game, priority);
                     }
                 }
 
