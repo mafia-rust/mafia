@@ -144,8 +144,8 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "yourRoleState":
-            GAME_MANAGER.gameState.role = packet.roleData.role;
-            GAME_MANAGER.gameState.roleData = packet.roleData;
+            GAME_MANAGER.gameState.role = packet.roleState.role;
+            GAME_MANAGER.gameState.roleState = packet.roleState;
         break;
         case "yourTarget":
             GAME_MANAGER.gameState.targets = packet.playerIndices;

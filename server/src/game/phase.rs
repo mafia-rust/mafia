@@ -233,7 +233,7 @@ impl PhaseState {
 
                 //get visits
                 for player_ref in PlayerReference::all_players(game){
-                    let visits = player_ref.role_state_convert_targets_to_visits(game, player_ref.chosen_targets(game).clone());
+                    let visits = player_ref.convert_targets_to_visits(game, player_ref.chosen_targets(game).clone());
                     player_ref.set_night_visits(game, visits.clone());
                     player_ref.set_night_appeared_visits(game, visits);
 
@@ -242,7 +242,7 @@ impl PhaseState {
                 //Night actions -- main loop
                 for priority in Priority::values(){
                     for player_ref in PlayerReference::all_players(game){
-                        player_ref.role_state_do_night_action(game, priority);
+                        player_ref.do_night_action(game, priority);
                     }
                 }
 

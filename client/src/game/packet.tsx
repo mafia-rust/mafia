@@ -79,7 +79,7 @@ export type ToClientPacket = {
     }
 } | {
     type: "yourRoleState",
-    roleData: RoleState
+    roleState: RoleState
 } | {
     type: "yourTarget",
     playerIndices: [PlayerIndex]

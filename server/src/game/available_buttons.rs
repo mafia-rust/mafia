@@ -21,11 +21,11 @@ impl AvailableButtons{
                 actor_ref.alive(game) && target_ref.alive(game),
 
             target: 
-                actor_ref.role_state_can_night_target(game, target_ref) && 
-                !game.current_phase().is_day(),
+                actor_ref.can_night_target(game, target_ref) && 
+                game.current_phase().is_night(),
 
             day_target: 
-                actor_ref.role_state_can_day_target(game, target_ref) &&
+                actor_ref.can_day_target(game, target_ref) &&
                 game.current_phase().is_day(),
         }
     }

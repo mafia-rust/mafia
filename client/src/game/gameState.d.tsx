@@ -16,7 +16,7 @@ export default interface GameState {
     dayNumber: number,
 
     role: Role | null,
-    roleData: RoleState | null,
+    roleState: RoleState | null,
 
     will: string,
     notes: string,

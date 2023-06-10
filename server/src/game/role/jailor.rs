@@ -22,6 +22,7 @@ pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Factio
 pub(super) const TEAM: Option<Team> = None;
 
 #[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct Jailor { 
     jailed_target_ref: Option<PlayerReference>, 
     executions_remaining: u8
@@ -30,8 +31,8 @@ pub struct Jailor {
 impl Default for Jailor {
     fn default() -> Self {
         Self { 
-            jailed_target_ref: Some(PlayerReference::new_unchecked(0)), 
-            executions_remaining: Default::default()
+            jailed_target_ref: None, 
+            executions_remaining: 3
         }
     }
 }
@@ -52,7 +53,7 @@ impl RoleStateImpl for Jailor {
 
                 self.executions_remaining = if target_ref.role(game).faction_alignment().faction() == Faction::Town { 0 } else { self.executions_remaining - 1 };
                 self.jailed_target_ref = None;
-                actor_ref.set_role_data(game, RoleState::Jailor(self));
+                actor_ref.set_role_state(game, RoleState::Jailor(self));
             }
         }
     }
@@ -68,12 +69,12 @@ impl RoleStateImpl for Jailor {
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
         if let Some(old_target_ref) = self.jailed_target_ref {
             if old_target_ref == target_ref {
-                actor_ref.set_role_data(game, RoleState::Jailor(Jailor { jailed_target_ref: None, executions_remaining: self.executions_remaining}));
+                actor_ref.set_role_state(game, RoleState::Jailor(Jailor { jailed_target_ref: None, executions_remaining: self.executions_remaining}));
             } else {
-                actor_ref.set_role_data(game, RoleState::Jailor(Jailor { jailed_target_ref: Some(target_ref), executions_remaining: self.executions_remaining }))
+                actor_ref.set_role_state(game, RoleState::Jailor(Jailor { jailed_target_ref: Some(target_ref), executions_remaining: self.executions_remaining }))
             }
         } else {
-            actor_ref.set_role_data(game, RoleState::Jailor(Jailor { jailed_target_ref: Some(target_ref), executions_remaining: self.executions_remaining }))
+            actor_ref.set_role_state(game, RoleState::Jailor(Jailor { jailed_target_ref: Some(target_ref), executions_remaining: self.executions_remaining }))
         }
     }
     fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {        
@@ -110,7 +111,7 @@ impl RoleStateImpl for Jailor {
             }
         }
         self.jailed_target_ref = None;
-        actor_ref.set_role_data(game, RoleState::Jailor(self));
+        actor_ref.set_role_state(game, RoleState::Jailor(self));
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
         crate::game::role::common_role::on_role_creation(game, actor_ref);
