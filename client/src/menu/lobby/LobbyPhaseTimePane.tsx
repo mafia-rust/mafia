@@ -87,7 +87,6 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
             {this.renderTimePicker("testimony")}
             {this.renderTimePicker("judgement")}
             {this.renderTimePicker("evening")}
-            {this.renderTimePicker("finalWords")}
             {this.renderTimePicker("night")}
         </div>
     }

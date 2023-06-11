@@ -21,7 +21,6 @@ pub enum PhaseType {
     Testimony,
     Judgement,
     Evening,
-    FinalWords,
     Night,
 }
 
@@ -32,8 +31,7 @@ pub enum PhaseState {
     Voting { trials_left: u8 },
     Testimony { trials_left: u8, player_on_trial: PlayerReference },
     Judgement { trials_left: u8, player_on_trial: PlayerReference },
-    FinalWords { player_on_trial: PlayerReference },
-    Evening,
+    Evening { player_on_trial: Option<PlayerReference> },
     Night,
 }
 
@@ -45,7 +43,7 @@ pub struct PhaseStateMachine {
 
 impl PhaseStateMachine {
     pub fn new(times: PhaseTimeSettings) -> Self {
-        let current_state = PhaseState::Evening;
+        let current_state = PhaseState::Evening { player_on_trial: None };
 
         Self {
             time_remaining: current_state.get_length(&times),
@@ -63,8 +61,7 @@ impl PhaseState {
             PhaseState::Voting {..} => PhaseType::Voting,
             PhaseState::Testimony {..} => PhaseType::Testimony,
             PhaseState::Judgement {..} => PhaseType::Judgement,
-            PhaseState::Evening => PhaseType::Evening,
-            PhaseState::FinalWords {..} => PhaseType::FinalWords,
+            PhaseState::Evening {..} => PhaseType::Evening,
             PhaseState::Night => PhaseType::Night,
         }
     }
@@ -139,8 +136,7 @@ impl PhaseState {
             },
             PhaseState::Discussion
             | PhaseState::Judgement { .. } 
-            | PhaseState::Evening
-            | PhaseState::FinalWords { .. } => {}
+            | PhaseState::Evening { .. } => {}
         }
     }
     
@@ -185,18 +181,17 @@ impl PhaseState {
                 });
                 
                 if innocent < guilty {
-                    Self::FinalWords { player_on_trial }
+                    Self::Evening { player_on_trial: Some(player_on_trial) }
                 } else if trials_left == 0 {
                     //TODO send no trials left
-                    Self::Evening
+                    Self::Evening { player_on_trial: None }
                 }else{
                     Self::Voting { trials_left }
                 }
             },
-            PhaseState::Evening => {
-                Self::Night
-            }
-            &PhaseState::FinalWords { player_on_trial } => {
+            &PhaseState::Evening { player_on_trial } => {
+                let Some(player_on_trial) = player_on_trial else { return Self::Night };
+
                 let mut guilty = 0;
                 let mut innocent = 0;
                 for player_ref in PlayerReference::all_players(game){
@@ -264,8 +259,7 @@ impl PhaseState {
             PhaseState::Voting {..} => times.voting,
             PhaseState::Testimony {..} => times.testimony,
             PhaseState::Judgement {..} => times.judgement,
-            PhaseState::Evening => times.evening,
-            PhaseState::FinalWords {..} => times.final_words,
+            PhaseState::Evening {..} => times.evening,
             PhaseState::Night => times.night,
         }
     }
