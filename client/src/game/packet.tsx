@@ -38,7 +38,7 @@ export type ToClientPacket = {
     time: number
 } | {
     type: "excludedRoles",
-    roles: Role[]
+    roles: RoleListEntry[]
 } |
 // Game
 {
@@ -122,6 +122,9 @@ export type ToServerPacket = {
     type: "setPhaseTime", 
     phase: Phase, 
     time: number
+} | {
+    type: "setExcludedRoles", 
+    roles: RoleListEntry[], 
 } | 
 //Game
 { //Accusation

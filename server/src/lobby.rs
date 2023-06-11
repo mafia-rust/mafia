@@ -1,4 +1,4 @@
-use std::{collections::HashMap, time::Duration};
+use std::{collections::{HashMap, HashSet}, time::Duration};
 
 use crate::{
     game::{
@@ -134,11 +134,14 @@ impl Lobby {
                 
                 self.send_to_all(ToClientPacket::RoleList { role_list });
             }
-            ToServerPacket::SetExcludedRoles { roles } => {
+            ToServerPacket::SetExcludedRoles {mut roles } => {
                 let LobbyState::Lobby{ settings, .. } = &mut self.lobby_state else {
                     println!("{} {}", log::error("Can't modify game settings outside of the lobby menu"), player_arbitrary_id);
                     return;
                 };
+                let set: HashSet<_> = roles.drain(..).collect(); // dedup
+                roles.extend(set.into_iter());
+                roles = roles.into_iter().filter(|role|*role != RoleListEntry::Any).collect();
                 settings.excluded_roles = roles.clone();
                 self.send_to_all(ToClientPacket::ExcludedRoles { roles });
             }

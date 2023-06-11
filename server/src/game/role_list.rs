@@ -7,7 +7,7 @@ use super::role::Role;
 
 macro_rules! make_faction_enum {
     ($($name:ident),*)=>{
-        #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+        #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
         #[serde(rename_all = "camelCase")]
         pub enum Faction { $($name,)*}
         impl Faction {
@@ -51,12 +51,17 @@ impl Faction{
             ],
         }
     }
-    pub fn get_all_possible_faction_alignments(&self, excluded_roles: &[Role], taken_roles: &[Role])->Vec<FactionAlignment>{
+    pub fn get_all_possible_faction_alignments(&self, excluded_roles: &[RoleListEntry], taken_roles: &[Role])->Vec<FactionAlignment>{
         self.all_alignments().into_iter().filter(|potential_faction_alignment|{
+            
+            if excluded_roles.contains(&RoleListEntry::FactionAlignment { faction_alignment: potential_faction_alignment.clone() }){
+                return false;
+            }
+
             !potential_faction_alignment.get_all_possible_roles(excluded_roles, taken_roles).is_empty()
         }).collect()
     }
-    pub fn get_random_faction_alignment(&self, excluded_roles: &[Role], taken_roles: &[Role])->Option<FactionAlignment>{
+    pub fn get_random_faction_alignment(&self, excluded_roles: &[RoleListEntry], taken_roles: &[Role])->Option<FactionAlignment>{
         let possible_faction_alignments = self.get_all_possible_faction_alignments(excluded_roles, taken_roles);
         if possible_faction_alignments.is_empty() {return None;}
         let random_index = rand::thread_rng().gen_range(0..possible_faction_alignments.len());
@@ -67,7 +72,7 @@ impl Faction{
 
 macro_rules! make_faction_alignment_enum {
     ($($name:ident),*)=>{
-        #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+        #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
         #[serde(rename_all = "camelCase")]
         pub enum FactionAlignment { $($name,)*}
         impl FactionAlignment {
@@ -110,10 +115,13 @@ impl FactionAlignment{
                 => Faction::Mafia,
         }
     }
-    pub fn get_all_possible_roles(&self, excluded_roles: &[Role], taken_roles: &[Role])->Vec<Role>{
+    pub fn get_all_possible_roles(&self, excluded_roles: &[RoleListEntry], taken_roles: &[Role])->Vec<Role>{
         Role::values().into_iter().filter(|potential_role|{
+            if excluded_roles.contains(&RoleListEntry::Exact { role: *potential_role }){
+                return false;
+            }
+            
             if potential_role.faction_alignment() != *self {return false;}
-            if excluded_roles.contains(potential_role) {return false;}
 
             let Some(potantial_role_max_count) = potential_role.maximum_count() else {return true};
             
@@ -122,7 +130,7 @@ impl FactionAlignment{
             }).count() < potantial_role_max_count.into()
         }).collect()
     }
-    pub fn get_random_role(&self, excluded_roles: &[Role], taken_roles: &[Role])->Option<Role>{
+    pub fn get_random_role(&self, excluded_roles: &[RoleListEntry], taken_roles: &[Role])->Option<Role>{
         let possible_roles = self.get_all_possible_roles(excluded_roles, taken_roles);
         if possible_roles.is_empty() {return None;}
         let random_index = rand::thread_rng().gen_range(0..possible_roles.len());
@@ -131,7 +139,7 @@ impl FactionAlignment{
 }
 
 pub type RoleList = Vec<RoleListEntry>;
-pub fn create_random_roles(excluded_roles: &[Role], role_list: &RoleList) -> Vec<Role> {
+pub fn create_random_roles(excluded_roles: &[RoleListEntry], role_list: &RoleList) -> Vec<Role> {
     let mut taken_roles = Vec::new();
     for entry in role_list{
         taken_roles.push(entry.get_random_role(excluded_roles, &taken_roles));
@@ -139,7 +147,7 @@ pub fn create_random_roles(excluded_roles: &[Role], role_list: &RoleList) -> Vec
     taken_roles
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "camelCase")]
 pub enum RoleListEntry {
     #[serde(rename_all = "camelCase")]
@@ -152,7 +160,7 @@ pub enum RoleListEntry {
 }
 
 impl RoleListEntry{
-    pub fn get_random_role(&self, excluded_roles: &[Role], taken_roles: &[Role]) -> Role {
+    pub fn get_random_role(&self, excluded_roles: &[RoleListEntry], taken_roles: &[Role]) -> Role {
         match self {
             RoleListEntry::Exact { role } => *role,
             RoleListEntry::FactionAlignment { faction_alignment } => {
@@ -171,6 +179,10 @@ impl RoleListEntry{
             },
             RoleListEntry::Any => {
                 let mut all_factions = Faction::values().into_iter().filter(|faction|{
+                    if excluded_roles.contains(&RoleListEntry::Faction { faction: faction.clone() }){
+                        return false;
+                    }
+
                     faction.get_random_faction_alignment(excluded_roles, taken_roles).is_some()
                 }).collect::<Vec<Faction>>();
 
@@ -186,29 +198,29 @@ impl RoleListEntry{
     }
 
 
-    pub fn get_possible_roles(&self) -> Vec<Role> {
-        match self {
-            RoleListEntry::Exact{role}=> 
-                vec![*role],
-            RoleListEntry::FactionAlignment{faction_alignment}=> 
-                Role::values().into_iter().filter(|role|{
-                    role.faction_alignment() == *faction_alignment
-                }).collect(),
-            RoleListEntry::Faction{faction}=>
-                Role::values().into_iter().filter(|role|{
-                    role.faction_alignment().faction() == *faction
-                }).collect(),
-            RoleListEntry::Any => Role::values(),
-        }
-    }
-    pub fn get_possible_roles_given_taken_roles(&self, taken_roles: &[Role]) -> Vec<Role> {
-        let possible_roles = self.get_possible_roles();
-        possible_roles.into_iter().filter(|potential_role|{
-            let Some(potantial_role_max_count) = potential_role.maximum_count() else {return true};
+    // pub fn get_possible_roles(&self) -> Vec<Role> {
+    //     match self {
+    //         RoleListEntry::Exact{role}=> 
+    //             vec![*role],
+    //         RoleListEntry::FactionAlignment{faction_alignment}=> 
+    //             Role::values().into_iter().filter(|role|{
+    //                 role.faction_alignment() == *faction_alignment
+    //             }).collect(),
+    //         RoleListEntry::Faction{faction}=>
+    //             Role::values().into_iter().filter(|role|{
+    //                 role.faction_alignment().faction() == *faction
+    //             }).collect(),
+    //         RoleListEntry::Any => Role::values(),
+    //     }
+    // }
+    // pub fn get_possible_roles_given_taken_roles(&self, taken_roles: &[Role]) -> Vec<Role> {
+    //     let possible_roles = self.get_possible_roles();
+    //     possible_roles.into_iter().filter(|potential_role|{
+    //         let Some(potantial_role_max_count) = potential_role.maximum_count() else {return true};
             
-            taken_roles.iter().filter(|taken_role|{
-                *taken_role == potential_role
-            }).count() < potantial_role_max_count.into()
-        }).collect()
-    }
+    //         taken_roles.iter().filter(|taken_role|{
+    //             *taken_role == potential_role
+    //         }).count() < potantial_role_max_count.into()
+    //     }).collect()
+    // }
 }

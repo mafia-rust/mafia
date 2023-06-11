@@ -1,10 +1,10 @@
 import React from "react";
 import translate, { styleText } from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
-import GameState, { RoleListEntry, getAlignmentStringFromFactionAlignment, getFactionFromFactionAlignment } from "../../../game/gameState.d";
 import { Grave } from "../../../game/grave";
 import GameScreen, { ContentMenus } from "../GameScreen";
 import "./graveyardMenu.css";
+import GameState, { renderRoleListEntry } from "../../../game/gameState.d";
 
 type GraveyardMenuProps = {
 }
@@ -89,25 +89,9 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
 
     renderRoleList(){return<div>
         {this.state.gameState.roleList.map((entry, index)=>{
-            return this.renderRoleListEntry(entry, index)
+            return <button key={index}>{renderRoleListEntry(entry)}</button>
         }, this)}
     </div>}
-    renderRoleListEntry(roleListEntry: RoleListEntry, index: number){
-        switch(roleListEntry.type){
-            case "any":
-                return <button key={index}>{styleText(translate("any"))}</button>
-            case "faction":
-                return <button key={index}>
-                    {styleText(translate("faction."+roleListEntry.faction.toString()))} {styleText(translate("any"))}
-                </button>
-            case "factionAlignment":
-                return <button key={index}>
-                    {styleText(translate("faction."+getFactionFromFactionAlignment(roleListEntry.factionAlignment)))} {styleText(translate("alignment."+getAlignmentStringFromFactionAlignment(roleListEntry.factionAlignment)))}
-                </button>
-            case "exact":
-                return <button key={index}>{styleText(translate("role."+roleListEntry.role+".name"))}</button>
-        }
-    }
     render(){return(<div className="graveyard-menu">
         <button onClick={()=>{
             GameScreen.instance.closeMenu(ContentMenus.GraveyardMenu)
