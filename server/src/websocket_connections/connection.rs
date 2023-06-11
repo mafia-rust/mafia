@@ -41,15 +41,9 @@ pub struct ClientSender {
 
 impl ClientSender {
     /// Send a message to the client.
-    /// Returns true if the message was sent successfully.
-    pub fn send(&self, message: ToClientPacket)->bool
-    {
-        let result = self.tx.send(message);
-        if let Err(err) = result {
+    pub fn send(&self, message: ToClientPacket) {
+        if let Err(err) = self.tx.send(message) {
             println!("{} Failed to send {:?}", log::error("ERROR:"), err.0);
-            false
-        }else{
-            true
         }
     }
 }
