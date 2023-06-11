@@ -31,7 +31,7 @@ export default interface GameState {
 
 export type PlayerIndex = number;
 export type Verdict = "innocent"|"guilty"|"abstain";
-export type Phase = "morning" | "discussion" | "voting" | "testimony" | "judgement" | "evening" | "finalWords" | "night"
+export type Phase = "morning" | "discussion" | "voting" | "testimony" | "judgement" | "evening" | "night"
 
 export interface PhaseTimes {
     "morning": number,
@@ -40,7 +40,6 @@ export interface PhaseTimes {
     "testimony": number,
     "judgement": number,
     "evening": number,
-    "finalWords": number,
     "night": number,
 }
 

@@ -104,7 +104,7 @@ impl Game {
 
         if let PhaseState::Testimony { player_on_trial, .. }
             | PhaseState::Judgement { player_on_trial, .. }
-            | PhaseState::FinalWords { player_on_trial } = self.current_phase() {
+            | PhaseState::Evening { player_on_trial: Some(player_on_trial) } = self.current_phase() {
             player_ref.send_packet(self, ToClientPacket::PlayerOnTrial{
                 player_index: player_on_trial.index()
             });
@@ -191,8 +191,7 @@ impl Game {
             PhaseState::Voting {..} => {},
             &PhaseState::Testimony {..} => {},
             &PhaseState::Judgement {..} => {},
-            PhaseState::Evening => {},
-            PhaseState::FinalWords {..} => {},
+            PhaseState::Evening {..} => {},
             PhaseState::Night => {},
         }
     }

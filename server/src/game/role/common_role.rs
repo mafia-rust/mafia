@@ -37,8 +37,7 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         PhaseState::Discussion 
         | PhaseState::Voting {..}
         | PhaseState::Judgement {..} 
-        | PhaseState::Evening 
-        | PhaseState::FinalWords {..} => vec![ChatGroup::All],
+        | PhaseState::Evening {..} => vec![ChatGroup::All],
         &PhaseState::Testimony { player_on_trial, .. } => {
             if player_on_trial == actor_ref {
                 vec![ChatGroup::All]

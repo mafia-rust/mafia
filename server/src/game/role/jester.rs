@@ -88,7 +88,7 @@ impl RoleStateImpl for Jester {
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         match game.current_phase() {
-            &PhaseState::FinalWords { player_on_trial } => {
+            &PhaseState::Evening { player_on_trial: Some(player_on_trial) } => {
                 if player_on_trial == actor_ref {
                     actor_ref.set_role_state(game, RoleState::Jester(Jester { lynched_yesterday: true }))
                 }

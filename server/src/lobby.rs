@@ -117,7 +117,6 @@ impl Lobby {
                     PhaseType::Morning => { settings.phase_times.morning = phase_time; }
                     PhaseType::Discussion => { settings.phase_times.discussion = phase_time; }
                     PhaseType::Evening => { settings.phase_times.evening = phase_time; }
-                    PhaseType::FinalWords => { settings.phase_times.final_words = phase_time; }
                     PhaseType::Judgement => { settings.phase_times.judgement = phase_time; }
                     PhaseType::Night => { settings.phase_times.night = phase_time; }
                     PhaseType::Testimony => { settings.phase_times.testimony = phase_time; }
@@ -250,7 +249,6 @@ impl Lobby {
             PhaseType::Testimony,
             PhaseType::Judgement,
             PhaseType::Evening, 
-            PhaseType::FinalWords, 
             PhaseType::Night,
         ] {
             player.send(ToClientPacket::PhaseTime { 

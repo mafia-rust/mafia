@@ -18,7 +18,6 @@ pub struct PhaseTimeSettings{
     pub testimony: Duration,
     pub judgement: Duration,
     pub evening: Duration,
-    pub final_words: Duration,
     pub night: Duration,
 }
 impl PhaseTimeSettings {
@@ -26,7 +25,6 @@ impl PhaseTimeSettings {
         match phase {
             PhaseType::Discussion => self.discussion,
             PhaseType::Evening => self.evening,
-            PhaseType::FinalWords => self.final_words,
             PhaseType::Judgement => self.judgement,
             PhaseType::Morning => self.morning,
             PhaseType::Night => self.night,
@@ -44,7 +42,6 @@ impl Default for PhaseTimeSettings{
             testimony: Duration::from_secs(20), 
             judgement: Duration::from_secs(20), 
             evening: Duration::from_secs(7), 
-            final_words: Duration::from_secs(7),
             night: Duration::from_secs(37) 
         }
     }
