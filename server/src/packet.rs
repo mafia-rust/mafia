@@ -20,7 +20,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{game::{
     player::{PlayerIndex, PlayerReference},
-    role_list::RoleList,
+    role_list::{RoleList, RoleListEntry},
     verdict::Verdict, phase::PhaseType, 
     chat::ChatMessage,
     role::{Role, RoleState}, 
@@ -52,7 +52,10 @@ pub enum ToClientPacket{
 
     #[serde(rename_all = "camelCase")]
     RoleList{role_list: RoleList},
+    #[serde(rename_all = "camelCase")]
     PhaseTime{phase: PhaseType, time: u64},
+    #[serde(rename_all = "camelCase")]
+    ExcludedRoles{roles: Vec<RoleListEntry>},
 
         //Game
     //Syncronize
@@ -161,6 +164,7 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SetRoleList{role_list: RoleList},
     SetPhaseTime{phase: PhaseType, time: u64},
+    SetExcludedRoles{roles: Vec<RoleListEntry>},
 
     //Game
     #[serde(rename_all = "camelCase")]

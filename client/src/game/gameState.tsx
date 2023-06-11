@@ -24,7 +24,7 @@ export function createGameState(): GameState {
         judgement: "abstain",
         
         roleList: [],
-        investigatorResults: [],
+        excludedRoles: [],
         phaseTimes: {
             morning: 5,
             discussion: 45, 

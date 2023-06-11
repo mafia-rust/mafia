@@ -1,6 +1,7 @@
 import { Grave } from "./grave";
 import { ChatMessage } from "./chatMessage";
 import ROLES from "./../resources/roles.json";
+import translate, { styleText } from "./lang";
 
 export default interface GameState {
     myName: string | null,
@@ -25,7 +26,7 @@ export default interface GameState {
     judgement: Verdict,
     
     roleList: RoleListEntry[],
-    investigatorResults: Role[][],
+    excludedRoles: RoleListEntry[],
     phaseTimes: PhaseTimes
 }
 
@@ -193,4 +194,20 @@ export function getFactionAlignmentFromRoleListEntry(roleListEntry: RoleListEntr
         case "factionAlignment": return roleListEntry.factionAlignment;
         case "exact": return getFactionAlignmentFromRole(roleListEntry.role);
     }
+}
+
+export function  renderRoleListEntry(roleListEntry: RoleListEntry): JSX.Element[] | null{
+    if(roleListEntry.type === "any"){
+        return styleText(translate("any"))
+    }
+    if(roleListEntry.type === "faction"){
+        return styleText(translate("faction."+roleListEntry.faction.toString())+" "+translate("any"))
+    }
+    if(roleListEntry.type === "factionAlignment"){
+        return styleText(translate("faction."+getFactionFromFactionAlignment(roleListEntry.factionAlignment))+" "+translate("alignment."+getAlignmentStringFromFactionAlignment(roleListEntry.factionAlignment)))
+    }
+    if(roleListEntry.type === "exact"){
+        return styleText(translate("role."+roleListEntry.role+".name"))
+    }
+    return null
 }

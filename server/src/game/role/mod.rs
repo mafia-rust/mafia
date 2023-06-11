@@ -87,7 +87,7 @@ mod macros {
         ) => {
             $(pub(crate) mod $file;)*
 
-            #[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
+            #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, Serialize, Deserialize)]
             #[serde(rename_all = "camelCase")]
             pub enum Role {
                 $($name),*

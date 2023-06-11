@@ -2,13 +2,13 @@ use std::time::Duration;
 
 use serde::{Serialize, Deserialize};
 
-use super::{role_list::RoleList, phase::PhaseType};
+use super::{role_list::{RoleList, RoleListEntry}, phase::PhaseType};
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct Settings{
     pub role_list: RoleList,
     pub phase_times: PhaseTimeSettings,
-    // pub excluded_roles: Vec<Role>,
+    pub excluded_roles: Vec<RoleListEntry>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PhaseTimeSettings{
@@ -35,7 +35,7 @@ impl PhaseTimeSettings {
 }
 impl Default for PhaseTimeSettings{
     fn default() -> Self {
-        Self { 
+        Self{
             morning: Duration::from_secs(5), 
             discussion: Duration::from_secs(45), 
             voting: Duration::from_secs(30), 

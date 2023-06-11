@@ -147,6 +147,12 @@ export function createGameManager(): GameManager {
                 text: text
             });
         },
+        sendExcludedRolesPacket(roles){
+            this.server.sendPacket({
+                type:"setExcludedRoles",
+                roles:roles
+            })
+        },
         
         messageListener(serverMessage) {
             messageListener(serverMessage);

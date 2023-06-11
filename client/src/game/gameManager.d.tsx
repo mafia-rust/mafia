@@ -1,4 +1,4 @@
-import GameState, { Phase, PlayerIndex, RoleListEntry, Verdict } from "./gameState.d";
+import GameState, { Phase, PlayerIndex, Role, RoleListEntry, Verdict } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 
 export interface Server {
@@ -44,6 +44,7 @@ export interface GameManager {
     sendSaveNotesPacket(notes: string): void;
     sendSendMessagePacket(text: string): void;
     sendSendWhisperPacket(playerIndex: number, text: string): void;
+    sendExcludedRolesPacket(roles: RoleListEntry[]): void;
     
     messageListener(serverMessage: ToClientPacket): void;
 
