@@ -24,7 +24,7 @@ use crate::{game::{
     verdict::Verdict, phase::PhaseType, 
     chat::ChatMessage,
     role::{Role, RoleState}, 
-    Game, grave::Grave, available_buttons::AvailableButtons
+    Game, grave::Grave, available_buttons::AvailableButtons, tag::Tag
 }, listener::RoomCode, log};
 
 #[derive(Serialize, Debug, Clone)]
@@ -72,6 +72,8 @@ pub enum ToClientPacket{
     YourButtons{buttons: Vec<AvailableButtons>},
     #[serde(rename_all = "camelCase")]
     YourRoleLabels{role_labels: HashMap<PlayerIndex, Role>},
+    #[serde(rename_all = "camelCase")]
+    YourPlayerTags{player_tags: HashMap<PlayerIndex, Vec<Tag>>},
     YourWill{will: String},
     YourNotes{notes: String},
     YourRole{role: Role},

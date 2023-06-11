@@ -11,7 +11,7 @@ use crate::{
             night_message::NightInformation
         }, 
         visit::Visit, 
-        grave::{GraveRole, GraveKiller}}, packet::ToClientPacket, 
+        grave::{GraveRole, GraveKiller}, tag::Tag}, packet::ToClientPacket, 
     };
 use super::PlayerReference;
 
@@ -71,6 +71,23 @@ impl PlayerReference{
     pub fn insert_role_label(&self, game: &mut Game, key: PlayerReference, value: Role){
         self.deref_mut(game).role_labels.insert(key, value);
         self.send_packet(game, ToClientPacket::YourRoleLabels { role_labels: PlayerReference::ref_map_to_index(self.deref(game).role_labels.clone()) });
+    }
+
+    pub fn player_tags<'a>(&self, game: &'a Game) -> &'a HashMap<PlayerReference, Vec<Tag>>{
+        &self.deref(game).player_tags
+    }  
+    pub fn push_player_tag(&self, game: &mut Game, key: PlayerReference, value: Tag){
+        if let Some(player_tags) = self.deref_mut(game).player_tags.get_mut(&key){
+            player_tags.push(value);
+        }else{
+            self.deref_mut(game).player_tags.insert(key, vec![value]);
+        }
+        self.send_packet(game, ToClientPacket::YourPlayerTags { player_tags: PlayerReference::ref_map_to_index(self.deref(game).player_tags.clone()) });
+    }
+    pub fn remove_player_tag(&self, game: &mut Game, key: PlayerReference, value: Tag){
+        let Some(player_tags) = self.deref_mut(game).player_tags.get_mut(&key) else {return};
+        *player_tags = player_tags.iter().filter(|t|**t!=value).map(Clone::clone).collect();
+        self.send_packet(game, ToClientPacket::YourPlayerTags { player_tags: PlayerReference::ref_map_to_index(self.deref(game).player_tags.clone()) });
     }
 
     pub fn add_chat_message(&self, game: &mut Game, message: ChatMessage) {

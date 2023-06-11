@@ -42,6 +42,7 @@ macros::roles! {
     Medium : medium,
     Retributionist : retributionist,
 
+    //Mafia
     Mafioso : mafioso,
     
     Consort : consort,
@@ -50,6 +51,7 @@ macros::roles! {
     Janitor : janitor,
     Framer : framer,
 
+    //Coven
     CovenLeader : coven_leader,
 
     VoodooMaster : voodoo_master,

@@ -1,6 +1,6 @@
 use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, team::Team, role_list::Faction, phase::PhaseState};
 
-use super::Role;
+use super::{Role, RoleState, coven_leader::CovenLeader, voodoo_master::VoodooMaster};
 
 
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -99,5 +99,15 @@ pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){
 }
 
 
+
+impl RoleState {
+    pub fn has_necronomicon(&self)->bool{
+        match self {
+            RoleState::CovenLeader(CovenLeader { necronomicon }) => *necronomicon,
+            RoleState::VoodooMaster(VoodooMaster { necronomicon }) => *necronomicon,
+            _ => false
+        }
+    }
+}
 
 

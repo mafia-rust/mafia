@@ -43,7 +43,7 @@ impl RoleStateImpl for Retributionist {
                     first_visit.target.convert_targets_to_visits(game, vec![second_visit.target])
                 );
                 
-                let mut used_bodies = self.used_bodies.clone();
+                let mut used_bodies = self.used_bodies;
                 used_bodies.push(first_visit.target);
                 actor_ref.set_role_state(game, RoleState::Retributionist(Retributionist { used_bodies, currently_used_player: Some(first_visit.target) }));
             },
