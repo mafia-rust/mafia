@@ -10,9 +10,9 @@ interface PlayerListState {
     players: Player[]
 }
 
-export default class LobbyPlayerList extends React.Component<any, PlayerListState> {
+export default class LobbyPlayerList extends React.Component<{}, PlayerListState> {
     listener: (type: StateEventType)=>void;
-    constructor(props: any) {
+    constructor(props: {}) {
         super(props);
 
         this.state = {     

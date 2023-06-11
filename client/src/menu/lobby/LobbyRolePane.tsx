@@ -9,10 +9,10 @@ interface RolePaneState {
     roleList: RoleListEntry[]
 }
 
-export default class LobbyRolePane extends React.Component<any, RolePaneState> {
+export default class LobbyRolePane extends React.Component<{}, RolePaneState> {
     listener: (type: StateEventType) => void;
 
-    constructor(props: any){
+    constructor(props: {}){
         super(props);
 
         this.state = {

@@ -1,12 +1,12 @@
-import GameState, { Phase, PhaseTimes, Player, PlayerIndex, RoleListEntry, Verdict } from "./gameState.d";
+import GameState, { Phase, PlayerIndex, RoleListEntry, Verdict } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 
 export interface Server {
     ws: WebSocket | null,
 
     openListener(event: Event): void;
-    closeListener(event: Event): void;
-    messageListener(event: Event): void;
+    closeListener(event: CloseEvent): void;
+    messageListener(event: MessageEvent<string>): void;
 
     open(): Promise<void>;
     sendPacket(packets: ToServerPacket): void;

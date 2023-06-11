@@ -14,7 +14,7 @@ type JoinMenuState = {
 }
 
 export default class JoinMenu extends React.Component<JoinMenuProps, JoinMenuState> {
-    constructor(props: any) {
+    constructor(props: JoinMenuProps) {
         super(props);
 
         this.state = {

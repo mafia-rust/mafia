@@ -51,14 +51,14 @@ export function createGameManager(): GameManager {
                 completePromise = resolver;
             });
             
-            let setName: StateListener = (type: any) => {
-                if (type==="AcceptJoin") {
+            let onJoined: StateListener = (type) => {
+                if (type==="acceptJoin") {
                     completePromise();
                     // This listener shouldn't stick around
-                    GAME_MANAGER.removeStateListener(setName);
+                    GAME_MANAGER.removeStateListener(onJoined);
                 }
             };
-            GAME_MANAGER.addStateListener(setName);
+            GAME_MANAGER.addStateListener(onJoined);
 
             let actualCode: number | null = parseInt(gameManager.roomCode!, 18);
 
@@ -173,7 +173,7 @@ function createServer(){
         closeListener : ()=>{
             Anchor.setContent(<StartMenu/>);
         },
-        messageListener: (event: any)=>{
+        messageListener: (event)=>{
             GAME_MANAGER.messageListener(
                 JSON.parse(event.data) as ToClientPacket
             );
@@ -194,10 +194,10 @@ function createServer(){
                 completePromise();
                 Server.openListener(event);
             });
-            Server.ws.addEventListener("close", (event: Event)=>{
+            Server.ws.addEventListener("close", (event: CloseEvent)=>{
                 Server.closeListener(event);
             });
-            Server.ws.addEventListener("message", (event: Event)=>{
+            Server.ws.addEventListener("message", (event: MessageEvent<string>)=>{
                 Server.messageListener(event);
             });
             Server.ws.addEventListener("error", (event: Event)=> {

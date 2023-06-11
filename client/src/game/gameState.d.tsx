@@ -135,11 +135,6 @@ export const FACTION_ALIGNMENTS = [
 ] as const;
 export type FactionAlignment = typeof FACTION_ALIGNMENTS[number]
 
-export function getAllRolesFromFactionAlignment(factionAlignment: FactionAlignment): Role[] {
-    return (ROLES as any).filter(
-        (role: { factionAlignment: FactionAlignment; }) => role.factionAlignment === factionAlignment
-    );
-}
 export function getFactionFromFactionAlignment(factionAlignment: FactionAlignment): Faction {
     switch(factionAlignment){
         case "townPower": return "town";
@@ -181,7 +176,7 @@ export type RoleListEntry={
     type: "exact",
     role: Role,
 };
-export type RoleListEntryType = "any"|"faction"|"factionAlignment"|"exact";
+export type RoleListEntryType = RoleListEntry["type"];
 
 export function getFactionFromRoleListEntry(roleListEntry: RoleListEntry): Faction | null {
     switch(roleListEntry.type){

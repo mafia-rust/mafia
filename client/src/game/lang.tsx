@@ -12,14 +12,14 @@ export function switchLanguage(language: string) {
     lang = new Map<string, string>(Object.entries(json))
 }
 
-export default function translate(langKey: string, ...valuesList: any[]): string {
+export default function translate(langKey: string, ...valuesList: (string | number)[]): string {
     let out = lang.get(langKey);
     if(out===undefined){
         console.error("Attempted to use non existant lang key: "+langKey);
         return "ERROR: "+langKey;
     }
     for(let i = 0; i < valuesList.length; i++){
-        out = out.replace("\\"+(i), valuesList[i]);
+        out = out.replace("\\"+(i), valuesList[i] as string);
     }
     return out;
 }
@@ -127,33 +127,33 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
         case "voted":
             if (message.votee !== null) {
                 return <span key={key}>{styleText(translate("chatmessage.voted",
-                    GAME_MANAGER.gameState.players[message.voter],
-                    GAME_MANAGER.gameState.players[message.votee],
+                    GAME_MANAGER.gameState.players[message.voter].toString(),
+                    GAME_MANAGER.gameState.players[message.votee].toString(),
                 ), {
                     defaultStyle: {color:"orange"}
                 })}</span>;
             } else {
                 return <span key={key}>{styleText(translate("chatmessage.voted.cleared",
-                    GAME_MANAGER.gameState.players[message.voter],
+                    GAME_MANAGER.gameState.players[message.voter].toString(),
                 ), {
                     defaultStyle: {color:"orange"}
                 })}</span>;
             }
         case "playerOnTrial":
             return <span key={key}>{styleText(translate("chatmessage.playerOnTrial",
-                GAME_MANAGER.gameState.players[message.playerIndex],
+                GAME_MANAGER.gameState.players[message.playerIndex].toString(),
             ), {
                 defaultStyle: {color:"yellow"}
             })}</span>;
         case "judgementVote":
             return <span key={key}>{styleText(translate("chatmessage.judgementVote",
-                GAME_MANAGER.gameState.players[message.voterPlayerIndex],
+                GAME_MANAGER.gameState.players[message.voterPlayerIndex].toString(),
             ), {
                 defaultStyle: {color:"orange"}
             })}</span>;
         case "judgementVerdict":
             return <span key={key}>{styleText(translate("chatmessage.judgementVerdict",
-                GAME_MANAGER.gameState.players[message.voterPlayerIndex],
+                GAME_MANAGER.gameState.players[message.voterPlayerIndex].toString(),
                 translate("verdict."+message.verdict.toLowerCase())
             ), {
                 defaultStyle: {color:"orange"}
@@ -174,14 +174,14 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
         case "targeted":
             if (message.targets.length > 0) {
                 return <span key={key}>{styleText(translate("chatmessage.targeted",
-                    GAME_MANAGER.gameState.players[message.targeter],
+                    GAME_MANAGER.gameState.players[message.targeter].toString(),
                     message.targets.map((target) => GAME_MANAGER.gameState.players[target].toString()).join(", ")
                 ), {
                     defaultStyle: {color:"orange"}
                 })}</span>;
             } else {
                 return <span key={key}>{styleText(translate("chatmessage.targeted.cleared",
-                    GAME_MANAGER.gameState.players[message.targeter],
+                    GAME_MANAGER.gameState.players[message.targeter].toString(),
                 ), {
                     defaultStyle: {color:"orange"}
                 })}</span>;

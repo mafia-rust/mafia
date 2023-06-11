@@ -4,13 +4,13 @@ import { Grave } from "./grave"
 export type ChatMessage = {
     type: "normal", 
     messageSender: MessageSender, 
-    text: String, 
+    text: string, 
     chatGroup: ChatGroup
 } | {
     type: "whisper", 
     fromPlayerIndex: PlayerIndex, 
     toPlayerIndex: PlayerIndex, 
-    text: String
+    text: string
 } | {
     type: "broadcastWhisper", 
     whisperer: PlayerIndex, 
@@ -155,7 +155,7 @@ export type NightInformation = {
 } | {
     type: "playerRoleAndWill", 
     role: Role, 
-    will: String 
+    will: string 
 } | {
     type: "consigliereResult", 
     role: Role 

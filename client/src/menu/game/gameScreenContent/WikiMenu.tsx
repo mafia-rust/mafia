@@ -74,7 +74,11 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
                     {styleText(translate("menu.wiki.attributes"))}
                     {this.renderRoleText(translate("role."+roleListEntry.role+".attributes"))}
                     <br/>
-                    {styleText(translate("menu.wiki.maxCount", ROLES[roleListEntry.role as keyof typeof ROLES].maxCount))}<br/>
+                    {(() => {
+                        let maxCount = ROLES[roleListEntry.role as keyof typeof ROLES].maxCount;
+                        if (maxCount == null) return maxCount;
+                        return styleText(translate("menu.wiki.maxCount", maxCount));
+                    })()}<br/>
                     {styleText(translate("menu.wiki.suspicious", ROLES[roleListEntry.role as keyof typeof ROLES].suspicious?"suspicious":"innocent"))}<br/>
                     {styleText(translate("menu.wiki.defense", defenseString))}<br/>
                 </div>
