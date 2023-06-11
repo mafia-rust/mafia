@@ -29,32 +29,32 @@ trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
 macros::roles! {
     Jailor : jailor,
 
-    // Sheriff : sheriff,
-    // Lookout : lookout,
+    Sheriff : sheriff,
+    Lookout : lookout,
 
-    // Doctor : doctor,
-    // Bodyguard : bodyguard,
+    Doctor : doctor,
+    Bodyguard : bodyguard,
 
-    Vigilante : vigilante
-    // Veteran : veteran,
+    Vigilante : vigilante,
+    Veteran : veteran,
 
-    // Escort : escort,
-    // Medium : medium,
-    // Retributionist : retributionist,
+    Escort : escort,
+    Medium : medium,
+    Retributionist : retributionist,
 
-    // Mafioso : mafioso,
+    Mafioso : mafioso,
     
-    // Consort : consort,
-    // Blackmailer : blackmailer,
+    Consort : consort,
+    Blackmailer : blackmailer,
 
-    // Janitor : janitor,
-    // Framer : framer,
+    Janitor : janitor,
+    Framer : framer,
 
-    // CovenLeader : coven_leader,
+    CovenLeader : coven_leader,
 
-    // VoodooMaster : voodoo_master,
+    VoodooMaster : voodoo_master,
 
-    // Jester : jester
+    Jester : jester
 }
 
 macros::priorities! {
@@ -171,7 +171,7 @@ mod macros {
                 }
                 pub fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool{
                     match self {
-                        $(Self::$name(role_struct) => role_struct.can_night_target(game, actor_ref, target_ref)),*
+                        $(Self::$name(role_struct) => role_struct.can_day_target(game, actor_ref, target_ref)),*
                     }
                 }
                 pub fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit>{
