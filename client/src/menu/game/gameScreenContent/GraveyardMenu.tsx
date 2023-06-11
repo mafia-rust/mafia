@@ -15,7 +15,7 @@ type GraveyardMenuState = {
 
 export default class GraveyardMenu extends React.Component<GraveyardMenuProps, GraveyardMenuState> {
     listener: () => void;
-    constructor(props: any) {
+    constructor(props: GraveyardMenuProps) {
         super(props);
 
         this.state = {

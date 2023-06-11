@@ -5,6 +5,7 @@ import LobbyPhaseTimePane from "./LobbyPhaseTimePane";
 import LobbyRolePane from "./LobbyRolePane";
 import "./lobbyMenu.css";
 import translate from "../../game/lang";
+import { StateListener } from "../../game/gameManager.d";
 
 type LobbyMenuProps = {}
 
@@ -23,7 +24,7 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
             });
         }
     }
-    listener: (type: any)=>void;
+    listener: StateListener;
     componentDidMount() {
         GAME_MANAGER.addStateListener(this.listener);
     }
