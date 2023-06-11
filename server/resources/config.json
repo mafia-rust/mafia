@@ -1,4 +1,3 @@
 {
-    "local_ip":"0.0.0.0",
-    "port":"8081"
+    "address": "localhost:8081"
 }

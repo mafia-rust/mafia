@@ -5,8 +5,7 @@ use std::fs;
 
 #[derive(Deserialize)]
 struct Config{
-    local_ip: String,
-    port: String
+    address: String,
 }
 
 ///
@@ -20,8 +19,6 @@ async fn main() {
     let config = serde_json::from_str::<Config>(
         &fs::read_to_string("./resources/config.json").expect("Failed to read the config file")
     ).unwrap();
-
-    let address_string = config.local_ip + ":" + &config.port;
     
-    create_ws_server(&address_string).await
+    create_ws_server(&config.address).await
 }
