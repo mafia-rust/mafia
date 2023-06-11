@@ -11,7 +11,7 @@ use std::collections::HashMap;
 
 use crate::{
     game::{
-        role::{RoleData, Role}, 
+        role::{Role, RoleState}, 
         chat::{
             ChatMessage, 
             night_message::NightInformation
@@ -30,7 +30,7 @@ pub struct Player {
     pub(super) sender: Option<ClientSender>,
 
     pub(super) name: String,
-    pub(super) role_data: RoleData,
+    pub(super) role_state: RoleState,
     pub(super) alive: bool,
     pub(super) will: String,
     pub(super) notes: String,
@@ -80,7 +80,7 @@ impl Player {
             sender: Some(sender),
 
             name,
-            role_data: role.default_data(),
+            role_state: role.default_state(),
             alive: true,
             will: "".to_string(),
             notes: "".to_string(),
@@ -115,7 +115,8 @@ impl Player {
 
                 messages: vec![],
 
-                grave_role: GraveRole::Role(Role::Sheriff), //This should not be a problem because we reset immedietly on creation
+                //TODO make this jester just incase
+                grave_role: GraveRole::Role(Role::Vigilante), //This should not be a problem because we reset immedietly on creation
                 grave_killers: vec![],
                 grave_will: "".to_string(),
                 grave_death_notes: vec![],

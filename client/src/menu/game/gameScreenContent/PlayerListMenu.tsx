@@ -41,27 +41,27 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     }
 
     renderRoleSpecific(){
-        switch(this.state.gameState.roleData?.role){
+        switch(this.state.gameState.roleState?.role){
             case "jailor":
                 if(this.state.gameState.phase==="night")
-                    return styleText(""+this.state.gameState.roleData.executionsRemaining);
+                    return styleText(""+this.state.gameState.roleState.executionsRemaining);
 
-                let jailedString = this.state.gameState.roleData.jailedTargetRef!=null?
-                    this.state.gameState.players[this.state.gameState.roleData.jailedTargetRef].toString():
+                let jailedString = this.state.gameState.roleState.jailedTargetRef!=null?
+                    this.state.gameState.players[this.state.gameState.roleState.jailedTargetRef].toString():
                     translate("none");
-                return styleText(jailedString+" "+this.state.gameState.roleData.executionsRemaining);
+                return styleText(jailedString+" "+this.state.gameState.roleState.executionsRemaining);
             case "doctor":
-                return styleText(""+this.state.gameState.roleData.selfHealsRemaining);
+                return styleText(""+this.state.gameState.roleState.selfHealsRemaining);
             case "bodyguard":
-                return styleText(""+this.state.gameState.roleData.selfShieldsRemaining);
+                return styleText(""+this.state.gameState.roleState.selfShieldsRemaining);
             case "vigilante":
-                if(this.state.gameState.roleData.willSuicide)
+                if(this.state.gameState.roleState.willSuicide)
                     return styleText(translate("grave.killer.suicide"));
-                return styleText(""+this.state.gameState.roleData.bulletsRemaining);
+                return styleText(""+this.state.gameState.roleState.bulletsRemaining);
             case "veteran":
-                return styleText(""+this.state.gameState.roleData.alertsRemaining);
+                return styleText(""+this.state.gameState.roleState.alertsRemaining);
             case "janitor":
-                return styleText(""+this.state.gameState.roleData.cleansRemaining);
+                return styleText(""+this.state.gameState.roleState.cleansRemaining);
         }
     }
     renderPhaseSpecific(){

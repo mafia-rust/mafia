@@ -23,7 +23,7 @@ use crate::{game::{
     role_list::RoleList,
     verdict::Verdict, phase::PhaseType, 
     chat::ChatMessage,
-    role::{Role, RoleData}, 
+    role::{Role, RoleState}, 
     Game, grave::Grave, available_buttons::AvailableButtons, tag::Tag
 }, listener::RoomCode, log};
 
@@ -78,7 +78,7 @@ pub enum ToClientPacket{
     YourNotes{notes: String},
     YourRole{role: Role},
     #[serde(rename_all = "camelCase")]
-    YourRoleData{role_data: RoleData},
+    YourRoleState{role_state: RoleState},
     #[serde(rename_all = "camelCase")]
     YourTarget{player_indices: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]

@@ -40,6 +40,8 @@ impl PlayerReference{
                 self.set_night_grave_death_notes(game,  vec![]);
             }
         }
+
+        self.role_state(game).clone().on_phase_start(game, *self, phase)
     }
 }
 

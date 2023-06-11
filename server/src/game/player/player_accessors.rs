@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::{
     game::{
-        role::{RoleData, Role}, 
+        role::{Role, RoleState}, 
         Game, 
         verdict::Verdict, 
         chat::{
@@ -22,18 +22,18 @@ impl PlayerReference{
     }
     
     pub fn role(&self, game: &Game) -> Role {
-        self.deref(game).role_data.role()
+        self.deref(game).role_state.role()
     }
-    pub fn role_data<'a>(&self, game: &'a Game) -> &'a RoleData{
-        &self.deref(game).role_data
+    pub fn role_state<'a>(&self, game: &'a Game) -> &'a RoleState {
+        &self.deref(game).role_state
     }
-    pub fn set_role_data(&self, game: &mut Game, new_role_data: RoleData){
+    pub fn set_role_state(&self, game: &mut Game, new_role_data: RoleState){
         
-        if self.deref(game).role_data.role() == new_role_data.role() {
-            self.send_packet(game, ToClientPacket::YourRole { role: self.deref(game).role_data.role() });
+        if self.deref(game).role_state.role() == new_role_data.role() {
+            self.send_packet(game, ToClientPacket::YourRole { role: self.deref(game).role_state.role() });
         }
-        self.deref_mut(game).role_data = new_role_data;
-        self.send_packet(game, ToClientPacket::YourRoleData { role_data: self.deref(game).role_data.clone() } );
+        self.deref_mut(game).role_state = new_role_data;
+        self.send_packet(game, ToClientPacket::YourRoleState { role_state: self.deref(game).role_state.clone() } );
     }
 
     pub fn alive(&self, game: &Game) -> bool{
@@ -86,7 +86,7 @@ impl PlayerReference{
     }
     pub fn remove_player_tag(&self, game: &mut Game, key: PlayerReference, value: Tag){
         let Some(player_tags) = self.deref_mut(game).player_tags.get_mut(&key) else {return};
-        *player_tags = player_tags.iter().filter(|t|**t!=value).map(|t|t.clone()).collect();
+        *player_tags = player_tags.iter().filter(|t|**t!=value).map(Clone::clone).collect();
         self.send_packet(game, ToClientPacket::YourPlayerTags { player_tags: PlayerReference::ref_map_to_index(self.deref(game).player_tags.clone()) });
     }
 
@@ -224,10 +224,8 @@ impl PlayerReference{
     pub fn set_chosen_targets(&self, game: &mut Game, chosen_targets: Vec<PlayerReference>){
         self.deref_mut(game).night_variables.chosen_targets = vec![];
 
-        let role = self.deref(game).role_data.role();
-
         for target_ref in chosen_targets {
-            if role.can_night_target(game, *self, target_ref){
+            if self.can_night_target(game, target_ref){
                 self.deref_mut(game).night_variables.chosen_targets.push(target_ref);
             }
         }
@@ -300,7 +298,7 @@ impl PlayerReference{
             self.send_packet(game, ToClientPacket::YouAreJailed);
 
             let mut message_sent = false;
-            for chat_group in self.role(game).get_current_send_chat_groups(game, *self){
+            for chat_group in self.get_current_send_chat_groups(game){
                 match chat_group {
                     ChatGroup::All | ChatGroup::Dead | ChatGroup::Jail => {},
                     ChatGroup::Mafia | ChatGroup::Vampire | ChatGroup::Coven => {

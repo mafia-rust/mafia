@@ -120,7 +120,7 @@ pub enum ChatMessage {
     PlayerWithNecronomicon{player_index: PlayerIndex}, //Sammy has the necronomicon
 
     // #[serde(rename_all = "camelCase")]
-    // RoleData{role_data: RoleData},  //Tell executioner their target, other things. TODO
+    // RoleState{role_data: RoleState},  //Tell executioner their target, other things. TODO
 
 }
 
@@ -143,7 +143,7 @@ pub enum ChatGroup {
 }
 impl ChatGroup{
     pub fn player_receive_from_chat_group(&self, game: &Game, player_ref: PlayerReference)->bool{
-        player_ref.role(game).get_current_recieve_chat_groups(game, player_ref).contains(self)
+        player_ref.get_current_recieve_chat_groups(game).contains(self)
     }
 
     pub fn all_players_in_group(&self, game: &Game)->Vec<PlayerReference>{
