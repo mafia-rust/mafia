@@ -68,6 +68,8 @@ export type RoleState = {
 } | {
     role: "lookout"
 } | {
+    role: "seer"
+} | {
     role: "doctor",
     selfHealsRemaining: number,
 } | {

@@ -204,11 +204,11 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.defense = defense;
     }
 
-    pub fn night_appeared_suspicious(&self, game: &Game) -> bool {
-        self.deref(game).night_variables.appeard_suspicious
+    pub fn night_appeared_role(&self, game: &Game) -> Role {
+        self.deref(game).night_variables.appeared_role
     }
-    pub fn set_night_appeared_suspicious(&self, game: &mut Game, suspicious: bool){
-        self.deref_mut(game).night_variables.appeard_suspicious = suspicious;
+    pub fn set_night_appeared_role(&self, game: &mut Game, role: Role){
+        self.deref_mut(game).night_variables.appeared_role = role;
     }
 
     pub fn night_appeared_visits<'a>(&self, game: &'a Game) -> &'a Vec<Visit>{
