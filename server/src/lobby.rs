@@ -134,6 +134,14 @@ impl Lobby {
                 
                 self.send_to_all(ToClientPacket::RoleList { role_list });
             }
+            ToServerPacket::SetExcludedRoles { roles } => {
+                let LobbyState::Lobby{ settings, .. } = &mut self.lobby_state else {
+                    println!("{} {}", log::error("Can't modify game settings outside of the lobby menu"), player_arbitrary_id);
+                    return;
+                };
+                settings.excluded_roles = roles.clone();
+                self.send_to_all(ToClientPacket::ExcludedRoles { roles });
+            }
             _ => {
                 let LobbyState::Game { game, players } = &mut self.lobby_state else {
                     println!("{} {:?}", log::error("ToServerPacket not implemented for lobby was sent during lobby: "), incoming_packet);

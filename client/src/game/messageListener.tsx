@@ -96,8 +96,8 @@ export default function messageListener(packet: ToClientPacket){
         case "phaseTime":
             GAME_MANAGER.gameState.phaseTimes[packet.phase as keyof typeof GAME_MANAGER.gameState.phaseTimes] = packet.time;
         break;
-        case "investigatorResults":
-            GAME_MANAGER.gameState.investigatorResults = packet.investigatorResults.results;
+        case "excludedRoles":
+            GAME_MANAGER.gameState.excludedRoles = packet.roles;
         break;
         case "phase":
             GAME_MANAGER.gameState.phase = packet.phase;

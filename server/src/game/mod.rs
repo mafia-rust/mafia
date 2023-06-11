@@ -43,7 +43,7 @@ impl Game {
     pub fn new(settings: Settings, lobby_players: Vec<LobbyPlayer>)->Self{
 
         //create role list
-        let mut roles = create_random_roles(&settings.role_list);
+        let mut roles = create_random_roles(&settings.excluded_roles, &settings.role_list);
         roles.shuffle(&mut thread_rng());
         
 
@@ -55,7 +55,7 @@ impl Game {
                 player.sender.clone(),
                 match roles.get(player_index){
                     Some(role) => *role,
-                    None => RoleListEntry::Any.get_random_role(&roles),
+                    None => RoleListEntry::Any.get_random_role(&settings.excluded_roles, &roles),
                 }
             );
             players.push(new_player);

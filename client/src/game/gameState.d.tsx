@@ -25,7 +25,7 @@ export default interface GameState {
     judgement: Verdict,
     
     roleList: RoleListEntry[],
-    investigatorResults: Role[][],
+    excludedRoles: Role[],
     phaseTimes: PhaseTimes
 }
 
