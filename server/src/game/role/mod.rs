@@ -31,6 +31,7 @@ macros::roles! {
 
     Sheriff : sheriff,
     Lookout : lookout,
+    Seer : seer,
 
     Doctor : doctor,
     Bodyguard : bodyguard,

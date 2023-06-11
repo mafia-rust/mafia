@@ -122,6 +122,15 @@ export type NightInformation = {
 } |
 /* Role-specific */
 {
+    type: "sheriffResult", 
+    suspicious: boolean
+} |{
+    type: "lookoutResult", 
+    players: PlayerIndex[]
+} | {
+    type: "seerResult",
+    enemies: boolean
+} | {
     type: "spyMafiaVisit", 
     players: PlayerIndex[]
 } | {
@@ -159,15 +168,6 @@ export type NightInformation = {
 } | {
     type: "consigliereResult", 
     role: Role 
-} | {
-    type: "sheriffResult", 
-    suspicious: boolean
-} | {
-    type: "lookoutResult", 
-    players: PlayerIndex[]
-} | {
-    type: "investigatorResult", 
-    roles: Role[]
 } | {
     type: "witchTargetImmune"
 } | {

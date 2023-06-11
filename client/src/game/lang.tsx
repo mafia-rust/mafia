@@ -220,6 +220,12 @@ export function getNightInformationString(info: NightInformation){
             return translate("chatmessage.night.sheriffResult." + (info.suspicious ? "suspicious" : "innocent"));
         case "lookoutResult":
             return translate("chatmessage.night.lookoutResult", (info.players.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", ")));
+        case "seerResult":
+            if(info.enemies){
+                return translate("chatmessage.night.seerResult.enemies");
+            }else{
+                return translate("chatmessage.night.seerResult.friends");
+            }
         case "playerRoleAndWill":
             return translate("chatmessage.night.playersRoleAndWill", translate("role."+info.role+".name"), info.will);
         default:

@@ -59,8 +59,8 @@ pub(super) struct PlayerNightVariables{
     pub(super) roleblocked:    bool,
     pub(super) defense:        u8,
 
-    pub(super) appeard_suspicious:     bool,
     pub(super) appeared_visits: Vec<Visit>,
+    pub(super) appeared_role:    Role,
 
     pub(super) silenced:       bool,
 
@@ -99,24 +99,23 @@ impl Player {
                 verdict : Verdict::Abstain,
             },
             night_variables: PlayerNightVariables{
-                alive_tonight:  true,
-                died:           false,
-                attacked:       false,
-                jailed:         false,
-                roleblocked:    false,
-                defense:        0,
-                appeard_suspicious:false,
-                appeared_visits: vec![],
+                alive_tonight:      true,
+                died:               false,
+                attacked:           false,
+                jailed:             false,
+                roleblocked:        false,
+                defense:            0,
+                appeared_visits:    vec![],
+                appeared_role:      Role::Jester,
 
-                silenced:       false,
+                silenced:           false,
 
-                chosen_targets: vec![],
-                visits:         vec![],
+                chosen_targets:     vec![],
+                visits:             vec![],
 
-                messages: vec![],
+                messages:           vec![],
 
-                //TODO make this jester just incase
-                grave_role: GraveRole::Role(Role::Vigilante), //This should not be a problem because we reset immedietly on creation
+                grave_role: GraveRole::Role(Role::Jester), //This should not be a problem because we reset immedietly on creation
                 grave_killers: vec![],
                 grave_will: "".to_string(),
                 grave_death_notes: vec![],

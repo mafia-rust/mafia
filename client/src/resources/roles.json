@@ -26,6 +26,15 @@
         "endGameCondition": "Faction",
         "maxCount": null
     },
+    "seer": {
+        "factionAlignment": "townInvestigative",
+        "suspicious": false,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": null
+    },
     "doctor": {
         "factionAlignment": "townProtective",
         "suspicious": false,

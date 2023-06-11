@@ -17,6 +17,9 @@ pub enum NightInformation {
     /* Role-specific */
     TargetJailed,
 
+    SheriffResult { suspicious: bool },
+    LookoutResult{players: Vec<PlayerIndex>},
+    SeerResult{ enemies: bool},
     SpyMafiaVisit{players: Vec<PlayerIndex>},
     SpyCovenVisit{players: Vec<PlayerIndex>},
     SpyBug{message: Box<ChatMessage>},
@@ -44,9 +47,6 @@ pub enum NightInformation {
 
     PlayerRoleAndWill { role: Role, will: String },
     ConsigliereResult{ role: Role },
-    
-    SheriffResult { suspicious: bool },
-    LookoutResult{players: Vec<PlayerIndex>},
  
     WitchTargetImmune,
     WitchedYou { immune: bool },    //you were witched
