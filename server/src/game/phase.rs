@@ -8,7 +8,7 @@ use super::{
     settings::PhaseTimeSettings,
     Game, player::PlayerReference,
     chat::{ChatGroup, ChatMessage, night_message::NightInformation},
-    verdict::Verdict, grave::Grave, role::Priority,
+    verdict::Verdict, grave::Grave, role::{Priority, Role, mafioso::Mafioso}, role_list::Faction,
 };
 
 
@@ -112,27 +112,27 @@ impl PhaseState {
                 //TODO move this potentially
                 //ensure mafia can kill
                 //search for mafia godfather or mafioso
-                // let mut main_mafia_killing_exists = false;
+                let mut main_mafia_killing_exists = false;
 
 
-                // for player_ref in PlayerReference::all_players(game){
-                //     if player_ref.role(game) == Role::Mafioso && player_ref.alive(game) { 
-                //         main_mafia_killing_exists = true;
-                //         break;
-                //     }
-                // }
+                for player_ref in PlayerReference::all_players(game){
+                    if player_ref.role(game) == Role::Mafioso && player_ref.alive(game) { 
+                        main_mafia_killing_exists = true;
+                        break;
+                    }
+                }
 
-                // //TODO for now just convert the first person we see to mafioso
-                // //later set an order for roles
-                // //ambusher should be converted first
-                // if !main_mafia_killing_exists{
-                //     for player_ref in PlayerReference::all_players(game){
-                //         if player_ref.role(game).faction_alignment().faction() == Faction::Mafia && player_ref.alive(game){
-                //             player_ref.set_role(game, Role::Mafioso);
-                //             break;
-                //         }
-                //     }
-                // }
+                //TODO for now just convert the first person we see to mafioso
+                //later set an order for roles
+                //ambusher should be converted first
+                if !main_mafia_killing_exists{
+                    for player_ref in PlayerReference::all_players(game){
+                        if player_ref.role(game).faction_alignment().faction() == Faction::Mafia && player_ref.alive(game){
+                            player_ref.set_role(game, super::role::RoleState::Mafioso(Mafioso::default()));
+                            break;
+                        }
+                    }
+                }
             },
             PhaseState::Discussion
             | PhaseState::Judgement { .. } 

@@ -31,7 +31,7 @@ pub struct Doctor {
 impl Default for Doctor {
     fn default() -> Self {
         Self { 
-            self_heals_remaining: 3,
+            self_heals_remaining: 1,
             target_healed_ref: None
         }
     }
