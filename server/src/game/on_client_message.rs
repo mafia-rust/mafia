@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::{packet::{ToServerPacket, ToClientPacket}, strings::TidyableString, log};
 
-use super::{Game, player::{PlayerIndex, PlayerReference}, phase::{PhaseType, PhaseState}, chat::{ChatGroup, ChatMessage, MessageSender}};
+use super::{Game, player::{PlayerIndex, PlayerReference}, phase::{PhaseType, PhaseState}, chat::{ChatGroup, ChatMessage, MessageSender}, role::Role};
 
 
 
@@ -123,11 +123,11 @@ impl Game {
 
                     //TODO possibly move message_sender
                     let message_sender = 
-                    // if sender_player_ref.role(self) == Role::Jailor && chat_group == ChatGroup::Jail {
-                    //     MessageSender::Jailor
-                    // } else if sender_player_ref.role(self) == Role::Medium && sender_player_ref.alive(self) && chat_group == ChatGroup::Dead{
-                    //     MessageSender::Medium
-                    // } else 
+                    if sender_player_ref.role(self) == Role::Jailor && chat_group == ChatGroup::Jail {
+                        MessageSender::Jailor
+                    } else if sender_player_ref.role(self) == Role::Medium && sender_player_ref.alive(self) && chat_group == ChatGroup::Dead{
+                        MessageSender::Medium
+                    } else 
                     {
                         MessageSender::Player {player: sender_player_index}
                     };

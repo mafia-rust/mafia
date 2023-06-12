@@ -411,6 +411,8 @@ export function styleText(
         {string:translate("grave.role.petrified"), style:HIDDEN},
         {string:translate("suspicious"), style:EVIL},
         {string:translate("suspicious.shorthand"), style:EVIL},
+        {string:translate("friends"), style:GOOD},
+        {string:translate("enemies"), style:EVIL},
 
         {string:translate("faction.town"), style:GOOD},
         {string:translate("faction.mafia"), style:EVIL},

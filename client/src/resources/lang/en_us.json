@@ -60,7 +60,7 @@
 
     "role.jailor.name": "Jailor",
     "role.jailor.abilities":"*Choose one player to jail during the day*You can execute your prisoners up to three times",
-    "role.jailor.attributes":"*You may anonymously talk with your prisoner at night*If you execute a town member, you forfiet the ability to jail prisoners*Jailed players are immune to all attacks, frames, transports, douses and more*Jailed players can't use their ability",
+    "role.jailor.attributes":"*You may anonymously talk with your prisoner at night*If you execute a town member, you forfeit the ability to jail prisoners*Jailed players are immune to all attacks, frames, transports, douses and more*Jailed players can't use their ability",
     "role.jailor.target": "Execute",
     "role.jailor.dayTarget": "Jail",
 
@@ -84,13 +84,13 @@
 
     "role.doctor.name": "Doctor",
     "role.doctor.abilities":"*Target a player to save them from death*Target yourself one time to save yourself",
-    "role.doctor.attributes":"*You give your target powerfull defense*You and your target will know if they were attacked and saved",
+    "role.doctor.attributes":"*You give your target powerful defense*You and your target will know if they were attacked and saved",
     "role.doctor.target": "Heal",
     "role.doctor.dayTarget": "Special",
 
     "role.bodyguard.name": "Bodyguard",
     "role.bodyguard.abilities":"*Target a player to guard them, killing their attacker, but getting attacked yourself*Target yourself one time to protect yourself",
-    "role.bodyguard.attributes":"*When you guard yourself, you gain powerfull defense*You and your target will know if they were attacked and protected*You will redirect attacks from your target onto yourself, and you will attack those players back",
+    "role.bodyguard.attributes":"*When you guard yourself, you gain powerful defense*You and your target will know if they were attacked and protected*You will redirect attacks from your target onto yourself, and you will attack those players back",
     "role.bodyguard.target": "Protect",
     "role.bodyguard.dayTarget": "Special",
 
@@ -120,13 +120,13 @@
 
     "role.veteran.name": "Veteran",
     "role.veteran.abilities":"*Target yourself to alert, killing everyone who visits you",
-    "role.veteran.attributes":"*You will know if you attack someone*You have a powerfull attack*You have basic defense while on alert",
+    "role.veteran.attributes":"*You will know if you attack someone*You have basic defense while on alert*You have a powerful attack",
     "role.veteran.target": "Alert",
     "role.veteran.dayTarget": "Special",
 
     "role.mafioso.name": "Mafioso",
     "role.mafioso.abilities":"*Target a player to kill them",
-    "role.mafioso.attributes":"*A Godfather can force you to target someone else*You have a basic attack*If the mafia has no Mafioso, a memeber of the mafia will become the Mafioso at the start of night",
+    "role.mafioso.attributes":"*A Godfather can force you to target someone else*You have a basic attack*If the mafia has no Mafioso, a member of the mafia will become the Mafioso at the start of night",
     "role.mafioso.target": "Kill",
     "role.mafioso.dayTarget": "Special",
 
@@ -141,7 +141,6 @@
     "role.blackmailer.attributes":"*Silenced players can not talk or vote",
     "role.blackmailer.target": "Silence",
     "role.blackmailer.dayTarget": "Special",
-
     
     "role.consigliere.name": "Consigliere",
     "role.consigliere.abilities":"*Investigate a player to find out their role, find who they visited, and who visited them",
@@ -157,7 +156,7 @@
 
     "role.framer.name": "Framer",
     "role.framer.abilities":"*Target two players to frame the first one",
-    "role.framer.attributes":"*You can only pick non mafia memebers for your first target, but anyone as your second target*Your second visit is astral*Lookouts and trackers will see that your first target visited your second target*The framed player will look like the mafioso to many town investigative",
+    "role.framer.attributes":"*The framed player will look like the mafioso to town investigative roles*Lookouts and trackers will see that your first target visited your second target*You can only pick non mafia mebers for your first target, but anyone as your second target*Your second visit is astral",
     "role.framer.target": "Target",
     "role.framer.dayTarget": "Special",
 
@@ -203,6 +202,8 @@
     "suspicious": "Suspicious",
     "suspicious.shorthand": "sus",
     "innocent.shorthand": "inno",
+    "friends":"Friends",
+    "enemies":"Enemies",
     "suicide": "Suicide",
     "dead": "Dead",
     "any": "Any",
