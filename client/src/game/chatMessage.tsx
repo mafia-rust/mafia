@@ -163,11 +163,13 @@ export type NightInformation = {
     players: PlayerIndex[]
 } | {
     type: "playerRoleAndWill", 
-    role: Role, 
-    will: string 
+    role: Role,
+    will: string
 } | {
     type: "consigliereResult", 
-    role: Role 
+    role: Role,
+    visitedBy: PlayerIndex[],
+    visited: PlayerIndex[]
 } | {
     type: "witchTargetImmune"
 } | {

@@ -32,12 +32,12 @@ impl RoleStateImpl for Sheriff {
         if let Some(visit) = actor_ref.night_visits(game).first(){
             
             if visit.target.night_jailed(game){
-                actor_ref.push_night_messages(game, NightInformation::TargetJailed );
+                actor_ref.push_night_message(game, NightInformation::TargetJailed );
                 return
             }
             let message = NightInformation::SheriffResult { suspicious: visit.target.night_appeared_role(game).suspicious()};
             
-            actor_ref.push_night_messages(game, message);
+            actor_ref.push_night_message(game, message);
         }
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}

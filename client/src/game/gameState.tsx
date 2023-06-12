@@ -47,11 +47,11 @@ export function createPlayer(name: string, index: number): Player {
             vote: false,
         },
         numVoted: 0,
-        alive:true,
+        alive: true,
         roleLabel: null,
 
         toString() {
-            return "("+(this.index + 1)+") " + this.name;
+            return ""+(this.index+1)+"-" + this.name;
         }
     }
 }

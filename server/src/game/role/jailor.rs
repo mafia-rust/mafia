@@ -48,7 +48,7 @@ impl RoleStateImpl for Jailor {
                 let killed = target_ref.try_night_kill(game, GraveKiller::Role(Role::Jailor), 3);
 
                 if !killed {
-                    actor_ref.push_night_messages(game, NightInformation::TargetSurvivedAttack);
+                    actor_ref.push_night_message(game, NightInformation::TargetSurvivedAttack);
                 }
 
                 self.executions_remaining = if target_ref.role(game).faction_alignment().faction() == Faction::Town { 0 } else { self.executions_remaining - 1 };

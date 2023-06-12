@@ -2,7 +2,7 @@ import React from "react";
 import GAME_MANAGER from "../index";
 import { ChatMessage, NightInformation } from "./chatMessage";
 import ROLES from "../resources/roles.json";
-import { FactionAlignment, Player, getFactionFromFactionAlignment } from "./gameState.d";
+import { FactionAlignment, getFactionFromFactionAlignment } from "./gameState.d";
 
 let lang: ReadonlyMap<string, string>;
 switchLanguage("en_us");
@@ -228,6 +228,12 @@ export function getNightInformationString(info: NightInformation){
             }
         case "playerRoleAndWill":
             return translate("chatmessage.night.playersRoleAndWill", translate("role."+info.role+".name"), info.will);
+        case "consigliereResult":
+            return translate("chatmessage.night.consigliereResult", 
+                translate("role."+info.role+".name"),
+                (info.visited.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", ")), 
+                (info.visitedBy.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", "))
+            );
         default:
             return translate("chatmessage.night."+info.type);
     }
@@ -365,16 +371,16 @@ export function styleText(
     const MAGIC: React.CSSProperties = { color: "magenta" };
     const NEUTRAL: React.CSSProperties = { color: "orange" };
     const INFO: React.CSSProperties = { color: "lightblue" };
-    const HIDDEN: React.CSSProperties = { fontStyle: "italic", fontWeight: "bold" };
+    const HIDDEN: React.CSSProperties = { color: "whitesmoke", fontStyle: "italic", fontWeight: "bold" };
 
-    stringsToStyle = stringsToStyle.concat(
-        GAME_MANAGER.gameState.players.map((player: Player)=>{
-            return {string:player.toString(), style:{
-                fontStyle: "italic",
-                fontWeight: "bold"
-            }};
-        })
-    );
+    for(let i = 0; i < GAME_MANAGER.gameState.players.length; i++){
+        stringsToStyle.push(
+            {
+                string: GAME_MANAGER.gameState.players[i].toString(), 
+                style:HIDDEN
+            }
+        )
+    }
 
     for(let role in ROLES){
         let roleObject = ROLES[role as keyof typeof ROLES];
@@ -438,7 +444,6 @@ export function styleText(
 
         {string:translate("kys"), style:gradient("violet, indigo, cyan, green, yellow, orange, red")},
         
-        // Happy pride month!
         {string:translate("pride.gay"), style:gradient("violet, indigo, cyan, green, yellow, orange, red")},
         {string:translate("pride.trans"), style:gradient("cyan, pink, white, pink, cyan")},
     ]);

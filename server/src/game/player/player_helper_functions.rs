@@ -10,12 +10,12 @@ impl PlayerReference{
         if self.role(game).roleblockable() {
             self.set_night_roleblocked(game, true);
             self.set_night_visits(game, vec![]);
-            self.push_night_messages(game,
+            self.push_night_message(game,
                 NightInformation::RoleBlocked { immune: false }
             );
             true
         } else {
-            self.push_night_messages(game,
+            self.push_night_message(game,
                 NightInformation::RoleBlocked { immune: true }
             );
             false
@@ -26,14 +26,14 @@ impl PlayerReference{
         self.set_night_attacked(game, true);
 
         if self.night_defense(game) >= attack {
-            self.push_night_messages(game,
+            self.push_night_message(game,
                 NightInformation::YouSurvivedAttack
             );
             return false;
         }
         
         //die
-        self.push_night_messages(game, NightInformation::YouDied);
+        self.push_night_message(game, NightInformation::YouDied);
 
         if !self.alive(game){
             return true;

@@ -9,15 +9,17 @@ pub enum EndGameCondition {
 impl EndGameCondition {
     ///The jester can win with everyone
     ///The serial killer only wins with other serial killers
-    pub fn wins_with(a: Role, b: Role)->bool{
+    pub fn can_win_together(a: Role, b: Role)->bool{
+        
         if a.end_game_condition() == Self::None {return true};
         if b.end_game_condition() == Self::None {return true};
+
         if a.end_game_condition() != b.end_game_condition() {return false;}
 
         match a.end_game_condition() {
             EndGameCondition::Faction => a.faction_alignment().faction() == b.faction_alignment().faction(),
             EndGameCondition::SingleRole => a == b,
-            EndGameCondition::None => true,
+            EndGameCondition::None => true, //just incase i guess
         }
     }
 }

@@ -50,14 +50,14 @@ impl RoleStateImpl for Vigilante {
 
                     let target_ref = visit.target;
                     if target_ref.night_jailed(game){
-                        actor_ref.push_night_messages(game, NightInformation::TargetJailed);
+                        actor_ref.push_night_message(game, NightInformation::TargetJailed);
                         return
                     }
 
                     let killed = target_ref.try_night_kill(game, GraveKiller::Role(Role::Vigilante), 1);
 
                     if !killed {
-                        actor_ref.push_night_messages(game,NightInformation::TargetSurvivedAttack);
+                        actor_ref.push_night_message(game,NightInformation::TargetSurvivedAttack);
                     }else if target_ref.role(game).faction_alignment().faction() == Faction::Town {
                         self.will_suicide = true;
                     }

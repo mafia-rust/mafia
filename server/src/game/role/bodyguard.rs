@@ -50,7 +50,7 @@ impl RoleStateImpl for Bodyguard {
                 let target_ref = visit.target;
     
                 if target_ref.night_jailed(game){
-                    actor_ref.push_night_messages(game, NightInformation::TargetJailed);
+                    actor_ref.push_night_message(game, NightInformation::TargetJailed);
                     return
                 }
     
@@ -66,7 +66,7 @@ impl RoleStateImpl for Bodyguard {
                 let target_ref = visit.target;
     
                 if target_ref.night_jailed(game){
-                    actor_ref.push_night_messages(game, NightInformation::TargetJailed);
+                    actor_ref.push_night_message(game, NightInformation::TargetJailed);
                     return
                 }
     
@@ -114,8 +114,8 @@ impl RoleStateImpl for Bodyguard {
             }
             Priority::Investigative => {
                 if let Some(target_protected_ref) = self.target_protected_ref {
-                    actor_ref.push_night_messages(game, NightInformation::BodyguardProtected);
-                    target_protected_ref.push_night_messages(game, NightInformation::BodyguardProtectedYou);
+                    actor_ref.push_night_message(game, NightInformation::BodyguardProtected);
+                    target_protected_ref.push_night_message(game, NightInformation::BodyguardProtectedYou);
                 }
             }
             _ => {}

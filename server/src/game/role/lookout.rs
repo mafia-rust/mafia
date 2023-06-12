@@ -32,7 +32,7 @@ impl RoleStateImpl for Lookout {
         if let Some(visit) = actor_ref.night_visits(game).first(){
             
             if visit.target.night_jailed(game){
-                actor_ref.push_night_messages(game, NightInformation::TargetJailed );
+                actor_ref.push_night_message(game, NightInformation::TargetJailed );
                 return
             }
             
@@ -43,7 +43,7 @@ impl RoleStateImpl for Lookout {
                 }).map(|player_ref|player_ref.index()).collect()
             };
             
-            actor_ref.push_night_messages(game, message);
+            actor_ref.push_night_message(game, message);
         }
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {

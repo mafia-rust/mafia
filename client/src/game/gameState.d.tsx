@@ -95,6 +95,8 @@ export type RoleState = {
 } | {
     role:"blackmailer"
 } | {
+    role:"consigliere",
+} | {
     role:"janitor"
     cleansRemaining: number,
 } | {
