@@ -33,14 +33,14 @@ impl RoleStateImpl for Mafioso {
         if let Some(visit) = actor_ref.night_visits(game).first(){
             let target_ref = visit.target;
             if target_ref.night_jailed(game){
-                actor_ref.push_night_messages(game, NightInformation::TargetJailed);
+                actor_ref.push_night_message(game, NightInformation::TargetJailed);
                 return
             }
     
             let killed = target_ref.try_night_kill(game, GraveKiller::Faction(Faction::Mafia), 1);
     
             if !killed {
-                actor_ref.push_night_messages(game,NightInformation::TargetSurvivedAttack);
+                actor_ref.push_night_message(game,NightInformation::TargetSurvivedAttack);
             }
         }
     }

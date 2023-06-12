@@ -48,6 +48,7 @@ macros::roles! {
     
     Consort : consort,
     Blackmailer : blackmailer,
+    Consigliere: consigliere,
 
     Janitor : janitor,
     Framer : framer,

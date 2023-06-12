@@ -248,7 +248,7 @@ impl PlayerReference{
     pub fn night_messages<'a>(&self, game: &'a Game) -> &'a Vec<NightInformation> {
         &self.deref(game).night_variables.messages
     }
-    pub fn push_night_messages(&self, game: &mut Game, message: NightInformation){
+    pub fn push_night_message(&self, game: &mut Game, message: NightInformation){
         self.deref_mut(game).night_variables.messages.push(message);
     }
     pub fn set_night_messages(&self, game: &mut Game, messages: Vec<NightInformation>){
@@ -326,7 +326,7 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.silenced = silenced;
         if silenced {
             self.send_packet(game, ToClientPacket::YouAreSilenced);
-            self.push_night_messages(game, NightInformation::Silenced);
+            self.push_night_message(game, NightInformation::Silenced);
         }
     }
 }

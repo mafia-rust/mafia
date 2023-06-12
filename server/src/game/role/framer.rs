@@ -35,7 +35,7 @@ impl RoleStateImpl for Framer {
         let Some(second_visit) = framer_visits.get(1) else {return};
     
         if first_visit.target.night_jailed(game) {
-            actor_ref.push_night_messages(game, NightInformation::TargetJailed);
+            actor_ref.push_night_message(game, NightInformation::TargetJailed);
         }else{
             first_visit.target.set_night_appeared_role(game, Role::Mafioso);
             first_visit.target.set_night_appeared_visits(game, vec![second_visit.clone()]);

@@ -125,6 +125,15 @@
         "endGameCondition": "Faction",
         "maxCount": null
     },
+    "consigliere": {
+        "factionAlignment": "mafiaSupport",
+        "suspicious": true,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": 1
+    },
     "janitor": {
         "factionAlignment": "mafiaDeception",
         "suspicious": true,

@@ -25,7 +25,6 @@ pub struct Retributionist {
     used_bodies: Vec<PlayerReference>, 
     currently_used_player: Option<PlayerReference> 
 }
-
 impl RoleStateImpl for Retributionist {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return;}
@@ -50,7 +49,7 @@ impl RoleStateImpl for Retributionist {
             Priority::StealMessages => {
                 if let Some(currently_used_player) = self.currently_used_player {
                     for message in currently_used_player.night_messages(game).clone() {
-                        actor_ref.push_night_messages(game, message.clone());
+                        actor_ref.push_night_message(game, message.clone());
                     }
                 }
             },

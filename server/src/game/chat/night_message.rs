@@ -46,7 +46,8 @@ pub enum NightInformation {
     Silenced,
 
     PlayerRoleAndWill { role: Role, will: String },
-    ConsigliereResult{ role: Role },
+    #[serde(rename_all = "camelCase")]
+    ConsigliereResult{ role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
  
     WitchTargetImmune,
     WitchedYou { immune: bool },    //you were witched

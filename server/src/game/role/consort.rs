@@ -31,7 +31,7 @@ impl RoleStateImpl for Consort {
         if let Some(visit) = actor_ref.night_visits(game).first(){
             let target_ref = visit.target;
             if target_ref.night_jailed(game) {
-                actor_ref.push_night_messages(game, NightInformation::TargetJailed);
+                actor_ref.push_night_message(game, NightInformation::TargetJailed);
             }else{
                 target_ref.roleblock(game);
             }

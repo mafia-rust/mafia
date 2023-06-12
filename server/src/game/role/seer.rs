@@ -33,24 +33,19 @@ impl RoleStateImpl for Seer {
         let Some(second_visit) = actor_ref.night_visits(game).get(1) else {return;};
 
             
-        if first_visit.target.night_jailed(game){
-            actor_ref.push_night_messages(game, NightInformation::TargetJailed );
-            return
-        }
-        if second_visit.target.night_jailed(game){
-            actor_ref.push_night_messages(game, NightInformation::TargetJailed );
+        if first_visit.target.night_jailed(game) || second_visit.target.night_jailed(game){
+            actor_ref.push_night_message(game, NightInformation::TargetJailed);
             return
         }
 
-        let message = NightInformation::SeerResult{ enemies:
-            !EndGameCondition::wins_with(
+        let message = NightInformation::SeerResult{enemies:
+            !EndGameCondition::can_win_together(
                 first_visit.target.night_appeared_role(game), 
                 second_visit.target.night_appeared_role(game)
             )
         };
         
-        actor_ref.push_night_messages(game, message);
-        
+        actor_ref.push_night_message(game, message);
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -70,7 +65,7 @@ impl RoleStateImpl for Seer {
         if target_refs.len() == 2 {
             vec![
                 Visit{ target: target_refs[0], astral:false, attack:false },
-                Visit{ target: target_refs[0], astral:false, attack:false }
+                Visit{ target: target_refs[1], astral:false, attack:false }
             ]
         } else {
             Vec::new()

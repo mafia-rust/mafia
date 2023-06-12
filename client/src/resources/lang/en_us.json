@@ -141,6 +141,13 @@
     "role.blackmailer.attributes":"*Silenced players can not talk or vote",
     "role.blackmailer.target": "Silence",
     "role.blackmailer.dayTarget": "Special",
+
+    
+    "role.consigliere.name": "Consigliere",
+    "role.consigliere.abilities":"*Investigate a player to find out their role, find who they visited, and who visited them",
+    "role.consigliere.attributes":"*Your information can be fooled by other roles like framers, arsonists, and hex masters.",
+    "role.consigliere.target": "Investigate",
+    "role.consigliere.dayTarget": "Special",
     
     "role.janitor.name": "Janitor",
     "role.janitor.abilities":"*Clean a player on the night they die",
@@ -269,6 +276,7 @@
     "chatmessage.night.doctorHealedYou":"A doctor healed you while you got attacked.",
     "chatmessage.night.silenced": "You were silenced! You can not speak or communicate in any way until at least the start of the next day!",
     "chatmessage.night.playersRoleAndWill": "Your targets role was \\0 and their will stated this: \\1",
+    "chatmessage.night.consigliereResult": "Your targets role was \\0. They visited \\1. They were visited by \\2.",
 
     "pride.gay":"GAY",
     "pride.trans":"TRANS",

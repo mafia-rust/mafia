@@ -16,14 +16,14 @@ pub(super) const ROLEBLOCKABLE: bool = true;
 pub(super) const WITCHABLE: bool = true;
 pub(super) const SUSPICIOUS: bool = true;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaSupport;
-pub(super) const MAXIMUM_COUNT: Option<u8> = None;
+pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Faction;
 pub(super) const TEAM: Option<Team> = Some(Team::Faction);
 
 #[derive(Clone, Debug, Serialize, Default)]
-pub struct Blackmailer;
+pub struct Consigliere;
 
-impl RoleStateImpl for Blackmailer {
+impl RoleStateImpl for Consigliere {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return;}
     
@@ -35,8 +35,18 @@ impl RoleStateImpl for Blackmailer {
                 actor_ref.push_night_message(game, NightInformation::TargetJailed);
                 return
             }
-    
-            target_ref.set_night_silenced(game, true);
+
+            let visited_by = PlayerReference::all_players(game).into_iter().filter(|player_ref|{
+                player_ref.night_appeared_visits(game).iter().any(|other_visit| other_visit.target == visit.target) && //if they visited your target
+                *player_ref != actor_ref //and they are not you
+            }).map(|player_ref|player_ref.index()).collect();
+            
+            let visited = target_ref.night_appeared_visits(game).iter().map(|v|v.target.index()).collect();
+
+            let message = NightInformation::ConsigliereResult{
+                role: target_ref.night_appeared_role(game), visited_by, visited
+            };
+            actor_ref.push_night_message(game, message);
         }
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
