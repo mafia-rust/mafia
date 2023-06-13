@@ -45,6 +45,14 @@ button:hover, input:hover, select:hover, option:hover textarea:hover{
     background-color: var(--hover-color);
 }
 
+.hero {
+    height: 100vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
 ::-webkit-scrollbar {
     width: .5rem;
 }
