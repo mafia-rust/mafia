@@ -33,6 +33,7 @@ impl PlayerReference{
                 self.set_chosen_targets(game,   vec![]);
                 self.set_night_visits(game,          vec![]);
                 self.set_night_messages(game,  vec![]);
+                
                 self.set_night_grave_role(game,  GraveRole::Role(self.role(game)));
                 self.set_night_grave_killers(game,  vec![]);
                 self.set_night_grave_will(game,  self.will(game).clone());   //THIS NEEDS TO BE SET RIGHT BEFORE THEY DIE
