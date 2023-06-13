@@ -268,7 +268,7 @@
     "chatmessage.executionerWon":"The executioner got their target lynched!",
     "chatmessage.deputyShot":"\\0 the deputy shot \\1!",
     "chatmessage.jailorDecidedToExecute":"The jailor decided to execute \\0",
-    "chatmessage.jailorDecidedToExecute.null":"The jailor decided not to execute you",
+    "chatmessage.jailorDecidedToExecute.null":"The jailor decided to spare everybody!",
 
     "chatmessage.night.roleBlocked.immune": "Someone tried to roleblock you but you are immune.",
     "chatmessage.night.roleBlocked": "You've been roleblocked.",

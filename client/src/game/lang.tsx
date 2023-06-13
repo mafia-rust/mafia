@@ -230,7 +230,7 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
 
 export function getNightInformationChatElement(info: NightInformation, key: number): JSX.Element {
     const RESULT_STYLE = { defaultStyle: { color: "green" } };
-    const WARNING_STYLE = { backgroundColor: "#330000" };
+    const WARNING_STYLE = { backgroundColor: "#660000" };
     switch (info.type) {
         case "roleBlocked":
             return <span key={key}>{styleText(
