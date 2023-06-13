@@ -111,7 +111,7 @@ pub enum ChatMessage {
     JailedTarget{player_index: PlayerIndex}, //You jailed Sammy
     #[serde(rename_all = "camelCase")]
     JailedSomeone{player_index: PlayerIndex}, //you have been jailed
-    JailorDecideExecuteYou,     //Jailor has decided to execute you
+    JailorDecideExecute {targets: Vec<PlayerIndex>},     //Jailor has decided to execute you
     MediumSeanceYou,       //You are being seanced by the medium
     JesterWon, //The jester will get their revenge from the grave
     ExecutionerWon, //You got your target lynched

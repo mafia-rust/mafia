@@ -42,12 +42,14 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             if(this.state.gameState.playerOnTrial !== null){
                 return(<div className="judgement-specific">
                     <div>
-                    {this.state.gameState.players[this.state.gameState.playerOnTrial!]?.toString()}
+                    {styleText(this.state.gameState.players[this.state.gameState.playerOnTrial!]?.toString())}
                     {(()=>{
-                        if( this.state.gameState.playerOnTrial !== this.state.gameState.myIndex && 
-                            this.state.gameState.players[this.state.gameState.myIndex!].alive)
-
-                            return(<div className="verdict-buttons">
+                        if (this.state.gameState.playerOnTrial === this.state.gameState.myIndex) {
+                            return <div className="judgement-info">{translate("judgement.cannotVote.onTrial")}</div>;
+                        } else if (!this.state.gameState.players[this.state.gameState.myIndex!].alive){
+                            return <div className="judgement-info">{translate("judgement.cannotVote.dead")}</div>;
+                        } else {
+                            return(<div className="judgement-info">
                                 <button
                                     onClick={()=>{GAME_MANAGER.sendJudgementPacket("guilty")}}
                                     style={{borderColor: this.state.gameState.judgement === "guilty"?"yellow":undefined}}
@@ -61,6 +63,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                                     style={{borderColor: this.state.gameState.judgement === "innocent"?"yellow":undefined}}
                                 >{styleText(translate("verdict.innocent"))}</button>
                             </div>);
+                        }
                     })()}
                     </div>
                 </div>);

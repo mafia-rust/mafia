@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::{packet::{ToServerPacket, ToClientPacket}, strings::TidyableString, log};
 
-use super::{Game, player::{PlayerIndex, PlayerReference}, phase::{PhaseType, PhaseState}, chat::{ChatGroup, ChatMessage, MessageSender}, role::Role};
+use super::{Game, player::{PlayerIndex, PlayerReference}, phase::{PhaseType, PhaseState}, chat::{ChatGroup, ChatMessage, MessageSender}, role::{Role, RoleState}};
 
 
 
@@ -88,13 +88,22 @@ impl Game {
                 //Send targeted message to chat groups
                 sender_player_ref.get_current_send_chat_groups(self)
                     .into_iter().for_each(|chat_group| {
-                        self.add_message_to_chat_group(
-                            chat_group,
-                            ChatMessage::Targeted { 
-                                targeter: sender_player_ref.index(), 
-                                targets: PlayerReference::ref_vec_to_index(&target_ref_list)
-                            }
-                        );
+                        match sender_player_ref.role_state(self) {
+                            // TODO: Role specific code here
+                            RoleState::Jailor(_) => self.add_message_to_chat_group(
+                                chat_group,
+                                ChatMessage::JailorDecideExecute {
+                                    targets: PlayerReference::ref_vec_to_index(&target_ref_list)
+                                }
+                            ),
+                            _ => self.add_message_to_chat_group(
+                                chat_group,
+                                ChatMessage::Targeted { 
+                                    targeter: sender_player_ref.index(), 
+                                    targets: PlayerReference::ref_vec_to_index(&target_ref_list)
+                                }
+                            )
+                        }
                     });
                 //if no chat groups then send to self at least
                 if sender_player_ref.get_current_send_chat_groups(self).is_empty(){
@@ -127,8 +136,7 @@ impl Game {
                         MessageSender::Jailor
                     } else if sender_player_ref.role(self) == Role::Medium && sender_player_ref.alive(self) && chat_group == ChatGroup::Dead{
                         MessageSender::Medium
-                    } else 
-                    {
+                    } else {
                         MessageSender::Player {player: sender_player_index}
                     };
 
