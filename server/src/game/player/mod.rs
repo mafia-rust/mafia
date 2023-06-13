@@ -106,7 +106,7 @@ impl Player {
                 roleblocked:        false,
                 defense:            0,
                 appeared_visits:    vec![],
-                appeared_role:      Role::Jester,
+                appeared_role:      role,
 
                 silenced:           false,
 
@@ -115,7 +115,7 @@ impl Player {
 
                 messages:           vec![],
 
-                grave_role: GraveRole::Role(Role::Jester), //This should not be a problem because we reset immedietly on creation
+                grave_role: GraveRole::Role(role),
                 grave_killers: vec![],
                 grave_will: "".to_string(),
                 grave_death_notes: vec![],
