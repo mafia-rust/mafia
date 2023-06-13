@@ -20,6 +20,8 @@
     "menu.lobby.button.setTimeSettings": "Set Time Settings",
     "menu.lobby.player": "\\0: (\\1)",
 
+    "menu.excludedRoles.exclude": "Exclude role",
+
     "menu.loading.host": "Starting Server",
     "menu.loading.join": "Connecting to Server",
     "menu.loading.default": "Loading",
@@ -39,6 +41,7 @@
     "menu.wiki.noRole": "No role selected",
     "menu.wiki.abilities": "Abilities",
     "menu.wiki.attributes": "Attributes",
+    "menu.wiki.search.placeholder": "Search the wiki...",
     
     "menu.wiki.maxCount": "There can only be \\0 of this role in a game",
     "menu.wiki.suspicious": "This role looks \\0 to the Sheriff",
@@ -144,7 +147,7 @@
     
     "role.consigliere.name": "Consigliere",
     "role.consigliere.abilities":"*Investigate a player to find out their role, find who they visited, and who visited them",
-    "role.consigliere.attributes":"*Your information can be fooled by other roles like framers, arsonists, and hex masters.",
+    "role.consigliere.attributes":"*Your information can be fooled by other roles like framers, arsonists, and hex masters",
     "role.consigliere.target": "Investigate",
     "role.consigliere.dayTarget": "Special",
     

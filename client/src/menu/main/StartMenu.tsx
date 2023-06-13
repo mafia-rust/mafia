@@ -7,6 +7,7 @@ import "./startMenu.css"
 import * as LoadingScreen from "../LoadingScreen";
 import JoinMenu from "./JoinMenu";
 import translate from "../../game/lang";
+import WikiSearch from "../WikiSearch";
 
 type StartMenuProps = {
 }
@@ -32,17 +33,30 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
     }
 
     render(){return(<div className="sm">
-        <header>
-            <h1>{translate("menu.start.title")}</h1>
-        </header>
-
-        <div>
-            <button onClick={()=>{this.joinGameButton()}}>
-                {translate("menu.start.button.join")}
-            </button>
-            <button onClick={()=>{this.hostGameButton()}}>
-                {translate("menu.start.button.host")}
-            </button>
+        <div className="hero">
+            <div className="sm-center-content sm-main">
+                <header>
+                    <h1>{translate("menu.start.title")}</h1>
+                </header>
+                
+                <div>
+                    <button onClick={()=>{this.joinGameButton()}}>
+                        {translate("menu.start.button.join")}
+                    </button>
+                    <button onClick={()=>{this.hostGameButton()}}>
+                        {translate("menu.start.button.host")}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div className="hero">
+            <div className="sm-center-content sm-wiki">
+                <header>
+                    <h2>{translate("menu.wiki.title")}</h2>
+                </header>
+                
+                <WikiSearch/>
+            </div>
         </div>
     </div>)}
 }

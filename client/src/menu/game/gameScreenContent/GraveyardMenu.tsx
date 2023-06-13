@@ -99,6 +99,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
         <div>
             {this.renderRoleList()}
             {this.renderGraves()}
+            {/* //TODO show excluded roles at top */}
         </div>
         <div>
             {this.state.extendedGraveIndex!==null?this.renderGraveExtended(this.state.gameState.graves[this.state.extendedGraveIndex]):null}

@@ -5,6 +5,7 @@ import { RoleListEntry, renderRoleListEntry } from "../../game/gameState.d";
 import "../../index.css";
 import RolePicker from "../RolePicker";
 import { StateEventType } from "../../game/gameManager.d";
+import translate from "../../game/lang";
 
 interface ExcludedRolesState {
     excludedRoles: RoleListEntry[],
@@ -64,6 +65,6 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
                 })
             }}
         />
-        <button onClick={()=>{this.excludeRole()}}>LANG TODO "exclude role"</button>
+        <button onClick={()=>{this.excludeRole()}}>{translate("menu.excludedRoles.exclude")}</button>
     </section>)}
 }
