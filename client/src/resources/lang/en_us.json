@@ -127,6 +127,12 @@
     "role.veteran.target": "Alert",
     "role.veteran.dayTarget": "Special",
 
+    "role.deputy.name": "Deputy",
+    "role.deputy.abilities":"*Kill one player during the day",
+    "role.deputy.attributes":"*Your role will be revealed to everybody when you shoot*You have a powerful attack",
+    "role.deputy.target": "Target",
+    "role.deputy.dayTarget": "Shoot",
+
     "role.mafioso.name": "Mafioso",
     "role.mafioso.abilities":"*Target a player to kill them",
     "role.mafioso.attributes":"*A Godfather can force you to target someone else*You have a basic attack*If the mafia has no Mafioso, a member of the mafia will become the Mafioso at the start of night",
@@ -260,6 +266,7 @@
     "chatmessage.mediumSeanceYou":"You're being seanced by the medium!",
     "chatmessage.jesterWon":"The jester will get their revenge from the grave!",
     "chatmessage.executionerWon":"The executioner got their target lynched!",
+    "chatmessage.deputyShot":"\\0 the deputy shot \\1!",
     "chatmessage.jailorDecidedToExecute":"The jailor decided to execute \\0",
     "chatmessage.jailorDecidedToExecute.null":"The jailor decided not to execute you",
 

@@ -38,6 +38,7 @@ macros::roles! {
 
     Vigilante : vigilante,
     Veteran : veteran,
+    Deputy : deputy,
 
     Escort : escort,
     Medium : medium,

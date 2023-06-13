@@ -4,6 +4,7 @@ import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
 import { Player } from "../../game/gameState.d";
 import { StateEventType } from "../../game/gameManager.d";
+import WikiSearch from "../WikiSearch";
 
 interface PlayerListState {
     enteredName: string,
