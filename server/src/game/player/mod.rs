@@ -27,52 +27,52 @@ use super::tag::Tag;
 
 
 pub struct Player {
-    pub(super) sender: Option<ClientSender>,
+    sender: Option<ClientSender>,
 
-    pub(super) name: String,
-    pub(super) role_state: RoleState,
-    pub(super) alive: bool,
-    pub(super) will: String,
-    pub(super) notes: String,
+    name: String,
+    role_state: RoleState,
+    alive: bool,
+    will: String,
+    notes: String,
 
-    pub(super) role_labels: HashMap<PlayerReference, Role>,   //when you can see someone elses role in the playerlist, dead players and teammates, mayor
-    pub(super) player_tags: HashMap<PlayerReference, Vec<Tag>>,
+    role_labels: HashMap<PlayerReference, Role>,   //when you can see someone elses role in the playerlist, dead players and teammates, mayor
+    player_tags: HashMap<PlayerReference, Vec<Tag>>,
 
 
-    pub(super) chat_messages: Vec<ChatMessage>, //all messages
-    pub(super) queued_chat_messages: Vec<ChatMessage>, //messages that have yet to have been sent to the client
+    chat_messages: Vec<ChatMessage>, //all messages
+    queued_chat_messages: Vec<ChatMessage>, //messages that have yet to have been sent to the client
 
-    pub(super) last_sent_buttons: Vec<AvailableButtons>,
+    last_sent_buttons: Vec<AvailableButtons>,
 
-    pub(super) voting_variables: PlayerVotingVariables,
-    pub(super) night_variables: PlayerNightVariables,
+    voting_variables: PlayerVotingVariables,
+    night_variables: PlayerNightVariables,
 }
-pub(super) struct PlayerVotingVariables{
-    pub(super) chosen_vote:    Option<PlayerReference>,
-    pub(super) verdict:        Verdict,
+struct PlayerVotingVariables{
+    chosen_vote:    Option<PlayerReference>,
+    verdict:        Verdict,
 }
-pub(super) struct PlayerNightVariables{
-    pub(super) alive_tonight:  bool,
-    pub(super) died:           bool,
-    pub(super) attacked:       bool,
-    pub(super) jailed:         bool,
-    pub(super) roleblocked:    bool,
-    pub(super) defense:        u8,
+struct PlayerNightVariables{
+    alive_tonight:  bool,
+    died:           bool,
+    attacked:       bool,
+    jailed:         bool,
+    roleblocked:    bool,
+    defense:        u8,
 
-    pub(super) appeared_visits: Vec<Visit>,
-    pub(super) appeared_role:    Role,
+    appeared_visits: Vec<Visit>,
+    appeared_role:    Role,
 
-    pub(super) silenced:       bool,
+    silenced:       bool,
 
-    pub(super) chosen_targets: Vec<PlayerReference>,
-    pub(super) visits:         Vec<Visit>,
+    chosen_targets: Vec<PlayerReference>,
+    visits:         Vec<Visit>,
 
-    pub(super) messages: Vec<NightInformation>,
+    messages: Vec<NightInformation>,
 
-    pub(super) grave_role: GraveRole,
-    pub(super) grave_killers: Vec<GraveKiller>,
-    pub(super) grave_will: String,
-    pub(super) grave_death_notes: Vec<String>,
+    grave_role: GraveRole,
+    grave_killers: Vec<GraveKiller>,
+    grave_will: String,
+    grave_death_notes: Vec<String>,
 }
 impl Player {
     pub fn new(name: String, sender: ClientSender, role: Role) -> Self {
