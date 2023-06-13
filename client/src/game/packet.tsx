@@ -73,10 +73,7 @@ export type ToClientPacket = {
     notes: string
 } | {
     type: "yourRole",
-    role: {
-        0: Role
-        /* OTHER FIELDS TODO */
-    }
+    role: Role
 } | {
     type: "yourRoleState",
     roleState: RoleState
