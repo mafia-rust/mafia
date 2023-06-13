@@ -7,6 +7,7 @@ import "./lobbyMenu.css";
 import translate from "../../game/lang";
 import { StateListener } from "../../game/gameManager.d";
 import LobbyExcludedRoles from "./lobbyExcludedRoles";
+import WikiSearch from "../WikiSearch";
 
 type LobbyMenuProps = {}
 
@@ -57,6 +58,7 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
                 <div className="left">
                     <LobbyPlayerList/>
                     <LobbyExcludedRoles/>
+                    <WikiSearch/>
                 </div>
                 <div className="right">
                     <LobbyPhaseTimePane/>

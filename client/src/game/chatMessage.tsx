@@ -85,6 +85,10 @@ export type ChatMessage = {
 } | {
     type: "executionerWon"
 } | {
+    type: "deputyShot",
+    deputyIndex: PlayerIndex,
+    shotIndex: PlayerIndex
+} | {
     type: "playerWithNecronomicon",
     playerIndex: PlayerIndex
 } | {

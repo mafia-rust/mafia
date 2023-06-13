@@ -204,6 +204,13 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             ), {
                 defaultStyle: {color:"violet"}
             })}</span>;
+        case "deputyShot":
+            return <span key={key}>{styleText(translate("chatmessage.deputyShot",
+                GAME_MANAGER.gameState.players[message.deputyIndex].toString(),
+                GAME_MANAGER.gameState.players[message.shotIndex].toString()
+            ), {
+                defaultStyle: {color:"violet"}
+            })}</span>;
         default:
             console.error("Unknown message type: "+message.type);
             console.error(message);

@@ -71,6 +71,15 @@
         "endGameCondition": "Faction",
         "maxCount": 1
     },
+    "deputy": {
+        "factionAlignment": "townKilling",
+        "suspicious": false,
+        "roleblockable": false,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": 1
+    },
     "escort": {
         "factionAlignment": "townSupport",
         "suspicious": false,

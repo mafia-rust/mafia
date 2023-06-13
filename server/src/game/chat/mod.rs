@@ -115,6 +115,8 @@ pub enum ChatMessage {
     MediumSeanceYou,       //You are being seanced by the medium
     JesterWon, //The jester will get their revenge from the grave
     ExecutionerWon, //You got your target lynched
+    #[serde(rename_all = "camelCase")]
+    DeputyShot{deputy_index: PlayerIndex, shot_index: PlayerIndex},
 
     #[serde(rename_all = "camelCase")]
     PlayerWithNecronomicon{player_index: PlayerIndex}, //Sammy has the necronomicon
