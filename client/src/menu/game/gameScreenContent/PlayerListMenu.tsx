@@ -22,10 +22,12 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     constructor(props: PlayerListMenuProps) {
         super(props);
 
+        let hideDeadByDefault = GAME_MANAGER.gameState.role !== "retributionist";
+
         this.state = {
             gameState : GAME_MANAGER.gameState,
             hideUnusable: false,
-            hideDead: true,
+            hideDead: hideDeadByDefault,
         };
         this.listener = ()=>{
             this.setState({

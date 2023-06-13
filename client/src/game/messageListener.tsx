@@ -4,7 +4,7 @@ import Anchor from "./../menu/Anchor";
 import LobbyMenu from "./../menu/lobby/LobbyMenu";
 import StartMenu from "./../menu/main/StartMenu";
 import GAME_MANAGER from "./../index";
-import GameScreen, { ContentMenus } from "./../menu/game/GameScreen";
+import GameScreen from "./../menu/game/GameScreen";
 import React from "react";
 import { ToClientPacket } from "./packet";
 import { Role } from "./gameState.d";
@@ -137,11 +137,7 @@ export default function messageListener(packet: ToClientPacket){
             GAME_MANAGER.gameState.notes = packet.notes;
         break;
         case "yourRole":
-            if(typeof(packet.role)==="string"){
-                GAME_MANAGER.gameState.role = packet.role;
-            }else{
-                GAME_MANAGER.gameState.role = Object.keys(packet.role)[0];
-            }
+            GAME_MANAGER.gameState.role = packet.role;
         break;
         case "yourRoleState":
             GAME_MANAGER.gameState.role = packet.roleState.role;

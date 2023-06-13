@@ -222,8 +222,8 @@ function allRolesAndAny(factionAlignment: FactionAlignment): (Role | "any")[] {
     let roles: (Role | "any")[] = ["any"];
 
     for(let role of Object.keys(ROLES)){
-        if(getFactionAlignmentFromRole(role) === factionAlignment)
-            roles.push(role);
+        if(getFactionAlignmentFromRole(role as Role) === factionAlignment)
+            roles.push(role as Role);
     }
     
 

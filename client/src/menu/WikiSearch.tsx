@@ -30,8 +30,8 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
                 translate("role."+role+".name").toLowerCase().includes(search) ||
                 search.includes(translate("role."+role+".name").toLowerCase())
             ){
-                if(!out.includes(role)){
-                    out.push(role);
+                if(!out.includes(role as Role)){
+                    out.push(role as Role);
                 }
             }
         }
@@ -40,8 +40,8 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
                 translate("role."+role+".abilities").toLowerCase().includes(search) ||
                 search.includes(translate("role."+role+".name").toLowerCase())
             ){
-                if(!out.includes(role)){
-                    out.push(role);
+                if(!out.includes(role as Role)){
+                    out.push(role as Role);
                 }
             }
         }
@@ -50,8 +50,8 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
                 translate("role."+role+".attributes").toLowerCase().includes(search) ||
                 search.includes(translate("role."+role+".name").toLowerCase())
             ){
-                if(!out.includes(role)){
-                    out.push(role);
+                if(!out.includes(role as Role)){
+                    out.push(role as Role);
                 }
             }
         }
@@ -59,7 +59,7 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
     }
     renderRoleWiki(role: Role){
         let defenseString = "";
-        switch(ROLES[role as keyof typeof ROLES].defense){
+        switch(ROLES[role].defense){
             case 0:
                 defenseString = translate("none");
                 break;

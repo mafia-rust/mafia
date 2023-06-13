@@ -105,7 +105,7 @@ export type RoleState = {
     role:"voodooMaster"
 }
 
-export type Role = string;
+export type Role = keyof typeof ROLES;
 export function getFactionFromRole(role: Role): Faction {
     return getFactionFromFactionAlignment(getFactionAlignmentFromRole(role));
 }
