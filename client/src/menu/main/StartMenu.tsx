@@ -7,6 +7,7 @@ import "./startMenu.css"
 import * as LoadingScreen from "../LoadingScreen";
 import JoinMenu from "./JoinMenu";
 import translate from "../../game/lang";
+import WikiSearch from "../WikiSearch";
 
 type StartMenuProps = {
 }
@@ -43,6 +44,10 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
             <button onClick={()=>{this.hostGameButton()}}>
                 {translate("menu.start.button.host")}
             </button>
+        </div>
+        <div>
+        <WikiSearch/>
+
         </div>
     </div>)}
 }

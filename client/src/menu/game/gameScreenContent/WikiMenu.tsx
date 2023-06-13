@@ -5,6 +5,7 @@ import GameState, { FactionAlignment, RoleListEntry, getFactionFromFactionAlignm
 import GameScreen, { ContentMenus } from "../GameScreen";
 import RolePicker from "../../RolePicker";
 import ROLES from "../../../resources/roles.json";
+import WikiSearch from "../../WikiSearch";
 
 interface WikiMenuProps {
     roleListEntry: RoleListEntry | null,
@@ -117,13 +118,14 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
     }
     render(){return(<div>
         <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.WikiMenu)}}>{translate("menu.wiki.title")}</button>
-        <br/>
+        <WikiSearch/>
+        {/* <br/>
         <RolePicker roleListEntry={this.state.roleListEntry} onChange={(value)=>{this.onChangeRolePicker(value);}}/>
         <br/>
         {this.renderRole(this.state.roleListEntry)}
         <br/>
         TODO priorties list of ALL ROLES with collapsable sections
         TODO list of all night message strings
-        <br/>
+        <br/> */}
     </div>)}
 }

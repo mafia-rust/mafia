@@ -31,5 +31,4 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     public static setContent(content: JSX.Element){
         Anchor.instance.setState({content : content});
     }
-    
 }
