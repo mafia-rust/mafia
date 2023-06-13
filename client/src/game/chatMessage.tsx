@@ -127,9 +127,11 @@ export type NightInformation = {
 } |
 /* Role-specific */
 {
+    type: "targetJailed"
+} | {
     type: "sheriffResult", 
     suspicious: boolean
-} |{
+} | {
     type: "lookoutResult", 
     players: PlayerIndex[]
 } | {
