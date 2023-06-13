@@ -233,8 +233,9 @@ export function getNightInformationChatElement(info: NightInformation, key: numb
     const WARNING_STYLE = { backgroundColor: "#330000" };
     switch (info.type) {
         case "roleBlocked":
-            return <span key={key} style={WARNING_STYLE}>{styleText(
-                translate("chatmessage.night.roleBlocked" + (info.immune ? ".immune" : ""))
+            return <span key={key}>{styleText(
+                translate("chatmessage.night.roleBlocked" + (info.immune ? ".immune" : "")),
+                RESULT_STYLE
             )}</span>;
         case "sheriffResult":
             return <span key={key}>{styleText(
@@ -277,9 +278,15 @@ export function getNightInformationChatElement(info: NightInformation, key: numb
                 ),
                 RESULT_STYLE
             )}</span>
-        default:
-            return <span key={key} style={WARNING_STYLE}>{styleText(
+        case "youDied":
+        case "silenced":
+            return <span key={key} style={WARNING_STYLE}>{
                 translate("chatmessage.night."+info.type)
+            }</span>
+        default:
+            return <span key={key}>{styleText(
+                translate("chatmessage.night."+info.type),
+                RESULT_STYLE
             )}</span>
     }
 }
