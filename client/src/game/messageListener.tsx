@@ -4,7 +4,7 @@ import Anchor from "./../menu/Anchor";
 import LobbyMenu from "./../menu/lobby/LobbyMenu";
 import StartMenu from "./../menu/main/StartMenu";
 import GAME_MANAGER from "./../index";
-import GameScreen from "./../menu/game/GameScreen";
+import GameScreen, { ContentMenus } from "./../menu/game/GameScreen";
 import React from "react";
 import { ToClientPacket } from "./packet";
 import { Role } from "./gameState.d";
@@ -15,7 +15,7 @@ export default function messageListener(packet: ToClientPacket){
     switch(packet.type) {
         case "acceptJoin":
             if(packet.inGame){
-                Anchor.setContent(<GameScreen/>);
+                Anchor.setContent(GameScreen.createDefault());
             }else{
                 Anchor.setContent(<LobbyMenu/>);
             }
@@ -87,7 +87,7 @@ export default function messageListener(packet: ToClientPacket){
             Anchor.setContent(<StartMenu/>)
         break;
         case "startGame":
-            Anchor.setContent(<GameScreen/>);
+            Anchor.setContent(GameScreen.createDefault());
         break;
         case "roleList":
             //list of role list entriy
