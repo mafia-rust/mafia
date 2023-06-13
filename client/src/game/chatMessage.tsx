@@ -77,7 +77,8 @@ export type ChatMessage = {
     type: "jailedTarget"
     playerIndex: PlayerIndex
 } | {
-    type: "jailorDecideExecuteYou"
+    type: "jailorDecideExecute"
+    targets: PlayerIndex[]
 } | {
     type: "mediumSeanceYou"
 } | {

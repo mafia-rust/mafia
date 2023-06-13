@@ -204,6 +204,18 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             ), {
                 defaultStyle: {color:"violet"}
             })}</span>;
+        case "jailorDecideExecute":
+            if (message.targets.length > 0) {
+                return <span key={key}>{styleText(translate("chatmessage.jailorDecideExecute",
+                    message.targets.map((target) => GAME_MANAGER.gameState.players[target].toString()).join(", ")
+                ), {
+                    defaultStyle: {color:"orange"}
+                })}</span>;
+            } else {
+                return <span key={key}>{styleText(translate("chatmessage.jailorDecideExecute.null"), {
+                    defaultStyle: {color:"orange"}
+                })}</span>;
+            }
         default:
             console.error("Unknown message type: "+message.type);
             console.error(message);
