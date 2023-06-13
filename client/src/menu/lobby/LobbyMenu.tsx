@@ -47,10 +47,10 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
                 }}>
                     {GAME_MANAGER.roomCode!}
                 </button> 
+                <h1>{GAME_MANAGER.gameState.myName!}</h1>
                 <button onClick={()=>{GAME_MANAGER.sendStartGamePacket()}}>
                     {translate("menu.lobby.button.start")}
                 </button>
-                <h1>{GAME_MANAGER.gameState.myName!}</h1>
                 
             </header>
 
