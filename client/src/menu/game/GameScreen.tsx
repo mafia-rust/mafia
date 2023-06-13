@@ -19,15 +19,28 @@ export enum ContentMenus {
 }
 
 type GameScreenProps = {
-    
+    contentMenus: ContentMenus[],
+    maxContent: boolean
 }
 type GameScreenState = {
     gameState: GameState,
-    header: JSX.Element,
-    content: JSX.Element[],
+    maxContent: number,
+
+    graveyardMenu: boolean,
+    playerListMenu: boolean,
+    willMenu: boolean,
+    wikiMenu: boolean,
 }
 
 export default class GameScreen extends React.Component<GameScreenProps, GameScreenState> {
+    static createDefault(): JSX.Element{
+        return <GameScreen contentMenus={[
+            ContentMenus.GraveyardMenu,
+            ContentMenus.PlayerListMenu,
+            ContentMenus.WikiMenu,
+            ContentMenus.WillMenu
+        ]} maxContent={false}/>
+    }
     static instance: GameScreen;
     listener: () => void;
 
@@ -35,16 +48,13 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         super(props);
         GameScreen.instance = this;
         this.state = {
-            header: <HeaderMenu 
-                phase={GAME_MANAGER.gameState.phase}
-            />,
-            content: [
-                <GraveyardMenu/>,
-                <ChatMenu/>,
-                <PlayerListMenu/>,
-                <WillMenu/>
-            ],
+            maxContent: props.maxContent?props.contentMenus.length:Infinity,
             gameState: GAME_MANAGER.gameState,
+
+            graveyardMenu: props.contentMenus.includes(ContentMenus.GraveyardMenu),
+            playerListMenu: props.contentMenus.includes(ContentMenus.PlayerListMenu),
+            willMenu: props.contentMenus.includes(ContentMenus.WillMenu),
+            wikiMenu: props.contentMenus.includes(ContentMenus.WikiMenu),
         };
 
         this.listener = ()=>{
@@ -60,83 +70,73 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
     componentWillUnmount() {
         GAME_MANAGER.removeStateListener(this.listener);
     }
-
-    openMenu(menu: ContentMenus) {
+    closeMenu(menu: ContentMenus) {
         switch(menu) {
             case ContentMenus.GraveyardMenu:
-                this.state.content.push(<GraveyardMenu/>);
-                this.setState({
-                    content: this.state.content,
-                });
+                this.setState({graveyardMenu: false});
                 break;
             case ContentMenus.PlayerListMenu:
-                this.state.content.push(<PlayerListMenu/>);
-                this.setState({
-                    content: this.state.content,
-                });
+                this.setState({playerListMenu: false});
                 break;
             case ContentMenus.WillMenu:
-                this.state.content.push(<WillMenu/>);
-                this.setState({
-                    content: this.state.content,
-                });
+                this.setState({willMenu: false});
                 break;
             case ContentMenus.WikiMenu:
-                this.state.content.push(<WikiMenu roleListEntry={null}/>);
-                this.setState({
-                    content: this.state.content,
-                });
+                this.setState({wikiMenu: false});
                 break;
         }
-        GAME_MANAGER.invokeStateListeners();
     }
-    closeMenu(menu: ContentMenus) {
-        for(let i = 0; i < this.state.content.length; i++) {
-            if(this.state.content[i].type.name === menu.toString()) {
-                this.state.content.splice(i, 1);
-                this.setState({
-                    content: this.state.content,
-                });
-                break;
-            }
+    openMenu(menu: ContentMenus) {
+        let menusOpen = this.menusOpen();
+        if(menusOpen.length + 1 > this.state.maxContent && menusOpen.length > 0){
+            this.closeMenu(menusOpen[0]);
         }
-        GAME_MANAGER.invokeStateListeners();
+
+        switch(menu) {
+            case ContentMenus.GraveyardMenu:
+                this.setState({graveyardMenu: true});
+                break;
+            case ContentMenus.PlayerListMenu:
+                this.setState({playerListMenu: true});
+                break;
+            case ContentMenus.WillMenu:
+                this.setState({willMenu: true});
+                break;
+            case ContentMenus.WikiMenu:
+                this.setState({wikiMenu: true});
+                break;
+        }
     }
-    menusOpen() : ContentMenus[] {
-        let out: ContentMenus[] = [];
-        for(let i = 0; i < this.state.content.length; i++) {
-            out.push(this.state.content[i].type.name);
+    menusOpen(): ContentMenus[] {
+        let out = [];
+        if(this.state.graveyardMenu) {
+            out.push(ContentMenus.GraveyardMenu);
+        }
+        if(this.state.playerListMenu) {
+            out.push(ContentMenus.PlayerListMenu);
+        }
+        if(this.state.willMenu) {
+            out.push(ContentMenus.WillMenu);
+        }
+        if(this.state.wikiMenu) {
+            out.push(ContentMenus.WikiMenu);
         }
         return out;
-    }    
+    }
 
     render() {
         return (
             <div className="game-screen">
-                {this.renderHeader(this.state.header)}
-                {this.renderContent(this.state.content)}
-            </div>
-        );
-    }
-
-    renderHeader(header: JSX.Element) {
-        return (
-            <div className="header">
-                {header}
-            </div>
-        );
-    }
-
-    renderContent(content: JSX.Element[]) {
-        return (
-            <div className="content">
-                {content.map((panel, index) => {
-                    return (
-                        <div key={index}>
-                            {panel}
-                        </div>
-                    );
-                })}
+                <div className="header">
+                    <HeaderMenu phase={GAME_MANAGER.gameState.phase}/>
+                </div>
+                <div className="content">
+                    {this.state.graveyardMenu?<GraveyardMenu/>:null},
+                    <ChatMenu/>,
+                    {this.state.playerListMenu?<PlayerListMenu/>:null},
+                    {this.state.willMenu?<WillMenu/>:null}
+                    {this.state.wikiMenu?<WikiMenu/>:null}
+                </div>
             </div>
         );
     }
