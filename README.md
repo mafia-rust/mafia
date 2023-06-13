@@ -1,5 +1,5 @@
 # Mafia (Rust)
-Local multiplayer TOS clone
+Multiplayer Social Deduction game
 
 ## Getting Started
 First, download and enter the [git](https://git-scm.com/) repository:
