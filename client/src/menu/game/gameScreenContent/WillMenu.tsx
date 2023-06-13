@@ -49,7 +49,14 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
                 //     }
                 // }}
                 value={this.state.willFeild}
-                onChange={(e)=>{this.setState({willFeild : e.target.value});}}>
+                onChange={(e)=>{this.setState({willFeild : e.target.value});}}
+                onKeyDown={(e) => {
+                    if (e.ctrlKey && e.key === 's') {
+                        // Prevent the Save dialog from opening
+                        e.preventDefault();
+                        GAME_MANAGER.sendSaveWillPacket(this.state.willFeild);
+                    }
+                }}>
             </textarea>
         </div>)
     }
@@ -68,7 +75,14 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
                 //     }
                 // }}
                 value={this.state.notesFeild}
-                onChange={(e)=>{this.setState({notesFeild : e.target.value});}}>
+                onChange={(e)=>{this.setState({notesFeild : e.target.value});}}
+                onKeyDown={(e) => {
+                    if (e.ctrlKey && e.key === 's') {
+                        // Prevent the Save dialog from opening
+                        e.preventDefault();
+                        GAME_MANAGER.sendSaveNotesPacket(this.state.notesFeild);
+                    }
+                }}>
             </textarea>
         </div>)
     }
