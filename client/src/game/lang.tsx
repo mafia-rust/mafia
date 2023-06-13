@@ -168,9 +168,7 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                 defaultStyle: {color:"yellow"}
             })}</span>;
         case "nightInformation":
-            return <span key={key}>{styleText(getNightInformationString(message.nightInformation), {
-                defaultStyle: {color:"green"}
-            })}</span>;
+            return getNightInformationChatElement(message.nightInformation, key);
         case "targeted":
             if (message.targets.length > 0) {
                 return <span key={key}>{styleText(translate("chatmessage.targeted",
@@ -230,31 +228,59 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
     }
 }
 
-// TODO make night information message union type (& make an interface) and make this a method
-export function getNightInformationString(info: NightInformation){
+export function getNightInformationChatElement(info: NightInformation, key: number): JSX.Element {
+    const RESULT_STYLE = { defaultStyle: { color: "green" } };
+    const WARNING_STYLE = { backgroundColor: "#330000" };
     switch (info.type) {
         case "roleBlocked":
-            return translate("chatmessage.night.roleBlocked" + (info.immune ? ".immune" : ""));
+            return <span key={key} style={WARNING_STYLE}>{styleText(
+                translate("chatmessage.night.roleBlocked" + (info.immune ? ".immune" : ""))
+            )}</span>;
         case "sheriffResult":
-            return translate("chatmessage.night.sheriffResult." + (info.suspicious ? "suspicious" : "innocent"));
+            return <span key={key}>{styleText(
+                translate("chatmessage.night.sheriffResult." + (info.suspicious ? "suspicious" : "innocent")), 
+                RESULT_STYLE
+            )}</span>;
         case "lookoutResult":
-            return translate("chatmessage.night.lookoutResult", (info.players.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", ")));
+            return <span key={key}>{styleText(
+                translate("chatmessage.night.lookoutResult", 
+                    (info.players.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", "))
+                ), 
+                RESULT_STYLE
+            )}</span>;
         case "seerResult":
             if(info.enemies){
-                return translate("chatmessage.night.seerResult.enemies");
+                return <span key={key}>{styleText(
+                    translate("chatmessage.night.seerResult.enemies"),
+                    RESULT_STYLE
+                )}</span>;
             }else{
-                return translate("chatmessage.night.seerResult.friends");
+                return <span key={key}>{styleText(
+                    translate("chatmessage.night.seerResult.friends"),
+                    RESULT_STYLE
+                )}</span>;
             }
         case "playerRoleAndWill":
-            return translate("chatmessage.night.playersRoleAndWill", translate("role."+info.role+".name"), info.will);
+            return <span key={key}>{styleText(
+                translate("chatmessage.night.playersRoleAndWill", 
+                    translate("role."+info.role+".name"), 
+                    info.will
+                ),
+                RESULT_STYLE
+            )}</span>
         case "consigliereResult":
-            return translate("chatmessage.night.consigliereResult", 
-                translate("role."+info.role+".name"),
-                (info.visited.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", ")), 
-                (info.visitedBy.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", "))
-            );
+            return <span key={key}>{styleText(
+                translate("chatmessage.night.consigliereResult", 
+                    translate("role."+info.role+".name"),
+                    (info.visited.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", ")), 
+                    (info.visitedBy.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", "))
+                ),
+                RESULT_STYLE
+            )}</span>
         default:
-            return translate("chatmessage.night."+info.type);
+            return <span key={key} style={WARNING_STYLE}>{styleText(
+                translate("chatmessage.night."+info.type)
+            )}</span>
     }
 }
 
