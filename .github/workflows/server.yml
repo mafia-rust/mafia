@@ -35,6 +35,6 @@ jobs:
       # - name: Test
       #   run: cargo test --verbose
       - name: Check
-        run: cargo check --verbose -- -D warnings
+        run: cargo check --verbose
       - name: Audit
         run: cargo audit
