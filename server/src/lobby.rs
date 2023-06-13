@@ -141,7 +141,7 @@ impl Lobby {
                 };
                 let set: HashSet<_> = roles.drain(..).collect(); // dedup
                 roles.extend(set.into_iter());
-                roles = roles.into_iter().filter(|role|*role != RoleListEntry::Any).collect();
+                roles.retain(|role|*role != RoleListEntry::Any);
                 settings.excluded_roles = roles.clone();
                 self.send_to_all(ToClientPacket::ExcludedRoles { roles });
             }
