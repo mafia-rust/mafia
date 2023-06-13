@@ -39,6 +39,7 @@
     "menu.wiki.noRole": "No role selected",
     "menu.wiki.abilities": "Abilities",
     "menu.wiki.attributes": "Attributes",
+    "menu.wiki.search.placeholder": "Search the wiki...",
     
     "menu.wiki.maxCount": "There can only be \\0 of this role in a game",
     "menu.wiki.suspicious": "This role looks \\0 to the Sheriff",

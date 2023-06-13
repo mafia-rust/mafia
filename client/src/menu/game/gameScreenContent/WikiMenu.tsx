@@ -3,7 +3,6 @@ import translate, { styleText } from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import GameState, { FactionAlignment, RoleListEntry, getFactionFromFactionAlignment } from "../../../game/gameState.d";
 import GameScreen, { ContentMenus } from "../GameScreen";
-import RolePicker from "../../RolePicker";
 import ROLES from "../../../resources/roles.json";
 import WikiSearch from "../../WikiSearch";
 

@@ -114,7 +114,7 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
     render() {return (<div className="wiki-search">
         <input type="text" value={this.state.wikiSearch}
             onChange={(e)=>{this.setState({wikiSearch: e.target.value, expandedRole: null})}}
-            placeholder={"LANG TODO SEARCH"}
+            placeholder={translate("menu.wiki.search.placeholder")}
         />
         <div>
             <div>
