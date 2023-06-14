@@ -6,12 +6,19 @@
     max-height: 100%;
     max-width: 100%;
 }
-/* .wiki-search > input{
-} */
-.wiki-search > div{
-    overflow-y: hidden;
+.wiki-search > .wiki-search-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+
+    > input {
+        width: 100%;
+    }
+
+    > button {
+        width: fit-content;
+    }
 }
-.wiki-search > div > div{
+.wiki-search > .wiki-results {
     overflow-y: scroll;
-    /* height: max-content; */
 }
