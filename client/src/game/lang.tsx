@@ -25,6 +25,12 @@ export default function translate(langKey: string, ...valuesList: (string | numb
 }
 
 export function getChatElement(message: ChatMessage, key: number): JSX.Element {
+    const SPECIAL = { defaultStyle: { color: "violet" } };
+    const PLAYER_MESSAGE = { indentStyle: { marginLeft: "2rem" } };
+    const DISCREET = { defaultStyle: { color: "turquoise" } };
+    const IMPORTANT = { defaultStyle: { color: "yellow" } };
+    const TRIAL = { defaultStyle: { color: "orange" } };
+    const TARGET = { defaultStyle: { color: "orange" } };
     switch (message.type) {
         case "normal":
             if(message.messageSender.type === "player"){
@@ -33,16 +39,14 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                     return <span key={key}>{styleText(translate("chatmessage.normal",
                         GAME_MANAGER.gameState.players[playerIndex].toString(),
                         message.text
-                    ), { 
-                        indentStyle: { marginLeft: "2rem" } 
-                    })}</span>;
+                    ), PLAYER_MESSAGE)}</span>;
                 }else{
                     return <span key={key} style={{backgroundColor:"black", borderRadius: "5px"}}>{styleText(translate("chatmessage.normal",
                         GAME_MANAGER.gameState.players[playerIndex].toString(),
                         message.text
                     ), {
-                        defaultStyle: { color: "grey" },
-                        indentStyle: { marginLeft: "2rem" } 
+                        ...PLAYER_MESSAGE,
+                        defaultStyle: { color: "grey" }
                     })}</span>;
                 }
             } else {
@@ -50,32 +54,27 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                 return <span key={key}>{styleText(translate("chatmessage.normal",
                     translate("role."+message.messageSender.type+".name"),
                     message.text
-                ), {
-                    defaultStyle: {color:"turquoise"}
-                })}</span>;
+                ), DISCREET)}</span>;
             }
         case "whisper":
             return <span key={key}>{styleText(translate("chatmessage.whisper", 
                 GAME_MANAGER.gameState.players[message.fromPlayerIndex].toString(),
                 GAME_MANAGER.gameState.players[message.toPlayerIndex].toString(),
                 message.text
-            ), {
-                defaultStyle: {color:"turquoise"}
-            })}</span>;
+            ), {...PLAYER_MESSAGE, ...DISCREET})}</span>;
         case "broadcastWhisper":
             return <span key={key}>{styleText(translate("chatmessage.broadcastWhisper",
                 GAME_MANAGER.gameState.players[message.whisperer].toString(),
                 GAME_MANAGER.gameState.players[message.whisperee].toString(),
-            ), {
-                defaultStyle: {color:"turquoise"}
-            })}</span>;
+            ), DISCREET)}</span>;
         case "roleAssignment":
             let role = message.role;
             let name = translate("role."+role+".name")
             
-            return <span key={key} style={{textAlign:"center"}}>{styleText(translate("chatmessage.roleAssignment", name), {
-                defaultStyle: {color:"yellow"}
-            })}</span>;
+            return <span key={key} style={{textAlign:"center"}}>{styleText(
+                translate("chatmessage.roleAssignment", name), 
+                IMPORTANT
+            )}</span>;
         case "playerDied":
             //TODO, role doesnt work properly
             let graveRoleString: string;
@@ -107,66 +106,50 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                 graveRoleString,
                 deathCause,
                 message.grave.will
-            ), {
-                defaultStyle: {color:"yellow"}
-            })}</span>;
+            ), IMPORTANT)}</span>;
         case "phaseChange":
             return <span key={key} style={{textAlign:"center", backgroundColor:"var(--primary-color)"}}>{styleText(translate("chatmessage.phaseChange",
                 translate("phase."+message.phase),
                 message.dayNumber
             ), {
                 defaultStyle: {color:"yellow", textDecoration:"underline"}
-            })}</span >;
+            })}</span>;
         case "trialInformation":
             return <span key={key}>{styleText(translate("chatmessage.trialInformation",
                 message.requiredVotes,
                 message.trialsLeft
-            ), {
-                defaultStyle: {color:"orange"}
-            })}</span>;
+            ), TRIAL)}</span>;
         case "voted":
             if (message.votee !== null) {
                 return <span key={key}>{styleText(translate("chatmessage.voted",
                     GAME_MANAGER.gameState.players[message.voter].toString(),
                     GAME_MANAGER.gameState.players[message.votee].toString(),
-                ), {
-                    defaultStyle: {color:"orange"}
-                })}</span>;
+                ), TRIAL)}</span>;
             } else {
                 return <span key={key}>{styleText(translate("chatmessage.voted.cleared",
                     GAME_MANAGER.gameState.players[message.voter].toString(),
-                ), {
-                    defaultStyle: {color:"orange"}
-                })}</span>;
+                ), TRIAL)}</span>;
             }
         case "playerOnTrial":
             return <span key={key}>{styleText(translate("chatmessage.playerOnTrial",
                 GAME_MANAGER.gameState.players[message.playerIndex].toString(),
-            ), {
-                defaultStyle: {color:"yellow"}
-            })}</span>;
+            ), IMPORTANT)}</span>;
         case "judgementVote":
             return <span key={key}>{styleText(translate("chatmessage.judgementVote",
                 GAME_MANAGER.gameState.players[message.voterPlayerIndex].toString(),
-            ), {
-                defaultStyle: {color:"orange"}
-            })}</span>;
+            ), TRIAL)}</span>;
         case "judgementVerdict":
             return <span key={key}>{styleText(translate("chatmessage.judgementVerdict",
                 GAME_MANAGER.gameState.players[message.voterPlayerIndex].toString(),
                 translate("verdict."+message.verdict.toLowerCase())
-            ), {
-                defaultStyle: {color:"orange"}
-            })}</span>;
+            ), TRIAL)}</span>;
         case "trialVerdict":
             return <span key={key}>{styleText(translate("chatmessage.trialVerdict",
                 GAME_MANAGER.gameState.players[message.playerOnTrial].toString(),
                 message.innocent>=message.guilty?translate("verdict.innocent"):translate("verdict.guilty"),
                 message.innocent,
                 message.guilty
-            ), {
-                defaultStyle: {color:"yellow"}
-            })}</span>;
+            ), IMPORTANT)}</span>;
         case "nightInformation":
             return getNightInformationChatElement(message.nightInformation, key);
         case "targeted":
@@ -174,52 +157,39 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                 return <span key={key}>{styleText(translate("chatmessage.targeted",
                     GAME_MANAGER.gameState.players[message.targeter].toString(),
                     message.targets.map((target) => GAME_MANAGER.gameState.players[target].toString()).join(", ")
-                ), {
-                    defaultStyle: {color:"orange"}
-                })}</span>;
+                ), TARGET)}</span>;
             } else {
                 return <span key={key}>{styleText(translate("chatmessage.targeted.cleared",
                     GAME_MANAGER.gameState.players[message.targeter].toString(),
-                ), {
-                    defaultStyle: {color:"orange"}
-                })}</span>;
+                ), TARGET)}</span>;
             }
         case "mayorRevealed":
             return <span key={key}>{styleText(translate("chatmessage.mayorRevealed",
                 GAME_MANAGER.gameState.players[message.playerIndex].toString(),
-            ), {
-                defaultStyle: {color:"violet"}
-            })}</span>;
+            ), SPECIAL)}</span>;
         case "jailedTarget":
             return <span key={key}>{styleText(translate("chatmessage.jailedTarget",
                 GAME_MANAGER.gameState.players[message.playerIndex].toString(),
-            ), {
-                defaultStyle: {color:"violet"}
-            })}</span>;
+            ), SPECIAL)}</span>;
         case "jailedSomeone":
             return <span key={key}>{styleText(translate("chatmessage.jailedSomeone",
                 GAME_MANAGER.gameState.players[message.playerIndex].toString()
-            ), {
-                defaultStyle: {color:"violet"}
-            })}</span>;
+            ), SPECIAL)}</span>;
         case "deputyShot":
             return <span key={key}>{styleText(translate("chatmessage.deputyShot",
                 GAME_MANAGER.gameState.players[message.deputyIndex].toString(),
                 GAME_MANAGER.gameState.players[message.shotIndex].toString()
-            ), {
-                defaultStyle: {color:"violet"}
-            })}</span>;
+            ), SPECIAL)}</span>;
         case "jailorDecideExecute":
             if (message.targets.length > 0) {
                 return <span key={key}>{styleText(translate("chatmessage.jailorDecideExecute",
                     message.targets.map((target) => GAME_MANAGER.gameState.players[target].toString()).join(", ")
-                ), {
-                    defaultStyle: {color:"orange"}
-                })}</span>;
+                ), SPECIAL)}</span>;
             } else {
-                return <span key={key}>{styleText(translate("chatmessage.jailorDecideExecute.null"), {
-                    defaultStyle: {color:"orange"}
-                })}</span>;
+                return <span key={key}>{styleText(
+                    translate("chatmessage.jailorDecideExecute.null"), 
+                    SPECIAL
+                )}</span>;
             }
         default:
             console.error("Unknown message type: "+message.type);
