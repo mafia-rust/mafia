@@ -160,7 +160,7 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             })}</span>;
         case "trialVerdict":
             return <span key={key}>{styleText(translate("chatmessage.trialVerdict",
-                GAME_MANAGER.gameState.players[GAME_MANAGER.gameState.playerOnTrial!].toString(),
+                GAME_MANAGER.gameState.players[message.playerOnTrial].toString(),
                 message.innocent>=message.guilty?translate("verdict.innocent"):translate("verdict.guilty"),
                 message.innocent,
                 message.guilty

@@ -14,7 +14,7 @@ const TIME_PERIOD = 1000;
 export default GAME_MANAGER;
 
 setInterval(() => {
-  GAME_MANAGER.tick(TIME_PERIOD);
+    GAME_MANAGER.tick(TIME_PERIOD);
 }, TIME_PERIOD);
 
 
