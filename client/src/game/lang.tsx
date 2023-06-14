@@ -25,56 +25,56 @@ export default function translate(langKey: string, ...valuesList: (string | numb
 }
 
 export function getChatElement(message: ChatMessage, key: number): JSX.Element {
-    const SPECIAL = { defaultStyle: { color: "violet" } };
-    const PLAYER_MESSAGE = { indentStyle: { marginLeft: "2rem" } };
-    const DISCREET = { defaultStyle: { color: "turquoise" } };
-    const IMPORTANT = { defaultStyle: { color: "yellow" } };
-    const TRIAL = { defaultStyle: { color: "orange" } };
-    const TARGET = { defaultStyle: { color: "orange" } };
+    const SPECIAL = { text: { color: "violet" } };
+    const PLAYER_MESSAGE = { indent: true }; // 2rem
+    const DISCREET = { text: { color: "turquoise" } };
+    const IMPORTANT = { text: { color: "yellow" } };
+    const TRIAL = { text: { color: "orange" } };
+    const TARGET = { text: { color: "orange" } };
     switch (message.type) {
         case "normal":
             if(message.messageSender.type === "player"){
                 let playerIndex = message.messageSender.player;
                 if(message.chatGroup !== "dead"){
-                    return <span key={key}>{styleText(translate("chatmessage.normal",
-                        GAME_MANAGER.gameState.players[playerIndex].toString(),
+                    return createChatElement(key, translate("chatmessage.normal",
+                        GAME_MANAGER.gameState.players[playerIndex].toString(), 
                         message.text
-                    ), PLAYER_MESSAGE)}</span>;
+                    ), PLAYER_MESSAGE);
                 }else{
-                    return <span key={key} style={{backgroundColor:"black", borderRadius: "5px"}}>{styleText(translate("chatmessage.normal",
+                    return createChatElement(key, translate("chatmessage.normal",
                         GAME_MANAGER.gameState.players[playerIndex].toString(),
                         message.text
                     ), {
-                        ...PLAYER_MESSAGE,
-                        defaultStyle: { color: "grey" }
-                    })}</span>;
+                        box: { backgroundColor: "black", borderRadius: "5px" },
+                        text: { color: "grey" },
+                        ...PLAYER_MESSAGE
+                    });
                 }
             } else {
                 //TODO, this only works because jailor and medium are the only options
-                return <span key={key}>{styleText(translate("chatmessage.normal",
+                return createChatElement(key, translate("chatmessage.normal",
                     translate("role."+message.messageSender.type+".name"),
                     message.text
-                ), DISCREET)}</span>;
+                ), {...PLAYER_MESSAGE, ...DISCREET});
             }
         case "whisper":
-            return <span key={key}>{styleText(translate("chatmessage.whisper", 
+            return createChatElement(key, translate("chatmessage.whisper", 
                 GAME_MANAGER.gameState.players[message.fromPlayerIndex].toString(),
                 GAME_MANAGER.gameState.players[message.toPlayerIndex].toString(),
                 message.text
-            ), {...PLAYER_MESSAGE, ...DISCREET})}</span>;
+            ), {...PLAYER_MESSAGE, ...DISCREET});
         case "broadcastWhisper":
-            return <span key={key}>{styleText(translate("chatmessage.broadcastWhisper",
+            return createChatElement(key, translate("chatmessage.broadcastWhisper",
                 GAME_MANAGER.gameState.players[message.whisperer].toString(),
                 GAME_MANAGER.gameState.players[message.whisperee].toString(),
-            ), DISCREET)}</span>;
+            ), DISCREET);
         case "roleAssignment":
-            let role = message.role;
-            let name = translate("role."+role+".name")
-            
-            return <span key={key} style={{textAlign:"center"}}>{styleText(
-                translate("chatmessage.roleAssignment", name), 
-                IMPORTANT
-            )}</span>;
+            return createChatElement(key, translate("chatmessage.roleAssignment", 
+                translate("role." + message.role + ".name")
+            ), { 
+                box: { textAlign: "center" }, 
+                ...IMPORTANT
+            });
         case "playerDied":
             //TODO, role doesnt work properly
             let graveRoleString: string;
@@ -101,166 +101,163 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                 deathCause = killers.join();
             }
 
-            return <span key={key}>{styleText(translate("chatmessage.playerDied",
+            return createChatElement(key, translate("chatmessage.playerDied",
                 GAME_MANAGER.gameState.players[message.grave.playerIndex].toString(),
                 graveRoleString,
                 deathCause,
                 message.grave.will
-            ), IMPORTANT)}</span>;
+            ), IMPORTANT);
         case "phaseChange":
-            return <span key={key} style={{textAlign:"center", backgroundColor:"var(--primary-color)"}}>{styleText(translate("chatmessage.phaseChange",
+            return createChatElement(key, translate("chatmessage.phaseChange",
                 translate("phase."+message.phase),
                 message.dayNumber
             ), {
-                defaultStyle: {color:"yellow", textDecoration:"underline"}
-            })}</span>;
+                box: { textAlign: "center", backgroundColor: "var(--primary-color)" },
+                text: { color: "yellow", textDecoration: "underline" }
+            });
         case "trialInformation":
-            return <span key={key}>{styleText(translate("chatmessage.trialInformation",
+            return createChatElement(key, translate("chatmessage.trialInformation",
                 message.requiredVotes,
                 message.trialsLeft
-            ), TRIAL)}</span>;
+            ), TRIAL);
         case "voted":
             if (message.votee !== null) {
-                return <span key={key}>{styleText(translate("chatmessage.voted",
+                return createChatElement(key, translate("chatmessage.voted",
                     GAME_MANAGER.gameState.players[message.voter].toString(),
                     GAME_MANAGER.gameState.players[message.votee].toString(),
-                ), TRIAL)}</span>;
+                ), TRIAL);
             } else {
-                return <span key={key}>{styleText(translate("chatmessage.voted.cleared",
+                return createChatElement(key, translate("chatmessage.voted.cleared",
                     GAME_MANAGER.gameState.players[message.voter].toString(),
-                ), TRIAL)}</span>;
+                ), TRIAL);
             }
         case "playerOnTrial":
-            return <span key={key}>{styleText(translate("chatmessage.playerOnTrial",
+            return createChatElement(key, translate("chatmessage.playerOnTrial",
                 GAME_MANAGER.gameState.players[message.playerIndex].toString(),
-            ), IMPORTANT)}</span>;
+            ), IMPORTANT);
         case "judgementVote":
-            return <span key={key}>{styleText(translate("chatmessage.judgementVote",
+            return createChatElement(key, translate("chatmessage.judgementVote",
                 GAME_MANAGER.gameState.players[message.voterPlayerIndex].toString(),
-            ), TRIAL)}</span>;
+            ), TRIAL);
         case "judgementVerdict":
-            return <span key={key}>{styleText(translate("chatmessage.judgementVerdict",
+            return createChatElement(key, translate("chatmessage.judgementVerdict",
                 GAME_MANAGER.gameState.players[message.voterPlayerIndex].toString(),
                 translate("verdict."+message.verdict.toLowerCase())
-            ), TRIAL)}</span>;
+            ), TRIAL);
         case "trialVerdict":
-            return <span key={key}>{styleText(translate("chatmessage.trialVerdict",
+            return createChatElement(key, translate("chatmessage.trialVerdict",
                 GAME_MANAGER.gameState.players[message.playerOnTrial].toString(),
                 message.innocent>=message.guilty?translate("verdict.innocent"):translate("verdict.guilty"),
                 message.innocent,
                 message.guilty
-            ), IMPORTANT)}</span>;
+            ), IMPORTANT);
         case "nightInformation":
             return getNightInformationChatElement(message.nightInformation, key);
         case "targeted":
             if (message.targets.length > 0) {
-                return <span key={key}>{styleText(translate("chatmessage.targeted",
+                return createChatElement(key, translate("chatmessage.targeted",
                     GAME_MANAGER.gameState.players[message.targeter].toString(),
                     message.targets.map((target) => GAME_MANAGER.gameState.players[target].toString()).join(", ")
-                ), TARGET)}</span>;
+                ), TARGET);
             } else {
-                return <span key={key}>{styleText(translate("chatmessage.targeted.cleared",
+                return createChatElement(key, translate("chatmessage.targeted.cleared",
                     GAME_MANAGER.gameState.players[message.targeter].toString(),
-                ), TARGET)}</span>;
+                ), TARGET);
             }
         case "mayorRevealed":
-            return <span key={key}>{styleText(translate("chatmessage.mayorRevealed",
+            return createChatElement(key, translate("chatmessage.mayorRevealed",
                 GAME_MANAGER.gameState.players[message.playerIndex].toString(),
-            ), SPECIAL)}</span>;
+            ), SPECIAL);
         case "jailedTarget":
-            return <span key={key}>{styleText(translate("chatmessage.jailedTarget",
+            return createChatElement(key, translate("chatmessage.jailedTarget",
                 GAME_MANAGER.gameState.players[message.playerIndex].toString(),
-            ), SPECIAL)}</span>;
+            ), SPECIAL);
         case "jailedSomeone":
-            return <span key={key}>{styleText(translate("chatmessage.jailedSomeone",
+            return createChatElement(key, translate("chatmessage.jailedSomeone",
                 GAME_MANAGER.gameState.players[message.playerIndex].toString()
-            ), SPECIAL)}</span>;
+            ), SPECIAL);
         case "deputyShot":
-            return <span key={key}>{styleText(translate("chatmessage.deputyShot",
+            return createChatElement(key, translate("chatmessage.deputyShot",
                 GAME_MANAGER.gameState.players[message.deputyIndex].toString(),
                 GAME_MANAGER.gameState.players[message.shotIndex].toString()
-            ), SPECIAL)}</span>;
+            ), SPECIAL);
         case "jailorDecideExecute":
             if (message.targets.length > 0) {
-                return <span key={key}>{styleText(translate("chatmessage.jailorDecideExecute",
+                return createChatElement(key, translate("chatmessage.jailorDecideExecute",
                     message.targets.map((target) => GAME_MANAGER.gameState.players[target].toString()).join(", ")
-                ), SPECIAL)}</span>;
+                ), SPECIAL);
             } else {
-                return <span key={key}>{styleText(
-                    translate("chatmessage.jailorDecideExecute.null"), 
-                    SPECIAL
-                )}</span>;
+                return createChatElement(key, translate("chatmessage.jailorDecideExecute.null"), SPECIAL);
             }
         default:
-            console.error("Unknown message type: "+message.type);
+            console.error("Unknown message type " + message.type + ":");
             console.error(message);
-            return <span key={key}>{styleText(translate("chatmessage."+message))}</span>;
+            return createChatElement(key, "FIXME: " + translate("chatmessage." + message), {
+                box: { borderStyle: "thick", borderColor: "purple" },
+                ...SPECIAL
+            });
     }
 }
 
 export function getNightInformationChatElement(info: NightInformation, key: number): JSX.Element {
-    const RESULT_STYLE = { defaultStyle: { color: "green" } };
-    const WARNING_STYLE = { backgroundColor: "#660000" };
+    const RESULT_STYLE = { text: { color: "green" } };
+    const WARNING_STYLE = { box: { backgroundColor: "#660000" } };
     switch (info.type) {
         case "roleBlocked":
-            return <span key={key}>{styleText(
+            return createChatElement(key, 
                 translate("chatmessage.night.roleBlocked" + (info.immune ? ".immune" : "")),
                 RESULT_STYLE
-            )}</span>;
+            );
         case "sheriffResult":
-            return <span key={key}>{styleText(
+            return createChatElement(key, 
                 translate("chatmessage.night.sheriffResult." + (info.suspicious ? "suspicious" : "innocent")), 
                 RESULT_STYLE
-            )}</span>;
+            );
         case "lookoutResult":
-            return <span key={key}>{styleText(
-                translate("chatmessage.night.lookoutResult", 
-                    (info.players.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", "))
-                ), 
-                RESULT_STYLE
-            )}</span>;
+            return createChatElement(key, translate("chatmessage.night.lookoutResult", 
+                info.players.map(playerIndex => 
+                    GAME_MANAGER.gameState.players[playerIndex].toString()
+                ).join(", ")
+            ), RESULT_STYLE);
         case "seerResult":
-            if(info.enemies){
-                return <span key={key}>{styleText(
-                    translate("chatmessage.night.seerResult.enemies"),
-                    RESULT_STYLE
-                )}</span>;
-            }else{
-                return <span key={key}>{styleText(
-                    translate("chatmessage.night.seerResult.friends"),
-                    RESULT_STYLE
-                )}</span>;
-            }
+            return createChatElement(key, 
+                translate("chatmessage.night.seerResult." + info.enemies ? "enemies" : "friends"),
+                RESULT_STYLE
+            );
         case "playerRoleAndWill":
-            return <span key={key}>{styleText(
-                translate("chatmessage.night.playersRoleAndWill", 
-                    translate("role."+info.role+".name"), 
-                    info.will
-                ),
-                RESULT_STYLE
-            )}</span>
+            return createChatElement(key, translate("chatmessage.night.playersRoleAndWill", 
+                translate("role."+info.role+".name"), 
+                info.will
+            ), RESULT_STYLE);
         case "consigliereResult":
-            return <span key={key}>{styleText(
-                translate("chatmessage.night.consigliereResult", 
-                    translate("role."+info.role+".name"),
-                    (info.visited.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", ")), 
-                    (info.visitedBy.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", "))
-                ),
-                RESULT_STYLE
-            )}</span>
+            return createChatElement(key, translate("chatmessage.night.consigliereResult", 
+                translate("role."+info.role+".name"),
+                (info.visited.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", ")), 
+                (info.visitedBy.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", "))
+            ), RESULT_STYLE);
+        /* Messages that players must not miss */
         case "youDied":
         case "silenced":
-            return <span key={key} style={WARNING_STYLE}>{
-                translate("chatmessage.night."+info.type)
-            }</span>
+            return createChatElement(key, translate("chatmessage.night."+info.type), WARNING_STYLE);
         default:
-            return <span key={key}>{styleText(
-                translate("chatmessage.night."+info.type),
-                RESULT_STYLE
-            )}</span>
+            return createChatElement(key, translate("chatmessage.night."+info.type), RESULT_STYLE);
     }
 }
 
+function createChatElement(
+    key: number, 
+    text: string,
+    style: {
+        box?: React.CSSProperties,
+        text?: React.CSSProperties,
+        indent?: boolean
+    } = {},
+): JSX.Element {
+    return <span key={key} style={style.box}>{styleText(text, {
+        defaultStyle: style.text,
+        indentStyle: style.indent ? { marginLeft: "2rem" } : undefined
+    })}</span>
+}
 
 function styleSubstrings(
     string: string, 
