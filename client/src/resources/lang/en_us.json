@@ -293,7 +293,7 @@
     "chatmessage.night.doctorHealedYou":"A doctor healed you while you got attacked.",
     "chatmessage.night.bodyguardProtected": "You protected your target",
     "chatmessage.night.bodyguardProtectedYou": "You were protected by a bodyguard",
-    "chatmessage.night.silenced": "You were silenced! You can not speak or communicate in any way until at least the start of the next day!",
+    "chatmessage.night.silenced": "You were silenced! You must not speak, chat, point, or otherwise communicate until tomorrow!",
     "chatmessage.night.playersRoleAndWill": "Your targets role was \\0 and their will stated this: \\1",
     "chatmessage.night.consigliereResult": "Your targets role was \\0. They visited \\1. They were visited by \\2.",
 

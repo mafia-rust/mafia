@@ -131,9 +131,9 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                     <HeaderMenu phase={GAME_MANAGER.gameState.phase}/>
                 </div>
                 <div className="content">
-                    {this.state.graveyardMenu?<GraveyardMenu/>:null},
-                    <ChatMenu/>,
-                    {this.state.playerListMenu?<PlayerListMenu/>:null},
+                    {this.state.graveyardMenu?<GraveyardMenu/>:null}
+                    <ChatMenu/>
+                    {this.state.playerListMenu?<PlayerListMenu/>:null}
                     {this.state.willMenu?<WillMenu/>:null}
                     {this.state.wikiMenu?<WikiMenu/>:null}
                 </div>
