@@ -19,8 +19,10 @@
     "menu.lobby.button.setName": "Set Name",
     "menu.lobby.button.setTimeSettings": "Set Time Settings",
     "menu.lobby.player": "\\0: (\\1)",
+    "menu.lobby.roleList": "Role List:",
+    "menu.lobby.timeSettings": "Times:",
 
-    "menu.excludedRoles.exclude": "Exclude role",
+    "menu.excludedRoles.exclude": "Exclude Role",
 
     "menu.loading.host": "Starting Server",
     "menu.loading.join": "Connecting to Server",
