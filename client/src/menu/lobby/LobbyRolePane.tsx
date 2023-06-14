@@ -4,6 +4,7 @@ import { RoleListEntry } from "../../game/gameState.d";
 import "../../index.css";
 import RolePicker from "../RolePicker";
 import { StateEventType } from "../../game/gameManager.d";
+import translate from "../../game/lang";
 
 interface RolePaneState {
     roleList: RoleListEntry[]
@@ -45,7 +46,7 @@ export default class LobbyRolePane extends React.Component<{}, RolePaneState> {
 
     render(){return(<section>
         <header>
-            <h2>Role list:</h2>
+            <h2>{translate("menu.lobby.roleList")}</h2>
             <div>
                 {/* TODO, role list presets */}
             </div>
