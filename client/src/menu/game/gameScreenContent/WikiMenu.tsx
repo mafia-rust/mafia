@@ -2,6 +2,7 @@ import React from "react";
 import GAME_MANAGER from "../../../index";
 import GameScreen, { ContentMenus } from "../GameScreen";
 import WikiSearch from "../../WikiSearch";
+import "./wikiMenu.css"
 import GameState from "../../../game/gameState.d";
 import translate from "../../../game/lang";
 
@@ -35,16 +36,11 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
     }
 
 
-    render(){return(<div>
-        <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.WikiMenu)}}>{translate("menu.wiki.title")}</button>
+    render(){return(<div className="wiki-menu">
+        {/* TODO: Use content-tab on other menus */}
+        <div className="content-tab">
+            <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.WikiMenu)}}>{translate("menu.wiki.title")}</button>
+        </div>
         <WikiSearch/>
-        {/* <br/>
-        <RolePicker roleListEntry={this.state.roleListEntry} onChange={(value)=>{this.onChangeRolePicker(value);}}/>
-        <br/>
-        {this.renderRole(this.state.roleListEntry)}
-        <br/>
-        TODO priorties list of ALL ROLES with collapsable sections
-        TODO list of all night message strings
-        <br/> */}
     </div>)}
 }
