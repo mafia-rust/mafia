@@ -5,7 +5,6 @@ import Anchor from './menu/Anchor';
 import { GameManager, createGameManager } from './game/gameManager';
 import { createGameState } from './game/gameState';
 import StartMenu from './menu/main/StartMenu';
-import JoinMenu from './menu/main/JoinMenu';
 
 
 const ROOT = ReactDOM.createRoot(document.getElementById('root')!);
@@ -17,22 +16,21 @@ setInterval(() => {
     GAME_MANAGER.tick(TIME_PERIOD);
 }, TIME_PERIOD);
 
+// Route roomcode queries to the associated lobby
+function onMount() {
+    const roomCode = (new URL(window.location.href)).searchParams.get("code");
+    
+    if (roomCode !== null) {
+        GAME_MANAGER.gameState = createGameState();
+        GAME_MANAGER.tryJoinGame(roomCode);
+    }
 
-let anchorMenu = <StartMenu/>;
-let roomCode = (new URL(window.location.href)).searchParams.get("code");
-window.history.replaceState({}, document.title, window.location.pathname);
-if(roomCode != null) {
-    GAME_MANAGER.gameState = createGameState();
-    anchorMenu = <JoinMenu roomCode={roomCode}/>;
+    window.history.replaceState({}, document.title, window.location.pathname);
 }
 
-
 ROOT.render(
-    // <React.StrictMode>
-        <Anchor content={anchorMenu} />
-    // </React.StrictMode>
+    <Anchor 
+        content={<StartMenu/>} 
+        onMount={onMount}
+    />
 );
-// // If you want to start measuring performance in your app, pass a function
-// // to log results (for example: reportWebVitals(console.log))
-// // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-// reportWebVitals();

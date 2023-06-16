@@ -42,6 +42,15 @@ export function createGameManager(): GameManager {
             }
         },
 
+        async tryJoinGame(roomCode: string) {
+            GAME_MANAGER.roomCode = roomCode;
+            
+            GAME_MANAGER.server.close();
+            await GAME_MANAGER.server.open();
+            
+            await GAME_MANAGER.sendJoinPacket();
+        },
+
         sendHostPacket() {
             this.server.sendPacket({type: "host"});
         },
