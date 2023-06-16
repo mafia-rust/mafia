@@ -36,7 +36,7 @@ pub struct Player {
     player_tags: HashMap<PlayerReference, Vec<Tag>>,
 
 
-    chat_messages: Vec<ChatMessage>, //all messages
+    pub chat_messages: Vec<ChatMessage>, //all messages
     queued_chat_messages: Vec<ChatMessage>, //messages that have yet to have been sent to the client
 
     last_sent_buttons: Vec<AvailableButtons>,
@@ -75,6 +75,62 @@ impl Player {
     pub fn new(name: String, sender: ClientSender, role: Role) -> Self {
         Self {
             sender: Some(sender),
+
+            name,
+            role_state: role.default_state(),
+            alive: true,
+            will: "".to_string(),
+            notes: "".to_string(),
+
+            role_labels: HashMap::new(),
+            player_tags: HashMap::new(),
+
+
+            chat_messages: Vec::new(),
+            queued_chat_messages: Vec::new(),
+            
+            last_sent_buttons: Vec::new(),
+
+            voting_variables: PlayerVotingVariables{
+                chosen_vote : None,
+                verdict : Verdict::Abstain,
+            },
+            night_variables: PlayerNightVariables{
+                alive_tonight:      true,
+                died:               false,
+                attacked:           false,
+                jailed:             false,
+                roleblocked:        false,
+                defense:            0,
+                appeared_visits:    vec![],
+                appeared_role:      role,
+
+                silenced:           false,
+
+                chosen_targets:     vec![],
+                visits:             vec![],
+
+                messages:           vec![],
+
+                grave_role: GraveRole::Role(role),
+                grave_killers: vec![],
+                grave_will: "".to_string(),
+                grave_death_notes: vec![],
+            },
+        }
+    }
+}
+
+pub mod test {
+    use std::collections::HashMap;
+
+    use crate::game::{role::Role, verdict::Verdict, grave::GraveRole};
+
+    use super::{Player, PlayerVotingVariables, PlayerNightVariables};
+
+    pub fn mock_player(name: String, role: Role) -> Player {
+        Player {
+            sender: None,
 
             name,
             role_state: role.default_state(),

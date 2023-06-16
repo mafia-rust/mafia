@@ -15,7 +15,7 @@ pub struct Lobby {
     lobby_state: LobbyState,
 }
 
-enum LobbyState {
+pub enum LobbyState {
     Lobby {
         settings: Settings,
         players: HashMap<ArbitraryPlayerID, LobbyPlayer>,
@@ -316,7 +316,7 @@ impl Lobby {
     }
 }
 
-mod name_validation {
+pub mod name_validation {
     use std::collections::HashMap;
     use crate::{listener::ArbitraryPlayerID, strings::TidyableString};
     use super::LobbyPlayer;

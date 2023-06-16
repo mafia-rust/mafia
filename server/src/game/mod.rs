@@ -243,3 +243,49 @@ impl Game {
     }
 
 }
+
+pub mod test {
+    use rand::{thread_rng, seq::SliceRandom};
+
+    use super::{Game, settings::Settings, role_list::{create_random_roles, RoleListEntry}, player::{PlayerReference, test::mock_player}, phase::PhaseStateMachine};
+
+    pub fn mock_game(settings: Settings, number_of_players: usize) -> Game {
+        //create role list
+        let mut roles = create_random_roles(&settings.excluded_roles, &settings.role_list);
+        roles.shuffle(&mut thread_rng());
+        
+        //create players
+        let mut players = Vec::new();
+        for player_index in 0..number_of_players {
+            let new_player = mock_player(
+                player_index.to_string(),
+                match roles.get(player_index){
+                    Some(role) => *role,
+                    None => RoleListEntry::Any.get_random_role(&settings.excluded_roles, &roles),
+                }
+            );
+            players.push(new_player);
+        }
+        drop(roles);
+        //just to make sure the order of roles is not used anywhere else for secuity from our own stupidity  
+        let mut game = Game {
+            players: players.into_boxed_slice(),
+            graves: Vec::new(),
+            phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
+            settings,
+        };
+
+
+
+        //set up role data
+        for player_ref in PlayerReference::all_players(&game){
+            let role_data_copy = player_ref.role_state(&game).clone();
+            player_ref.set_role(&mut game, role_data_copy);
+        }
+
+        for player_ref in PlayerReference::all_players(&game){
+            game.send_join_game_information(player_ref)
+        }
+        game
+    }
+}

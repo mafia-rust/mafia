@@ -32,8 +32,8 @@ jobs:
         run: cargo install cargo-audit
       - name: Builds
         run: cargo build --verbose
-      # - name: Test
-      #   run: cargo test --verbose
+      - name: Test
+        run: cargo test --verbose
       - name: Check
         run: cargo check --verbose
       - name: Audit
