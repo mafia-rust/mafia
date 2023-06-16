@@ -5,6 +5,13 @@
     /* overflow: hidden; */
 }
 
+.game-screen > .leave-button {
+    position: absolute;
+    margin: 0;
+    left: 0.5rem;
+    top: 0.5rem;
+}
+
 .game-screen .header {
     height: fit-content;
     border: var(--primary-border-color) solid 2px;

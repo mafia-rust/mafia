@@ -13,6 +13,8 @@
     "menu.join.field.roomCode": "Room code",
     "menu.join.field.name": "Name",
 
+    "menu.button.leave": "Leave",
+
     "menu.lobby.title": "Lobby \\0",
     "menu.lobby.button.start": "Start Game",
     "menu.lobby.field.namePlaceholder": "Enter name",
