@@ -24,6 +24,8 @@ export type ChatMessage = {
     type: "playerDied", 
     grave: Grave
 } | {
+    type: "youDied"
+} | {
     type: "gameOver"
 } | {
     type: "phaseChange", 
@@ -62,7 +64,7 @@ export type ChatMessage = {
     targets: PlayerIndex[]
 } | {
     type: "nightInformation", 
-    nightInformation: NightInformation 
+    nightInformation: ChatMessage 
 } | 
 // Role-specific
 {
@@ -87,7 +89,6 @@ export type ChatMessage = {
     type: "executionerWon"
 } | {
     type: "deputyShot",
-    deputyIndex: PlayerIndex,
     shotIndex: PlayerIndex
 } | {
     type: "playerWithNecronomicon",
@@ -97,33 +98,13 @@ export type ChatMessage = {
     roleData: Role | {
         0: Role
     }
-}
-
-export type MessageSender = {
-    type: "player", 
-    player: PlayerIndex
 } | {
-    type: "jailor"
-} | {
-    type: "medium"
-}
-
-export type ChatGroup =
-    | "all"
-    | "mafia"
-    | "dead"
-    | "vampire"
-    | "coven"
-
-export type NightInformation = {
     type: "roleBlocked", 
     immune : boolean
 } | {
     type: "targetSurvivedAttack"
 } | {
     type: "youSurvivedAttack"
-} | {
-    type: "youDied"
 } |
 /* Role-specific */
 {
@@ -191,3 +172,19 @@ export type NightInformation = {
     type: "arsonistDousedPlayers", 
     players: PlayerIndex[]
 }
+
+export type MessageSender = {
+    type: "player", 
+    player: PlayerIndex
+} | {
+    type: "jailor"
+} | {
+    type: "medium"
+}
+
+export type ChatGroup =
+    | "all"
+    | "mafia"
+    | "dead"
+    | "vampire"
+    | "coven"

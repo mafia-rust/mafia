@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::{chat::night_message::NightInformation, tag::Tag};
+use crate::game::tag::Tag;
 use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -36,7 +36,7 @@ impl RoleStateImpl for VoodooMaster {
         if let Some(visit) = actor_ref.night_visits(game).first(){
             let target_ref = visit.target;
             if target_ref.night_jailed(game) {
-                actor_ref.push_night_message(game, NightInformation::TargetJailed);
+                actor_ref.push_night_message(game, ChatMessage::TargetJailed);
                 return
             }
 

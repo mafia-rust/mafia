@@ -1,8 +1,8 @@
 import React from "react";
 import GAME_MANAGER from "../index";
-import { ChatMessage, NightInformation } from "./chatMessage";
 import ROLES from "../resources/roles.json";
 import { FactionAlignment, getFactionFromFactionAlignment } from "./gameState.d";
+import { ChatMessage } from "./chatMessage";
 
 let lang: ReadonlyMap<string, string>;
 switchLanguage("en_us");
@@ -31,6 +31,11 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
     const IMPORTANT = { text: { color: "yellow" } };
     const TRIAL = { text: { color: "orange" } };
     const TARGET = { text: { color: "orange" } };
+
+    
+    const RESULT_STYLE = { text: { color: "green" } };
+    const WARNING_STYLE = { box: { backgroundColor: "#660000" } };
+
     switch (message.type) {
         case "normal":
             if(message.messageSender.type === "player"){
@@ -107,6 +112,8 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                 deathCause,
                 message.grave.will
             ), IMPORTANT);
+        case "youDied":
+            return createChatElement(key, translate("chatmessage.youDied"), IMPORTANT);
         case "phaseChange":
             return createChatElement(key, translate("chatmessage.phaseChange",
                 translate("phase."+message.phase),
@@ -151,8 +158,6 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                 message.innocent,
                 message.guilty
             ), IMPORTANT);
-        case "nightInformation":
-            return getNightInformationChatElement(message.nightInformation, key);
         case "targeted":
             if (message.targets.length > 0) {
                 return createChatElement(key, translate("chatmessage.targeted",
@@ -178,7 +183,6 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             ), SPECIAL);
         case "deputyShot":
             return createChatElement(key, translate("chatmessage.deputyShot",
-                GAME_MANAGER.gameState.players[message.deputyIndex].toString(),
                 GAME_MANAGER.gameState.players[message.shotIndex].toString()
             ), SPECIAL);
         case "jailorDecideExecute":
@@ -189,58 +193,51 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             } else {
                 return createChatElement(key, translate("chatmessage.jailorDecideExecute.null"), SPECIAL);
             }
-        default:
-            console.error("Unknown message type " + message.type + ":");
-            console.error(message);
-            return createChatElement(key, "FIXME: " + translate("chatmessage." + message), {
-                box: { borderStyle: "thick", borderColor: "purple" },
-                ...SPECIAL
-            });
-    }
-}
-
-export function getNightInformationChatElement(info: NightInformation, key: number): JSX.Element {
-    const RESULT_STYLE = { text: { color: "green" } };
-    const WARNING_STYLE = { box: { backgroundColor: "#660000" } };
-    switch (info.type) {
+            ////////////////////// NIGHT
         case "roleBlocked":
             return createChatElement(key, 
-                translate("chatmessage.night.roleBlocked" + (info.immune ? ".immune" : "")),
+                translate("chatmessage.roleBlocked" + (message.immune ? ".immune" : "")),
                 RESULT_STYLE
             );
         case "sheriffResult":
             return createChatElement(key, 
-                translate("chatmessage.night.sheriffResult." + (info.suspicious ? "suspicious" : "innocent")), 
+                translate("chatmessage.sheriffResult." + (message.suspicious ? "suspicious" : "innocent")), 
                 RESULT_STYLE
             );
         case "lookoutResult":
-            return createChatElement(key, translate("chatmessage.night.lookoutResult", 
-                info.players.map(playerIndex => 
+            return createChatElement(key, translate("chatmessage.lookoutResult", 
+            message.players.map(playerIndex => 
                     GAME_MANAGER.gameState.players[playerIndex].toString()
                 ).join(", ")
             ), RESULT_STYLE);
         case "seerResult":
             return createChatElement(key, 
-                translate("chatmessage.night.seerResult." + info.enemies ? "enemies" : "friends"),
+                translate("chatmessage.seerResult." + message.enemies ? "enemies" : "friends"),
                 RESULT_STYLE
             );
         case "playerRoleAndWill":
-            return createChatElement(key, translate("chatmessage.night.playersRoleAndWill", 
-                translate("role."+info.role+".name"), 
-                info.will
+            return createChatElement(key, translate("chatmessage.playersRoleAndWill", 
+                translate("role."+message.role+".name"), 
+                message.will
             ), RESULT_STYLE);
         case "consigliereResult":
-            return createChatElement(key, translate("chatmessage.night.consigliereResult", 
-                translate("role."+info.role+".name"),
-                (info.visited.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", ")), 
-                (info.visitedBy.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", "))
+            return createChatElement(key, translate("chatmessage.consigliereResult", 
+                translate("role."+message.role+".name"),
+                (message.visited.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", ")), 
+                (message.visitedBy.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", "))
             ), RESULT_STYLE);
         /* Messages that players must not miss */
-        case "youDied":
         case "silenced":
-            return createChatElement(key, translate("chatmessage.night."+info.type), WARNING_STYLE);
+            return createChatElement(key, translate("chatmessage."+message.type), WARNING_STYLE);
         default:
-            return createChatElement(key, translate("chatmessage.night."+info.type), RESULT_STYLE);
+            return createChatElement(key, translate("chatmessage."+message.type), RESULT_STYLE);
+        // default:
+        //     console.error("Unknown message type " + message.type + ":");
+        //     console.error(message);
+        //     return createChatElement(key, "FIXME: " + translate("chatmessage." + message), {
+        //         box: { borderStyle: "thick", borderColor: "purple" },
+        //         ...SPECIAL
+        //     });
     }
 }
 

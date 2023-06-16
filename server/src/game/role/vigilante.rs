@@ -1,8 +1,7 @@
 
 use serde::Serialize;
 
-use crate::game::chat::night_message::NightInformation;
-use crate::game::chat::ChatGroup;
+use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -50,14 +49,14 @@ impl RoleStateImpl for Vigilante {
 
                     let target_ref = visit.target;
                     if target_ref.night_jailed(game){
-                        actor_ref.push_night_message(game, NightInformation::TargetJailed);
+                        actor_ref.push_night_message(game, ChatMessage::TargetJailed);
                         return
                     }
 
                     let killed = target_ref.try_night_kill(game, GraveKiller::Role(Role::Vigilante), 1);
 
                     if !killed {
-                        actor_ref.push_night_message(game,NightInformation::TargetSurvivedAttack);
+                        actor_ref.push_night_message(game,ChatMessage::TargetSurvivedAttack);
                     }else if target_ref.role(game).faction_alignment().faction() == Faction::Town {
                         self.will_suicide = true;
                     }
