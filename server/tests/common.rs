@@ -8,7 +8,7 @@ pub struct TestScenario {
 
 #[allow(unused)]
 macro_rules! init_test {
-    ($game:ident, 
+    ($game:ident,
         $($name:ident @ $role:ident),*
     ) => {
         let mut scenario = common::__init_test(vec![$(RoleState::$role($role::default())),*]);

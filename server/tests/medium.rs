@@ -12,7 +12,7 @@ fn medium_recieves_dead_messages_from_jail() {
 
     townie.set_alive(game, false);
 
-    jailor.set_chosen_targets(game, vec![medium]);
+    game.on_client_message(jailor.index(), ToServerPacket::DayTarget { player_index: medium.index() });
 
     game.start_phase(PhaseState::Night);
 
