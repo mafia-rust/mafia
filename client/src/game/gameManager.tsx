@@ -51,6 +51,13 @@ export function createGameManager(): GameManager {
             await GAME_MANAGER.sendJoinPacket();
         },
 
+        leaveGame() {
+            // This is kind of lazy. It basically resets the URL to the "main menu" state and refreshes.
+            // Clear query parameters from visible URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+            window.location.reload();
+        },
+
         sendHostPacket() {
             this.server.sendPacket({type: "host"});
         },

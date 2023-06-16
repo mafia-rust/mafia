@@ -10,6 +10,7 @@ import WikiMenu from "./gameScreenContent/WikiMenu";
 
 import "../../index.css";
 import "./gameScreen.css";
+import translate from "../../game/lang";
 
 export enum ContentMenus {
     GraveyardMenu = "GraveyardMenu",
@@ -127,6 +128,9 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
     render() {
         return (
             <div className="game-screen">
+                <button className="leave-button" onClick={GAME_MANAGER.leaveGame}>
+                    {translate("menu.button.leave")}
+                </button>
                 <div className="header">
                     <HeaderMenu phase={GAME_MANAGER.gameState.phase}/>
                 </div>

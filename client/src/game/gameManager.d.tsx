@@ -30,6 +30,7 @@ export interface GameManager {
     invokeStateListeners(type?: StateEventType): void;
 
     tryJoinGame(roomCode: string): Promise<void>;
+    leaveGame(): void;
 
     sendHostPacket(): void;
     sendJoinPacket(): Promise<void>;
