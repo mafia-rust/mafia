@@ -101,7 +101,7 @@ impl RoleStateImpl for Jailor {
         if phase != PhaseType::Night{return;}
         
         if let Some(jailed_ref) = self.jailed_target_ref {
-            if jailed_ref.alive(game){
+            if jailed_ref.alive(game) && actor_ref.alive(game){
         
                 jailed_ref.set_night_jailed(game, true);
                 actor_ref.add_chat_message(game, 
