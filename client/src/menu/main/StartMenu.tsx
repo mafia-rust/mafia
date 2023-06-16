@@ -49,7 +49,7 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
                 </div>
             </div>
         </div>
-        <div className="hero">
+        <div id="wiki" className="hero">
             <div className="sm-center-content sm-wiki">
                 <header>
                     <h2>{translate("menu.wiki.title")}</h2>
