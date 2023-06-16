@@ -38,6 +38,10 @@
 .chat-menu .send-section button{
     height: 92%;
 }
+
+.chat-menu .send-section > button{
+    border-color: yellow;
+}
 .chat-menu textarea {
     resize: none;
     width: 100%;

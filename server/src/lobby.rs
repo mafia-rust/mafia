@@ -125,11 +125,17 @@ impl Lobby {
                 
                 self.send_to_all(ToClientPacket::PhaseTime { phase, time });
             },
-            ToServerPacket::SetRoleList { role_list } => {
-                let LobbyState::Lobby{ settings, .. } = &mut self.lobby_state else {
+            ToServerPacket::SetRoleList { mut role_list } => {
+                let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
                     println!("{} {}", log::error("Can't modify game settings outside of the lobby menu"), player_arbitrary_id);
                     return;
                 };
+                while role_list.len() < players.len() {
+                    role_list.push(RoleListEntry::Any);
+                }
+                while players.len() < role_list.len() {
+                    role_list.pop();
+                }
                 settings.role_list = role_list.clone();
                 
                 self.send_to_all(ToClientPacket::RoleList { role_list });

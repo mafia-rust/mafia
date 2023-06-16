@@ -53,8 +53,11 @@
     "menu.wiki.defense": "This role has \\0 defense by default",
 
     "menu.playerList.title": "Player List",
-    "menu.playerList.button.hideUnusable": "Hide Unusable",
-    "menu.playerList.button.hideDead": "Hide Dead",
+    
+    "menu.playerList.button.all": "All",
+    "menu.playerList.button.living": "Living",
+    "menu.playerList.button.usable": "Usable",
+
     "menu.playerList.button.whisper":"Whisper",
     "menu.playerList.button.vote":"Vote",
     "menu.playerList.button.resetVote":"Clear Vote",

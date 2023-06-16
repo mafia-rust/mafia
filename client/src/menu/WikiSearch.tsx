@@ -1,7 +1,7 @@
 import React from "react";
 import ROLES from "./../resources/roles.json";
 import translate, { styleText } from "../game/lang";
-import { Role } from "../game/gameState.d";
+import { FactionAlignment, Role, getRoleListEntryFromFactionAlignment, renderRoleListEntry } from "../game/gameState.d";
 import "./wikiSearch.css";
 
 interface WikiSearchState {
@@ -77,6 +77,7 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
         return <div>
             <div>
                 <div>{styleText(translate("role."+role+".name"))}</div>
+                <div>{renderRoleListEntry(getRoleListEntryFromFactionAlignment(ROLES[role as keyof typeof ROLES].factionAlignment as FactionAlignment))}</div>
                 <br/>
                 {styleText(translate("menu.wiki.abilities"))}
                 {this.renderRoleText(translate("role."+role+".abilities"))}

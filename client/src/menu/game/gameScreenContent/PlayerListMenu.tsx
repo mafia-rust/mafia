@@ -7,31 +7,38 @@ import ChatMenu, { textContent } from "./ChatMenu";
 import GameState, { Player, PlayerIndex } from "../../../game/gameState.d";
 import GameScreen, { ContentMenus } from "../GameScreen";
 import { ChatMessage } from "../../../game/chatMessage";
+import { StateEventType } from "../../../game/gameManager.d";
 
 interface PlayerListMenuProps {
 }
 interface PlayerListMenuState {
     gameState: GameState,
-    hideUnusable: boolean,
-    hideDead: boolean,
+    playerFilter: PlayerFilter
 }
+type PlayerFilter = "all"|"living"|"usable";
 
 export default class PlayerListMenu extends React.Component<PlayerListMenuProps, PlayerListMenuState> {
-    listener: () => void;
+    listener: (type: StateEventType) => void;
 
     constructor(props: PlayerListMenuProps) {
         super(props);
 
-        let hideDeadByDefault = GAME_MANAGER.gameState.role !== "retributionist";
-
         this.state = {
             gameState : GAME_MANAGER.gameState,
-            hideUnusable: false,
-            hideDead: hideDeadByDefault,
+            playerFilter: "living",
         };
-        this.listener = ()=>{
+        this.listener = (type)=>{
+            let playerFilter = this.state.playerFilter;
+            if(type==="phase"){
+                if(GAME_MANAGER.gameState.phase === "night"){
+                    playerFilter = "usable"
+                }else if(GAME_MANAGER.gameState.phase === "morning"){
+                    playerFilter = "living";
+                }
+            }
             this.setState({
-                gameState: GAME_MANAGER.gameState
+                gameState: GAME_MANAGER.gameState,
+                playerFilter: playerFilter
             })
         };  
     }
@@ -43,60 +50,81 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     }
 
     renderRoleSpecific(){
+        let roleSpecificJSX = null;
         switch(this.state.gameState.roleState?.role){
             case "jailor":
                 if(this.state.gameState.phase==="night")
-                    return styleText(""+this.state.gameState.roleState.executionsRemaining);
-
-                let jailedString = this.state.gameState.roleState.jailedTargetRef!=null?
-                    this.state.gameState.players[this.state.gameState.roleState.jailedTargetRef].toString():
-                    translate("none");
-                return styleText(jailedString+" "+this.state.gameState.roleState.executionsRemaining);
+                    roleSpecificJSX = styleText(""+this.state.gameState.roleState.executionsRemaining);
+                else
+                {
+                    let jailedString = this.state.gameState.roleState.jailedTargetRef!=null?
+                        this.state.gameState.players[this.state.gameState.roleState.jailedTargetRef].toString():
+                        translate("none");
+                    roleSpecificJSX = styleText(jailedString+" "+this.state.gameState.roleState.executionsRemaining);
+                }
+                break;
             case "doctor":
-                return styleText(""+this.state.gameState.roleState.selfHealsRemaining);
+                roleSpecificJSX = styleText(""+this.state.gameState.roleState.selfHealsRemaining);
+                break;
             case "bodyguard":
-                return styleText(""+this.state.gameState.roleState.selfShieldsRemaining);
+                roleSpecificJSX = styleText(""+this.state.gameState.roleState.selfShieldsRemaining);
+                break;
             case "vigilante":
                 if(this.state.gameState.roleState.willSuicide)
-                    return styleText(translate("grave.killer.suicide"));
-                return styleText(""+this.state.gameState.roleState.bulletsRemaining);
+                    roleSpecificJSX = styleText(translate("grave.killer.suicide"));
+                else
+                    roleSpecificJSX = styleText(""+this.state.gameState.roleState.bulletsRemaining);
+                    break;
             case "veteran":
-                return styleText(""+this.state.gameState.roleState.alertsRemaining);
+                roleSpecificJSX = styleText(""+this.state.gameState.roleState.alertsRemaining);
+                break;
             case "janitor":
-                return styleText(""+this.state.gameState.roleState.cleansRemaining);
+                roleSpecificJSX = styleText(""+this.state.gameState.roleState.cleansRemaining);
+                break;
         }
+        if(roleSpecificJSX!==null){
+            return <div className="role-specific">{roleSpecificJSX}</div>
+        }
+        return null
     }
     renderPhaseSpecific(){
+        let phaseSpecificJSX = null;
         switch(this.state.gameState.phase){
             case "voting":
                 let votedString = "";
                 if(this.state.gameState.voted!=null){
                     votedString = this.state.gameState.players[this.state.gameState.voted].name;
-                    return(<div>
+                    phaseSpecificJSX = (<div>
                         <div>{votedString}</div>
                         <button className="button gm-button" onClick={()=>{
                             GAME_MANAGER.sendVotePacket(null);
                         }}>{translate("menu.playerList.button.resetVote")}</button>
                     </div>);
                 }
-                return null;
+                else
+                    phaseSpecificJSX = null;
+                break;
             case "night":
                 let targetStringList = this.state.gameState.targets.map((playerIndex: PlayerIndex)=>{
                     return this.state.gameState.players[playerIndex].toString();
                 });
 
                 if(targetStringList.length > 0){
-                    return(<div>
+                    phaseSpecificJSX = (<div>
                         <div>{targetStringList.join(", ")+"."}</div>
                         <button className="button gm-button" onClick={()=>{
                             GAME_MANAGER.sendTargetPacket([]);
                         }}>{translate("menu.playerList.button.resetTargets")}</button>
                     </div>);
                 }
-                return null;
-            default:
-                return null;
+                else
+                    phaseSpecificJSX =  null;
         }
+        
+        if(phaseSpecificJSX!==null){
+            return <div className="phase-specific">{phaseSpecificJSX}</div>
+        }
+        return null;
     }
 
     renderPlayer(player: Player){
@@ -158,46 +186,47 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     renderPlayers(players: Player[]){
         return<div className="player-list">{
             players.map((player: Player)=>{
-            if(
-                (!this.state.hideUnusable || (this.state.hideUnusable && 
-                    (player.buttons.dayTarget || player.buttons.target || player.buttons.vote)
-                    )
-                ) && (!this.state.hideDead || player.alive)
-                ){
-                return this.renderPlayer(player);
-            }else{
+                switch(this.state.playerFilter){
+                    case "all":
+                        return this.renderPlayer(player);
+                    case "living":
+                        if(player.alive){
+                            return this.renderPlayer(player);
+                        }else{
+                            return null;
+                        }
+                    case "usable":            
+                        if(Object.values(player.buttons).includes(true)){
+                            return this.renderPlayer(player);
+                        }else{
+                            return null;
+                        }
+                }
                 return null;
             }
-        })}</div>
+        )}</div>
     }
 
     render(){return(<div className="player-list-menu">
         
-        <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.PlayerListMenu)}}>{translate("menu.playerList.title")}</button>        
-        <label>
-            <input type="checkbox"
-                checked={this.state.hideUnusable}
-                onChange={(checked)=>{
-                    this.setState({
-                        hideUnusable: checked.target.checked
-                    });
-                }
-            }/>
-            {translate("menu.playerList.button.hideUnusable")}
-        </label>
-        <label>
-            <input type="checkbox"
-                checked={this.state.hideDead}
-                onChange={(checked)=>{
-                    this.setState({
-                        hideDead: checked.target.checked
-                    });
-                }
-            }/>
-            {translate("menu.playerList.button.hideDead")}
-        </label>
-        <div className="role-specific">{this.renderRoleSpecific()}</div>
-        <div className="phase-specific">{this.renderPhaseSpecific()}</div>
+        <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.PlayerListMenu)}}>{translate("menu.playerList.title")}</button>
+        
+        <button 
+            style={{borderColor: this.state.playerFilter === "all"?"yellow":undefined}} 
+            onClick={()=>{this.setState({playerFilter: "all"})}}
+        >{translate("menu.playerList.button.all")}</button>
+        <button 
+            style={{borderColor: this.state.playerFilter === "living"?"yellow":undefined}} 
+            onClick={()=>{this.setState({playerFilter: "living"})}}
+        >{translate("menu.playerList.button.living")}</button>
+        <button 
+            style={{borderColor: this.state.playerFilter === "usable"?"yellow":undefined}} 
+            onClick={()=>{this.setState({playerFilter: "usable"})}}
+        >{translate("menu.playerList.button.usable")}</button>
+        
+
+        {this.renderRoleSpecific()}
+        {this.renderPhaseSpecific()}
         {this.renderPlayers(this.state.gameState.players)}
     </div>)}
 }

@@ -133,6 +133,12 @@ export function getAllFactionAlignments(faction: Faction): FactionAlignment[] {
         ];
     }
 }
+export function getRoleListEntryFromFaction(faction: Faction): RoleListEntry {
+    return {
+        type: "faction",
+        faction: faction
+    }
+}
 
 export const FACTION_ALIGNMENTS = [
     "townPower","townKilling","townProtective","townInvestigative","townSupport",
@@ -168,6 +174,12 @@ export function getAlignmentStringFromFactionAlignment(factionAlignment: Faction
     //make first letter lowercase
     let alignment = factionAlignment.replace(getFactionFromFactionAlignment(factionAlignment).toString(), "");
     return alignment.charAt(0).toLowerCase() + alignment.slice(1);
+}
+export function getRoleListEntryFromFactionAlignment(factionAlignment: FactionAlignment): RoleListEntry {
+    return {
+        type: "factionAlignment",
+        factionAlignment: factionAlignment
+    }
 }
 
 
