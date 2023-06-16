@@ -66,7 +66,7 @@ impl RoleStateImpl for Transporter {
             chosen_targets.is_empty()
         ) || (
             chosen_targets.len() == 1 &&
-            Some(target_ref) != chosen_targets.get(0).map(|p|*p)
+            Some(target_ref) != chosen_targets.get(0).cloned()
         )
     }
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {

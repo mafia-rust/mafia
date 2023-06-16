@@ -89,7 +89,7 @@ mod macros {
         (
             $($name:ident : $file:ident),*
         ) => {
-            $(pub(crate) mod $file;)*
+            $(pub mod $file;)*
 
             #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, Serialize, Deserialize)]
             #[serde(rename_all = "camelCase")]

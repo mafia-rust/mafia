@@ -1,6 +1,8 @@
 //! 
 //! Examples of how serde serializes enum variants:
 //! ```
+//! use serde::{Serialize, Deserialize};
+//! 
 //! #[derive(Serialize, Deserialize)]
 //! enum Test{
 //!     Unit(i8),           // {"Unit": 6}
