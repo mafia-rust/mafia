@@ -28,8 +28,3 @@ fn medium_recieves_dead_messages_from_jail() {
 
     assert_eq!(dead_message, last_recieved_message);
 }
-
-#[test]
-fn test2() {
-
-}

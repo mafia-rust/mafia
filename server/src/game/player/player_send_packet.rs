@@ -51,7 +51,7 @@ impl PlayerReference{
         self.send_chat_messages(game);
     }
     #[allow(unused)]
-    pub fn requeue_chat_messages(&self, game: &mut Game){
+    fn requeue_chat_messages(&self, game: &mut Game){
         for msg in self.deref(game).chat_messages.clone().into_iter(){
             self.deref_mut(game).queued_chat_messages.push(msg);
         };
