@@ -1,4 +1,4 @@
-import GameState, { Phase, PlayerIndex, Role, RoleListEntry, Verdict } from "./gameState.d";
+import GameState, { Phase, PlayerIndex, RoleListEntry, Verdict } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 
 export interface Server {
@@ -28,6 +28,9 @@ export interface GameManager {
     addAndCallStateListener(listener: StateListener): void;
     removeStateListener(listener: StateListener): void;
     invokeStateListeners(type?: StateEventType): void;
+
+    tryJoinGame(roomCode: string): Promise<void>;
+    leaveGame(): void;
 
     sendHostPacket(): void;
     sendJoinPacket(): Promise<void>;

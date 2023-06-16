@@ -13,6 +13,8 @@
     "menu.join.field.roomCode": "Room code",
     "menu.join.field.name": "Name",
 
+    "menu.button.leave": "Leave",
+
     "menu.lobby.title": "Lobby \\0",
     "menu.lobby.button.start": "Start Game",
     "menu.lobby.field.namePlaceholder": "Enter name",
@@ -44,6 +46,7 @@
     "menu.wiki.abilities": "Abilities",
     "menu.wiki.attributes": "Attributes",
     "menu.wiki.search.placeholder": "Search the wiki...",
+    "menu.wiki.search.clear": "Clear",
     
     "menu.wiki.maxCount": "There can only be \\0 of this role in a game",
     "menu.wiki.suspicious": "This role looks \\0 to the Sheriff",
@@ -276,7 +279,7 @@
     "chatmessage.executionerWon":"The executioner got their target lynched!",
     "chatmessage.deputyShot":"A deputy shot \\0!",
     "chatmessage.jailorDecidedToExecute":"The jailor decided to execute \\0",
-    "chatmessage.jailorDecidedToExecute.null":"The jailor decided to spare everybody!",
+    "chatmessage.jailorDecideExecute.nobody":"The jailor decided not to execute!",
 
 
     "chatmessage.youDied":"You died!",

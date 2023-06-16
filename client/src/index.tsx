@@ -5,34 +5,44 @@ import Anchor from './menu/Anchor';
 import { GameManager, createGameManager } from './game/gameManager';
 import { createGameState } from './game/gameState';
 import StartMenu from './menu/main/StartMenu';
-import JoinMenu from './menu/main/JoinMenu';
+import * as LoadingScreen from './menu/LoadingScreen'; 
 
+const QUERY_PARAMS = new URLSearchParams(window.location.search);
+// Clear query parameters from visible URL
+window.history.replaceState({}, document.title, window.location.pathname);
 
 const ROOT = ReactDOM.createRoot(document.getElementById('root')!);
 const GAME_MANAGER: GameManager = createGameManager();
 const TIME_PERIOD = 1000;
 export default GAME_MANAGER;
 
+GAME_MANAGER.addStateListener((type) => {
+    switch (type) {
+        case "acceptJoin":
+        case "acceptHost":
+            window.history.pushState({}, document.title, `?code=${GAME_MANAGER.roomCode}`);
+    }
+})
+
 setInterval(() => {
     GAME_MANAGER.tick(TIME_PERIOD);
 }, TIME_PERIOD);
 
+// Route roomcode queries to the associated lobby
+function onMount() {
+    const roomCode = QUERY_PARAMS.get("code");
 
-let anchorMenu = <StartMenu/>;
-let roomCode = (new URL(window.location.href)).searchParams.get("code");
-window.history.replaceState({}, document.title, window.location.pathname);
-if(roomCode != null) {
-    GAME_MANAGER.gameState = createGameState();
-    anchorMenu = <JoinMenu roomCode={roomCode}/>;
+    if (roomCode !== null) {
+        GAME_MANAGER.gameState = createGameState();
+        GAME_MANAGER.tryJoinGame(roomCode);
+    } else {
+        Anchor.setContent(<StartMenu/>)
+    }
 }
 
-
 ROOT.render(
-    // <React.StrictMode>
-        <Anchor content={anchorMenu} />
-    // </React.StrictMode>
+    <Anchor 
+        content={LoadingScreen.create()} 
+        onMount={onMount}
+    />
 );
-// // If you want to start measuring performance in your app, pass a function
-// // to log results (for example: reportWebVitals(console.log))
-// // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-// reportWebVitals();

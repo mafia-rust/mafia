@@ -191,7 +191,7 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                     message.targets.map((target) => GAME_MANAGER.gameState.players[target].toString()).join(", ")
                 ), SPECIAL);
             } else {
-                return createChatElement(key, translate("chatmessage.jailorDecideExecute.null"), SPECIAL);
+                return createChatElement(key, translate("chatmessage.jailorDecideExecute.nobody"), SPECIAL);
             }
             ////////////////////// NIGHT
         case "roleBlocked":
@@ -205,11 +205,15 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                 RESULT_STYLE
             );
         case "lookoutResult":
-            return createChatElement(key, translate("chatmessage.lookoutResult", 
-            message.players.map(playerIndex => 
-                    GAME_MANAGER.gameState.players[playerIndex].toString()
-                ).join(", ")
-            ), RESULT_STYLE);
+            if (message.players.length === 0) {
+                return createChatElement(key, translate("chatmessage.night.lookoutResult.nobody"), RESULT_STYLE)
+            } else {
+                return createChatElement(key, translate("chatmessage.night.lookoutResult", 
+                    message.players.map(playerIndex => 
+                        GAME_MANAGER.gameState.players[playerIndex].toString()
+                    ).join(", ")
+                ), RESULT_STYLE);
+            }
         case "seerResult":
             return createChatElement(key, 
                 translate("chatmessage.seerResult." + message.enemies ? "enemies" : "friends"),

@@ -29,14 +29,9 @@ export default class JoinMenu extends React.Component<JoinMenuProps, JoinMenuSta
         this.setState({roomCode: code})
     }
     async joinGameButton(){
-        GAME_MANAGER.roomCode = this.state.roomCode;
-
         Anchor.setContent(LoadingScreen.create(LoadingScreen.Type.Join));
 
-        GAME_MANAGER.server.close();
-        await GAME_MANAGER.server.open();
-        
-        await GAME_MANAGER.sendJoinPacket();
+        GAME_MANAGER.tryJoinGame(this.state.roomCode)
     }
     render(){return(
         <div className="jm">

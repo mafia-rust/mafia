@@ -107,19 +107,28 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
             return this.renderRoleWiki(this.state.expandedRole);
         }else{
             return this.getRolesFromSearch(this.state.wikiSearch).map((role)=>{
-                return <button key={role} onClick={()=>{this.setState({expandedRole: role})}}>{styleText(translate("role."+role+".name"))}</button>
+                return <button key={role} 
+                    onClick={()=>{this.setState({wikiSearch: translate("role."+role+".name"),expandedRole: role})}}
+                >{
+                    styleText(translate("role."+role+".name"))
+                }</button>
             })
         }
     }
     render() {return (<div className="wiki-search">
-        <input type="text" value={this.state.wikiSearch}
-            onChange={(e)=>{this.setState({wikiSearch: e.target.value, expandedRole: null})}}
-            placeholder={translate("menu.wiki.search.placeholder")}
-        />
-        <div>
-            <div>
-                {this.renderExpandedRoleOrSearch()}
-            </div>
+        <div className="wiki-search-bar">
+            <input type="text" value={this.state.wikiSearch}
+                onChange={(e)=>{this.setState({wikiSearch: e.target.value, expandedRole: null})}}
+                placeholder={translate("menu.wiki.search.placeholder")}
+            />
+            {this.state.wikiSearch !== null && this.state.wikiSearch !== "" ? 
+                <button onClick={() => {
+                    this.setState({wikiSearch: "", expandedRole: null})
+                }}>{translate("menu.wiki.search.clear")}</button> 
+            : null}
+        </div>
+        <div className="wiki-results">
+            {this.renderExpandedRoleOrSearch()}
         </div>
     </div>);}
 }

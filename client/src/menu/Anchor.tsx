@@ -4,11 +4,11 @@ import "./anchor.css";
 
 type AnchorProps = {
     content: JSX.Element,
+    onMount: () => void
 }
 type AnchorState = {
     content: JSX.Element,
 }
-
 
 export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     private static instance: Anchor;
@@ -22,6 +22,8 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     }
     componentDidMount() {
         Anchor.instance = this;
+
+        this.props.onMount()
     }
     render(){return(
         <div className="anchor">

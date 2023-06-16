@@ -6,9 +6,11 @@
     max-width: 90%;
     transform: translate(-50%, -50%);
 }
+.sm-main > header {
+    margin-bottom: 5%;
+}
 .sm-center-content > header {
     align-items: center;
-    margin-bottom: 5%;
 }
 .sm-center-content > header > h1 {
     font-size: 700%;
@@ -32,16 +34,20 @@
 }
 
 .sm-wiki {
-    padding: 1rem;
+    margin: 1rem;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     flex-direction: column;
     height: 60%;
+    overflow: hidden;
     width: 50%;
 }
 
+.sm-wiki > header {
+    height: 25%;
+}
+
 .sm-wiki > div {
-    max-width: 90vw;
-    height: 100%;
+    height: 75%;
 }

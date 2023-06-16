@@ -37,8 +37,10 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
     render() {
         return <div className="lm">
             <header>
-                {/* <input type="text" disabled/>   */}
-                {/* supposedly required for clipboard TODO */}
+                {/* TODO: Place this nicely */}
+                <button className="leave-button" onClick={GAME_MANAGER.leaveGame}>
+                    {translate("menu.button.leave")}
+                </button>
                 <button onClick={() => {
                     let code = new URL(window.location.href);
                     code.searchParams.set("code", GAME_MANAGER.roomCode!);

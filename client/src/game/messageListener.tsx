@@ -11,7 +11,7 @@ import { Role } from "./gameState.d";
 
 export default function messageListener(packet: ToClientPacket){
 
-    console.log(packet);
+    console.log(JSON.stringify(packet, null, 2));
     switch(packet.type) {
         case "acceptJoin":
             if(packet.inGame){
