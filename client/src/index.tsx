@@ -5,12 +5,24 @@ import Anchor from './menu/Anchor';
 import { GameManager, createGameManager } from './game/gameManager';
 import { createGameState } from './game/gameState';
 import StartMenu from './menu/main/StartMenu';
+import * as LoadingScreen from './menu/LoadingScreen'; 
 
+const QUERY_PARAMS = new URLSearchParams(window.location.search);
+// Clear query parameters from visible URL
+window.history.replaceState({}, document.title, window.location.pathname);
 
 const ROOT = ReactDOM.createRoot(document.getElementById('root')!);
 const GAME_MANAGER: GameManager = createGameManager();
 const TIME_PERIOD = 1000;
 export default GAME_MANAGER;
+
+GAME_MANAGER.addStateListener((type) => {
+    switch (type) {
+        case "acceptJoin":
+        case "acceptHost":
+            window.history.pushState({}, document.title, `?code=${GAME_MANAGER.roomCode}`);
+    }
+})
 
 setInterval(() => {
     GAME_MANAGER.tick(TIME_PERIOD);
@@ -18,19 +30,19 @@ setInterval(() => {
 
 // Route roomcode queries to the associated lobby
 function onMount() {
-    const roomCode = (new URL(window.location.href)).searchParams.get("code");
-    
+    const roomCode = QUERY_PARAMS.get("code");
+
     if (roomCode !== null) {
         GAME_MANAGER.gameState = createGameState();
         GAME_MANAGER.tryJoinGame(roomCode);
+    } else {
+        Anchor.setContent(<StartMenu/>)
     }
-
-    window.history.replaceState({}, document.title, window.location.pathname);
 }
 
 ROOT.render(
     <Anchor 
-        content={<StartMenu/>} 
+        content={LoadingScreen.create()} 
         onMount={onMount}
     />
 );
