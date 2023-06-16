@@ -187,7 +187,7 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                     message.targets.map((target) => GAME_MANAGER.gameState.players[target].toString()).join(", ")
                 ), SPECIAL);
             } else {
-                return createChatElement(key, translate("chatmessage.jailorDecideExecute.null"), SPECIAL);
+                return createChatElement(key, translate("chatmessage.jailorDecideExecute.nobody"), SPECIAL);
             }
         default:
             console.error("Unknown message type " + message.type + ":");
@@ -214,11 +214,15 @@ export function getNightInformationChatElement(info: NightInformation, key: numb
                 RESULT_STYLE
             );
         case "lookoutResult":
-            return createChatElement(key, translate("chatmessage.night.lookoutResult", 
-                info.players.map(playerIndex => 
-                    GAME_MANAGER.gameState.players[playerIndex].toString()
-                ).join(", ")
-            ), RESULT_STYLE);
+            if (info.players.length === 0) {
+                return createChatElement(key, translate("chatmessage.night.lookoutResult.nobody"), RESULT_STYLE)
+            } else {
+                return createChatElement(key, translate("chatmessage.night.lookoutResult", 
+                    info.players.map(playerIndex => 
+                        GAME_MANAGER.gameState.players[playerIndex].toString()
+                    ).join(", ")
+                ), RESULT_STYLE);
+            }
         case "seerResult":
             return createChatElement(key, 
                 translate("chatmessage.night.seerResult." + info.enemies ? "enemies" : "friends"),
