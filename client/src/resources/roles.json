@@ -8,6 +8,15 @@
         "endGameCondition": "Faction",
         "maxCount": 1
     },
+    "transporter":{
+        "factionAlignment": "townPower",
+        "suspicious": false,
+        "roleblockable": false,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": null
+    },
     "sheriff": {
         "factionAlignment": "townInvestigative",
         "suspicious": false,

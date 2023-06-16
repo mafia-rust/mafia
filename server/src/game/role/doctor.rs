@@ -1,8 +1,7 @@
 
 use serde::Serialize;
 
-use crate::game::chat::night_message::NightInformation;
-use crate::game::chat::ChatGroup;
+use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::FactionAlignment;
@@ -46,7 +45,7 @@ impl RoleStateImpl for Doctor {
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
                 let target_ref = visit.target;
                 if target_ref.night_jailed(game){
-                    actor_ref.push_night_message(game, NightInformation::TargetJailed);
+                    actor_ref.push_night_message(game, ChatMessage::TargetJailed);
                     return
                 }
                 
@@ -64,8 +63,8 @@ impl RoleStateImpl for Doctor {
                 if let Some(target_healed_ref) = self.target_healed_ref {
                     if target_healed_ref.night_attacked(game){
                         
-                        actor_ref.push_night_message(game, NightInformation::DoctorHealed);
-                        target_healed_ref.push_night_message(game, NightInformation::DoctorHealedYou);
+                        actor_ref.push_night_message(game, ChatMessage::DoctorHealed);
+                        target_healed_ref.push_night_message(game, ChatMessage::DoctorHealedYou);
                     }
                 }
             }

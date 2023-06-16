@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::night_message::NightInformation;
-use crate::game::chat::ChatGroup;
+use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -67,19 +66,19 @@ impl RoleStateImpl for Veteran {
                         if other_player_ref.night_jailed(game){continue;}  //Attacking Jailed Player?
 
                         other_player_ref.push_night_message(game,
-                            NightInformation::VeteranAttackedYou 
+                            ChatMessage::VeteranAttackedYou 
                         );
 
                         //Kill
                         let killed = other_player_ref.try_night_kill(game, GraveKiller::Role(Role::Veteran), 2);
                         
                         actor_ref.push_night_message(game, 
-                            NightInformation::VeteranAttackedVisitor 
+                            ChatMessage::VeteranAttackedVisitor 
                         );
 
                         if !killed {
                             actor_ref.push_night_message(game,
-                                NightInformation::TargetSurvivedAttack 
+                                ChatMessage::TargetSurvivedAttack 
                             );
                         }
                     }

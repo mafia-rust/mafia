@@ -13,48 +13,60 @@ use super::{Priority, RoleStateImpl};
 pub(super) const SUSPICIOUS: bool = false;
 pub(super) const WITCHABLE: bool = true;
 pub(super) const DEFENSE: u8 = 0;
-pub(super) const ROLEBLOCKABLE: bool = true;
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownInvestigative;
+pub(super) const ROLEBLOCKABLE: bool = false;
+pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownPower;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Faction;
 pub(super) const TEAM: Option<Team> = None;
 
 #[derive(Clone, Debug, Serialize, Default)]
-pub struct Seer;
+pub struct Transporter;
 
-impl RoleStateImpl for Seer {
+impl RoleStateImpl for Transporter {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return;}
+    
+        if priority != Priority::Transporter {return;}
+    
+        let transporter_visits = actor_ref.night_visits(game).clone();
+        let Some(first_visit) = transporter_visits.get(0) else {return};
+        let Some(second_visit) = transporter_visits.get(1) else {return};
 
-        if priority != Priority::Investigative {return;}
-
-        let Some(first_visit) = actor_ref.night_visits(game).get(0) else {return;};
-        let Some(second_visit) = actor_ref.night_visits(game).get(1) else {return;};
-
-            
         if first_visit.target.night_jailed(game) || second_visit.target.night_jailed(game){
-            actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+            actor_ref.push_night_message(game, ChatMessage::TargetJailed );
             return
         }
-
-        let message = ChatMessage::SeerResult{enemies:
-            !EndGameCondition::can_win_together(
-                first_visit.target.night_appeared_role(game), 
-                second_visit.target.night_appeared_role(game)
-            )
-        };
         
-        actor_ref.push_night_message(game, message);
+        first_visit.target.push_night_message(game, ChatMessage::Transported);
+        second_visit.target.push_night_message(game, ChatMessage::Transported);
+    
+        //swap targets
+        for player_ref in PlayerReference::all_players(game){
+            if player_ref == actor_ref {continue;}
+
+            let new_visits = player_ref.night_visits(game).clone().into_iter().map(|mut v|{
+                if v.target == first_visit.target {
+                    v.target = second_visit.target;
+                } else if v.target == second_visit.target{
+                    v.target = first_visit.target;
+                }
+                v
+            }).collect();
+            player_ref.set_night_visits(game, new_visits);
+        }
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        actor_ref != target_ref &&
+        let chosen_targets = actor_ref.chosen_targets(game);
+
         !actor_ref.night_jailed(game) &&
         actor_ref.alive(game) &&
-        target_ref.alive(game) &&
+        target_ref.alive(game) && 
         (
-            actor_ref.chosen_targets(game).is_empty() || 
-            actor_ref.chosen_targets(game).len() == 1 && *actor_ref.chosen_targets(game).get(0).unwrap() != target_ref
+            chosen_targets.is_empty()
+        ) || (
+            chosen_targets.len() == 1 &&
+            Some(target_ref) != chosen_targets.get(0).map(|p|*p)
         )
     }
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
@@ -63,8 +75,8 @@ impl RoleStateImpl for Seer {
     fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() == 2 {
             vec![
-                Visit{ target: target_refs[0], astral:false, attack:false },
-                Visit{ target: target_refs[1], astral:false, attack:false }
+                Visit{ target: target_refs[0], astral: false, attack: false },
+                Visit{ target: target_refs[1], astral: false, attack: false }
             ]
         } else {
             Vec::new()

@@ -1,4 +1,4 @@
-use crate::game::{chat::{ChatMessage, night_message::NightInformation, ChatGroup}, Game, grave::GraveKiller, role::{RoleState, Priority}, visit::Visit};
+use crate::{game::{chat::{ChatMessage, ChatGroup}, Game, grave::{GraveKiller, Grave}, role::{RoleState, Priority}, visit::Visit}, packet::ToClientPacket};
 
 use super::PlayerReference;
 
@@ -11,12 +11,12 @@ impl PlayerReference{
             self.set_night_roleblocked(game, true);
             self.set_night_visits(game, vec![]);
             self.push_night_message(game,
-                NightInformation::RoleBlocked { immune: false }
+                ChatMessage::RoleBlocked { immune: false }
             );
             true
         } else {
             self.push_night_message(game,
-                NightInformation::RoleBlocked { immune: true }
+                ChatMessage::RoleBlocked { immune: true }
             );
             false
         }
@@ -27,30 +27,40 @@ impl PlayerReference{
 
         if self.night_defense(game) >= attack {
             self.push_night_message(game,
-                NightInformation::YouSurvivedAttack
+                ChatMessage::YouSurvivedAttack
             );
             return false;
         }
-        
-        //die
-        self.push_night_message(game, NightInformation::YouDied);
 
         if !self.alive(game){
             return true;
         }
         self.set_night_died(game, true);
-        self.set_alive(game, false);
+        // self.set_alive(game, false); TODO remove this comment if it doesnt cause problems. 6/14/2023
         self.push_night_grave_killers(game, grave_killer);
 
         true
+    }
+    pub fn die(&self, game: &mut Game, grave: Grave){
+        self.set_alive(game, false);
+
+        self.add_chat_message(game, ChatMessage::YouDied);
+        game.graves.push(grave.clone());
+        game.send_packet_to_all(ToClientPacket::AddGrave{grave: grave.clone()});
+        game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied { grave: grave.clone() });
+
+        if let Some(role) = grave.role.get_role(){
+            for other_player_ref in PlayerReference::all_players(game){
+                other_player_ref.insert_role_label(game, *self, role);
+            }
+        }
     }
     /// swap this persons role, sending them the role chat message, and associated changes
     pub fn set_role(&self, game: &mut Game, new_role_data: RoleState){
 
         self.set_role_state(game, new_role_data);
         self.on_role_creation(game);
-        let chat_message = ChatMessage::RoleAssignment { role: self.role(game)};
-        self.add_chat_message(game, chat_message);
+        self.add_chat_message(game, ChatMessage::RoleAssignment{role: self.role(game)});
     }
     pub fn increase_defense_to(&self, game: &mut Game, defense: u8){
         if self.night_defense(game) < defense {

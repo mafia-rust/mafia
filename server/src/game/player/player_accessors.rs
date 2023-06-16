@@ -7,8 +7,7 @@ use crate::{
         verdict::Verdict, 
         chat::{
             ChatGroup, 
-            ChatMessage, 
-            night_message::NightInformation
+            ChatMessage,
         }, 
         visit::Visit, 
         grave::{GraveRole, GraveKiller}, tag::Tag}, packet::ToClientPacket, 
@@ -245,13 +244,13 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.visits = visits;
     }
 
-    pub fn night_messages<'a>(&self, game: &'a Game) -> &'a Vec<NightInformation> {
+    pub fn night_messages<'a>(&self, game: &'a Game) -> &'a Vec<ChatMessage> {
         &self.deref(game).night_variables.messages
     }
-    pub fn push_night_message(&self, game: &mut Game, message: NightInformation){
+    pub fn push_night_message(&self, game: &mut Game, message: ChatMessage){
         self.deref_mut(game).night_variables.messages.push(message);
     }
-    pub fn set_night_messages(&self, game: &mut Game, messages: Vec<NightInformation>){
+    pub fn set_night_messages(&self, game: &mut Game, messages: Vec<ChatMessage>){
         self.deref_mut(game).night_variables.messages = messages;
     }
 
@@ -326,7 +325,7 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.silenced = silenced;
         if silenced {
             self.send_packet(game, ToClientPacket::YouAreSilenced);
-            self.push_night_message(game, NightInformation::Silenced);
+            self.push_night_message(game, ChatMessage::Silenced);
         }
     }
 }

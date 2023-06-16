@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::ChatGroup;
-use crate::game::chat::night_message::NightInformation;
+use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::FactionAlignment;
@@ -32,11 +31,11 @@ impl RoleStateImpl for Lookout {
         if let Some(visit) = actor_ref.night_visits(game).first(){
             
             if visit.target.night_jailed(game){
-                actor_ref.push_night_message(game, NightInformation::TargetJailed );
+                actor_ref.push_night_message(game, ChatMessage::TargetJailed );
                 return
             }
             
-            let message = NightInformation::LookoutResult { players: 
+            let message = ChatMessage::LookoutResult { players: 
                 PlayerReference::all_players(game).into_iter().filter(|player_ref|{
                     player_ref.night_appeared_visits(game).iter().any(|other_visit| other_visit.target == visit.target) && //if they visited your target
                     *player_ref != actor_ref //and they are not you

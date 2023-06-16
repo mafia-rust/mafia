@@ -12,10 +12,7 @@ use std::collections::HashMap;
 use crate::{
     game::{
         role::{Role, RoleState}, 
-        chat::{
-            ChatMessage, 
-            night_message::NightInformation
-        }, 
+        chat::ChatMessage, 
         visit::Visit, 
         grave::{GraveRole, GraveKiller}, 
         verdict::Verdict, available_buttons::AvailableButtons
@@ -67,7 +64,7 @@ struct PlayerNightVariables{
     chosen_targets: Vec<PlayerReference>,
     visits:         Vec<Visit>,
 
-    messages: Vec<NightInformation>,
+    messages: Vec<ChatMessage>,
 
     grave_role: GraveRole,
     grave_killers: Vec<GraveKiller>,

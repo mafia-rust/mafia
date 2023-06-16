@@ -64,6 +64,8 @@ export type RoleState = {
     executionsRemaining: number,
     jailedTargetRef: number | null
 } | {
+    role: "transporter"
+} | {
     role: "sheriff"
 } | {
     role: "lookout"

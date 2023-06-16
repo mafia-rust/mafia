@@ -32,16 +32,23 @@ impl RoleStateImpl for Retributionist {
         let retributionist_visits = actor_ref.night_visits(game).clone();
         let Some(first_visit) = retributionist_visits.get(0) else {return};
         let Some(second_visit) = retributionist_visits.get(1) else {return};
+        
     
         if first_visit.target.alive(game) {return;}
     
-        match priority{
+        match priority {
             Priority::Necromancy => {
+
+                let mut new_chosen_targets = vec![second_visit.target];
+                if let Some(third_visit) = retributionist_visits.get(2){
+                    new_chosen_targets.push(third_visit.target);
+                }
+
                 first_visit.target.set_night_visits(
                     game,
-                    first_visit.target.convert_targets_to_visits(game, vec![second_visit.target])
+                    first_visit.target.convert_targets_to_visits(game, new_chosen_targets)
                 );
-                
+
                 let mut used_bodies = self.used_bodies;
                 used_bodies.push(first_visit.target);
                 actor_ref.set_role_state(game, RoleState::Retributionist(Retributionist { used_bodies, currently_used_player: Some(first_visit.target) }));
@@ -66,7 +73,7 @@ impl RoleStateImpl for Retributionist {
             !self.used_bodies.iter().any(|p| *p == target_ref)
         ) || (
             actor_ref != target_ref &&
-            actor_ref.chosen_targets(game).len() == 1 &&
+            (actor_ref.chosen_targets(game).len() == 1 || actor_ref.chosen_targets(game).len() == 2) &&
             target_ref.alive(game)
     
         ))
@@ -81,7 +88,8 @@ impl RoleStateImpl for Retributionist {
         if target_refs.len() == 2 {
             vec![
                 Visit{target: target_refs[0], astral: false, attack: false}, 
-                Visit{target: target_refs[1], astral: true, attack: false}
+                Visit{target: target_refs[1], astral: true, attack: false},
+                Visit{target: target_refs[2], astral: true, attack: false}
             ]
         } else {
             Vec::new()

@@ -1,6 +1,5 @@
 use serde::Serialize;
 
-use crate::game::chat::night_message::NightInformation;
 use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -38,12 +37,12 @@ impl RoleStateImpl for CovenLeader {
         if let Some(visit) = actor_ref.night_visits(game).first(){
             let target_ref = visit.target;
             if target_ref.night_jailed(game) {
-                actor_ref.push_night_message(game, NightInformation::TargetJailed)
+                actor_ref.push_night_message(game, ChatMessage::TargetJailed)
             }else {
                 let killed = target_ref.try_night_kill(game, GraveKiller::Faction(Faction::Coven), 1);
 
                 if !killed {
-                    actor_ref.push_night_message(game, NightInformation::TargetSurvivedAttack);
+                    actor_ref.push_night_message(game, ChatMessage::TargetSurvivedAttack);
                 }
             }
         }

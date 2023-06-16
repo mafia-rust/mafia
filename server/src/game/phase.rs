@@ -7,7 +7,7 @@ use crate::packet::ToClientPacket;
 use super::{
     settings::PhaseTimeSettings,
     Game, player::PlayerReference,
-    chat::{ChatGroup, ChatMessage, night_message::NightInformation},
+    chat::{ChatGroup, ChatMessage},
     verdict::Verdict, grave::Grave, role::{Priority, Role, mafioso::Mafioso}, role_list::Faction,
 };
 
@@ -79,15 +79,9 @@ impl PhaseState {
                 //generate & add graves
                 for player_ref in PlayerReference::all_players(game){
                     if player_ref.night_died(game) {
+
                         let new_grave = Grave::from_player_night(game, player_ref);
-                        game.graves.push(new_grave.clone());
-                        game.send_packet_to_all(ToClientPacket::AddGrave{grave: new_grave.clone()});
-                        game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied { grave: new_grave.clone() });
-                        if let Some(role) = new_grave.role.get_role(){
-                            for other_player_ref in PlayerReference::all_players(game){
-                                other_player_ref.insert_role_label(game, player_ref, role);
-                            }
-                        }
+                        player_ref.die(game, new_grave);
                     }
                 }
 
@@ -205,14 +199,7 @@ impl PhaseState {
                     player_on_trial.set_alive(game, false);
 
                     let new_grave = Grave::from_player_lynch(game, player_on_trial);
-                    game.graves.push(new_grave.clone());
-                    game.send_packet_to_all(ToClientPacket::AddGrave{grave: new_grave.clone()});
-                    game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied { grave: new_grave.clone() });
-                    if let Some(role) = new_grave.role.get_role(){
-                        for other_player_ref in PlayerReference::all_players(game){
-                            other_player_ref.insert_role_label(game, player_on_trial, role);
-                        }
-                    }
+                    player_on_trial.die(game, new_grave);
                 }
 
                 Self::Night
@@ -243,7 +230,7 @@ impl PhaseState {
 
                 //queue night messages
                 for player_ref in PlayerReference::all_players(game){
-                    player_ref.add_chat_messages(game, NightInformation::to_chat_message_vec(player_ref.night_messages(game)));
+                    player_ref.add_chat_messages(game, player_ref.night_messages(game).to_vec());
                 }
 
 

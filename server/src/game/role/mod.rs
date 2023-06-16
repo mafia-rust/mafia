@@ -43,6 +43,7 @@ macros::roles! {
     Escort : escort,
     Medium : medium,
     Retributionist : retributionist,
+    Transporter : transporter,
 
     //Mafia
     Mafioso : mafioso,

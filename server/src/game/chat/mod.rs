@@ -1,9 +1,6 @@
-pub mod night_message;
 
 use serde::{Serialize, Deserialize};
-
 use crate::game::{grave::Grave, role::Role, player::{PlayerIndex, PlayerReference}, verdict::Verdict, phase::PhaseType, Game};
-use self::night_message::NightInformation;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -23,7 +20,7 @@ pub enum ChatMessage {
     Normal{
         message_sender: MessageSender, 
         text: String, 
-        chat_group: ChatGroup
+        chat_group: ChatGroup,
     },
 
     #[serde(rename_all = "camelCase")]
@@ -98,11 +95,6 @@ pub enum ChatMessage {
         targets: Vec<PlayerIndex> 
     },
 
-    #[serde(rename_all = "camelCase")]
-    NightInformation{
-        night_information: NightInformation
-    },
-
     /* Role-specific */
     #[serde(rename_all = "camelCase")]
     MayorRevealed{player_index: PlayerIndex}, //Sammy revealed as mayor
@@ -116,14 +108,60 @@ pub enum ChatMessage {
     JesterWon, //The jester will get their revenge from the grave
     ExecutionerWon, //You got your target lynched
     #[serde(rename_all = "camelCase")]
-    DeputyShot{deputy_index: PlayerIndex, shot_index: PlayerIndex},
+    DeputyShot{shot_index: PlayerIndex},
 
     #[serde(rename_all = "camelCase")]
     PlayerWithNecronomicon{player_index: PlayerIndex}, //Sammy has the necronomicon
 
-    // #[serde(rename_all = "camelCase")]
-    // RoleState{role_data: RoleState},  //Tell executioner their target, other things. TODO
+    //BOTH DAY AND NIGHT
+    TargetSurvivedAttack,
+    YouSurvivedAttack,
+    YouDied,
 
+    //NIGHT INFORMATION MESSAGES
+    RoleBlocked { immune : bool },  //you were roleblocked
+
+    /* Role-specific */
+    TargetJailed,
+
+    SheriffResult { suspicious: bool },
+    LookoutResult{players: Vec<PlayerIndex>},
+    SeerResult{ enemies: bool},
+    SpyMafiaVisit{players: Vec<PlayerIndex>},
+    SpyCovenVisit{players: Vec<PlayerIndex>},
+    SpyBug{message: Box<ChatMessage>},
+
+    VeteranAttackedYou,
+    VeteranAttackedVisitor,
+
+    VigilanteSuicide,
+
+    DoctorHealed, //Your target was attacked
+    DoctorHealedYou, //"Someone attacked you but a doctor nursed you back to health"
+
+    BodyguardProtected, //You redirected an attack off your target
+    BodyguardProtectedYou, //You were attacked but a bodyguard protected you
+
+    Transported,
+
+    RetributionistBug{message: Box<ChatMessage>},
+    NecromancerBug{message: Box<ChatMessage>},
+
+    GodfatherForcedMafioso,
+    GodfatherForcedYou,
+
+    Silenced,
+
+    PlayerRoleAndWill { role: Role, will: String },
+    #[serde(rename_all = "camelCase")]
+    ConsigliereResult{ role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
+ 
+    WitchTargetImmune,
+    WitchedYou { immune: bool },    //you were witched
+    WitchBug{message: Box<ChatMessage>},
+
+    ArsonistCleanedSelf,    //You cleaned the gas off yourself
+    ArsonistWasDoused,  //you were doused in gas (only arsonists recieve this message)
 }
 
 
