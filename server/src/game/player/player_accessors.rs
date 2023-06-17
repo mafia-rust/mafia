@@ -210,10 +210,10 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.appeared_role = role;
     }
 
-    pub fn night_appeared_visits<'a>(&self, game: &'a Game) -> &'a Vec<Visit>{
+    pub fn night_appeared_visits<'a>(&self, game: &'a Game) -> &'a Option<Vec<Visit>>{
         &self.deref(game).night_variables.appeared_visits
     }
-    pub fn set_night_appeared_visits(&self, game: &mut Game, appeared_visits: Vec<Visit>){
+    pub fn set_night_appeared_visits(&self, game: &mut Game, appeared_visits: Option<Vec<Visit>>){
         self.deref_mut(game).night_variables.appeared_visits = appeared_visits;
     }
     

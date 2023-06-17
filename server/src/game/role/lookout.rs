@@ -37,7 +37,7 @@ impl RoleStateImpl for Lookout {
             
             let message = ChatMessage::LookoutResult { players: 
                 PlayerReference::all_players(game).into_iter().filter(|player_ref|{
-                    player_ref.night_appeared_visits(game).iter().any(|other_visit| other_visit.target == visit.target) && //if they visited your target
+                    player_ref.lookout_seen_visits(game).iter().any(|other_visit| other_visit.target == visit.target) && //if they visited your target
                     *player_ref != actor_ref //and they are not you
                 }).map(|player_ref|player_ref.index()).collect()
             };

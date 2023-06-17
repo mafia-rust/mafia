@@ -28,7 +28,7 @@ impl PlayerReference{
                 self.set_night_roleblocked(game,     false);
                 self.set_night_defense(game,         self.role(game).defense());
                 self.set_night_appeared_role(game,   self.role(game));
-                self.set_night_appeared_visits(game, vec![]);
+                self.set_night_appeared_visits(game, None);
                 self.set_night_silenced(game,       false);
                 self.set_chosen_targets(game,   vec![]);
                 self.set_night_visits(game,          vec![]);

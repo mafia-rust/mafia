@@ -37,7 +37,7 @@ impl RoleStateImpl for Framer {
             actor_ref.push_night_message(game, ChatMessage::TargetJailed);
         }else{
             first_visit.target.set_night_appeared_role(game, Role::Mafioso);
-            first_visit.target.set_night_appeared_visits(game, vec![second_visit.clone()]);
+            first_visit.target.set_night_appeared_visits(game, Some(vec![second_visit.clone()]));
         }
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
