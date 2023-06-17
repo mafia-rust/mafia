@@ -30,6 +30,26 @@ fn medium_recieves_dead_messages_from_jail() {
 }
 
 #[test]
+fn bodyguard_protects() {
+    kit::scenario!(game in Night 1 where
+        maf: Mafioso,
+        bg: Bodyguard,
+        townie: Sheriff
+    );
+
+    maf.set_night_target(townie);
+    bg.set_night_target(townie);
+
+    game.skip_to(PhaseType::Morning, 2);
+
+    assert!(townie.get_messages().contains(&ChatMessage::BodyguardProtectedYou));
+
+    assert!(townie.alive());
+    assert!(!bg.alive());
+    assert!(!maf.alive());
+}
+
+#[test]
 fn sheriff_investigates() {
     kit::scenario!(game in Night 1 where
         sher: Sheriff,
