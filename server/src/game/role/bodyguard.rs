@@ -44,6 +44,58 @@ impl RoleStateImpl for Bodyguard {
         if actor_ref.night_jailed(game) {return;}
     
         match priority {
+            Priority::Bodyguard => {
+    
+                let Some(visit) = actor_ref.night_visits(game).first() else {return};
+                let target_ref = visit.target;
+                if actor_ref == target_ref {return}
+    
+                if target_ref.night_jailed(game){
+                    actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                    return
+                }
+    
+                    
+                let mut attackers: Vec<PlayerReference> = Vec::new();
+
+                for attacker_ref in PlayerReference::all_players(game){
+                    for attacker_visit in attacker_ref.lookout_seen_visits(game){
+                        if 
+                            attacker_visit.attack && 
+                            !attacker_visit.astral && 
+                            attacker_visit.target == target_ref && 
+                            attacker_ref != actor_ref
+                        {
+                            attackers.push(attacker_ref);
+                        }
+                    }
+                }
+
+                if attackers.is_empty() {return;}
+                let target_protected_ref = Some(target_ref);
+
+                let mut redirected_player_refs = Vec::new();
+                for attacker_ref in attackers {
+                    if attacker_ref.night_jailed(game) {continue;}
+                    let mut was_redirected = false;
+
+                    let mut visits = Vec::new();
+                    for attacker_visit in attacker_ref.night_visits(game){
+                        if attacker_visit.target == target_ref && !attacker_visit.astral{
+                            visits.push(Visit { target: actor_ref, astral: false, attack: attacker_visit.attack });
+                            was_redirected = true;
+                        }else{
+                            visits.push(attacker_visit.clone());
+                        }
+                    }
+                    attacker_ref.set_night_visits(game, visits);
+                    if was_redirected {redirected_player_refs.push(attacker_ref);}
+                }
+
+                
+                actor_ref.set_role_state(game, RoleState::Bodyguard(Bodyguard { self_shields_remaining: self.self_shields_remaining, target_protected_ref, redirected_player_refs}));
+                
+            },
             Priority::Heal => {
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
                 let target_ref = visit.target;
@@ -57,53 +109,6 @@ impl RoleStateImpl for Bodyguard {
                     let self_shields_remaining = self.self_shields_remaining - 1;
                     target_ref.increase_defense_to(game, 2);
                     actor_ref.set_role_state(game, RoleState::Bodyguard(Bodyguard{ self_shields_remaining, target_protected_ref: self.target_protected_ref, redirected_player_refs: self.redirected_player_refs }));
-                }
-            },
-            Priority::Bodyguard => {
-    
-                let Some(visit) = actor_ref.night_visits(game).first() else {return};
-                let target_ref = visit.target;
-    
-                if target_ref.night_jailed(game){
-                    actor_ref.push_night_message(game, ChatMessage::TargetJailed);
-                    return
-                }
-    
-                if actor_ref != target_ref {
-                    
-                    let mut attackers: Vec<PlayerReference> = Vec::new();
-    
-                    for attacker_ref in PlayerReference::all_players(game){
-                        for attacker_visit in attacker_ref.night_appeared_visits(game){
-                            if attacker_visit.attack && !attacker_visit.astral && attacker_visit.target == target_ref {
-                                attackers.push(attacker_ref);
-                            }
-                        }
-                    }
-    
-                    if attackers.is_empty() {return;}
-                    let target_protected_ref = Some(target_ref);
-    
-                    let mut redirected_player_refs = Vec::new();
-                    for attacker_ref in attackers {
-                        if attacker_ref.night_jailed(game) {continue;}
-                        let mut was_redirected = false;
-    
-                        let mut visits = Vec::new();
-                        for attacker_visit in attacker_ref.night_visits(game){
-                            if attacker_visit.target == target_ref && !attacker_visit.astral{
-                                visits.push(Visit { target: actor_ref, astral: false, attack: attacker_visit.attack });
-                                was_redirected = true;
-                            }else{
-                                visits.push(attacker_visit.clone());
-                            }
-                        }
-                        attacker_ref.set_night_visits(game, visits);
-                        if was_redirected {redirected_player_refs.push(attacker_ref);}
-                    }
-    
-                    
-                    actor_ref.set_role_state(game, RoleState::Bodyguard(Bodyguard { self_shields_remaining: self.self_shields_remaining, target_protected_ref, redirected_player_refs}));
                 }
             },
             Priority::Kill => {

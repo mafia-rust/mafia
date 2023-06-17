@@ -56,7 +56,7 @@ struct PlayerNightVariables{
     roleblocked:    bool,
     defense:        u8,
 
-    appeared_visits: Vec<Visit>,
+    appeared_visits: Option<Vec<Visit>>,
     appeared_role:    Role,
 
     silenced:       bool,
@@ -102,7 +102,7 @@ impl Player {
                 jailed:             false,
                 roleblocked:        false,
                 defense:            0,
-                appeared_visits:    vec![],
+                appeared_visits:    None,
                 appeared_role:      role,
 
                 silenced:           false,
@@ -158,7 +158,7 @@ pub mod test {
                 jailed:             false,
                 roleblocked:        false,
                 defense:            0,
-                appeared_visits:    vec![],
+                appeared_visits:    None,
                 appeared_role:      role,
 
                 silenced:           false,

@@ -36,11 +36,11 @@ impl RoleStateImpl for Consigliere {
             }
 
             let visited_by = PlayerReference::all_players(game).into_iter().filter(|player_ref|{
-                player_ref.night_appeared_visits(game).iter().any(|other_visit| other_visit.target == visit.target) && //if they visited your target
+                player_ref.lookout_seen_visits(game).iter().any(|other_visit| other_visit.target == visit.target) && //if they visited your target
                 *player_ref != actor_ref //and they are not you
             }).map(|player_ref|player_ref.index()).collect();
             
-            let visited = target_ref.night_appeared_visits(game).iter().map(|v|v.target.index()).collect();
+            let visited = target_ref.lookout_seen_visits(game).iter().map(|v|v.target.index()).collect();
 
             let message = ChatMessage::ConsigliereResult{
                 role: target_ref.night_appeared_role(game), visited_by, visited

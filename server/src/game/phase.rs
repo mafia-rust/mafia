@@ -217,8 +217,6 @@ impl PhaseState {
                 for player_ref in PlayerReference::all_players(game){
                     let visits = player_ref.convert_targets_to_visits(game, player_ref.chosen_targets(game).clone());
                     player_ref.set_night_visits(game, visits.clone());
-                    player_ref.set_night_appeared_visits(game, visits);
-
                 }
 
                 //Night actions -- main loop

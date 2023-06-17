@@ -67,6 +67,17 @@ impl PlayerReference{
             self.set_night_defense(game, defense);
         }
     }
+    
+    pub fn lookout_seen_visits<'a>(self, game: &'a Game)->&'a Vec<Visit>{
+        if let Some(v) = self.night_appeared_visits(game){
+            v
+        }else{
+            self.night_visits(game)
+        }
+    }
+    
+    
+    //role functions
     pub fn can_night_target(&self, game: &Game, target_ref: PlayerReference) -> bool {
         self.role_state(game).clone().can_night_target(game, *self, target_ref)
     }

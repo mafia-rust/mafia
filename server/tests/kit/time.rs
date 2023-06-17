@@ -33,3 +33,11 @@ pub fn skip_days(game: &mut Game, days: u8) -> &PhaseState {
     }
     game.current_phase()
 }
+
+pub fn skip_to(game: &mut Game, day_number: u8, phase: PhaseType) -> &PhaseState{
+
+    //TODO
+    //
+    // Your code here ! :D
+    return &PhaseState::Discussion //TODO just to satisfy compiler
+}
