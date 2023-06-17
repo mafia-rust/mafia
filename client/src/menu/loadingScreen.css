@@ -1,20 +1,34 @@
+.loading {
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    max-width: 90%;
+    transform: translate(-50%, -50%);
+}
+.loading > h1 {
+    font-size: 400%;
+    margin-bottom: 10%;
+}
 .loading-dots {
     display: inline-block;
-    width: 60px;
+    width: 80px;
     aspect-ratio: 8/5;
-    --_g: no-repeat radial-gradient(#000 68%,#0000 71%);
-    mask: var(--_g),var(--_g),var(--_g);
+    --circle: no-repeat radial-gradient(#000 68%,#0000 71%);
+    mask: var(--circle), var(--circle), var(--circle);
     mask-size: 25% 40%;
     background: white;
-    animation: load 2s infinite;
+    animation: sine 0.75s infinite linear;
 }
 
-@keyframes load {
-    0%    {mask-position: 0% 0%  ,50% 0%  ,100% 0%  }
-    16.67%{mask-position: 0% 100%,50% 0%  ,100% 0%  }
-    33.33%{mask-position: 0% 100%,50% 100%,100% 0%  }
-    50%   {mask-position: 0% 100%,50% 100%,100% 100%}
-    66.67%{mask-position: 0% 0%  ,50% 100%,100% 100%}
-    83.33%{mask-position: 0% 0%  ,50% 0%  ,100% 100%}
-    100%  {mask-position: 0% 0%  ,50% 0%  ,100% 0%  }
+@keyframes sine {
+    0%   {mask-position: 0% 100% ,50% 50%  ,100% 0%   }
+    12.5%{mask-position: 0% 85.4%,50% 14.6%,100% 14.6%}
+    25%  {mask-position: 0% 50%  ,50% 0%   ,100% 50%  }
+    37.5%{mask-position: 0% 14.6%,50% 14.6%,100% 85.4%}
+    50%  {mask-position: 0% 0%   ,50% 50%  ,100% 100% }
+    62.5%{mask-position: 0% 14.6%,50% 85.4%,100% 85.4%}
+    75%  {mask-position: 0% 50%  ,50% 100% ,100% 50%  }
+    87.5%{mask-position: 0% 85.4%,50% 85.4%,100% 14.6%}
+    100% {mask-position: 0% 100% ,50% 50%  ,100% 0%   }
 }

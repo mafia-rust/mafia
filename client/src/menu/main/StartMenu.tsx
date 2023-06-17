@@ -23,7 +23,7 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
     private async hostGameButton() {
         GAME_MANAGER.gameState = createGameState();
         
-        Anchor.setContent(LoadingScreen.create(LoadingScreen.Type.Host));
+        Anchor.setContent(LoadingScreen.create("host"));
 
         GAME_MANAGER.server.close();
         await GAME_MANAGER.server.open();
