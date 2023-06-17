@@ -76,11 +76,11 @@ export function createGameManager(): GameManager {
             };
             GAME_MANAGER.addStateListener(onJoined);
 
-            let actualCode: number | null = parseInt(gameManager.roomCode!, 18);
+            let actualCode: number = parseInt(gameManager.roomCode!, 18);
 
             this.server.sendPacket({
                 type: "join",
-                roomCode: actualCode == null ? 0 : actualCode
+                roomCode: isNaN(actualCode) ? 0 : actualCode
             });
 
             return promise;

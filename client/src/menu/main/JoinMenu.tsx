@@ -18,7 +18,7 @@ export default class JoinMenu extends React.Component<JoinMenuProps, JoinMenuSta
         super(props);
 
         this.state = {
-            roomCode: this.props.roomCode != null ? this.props.roomCode : "",
+            roomCode: this.props.roomCode ?? "",
         };
     }
     componentDidMount() {
@@ -29,7 +29,7 @@ export default class JoinMenu extends React.Component<JoinMenuProps, JoinMenuSta
         this.setState({roomCode: code})
     }
     async joinGameButton(){
-        Anchor.setContent(LoadingScreen.create(LoadingScreen.Type.Join));
+        Anchor.setContent(LoadingScreen.create("join"));
 
         GAME_MANAGER.tryJoinGame(this.state.roomCode)
     }
