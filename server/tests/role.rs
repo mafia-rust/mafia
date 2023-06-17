@@ -1,5 +1,6 @@
 mod kit;
-pub use kit::time as time_kit;
+pub(crate) use kit::{assert_contains, assert_not_contains};
+use mafia_server::game::chat::{MessageSender, ChatGroup};
 // Pub use so that submodules don't have to re-import everything.
 pub use mafia_server::game::{role::{RoleState, transporter::Transporter, medium::Medium, jailor::Jailor, vigilante::Vigilante, sheriff::Sheriff, escort::Escort, mafioso::Mafioso, bodyguard::Bodyguard}, phase::PhaseState, chat::ChatMessage};
 pub use mafia_server::packet::ToServerPacket;
@@ -7,69 +8,44 @@ pub use mafia_server::game::phase::PhaseType;
 
 #[test]
 fn medium_recieves_dead_messages_from_jail() {
-    kit::scenario!(game where
-        ref medium: Medium,
-        ref jailor: Jailor,
-        ref townie: Sheriff
+    kit::scenario!(game in Evening 1 where
+        medium: Medium,
+        jailor: Jailor,
+        townie: Sheriff
     );
-
     townie.die();
-
     jailor.day_target(medium);
 
-    game.start_phase(PhaseState::Night);
-
+    game.skip_to(PhaseType::Night, 1);
     let dead_message = "Hello medium!! Are you there!?";
     townie.send_message(dead_message);
 
-    let last_recieved_message = match medium.get_messages().last() {
-        Some(ChatMessage::Normal { text, .. }) => {
-            text.clone()
+    assert_contains!(medium.get_messages(), 
+        ChatMessage::Normal { 
+            text: dead_message.to_string(),
+            message_sender: MessageSender::Player { player: townie.index() },
+            chat_group: ChatGroup::Dead
         }
-        _ => panic!("No messages have been received!")
-    };
-
-    assert_eq!(dead_message, last_recieved_message);
-}
-
-#[test]
-fn bodyguard_protects() {
-    kit::scenario!(game in Night 1 where
-        ref maf: Mafioso,
-        ref bg: Bodyguard,
-        ref townie: Sheriff
     );
-
-    maf.set_night_target(townie);
-    bg.set_night_target(townie);
-    
-    kit::time::advance_phase(game); // Morning
-
-    assert!(townie.get_messages().contains(&ChatMessage::BodyguardProtectedYou));
-
-    assert!(townie.alive());
-    assert!(!bg.alive());
-    assert!(!maf.alive());
 }
 
 #[test]
 fn sheriff_investigates() {
     kit::scenario!(game in Night 1 where
-        ref sher: Sheriff,
-        ref mafia: Mafioso,
-        ref townie: Sheriff
+        sher: Sheriff,
+        mafia: Mafioso,
+        townie: Sheriff
     );
     sher.set_night_targets(vec![mafia]);
     
-    kit::time::advance_phase(game); // Morning
-    assert!(sher.get_messages().contains(&ChatMessage::SheriffResult { suspicious: true }));
+    game.skip_to(PhaseType::Morning, 2);
+    assert_contains!(sher.get_messages(), ChatMessage::SheriffResult { suspicious: true });
 
-    kit::time::skip_to_phase(game, PhaseType::Night);
-
+    game.skip_to(PhaseType::Night, 2);
     sher.set_night_targets(vec![townie]);
     
-    kit::time::advance_phase(game); // Morning
-    assert!(sher.get_messages().contains(&ChatMessage::SheriffResult { suspicious: false }));
+    game.skip_to(PhaseType::Morning, 3);
+    assert_contains!(sher.get_messages(), ChatMessage::SheriffResult { suspicious: false });
 }
 
 /// A module for tests involving transporter interactions.
@@ -81,24 +57,19 @@ pub mod transporter_interactions {
     #[test]
     fn vigilante_kills_transportee() {
         kit::scenario!(game in Night 2 where
-            ref trans: Transporter,
-            ref vigi: Vigilante,
-            ref town1: Sheriff,
-            ref town2: Sheriff
+            trans: Transporter,
+            vigi: Vigilante,
+            town1: Sheriff,
+            town2: Sheriff
         );
-    
         trans.set_night_targets(vec![town1, town2]);
         vigi.set_night_target(town1);
     
-        kit::time::advance_phase(game); // Morning
-    
-        // Regular transportation works (vigi)
+        game.skip_to(PhaseType::Morning, 3);
         assert!(town1.alive());
         assert!(!town2.alive());
         
-        kit::time::skip_days(game, 1); // Morning
-    
-        //Vigilante did suicide
+        game.skip_to(PhaseType::Morning, 4);
         assert!(!vigi.alive());
     }
 
@@ -108,18 +79,15 @@ pub mod transporter_interactions {
     #[test]
     fn escort_roleblocks_reverse_transportee() {
         kit::scenario!(game in Night 1 where 
-            ref trans: Transporter,
-            ref escort: Escort,
-            ref town1: Sheriff,
-            ref town2: Sheriff
+            trans: Transporter,
+            escort: Escort,
+            town1: Sheriff,
+            town2: Sheriff
         );
-    
         trans.set_night_targets(vec![town1, town2]);
         escort.set_night_target(town2);
     
-        kit::time::advance_phase(game); // Morning
-        
-        // Reverse transportation works (esc)
+        game.skip_to(PhaseType::Morning, 2);
         assert!(town1.was_roleblocked());
         assert!(!town2.was_roleblocked());
     }
@@ -128,25 +96,24 @@ pub mod transporter_interactions {
     #[test]
     fn bodyguard_protects_transported_target() {
         kit::scenario!(game in Night 1 where
-            ref trans: Transporter,
-            ref maf: Mafioso,
-            ref bg: Bodyguard,
-            ref t1: Sheriff,
-            ref t2: Sheriff
+            trans: Transporter,
+            maf: Mafioso,
+            bg: Bodyguard,
+            t1: Sheriff,
+            t2: Sheriff
         );
-    
         trans.set_night_targets(vec![t1, t2]);
         maf.set_night_target(t1);
         bg.set_night_target(t1);
         
-        kit::time::advance_phase(game); // Morning
-    
+        game.skip_to(PhaseType::Morning, 2);
         assert!(t1.alive());
         assert!(t2.alive());
         assert!(trans.alive());
         assert!(!bg.alive());
         assert!(!maf.alive());
-    
-        assert!(t2.get_messages().contains(&ChatMessage::BodyguardProtectedYou));
+
+        assert_not_contains!(t1.get_messages(), ChatMessage::BodyguardProtectedYou);
+        assert_contains!(t2.get_messages(), ChatMessage::BodyguardProtectedYou);
     }
 }

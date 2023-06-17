@@ -158,11 +158,15 @@ impl Game {
         &self.phase_machine.current_state
     }
 
+    pub fn day_number(&self) -> u8 {
+        self.phase_machine.day_number
+    }
+
     //phase state machine
     pub fn tick(&mut self, time_passed: Duration){
         
         //if max day is reached, end game
-        if self.phase_machine.day_number == 255 {
+        if self.phase_machine.day_number == u8::MAX {
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
             // TODO, clean up the lobby. Stop the ticking
             return;

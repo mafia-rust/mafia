@@ -12,7 +12,7 @@ use super::{
 };
 
 
-#[derive(Clone, Copy, PartialEq, Debug, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, PartialEq, Debug, Eq, Serialize, Deserialize, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum PhaseType {
     Morning,
@@ -68,12 +68,6 @@ impl PhaseState {
     
     pub fn start(game: &mut Game) {
         // Match phase type and do stuff
-        game.add_message_to_chat_group(ChatGroup::All, 
-            ChatMessage::PhaseChange { 
-                phase_type: game.current_phase().get_type(), 
-                day_number: game.phase_machine.day_number 
-            }
-        );
         match game.current_phase().clone() {
             PhaseState::Morning => {
                 //generate & add graves
@@ -85,7 +79,7 @@ impl PhaseState {
                     }
                 }
 
-                game.phase_machine.day_number+=1;   //day_number packet gets sent right after morning starts
+                game.phase_machine.day_number += 1;
             },
             PhaseState::Voting { trials_left } => {
                 let required_votes = 1+
@@ -132,6 +126,12 @@ impl PhaseState {
             | PhaseState::Judgement { .. } 
             | PhaseState::Evening { .. } => {}
         }
+        game.add_message_to_chat_group(ChatGroup::All, 
+            ChatMessage::PhaseChange { 
+                phase_type: game.current_phase().get_type(), 
+                day_number: game.phase_machine.day_number 
+            }
+        );
     }
     
     ///returns the next phase

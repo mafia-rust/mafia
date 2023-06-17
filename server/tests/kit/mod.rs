@@ -1,7 +1,7 @@
 use mafia_server::game::{player::PlayerReference, Game, role::RoleState, role_list::RoleListEntry, settings::Settings, test::mock_game};
 
-pub mod time;
 pub mod player;
+pub mod game;
 
 pub struct TestScenario {
     pub game: Game,
@@ -11,35 +11,48 @@ pub struct TestScenario {
 #[allow(unused)]
 macro_rules! scenario {
     ($game:ident in Evening 1 $($tok:tt)*) => {
-        kit::scenario!($game in Evening 1 $($tok)*);
+        kit::scenario!($game $($tok)*);
     };
     ($game:ident in $phase:ident $day:literal $($tok:tt)*) => {
         kit::scenario!($game $($tok)*);
-        kit::time::advance_phase($game); // Night 1
-        kit::time::skip_days($game, $day - 1); // Night $day
-        kit::time::skip_to_phase($game, PhaseType::$phase);
+        $game.skip_to(PhaseType::$phase, $day);
     };
     ($game:ident where
-        $(ref $name:ident: $role:ident),*
+        $($name:ident: $role:ident),*
     ) => {
         let mut scenario = kit::_init::create_basic_scenario(
             vec![$(RoleState::$role($role::default())),*]
         );
 
-        let $game = &mut scenario.game;
+        let game = &mut scenario.game;
 
         let players: Vec<kit::player::TestPlayer> = scenario.players
             .into_iter()
-            .map(|player| kit::player::TestPlayer::new(player, &$game))
+            .map(|player| kit::player::TestPlayer::new(player, &game))
             .collect();
 
         let [$($name),*] = players.as_slice() else {unreachable!()};
+
+        let mut $game = kit::game::TestGame::new(game);
         $(let $name = *$name;)*
     }
 }
 
 #[allow(unused)]
-pub(crate) use scenario;
+macro_rules! assert_contains {
+    ($container:expr, $value:expr) => {
+        assert!($container.contains(&$value), "{}", format!("Expected {:#?} to contain {:?}", $container, $value));
+    };
+}
+#[allow(unused)]
+macro_rules! assert_not_contains {
+    ($container:expr, $value:expr) => {
+        assert!(!$container.contains(&$value), "{}", format!("Expected {:#?} not to contain {:?}", $container, $value));
+    };
+}
+
+#[allow(unused)]
+pub(crate) use {scenario, assert_contains, assert_not_contains};
 
 /// Stuff that shouldn't be called directly - only in macro invocations.
 #[doc(hidden)]
