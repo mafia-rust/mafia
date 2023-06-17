@@ -1,4 +1,4 @@
-import GameState, { Phase, PlayerIndex, RoleListEntry, Verdict } from "./gameState.d";
+import GameState, { Phase, PhaseTimes, PlayerIndex, RoleListEntry, Verdict } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 
 export interface Server {
@@ -36,7 +36,8 @@ export interface GameManager {
     sendJoinPacket(): Promise<void>;
     sendSetNamePacket(name: string): void;
     sendStartGamePacket(): void;
-    phaseTimeButton(phase: Phase, time: number): void;
+    sendSetPhaseTimePacket(phase: Phase, time: number): void;
+    sendSetPhaseTimesPacket(phaseTimeSettings: PhaseTimes): void;
     sendSetRoleListPacket(roleListEntries: RoleListEntry[]): void;
     
     sendJudgementPacket(judgement: Verdict): void;

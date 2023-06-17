@@ -5,7 +5,7 @@ import GAME_MANAGER from "./../index";
 import messageListener from "./messageListener";
 import CONFIG from "./../resources/config.json"
 import React from "react";
-import { Phase, RoleListEntry, Verdict } from "./gameState.d";
+import { Phase, PhaseTimes, RoleListEntry, Verdict } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 
@@ -97,7 +97,7 @@ export function createGameManager(): GameManager {
                 type: "startGame"
             });
         },
-        phaseTimeButton(phase: Phase, time: number) {
+        sendSetPhaseTimePacket(phase: Phase, time: number) {
             if (isValidPhaseTime(time)) {
                 this.server.sendPacket({
                     type: "setPhaseTime",
@@ -105,6 +105,13 @@ export function createGameManager(): GameManager {
                     time: time
                 });
             }
+        },
+        sendSetPhaseTimesPacket(phaseTimeSettings: PhaseTimes) {
+            // No need for validity checks here - json should be valid.
+            this.server.sendPacket({
+                type: "setPhaseTimes",
+                phaseTimeSettings
+            });
         },
         sendSetRoleListPacket(roleListEntries: RoleListEntry[]) {
             this.server.sendPacket({

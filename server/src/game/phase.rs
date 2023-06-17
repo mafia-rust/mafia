@@ -46,7 +46,7 @@ impl PhaseStateMachine {
         let current_state = PhaseState::Evening { player_on_trial: None };
 
         Self {
-            time_remaining: current_state.get_length(&times),
+            time_remaining: times.get_time_for(current_state.get_type()),
             day_number: 1,
             current_state,
         }
@@ -234,18 +234,6 @@ impl PhaseState {
 
                 Self::Morning
             },
-        }
-    }
-
-    pub const fn get_length(&self, times: &PhaseTimeSettings) -> Duration {
-        match self {
-            PhaseState::Morning => times.morning,
-            PhaseState::Discussion => times.discussion,
-            PhaseState::Voting {..} => times.voting,
-            PhaseState::Testimony {..} => times.testimony,
-            PhaseState::Judgement {..} => times.judgement,
-            PhaseState::Evening {..} => times.evening,
-            PhaseState::Night => times.night,
         }
     }
     

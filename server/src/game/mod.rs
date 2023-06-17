@@ -202,7 +202,7 @@ impl Game {
     pub fn start_phase(&mut self, phase: PhaseState){
 
         self.phase_machine.current_state = phase;
-        self.phase_machine.time_remaining = self.current_phase().get_length(&self.settings.phase_times);
+        self.phase_machine.time_remaining = self.settings.phase_times.get_time_for(self.current_phase().get_type());
 
         PhaseState::start(self); //THIS WAS RECENTLY MOVED BEFORE THE ON_PHASE_STARTS, PRAY THAT IT WONT CAUSE PROBLEMS
 

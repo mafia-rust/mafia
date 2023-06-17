@@ -26,7 +26,7 @@ use crate::{game::{
     verdict::Verdict, phase::PhaseType, 
     chat::ChatMessage,
     role::{Role, RoleState}, 
-    Game, grave::Grave, available_buttons::AvailableButtons, tag::Tag
+    Game, grave::Grave, available_buttons::AvailableButtons, tag::Tag, settings::PhaseTimeSettings
 }, listener::RoomCode, log};
 
 #[derive(Serialize, Debug, Clone)]
@@ -56,6 +56,8 @@ pub enum ToClientPacket{
     RoleList{role_list: RoleList},
     #[serde(rename_all = "camelCase")]
     PhaseTime{phase: PhaseType, time: u64},
+    #[serde(rename_all = "camelCase")]
+    PhaseTimes{phase_time_settings: PhaseTimeSettings},
     #[serde(rename_all = "camelCase")]
     ExcludedRoles{roles: Vec<RoleListEntry>},
 
@@ -166,6 +168,8 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SetRoleList{role_list: RoleList},
     SetPhaseTime{phase: PhaseType, time: u64},
+    #[serde(rename_all = "camelCase")]
+    SetPhaseTimes{phase_time_settings: PhaseTimeSettings},
     SetExcludedRoles{roles: Vec<RoleListEntry>},
 
     //Game

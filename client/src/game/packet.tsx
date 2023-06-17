@@ -1,4 +1,4 @@
-import { Phase, PlayerIndex, Role, RoleState, RoleListEntry, Verdict } from "./gameState.d"
+import { Phase, PlayerIndex, Role, RoleState, RoleListEntry, Verdict, PhaseTimes } from "./gameState.d"
 import { Grave } from "./grave"
 import { ChatMessage } from "./chatMessage"
 
@@ -36,6 +36,9 @@ export type ToClientPacket = {
     type: "phaseTime",
     phase: Phase, 
     time: number
+} | {
+    type: "phaseTimes",
+    phaseTimeSettings: PhaseTimes
 } | {
     type: "excludedRoles",
     roles: RoleListEntry[]
@@ -119,6 +122,9 @@ export type ToServerPacket = {
     type: "setPhaseTime", 
     phase: Phase, 
     time: number
+} | {
+    type: "setPhaseTimes", 
+    phaseTimeSettings: PhaseTimes
 } | {
     type: "setExcludedRoles", 
     roles: RoleListEntry[], 
