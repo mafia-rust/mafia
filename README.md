@@ -9,10 +9,10 @@ cd mafia-rust
 ```
 From here it's recommended to split terminals (If you're using VSCode), or open up a second terminal - one for client and one for server.
 ## Client setup
-Enter the client directory and install the required dependencies using [npm](https://www.npmjs.com/). Our dependencies are a little messed up at the moment, so you may need to use the `--force` flag.
+Enter the client directory and install the required dependencies using [npm](https://www.npmjs.com/).
 ```bash
 cd client
-npm install --force
+npm install
 ```
 You can now start the client frontend using npm. If you're using WSL, you need to execute with `sudo`
 ```bash
