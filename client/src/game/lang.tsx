@@ -1,10 +1,10 @@
 import React from "react";
 import GAME_MANAGER from "../index";
 import ROLES from "../resources/roles.json";
-import { FactionAlignment, getFactionFromFactionAlignment } from "./gameState.d";
+import { Role, getFactionFromRole } from "./gameState.d";
 import { ChatMessage } from "./chatMessage";
 
-export let lang: ReadonlyMap<string, string>;
+let lang: ReadonlyMap<string, string>;
 switchLanguage("en_us");
 
 export function switchLanguage(language: string) {
@@ -24,7 +24,7 @@ export default function translate(langKey: string, ...valuesList: (string | numb
     return out;
 }
 
-export function getChatElement(message: ChatMessage, key: string): JSX.Element {
+export function getChatElement(message: ChatMessage, key: number): JSX.Element {
     const SPECIAL = { text: { color: "violet" } };
     const PLAYER_MESSAGE = { indent: true }; // 2rem
     const DISCREET = { text: { color: "turquoise" } };
@@ -221,11 +221,11 @@ export function getChatElement(message: ChatMessage, key: string): JSX.Element {
             );
         case "retributionistBug":
             return <>{[
-                createChatElement(key, 
+                createChatElement(0, 
                     translate("chatmessage.retributionistBug"),
                     RESULT_STYLE
                 ), 
-                getChatElement(message.message, key+".bugMessage")
+                getChatElement(message.message, 1)
             ]}</>;
         case "playerRoleAndWill":
             return createChatElement(key, translate("chatmessage.playersRoleAndWill", 
@@ -241,20 +241,46 @@ export function getChatElement(message: ChatMessage, key: string): JSX.Element {
         /* Messages that players must not miss */
         case "silenced":
             return createChatElement(key, translate("chatmessage."+message.type), WARNING_STYLE);
-        default:
+        case "arsonistCleanedSelf":
+        case "arsonistDousedPlayers":
+        case "bodyguardProtected":
+        case "bodyguardProtectedYou":
+        case "doctorHealed":
+        case "doctorHealedYou":
+        case "executionerWon":
+        case "framerFramedPlayers":
+        case "gameOver":
+        case "godfatherForcedMafioso":
+        case "godfatherForcedYou":
+        case "jesterWon":
+        case "mayorCantWhisper":
+        case "mediumSeanceYou":
+        case "playerWithNecronomicon":
+        case "roleData":
+        case "spyMafiaVisit":
+        case "targetJailed":
+        case "targetSurvivedAttack":
+        case "transported":
+        case "veteranAttackedVisitor":
+        case "veteranAttackedYou":
+        case "vigilanteSuicide":
+        case "witchBug":
+        case "witchTargetImmune":
+        case "witchedYou":
+        case "youSurvivedAttack":
             return createChatElement(key, translate("chatmessage."+message.type), RESULT_STYLE);
-        // default:
-        //     console.error("Unknown message type " + message.type + ":");
-        //     console.error(message);
-        //     return createChatElement(key, "FIXME: " + translate("chatmessage." + message), {
-        //         box: { borderStyle: "thick", borderColor: "purple" },
-        //         ...SPECIAL
-        //     });
+        default:
+            console.error("Unknown message type " + (message as any).type + ":");
+            console.error(message);
+            return createChatElement(key, "FIXME: " + translate("chatmessage." + message), {
+                box: { borderStyle: "thick", borderColor: "purple" },
+                ...SPECIAL
+            });
     }
 }
 
 function createChatElement(
-    key: string, 
+    key: number, 
     text: string,
     style: {
         box?: React.CSSProperties,
@@ -268,22 +294,30 @@ function createChatElement(
     })}</span>
 }
 
-function styleSubstrings(
+const BUILTIN_STYLES: {[key: string]: React.CSSProperties} = {
+    EVIL: { color: "red" },
+    GOOD: { color: "lime" },
+    MAGIC: { color: "magenta" },
+    NEUTRAL: { color: "orange" },
+    INFO: { color: "lightblue" },
+    HIDDEN: { color: "whitesmoke", fontStyle: "italic", fontWeight: "bold" },
+}
+
+type StyleMap = { [key: string]: React.CSSProperties };
+
+export function styleText(
     string: string, 
-    stringsToStyle: {
-        string: string, 
-        style: React.CSSProperties,
-    }[], 
     styleOverride: {
         defaultStyle?: React.CSSProperties, 
         indentStyle?: React.CSSProperties,
     } = {}
 ): JSX.Element[]{
+    const KEYWORD_STYLE_MAP: StyleMap = getKeywordStyles();
 
-    let defaultStyle = styleOverride.defaultStyle !== undefined ? styleOverride.defaultStyle : {};
-    let indentStyle = styleOverride.indentStyle !== undefined ? styleOverride.indentStyle : {};
+    const defaultStyle = styleOverride.defaultStyle ?? {};
+    const indentStyle = styleOverride.indentStyle ?? {};
 
-    type StyledOrNot = {
+    type Token = {
         type: "string"
         string: string 
     } | {
@@ -294,97 +328,109 @@ function styleSubstrings(
         type: "br"
     }
 
-    let finalOutList: StyledOrNot[] = [];
+    let tokens: Token[] = [];
 
-    //add in br
-    string.split("\n").forEach((v, i, a) => {
-        finalOutList.push({type: "string", string: v});
-        if(i !== a.length-1) 
-            finalOutList.push({type: "br"});
+    // Insert newlines
+    string.split("\n").forEach(line => {
+        tokens.push({type: "string", string: line});
+        tokens.push({type: "br"});
     });
+    tokens.pop();
 
+    for(const [stringToStyle, style] of Object.entries(KEYWORD_STYLE_MAP)){
+        // Using for..of or for..in is prone to errors, since we mutate the array as we loop through it,
+        // which is why I've opted for a classical for loop to ensure completeness.
+        for(let index = 0; index < tokens.length; index++) {
+            const token = tokens[index];
+            if (token.type !== "string") continue;
 
-    for(let i in stringsToStyle){
-        for(let j in finalOutList){
-
-            let current = finalOutList[j];
-            if(current === undefined){
-                continue;
-            }
-            if(current.type !== "string"){
-                continue;
-            }
-
-            
             const regEscape = (v: string) => v.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 
-            let currentStringSplit = current.string.split(RegExp("\\b" + regEscape(stringsToStyle[i].string) + "\\b", "gi"));
+            // Remove the stringToStyle and split so we can insert the styled text in its place
+            const stringSplit = token.string.split(RegExp(`\\b${regEscape(stringToStyle)}\\b`, "gi"));
 
+            if (stringSplit.length === 1) continue;
 
-            let currentOutList: StyledOrNot[] = []; 
-
-            for(let str of currentStringSplit){
-                if(str !== "")
-                    currentOutList.push({
+            // Insert the styled string into where we just removed the unstyled string from
+            let replacement: Token[] = []; 
+            for(const string of stringSplit){
+                if(string !== "")
+                    replacement.push({
                         type: "string",
-                        string: str
+                        string: string
                     });
 
-                currentOutList.push({
+                replacement.push({
                     type: "styled",
-                    string: stringsToStyle[i].string, 
-                    style: stringsToStyle[i].style
+                    string: stringToStyle,
+                    style: style
                 });
             }
-            currentOutList.pop();
+            replacement.pop();
 
-            //inject outlist into finaloutlist at position j, without using splice
-            finalOutList = 
-                finalOutList.slice(0, Number(j))
-                .concat(currentOutList)
-                .concat(finalOutList.slice(Number(j)+1));
+            // Insert the new tokens in the place of the old one
+            tokens = 
+                tokens.slice(0, index)
+                    .concat(replacement)
+                    .concat(tokens.slice(index+1));
+            
+            // Skip elements we've already checked
+            index += replacement.length - 1;
         }
     }
 
-    //turn into jsx
-    let outJsxList = [];
+    // Convert to JSX
+    let jsx = [];
     let shouldIndent = false;
-    for(let [i, current] of finalOutList.entries()){
-        if(current.type === "br"){
+    for(const [index, token] of tokens.entries()){
+        if(token.type === "br"){
             shouldIndent = true;
-            outJsxList.push(<br key={i}/>);
-        }else if(current.type === "string"){
-            outJsxList.push(
-            <span key={i} style={shouldIndent ? {...defaultStyle, ...indentStyle} : defaultStyle }>
-                {current.string}
+            jsx.push(<br key={index}/>);
+        }else if(token.type === "string"){
+            jsx.push(
+            <span key={index} style={shouldIndent ? {...defaultStyle, ...indentStyle} : defaultStyle }>
+                {token.string}
             </span>);
             shouldIndent = false;
-        }else if(current.type === "styled"){
-            outJsxList.push(
-            <span key={i}
-                style={shouldIndent ? {...current.style, ...indentStyle} : current.style }
+        }else if(token.type === "styled"){
+            jsx.push(
+            <span key={index}
+                style={shouldIndent ? {...token.style, ...indentStyle} : token.style }
             >
-                {current.string}
+                {token.string}
             </span>);
             shouldIndent = false;
         }
     }
 
-    return outJsxList;
+    return jsx;
 }
 
-// TODO: stringsToStyle should be calculated ONCE, statically, rather than every time this function is called.
-export function styleText(
-    string: string, 
-    styleOverride: {
-        defaultStyle?: React.CSSProperties, 
-        indentStyle?: React.CSSProperties
-    } = {}
-): JSX.Element[]{
-    let stringsToStyle: {string: string, style: React.CSSProperties}[] = [];
+// TODO: Memoize this - shouldn't need to change after a game has begun.
+function getKeywordStyles(): StyleMap {
+    let stringsToStyle: StyleMap = {};
 
+    for(let player of GAME_MANAGER.gameState.players){
+        stringsToStyle[player.toString()] = { color: "whitesmoke", fontStyle: "italic", fontWeight: "bold" };
+    }
+
+    const STYLES = require("../resources/lang/style.json");
+
+    // Automatically color roles based on faction
+    for(let role of Object.keys(ROLES)){
+        stringsToStyle[translate("role." + role + ".name")] = getStyleFromValue(STYLES["faction." + getFactionFromRole(role as Role)]);
+    }
+
+    for (let [key, value] of Object.entries(STYLES)) {
+        stringsToStyle[translate(key)] = getStyleFromValue(value);
+    }
+
+    return stringsToStyle;
+}
+
+function getStyleFromValue(value: any): React.CSSProperties {
     // Use sparingly!
-    let gradient = (colors: string): React.CSSProperties => {
+    const gradient = (colors: string): React.CSSProperties => {
         return {
             backgroundImage: `linear-gradient(to left, ${colors})`,
             backgroundClip: "text",
@@ -394,89 +440,17 @@ export function styleText(
         }
     };
 
-    const EVIL: React.CSSProperties = { color: "red" };
-    const GOOD: React.CSSProperties = { color: "lime" };
-    const MAGIC: React.CSSProperties = { color: "magenta" };
-    const NEUTRAL: React.CSSProperties = { color: "orange" };
-    const INFO: React.CSSProperties = { color: "lightblue" };
-    const HIDDEN: React.CSSProperties = { color: "whitesmoke", fontStyle: "italic", fontWeight: "bold" };
-
-    for(let i = 0; i < GAME_MANAGER.gameState.players.length; i++){
-        stringsToStyle.push(
-            {
-                string: GAME_MANAGER.gameState.players[i].toString(), 
-                style:HIDDEN
-            }
-        )
-    }
-
-    for(let role in ROLES){
-        let roleObject = ROLES[role as keyof typeof ROLES];
-
-        switch(getFactionFromFactionAlignment(roleObject.factionAlignment as FactionAlignment)){
-            case "coven":
-                stringsToStyle.push({string:translate("role."+role+".name"), style:MAGIC});
-                break;
-            case "town":
-                stringsToStyle.push({string:translate("role."+role+".name"), style:GOOD});
-                break;
-            case "mafia":
-                stringsToStyle.push({string:translate("role."+role+".name"), style:EVIL});
-                break;
-            case "neutral":
-                stringsToStyle.push({string:translate("role."+role+".name"), style:NEUTRAL});
-                break;
+    if (typeof value == "object") {
+        return value as React.CSSProperties;
+    } else if (typeof value == "string") {
+        if (value.startsWith("GRADIENT::")) {
+            return gradient(value.substring(10));
+        } else if (Object.keys(BUILTIN_STYLES).includes(value)) {
+            return BUILTIN_STYLES[value];
         }
     }
 
-    stringsToStyle = stringsToStyle.concat([
-        {string:translate("verdict.guilty"), style:EVIL},
-        {string:translate("verdict.innocent"), style:GOOD},
-        {string:translate("innocent.shorthand"), style:GOOD},
-        {string:translate("verdict.abstain"), style:{color:"cyan"}},
-
-        {string:translate("grave.role.cleaned"), style:HIDDEN},
-        {string:translate("grave.role.petrified"), style:HIDDEN},
-        {string:translate("suspicious"), style:EVIL},
-        {string:translate("suspicious.shorthand"), style:EVIL},
-        {string:translate("friends"), style:GOOD},
-        {string:translate("enemies"), style:EVIL},
-
-        {string:translate("faction.town"), style:GOOD},
-        {string:translate("faction.mafia"), style:EVIL},
-        {string:translate("faction.neutral"), style:NEUTRAL},
-        {string:translate("faction.coven"), style:MAGIC},
-
-        {string:translate("alignment.killing"), style:INFO},
-        {string:translate("alignment.investigative"), style:INFO},
-        {string:translate("alignment.protective"), style:INFO},
-        {string:translate("alignment.support"), style:INFO},
-        {string:translate("alignment.deception"), style:INFO},
-        {string:translate("alignment.evil"), style:INFO},
-        {string:translate("alignment.chaos"), style:INFO},
-        {string:translate("alignment.utility"), style:INFO},
-        {string:translate("alignment.power"), style:INFO},
-
-        {string:translate("any"), style:INFO},
-        {string:translate("none"), style:INFO},
-        {string:translate("basic"), style:INFO},
-        {string:translate("powerful"), style:INFO},
-        {string:translate("unstoppable"), style:INFO},
-        {string:translate("invincible"), style:INFO},
-        {string:translate("dead"), style:{fontStyle: "italic", color:"gray"}},
-
-        {string:translate("menu.wiki.abilities"), style:INFO},
-        {string:translate("menu.wiki.attributes"), style:INFO},
-
-        {string:translate("grave.killer.suicide"), style:INFO},
-
-        // Special values:
-
-        {string:translate("kys"), style:gradient("violet, indigo, cyan, green, yellow, orange, red")},
-        
-        {string:translate("pride.gay"), style:gradient("violet, indigo, cyan, green, yellow, orange, red")},
-        {string:translate("pride.trans"), style:gradient("cyan, pink, white, pink, cyan")},
-    ]);
-
-    return styleSubstrings(string, stringsToStyle, styleOverride);
+    console.log(`Found invalid style: ${value}`);
+    // Mark as an error
+    return gradient("magenta, black, white, magenta, black, white, magenta, black, white");
 }
