@@ -82,7 +82,7 @@ impl Lobby {
                     settings.phase_times.discussion, settings.phase_times.voting,
                     settings.phase_times.judgement, settings.phase_times.testimony,
                     settings.phase_times.night,
-                ].iter().all(Duration::is_zero) {
+                ].iter().all(|t| *t == 0) {
                     send.send(ToClientPacket::RejectStart { reason: RejectStartReason::ZeroTimeGame });
                     return;
                 }
@@ -111,20 +111,28 @@ impl Lobby {
                     return;
                 };
 
-                let phase_time = Duration::from_secs(time);
-
                 match phase {
-                    PhaseType::Morning => { settings.phase_times.morning = phase_time; }
-                    PhaseType::Discussion => { settings.phase_times.discussion = phase_time; }
-                    PhaseType::Evening => { settings.phase_times.evening = phase_time; }
-                    PhaseType::Judgement => { settings.phase_times.judgement = phase_time; }
-                    PhaseType::Night => { settings.phase_times.night = phase_time; }
-                    PhaseType::Testimony => { settings.phase_times.testimony = phase_time; }
-                    PhaseType::Voting => { settings.phase_times.voting = phase_time; }
+                    PhaseType::Morning => { settings.phase_times.morning = time; }
+                    PhaseType::Discussion => { settings.phase_times.discussion = time; }
+                    PhaseType::Evening => { settings.phase_times.evening = time; }
+                    PhaseType::Judgement => { settings.phase_times.judgement = time; }
+                    PhaseType::Night => { settings.phase_times.night = time; }
+                    PhaseType::Testimony => { settings.phase_times.testimony = time; }
+                    PhaseType::Voting => { settings.phase_times.voting = time; }
                 };
                 
                 self.send_to_all(ToClientPacket::PhaseTime { phase, time });
             },
+            ToServerPacket::SetPhaseTimes { phase_time_settings } => {
+                let LobbyState::Lobby{ settings, .. } = &mut self.lobby_state else {
+                    println!("{} {}", log::error("Attempted to change phase time outside of the lobby menu!"), player_arbitrary_id);
+                    return;
+                };
+
+                settings.phase_times = phase_time_settings.clone();
+
+                self.send_to_all(ToClientPacket::PhaseTimes { phase_time_settings });
+            }
             ToServerPacket::SetRoleList { mut role_list } => {
                 let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
                     println!("{} {}", log::error("Can't modify game settings outside of the lobby menu"), player_arbitrary_id);

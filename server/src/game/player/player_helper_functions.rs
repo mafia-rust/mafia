@@ -68,14 +68,13 @@ impl PlayerReference{
         }
     }
     
-    pub fn lookout_seen_visits<'a>(self, game: &'a Game)->&'a Vec<Visit>{
-        if let Some(v) = self.night_appeared_visits(game){
+    pub fn lookout_seen_visits(self, game: &Game) -> &Vec<Visit> {
+        if let Some(v) = self.night_appeared_visits(game) {
             v
-        }else{
+        } else {
             self.night_visits(game)
         }
     }
-    
     
     //role functions
     pub fn can_night_target(&self, game: &Game, target_ref: PlayerReference) -> bool {

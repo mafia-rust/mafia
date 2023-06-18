@@ -30,7 +30,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
         };
 
         this.listener = (type)=>{
-            if(type==="phaseTime")
+            if(type==="phaseTime" || type==="phaseTimes")
                 this.setState({
                     mode: this.determineModeFromPhaseTimes(GAME_MANAGER.gameState.phaseTimes),
                     phaseTimes: GAME_MANAGER.gameState.phaseTimes
@@ -56,9 +56,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
                     mode: mode,
                     phaseTimes: phaseTimes
                 });
-                for (let [phase, time] of Object.entries(phaseTimes)) {
-                    GAME_MANAGER.phaseTimeButton(phase as Phase, time);
-                }
+                GAME_MANAGER.sendSetPhaseTimesPacket(phaseTimes);
             }}
         >{
             // TODO lang
@@ -108,11 +106,11 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
                             phaseTimes: {...newPhaseTimes}
                         });
                     }
-                    GAME_MANAGER.phaseTimeButton(phase, value);
+                    GAME_MANAGER.sendSetPhaseTimePacket(phase, value);
                 }}
                 onKeyUp={(e)=>{
                     if(e.key === 'Enter')
-                        GAME_MANAGER.phaseTimeButton(phase, this.state.phaseTimes[phase]);
+                        GAME_MANAGER.sendSetPhaseTimePacket(phase, this.state.phaseTimes[phase]);
                 }}
             />
         </div>
