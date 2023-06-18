@@ -3,7 +3,6 @@ import ROLES from "./../resources/roles.json";
 import translate, { styleText } from "../game/lang";
 import { FactionAlignment, Role, getRoleListEntryFromFactionAlignment, renderRoleListEntry } from "../game/gameState.d";
 import "./wikiSearch.css";
-import { lang } from "../game/lang";
 
 interface WikiSearchState {
     wikiSearch: string,
@@ -141,11 +140,4 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
             {this.renderWikiPageOrSearch()}
         </div>
     </div>);}
-}
-
-
-type WikiEntry = {
-    type: "role", role: Role
-} | {
-    type: "general", name: string
 }

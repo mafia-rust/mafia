@@ -62,9 +62,6 @@ export type ChatMessage = {
     type: "targeted", 
     targeter: PlayerIndex, 
     targets: PlayerIndex[]
-} | {
-    type: "nightInformation", 
-    nightInformation: ChatMessage 
 } | 
 // Role-specific
 {
