@@ -181,7 +181,7 @@ impl Game {
         }
 
         for player_ref in PlayerReference::all_players(self){
-            player_ref.tick(self)
+            player_ref.tick(self, time_passed)
         }
         
         //subtract time for actual tick

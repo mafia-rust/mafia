@@ -216,7 +216,7 @@ impl Lobby {
             LobbyState::Game{ game, players } => {
 
                 for player_ref in PlayerReference::all_players(game){
-                    if !player_ref.is_connected(game){
+                    if player_ref.has_lost_connection(game) {
                         //loop through all arbitrary player ids and find the first one that isn't connected
                         let arbitrary_player_ids: Vec<ArbitraryPlayerID> = players.iter().map(|(id, _)|*id).collect();
                         let mut new_id: ArbitraryPlayerID = 0;
@@ -230,7 +230,7 @@ impl Lobby {
                             host: false,
                         };
                         players.insert(new_id, game_player);
-                        player_ref.connect(game, send.clone());
+                        player_ref.reconnect(game, send.clone());
                         
                         send.send(ToClientPacket::AcceptJoin{in_game: true});
                         
@@ -270,12 +270,13 @@ impl Lobby {
                 }
             },
             LobbyState::Game {game, players} => {
-                // game.on_client_disconnect(*players.get(&id).unwrap());
                 //TODO proper disconnect from game
                 let player_index = players.get(&id);
                 if let Some(game_player) = player_index {
                     if let Ok(player_ref) = PlayerReference::new(game, game_player.player_index) {
-                        player_ref.disconnect(game);
+                        if !player_ref.has_left(game) {
+                            player_ref.lose_connection(game);
+                        }
                     }
                 }
                 players.remove(&id);
@@ -296,6 +297,10 @@ impl Lobby {
     pub fn tick(&mut self, time_passed: Duration){
         if let LobbyState::Game { game, .. } = &mut self.lobby_state {
             game.tick(time_passed);
+            
+            if PlayerReference::all_players(game).iter().all(|p| p.has_left(game)) {
+                self.lobby_state = LobbyState::Closed;
+            }
         }
     }
     

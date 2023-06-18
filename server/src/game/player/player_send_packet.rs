@@ -1,20 +1,32 @@
+use std::time::Duration;
+
 use crate::{game::{Game, available_buttons::AvailableButtons}, packet::{ToClientPacket}, websocket_connections::connection::ClientSender};
 
-use super::PlayerReference;
+use super::{PlayerReference, ClientConnection, DISCONNECT_TIMER_SECS};
 
 impl PlayerReference{
-    pub fn disconnect(&self, game: &mut Game){
-        self.deref_mut(game).sender = None;
-    }
-    pub fn connect(&self, game: &mut Game, sender: ClientSender){
-        self.deref_mut(game).sender = Some(sender);
+    pub fn reconnect(&self, game: &mut Game, sender: ClientSender){
+        self.deref_mut(game).connection = ClientConnection::Connected(sender);
         self.requeue_chat_messages(game);
     }
-    pub fn is_connected(&self, game: &Game)->bool{
-        self.deref(game).sender.is_some()
+    pub fn lose_connection(&self, game: &mut Game){
+        self.deref_mut(game).connection = ClientConnection::LostConnection { disconnect_timer: Duration::from_secs(DISCONNECT_TIMER_SECS) };
     }
+    pub fn leave(&self, game: &mut Game) {
+        self.deref_mut(game).connection = ClientConnection::Disconnected;
+    }
+    pub fn is_connected(&self, game: &Game) -> bool {
+        matches!(self.deref(game).connection, ClientConnection::Connected(_))
+    }
+    pub fn has_lost_connection(&self, game: &Game) -> bool {
+        matches!(self.deref(game).connection, ClientConnection::LostConnection {..})
+    }
+    pub fn has_left(&self, game: &Game) -> bool {
+        matches!(self.deref(game).connection, ClientConnection::Disconnected)
+    }
+
     pub fn send_packet(&self, game: &Game, packet: ToClientPacket){
-        if let Some(sender) = &self.deref(game).sender{
+        if let ClientConnection::Connected(sender) = &self.deref(game).connection{
             sender.send(packet);
         }
     }

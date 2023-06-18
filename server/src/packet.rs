@@ -186,4 +186,6 @@ pub enum ToServerPacket{
     SendWhisper{player_index: PlayerIndex, text: String},
     SaveWill{will: String},
     SaveNotes{notes: String},
+
+    Leave,
 }

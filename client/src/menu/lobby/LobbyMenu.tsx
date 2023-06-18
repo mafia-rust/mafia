@@ -38,7 +38,7 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
         return <div className="lm">
             <header>
                 {/* TODO: Place this nicely */}
-                <button className="leave-button" onClick={GAME_MANAGER.leaveGame}>
+                <button className="leave-button" onClick={() => GAME_MANAGER.leaveGame()}>
                     {translate("menu.button.leave")}
                 </button>
                 <button onClick={() => {

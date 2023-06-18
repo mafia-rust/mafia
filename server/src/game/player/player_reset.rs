@@ -1,13 +1,29 @@
 
 
+use std::time::Duration;
+
 use crate::game::{phase::PhaseType, Game, verdict::Verdict, grave::GraveRole};
-use super::PlayerReference;
+use super::{PlayerReference, ClientConnection};
 
 
 impl PlayerReference{
-    pub fn tick(&self, game: &mut Game){
-        self.send_repeating_data(game);
+    pub fn tick(&self, game: &mut Game, time_passed: Duration){
+        match &self.deref(game).connection {
+            ClientConnection::Connected(_) => self.send_repeating_data(game),
+            ClientConnection::LostConnection { disconnect_timer } => {
+                match disconnect_timer.saturating_sub(time_passed) {
+                    Duration::ZERO => {
+                        self.leave(game);
+                    },
+                    time_remaining => {
+                        self.deref_mut(game).connection = ClientConnection::LostConnection { disconnect_timer: time_remaining }
+                    }
+                }
+            },
+            _ => {}
+        }
     }
+
     pub fn on_phase_start(&self, game: &mut Game, phase: PhaseType){
         match phase {
             PhaseType::Morning => {
