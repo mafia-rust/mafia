@@ -128,7 +128,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
     render() {
         return (
             <div className="game-screen">
-                <button className="leave-button" onClick={GAME_MANAGER.leaveGame}>
+                <button className="leave-button" onClick={() => GAME_MANAGER.leaveGame()}>
                     {translate("menu.button.leave")}
                 </button>
                 <div className="header">

@@ -8,6 +8,7 @@ pub use player_reference::PlayerIndex;
 pub use player_reference::PlayerReference;
 
 use std::collections::HashMap;
+use std::time::Duration;
 
 use crate::{
     game::{
@@ -22,9 +23,8 @@ use crate::{
 
 use super::tag::Tag;
 
-
 pub struct Player {
-    sender: Option<ClientSender>,
+    connection: ClientConnection,
 
     name: String,
     role_state: RoleState,
@@ -74,7 +74,7 @@ struct PlayerNightVariables{
 impl Player {
     pub fn new(name: String, sender: ClientSender, role: Role) -> Self {
         Self {
-            sender: Some(sender),
+            connection: ClientConnection::Connected(sender),
 
             name,
             role_state: role.default_state(),
@@ -122,7 +122,7 @@ impl Player {
 }
 
 pub mod test {
-    use std::collections::HashMap;
+    use std::{collections::HashMap, time::Duration};
 
     use crate::game::{role::Role, verdict::Verdict, grave::GraveRole};
 
@@ -130,7 +130,8 @@ pub mod test {
 
     pub fn mock_player(name: String, role: Role) -> Player {
         Player {
-            sender: None,
+            // Since `tick` is never called in tests, this will never decrement.
+            connection: super::ClientConnection::LostConnection { disconnect_timer: Duration::from_secs(1) },
 
             name,
             role_state: role.default_state(),
@@ -175,4 +176,12 @@ pub mod test {
             },
         }
     }
+}
+
+pub const DISCONNECT_TIMER_SECS: u64 = 45;
+
+enum ClientConnection {
+    Connected(ClientSender),
+    LostConnection { disconnect_timer: Duration },
+    Disconnected
 }

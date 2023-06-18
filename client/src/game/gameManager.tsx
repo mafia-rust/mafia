@@ -21,7 +21,7 @@ export function createGameManager(): GameManager {
         server : createServer(),
 
         listeners : [],
-        
+
         addStateListener(listener) {
             gameManager.listeners.push(listener);
         },
@@ -48,6 +48,10 @@ export function createGameManager(): GameManager {
         },
 
         leaveGame() {
+            if (this.gameState.inGame) {
+                // Let the server know it can disconnect us immediately. No need for a timer.
+                this.server.sendPacket({type: "leave"});
+            }
             // This is kind of lazy. It basically resets the URL to the "main menu" state and refreshes.
             // Clear query parameters from visible URL
             window.history.replaceState({}, document.title, window.location.pathname);

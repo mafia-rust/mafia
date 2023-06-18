@@ -14,6 +14,7 @@ export default function messageListener(packet: ToClientPacket){
     console.log(JSON.stringify(packet, null, 2));
     switch(packet.type) {
         case "acceptJoin":
+            GAME_MANAGER.gameState.inGame = packet.inGame;
             if(packet.inGame){
                 Anchor.setContent(GameScreen.createDefault());
             }else{
@@ -87,6 +88,7 @@ export default function messageListener(packet: ToClientPacket){
             Anchor.setContent(<StartMenu/>)
         break;
         case "startGame":
+            GAME_MANAGER.gameState.inGame = true;
             Anchor.setContent(GameScreen.createDefault());
         break;
         case "roleList":

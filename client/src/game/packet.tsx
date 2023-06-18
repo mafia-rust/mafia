@@ -157,4 +157,6 @@ export type ToServerPacket = {
 } | {
     type: "saveNotes", 
     notes: String
+} | {
+    type: "leave",
 }

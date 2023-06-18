@@ -186,6 +186,9 @@ impl Game {
             ToServerPacket::SaveNotes { notes } => {
                 sender_player_ref.set_notes(self, notes);
             },
+            ToServerPacket::Leave => {
+                sender_player_ref.leave(self);
+            }
             _ => unreachable!()
         }}
         

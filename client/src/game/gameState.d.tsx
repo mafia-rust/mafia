@@ -4,6 +4,8 @@ import ROLES from "./../resources/roles.json";
 import translate, { styleText } from "./lang";
 
 export default interface GameState {
+    inGame: boolean;
+
     myName: string | null,
     myIndex: PlayerIndex | null,
 
