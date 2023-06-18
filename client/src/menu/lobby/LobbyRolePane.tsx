@@ -3,7 +3,7 @@ import GAME_MANAGER from "../../index";
 import { RoleListEntry } from "../../game/gameState.d";
 import "../../index.css";
 import RolePicker from "../RolePicker";
-import { StateEventType } from "../../game/gameManager.d";
+import { StateListener } from "../../game/gameManager.d";
 import translate from "../../game/lang";
 
 interface RolePaneState {
@@ -11,7 +11,7 @@ interface RolePaneState {
 }
 
 export default class LobbyRolePane extends React.Component<{}, RolePaneState> {
-    listener: (type: StateEventType) => void;
+    listener: StateListener;
 
     constructor(props: {}){
         super(props);

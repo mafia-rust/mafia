@@ -20,8 +20,8 @@ export function createGameManager(): GameManager {
 
         server : createServer(),
 
-
         listeners : [],
+        
         addStateListener(listener) {
             gameManager.listeners.push(listener);
         },

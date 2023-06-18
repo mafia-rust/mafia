@@ -7,7 +7,7 @@ import ChatMenu, { textContent } from "./ChatMenu";
 import GameState, { Player, PlayerIndex } from "../../../game/gameState.d";
 import GameScreen, { ContentMenus } from "../GameScreen";
 import { ChatMessage } from "../../../game/chatMessage";
-import { StateEventType } from "../../../game/gameManager.d";
+import { StateListener } from "../../../game/gameManager.d";
 
 interface PlayerListMenuProps {
 }
@@ -18,7 +18,7 @@ interface PlayerListMenuState {
 type PlayerFilter = "all"|"living"|"usable";
 
 export default class PlayerListMenu extends React.Component<PlayerListMenuProps, PlayerListMenuState> {
-    listener: (type: StateEventType) => void;
+    listener: StateListener;
 
     constructor(props: PlayerListMenuProps) {
         super(props);

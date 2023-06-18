@@ -13,7 +13,7 @@ export interface Server {
     close(): void;
 }
 
-export type StateEventType = ToClientPacket["type"] | "tick";
+type StateEventType = ToClientPacket["type"] | "tick";
 export type StateListener = (type?: StateEventType) => void;
 
 export interface GameManager {

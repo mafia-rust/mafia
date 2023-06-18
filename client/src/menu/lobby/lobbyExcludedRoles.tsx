@@ -4,7 +4,7 @@ import GAME_MANAGER from "../../index";
 import { RoleListEntry, renderRoleListEntry } from "../../game/gameState.d";
 import "../../index.css";
 import RolePicker from "../RolePicker";
-import { StateEventType } from "../../game/gameManager.d";
+import { StateListener } from "../../game/gameManager.d";
 import translate from "../../game/lang";
 
 interface ExcludedRolesState {
@@ -13,7 +13,7 @@ interface ExcludedRolesState {
 }
 
 export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRolesState> {
-    listener: (type: StateEventType) => void;
+    listener: StateListener;
 
     constructor(props: {}){
         super(props);

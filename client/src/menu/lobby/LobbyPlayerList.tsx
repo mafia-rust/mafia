@@ -3,7 +3,7 @@ import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
 import { Player } from "../../game/gameState.d";
-import { StateEventType } from "../../game/gameManager.d";
+import { StateListener } from "../../game/gameManager.d";
 
 interface PlayerListState {
     enteredName: string,
@@ -11,7 +11,7 @@ interface PlayerListState {
 }
 
 export default class LobbyPlayerList extends React.Component<{}, PlayerListState> {
-    listener: (type: StateEventType)=>void;
+    listener: StateListener;
     constructor(props: {}) {
         super(props);
 
