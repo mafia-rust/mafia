@@ -75,8 +75,6 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         //turns all 2 spaces into 1 space. turn all tabs into 1 space. turn all new lines into 1 space
         const value = event.target.value.replace(/  +/g, ' ').replace(/\t/g, ' ').replace(/\n/g, ' ');
 
-        ChatMenu.instance.history_poller.reset();
-
         ChatMenu.instance.setState({
             chatField: value
         });
@@ -94,7 +92,9 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         } else if (event.code === "ArrowDown") {
             event.preventDefault();
             let text = ChatMenu.instance.history_poller.poll_previous(ChatMenu.instance.history);
-            if (text !== undefined) 
+            if (text === undefined) 
+                ChatMenu.instance.setState({ chatField: '' })
+            else
                 ChatMenu.instance.setState({ chatField: text })
         }
     };
@@ -218,10 +218,9 @@ class ChatHistoryPoller {
         this.index++;
         let result = history.poll(this.index);
         if (result === undefined) {
-            return undefined;
-        } else {
-            return result;
+            this.index--;
         }
+        return result;
     }
 
     poll_previous(history: ChatHistory): string | undefined {
@@ -231,6 +230,7 @@ class ChatHistoryPoller {
             return undefined;
         } else {
             let result = history.poll(this.index);
+            // History shrunk for some reason. Should be impossible but might as well account for it.
             if (result === undefined) {
                 return this.poll_previous(history);
             } else {
