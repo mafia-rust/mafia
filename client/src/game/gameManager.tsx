@@ -25,10 +25,6 @@ export function createGameManager(): GameManager {
         addStateListener(listener) {
             gameManager.listeners.push(listener);
         },
-        addAndCallStateListener(listener): void {
-            gameManager.listeners.push(listener);
-            listener();
-        },
         removeStateListener(listener) {
             let index = gameManager.listeners.indexOf(listener);
             if(index !== -1)

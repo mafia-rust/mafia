@@ -5,7 +5,7 @@ import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
 import phaseTimesJson from "../../resources/phasetimes.json";
-import { StateEventType } from "../../game/gameManager.d";
+import { StateListener } from "../../game/gameManager.d";
 
 const PHASE_TIME_MODES: ReadonlyMap<string, PhaseTimes> = new Map(Object.entries(phaseTimesJson));
 type PhaseTimeMode = string;
@@ -17,7 +17,7 @@ type PhaseTimePaneState = {
 }
 
 export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePaneState> {
-    listener: (type: StateEventType) => void;
+    listener: StateListener;
     constructor(props: {}) {
         super(props);
 
@@ -43,8 +43,6 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
     componentWillUnmount() {
         GAME_MANAGER.removeStateListener(this.listener);
     }
-
-    
 
     renderTimeModeDropdown() {
         return <select 

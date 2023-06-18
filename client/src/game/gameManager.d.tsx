@@ -13,7 +13,7 @@ export interface Server {
     close(): void;
 }
 
-export type StateEventType = ToClientPacket["type"] | undefined | "tick";
+export type StateEventType = ToClientPacket["type"] | "tick";
 export type StateListener = (type?: StateEventType) => void;
 
 export interface GameManager {
@@ -25,7 +25,6 @@ export interface GameManager {
     listeners: StateListener[],
 
     addStateListener(listener: StateListener): void;
-    addAndCallStateListener(listener: StateListener): void;
     removeStateListener(listener: StateListener): void;
     invokeStateListeners(type?: StateEventType): void;
 
