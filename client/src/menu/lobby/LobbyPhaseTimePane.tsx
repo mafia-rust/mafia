@@ -21,7 +21,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
     constructor(props: {}) {
         super(props);
 
-        let initialPhaseTimes = {...PHASE_TIME_MODES.get("Classic")!};
+        let initialPhaseTimes = GAME_MANAGER.gameState.phaseTimes ?? {...PHASE_TIME_MODES.get("Classic")!};
 
         this.state = {
             mode: this.determineModeFromPhaseTimes(initialPhaseTimes),

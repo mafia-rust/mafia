@@ -301,20 +301,7 @@ impl Lobby {
     
     /// Catches the sender up with the current lobby settings
     pub fn send_settings(player: &LobbyPlayer, settings: &Settings) {
-        for phase in [
-            PhaseType::Morning,
-            PhaseType::Discussion, 
-            PhaseType::Voting,
-            PhaseType::Testimony,
-            PhaseType::Judgement,
-            PhaseType::Evening, 
-            PhaseType::Night,
-        ] {
-            player.send(ToClientPacket::PhaseTime { 
-                phase, 
-                time: settings.phase_times.get_time_for(phase).as_secs() 
-            });
-        }
+        player.send(ToClientPacket::PhaseTimes { phase_time_settings: settings.phase_times.clone() });
         player.send(ToClientPacket::RoleList { role_list: settings.role_list.clone() });
     }
 
