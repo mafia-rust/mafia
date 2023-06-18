@@ -199,7 +199,7 @@ impl Lobby {
                 
                 send.send(ToClientPacket::YourName { name: name.clone() });
                 
-                let new_player = LobbyPlayer { sender: send.clone(), name, host: players.len() == 0 };
+                let new_player = LobbyPlayer { sender: send.clone(), name, host: players.is_empty() };
                 let arbitrary_player_id = players.len() as ArbitraryPlayerID;
                 players.insert(arbitrary_player_id, new_player);
 

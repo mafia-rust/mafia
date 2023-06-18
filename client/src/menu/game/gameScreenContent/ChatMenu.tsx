@@ -34,6 +34,8 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
 
     static instance: ChatMenu | null = null;
     messageSection: HTMLDivElement | null;
+    history: ChatHistory = new ChatHistory(40);
+    history_poller: ChatHistoryPoller = new ChatHistoryPoller();
     listener: () => void;
 
     constructor(props: ChatMenuProps) {
@@ -68,25 +70,37 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     }
 
 
-    handleInputChange = (event: { target: { value: string; }; }) => {
+    handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        if(ChatMenu.instance === null) return;
         //turns all 2 spaces into 1 space. turn all tabs into 1 space. turn all new lines into 1 space
         const value = event.target.value.replace(/  +/g, ' ').replace(/\t/g, ' ').replace(/\n/g, ' ');
 
-        if(ChatMenu.instance === null) return;
+        ChatMenu.instance.history_poller.reset();
+
         ChatMenu.instance.setState({
             chatField: value
         });
     };
-    handleInputKeyPress(event: { code: string; preventDefault: () => void; }){
-        if (event.code === "Enter") {
+    handleInputKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>){
+        if(ChatMenu.instance === null) return;
+        else if (event.code === "Enter") {
             event.preventDefault();
-            if(ChatMenu.instance === null) return;
-                ChatMenu.instance.sendChatField();
+            ChatMenu.instance.sendChatField();
+        } else if (event.code === "ArrowUp") {
+            let text = ChatMenu.instance.history_poller.poll_next(ChatMenu.instance.history);
+            if (text !== undefined) 
+                ChatMenu.instance.setState({ chatField: text })
+        } else if (event.code === "ArrowDown") {
+            let text = ChatMenu.instance.history_poller.poll_previous(ChatMenu.instance.history);
+            if (text !== undefined) 
+                ChatMenu.instance.setState({ chatField: text })
         }
     };
     sendChatField(){
         if(ChatMenu.instance === null) return;
         const text = ChatMenu.instance.state.chatField.trim();
+        ChatMenu.instance.history.push(text);
+        ChatMenu.instance.history_poller.reset();
         if (text.startsWith("/w")) {
             try {
                 let textSplit = text.split(' ');
@@ -124,7 +138,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
                 <textarea
                     value={this.state.chatField}
                     onChange={this.handleInputChange}
-                    onKeyPress={this.handleInputKeyPress}
+                    onKeyDown={this.handleInputKeyDown}
                 />
                 <button onClick={this.sendChatField}>
                     {translate("menu.chat.button.send")}
@@ -185,3 +199,63 @@ export function textContent(elem: React.ReactElement | string): string {
     return textContent(children);
 }
 
+// A utility for keeping track of how we're polling the chat history
+class ChatHistoryPoller {
+    index: number; // -1 indicates we are not using the history.
+
+    constructor() {
+        this.index = -1;
+    }
+
+    reset(): ChatHistoryPoller {
+        this.index = -1;
+        return this;
+    }
+
+    poll_next(history: ChatHistory): string | undefined {
+        this.index++;
+        let result = history.poll(this.index);
+        if (result === undefined) {
+            return undefined;
+        } else {
+            return result;
+        }
+    }
+
+    poll_previous(history: ChatHistory): string | undefined {
+        this.index--;
+        if (this.index < 0) {
+            this.index = -1;
+            return undefined;
+        } else {
+            let result = history.poll(this.index);
+            if (result === undefined) {
+                return this.poll_previous(history);
+            } else {
+                return result;
+            }
+        }
+    }
+}
+
+// A queue with a max length
+class ChatHistory {
+    max_length: number;
+    values: string[];
+
+    constructor(max_length: number) {
+        this.max_length = max_length;
+        this.values = [];
+    }
+
+    poll(n: number): string | undefined {
+        return this.values.at(n);
+    }
+
+    push(message: string) {
+        this.values = [message].concat(this.values);
+        if (this.values.length > this.max_length) {
+            this.values.pop()
+        }
+    }
+}
