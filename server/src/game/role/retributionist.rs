@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::ChatGroup;
+use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::{FactionAlignment, Faction};
@@ -29,15 +29,13 @@ impl RoleStateImpl for Retributionist {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return;}
         
-        let retributionist_visits = actor_ref.night_visits(game).clone();
-        let Some(first_visit) = retributionist_visits.get(0) else {return};
-        let Some(second_visit) = retributionist_visits.get(1) else {return};
-        
-    
-        if first_visit.target.alive(game) {return;}
-    
         match priority {
             Priority::Necromancy => {
+
+                let retributionist_visits = actor_ref.night_visits(game).clone();
+                let Some(first_visit) = retributionist_visits.get(0) else {return};
+                let Some(second_visit) = retributionist_visits.get(1) else {return};
+                if first_visit.target.alive(game) {return;}
 
                 let mut new_chosen_targets = vec![second_visit.target];
                 if let Some(third_visit) = retributionist_visits.get(2){
@@ -56,7 +54,9 @@ impl RoleStateImpl for Retributionist {
             Priority::StealMessages => {
                 if let Some(currently_used_player) = self.currently_used_player {
                     for message in currently_used_player.night_messages(game).clone() {
-                        actor_ref.push_night_message(game, message.clone());
+                        actor_ref.push_night_message(game,
+                            ChatMessage::RetributionistBug { message: Box::new(message.clone()) }
+                        );
                     }
                 }
             },
@@ -89,9 +89,14 @@ impl RoleStateImpl for Retributionist {
             vec![
                 Visit{target: target_refs[0], astral: false, attack: false}, 
                 Visit{target: target_refs[1], astral: true, attack: false},
+            ]
+        } else if target_refs.len() >= 3 {
+            vec![
+                Visit{target: target_refs[0], astral: false, attack: false}, 
+                Visit{target: target_refs[1], astral: true, attack: false},
                 Visit{target: target_refs[2], astral: true, attack: false}
             ]
-        } else {
+        }else{
             Vec::new()
         }
     }

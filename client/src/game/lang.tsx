@@ -4,7 +4,7 @@ import ROLES from "../resources/roles.json";
 import { FactionAlignment, getFactionFromFactionAlignment } from "./gameState.d";
 import { ChatMessage } from "./chatMessage";
 
-let lang: ReadonlyMap<string, string>;
+export let lang: ReadonlyMap<string, string>;
 switchLanguage("en_us");
 
 export function switchLanguage(language: string) {
@@ -24,7 +24,7 @@ export default function translate(langKey: string, ...valuesList: (string | numb
     return out;
 }
 
-export function getChatElement(message: ChatMessage, key: number): JSX.Element {
+export function getChatElement(message: ChatMessage, key: string): JSX.Element {
     const SPECIAL = { text: { color: "violet" } };
     const PLAYER_MESSAGE = { indent: true }; // 2rem
     const DISCREET = { text: { color: "turquoise" } };
@@ -219,6 +219,14 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                 translate("chatmessage.seerResult." + message.enemies ? "enemies" : "friends"),
                 RESULT_STYLE
             );
+        case "retributionistBug":
+            return <>{[
+                createChatElement(key, 
+                    translate("chatmessage.retributionistBug"),
+                    RESULT_STYLE
+                ), 
+                getChatElement(message.message, key+".bugMessage")
+            ]}</>;
         case "playerRoleAndWill":
             return createChatElement(key, translate("chatmessage.playersRoleAndWill", 
                 translate("role."+message.role+".name"), 
@@ -246,7 +254,7 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
 }
 
 function createChatElement(
-    key: number, 
+    key: string, 
     text: string,
     style: {
         box?: React.CSSProperties,

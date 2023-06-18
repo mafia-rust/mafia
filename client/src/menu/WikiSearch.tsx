@@ -3,6 +3,7 @@ import ROLES from "./../resources/roles.json";
 import translate, { styleText } from "../game/lang";
 import { FactionAlignment, Role, getRoleListEntryFromFactionAlignment, renderRoleListEntry } from "../game/gameState.d";
 import "./wikiSearch.css";
+import { lang } from "../game/lang";
 
 interface WikiSearchState {
     wikiSearch: string,
@@ -21,6 +22,9 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
     componentDidMount() {
     }
     componentWillUnmount() {
+    }
+    getGeneralPageFromSearch(search: string): string[] {
+        return []
     }
     getRolesFromSearch(search: string): Role[] {
         search = search.toLowerCase();
@@ -57,7 +61,7 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
         }
         return out;
     }
-    renderRoleWiki(role: Role){
+    renderRoleWikiPage(role: Role){
         let defenseString = "";
         switch(ROLES[role].defense){
             case 0:
@@ -80,10 +84,10 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
                 <div>{renderRoleListEntry(getRoleListEntryFromFactionAlignment(ROLES[role as keyof typeof ROLES].factionAlignment as FactionAlignment))}</div>
                 <br/>
                 {styleText(translate("menu.wiki.abilities"))}
-                {this.renderRoleText(translate("role."+role+".abilities"))}
+                {this.renderWikiText(translate("role."+role+".abilities"))}
                 <br/>
                 {styleText(translate("menu.wiki.attributes"))}
-                {this.renderRoleText(translate("role."+role+".attributes"))}
+                {this.renderWikiText(translate("role."+role+".attributes"))}
                 <br/>
                 {(() => {
                     let maxCount = ROLES[role as keyof typeof ROLES].maxCount;
@@ -95,17 +99,10 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
             </div>
         </div>
     }
-    renderRoleText(string: string): JSX.Element{
-        let split = string.split("*");
-        let out = [];
-        for(let i = 1; i < split.length; i++){
-            out.push(<li key={i}>{split[i]}</li>);
-        }
-        return <div>{out}</div>
-    }
-    renderExpandedRoleOrSearch(){
+    
+    renderWikiPageOrSearch(){
         if(this.state.expandedRole != null){
-            return this.renderRoleWiki(this.state.expandedRole);
+            return this.renderRoleWikiPage(this.state.expandedRole);
         }else{
             return this.getRolesFromSearch(this.state.wikiSearch).map((role)=>{
                 return <button key={role} 
@@ -113,10 +110,22 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
                 >{
                     styleText(translate("role."+role+".name"))
                 }</button>
-            })
+            }).concat();
         }
     }
-    render() {return (<div className="wiki-search">
+
+    renderWikiText(string: string): JSX.Element{
+        let split = string.split("*");
+        let out = [];
+        for(let i = 1; i < split.length; i++){
+            out.push(<li key={i}>{split[i]}</li>);
+        }
+        return <div>{out}</div>
+    }
+
+    render() {
+        this.getGeneralPageFromSearch("");
+        return (<div className="wiki-search">
         <div className="wiki-search-bar">
             <input type="text" value={this.state.wikiSearch}
                 onChange={(e)=>{this.setState({wikiSearch: e.target.value, expandedRole: null})}}
@@ -129,7 +138,14 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
             : null}
         </div>
         <div className="wiki-results">
-            {this.renderExpandedRoleOrSearch()}
+            {this.renderWikiPageOrSearch()}
         </div>
     </div>);}
+}
+
+
+type WikiEntry = {
+    type: "role", role: Role
+} | {
+    type: "general", name: string
 }

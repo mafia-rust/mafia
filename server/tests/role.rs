@@ -1,6 +1,6 @@
 mod kit;
 pub(crate) use kit::{assert_contains, assert_not_contains};
-use mafia_server::game::chat::{MessageSender, ChatGroup};
+use mafia_server::game::{chat::{MessageSender, ChatGroup}, role::{retributionist::Retributionist, jester::Jester}};
 // Pub use so that submodules don't have to re-import everything.
 pub use mafia_server::game::{role::{RoleState, transporter::Transporter, medium::Medium, jailor::Jailor, vigilante::Vigilante, sheriff::Sheriff, escort::Escort, mafioso::Mafioso, bodyguard::Bodyguard}, phase::PhaseState, chat::ChatMessage};
 pub use mafia_server::packet::ToServerPacket;
@@ -30,7 +30,7 @@ fn medium_recieves_dead_messages_from_jail() {
 }
 
 #[test]
-fn bodyguard_protects() {
+fn bodyguard_basic() {
     kit::scenario!(game in Night 1 where
         maf: Mafioso,
         bg: Bodyguard,
@@ -50,7 +50,7 @@ fn bodyguard_protects() {
 }
 
 #[test]
-fn sheriff_investigates() {
+fn sheriff_basic() {
     kit::scenario!(game in Night 1 where
         sher: Sheriff,
         mafia: Mafioso,
@@ -68,72 +68,96 @@ fn sheriff_investigates() {
     assert_contains!(sher.get_messages(), ChatMessage::SheriffResult { suspicious: false });
 }
 
-/// A module for tests involving transporter interactions.
-pub mod transporter_interactions {
-    use super::*;
+/// Tests if transporter properly swaps, redirecting actions on their first target to their
+/// second. The vigilante will try to kill town1, which should end up killing town2.
+#[test]
+fn transporter_basic_vigilante_escort() {
+    kit::scenario!(game in Night 2 where
+        trans: Transporter,
+        vigi: Vigilante,
+        escort: Escort,
+        town1: Sheriff,
+        town2: Sheriff
+    );
+    trans.set_night_targets(vec![town1, town2]);
+    vigi.set_night_target(town1);
+    escort.set_night_target(town2);
 
-    /// Tests if transporter properly swaps, redirecting actions on their first target to their
-    /// second. The vigilante will try to kill town1, which should end up killing town2.
-    #[test]
-    fn vigilante_kills_transportee() {
-        kit::scenario!(game in Night 2 where
-            trans: Transporter,
-            vigi: Vigilante,
-            town1: Sheriff,
-            town2: Sheriff
-        );
-        trans.set_night_targets(vec![town1, town2]);
-        vigi.set_night_target(town1);
-    
-        game.skip_to(PhaseType::Morning, 3);
-        assert!(town1.alive());
-        assert!(!town2.alive());
-        
-        game.skip_to(PhaseType::Morning, 4);
-        assert!(!vigi.alive());
-    }
+    game.skip_to(PhaseType::Morning, 3);
+    assert!(town1.alive());
+    assert!(!town2.alive());
 
-    /// Test if when the transporter swaps two people, visits to the second target also redirect to
-    /// the first target. The escort will try to roleblock town2, which will end up roleblocking 
-    /// town1.
-    #[test]
-    fn escort_roleblocks_reverse_transportee() {
-        kit::scenario!(game in Night 1 where 
-            trans: Transporter,
-            escort: Escort,
-            town1: Sheriff,
-            town2: Sheriff
-        );
-        trans.set_night_targets(vec![town1, town2]);
-        escort.set_night_target(town2);
+    assert!(town1.was_roleblocked());
+    assert!(!town2.was_roleblocked());
     
-        game.skip_to(PhaseType::Morning, 2);
-        assert!(town1.was_roleblocked());
-        assert!(!town2.was_roleblocked());
-    }
-    
-    /// Test that the bodyguard protects the person their target was swapped with
-    #[test]
-    fn bodyguard_protects_transported_target() {
-        kit::scenario!(game in Night 1 where
-            trans: Transporter,
-            maf: Mafioso,
-            bg: Bodyguard,
-            t1: Sheriff,
-            t2: Sheriff
-        );
-        trans.set_night_targets(vec![t1, t2]);
-        maf.set_night_target(t1);
-        bg.set_night_target(t1);
-        
-        game.skip_to(PhaseType::Morning, 2);
-        assert!(t1.alive());
-        assert!(t2.alive());
-        assert!(trans.alive());
-        assert!(!bg.alive());
-        assert!(!maf.alive());
+    game.skip_to(PhaseType::Morning, 4);
+    assert!(!vigi.alive());
+}
 
-        assert_not_contains!(t1.get_messages(), ChatMessage::BodyguardProtectedYou);
-        assert_contains!(t2.get_messages(), ChatMessage::BodyguardProtectedYou);
-    }
+/// Test that the bodyguard protects the person their target was swapped with
+#[test]
+fn bodyguard_protects_transported_target() {
+    kit::scenario!(game in Night 1 where
+        trans: Transporter,
+        maf: Mafioso,
+        bg: Bodyguard,
+        t1: Sheriff,
+        t2: Sheriff
+    );
+    trans.set_night_targets(vec![t1, t2]);
+    maf.set_night_target(t1);
+    bg.set_night_target(t1);
+    
+    game.skip_to(PhaseType::Morning, 2);
+    assert!(t1.alive());
+    assert!(t2.alive());
+    assert!(trans.alive());
+    assert!(!bg.alive());
+    assert!(!maf.alive());
+
+    assert_not_contains!(t1.get_messages(), ChatMessage::BodyguardProtectedYou);
+    assert_contains!(t2.get_messages(), ChatMessage::BodyguardProtectedYou);
+}
+
+#[test]
+fn retributionist_basic(){
+    kit::scenario!(game where
+        ret: Retributionist,
+        sher1: Sheriff,
+        sher2: Sheriff,
+        mafioso: Mafioso,
+        jester: Jester
+    );
+    sher1.die();
+    sher2.die();
+
+    game.next_phase();
+    ret.set_night_targets(vec![sher1, mafioso]);
+    game.next_phase();
+    assert_eq!(
+        *ret.get_messages().get(ret.get_messages().len()-2).unwrap(),
+        ChatMessage::RetributionistBug{message: Box::new(
+            ChatMessage::SheriffResult{ suspicious: true }
+        )}
+    );
+    
+    game.skip_to(PhaseType::Night, 2);
+    ret.set_night_targets(vec![sher1, mafioso, jester]);
+    game.next_phase();
+    assert_ne!(
+        *ret.get_messages().get(ret.get_messages().len()-2).unwrap(), 
+        ChatMessage::RetributionistBug{message: Box::new(
+            ChatMessage::SheriffResult{suspicious: true}
+        )}
+    );
+    
+    game.skip_to(PhaseType::Night, 3);
+    ret.set_night_targets(vec![sher2, jester, mafioso]);
+    game.next_phase();
+    assert_eq!(
+        *ret.get_messages().get(ret.get_messages().len()-2).unwrap(), 
+        ChatMessage::RetributionistBug{message: Box::new(
+            ChatMessage::SheriffResult{suspicious: false}
+        )}
+    );
 }

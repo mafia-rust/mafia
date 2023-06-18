@@ -45,10 +45,13 @@ impl TestGame {
                 panic!("Never reached the specified phase!");
             }
 
-            let next_phase = PhaseState::end(self);
-            self.start_phase(next_phase);
+            self.next_phase();
         }
 
         self.current_phase()
+    }
+    pub fn next_phase(&mut self){
+        let next_phase = PhaseState::end(self);
+        self.start_phase(next_phase);
     }
 }

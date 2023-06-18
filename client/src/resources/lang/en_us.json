@@ -47,6 +47,13 @@
     "menu.wiki.attributes": "Attributes",
     "menu.wiki.search.placeholder": "Search the wiki...",
     "menu.wiki.search.clear": "Clear",
+
+    "menu.wiki.entries.help.title":"Help",
+    "menu.wiki.entries.roles_and_teams.title":"Roles and Teams",
+    "menu.wiki.entries.phases_and_timeline.title":"Phases and Timelines",
+    "menu.wiki.entries.controls.title":"Controls",
+    "menu.wiki.entries.wills_and_notes.title":"Wills and Notes",
+    "menu.wiki.entries.visit.title":"Visits",
     
     "menu.wiki.maxCount": "There can only be \\0 of this role in a game",
     "menu.wiki.suspicious": "This role looks \\0 to the Sheriff",
@@ -301,7 +308,7 @@
     "chatmessage.seerResult.enemies":"Your targets are enemies!",
     "chatmessage.spyMafiaVisit":"The mafia visited: \\0.",
     "chatmessage.spyCovenVisit":"The coven visited: \\0.",
-    "chatmessage.spyBug":"Your bug captured: \\0",
+    "chatmessage.retributionistBug":"Your target got the following message:",
     "chatmessage.veteranAttackedYou":"You were attacked by the veteran you visited.",
     "chatmessage.veteranAttackedVisitor":"You attacked a visitor.",
     "chatmessage.vigilanteSuicide":"You committed suicide over the guilt of killing an innocnet person.",
