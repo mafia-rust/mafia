@@ -87,10 +87,12 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
             event.preventDefault();
             ChatMenu.instance.sendChatField();
         } else if (event.code === "ArrowUp") {
+            event.preventDefault();
             let text = ChatMenu.instance.history_poller.poll_next(ChatMenu.instance.history);
             if (text !== undefined) 
                 ChatMenu.instance.setState({ chatField: text })
         } else if (event.code === "ArrowDown") {
+            event.preventDefault();
             let text = ChatMenu.instance.history_poller.poll_previous(ChatMenu.instance.history);
             if (text !== undefined) 
                 ChatMenu.instance.setState({ chatField: text })
