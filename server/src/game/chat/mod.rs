@@ -129,7 +129,6 @@ pub enum ChatMessage {
     SeerResult{ enemies: bool},
     SpyMafiaVisit{players: Vec<PlayerIndex>},
     SpyCovenVisit{players: Vec<PlayerIndex>},
-    SpyBug{message: Box<ChatMessage>},
 
     VeteranAttackedYou,
     VeteranAttackedVisitor,
@@ -144,7 +143,9 @@ pub enum ChatMessage {
 
     Transported,
 
+    #[serde(rename_all = "camelCase")]
     RetributionistBug{message: Box<ChatMessage>},
+    #[serde(rename_all = "camelCase")]
     NecromancerBug{message: Box<ChatMessage>},
 
     GodfatherForcedMafioso,
@@ -152,6 +153,7 @@ pub enum ChatMessage {
 
     Silenced,
 
+    #[serde(rename_all = "camelCase")]
     PlayerRoleAndWill { role: Role, will: String },
     #[serde(rename_all = "camelCase")]
     ConsigliereResult{ role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},

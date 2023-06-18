@@ -26,16 +26,15 @@ impl TestPlayer {
         self.0.index()
     }
 
-    pub fn set_night_targets(&self, targets: Vec<TestPlayer>) {
-        for target in targets.clone() {
-            assert!(self.0.can_night_target(game!(self), target.0));
-        }
-        self.0.set_chosen_targets(game!(self), targets.into_iter().map(|t|t.0).collect());
+    pub fn set_night_targets(&self, targets: Vec<TestPlayer>)->bool {
+        self.0.set_chosen_targets(
+            game!(self), 
+            targets.into_iter().map(|t|t.0).collect()
+        )
     }
 
-    pub fn set_night_target(&self, target: TestPlayer) {
-        assert!(self.0.can_night_target(game!(self), target.0));
-        self.0.set_chosen_targets(game!(self), vec![target.0]);
+    pub fn set_night_target(&self, target: TestPlayer)->bool {
+        self.0.set_chosen_targets(game!(self), vec![target.0])
     }
 
     pub fn send_message(&self, message: &str) {
@@ -44,12 +43,12 @@ impl TestPlayer {
         );
     }
 
-    pub fn day_target(&self, target: TestPlayer) {
-        assert!(self.0.can_day_target(game!(self), target.0));
-
+    pub fn day_target(&self, target: TestPlayer)->bool{
+        let out = self.0.can_day_target(game!(self), target.0);
         game!(self).on_client_message(self.0.index(), 
             ToServerPacket::DayTarget { player_index: target.index() }
         );
+        out
     }
 
     pub fn alive(&self) -> bool {
@@ -57,7 +56,6 @@ impl TestPlayer {
     }
 
     pub fn die(&self) {
-        assert!(self.alive());
         self.0.set_alive(game!(self), false)
     }
 

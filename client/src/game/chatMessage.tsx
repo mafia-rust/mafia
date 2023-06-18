@@ -122,7 +122,7 @@ export type ChatMessage = {
     type: "spyMafiaVisit", 
     players: PlayerIndex[]
 } | {
-    type: "spyBug", 
+    type: "retributionistBug", 
     message: ChatMessage
 } | {
     type: "veteranAttackedYou"

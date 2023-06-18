@@ -22,7 +22,7 @@ enum LobbyState {
     },
     Game {
         game: Game,
-        players: HashMap<ArbitraryPlayerID, PlayerIndex>,
+        players: HashMap<ArbitraryPlayerID, GamePlayer>,
     },
     Closed
 }
@@ -31,12 +31,18 @@ enum LobbyState {
 pub struct LobbyPlayer{
     pub sender: ClientSender,
     pub name: String,
+    pub host: bool
 }
 
 impl LobbyPlayer {
     pub fn send(&self, message: ToClientPacket) {
         self.sender.send(message);
     }
+}
+#[derive(Clone)]
+pub struct GamePlayer{
+    pub player_index: PlayerIndex,
+    pub host: bool
 }
 
 impl Lobby {
@@ -76,6 +82,9 @@ impl Lobby {
                     println!("{} {}", log::error("ToServerPacket::StartGame can not be used outside of LobbyState::Lobby"), player_arbitrary_id);
                     return;
                 };
+                if let Some(player) = players.get(&player_arbitrary_id){
+                    if !player.host {return;}
+                }
                 
                 if [
                     settings.phase_times.evening, settings.phase_times.morning,
@@ -87,11 +96,11 @@ impl Lobby {
                     return;
                 }
 
-                let mut player_indices: HashMap<ArbitraryPlayerID,PlayerIndex> = HashMap::new();
+                let mut player_indices: HashMap<ArbitraryPlayerID,GamePlayer> = HashMap::new();
                 let mut game_players = Vec::new();
                 
                 for (index, (arbitrary_player_id, lobby_player)) in players.drain().enumerate() {
-                    player_indices.insert(arbitrary_player_id, index as u8);
+                    player_indices.insert(arbitrary_player_id, GamePlayer { player_index: index as PlayerIndex, host: lobby_player.host });
                     game_players.push(lobby_player);
                 }
 
@@ -106,10 +115,13 @@ impl Lobby {
                 //TODO
             },
             ToServerPacket::SetPhaseTime{phase, time} => {
-                let LobbyState::Lobby{ settings, .. } = &mut self.lobby_state else {
+                let LobbyState::Lobby{ settings, players  } = &mut self.lobby_state else {
                     println!("{} {}", log::error("Attempted to change phase time outside of the lobby menu!"), player_arbitrary_id);
                     return;
                 };
+                if let Some(player) = players.get(&player_arbitrary_id){
+                    if !player.host {return;}
+                }
 
                 match phase {
                     PhaseType::Morning => { settings.phase_times.morning = time; }
@@ -138,6 +150,11 @@ impl Lobby {
                     println!("{} {}", log::error("Can't modify game settings outside of the lobby menu"), player_arbitrary_id);
                     return;
                 };
+                if let Some(player) = players.get(&player_arbitrary_id){
+                    if !player.host {return;}
+                }
+
+
                 while role_list.len() < players.len() {
                     role_list.push(RoleListEntry::Any);
                 }
@@ -149,10 +166,15 @@ impl Lobby {
                 self.send_to_all(ToClientPacket::RoleList { role_list });
             }
             ToServerPacket::SetExcludedRoles {mut roles } => {
-                let LobbyState::Lobby{ settings, .. } = &mut self.lobby_state else {
+                let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
                     println!("{} {}", log::error("Can't modify game settings outside of the lobby menu"), player_arbitrary_id);
                     return;
                 };
+                if let Some(player) = players.get(&player_arbitrary_id){
+                    if !player.host {return;}
+                }
+
+
                 let set: HashSet<_> = roles.drain(..).collect(); // dedup
                 roles.extend(set.into_iter());
                 roles.retain(|role|*role != RoleListEntry::Any);
@@ -165,7 +187,7 @@ impl Lobby {
                     return;
                 };
 
-                game.on_client_message(players[&player_arbitrary_id], incoming_packet)
+                game.on_client_message(players[&player_arbitrary_id].player_index, incoming_packet)
             }
         }
     }
@@ -173,12 +195,11 @@ impl Lobby {
     pub fn connect_player_to_lobby(&mut self, send: &ClientSender)-> Result<ArbitraryPlayerID, RejectJoinReason>{
         match &mut self.lobby_state {
             LobbyState::Lobby { players, settings } => {
-                // TODO, move this somewhere else
                 let name = name_validation::sanitize_name("".to_string(), players);
                 
                 send.send(ToClientPacket::YourName { name: name.clone() });
                 
-                let new_player = LobbyPlayer { sender: send.clone(), name };
+                let new_player = LobbyPlayer { sender: send.clone(), name, host: players.len() == 0 };
                 let arbitrary_player_id = players.len() as ArbitraryPlayerID;
                 players.insert(arbitrary_player_id, new_player);
 
@@ -204,8 +225,11 @@ impl Lobby {
                                 new_id = id + 1;
                             }
                         }
-
-                        players.insert(new_id, player_ref.index());
+                        let game_player = GamePlayer{
+                            player_index: player_ref.index(),
+                            host: false,
+                        };
+                        players.insert(new_id, game_player);
                         player_ref.connect(game, send.clone());
                         
                         send.send(ToClientPacket::AcceptJoin{in_game: true});
@@ -232,6 +256,11 @@ impl Lobby {
                     self.lobby_state = LobbyState::Closed;
                     return;
                 }
+                if !players.iter().any(|p|p.1.host) {
+                    if let Some(new_host) = players.values_mut().next(){
+                        new_host.host = true;
+                    }
+                }
 
                 settings.role_list.pop();
 
@@ -244,12 +273,17 @@ impl Lobby {
                 // game.on_client_disconnect(*players.get(&id).unwrap());
                 //TODO proper disconnect from game
                 let player_index = players.get(&id);
-                if let Some(player_index) = player_index {
-                    if let Ok(player_ref) = PlayerReference::new(game, *player_index) {
+                if let Some(game_player) = player_index {
+                    if let Ok(player_ref) = PlayerReference::new(game, game_player.player_index) {
                         player_ref.disconnect(game);
                     }
                 }
                 players.remove(&id);
+                if !players.iter().any(|p|p.1.host) {
+                    if let Some(new_host) = players.values_mut().next(){
+                        new_host.host = true;
+                    }
+                }
             },
             LobbyState::Closed => {}
         }
