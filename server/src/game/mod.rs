@@ -188,17 +188,6 @@ impl Game {
         self.phase_machine.time_remaining = self.phase_machine.time_remaining.saturating_sub(time_passed);
     }
 
-    pub fn on_phase_start(&mut self){
-        match self.current_phase() {
-            PhaseState::Morning => {},
-            PhaseState::Discussion => {},
-            PhaseState::Voting {..} => {},
-            &PhaseState::Testimony {..} => {},
-            &PhaseState::Judgement {..} => {},
-            PhaseState::Evening {..} => {},
-            PhaseState::Night => {},
-        }
-    }
     pub fn start_phase(&mut self, phase: PhaseState){
 
         self.phase_machine.current_state = phase;
@@ -206,14 +195,10 @@ impl Game {
 
         PhaseState::start(self); //THIS WAS RECENTLY MOVED BEFORE THE ON_PHASE_STARTS, PRAY THAT IT WONT CAUSE PROBLEMS
 
-
         //player reset
         for player_ref in PlayerReference::all_players(self){
             player_ref.on_phase_start(self, self.current_phase().get_type());
         }
-
-        //game reset
-        self.on_phase_start();
 
         self.send_packet_to_all(ToClientPacket::Phase { 
             phase: self.current_phase().get_type(),
