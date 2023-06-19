@@ -305,7 +305,7 @@ impl PlayerReference{
             for chat_group in self.get_current_send_chat_groups(game){
                 match chat_group {
                     ChatGroup::All | ChatGroup::Dead | ChatGroup::Jail => {},
-                    ChatGroup::Mafia | ChatGroup::Vampire | ChatGroup::Coven => {
+                    ChatGroup::Mafia | ChatGroup::Vampire | ChatGroup::Coven | ChatGroup::Seance => {
                         game.add_message_to_chat_group(
                             chat_group,
                             ChatMessage::JailedSomeone { player_index: self.index() }

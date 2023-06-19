@@ -78,6 +78,8 @@ export type RoleState = {
 } | {
     role: "lookout"
 } | {
+    role: "tracker"
+} | {
     role: "seer"
 } | {
     role: "doctor",
@@ -95,7 +97,9 @@ export type RoleState = {
 } | {
     role:"escort"
 } | {
-    role:"medium"
+    role:"medium",
+    seancnesRemaining: number,
+    seancedTarget: PlayerIndex | null
 } | {
     role:"retributionist"
 } | {

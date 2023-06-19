@@ -214,6 +214,16 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                     ).join(", ")
                 ), RESULT_STYLE);
             }
+        case "trackerResult":
+            if (message.players.length === 0) {
+                return createChatElement(key, translate("chatmessage.trackerResult.nobody"), RESULT_STYLE)
+            } else {
+                return createChatElement(key, translate("chatmessage.trackerResult", 
+                    message.players.map(playerIndex => 
+                        GAME_MANAGER.gameState.players[playerIndex].toString()
+                    ).join(", ")
+                ), RESULT_STYLE);
+            }
         case "seerResult":
             return createChatElement(key, 
                 translate("chatmessage.seerResult." + message.enemies ? "enemies" : "friends"),
@@ -240,7 +250,9 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             ), RESULT_STYLE);
         /* Messages that players must not miss */
         case "silenced":
-            return createChatElement(key, translate("chatmessage."+message.type), WARNING_STYLE);
+            return createChatElement(key, translate("chatmessage.silenced"), WARNING_STYLE);
+        case "mediumSeance":
+            return createChatElement(key, translate("chatmessage.mediumSeance", GAME_MANAGER.gameState.players[message.player].toString()), SPECIAL);
         case "arsonistCleanedSelf":
         case "arsonistDousedPlayers":
         case "doctorHealed":
@@ -253,7 +265,6 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
         case "godfatherForcedYou":
         case "jesterWon":
         case "mayorCantWhisper":
-        case "mediumSeanceYou":
         case "playerWithNecronomicon":
         case "roleData":
         case "spyMafiaVisit":

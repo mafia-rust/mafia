@@ -79,7 +79,8 @@ export type ChatMessage = {
     type: "jailorDecideExecute"
     targets: PlayerIndex[]
 } | {
-    type: "mediumSeanceYou"
+    type: "mediumSeance",
+    player: PlayerIndex
 } | {
     type: "jesterWon"
 } | {
@@ -111,6 +112,9 @@ export type ChatMessage = {
     suspicious: boolean
 } | {
     type: "lookoutResult", 
+    players: PlayerIndex[]
+} | {
+    type: "trackerResult",
     players: PlayerIndex[]
 } | {
     type: "seerResult",

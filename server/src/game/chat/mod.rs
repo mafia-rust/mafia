@@ -104,7 +104,7 @@ pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
     JailedSomeone{player_index: PlayerIndex}, //you have been jailed
     JailorDecideExecute {targets: Vec<PlayerIndex>},     //Jailor has decided to execute you
-    MediumSeanceYou,       //You are being seanced by the medium
+    MediumSeance{player: PlayerIndex},//You are being seanced by the medium
     JesterWon, //The jester will get their revenge from the grave
     ExecutionerWon, //You got your target lynched
     #[serde(rename_all = "camelCase")]
@@ -126,6 +126,7 @@ pub enum ChatMessage {
 
     SheriffResult { suspicious: bool },
     LookoutResult{players: Vec<PlayerIndex>},
+    TrackerResult{players: Vec<PlayerIndex>},
     SeerResult{ enemies: bool},
     SpyMafiaVisit{players: Vec<PlayerIndex>},
     SpyCovenVisit{players: Vec<PlayerIndex>},
@@ -178,7 +179,7 @@ pub enum ChatGroup {
     Coven,
 
     Jail,
-    //Seance
+    Seance
     //Whisper
     //Pirate, 
 }
