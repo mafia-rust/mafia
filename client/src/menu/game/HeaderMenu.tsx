@@ -1,7 +1,7 @@
 import React from "react";
 import translate, { styleText } from "../../game/lang";
 import GAME_MANAGER from "../../index";
-import GameState, { Phase } from "../../game/gameState.d";
+import GameState, { Phase, Verdict } from "../../game/gameState.d";
 import GameScreen, { ContentMenus as GameScreenContentMenus } from "./GameScreen";
 import "./headerMenu.css";
 
@@ -36,9 +36,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
     }
     renderPhaseSpecific(){
         switch(this.state.gameState.phase){
-            
             case "judgement":
-            //TODO make buttons light up if they are clicked instead of showing what you voted seperately
             if(this.state.gameState.playerOnTrial !== null){
                 return(<div className="judgement-specific">
                     <div>
@@ -50,18 +48,9 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                             return <div className="judgement-info">{translate("judgement.cannotVote.dead")}</div>;
                         } else {
                             return(<div className="judgement-info">
-                                <button
-                                    onClick={()=>{GAME_MANAGER.sendJudgementPacket("guilty")}}
-                                    style={{borderColor: this.state.gameState.judgement === "guilty"?"yellow":undefined}}
-                                >{styleText(translate("verdict.guilty"))}</button>
-                                <button 
-                                    onClick={()=>{GAME_MANAGER.sendJudgementPacket("abstain")}}
-                                    style={{borderColor: this.state.gameState.judgement === "abstain"?"yellow":undefined}}
-                                >{styleText(translate("verdict.abstain"))}</button>
-                                <button 
-                                    onClick={()=>{GAME_MANAGER.sendJudgementPacket("innocent")}}
-                                    style={{borderColor: this.state.gameState.judgement === "innocent"?"yellow":undefined}}
-                                >{styleText(translate("verdict.innocent"))}</button>
+                                {this.renderVerdictButton("guilty")}
+                                {this.renderVerdictButton("abstain")}
+                                {this.renderVerdictButton("innocent")}
                             </div>);
                         }
                     })()}
@@ -77,6 +66,15 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             default:
             return null;
         }
+    }
+
+    renderVerdictButton(verdict: Verdict) {
+        return <button
+            className={this.state.gameState.judgement === verdict ? "highlighted" : undefined}
+            onClick={()=>{GAME_MANAGER.sendJudgementPacket(verdict)}}
+        >
+            {styleText(translate("verdict." + verdict))}
+        </button>
     }
     
     renderMenuButtons(){

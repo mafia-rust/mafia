@@ -3,13 +3,15 @@ import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import GameScreen, { ContentMenus } from "../GameScreen";
 import "./willMenu.css"
-import GameState from "../../../game/gameState.d";
 import { StateListener } from "../../../game/gameManager.d";
 
+
+type FieldType = "will" | "notes";
+type Fields = { [key in FieldType]: string };
+
 interface WillMenuState {
-    gameState : GameState,
-    willFeild: string,
-    notesFeild: string
+    syncedFields : Fields
+    localFields: Fields
 }
 
 export default class WillMenu extends React.Component<{}, WillMenuState> {
@@ -17,15 +19,24 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
     constructor(props: {}) {
         super(props);
 
-        this.state = {
-            gameState : GAME_MANAGER.gameState,
-            willFeild: GAME_MANAGER.gameState.will,
-            notesFeild: GAME_MANAGER.gameState.notes,
+        let gameStateFields = {
+            will: GAME_MANAGER.gameState.will,
+            notes: GAME_MANAGER.gameState.notes
         };
-        this.listener = ()=>{
-            this.setState({
-                gameState: GAME_MANAGER.gameState,
-            })
+
+        this.state = {
+            syncedFields: gameStateFields,
+            localFields: gameStateFields
+        };
+        this.listener = (type) => {
+            if (type === "yourWill" || type === "yourNotes") {
+                this.setState({
+                    syncedFields: {
+                        will: GAME_MANAGER.gameState.will,
+                        notes: GAME_MANAGER.gameState.notes,
+                    }
+                })
+            }
         };  
     }
     componentDidMount() {
@@ -34,63 +45,56 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
     componentWillUnmount() {
         GAME_MANAGER.removeStateListener(this.listener);
     }
-    renderWillInput(){
-        return (<div className="textarea-section">
-            {translate("menu.will.will")}
-            <button 
-                onClick={()=>{GAME_MANAGER.sendSaveWillPacket(this.state.willFeild)}}
-                style={{borderColor: this.state.gameState.will === this.state.willFeild ? undefined : "yellow"}}
-            >{translate("menu.will.save")}</button>
-            <button onClick={()=>{GAME_MANAGER.sendSendMessagePacket('\n' + this.state.gameState.will)}}>{translate("menu.will.post")}</button>
-            <textarea
-                // onKeyPress={(e) => {
-                //     if(e.code === "Enter") {
-                //         GAME_MANAGER.sendSaveWillPacket(this.state.willFeild)
-                //     }
-                // }}
-                value={this.state.willFeild}
-                onChange={(e)=>{this.setState({willFeild : e.target.value});}}
-                onKeyDown={(e) => {
-                    if (e.ctrlKey && e.key === 's') {
-                        // Prevent the Save dialog from opening
-                        e.preventDefault();
-                        GAME_MANAGER.sendSaveWillPacket(this.state.willFeild);
-                    }
-                }}>
-            </textarea>
-        </div>)
+    send(type: FieldType) {
+        this.save(type);
+        GAME_MANAGER.sendSendMessagePacket('\n' + this.state.localFields[type])
     }
-    renderNotesInput(){
+    save(type: FieldType) {
+        if (type === "will")
+            GAME_MANAGER.sendSaveWillPacket(this.state.localFields[type])
+        else if (type === "notes")
+            GAME_MANAGER.sendSaveNotesPacket(this.state.localFields[type])
+    }
+    renderInput(type: FieldType) {
         return (<div className="textarea-section">
-            {translate("menu.will.notes")}
+            {translate("menu.will." + type)}
             <button 
-                onClick={()=>{GAME_MANAGER.sendSaveNotesPacket(this.state.notesFeild)}}
-                style={{borderColor: this.state.gameState.notes === this.state.notesFeild ? undefined : "yellow"}}
-            >{translate("menu.will.save")}</button>
-            <button onClick={()=>{GAME_MANAGER.sendSendMessagePacket(this.state.gameState.notes)}}>{translate("menu.will.post")}</button>
+                className={this.state.syncedFields[type] !== this.state.localFields[type] ? "highlighted" : undefined}
+                onClick={() => this.save(type)}
+            >
+                {translate("menu.will.save")}
+            </button>
+            <button onClick={() => this.send(type)}>
+                {translate("menu.will.post")}
+            </button>
             <textarea
-                // onKeyPress={(e) => {
-                //     if(e.code === "Enter") {
-                //         GAME_MANAGER.sendSaveNotesPacket(this.state.notesFeild)
-                //     }
-                // }}
-                value={this.state.notesFeild}
-                onChange={(e)=>{this.setState({notesFeild : e.target.value});}}
+                value={this.state.localFields[type]}
+                onChange={(e) => {
+                    let fields = this.state.localFields;
+                    fields[type] = e.target.value;
+                    this.setState({ localFields: fields });
+                }}
                 onKeyDown={(e) => {
-                    if (e.ctrlKey && e.key === 's') {
-                        // Prevent the Save dialog from opening
-                        e.preventDefault();
-                        GAME_MANAGER.sendSaveNotesPacket(this.state.notesFeild);
+                    if (e.ctrlKey) {
+                        if (e.key === 's') {
+                            // Prevent the Save dialog from opening
+                            e.preventDefault();
+                            this.save(type);
+                        } else if (e.key === "Enter") {
+                            this.send(type);
+                        }
                     }
                 }}>
             </textarea>
         </div>)
     }
     render() {return (<div className="will-menu">
-        <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.WillMenu)}}>{translate("menu.will.title")}</button>
+        <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.WillMenu)}}>
+            {translate("menu.will.title")}
+        </button>
         <section>
-            {this.renderWillInput()}
-            {this.renderNotesInput()}
+            {this.renderInput("will")}
+            {this.renderInput("notes")}
         </section>
     </div>);}
 }
