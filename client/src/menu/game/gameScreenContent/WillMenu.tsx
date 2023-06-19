@@ -14,11 +14,6 @@ interface WillMenuState {
     localFields: Fields
 }
 
-const saveFieldFunctionMap = {
-    will: (field: string) => GAME_MANAGER.sendSaveWillPacket(field),
-    notes: (field: string) => GAME_MANAGER.sendSaveNotesPacket(field)
-}
-
 export default class WillMenu extends React.Component<{}, WillMenuState> {
     listener: StateListener
     constructor(props: {}) {
@@ -50,16 +45,26 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
     componentWillUnmount() {
         GAME_MANAGER.removeStateListener(this.listener);
     }
+    send(type: FieldType) {
+        this.save(type);
+        GAME_MANAGER.sendSendMessagePacket('\n' + this.state.localFields[type])
+    }
+    save(type: FieldType) {
+        if (type === "will")
+            GAME_MANAGER.sendSaveWillPacket(this.state.localFields[type])
+        else if (type === "notes")
+            GAME_MANAGER.sendSaveNotesPacket(this.state.localFields[type])
+    }
     renderInput(type: FieldType) {
         return (<div className="textarea-section">
             {translate("menu.will." + type)}
             <button 
                 className={this.state.syncedFields[type] !== this.state.localFields[type] ? "highlighted" : undefined}
-                onClick={() => saveFieldFunctionMap[type](this.state.localFields[type])}
+                onClick={() => this.save(type)}
             >
                 {translate("menu.will.save")}
             </button>
-            <button onClick={() => GAME_MANAGER.sendSendMessagePacket('\n' + this.state.syncedFields[type])}>
+            <button onClick={() => this.send(type)}>
                 {translate("menu.will.post")}
             </button>
             <textarea
@@ -70,10 +75,14 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
                     this.setState({ localFields: fields });
                 }}
                 onKeyDown={(e) => {
-                    if (e.ctrlKey && e.key === 's') {
-                        // Prevent the Save dialog from opening
-                        e.preventDefault();
-                        saveFieldFunctionMap[type](this.state.localFields[type]);
+                    if (e.ctrlKey) {
+                        if (e.key === 's') {
+                            // Prevent the Save dialog from opening
+                            e.preventDefault();
+                            this.save(type);
+                        } else if (e.key === "Enter") {
+                            this.send(type);
+                        }
                     }
                 }}>
             </textarea>
