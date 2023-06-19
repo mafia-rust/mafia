@@ -6,8 +6,15 @@ import "./wikiSearch.css";
 
 interface WikiSearchState {
     wikiSearch: string,
-    expandedRole: Role | null,
+    openPage: WikiEntry | null,
 }
+type WikiEntry = {
+    type: "role", role: Role
+} | {
+    type: "article", article: Article
+}
+export const ARTICLES = ["help", "roles_and_teams", "phases_and_timeline", "controls", "wills_and_notes", "visit"] as const;
+export type Article = typeof ARTICLES[number];
 
 export default class WikiSearch extends React.Component<{}, WikiSearchState> {
     constructor(props: {}) {
@@ -15,23 +22,52 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
 
         this.state = {
             wikiSearch: "",
-            expandedRole: null,
+            openPage: null,
         };
     }
     componentDidMount() {
     }
     componentWillUnmount() {
     }
-    getGeneralPageFromSearch(search: string): string[] {
-        return []
+    getGeneralPageFromSearch(search: string): Article[] {
+        let out: Article[] = [];
+        for(let i in ARTICLES){
+            let article = ARTICLES[i];
+            if(
+                this.eitherContains(translate("menu.wiki.entries."+article+".title"), search)
+            ){
+                if(!out.includes(article as Article)){
+                    out.push(article as Article);
+                }
+            }
+        }
+        for(let i in ARTICLES){
+            let article = ARTICLES[i];
+            if(
+                this.eitherContains(translate("menu.wiki.entries."+article+".text"), search)
+            ){
+                if(!out.includes(article as Article)){
+                    out.push(article as Article);
+                }
+            }
+        }
+        return out
+    }
+    renderGeneralWikiPage(article: string){
+        return <div>
+            <div>{styleText(translate("menu.wiki.entries."+article+".title"))}</div>
+            <br/>
+            <div className="wiki-search-content">
+                <div>{styleText(translate("menu.wiki.entries."+article+".text"))}</div>
+            </div>
+        </div>
     }
     getRolesFromSearch(search: string): Role[] {
         search = search.toLowerCase();
         let out: Role[] = [];
         for(let role in ROLES){
             if(
-                translate("role."+role+".name").toLowerCase().includes(search) ||
-                search.includes(translate("role."+role+".name").toLowerCase())
+                this.eitherContains(translate("role."+role+".name"), search)
             ){
                 if(!out.includes(role as Role)){
                     out.push(role as Role);
@@ -40,8 +76,7 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
         }
         for(let role in ROLES){
             if(
-                translate("role."+role+".abilities").toLowerCase().includes(search) ||
-                search.includes(translate("role."+role+".name").toLowerCase())
+                this.eitherContains(translate("role."+role+".abilities"), search)
             ){
                 if(!out.includes(role as Role)){
                     out.push(role as Role);
@@ -50,8 +85,7 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
         }
         for(let role in ROLES){
             if(
-                translate("role."+role+".attributes").toLowerCase().includes(search) ||
-                search.includes(translate("role."+role+".name").toLowerCase())
+                this.eitherContains(translate("role."+role+".attributes"), search)
             ){
                 if(!out.includes(role as Role)){
                     out.push(role as Role);
@@ -77,62 +111,79 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
                 break;
         }
 
-        return <div>
-            <div>
-                <div>{styleText(translate("role."+role+".name"))}</div>
-                <div>{renderRoleListEntry(getRoleListEntryFromFactionAlignment(ROLES[role as keyof typeof ROLES].factionAlignment as FactionAlignment))}</div>
-                <br/>
-                {styleText(translate("menu.wiki.abilities"))}
-                {this.renderWikiText(translate("role."+role+".abilities"))}
-                <br/>
-                {styleText(translate("menu.wiki.attributes"))}
-                {this.renderWikiText(translate("role."+role+".attributes"))}
-                <br/>
-                {(() => {
-                    let maxCount = ROLES[role as keyof typeof ROLES].maxCount;
-                    if (maxCount == null) return maxCount;
-                    return styleText(translate("menu.wiki.maxCount", maxCount));
-                })()}<br/>
-                {styleText(translate("menu.wiki.suspicious", ROLES[role as keyof typeof ROLES].suspicious?"suspicious":"innocent"))}<br/>
-                {styleText(translate("menu.wiki.defense", defenseString))}<br/>
-            </div>
+        return <div className="wiki-search-page">
+            <div>{styleText(translate("role."+role+".name"))}</div>
+            <div>{renderRoleListEntry(getRoleListEntryFromFactionAlignment(ROLES[role as keyof typeof ROLES].factionAlignment as FactionAlignment))}</div>
+            <br/>
+            <div>{styleText(translate("menu.wiki.abilities"))}</div>
+            <br/>
+            <div className="wiki-search-content">{styleText(translate("role."+role+".abilities"))}</div>
+            <br/>
+            <div>{styleText(translate("menu.wiki.attributes"))}</div>
+            <br/>
+            <div className="wiki-search-content">{styleText(translate("role."+role+".attributes"))}</div>
+            <br/>
+            <br/>
+            {(() => {
+                let maxCount = ROLES[role as keyof typeof ROLES].maxCount;
+                if (maxCount == null) return maxCount;
+                return styleText(translate("menu.wiki.maxCount", maxCount));
+            })()}<br/>
+            {styleText(translate("menu.wiki.suspicious", ROLES[role as keyof typeof ROLES].suspicious?"suspicious":"innocent"))}<br/>
+            {styleText(translate("menu.wiki.defense", defenseString))}<br/>
         </div>
     }
     
     renderWikiPageOrSearch(){
-        if(this.state.expandedRole != null){
-            return this.renderRoleWikiPage(this.state.expandedRole);
+        if(this.state.openPage != null){
+            if(this.state.openPage.type === "role"){
+                return this.renderRoleWikiPage(this.state.openPage.role);
+            }else if(this.state.openPage.type === "article"){
+                return this.renderGeneralWikiPage(this.state.openPage.article);
+            }
         }else{
+
             return this.getRolesFromSearch(this.state.wikiSearch).map((role)=>{
                 return <button key={role} 
-                    onClick={()=>{this.setState({wikiSearch: translate("role."+role+".name"),expandedRole: role})}}
+                    onClick={()=>{
+                        this.setState({
+                            wikiSearch: translate("role."+role+".name"),
+                            openPage: {type: "role", role: role}
+                        })
+                    }}
                 >{
                     styleText(translate("role."+role+".name"))
                 }</button>
-            }).concat();
+            }).concat(this.getGeneralPageFromSearch(this.state.wikiSearch).map((article)=>{
+                return <button key={article} 
+                    onClick={()=>{
+                        this.setState({
+                            wikiSearch: translate("menu.wiki.entries."+article+".title"),
+                            openPage: {type: "article", article: article}
+                        })
+                    }}
+                >{
+                    styleText(translate("menu.wiki.entries."+article+".title"))
+                }</button>
+            }));
         }
     }
 
-    renderWikiText(string: string): JSX.Element{
-        let split = string.split("*");
-        let out = [];
-        for(let i = 1; i < split.length; i++){
-            out.push(<li key={i}>{split[i]}</li>);
-        }
-        return <div>{out}</div>
+    eitherContains(string1: string, string2: string): boolean{
+        return string1.toLowerCase().includes(string2.toLowerCase()) ||
+        string2.toLowerCase().includes(string1.toLowerCase())
     }
-
+    
     render() {
-        this.getGeneralPageFromSearch("");
         return (<div className="wiki-search">
         <div className="wiki-search-bar">
             <input type="text" value={this.state.wikiSearch}
-                onChange={(e)=>{this.setState({wikiSearch: e.target.value, expandedRole: null})}}
+                onChange={(e)=>{this.setState({wikiSearch: e.target.value, openPage: null})}}
                 placeholder={translate("menu.wiki.search.placeholder")}
             />
             {this.state.wikiSearch !== null && this.state.wikiSearch !== "" ? 
                 <button onClick={() => {
-                    this.setState({wikiSearch: "", expandedRole: null})
+                    this.setState({wikiSearch: "", openPage: null})
                 }}>{translate("menu.wiki.search.clear")}</button> 
             : null}
         </div>
