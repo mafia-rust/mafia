@@ -2,7 +2,7 @@
 use rand::seq::SliceRandom;
 use serde::Serialize;
 
-use crate::game::chat::ChatGroup;
+use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::{PhaseType, PhaseState};
 use crate::game::player::PlayerReference;
 use crate::game::role::RoleState;
@@ -100,5 +100,13 @@ impl RoleStateImpl for Jester {
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
         crate::game::role::common_role::on_role_creation(game, actor_ref);
+    }
+    fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
+        if 
+            actor_ref == dead_player_ref && 
+            game.current_phase().phase() == PhaseType::Evening
+        {
+            game.add_message_to_chat_group(ChatGroup::All, ChatMessage::JesterWon);
+        }
     }
 }

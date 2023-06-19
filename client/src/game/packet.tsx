@@ -1,4 +1,4 @@
-import { Phase, PlayerIndex, Role, RoleState, RoleListEntry, Verdict, PhaseTimes } from "./gameState.d"
+import { Phase, PlayerIndex, Role, RoleState, RoleListEntry, Verdict, PhaseTimes, Tag } from "./gameState.d"
 import { Grave } from "./grave"
 import { ChatMessage } from "./chatMessage"
 
@@ -68,6 +68,9 @@ export type ToClientPacket = {
 } | {
     type: "yourRoleLabels",
     roleLabels: Map<PlayerIndex, Role>
+} | {
+    type: "yourPlayerTags",
+    playerTags: Map<PlayerIndex, Tag[]>
 } | {
     type: "yourWill",
     will: string

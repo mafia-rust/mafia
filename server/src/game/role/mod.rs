@@ -23,6 +23,7 @@ trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
 
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType);
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference);
+    fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference);
 }
 
 // Creates the Role enum
@@ -61,7 +62,9 @@ macros::roles! {
 
     VoodooMaster : voodoo_master,
 
-    Jester : jester
+    //Neutral
+    Jester : jester,
+    Executioner: executioner
 }
 
 macros::priorities! {
@@ -79,7 +82,8 @@ macros::priorities! {
     Heal,
     Kill,
     Investigative,
-    StealMessages
+    StealMessages,
+    Convert
 }
 
 mod common_role;
@@ -203,6 +207,11 @@ mod macros {
                 pub fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
                     match self {
                         $(Self::$name(role_struct) => role_struct.on_role_creation(game, actor_ref)),*
+                    }
+                }
+                pub fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_any_death(game, actor_ref, dead_player_ref)),*
                     }
                 }
             }

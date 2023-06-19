@@ -32,12 +32,12 @@ impl TestGame {
             panic!("There is no {:?} 1!", phase);
         }
         // If the phase & day is in the past
-        if self.day_number() > day_number || (self.day_number() == day_number && self.current_phase().get_type() > phase) {
-            panic!("Can't skip back in time! Tried to go to {:?} {}, but was already on {:?} {}!", phase, day_number, self.current_phase().get_type(), self.day_number());
+        if self.day_number() > day_number || (self.day_number() == day_number && self.current_phase().phase() > phase) {
+            panic!("Can't skip back in time! Tried to go to {:?} {}, but was already on {:?} {}!", phase, day_number, self.current_phase().phase(), self.day_number());
         }
 
-        while self.day_number() != day_number || self.current_phase().get_type() != phase {
-            if self.day_number() == u8::MAX - 1 && self.current_phase().get_type() == PhaseType::Night {
+        while self.day_number() != day_number || self.current_phase().phase() != phase {
+            if self.day_number() == u8::MAX - 1 && self.current_phase().phase() == PhaseType::Night {
                 panic!("Can't go above the maximum day!");
             }
 

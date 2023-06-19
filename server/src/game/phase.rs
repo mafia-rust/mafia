@@ -46,7 +46,7 @@ impl PhaseStateMachine {
         let current_state = PhaseState::Evening { player_on_trial: None };
 
         Self {
-            time_remaining: times.get_time_for(current_state.get_type()),
+            time_remaining: times.get_time_for(current_state.phase()),
             day_number: 1,
             current_state,
         }
@@ -54,7 +54,7 @@ impl PhaseStateMachine {
 }
 
 impl PhaseState {
-    pub const fn get_type(&self) -> PhaseType {
+    pub const fn phase(&self) -> PhaseType {
         match self {
             PhaseState::Morning => PhaseType::Morning,
             PhaseState::Discussion => PhaseType::Discussion,
@@ -128,7 +128,7 @@ impl PhaseState {
         }
         game.add_message_to_chat_group(ChatGroup::All, 
             ChatMessage::PhaseChange { 
-                phase_type: game.current_phase().get_type(), 
+                phase_type: game.current_phase().phase(), 
                 day_number: game.phase_machine.day_number 
             }
         );
@@ -238,10 +238,10 @@ impl PhaseState {
     }
     
     pub fn is_day(&self) -> bool {
-        self.get_type() != PhaseType::Night
+        self.phase() != PhaseType::Night
     }
 
     pub fn is_night(&self) -> bool {
-        self.get_type() == PhaseType::Night
+        self.phase() == PhaseType::Night
     }
 }

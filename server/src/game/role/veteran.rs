@@ -45,7 +45,6 @@ impl RoleStateImpl for Veteran {
                 if self.alerts_remaining > 0 {
                     if let Some(visit) = actor_ref.night_visits(game).first(){
                         if visit.target == actor_ref{
-                            actor_ref.increase_defense_to(game, 1);
                             actor_ref.set_role_state(game, RoleState::Veteran(Veteran { 
                                 alerts_remaining: self.alerts_remaining - 1, 
                                 alerting_tonight: true 
@@ -53,6 +52,10 @@ impl RoleStateImpl for Veteran {
                         }
                     }
                 }
+            }
+            Priority::Heal=>{
+                if !self.alerting_tonight {return}
+                actor_ref.increase_defense_to(game, 1);
             }
             Priority::Kill => {
                 if !self.alerting_tonight {return}
@@ -109,5 +112,6 @@ impl RoleStateImpl for Veteran {
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
         crate::game::role::common_role::on_role_creation(game, actor_ref);
     }
-
+    fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
+    }
 }

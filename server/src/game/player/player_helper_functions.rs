@@ -55,6 +55,10 @@ impl PlayerReference{
                 other_player_ref.insert_role_label(game, *self, role);
             }
         }
+
+        for player_ref in PlayerReference::all_players(game){
+            player_ref.on_any_death(game, *self)
+        }
     }
     /// swap this persons role, sending them the role chat message, and associated changes
     pub fn set_role(&self, game: &mut Game, new_role_data: RoleState){
@@ -108,6 +112,9 @@ impl PlayerReference{
     }
     pub fn convert_targets_to_visits(&self, game: &Game, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         self.role_state(game).clone().convert_targets_to_visits(game, *self, target_refs)
+    }
+    pub fn on_any_death(&self, game: &mut Game, dead_player_ref: PlayerReference){
+        self.role_state(game).clone().on_any_death(game, *self, dead_player_ref)
     }
 }
 

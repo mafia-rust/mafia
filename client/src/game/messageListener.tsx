@@ -7,7 +7,7 @@ import GAME_MANAGER from "./../index";
 import GameScreen from "./../menu/game/GameScreen";
 import React from "react";
 import { ToClientPacket } from "./packet";
-import { Role } from "./gameState.d";
+import { Role, Tag } from "./gameState.d";
 
 export default function messageListener(packet: ToClientPacket){
 
@@ -133,6 +133,11 @@ export default function messageListener(packet: ToClientPacket){
         case "yourRoleLabels":
             for (const [key, value] of Object.entries(packet.roleLabels)) { 
                 GAME_MANAGER.gameState.players[Number.parseInt(key)].roleLabel = value as Role;
+            }
+        break;
+        case "yourPlayerTags":
+            for (const [key, value] of Object.entries(packet.playerTags)) { 
+                GAME_MANAGER.gameState.players[Number.parseInt(key)].playerTags = value as Tag[];
             }
         break;
         case "yourWill":

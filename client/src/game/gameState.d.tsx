@@ -45,6 +45,11 @@ export interface PhaseTimes {
     "evening": number,
     "night": number,
 }
+export type Tag =
+| "doused"
+| "hexxed"
+| "necronomicon"
+| "executionerTarget"
 
 export interface Player {
     name: string,
@@ -57,6 +62,7 @@ export interface Player {
     numVoted: number,
     alive: boolean,
     roleLabel: Role | null,
+    playerTags: Tag[],
 
     toString(): string
 }
@@ -107,6 +113,10 @@ export type RoleState = {
     role:"covenLeader"
 } | {
     role:"voodooMaster"
+} | {
+    role:"jester"
+} | {
+    role:"executioner"
 }
 
 export type Role = keyof typeof ROLES;
