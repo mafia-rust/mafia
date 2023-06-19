@@ -57,7 +57,8 @@ impl RoleStateImpl for Deputy {
         game.phase_machine.day_number > 1 &&
         self.bullets_remaining > 0 &&
         actor_ref != target_ref &&
-        target_ref.alive(game) && actor_ref.alive(game)
+        target_ref.alive(game) && actor_ref.alive(game) &&
+        (PhaseType::Discussion == game.current_phase().phase() || PhaseType::Voting == game.current_phase().phase())
     }
     fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         vec![]
@@ -73,5 +74,7 @@ impl RoleStateImpl for Deputy {
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
         crate::game::role::common_role::on_role_creation(game, actor_ref);
+    }
+    fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
     }
 }

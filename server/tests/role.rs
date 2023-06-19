@@ -1,6 +1,6 @@
 mod kit;
 pub(crate) use kit::{assert_contains, assert_not_contains};
-use mafia_server::game::{chat::{MessageSender, ChatGroup}, role::{retributionist::Retributionist, jester::Jester, crusader::Crusader, framer::Framer, veteran::Veteran}};
+use mafia_server::game::{chat::{MessageSender, ChatGroup}, role::{retributionist::Retributionist, jester::Jester, crusader::Crusader, framer::Framer, veteran::Veteran, executioner::Executioner}};
 // Pub use so that submodules don't have to re-import everything.
 pub use mafia_server::game::{role::{RoleState, transporter::Transporter, medium::Medium, jailor::Jailor, vigilante::Vigilante, sheriff::Sheriff, escort::Escort, mafioso::Mafioso, bodyguard::Bodyguard}, phase::PhaseState, chat::ChatMessage};
 pub use mafia_server::packet::ToServerPacket;
@@ -239,4 +239,27 @@ fn veteran_doesnt_kill_framed_player(){
     assert!(townie.alive());
 }
 
+#[test]
+fn executioner_turns_into_jester(){
+    kit::scenario!(game in Night 1 where
+        target: Sheriff,
+        exe: Executioner,
+        mafioso: Mafioso
+    );
 
+    assert!(mafioso.set_night_targets(vec![target]));
+
+    game.skip_to(PhaseType::Voting, 2);
+
+    assert!(!target.alive());
+    assert!(exe.alive());
+    assert!(mafioso.alive());
+    let RoleState::Jester(_) = exe.role_state() else {panic!()};
+}
+#[test]
+fn executioner_instantly_turns_into_jester(){
+    kit::scenario!(_game where
+        exe: Executioner
+    );
+    let RoleState::Jester(_) = exe.role_state() else {panic!()};
+}

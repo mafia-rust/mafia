@@ -225,6 +225,12 @@
     "role.jester.target": "Haunt",
     "role.jester.dayTarget": "Special",
 
+    "role.executioner.name": "Executioner",
+    "role.executioner.abilities":"● Get your target lynched to win\n● If your target dies by something other than lynching, you will be converted to a jester",
+    "role.executioner.attributes":"● After you win you will commit suicide",
+    "role.executioner.target": "Target",
+    "role.executioner.dayTarget": "Special",
+
     "grave.role.cleaned": "Cleaned",
     "grave.role.petrified": "Petrified",
     "grave.deathCause.lynching": "Lynching",
@@ -244,6 +250,10 @@
     "alignment.chaos": "Chaos",
     "alignment.utility": "Utility",
     "alignment.power": "Power",
+
+    "tag.executionerTarget":"🎯",
+    "tag.necronomicon":"📓",
+    "tag.doused":"🔥",
 
     "day": "Day",
     "suspicious": "Suspicious",
@@ -303,7 +313,7 @@
     "chatmessage.jailorDecideNotExecute":"The Jailor decided not to execute.",
     "chatmessage.mediumSeanceYou":"You're being seanced by the medium!",
     "chatmessage.jesterWon":"The jester will get their revenge from the grave!",
-    "chatmessage.executionerWon":"The executioner got their target lynched!",
+    "chatmessage.executionerWon":"The executioner got their target lynched and won!",
     "chatmessage.deputyShot":"A deputy shot \\0!",
     "chatmessage.jailorDecidedToExecute":"The jailor decided to execute \\0",
     "chatmessage.jailorDecideExecute.nobody":"The jailor decided not to execute!",
@@ -321,6 +331,7 @@
     "chatmessage.sheriffResult.suspicious":"Your target seems to be suspicious.",
     "chatmessage.sheriffResult.innocent":"Your target seems to be innocent.",
     "chatmessage.lookoutResult":"Your target was visited by \\0.",
+    "chatmessage.lookoutResult.nobody":"Nobody visited your target",
     "chatmessage.seerResult.friends":"Your targets are friends.",
     "chatmessage.seerResult.enemies":"Your targets are enemies!",
     "chatmessage.spyMafiaVisit":"The mafia visited: \\0.",

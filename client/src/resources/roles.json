@@ -205,5 +205,14 @@
         "witchable": true,
         "endGameCondition": "None",
         "maxCount": null
+    },
+    "executioner": {
+        "factionAlignment": "neutralEvil",
+        "suspicious": false,
+        "roleblockable": true,
+        "defense": 1,
+        "witchable": true,
+        "endGameCondition": "None",
+        "maxCount": null
     }
 }

@@ -206,9 +206,9 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             );
         case "lookoutResult":
             if (message.players.length === 0) {
-                return createChatElement(key, translate("chatmessage.night.lookoutResult.nobody"), RESULT_STYLE)
+                return createChatElement(key, translate("chatmessage.lookoutResult.nobody"), RESULT_STYLE)
             } else {
-                return createChatElement(key, translate("chatmessage.night.lookoutResult", 
+                return createChatElement(key, translate("chatmessage.lookoutResult", 
                     message.players.map(playerIndex => 
                         GAME_MANAGER.gameState.players[playerIndex].toString()
                     ).join(", ")

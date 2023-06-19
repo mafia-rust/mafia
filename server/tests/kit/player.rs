@@ -1,4 +1,4 @@
-use mafia_server::{game::{player::{PlayerReference, PlayerIndex}, Game, chat::ChatMessage}, packet::ToServerPacket};
+use mafia_server::{game::{player::{PlayerReference, PlayerIndex}, Game, chat::ChatMessage, role::RoleState}, packet::ToServerPacket};
 
 #[derive(Clone, Copy, Debug)]
 pub struct TestPlayer(PlayerReference, *mut Game);
@@ -65,5 +65,9 @@ impl TestPlayer {
 
     pub fn get_messages(&self) -> &Vec<ChatMessage> {
         &self.0.deref(game!(self)).chat_messages
+    }
+
+    pub fn role_state(&self) -> &RoleState{
+        self.0.role_state(game!(self))
     }
 }

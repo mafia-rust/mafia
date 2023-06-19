@@ -93,7 +93,7 @@ impl Game {
             },
             ToClientPacket::RoleList {role_list: self.settings.role_list.clone()},
             ToClientPacket::Phase { 
-                phase: self.current_phase().get_type(),
+                phase: self.current_phase().phase(),
                 seconds_left: self.phase_machine.time_remaining.as_secs(), 
                 day_number: self.phase_machine.day_number 
             },
@@ -131,6 +131,9 @@ impl Game {
             },
             ToClientPacket::YourRoleLabels { 
                 role_labels: PlayerReference::ref_map_to_index(player_ref.role_labels(self).clone()) 
+            },
+            ToClientPacket::YourPlayerTags { 
+                player_tags: PlayerReference::ref_map_to_index(player_ref.player_tags(self).clone())
             },
             ToClientPacket::YourTarget{
                 player_indices: PlayerReference::ref_vec_to_index(player_ref.chosen_targets(self))
@@ -191,17 +194,17 @@ impl Game {
     pub fn start_phase(&mut self, phase: PhaseState){
 
         self.phase_machine.current_state = phase;
-        self.phase_machine.time_remaining = self.settings.phase_times.get_time_for(self.current_phase().get_type());
+        self.phase_machine.time_remaining = self.settings.phase_times.get_time_for(self.current_phase().phase());
 
         PhaseState::start(self); //THIS WAS RECENTLY MOVED BEFORE THE ON_PHASE_STARTS, PRAY THAT IT WONT CAUSE PROBLEMS
 
         //player reset
         for player_ref in PlayerReference::all_players(self){
-            player_ref.on_phase_start(self, self.current_phase().get_type());
+            player_ref.on_phase_start(self, self.current_phase().phase());
         }
 
         self.send_packet_to_all(ToClientPacket::Phase { 
-            phase: self.current_phase().get_type(),
+            phase: self.current_phase().phase(),
             day_number: self.phase_machine.day_number,
             seconds_left: self.phase_machine.time_remaining.as_secs()
         });

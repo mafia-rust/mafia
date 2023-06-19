@@ -121,10 +121,13 @@ impl RoleStateImpl for Crusader {
     fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
     }
-    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
+    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
+        if phase != PhaseType::Night {return;}
         actor_ref.set_role_state(game, RoleState::Crusader(Crusader {target_protected_ref: None}));
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
         crate::game::role::common_role::on_role_creation(game, actor_ref);
+    }
+    fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
     }
 }

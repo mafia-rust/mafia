@@ -72,7 +72,7 @@ impl Game {
                 }
             },
             ToServerPacket::Judgement { verdict } => {
-                if self.current_phase().get_type() != PhaseType::Judgement {break 'packet_match;}
+                if self.current_phase().phase() != PhaseType::Judgement {break 'packet_match;}
                 
                 sender_player_ref.set_verdict(self, verdict, true);
             },

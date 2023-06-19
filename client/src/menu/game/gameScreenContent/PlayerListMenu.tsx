@@ -141,7 +141,8 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         )+
                         player.toString()+
                         (player.roleLabel==null?"":(" ("+translate("role."+player.roleLabel+".name")+")"))+
-                        (player.alive?"":" ("+translate("dead")+")")
+                        (player.alive?"":" ("+translate("dead")+")")+
+                        (player.playerTags.map((tag)=>{return translate("tag."+tag)}))
                     )}
                 </button>
                 <button className="filter" onClick={()=>{
