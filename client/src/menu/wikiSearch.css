@@ -21,3 +21,11 @@
     overflow-y: auto;
     flex: 1 1;
 }
+.wiki-search .wiki-search-page {
+    display: block;
+    height: 100%;
+}
+.wiki-search .wiki-search-content {
+    text-align: left;
+    height: max-content;
+}
