@@ -134,7 +134,13 @@ impl Game {
                     let message_sender = 
                     if sender_player_ref.role(self) == Role::Jailor && chat_group == ChatGroup::Jail {
                         MessageSender::Jailor
-                    } else if sender_player_ref.role(self) == Role::Medium && sender_player_ref.alive(self) && chat_group == ChatGroup::Dead{
+                    } else if 
+                        sender_player_ref.role(self) == Role::Medium && 
+                        (
+                            (sender_player_ref.alive(self) && chat_group == ChatGroup::Dead) || 
+                            (!sender_player_ref.alive(self) && chat_group==ChatGroup::Seance)
+                        )
+                    {
                         MessageSender::Medium
                     } else {
                         MessageSender::Player {player: sender_player_index}

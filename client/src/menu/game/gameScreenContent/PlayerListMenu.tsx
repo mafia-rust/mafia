@@ -63,6 +63,14 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                     roleSpecificJSX = styleText(jailedString+" "+this.state.gameState.roleState.executionsRemaining);
                 }
                 break;
+            case "medium":
+            
+                let seancedString = this.state.gameState.roleState.seancedTarget!=null?
+                    this.state.gameState.players[this.state.gameState.roleState.seancedTarget].toString():
+                    translate("none");
+                roleSpecificJSX = styleText(seancedString+" "+this.state.gameState.roleState.seancnesRemaining);
+                
+                break;
             case "doctor":
                 roleSpecificJSX = styleText(""+this.state.gameState.roleState.selfHealsRemaining);
                 break;

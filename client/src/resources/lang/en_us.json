@@ -109,6 +109,12 @@
     "role.lookout.attributes":"● You can not see astral visits\n● You can never see yourself visit",
     "role.lookout.target": "Watch",
     "role.lookout.dayTarget": "Special",
+
+    "role.tracker.name": "Tracker",
+    "role.tracker.abilities":"● Watch a player to find who they visited",
+    "role.tracker.attributes":"● You can not see astral visits",
+    "role.tracker.target": "Track",
+    "role.tracker.dayTarget": "Special",
     
     "role.seer.name": "Seer",
     "role.seer.abilities":"● Examine two players to find if they are friends or enemies",
@@ -141,8 +147,8 @@
     "role.escort.dayTarget": "Special",
 
     "role.medium.name": "Medium",
-    "role.medium.abilities":"● You can talk with the dead during the night",
-    "role.medium.attributes":"● You can talk to other mediums during the night as well",
+    "role.medium.abilities":"● You can talk with the dead during the night\n● After you died, you can seance a living player twice",
+    "role.medium.attributes":"● You can talk to other mediums during the night as well\n● A seance lets you communicate with the living after you died\n● Seance has two uses",
     "role.medium.target": "Target",
     "role.medium.dayTarget": "Seance",
 
@@ -312,7 +318,7 @@
     "chatmessage.jailedSomeone":"\\0 was dragged off to jail!",
     "chatmessage.jailorDecideExecute":"The Jailor decided to execute \\0!",
     "chatmessage.jailorDecideNotExecute":"The Jailor decided not to execute.",
-    "chatmessage.mediumSeanceYou":"You're being seanced by the medium!",
+    "chatmessage.mediumSeance":"\\0 is being seanced by a medium!",
     "chatmessage.jesterWon":"The jester will get their revenge from the grave!",
     "chatmessage.executionerWon":"The executioner got their target lynched and won!",
     "chatmessage.deputyShot":"A deputy shot \\0!",
@@ -333,6 +339,8 @@
     "chatmessage.sheriffResult.innocent":"Your target seems to be innocent.",
     "chatmessage.lookoutResult":"Your target was visited by \\0.",
     "chatmessage.lookoutResult.nobody":"Nobody visited your target",
+    "chatmessage.trackerResult":"Your target visited \\0.",
+    "chatmessage.trackerResult.nobody":"Your target did not visit anybody",
     "chatmessage.seerResult.friends":"Your targets are friends.",
     "chatmessage.seerResult.enemies":"Your targets are enemies!",
     "chatmessage.spyMafiaVisit":"The mafia visited: \\0.",

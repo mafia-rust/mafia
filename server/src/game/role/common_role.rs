@@ -1,6 +1,6 @@
-use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, team::Team, role_list::Faction, phase::PhaseState};
+use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, team::Team, role_list::Faction, phase::{PhaseState, PhaseType}};
 
-use super::{Role, RoleState, coven_leader::CovenLeader, voodoo_master::VoodooMaster};
+use super::{RoleState, coven_leader::CovenLeader, voodoo_master::VoodooMaster};
 
 
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -45,11 +45,28 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
             }
         },
         PhaseState::Night => {
-            if actor_ref.night_jailed(game){
+            let mut out = vec![];
+            if PlayerReference::all_players(game).into_iter()
+                .any(|med|{
+                    if let RoleState::Medium(medium_state) = med.role_state(game){
+                        if Some(actor_ref) == medium_state.seanced_target{
+                            return true;
+                        }
+                    }
+                    false
+                })
+            {
+                out.push(ChatGroup::Seance);
+            }
+
+
+            let mut jail_or_night_chats = if actor_ref.night_jailed(game){
                 vec![ChatGroup::Jail]
             } else {
                 night_chat_groups
-            }
+            };
+            out.append(&mut jail_or_night_chats);
+            out
         },
     }
 }
@@ -68,8 +85,22 @@ pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerRefe
     if actor_ref.role(game).faction_alignment().faction() == Faction::Coven {
         out.push(ChatGroup::Coven);
     }
-    if actor_ref.role(game) == Role::Jailor || actor_ref.night_jailed(game){
+    if actor_ref.night_jailed(game){
         out.push(ChatGroup::Jail);
+    }
+    if
+        game.current_phase().phase() == PhaseType::Night &&
+        PlayerReference::all_players(game).into_iter()
+            .any(|med|{
+                if let RoleState::Medium(medium_state) = med.role_state(game){
+                    if Some(actor_ref) == medium_state.seanced_target{
+                        return true;
+                    }
+                }
+                false
+            })
+    {
+        out.push(ChatGroup::Seance);
     }
 
     out
