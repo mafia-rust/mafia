@@ -52,17 +52,16 @@
     "menu.wiki.entries.help.text":"Learn how to use the wiki.",
     
     "menu.wiki.entries.roles_and_teams.title":"Roles and Teams",
-    "menu.wiki.entries.roles_and_teams.text":"Roles are a thing.",
-
+    "menu.wiki.entries.roles_and_teams.text":"Every player has a role, including you. Your role is told to you in the first chat message you received and at the top of the screen. Almost every role has an ability that can be used during the night, these abilities help you to win.\n\nEvery role has a “Faction” and “Alignment” which indicate what team you're on and what your goal is. You can see a role's faction and alignment on its wiki page. Town, Mafia, and Coven’s goal is to be the only remaining team, and to kill every player from every other team. Neutral roles have different goals that vary depending on the role.\n\nTown usually has the majority when the game starts meaning there are more players with town roles. Therefore; town has voting power, and evil players must lie, saying that they are townies even though they are not.\n\nIf you are asked to claim a role (to tell others what your role is), It is often best to say that you are a specific town role, such as doctor, or sheriff. In order to make your fake claim believable you must keep a will. \n\nThere can be multiple players with almost any role, so you might not be the only person with the role you have.",    
+    
     "menu.wiki.entries.phases_and_timeline.title":"Phases and Timelines",
-    "menu.wiki.entries.phases_and_timeline.text":"Phases are a thing.",
-
+    "menu.wiki.entries.phases_and_timeline.text":"The game is always in a phase. Phases run in this order: Morning, Discussion, Voting, Testimony, Judgement, Evening, Night.\n\n● Night\nWhen most roles use their abilities. For example, night is when the mafioso chooses who to kill, and the doctor chooses who to protect. Chat is closed at night so players can not communicate with each other. However, some roles can communicate with others at night, for example, the medium can talk to the dead, and mafia can talk with each other.\n\n● Morning\nPlayers see who died last night, and they are added to the graveyard.\n\n● Discussion\nPlayers discuss information they have to try to find out who evils are, or pretend to find out who evils are.\n\n● Voting\nPlayers vote to put a player on trial, this doesn’t always mean that player is going to be killed. More than half the living players need to vote in order to put someone onto trial. If the voting phase ends before anyone is voted, it goes directly to night after. There can be a maximum of three trials during each day.\n\n● Testimony\nThis runs right after voting only if a player was voted onto trial, Every player must stop chatting except the player on trial, and the player defends themselves to hope they don't get killed. Usually the player on trial will claim a role and post their will here.\n\n● Judgement\nEveryone votes either innocent, or guilty. If there are more guilty votes than innocent votes, the player on trial is killed. Players can also choose to abstain. This is how town usually gets evils killed.\n\n● Evening\nA brief period after judgement but before night.",    
     "menu.wiki.entries.controls.title":"Controls",
     "menu.wiki.entries.controls.text":"You can whisper and target people.",
 
     "menu.wiki.entries.wills_and_notes.title":"Wills and Notes",
-    "menu.wiki.entries.wills_and_notes.text":"Its important to write a will and helpfull to write notes.",
-
+    "menu.wiki.entries.wills_and_notes.text":"Wills\n\nWith any role, it is important to keep a final will. This is a document that shows all the information you claim to have and how you got it. Usually, all players are going to claim that they are a town role, so almost every will you see is a will of a town role.\n\nEach night, the sheriff will choose a player and find out if they are innocent or suspicious. (See the wiki page for “sheriff” to learn more).\nHere is a typical sheriff will:\n\nN1: John-Innocent\nN2: Peter-Innocent\nN3: Jennifer-Suspicious\n\nThis will shows that on night 1, this sheriff found that John was innocent. On night 2, they found Peter innocent. On night 3, they found that Jennifer was suspicious.\n\nThe sheriff can post this will in order to claim, and show that Jennifer is likely evil. As an evil player, keeping a fake will is extremely important because a claim is only believable with a will alongside it.\n\n\nNotes\n\nNotes are just for you, nobody else can see them. To keep organised, It is often very helpful to write down what role everyone else claimed. For example, a note page might look like this:\n\nJohn - Claims doctor\nPeter - Claims sheriff\nJennifer - Never claimed, probably evil",    
+    
     "menu.wiki.entries.visit.title":"Visits",
     "menu.wiki.entries.visit.text":"Vitis are how all roles work.",
     
@@ -236,11 +235,13 @@
     "grave.deathCause.lynching": "Lynching",
     "grave.killer.suicide": "Suicide",
 
+    "faction":"Faction",
     "faction.town": "Town",
     "faction.mafia": "Mafia",
     "faction.neutral": "Neutral",
     "faction.coven": "Coven",
 
+    "alignment":"Alignment",
     "alignment.killing": "Killing",
     "alignment.investigative": "Investigative",
     "alignment.protective": "Protective",

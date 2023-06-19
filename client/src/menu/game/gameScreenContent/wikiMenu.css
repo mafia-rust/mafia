@@ -1,4 +1,6 @@
 .wiki-menu {
     display: flex;
     flex-direction: column;
+    overflow-y: hidden;
+    max-height: 1vh;
 }
