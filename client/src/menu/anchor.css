@@ -7,3 +7,55 @@
 
     background-color: var(--background-color);
 }
+
+.errorCard {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    right: 5%;
+    bottom: 10%;
+    height: fit-content;
+    width: 20%;
+    min-width: 15rem;
+    box-shadow: 0 0 .5rem #0007;
+    
+    border-radius: 0.4rem;
+    border-style: outset;
+    padding: .5rem;
+    background-color: var(--secondary-color);
+    border-color: var(--primary-border-color);
+    border-width: .13rem;
+    color: white;
+
+    /* Start off the page, and slide in */
+    transform: translateX(100%);
+    animation: slide-in 0.5s forwards;
+    -webkit-animation: slide-in 0.5s forwards;
+}
+
+.errorCard > header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 125%;
+}
+
+.errorCard > button {
+    position: fixed;
+    padding: 0;
+    font-size: 75%;
+    font-weight: bold;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.errorCard > div {
+    margin-top: 3%;
+}
+    
+@keyframes slide-in {
+    100% { transform: translateX(0%); }
+}

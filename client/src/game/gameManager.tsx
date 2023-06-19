@@ -208,9 +208,7 @@ function createServer(){
             );
         },
 
-        open : ()=>{
-            // let address = CONFIG.serverIP + ":" + CONFIG.port;
-            // Server.ws = new WebSocket("ws://"+address);   //TODO
+        open : () => {
             let address = CONFIG.address;
             Server.ws = new WebSocket(address);
 
@@ -229,8 +227,8 @@ function createServer(){
             Server.ws.addEventListener("message", (event: MessageEvent<string>)=>{
                 Server.messageListener(event);
             });
-            Server.ws.addEventListener("error", (event: Event)=> {
-                alert("Failed to connect to server. Contact an admin to see if it is online.");
+            Server.ws.addEventListener("error", (event: Event) => {
+                Anchor.queueError("Failed to connect", "Contact an admin to see if the server is online.");
                 Anchor.setContent(<StartMenu/>);
             })
             
