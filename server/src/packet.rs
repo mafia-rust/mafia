@@ -23,7 +23,7 @@ use serde::{Deserialize, Serialize};
 use crate::{game::{
     player::{PlayerIndex, PlayerReference},
     role_list::{RoleList, RoleListEntry},
-    verdict::Verdict, phase::PhaseType, 
+    verdict::Verdict, phase::{PhaseType, PhaseState}, 
     chat::ChatMessage,
     role::{Role, RoleState}, 
     Game, grave::Grave, available_buttons::AvailableButtons, tag::Tag, settings::PhaseTimeSettings
@@ -64,9 +64,7 @@ pub enum ToClientPacket{
         //Game
     //Syncronize
     #[serde(rename_all = "camelCase")]
-    Phase{phase: PhaseType, day_number: u8, seconds_left: u64},   //Time left & PhaseType
-    #[serde(rename_all = "camelCase")]
-    PlayerOnTrial{player_index: PlayerIndex},  //Player index
+    PhaseState{phase_state: PhaseState, day_number: u8, seconds_left: u64},   //Time left & PhaseType
 
         
     
@@ -83,7 +81,6 @@ pub enum ToClientPacket{
     YourPlayerTags{player_tags: HashMap<PlayerIndex, Vec<Tag>>},
     YourWill{will: String},
     YourNotes{notes: String},
-    YourRole{role: Role},
     #[serde(rename_all = "camelCase")]
     YourRoleState{role_state: RoleState},
     #[serde(rename_all = "camelCase")]

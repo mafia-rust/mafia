@@ -104,13 +104,10 @@ export default function messageListener(packet: ToClientPacket){
         case "excludedRoles":
             GAME_MANAGER.gameState.excludedRoles = packet.roles;
         break;
-        case "phase":
-            GAME_MANAGER.gameState.phase = packet.phase;
+        case "phaseState":
+            GAME_MANAGER.gameState.phaseState = packet.phaseState;
             GAME_MANAGER.gameState.dayNumber = packet.dayNumber;
             GAME_MANAGER.gameState.secondsLeft = packet.secondsLeft;
-        break;
-        case "playerOnTrial":
-            GAME_MANAGER.gameState.playerOnTrial = packet.playerIndex;
         break;
         case "playerAlive":
             for(let i = 0; i < GAME_MANAGER.gameState.players.length && i < packet.alive.length; i++){
@@ -141,11 +138,7 @@ export default function messageListener(packet: ToClientPacket){
         case "yourNotes":
             GAME_MANAGER.gameState.notes = packet.notes;
         break;
-        case "yourRole":
-            GAME_MANAGER.gameState.role = packet.role;
-        break;
         case "yourRoleState":
-            GAME_MANAGER.gameState.role = packet.roleState.role;
             GAME_MANAGER.gameState.roleState = packet.roleState;
         break;
         case "yourTarget":

@@ -27,10 +27,10 @@ export default class LobbyRolePane extends React.Component<{}, RolePaneState> {
         };
     }
     componentDidMount() {
-        GAME_MANAGER.addStateListener(this.listener);
+        GAME_MANAGER.addStateListener("roleList", this.listener);
     }
     componentWillUnmount() {
-        GAME_MANAGER.removeStateListener(this.listener);
+        GAME_MANAGER.removeStateListener("roleList", this.listener);
     }
 
     onChangeRolePicker(index: number, value: RoleListEntry){

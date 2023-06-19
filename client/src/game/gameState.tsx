@@ -11,13 +11,11 @@ export function createGameState(): GameState {
         graves: [],
         players: [],
         
-        playerOnTrial: null,
-        phase: null,
+        phaseState: { phase: "evening", playerOnTrial: null },
         secondsLeft: 0,
         dayNumber: 1,
 
-        role: null,
-        roleState: null,
+        roleState: { role: "sheriff" },
 
         will: "",
         notes: "",

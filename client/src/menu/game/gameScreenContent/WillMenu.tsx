@@ -16,6 +16,7 @@ interface WillMenuState {
 
 export default class WillMenu extends React.Component<{}, WillMenuState> {
     listener: StateListener
+
     constructor(props: {}) {
         super(props);
 
@@ -28,22 +29,22 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
             syncedFields: gameStateFields,
             localFields: gameStateFields
         };
-        this.listener = (type) => {
-            if (type === "yourWill" || type === "yourNotes") {
-                this.setState({
-                    syncedFields: {
-                        will: GAME_MANAGER.gameState.will,
-                        notes: GAME_MANAGER.gameState.notes,
-                    }
-                })
-            }
+        this.listener = () => {
+            this.setState({
+                syncedFields: {
+                    will: GAME_MANAGER.gameState.will,
+                    notes: GAME_MANAGER.gameState.notes,
+                }
+            })
         };  
     }
     componentDidMount() {
-        GAME_MANAGER.addStateListener(this.listener);
+        GAME_MANAGER.addStateListener("yourWill", this.listener);
+        GAME_MANAGER.addStateListener("yourNotes", this.listener);
     }
     componentWillUnmount() {
-        GAME_MANAGER.removeStateListener(this.listener);
+        GAME_MANAGER.removeStateListener("yourWill", this.listener);
+        GAME_MANAGER.removeStateListener("yourNotes", this.listener);
     }
     send(type: FieldType) {
         this.save(type);

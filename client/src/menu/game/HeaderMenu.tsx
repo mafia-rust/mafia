@@ -1,50 +1,63 @@
 import React from "react";
 import translate, { styleText } from "../../game/lang";
 import GAME_MANAGER from "../../index";
-import GameState, { Phase, Verdict } from "../../game/gameState.d";
+import { PhaseState, Verdict } from "../../game/gameState.d";
 import GameScreen, { ContentMenus as GameScreenContentMenus } from "./GameScreen";
 import "./headerMenu.css";
+import { StateListener } from "../../game/gameManager.d";
 
 
 type HeaderMenuProps = {
-    phase: Phase | null,
 }
 type HeaderMenuState = {
-    gameState: GameState,
+    phaseState: PhaseState,
+    dayNumber: number,
+    secondsLeft: number,
 }
 
 export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderMenuState> {
-    listener: () => void;
+    phaseListener: StateListener;
+    secondsListener: StateListener;
     
     constructor(props: HeaderMenuProps) {
         super(props);
 
         this.state = {
-            gameState: GAME_MANAGER.gameState,
+            phaseState: GAME_MANAGER.gameState.phaseState!,
+            dayNumber: GAME_MANAGER.gameState.dayNumber,
+            secondsLeft: GAME_MANAGER.gameState.secondsLeft,
         };
-        this.listener = () => {
+        this.phaseListener = () => {
             this.setState({
-                gameState: GAME_MANAGER.gameState,
+                phaseState: GAME_MANAGER.gameState.phaseState!,
+                dayNumber: GAME_MANAGER.gameState.dayNumber,
+                secondsLeft: GAME_MANAGER.gameState.secondsLeft
             });
         };
+        this.secondsListener = () => {
+            this.setState({
+                secondsLeft: GAME_MANAGER.gameState.secondsLeft
+            })
+        }
     }
     componentDidMount() {
-        GAME_MANAGER.addStateListener(this.listener);
+        GAME_MANAGER.addStateListener("phaseState", this.phaseListener);
+        GAME_MANAGER.addStateListener("tick", this.secondsListener);
     }
     componentWillUnmount() {
-        GAME_MANAGER.removeStateListener(this.listener);
+        GAME_MANAGER.removeStateListener("phaseState", this.phaseListener);
+        GAME_MANAGER.removeStateListener("tick", this.secondsListener);
     }
     renderPhaseSpecific(){
-        switch(this.state.gameState.phase){
+        switch(this.state.phaseState?.phase){
             case "judgement":
-            if(this.state.gameState.playerOnTrial !== null){
                 return(<div className="judgement-specific">
                     <div>
-                    {styleText(this.state.gameState.players[this.state.gameState.playerOnTrial!]?.toString())}
+                    {styleText(GAME_MANAGER.gameState.players[this.state.phaseState.playerOnTrial]?.toString())}
                     {(()=>{
-                        if (this.state.gameState.playerOnTrial === this.state.gameState.myIndex) {
+                        if (this.state.phaseState.playerOnTrial === GAME_MANAGER.gameState.myIndex) {
                             return <div className="judgement-info">{translate("judgement.cannotVote.onTrial")}</div>;
-                        } else if (!this.state.gameState.players[this.state.gameState.myIndex!].alive){
+                        } else if (!GAME_MANAGER.gameState.players[GAME_MANAGER.gameState.myIndex!].alive){
                             return <div className="judgement-info">{translate("judgement.cannotVote.dead")}</div>;
                         } else {
                             return(<div className="judgement-info">
@@ -56,21 +69,14 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                     })()}
                     </div>
                 </div>);
-            }else{
-                //TODO lang or fix
-                return(<div> 
-                    ERROR NO PLAYER ON TRIAL FOUND IN JUDGEMENT PHASE TODO 
-                </div>);
-            }
-            
             default:
-            return null;
+                return null;
         }
     }
 
     renderVerdictButton(verdict: Verdict) {
         return <button
-            className={this.state.gameState.judgement === verdict ? "highlighted" : undefined}
+            className={GAME_MANAGER.gameState.judgement === verdict ? "highlighted" : undefined}
             onClick={()=>{GAME_MANAGER.sendJudgementPacket(verdict)}}
         >
             {styleText(translate("verdict." + verdict))}
@@ -109,9 +115,9 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
         </div>
     }
     renderPhase(){
-        if(this.state.gameState.phase){
+        if(this.state.phaseState.phase){
             return(<div>
-                {translate("phase."+this.state.gameState.phase)} {this.state.gameState.dayNumber}⏳{this.state.gameState.secondsLeft}
+                {translate("phase."+this.state.phaseState.phase)} {this.state.dayNumber}⏳{this.state.secondsLeft}
             </div>);
         }
         return null;
@@ -120,9 +126,9 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
     render(){return(<div className="header-menu">
         {this.renderPhase()}
         {(()=>{
-            if(this.state.gameState.myIndex !== null){
-                return styleText(this.state.gameState.players[this.state.gameState.myIndex].toString() +
-                 " (" + translate("role."+this.state.gameState.role+".name") + ")");
+            if(GAME_MANAGER.gameState.myIndex !== null){
+                return styleText(GAME_MANAGER.gameState.players[GAME_MANAGER.gameState.myIndex].toString() +
+                " (" + translate("role."+GAME_MANAGER.gameState.roleState.role+".name") + ")");
             }
         })()}
         {this.renderPhaseSpecific()}

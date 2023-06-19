@@ -16,13 +16,12 @@ const GAME_MANAGER: GameManager = createGameManager();
 const TIME_PERIOD = 1000;
 export default GAME_MANAGER;
 
-GAME_MANAGER.addStateListener((type) => {
-    switch (type) {
-        case "acceptJoin":
-        case "acceptHost":
-            window.history.pushState({}, document.title, `?code=${GAME_MANAGER.roomCode}`);
-    }
-})
+function addRoomCodeToURL() {
+    window.history.pushState({}, document.title, `?code=${GAME_MANAGER.roomCode}`);
+}
+
+GAME_MANAGER.addStateListener("acceptJoin", addRoomCodeToURL);
+GAME_MANAGER.addStateListener("acceptHost", addRoomCodeToURL);
 
 setInterval(() => {
     GAME_MANAGER.tick(TIME_PERIOD);

@@ -30,10 +30,10 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
         };
     }
     componentDidMount() {
-        GAME_MANAGER.addStateListener(this.listener);
+        GAME_MANAGER.addStateListener("excludedRoles", this.listener);
     }
     componentWillUnmount() {
-        GAME_MANAGER.removeStateListener(this.listener);
+        GAME_MANAGER.removeStateListener("excludedRoles", this.listener);
     }
 
     includeRole(role: RoleListEntry){

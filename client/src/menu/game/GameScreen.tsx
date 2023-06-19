@@ -66,10 +66,10 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
     }
     componentDidMount() {
         GameScreen.instance = this;
-        GAME_MANAGER.addStateListener(this.listener);
+        GAME_MANAGER.addStateListener("tick", this.listener);
     }
     componentWillUnmount() {
-        GAME_MANAGER.removeStateListener(this.listener);
+        GAME_MANAGER.removeStateListener("tick", this.listener);
     }
     closeMenu(menu: ContentMenus) {
         switch(menu) {
@@ -132,7 +132,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                     {translate("menu.button.leave")}
                 </button>
                 <div className="header">
-                    <HeaderMenu phase={GAME_MANAGER.gameState.phase}/>
+                    <HeaderMenu/>
                 </div>
                 <div className="content">
                     {this.state.graveyardMenu?<GraveyardMenu/>:null}

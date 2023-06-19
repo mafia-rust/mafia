@@ -4,12 +4,12 @@ import GAME_MANAGER from "../../../index";
 import { Grave } from "../../../game/grave";
 import GameScreen, { ContentMenus } from "../GameScreen";
 import "./graveyardMenu.css";
-import GameState, { renderRoleListEntry } from "../../../game/gameState.d";
+import { renderRoleListEntry } from "../../../game/gameState.d";
 
 type GraveyardMenuProps = {
 }
 type GraveyardMenuState = {
-    gameState: GameState,
+    graves: Grave[],
     extendedGraveIndex: number | null
 }
 
@@ -19,25 +19,25 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
         super(props);
 
         this.state = {
-            gameState : GAME_MANAGER.gameState,
+            graves: GAME_MANAGER.gameState.graves,
             extendedGraveIndex: null
         };
         this.listener = ()=>{
             this.setState({
-                gameState: GAME_MANAGER.gameState
+                graves: GAME_MANAGER.gameState.graves
             })
         };  
     }
     componentDidMount() {
-        GAME_MANAGER.addStateListener(this.listener);
+        GAME_MANAGER.addStateListener("addGrave", this.listener);
     }
     componentWillUnmount() {
-        GAME_MANAGER.removeStateListener(this.listener);
+        GAME_MANAGER.removeStateListener("addGrave", this.listener);
     }
 
     renderGraves(){
         return <div>
-            {this.state.gameState.graves.map((grave, graveIndex)=>{
+            {this.state.graves.map((grave, graveIndex)=>{
                 return this.renderGrave(grave, graveIndex);
             }, this)}
         </div>
@@ -51,7 +51,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
         }
 
         return(<button key={graveIndex} onClick={()=>{this.setState({extendedGraveIndex:graveIndex})}}>
-            {this.state.gameState.players[grave.playerIndex]?.toString()} {styleText("("+graveRoleString+")")}
+            {GAME_MANAGER.gameState.players[grave.playerIndex]?.toString()} {styleText("("+graveRoleString+")")}
         </button>);
     }
     renderGraveExtended(grave: Grave){
@@ -81,14 +81,14 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
         let diedPhaseString = grave.diedPhase === "day" ? translate("day") : translate("phase.night");
         return(<button onClick={()=>{this.setState({extendedGraveIndex:null})}}>
             {styleText(diedPhaseString+" "+grave.dayNumber)} <br/>
-            {styleText(this.state.gameState.players[grave.playerIndex]?.toString()+" ("+graveRoleString+")")}<br/>
+            {styleText(GAME_MANAGER.gameState.players[grave.playerIndex]?.toString()+" ("+graveRoleString+")")}<br/>
             {styleText(translate("menu.graveyard.killedBy")+" "+deathCauseString)}<br/>
             <div className="will-area">{styleText(grave.will)}</div>
         </button>);
     }
 
     renderRoleList(){return<div>
-        {this.state.gameState.roleList.map((entry, index)=>{
+        {GAME_MANAGER.gameState.roleList.map((entry, index)=>{
             return <button key={index}>{renderRoleListEntry(entry)}</button>
         }, this)}
     </div>}
@@ -102,7 +102,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             {/* //TODO show excluded roles at top */}
         </div>
         <div>
-            {this.state.extendedGraveIndex!==null?this.renderGraveExtended(this.state.gameState.graves[this.state.extendedGraveIndex]):null}
+            {this.state.extendedGraveIndex!==null?this.renderGraveExtended(GAME_MANAGER.gameState.graves[this.state.extendedGraveIndex]):null}
         </div>
     </div>)}
 }

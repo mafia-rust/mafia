@@ -20,7 +20,7 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
         this.state = {
             name: ""
         }
-        this.listener = (type)=>{
+        this.listener = ()=>{
             this.setState({
                 name: GAME_MANAGER.gameState.myName!
             });
@@ -28,10 +28,10 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
     }
     listener: StateListener;
     componentDidMount() {
-        GAME_MANAGER.addStateListener(this.listener);
+        GAME_MANAGER.addStateListener("yourName", this.listener);
     }
     componentWillUnmount() {
-        GAME_MANAGER.removeStateListener(this.listener);
+        GAME_MANAGER.removeStateListener("yourName", this.listener);
     }
 
     render() {

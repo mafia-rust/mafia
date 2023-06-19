@@ -6,7 +6,7 @@ import messageListener from "./messageListener";
 import CONFIG from "./../resources/config.json"
 import React from "react";
 import { Phase, PhaseTimes, RoleListEntry, Verdict } from "./gameState.d";
-import { GameManager, Server, StateListener } from "./gameManager.d";
+import { GameManager, Server, StateEventType, StateListener } from "./gameManager.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 
 export function createGameManager(): GameManager {
@@ -20,22 +20,24 @@ export function createGameManager(): GameManager {
 
         server : createServer(),
 
-        listeners : [],
+        listeners : {},
 
-        addStateListener(listener) {
-            gameManager.listeners.push(listener);
+        addStateListener(type: StateEventType | StateEventType[], listener) {
+            (typeof type === "string" ? [type] : type).forEach(type => {
+                gameManager.listeners[type] = gameManager.listeners[type] ?? []
+                gameManager.listeners[type]!.push(listener);
+            })
         },
-        removeStateListener(listener) {
-            let index = gameManager.listeners.indexOf(listener);
-            if(index !== -1)
-                gameManager.listeners.splice(index, 1);
+        removeStateListener(type: StateEventType | StateEventType[], listener) {
+            (typeof type === "string" ? [type] : type).forEach(type => {
+                let index = gameManager.listeners[type]?.indexOf(listener);
+                if(index !== undefined && index !== -1)
+                    gameManager.listeners[type]!.splice(index, 1);
+            })
         },
-        invokeStateListeners(type) {
-            for(let i = 0; i < gameManager.listeners.length; i++){
-                if(typeof(gameManager.listeners[i])==="function"){
-                    gameManager.listeners[i](type);
-                }
-            }
+        invokeStateListeners(type: StateEventType) {
+            (gameManager.listeners[type] ?? [])
+                .map(listener => listener())
         },
 
         async tryJoinGame(roomCode: string) {
@@ -67,14 +69,12 @@ export function createGameManager(): GameManager {
                 completePromise = resolver;
             });
             
-            let onJoined: StateListener = (type) => {
-                if (type==="acceptJoin") {
-                    completePromise();
-                    // This listener shouldn't stick around
-                    GAME_MANAGER.removeStateListener(onJoined);
-                }
+            let onJoined: StateListener = () => {
+                completePromise();
+                // This listener shouldn't stick around
+                GAME_MANAGER.removeStateListener("acceptJoin", onJoined);
             };
-            GAME_MANAGER.addStateListener(onJoined);
+            GAME_MANAGER.addStateListener("acceptJoin", onJoined);
 
             let actualCode: number = parseInt(gameManager.roomCode!, 18);
 
@@ -182,7 +182,6 @@ export function createGameManager(): GameManager {
         },
     
         tick(timePassedms) {
-            //console.log("tick");
             gameManager.gameState.secondsLeft = Math.round(gameManager.gameState.secondsLeft - timePassedms/1000)
             if(gameManager.gameState.secondsLeft < 0)
                 gameManager.gameState.secondsLeft = 0;

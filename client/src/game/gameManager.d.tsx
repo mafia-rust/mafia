@@ -13,8 +13,8 @@ export interface Server {
     close(): void;
 }
 
-type StateEventType = ToClientPacket["type"] | "tick";
-export type StateListener = (type?: StateEventType) => void;
+export type StateEventType = ToClientPacket["type"] | "tick";
+export type StateListener = () => void;
 
 export interface GameManager {
     roomCode: string | null,
@@ -22,11 +22,11 @@ export interface GameManager {
     gameState: GameState,
 
     server: Server,
-    listeners: StateListener[],
+    listeners: Partial<Record<StateEventType, StateListener[]>>,
 
-    addStateListener(listener: StateListener): void;
-    removeStateListener(listener: StateListener): void;
-    invokeStateListeners(type?: StateEventType): void;
+    addStateListener(type: StateEventType | StateEventType[], listener: StateListener): void;
+    removeStateListener(type: StateEventType | StateEventType[], listener: StateListener): void;
+    invokeStateListeners(type: StateEventType): void;
 
     tryJoinGame(roomCode: string): Promise<void>;
     leaveGame(): void;

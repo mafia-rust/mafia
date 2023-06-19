@@ -3,14 +3,14 @@ import translate, { getChatElement } from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import "../gameScreen.css";
 import "./chatMenu.css"
-import GameState, { PlayerIndex } from "../../../game/gameState.d";
+import { PlayerIndex } from "../../../game/gameState.d";
 import { ChatMessage } from "../../../game/chatMessage";
 
 interface ChatMenuProps {
 }
 
 interface ChatMenuState {
-    gameState: GameState,
+    chatMessages: ChatMessage[],
     chatField: string,
     filterFunction: ((message: ChatMessage) => boolean) | null,
 }
@@ -42,7 +42,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         super(props);
         
         this.state = {
-            gameState: GAME_MANAGER.gameState,
+            chatMessages: GAME_MANAGER.gameState.chatMessages,
             chatField: "",
             filterFunction: null,
         };
@@ -50,7 +50,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         this.listener = () => {
             let atTop = this.messageSection !== null && this.messageSection.scrollTop >= this.messageSection.scrollHeight - this.messageSection.clientHeight - 100;            
             this.setState({
-                gameState: GAME_MANAGER.gameState
+                chatMessages: GAME_MANAGER.gameState.chatMessages
             }, () => {
                 if(this.messageSection !== null && atTop){
                     this.messageSection.scrollTop = this.messageSection.scrollHeight;
@@ -60,11 +60,11 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         this.messageSection = null;
     }
     componentDidMount() {
-        GAME_MANAGER.addStateListener(this.listener);
+        GAME_MANAGER.addStateListener("addChatMessages", this.listener);
         ChatMenu.instance = this;
     }
     componentWillUnmount() {
-        GAME_MANAGER.removeStateListener(this.listener);
+        GAME_MANAGER.removeStateListener("tick", this.listener);
     }
     componentDidUpdate() {
     }
@@ -152,8 +152,8 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         <div className="chat-menu">
             <div className="message-section" ref={(el) => { this.messageSection = el; }}>
                 <div className="message-list">
-                    {this.state.gameState.chatMessages.filter((msg)=>
-                        this.state.filterFunction?this.state.filterFunction(msg):true
+                    {this.state.chatMessages.filter((msg) =>
+                        this.state.filterFunction ? this.state.filterFunction(msg) : true
                     ).map((msg, index) => {
                         return getChatElement(msg, index);
                     })}
@@ -175,10 +175,10 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
  */
 export function textContent(elem: React.ReactElement | string): string {
     if (!elem) {
-      return '';
+        return '';
     }
     if (typeof elem === 'string') {
-      return elem;
+        return elem;
     }
     // Debugging for basic content shows that props.children, if any, is either a
     // ReactElement, or a string, or an Array with any combination. Like for
@@ -196,7 +196,7 @@ export function textContent(elem: React.ReactElement | string): string {
     //       - "!"
     const children = elem.props && elem.props.children;
     if (children instanceof Array) {
-      return children.map(textContent).join('');
+        return children.map(textContent).join('');
     }
     return textContent(children);
 }

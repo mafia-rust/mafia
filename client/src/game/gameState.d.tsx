@@ -13,13 +13,11 @@ export default interface GameState {
     graves: Grave[],
     players: Player[],
     
-    playerOnTrial: PlayerIndex | null,
-    phase: Phase | null,
+    phaseState: PhaseState,
     secondsLeft: number,
     dayNumber: number,
 
-    role: Role | null,
-    roleState: RoleState | null,
+    roleState: RoleState,
 
     will: string,
     notes: string,
@@ -35,6 +33,20 @@ export default interface GameState {
 export type PlayerIndex = number;
 export type Verdict = "innocent"|"guilty"|"abstain";
 export type Phase = "morning" | "discussion" | "voting" | "testimony" | "judgement" | "evening" | "night"
+
+export type PhaseState = {
+    phase: "morning" | "discussion" | "night"
+} | {
+    phase: "voting",
+    trialsLeft: number
+} | {
+    phase: "testimony" | "judgement",
+    trailsLeft: number,
+    playerOnTrial: PlayerIndex
+} | {
+    phase: "evening",
+    playerOnTrial: PlayerIndex | null
+}
 
 export interface PhaseTimes {
     "morning": number,

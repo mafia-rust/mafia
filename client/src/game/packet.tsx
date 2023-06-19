@@ -1,4 +1,4 @@
-import { Phase, PlayerIndex, Role, RoleState, RoleListEntry, Verdict, PhaseTimes } from "./gameState.d"
+import { Phase, PlayerIndex, Role, RoleState, RoleListEntry, Verdict, PhaseTimes, PhaseState } from "./gameState.d"
 import { Grave } from "./grave"
 import { ChatMessage } from "./chatMessage"
 
@@ -45,13 +45,10 @@ export type ToClientPacket = {
 } |
 // Game
 {
-    type: "phase",
-    phase: Phase, 
+    type: "phaseState",
+    phaseState: PhaseState, 
     dayNumber: number, 
     secondsLeft: number
-} | {
-    type: "playerOnTrial",
-    playerIndex: PlayerIndex
 } | {
     type: "playerAlive", 
     alive: [boolean]

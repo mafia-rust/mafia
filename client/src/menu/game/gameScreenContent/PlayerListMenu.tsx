@@ -18,7 +18,8 @@ interface PlayerListMenuState {
 type PlayerFilter = "all"|"living"|"usable";
 
 export default class PlayerListMenu extends React.Component<PlayerListMenuProps, PlayerListMenuState> {
-    listener: StateListener;
+    gameStatelistener: StateListener;
+    phaseListener: StateListener;
 
     constructor(props: PlayerListMenuProps) {
         super(props);
@@ -27,33 +28,29 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
             gameState : GAME_MANAGER.gameState,
             playerFilter: "living",
         };
-        this.listener = (type)=>{
-            let playerFilter = this.state.playerFilter;
-            if(type==="phase"){
-                if(GAME_MANAGER.gameState.phase === "night"){
-                    playerFilter = "usable"
-                }else if(GAME_MANAGER.gameState.phase === "morning"){
-                    playerFilter = "living";
-                }
+        this.gameStatelistener = () => { this.setState({ gameState: GAME_MANAGER.gameState }) };  
+        this.phaseListener = () => {
+            if (GAME_MANAGER.gameState.phaseState?.phase === "night") {
+                this.setState({ playerFilter: "usable" });
+            } else if (GAME_MANAGER.gameState.phaseState?.phase === "morning"){
+                this.setState({ playerFilter: "living" });
             }
-            this.setState({
-                gameState: GAME_MANAGER.gameState,
-                playerFilter: playerFilter
-            })
-        };  
+        }
     }
     componentDidMount() {
-        GAME_MANAGER.addStateListener(this.listener);
+        GAME_MANAGER.addStateListener("tick", this.gameStatelistener);
+        GAME_MANAGER.addStateListener("phaseState", this.phaseListener);
     }
     componentWillUnmount() {
-        GAME_MANAGER.removeStateListener(this.listener);
+        GAME_MANAGER.removeStateListener("tick", this.gameStatelistener);
+        GAME_MANAGER.addStateListener("phaseState", this.phaseListener);
     }
 
     renderRoleSpecific(){
         let roleSpecificJSX = null;
         switch(this.state.gameState.roleState?.role){
             case "jailor":
-                if(this.state.gameState.phase==="night")
+                if(this.state.gameState.phaseState?.phase==="night")
                     roleSpecificJSX = styleText(""+this.state.gameState.roleState.executionsRemaining);
                 else
                 {
@@ -89,7 +86,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     }
     renderPhaseSpecific(){
         let phaseSpecificJSX = null;
-        switch(this.state.gameState.phase){
+        switch(this.state.gameState.phaseState?.phase){
             case "voting":
                 let votedString = "";
                 if(this.state.gameState.voted!=null){
@@ -130,13 +127,12 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     renderPlayer(player: Player){
         return(<div className="player" key={player.index}>
             <div className="top">
-                
                 <button className="whisper" onClick={()=>ChatMenu.prependWhisper(player.index)}>
                     {styleText(
                         (
                             player.numVoted!==null &&
                             player.numVoted!==0 &&
-                            this.state.gameState.phase==="voting" ? 
+                            this.state.gameState.phaseState?.phase==="voting" ? 
                             player.numVoted+" :":""
                         )+
                         player.toString()+
@@ -161,7 +157,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         <button onClick={()=>{
                             GAME_MANAGER.sendDayTargetPacket(player.index)}}
                     >{
-                        translate("role."+this.state.gameState.role+".dayTarget")
+                        translate("role."+this.state.gameState.roleState.role+".dayTarget")
                     }</button>)}})(player)}
                 </div>
                 <div className="target">
@@ -169,7 +165,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         <button onClick={()=>{
                             GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.gameState.targets, player.index]);
                         }}>{
-                            translate("role."+this.state.gameState.role+".target")
+                            translate("role."+this.state.gameState.roleState.role+".target")
                         }</button>
                     )}})(player)}
                 </div>

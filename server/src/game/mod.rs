@@ -92,8 +92,8 @@ impl Game {
                 names: PlayerReference::all_players(self).iter().map(|p|{return p.name(self).clone()}).collect()
             },
             ToClientPacket::RoleList {role_list: self.settings.role_list.clone()},
-            ToClientPacket::Phase { 
-                phase: self.current_phase().get_type(),
+            ToClientPacket::PhaseState { 
+                phase_state: self.current_phase().clone(),
                 seconds_left: self.phase_machine.time_remaining.as_secs(), 
                 day_number: self.phase_machine.day_number 
             },
@@ -102,13 +102,6 @@ impl Game {
             }
         ]);
 
-        if let PhaseState::Testimony { player_on_trial, .. }
-            | PhaseState::Judgement { player_on_trial, .. }
-            | PhaseState::Evening { player_on_trial: Some(player_on_trial) } = self.current_phase() {
-            player_ref.send_packet(self, ToClientPacket::PlayerOnTrial{
-                player_index: player_on_trial.index()
-            });
-        }
         let votes_packet = ToClientPacket::new_player_votes(self);
         player_ref.send_packet(self, votes_packet);
         for grave in self.graves.iter(){
@@ -200,8 +193,8 @@ impl Game {
             player_ref.on_phase_start(self, self.current_phase().get_type());
         }
 
-        self.send_packet_to_all(ToClientPacket::Phase { 
-            phase: self.current_phase().get_type(),
+        self.send_packet_to_all(ToClientPacket::PhaseState { 
+            phase_state: self.current_phase().clone(),
             day_number: self.phase_machine.day_number,
             seconds_left: self.phase_machine.time_remaining.as_secs()
         });

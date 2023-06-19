@@ -24,7 +24,8 @@ pub enum PhaseType {
     Night,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Serialize)]
+#[serde(tag = "phase", rename_all = "camelCase")]
 pub enum PhaseState {
     Morning,
     Discussion,
@@ -94,7 +95,6 @@ impl PhaseState {
                 game.add_message_to_chat_group(ChatGroup::All, 
                     ChatMessage::PlayerOnTrial { player_index: player_on_trial.index() }
                 );
-                game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() });
             },
             PhaseState::Night => {
                 //TODO move this potentially

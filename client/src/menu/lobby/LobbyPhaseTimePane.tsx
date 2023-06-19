@@ -29,19 +29,18 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
             phaseTimes: initialPhaseTimes
         };
 
-        this.listener = (type)=>{
-            if(type==="phaseTime" || type==="phaseTimes")
-                this.setState({
-                    mode: this.determineModeFromPhaseTimes(GAME_MANAGER.gameState.phaseTimes),
-                    phaseTimes: GAME_MANAGER.gameState.phaseTimes
-                });
+        this.listener = ()=>{
+            this.setState({
+                mode: this.determineModeFromPhaseTimes(GAME_MANAGER.gameState.phaseTimes),
+                phaseTimes: GAME_MANAGER.gameState.phaseTimes
+            });
         }
     }
     componentDidMount() {
-        GAME_MANAGER.addStateListener(this.listener);
+        GAME_MANAGER.addStateListener(["phaseTime", "phaseTimes"], this.listener);
     }
     componentWillUnmount() {
-        GAME_MANAGER.removeStateListener(this.listener);
+        GAME_MANAGER.removeStateListener(["phaseTime", "phaseTimes"], this.listener);
     }
 
     renderTimeModeDropdown() {
