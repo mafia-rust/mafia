@@ -37,6 +37,9 @@ button, input, select, option, textarea {
 button {
     background-color: var(--primary-color);
 }
+button.highlighted {
+    border-color: yellow;
+}
 option {
     background-color: var(--background-color);
 }

@@ -184,46 +184,34 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         </div>)
     }
     renderPlayers(players: Player[]){
-        return<div className="player-list">{
-            players.map((player: Player)=>{
+        return <div className="player-list">{
+            players.filter((player: Player) => {
                 switch(this.state.playerFilter){
-                    case "all":
-                        return this.renderPlayer(player);
-                    case "living":
-                        if(player.alive){
-                            return this.renderPlayer(player);
-                        }else{
-                            return null;
-                        }
-                    case "usable":            
-                        if(Object.values(player.buttons).includes(true)){
-                            return this.renderPlayer(player);
-                        }else{
-                            return null;
-                        }
+                    case "all": return true;
+                    case "living": return player.alive;
+                    case "usable": return Object.values(player.buttons).includes(true);
+                    default: return false;
                 }
-                return null;
-            }
-        )}</div>
+            }).map(player => this.renderPlayer(player))
+        }</div>
+    }
+
+    renderFilterButton(filter: PlayerFilter) {
+        return <button 
+            className={this.state.playerFilter === filter ? "highlighted" : undefined}
+            onClick={()=>{this.setState({playerFilter: filter})}}
+        >
+            {translate("menu.playerList.button." + filter)}
+        </button>
     }
 
     render(){return(<div className="player-list-menu">
         
         <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.PlayerListMenu)}}>{translate("menu.playerList.title")}</button>
         
-        <button 
-            style={{borderColor: this.state.playerFilter === "all"?"yellow":undefined}} 
-            onClick={()=>{this.setState({playerFilter: "all"})}}
-        >{translate("menu.playerList.button.all")}</button>
-        <button 
-            style={{borderColor: this.state.playerFilter === "living"?"yellow":undefined}} 
-            onClick={()=>{this.setState({playerFilter: "living"})}}
-        >{translate("menu.playerList.button.living")}</button>
-        <button 
-            style={{borderColor: this.state.playerFilter === "usable"?"yellow":undefined}} 
-            onClick={()=>{this.setState({playerFilter: "usable"})}}
-        >{translate("menu.playerList.button.usable")}</button>
-        
+        {this.renderFilterButton("all")}
+        {this.renderFilterButton("living")}
+        {this.renderFilterButton("usable")}
 
         {this.renderRoleSpecific()}
         {this.renderPhaseSpecific()}

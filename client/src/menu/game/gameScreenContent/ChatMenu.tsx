@@ -132,7 +132,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         <div className="send-section">
             {(()=>{
                 if(this.state.filterFunction === null) return null;
-                return <button onClick={()=>ChatMenu.setFilterFunction(null)}>
+                return <button className="highlighted" onClick={()=>ChatMenu.setFilterFunction(null)}>
                     {translate("menu.chat.clearFilter")}
                 </button>
             })()}
