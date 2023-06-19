@@ -54,17 +54,16 @@ impl RoleStateImpl for Doctor {
                 if actor_ref == target_ref {
                     self_heals_remaining -= 1;
                 }
-                let target_healed_ref = Some(target_ref);
                 target_ref.increase_defense_to(game, 2);
     
-                actor_ref.set_role_state(game, RoleState::Doctor(Doctor {self_heals_remaining, target_healed_ref}));
+                actor_ref.set_role_state(game, RoleState::Doctor(Doctor {self_heals_remaining, target_healed_ref: Some(target_ref)}));
             }
             Priority::Investigative => {
                 if let Some(target_healed_ref) = self.target_healed_ref {
                     if target_healed_ref.night_attacked(game){
                         
-                        actor_ref.push_night_message(game, ChatMessage::DoctorHealed);
-                        target_healed_ref.push_night_message(game, ChatMessage::DoctorHealedYou);
+                        actor_ref.push_night_message(game, ChatMessage::ProtectedYou);
+                        target_healed_ref.push_night_message(game, ChatMessage::ProtectedYou);
                     }
                 }
             }

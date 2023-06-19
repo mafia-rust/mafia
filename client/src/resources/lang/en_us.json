@@ -118,16 +118,22 @@
     "role.seer.dayTarget": "Special",
 
     "role.doctor.name": "Doctor",
-    "role.doctor.abilities":"● Target a player to save them from death\n● Target yourself one time to save yourself",
+    "role.doctor.abilities":"● Heal a player to save them from death\n● You can heal yourself once",
     "role.doctor.attributes":"● You give your target powerful defense\n● You and your target will know if they were attacked and saved",
     "role.doctor.target": "Heal",
     "role.doctor.dayTarget": "Special",
 
     "role.bodyguard.name": "Bodyguard",
-    "role.bodyguard.abilities":"● Target a player to guard them, killing their attacker, but getting attacked yourself\n● Target yourself one time to protect yourself",
-    "role.bodyguard.attributes":"● When you guard yourself, you gain powerful defense\n● You and your target will know if they were attacked and protected\n● You will redirect attacks from your target onto yourself, and you will attack those players back",
+    "role.bodyguard.abilities":"● Protect a to kill their attacker, but getting attacked yourself\n● You can protect yourself once",
+    "role.bodyguard.attributes":"● When you guard yourself, you gain powerful defense\n● You and your target will know if they were attacked and protected\n● You will redirect attacks from your target onto yourself, and you will attack those players back\n● Your attack is basic and astral",
     "role.bodyguard.target": "Protect",
     "role.bodyguard.dayTarget": "Special",
+
+    "role.crusader.name": "Crusader",
+    "role.crusader.abilities":"● Protect a player to save them from death, but killing one other visitor to them",
+    "role.crusader.attributes":"● You give your target powerful defense\n● You will attack A random other player who visited your target\n● If both town members and non town members visit your target then you will kill a non townie\n● Your attack is basic and astral",
+    "role.crusader.target": "Protect",
+    "role.crusader.dayTarget": "Special",
 
     "role.escort.name": "Escort",
     "role.escort.abilities":"● Target a player to roleblock them",
@@ -197,7 +203,7 @@
 
     "role.framer.name": "Framer",
     "role.framer.abilities":"● Target two players to frame the first one",
-    "role.framer.attributes":"● The framed player will look like the mafioso to town investigative roles\n● Lookouts and trackers will see that your first target visited your second target\n● You can only pick non mafia mebers for your first target, but anyone as your second target\n● Your second visit is astral",
+    "role.framer.attributes":"● The framed player will look like the mafioso to town investigative roles\n● It will look like first target visited your second target non attacking\n● You can only pick non mafia mebers for your first target, but anyone as your second target\n● Your second visit is astral",
     "role.framer.target": "Target",
     "role.framer.dayTarget": "Special",
 
@@ -324,9 +330,8 @@
     "chatmessage.veteranAttackedVisitor":"You attacked a visitor.",
     "chatmessage.vigilanteSuicide":"You committed suicide over the guilt of killing an innocnet person.",
     "chatmessage.doctorHealed":"You healed your target while they got attacked.",
-    "chatmessage.doctorHealedYou":"A doctor healed you while you got attacked.",
-    "chatmessage.bodyguardProtected": "You protected your target",
-    "chatmessage.bodyguardProtectedYou": "You were protected by a bodyguard",
+    "chatmessage.bodyguardProtected": "You protected your target.",
+    "chatmessage.protectedYou": "You were attacked but someone protected you.",
     "chatmessage.transported": "You were transported!",
     "chatmessage.silenced": "You were silenced! You must not speak, chat, point, or otherwise communicate until tomorrow!",
     "chatmessage.playersRoleAndWill": "Your targets role was \\0 and their will stated this: \\1",

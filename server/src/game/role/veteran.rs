@@ -57,36 +57,30 @@ impl RoleStateImpl for Veteran {
             Priority::Kill => {
                 if !self.alerting_tonight {return}
 
-                for other_player_ref in PlayerReference::all_players(game){
-                    for visit_index in 0..other_player_ref.night_visits(game).len(){
-                        
-                        let visit = &other_player_ref.night_visits(game)[visit_index];
+                for other_player_ref in PlayerReference::all_players(game)
+                    .into_iter()
+                    .filter(|other_player_ref|
+                        *other_player_ref != actor_ref &&
+                        other_player_ref.night_visits(game)
+                            .into_iter()
+                            .any(|v|!v.astral&&v.target==actor_ref)
+                    ).collect::<Vec<PlayerReference>>()
+                {
+                    other_player_ref.push_night_message(game,
+                        ChatMessage::VeteranAttackedYou 
+                    );
 
-                        if visit.target!=actor_ref || visit.astral {continue}
-                        if other_player_ref.night_jailed(game){continue;}  //Attacking Jailed Player?
-
-                        other_player_ref.push_night_message(game,
-                            ChatMessage::VeteranAttackedYou 
-                        );
-
-                        //Kill
-                        let killed = other_player_ref.try_night_kill(game, GraveKiller::Role(Role::Veteran), 2);
-                        
-                        actor_ref.push_night_message(game, 
-                            ChatMessage::VeteranAttackedVisitor 
-                        );
-
-                        if !killed {
-                            actor_ref.push_night_message(game,
-                                ChatMessage::TargetSurvivedAttack 
-                            );
-                        }
-                    }
+                    other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Veteran), 2);
+                    
+                    actor_ref.push_night_message(game, 
+                        ChatMessage::VeteranAttackedVisitor 
+                    );
                 }
             }
             _=>{}
         }
     }
+    
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         actor_ref == target_ref &&
         !actor_ref.night_jailed(game) &&

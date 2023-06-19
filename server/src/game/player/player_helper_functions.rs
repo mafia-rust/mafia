@@ -22,13 +22,14 @@ impl PlayerReference{
         }
     }
     ///returns true if attack overpowered defense.
-    pub fn try_night_kill(&self, game: &mut Game, grave_killer: GraveKiller, attack: u8)->bool{
+    pub fn try_night_kill(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: u8)->bool{
         self.set_night_attacked(game, true);
 
         if self.night_defense(game) >= attack {
             self.push_night_message(game,
                 ChatMessage::YouSurvivedAttack
             );
+            attacker_ref.push_night_message(game,ChatMessage::TargetSurvivedAttack);
             return false;
         }
 
@@ -68,14 +69,21 @@ impl PlayerReference{
         }
     }
     
-    pub fn lookout_seen_visits(self, game: &Game) -> &Vec<Visit> {
+    pub fn tracker_seen_visits(self, game: &Game) -> Vec<&Visit> {
         if let Some(v) = self.night_appeared_visits(game) {
-            v
+            v.into_iter().filter(|v|!v.astral).collect()
         } else {
-            self.night_visits(game)
+            self.night_visits(game).into_iter().filter(|v|!v.astral).collect()
         }
     }
-    
+    ///includes self obviously
+    pub fn lookout_seen_players(self, game: &Game) -> Vec<PlayerReference> {
+        PlayerReference::all_players(game).into_iter().filter(|player_ref|{
+            player_ref.tracker_seen_visits(game).iter().any(|other_visit| 
+                other_visit.target == self && !other_visit.astral
+            )
+        }).collect()
+    }
     //role functions
     pub fn can_night_target(&self, game: &Game, target_ref: PlayerReference) -> bool {
         self.role_state(game).clone().can_night_target(game, *self, target_ref)

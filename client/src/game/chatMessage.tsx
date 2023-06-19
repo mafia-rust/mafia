@@ -130,11 +130,9 @@ export type ChatMessage = {
 } | {
     type: "doctorHealed"
 } | {
-    type: "doctorHealedYou"
-} | {
     type: "bodyguardProtected"
 } | {
-    type: "bodyguardProtectedYou"
+    type: "protectedYou"
 } | {
     type: "transported"
 } | {

@@ -1,6 +1,6 @@
 mod kit;
 pub(crate) use kit::{assert_contains, assert_not_contains};
-use mafia_server::game::{chat::{MessageSender, ChatGroup}, role::{retributionist::Retributionist, jester::Jester}};
+use mafia_server::game::{chat::{MessageSender, ChatGroup}, role::{retributionist::Retributionist, jester::Jester, crusader::Crusader, framer::Framer, veteran::Veteran}};
 // Pub use so that submodules don't have to re-import everything.
 pub use mafia_server::game::{role::{RoleState, transporter::Transporter, medium::Medium, jailor::Jailor, vigilante::Vigilante, sheriff::Sheriff, escort::Escort, mafioso::Mafioso, bodyguard::Bodyguard}, phase::PhaseState, chat::ChatMessage};
 pub use mafia_server::packet::ToServerPacket;
@@ -30,26 +30,6 @@ fn medium_recieves_dead_messages_from_jail() {
 }
 
 #[test]
-fn bodyguard_basic() {
-    kit::scenario!(game in Night 1 where
-        maf: Mafioso,
-        bg: Bodyguard,
-        townie: Sheriff
-    );
-
-    maf.set_night_target(townie);
-    bg.set_night_target(townie);
-
-    game.skip_to(PhaseType::Morning, 2);
-
-    assert!(townie.get_messages().contains(&ChatMessage::BodyguardProtectedYou));
-
-    assert!(townie.alive());
-    assert!(!bg.alive());
-    assert!(!maf.alive());
-}
-
-#[test]
 fn sheriff_basic() {
     kit::scenario!(game in Night 1 where
         sher: Sheriff,
@@ -66,6 +46,26 @@ fn sheriff_basic() {
     
     game.skip_to(PhaseType::Morning, 3);
     assert_contains!(sher.get_messages(), ChatMessage::SheriffResult { suspicious: false });
+}
+
+#[test]
+fn bodyguard_basic() {
+    kit::scenario!(game in Night 1 where
+        maf: Mafioso,
+        bg: Bodyguard,
+        townie: Sheriff
+    );
+
+    maf.set_night_target(townie);
+    bg.set_night_target(townie);
+
+    game.skip_to(PhaseType::Morning, 2);
+
+    assert!(townie.get_messages().contains(&ChatMessage::ProtectedYou));
+
+    assert!(townie.alive());
+    assert!(!bg.alive());
+    assert!(!maf.alive());
 }
 
 /// Tests if transporter properly swaps, redirecting actions on their first target to their
@@ -115,8 +115,8 @@ fn bodyguard_protects_transported_target() {
     assert!(!bg.alive());
     assert!(!maf.alive());
 
-    assert_not_contains!(t1.get_messages(), ChatMessage::BodyguardProtectedYou);
-    assert_contains!(t2.get_messages(), ChatMessage::BodyguardProtectedYou);
+    assert_not_contains!(t1.get_messages(), ChatMessage::ProtectedYou);
+    assert_contains!(t2.get_messages(), ChatMessage::ProtectedYou);
 }
 
 #[test]
@@ -132,7 +132,7 @@ fn retributionist_basic(){
     sher2.die();
 
     game.next_phase();
-    ret.set_night_targets(vec![sher1, mafioso]);
+    assert_eq!(true, ret.set_night_targets(vec![sher1, mafioso]));
     game.next_phase();
     assert_eq!(
         *ret.get_messages().get(ret.get_messages().len()-2).unwrap(),
@@ -142,7 +142,7 @@ fn retributionist_basic(){
     );
     
     game.skip_to(PhaseType::Night, 2);
-    ret.set_night_targets(vec![sher1, mafioso, jester]);
+    assert_eq!(false, ret.set_night_targets(vec![sher1, mafioso, jester]));
     game.next_phase();
     assert_ne!(
         *ret.get_messages().get(ret.get_messages().len()-2).unwrap(), 
@@ -152,7 +152,7 @@ fn retributionist_basic(){
     );
     
     game.skip_to(PhaseType::Night, 3);
-    ret.set_night_targets(vec![sher2, jester, mafioso]);
+    assert_eq!(true, ret.set_night_targets(vec![sher2, jester, mafioso]));
     game.next_phase();
     assert_eq!(
         *ret.get_messages().get(ret.get_messages().len()-2).unwrap(), 
@@ -161,3 +161,82 @@ fn retributionist_basic(){
         )}
     );
 }
+
+#[test]
+fn crusader_basic(){
+    kit::scenario!(game in Night 1 where
+        crus: Crusader,
+        protected: Jester,
+        townie1: Sheriff,
+        townie2: Sheriff,
+        mafioso: Mafioso
+    );
+
+    crus.set_night_targets(vec![protected]);
+    townie1.set_night_targets(vec![protected]);
+    townie2.set_night_targets(vec![protected]);
+    mafioso.set_night_targets(vec![protected]);
+
+    game.skip_to(PhaseType::Night, 2);
+
+    assert_eq!(true, crus.alive());
+    assert_eq!(true, protected.alive());
+    assert_eq!(true, townie1.alive());
+    assert_eq!(true, townie2.alive());
+    assert_eq!(false, mafioso.alive());
+
+    crus.set_night_targets(vec![protected]);
+    townie1.set_night_targets(vec![protected]);
+    townie2.set_night_targets(vec![protected]);
+
+    game.next_phase();
+    
+    assert!(crus.alive());
+    assert!(protected.alive());
+    assert!(townie1.alive() || townie2.alive());
+    assert!(!(townie1.alive() && townie2.alive()));
+}
+
+#[test]
+fn crusader_doesnt_kill_framed_player(){
+    kit::scenario!(game in Night 1 where
+        crus: Crusader,
+        protected: Jester,
+        townie: Sheriff,
+        framer: Framer,
+        mafioso: Mafioso
+    );
+
+    assert!(crus.set_night_targets(vec![protected]));
+    assert!(framer.set_night_targets(vec![townie, protected]));
+
+    game.next_phase();
+
+    assert!(crus.alive());
+    assert!(protected.alive());
+    assert!(framer.alive());
+    assert!(mafioso.alive());
+    assert!(townie.alive());
+}
+
+#[test]
+fn veteran_doesnt_kill_framed_player(){
+    kit::scenario!(game in Night 1 where
+        vet: Veteran,
+        townie: Sheriff,
+        framer: Framer,
+        mafioso: Mafioso
+    );
+
+    assert!(vet.set_night_targets(vec![vet]));
+    assert!(framer.set_night_targets(vec![townie, vet]));
+
+    game.next_phase();
+
+    assert!(vet.alive());
+    assert!(framer.alive());
+    assert!(mafioso.alive());
+    assert!(townie.alive());
+}
+
+

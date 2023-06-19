@@ -62,6 +62,15 @@
         "endGameCondition": "Faction",
         "maxCount": null
     },
+    "crusader": {
+        "factionAlignment": "townProtective",
+        "suspicious": false,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": null
+    },
     "vigilante": {
         "factionAlignment": "townKilling",
         "suspicious": false,
