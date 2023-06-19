@@ -54,12 +54,13 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
         return out
     }
     renderGeneralWikiPage(article: string){
-        return <div>
+        return <div className="wiki-search-page">
             <div>{styleText(translate("menu.wiki.entries."+article+".title"))}</div>
             <br/>
             <div className="wiki-search-content">
-                <div>{styleText(translate("menu.wiki.entries."+article+".text"))}</div>
+                {styleText(translate("menu.wiki.entries."+article+".text"))}
             </div>
+            <br/>
         </div>
     }
     getRolesFromSearch(search: string): Role[] {
@@ -130,7 +131,8 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
                 return styleText(translate("menu.wiki.maxCount", maxCount));
             })()}<br/>
             {styleText(translate("menu.wiki.suspicious", ROLES[role as keyof typeof ROLES].suspicious?"suspicious":"innocent"))}<br/>
-            {styleText(translate("menu.wiki.defense", defenseString))}<br/>
+            {styleText(translate("menu.wiki.defense", defenseString))}
+            <br/>
         </div>
     }
     

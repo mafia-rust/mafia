@@ -29,12 +29,13 @@
     flex-basis: auto;
 
     height: 1vh;
+    overflow-x: hidden;
     /* setting this to 1vh */
 }
 .game-screen .content > div{
     /* overflow-y: scroll; */
     overflow-x: hidden;
-    overflow-y:auto;
+    /* overflow-y: auto; */
 }
 
 .game-screen .content > div {

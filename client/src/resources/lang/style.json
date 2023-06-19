@@ -28,6 +28,8 @@
     "powerful": "INFO",
     "unstoppable": "INFO",
     "invincible": "INFO",
+    "faction": "INFO",
+    "alignment": "INFO",
     "dead": { "fontStyle": "italic", "color": "gray" },
     "menu.wiki.abilities": "INFO",
     "menu.wiki.attributes": "INFO",
