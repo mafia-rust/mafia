@@ -36,11 +36,7 @@ impl RoleStateImpl for Mafioso {
                 return
             }
     
-            let killed = target_ref.try_night_kill(game, GraveKiller::Faction(Faction::Mafia), 1);
-    
-            if !killed {
-                actor_ref.push_night_message(game,ChatMessage::TargetSurvivedAttack);
-            }
+            target_ref.try_night_kill(actor_ref, game, GraveKiller::Faction(Faction::Mafia), 1);
         }
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {

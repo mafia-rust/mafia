@@ -59,8 +59,7 @@ impl RoleStateImpl for Jester {
             },
         };
     
-        let target_ref = visit.target;
-        target_ref.try_night_kill(game, crate::game::grave::GraveKiller::Role(super::Role::Jester), 3);
+        visit.target.try_night_kill(actor_ref, game, crate::game::grave::GraveKiller::Role(super::Role::Jester), 3);
     
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {

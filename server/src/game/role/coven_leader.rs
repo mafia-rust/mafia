@@ -39,11 +39,7 @@ impl RoleStateImpl for CovenLeader {
             if target_ref.night_jailed(game) {
                 actor_ref.push_night_message(game, ChatMessage::TargetJailed)
             }else {
-                let killed = target_ref.try_night_kill(game, GraveKiller::Faction(Faction::Coven), 1);
-
-                if !killed {
-                    actor_ref.push_night_message(game, ChatMessage::TargetSurvivedAttack);
-                }
+                target_ref.try_night_kill(actor_ref, game, GraveKiller::Faction(Faction::Coven), 1);
             }
         }
     }

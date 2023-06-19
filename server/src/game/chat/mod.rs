@@ -136,10 +136,9 @@ pub enum ChatMessage {
     VigilanteSuicide,
 
     DoctorHealed, //Your target was attacked
-    DoctorHealedYou, //"Someone attacked you but a doctor nursed you back to health"
 
     BodyguardProtected, //You redirected an attack off your target
-    BodyguardProtectedYou, //You were attacked but a bodyguard protected you
+    ProtectedYou, //You were attacked but someone protected you
 
     Transported,
 

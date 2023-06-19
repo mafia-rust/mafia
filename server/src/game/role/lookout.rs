@@ -35,11 +35,8 @@ impl RoleStateImpl for Lookout {
                 return
             }
             
-            let message = ChatMessage::LookoutResult { players: 
-                PlayerReference::all_players(game).into_iter().filter(|player_ref|{
-                    player_ref.lookout_seen_visits(game).iter().any(|other_visit| other_visit.target == visit.target) && //if they visited your target
-                    *player_ref != actor_ref //and they are not you
-                }).map(|player_ref|player_ref.index()).collect()
+            let message = ChatMessage::LookoutResult { players:
+                visit.target.lookout_seen_players(game).into_iter().filter(|p|actor_ref!=*p).map(|player_ref|player_ref.index()).collect()
             };
             
             actor_ref.push_night_message(game, message);

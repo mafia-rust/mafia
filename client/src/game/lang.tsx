@@ -243,10 +243,9 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             return createChatElement(key, translate("chatmessage."+message.type), WARNING_STYLE);
         case "arsonistCleanedSelf":
         case "arsonistDousedPlayers":
-        case "bodyguardProtected":
-        case "bodyguardProtectedYou":
         case "doctorHealed":
-        case "doctorHealedYou":
+        case "bodyguardProtected":
+        case "protectedYou":
         case "executionerWon":
         case "framerFramedPlayers":
         case "gameOver":

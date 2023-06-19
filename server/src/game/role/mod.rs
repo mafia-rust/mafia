@@ -35,6 +35,7 @@ macros::roles! {
 
     Doctor : doctor,
     Bodyguard : bodyguard,
+    Crusader : crusader,
 
     Vigilante : vigilante,
     Veteran : veteran,
@@ -73,7 +74,6 @@ macros::priorities! {
     Roleblock,
     Deception,
 
-    Trickster,
     Bodyguard,
 
     Heal,
