@@ -190,9 +190,13 @@ impl Game {
                 };
         
                 whisperee_ref.add_chat_message(self, message.clone());
-                sender_player_ref.add_chat_message(self, message);
+                sender_player_ref.add_chat_message(self, message.clone());
 
-                //TODO, send to blackmailer
+                for player in PlayerReference::all_players(self){
+                    if player.role(self) == Role::Consigliere {
+                        whisperee_ref.add_chat_message(self, message.clone());
+                    }
+                }
             },
             ToServerPacket::SaveWill { will } => {
                 sender_player_ref.set_will(self, will);
