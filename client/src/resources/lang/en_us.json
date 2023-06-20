@@ -208,7 +208,7 @@
     
     "role.consigliere.name": "Consigliere",
     "role.consigliere.abilities":"● Investigate a player to find out their role, find who they visited, and who visited them",
-    "role.consigliere.attributes":"● Your information can be fooled by other roles like framers, arsonists, and hex masters",
+    "role.consigliere.attributes":"● Your information can be fooled by other roles like framers, arsonists, and hex masters\n● You can read whispers that were not sent to you",
     "role.consigliere.target": "Investigate",
     "role.consigliere.dayTarget": "Special",
     
