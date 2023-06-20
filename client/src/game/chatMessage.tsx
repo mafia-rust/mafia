@@ -114,14 +114,20 @@ export type ChatMessage = {
     type: "lookoutResult", 
     players: PlayerIndex[]
 } | {
+    type: "spyMafiaVisit", 
+    players: PlayerIndex[]
+} | {
+    type: "spyCovenVisit", 
+    players: PlayerIndex[]
+} | {
+    type: "spyBug", 
+    bug: String
+} | {
     type: "trackerResult",
     players: PlayerIndex[]
 } | {
     type: "seerResult",
     enemies: boolean
-} | {
-    type: "spyMafiaVisit", 
-    players: PlayerIndex[]
 } | {
     type: "retributionistBug", 
     message: ChatMessage
