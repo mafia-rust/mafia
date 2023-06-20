@@ -90,7 +90,15 @@ impl RoleStateImpl for Jailor {
         )
     }
     fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
+        let mut out = crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref);
+        if 
+            game.current_phase().is_night() &&
+            actor_ref.alive(game) &&
+            PlayerReference::all_players(game).into_iter().any(|p|p.night_jailed(game))
+        {
+            out.push(ChatGroup::Jail);
+        }
+        out
     }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
     

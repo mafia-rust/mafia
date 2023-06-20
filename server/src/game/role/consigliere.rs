@@ -26,7 +26,7 @@ impl RoleStateImpl for Consigliere {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return;}
     
-        if priority != Priority::Deception {return}
+        if priority != Priority::Investigative {return}
         
         if let Some(visit) = actor_ref.night_visits(game).first(){
             let target_ref = visit.target;

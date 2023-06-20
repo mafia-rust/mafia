@@ -113,7 +113,7 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                 message.grave.will
             ), IMPORTANT);
         case "youDied":
-            return createChatElement(key, translate("chatmessage.youDied"), IMPORTANT);
+            return createChatElement(key, translate("chatmessage.youDied"), SPECIAL);
         case "phaseChange":
             return createChatElement(key, translate("chatmessage.phaseChange",
                 translate("phase."+message.phase),
@@ -248,7 +248,7 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             }
         case "seerResult":
             return createChatElement(key, 
-                translate("chatmessage.seerResult." + message.enemies ? "enemies" : "friends"),
+                translate("chatmessage.seerResult." + (message.enemies ? "enemies" : "friends")),
                 RESULT_STYLE
             );
         case "retributionistBug":
