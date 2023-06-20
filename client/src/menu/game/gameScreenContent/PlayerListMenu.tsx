@@ -141,6 +141,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 
                 <button className="whisper" onClick={()=>ChatMenu.prependWhisper(player.index)}>
                     {styleText(
+                        (player.playerTags.map((tag)=>{return translate("tag."+tag)}))+
                         (
                             player.numVoted!==null &&
                             player.numVoted!==0 &&
@@ -149,8 +150,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         )+
                         player.toString()+
                         (player.roleLabel==null?"":(" ("+translate("role."+player.roleLabel+".name")+")"))+
-                        (player.alive?"":" ("+translate("dead")+")")+
-                        (player.playerTags.map((tag)=>{return translate("tag."+tag)}))
+                        (player.alive?"":" ("+translate("dead")+")")
                     )}
                 </button>
                 <button className="filter" onClick={()=>{
