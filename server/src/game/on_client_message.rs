@@ -42,10 +42,18 @@ impl Game {
 
                         if let Some(any_player_voted_ref) = any_player_ref.chosen_vote(self){
 
+                            let mut voting_power = 1;
+                            if let RoleState::Mayor(mayor) = any_player_ref.role_state(self).clone(){
+                                if mayor.revealed {
+                                    voting_power += 2;
+                                }
+                            }
+
                             if let Some(num_votes) = voted_for_player.get_mut(&any_player_voted_ref){
-                                *num_votes+=1;
+                                
+                                *num_votes+=voting_power;
                             }else{
-                                voted_for_player.insert(any_player_voted_ref, 1);
+                                voted_for_player.insert(any_player_voted_ref, voting_power);
                             }
                         }
                     }

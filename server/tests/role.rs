@@ -1,6 +1,8 @@
 mod kit;
+use std::vec;
+
 pub(crate) use kit::{assert_contains, assert_not_contains};
-use mafia_server::game::{chat::{MessageSender, ChatGroup}, role::{retributionist::Retributionist, jester::Jester, crusader::Crusader, framer::Framer, veteran::Veteran, executioner::Executioner}};
+use mafia_server::game::{chat::{MessageSender, ChatGroup}, role::{retributionist::Retributionist, jester::Jester, crusader::Crusader, framer::Framer, veteran::Veteran, executioner::Executioner, spy::{Spy, SpyBug}, blackmailer::Blackmailer}};
 // Pub use so that submodules don't have to re-import everything.
 pub use mafia_server::game::{role::{RoleState, transporter::Transporter, medium::Medium, jailor::Jailor, vigilante::Vigilante, sheriff::Sheriff, escort::Escort, mafioso::Mafioso, bodyguard::Bodyguard}, phase::PhaseState, chat::ChatMessage};
 pub use mafia_server::packet::ToServerPacket;
@@ -46,6 +48,32 @@ fn sheriff_basic() {
     
     game.skip_to(PhaseType::Morning, 3);
     assert_contains!(sher.get_messages(), ChatMessage::SheriffResult { suspicious: false });
+}
+
+#[test]
+fn spy_basic_transported() {
+    kit::scenario!(game in Night 1 where
+        spy: Spy,
+        _mafioso: Mafioso,
+        bmer: Blackmailer,
+        esc: Escort,
+        transp: Transporter,
+        bugged: Sheriff,
+        jester: Jester
+    );
+    spy.set_night_target(jester);
+    transp.set_night_targets(vec![jester, bugged]);
+    bmer.set_night_target(jester);
+    esc.set_night_target(jester);
+
+    game.next_phase();
+
+    assert_contains!(spy.get_messages(), ChatMessage::SpyBug { bug: SpyBug::Silenced });
+    assert_contains!(spy.get_messages(), ChatMessage::SpyBug { bug: SpyBug::Roleblocked });
+    assert_contains!(spy.get_messages(), ChatMessage::SpyBug { bug: SpyBug::Transported });
+
+    
+    assert_contains!(spy.get_messages(), ChatMessage::SpyMafiaVisit { players: vec![bugged.index()] });
 }
 
 #[test]

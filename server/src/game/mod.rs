@@ -29,6 +29,8 @@ use settings::Settings;
 use grave::Grave;
 
 use self::phase::PhaseState;
+use self::role::RoleState;
+use self::verdict::Verdict;
 
 pub struct Game {
     pub settings : Settings,
@@ -155,6 +157,30 @@ impl Game {
 
         let buttons = AvailableButtons::from_player(self, player_ref);
         player_ref.send_packet(self, ToClientPacket::YourButtons{buttons});
+    }
+
+    //returns (guilty, innocent)
+    pub fn count_verdict_votes(&self, player_on_trial: PlayerReference)->(u8,u8){
+        let mut guilty = 0;
+        let mut innocent = 0;
+        for player_ref in PlayerReference::all_players(self){
+            if !player_ref.alive(self) || player_ref == player_on_trial {
+                continue;
+            }
+            let mut voting_power = 1;
+            if let RoleState::Mayor(mayor) = player_ref.role_state(self).clone(){
+                if mayor.revealed {
+                    voting_power += 2;
+                }
+            }
+            
+            match player_ref.verdict(self) {
+                Verdict::Innocent => innocent += voting_power,
+                Verdict::Abstain => {},
+                Verdict::Guilty => guilty += voting_power,
+            }
+        }
+        (guilty, innocent)
     }
 
     pub fn current_phase(&self) -> &PhaseState {

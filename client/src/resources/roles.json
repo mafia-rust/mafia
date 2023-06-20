@@ -8,6 +8,15 @@
         "endGameCondition": "Faction",
         "maxCount": 1
     },
+    "mayor":{
+        "factionAlignment": "townPower",
+        "suspicious": false,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": 1
+    },
     "transporter":{
         "factionAlignment": "townPower",
         "suspicious": false,
@@ -27,6 +36,15 @@
         "maxCount": null
     },
     "lookout": {
+        "factionAlignment": "townInvestigative",
+        "suspicious": false,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": null
+    },
+    "spy": {
         "factionAlignment": "townInvestigative",
         "suspicious": false,
         "roleblockable": true,

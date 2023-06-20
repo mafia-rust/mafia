@@ -8,7 +8,7 @@ use super::{
     settings::PhaseTimeSettings,
     Game, player::PlayerReference,
     chat::{ChatGroup, ChatMessage},
-    verdict::Verdict, grave::Grave, role::{Priority, Role, mafioso::Mafioso}, role_list::Faction,
+    grave::Grave, role::{Priority, Role, mafioso::Mafioso}, role_list::Faction,
 };
 
 
@@ -151,18 +151,10 @@ impl PhaseState {
                 Self::Judgement { trials_left, player_on_trial }
             },
             &PhaseState::Judgement { trials_left, player_on_trial } => {
-                let mut innocent = 0;
-                let mut guilty = 0;
                 let mut messages = Vec::new();
+                let (guilty, innocent) = game.count_verdict_votes(player_on_trial);
+
                 for player_ref in PlayerReference::all_players(game){
-                    if !player_ref.alive(game) || player_ref == player_on_trial {
-                        continue;
-                    }
-                    match player_ref.verdict(game){
-                        Verdict::Innocent => innocent += 1,
-                        Verdict::Abstain => {},
-                        Verdict::Guilty => guilty += 1,
-                    }
                     messages.push(ChatMessage::JudgementVerdict{
                         voter_player_index: player_ref.index(),
                         verdict: player_ref.verdict(game)
@@ -186,15 +178,8 @@ impl PhaseState {
             &PhaseState::Evening { player_on_trial } => {
                 let Some(player_on_trial) = player_on_trial else { return Self::Night };
 
-                let mut guilty = 0;
-                let mut innocent = 0;
-                for player_ref in PlayerReference::all_players(game){
-                    match player_ref.verdict(game) {
-                        Verdict::Innocent => innocent += 1,
-                        Verdict::Abstain => {},
-                        Verdict::Guilty => guilty += 1,
-                    }
-                }
+                let (guilty, innocent) = game.count_verdict_votes(player_on_trial);
+                
                 if innocent < guilty {
                     player_on_trial.set_alive(game, false);
 

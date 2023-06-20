@@ -214,6 +214,28 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                     ).join(", ")
                 ), RESULT_STYLE);
             }
+        case "spyMafiaVisit":
+            if (message.players.length === 0) {
+                return createChatElement(key, translate("chatmessage.spyMafiaVisit.nobody"), RESULT_STYLE)
+            } else {
+                return createChatElement(key, translate("chatmessage.spyMafiaVisit", 
+                    message.players.map(playerIndex => 
+                        GAME_MANAGER.gameState.players[playerIndex].toString()
+                    ).join(", ")
+                ), RESULT_STYLE);
+            }
+        case "spyCovenVisit":
+            if (message.players.length === 0) {
+                return createChatElement(key, translate("chatmessage.spyCovenVisit.nobody"), RESULT_STYLE)
+            } else {
+                return createChatElement(key, translate("chatmessage.spyCovenVisit", 
+                    message.players.map(playerIndex => 
+                        GAME_MANAGER.gameState.players[playerIndex].toString()
+                    ).join(", ")
+                ), RESULT_STYLE);
+            }
+        case "spyBug":
+            return createChatElement(key, translate("chatmessage.spyBug."+message.bug), RESULT_STYLE)
         case "trackerResult":
             if (message.players.length === 0) {
                 return createChatElement(key, translate("chatmessage.trackerResult.nobody"), RESULT_STYLE)
@@ -267,7 +289,6 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
         case "mayorCantWhisper":
         case "playerWithNecronomicon":
         case "roleData":
-        case "spyMafiaVisit":
         case "targetJailed":
         case "targetSurvivedAttack":
         case "transported":

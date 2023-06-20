@@ -2,6 +2,8 @@
 use serde::{Serialize, Deserialize};
 use crate::game::{grave::Grave, role::Role, player::{PlayerIndex, PlayerReference}, verdict::Verdict, phase::PhaseType, Game};
 
+use super::role::spy::SpyBug;
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
@@ -12,7 +14,7 @@ pub enum MessageSender {
 }
 
 // Determines message color
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum ChatMessage {
@@ -83,8 +85,8 @@ pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
     TrialVerdict {
         player_on_trial: PlayerIndex, 
-        innocent: usize, 
-        guilty: usize 
+        innocent: u8, 
+        guilty: u8 
     },
     
     /* Misc */
@@ -98,7 +100,6 @@ pub enum ChatMessage {
     /* Role-specific */
     #[serde(rename_all = "camelCase")]
     MayorRevealed{player_index: PlayerIndex}, //Sammy revealed as mayor
-    MayorCantWhisper,   //you cant whisper as or to a revealed mayor
     #[serde(rename_all = "camelCase")]
     JailedTarget{player_index: PlayerIndex}, //You jailed Sammy
     #[serde(rename_all = "camelCase")]
@@ -130,6 +131,7 @@ pub enum ChatMessage {
     SeerResult{ enemies: bool},
     SpyMafiaVisit{players: Vec<PlayerIndex>},
     SpyCovenVisit{players: Vec<PlayerIndex>},
+    SpyBug{bug: SpyBug},
 
     VeteranAttackedYou,
     VeteranAttackedVisitor,

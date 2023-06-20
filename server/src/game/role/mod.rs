@@ -29,10 +29,12 @@ trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
 // Creates the Role enum
 macros::roles! {
     Jailor : jailor,
+    Mayor : mayor,
     Transporter : transporter,
 
     Sheriff : sheriff,
     Lookout : lookout,
+    Spy : spy,
     Tracker : tracker,
     Seer : seer,
 
@@ -71,7 +73,9 @@ macros::roles! {
 macros::priorities! {
     TopPriority,
     Unswappable,
+
     Transporter,
+    
     Control,
     Necromancy,
 
@@ -83,6 +87,9 @@ macros::priorities! {
     Heal,
     Kill,
     Investigative,
+
+    SpyBug,
+
     StealMessages,
     Convert
 }
