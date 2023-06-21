@@ -100,7 +100,7 @@ pub enum ToClientPacket{
 
     GameOver{reason: GameOverReason},
 
-    //a way to syncronise the entire game for someone who joined late
+    //a way to syncronise the entire game for someone who joined late\
 }
 impl ToClientPacket {
     pub fn to_json_string(&self) -> Result<String, serde_json::Error> {
@@ -188,4 +188,8 @@ pub enum ToServerPacket{
     SaveNotes{notes: String},
 
     Leave,
+
+    //ROLE SPECIFIC PACKETS
+    #[serde(rename_all = "camelCase")]
+    SetForgerWill{ role: Role, will: String },
 }
