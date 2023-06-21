@@ -11,12 +11,14 @@ import WikiMenu from "./gameScreenContent/WikiMenu";
 import "../../index.css";
 import "./gameScreen.css";
 import translate from "../../game/lang";
+import RoleSpecifcMenu from "./gameScreenContent/RoleSpecific";
 
 export enum ContentMenus {
     GraveyardMenu = "GraveyardMenu",
     PlayerListMenu = "PlayerListMenu",
     WillMenu = "WillMenu",
     WikiMenu = "WikiMenu",
+    RoleSpecificMenu = "RoleSpecificMenu"
 }
 
 type GameScreenProps = {
@@ -31,6 +33,7 @@ type GameScreenState = {
     playerListMenu: boolean,
     willMenu: boolean,
     wikiMenu: boolean,
+    roleSpecificMenu: boolean
 }
 
 export default class GameScreen extends React.Component<GameScreenProps, GameScreenState> {
@@ -56,6 +59,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
             playerListMenu: props.contentMenus.includes(ContentMenus.PlayerListMenu),
             willMenu: props.contentMenus.includes(ContentMenus.WillMenu),
             wikiMenu: props.contentMenus.includes(ContentMenus.WikiMenu),
+            roleSpecificMenu : props.contentMenus.includes(ContentMenus.RoleSpecificMenu)
         };
 
         this.listener = ()=>{
@@ -85,6 +89,9 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
             case ContentMenus.WikiMenu:
                 this.setState({wikiMenu: false});
                 break;
+            case ContentMenus.RoleSpecificMenu:
+                this.setState({roleSpecificMenu: false});
+                break;
         }
     }
     openMenu(menu: ContentMenus) {
@@ -106,6 +113,9 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
             case ContentMenus.WikiMenu:
                 this.setState({wikiMenu: true});
                 break;
+            case ContentMenus.RoleSpecificMenu:
+                this.setState({roleSpecificMenu: true});
+                break;
         }
     }
     menusOpen(): ContentMenus[] {
@@ -121,6 +131,9 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         }
         if(this.state.wikiMenu) {
             out.push(ContentMenus.WikiMenu);
+        }
+        if(this.state.roleSpecificMenu) {
+            out.push(ContentMenus.RoleSpecificMenu);
         }
         return out;
     }
@@ -139,6 +152,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                     <ChatMenu/>
                     {this.state.playerListMenu?<PlayerListMenu/>:null}
                     {this.state.willMenu?<WillMenu/>:null}
+                    {this.state.roleSpecificMenu?<RoleSpecifcMenu/>:null}
                     {this.state.wikiMenu?<WikiMenu/>:null}
                 </div>
             </div>

@@ -162,4 +162,8 @@ export type ToServerPacket = {
     notes: String
 } | {
     type: "leave",
+} | {
+    type: "setForgerWill",
+    role: Role,
+    will: string
 }

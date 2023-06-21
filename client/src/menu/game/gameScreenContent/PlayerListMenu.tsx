@@ -8,6 +8,7 @@ import GameState, { Player, PlayerIndex } from "../../../game/gameState.d";
 import GameScreen, { ContentMenus } from "../GameScreen";
 import { ChatMessage } from "../../../game/chatMessage";
 import { StateListener } from "../../../game/gameManager.d";
+import SmallRoleSpecifcMenu from "./RoleSpecificMenus/SmallRoleSpecificMenu";
 
 interface PlayerListMenuProps {
 }
@@ -49,52 +50,6 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         GAME_MANAGER.removeStateListener(this.listener);
     }
 
-    renderRoleSpecific(){
-        let roleSpecificJSX = null;
-        switch(this.state.gameState.roleState?.role){
-            case "jailor":
-                if(this.state.gameState.phase==="night")
-                    roleSpecificJSX = styleText(""+this.state.gameState.roleState.executionsRemaining);
-                else
-                {
-                    let jailedString = this.state.gameState.roleState.jailedTargetRef!=null?
-                        this.state.gameState.players[this.state.gameState.roleState.jailedTargetRef].toString():
-                        translate("none");
-                    roleSpecificJSX = styleText(jailedString+" "+this.state.gameState.roleState.executionsRemaining);
-                }
-                break;
-            case "medium":
-            
-                let seancedString = this.state.gameState.roleState.seancedTarget!=null?
-                    this.state.gameState.players[this.state.gameState.roleState.seancedTarget].toString():
-                    translate("none");
-                roleSpecificJSX = styleText(seancedString+" "+this.state.gameState.roleState.seancnesRemaining);
-                
-                break;
-            case "doctor":
-                roleSpecificJSX = styleText(""+this.state.gameState.roleState.selfHealsRemaining);
-                break;
-            case "bodyguard":
-                roleSpecificJSX = styleText(""+this.state.gameState.roleState.selfShieldsRemaining);
-                break;
-            case "vigilante":
-                if(this.state.gameState.roleState.willSuicide)
-                    roleSpecificJSX = styleText(translate("grave.killer.suicide"));
-                else
-                    roleSpecificJSX = styleText(""+this.state.gameState.roleState.bulletsRemaining);
-                    break;
-            case "veteran":
-                roleSpecificJSX = styleText(""+this.state.gameState.roleState.alertsRemaining);
-                break;
-            case "janitor":
-                roleSpecificJSX = styleText(""+this.state.gameState.roleState.cleansRemaining);
-                break;
-        }
-        if(roleSpecificJSX!==null){
-            return <div className="role-specific">{roleSpecificJSX}</div>
-        }
-        return null
-    }
     renderPhaseSpecific(){
         let phaseSpecificJSX = null;
         switch(this.state.gameState.phase){
@@ -222,7 +177,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         {this.renderFilterButton("living")}
         {this.renderFilterButton("usable")}
 
-        {this.renderRoleSpecific()}
+        <SmallRoleSpecifcMenu/>
         {this.renderPhaseSpecific()}
         {this.renderPlayers(this.state.gameState.players)}
     </div>)}
