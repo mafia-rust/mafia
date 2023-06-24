@@ -88,7 +88,8 @@ impl RoleStateImpl for Executioner {
             .into_iter()
             .filter(|p|
                 p.role(game).faction_alignment().faction() == Faction::Town && 
-                p.role(game).faction_alignment() != FactionAlignment::TownPower
+                p.role(game).faction_alignment() != FactionAlignment::TownPower &&
+                p.role(game).faction_alignment() != FactionAlignment::TownKilling
             ).collect::<Vec<PlayerReference>>()
             .choose(&mut rand::thread_rng())
         {

@@ -36,16 +36,22 @@ impl RoleStateImpl for Deputy {
     }
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
 
-        game.add_message_to_chat_group(ChatGroup::All, ChatMessage::DeputyShot{shot_index: target_ref.index()});
-        
-        let mut grave = Grave::from_player_lynch(game, target_ref);
-        grave.death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Deputy)]);
-        target_ref.die(game, grave);
+        if target_ref.role(game).defense() <= 2 {
+            target_ref.add_chat_message(game, ChatMessage::YouSurvivedAttack);
+            actor_ref.add_chat_message(game, ChatMessage::TargetSurvivedAttack);
 
-        if target_ref.role(game).faction_alignment().faction() == Faction::Town {
-            let mut grave = Grave::from_player_lynch(game, actor_ref);
-            grave.death_cause = GraveDeathCause::Killers(vec![GraveKiller::Suicide]);
-            actor_ref.die(game, grave);
+        }else{
+            let mut grave = Grave::from_player_lynch(game, target_ref);
+            grave.death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Deputy)]);
+            target_ref.die(game, grave);
+            game.add_message_to_chat_group(ChatGroup::All, ChatMessage::DeputyKilled{shot_index: target_ref.index()});
+            
+
+            if target_ref.role(game).faction_alignment().faction() == Faction::Town {
+                let mut grave = Grave::from_player_lynch(game, actor_ref);
+                grave.death_cause = GraveDeathCause::Killers(vec![GraveKiller::Suicide]);
+                actor_ref.die(game, grave);
+            }
         }
 
         actor_ref.set_role_state(game, RoleState::Deputy(Deputy{bullets_remaining:self.bullets_remaining-1}));

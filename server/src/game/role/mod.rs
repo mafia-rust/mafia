@@ -67,7 +67,9 @@ macros::roles! {
 
     //Neutral
     Jester : jester,
-    Executioner: executioner
+    Executioner: executioner,
+
+    Vampire: vampire
 }
 
 macros::priorities! {
