@@ -1,20 +1,28 @@
-use super::role::Role;
+use super::{player::PlayerReference};
 
-
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Team{
-    Faction, //eveyone within this faction is on a team
-    Role
+    Mafia, Coven, Vampire
 }
-impl Team{
-    pub fn same_team(a_role: Role, b_role: Role)->bool{
-        let Some(a_team) = a_role.team() else {return false};
-        let Some(b_team) = b_role.team() else {return false};
-        if a_team != b_team {return false};
-
-        match a_team {
-            Team::Faction => a_role.faction_alignment().faction() == b_role.faction_alignment().faction(),
-            Team::Role => a_role == b_role,
+#[derive(Debug, PartialEq, Eq)]
+pub enum TeamState{
+    Mafia,
+    Coven{
+        player_with_necronomicon: PlayerReference
+    },
+    Vampire{
+        youngest_vampire: PlayerReference
+    }
+}
+impl TeamState{
+    pub fn team(&self)->Team{
+        match self {
+            TeamState::Mafia => Team::Mafia,
+            TeamState::Coven { .. } => Team::Coven,
+            TeamState::Vampire { .. } => Team::Vampire,
         }
+    }
+    pub fn same_team(a: TeamState, b: TeamState)->bool{
+        a.team() == b.team()
     }
 }

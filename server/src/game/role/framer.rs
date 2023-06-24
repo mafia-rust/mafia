@@ -18,7 +18,7 @@ pub(super) const SUSPICIOUS: bool = true;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaDeception;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Faction;
-pub(super) const TEAM: Option<Team> = Some(Team::Faction);
+pub(super) const TEAM: Option<Team> = Some(Team::Mafia);
 
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Framer;
@@ -50,10 +50,7 @@ impl RoleStateImpl for Framer {
         (
             actor_ref.chosen_targets(game).is_empty() &&
             actor_ref != target_ref &&
-            !Team::same_team(
-                actor_ref.role(game), 
-                target_ref.role(game)
-            )
+            actor_ref.role(game).team() != target_ref.role(game).team()
         ) || 
         (
             actor_ref.chosen_targets(game).len() == 1

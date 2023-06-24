@@ -181,8 +181,8 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
             return createChatElement(key, translate("chatmessage.jailedSomeone",
                 GAME_MANAGER.gameState.players[message.playerIndex].toString()
             ), SPECIAL);
-        case "deputyShot":
-            return createChatElement(key, translate("chatmessage.deputyShot",
+        case "deputyKilled":
+            return createChatElement(key, translate("chatmessage.deputyKilled",
                 GAME_MANAGER.gameState.players[message.shotIndex].toString()
             ), SPECIAL);
         case "jailorDecideExecute":

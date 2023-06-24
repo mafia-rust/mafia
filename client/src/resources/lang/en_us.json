@@ -130,7 +130,7 @@
     
     "role.seer.name": "Seer",
     "role.seer.abilities":"● Examine two players to find if they are friends or enemies",
-    "role.seer.attributes":"● Two players are friends if they could possibly both win together\n● Frames, Douses, Hexes, and Enchants can make your target look like they are on a different team",
+    "role.seer.attributes":"● Two players are friends if they could possibly both win together\n● A jester can win alongside anyone, therefore the jester has no enemies\n● Frames, Douses, Hexes, and Enchants can make your target look like they are a different role",
     "role.seer.target": "Examine",
     "role.seer.dayTarget": "Special",
 
@@ -178,13 +178,13 @@
 
     "role.veteran.name": "Veteran",
     "role.veteran.abilities":"● Target yourself to alert, killing everyone who visits you",
-    "role.veteran.attributes":"● You will know if you attack someone\n● You have basic defense while on alert\n● You have a powerful attack",
+    "role.veteran.attributes":"● You will know if you attack someone\n● You have basic defense while on alert\n● You have a powerful attack\n● You have three alerts",
     "role.veteran.target": "Alert",
     "role.veteran.dayTarget": "Special",
 
     "role.deputy.name": "Deputy",
-    "role.deputy.abilities":"● Kill one player during the day",
-    "role.deputy.attributes":"● You have a powerful attack",
+    "role.deputy.abilities":"● Shoot one player during the day",
+    "role.deputy.attributes":"\n● When you kill a player, it will be announced that they were shot by a deputy\n● If the player you attack survives the attack, they will know they were attaked, but it will not be announced that they were shot by a deputy\n● You have a powerful attack\n● You have one bullet",
     "role.deputy.target": "Target",
     "role.deputy.dayTarget": "Shoot",
 
@@ -220,7 +220,7 @@
 
     "role.framer.name": "Framer",
     "role.framer.abilities":"● Target two players to frame the first one",
-    "role.framer.attributes":"● The framed player will look like the mafioso to town investigative roles\n● It will look like first target visited your second target non attacking\n● You can only pick non mafia mebers for your first target, but anyone as your second target\n● Your second visit is astral",
+    "role.framer.attributes":"● The framed player will look like the mafioso to town investigative roles\n● It will look like first target visited your second target, non attacking\n● You can only pick non mafia mebers for your first target, but anyone as your second target\n● Your second visit is astral",
     "role.framer.target": "Target",
     "role.framer.dayTarget": "Special",
 
@@ -244,7 +244,7 @@
 
     "role.executioner.name": "Executioner",
     "role.executioner.abilities":"● Get your target lynched to win\n● If your target dies by something other than lynching, you will be converted to a jester",
-    "role.executioner.attributes":"● After you win you will commit suicide",
+    "role.executioner.attributes":"● After you win you will commit suicide\n● Your target will always be a townie, but never town power, or town killing",
     "role.executioner.target": "Target",
     "role.executioner.dayTarget": "Special",
 
@@ -333,7 +333,7 @@
     "chatmessage.mediumSeance":"\\0 is being seanced by a medium!",
     "chatmessage.jesterWon":"The jester will get their revenge from the grave!",
     "chatmessage.executionerWon":"The executioner got their target lynched and won!",
-    "chatmessage.deputyShot":"A deputy shot \\0!",
+    "chatmessage.deputyKilled":"A deputy killed \\0!",
     "chatmessage.jailorDecidedToExecute":"The jailor decided to execute \\0",
     "chatmessage.jailorDecideExecute.nobody":"The jailor decided not to execute!",
 
