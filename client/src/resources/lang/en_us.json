@@ -25,6 +25,7 @@
     "menu.lobby.timeSettings": "Times:",
 
     "menu.excludedRoles.exclude": "Exclude Role",
+    "menu.excludedRoles.excludedRoles": "Excluded Roles",
 
     "menu.loading.host": "Starting Server",
     "menu.loading.join": "Connecting to Lobby",

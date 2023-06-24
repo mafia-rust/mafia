@@ -93,6 +93,23 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             return <button key={index}>{renderRoleListEntry(entry)}</button>
         }, this)}
     </div>}
+
+    renderExcludedRoles(){
+        return<div className="graveyard-menu-excludedRoles">
+            <section>
+                {translate("menu.excludedRoles.excludedRoles")}
+            </section>
+            <div>
+                {this.state.gameState.excludedRoles.map((value, i)=>{
+                    return <button key={i}>
+                        {renderRoleListEntry(value)}
+                    </button>
+                })}
+            </div>
+        </div>
+    }
+
+
     render(){return(<div className="graveyard-menu">
         <button onClick={()=>{
             GameScreen.instance.closeMenu(ContentMenus.GraveyardMenu)
@@ -102,6 +119,12 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             {this.renderGraves()}
             {/* //TODO show excluded roles at top */}
         </div>
+        {this.renderExcludedRoles()}
+
+        
+        
+
+
         <div>
             {this.state.extendedGraveIndex!==null?this.renderGraveExtended(this.state.gameState.graves[this.state.extendedGraveIndex]):null}
         </div>

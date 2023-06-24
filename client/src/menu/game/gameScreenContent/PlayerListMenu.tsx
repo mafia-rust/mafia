@@ -31,10 +31,12 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         this.listener = (type)=>{
             let playerFilter = this.state.playerFilter;
             if(type==="phase"){
-                if(GAME_MANAGER.gameState.phase === "night"){
-                    playerFilter = "usable"
-                }else if(GAME_MANAGER.gameState.phase === "morning"){
-                    playerFilter = "living";
+                if(GAME_MANAGER.gameState.myIndex===null || GAME_MANAGER.gameState.players[GAME_MANAGER.gameState.myIndex].alive){
+                    if(GAME_MANAGER.gameState.phase === "night"){
+                        playerFilter = "usable"
+                    }else if(GAME_MANAGER.gameState.phase === "morning"){
+                        playerFilter = "living";
+                    }
                 }
             }
             this.setState({

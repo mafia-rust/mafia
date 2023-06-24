@@ -126,16 +126,22 @@ impl PhaseState {
                 Self::Judgement { trials_left, player_on_trial }
             },
             &PhaseState::Judgement { trials_left, player_on_trial } => {
-                let mut messages = Vec::new();
-                let (guilty, innocent) = game.count_verdict_votes(player_on_trial);
 
-                for player_ref in PlayerReference::all_players(game){
-                    messages.push(ChatMessage::JudgementVerdict{
-                        voter_player_index: player_ref.index(),
-                        verdict: player_ref.verdict(game)
-                    });
-                }
-                game.add_messages_to_chat_group(ChatGroup::All, messages);
+                game.add_messages_to_chat_group(ChatGroup::All, 
+                PlayerReference::all_players(game).into_iter()
+                    .filter(|player_ref|{
+                        player_ref.alive(game) && *player_ref != player_on_trial
+                    })
+                    .map(|player_ref|
+                        ChatMessage::JudgementVerdict{
+                            voter_player_index: player_ref.index(),
+                            verdict: player_ref.verdict(game)
+                        }
+                    )
+                    .collect()
+                );
+                
+                let (guilty, innocent) = game.count_verdict_votes(player_on_trial);
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialVerdict{ 
                         player_on_trial: player_on_trial.index(), 
                         innocent, guilty 
@@ -147,7 +153,7 @@ impl PhaseState {
                     //TODO send no trials left
                     Self::Evening { player_on_trial: None }
                 }else{
-                    Self::Voting { trials_left }
+                    Self::Voting { trials_left: trials_left-1 }
                 }
             },
             &PhaseState::Evening { player_on_trial } => {
