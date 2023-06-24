@@ -7,6 +7,7 @@ type AnchorProps = {
     onMount: () => void
 }
 type AnchorState = {
+    mobile: boolean,
     content: JSX.Element,
     errors: Error[]
 }
@@ -18,15 +19,29 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         super(props);
 
         this.state = {
+            mobile: false,
             content: this.props.content,
             errors: []
         }
     }
+    
     componentDidMount() {
         Anchor.instance = this;
 
+        window.addEventListener("resize", Anchor.onResize);
+        Anchor.onResize();
+
         this.props.onMount()
     }
+    
+    private static onResize() {
+        Anchor.instance.setState({mobile: window.innerWidth <= 600});
+    }
+    
+    componentWillUnmount() {
+        window.removeEventListener("resize", Anchor.onResize);
+    }
+
     render(){
         return <div className="anchor">
             {this.state.content}
@@ -47,6 +62,9 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     }
     public static queueError(title: string, body: string) {
         Anchor.instance.setState({errors: [{title, body}, ...Anchor.instance.state.errors]});
+    }
+    public static isMobile(): boolean {
+        return Anchor.instance.state.mobile;
     }
 }
 
