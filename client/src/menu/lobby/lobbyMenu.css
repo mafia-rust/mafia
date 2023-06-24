@@ -67,7 +67,11 @@
 }
 
 
-
+.lm .right > h1 {
+    font-size: 125%;
+    width: 100%;
+    margin-bottom: 2%;
+}
 .lm .right .time {
     margin-bottom: 5%;
 }

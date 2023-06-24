@@ -45,10 +45,10 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
                     <WikiSearch/>
                 </div>
                 <div className="right">
+                    {Anchor.isMobile() && <h1>Game Settings</h1>}
                     <LobbyPhaseTimePane/>
                     <LobbyRolePane/>
                 </div>
-
             </main>
         </div>
     }
