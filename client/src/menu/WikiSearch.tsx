@@ -1,8 +1,9 @@
 import React from "react";
 import ROLES from "./../resources/roles.json";
 import translate, { styleText } from "../game/lang";
-import { FactionAlignment, Role, getRoleListEntryFromFactionAlignment, renderRoleListEntry } from "../game/gameState.d";
 import "./wikiSearch.css";
+import { Role } from "../game/roleState.d";
+import { FactionAlignment, getRoleListEntryFromFactionAlignment, renderRoleListEntry } from "../game/roleListState.d";
 
 interface WikiSearchState {
     wikiSearch: string,

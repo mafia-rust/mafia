@@ -23,7 +23,6 @@ pub async fn create_ws_server(address: &str) {
 
     Listener::start(event_listener.clone());
 
-    print!("\x1B[2J\x1B[1;1H"); // Clear terminal
     println!("{}", log::notice("Mafia Server started!\n"));
     println!("Listening on: {}\n", log::important(address));
     println!("Log output:");

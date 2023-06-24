@@ -19,7 +19,7 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
             enteredName: "",
             players: GAME_MANAGER.gameState.players
         };
-        this.listener = (type)=>{
+        this.listener = ()=>{
             this.setState({
                 players: GAME_MANAGER.gameState.players
             });

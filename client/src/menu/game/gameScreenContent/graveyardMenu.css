@@ -11,3 +11,16 @@
 .graveyard-menu .will-area{
     text-align: left;
 }
+.graveyard-menu .graveyard-menu-excludedRoles{
+    display: flex;
+    flex-direction: column;
+}
+.graveyard-menu .graveyard-menu-excludedRoles > section{
+    flex: 0 0 1;
+}
+.graveyard-menu .graveyard-menu-excludedRoles > div{
+    display: block;
+}
+.graveyard-menu .graveyard-menu-excludedRoles > div > *{
+    width: min-content;
+}

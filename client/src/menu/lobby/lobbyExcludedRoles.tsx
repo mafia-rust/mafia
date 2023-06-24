@@ -1,7 +1,7 @@
 
 import React from "react";
 import GAME_MANAGER from "../../index";
-import { RoleListEntry, renderRoleListEntry } from "../../game/gameState.d";
+import { RoleListEntry, renderRoleListEntry } from "../../game/roleListState.d";
 import "../../index.css";
 import RolePicker from "../RolePicker";
 import { StateListener } from "../../game/gameManager.d";
@@ -37,12 +37,12 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
     }
 
     includeRole(role: RoleListEntry){
-        let roles = this.state.excludedRoles;
+        let roles = [...this.state.excludedRoles];
         roles = roles.filter((value)=>value !== role);
         GAME_MANAGER.sendExcludedRolesPacket(roles);
     }
     excludeRole(){
-        let roles = this.state.excludedRoles;
+        let roles = [...this.state.excludedRoles];
         roles.push(this.state.roleListEntry);
         GAME_MANAGER.sendExcludedRolesPacket(roles);
     }
@@ -50,13 +50,7 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
     
 
     render(){return(<section>
-        <div>
-            {this.state.excludedRoles.map((value, i)=>{
-                return <button key={i} onClick={()=>{this.includeRole(value)}}>
-                    {renderRoleListEntry(value)}
-                </button>
-            })}
-        </div>
+        <button onClick={()=>{this.excludeRole()}}>{translate("menu.excludedRoles.exclude")}</button>
         <RolePicker
             roleListEntry={this.state.roleListEntry}
             onChange={(value: RoleListEntry) => {
@@ -65,6 +59,12 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
                 })
             }}
         />
-        <button onClick={()=>{this.excludeRole()}}>{translate("menu.excludedRoles.exclude")}</button>
+        <div>
+            {this.state.excludedRoles.map((value, i)=>{
+                return <button key={i} onClick={()=>{this.includeRole(value)}}>
+                    {renderRoleListEntry(value)}
+                </button>
+            })}
+        </div>
     </section>)}
 }

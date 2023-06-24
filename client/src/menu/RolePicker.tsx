@@ -1,14 +1,12 @@
 import React from "react";
 import "./rolePicker.css";
 import { 
-    Faction, FactionAlignment, Role, RoleListEntry, FACTIONS,
-    getAlignmentStringFromFactionAlignment, 
-    getAllFactionAlignments, 
-    getFactionFromFactionAlignment, getFactionAlignmentFromRole, getFactionFromRoleListEntry, 
-    getFactionAlignmentFromRoleListEntry, getFactionFromRole
+
 } from "../game/gameState.d";
 import translate from "../game/lang";
 import ROLES from "../resources/roles.json";
+import { FACTIONS, Faction, FactionAlignment, RoleListEntry, getAlignmentStringFromFactionAlignment, getAllFactionAlignments, getFactionAlignmentFromRoleListEntry, getFactionFromFactionAlignment, getFactionFromRoleListEntry } from "../game/roleListState.d";
+import { Role, getFactionAlignmentFromRole, getFactionFromRole } from "../game/roleState.d";
 
 interface RolePickerProps {
     roleListEntry: RoleListEntry,

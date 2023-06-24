@@ -25,6 +25,7 @@
     "menu.lobby.timeSettings": "Times:",
 
     "menu.excludedRoles.exclude": "Exclude Role",
+    "menu.excludedRoles.excludedRoles": "Excluded Roles",
 
     "menu.loading.host": "Starting Server",
     "menu.loading.join": "Connecting to Lobby",
@@ -38,6 +39,7 @@
     "menu.will.title": "Will",
     "menu.will.will": "Will",
     "menu.will.notes": "Notes",
+    "menu.will.deathNote": "Death Note",
     "menu.will.save": "Save",
     "menu.will.post": "Post",
 
