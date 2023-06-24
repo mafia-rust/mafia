@@ -8,6 +8,7 @@ import translate from "../../game/lang";
 import { StateListener } from "../../game/gameManager.d";
 import LobbyExcludedRoles from "./lobbyExcludedRoles";
 import WikiSearch from "../WikiSearch";
+import Anchor from "../Anchor";
 
 type LobbyMenuProps = {}
 
@@ -36,26 +37,7 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
 
     render() {
         return <div className="lm">
-            <header>
-                {/* TODO: Place this nicely */}
-                <button className="leave-button" onClick={() => GAME_MANAGER.leaveGame()}>
-                    {translate("menu.button.leave")}
-                </button>
-                <button onClick={() => {
-                    let code = new URL(window.location.href);
-                    code.searchParams.set("code", GAME_MANAGER.roomCode!);
-                    if (navigator.clipboard)
-                        navigator.clipboard.writeText(code.toString());
-                }}>
-                    {GAME_MANAGER.roomCode!}
-                </button> 
-                <h1>{GAME_MANAGER.gameState.myName!}</h1>
-                <button onClick={()=>{GAME_MANAGER.sendStartGamePacket()}}>
-                    {translate("menu.lobby.button.start")}
-                </button>
-                
-            </header>
-
+            <LobbyMenuHeader/>
             <main>
                 <div className="left">
                     <LobbyPlayerList/>
@@ -63,11 +45,51 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
                     <WikiSearch/>
                 </div>
                 <div className="right">
+                    {Anchor.isMobile() && <h1>Game Settings</h1>}
                     <LobbyPhaseTimePane/>
                     <LobbyRolePane/>
                 </div>
-
             </main>
         </div>
     }
+}
+
+// There's probably a better way to do this that doesn't need the mobile check.
+function LobbyMenuHeader(props: {}): JSX.Element {
+    if (Anchor.isMobile()) {
+        return <header>
+            <div>
+                <button className="leave" onClick={() => GAME_MANAGER.leaveGame()}>
+                    {translate("menu.button.leave")}
+                </button>
+                <RoomCodeButton/>
+                <button className="start" onClick={()=>{GAME_MANAGER.sendStartGamePacket()}}>
+                    {translate("menu.lobby.button.start")}
+                </button>
+            </div>
+            <h1>{GAME_MANAGER.gameState.myName!}</h1>
+        </header>
+    } else {
+        return <header>
+            <button className="leave" onClick={() => GAME_MANAGER.leaveGame()}>
+                {translate("menu.button.leave")}
+            </button>
+            <RoomCodeButton/>
+            <h1>{GAME_MANAGER.gameState.myName!}</h1>
+            <button className="start" onClick={()=>{GAME_MANAGER.sendStartGamePacket()}}>
+                {translate("menu.lobby.button.start")}
+            </button>
+        </header>
+    }
+}
+
+function RoomCodeButton(props: {}): JSX.Element {
+    return <button onClick={() => {
+        let code = new URL(window.location.href);
+        code.searchParams.set("code", GAME_MANAGER.roomCode!);
+        if (navigator.clipboard)
+            navigator.clipboard.writeText(code.toString());
+    }}>
+        {GAME_MANAGER.roomCode!}
+    </button>
 }

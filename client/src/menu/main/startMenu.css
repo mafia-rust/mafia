@@ -34,7 +34,6 @@
 }
 
 .sm-wiki {
-    margin: 1rem;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -50,4 +49,10 @@
 
 .sm-wiki > div {
     height: 75%;
+}
+
+@media only screen and (max-width: 600px) {
+    .sm-wiki {
+        width: 80%;
+    }
 }

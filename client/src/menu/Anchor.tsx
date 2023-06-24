@@ -7,8 +7,9 @@ type AnchorProps = {
     onMount: () => void
 }
 type AnchorState = {
+    mobile: boolean,
     content: JSX.Element,
-    errors: Error[]
+    error: JSX.Element | null
 }
 
 export default class Anchor extends React.Component<AnchorProps, AnchorState> {
@@ -18,35 +19,53 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         super(props);
 
         this.state = {
+            mobile: false,
             content: this.props.content,
-            errors: []
+            error: null
         }
     }
+    
     componentDidMount() {
         Anchor.instance = this;
 
+        window.addEventListener("resize", Anchor.onResize);
+        Anchor.onResize();
+
         this.props.onMount()
     }
+    
+    private static onResize() {
+        const mobile = window.innerWidth <= 600;
+        if (Anchor.instance.state.mobile && !mobile) {
+            console.info("Switching to desktop layout");
+        } else if (mobile && !Anchor.instance.state.mobile) {
+            console.info("Switching to mobile layout");
+        }
+        Anchor.instance.setState({mobile});
+    }
+    
+    componentWillUnmount() {
+        window.removeEventListener("resize", Anchor.onResize);
+    }
+
     render(){
         return <div className="anchor">
             {this.state.content}
-            {this.state.errors.map((error, index) => {
-                return <ErrorCard 
-                    key={index}
-                    onClose={() => this.setState({ 
-                        errors: this.state.errors.slice(0, index).concat(this.state.errors.slice(index+1)) 
-                    })}
-                    error={error}
-                />;
-            })}
+            {this.state.error}
         </div>
     }
 
     public static setContent(content: JSX.Element){
         Anchor.instance.setState({content : content});
     }
-    public static queueError(title: string, body: string) {
-        Anchor.instance.setState({errors: [{title, body}, ...Anchor.instance.state.errors]});
+    public static pushError(title: string, body: string) {
+        Anchor.instance.setState({error: <ErrorCard
+            onClose={() => Anchor.instance.setState({ error: null })}
+            error={{title, body}}
+        />});
+    }
+    public static isMobile(): boolean {
+        return Anchor.instance.state.mobile;
     }
 }
 
@@ -56,15 +75,9 @@ interface Error {
 }
 
 function ErrorCard(props: { error: Error, onClose: () => void }) {
-    return <div className="errorCard slide-in">
-        <header>
-            {props.error.title}
-        </header>
-        <button onClick={() => props.onClose()}>
-            ✕
-        </button>
-        <div>
-            {props.error.body}
-        </div>
+    return <div className="errorCard slide-in" onClick={() => props.onClose()}>
+        <header>{props.error.title}</header>
+        <button>✕</button>
+        <div>{props.error.body}</div>
     </div>
 }
