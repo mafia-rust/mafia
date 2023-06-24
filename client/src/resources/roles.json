@@ -1,39 +1,39 @@
 {
     "jailor":{
-        "factionAlignment": "townPower",
-        "suspicious": false,
-        "roleblockable": true,
         "defense": 0,
+        "roleblockable": true,
         "witchable": true,
-        "endGameCondition": "Faction",
-        "maxCount": 1
+        "suspicious": false,
+        "factionAlignment": "townPower",
+        "maxCount": 1,
+        "endGameCondition": "Faction"
     },
     "mayor":{
-        "factionAlignment": "townPower",
-        "suspicious": false,
-        "roleblockable": true,
         "defense": 0,
+        "roleblockable": true,
         "witchable": true,
-        "endGameCondition": "Faction",
-        "maxCount": 1
+        "suspicious": false,
+        "factionAlignment": "townPower",
+        "maxCount": 1,
+        "endGameCondition": "Faction"
     },
     "transporter":{
-        "factionAlignment": "townPower",
-        "suspicious": false,
-        "roleblockable": false,
         "defense": 0,
+        "roleblockable": false,
         "witchable": true,
-        "endGameCondition": "Faction",
-        "maxCount": null
+        "suspicious": false,
+        "factionAlignment": "townPower",
+        "maxCount": null,
+        "endGameCondition": "Faction"
     },
     "sheriff": {
-        "factionAlignment": "townInvestigative",
-        "suspicious": false,
-        "roleblockable": true,
         "defense": 0,
+        "roleblockable": true,
         "witchable": true,
-        "endGameCondition": "Faction",
-        "maxCount": null
+        "suspicious": false,
+        "factionAlignment": "townInvestigative",
+        "maxCount": null,
+        "endGameCondition": "Faction"
     },
     "lookout": {
         "factionAlignment": "townInvestigative",

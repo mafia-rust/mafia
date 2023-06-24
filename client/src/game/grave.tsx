@@ -1,4 +1,6 @@
-import { Faction, PlayerIndex, Role } from "./gameState.d";
+import { PlayerIndex } from "./gameState.d";
+import { Faction } from "./roleListState.d";
+import { Role } from "./roleState.d";
 
 export interface Grave {
     playerIndex: PlayerIndex,

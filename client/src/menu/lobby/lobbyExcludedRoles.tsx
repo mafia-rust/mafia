@@ -1,7 +1,7 @@
 
 import React from "react";
 import GAME_MANAGER from "../../index";
-import { RoleListEntry, renderRoleListEntry } from "../../game/gameState.d";
+import { RoleListEntry, renderRoleListEntry } from "../../game/roleListState.d";
 import "../../index.css";
 import RolePicker from "../RolePicker";
 import { StateListener } from "../../game/gameManager.d";
