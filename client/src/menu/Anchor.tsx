@@ -35,7 +35,13 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     }
     
     private static onResize() {
-        Anchor.instance.setState({mobile: window.innerWidth <= 600});
+        const mobile = window.innerWidth <= 600;
+        if (Anchor.instance.state.mobile && !mobile) {
+            console.info("Switching to desktop layout");
+        } else if (mobile && !Anchor.instance.state.mobile) {
+            console.info("Switching to mobile layout");
+        }
+        Anchor.instance.setState({mobile});
     }
     
     componentWillUnmount() {
