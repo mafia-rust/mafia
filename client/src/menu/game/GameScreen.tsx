@@ -12,6 +12,7 @@ import "../../index.css";
 import "./gameScreen.css";
 import translate from "../../game/lang";
 import RoleSpecifcMenu from "./gameScreenContent/RoleSpecific";
+import Anchor from "../Anchor";
 
 export enum ContentMenus {
     GraveyardMenu = "GraveyardMenu",
@@ -38,12 +39,18 @@ type GameScreenState = {
 
 export default class GameScreen extends React.Component<GameScreenProps, GameScreenState> {
     static createDefault(): JSX.Element{
-        return <GameScreen contentMenus={[
-            ContentMenus.GraveyardMenu,
-            ContentMenus.PlayerListMenu,
-            ContentMenus.WikiMenu,
-            ContentMenus.WillMenu
-        ]} maxContent={false}/>
+        if (Anchor.isMobile()) {
+            return <GameScreen contentMenus={[
+                ContentMenus.PlayerListMenu,
+            ]} maxContent={true}/>
+        } else {
+            return <GameScreen contentMenus={[
+                ContentMenus.GraveyardMenu,
+                ContentMenus.PlayerListMenu,
+                ContentMenus.WikiMenu,
+                ContentMenus.WillMenu
+            ]} maxContent={false}/>
+        }
     }
     static instance: GameScreen;
     listener: () => void;
