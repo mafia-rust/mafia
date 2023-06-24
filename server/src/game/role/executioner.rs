@@ -100,9 +100,7 @@ impl RoleStateImpl for Executioner {
         };
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
-        if 
-            Some(dead_player_ref) == self.target.get_target()
-        {
+        if Some(dead_player_ref) == self.target.get_target() {
             if game.current_phase().phase() == PhaseType::Evening {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::ExecutionerWon);
                 actor_ref.set_role_state(game, RoleState::Executioner(Executioner { target: ExecutionerTarget::Won }));

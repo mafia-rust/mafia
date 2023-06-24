@@ -1,4 +1,4 @@
-use crate::{game::{chat::{ChatMessage, ChatGroup}, Game, grave::{GraveKiller, Grave}, role::{RoleState, Priority}, visit::Visit}, packet::ToClientPacket};
+use crate::{game::{chat::{ChatMessage, ChatGroup}, Game, grave::{GraveKiller, Grave}, role::{RoleState, Priority}, visit::Visit, team::Teams}, packet::ToClientPacket};
 
 use super::PlayerReference;
 
@@ -59,6 +59,7 @@ impl PlayerReference{
         for player_ref in PlayerReference::all_players(game){
             player_ref.on_any_death(game, *self)
         }
+        Teams::on_any_death(game);
     }
     /// swap this persons role, sending them the role chat message, and associated changes
     pub fn set_role(&self, game: &mut Game, new_role_data: RoleState){

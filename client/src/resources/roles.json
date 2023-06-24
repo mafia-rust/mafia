@@ -206,20 +206,11 @@
         "endGameCondition": "Faction",
         "maxCount": null
     },
-    "covenLeader": {
+    "witch": {
         "factionAlignment": "covenPower",
         "suspicious": true,
         "roleblockable": true,
         "defense": 1,
-        "witchable": true,
-        "endGameCondition": "Faction",
-        "maxCount": 1
-    },
-    "voodooMaster": {
-        "factionAlignment": "covenUtility",
-        "suspicious": true,
-        "roleblockable": true,
-        "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": 1
@@ -241,5 +232,14 @@
         "witchable": true,
         "endGameCondition": "None",
         "maxCount": null
+    },
+    "vampire": {
+        "factionAlignment": "neutralChaos",
+        "suspicious": true,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "SingleRole",
+        "maxCount": 2
     }
 }

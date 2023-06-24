@@ -2,7 +2,7 @@ mod kit;
 use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
-use mafia_server::game::{chat::{MessageSender, ChatGroup}, role::{retributionist::Retributionist, jester::Jester, crusader::Crusader, framer::Framer, veteran::Veteran, executioner::Executioner, spy::{Spy, SpyBug}, blackmailer::Blackmailer}};
+use mafia_server::game::{chat::{MessageSender, ChatGroup}, role::{retributionist::Retributionist, jester::Jester, crusader::Crusader, framer::Framer, veteran::Veteran, executioner::Executioner, spy::{Spy, SpyBug}, blackmailer::Blackmailer, vampire::Vampire, doctor::Doctor, Role}};
 // Pub use so that submodules don't have to re-import everything.
 pub use mafia_server::game::{role::{RoleState, transporter::Transporter, medium::Medium, jailor::Jailor, vigilante::Vigilante, sheriff::Sheriff, escort::Escort, mafioso::Mafioso, bodyguard::Bodyguard}, phase::PhaseState, chat::ChatMessage};
 pub use mafia_server::packet::ToServerPacket;
@@ -291,3 +291,73 @@ fn executioner_instantly_turns_into_jester(){
     );
     let RoleState::Jester(_) = exe.role_state() else {panic!()};
 }
+
+#[test]
+fn vampire_cant_convert_protected(){
+    kit::scenario!(game where
+        vamp: Vampire,
+        doc: Doctor,
+        sher: Sheriff
+    );
+
+    game.next_phase();
+
+    assert!(doc.set_night_targets(vec![sher]));
+    assert!(vamp.set_night_targets(vec![sher]));
+
+    game.skip_to(PhaseType::Night, 2);
+
+    assert!(sher.role_state().role() != Role::Vampire);
+    
+    assert!(vamp.set_night_targets(vec![sher]));
+
+    game.next_phase();
+
+    assert!(sher.role_state().role() == Role::Vampire);
+}
+
+#[test]
+fn vampire_cant_convert_twice_in_a_row(){
+    kit::scenario!(game where
+        vamp: Vampire,
+        c1: Sheriff,
+        c2: Sheriff
+    );
+
+    //first convert
+    game.next_phase();
+    assert!(vamp.set_night_targets(vec![c1]));
+
+    //convert worked
+    game.next_phase();
+    assert!(c1.role_state().role() == Role::Vampire);
+    assert!(c2.role_state().role() != Role::Vampire);
+
+    //second convert should fail
+    game.skip_to(PhaseType::Night, 2);
+
+    assert!(!vamp.set_night_targets(vec![c2]));
+    assert!(!c1.set_night_targets(vec![c2]));
+
+    //check convert failed
+    game.next_phase();
+    
+    assert!(c1.role_state().role() == Role::Vampire);
+    assert!(c2.role_state().role() != Role::Vampire);
+
+    //second attempt at second convert
+    game.skip_to(PhaseType::Night, 3);
+
+    assert!(!vamp.set_night_targets(vec![c2]));
+    assert!(c1.set_night_targets(vec![c2]));
+
+    //final convert should work
+    game.next_phase();
+    
+    assert!(c1.role_state().role() == Role::Vampire);
+    assert!(c2.role_state().role() == Role::Vampire);
+
+}
+
+
+
