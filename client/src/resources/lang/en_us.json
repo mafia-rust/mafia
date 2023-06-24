@@ -157,7 +157,7 @@
     "role.escort.name": "Escort",
     "role.escort.abilities":"● Target a player to roleblock them",
     "role.escort.attributes":"● Roleblocking a player prevents them from using parts of their ability",
-    "role.escort.target": "Role block",
+    "role.escort.target": "Roleblock",
     "role.escort.dayTarget": "Special",
 
     "role.medium.name": "Medium",
@@ -199,7 +199,7 @@
     "role.consort.name": "Consort",
     "role.consort.abilities":"● Target a player to roleblock them",
     "role.consort.attributes":"● Roleblocking a player prevents them from using parts of their ability",
-    "role.consort.target": "Role block",
+    "role.consort.target": "Roleblock",
     "role.consort.dayTarget": "Special",
     
     "role.blackmailer.name": "Blackmailer",
