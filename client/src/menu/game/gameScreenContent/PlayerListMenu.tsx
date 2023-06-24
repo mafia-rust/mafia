@@ -9,6 +9,7 @@ import GameScreen, { ContentMenus } from "../GameScreen";
 import { ChatMessage } from "../../../game/chatMessage";
 import { StateListener } from "../../../game/gameManager.d";
 import SmallRoleSpecifcMenu from "./RoleSpecificMenus/SmallRoleSpecificMenu";
+import Anchor from "../../Anchor";
 
 interface PlayerListMenuProps {
 }
@@ -26,16 +27,18 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
 
         this.state = {
             gameState : GAME_MANAGER.gameState,
-            playerFilter: "living",
+            playerFilter: Anchor.isMobile() ? "all" : "living",
         };
         this.listener = (type)=>{
             let playerFilter = this.state.playerFilter;
             if(type==="phase"){
                 if(GAME_MANAGER.gameState.myIndex===null || GAME_MANAGER.gameState.players[GAME_MANAGER.gameState.myIndex].alive){
-                    if(GAME_MANAGER.gameState.phase === "night"){
-                        playerFilter = "usable"
-                    }else if(GAME_MANAGER.gameState.phase === "morning"){
-                        playerFilter = "living";
+                    if (!Anchor.isMobile()) {
+                        if(GAME_MANAGER.gameState.phase === "night"){
+                            playerFilter = "usable"
+                        }else if(GAME_MANAGER.gameState.phase === "morning"){
+                            playerFilter = "living";
+                        }
                     }
                 }
             }
