@@ -63,9 +63,12 @@
 .lm .left .name-box {
     display: flex;
     flex-direction: row;
-    margin-bottom: 4%;
+    margin-top: 2%;
+    margin-bottom: 2%;
 }
-
+.lm .left .name-box > button {
+    white-space: nowrap;
+}
 
 .lm .right > h1 {
     font-size: 125%;
