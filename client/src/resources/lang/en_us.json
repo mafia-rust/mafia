@@ -220,21 +220,15 @@
 
     "role.framer.name": "Framer",
     "role.framer.abilities":"● Target two players to frame the first one",
-    "role.framer.attributes":"● The framed player will look like the mafioso to town investigative roles\n● It will look like first target visited your second target, non attacking\n● You can only pick non mafia mebers for your first target, but anyone as your second target\n● Your second visit is astral",
+    "role.framer.attributes":"● The framed player will look like the mafioso to town investigative roles\n● It will look like first target visited your second target, non attacking\n● You can only choose non mafia mebers for your first target, but anyone as your second target\n● Your second visit is astral",
     "role.framer.target": "Target",
     "role.framer.dayTarget": "Special",
 
-    "role.covenLeader.name": "Coven Leader",
-    "role.covenLeader.abilities":"",
-    "role.covenLeader.attributes":"",
-    "role.covenLeader.target": "Kill",
-    "role.covenLeader.dayTarget": "Toggle Power",
-
-    "role.voodooMaster.name": "Voodoo Master",
-    "role.voodooMaster.abilities":"",
-    "role.voodooMaster.attributes":"",
-    "role.voodooMaster.target": "Silence",
-    "role.voodooMaster.dayTarget": "Special",
+    "role.witch.name": "Witch",
+    "role.witch.abilities":"",
+    "role.witch.attributes":"",
+    "role.witch.target": "Target",
+    "role.witch.dayTarget": "Special",
 
     "role.jester.name": "Jester",
     "role.jester.abilities":"● Get lynched to win\n● After you are lynched, you can haunt a player who didn't vote innocent",
@@ -247,6 +241,12 @@
     "role.executioner.attributes":"● After you win you will commit suicide\n● Your target will always be a townie, but never town power, or town killing",
     "role.executioner.target": "Target",
     "role.executioner.dayTarget": "Special",
+
+    "role.vampire.name": "Vampire",
+    "role.vampire.abilities":"● Bite a player to convert them to a vampire",
+    "role.vampire.attributes":"● Only the newest vampire can choose to bite\n● Vampires can not bite on the night immedietly following a night that they successfully converted another vampire\n● You can not convert a player with defense\n● If there are four or more vampires, they can not choose to bite someone",
+    "role.vampire.target": "Bite",
+    "role.vampire.dayTarget": "Special",
 
     "grave.role.cleaned": "Cleaned",
     "grave.role.petrified": "Petrified",

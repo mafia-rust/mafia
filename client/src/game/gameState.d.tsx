@@ -119,13 +119,13 @@ export type RoleState = {
     role:"janitor"
     cleansRemaining: number,
 } | {
-    role:"covenLeader"
-} | {
-    role:"voodooMaster"
+    role:"witch"
 } | {
     role:"jester"
 } | {
     role:"executioner"
+} | {
+    role:"vampire"
 }
 
 export type Role = keyof typeof ROLES;

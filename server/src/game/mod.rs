@@ -30,6 +30,7 @@ use grave::Grave;
 
 use self::phase::PhaseState;
 use self::role::RoleState;
+use self::team::Teams;
 use self::verdict::Verdict;
 
 pub struct Game {
@@ -37,6 +38,7 @@ pub struct Game {
 
     pub players: Box<[Player]>,
     pub graves: Vec<Grave>,
+    pub teams: Teams,
 
     phase_machine : PhaseStateMachine,
 }
@@ -67,6 +69,7 @@ impl Game {
         let mut game = Self{
             players: players.into_boxed_slice(),
             graves: Vec::new(),
+            teams: Teams::default(),
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
         };
@@ -78,6 +81,8 @@ impl Game {
             let role_data_copy = player_ref.role_state(&game).clone();
             player_ref.set_role(&mut game, role_data_copy);
         }
+
+        Teams::on_team_creation(&mut game);
 
         for player_ref in PlayerReference::all_players(&game){
             game.send_join_game_information(player_ref)
@@ -229,6 +234,8 @@ impl Game {
             player_ref.on_phase_start(self, self.current_phase().phase());
         }
 
+        Teams::on_phase_start(self);
+
         self.send_packet_to_all(ToClientPacket::Phase { 
             phase: self.current_phase().phase(),
             day_number: self.phase_machine.day_number,
@@ -265,7 +272,7 @@ impl Game {
 pub mod test {
     use rand::{thread_rng, seq::SliceRandom};
 
-    use super::{Game, settings::Settings, role_list::{create_random_roles, RoleListEntry}, player::{PlayerReference, test::mock_player}, phase::PhaseStateMachine};
+    use super::{Game, settings::Settings, role_list::{create_random_roles, RoleListEntry}, player::{PlayerReference, test::mock_player}, phase::PhaseStateMachine, team::Teams};
 
     pub fn mock_game(settings: Settings, number_of_players: usize) -> Game {
         //create role list
@@ -289,6 +296,7 @@ pub mod test {
         let mut game = Game {
             players: players.into_boxed_slice(),
             graves: Vec::new(),
+            teams: Teams::default(),
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
         };
@@ -300,6 +308,8 @@ pub mod test {
             let role_data_copy = player_ref.role_state(&game).clone();
             player_ref.set_role(&mut game, role_data_copy);
         }
+        
+        Teams::on_team_creation(&mut game);
 
         for player_ref in PlayerReference::all_players(&game){
             game.send_join_game_information(player_ref)

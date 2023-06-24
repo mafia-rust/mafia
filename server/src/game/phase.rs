@@ -8,7 +8,7 @@ use super::{
     settings::PhaseTimeSettings,
     Game, player::PlayerReference,
     chat::{ChatGroup, ChatMessage},
-    grave::Grave, role::{Priority, Role, mafioso::Mafioso}, role_list::Faction,
+    grave::Grave, role::{Priority},
 };
 
 
@@ -96,33 +96,8 @@ impl PhaseState {
                 );
                 game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() });
             },
-            PhaseState::Night => {
-                //TODO move this potentially
-                //ensure mafia can kill
-                //search for mafia godfather or mafioso
-                let mut main_mafia_killing_exists = false;
-
-
-                for player_ref in PlayerReference::all_players(game){
-                    if player_ref.role(game) == Role::Mafioso && player_ref.alive(game) { 
-                        main_mafia_killing_exists = true;
-                        break;
-                    }
-                }
-
-                //TODO for now just convert the first person we see to mafioso
-                //later set an order for roles
-                //ambusher should be converted first
-                if !main_mafia_killing_exists{
-                    for player_ref in PlayerReference::all_players(game){
-                        if player_ref.role(game).faction_alignment().faction() == Faction::Mafia && player_ref.alive(game){
-                            player_ref.set_role(game, super::role::RoleState::Mafioso(Mafioso::default()));
-                            break;
-                        }
-                    }
-                }
-            },
-            PhaseState::Discussion
+            PhaseState::Night
+            | PhaseState::Discussion
             | PhaseState::Judgement { .. } 
             | PhaseState::Evening { .. } => {}
         }

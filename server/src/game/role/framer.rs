@@ -50,7 +50,7 @@ impl RoleStateImpl for Framer {
         (
             actor_ref.chosen_targets(game).is_empty() &&
             actor_ref != target_ref &&
-            actor_ref.role(game).team() != target_ref.role(game).team()
+            !Team::same_team(actor_ref.role(game), target_ref.role(game))
         ) || 
         (
             actor_ref.chosen_targets(game).len() == 1

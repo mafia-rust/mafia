@@ -61,9 +61,7 @@ macros::roles! {
     Framer : framer,
 
     //Coven
-    CovenLeader : coven_leader,
-
-    VoodooMaster : voodoo_master,
+    Witch : witch,
 
     //Neutral
     Jester : jester,
@@ -93,6 +91,7 @@ macros::priorities! {
     SpyBug,
 
     StealMessages,
+
     Convert
 }
 
