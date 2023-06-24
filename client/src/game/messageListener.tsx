@@ -25,19 +25,19 @@ export default function messageListener(packet: ToClientPacket){
         case "rejectJoin":
             switch(packet.reason) {
                 case "INVALID_ROOM_CODE":
-                    Anchor.queueError("Couldn't join", "No lobby has that room code!");
+                    Anchor.pushError("Couldn't join", "No lobby has that room code!");
                 break;
                 case "GAME_ALREADY_STARTED":
-                    Anchor.queueError("Couldn't join", "That game has already begun!");
+                    Anchor.pushError("Couldn't join", "That game has already begun!");
                 break;
                 case "ROOM_FULL":
-                    Anchor.queueError("Couldn't join", "That lobby is full!");
+                    Anchor.pushError("Couldn't join", "That lobby is full!");
                 break;
                 case "SERVER_BUSY":
-                    Anchor.queueError("Couldn't join", "The server is busy. Try again later!");
+                    Anchor.pushError("Couldn't join", "The server is busy. Try again later!");
                 break;
                 default:
-                    Anchor.queueError("Couldn't join", "Failed to join the lobby. Try again later!");
+                    Anchor.pushError("Couldn't join", "Failed to join the lobby. Try again later!");
                     console.log("incoming message response not implemented " + packet.type + ": " + packet.reason);
                     console.log(packet);
                 break;
@@ -47,13 +47,13 @@ export default function messageListener(packet: ToClientPacket){
         case "rejectStart":
             switch(packet.reason) {
                 case "GameEndsInstantly":
-                    Anchor.queueError("Couldn't start", "Game would end instantly! Make sure your role list is valid.");
+                    Anchor.pushError("Couldn't start", "Game would end instantly! Make sure your role list is valid.");
                 break;
                 case "ZeroTimeGame":
-                    Anchor.queueError("Couldn't start", "Make sure your phase time settings are valid!");
+                    Anchor.pushError("Couldn't start", "Make sure your phase time settings are valid!");
                 break;
                 default:
-                    Anchor.queueError("Couldn't start", "Failed to start lobby. Try again later!");
+                    Anchor.pushError("Couldn't start", "Failed to start lobby. Try again later!");
                     console.log("incoming message response not implemented " + packet.type + ": " + packet.reason);
                     console.log(packet);
                 break;

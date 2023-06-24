@@ -229,7 +229,7 @@ function createServer(){
                 Server.messageListener(event);
             });
             Server.ws.addEventListener("error", (event: Event) => {
-                Anchor.queueError("Failed to connect", "Contact an admin to see if the server is online.");
+                Anchor.pushError("Failed to connect", "Contact an admin to see if the server is online.");
                 Anchor.setContent(<StartMenu/>);
             })
             
