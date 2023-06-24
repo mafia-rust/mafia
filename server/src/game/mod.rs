@@ -95,10 +95,12 @@ impl Game {
 
         //GENERAL GAME
         player_ref.send_packets(self, vec![
+            ToClientPacket::ExcludedRoles { roles: self.settings.excluded_roles.clone() },
+            ToClientPacket::RoleList {role_list: self.settings.role_list.clone()},
+            
             ToClientPacket::Players{ 
                 names: PlayerReference::all_players(self).iter().map(|p|{return p.name(self).clone()}).collect()
             },
-            ToClientPacket::RoleList {role_list: self.settings.role_list.clone()},
             ToClientPacket::Phase { 
                 phase: self.current_phase().phase(),
                 seconds_left: self.phase_machine.time_remaining.as_secs(), 
