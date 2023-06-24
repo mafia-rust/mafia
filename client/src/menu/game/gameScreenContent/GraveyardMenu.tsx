@@ -4,7 +4,8 @@ import GAME_MANAGER from "../../../index";
 import { Grave } from "../../../game/grave";
 import GameScreen, { ContentMenus } from "../GameScreen";
 import "./graveyardMenu.css";
-import GameState, { renderRoleListEntry } from "../../../game/gameState.d";
+import GameState from "../../../game/gameState.d";
+import { renderRoleListEntry } from "../../../game/roleListState.d";
 
 type GraveyardMenuProps = {
 }

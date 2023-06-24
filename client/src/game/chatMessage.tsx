@@ -1,5 +1,6 @@
-import { Phase, PlayerIndex, Role, Verdict } from "./gameState.d"
+import { Phase, PlayerIndex, Verdict } from "./gameState.d"
 import { Grave } from "./grave"
+import { Role } from "./roleState.d"
 
 export type ChatMessage = {
     type: "normal", 

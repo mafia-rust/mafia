@@ -1,8 +1,8 @@
 import React from "react";
 import GAME_MANAGER from "../index";
 import ROLES from "../resources/roles.json";
-import { Role, getFactionFromRole } from "./gameState.d";
 import { ChatMessage } from "./chatMessage";
+import { Role, getFactionFromRole } from "./roleState.d";
 
 let lang: ReadonlyMap<string, string>;
 switchLanguage("en_us");

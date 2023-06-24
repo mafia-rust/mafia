@@ -1,5 +1,6 @@
-import GameState, { Phase, PhaseTimes, PlayerIndex, RoleListEntry, Verdict } from "./gameState.d";
+import GameState, { Phase, PhaseTimes, PlayerIndex, Verdict } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
+import { RoleListEntry } from "./roleListState.d";
 
 export interface Server {
     ws: WebSocket | null,

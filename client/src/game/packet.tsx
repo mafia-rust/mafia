@@ -1,6 +1,8 @@
-import { Phase, PlayerIndex, Role, RoleState, RoleListEntry, Verdict, PhaseTimes, Tag } from "./gameState.d"
+import { Phase, PlayerIndex, Verdict, PhaseTimes, Tag } from "./gameState.d"
 import { Grave } from "./grave"
 import { ChatMessage } from "./chatMessage"
+import { RoleListEntry } from "./roleListState.d"
+import { Role, RoleState } from "./roleState.d"
 
 export type ToClientPacket = {
     type: "acceptJoin",

@@ -6,7 +6,7 @@ import "./willMenu.css"
 import { StateListener } from "../../../game/gameManager.d";
 
 
-type FieldType = "will" | "notes";
+type FieldType = "will" | "notes" | "deathNote";
 type Fields = { [key in FieldType]: string };
 
 interface WillMenuState {
@@ -21,7 +21,8 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
 
         let gameStateFields = {
             will: GAME_MANAGER.gameState.will,
-            notes: GAME_MANAGER.gameState.notes
+            notes: GAME_MANAGER.gameState.notes,
+            deathNote: GAME_MANAGER.gameState.notes,
         };
 
         this.state = {
@@ -34,6 +35,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
                     syncedFields: {
                         will: GAME_MANAGER.gameState.will,
                         notes: GAME_MANAGER.gameState.notes,
+                        deathNote: GAME_MANAGER.gameState.notes,
                     }
                 })
             }
@@ -95,6 +97,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
         <section>
             {this.renderInput("will")}
             {this.renderInput("notes")}
+            {this.renderInput("deathNote")}
         </section>
     </div>);}
 }

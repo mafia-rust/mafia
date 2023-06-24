@@ -7,7 +7,8 @@ import GAME_MANAGER from "./../index";
 import GameScreen from "./../menu/game/GameScreen";
 import React from "react";
 import { ToClientPacket } from "./packet";
-import { Role, Tag } from "./gameState.d";
+import { Tag } from "./gameState.d";
+import { Role } from "./roleState.d";
 
 export default function messageListener(packet: ToClientPacket){
 
