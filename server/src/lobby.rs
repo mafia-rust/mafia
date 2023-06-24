@@ -136,10 +136,13 @@ impl Lobby {
                 self.send_to_all(ToClientPacket::PhaseTime { phase, time });
             },
             ToServerPacket::SetPhaseTimes { phase_time_settings } => {
-                let LobbyState::Lobby{ settings, .. } = &mut self.lobby_state else {
+                let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
                     println!("{} {}", log::error("Attempted to change phase time outside of the lobby menu!"), player_arbitrary_id);
                     return;
                 };
+                if let Some(player) = players.get(&player_arbitrary_id){
+                    if !player.host {return;}
+                }
 
                 settings.phase_times = phase_time_settings.clone();
 
@@ -175,9 +178,8 @@ impl Lobby {
                 }
 
 
-                let set: HashSet<_> = roles.drain(..).collect(); // dedup
-                roles.extend(set.into_iter());
-                roles.retain(|role|*role != RoleListEntry::Any);
+                let roles: HashSet<_> = roles.drain(..).collect();
+                let roles: Vec<_> = roles.into_iter().collect();
                 settings.excluded_roles = roles.clone();
                 self.send_to_all(ToClientPacket::ExcludedRoles { roles });
             }
@@ -308,6 +310,7 @@ impl Lobby {
     pub fn send_settings(player: &LobbyPlayer, settings: &Settings) {
         player.send(ToClientPacket::PhaseTimes { phase_time_settings: settings.phase_times.clone() });
         player.send(ToClientPacket::RoleList { role_list: settings.role_list.clone() });
+        player.send(ToClientPacket::ExcludedRoles { roles: settings.excluded_roles.clone()});
     }
 
 

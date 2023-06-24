@@ -37,12 +37,12 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
     }
 
     includeRole(role: RoleListEntry){
-        let roles = this.state.excludedRoles;
+        let roles = [...this.state.excludedRoles];
         roles = roles.filter((value)=>value !== role);
         GAME_MANAGER.sendExcludedRolesPacket(roles);
     }
     excludeRole(){
-        let roles = this.state.excludedRoles;
+        let roles = [...this.state.excludedRoles];
         roles.push(this.state.roleListEntry);
         GAME_MANAGER.sendExcludedRolesPacket(roles);
     }
