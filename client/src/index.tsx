@@ -7,11 +7,7 @@ import { createGameState } from './game/gameState';
 import StartMenu from './menu/main/StartMenu';
 import * as LoadingScreen from './menu/LoadingScreen'; 
 
-const QUERY_PARAMS = new URLSearchParams(window.location.search);
-// Clear query parameters from visible URL
-window.history.replaceState({}, document.title, window.location.pathname);
-
-const ROOT = ReactDOM.createRoot(document.getElementById('root')!);
+const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
 const TIME_PERIOD = 1000;
 export default GAME_MANAGER;
@@ -30,7 +26,7 @@ setInterval(() => {
 
 // Route roomcode queries to the associated lobby
 function onMount() {
-    const roomCode = QUERY_PARAMS.get("code");
+    const roomCode = new URLSearchParams(window.location.search).get("code");
 
     if (roomCode !== null) {
         GAME_MANAGER.gameState = createGameState();
