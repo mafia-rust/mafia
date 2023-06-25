@@ -19,7 +19,7 @@
     flex-direction: column;
     /* justify-content: end; */
 }
-.chat-menu .message-list * {
+.chat-menu .message-list > * {
     max-width: 100%;
     text-align: left;
     margin: .1rem;
