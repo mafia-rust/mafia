@@ -3,6 +3,8 @@ import GAME_MANAGER from "../index";
 import ROLES from "../resources/roles.json";
 import { ChatMessage } from "./chatMessage";
 import { Role, getFactionFromRole } from "./roleState.d";
+import { marked } from "marked";
+import DOMPurify from 'dompurify';
 
 let lang: ReadonlyMap<string, string>;
 switchLanguage("en_us");
@@ -26,7 +28,6 @@ export default function translate(langKey: string, ...valuesList: (string | numb
 
 export function getChatElement(message: ChatMessage, key: number): JSX.Element {
     const SPECIAL = { text: { color: "violet" } };
-    const PLAYER_MESSAGE = { indent: true }; // 2rem
     const DISCREET = { text: { color: "turquoise" } };
     const IMPORTANT = { text: { color: "yellow" } };
     const TRIAL = { text: { color: "orange" } };
@@ -44,7 +45,7 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                     return createChatElement(key, translate("chatmessage.normal",
                         GAME_MANAGER.gameState.players[playerIndex].toString(), 
                         message.text
-                    ), PLAYER_MESSAGE);
+                    ), { indent: true });
                 }else{
                     return createChatElement(key, translate("chatmessage.normal",
                         GAME_MANAGER.gameState.players[playerIndex].toString(),
@@ -52,7 +53,7 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                     ), {
                         box: { backgroundColor: "black", borderRadius: "5px" },
                         text: { color: "grey" },
-                        ...PLAYER_MESSAGE
+                        indent: true
                     });
                 }
             } else {
@@ -60,14 +61,14 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
                 return createChatElement(key, translate("chatmessage.normal",
                     translate("role."+message.messageSender.type+".name"),
                     message.text
-                ), {...PLAYER_MESSAGE, ...DISCREET});
+                ), {...DISCREET, indent: true});
             }
         case "whisper":
             return createChatElement(key, translate("chatmessage.whisper", 
                 GAME_MANAGER.gameState.players[message.fromPlayerIndex].toString(),
                 GAME_MANAGER.gameState.players[message.toPlayerIndex].toString(),
                 message.text
-            ), {...PLAYER_MESSAGE, ...DISCREET});
+            ), {...DISCREET, indent: true});
         case "broadcastWhisper":
             return createChatElement(key, translate("chatmessage.broadcastWhisper",
                 GAME_MANAGER.gameState.players[message.whisperer].toString(),
@@ -311,7 +312,7 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
 }
 
 function createChatElement(
-    key: number, 
+    key: number,
     text: string,
     style: {
         box?: React.CSSProperties,
@@ -319,10 +320,11 @@ function createChatElement(
         indent?: boolean
     } = {},
 ): JSX.Element {
-    return <span key={key} style={style.box}>{styleText(text, {
+    return styleText(text, {
+        boxStyle: style.box,
         defaultStyle: style.text,
-        indentStyle: style.indent ? { marginLeft: "2rem" } : undefined
-    })}</span>
+        indent: style.indent
+    }, key)
 }
 
 const BUILTIN_STYLES: {[key: string]: React.CSSProperties} = {
@@ -336,17 +338,32 @@ const BUILTIN_STYLES: {[key: string]: React.CSSProperties} = {
 
 type StyleMap = { [key: string]: React.CSSProperties };
 
+const SANITIZATION_OPTIONS = {
+    ALLOWED_TAGS: ['br', 'span', 'li', 'ol', 'ul', 'p', 'strong', 'em', 'del'],
+}
+
+const MARKDOWN_OPTIONS = {
+    breaks: true,
+    mangle: false,
+    headerIds: false,
+    gfm: true
+}
+
+marked.use(MARKDOWN_OPTIONS);
+
 export function styleText(
     string: string, 
     styleOverride: {
-        defaultStyle?: React.CSSProperties, 
-        indentStyle?: React.CSSProperties,
-    } = {}
-): JSX.Element[]{
+        boxStyle?: React.CSSProperties,
+        defaultStyle?: React.CSSProperties
+        indent?: boolean
+    } = {},
+    key?: number
+): JSX.Element {
     const KEYWORD_STYLE_MAP: StyleMap = getKeywordStyles();
 
+    const boxStyle = styleOverride.boxStyle ?? {};
     const defaultStyle = styleOverride.defaultStyle ?? {};
-    const indentStyle = styleOverride.indentStyle ?? {};
 
     type Token = {
         type: "string"
@@ -355,18 +372,14 @@ export function styleText(
         type: "styled"
         string: string
         style: React.CSSProperties
-    } | {
-        type: "br"
     }
 
-    let tokens: Token[] = [];
+    const startString = DOMPurify.sanitize(marked.parseInline(string), SANITIZATION_OPTIONS);
 
-    // Insert newlines
-    string.split("\n").forEach(line => {
-        tokens.push({type: "string", string: line});
-        tokens.push({type: "br"});
-    });
-    tokens.pop();
+    let tokens: Token[] = [{
+        type: "string",
+        string: styleOverride.indent ? startString.replace(/<br>/g, "<br>      ") : startString
+    }];
 
     for(const [stringToStyle, style] of Object.entries(KEYWORD_STYLE_MAP)){
         // Using for..of or for..in is prone to errors, since we mutate the array as we loop through it,
@@ -412,29 +425,14 @@ export function styleText(
 
     // Convert to JSX
     let jsx = [];
-    let shouldIndent = false;
     for(const [index, token] of tokens.entries()){
-        if(token.type === "br"){
-            shouldIndent = true;
-            jsx.push(<br key={index}/>);
-        }else if(token.type === "string"){
-            jsx.push(
-            <span key={index} style={shouldIndent ? {...defaultStyle, ...indentStyle} : defaultStyle }>
-                {token.string}
-            </span>);
-            shouldIndent = false;
-        }else if(token.type === "styled"){
-            jsx.push(
-            <span key={index}
-                style={shouldIndent ? {...token.style, ...indentStyle} : token.style }
-            >
-                {token.string}
-            </span>);
-            shouldIndent = false;
-        }
+        jsx.push(<span key={index} 
+            style={token.type === "styled" ? token.style : defaultStyle} 
+            dangerouslySetInnerHTML={{ __html: token.string }}
+        />);
     }
-
-    return jsx;
+    
+    return <pre key={key} style={{...boxStyle, whiteSpace: "pre-wrap"}}>{jsx}</pre>
 }
 
 // TODO: Memoize this - shouldn't need to change after a game has begun.
