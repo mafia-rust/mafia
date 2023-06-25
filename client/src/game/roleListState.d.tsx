@@ -101,7 +101,7 @@ export function getFactionAlignmentFromRoleListEntry(roleListEntry: RoleListEntr
     }
 }
 
-export function  renderRoleListEntry(roleListEntry: RoleListEntry): JSX.Element[] | null{
+export function  renderRoleListEntry(roleListEntry: RoleListEntry): JSX.Element | null{
     if(roleListEntry.type === "any"){
         return styleText(translate("any"))
     }
