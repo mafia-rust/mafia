@@ -18,6 +18,7 @@ pub mod log {
 pub mod strings{
     pub trait TidyableString {
         fn trim_whitespace(&self) -> Self;
+        fn remove_newline(&self) -> Self;
         fn trim_newline(&self) -> Self;
         fn truncate(&self, max_chars: usize) -> Self;
         fn truncate_lines(&self, max_lines: usize) -> Self;
@@ -35,14 +36,19 @@ pub mod strings{
             });
             new_str
         }
-        /// Removes newlines
+        fn remove_newline(&self) -> String {
+            let mut new_str = self.trim().to_owned();
+            new_str.retain(|ch| {ch != '\n'});
+            new_str
+        }
+        /// Removes more than two newlines in a row
         fn trim_newline(&self) -> String {
             let mut new_str = self.trim().to_owned();
-            let mut prev = ' '; // The initial value doesn't really matter
+            let mut prev = (' ', ' '); // The initial value doesn't really matter
             new_str.retain(|ch| {
-                //if theyre not both spaces, keep the character
-                let result = ch != '\n' || prev != '\n';
-                prev = ch;
+                //if theyre not all newlines, keep the character
+                let result = ch != '\n' || prev.0 != '\n' || prev.1 != '\n';
+                (prev.0, prev.1) = (prev.1, ch);
                 result
             });
             new_str

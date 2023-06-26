@@ -19,11 +19,19 @@
     flex-direction: column;
     /* justify-content: end; */
 }
-.chat-menu .message-list > * {
+.chat-message {
     max-width: 100%;
     text-align: left;
     margin: .1rem;
     overflow-wrap: anywhere;
+}
+.chat-message p, .chat-message ul, .chat-message ol {
+    list-style-position: inside;
+    padding-left: 1rem;
+    tab-size: 1rem;
+}
+.chat-message *:not(span, #text) {
+    text-align: left;
 }
 .chat-menu .send-section {
     display: flex;
