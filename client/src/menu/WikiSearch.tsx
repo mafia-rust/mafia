@@ -3,7 +3,7 @@ import ROLES from "./../resources/roles.json";
 import translate, { styleText } from "../game/lang";
 import "./wikiSearch.css";
 import { Role } from "../game/roleState.d";
-import { FactionAlignment, getRoleListEntryFromFactionAlignment, renderRoleListEntry } from "../game/roleListState.d";
+import { FactionAlignment, getRoleListEntryFromFactionAlignment, translateRoleListEntry } from "../game/roleListState.d";
 
 interface WikiSearchState {
     wikiSearch: string,
@@ -55,14 +55,12 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
         return out
     }
     renderGeneralWikiPage(article: string){
-        return <div className="wiki-search-page">
-            <div>{styleText(translate("menu.wiki.entries."+article+".title"))}</div>
-            <br/>
-            <div className="wiki-search-content">
-                {styleText(translate("menu.wiki.entries."+article+".text"))}
-            </div>
-            <br/>
-        </div>
+        return styleText(
+`# ${translate("menu.wiki.entries."+article+".title")}
+<br>
+
+${translate("menu.wiki.entries."+article+".text")}
+`, { clazz: "wiki-content-body" })
     }
     getRolesFromSearch(search: string): Role[] {
         search = search.toLowerCase();
@@ -113,28 +111,24 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
                 break;
         }
 
-        return <div className="wiki-search-page">
-            <div>{styleText(translate("role."+role+".name"))}</div>
-            <div>{renderRoleListEntry(getRoleListEntryFromFactionAlignment(ROLES[role as keyof typeof ROLES].factionAlignment as FactionAlignment))}</div>
-            <br/>
-            <div>{styleText(translate("menu.wiki.abilities"))}</div>
-            <br/>
-            <div className="wiki-search-content">{styleText(translate("role."+role+".abilities"))}</div>
-            <br/>
-            <div>{styleText(translate("menu.wiki.attributes"))}</div>
-            <br/>
-            <div className="wiki-search-content">{styleText(translate("role."+role+".attributes"))}</div>
-            <br/>
-            <br/>
-            {(() => {
-                let maxCount = ROLES[role as keyof typeof ROLES].maxCount;
-                if (maxCount == null) return maxCount;
-                return styleText(translate("menu.wiki.maxCount", maxCount));
-            })()}<br/>
-            {styleText(translate("menu.wiki.suspicious", ROLES[role as keyof typeof ROLES].suspicious?"suspicious":"innocent"))}<br/>
-            {styleText(translate("menu.wiki.defense", defenseString))}
-            <br/>
-        </div>
+        const roleData = ROLES[role as keyof typeof ROLES];
+
+        return styleText(
+`# ${translate("role."+role+".name")}
+### ${translateRoleListEntry(getRoleListEntryFromFactionAlignment(roleData.factionAlignment as FactionAlignment))}
+<br>
+
+### ${translate("menu.wiki.abilities")} 
+${translate("role."+role+".abilities")} 
+### ${translate("menu.wiki.attributes")}
+${translate("role."+role+".attributes")}
+
+<br>
+
+### ${roleData.maxCount === null ? '' : translate("menu.wiki.maxCount", roleData.maxCount)}
+### ${translate("menu.wiki.suspicious", ROLES[role as keyof typeof ROLES].suspicious?"suspicious":"innocent")}
+### ${translate("menu.wiki.defense", defenseString)}
+`, { clazz: "wiki-content-body" })
     }
     
     renderWikiPageOrSearch(){

@@ -5,7 +5,7 @@ import { Grave } from "../../../game/grave";
 import GameScreen, { ContentMenus } from "../GameScreen";
 import "./graveyardMenu.css";
 import GameState from "../../../game/gameState.d";
-import { renderRoleListEntry } from "../../../game/roleListState.d";
+import { translateRoleListEntry } from "../../../game/roleListState.d";
 
 type GraveyardMenuProps = {
 }
@@ -90,7 +90,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
 
     renderRoleList(){return<div>
         {this.state.gameState.roleList.map((entry, index)=>{
-            return <button key={index}>{renderRoleListEntry(entry)}</button>
+            return <button key={index}>{translateRoleListEntry(entry)}</button>
         }, this)}
     </div>}
 
@@ -102,7 +102,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             <div>
                 {this.state.gameState.excludedRoles.map((value, i)=>{
                     return <button key={i}>
-                        {renderRoleListEntry(value)}
+                        {translateRoleListEntry(value)}
                     </button>
                 })}
             </div>

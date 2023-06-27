@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOMServer from "react-dom/server";
 import GAME_MANAGER from "../index";
 import ROLES from "../resources/roles.json";
 import { ChatMessage } from "./chatMessage";
@@ -331,9 +332,10 @@ function createChatElement(
     } = {},
 ): JSX.Element {
     return styleText(text, {
+        clazz: "chat-message",
         boxStyle: style.box,
         defaultStyle: style.text,
-        indent: style.indent
+        isPlayerMessage: style.indent
     }, key)
 }
 
@@ -349,7 +351,7 @@ const BUILTIN_STYLES: {[key: string]: React.CSSProperties} = {
 type StyleMap = { [key: string]: React.CSSProperties };
 
 const SANITIZATION_OPTIONS = {
-    ALLOWED_TAGS: ['br', 'span', 'li', 'ol', 'ul', 'p', 'strong', 'em', 'del'],
+    FORBID_TAGS: ['a', 'img']
 }
 
 const MARKDOWN_OPTIONS = {
@@ -359,14 +361,13 @@ const MARKDOWN_OPTIONS = {
     gfm: true
 }
 
-marked.use(MARKDOWN_OPTIONS);
-
 export function styleText(
     string: string, 
     styleOverride: {
+        clazz?: string,
         boxStyle?: React.CSSProperties,
         defaultStyle?: React.CSSProperties
-        indent?: boolean
+        isPlayerMessage?: boolean
     } = {},
     key?: number
 ): JSX.Element {
@@ -384,12 +385,17 @@ export function styleText(
         style: React.CSSProperties
     }
 
-    const startString = DOMPurify.sanitize(marked.parseInline(string), SANITIZATION_OPTIONS);
+    let tokens: Token[] = [];
 
-    let tokens: Token[] = [{
+    let body = DOMPurify.sanitize(
+        marked.parse(string, MARKDOWN_OPTIONS), 
+        SANITIZATION_OPTIONS
+    ) // Remove leading and trailing whitespace from elements
+
+    tokens.push({
         type: "string",
-        string: styleOverride.indent ? startString.replace(/<br>/g, "<br>      ") : startString
-    }];
+        string: body
+    });
 
     for(const [stringToStyle, style] of Object.entries(KEYWORD_STYLE_MAP)){
         // Using for..of or for..in is prone to errors, since we mutate the array as we loop through it,
@@ -434,15 +440,25 @@ export function styleText(
     }
 
     // Convert to JSX
-    let jsx = [];
+    let jsxString = "";
     for(const [index, token] of tokens.entries()){
-        jsx.push(<span key={index} 
-            style={token.type === "styled" ? token.style : defaultStyle} 
-            dangerouslySetInnerHTML={{ __html: token.string }}
-        />);
+        jsxString = jsxString + ReactDOMServer.renderToStaticMarkup(
+            <span key={index} 
+                style={token.type === "styled" ? token.style : defaultStyle} 
+                // Sanitize again, mainly as a sanity check.
+                dangerouslySetInnerHTML={{ __html: token.string }}
+            />
+        );
     }
     
-    return <pre key={key} style={{...boxStyle, whiteSpace: "pre-wrap"}}>{jsx}</pre>
+    return <span key={key} 
+        className={styleOverride.clazz} 
+        style={{...boxStyle}}
+        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(
+            jsxString, 
+            SANITIZATION_OPTIONS
+        )}}>
+    </span>
 }
 
 // TODO: Memoize this - shouldn't need to change after a game has begun.

@@ -384,8 +384,8 @@ mod name_validation {
     /// If the desired name is invalid or taken, this generates a random acceptable name.
     /// Otherwise, this trims and returns the input name.
     pub fn sanitize_name(mut desired_name: String, players: &HashMap<ArbitraryPlayerID, LobbyPlayer>) -> String {
-        desired_name = desired_name.trim().to_string()
-            .trim_newline()
+        desired_name = desired_name
+            .remove_newline()
             .trim_whitespace()
             .truncate(MAX_NAME_LENGTH)
             .truncate_lines(1);
@@ -403,14 +403,14 @@ mod name_validation {
         let available_random_names = RANDOM_NAMES.iter().filter(|new_random_name| {
             !taken_names.iter()
                 .any(|existing_name| {
-                    let new_random_name = new_random_name.trim().to_string()
-                        .trim_newline()
+                    let new_random_name = new_random_name
+                        .remove_newline()
                         .trim_whitespace()
                         .truncate(MAX_NAME_LENGTH)
                         .truncate_lines(1);
 
-                    let existing_name = existing_name.trim().to_string()
-                        .trim_newline()
+                    let existing_name = existing_name.to_string()
+                        .remove_newline()
                         .trim_whitespace()
                         .truncate(MAX_NAME_LENGTH)
                         .truncate_lines(1);

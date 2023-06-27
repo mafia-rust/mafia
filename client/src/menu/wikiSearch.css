@@ -21,11 +21,45 @@
     overflow-y: auto;
     flex: 1 1;
 }
-.wiki-search .wiki-search-page {
-    display: block;
-    height: 100%;
-}
-.wiki-search .wiki-search-content {
+.wiki-content-body {
     text-align: left;
     height: max-content;
+}
+/* Markdown */
+.wiki-content-body * {
+    text-align: left;
+}
+.wiki-content-body blockquote {
+    width: 100%;
+    background-color: var(--primary-color);
+    padding-top: 0.5rem;
+    padding-bottom: 0.001rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+.wiki-content-body blockquote > * {
+    display: inline-block;
+    margin: auto;
+    text-align: left;
+}
+.wiki-content-body h1 {
+    text-align: center;
+    font-size: 150%;
+    margin-bottom: 0.25rem;
+}
+.wiki-content-body h2 {
+    text-align: center;
+    font-size: 125%;
+    margin-bottom: 0.25rem;
+}
+.wiki-content-body h3 {
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+.wiki-content-body p {
+    margin-bottom: 0.5rem;
+}
+.wiki-content-body ul, .wiki-content-body ol {
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
 }
