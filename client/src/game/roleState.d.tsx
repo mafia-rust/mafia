@@ -1,6 +1,7 @@
 import { PlayerIndex } from "./gameState.d"
 import { Faction, FactionAlignment, getFactionFromFactionAlignment } from "./roleListState.d"
 import ROLES from "./../resources/roles.json";
+import { Doomsayer } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 
 export type RoleState = {
     role: "jailor",
@@ -59,9 +60,12 @@ export type RoleState = {
     role:"jester"
 } | {
     role:"executioner"
-} | {
+} | 
+    Doomsayer
+ | {
     role:"vampire"
 }
+
 
 export type Role = keyof typeof ROLES;
 export function getFactionFromRole(role: Role): Faction {

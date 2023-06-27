@@ -177,6 +177,13 @@ export function createGameManager(): GameManager {
                 roles:roles
             })
         },
+
+        sendSetDoomsayerGuess(guesses) {
+            this.server.sendPacket({
+                type: "setDoomsayerGuess",
+                guesses: guesses
+            });
+        },
         
         messageListener(serverMessage) {
             messageListener(serverMessage);

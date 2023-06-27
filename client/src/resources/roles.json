@@ -6,7 +6,8 @@
         "suspicious": false,
         "factionAlignment": "townPower",
         "maxCount": 1,
-        "endGameCondition": "Faction"
+        "endGameCondition": "Faction",
+        "largeRoleSpecificMenu": false
     },
     "mayor":{
         "defense": 0,
@@ -15,7 +16,8 @@
         "suspicious": false,
         "factionAlignment": "townPower",
         "maxCount": 1,
-        "endGameCondition": "Faction"
+        "endGameCondition": "Faction",
+        "largeRoleSpecificMenu": false
     },
     "transporter":{
         "defense": 0,
@@ -24,7 +26,8 @@
         "suspicious": false,
         "factionAlignment": "townPower",
         "maxCount": null,
-        "endGameCondition": "Faction"
+        "endGameCondition": "Faction",
+        "largeRoleSpecificMenu": false
     },
     "sheriff": {
         "defense": 0,
@@ -33,7 +36,8 @@
         "suspicious": false,
         "factionAlignment": "townInvestigative",
         "maxCount": null,
-        "endGameCondition": "Faction"
+        "endGameCondition": "Faction",
+        "largeRoleSpecificMenu": false
     },
     "lookout": {
         "factionAlignment": "townInvestigative",
@@ -42,7 +46,8 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": null
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
     },
     "spy": {
         "factionAlignment": "townInvestigative",
@@ -51,7 +56,8 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": null
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
     },
     "tracker": {
         "factionAlignment": "townInvestigative",
@@ -60,7 +66,8 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": null
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
     },
     "seer": {
         "factionAlignment": "townInvestigative",
@@ -69,7 +76,8 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": null
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
     },
     "doctor": {
         "factionAlignment": "townProtective",
@@ -78,7 +86,8 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": null
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
     },
     "bodyguard": {
         "factionAlignment": "townProtective",
@@ -87,7 +96,8 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": null
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
     },
     "crusader": {
         "factionAlignment": "townProtective",
@@ -96,7 +106,8 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": null
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
     },
     "vigilante": {
         "factionAlignment": "townKilling",
@@ -105,7 +116,8 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": null
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
     },
     "veteran": {
         "factionAlignment": "townKilling",
@@ -114,7 +126,8 @@
         "defense": 0,
         "witchable": false,
         "endGameCondition": "Faction",
-        "maxCount": 1
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false
     },
     "deputy": {
         "factionAlignment": "townKilling",
@@ -123,7 +136,8 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": 1
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false
     },
     "escort": {
         "factionAlignment": "townSupport",
@@ -132,7 +146,8 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": null
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
     },
     "medium": {
         "factionAlignment": "townSupport",
@@ -141,7 +156,8 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": null
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
     },
     "retributionist": {
         "factionAlignment": "townSupport",
@@ -150,7 +166,8 @@
         "defense": 0,
         "witchable": false,
         "endGameCondition": "Faction",
-        "maxCount": 1
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false
     },
     "mafioso": {
         "factionAlignment": "mafiaKilling",
@@ -159,7 +176,8 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": 1
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false
     },
     "consort": {
         "factionAlignment": "mafiaSupport",
@@ -168,7 +186,8 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": null
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
     },
     "blackmailer": {
         "factionAlignment": "mafiaSupport",
@@ -177,7 +196,8 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": null
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
     },
     "consigliere": {
         "factionAlignment": "mafiaSupport",
@@ -186,7 +206,8 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": 1
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false
     },
     "janitor": {
         "factionAlignment": "mafiaDeception",
@@ -195,7 +216,8 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": 1
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false
     },
     "framer": {
         "factionAlignment": "mafiaDeception",
@@ -204,16 +226,18 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": null
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
     },
     "witch": {
         "factionAlignment": "covenPower",
         "suspicious": true,
         "roleblockable": true,
-        "defense": 1,
+        "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": 1
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false
     },
     "jester": {
         "factionAlignment": "neutralEvil",
@@ -222,7 +246,8 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "None",
-        "maxCount": null
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
     },
     "executioner": {
         "factionAlignment": "neutralEvil",
@@ -231,7 +256,18 @@
         "defense": 1,
         "witchable": true,
         "endGameCondition": "None",
-        "maxCount": null
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
+    },
+    "doomsayer":{
+        "factionAlignment": "neutralEvil",
+        "suspicious": false,
+        "roleblockable": false,
+        "defense": 0,
+        "witchable": false,
+        "endGameCondition": "None",
+        "maxCount": 1,
+        "largeRoleSpecificMenu": true
     },
     "vampire": {
         "factionAlignment": "neutralChaos",
@@ -240,6 +276,7 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "SingleRole",
-        "maxCount": 2
+        "maxCount": 2,
+        "largeRoleSpecificMenu": false
     }
 }

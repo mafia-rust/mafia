@@ -207,7 +207,16 @@ impl Game {
             ToServerPacket::Leave => {
                 sender_player_ref.leave(self);
             }
-            _ => unreachable!()
+            ToServerPacket::SetDoomsayerGuess { guesses } => {
+                if let RoleState::Doomsayer(mut doomsayer) = sender_player_ref.role_state(self).clone(){
+                    doomsayer.guesses = guesses;
+                    sender_player_ref.set_role_state(self, RoleState::Doomsayer(doomsayer));
+                }
+            }
+            _ => {
+                println!("FATAL ERROR! unimplemented ToServerPacket: {:?}", incoming_packet);
+                unreachable!();
+            }
         }}
         
         for player_ref in PlayerReference::all_players(self){

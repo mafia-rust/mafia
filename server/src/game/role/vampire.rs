@@ -11,8 +11,8 @@ use crate::game::team::Team;
 use super::{Priority, RoleStateImpl, RoleState, common_role};
 
 pub(super) const DEFENSE: u8 = 0;
-pub(super) const ROLEBLOCKABLE: bool = true;
-pub(super) const WITCHABLE: bool = true;
+pub(super) const ROLEBLOCK_IMMUNE: bool = false;
+pub(super) const CONTROL_IMMUNE: bool = false;
 pub(super) const SUSPICIOUS: bool = true;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::NeutralChaos;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(2);

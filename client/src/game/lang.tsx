@@ -25,6 +25,16 @@ export default function translate(langKey: string, ...valuesList: (string | numb
     }
     return out;
 }
+export function translateChecked(langKey: string, ...valuesList: (string | number)[]): string | null {
+    let out = lang.get(langKey);
+    if(out===undefined){
+        return null;
+    }
+    for(let i = 0; i < valuesList.length; i++){
+        out = out.replace("\\"+(i), valuesList[i] as string);
+    }
+    return out;
+}
 
 export function getChatElement(message: ChatMessage, key: number): JSX.Element {
     const SPECIAL = { text: { color: "violet" } };
