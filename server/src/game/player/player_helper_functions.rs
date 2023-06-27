@@ -7,7 +7,7 @@ use super::PlayerReference;
 impl PlayerReference{
     ///returns true if they are not roleblockable
     pub fn roleblock(&self, game: &mut Game)->bool{
-        if self.role(game).roleblockable() {
+        if !self.role(game).roleblock_immune() {
             self.set_night_roleblocked(game, true);
             self.set_night_visits(game, vec![]);
             self.push_night_message(game,

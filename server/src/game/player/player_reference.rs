@@ -7,7 +7,7 @@ use crate::game::Game;
 use super::Player;
 
 pub type PlayerIndex = u8;
-#[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Copy, Clone, Default)]
 pub struct PlayerReference {
     index: PlayerIndex
 }

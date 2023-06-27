@@ -1,3 +1,4 @@
+import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import GameState, { Phase, PhaseTimes, PlayerIndex, Verdict } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleListEntry } from "./roleListState.d";
@@ -14,7 +15,7 @@ export interface Server {
     close(): void;
 }
 
-type StateEventType = ToClientPacket["type"] | "tick";
+export type StateEventType = ToClientPacket["type"] | "tick";
 export type StateListener = (type?: StateEventType) => void;
 
 export interface GameManager {
@@ -49,6 +50,12 @@ export interface GameManager {
     sendSendMessagePacket(text: string): void;
     sendSendWhisperPacket(playerIndex: number, text: string): void;
     sendExcludedRolesPacket(roles: RoleListEntry[]): void;
+
+    sendSetDoomsayerGuess(guesses: [
+        [number, DoomsayerGuess],
+        [number, DoomsayerGuess],
+        [number, DoomsayerGuess]
+    ]): void;
     
     messageListener(serverMessage: ToClientPacket): void;
 

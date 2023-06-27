@@ -25,7 +25,7 @@ use crate::{game::{
     role_list::{RoleList, RoleListEntry},
     verdict::Verdict, phase::PhaseType, 
     chat::ChatMessage,
-    role::{Role, RoleState}, 
+    role::{Role, RoleState, doomsayer::DoomsayerGuess}, 
     Game, grave::Grave, available_buttons::AvailableButtons, tag::Tag, settings::PhaseTimeSettings
 }, listener::RoomCode, log};
 
@@ -192,4 +192,7 @@ pub enum ToServerPacket{
     //ROLE SPECIFIC PACKETS
     #[serde(rename_all = "camelCase")]
     SetForgerWill{ role: Role, will: String },
+    
+    #[serde(rename_all = "camelCase")]
+    SetDoomsayerGuess{ guesses: [(PlayerReference, DoomsayerGuess); 3] },
 }

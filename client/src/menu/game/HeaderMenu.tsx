@@ -3,7 +3,9 @@ import translate, { styleText } from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import GameState, { Phase, Verdict } from "../../game/gameState.d";
 import GameScreen, { ContentMenus as GameScreenContentMenus } from "./GameScreen";
+import ROLES from "../../resources/roles.json"
 import "./headerMenu.css";
+import { Role } from "../../game/roleState.d";
 
 
 type HeaderMenuProps = {
@@ -105,6 +107,15 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                         GameScreen.instance.openMenu(GameScreenContentMenus.WikiMenu)
                     
                     }}>{translate("menu.wiki.title")}</button>
+            )()}
+            {(()=>
+                (
+                    !ROLES[this.state.gameState.role as Role].largeRoleSpecificMenu || GameScreen.instance.menusOpen().includes(GameScreenContentMenus.RoleSpecificMenu)
+                )?null:
+                    <button onClick={()=>{
+                        GameScreen.instance.openMenu(GameScreenContentMenus.RoleSpecificMenu)
+                    
+                    }}>{styleText(translate("role."+this.state.gameState.role+".name"))}</button>
             )()}
         </div>
     }

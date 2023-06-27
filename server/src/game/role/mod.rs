@@ -66,6 +66,7 @@ macros::roles! {
     //Neutral
     Jester : jester,
     Executioner: executioner,
+    Doomsayer: doomsayer,
 
     Vampire: vampire
 }
@@ -128,14 +129,14 @@ mod macros {
                         $(Self::$name => $file::DEFENSE),*
                     }
                 }
-                pub fn witchable(&self) -> bool {
+                pub fn control_immune(&self) -> bool {
                     match self {
-                        $(Self::$name => $file::WITCHABLE),*
+                        $(Self::$name => $file::CONTROL_IMMUNE),*
                     }
                 }
-                pub fn roleblockable(&self) -> bool {
+                pub fn roleblock_immune(&self) -> bool {
                     match self {
-                        $(Self::$name => $file::ROLEBLOCKABLE),*
+                        $(Self::$name => $file::ROLEBLOCK_IMMUNE),*
                     }
                 }
                 pub fn maximum_count(&self) -> Option<u8> {

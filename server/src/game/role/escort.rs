@@ -13,8 +13,8 @@ use crate::game::Game;
 use super::{Priority, RoleStateImpl};
 
 pub(super) const DEFENSE: u8 = 0;
-pub(super) const ROLEBLOCKABLE: bool = false;
-pub(super) const WITCHABLE: bool = true;
+pub(super) const ROLEBLOCK_IMMUNE: bool = true;
+pub(super) const CONTROL_IMMUNE: bool = false;
 pub(super) const SUSPICIOUS: bool = false;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownSupport;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;

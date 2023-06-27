@@ -11,8 +11,8 @@ use crate::game::team::Team;
 use super::{Priority, RoleState, RoleStateImpl};
 
 pub(super) const DEFENSE: u8 = 0;
-pub(super) const ROLEBLOCKABLE: bool = true;
-pub(super) const WITCHABLE: bool = false;
+pub(super) const ROLEBLOCK_IMMUNE: bool = true;
+pub(super) const CONTROL_IMMUNE: bool = true;
 pub(super) const SUSPICIOUS: bool = false;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownSupport;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
@@ -36,6 +36,7 @@ impl RoleStateImpl for Retributionist {
                 let Some(first_visit) = retributionist_visits.get(0) else {return};
                 let Some(second_visit) = retributionist_visits.get(1) else {return};
                 if first_visit.target.alive(game) {return;}
+                if first_visit.target.role(game).control_immune() {return;}
 
                 let mut new_chosen_targets = vec![second_visit.target];
                 if let Some(third_visit) = retributionist_visits.get(2){

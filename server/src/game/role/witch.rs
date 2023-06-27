@@ -10,9 +10,9 @@ use crate::game::team::Team;
 use crate::game::Game;
 use super::{Priority, RoleStateImpl};
 
-pub(super) const DEFENSE: u8 = 1;
-pub(super) const ROLEBLOCKABLE: bool = true;
-pub(super) const WITCHABLE: bool = true;
+pub(super) const DEFENSE: u8 = 0;
+pub(super) const ROLEBLOCK_IMMUNE: bool = true;
+pub(super) const CONTROL_IMMUNE: bool = true;
 pub(super) const SUSPICIOUS: bool = true;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::CovenPower;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);

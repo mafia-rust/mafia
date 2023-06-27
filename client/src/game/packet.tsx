@@ -3,6 +3,7 @@ import { Grave } from "./grave"
 import { ChatMessage } from "./chatMessage"
 import { RoleListEntry } from "./roleListState.d"
 import { Role, RoleState } from "./roleState.d"
+import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu"
 
 export type ToClientPacket = {
     type: "acceptJoin",
@@ -168,4 +169,11 @@ export type ToServerPacket = {
     type: "setForgerWill",
     role: Role,
     will: string
+} | {
+    type: "setDoomsayerGuess",
+    guesses: [
+        [number, DoomsayerGuess],
+        [number, DoomsayerGuess],
+        [number, DoomsayerGuess]
+    ]
 }

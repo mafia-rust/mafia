@@ -106,8 +106,6 @@ pub enum ChatMessage {
     JailedSomeone{player_index: PlayerIndex}, //you have been jailed
     JailorDecideExecute {targets: Vec<PlayerIndex>},     //Jailor has decided to execute you
     MediumSeance{player: PlayerIndex},//You are being seanced by the medium
-    JesterWon, //The jester will get their revenge from the grave
-    ExecutionerWon, //You got your target lynched
     #[serde(rename_all = "camelCase")]
     DeputyKilled{shot_index: PlayerIndex},
 
@@ -166,6 +164,11 @@ pub enum ChatMessage {
 
     ArsonistCleanedSelf,    //You cleaned the gas off yourself
     ArsonistWasDoused,  //you were doused in gas (only arsonists recieve this message)
+
+    JesterWon, //The jester will get their revenge from the grave
+    ExecutionerWon, //You got your target lynched\
+    DoomsayerFailed,
+    DoomsayerWon,
 }
 
 

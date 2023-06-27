@@ -243,6 +243,12 @@
     "role.executioner.attributes":"● After you win you will commit suicide\n● Your target will always be a townie, but never town power, or town killing",
     "role.executioner.target": "Target",
     "role.executioner.dayTarget": "Special",
+    
+    "role.doomsayer.name": "Doomsayer",
+    "role.doomsayer.abilities":"● Guess the role of three living players in one night, killing them and winning the game",
+    "role.doomsayer.attributes":"● When you win, you will commit suicide using an unstoppable attack\n●You have to guess the exact role of townies, but just the faction of all other roles\n● You can not try to guess town investigative roles\n● If there is not enough players left for you to guess and win the game, you will convert to a jester\n● You do not visit, so the transporter doesn't effect your attack\n● Your attack is unstoppable",
+    "role.doomsayer.target": "Target",
+    "role.doomsayer.dayTarget": "Special",
 
     "role.vampire.name": "Vampire",
     "role.vampire.abilities":"● Bite a player to convert them to a vampire",
@@ -376,6 +382,9 @@
     "chatmessage.silenced": "You were silenced! You must not speak, chat, point, or otherwise communicate until tomorrow!",
     "chatmessage.playersRoleAndWill": "Your targets role was \\0 and their will stated this: \\1",
     "chatmessage.consigliereResult": "Your targets role was \\0. They visited \\1. They were visited by \\2.",
+
+    "chatmessage.doomsayerFailed": "At least one of your guesses was incorrect or invalid.",
+    "chatmessage.doomsayerWon": "Your guesses were correct, and you won!",
 
     "pride.gay":"GAY",
     "pride.trans":"TRANS",

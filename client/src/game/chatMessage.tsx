@@ -83,10 +83,6 @@ export type ChatMessage = {
     type: "mediumSeance",
     player: PlayerIndex
 } | {
-    type: "jesterWon"
-} | {
-    type: "executionerWon"
-} | {
     type: "deputyKilled",
     shotIndex: PlayerIndex
 } | {
@@ -177,6 +173,14 @@ export type ChatMessage = {
 } | {
     type: "arsonistDousedPlayers", 
     players: PlayerIndex[]
+} | {
+    type: "jesterWon"
+} | {
+    type: "executionerWon"
+} | {
+    type: "doomsayerFailed"
+} | {
+    type: "doomsayerWon"
 }
 
 export type MessageSender = {
