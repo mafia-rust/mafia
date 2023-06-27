@@ -325,7 +325,7 @@ function createChatElement(
         clazz: "chat-message",
         boxStyle: style.box,
         defaultStyle: style.text,
-        indent: style.indent
+        isPlayerMessage: style.indent
     }, key)
 }
 
@@ -341,7 +341,7 @@ const BUILTIN_STYLES: {[key: string]: React.CSSProperties} = {
 type StyleMap = { [key: string]: React.CSSProperties };
 
 const SANITIZATION_OPTIONS = {
-    ALLOWED_TAGS: ['br', 'span', 'li', 'ol', 'ul', 'p', 'strong', 'em', 'del'],
+    FORBID_TAGS: ['a', 'img']
 }
 
 const MARKDOWN_OPTIONS = {
@@ -351,23 +351,14 @@ const MARKDOWN_OPTIONS = {
     gfm: true
 }
 
-marked.lexer = (src: string, options?: marked.MarkedOptions) => {
-    const lexer = new marked.Lexer(options);
-    // Disable these markdown features
-    ['table', 'tablerow', 'tablecell', 'code', 'html', 'heading', 'codespan', 'link', 'image'].forEach(element => {
-        lexer.rules[element].exec = () => null;
-    })
-    return lexer.lex(src);
-};
-
 export function styleText(
     string: string, 
     styleOverride: {
         clazz?: string,
         boxStyle?: React.CSSProperties,
         defaultStyle?: React.CSSProperties
-        indent?: boolean
-    }= {},
+        isPlayerMessage?: boolean
+    } = {},
     key?: number
 ): JSX.Element {
     const KEYWORD_STYLE_MAP: StyleMap = getKeywordStyles();
@@ -386,21 +377,15 @@ export function styleText(
 
     let tokens: Token[] = [];
 
-    // Treat first line differently
-    const lines = string.split("\n");
+    let body = DOMPurify.sanitize(
+        marked.parse(string, MARKDOWN_OPTIONS), 
+        SANITIZATION_OPTIONS
+    ) // Remove leading and trailing whitespace from elements
+
     tokens.push({
         type: "string",
-        string: DOMPurify.sanitize(marked.parseInline(lines[0] + '\n', MARKDOWN_OPTIONS), SANITIZATION_OPTIONS)
+        string: body
     });
-    if (lines.length > 1) {
-        const body = DOMPurify.sanitize(marked.parse(lines.slice(1).join('\n'), MARKDOWN_OPTIONS), SANITIZATION_OPTIONS)
-            .replace(/[\s]*(<\/?[a-z|A-Z| ]*>)[\s]*/g, "$1"); // Remove leading and trailing whitespace from elements
-    
-        tokens.push({
-            type: "string",
-            string: body
-        });
-    }
 
     for(const [stringToStyle, style] of Object.entries(KEYWORD_STYLE_MAP)){
         // Using for..of or for..in is prone to errors, since we mutate the array as we loop through it,
@@ -456,11 +441,14 @@ export function styleText(
         );
     }
     
-    return <pre key={key} 
+    return <span key={key} 
         className={styleOverride.clazz} 
-        style={{...boxStyle, whiteSpace: "pre-wrap"}}
-        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(jsxString, SANITIZATION_OPTIONS) }}>
-    </pre>
+        style={{...boxStyle}}
+        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(
+            jsxString, 
+            SANITIZATION_OPTIONS
+        )}}>
+    </span>
 }
 
 // TODO: Memoize this - shouldn't need to change after a game has begun.

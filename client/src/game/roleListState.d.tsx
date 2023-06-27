@@ -1,4 +1,4 @@
-import translate, { styleText } from "./lang";
+import translate from "./lang";
 import { Role, getFactionAlignmentFromRole, getFactionFromRole } from "./roleState.d";
 
 
@@ -101,18 +101,18 @@ export function getFactionAlignmentFromRoleListEntry(roleListEntry: RoleListEntr
     }
 }
 
-export function  renderRoleListEntry(roleListEntry: RoleListEntry): JSX.Element | null{
+export function translateRoleListEntry(roleListEntry: RoleListEntry): string | null{
     if(roleListEntry.type === "any"){
-        return styleText(translate("any"))
+        return translate("any")
     }
     if(roleListEntry.type === "faction"){
-        return styleText(translate("faction."+roleListEntry.faction.toString())+" "+translate("any"))
+        return translate("faction."+roleListEntry.faction.toString())+" "+translate("any")
     }
     if(roleListEntry.type === "factionAlignment"){
-        return styleText(translate("faction."+getFactionFromFactionAlignment(roleListEntry.factionAlignment))+" "+translate("alignment."+getAlignmentStringFromFactionAlignment(roleListEntry.factionAlignment)))
+        return translate("faction."+getFactionFromFactionAlignment(roleListEntry.factionAlignment))+" "+translate("alignment."+getAlignmentStringFromFactionAlignment(roleListEntry.factionAlignment))
     }
     if(roleListEntry.type === "exact"){
-        return styleText(translate("role."+roleListEntry.role+".name"))
+        return translate("role."+roleListEntry.role+".name")
     }
     return null
 }

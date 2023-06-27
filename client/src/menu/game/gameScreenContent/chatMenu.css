@@ -19,20 +19,26 @@
     flex-direction: column;
     /* justify-content: end; */
 }
+
 .chat-message {
     max-width: 100%;
     text-align: left;
+    text-indent: 1rem hanging;
     margin: .1rem;
     overflow-wrap: anywhere;
-}
-.chat-message p, .chat-message ul, .chat-message ol {
-    list-style-position: inside;
-    padding-left: 1rem;
     tab-size: 1rem;
 }
-.chat-message *:not(span, #text) {
+/* For keyword styling purposes */
+.chat-message > span p {
+    all: inherit;
+}
+.chat-message ul, .chat-message ol {
+    list-style-position: inside;
+}
+.chat-message * {
     text-align: left;
 }
+
 .chat-menu .send-section {
     display: flex;
     flex-direction: column;
