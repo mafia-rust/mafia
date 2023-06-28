@@ -8,7 +8,7 @@
     background-color: var(--background-color);
 }
 
-.errorCard {
+.error-card {
     position: fixed;
     display: flex;
     flex-direction: column;
@@ -33,7 +33,7 @@
     -webkit-animation: slide-in 0.5s forwards;
 }
 
-.errorCard > header {
+.error-card > header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -41,7 +41,7 @@
     font-size: 125%;
 }
 
-.errorCard > button {
+.error-card > button {
     position: fixed;
     padding: 0;
     font-size: 75%;
@@ -52,7 +52,7 @@
     height: 1.5rem;
 }
 
-.errorCard > div {
+.error-card > div {
     margin-top: 3%;
 }
     
