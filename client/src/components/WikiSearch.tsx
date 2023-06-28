@@ -1,9 +1,10 @@
 import React from "react";
 import ROLES from "./../resources/roles.json";
-import translate, { styleText } from "../game/lang";
+import translate from "../game/lang";
 import "./wikiSearch.css";
 import { Role } from "../game/roleState.d";
 import { FactionAlignment, getRoleListEntryFromFactionAlignment, translateRoleListEntry } from "../game/roleListState.d";
+import StyledText from "../components/StyledText";
 
 interface WikiSearchState {
     wikiSearch: string,
@@ -55,12 +56,12 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
         return out
     }
     renderGeneralWikiPage(article: string){
-        return styleText(
-`# ${translate("menu.wiki.entries."+article+".title")}
-<br>
+        return <StyledText className="wiki-content-body">{`
+# ${translate("menu.wiki.entries."+article+".title")}
+<br/>
 
 ${translate("menu.wiki.entries."+article+".text")}
-`, { clazz: "wiki-content-body" })
+        `}</StyledText>
     }
     getRolesFromSearch(search: string): Role[] {
         search = search.toLowerCase();
@@ -113,22 +114,22 @@ ${translate("menu.wiki.entries."+article+".text")}
 
         const roleData = ROLES[role as keyof typeof ROLES];
 
-        return styleText(
-`# ${translate("role."+role+".name")}
+        return <StyledText className="wiki-content-body">{`
+# ${translate("role."+role+".name")}
 ### ${translateRoleListEntry(getRoleListEntryFromFactionAlignment(roleData.factionAlignment as FactionAlignment))}
-<br>
+<br/>
 
-### ${translate("menu.wiki.abilities")} 
-${translate("role."+role+".abilities")} 
+### ${translate("menu.wiki.abilities")}
+${translate("role."+role+".abilities")}
 ### ${translate("menu.wiki.attributes")}
 ${translate("role."+role+".attributes")}
 
-<br>
+<br/>
 
 ### ${roleData.maxCount === null ? '' : translate("menu.wiki.maxCount", roleData.maxCount)}
 ### ${translate("menu.wiki.suspicious", ROLES[role as keyof typeof ROLES].suspicious?"suspicious":"innocent")}
-### ${translate("menu.wiki.defense", defenseString)}
-`, { clazz: "wiki-content-body" })
+### ${translate("menu.wiki.defense", defenseString)}`}
+        </StyledText>
     }
     
     renderWikiPageOrSearch(){
@@ -148,9 +149,11 @@ ${translate("role."+role+".attributes")}
                             openPage: {type: "role", role: role}
                         })
                     }}
-                >{
-                    styleText(translate("role."+role+".name"))
-                }</button>
+                >
+                    <StyledText>
+                        {translate("role."+role+".name")}
+                    </StyledText>
+                </button>
             }).concat(this.getGeneralPageFromSearch(this.state.wikiSearch).map((article)=>{
                 return <button key={article} 
                     onClick={()=>{
@@ -159,9 +162,11 @@ ${translate("role."+role+".attributes")}
                             openPage: {type: "article", article: article}
                         })
                     }}
-                >{
-                    styleText(translate("menu.wiki.entries."+article+".title"))
-                }</button>
+                >
+                    <StyledText>
+                        {translate("menu.wiki.entries."+article+".title")}
+                    </StyledText>
+                </button>
             }));
         }
     }

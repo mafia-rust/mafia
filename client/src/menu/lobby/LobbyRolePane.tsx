@@ -1,10 +1,10 @@
 import React from "react";
 import GAME_MANAGER from "../../index";
 import "../../index.css";
-import RolePicker from "../RolePicker";
 import { StateListener } from "../../game/gameManager.d";
 import translate from "../../game/lang";
 import { RoleListEntry } from "../../game/roleListState.d";
+import RolePicker from "../../components/RolePicker";
 
 interface RolePaneState {
     roleList: RoleListEntry[]

@@ -1,15 +1,17 @@
 import React from "react";
-import translate, { getChatElement, styleText } from "../../../game/lang";
+import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import "./playerListMenu.css"
 import "./../gameScreen.css"
-import ChatMenu, { textContent } from "./ChatMenu";
+import ChatMenu from "./ChatMenu";
 import GameState, { Player, PlayerIndex } from "../../../game/gameState.d";
 import GameScreen, { ContentMenus } from "../GameScreen";
 import { ChatMessage } from "../../../game/chatMessage";
 import { StateListener } from "../../../game/gameManager.d";
 import SmallRoleSpecifcMenu from "./RoleSpecificMenus/SmallRoleSpecificMenu";
 import Anchor from "../../Anchor";
+import StyledText from "../../../components/StyledText";
+import { translateChatMessage } from "../../../components/ChatMessage";
 
 interface PlayerListMenuProps {
 }
@@ -98,23 +100,25 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
             <div className="top">
                 
                 <button className="whisper" onClick={()=>ChatMenu.prependWhisper(player.index)}>
-                    {styleText(
-                        (player.playerTags.map((tag)=>{return translate("tag."+tag)}))+
-                        (
-                            player.numVoted!==null &&
-                            player.numVoted!==0 &&
-                            this.state.gameState.phase==="voting" ? 
-                            player.numVoted+" :":""
-                        )+
-                        player.toString()+
-                        (player.roleLabel==null?"":(" ("+translate("role."+player.roleLabel+".name")+")"))+
-                        (player.alive?"":" ("+translate("dead")+")")
-                    )}
+                    <StyledText>
+                        {(
+                            (player.playerTags.map((tag)=>{return translate("tag."+tag)}))+
+                            (
+                                player.numVoted!==null &&
+                                player.numVoted!==0 &&
+                                this.state.gameState.phase==="voting" ? 
+                                player.numVoted+" :":""
+                            )+
+                            player.toString()+
+                            (player.roleLabel==null?"":(" ("+translate("role."+player.roleLabel+".name")+")"))+
+                            (player.alive?"":" ("+translate("dead")+")")
+                        )}
+                    </StyledText>
                 </button>
                 <button className="filter" onClick={()=>{
                     ChatMenu.setFilterFunction(
                         (message: ChatMessage) => {
-                            return textContent(getChatElement(message, 0)).includes(player.name) || 
+                            return translateChatMessage(message).includes(player.name) || 
                             message.type === "phaseChange"
                         }
                     );

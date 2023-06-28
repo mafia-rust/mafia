@@ -1,10 +1,10 @@
 import React from "react";
 import GAME_MANAGER from "../../../index";
 import GameScreen, { ContentMenus } from "../GameScreen";
-import WikiSearch from "../../WikiSearch";
 import "./wikiMenu.css"
 import GameState from "../../../game/gameState.d";
 import translate from "../../../game/lang";
+import WikiSearch from "../../../components/WikiSearch";
 
 interface WikiMenuProps {
 }
