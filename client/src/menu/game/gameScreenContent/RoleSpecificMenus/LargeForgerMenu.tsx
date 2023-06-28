@@ -1,7 +1,6 @@
 import React from "react"
 import GameState from "../../../../game/gameState.d"
 import GAME_MANAGER from "../../../.."
-import translate, { styleText } from "../../../../game/lang"
 
 type LargeForgerMenuProps = {
 }

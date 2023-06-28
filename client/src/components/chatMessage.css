@@ -1,0 +1,54 @@
+
+.chat-message {
+    max-width: 100%;
+    text-align: left;
+    margin: .1rem;
+    overflow-wrap: anywhere;
+    tab-size: 1rem;
+}
+.chat-message > p {
+    all: inherit;
+}
+.chat-message * {
+    text-align: left;
+}
+.chat-message ul, .chat-message ol {
+    padding-left: 1rem;
+    list-style-position: inside;
+}
+/* Chat message variants */
+.chat-message.dead {
+    background-color: black;
+    border-radius: 5px;
+    color: grey;
+}
+.chat-message.phase-change {
+    text-align: center;
+    background-color: var(--primary-color);
+    color: yellow;
+    text-decoration: underline;
+}
+.chat-message.center {
+    text-align: center;
+}
+.chat-message.special {
+    color: violet;
+}
+.chat-message.discreet {
+    color: turquoise;
+}
+.chat-message.important {
+    color: yellow;
+}
+.chat-message.trial {
+    color: orange;
+}
+.chat-message.target {
+    color: orange;
+}
+.chat-message.result {
+    color: green;
+}
+.chat-message.warning {
+    background-color: #660000;
+}

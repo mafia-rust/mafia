@@ -1,11 +1,12 @@
 import React from "react";
-import translate, { styleText } from "../../../game/lang";
+import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import { Grave } from "../../../game/grave";
 import GameScreen, { ContentMenus } from "../GameScreen";
 import "./graveyardMenu.css";
 import GameState from "../../../game/gameState.d";
 import { translateRoleListEntry } from "../../../game/roleListState.d";
+import StyledText from "../../../components/StyledText";
 
 type GraveyardMenuProps = {
 }
@@ -52,7 +53,10 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
         }
 
         return(<button key={graveIndex} onClick={()=>{this.setState({extendedGraveIndex:graveIndex})}}>
-            {this.state.gameState.players[grave.playerIndex]?.toString()} {styleText("("+graveRoleString+")")}
+            {this.state.gameState.players[grave.playerIndex]?.toString()}
+            <StyledText>
+                {`(${graveRoleString})`}
+            </StyledText>
         </button>);
     }
     renderGraveExtended(grave: Grave){
@@ -81,16 +85,28 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
 
         let diedPhaseString = grave.diedPhase === "day" ? translate("day") : translate("phase.night");
         return(<button onClick={()=>{this.setState({extendedGraveIndex:null})}}>
-            {styleText(diedPhaseString+" "+grave.dayNumber)} <br/>
-            {styleText(this.state.gameState.players[grave.playerIndex]?.toString()+" ("+graveRoleString+")")}<br/>
-            {styleText(translate("menu.graveyard.killedBy")+" "+deathCauseString)}<br/>
-            <div className="will-area">{styleText(grave.will)}</div>
+            <StyledText>{`
+${diedPhaseString+" "+grave.dayNumber}
+
+${this.state.gameState.players[grave.playerIndex]?.toString()+" ("+graveRoleString+")"}
+
+${translate("menu.graveyard.killedBy")+" "+deathCauseString}
+            `}</StyledText>
+            <div className="will-area">
+                <StyledText>
+                    {grave.will}
+                </StyledText>
+            </div>
         </button>);
     }
 
     renderRoleList(){return<div>
         {this.state.gameState.roleList.map((entry, index)=>{
-            return <button key={index}>{translateRoleListEntry(entry)}</button>
+            return <button key={index}>
+                <StyledText>
+                    {translateRoleListEntry(entry) ?? ""}
+                </StyledText>
+            </button>
         }, this)}
     </div>}
 
@@ -102,7 +118,9 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             <div>
                 {this.state.gameState.excludedRoles.map((value, i)=>{
                     return <button key={i}>
-                        {translateRoleListEntry(value)}
+                        <StyledText>
+                            {translateRoleListEntry(value) ?? ""}
+                        </StyledText>
                     </button>
                 })}
             </div>
@@ -113,7 +131,11 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
     render(){return(<div className="graveyard-menu">
         <button onClick={()=>{
             GameScreen.instance.closeMenu(ContentMenus.GraveyardMenu)
-        }}>{styleText(translate("menu.graveyard.title"))}</button>
+        }}>
+            <StyledText>
+                {translate("menu.graveyard.title")}
+            </StyledText>
+        </button>
         <div>
             {this.renderRoleList()}
             {this.renderGraves()}

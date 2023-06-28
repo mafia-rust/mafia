@@ -7,8 +7,8 @@ import "./lobbyMenu.css";
 import translate from "../../game/lang";
 import { StateListener } from "../../game/gameManager.d";
 import LobbyExcludedRoles from "./lobbyExcludedRoles";
-import WikiSearch from "../WikiSearch";
 import Anchor from "../Anchor";
+import WikiSearch from "../../components/WikiSearch";
 
 type LobbyMenuProps = {}
 

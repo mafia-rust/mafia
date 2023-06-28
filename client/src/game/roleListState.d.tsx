@@ -101,18 +101,18 @@ export function getFactionAlignmentFromRoleListEntry(roleListEntry: RoleListEntr
     }
 }
 
-export function translateRoleListEntry(roleListEntry: RoleListEntry): string | null{
+export function translateRoleListEntry(roleListEntry: RoleListEntry): string | null {
     if(roleListEntry.type === "any"){
-        return translate("any")
+        return translate("any");
     }
     if(roleListEntry.type === "faction"){
-        return translate("faction."+roleListEntry.faction.toString())+" "+translate("any")
+        return translate("faction."+roleListEntry.faction.toString())+" "+translate("any");
     }
     if(roleListEntry.type === "factionAlignment"){
-        return translate("faction."+getFactionFromFactionAlignment(roleListEntry.factionAlignment))+" "+translate("alignment."+getAlignmentStringFromFactionAlignment(roleListEntry.factionAlignment))
+        return translate("faction."+getFactionFromFactionAlignment(roleListEntry.factionAlignment))+" "+translate("alignment."+getAlignmentStringFromFactionAlignment(roleListEntry.factionAlignment));
     }
     if(roleListEntry.type === "exact"){
-        return translate("role."+roleListEntry.role+".name")
+        return translate("role."+roleListEntry.role+".name");
     }
     return null
 }

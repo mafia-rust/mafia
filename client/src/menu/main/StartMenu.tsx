@@ -7,7 +7,7 @@ import "./startMenu.css"
 import * as LoadingScreen from "../LoadingScreen";
 import JoinMenu from "./JoinMenu";
 import translate from "../../game/lang";
-import WikiSearch from "../WikiSearch";
+import WikiSearch from "../../components/WikiSearch";
 
 type StartMenuProps = {
 }

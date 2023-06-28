@@ -1,11 +1,12 @@
 import React from "react";
-import translate, { styleText } from "../../game/lang";
+import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import GameState, { Phase, Verdict } from "../../game/gameState.d";
 import GameScreen, { ContentMenus as GameScreenContentMenus } from "./GameScreen";
 import ROLES from "../../resources/roles.json"
 import "./headerMenu.css";
 import { Role } from "../../game/roleState.d";
+import StyledText from "../../components/StyledText";
 
 
 type HeaderMenuProps = {
@@ -42,7 +43,9 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             if(this.state.gameState.playerOnTrial !== null){
                 return(<div className="judgement-specific">
                     <div>
-                    {styleText(this.state.gameState.players[this.state.gameState.playerOnTrial!]?.toString())}
+                        <StyledText>
+                            {this.state.gameState.players[this.state.gameState.playerOnTrial!]?.toString()}
+                        </StyledText>
                     {(()=>{
                         if (this.state.gameState.playerOnTrial === this.state.gameState.myIndex) {
                             return <div className="judgement-info">{translate("judgement.cannotVote.onTrial")}</div>;
@@ -75,7 +78,9 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             className={this.state.gameState.judgement === verdict ? "highlighted" : undefined}
             onClick={()=>{GAME_MANAGER.sendJudgementPacket(verdict)}}
         >
-            {styleText(translate("verdict." + verdict))}
+            <StyledText>
+                {translate("verdict." + verdict)}
+            </StyledText>
         </button>
     }
     
@@ -115,7 +120,11 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                     <button onClick={()=>{
                         GameScreen.instance.openMenu(GameScreenContentMenus.RoleSpecificMenu)
                     
-                    }}>{styleText(translate("role."+this.state.gameState.role+".name"))}</button>
+                    }}>
+                        <StyledText>
+                            {translate("role."+this.state.gameState.role+".name")}
+                        </StyledText>
+                    </button>
             )()}
         </div>
     }
@@ -132,8 +141,10 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
         {this.renderPhase()}
         {(()=>{
             if(this.state.gameState.myIndex !== null){
-                return styleText(this.state.gameState.players[this.state.gameState.myIndex].toString() +
-                 " (" + translate("role."+this.state.gameState.role+".name") + ")");
+                return <StyledText>
+                    {this.state.gameState.players[this.state.gameState.myIndex].toString() +
+                    " (" + translate("role."+this.state.gameState.role+".name") + ")"}
+                </StyledText>;
             }
         })()}
         {this.renderPhaseSpecific()}
