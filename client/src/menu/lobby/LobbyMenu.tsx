@@ -45,7 +45,7 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
                     <WikiSearch/>
                 </div>
                 <div className="right">
-                    {Anchor.isMobile() && <h1>LANG TODO Game Settings</h1>}
+                    {Anchor.isMobile() && <h1>{translate("menu.lobby.gameSettings")}</h1>}
                     <LobbyPhaseTimePane/>
                     <LobbyRolePane/>
                 </div>
