@@ -23,6 +23,7 @@
     "menu.lobby.player": "\\0: (\\1)",
     "menu.lobby.roleList": "Role List:",
     "menu.lobby.timeSettings": "Times:",
+    "menu.lobby.gameSettings": "Game Settings:",
 
     "menu.excludedRoles.exclude": "Exclude Role",
     "menu.excludedRoles.excludedRoles": "Excluded Roles",
