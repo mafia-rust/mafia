@@ -5,7 +5,8 @@ import Anchor from './menu/Anchor';
 import { GameManager, createGameManager } from './game/gameManager';
 import { createGameState } from './game/gameState';
 import StartMenu from './menu/main/StartMenu';
-import * as LoadingScreen from './menu/LoadingScreen'; 
+import * as LoadingScreen from './menu/LoadingScreen';
+import StandaloneWiki from './menu/main/StandaloneWiki';
 
 const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
@@ -31,6 +32,9 @@ function onMount() {
     if (roomCode !== null) {
         GAME_MANAGER.gameState = createGameState();
         GAME_MANAGER.tryJoinGame(roomCode);
+    } else if (window.location.pathname === '/wiki') {
+        // If we ever need more routing than this, use react router instead.
+        Anchor.setContent(<StandaloneWiki/>);
     } else {
         Anchor.setContent(<StartMenu/>)
     }
