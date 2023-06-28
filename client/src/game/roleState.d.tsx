@@ -33,37 +33,37 @@ export type RoleState = {
     bulletsRemaining: number,
     willSuicide: boolean,
 } | {
-    role:"veteran"
+    role: "veteran"
     alertsRemaining: number,
 } | {
-    role:"escort"
+    role: "escort"
 } | {
-    role:"medium",
+    role: "medium",
     seancnesRemaining: number,
     seancedTarget: PlayerIndex | null
 } | {
-    role:"retributionist"
+    role: "retributionist"
 } | {
-    role:"mafioso"
+    role: "mafioso"
 } | {
-    role:"consort"
+    role: "consort"
 } | {
-    role:"blackmailer"
+    role: "blackmailer"
 } | {
-    role:"consigliere",
+    role: "consigliere",
 } | {
-    role:"janitor"
+    role: "janitor"
     cleansRemaining: number,
 } | {
-    role:"witch"
+    role: "witch"
 } | {
-    role:"jester"
+    role: "jester"
 } | {
-    role:"executioner"
+    role: "executioner"
 } | 
     Doomsayer
  | {
-    role:"vampire"
+    role: "vampire"
 }
 
 
