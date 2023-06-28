@@ -26,13 +26,13 @@
         "evening": 4,
         "night": 19
     },
-    "Long": {
-        "morning": 10,
-        "discussion": 90,
-        "voting": 60,
+    "Aloud": {
+        "morning": 5,
+        "discussion": 45,
+        "voting": 30,
         "testimony": 30,
-        "judgement": 40,
-        "evening": 14,
-        "night": 74
+        "judgement": 30,
+        "evening": 10,
+        "night": 43
     }
 }

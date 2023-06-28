@@ -261,6 +261,8 @@ export function translateChatMessage(message: ChatMessage): string {
         case "witchTargetImmune":
         case "witchedYou":
         case "youSurvivedAttack":
+        case "doomsayerFailed":
+        case "doomsayerWon":
             return translate("chatmessage."+message.type);
         default:
             console.error("Unknown message type " + (message as any).type + ":");
