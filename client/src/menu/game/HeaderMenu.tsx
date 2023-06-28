@@ -110,6 +110,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             )()}
             {(()=>
                 (
+                    ROLES[this.state.gameState.role as Role] === undefined ||
                     !ROLES[this.state.gameState.role as Role].largeRoleSpecificMenu || GameScreen.instance.menusOpen().includes(GameScreenContentMenus.RoleSpecificMenu)
                 )?null:
                     <button onClick={()=>{

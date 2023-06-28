@@ -311,6 +311,8 @@ export function getChatElement(message: ChatMessage, key: number): JSX.Element {
         case "witchTargetImmune":
         case "witchedYou":
         case "youSurvivedAttack":
+        case "doomsayerFailed":
+        case "doomsayerWon":
             return createChatElement(key, translate("chatmessage."+message.type), RESULT_STYLE);
         default:
             console.error("Unknown message type " + (message as any).type + ":");
