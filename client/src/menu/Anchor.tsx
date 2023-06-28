@@ -75,7 +75,7 @@ interface Error {
 }
 
 function ErrorCard(props: { error: Error, onClose: () => void }) {
-    return <div className="errorCard slide-in" onClick={() => props.onClose()}>
+    return <div className="error-card slide-in" onClick={() => props.onClose()}>
         <header>{props.error.title}</header>
         <button>✕</button>
         <div>{props.error.body}</div>
