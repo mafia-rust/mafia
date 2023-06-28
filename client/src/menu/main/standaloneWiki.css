@@ -1,0 +1,38 @@
+.standalone-wiki {
+    border-style: outset;
+    border-color: var(--primary-border-color);
+    border-width: .13rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+    width: 60%;
+    padding: 0 2rem;
+    border-top: none;
+    border-bottom: none;
+    font-size: 110%;
+}
+.standalone-wiki > header {
+    display: flex;
+    align-items: center;
+    height: 20%;
+}
+.standalone-wiki > header > h2 {
+    font-size: 400%;
+}
+
+.standalone-wiki > div {
+    height: 80%;
+}
+
+@media only screen and (max-width: 600px) {
+    .standalone-wiki {
+        border: none;
+        width: 90%;
+        padding: 0;
+    }
+}
