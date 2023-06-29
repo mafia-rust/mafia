@@ -16,7 +16,9 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
         if(message.messageSender.type !== "player"){
             style = "discreet";
         } else if (message.chatGroup === "dead") {
-            style = "dead";
+            style = "dead player";
+        } else {
+            style = "player"
         }
     } else if (message.type === "retributionistBug") {
         return <>

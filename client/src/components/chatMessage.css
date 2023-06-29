@@ -7,7 +7,10 @@
     tab-size: 1rem;
 }
 .chat-message > p {
-    all: inherit;
+    color: inherit;
+    text-align: inherit;
+    text-decoration: inherit;
+    font: inherit;
 }
 .chat-message * {
     text-align: left;
@@ -17,6 +20,10 @@
     list-style-position: inside;
 }
 /* Chat message variants */
+.chat-message.player {
+    text-indent: -1rem;
+    padding-left: 1rem;
+}
 .chat-message.dead {
     background-color: black;
     border-radius: 5px;
