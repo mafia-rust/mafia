@@ -22,6 +22,7 @@
     "menu.lobby.button.setTimeSettings": "Set Time Settings",
     "menu.lobby.player": "\\0: (\\1)",
     "menu.lobby.roleList": "Role List:",
+    "menu.lobby.excludedRoles": "Exclude roles:",
     "menu.lobby.timeSettings": "Times:",
     "menu.lobby.gameSettings": "Game Settings:",
 
