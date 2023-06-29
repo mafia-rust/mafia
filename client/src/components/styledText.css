@@ -1,45 +1,45 @@
 
-.keyword.player {
+.keyword-player {
     color: whitesmoke;
     font-style: italic; 
     font-weight: bold;
 }
-.keyword.evil {
+.keyword-evil {
     color: red;
 }
-.keyword.good {
+.keyword-good {
     color: lime;
 }
-.keyword.magic {
+.keyword-magic {
     color: magenta;
 }
-.keyword.neutral {
+.keyword-neutral {
     color: orange;
 }
-.keyword.info {
+.keyword-info {
     color: lightblue;
 }
-.keyword.hidden {
+.keyword-hidden {
     color: whitesmoke;
     font-style: italic;
     font-weight: bold;
 }
-.keyword.abstain {
+.keyword-abstain {
     color: cyan;
 }
-.keyword.dead {
+.keyword-dead {
     font-style: italic;
     color: gray
 }
-.keyword.pride, .keyword.trans {
+.keyword-pride, .keyword-trans {
     background-clip: text;
     color: rgba(255,255,255,.2);
     -webkit-background-clip: text;
     -webkit-text-fill-color: rgba(255,255,255,.2);
 }
-.keyword.pride {
+.keyword-pride {
     background-image: linear-gradient(to left, violet, indigo, cyan, green, yellow, orange, red);
 }
-.keyword.trans {
+.keyword-trans {
     background-image: linear-gradient(to left, cyan, pink, white, pink, cyan);
 }

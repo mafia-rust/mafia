@@ -54,7 +54,7 @@ export default function StyledText(props: { children: string[] | string, classNa
             const regEscape = (v: string) => v.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 
             // Remove the stringToStyle and split so we can insert the styled text in its place
-            const stringSplit = token.string.split(RegExp(`\\b${regEscape(stringToStyle)}\\b`, "gi"));
+            const stringSplit = token.string.split(RegExp(`(?<!\\w)${regEscape(stringToStyle)}(?!\\w)`, "gi"));
 
             if (stringSplit.length === 1) continue;
 
@@ -91,7 +91,7 @@ export default function StyledText(props: { children: string[] | string, classNa
         token.type === "string" 
             ? token.string 
             : ReactDOMServer.renderToStaticMarkup(
-                <span className={"keyword " + token.className} 
+                <span className={token.className} 
                     dangerouslySetInnerHTML={{ __html: token.string }}
                 />
             )
@@ -99,6 +99,7 @@ export default function StyledText(props: { children: string[] | string, classNa
     
     return <span
         className={props.className}
+        // Sanitization isn't strictly necessary here, but it's good to be safe.
         dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(
             jsxString, 
             SANITIZATION_OPTIONS
@@ -118,7 +119,7 @@ function useKeywordStyles(): StyleMap {
     }, [setPlayers]);
 
     for(const player of players){
-        stringsToStyle[player.toString()] = "player";
+        stringsToStyle[player.toString()] = "keyword-player";
     }
 
     const STYLES = require("../resources/styling/keywords.json");
