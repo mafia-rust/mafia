@@ -85,6 +85,8 @@ impl Game {
                 sender_player_ref.set_verdict(self, verdict, true);
             },
             ToServerPacket::Target { player_index_list }=>{
+                if self.current_phase().phase() != PhaseType::Night {break 'packet_match;}
+
                 let target_ref_list = match PlayerReference::index_vec_to_ref(self, &player_index_list){
                     Ok(target_ref_list) => target_ref_list,
                     Err(_) => {
