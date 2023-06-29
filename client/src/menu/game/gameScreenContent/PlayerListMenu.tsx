@@ -128,8 +128,13 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
 
             <div className="buttons">
                 <div className="day-target">
-                    {((player)=>{if(player.buttons.dayTarget){return(
-                        <button onClick={()=>{
+                    {((player)=>{if(player.buttons.dayTarget){
+                        // This is a little hacky. TODO: Extract this to another function.
+                        const highlighted = 
+                            this.state.gameState.roleState?.role === "jailor" && 
+                                this.state.gameState.roleState.jailedTargetRef === player.index;
+                    return(
+                        <button className={highlighted ? "highlighted" : undefined} onClick={()=>{
                             GAME_MANAGER.sendDayTargetPacket(player.index)}}
                     >{
                         translate("role."+this.state.gameState.role+".dayTarget")
