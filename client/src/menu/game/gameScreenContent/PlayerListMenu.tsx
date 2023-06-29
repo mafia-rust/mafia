@@ -1,17 +1,15 @@
 import React from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER from "../../../index";
+import GAME_MANAGER, { regEscape } from "../../../index";
 import "./playerListMenu.css"
 import "./../gameScreen.css"
 import ChatMenu from "./ChatMenu";
 import GameState, { Player, PlayerIndex } from "../../../game/gameState.d";
 import GameScreen, { ContentMenus } from "../GameScreen";
-import { ChatMessage } from "../../../game/chatMessage";
 import { StateListener } from "../../../game/gameManager.d";
 import SmallRoleSpecifcMenu from "./RoleSpecificMenus/SmallRoleSpecificMenu";
 import Anchor from "../../Anchor";
 import StyledText from "../../../components/StyledText";
-import { translateChatMessage } from "../../../components/ChatMessage";
 
 interface PlayerListMenuProps {
 }
@@ -98,7 +96,6 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     renderPlayer(player: Player){
         return(<div className="player" key={player.index}>
             <div className="top">
-                
                 <button className="whisper" onClick={()=>ChatMenu.prependWhisper(player.index)}>
                     <StyledText>
                         {(
@@ -115,14 +112,17 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         )}
                     </StyledText>
                 </button>
-                <button className="filter" onClick={()=>{
-                    ChatMenu.setFilterFunction(
-                        (message: ChatMessage) => {
-                            return translateChatMessage(message).includes(player.name) || 
-                            message.type === "phaseChange"
-                        }
-                    );
-                }}>{translate("menu.playerList.button.filter")}</button>
+                {(() => {
+                    const filter = RegExp(`(?<!\\w)${regEscape(player.name)}(?!\\w)`, "i");
+                    const isFilterSet = ChatMenu.getFilter()?.source === filter.source;
+                    
+                    return <button 
+                        className={"filter" + (isFilterSet ? " highlighted" : "")} 
+                        onClick={() => isFilterSet ? ChatMenu.setFilter(null) : ChatMenu.setFilter(filter)}
+                    >
+                        {translate("menu.playerList.button.filter")}
+                    </button>
+                })()}
             </div>
             
 

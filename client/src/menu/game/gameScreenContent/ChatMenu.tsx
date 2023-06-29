@@ -4,7 +4,7 @@ import GAME_MANAGER from "../../../index";
 import "../gameScreen.css";
 import "./chatMenu.css"
 import GameState, { PlayerIndex } from "../../../game/gameState.d";
-import { ChatMessage } from "../../../game/chatMessage";
+import { translateChatMessage } from "../../../components/ChatMessage";
 import ChatElement from "../../../components/ChatMessage";
 
 interface ChatMenuProps {
@@ -13,7 +13,7 @@ interface ChatMenuProps {
 interface ChatMenuState {
     gameState: GameState,
     chatField: string,
-    filterFunction: ((message: ChatMessage) => boolean) | null,
+    filter: RegExp | null,
 }
 
 export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuState> {
@@ -25,12 +25,13 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
             chatField: "/w " + (playerIndex + 1) + " " + ChatMenu.instance!.state.chatField,
         });
     }
-    static setFilterFunction(func: null | ((message: ChatMessage) => boolean)) {
+    static setFilter(regex: RegExp | null) {
         if(ChatMenu.instance === null)
             return;
-        ChatMenu.instance!.setState({
-            filterFunction: func,
-        });
+        ChatMenu.instance.setState({ filter: regex });
+    }
+    static getFilter(): RegExp | null {
+        return ChatMenu.instance!.state.filter;
     }
 
     static instance: ChatMenu | null = null;
@@ -45,7 +46,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         this.state = {
             gameState: GAME_MANAGER.gameState,
             chatField: "",
-            filterFunction: null,
+            filter: null,
         };
 
         this.listener = () => {
@@ -132,8 +133,8 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     renderTextInput() {return (
         <div className="send-section">
             {(()=>{
-                if(this.state.filterFunction === null) return null;
-                return <button className="highlighted" onClick={()=>ChatMenu.setFilterFunction(null)}>
+                if(this.state.filter === null) return null;
+                return <button className="highlighted" onClick={()=>ChatMenu.setFilter(null)}>
                     {translate("menu.chat.clearFilter")}
                 </button>
             })()}
@@ -153,9 +154,13 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         <div className="chat-menu">
             <div className="message-section" ref={(el) => { this.messageSection = el; }}>
                 <div className="message-list">
-                    {this.state.gameState.chatMessages.filter((msg)=>
-                        this.state.filterFunction?this.state.filterFunction(msg):true
-                    ).map((msg, index) => {
+                    {this.state.gameState.chatMessages.filter((msg) => {
+                        if (this.state.filter === null) {
+                            return true;
+                        } else {
+                            return msg.type === "phaseChange" || this.state.filter.test(translateChatMessage(msg));
+                        }
+                    }).map((msg, index) => {
                         return <ChatElement key={index} message={msg}/>;
                     })}
                 </div>
