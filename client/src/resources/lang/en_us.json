@@ -96,7 +96,7 @@
     "role.jailor.target": "Execute",
     "role.jailor.untarget": "Spare",
     "role.jailor.roleDataText.night": "You have \\0 executions remaining",
-    "role.jailor.roleDataText.nobody": "You have not decided to jail anybody.\nYou have \\1 executions remaining",
+    "role.jailor.roleDataText.nobody": "You have not decided to jail anybody.\nYou have \\0 executions remaining",
     "role.jailor.roleDataText": "You have decided to jail \\0.\nYou have \\1 executions remaining",
     "role.jailor.dayTarget": "Jail",
     
