@@ -168,6 +168,19 @@ impl Lobby {
                 
                 self.send_to_all(ToClientPacket::RoleList { role_list });
             }
+            ToServerPacket::SetRoleListEntry { index, role_list_entry } => {
+                let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
+                    println!("{} {}", log::error("Can't modify game settings outside of the lobby menu"), player_arbitrary_id);
+                    return;
+                };
+                if let Some(player) = players.get(&player_arbitrary_id){
+                    if !player.host {return;}
+                }
+
+                settings.role_list[index as usize] = role_list_entry.clone();
+                
+                self.send_to_all(ToClientPacket::RoleListEntry { index, role_list_entry });
+            }
             ToServerPacket::SetExcludedRoles {mut roles } => {
                 let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
                     println!("{} {}", log::error("Can't modify game settings outside of the lobby menu"), player_arbitrary_id);

@@ -36,6 +36,10 @@ export type ToClientPacket = {
     type: "roleList",
     roleList: RoleListEntry[]
 } | {
+    type: "roleListEntry",
+    index: number,
+    roleListEntry: RoleListEntry
+} | {
     type: "phaseTime",
     phase: Phase, 
     time: number
@@ -124,6 +128,10 @@ export type ToServerPacket = {
 } | {
     type: "setRoleList", 
     roleList: RoleListEntry[]
+} | {
+    type: "setRoleListEntry", 
+    index: number,
+    roleListEntry: RoleListEntry
 } | {
     type: "setPhaseTime", 
     phase: Phase, 

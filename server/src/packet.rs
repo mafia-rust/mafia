@@ -55,6 +55,8 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     RoleList{role_list: RoleList},
     #[serde(rename_all = "camelCase")]
+    RoleListEntry{index: u8, role_list_entry: RoleListEntry},
+    #[serde(rename_all = "camelCase")]
     PhaseTime{phase: PhaseType, time: u64},
     #[serde(rename_all = "camelCase")]
     PhaseTimes{phase_time_settings: PhaseTimeSettings},
@@ -167,6 +169,8 @@ pub enum ToServerPacket{
     Kick{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
     SetRoleList{role_list: RoleList},
+    #[serde(rename_all = "camelCase")]
+    SetRoleListEntry{index: u8, role_list_entry: RoleListEntry},
     SetPhaseTime{phase: PhaseType, time: u64},
     #[serde(rename_all = "camelCase")]
     SetPhaseTimes{phase_time_settings: PhaseTimeSettings},

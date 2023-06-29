@@ -120,6 +120,13 @@ export function createGameManager(): GameManager {
                 roleList: roleListEntries
             });
         },
+        sendSetRoleListEntryPacket(index: number, roleListEntry: RoleListEntry) {
+            this.server.sendPacket({
+                type: "setRoleListEntry",
+                index,
+                roleListEntry
+            });
+        },
 
         sendJudgementPacket(judgement: Verdict) {
             this.server.sendPacket({
