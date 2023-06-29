@@ -1,17 +1,15 @@
 import React from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER from "../../../index";
+import GAME_MANAGER, { regEscape } from "../../../index";
 import "./playerListMenu.css"
 import "./../gameScreen.css"
 import ChatMenu from "./ChatMenu";
 import GameState, { Player, PlayerIndex } from "../../../game/gameState.d";
 import GameScreen, { ContentMenus } from "../GameScreen";
-import { ChatMessage } from "../../../game/chatMessage";
 import { StateListener } from "../../../game/gameManager.d";
 import SmallRoleSpecifcMenu from "./RoleSpecificMenus/SmallRoleSpecificMenu";
 import Anchor from "../../Anchor";
 import StyledText from "../../../components/StyledText";
-import { translateChatMessage } from "../../../components/ChatMessage";
 
 interface PlayerListMenuProps {
 }
@@ -98,7 +96,6 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     renderPlayer(player: Player){
         return(<div className="player" key={player.index}>
             <div className="top">
-                
                 <button className="whisper" onClick={()=>ChatMenu.prependWhisper(player.index)}>
                     <StyledText>
                         {(
@@ -115,34 +112,48 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         )}
                     </StyledText>
                 </button>
-                <button className="filter" onClick={()=>{
-                    ChatMenu.setFilterFunction(
-                        (message: ChatMessage) => {
-                            return translateChatMessage(message).includes(player.name) || 
-                            message.type === "phaseChange"
-                        }
-                    );
-                }}>{translate("menu.playerList.button.filter")}</button>
+                {(() => {
+                    const filter = RegExp(`(?<!\\w)${regEscape(player.name)}(?!\\w)`, "i");
+                    const isFilterSet = ChatMenu.getFilter()?.source === filter.source;
+                    
+                    return <button 
+                        className={"filter" + (isFilterSet ? " highlighted" : "")} 
+                        onClick={() => isFilterSet ? ChatMenu.setFilter(null) : ChatMenu.setFilter(filter)}
+                    >
+                        {translate("menu.playerList.button.filter")}
+                    </button>
+                })()}
             </div>
             
 
             <div className="buttons">
                 <div className="day-target">
-                    {((player)=>{if(player.buttons.dayTarget){return(
-                        <button onClick={()=>{
+                    {((player)=>{if(player.buttons.dayTarget){
+                        // This is a little hacky. TODO: Extract this to another function.
+                        const highlighted = 
+                            this.state.gameState.roleState?.role === "jailor" && 
+                                this.state.gameState.roleState.jailedTargetRef === player.index;
+                    return(
+                        <button className={highlighted ? "highlighted" : undefined} onClick={()=>{
                             GAME_MANAGER.sendDayTargetPacket(player.index)}}
                     >{
                         translate("role."+this.state.gameState.role+".dayTarget")
                     }</button>)}})(player)}
                 </div>
                 <div className="target">
-                    {((player)=>{if(player.buttons.target){return(
-                        <button onClick={()=>{
-                            GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.gameState.targets, player.index]);
-                        }}>{
-                            translate("role."+this.state.gameState.role+".target")
-                        }</button>
-                    )}})(player)}
+                    {((player) => {
+                        if(player.buttons.target) {
+                            return <button onClick={() => GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.gameState.targets, player.index])}>
+                                {translate("role."+this.state.gameState.role+".target")}
+                            </button>
+                        } else if (this.state.gameState.phase === "night" && this.state.gameState.targets.includes(player.index)) {
+                            let newTargets = [...GAME_MANAGER.gameState.targets];
+                            newTargets.splice(newTargets.indexOf(player.index), 1);
+                            return <button className="highlighted" onClick={() => GAME_MANAGER.sendTargetPacket(newTargets)}>
+                                {translate("role."+this.state.gameState.role+".untarget")}
+                            </button>
+                        }
+                    })(player)}
                 </div>
                 <div className="vote">
                     {((player)=>{if(player.buttons.vote){return(

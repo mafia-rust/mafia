@@ -3,7 +3,7 @@ import { marked } from "marked";
 import React, { ReactElement, useEffect, useState } from "react";
 import ReactDOMServer from "react-dom/server";
 import { Player } from "../game/gameState.d";
-import GAME_MANAGER from "..";
+import GAME_MANAGER, { regEscape } from "..";
 import translate from "../game/lang";
 import { Role, getFactionFromRole } from "../game/roleState.d";
 import ROLES from "../resources/roles.json";
@@ -50,8 +50,6 @@ export default function StyledText(props: { children: string[] | string, classNa
         for(let index = 0; index < tokens.length; index++) {
             const token = tokens[index];
             if (token.type !== "string") continue;
-
-            const regEscape = (v: string) => v.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 
             // Remove the stringToStyle and split so we can insert the styled text in its place
             const stringSplit = token.string.split(RegExp(`(?<!\\w)${regEscape(stringToStyle)}(?!\\w)`, "gi"));

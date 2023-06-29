@@ -46,3 +46,7 @@ ROOT.render(
         onMount={onMount}
     />
 );
+
+export function regEscape(text: string) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+}

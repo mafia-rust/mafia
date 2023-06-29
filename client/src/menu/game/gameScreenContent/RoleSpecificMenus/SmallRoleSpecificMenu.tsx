@@ -31,51 +31,50 @@ export default class SmallRoleSpecifcMenu extends React.Component<SmallRoleSpeci
     }
 
     render(){
-        let roleSpecificText = null;
+        const roleSpecificText = this.getRoleSpecificText();
+
+        return roleSpecificText && <div className="role-specific">
+            <StyledText>
+                {roleSpecificText}
+            </StyledText>
+        </div>
+    }
+
+    getRoleSpecificText(): string | undefined {
         switch(this.state.gameState.roleState?.role){
             case "jailor":
-                if(this.state.gameState.phase==="night")
-                    roleSpecificText = ""+this.state.gameState.roleState.executionsRemaining;
-                else
-                {
-                    let jailedString = this.state.gameState.roleState.jailedTargetRef!=null?
-                        this.state.gameState.players[this.state.gameState.roleState.jailedTargetRef].toString():
-                        translate("none");
-                    roleSpecificText = jailedString+" "+this.state.gameState.roleState.executionsRemaining;
+                if(this.state.gameState.phase==="night") {
+                    return translate("role.jailor.roleDataText.night", this.state.gameState.roleState.executionsRemaining);
+                } else if (this.state.gameState.roleState.jailedTargetRef === null) {
+                    return translate("role.jailor.roleDataText.nobody", this.state.gameState.roleState.executionsRemaining)
+                } else {
+                    return translate("role.jailor.roleDataText", 
+                        this.state.gameState.players[this.state.gameState.roleState.jailedTargetRef].toString(), 
+                        this.state.gameState.roleState.executionsRemaining
+                    );
                 }
-                break;
             case "medium":
-                let seancedString = this.state.gameState.roleState.seancedTarget!=null?
-                    this.state.gameState.players[this.state.gameState.roleState.seancedTarget].toString():
-                    translate("none");
-                roleSpecificText = seancedString+" "+this.state.gameState.roleState.seancnesRemaining;
-                break;
+                if (this.state.gameState.roleState.seancedTarget === null) {
+                    return translate("role.medium.roleDataText.nobody", this.state.gameState.roleState.seancnesRemaining);
+                } else {
+                    return translate("role.medium.roleDataText", 
+                        this.state.gameState.players[this.state.gameState.roleState.seancedTarget].toString(),
+                        this.state.gameState.roleState.seancnesRemaining
+                    )
+                }
             case "doctor":
-                roleSpecificText = ""+this.state.gameState.roleState.selfHealsRemaining;
-                break;
+                return translate("role.doctor.roleDataText", this.state.gameState.roleState.selfHealsRemaining)
             case "bodyguard":
-                roleSpecificText = ""+this.state.gameState.roleState.selfShieldsRemaining;
-                break;
+                return translate("role.bodyguard.roleDataText", this.state.gameState.roleState.selfShieldsRemaining)
             case "vigilante":
                 if(this.state.gameState.roleState.willSuicide)
-                    roleSpecificText = translate("grave.killer.suicide");
+                    return translate("role.vigilante.roleDataText.suicide");
                 else
-                    roleSpecificText = ""+this.state.gameState.roleState.bulletsRemaining;
-                    break;
+                    return translate("role.vigilante.roleDataText", this.state.gameState.roleState.bulletsRemaining);
             case "veteran":
-                roleSpecificText = ""+this.state.gameState.roleState.alertsRemaining;
-                break;
+                return translate("role.veteran.roleDataText", this.state.gameState.roleState.alertsRemaining);
             case "janitor":
-                roleSpecificText = ""+this.state.gameState.roleState.cleansRemaining;
-                break;
+                return translate("role.janitor.roleDataText", this.state.gameState.roleState.cleansRemaining);
         }
-        if(roleSpecificText!==null){
-            return <div className="role-specific">
-                <StyledText>
-                    {roleSpecificText}
-                </StyledText>
-            </div>
-        }
-        return null
     }
 }

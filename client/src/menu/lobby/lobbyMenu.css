@@ -56,34 +56,32 @@
     margin: .5%;
 }
 
-.lm .left {
+.lm {
     margin-bottom: 4%;
 }
 
-.lm .left .name-box {
+.lm .name-box {
     display: flex;
     flex-direction: row;
     margin-top: 2%;
     margin-bottom: 2%;
 }
 
-.lm .right > h1 {
+.lm > h1 {
     font-size: 125%;
     width: 100%;
     margin-bottom: 2%;
 }
-.lm .right .time {
+.lm section {
     margin-bottom: 5%;
 }
-.lm .right .time-picker {
+.lm .time-picker {
     display: flex;
     margin-left: 2%;
     margin-right: 2%;
 }
 
-.lm .right .time-picker {
+.lm .excluded-roles > div:nth-of-type(1) {
     display: flex;
-    margin-left: 2%;
-    margin-right: 2%;
+    flex-direction: row;
 }
-

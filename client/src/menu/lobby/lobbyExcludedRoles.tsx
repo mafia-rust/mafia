@@ -50,16 +50,21 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
 
     
 
-    render(){return(<section>
-        <button onClick={()=>{this.excludeRole()}}>{translate("menu.excludedRoles.exclude")}</button>
-        <RolePicker
-            roleListEntry={this.state.roleListEntry}
-            onChange={(value: RoleListEntry) => {
-                this.setState({
-                    roleListEntry: value
-                })
-            }}
-        />
+    render(){return(<section className="excluded-roles">
+        <header>
+            <h2>{translate("menu.lobby.excludedRoles")}</h2>
+        </header>
+        <div>
+            <RolePicker
+                roleListEntry={this.state.roleListEntry}
+                onChange={(value: RoleListEntry) => {
+                    this.setState({
+                        roleListEntry: value
+                    })
+                }}
+            />
+            <button onClick={()=>{this.excludeRole()}}>{translate("menu.excludedRoles.exclude")}</button>
+        </div>
         <div>
             {this.state.excludedRoles.map((value, i)=>{
                 return <button key={i} onClick={()=>{this.includeRole(value)}}>
