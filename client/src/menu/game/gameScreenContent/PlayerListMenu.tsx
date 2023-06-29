@@ -144,7 +144,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         } else if (this.state.gameState.phase === "night" && this.state.gameState.targets.includes(player.index)) {
                             let newTargets = [...GAME_MANAGER.gameState.targets];
                             newTargets.splice(newTargets.indexOf(player.index), 1);
-                            return <button onClick={() => GAME_MANAGER.sendTargetPacket(newTargets)}>
+                            return <button className="highlighted" onClick={() => GAME_MANAGER.sendTargetPacket(newTargets)}>
                                 {translate("role."+this.state.gameState.role+".untarget")}
                             </button>
                         }
