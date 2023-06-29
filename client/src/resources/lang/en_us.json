@@ -422,7 +422,12 @@
     "chatmessage.transported": "You were transported!",
     "chatmessage.silenced": "You were silenced! You must not speak, chat, point, or otherwise communicate until tomorrow!",
     "chatmessage.playersRoleAndWill": "Your targets role was \\0 and their will stated this: \\1",
-    "chatmessage.consigliereResult": "Your targets role was \\0. They visited \\1. They were visited by \\2.",
+    "chatmessage.consigliereResult": "\\0. \\1. \\2.",
+    "chatmessage.consigliereResult.role": "Your targets role was \\0",
+    "chatmessage.consigliereResult.visited": "They visited \\0",
+    "chatmessage.consigliereResult.visited.nobody": "They didn't visit anybody",
+    "chatmessage.consigliereResult.visitedBy": "They were visited by \\0",
+    "chatmessage.consigliereResult.visitedBy.nobody": "They were not visited by anybody",
 
     "chatmessage.doomsayerFailed": "At least one of your guesses was incorrect or invalid.",
     "chatmessage.doomsayerWon": "Your guesses were correct, and you won!",

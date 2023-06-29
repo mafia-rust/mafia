@@ -239,10 +239,21 @@ export function translateChatMessage(message: ChatMessage): string {
                 message.will
             );
         case "consigliereResult":
+            const visitedNobody = message.visited.length === 0;
+            const visitedByNobody = message.visitedBy.length === 0;
+
             return translate("chatmessage.consigliereResult", 
-                translate("role."+message.role+".name"),
-                (message.visited.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", ")), 
-                (message.visitedBy.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", "))
+                translate("chatmessage.consigliereResult.role", translate("role."+message.role+".name")),
+                visitedNobody 
+                    ? translate("chatmessage.consigliereResult.visited.nobody") 
+                    : translate("chatmessage.consigliereResult.visited",
+                        message.visited.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", "), 
+                    ),
+                visitedByNobody 
+                    ? translate("chatmessage.consigliereResult.visitedBy.nobody") 
+                    : translate("chatmessage.consigliereResult.visitedBy",
+                        message.visitedBy.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", "), 
+                    )
             );
         /* Messages that players must not miss */
         case "silenced":
