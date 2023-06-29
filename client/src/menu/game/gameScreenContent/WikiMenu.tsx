@@ -41,6 +41,8 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
         <div className="content-tab">
             <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.WikiMenu)}}>{translate("menu.wiki.title")}</button>
         </div>
-        <WikiSearch/>
+        <div className="wiki-menu-search">
+            <WikiSearch/>
+        </div>
     </div>)}
 }
