@@ -2,7 +2,7 @@ mod kit;
 use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
-use mafia_server::game::{chat::{MessageSender, ChatGroup}, role::{retributionist::Retributionist, jester::Jester, crusader::Crusader, framer::Framer, veteran::Veteran, executioner::Executioner, spy::{Spy, SpyBug}, blackmailer::Blackmailer, vampire::Vampire, doctor::Doctor, Role}};
+use mafia_server::game::{chat::{MessageSender, ChatGroup}, role::{retributionist::Retributionist, jester::Jester, crusader::Crusader, framer::Framer, veteran::Veteran, executioner::Executioner, spy::{Spy, SpyBug}, blackmailer::Blackmailer, vampire::Vampire, doctor::Doctor, Role, janitor::Janitor}};
 // Pub use so that submodules don't have to re-import everything.
 pub use mafia_server::game::{role::{RoleState, transporter::Transporter, medium::Medium, jailor::Jailor, vigilante::Vigilante, sheriff::Sheriff, escort::Escort, mafioso::Mafioso, bodyguard::Bodyguard}, phase::PhaseState, chat::ChatMessage};
 pub use mafia_server::packet::ToServerPacket;
@@ -359,5 +359,45 @@ fn vampire_cant_convert_twice_in_a_row(){
 
 }
 
+#[test]
+fn can_type_in_jail() {
+    kit::scenario!(game where
+        jailor: Jailor,
+        sheriff: Sheriff
+    );
 
+    jailor.day_target(sheriff);
+    game.next_phase();
 
+    sheriff.send_message("Hello!");
+    
+    assert_contains!(jailor.get_messages(), 
+        ChatMessage::Normal { 
+            message_sender: MessageSender::Player { player: sheriff.index() }, 
+            text: "Hello!".to_string(), 
+            chat_group: ChatGroup::Jail
+        }
+    );
+    
+    assert_contains!(sheriff.get_messages(), 
+        ChatMessage::Normal { 
+            message_sender: MessageSender::Player { player: sheriff.index() }, 
+            text: "Hello!".to_string(), 
+            chat_group: ChatGroup::Jail
+        }
+    );
+}
+
+#[test]
+fn mafioso_cant_kill_mafia() {
+    kit::scenario!(game in Night 1 where
+        mafioso: Mafioso,
+        janitor: Janitor
+    );
+
+    mafioso.set_night_target(janitor);
+
+    game.next_phase();
+
+    assert!(janitor.alive());
+}
