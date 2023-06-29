@@ -41,9 +41,9 @@ impl RoleStateImpl for Spy {
                 let mut coven_visits = vec![];
                 for other_player in PlayerReference::all_players(game){
                     if other_player.role(game).faction_alignment().faction() == Faction::Mafia{
-                        mafia_visits.append(&mut other_player.night_visits(game).into_iter().filter(|v|!v.astral).map(|v|v.target.index()).collect());
+                        mafia_visits.append(&mut other_player.night_visits(game).iter().filter(|v|!v.astral).map(|v|v.target.index()).collect());
                     }else if other_player.role(game).faction_alignment().faction() == Faction::Coven{
-                        coven_visits.append(&mut other_player.night_visits(game).into_iter().filter(|v|!v.astral).map(|v|v.target.index()).collect());
+                        coven_visits.append(&mut other_player.night_visits(game).iter().filter(|v|!v.astral).map(|v|v.target.index()).collect());
                     }
                 }
                 mafia_visits.shuffle(&mut rand::thread_rng());

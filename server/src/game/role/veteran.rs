@@ -65,7 +65,7 @@ impl RoleStateImpl for Veteran {
                     .filter(|other_player_ref|
                         *other_player_ref != actor_ref &&
                         other_player_ref.night_visits(game)
-                            .into_iter()
+                            .iter()
                             .any(|v|!v.astral&&v.target==actor_ref)
                     ).collect::<Vec<PlayerReference>>()
                 {

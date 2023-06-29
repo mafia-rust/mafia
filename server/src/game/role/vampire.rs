@@ -19,15 +19,9 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = Some(2);
 pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::SingleRole;
 pub(super) const TEAM: Option<Team> = Some(Team::Vampire);
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Vampire;
-
-impl Default for Vampire {
-    fn default() -> Self {
-        Vampire {}
-    }
-}
 
 impl RoleStateImpl for Vampire {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
