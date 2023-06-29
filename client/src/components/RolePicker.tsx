@@ -10,7 +10,8 @@ import { Role, getFactionAlignmentFromRole, getFactionFromRole } from "../game/r
 
 interface RolePickerProps {
     roleListEntry: RoleListEntry,
-    onChange: (value: RoleListEntry) => void
+    onChange: (value: RoleListEntry) => void,
+    disabled?: boolean,
 }
 
 // Can convert to function component
@@ -83,6 +84,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
             case "any":
                 selectors = [
                     <select 
+                        disabled={this.props.disabled}
                         key="faction" 
                         value={translate("any")}
                         onChange={(e)=>this.setFirstBox(e)}
@@ -98,6 +100,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
             case "faction":
                 selectors = [
                     <select 
+                        disabled={this.props.disabled}
                         key="faction" 
                         value={translate("faction."+this.props.roleListEntry.faction)}
                         onChange={(e)=>this.setFirstBox(e)}
@@ -110,6 +113,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     } </select>,
                     
                     <select
+                        disabled={this.props.disabled}
                         key="alignment"
                         value={translate("any")}
                         onChange={(e)=>this.setSecondBox(e)}
@@ -125,6 +129,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
             case "factionAlignment":
                 selectors = [
                     <select
+                        disabled={this.props.disabled}
                         key="faction" 
                         value={translate("faction."+getFactionFromFactionAlignment(this.props.roleListEntry.factionAlignment))}
                         onChange={(e)=>this.setFirstBox(e)}
@@ -137,6 +142,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     } </select>,
 
                     <select
+                        disabled={this.props.disabled}
                         key="alignment"
                         value={translate("alignment."+getAlignmentStringFromFactionAlignment(this.props.roleListEntry.factionAlignment))}
                         onChange={(e)=>this.setSecondBox(e)}
@@ -148,6 +154,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                         })
                     } </select>,
                     <select
+                        disabled={this.props.disabled}
                         key="exact"
                         value={translate("any")}
                         onChange={(e)=>this.setThirdBox(e)}
@@ -163,6 +170,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
             case "exact":
                 selectors = [
                     <select
+                        disabled={this.props.disabled}
                         key="faction" 
                         value={translate("faction."+getFactionFromRole(this.props.roleListEntry.role))}
                         onChange={(e)=>this.setFirstBox(e)}
@@ -175,6 +183,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     } </select>,
 
                     <select
+                        disabled={this.props.disabled}
                         key="alignment"
                         value={translate("alignment."+getAlignmentStringFromFactionAlignment(getFactionAlignmentFromRole(this.props.roleListEntry.role)))}
                         onChange={(e)=>this.setSecondBox(e)}
@@ -186,6 +195,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                         })
                     } </select>,
                     <select
+                        disabled={this.props.disabled}
                         key="exact"
                         value={translate(`role.${this.props.roleListEntry.role}.name`)}
                         onChange={(e)=>this.setThirdBox(e)}

@@ -49,6 +49,7 @@ pub enum ToClientPacket{
     Players{names: Vec<String>},
     Kicked,
     RejectStart{reason: RejectStartReason},
+    YouAreHost,
     // 
     StartGame,
 

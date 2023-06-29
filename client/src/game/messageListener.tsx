@@ -109,6 +109,9 @@ export default function messageListener(packet: ToClientPacket){
         case "excludedRoles":
             GAME_MANAGER.gameState.excludedRoles = packet.roles;
         break;
+        case "youAreHost":
+            GAME_MANAGER.gameState.host = true;
+        break;
         case "phase":
             GAME_MANAGER.gameState.phase = packet.phase;
             GAME_MANAGER.gameState.dayNumber = packet.dayNumber;

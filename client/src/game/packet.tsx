@@ -49,6 +49,8 @@ export type ToClientPacket = {
 } | {
     type: "excludedRoles",
     roles: RoleListEntry[]
+} | {
+    type: "youAreHost"
 } |
 // Game
 {

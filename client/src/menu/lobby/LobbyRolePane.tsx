@@ -7,7 +7,8 @@ import { RoleListEntry } from "../../game/roleListState.d";
 import RolePicker from "../../components/RolePicker";
 
 interface RolePaneState {
-    roleList: RoleListEntry[]
+    roleList: RoleListEntry[],
+    host: boolean
 }
 
 export default class LobbyRolePane extends React.Component<{}, RolePaneState> {
@@ -17,12 +18,14 @@ export default class LobbyRolePane extends React.Component<{}, RolePaneState> {
         super(props);
 
         this.state = {
-            roleList: GAME_MANAGER.gameState.roleList
+            roleList: GAME_MANAGER.gameState.roleList,
+            host: GAME_MANAGER.gameState.host
         }
 
         this.listener = () => {
             this.setState({
-                roleList: GAME_MANAGER.gameState.roleList
+                roleList: GAME_MANAGER.gameState.roleList,
+                host: GAME_MANAGER.gameState.host
             });
         };
     }
@@ -54,6 +57,7 @@ export default class LobbyRolePane extends React.Component<{}, RolePaneState> {
         <div> {
             this.state.roleList.map((_, index) => {
                 return <RolePicker
+                    disabled={!this.state.host}
                     roleListEntry={this.state.roleList[index]}
                     onChange={(value: RoleListEntry) => {this.onChangeRolePicker(index, value);}}
                     key={index}
