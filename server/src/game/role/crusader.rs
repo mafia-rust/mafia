@@ -22,18 +22,10 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Faction;
 pub(super) const TEAM: Option<Team> = None;
 
-#[derive(Clone, Serialize, Debug)]
+#[derive(Clone, Serialize, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Crusader {
     target_protected_ref: Option<PlayerReference>
-}
-
-impl Default for Crusader {
-    fn default() -> Self {
-        Self { 
-            target_protected_ref: None
-        }
-    }
 }
 
 impl RoleStateImpl for Crusader {
@@ -66,7 +58,7 @@ impl RoleStateImpl for Crusader {
                         *other_player_ref != actor_ref &&
                         other_player_ref.role(game).faction_alignment().faction() != Faction::Town &&
                         other_player_ref.night_visits(game)
-                            .into_iter()
+                            .iter()
                             .any(|v|!v.astral&&v.target==target_ref)
                     ).collect::<Vec<PlayerReference>>()
                     .choose(&mut rand::thread_rng())
@@ -80,7 +72,7 @@ impl RoleStateImpl for Crusader {
                         .filter(|other_player_ref|
                             *other_player_ref != actor_ref &&
                             other_player_ref.night_visits(game)
-                                .into_iter()
+                                .iter()
                                 .any(|v|!v.astral&&v.target==target_ref)
                         ).collect::<Vec<PlayerReference>>()
                         .choose(&mut rand::thread_rng())

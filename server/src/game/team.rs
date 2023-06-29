@@ -169,7 +169,7 @@ impl Vampires{
             }
         }
         //remove dead/non vamps
-        self.orderd_vampires = self.orderd_vampires.iter().map(|p|*p).filter(|p|
+        self.orderd_vampires = self.orderd_vampires.iter().cloned().filter(|p|
             p.role(game) == Role::Vampire &&
             p.alive(game)
         ).collect();

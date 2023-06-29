@@ -20,16 +20,12 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Faction;
 pub(super) const TEAM: Option<Team> = None;
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Mayor {
     pub revealed: bool,
 }
-impl Default for Mayor {
-    fn default() -> Self {
-        Self { revealed: false}
-    }
-}
+
 impl RoleStateImpl for Mayor {
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {
 
@@ -47,7 +43,7 @@ impl RoleStateImpl for Mayor {
         false
     }
     fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        self.revealed == false &&
+        !self.revealed &&
         actor_ref == target_ref &&
         actor_ref.alive(game) &&
         PhaseType::Night != game.current_phase().phase()

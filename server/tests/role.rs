@@ -160,7 +160,7 @@ fn retributionist_basic(){
     sher2.die();
 
     game.next_phase();
-    assert_eq!(true, ret.set_night_targets(vec![sher1, mafioso]));
+    assert!(ret.set_night_targets(vec![sher1, mafioso]));
     game.next_phase();
     assert_eq!(
         *ret.get_messages().get(ret.get_messages().len()-2).unwrap(),
@@ -170,7 +170,7 @@ fn retributionist_basic(){
     );
     
     game.skip_to(PhaseType::Night, 2);
-    assert_eq!(false, ret.set_night_targets(vec![sher1, mafioso, jester]));
+    assert!(!ret.set_night_targets(vec![sher1, mafioso, jester]));
     game.next_phase();
     assert_ne!(
         *ret.get_messages().get(ret.get_messages().len()-2).unwrap(), 
@@ -180,7 +180,7 @@ fn retributionist_basic(){
     );
     
     game.skip_to(PhaseType::Night, 3);
-    assert_eq!(true, ret.set_night_targets(vec![sher2, jester, mafioso]));
+    assert!(ret.set_night_targets(vec![sher2, jester, mafioso]));
     game.next_phase();
     assert_eq!(
         *ret.get_messages().get(ret.get_messages().len()-2).unwrap(), 
@@ -207,11 +207,11 @@ fn crusader_basic(){
 
     game.skip_to(PhaseType::Night, 2);
 
-    assert_eq!(true, crus.alive());
-    assert_eq!(true, protected.alive());
-    assert_eq!(true, townie1.alive());
-    assert_eq!(true, townie2.alive());
-    assert_eq!(false, mafioso.alive());
+    assert!(crus.alive());
+    assert!(protected.alive());
+    assert!(townie1.alive());
+    assert!(townie2.alive());
+    assert!(!mafioso.alive());
 
     crus.set_night_targets(vec![protected]);
     townie1.set_night_targets(vec![protected]);

@@ -76,9 +76,9 @@ impl PlayerReference{
     
     pub fn tracker_seen_visits(self, game: &Game) -> Vec<&Visit> {
         if let Some(v) = self.night_appeared_visits(game) {
-            v.into_iter().filter(|v|!v.astral).collect()
+            v.iter().filter(|v|!v.astral).collect()
         } else {
-            self.night_visits(game).into_iter().filter(|v|!v.astral).collect()
+            self.night_visits(game).iter().filter(|v|!v.astral).collect()
         }
     }
     ///includes self obviously
