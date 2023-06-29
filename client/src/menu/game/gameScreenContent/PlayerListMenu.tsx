@@ -136,13 +136,19 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                     }</button>)}})(player)}
                 </div>
                 <div className="target">
-                    {((player)=>{if(player.buttons.target){return(
-                        <button onClick={()=>{
-                            GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.gameState.targets, player.index]);
-                        }}>{
-                            translate("role."+this.state.gameState.role+".target")
-                        }</button>
-                    )}})(player)}
+                    {((player) => {
+                        if(player.buttons.target) {
+                            return <button onClick={() => GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.gameState.targets, player.index])}>
+                                {translate("role."+this.state.gameState.role+".target")}
+                            </button>
+                        } else if (this.state.gameState.phase === "night" && this.state.gameState.targets.includes(player.index)) {
+                            let newTargets = [...GAME_MANAGER.gameState.targets];
+                            newTargets.splice(newTargets.indexOf(player.index), 1);
+                            return <button onClick={() => GAME_MANAGER.sendTargetPacket(newTargets)}>
+                                {translate("role."+this.state.gameState.role+".untarget")}
+                            </button>
+                        }
+                    })(player)}
                 </div>
                 <div className="vote">
                     {((player)=>{if(player.buttons.vote){return(
