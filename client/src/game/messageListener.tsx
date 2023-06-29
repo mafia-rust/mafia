@@ -25,19 +25,19 @@ export default function messageListener(packet: ToClientPacket){
         case "rejectJoin":
             switch(packet.reason) {
                 case "INVALID_ROOM_CODE":
-                    Anchor.pushError("Couldn't join", "No lobby has that room code!");
+                    Anchor.pushInfo("Couldn't join", "No lobby has that room code!");
                 break;
                 case "GAME_ALREADY_STARTED":
-                    Anchor.pushError("Couldn't join", "That game has already begun!");
+                    Anchor.pushInfo("Couldn't join", "That game has already begun!");
                 break;
                 case "ROOM_FULL":
-                    Anchor.pushError("Couldn't join", "That lobby is full!");
+                    Anchor.pushInfo("Couldn't join", "That lobby is full!");
                 break;
                 case "SERVER_BUSY":
-                    Anchor.pushError("Couldn't join", "The server is busy. Try again later!");
+                    Anchor.pushInfo("Couldn't join", "The server is busy. Try again later!");
                 break;
                 default:
-                    Anchor.pushError("Couldn't join", "Failed to join the lobby. Try again later!");
+                    Anchor.pushInfo("Couldn't join", "Failed to join the lobby. Try again later!");
                     console.log("incoming message response not implemented " + packet.type + ": " + packet.reason);
                     console.log(packet);
                 break;
@@ -47,13 +47,13 @@ export default function messageListener(packet: ToClientPacket){
         case "rejectStart":
             switch(packet.reason) {
                 case "GameEndsInstantly":
-                    Anchor.pushError("Couldn't start", "Game would end instantly! Make sure your role list is valid.");
+                    Anchor.pushInfo("Couldn't start", "Game would end instantly! Make sure your role list is valid.");
                 break;
                 case "ZeroTimeGame":
-                    Anchor.pushError("Couldn't start", "Make sure your phase time settings are valid!");
+                    Anchor.pushInfo("Couldn't start", "Make sure your phase time settings are valid!");
                 break;
                 default:
-                    Anchor.pushError("Couldn't start", "Failed to start lobby. Try again later!");
+                    Anchor.pushInfo("Couldn't start", "Failed to start lobby. Try again later!");
                     console.log("incoming message response not implemented " + packet.type + ": " + packet.reason);
                     console.log(packet);
                 break;
@@ -61,6 +61,7 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "acceptHost":
             GAME_MANAGER.roomCode = packet.roomCode.toString(18);
+            GAME_MANAGER.gameState.host = true;
             Anchor.setContent(<LobbyMenu/>);
         break;
 
@@ -111,6 +112,7 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "youAreHost":
             GAME_MANAGER.gameState.host = true;
+            Anchor.pushInfo("You are host", "The previous host left and you have become the host.")
         break;
         case "phase":
             GAME_MANAGER.gameState.phase = packet.phase;
