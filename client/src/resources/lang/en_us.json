@@ -95,6 +95,9 @@
     "role.jailor.attributes":"* You may anonymously talk with your prisoner at night\n* If you execute a town member, you forfeit the ability to jail prisoners\n* Jailed players are immune to all attacks, frames, transports, douses and more\n* Jailed players can't use their ability\n* Other players will know if their target was jailed",
     "role.jailor.target": "Execute",
     "role.jailor.untarget": "Spare",
+    "role.jailor.roleDataText.night": "You have \\0 executions remaining",
+    "role.jailor.roleDataText.nobody": "You have not decided to jail anybody.\nYou have \\1 executions remaining",
+    "role.jailor.roleDataText": "You have decided to jail \\0.\nYou have \\1 executions remaining",
     "role.jailor.dayTarget": "Jail",
     
     "role.mayor.name": "Mayor",
@@ -151,6 +154,7 @@
     "role.doctor.attributes":"* You give your target powerful defense\n* You and your target will know if they were attacked and saved",
     "role.doctor.target": "Heal",
     "role.doctor.untarget": "Untarget",
+    "role.doctor.roleDataText": "You have \\0 self-heals remaining",
     "role.doctor.dayTarget": "Special",
 
     "role.bodyguard.name": "Bodyguard",
@@ -158,6 +162,7 @@
     "role.bodyguard.attributes":"* When you guard yourself, you gain powerful defense\n* You and your target will know if they were attacked and protected\n* You will redirect attacks from your target onto yourself, and you will attack those players back\n* Your attack is basic and astral",
     "role.bodyguard.target": "Protect",
     "role.bodyguard.untarget": "Unprotect",
+    "role.bodyguard.roleDataText": "You have \\0 self-shields remaining",
     "role.bodyguard.dayTarget": "Special",
 
     "role.crusader.name": "Crusader",
@@ -179,6 +184,8 @@
     "role.medium.attributes":"* You can talk to other mediums during the night as well\n* A seance lets you communicate with the living after you died\n* Seance has two uses",
     "role.medium.target": "Target",
     "role.medium.untarget": "Untarget",
+    "role.medium.roleDataText.nobody": "You have not decided to seance anybody.\nYou have \\1 seances remaining",
+    "role.medium.roleDataText": "You have decided to seance \\0.\nYou have \\1 seances remaining",
     "role.medium.dayTarget": "Seance",
 
     "role.retributionist.name": "Retributionist",
@@ -193,6 +200,8 @@
     "role.vigilante.attributes":"* You have three bullets\n* You can't shoot night 1\n* If you shoot a town member, you will commit suicide the next night\n* Your suicide deals an unstoppable attack towards yourself\n* You have a basic attack",
     "role.vigilante.target": "Shoot",
     "role.vigilante.untarget": "Untarget",
+    "role.vigilante.roleDataText.suicide": "You have killed a townie and will commit suicide tonight",
+    "role.vigilante.roleDataText": "You have \\0 bullets remaining",
     "role.vigilante.dayTarget": "Special",
 
     "role.veteran.name": "Veteran",
@@ -200,6 +209,7 @@
     "role.veteran.attributes":"* You will know if you attack someone\n* You have basic defense while on alert\n* You have a powerful attack\n* You have three alerts",
     "role.veteran.target": "Alert",
     "role.veteran.untarget": "Unalert",
+    "role.veteran.roleDataText": "You have \\0 alerts remaining",
     "role.veteran.dayTarget": "Special",
 
     "role.deputy.name": "Deputy",
@@ -242,6 +252,7 @@
     "role.janitor.attributes":"* Cleaning a player erases information from their grave\n* You will know the role and will of a player you clean, but it wont show up in the graveyard",
     "role.janitor.target": "Clean",
     "role.janitor.untarget": "Unclean",
+    "role.janitor.roleDataText": "You have \\0 cleans remaining",
     "role.janitor.dayTarget": "Special",
 
     "role.framer.name": "Framer",

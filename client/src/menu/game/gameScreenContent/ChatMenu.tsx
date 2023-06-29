@@ -31,6 +31,8 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         ChatMenu.instance.setState({ filter: regex });
     }
     static getFilter(): RegExp | null {
+        if(ChatMenu.instance === null)
+            return null;
         return ChatMenu.instance!.state.filter;
     }
 
