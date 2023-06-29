@@ -35,14 +35,6 @@ pub struct LobbyPlayer{
 }
 
 impl LobbyPlayer {
-    pub fn new(name: String, sender: ClientSender) -> Self {
-        LobbyPlayer { 
-            sender, 
-            name, 
-            host: false
-        }
-    }
-
     pub fn set_host(&mut self) {
         self.host = true;
         self.sender.send(ToClientPacket::YouAreHost);
@@ -227,10 +219,7 @@ impl Lobby {
                 
                 send.send(ToClientPacket::YourName { name: name.clone() });
                 
-                let mut new_player = LobbyPlayer::new(name, send.clone());
-                if players.is_empty() {
-                    new_player.set_host();
-                }
+                let new_player = LobbyPlayer { name, sender: send.clone(), host: players.is_empty() };
                 let arbitrary_player_id = players.len() as ArbitraryPlayerID;
                 players.insert(arbitrary_player_id, new_player);
 

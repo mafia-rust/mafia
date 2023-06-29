@@ -9,7 +9,7 @@ type AnchorProps = {
 type AnchorState = {
     mobile: boolean,
     content: JSX.Element,
-    error: JSX.Element | null
+    info: JSX.Element | null
 }
 
 export default class Anchor extends React.Component<AnchorProps, AnchorState> {
@@ -21,7 +21,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         this.state = {
             mobile: false,
             content: this.props.content,
-            error: null
+            info: null
         }
     }
     
@@ -51,16 +51,16 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     render(){
         return <div className="anchor">
             {this.state.content}
-            {this.state.error}
+            {this.state.info}
         </div>
     }
 
     public static setContent(content: JSX.Element){
         Anchor.instance.setState({content : content});
     }
-    public static pushError(title: string, body: string) {
-        Anchor.instance.setState({error: <ErrorCard
-            onClose={() => Anchor.instance.setState({ error: null })}
+    public static pushInfo(title: string, body: string) {
+        Anchor.instance.setState({info: <ErrorCard
+            onClose={() => Anchor.instance.setState({ info: null })}
             error={{title, body}}
         />});
     }
