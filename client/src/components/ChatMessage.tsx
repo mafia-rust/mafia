@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 import { ChatMessage } from "../game/chatMessage";
 import translate from "../game/lang";
 import React from "react";
-import GAME_MANAGER from "..";
+import GAME_MANAGER, { regEscape } from "..";
 import StyledText from "./StyledText";
 import "./chatMessage.css"
 
@@ -10,26 +10,36 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
     const message = props.message;
     const chatMessageStyles = require("../resources/styling/chatMessage.json");
     let style = typeof chatMessageStyles[message.type] === "string" ? chatMessageStyles[message.type] : "";
-    
+    const text = translateChatMessage(message);
     // Special chat messages that don't play by the rules
     if (message.type === "normal") {
         if(message.messageSender.type !== "player"){
-            style = "discreet";
+            style += " discreet";
         } else if (message.chatGroup === "dead") {
-            style = "dead player";
+            style += " dead player";
         } else {
-            style = "player"
+            style += " player"
         }
+        // Could I write a regex that combines both of these? Yes. Will I? No.
+        if (
+            RegExp(`(?<!\\w)${regEscape(GAME_MANAGER.gameState.myName ?? "")}(?!\\w)`, "i").test(message.text) ||
+            (
+                GAME_MANAGER.gameState.myIndex !== null &&
+                RegExp(`(?<!\\w)${regEscape("" + (GAME_MANAGER.gameState.myIndex + 1))}(?!\\w)`, "i").test(message.text)
+            )
+            
+        ) {
+            style += " mention";
+        } 
     } else if (message.type === "retributionistBug") {
+        style += " result"
         return <>
-            <StyledText className="chat-message result">{translate("chatmessage.retributionistBug")}</StyledText>
+            <StyledText className={"chat-message " + style}>{text}</StyledText>
             <ChatElement message={message.message}/>
         </>
     }
 
-    return <StyledText className={"chat-message " + style}>{
-        translateChatMessage(message)
-    }</StyledText>;
+    return <StyledText className={"chat-message " + style}>{text}</StyledText>;
 }
 
 export function translateChatMessage(message: ChatMessage): string {
@@ -222,7 +232,7 @@ export function translateChatMessage(message: ChatMessage): string {
         case "seerResult":
             return translate("chatmessage.seerResult." + (message.enemies ? "enemies" : "friends"));
         case "retributionistBug":
-            return "";
+            return translate("chatmessage.retributionistBug");
         case "playerRoleAndWill":
             return translate("chatmessage.playersRoleAndWill", 
                 translate("role."+message.role+".name"), 
