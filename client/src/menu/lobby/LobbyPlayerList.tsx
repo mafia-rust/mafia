@@ -7,7 +7,8 @@ import { StateListener } from "../../game/gameManager.d";
 
 interface PlayerListState {
     enteredName: string,
-    players: Player[]
+    players: Player[],
+    host: boolean
 }
 
 export default class LobbyPlayerList extends React.Component<{}, PlayerListState> {
@@ -17,11 +18,13 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
 
         this.state = {     
             enteredName: "",
-            players: GAME_MANAGER.gameState.players
+            players: GAME_MANAGER.gameState.players,
+            host: GAME_MANAGER.gameState.host
         };
         this.listener = ()=>{
             this.setState({
-                players: GAME_MANAGER.gameState.players
+                players: GAME_MANAGER.gameState.players,
+                host: GAME_MANAGER.gameState.host
             });
         }
     }

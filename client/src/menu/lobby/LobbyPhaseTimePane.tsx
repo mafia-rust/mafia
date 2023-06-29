@@ -13,7 +13,8 @@ type PhaseTimeMode = string;
 type PhaseTimePaneState = {
     mode: PhaseTimeMode,
     advancedEditing: boolean,
-    phaseTimes: PhaseTimes
+    phaseTimes: PhaseTimes,
+    host: boolean
 }
 
 export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePaneState> {
@@ -26,7 +27,8 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
         this.state = {
             mode: this.determineModeFromPhaseTimes(initialPhaseTimes),
             advancedEditing: false,
-            phaseTimes: initialPhaseTimes
+            phaseTimes: initialPhaseTimes,
+            host: GAME_MANAGER.gameState.host
         };
 
         this.listener = (type)=>{
@@ -35,6 +37,9 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
                     mode: this.determineModeFromPhaseTimes(GAME_MANAGER.gameState.phaseTimes),
                     phaseTimes: GAME_MANAGER.gameState.phaseTimes
                 });
+            else if (type === "youAreHost") {
+                this.setState({ host: GAME_MANAGER.gameState.host });
+            }
         }
     }
     componentDidMount() {
@@ -46,6 +51,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
 
     renderTimeModeDropdown() {
         return <select 
+            disabled={!this.state.host}
             value={this.state.mode.toString()}
             onChange={(e) => {
                 let mode = e.target.value as PhaseTimeMode;
@@ -91,7 +97,11 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
         let phaseKey = "phase." + phase;
         return <div className="time-picker">
             <label htmlFor={phaseKey}>{translate(phaseKey)}:</label>
-            <input name={phaseKey} type="text" value={this.state.phaseTimes[phase]}
+            <input 
+                disabled={!this.state.host}
+                name={phaseKey} 
+                type="text" 
+                value={this.state.phaseTimes[phase]}
                 onChange={(e)=>{ 
                     let value = Number(e.target.value);
 

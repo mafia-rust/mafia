@@ -35,6 +35,19 @@ pub struct LobbyPlayer{
 }
 
 impl LobbyPlayer {
+    pub fn new(name: String, sender: ClientSender) -> Self {
+        LobbyPlayer { 
+            sender, 
+            name, 
+            host: false
+        }
+    }
+
+    pub fn set_host(&mut self) {
+        self.host = true;
+        self.sender.send(ToClientPacket::YouAreHost);
+    }
+
     pub fn send(&self, message: ToClientPacket) {
         self.sender.send(message);
     }
@@ -168,6 +181,19 @@ impl Lobby {
                 
                 self.send_to_all(ToClientPacket::RoleList { role_list });
             }
+            ToServerPacket::SetRoleListEntry { index, role_list_entry } => {
+                let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
+                    println!("{} {}", log::error("Can't modify game settings outside of the lobby menu"), player_arbitrary_id);
+                    return;
+                };
+                if let Some(player) = players.get(&player_arbitrary_id){
+                    if !player.host {return;}
+                }
+
+                settings.role_list[index as usize] = role_list_entry.clone();
+                
+                self.send_to_all(ToClientPacket::RoleListEntry { index, role_list_entry });
+            }
             ToServerPacket::SetExcludedRoles {mut roles } => {
                 let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
                     println!("{} {}", log::error("Can't modify game settings outside of the lobby menu"), player_arbitrary_id);
@@ -201,7 +227,10 @@ impl Lobby {
                 
                 send.send(ToClientPacket::YourName { name: name.clone() });
                 
-                let new_player = LobbyPlayer { sender: send.clone(), name, host: players.is_empty() };
+                let mut new_player = LobbyPlayer::new(name, send.clone());
+                if players.is_empty() {
+                    new_player.set_host();
+                }
                 let arbitrary_player_id = players.len() as ArbitraryPlayerID;
                 players.insert(arbitrary_player_id, new_player);
 
@@ -260,7 +289,7 @@ impl Lobby {
                 }
                 if !players.iter().any(|p|p.1.host) {
                     if let Some(new_host) = players.values_mut().next(){
-                        new_host.host = true;
+                        new_host.set_host();
                     }
                 }
 

@@ -34,6 +34,11 @@ button, input, select, option, textarea {
     border-width: .13rem;
     color: white;
 }
+
+button:disabled, input:disabled, select:disabled, option:disabled, textarea:disabled {
+    opacity: 0.5;
+    box-shadow: 0 0 100vmax #55555555 inset;
+}
 button {
     background-color: var(--primary-color);
     white-space: nowrap;
@@ -45,7 +50,7 @@ option {
     background-color: var(--background-color);
 }
 
-button:hover, input:hover, select:hover, option:hover textarea:hover{
+button:hover:not([disabled]), input:hover:not([disabled]), select:hover:not([disabled]), option:hover:not([disabled]) {
     background-color: var(--hover-color);
 }
 

@@ -18,7 +18,7 @@ pub(super) const SUSPICIOUS: bool = true;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaKilling;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Faction;
-pub(super) const TEAM: Option<Team> = Some(Team::Coven);
+pub(super) const TEAM: Option<Team> = Some(Team::Mafia);
 
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct Mafioso;

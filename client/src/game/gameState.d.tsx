@@ -8,6 +8,7 @@ export default interface GameState {
 
     myName: string | null,
     myIndex: PlayerIndex | null,
+    host: boolean,
 
     chatMessages : ChatMessage[],
     graves: Grave[],

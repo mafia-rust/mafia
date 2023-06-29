@@ -67,6 +67,11 @@ impl PlayerReference{
         self.set_role_state(game, new_role_data);
         self.on_role_creation(game);
         self.add_chat_message(game, ChatMessage::RoleAssignment{role: self.role(game)});
+        if let Some(team) = self.role(game).team() {
+            for player_ref in team.members(game) {
+                player_ref.insert_role_label(game, *self, self.role(game));
+            }
+        }
     }
     pub fn increase_defense_to(&self, game: &mut Game, defense: u8){
         if self.night_defense(game) < defense {

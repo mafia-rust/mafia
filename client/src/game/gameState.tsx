@@ -6,6 +6,7 @@ export function createGameState(): GameState {
 
         myName: null,
         myIndex: null,
+        host: false,
 
         chatMessages : [],
         graves: [],

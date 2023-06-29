@@ -1,6 +1,6 @@
 use super::{player::{PlayerReference}, Game, role_list::Faction, role::{mafioso::Mafioso, Role}};
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum Team{
     Mafia, Coven, Vampire
 }
@@ -10,6 +10,14 @@ impl Team{
         let Some(b) = b.team() else {return false};
 
         a == b
+    }
+
+    pub fn members(&self, game: &Game) -> Vec<PlayerReference> {
+        PlayerReference::all_players(game)
+            .iter()
+            .filter(|p| p.role(game).team() == Some(*self))
+            .cloned()
+            .collect()
     }
 }
 pub trait TeamStateImpl : Clone{

@@ -10,7 +10,8 @@ import StyledText from "../../components/StyledText";
 
 interface ExcludedRolesState {
     excludedRoles: RoleListEntry[],
-    roleListEntry: RoleListEntry
+    roleListEntry: RoleListEntry,
+    host: boolean
 }
 
 export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRolesState> {
@@ -21,12 +22,14 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
 
         this.state = {
             excludedRoles: GAME_MANAGER.gameState.excludedRoles,
-            roleListEntry: {type:"any"}
+            roleListEntry: {type:"any"},
+            host: GAME_MANAGER.gameState.host
         }
 
         this.listener = () => {
             this.setState({
-                excludedRoles: GAME_MANAGER.gameState.excludedRoles
+                excludedRoles: GAME_MANAGER.gameState.excludedRoles,
+                host: GAME_MANAGER.gameState.host
             });
         };
     }
@@ -56,6 +59,7 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
         </header>
         <div>
             <RolePicker
+                disabled={!this.state.host}
                 roleListEntry={this.state.roleListEntry}
                 onChange={(value: RoleListEntry) => {
                     this.setState({
@@ -63,11 +67,17 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
                     })
                 }}
             />
-            <button onClick={()=>{this.excludeRole()}}>{translate("menu.excludedRoles.exclude")}</button>
+            <button 
+                disabled={!this.state.host}
+                onClick={()=>{this.excludeRole()}}
+            >{translate("menu.excludedRoles.exclude")}</button>
         </div>
         <div>
             {this.state.excludedRoles.map((value, i)=>{
-                return <button key={i} onClick={()=>{this.includeRole(value)}}>
+                return <button key={i} 
+                    disabled={!this.state.host}
+                    onClick={()=>{this.includeRole(value)}}
+                >
                     <StyledText>
                         {translateRoleListEntry(value) ?? ""}
                     </StyledText>

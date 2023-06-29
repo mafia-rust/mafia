@@ -40,6 +40,7 @@ export interface GameManager {
     sendSetPhaseTimePacket(phase: Phase, time: number): void;
     sendSetPhaseTimesPacket(phaseTimeSettings: PhaseTimes): void;
     sendSetRoleListPacket(roleListEntries: RoleListEntry[]): void;
+    sendSetRoleListEntryPacket(index: number, roleListEntry: RoleListEntry): void;
     
     sendJudgementPacket(judgement: Verdict): void;
     sendVotePacket(voteeIndex: PlayerIndex| null): void;
