@@ -14,16 +14,6 @@ use crate::game::team::Team;
 use super::jester::Jester;
 use super::{Priority, RoleStateImpl, Role, RoleState};
 
-
-pub(super) const DEFENSE: u8 = 0;
-pub(super) const ROLEBLOCK_IMMUNE: bool = false;
-pub(super) const CONTROL_IMMUNE: bool = true;
-pub(super) const SUSPICIOUS: bool = false;
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::NeutralEvil;
-pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::None;
-pub(super) const TEAM: Option<Team> = None;
-
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Doomsayer {
     pub guesses: [(PlayerReference, DoomsayerGuess); 3]
@@ -70,7 +60,18 @@ impl DoomsayerGuess{
     }
 }
 
+pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::NeutralEvil;
+pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
+
 impl RoleStateImpl for Doomsayer {
+    fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
+    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
+    fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {true}
+    fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
+    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::None}
+    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
+
+
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::TopPriority {return;}
 

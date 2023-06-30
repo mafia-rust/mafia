@@ -250,11 +250,9 @@ impl Lobby {
                             host: false,
                         };
                         players.insert(new_id, game_player);
-                        player_ref.reconnect(game, send.clone());
+                        player_ref.connect(game, send.clone());
                         
                         send.send(ToClientPacket::AcceptJoin{in_game: true});
-                        
-                        game.send_join_game_information(player_ref);
                         
                         return Ok(new_id);
                     }

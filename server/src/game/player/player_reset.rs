@@ -10,13 +10,13 @@ impl PlayerReference{
     pub fn tick(&self, game: &mut Game, time_passed: Duration){
         match &self.deref(game).connection {
             ClientConnection::Connected(_) => self.send_repeating_data(game),
-            ClientConnection::LostConnection { disconnect_timer } => {
+            ClientConnection::CouldReconnect { disconnect_timer } => {
                 match disconnect_timer.saturating_sub(time_passed) {
                     Duration::ZERO => {
                         self.leave(game);
                     },
                     time_remaining => {
-                        self.deref_mut(game).connection = ClientConnection::LostConnection { disconnect_timer: time_remaining }
+                        self.deref_mut(game).connection = ClientConnection::CouldReconnect { disconnect_timer: time_remaining }
                     }
                 }
             },
@@ -38,11 +38,10 @@ impl PlayerReference{
             PhaseType::Judgement => {},
             PhaseType::Evening => {},
             PhaseType::Night => {
-                self.set_night_alive_tonight(game,   self.alive(game));
                 self.set_night_died(game,            false);
                 self.set_night_attacked(game,        false);
                 self.set_night_roleblocked(game,     false);
-                self.set_night_defense(game,         self.role(game).defense());
+                self.set_night_defense(game,         self.role_state(game).defense(game, *self));
                 self.set_night_appeared_role(game,   self.role(game));
                 self.set_night_appeared_visits(game, None);
                 self.set_night_silenced(game,       false);

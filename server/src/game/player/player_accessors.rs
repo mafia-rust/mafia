@@ -168,12 +168,6 @@ impl PlayerReference{
     }
 
     //NIGHT
-    pub fn night_alive_tonight(&self, game: &Game) -> bool {
-        self.deref(game).night_variables.alive_tonight
-    }
-    pub fn set_night_alive_tonight(&self, game: &mut Game, alive_tonight: bool){
-        self.deref_mut(game).night_variables.alive_tonight = alive_tonight;
-    }
     
     pub fn night_died(&self, game: &Game) -> bool {
         self.deref(game).night_variables.died

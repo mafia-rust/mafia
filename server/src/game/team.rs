@@ -5,9 +5,9 @@ pub enum Team{
     Mafia, Coven, Vampire
 }
 impl Team{
-    pub fn same_team(a: Role, b: Role)->bool{
-        let Some(a) = a.team() else {return false};
-        let Some(b) = b.team() else {return false};
+    pub fn same_team(game: &Game, a: PlayerReference, b: PlayerReference)->bool{
+        let Some(a) = a.role_state(game).team(game, a) else {return false};
+        let Some(b) = b.role_state(game).team(game, b) else {return false};
 
         a == b
     }
@@ -15,7 +15,7 @@ impl Team{
     pub fn members(&self, game: &Game) -> Vec<PlayerReference> {
         PlayerReference::all_players(game)
             .iter()
-            .filter(|p| p.role(game).team() == Some(*self))
+            .filter(|p| p.team(game) == Some(*self))
             .cloned()
             .collect()
     }

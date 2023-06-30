@@ -10,14 +10,8 @@ use crate::game::Game;
 use crate::game::team::Team;
 use super::{Priority, RoleState, RoleStateImpl};
 
-pub(super) const DEFENSE: u8 = 0;
-pub(super) const ROLEBLOCK_IMMUNE: bool = true;
-pub(super) const CONTROL_IMMUNE: bool = true;
-pub(super) const SUSPICIOUS: bool = false;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownSupport;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Faction;
-pub(super) const TEAM: Option<Team> = None;
 
 #[derive(Clone, Debug, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -26,6 +20,13 @@ pub struct Retributionist {
     currently_used_player: Option<PlayerReference> 
 }
 impl RoleStateImpl for Retributionist {
+    fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
+    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
+    fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {true}
+    fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {true}
+    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::Town}
+    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
+
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return;}
         
@@ -36,7 +37,7 @@ impl RoleStateImpl for Retributionist {
                 let Some(first_visit) = retributionist_visits.get(0) else {return};
                 let Some(second_visit) = retributionist_visits.get(1) else {return};
                 if first_visit.target.alive(game) {return;}
-                if first_visit.target.role(game).control_immune() {return;}
+                if first_visit.target.control_immune(&game) {return;}
 
                 let mut new_chosen_targets = vec![second_visit.target];
                 if let Some(third_visit) = retributionist_visits.get(2){

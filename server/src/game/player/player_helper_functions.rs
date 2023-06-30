@@ -1,4 +1,4 @@
-use crate::{game::{chat::{ChatMessage, ChatGroup}, Game, grave::{GraveKiller, Grave}, role::{RoleState, Priority}, visit::Visit, team::Teams}, packet::ToClientPacket};
+use crate::{game::{chat::{ChatMessage, ChatGroup}, Game, grave::{GraveKiller, Grave}, role::{RoleState, Priority}, visit::Visit, team::{Teams, Team}, end_game_condition::EndGameCondition}, packet::ToClientPacket};
 
 use super::PlayerReference;
 
@@ -7,7 +7,7 @@ use super::PlayerReference;
 impl PlayerReference{
     ///returns true if they are not roleblockable
     pub fn roleblock(&self, game: &mut Game)->bool{
-        if !self.role(game).roleblock_immune() {
+        if !self.role_state(game).roleblock_immune(game, *self) {
             self.set_night_roleblocked(game, true);
             self.set_night_visits(game, vec![]);
             self.push_night_message(game,
@@ -67,7 +67,7 @@ impl PlayerReference{
         self.set_role_state(game, new_role_data);
         self.on_role_creation(game);
         self.add_chat_message(game, ChatMessage::RoleAssignment{role: self.role(game)});
-        if let Some(team) = self.role(game).team() {
+        if let Some(team) = self.team(&game) {
             for player_ref in team.members(game) {
                 player_ref.insert_role_label(game, *self, self.role(game));
             }
@@ -94,7 +94,31 @@ impl PlayerReference{
             )
         }).collect()
     }
+
+
+
     //role functions
+    pub fn suspicious(&self, game: &Game) -> bool {
+        self.role_state(game).suspicious(game, *self)
+    }
+    pub fn defense(&self, game: &Game) -> u8 {
+        self.role_state(game).defense(game, *self)
+    }
+    pub fn control_immune(&self, game: &Game) -> bool {
+        self.role_state(game).control_immune(game, *self)
+    }
+    pub fn roleblock_immune(&self, game: &Game) -> bool {
+        self.role_state(game).roleblock_immune(game, *self)
+    }
+    pub fn end_game_condition(&self, game: &Game) -> EndGameCondition {
+        self.role_state(game).end_game_condition(game, *self)
+    }
+    pub fn team(&self, game: &Game) -> Option<Team> {
+        self.role_state(game).team(game, *self)
+    }
+
+
+
     pub fn can_night_target(&self, game: &Game, target_ref: PlayerReference) -> bool {
         self.role_state(game).clone().can_night_target(game, *self, target_ref)
     }
