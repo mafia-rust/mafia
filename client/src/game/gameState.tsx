@@ -22,6 +22,7 @@ export function createGameState(): GameState {
 
         will: "",
         notes: "",
+        deathNote: "",
         targets: [],
         voted: null,
         judgement: "abstain",

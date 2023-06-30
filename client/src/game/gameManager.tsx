@@ -165,6 +165,12 @@ export function createGameManager(): GameManager {
                 notes: notes
             });
         },
+        sendSaveDeathNotePacket(notes) {
+            this.server.sendPacket({
+                type: "saveDeathNote",
+                deathNote: notes.trim().length === 0 ? null : notes
+            });
+        },
         sendSendMessagePacket(text) {
             this.server.sendPacket({
                 type: "sendMessage",

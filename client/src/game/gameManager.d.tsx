@@ -48,6 +48,7 @@ export interface GameManager {
     sendDayTargetPacket(targetIndex: number): void;
     sendSaveWillPacket(will: string): void;
     sendSaveNotesPacket(notes: string): void;
+    sendSaveDeathNotePacket(notes: string): void;
     sendSendMessagePacket(text: string): void;
     sendSendWhisperPacket(playerIndex: number, text: string): void;
     sendExcludedRolesPacket(roles: RoleListEntry[]): void;

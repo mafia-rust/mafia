@@ -87,6 +87,9 @@ export type ToClientPacket = {
     type: "yourNotes",
     notes: string
 } | {
+    type: "yourDeathNote", 
+    deathNote: string | null
+} | {
     type: "yourRole",
     role: Role
 } | {
@@ -121,7 +124,7 @@ export type ToServerPacket = {
 //Lobby
 | {
     type: "setName", 
-    name: String
+    name: string
 } | {
     type: "startGame",
 } | {
@@ -162,17 +165,20 @@ export type ToServerPacket = {
     playerIndex:  PlayerIndex
 } | {
     type: "sendMessage", 
-    text: String
+    text: string
 } | {
     type: "sendWhisper", 
     playerIndex: PlayerIndex, 
-    text: String
+    text: string
 } | {
     type: "saveWill", 
-    will: String
+    will: string
 } | {
     type: "saveNotes", 
-    notes: String
+    notes: string
+} | {
+    type: "saveDeathNote", 
+    deathNote: string | null
 } | {
     type: "leave",
 } | {

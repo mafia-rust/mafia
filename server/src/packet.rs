@@ -86,6 +86,8 @@ pub enum ToClientPacket{
     YourPlayerTags{player_tags: HashMap<PlayerIndex, Vec<Tag>>},
     YourWill{will: String},
     YourNotes{notes: String},
+    #[serde(rename_all = "camelCase")]
+    YourDeathNote{death_note: Option<String>},
     YourRole{role: Role},
     #[serde(rename_all = "camelCase")]
     YourRoleState{role_state: RoleState},
@@ -191,6 +193,8 @@ pub enum ToServerPacket{
     SendWhisper{player_index: PlayerIndex, text: String},
     SaveWill{will: String},
     SaveNotes{notes: String},
+    #[serde(rename_all = "camelCase")]
+    SaveDeathNote{death_note: Option<String>},
 
     Leave,
 

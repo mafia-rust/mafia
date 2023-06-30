@@ -37,6 +37,17 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
             <StyledText className={"chat-message " + style}>{text}</StyledText>
             <ChatElement message={message.message}/>
         </>
+    } else if (message.type === "playerDied") {
+        // Who knew rendering an entire grave in the chat would be difficult?
+        return <>
+            <StyledText className={"chat-message " + style}>{text}</StyledText>
+            {message.grave.will.length !== 0 
+                && <StyledText className={"chat-message will"}>{message.grave.will}</StyledText>}
+            {message.grave.deathNotes.length !== 0 && message.grave.deathNotes.map(note => <>
+                <StyledText className={"chat-message " + style}>{translate("chatmessage.deathNote")}</StyledText>
+                <StyledText className={"chat-message deathNote"}>{note}</StyledText>
+            </>)}
+        </>
     }
 
     return <StyledText className={"chat-message " + style}>{text}</StyledText>;
@@ -98,11 +109,10 @@ export function translateChatMessage(message: ChatMessage): string {
                 deathCause = killers.join();
             }
 
-            return translate("chatmessage.playerDied",
+            return translate(message.grave.will.length === 0 ? "chatmessage.playerDied.noWill": "chatmessage.playerDied",
                 GAME_MANAGER.gameState.players[message.grave.playerIndex].toString(),
                 graveRoleString,
-                deathCause,
-                message.grave.will
+                deathCause
             );
         case "youDied":
             return translate("chatmessage.youDied");

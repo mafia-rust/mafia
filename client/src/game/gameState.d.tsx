@@ -24,6 +24,7 @@ export default interface GameState {
 
     will: string,
     notes: string,
+    deathNote: string,
     targets: PlayerIndex[],
     voted: PlayerIndex | null,
     judgement: Verdict,

@@ -51,6 +51,15 @@
 .chat-message.important {
     color: yellow;
 }
+.chat-message.will {
+    border-top: .13rem solid var(--primary-border-color);
+    border-bottom: .13rem solid var(--primary-border-color);
+}
+.chat-message.deathNote {
+    border-top: .13rem solid var(--primary-border-color);
+    border-bottom: .13rem solid var(--primary-border-color);
+    background-color: #ff000022;
+}
 .chat-message.trial {
     color: orange;
 }

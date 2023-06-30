@@ -22,7 +22,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
         let gameStateFields = {
             will: GAME_MANAGER.gameState.will,
             notes: GAME_MANAGER.gameState.notes,
-            deathNote: GAME_MANAGER.gameState.notes,
+            deathNote: GAME_MANAGER.gameState.deathNote,
         };
 
         this.state = {
@@ -30,12 +30,12 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
             localFields: gameStateFields
         };
         this.listener = (type) => {
-            if (type === "yourWill" || type === "yourNotes") {
+            if (type === "yourWill" || type === "yourNotes" || type === "yourDeathNote") {
                 this.setState({
                     syncedFields: {
                         will: GAME_MANAGER.gameState.will,
                         notes: GAME_MANAGER.gameState.notes,
-                        deathNote: GAME_MANAGER.gameState.notes,
+                        deathNote: GAME_MANAGER.gameState.deathNote,
                     }
                 })
             }
@@ -56,6 +56,8 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
             GAME_MANAGER.sendSaveWillPacket(this.state.localFields[type])
         else if (type === "notes")
             GAME_MANAGER.sendSaveNotesPacket(this.state.localFields[type])
+        else if (type === "deathNote")
+            GAME_MANAGER.sendSaveDeathNotePacket(this.state.localFields[type])
     }
     renderInput(type: FieldType) {
         return (<div className="textarea-section">

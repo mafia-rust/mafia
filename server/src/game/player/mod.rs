@@ -31,6 +31,7 @@ pub struct Player {
     alive: bool,
     will: String,
     notes: String,
+    death_note: Option<String>,
 
     role_labels: HashMap<PlayerReference, Role>,   //when you can see someone elses role in the playerlist, dead players and teammates, mayor
     player_tags: HashMap<PlayerReference, Vec<Tag>>,
@@ -80,6 +81,7 @@ impl Player {
             alive: true,
             will: "".to_string(),
             notes: "".to_string(),
+            death_note: None,
 
             role_labels: HashMap::new(),
             player_tags: HashMap::new(),
@@ -136,6 +138,7 @@ pub mod test {
             alive: true,
             will: "".to_string(),
             notes: "".to_string(),
+            death_note: None,
 
             role_labels: HashMap::new(),
             player_tags: HashMap::new(),
