@@ -22,12 +22,12 @@
     "menu.lobby.button.setTimeSettings": "Set Time Settings",
     "menu.lobby.player": "\\0: (\\1)",
     "menu.lobby.roleList": "Role List:",
-    "menu.lobby.excludedRoles": "Exclude roles:",
+    "menu.lobby.excludedRoles": "Exclusions:",
     "menu.lobby.timeSettings": "Times:",
     "menu.lobby.gameSettings": "Game Settings:",
 
-    "menu.excludedRoles.exclude": "Exclude Role",
-    "menu.excludedRoles.excludedRoles": "Excluded Roles",
+    "menu.excludedRoles.exclude": "Exclude",
+    "menu.excludedRoles.excludedRoles": "Exclusions",
 
     "menu.loading.host": "Starting Server",
     "menu.loading.join": "Connecting to Lobby",

@@ -21,6 +21,7 @@ use crate::{
     websocket_connections::connection::ClientSender,
 };
 
+use super::recruit::Recruit;
 use super::tag::Tag;
 
 pub struct Player {
@@ -44,6 +45,8 @@ pub struct Player {
 
     voting_variables: PlayerVotingVariables,
     night_variables: PlayerNightVariables,
+
+    recruit: Option<Recruit>,
 }
 struct PlayerVotingVariables{
     chosen_vote:    Option<PlayerReference>,
@@ -117,6 +120,8 @@ impl Player {
                 grave_will: "".to_string(),
                 grave_death_notes: vec![],
             },
+
+            recruit: None
         }
     }
 }
@@ -174,6 +179,8 @@ pub mod test {
                 grave_will: "".to_string(),
                 grave_death_notes: vec![],
             },
+
+            recruit: None
         }
     }
 }

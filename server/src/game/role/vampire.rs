@@ -23,7 +23,7 @@ impl RoleStateImpl for Vampire {
     fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
     fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
     fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::Vampire}
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Vampire)}
+    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Vampires)}
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -42,14 +42,14 @@ impl RoleStateImpl for Vampire {
             return
         }
 
-        let mut vampires = game.teams.vampire().clone();
+        let mut vampires = game.teams.vampires().clone();
         vampires.night_last_converted = Some(game.phase_machine.day_number);
         game.teams.set_vampires(vampires);
         target_ref.set_role(game, RoleState::Vampire(Vampire::default()));
     }
     
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        let time_passed = if let Some(night_last_converted) = game.teams.vampire().night_last_converted{
+        let time_passed = if let Some(night_last_converted) = game.teams.vampires().night_last_converted{
             night_last_converted <= game.phase_machine.day_number - 2
         }else{
             true
@@ -61,8 +61,8 @@ impl RoleStateImpl for Vampire {
         actor_ref.alive(game) &&
         target_ref.alive(game) &&
         !Team::same_team(game, actor_ref, target_ref) &&
-        game.teams.vampire().orderd_vampires.len() <= 4 &&
-        game.teams.vampire().orderd_vampires.last() == Some(&actor_ref) &&
+        game.teams.vampires().orderd_vampires.len() <= 4 &&
+        game.teams.vampires().orderd_vampires.last() == Some(&actor_ref) &&
         time_passed
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
@@ -84,8 +84,8 @@ impl RoleStateImpl for Vampire {
     }
     fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType){
     }
-    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
-        crate::game::role::common_role::on_role_creation(game, actor_ref);
+    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
+        
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
     }

@@ -67,9 +67,15 @@ impl PlayerReference{
         self.set_role_state(game, new_role_data);
         self.on_role_creation(game);
         self.add_chat_message(game, ChatMessage::RoleAssignment{role: self.role(game)});
+
+        self.insert_role_label(game, *self, self.role(game));
         if let Some(team) = self.team(&game) {
-            for player_ref in team.members(game) {
-                player_ref.insert_role_label(game, *self, self.role(game));
+
+            team.team_state(&game.teams).on_member_role_switch(game, *self);
+
+            for player in team.members(game) {
+                player.insert_role_label(game, *self, self.role(game));
+                self.insert_role_label(game, player, player.role(game));
             }
         }
     }
@@ -94,6 +100,27 @@ impl PlayerReference{
             )
         }).collect()
     }
+
+
+
+    pub fn insert_role_label_for_teammates(&self, game: &mut Game){
+        let actor_role = self.role(game);
+    
+    
+        //if they are on a team. set labels for their teammates, and my label for my teammates
+        for other in PlayerReference::all_players(game){
+            if *self == other{
+                continue;
+            }
+            let other_role = other.role(game);
+            
+            if Team::same_team(game, *self, other) {
+                other.insert_role_label(game, *self, actor_role);
+                self.insert_role_label(game, other, other_role);
+            }
+        }
+    }
+
 
 
 

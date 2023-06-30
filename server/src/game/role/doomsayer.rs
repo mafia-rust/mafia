@@ -105,11 +105,6 @@ impl RoleStateImpl for Doomsayer {
         false
     }
     fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        // vec![
-        //     Visit{ target: self.guesses[0].0, astral: true, attack: true },
-        //     Visit{ target: self.guesses[1].0, astral: true, attack: true },
-        //     Visit{ target: self.guesses[2].0, astral: true, attack: true }
-        // ]
         vec![]
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
