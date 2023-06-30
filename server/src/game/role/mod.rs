@@ -10,6 +10,14 @@ use crate::game::team::Team;
 use serde::{Serialize, Deserialize};
 
 trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
+    fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool;
+    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8;
+    fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool;
+    fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool;
+    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition;
+    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team>;
+
+
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority);
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference);
 
@@ -119,26 +127,6 @@ mod macros {
                         $(Self::$name => RoleState::$name($file::$name::default())),*
                     }
                 }
-                pub fn suspicious(&self) -> bool {
-                    match self {
-                        $(Self::$name => $file::SUSPICIOUS),*
-                    }
-                }
-                pub fn defense(&self) -> u8 {
-                    match self {
-                        $(Self::$name => $file::DEFENSE),*
-                    }
-                }
-                pub fn control_immune(&self) -> bool {
-                    match self {
-                        $(Self::$name => $file::CONTROL_IMMUNE),*
-                    }
-                }
-                pub fn roleblock_immune(&self) -> bool {
-                    match self {
-                        $(Self::$name => $file::ROLEBLOCK_IMMUNE),*
-                    }
-                }
                 pub fn maximum_count(&self) -> Option<u8> {
                     match self {
                         $(Self::$name => $file::MAXIMUM_COUNT),*
@@ -147,16 +135,6 @@ mod macros {
                 pub fn faction_alignment(&self) -> FactionAlignment {
                     match self {
                         $(Self::$name => $file::FACTION_ALIGNMENT),*
-                    }
-                }
-                pub fn end_game_condition(&self) -> EndGameCondition {
-                    match self {
-                        $(Self::$name => $file::END_GAME_CONDITION),*
-                    }
-                }
-                pub fn team(&self) -> Option<Team> {
-                    match self {
-                        $(Self::$name => $file::TEAM),*
                     }
                 }
             }
@@ -174,6 +152,38 @@ mod macros {
                         $(Self::$name(_) => Role::$name),*
                     }
                 }
+                //old constants
+                pub fn suspicious(&self, game: &Game, actor_ref: PlayerReference) -> bool {
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.suspicious(game, actor_ref)),*
+                    }
+                }
+                pub fn defense(&self, game: &Game, actor_ref: PlayerReference) -> u8 {
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.defense(game, actor_ref)),*
+                    }
+                }
+                pub fn control_immune(&self, game: &Game, actor_ref: PlayerReference) -> bool {
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.control_immune(game, actor_ref)),*
+                    }
+                }
+                pub fn roleblock_immune(&self, game: &Game, actor_ref: PlayerReference) -> bool {
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.roleblock_immune(game, actor_ref)),*
+                    }
+                }
+                pub fn end_game_condition(&self, game: &Game, actor_ref: PlayerReference) -> EndGameCondition {
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.end_game_condition(game, actor_ref)),*
+                    }
+                }
+                pub fn team(&self, game: &Game, actor_ref: PlayerReference) -> Option<Team> {
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.team(game, actor_ref)),*
+                    }
+                }
+                //event listeners
                 pub fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority){
                     match self {
                         $(Self::$name(role_struct) => role_struct.do_night_action(game, actor_ref, priority)),*

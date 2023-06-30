@@ -11,19 +11,22 @@ use crate::game::team::Team;
 use crate::game::Game;
 use super::{Priority, RoleStateImpl};
 
-pub(super) const DEFENSE: u8 = 0;
-pub(super) const ROLEBLOCK_IMMUNE: bool = false;
-pub(super) const CONTROL_IMMUNE: bool = false;
-pub(super) const SUSPICIOUS: bool = true;
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaKilling;
-pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Faction;
-pub(super) const TEAM: Option<Team> = Some(Team::Mafia);
 
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct Mafioso;
 
+pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaKilling;
+pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
+
 impl RoleStateImpl for Mafioso {
+    fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {true}
+    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
+    fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
+    fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
+    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::Mafia}
+    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Mafia)}
+
+
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return;}
     

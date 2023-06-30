@@ -19,7 +19,6 @@ use rand::thread_rng;
 
 use crate::lobby::LobbyPlayer;
 use crate::packet::{ToClientPacket, GameOverReason};
-use available_buttons::AvailableButtons;
 use chat::{ChatMessage, ChatGroup};
 use player::PlayerReference;
 use role_list::{RoleListEntry, create_random_roles};
@@ -49,7 +48,7 @@ impl Game {
         //create role list
         let mut roles = create_random_roles(&settings.excluded_roles, &settings.role_list);
         roles.shuffle(&mut thread_rng());
-        
+
 
         //create players
         let mut players = Vec::new();
@@ -64,8 +63,8 @@ impl Game {
             );
             players.push(new_player);
         }
-        drop(roles);
         //just to make sure the order of roles is not used anywhere else for secuity from our own stupidity  
+        drop(roles);
         let mut game = Self{
             players: players.into_boxed_slice(),
             graves: Vec::new(),
@@ -74,6 +73,9 @@ impl Game {
             settings,
         };
 
+        for player_ref in PlayerReference::all_players(&game){
+            player_ref.send_join_game_data(&mut game);
+        }
 
 
         //set up role data
@@ -84,86 +86,8 @@ impl Game {
 
         Teams::on_team_creation(&mut game);
 
-        for player_ref in PlayerReference::all_players(&game){
-            game.send_join_game_information(player_ref)
-        }
-        game
-    }
-
-    pub fn send_join_game_information(&mut self, player_ref: PlayerReference){
-
-
-        //GENERAL GAME
-        player_ref.send_packets(self, vec![
-            ToClientPacket::ExcludedRoles { roles: self.settings.excluded_roles.clone() },
-            ToClientPacket::RoleList {role_list: self.settings.role_list.clone()},
-            
-            ToClientPacket::Players{ 
-                names: PlayerReference::all_players(self).iter().map(|p|{return p.name(self).clone()}).collect()
-            },
-            ToClientPacket::Phase { 
-                phase: self.current_phase().phase(),
-                seconds_left: self.phase_machine.time_remaining.as_secs(), 
-                day_number: self.phase_machine.day_number 
-            },
-            ToClientPacket::PlayerAlive{
-                alive: PlayerReference::all_players(self).into_iter().map(|p|p.alive(self)).collect()
-            }
-        ]);
-
-        if let PhaseState::Testimony { player_on_trial, .. }
-            | PhaseState::Judgement { player_on_trial, .. }
-            | PhaseState::Evening { player_on_trial: Some(player_on_trial) } = self.current_phase() {
-            player_ref.send_packet(self, ToClientPacket::PlayerOnTrial{
-                player_index: player_on_trial.index()
-            });
-        }
-        let votes_packet = ToClientPacket::new_player_votes(self);
-        player_ref.send_packet(self, votes_packet);
-        for grave in self.graves.iter(){
-            player_ref.send_packet(self, ToClientPacket::AddGrave { grave: grave.clone() });
-        }
-
-
-
-        //PLAYER SPECIFIC
-
-        player_ref.send_packets(self, vec![
-            ToClientPacket::YourName{
-                name: player_ref.name(self).clone()
-            },
-            ToClientPacket::YourPlayerIndex { 
-                player_index: player_ref.index() 
-            },
-            ToClientPacket::YourRoleState {
-                role_state: player_ref.role_state(self).clone()
-            },
-            ToClientPacket::YourRoleLabels { 
-                role_labels: PlayerReference::ref_map_to_index(player_ref.role_labels(self).clone()) 
-            },
-            ToClientPacket::YourPlayerTags { 
-                player_tags: PlayerReference::ref_map_to_index(player_ref.player_tags(self).clone())
-            },
-            ToClientPacket::YourTarget{
-                player_indices: PlayerReference::ref_vec_to_index(player_ref.chosen_targets(self))
-            },
-            ToClientPacket::YourJudgement{
-                verdict: player_ref.verdict(self)
-            },
-            ToClientPacket::YourVoting{ 
-                player_index: PlayerReference::ref_option_to_index(&player_ref.chosen_vote(self))
-            },
-            ToClientPacket::YourWill{
-                will: player_ref.will(self).clone()
-            },
-            ToClientPacket::YourNotes{
-                notes: player_ref.notes(self).clone()
-            }
-        ]);
         
-
-        let buttons = AvailableButtons::from_player(self, player_ref);
-        player_ref.send_packet(self, ToClientPacket::YourButtons{buttons});
+        game
     }
 
     //returns (guilty, innocent)
@@ -229,7 +153,11 @@ impl Game {
         self.phase_machine.current_state = phase;
         self.phase_machine.time_remaining = self.settings.phase_times.get_time_for(self.current_phase().phase());
 
-        PhaseState::start(self); //THIS WAS RECENTLY MOVED BEFORE THE ON_PHASE_STARTS, PRAY THAT IT WONT CAUSE PROBLEMS
+        if PlayerReference::all_players(self).into_iter().filter(|p|p.alive(self)).collect::<Vec<_>>().len() <= 3{
+            self.phase_machine.time_remaining /= 2
+        }
+
+        PhaseState::start(self);
 
         //player reset
         for player_ref in PlayerReference::all_players(self){
@@ -281,11 +209,12 @@ pub mod test {
         let mut roles = create_random_roles(&settings.excluded_roles, &settings.role_list);
         roles.shuffle(&mut thread_rng());
         
+
         //create players
         let mut players = Vec::new();
         for player_index in 0..number_of_players {
             let new_player = mock_player(
-                player_index.to_string(),
+                format!("{}",player_index),
                 match roles.get(player_index){
                     Some(role) => *role,
                     None => RoleListEntry::Any.get_random_role(&settings.excluded_roles, &roles),
@@ -293,9 +222,9 @@ pub mod test {
             );
             players.push(new_player);
         }
-        drop(roles);
         //just to make sure the order of roles is not used anywhere else for secuity from our own stupidity  
-        let mut game = Game {
+        drop(roles);
+        let mut game = Game{
             players: players.into_boxed_slice(),
             graves: Vec::new(),
             teams: Teams::default(),
@@ -303,6 +232,9 @@ pub mod test {
             settings,
         };
 
+        for player_ref in PlayerReference::all_players(&game){
+            player_ref.send_join_game_data(&mut game);
+        }
 
 
         //set up role data
@@ -310,12 +242,10 @@ pub mod test {
             let role_data_copy = player_ref.role_state(&game).clone();
             player_ref.set_role(&mut game, role_data_copy);
         }
-        
+
         Teams::on_team_creation(&mut game);
 
-        for player_ref in PlayerReference::all_players(&game){
-            game.send_join_game_information(player_ref)
-        }
+        
         game
     }
 }

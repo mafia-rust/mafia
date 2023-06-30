@@ -1,16 +1,16 @@
 use std::time::Duration;
 
-use crate::{game::{Game, available_buttons::AvailableButtons}, packet::{ToClientPacket}, websocket_connections::connection::ClientSender};
+use crate::{game::{Game, available_buttons::AvailableButtons, phase::PhaseState}, packet::{ToClientPacket}, websocket_connections::connection::ClientSender};
 
 use super::{PlayerReference, ClientConnection, DISCONNECT_TIMER_SECS};
 
 impl PlayerReference{
-    pub fn reconnect(&self, game: &mut Game, sender: ClientSender){
+    pub fn connect(&self, game: &mut Game, sender: ClientSender){
         self.deref_mut(game).connection = ClientConnection::Connected(sender);
-        self.requeue_chat_messages(game);
+        self.send_join_game_data(game);
     }
     pub fn lose_connection(&self, game: &mut Game){
-        self.deref_mut(game).connection = ClientConnection::LostConnection { disconnect_timer: Duration::from_secs(DISCONNECT_TIMER_SECS) };
+        self.deref_mut(game).connection = ClientConnection::CouldReconnect { disconnect_timer: Duration::from_secs(DISCONNECT_TIMER_SECS) };
     }
     pub fn leave(&self, game: &mut Game) {
         self.deref_mut(game).connection = ClientConnection::Disconnected;
@@ -19,7 +19,7 @@ impl PlayerReference{
         matches!(self.deref(game).connection, ClientConnection::Connected(_))
     }
     pub fn has_lost_connection(&self, game: &Game) -> bool {
-        matches!(self.deref(game).connection, ClientConnection::LostConnection {..})
+        matches!(self.deref(game).connection, ClientConnection::CouldReconnect {..})
     }
     pub fn has_left(&self, game: &Game) -> bool {
         matches!(self.deref(game).connection, ClientConnection::Disconnected)
@@ -39,6 +39,84 @@ impl PlayerReference{
         self.send_chat_messages(game);
         self.send_available_buttons(game);
     }
+    pub fn send_join_game_data(&self, game: &mut Game){
+        
+
+        //GENERAL GAME
+        self.send_packets(game, vec![
+            ToClientPacket::ExcludedRoles { roles: game.settings.excluded_roles.clone() },
+            ToClientPacket::RoleList {role_list: game.settings.role_list.clone()},
+            
+            ToClientPacket::Players{ 
+                names: PlayerReference::all_players(game).iter().map(|p|{return p.name(game).clone()}).collect()
+            },
+            ToClientPacket::Phase { 
+                phase: game.current_phase().phase(),
+                seconds_left: game.phase_machine.time_remaining.as_secs(), 
+                day_number: game.phase_machine.day_number 
+            },
+            ToClientPacket::PlayerAlive{
+                alive: PlayerReference::all_players(game).into_iter().map(|p|p.alive(game)).collect()
+            }
+        ]);
+
+        if let PhaseState::Testimony { player_on_trial, .. }
+            | PhaseState::Judgement { player_on_trial, .. }
+            | PhaseState::Evening { player_on_trial: Some(player_on_trial) } = game.current_phase() {
+            self.send_packet(game, ToClientPacket::PlayerOnTrial{
+                player_index: player_on_trial.index()
+            });
+        }
+        let votes_packet = ToClientPacket::new_player_votes(game);
+        self.send_packet(game, votes_packet);
+        for grave in game.graves.iter(){
+            self.send_packet(game, ToClientPacket::AddGrave { grave: grave.clone() });
+        }
+
+
+
+        //PLAYER SPECIFIC
+        self.requeue_chat_messages(game);
+
+        self.send_packets(game, vec![
+            ToClientPacket::YourName{
+                name: self.name(game).clone()
+            },
+            ToClientPacket::YourPlayerIndex { 
+                player_index: self.index() 
+            },
+            ToClientPacket::YourRoleState {
+                role_state: self.role_state(game).clone()
+            },
+            ToClientPacket::YourRoleLabels { 
+                role_labels: PlayerReference::ref_map_to_index(self.role_labels(game).clone()) 
+            },
+            ToClientPacket::YourPlayerTags { 
+                player_tags: PlayerReference::ref_map_to_index(self.player_tags(game).clone())
+            },
+            ToClientPacket::YourTarget{
+                player_indices: PlayerReference::ref_vec_to_index(self.chosen_targets(game))
+            },
+            ToClientPacket::YourJudgement{
+                verdict: self.verdict(game)
+            },
+            ToClientPacket::YourVoting{ 
+                player_index: PlayerReference::ref_option_to_index(&self.chosen_vote(game))
+            },
+            ToClientPacket::YourWill{
+                will: self.will(game).clone()
+            },
+            ToClientPacket::YourNotes{
+                notes: self.notes(game).clone()
+            }
+        ]);
+        
+
+        let buttons = AvailableButtons::from_player(game, *self);
+        self.send_packet(game, ToClientPacket::YourButtons{buttons});
+    }
+
+
 
     pub fn send_chat_messages(&self, game: &mut Game){
         

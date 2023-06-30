@@ -49,7 +49,6 @@ struct PlayerVotingVariables{
     verdict:        Verdict,
 }
 struct PlayerNightVariables{
-    alive_tonight:  bool,
     died:           bool,
     attacked:       bool,
     jailed:         bool,
@@ -96,7 +95,6 @@ impl Player {
                 verdict : Verdict::Abstain,
             },
             night_variables: PlayerNightVariables{
-                alive_tonight:      true,
                 died:               false,
                 attacked:           false,
                 jailed:             false,
@@ -131,7 +129,7 @@ pub mod test {
     pub fn mock_player(name: String, role: Role) -> Player {
         Player {
             // Since `tick` is never called in tests, this will never decrement.
-            connection: super::ClientConnection::LostConnection { disconnect_timer: Duration::from_secs(1) },
+            connection: super::ClientConnection::CouldReconnect { disconnect_timer: Duration::from_secs(1) },
 
             name,
             role_state: role.default_state(),
@@ -153,7 +151,6 @@ pub mod test {
                 verdict : Verdict::Abstain,
             },
             night_variables: PlayerNightVariables{
-                alive_tonight:      true,
                 died:               false,
                 attacked:           false,
                 jailed:             false,
@@ -182,6 +179,6 @@ pub const DISCONNECT_TIMER_SECS: u64 = 45;
 
 enum ClientConnection {
     Connected(ClientSender),
-    LostConnection { disconnect_timer: Duration },
+    CouldReconnect { disconnect_timer: Duration },
     Disconnected
 }

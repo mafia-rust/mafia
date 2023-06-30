@@ -10,7 +10,7 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
     actor_ref.chosen_targets(game).is_empty() &&
     actor_ref.alive(game) &&
     target_ref.alive(game) &&
-    !Team::same_team(actor_ref.role(game), target_ref.role(game))
+    !Team::same_team(game, actor_ref, target_ref)
 }
 pub(super) fn convert_targets_to_visits(_game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, astral: bool, attack: bool) -> Vec<Visit> {
     if !target_refs.is_empty() {
@@ -118,7 +118,7 @@ pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){
         }
         let other_role = other_ref.role(game);
         
-        if Team::same_team(actor_role, other_role) {
+        if Team::same_team(game, actor_ref, other_ref) {
             other_ref.insert_role_label(game, actor_ref, actor_role);
             actor_ref.insert_role_label(game, other_ref, other_role);
         }

@@ -10,19 +10,21 @@ use crate::game::Game;
 use crate::game::team::Team;
 use super::{Priority, RoleStateImpl};
 
-pub(super) const DEFENSE: u8 = 0;
-pub(super) const ROLEBLOCK_IMMUNE: bool = false;
-pub(super) const CONTROL_IMMUNE: bool = false;
-pub(super) const SUSPICIOUS: bool = false;
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownInvestigative;
-pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const END_GAME_CONDITION: EndGameCondition = EndGameCondition::Faction;
-pub(super) const TEAM: Option<Team> = None;
-
 #[derive(Clone, Serialize, Debug, Default)]
 pub struct Lookout;
 
+pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownInvestigative;
+pub(super) const MAXIMUM_COUNT: Option<u8> = None;
+
 impl RoleStateImpl for Lookout {
+    fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
+    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
+    fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
+    fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
+    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::Town}
+    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
+
+
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return;}
 

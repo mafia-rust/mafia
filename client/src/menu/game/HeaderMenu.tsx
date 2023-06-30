@@ -87,10 +87,11 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
     renderMenuButtons(){
         return <div className="menu-buttons">
             {(()=>
-                GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WillMenu)?null:
+                GameScreen.instance.menusOpen().includes(GameScreenContentMenus.GraveyardMenu)?null:
                     <button onClick={()=>{
-                        GameScreen.instance.openMenu(GameScreenContentMenus.WillMenu)
-                    }}>{translate("menu.will.title")}</button>
+                        GameScreen.instance.openMenu(GameScreenContentMenus.GraveyardMenu)
+                    
+                    }}>{translate("menu.graveyard.title")}</button>
             )()}
             {(()=>
                 GameScreen.instance.menusOpen().includes(GameScreenContentMenus.PlayerListMenu)?null:
@@ -100,18 +101,10 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                     }}>{translate("menu.playerList.title")}</button>
             )()}
             {(()=>
-                GameScreen.instance.menusOpen().includes(GameScreenContentMenus.GraveyardMenu)?null:
+                GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WillMenu)?null:
                     <button onClick={()=>{
-                        GameScreen.instance.openMenu(GameScreenContentMenus.GraveyardMenu)
-                    
-                    }}>{translate("menu.graveyard.title")}</button>
-            )()}
-            {(()=>
-                GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WikiMenu)?null:
-                    <button onClick={()=>{
-                        GameScreen.instance.openMenu(GameScreenContentMenus.WikiMenu)
-                    
-                    }}>{translate("menu.wiki.title")}</button>
+                        GameScreen.instance.openMenu(GameScreenContentMenus.WillMenu)
+                    }}>{translate("menu.will.title")}</button>
             )()}
             {(()=>
                 (
@@ -126,6 +119,13 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                             {translate("role."+this.state.gameState.role+".name")}
                         </StyledText>
                     </button>
+            )()}
+            {(()=>
+                GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WikiMenu)?null:
+                    <button onClick={()=>{
+                        GameScreen.instance.openMenu(GameScreenContentMenus.WikiMenu)
+                    
+                    }}>{translate("menu.wiki.title")}</button>
             )()}
         </div>
     }
