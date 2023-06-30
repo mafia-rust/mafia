@@ -80,7 +80,7 @@ impl RoleStateImpl for Executioner {
     fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType){
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
-        crate::game::role::common_role::on_role_creation(game, actor_ref);
+        
         if let Some(target) = PlayerReference::all_players(game)
             .into_iter()
             .filter(|p|

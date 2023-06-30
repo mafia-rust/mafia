@@ -30,7 +30,7 @@ trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
     fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
 
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType);
-    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference);
+    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference);
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference);
 }
 

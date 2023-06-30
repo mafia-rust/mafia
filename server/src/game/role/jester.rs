@@ -103,8 +103,8 @@ impl RoleStateImpl for Jester {
             _ => {}
         }
     }
-    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
-        crate::game::role::common_role::on_role_creation(game, actor_ref);
+    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
+        
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
         if 

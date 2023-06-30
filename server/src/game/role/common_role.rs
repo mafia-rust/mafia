@@ -104,27 +104,5 @@ pub(super) fn get_current_recieve_chat_groups(game: &Game, actor_ref: PlayerRefe
 }
 
 
-pub(super) fn on_role_creation(game: &mut Game, actor_ref: PlayerReference){
-
-    let actor_role = actor_ref.role(game);
-
-    //set a role tag for themselves
-    actor_ref.insert_role_label(game, actor_ref, actor_role);
-
-    //if they are on a team. set labels for their teammates, and my label for my teammates
-    for other_ref in PlayerReference::all_players(game){
-        if actor_ref == other_ref{
-            continue;
-        }
-        let other_role = other_ref.role(game);
-        
-        if Team::same_team(game, actor_ref, other_ref) {
-            other_ref.insert_role_label(game, actor_ref, actor_role);
-            actor_ref.insert_role_label(game, other_ref, other_role);
-        }
-    }
-}
-
-
 
 

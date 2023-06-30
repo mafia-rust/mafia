@@ -12,6 +12,7 @@ pub mod team;
 pub mod available_buttons;
 pub mod on_client_message;
 pub mod tag;
+pub mod recruit;
 
 use std::time::Duration;
 use rand::seq::SliceRandom;

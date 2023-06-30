@@ -111,8 +111,8 @@ impl RoleStateImpl for Veteran {
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         actor_ref.set_role_state(game, RoleState::Veteran(Veteran { alerts_remaining: self.alerts_remaining, alerting_tonight: false }));   
     }
-    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
-        crate::game::role::common_role::on_role_creation(game, actor_ref);
+    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
+        
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
     }
