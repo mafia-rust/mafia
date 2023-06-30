@@ -8,7 +8,7 @@ export interface Grave {
     role: GraveRole,
     deathCause: GraveDeathCause,
     will: string,
-    deathNotes: [string],
+    deathNotes: string[],
 
     diedPhase: GravePhase,
     dayNumber: number,

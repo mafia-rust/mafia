@@ -156,6 +156,9 @@ export default function messageListener(packet: ToClientPacket){
         case "yourNotes":
             GAME_MANAGER.gameState.notes = packet.notes;
         break;
+        case "yourDeathNote":
+            GAME_MANAGER.gameState.deathNote = packet.deathNote ?? "";
+        break;
         case "yourRole":
             GAME_MANAGER.gameState.role = packet.role;
         break;

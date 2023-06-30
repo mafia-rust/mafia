@@ -64,6 +64,14 @@ impl PlayerReference{
         self.send_packet(game, ToClientPacket::YourNotes { notes: self.deref(game).notes.clone() })
     }
     
+    pub fn death_note<'a>(&self, game: &'a Game) -> &'a Option<String> {
+        &self.deref(game).death_note
+    }
+    pub fn set_death_note(&self, game: &mut Game, death_note: Option<String>){
+        self.deref_mut(game).death_note = death_note;
+        self.send_packet(game, ToClientPacket::YourDeathNote { death_note: self.deref(game).death_note.clone() })
+    }
+    
     pub fn role_labels<'a>(&self, game: &'a Game) -> &'a HashMap<PlayerReference, Role>{
         &self.deref(game).role_labels
     }  

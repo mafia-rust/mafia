@@ -8,7 +8,12 @@
 .graveyard-menu > div button{
     width: 100%;
 }
-.graveyard-menu .will-area{
+.graveyard-menu .grave {
+    white-space: normal;
+}
+.graveyard-menu .note-area {
+    background-color: var(--secondary-color);
+    margin-bottom: 0.5rem;
     text-align: left;
 }
 .graveyard-menu .graveyard-menu-excludedRoles{

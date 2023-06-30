@@ -206,6 +206,9 @@ impl Game {
             ToServerPacket::SaveNotes { notes } => {
                 sender_player_ref.set_notes(self, notes);
             },
+            ToServerPacket::SaveDeathNote { death_note } => {
+                sender_player_ref.set_death_note(self, death_note);
+            },
             ToServerPacket::Leave => {
                 sender_player_ref.leave(self);
             }

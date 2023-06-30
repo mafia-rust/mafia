@@ -84,7 +84,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
         }
 
         let diedPhaseString = grave.diedPhase === "day" ? translate("day") : translate("phase.night");
-        return(<button onClick={()=>{this.setState({extendedGraveIndex:null})}}>
+        return(<button className="grave" onClick={()=>{this.setState({extendedGraveIndex:null})}}>
             <StyledText>{`
 ${diedPhaseString+" "+grave.dayNumber}
 
@@ -92,11 +92,22 @@ ${this.state.gameState.players[grave.playerIndex]?.toString()+" ("+graveRoleStri
 
 ${translate("menu.graveyard.killedBy")+" "+deathCauseString}
             `}</StyledText>
-            <div className="will-area">
-                <StyledText>
-                    {grave.will}
-                </StyledText>
-            </div>
+            {grave.will.length === 0 || <>
+                {translate("grave.will")}
+                <div className="note-area">
+                    <StyledText>
+                        {grave.will}
+                    </StyledText>
+                </div>
+            </>}
+            {grave.deathNotes.length === 0 || grave.deathNotes.map(note => <>
+                {translate("grave.deathNote")}
+                <div className="note-area">
+                    <StyledText>
+                        {note}
+                    </StyledText>
+                </div>
+            </>)}
         </button>);
     }
 
@@ -116,7 +127,9 @@ ${translate("menu.graveyard.killedBy")+" "+deathCauseString}
                 {translate("menu.excludedRoles.excludedRoles")}
             </section>
             <div>
-                {this.state.gameState.excludedRoles.map((value, i)=>{
+                {this.state.gameState.excludedRoles.length === 0 
+                    ? <StyledText>{translate("none")}</StyledText>
+                    : this.state.gameState.excludedRoles.map((value, i)=>{
                     return <button key={i}>
                         <StyledText>
                             {translateRoleListEntry(value) ?? ""}
