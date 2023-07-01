@@ -97,20 +97,16 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         return(<div className="player" key={player.index}>
             <div className="top">
                 <button className="whisper" onClick={()=>ChatMenu.prependWhisper(player.index)}>
-                    <StyledText>
-                        {(
-                            (player.playerTags.map((tag)=>{return translate("tag."+tag)}))+
-                            (
+                            <StyledText>{player.playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
+                            {(
                                 player.numVoted!==null &&
                                 player.numVoted!==0 &&
                                 this.state.gameState.phase==="voting" ? 
                                 player.numVoted+" :":""
-                            )+
-                            player.toString()+
-                            (player.roleLabel==null?"":(" ("+translate("role."+player.roleLabel+".name")+")"))+
-                            (player.alive?"":" ("+translate("dead")+")")
-                        )}
-                    </StyledText>
+                            )}
+                            <StyledText>{player.toString()}</StyledText>
+                            <StyledText>{(player.roleLabel==null?"":(" ("+translate("role."+player.roleLabel+".name")+")"))}</StyledText>
+                            <StyledText>{(player.alive?"":" ("+translate("dead")+")")}</StyledText>
                 </button>
                 {(() => {
                     const filter = RegExp(`(?<!\\w)${regEscape(player.name)}(?!\\w)`, "i");
@@ -150,7 +146,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                             let newTargets = [...GAME_MANAGER.gameState.targets];
                             newTargets.splice(newTargets.indexOf(player.index), 1);
                             return <button className="highlighted" onClick={() => GAME_MANAGER.sendTargetPacket(newTargets)}>
-                                {translate("role."+this.state.gameState.role+".untarget")}
+                                {translate("role."+this.state.gameState.role+".detarget")}
                             </button>
                         }
                     })(player)}
@@ -190,7 +186,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     render(){return(<div className="player-list-menu">
         
         <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.PlayerListMenu)}}>{translate("menu.playerList.title")}</button>
-        
+        <br/> {/* TODO remove this BR */}
         {this.renderFilterButton("all")}
         {this.renderFilterButton("living")}
         {this.renderFilterButton("usable")}
