@@ -221,6 +221,7 @@ function createServer(){
             //Server.ws.send("Hello to Server");
         },
         closeListener : ()=>{
+            Anchor.pushInfo("Connection closed", "The connection to the server was closed.")
             Anchor.setContent(<StartMenu/>);
         },
         messageListener: (event)=>{

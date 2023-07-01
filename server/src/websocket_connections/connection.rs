@@ -2,10 +2,9 @@ use std::net::SocketAddr;
 
 use tokio::sync::mpsc::UnboundedSender;
 
-use crate::log;
 use crate::packet::ToClientPacket;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Connection {
     tx: ClientSender,
     address: SocketAddr,
@@ -42,8 +41,6 @@ pub struct ClientSender {
 impl ClientSender {
     /// Send a message to the client.
     pub fn send(&self, message: ToClientPacket) {
-        if let Err(err) = self.tx.send(message) {
-            println!("{} Failed to send {:?}", log::error("ERROR:"), err.0);
-        }
+        let _ = self.tx.send(message);
     }
 }
