@@ -72,7 +72,7 @@ impl Listener {
         self.players.insert(*connection.get_address(), PlayerLocation::OutsideLobby);
     }
 
-    pub fn on_disconnect(&mut self, connection: &Connection) {
+    pub fn on_disconnect(&mut self, connection: Connection) {
         println!("{}\t{}", log::important("DISCONNECTED:"), connection.get_address());
 
         if let Some(disconnected_player_location) = self.players.remove(connection.get_address()) {
@@ -151,7 +151,7 @@ impl Listener {
             _ => {
                 if let PlayerLocation::InLobby { room_code, player_id } = sender_player_location {
                     if let Some(lobby) = self.lobbies.get_mut(room_code){
-                        lobby.on_client_message(connection, *player_id, incoming_packet);
+                        lobby.on_client_message(&connection.get_sender(), *player_id, incoming_packet);
                     } else {
                         //Player is in a lobby that doesnt exist   
                         todo!()

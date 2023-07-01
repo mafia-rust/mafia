@@ -19,6 +19,9 @@ async fn main() {
     let config = serde_json::from_str::<Config>(
         &fs::read_to_string("./resources/config.json").expect("Failed to read the config file")
     ).unwrap();
-    
-    create_ws_server(&config.address).await
+
+    loop {
+        create_ws_server(&config.address).await;
+        println!("Restarting...");
+    }
 }

@@ -8,7 +8,7 @@ use crate::{
         role_list::RoleListEntry, 
         phase::PhaseType
     },
-    log, listener::ArbitraryPlayerID, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}, websocket_connections::connection::{Connection, ClientSender}
+    log, listener::ArbitraryPlayerID, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}, websocket_connections::connection::{ClientSender}
 };
 
 pub struct Lobby {
@@ -62,7 +62,7 @@ impl Lobby {
     }
 
     
-    pub fn on_client_message(&mut self, send: &Connection, player_arbitrary_id: ArbitraryPlayerID, incoming_packet: ToServerPacket){
+    pub fn on_client_message(&mut self, send: &ClientSender, player_arbitrary_id: ArbitraryPlayerID, incoming_packet: ToServerPacket){
         match incoming_packet {
             ToServerPacket::SetName{ name } => {
                 let LobbyState::Lobby { players, .. } = &mut self.lobby_state else {
