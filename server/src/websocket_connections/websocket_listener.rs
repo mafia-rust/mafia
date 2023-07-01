@@ -37,13 +37,12 @@ pub async fn create_ws_server(address: &str) {
     println!("Log output:");
 
     loop {
-        // This could be one line but it's written explicitly here for clarity
         let (stream, addr) = match future::select(
             pin!(tcp_listener.accept()), 
             pin!(crash_signal.1.recv())
         ).await {
             Either::Left((Ok((stream, addr)), _)) => (stream, addr),
-            Either::Left((Err(_), _)) => break, // tcp listener errored, stop server.
+            Either::Left((Err(_), _)) => continue, // tcp connection failed, carry on.
             Either::Right(_) => break // crash signal recieved, stop server.
         };
         
