@@ -11,3 +11,6 @@
     height: 19rem;
     width: calc(100% - .2rem);
 }
+.will-menu summary {
+    text-align: left;
+}
