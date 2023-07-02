@@ -46,6 +46,7 @@ pub struct Player {
     voting_variables: PlayerVotingVariables,
     night_variables: PlayerNightVariables,
 
+    #[allow(dead_code)]
     recruit: Option<Recruit>,
 }
 struct PlayerVotingVariables{

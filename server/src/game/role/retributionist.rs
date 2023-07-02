@@ -37,7 +37,7 @@ impl RoleStateImpl for Retributionist {
                 let Some(first_visit) = retributionist_visits.get(0) else {return};
                 let Some(second_visit) = retributionist_visits.get(1) else {return};
                 if first_visit.target.alive(game) {return;}
-                if first_visit.target.control_immune(&game) {return;}
+                if first_visit.target.control_immune(game) {return;}
 
                 let mut new_chosen_targets = vec![second_visit.target];
                 if let Some(third_visit) = retributionist_visits.get(2){

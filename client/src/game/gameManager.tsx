@@ -217,19 +217,6 @@ function createServer(){
     let Server: Server = {
         ws: null,
 
-        openListener : ()=>{
-            //Server.ws.send("Hello to Server");
-        },
-        closeListener : ()=>{
-            Anchor.pushInfo("Connection closed", "The connection to the server was closed.")
-            Anchor.setContent(<StartMenu/>);
-        },
-        messageListener: (event)=>{
-            GAME_MANAGER.messageListener(
-                JSON.parse(event.data) as ToClientPacket
-            );
-        },
-
         open : () => {
             let address = CONFIG.address;
             Server.ws = new WebSocket(address);
@@ -239,23 +226,29 @@ function createServer(){
                 completePromise = resolver;
             });
 
-            Server.ws.addEventListener("open", (event: Event)=>{
+            Server.ws.onopen = (event: Event)=>{
                 completePromise();
-                Server.openListener(event);
-            });
-            Server.ws.addEventListener("close", (event: CloseEvent)=>{
-                Server.closeListener(event);
-            });
-            Server.ws.addEventListener("message", (event: MessageEvent<string>)=>{
-                Server.messageListener(event);
-            });
-            Server.ws.addEventListener("error", (event: Event) => {
+            };
+            Server.ws.onclose = (event: CloseEvent)=>{
+                if (Server.ws === null) return; // This indicates that we closed it ourselves
+
+                Anchor.pushInfo("Connection closed", "The connection to the server was closed.")
+                Anchor.setContent(<StartMenu/>);
+            };
+            Server.ws.onmessage = (event: MessageEvent<string>)=>{
+                GAME_MANAGER.messageListener(
+                    JSON.parse(event.data) as ToClientPacket
+                );
+            };
+            Server.ws.onerror = (event: Event) => {
+                Server.ws = null;
                 Anchor.pushInfo("Failed to connect", "Contact an admin to see if the server is online.");
                 Anchor.setContent(<StartMenu/>);
-            })
+            };
             
             return promise;
         },
+
         sendPacket : (packet: ToServerPacket)=>{
             if (Server.ws === null) {
                 console.log("Attempted to send packet to null websocket!");
@@ -263,13 +256,11 @@ function createServer(){
                 Server.ws.send(JSON.stringify(packet));
             }
         },
+
         close : ()=>{
-            if(Server.ws==null) return;
+            if(Server.ws === null) return;
             
             Server.ws.close();
-            Server.ws.removeEventListener("close", Server.closeListener);
-            Server.ws.removeEventListener("message", Server.messageListener);
-            Server.ws.removeEventListener("open", Server.openListener);
             Server.ws = null;
         }
         

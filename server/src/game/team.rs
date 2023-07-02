@@ -20,7 +20,7 @@ impl Team{
             .collect()
     }
     
-    pub fn team_state<'a>(&self, teams: &Teams)->TeamState{
+    pub fn team_state(&self, teams: &Teams)->TeamState{
         match self{
             Team::Mafia => TeamState::Mafia(teams.mafia().clone()),
             Team::Coven => TeamState::Coven(teams.coven().clone()),
@@ -142,7 +142,7 @@ impl TeamStateImpl for Mafia{
     fn on_any_death(self, game: &mut Game){
         Mafia::ensure_killer(game);
     }
-    fn on_member_role_switch(self, game: &mut Game, actor: PlayerReference) {
+    fn on_member_role_switch(self, _game: &mut Game, _actor: PlayerReference) {
         
     }
 }
@@ -193,7 +193,7 @@ impl TeamStateImpl for Coven{
     fn on_any_death(self, game: &mut Game){
         Coven::ensure_necronomicon_on_night_3(game);
     }
-    fn on_member_role_switch(self, game: &mut Game, actor: PlayerReference) {
+    fn on_member_role_switch(self, _game: &mut Game, _actor: PlayerReference) {
     }
 }
 impl Coven{
@@ -222,7 +222,7 @@ impl TeamStateImpl for Vampires{
     fn on_any_death(self, game: &mut Game){
         Vampires::ensure_youngest_vamp(self, game);
     }
-    fn on_member_role_switch(self, game: &mut Game, actor: PlayerReference) {
+    fn on_member_role_switch(self, _game: &mut Game, _actor: PlayerReference) {
     }
 }
 impl Vampires{

@@ -6,10 +6,6 @@ import { RoleListEntry } from "./roleListState.d";
 export interface Server {
     ws: WebSocket | null,
 
-    openListener(event: Event): void;
-    closeListener(event: CloseEvent): void;
-    messageListener(event: MessageEvent<string>): void;
-
     open(): Promise<void>;
     sendPacket(packets: ToServerPacket): void;
     close(): void;
