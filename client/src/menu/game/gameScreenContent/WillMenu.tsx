@@ -60,7 +60,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
             GAME_MANAGER.sendSaveDeathNotePacket(this.state.localFields[type])
     }
     renderInput(type: FieldType) {
-        return (<details>
+        return (<details open={type === "will"}>
             <summary>{translate("menu.will." + type)}</summary>
             <button 
                 className={this.state.syncedFields[type] !== this.state.localFields[type] ? "highlighted" : undefined}
