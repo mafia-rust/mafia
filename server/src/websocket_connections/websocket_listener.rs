@@ -64,7 +64,7 @@ struct ConnectionError;
 
 // Code within this function __SHOULD NOT PANIC__ except for listener methods.
 // There is a panic hook that restarts the server. The server doesn't need to restart if a connection fails, so don't panic -- just disconnect.
-/// This runs until the connection is closed. It does not remove the connection from the listener or the clients hashmap.
+/// This runs until the connection is closed. It does not remove the connection from the listener.
 async fn handle_connection(
     raw_stream: TcpStream, 
     addr: SocketAddr, 

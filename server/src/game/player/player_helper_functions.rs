@@ -69,7 +69,7 @@ impl PlayerReference{
         self.add_chat_message(game, ChatMessage::RoleAssignment{role: self.role(game)});
 
         self.insert_role_label(game, *self, self.role(game));
-        if let Some(team) = self.team(&game) {
+        if let Some(team) = self.team(game) {
 
             team.team_state(&game.teams).on_member_role_switch(game, *self);
 
