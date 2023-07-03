@@ -26,7 +26,7 @@
     color: white;
 }
 
-button, input, select, option, textarea {
+button, input, select, option, textarea, summary {
     border-radius: 0.4rem;
     margin: .75%;
     background-color: var(--secondary-color);
@@ -35,22 +35,28 @@ button, input, select, option, textarea {
     color: white;
 }
 
-button:disabled, input:disabled, select:disabled, option:disabled, textarea:disabled {
+button:disabled, input:disabled, select:disabled, option:disabled, textarea:disabled, summary:disabled {
     opacity: 0.5;
     box-shadow: 0 0 100vmax #55555555 inset;
 }
-button {
+button, summary {
+    cursor: default;
+    border-style: outset;
     background-color: var(--primary-color);
     white-space: nowrap;
 }
-button.highlighted {
+summary {
+    text-align: left;
+    padding-left: 0.5rem;
+}
+button.highlighted, summary.highlighted {
     border-color: yellow;
 }
 option {
     background-color: var(--background-color);
 }
 
-button:hover:not([disabled]), input:hover:not([disabled]), select:hover:not([disabled]), option:hover:not([disabled]) {
+button:hover:not([disabled]), input:hover:not([disabled]), select:hover:not([disabled]), option:hover:not([disabled]), summary:hover:not([disabled]) {
     background-color: var(--hover-color);
 }
 

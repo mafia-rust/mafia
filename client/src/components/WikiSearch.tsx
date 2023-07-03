@@ -179,15 +179,15 @@ ${translate("role."+role+".attributes")}
     render() {
         return (<div className="wiki-search">
         <div className="wiki-search-bar">
-            <input type="text" value={this.state.wikiSearch}
-                onChange={(e)=>{this.setState({wikiSearch: e.target.value, openPage: null})}}
-                placeholder={translate("menu.wiki.search.placeholder")}
-            />
             {this.state.wikiSearch !== null && this.state.wikiSearch !== "" ? 
                 <button onClick={() => {
                     this.setState({wikiSearch: "", openPage: null})
                 }}>{translate("menu.wiki.search.clear")}</button> 
             : null}
+            <input type="text" value={this.state.wikiSearch}
+                onChange={(e)=>{this.setState({wikiSearch: e.target.value, openPage: null})}}
+                placeholder={translate("menu.wiki.search.placeholder")}
+            />
         </div>
         <div className="wiki-results">
             {this.renderWikiPageOrSearch()}

@@ -60,8 +60,8 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
             GAME_MANAGER.sendSaveDeathNotePacket(this.state.localFields[type])
     }
     renderInput(type: FieldType) {
-        return (<div className="textarea-section">
-            {translate("menu.will." + type)}
+        return (<details open={type === "will"}>
+            <summary>{translate("menu.will." + type)}</summary>
             <button 
                 className={this.state.syncedFields[type] !== this.state.localFields[type] ? "highlighted" : undefined}
                 onClick={() => this.save(type)}
@@ -74,7 +74,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
             <textarea
                 value={this.state.localFields[type]}
                 onChange={(e) => {
-                    let fields = this.state.localFields;
+                    let fields = {...this.state.localFields};
                     fields[type] = e.target.value;
                     this.setState({ localFields: fields });
                 }}
@@ -90,7 +90,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
                     }
                 }}>
             </textarea>
-        </div>)
+        </details>)
     }
     render() {return (<div className="will-menu">
         <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.WillMenu)}}>
