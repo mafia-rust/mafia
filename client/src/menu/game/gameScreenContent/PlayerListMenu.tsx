@@ -114,7 +114,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                     
                     return <button 
                         className={"filter" + (isFilterSet ? " highlighted" : "")} 
-                        onClick={() => isFilterSet ? ChatMenu.setFilter(null) : ChatMenu.setFilter(filter)}
+                        onClick={() => {isFilterSet ? ChatMenu.setFilter(null) : ChatMenu.setFilter(filter); this.setState({})}}
                     >
                         {translate("menu.playerList.button.filter")}
                     </button>
