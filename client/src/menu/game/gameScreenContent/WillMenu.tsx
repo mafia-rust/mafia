@@ -74,7 +74,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
             <textarea
                 value={this.state.localFields[type]}
                 onChange={(e) => {
-                    let fields = this.state.localFields;
+                    let fields = {...this.state.localFields};
                     fields[type] = e.target.value;
                     this.setState({ localFields: fields });
                 }}
