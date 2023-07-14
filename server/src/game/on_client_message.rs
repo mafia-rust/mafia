@@ -13,7 +13,7 @@ impl Game {
         let sender_player_ref = match PlayerReference::new(self, sender_player_index){
             Ok(sender_player_ref) => sender_player_ref,
             Err(_) => {
-                println!("{} Recieved message from invalid player index: {}", log::error("ERROR: "), sender_player_index);
+                log!(error "Game"; "Recieved message from invalid player index: {}", sender_player_index);
                 return;
             }
         };
@@ -219,7 +219,7 @@ impl Game {
                 }
             }
             _ => {
-                println!("FATAL ERROR! unimplemented ToServerPacket: {:?}", incoming_packet);
+                log!(fatal "Game"; "Unimplemented ToServerPacket: {incoming_packet:?}");
                 unreachable!();
             }
         }}

@@ -5,14 +5,35 @@ pub mod lobby;
 pub mod packet;
 
 pub mod log {
-    pub fn important(str: &str) -> String {
-        format!("\x1b[0;1;93m{str}\x1b[0m")
-    }
-    pub fn error(str: &str) -> String {
-        format!("\x1b[0;1;91m{str}\x1b[0m")
-    }
-    pub fn notice(str: &str) -> String {
-        format!("\x1b[0;32m{str}\x1b[0m")
+    #[macro_export]
+    /// Log a statement to the console. 
+    /// When logging using this macro, a timestamp and possibly a marker is added to the message.
+    macro_rules! log {
+        // Each case in this macro definition is for a different log marker.
+        // None
+        ($expr:expr) => {
+            println!("\x1b[0;90m{}\x1b[0m {}", chrono::Local::now().format("%m.%d %I:%M:%S"), $expr)
+        };
+        // Fatal error
+        (fatal $prefix:expr; $($expr:expr),*) => {
+            log!(&format!("\x1b[0;1;91m[{}] FATAL\x1b[0m \x1b[0;1;41m{}\x1b[0m", $prefix, &format!($($expr),*)))
+        };
+        // Warning error
+        (error $prefix:expr; $($expr:expr),*) => {
+            log!(&format!("\x1b[0;1;91m[{}] WARN\x1b[0m {}", $prefix, &format!($($expr),*)))
+        };
+        // Important
+        (important $prefix:expr; $($expr:expr),*) => {
+            log!(&format!("\x1b[0;1;93m[{}]\x1b[0m {}", $prefix, &format!($($expr),*)))
+        };
+        // Info
+        (info $prefix:expr; $($expr:expr),*) => {
+            log!(&format!("\x1b[0;1;32m[{}]\x1b[0m {}", $prefix, &format!($($expr),*)))
+        };
+        // Default (use info)
+        ($prefix:expr; $($expr:expr),*) => {
+            log!(info $prefix; $($expr),*)
+        };
     }
 }
 pub mod strings{

@@ -3,7 +3,7 @@ use std::{net::SocketAddr, collections::HashMap, sync::{Mutex, Arc}, time::Durat
 use rand::random;
 use tokio_tungstenite::tungstenite::Message;
 
-use crate::{lobby::Lobby, log, websocket_connections::connection::{Connection}, packet::{ToServerPacket, ToClientPacket, RejectJoinReason}};
+use crate::{lobby::Lobby, websocket_connections::connection::{Connection}, packet::{ToServerPacket, ToClientPacket, RejectJoinReason}, log};
 
 // TODO, rename to PregameID or IntermediaryID
 pub type ArbitraryPlayerID = u32;
@@ -54,7 +54,7 @@ impl Listener{
 
                     // Remove closed lobbies
                     for key in closed_lobbies {
-                        println!("{}\t{}", log::important("LOBBY CLOSED:"), key);
+                        log!(important "Lobby"; "Closed {key}");
                         listener.lobbies.remove(&key);
                     }
                 }
@@ -68,40 +68,43 @@ impl Listener{
 
 impl Listener {
     pub fn on_connect(&mut self, connection: &Connection) {
-        println!("{}\t{}", log::important("CONNECTED:"), connection.get_address());
         self.players.insert(*connection.get_address(), PlayerLocation::OutsideLobby);
     }
 
-    pub fn on_disconnect(&mut self, connection: Connection) {
-        println!("{}\t{}", log::important("DISCONNECTED:"), connection.get_address());
+    // TODO: DisconnectError enum
+    pub fn on_disconnect(&mut self, connection: Connection) -> Result<(), &'static str> {
+        let Some(disconnected_player_location) = self.players.remove(connection.get_address()) else {
+            return Err("Player doesn't exist");
+        };
 
-        if let Some(disconnected_player_location) = self.players.remove(connection.get_address()) {
-            if let PlayerLocation::InLobby { room_code, player_id } = disconnected_player_location {
-                // If the lobby actually exists
-                if let Some(lobby) = self.lobbies.get_mut(&room_code){
-                    lobby.disconnect_player_from_lobby(player_id);
-                }
-            }
-        } else {
-            println!("{} {}", log::error("Tried to disconnect a non existent player!"), connection.get_address())
-        }
+        let PlayerLocation::InLobby { room_code, player_id } = disconnected_player_location else {
+            return Err("Player is not in a lobby");
+        };
+
+        let Some(lobby) = self.lobbies.get_mut(&room_code) else {
+            return Err("Player is in a lobby that doesn't exist");
+        };
+
+        lobby.disconnect_player_from_lobby(player_id);
+        Ok(())
     }
 
     pub fn on_message(&mut self, connection: &Connection, message: &Message) {
         if message.is_empty() {
             return; // They either disconnected, or sent nothing.
         }
-        println!("[{}]\t{}", log::notice(&connection.get_address().to_string()), message);
+        log!(info "Listener"; "{}: {}", &connection.get_address().to_string(), message);
 
         if let Err(k) = self.handle_message(connection, message){
-            println!("[{}]\t{}:\n{}", log::error(&connection.get_address().to_string()), log::error("SERDE ERROR"), k);
+            log!(error "Listener"; "Serde error when recieving message from {}: {}", &connection.get_address().to_string(), k);
         }    
     }
+    // TODO sum the error types in this function so they can be handled in on_message
     fn handle_message(&mut self, connection: &Connection, message: &Message) -> Result<(), serde_json::Error> {
         let incoming_packet = serde_json::from_str::<ToServerPacket>(message.to_string().as_str())?;
 
         let Some(sender_player_location) = self.players.get_mut(connection.get_address()) else {
-            println!("{} {}", log::error("Received packet from unconnected player!"), connection.get_address());
+            log!(error "Listener"; "{} {}", "Received packet from unconnected player!", connection.get_address());
             return Ok(());
         };
 
@@ -144,7 +147,7 @@ impl Listener {
                     }
                 }
 
-                println!("{}\t{}", log::important("LOBBY CREATED:"), room_code);
+                log!(important "Lobby"; "Created {room_code}");
 
                 self.lobbies.insert(room_code, lobby);
             },
