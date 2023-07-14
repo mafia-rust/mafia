@@ -110,7 +110,7 @@ pub enum ToClientPacket{
 impl ToClientPacket {
     pub fn to_json_string(&self) -> Result<String, serde_json::Error> {
         serde_json::to_string(self).map_err(|err|{
-            println!("{} while parsing JSON string: {:?}", log::error(&format!("{} error", err)), self);
+            log!(error "Serde error"; "Parsing JSON string: {:?}", self);
             err
         })
     }

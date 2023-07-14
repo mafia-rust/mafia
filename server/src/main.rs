@@ -1,7 +1,7 @@
 
-use mafia_server::websocket_connections::websocket_listener::create_ws_server;
+use mafia_server::{websocket_connections::websocket_listener::create_ws_server, log};
 use serde::Deserialize;
-use std::fs;
+use std::{fs, thread, time::Duration};
 
 #[derive(Deserialize)]
 struct Config{
@@ -22,6 +22,8 @@ async fn main() {
 
     loop {
         create_ws_server(&config.address).await;
-        println!("Restarting...");
+        // This delay is only to make sure disconnect messages are sent before the server restarts
+        thread::sleep(Duration::from_secs(1));
+        log!(important "Main"; "Restarting server...");
     }
 }

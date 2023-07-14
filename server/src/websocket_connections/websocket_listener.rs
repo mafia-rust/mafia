@@ -1,4 +1,4 @@
-use crate::{websocket_connections::{connection::Connection, ForceLock}, log, listener::Listener};
+use crate::{websocket_connections::{connection::Connection, ForceLock}, listener::Listener, log};
 use tokio_tungstenite::tungstenite::Message;
 use std::{net::SocketAddr, sync::{Arc, Mutex}, pin::pin};
 
@@ -32,9 +32,7 @@ pub async fn create_ws_server(address: &str) {
     let event_listener = Arc::new(Mutex::new(Listener::new()));
     Listener::start(event_listener.clone());
 
-    println!("{}", log::notice("Mafia Server started!\n"));
-    println!("Listening on: {}\n", log::important(address));
-    println!("Log output:");
+    log!(important "Server"; "Started listening on {address}");
 
     loop {
         let (stream, addr) = match future::select(
@@ -52,12 +50,16 @@ pub async fn create_ws_server(address: &str) {
         tokio::spawn(async move {
             // Handle connection runs until the connection or server is closed
             if let Ok(connection) = handle_connection(stream, addr, event_listener.clone(), crash_signal).await {
-                event_listener.force_lock().on_disconnect(connection);
+                match event_listener.force_lock().on_disconnect(connection) {
+                    Ok(()) => log!(important "Connection"; "Disconnected {}", addr),
+                    Err(reason) => log!(error "Connection"; "Failed to disconnect {}: {}", addr, reason)
+                };
             } 
         });
     }
 
-    println!("{}", log::error("The server panicked!"));
+    log!(fatal "Server"; "The server panicked!");
+    log!(important "Server"; "Shutting down...");
 }
 
 struct ConnectionError;
@@ -74,7 +76,7 @@ async fn handle_connection(
     let ws_stream = match tokio_tungstenite::accept_async(raw_stream).await {
         Ok(ws_stream) => ws_stream,
         Err(error) => {
-            println!("{} failed to accept websocket handshake with {}. {}", log::error("Error:"), addr, error);
+            log!(error; "Failed to accept websocket handshake with {}: {}", addr, error);
             return Err(ConnectionError);
         }
     };
@@ -92,6 +94,7 @@ async fn handle_connection(
             return Err(ConnectionError)
         };
         let connection = Connection::new(mpsc_sender, addr);
+        log!(important "Connection"; "Connected: {}", addr);
         listener.on_connect(&connection);
         connection
     };
@@ -112,7 +115,7 @@ async fn handle_connection(
                 Ok(_) => {},
                 Err(tokio_tungstenite::tungstenite::Error::ConnectionClosed) => break,
                 Err(err) => {
-                    println!("{} while sending packet. {}", log::error("Error"), err);
+                    log!(error "Connection"; "Failed to send packet. {}", err);
                     break
                 },
             }

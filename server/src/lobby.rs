@@ -8,7 +8,7 @@ use crate::{
         role_list::RoleListEntry, 
         phase::PhaseType
     },
-    log, listener::ArbitraryPlayerID, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}, websocket_connections::connection::{ClientSender}
+    listener::ArbitraryPlayerID, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}, websocket_connections::connection::{ClientSender}, log
 };
 
 pub struct Lobby {
@@ -66,7 +66,7 @@ impl Lobby {
         match incoming_packet {
             ToServerPacket::SetName{ name } => {
                 let LobbyState::Lobby { players, .. } = &mut self.lobby_state else {
-                    println!("{} {}", log::error("ToServerPacket::SetName can not be used outside of LobbyState::Lobby"), player_arbitrary_id);
+                    log!(error "Lobby"; "{} {}", "ToServerPacket::SetName can not be used outside of LobbyState::Lobby", player_arbitrary_id);
                     return;
                 };
 
@@ -84,7 +84,7 @@ impl Lobby {
             },
             ToServerPacket::StartGame => {
                 let LobbyState::Lobby { settings, players } = &mut self.lobby_state else {
-                    println!("{} {}", log::error("ToServerPacket::StartGame can not be used outside of LobbyState::Lobby"), player_arbitrary_id);
+                    log!(error "Lobby"; "{} {}", "ToServerPacket::StartGame can not be used outside of LobbyState::Lobby", player_arbitrary_id);
                     return;
                 };
                 if let Some(player) = players.get(&player_arbitrary_id){
@@ -121,7 +121,7 @@ impl Lobby {
             },
             ToServerPacket::SetPhaseTime{phase, time} => {
                 let LobbyState::Lobby{ settings, players  } = &mut self.lobby_state else {
-                    println!("{} {}", log::error("Attempted to change phase time outside of the lobby menu!"), player_arbitrary_id);
+                    log!(error "Lobby"; "{} {}", "Attempted to change phase time outside of the lobby menu!", player_arbitrary_id);
                     return;
                 };
                 if let Some(player) = players.get(&player_arbitrary_id){
@@ -142,7 +142,7 @@ impl Lobby {
             },
             ToServerPacket::SetPhaseTimes { phase_time_settings } => {
                 let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
-                    println!("{} {}", log::error("Attempted to change phase time outside of the lobby menu!"), player_arbitrary_id);
+                    log!(error "Lobby"; "{} {}", "Attempted to change phase time outside of the lobby menu!", player_arbitrary_id);
                     return;
                 };
                 if let Some(player) = players.get(&player_arbitrary_id){
@@ -155,7 +155,7 @@ impl Lobby {
             }
             ToServerPacket::SetRoleList { mut role_list } => {
                 let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
-                    println!("{} {}", log::error("Can't modify game settings outside of the lobby menu"), player_arbitrary_id);
+                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", player_arbitrary_id);
                     return;
                 };
                 if let Some(player) = players.get(&player_arbitrary_id){
@@ -175,7 +175,7 @@ impl Lobby {
             }
             ToServerPacket::SetRoleListEntry { index, role_list_entry } => {
                 let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
-                    println!("{} {}", log::error("Can't modify game settings outside of the lobby menu"), player_arbitrary_id);
+                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", player_arbitrary_id);
                     return;
                 };
                 if let Some(player) = players.get(&player_arbitrary_id){
@@ -188,7 +188,7 @@ impl Lobby {
             }
             ToServerPacket::SetExcludedRoles {mut roles } => {
                 let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
-                    println!("{} {}", log::error("Can't modify game settings outside of the lobby menu"), player_arbitrary_id);
+                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", player_arbitrary_id);
                     return;
                 };
                 if let Some(player) = players.get(&player_arbitrary_id){
@@ -203,7 +203,7 @@ impl Lobby {
             }
             _ => {
                 let LobbyState::Game { game, players } = &mut self.lobby_state else {
-                    println!("{} {:?}", log::error("ToServerPacket not implemented for lobby was sent during lobby: "), incoming_packet);
+                    log!(error "Lobby"; "{} {:?}", "ToServerPacket not implemented for lobby was sent during lobby: ", incoming_packet);
                     return;
                 };
 
