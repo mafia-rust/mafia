@@ -142,13 +142,19 @@ ${translate("menu.graveyard.killedBy")+" "+deathCauseString}
 
 
     render(){return(<div className="graveyard-menu">
-        <button onClick={()=>{
-            GameScreen.instance.closeMenu(ContentMenus.GraveyardMenu)
-        }}>
-            <StyledText>
-                {translate("menu.graveyard.title")}
-            </StyledText>
-        </button>
+        <div>
+            <div>
+                <StyledText>
+                    {translate("menu.graveyard.title")}
+                </StyledText>
+            </div>
+
+            <button onClick={()=>{
+                GameScreen.instance.closeMenu(ContentMenus.GraveyardMenu)
+            }}>✕</button>
+        </div>
+        
+            
         <div>
             {this.renderRoleList()}
             {this.renderGraves()}

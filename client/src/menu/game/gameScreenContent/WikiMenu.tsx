@@ -5,6 +5,7 @@ import "./wikiMenu.css"
 import GameState from "../../../game/gameState.d";
 import translate from "../../../game/lang";
 import WikiSearch from "../../../components/WikiSearch";
+import StyledText from "../../../components/StyledText";
 
 interface WikiMenuProps {
 }
@@ -37,10 +38,18 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
 
 
     render(){return(<div className="wiki-menu">
-        {/* TODO: Use content-tab on other menus */}
-        <div className="content-tab">
-            <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.WikiMenu)}}>{translate("menu.wiki.title")}</button>
+        <div>
+            <div>
+                <StyledText>
+                    {translate("menu.wiki.title")}
+                </StyledText>
+            </div>
+
+            <button onClick={()=>{
+                GameScreen.instance.closeMenu(ContentMenus.WikiMenu)
+            }}>✕</button>
         </div>
+        
         <div className="wiki-menu-search">
             <WikiSearch/>
         </div>

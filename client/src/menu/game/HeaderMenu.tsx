@@ -86,33 +86,31 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
     
     renderMenuButtons(){
         return <div className="menu-buttons">
-            {(()=>
-                GameScreen.instance.menusOpen().includes(GameScreenContentMenus.GraveyardMenu)?null:
-                    <button onClick={()=>{
-                        GameScreen.instance.openMenu(GameScreenContentMenus.GraveyardMenu)
-                    
-                    }}>{translate("menu.graveyard.title")}</button>
-            )()}
-            {(()=>
-                GameScreen.instance.menusOpen().includes(GameScreenContentMenus.PlayerListMenu)?null:
-                    <button onClick={()=>{
-                        GameScreen.instance.openMenu(GameScreenContentMenus.PlayerListMenu)
-                    
-                    }}>{translate("menu.playerList.title")}</button>
-            )()}
-            {(()=>
-                GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WillMenu)?null:
-                    <button onClick={()=>{
-                        GameScreen.instance.openMenu(GameScreenContentMenus.WillMenu)
-                    }}>{translate("menu.will.title")}</button>
-            )()}
+            <button 
+            className={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.GraveyardMenu)?"highlighted":""} 
+            onClick={()=>{
+                GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.GraveyardMenu)
+            }}>{translate("menu.graveyard.title")}</button>
+
+            <button 
+            className={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.PlayerListMenu)?"highlighted":""} 
+            onClick={()=>{
+                GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.PlayerListMenu)
+            
+            }}>{translate("menu.playerList.title")}</button>
+            <button 
+            className={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WillMenu)?"highlighted":""} 
+            onClick={()=>{
+                GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.WillMenu)
+            }}>{translate("menu.will.title")}</button>
             {(()=>
                 (
-                    ROLES[this.state.gameState.role as Role] === undefined ||
-                    !ROLES[this.state.gameState.role as Role].largeRoleSpecificMenu || GameScreen.instance.menusOpen().includes(GameScreenContentMenus.RoleSpecificMenu)
+                    ROLES[this.state.gameState.role as Role] === undefined || !ROLES[this.state.gameState.role as Role].largeRoleSpecificMenu
                 )?null:
-                    <button onClick={()=>{
-                        GameScreen.instance.openMenu(GameScreenContentMenus.RoleSpecificMenu)
+                    <button 
+                    className={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.RoleSpecificMenu)?"highlighted":""} 
+                    onClick={()=>{
+                        GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.RoleSpecificMenu)
                     
                     }}>
                         <StyledText>
@@ -120,13 +118,13 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                         </StyledText>
                     </button>
             )()}
-            {(()=>
-                GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WikiMenu)?null:
-                    <button onClick={()=>{
-                        GameScreen.instance.openMenu(GameScreenContentMenus.WikiMenu)
-                    
-                    }}>{translate("menu.wiki.title")}</button>
-            )()}
+            <button 
+            className={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WikiMenu)?"highlighted":""} 
+            onClick={()=>{
+                GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.WikiMenu)
+            
+            }}>{translate("menu.wiki.title")}</button>
+
         </div>
     }
     renderPhase(){

@@ -42,9 +42,13 @@ export default class RoleSpecifcMenu extends React.Component<RoleSpecifcMenuProp
         }
     }
     render(){return(<div>
-        <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.RoleSpecificMenu)}}>
-            <StyledText>{translate("role."+this.state.gameState.role+".name")}</StyledText>
-        </button>
+        <div>
+            <div>
+                <StyledText>{translate("role."+this.state.gameState.role+".name")}</StyledText>
+            </div>
+            <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.RoleSpecificMenu)}}>✕
+            </button>
+        </div>
         <div>
             {this.renderRoleSpecificMenu()}
         </div>
