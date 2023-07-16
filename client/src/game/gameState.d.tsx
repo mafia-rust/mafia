@@ -1,5 +1,5 @@
 import { Grave } from "./grave";
-import { ChatMessage } from "./chatMessage";
+import { ChatMessage } from "../components/ChatMessage";
 import { Role, RoleState } from "./roleState.d";
 import { RoleListEntry } from "./roleListState.d";
 

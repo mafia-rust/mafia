@@ -44,15 +44,29 @@ export default function StyledText(props: { children: string[] | string, classNa
         )
     }];
 
-    for(const [stringToStyle, style] of Object.entries(KEYWORD_STYLE_MAP)){
+    for(const [keyword, style] of Object.entries(KEYWORD_STYLE_MAP)){
         // Using for..of or for..in is prone to errors, since we mutate the array as we loop through it,
         // which is why I've opted for a classical for loop to ensure completeness.
         for(let index = 0; index < tokens.length; index++) {
             const token = tokens[index];
             if (token.type !== "string") continue;
+            
+            let findKeyword;
+            // Detect if iOS <= 16.3
+            // This code doesn't work for iOS 1. Too bad!
+            // https://stackoverflow.com/a/11129615
+            if(
+                /(iPhone|iPod|iPad)/i.test(navigator.userAgent) && 
+                /OS ([2-15]_\d)|(16_[0-3])(_\d)? like Mac OS X/i.test(navigator.userAgent)
+            ) { 
+                // Close enough. This won't work if a keyword starts with a symbol.
+                findKeyword = RegExp(`\\b${regEscape(keyword)}(?!\\w)`, "gi");
+            } else {
+                findKeyword = RegExp(`(?<!\\w)${regEscape(keyword)}(?!\\w)`, "gi");
+            }
 
-            // Remove the stringToStyle and split so we can insert the styled text in its place
-            const stringSplit = token.string.split(RegExp(`(?<!\\w)${regEscape(stringToStyle)}(?!\\w)`, "gi"));
+            // Remove the keyword and split so we can insert the styled text in its place
+            const stringSplit = token.string.split(findKeyword);
 
             if (stringSplit.length === 1) continue;
 
@@ -67,7 +81,7 @@ export default function StyledText(props: { children: string[] | string, classNa
 
                 replacement.push({
                     type: "styled",
-                    string: stringToStyle,
+                    string: keyword,
                     className: style
                 });
             }

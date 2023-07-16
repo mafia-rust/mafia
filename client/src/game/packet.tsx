@@ -1,6 +1,6 @@
 import { Phase, PlayerIndex, Verdict, PhaseTimes, Tag } from "./gameState.d"
 import { Grave } from "./grave"
-import { ChatMessage } from "./chatMessage"
+import { ChatMessage } from "../components/ChatMessage"
 import { RoleListEntry } from "./roleListState.d"
 import { Role, RoleState } from "./roleState.d"
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu"
