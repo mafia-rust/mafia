@@ -5,6 +5,7 @@ import GameScreen, { ContentMenus } from "../GameScreen";
 import "./graveyardMenu.css";
 import GameState from "../../../game/gameState.d";
 import StyledText from "../../../components/StyledText";
+import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
 
 type RoleSpecifcMenuProps = {
 }
@@ -33,12 +34,19 @@ export default class RoleSpecifcMenu extends React.Component<RoleSpecifcMenuProp
         GAME_MANAGER.removeStateListener(this.listener);
     }
 
+    
+    renderRoleSpecificMenu(){
+        switch(this.state.gameState.role){
+            case "doomsayer":
+                return <LargeDoomsayerMenu/>;
+        }
+    }
     render(){return(<div>
         <button onClick={()=>{GameScreen.instance.closeMenu(ContentMenus.RoleSpecificMenu)}}>
             <StyledText>{translate("role."+this.state.gameState.role+".name")}</StyledText>
         </button>
         <div>
-            TODO actual menu and everything
+            {this.renderRoleSpecificMenu()}
         </div>
     </div>)}
 }
