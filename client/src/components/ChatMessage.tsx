@@ -1,7 +1,7 @@
 import { ReactElement } from "react";
 import translate from "../game/lang";
 import React from "react";
-import GAME_MANAGER, { regEscape } from "..";
+import GAME_MANAGER, { find } from "..";
 import StyledText from "./StyledText";
 import "./chatMessage.css"
 import { Phase, PlayerIndex, Verdict } from "../game/gameState.d";
@@ -24,10 +24,10 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
         }
         // Could I write a regex that combines both of these? Yes. Will I? No.
         if (
-            RegExp(`(?<!\\w)${regEscape(GAME_MANAGER.gameState.myName ?? "")}(?!\\w)`, "i").test(message.text) ||
+            find(GAME_MANAGER.gameState.myName ?? "").test(message.text) ||
             (
                 GAME_MANAGER.gameState.myIndex !== null &&
-                RegExp(`(?<!\\w)${regEscape("" + (GAME_MANAGER.gameState.myIndex + 1))}(?!\\w)`, "i").test(message.text)
+                find("" + (GAME_MANAGER.gameState.myIndex + 1)).test(message.text)
             )
             
         ) {

@@ -3,7 +3,7 @@ import { marked } from "marked";
 import React, { ReactElement, useEffect, useState } from "react";
 import ReactDOMServer from "react-dom/server";
 import { Player } from "../game/gameState.d";
-import GAME_MANAGER, { regEscape } from "..";
+import GAME_MANAGER, { find } from "..";
 import translate from "../game/lang";
 import { Role, getFactionFromRole } from "../game/roleState.d";
 import ROLES from "../resources/roles.json";
@@ -51,22 +51,8 @@ export default function StyledText(props: { children: string[] | string, classNa
             const token = tokens[index];
             if (token.type !== "string") continue;
             
-            let findKeyword;
-            // Detect if iOS <= 16.3
-            // This code doesn't work for iOS 1. Too bad!
-            // https://stackoverflow.com/a/11129615
-            if(
-                /(iPhone|iPod|iPad)/i.test(navigator.userAgent) && 
-                /OS ([2-9]_\d)|(1[0-5]_\d)|(16_[0-3])(_\d)? like Mac OS X/i.test(navigator.userAgent)
-            ) { 
-                // Close enough. This won't work if a keyword starts with a symbol.
-                findKeyword = RegExp(`\\b${regEscape(keyword)}(?!\\w)`, "gi");
-            } else {
-                findKeyword = RegExp(`(?<!\\w)${regEscape(keyword)}(?!\\w)`, "gi");
-            }
-
             // Remove the keyword and split so we can insert the styled text in its place
-            const stringSplit = token.string.split(findKeyword);
+            const stringSplit = token.string.split(find(keyword));
 
             if (stringSplit.length === 1) continue;
 

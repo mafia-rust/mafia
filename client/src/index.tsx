@@ -47,6 +47,21 @@ ROOT.render(
     />
 );
 
+export function find(text: string): RegExp {
+    // Detect if iOS <= 16.3
+    // This code doesn't work for iOS 1. Too bad!
+    // https://stackoverflow.com/a/11129615
+    if(
+        /(iPhone|iPod|iPad)/i.test(navigator.userAgent) && 
+        /OS ([2-9]_\d)|(1[0-5]_\d)|(16_[0-3])(_\d)? like Mac OS X/i.test(navigator.userAgent)
+    ) { 
+        // Close enough. This won't work if a keyword starts with a symbol.
+        return RegExp(`\\b${regEscape(text)}(?!\\w)`, "gi");
+    } else {
+        return RegExp(`(?<!\\w)${regEscape(text)}(?!\\w)`, "gi");
+    }
+}
+
 export function regEscape(text: string) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
 }
