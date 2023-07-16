@@ -125,6 +125,25 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                 break;
         }
     }
+    closeOrOpenMenu(menu: ContentMenus){
+        switch(menu) {
+            case ContentMenus.GraveyardMenu:
+                this.setState({graveyardMenu: !this.menusOpen().includes(menu)});
+                break;
+            case ContentMenus.PlayerListMenu:
+                this.setState({playerListMenu: !this.menusOpen().includes(menu)});
+                break;
+            case ContentMenus.WillMenu:
+                this.setState({willMenu: !this.menusOpen().includes(menu)});
+                break;
+            case ContentMenus.WikiMenu:
+                this.setState({wikiMenu: !this.menusOpen().includes(menu)});
+                break;
+            case ContentMenus.RoleSpecificMenu:
+                this.setState({roleSpecificMenu: !this.menusOpen().includes(menu)});
+                break;
+        }
+    }
     menusOpen(): ContentMenus[] {
         let out = [];
         if(this.state.graveyardMenu) {

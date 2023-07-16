@@ -50,3 +50,28 @@
     border-left: var(--primary-border-color) solid 1px;
     border-right: var(--primary-border-color) solid 1px;
 }
+
+.game-screen .content > div > :first-child {
+    display: flex;
+    flex-direction: row;
+    height: max-content;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 1px;
+    border-style: solid;
+    border-color: var(--primary-border-color);
+    width: 100%;
+    margin: 0;
+    background-color: var(--primary-color);
+    justify-content: space-between;
+    align-items: center;
+}
+.game-screen .content > div > :first-child > div{
+    flex-grow: 1;
+}
+.game-screen .content > div > :first-child > button{
+    width: max-content;
+    /* height: max-content; */
+    margin: 0;
+}
