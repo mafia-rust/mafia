@@ -74,7 +74,7 @@ impl Lobby {
                 other_players.remove(&player_arbitrary_id);
                 
                 let name = name_validation::sanitize_name(name, &other_players);
-                if let Some(mut player) = players.get_mut(&player_arbitrary_id){
+                if let Some(player) = players.get_mut(&player_arbitrary_id){
                     player.name = name.clone();
                 }
                 
