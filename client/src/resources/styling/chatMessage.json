@@ -53,5 +53,7 @@
     "witchBug": "result",
     "witchTargetImmune": "result",
     "witchedYou": "result",
-    "youSurvivedAttack": "result"
+    "youSurvivedAttack": "result",
+    "doomsayerFailed": "result",
+    "doomsayerWon": "result"
 }
