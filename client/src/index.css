@@ -43,11 +43,16 @@ button, input, select, option, textarea, summary {
     display: block;
 }
 
+:has(button.clear) {
+    position: relative;
+}
+
 button.clear {
     display: none;
-    font-size: 1rem;
+    font-size: 0.8rem;
     position: absolute;
-    right: .15rem;
+    right: 0.5rem;
+    top: 0.4rem;
     background: none;
     border: none;
     padding: 0;
