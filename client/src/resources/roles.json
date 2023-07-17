@@ -209,6 +209,26 @@
         "maxCount": 1,
         "largeRoleSpecificMenu": false
     },
+    "witch": {
+        "factionAlignment": "mafiaSupport",
+        "suspicious": true,
+        "roleblockable": false,
+        "defense": 0,
+        "witchable": false,
+        "endGameCondition": "Faction",
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false
+    },
+    "necromancer": {
+        "factionAlignment": "mafiaSupport",
+        "suspicious": true,
+        "roleblockable": false,
+        "defense": 0,
+        "witchable": false,
+        "endGameCondition": "Faction",
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false
+    },
     "janitor": {
         "factionAlignment": "mafiaDeception",
         "suspicious": true,
@@ -227,16 +247,6 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
-    },
-    "witch": {
-        "factionAlignment": "mafiaSupport",
-        "suspicious": true,
-        "roleblockable": true,
-        "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
-        "maxCount": 1,
         "largeRoleSpecificMenu": false
     },
     "jester": {

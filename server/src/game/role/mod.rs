@@ -65,6 +65,7 @@ macros::roles! {
     Blackmailer : blackmailer,
     Consigliere: consigliere,
     Witch : witch,
+    Necromancer : necromancer,
 
     Janitor : janitor,
     Framer : framer,

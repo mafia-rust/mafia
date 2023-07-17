@@ -143,9 +143,9 @@ pub enum ChatMessage {
     Transported,
 
     #[serde(rename_all = "camelCase")]
-    RetributionistBug{message: Box<ChatMessage>},
+    RetributionistMessage{message: Box<ChatMessage>},
     #[serde(rename_all = "camelCase")]
-    NecromancerBug{message: Box<ChatMessage>},
+    NecromancerMessage{message: Box<ChatMessage>},
 
     GodfatherForcedMafioso,
     GodfatherForcedYou,

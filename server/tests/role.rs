@@ -2,7 +2,7 @@ mod kit;
 use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
-use mafia_server::game::{chat::{MessageSender, ChatGroup}, role::{retributionist::Retributionist, jester::Jester, crusader::Crusader, framer::Framer, veteran::Veteran, executioner::Executioner, spy::{Spy, SpyBug}, blackmailer::Blackmailer, vampire::Vampire, doctor::Doctor, Role, janitor::Janitor}};
+use mafia_server::game::{chat::{MessageSender, ChatGroup}, role::{retributionist::Retributionist, jester::Jester, crusader::Crusader, framer::Framer, veteran::Veteran, executioner::Executioner, spy::{Spy, SpyBug}, blackmailer::Blackmailer, vampire::Vampire, doctor::Doctor, Role, janitor::Janitor, consigliere::Consigliere, necromancer::Necromancer, witch::Witch}};
 // Pub use so that submodules don't have to re-import everything.
 pub use mafia_server::game::{role::{RoleState, transporter::Transporter, medium::Medium, jailor::Jailor, vigilante::Vigilante, sheriff::Sheriff, escort::Escort, mafioso::Mafioso, bodyguard::Bodyguard}, phase::PhaseState, chat::ChatMessage};
 pub use mafia_server::packet::ToServerPacket;
@@ -164,7 +164,7 @@ fn retributionist_basic(){
     game.next_phase();
     assert_eq!(
         *ret.get_messages().get(ret.get_messages().len()-2).unwrap(),
-        ChatMessage::RetributionistBug{message: Box::new(
+        ChatMessage::RetributionistMessage{message: Box::new(
             ChatMessage::SheriffResult{ suspicious: true }
         )}
     );
@@ -174,7 +174,7 @@ fn retributionist_basic(){
     game.next_phase();
     assert_ne!(
         *ret.get_messages().get(ret.get_messages().len()-2).unwrap(), 
-        ChatMessage::RetributionistBug{message: Box::new(
+        ChatMessage::RetributionistMessage{message: Box::new(
             ChatMessage::SheriffResult{suspicious: true}
         )}
     );
@@ -184,11 +184,96 @@ fn retributionist_basic(){
     game.next_phase();
     assert_eq!(
         *ret.get_messages().get(ret.get_messages().len()-2).unwrap(), 
-        ChatMessage::RetributionistBug{message: Box::new(
+        ChatMessage::RetributionistMessage{message: Box::new(
             ChatMessage::SheriffResult{suspicious: false}
         )}
     );
 }
+
+#[test]
+fn necromancer_basic(){
+    kit::scenario!(game where
+        ret: Necromancer,
+        sher: Sheriff,
+        consigliere: Consigliere,
+        mafioso: Mafioso,
+        jester: Jester
+    );
+    sher.die();
+    consigliere.die();
+
+    game.next_phase();
+    assert!(ret.set_night_targets(vec![sher, mafioso]));
+    game.next_phase();
+    assert_eq!(
+        *ret.get_messages().get(ret.get_messages().len()-2).unwrap(),
+        ChatMessage::NecromancerMessage{message: Box::new(
+            ChatMessage::SheriffResult{ suspicious: true }
+        )}
+    );
+    
+    game.skip_to(PhaseType::Night, 2);
+    assert!(!ret.set_night_targets(vec![sher, mafioso, jester]));
+    game.next_phase();
+    assert_ne!(
+        *ret.get_messages().get(ret.get_messages().len()-2).unwrap(), 
+        ChatMessage::NecromancerMessage{message: Box::new(
+            ChatMessage::SheriffResult{suspicious: true}
+        )}
+    );
+    
+    game.skip_to(PhaseType::Night, 3);
+    assert!(ret.set_night_targets(vec![consigliere, jester, mafioso]));
+    game.next_phase();
+    assert_eq!(
+        *ret.get_messages().get(ret.get_messages().len()-2).unwrap(), 
+        ChatMessage::NecromancerMessage{message: Box::new(
+            ChatMessage::ConsigliereResult { role: Role::Jester, visited_by: vec![], visited: vec![] }
+        )}
+    );
+}
+
+#[test]
+fn witch_basic(){
+    kit::scenario!(game where
+        witch: Witch,
+        sher: Sheriff,
+        consigliere: Consigliere,
+        mafioso: Mafioso,
+        jester: Jester
+    );
+
+    game.next_phase();
+    assert!(witch.set_night_targets(vec![sher, mafioso]));
+    game.next_phase();
+    assert_eq!(
+        *witch.get_messages().get(witch.get_messages().len()-2).unwrap(),
+        ChatMessage::WitchMessage{message: Box::new(
+            ChatMessage::SheriffResult{ suspicious: true }
+        )}
+    );
+    
+    game.skip_to(PhaseType::Night, 2);
+    assert!(witch.set_night_targets(vec![sher, mafioso, jester]));
+    game.next_phase();
+    assert_eq!(
+        *witch.get_messages().get(witch.get_messages().len()-2).unwrap(), 
+        ChatMessage::WitchMessage{message: Box::new(
+            ChatMessage::SheriffResult{suspicious: true}
+        )}
+    );
+    
+    game.skip_to(PhaseType::Night, 3);
+    assert!(!witch.set_night_targets(vec![consigliere, jester, mafioso]));
+    game.next_phase();
+    assert_ne!(
+        *witch.get_messages().get(witch.get_messages().len()-2).unwrap(), 
+        ChatMessage::WitchMessage{message: Box::new(
+            ChatMessage::ConsigliereResult { role: Role::Jester, visited_by: vec![], visited: vec![] }
+        )}
+    );
+}
+
 
 #[test]
 fn crusader_basic(){
@@ -271,8 +356,8 @@ fn veteran_doesnt_kill_framed_player(){
 fn executioner_turns_into_jester(){
     kit::scenario!(game in Night 1 where
         target: Sheriff,
-        exe: Executioner,
-        mafioso: Mafioso
+        mafioso: Mafioso,
+        exe: Executioner
     );
 
     assert!(mafioso.set_night_targets(vec![target]));

@@ -33,8 +33,7 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
         ) {
             style += " mention";
         } 
-    } else if (message.type === "retributionistBug") {
-        style += " result"
+    } else if (message.type === "retributionistMessage" || message.type === "necromancerMessage" || message.type === "witchMessage") {
         return <>
             <StyledText className={"chat-message " + style}>{text}</StyledText>
             <ChatElement message={message.message}/>
@@ -233,8 +232,6 @@ export function translateChatMessage(message: ChatMessage): string {
             }
         case "seerResult":
             return translate("chatmessage.seerResult." + (message.enemies ? "enemies" : "friends"));
-        case "retributionistBug":
-            return translate("chatmessage.retributionistBug");
         case "playerRoleAndWill":
             return translate("chatmessage.playersRoleAndWill", 
                 translate("role."+message.role+".name"), 
@@ -262,6 +259,8 @@ export function translateChatMessage(message: ChatMessage): string {
             return translate("chatmessage.silenced");
         case "mediumSeance":
             return translate("chatmessage.mediumSeance", GAME_MANAGER.gameState.players[message.player].toString());
+        case "witchedYou":
+            return translate("chatmessage.witchedYou" + (message.immune ? ".immune" : ""));
         case "arsonistCleanedSelf":
         case "arsonistDousedPlayers":
         case "doctorHealed":
@@ -281,12 +280,13 @@ export function translateChatMessage(message: ChatMessage): string {
         case "veteranAttackedVisitor":
         case "veteranAttackedYou":
         case "vigilanteSuicide":
-        case "witchMessage":
         case "witchTargetImmune":
-        case "witchedYou":
         case "youSurvivedAttack":
         case "doomsayerFailed":
         case "doomsayerWon":
+        case "retributionistMessage":
+        case "necromancerMessage":
+        case "witchMessage":
             return translate("chatmessage."+message.type);
         default:
             console.error("Unknown message type " + (message as any).type + ":");
@@ -411,7 +411,10 @@ export type ChatMessage = {
     type: "seerResult",
     enemies: boolean
 } | {
-    type: "retributionistBug", 
+    type: "retributionistMessage", 
+    message: ChatMessage
+} | {
+    type: "necromancerMessage", 
     message: ChatMessage
 } | {
     type: "veteranAttackedYou"
@@ -448,10 +451,10 @@ export type ChatMessage = {
 } | {
     type: "witchTargetImmune"
 } | {
-    type: "witchedYou", 
+    type: "witchedYou",
     immune: boolean
 } | {
-    type: "witchMessage", 
+    type: "witchMessage",
     message: ChatMessage
 } | {
     type: "arsonistCleanedSelf"
