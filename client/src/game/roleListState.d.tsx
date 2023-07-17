@@ -2,7 +2,7 @@ import translate from "./lang";
 import { Role, getFactionAlignmentFromRole, getFactionFromRole } from "./roleState.d";
 
 
-export const FACTIONS = ["town", "mafia", "neutral", "coven"] as const;
+export const FACTIONS = ["town", "mafia", "neutral"] as const;
 export type Faction = typeof FACTIONS[number]
 export function getAllFactionAlignments(faction: Faction): FactionAlignment[] {
     switch(faction){
@@ -10,13 +10,10 @@ export function getAllFactionAlignments(faction: Faction): FactionAlignment[] {
             "townPower", "townKilling", "townProtective", "townInvestigative", "townSupport"
         ];
         case "mafia": return [
-            "mafiaKilling", "mafiaDeception", "mafiaSupport"
+            "mafiaKilling", "mafiaDeception", "mafiaSupport", "mafiaPower"
         ];
         case "neutral": return [
             "neutralKilling", "neutralEvil", "neutralChaos"
-        ];
-        case "coven": return [
-            "covenPower", "covenKilling", "covenUtility", "covenDeception"
         ];
     }
 }
@@ -29,9 +26,8 @@ export function getRoleListEntryFromFaction(faction: Faction): RoleListEntry {
 
 export const FACTION_ALIGNMENTS = [
     "townPower","townKilling","townProtective","townInvestigative","townSupport",
-    "mafiaKilling","mafiaDeception","mafiaSupport",
-    "neutralKilling","neutralEvil","neutralChaos",
-    "covenPower","covenKilling","covenUtility","covenDeception"
+    "mafiaKilling","mafiaDeception","mafiaSupport","mafiaPower",
+    "neutralKilling","neutralEvil","neutralChaos"
 ] as const;
 export type FactionAlignment = typeof FACTION_ALIGNMENTS[number]
 
@@ -46,15 +42,11 @@ export function getFactionFromFactionAlignment(factionAlignment: FactionAlignmen
         case "mafiaKilling": return "mafia";
         case "mafiaDeception": return "mafia";
         case "mafiaSupport": return "mafia";
+        case "mafiaPower": return "mafia";
 
         case "neutralKilling": return "neutral";
         case "neutralEvil": return "neutral";
         case "neutralChaos": return "neutral";
-
-        case "covenPower": return "coven";
-        case "covenKilling": return "coven";
-        case "covenUtility": return "coven";
-        case "covenDeception": return "coven";
     }
 }
 export function getAlignmentStringFromFactionAlignment(factionAlignment: FactionAlignment): string {

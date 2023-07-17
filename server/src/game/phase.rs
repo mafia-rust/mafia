@@ -8,7 +8,7 @@ use super::{
     settings::PhaseTimeSettings,
     Game, player::PlayerReference,
     chat::{ChatGroup, ChatMessage},
-    grave::Grave, role::{Priority},
+    grave::Grave, role::Priority,
 };
 
 

@@ -3,29 +3,29 @@ use serde::Serialize;
 use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::{FactionAlignment, Faction};
+use crate::game::role_list::FactionAlignment;
 use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::team::Team;
 use super::{Priority, RoleState, RoleStateImpl};
 
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownSupport;
+pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaSupport;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 #[derive(Clone, Debug, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Retributionist { 
+pub struct Necromancer { 
     used_bodies: Vec<PlayerReference>, 
     currently_used_player: Option<PlayerReference> 
 }
-impl RoleStateImpl for Retributionist {
+impl RoleStateImpl for Necromancer {
     fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
     fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {true}
     fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {true}
-    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::Town}
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
+    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::Mafia}
+    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Mafia)}
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return;}
@@ -51,13 +51,13 @@ impl RoleStateImpl for Retributionist {
 
                 let mut used_bodies = self.used_bodies;
                 used_bodies.push(first_visit.target);
-                actor_ref.set_role_state(game, RoleState::Retributionist(Retributionist { used_bodies, currently_used_player: Some(first_visit.target) }));
+                actor_ref.set_role_state(game, RoleState::Necromancer(Necromancer { used_bodies, currently_used_player: Some(first_visit.target) }));
             },
             Priority::StealMessages => {
                 if let Some(currently_used_player) = self.currently_used_player {
                     for message in currently_used_player.night_messages(game).clone() {
                         actor_ref.push_night_message(game,
-                            ChatMessage::RetributionistMessage { message: Box::new(message.clone()) }
+                            ChatMessage::NecromancerMessage { message: Box::new(message.clone()) }
                         );
                     }
                 }
@@ -71,7 +71,6 @@ impl RoleStateImpl for Retributionist {
         ((
             actor_ref.chosen_targets(game).is_empty() &&
             !target_ref.alive(game) &&
-            target_ref.role(game).faction_alignment().faction() == Faction::Town &&
             !self.used_bodies.iter().any(|p| *p == target_ref)
         ) || (
             actor_ref != target_ref &&
@@ -103,14 +102,14 @@ impl RoleStateImpl for Retributionist {
         }
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
+        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Mafia])
     }
     fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         if phase == PhaseType::Night {
-            actor_ref.set_role_state(game, RoleState::Retributionist(Retributionist { used_bodies: self.used_bodies, currently_used_player: None }));
+            actor_ref.set_role_state(game, RoleState::Necromancer(Necromancer { used_bodies: self.used_bodies, currently_used_player: None }));
         }
     }
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){

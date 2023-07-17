@@ -64,12 +64,11 @@ macros::roles! {
     Consort : consort,
     Blackmailer : blackmailer,
     Consigliere: consigliere,
+    Witch : witch,
+    Necromancer : necromancer,
 
     Janitor : janitor,
     Framer : framer,
-
-    //Coven
-    Witch : witch,
 
     //Neutral
     Jester : jester,

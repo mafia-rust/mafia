@@ -97,16 +97,16 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         return(<div className="player" key={player.index}>
             <div className="top">
                 <button className="whisper" onClick={()=>ChatMenu.prependWhisper(player.index)}>
-                            <StyledText>{player.playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
-                            {(
-                                player.numVoted!==null &&
-                                player.numVoted!==0 &&
-                                this.state.gameState.phase==="voting" ? 
-                                player.numVoted+" :":""
-                            )}
-                            <StyledText>{player.toString()}</StyledText>
-                            <StyledText>{(player.roleLabel==null?"":(" ("+translate("role."+player.roleLabel+".name")+")"))}</StyledText>
-                            <StyledText>{(player.alive?"":" ("+translate("dead")+")")}</StyledText>
+                    <StyledText>{player.playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
+                    <StyledText>{(player.alive?"":" ("+translate("tag.dead")+")")}</StyledText>
+                    {(
+                        player.numVoted!==null &&
+                        player.numVoted!==0 &&
+                        this.state.gameState.phase==="voting" ? 
+                        player.numVoted+" :":""
+                    )}
+                    <StyledText>{player.toString()}</StyledText>
+                    <StyledText>{(player.roleLabel==null?"":(" ("+translate("role."+player.roleLabel+".name")+")"))}</StyledText>
                 </button>
                 {(() => {
                     const filter = find(player.name);

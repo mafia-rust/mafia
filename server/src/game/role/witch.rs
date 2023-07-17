@@ -1,35 +1,88 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup};
+use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::{FactionAlignment};
+use crate::game::role_list::FactionAlignment;
 use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
 use crate::game::Game;
-use super::{Priority, RoleStateImpl};
+use super::{Priority, RoleStateImpl, RoleState};
 
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::CovenPower;
+pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaSupport;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 #[derive(Clone, Debug, Default, Serialize)]
-pub struct Witch;
+pub struct Witch{
+    currently_used_player: Option<PlayerReference> 
+}
 
 impl RoleStateImpl for Witch {
     fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {true}
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
     fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {true}
     fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {true}
-    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::Coven}
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Coven)}
+    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::Mafia}
+    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Mafia)}
 
 
-    fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {
+    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+        if actor_ref.night_jailed(game) {return;}
+        
+        match priority {
+            Priority::Control => {
 
+                let witch_visits = actor_ref.night_visits(game).clone();
+                let Some(first_visit) = witch_visits.get(0) else {return};
+                let Some(second_visit) = witch_visits.get(1) else {return};
+                if !first_visit.target.alive(game) {return;}
+                
+                first_visit.target.push_night_message(game,
+                    ChatMessage::WitchedYou { immune: first_visit.target.control_immune(game) }
+                );
+                if first_visit.target.control_immune(game) {
+                    actor_ref.push_night_message(game,
+                        ChatMessage::WitchTargetImmune
+                    );
+                    return;
+                }
+
+                let mut new_chosen_targets = vec![second_visit.target];
+                if let Some(third_visit) = witch_visits.get(2){
+                    new_chosen_targets.push(third_visit.target);
+                }
+
+                first_visit.target.set_night_visits(
+                    game,
+                    first_visit.target.convert_targets_to_visits(game, new_chosen_targets)
+                );
+
+                actor_ref.set_role_state(game, RoleState::Witch(Witch { currently_used_player: Some(first_visit.target) }));
+            },
+            Priority::StealMessages => {
+                if let Some(currently_used_player) = self.currently_used_player {
+                    for message in currently_used_player.night_messages(game).clone() {
+                        actor_ref.push_night_message(game,
+                            ChatMessage::WitchMessage { message: Box::new(message.clone()) }
+                        );
+                    }
+                }
+            },
+            _ => {}
+        }
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_target(game, actor_ref, target_ref)
+        !actor_ref.night_jailed(game) &&
+        actor_ref.alive(game) &&
+        target_ref.alive(game) &&
+        ((
+            actor_ref.chosen_targets(game).is_empty() &&
+            !Team::same_team(game, actor_ref, target_ref)
+        ) || (
+            actor_ref != target_ref &&
+            (actor_ref.chosen_targets(game).len() == 1 || actor_ref.chosen_targets(game).len() == 2)
+        ))
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
     
@@ -37,16 +90,32 @@ impl RoleStateImpl for Witch {
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false
     }
-    fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, true)
+    fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        if target_refs.len() == 2 {
+            vec![
+                Visit{target: target_refs[0], astral: false, attack: false}, 
+                Visit{target: target_refs[1], astral: true, attack: false},
+            ]
+        } else if target_refs.len() >= 3 {
+            vec![
+                Visit{target: target_refs[0], astral: false, attack: false}, 
+                Visit{target: target_refs[1], astral: true, attack: false},
+                Visit{target: target_refs[2], astral: true, attack: false}
+            ]
+        }else{
+            Vec::new()
+        }
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Coven])
+        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Mafia])
     }
     fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
     }
-    fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType){
+    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
+        if phase == PhaseType::Night {
+            actor_ref.set_role_state(game, RoleState::Witch(Witch { currently_used_player: None }));
+        }
     }
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
         

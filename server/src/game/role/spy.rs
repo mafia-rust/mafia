@@ -40,19 +40,14 @@ impl RoleStateImpl for Spy {
                 if actor_ref.night_roleblocked(game) {return;}
 
                 let mut mafia_visits = vec![];
-                let mut coven_visits = vec![];
                 for other_player in PlayerReference::all_players(game){
                     if other_player.role(game).faction_alignment().faction() == Faction::Mafia{
                         mafia_visits.append(&mut other_player.night_visits(game).iter().filter(|v|!v.astral).map(|v|v.target.index()).collect());
-                    }else if other_player.role(game).faction_alignment().faction() == Faction::Coven{
-                        coven_visits.append(&mut other_player.night_visits(game).iter().filter(|v|!v.astral).map(|v|v.target.index()).collect());
                     }
                 }
                 mafia_visits.shuffle(&mut rand::thread_rng());
-                coven_visits.shuffle(&mut rand::thread_rng());
                 
                 actor_ref.push_night_message(game, ChatMessage::SpyMafiaVisit { players: mafia_visits });
-                actor_ref.push_night_message(game, ChatMessage::SpyCovenVisit { players: coven_visits });
             },
             Priority::SpyBug => {
                 let Some(visit) = actor_ref.night_visits(game).first()else{return};

@@ -12,7 +12,6 @@
     "faction.town": "keyword-good",
     "faction.mafia": "keyword-evil",
     "faction.neutral": "keyword-neutral",
-    "faction.coven": "keyword-magic",
     "alignment.killing": "keyword-info",
     "alignment.investigative": "keyword-info",
     "alignment.protective": "keyword-info",
@@ -34,7 +33,8 @@
     "menu.wiki.abilities": "keyword-info",
     "menu.wiki.attributes": "keyword-info",
     "grave.killer.suicide": "keyword-info",
-    "kys": "keyword-pride",
-    "pride.gay": "keyword-pride",
-    "pride.trans": "keyword-trans"
+    "random.kys": "keyword-pride",
+    "random.gay": "keyword-pride",
+    "random.trans": "keyword-trans",
+    "random.fuck_off": "keyword-pride"
 }

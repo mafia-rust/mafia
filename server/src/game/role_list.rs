@@ -20,25 +20,17 @@ macro_rules! make_faction_enum {
 make_faction_enum!{
     Mafia,
     Town,
-    Neutral,
-    Coven
+    Neutral
 }
 impl Faction{
     pub fn all_alignments(&self)->Vec<FactionAlignment>{
         match self{
-            Faction::Coven => vec![
-                FactionAlignment::CovenPower,
-                FactionAlignment::CovenKilling,
-                FactionAlignment::CovenUtility,
-                FactionAlignment::CovenDeception
-            ],
             Faction::Town => vec![
                 FactionAlignment::TownPower,
                 FactionAlignment::TownInvestigative,
                 FactionAlignment::TownProtective,
                 FactionAlignment::TownKilling,
                 FactionAlignment::TownSupport,
-                FactionAlignment::TownTraitor
             ],
             Faction::Neutral => vec![
                 FactionAlignment::NeutralEvil,
@@ -49,7 +41,7 @@ impl Faction{
                 FactionAlignment::MafiaKilling,
                 FactionAlignment::MafiaDeception,
                 FactionAlignment::MafiaSupport,
-                FactionAlignment::MafiaTraitor
+                FactionAlignment::MafiaPower,
             ],
         }
     }
@@ -88,34 +80,26 @@ make_faction_alignment_enum!{
     MafiaKilling,
     MafiaDeception,
     MafiaSupport,
-    MafiaTraitor,
-
+    MafiaPower,
+    
     TownPower,
     TownInvestigative,
     TownProtective,
     TownKilling,
     TownSupport,
-    TownTraitor,
 
     NeutralEvil,
     NeutralKilling,
-    NeutralChaos,
-
-    CovenPower,
-    CovenKilling,
-    CovenUtility,
-    CovenDeception
+    NeutralChaos
 }
 impl FactionAlignment{
     pub fn faction(&self)->Faction{
         match self {
-            Self::TownPower | Self::TownInvestigative | Self::TownProtective | Self::TownKilling | Self::TownSupport | Self::TownTraitor
+            Self::TownPower | Self::TownInvestigative | Self::TownProtective | Self::TownKilling | Self::TownSupport
                 => Faction::Town,
-            Self::CovenPower |  Self::CovenKilling | Self::CovenUtility | Self::CovenDeception
-                => Faction::Coven,
             Self::NeutralEvil | Self::NeutralKilling | Self::NeutralChaos 
                 => Faction::Neutral,
-            Self::MafiaKilling | Self::MafiaDeception | Self::MafiaSupport | Self::MafiaTraitor
+            Self::MafiaKilling | Self::MafiaDeception | Self::MafiaSupport | Self::MafiaPower
                 => Faction::Mafia,
         }
     }
