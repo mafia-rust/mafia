@@ -72,6 +72,13 @@ pub mod _init {
     
         let mut players = Vec::new();
         
+        // Assign role state manually before setting role, so on_role_creation knows the correct other roles in the game.
+        // (set_role calls on_role_creation)
+        for (index, role) in roles.iter().enumerate() {
+            let player = PlayerReference::new(&game, index as u8).unwrap();
+            player.set_role_state(&mut game, role.clone());
+        }
+
         for (index, role) in roles.into_iter().enumerate() {
             let player = PlayerReference::new(&game, index as u8).unwrap();
             player.set_role(&mut game, role);
