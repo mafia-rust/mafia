@@ -128,7 +128,6 @@ pub enum ChatMessage {
     TrackerResult{players: Vec<PlayerIndex>},
     SeerResult{ enemies: bool},
     SpyMafiaVisit{players: Vec<PlayerIndex>},
-    SpyCovenVisit{players: Vec<PlayerIndex>},
     SpyBug{bug: SpyBug},
 
     VeteranAttackedYou,
@@ -160,7 +159,7 @@ pub enum ChatMessage {
  
     WitchTargetImmune,
     WitchedYou { immune: bool },    //you were witched
-    WitchBug{message: Box<ChatMessage>},
+    WitchMessage{message: Box<ChatMessage>},
 
     ArsonistCleanedSelf,    //You cleaned the gas off yourself
     ArsonistWasDoused,  //you were doused in gas (only arsonists recieve this message)
@@ -181,7 +180,6 @@ pub enum ChatGroup {
 
     Mafia,
     Vampire,
-    Coven,
 
     Jail,
     Seance

@@ -230,7 +230,7 @@
         "largeRoleSpecificMenu": false
     },
     "witch": {
-        "factionAlignment": "covenPower",
+        "factionAlignment": "mafiaSupport",
         "suspicious": true,
         "roleblockable": true,
         "defense": 0,

@@ -12,7 +12,6 @@
     "faction.town": "keyword-good",
     "faction.mafia": "keyword-evil",
     "faction.neutral": "keyword-neutral",
-    "faction.coven": "keyword-magic",
     "alignment.killing": "keyword-info",
     "alignment.investigative": "keyword-info",
     "alignment.protective": "keyword-info",

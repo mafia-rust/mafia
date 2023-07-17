@@ -219,16 +219,6 @@ export function translateChatMessage(message: ChatMessage): string {
                     ).join(", ")
                 );
             }
-        case "spyCovenVisit":
-            if (message.players.length === 0) {
-                return translate("chatmessage.spyCovenVisit.nobody");
-            } else {
-                return translate("chatmessage.spyCovenVisit", 
-                    message.players.map(playerIndex => 
-                        GAME_MANAGER.gameState.players[playerIndex].toString()
-                    ).join(", ")
-                );
-            }
         case "spyBug":
             return translate("chatmessage.spyBug."+message.bug);
         case "trackerResult":
@@ -291,7 +281,7 @@ export function translateChatMessage(message: ChatMessage): string {
         case "veteranAttackedVisitor":
         case "veteranAttackedYou":
         case "vigilanteSuicide":
-        case "witchBug":
+        case "witchMessage":
         case "witchTargetImmune":
         case "witchedYou":
         case "youSurvivedAttack":
@@ -309,7 +299,7 @@ export type ChatMessage = {
     type: "normal", 
     messageSender: MessageSender, 
     text: string, 
-    chatGroup: "all" | "mafia" | "dead" | "vampire" | "coven"
+    chatGroup: "all" | "mafia" | "dead" | "vampire"
 } | {
     type: "whisper", 
     fromPlayerIndex: PlayerIndex, 
@@ -412,9 +402,6 @@ export type ChatMessage = {
     type: "spyMafiaVisit", 
     players: PlayerIndex[]
 } | {
-    type: "spyCovenVisit", 
-    players: PlayerIndex[]
-} | {
     type: "spyBug", 
     bug: String
 } | {
@@ -464,7 +451,7 @@ export type ChatMessage = {
     type: "witchedYou", 
     immune: boolean
 } | {
-    type: "witchBug", 
+    type: "witchMessage", 
     message: ChatMessage
 } | {
     type: "arsonistCleanedSelf"

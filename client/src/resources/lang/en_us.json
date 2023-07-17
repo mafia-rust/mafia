@@ -56,7 +56,7 @@
     "menu.wiki.entries.help.text":"Learn how to use the wiki.",
     
     "menu.wiki.entries.roles_and_teams.title":"Roles and Teams",
-    "menu.wiki.entries.roles_and_teams.text":"Every player has a role, including you. Your role is told to you in the first chat message you received and at the top of the screen. Almost every role has an ability that can be used during the night, these abilities help you to win.\n\nEvery role has a “Faction” and “Alignment” which indicate what team you're on and what your goal is. You can see a role's faction and alignment on its wiki page. Town, Mafia, and Coven’s goal is to be the only remaining team, and to kill every player from every other team. Neutral roles have different goals that vary depending on the role.\n\nTown usually has the majority when the game starts meaning there are more players with town roles. Therefore; town has voting power, and evil players must lie, saying that they are townies even though they are not.\n\nIf you are asked to claim a role (to tell others what your role is), It is often best to say that you are a specific town role, such as doctor, or sheriff. In order to make your fake claim believable you must keep a will. \n\nThere can be multiple players with almost any role, so you might not be the only person with the role you have.",    
+    "menu.wiki.entries.roles_and_teams.text":"Every player has a role, including you. Your role is told to you in the first chat message you received and at the top of the screen. Almost every role has an ability that can be used during the night, these abilities help you to win.\n\nEvery role has a “Faction” and “Alignment” which indicate what team you're on and what your goal is. You can see a role's faction and alignment on its wiki page. Town, and Mafia's goal is to be the only remaining team, and to kill every player from every other team. Neutral roles have different goals that vary depending on the role.\n\nTown usually has the majority when the game starts meaning there are more players with town roles. Therefore; town has voting power, and evil players must lie, saying that they are townies even though they are not.\n\nIf you are asked to claim a role (to tell others what your role is), It is often best to say that you are a specific town role, such as doctor, or sheriff. In order to make your fake claim believable you must keep a will. \n\nThere can be multiple players with almost any role, so you might not be the only person with the role you have.",    
     
     "menu.wiki.entries.phases_and_timeline.title":"Phases and Timelines",
     "menu.wiki.entries.phases_and_timeline.text":"The game is always in a phase. Phases run in this order: Morning, Discussion, Voting, Testimony, Judgement, Evening, Night. When there are three or less players alive, the game runs at double the speed.\n\n### Night\nWhen most roles use their abilities. For example, night is when the mafioso chooses who to kill, and the doctor chooses who to protect. Chat is closed at night so players can not communicate with each other. However, some roles can communicate with others at night, for example, the medium can talk to the dead, and mafia can talk with each other.\n\n### Morning\nPlayers see who died last night, and they are added to the graveyard.\n\n### Discussion\nPlayers discuss information they have to try to find out who evils are, or pretend to find out who evils are.\n\n### Voting\nPlayers vote to put a player on trial, this doesn’t always mean that player is going to be killed. More than half the living players need to vote in order to put someone onto trial. If the voting phase ends before anyone is voted, it goes directly to night after. There can be a maximum of three trials during each day.\n\n### Testimony\nThis runs right after voting only if a player was voted onto trial, Every player must stop chatting except the player on trial, and the player defends themselves to hope they don't get killed. Usually the player on trial will claim a role and post their will here.\n\n### Judgement\nEveryone votes either innocent, or guilty. If there are more guilty votes than innocent votes, the player on trial is killed. Players can also choose to abstain. This is how town usually gets evils killed.\n\n### Evening\nA brief period after judgement but before night.",    
@@ -129,8 +129,8 @@
     "role.lookout.dayTarget": "Special",
     
     "role.spy.name": "Spy",
-    "role.spy.abilities":"* Bug a player to find out what happened to them\n* You will get to know who the mafia and coven visited",
-    "role.spy.attributes":"* Your bug will catch when your target sees a message saying they are silenced, roleblocked, protected or transported\n* The mafia visits and coven visits can not be fooled, they are always accurate.",
+    "role.spy.abilities":"* Bug a player to find out what happened to them\n* You will get to know who the mafia visited",
+    "role.spy.attributes":"* Your bug will catch when your target sees a message saying they are silenced, roleblocked, protected or transported\n* The mafia visits can not be fooled, they are always accurate.",
     "role.spy.target": "Bug",
     "role.spy.detarget": "Remove bug",
     "role.spy.dayTarget": "Special",
@@ -308,7 +308,6 @@
     "faction.town": "Town",
     "faction.mafia": "Mafia",
     "faction.neutral": "Neutral",
-    "faction.coven": "Coven",
 
     "alignment":"Alignment",
     "alignment.killing": "Killing",
@@ -318,7 +317,6 @@
     "alignment.deception": "Deception",
     "alignment.evil": "Evil",
     "alignment.chaos": "Chaos",
-    "alignment.utility": "Utility",
     "alignment.power": "Power",
 
     "tag.executionerTarget":"🎯",
@@ -410,8 +408,6 @@
     "chatmessage.seerResult.enemies":"Your targets are enemies!",
     "chatmessage.spyMafiaVisit":"The mafia visited \\0.",
     "chatmessage.spyMafiaVisit.nobody":"The mafia visited nobody.",
-    "chatmessage.spyCovenVisit":"The coven visited \\0.",
-    "chatmessage.spyCovenVisit.nobody":"The coven visited nobody.",
     "chatmessage.spyBug.silenced":"Your target was silenced.",
     "chatmessage.spyBug.roleblocked":"Someone attempted to roleblock your target.",
     "chatmessage.spyBug.protected":"Your target was protected from an attack.",

@@ -1,8 +1,8 @@
-use super::{player::{PlayerReference}, Game, role_list::Faction, role::{mafioso::Mafioso, Role}};
+use super::{player::PlayerReference, Game, role_list::Faction, role::{mafioso::Mafioso, Role}};
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum Team{
-    Mafia, Coven, Vampires
+    Mafia, Vampires
 }
 impl Team{
     pub fn same_team(game: &Game, a: PlayerReference, b: PlayerReference)->bool{
@@ -23,7 +23,6 @@ impl Team{
     pub fn team_state(&self, teams: &Teams)->TeamState{
         match self{
             Team::Mafia => TeamState::Mafia(teams.mafia().clone()),
-            Team::Coven => TeamState::Coven(teams.coven().clone()),
             Team::Vampires => TeamState::Vampires(teams.vampires().clone()),
         }
     }
@@ -31,41 +30,36 @@ impl Team{
 
 
 pub enum TeamState{
-    Mafia(Mafia), Coven(Coven), Vampires(Vampires)
+    Mafia(Mafia), Vampires(Vampires)
 }
 impl TeamState{
     pub fn team(&self) -> Team{
         match self {
             TeamState::Mafia(t) => t.team(),
-            TeamState::Coven(t) => t.team(),
             TeamState::Vampires(t) => t.team(),
         }
     }
     pub fn on_creation(self, game: &mut Game){
         match self {
             TeamState::Mafia(t) => t.on_creation(game),
-            TeamState::Coven(t) => t.on_creation(game),
             TeamState::Vampires(t) => t.on_creation(game),
         }
     }
     pub fn on_phase_start(self, game: &mut Game){
         match self {
             TeamState::Mafia(t) => t.on_phase_start(game),
-            TeamState::Coven(t) => t.on_phase_start(game),
             TeamState::Vampires(t) => t.on_phase_start(game),
         }
     }
     pub fn on_any_death(self, game: &mut Game){
         match self {
             TeamState::Mafia(t) => t.on_any_death(game),
-            TeamState::Coven(t) => t.on_any_death(game),
             TeamState::Vampires(t) => t.on_any_death(game),
         }
     }
     pub fn on_member_role_switch(self, game: &mut Game, actor: PlayerReference){
         match self {
             TeamState::Mafia(t) => t.on_member_role_switch(game, actor),
-            TeamState::Coven(t) => t.on_member_role_switch(game, actor),
             TeamState::Vampires(t) => t.on_member_role_switch(game, actor),
         }
     }
@@ -85,31 +79,24 @@ pub trait TeamStateImpl : Clone{
 #[derive(Default)]
 pub struct Teams{
     mafia: Mafia,
-    coven: Coven,
     vampires: Vampires
 }
 impl Teams{
     pub fn on_team_creation(game: &mut Game){
         game.teams.mafia.clone().on_creation(game);
-        game.teams.coven.clone().on_creation(game);
         game.teams.vampires.clone().on_creation(game);
     }
     pub fn on_phase_start(game: &mut Game){
         game.teams.mafia.clone().on_phase_start(game);
-        game.teams.coven.clone().on_phase_start(game);
         game.teams.vampires.clone().on_phase_start(game);
     }
     pub fn on_any_death(game: &mut Game){
         game.teams.mafia.clone().on_any_death(game);
-        game.teams.coven.clone().on_any_death(game);
         game.teams.vampires.clone().on_any_death(game);
     }
 
     pub fn mafia(&self)->&Mafia{
         &self.mafia
-    }
-    pub fn coven(&self)->&Coven{
-        &self.coven
     }
     pub fn vampires(&self)->&Vampires{
         &self.vampires
@@ -117,9 +104,6 @@ impl Teams{
 
     pub fn set_mafia(&mut self, mafia: Mafia){
         self.mafia = mafia;
-    }
-    pub fn set_coven(&mut self, coven: Coven){
-        self.coven = coven;
     }
     pub fn set_vampires(&mut self, vampires: Vampires){
         self.vampires = vampires;
@@ -173,35 +157,6 @@ impl Mafia{
         }
     }
 }
-
-
-
-#[derive(Default, Clone)]
-pub struct Coven {
-    pub player_with_necronomicon: Option<PlayerReference>
-}
-impl TeamStateImpl for Coven{
-    fn team(&self) -> Team {
-        Team::Coven
-    }
-    fn on_phase_start(self, game: &mut Game){
-        Coven::ensure_necronomicon_on_night_3(game);
-    }
-    fn on_creation(self, game: &mut Game) {
-        Coven::ensure_necronomicon_on_night_3(game);
-    }
-    fn on_any_death(self, game: &mut Game){
-        Coven::ensure_necronomicon_on_night_3(game);
-    }
-    fn on_member_role_switch(self, _game: &mut Game, _actor: PlayerReference) {
-    }
-}
-impl Coven{
-    fn ensure_necronomicon_on_night_3(_game: &mut Game){
-        
-    }
-}
-
 
 
 #[derive(Default, Clone)]

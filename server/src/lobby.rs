@@ -8,7 +8,7 @@ use crate::{
         role_list::RoleListEntry, 
         phase::PhaseType
     },
-    listener::ArbitraryPlayerID, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}, websocket_connections::connection::{ClientSender}, log
+    listener::ArbitraryPlayerID, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}, websocket_connections::connection::ClientSender, log
 };
 
 pub struct Lobby {

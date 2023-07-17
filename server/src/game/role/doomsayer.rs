@@ -22,7 +22,7 @@ pub struct Doomsayer {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub enum DoomsayerGuess{
-    Mafia, Coven, #[default] Neutral,
+    Mafia, #[default] Neutral,
 
     Jailor, Mayor, Transporter, 
     //No TI
@@ -46,8 +46,9 @@ impl DoomsayerGuess{
             Role::Escort => Some(DoomsayerGuess::Escort),
             Role::Medium => Some(DoomsayerGuess::Medium),
             Role::Retributionist => Some(DoomsayerGuess::Retributionist),
-            Role::Mafioso | Role::Consort | Role::Blackmailer | Role::Consigliere | Role::Janitor | Role::Framer => Some(DoomsayerGuess::Mafia),
-            Role::Witch => Some(DoomsayerGuess::Coven),
+            Role::Mafioso | 
+                Role::Consort | Role::Blackmailer | Role::Consigliere | Role::Witch |
+                Role::Janitor | Role::Framer => Some(DoomsayerGuess::Mafia),
             Role::Jester | Role::Executioner | Role::Doomsayer | Role::Vampire => Some(DoomsayerGuess::Neutral),
         }
     }

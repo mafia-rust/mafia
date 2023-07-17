@@ -1,7 +1,6 @@
 #[derive(Debug, PartialEq, Eq)]
 pub enum EndGameCondition {
     Mafia,
-    Coven,
     Town,
 
     Vampire,
