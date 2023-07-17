@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use crate::{game::{Game, available_buttons::AvailableButtons, phase::PhaseState}, packet::{ToClientPacket}, websocket_connections::connection::ClientSender};
+use crate::{game::{Game, available_buttons::AvailableButtons, phase::PhaseState}, packet::ToClientPacket, websocket_connections::connection::ClientSender};
 
 use super::{PlayerReference, ClientConnection, DISCONNECT_TIMER_SECS};
 

@@ -5,7 +5,8 @@ use serde::Serialize;
 #[serde(rename_all = "camelCase")]
 pub enum Tag{
     Doused,
-    Hexxed,
+    Hexed,
     Necronomicon,
-    ExecutionerTarget
+    ExecutionerTarget,
+    Insane
 }

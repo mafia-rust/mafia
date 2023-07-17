@@ -261,6 +261,8 @@ export function translateChatMessage(message: ChatMessage): string {
             return translate("chatmessage.mediumSeance", GAME_MANAGER.gameState.players[message.player].toString());
         case "witchedYou":
             return translate("chatmessage.witchedYou" + (message.immune ? ".immune" : ""));
+        case "playerWithNecronomicon":
+            return translate("chatmessage.playerWithNecronomicon", GAME_MANAGER.gameState.players[message.playerIndex].toString());
         case "arsonistCleanedSelf":
         case "arsonistDousedPlayers":
         case "doctorHealed":
@@ -273,7 +275,6 @@ export function translateChatMessage(message: ChatMessage): string {
         case "godfatherForcedYou":
         case "jesterWon":
         case "mayorCantWhisper":
-        case "playerWithNecronomicon":
         case "targetJailed":
         case "targetSurvivedAttack":
         case "transported":

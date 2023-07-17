@@ -329,6 +329,8 @@
     "tag.executionerTarget":"🎯",
     "tag.necronomicon":"📓",
     "tag.doused":"🔥",
+    "tag.insane":"🪬",
+    "tag.dead":"🏴‍☠️",
 
     "day": "Day",
     "suspicious": "Suspicious",
@@ -394,6 +396,7 @@
     "chatmessage.deputyKilled":"A deputy killed \\0!",
     "chatmessage.jailorDecidedToExecute":"The jailor decided to execute \\0",
     "chatmessage.jailorDecideExecute.nobody":"The jailor decided not to execute!",
+    "chatmessage.playerWithNecronomicon":"\\0 has the necronomicon.",
 
 
     "chatmessage.youDied":"You died!",
@@ -444,8 +447,9 @@
     "chatmessage.doomsayerFailed": "At least one of your guesses was incorrect or invalid.",
     "chatmessage.doomsayerWon": "Your guesses were correct, and you won!",
 
-    "pride.gay":"GAY",
-    "pride.trans":"TRANS",
+    "random.gay":"GAY",
+    "random.trans":"TRANS",
+    "random.fuck_off":"FUCK OFF",
 
-    "kys":"KILL YOURSELF"
+    "random.kys":"KILL YOURSELF"
 }

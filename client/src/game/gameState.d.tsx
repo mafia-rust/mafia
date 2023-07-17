@@ -49,9 +49,10 @@ export interface PhaseTimes {
 }
 export type Tag =
 | "doused"
-| "hexxed"
+| "hexed"
 | "necronomicon"
 | "executionerTarget"
+| "insane"
 
 export interface Player {
     name: string,
