@@ -207,6 +207,15 @@ ${translate("role."+role+".attributes")}
                 }}
                 placeholder={translate("menu.wiki.search.placeholder")}
             />
+            {this.state.searchQuery && <button 
+                className="material-icons-round clear"
+                onClick={() => {
+                    this.history.push(this.state)
+                    this.setState({ type: "search", searchQuery: "" });
+                }}
+            >
+                backspace
+            </button>}
         </div>
         <div className="wiki-results">
             {this.renderWikiPageOrSearch()}

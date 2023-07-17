@@ -39,6 +39,20 @@ button, input, select, option, textarea, summary {
     color: white;
 }
 
+:has(input):focus-within > button.clear {
+    display: block;
+}
+
+button.clear {
+    display: none;
+    font-size: 1rem;
+    position: absolute;
+    right: .15rem;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
 button.close {
     font-size: 1rem;
     padding: 0;
