@@ -11,6 +11,10 @@
     --hover-color: #2d364e;
 }
 
+*.material-icons-round {
+    font-size: 1.3em;
+}
+
 *{
     text-align: center;
 

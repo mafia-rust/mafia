@@ -113,10 +113,12 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                     const isFilterSet = ChatMenu.getFilter()?.source === filter.source;
                     
                     return <button 
-                        className={"filter" + (isFilterSet ? " highlighted" : "")} 
+                        className={"material-icons-round filter" + (isFilterSet ? " highlighted" : "")} 
                         onClick={() => {isFilterSet ? ChatMenu.setFilter(null) : ChatMenu.setFilter(filter); this.setState({})}}
+                        aria-label={translate("menu.playerList.button.filter")}
                     >
-                        {translate("menu.playerList.button.filter")}
+                        {/* This font uses ligatures. This isn't missing lang. */}
+                        filter_alt
                     </button>
                 })()}
             </div>
