@@ -64,13 +64,18 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
         return (<details open={type === "will"}>
             <summary>{translate("menu.will." + type)}</summary>
             <button 
-                className={this.state.syncedFields[type] !== this.state.localFields[type] ? "highlighted" : undefined}
+                className={"material-icons-round " + (this.state.syncedFields[type] !== this.state.localFields[type] ? "highlighted" : "")}
                 onClick={() => this.save(type)}
+                aria-label={translate("menu.will.save")}
             >
-                {translate("menu.will.save")}
+                save
             </button>
-            <button onClick={() => this.send(type)}>
-                {translate("menu.will.post")}
+            <button 
+                className="material-icons-round"
+                onClick={() => this.send(type)}
+                aria-label={translate("menu.will.post")}
+            >
+                send
             </button>
             <textarea
                 value={this.state.localFields[type]}
