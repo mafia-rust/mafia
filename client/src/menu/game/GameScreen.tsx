@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import HeaderMenu from "./HeaderMenu";
 import GraveyardMenu from "./gameScreenContent/GraveyardMenu";
 import ChatMenu from "./gameScreenContent/ChatMenu";
@@ -13,6 +13,7 @@ import "./gameScreen.css";
 import translate from "../../game/lang";
 import RoleSpecifcMenu from "./gameScreenContent/RoleSpecific";
 import Anchor from "../Anchor";
+import StyledText from "../../components/StyledText";
 
 export enum ContentMenus {
     GraveyardMenu = "GraveyardMenu",
@@ -184,4 +185,22 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
             </div>
         );
     }
+}
+
+export function ContentTab(props: { close: ContentMenus | false, children: string }): ReactElement {
+    return <div className="content-tab">
+        <div>
+            <StyledText>
+                {props.children}
+            </StyledText>
+        </div>
+
+        {props.close && <button 
+            className="material-icons-round close" 
+            onClick={()=>GameScreen.instance.closeMenu(props.close as ContentMenus)}
+            aria-label={translate("menu.button.close")}
+        >
+            close
+        </button>}
+    </div>
 }

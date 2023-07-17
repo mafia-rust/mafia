@@ -51,7 +51,7 @@
     border-right: var(--primary-border-color) solid 1px;
 }
 
-.game-screen .content > div > :first-child {
+.game-screen .content .content-tab {
     display: flex;
     flex-direction: row;
     height: max-content;
@@ -63,15 +63,16 @@
     border-color: var(--primary-border-color);
     width: 100%;
     margin: 0;
+    padding: .15rem .15rem;
     background-color: var(--primary-color);
     justify-content: space-between;
     align-items: center;
 }
-.game-screen .content > div > :first-child > div{
+.game-screen .content .content-tab > div{
     flex-grow: 1;
 }
-.game-screen .content > div > :first-child > button{
+.game-screen .content .content-tab > button{
     width: max-content;
     /* height: max-content; */
-    margin: 0;
+    margin: 0 .30rem;
 }

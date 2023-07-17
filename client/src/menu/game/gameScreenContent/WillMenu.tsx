@@ -1,10 +1,9 @@
 import React from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
-import GameScreen, { ContentMenus } from "../GameScreen";
+import { ContentMenus, ContentTab } from "../GameScreen";
 import "./willMenu.css"
 import { StateListener } from "../../../game/gameManager.d";
-import StyledText from "../../../components/StyledText";
 
 
 type FieldType = "will" | "notes" | "deathNote";
@@ -99,18 +98,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
         </details>)
     }
     render() {return (<div className="will-menu">
-        <div>
-            <div>
-                <StyledText>
-                    {translate("menu.will.title")}
-                </StyledText>
-            </div>
-
-            <button onClick={()=>{
-                GameScreen.instance.closeMenu(ContentMenus.WillMenu)
-            }}>✕</button>
-        </div>
-
+        <ContentTab close={ContentMenus.WillMenu}>{translate("menu.will.title")}</ContentTab>
         <section>
             {this.renderInput("will")}
             {this.renderInput("notes")}

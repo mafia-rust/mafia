@@ -6,7 +6,8 @@ import "./chatMenu.css"
 import GameState, { PlayerIndex } from "../../../game/gameState.d";
 import { translateChatMessage } from "../../../components/ChatMessage";
 import ChatElement from "../../../components/ChatMessage";
-import StyledText from "../../../components/StyledText";
+import { ContentTab } from "../GameScreen";
+import { HistoryPoller, HistoryQueue } from "../../../history";
 
 interface ChatMenuProps {
 }
@@ -39,8 +40,8 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
 
     static instance: ChatMenu | null = null;
     messageSection: HTMLDivElement | null;
-    history: ChatHistory = new ChatHistory(40);
-    history_poller: ChatHistoryPoller = new ChatHistoryPoller();
+    history: HistoryQueue<string> = new HistoryQueue(40);
+    history_poller: HistoryPoller<string> = new HistoryPoller();
     listener: () => void;
 
     constructor(props: ChatMenuProps) {
@@ -91,12 +92,12 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
             ChatMenu.instance.sendChatField();
         } else if (event.code === "ArrowUp") {
             event.preventDefault();
-            let text = ChatMenu.instance.history_poller.poll_next(ChatMenu.instance.history);
+            let text = ChatMenu.instance.history_poller.poll(ChatMenu.instance.history);
             if (text !== undefined) 
                 ChatMenu.instance.setState({ chatField: text })
         } else if (event.code === "ArrowDown") {
             event.preventDefault();
-            let text = ChatMenu.instance.history_poller.poll_previous(ChatMenu.instance.history);
+            let text = ChatMenu.instance.history_poller.pollPrevious(ChatMenu.instance.history);
             if (text === undefined) 
                 ChatMenu.instance.setState({ chatField: '' })
             else
@@ -155,13 +156,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     );}
     render(){return(
         <div className="chat-menu">
-            <div>
-                <div>
-                    <StyledText>
-                        {translate("menu.chat.title")}
-                    </StyledText>
-                </div>
-            </div>
+            <ContentTab close={false}>{translate("menu.chat.title")}</ContentTab>
             <div className="message-section" ref={(el) => { this.messageSection = el; }}>
                 <div className="message-list">
                     {this.state.gameState.chatMessages.filter((msg) => {
@@ -178,65 +173,4 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
             {this.renderTextInput()}
         </div>
     )}
-}
-
-// A utility for keeping track of how we're polling the chat history
-class ChatHistoryPoller {
-    index: number; // -1 indicates we are not using the history.
-
-    constructor() {
-        this.index = -1;
-    }
-
-    reset(): ChatHistoryPoller {
-        this.index = -1;
-        return this;
-    }
-
-    poll_next(history: ChatHistory): string | undefined {
-        this.index++;
-        let result = history.poll(this.index);
-        if (result === undefined) {
-            this.index--;
-        }
-        return result;
-    }
-
-    poll_previous(history: ChatHistory): string | undefined {
-        this.index--;
-        if (this.index < 0) {
-            this.index = -1;
-            return undefined;
-        } else {
-            let result = history.poll(this.index);
-            // History shrunk for some reason. Should be impossible but might as well account for it.
-            if (result === undefined) {
-                return this.poll_previous(history);
-            } else {
-                return result;
-            }
-        }
-    }
-}
-
-// A queue with a max length
-class ChatHistory {
-    max_length: number;
-    values: string[];
-
-    constructor(max_length: number) {
-        this.max_length = max_length;
-        this.values = [];
-    }
-
-    poll(n: number): string | undefined {
-        return this.values.at(n);
-    }
-
-    push(message: string) {
-        this.values = [message].concat(this.values);
-        if (this.values.length > this.max_length) {
-            this.values.pop()
-        }
-    }
 }

@@ -5,7 +5,7 @@ import "./playerListMenu.css"
 import "./../gameScreen.css"
 import ChatMenu from "./ChatMenu";
 import GameState, { Player, PlayerIndex } from "../../../game/gameState.d";
-import GameScreen, { ContentMenus } from "../GameScreen";
+import { ContentMenus, ContentTab } from "../GameScreen";
 import { StateListener } from "../../../game/gameManager.d";
 import SmallRoleSpecifcMenu from "./RoleSpecificMenus/SmallRoleSpecificMenu";
 import Anchor from "../../Anchor";
@@ -186,17 +186,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     }
 
     render(){return(<div className="player-list-menu">
-        <div>
-            <div>
-                <StyledText>
-                    {translate("menu.playerList.title")}
-                </StyledText>
-            </div>
-
-            <button onClick={()=>{
-                GameScreen.instance.closeMenu(ContentMenus.PlayerListMenu)
-            }}>✕</button>
-        </div>
+        <ContentTab close={ContentMenus.PlayerListMenu}>{translate("menu.playerList.title")}</ContentTab>
 
         {this.renderFilterButton("all")}
         {this.renderFilterButton("living")}
