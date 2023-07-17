@@ -39,6 +39,30 @@ button, input, select, option, textarea, summary {
     color: white;
 }
 
+:has(input):focus-within > button.clear {
+    display: block;
+}
+
+:has(button.clear) {
+    position: relative;
+}
+
+button.clear {
+    display: none;
+    font-size: 0.8rem;
+    position: absolute;
+    right: 0.5rem;
+    top: 0.4rem;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+button.close {
+    font-size: 1rem;
+    padding: 0;
+}
+
 button:disabled, input:disabled, select:disabled, option:disabled, textarea:disabled, summary:disabled {
     opacity: 0.5;
     box-shadow: 0 0 100vmax #55555555 inset;

@@ -2,7 +2,7 @@ import React from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import { Grave } from "../../../game/grave";
-import GameScreen, { ContentMenus } from "../GameScreen";
+import { ContentMenus, ContentTab } from "../GameScreen";
 import "./graveyardMenu.css";
 import GameState from "../../../game/gameState.d";
 import { translateRoleListEntry } from "../../../game/roleListState.d";
@@ -142,18 +142,7 @@ ${translate("menu.graveyard.killedBy")+" "+deathCauseString}
 
 
     render(){return(<div className="graveyard-menu">
-        <div>
-            <div>
-                <StyledText>
-                    {translate("menu.graveyard.title")}
-                </StyledText>
-            </div>
-
-            <button onClick={()=>{
-                GameScreen.instance.closeMenu(ContentMenus.GraveyardMenu)
-            }}>✕</button>
-        </div>
-        
+        <ContentTab close={ContentMenus.GraveyardMenu}>{translate("menu.graveyard.title")}</ContentTab>
             
         <div>
             {this.renderRoleList()}
@@ -161,10 +150,6 @@ ${translate("menu.graveyard.killedBy")+" "+deathCauseString}
             {/* //TODO show excluded roles at top */}
         </div>
         {this.renderExcludedRoles()}
-
-        
-        
-
 
         <div>
             {this.state.extendedGraveIndex!==null?this.renderGraveExtended(this.state.gameState.graves[this.state.extendedGraveIndex]):null}
