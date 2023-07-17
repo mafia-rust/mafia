@@ -5,12 +5,17 @@ import "./wikiSearch.css";
 import { Role } from "../game/roleState.d";
 import { FactionAlignment, getRoleListEntryFromFactionAlignment, translateRoleListEntry } from "../game/roleListState.d";
 import StyledText from "../components/StyledText";
+import { HistoryQueue } from "../history";
 
-interface WikiSearchState {
-    wikiSearch: string,
-    openPage: WikiEntry | null,
+type WikiSearchState = ({
+    type: "search"
+} | {
+    type: "page",
+    page: WikiPage,
+}) & {
+    searchQuery: string,
 }
-type WikiEntry = {
+type WikiPage = {
     type: "role", role: Role
 } | {
     type: "article", article: Article
@@ -19,12 +24,13 @@ export const ARTICLES = ["help", "roles_and_teams", "phases_and_timeline", "cont
 export type Article = typeof ARTICLES[number];
 
 export default class WikiSearch extends React.Component<{}, WikiSearchState> {
+    history: HistoryQueue<WikiSearchState> = new HistoryQueue(10);
     constructor(props: {}) {
         super(props);
 
         this.state = {
-            wikiSearch: "",
-            openPage: null,
+            type: "search",
+            searchQuery: "",
         };
     }
     componentDidMount() {
@@ -133,34 +139,38 @@ ${translate("role."+role+".attributes")}
     }
     
     renderWikiPageOrSearch(){
-        if(this.state.openPage != null){
-            if(this.state.openPage.type === "role"){
-                return this.renderRoleWikiPage(this.state.openPage.role);
-            }else if(this.state.openPage.type === "article"){
-                return this.renderGeneralWikiPage(this.state.openPage.article);
+        if(this.state.type === "page"){
+            if(this.state.page.type === "role"){
+                return this.renderRoleWikiPage(this.state.page.role);
+            }else if(this.state.page.type === "article"){
+                return this.renderGeneralWikiPage(this.state.page.article);
             }
         }else{
 
-            return this.getRolesFromSearch(this.state.wikiSearch).map((role)=>{
+            return this.getRolesFromSearch(this.state.searchQuery).map((role)=>{
                 return <button key={role} 
                     onClick={()=>{
+                        this.history.push(this.state);
                         this.setState({
-                            wikiSearch: translate("role."+role+".name"),
-                            openPage: {type: "role", role: role}
-                        })
+                            type: "page",
+                            searchQuery: this.state.searchQuery,
+                            page: { type: "role", role }
+                        });
                     }}
                 >
                     <StyledText>
                         {translate("role."+role+".name")}
                     </StyledText>
                 </button>
-            }).concat(this.getGeneralPageFromSearch(this.state.wikiSearch).map((article)=>{
+            }).concat(this.getGeneralPageFromSearch(this.state.searchQuery).map((article)=>{
                 return <button key={article} 
                     onClick={()=>{
+                        this.history.push(this.state);
                         this.setState({
-                            wikiSearch: translate("menu.wiki.entries."+article+".title"),
-                            openPage: {type: "article", article: article}
-                        })
+                            type: "page",
+                            searchQuery: this.state.searchQuery,
+                            page: { type: "article", article }
+                        });
                     }}
                 >
                     <StyledText>
@@ -179,13 +189,22 @@ ${translate("role."+role+".attributes")}
     render() {
         return (<div className="wiki-search">
         <div className="wiki-search-bar">
-            {this.state.wikiSearch !== null && this.state.wikiSearch !== "" ? 
-                <button onClick={() => {
-                    this.setState({wikiSearch: "", openPage: null})
-                }}>{translate("menu.wiki.search.clear")}</button> 
+            {this.history.length() !== 0 ? 
+                <button
+                    className="material-icons-round"
+                    onClick={() => {this.setState(this.history.pop()!)}}
+                    aria-label={translate("menu.wiki.search.back")}
+                >
+                    arrow_back
+                </button> 
             : null}
-            <input type="text" value={this.state.wikiSearch}
-                onChange={(e)=>{this.setState({wikiSearch: e.target.value, openPage: null})}}
+            <input type="text" value={this.state.searchQuery}
+                onChange={(e)=>{
+                    if (this.state.type === "page" || this.history.length() === 0) {
+                        this.history.push(this.state);
+                    }
+                    this.setState({type: "search", searchQuery: e.target.value})
+                }}
                 placeholder={translate("menu.wiki.search.placeholder")}
             />
         </div>
