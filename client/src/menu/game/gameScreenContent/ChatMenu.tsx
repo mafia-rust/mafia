@@ -6,7 +6,7 @@ import "./chatMenu.css"
 import GameState, { PlayerIndex } from "../../../game/gameState.d";
 import { translateChatMessage } from "../../../components/ChatMessage";
 import ChatElement from "../../../components/ChatMessage";
-import StyledText from "../../../components/StyledText";
+import { ContentTab } from "../GameScreen";
 
 interface ChatMenuProps {
 }
@@ -155,13 +155,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     );}
     render(){return(
         <div className="chat-menu">
-            <div>
-                <div>
-                    <StyledText>
-                        {translate("menu.chat.title")}
-                    </StyledText>
-                </div>
-            </div>
+            <ContentTab close={false}>{translate("menu.chat.title")}</ContentTab>
             <div className="message-section" ref={(el) => { this.messageSection = el; }}>
                 <div className="message-list">
                     {this.state.gameState.chatMessages.filter((msg) => {

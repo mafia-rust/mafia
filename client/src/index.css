@@ -39,6 +39,11 @@ button, input, select, option, textarea, summary {
     color: white;
 }
 
+button.close {
+    font-size: 1rem;
+    padding: 0;
+}
+
 button:disabled, input:disabled, select:disabled, option:disabled, textarea:disabled, summary:disabled {
     opacity: 0.5;
     box-shadow: 0 0 100vmax #55555555 inset;
