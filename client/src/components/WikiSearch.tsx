@@ -208,6 +208,7 @@ ${translate("role."+role+".attributes")}
                 placeholder={translate("menu.wiki.search.placeholder")}
             />
             {this.state.searchQuery && <button 
+                tabIndex={-1}
                 className="material-icons-round clear"
                 onClick={() => {
                     this.history.push(this.state)
