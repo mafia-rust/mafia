@@ -279,6 +279,16 @@
         "maxCount": 1,
         "largeRoleSpecificMenu": true
     },
+    "death":{
+        "factionAlignment": "neutralKilling",
+        "suspicious": false,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "None",
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false
+    },
     "vampire": {
         "factionAlignment": "neutralChaos",
         "suspicious": true,
