@@ -80,13 +80,23 @@ impl RoleStateImpl for Doomsayer {
         if actor_ref.night_roleblocked(game) {return;}
         if !actor_ref.alive(game) {return;}
 
-        if self.guesses.iter().all(
-            |(player, guess)|{
-                guess.guess_matches_role(player.role(game)) &&
-                *player != actor_ref &&
-                player.alive(game)
+
+        let mut won = true;
+        for (player, guess) in self.guesses.iter(){
+            if 
+                *player == actor_ref || //cant guess yourself
+                !player.alive(game) || //cant guess dead player
+                !guess.guess_matches_role(player.role(game)) || //cant guess wrong
+                self.guesses.iter().filter(|(other_p, _other_g)|{
+                    *other_p == *player
+                }).count() != 1 //cant guess a player more than once
+            {
+                won = false;
+                break;
             }
-        ){
+        };
+
+        if won{
             actor_ref.add_chat_message(game, ChatMessage::DoomsayerWon);
             self.guesses[0].0.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), 3);
             self.guesses[1].0.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), 3);
@@ -114,8 +124,8 @@ impl RoleStateImpl for Doomsayer {
     fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
     }
-    fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType) {
-        
+    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType) {
+        Doomsayer::check_and_convert_to_jester(game, actor_ref);
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
         Doomsayer::check_and_convert_to_jester(game, actor_ref);
@@ -129,7 +139,7 @@ impl Doomsayer{
         if 
             PlayerReference::all_players(game).into_iter().filter(|player|
                 player.alive(game) && DoomsayerGuess::convert_to_guess(player.role(game)).is_some() && *player != actor_ref
-            ).collect::<Vec<PlayerReference>>().len() < 3
+            ).collect::<Vec<PlayerReference>>().len() < 3 && actor_ref.alive(game)
         {
             actor_ref.set_role(game, RoleState::Jester(Jester::default()));
         }

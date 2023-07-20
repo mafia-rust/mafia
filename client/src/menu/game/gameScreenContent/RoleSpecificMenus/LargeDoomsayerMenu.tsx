@@ -115,7 +115,7 @@ export default class LargeDoomsayerMenu extends React.Component<LargeDoomsayerMe
         }
         return <div>
             <select
-                value={this.state.localDoomsayerGuesses[index][0]}
+                value={this.state.gameState.players[this.state.localDoomsayerGuesses[index][0]].toString()}
                 onChange={(e)=>{
                     let newGuess = this.state.localDoomsayerGuesses;
                     newGuess[index][0] = e.target.selectedIndex;

@@ -98,7 +98,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
             <div className="top">
                 <button className="whisper" onClick={()=>ChatMenu.prependWhisper(player.index)}>
                     <StyledText>{player.playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
-                    <StyledText>{(player.alive?"":" ("+translate("tag.dead")+")")}</StyledText>
+                    <StyledText>{(player.alive?"":" "+translate("tag.dead")+"")}</StyledText>
                     {(
                         player.numVoted!==null &&
                         player.numVoted!==0 &&

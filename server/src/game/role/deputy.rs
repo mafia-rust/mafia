@@ -43,7 +43,7 @@ impl RoleStateImpl for Deputy {
     }
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
 
-        if target_ref.defense(game) <= 2 {
+        if target_ref.defense(game) >= 2 {
             target_ref.add_chat_message(game, ChatMessage::YouSurvivedAttack);
             actor_ref.add_chat_message(game, ChatMessage::TargetSurvivedAttack);
 
