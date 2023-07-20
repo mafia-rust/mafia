@@ -2,7 +2,7 @@ mod kit;
 use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
-use mafia_server::game::{chat::{MessageSender, ChatGroup}, role::{retributionist::Retributionist, jester::Jester, crusader::Crusader, framer::Framer, veteran::Veteran, executioner::Executioner, spy::{Spy, SpyBug}, blackmailer::Blackmailer, vampire::Vampire, doctor::Doctor, Role, janitor::Janitor, consigliere::Consigliere, necromancer::Necromancer, witch::Witch}};
+use mafia_server::game::{chat::{MessageSender, ChatGroup}, role::{retributionist::Retributionist, jester::Jester, crusader::Crusader, framer::Framer, veteran::Veteran, executioner::Executioner, spy::{Spy, SpyBug}, blackmailer::Blackmailer, vampire::Vampire, doctor::Doctor, Role, janitor::Janitor, consigliere::Consigliere, necromancer::Necromancer, witch::Witch, seer::Seer}};
 // Pub use so that submodules don't have to re-import everything.
 pub use mafia_server::game::{role::{RoleState, transporter::Transporter, medium::Medium, jailor::Jailor, vigilante::Vigilante, sheriff::Sheriff, escort::Escort, mafioso::Mafioso, bodyguard::Bodyguard}, phase::PhaseState, chat::ChatMessage};
 pub use mafia_server::packet::ToServerPacket;
@@ -48,6 +48,61 @@ fn sheriff_basic() {
     
     game.skip_to(PhaseType::Morning, 3);
     assert_contains!(sher.get_messages(), ChatMessage::SheriffResult { suspicious: false });
+}
+
+#[test]
+fn seer_basic() {
+    kit::scenario!(game in Night 1 where
+        seer: Seer,
+        mafia1: Mafioso,
+        mafia2: Consigliere,
+        townie1: Sheriff,
+        townie2: Vigilante,
+        jester: Jester
+    );
+    seer.set_night_targets(vec![mafia1, townie1]);
+    
+    game.skip_to(PhaseType::Morning, 2);
+    assert_eq!(
+        *seer.get_messages().get(seer.get_messages().len()-2).unwrap(),
+        ChatMessage::SeerResult { enemies: true }
+    );
+
+    game.skip_to(PhaseType::Night, 2);
+    seer.set_night_targets(vec![mafia1, mafia2]);
+    
+    game.skip_to(PhaseType::Morning, 3);
+    assert_eq!(
+        *seer.get_messages().get(seer.get_messages().len()-2).unwrap(),
+        ChatMessage::SeerResult { enemies: false }
+    );
+
+    game.skip_to(PhaseType::Night, 3);
+    seer.set_night_targets(vec![jester, mafia2]);
+    
+    game.skip_to(PhaseType::Morning, 4);
+    assert_eq!(
+        *seer.get_messages().get(seer.get_messages().len()-2).unwrap(),
+        ChatMessage::SeerResult { enemies: false }
+    );
+
+    game.skip_to(PhaseType::Night, 4);
+    seer.set_night_targets(vec![townie2, jester]);
+    
+    game.skip_to(PhaseType::Morning, 5);
+    assert_eq!(
+        *seer.get_messages().get(seer.get_messages().len()-2).unwrap(),
+        ChatMessage::SeerResult { enemies: false }
+    );
+
+    game.skip_to(PhaseType::Night, 5);
+    seer.set_night_targets(vec![townie2, townie1]);
+    
+    game.skip_to(PhaseType::Morning, 6);
+    assert_eq!(
+        *seer.get_messages().get(seer.get_messages().len()-2).unwrap(),
+        ChatMessage::SeerResult { enemies: false }
+    );
 }
 
 #[test]
@@ -120,6 +175,37 @@ fn transporter_basic_vigilante_escort() {
     
     game.skip_to(PhaseType::Morning, 4);
     assert!(!vigi.alive());
+}
+
+#[test]
+fn transporter_basic_seer_sheriff_framer() {
+    kit::scenario!(game in Night 1 where
+        trans: Transporter,
+        seer: Seer,
+        _mafioso: Mafioso,
+        framer: Framer,
+        town1: Sheriff,
+        town2: Sheriff
+    );
+    assert!(trans.set_night_targets(vec![town1, town2]));
+    assert!(framer.set_night_targets(vec![town1, seer]));
+    assert!(seer.set_night_targets(vec![town1, town2]));
+    assert!(town1.set_night_targets(vec![town2]));
+    assert!(town2.set_night_targets(vec![town1]));
+
+    game.skip_to(PhaseType::Morning, 2);
+    assert_eq!(
+        *seer.get_messages().get(seer.get_messages().len()-2).unwrap(),
+        ChatMessage::SeerResult { enemies: true }
+    );
+    assert_eq!(
+        *town1.get_messages().get(town1.get_messages().len()-2).unwrap(),
+        ChatMessage::SheriffResult { suspicious: false }
+    );
+    assert_eq!(
+        *town2.get_messages().get(town2.get_messages().len()-2).unwrap(),
+        ChatMessage::SheriffResult { suspicious: true }
+    );
 }
 
 /// Test that the bodyguard protects the person their target was swapped with
@@ -273,7 +359,6 @@ fn witch_basic(){
         )}
     );
 }
-
 
 #[test]
 fn crusader_basic(){

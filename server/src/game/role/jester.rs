@@ -34,6 +34,11 @@ impl RoleStateImpl for Jester {
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::TopPriority {return;}
+
+        if game.day_number() == 1{
+            actor_ref.increase_defense_to(game, 1);
+        }
+
         if actor_ref.alive(game) {return;}
     
         if !self.lynched_yesterday {return}

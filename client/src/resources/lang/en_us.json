@@ -280,7 +280,7 @@
 
     "role.jester.name": "Jester",
     "role.jester.abilities":"* Get lynched to win\n* After you are lynched, you can haunt a player who didn't vote innocent",
-    "role.jester.attributes":"* If you haunt nobody, you will haunt a random player\n* Haunting is an unstoppable astral attack",
+    "role.jester.attributes":"* If you haunt nobody, you will haunt a random player\n* You get basic defense on night one\n* Haunting is an unstoppable astral attack",
     "role.jester.target": "Haunt",
     "role.jester.detarget": "Unhaunt",
     "role.jester.dayTarget": "Special",
