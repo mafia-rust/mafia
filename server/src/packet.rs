@@ -193,4 +193,6 @@ pub enum ToServerPacket{
     SetForgerWill{ role: Role, will: String },
     #[serde(rename_all = "camelCase")]
     SetDoomsayerGuess{ guesses: [(PlayerReference, DoomsayerGuess); 3] },
+    #[serde(rename_all = "camelCase")]
+    SetAmnesiacRoleListEntry{ role_list_entry: RoleListEntry },
 }

@@ -5,6 +5,7 @@ import { ContentMenus, ContentTab } from "../GameScreen";
 import "./graveyardMenu.css";
 import GameState from "../../../game/gameState.d";
 import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
+import LargeAmnesiacMenu from "./RoleSpecificMenus/LargeAmnesiacMenu";
 
 type RoleSpecificMenuProps = {
 }
@@ -38,6 +39,8 @@ export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuPr
         switch(this.state.gameState.role){
             case "doomsayer":
                 return <LargeDoomsayerMenu/>;
+            case "amnesiac":
+                return <LargeAmnesiacMenu/>
         }
     }
     render(){return(<div>
