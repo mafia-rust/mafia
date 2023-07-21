@@ -193,6 +193,12 @@ export function createGameManager(): GameManager {
                 guesses: guesses
             });
         },
+        sendSetAmnesiacRoleListEntry(roleListEntry) {
+            this.server.sendPacket({
+                type: "setAmnesiacRoleListEntry",
+                roleListEntry: roleListEntry
+            });
+        },
         
         messageListener(serverMessage) {
             messageListener(serverMessage);

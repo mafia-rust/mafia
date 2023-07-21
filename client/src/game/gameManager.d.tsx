@@ -2,6 +2,7 @@ import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus
 import GameState, { Phase, PhaseTimes, PlayerIndex, Verdict } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleListEntry } from "./roleListState.d";
+import { Role } from "./roleState.d";
 
 export interface Server {
     ws: WebSocket | null,
@@ -54,7 +55,8 @@ export interface GameManager {
         [number, DoomsayerGuess],
         [number, DoomsayerGuess]
     ]): void;
-    
+    sendSetAmnesiacRoleListEntry(roleListEntry: RoleListEntry): void;
+
     messageListener(serverMessage: ToClientPacket): void;
 
     tick(timePassedMs: number): void;

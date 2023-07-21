@@ -75,7 +75,8 @@ macros::roles! {
     Executioner: executioner,
     Doomsayer: doomsayer,
 
-    Vampire: vampire
+    Vampire: vampire,
+    Amnesiac: amnesiac
 }
 
 macros::priorities! {

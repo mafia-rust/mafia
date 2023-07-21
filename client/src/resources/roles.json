@@ -298,5 +298,15 @@
         "endGameCondition": "SingleRole",
         "maxCount": 2,
         "largeRoleSpecificMenu": false
+    },
+    "amnesiac": {
+        "factionAlignment": "neutralChaos",
+        "suspicious": false,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "None",
+        "maxCount": null,
+        "largeRoleSpecificMenu": true
     }
 }

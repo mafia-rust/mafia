@@ -190,4 +190,7 @@ export type ToServerPacket = {
         [number, DoomsayerGuess],
         [number, DoomsayerGuess]
     ]
+} | {
+    type: "setAmnesiacRoleListEntry",
+    roleListEntry: RoleListEntry
 }

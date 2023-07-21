@@ -1,4 +1,4 @@
-use crate::{game::{chat::{ChatMessage, ChatGroup}, Game, grave::{GraveKiller, Grave}, role::{RoleState, Priority}, visit::Visit, team::{Teams, Team}, end_game_condition::EndGameCondition}, packet::ToClientPacket};
+use crate::{game::{chat::{ChatMessage, ChatGroup}, Game, grave::{GraveKiller, Grave}, role::{RoleState, Priority}, visit::Visit, team::{Teams, Team}, end_game_condition::EndGameCondition}, packet::ToClientPacket, log};
 
 use super::PlayerReference;
 
@@ -60,6 +60,12 @@ impl PlayerReference{
     }
     /// Swaps this persons role, sends them the role chat message, and makes associated changes
     pub fn set_role(&self, game: &mut Game, new_role_data: RoleState){
+
+        #[cfg(debug_assertions)]
+        if new_role_data.role() == self.role(game){
+            log!(fatal "player_reference"; "Set role called but kept role the same, dont do that!");
+            panic!();
+        }
 
         self.set_role_state(game, new_role_data);
         self.on_role_creation(game);

@@ -2,7 +2,13 @@ use std::collections::HashMap;
 
 use crate::{packet::{ToServerPacket, ToClientPacket}, strings::TidyableString, log};
 
-use super::{Game, player::{PlayerIndex, PlayerReference}, phase::{PhaseType, PhaseState}, chat::{ChatGroup, ChatMessage, MessageSender}, role::{Role, RoleState}};
+use super::{
+    Game, 
+    player::{PlayerIndex, PlayerReference}, 
+    phase::{PhaseType, PhaseState}, 
+    chat::{ChatGroup, ChatMessage, MessageSender}, 
+    role::{Role, RoleState}
+};
 
 
 
@@ -209,6 +215,12 @@ impl Game {
                 if let RoleState::Doomsayer(mut doomsayer) = sender_player_ref.role_state(self).clone(){
                     doomsayer.guesses = guesses;
                     sender_player_ref.set_role_state(self, RoleState::Doomsayer(doomsayer));
+                }
+            }
+            ToServerPacket::SetAmnesiacRoleListEntry { role_list_entry } => {
+                if let RoleState::Amnesiac(mut amnesiac) = sender_player_ref.role_state(self).clone(){
+                    amnesiac.role_list_entry = role_list_entry;
+                    sender_player_ref.set_role_state(self, RoleState::Amnesiac(amnesiac));
                 }
             }
             _ => {
