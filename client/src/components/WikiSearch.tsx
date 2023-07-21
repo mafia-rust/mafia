@@ -1,6 +1,6 @@
 import React from "react";
 import ROLES from "./../resources/roles.json";
-import translate from "../game/lang";
+import translate, { langText } from "../game/lang";
 import "./wikiSearch.css";
 import { Role } from "../game/roleState.d";
 import { FactionAlignment, getRoleListEntryFromFactionAlignment, translateRoleListEntry } from "../game/roleListState.d";
@@ -21,7 +21,7 @@ type WikiPage = {
 } | {
     type: "article", article: Article
 }
-export const ARTICLES = ["help", "roles_and_teams", "phases_and_timeline", "controls", "wills_and_notes", "visit"] as const;
+export const ARTICLES = ["help", "roles_and_teams", "phases_and_timeline", "controls", "wills_and_notes", "visit", "all_language"] as const;
 export type Article = typeof ARTICLES[number];
 
 export default class WikiSearch extends React.Component<{}, WikiSearchState> {
@@ -45,6 +45,9 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
         )
     }
     renderGeneralWikiPage(article: string){
+        if(article==="all_language"){
+            return <>{langText}</>;
+        }
         return <StyledText className="wiki-content-body">{`
 # ${translate("menu.wiki.entries."+article+".title")}
 <br/>
