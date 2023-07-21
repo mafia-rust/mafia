@@ -13,7 +13,7 @@ impl Game {
         let sender_player_ref = match PlayerReference::new(self, sender_player_index){
             Ok(sender_player_ref) => sender_player_ref,
             Err(_) => {
-                log!(error "Game"; "Recieved message from invalid player index: {}", sender_player_index);
+                log!(error "Game"; "Received message from invalid player index: {}", sender_player_index);
                 return;
             }
         };
@@ -27,49 +27,44 @@ impl Game {
                     Err(_) => break 'packet_match,
                 };
 
-                let vote_changed_succesfully = sender_player_ref.set_chosen_vote(self, player_voted_ref, true);
+                let vote_changed_successfully = sender_player_ref.set_chosen_vote(self, player_voted_ref, true);
 
-                if !vote_changed_succesfully {break 'packet_match;}
+                if !vote_changed_successfully {break 'packet_match;}
 
-                //get all votes on people
                 let mut living_players_count = 0;
                 let mut voted_for_player: HashMap<PlayerReference, u8> = HashMap::new();
 
+                for player in PlayerReference::all_players(self){
+                    if !player.alive(self) { continue }
 
-                for any_player_ref in PlayerReference::all_players(self){
-                    if any_player_ref.alive(self){
-                        living_players_count+=1;
+                    living_players_count += 1;
 
-                        if let Some(any_player_voted_ref) = any_player_ref.chosen_vote(self){
+                    let Some(player_voted) = player.chosen_vote(self) else { continue };
 
-                            let mut voting_power = 1;
-                            if let RoleState::Mayor(mayor) = any_player_ref.role_state(self).clone(){
-                                if mayor.revealed {
-                                    voting_power += 2;
-                                }
-                            }
-
-                            if let Some(num_votes) = voted_for_player.get_mut(&any_player_voted_ref){
-                                
-                                *num_votes+=voting_power;
-                            }else{
-                                voted_for_player.insert(any_player_voted_ref, voting_power);
-                            }
+                    let mut voting_power = 1;
+                    if let RoleState::Mayor(mayor) = player.role_state(self).clone() {
+                        if mayor.revealed {
+                            voting_power = 3;
                         }
+                    }
+
+                    if let Some(num_votes) = voted_for_player.get_mut(&player_voted) {
+                        *num_votes += voting_power;
+                    } else {
+                        voted_for_player.insert(player_voted, voting_power);
                     }
                 }
                 
                 self.send_packet_to_all(
-                    ToClientPacket::PlayerVotes { voted_for_player: 
+                    ToClientPacket::PlayerVotes { votes_for_player: 
                         PlayerReference::ref_map_to_index(voted_for_player.clone())
                     }
                 );
                 
-                //if someone was voted
                 let mut next_player_on_trial = None;
-                for (player_with_votes_ref, num_votes) in voted_for_player.iter(){
-                    if *num_votes > (living_players_count / 2){
-                        next_player_on_trial = Some(*player_with_votes_ref);
+                for (player, votes) in voted_for_player.iter(){
+                    if *votes > (living_players_count / 2){
+                        next_player_on_trial = Some(*player);
                         break;
                     }
                 }
@@ -95,7 +90,6 @@ impl Game {
                 };
                 sender_player_ref.set_chosen_targets(self, target_ref_list.clone());
                 
-                //Send targeted message to chat groups
                 sender_player_ref.get_current_send_chat_groups(self)
                     .into_iter().for_each(|chat_group| {
                         match sender_player_ref.role_state(self) {
@@ -115,7 +109,7 @@ impl Game {
                             )
                         }
                     });
-                //if no chat groups then send to self at least
+                
                 if sender_player_ref.get_current_send_chat_groups(self).is_empty(){
                     sender_player_ref.add_chat_message(self, ChatMessage::Targeted { 
                         targeter: sender_player_ref.index(), 
@@ -140,7 +134,7 @@ impl Game {
                 
                 for chat_group in sender_player_ref.get_current_send_chat_groups(self){
 
-                    //TODO possibly move message_sender
+                    // TODO possibly move message_sender
                     let message_sender = 
                     if sender_player_ref.role(self) == Role::Jailor && chat_group == ChatGroup::Jail {
                         MessageSender::Jailor
@@ -158,8 +152,7 @@ impl Game {
 
                     self.add_message_to_chat_group(
                         chat_group.clone(),
-                        //TODO message sender, Jailor & medium
-
+                        
                         ChatMessage::Normal{
                             message_sender,
                             text: text.trim_newline().trim_whitespace().truncate(400).truncate_lines(20), 

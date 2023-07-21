@@ -32,14 +32,13 @@ pub enum ChatMessage {
         text: String
     },
 
-    //Sammy whispered to Tyler
     BroadcastWhisper {
         whisperer: PlayerIndex, 
         whisperee: PlayerIndex 
     },
 
-    RoleAssignment{role: Role},   //you are this role
-    PlayerDied{grave: Grave},      //this player died this is their role
+    RoleAssignment{role: Role},
+    PlayerDied{grave: Grave},
     GameOver/*(WinState)*/,
 
 
@@ -61,27 +60,19 @@ pub enum ChatMessage {
         voter: PlayerIndex, 
         votee: Option<PlayerIndex> 
     },
-
-    //Geneveive is on trial
     #[serde(rename_all = "camelCase")]
     PlayerOnTrial{
         player_index: PlayerIndex
     },
-
-    //Sammy voted
     #[serde(rename_all = "camelCase")]
     JudgementVote{
         voter_player_index: PlayerIndex
     },
-
-    //Sammy voted innocent
     #[serde(rename_all = "camelCase")]
     JudgementVerdict{
         voter_player_index: PlayerIndex, 
         verdict: Verdict
     },
-
-    //Sammy was voted innocent with these many votes
     #[serde(rename_all = "camelCase")]
     TrialVerdict {
         player_on_trial: PlayerIndex, 
@@ -90,7 +81,6 @@ pub enum ChatMessage {
     },
     
     /* Misc */
-    //Sammy targeted Jack
     #[serde(rename_all = "camelCase")]
     Targeted {
         targeter: PlayerIndex,
@@ -99,28 +89,31 @@ pub enum ChatMessage {
 
     /* Role-specific */
     #[serde(rename_all = "camelCase")]
-    MayorRevealed{player_index: PlayerIndex}, //Sammy revealed as mayor
+    MayorRevealed{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
-    JailedTarget{player_index: PlayerIndex}, //You jailed Sammy
+    JailedTarget{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
-    JailedSomeone{player_index: PlayerIndex}, //you have been jailed
-    JailorDecideExecute {targets: Vec<PlayerIndex>},     //Jailor has decided to execute you
-    MediumSeance{player: PlayerIndex},//You are being seanced by the medium
+    JailedSomeone{player_index: PlayerIndex},
+    JailorDecideExecute {targets: Vec<PlayerIndex>},
+    // TODO rename to MediumSeanced
+    MediumSeance{player: PlayerIndex},
     #[serde(rename_all = "camelCase")]
     DeputyKilled{shot_index: PlayerIndex},
 
     #[serde(rename_all = "camelCase")]
-    PlayerWithNecronomicon{player_index: PlayerIndex}, //Sammy has the necronomicon
+    PlayerWithNecronomicon{player_index: PlayerIndex},
 
-    //BOTH DAY AND NIGHT
     TargetSurvivedAttack,
     YouSurvivedAttack,
+    // TODO rename YouWereProtected or ProtectedFromAttack
+    ProtectedYou,
     YouDied,
 
-    //NIGHT INFORMATION MESSAGES
-    RoleBlocked { immune : bool },  //you were roleblocked
+    /*
+    Night Information
+    */
+    RoleBlocked { immune : bool },
 
-    /* Role-specific */
     TargetJailed,
 
     SheriffResult { suspicious: bool },
@@ -133,13 +126,6 @@ pub enum ChatMessage {
     VeteranAttackedYou,
     VeteranAttackedVisitor,
 
-    VigilanteSuicide,
-
-    DoctorHealed, //Your target was attacked
-
-    BodyguardProtected, //You redirected an attack off your target
-    ProtectedYou, //You were attacked but someone protected you
-
     Transported,
 
     #[serde(rename_all = "camelCase")]
@@ -147,25 +133,20 @@ pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
     NecromancerMessage{message: Box<ChatMessage>},
 
-    GodfatherForcedMafioso,
-    GodfatherForcedYou,
-
     Silenced,
 
     #[serde(rename_all = "camelCase")]
     PlayerRoleAndWill { role: Role, will: String },
     #[serde(rename_all = "camelCase")]
     ConsigliereResult{ role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
- 
+
     WitchTargetImmune,
-    WitchedYou { immune: bool },    //you were witched
+    WitchedYou { immune: bool },
     WitchMessage{message: Box<ChatMessage>},
 
-    ArsonistCleanedSelf,    //You cleaned the gas off yourself
-    ArsonistWasDoused,  //you were doused in gas (only arsonists recieve this message)
-
-    JesterWon, //The jester will get their revenge from the grave
-    ExecutionerWon, //You got your target lynched\
+    JesterWon,
+    // TODO Rename ExecutionerYouWon
+    ExecutionerWon,
     DoomsayerFailed,
     DoomsayerWon,
 }
@@ -183,12 +164,10 @@ pub enum ChatGroup {
 
     Jail,
     Seance
-    //Whisper
-    //Pirate, 
 }
 impl ChatGroup{
     pub fn player_receive_from_chat_group(&self, game: &Game, player_ref: PlayerReference)->bool{
-        player_ref.get_current_recieve_chat_groups(game).contains(self)
+        player_ref.get_current_receive_chat_groups(game).contains(self)
     }
 
     pub fn all_players_in_group(&self, game: &Game)->Vec<PlayerReference>{

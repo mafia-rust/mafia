@@ -43,13 +43,13 @@ impl RoleStateImpl for Vampire {
         }
 
         let mut vampires = game.teams.vampires().clone();
-        vampires.night_last_converted = Some(game.phase_machine.day_number);
+        vampires.night_of_last_conversion = Some(game.phase_machine.day_number);
         game.teams.set_vampires(vampires);
-        target_ref.set_role(game, RoleState::Vampire(Vampire::default()));
+        target_ref.set_role(game, RoleState::Vampire(Vampire));
     }
     
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        let time_passed = if let Some(night_last_converted) = game.teams.vampires().night_last_converted{
+        let time_passed = if let Some(night_last_converted) = game.teams.vampires().night_of_last_conversion{
             night_last_converted <= game.phase_machine.day_number - 2
         }else{
             true
@@ -61,8 +61,8 @@ impl RoleStateImpl for Vampire {
         actor_ref.alive(game) &&
         target_ref.alive(game) &&
         !Team::same_team(game, actor_ref, target_ref) &&
-        game.teams.vampires().orderd_vampires.len() <= 4 &&
-        game.teams.vampires().orderd_vampires.last() == Some(&actor_ref) &&
+        game.teams.vampires().ordered_vampires.len() <= 4 &&
+        game.teams.vampires().ordered_vampires.last() == Some(&actor_ref) &&
         time_passed
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
@@ -77,8 +77,8 @@ impl RoleStateImpl for Vampire {
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Vampire])
     }
-    fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        let mut out = crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref);
+    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+        let mut out = crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref);
         out.push(ChatGroup::Vampire);
         out
     }

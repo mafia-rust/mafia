@@ -25,37 +25,36 @@ setInterval(() => {
     GAME_MANAGER.tick(TIME_PERIOD);
 }, TIME_PERIOD);
 
-// Route roomcode queries to the associated lobby
-function onMount() {
-    const roomCode = new URLSearchParams(window.location.search).get("code");
+function route(url: Location) {
+    const roomCode = new URLSearchParams(url.search).get("code");
 
     if (roomCode !== null) {
         GAME_MANAGER.gameState = createGameState();
         GAME_MANAGER.tryJoinGame(roomCode);
-    } else if (window.location.pathname === '/wiki') {
-        // If we ever need more routing than this, use react router instead.
+    } else if (url.pathname === '/wiki') {
         Anchor.setContent(<StandaloneWiki/>);
     } else {
         Anchor.setContent(<StartMenu/>)
     }
+    // If we ever need more routing than this, use react router instead.
 }
 
 ROOT.render(
     <Anchor 
         content={LoadingScreen.create()} 
-        onMount={onMount}
+        onMount={() => route(window.location)}
     />
 );
 
 export function find(text: string): RegExp {
     // Detect if iOS <= 16.3
-    // This code doesn't work for iOS 1. Too bad!
+    // https://bugs.webkit.org/show_bug.cgi?id=174931
     // https://stackoverflow.com/a/11129615
     if(
         /(iPhone|iPod|iPad)/i.test(navigator.userAgent) && 
         /OS ([2-9]_\d)|(1[0-5]_\d)|(16_[0-3])(_\d)? like Mac OS X/i.test(navigator.userAgent)
     ) { 
-        // Close enough. This won't work if a keyword starts with a symbol.
+        // This won't work if a keyword starts with a symbol.
         return RegExp(`\\b${regEscape(text)}(?!\\w)`, "gi");
     } else {
         return RegExp(`(?<!\\w)${regEscape(text)}(?!\\w)`, "gi");

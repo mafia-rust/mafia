@@ -17,7 +17,6 @@
     max-width: 100%;
     display: flex;
     flex-direction: column;
-    /* justify-content: end; */
 }
 .chat-menu .send-section {
     display: flex;
@@ -37,7 +36,4 @@
     width: 100%;
     margin: 1%;
     text-align: left;
-    /* color: white; */
-    /* background-color: white; */
-    /* text refuses to come up white for some reason TODO */
 }

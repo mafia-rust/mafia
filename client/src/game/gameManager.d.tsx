@@ -57,7 +57,7 @@ export interface GameManager {
     
     messageListener(serverMessage: ToClientPacket): void;
 
-    tick(timePassedms: number): void;
+    tick(timePassedMs: number): void;
 
 }
 

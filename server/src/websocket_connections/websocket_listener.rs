@@ -8,15 +8,12 @@ use tokio::sync::{mpsc, broadcast};
 use tokio::net::{TcpListener, TcpStream};
 
 pub async fn create_ws_server(address: &str) {
-    // Create the event loop and TCP listener we'll accept connections on.
     let tcp_listener = TcpListener::bind(&address).await.unwrap_or_else(|err| {
         panic!("Failed to bind websocket server to address {address}: {err}")
     });
     
-    // Used to terminate connection threads and stop server
     let mut crash_signal = broadcast::channel(1);
 
-    // Set the panic hook to stop the server gracefully
     {
         // Remove the hook from the previous server instance, if any.
         let _ = std::panic::take_hook();
@@ -40,15 +37,14 @@ pub async fn create_ws_server(address: &str) {
             pin!(crash_signal.1.recv())
         ).await {
             Either::Left((Ok((stream, addr)), _)) => (stream, addr),
-            Either::Left((Err(_), _)) => continue, // tcp connection failed, carry on.
-            Either::Right(_) => break // crash signal recieved, stop server.
+            Either::Left((Err(_), _)) => continue, // TCP connection failed
+            Either::Right(_) => break // Received crash signal
         };
         
         let event_listener = event_listener.clone();
         let crash_signal = (crash_signal.0.clone(), crash_signal.1.resubscribe());
 
         tokio::spawn(async move {
-            // Handle connection runs until the connection or server is closed
             if let Ok(connection) = handle_connection(stream, addr, event_listener.clone(), crash_signal).await {
                 match event_listener.force_lock().on_disconnect(connection) {
                     Ok(()) => log!(important "Connection"; "Disconnected {}", addr),
@@ -81,11 +77,10 @@ async fn handle_connection(
         }
     };
 
-    // Sending to client MPSC (This gets recieved and rerouted to the client over TCP)
-    let (mpsc_sender, mut mpsc_reciever) = mpsc::unbounded_channel();
+    // Messages in this channel get received and rerouted to the client over TCP
+    let (mpsc_sender, mut mpsc_receiver) = mpsc::unbounded_channel();
 
-    // Client TCP connection
-    let (mut tcp_sender, mut tcp_reciever) = ws_stream.split();
+    let (mut tcp_sender, mut tcp_receiver) = ws_stream.split();
     
     let connection = {
         let Ok(mut listener) = listener.lock() else {
@@ -102,13 +97,12 @@ async fn handle_connection(
     // Route MPSC packets to client via TCP
     let send_over_tcp = tokio::spawn(async move {
         loop {
-            let message = match future::select(pin!(mpsc_reciever.recv()), pin!(crash_signal.1.recv())).await {
+            let message = match future::select(pin!(mpsc_receiver.recv()), pin!(crash_signal.1.recv())).await {
                 Either::Left((Some(message), _)) => message,
                 Either::Left((None, _)) => break, // Channel has been closed
                 Either::Right(_) => break // Server has been closed
             };
             
-            // Just disconnect the player if the serialization fails.
             let Ok(json_message) = message.to_json_string() else {break};
 
             match tcp_sender.send(Message::text(json_message)).await {
@@ -120,17 +114,15 @@ async fn handle_connection(
                 },
             }
         }
-        // We don't care if there is an error -- we're not using the connection anymore anyway.
         let _ = tcp_sender.close().await;
     });
 
-    let recieve_over_tcp = {
+    let receive_over_tcp = {
         let listener = listener.clone();
-        // It would be nice if we could avoid this ... but it's only once per connection, so it's fine.
         let connection = connection.clone();
 
         tokio::spawn(async move {
-            while let Some(Ok(message)) = tcp_reciever.next().await {
+            while let Some(Ok(message)) = tcp_receiver.next().await {
                 let Ok(mut listener) = listener.lock() else {
                     let _ = crash_signal.0.send(());
                     return;
@@ -142,7 +134,7 @@ async fn handle_connection(
     };
     
     // When either future is complete, that means it has disconnected
-    future::select(send_over_tcp, recieve_over_tcp).await;
+    future::select(send_over_tcp, receive_over_tcp).await;
 
     Ok(connection)
 }

@@ -13,7 +13,7 @@ export type ToClientPacket = {
     reason: string /* TODO RejectJoinReason */
 } | {
     type: "acceptHost",
-    roomCode: number /* TODO RoomCode */
+    roomCode: number
 } |
 // Lobby
 {
@@ -66,7 +66,7 @@ export type ToClientPacket = {
     alive: [boolean]
 } | {
     type: "playerVotes",
-    votedForPlayer: Map<PlayerIndex, number>
+    votesForPlayer: Map<PlayerIndex, number>
 } | {
     type: "yourButtons", 
     buttons: [{
@@ -114,14 +114,14 @@ export type ToClientPacket = {
     type: "gameOver",
     reason: string /* TODO GameOverReason */
 }
-    //////////////////////////////////////////////////////////////////////////////////////////////////
+
 export type ToServerPacket = {
     type: "join", 
     roomCode: number
 } | {
     type: "host",
 }
-//Lobby
+// Lobby
 | {
     type: "setName", 
     name: string
@@ -148,16 +148,14 @@ export type ToServerPacket = {
     type: "setExcludedRoles", 
     roles: RoleListEntry[], 
 } | 
-//Game
-{ //Accusation
+// Game
+{
     type: "vote", 
     playerIndex: PlayerIndex | null
-} |
-{ //Vote
+} | {
     type: "judgement", 
     verdict: Verdict
-} |
-{
+} | {
     type: "target", 
     playerIndexList: PlayerIndex[]
 } | {

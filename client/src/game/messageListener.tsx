@@ -64,10 +64,9 @@ export default function messageListener(packet: ToClientPacket){
             GAME_MANAGER.gameState.host = true;
             Anchor.setContent(<LobbyMenu/>);
         break;
-
-        //InLobby/Game
-
-        
+        /*
+        In Lobby/Game 
+        */
         case "yourName":
             GAME_MANAGER.gameState.myName = packet.name;
         break;
@@ -77,10 +76,9 @@ export default function messageListener(packet: ToClientPacket){
         case "players":
             GAME_MANAGER.gameState.players = [];
             for(let i = 0; i < packet.names.length; i++){
-                if(GAME_MANAGER.gameState.players.length > i){
+                if (GAME_MANAGER.gameState.players.length > i) {
                     GAME_MANAGER.gameState.players[i].name = packet.names[i];
-                }else{
-                    //if this player index isnt in the already made list, create a new player and then sync
+                } else {
                     GAME_MANAGER.gameState.players.push(createPlayer(packet.names[i], i));
                 }
             }
@@ -117,7 +115,7 @@ export default function messageListener(packet: ToClientPacket){
         case "phase":
             GAME_MANAGER.gameState.phase = packet.phase;
             GAME_MANAGER.gameState.dayNumber = packet.dayNumber;
-            GAME_MANAGER.gameState.secondsLeft = packet.secondsLeft;
+            GAME_MANAGER.gameState.timeLeftMs = packet.secondsLeft * 1000;
         break;
         case "playerOnTrial":
             GAME_MANAGER.gameState.playerOnTrial = packet.playerIndex;
@@ -131,7 +129,7 @@ export default function messageListener(packet: ToClientPacket){
             for(let i = 0; i < GAME_MANAGER.gameState.players.length; i++){
                 GAME_MANAGER.gameState.players[i].numVoted = 0;
             }
-            for(let [playerIndex, numVoted] of Object.entries(packet.votedForPlayer)){
+            for(let [playerIndex, numVoted] of Object.entries(packet.votesForPlayer)){
                 GAME_MANAGER.gameState.players[Number.parseInt(playerIndex)].numVoted = numVoted;
             }
         break;

@@ -27,7 +27,7 @@ trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
     fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit>;
 
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
-    fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
+    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
 
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType);
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference);
@@ -58,7 +58,7 @@ macros::roles! {
     Medium : medium,
     Retributionist : retributionist,
 
-    //Mafia
+    // Mafia
     Mafioso : mafioso,
     
     Consort : consort,
@@ -70,7 +70,7 @@ macros::roles! {
     Janitor : janitor,
     Framer : framer,
 
-    //Neutral
+    // Neutral
     Jester : jester,
     Executioner: executioner,
     Doomsayer: doomsayer,
@@ -151,7 +151,6 @@ mod macros {
                         $(Self::$name(_) => Role::$name),*
                     }
                 }
-                //old constants
                 pub fn suspicious(&self, game: &Game, actor_ref: PlayerReference) -> bool {
                     match self {
                         $(Self::$name(role_struct) => role_struct.suspicious(game, actor_ref)),*
@@ -182,7 +181,7 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.team(game, actor_ref)),*
                     }
                 }
-                //event listeners
+                
                 pub fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority){
                     match self {
                         $(Self::$name(role_struct) => role_struct.do_night_action(game, actor_ref, priority)),*
@@ -213,9 +212,9 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.get_current_send_chat_groups(game, actor_ref)),*
                     }
                 }
-                pub fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>{
+                pub fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>{
                     match self {
-                        $(Self::$name(role_struct) => role_struct.get_current_recieve_chat_groups(game, actor_ref)),*
+                        $(Self::$name(role_struct) => role_struct.get_current_receive_chat_groups(game, actor_ref)),*
                     }
                 }
                 pub fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){

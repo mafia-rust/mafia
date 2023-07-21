@@ -9,7 +9,7 @@ pub use mafia_server::packet::ToServerPacket;
 pub use mafia_server::game::phase::PhaseType;
 
 #[test]
-fn medium_recieves_dead_messages_from_jail() {
+fn medium_receives_dead_messages_from_jail() {
     kit::scenario!(game in Evening 1 where
         medium: Medium,
         jailor: Jailor,
@@ -110,7 +110,7 @@ fn spy_basic_transported() {
     kit::scenario!(game in Night 1 where
         spy: Spy,
         _mafioso: Mafioso,
-        bmer: Blackmailer,
+        blackmailer: Blackmailer,
         esc: Escort,
         transp: Transporter,
         bugged: Sheriff,
@@ -118,7 +118,7 @@ fn spy_basic_transported() {
     );
     spy.set_night_target(jester);
     transp.set_night_targets(vec![jester, bugged]);
-    bmer.set_night_target(jester);
+    blackmailer.set_night_target(jester);
     esc.set_night_target(jester);
 
     game.next_phase();
@@ -396,7 +396,7 @@ fn crusader_basic(){
 }
 
 #[test]
-fn crusader_doesnt_kill_framed_player(){
+fn crusader_does_not_kill_framed_player(){
     kit::scenario!(game in Night 1 where
         crus: Crusader,
         protected: Jester,
@@ -418,7 +418,7 @@ fn crusader_doesnt_kill_framed_player(){
 }
 
 #[test]
-fn veteran_doesnt_kill_framed_player(){
+fn veteran_does_not_kill_framed_player(){
     kit::scenario!(game in Night 1 where
         vet: Veteran,
         townie: Sheriff,

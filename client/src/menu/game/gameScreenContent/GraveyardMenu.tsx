@@ -147,7 +147,6 @@ ${translate("menu.graveyard.killedBy")+" "+deathCauseString}
         <div>
             {this.renderRoleList()}
             {this.renderGraves()}
-            {/* //TODO show excluded roles at top */}
         </div>
         {this.renderExcludedRoles()}
 

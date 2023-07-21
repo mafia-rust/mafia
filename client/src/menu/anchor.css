@@ -27,7 +27,7 @@
     border-width: .13rem;
     color: white;
 
-    /* Start off the page, and slide in */
+    /* Start off the page and slide in */
     transform: translateX(100%);
     animation: slide-in 0.5s forwards;
     -webkit-animation: slide-in 0.5s forwards;

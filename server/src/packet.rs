@@ -33,16 +33,14 @@ use crate::{game::{
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum ToClientPacket{
-    
-        //Pre lobby
+    // Pre lobby
     #[serde(rename_all = "camelCase")]
     AcceptJoin{in_game: bool},
     RejectJoin{reason: RejectJoinReason},
     #[serde(rename_all = "camelCase")]
     AcceptHost{room_code: RoomCode},
     
-        //Lobby
-    //Syncronize
+    // Lobby
     YourName{name: String},
     #[serde(rename_all = "camelCase")]
     YourPlayerIndex{player_index: PlayerIndex},
@@ -50,7 +48,6 @@ pub enum ToClientPacket{
     Kicked,
     RejectStart{reason: RejectStartReason},
     YouAreHost,
-    // 
     StartGame,
 
     #[serde(rename_all = "camelCase")]
@@ -64,18 +61,15 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     ExcludedRoles{roles: Vec<RoleListEntry>},
 
-        //Game
-    //Syncronize
+    // Game
     #[serde(rename_all = "camelCase")]
-    Phase{phase: PhaseType, day_number: u8, seconds_left: u64},   //Time left & PhaseType
+    Phase{phase: PhaseType, day_number: u8, seconds_left: u64},
     #[serde(rename_all = "camelCase")]
-    PlayerOnTrial{player_index: PlayerIndex},  //Player index
+    PlayerOnTrial{player_index: PlayerIndex},
 
-        
-    
     PlayerAlive{alive: Vec<bool>},
     #[serde(rename_all = "camelCase")]
-    PlayerVotes{voted_for_player: HashMap<PlayerIndex, u8>}, //map from playerindex to num_voted_for that player
+    PlayerVotes{votes_for_player: HashMap<PlayerIndex, u8>},
 
     YouAreSilenced,
     YouAreJailed,
@@ -96,16 +90,12 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     YourVoting{player_index: Option<PlayerIndex>},
     YourJudgement{verdict: Verdict},
-    //YourChatGroups{chat_groups: Vec<ChatGroup>},
 
-    //Run function
     #[serde(rename_all = "camelCase")]
     AddChatMessages{chat_messages: Vec<ChatMessage>},
     AddGrave{grave: Grave},
 
     GameOver{reason: GameOverReason},
-
-    //a way to syncronise the entire game for someone who joined late\
 }
 impl ToClientPacket {
     pub fn to_json_string(&self) -> Result<String, serde_json::Error> {
@@ -130,7 +120,7 @@ impl ToClientPacket {
             }
         }
 
-        ToClientPacket::PlayerVotes { voted_for_player }
+        ToClientPacket::PlayerVotes { votes_for_player: voted_for_player }
     }
 }
 
@@ -160,12 +150,12 @@ pub enum GameOverReason {
 #[derive(Deserialize, Debug, Clone)]
 #[serde(tag = "type", rename_all = "camelCase")]
 pub enum ToServerPacket{
-    //Pre Lobby
+    // Pre Lobby
     #[serde(rename_all = "camelCase")]
     Join{room_code: RoomCode},
     Host,
 
-    //Lobby
+    // Lobby
     SetName{name: String},
     StartGame,
     #[serde(rename_all = "camelCase")]
@@ -179,10 +169,10 @@ pub enum ToServerPacket{
     SetPhaseTimes{phase_time_settings: PhaseTimeSettings},
     SetExcludedRoles{roles: Vec<RoleListEntry>},
 
-    //Game
+    // Game
     #[serde(rename_all = "camelCase")]
-    Vote{player_index: Option<PlayerIndex>},   //Accusation
-    Judgement{verdict: Verdict},  //Vote
+    Vote{player_index: Option<PlayerIndex>},
+    Judgement{verdict: Verdict},
     #[serde(rename_all = "camelCase")]
     Target{player_index_list: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
@@ -198,10 +188,9 @@ pub enum ToServerPacket{
 
     Leave,
 
-    //ROLE SPECIFIC PACKETS
+    // Role-specific
     #[serde(rename_all = "camelCase")]
     SetForgerWill{ role: Role, will: String },
-    
     #[serde(rename_all = "camelCase")]
     SetDoomsayerGuess{ guesses: [(PlayerReference, DoomsayerGuess); 3] },
 }

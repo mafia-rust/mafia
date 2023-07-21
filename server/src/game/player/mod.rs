@@ -34,12 +34,12 @@ pub struct Player {
     notes: String,
     death_note: Option<String>,
 
-    role_labels: HashMap<PlayerReference, Role>,   //when you can see someone elses role in the playerlist, dead players and teammates, mayor
+    role_labels: HashMap<PlayerReference, Role>,
     player_tags: HashMap<PlayerReference, Vec<Tag>>,
 
 
-    pub chat_messages: Vec<ChatMessage>, //all messages
-    queued_chat_messages: Vec<ChatMessage>, //messages that have yet to have been sent to the client
+    pub chat_messages: Vec<ChatMessage>,
+    queued_chat_messages: Vec<ChatMessage>, // Not yet sent to the client
 
     last_sent_buttons: Vec<AvailableButtons>,
 

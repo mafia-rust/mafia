@@ -51,7 +51,7 @@ impl PlayerReference{
                 
                 self.set_night_grave_role(game,  GraveRole::Role(self.role(game)));
                 self.set_night_grave_killers(game,  vec![]);
-                self.set_night_grave_will(game,  self.will(game).clone());   //THIS NEEDS TO BE SET RIGHT BEFORE THEY DIE
+                self.set_night_grave_will(game,  self.will(game).clone());
                 self.set_night_grave_death_notes(game,  vec![]);
             }
         }

@@ -3,9 +3,8 @@ use std::{net::SocketAddr, collections::HashMap, sync::{Mutex, Arc}, time::Durat
 use rand::random;
 use tokio_tungstenite::tungstenite::Message;
 
-use crate::{lobby::Lobby, websocket_connections::connection::{Connection}, packet::{ToServerPacket, ToClientPacket, RejectJoinReason}, log};
+use crate::{lobby::Lobby, websocket_connections::connection::Connection, packet::{ToServerPacket, ToClientPacket, RejectJoinReason}, log};
 
-// TODO, rename to PregameID or IntermediaryID
 pub type ArbitraryPlayerID = u32;
 pub type RoomCode = usize;
 
@@ -31,14 +30,14 @@ impl Listener{
     }
 
     pub fn start(listener: Arc<Mutex<Self>>) {
-        const DESIRED_FRAME_TIME: Duration = Duration::from_millis(980);
+        const DESIRED_FRAME_TIME: Duration = Duration::from_millis(1000);
 
         tokio::spawn(async move {
             let mut last_tick = tokio::time::Instant::now();
             loop {
                 let delta_time;
-                { // Tick, and remove completed lobbies
-                    let Ok(mut listener) = listener.lock() else {return};
+
+                if let Ok(mut listener) = listener.lock() {
                     let mut closed_lobbies = Vec::new();
                     
                     delta_time = last_tick.elapsed();
@@ -52,15 +51,15 @@ impl Listener{
                         }
                     }
 
-                    // Remove closed lobbies
                     for key in closed_lobbies {
                         log!(important "Lobby"; "Closed {key}");
                         listener.lobbies.remove(&key);
                     }
+                } else { 
+                    return;
                 }
 
-                // Calculate sleep time based on the last frame time
-                tokio::time::sleep(DESIRED_FRAME_TIME).await;
+                tokio::time::sleep(DESIRED_FRAME_TIME.saturating_sub(delta_time)).await;
             }
         });
     }
@@ -90,13 +89,11 @@ impl Listener {
     }
 
     pub fn on_message(&mut self, connection: &Connection, message: &Message) {
-        if message.is_empty() {
-            return; // They either disconnected, or sent nothing.
-        }
-        log!(info "Listener"; "{}: {}", &connection.get_address().to_string(), message);
+        if message.is_empty() { return }
 
+        log!(info "Listener"; "{}: {}", &connection.get_address().to_string(), message);
         if let Err(k) = self.handle_message(connection, message){
-            log!(error "Listener"; "Serde error when recieving message from {}: {}", &connection.get_address().to_string(), k);
+            log!(error "Listener"; "Serde error when receiving message from {}: {}", &connection.get_address().to_string(), k);
         }    
     }
     // TODO sum the error types in this function so they can be handled in on_message
@@ -118,8 +115,6 @@ impl Listener {
                 match lobby.connect_player_to_lobby(&connection.get_sender()) {
                     Ok(player_id) => {
                         *sender_player_location = PlayerLocation::InLobby { room_code, player_id };
-        
-                        // connection.send(ToClientPacket::AcceptJoin{in_game: false});
                     },
                     Err(reason) => {
                         connection.send(ToClientPacket::RejectJoin { reason });
@@ -156,7 +151,7 @@ impl Listener {
                     if let Some(lobby) = self.lobbies.get_mut(room_code){
                         lobby.on_client_message(&connection.get_sender(), *player_id, incoming_packet);
                     } else {
-                        //Player is in a lobby that doesnt exist   
+                        //Player is in a lobby that doesn't exist
                         todo!()
                     }
                 }

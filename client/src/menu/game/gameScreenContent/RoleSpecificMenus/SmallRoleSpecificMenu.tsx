@@ -9,7 +9,7 @@ type SmallRoleSpecificMenuProps = {
 type SmallRoleSpecificMenuState = {
     gameState: GameState
 }
-export default class SmallRoleSpecifcMenu extends React.Component<SmallRoleSpecificMenuProps, SmallRoleSpecificMenuState> {
+export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpecificMenuProps, SmallRoleSpecificMenuState> {
     listener: () => void;
     constructor(props: SmallRoleSpecificMenuProps) {
         super(props);
@@ -55,11 +55,11 @@ export default class SmallRoleSpecifcMenu extends React.Component<SmallRoleSpeci
                 }
             case "medium":
                 if (this.state.gameState.roleState.seancedTarget === null) {
-                    return translate("role.medium.roleDataText.nobody", this.state.gameState.roleState.seancnesRemaining);
+                    return translate("role.medium.roleDataText.nobody", this.state.gameState.roleState.seancesRemaining);
                 } else {
                     return translate("role.medium.roleDataText", 
                         this.state.gameState.players[this.state.gameState.roleState.seancedTarget].toString(),
-                        this.state.gameState.roleState.seancnesRemaining
+                        this.state.gameState.roleState.seancesRemaining
                     )
                 }
             case "doctor":

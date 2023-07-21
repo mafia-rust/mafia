@@ -2,7 +2,6 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    /* overflow: hidden; */
 }
 
 .game-screen > .leave-button {
@@ -30,12 +29,9 @@
 
     height: 1vh;
     overflow-x: hidden;
-    /* setting this to 1vh */
 }
 .game-screen .content > div{
-    /* overflow-y: scroll; */
     overflow-x: hidden;
-    /* overflow-y: auto; */
 }
 
 .game-screen .content > div {
@@ -73,6 +69,5 @@
 }
 .game-screen .content .content-tab > button{
     width: max-content;
-    /* height: max-content; */
     margin: 0 .30rem;
 }

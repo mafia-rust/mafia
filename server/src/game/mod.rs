@@ -44,14 +44,10 @@ pub struct Game {
 }
 
 impl Game {
-    pub fn new(settings: Settings, lobby_players: Vec<LobbyPlayer>)->Self{
-
-        //create role list
+    pub fn new(settings: Settings, lobby_players: Vec<LobbyPlayer>) -> Self{
         let mut roles = create_random_roles(&settings.excluded_roles, &settings.role_list);
         roles.shuffle(&mut thread_rng());
 
-
-        //create players
         let mut players = Vec::new();
         for (player_index, player) in lobby_players.iter().enumerate() {
             let new_player = Player::new(
@@ -64,8 +60,8 @@ impl Game {
             );
             players.push(new_player);
         }
-        //just to make sure the order of roles is not used anywhere else for secuity from our own stupidity  
-        drop(roles);
+        drop(roles); // Ensure we don't use the order of roles anywhere
+
         let mut game = Self{
             players: players.into_boxed_slice(),
             graves: Vec::new(),
@@ -78,8 +74,6 @@ impl Game {
             player_ref.send_join_game_data(&mut game);
         }
 
-
-        //set up role data
         for player_ref in PlayerReference::all_players(&game){
             let role_data_copy = player_ref.role_state(&game).clone();
             player_ref.set_role(&mut game, role_data_copy);
@@ -87,11 +81,10 @@ impl Game {
 
         Teams::on_team_creation(&mut game);
 
-        
         game
     }
 
-    //returns (guilty, innocent)
+    /// Returns a tuple containing the number of guilty votes and the number of innocent votes
     pub fn count_verdict_votes(&self, player_on_trial: PlayerReference)->(u8,u8){
         let mut guilty = 0;
         let mut innocent = 0;
@@ -123,19 +116,14 @@ impl Game {
         self.phase_machine.day_number
     }
 
-    //phase state machine
     pub fn tick(&mut self, time_passed: Duration){
-        
-        //if max day is reached, end game
         if self.phase_machine.day_number == u8::MAX {
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
             // TODO, clean up the lobby. Stop the ticking
             return;
         }
 
-        //check if phase is over and start next phase
         while self.phase_machine.time_remaining <= Duration::ZERO {
-
             let new_phase = PhaseState::end(self);
 
             self.start_phase(new_phase);
@@ -145,12 +133,10 @@ impl Game {
             player_ref.tick(self, time_passed)
         }
         
-        //subtract time for actual tick
         self.phase_machine.time_remaining = self.phase_machine.time_remaining.saturating_sub(time_passed);
     }
 
     pub fn start_phase(&mut self, phase: PhaseState){
-
         self.phase_machine.current_state = phase;
         self.phase_machine.time_remaining = self.settings.phase_times.get_time_for(self.current_phase().phase());
 
@@ -160,7 +146,6 @@ impl Game {
 
         PhaseState::start(self);
 
-        //player reset
         for player_ref in PlayerReference::all_players(self){
             player_ref.on_phase_start(self, self.current_phase().phase());
         }
@@ -175,12 +160,10 @@ impl Game {
     }
 
     pub fn add_message_to_chat_group(&mut self, group: ChatGroup, mut message: ChatMessage){
-        //if normal message, then correct chat group
         if let ChatMessage::Normal { chat_group, .. } = &mut message {
             *chat_group = group.clone();
         }
 
-        //add messages
         for player_ref in group.all_players_in_group(self){
             player_ref.add_chat_message(self, message.clone());
             player_ref.send_chat_messages(self);
@@ -206,12 +189,9 @@ pub mod test {
     use super::{Game, settings::Settings, role_list::{create_random_roles, RoleListEntry}, player::{PlayerReference, test::mock_player}, phase::PhaseStateMachine, team::Teams};
 
     pub fn mock_game(settings: Settings, number_of_players: usize) -> Game {
-        //create role list
         let mut roles = create_random_roles(&settings.excluded_roles, &settings.role_list);
         roles.shuffle(&mut thread_rng());
         
-
-        //create players
         let mut players = Vec::new();
         for player_index in 0..number_of_players {
             let new_player = mock_player(
@@ -223,8 +203,8 @@ pub mod test {
             );
             players.push(new_player);
         }
-        //just to make sure the order of roles is not used anywhere else for secuity from our own stupidity  
         drop(roles);
+
         let mut game = Game{
             players: players.into_boxed_slice(),
             graves: Vec::new(),
@@ -237,15 +217,12 @@ pub mod test {
             player_ref.send_join_game_data(&mut game);
         }
 
-
-        //set up role data
         for player_ref in PlayerReference::all_players(&game){
             let role_data_copy = player_ref.role_state(&game).clone();
             player_ref.set_role(&mut game, role_data_copy);
         }
 
         Teams::on_team_creation(&mut game);
-
         
         game
     }

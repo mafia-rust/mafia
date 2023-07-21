@@ -39,7 +39,6 @@ pub struct ClientSender {
 }
 
 impl ClientSender {
-    /// Send a message to the client.
     pub fn send(&self, message: ToClientPacket) {
         let _ = self.tx.send(message);
     }

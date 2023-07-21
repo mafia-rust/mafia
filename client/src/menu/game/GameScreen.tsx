@@ -11,7 +11,7 @@ import WikiMenu from "./gameScreenContent/WikiMenu";
 import "../../index.css";
 import "./gameScreen.css";
 import translate from "../../game/lang";
-import RoleSpecifcMenu from "./gameScreenContent/RoleSpecific";
+import RoleSpecificMenu from "./gameScreenContent/RoleSpecific";
 import Anchor from "../Anchor";
 import StyledText from "../../components/StyledText";
 
@@ -167,7 +167,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                     <ChatMenu/>
                     {this.state.playerListMenu?<PlayerListMenu/>:null}
                     {this.state.willMenu?<WillMenu/>:null}
-                    {this.state.roleSpecificMenu?<RoleSpecifcMenu/>:null}
+                    {this.state.roleSpecificMenu?<RoleSpecificMenu/>:null}
                     {this.state.wikiMenu?<WikiMenu/>:null}
                 </div>
             </div>

@@ -54,10 +54,7 @@ impl RoleStateImpl for Jester {
         let visit: Visit = match actor_ref.night_visits(game).first() {
             Some(v) => v.clone(),
             None => {
-                //get random player from list
-                let target_ref = all_killable_players.choose(&mut rand::thread_rng());
-    
-                let Some(target_ref) = target_ref else {return};
+                let Some(target_ref) = all_killable_players.choose(&mut rand::thread_rng()) else {return};
                 Visit{
                     target: *target_ref,
                     astral: true,
@@ -92,8 +89,8 @@ impl RoleStateImpl for Jester {
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
     }
-    fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
+    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+        crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         match game.current_phase() {
