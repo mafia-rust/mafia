@@ -70,6 +70,8 @@
     
     "menu.wiki.entries.visit.title":"Visits",
     "menu.wiki.entries.visit.text":"Visits are how all roles work.",
+
+    "menu.wiki.entries.all_language.title":"All Language",
     
     "menu.wiki.maxCount": "At most \\0 of this role",
     "menu.wiki.suspicious": "Sheriff result: \\0",
@@ -447,7 +449,7 @@
     "chatMessage.veteranAttackedYou":"You were attacked by the veteran you visited.",
     "chatMessage.veteranAttackedVisitor":"You attacked a visitor.",
     "chatMessage.vigilanteSuicide":"You committed suicide over the guilt of killing an innocent person.",
-    "chatMessage.doctorHealed":"You healed your target while they got attacked.",
+    "chatMessage.doctorHealed":"Your target was attacked.",
     "chatMessage.bodyguardProtected": "You protected your target.",
     "chatMessage.protectedYou": "You were attacked but someone protected you.",
     "chatMessage.transported": "You were transported!",

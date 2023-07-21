@@ -1,10 +1,12 @@
 
 let lang: ReadonlyMap<string, string>;
+export let langText: String;
 switchLanguage("en_us");
 
 export function switchLanguage(language: string) {
     let json = require("../resources/lang/" + language + ".json");
-    lang = new Map<string, string>(Object.entries(json))
+    lang = new Map<string, string>(Object.entries(json));
+    langText = JSON.stringify(json);
 }
 
 export default function translate(langKey: string, ...valuesList: (string | number)[]): string {
