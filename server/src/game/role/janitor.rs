@@ -88,8 +88,8 @@ impl RoleStateImpl for Janitor {
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Mafia])
     }
-    fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
+    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+        crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         actor_ref.set_role_state(game, RoleState::Janitor(Janitor { cleans_remaining: self.cleans_remaining, cleaned_ref: None }));

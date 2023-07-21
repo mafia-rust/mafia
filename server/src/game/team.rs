@@ -118,24 +118,21 @@ impl TeamStateImpl for Mafia{
         Team::Mafia
     }
     fn on_phase_start(self, game: &mut Game){
-        Mafia::ensure_killer(game);
+        Mafia::ensure_mafia_can_kill(game);
     }
     fn on_creation(self, game: &mut Game) {
-        Mafia::ensure_killer(game);
+        Mafia::ensure_mafia_can_kill(game);
     }
     fn on_any_death(self, game: &mut Game){
-        Mafia::ensure_killer(game);
+        Mafia::ensure_mafia_can_kill(game);
     }
     fn on_member_role_switch(self, _game: &mut Game, _actor: PlayerReference) {
         
     }
 }
 impl Mafia{
-    fn ensure_killer(game: &mut Game){
-        //ensure mafia can kill
-        //search for mafia godfather or mafioso
+    fn ensure_mafia_can_kill(game: &mut Game){
         let mut main_mafia_killing_exists = false;
-
 
         for player_ref in PlayerReference::all_players(game){
             if player_ref.role(game) == Role::Mafioso && player_ref.alive(game) { 
@@ -144,13 +141,11 @@ impl Mafia{
             }
         }
 
-        //TODO for now just convert the first person we see to mafioso
-        //later set an order for roles
-        //ambusher should be converted first
+        // TODO Set an order for roles for conversion
         if !main_mafia_killing_exists{
             for player_ref in PlayerReference::all_players(game){
                 if player_ref.role(game).faction_alignment().faction() == Faction::Mafia && player_ref.alive(game){
-                    player_ref.set_role(game, super::role::RoleState::Mafioso(Mafioso::default()));
+                    player_ref.set_role(game, super::role::RoleState::Mafioso(Mafioso));
                     break;
                 }
             }
@@ -161,8 +156,8 @@ impl Mafia{
 
 #[derive(Default, Clone)]
 pub struct Vampires {
-    pub orderd_vampires: Vec<PlayerReference>,
-    pub night_last_converted: Option<u8>
+    pub ordered_vampires: Vec<PlayerReference>,
+    pub night_of_last_conversion: Option<u8>
 }
 impl TeamStateImpl for Vampires{
     fn team(&self) -> Team {
@@ -182,22 +177,22 @@ impl TeamStateImpl for Vampires{
 }
 impl Vampires{
     fn ensure_youngest_vamp(mut self, game: &mut Game){
-        //add new vamps
-        for player in PlayerReference::all_players(game){
-            if 
-                player.role(game) == Role::Vampire &&
-                player.alive(game) &&
-                !self.orderd_vampires.contains(&player)
-            {
-                self.orderd_vampires.push(player);
-            }
-        }
-        //remove dead/non vamps
-        self.orderd_vampires = self.orderd_vampires.iter().cloned().filter(|p|
+        // Remove dead
+        self.ordered_vampires = self.ordered_vampires.iter().cloned().filter(|p|
             p.role(game) == Role::Vampire &&
             p.alive(game)
         ).collect();
 
+        // Add new
+        for player in PlayerReference::all_players(game){
+            if 
+                player.role(game) == Role::Vampire &&
+                player.alive(game) &&
+                !self.ordered_vampires.contains(&player)
+            {
+                self.ordered_vampires.push(player);
+            }
+        }
 
         game.teams.set_vampires(self);
     }

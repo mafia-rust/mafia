@@ -7,7 +7,7 @@ import ChatMenu from "./ChatMenu";
 import GameState, { Player, PlayerIndex } from "../../../game/gameState.d";
 import { ContentMenus, ContentTab } from "../GameScreen";
 import { StateListener } from "../../../game/gameManager.d";
-import SmallRoleSpecifcMenu from "./RoleSpecificMenus/SmallRoleSpecificMenu";
+import SmallRoleSpecificMenu from "./RoleSpecificMenus/SmallRoleSpecificMenu";
 import Anchor from "../../Anchor";
 import StyledText from "../../../components/StyledText";
 
@@ -117,7 +117,6 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         onClick={() => {isFilterSet ? ChatMenu.setFilter(null) : ChatMenu.setFilter(filter); this.setState({})}}
                         aria-label={translate("menu.playerList.button.filter")}
                     >
-                        {/* This font uses ligatures. This isn't missing lang. */}
                         filter_alt
                     </button>
                 })()}
@@ -127,7 +126,6 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
             <div className="buttons">
                 <div className="day-target">
                     {((player)=>{if(player.buttons.dayTarget){
-                        // This is a little hacky. TODO: Extract this to another function.
                         const highlighted = 
                             this.state.gameState.roleState?.role === "jailor" && 
                                 this.state.gameState.roleState.jailedTargetRef === player.index;
@@ -192,7 +190,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         {this.renderFilterButton("living")}
         {this.renderFilterButton("usable")}
 
-        <SmallRoleSpecifcMenu/>
+        <SmallRoleSpecificMenu/>
         {this.renderPhaseSpecific()}
         {this.renderPlayers(this.state.gameState.players)}
     </div>)}

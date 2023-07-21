@@ -10,7 +10,7 @@ export function switchLanguage(language: string) {
 export default function translate(langKey: string, ...valuesList: (string | number)[]): string {
     let out = lang.get(langKey);
     if(out===undefined){
-        console.error("Attempted to use non existant lang key: "+langKey);
+        console.error("Attempted to use non existent lang key: "+langKey);
         return "ERROR: "+langKey;
     }
     for(let i = 0; i < valuesList.length; i++){

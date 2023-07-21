@@ -50,8 +50,7 @@ export function getFactionFromFactionAlignment(factionAlignment: FactionAlignmen
     }
 }
 export function getAlignmentStringFromFactionAlignment(factionAlignment: FactionAlignment): string {
-    //make first letter lowercase
-    let alignment = factionAlignment.replace(getFactionFromFactionAlignment(factionAlignment).toString(), "");
+    const alignment = factionAlignment.replace(getFactionFromFactionAlignment(factionAlignment).toString(), "");
     return alignment.charAt(0).toLowerCase() + alignment.slice(1);
 }
 export function getRoleListEntryFromFactionAlignment(factionAlignment: FactionAlignment): RoleListEntry {

@@ -44,9 +44,7 @@ export default function StyledText(props: { children: string[] | string, classNa
         )
     }];
 
-    for(const [keyword, style] of Object.entries(KEYWORD_STYLE_MAP)){
-        // Using for..of or for..in is prone to errors, since we mutate the array as we loop through it,
-        // which is why I've opted for a classical for loop to ensure completeness.
+    for(const [keyword, style] of Object.entries(KEYWORD_STYLE_MAP)) {
         for(let index = 0; index < tokens.length; index++) {
             const token = tokens[index];
             if (token.type !== "string") continue;
@@ -73,7 +71,6 @@ export default function StyledText(props: { children: string[] | string, classNa
             }
             replacement.pop();
 
-            // Insert the new tokens in the place of the old one
             tokens = 
                 tokens.slice(0, index)
                     .concat(replacement)
@@ -84,7 +81,6 @@ export default function StyledText(props: { children: string[] | string, classNa
         }
     }
 
-    // Convert to JSX
     const jsxString = tokens.map(token => 
         token.type === "string" 
             ? token.string 
@@ -97,7 +93,6 @@ export default function StyledText(props: { children: string[] | string, classNa
     
     return <span
         className={props.className}
-        // Sanitization isn't strictly necessary here, but it's good to be safe.
         dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(
             jsxString, 
             SANITIZATION_OPTIONS
@@ -106,7 +101,7 @@ export default function StyledText(props: { children: string[] | string, classNa
 }
 
 function useKeywordStyles(): StyleMap {
-    let stringsToStyle: StyleMap = {};
+    let keywordStyles: StyleMap = {};
 
     let [players, setPlayers] = useState<Player[]>(GAME_MANAGER.gameState.players);
     useEffect(() => {
@@ -117,19 +112,21 @@ function useKeywordStyles(): StyleMap {
     }, [setPlayers]);
 
     for(const player of players){
-        stringsToStyle[player.toString()] = "keyword-player";
+        keywordStyles[player.toString()] = "keyword-player";
     }
 
     const STYLES = require("../resources/styling/keywords.json");
 
-    // Automatically color roles based on faction
     for(const role of Object.keys(ROLES)){
-        stringsToStyle[translate("role." + role + ".name")] = STYLES["faction." + getFactionFromRole(role as Role)];
+        const faction = "faction." + getFactionFromRole(role as Role);
+        if (STYLES[faction]) {
+            keywordStyles[translate(`role.${role}.name`)] = STYLES[faction];
+        }
     }
 
     for (const [key, value] of Object.entries(STYLES)) {
-        stringsToStyle[translate(key)] = value as string;
+        keywordStyles[translate(key)] = value as string;
     }
 
-    return stringsToStyle;
+    return keywordStyles;
 }

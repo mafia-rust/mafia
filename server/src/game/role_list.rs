@@ -111,11 +111,11 @@ impl FactionAlignment{
             
             if potential_role.faction_alignment() != *self {return false;}
 
-            let Some(potantial_role_max_count) = potential_role.maximum_count() else {return true};
+            let Some(potential_role_max_count) = potential_role.maximum_count() else {return true};
             
             taken_roles.iter().filter(|taken_role|{
                 **taken_role == *potential_role
-            }).count() < potantial_role_max_count.into()
+            }).count() < potential_role_max_count.into()
         }).collect()
     }
     pub fn get_random_role(&self, excluded_roles: &[RoleListEntry], taken_roles: &[Role])->Option<Role>{
@@ -184,31 +184,4 @@ impl RoleListEntry{
             },
         }
     }
-
-
-    // pub fn get_possible_roles(&self) -> Vec<Role> {
-    //     match self {
-    //         RoleListEntry::Exact{role}=> 
-    //             vec![*role],
-    //         RoleListEntry::FactionAlignment{faction_alignment}=> 
-    //             Role::values().into_iter().filter(|role|{
-    //                 role.faction_alignment() == *faction_alignment
-    //             }).collect(),
-    //         RoleListEntry::Faction{faction}=>
-    //             Role::values().into_iter().filter(|role|{
-    //                 role.faction_alignment().faction() == *faction
-    //             }).collect(),
-    //         RoleListEntry::Any => Role::values(),
-    //     }
-    // }
-    // pub fn get_possible_roles_given_taken_roles(&self, taken_roles: &[Role]) -> Vec<Role> {
-    //     let possible_roles = self.get_possible_roles();
-    //     possible_roles.into_iter().filter(|potential_role|{
-    //         let Some(potantial_role_max_count) = potential_role.maximum_count() else {return true};
-            
-    //         taken_roles.iter().filter(|taken_role|{
-    //             *taken_role == potential_role
-    //         }).count() < potantial_role_max_count.into()
-    //     }).collect()
-    // }
 }

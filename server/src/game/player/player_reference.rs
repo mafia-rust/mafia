@@ -64,7 +64,6 @@ impl PlayerReference{
     pub fn all_players(game: &Game)->Vec<PlayerReference>{
         let mut out = Vec::new();
         for player_index in 0..game.players.len(){
-            // Guaranteed to be safe
             out.push(PlayerReference::new_unchecked(player_index as PlayerIndex));
         }
         out

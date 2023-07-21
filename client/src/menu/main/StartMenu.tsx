@@ -33,7 +33,6 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
         await GAME_MANAGER.server.open();
 
         GAME_MANAGER.sendHostPacket();
-        // Lobby menu opens when AcceptHost packet is recieved
     }
 
     render(){return(<div className="sm">

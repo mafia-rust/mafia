@@ -225,8 +225,8 @@ impl Lobby {
 
                 settings.role_list.push(RoleListEntry::Any);
 
-                // Make sure everybody is on the same page
                 Self::send_players_lobby(players);
+
                 for player in players.iter(){
                     Self::send_settings(player.1, settings)
                 }
@@ -237,8 +237,7 @@ impl Lobby {
 
                 for player_ref in PlayerReference::all_players(game){
                     if player_ref.has_lost_connection(game) {
-                        //loop through all arbitrary player ids and find the first one that isn't connected
-                        let arbitrary_player_ids: Vec<ArbitraryPlayerID> = players.iter().map(|(id, _)|*id).collect();
+                        let arbitrary_player_ids: Vec<ArbitraryPlayerID> = players.keys().copied().collect();
                         let mut new_id: ArbitraryPlayerID = 0;
                         for id in arbitrary_player_ids {
                             if id >= new_id {
@@ -438,7 +437,7 @@ mod name_validation {
         if let Some(random_name) = available_random_names.choose(&mut rand::thread_rng()) {
             (*random_name).clone()
         } else {
-            // This name generator sucks, but at least it works.
+            // TODO this can cause a crash if someone is already named this
             (taken_names.len()).to_string()
         }
     }

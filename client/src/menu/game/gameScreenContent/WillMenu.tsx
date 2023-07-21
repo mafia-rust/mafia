@@ -86,7 +86,6 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
                 onKeyDown={(e) => {
                     if (e.ctrlKey) {
                         if (e.key === 's') {
-                            // Prevent the Save dialog from opening
                             e.preventDefault();
                             this.save(type);
                         } else if (e.key === "Enter") {

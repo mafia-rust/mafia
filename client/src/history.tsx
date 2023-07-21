@@ -1,8 +1,11 @@
-
-
-// A utility for keeping track of how we're polling the history
+/**
+ * A utility for keeping track of how we're polling the history
+ */
 export class HistoryPoller<T> {
-    index: number; // -1 indicates we are not using the history.
+    /** 
+     * -1 indicates we are not using the history.
+     */
+    index: number;
 
     constructor() {
         this.index = -1;
@@ -39,7 +42,9 @@ export class HistoryPoller<T> {
     }
 }
 
-// A queue with a max length
+/** 
+ * A queue with a max length
+ */
 export class HistoryQueue<T> {
     private max_length: number;
     private values: T[];

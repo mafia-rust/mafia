@@ -18,11 +18,11 @@ use super::{Priority, RoleStateImpl, Role, RoleState};
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Deputy {
-    bullets_remaining: u8,  //TODO this entire role, powerfull attack, die function, cleaned, not shooting day 1, etc
+    bullets_remaining: u8,
 }
 impl Default for Deputy {
     fn default() -> Self {
-        Self { bullets_remaining: 1}
+        Self { bullets_remaining: 1 }
     }
 }
 
@@ -79,8 +79,8 @@ impl RoleStateImpl for Deputy {
     fn get_current_send_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
     }
-    fn get_current_recieve_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
+    fn get_current_receive_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+        crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
     fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType) {
 

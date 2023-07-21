@@ -16,7 +16,7 @@ export default interface GameState {
     
     playerOnTrial: PlayerIndex | null,
     phase: Phase | null,
-    secondsLeft: number,
+    timeLeftMs: number,
     dayNumber: number,
 
     role: Role | null,

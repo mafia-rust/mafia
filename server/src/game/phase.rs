@@ -67,10 +67,8 @@ impl PhaseState {
     }
     
     pub fn start(game: &mut Game) {
-        // Match phase type and do stuff
         match game.current_phase().clone() {
             PhaseState::Morning => {
-                //generate & add graves
                 for player_ref in PlayerReference::all_players(game){
                     if player_ref.night_died(game) {
 
@@ -109,9 +107,8 @@ impl PhaseState {
         );
     }
     
-    ///returns the next phase
+    /// Returns the next phase
     pub fn end(game: &mut Game) -> PhaseState {
-        // Match phase type and do stuff
         match game.current_phase() {
             PhaseState::Morning => {
                 Self::Discussion
@@ -150,7 +147,7 @@ impl PhaseState {
                 if innocent < guilty {
                     Self::Evening { player_on_trial: Some(player_on_trial) }
                 } else if trials_left == 0 {
-                    //TODO send no trials left
+                    // TODO send no trials left
                     Self::Evening { player_on_trial: None }
                 }else{
                     Self::Voting { trials_left: trials_left-1 }
@@ -171,32 +168,24 @@ impl PhaseState {
                 Self::Night
             },
             PhaseState::Night => {
-
-                //MAIN NIGHT CODE
-
-                //get wills
                 for player_ref in PlayerReference::all_players(game){
                     player_ref.set_night_grave_will(game, player_ref.will(game).clone());
                 }
 
-                //get visits
                 for player_ref in PlayerReference::all_players(game){
                     let visits = player_ref.convert_targets_to_visits(game, player_ref.chosen_targets(game).clone());
                     player_ref.set_night_visits(game, visits.clone());
                 }
 
-                //Night actions -- main loop
                 for priority in Priority::values(){
                     for player_ref in PlayerReference::all_players(game){
                         player_ref.do_night_action(game, priority);
                     }
                 }
 
-                //queue night messages
                 for player_ref in PlayerReference::all_players(game){
                     player_ref.add_chat_messages(game, player_ref.night_messages(game).to_vec());
                 }
-
 
                 Self::Morning
             },

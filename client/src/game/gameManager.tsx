@@ -50,11 +50,9 @@ export function createGameManager(): GameManager {
 
         leaveGame() {
             if (this.gameState.inGame) {
-                // Let the server know it can disconnect us immediately. No need for a timer.
                 this.server.sendPacket({type: "leave"});
             }
-            // This is kind of lazy. It basically resets the URL to the "main menu" state and refreshes.
-            // Clear query parameters from visible URL
+            // Set URL to main menu and refresh
             window.history.replaceState({}, document.title, window.location.pathname);
             window.location.reload();
         },
@@ -71,7 +69,6 @@ export function createGameManager(): GameManager {
             let onJoined: StateListener = (type) => {
                 if (type==="acceptJoin") {
                     completePromise();
-                    // This listener shouldn't stick around
                     GAME_MANAGER.removeStateListener(onJoined);
                 }
             };
@@ -108,7 +105,6 @@ export function createGameManager(): GameManager {
             }
         },
         sendSetPhaseTimesPacket(phaseTimeSettings: PhaseTimes) {
-            // No need for validity checks here - json should be valid.
             this.server.sendPacket({
                 type: "setPhaseTimes",
                 phaseTimeSettings
@@ -202,12 +198,15 @@ export function createGameManager(): GameManager {
             messageListener(serverMessage);
         },
     
-        tick(timePassedms) {
-            //console.log("tick");
-            gameManager.gameState.secondsLeft = Math.round(gameManager.gameState.secondsLeft - timePassedms/1000)
-            if(gameManager.gameState.secondsLeft < 0)
-                gameManager.gameState.secondsLeft = 0;
-            gameManager.invokeStateListeners("tick");
+        tick(timePassedMs) {
+            const newTimeLeft = gameManager.gameState.timeLeftMs - timePassedMs;
+            if (Math.floor(newTimeLeft / 1000) < Math.floor(gameManager.gameState.timeLeftMs / 1000)) {
+                gameManager.invokeStateListeners("tick");
+            }
+            gameManager.gameState.timeLeftMs = newTimeLeft;
+            if (gameManager.gameState.timeLeftMs < 0) {
+                gameManager.gameState.timeLeftMs = 0;
+            }
         },
     }
     return gameManager;
@@ -230,7 +229,7 @@ function createServer(){
                 completePromise();
             };
             Server.ws.onclose = (event: CloseEvent)=>{
-                if (Server.ws === null) return; // This indicates that we closed it ourselves
+                if (Server.ws === null) return; // We closed it ourselves
 
                 Anchor.pushInfo("Connection closed", "The connection to the server was closed.")
                 Anchor.setContent(<StartMenu/>);

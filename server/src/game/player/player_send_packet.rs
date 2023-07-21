@@ -40,9 +40,7 @@ impl PlayerReference{
         self.send_available_buttons(game);
     }
     pub fn send_join_game_data(&self, game: &mut Game){
-        
-
-        //GENERAL GAME
+        // General
         self.send_packets(game, vec![
             ToClientPacket::ExcludedRoles { roles: game.settings.excluded_roles.clone() },
             ToClientPacket::RoleList {role_list: game.settings.role_list.clone()},
@@ -73,9 +71,7 @@ impl PlayerReference{
             self.send_packet(game, ToClientPacket::AddGrave { grave: grave.clone() });
         }
 
-
-
-        //PLAYER SPECIFIC
+        // Player specific
         self.requeue_chat_messages(game);
 
         self.send_packets(game, vec![
@@ -126,8 +122,8 @@ impl PlayerReference{
         
         let mut chat_messages_out = vec![];
 
-        //get the first 5
-        for _ in 0..5{
+        // Send in chunks
+        for _ in 0..5 {
             let msg_option = self.deref(game).queued_chat_messages.get(0);
             if let Some(msg) = msg_option{
                 chat_messages_out.push(msg.clone());

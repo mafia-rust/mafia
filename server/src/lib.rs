@@ -48,9 +48,8 @@ pub mod strings{
         /// Removes multiple whitespace in a row.
         fn trim_whitespace(&self) -> String {
             let mut new_str = self.trim().to_owned();
-            let mut prev = ' '; // The initial value doesn't really matter
+            let mut prev = ' ';
             new_str.retain(|ch| {
-                //if theyre not both spaces, keep the character
                 let result = ch != ' ' || prev != ' ';
                 prev = ch;
                 result
@@ -65,9 +64,8 @@ pub mod strings{
         /// Removes more than two newlines in a row
         fn trim_newline(&self) -> String {
             let mut new_str = self.trim().to_owned();
-            let mut prev = (' ', ' '); // The initial value doesn't really matter
+            let mut prev = (' ', ' ');
             new_str.retain(|ch| {
-                //if theyre not all newlines, keep the character
                 let result = ch != '\n' || prev.0 != '\n' || prev.1 != '\n';
                 (prev.0, prev.1) = (prev.1, ch);
                 result
@@ -75,7 +73,7 @@ pub mod strings{
             new_str
         }
         /// Truncates to a given number of unicode characters, rather than rust's [`String::truncate`]
-        /// which truncates to a given number of unicode codepoints.
+        /// which truncates to a given number of unicode code points.
         fn truncate(&self, max_chars: usize) -> String {
             match self.char_indices().nth(max_chars) {
                 None => self.clone(),

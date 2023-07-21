@@ -38,6 +38,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
         GAME_MANAGER.removeStateListener(this.listener);
     }
     renderPhaseSpecific(){
+        // TODO: Change to phase state
         switch(this.state.gameState.phase){
             case "judgement":
             if(this.state.gameState.playerOnTrial !== null){
@@ -62,7 +63,6 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                     </div>
                 </div>);
             }else{
-                //TODO lang or fix
                 return(<div> 
                     ERROR NO PLAYER ON TRIAL FOUND IN JUDGEMENT PHASE TODO 
                 </div>);
@@ -130,7 +130,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
     renderPhase(){
         if(this.state.gameState.phase){
             return(<div>
-                {translate("phase."+this.state.gameState.phase)} {this.state.gameState.dayNumber}⏳{this.state.gameState.secondsLeft}
+                {translate("phase."+this.state.gameState.phase)} {this.state.gameState.dayNumber}⏳{Math.floor(this.state.gameState.timeLeftMs/1000)}
             </div>);
         }
         return null;

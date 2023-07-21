@@ -6,15 +6,15 @@ import "./graveyardMenu.css";
 import GameState from "../../../game/gameState.d";
 import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
 
-type RoleSpecifcMenuProps = {
+type RoleSpecificMenuProps = {
 }
-type RoleSpecifcMenuState = {
+type RoleSpecificMenuState = {
     gameState: GameState,
 }
 
-export default class RoleSpecifcMenu extends React.Component<RoleSpecifcMenuProps, RoleSpecifcMenuState> {
+export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuProps, RoleSpecificMenuState> {
     listener: () => void;
-    constructor(props: RoleSpecifcMenuProps) {
+    constructor(props: RoleSpecificMenuProps) {
         super(props);
 
         this.state = {

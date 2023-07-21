@@ -21,6 +21,7 @@ export const DOOMSAYER_GUESSES = [
     "vigilante",  "veteran",  "deputy",
     "escort",  "medium",  "retributionist"
 ];
+
 export type DoomsayerGuess = typeof DOOMSAYER_GUESSES[number];
 export function doomsayerGuessTranslate(doomsayerGuess: DoomsayerGuess): string{
     let outString = translateChecked("role."+doomsayerGuess+".name");
@@ -29,10 +30,6 @@ export function doomsayerGuessTranslate(doomsayerGuess: DoomsayerGuess): string{
     }
     return outString;
 }
-
-
-//ABOVE IS RELATED DOOMSAYER TYPES
-
 
 type LargeDoomsayerMenuProps = {
 }

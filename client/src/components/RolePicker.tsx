@@ -14,7 +14,6 @@ interface RolePickerProps {
     disabled?: boolean,
 }
 
-// Can convert to function component
 export default class RolePicker extends React.Component<RolePickerProps> {
     setAny(){
         this.props.onChange({
@@ -214,8 +213,6 @@ export default class RolePicker extends React.Component<RolePickerProps> {
             {selectors}
         </div>
     }
-
-    
 }
 
 function allFactionsAndAny(): (Faction | "any")[] {

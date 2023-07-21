@@ -4,7 +4,7 @@ import { Phase, PhaseTimes } from "../../game/gameState.d";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
-import phaseTimesJson from "../../resources/phasetimes.json";
+import phaseTimesJson from "../../resources/phaseTimes.json";
 import { StateListener } from "../../game/gameManager.d";
 
 const PHASE_TIME_MODES: ReadonlyMap<string, PhaseTimes> = new Map(Object.entries(phaseTimesJson));

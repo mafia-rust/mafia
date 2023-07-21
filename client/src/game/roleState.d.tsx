@@ -39,7 +39,7 @@ export type RoleState = {
     role: "escort"
 } | {
     role: "medium",
-    seancnesRemaining: number,
+    seancesRemaining: number,
     seancedTarget: PlayerIndex | null
 } | {
     role: "retributionist"
@@ -61,8 +61,8 @@ export type RoleState = {
 } | {
     role: "executioner"
 } | 
-    Doomsayer
- | {
+Doomsayer 
+| {
     role: "vampire"
 }
 

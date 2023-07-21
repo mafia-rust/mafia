@@ -25,7 +25,7 @@ pub enum DoomsayerGuess{
     Mafia, #[default] Neutral,
 
     Jailor, Mayor, Transporter, 
-    //No TI
+    // No TI
     Doctor, Bodyguard, Crusader,
     Vigilante, Veteran, Deputy,
     Escort, Medium, Retributionist,
@@ -111,8 +111,8 @@ impl RoleStateImpl for Doomsayer {
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
     }
-    fn get_current_recieve_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_recieve_chat_groups(game, actor_ref)
+    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+        crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
     fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType) {
         

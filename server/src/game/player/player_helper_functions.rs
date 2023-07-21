@@ -5,24 +5,22 @@ use super::PlayerReference;
 
 
 impl PlayerReference{
-    ///returns true if they are not roleblockable
-    pub fn roleblock(&self, game: &mut Game)->bool{
+    pub fn roleblock(&self, game: &mut Game) {
         if !self.role_state(game).roleblock_immune(game, *self) {
             self.set_night_roleblocked(game, true);
             self.set_night_visits(game, vec![]);
             self.push_night_message(game,
                 ChatMessage::RoleBlocked { immune: false }
             );
-            true
         } else {
             self.push_night_message(game,
                 ChatMessage::RoleBlocked { immune: true }
             );
-            false
         }
     }
-    ///returns true if attack overpowered defense.
-    pub fn try_night_kill(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: u8)->bool{
+
+    /// Returns true if successful
+    pub fn try_night_kill(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: u8) -> bool {
         self.set_night_attacked(game, true);
 
         if self.night_defense(game) >= attack {
@@ -33,11 +31,10 @@ impl PlayerReference{
             return false;
         }
 
-        if !self.alive(game){
-            return true;
-        }
+        if !self.alive(game) { return true }
+
         self.set_night_died(game, true);
-        // self.set_alive(game, false); TODO remove this comment if it doesnt cause problems. 6/14/2023
+        // self.set_alive(game, false); TODO remove this comment if it doesn't cause problems. 6/14/2023
         self.push_night_grave_killers(game, grave_killer);
 
         true
@@ -61,7 +58,7 @@ impl PlayerReference{
         }
         Teams::on_any_death(game);
     }
-    /// swap this persons role, sending them the role chat message, and associated changes
+    /// Swaps this persons role, sends them the role chat message, and makes associated changes
     pub fn set_role(&self, game: &mut Game, new_role_data: RoleState){
 
         self.set_role_state(game, new_role_data);
@@ -92,7 +89,7 @@ impl PlayerReference{
             self.night_visits(game).iter().filter(|v|!v.astral).collect()
         }
     }
-    ///includes self obviously
+    
     pub fn lookout_seen_players(self, game: &Game) -> Vec<PlayerReference> {
         PlayerReference::all_players(game).into_iter().filter(|player_ref|{
             player_ref.tracker_seen_visits(game).iter().any(|other_visit| 
@@ -106,25 +103,21 @@ impl PlayerReference{
     pub fn insert_role_label_for_teammates(&self, game: &mut Game){
         let actor_role = self.role(game);
     
-    
-        //if they are on a team. set labels for their teammates, and my label for my teammates
         for other in PlayerReference::all_players(game){
-            if *self == other{
-                continue;
-            }
-            let other_role = other.role(game);
+            if *self == other { continue }
             
             if Team::same_team(game, *self, other) {
+                let other_role = other.role(game);
                 other.insert_role_label(game, *self, actor_role);
                 self.insert_role_label(game, other, other_role);
             }
         }
     }
 
-
-
-
-    //role functions
+    /*
+    Role functions
+    */
+    
     pub fn suspicious(&self, game: &Game) -> bool {
         self.role_state(game).suspicious(game, *self)
     }
@@ -164,8 +157,8 @@ impl PlayerReference{
     pub fn get_current_send_chat_groups(&self, game: &Game) -> Vec<ChatGroup> {
         self.role_state(game).clone().get_current_send_chat_groups(game, *self)
     }
-    pub fn get_current_recieve_chat_groups(&self, game: &Game) -> Vec<ChatGroup> {
-        self.role_state(game).clone().get_current_recieve_chat_groups(game, *self)
+    pub fn get_current_receive_chat_groups(&self, game: &Game) -> Vec<ChatGroup> {
+        self.role_state(game).clone().get_current_receive_chat_groups(game, *self)
     }
     pub fn convert_targets_to_visits(&self, game: &Game, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         self.role_state(game).clone().convert_targets_to_visits(game, *self, target_refs)

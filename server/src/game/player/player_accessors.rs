@@ -107,16 +107,14 @@ impl PlayerReference{
         }
     }
 
-    //VOTING
+    /* 
+    Voting
+    */
+
     pub fn chosen_vote(&self, game: &Game) -> Option<PlayerReference>{
         self.deref(game).voting_variables.chosen_vote
     }
-    /// returns true if players vote was changed and packet was sent
-    /// ### checks
-    /// - player is alive
-    /// - player is not silenced
-    /// - player is not voting itself
-    /// - player is not voting a dead player
+    /// Returns true if this player's vote was changed and packet was sent
     pub fn set_chosen_vote(&self, game: &mut Game, chosen_vote: Option<PlayerReference>, send_chat_message: bool) -> bool{
 
         if chosen_vote == self.deref(game).voting_variables.chosen_vote ||
@@ -175,7 +173,9 @@ impl PlayerReference{
         }
     }
 
-    //NIGHT
+    /* 
+    Night
+    */
     
     pub fn night_died(&self, game: &Game) -> bool {
         self.deref(game).night_variables.died
@@ -298,7 +298,7 @@ impl PlayerReference{
     pub fn night_jailed(&self, game: &Game) -> bool {
         self.deref(game).night_variables.jailed
     }
-    ///add chat message saying that they were jailed, and sends packet
+    /// Adds chat message saying that they were jailed, and sends packet
     pub fn set_night_jailed(&self, game: &mut Game, jailed: bool){
         if jailed {
             self.send_packet(game, ToClientPacket::YouAreJailed);

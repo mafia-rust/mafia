@@ -14,7 +14,7 @@ export function createGameState(): GameState {
         
         playerOnTrial: null,
         phase: null,
-        secondsLeft: 0,
+        timeLeftMs: 0,
         dayNumber: 1,
 
         role: null,
