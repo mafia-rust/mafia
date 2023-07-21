@@ -38,11 +38,11 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
     }
 
     renderGraves(){
-        return <div>
+        return <>
             {this.state.gameState.graves.map((grave, graveIndex)=>{
                 return this.renderGrave(grave, graveIndex);
             }, this)}
-        </div>
+        </>
     }
     renderGrave(grave: Grave, graveIndex: number){
         let graveRoleString: string;
@@ -52,7 +52,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             graveRoleString = translate(`grave.role.${grave.role.type}`);
         }
 
-        return(<button key={graveIndex} onClick={()=>{this.setState({extendedGraveIndex:graveIndex})}}>
+        return(<button style={{ gridRow: graveIndex + 1, gridColumn:0 }} key={graveIndex} onClick={()=>{this.setState({extendedGraveIndex:graveIndex})}}>
             {this.state.gameState.players[grave.playerIndex]?.toString()}
             <StyledText>
                 {`(${graveRoleString})`}
@@ -111,15 +111,15 @@ ${translate("menu.graveyard.killedBy")+" "+deathCauseString}
         </button>);
     }
 
-    renderRoleList(){return<div>
+    renderRoleList(){return<>
         {this.state.gameState.roleList.map((entry, index)=>{
-            return <button key={index}>
+            return <button style={{ gridRow: index + 1, gridColumn:1 }} key={index}>
                 <StyledText>
                     {translateRoleListEntry(entry) ?? ""}
                 </StyledText>
             </button>
         }, this)}
-    </div>}
+    </>}
 
     renderExcludedRoles(){
         return<div className="graveyard-menu-excludedRoles">
@@ -144,7 +144,7 @@ ${translate("menu.graveyard.killedBy")+" "+deathCauseString}
     render(){return(<div className="graveyard-menu">
         <ContentTab close={ContentMenus.GraveyardMenu}>{translate("menu.graveyard.title")}</ContentTab>
             
-        <div>
+        <div className="grid">
             {this.renderRoleList()}
             {this.renderGraves()}
         </div>
