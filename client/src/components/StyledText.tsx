@@ -8,8 +8,13 @@ import translate from "../game/lang";
 import { Role, getFactionFromRole } from "../game/roleState.d";
 import ROLES from "../resources/roles.json";
 import "./styledText.css";
+import WikiSearch, { WikiPage } from "./WikiSearch";
 
-type StyleMap = { [key: string]: string };
+type TextData = { 
+    styleClass?: string, 
+    link?: WikiPage
+};
+type TextDataMap = { [key: string]: TextData };
 
 const SANITIZATION_OPTIONS = {
     FORBID_TAGS: ['a', 'img']
@@ -22,20 +27,19 @@ const MARKDOWN_OPTIONS = {
     gfm: true
 }
 
-export default function StyledText(props: { children: string[] | string, className?: string }): ReactElement {
-    const KEYWORD_STYLE_MAP: StyleMap = useKeywordStyles();
+export default function StyledText(props: { children: string[] | string, className?: string, noLinks?: boolean }): ReactElement {
+    const KEYWORD_DATA_MAP: TextDataMap = useKeywordData();
 
     type Token = {
-        type: "string"
+        type: "raw"
         string: string 
-    } | {
-        type: "styled"
+    } | ({
+        type: "data"
         string: string
-        className: string
-    }
+    } & TextData)
 
     let tokens: Token[] = [{
-        type: "string",
+        type: "raw",
         string: marked.parse(
             typeof props.children === "string" 
                 ? props.children 
@@ -44,32 +48,32 @@ export default function StyledText(props: { children: string[] | string, classNa
         )
     }];
 
-    for(const [keyword, style] of Object.entries(KEYWORD_STYLE_MAP)) {
+    for(const [keyword, data] of Object.entries(KEYWORD_DATA_MAP)) {
         for(let index = 0; index < tokens.length; index++) {
             const token = tokens[index];
-            if (token.type !== "string") continue;
+            if (token.type !== "raw") continue;
             
             // Remove the keyword and split so we can insert the styled text in its place
-            const stringSplit = token.string.split(find(keyword));
+            const stringSplit = token.string.split(RegExp('('+find(keyword).source+')', 'gi'));
 
             if (stringSplit.length === 1) continue;
 
             // Insert the styled string into where we just removed the unstyled string from
             let replacement: Token[] = []; 
             for(const string of stringSplit){
-                if(string !== "")
+                if (find(keyword).test(string)) {
                     replacement.push({
-                        type: "string",
+                        type: "data",
+                        string,
+                        ...data
+                    });
+                } else if(string !== "") {
+                    replacement.push({
+                        type: "raw",
                         string: string
                     });
-
-                replacement.push({
-                    type: "styled",
-                    string: keyword,
-                    className: style
-                });
+                }
             }
-            replacement.pop();
 
             tokens = 
                 tokens.slice(0, index)
@@ -81,27 +85,45 @@ export default function StyledText(props: { children: string[] | string, classNa
         }
     }
 
-    const jsxString = tokens.map(token => 
-        token.type === "string" 
-            ? token.string 
-            : ReactDOMServer.renderToStaticMarkup(
-                <span className={token.className} 
-                    dangerouslySetInnerHTML={{ __html: token.string }}
+    const jsxString = tokens.map(token => {
+        if (token.type === "raw") {
+            return token.string;
+        } else if (token.link === undefined || props.noLinks) {
+            return ReactDOMServer.renderToStaticMarkup(
+                <span
+                    className={token.styleClass}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(
+                        token.string, 
+                        SANITIZATION_OPTIONS
+                    )}}
                 />
-            )
-    ).join("");
+            );
+        } else {
+            // TODO: This is absolutely terrible. Don't do this.
+            (window as any).setWikiSearchPage = WikiSearch.setPage;
+
+            return ReactDOMServer.renderToStaticMarkup(
+                // eslint-disable-next-line jsx-a11y/anchor-is-valid
+                <a
+                    href={`javascript: window.setWikiSearchPage("${token.link}")`}
+                    className={token.styleClass + " keyword-link"}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(
+                        token.string, 
+                        SANITIZATION_OPTIONS
+                    ) }}
+                />
+            );
+        }
+    }).join("");
     
     return <span
         className={props.className}
-        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(
-            jsxString, 
-            SANITIZATION_OPTIONS
-        )}}>
+        dangerouslySetInnerHTML={{__html: jsxString}}>
     </span>
 }
 
-function useKeywordStyles(): StyleMap {
-    let keywordStyles: StyleMap = {};
+function useKeywordData(): TextDataMap {
+    let keywordData: TextDataMap = {};
 
     let [players, setPlayers] = useState<Player[]>(GAME_MANAGER.gameState.players);
     useEffect(() => {
@@ -112,21 +134,35 @@ function useKeywordStyles(): StyleMap {
     }, [setPlayers]);
 
     for(const player of players){
-        keywordStyles[player.toString()] = "keyword-player";
+        keywordData[player.toString()] = { styleClass: "keyword-player" };
     }
 
     const STYLES = require("../resources/styling/keywords.json");
+    const LINKS = require("../resources/links/keywords.json")
 
     for(const role of Object.keys(ROLES)){
         const faction = "faction." + getFactionFromRole(role as Role);
-        if (STYLES[faction]) {
-            keywordStyles[translate(`role.${role}.name`)] = STYLES[faction];
+        if (!STYLES[faction]) {
+            console.error(`${STYLES[faction]} faction is missing a keyword style!`);
+            continue;
         }
+        keywordData[translate(`role.${role}.name`)] = {
+            styleClass: STYLES[faction],
+            link: `role/${role}` as WikiPage
+        };
     }
 
-    for (const [key, value] of Object.entries(STYLES)) {
-        keywordStyles[translate(key)] = value as string;
+    for (const keyword of Object.keys(STYLES).concat(Object.keys(LINKS))) {
+        keywordData[translate(keyword)] = {};
     }
 
-    return keywordStyles;
+    for (const [keyword, styleClass] of Object.entries(STYLES)) {
+        keywordData[translate(keyword)].styleClass = styleClass as string;
+    }
+
+    for (const [keyword, link] of Object.entries(LINKS)) {
+        keywordData[translate(keyword)].link = link as WikiPage;
+    }
+
+    return keywordData;
 }

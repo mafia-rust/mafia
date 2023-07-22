@@ -8,10 +8,6 @@ import StyledText from "../components/StyledText";
 import { HistoryQueue } from "../history";
 import { regEscape } from "..";
 
-type WikiSearchProps = {
-    setPageController?: (pageController: (page: WikiPage) => void) => void
-}
-
 type WikiSearchState = ({
     type: "search"
 } | {
@@ -31,15 +27,11 @@ type Article = typeof ARTICLES[number];
 const PAGES: WikiPage[] = Object.keys(ROLES).map(role => `role/${role}`)
     .concat(ARTICLES.map(article => `article/${article}`)) as WikiPage[];
 
-export default class WikiSearch extends React.Component<WikiSearchProps, WikiSearchState> {
+export default class WikiSearch extends React.Component<{}, WikiSearchState> {
+    private static activeWikis: WikiSearch[] = [];
     history: HistoryQueue<WikiSearchState> = new HistoryQueue(10);
-    constructor(props: WikiSearchProps) {
+    constructor(props: {}) {
         super(props);
-
-        // Let parent components change the wiki page
-        if (this.props.setPageController !== undefined) {
-            this.props.setPageController(this.setPage.bind(this));
-        }
 
         this.state = {
             type: "search",
@@ -47,7 +39,21 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
         };
     }
 
+    static setPage(page: WikiPage) {
+        WikiSearch.activeWikis.forEach(wiki => wiki.setPage(page));
+    }
+
+    componentDidMount() {
+        WikiSearch.activeWikis.push(this);
+    }
+    componentWillUnmount() {
+        WikiSearch.activeWikis.splice(WikiSearch.activeWikis.findIndex(wiki => wiki === this), 1);
+    }
+
     setPage(page: WikiPage) {
+        if (this.state.type === "page" && this.state.page === page) {
+            return;
+        }
         this.history.push(this.state);
         this.setState({
             type: "page",
@@ -58,7 +64,7 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
 
     renderOpenPageButton(page: WikiPage) {
         return <button key={page} onClick={()=>{this.setPage(page)}}>
-            <StyledText>{getPageTitle(page)}</StyledText>
+            <StyledText noLinks={true}>{getPageTitle(page)}</StyledText>
         </button>
     }
 

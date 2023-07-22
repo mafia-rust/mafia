@@ -39,7 +39,7 @@
     "menu.chat.placeHolder": "Enter message",
     "menu.chat.clearFilter": "Clear Filter",
     
-    "menu.will.title": "Will",
+    "menu.will.title": "Wills and Notes",
     "menu.will.will": "Will",
     "menu.will.notes": "Notes",
     "menu.will.deathNote": "Death Note",
@@ -220,8 +220,6 @@
     "role.doomsayer.dayTarget": "Special",
 
     "role.death.name": "Thanos",
-    "role.death.abilities":"* Target a player on the night they die to collect a stone\n* Once you've collected six stones, endgame starts, everyone is notified, and on the next night, you snap away everyone, and win.",
-    "role.death.attributes":"* Passively gain a stone each night\n* You have to guess who is going to die each night in order to collect stones faster",
     "role.death.target": "Collect",
     "role.death.detarget": "Detarget",
     "role.death.dayTarget": "Special",
@@ -232,8 +230,6 @@
     "role.vampire.dayTarget": "Special",
 
     "role.amnesiac.name": "Amnesiac",
-    "role.amnesiac.abilities":"* Choose a role and become that role at night",
-    "role.amnesiac.attributes":"* Roleblocking doesn't effect changing roles",
     "role.amnesiac.target": "Target",
     "role.amnesiac.detarget": "Detarget",
     "role.amnesiac.dayTarget": "Special",
@@ -402,8 +398,19 @@
     "wiki.entry.article.visit.text":"Visits are how all roles work.",
 
     "wiki.entry.article.all_language.title":"All Language",
+    "wiki.entry.article.all_language.text":"",
 
     "wiki.entry.role": "# \\0\n### \\1\n<br/>\n\n### Abilities\n\\2\n### Attributes\n\\3\n\n<br/>\n\n### Maximum count: \\4\n### Sheriff result: \\5\n### Defense: \\6",
+    "wiki.entry.role.abilities": "Abilities",
+    "wiki.entry.role.attributes": "Attributes",
+
+    "wiki.entry.role.death.title": "Thanos",
+    "wiki.entry.role.death.abilities":"* Target a player on the night they die to collect a stone\n* Once you've collected six stones, endgame starts, everyone is notified, and on the next night, you snap away everyone, and win.",
+    "wiki.entry.role.death.attributes":"* Passively gain a stone each night\n* You have to guess who is going to die each night in order to collect stones faster",
+    
+    "wiki.entry.role.amnesiac.title": "Amnesiac",
+    "wiki.entry.role.amnesiac.abilities":"* Choose a role and become that role at night",
+    "wiki.entry.role.amnesiac.attributes":"* Roleblocking doesn't effect changing roles",
 
     "wiki.entry.role.jailor.title": "Jailor",
     "wiki.entry.role.jailor.abilities":"* Choose one player to jail during the day\n* You can execute your prisoners up to three times",
