@@ -50,10 +50,6 @@
     "menu.wiki.search.placeholder": "Search the wiki...",
     "menu.wiki.search.back": "Back",
     "menu.wiki.search.clear": "Clear",
-    
-    "menu.wiki.maxCount": "At most \\0 of this role",
-    "menu.wiki.suspicious": "Sheriff result: \\0",
-    "menu.wiki.defense": "Defense: \\0",
 
     "menu.playerList.title": "Player List",
     
