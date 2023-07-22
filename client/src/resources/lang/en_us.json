@@ -220,7 +220,7 @@
     "role.doomsayer.dayTarget": "Special",
 
     "role.death.name": "Thanos",
-    "role.death.abilities":"* Target a player on the night they die to collect a stone\n* Once you've collected six stones, endgame starts, everyone is notified, and on the next night, you snap away everone, and win.",
+    "role.death.abilities":"* Target a player on the night they die to collect a stone\n* Once you've collected six stones, endgame starts, everyone is notified, and on the next night, you snap away everyone, and win.",
     "role.death.attributes":"* Passively gain a stone each night\n* You have to guess who is going to die each night in order to collect stones faster",
     "role.death.target": "Collect",
     "role.death.detarget": "Detarget",
@@ -233,7 +233,7 @@
 
     "role.amnesiac.name": "Amnesiac",
     "role.amnesiac.abilities":"* Choose a role and become that role at night",
-    "role.amnesiac.attributes":"* Roleblocking doesnt effect changing roles",
+    "role.amnesiac.attributes":"* Roleblocking doesn't effect changing roles",
     "role.amnesiac.target": "Target",
     "role.amnesiac.detarget": "Detarget",
     "role.amnesiac.dayTarget": "Special",
