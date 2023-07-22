@@ -7,7 +7,7 @@ import "./graveyardMenu.css";
 import GameState from "../../../game/gameState.d";
 import { translateRoleListEntry } from "../../../game/roleListState.d";
 import StyledText from "../../../components/StyledText";
-import WikiMenu from "./WikiMenu";
+import WikiSearch from "../../../components/WikiSearch";
 
 type GraveyardMenuProps = {
 }
@@ -59,7 +59,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             onClick={()=>{this.setState({extendedGraveIndex:graveIndex})}}
         >
             {this.state.gameState.players[grave.playerIndex]?.toString()}
-            <StyledText>
+            <StyledText noLinks={true}>
                 {`(${graveRoleString})`}
             </StyledText>
         </button>);
@@ -123,7 +123,7 @@ ${translate("menu.graveyard.killedBy")+" "+deathCauseString}
                 key={index}
                 onClick={() => {
                     if (entry.type === "exact") {
-                        WikiMenu.setPage(`role/${entry.role}`);
+                        WikiSearch.setPage(`role/${entry.role}`);
                     }
                 }}
             >
