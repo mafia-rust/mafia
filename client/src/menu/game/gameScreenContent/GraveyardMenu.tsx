@@ -7,6 +7,7 @@ import "./graveyardMenu.css";
 import GameState from "../../../game/gameState.d";
 import { translateRoleListEntry } from "../../../game/roleListState.d";
 import StyledText from "../../../components/StyledText";
+import WikiMenu from "./WikiMenu";
 
 type GraveyardMenuProps = {
 }
@@ -52,7 +53,11 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             graveRoleString = translate(`grave.role.${grave.role.type}`);
         }
 
-        return(<button style={{ gridRow: graveIndex + 1, gridColumn:0 }} key={graveIndex} onClick={()=>{this.setState({extendedGraveIndex:graveIndex})}}>
+        return(<button 
+            style={{ gridRow: graveIndex + 1, gridColumn:0 }} 
+            key={graveIndex} 
+            onClick={()=>{this.setState({extendedGraveIndex:graveIndex})}}
+        >
             {this.state.gameState.players[grave.playerIndex]?.toString()}
             <StyledText>
                 {`(${graveRoleString})`}
@@ -113,7 +118,15 @@ ${translate("menu.graveyard.killedBy")+" "+deathCauseString}
 
     renderRoleList(){return<>
         {this.state.gameState.roleList.map((entry, index)=>{
-            return <button style={{ gridRow: index + 1, gridColumn:1 }} key={index}>
+            return <button 
+                style={{ gridRow: index + 1, gridColumn:1 }} 
+                key={index}
+                onClick={() => {
+                    if (entry.type === "exact") {
+                        WikiMenu.setPage(`role/${entry.role}`);
+                    }
+                }}
+            >
                 <StyledText>
                     {translateRoleListEntry(entry) ?? ""}
                 </StyledText>

@@ -1,6 +1,6 @@
 
 let lang: ReadonlyMap<string, string>;
-export let langText: String;
+export let langText: string;
 switchLanguage("en_us");
 
 export function switchLanguage(language: string) {
