@@ -4,7 +4,7 @@ import { ContentMenus, ContentTab } from "../GameScreen";
 import "./wikiMenu.css"
 import GameState from "../../../game/gameState.d";
 import translate from "../../../game/lang";
-import WikiSearch from "../../../components/WikiSearch";
+import WikiSearch, { WikiPage } from "../../../components/WikiSearch";
 
 interface WikiMenuProps {
 }
@@ -12,8 +12,8 @@ interface WikiMenuState {
     gameState: GameState,
 }
 
-
 export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuState> {
+    static setPage: (page: WikiPage) => void = () => {};
     listener: () => void;
     
     constructor(props : WikiMenuProps) {
@@ -35,12 +35,11 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
         GAME_MANAGER.removeStateListener(this.listener);
     }
 
-
     render(){return(<div className="wiki-menu">
         <ContentTab close={ContentMenus.WikiMenu}>{translate("menu.wiki.title")}</ContentTab>
         
         <div className="wiki-menu-search">
-            <WikiSearch/>
+            <WikiSearch setPageController={setPage => WikiMenu.setPage = setPage}/>
         </div>
     </div>)}
 }

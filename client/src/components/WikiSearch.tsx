@@ -8,6 +8,10 @@ import StyledText from "../components/StyledText";
 import { HistoryQueue } from "../history";
 import { regEscape } from "..";
 
+type WikiSearchProps = {
+    setPageController?: (pageController: (page: WikiPage) => void) => void
+}
+
 type WikiSearchState = ({
     type: "search"
 } | {
@@ -16,133 +20,65 @@ type WikiSearchState = ({
 }) & {
     searchQuery: string,
 }
-type WikiPage = {
-    type: "role", role: Role
-} | {
-    type: "article", article: Article
-}
-export const ARTICLES = ["help", "roles_and_teams", "phases_and_timeline", "controls", "wills_and_notes", "visit", "all_language"] as const;
-export type Article = typeof ARTICLES[number];
 
-export default class WikiSearch extends React.Component<{}, WikiSearchState> {
+export type WikiPage = 
+    | `role/${Role}`
+    | `article/${Article}`;
+
+const ARTICLES = ["help", "roles_and_teams", "phases_and_timeline", "controls", "wills_and_notes", "visit", "all_language"] as const;
+type Article = typeof ARTICLES[number];
+
+const PAGES: WikiPage[] = Object.keys(ROLES).map(role => `role/${role}`)
+    .concat(ARTICLES.map(article => `article/${article}`)) as WikiPage[];
+
+export default class WikiSearch extends React.Component<WikiSearchProps, WikiSearchState> {
     history: HistoryQueue<WikiSearchState> = new HistoryQueue(10);
-    constructor(props: {}) {
+    constructor(props: WikiSearchProps) {
         super(props);
+
+        // Let parent components change the wiki page
+        if (this.props.setPageController !== undefined) {
+            this.props.setPageController(this.setPage.bind(this));
+        }
 
         this.state = {
             type: "search",
             searchQuery: "",
         };
     }
-    componentDidMount() {
-    }
-    componentWillUnmount() {
-    }
-    getGeneralPageFromSearch(search: string): Article[] {
-        return ARTICLES.filter(article => 
-            RegExp(regEscape(search), 'i').test(translate("menu.wiki.entries."+article+".title")) 
-            || RegExp(regEscape(search), 'i').test(translate("menu.wiki.entries."+article+".text"))
-        )
-    }
-    renderGeneralWikiPage(article: string){
-        if(article==="all_language"){
-            return <>{langText}</>;
-        }
-        return <StyledText className="wiki-content-body">{`
-# ${translate("menu.wiki.entries."+article+".title")}
-<br/>
 
-${translate("menu.wiki.entries."+article+".text")}
-        `}</StyledText>
-    }
-    getRolesFromSearch(search: string): Role[] {
-        return Object.keys(ROLES).filter(role => 
-            RegExp(regEscape(search), 'i').test(translate("role."+role+".name")) 
-            || RegExp(regEscape(search), 'i').test(translate("role."+role+".abilities"))
-            || RegExp(regEscape(search), 'i').test(translate("role."+role+".attributes"))
-        ) as Role[]
-    }
-    renderRoleWikiPage(role: Role){
-        let defenseString = "";
-        switch(ROLES[role].defense){
-            case 0:
-                defenseString = translate("none");
-                break;
-            case 1:
-                defenseString = translate("basic");
-                break;
-            case 2:
-                defenseString = translate("powerful");
-                break;
-            case 3:
-                defenseString = translate("invincible");
-                break;
-        }
-
-        const roleData = ROLES[role as keyof typeof ROLES];
-
-        return <StyledText className="wiki-content-body">{`
-# ${translate("role."+role+".name")}
-### ${translateRoleListEntry(getRoleListEntryFromFactionAlignment(roleData.factionAlignment as FactionAlignment))}
-<br/>
-
-### ${translate("menu.wiki.abilities")}
-${translate("role."+role+".abilities")}
-### ${translate("menu.wiki.attributes")}
-${translate("role."+role+".attributes")}
-
-<br/>
-
-### ${roleData.maxCount === null ? '' : translate("menu.wiki.maxCount", roleData.maxCount)}
-### ${translate("menu.wiki.suspicious", ROLES[role as keyof typeof ROLES].suspicious?"suspicious":"innocent")}
-### ${translate("menu.wiki.defense", defenseString)}`}
-        </StyledText>
+    setPage(page: WikiPage) {
+        this.history.push(this.state);
+        this.setState({
+            type: "page",
+            searchQuery: this.state.searchQuery,
+            page
+        });
     }
 
     renderOpenPageButton(page: WikiPage) {
-        let key, text;
-        if (page.type === "role") {
-            key = page.role;
-            text = translate("role."+page.role+".name");
-        } else {
-            key = page.article;
-            text = translate("menu.wiki.entries."+page.article+".title");
-        }
-        
-        return <button key={key} 
-            onClick={()=>{
-                this.history.push(this.state);
-                this.setState({
-                    type: "page",
-                    searchQuery: this.state.searchQuery,
-                    page
-                });
-            }}
-        >
-            <StyledText>{text}</StyledText>
+        return <button key={page} onClick={()=>{this.setPage(page)}}>
+            <StyledText>{getPageTitle(page)}</StyledText>
         </button>
     }
+
+    getSearchResults(search: string): WikiPage[] {
+        return PAGES.filter(page => RegExp(regEscape(search), 'i').test(getPageText(page)))
+    }
     
-    renderWikiPageOrSearch(){
-        if(this.state.type === "page"){
-            if (this.state.page.type === "role") {
-                return this.renderRoleWikiPage(this.state.page.role);
+    renderPageOrSearch(){
+        if (this.state.type === "page") {
+            if (this.state.page === "article/all_language") {
+                return langText;
             } else {
-                return this.renderGeneralWikiPage(this.state.page.article);
+                return <StyledText className="wiki-content-body">
+                    {getPageText(this.state.page)}
+                </StyledText>;
             }
         } else {
-            return this.getRolesFromSearch(this.state.searchQuery)
-                .map(role => this.renderOpenPageButton({ type: "role", role }))
-                .concat(
-                    this.getGeneralPageFromSearch(this.state.searchQuery)
-                        .map(article => this.renderOpenPageButton({ type: "article", article }))
-                );
+            return this.getSearchResults(this.state.searchQuery)
+                .map(this.renderOpenPageButton.bind(this));
         }
-    }
-
-    eitherContains(string1: string, string2: string): boolean{
-        return string1.toLowerCase().includes(string2.toLowerCase()) ||
-        string2.toLowerCase().includes(string1.toLowerCase())
     }
 
     renderSearchBar() {
@@ -183,7 +119,49 @@ ${translate("role."+role+".attributes")}
         return (<div className="wiki-search">
         {this.renderSearchBar()}
         <div className="wiki-results">
-            {this.renderWikiPageOrSearch()}
+            {this.renderPageOrSearch()}
         </div>
     </div>);}
+}
+
+function getPageTitle(page: WikiPage): string {
+    const path = page.split('/');
+
+    switch (path[0]) {
+        case "role":
+            return translate(`role.${path[1]}.name`);
+        default:
+            return translate(`wiki.entry.${page.replace('/', '.')}.title`)
+    }
+}
+
+function getPageText(page: WikiPage): string {
+    const path = page.split('/');
+
+    switch (path[0]) {
+        case "role":
+            const role = path[1] as Role;
+            const roleData = ROLES[role];
+            return translate("wiki.entry.role",
+                translate("role."+role+".name"),
+                translateRoleListEntry(getRoleListEntryFromFactionAlignment(roleData.factionAlignment as FactionAlignment)) || '',
+                translate("wiki.entry.role."+role+".abilities"),
+                translate("wiki.entry.role."+role+".attributes"),
+                roleData.maxCount === null ? translate("none") : roleData.maxCount,
+                ROLES[role as keyof typeof ROLES].suspicious ? translate("suspicious") : translate("verdict.innocent"),
+                translate("defense."+roleData.defense)
+            )
+        case "article":
+            const article = path[1] as Article;
+            return translate("wiki.entry.article",
+                translate("wiki.entry.article."+article+".title"),
+                translate("wiki.entry.article."+article+".text")
+            )
+        default:
+            console.error(`Tried to get nonexistent wiki page at ${page}`);
+            return translate("wiki.entry.article",
+                translate("wiki.entry.article.404.title"),
+                translate("wiki.entry.article.404.text")
+            )
+    }
 }
