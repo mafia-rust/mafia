@@ -45,17 +45,17 @@ impl Faction{
             ],
         }
     }
-    pub fn get_all_possible_faction_alignments(&self, excluded_roles: &[RoleListEntry], taken_roles: &[Role])->Vec<FactionAlignment>{
+    pub fn get_all_possible_faction_alignments(&self, excluded_roles: &[RoleOutline], taken_roles: &[Role])->Vec<FactionAlignment>{
         self.all_alignments().into_iter().filter(|potential_faction_alignment|{
             
-            if excluded_roles.contains(&RoleListEntry::FactionAlignment { faction_alignment: potential_faction_alignment.clone() }){
+            if excluded_roles.contains(&RoleOutline::FactionAlignment { faction_alignment: potential_faction_alignment.clone() }){
                 return false;
             }
 
             !potential_faction_alignment.get_all_possible_roles(excluded_roles, taken_roles).is_empty()
         }).collect()
     }
-    pub fn get_random_faction_alignment(&self, excluded_roles: &[RoleListEntry], taken_roles: &[Role])->Option<FactionAlignment>{
+    pub fn get_random_faction_alignment(&self, excluded_roles: &[RoleOutline], taken_roles: &[Role])->Option<FactionAlignment>{
         let possible_faction_alignments = self.get_all_possible_faction_alignments(excluded_roles, taken_roles);
         if possible_faction_alignments.is_empty() {return None;}
         let random_index = rand::thread_rng().gen_range(0..possible_faction_alignments.len());
@@ -103,9 +103,9 @@ impl FactionAlignment{
                 => Faction::Mafia,
         }
     }
-    pub fn get_all_possible_roles(&self, excluded_roles: &[RoleListEntry], taken_roles: &[Role])->Vec<Role>{
+    pub fn get_all_possible_roles(&self, excluded_roles: &[RoleOutline], taken_roles: &[Role])->Vec<Role>{
         Role::values().into_iter().filter(|potential_role|{
-            if excluded_roles.contains(&RoleListEntry::Exact { role: *potential_role }){
+            if excluded_roles.contains(&RoleOutline::Exact { role: *potential_role }){
                 return false;
             }
             
@@ -118,7 +118,7 @@ impl FactionAlignment{
             }).count() < potential_role_max_count.into()
         }).collect()
     }
-    pub fn get_random_role(&self, excluded_roles: &[RoleListEntry], taken_roles: &[Role])->Option<Role>{
+    pub fn get_random_role(&self, excluded_roles: &[RoleOutline], taken_roles: &[Role])->Option<Role>{
         let possible_roles = self.get_all_possible_roles(excluded_roles, taken_roles);
         if possible_roles.is_empty() {return None;}
         let random_index = rand::thread_rng().gen_range(0..possible_roles.len());
@@ -126,8 +126,8 @@ impl FactionAlignment{
     }
 }
 
-pub type RoleList = Vec<RoleListEntry>;
-pub fn create_random_roles(excluded_roles: &[RoleListEntry], role_list: &RoleList) -> Vec<Role> {
+pub type RoleList = Vec<RoleOutline>;
+pub fn create_random_roles(excluded_roles: &[RoleOutline], role_list: &RoleList) -> Vec<Role> {
     let mut taken_roles = Vec::new();
     for entry in role_list{
         taken_roles.push(entry.get_random_role(excluded_roles, &taken_roles));
@@ -137,7 +137,7 @@ pub fn create_random_roles(excluded_roles: &[RoleListEntry], role_list: &RoleLis
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "camelCase")]
-pub enum RoleListEntry {
+pub enum RoleOutline {
     #[serde(rename_all = "camelCase")]
     Exact{role: Role},
     #[serde(rename_all = "camelCase")]
@@ -147,27 +147,27 @@ pub enum RoleListEntry {
     Any
 }
 
-impl RoleListEntry{
-    pub fn get_random_role(&self, excluded_roles: &[RoleListEntry], taken_roles: &[Role]) -> Role {
+impl RoleOutline{
+    pub fn get_random_role(&self, excluded_roles: &[RoleOutline], taken_roles: &[Role]) -> Role {
         match self {
-            RoleListEntry::Exact { role } => *role,
-            RoleListEntry::FactionAlignment { faction_alignment } => {
+            RoleOutline::Exact { role } => *role,
+            RoleOutline::FactionAlignment { faction_alignment } => {
                 if let Some(role) = faction_alignment.get_random_role(excluded_roles, taken_roles){
                     role
                 } else {
-                    RoleListEntry::Faction { faction: faction_alignment.faction() }.get_random_role(excluded_roles, taken_roles)
+                    RoleOutline::Faction { faction: faction_alignment.faction() }.get_random_role(excluded_roles, taken_roles)
                 }
             },
-            RoleListEntry::Faction { faction } => {
+            RoleOutline::Faction { faction } => {
                 if let Some(faction_alignment) = faction.get_random_faction_alignment(excluded_roles, taken_roles){
                     faction_alignment.get_random_role(excluded_roles, taken_roles).expect("just checked that there was an available role")
                 } else {
-                    RoleListEntry::Any.get_random_role(excluded_roles, taken_roles)
+                    RoleOutline::Any.get_random_role(excluded_roles, taken_roles)
                 }
             },
-            RoleListEntry::Any => {
+            RoleOutline::Any => {
                 let mut all_factions = Faction::values().into_iter().filter(|faction|{
-                    if excluded_roles.contains(&RoleListEntry::Faction { faction: faction.clone() }){
+                    if excluded_roles.contains(&RoleOutline::Faction { faction: faction.clone() }){
                         return false;
                     }
 
@@ -180,7 +180,7 @@ impl RoleListEntry{
 
                 let random_faction = all_factions.get(
                     rand::thread_rng().gen_range(0..all_factions.len())).expect("there should be at least one role");
-                RoleListEntry::Faction{faction: random_faction.clone()}.get_random_role(excluded_roles, taken_roles)
+                RoleOutline::Faction{faction: random_faction.clone()}.get_random_role(excluded_roles, taken_roles)
             },
         }
     }

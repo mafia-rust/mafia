@@ -17,7 +17,7 @@ export function getAllFactionAlignments(faction: Faction): FactionAlignment[] {
         ];
     }
 }
-export function getRoleListEntryFromFaction(faction: Faction): RoleListEntry {
+export function getRoleOutlineFromFaction(faction: Faction): RoleOutline {
     return {
         type: "faction",
         faction: faction
@@ -53,7 +53,7 @@ export function getAlignmentStringFromFactionAlignment(factionAlignment: Faction
     const alignment = factionAlignment.replace(getFactionFromFactionAlignment(factionAlignment).toString(), "");
     return alignment.charAt(0).toLowerCase() + alignment.slice(1);
 }
-export function getRoleListEntryFromFactionAlignment(factionAlignment: FactionAlignment): RoleListEntry {
+export function getRoleOutlineFromFactionAlignment(factionAlignment: FactionAlignment): RoleOutline {
     return {
         type: "factionAlignment",
         factionAlignment: factionAlignment
@@ -61,7 +61,7 @@ export function getRoleListEntryFromFactionAlignment(factionAlignment: FactionAl
 }
 
 
-export type RoleListEntry={
+export type RoleOutline={
     type: "any",
 } | {
     type: "faction",
@@ -73,37 +73,37 @@ export type RoleListEntry={
     type: "exact",
     role: Role,
 };
-export type RoleListEntryType = RoleListEntry["type"];
+export type RoleOutlineType = RoleOutline["type"];
 
-export function getFactionFromRoleListEntry(roleListEntry: RoleListEntry): Faction | null {
-    switch(roleListEntry.type){
+export function getFactionFromRoleOutline(roleOutline: RoleOutline): Faction | null {
+    switch(roleOutline.type){
         case "any": return null;
-        case "faction": return roleListEntry.faction;
-        case "factionAlignment": return getFactionFromFactionAlignment(roleListEntry.factionAlignment);
-        case "exact": return getFactionFromRole(roleListEntry.role);
+        case "faction": return roleOutline.faction;
+        case "factionAlignment": return getFactionFromFactionAlignment(roleOutline.factionAlignment);
+        case "exact": return getFactionFromRole(roleOutline.role);
     }
 }
-export function getFactionAlignmentFromRoleListEntry(roleListEntry: RoleListEntry): FactionAlignment | null {
-    switch(roleListEntry.type){
+export function getFactionAlignmentFromRoleOutline(roleOutline: RoleOutline): FactionAlignment | null {
+    switch(roleOutline.type){
         case "any": return null;
         case "faction": return null;
-        case "factionAlignment": return roleListEntry.factionAlignment;
-        case "exact": return getFactionAlignmentFromRole(roleListEntry.role);
+        case "factionAlignment": return roleOutline.factionAlignment;
+        case "exact": return getFactionAlignmentFromRole(roleOutline.role);
     }
 }
 
-export function translateRoleListEntry(roleListEntry: RoleListEntry): string | null {
-    if(roleListEntry.type === "any"){
+export function translateRoleOutline(roleOutline: RoleOutline): string | null {
+    if(roleOutline.type === "any"){
         return translate("any");
     }
-    if(roleListEntry.type === "faction"){
-        return translate("faction."+roleListEntry.faction.toString())+" "+translate("any");
+    if(roleOutline.type === "faction"){
+        return translate("faction."+roleOutline.faction.toString())+" "+translate("any");
     }
-    if(roleListEntry.type === "factionAlignment"){
-        return translate("faction."+getFactionFromFactionAlignment(roleListEntry.factionAlignment))+" "+translate("alignment."+getAlignmentStringFromFactionAlignment(roleListEntry.factionAlignment));
+    if(roleOutline.type === "factionAlignment"){
+        return translate("faction."+getFactionFromFactionAlignment(roleOutline.factionAlignment))+" "+translate("alignment."+getAlignmentStringFromFactionAlignment(roleOutline.factionAlignment));
     }
-    if(roleListEntry.type === "exact"){
-        return translate("role."+roleListEntry.role+".name");
+    if(roleOutline.type === "exact"){
+        return translate("role."+roleOutline.role+".name");
     }
     return null
 }

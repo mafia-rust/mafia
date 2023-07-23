@@ -1,7 +1,7 @@
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import GameState, { Phase, PhaseTimes, PlayerIndex, Verdict } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
-import { RoleListEntry } from "./roleListState.d";
+import { RoleOutline } from "./roleListState.d";
 
 export interface Server {
     ws: WebSocket | null,
@@ -35,8 +35,8 @@ export interface GameManager {
     sendStartGamePacket(): void;
     sendSetPhaseTimePacket(phase: Phase, time: number): void;
     sendSetPhaseTimesPacket(phaseTimeSettings: PhaseTimes): void;
-    sendSetRoleListPacket(roleListEntries: RoleListEntry[]): void;
-    sendSetRoleListEntryPacket(index: number, roleListEntry: RoleListEntry): void;
+    sendSetRoleListPacket(roleListEntries: RoleOutline[]): void;
+    sendSetRoleOutlinePacket(index: number, roleOutline: RoleOutline): void;
     
     sendJudgementPacket(judgement: Verdict): void;
     sendVotePacket(voteeIndex: PlayerIndex| null): void;
@@ -47,14 +47,14 @@ export interface GameManager {
     sendSaveDeathNotePacket(notes: string): void;
     sendSendMessagePacket(text: string): void;
     sendSendWhisperPacket(playerIndex: number, text: string): void;
-    sendExcludedRolesPacket(roles: RoleListEntry[]): void;
+    sendExcludedRolesPacket(roles: RoleOutline[]): void;
 
     sendSetDoomsayerGuess(guesses: [
         [number, DoomsayerGuess],
         [number, DoomsayerGuess],
         [number, DoomsayerGuess]
     ]): void;
-    sendSetAmnesiacRoleListEntry(roleListEntry: RoleListEntry): void;
+    sendSetAmnesiacRoleOutline(roleOutline: RoleOutline): void;
 
     messageListener(serverMessage: ToClientPacket): void;
 

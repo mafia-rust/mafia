@@ -5,7 +5,7 @@ use crate::{
         Game, 
         player::{PlayerIndex, PlayerReference}, 
         settings::Settings, 
-        role_list::RoleListEntry, 
+        role_list::RoleOutline, 
         phase::PhaseType
     },
     listener::ArbitraryPlayerID, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}, websocket_connections::connection::ClientSender, log
@@ -164,7 +164,7 @@ impl Lobby {
 
 
                 while role_list.len() < players.len() {
-                    role_list.push(RoleListEntry::Any);
+                    role_list.push(RoleOutline::Any);
                 }
                 while players.len() < role_list.len() {
                     role_list.pop();
@@ -173,7 +173,7 @@ impl Lobby {
                 
                 self.send_to_all(ToClientPacket::RoleList { role_list });
             }
-            ToServerPacket::SetRoleListEntry { index, role_list_entry } => {
+            ToServerPacket::SetRoleOutline { index, role_outline } => {
                 let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
                     log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", player_arbitrary_id);
                     return;
@@ -182,9 +182,9 @@ impl Lobby {
                     if !player.host {return;}
                 }
 
-                settings.role_list[index as usize] = role_list_entry.clone();
+                settings.role_list[index as usize] = role_outline.clone();
                 
-                self.send_to_all(ToClientPacket::RoleListEntry { index, role_list_entry });
+                self.send_to_all(ToClientPacket::RoleOutline { index, role_outline });
             }
             ToServerPacket::SetExcludedRoles {mut roles } => {
                 let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
@@ -223,7 +223,7 @@ impl Lobby {
                 let arbitrary_player_id = players.len() as ArbitraryPlayerID;
                 players.insert(arbitrary_player_id, new_player);
 
-                settings.role_list.push(RoleListEntry::Any);
+                settings.role_list.push(RoleOutline::Any);
 
                 Self::send_players_lobby(players);
 

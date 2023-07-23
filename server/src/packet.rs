@@ -22,7 +22,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{game::{
     player::{PlayerIndex, PlayerReference},
-    role_list::{RoleList, RoleListEntry},
+    role_list::{RoleList, RoleOutline},
     verdict::Verdict, phase::PhaseType, 
     chat::ChatMessage,
     role::{Role, RoleState, doomsayer::DoomsayerGuess}, 
@@ -53,13 +53,13 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     RoleList{role_list: RoleList},
     #[serde(rename_all = "camelCase")]
-    RoleListEntry{index: u8, role_list_entry: RoleListEntry},
+    RoleOutline{index: u8, role_outline: RoleOutline},
     #[serde(rename_all = "camelCase")]
     PhaseTime{phase: PhaseType, time: u64},
     #[serde(rename_all = "camelCase")]
     PhaseTimes{phase_time_settings: PhaseTimeSettings},
     #[serde(rename_all = "camelCase")]
-    ExcludedRoles{roles: Vec<RoleListEntry>},
+    ExcludedRoles{roles: Vec<RoleOutline>},
 
     // Game
     #[serde(rename_all = "camelCase")]
@@ -163,11 +163,11 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SetRoleList{role_list: RoleList},
     #[serde(rename_all = "camelCase")]
-    SetRoleListEntry{index: u8, role_list_entry: RoleListEntry},
+    SetRoleOutline{index: u8, role_outline: RoleOutline},
     SetPhaseTime{phase: PhaseType, time: u64},
     #[serde(rename_all = "camelCase")]
     SetPhaseTimes{phase_time_settings: PhaseTimeSettings},
-    SetExcludedRoles{roles: Vec<RoleListEntry>},
+    SetExcludedRoles{roles: Vec<RoleOutline>},
 
     // Game
     #[serde(rename_all = "camelCase")]
@@ -194,5 +194,5 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SetDoomsayerGuess{ guesses: [(PlayerReference, DoomsayerGuess); 3] },
     #[serde(rename_all = "camelCase")]
-    SetAmnesiacRoleListEntry{ role_list_entry: RoleListEntry },
+    SetAmnesiacRoleOutline{ role_outline: RoleOutline },
 }

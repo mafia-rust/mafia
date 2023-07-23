@@ -1,4 +1,4 @@
-use mafia_server::game::{player::PlayerReference, Game, role::RoleState, role_list::RoleListEntry, settings::Settings, test::mock_game};
+use mafia_server::game::{player::PlayerReference, Game, role::RoleState, role_list::RoleOutline, settings::Settings, test::mock_game};
 
 pub mod player;
 pub mod game;
@@ -62,7 +62,7 @@ pub mod _init {
     pub fn create_basic_scenario(roles: Vec<RoleState>) -> TestScenario {
         let mut role_list = Vec::new();
         for _ in 0..roles.len() {
-            role_list.push(RoleListEntry::Any);
+            role_list.push(RoleOutline::Any);
         }
     
         let mut game = mock_game(Settings {

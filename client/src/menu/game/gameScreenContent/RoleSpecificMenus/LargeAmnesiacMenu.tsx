@@ -3,27 +3,27 @@ import GameState from "../../../../game/gameState.d"
 import GAME_MANAGER from "../../../.."
 import { StateEventType } from "../../../../game/gameManager.d"
 import RolePicker from "../../../../components/RolePicker"
-import { RoleListEntry } from "../../../../game/roleListState.d"
+import { RoleOutline } from "../../../../game/roleListState.d"
 
 
 type LargeAmnesiacMenuProps = {
 }
 type LargeAmnesiacMenuState = {
     gameState: GameState,
-    localRoleListEntry: RoleListEntry
+    localRoleOutline: RoleOutline
 }
 export default class LargeAmnesiacMenu extends React.Component<LargeAmnesiacMenuProps, LargeAmnesiacMenuState> {
     listener: (type?: StateEventType) => void;
     constructor(props: LargeAmnesiacMenuState) {
         super(props);
 
-        let defaultRole: RoleListEntry;
+        let defaultRole: RoleOutline;
         if(
             GAME_MANAGER.gameState.roleState?.role === "amnesiac" && 
-            GAME_MANAGER.gameState.roleState.roleListEntry!==undefined &&
-            GAME_MANAGER.gameState.roleState.roleListEntry!==null
+            GAME_MANAGER.gameState.roleState.roleOutline!==undefined &&
+            GAME_MANAGER.gameState.roleState.roleOutline!==null
         ){
-            defaultRole = GAME_MANAGER.gameState.roleState.roleListEntry;
+            defaultRole = GAME_MANAGER.gameState.roleState.roleOutline;
         }else{
             defaultRole = {type: "exact", role:"amnesiac"};
         }
@@ -31,7 +31,7 @@ export default class LargeAmnesiacMenu extends React.Component<LargeAmnesiacMenu
 
         this.state = {
             gameState : GAME_MANAGER.gameState,
-            localRoleListEntry: defaultRole
+            localRoleOutline: defaultRole
         };
         this.listener = (type)=>{
             this.setState({
@@ -39,7 +39,7 @@ export default class LargeAmnesiacMenu extends React.Component<LargeAmnesiacMenu
             });
             if(type==="yourRoleState" && GAME_MANAGER.gameState.roleState?.role === "amnesiac"){
                 this.setState({
-                    localRoleListEntry: GAME_MANAGER.gameState.roleState.roleListEntry
+                    localRoleOutline: GAME_MANAGER.gameState.roleState.roleOutline
                 });
             }
         };  
@@ -51,15 +51,15 @@ export default class LargeAmnesiacMenu extends React.Component<LargeAmnesiacMenu
         GAME_MANAGER.removeStateListener(this.listener);
     }
 
-    sendAndSetRole(roleListEntry: RoleListEntry){
+    sendAndSetRole(roleOutline: RoleOutline){
         this.setState({
-            localRoleListEntry: roleListEntry
+            localRoleOutline: roleOutline
         });
-        GAME_MANAGER.sendSetAmnesiacRoleListEntry(roleListEntry);
+        GAME_MANAGER.sendSetAmnesiacRoleOutline(roleOutline);
     }
     render(){
         return <div>
-            <RolePicker roleListEntry={this.state.localRoleListEntry} onChange={(rle)=>{this.sendAndSetRole(rle)}}/>
+            <RolePicker roleOutline={this.state.localRoleOutline} onChange={(rle)=>{this.sendAndSetRole(rle)}}/>
         </div>
     }
 }

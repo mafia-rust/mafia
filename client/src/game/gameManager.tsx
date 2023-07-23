@@ -8,7 +8,7 @@ import React from "react";
 import { Phase, PhaseTimes, Verdict } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
-import { RoleListEntry } from "./roleListState.d";
+import { RoleOutline } from "./roleListState.d";
 
 export function createGameManager(): GameManager {
 
@@ -110,17 +110,17 @@ export function createGameManager(): GameManager {
                 phaseTimeSettings
             });
         },
-        sendSetRoleListPacket(roleListEntries: RoleListEntry[]) {
+        sendSetRoleListPacket(roleListEntries: RoleOutline[]) {
             this.server.sendPacket({
                 type: "setRoleList",
                 roleList: roleListEntries
             });
         },
-        sendSetRoleListEntryPacket(index: number, roleListEntry: RoleListEntry) {
+        sendSetRoleOutlinePacket(index: number, roleOutline: RoleOutline) {
             this.server.sendPacket({
-                type: "setRoleListEntry",
+                type: "setRoleOutline",
                 index,
-                roleListEntry
+                roleOutline
             });
         },
 
@@ -193,10 +193,10 @@ export function createGameManager(): GameManager {
                 guesses: guesses
             });
         },
-        sendSetAmnesiacRoleListEntry(roleListEntry) {
+        sendSetAmnesiacRoleOutline(roleOutline) {
             this.server.sendPacket({
-                type: "setAmnesiacRoleListEntry",
-                roleListEntry: roleListEntry
+                type: "setAmnesiacRoleOutline",
+                roleOutline: roleOutline
             });
         },
         
