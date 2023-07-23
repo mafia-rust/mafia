@@ -6,6 +6,17 @@
 .keyword-link:hover {
     text-decoration: underline;
 }
+.keyword-player-number {
+	border-radius: 50%;
+    border: outset 1.5px;
+    background-color: var(--primary-color);
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    font-size: 0.8rem;
+    text-indent: 0;
+    text-align: center !important;
+}
 .keyword-player {
     color: whitesmoke;
     font-style: italic; 

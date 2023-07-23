@@ -1,6 +1,6 @@
 import React from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER from "../../../index";
+import GAME_MANAGER, { find, replaceMentions } from "../../../index";
 import "../gameScreen.css";
 import "./chatMenu.css"
 import GameState, { PlayerIndex } from "../../../game/gameState.d";
@@ -24,7 +24,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         if(ChatMenu.instance === null)
             return;
         ChatMenu.instance!.setState({
-            chatField: "/w " + (playerIndex + 1) + " " + ChatMenu.instance!.state.chatField,
+            chatField: "/w @" + (playerIndex + 1) + " " + ChatMenu.instance!.state.chatField,
         });
     }
     static setFilter(regex: RegExp | null) {
@@ -109,28 +109,28 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     };
     sendChatField(){
         if(ChatMenu.instance === null) return;
-        const text = ChatMenu.instance.state.chatField.trim();
+        const text = replaceMentions(
+            ChatMenu.instance.state.chatField.replace("\n", "").replace("\r", "").trim(),
+            ChatMenu.instance.state.gameState.players
+        );
+        if (text === "") return;
         ChatMenu.instance.history.push(text);
         ChatMenu.instance.history_poller.reset();
         if (text.startsWith("/w")) {
-            try {
-                let textSplit = text.split(' ');
-                if(textSplit.length < 2){
-                    throw new Error("Invalid whisper");
-                }
-                const playerIndex = parseInt(textSplit[1]) - 1;
-                if (isNaN(playerIndex)) {
-                    throw new Error("Invalid player index");
-                }
-                const message = text.substring(textSplit[0].length + textSplit[1].length + 2);
-                GAME_MANAGER.sendSendWhisperPacket(playerIndex, message);
-            } catch (e) {
-                GAME_MANAGER.sendSendMessagePacket(text);                
-            }
-        } else {
-            if (text.replace("\n", "").replace("\r", "").trim() !== "") {
+            const recipient = ChatMenu.instance.state.gameState.players.find(player => 
+                RegExp(`^${find(player.toString()).source}`).test(text.substring(3))
+            );
+            if (recipient !== undefined) {
+                GAME_MANAGER.sendSendWhisperPacket(
+                    recipient.index,
+                    text.substring(4 + recipient.toString().length)
+                ); 
+            } else {
+                // Malformed whisper
                 GAME_MANAGER.sendSendMessagePacket(text);
             }
+        } else {
+            GAME_MANAGER.sendSendMessagePacket(text);
         }
         ChatMenu.instance.setState({
             chatField: ""
@@ -139,12 +139,9 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
 
     renderTextInput() {return (
         <div className="send-section">
-            {(()=>{
-                if(this.state.filter === null) return null;
-                return <button className="highlighted" onClick={()=>ChatMenu.setFilter(null)}>
-                    {translate("menu.chat.clearFilter")}
-                </button>
-            })()}
+            {this.state.filter && <button className="highlighted" onClick={()=>ChatMenu.setFilter(null)}>
+                {translate("menu.chat.clearFilter")}
+            </button>}
             <div>
                 <textarea
                     value={this.state.chatField}

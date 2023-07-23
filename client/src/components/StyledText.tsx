@@ -48,6 +48,13 @@ export default function StyledText(props: { children: string[] | string, classNa
         )
     }];
 
+    GAME_MANAGER.gameState.players.forEach((player, index) => {
+        tokens[0].string = tokens[0].string.replace(
+            find(player.toString()), 
+            `<span class="keyword-player-number">${index + 1}</span> ${player.name}`
+        );
+    })
+
     for(const [keyword, data] of Object.entries(KEYWORD_DATA_MAP)) {
         for(let index = 0; index < tokens.length; index++) {
             const token = tokens[index];
@@ -134,7 +141,7 @@ function useKeywordData(): TextDataMap {
     }, [setPlayers]);
 
     for(const player of players){
-        keywordData[player.toString()] = { styleClass: "keyword-player" };
+        keywordData[player.name] = { styleClass: "keyword-player" };
     }
 
     const STYLES = require("../resources/styling/keywords.json");
