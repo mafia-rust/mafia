@@ -8,6 +8,7 @@ import StartMenu from './menu/main/StartMenu';
 import * as LoadingScreen from './menu/LoadingScreen';
 import StandaloneWiki from './menu/main/StandaloneWiki';
 import { WikiPage } from './components/WikiSearch';
+import { Player } from './game/gameState.d';
 
 const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
@@ -65,4 +66,15 @@ export function find(text: string): RegExp {
 
 export function regEscape(text: string) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+}
+
+export function replaceMentions(rawText: string, players: Player[]) {
+    let text = rawText;
+    players.forEach(player => {
+        text = text.replace(find(`@${player.index + 1}`), player.toString());
+    });
+    players.forEach(player => {
+        text = text.replace(find(`@${player.name}`), player.toString());
+    });
+    return text;
 }

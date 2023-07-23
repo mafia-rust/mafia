@@ -1,6 +1,6 @@
 import React from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER from "../../../index";
+import GAME_MANAGER, { replaceMentions } from "../../../index";
 import { ContentMenus, ContentTab } from "../GameScreen";
 import "./willMenu.css"
 import { StateListener } from "../../../game/gameManager.d";
@@ -49,7 +49,10 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
     }
     send(type: FieldType) {
         this.save(type);
-        GAME_MANAGER.sendSendMessagePacket('\n' + this.state.localFields[type])
+        GAME_MANAGER.sendSendMessagePacket('\n' + replaceMentions(
+            this.state.localFields[type],
+            GAME_MANAGER.gameState.players
+        ))
     }
     save(type: FieldType) {
         if (type === "will")
