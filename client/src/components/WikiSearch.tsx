@@ -8,6 +8,11 @@ import StyledText from "../components/StyledText";
 import { HistoryQueue } from "../history";
 import { regEscape } from "..";
 
+type WikiSearchProps = {
+    page?: WikiPage,
+    pageChangeCallback?: (page: WikiPage) => void
+}
+
 type WikiSearchState = ({
     type: "search"
 } | {
@@ -27,16 +32,28 @@ type Article = typeof ARTICLES[number];
 const PAGES: WikiPage[] = Object.keys(ROLES).map(role => `role/${role}`)
     .concat(ARTICLES.map(article => `article/${article}`)) as WikiPage[];
 
-export default class WikiSearch extends React.Component<{}, WikiSearchState> {
+export default class WikiSearch extends React.Component<WikiSearchProps, WikiSearchState> {
     private static activeWikis: WikiSearch[] = [];
     history: HistoryQueue<WikiSearchState> = new HistoryQueue(10);
-    constructor(props: {}) {
+    constructor(props: WikiSearchProps) {
         super(props);
 
-        this.state = {
-            type: "search",
-            searchQuery: "",
-        };
+        if (props.page !== undefined) {
+            this.history.push({
+                type: "search",
+                searchQuery: "",
+            });
+            this.state = {
+                type: "page",
+                searchQuery: "",
+                page: props.page
+            }
+        } else {
+            this.state = {
+                type: "search",
+                searchQuery: "",
+            };
+        }
     }
 
     static setPage(page: WikiPage) {
@@ -59,6 +76,10 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
             type: "page",
             searchQuery: this.state.searchQuery,
             page
+        }, () => {
+            if (this.props.pageChangeCallback !== undefined) {
+                this.props.pageChangeCallback(page);
+            }
         });
     }
 
@@ -92,7 +113,7 @@ export default class WikiSearch extends React.Component<{}, WikiSearchState> {
             {this.history.length() !== 0 ? 
                 <button
                     className="material-icons-round"
-                    onClick={() => {this.setState(this.history.pop()!)}}
+                    onClick={() => this.setState(this.history.pop()!)}
                     aria-label={translate("menu.wiki.search.back")}
                 >
                     arrow_back

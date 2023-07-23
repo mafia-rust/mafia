@@ -7,6 +7,7 @@ import { createGameState } from './game/gameState';
 import StartMenu from './menu/main/StartMenu';
 import * as LoadingScreen from './menu/LoadingScreen';
 import StandaloneWiki from './menu/main/StandaloneWiki';
+import { WikiPage } from './components/WikiSearch';
 
 const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
@@ -31,8 +32,9 @@ function route(url: Location) {
     if (roomCode !== null) {
         GAME_MANAGER.gameState = createGameState();
         GAME_MANAGER.tryJoinGame(roomCode);
-    } else if (url.pathname === '/wiki') {
-        Anchor.setContent(<StandaloneWiki/>);
+    } else if (url.pathname.startsWith('/wiki')) {
+        const page = url.pathname.substring(6);
+        Anchor.setContent(<StandaloneWiki page={page !== "" ? page as WikiPage : undefined}/>);
     } else {
         Anchor.setContent(<StartMenu/>)
     }
