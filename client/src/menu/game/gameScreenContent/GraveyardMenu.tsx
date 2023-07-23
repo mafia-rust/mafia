@@ -124,6 +124,8 @@ ${translate("menu.graveyard.killedBy")+" "+deathCauseString}
                 onClick={() => {
                     if (entry.type === "exact") {
                         WikiSearch.setPage(`role/${entry.role}`);
+                    } else {
+                        WikiSearch.setPage(`article/roles_and_teams`);
                     }
                 }}
             >
