@@ -141,7 +141,7 @@ function useKeywordData(): TextDataMap {
     }, [setPlayers]);
 
     for(const player of players){
-        keywordData[player.toString()] = { styleClass: "keyword-player" };
+        keywordData[player.name] = { styleClass: "keyword-player" };
     }
 
     const STYLES = require("../resources/styling/keywords.json");

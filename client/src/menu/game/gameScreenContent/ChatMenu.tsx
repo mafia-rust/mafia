@@ -123,7 +123,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
             if (recipient !== undefined) {
                 GAME_MANAGER.sendSendWhisperPacket(
                     recipient.index,
-                    text.substring(3 + recipient.toString().length)
+                    text.substring(4 + recipient.toString().length)
                 ); 
             } else {
                 // Malformed whisper
