@@ -95,9 +95,9 @@ export default function messageListener(packet: ToClientPacket){
             //list of role list entriy
             GAME_MANAGER.gameState.roleList = packet.roleList;
         break;
-        case "roleListEntry":
+        case "roleOutline":
             //role list entriy
-            GAME_MANAGER.gameState.roleList[packet.index] = packet.roleListEntry;
+            GAME_MANAGER.gameState.roleList[packet.index] = packet.roleOutline;
         break;
         case "phaseTime":
             GAME_MANAGER.gameState.phaseTimes[packet.phase as keyof typeof GAME_MANAGER.gameState.phaseTimes] = packet.time;

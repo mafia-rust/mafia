@@ -1,7 +1,7 @@
 import { Phase, PlayerIndex, Verdict, PhaseTimes, Tag } from "./gameState.d"
 import { Grave } from "./grave"
 import { ChatMessage } from "../components/ChatMessage"
-import { RoleListEntry } from "./roleListState.d"
+import { RoleOutline } from "./roleListState.d"
 import { Role, RoleState } from "./roleState.d"
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu"
 
@@ -34,11 +34,11 @@ export type ToClientPacket = {
     type: "startGame"
 } | {
     type: "roleList",
-    roleList: RoleListEntry[]
+    roleList: RoleOutline[]
 } | {
-    type: "roleListEntry",
+    type: "roleOutline",
     index: number,
-    roleListEntry: RoleListEntry
+    roleOutline: RoleOutline
 } | {
     type: "phaseTime",
     phase: Phase, 
@@ -48,7 +48,7 @@ export type ToClientPacket = {
     phaseTimeSettings: PhaseTimes
 } | {
     type: "excludedRoles",
-    roles: RoleListEntry[]
+    roles: RoleOutline[]
 } | {
     type: "youAreHost"
 } |
@@ -132,11 +132,11 @@ export type ToServerPacket = {
     playerIndex: PlayerIndex
 } | {
     type: "setRoleList", 
-    roleList: RoleListEntry[]
+    roleList: RoleOutline[]
 } | {
-    type: "setRoleListEntry", 
+    type: "setRoleOutline", 
     index: number,
-    roleListEntry: RoleListEntry
+    roleOutline: RoleOutline
 } | {
     type: "setPhaseTime", 
     phase: Phase, 
@@ -146,7 +146,7 @@ export type ToServerPacket = {
     phaseTimeSettings: PhaseTimes
 } | {
     type: "setExcludedRoles", 
-    roles: RoleListEntry[], 
+    roles: RoleOutline[], 
 } | 
 // Game
 {
@@ -191,6 +191,6 @@ export type ToServerPacket = {
         [number, DoomsayerGuess]
     ]
 } | {
-    type: "setAmnesiacRoleListEntry",
-    roleListEntry: RoleListEntry
+    type: "setAmnesiacRoleOutline",
+    roleOutline: RoleOutline
 }

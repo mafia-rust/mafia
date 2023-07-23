@@ -1,7 +1,7 @@
 import { Grave } from "./grave";
 import { ChatMessage } from "../components/ChatMessage";
 import { Role, RoleState } from "./roleState.d";
-import { RoleListEntry } from "./roleListState.d";
+import { RoleOutline } from "./roleListState.d";
 
 export default interface GameState {
     inGame: boolean;
@@ -29,8 +29,8 @@ export default interface GameState {
     voted: PlayerIndex | null,
     judgement: Verdict,
     
-    roleList: RoleListEntry[],
-    excludedRoles: RoleListEntry[],
+    roleList: RoleOutline[],
+    excludedRoles: RoleOutline[],
     phaseTimes: PhaseTimes
 }
 

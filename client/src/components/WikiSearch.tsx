@@ -3,7 +3,7 @@ import ROLES from "./../resources/roles.json";
 import translate, { langText } from "../game/lang";
 import "./wikiSearch.css";
 import { Role } from "../game/roleState.d";
-import { FactionAlignment, getRoleListEntryFromFactionAlignment, translateRoleListEntry } from "../game/roleListState.d";
+import { FactionAlignment, getRoleOutlineFromFactionAlignment, translateRoleOutline } from "../game/roleListState.d";
 import StyledText from "../components/StyledText";
 import { HistoryQueue } from "../history";
 import { regEscape } from "..";
@@ -171,7 +171,7 @@ function getPageText(page: WikiPage): string {
             const roleData = ROLES[role];
             return translate("wiki.entry.role",
                 translate("role."+role+".name"),
-                translateRoleListEntry(getRoleListEntryFromFactionAlignment(roleData.factionAlignment as FactionAlignment)) || '',
+                translateRoleOutline(getRoleOutlineFromFactionAlignment(roleData.factionAlignment as FactionAlignment)) || '',
                 translate("wiki.entry.role."+role+".abilities"),
                 translate("wiki.entry.role."+role+".attributes"),
                 roleData.maxCount === null ? translate("none") : roleData.maxCount,

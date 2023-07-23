@@ -3,11 +3,11 @@ import GAME_MANAGER from "../../index";
 import "../../index.css";
 import { StateListener } from "../../game/gameManager.d";
 import translate from "../../game/lang";
-import { RoleListEntry } from "../../game/roleListState.d";
+import { RoleOutline } from "../../game/roleListState.d";
 import RolePicker from "../../components/RolePicker";
 
 interface RolePaneState {
-    roleList: RoleListEntry[],
+    roleList: RoleOutline[],
     host: boolean
 }
 
@@ -36,7 +36,7 @@ export default class LobbyRolePane extends React.Component<{}, RolePaneState> {
         GAME_MANAGER.removeStateListener(this.listener);
     }
 
-    onChangeRolePicker(index: number, value: RoleListEntry){
+    onChangeRolePicker(index: number, value: RoleOutline){
         let roleList = [...this.state.roleList];
         roleList[index] = value;
 
@@ -44,7 +44,7 @@ export default class LobbyRolePane extends React.Component<{}, RolePaneState> {
             roleList: roleList
         })
 
-        GAME_MANAGER.sendSetRoleListEntryPacket(index, value);
+        GAME_MANAGER.sendSetRoleOutlinePacket(index, value);
     }
 
     render(){return(<section>
@@ -58,8 +58,8 @@ export default class LobbyRolePane extends React.Component<{}, RolePaneState> {
             this.state.roleList.map((_, index) => {
                 return <RolePicker
                     disabled={!this.state.host}
-                    roleListEntry={this.state.roleList[index]}
-                    onChange={(value: RoleListEntry) => {this.onChangeRolePicker(index, value);}}
+                    roleOutline={this.state.roleList[index]}
+                    onChange={(value: RoleOutline) => {this.onChangeRolePicker(index, value);}}
                     key={index}
                 />
             })

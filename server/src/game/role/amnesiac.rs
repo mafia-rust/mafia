@@ -4,7 +4,7 @@ use serde::{Serialize, Deserialize};
 
 use crate::game::{chat::ChatGroup, phase::PhaseType};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::{FactionAlignment, RoleListEntry};
+use crate::game::role_list::{FactionAlignment, RoleOutline};
 use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::Game;
@@ -14,11 +14,11 @@ use super::{Priority, RoleStateImpl, Role};
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Amnesiac{
-    pub role_list_entry: RoleListEntry
+    pub role_outline: RoleOutline
 }
 impl Default for Amnesiac{
     fn default() -> Self {
-        Self { role_list_entry: RoleListEntry::Exact { role: Role::Amnesiac } }
+        Self { role_outline: RoleOutline::Exact { role: Role::Amnesiac } }
     }
 }
 
@@ -36,7 +36,7 @@ impl RoleStateImpl for Amnesiac {
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::TopPriority {return;}
-        let new_role_data = self.role_list_entry.get_random_role(&[], &[]).default_state();
+        let new_role_data = self.role_outline.get_random_role(&[], &[]).default_state();
         if new_role_data.role() != Role::Amnesiac {
             actor_ref.set_role(game, new_role_data);
         }

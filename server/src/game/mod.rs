@@ -22,7 +22,7 @@ use crate::lobby::LobbyPlayer;
 use crate::packet::{ToClientPacket, GameOverReason};
 use chat::{ChatMessage, ChatGroup};
 use player::PlayerReference;
-use role_list::{RoleListEntry, create_random_roles};
+use role_list::{RoleOutline, create_random_roles};
 use player::Player;
 use phase::PhaseStateMachine;
 use settings::Settings;
@@ -55,7 +55,7 @@ impl Game {
                 player.sender.clone(),
                 match roles.get(player_index){
                     Some(role) => *role,
-                    None => RoleListEntry::Any.get_random_role(&settings.excluded_roles, &roles),
+                    None => RoleOutline::Any.get_random_role(&settings.excluded_roles, &roles),
                 }
             );
             players.push(new_player);
@@ -186,7 +186,7 @@ impl Game {
 pub mod test {
     use rand::{thread_rng, seq::SliceRandom};
 
-    use super::{Game, settings::Settings, role_list::{create_random_roles, RoleListEntry}, player::{PlayerReference, test::mock_player}, phase::PhaseStateMachine, team::Teams};
+    use super::{Game, settings::Settings, role_list::{create_random_roles, RoleOutline}, player::{PlayerReference, test::mock_player}, phase::PhaseStateMachine, team::Teams};
 
     pub fn mock_game(settings: Settings, number_of_players: usize) -> Game {
         let mut roles = create_random_roles(&settings.excluded_roles, &settings.role_list);
@@ -198,7 +198,7 @@ pub mod test {
                 format!("{}",player_index),
                 match roles.get(player_index){
                     Some(role) => *role,
-                    None => RoleListEntry::Any.get_random_role(&settings.excluded_roles, &roles),
+                    None => RoleOutline::Any.get_random_role(&settings.excluded_roles, &roles),
                 }
             );
             players.push(new_player);

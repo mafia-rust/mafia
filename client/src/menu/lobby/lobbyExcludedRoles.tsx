@@ -1,7 +1,7 @@
 
 import React from "react";
 import GAME_MANAGER from "../../index";
-import { RoleListEntry, translateRoleListEntry } from "../../game/roleListState.d";
+import { RoleOutline, translateRoleOutline } from "../../game/roleListState.d";
 import "../../index.css";
 import { StateListener } from "../../game/gameManager.d";
 import translate from "../../game/lang";
@@ -9,8 +9,8 @@ import RolePicker from "../../components/RolePicker";
 import StyledText from "../../components/StyledText";
 
 interface ExcludedRolesState {
-    excludedRoles: RoleListEntry[],
-    roleListEntry: RoleListEntry,
+    excludedRoles: RoleOutline[],
+    roleOutline: RoleOutline,
     host: boolean
 }
 
@@ -22,7 +22,7 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
 
         this.state = {
             excludedRoles: GAME_MANAGER.gameState.excludedRoles,
-            roleListEntry: {type:"any"},
+            roleOutline: {type:"any"},
             host: GAME_MANAGER.gameState.host
         }
 
@@ -40,14 +40,14 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
         GAME_MANAGER.removeStateListener(this.listener);
     }
 
-    includeRole(role: RoleListEntry){
+    includeRole(role: RoleOutline){
         let roles = [...this.state.excludedRoles];
         roles = roles.filter((value)=>value !== role);
         GAME_MANAGER.sendExcludedRolesPacket(roles);
     }
     excludeRole(){
         let roles = [...this.state.excludedRoles];
-        roles.push(this.state.roleListEntry);
+        roles.push(this.state.roleOutline);
         GAME_MANAGER.sendExcludedRolesPacket(roles);
     }
 
@@ -60,10 +60,10 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
         <div>
             <RolePicker
                 disabled={!this.state.host}
-                roleListEntry={this.state.roleListEntry}
-                onChange={(value: RoleListEntry) => {
+                roleOutline={this.state.roleOutline}
+                onChange={(value: RoleOutline) => {
                     this.setState({
-                        roleListEntry: value
+                        roleOutline: value
                     })
                 }}
             />
@@ -79,7 +79,7 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
                     onClick={()=>{this.includeRole(value)}}
                 >
                     <StyledText>
-                        {translateRoleListEntry(value) ?? ""}
+                        {translateRoleOutline(value) ?? ""}
                     </StyledText>
                 </button>
             })}

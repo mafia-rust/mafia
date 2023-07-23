@@ -217,9 +217,9 @@ impl Game {
                     sender_player_ref.set_role_state(self, RoleState::Doomsayer(doomsayer));
                 }
             }
-            ToServerPacket::SetAmnesiacRoleListEntry { role_list_entry } => {
+            ToServerPacket::SetAmnesiacRoleOutline { role_outline } => {
                 if let RoleState::Amnesiac(mut amnesiac) = sender_player_ref.role_state(self).clone(){
-                    amnesiac.role_list_entry = role_list_entry;
+                    amnesiac.role_outline = role_outline;
                     sender_player_ref.set_role_state(self, RoleState::Amnesiac(amnesiac));
                 }
             }

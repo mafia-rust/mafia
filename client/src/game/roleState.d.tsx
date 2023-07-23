@@ -1,5 +1,5 @@
 import { PlayerIndex } from "./gameState.d"
-import { Faction, FactionAlignment, RoleListEntry, getFactionFromFactionAlignment } from "./roleListState.d"
+import { Faction, FactionAlignment, RoleOutline, getFactionFromFactionAlignment } from "./roleListState.d"
 import ROLES from "./../resources/roles.json";
 import { Doomsayer } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 
@@ -66,7 +66,7 @@ Doomsayer
     role: "vampire"
 } | {
     role: "amnesiac"
-    roleListEntry: RoleListEntry
+    roleOutline: RoleOutline
 }
 
 

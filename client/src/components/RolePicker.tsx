@@ -5,12 +5,12 @@ import {
 } from "../game/gameState.d";
 import translate from "../game/lang";
 import ROLES from "../resources/roles.json";
-import { FACTIONS, Faction, FactionAlignment, RoleListEntry, getAlignmentStringFromFactionAlignment, getAllFactionAlignments, getFactionAlignmentFromRoleListEntry, getFactionFromFactionAlignment, getFactionFromRoleListEntry } from "../game/roleListState.d";
+import { FACTIONS, Faction, FactionAlignment, RoleOutline, getAlignmentStringFromFactionAlignment, getAllFactionAlignments, getFactionAlignmentFromRoleOutline, getFactionFromFactionAlignment, getFactionFromRoleOutline } from "../game/roleListState.d";
 import { Role, getFactionAlignmentFromRole, getFactionFromRole } from "../game/roleState.d";
 
 interface RolePickerProps {
-    roleListEntry: RoleListEntry,
-    onChange: (value: RoleListEntry) => void,
+    roleOutline: RoleOutline,
+    onChange: (value: RoleOutline) => void,
     disabled?: boolean,
 }
 
@@ -49,7 +49,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
         }
     }
     setSecondBox(e: { target: { selectedIndex: number; }; }){
-        let currentFaction = getFactionFromRoleListEntry(this.props.roleListEntry);
+        let currentFaction = getFactionFromRoleOutline(this.props.roleOutline);
         if(currentFaction === null)
             return;
         
@@ -62,7 +62,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
         }
     }
     setThirdBox(e: { target: { selectedIndex: number; }; }){
-        let currentFactionAlignment = getFactionAlignmentFromRoleListEntry(this.props.roleListEntry);
+        let currentFactionAlignment = getFactionAlignmentFromRoleOutline(this.props.roleOutline);
         if(currentFactionAlignment === null)
             return;
 
@@ -78,7 +78,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
     render() {
         let selectors: JSX.Element[] = [];
         
-        switch(this.props.roleListEntry.type){
+        switch(this.props.roleOutline.type){
 
             case "any":
                 selectors = [
@@ -101,7 +101,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     <select 
                         disabled={this.props.disabled}
                         key="faction" 
-                        value={translate("faction."+this.props.roleListEntry.faction)}
+                        value={translate("faction."+this.props.roleOutline.faction)}
                         onChange={(e)=>this.setFirstBox(e)}
                     > {
                         allFactionsAndAny().map((faction: Faction | "any", key) => {
@@ -117,7 +117,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                         value={translate("any")}
                         onChange={(e)=>this.setSecondBox(e)}
                     > {
-                        allFactionAlignmentsAndAny(this.props.roleListEntry.faction).map((factionAlignment: FactionAlignment | "any", key) => {
+                        allFactionAlignmentsAndAny(this.props.roleOutline.faction).map((factionAlignment: FactionAlignment | "any", key) => {
                             if(factionAlignment === "any")
                                 return <option key={key}>{translate("any")}</option>
                             return <option key={key}>{translate("alignment."+getAlignmentStringFromFactionAlignment(factionAlignment))}</option>
@@ -130,7 +130,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     <select
                         disabled={this.props.disabled}
                         key="faction" 
-                        value={translate("faction."+getFactionFromFactionAlignment(this.props.roleListEntry.factionAlignment))}
+                        value={translate("faction."+getFactionFromFactionAlignment(this.props.roleOutline.factionAlignment))}
                         onChange={(e)=>this.setFirstBox(e)}
                     > {
                         allFactionsAndAny().map((faction: string, key) => {
@@ -143,10 +143,10 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     <select
                         disabled={this.props.disabled}
                         key="alignment"
-                        value={translate("alignment."+getAlignmentStringFromFactionAlignment(this.props.roleListEntry.factionAlignment))}
+                        value={translate("alignment."+getAlignmentStringFromFactionAlignment(this.props.roleOutline.factionAlignment))}
                         onChange={(e)=>this.setSecondBox(e)}
                     > {
-                        allFactionAlignmentsAndAny(getFactionFromFactionAlignment(this.props.roleListEntry.factionAlignment)).map((factionAlignment: string, key) => {
+                        allFactionAlignmentsAndAny(getFactionFromFactionAlignment(this.props.roleOutline.factionAlignment)).map((factionAlignment: string, key) => {
                             if(factionAlignment === "any")
                                 return <option key={key}>{translate("any")}</option>
                             return <option key={key}>{translate("alignment."+getAlignmentStringFromFactionAlignment(factionAlignment as FactionAlignment))}</option>
@@ -158,7 +158,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                         value={translate("any")}
                         onChange={(e)=>this.setThirdBox(e)}
                     > {
-                        allRolesAndAny(this.props.roleListEntry.factionAlignment).map((role: string, key) => {
+                        allRolesAndAny(this.props.roleOutline.factionAlignment).map((role: string, key) => {
                             if(role === "any")
                                 return <option key={key}>{translate("any")}</option>
                             return <option key={key}>{translate(`role.${role}.name`)}</option>
@@ -171,7 +171,7 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     <select
                         disabled={this.props.disabled}
                         key="faction" 
-                        value={translate("faction."+getFactionFromRole(this.props.roleListEntry.role))}
+                        value={translate("faction."+getFactionFromRole(this.props.roleOutline.role))}
                         onChange={(e)=>this.setFirstBox(e)}
                     > {
                         allFactionsAndAny().map((faction: string, key) => {
@@ -184,10 +184,10 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     <select
                         disabled={this.props.disabled}
                         key="alignment"
-                        value={translate("alignment."+getAlignmentStringFromFactionAlignment(getFactionAlignmentFromRole(this.props.roleListEntry.role)))}
+                        value={translate("alignment."+getAlignmentStringFromFactionAlignment(getFactionAlignmentFromRole(this.props.roleOutline.role)))}
                         onChange={(e)=>this.setSecondBox(e)}
                     > {
-                        allFactionAlignmentsAndAny(getFactionFromRole(this.props.roleListEntry.role)).map((factionAlignment: string, key) => {
+                        allFactionAlignmentsAndAny(getFactionFromRole(this.props.roleOutline.role)).map((factionAlignment: string, key) => {
                             if(factionAlignment === "any")
                                 return <option key={key}>{translate("any")}</option>
                             return <option key={key}>{translate("alignment."+getAlignmentStringFromFactionAlignment(factionAlignment as FactionAlignment))}</option>
@@ -196,10 +196,10 @@ export default class RolePicker extends React.Component<RolePickerProps> {
                     <select
                         disabled={this.props.disabled}
                         key="exact"
-                        value={translate(`role.${this.props.roleListEntry.role}.name`)}
+                        value={translate(`role.${this.props.roleOutline.role}.name`)}
                         onChange={(e)=>this.setThirdBox(e)}
                     > {
-                        allRolesAndAny(getFactionAlignmentFromRole(this.props.roleListEntry.role)).map((role: string, key) => {
+                        allRolesAndAny(getFactionAlignmentFromRole(this.props.roleOutline.role)).map((role: string, key) => {
                             if(role === "any")
                                 return <option key={key}>{translate("any")}</option>
                             return <option key={key}>{translate(`role.${role}.name`)}</option>

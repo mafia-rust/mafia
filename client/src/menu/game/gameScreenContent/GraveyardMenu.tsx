@@ -5,7 +5,7 @@ import { Grave } from "../../../game/grave";
 import { ContentMenus, ContentTab } from "../GameScreen";
 import "./graveyardMenu.css";
 import GameState from "../../../game/gameState.d";
-import { translateRoleListEntry } from "../../../game/roleListState.d";
+import { translateRoleOutline } from "../../../game/roleListState.d";
 import StyledText from "../../../components/StyledText";
 import WikiSearch from "../../../components/WikiSearch";
 
@@ -130,7 +130,7 @@ ${translate("menu.graveyard.killedBy")+" "+deathCauseString}
                 }}
             >
                 <StyledText>
-                    {translateRoleListEntry(entry) ?? ""}
+                    {translateRoleOutline(entry) ?? ""}
                 </StyledText>
             </button>
         }, this)}
@@ -147,7 +147,7 @@ ${translate("menu.graveyard.killedBy")+" "+deathCauseString}
                     : this.state.gameState.excludedRoles.map((value, i)=>{
                     return <button key={i}>
                         <StyledText>
-                            {translateRoleListEntry(value) ?? ""}
+                            {translateRoleOutline(value) ?? ""}
                         </StyledText>
                     </button>
                 })}
