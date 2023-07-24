@@ -1,8 +1,7 @@
 import DOMPurify from "dompurify";
 import { marked } from "marked";
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement } from "react";
 import ReactDOMServer from "react-dom/server";
-import { Player } from "../game/gameState.d";
 import GAME_MANAGER, { find } from "..";
 import translate from "../game/lang";
 import { Role, getFactionFromRole } from "../game/roleState.d";
@@ -27,17 +26,15 @@ const MARKDOWN_OPTIONS = {
     gfm: true
 }
 
+type Token = {
+    type: "raw"
+    string: string 
+} | ({
+    type: "data"
+    string: string
+} & TextData)
+
 export default function StyledText(props: { children: string[] | string, className?: string, noLinks?: boolean }): ReactElement {
-    const KEYWORD_DATA_MAP: TextDataMap = useKeywordData();
-
-    type Token = {
-        type: "raw"
-        string: string 
-    } | ({
-        type: "data"
-        string: string
-    } & TextData)
-
     let tokens: Token[] = [{
         type: "raw",
         string: marked.parse(
@@ -48,49 +45,9 @@ export default function StyledText(props: { children: string[] | string, classNa
         )
     }];
 
-    GAME_MANAGER.gameState.players.forEach((player, index) => {
-        tokens[0].string = tokens[0].string.replace(
-            find(player.toString()), 
-            `<span class="keyword-player-number">${index + 1}</span> ${player.name}`
-        );
-    })
+    tokens = stylePlayerNames(tokens);
 
-    for(const [keyword, data] of Object.entries(KEYWORD_DATA_MAP)) {
-        for(let index = 0; index < tokens.length; index++) {
-            const token = tokens[index];
-            if (token.type !== "raw") continue;
-            
-            // Remove the keyword and split so we can insert the styled text in its place
-            const stringSplit = token.string.split(RegExp('('+find(keyword).source+')', 'gi'));
-
-            if (stringSplit.length === 1) continue;
-
-            // Insert the styled string into where we just removed the unstyled string from
-            let replacement: Token[] = []; 
-            for(const string of stringSplit){
-                if (find(keyword).test(string)) {
-                    replacement.push({
-                        type: "data",
-                        string,
-                        ...data
-                    });
-                } else if(string !== "") {
-                    replacement.push({
-                        type: "raw",
-                        string: string
-                    });
-                }
-            }
-
-            tokens = 
-                tokens.slice(0, index)
-                    .concat(replacement)
-                    .concat(tokens.slice(index+1));
-            
-            // Skip elements we've already checked
-            index += replacement.length - 1;
-        }
-    }
+    tokens = styleKeywords(tokens);
 
     const jsxString = tokens.map(token => {
         if (token.type === "raw") {
@@ -129,20 +86,8 @@ export default function StyledText(props: { children: string[] | string, classNa
     </span>
 }
 
-function useKeywordData(): TextDataMap {
+function getKeywordData(): TextDataMap {
     let keywordData: TextDataMap = {};
-
-    let [players, setPlayers] = useState<Player[]>(GAME_MANAGER.gameState.players);
-    useEffect(() => {
-        const listener = () => setPlayers(GAME_MANAGER.gameState.players);
-
-        GAME_MANAGER.addStateListener(listener);
-        return () => GAME_MANAGER.removeStateListener(listener);
-    }, [setPlayers]);
-
-    for(const player of players){
-        keywordData[player.name] = { styleClass: "keyword-player" };
-    }
 
     const STYLES = require("../resources/styling/keywords.json");
     const LINKS = require("../resources/links/keywords.json")
@@ -172,4 +117,97 @@ function useKeywordData(): TextDataMap {
     }
 
     return keywordData;
+}
+
+function stylePlayerNames(tokens: Token[]): Token[] {
+    for (const player of GAME_MANAGER.gameState.players) {
+        for(let index = 0; index < tokens.length; index++) {
+            const token = tokens[index];
+            if (token.type !== "raw") continue;
+            
+            // Remove the keyword and split so we can insert the styled text in its place
+            const stringSplit = token.string.split(RegExp('('+find(player.toString()).source+')', 'gi'));
+
+            if (stringSplit.length === 1) continue;
+
+            // Insert the styled string into where we just removed the unstyled string from
+            let replacement: Token[] = []; 
+            for(const string of stringSplit){
+                if (find(player.toString()).test(string)) {
+                    replacement.push({
+                        type: "data",
+                        string: (player.index + 1).toString(),
+                        styleClass: "keyword-player-number"
+                    });
+                    replacement.push({
+                        type: "raw",
+                        string: " ",
+                    });
+                    replacement.push({
+                        type: "data",
+                        string: player.name,
+                        styleClass: "keyword-player"
+                    });
+                } else if(string !== "") {
+                    replacement.push({
+                        type: "raw",
+                        string: string
+                    });
+                }
+            }
+
+            tokens = 
+                tokens.slice(0, index)
+                    .concat(replacement)
+                    .concat(tokens.slice(index+1));
+            
+            // Skip elements we've already checked
+            index += replacement.length - 1;
+        }
+    }
+
+    return tokens;
+}
+
+function styleKeywords(tokens: Token[]): Token[] {
+    const KEYWORD_DATA_MAP: TextDataMap = getKeywordData();
+
+    for(const [keyword, data] of Object.entries(KEYWORD_DATA_MAP)) {
+        for(let index = 0; index < tokens.length; index++) {
+            const token = tokens[index];
+            if (token.type !== "raw") continue;
+            
+            // Remove the keyword and split so we can insert the styled text in its place
+            const stringSplit = token.string.split(RegExp('('+find(keyword).source+')', 'gi'));
+
+            if (stringSplit.length === 1) continue;
+
+            // Insert the styled string into where we just removed the unstyled string from
+            let replacement: Token[] = []; 
+            for(const string of stringSplit){
+                if (find(keyword).test(string)) {
+                    replacement.push({
+                        type: "data",
+                        string,
+                        ...data
+                    });
+                } else if(string !== "") {
+                    replacement.push({
+                        type: "raw",
+                        string: string
+                    });
+                }
+            }
+
+            tokens = 
+                tokens.slice(0, index)
+                    .concat(replacement)
+                    .concat(tokens.slice(index+1));
+            
+            // Skip elements we've already checked
+            index += replacement.length - 1;
+        }
+    }
+
+    return tokens;
 }
