@@ -466,7 +466,7 @@
     
     "wiki.entry.role.retributionist.title": "Retributionist",
     "wiki.entry.role.retributionist.abilities":"* Force a dead player to use their ability on a living one",
-    "wiki.entry.role.retributionist.attributes":"* Your ability only works only on townies\n* You cant use the same person two times",
+    "wiki.entry.role.retributionist.attributes":"* Your ability only works only players whos graves show town roles, or no role at all\n* You cant use the same person two times",
     
     "wiki.entry.role.vigilante.title": "Vigilante",
     "wiki.entry.role.vigilante.abilities":"* Shoot suspicious looking players",

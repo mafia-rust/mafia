@@ -71,7 +71,14 @@ impl RoleStateImpl for Retributionist {
         ((
             actor_ref.chosen_targets(game).is_empty() &&
             !target_ref.alive(game) &&
-            target_ref.role(game).faction_alignment().faction() == Faction::Town &&
+            game.graves.iter().any(|grave|
+                grave.player == target_ref.index() && 
+                match grave.role {
+                    crate::game::grave::GraveRole::Cleaned => true,
+                    crate::game::grave::GraveRole::Petrified => true,
+                    crate::game::grave::GraveRole::Role(r) => r.faction_alignment().faction() == Faction::Town,
+                }
+            ) &&
             !self.used_bodies.iter().any(|p| *p == target_ref)
         ) || (
             actor_ref != target_ref &&
