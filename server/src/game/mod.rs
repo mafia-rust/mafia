@@ -44,8 +44,21 @@ pub struct Game {
 }
 
 impl Game {
-    pub fn new(settings: Settings, lobby_players: Vec<LobbyPlayer>) -> Self{
-        let mut roles = create_random_roles(&settings.excluded_roles, &settings.role_list);
+    pub fn new(mut settings: Settings, lobby_players: Vec<LobbyPlayer>) -> Self{
+        let mut roles = match create_random_roles(&settings.excluded_roles, &settings.role_list){
+            Some(roles) => {
+                roles
+            },
+            None => {
+                let mut new_list = vec![];
+                for _ in 0..lobby_players.len(){
+                    new_list.push(RoleOutline::Any);
+                }
+                settings.role_list = new_list;
+                settings.excluded_roles = vec![];
+                create_random_roles(&settings.excluded_roles, &settings.role_list).expect("All any with no exclusions should have open roles")
+            }
+        };
         roles.shuffle(&mut thread_rng());
 
         let mut players = Vec::new();
@@ -55,7 +68,7 @@ impl Game {
                 player.sender.clone(),
                 match roles.get(player_index){
                     Some(role) => *role,
-                    None => RoleOutline::Any.get_random_role(&settings.excluded_roles, &roles),
+                    None => RoleOutline::Any.get_random_role(&settings.excluded_roles, &roles).expect("Any should have open roles"),
                 }
             );
             players.push(new_player);
@@ -188,8 +201,21 @@ pub mod test {
 
     use super::{Game, settings::Settings, role_list::{create_random_roles, RoleOutline}, player::{PlayerReference, test::mock_player}, phase::PhaseStateMachine, team::Teams};
 
-    pub fn mock_game(settings: Settings, number_of_players: usize) -> Game {
-        let mut roles = create_random_roles(&settings.excluded_roles, &settings.role_list);
+    pub fn mock_game(mut settings: Settings, number_of_players: usize) -> Game {
+        let mut roles = match create_random_roles(&settings.excluded_roles, &settings.role_list){
+            Some(roles) => {
+                roles
+            },
+            None => {
+                let mut new_list = vec![];
+                for _ in 0..number_of_players{
+                    new_list.push(RoleOutline::Any);
+                }
+                settings.role_list = new_list;
+                settings.excluded_roles = vec![];
+                create_random_roles(&settings.excluded_roles, &settings.role_list).expect("All any with no exclusions should have open roles")
+            }
+        };
         roles.shuffle(&mut thread_rng());
         
         let mut players = Vec::new();
@@ -198,7 +224,7 @@ pub mod test {
                 format!("{}",player_index),
                 match roles.get(player_index){
                     Some(role) => *role,
-                    None => RoleOutline::Any.get_random_role(&settings.excluded_roles, &roles),
+                    None => RoleOutline::Any.get_random_role(&settings.excluded_roles, &roles).expect("Any should have open roles"),
                 }
             );
             players.push(new_player);
