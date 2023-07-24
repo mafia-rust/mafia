@@ -1,0 +1,169 @@
+{
+    "verdict.guilty": { 
+        "styleClass": "keyword-evil",
+        "link": "article/phases_and_timeline"
+    },
+    "verdict.innocent": { 
+        "styleClass": "keyword-good",
+        "link": "article/phases_and_timeline"
+    },
+    "innocent.shorthand": { 
+        "styleClass": "keyword-good",
+        "link": "article/phases_and_timeline"
+    },
+    "verdict.abstain": { 
+        "styleClass": "keyword-abstain",
+        "link": "article/phases_and_timeline"
+    },
+    "grave.role.cleaned": { 
+        "styleClass": "keyword-hidden",
+        "link": "role/janitor"
+    },
+    "grave.role.petrified": { 
+        "styleClass": "keyword-hidden"
+    },
+    "suspicious": { 
+        "styleClass": "keyword-evil",
+        "link": "role/sheriff"
+    },
+    "suspicious.shorthand": { 
+        "styleClass": "keyword-evil",
+        "link": "role/sheriff"
+    },
+    "friends": { 
+        "styleClass": "keyword-good",
+        "link": "role/seer"
+    },
+    "enemies": { 
+        "styleClass": "keyword-evil",
+        "link": "role/seer"
+    },
+    "faction.town": { 
+        "styleClass": "keyword-good",
+        "link": "article/roles_and_teams"
+    },
+    "faction.mafia": { 
+        "styleClass": "keyword-evil",
+        "link": "article/roles_and_teams"
+    },
+    "faction.neutral": { 
+        "styleClass": "keyword-neutral",
+        "link": "article/roles_and_teams"
+    },
+    "alignment.killing": { 
+        "styleClass": "keyword-info"
+    },
+    "alignment.investigative": { 
+        "styleClass": "keyword-info"
+    },
+    "alignment.protective": { 
+        "styleClass": "keyword-info"
+    },
+    "alignment.support": { 
+        "styleClass": "keyword-info"
+    },
+    "alignment.deception": { 
+        "styleClass": "keyword-info"
+    },
+    "alignment.evil": { 
+        "styleClass": "keyword-info"
+    },
+    "alignment.chaos": { 
+        "styleClass": "keyword-info"
+    },
+    "alignment.power": { 
+        "styleClass": "keyword-info"
+    },
+    "any": { 
+        "styleClass": "keyword-info"
+    },
+    "none": { 
+        "styleClass": "keyword-info"
+    },
+    "defense.0": { 
+        "styleClass": "keyword-info"
+    },
+    "defense.1": { 
+        "styleClass": "keyword-info"
+    },
+    "defense.2": { 
+        "styleClass": "keyword-info"
+    },
+    "defense.3": { 
+        "styleClass": "keyword-info"
+    },
+    "faction": { 
+        "styleClass": "keyword-info",
+        "link": "article/roles_and_teams"
+    },
+    "alignment": { 
+        "styleClass": "keyword-info",
+        "link": "article/roles_and_teams"
+    },
+    "dead": { 
+        "styleClass": "keyword-dead"
+    },
+    "wiki.entry.role.abilities": { 
+        "styleClass": "keyword-info",
+        "link": "article/roles_and_teams"
+    },
+    "wiki.entry.role.attributes": { 
+        "styleClass": "keyword-info",
+        "link": "article/roles_and_teams"
+    },
+    "grave.killer.suicide": { 
+        "styleClass": "keyword-info"
+    },
+    "random.kys": { 
+        "styleClass": "keyword-pride"
+    },
+    "random.gay": { 
+        "styleClass": "keyword-pride"
+    },
+    "random.trans": { 
+        "styleClass": "keyword-trans"
+    },
+    "random.fuck_off": { 
+        "styleClass": "keyword-pride"
+    },
+
+    "day": {
+        "link": "article/phases_and_timeline"
+    },
+    "phase.morning": {
+        "link": "article/phases_and_timeline"
+    },
+    "phase.discussion": {
+        "link": "article/phases_and_timeline"
+    },
+    "phase.voting": {
+        "link": "article/phases_and_timeline"
+    },
+    "phase.testimony": {
+        "link": "article/phases_and_timeline"
+    },
+    "phase.judgement": {
+        "link": "article/phases_and_timeline"
+    },
+    "phase.evening": {
+        "link": "article/phases_and_timeline"
+    },
+    "phase.night": {
+        "link": "article/phases_and_timeline"
+    },
+    "wiki.entry.article.wills_and_notes.title":{
+        "link": "article/wills_and_notes"
+    },
+    "menu.will.will": {
+        "link": "article/wills_and_notes"
+    },
+    "menu.will.notes": {
+        "link": "article/wills_and_notes"
+    },
+    "menu.will.deathNote": {
+        "link": "article/wills_and_notes"
+    },
+    "language":{ 
+        "link": "article/all_language"
+    }
+}
