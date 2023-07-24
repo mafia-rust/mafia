@@ -36,7 +36,10 @@ impl RoleStateImpl for Amnesiac {
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::TopPriority {return;}
-        let new_role_data = self.role_outline.get_random_role(&[], &[]).default_state();
+        let new_role_data = self.role_outline
+            .get_random_role(&[RoleOutline::Exact { role: Role::Amnesiac }], &[])
+            .unwrap_or(Role::Amnesiac)
+            .default_state();
         if new_role_data.role() != Role::Amnesiac {
             actor_ref.set_role(game, new_role_data);
         }
