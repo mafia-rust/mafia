@@ -409,7 +409,7 @@
 
     "wiki.entry.role.death.title": "Thanos",
     "wiki.entry.role.death.abilities":"* Target a player on the night they die to collect a stone\n* Once you've collected six stones, endgame starts, everyone is notified, and at the start of the next night, you kill everyone, and win.",
-    "wiki.entry.role.death.attributes":"* Passively gain a stone each night\n* To collect stones faster, guess what player will die on that night by targeting them\n* You gain invincible defense once you have six stones.",
+    "wiki.entry.role.death.attributes":"* Passively gain a stone each night\n* To collect stones faster, guess what player will die on that night by targeting them\n* You gain powerful defense once you have six stones.",
     
     "wiki.entry.role.amnesiac.title": "Amnesiac",
     "wiki.entry.role.amnesiac.abilities":"* Choose a role and become that role at night",
