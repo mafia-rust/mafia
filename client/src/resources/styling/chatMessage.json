@@ -16,6 +16,8 @@
     "jailedTarget": "special",
     "jailedSomeone": "special",
     "deputyKilled": "special",
+    "deputyShotSomeoneSurvived": "special",
+    "deathCollectedSouls": "special",
     "jailorDecideExecute": "special",
     "roleBlocked": "result",
     "sheriffResult": "result",
