@@ -9,11 +9,13 @@ import ROLES from "../resources/roles.json";
 import "./styledText.css";
 import WikiSearch, { WikiPage } from "./WikiSearch";
 
-type TextData = { 
+type TokenData = {
     styleClass?: string, 
-    link?: WikiPage
+    link?: WikiPage,
+    replacement?: string
 };
-type TextDataMap = { [key: string]: TextData };
+type KeywordData = TokenData[];
+type KeywordDataMap = { [key: string]: KeywordData };
 
 const SANITIZATION_OPTIONS = {
     FORBID_TAGS: ['a', 'img']
@@ -32,7 +34,7 @@ type Token = {
 } | ({
     type: "data"
     string: string
-} & TextData)
+} & KeywordData[number])
 
 export default function StyledText(props: { children: string[] | string, className?: string, noLinks?: boolean }): ReactElement {
     let tokens: Token[] = [{
@@ -44,8 +46,6 @@ export default function StyledText(props: { children: string[] | string, classNa
             MARKDOWN_OPTIONS
         )
     }];
-
-    tokens = stylePlayerNames(tokens);
 
     tokens = styleKeywords(tokens);
 
@@ -86,91 +86,43 @@ export default function StyledText(props: { children: string[] | string, classNa
     </span>
 }
 
-function getKeywordData(): TextDataMap {
-    let keywordData: TextDataMap = {};
+function getKeywordData(): KeywordDataMap {
+    let keywordData: KeywordDataMap = {};
 
-    const STYLES = require("../resources/styling/keywords.json");
-    const LINKS = require("../resources/links/keywords.json")
+    const DATA = require("../resources/keywords.json");
+
+    for(const player of GAME_MANAGER.gameState.players) {
+        keywordData[player.toString()] = [
+            { styleClass: "keyword-player-number", replacement: (player.index + 1).toString() },
+            { replacement: " " },
+            { styleClass: "keyword-player", replacement: player.name }
+        ];
+    }
 
     for(const role of Object.keys(ROLES)){
-        const faction = "faction." + getFactionFromRole(role as Role);
-        if (!STYLES[faction]) {
-            console.error(`${STYLES[faction]} faction is missing a keyword style!`);
+        const factionData = DATA["faction." + getFactionFromRole(role as Role)];
+        if (factionData === undefined) {
+            console.error(`faction.${getFactionFromRole(role as Role)} is missing a keyword style!`);
             continue;
         }
-        keywordData[translate(`role.${role}.name`)] = {
-            styleClass: STYLES[faction],
-            link: `role/${role}` as WikiPage
-        };
+        const data = Array.isArray(factionData) ? factionData : [factionData];
+        keywordData[translate(`role.${role}.name`)] = data.map(datum => {
+            return {
+                ...datum,
+                link: `role/${role}` as WikiPage
+            }
+        });
     }
 
-    for (const keyword of Object.keys(STYLES).concat(Object.keys(LINKS))) {
-        keywordData[translate(keyword)] = {};
-    }
-
-    for (const [keyword, styleClass] of Object.entries(STYLES)) {
-        keywordData[translate(keyword)].styleClass = styleClass as string;
-    }
-
-    for (const [keyword, link] of Object.entries(LINKS)) {
-        keywordData[translate(keyword)].link = link as WikiPage;
+    for (const [keyword, data] of Object.entries(DATA)) {
+        keywordData[translate(keyword)] = Array.isArray(data) ? data : [data];
     }
 
     return keywordData;
 }
 
-function stylePlayerNames(tokens: Token[]): Token[] {
-    for (const player of GAME_MANAGER.gameState.players) {
-        for(let index = 0; index < tokens.length; index++) {
-            const token = tokens[index];
-            if (token.type !== "raw") continue;
-            
-            // Remove the keyword and split so we can insert the styled text in its place
-            const stringSplit = token.string.split(RegExp('('+find(player.toString()).source+')', 'gi'));
-
-            if (stringSplit.length === 1) continue;
-
-            // Insert the styled string into where we just removed the unstyled string from
-            let replacement: Token[] = []; 
-            for(const string of stringSplit){
-                if (find(player.toString()).test(string)) {
-                    replacement.push({
-                        type: "data",
-                        string: (player.index + 1).toString(),
-                        styleClass: "keyword-player-number"
-                    });
-                    replacement.push({
-                        type: "raw",
-                        string: " ",
-                    });
-                    replacement.push({
-                        type: "data",
-                        string: player.name,
-                        styleClass: "keyword-player"
-                    });
-                } else if(string !== "") {
-                    replacement.push({
-                        type: "raw",
-                        string: string
-                    });
-                }
-            }
-
-            tokens = 
-                tokens.slice(0, index)
-                    .concat(replacement)
-                    .concat(tokens.slice(index+1));
-            
-            // Skip elements we've already checked
-            index += replacement.length - 1;
-        }
-    }
-
-    return tokens;
-}
-
 function styleKeywords(tokens: Token[]): Token[] {
-    const KEYWORD_DATA_MAP: TextDataMap = getKeywordData();
+    const KEYWORD_DATA_MAP: KeywordDataMap = getKeywordData();
 
     for(const [keyword, data] of Object.entries(KEYWORD_DATA_MAP)) {
         for(let index = 0; index < tokens.length; index++) {
@@ -185,16 +137,19 @@ function styleKeywords(tokens: Token[]): Token[] {
             // Insert the styled string into where we just removed the unstyled string from
             let replacement: Token[] = []; 
             for(const string of stringSplit){
-                if (find(keyword).test(string)) {
-                    replacement.push({
-                        type: "data",
-                        string,
-                        ...data
-                    });
-                } else if(string !== "") {
+                if(string === "") continue;
+                if (!find(keyword).test(string)) {
                     replacement.push({
                         type: "raw",
                         string: string
+                    });
+                    continue;
+                }
+                for (const datum of data) {
+                    replacement.push({
+                        type: "data",
+                        string: datum.replacement ?? string,
+                        ...datum
                     });
                 }
             }
