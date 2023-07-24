@@ -46,10 +46,14 @@ impl DoomsayerGuess{
             Role::Escort => Some(DoomsayerGuess::Escort),
             Role::Medium => Some(DoomsayerGuess::Medium),
             Role::Retributionist => Some(DoomsayerGuess::Retributionist),
+            //Mafia
             Role::Mafioso | 
-                Role::Consort | Role::Blackmailer | Role::Consigliere | Role::Witch | Role::Necromancer |
-                Role::Janitor | Role::Framer => Some(DoomsayerGuess::Mafia),
-            Role::Jester | Role::Executioner | Role::Doomsayer | Role::Vampire | Role::Amnesiac => Some(DoomsayerGuess::Neutral),
+            Role::Consort | Role::Blackmailer | Role::Consigliere | Role::Witch | Role::Necromancer |
+            Role::Janitor | Role::Framer => Some(DoomsayerGuess::Mafia),
+            //Neutral
+            Role::Jester | Role::Executioner | Role::Doomsayer | 
+            Role::Death |
+            Role::Vampire | Role::Amnesiac => Some(DoomsayerGuess::Neutral),
         }
     }
     fn guess_matches_role(&self, role: Role)->bool{
