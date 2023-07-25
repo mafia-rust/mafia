@@ -82,7 +82,6 @@ pub enum ToClientPacket{
     YourNotes{notes: String},
     #[serde(rename_all = "camelCase")]
     YourDeathNote{death_note: Option<String>},
-    YourRole{role: Role},
     #[serde(rename_all = "camelCase")]
     YourRoleState{role_state: RoleState},
     #[serde(rename_all = "camelCase")]

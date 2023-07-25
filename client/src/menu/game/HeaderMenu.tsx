@@ -105,7 +105,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             }}>{translate("menu.will.title")}</button>
             {(()=>
                 (
-                    ROLES[this.state.gameState.role as Role] === undefined || !ROLES[this.state.gameState.role as Role].largeRoleSpecificMenu
+                    ROLES[this.state.gameState.roleState?.role as Role] === undefined || !ROLES[this.state.gameState.roleState?.role as Role].largeRoleSpecificMenu
                 )?null:
                     <button 
                     className={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.RoleSpecificMenu)?"highlighted":""} 
@@ -114,7 +114,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                     
                     }}>
                         <StyledText>
-                            {translate("role."+this.state.gameState.role+".name")}
+                            {translate("role."+this.state.gameState.roleState?.role+".name")}
                         </StyledText>
                     </button>
             )()}
@@ -142,7 +142,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             if(this.state.gameState.myIndex !== null){
                 return <StyledText>
                     {this.state.gameState.players[this.state.gameState.myIndex].toString() +
-                    " (" + translate("role."+this.state.gameState.role+".name") + ")"}
+                    " (" + translate("role."+this.state.gameState.roleState?.role+".name") + ")"}
                 </StyledText>;
             }
         })()}

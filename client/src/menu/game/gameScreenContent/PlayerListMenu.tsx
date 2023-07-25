@@ -133,20 +133,20 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         <button className={highlighted ? "highlighted" : undefined} onClick={()=>{
                             GAME_MANAGER.sendDayTargetPacket(player.index)}}
                     >{
-                        translate("role."+this.state.gameState.role+".dayTarget")
+                        translate("role."+this.state.gameState.roleState?.role+".dayTarget")
                     }</button>)}})(player)}
                 </div>
                 <div className="target">
                     {((player) => {
                         if(player.buttons.target) {
                             return <button onClick={() => GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.gameState.targets, player.index])}>
-                                {translate("role."+this.state.gameState.role+".target")}
+                                {translate("role."+this.state.gameState.roleState?.role+".target")}
                             </button>
                         } else if (this.state.gameState.phase === "night" && this.state.gameState.targets.includes(player.index)) {
                             let newTargets = [...GAME_MANAGER.gameState.targets];
                             newTargets.splice(newTargets.indexOf(player.index), 1);
                             return <button className="highlighted" onClick={() => GAME_MANAGER.sendTargetPacket(newTargets)}>
-                                {translate("role."+this.state.gameState.role+".detarget")}
+                                {translate("role."+this.state.gameState.roleState?.role+".detarget")}
                             </button>
                         }
                     })(player)}

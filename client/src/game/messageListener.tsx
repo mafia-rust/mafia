@@ -4,7 +4,7 @@ import Anchor from "./../menu/Anchor";
 import LobbyMenu from "./../menu/lobby/LobbyMenu";
 import StartMenu from "./../menu/main/StartMenu";
 import GAME_MANAGER from "./../index";
-import GameScreen from "./../menu/game/GameScreen";
+import GameScreen, { ContentMenus } from "./../menu/game/GameScreen";
 import React from "react";
 import { ToClientPacket } from "./packet";
 import { Tag } from "./gameState.d";
@@ -157,11 +157,10 @@ export default function messageListener(packet: ToClientPacket){
         case "yourDeathNote":
             GAME_MANAGER.gameState.deathNote = packet.deathNote ?? "";
         break;
-        case "yourRole":
-            GAME_MANAGER.gameState.role = packet.role;
-        break;
         case "yourRoleState":
-            GAME_MANAGER.gameState.role = packet.roleState.role;
+            if(GAME_MANAGER.gameState.roleState?.role!== packet.roleState.role){
+                GameScreen.instance?.closeMenu(ContentMenus.RoleSpecificMenu);
+            }
             GAME_MANAGER.gameState.roleState = packet.roleState;
         break;
         case "yourTarget":

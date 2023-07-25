@@ -36,7 +36,7 @@ export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuPr
 
     
     renderRoleSpecificMenu(){
-        switch(this.state.gameState.role){
+        switch(this.state.gameState.roleState?.role){
             case "doomsayer":
                 return <LargeDoomsayerMenu/>;
             case "amnesiac":
@@ -45,7 +45,7 @@ export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuPr
     }
     render(){return(<div>
         <ContentTab close={ContentMenus.RoleSpecificMenu}>
-            {translate("role."+this.state.gameState.role+".name")}
+            {translate("role."+this.state.gameState.roleState?.role+".name")}
         </ContentTab>
         <div>
             {this.renderRoleSpecificMenu()}

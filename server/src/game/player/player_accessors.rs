@@ -27,10 +27,6 @@ impl PlayerReference{
         &self.deref(game).role_state
     }
     pub fn set_role_state(&self, game: &mut Game, new_role_data: RoleState){
-        
-        if self.deref(game).role_state.role() == new_role_data.role() {
-            self.send_packet(game, ToClientPacket::YourRole { role: self.deref(game).role_state.role() });
-        }
         self.deref_mut(game).role_state = new_role_data;
         self.send_packet(game, ToClientPacket::YourRoleState { role_state: self.deref(game).role_state.clone() } );
     }
