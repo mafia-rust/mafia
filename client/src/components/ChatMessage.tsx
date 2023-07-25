@@ -413,6 +413,14 @@ export type ChatMessage = {
     type: "seerResult",
     enemies: boolean
 } | {
+    type: "psychicGood",
+    players: PlayerIndex[]
+} | {
+    type: "psychicEvil",
+    players: PlayerIndex[]
+} | {
+    type: "psychicFailed"
+} | {
     type: "retributionistMessage", 
     message: ChatMessage
 } | {

@@ -110,6 +110,11 @@
     "role.seer.detarget": "Detarget",
     "role.seer.dayTarget": "Special",
 
+    "role.psychic.name": "Psychic",
+    "role.psychic.target": "target",
+    "role.psychic.detarget": "Detarget",
+    "role.psychic.dayTarget": "Special",
+
     "role.doctor.name": "Doctor",
     "role.doctor.target": "Heal",
     "role.doctor.detarget": "Detarget",
@@ -352,6 +357,8 @@
     "chatMessage.spyBug.roleblocked":"Someone attempted to roleblock your target.",
     "chatMessage.spyBug.protected":"Your target was protected from an attack.",
     "chatMessage.spyBug.transported":"Your target was transported.",
+    "chatMessage.psychicGood":"At least one of these players is a townie: \\0",
+    "chatMessage.psychicEvil":"At least one of these players is not a townie: \\0",
     "chatMessage.retributionistMessage":"Your target got the following message:",
     "chatMessage.necromancerMessage":"Your target got the following message:",
     "chatMessage.witchMessage":"Your target got the following message:",
@@ -445,6 +452,10 @@
     "wiki.entry.role.seer.title": "Seer",
     "wiki.entry.role.seer.abilities":"* Examine two players to find if they are friends or enemies",
     "wiki.entry.role.seer.attributes":"* Two players are friends if they could possibly both win together\n* A jester can win alongside anyone, therefore the jester has no enemies\n* Frames, Douses, Hexes, and Enchants can make your target look like they are a different role",
+    
+    "wiki.entry.role.psychic.title": "Psychic",
+    "wiki.entry.role.psychic.abilities":"* Get an evil vision on odd nights\n* Get a good vision on even nights",
+    "wiki.entry.role.psychic.attributes":"* Evil visions show three players, at least one of them is not a townie\n* Good visions show two players, at least one of them is a townie",
     
     "wiki.entry.role.doctor.title": "Doctor",
     "wiki.entry.role.doctor.abilities":"* Heal a player to save them from death\n* You can heal yourself once",
