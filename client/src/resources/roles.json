@@ -79,6 +79,16 @@
         "maxCount": null,
         "largeRoleSpecificMenu": false
     },
+    "psychic": {
+        "factionAlignment": "townInvestigative",
+        "suspicious": false,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
+    },
     "doctor": {
         "factionAlignment": "townProtective",
         "suspicious": false,

@@ -3,7 +3,7 @@ use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::PhaseType;
-use crate::game::player::{PlayerReference, PlayerIndex};
+use crate::game::player::PlayerReference;
 use crate::game::role_list::{FactionAlignment, Faction};
 use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
@@ -33,36 +33,59 @@ impl RoleStateImpl for Psychic {
 
         if priority != Priority::Investigative {return}
 
-        actor_ref.push_night_message(game, 
-            match game.day_number() % 2 {
-                1=>{
-                    let all_townies: Vec<_> = PlayerReference::all_players(game)
-                        .into_iter()
-                        .filter(|p|p.alive(game)&&p.night_appeared_role(game).faction_alignment().faction()==Faction::Town)
-                        .collect();
+        let all_players: Vec<_> = PlayerReference::all_players(game)
+            .into_iter()
+            .filter(|p|p.alive(game))
+            .collect();
 
-                    if all_townies.len() >= 2 {
-                        let mut players = [PlayerIndex, 2];
-                        ChatMessage::PsychicGood { players: all_townies.choose_multiple(&mut rand::thread_rng(), 2).collect() }
-                    }else{
-                        ChatMessage::PsychicFailed
-                    }
-                },
-                _=>{
-                    let all_non_townies: Vec<_> = PlayerReference::all_players(game)
-                        .into_iter()
-                        .filter(|p|p.alive(game)&&p.night_appeared_role(game).faction_alignment().faction()!=Faction::Town)
-                        .collect();
+        let mut rng = rand::thread_rng();
+        actor_ref.push_night_message(game, 'a: {match game.day_number() % 2 {
+            1=>{
+                let all_townies: Vec<_> = PlayerReference::all_players(game)
+                    .into_iter()
+                    .filter(|p|p.alive(game)&&p.night_appeared_role(game).faction_alignment().faction()==Faction::Town)
+                    .collect();
 
-                    if all_townies.len() >= 3 {
-                        all_townies.choose_multiple(rand::random(), 2)
-                        ChatMessage::PsychicEvil { players: () }
-                    }else{
-                        ChatMessage::PsychicFailed
+                if let Some(townie) = all_townies.choose(&mut rng){
+                    if let Some(random_player) = all_players.into_iter()
+                        .filter(|p|p!=townie)
+                        .collect::<Vec<_>>()
+                        .choose(&mut rand::thread_rng()){
+                        
+                        let mut out = vec![townie, random_player];
+                        out.shuffle(&mut rng);
+
+                        break 'a ChatMessage::PsychicGood { players: [out[0].index(), out[1].index()] }   
                     }
-                },
-            }
-        );
+                }
+                ChatMessage::PsychicFailed
+            },
+            _=>{
+                let all_non_townies: Vec<_> = PlayerReference::all_players(game)
+                    .into_iter()
+                    .filter(|p|p.alive(game)&&p.night_appeared_role(game).faction_alignment().faction()!=Faction::Town)
+                    .collect();
+
+                if let Some(non_townie) = all_non_townies.choose(&mut rng){
+                    let random_players: Vec<PlayerReference> = all_players.into_iter()
+                        .filter(|p|p!=non_townie)
+                        .collect::<Vec<_>>()
+                        .choose_multiple(&mut rng, 2)
+                        .map(|p|*p)
+                        .collect();
+                    
+                    if let Some(random_player0) = random_players.get(0){
+                        if let Some(random_player1) = random_players.get(1){
+
+                            let mut out = vec![non_townie, random_player0, random_player1];
+                            out.shuffle(&mut rng);
+                            break 'a ChatMessage::PsychicEvil { players: [out[0].index(), out[1].index(), out[2].index()] }
+                        }
+                    }
+                }
+                ChatMessage::PsychicFailed
+            },
+        }});
         
         
         
