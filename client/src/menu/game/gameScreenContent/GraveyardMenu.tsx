@@ -129,7 +129,7 @@ ${translate("menu.graveyard.killedBy")+" "+deathCauseString}
                     }
                 }}
             >
-                <StyledText>
+                <StyledText noLinks={true}>
                     {translateRoleOutline(entry) ?? ""}
                 </StyledText>
             </button>
@@ -144,10 +144,19 @@ ${translate("menu.graveyard.killedBy")+" "+deathCauseString}
             <div>
                 {this.state.gameState.excludedRoles.length === 0 
                     ? <StyledText>{translate("none")}</StyledText>
-                    : this.state.gameState.excludedRoles.map((value, i)=>{
-                    return <button key={i}>
-                        <StyledText>
-                            {translateRoleOutline(value) ?? ""}
+                    : this.state.gameState.excludedRoles.map((entry, i)=>{
+                    return <button 
+                        key={i}
+                        onClick={() => {
+                            if (entry.type === "exact") {
+                                WikiSearch.setPage(`role/${entry.role}`);
+                            } else {
+                                WikiSearch.setPage(`article/roles_and_teams`);
+                            }
+                        }}
+                    >
+                        <StyledText noLinks={true}>
+                            {translateRoleOutline(entry) ?? ""}
                         </StyledText>
                     </button>
                 })}

@@ -78,7 +78,7 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
                     disabled={!this.state.host}
                     onClick={()=>{this.includeRole(value)}}
                 >
-                    <StyledText>
+                    <StyledText noLinks={!this.state.host}>
                         {translateRoleOutline(value) ?? ""}
                     </StyledText>
                 </button>

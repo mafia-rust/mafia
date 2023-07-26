@@ -10,7 +10,7 @@ import "./styledText.css";
 import WikiSearch, { WikiPage } from "./WikiSearch";
 
 type TokenData = {
-    styleClass?: string, 
+    style?: string, 
     link?: WikiPage,
     replacement?: string
 };
@@ -55,7 +55,7 @@ export default function StyledText(props: { children: string[] | string, classNa
         } else if (token.link === undefined || props.noLinks) {
             return ReactDOMServer.renderToStaticMarkup(
                 <span
-                    className={token.styleClass}
+                    className={token.style}
                     dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(
                         token.string, 
                         SANITIZATION_OPTIONS
@@ -70,7 +70,7 @@ export default function StyledText(props: { children: string[] | string, classNa
                 // eslint-disable-next-line jsx-a11y/anchor-is-valid
                 <a
                     href={`javascript: window.setWikiSearchPage("${token.link}")`}
-                    className={token.styleClass + " keyword-link"}
+                    className={token.style + " keyword-link"}
                     dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(
                         token.string, 
                         SANITIZATION_OPTIONS
@@ -93,29 +93,32 @@ function getKeywordData(): KeywordDataMap {
 
     for(const player of GAME_MANAGER.gameState.players) {
         keywordData[player.toString()] = [
-            { styleClass: "keyword-player-number", replacement: (player.index + 1).toString() },
+            { style: "keyword-player-number", replacement: (player.index + 1).toString() },
             { replacement: " " },
-            { styleClass: "keyword-player", replacement: player.name }
+            { style: "keyword-player", replacement: player.name }
         ];
     }
 
     for(const role of Object.keys(ROLES)){
-        const factionData = DATA["faction." + getFactionFromRole(role as Role)];
-        if (factionData === undefined) {
-            console.error(`faction.${getFactionFromRole(role as Role)} is missing a keyword style!`);
+        const data = DATA["faction." + getFactionFromRole(role as Role)];
+        if (data === undefined || Array.isArray(data)) {
+            console.error(`faction.${getFactionFromRole(role as Role)} has malformed keyword data!`);
             continue;
         }
-        const data = Array.isArray(factionData) ? factionData : [factionData];
-        keywordData[translate(`role.${role}.name`)] = data.map(datum => {
-            return {
-                ...datum,
-                link: `role/${role}` as WikiPage
-            }
-        });
+        keywordData[translate(`role.${role}.name`)] = [{
+            ...data,
+            link: `role/${role}` as WikiPage,
+            replacement: translate(`role.${role}.name`)   // Capitalize roles
+        }]
     }
 
     for (const [keyword, data] of Object.entries(DATA)) {
-        keywordData[translate(keyword)] = Array.isArray(data) ? data : [data];
+        keywordData[translate(keyword)] = (Array.isArray(data) ? data : [data]).map(data => {
+            return {
+                ...data,
+                replacement: data.replacement === undefined ? undefined : translate(data.replacement)
+            }
+        });
     }
 
     return keywordData;
