@@ -35,35 +35,15 @@ impl RoleStateImpl for Psychic {
 
         let all_players: Vec<_> = PlayerReference::all_players(game)
             .into_iter()
-            .filter(|p|p.alive(game))
+            .filter(|p|p.alive(game)&&*p!=actor_ref)
             .collect();
 
         let mut rng = rand::thread_rng();
         actor_ref.push_night_message(game, 'a: {match game.day_number() % 2 {
-            1=>{
-                let all_townies: Vec<_> = PlayerReference::all_players(game)
-                    .into_iter()
-                    .filter(|p|p.alive(game)&&p.night_appeared_role(game).faction_alignment().faction()==Faction::Town)
-                    .collect();
-
-                if let Some(townie) = all_townies.choose(&mut rng){
-                    if let Some(random_player) = all_players.into_iter()
-                        .filter(|p|p!=townie)
-                        .collect::<Vec<_>>()
-                        .choose(&mut rand::thread_rng()){
-                        
-                        let mut out = vec![townie, random_player];
-                        out.shuffle(&mut rng);
-
-                        break 'a ChatMessage::PsychicGood { players: [out[0].index(), out[1].index()] }   
-                    }
-                }
-                ChatMessage::PsychicFailed
-            },
-            _=>{
+           0=>{
                 let all_non_townies: Vec<_> = PlayerReference::all_players(game)
                     .into_iter()
-                    .filter(|p|p.alive(game)&&p.night_appeared_role(game).faction_alignment().faction()!=Faction::Town)
+                    .filter(|p|p.alive(game)&&*p!=actor_ref&&p.night_appeared_role(game).faction_alignment().faction()!=Faction::Town)
                     .collect();
 
                 if let Some(non_townie) = all_non_townies.choose(&mut rng){
@@ -85,6 +65,26 @@ impl RoleStateImpl for Psychic {
                 }
                 ChatMessage::PsychicFailed
             },
+            _=>{
+                let all_townies: Vec<_> = PlayerReference::all_players(game)
+                    .into_iter()
+                    .filter(|p|p.alive(game)&&*p!=actor_ref&&p.night_appeared_role(game).faction_alignment().faction()==Faction::Town)
+                    .collect();
+
+                if let Some(townie) = all_townies.choose(&mut rng){
+                    if let Some(random_player) = all_players.into_iter()
+                        .filter(|p|p!=townie)
+                        .collect::<Vec<_>>()
+                        .choose(&mut rand::thread_rng()){
+                        
+                        let mut out = vec![townie, random_player];
+                        out.shuffle(&mut rng);
+
+                        break 'a ChatMessage::PsychicGood { players: [out[0].index(), out[1].index()] }   
+                    }
+                }
+                ChatMessage::PsychicFailed
+            },
         }});
         
         
@@ -92,8 +92,8 @@ impl RoleStateImpl for Psychic {
         
 
     }
-    fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_target(game, actor_ref, target_ref)
+    fn can_night_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
+        false
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
     
