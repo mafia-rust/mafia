@@ -125,6 +125,9 @@ pub enum ChatMessage {
     SeerResult{ enemies: bool},
     SpyMafiaVisit{players: Vec<PlayerIndex>},
     SpyBug{bug: SpyBug},
+    PsychicGood{players: [PlayerIndex; 2]},
+    PsychicEvil{players: [PlayerIndex; 3]},
+    PsychicFailed,
 
     VeteranAttackedYou,
     VeteranAttackedVisitor,

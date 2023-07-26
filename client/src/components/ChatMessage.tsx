@@ -230,6 +230,14 @@ export function translateChatMessage(message: ChatMessage): string {
             }
         case "seerResult":
             return translate("chatMessage.seerResult." + (message.enemies ? "enemies" : "friends"));
+        case "psychicEvil":
+            return translate("chatMessage.psychicEvil",message.players.map(playerIndex => 
+                GAME_MANAGER.gameState.players[playerIndex].toString()
+            ).join(", "));
+        case "psychicGood":
+            return translate("chatMessage.psychicGood",message.players.map(playerIndex => 
+                GAME_MANAGER.gameState.players[playerIndex].toString()
+            ).join(", "));
         case "playerRoleAndWill":
             return translate("chatMessage.playersRoleAndWill", 
                 translate("role."+message.role+".name"), 
@@ -287,6 +295,7 @@ export function translateChatMessage(message: ChatMessage): string {
         case "retributionistMessage":
         case "necromancerMessage":
         case "witchMessage":
+        case "psychicFailed":
             return translate("chatMessage."+message.type);
         default:
             console.error("Unknown message type " + (message as any).type + ":");
@@ -412,6 +421,14 @@ export type ChatMessage = {
 } | {
     type: "seerResult",
     enemies: boolean
+} | {
+    type: "psychicGood",
+    players: PlayerIndex[]
+} | {
+    type: "psychicEvil",
+    players: PlayerIndex[]
+} | {
+    type: "psychicFailed"
 } | {
     type: "retributionistMessage", 
     message: ChatMessage

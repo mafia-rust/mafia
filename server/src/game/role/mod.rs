@@ -45,6 +45,7 @@ macros::roles! {
     Spy : spy,
     Tracker : tracker,
     Seer : seer,
+    Psychic : psychic,
 
     Doctor : doctor,
     Bodyguard : bodyguard,

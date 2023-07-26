@@ -36,7 +36,7 @@ impl DoomsayerGuess{
             Role::Jailor => Some(DoomsayerGuess::Jailor),
             Role::Mayor => Some(DoomsayerGuess::Mayor),
             Role::Transporter => Some(DoomsayerGuess::Transporter),
-            Role::Sheriff | Role::Lookout | Role::Spy | Role::Tracker | Role::Seer => None, 
+            Role::Sheriff | Role::Lookout | Role::Spy | Role::Tracker | Role::Seer | Role::Psychic => None, 
             Role::Doctor => Some(DoomsayerGuess::Doctor),
             Role::Bodyguard => Some(DoomsayerGuess::Bodyguard),
             Role::Crusader => Some(DoomsayerGuess::Crusader),
