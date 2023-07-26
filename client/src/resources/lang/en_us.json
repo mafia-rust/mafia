@@ -534,5 +534,6 @@
     "random.trans":"TRANS",
     "random.fuck_off":"FUCK OFF",
 
-    "random.kys":"KILL YOURSELF"
+    "random.kys":"KILL YOURSELF",
+    "random.kys.shorthand":"kys"
 }

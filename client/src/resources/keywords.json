@@ -1,130 +1,141 @@
 {
     "verdict.guilty": { 
-        "styleClass": "keyword-evil",
+        "style": "keyword-evil",
         "link": "article/phases_and_timeline"
     },
     "verdict.innocent": { 
-        "styleClass": "keyword-good",
+        "style": "keyword-good",
         "link": "article/phases_and_timeline"
     },
     "innocent.shorthand": { 
-        "styleClass": "keyword-good",
+        "style": "keyword-good",
         "link": "article/phases_and_timeline"
     },
     "verdict.abstain": { 
-        "styleClass": "keyword-abstain",
+        "style": "keyword-abstain",
         "link": "article/phases_and_timeline"
     },
     "grave.role.cleaned": { 
-        "styleClass": "keyword-hidden",
+        "style": "keyword-hidden",
         "link": "role/janitor"
     },
     "grave.role.petrified": { 
-        "styleClass": "keyword-hidden"
+        "style": "keyword-hidden"
     },
     "suspicious": { 
-        "styleClass": "keyword-evil",
+        "style": "keyword-evil",
         "link": "role/sheriff"
     },
     "suspicious.shorthand": { 
-        "styleClass": "keyword-evil",
+        "style": "keyword-evil",
         "link": "role/sheriff"
     },
     "friends": { 
-        "styleClass": "keyword-good",
+        "style": "keyword-good",
         "link": "role/seer"
     },
     "enemies": { 
-        "styleClass": "keyword-evil",
+        "style": "keyword-evil",
         "link": "role/seer"
     },
     "faction.town": { 
-        "styleClass": "keyword-good",
+        "style": "keyword-good",
         "link": "article/roles_and_teams"
     },
     "faction.mafia": { 
-        "styleClass": "keyword-evil",
+        "style": "keyword-evil",
         "link": "article/roles_and_teams"
     },
     "faction.neutral": { 
-        "styleClass": "keyword-neutral",
+        "style": "keyword-neutral",
         "link": "article/roles_and_teams"
     },
     "alignment.killing": { 
-        "styleClass": "keyword-info"
+        "style": "keyword-info"
     },
     "alignment.investigative": { 
-        "styleClass": "keyword-info"
+        "style": "keyword-info"
     },
     "alignment.protective": { 
-        "styleClass": "keyword-info"
+        "style": "keyword-info"
     },
     "alignment.support": { 
-        "styleClass": "keyword-info"
+        "style": "keyword-info"
     },
     "alignment.deception": { 
-        "styleClass": "keyword-info"
+        "style": "keyword-info"
     },
     "alignment.evil": { 
-        "styleClass": "keyword-info"
+        "style": "keyword-info"
     },
     "alignment.chaos": { 
-        "styleClass": "keyword-info"
+        "style": "keyword-info"
     },
     "alignment.power": { 
-        "styleClass": "keyword-info"
+        "style": "keyword-info"
     },
     "any": { 
-        "styleClass": "keyword-info"
+        "style": "keyword-info"
     },
     "none": { 
-        "styleClass": "keyword-info"
+        "style": "keyword-info"
     },
     "defense.0": { 
-        "styleClass": "keyword-info"
+        "style": "keyword-info"
     },
     "defense.1": { 
-        "styleClass": "keyword-info"
+        "style": "keyword-info"
     },
     "defense.2": { 
-        "styleClass": "keyword-info"
+        "style": "keyword-info"
     },
     "defense.3": { 
-        "styleClass": "keyword-info"
+        "style": "keyword-info"
     },
     "faction": { 
-        "styleClass": "keyword-info",
+        "style": "keyword-info",
         "link": "article/roles_and_teams"
     },
     "alignment": { 
-        "styleClass": "keyword-info",
+        "style": "keyword-info",
         "link": "article/roles_and_teams"
     },
     "dead": { 
-        "styleClass": "keyword-dead"
+        "style": "keyword-dead"
     },
     "wiki.entry.role.abilities": { 
-        "styleClass": "keyword-info",
+        "style": "keyword-info",
         "link": "article/roles_and_teams"
     },
     "wiki.entry.role.attributes": { 
-        "styleClass": "keyword-info",
+        "style": "keyword-info",
         "link": "article/roles_and_teams"
     },
     "grave.killer.suicide": { 
-        "styleClass": "keyword-info"
+        "style": "keyword-info"
     },
     "random.kys": { 
-        "styleClass": "keyword-pride"
+        "style": "keyword-pride",
+        "replacement": "random.kys",
+        "link": "article/all_language"
+    },
+    "random.kys.shorthand": { 
+        "style": "keyword-pride",
+        "replacement": "random.kys",
+        "link": "article/all_language"
     },
     "random.gay": { 
-        "styleClass": "keyword-pride"
+        "style": "keyword-pride",
+        "replacement": "random.gay"
     },
     "random.trans": { 
-        "styleClass": "keyword-trans"
+        "style": "keyword-trans",
+        "replacement": "random.trans",
+        "link": "role/transporter"
     },
     "random.fuck_off": { 
-        "styleClass": "keyword-pride"
+        "style": "keyword-pride",
+        "replacement": "random.fuck_off"
     },
 
     "day": {

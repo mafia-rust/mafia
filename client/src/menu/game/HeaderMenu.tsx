@@ -78,7 +78,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             className={this.state.gameState.judgement === verdict ? "highlighted" : undefined}
             onClick={()=>{GAME_MANAGER.sendJudgementPacket(verdict)}}
         >
-            <StyledText>
+            <StyledText noLinks={true}>
                 {translate("verdict." + verdict)}
             </StyledText>
         </button>
@@ -113,7 +113,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                         GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.RoleSpecificMenu)
                     
                     }}>
-                        <StyledText>
+                        <StyledText noLinks={true}>
                             {translate("role."+this.state.gameState.roleState?.role+".name")}
                         </StyledText>
                     </button>
