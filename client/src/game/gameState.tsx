@@ -17,7 +17,6 @@ export function createGameState(): GameState {
         timeLeftMs: 0,
         dayNumber: 1,
 
-        role: null,
         roleState: null,
 
         will: "",

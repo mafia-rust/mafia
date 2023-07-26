@@ -260,6 +260,8 @@ export function translateChatMessage(message: ChatMessage): string {
             return translate("chatMessage.witchedYou" + (message.immune ? ".immune" : ""));
         case "playerWithNecronomicon":
             return translate("chatMessage.playerWithNecronomicon", GAME_MANAGER.gameState.players[message.playerIndex].toString());
+        case "deputyShotSomeoneSurvived":
+        case "deathCollectedSouls":
         case "arsonistCleanedSelf":
         case "arsonistDousedPlayers":
         case "doctorHealed":
@@ -377,6 +379,8 @@ export type ChatMessage = {
     type: "deputyKilled",
     shotIndex: PlayerIndex
 } | {
+    type: "deputyShotSomeoneSurvived"
+} | {
     type: "playerWithNecronomicon",
     playerIndex: PlayerIndex
 } | {
@@ -461,6 +465,8 @@ export type ChatMessage = {
     players: PlayerIndex[]
 } | {
     type: "jesterWon"
+} | {
+    type: "deathCollectedSouls"
 } | {
     type: "executionerWon"
 } | {

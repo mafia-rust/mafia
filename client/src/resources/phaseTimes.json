@@ -27,12 +27,12 @@
         "night": 19
     },
     "Aloud": {
-        "morning": 5,
-        "discussion": 45,
-        "voting": 30,
-        "testimony": 30,
-        "judgement": 30,
-        "evening": 10,
-        "night": 43
+        "morning": 0,
+        "discussion": 60,
+        "voting": 60,
+        "testimony": 20,
+        "judgement": 20,
+        "evening": 15,
+        "night": 45
     }
 }

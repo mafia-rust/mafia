@@ -99,6 +99,9 @@ pub enum ChatMessage {
     MediumSeance{player: PlayerIndex},
     #[serde(rename_all = "camelCase")]
     DeputyKilled{shot_index: PlayerIndex},
+    #[serde(rename_all = "camelCase")]
+    DeputyShotSomeoneSurvived,
+
 
     #[serde(rename_all = "camelCase")]
     PlayerWithNecronomicon{player_index: PlayerIndex},
@@ -147,6 +150,7 @@ pub enum ChatMessage {
     JesterWon,
     // TODO Rename ExecutionerYouWon
     ExecutionerWon,
+    DeathCollectedSouls,
     DoomsayerFailed,
     DoomsayerWon,
 }

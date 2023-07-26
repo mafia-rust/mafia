@@ -90,9 +90,6 @@ export type ToClientPacket = {
     type: "yourDeathNote", 
     deathNote: string | null
 } | {
-    type: "yourRole",
-    role: Role
-} | {
     type: "yourRoleState",
     roleState: RoleState
 } | {

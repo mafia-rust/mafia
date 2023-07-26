@@ -19,7 +19,6 @@ export default interface GameState {
     timeLeftMs: number,
     dayNumber: number,
 
-    role: Role | null,
     roleState: RoleState | null,
 
     will: string,

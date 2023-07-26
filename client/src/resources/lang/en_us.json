@@ -6,7 +6,6 @@
     "menu.start.button.host": "Host",
     "menu.start.button.login": "Log in",
     "menu.start.button.logout": "Log out",
-    "menu.start.credits": "Mafia, made by Samuel Maselli, Jack Papel, and Isaac Worsencroft",
 
     "menu.join.title": "Join Game",
     "menu.join.button.join": "Join Lobby",
@@ -223,6 +222,7 @@
     "role.death.target": "Collect",
     "role.death.detarget": "Detarget",
     "role.death.dayTarget": "Special",
+    "role.death.roleDataText": "Stones collected: \\0",
 
     "role.vampire.name": "Vampire",
     "role.vampire.target": "Bite",
@@ -323,7 +323,9 @@
     "chatMessage.mediumSeance":"\\0 is being seanced by a medium!",
     "chatMessage.jesterWon":"The jester will get their revenge from the grave!",
     "chatMessage.executionerWon":"The executioner got their target lynched and won!",
+    "chatMessage.deathCollectedSouls":"Thanos has collected all the stones, it is the endgame now.",
     "chatMessage.deputyKilled":"A deputy killed \\0!",
+    "chatMessage.deputyShotSomeoneSurvived":"A deputy shot someone but they survived!",
     "chatMessage.jailorDecidedToExecute":"The jailor decided to execute \\0",
     "chatMessage.jailorDecideExecute.nobody":"The jailor decided not to execute!",
     "chatMessage.playerWithNecronomicon":"\\0 has the necronomicon.",
@@ -405,8 +407,8 @@
     "wiki.entry.role.attributes": "Attributes",
 
     "wiki.entry.role.death.title": "Thanos",
-    "wiki.entry.role.death.abilities":"* Target a player on the night they die to collect a stone\n* Once you've collected six stones, endgame starts, everyone is notified, and on the next night, you snap away everyone, and win.",
-    "wiki.entry.role.death.attributes":"* Passively gain a stone each night\n* You have to guess who is going to die each night in order to collect stones faster",
+    "wiki.entry.role.death.abilities":"* Target a player on the night they die to collect a stone\n* Once you've collected six stones, endgame starts, everyone is notified, and at the start of the next night, you kill everyone, and win.",
+    "wiki.entry.role.death.attributes":"* Passively gain a stone each night\n* To collect stones faster, guess what player will die on that night by targeting them\n* You gain powerful defense once you have six stones.",
     
     "wiki.entry.role.amnesiac.title": "Amnesiac",
     "wiki.entry.role.amnesiac.abilities":"* Choose a role and become that role at night",
@@ -466,7 +468,7 @@
     
     "wiki.entry.role.retributionist.title": "Retributionist",
     "wiki.entry.role.retributionist.abilities":"* Force a dead player to use their ability on a living one",
-    "wiki.entry.role.retributionist.attributes":"* Your ability only works only on townies\n* You cant use the same person two times",
+    "wiki.entry.role.retributionist.attributes":"* Your ability only works only players whos graves show town roles, or no role at all\n* You cant use the same person two times",
     
     "wiki.entry.role.vigilante.title": "Vigilante",
     "wiki.entry.role.vigilante.abilities":"* Shoot suspicious looking players",

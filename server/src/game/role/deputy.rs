@@ -46,6 +46,7 @@ impl RoleStateImpl for Deputy {
         if target_ref.defense(game) >= 2 {
             target_ref.add_chat_message(game, ChatMessage::YouSurvivedAttack);
             actor_ref.add_chat_message(game, ChatMessage::TargetSurvivedAttack);
+            game.add_message_to_chat_group(ChatGroup::All, ChatMessage::DeputyShotSomeoneSurvived);
 
         }else{
             let mut grave = Grave::from_player_lynch(game, target_ref);
