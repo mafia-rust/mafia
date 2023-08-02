@@ -1,4 +1,4 @@
-import { Phase, PlayerIndex, Verdict, PhaseTimes, Tag } from "./gameState.d"
+import { Phase, PlayerIndex, Verdict, PhaseTimes, Tag, PlayerID } from "./gameState.d"
 import { Grave } from "./grave"
 import { ChatMessage } from "../components/ChatMessage"
 import { RoleOutline } from "./roleListState.d"
@@ -7,13 +7,15 @@ import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus
 
 export type ToClientPacket = {
     type: "acceptJoin",
-    inGame: boolean
+    inGame: boolean,
+    playerId: number,
 } | {
     type: "rejectJoin",
     reason: string /* TODO RejectJoinReason */
 } | {
     type: "acceptHost",
-    roomCode: number
+    roomCode: number,
+    playerId: number,
 } |
 // Lobby
 {
@@ -23,10 +25,12 @@ export type ToClientPacket = {
     type: "yourPlayerIndex",
     playerIndex: PlayerIndex
 } | {
+    names: any
     type: "players",
-    names: [string]
+    players: [number, string][]
 } | {
-    type: "kicked"
+    type: "kickPlayer",
+    playerId: PlayerID
 } | {
     type: "rejectStart",
     reason: string /* TODO RejectStartReason */
@@ -125,8 +129,8 @@ export type ToServerPacket = {
 } | {
     type: "startGame",
 } | {
-    type: "kick", 
-    playerIndex: PlayerIndex
+    type: "kickPlayer", 
+    playerId: PlayerID
 } | {
     type: "setRoleList", 
     roleList: RoleOutline[]

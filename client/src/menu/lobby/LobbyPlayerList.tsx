@@ -4,6 +4,7 @@ import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
 import { Player } from "../../game/gameState.d";
 import { StateListener } from "../../game/gameManager.d";
+import StyledText from "../../components/StyledText";
 
 interface PlayerListState {
     enteredName: string,
@@ -53,7 +54,12 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
 
     renderPlayers(){return(<div>
         {this.state.players.map((player, i)=>{
-            return(<div key={i}>{player.toString()}</div>)
+            return(<div key={i}>
+                <StyledText>
+                    {player.toString()}
+                </StyledText>
+                <button onClick={()=>{GAME_MANAGER.sendKickPlayerPacket(player.id)}}>{translate("menu.lobby.kick")}</button>
+            </div>)
         })}
     </div>)}
 

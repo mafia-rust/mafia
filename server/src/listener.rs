@@ -5,13 +5,13 @@ use tokio_tungstenite::tungstenite::Message;
 
 use crate::{lobby::Lobby, websocket_connections::connection::Connection, packet::{ToServerPacket, ToClientPacket, RejectJoinReason}, log};
 
-pub type ArbitraryPlayerID = u32;
+pub type PlayerID = u32;
 pub type RoomCode = usize;
 
 enum PlayerLocation {
     InLobby {
         room_code: RoomCode,
-        player_id: ArbitraryPlayerID,
+        player_id: PlayerID,
     },
     OutsideLobby
 }
@@ -135,7 +135,7 @@ impl Listener {
                     Ok(player_id) => {
                         *sender_player_location = PlayerLocation::InLobby { room_code, player_id };
         
-                        connection.send(ToClientPacket::AcceptHost{ room_code });
+                        connection.send(ToClientPacket::AcceptHost{ room_code, player_id });
                     },
                     Err(reason) => {
                         connection.send(ToClientPacket::RejectJoin { reason });

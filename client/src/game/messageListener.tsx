@@ -1,5 +1,5 @@
 
-import { createGameState, createPlayer } from "./gameState";
+import { createPlayer } from "./gameState";
 import Anchor from "./../menu/Anchor";
 import LobbyMenu from "./../menu/lobby/LobbyMenu";
 import StartMenu from "./../menu/main/StartMenu";
@@ -16,6 +16,7 @@ export default function messageListener(packet: ToClientPacket){
     switch(packet.type) {
         case "acceptJoin":
             GAME_MANAGER.gameState.inGame = packet.inGame;
+            GAME_MANAGER.playerId = packet.playerId;
             if(packet.inGame){
                 Anchor.setContent(GameScreen.createDefault());
             }else{
@@ -61,6 +62,7 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "acceptHost":
             GAME_MANAGER.roomCode = packet.roomCode.toString(18);
+            GAME_MANAGER.playerId = packet.playerId;
             GAME_MANAGER.gameState.host = true;
             Anchor.setContent(<LobbyMenu/>);
         break;
@@ -75,17 +77,21 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "players":
             GAME_MANAGER.gameState.players = [];
-            for(let i = 0; i < packet.names.length; i++){
+            for(let i = 0; i < packet.players.length; i++){
                 if (GAME_MANAGER.gameState.players.length > i) {
-                    GAME_MANAGER.gameState.players[i].name = packet.names[i];
+                    GAME_MANAGER.gameState.players[i].name = packet.players[i][1];
+                    GAME_MANAGER.gameState.players[i].id = packet.players[i][0];
                 } else {
-                    GAME_MANAGER.gameState.players.push(createPlayer(packet.names[i], i));
+                    GAME_MANAGER.gameState.players.push(createPlayer(packet.players[i][1], i, packet.players[i][0]));
                 }
             }
         break;
-        case "kicked":
-            GAME_MANAGER.gameState = createGameState();
-            Anchor.setContent(<StartMenu/>)
+        case "kickPlayer":
+            if(packet.playerId === GAME_MANAGER.playerId){
+                GAME_MANAGER.leaveGame();
+            }
+            // GAME_MANAGER.gameState = createGameState();
+            // Anchor.setContent(<StartMenu/>)
         break;
         case "startGame":
             GAME_MANAGER.gameState.inGame = true;

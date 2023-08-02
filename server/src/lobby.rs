@@ -8,7 +8,7 @@ use crate::{
         role_list::RoleOutline, 
         phase::PhaseType
     },
-    listener::ArbitraryPlayerID, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}, websocket_connections::connection::ClientSender, log
+    listener::PlayerID, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}, websocket_connections::connection::ClientSender, log
 };
 
 pub struct Lobby {
@@ -18,11 +18,11 @@ pub struct Lobby {
 enum LobbyState {
     Lobby {
         settings: Settings,
-        players: HashMap<ArbitraryPlayerID, LobbyPlayer>,
+        players: HashMap<PlayerID, LobbyPlayer>,
     },
     Game {
         game: Game,
-        players: HashMap<ArbitraryPlayerID, GamePlayer>,
+        players: HashMap<PlayerID, GamePlayer>,
     },
     Closed
 }
@@ -62,19 +62,19 @@ impl Lobby {
     }
 
     
-    pub fn on_client_message(&mut self, send: &ClientSender, player_arbitrary_id: ArbitraryPlayerID, incoming_packet: ToServerPacket){
+    pub fn on_client_message(&mut self, send: &ClientSender, player_id: PlayerID, incoming_packet: ToServerPacket){
         match incoming_packet {
             ToServerPacket::SetName{ name } => {
                 let LobbyState::Lobby { players, .. } = &mut self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "ToServerPacket::SetName can not be used outside of LobbyState::Lobby", player_arbitrary_id);
+                    log!(error "Lobby"; "{} {}", "ToServerPacket::SetName can not be used outside of LobbyState::Lobby", player_id);
                     return;
                 };
 
                 let mut other_players = players.clone();
-                other_players.remove(&player_arbitrary_id);
+                other_players.remove(&player_id);
                 
                 let name = name_validation::sanitize_name(name, &other_players);
-                if let Some(player) = players.get_mut(&player_arbitrary_id){
+                if let Some(player) = players.get_mut(&player_id){
                     player.name = name.clone();
                 }
                 
@@ -84,10 +84,10 @@ impl Lobby {
             },
             ToServerPacket::StartGame => {
                 let LobbyState::Lobby { settings, players } = &mut self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "ToServerPacket::StartGame can not be used outside of LobbyState::Lobby", player_arbitrary_id);
+                    log!(error "Lobby"; "{} {}", "ToServerPacket::StartGame can not be used outside of LobbyState::Lobby", player_id);
                     return;
                 };
-                if let Some(player) = players.get(&player_arbitrary_id){
+                if let Some(player) = players.get(&player_id){
                     if !player.host {return;}
                 }
                 
@@ -101,7 +101,7 @@ impl Lobby {
                     return;
                 }
 
-                let mut player_indices: HashMap<ArbitraryPlayerID,GamePlayer> = HashMap::new();
+                let mut player_indices: HashMap<PlayerID,GamePlayer> = HashMap::new();
                 let mut game_players = Vec::new();
                 
                 for (index, (arbitrary_player_id, lobby_player)) in players.drain().enumerate() {
@@ -116,15 +116,23 @@ impl Lobby {
                 
                 self.send_to_all(ToClientPacket::StartGame);
             },
-            ToServerPacket::Kick{..} => {
-                //TODO
+            ToServerPacket::KickPlayer{player_id: kicked_player_id} => {
+                let LobbyState::Lobby { players, .. } = &mut self.lobby_state else {
+                    log!(error "Lobby"; "{} {}", "ToServerPacket::KickPlayer can not be used outside of LobbyState::Lobby", player_id);
+                    return;
+                };
+                if let Some(player) = players.get(&player_id){
+                    if !player.host {return;}
+                }
+                self.send_to_all(ToClientPacket::KickPlayer { player_id: kicked_player_id });
+                self.disconnect_player_from_lobby(kicked_player_id);
             },
             ToServerPacket::SetPhaseTime{phase, time} => {
                 let LobbyState::Lobby{ settings, players  } = &mut self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "Attempted to change phase time outside of the lobby menu!", player_arbitrary_id);
+                    log!(error "Lobby"; "{} {}", "Attempted to change phase time outside of the lobby menu!", player_id);
                     return;
                 };
-                if let Some(player) = players.get(&player_arbitrary_id){
+                if let Some(player) = players.get(&player_id){
                     if !player.host {return;}
                 }
 
@@ -142,10 +150,10 @@ impl Lobby {
             },
             ToServerPacket::SetPhaseTimes { phase_time_settings } => {
                 let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "Attempted to change phase time outside of the lobby menu!", player_arbitrary_id);
+                    log!(error "Lobby"; "{} {}", "Attempted to change phase time outside of the lobby menu!", player_id);
                     return;
                 };
-                if let Some(player) = players.get(&player_arbitrary_id){
+                if let Some(player) = players.get(&player_id){
                     if !player.host {return;}
                 }
 
@@ -155,10 +163,10 @@ impl Lobby {
             }
             ToServerPacket::SetRoleList { mut role_list } => {
                 let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", player_arbitrary_id);
+                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", player_id);
                     return;
                 };
-                if let Some(player) = players.get(&player_arbitrary_id){
+                if let Some(player) = players.get(&player_id){
                     if !player.host {return;}
                 }
 
@@ -175,10 +183,10 @@ impl Lobby {
             }
             ToServerPacket::SetRoleOutline { index, role_outline } => {
                 let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", player_arbitrary_id);
+                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", player_id);
                     return;
                 };
-                if let Some(player) = players.get(&player_arbitrary_id){
+                if let Some(player) = players.get(&player_id){
                     if !player.host {return;}
                 }
 
@@ -188,10 +196,10 @@ impl Lobby {
             }
             ToServerPacket::SetExcludedRoles {mut roles } => {
                 let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", player_arbitrary_id);
+                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", player_id);
                     return;
                 };
-                if let Some(player) = players.get(&player_arbitrary_id){
+                if let Some(player) = players.get(&player_id){
                     if !player.host {return;}
                 }
 
@@ -207,12 +215,12 @@ impl Lobby {
                     return;
                 };
 
-                game.on_client_message(players[&player_arbitrary_id].player_index, incoming_packet)
+                game.on_client_message(players[&player_id].player_index, incoming_packet)
             }
         }
     }
 
-    pub fn connect_player_to_lobby(&mut self, send: &ClientSender)-> Result<ArbitraryPlayerID, RejectJoinReason>{
+    pub fn connect_player_to_lobby(&mut self, send: &ClientSender)-> Result<PlayerID, RejectJoinReason>{
         match &mut self.lobby_state {
             LobbyState::Lobby { players, settings } => {
                 let name = name_validation::sanitize_name("".to_string(), players);
@@ -220,7 +228,7 @@ impl Lobby {
                 send.send(ToClientPacket::YourName { name: name.clone() });
                 
                 let new_player = LobbyPlayer { name, sender: send.clone(), host: players.is_empty() };
-                let arbitrary_player_id = players.len() as ArbitraryPlayerID;
+                let arbitrary_player_id = players.len() as PlayerID;
                 players.insert(arbitrary_player_id, new_player);
 
                 settings.role_list.push(RoleOutline::Any);
@@ -230,15 +238,15 @@ impl Lobby {
                 for player in players.iter(){
                     Self::send_settings(player.1, settings)
                 }
-                send.send(ToClientPacket::AcceptJoin{in_game: false});
+                send.send(ToClientPacket::AcceptJoin{in_game: false, player_id: arbitrary_player_id });
                 Ok(arbitrary_player_id)
             },
             LobbyState::Game{ game, players } => {
 
                 for player_ref in PlayerReference::all_players(game){
                     if player_ref.has_lost_connection(game) {
-                        let arbitrary_player_ids: Vec<ArbitraryPlayerID> = players.keys().copied().collect();
-                        let mut new_id: ArbitraryPlayerID = 0;
+                        let arbitrary_player_ids: Vec<PlayerID> = players.keys().copied().collect();
+                        let mut new_id: PlayerID = 0;
                         for id in arbitrary_player_ids {
                             if id >= new_id {
                                 new_id = id + 1;
@@ -250,8 +258,9 @@ impl Lobby {
                         };
                         players.insert(new_id, game_player);
                         player_ref.connect(game, send.clone());
+                        Lobby::send_players_game(game, players);
                         
-                        send.send(ToClientPacket::AcceptJoin{in_game: true});
+                        send.send(ToClientPacket::AcceptJoin{in_game: true, player_id: new_id });
                         
                         return Ok(new_id);
                     }
@@ -264,7 +273,7 @@ impl Lobby {
             }
         }
     }
-    pub fn disconnect_player_from_lobby(&mut self, id: ArbitraryPlayerID) {
+    pub fn disconnect_player_from_lobby(&mut self, id: PlayerID) {
         match &mut self.lobby_state {
             LobbyState::Lobby {players, settings} => {
                 players.remove(&id);
@@ -329,22 +338,22 @@ impl Lobby {
     }
 
 
-    fn send_players_lobby(players: &HashMap<ArbitraryPlayerID, LobbyPlayer>){
+    fn send_players_lobby(players: &HashMap<PlayerID, LobbyPlayer>){
         let packet = ToClientPacket::Players { 
-            names: players.iter().map(|p| {
-                p.1.name.clone()
-            }).collect() 
+            players: players.iter().map(|p| {
+                (*p.0, p.1.name.clone())
+            }).collect()
         };
         for player in players.iter() {
             player.1.send(packet.clone());
         }
     }
     #[allow(unused)]
-    fn send_players_game(game: &mut Game, players: &HashMap<ArbitraryPlayerID, PlayerIndex>){
+    fn send_players_game(game: &mut Game, players: &HashMap<PlayerID, GamePlayer>){
         let packet = ToClientPacket::Players { 
-            names: PlayerReference::all_players(game).into_iter().map(|p| {
-                p.name(game).clone()
-            }).collect() 
+            players: players.iter().map(|p| {
+                (*p.0, PlayerReference::new_unchecked(p.1.player_index).name(game).to_owned())
+            }).collect()
         };
         for player_ref in PlayerReference::all_players(game){
             player_ref.send_packet(game, packet.clone());
@@ -370,7 +379,7 @@ impl Lobby {
 
 mod name_validation {
     use std::collections::HashMap;
-    use crate::{listener::ArbitraryPlayerID, strings::TidyableString};
+    use crate::{listener::PlayerID, strings::TidyableString};
     use super::LobbyPlayer;
     use lazy_static::lazy_static;
     use rand::seq::SliceRandom;
@@ -398,7 +407,7 @@ mod name_validation {
     /// Sanitizes a player name.
     /// If the desired name is invalid or taken, this generates a random acceptable name.
     /// Otherwise, this trims and returns the input name.
-    pub fn sanitize_name(mut desired_name: String, players: &HashMap<ArbitraryPlayerID, LobbyPlayer>) -> String {
+    pub fn sanitize_name(mut desired_name: String, players: &HashMap<PlayerID, LobbyPlayer>) -> String {
         desired_name = desired_name
             .remove_newline()
             .trim_whitespace()

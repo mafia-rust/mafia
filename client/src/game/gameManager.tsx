@@ -16,6 +16,7 @@ export function createGameManager(): GameManager {
     
     let gameManager: GameManager = {
         roomCode: null,
+        playerId: null,
 
         gameState : createGameState(),
 
@@ -184,6 +185,12 @@ export function createGameManager(): GameManager {
             this.server.sendPacket({
                 type:"setExcludedRoles",
                 roles:roles
+            })
+        },
+        sendKickPlayerPacket(playerId){
+            this.server.sendPacket({
+                type:"kickPlayer",
+                playerId:playerId
             })
         },
 

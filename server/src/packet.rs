@@ -27,7 +27,7 @@ use crate::{game::{
     chat::ChatMessage,
     role::{Role, RoleState, doomsayer::DoomsayerGuess}, 
     Game, grave::Grave, available_buttons::AvailableButtons, tag::Tag, settings::PhaseTimeSettings
-}, listener::RoomCode, log};
+}, listener::{RoomCode, PlayerID}, log};
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -35,17 +35,16 @@ use crate::{game::{
 pub enum ToClientPacket{
     // Pre lobby
     #[serde(rename_all = "camelCase")]
-    AcceptJoin{in_game: bool},
+    AcceptJoin{in_game: bool, player_id: PlayerID},
     RejectJoin{reason: RejectJoinReason},
     #[serde(rename_all = "camelCase")]
-    AcceptHost{room_code: RoomCode},
+    AcceptHost{room_code: RoomCode, player_id: PlayerID},
     
     // Lobby
     YourName{name: String},
+    Players{players: Vec<(PlayerID, String)>},
     #[serde(rename_all = "camelCase")]
-    YourPlayerIndex{player_index: PlayerIndex},
-    Players{names: Vec<String>},
-    Kicked,
+    KickPlayer{player_id: PlayerID},
     RejectStart{reason: RejectStartReason},
     YouAreHost,
     StartGame,
@@ -62,6 +61,9 @@ pub enum ToClientPacket{
     ExcludedRoles{roles: Vec<RoleOutline>},
 
     // Game
+    
+    #[serde(rename_all = "camelCase")]
+    YourPlayerIndex{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
     Phase{phase: PhaseType, day_number: u8, seconds_left: u64},
     #[serde(rename_all = "camelCase")]
@@ -158,7 +160,7 @@ pub enum ToServerPacket{
     SetName{name: String},
     StartGame,
     #[serde(rename_all = "camelCase")]
-    Kick{player_index: PlayerIndex},
+    KickPlayer{player_id: PlayerID},
     #[serde(rename_all = "camelCase")]
     SetRoleList{role_list: RoleList},
     #[serde(rename_all = "camelCase")]

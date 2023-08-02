@@ -40,10 +40,11 @@ export function createGameState(): GameState {
     }
 }
 
-export function createPlayer(name: string, index: number): Player {
+export function createPlayer(name: string, index: number, id: number): Player {
     return{
         name: name,
         index: index,
+        id: id,
         buttons: {
             dayTarget: false,
             target: false,

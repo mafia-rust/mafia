@@ -25,6 +25,7 @@
     "menu.lobby.excludedRoles": "Exclusions:",
     "menu.lobby.timeSettings": "Times:",
     "menu.lobby.gameSettings": "Game Settings:",
+    "menu.lobby.kick": "Kick",
 
     "menu.excludedRoles.exclude": "Exclude",
     "menu.excludedRoles.excludedRoles": "Exclusions",

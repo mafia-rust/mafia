@@ -45,9 +45,6 @@ impl PlayerReference{
             ToClientPacket::ExcludedRoles { roles: game.settings.excluded_roles.clone() },
             ToClientPacket::RoleList {role_list: game.settings.role_list.clone()},
             
-            ToClientPacket::Players{ 
-                names: PlayerReference::all_players(game).iter().map(|p|{return p.name(game).clone()}).collect()
-            },
             ToClientPacket::Phase { 
                 phase: game.current_phase().phase(),
                 seconds_left: game.phase_machine.time_remaining.as_secs(), 
