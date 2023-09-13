@@ -77,11 +77,11 @@ impl Listener {
         };
 
         let PlayerLocation::InLobby { room_code, player_id } = disconnected_player_location else {
-            return Err("Player is not in a lobby");
+            return Err("Player is not in a lobby, but was removed from listener");
         };
 
         let Some(lobby) = self.lobbies.get_mut(&room_code) else {
-            return Err("Player is in a lobby that doesn't exist");
+            return Err("Player is in a lobby that doesn't exist, but was removed from listener");
         };
 
         lobby.disconnect_player_from_lobby(player_id);

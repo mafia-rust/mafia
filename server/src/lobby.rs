@@ -125,6 +125,9 @@ impl Lobby {
                     if !player.host {return;}
                 }
                 self.send_to_all(ToClientPacket::KickPlayer { player_id: kicked_player_id });
+
+
+                //THIS IS BROKEN BECAUSE IT REMOVES THEM FROM THE LOBBY BUT NOT FROM THE LISTENER
                 self.disconnect_player_from_lobby(kicked_player_id);
             },
             ToServerPacket::SetPhaseTime{phase, time} => {
