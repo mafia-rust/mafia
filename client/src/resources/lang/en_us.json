@@ -39,7 +39,7 @@
     "menu.chat.placeHolder": "Enter message",
     "menu.chat.clearFilter": "Clear Filter",
     
-    "menu.will.title": "Will and Notes",
+    "menu.will.title": "Will",
     "menu.will.will": "Will",
     "menu.will.notes": "Notes",
     "menu.will.deathNote": "Death Note",
@@ -51,7 +51,7 @@
     "menu.wiki.search.back": "Back",
     "menu.wiki.search.clear": "Clear",
 
-    "menu.playerList.title": "Player List",
+    "menu.playerList.title": "Players",
     
     "menu.playerList.button.all": "All",
     "menu.playerList.button.living": "Living",
