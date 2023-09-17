@@ -146,7 +146,11 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "yourRoleLabels":
             for (const [key, value] of Object.entries(packet.roleLabels)) { 
-                GAME_MANAGER.gameState.players[Number.parseInt(key)].roleLabel = value as Role;
+                if(
+                    GAME_MANAGER.gameState.players !== undefined && 
+                    GAME_MANAGER.gameState.players[Number.parseInt(key)] !== undefined
+                )
+                    GAME_MANAGER.gameState.players[Number.parseInt(key)].roleLabel = value as Role;
             }
         break;
         case "yourPlayerTags":

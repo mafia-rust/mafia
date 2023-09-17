@@ -117,18 +117,18 @@ impl Lobby {
                 self.send_to_all(ToClientPacket::StartGame);
             },
             ToServerPacket::KickPlayer{player_id: kicked_player_id} => {
-                let LobbyState::Lobby { players, .. } = &mut self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "ToServerPacket::KickPlayer can not be used outside of LobbyState::Lobby", player_id);
-                    return;
-                };
-                if let Some(player) = players.get(&player_id){
-                    if !player.host {return;}
-                }
-                self.send_to_all(ToClientPacket::KickPlayer { player_id: kicked_player_id });
+                // let LobbyState::Lobby { players, .. } = &mut self.lobby_state else {
+                //     log!(error "Lobby"; "{} {}", "ToServerPacket::KickPlayer can not be used outside of LobbyState::Lobby", player_id);
+                //     return;
+                // };
+                // if let Some(player) = players.get(&player_id){
+                //     if !player.host {return;}
+                // }
+                // self.send_to_all(ToClientPacket::KickPlayer { player_id: kicked_player_id });
 
 
-                //THIS IS BROKEN BECAUSE IT REMOVES THEM FROM THE LOBBY BUT NOT FROM THE LISTENER
-                self.disconnect_player_from_lobby(kicked_player_id);
+                // //THIS IS BROKEN BECAUSE IT REMOVES THEM FROM THE LOBBY BUT NOT FROM THE LISTENER
+                // self.disconnect_player_from_lobby(kicked_player_id);
             },
             ToServerPacket::SetPhaseTime{phase, time} => {
                 let LobbyState::Lobby{ settings, players  } = &mut self.lobby_state else {
@@ -231,7 +231,11 @@ impl Lobby {
                 send.send(ToClientPacket::YourName { name: name.clone() });
                 
                 let new_player = LobbyPlayer { name, sender: send.clone(), host: players.is_empty() };
-                let arbitrary_player_id = players.len() as PlayerID;
+                let arbitrary_player_id: PlayerID = 
+                players
+                    .iter()
+                    .map(|(i,_)|*i)
+                    .fold(0u32, u32::max) as PlayerID + 1u32 ;
                 players.insert(arbitrary_player_id, new_player);
 
                 settings.role_list.push(RoleOutline::Any);

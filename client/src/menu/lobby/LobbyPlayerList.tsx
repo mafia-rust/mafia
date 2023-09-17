@@ -58,7 +58,7 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
                 <StyledText>
                     {player.toString()}
                 </StyledText>
-                <button onClick={()=>{GAME_MANAGER.sendKickPlayerPacket(player.id)}}>{translate("menu.lobby.kick")}</button>
+                {/* <button onClick={()=>{GAME_MANAGER.sendKickPlayerPacket(player.id)}}>{translate("menu.lobby.kick")}</button> */}
             </div>)
         })}
     </div>)}
