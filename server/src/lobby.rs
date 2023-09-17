@@ -357,11 +357,21 @@ impl Lobby {
     }
     #[allow(unused)]
     fn send_players_game(game: &mut Game, players: &HashMap<PlayerID, GamePlayer>){
+
+        let mut players: Vec<_> = players.iter().collect();
+        players.sort_by(|a,b|{
+            a.1.player_index.cmp(&b.1.player_index)
+        });
+
+        let players: Vec<_> = players.iter().map(|p| {
+            (*p.0, PlayerReference::new_unchecked(p.1.player_index).name(game).to_owned())
+        }).collect();
+
         let packet = ToClientPacket::Players { 
-            players: players.iter().map(|p| {
-                (*p.0, PlayerReference::new_unchecked(p.1.player_index).name(game).to_owned())
-            }).collect()
+            players
         };
+
+
         for player_ref in PlayerReference::all_players(game){
             player_ref.send_packet(game, packet.clone());
         }
