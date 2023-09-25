@@ -571,3 +571,31 @@ fn mafioso_cant_kill_mafia() {
 
     assert!(janitor.alive());
 }
+
+#[test]
+fn transporter_cant_transport_dead() {
+    kit::scenario!(game in Night 1 where
+        mafioso: Mafioso,
+        _vet: Veteran,
+        _necro: Necromancer,
+        _seer: Seer,
+        townie: Sheriff,
+        thomas: Jailor,
+        trans: Transporter
+    );
+
+    mafioso.set_night_target(thomas);
+
+    game.next_phase();
+
+    assert!(!thomas.alive());
+
+    game.skip_to(PhaseType::Night, 2);
+
+    assert!(trans.set_night_target(townie));
+    assert!(!trans.set_night_targets(vec![townie, thomas]), "Transporter targeted dead player");
+
+    game.next_phase();
+
+    assert_not_contains!(thomas.get_messages(), ChatMessage::Transported);
+}
