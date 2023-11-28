@@ -87,12 +87,6 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
     renderMenuButtons(){
         return <div className="menu-buttons">
             <button 
-            className={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.GraveyardMenu)?"highlighted":""} 
-            onClick={()=>{
-                GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.GraveyardMenu)
-            }}>{translate("menu.graveyard.title")}</button>
-
-            <button 
             className={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.PlayerListMenu)?"highlighted":""} 
             onClick={()=>{
                 GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.PlayerListMenu)
@@ -118,6 +112,11 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                         </StyledText>
                     </button>
             )()}
+            <button 
+            className={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.GraveyardMenu)?"highlighted":""} 
+            onClick={()=>{
+                GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.GraveyardMenu)
+            }}>{translate("menu.graveyard.title")}</button>
             <button 
             className={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WikiMenu)?"highlighted":""} 
             onClick={()=>{

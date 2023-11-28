@@ -28,6 +28,7 @@ use phase::PhaseStateMachine;
 use settings::Settings;
 use grave::Grave;
 
+use self::end_game_condition::EndGameCondition;
 use self::phase::PhaseState;
 use self::role::RoleState;
 use self::team::Teams;
@@ -121,6 +122,26 @@ impl Game {
         (guilty, innocent)
     }
 
+    pub fn game_is_over(&self)->bool{
+        let mut winning_team = None;
+
+        for player_ref in PlayerReference::all_players(self){
+            if !player_ref.alive(self) {continue;}
+            let egc = player_ref.end_game_condition(self);
+            if egc == EndGameCondition::None {continue;}
+
+            if let Some(ref winning_team) = winning_team{
+                //if there are two different teams alive then nobody won
+                if *winning_team != egc{
+                    return false;
+                }
+            }else{
+                winning_team = Some(egc.clone());
+            }
+        }
+        return true;
+    }
+
     pub fn current_phase(&self) -> &PhaseState {
         &self.phase_machine.current_state
     }
@@ -130,6 +151,12 @@ impl Game {
     }
 
     pub fn tick(&mut self, time_passed: Duration){
+        if self.game_is_over() {
+            self.add_message_to_chat_group(ChatGroup::All, ChatMessage::GameOver);
+            self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::Draw });
+
+        }
+
         if self.phase_machine.day_number == u8::MAX {
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
             // TODO, clean up the lobby. Stop the ticking
@@ -193,6 +220,7 @@ impl Game {
             player_ref.send_packet(self, packet.clone());
         }
     }
+
 
 }
 

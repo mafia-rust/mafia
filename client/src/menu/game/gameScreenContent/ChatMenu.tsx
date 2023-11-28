@@ -139,8 +139,13 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
 
     renderTextInput() {return (
         <div className="send-section">
-            {this.state.filter && <button className="highlighted" onClick={()=>ChatMenu.setFilter(null)}>
-                {translate("menu.chat.clearFilter")}
+            {this.state.filter && <button 
+                // className="highlighted" 
+                onClick={()=>ChatMenu.setFilter(null)}
+                className="material-icons-round"
+                aria-label={translate("menu.chat.clearFilter")}
+            >
+                filter_alt_off
             </button>}
             <div>
                 <textarea
@@ -148,8 +153,12 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
                     onChange={this.handleInputChange}
                     onKeyDown={this.handleInputKeyDown}
                 />
-                <button onClick={this.sendChatField}>
-                    {translate("menu.chat.button.send")}
+                <button 
+                    className="material-icons-round"
+                    onClick={this.sendChatField}
+                    aria-label={translate("menu.chat.button.send")}
+                >
+                    send
                 </button>
             </div>
         </div>

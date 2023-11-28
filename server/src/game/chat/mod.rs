@@ -39,9 +39,13 @@ pub enum ChatMessage {
 
     RoleAssignment{role: Role},
     PlayerDied{grave: Grave},
-    GameOver/*(WinState)*/,
+
+    
+    #[serde(rename_all = "camelCase")]
+    GameOver,
 
 
+    
     #[serde(rename_all = "camelCase")]
     PhaseChange{
         #[serde(rename = "phase")]

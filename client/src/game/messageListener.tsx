@@ -191,10 +191,12 @@ export default function messageListener(packet: ToClientPacket){
         case "gameOver":
             switch(packet.reason) {
                 case "ReachedMaxDay":
-                    alert("Game Over: Reached the maximum day!");
+                    // alert("Game Over: Reached the maximum day!");
+                    console.log("incoming message response not implemented " + packet.type + ": " + packet.reason);
+                    console.log(packet);
                 break;
                 default:
-                    alert("Game ended for an unknown reason!");
+                    // alert("Game ended for an unknown reason!");
                     console.log("incoming message response not implemented " + packet.type + ": " + packet.reason);
                     console.log(packet);
                 break;

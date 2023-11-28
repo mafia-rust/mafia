@@ -43,11 +43,26 @@ impl Listener{
                     delta_time = last_tick.elapsed();
                     last_tick = tokio::time::Instant::now();
 
-                    for (key, lobby) in listener.lobbies.iter_mut() {
+                    let Listener { ref mut lobbies, ref mut players } = *listener;
+
+                    for (room_code, lobby) in lobbies.iter_mut() {
                         if lobby.is_closed() {
-                            closed_lobbies.push(*key);
+                            closed_lobbies.push(*room_code);
                         } else {
                             lobby.tick(delta_time);
+
+
+
+
+
+                            //TODO move this somewhere else, 
+                            //Kick players from lobby and disconnect them from listener
+                            lobby.get_players_to_kick().into_iter().for_each(|id|{
+                                if let Some(address) = Self::get_address_from_id(players, *room_code, id){
+                                    players.remove(&address);
+                                    lobby.disconnect_player_from_lobby(id);
+                                }
+                            });
                         }
                     }
 
@@ -63,9 +78,17 @@ impl Listener{
             }
         });
     }
-}
 
-impl Listener {
+    fn get_address_from_id(players: &HashMap<SocketAddr, PlayerLocation>, room_code: RoomCode, id: PlayerID)->Option<SocketAddr>{
+        players.iter().find(|p|
+            if let PlayerLocation::InLobby{room_code: player_room_code, player_id} = p.1{
+                *player_id == id && room_code == *player_room_code
+            }else{
+                false
+            }
+        ).map(|p|p.0.clone())
+    }
+
     pub fn on_connect(&mut self, connection: &Connection) {
         self.players.insert(*connection.get_address(), PlayerLocation::OutsideLobby);
     }
@@ -123,6 +146,7 @@ impl Listener {
             },
             ToServerPacket::Host => {
                 let Some(room_code) = ((random::<u16>() as usize)..usize::MAX).find(
+                    //TODO make this fill up the usize entirely
                     |code| !self.lobbies.contains_key(code)
                 ) else {
                     connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::ServerBusy });
@@ -152,7 +176,7 @@ impl Listener {
                         lobby.on_client_message(&connection.get_sender(), *player_id, incoming_packet);
                     } else {
                         //Player is in a lobby that doesn't exist
-                        todo!()
+                        panic!("Recieved a message from a player in a lobby that doesnt exist")
                     }
                 }
             }

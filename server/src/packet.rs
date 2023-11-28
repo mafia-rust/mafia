@@ -145,6 +145,8 @@ pub enum RejectStartReason {
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum GameOverReason {
     ReachedMaxDay,
+    Winner,
+    Draw
     /*TODO Winner { who won? }*/
 }
 

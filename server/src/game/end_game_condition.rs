@@ -1,10 +1,8 @@
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum EndGameCondition {
     Mafia,
     Town,
-
     Vampire,
-
     None
 }
 impl EndGameCondition {
