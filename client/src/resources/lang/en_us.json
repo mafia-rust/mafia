@@ -531,7 +531,7 @@
     
     "wiki.entry.role.jester.title": "Jester",
     "wiki.entry.role.jester.abilities":"* Get lynched to win\n* After you are lynched, you can haunt a player who didn't vote innocent",
-    "wiki.entry.role.jester.attributes":"* If you haunt nobody, you will haunt a random player\n* You get basic defense on night one\n* Haunting is an unstoppable astral attack",
+    "wiki.entry.role.jester.attributes":"* If dont choose to haunt somebody on the night you win, you will haunt a random player\n* You get basic defense on night one\n* Haunting is an unstoppable astral attack",
     
     "wiki.entry.role.executioner.title": "Executioner",
     "wiki.entry.role.executioner.abilities":"* Get your target lynched to win\n* If your target dies by something other than lynching, you will be converted to a jester",
@@ -539,7 +539,7 @@
     
     "wiki.entry.role.doomsayer.title": "Doomsayer",
     "wiki.entry.role.doomsayer.abilities":"* Guess the role of three living players in one night, killing them and winning the game",
-    "wiki.entry.role.doomsayer.attributes":"* When you win, you will commit suicide using an unstoppable attack\n* You have to guess the exact role of townies, but just the faction of all other roles\n* You can not try to guess town investigative roles\n* If there are not enough players left for you to guess and win the game, you will convert to a jester\n* You do not visit, so the transporter doesn't effect your attack\n* Your attack is unstoppable",
+    "wiki.entry.role.doomsayer.attributes":"* When you win, you will commit suicide using an unstoppable attack\n* You have to guess the exact role of townies, but just the faction of all other roles\n* You can not try to guess town investigative roles\n* If there are not enough players left for you to guess and win the game, you will convert to a jester\n* You do not visit\n* Your attack is unstoppable",
 
     "wiki.entry.role.vampire.title": "Vampire",
     "wiki.entry.role.vampire.abilities":"* Bite a player to convert them to a vampire",
