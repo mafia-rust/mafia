@@ -7,6 +7,8 @@ import { StateListener } from "../../game/gameManager.d";
 import translate from "../../game/lang";
 import RolePicker from "../../components/RolePicker";
 import StyledText from "../../components/StyledText";
+import ROLES from "./../../resources/roles.json";
+import { Role } from "../../game/roleState.d";
 
 interface ExcludedRolesState {
     excludedRoles: RoleOutline[],
@@ -47,7 +49,18 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
     }
     excludeRole(){
         let roles = [...this.state.excludedRoles];
-        roles.push(this.state.roleOutline);
+
+        if(this.state.roleOutline.type !== "any"){
+            roles.push(this.state.roleOutline);
+        }else{
+            for(let role in ROLES){
+                roles.push({
+                    type: "exact",
+                    role: role as Role,
+                });
+            }
+        }
+
         GAME_MANAGER.sendExcludedRolesPacket(roles);
     }
 

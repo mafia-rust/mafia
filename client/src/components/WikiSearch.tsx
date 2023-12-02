@@ -3,7 +3,7 @@ import ROLES from "./../resources/roles.json";
 import translate, { langText } from "../game/lang";
 import "./wikiSearch.css";
 import { Role, getFactionAlignmentFromRole, getFactionFromRole } from "../game/roleState.d";
-import { FactionAlignment, RoleOutline, getRoleOutlineFromFactionAlignment, translateRoleOutline } from "../game/roleListState.d";
+import { FACTIONS, FACTION_ALIGNMENTS, FactionAlignment, RoleOutline, getAlignmentStringFromFactionAlignment, getAllFactionAlignments, getRoleOutlineFromFactionAlignment, translateRoleOutline } from "../game/roleListState.d";
 import StyledText from "../components/StyledText";
 import { HistoryQueue } from "../history";
 import { regEscape } from "..";
@@ -28,7 +28,7 @@ export type WikiPage =
     | `role/${Role}`
     | `article/${Article}`;
 
-const ARTICLES = ["help", "roles_and_teams", "phases_and_timeline", "controls", "wills_and_notes", "visit", "all_language"] as const;
+const ARTICLES = ["help", "roles_and_teams", "phases_and_timeline", "faction_alignments", "wills_and_notes", "visit", "all_language"] as const;
 type Article = typeof ARTICLES[number];
 
 const PAGES: WikiPage[] = Object.keys(ROLES).map(role => `role/${role}`)
@@ -136,7 +136,44 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
         if (this.state.type === "page") {
             if (this.state.page === "article/all_language") {
                 return langText;
-            } else {
+            } else if (this.state.page === "article/faction_alignments"){
+                
+
+
+
+                let articleText = "## Factions and Alignments\n";
+
+                for(let faction of FACTIONS){
+
+                    articleText+="### "+translateRoleOutline({
+                        type: "faction",
+                        faction: faction
+                    })+"\n";
+
+                    for(let alignment of getAllFactionAlignments(faction)){
+
+                        articleText+="#### "+translateRoleOutline({
+                            type: "factionAlignment",
+                            factionAlignment: alignment,
+                        })+"\n>";
+
+                        for(let role in ROLES){
+
+                            if(getFactionAlignmentFromRole(role as Role) === alignment){
+                                articleText+=translateRoleOutline({
+                                    type: "exact",
+                                    role: role as Role,
+                                })+"\n";
+                            }
+                        }
+                    }
+                }
+
+                return <StyledText className="wiki-content-body">{articleText}</StyledText>
+
+
+
+            }else{
                 return <StyledText className="wiki-content-body">
                     {getPageText(this.state.page)}
                 </StyledText>;
