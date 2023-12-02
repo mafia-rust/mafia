@@ -215,7 +215,7 @@ impl Lobby {
 
 
                 let roles: HashSet<_> = roles.drain(..).collect();
-                let roles: Vec<_> = roles.into_iter().collect();
+                let roles: Vec<_> = roles.into_iter().filter(|e|*e!=RoleOutline::Any).map(|e|e.clone()).collect();
                 settings.excluded_roles = roles.clone();
                 self.send_to_all(ToClientPacket::ExcludedRoles { roles });
             }
@@ -301,7 +301,7 @@ impl Lobby {
 
         match &mut self.lobby_state {
             LobbyState::Lobby {players, settings} => {
-                players.remove(&id);
+                let player = players.remove(&id);
             
                 if players.is_empty() {
                     self.lobby_state = LobbyState::Closed;
@@ -313,16 +313,19 @@ impl Lobby {
                     }
                 }
 
-                settings.role_list.pop();
+                if let Some(_player) = player {
+                    settings.role_list.pop();
+                };
 
                 Self::send_players_lobby(players);
                 for player in players.iter(){
-                    Self::send_settings(player.1, settings)
+                    Self::send_settings(player.1, settings);
                 }
             },
             LobbyState::Game {game, players} => {
                 //TODO proper disconnect from game
                 let player_index = players.get(&id);
+
                 if let Some(game_player) = player_index {
                     if let Ok(player_ref) = PlayerReference::new(game, game_player.player_index) {
                         if !player_ref.has_left(game) {
@@ -330,7 +333,9 @@ impl Lobby {
                         }
                     }
                 }
+
                 players.remove(&id);
+                
                 if !players.iter().any(|p|p.1.host) {
                     if let Some(new_host) = players.values_mut().next(){
                         new_host.host = true;

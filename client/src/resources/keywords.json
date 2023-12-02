@@ -16,11 +16,11 @@
         "link": "article/phases_and_timeline"
     },
     "grave.role.cleaned": { 
-        "style": "keyword-hidden",
+        "style": "keyword-hiddenRole",
         "link": "role/janitor"
     },
     "grave.role.petrified": { 
-        "style": "keyword-hidden"
+        "style": "keyword-hiddenRole"
     },
     "suspicious": { 
         "style": "keyword-evil",

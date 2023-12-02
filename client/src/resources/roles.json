@@ -220,7 +220,7 @@
         "largeRoleSpecificMenu": false
     },
     "witch": {
-        "factionAlignment": "mafiaSupport",
+        "factionAlignment": "mafiaPower",
         "suspicious": true,
         "roleblockable": false,
         "defense": 0,
@@ -230,7 +230,7 @@
         "largeRoleSpecificMenu": false
     },
     "necromancer": {
-        "factionAlignment": "mafiaSupport",
+        "factionAlignment": "mafiaPower",
         "suspicious": true,
         "roleblockable": false,
         "defense": 0,

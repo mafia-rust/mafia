@@ -10,7 +10,7 @@ use crate::game::Game;
 use crate::game::team::Team;
 use super::{Priority, RoleState, RoleStateImpl};
 
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaSupport;
+pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaPower;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 #[derive(Clone, Debug, Default, Serialize)]

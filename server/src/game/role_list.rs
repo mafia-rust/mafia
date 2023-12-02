@@ -127,14 +127,18 @@ impl RoleOutline{
                             Some(m) => taken_roles.iter().filter(|r2|*r2==r).count() < m.into(),
                             None => true,
                         }
-
                     )
                     .collect()
             },
             RoleOutline::Faction { faction } => {
                 Role::values().into_iter()
                     .filter(|r|r.faction_alignment().faction() == *faction)
-                    .filter(|r|!excluded_roles.contains(&RoleOutline::Exact { role: *r }))
+                    .filter(|r|
+                        !(
+                            excluded_roles.contains(&RoleOutline::Exact { role: *r }) || 
+                            excluded_roles.contains(&RoleOutline::FactionAlignment { faction_alignment: r.faction_alignment() })
+                        )
+                    ) 
                     .filter(|r|
                         match r.maximum_count() {
                             Some(m) => taken_roles.iter().filter(|r2|*r2==r).count() < m.into(),
@@ -146,7 +150,13 @@ impl RoleOutline{
             },
             RoleOutline::Any => {
                 Role::values().into_iter()
-                    .filter(|r|!excluded_roles.contains(&RoleOutline::Exact { role: *r }))
+                    .filter(|r|
+                        !(
+                            excluded_roles.contains(&RoleOutline::Exact { role: *r }) ||
+                            excluded_roles.contains(&RoleOutline::FactionAlignment { faction_alignment: r.faction_alignment() }) ||
+                            excluded_roles.contains(&RoleOutline::Faction { faction: r.faction_alignment().faction() })
+                        )
+                    )
                     .filter(|r|
                         match r.maximum_count() {
                             Some(m) => taken_roles.iter().filter(|r2|*r2==r).count() < m.into(),

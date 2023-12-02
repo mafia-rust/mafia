@@ -2,24 +2,26 @@ import React from "react";
 import ROLES from "./../resources/roles.json";
 import translate, { langText } from "../game/lang";
 import "./wikiSearch.css";
-import { Role } from "../game/roleState.d";
-import { FactionAlignment, getRoleOutlineFromFactionAlignment, translateRoleOutline } from "../game/roleListState.d";
+import { Role, getFactionAlignmentFromRole, getFactionFromRole } from "../game/roleState.d";
+import { FactionAlignment, RoleOutline, getRoleOutlineFromFactionAlignment, translateRoleOutline } from "../game/roleListState.d";
 import StyledText from "../components/StyledText";
 import { HistoryQueue } from "../history";
 import { regEscape } from "..";
 
 type WikiSearchProps = {
     page?: WikiPage,
+    excludedRoles?: RoleOutline[]
     pageChangeCallback?: (page: WikiPage) => void
 }
 
 type WikiSearchState = ({
-    type: "search"
+    type: "search",
 } | {
     type: "page",
     page: WikiPage,
 }) & {
     searchQuery: string,
+    excludedRoles: RoleOutline[]
 }
 
 export type WikiPage = 
@@ -33,8 +35,10 @@ const PAGES: WikiPage[] = Object.keys(ROLES).map(role => `role/${role}`)
     .concat(ARTICLES.map(article => `article/${article}`)) as WikiPage[];
 
 export default class WikiSearch extends React.Component<WikiSearchProps, WikiSearchState> {
+    
     private static activeWikis: WikiSearch[] = [];
     history: HistoryQueue<WikiSearchState> = new HistoryQueue(10);
+
     constructor(props: WikiSearchProps) {
         super(props);
 
@@ -42,16 +46,19 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
             this.history.push({
                 type: "search",
                 searchQuery: "",
+                excludedRoles: props.excludedRoles ? props.excludedRoles : [],
             });
             this.state = {
                 type: "page",
                 searchQuery: "",
-                page: props.page
+                page: props.page,
+                excludedRoles: props.excludedRoles ? props.excludedRoles : [],
             }
         } else {
             this.state = {
                 type: "search",
                 searchQuery: "",
+                excludedRoles: props.excludedRoles ? props.excludedRoles : [],
             };
         }
     }
@@ -75,6 +82,7 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
         this.setState({
             type: "page",
             searchQuery: this.state.searchQuery,
+            excludedRoles: this.state.excludedRoles,
             page
         }, () => {
             if (this.props.pageChangeCallback !== undefined) {
@@ -84,9 +92,41 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
     }
 
     renderOpenPageButton(page: WikiPage) {
-        return <button key={page} onClick={()=>{this.setPage(page)}}>
-            <StyledText noLinks={true}>{getPageTitle(page)}</StyledText>
-        </button>
+
+
+        let excludedRolesExact: Role[] = [];
+        for(let role in ROLES){
+            let faction = getFactionFromRole(role as Role);
+            let factionAlignment = getFactionAlignmentFromRole(role as Role);
+
+
+            for(let excludedRoleOutline of this.state.excludedRoles){
+                switch(excludedRoleOutline.type){
+                    case "exact":
+                        if(excludedRoleOutline.role === role)
+                            excludedRolesExact.push(role as Role);
+                    break;
+                    case "factionAlignment":
+                        if(excludedRoleOutline.factionAlignment === factionAlignment)
+                            excludedRolesExact.push(role as Role);
+                    break;
+                    case "faction":
+                        if(excludedRoleOutline.faction === faction)
+                            excludedRolesExact.push(role as Role);
+                    break;
+                }
+            }
+        }
+
+        if(!excludedRolesExact.map((role)=>{return `role/${role}`}).includes(page)){
+            return <button key={page} onClick={()=>{this.setPage(page)}}>
+                <StyledText noLinks={true}>{getPageTitle(page)}</StyledText>
+            </button>
+        }else{
+            return <button key={page} onClick={()=>{this.setPage(page)}}>
+                <span className="keyword-dead">{getPageTitle(page)}</span>
+            </button>
+        }
     }
 
     getSearchResults(search: string): WikiPage[] {

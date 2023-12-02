@@ -38,7 +38,7 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
         <ContentTab close={ContentMenus.WikiMenu}>{translate("menu.wiki.title")}</ContentTab>
         
         <div className="wiki-menu-search">
-            <WikiSearch/>
+            <WikiSearch excludedRoles={this.state.gameState.excludedRoles}/>
         </div>
     </div>)}
 }
