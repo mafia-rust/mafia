@@ -98,8 +98,6 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
         for(let role in ROLES){
             let faction = getFactionFromRole(role as Role);
             let factionAlignment = getFactionAlignmentFromRole(role as Role);
-
-
             for(let excludedRoleOutline of this.state.excludedRoles){
                 switch(excludedRoleOutline.type){
                     case "exact":
@@ -123,6 +121,7 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
                 <StyledText noLinks={true}>{getPageTitle(page)}</StyledText>
             </button>
         }else{
+            //TODO ill fix it says jack
             return <button key={page} onClick={()=>{this.setPage(page)}}>
                 <span className="keyword-dead">{getPageTitle(page)}</span>
             </button>

@@ -121,7 +121,7 @@ impl PlayerReference{
     }
 
     /*
-    Role functions
+        Role functions
     */
     
     pub fn suspicious(&self, game: &Game) -> bool {
