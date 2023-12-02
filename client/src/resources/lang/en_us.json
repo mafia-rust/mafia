@@ -475,7 +475,7 @@
     
     "wiki.entry.role.escort.title": "Escort",
     "wiki.entry.role.escort.abilities":"* Target a player to roleblock them",
-    "wiki.entry.role.escort.attributes":"* Roleblocking a player prevents them from using parts of their ability",
+    "wiki.entry.role.escort.attributes":"* Roleblocking a player prevents them from using most parts of their ability\n* Some roles are immune to roleblocks\n* The player will know that someone tried to roleblock them",
     
     "wiki.entry.role.medium.title": "Medium",
     "wiki.entry.role.medium.abilities":"* You can talk with the dead during the night\n* After you died, you can seance a living player twice",
@@ -503,7 +503,7 @@
     
     "wiki.entry.role.consort.title": "Consort",
     "wiki.entry.role.consort.abilities":"* Target a player to roleblock them",
-    "wiki.entry.role.consort.attributes":"* Roleblocking a player prevents them from using parts of their ability",
+    "wiki.entry.role.consort.attributes":"* Roleblocking a player prevents them from using most parts of their ability\n* Some roles are immune to roleblocks\n* The player will know that someone tried to roleblock them",
     
     "wiki.entry.role.blackmailer.title": "Blackmailer",
     "wiki.entry.role.blackmailer.abilities":"* Blackmail a player to silence them for the next day",

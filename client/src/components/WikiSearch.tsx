@@ -160,10 +160,7 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
                         for(let role in ROLES){
 
                             if(getFactionAlignmentFromRole(role as Role) === alignment){
-                                articleText+=translateRoleOutline({
-                                    type: "exact",
-                                    role: role as Role,
-                                })+"\n";
+                                articleText+=translate("role."+role+".name")+"\n";
                             }
                         }
                     }
