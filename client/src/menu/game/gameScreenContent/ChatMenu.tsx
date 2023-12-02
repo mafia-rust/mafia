@@ -142,7 +142,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
             {this.state.filter && <button 
                 // className="highlighted" 
                 onClick={()=>ChatMenu.setFilter(null)}
-                className="material-icons-round"
+                className="material-icons-round highlighted"
                 aria-label={translate("menu.chat.clearFilter")}
             >
                 filter_alt_off
