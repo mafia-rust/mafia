@@ -1,58 +1,57 @@
-.sm-center-content {
-    text-align: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    max-width: 90%;
-    transform: translate(-50%, -50%);
-}
-.sm-main > header {
-    margin-bottom: 5%;
-}
-.sm-center-content > header {
-    align-items: center;
-}
-.sm-center-content > header > h1 {
-    font-size: 700%;
-}
-.sm-center-content > header > h2 {
-    font-size: 400%;
+.sm {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
-.sm-main > div {
+.sm > main {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
-    font-size: 400%;
+    flex-wrap: wrap;
+    flex-grow: 1;
 }
 
-.sm-main > div > button {
-    margin: 2%;
-    width: 20%;
-    min-width: fit-content;
-}
-
-.sm-wiki {
+.sm > main > section {
+    height: 100%;
+    flex-grow: 1;
     display: flex;
-    align-items: center;
-    justify-content: flex-start;
     flex-direction: column;
-    height: 60%;
-    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.sm > main > section#main > div {
+    display: flex;
+    flex-direction: row;
+}
+.sm > main > section#main > h1 {
+    font-size: 5.5rem;
+}
+
+.sm > main > section#main > div > button {
+    padding: 0.3rem 0.5rem;
+    margin: 0 0.5rem;
+    font-size: 2rem;
+}
+
+.sm > main > section#main {
     width: 50%;
 }
 
-.sm-wiki > header {
-    height: 25%;
+.sm > main > section#wiki {
+    width: 30%;
 }
 
-.sm-wiki > div {
-    height: 75%;
+.sm > main > section > h1 {
+    width: 100%;
+    font-size: 4.5rem;
+    padding-bottom: 1rem;
 }
 
-@media only screen and (max-width: 600px) {
-    .sm-wiki {
-        width: 80%;
-    }
+.sm > footer {
+    position: static;
+    background-color: var(--primary-color);
+    border-top: var(--primary-border-color) solid .13rem;
 }

@@ -36,11 +36,9 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
     }
 
     render(){return(<div className="sm">
-        <div className="hero">
-            <div className="sm-center-content sm-main">
-                <header>
-                    <h1>{translate("menu.start.title")}</h1>
-                </header>
+        <main>
+            <section id="main">
+                <h1>{translate("menu.start.title")}</h1>
                 
                 <div>
                     <button onClick={()=>{this.joinGameButton()}}>
@@ -50,16 +48,20 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
                         {translate("menu.start.button.host")}
                     </button>
                 </div>
-            </div>
-        </div>
-        <div id="wiki" className="hero">
-            <div className="sm-center-content sm-wiki">
-                <header>
-                    <h2>{translate("menu.wiki.title")}</h2>
-                </header>
+            </section>
+            <section id="wiki">
+                <h1>{translate("menu.wiki.title")}</h1>
                 
                 <WikiSearch/>
-            </div>
-        </div>
+            </section>
+        </main>
+        <footer>
+            <nav>
+                <ul>
+                    <li><a href="https://www.github.com/ItsSammyM/mafia-rust/issues">Issues</a></li>
+                    <li><a href="https://www.github.com/ItsSammyM/mafia-rust">Source</a></li>
+                </ul>
+            </nav>
+        </footer>
     </div>)}
 }
