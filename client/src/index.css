@@ -61,12 +61,14 @@ button, input, select, option, textarea, summary {
 }
 button, summary {
     cursor: default;
-    border-bottom-color: black;
-    border-right-color: black;
     background-color: var(--primary-color);
     white-space: nowrap;
 }
-input, select, option, textarea {
+button, select, summary {
+    border-bottom-color: black;
+    border-right-color: black;
+}
+input, option, textarea {
     border-top-color: black;
     border-left-color: black;
 }
