@@ -8,7 +8,9 @@
 }
 .keyword-player-number {
 	border-radius: 50%;
-    border: outset 1.5px;
+    border: solid 1.5px;
+    border-bottom-color: darkgray;
+    border-right-color: darkgray;
     background-color: var(--primary-color);
     display: inline-block;
     width: 1rem;

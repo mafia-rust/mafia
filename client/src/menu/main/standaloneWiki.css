@@ -1,6 +1,7 @@
 .standalone-wiki {
-    border-style: outset;
+    border-style: solid;
     border-color: var(--primary-border-color);
+    border-right-color: black;
     border-width: .13rem;
     position: absolute;
     top: 50%;
