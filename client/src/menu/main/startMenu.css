@@ -42,6 +42,7 @@
 
 .sm > main > section#wiki {
     width: 30%;
+    height: 80vh;
 }
 
 .sm > main > section > h1 {

@@ -51,7 +51,6 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
             </section>
             <section id="wiki">
                 <h1>{translate("menu.wiki.title")}</h1>
-                
                 <WikiSearch/>
             </section>
         </main>
@@ -61,7 +60,6 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
                     <li><a href="https://www.github.com/ItsSammyM/mafia-rust">Github</a></li>
                     <li><a href="https://mafia-game-old.vercel.app/">Old Game</a></li>
                     <li><a href="https://netgames.io/games/">Net Games</a></li>
-
                 </ul>
             </nav>
         </footer>
