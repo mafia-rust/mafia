@@ -156,8 +156,9 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
     render() {
         return (
             <div className="game-screen">
-                <button className="leave-button" onClick={() => GAME_MANAGER.leaveGame()}>
-                    {translate("menu.button.leave")}
+                <button className="material-icons-round leave-button" onClick={() => GAME_MANAGER.leaveGame()}>
+                    {/* {translate("menu.button.leave")} */}
+                    arrow_back
                 </button>
                 <div className="header">
                     <HeaderMenu phase={GAME_MANAGER.gameState.phase}/>
