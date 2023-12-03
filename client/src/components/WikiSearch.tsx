@@ -3,7 +3,7 @@ import ROLES from "./../resources/roles.json";
 import translate, { langText } from "../game/lang";
 import "./wikiSearch.css";
 import { Role, getFactionAlignmentFromRole, getFactionFromRole } from "../game/roleState.d";
-import { FACTIONS, FACTION_ALIGNMENTS, FactionAlignment, RoleOutline, getAlignmentStringFromFactionAlignment, getAllFactionAlignments, getRoleOutlineFromFactionAlignment, translateRoleOutline } from "../game/roleListState.d";
+import { FACTIONS, FactionAlignment, RoleOutline, getAllFactionAlignments, getRoleOutlineFromFactionAlignment, translateRoleOutline } from "../game/roleListState.d";
 import StyledText from "../components/StyledText";
 import { HistoryQueue } from "../history";
 import { regEscape } from "..";
