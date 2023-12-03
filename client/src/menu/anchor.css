@@ -20,10 +20,12 @@
     box-shadow: 0 0 .5rem #0007;
     
     border-radius: 0.4rem;
-    border-style: outset;
+    border-style: solid;
     padding: .5rem;
     background-color: var(--secondary-color);
     border-color: var(--primary-border-color);
+    border-bottom-color: black;
+    border-right-color: black;
     border-width: .13rem;
     color: white;
 

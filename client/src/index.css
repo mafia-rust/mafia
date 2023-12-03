@@ -10,7 +10,7 @@
 
     --hover-color: #2d364e;
 
-    font-size: .9em;
+    font-size: 1em;
 }
 
 *.material-icons-round {
@@ -53,10 +53,22 @@ button, input, select, option, textarea, summary {
     margin: .75%;
     background-color: var(--secondary-color);
     border-color: var(--primary-border-color);
+    border-style: solid;
     border-width: .13rem;
     color: white;
     font-size: 1rem;
     padding: 0.13rem 0.25rem;
+}
+button, summary {
+    cursor: default;
+    border-bottom-color: black;
+    border-right-color: black;
+    background-color: var(--primary-color);
+    white-space: nowrap;
+}
+input, select, option, textarea {
+    border-top-color: black;
+    border-left-color: black;
 }
 
 :has(input):focus-within > button.clear {
@@ -86,12 +98,6 @@ button.close {
 button:disabled, input:disabled, select:disabled, option:disabled, textarea:disabled, summary:disabled {
     opacity: 0.5;
     box-shadow: 0 0 100vmax #55555555 inset;
-}
-button, summary {
-    cursor: default;
-    border-style: outset;
-    background-color: var(--primary-color);
-    white-space: nowrap;
 }
 summary {
     text-align: left;
