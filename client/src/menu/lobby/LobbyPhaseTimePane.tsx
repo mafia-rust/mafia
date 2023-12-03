@@ -141,13 +141,11 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
     }
 
     render() {return(<section className="time">
-        <header>
-            <h2>{translate("menu.lobby.timeSettings")}</h2>
-            <div>
-                {this.renderTimeModeDropdown()}
-                {this.renderEditButton()}
-            </div>
-        </header>
+        <h2>{translate("menu.lobby.timeSettings")}</h2>
+        <div>
+            {this.renderTimeModeDropdown()}
+            {this.renderEditButton()}
+        </div>
         {this.state.advancedEditing ? this.renderInputColumn() : null}
     </section>)}
 }

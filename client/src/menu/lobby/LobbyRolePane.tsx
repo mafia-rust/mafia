@@ -48,21 +48,14 @@ export default class LobbyRolePane extends React.Component<{}, RolePaneState> {
     }
 
     render(){return(<section>
-        <header>
-            <h2>{translate("menu.lobby.roleList")}</h2>
-            <div>
-                {/* TODO, role list presets */}
-            </div>
-        </header>
-        <div> {
-            this.state.roleList.map((_, index) => {
-                return <RolePicker
-                    disabled={!this.state.host}
-                    roleOutline={this.state.roleList[index]}
-                    onChange={(value: RoleOutline) => {this.onChangeRolePicker(index, value);}}
-                    key={index}
-                />
-            })
-        } </div>
+        <h2>{translate("menu.lobby.roleList")}</h2>
+        {this.state.roleList.map((_, index) => {
+            return <RolePicker
+                disabled={!this.state.host}
+                roleOutline={this.state.roleList[index]}
+                onChange={(value: RoleOutline) => {this.onChangeRolePicker(index, value);}}
+                key={index}
+            />
+        })}
     </section>)}
 }

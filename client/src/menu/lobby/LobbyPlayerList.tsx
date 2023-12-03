@@ -52,16 +52,15 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
         </div>
     )}
 
-    renderPlayers(){return(<div>
-        {this.state.players.map((player, i)=>{
-            return(<div key={i}>
-                <StyledText>
-                    {player.toString()}
-                </StyledText>
-                {/* <button onClick={()=>{GAME_MANAGER.sendKickPlayerPacket(player.id)}}>{translate("menu.lobby.kick")}</button> */}
-            </div>)
-        })}
-    </div>)}
+    renderPlayers() {
+        return <ol>
+            {this.state.players.map((player, i)=>{
+                return <li key={i}>
+                    <StyledText>{player.toString()}</StyledText>
+                </li>
+            })}
+        </ol>
+    }
 
     render(){return(<section>
         {this.renderName()}
