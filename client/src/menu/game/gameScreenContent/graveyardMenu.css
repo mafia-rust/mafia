@@ -1,3 +1,9 @@
+.graveyard-menu {
+    background-color: #242424;
+}
+.graveyard-menu .content-tab {
+    background-color: #303030;
+}
 .graveyard-menu > .grid {
     display: grid;
     margin-bottom: 1rem;

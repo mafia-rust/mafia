@@ -1,5 +1,11 @@
+.will-menu {
+    background-color: #1a0b19;
+}
 .will-menu > section{
     margin-top: 1%;
+}
+.will-menu .content-tab {
+    background-color: #382138
 }
 .will-menu textarea {
     box-sizing: border-box;

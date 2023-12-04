@@ -7,6 +7,9 @@
     max-height: 100%;
     max-width: 100%;
 }
+.chat-menu .content-tab {
+    background-color: #132936;
+}
 .chat-menu .message-section {
     display: grid;
     height: 100%;

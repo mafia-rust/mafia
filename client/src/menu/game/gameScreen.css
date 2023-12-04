@@ -48,7 +48,7 @@
     border-right: var(--primary-border-color) solid 1px;
 }
 
-.game-screen .content .content-tab {
+.content-tab {
     display: flex;
     flex-direction: row;
     height: max-content;
@@ -65,10 +65,10 @@
     justify-content: space-between;
     align-items: center;
 }
-.game-screen .content .content-tab > div{
+.content-tab > div{
     flex-grow: 1;
 }
-.game-screen .content .content-tab > button{
+.content-tab > button{
     width: max-content;
     margin: 0 .30rem;
 }

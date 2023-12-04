@@ -1,6 +1,10 @@
 .wiki-menu {
     display: flex;
     flex-direction: column;
+    background-color: #1a1508;
+}
+.wiki-menu .content-tab {
+    background-color: #29251a;
 }
 .wiki-menu > .wiki-menu-search {
     min-height: 0;
