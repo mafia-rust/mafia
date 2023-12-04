@@ -135,7 +135,15 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
         return null;
     }
 
-    render(){return(<div className="header-menu">
+    render(){
+        const timerStyle = {
+            paddingTop: '1%',
+            backgroundColor: 'red',
+            width: `${(this.state.gameState.timeLeftMs) * (100/(60*1000))}%`,
+            margin: '0 auto', // Center the timer horizontally
+        };
+        
+        return(<div className="header-menu">
         {this.renderPhase()}
         {(()=>{
             if(this.state.gameState.myIndex !== null){
@@ -145,7 +153,10 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                 </StyledText>;
             }
         })()}
-        {this.renderPhaseSpecific()}
         {this.renderMenuButtons()}
+        {this.renderPhaseSpecific()}
+        <div className="timer-box">
+            <div style={timerStyle}/>
+        </div>
     </div>)}
 }

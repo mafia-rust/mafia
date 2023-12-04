@@ -7,13 +7,14 @@
 .game-screen > .leave-button {
     position: absolute;
     margin: 0;
-    left: 0.5rem;
+    right: 0.5rem;
     top: 0.5rem;
 }
 
 .game-screen .header {
     height: fit-content;
     border: var(--primary-border-color) solid 2px;
+    border-bottom: 0;
 
     flex-grow: 0;
     flex-basis: 0px;

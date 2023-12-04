@@ -27,7 +27,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
 
         this.state = {
             gameState : GAME_MANAGER.gameState,
-            playerFilter: Anchor.isMobile() ? "all" : "living",
+            playerFilter: "living",
         };
         this.listener = (type)=>{
             let playerFilter = this.state.playerFilter;

@@ -28,7 +28,7 @@ export type WikiPage =
     | `role/${Role}`
     | `article/${Article}`;
 
-const ARTICLES = ["help", "roles_and_teams", "phases_and_timeline", "faction_alignments", "wills_and_notes", "visit", "all_language"] as const;
+const ARTICLES = ["roles_and_teams", "phases_and_timeline", "faction_alignments", "wills_and_notes", "all_language"] as const;
 type Article = typeof ARTICLES[number];
 
 const PAGES: WikiPage[] = Object.keys(ROLES).map(role => `role/${role}`)
