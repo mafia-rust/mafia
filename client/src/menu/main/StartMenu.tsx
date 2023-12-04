@@ -58,7 +58,7 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
             <nav>
                 <ul>
                     <li><a href="https://www.github.com/ItsSammyM/mafia-rust">Github</a></li>
-                    <li><a href="https://mafia-game-old.vercel.app/">Old Game</a></li>
+                    <li><a href="https://mafia-game-old.vercel.app/">Old Mafia</a></li>
                     <li><a href="https://netgames.io/games/">Net Games</a></li>
                 </ul>
             </nav>
