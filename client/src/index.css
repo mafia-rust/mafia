@@ -59,6 +59,16 @@ button, input, select, option, textarea, summary {
     font-size: 1rem;
     padding: 0.13rem 0.25rem;
 }
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+option:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+    outline: white solid .13rem;
+}
+
 button, summary {
     cursor: default;
     background-color: var(--primary-color);
