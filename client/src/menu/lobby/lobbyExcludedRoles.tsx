@@ -10,7 +10,7 @@ import StyledText from "../../components/StyledText";
 import ROLES from "./../../resources/roles.json";
 import { Role } from "../../game/roleState.d";
 
-interface ExcludedRolesState {
+type ExcludedRolesState = {
     excludedRoles: RoleOutline[],
     roleOutline: RoleOutline,
     host: boolean

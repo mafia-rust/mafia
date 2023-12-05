@@ -6,7 +6,7 @@ import { Player } from "../../game/gameState.d";
 import { StateListener } from "../../game/gameManager.d";
 import StyledText from "../../components/StyledText";
 
-interface PlayerListState {
+type PlayerListState = {
     enteredName: string,
     players: Player[],
     host: boolean

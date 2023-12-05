@@ -2,6 +2,8 @@ import GameState, { Player } from "./gameState.d"
 
 export function createGameState(): GameState {
     return {
+        stateType: "game",
+        
         inGame: false,
 
         myName: null,

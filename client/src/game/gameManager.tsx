@@ -18,6 +18,10 @@ export function createGameManager(): GameManager {
         roomCode: null,
         playerId: null,
 
+        // state: {
+        //     stateType: "outsideLobby"
+        // },
+
         gameState : createGameState(),
 
         server : createServer(),

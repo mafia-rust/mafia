@@ -42,4 +42,19 @@
     margin: 0%;
     padding: 0%;
     background-color: #220000;
-} 
+}
+.header-menu .player-list{
+    background-color: #254230;
+}
+
+.header-menu .will{
+    background-color: #382138
+}
+
+.header-menu .graveyard{
+    background-color: #424242;
+}
+
+.header-menu .wiki{
+    background-color: #39352a;
+}

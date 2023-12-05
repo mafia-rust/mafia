@@ -1,9 +1,9 @@
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
-import GameState, { Phase, PhaseTimes, PlayerID, PlayerIndex, Verdict } from "./gameState.d";
+import GameState, { Phase, PhaseTimes, PlayerID, PlayerIndex, State, Verdict } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleOutline } from "./roleListState.d";
 
-export interface Server {
+export type Server = {
     ws: WebSocket | null,
 
     open(): Promise<void>;
@@ -14,10 +14,12 @@ export interface Server {
 export type StateEventType = ToClientPacket["type"] | "tick";
 export type StateListener = (type?: StateEventType) => void;
 
-export interface GameManager {
+export type GameManager = {
     roomCode: string | null,
     playerId: number | null,
     
+
+    // state: State,
     gameState: GameState,
 
     server: Server,

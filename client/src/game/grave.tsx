@@ -2,7 +2,7 @@ import { PlayerIndex } from "./gameState.d";
 import { Faction } from "./roleListState.d";
 import { Role } from "./roleState.d";
 
-export interface Grave {
+export type Grave = {
     playerIndex: PlayerIndex,
 
     role: GraveRole,

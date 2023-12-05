@@ -11,9 +11,9 @@ import SmallRoleSpecificMenu from "./RoleSpecificMenus/SmallRoleSpecificMenu";
 import Anchor from "../../Anchor";
 import StyledText from "../../../components/StyledText";
 
-interface PlayerListMenuProps {
+type PlayerListMenuProps = {
 }
-interface PlayerListMenuState {
+type PlayerListMenuState = {
     gameState: GameState,
     playerFilter: PlayerFilter
 }

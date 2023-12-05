@@ -9,7 +9,7 @@ import { StateListener } from "../../../game/gameManager.d";
 type FieldType = "will" | "notes" | "deathNote";
 type Fields = { [key in FieldType]: string };
 
-interface WillMenuState {
+type WillMenuState = {
     syncedFields : Fields
     localFields: Fields
 }

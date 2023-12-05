@@ -8,7 +8,7 @@ import ROLES from "../resources/roles.json";
 import { FACTIONS, Faction, FactionAlignment, RoleOutline, getAlignmentStringFromFactionAlignment, getAllFactionAlignments, getFactionAlignmentFromRoleOutline, getFactionFromFactionAlignment, getFactionFromRoleOutline } from "../game/roleListState.d";
 import { Role, getFactionAlignmentFromRole, getFactionFromRole } from "../game/roleState.d";
 
-interface RolePickerProps {
+type RolePickerProps = {
     roleOutline: RoleOutline,
     onChange: (value: RoleOutline) => void,
     disabled?: boolean,

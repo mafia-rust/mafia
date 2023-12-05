@@ -6,9 +6,9 @@ import GameState from "../../../game/gameState.d";
 import translate from "../../../game/lang";
 import WikiSearch from "../../../components/WikiSearch";
 
-interface WikiMenuProps {
+type WikiMenuProps = {
 }
-interface WikiMenuState {
+type WikiMenuState = {
     gameState: GameState,
 }
 

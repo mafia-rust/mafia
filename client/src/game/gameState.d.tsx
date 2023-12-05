@@ -3,7 +3,30 @@ import { ChatMessage } from "../components/ChatMessage";
 import { Role, RoleState } from "./roleState.d";
 import { RoleOutline } from "./roleListState.d";
 
-export default interface GameState {
+
+export type State = OutsideLobbyState | LobbyState | GameState;
+
+export type OutsideLobbyState = {
+    stateType: "outsideLobby"
+}
+
+export type LobbyState = {
+    stateType: "lobby"
+
+    roleList: RoleOutline[],
+    excludedRoles: RoleOutline[],
+    phaseTimes: PhaseTimes,
+
+    players: Map<PlayerID, LobbyPlayer>,
+}
+export type LobbyPlayer = {
+    name: string,
+    host: boolean,
+}
+
+type GameState = {
+    stateType: "game"
+
     inGame: boolean;
 
     myName: string | null,
@@ -32,13 +55,14 @@ export default interface GameState {
     excludedRoles: RoleOutline[],
     phaseTimes: PhaseTimes
 }
+export default GameState;
 
 export type PlayerIndex = number;
 export type PlayerID = number;
 export type Verdict = "innocent"|"guilty"|"abstain";
 export type Phase = "morning" | "discussion" | "voting" | "testimony" | "judgement" | "evening" | "night"
 
-export interface PhaseTimes {
+export type PhaseTimes = {
     "morning": number,
     "discussion": number,
     "voting": number,
@@ -54,7 +78,7 @@ export type Tag =
 | "executionerTarget"
 | "insane"
 
-export interface Player {
+export type Player = {
     name: string,
     index: number
     id: number,

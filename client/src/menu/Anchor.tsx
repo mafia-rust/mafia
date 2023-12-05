@@ -69,7 +69,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     }
 }
 
-interface Error {
+type Error = {
     title: string,
     body: string
 }

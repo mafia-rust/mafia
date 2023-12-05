@@ -6,7 +6,7 @@ import translate from "../../game/lang";
 import { RoleOutline } from "../../game/roleListState.d";
 import RolePicker from "../../components/RolePicker";
 
-interface RolePaneState {
+type RolePaneState = {
     roleList: RoleOutline[],
     host: boolean
 }

@@ -9,10 +9,10 @@ import ChatElement from "../../../components/ChatMessage";
 import { ContentTab } from "../GameScreen";
 import { HistoryPoller, HistoryQueue } from "../../../history";
 
-interface ChatMenuProps {
+type ChatMenuProps = {
 }
 
-interface ChatMenuState {
+type ChatMenuState = {
     gameState: GameState,
     chatField: string,
     filter: RegExp | null,
