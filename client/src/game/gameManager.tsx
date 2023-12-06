@@ -216,6 +216,8 @@ export function createGameManager(): GameManager {
         },
     
         tick(timePassedMs) {
+            if (!gameManager.gameState.ongoing) return;
+            
             const newTimeLeft = gameManager.gameState.timeLeftMs - timePassedMs;
             if (Math.floor(newTimeLeft / 1000) < Math.floor(gameManager.gameState.timeLeftMs / 1000)) {
                 gameManager.invokeStateListeners("tick");

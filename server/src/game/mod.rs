@@ -42,6 +42,8 @@ pub struct Game {
     pub teams: Teams,
 
     phase_machine : PhaseStateMachine,
+
+    pub ongoing: bool
 }
 
 impl Game {
@@ -77,6 +79,7 @@ impl Game {
         drop(roles); // Ensure we don't use the order of roles anywhere
 
         let mut game = Self{
+            ongoing: true,
             players: players.into_boxed_slice(),
             graves: Vec::new(),
             teams: Teams::default(),
@@ -122,7 +125,7 @@ impl Game {
         (guilty, innocent)
     }
 
-    pub fn game_is_over(&self)->bool{
+    pub fn winner(&self) -> Option<EndGameCondition> {
         let mut winning_team = None;
 
         for player_ref in PlayerReference::all_players(self){
@@ -133,13 +136,14 @@ impl Game {
             if let Some(ref winning_team) = winning_team{
                 //if there are two different teams alive then nobody won
                 if *winning_team != egc{
-                    return false;
+                    return None;
                 }
-            }else{
+            } else {
                 winning_team = Some(egc.clone());
             }
         }
-        return true;
+        
+        winning_team
     }
 
     pub fn current_phase(&self) -> &PhaseState {
@@ -151,15 +155,23 @@ impl Game {
     }
 
     pub fn tick(&mut self, time_passed: Duration){
-        if self.game_is_over() {
+        for player_ref in PlayerReference::all_players(self){
+            player_ref.tick(self, time_passed)
+        }
+
+        if !self.ongoing { return }
+
+        if let Some(_winner) = self.winner() {
             self.add_message_to_chat_group(ChatGroup::All, ChatMessage::GameOver);
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::Draw });
-
+            self.ongoing = false;
+            return;
         }
 
         if self.phase_machine.day_number == u8::MAX {
+            self.add_message_to_chat_group(ChatGroup::All, ChatMessage::GameOver);
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
-            // TODO, clean up the lobby. Stop the ticking
+            self.ongoing = false;
             return;
         }
 
@@ -169,10 +181,6 @@ impl Game {
             self.start_phase(new_phase);
         }
 
-        for player_ref in PlayerReference::all_players(self){
-            player_ref.tick(self, time_passed)
-        }
-        
         self.phase_machine.time_remaining = self.phase_machine.time_remaining.saturating_sub(time_passed);
     }
 
@@ -260,6 +268,7 @@ pub mod test {
         drop(roles);
 
         let mut game = Game{
+            ongoing: true,
             players: players.into_boxed_slice(),
             graves: Vec::new(),
             teams: Teams::default(),

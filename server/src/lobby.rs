@@ -387,7 +387,7 @@ impl Lobby {
             player.1.send(packet.clone());
         }
     }
-    #[allow(unused)]
+    
     fn send_players_game(game: &mut Game, players: &HashMap<PlayerID, GamePlayer>){
 
         let mut players: Vec<_> = players.iter().collect();

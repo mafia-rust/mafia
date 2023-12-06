@@ -189,6 +189,7 @@ export default function messageListener(packet: ToClientPacket){
             GAME_MANAGER.gameState.graves.push(packet.grave);
         break;
         case "gameOver":
+            GAME_MANAGER.gameState.ongoing = false;
             switch(packet.reason) {
                 case "ReachedMaxDay":
                     // alert("Game Over: Reached the maximum day!");

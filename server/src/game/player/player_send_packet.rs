@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use crate::{game::{Game, available_buttons::AvailableButtons, phase::PhaseState}, packet::ToClientPacket, websocket_connections::connection::ClientSender};
+use crate::{game::{Game, available_buttons::AvailableButtons, phase::PhaseState}, packet::{ToClientPacket, GameOverReason}, websocket_connections::connection::ClientSender};
 
 use super::{PlayerReference, ClientConnection, DISCONNECT_TIMER_SECS};
 
@@ -54,6 +54,10 @@ impl PlayerReference{
                 alive: PlayerReference::all_players(game).into_iter().map(|p|p.alive(game)).collect()
             }
         ]);
+
+        if !game.ongoing {
+            self.send_packet(game, ToClientPacket::GameOver { reason: GameOverReason::Draw })
+        }
 
         if let PhaseState::Testimony { player_on_trial, .. }
             | PhaseState::Judgement { player_on_trial, .. }

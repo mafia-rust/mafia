@@ -39,6 +39,8 @@ export function createGameState(): GameState {
             evening: 7, 
             night: 37,
         },
+
+        ongoing: true,
     }
 }
 

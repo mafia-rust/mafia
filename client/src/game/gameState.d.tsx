@@ -54,6 +54,8 @@ type GameState = {
     roleList: RoleOutline[],
     excludedRoles: RoleOutline[],
     phaseTimes: PhaseTimes
+
+    ongoing: boolean
 }
 export default GameState;
 
