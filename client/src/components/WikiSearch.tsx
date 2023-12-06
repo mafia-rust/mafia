@@ -37,7 +37,7 @@ const PAGES: WikiPage[] = Object.keys(ROLES).map(role => `role/${role}`)
 export default class WikiSearch extends React.Component<WikiSearchProps, WikiSearchState> {
     
     private static activeWikis: WikiSearch[] = [];
-    history: HistoryQueue<WikiSearchState> = new HistoryQueue(10);
+    history: HistoryQueue<WikiSearchState> = new HistoryQueue(20);
 
     constructor(props: WikiSearchProps) {
         super(props);

@@ -50,7 +50,7 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
                     </section>}
                 </div>
                 <div>
-                    {Anchor.isMobile() && <h1>{translate("menu.lobby.gameSettings")}</h1>}
+                    {Anchor.isMobile() && <h1>{translate("menu.lobby.settings")}</h1>}
                     <LobbyPhaseTimePane/>
                     <LobbyRolePane/>
                     <LobbyExcludedRoles/>

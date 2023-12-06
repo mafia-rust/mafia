@@ -137,7 +137,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
 
     render(){
         const timerStyle = {
-            paddingTop: '100%',
+            height: "100%",
             backgroundColor: 'red',
             width: `${(this.state.gameState.timeLeftMs) * (100/(60*1000))}%`,
             margin: '0 auto', // Center the timer horizontally

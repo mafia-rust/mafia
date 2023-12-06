@@ -21,7 +21,6 @@
 
 
 .player-list-menu .player{
-    width: 100%;
     display: flex;
     flex-direction: column;
     text-align: left;

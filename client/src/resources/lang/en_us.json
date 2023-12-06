@@ -7,7 +7,7 @@
     "menu.start.button.login": "Log in",
     "menu.start.button.logout": "Log out",
 
-    "menu.join.title": "Join Game",
+    "menu.join.title": "Join",
     "menu.join.button.join": "Join Lobby",
     "menu.join.field.roomCode": "Room code",
     "menu.join.field.name": "Name",
@@ -16,7 +16,7 @@
     "menu.button.close": "Close",
 
     "menu.lobby.title": "Lobby \\0",
-    "menu.lobby.button.start": "Start Game",
+    "menu.lobby.button.start": "Start",
     "menu.lobby.field.namePlaceholder": "Enter name",
     "menu.lobby.button.setName": "Set Name",
     "menu.lobby.button.setTimeSettings": "Set Time Settings",
@@ -24,7 +24,7 @@
     "menu.lobby.roleList": "Role List:",
     "menu.lobby.excludedRoles": "Exclusions:",
     "menu.lobby.timeSettings": "Times:",
-    "menu.lobby.gameSettings": "Game Settings:",
+    "menu.lobby.settings": "Settings:",
     "menu.lobby.kick": "Kick",
 
     "menu.excludedRoles.exclude": "Exclude",
@@ -532,8 +532,8 @@
     "wiki.entry.role.executioner.attributes":"* After you win you will commit suicide\n* Your target will always be a townie, but never town power, or town killing",
     
     "wiki.entry.role.doomsayer.title": "Doomsayer",
-    "wiki.entry.role.doomsayer.abilities":"* Guess the role of three living players in one night, killing them and winning the game",
-    "wiki.entry.role.doomsayer.attributes":"* When you win, you will commit suicide using an unstoppable attack\n* You have to guess the exact role of townies, but just the faction of all other roles\n* You can not try to guess town investigative roles\n* If there are not enough players left for you to guess and win the game, you will convert to a jester\n* You do not visit\n* Your attack is unstoppable",
+    "wiki.entry.role.doomsayer.abilities":"* Guess the role of three living players in one night, killing them and winning",
+    "wiki.entry.role.doomsayer.attributes":"* When you win, you will commit suicide using an unstoppable attack\n* You have to guess the exact role of townies, but just the faction of all other roles\n* You can not try to guess town investigative roles\n* If there are not enough players left for you to guess and win, you will convert to a jester\n* You do not visit\n* Your attack is unstoppable",
 
     "wiki.entry.role.vampire.title": "Vampire",
     "wiki.entry.role.vampire.abilities":"* Bite a player to convert them to a vampire",
