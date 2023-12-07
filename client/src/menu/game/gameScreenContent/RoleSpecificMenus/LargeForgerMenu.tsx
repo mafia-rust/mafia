@@ -12,13 +12,15 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
     constructor(props: LargeForgerMenuState) {
         super(props);
 
-        this.state = {
-            gameState : GAME_MANAGER.gameState,
-        };
+        if(GAME_MANAGER.state.stateType === "game")
+            this.state = {
+                gameState : GAME_MANAGER.state,
+            };
         this.listener = ()=>{
-            this.setState({
-                gameState: GAME_MANAGER.gameState
-            })
+            if(GAME_MANAGER.state.stateType === "game")
+                this.setState({
+                    gameState: GAME_MANAGER.state
+                })
         };  
     }
     componentDidMount() {

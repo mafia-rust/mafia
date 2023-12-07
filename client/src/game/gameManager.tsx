@@ -1,4 +1,3 @@
-import { createGameState } from "./gameState";
 import Anchor from "./../menu/Anchor";
 import StartMenu from "./../menu/main/StartMenu";
 import GAME_MANAGER from "./../index";
@@ -18,11 +17,9 @@ export function createGameManager(): GameManager {
         roomCode: null,
         playerId: null,
 
-        // state: {
-        //     stateType: "outsideLobby"
-        // },
-
-        gameState : createGameState(),
+        state: {
+            stateType: "outsideLobby"
+        },
 
         server : createServer(),
 
@@ -54,7 +51,7 @@ export function createGameManager(): GameManager {
         },
 
         leaveGame() {
-            if (this.gameState.inGame) {
+            if (this.state.stateType === "game") {
                 this.server.sendPacket({type: "leave"});
             }
             // Set URL to main menu and refresh
@@ -216,16 +213,21 @@ export function createGameManager(): GameManager {
         },
     
         tick(timePassedMs) {
-            if (!gameManager.gameState.ongoing) return;
+            if (gameManager.state.stateType === "game"){
+                if (!gameManager.state.still_ticking) return;
+
+                const newTimeLeft = gameManager.state.timeLeftMs - timePassedMs;
+                if (Math.floor(newTimeLeft / 1000) < Math.floor(gameManager.state.timeLeftMs / 1000)) {
+                    gameManager.invokeStateListeners("tick");
+                }
+                gameManager.state.timeLeftMs = newTimeLeft;
+                if (gameManager.state.timeLeftMs < 0) {
+                    gameManager.state.timeLeftMs = 0;
+                }
+            }
             
-            const newTimeLeft = gameManager.gameState.timeLeftMs - timePassedMs;
-            if (Math.floor(newTimeLeft / 1000) < Math.floor(gameManager.gameState.timeLeftMs / 1000)) {
-                gameManager.invokeStateListeners("tick");
-            }
-            gameManager.gameState.timeLeftMs = newTimeLeft;
-            if (gameManager.gameState.timeLeftMs < 0) {
-                gameManager.gameState.timeLeftMs = 0;
-            }
+            
+            
         },
     }
     return gameManager;

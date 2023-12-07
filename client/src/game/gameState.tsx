@@ -1,10 +1,32 @@
-import GameState, { Player } from "./gameState.d"
+import GameState, { LobbyState, Player } from "./gameState.d"
+
+
+export function createLobbyState(): LobbyState {
+    return {
+        stateType: "lobby",
+
+        myName: null,
+        host: false,
+
+        roleList: [],
+        excludedRoles: [],
+        phaseTimes: {
+            morning: 5,
+            discussion: 45, 
+            voting: 30, 
+            testimony: 20, 
+            judgement: 20, 
+            evening: 7, 
+            night: 37,
+        },
+
+        players: [],//new Map<PlayerID, LobbyPlayer>(),
+    }
+}
 
 export function createGameState(): GameState {
     return {
         stateType: "game",
-        
-        inGame: false,
 
         myName: null,
         myIndex: null,
@@ -40,7 +62,7 @@ export function createGameState(): GameState {
             night: 37,
         },
 
-        ongoing: true,
+        still_ticking: true,
     }
 }
 

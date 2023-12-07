@@ -13,11 +13,14 @@ export type OutsideLobbyState = {
 export type LobbyState = {
     stateType: "lobby"
 
+    myName: string | null,
+    host: boolean,
+
     roleList: RoleOutline[],
     excludedRoles: RoleOutline[],
     phaseTimes: PhaseTimes,
 
-    players: Map<PlayerID, LobbyPlayer>,
+    players: Player[]//Map<PlayerID, LobbyPlayer>,
 }
 export type LobbyPlayer = {
     name: string,
@@ -26,8 +29,6 @@ export type LobbyPlayer = {
 
 type GameState = {
     stateType: "game"
-
-    inGame: boolean;
 
     myName: string | null,
     myIndex: PlayerIndex | null,
@@ -55,7 +56,7 @@ type GameState = {
     excludedRoles: RoleOutline[],
     phaseTimes: PhaseTimes
 
-    ongoing: boolean
+    still_ticking: boolean
 }
 export default GameState;
 

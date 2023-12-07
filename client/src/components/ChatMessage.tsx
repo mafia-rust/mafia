@@ -25,11 +25,13 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
         }
         
         if (
-            find(GAME_MANAGER.gameState.myName ?? "").test(message.text) ||
+            GAME_MANAGER.state.stateType === "game" &&
+            (find(GAME_MANAGER.state.myName ?? "").test(message.text) ||
             (
-                GAME_MANAGER.gameState.myIndex !== null &&
-                find("" + (GAME_MANAGER.gameState.myIndex + 1)).test(message.text)
-            )
+                GAME_MANAGER.state.stateType === "game" &&
+                GAME_MANAGER.state.myIndex !== null &&
+                find("" + (GAME_MANAGER.state.myIndex + 1)).test(message.text)
+            ))
             
         ) {
             style += " mention";
@@ -54,12 +56,26 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
     return <StyledText className={"chat-message " + style}>{text}</StyledText>;
 }
 
+function playerListToString(playerList: PlayerIndex[]): string {
+
+    return playerList.map((playerIndex) => {
+        if(GAME_MANAGER.state.stateType === "game")
+            return GAME_MANAGER.state.players[playerIndex].toString();
+        else
+            return "ERROR: outside game"
+    }).join(", ");
+}
+
 export function translateChatMessage(message: ChatMessage): string {
+    if(GAME_MANAGER.state.stateType !== "game"){
+        return "ERROR: outside game"
+    }
+
     switch (message.type) {
         case "normal":
             if(message.messageSender.type === "player"){
                 return translate("chatMessage.normal",
-                    GAME_MANAGER.gameState.players[message.messageSender.player].toString(), 
+                    GAME_MANAGER.state.players[message.messageSender.player].toString(), 
                     message.text
                 );
             } else {
@@ -70,14 +86,14 @@ export function translateChatMessage(message: ChatMessage): string {
             }
         case "whisper":
             return translate("chatMessage.whisper", 
-                GAME_MANAGER.gameState.players[message.fromPlayerIndex].toString(),
-                GAME_MANAGER.gameState.players[message.toPlayerIndex].toString(),
+                GAME_MANAGER.state.players[message.fromPlayerIndex].toString(),
+                GAME_MANAGER.state.players[message.toPlayerIndex].toString(),
                 message.text
             );
         case "broadcastWhisper":
             return translate("chatMessage.broadcastWhisper",
-                GAME_MANAGER.gameState.players[message.whisperer].toString(),
-                GAME_MANAGER.gameState.players[message.whisperee].toString(),
+                GAME_MANAGER.state.players[message.whisperer].toString(),
+                GAME_MANAGER.state.players[message.whisperee].toString(),
             );
         case "roleAssignment":
             return translate("chatMessage.roleAssignment", 
@@ -109,7 +125,7 @@ export function translateChatMessage(message: ChatMessage): string {
             }
 
             return translate(message.grave.will.length === 0 ? "chatMessage.playerDied.noWill": "chatMessage.playerDied",
-                GAME_MANAGER.gameState.players[message.grave.playerIndex].toString(),
+                GAME_MANAGER.state.players[message.grave.playerIndex].toString(),
                 graveRoleString,
                 deathCause
             );
@@ -128,30 +144,30 @@ export function translateChatMessage(message: ChatMessage): string {
         case "voted":
             if (message.votee !== null) {
                 return translate("chatMessage.voted",
-                    GAME_MANAGER.gameState.players[message.voter].toString(),
-                    GAME_MANAGER.gameState.players[message.votee].toString(),
+                    GAME_MANAGER.state.players[message.voter].toString(),
+                    GAME_MANAGER.state.players[message.votee].toString(),
                 );
             } else {
                 return translate("chatMessage.voted.cleared",
-                    GAME_MANAGER.gameState.players[message.voter].toString(),
+                    GAME_MANAGER.state.players[message.voter].toString(),
                 );
             }
         case "playerOnTrial":
             return translate("chatMessage.playerOnTrial",
-                GAME_MANAGER.gameState.players[message.playerIndex].toString(),
+                GAME_MANAGER.state.players[message.playerIndex].toString(),
             );
         case "judgementVote":
             return translate("chatMessage.judgementVote",
-                GAME_MANAGER.gameState.players[message.voterPlayerIndex].toString(),
+                GAME_MANAGER.state.players[message.voterPlayerIndex].toString(),
             );
         case "judgementVerdict":
             return translate("chatMessage.judgementVerdict",
-                GAME_MANAGER.gameState.players[message.voterPlayerIndex].toString(),
+                GAME_MANAGER.state.players[message.voterPlayerIndex].toString(),
                 translate("verdict."+message.verdict.toLowerCase())
             );
         case "trialVerdict":
             return translate("chatMessage.trialVerdict",
-                GAME_MANAGER.gameState.players[message.playerOnTrial].toString(),
+                GAME_MANAGER.state.players[message.playerOnTrial].toString(),
                 message.innocent>=message.guilty?translate("verdict.innocent"):translate("verdict.guilty"),
                 message.innocent,
                 message.guilty
@@ -159,35 +175,32 @@ export function translateChatMessage(message: ChatMessage): string {
         case "targeted":
             if (message.targets.length > 0) {
                 return translate("chatMessage.targeted",
-                    GAME_MANAGER.gameState.players[message.targeter].toString(),
-                    message.targets.map((target) => GAME_MANAGER.gameState.players[target].toString()).join(", ")
-                );
+                    GAME_MANAGER.state.players[message.targeter].toString(),
+                    playerListToString(message.targets));
             } else {
                 return translate("chatMessage.targeted.cleared",
-                    GAME_MANAGER.gameState.players[message.targeter].toString(),
+                    GAME_MANAGER.state.players[message.targeter].toString(),
                 );
             }
         case "mayorRevealed":
             return translate("chatMessage.mayorRevealed",
-                GAME_MANAGER.gameState.players[message.playerIndex].toString(),
+                GAME_MANAGER.state.players[message.playerIndex].toString(),
             );
         case "jailedTarget":
             return translate("chatMessage.jailedTarget",
-                GAME_MANAGER.gameState.players[message.playerIndex].toString(),
+                GAME_MANAGER.state.players[message.playerIndex].toString(),
             );
         case "jailedSomeone":
             return translate("chatMessage.jailedSomeone",
-                GAME_MANAGER.gameState.players[message.playerIndex].toString()
+                GAME_MANAGER.state.players[message.playerIndex].toString()
             );
         case "deputyKilled":
             return translate("chatMessage.deputyKilled",
-                GAME_MANAGER.gameState.players[message.shotIndex].toString()
+                GAME_MANAGER.state.players[message.shotIndex].toString()
             );
         case "jailorDecideExecute":
             if (message.targets.length > 0) {
-                return translate("chatMessage.jailorDecideExecute",
-                    message.targets.map((target) => GAME_MANAGER.gameState.players[target].toString()).join(", ")
-                );
+                return translate("chatMessage.jailorDecideExecute", playerListToString(message.targets));
             } else {
                 return translate("chatMessage.jailorDecideExecute.nobody");
             }
@@ -200,21 +213,13 @@ export function translateChatMessage(message: ChatMessage): string {
             if (message.players.length === 0) {
                 return translate("chatMessage.lookoutResult.nobody");
             } else {
-                return translate("chatMessage.lookoutResult", 
-                    message.players.map(playerIndex => 
-                        GAME_MANAGER.gameState.players[playerIndex].toString()
-                    ).join(", ")
-                );
+                return translate("chatMessage.lookoutResult", playerListToString(message.players));
             }
         case "spyMafiaVisit":
             if (message.players.length === 0) {
                 return translate("chatMessage.spyMafiaVisit.nobody");
             } else {
-                return translate("chatMessage.spyMafiaVisit", 
-                    message.players.map(playerIndex => 
-                        GAME_MANAGER.gameState.players[playerIndex].toString()
-                    ).join(", ")
-                );
+                return translate("chatMessage.spyMafiaVisit", playerListToString(message.players));
             }
         case "spyBug":
             return translate("chatMessage.spyBug."+message.bug);
@@ -222,22 +227,14 @@ export function translateChatMessage(message: ChatMessage): string {
             if (message.players.length === 0) {
                 return translate("chatMessage.trackerResult.nobody");
             } else {
-                return translate("chatMessage.trackerResult", 
-                    message.players.map(playerIndex => 
-                        GAME_MANAGER.gameState.players[playerIndex].toString()
-                    ).join(", ")
-                );
+                return translate("chatMessage.trackerResult", playerListToString(message.players));
             }
         case "seerResult":
             return translate("chatMessage.seerResult." + (message.enemies ? "enemies" : "friends"));
         case "psychicEvil":
-            return translate("chatMessage.psychicEvil",message.players.map(playerIndex => 
-                GAME_MANAGER.gameState.players[playerIndex].toString()
-            ).join(", "));
+            return translate("chatMessage.psychicEvil", playerListToString(message.players));
         case "psychicGood":
-            return translate("chatMessage.psychicGood",message.players.map(playerIndex => 
-                GAME_MANAGER.gameState.players[playerIndex].toString()
-            ).join(", "));
+            return translate("chatMessage.psychicGood", playerListToString(message.players));
         case "playerRoleAndWill":
             return translate("chatMessage.playersRoleAndWill", 
                 translate("role."+message.role+".name"), 
@@ -251,23 +248,19 @@ export function translateChatMessage(message: ChatMessage): string {
                 translate("chatMessage.consigliereResult.role", translate("role."+message.role+".name")),
                 visitedNobody 
                     ? translate("chatMessage.consigliereResult.visited.nobody") 
-                    : translate("chatMessage.consigliereResult.visited",
-                        message.visited.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", "), 
-                    ),
+                    : translate("chatMessage.consigliereResult.visited", playerListToString(message.visited)),
                 visitedByNobody 
                     ? translate("chatMessage.consigliereResult.visitedBy.nobody") 
-                    : translate("chatMessage.consigliereResult.visitedBy",
-                        message.visitedBy.map((playerIndex) => GAME_MANAGER.gameState.players[playerIndex].toString()).join(", "), 
-                    )
+                    : translate("chatMessage.consigliereResult.visitedBy", playerListToString(message.visitedBy))
             );
         case "silenced":
             return translate("chatMessage.silenced");
         case "mediumSeance":
-            return translate("chatMessage.mediumSeance", GAME_MANAGER.gameState.players[message.player].toString());
+            return translate("chatMessage.mediumSeance", GAME_MANAGER.state.players[message.player].toString());
         case "witchedYou":
             return translate("chatMessage.witchedYou" + (message.immune ? ".immune" : ""));
         case "playerWithNecronomicon":
-            return translate("chatMessage.playerWithNecronomicon", GAME_MANAGER.gameState.players[message.playerIndex].toString());
+            return translate("chatMessage.playerWithNecronomicon", GAME_MANAGER.state.players[message.playerIndex].toString());
         case "deputyShotSomeoneSurvived":
         case "deathCollectedSouls":
         case "arsonistCleanedSelf":

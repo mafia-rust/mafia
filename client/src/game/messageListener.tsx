@@ -1,5 +1,5 @@
 
-import { createPlayer } from "./gameState";
+import { createGameState, createLobbyState, createPlayer } from "./gameState";
 import Anchor from "./../menu/Anchor";
 import LobbyMenu from "./../menu/lobby/LobbyMenu";
 import StartMenu from "./../menu/main/StartMenu";
@@ -15,12 +15,13 @@ export default function messageListener(packet: ToClientPacket){
     console.log(JSON.stringify(packet, null, 2));
     switch(packet.type) {
         case "acceptJoin":
-            GAME_MANAGER.gameState.inGame = packet.inGame;
             GAME_MANAGER.playerId = packet.playerId;
             if(packet.inGame){
                 Anchor.setContent(GameScreen.createDefault());
+                GAME_MANAGER.state = createGameState();
             }else{
                 Anchor.setContent(<LobbyMenu/>);
+                GAME_MANAGER.state = createLobbyState();
             }
         break;
         case "rejectJoin":
@@ -63,30 +64,48 @@ export default function messageListener(packet: ToClientPacket){
         case "acceptHost":
             GAME_MANAGER.roomCode = packet.roomCode.toString(18);
             GAME_MANAGER.playerId = packet.playerId;
-            GAME_MANAGER.gameState.host = true;
+            if(GAME_MANAGER.state.stateType !== "outsideLobby")
+                GAME_MANAGER.state.host = true;
             Anchor.setContent(<LobbyMenu/>);
         break;
         /*
         In Lobby/Game 
         */
         case "yourName":
-            GAME_MANAGER.gameState.myName = packet.name;
+            if(GAME_MANAGER.state.stateType !== "outsideLobby")
+                GAME_MANAGER.state.myName = packet.name;
         break;
         case "yourPlayerIndex":
-            GAME_MANAGER.gameState.myIndex = packet.playerIndex;
+            if(GAME_MANAGER.state.stateType === "game")
+                GAME_MANAGER.state.myIndex = packet.playerIndex;
         break;
         case "players":
-            GAME_MANAGER.gameState.players = [];
-            for(let i = 0; i < packet.players.length; i++){
-                if (GAME_MANAGER.gameState.players.length > i) {
-                    GAME_MANAGER.gameState.players[i].name = packet.players[i][1];
-                    GAME_MANAGER.gameState.players[i].id = packet.players[i][0];
-                } else {
-                    GAME_MANAGER.gameState.players.push(createPlayer(packet.players[i][1], i, packet.players[i][0]));
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////// Split into two different player messages, or find out how to understand both
+            if(GAME_MANAGER.state.stateType !== "outsideLobby"){
+                GAME_MANAGER.state.players = [];
+                for(let i = 0; i < packet.players.length; i++){
+                    if (GAME_MANAGER.state.players.length > i) {
+                        GAME_MANAGER.state.players[i].name = packet.players[i][1];
+                        GAME_MANAGER.state.players[i].id = packet.players[i][0];
+                    } else {
+                        GAME_MANAGER.state.players.push(createPlayer(packet.players[i][1], i, packet.players[i][0]));
+                    }
                 }
             }
+                
         break;
         case "kickPlayer":
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //COMPLETLY BROKEN
             if(packet.playerId === GAME_MANAGER.playerId){
                 GAME_MANAGER.leaveGame();
             }
@@ -94,113 +113,145 @@ export default function messageListener(packet: ToClientPacket){
             // Anchor.setContent(<StartMenu/>)
         break;
         case "startGame":
-            GAME_MANAGER.gameState.inGame = true;
+            GAME_MANAGER.state = createGameState();
             Anchor.setContent(GameScreen.createDefault());
         break;
         case "roleList":
             //list of role list entriy
-            GAME_MANAGER.gameState.roleList = packet.roleList;
+            if(GAME_MANAGER.state.stateType !== "outsideLobby")
+                GAME_MANAGER.state.roleList = packet.roleList;
         break;
         case "roleOutline":
             //role list entriy
-            GAME_MANAGER.gameState.roleList[packet.index] = packet.roleOutline;
+            if(GAME_MANAGER.state.stateType !== "outsideLobby")
+                GAME_MANAGER.state.roleList[packet.index] = packet.roleOutline;
         break;
         case "phaseTime":
-            GAME_MANAGER.gameState.phaseTimes[packet.phase as keyof typeof GAME_MANAGER.gameState.phaseTimes] = packet.time;
+            if(GAME_MANAGER.state.stateType !== "outsideLobby")
+                GAME_MANAGER.state.phaseTimes[packet.phase as keyof typeof GAME_MANAGER.state.phaseTimes] = packet.time;
         break;
         case "phaseTimes":
-            GAME_MANAGER.gameState.phaseTimes = packet.phaseTimeSettings;
+            if(GAME_MANAGER.state.stateType !== "outsideLobby")
+                GAME_MANAGER.state.phaseTimes = packet.phaseTimeSettings;
         break;
         case "excludedRoles":
-            GAME_MANAGER.gameState.excludedRoles = packet.roles;
+            if(GAME_MANAGER.state.stateType !== "outsideLobby")
+                GAME_MANAGER.state.excludedRoles = packet.roles;
         break;
         case "youAreHost":
-            GAME_MANAGER.gameState.host = true;
-            Anchor.pushInfo("You are host", "The previous host left and you have become the host.")
+            if(GAME_MANAGER.state.stateType !== "outsideLobby"){
+                GAME_MANAGER.state.host = true;
+                Anchor.pushInfo("You are host", "The previous host left and you have become the host.")
+            }
         break;
         case "phase":
-            GAME_MANAGER.gameState.phase = packet.phase;
-            GAME_MANAGER.gameState.dayNumber = packet.dayNumber;
-            GAME_MANAGER.gameState.timeLeftMs = packet.secondsLeft * 1000;
+            if(GAME_MANAGER.state.stateType === "game"){
+                GAME_MANAGER.state.phase = packet.phase;
+                GAME_MANAGER.state.dayNumber = packet.dayNumber;
+                GAME_MANAGER.state.timeLeftMs = packet.secondsLeft * 1000;
+            }
         break;
         case "playerOnTrial":
-            GAME_MANAGER.gameState.playerOnTrial = packet.playerIndex;
+            if(GAME_MANAGER.state.stateType === "game")
+                GAME_MANAGER.state.playerOnTrial = packet.playerIndex;
         break;
         case "playerAlive":
-            for(let i = 0; i < GAME_MANAGER.gameState.players.length && i < packet.alive.length; i++){
-                GAME_MANAGER.gameState.players[i].alive = packet.alive[i];
+            if(GAME_MANAGER.state.stateType === "game"){
+                for(let i = 0; i < GAME_MANAGER.state.players.length && i < packet.alive.length; i++){
+                    GAME_MANAGER.state.players[i].alive = packet.alive[i];
+                }
             }
         break;
         case "playerVotes":
-            for(let i = 0; i < GAME_MANAGER.gameState.players.length; i++){
-                GAME_MANAGER.gameState.players[i].numVoted = 0;
-            }
-            for(let [playerIndex, numVoted] of Object.entries(packet.votesForPlayer)){
-                GAME_MANAGER.gameState.players[Number.parseInt(playerIndex)].numVoted = numVoted;
+            if(GAME_MANAGER.state.stateType === "game"){
+                for(let i = 0; i < GAME_MANAGER.state.players.length; i++){
+                    GAME_MANAGER.state.players[i].numVoted = 0;
+                }
+                for(let [playerIndex, numVoted] of Object.entries(packet.votesForPlayer)){
+                    GAME_MANAGER.state.players[Number.parseInt(playerIndex)].numVoted = numVoted;
+                }
             }
         break;
         case "yourButtons":
-            for(let i = 0; i < GAME_MANAGER.gameState.players.length && i < packet.buttons.length; i++){
-                GAME_MANAGER.gameState.players[i].buttons = packet.buttons[i];
+            if(GAME_MANAGER.state.stateType === "game"){
+                for(let i = 0; i < GAME_MANAGER.state.players.length && i < packet.buttons.length; i++){
+                    GAME_MANAGER.state.players[i].buttons = packet.buttons[i];
+                }
             }
         break;
         case "yourRoleLabels":
-            for (const [key, value] of Object.entries(packet.roleLabels)) { 
-                if(
-                    GAME_MANAGER.gameState.players !== undefined && 
-                    GAME_MANAGER.gameState.players[Number.parseInt(key)] !== undefined
-                )
-                    GAME_MANAGER.gameState.players[Number.parseInt(key)].roleLabel = value as Role;
+            if(GAME_MANAGER.state.stateType === "game"){
+                for (const [key, value] of Object.entries(packet.roleLabels)) { 
+                    if(
+                        GAME_MANAGER.state.players !== undefined && 
+                        GAME_MANAGER.state.players[Number.parseInt(key)] !== undefined
+                    )
+                        GAME_MANAGER.state.players[Number.parseInt(key)].roleLabel = value as Role;
+                }
             }
         break;
         case "yourPlayerTags":
-            for (const [key, value] of Object.entries(packet.playerTags)) { 
-                GAME_MANAGER.gameState.players[Number.parseInt(key)].playerTags = value as Tag[];
+            if(GAME_MANAGER.state.stateType === "game"){
+                for (const [key, value] of Object.entries(packet.playerTags)) { 
+                    GAME_MANAGER.state.players[Number.parseInt(key)].playerTags = value as Tag[];
+                }
             }
         break;
         case "yourWill":
-            GAME_MANAGER.gameState.will = packet.will;
+            if(GAME_MANAGER.state.stateType === "game")
+                GAME_MANAGER.state.will = packet.will;
         break;
         case "yourNotes":
-            GAME_MANAGER.gameState.notes = packet.notes;
+            if(GAME_MANAGER.state.stateType === "game")
+            GAME_MANAGER.state.notes = packet.notes;
         break;
         case "yourDeathNote":
-            GAME_MANAGER.gameState.deathNote = packet.deathNote ?? "";
+            if(GAME_MANAGER.state.stateType === "game")
+                GAME_MANAGER.state.deathNote = packet.deathNote ?? "";
         break;
         case "yourRoleState":
-            if(GAME_MANAGER.gameState.roleState?.role!== packet.roleState.role){
-                GameScreen.instance?.closeMenu(ContentMenus.RoleSpecificMenu);
+            if(GAME_MANAGER.state.stateType === "game"){
+                if(GAME_MANAGER.state.roleState?.role!== packet.roleState.role){
+                    GameScreen.instance?.closeMenu(ContentMenus.RoleSpecificMenu);
+                }
+                GAME_MANAGER.state.roleState = packet.roleState;
             }
-            GAME_MANAGER.gameState.roleState = packet.roleState;
         break;
         case "yourTarget":
-            GAME_MANAGER.gameState.targets = packet.playerIndices;
+            if(GAME_MANAGER.state.stateType === "game")
+                GAME_MANAGER.state.targets = packet.playerIndices;
         break;
         case "yourVoting":
-            GAME_MANAGER.gameState.voted = packet.playerIndex;
+            if(GAME_MANAGER.state.stateType === "game")
+                GAME_MANAGER.state.voted = packet.playerIndex;
         break;
         case "yourJudgement":
-            GAME_MANAGER.gameState.judgement = packet.verdict;
+            if(GAME_MANAGER.state.stateType === "game")
+                GAME_MANAGER.state.judgement = packet.verdict;
         break;
         case "addChatMessages":
-            GAME_MANAGER.gameState.chatMessages = GAME_MANAGER.gameState.chatMessages.concat(packet.chatMessages);
+            if(GAME_MANAGER.state.stateType === "game")
+                GAME_MANAGER.state.chatMessages = GAME_MANAGER.state.chatMessages.concat(packet.chatMessages);
         break;
         case "addGrave":
-            GAME_MANAGER.gameState.graves.push(packet.grave);
+            if(GAME_MANAGER.state.stateType === "game")
+                GAME_MANAGER.state.graves.push(packet.grave);
         break;
         case "gameOver":
-            GAME_MANAGER.gameState.ongoing = false;
-            switch(packet.reason) {
-                case "ReachedMaxDay":
-                    // alert("Game Over: Reached the maximum day!");
-                    console.log("incoming message response not implemented " + packet.type + ": " + packet.reason);
-                    console.log(packet);
-                break;
-                default:
-                    // alert("Game ended for an unknown reason!");
-                    console.log("incoming message response not implemented " + packet.type + ": " + packet.reason);
-                    console.log(packet);
-                break;
+            if(GAME_MANAGER.state.stateType === "game"){
+                GAME_MANAGER.state.still_ticking = false;
+                switch(packet.reason) {
+                    case "ReachedMaxDay":
+                        // alert("Game Over: Reached the maximum day!");
+                        console.log("incoming message response not implemented " + packet.type + ": " + packet.reason);
+                        console.log(packet);
+                    break;
+                    default:
+                        // alert("Game ended for an unknown reason!");
+                        console.log("incoming message response not implemented " + packet.type + ": " + packet.reason);
+                        console.log(packet);
+                    break;
+                }
             }
         break;
         default:

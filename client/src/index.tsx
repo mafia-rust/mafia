@@ -31,7 +31,7 @@ function route(url: Location) {
     const roomCode = new URLSearchParams(url.search).get("code");
 
     if (roomCode !== null) {
-        GAME_MANAGER.gameState = createGameState();
+        GAME_MANAGER.state = createGameState();
         GAME_MANAGER.tryJoinGame(roomCode);
     } else if (url.pathname.startsWith('/wiki')) {
         const page = url.pathname.substring(6);

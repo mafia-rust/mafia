@@ -47,21 +47,26 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     constructor(props: ChatMenuProps) {
         super(props);
         
-        this.state = {
-            gameState: GAME_MANAGER.gameState,
-            chatField: "",
-            filter: null,
-        };
+        
+        if(GAME_MANAGER.state.stateType === "game")
+            this.state = {
+                gameState: GAME_MANAGER.state,
+                chatField: "",
+                filter: null,
+            };
 
         this.listener = () => {
             let atTop = this.messageSection !== null && this.messageSection.scrollTop >= this.messageSection.scrollHeight - this.messageSection.clientHeight - 100;            
-            this.setState({
-                gameState: GAME_MANAGER.gameState
-            }, () => {
-                if(this.messageSection !== null && atTop){
-                    this.messageSection.scrollTop = this.messageSection.scrollHeight;
-                }
-            });
+            
+            
+            if(GAME_MANAGER.state.stateType === "game")
+                this.setState({
+                    gameState: GAME_MANAGER.state
+                }, () => {
+                    if(this.messageSection !== null && atTop){
+                        this.messageSection.scrollTop = this.messageSection.scrollHeight;
+                    }
+                });
         };
         this.messageSection = null;
     }

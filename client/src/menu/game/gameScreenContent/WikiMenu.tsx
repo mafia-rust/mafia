@@ -18,13 +18,15 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
     constructor(props : WikiMenuProps) {
         super(props);
 
-        this.state = {
-            gameState : GAME_MANAGER.gameState,
-        };
+        if(GAME_MANAGER.state.stateType === "game")
+            this.state = {
+                gameState : GAME_MANAGER.state,
+            };
         this.listener = ()=>{
-            this.setState({
-                gameState: GAME_MANAGER.gameState,
-            })
+            if(GAME_MANAGER.state.stateType === "game")
+                this.setState({
+                    gameState: GAME_MANAGER.state,
+                });
         };  
     }
     componentDidMount() {

@@ -21,14 +21,16 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
     constructor(props: GraveyardMenuProps) {
         super(props);
 
-        this.state = {
-            gameState : GAME_MANAGER.gameState,
-            extendedGraveIndex: null
-        };
+        if(GAME_MANAGER.state.stateType === "game")
+            this.state = {
+                gameState : GAME_MANAGER.state,
+                extendedGraveIndex: null
+            };
         this.listener = ()=>{
-            this.setState({
-                gameState: GAME_MANAGER.gameState
-            })
+            if(GAME_MANAGER.state.stateType === "game")
+                this.setState({
+                    gameState: GAME_MANAGER.state
+                });
         };  
     }
     componentDidMount() {

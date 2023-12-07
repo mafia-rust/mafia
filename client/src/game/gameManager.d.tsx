@@ -19,8 +19,7 @@ export type GameManager = {
     playerId: number | null,
     
 
-    // state: State,
-    gameState: GameState,
+    state: State,
 
     server: Server,
     listeners: StateListener[],

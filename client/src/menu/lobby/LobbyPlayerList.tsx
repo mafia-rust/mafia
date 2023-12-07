@@ -17,16 +17,18 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
     constructor(props: {}) {
         super(props);
 
-        this.state = {     
-            enteredName: "",
-            players: GAME_MANAGER.gameState.players,
-            host: GAME_MANAGER.gameState.host
-        };
+        if(GAME_MANAGER.state.stateType === "lobby")
+            this.state = {     
+                enteredName: "",
+                players: GAME_MANAGER.state.players,
+                host: GAME_MANAGER.state.host
+            };
         this.listener = ()=>{
-            this.setState({
-                players: GAME_MANAGER.gameState.players,
-                host: GAME_MANAGER.gameState.host
-            });
+            if(GAME_MANAGER.state.stateType === "lobby")
+                this.setState({
+                    players: GAME_MANAGER.state.players,
+                    host: GAME_MANAGER.state.host
+                });
         }
     }
     componentDidMount() {

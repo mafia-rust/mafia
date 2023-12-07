@@ -22,13 +22,15 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
     constructor(props: HeaderMenuProps) {
         super(props);
 
-        this.state = {
-            gameState: GAME_MANAGER.gameState,
-        };
+        if(GAME_MANAGER.state.stateType === "game")
+            this.state = {
+                gameState: GAME_MANAGER.state,
+            };
         this.listener = () => {
-            this.setState({
-                gameState: GAME_MANAGER.gameState,
-            });
+            if(GAME_MANAGER.state.stateType === "game")
+                this.setState({
+                    gameState: GAME_MANAGER.state,
+                });
         };
     }
     componentDidMount() {
@@ -39,6 +41,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
     }
     renderPhaseSpecific(){
         // TODO: Change to phase state
+        
         switch(this.state.gameState.phase){
             case "judgement":
             if(this.state.gameState.playerOnTrial !== null){
