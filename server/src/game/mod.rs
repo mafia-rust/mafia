@@ -19,6 +19,7 @@ use rand::seq::SliceRandom;
 use rand::thread_rng;
 
 use crate::lobby::LobbyPlayer;
+use crate::log;
 use crate::packet::{ToClientPacket, GameOverReason};
 use chat::{ChatMessage, ChatGroup};
 use player::PlayerReference;
@@ -71,7 +72,10 @@ impl Game {
                 player.sender.clone(),
                 match roles.get(player_index){
                     Some(role) => *role,
-                    None => RoleOutline::Any.get_random_role(&settings.excluded_roles, &roles).expect("Any should have open roles"),
+                    None => {
+                        log!(error "Game::new"; "Failed to generate role. rolelist wasnt big enough for number of players");
+                        RoleOutline::Any.get_random_role(&settings.excluded_roles, &roles).expect("Any should have open roles")
+                    },
                 }
             );
             players.push(new_player);

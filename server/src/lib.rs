@@ -8,6 +8,14 @@ pub mod log {
     #[macro_export]
     /// Log a statement to the console. 
     /// When logging using this macro, a timestamp and possibly a marker is added to the message.
+    /// 
+    /// # Examples
+    /// ```
+    /// use crate::log;
+    /// log!(error "Error location"; "Error message");
+    /// log!(error "Game::new"; "Failed to generate role. rolelist wasnt big enough for number of players");
+    /// log!(info "Listener"; "{}: {}", &connection.get_address().to_string(), message);
+    /// ```
     macro_rules! log {
         // Each case in this macro definition is for a different log marker.
         // None
