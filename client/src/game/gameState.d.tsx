@@ -10,9 +10,12 @@ export type OutsideLobbyState = {
     stateType: "outsideLobby"
 }
 
+
+//Change this to use PlayerID for player map and playerID for who I AM instead of myName and host
 export type LobbyState = {
     stateType: "lobby"
 
+    // myId: number | null,
     myName: string | null,
     host: boolean,
 

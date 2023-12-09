@@ -8,10 +8,11 @@ use crate::{
         role_list::RoleOutline, 
         phase::PhaseType
     },
-    listener::PlayerID, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}, websocket_connections::connection::ClientSender, log
+    listener::{PlayerID, RoomCode}, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}, websocket_connections::connection::ClientSender, log
 };
 
 pub struct Lobby {
+    room_code: RoomCode,
     lobby_state: LobbyState,
 }
 
@@ -58,8 +59,9 @@ pub struct GamePlayer{
 
 impl Lobby {
     #[allow(clippy::new_without_default)]
-    pub fn new() -> Lobby {
+    pub fn new(room_code: RoomCode) -> Lobby {
         Self { 
+            room_code,
             lobby_state: LobbyState::Lobby{
                 settings: Settings::default(),
                 players: HashMap::new()
@@ -109,18 +111,30 @@ impl Lobby {
 
                 let mut player_indices: HashMap<PlayerID,GamePlayer> = HashMap::new();
                 let mut game_players = Vec::new();
+
                 
+                self.send_to_all(ToClientPacket::StartGame);
+
+                let LobbyState::Lobby { settings, players} = &mut self.lobby_state else {
+                    unreachable!("LobbyState::Lobby was checked to be to LobbyState::Lobby in the previous line")
+                };
+
                 for (index, (arbitrary_player_id, lobby_player)) in players.drain().enumerate() {
                     player_indices.insert(arbitrary_player_id, GamePlayer { player_index: index as PlayerIndex, host: lobby_player.host });
                     game_players.push(lobby_player);
                 }
 
+                
+
                 self.lobby_state = LobbyState::Game{
                     game: Game::new(settings.clone(), game_players),
                     players: player_indices,
                 };
-                
-                self.send_to_all(ToClientPacket::StartGame);
+                let LobbyState::Game { game, players } = &mut self.lobby_state else {
+                    unreachable!("LobbyState::Game was set to be to LobbyState::Game in the previous line");
+                };
+
+                Lobby::send_players_game(game, players);
             },
             ToServerPacket::KickPlayer{player_id: kicked_player_id} => {
                 let LobbyState::Lobby { players, .. } = &mut self.lobby_state else {
@@ -235,9 +249,8 @@ impl Lobby {
             LobbyState::Lobby { players, settings } => {
                 let name = name_validation::sanitize_name("".to_string(), players);
                 
-                send.send(ToClientPacket::YourName { name: name.clone() });
                 
-                let new_player = LobbyPlayer::new(name, send.clone(), players.is_empty());
+                let new_player = LobbyPlayer::new(name.clone(), send.clone(), players.is_empty());
                 let arbitrary_player_id: PlayerID = 
                 players
                     .iter()
@@ -247,12 +260,16 @@ impl Lobby {
 
                 settings.role_list.push(RoleOutline::Any);
 
+                send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: false, player_id: arbitrary_player_id, host: true});
+
+                send.send(ToClientPacket::YourName { name: name });
+
                 Self::send_players_lobby(players);
 
                 for player in players.iter(){
                     Self::send_settings(player.1, settings)
                 }
-                send.send(ToClientPacket::AcceptJoin{in_game: false, player_id: arbitrary_player_id });
+                
                 Ok(arbitrary_player_id)
             },
             LobbyState::Game{ game, players } => {
@@ -272,9 +289,11 @@ impl Lobby {
                         };
                         players.insert(new_id, game_player);
                         player_ref.connect(game, send.clone());
+
+                        send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id: new_id, host: false});
+                        
                         Lobby::send_players_game(game, players);
                         
-                        send.send(ToClientPacket::AcceptJoin{in_game: true, player_id: new_id });
                         
                         return Ok(new_id);
                     }

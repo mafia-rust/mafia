@@ -7,16 +7,14 @@ import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus
 
 export type ToClientPacket = {
     type: "acceptJoin",
+    roomCode: number,
     inGame: boolean,
     playerId: number,
+    host: boolean,
 } | {
     type: "rejectJoin",
     reason: string /* TODO RejectJoinReason */
-} | {
-    type: "acceptHost",
-    roomCode: number,
-    playerId: number,
-} |
+} | 
 // Lobby
 {
     type: "yourName",

@@ -69,11 +69,6 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
 
 // There's probably a better way to do this that doesn't need the mobile check.
 function LobbyMenuHeader(props: { host?: boolean }): JSX.Element {
-    console.log(GAME_MANAGER.state.stateType);
-    
-    if(GAME_MANAGER.state.stateType !== "outsideLobby")
-        console.log(GAME_MANAGER.state);
-
     if(GAME_MANAGER.state.stateType !== "outsideLobby")
         return <header>
             <button className="leave" onClick={() => GAME_MANAGER.leaveGame()}>

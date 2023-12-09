@@ -12,17 +12,23 @@ import { Role } from "./roleState.d";
 
 export default function messageListener(packet: ToClientPacket){
 
-    console.log(JSON.stringify(packet, null, 2));
+    // console.log(JSON.stringify(packet, null, 2));
+    console.log(packet.type);
+
+
     switch(packet.type) {
         case "acceptJoin":
-            GAME_MANAGER.playerId = packet.playerId;
             if(packet.inGame){
-                Anchor.setContent(GameScreen.createDefault());
                 GAME_MANAGER.state = createGameState();
+                Anchor.setContent(GameScreen.createDefault());
             }else{
-                Anchor.setContent(<LobbyMenu/>);
                 GAME_MANAGER.state = createLobbyState();
+                Anchor.setContent(<LobbyMenu/>);
             }
+            GAME_MANAGER.roomCode = packet.roomCode.toString(18);
+            GAME_MANAGER.playerId = packet.playerId;
+            if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
+                GAME_MANAGER.state.host = packet.host;
         break;
         case "rejectJoin":
             switch(packet.reason) {
@@ -60,13 +66,6 @@ export default function messageListener(packet: ToClientPacket){
                     console.log(packet);
                 break;
             }
-        break;
-        case "acceptHost":
-            GAME_MANAGER.roomCode = packet.roomCode.toString(18);
-            GAME_MANAGER.playerId = packet.playerId;
-            if(GAME_MANAGER.state.stateType !== "outsideLobby")
-                GAME_MANAGER.state.host = true;
-            Anchor.setContent(<LobbyMenu/>);
         break;
         /*
         In Lobby/Game 

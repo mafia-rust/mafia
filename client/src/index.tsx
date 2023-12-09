@@ -18,7 +18,6 @@ export default GAME_MANAGER;
 GAME_MANAGER.addStateListener((type) => {
     switch (type) {
         case "acceptJoin":
-        case "acceptHost":
             window.history.pushState({}, document.title, `?code=${GAME_MANAGER.roomCode}`);
     }
 })
