@@ -129,25 +129,20 @@ impl Game {
         (guilty, innocent)
     }
 
-    pub fn winner(&self) -> Option<EndGameCondition> {
-        let mut winning_team = None;
+    pub fn game_is_over(&self) -> bool {
+        //find list of all remaining teams
+        let remaining_teams: Vec<EndGameCondition> = 
+            PlayerReference::all_players(self).into_iter()
+            .filter(|p|p.alive(self)).map(|p|p.end_game_condition(self)).collect();
 
-        for player_ref in PlayerReference::all_players(self){
-            if !player_ref.alive(self) {continue;}
-            let egc = player_ref.end_game_condition(self);
-            if egc == EndGameCondition::None {continue;}
+        //remove all duplicates from remaining_teams
+        let remaining_teams = remaining_teams.into_iter()
+            .collect::<std::collections::HashSet<EndGameCondition>>().into_iter().collect::<Vec<EndGameCondition>>();
 
-            if let Some(ref winning_team) = winning_team{
-                //if there are two different teams alive then nobody won
-                if *winning_team != egc{
-                    return None;
-                }
-            } else {
-                winning_team = Some(egc.clone());
-            }
-        }
-        
-        winning_team
+        //if there is only one team left, then the game is over
+        remaining_teams.len() <= 1
+
+        //it doesnt matter if the final team is none, because this doesnt care who won, just that game is over
     }
 
     pub fn current_phase(&self) -> &PhaseState {
@@ -165,7 +160,7 @@ impl Game {
 
         if !self.ongoing { return }
 
-        if let Some(_winner) = self.winner() {
+        if self.game_is_over() {
             self.add_message_to_chat_group(ChatGroup::All, ChatMessage::GameOver);
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::Draw });
             self.ongoing = false;
