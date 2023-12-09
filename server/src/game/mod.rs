@@ -130,19 +130,24 @@ impl Game {
     }
 
     pub fn game_is_over(&self) -> bool {
-        //find list of all remaining teams
+        //find list of all remaining teams, no duplicates, and remove none
         let remaining_teams: Vec<EndGameCondition> = 
             PlayerReference::all_players(self).into_iter()
-            .filter(|p|p.alive(self)).map(|p|p.end_game_condition(self)).collect();
+                .filter(|p|p.alive(self) && p.end_game_condition(self) != EndGameCondition::None)
+                .map(|p|p.end_game_condition(self))
+                .collect::<std::collections::HashSet<EndGameCondition>>().into_iter().collect::<Vec<EndGameCondition>>();
 
-        //remove all duplicates from remaining_teams
-        let remaining_teams = remaining_teams.into_iter()
-            .collect::<std::collections::HashSet<EndGameCondition>>().into_iter().collect::<Vec<EndGameCondition>>();
-
-        //if there is only one team left, then the game is over
-        remaining_teams.len() <= 1
-
-        //it doesnt matter if the final team is none, because this doesnt care who won, just that game is over
+        //if there are no teams left and multiple amnesiacs alive then the game is not over
+        if 
+            remaining_teams.len() == 0 && 
+            PlayerReference::all_players(self).into_iter()
+                .filter(|p|p.alive(self) && p.role_state(self).role() == role::Role::Amnesiac)
+                .collect::<Vec<_>>().len() > 1 
+        {
+            return false;
+        }
+        
+        remaining_teams.len() <= 1        
     }
 
     pub fn current_phase(&self) -> &PhaseState {
