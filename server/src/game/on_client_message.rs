@@ -77,7 +77,7 @@ impl Game {
                 
                 if let Some(player_on_trial) = next_player_on_trial {
                     self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
-                    self.start_phase(PhaseState::Testimony { trials_left, player_on_trial });
+                    self.start_phase(PhaseState::Testimony { trials_left: trials_left-1, player_on_trial });
                 }
             },
             ToServerPacket::Judgement { verdict } => {
