@@ -129,25 +129,25 @@ impl Game {
         (guilty, innocent)
     }
 
-    pub fn winner(&self) -> Option<EndGameCondition> {
-        let mut winning_team = None;
+    pub fn game_is_over(&self) -> bool {
+        //find list of all remaining teams, no duplicates, and remove none
+        let remaining_teams: Vec<EndGameCondition> = 
+            PlayerReference::all_players(self).into_iter()
+                .filter(|p|p.alive(self) && p.end_game_condition(self) != EndGameCondition::None)
+                .map(|p|p.end_game_condition(self))
+                .collect::<std::collections::HashSet<EndGameCondition>>().into_iter().collect::<Vec<EndGameCondition>>();
 
-        for player_ref in PlayerReference::all_players(self){
-            if !player_ref.alive(self) {continue;}
-            let egc = player_ref.end_game_condition(self);
-            if egc == EndGameCondition::None {continue;}
-
-            if let Some(ref winning_team) = winning_team{
-                //if there are two different teams alive then nobody won
-                if *winning_team != egc{
-                    return None;
-                }
-            } else {
-                winning_team = Some(egc.clone());
-            }
+        //if there are no teams left and multiple amnesiacs alive then the game is not over
+        if 
+            remaining_teams.len() == 0 && 
+            PlayerReference::all_players(self).into_iter()
+                .filter(|p|p.alive(self) && p.role_state(self).role() == role::Role::Amnesiac)
+                .collect::<Vec<_>>().len() > 1 
+        {
+            return false;
         }
         
-        winning_team
+        remaining_teams.len() <= 1        
     }
 
     pub fn current_phase(&self) -> &PhaseState {
@@ -165,7 +165,7 @@ impl Game {
 
         if !self.ongoing { return }
 
-        if let Some(_winner) = self.winner() {
+        if self.game_is_over() {
             self.add_message_to_chat_group(ChatGroup::All, ChatMessage::GameOver);
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::Draw });
             self.ongoing = false;

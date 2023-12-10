@@ -156,8 +156,8 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                 </StyledText>;
             }
         })()}
-        {this.renderMenuButtons()}
         {this.renderPhaseSpecific()}
+        {this.renderMenuButtons()}
         <div className="timer-box">
             <div style={timerStyle}/>
         </div>
