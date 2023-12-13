@@ -275,7 +275,6 @@ export function translateChatMessage(message: ChatMessage): string {
         case "targetWasAttacked":
         case "youWereProtected":
         case "executionerWon":
-        case "framerFramedPlayers":
         case "gameOver":
         case "godfatherForcedMafioso":
         case "godfatherForcedYou":
@@ -370,10 +369,10 @@ export type ChatMessage = {
 } | {
     type: "mayorCantWhisper"
 } | {
-    type: "jailedSomeone",
+    type: "jailedTarget"
     playerIndex: PlayerIndex
 } | {
-    type: "jailedTarget"
+    type: "jailedSomeone",
     playerIndex: PlayerIndex
 } | {
     type: "jailorDecideExecute"
@@ -452,9 +451,6 @@ export type ChatMessage = {
     type: "godfatherForcedYou"
 } | {
     type: "silenced"
-} | {
-    type: "framerFramedPlayers", 
-    players: PlayerIndex[]
 } | {
     type: "playerRoleAndWill", 
     role: Role,
