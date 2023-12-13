@@ -272,9 +272,8 @@ export function translateChatMessage(message: ChatMessage): string {
         case "deathCollectedSouls":
         case "arsonistCleanedSelf":
         case "arsonistDousedPlayers":
-        case "doctorHealed":
-        case "bodyguardProtected":
-        case "protectedYou":
+        case "targetWasAttacked":
+        case "youWereProtected":
         case "executionerWon":
         case "framerFramedPlayers":
         case "gameOver":
@@ -326,8 +325,6 @@ export type ChatMessage = {
 } | {
     type: "playerDied", 
     grave: Grave
-} | {
-    type: "youDied"
 } | {
     type: "gameOver"
 } | {
@@ -442,11 +439,11 @@ export type ChatMessage = {
 } | {
     type: "vigilanteSuicide"
 } | {
-    type: "doctorHealed"
+    type: "targetWasAttacked"
 } | {
-    type: "bodyguardProtected"
+    type: "youWereProtected"
 } | {
-    type: "protectedYou"
+    type: "youDied"
 } | {
     type: "transported"
 } | {

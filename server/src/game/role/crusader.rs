@@ -91,8 +91,8 @@ impl RoleStateImpl for Crusader {
                 if let Some(target_protected_ref) = self.target_protected_ref {
                     if target_protected_ref.night_attacked(game){
                         
-                        actor_ref.push_night_message(game, ChatMessage::ProtectedYou);
-                        target_protected_ref.push_night_message(game, ChatMessage::ProtectedYou);
+                        actor_ref.push_night_message(game, ChatMessage::TargetWasAttacked);
+                        target_protected_ref.push_night_message(game, ChatMessage::YouWereProtected);
                     }
                 }
             }

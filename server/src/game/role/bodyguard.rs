@@ -100,8 +100,8 @@ impl RoleStateImpl for Bodyguard {
             }
             Priority::Investigative => {
                 if let Some(target_protected_ref) = self.target_protected_ref {
-                    actor_ref.push_night_message(game, ChatMessage::ProtectedYou);
-                    target_protected_ref.push_night_message(game, ChatMessage::ProtectedYou);
+                    actor_ref.push_night_message(game, ChatMessage::TargetWasAttacked);
+                    target_protected_ref.push_night_message(game, ChatMessage::YouWereProtected);
                 }
             }
             _ => {}

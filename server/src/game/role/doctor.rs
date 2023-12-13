@@ -64,8 +64,8 @@ impl RoleStateImpl for Doctor {
                 if let Some(target_healed_ref) = self.target_healed_ref {
                     if target_healed_ref.night_attacked(game){
                         
-                        actor_ref.push_night_message(game, ChatMessage::ProtectedYou);
-                        target_healed_ref.push_night_message(game, ChatMessage::ProtectedYou);
+                        actor_ref.push_night_message(game, ChatMessage::TargetWasAttacked);
+                        target_healed_ref.push_night_message(game, ChatMessage::YouWereProtected);
                     }
                 }
             }
