@@ -32,7 +32,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
                 mode: this.determineModeFromPhaseTimes(initialPhaseTimes),
                 advancedEditing: false,
                 phaseTimes: initialPhaseTimes,
-                host: GAME_MANAGER.state.host
+                host: GAME_MANAGER.getMyHost() ?? false
             };
 
         this.listener = (type)=>{
@@ -41,8 +41,8 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
                     mode: this.determineModeFromPhaseTimes(GAME_MANAGER.state.phaseTimes),
                     phaseTimes: GAME_MANAGER.state.phaseTimes
                 });
-            else if (GAME_MANAGER.state.stateType === "lobby" && type === "youAreHost") {
-                this.setState({ host: GAME_MANAGER.state.host });
+            else if (GAME_MANAGER.state.stateType === "lobby" && type === "playersHost") {
+                this.setState({ host: GAME_MANAGER.getMyHost() ?? false });
             }
         }
     }

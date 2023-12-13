@@ -2,13 +2,13 @@ import React from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
-import { Player } from "../../game/gameState.d";
+import { LobbyPlayer, PlayerID } from "../../game/gameState.d";
 import { StateListener } from "../../game/gameManager.d";
 import StyledText from "../../components/StyledText";
 
 type PlayerListState = {
     enteredName: string,
-    players: Player[],
+    players: Map<PlayerID, LobbyPlayer>,
     host: boolean
 }
 
@@ -21,13 +21,13 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
             this.state = {     
                 enteredName: "",
                 players: GAME_MANAGER.state.players,
-                host: GAME_MANAGER.state.host
+                host: GAME_MANAGER.getMyHost() ?? false
             };
         this.listener = ()=>{
             if(GAME_MANAGER.state.stateType === "lobby")
                 this.setState({
                     players: GAME_MANAGER.state.players,
-                    host: GAME_MANAGER.state.host
+                    host: GAME_MANAGER.getMyHost() ?? false
                 });
         }
     }
@@ -55,12 +55,17 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
     )}
 
     renderPlayers() {
+
+        let out = [];
+        for(let [id, player] of this.state.players.entries()){
+            out.push(<li key={id}>
+                <StyledText>{player.name}</StyledText>
+            </li>)
+        }
+
+
         return <ol>
-            {this.state.players.map((player, i)=>{
-                return <li key={i}>
-                    <StyledText>{player.toString()}</StyledText>
-                </li>
-            })}
+            {out}
         </ol>
     }
 

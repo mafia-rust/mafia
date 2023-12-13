@@ -20,16 +20,16 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
     constructor(props: LobbyMenuProps) {
         super(props);
         
-        if(GAME_MANAGER.state.stateType !== "outsideLobby")
+        if(GAME_MANAGER.state.stateType === "lobby")
             this.state = {
-                name: "",
-                host: GAME_MANAGER.state.host
+                name: GAME_MANAGER.getMyName() ?? "",
+                host: GAME_MANAGER.getMyHost() ?? false,
             }
         this.listener = (type)=>{
-            if(GAME_MANAGER.state.stateType !== "outsideLobby")
+            if(GAME_MANAGER.state.stateType === "lobby")
                 this.setState({
-                    name: GAME_MANAGER.state.myName!,
-                    host: GAME_MANAGER.state.host
+                    name: GAME_MANAGER.getMyName() ?? "",
+                    host: GAME_MANAGER.getMyHost() ?? false,
                 });
         }
     }
@@ -69,17 +69,21 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
 
 // There's probably a better way to do this that doesn't need the mobile check.
 function LobbyMenuHeader(props: { host?: boolean }): JSX.Element {
-    if(GAME_MANAGER.state.stateType !== "outsideLobby")
+    if(GAME_MANAGER.state.stateType === "lobby")
         return <header>
             <button className="leave" onClick={() => GAME_MANAGER.leaveGame()}>
                 {translate("menu.button.leave")}
             </button>
             <RoomCodeButton/>
-            {Anchor.isMobile() || <h1>{GAME_MANAGER.state.myName!}</h1>}
+            {Anchor.isMobile() || <h1>{
+                        GAME_MANAGER.getMyName() ?? ""
+                    }</h1>}
             <button disabled={!props.host} className="start" onClick={()=>{GAME_MANAGER.sendStartGamePacket()}}>
                 {translate("menu.lobby.button.start")}
             </button>
-            {Anchor.isMobile() && <h1>{GAME_MANAGER.state.myName!}</h1>}
+            {Anchor.isMobile() && <h1>{
+                        GAME_MANAGER.getMyName() ?? ""
+                    }</h1>}
         </header>
     else
         return <header>

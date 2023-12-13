@@ -4,7 +4,9 @@ import { Role, RoleState } from "./roleState.d";
 import { RoleOutline } from "./roleListState.d";
 
 
-export type State = OutsideLobbyState | LobbyState | GameState;
+export type State = {
+
+} & (OutsideLobbyState | LobbyState | GameState);
 
 export type OutsideLobbyState = {
     stateType: "outsideLobby"
@@ -15,15 +17,13 @@ export type OutsideLobbyState = {
 export type LobbyState = {
     stateType: "lobby"
 
-    // myId: number | null,
-    myName: string | null,
-    host: boolean,
+    myId: number | null,
 
     roleList: RoleOutline[],
     excludedRoles: RoleOutline[],
     phaseTimes: PhaseTimes,
 
-    players: Player[]//Map<PlayerID, LobbyPlayer>,
+    players: Map<PlayerID, LobbyPlayer>,
 }
 export type LobbyPlayer = {
     name: string,
@@ -33,9 +33,7 @@ export type LobbyPlayer = {
 type GameState = {
     stateType: "game"
 
-    myName: string | null,
     myIndex: PlayerIndex | null,
-    host: boolean,
 
     chatMessages : ChatMessage[],
     graves: Grave[],
@@ -87,7 +85,6 @@ export type Tag =
 export type Player = {
     name: string,
     index: number
-    id: number,
     buttons: {
         dayTarget: boolean,
         target: boolean,
@@ -97,6 +94,7 @@ export type Player = {
     alive: boolean,
     roleLabel: Role | null,
     playerTags: Tag[],
+    host: boolean,
 
     toString(): string
 }

@@ -61,9 +61,9 @@ export function getRoleOutlineFromFactionAlignment(factionAlignment: FactionAlig
 }
 
 
-export type RoleOutline={
+export type RoleOutline = ({
     type: "any",
-} | {
+} | { 
     type: "faction",
     faction: Faction,
 } | {
@@ -72,7 +72,7 @@ export type RoleOutline={
 } | {
     type: "exact",
     role: Role,
-};
+});
 export type RoleOutlineType = RoleOutline["type"];
 
 export function getFactionFromRoleOutline(roleOutline: RoleOutline): Faction | null {

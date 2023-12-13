@@ -26,7 +26,7 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
         
         if (
             GAME_MANAGER.state.stateType === "game" &&
-            (find(GAME_MANAGER.state.myName ?? "").test(message.text) ||
+            (find(GAME_MANAGER.state.players[GAME_MANAGER.state.myIndex!].name ?? "").test(message.text) ||
             (
                 GAME_MANAGER.state.stateType === "game" &&
                 GAME_MANAGER.state.myIndex !== null &&

@@ -42,9 +42,11 @@ impl PlayerReference{
     pub fn send_join_game_data(&self, game: &mut Game){
         // General
         self.send_packets(game, vec![
+            ToClientPacket::GamePlayers{ 
+                players: PlayerReference::all_players(game).into_iter().map(|p|p.name(game).clone()).collect()
+            },
             ToClientPacket::ExcludedRoles { roles: game.settings.excluded_roles.clone() },
             ToClientPacket::RoleList {role_list: game.settings.role_list.clone()},
-            
             ToClientPacket::Phase { 
                 phase: game.current_phase().phase(),
                 seconds_left: game.phase_machine.time_remaining.as_secs(), 
@@ -76,9 +78,6 @@ impl PlayerReference{
         self.requeue_chat_messages(game);
 
         self.send_packets(game, vec![
-            ToClientPacket::YourName{
-                name: self.name(game).clone()
-            },
             ToClientPacket::YourPlayerIndex { 
                 player_index: self.index() 
             },
@@ -105,12 +104,11 @@ impl PlayerReference{
             },
             ToClientPacket::YourNotes{
                 notes: self.notes(game).clone()
+            },
+            ToClientPacket::YourButtons{
+                buttons: AvailableButtons::from_player(game, *self)
             }
         ]);
-        
-
-        let buttons = AvailableButtons::from_player(game, *self);
-        self.send_packet(game, ToClientPacket::YourButtons{buttons});
     }
 
 

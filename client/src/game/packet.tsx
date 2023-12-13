@@ -10,22 +10,20 @@ export type ToClientPacket = {
     roomCode: number,
     inGame: boolean,
     playerId: number,
-    host: boolean,
 } | {
     type: "rejectJoin",
     reason: string /* TODO RejectJoinReason */
 } | 
 // Lobby
 {
-    type: "yourName",
-    name: string
+    type: "yourId",
+    playerId: PlayerID
+} | {
+    type: "lobbyPlayers",
+    players: Map<PlayerID, string>
 } | {
     type: "yourPlayerIndex",
     playerIndex: PlayerIndex
-} | {
-    names: any
-    type: "players",
-    players: [number, string][]
 } | {
     type: "kickPlayer",
     playerId: PlayerID
@@ -33,7 +31,13 @@ export type ToClientPacket = {
     type: "rejectStart",
     reason: string /* TODO RejectStartReason */
 } | {
+    type: "playersHost",
+    hosts: PlayerID[],
+} | {
     type: "startGame"
+} | {
+    type: "gamePlayers",
+    players: string[]
 } | {
     type: "roleList",
     roleList: RoleOutline[]
@@ -51,9 +55,7 @@ export type ToClientPacket = {
 } | {
     type: "excludedRoles",
     roles: RoleOutline[]
-} | {
-    type: "youAreHost"
-} |
+} | 
 // Game
 {
     type: "phase",

@@ -20,6 +20,22 @@ export function createGameManager(): GameManager {
         state: {
             stateType: "outsideLobby"
         },
+        
+        getMyName() {
+            if (gameManager.state.stateType === "lobby") 
+                return gameManager.state.players.get(gameManager.state.myId!)?.name;
+            if (gameManager.state.stateType === "game")
+                return gameManager.state.players[gameManager.state.myIndex!]?.name;
+            return undefined;
+        },
+        getMyHost() {
+            if (gameManager.state.stateType === "lobby") 
+                return gameManager.state.players.get(gameManager.state.myId!)?.host;
+            if (gameManager.state.stateType === "game")
+                return gameManager.state.players[gameManager.state.myIndex!]?.host;            
+            return undefined;
+        },
+
 
         server : createServer(),
 

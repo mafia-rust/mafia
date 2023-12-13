@@ -1,12 +1,11 @@
-import GameState, { LobbyState, Player } from "./gameState.d"
+import GameState, { LobbyPlayer, LobbyState, Player, PlayerID } from "./gameState.d"
 
 
 export function createLobbyState(): LobbyState {
     return {
         stateType: "lobby",
 
-        myName: null,
-        host: false,
+        myId: null,
 
         roleList: [],
         excludedRoles: [],
@@ -20,7 +19,7 @@ export function createLobbyState(): LobbyState {
             night: 37,
         },
 
-        players: [],//new Map<PlayerID, LobbyPlayer>(),
+        players: new Map<PlayerID, LobbyPlayer>(),
     }
 }
 
@@ -28,9 +27,7 @@ export function createGameState(): GameState {
     return {
         stateType: "game",
 
-        myName: null,
         myIndex: null,
-        host: false,
 
         chatMessages : [],
         graves: [],
@@ -66,11 +63,10 @@ export function createGameState(): GameState {
     }
 }
 
-export function createPlayer(name: string, index: number, id: number): Player {
+export function createPlayer(name: string, index: number): Player {
     return{
         name: name,
         index: index,
-        id: id,
         buttons: {
             dayTarget: false,
             target: false,
@@ -80,6 +76,7 @@ export function createPlayer(name: string, index: number, id: number): Player {
         alive: true,
         roleLabel: null,
         playerTags: [],
+        host: false,
 
         toString() {
             return ""+(this.index+1)+"-" + this.name;

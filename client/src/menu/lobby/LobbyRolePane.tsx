@@ -20,14 +20,14 @@ export default class LobbyRolePane extends React.Component<{}, RolePaneState> {
         if(GAME_MANAGER.state.stateType === "lobby")
             this.state = {
                 roleList: GAME_MANAGER.state.roleList,
-                host: GAME_MANAGER.state.host
+                host: GAME_MANAGER.getMyHost() ?? false
             }
 
         this.listener = () => {
             if(GAME_MANAGER.state.stateType === "lobby")
                 this.setState({
                     roleList: GAME_MANAGER.state.roleList,
-                    host: GAME_MANAGER.state.host
+                    host: GAME_MANAGER.getMyHost() ?? false
                 });
         };
     }
