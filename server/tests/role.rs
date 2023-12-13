@@ -144,7 +144,7 @@ fn bodyguard_basic() {
 
     game.skip_to(PhaseType::Morning, 2);
 
-    assert!(townie.get_messages().contains(&ChatMessage::ProtectedYou));
+    assert!(townie.get_messages().contains(&ChatMessage::YouWereProtected));
 
     assert!(townie.alive());
     assert!(!bg.alive());
@@ -229,8 +229,9 @@ fn bodyguard_protects_transported_target() {
     assert!(!bg.alive());
     assert!(!maf.alive());
 
-    assert_not_contains!(t1.get_messages(), ChatMessage::ProtectedYou);
-    assert_contains!(t2.get_messages(), ChatMessage::ProtectedYou);
+    assert_not_contains!(t1.get_messages(), ChatMessage::YouWereProtected);
+    assert_contains!(t2.get_messages(), ChatMessage::YouWereProtected);
+    assert_contains!(bg.get_messages(), ChatMessage::TargetWasAttacked);
 }
 
 #[test]

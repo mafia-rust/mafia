@@ -65,7 +65,7 @@ impl RoleStateImpl for Spy {
                         ChatMessage::RoleBlocked { immune: _ } =>{
                             actor_ref.push_night_message(game, ChatMessage::SpyBug { bug: SpyBug::Roleblocked });
                         }
-                        ChatMessage::ProtectedYou => {
+                        ChatMessage::YouWereProtected => {
                             actor_ref.push_night_message(game, ChatMessage::SpyBug { bug: SpyBug::Protected });
                         }
                         ChatMessage::Transported => {

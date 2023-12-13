@@ -113,7 +113,8 @@ pub enum ChatMessage {
     TargetSurvivedAttack,
     YouSurvivedAttack,
     // TODO rename YouWereProtected or ProtectedFromAttack
-    ProtectedYou,
+    TargetWasAttacked,
+    YouWereProtected,
     YouDied,
 
     /*
