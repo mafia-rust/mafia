@@ -55,10 +55,6 @@ impl TestPlayer {
         self.0.alive(game!(self))
     }
 
-    pub fn die(&self) {
-        self.0.set_alive(game!(self), false)
-    }
-
     pub fn was_roleblocked(&self) -> bool {
         self.0.night_roleblocked(game!(self))
     }

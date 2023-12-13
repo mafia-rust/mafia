@@ -11,10 +11,10 @@ pub mod log {
     /// 
     /// # Examples
     /// ```
-    /// use crate::log;
+    /// use mafia_server::log;
     /// log!(error "Error location"; "Error message");
     /// log!(error "Game::new"; "Failed to generate role. rolelist wasnt big enough for number of players");
-    /// log!(info "Listener"; "{}: {}", &connection.get_address().to_string(), message);
+    /// log!(info "Listener"; "{}: {}", "Received message", "message");
     /// ```
     macro_rules! log {
         // Each case in this macro definition is for a different log marker.

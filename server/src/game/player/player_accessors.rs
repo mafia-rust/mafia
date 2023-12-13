@@ -228,6 +228,7 @@ impl PlayerReference{
                 self.deref_mut(game).night_variables.chosen_targets.push(target_ref);
             }else{
                 out = false;
+                break;
             }
         }
 

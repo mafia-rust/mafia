@@ -10,15 +10,19 @@ pub use mafia_server::game::phase::PhaseType;
 
 #[test]
 fn medium_receives_dead_messages_from_jail() {
-    kit::scenario!(game in Evening 1 where
+    kit::scenario!(game where
         medium: Medium,
         jailor: Jailor,
-        townie: Sheriff
+        townie: Sheriff,
+        mafioso: Mafioso
     );
-    townie.die();
+    game.next_phase();
+    mafioso.set_night_target(townie);
+    game.skip_to(PhaseType::Voting, 2);
+    
     jailor.day_target(medium);
 
-    game.skip_to(PhaseType::Night, 1);
+    game.next_phase();
     let dead_message = "Hello medium!! Are you there!?";
     townie.send_message(dead_message);
 
@@ -243,10 +247,17 @@ fn retributionist_basic(){
         mafioso: Mafioso,
         jester: Jester
     );
-    sher1.die();
-    sher2.die();
 
     game.next_phase();
+
+    mafioso.set_night_target(sher1);
+    game.skip_to(PhaseType::Night, 2);
+    mafioso.set_night_target(sher2);
+    game.skip_to(PhaseType::Night, 3);
+
+    assert!(!sher1.alive());
+    assert!(!sher2.alive());
+
     assert!(ret.set_night_targets(vec![sher1, mafioso]));
     game.next_phase();
     assert_eq!(
@@ -256,7 +267,7 @@ fn retributionist_basic(){
         )}
     );
     
-    game.skip_to(PhaseType::Night, 2);
+    game.skip_to(PhaseType::Night, 4);
     assert!(!ret.set_night_targets(vec![sher1, mafioso, jester]));
     game.next_phase();
     assert_ne!(
@@ -266,7 +277,7 @@ fn retributionist_basic(){
         )}
     );
     
-    game.skip_to(PhaseType::Night, 3);
+    game.skip_to(PhaseType::Night, 5);
     assert!(ret.set_night_targets(vec![sher2, jester, mafioso]));
     game.next_phase();
     assert_eq!(
@@ -284,12 +295,18 @@ fn necromancer_basic(){
         sher: Sheriff,
         consigliere: Consigliere,
         mafioso: Mafioso,
-        jester: Jester
+        jester: Jester,
+        vigilante: Vigilante
     );
-    sher.die();
-    consigliere.die();
-
+    
     game.next_phase();
+    mafioso.set_night_target(sher);
+    game.skip_to(PhaseType::Night, 2);
+    vigilante.set_night_target(consigliere);
+    game.skip_to(PhaseType::Night, 3);
+
+
+
     assert!(ret.set_night_targets(vec![sher, mafioso]));
     game.next_phase();
     assert_eq!(
@@ -299,7 +316,7 @@ fn necromancer_basic(){
         )}
     );
     
-    game.skip_to(PhaseType::Night, 2);
+    game.skip_to(PhaseType::Night, 4);
     assert!(!ret.set_night_targets(vec![sher, mafioso, jester]));
     game.next_phase();
     assert_ne!(
@@ -309,7 +326,7 @@ fn necromancer_basic(){
         )}
     );
     
-    game.skip_to(PhaseType::Night, 3);
+    game.skip_to(PhaseType::Night, 5);
     assert!(ret.set_night_targets(vec![consigliere, jester, mafioso]));
     game.next_phase();
     assert_eq!(
@@ -599,4 +616,5 @@ fn transporter_cant_transport_dead() {
     game.next_phase();
 
     assert_not_contains!(thomas.get_messages(), ChatMessage::Transported);
+    assert_not_contains!(townie.get_messages(), ChatMessage::Transported);
 }

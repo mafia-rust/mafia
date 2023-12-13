@@ -63,12 +63,12 @@ impl RoleStateImpl for Transporter {
         !actor_ref.night_jailed(game) &&
         actor_ref.alive(game) &&
         target_ref.alive(game) && 
-        (
+        ((
             chosen_targets.is_empty()
         ) || (
             chosen_targets.len() == 1 &&
-            Some(target_ref) != chosen_targets.get(0).cloned()
-        )
+            Some(target_ref) != chosen_targets.first().copied()
+        ))
     }
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false
