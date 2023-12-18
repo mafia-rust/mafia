@@ -18,7 +18,7 @@ export function createGameManager(): GameManager {
         playerId: null,
 
         state: {
-            stateType: "outsideLobby"
+            stateType: "disconnected"
         },
         
         getMyName() {

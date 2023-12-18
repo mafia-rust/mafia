@@ -140,24 +140,24 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "roleList":
             //list of role list entriy
-            if(GAME_MANAGER.state.stateType !== "outsideLobby")
+            if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
                 GAME_MANAGER.state.roleList = packet.roleList;
         break;
         case "roleOutline":
             //role list entriy
-            if(GAME_MANAGER.state.stateType !== "outsideLobby")
+            if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
                 GAME_MANAGER.state.roleList[packet.index] = packet.roleOutline;
         break;
         case "phaseTime":
-            if(GAME_MANAGER.state.stateType !== "outsideLobby")
+            if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
                 GAME_MANAGER.state.phaseTimes[packet.phase as keyof typeof GAME_MANAGER.state.phaseTimes] = packet.time;
         break;
         case "phaseTimes":
-            if(GAME_MANAGER.state.stateType !== "outsideLobby")
+            if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
                 GAME_MANAGER.state.phaseTimes = packet.phaseTimeSettings;
         break;
         case "excludedRoles":
-            if(GAME_MANAGER.state.stateType !== "outsideLobby")
+            if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
                 GAME_MANAGER.state.excludedRoles = packet.roles;
         break;
         case "phase":

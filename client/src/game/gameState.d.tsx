@@ -4,9 +4,11 @@ import { Role, RoleState } from "./roleState.d";
 import { RoleOutline } from "./roleListState.d";
 
 
-export type State = {
+export type State = Disconnected | OutsideLobbyState | LobbyState | GameState;
 
-} & (OutsideLobbyState | LobbyState | GameState);
+export type Disconnected = {
+    stateType: "disconnected"
+}
 
 export type OutsideLobbyState = {
     stateType: "outsideLobby"
