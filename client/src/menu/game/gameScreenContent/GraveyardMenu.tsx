@@ -5,7 +5,7 @@ import { Grave } from "../../../game/grave";
 import { ContentMenus, ContentTab } from "../GameScreen";
 import "./graveyardMenu.css";
 import GameState from "../../../game/gameState.d";
-import { translateRoleOutline } from "../../../game/roleListState.d";
+import { sortRoleOutlines, translateRoleOutline } from "../../../game/roleListState.d";
 import StyledText from "../../../components/StyledText";
 import WikiSearch from "../../../components/WikiSearch";
 
@@ -146,22 +146,24 @@ ${translate("menu.graveyard.killedBy")+" "+deathCauseString}
             <div>
                 {this.state.gameState.excludedRoles.length === 0 
                     ? <StyledText>{translate("none")}</StyledText>
-                    : this.state.gameState.excludedRoles.map((entry, i)=>{
-                    return <button 
-                        key={i}
-                        onClick={() => {
-                            if (entry.type === "exact") {
-                                WikiSearch.setPage(`role/${entry.role}`);
-                            } else {
-                                WikiSearch.setPage(`article/roles_and_teams`);
-                            }
-                        }}
-                    >
-                        <StyledText noLinks={true}>
-                            {translateRoleOutline(entry) ?? ""}
-                        </StyledText>
-                    </button>
-                })}
+                    : 
+                    sortRoleOutlines(Array.from(this.state.gameState.excludedRoles.values())).map((entry, i)=>{
+                        return <button 
+                            key={i}
+                            onClick={() => {
+                                if (entry.type === "exact") {
+                                    WikiSearch.setPage(`role/${entry.role}`);
+                                } else {
+                                    WikiSearch.setPage(`article/roles_and_teams`);
+                                }
+                            }}
+                        >
+                            <StyledText noLinks={true}>
+                                {translateRoleOutline(entry) ?? ""}
+                            </StyledText>
+                        </button>
+                    })
+                }
             </div>
         </div>
     }

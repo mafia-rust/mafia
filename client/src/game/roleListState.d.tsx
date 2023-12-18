@@ -1,6 +1,6 @@
 import translate from "./lang";
 import { Role, getFactionAlignmentFromRole, getFactionFromRole } from "./roleState.d";
-
+import ROLES from "./../resources/roles.json";
 
 export const FACTIONS = ["town", "mafia", "neutral"] as const;
 export type Faction = typeof FACTIONS[number]
@@ -106,4 +106,51 @@ export function translateRoleOutline(roleOutline: RoleOutline): string | null {
         return translate("role."+roleOutline.role+".name");
     }
     return null
+}
+
+export function sortRoleOutlines(roleOutlines: RoleOutline[]): RoleOutline[] {
+    //sorts by type, then by faction, then by factionAlignment, then by role
+    //need to get faction and factionAlignment from role
+
+    let factionOrder = ["town", "mafia", "neutral"];
+    let factionAlignmentOrder = [
+        "townPower","townInvestigative","townProtective","townKilling","townSupport",
+        "mafiaKilling","mafiaSupport","mafiaDeception","mafiaPower",
+        "neutralEvil","neutralKilling","neutralChaos"
+    ];
+
+    
+    return roleOutlines.sort((a, b)=>{
+        if(a.type === "any" && b.type === "any") return 0;
+        if(a.type === "any") return 1;
+        if(b.type === "any") return -1;
+
+        if(a.type === "faction" && b.type === "faction"){
+            //sort by faction
+            let aFactionIndex = factionOrder.indexOf(a.faction);
+            let bFactionIndex = factionOrder.indexOf(b.faction);
+            if(aFactionIndex !== bFactionIndex) return aFactionIndex - bFactionIndex;
+        }
+        if(a.type === "faction") return 1;
+        if(b.type === "faction") return -1;
+
+        if(a.type === "factionAlignment" && b.type === "factionAlignment"){
+            let aFactionAlignmentIndex = factionAlignmentOrder.indexOf(a.factionAlignment);
+            let bFactionAlignmentIndex = factionAlignmentOrder.indexOf(b.factionAlignment);
+            if(aFactionAlignmentIndex !== bFactionAlignmentIndex) return aFactionAlignmentIndex - bFactionAlignmentIndex;
+        }
+        if(a.type === "factionAlignment") return 1;
+        if(b.type === "factionAlignment") return -1;
+
+        if(a.type === "exact" && b.type === "exact"){
+            //sort roles by order in ROLES
+            let aRoleIndex = Object.keys(ROLES).indexOf(a.role);
+            let bRoleIndex = Object.keys(ROLES).indexOf(b.role);
+            if(aRoleIndex !== bRoleIndex) return aRoleIndex - bRoleIndex;
+        }
+        if(a.type === "exact") return 1;
+        if(b.type === "exact") return -1;
+
+        return 0;
+    });
 }

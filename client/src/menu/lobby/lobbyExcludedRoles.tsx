@@ -1,7 +1,7 @@
 
 import React from "react";
 import GAME_MANAGER from "../../index";
-import { RoleOutline, translateRoleOutline } from "../../game/roleListState.d";
+import { RoleOutline, sortRoleOutlines, translateRoleOutline } from "../../game/roleListState.d";
 import "../../index.css";
 import { StateListener } from "../../game/gameManager.d";
 import translate from "../../game/lang";
@@ -88,7 +88,7 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
             >{translate("menu.excludedRoles.exclude")}</button>
         </div>
         <div>
-            {this.state.excludedRoles.map((value, i)=>{
+            {sortRoleOutlines(Array.from(this.state.excludedRoles.values())).map((value, i)=>{
                 return <button key={i} 
                     disabled={!this.state.host}
                     onClick={()=>{this.includeRole(value)}}
