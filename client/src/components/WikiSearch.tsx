@@ -21,7 +21,6 @@ type WikiSearchState = ({
     page: WikiPage,
 }) & {
     searchQuery: string,
-    excludedRoles: RoleOutline[]
 }
 
 export type WikiPage = 
@@ -46,19 +45,16 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
             this.history.push({
                 type: "search",
                 searchQuery: "",
-                excludedRoles: props.excludedRoles ? props.excludedRoles : [],
             });
             this.state = {
                 type: "page",
                 searchQuery: "",
                 page: props.page,
-                excludedRoles: props.excludedRoles ? props.excludedRoles : [],
             }
         } else {
             this.state = {
                 type: "search",
                 searchQuery: "",
-                excludedRoles: props.excludedRoles ? props.excludedRoles : [],
             };
         }
     }
@@ -82,7 +78,6 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
         this.setState({
             type: "page",
             searchQuery: this.state.searchQuery,
-            excludedRoles: this.state.excludedRoles,
             page
         }, () => {
             if (this.props.pageChangeCallback !== undefined) {
@@ -98,7 +93,7 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
         for(let role in ROLES){
             let faction = getFactionFromRole(role as Role);
             let factionAlignment = getFactionAlignmentFromRole(role as Role);
-            for(let excludedRoleOutline of this.state.excludedRoles){
+            for(let excludedRoleOutline of this.props.excludedRoles ?? []){
                 switch(excludedRoleOutline.type){
                     case "exact":
                         if(excludedRoleOutline.role === role)
