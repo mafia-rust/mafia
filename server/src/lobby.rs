@@ -119,7 +119,7 @@ impl Lobby {
                     }
                 };
                 
-                self.send_to_all(ToClientPacket::StartGame);
+                log!(info "Lobby"; "Game started with room code {}", self.room_code);
 
                 self.lobby_state = LobbyState::Game{
                     game,

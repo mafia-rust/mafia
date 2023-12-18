@@ -114,6 +114,7 @@ impl Game {
             settings,
         };
 
+        game.send_packet_to_all(ToClientPacket::StartGame);
         for player_ref in PlayerReference::all_players(&game){
             player_ref.send_join_game_data(&mut game);
         }

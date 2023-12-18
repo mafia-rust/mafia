@@ -97,7 +97,8 @@ impl Game {
                 sender_player_ref.set_chosen_targets(self, target_ref_list.clone());
                 
                 sender_player_ref.get_current_send_chat_groups(self)
-                    .into_iter().for_each(|chat_group| {
+                    .into_iter().filter(|group|*group != ChatGroup::Seance)
+                        .for_each(|chat_group| {
                         match sender_player_ref.role_state(self) {
                             // TODO: Role specific code here
                             RoleState::Jailor(_) => self.add_message_to_chat_group(
