@@ -118,7 +118,7 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
 
         if(!excludedRolesExact.map((role)=>{return `role/${role}`}).includes(page)){
             return <button key={page} onClick={()=>{this.setPage(page)}}>
-                <StyledText noLinks={true}>{getPageTitle(page)}</StyledText>
+                <StyledText noLinks={true} markdown={true}>{getPageTitle(page)}</StyledText>
             </button>
         }else{
             //TODO ill fix it says jack
@@ -166,12 +166,12 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
                     }
                 }
 
-                return <StyledText className="wiki-content-body">{articleText}</StyledText>
+                return <StyledText className="wiki-content-body" markdown={true}>{articleText}</StyledText>
 
 
 
             }else{
-                return <StyledText className="wiki-content-body">
+                return <StyledText className="wiki-content-body" markdown={true}>
                     {getPageText(this.state.page)}
                 </StyledText>;
             }
