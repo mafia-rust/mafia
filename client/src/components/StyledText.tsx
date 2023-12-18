@@ -136,15 +136,6 @@ function styleKeywords(tokens: Token[]): Token[] {
             const token = tokens[index];
             if (token.type !== "raw") continue;
             
-            // Remove the keyword and split so we can insert the styled text in its place
-            if (keyword === '1-Jack\'' && token.string.includes('Jack')) {
-                console.log("Keyword:     " + keyword);
-                console.log("Token:       " + token.string);
-                console.log("Regex:       " + find(keyword));
-                console.log("Regex src:   " + find(keyword).source);
-                console.log("Final regex: " + RegExp('('+find(keyword).source+')', 'gi'));
-                console.log("Split:       " + token.string.split(RegExp('('+find(keyword).source+')', 'gi')));
-            }
             const stringSplit = token.string.split(RegExp('('+find(keyword).source+')', 'gi'));
 
             if (stringSplit.length === 1) continue;
