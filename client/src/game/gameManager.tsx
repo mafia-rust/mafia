@@ -287,7 +287,7 @@ function createServer(){
 
         sendPacket : (packet: ToServerPacket)=>{
             if (Server.ws === null) {
-                console.log("Attempted to send packet to null websocket!");
+                console.error("Attempted to send packet to null websocket!");
             } else {
                 Server.ws.send(JSON.stringify(packet));
             }
