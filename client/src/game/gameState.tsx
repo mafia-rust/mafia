@@ -1,14 +1,33 @@
-import GameState, { Player } from "./gameState.d"
+import GameState, { LobbyPlayer, LobbyState, Player, PlayerID } from "./gameState.d"
+
+
+export function createLobbyState(): LobbyState {
+    return {
+        stateType: "lobby",
+
+        myId: null,
+
+        roleList: [],
+        excludedRoles: [],
+        phaseTimes: {
+            morning: 5,
+            discussion: 45, 
+            voting: 30, 
+            testimony: 20, 
+            judgement: 20, 
+            evening: 7, 
+            night: 37,
+        },
+
+        players: new Map<PlayerID, LobbyPlayer>(),
+    }
+}
 
 export function createGameState(): GameState {
     return {
         stateType: "game",
-        
-        inGame: false,
 
-        myName: null,
         myIndex: null,
-        host: false,
 
         chatMessages : [],
         graves: [],
@@ -40,15 +59,14 @@ export function createGameState(): GameState {
             night: 37,
         },
 
-        ongoing: true,
+        still_ticking: true,
     }
 }
 
-export function createPlayer(name: string, index: number, id: number): Player {
+export function createPlayer(name: string, index: number): Player {
     return{
         name: name,
         index: index,
-        id: id,
         buttons: {
             dayTarget: false,
             target: false,
@@ -58,6 +76,7 @@ export function createPlayer(name: string, index: number, id: number): Player {
         alive: true,
         roleLabel: null,
         playerTags: [],
+        host: false,
 
         toString() {
             return ""+(this.index+1)+"-" + this.name;

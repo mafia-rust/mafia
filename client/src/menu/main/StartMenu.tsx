@@ -1,6 +1,6 @@
 import React from "react";
 import GAME_MANAGER from "../../index";
-import { createGameState } from "../../game/gameState";
+import { createLobbyState } from "../../game/gameState";
 import Anchor from "../Anchor";
 import "../../index.css"
 import "./startMenu.css"
@@ -20,12 +20,12 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
         window.history.replaceState({}, document.title, window.location.pathname);
     }
     private joinGameButton() {
-        GAME_MANAGER.gameState = createGameState();
+        GAME_MANAGER.state = createLobbyState();
         Anchor.setContent(<JoinMenu roomCode={null}/>);
     }
     
     private async hostGameButton() {
-        GAME_MANAGER.gameState = createGameState();
+        GAME_MANAGER.state = createLobbyState();
         
         Anchor.setContent(LoadingScreen.create("host"));
 

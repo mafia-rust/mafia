@@ -35,20 +35,22 @@ use crate::{game::{
 pub enum ToClientPacket{
     // Pre lobby
     #[serde(rename_all = "camelCase")]
-    AcceptJoin{in_game: bool, player_id: PlayerID},
+    AcceptJoin{room_code: RoomCode, in_game: bool, player_id: PlayerID},
     RejectJoin{reason: RejectJoinReason},
-    #[serde(rename_all = "camelCase")]
-    AcceptHost{room_code: RoomCode, player_id: PlayerID},
     
     // Lobby
-    YourName{name: String},
-    Players{players: Vec<(PlayerID, String)>},
+    #[serde(rename_all = "camelCase")]
+    YourId{player_id: PlayerID},
+    #[serde(rename_all = "camelCase")]
+    LobbyPlayers{players: HashMap<PlayerID, String>},
     #[serde(rename_all = "camelCase")]
     KickPlayer{player_id: PlayerID},
+    #[serde(rename_all = "camelCase")]
     RejectStart{reason: RejectStartReason},
-    YouAreHost,
+    PlayersHost{hosts: Vec<PlayerID>},
     StartGame,
 
+    GamePlayers{players: Vec<String>},
     #[serde(rename_all = "camelCase")]
     RoleList{role_list: RoleList},
     #[serde(rename_all = "camelCase")]

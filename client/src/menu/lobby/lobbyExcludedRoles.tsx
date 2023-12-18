@@ -22,17 +22,19 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
     constructor(props: {}){
         super(props);
 
-        this.state = {
-            excludedRoles: GAME_MANAGER.gameState.excludedRoles,
-            roleOutline: {type:"any"},
-            host: GAME_MANAGER.gameState.host
-        }
+        if(GAME_MANAGER.state.stateType === "lobby")
+            this.state = {
+                excludedRoles: GAME_MANAGER.state.excludedRoles,
+                roleOutline: {type:"any"},
+                host: GAME_MANAGER.getMyHost() ?? false
+            }
 
         this.listener = () => {
-            this.setState({
-                excludedRoles: GAME_MANAGER.gameState.excludedRoles,
-                host: GAME_MANAGER.gameState.host
-            });
+            if(GAME_MANAGER.state.stateType === "lobby")
+                this.setState({
+                    excludedRoles: GAME_MANAGER.state.excludedRoles,
+                    host: GAME_MANAGER.getMyHost() ?? false
+                });
         };
     }
     componentDidMount() {

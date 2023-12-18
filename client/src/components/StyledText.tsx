@@ -91,13 +91,14 @@ function getKeywordData(): KeywordDataMap {
 
     const DATA = require("../resources/keywords.json");
 
-    for(const player of GAME_MANAGER.gameState.players) {
-        keywordData[player.toString()] = [
-            { style: "keyword-player-number", replacement: (player.index + 1).toString() },
-            { replacement: " " },
-            { style: "keyword-player", replacement: player.name }
-        ];
-    }
+    if(GAME_MANAGER.state.stateType === "game")
+        for(const player of GAME_MANAGER.state.players) {
+            keywordData[player.toString()] = [
+                { style: "keyword-player-number", replacement: (player.index + 1).toString() },
+                { replacement: " " },
+                { style: "keyword-player", replacement: player.name }
+            ];
+        }
 
     for(const role of Object.keys(ROLES)){
         const data = DATA["faction." + getFactionFromRole(role as Role)];

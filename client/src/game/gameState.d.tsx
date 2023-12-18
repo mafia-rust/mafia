@@ -4,14 +4,22 @@ import { Role, RoleState } from "./roleState.d";
 import { RoleOutline } from "./roleListState.d";
 
 
-export type State = OutsideLobbyState | LobbyState | GameState;
+export type State = Disconnected | OutsideLobbyState | LobbyState | GameState;
+
+export type Disconnected = {
+    stateType: "disconnected"
+}
 
 export type OutsideLobbyState = {
     stateType: "outsideLobby"
 }
 
+
+//Change this to use PlayerID for player map and playerID for who I AM instead of myName and host
 export type LobbyState = {
     stateType: "lobby"
+
+    myId: number | null,
 
     roleList: RoleOutline[],
     excludedRoles: RoleOutline[],
@@ -27,11 +35,7 @@ export type LobbyPlayer = {
 type GameState = {
     stateType: "game"
 
-    inGame: boolean;
-
-    myName: string | null,
     myIndex: PlayerIndex | null,
-    host: boolean,
 
     chatMessages : ChatMessage[],
     graves: Grave[],
@@ -55,7 +59,7 @@ type GameState = {
     excludedRoles: RoleOutline[],
     phaseTimes: PhaseTimes
 
-    ongoing: boolean
+    still_ticking: boolean
 }
 export default GameState;
 
@@ -83,7 +87,6 @@ export type Tag =
 export type Player = {
     name: string,
     index: number
-    id: number,
     buttons: {
         dayTarget: boolean,
         target: boolean,
@@ -93,6 +96,7 @@ export type Player = {
     alive: boolean,
     roleLabel: Role | null,
     playerTags: Tag[],
+    host: boolean,
 
     toString(): string
 }

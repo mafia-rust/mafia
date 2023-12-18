@@ -59,21 +59,24 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
     constructor(props: GameScreenProps) {
         super(props);
         GameScreen.instance = this;
-        this.state = {
-            maxContent: props.maxContent?props.contentMenus.length:Infinity,
-            gameState: GAME_MANAGER.gameState,
 
-            graveyardMenu: props.contentMenus.includes(ContentMenus.GraveyardMenu),
-            playerListMenu: props.contentMenus.includes(ContentMenus.PlayerListMenu),
-            willMenu: props.contentMenus.includes(ContentMenus.WillMenu),
-            wikiMenu: props.contentMenus.includes(ContentMenus.WikiMenu),
-            roleSpecificMenu : props.contentMenus.includes(ContentMenus.RoleSpecificMenu)
-        };
+        if(GAME_MANAGER.state.stateType === "game")
+            this.state = {
+                maxContent: props.maxContent?props.contentMenus.length:Infinity,
+                gameState: GAME_MANAGER.state,
+
+                graveyardMenu: props.contentMenus.includes(ContentMenus.GraveyardMenu),
+                playerListMenu: props.contentMenus.includes(ContentMenus.PlayerListMenu),
+                willMenu: props.contentMenus.includes(ContentMenus.WillMenu),
+                wikiMenu: props.contentMenus.includes(ContentMenus.WikiMenu),
+                roleSpecificMenu : props.contentMenus.includes(ContentMenus.RoleSpecificMenu)
+            };
 
         this.listener = ()=>{
-            this.setState({
-                gameState: GAME_MANAGER.gameState,
-            });
+            if(GAME_MANAGER.state.stateType === "game")
+                this.setState({
+                    gameState: GAME_MANAGER.state,
+                });
         }
     }
     componentDidMount() {
@@ -154,13 +157,17 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
     }
 
     render() {
+        if(GAME_MANAGER.state.stateType !== "game"){
+            return;
+        }
+
         return (
             <div className="game-screen">
                 <button className="material-icons-round leave-button" onClick={() => GAME_MANAGER.leaveGame()}>
                     close
                 </button>
                 <div className="header">
-                    <HeaderMenu phase={GAME_MANAGER.gameState.phase}/>
+                    <HeaderMenu phase={GAME_MANAGER.state.phase}/>
                 </div>
                 <div className="content">
                     <ChatMenu/>

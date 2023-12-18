@@ -25,23 +25,30 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     constructor(props: PlayerListMenuProps) {
         super(props);
 
-        this.state = {
-            gameState : GAME_MANAGER.gameState,
-            playerFilter: "living",
-        };
+        
+        if(GAME_MANAGER.state.stateType === "game")
+            this.state = {
+                gameState : GAME_MANAGER.state,
+                playerFilter: "living",
+            };
+
         this.listener = (type)=>{
+            if(GAME_MANAGER.state.stateType !== "game"){
+                return;
+            }
+
             let playerFilter = this.state.playerFilter;
             if(type==="phase"){
-                if(!Anchor.isMobile() && (GAME_MANAGER.gameState.myIndex===null || GAME_MANAGER.gameState.players[GAME_MANAGER.gameState.myIndex].alive)){
-                    if(GAME_MANAGER.gameState.phase === "night"){
+                if(!Anchor.isMobile() && (GAME_MANAGER.state.myIndex===null || GAME_MANAGER.state.players[GAME_MANAGER.state.myIndex].alive)){
+                    if(GAME_MANAGER.state.phase === "night"){
                         playerFilter = "usable"
-                    }else if(GAME_MANAGER.gameState.phase === "morning"){
+                    }else if(GAME_MANAGER.state.phase === "morning"){
                         playerFilter = "living";
                     }
                 }
             }
             this.setState({
-                gameState: GAME_MANAGER.gameState,
+                gameState: GAME_MANAGER.state,
                 playerFilter: playerFilter
             })
         };  
@@ -139,11 +146,14 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 <div className="target">
                     {((player) => {
                         if(player.buttons.target) {
-                            return <button onClick={() => GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.gameState.targets, player.index])}>
+                            return <button onClick={() => {
+                                if(GAME_MANAGER.state.stateType === "game")
+                                    GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.state.targets, player.index])
+                            }}>
                                 {translate("role."+this.state.gameState.roleState?.role+".target")}
                             </button>
-                        } else if (this.state.gameState.phase === "night" && this.state.gameState.targets.includes(player.index)) {
-                            let newTargets = [...GAME_MANAGER.gameState.targets];
+                        } else if (GAME_MANAGER.state.stateType === "game" && this.state.gameState.phase === "night" && this.state.gameState.targets.includes(player.index)) {
+                            let newTargets = [...GAME_MANAGER.state.targets];
                             newTargets.splice(newTargets.indexOf(player.index), 1);
                             return <button className="highlighted" onClick={() => GAME_MANAGER.sendTargetPacket(newTargets)}>
                                 {translate("role."+this.state.gameState.roleState?.role+".detarget")}

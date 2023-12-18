@@ -18,13 +18,15 @@ export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuPr
     constructor(props: RoleSpecificMenuProps) {
         super(props);
 
-        this.state = {
-            gameState : GAME_MANAGER.gameState,
-        };
+        if(GAME_MANAGER.state.stateType === "game")
+            this.state = {
+                gameState : GAME_MANAGER.state,
+            };
         this.listener = ()=>{
-            this.setState({
-                gameState: GAME_MANAGER.gameState
-            })
+            if(GAME_MANAGER.state.stateType === "game")
+                this.setState({
+                    gameState: GAME_MANAGER.state
+                })
         };  
     }
     componentDidMount() {

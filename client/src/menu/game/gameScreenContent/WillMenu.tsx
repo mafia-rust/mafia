@@ -19,25 +19,29 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
     constructor(props: {}) {
         super(props);
 
-        let gameStateFields = {
-            will: GAME_MANAGER.gameState.will,
-            notes: GAME_MANAGER.gameState.notes,
-            deathNote: GAME_MANAGER.gameState.deathNote,
-        };
-
-        this.state = {
-            syncedFields: gameStateFields,
-            localFields: gameStateFields
-        };
+        if(GAME_MANAGER.state.stateType === "game"){
+            let gameStateFields = {
+                will: GAME_MANAGER.state.will,
+                notes: GAME_MANAGER.state.notes,
+                deathNote: GAME_MANAGER.state.deathNote,
+            };
+    
+            this.state = {
+                syncedFields: gameStateFields,
+                localFields: gameStateFields
+            };
+        }
+        
         this.listener = (type) => {
             if (type === "yourWill" || type === "yourNotes" || type === "yourDeathNote") {
-                this.setState({
-                    syncedFields: {
-                        will: GAME_MANAGER.gameState.will,
-                        notes: GAME_MANAGER.gameState.notes,
-                        deathNote: GAME_MANAGER.gameState.deathNote,
-                    }
-                })
+                if(GAME_MANAGER.state.stateType === "game")
+                    this.setState({
+                        syncedFields: {
+                            will: GAME_MANAGER.state.will,
+                            notes: GAME_MANAGER.state.notes,
+                            deathNote: GAME_MANAGER.state.deathNote,
+                        }
+                    });
             }
         };  
     }
@@ -49,10 +53,11 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
     }
     send(type: FieldType) {
         this.save(type);
-        GAME_MANAGER.sendSendMessagePacket('\n' + replaceMentions(
-            this.state.localFields[type],
-            GAME_MANAGER.gameState.players
-        ))
+        if (GAME_MANAGER.state.stateType === "game")
+            GAME_MANAGER.sendSendMessagePacket('\n' + replaceMentions(
+                this.state.localFields[type],
+                GAME_MANAGER.state.players
+            ));
     }
     save(type: FieldType) {
         if (type === "will")

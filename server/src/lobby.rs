@@ -8,10 +8,11 @@ use crate::{
         role_list::RoleOutline, 
         phase::PhaseType
     },
-    listener::PlayerID, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}, websocket_connections::connection::ClientSender, log
+    listener::{PlayerID, RoomCode}, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}, websocket_connections::connection::ClientSender, log
 };
 
 pub struct Lobby {
+    room_code: RoomCode,
     lobby_state: LobbyState,
 }
 
@@ -43,7 +44,6 @@ impl LobbyPlayer {
     }
     pub fn set_host(&mut self) {
         self.host = true;
-        self.sender.send(ToClientPacket::YouAreHost);
     }
 
     pub fn send(&self, message: ToClientPacket) {
@@ -58,8 +58,9 @@ pub struct GamePlayer{
 
 impl Lobby {
     #[allow(clippy::new_without_default)]
-    pub fn new() -> Lobby {
+    pub fn new(room_code: RoomCode) -> Lobby {
         Self { 
+            room_code,
             lobby_state: LobbyState::Lobby{
                 settings: Settings::default(),
                 players: HashMap::new()
@@ -83,8 +84,6 @@ impl Lobby {
                 if let Some(player) = players.get_mut(&player_id){
                     player.name = name.clone();
                 }
-                
-                send.send(ToClientPacket::YourName{name});
 
                 Self::send_players_lobby(players);
             },
@@ -109,18 +108,30 @@ impl Lobby {
 
                 let mut player_indices: HashMap<PlayerID,GamePlayer> = HashMap::new();
                 let mut game_players = Vec::new();
+
                 
+                self.send_to_all(ToClientPacket::StartGame);
+
+                let LobbyState::Lobby { settings, players} = &mut self.lobby_state else {
+                    unreachable!("LobbyState::Lobby was checked to be to LobbyState::Lobby in the previous line")
+                };
+
                 for (index, (arbitrary_player_id, lobby_player)) in players.drain().enumerate() {
                     player_indices.insert(arbitrary_player_id, GamePlayer { player_index: index as PlayerIndex, host: lobby_player.host });
                     game_players.push(lobby_player);
                 }
 
+                
+
                 self.lobby_state = LobbyState::Game{
                     game: Game::new(settings.clone(), game_players),
                     players: player_indices,
                 };
-                
-                self.send_to_all(ToClientPacket::StartGame);
+                let LobbyState::Game { game, players: _player } = &mut self.lobby_state else {
+                    unreachable!("LobbyState::Game was set to be to LobbyState::Game in the previous line");
+                };
+
+                Lobby::send_players_game(game);
             },
             ToServerPacket::KickPlayer{player_id: kicked_player_id} => {
                 let LobbyState::Lobby { players, .. } = &mut self.lobby_state else {
@@ -235,24 +246,33 @@ impl Lobby {
             LobbyState::Lobby { players, settings } => {
                 let name = name_validation::sanitize_name("".to_string(), players);
                 
-                send.send(ToClientPacket::YourName { name: name.clone() });
                 
-                let new_player = LobbyPlayer::new(name, send.clone(), players.is_empty());
+                let mut new_player = LobbyPlayer::new(name.clone(), send.clone(), players.is_empty());
                 let arbitrary_player_id: PlayerID = 
-                players
-                    .iter()
-                    .map(|(i,_)|*i)
-                    .fold(0u32, u32::max) as PlayerID + 1u32 ;
+                    players
+                        .iter()
+                        .map(|(i,_)|*i)
+                        .fold(0u32, u32::max) as PlayerID + 1u32;
+
+                //if there are no hosts, make this player the host
+                if !players.iter().any(|p|p.1.host) {
+                    new_player.set_host();
+                }
+
                 players.insert(arbitrary_player_id, new_player);
 
                 settings.role_list.push(RoleOutline::Any);
+
+                
+
+                send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: false, player_id: arbitrary_player_id});
 
                 Self::send_players_lobby(players);
 
                 for player in players.iter(){
                     Self::send_settings(player.1, settings)
                 }
-                send.send(ToClientPacket::AcceptJoin{in_game: false, player_id: arbitrary_player_id });
+                
                 Ok(arbitrary_player_id)
             },
             LobbyState::Game{ game, players } => {
@@ -266,15 +286,15 @@ impl Lobby {
                                 new_id = id + 1;
                             }
                         }
+
+                        send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id: new_id});
+
                         let game_player = GamePlayer{
                             player_index: player_ref.index(),
                             host: false,
                         };
                         players.insert(new_id, game_player);
                         player_ref.connect(game, send.clone());
-                        Lobby::send_players_game(game, players);
-                        
-                        send.send(ToClientPacket::AcceptJoin{in_game: true, player_id: new_id });
                         
                         return Ok(new_id);
                     }
@@ -378,7 +398,7 @@ impl Lobby {
 
 
     fn send_players_lobby(players: &HashMap<PlayerID, LobbyPlayer>){
-        let packet = ToClientPacket::Players { 
+        let packet = ToClientPacket::LobbyPlayers { 
             players: players.iter().map(|p| {
                 (*p.0, p.1.name.clone())
             }).collect()
@@ -386,23 +406,24 @@ impl Lobby {
         for player in players.iter() {
             player.1.send(packet.clone());
         }
+
+        //send hosts
+        let hosts: Vec<PlayerID> = players.iter().filter(|p|p.1.host).map(|p|*p.0).collect();
+        let packet = ToClientPacket::PlayersHost { hosts };
+        for player in players.iter() {
+            player.1.send(packet.clone());
+        }
     }
     
-    fn send_players_game(game: &mut Game, players: &HashMap<PlayerID, GamePlayer>){
+    fn send_players_game(game: &mut Game){
 
-        let mut players: Vec<_> = players.iter().collect();
-        players.sort_by(|a,b|{
-            a.1.player_index.cmp(&b.1.player_index)
-        });
+        let players: Vec<String> = PlayerReference::all_players(game).into_iter().map(|p|
+            p.name(game).clone()
+        ).collect();
 
-        let players: Vec<_> = players.iter().map(|p| {
-            (*p.0, PlayerReference::new_unchecked(p.1.player_index).name(game).to_owned())
-        }).collect();
-
-        let packet = ToClientPacket::Players { 
+        let packet = ToClientPacket::GamePlayers{ 
             players
         };
-
 
         for player_ref in PlayerReference::all_players(game){
             player_ref.send_packet(game, packet.clone());

@@ -153,13 +153,13 @@ impl Listener{
                     return Ok(());
                 };
 
-                let mut lobby = Lobby::new();
+                let mut lobby = Lobby::new(room_code);
                 
                 match lobby.connect_player_to_lobby(&connection.get_sender()) {
                     Ok(player_id) => {
                         *sender_player_location = PlayerLocation::InLobby { room_code, player_id };
         
-                        connection.send(ToClientPacket::AcceptHost{ room_code, player_id });
+                        // connection.send(ToClientPacket::AcceptHost{ room_code, player_id });
                     },
                     Err(reason) => {
                         connection.send(ToClientPacket::RejectJoin { reason });

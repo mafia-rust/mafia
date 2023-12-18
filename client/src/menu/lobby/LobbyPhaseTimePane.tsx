@@ -22,23 +22,27 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
     constructor(props: {}) {
         super(props);
 
-        let initialPhaseTimes = GAME_MANAGER.gameState.phaseTimes ?? {...PHASE_TIME_MODES.get("Classic")!};
+        let initialPhaseTimes = {...PHASE_TIME_MODES.get("Classic")!};
+        if(GAME_MANAGER.state.stateType === "lobby"){
+            initialPhaseTimes = GAME_MANAGER.state.phaseTimes;
+        }
 
-        this.state = {
-            mode: this.determineModeFromPhaseTimes(initialPhaseTimes),
-            advancedEditing: false,
-            phaseTimes: initialPhaseTimes,
-            host: GAME_MANAGER.gameState.host
-        };
+        if(GAME_MANAGER.state.stateType === "lobby")
+            this.state = {
+                mode: this.determineModeFromPhaseTimes(initialPhaseTimes),
+                advancedEditing: false,
+                phaseTimes: initialPhaseTimes,
+                host: GAME_MANAGER.getMyHost() ?? false
+            };
 
         this.listener = (type)=>{
-            if(type==="phaseTime" || type==="phaseTimes")
+            if(GAME_MANAGER.state.stateType === "lobby" && (type==="phaseTime" || type==="phaseTimes"))
                 this.setState({
-                    mode: this.determineModeFromPhaseTimes(GAME_MANAGER.gameState.phaseTimes),
-                    phaseTimes: GAME_MANAGER.gameState.phaseTimes
+                    mode: this.determineModeFromPhaseTimes(GAME_MANAGER.state.phaseTimes),
+                    phaseTimes: GAME_MANAGER.state.phaseTimes
                 });
-            else if (type === "youAreHost") {
-                this.setState({ host: GAME_MANAGER.gameState.host });
+            else if (GAME_MANAGER.state.stateType === "lobby" && type === "playersHost") {
+                this.setState({ host: GAME_MANAGER.getMyHost() ?? false });
             }
         }
     }
