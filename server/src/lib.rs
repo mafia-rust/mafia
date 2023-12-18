@@ -16,6 +16,15 @@ pub mod log {
     /// log!(error "Game::new"; "Failed to generate role. rolelist wasnt big enough for number of players");
     /// log!(info "Listener"; "{}: {}", "Received message", "message");
     /// ```
+    /// 
+    /// # Markers
+    /// - `fatal`: Prints the word FATAL
+    /// - `error`: Prints red and writes "WARN"
+    /// - `important`: 
+    /// - `info`: 
+    /// 
+    /// if none are put then it defaults to info
+    /// 
     macro_rules! log {
         // Each case in this macro definition is for a different log marker.
         // None

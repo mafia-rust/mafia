@@ -17,13 +17,13 @@ pub mod recruit;
 use std::time::Duration;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
+use serde::Serialize;
 
 use crate::lobby::LobbyPlayer;
-use crate::log;
-use crate::packet::{ToClientPacket, GameOverReason};
+use crate::packet::ToClientPacket;
 use chat::{ChatMessage, ChatGroup};
 use player::PlayerReference;
-use role_list::{RoleOutline, create_random_roles};
+use role_list::create_random_roles;
 use player::Player;
 use phase::PhaseStateMachine;
 use settings::Settings;
@@ -48,20 +48,43 @@ pub struct Game {
     pub ticking: bool
 }
 
+#[derive(Serialize, Debug, Clone, Copy)]
+#[serde(rename_all = "camelCase")]
+pub enum RejectStartReason {
+    GameEndsInstantly,
+    RoleListTooSmall,
+    RoleListCannotCreateRoles,
+    ZeroTimeGame,
+}
+
+#[derive(Serialize, Debug, Clone, Copy)]
+#[serde(rename_all = "camelCase")]
+pub enum GameOverReason {
+    ReachedMaxDay,
+    Winner,
+    Draw
+    /*TODO Winner { who won? }*/
+}
+
 impl Game {
-    pub fn new(mut settings: Settings, lobby_players: Vec<LobbyPlayer>) -> Self{
+    pub fn new(settings: Settings, lobby_players: Vec<LobbyPlayer>) -> Result<Self, RejectStartReason>{
+        //check settings are not completly off the rails
+        if [
+            settings.phase_times.evening, settings.phase_times.morning,
+            settings.phase_times.discussion, settings.phase_times.voting,
+            settings.phase_times.judgement, settings.phase_times.testimony,
+            settings.phase_times.night,
+        ].iter().all(|t| *t == 0) {
+            return Err(RejectStartReason::ZeroTimeGame);
+        }
+        
+        
         let mut roles = match create_random_roles(&settings.excluded_roles, &settings.role_list){
             Some(roles) => {
                 roles
             },
             None => {
-                let mut new_list = vec![];
-                for _ in 0..lobby_players.len(){
-                    new_list.push(RoleOutline::Any);
-                }
-                settings.role_list = new_list;
-                settings.excluded_roles = vec![];
-                create_random_roles(&settings.excluded_roles, &settings.role_list).expect("All any with no exclusions should have open roles")
+                return Err(RejectStartReason::RoleListCannotCreateRoles);
             }
         };
         roles.shuffle(&mut thread_rng());
@@ -74,8 +97,7 @@ impl Game {
                 match roles.get(player_index){
                     Some(role) => *role,
                     None => {
-                        log!(error "Game::new"; "Failed to generate role. rolelist wasnt big enough for number of players");
-                        RoleOutline::Any.get_random_role(&settings.excluded_roles, &roles).expect("Any should have open roles")
+                        return Err(RejectStartReason::RoleListTooSmall);
                     },
                 }
             );
@@ -104,7 +126,7 @@ impl Game {
 
         Teams::on_team_creation(&mut game);
 
-        game
+        Ok(game)
     }
 
     /// Returns a tuple containing the number of guilty votes and the number of innocent votes

@@ -26,7 +26,7 @@ use crate::{game::{
     verdict::Verdict, phase::PhaseType, 
     chat::ChatMessage,
     role::{Role, RoleState, doomsayer::DoomsayerGuess}, 
-    Game, grave::Grave, available_buttons::AvailableButtons, tag::Tag, settings::PhaseTimeSettings
+    Game, grave::Grave, available_buttons::AvailableButtons, tag::Tag, settings::PhaseTimeSettings, RejectStartReason, GameOverReason
 }, listener::{RoomCode, PlayerID}, log};
 
 #[derive(Serialize, Debug, Clone)]
@@ -128,28 +128,12 @@ impl ToClientPacket {
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[serde(rename_all = "camelCase")]
 pub enum RejectJoinReason {
     GameAlreadyStarted,
     RoomFull,
     InvalidRoomCode,
     ServerBusy,
-}
-
-#[derive(Serialize, Debug, Clone, Copy)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
-pub enum RejectStartReason {
-    GameEndsInstantly,
-    ZeroTimeGame,
-}
-
-#[derive(Serialize, Debug, Clone, Copy)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
-pub enum GameOverReason {
-    ReachedMaxDay,
-    Winner,
-    Draw
-    /*TODO Winner { who won? }*/
 }
 
 #[derive(Deserialize, Debug, Clone)]

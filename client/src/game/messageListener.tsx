@@ -31,16 +31,16 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "rejectJoin":
             switch(packet.reason) {
-                case "INVALID_ROOM_CODE":
+                case "invalidRoomCode":
                     Anchor.pushInfo("Couldn't join", "No lobby has that room code!");
                 break;
-                case "GAME_ALREADY_STARTED":
+                case "gameAlreadyStarted":
                     Anchor.pushInfo("Couldn't join", "That game has already begun!");
                 break;
-                case "ROOM_FULL":
+                case "roomFull":
                     Anchor.pushInfo("Couldn't join", "That lobby is full!");
                 break;
-                case "SERVER_BUSY":
+                case "serverBusy":
                     Anchor.pushInfo("Couldn't join", "The server is busy. Try again later!");
                 break;
                 default:
@@ -52,12 +52,24 @@ export default function messageListener(packet: ToClientPacket){
             Anchor.setContent(<StartMenu/>);
         break;
         case "rejectStart":
+            /*
+            GameEndsInstantly,
+            RoleListTooSmall,
+            RoleListCannotCreateRoles,
+            ZeroTimeGame,
+            */
             switch(packet.reason) {
-                case "GameEndsInstantly":
+                case "gameEndsInstantly":
                     Anchor.pushInfo("Couldn't start", "Game would end instantly! Make sure your role list is valid.");
                 break;
-                case "ZeroTimeGame":
-                    Anchor.pushInfo("Couldn't start", "Make sure your phase time settings are valid!");
+                case "roleListTooSmall":
+                    Anchor.pushInfo("Couldn't start", "Role list is too small!");
+                break;
+                case "roleListCannotCreateRoles":
+                    Anchor.pushInfo("Couldn't start", "Role list is invalid! Excluded roles could be the problem.");
+                break;
+                case "zeroTimeGame":
+                    Anchor.pushInfo("Couldn't start", "Game has zero time.");
                 break;
                 default:
                     Anchor.pushInfo("Couldn't start", "Failed to start lobby. Try again later!");
@@ -257,7 +269,7 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game"){
                 GAME_MANAGER.state.ticking = false;
                 switch(packet.reason) {
-                    case "ReachedMaxDay":
+                    case "reachedMaxDay":
                         // alert("Game Over: Reached the maximum day!");
                         console.log("incoming message response not implemented " + packet.type + ": " + packet.reason);
                         console.log(packet);

@@ -8,7 +8,7 @@ use crate::{
         role_list::RoleOutline, 
         phase::PhaseType
     },
-    listener::{PlayerID, RoomCode}, packet::{ToClientPacket, RejectJoinReason, ToServerPacket, RejectStartReason}, websocket_connections::connection::ClientSender, log
+    listener::{PlayerID, RoomCode}, packet::{ToClientPacket, RejectJoinReason, ToServerPacket}, websocket_connections::connection::ClientSender, log
 };
 
 pub struct Lobby {
@@ -88,29 +88,18 @@ impl Lobby {
                 Self::send_players_lobby(players);
             },
             ToServerPacket::StartGame => {
-                let LobbyState::Lobby { settings, players } = &mut self.lobby_state else {
+                let LobbyState::Lobby { settings: _, players } = &mut self.lobby_state else {
                     log!(error "Lobby"; "{} {}", "ToServerPacket::StartGame can not be used outside of LobbyState::Lobby", player_id);
                     return;
                 };
                 if let Some(player) = players.get(&player_id){
                     if !player.host {return;}
                 }
-                
-                if [
-                    settings.phase_times.evening, settings.phase_times.morning,
-                    settings.phase_times.discussion, settings.phase_times.voting,
-                    settings.phase_times.judgement, settings.phase_times.testimony,
-                    settings.phase_times.night,
-                ].iter().all(|t| *t == 0) {
-                    send.send(ToClientPacket::RejectStart { reason: RejectStartReason::ZeroTimeGame });
-                    return;
-                }
 
                 let mut player_indices: HashMap<PlayerID,GamePlayer> = HashMap::new();
                 let mut game_players = Vec::new();
 
                 
-                self.send_to_all(ToClientPacket::StartGame);
 
                 let LobbyState::Lobby { settings, players} = &mut self.lobby_state else {
                     unreachable!("LobbyState::Lobby was checked to be to LobbyState::Lobby in the previous line")
@@ -121,10 +110,19 @@ impl Lobby {
                     game_players.push(lobby_player);
                 }
 
+                let game = match Game::new(settings.clone(), game_players){
+                    Ok(game) => game,
+                    Err(err) => {
+                        send.send(ToClientPacket::RejectStart { reason: err });
+                        log!(info "Lobby"; "Failed to start game: {:?}", err);
+                        return;
+                    }
+                };
                 
+                self.send_to_all(ToClientPacket::StartGame);
 
                 self.lobby_state = LobbyState::Game{
-                    game: Game::new(settings.clone(), game_players),
+                    game,
                     players: player_indices,
                 };
                 let LobbyState::Game { game, players: _player } = &mut self.lobby_state else {
