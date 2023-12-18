@@ -36,16 +36,19 @@ type Token = {
     string: string
 } & KeywordData[number])
 
-export default function StyledText(props: { children: string[] | string, className?: string, noLinks?: boolean }): ReactElement {
+export default function StyledText(props: { children: string[] | string, className?: string, noLinks?: boolean, markdown?: boolean }): ReactElement {
     let tokens: Token[] = [{
         type: "raw",
-        string: marked.parse(
-            typeof props.children === "string" 
+        string: typeof props.children === "string" 
                 ? props.children 
-                : props.children.join(""), 
-            MARKDOWN_OPTIONS
-        )
+                : props.children.join("")
     }];
+
+    if (props.markdown) {
+        tokens[0].string = marked.parse(tokens[0].string, MARKDOWN_OPTIONS);
+    } else {
+        tokens[0].string = tokens[0].string.replace('\n', '<br>');
+    }
 
     tokens = styleKeywords(tokens);
 
@@ -134,6 +137,14 @@ function styleKeywords(tokens: Token[]): Token[] {
             if (token.type !== "raw") continue;
             
             // Remove the keyword and split so we can insert the styled text in its place
+            if (keyword === '1-Jack\'' && token.string.includes('Jack')) {
+                console.log("Keyword:     " + keyword);
+                console.log("Token:       " + token.string);
+                console.log("Regex:       " + find(keyword));
+                console.log("Regex src:   " + find(keyword).source);
+                console.log("Final regex: " + RegExp('('+find(keyword).source+')', 'gi'));
+                console.log("Split:       " + token.string.split(RegExp('('+find(keyword).source+')', 'gi')));
+            }
             const stringSplit = token.string.split(RegExp('('+find(keyword).source+')', 'gi'));
 
             if (stringSplit.length === 1) continue;

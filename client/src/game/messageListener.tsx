@@ -12,8 +12,7 @@ import { Role } from "./roleState.d";
 
 export default function messageListener(packet: ToClientPacket){
 
-    // console.log(JSON.stringify(packet, null, 2));
-    console.log(packet.type);
+    console.log(JSON.stringify(packet, null, 2));
 
 
     switch(packet.type) {
