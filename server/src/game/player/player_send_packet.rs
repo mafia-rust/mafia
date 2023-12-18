@@ -57,7 +57,7 @@ impl PlayerReference{
             }
         ]);
 
-        if !game.ongoing {
+        if !game.ticking {
             self.send_packet(game, ToClientPacket::GameOver { reason: GameOverReason::Draw })
         }
 

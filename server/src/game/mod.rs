@@ -44,7 +44,8 @@ pub struct Game {
 
     phase_machine : PhaseStateMachine,
 
-    pub ongoing: bool
+    /// Whether the game is still updating phase times
+    pub ticking: bool
 }
 
 impl Game {
@@ -83,7 +84,7 @@ impl Game {
         drop(roles); // Ensure we don't use the order of roles anywhere
 
         let mut game = Self{
-            ongoing: true,
+            ticking: true,
             players: players.into_boxed_slice(),
             graves: Vec::new(),
             teams: Teams::default(),
@@ -164,19 +165,19 @@ impl Game {
             player_ref.tick(self, time_passed)
         }
 
-        if !self.ongoing { return }
+        if !self.ticking { return }
 
         if self.game_is_over() {
             self.add_message_to_chat_group(ChatGroup::All, ChatMessage::GameOver);
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::Draw });
-            self.ongoing = false;
+            self.ticking = false;
             return;
         }
 
         if self.phase_machine.day_number == u8::MAX {
             self.add_message_to_chat_group(ChatGroup::All, ChatMessage::GameOver);
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
-            self.ongoing = false;
+            self.ticking = false;
             return;
         }
 
@@ -273,7 +274,7 @@ pub mod test {
         drop(roles);
 
         let mut game = Game{
-            ongoing: true,
+            ticking: true,
             players: players.into_boxed_slice(),
             graves: Vec::new(),
             teams: Teams::default(),

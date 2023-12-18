@@ -255,7 +255,7 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "gameOver":
             if(GAME_MANAGER.state.stateType === "game"){
-                GAME_MANAGER.state.still_ticking = false;
+                GAME_MANAGER.state.ticking = false;
                 switch(packet.reason) {
                     case "ReachedMaxDay":
                         // alert("Game Over: Reached the maximum day!");

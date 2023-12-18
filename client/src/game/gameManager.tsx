@@ -230,7 +230,7 @@ export function createGameManager(): GameManager {
     
         tick(timePassedMs) {
             if (gameManager.state.stateType === "game"){
-                if (!gameManager.state.still_ticking) return;
+                if (!gameManager.state.ticking) return;
 
                 const newTimeLeft = gameManager.state.timeLeftMs - timePassedMs;
                 if (Math.floor(newTimeLeft / 1000) < Math.floor(gameManager.state.timeLeftMs / 1000)) {

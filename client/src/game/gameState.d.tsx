@@ -59,7 +59,7 @@ type GameState = {
     excludedRoles: RoleOutline[],
     phaseTimes: PhaseTimes
 
-    still_ticking: boolean
+    ticking: boolean
 }
 export default GameState;
 

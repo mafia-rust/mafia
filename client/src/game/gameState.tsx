@@ -59,7 +59,7 @@ export function createGameState(): GameState {
             night: 37,
         },
 
-        still_ticking: true,
+        ticking: true,
     }
 }
 
