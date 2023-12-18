@@ -33,15 +33,15 @@ impl Listener{
         const DESIRED_FRAME_TIME: Duration = Duration::from_millis(1000);
 
         tokio::spawn(async move {
-            let mut last_tick = tokio::time::Instant::now();
+            let mut frame_start_time = tokio::time::Instant::now();
             loop {
-                let delta_time;
+                let delta_time = frame_start_time.elapsed();
+                frame_start_time = tokio::time::Instant::now();
 
                 if let Ok(mut listener) = listener.lock() {
                     let mut closed_lobbies = Vec::new();
                     
-                    delta_time = last_tick.elapsed();
-                    last_tick = tokio::time::Instant::now();
+                    
 
                     let Listener { ref mut lobbies, ref mut players } = *listener;
 
@@ -74,7 +74,7 @@ impl Listener{
                     return;
                 }
 
-                tokio::time::sleep(DESIRED_FRAME_TIME.saturating_sub(delta_time)).await;
+                tokio::time::sleep(DESIRED_FRAME_TIME.saturating_sub(tokio::time::Instant::now() - frame_start_time)).await;
             }
         });
     }

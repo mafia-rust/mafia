@@ -618,3 +618,78 @@ fn transporter_cant_transport_dead() {
     assert_not_contains!(thomas.get_messages(), ChatMessage::Transported);
     assert_not_contains!(townie.get_messages(), ChatMessage::Transported);
 }
+
+#[test]
+fn double_transport() {
+    kit::scenario!(game in Night 1 where
+        mafioso: Mafioso,
+ 
+        townie_a: Sheriff,
+        townie_b: Jailor,
+
+        trans_a: Transporter,
+        trans_b: Transporter
+    );
+    
+    assert!(mafioso.set_night_target(townie_a));
+
+    assert!(trans_a.set_night_targets(vec![townie_a, townie_b]));
+    assert!(trans_b.set_night_targets(vec![townie_b, townie_a]));
+
+    game.next_phase();
+    assert!(!townie_a.alive());
+    assert!(townie_b.alive());
+}
+
+
+#[test]
+fn double_transport_single_player() {
+    kit::scenario!(game in Night 1 where
+        mafioso: Mafioso,
+ 
+        townie_a: Sheriff,
+        townie_b: Jailor,
+        townie_c: Vigilante,
+
+        trans_a: Transporter,
+        trans_b: Transporter
+    );
+    
+    assert!(mafioso.set_night_target(townie_a));
+
+    assert!(trans_a.set_night_targets(vec![townie_a, townie_b]));
+    assert!(trans_b.set_night_targets(vec![townie_a, townie_c]));
+
+
+    game.next_phase();
+    assert!(townie_a.alive());
+    assert!(!townie_b.alive());
+    assert!(townie_c.alive());
+}
+
+#[test]
+fn double_transport_three_players() {
+    kit::scenario!(game in Night 1 where
+        mafioso: Mafioso,
+ 
+        townie_a: Sheriff,
+        townie_b: Jailor,
+        townie_c: Vigilante,
+
+        trans_a: Transporter,
+        trans_b: Transporter,
+        trans_c: Transporter
+    );
+    
+    assert!(mafioso.set_night_target(townie_a));
+
+    assert!(trans_a.set_night_targets(vec![townie_a, townie_b]));
+    assert!(trans_b.set_night_targets(vec![townie_a, townie_c]));
+    assert!(trans_c.set_night_targets(vec![townie_b, townie_c]));
+
+
+    game.next_phase();
+    assert!(townie_a.alive());
+    assert!(townie_b.alive());
+    assert!(!townie_c.alive());
+}

@@ -263,25 +263,30 @@ impl Game {
 pub mod test {
     use rand::{thread_rng, seq::SliceRandom};
 
-    use super::{Game, settings::Settings, role_list::{create_random_roles, RoleOutline}, player::{PlayerReference, test::mock_player}, phase::PhaseStateMachine, team::Teams};
+    use super::{Game, settings::Settings, role_list::{create_random_roles, RoleOutline}, player::{PlayerReference, test::mock_player}, phase::PhaseStateMachine, team::Teams, RejectStartReason};
 
-    pub fn mock_game(mut settings: Settings, number_of_players: usize) -> Game {
+    pub fn mock_game(settings: Settings, number_of_players: usize) -> Result<Game, RejectStartReason> {
+
+        //check settings are not completly off the rails
+        if [
+            settings.phase_times.evening, settings.phase_times.morning,
+            settings.phase_times.discussion, settings.phase_times.voting,
+            settings.phase_times.judgement, settings.phase_times.testimony,
+            settings.phase_times.night,
+        ].iter().all(|t| *t == 0) {
+            return Err(RejectStartReason::ZeroTimeGame);
+        }
+        
         let mut roles = match create_random_roles(&settings.excluded_roles, &settings.role_list){
             Some(roles) => {
                 roles
             },
             None => {
-                let mut new_list = vec![];
-                for _ in 0..number_of_players{
-                    new_list.push(RoleOutline::Any);
-                }
-                settings.role_list = new_list;
-                settings.excluded_roles = vec![];
-                create_random_roles(&settings.excluded_roles, &settings.role_list).expect("All any with no exclusions should have open roles")
+                return Err(RejectStartReason::RoleListCannotCreateRoles);
             }
         };
         roles.shuffle(&mut thread_rng());
-        
+
         let mut players = Vec::new();
         for player_index in 0..number_of_players {
             let new_player = mock_player(
@@ -293,7 +298,7 @@ pub mod test {
             );
             players.push(new_player);
         }
-        drop(roles);
+        drop(roles); // Ensure we don't use the order of roles anywhere
 
         let mut game = Game{
             ticking: true,
@@ -308,13 +313,14 @@ pub mod test {
             player_ref.send_join_game_data(&mut game);
         }
 
+        //on role creation needs to be called after all players roles are known
         for player_ref in PlayerReference::all_players(&game){
             let role_data_copy = player_ref.role_state(&game).clone();
             player_ref.set_role(&mut game, role_data_copy);
         }
 
         Teams::on_team_creation(&mut game);
-        
-        game
+
+        Ok(game)
     }
 }

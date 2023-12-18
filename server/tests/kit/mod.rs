@@ -65,10 +65,13 @@ pub mod _init {
             role_list.push(RoleOutline::Any);
         }
     
-        let mut game = mock_game(Settings {
+        let mut game = match mock_game(Settings {
             role_list,
             ..Default::default()
-        }, roles.len());
+        }, roles.len()){
+            Ok(game) => game,
+            Err(err) => panic!("Failed to create game: {:?}", err),
+        };
     
         let mut players = Vec::new();
         

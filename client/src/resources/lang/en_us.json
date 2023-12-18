@@ -428,7 +428,7 @@
     
     "wiki.entry.role.transporter.title": "Transporter",
     "wiki.entry.role.transporter.abilities":"* Transport two players with each other.",
-    "wiki.entry.role.transporter.attributes":"* Transporting a target swaps all visitors to them; for example, all visitors that visit target A will instead visit target B, and vice versa\n* You can transport yourself",
+    "wiki.entry.role.transporter.attributes":"* Transporting a target swaps all visitors to them; for example, all visitors that visit target A will instead visit target B, and vice versa\n* You can transport yourself* Your targets do not change due to other transporters (your targets wont change due to your own transport either)",
     
     "wiki.entry.role.sheriff.title": "Sheriff",
     "wiki.entry.role.sheriff.abilities":"* Interrogate a player to find out if they're innocent or suspicious",

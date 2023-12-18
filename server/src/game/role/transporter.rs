@@ -8,7 +8,7 @@ use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::team::Team;
-use super::{Priority, RoleStateImpl};
+use super::{Priority, RoleStateImpl, Role};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Transporter;
@@ -44,6 +44,7 @@ impl RoleStateImpl for Transporter {
     
         for player_ref in PlayerReference::all_players(game){
             if player_ref == actor_ref {continue;}
+            if player_ref.role(game) == Role::Transporter {continue;}
 
             let new_visits = player_ref.night_visits(game).clone().into_iter().map(|mut v|{
                 if v.target == first_visit.target {
