@@ -44,8 +44,8 @@ export default function messageListener(packet: ToClientPacket){
                 break;
                 default:
                     Anchor.pushInfo("Couldn't join", "Failed to join the lobby. Try again later!");
-                    console.log("incoming message response not implemented " + packet.type + ": " + packet.reason);
-                    console.log(packet);
+                    console.error(`${packet.type} message response not implemented: ${packet.reason}`);
+                    console.error(packet);
                 break;
             }
             Anchor.setContent(<StartMenu/>);
@@ -72,8 +72,8 @@ export default function messageListener(packet: ToClientPacket){
                 break;
                 default:
                     Anchor.pushInfo("Couldn't start", "Failed to start lobby. Try again later!");
-                    console.log("incoming message response not implemented " + packet.type + ": " + packet.reason);
-                    console.log(packet);
+                    console.error(`${packet.type} message response not implemented: ${packet.reason}`);
+                    console.error(packet);
                 break;
             }
         break;
@@ -270,13 +270,13 @@ export default function messageListener(packet: ToClientPacket){
                 switch(packet.reason) {
                     case "reachedMaxDay":
                         // alert("Game Over: Reached the maximum day!");
-                        console.log("incoming message response not implemented " + packet.type + ": " + packet.reason);
-                        console.log(packet);
+                        console.error(`${packet.type} message response not implemented: ${packet.reason}`);
+                        console.error(packet);
                     break;
                     default:
                         // alert("Game ended for an unknown reason!");
-                        console.log("incoming message response not implemented " + packet.type + ": " + packet.reason);
-                        console.log(packet);
+                        console.error(`${packet.type} message response not implemented: ${packet.reason}`);
+                        console.error(packet);
                     break;
                 }
             }
