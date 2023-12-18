@@ -150,7 +150,7 @@ impl PhaseState {
                     // TODO send no trials left
                     Self::Evening { player_on_trial: None }
                 }else{
-                    Self::Voting { trials_left: trials_left }
+                    Self::Voting { trials_left }
                 }
             },
             &PhaseState::Evening { player_on_trial } => {

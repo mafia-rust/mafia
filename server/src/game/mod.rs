@@ -163,7 +163,7 @@ impl Game {
 
         //if there are no teams left and multiple amnesiacs alive then the game is not over
         if 
-            remaining_teams.len() == 0 && 
+            remaining_teams.is_empty() && 
             PlayerReference::all_players(self).into_iter()
                 .filter(|p|p.alive(self) && p.role_state(self).role() == role::Role::Amnesiac)
                 .collect::<Vec<_>>().len() > 1 

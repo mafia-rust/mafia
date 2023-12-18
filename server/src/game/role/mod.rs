@@ -1,3 +1,5 @@
+#![allow(clippy::single_match)]
+
 use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 use crate::game::Game;

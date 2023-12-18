@@ -51,13 +51,13 @@ impl RoleStateImpl for Psychic {
                         .filter(|p|p!=non_townie)
                         .collect::<Vec<_>>()
                         .choose_multiple(&mut rng, 2)
-                        .map(|p|*p)
+                        .copied()
                         .collect();
                     
                     if let Some(random_player0) = random_players.get(0){
                         if let Some(random_player1) = random_players.get(1){
 
-                            let mut out = vec![non_townie, random_player0, random_player1];
+                            let mut out = [non_townie, random_player0, random_player1];
                             out.shuffle(&mut rng);
                             break 'a ChatMessage::PsychicEvil { players: [out[0].index(), out[1].index(), out[2].index()] }
                         }
@@ -77,7 +77,7 @@ impl RoleStateImpl for Psychic {
                         .collect::<Vec<_>>()
                         .choose(&mut rand::thread_rng()){
                         
-                        let mut out = vec![townie, random_player];
+                        let mut out = [townie, random_player];
                         out.shuffle(&mut rng);
 
                         break 'a ChatMessage::PsychicGood { players: [out[0].index(), out[1].index()] }   
