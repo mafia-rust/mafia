@@ -1,21 +1,25 @@
 .will-menu {
-    background-color: #2a1b29;
+    --background-color: #2a1b29;
+    --primary-color: #170c21;
+    --primary-border-color: #3d3966;
+    --secondary-color: #28213a;
+    --hover-color: #3b2d4e;
+    --tab-color: #382138;
 }
-.will-menu > section{
-    margin-top: 1%;
+.will-menu details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
-.will-menu .content-tab {
-    background-color: #382138
+.will-menu details > div {
+    padding: .13rem;
 }
 .will-menu textarea {
-    box-sizing: border-box;
-    justify-content: center;
-    margin-left: .1rem;
-    margin-right: .1rem;
-    resize: none;
     text-align: left;
     height: 19rem;
-    width: calc(100% - .2rem);
+    resize: none;
+    width: 100%;
+    margin: 0;
 }
 .will-menu summary {
     text-align: left;

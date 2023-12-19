@@ -70,38 +70,42 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
     renderInput(type: FieldType) {
         return (<details open={type === "will"}>
             <summary>{translate("menu.will." + type)}</summary>
-            <button 
-                className={"material-icons-round " + (this.state.syncedFields[type] !== this.state.localFields[type] ? "highlighted" : "")}
-                onClick={() => this.save(type)}
-                aria-label={translate("menu.will.save")}
-            >
-                save
-            </button>
-            <button 
-                className="material-icons-round"
-                onClick={() => this.send(type)}
-                aria-label={translate("menu.will.post")}
-            >
-                send
-            </button>
-            <textarea
-                value={this.state.localFields[type]}
-                onChange={(e) => {
-                    let fields = {...this.state.localFields};
-                    fields[type] = e.target.value;
-                    this.setState({ localFields: fields });
-                }}
-                onKeyDown={(e) => {
-                    if (e.ctrlKey) {
-                        if (e.key === 's') {
-                            e.preventDefault();
-                            this.save(type);
-                        } else if (e.key === "Enter") {
-                            this.send(type);
+            <div>
+                <button 
+                    className={"material-icons-round " + (this.state.syncedFields[type] !== this.state.localFields[type] ? "highlighted" : "")}
+                    onClick={() => this.save(type)}
+                    aria-label={translate("menu.will.save")}
+                >
+                    save
+                </button>
+                <button 
+                    className="material-icons-round"
+                    onClick={() => this.send(type)}
+                    aria-label={translate("menu.will.post")}
+                >
+                    send
+                </button>
+            </div>
+            <div>
+                <textarea
+                    value={this.state.localFields[type]}
+                    onChange={(e) => {
+                        let fields = {...this.state.localFields};
+                        fields[type] = e.target.value;
+                        this.setState({ localFields: fields });
+                    }}
+                    onKeyDown={(e) => {
+                        if (e.ctrlKey) {
+                            if (e.key === 's') {
+                                e.preventDefault();
+                                this.save(type);
+                            } else if (e.key === "Enter") {
+                                this.send(type);
+                            }
                         }
-                    }
-                }}>
-            </textarea>
+                    }}>
+                </textarea>
+            </div>
         </details>)
     }
     render() {return (<div className="will-menu">

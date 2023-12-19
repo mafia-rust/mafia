@@ -44,6 +44,7 @@
     max-height: 100%;
     width: 100%;
     max-width: 100%;
+    background-color: var(--background-color);
     border-left: var(--primary-border-color) solid 1px;
     border-right: var(--primary-border-color) solid 1px;
 }
@@ -61,7 +62,7 @@
     width: 100%;
     margin: 0;
     padding: .15rem .15rem;
-    background-color: var(--primary-color);
+    background-color: var(--tab-color);
     justify-content: space-between;
     align-items: center;
 }
