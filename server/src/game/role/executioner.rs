@@ -56,7 +56,7 @@ impl RoleStateImpl for Executioner {
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority == Priority::TopPriority && self.target == ExecutionerTarget::Won {
-            actor_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, 3);
+            actor_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, 3, false);
         }
     }
     fn can_night_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {

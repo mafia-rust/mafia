@@ -42,7 +42,7 @@ impl RoleStateImpl for Vigilante {
         match priority{
             Priority::TopPriority => {
                 if self.will_suicide {
-                    actor_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, 3);
+                    actor_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, 3, false);
                 }
             },
             Priority::Kill => {
@@ -57,7 +57,7 @@ impl RoleStateImpl for Vigilante {
                         return
                     }
 
-                    let killed = target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Vigilante), 1);
+                    let killed = target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Vigilante), 1, false);
 
                     if killed && target_ref.role(game).faction_alignment().faction() == Faction::Town {
                         self.will_suicide = true;

@@ -69,7 +69,7 @@ impl RoleStateImpl for Crusader {
                     .copied();
 
                 if let Some(non_town_visitor) = non_town_visitor{
-                    non_town_visitor.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Crusader), 1);
+                    non_town_visitor.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Crusader), 1, false);
                 }else{
                     let town_visitor: Option<PlayerReference> = PlayerReference::all_players(game)
                         .into_iter()
@@ -83,7 +83,7 @@ impl RoleStateImpl for Crusader {
                         .copied();
 
                     if let Some(town_visitor) = town_visitor{
-                        town_visitor.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Crusader), 1);
+                        town_visitor.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Crusader), 1, false);
                     }
                 }
             }

@@ -47,7 +47,7 @@ impl RoleStateImpl for Jailor {
     
             let target_ref = visit.target;
             if target_ref.night_jailed(game){
-                target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Jailor), 3);
+                target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Jailor), 3, false);
 
                 self.executions_remaining = if target_ref.role(game).faction_alignment().faction() == Faction::Town { 0 } else { self.executions_remaining - 1 };
                 self.jailed_target_ref = None;

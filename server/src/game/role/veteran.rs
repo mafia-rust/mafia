@@ -75,7 +75,7 @@ impl RoleStateImpl for Veteran {
                         ChatMessage::VeteranAttackedYou 
                     );
 
-                    other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Veteran), 2);
+                    other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Veteran), 2, false);
                     
                     actor_ref.push_night_message(game, 
                         ChatMessage::VeteranAttackedVisitor 

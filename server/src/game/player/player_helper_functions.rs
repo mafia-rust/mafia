@@ -20,7 +20,7 @@ impl PlayerReference{
     }
 
     /// Returns true if successful
-    pub fn try_night_kill(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: u8) -> bool {
+    pub fn try_night_kill(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: u8, should_leave_death_note: bool) -> bool {
         self.set_night_attacked(game, true);
 
         if self.night_defense(game) >= attack {
@@ -32,6 +32,12 @@ impl PlayerReference{
         }
 
         self.push_night_grave_killers(game, grave_killer);
+        if should_leave_death_note {
+            if let Some(note) = attacker_ref.death_note(game) {
+                self.push_night_grave_death_notes(game, note.clone());
+            }
+        }
+        
 
         if !self.alive(game) { return true }
 

@@ -39,7 +39,7 @@ impl RoleStateImpl for Mafioso {
                 return
             }
     
-            target_ref.try_night_kill(actor_ref, game, GraveKiller::Faction(Faction::Mafia), 1);
+            target_ref.try_night_kill(actor_ref, game, GraveKiller::Faction(Faction::Mafia), 1, true);
         }
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
