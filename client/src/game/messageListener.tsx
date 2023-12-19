@@ -270,9 +270,8 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.ticking = false;
                 switch(packet.reason) {
                     case "reachedMaxDay":
-                        // alert("Game Over: Reached the maximum day!");
-                        console.error(`${packet.type} message response not implemented: ${packet.reason}`);
-                        console.error(packet);
+                    case "draw":
+                        console.log("Game ended! (naturally)");
                     break;
                     default:
                         // alert("Game ended for an unknown reason!");
