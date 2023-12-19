@@ -68,6 +68,23 @@
     "menu.graveyard.title": "🪦",
     "menu.graveyard.killedBy": "Killed by",
 
+    "notification.connectionFailed": "Connection failed",
+    "notification.serverNotFound": "Server not found, it could be offline",
+    
+    "notification.rejectJoin": "Couldn't join lobby",
+    "notification.rejectJoin.roomFull": "Lobby is full",
+    "notification.rejectJoin.gameAlreadyStarted": "Game already started",
+    "notification.rejectJoin.invalidRoomCode": "Invalid room code",
+    "notification.rejectJoin.serverBusy": "Server is busy right now due to too many players",
+
+    "notification.rejectStart": "Couldn't start game",
+    "notification.rejectStart.gameEndsInstantly": "Game would end instantly! Your role list is likely invalid.",
+    "notification.rejectStart.roleListTooSmall": "Role list is too small",
+    "notification.rejectStart.roleListCannotCreateRoles": "Role list cannot create roles",
+    "notification.rejectStart.zeroTimeGame": "Game has no time",
+
+
+
     "role.jailor.name": "Jailor",
     "role.jailor.target": "Execute",
     "role.jailor.detarget": "Spare",
@@ -244,8 +261,8 @@
     "grave.role.petrified": "Petrified",
     "grave.deathCause.lynching": "Lynching",
     "grave.killer.suicide": "Suicide",
-    "grave.will": "Their will reads:",
-    "grave.deathNote": "A note was left with the body:",
+    "grave.will": "Will",
+    "grave.deathNote": "A note was found with the body",
 
     "faction":"Faction",
     "faction.town": "Town",

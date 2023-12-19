@@ -8,7 +8,6 @@ import GameState, { Player, PlayerIndex } from "../../../game/gameState.d";
 import { ContentMenus, ContentTab } from "../GameScreen";
 import { StateListener } from "../../../game/gameManager.d";
 import SmallRoleSpecificMenu from "./RoleSpecificMenus/SmallRoleSpecificMenu";
-import Anchor from "../../Anchor";
 import StyledText from "../../../components/StyledText";
 
 type PlayerListMenuProps = {
@@ -52,6 +51,14 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         playerFilter = "living";
                     }
                 }
+            }
+            //if there are no usable players, switch to living
+            if(playerFilter==="usable" && !GAME_MANAGER.state.players.some((player)=>{return Object.values(player.buttons).includes(true)})){
+                playerFilter = "living";
+            }
+            //if there are no living players, switch to all
+            if(playerFilter==="living" && !GAME_MANAGER.state.players.some((player)=>{return player.alive})){
+                playerFilter = "all";
             }
             this.setState({
                 gameState: GAME_MANAGER.state,
@@ -110,8 +117,9 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         return(<div className="player" key={player.index}>
             <div className="top">
                 <button className="whisper" onClick={()=>ChatMenu.prependWhisper(player.index)}>
-                    <StyledText>{player.playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
-                    <StyledText>{(player.alive?"":" "+translate("tag.dead")+"")}</StyledText>
+                    <h4>
+                        <StyledText>{(player.alive?"":" "+translate("tag.dead")+"")}</StyledText>
+                    </h4>
                     {(
                         player.numVoted!==null &&
                         player.numVoted!==0 &&
@@ -121,6 +129,9 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                     <StyledText>{player.toString()}</StyledText>
                     <StyledText>{(player.roleLabel==null?"":(" ("+translate("role."+player.roleLabel+".name")+")"))}</StyledText>
                 </button>
+                <div>
+                    <StyledText>{player.playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
+                </div>
                 {(() => {
                     const filter = find(player.name);
                     const isFilterSet = ChatMenu.getFilter()?.source === filter.source;

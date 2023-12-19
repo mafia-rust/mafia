@@ -60,7 +60,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             key={graveIndex} 
             onClick={()=>{this.setState({extendedGraveIndex:graveIndex})}}
         >
-            {this.state.gameState.players[grave.playerIndex]?.toString()}
+            <StyledText noLinks={true}>{this.state.gameState.players[grave.playerIndex]?.toString()}</StyledText>
             <StyledText noLinks={true}>
                 {`(${graveRoleString})`}
             </StyledText>
@@ -92,13 +92,9 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
 
         let diedPhaseString = grave.diedPhase === "day" ? translate("day") : translate("phase.night");
         return(<button className="grave" onClick={()=>{this.setState({extendedGraveIndex:null})}}>
-            <StyledText>{`
-${diedPhaseString+" "+grave.dayNumber}
-
-${this.state.gameState.players[grave.playerIndex]?.toString()+" ("+graveRoleString+")"}
-
-${translate("menu.graveyard.killedBy")+" "+deathCauseString}
-            `}</StyledText>
+            <div><StyledText>{`${diedPhaseString+" "+grave.dayNumber}`}</StyledText></div>
+            <div><StyledText>{`${this.state.gameState.players[grave.playerIndex]?.toString()+" ("+graveRoleString+")"}`}</StyledText></div>
+            <div><StyledText>{`${translate("menu.graveyard.killedBy")+" "+deathCauseString}`}</StyledText></div>
             {grave.will.length === 0 || <>
                 {translate("grave.will")}
                 <div className="note-area">

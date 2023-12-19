@@ -10,9 +10,18 @@
 }
 .graveyard-menu > .grid button {
     width: 100%;
+    text-align: left;
+}
+.graveyard-menu > .grid button > *{
+    width: 100%;
+    text-align: left;
 }
 .graveyard-menu .grave {
     white-space: normal;
+    width: 100%;
+}
+.graveyard-menu .grave > div {
+    text-align: left;
 }
 .graveyard-menu .note-area {
     background-color: var(--secondary-color);

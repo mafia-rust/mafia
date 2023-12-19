@@ -8,6 +8,7 @@ import { Phase, PhaseTimes, Verdict } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleOutline } from "./roleListState.d";
+import translate from "./lang";
 
 export function createGameManager(): GameManager {
 
@@ -268,7 +269,7 @@ function createServer(){
             Server.ws.onclose = (event: CloseEvent)=>{
                 if (Server.ws === null) return; // We closed it ourselves
 
-                Anchor.pushInfo("Connection closed", "The connection to the server was closed.")
+                Anchor.pushInfo(translate("notification.connectionFailed"), "")
                 Anchor.setContent(<StartMenu/>);
             };
             Server.ws.onmessage = (event: MessageEvent<string>)=>{
@@ -278,7 +279,7 @@ function createServer(){
             };
             Server.ws.onerror = (event: Event) => {
                 Server.ws = null;
-                Anchor.pushInfo("Failed to connect", "Contact an admin to see if the server is online.");
+                Anchor.pushInfo(translate("notification.connectionFailed"), translate("notification.serverNotFound"));
                 Anchor.setContent(<StartMenu/>);
             };
             

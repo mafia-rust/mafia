@@ -9,6 +9,7 @@ export function switchLanguage(language: string) {
     langText = JSON.stringify(json);
 }
 
+/// Returns the translated string with the given key, replacing the placeholders with the given values.
 export default function translate(langKey: string, ...valuesList: (string | number)[]): string {
     let out = lang.get(langKey);
     if(out===undefined){

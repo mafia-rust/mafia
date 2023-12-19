@@ -47,7 +47,7 @@ export default function StyledText(props: { children: string[] | string, classNa
     if (props.markdown) {
         tokens[0].string = marked.parse(tokens[0].string, MARKDOWN_OPTIONS);
     } else {
-        tokens[0].string = tokens[0].string.replace('\n', '<br>');
+        tokens[0].string = tokens[0].string.replace(/\n/g, '<br>');
     }
 
     tokens = styleKeywords(tokens);

@@ -9,6 +9,7 @@ import React from "react";
 import { ToClientPacket } from "./packet";
 import { Tag } from "./gameState.d";
 import { Role } from "./roleState.d";
+import translate from "./lang";
 
 export default function messageListener(packet: ToClientPacket){
 
@@ -31,19 +32,19 @@ export default function messageListener(packet: ToClientPacket){
         case "rejectJoin":
             switch(packet.reason) {
                 case "invalidRoomCode":
-                    Anchor.pushInfo("Couldn't join", "No lobby has that room code!");
+                    Anchor.pushInfo(translate("notification.rejectJoin"), translate("notification.rejectJoin.invalidRoomCode"));
                 break;
                 case "gameAlreadyStarted":
-                    Anchor.pushInfo("Couldn't join", "That game has already begun!");
+                    Anchor.pushInfo(translate("notification.rejectJoin"), translate("notification.rejectJoin.gameAlreadyStarted"));
                 break;
                 case "roomFull":
-                    Anchor.pushInfo("Couldn't join", "That lobby is full!");
+                    Anchor.pushInfo(translate("notification.rejectJoin"), translate("notification.rejectJoin.roomFull"));
                 break;
                 case "serverBusy":
-                    Anchor.pushInfo("Couldn't join", "The server is busy. Try again later!");
+                    Anchor.pushInfo(translate("notification.rejectJoin"), translate("notification.rejectJoin.serverBusy"));
                 break;
                 default:
-                    Anchor.pushInfo("Couldn't join", "Failed to join the lobby. Try again later!");
+                    Anchor.pushInfo(translate("notification.rejectJoin"), "");
                     console.error(`${packet.type} message response not implemented: ${packet.reason}`);
                     console.error(packet);
                 break;
@@ -59,19 +60,19 @@ export default function messageListener(packet: ToClientPacket){
             */
             switch(packet.reason) {
                 case "gameEndsInstantly":
-                    Anchor.pushInfo("Couldn't start", "Game would end instantly! Make sure your role list is valid.");
+                    Anchor.pushInfo(translate("notification.rejectStart"), translate("notification.rejectStart.gameEndsInstantly"));
                 break;
                 case "roleListTooSmall":
-                    Anchor.pushInfo("Couldn't start", "Role list is too small!");
+                    Anchor.pushInfo(translate("notification.rejectStart"), translate("notification.rejectStart.roleListTooSmall"));
                 break;
                 case "roleListCannotCreateRoles":
-                    Anchor.pushInfo("Couldn't start", "Role list is invalid! Excluded roles could be the problem.");
+                    Anchor.pushInfo(translate("notification.rejectStart"), translate("notification.rejectStart.roleListCannotCreateRoles"));
                 break;
                 case "zeroTimeGame":
-                    Anchor.pushInfo("Couldn't start", "Game has zero time.");
+                    Anchor.pushInfo(translate("notification.rejectStart"), translate("notification.rejectStart.zeroTimeGame"));
                 break;
                 default:
-                    Anchor.pushInfo("Couldn't start", "Failed to start lobby. Try again later!");
+                    Anchor.pushInfo(translate("notification.rejectStart"), "");
                     console.error(`${packet.type} message response not implemented: ${packet.reason}`);
                     console.error(packet);
                 break;

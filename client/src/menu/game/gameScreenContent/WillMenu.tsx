@@ -40,6 +40,11 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
                             will: GAME_MANAGER.state.will,
                             notes: GAME_MANAGER.state.notes,
                             deathNote: GAME_MANAGER.state.deathNote,
+                        },
+                        localFields: {
+                            will: GAME_MANAGER.state.will,
+                            notes: GAME_MANAGER.state.notes,
+                            deathNote: GAME_MANAGER.state.deathNote,
                         }
                     });
             }
