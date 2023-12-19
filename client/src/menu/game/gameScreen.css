@@ -65,6 +65,7 @@
     background-color: var(--tab-color);
     justify-content: space-between;
     align-items: center;
+    user-select: none;
 }
 .content-tab > div{
     flex-grow: 1;

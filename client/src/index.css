@@ -78,6 +78,7 @@ button, summary {
 button, select, summary {
     border-bottom-color: black;
     border-right-color: black;
+    user-select: none;
 }
 input, option, textarea {
     border-top-color: black;

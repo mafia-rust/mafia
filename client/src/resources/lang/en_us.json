@@ -262,6 +262,11 @@
     "role.amnesiac.detarget": "Detarget",
     "role.amnesiac.dayTarget": "Special",
 
+    "role.unknown.name": "Unknown",
+    "role.unknown.target": "Target",
+    "role.unknown.detarget": "Detarget",
+    "role.unknown.dayTarget": "Special",
+
     "grave.role.cleaned": "Cleaned",
     "grave.role.petrified": "Petrified",
     "grave.deathCause.lynching": "Lynching",
