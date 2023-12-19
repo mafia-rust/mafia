@@ -31,11 +31,11 @@ impl PlayerReference{
             return false;
         }
 
+        self.push_night_grave_killers(game, grave_killer);
+
         if !self.alive(game) { return true }
 
         self.set_night_died(game, true);
-        // self.set_alive(game, false); TODO remove this comment if it doesn't cause problems. 6/14/2023
-        self.push_night_grave_killers(game, grave_killer);
 
         true
     }

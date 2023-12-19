@@ -66,4 +66,8 @@ impl TestPlayer {
     pub fn role_state(&self) -> &RoleState{
         self.0.role_state(game!(self))
     }
+
+    pub fn set_role_state(&self, new_role_data: RoleState){
+        self.0.set_role_state(game!(self), new_role_data);
+    }
 }

@@ -73,13 +73,13 @@ macros::roles! {
 
     // Neutral
     Jester : jester,
-    Executioner: executioner,
-    Doomsayer: doomsayer,
+    Executioner : executioner,
+    Doomsayer : doomsayer,
 
-    Death: death,
+    Death : death,
 
-    Vampire: vampire,
-    Amnesiac: amnesiac
+    Vampire : vampire,
+    Amnesiac : amnesiac
 }
 
 macros::priorities! {

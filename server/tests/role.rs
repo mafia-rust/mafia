@@ -2,11 +2,66 @@ mod kit;
 use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
-use mafia_server::game::{chat::{MessageSender, ChatGroup}, role::{retributionist::Retributionist, jester::Jester, crusader::Crusader, framer::Framer, veteran::Veteran, executioner::Executioner, spy::{Spy, SpyBug}, blackmailer::Blackmailer, vampire::Vampire, doctor::Doctor, Role, janitor::Janitor, consigliere::Consigliere, necromancer::Necromancer, witch::Witch, seer::Seer}};
+
+pub use mafia_server::game::{
+    chat::{ChatMessage, MessageSender, ChatGroup}, 
+    grave::*, 
+    role_list::Faction,
+    player::PlayerReference,
+    role::{
+        Role,
+        RoleState,
+
+        jailor::Jailor,
+        mayor::Mayor,
+        transporter::Transporter,
+
+        sheriff::Sheriff,
+        lookout::Lookout,
+        spy::{Spy, SpyBug},
+        tracker::Tracker,
+        seer::Seer,
+        psychic::Psychic,
+
+        doctor::Doctor,
+        bodyguard::Bodyguard,
+        crusader::Crusader,
+
+        vigilante::Vigilante,
+        veteran::Veteran,
+        deputy::Deputy,
+
+        escort::Escort,
+        medium::Medium,
+        retributionist::Retributionist,
+
+        mafioso::Mafioso,
+        
+        consort::Consort,
+        blackmailer::Blackmailer,
+        consigliere::Consigliere,
+        witch::Witch,
+        necromancer::Necromancer,
+
+        janitor::Janitor,
+        framer::Framer,
+
+        jester::Jester,
+        executioner::Executioner,
+        doomsayer::{Doomsayer, DoomsayerGuess},
+
+        death::Death,
+
+        vampire::Vampire,
+        amnesiac::Amnesiac
+    }, 
+    phase::{
+        PhaseState, 
+        PhaseType
+    }
+};
 // Pub use so that submodules don't have to re-import everything.
-pub use mafia_server::game::{role::{RoleState, transporter::Transporter, medium::Medium, jailor::Jailor, vigilante::Vigilante, sheriff::Sheriff, escort::Escort, mafioso::Mafioso, bodyguard::Bodyguard}, phase::PhaseState, chat::ChatMessage};
 pub use mafia_server::packet::ToServerPacket;
-pub use mafia_server::game::phase::PhaseType;
 
 #[test]
 fn medium_receives_dead_messages_from_jail() {
@@ -692,4 +747,68 @@ fn double_transport_three_players() {
     assert!(townie_a.alive());
     assert!(townie_b.alive());
     assert!(!townie_c.alive());
+}
+
+
+#[test]
+fn grave_contains_multiple_killers() {
+    kit::scenario!(game in Night 2 where
+        mafioso: Mafioso,
+        vigilante: Vigilante,
+        townie: Sheriff
+    );
+
+    assert!(mafioso.set_night_target(townie));
+    assert!(vigilante.set_night_target(townie));
+    game.next_phase();
+    assert_eq!(
+        *game.graves.first().unwrap(), 
+        Grave {
+            player: townie.index(),
+        
+            role: GraveRole::Role(Role::Sheriff),
+            death_cause: GraveDeathCause::Killers(vec![GraveKiller::Faction(Faction::Mafia), GraveKiller::Role(Role::Vigilante)]),
+            will: "".to_string(),
+            death_notes: vec![],
+        
+            died_phase: GravePhase::Night,
+            day_number: 2,
+    });
+}
+
+#[test]
+fn grave_contains_multiple_killers_roles() {
+    kit::scenario!(game in Night 2 where
+        townie_b: Doctor,
+        _townie_a: Doctor,
+        mafioso: Mafioso,
+        vigilante: Vigilante,
+        doom: Doomsayer
+    );
+
+    assert!(mafioso.set_night_target(townie_b));
+    assert!(vigilante.set_night_target(townie_b));
+    doom.set_role_state(RoleState::Doomsayer(
+        Doomsayer { guesses: [
+            (PlayerReference::new(&game, 0).expect("player index no existo"), DoomsayerGuess::Doctor),
+            (PlayerReference::new(&game, 1).expect("player index no existo"), DoomsayerGuess::Doctor),
+            (PlayerReference::new(&game, 2).expect("player index no existo"), DoomsayerGuess::Mafia)
+        ]}
+    ));
+
+
+    game.next_phase();
+    assert_eq!(
+        *game.graves.first().unwrap(), 
+        Grave {
+            player: townie_b.index(),
+        
+            role: GraveRole::Role(Role::Doctor),
+            death_cause: GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Doomsayer), GraveKiller::Faction(Faction::Mafia), GraveKiller::Role(Role::Vigilante)]),
+            will: "".to_string(),
+            death_notes: vec![],
+        
+            died_phase: GravePhase::Night,
+            day_number: 2,
+    });
 }
