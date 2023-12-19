@@ -16,7 +16,8 @@ use super::{Priority, RoleStateImpl, Role, RoleState};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Doomsayer {
-    pub guesses: [(PlayerReference, DoomsayerGuess); 3]
+    pub guesses: [(PlayerReference, DoomsayerGuess); 3],
+    pub won: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
@@ -51,7 +52,7 @@ impl DoomsayerGuess{
             Role::Consort | Role::Blackmailer | Role::Consigliere | Role::Witch | Role::Necromancer |
             Role::Janitor | Role::Framer => Some(DoomsayerGuess::Mafia),
             //Neutral
-            Role::Jester | Role::Executioner | Role::Doomsayer | 
+            Role::Jester | Role::Executioner | Role::Doomsayer | Role::Politician |
             Role::Death |
             Role::Vampire | Role::Amnesiac => Some(DoomsayerGuess::Neutral),
         }
@@ -106,6 +107,7 @@ impl RoleStateImpl for Doomsayer {
             self.guesses[1].0.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), 3, true);
             self.guesses[2].0.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), 3, true);
             actor_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, 3, false);
+            actor_ref.set_role_state(game, RoleState::Doomsayer(Doomsayer { guesses: self.guesses, won: true }));
         }else{
             actor_ref.add_chat_message(game, ChatMessage::DoomsayerFailed);
         }
@@ -128,6 +130,9 @@ impl RoleStateImpl for Doomsayer {
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
+    fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
+        self.won
+    }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType) {
         Doomsayer::check_and_convert_to_jester(game, actor_ref);
     }
@@ -136,6 +141,8 @@ impl RoleStateImpl for Doomsayer {
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
         Doomsayer::check_and_convert_to_jester(game, actor_ref);
+    }
+    fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
 }
 impl Doomsayer{

@@ -14,7 +14,8 @@ use super::{Priority, RoleStateImpl, RoleState, Role};
 
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct Death{
-    souls: u8
+    souls: u8,
+    won: bool,
 }
 const NEEDED_SOULS: u8 = 6;
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::NeutralKilling;
@@ -68,6 +69,9 @@ impl RoleStateImpl for Death {
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
+    fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
+        self.won
+    }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {
             PhaseType::Night => {
@@ -82,6 +86,7 @@ impl RoleStateImpl for Death {
                             let mut grave = Grave::from_player_lynch(game, player);
                             grave.death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Death)]);
                             player.die(game, grave);
+                            actor_ref.set_role_state(game, RoleState::Death(Death{won: true, souls: self.souls}));
                         }
                     }
                 }
@@ -94,5 +99,7 @@ impl RoleStateImpl for Death {
         
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
+    }
+    fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
 }

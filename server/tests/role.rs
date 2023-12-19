@@ -793,8 +793,9 @@ fn grave_contains_multiple_killers_roles() {
             (PlayerReference::new(&game, 0).expect("that player doesnt exist"), DoomsayerGuess::Doctor),
             (PlayerReference::new(&game, 1).expect("that player doesnt exist"), DoomsayerGuess::Doctor),
             (PlayerReference::new(&game, 2).expect("that player doesnt exist"), DoomsayerGuess::Mafia)
-        ]}
-    ));
+        ],
+        won: doom.get_won_game()
+    }));
 
 
     game.next_phase();

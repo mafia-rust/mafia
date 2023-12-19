@@ -108,6 +108,9 @@ impl RoleStateImpl for Veteran {
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
+    fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
+        crate::game::role::common_role::get_won_game(game, actor_ref)
+    }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         actor_ref.set_role_state(game, RoleState::Veteran(Veteran { alerts_remaining: self.alerts_remaining, alerting_tonight: false }));   
     }
@@ -115,5 +118,7 @@ impl RoleStateImpl for Veteran {
         
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
+    }
+    fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
 }

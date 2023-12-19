@@ -70,4 +70,8 @@ impl TestPlayer {
     pub fn set_role_state(&self, new_role_data: RoleState){
         self.0.set_role_state(game!(self), new_role_data);
     }
+
+    pub fn get_won_game(&self) -> bool {
+        self.0.get_won_game(game!(self))
+    }
 }

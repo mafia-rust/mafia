@@ -103,6 +103,9 @@ impl RoleStateImpl for Jailor {
         }
         out
     }
+    fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
+        crate::game::role::common_role::get_won_game(game, actor_ref)
+    }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
     
         if phase != PhaseType::Night{return;}
@@ -123,5 +126,7 @@ impl RoleStateImpl for Jailor {
         
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
+    }
+    fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
 }

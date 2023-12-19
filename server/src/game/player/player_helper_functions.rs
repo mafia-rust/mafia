@@ -172,11 +172,17 @@ impl PlayerReference{
     pub fn get_current_receive_chat_groups(&self, game: &Game) -> Vec<ChatGroup> {
         self.role_state(game).clone().get_current_receive_chat_groups(game, *self)
     }
+    pub fn get_won_game(&self, game: &Game) -> bool {
+        self.role_state(game).clone().get_won_game(game, *self)
+    }
     pub fn convert_targets_to_visits(&self, game: &Game, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         self.role_state(game).clone().convert_targets_to_visits(game, *self, target_refs)
     }
     pub fn on_any_death(&self, game: &mut Game, dead_player_ref: PlayerReference){
         self.role_state(game).clone().on_any_death(game, *self, dead_player_ref)
+    }
+    pub fn on_game_ending(&self, game: &mut Game){
+        self.role_state(game).clone().on_game_ending(game, *self)
     }
 }
 

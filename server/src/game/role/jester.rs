@@ -17,7 +17,8 @@ use super::{Priority, RoleStateImpl};
 #[derive(Clone, Serialize, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Jester {
-    lynched_yesterday: bool
+    lynched_yesterday: bool,
+    won: bool,
 }
 
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::NeutralEvil;
@@ -88,15 +89,24 @@ impl RoleStateImpl for Jester {
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
+    fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
+        self.won
+    }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         match game.current_phase() {
             &PhaseState::Evening { player_on_trial: Some(player_on_trial) } => {
                 if player_on_trial == actor_ref {
-                    actor_ref.set_role_state(game, RoleState::Jester(Jester { lynched_yesterday: true }))
+                    actor_ref.set_role_state(game, RoleState::Jester(Jester { 
+                        lynched_yesterday: true,
+                        won: true
+                    }))
                 }
             }
             PhaseState::Morning => {
-                actor_ref.set_role_state(game, RoleState::Jester(Jester { lynched_yesterday: false }))
+                actor_ref.set_role_state(game, RoleState::Jester(Jester { 
+                    lynched_yesterday: false,
+                    won: self.won
+                }))
             }
             _ => {}
         }
@@ -111,5 +121,7 @@ impl RoleStateImpl for Jester {
         {
             game.add_message_to_chat_group(ChatGroup::All, ChatMessage::JesterWon);
         }
+    }
+    fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
 }

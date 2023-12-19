@@ -289,6 +289,16 @@
         "maxCount": 1,
         "largeRoleSpecificMenu": true
     },
+    "politician":{
+        "factionAlignment": "neutralEvil",
+        "suspicious": true,
+        "roleblockable": false,
+        "defense": 1,
+        "witchable": true,
+        "endGameCondition": "None",
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
+    },
     "death":{
         "factionAlignment": "neutralKilling",
         "suspicious": false,

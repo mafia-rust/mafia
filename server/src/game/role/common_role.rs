@@ -1,4 +1,4 @@
-use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, role_list::Faction, phase::{PhaseState, PhaseType}, team::Team};
+use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, role_list::Faction, phase::{PhaseState, PhaseType}, team::Team, end_game_condition::EndGameCondition};
 
 use super::RoleState;
 
@@ -98,6 +98,25 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
     }
 
     out
+}
+
+pub(super) fn get_won_game(game: &Game, actor_ref: PlayerReference) -> bool {
+    //if the only endgamecondition left is the one for the actor_ref's role
+    //then the actor_ref's role won the game
+    
+    //get all remaining endgameconditions THAT ARE NOT the actor_ref's role's endgamecondition
+    let remaining_end_game_conditions = PlayerReference::all_players(game).into_iter()
+        .filter(|player_ref|
+            player_ref.alive(game)
+        )
+        .map(|player_ref|player_ref.role_state(game).end_game_condition(game, player_ref))
+        .collect::<Vec<_>>();
+
+    //if the only remaining endgame conditions are none and or the actor_ref's role's endgamecondition then true
+    remaining_end_game_conditions.iter().all(|end_game_condition|
+        *end_game_condition == EndGameCondition::None || 
+        *end_game_condition == actor_ref.role_state(game).end_game_condition(game, actor_ref)
+    )
 }
 
 

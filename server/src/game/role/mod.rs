@@ -31,9 +31,12 @@ trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
 
+    fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool;
+
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType);
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference);
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference);
+    fn on_game_ending(self, game: &mut Game, actor_ref: PlayerReference);
 }
 
 // Creates the Role enum
@@ -77,6 +80,7 @@ macros::roles! {
     Jester : jester,
     Executioner : executioner,
     Doomsayer : doomsayer,
+    Politician : politician,
 
     Death : death,
 
@@ -223,6 +227,11 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.get_current_receive_chat_groups(game, actor_ref)),*
                     }
                 }
+                pub fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool{
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.get_won_game(game, actor_ref)),*
+                    }
+                }
                 pub fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
                     match self {
                         $(Self::$name(role_struct) => role_struct.on_phase_start(game, actor_ref, phase)),*
@@ -236,6 +245,11 @@ mod macros {
                 pub fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
                     match self {
                         $(Self::$name(role_struct) => role_struct.on_any_death(game, actor_ref, dead_player_ref)),*
+                    }
+                }
+                pub fn on_game_ending(self, game: &mut Game, actor_ref: PlayerReference){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_game_ending(game, actor_ref)),*
                     }
                 }
             }

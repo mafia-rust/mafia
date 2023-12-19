@@ -77,6 +77,9 @@ impl RoleStateImpl for Executioner {
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
+    fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
+        self.target == ExecutionerTarget::Won
+    }
     fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType){
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
@@ -105,5 +108,7 @@ impl RoleStateImpl for Executioner {
                 actor_ref.set_role(game, RoleState::Jester(Jester::default()))
             }
         }
+    }
+    fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
 }

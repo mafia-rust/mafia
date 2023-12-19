@@ -241,6 +241,11 @@
     "role.doomsayer.detarget": "Detarget",
     "role.doomsayer.dayTarget": "Special",
 
+    "role.politician.name": "Politician",
+    "role.politician.target": "Target",
+    "role.politician.detarget": "Detarget",
+    "role.politician.dayTarget": "Special",
+
     "role.death.name": "Thanos",
     "role.death.target": "Collect",
     "role.death.detarget": "Detarget",
@@ -550,6 +555,10 @@
     "wiki.entry.role.doomsayer.title": "Doomsayer",
     "wiki.entry.role.doomsayer.abilities":"* Guess the role of three living players in one night, killing them and winning",
     "wiki.entry.role.doomsayer.attributes":"* When you win, you will commit suicide using an unstoppable attack\n* You have to guess the exact role of townies, but just the faction of all other roles\n* You can not try to guess town investigative roles\n* If there are not enough players left for you to guess and win, you will convert to a jester\n* You do not visit\n* Your attack is unstoppable",
+
+    "wiki.entry.role.politician.title": "Politician",
+    "wiki.entry.role.politician.abilities": "* When town would normally win, if you are still alive, you win instead, and kill every townsperseon.",
+    "wiki.entry.role.politician.attributes": "* You can win with other polititians",
 
     "wiki.entry.role.vampire.title": "Vampire",
     "wiki.entry.role.vampire.abilities":"* Bite a player to convert them to a vampire",

@@ -190,11 +190,19 @@ impl Game {
         if !self.ticking { return }
 
         if self.game_is_over() {
-            self.add_message_to_chat_group(ChatGroup::All, ChatMessage::GameOver);
-            self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::Draw });
-            self.ticking = false;
-            return;
+            for player_ref in PlayerReference::all_players(self){
+                player_ref.on_game_ending(self);
+            }
+
+            if self.game_is_over() {
+                self.add_message_to_chat_group(ChatGroup::All, ChatMessage::GameOver);
+                self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::Draw });
+                self.ticking = false;
+                return;
+            }
         }
+        
+        
 
         if self.phase_machine.day_number == u8::MAX {
             self.add_message_to_chat_group(ChatGroup::All, ChatMessage::GameOver);

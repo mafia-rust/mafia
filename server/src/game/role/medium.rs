@@ -121,6 +121,9 @@ impl RoleStateImpl for Medium {
         }
         out
     }
+    fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
+        crate::game::role::common_role::get_won_game(game, actor_ref)
+    }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {
             PhaseType::Morning => {
@@ -148,5 +151,7 @@ impl RoleStateImpl for Medium {
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
+    }
+    fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
 }

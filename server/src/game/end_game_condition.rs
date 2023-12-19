@@ -3,6 +3,7 @@ pub enum EndGameCondition {
     Mafia,
     Town,
     Vampire,
+
     None
 }
 impl EndGameCondition {
