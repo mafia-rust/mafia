@@ -51,6 +51,10 @@
 }
 .player-list-menu .player .top .whisper{
     flex-grow: 1;
+    max-width: 100%;
+    overflow-x: hidden;
+    flex-wrap: wrap;
+    display:flex;
 }
 .player-list-menu .player .top .filter{
     flex-shrink: 1;

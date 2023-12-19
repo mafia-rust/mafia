@@ -39,7 +39,13 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
 
             let playerFilter = this.state.playerFilter;
             if(type==="phase"){
-                if(!Anchor.isMobile() && (GAME_MANAGER.state.myIndex===null || GAME_MANAGER.state.players[GAME_MANAGER.state.myIndex].alive)){
+                if(
+                    (
+                        GAME_MANAGER.state.myIndex===null || 
+                        GAME_MANAGER.state.players[GAME_MANAGER.state.myIndex].alive
+                    ) && 
+                    playerFilter != "all"
+                ){
                     if(GAME_MANAGER.state.phase === "night"){
                         playerFilter = "usable"
                     }else if(GAME_MANAGER.state.phase === "morning"){
