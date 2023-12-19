@@ -206,8 +206,10 @@ impl Lobby {
                     return;
                 };
                 if let Some(player) = players.get(&player_id){
-                    if !player.host {return;}
+                    if !player.host {return}
                 }
+
+                if settings.role_list.len() <= index as usize {return}
 
                 settings.role_list[index as usize] = role_outline.clone();
                 
