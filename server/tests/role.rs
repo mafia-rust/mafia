@@ -790,9 +790,9 @@ fn grave_contains_multiple_killers_roles() {
     assert!(vigilante.set_night_target(townie_b));
     doom.set_role_state(RoleState::Doomsayer(
         Doomsayer { guesses: [
-            (PlayerReference::new(&game, 0).expect("player index no existo"), DoomsayerGuess::Doctor),
-            (PlayerReference::new(&game, 1).expect("player index no existo"), DoomsayerGuess::Doctor),
-            (PlayerReference::new(&game, 2).expect("player index no existo"), DoomsayerGuess::Mafia)
+            (PlayerReference::new(&game, 0).expect("that player doesnt exist"), DoomsayerGuess::Doctor),
+            (PlayerReference::new(&game, 1).expect("that player doesnt exist"), DoomsayerGuess::Doctor),
+            (PlayerReference::new(&game, 2).expect("that player doesnt exist"), DoomsayerGuess::Mafia)
         ]}
     ));
 
