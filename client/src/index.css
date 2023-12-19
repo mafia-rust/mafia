@@ -19,6 +19,7 @@
 
 *{
     text-align: center;
+    box-sizing: border-box;
 
     margin: 0;
     padding: 0;
@@ -50,7 +51,7 @@ nav > ul > li > a {
 
 button, input, select, option, textarea, summary {
     border-radius: 0.4rem;
-    margin: .75%;
+    margin: .13rem;
     background-color: var(--secondary-color);
     border-color: var(--primary-border-color);
     border-style: solid;

@@ -1,16 +1,21 @@
 .graveyard-menu {
-    background-color: #343434;
-}
-.graveyard-menu .content-tab {
-    background-color: #424242;
+    --background-color: #343434;
+    --primary-color: #212121;
+    --primary-border-color: #575757;
+    --secondary-color: #2e2e2e;
+    --hover-color: #3d3d3d;
+    --tab-color: #424242;
 }
 .graveyard-menu > .grid {
     display: grid;
+    padding: .13rem;
+    gap: .13rem .25rem;
     margin-bottom: 1rem;
 }
 .graveyard-menu > .grid button {
     width: 100%;
     text-align: left;
+    margin: 0;
 }
 .graveyard-menu > .grid button > *{
     width: 100%;
