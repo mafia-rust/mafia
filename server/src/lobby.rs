@@ -105,7 +105,7 @@ impl Lobby {
                     unreachable!("LobbyState::Lobby was checked to be to LobbyState::Lobby in the previous line")
                 };
 
-                for (index, (arbitrary_player_id, lobby_player)) in players.drain().enumerate() {
+                for (index, (arbitrary_player_id, lobby_player)) in players.iter().map(|(index, tup)| (*index, tup.clone())).enumerate() {
                     player_indices.insert(arbitrary_player_id, GamePlayer { player_index: index as PlayerIndex, host: lobby_player.host });
                     game_players.push(lobby_player);
                 }
@@ -224,7 +224,7 @@ impl Lobby {
 
 
                 let roles: HashSet<_> = roles.drain(..).collect();
-                let roles: Vec<_> = roles.into_iter().filter(|e|*e!=RoleOutline::Any).map(|e|e.clone()).collect();
+                let roles: Vec<_> = roles.into_iter().filter(|e|*e!=RoleOutline::Any).collect();
                 settings.excluded_roles = roles.clone();
                 self.send_to_all(ToClientPacket::ExcludedRoles { roles });
             }

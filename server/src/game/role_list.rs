@@ -117,7 +117,7 @@ pub enum RoleOutline {
 impl RoleOutline{
     pub fn get_all_possible_roles(&self, excluded_roles: &[RoleOutline], taken_roles: &[Role]) -> Vec<Role> {
         match self {
-            RoleOutline::Exact { role } => vec![role.clone()],
+            RoleOutline::Exact { role } => vec![*role],
             RoleOutline::FactionAlignment { faction_alignment } => {
                 Role::values().into_iter()
                     .filter(|r|r.faction_alignment() == *faction_alignment)

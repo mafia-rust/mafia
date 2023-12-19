@@ -86,7 +86,7 @@ impl Listener{
             }else{
                 false
             }
-        ).map(|p|p.0.clone())
+        ).map(|p| *p.0)
     }
 
     pub fn on_connect(&mut self, connection: &Connection) {
