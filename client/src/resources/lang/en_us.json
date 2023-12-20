@@ -503,7 +503,7 @@
     
     "wiki.entry.role.retributionist.title": "Retributionist",
     "wiki.entry.role.retributionist.abilities":"* Force a dead player to use their ability on a living one",
-    "wiki.entry.role.retributionist.attributes":"* Your ability only works only players whos graves show town roles, or no role at all\n* You cant use the same person two times",
+    "wiki.entry.role.retributionist.attributes":"* Your ability only works on dead players with graves that show town roles\n* You cant use the same person two times\n* You can use the dead player to target two living players, this is useful for roles like framer, transporter, and seer\n* Your first target is the player you're controlling, the second and third are the players they're targeting\n* If there are multiple retributionists and necromancers, and they both select the same player, the player with the higher player number will take precendence",
     
     "wiki.entry.role.vigilante.title": "Vigilante",
     "wiki.entry.role.vigilante.abilities":"* Shoot suspicious looking players",
@@ -535,7 +535,7 @@
     
     "wiki.entry.role.necromancer.title": "Necromancer",
     "wiki.entry.role.necromancer.abilities":"* Force a dead player to use their ability on a living player",
-    "wiki.entry.role.necromancer.attributes":"* You cant use the same person two times\n* You can use the dead player to target two living players, this is useful for roles like framer, transporter, and seer\n* Your first target is the player you're controlling, the second and third are the players they're targeting",
+    "wiki.entry.role.necromancer.attributes":"* You cant use the same person two times\n* You can use the dead player to target two living players, this is useful for roles like framer, transporter, and seer\n* Your first target is the player you're controlling, the second and third are the players they're targeting\n* If there are multiple retributionists and necromancers, and they both select the same player, the player with the higher player number will take precendence",
 
     "wiki.entry.role.witch.title": "Witch",
     "wiki.entry.role.witch.abilities":"* Force a player to use their ability on another player",
@@ -562,8 +562,8 @@
     "wiki.entry.role.doomsayer.attributes":"* When you win, you will commit suicide using an unstoppable attack\n* You have to guess the exact role of townies, but just the faction of all other roles\n* You can not try to guess town investigative roles\n* If there are not enough players left for you to guess and win, you will convert to a jester\n* You do not visit\n* Your attack is unstoppable",
 
     "wiki.entry.role.politician.title": "Politician",
-    "wiki.entry.role.politician.abilities": "* When town would normally win, if you are still alive, you win instead, and kill every townsperseon.",
-    "wiki.entry.role.politician.attributes": "* You can win with other polititians",
+    "wiki.entry.role.politician.abilities": "* When town would normally win, if you are still alive, you win instead\n* When you win, you kill every townie, and all politicians commit suicide",
+    "wiki.entry.role.politician.attributes": "* You win with other polititians\n* The final attack on townies is an unstoppable attack\n* Suicide is an unstoppable attack\n* The politician with the lowest player number will force the other politicians to commit suicide",
 
     "wiki.entry.role.vampire.title": "Vampire",
     "wiki.entry.role.vampire.abilities":"* Bite a player to convert them to a vampire",

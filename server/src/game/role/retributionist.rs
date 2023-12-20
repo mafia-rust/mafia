@@ -74,9 +74,8 @@ impl RoleStateImpl for Retributionist {
             game.graves.iter().any(|grave|
                 grave.player == target_ref.index() && 
                 match grave.role {
-                    crate::game::grave::GraveRole::Cleaned => true,
-                    crate::game::grave::GraveRole::Petrified => true,
                     crate::game::grave::GraveRole::Role(r) => r.faction_alignment().faction() == Faction::Town,
+                    _ => false
                 }
             ) &&
             !self.used_bodies.iter().any(|p| *p == target_ref)

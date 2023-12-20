@@ -210,8 +210,8 @@ impl Lobby {
                 }
 
                 if settings.role_list.len() <= index as usize {return}
-
-                settings.role_list[index as usize] = role_outline.clone();
+                let Some(unset_outline) = settings.role_list.get_mut(index as usize) else {return};
+                *unset_outline = role_outline.clone();
                 
                 self.send_to_all(ToClientPacket::RoleOutline { index, role_outline });
             }

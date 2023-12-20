@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::ChatGroup;
+use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::grave::{GraveKiller, Grave, GraveDeathCause};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -73,20 +73,29 @@ impl RoleStateImpl for Politician {
         if !actor_ref.alive(game) {return}
 
         let mut won = false;
+        //kill all townies who won
         for player_ref in PlayerReference::all_players(game) {
             if
                 player_ref.alive(game) && 
                 player_ref.role(game).faction_alignment().faction() == Faction::Town &&
                 player_ref.get_won_game(game)
             {
-                let mut grave = Grave::from_player_lynch(game, player_ref);
-                grave.death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Politician)]);
-                player_ref.die(game, grave);
+                
+                if player_ref.defense(game) >= 3 {
+
+                    let mut grave = Grave::from_player_lynch(game, player_ref);
+                    grave.death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Politician)]);
+                    player_ref.die(game, grave);
+                }else{
+                    player_ref.add_chat_message(game, ChatMessage::YouSurvivedAttack);
+                    actor_ref.add_chat_message(game, ChatMessage::TargetSurvivedAttack);
+                }
                 won = true;
             }
         }
 
         if won {
+            //kill all politicians because they all won
             for player_ref in PlayerReference::all_players(game) {
                 if
                     player_ref.alive(game) && 
@@ -94,7 +103,12 @@ impl RoleStateImpl for Politician {
                 {
                     player_ref.set_role_state(game, RoleState::Politician(Politician{won: true}));
 
-                    player_ref.die(game, Grave::from_player_suicide(game, player_ref));
+                    if player_ref.defense(game) >= 3 {
+                        player_ref.die(game, Grave::from_player_suicide(game, player_ref));
+                    }else{
+                        player_ref.add_chat_message(game, ChatMessage::YouSurvivedAttack);
+                        actor_ref.add_chat_message(game, ChatMessage::TargetSurvivedAttack);
+                    }
                 }
             }
         }
