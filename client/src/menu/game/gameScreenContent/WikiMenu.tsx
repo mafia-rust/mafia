@@ -36,7 +36,7 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
         GAME_MANAGER.removeStateListener(this.listener);
     }
 
-    render(){return(<div className="wiki-menu">
+    render(){return(<div className="wiki-menu wiki-menu-colors">
         <ContentTab close={ContentMenus.WikiMenu}>{translate("menu.wiki.title")}</ContentTab>
         
         <div className="wiki-menu-search">

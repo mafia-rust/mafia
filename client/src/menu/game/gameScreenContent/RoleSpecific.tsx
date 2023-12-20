@@ -2,7 +2,6 @@ import React from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import { ContentMenus, ContentTab } from "../GameScreen";
-import "./graveyardMenu.css";
 import GameState from "../../../game/gameState.d";
 import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
 import LargeAmnesiacMenu from "./RoleSpecificMenus/LargeAmnesiacMenu";
@@ -45,7 +44,7 @@ export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuPr
                 return <LargeAmnesiacMenu/>
         }
     }
-    render(){return(<div>
+    render(){return(<div className="role-specific-colors">
         <ContentTab close={ContentMenus.RoleSpecificMenu}>
             {translate("role."+this.state.gameState.roleState?.role+".name")}
         </ContentTab>

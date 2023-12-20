@@ -210,7 +210,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         </button>
     }
 
-    render(){return(<div className="player-list-menu">
+    render(){return(<div className="player-list-menu player-list-menu-colors">
         <ContentTab close={ContentMenus.PlayerListMenu}>{translate("menu.playerList.title")}</ContentTab>
 
         {this.renderFilterButton("all")}

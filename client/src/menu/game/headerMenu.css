@@ -9,7 +9,10 @@
     max-width: 110px;
     border-bottom: 0;
     border-radius: 8px 8px 0 0;
-
+    background-color: var(--tab-color);
+}
+.header-menu .menu-buttons button:hover {
+    background-color: var(--hover-color);
 }
 .header-menu{
     background-color: var(--secondary-color);
@@ -42,19 +45,4 @@
     margin: 0%;
     padding: 0%;
     background-color: #220000;
-}
-.header-menu .player-list{
-    background-color: #254230;
-}
-
-.header-menu .will{
-    background-color: #382138
-}
-
-.header-menu .graveyard{
-    background-color: #424242;
-}
-
-.header-menu .wiki{
-    background-color: #39352a;
 }

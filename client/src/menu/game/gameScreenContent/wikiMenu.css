@@ -1,13 +1,6 @@
 .wiki-menu {
     display: flex;
     flex-direction: column;
-
-    --background-color: #2a2518;
-    --primary-color: #1c160d;
-    --primary-border-color: #52402e;
-    --secondary-color: #362c24;
-    --hover-color: #3d3023;
-    --tab-color: #39352a;
 }
 .wiki-menu > .wiki-menu-search {
     min-height: 0;

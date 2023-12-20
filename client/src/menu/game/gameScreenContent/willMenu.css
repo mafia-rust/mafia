@@ -1,11 +1,3 @@
-.will-menu {
-    --background-color: #2a1b29;
-    --primary-color: #170c21;
-    --primary-border-color: #3d3966;
-    --secondary-color: #28213a;
-    --hover-color: #3b2d4e;
-    --tab-color: #382138;
-}
 .will-menu details {
     display: flex;
     flex-direction: column;

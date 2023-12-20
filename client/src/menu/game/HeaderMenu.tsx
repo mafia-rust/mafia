@@ -90,13 +90,13 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
     renderMenuButtons(){
         return <div className="menu-buttons">
             <button 
-            className={"player-list"+ (GameScreen.instance.menusOpen().includes(GameScreenContentMenus.PlayerListMenu)?" highlighted":"")} 
+            className={"player-list-menu-colors"+ (GameScreen.instance.menusOpen().includes(GameScreenContentMenus.PlayerListMenu)?" highlighted":"")} 
             onClick={()=>{
                 GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.PlayerListMenu)
             
             }}>{translate("menu.playerList.title")}</button>
             <button 
-            className={"will"+(GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WillMenu)?" highlighted":"")} 
+            className={"will-menu-colors"+(GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WillMenu)?" highlighted":"")} 
             onClick={()=>{
                 GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.WillMenu)
             }}>{translate("menu.will.title")}</button>
@@ -105,7 +105,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                     ROLES[this.state.gameState.roleState?.role as Role] === undefined || !ROLES[this.state.gameState.roleState?.role as Role].largeRoleSpecificMenu
                 )?null:
                     <button 
-                    className={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.RoleSpecificMenu)?" highlighted":""} 
+                    className={"role-specific-colors" + (GameScreen.instance.menusOpen().includes(GameScreenContentMenus.RoleSpecificMenu)?" highlighted":"")} 
                     onClick={()=>{
                         GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.RoleSpecificMenu)
                     
@@ -116,12 +116,12 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                     </button>
             )()}
             <button 
-            className={"graveyard"+(GameScreen.instance.menusOpen().includes(GameScreenContentMenus.GraveyardMenu)?" highlighted":"")} 
+            className={"graveyard-menu-colors"+(GameScreen.instance.menusOpen().includes(GameScreenContentMenus.GraveyardMenu)?" highlighted":"")} 
             onClick={()=>{
                 GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.GraveyardMenu)
             }}>{translate("menu.graveyard.title")}</button>
             <button 
-            className={"wiki"+(GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WikiMenu)?" highlighted":"")} 
+            className={"wiki-menu-colors"+(GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WikiMenu)?" highlighted":"")} 
             onClick={()=>{
                 GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.WikiMenu)
             

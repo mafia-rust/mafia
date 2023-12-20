@@ -113,7 +113,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
             </div>
         </details>)
     }
-    render() {return (<div className="will-menu">
+    render() {return (<div className="will-menu will-menu-colors">
         <ContentTab close={ContentMenus.WillMenu}>{translate("menu.will.title")}</ContentTab>
         <section>
             {this.renderInput("will")}

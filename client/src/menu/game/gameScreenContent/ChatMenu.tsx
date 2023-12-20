@@ -171,7 +171,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         </div>
     );}
     render(){return(
-        <div className="chat-menu">
+        <div className="chat-menu chat-menu-colors">
             <ContentTab close={false}>{translate("menu.chat.title")}</ContentTab>
             <div className="message-section" ref={(el) => { this.messageSection = el; }}>
                 <div className="message-list">
