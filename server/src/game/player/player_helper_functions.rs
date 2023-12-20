@@ -73,9 +73,11 @@ impl PlayerReference{
         //     panic!();
         // }
 
-        self.set_role_state(game, new_role_data);
+        self.set_role_state(game, new_role_data.clone());
         self.on_role_creation(game);
-        self.add_chat_message(game, ChatMessage::RoleAssignment{role: self.role(game)});
+        if new_role_data.role() == self.role(game) {
+            self.add_chat_message(game, ChatMessage::RoleAssignment{role: self.role(game)});
+        }
 
         self.insert_role_label(game, *self, self.role(game));
         if let Some(team) = self.team(game) {
