@@ -56,9 +56,7 @@ impl RoleStateImpl for Deputy {
             
 
             if target_ref.role(game).faction_alignment().faction() == Faction::Town {
-                let mut grave = Grave::from_player_lynch(game, actor_ref);
-                grave.death_cause = GraveDeathCause::Killers(vec![GraveKiller::Suicide]);
-                actor_ref.die(game, grave);
+                actor_ref.die(game, Grave::from_player_suicide(game, actor_ref));
             }
         }
 

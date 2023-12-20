@@ -94,9 +94,7 @@ impl RoleStateImpl for Politician {
                 {
                     player_ref.set_role_state(game, RoleState::Politician(Politician{won: true}));
 
-                    let mut grave = Grave::from_player_lynch(game, player_ref);
-                    grave.death_cause = GraveDeathCause::Killers(vec![GraveKiller::Suicide]);
-                    player_ref.die(game, grave);
+                    player_ref.die(game, Grave::from_player_suicide(game, player_ref));
                 }
             }
         }
