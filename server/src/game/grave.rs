@@ -62,7 +62,7 @@ pub enum GravePhase {
 }
 
 impl Grave{
-    pub fn from_player_night(game: &mut Game, player_ref: PlayerReference)->Grave{
+    pub fn from_player_night(game: &Game, player_ref: PlayerReference) -> Grave {
         let day_number = game.phase_machine.day_number;
 
         Grave { 
@@ -75,12 +75,24 @@ impl Grave{
             death_notes: player_ref.night_grave_death_notes(game).clone()
         }
     }
-    pub fn from_player_lynch(game: &mut Game, player_ref: PlayerReference)->Grave{
+    pub fn from_player_lynch(game: &Game, player_ref: PlayerReference) -> Grave {
 
         Grave { 
             player: player_ref.index(), 
             role: GraveRole::Role(player_ref.role(game)), 
             death_cause: GraveDeathCause::Lynching, 
+            will: player_ref.will(game).clone(), 
+            died_phase: GravePhase::Day, 
+            day_number: game.phase_machine.day_number,
+            death_notes: vec![]
+        }
+    }
+
+    pub fn from_player_suicide(game: &Game, player_ref: PlayerReference) -> Grave {
+        Grave {
+            player: player_ref.index(), 
+            role: GraveRole::Role(player_ref.role(game)), 
+            death_cause: GraveDeathCause::Killers(vec![GraveKiller::Suicide]), 
             will: player_ref.will(game).clone(), 
             died_phase: GravePhase::Day, 
             day_number: game.phase_machine.day_number,

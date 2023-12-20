@@ -55,45 +55,21 @@ impl RoleStateImpl for Politician {
         self.won
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
-        self.check_if_no_town_and_leave_town(game, actor_ref);
+        if self.should_suicide(game, actor_ref) {
+            actor_ref.die(game, Grave::from_player_suicide(game, actor_ref));
+        }
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
-        self.check_if_no_town_and_convert_to_jester(game, actor_ref);
-    }
-    fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
-        self.check_if_no_town_and_leave_town(game, actor_ref);
-    }
-    fn on_game_ending(self, game: &mut Game, actor_ref: PlayerReference){
-        Politician::check_if_town_wouldve_won_and_kill(game, actor_ref);
-    }
-}
-
-impl Politician{
-    pub fn check_if_no_town_and_convert_to_jester(&self, game: &mut Game, actor_ref: PlayerReference){
-        if
-            !self.won &&
-            actor_ref.alive(game) &&
-            PlayerReference::all_players(game).into_iter().filter(|player|
-                player.alive(game) && player.role(game).faction_alignment().faction() == Faction::Town
-            ).collect::<Vec<PlayerReference>>().len() == 0
-        {
+        if self.should_suicide(game, actor_ref) {
             actor_ref.set_role(game, RoleState::Jester(Jester::default()));
         }
     }
-    pub fn check_if_no_town_and_leave_town(&self, game: &mut Game, actor_ref: PlayerReference){
-        if
-            !self.won &&
-            actor_ref.alive(game) &&
-            PlayerReference::all_players(game).into_iter().filter(|player|
-                player.alive(game) && player.role(game).faction_alignment().faction() == Faction::Town
-            ).collect::<Vec<PlayerReference>>().len() == 0
-        {
-            let mut grave = Grave::from_player_lynch(game, actor_ref);
-            grave.death_cause = GraveDeathCause::Killers(vec![GraveKiller::Suicide]);
-            actor_ref.die(game, grave);
+    fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
+        if self.should_suicide(game, actor_ref) {
+            actor_ref.die(game, Grave::from_player_suicide(game, actor_ref));
         }
     }
-    pub fn check_if_town_wouldve_won_and_kill(game: &mut Game, actor_ref: PlayerReference) {
+    fn on_game_ending(self, game: &mut Game, actor_ref: PlayerReference){
         if !actor_ref.alive(game) {return}
 
         let mut won = false;
@@ -124,5 +100,17 @@ impl Politician{
                 }
             }
         }
+    }
+}
+
+pub fn is_town_remaining(game: &Game) -> bool {
+    !PlayerReference::all_players(game).into_iter().filter(|player|
+        player.alive(game) && player.role(game).faction_alignment().faction() == Faction::Town
+    ).collect::<Vec<PlayerReference>>().is_empty()
+}
+
+impl Politician {
+    pub fn should_suicide(&self, game: &Game, actor_ref: PlayerReference) -> bool {
+        !self.won && actor_ref.alive(game) && !is_town_remaining(game)
     }
 }
