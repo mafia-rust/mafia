@@ -49,7 +49,7 @@ export default class LobbyRolePane extends React.Component<{}, RolePaneState> {
         GAME_MANAGER.sendSetRoleOutlinePacket(index, value);
     }
 
-    render(){return(<section>
+    render(){return(<section className="graveyard-menu-colors">
         <h2>{translate("menu.lobby.roleList")}</h2>
         {this.state.roleList.map((_, index) => {
             return <RolePicker

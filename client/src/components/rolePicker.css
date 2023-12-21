@@ -4,6 +4,17 @@
     justify-content: space-evenly;
     width: 100%;
 }
-.role-picker select{
+.role-picker select {
     width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    border-radius: 0;
+}
+.role-picker select:first-of-type {
+    border-top-left-radius: .4rem;
+    border-bottom-left-radius: .4rem;
+}
+.role-picker select:last-of-type {
+    border-top-right-radius: .4rem;
+    border-bottom-right-radius: .4rem;
 }

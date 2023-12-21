@@ -144,7 +144,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
         return {...PHASE_TIME_MODES.get(mode.toString())} as PhaseTimes;
     }
 
-    render() {return(<section className="time">
+    render() {return(<section className="will-menu-colors">
         <h2>{translate("menu.lobby.timeSettings")}</h2>
         <div>
             {this.renderTimeModeDropdown()}

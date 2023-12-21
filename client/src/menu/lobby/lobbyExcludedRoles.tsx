@@ -68,7 +68,7 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
 
     
 
-    render(){return(<section className="excluded-roles">
+    render(){return(<section className="excluded-roles role-specific-colors">
         <header>
             <h2>{translate("menu.lobby.excludedRoles")}</h2>
         </header>

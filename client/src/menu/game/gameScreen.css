@@ -4,56 +4,6 @@
     flex-direction: column;
 }
 
-.chat-menu-colors {
-    --background-color: var(--background-color);
-    --tab-color: #132936;
-}
-
-.player-list-menu-colors {
-    --background-color: #192c23;
-    --primary-color: #0c1a0c;
-    --primary-border-color: #3b5738;
-    --secondary-color: #212e20;
-    --hover-color: #2d4e37;
-    --tab-color: #254230;
-}
-
-.will-menu-colors {
-    --background-color: #2a1b29;
-    --primary-color: #170c21;
-    --primary-border-color: #3d3966;
-    --secondary-color: #28213a;
-    --hover-color: #3b2d4e;
-    --tab-color: #382138;
-}
-
-.role-specific-colors {
-    --background-color: #2a181d;
-    --primary-color: #1c0d0f;
-    --primary-border-color: #633e46;
-    --secondary-color: #362429;
-    --hover-color: #3d2328;
-    --tab-color: #392a2d;
-}
-
-.graveyard-menu-colors {
-    --background-color: #343434;
-    --primary-color: #212121;
-    --primary-border-color: #575757;
-    --secondary-color: #2e2e2e;
-    --hover-color: #3d3d3d;
-    --tab-color: #424242;
-}
-
-.wiki-menu-colors {
-    --background-color: #2a2518;
-    --primary-color: #1c160d;
-    --primary-border-color: #52402e;
-    --secondary-color: #362c24;
-    --hover-color: #3d3023;
-    --tab-color: #39352a;
-}
-
 .game-screen > .leave-button {
     position: absolute;
     margin: 0;

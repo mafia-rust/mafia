@@ -47,7 +47,7 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
             <main>
                 <div>
                     <LobbyPlayerList/>
-                    {Anchor.isMobile() || <section>
+                    {Anchor.isMobile() || <section className="wiki-menu-colors">
                         <h2>{translate("menu.wiki.title")}</h2>
                         <WikiSearch/>
                     </section>}
@@ -57,7 +57,7 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
                     <LobbyPhaseTimePane/>
                     <LobbyRolePane/>
                     <LobbyExcludedRoles/>
-                    {Anchor.isMobile() && <section>
+                    {Anchor.isMobile() && <section className="wiki-menu-colors">
                         <h2>{translate("menu.wiki.title")}</h2>
                         <WikiSearch/>
                     </section>}
@@ -69,30 +69,17 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
 
 // There's probably a better way to do this that doesn't need the mobile check.
 function LobbyMenuHeader(props: { host?: boolean }): JSX.Element {
-    if(GAME_MANAGER.state.stateType === "lobby")
-        return <header>
+    return <header>
+        <div>
             <button className="leave" onClick={() => GAME_MANAGER.leaveGame()}>
                 {translate("menu.button.leave")}
             </button>
             <RoomCodeButton/>
-            {Anchor.isMobile() || <h1>{
-                        GAME_MANAGER.getMyName() ?? ""
-                    }</h1>}
-            <button disabled={!props.host} className="start" onClick={()=>{GAME_MANAGER.sendStartGamePacket()}}>
-                {translate("menu.lobby.button.start")}
-            </button>
-            {Anchor.isMobile() && <h1>{
-                        GAME_MANAGER.getMyName() ?? ""
-                    }</h1>}
-        </header>
-    else
-        return <header>
-            <button className="leave" onClick={() => GAME_MANAGER.leaveGame()}>
-                {translate("menu.button.leave")}
-            </button>
-            <RoomCodeButton/>
-        </header>
-            
+        </div>
+        <button disabled={!props.host} className="start" onClick={()=>{GAME_MANAGER.sendStartGamePacket()}}>
+            {translate("menu.lobby.button.start")}
+        </button>
+    </header>
 }
 
 function RoomCodeButton(props: {}): JSX.Element {

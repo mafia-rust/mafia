@@ -55,22 +55,27 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
     )}
 
     renderPlayers() {
-
         let out = [];
         for(let [id, player] of this.state.players.entries()){
             out.push(<li key={id}>
                 <StyledText>{player.name}</StyledText>
+                {}
             </li>)
         }
-
 
         return <ol>
             {out}
         </ol>
     }
 
-    render(){return(<section>
-        {this.renderName()}
-        {this.renderPlayers()}
-    </section>)}
+    render(){return(<>
+        <section style={{backgroundColor: "var(--tab-color)"}}>
+            <h2>{GAME_MANAGER.getMyName() ?? ""}</h2>
+            {this.renderName()}
+        </section>
+        <section className="player-list-menu-colors">
+            <h2>{translate("menu.lobby.players")}</h2>
+            {this.renderPlayers()}
+        </section>
+    </>)}
 }
