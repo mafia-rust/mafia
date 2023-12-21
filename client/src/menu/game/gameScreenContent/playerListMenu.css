@@ -43,21 +43,18 @@
 .player-list-menu .player .top{
     display: flex;
     flex-direction: row;
+    align-items: center
 }
 .player-list-menu .player .top .whisper{
     flex-grow: 1;
-    /* flex-shrink: 1; */
     overflow-x: hidden;
     flex-wrap: wrap;
     display: flex;
-    /* width: 100%; */
 }
 .player-list-menu .player .top > div{
     flex-shrink: 1;
     overflow-x: hidden;
-    display: flex; 
-    align-items: center;
-    
+    display: flex;     
 }
 .player-list-menu .player .top > div > *{
     flex-shrink: 1;
@@ -68,11 +65,17 @@
 }
 .player-list-menu .vote{
     grid-column: 3;
+    overflow-x: hidden;
+    flex-wrap: wrap;
 }
 .player-list-menu .target{
     grid-column: 2;
+    overflow-x: hidden;
+    flex-wrap: wrap;
 }
 .player-list-menu .day-target{
     grid-column: 1;
+    overflow-x: hidden;
+    flex-wrap: wrap;
 }
 
