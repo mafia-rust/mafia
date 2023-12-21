@@ -65,6 +65,8 @@ export type RoleState = {
 } | 
 Doomsayer 
 | {
+    role: "politician"
+} | {
     role: "death",
     souls: number
 } | {
