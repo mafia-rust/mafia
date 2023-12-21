@@ -49,7 +49,11 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
                     <LobbyPlayerList/>
                     {Anchor.isMobile() || <section className="wiki-menu-colors">
                         <h2>{translate("menu.wiki.title")}</h2>
-                        <WikiSearch/>
+                        <WikiSearch excludedRoles={
+                            GAME_MANAGER.state.stateType === "lobby" ?
+                            GAME_MANAGER.state.excludedRoles :
+                            []
+                        }/>
                     </section>}
                 </div>
                 <div>

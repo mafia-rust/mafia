@@ -1,0 +1,189 @@
+{
+    "Beginner": [
+        {
+            "type": "exact",
+            "role": "jailor"
+        },
+        {
+            "type": "exact",
+            "role": "mayor"
+        },
+        {
+            "type": "exact",
+            "role": "transporter"
+        },
+        
+
+        {
+            "type": "exact",
+            "role": "spy"
+        },
+        {
+            "type": "exact",
+            "role": "tracker"
+        },
+        {
+            "type": "exact",
+            "role": "seer"
+        },
+        {
+            "type": "exact",
+            "role": "psychic"
+        },
+
+        {
+            "type": "exact",
+            "role": "bodyguard"
+        },
+        {
+            "type": "exact",
+            "role": "crusader"
+        },
+
+        {
+            "type": "exact",
+            "role": "deputy"
+        },
+
+        {
+            "type": "exact",
+            "role": "retributionist"
+        },
+
+        
+        {
+            "type": "exact",
+            "role": "consigliere"
+        },
+        {
+            "type": "exact",
+            "role": "witch"
+        },
+        {
+            "type": "exact",
+            "role": "necromancer"
+        },
+
+        {
+            "type": "exact",
+            "role": "janitor"
+        },
+        {
+            "type": "exact",
+            "role": "framer"
+        },
+
+        
+        {
+            "type": "exact",
+            "role": "doomsayer"
+        },
+        {
+            "type": "exact",
+            "role": "politician"
+        },
+
+        {
+            "type": "exact",
+            "role": "death"
+        },
+        
+        {
+            "type": "exact",
+            "role": "vampire"
+        }
+    ],
+    "Intermediate": [
+        {
+            "type": "exact",
+            "role": "transporter"
+        },
+        
+
+        {
+            "type": "exact",
+            "role": "spy"
+        },
+        {
+            "type": "exact",
+            "role": "psychic"
+        },
+
+        {
+            "type": "exact",
+            "role": "crusader"
+        },
+
+        {
+            "type": "exact",
+            "role": "deputy"
+        },
+
+        {
+            "type": "exact",
+            "role": "retributionist"
+        },
+
+        
+        {
+            "type": "exact",
+            "role": "witch"
+        },
+        {
+            "type": "exact",
+            "role": "necromancer"
+        },
+        
+        {
+            "type": "exact",
+            "role": "politician"
+        },
+
+        {
+            "type": "exact",
+            "role": "death"
+        }
+    ],
+    "Classic": [
+        {
+            "type": "exact",
+            "role": "tracker"
+        },
+        {
+            "type": "exact",
+            "role": "seer"
+        },
+        {
+            "type": "exact",
+            "role": "psychic"
+        },
+
+        {
+            "type": "exact",
+            "role": "crusader"
+        },
+
+        {
+            "type": "exact",
+            "role": "deputy"
+        },
+
+        {
+            "type": "exact",
+            "role": "necromancer"
+        },
+        {
+            "type": "exact",
+            "role": "doomsayer"
+        },
+        {
+            "type": "exact",
+            "role": "politician"
+        },
+        {
+            "type": "exact",
+            "role": "death"
+        }
+    ]
+
+}
