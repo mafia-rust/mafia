@@ -58,8 +58,7 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
         let out = [];
         for(let [id, player] of this.state.players.entries()){
             out.push(<li key={id}>
-                <StyledText>{player.name}</StyledText>
-                {}
+                <StyledText>{player.host ? "👑 " : ""}{player.name}</StyledText>
             </li>)
         }
 
