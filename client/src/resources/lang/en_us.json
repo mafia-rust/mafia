@@ -554,7 +554,7 @@
 
     "wiki.entry.role.politician.title": "Politician",
     "wiki.entry.role.politician.abilities": "* When town would normally win, if you are still alive, you win instead\n* When you win, you kill every townie, and all politicians commit suicide",
-    "wiki.entry.role.politician.attributes": "* You win with other polititians\n* The final attack on townies is an unstoppable attack\n* Suicide is an unstoppable attack\n* The politician with the lowest player number will force the other politicians to commit suicide",
+    "wiki.entry.role.politician.attributes": "* You win with other polititians\n* The final attack on townies is an unstoppable attack\n* Suicide is an unstoppable attack\n* The politician with the lowest player number will force the other politicians to commit suicide*\n When the game starts or you first become this role, if there is no townies alive, you become a jester",
 
     "wiki.entry.role.death.title": "Thanos",
     "wiki.entry.role.death.abilities":"* Target a player on the night they die to collect a stone\n* Once you've collected six stones, endgame starts, everyone is notified, and at the start of the next night, you kill everyone, and win.",
