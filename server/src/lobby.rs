@@ -28,18 +28,28 @@ enum LobbyState {
     Closed
 }
 
+pub const LOBBY_DISCONNECT_TIMER_SECS: u64 = 5;
+pub const GAME_DISCONNECT_TIMER_SECS: u64 = 45;
+
+#[derive(Clone)]
+pub enum ClientConnection {
+    Connected(ClientSender),
+    CouldReconnect { disconnect_timer: Duration },
+    Disconnected
+}
+
 #[derive(Clone)]
 pub struct LobbyPlayer{
-    pub sender: ClientSender,
+    pub connection: ClientConnection,
     pub name: String,
     pub host: bool,
     pub to_be_kicked: bool,
 }
 
 impl LobbyPlayer {
-    pub fn new(name: String, sender: ClientSender, host: bool)->Self{
+    pub fn new(name: String, connection: ClientConnection, host: bool)->Self{
         LobbyPlayer{
-            name, sender, host, to_be_kicked: false
+            name, connection, host, to_be_kicked: false
         }
     }
     pub fn set_host(&mut self) {
@@ -47,7 +57,9 @@ impl LobbyPlayer {
     }
 
     pub fn send(&self, message: ToClientPacket) {
-        self.sender.send(message);
+        if let ClientConnection::Connected(ref sender) = self.connection {
+            sender.send(message);
+        }
     }
 }
 #[derive(Clone)]
@@ -244,28 +256,34 @@ impl Lobby {
     pub fn connect_player_to_lobby(&mut self, send: &ClientSender)-> Result<PlayerID, RejectJoinReason>{
         match &mut self.lobby_state {
             LobbyState::Lobby { players, settings } => {
-                let name = name_validation::sanitize_name("".to_string(), players);
-                
-                
-                let mut new_player = LobbyPlayer::new(name.clone(), send.clone(), players.is_empty());
-                let arbitrary_player_id: PlayerID = 
-                    players
-                        .iter()
-                        .map(|(i,_)|*i)
-                        .fold(0u32, u32::max) as PlayerID + 1u32;
+                let player_id = {
+                    if let Some((id, player)) = players.iter_mut().find(|(_, ref player)| matches!(player.connection, ClientConnection::CouldReconnect { .. })) {
+                        player.connection = ClientConnection::Connected(send.clone());
+                        *id
+                    } else {
+                        let name = name_validation::sanitize_name("".to_string(), players);
+                        
+                        let mut new_player = LobbyPlayer::new(name.clone(), ClientConnection::Connected(send.clone()), players.is_empty());
+                        let player_id: PlayerID = 
+                            players
+                                .iter()
+                                .map(|(i,_)|*i)
+                                .fold(0u32, u32::max) as PlayerID + 1u32;
 
-                //if there are no hosts, make this player the host
-                if !players.iter().any(|p|p.1.host) {
-                    new_player.set_host();
-                }
+                        //if there are no hosts, make this player the host
+                        if !players.iter().any(|p|p.1.host) {
+                            new_player.set_host();
+                        }
+        
+                        players.insert(player_id, new_player);
+        
+                        settings.role_list.push(RoleOutline::Any);
+                        
+                        player_id
+                    }
+                };
 
-                players.insert(arbitrary_player_id, new_player);
-
-                settings.role_list.push(RoleOutline::Any);
-
-                
-
-                send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: false, player_id: arbitrary_player_id});
+                send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: false, player_id});
 
                 Self::send_players_lobby(players);
 
@@ -273,7 +291,7 @@ impl Lobby {
                     Self::send_settings(player.1, settings)
                 }
                 
-                Ok(arbitrary_player_id)
+                Ok(player_id)
             },
             LobbyState::Game{ game, players } => {
 
@@ -308,6 +326,32 @@ impl Lobby {
         }
     }
     pub fn disconnect_player_from_lobby(&mut self, id: PlayerID) {
+        let LobbyState::Lobby {players, settings} = &mut self.lobby_state else {
+            panic!("function called wrong");
+        };
+
+        let player = players.remove(&id);
+        
+        if players.is_empty() {
+            self.lobby_state = LobbyState::Closed;
+            return;
+        }
+        if !players.iter().any(|p|p.1.host) {
+            if let Some(new_host) = players.values_mut().next(){
+                new_host.set_host();
+            }
+        }
+
+        if let Some(_player) = player {
+            settings.role_list.pop();
+        };
+
+        Self::send_players_lobby(players);
+        for player in players.iter(){
+            Self::send_settings(player.1, settings);
+        }
+    }
+    pub fn lose_player_connection(&mut self, id: PlayerID) {
 
         //TODO!!! if player id doesnt exist do nothing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -320,26 +364,12 @@ impl Lobby {
 
 
         match &mut self.lobby_state {
-            LobbyState::Lobby {players, settings} => {
-                let player = players.remove(&id);
-            
-                if players.is_empty() {
-                    self.lobby_state = LobbyState::Closed;
-                    return;
-                }
-                if !players.iter().any(|p|p.1.host) {
-                    if let Some(new_host) = players.values_mut().next(){
-                        new_host.set_host();
-                    }
-                }
-
-                if let Some(_player) = player {
-                    settings.role_list.pop();
-                };
-
-                Self::send_players_lobby(players);
-                for player in players.iter(){
-                    Self::send_settings(player.1, settings);
+            LobbyState::Lobby {players, settings: _settings} => {
+                if let Some(player) = players.get_mut(&id) {
+                    player.connection = ClientConnection::CouldReconnect { 
+                        disconnect_timer: Duration::from_secs(LOBBY_DISCONNECT_TIMER_SECS)
+                    };
+                    Self::send_players_lobby(players);
                 }
             },
             LobbyState::Game {game, players} => {
@@ -378,12 +408,35 @@ impl Lobby {
     }
 
     pub fn tick(&mut self, time_passed: Duration){
-        if let LobbyState::Game { game, .. } = &mut self.lobby_state {
-            game.tick(time_passed);
-            
-            if PlayerReference::all_players(game).iter().all(|p| p.has_left(game)) {
-                self.lobby_state = LobbyState::Closed;
+        match &mut self.lobby_state {
+            LobbyState::Game { game, .. } => {
+                game.tick(time_passed);
+                
+                if PlayerReference::all_players(game).iter().all(|p| p.has_left(game)) {
+                    self.lobby_state = LobbyState::Closed;
+                }
             }
+            LobbyState::Lobby { settings: _settings, players } => {
+                let mut to_remove = vec![];
+
+                for player in players {
+                    if let ClientConnection::CouldReconnect { disconnect_timer } = &mut player.1.connection {
+                        if let Some(time_remaining) = disconnect_timer.checked_sub(time_passed) {
+                            *disconnect_timer = time_remaining;
+                        } else {
+                            player.1.connection = ClientConnection::Disconnected;
+                        }
+                    }
+                    if let ClientConnection::Disconnected = player.1.connection {
+                        to_remove.push(*player.0);
+                    }
+                }
+
+                for player in to_remove {
+                    self.disconnect_player_from_lobby(player);
+                }
+            },
+            LobbyState::Closed => {}
         }
     }
     
@@ -409,9 +462,13 @@ impl Lobby {
 
         //send hosts
         let hosts: Vec<PlayerID> = players.iter().filter(|p|p.1.host).map(|p|*p.0).collect();
-        let packet = ToClientPacket::PlayersHost { hosts };
+        let host_packet = ToClientPacket::PlayersHost { hosts };
+        // Send Players that have lost connection
+        let lost_connection: Vec<PlayerID> = players.iter().filter(|p| matches!(p.1.connection, ClientConnection::CouldReconnect { .. })).map(|p|*p.0).collect();
+        let lost_connection_packet = ToClientPacket::PlayersLostConnection { lost_connection };
         for player in players.iter() {
-            player.1.send(packet.clone());
+            player.1.send(host_packet.clone());
+            player.1.send(lost_connection_packet.clone());
         }
     }
     

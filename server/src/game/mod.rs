@@ -18,7 +18,7 @@ use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::Serialize;
 
-use crate::lobby::LobbyPlayer;
+use crate::lobby::{LobbyPlayer, ClientConnection};
 use crate::packet::ToClientPacket;
 use chat::{ChatMessage, ChatGroup};
 use player::PlayerReference;
@@ -54,6 +54,7 @@ pub enum RejectStartReason {
     RoleListTooSmall,
     RoleListCannotCreateRoles,
     ZeroTimeGame,
+    PlayerDisconnected
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -90,9 +91,12 @@ impl Game {
 
         let mut players = Vec::new();
         for (player_index, player) in lobby_players.iter().enumerate() {
+            let ClientConnection::Connected(ref sender) = player.connection else {
+                return Err(RejectStartReason::PlayerDisconnected)
+            };
             let new_player = Player::new(
                 player.name.clone(),
-                player.sender.clone(),
+                sender.clone(),
                 match roles.get(player_index){
                     Some(role) => *role,
                     None => {

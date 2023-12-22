@@ -30,6 +30,7 @@ export type LobbyState = {
 export type LobbyPlayer = {
     name: string,
     host: boolean,
+    lostConnection: boolean,
 }
 
 type GameState = {

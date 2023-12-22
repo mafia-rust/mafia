@@ -4,7 +4,6 @@ import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
 import { LobbyPlayer, PlayerID } from "../../game/gameState.d";
 import { StateListener } from "../../game/gameManager.d";
-import StyledText from "../../components/StyledText";
 
 type PlayerListState = {
     enteredName: string,
@@ -57,8 +56,9 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
     renderPlayers() {
         let out = [];
         for(let [id, player] of this.state.players.entries()){
-            out.push(<li key={id}>
-                <StyledText>{player.host ? "👑 " : ""}{player.name}</StyledText>
+            // TODO: Find an emoji to represent this
+            out.push(<li key={id} className={player.lostConnection ? "keyword-dead" : ""}>
+                {player.host ? "👑 " : ""}{player.lostConnection ? "... " : ""}{player.name}
             </li>)
         }
 

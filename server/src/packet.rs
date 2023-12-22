@@ -48,6 +48,8 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     RejectStart{reason: RejectStartReason},
     PlayersHost{hosts: Vec<PlayerID>},
+    #[serde(rename_all = "camelCase")]
+    PlayersLostConnection{lost_connection: Vec<PlayerID>},
     StartGame,
 
     GamePlayers{players: Vec<String>},

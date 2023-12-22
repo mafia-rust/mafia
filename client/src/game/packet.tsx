@@ -34,6 +34,9 @@ export type ToClientPacket = {
     type: "playersHost",
     hosts: PlayerID[],
 } | {
+    type: "playersLostConnection",
+    lostConnection: PlayerID[],
+} | {
     type: "startGame"
 } | {
     type: "gamePlayers",

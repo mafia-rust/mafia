@@ -8,8 +8,8 @@ pub use player_reference::PlayerIndex;
 pub use player_reference::PlayerReference;
 
 use std::collections::HashMap;
-use std::time::Duration;
 
+use crate::lobby::ClientConnection;
 use crate::{
     game::{
         role::{Role, RoleState}, 
@@ -124,14 +124,14 @@ impl Player {
 pub mod test {
     use std::{collections::HashMap, time::Duration};
 
-    use crate::game::{role::Role, verdict::Verdict, grave::GraveRole};
+    use crate::{game::{role::Role, verdict::Verdict, grave::GraveRole}, lobby::ClientConnection};
 
     use super::{Player, PlayerVotingVariables, PlayerNightVariables};
 
     pub fn mock_player(name: String, role: Role) -> Player {
         Player {
             // Since `tick` is never called in tests, this will never decrement.
-            connection: super::ClientConnection::CouldReconnect { disconnect_timer: Duration::from_secs(1) },
+            connection: ClientConnection::CouldReconnect { disconnect_timer: Duration::from_secs(1) },
 
             name,
             role_state: role.default_state(),
@@ -176,12 +176,4 @@ pub mod test {
             },
         }
     }
-}
-
-pub const DISCONNECT_TIMER_SECS: u64 = 45;
-
-enum ClientConnection {
-    Connected(ClientSender),
-    CouldReconnect { disconnect_timer: Duration },
-    Disconnected
 }

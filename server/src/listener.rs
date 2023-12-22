@@ -107,7 +107,7 @@ impl Listener{
             return Err("Player is in a lobby that doesn't exist, but was removed from listener");
         };
 
-        lobby.disconnect_player_from_lobby(player_id);
+        lobby.lose_player_connection(player_id);
         Ok(())
     }
 

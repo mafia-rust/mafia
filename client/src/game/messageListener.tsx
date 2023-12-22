@@ -85,6 +85,13 @@ export default function messageListener(packet: ToClientPacket){
                 }
             }
         break;
+        case "playersLostConnection":
+            if(GAME_MANAGER.state.stateType === "lobby"){
+                for(let [playerId, player] of GAME_MANAGER.state.players){
+                    player.lostConnection = packet.lostConnection.includes(playerId);
+                }
+            }
+        break;
         /*
         In Lobby/Game 
         */
@@ -100,9 +107,8 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "lobby"){
                 GAME_MANAGER.state.players = new Map();
                 for(let [playerId, name] of Object.entries(packet.players)){
-                    GAME_MANAGER.state.players.set(Number.parseInt(playerId), {name: name, host: false});
+                    GAME_MANAGER.state.players.set(Number.parseInt(playerId), {name: name, host: false, lostConnection: false});
                 }
-                
             }
         break;
         case "kickPlayer":
