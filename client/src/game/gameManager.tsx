@@ -9,13 +9,44 @@ import { GameManager, Server, StateListener } from "./gameManager.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleOutline } from "./roleListState.d";
 import translate from "./lang";
-
+import PlayMenu from "../menu/main/playMenu";
+import { createGameState, createLobbyState } from "./gameState";
+import LobbyMenu from "../menu/lobby/LobbyMenu";
+import GameScreen from "../menu/game/GameScreen";
 export function createGameManager(): GameManager {
 
     console.log("Game manager created.");
     
     let gameManager: GameManager = {
-        roomCode: null,
+
+        setDisconnectedState() {
+            GAME_MANAGER.server.close();
+            
+            GAME_MANAGER.state = {
+                stateType: "disconnected"
+            };
+        },
+        setLobbyState() {
+            GAME_MANAGER.state = createLobbyState();
+            Anchor.setContent(<LobbyMenu/>);
+        },
+        setGameState() {
+            GAME_MANAGER.state = createGameState();
+            Anchor.setContent(GameScreen.createDefault());
+        },
+        async setOutsideLobbyState() {
+
+            GAME_MANAGER.server.close();
+            await GAME_MANAGER.server.open();
+
+            GAME_MANAGER.state = {
+                stateType: "outsideLobby",
+                selectedRoomCode: null,
+            }
+
+            Anchor.setContent(<PlayMenu/>);
+        },
+
         playerId: null,
 
         state: {
@@ -58,13 +89,8 @@ export function createGameManager(): GameManager {
             }
         },
 
-        async tryJoinGame(roomCode: string) {
-            GAME_MANAGER.roomCode = roomCode;
-            
-            GAME_MANAGER.server.close();
-            await GAME_MANAGER.server.open();
-            
-            await GAME_MANAGER.sendJoinPacket();
+        async tryJoinGame(roomCode: string) {   
+            await GAME_MANAGER.sendJoinPacket(roomCode);
         },
 
         leaveGame() {
@@ -79,7 +105,7 @@ export function createGameManager(): GameManager {
         sendHostPacket() {
             this.server.sendPacket({type: "host"});
         },
-        sendJoinPacket() {
+        sendJoinPacket(roomCode: string) {
             let completePromise: () => void;
             let promise = new Promise<void>((resolver) => {
                 completePromise = resolver;
@@ -93,7 +119,7 @@ export function createGameManager(): GameManager {
             };
             GAME_MANAGER.addStateListener(onJoined);
 
-            let actualCode: number = parseInt(gameManager.roomCode!, 18);
+            let actualCode: number = parseInt(roomCode, 18);
 
             this.server.sendPacket({
                 type: "join",
@@ -265,11 +291,15 @@ function createServer(){
 
             Server.ws.onopen = (event: Event)=>{
                 completePromise();
+                console.log("Connected to server.");
+                
+                Anchor.setContent(<PlayMenu/>);
             };
             Server.ws.onclose = (event: CloseEvent)=>{
+                console.log("Disconnected from server.");
                 if (Server.ws === null) return; // We closed it ourselves
 
-                Anchor.pushInfo(translate("notification.connectionFailed"), "")
+                Anchor.pushInfo(translate("notification.connectionFailed"), "");
                 Anchor.setContent(<StartMenu/>);
             };
             Server.ws.onmessage = (event: MessageEvent<string>)=>{
@@ -278,7 +308,7 @@ function createServer(){
                 );
             };
             Server.ws.onerror = (event: Event) => {
-                Server.ws = null;
+                Server.close();
                 Anchor.pushInfo(translate("notification.connectionFailed"), translate("notification.serverNotFound"));
                 Anchor.setContent(<StartMenu/>);
             };

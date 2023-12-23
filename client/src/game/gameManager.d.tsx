@@ -15,7 +15,12 @@ export type StateEventType = ToClientPacket["type"] | "tick";
 export type StateListener = (type?: StateEventType) => void;
 
 export type GameManager = {
-    roomCode: string | null,
+
+    setDisconnectedState(): void;
+    setLobbyState(): void;
+    setGameState(): void;
+    setOutsideLobbyState(): void;
+
     playerId: number | null,
     
 
@@ -34,7 +39,7 @@ export type GameManager = {
     leaveGame(): void;
 
     sendHostPacket(): void;
-    sendJoinPacket(): Promise<void>;
+    sendJoinPacket(roomCode: string): Promise<void>;
     sendSetNamePacket(name: string): void;
     sendStartGamePacket(): void;
     sendSetPhaseTimePacket(phase: Phase, time: number): void;

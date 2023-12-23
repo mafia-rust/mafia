@@ -89,10 +89,16 @@ function LobbyMenuHeader(props: { host?: boolean }): JSX.Element {
 function RoomCodeButton(props: {}): JSX.Element {
     return <button onClick={() => {
         let code = new URL(window.location.href);
-        code.searchParams.set("code", GAME_MANAGER.roomCode!);
+        
+        if (GAME_MANAGER.state.stateType === "lobby")
+            code.searchParams.set("code", GAME_MANAGER.state.roomCode!);
+
         if (navigator.clipboard)
             navigator.clipboard.writeText(code.toString());
     }}>
-        {GAME_MANAGER.roomCode!}
+        {
+            GAME_MANAGER.state.stateType === "lobby" ?
+            GAME_MANAGER.state.roomCode : ""
+        }
     </button>
 }

@@ -1,11 +1,7 @@
 import React from "react";
 import GAME_MANAGER from "../../index";
-import { createLobbyState } from "../../game/gameState";
-import Anchor from "../Anchor";
 import "../../index.css"
 import "./startMenu.css"
-import * as LoadingScreen from "../LoadingScreen";
-import JoinMenu from "./JoinMenu";
 import translate from "../../game/lang";
 import WikiSearch from "../../components/WikiSearch";
 
@@ -19,20 +15,9 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
         super(props);
         window.history.replaceState({}, document.title, window.location.pathname);
     }
-    private joinGameButton() {
-        GAME_MANAGER.state = createLobbyState();
-        Anchor.setContent(<JoinMenu roomCode={null}/>);
-    }
-    
-    private async hostGameButton() {
-        GAME_MANAGER.state = createLobbyState();
-        
-        Anchor.setContent(LoadingScreen.create("host"));
 
-        GAME_MANAGER.server.close();
-        await GAME_MANAGER.server.open();
-
-        GAME_MANAGER.sendHostPacket();
+    private async connectButton() {
+        GAME_MANAGER.setOutsideLobbyState();
     }
 
     render(){return(<div className="sm">
@@ -41,11 +26,8 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
                 <h1>{translate("menu.start.title")}</h1>
                 
                 <div>
-                    <button onClick={()=>{this.joinGameButton()}}>
-                        {translate("menu.start.button.join")}
-                    </button>
-                    <button onClick={()=>{this.hostGameButton()}}>
-                        {translate("menu.start.button.host")}
+                    <button onClick={()=>{this.connectButton()}}>
+                        CONNECT
                     </button>
                 </div>
             </section>

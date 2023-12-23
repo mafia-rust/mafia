@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import Anchor from './menu/Anchor';
 import { GameManager, createGameManager } from './game/gameManager';
-import { createGameState } from './game/gameState';
 import StartMenu from './menu/main/StartMenu';
 import * as LoadingScreen from './menu/LoadingScreen';
 import StandaloneWiki from './menu/main/StandaloneWiki';
@@ -18,7 +17,9 @@ export default GAME_MANAGER;
 GAME_MANAGER.addStateListener((type) => {
     switch (type) {
         case "acceptJoin":
-            window.history.pushState({}, document.title, `?code=${GAME_MANAGER.roomCode}`);
+            if (GAME_MANAGER.state.stateType === "lobby") {
+                window.history.pushState({}, document.title, `?code=${GAME_MANAGER.state.roomCode}`);
+            }
     }
 })
 
@@ -26,11 +27,11 @@ setInterval(() => {
     GAME_MANAGER.tick(TIME_PERIOD);
 }, TIME_PERIOD);
 
-function route(url: Location) {
+async function route(url: Location) {
     const roomCode = new URLSearchParams(url.search).get("code");
 
     if (roomCode !== null) {
-        GAME_MANAGER.state = createGameState();
+        await GAME_MANAGER.setOutsideLobbyState();
         GAME_MANAGER.tryJoinGame(roomCode);
     } else if (url.pathname.startsWith('/wiki')) {
         const page = url.pathname.substring(6);

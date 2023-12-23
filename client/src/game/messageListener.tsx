@@ -1,7 +1,6 @@
 
-import { createGameState, createLobbyState, createPlayer } from "./gameState";
+import { createPlayer } from "./gameState";
 import Anchor from "./../menu/Anchor";
-import LobbyMenu from "./../menu/lobby/LobbyMenu";
 import StartMenu from "./../menu/main/StartMenu";
 import GAME_MANAGER from "./../index";
 import GameScreen, { ContentMenus } from "./../menu/game/GameScreen";
@@ -19,13 +18,13 @@ export default function messageListener(packet: ToClientPacket){
     switch(packet.type) {
         case "acceptJoin":
             if(packet.inGame){
-                GAME_MANAGER.state = createGameState();
-                Anchor.setContent(GameScreen.createDefault());
+                GAME_MANAGER.setGameState();
             }else{
-                GAME_MANAGER.state = createLobbyState();
-                Anchor.setContent(<LobbyMenu/>);
+                GAME_MANAGER.setLobbyState();
             }
-            GAME_MANAGER.roomCode = packet.roomCode.toString(18);
+            if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
+                GAME_MANAGER.state.roomCode = packet.roomCode.toString(18);
+            }
             if(GAME_MANAGER.state.stateType === "lobby")
                 GAME_MANAGER.state.myId = packet.playerId;
         break;
@@ -125,8 +124,7 @@ export default function messageListener(packet: ToClientPacket){
             // Anchor.setContent(<StartMenu/>)
         break;
         case "startGame":
-            GAME_MANAGER.state = createGameState();
-            Anchor.setContent(GameScreen.createDefault());
+            GAME_MANAGER.setGameState();
         break;
         case "gamePlayers":
             if(GAME_MANAGER.state.stateType === "game"){
