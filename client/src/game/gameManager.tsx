@@ -42,6 +42,7 @@ export function createGameManager(): GameManager {
             GAME_MANAGER.state = {
                 stateType: "outsideLobby",
                 selectedRoomCode: null,
+                roomCodes: []
             }
 
             Anchor.setContent(<PlayMenu/>);
@@ -102,6 +103,9 @@ export function createGameManager(): GameManager {
             window.location.reload();
         },
 
+        sendLobbyListRequest() {
+            this.server.sendPacket({type: "lobbyListRequest"});
+        },
         sendHostPacket() {
             this.server.sendPacket({type: "host"});
         },

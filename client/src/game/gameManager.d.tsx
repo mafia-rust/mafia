@@ -38,6 +38,7 @@ export type GameManager = {
     tryJoinGame(roomCode: string): Promise<void>;
     leaveGame(): void;
 
+    sendLobbyListRequest(): void;
     sendHostPacket(): void;
     sendJoinPacket(roomCode: string): Promise<void>;
     sendSetNamePacket(name: string): void;

@@ -35,6 +35,10 @@ use crate::{game::{
 pub enum ToClientPacket{
     // Pre lobby
     #[serde(rename_all = "camelCase")]
+    LobbyList{
+        room_codes: Vec<RoomCode>,
+    },
+    #[serde(rename_all = "camelCase")]
     AcceptJoin{room_code: RoomCode, in_game: bool, player_id: PlayerID},
     RejectJoin{reason: RejectJoinReason},
     
@@ -140,6 +144,7 @@ pub enum RejectJoinReason {
 #[serde(tag = "type", rename_all = "camelCase")]
 pub enum ToServerPacket{
     // Pre Lobby
+    LobbyListRequest,
     #[serde(rename_all = "camelCase")]
     Join{room_code: RoomCode},
     Host,

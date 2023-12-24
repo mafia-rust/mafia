@@ -13,7 +13,8 @@ export type Disconnected = {
 export type OutsideLobbyState = {
     stateType: "outsideLobby",
 
-    selectedRoomCode: string | null
+    selectedRoomCode: string | null,
+    roomCodes: string[],
 }
 
 

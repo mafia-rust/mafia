@@ -164,6 +164,13 @@ impl Listener{
         
 
         match incoming_packet {
+            ToServerPacket::LobbyListRequest => {
+                let lobbies = self.lobbies.iter().map(|(room_code, _lobby)| {
+                    *room_code
+                }).collect::<Vec<_>>();
+
+                connection.send(ToClientPacket::LobbyList { room_codes: lobbies });
+            },
             ToServerPacket::Join{ room_code } => {
                 self.connect_player_to_lobby(connection, room_code);
             },

@@ -16,6 +16,10 @@ export default function messageListener(packet: ToClientPacket){
 
 
     switch(packet.type) {
+        case "lobbyList":
+            if(GAME_MANAGER.state.stateType === "outsideLobby")
+                GAME_MANAGER.state.roomCodes = packet.roomCodes.map((roomCode) => roomCode.toString(18));
+        break;
         case "acceptJoin":
             if(packet.inGame){
                 GAME_MANAGER.setGameState();

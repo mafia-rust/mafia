@@ -5,7 +5,11 @@ import { RoleOutline } from "./roleListState.d"
 import { Role, RoleState } from "./roleState.d"
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu"
 
-export type ToClientPacket = {
+export type ToClientPacket = 
+{
+    type: "lobbyList",
+    roomCodes: number[],
+} | {
     type: "acceptJoin",
     roomCode: number,
     inGame: boolean,
@@ -117,6 +121,8 @@ export type ToClientPacket = {
 }
 
 export type ToServerPacket = {
+    type: "lobbyListRequest",
+} | {
     type: "join", 
     roomCode: number
 } | {

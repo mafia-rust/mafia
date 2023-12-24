@@ -12,27 +12,39 @@ type PlayMenuState = {
 }
 
 export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuState> {
+    listener: ()=>void;
     constructor(props: PlayMenuProps) {
         super(props);
 
         this.state = {
             selectedRoomCode: null,
         };
+        this.listener = () => {
+            this.forceUpdate();
+        }
     }
     componentDidMount() {
+        GAME_MANAGER.addStateListener(this.listener);
     }
     componentWillUnmount() {
+        GAME_MANAGER.removeStateListener(this.listener);
     }
-    private async joinGameButton() {
-        if(this.state.selectedRoomCode !== null){
-            Anchor.setContent(<LoadingScreen type="join"/>);
-            GAME_MANAGER.tryJoinGame(this.state.selectedRoomCode);
-        }
+    private async joinGameButton(roomCode?: string) {
+        if(!roomCode){
+            Anchor.pushInfo(translate("notification.rejectJoin"), translate("notification.rejectJoin.invalidRoomCode"));
+            return;
+        };
+        Anchor.setContent(<LoadingScreen type="join"/>);
+        GAME_MANAGER.tryJoinGame(roomCode);
     }
     
     private async hostGameButton() {
         Anchor.setContent(<LoadingScreen type="host"/>);
         GAME_MANAGER.sendHostPacket();
+    }
+
+    private refreshButton() {
+        GAME_MANAGER.sendLobbyListRequest();
     }
 
     render() {
@@ -50,19 +62,42 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
                         onChange={(e)=>{this.setState({selectedRoomCode: e.target.value})}}
                         onKeyUp={(e)=>{
                             if(e.key === 'Enter') {
-                                this.joinGameButton();
+                                this.joinGameButton(this.state.selectedRoomCode??"");
                             }
                         }}
                     />
                 </section>
             </div>
             
-            <button onClick={()=>{this.joinGameButton()}}>
+            <button onClick={()=>{this.joinGameButton(this.state.selectedRoomCode??"")}}>
                 {translate("menu.start.button.join")}
             </button>
             <button onClick={()=>{this.hostGameButton()}}>
                 {translate("menu.start.button.host")}
             </button>
+            <button onClick={()=>{this.refreshButton()}}>
+                REFRESH
+            </button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Room Code</th>
+                        {/* <th>Players</th>
+                        <th>Host</th> */}
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                    GAME_MANAGER.state.stateType === "outsideLobby" &&
+                    GAME_MANAGER.state.roomCodes.map((roomCode, i)=>{
+                        return <tr key={i}>
+                            <td><button onClick={()=>{this.joinGameButton(roomCode??"")}}>{roomCode}</button></td>
+                            {/* <td>{GAME_MANAGER.state.players.get(roomCode)?.size}</td>
+                            <td>{GAME_MANAGER.state.players.get(roomCode)?.getHost()?.name}</td> */}
+                        </tr>
+                    })}
+                </tbody>
+            </table>
         </div>
     }
 }
