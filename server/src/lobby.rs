@@ -43,13 +43,12 @@ pub struct LobbyPlayer{
     pub connection: ClientConnection,
     pub name: String,
     pub host: bool,
-    pub to_be_kicked: bool,
 }
 
 impl LobbyPlayer {
     pub fn new(name: String, connection: ClientConnection, host: bool)->Self{
         LobbyPlayer{
-            name, connection, host, to_be_kicked: false
+            name, connection, host
         }
     }
     pub fn set_host(&mut self) {
@@ -142,21 +141,6 @@ impl Lobby {
                 };
 
                 Lobby::send_players_game(game);
-            },
-            ToServerPacket::KickPlayer{player_id: kicked_player_id} => {
-                let LobbyState::Lobby { players, .. } = &mut self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "ToServerPacket::KickPlayer can not be used outside of LobbyState::Lobby", player_id);
-                    return;
-                };
-                if let Some(player) = players.get(&player_id){
-                    if !player.host {return;}
-                }
-
-                if let Some(kicked_player) = players.get_mut(&kicked_player_id){
-                    kicked_player.to_be_kicked = true;
-                }
-                self.send_to_all(ToClientPacket::KickPlayer { player_id: kicked_player_id });
-                
             },
             ToServerPacket::SetPhaseTime{phase, time} => {
                 let LobbyState::Lobby{ settings, players  } = &mut self.lobby_state else {
@@ -394,13 +378,6 @@ impl Lobby {
             },
             LobbyState::Closed => {}
         }
-    }
-    
-    pub fn get_players_to_kick(&self)->Vec<PlayerID>{
-        let LobbyState::Lobby { players, .. } = &self.lobby_state else {
-            return vec![];
-        };
-        players.iter().filter(|p|p.1.to_be_kicked).map(|p|*p.0).collect()
     }
 
     pub fn is_closed(&self) -> bool {

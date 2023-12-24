@@ -24,7 +24,6 @@
     "menu.lobby.excludedRoles": "Exclusions:",
     "menu.lobby.timeSettings": "Times:",
     "menu.lobby.settings": "Settings:",
-    "menu.lobby.kick": "Kick",
 
     "menu.excludedRoles.exclude": "Exclude",
     "menu.excludedRoles.includeAll": "Include All",

@@ -57,7 +57,6 @@ export type GameManager = {
     sendSendMessagePacket(text: string): void;
     sendSendWhisperPacket(playerIndex: number, text: string): void;
     sendExcludedRolesPacket(roles: RoleOutline[]): void;
-    sendKickPlayerPacket(playerId: PlayerID): void;
 
     sendSetDoomsayerGuess(guesses: [
         [number, DoomsayerGuess],

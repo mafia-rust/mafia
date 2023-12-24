@@ -231,12 +231,6 @@ export function createGameManager(): GameManager {
                 roles:roles
             })
         },
-        sendKickPlayerPacket(playerId){
-            this.server.sendPacket({
-                type:"kickPlayer",
-                playerId:playerId
-            })
-        },
 
         sendSetDoomsayerGuess(guesses) {
             this.server.sendPacket({

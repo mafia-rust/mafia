@@ -25,9 +25,6 @@ export type ToClientPacket = {
     type: "yourPlayerIndex",
     playerIndex: PlayerIndex
 } | {
-    type: "kickPlayer",
-    playerId: PlayerID
-} | {
     type: "rejectStart",
     reason: string /* TODO RejectStartReason */
 } | {
@@ -131,9 +128,6 @@ export type ToServerPacket = {
     name: string
 } | {
     type: "startGame",
-} | {
-    type: "kickPlayer", 
-    playerId: PlayerID
 } | {
     type: "setRoleList", 
     roleList: RoleOutline[]

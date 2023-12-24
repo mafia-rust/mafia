@@ -50,19 +50,6 @@ impl Listener{
                             closed_lobbies.push(*room_code);
                         } else {
                             lobby.tick(delta_time);
-
-
-
-
-
-                            //TODO move this somewhere else, 
-                            //Kick players from lobby and disconnect them from listener
-                            lobby.get_players_to_kick().into_iter().for_each(|id|{
-                                if let Some(address) = Self::get_address_from_id(players, *room_code, id){
-                                    players.remove(&address);
-                                    lobby.disconnect_player_from_lobby(id);
-                                }
-                            });
                         }
                     }
 

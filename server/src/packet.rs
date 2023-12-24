@@ -44,8 +44,6 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     LobbyPlayers{players: HashMap<PlayerID, String>},
     #[serde(rename_all = "camelCase")]
-    KickPlayer{player_id: PlayerID},
-    #[serde(rename_all = "camelCase")]
     RejectStart{reason: RejectStartReason},
     PlayersHost{hosts: Vec<PlayerID>},
     #[serde(rename_all = "camelCase")]
@@ -149,8 +147,6 @@ pub enum ToServerPacket{
     // Lobby
     SetName{name: String},
     StartGame,
-    #[serde(rename_all = "camelCase")]
-    KickPlayer{player_id: PlayerID},
     #[serde(rename_all = "camelCase")]
     SetRoleList{role_list: RoleList},
     #[serde(rename_all = "camelCase")]
