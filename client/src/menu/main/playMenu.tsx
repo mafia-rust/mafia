@@ -32,7 +32,6 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
     
     private async hostGameButton() {
         Anchor.setContent(LoadingScreen.create("host"));
-
         GAME_MANAGER.sendHostPacket();
     }
 

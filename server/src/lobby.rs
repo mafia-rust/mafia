@@ -302,9 +302,11 @@ impl Lobby {
                     }
                 }
 
+                send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::GameAlreadyStarted});
                 Err(RejectJoinReason::GameAlreadyStarted)
             }
             LobbyState::Closed => {
+                send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::InvalidRoomCode});
                 Err(RejectJoinReason::InvalidRoomCode)
             }
         }

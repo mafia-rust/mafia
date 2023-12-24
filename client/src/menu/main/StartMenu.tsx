@@ -4,6 +4,8 @@ import "../../index.css"
 import "./startMenu.css"
 import translate from "../../game/lang";
 import WikiSearch from "../../components/WikiSearch";
+import Anchor from "../Anchor";
+import * as LoadingScreen from "../LoadingScreen";
 
 type StartMenuProps = {
 }
@@ -17,6 +19,8 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
     }
 
     private async connectButton() {
+        Anchor.setContent(LoadingScreen.create("default"));
+
         GAME_MANAGER.setOutsideLobbyState();
     }
 
