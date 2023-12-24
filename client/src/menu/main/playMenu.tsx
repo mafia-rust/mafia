@@ -2,7 +2,7 @@ import React from "react";
 import translate from "../../game/lang";
 import Anchor from "../Anchor";
 import GAME_MANAGER from "../..";
-import * as LoadingScreen from "../LoadingScreen";
+import LoadingScreen from "../LoadingScreen";
 
 
 type PlayMenuProps = {
@@ -25,13 +25,13 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
     }
     private async joinGameButton() {
         if(this.state.selectedRoomCode !== null){
-            Anchor.setContent(LoadingScreen.create("join"));
+            Anchor.setContent(<LoadingScreen type="join"/>);
             GAME_MANAGER.tryJoinGame(this.state.selectedRoomCode);
         }
     }
     
     private async hostGameButton() {
-        Anchor.setContent(LoadingScreen.create("host"));
+        Anchor.setContent(<LoadingScreen type="host"/>);
         GAME_MANAGER.sendHostPacket();
     }
 

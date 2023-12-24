@@ -79,14 +79,15 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
 function LobbyMenuHeader(props: { host?: boolean }): JSX.Element {
     return <header>
         <div>
-            <button className="leave" onClick={() => GAME_MANAGER.leaveGame()}>
-                {translate("menu.button.leave")}
+            <button disabled={!props.host} className="start" onClick={()=>{GAME_MANAGER.sendStartGamePacket()}}>
+                {translate("menu.lobby.button.start")}
             </button>
             <RoomCodeButton/>
         </div>
-        <button disabled={!props.host} className="start" onClick={()=>{GAME_MANAGER.sendStartGamePacket()}}>
-            {translate("menu.lobby.button.start")}
+        <button className="leave" onClick={() => GAME_MANAGER.leaveGame()}>
+            {translate("menu.button.leave")}
         </button>
+        
     </header>
 }
 

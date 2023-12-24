@@ -3,11 +3,9 @@ import "../index.css"
 import "./loadingScreen.css"
 import translate from "../game/lang";
 
-export type Type = "default" | "host" | "join"
-
-export function create(value: Type = "default") {
+export default function LoadingScreen(props: {type: "default" | "host" | "join"}) {
     return <div className="loading">
-        <h1>{translate("menu.loading." + value)}</h1>
+        <h1>{translate("menu.loading." + props.type)}</h1>
         <div className="loading-dots"></div>
-    </div>;
+    </div>
 }

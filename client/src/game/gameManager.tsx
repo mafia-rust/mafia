@@ -9,7 +9,7 @@ import { GameManager, Server, StateListener } from "./gameManager.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleOutline } from "./roleListState.d";
 import translate from "./lang";
-import PlayMenu from "../menu/main/playMenu";
+import PlayMenu from "../menu/main/PlayMenu";
 import { createGameState, createLobbyState } from "./gameState";
 import LobbyMenu from "../menu/lobby/LobbyMenu";
 import GameScreen from "../menu/game/GameScreen";

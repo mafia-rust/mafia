@@ -4,10 +4,10 @@ import './index.css';
 import Anchor from './menu/Anchor';
 import { GameManager, createGameManager } from './game/gameManager';
 import StartMenu from './menu/main/StartMenu';
-import * as LoadingScreen from './menu/LoadingScreen';
 import StandaloneWiki from './menu/main/StandaloneWiki';
 import { WikiPage } from './components/WikiSearch';
 import { Player } from './game/gameState.d';
+import LoadingScreen from './menu/LoadingScreen';
 
 const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
@@ -44,7 +44,7 @@ async function route(url: Location) {
 
 ROOT.render(
     <Anchor 
-        content={LoadingScreen.create()} 
+        content={<LoadingScreen type="default"/>} 
         onMount={() => route(window.location)}
     />
 );
