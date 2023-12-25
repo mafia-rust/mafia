@@ -48,7 +48,24 @@ export function createGameManager(): GameManager {
             Anchor.setContent(<PlayMenu/>);
         },
 
-        playerId: null,
+        saveReconnectData(roomCode, playerId) {
+            localStorage.setItem(
+                "reconnectData", 
+                JSON.stringify({
+                    "roomCode": roomCode,
+                    "playerId": playerId,
+                    "lastSaveTime": Date.now()
+                })
+            );
+        },
+        loadReconnectData() {
+            let data = localStorage.getItem("reconnectData");
+            // localStorage.removeItem("reconnectData");
+            if (data) {
+                return JSON.parse(data);
+            }
+            return null;
+        },
 
         state: {
             stateType: "disconnected"
@@ -90,16 +107,13 @@ export function createGameManager(): GameManager {
             }
         },
 
-        async tryJoinGame(roomCode: string) {   
-            await GAME_MANAGER.sendJoinPacket(roomCode);
-        },
 
         leaveGame() {
             if (this.state.stateType === "game") {
                 this.server.sendPacket({type: "leave"});
             }
             // Set URL to main menu and refresh
-            window.history.replaceState({}, document.title, window.location.pathname);
+            // window.history.replaceState({}, document.title, window.location.pathname);
             window.location.reload();
         },
 
@@ -108,6 +122,28 @@ export function createGameManager(): GameManager {
         },
         sendHostPacket() {
             this.server.sendPacket({type: "host"});
+        },
+        sendRejoinPacket(roomCode: string, playerId: number) {
+            let completePromise: () => void;
+            let promise = new Promise<void>((resolver) => {
+                completePromise = resolver;
+            });
+            let onJoined: StateListener = (type) => {
+                if (type==="acceptJoin") {
+                    completePromise();
+                    GAME_MANAGER.removeStateListener(onJoined);
+                }
+            };
+            GAME_MANAGER.addStateListener(onJoined);
+
+            this.server.sendPacket({
+                type: "reJoin",
+                roomCode: parseInt(roomCode, 18),
+                playerId: playerId
+            });
+            
+            
+            return promise;
         },
         sendJoinPacket(roomCode: string) {
             let completePromise: () => void;
@@ -297,7 +333,7 @@ function createServer(){
                 console.log("Disconnected from server.");
                 if (Server.ws === null) return; // We closed it ourselves
 
-                Anchor.pushInfo(translate("notification.connectionFailed"), "");
+                Anchor.pushError(translate("notification.connectionFailed"), "");
                 Anchor.setContent(<StartMenu/>);
             };
             Server.ws.onmessage = (event: MessageEvent<string>)=>{
@@ -307,7 +343,7 @@ function createServer(){
             };
             Server.ws.onerror = (event: Event) => {
                 Server.close();
-                Anchor.pushInfo(translate("notification.connectionFailed"), translate("notification.serverNotFound"));
+                Anchor.pushError(translate("notification.connectionFailed"), translate("notification.serverNotFound"));
                 Anchor.setContent(<StartMenu/>);
             };
             

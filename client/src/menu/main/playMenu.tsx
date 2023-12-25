@@ -22,6 +22,10 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
         this.listener = () => {
             this.forceUpdate();
         }
+        let reconnectData = GAME_MANAGER.loadReconnectData();
+        if(reconnectData) {
+            Anchor.pushRejoin(reconnectData.roomCode, reconnectData.playerId);
+        }
     }
     componentDidMount() {
         GAME_MANAGER.addStateListener(this.listener);
@@ -31,11 +35,11 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
     }
     private async joinGameButton(roomCode?: string) {
         if(!roomCode){
-            Anchor.pushInfo(translate("notification.rejectJoin"), translate("notification.rejectJoin.invalidRoomCode"));
+            Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.invalidRoomCode"));
             return;
         };
         Anchor.setContent(<LoadingScreen type="join"/>);
-        GAME_MANAGER.tryJoinGame(roomCode);
+        GAME_MANAGER.sendJoinPacket(roomCode);
     }
     
     private async hostGameButton() {
@@ -76,12 +80,12 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
                 {translate("menu.start.button.host")}
             </button>
             <button onClick={()=>{this.refreshButton()}}>
-                REFRESH
+                {translate("menu.play.button.refresh")}
             </button>
             <table>
                 <thead>
                     <tr>
-                        <th>Room Code</th>
+                        <th>ROOM CODE</th>
                         {/* <th>Players</th>
                         <th>Host</th> */}
                     </tr>

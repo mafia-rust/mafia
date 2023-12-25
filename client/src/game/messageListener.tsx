@@ -31,23 +31,25 @@ export default function messageListener(packet: ToClientPacket){
             }
             if(GAME_MANAGER.state.stateType === "lobby")
                 GAME_MANAGER.state.myId = packet.playerId;
+
+            GAME_MANAGER.saveReconnectData(packet.roomCode.toString(18), packet.playerId);
         break;
         case "rejectJoin":
             switch(packet.reason) {
                 case "invalidRoomCode":
-                    Anchor.pushInfo(translate("notification.rejectJoin"), translate("notification.rejectJoin.invalidRoomCode"));
+                    Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.invalidRoomCode"));
                 break;
                 case "gameAlreadyStarted":
-                    Anchor.pushInfo(translate("notification.rejectJoin"), translate("notification.rejectJoin.gameAlreadyStarted"));
+                    Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.gameAlreadyStarted"));
                 break;
                 case "roomFull":
-                    Anchor.pushInfo(translate("notification.rejectJoin"), translate("notification.rejectJoin.roomFull"));
+                    Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.roomFull"));
                 break;
                 case "serverBusy":
-                    Anchor.pushInfo(translate("notification.rejectJoin"), translate("notification.rejectJoin.serverBusy"));
+                    Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.serverBusy"));
                 break;
                 default:
-                    Anchor.pushInfo(translate("notification.rejectJoin"), "");
+                    Anchor.pushError(translate("notification.rejectJoin"), "");
                     console.error(`${packet.type} message response not implemented: ${packet.reason}`);
                     console.error(packet);
                 break;
@@ -63,19 +65,19 @@ export default function messageListener(packet: ToClientPacket){
             */
             switch(packet.reason) {
                 case "gameEndsInstantly":
-                    Anchor.pushInfo(translate("notification.rejectStart"), translate("notification.rejectStart.gameEndsInstantly"));
+                    Anchor.pushError(translate("notification.rejectStart"), translate("notification.rejectStart.gameEndsInstantly"));
                 break;
                 case "roleListTooSmall":
-                    Anchor.pushInfo(translate("notification.rejectStart"), translate("notification.rejectStart.roleListTooSmall"));
+                    Anchor.pushError(translate("notification.rejectStart"), translate("notification.rejectStart.roleListTooSmall"));
                 break;
                 case "roleListCannotCreateRoles":
-                    Anchor.pushInfo(translate("notification.rejectStart"), translate("notification.rejectStart.roleListCannotCreateRoles"));
+                    Anchor.pushError(translate("notification.rejectStart"), translate("notification.rejectStart.roleListCannotCreateRoles"));
                 break;
                 case "zeroTimeGame":
-                    Anchor.pushInfo(translate("notification.rejectStart"), translate("notification.rejectStart.zeroTimeGame"));
+                    Anchor.pushError(translate("notification.rejectStart"), translate("notification.rejectStart.zeroTimeGame"));
                 break;
                 default:
-                    Anchor.pushInfo(translate("notification.rejectStart"), "");
+                    Anchor.pushError(translate("notification.rejectStart"), "");
                     console.error(`${packet.type} message response not implemented: ${packet.reason}`);
                     console.error(packet);
                 break;

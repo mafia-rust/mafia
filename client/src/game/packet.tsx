@@ -123,6 +123,10 @@ export type ToClientPacket =
 export type ToServerPacket = {
     type: "lobbyListRequest",
 } | {
+    type: "reJoin",
+    roomCode: number,
+    playerId: number,
+} | {
     type: "join", 
     roomCode: number
 } | {

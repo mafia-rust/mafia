@@ -146,6 +146,8 @@ pub enum ToServerPacket{
     // Pre Lobby
     LobbyListRequest,
     #[serde(rename_all = "camelCase")]
+    ReJoin{room_code: RoomCode, player_id: PlayerID},
+    #[serde(rename_all = "camelCase")]
     Join{room_code: RoomCode},
     Host,
 

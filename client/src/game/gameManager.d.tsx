@@ -21,7 +21,12 @@ export type GameManager = {
     setGameState(): void;
     setOutsideLobbyState(): void;
 
-    playerId: number | null,
+    saveReconnectData(roomCode: string, playerId: number): void;
+    loadReconnectData(): {
+        roomCode: string,
+        playerId: number,
+        lastSaveTime: number,
+    } | null;
     
 
     state: State,
@@ -35,11 +40,11 @@ export type GameManager = {
     removeStateListener(listener: StateListener): void;
     invokeStateListeners(type?: StateEventType): void;
 
-    tryJoinGame(roomCode: string): Promise<void>;
     leaveGame(): void;
 
     sendLobbyListRequest(): void;
     sendHostPacket(): void;
+    sendRejoinPacket(roomCode: string, playerId: number): Promise<void>;
     sendJoinPacket(roomCode: string): Promise<void>;
     sendSetNamePacket(name: string): void;
     sendStartGamePacket(): void;

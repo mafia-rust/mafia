@@ -14,14 +14,14 @@ const GAME_MANAGER: GameManager = createGameManager();
 const TIME_PERIOD = 1000;
 export default GAME_MANAGER;
 
-GAME_MANAGER.addStateListener((type) => {
-    switch (type) {
-        case "acceptJoin":
-            if (GAME_MANAGER.state.stateType === "lobby") {
-                window.history.pushState({}, document.title, `?code=${GAME_MANAGER.state.roomCode}`);
-            }
-    }
-})
+// GAME_MANAGER.addStateListener((type) => {
+//     switch (type) {
+//         case "acceptJoin":
+//             if (GAME_MANAGER.state.stateType === "lobby") {
+//                 window.history.pushState({}, document.title, `?code=${GAME_MANAGER.state.roomCode}`);
+//             }
+//     }
+// })
 
 setInterval(() => {
     GAME_MANAGER.tick(TIME_PERIOD);
@@ -29,17 +29,23 @@ setInterval(() => {
 
 async function route(url: Location) {
     const roomCode = new URLSearchParams(url.search).get("code");
+    let reconnectData = GAME_MANAGER.loadReconnectData()
 
     if (roomCode !== null) {
         await GAME_MANAGER.setOutsideLobbyState();
-        GAME_MANAGER.tryJoinGame(roomCode);
+        GAME_MANAGER.sendJoinPacket(roomCode);
+        window.history.replaceState({}, document.title, window.location.pathname);
     } else if (url.pathname.startsWith('/wiki')) {
         const page = url.pathname.substring(6);
         Anchor.setContent(<StandaloneWiki page={page !== "" ? page as WikiPage : undefined}/>);
+    } else if (reconnectData){
+        await GAME_MANAGER.setOutsideLobbyState();
+        GAME_MANAGER.sendRejoinPacket(reconnectData.roomCode, reconnectData.playerId);
     } else {
         Anchor.setContent(<StartMenu/>)
     }
     // If we ever need more routing than this, use react router instead.
+    Anchor.setContent(<StartMenu/>)
 }
 
 ROOT.render(

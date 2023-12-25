@@ -237,35 +237,27 @@ impl Lobby {
         }
     }
 
-    pub fn connect_player_to_lobby(&mut self, send: &ClientSender)-> Result<PlayerID, RejectJoinReason>{
+    pub fn connect_player_to_lobby(&mut self, send: &ClientSender) -> Result<PlayerID, RejectJoinReason>{
         match &mut self.lobby_state {
             LobbyState::Lobby { players, settings } => {
-                let player_id = {
-                    if let Some((id, player)) = players.iter_mut().find(|(_, ref player)| matches!(player.connection, ClientConnection::CouldReconnect { .. })) {
-                        player.connection = ClientConnection::Connected(send.clone());
-                        *id
-                    } else {
-                        let name = name_validation::sanitize_name("".to_string(), players);
-                        
-                        let mut new_player = LobbyPlayer::new(name.clone(), ClientConnection::Connected(send.clone()), players.is_empty());
-                        let player_id: PlayerID = 
-                            players
-                                .iter()
-                                .map(|(i,_)|*i)
-                                .fold(0u32, u32::max) as PlayerID + 1u32;
 
-                        //if there are no hosts, make this player the host
-                        if !players.iter().any(|p|p.1.host) {
-                            new_player.set_host();
-                        }
-        
-                        players.insert(player_id, new_player);
-        
-                        settings.role_list.push(RoleOutline::Any);
-                        
-                        player_id
-                    }
-                };
+                let name = name_validation::sanitize_name("".to_string(), players);
+                
+                let mut new_player = LobbyPlayer::new(name.clone(), ClientConnection::Connected(send.clone()), players.is_empty());
+                let player_id: PlayerID = 
+                    players
+                        .iter()
+                        .map(|(i,_)|*i)
+                        .fold(0u32, u32::max) as PlayerID + 1u32;
+
+                //if there are no hosts, make this player the host
+                if !players.iter().any(|p|p.1.host) {
+                    new_player.set_host();
+                }
+
+                players.insert(player_id, new_player);
+
+                settings.role_list.push(RoleOutline::Any);
 
                 send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: false, player_id});
 
@@ -277,31 +269,7 @@ impl Lobby {
                 
                 Ok(player_id)
             },
-            LobbyState::Game{ game, players } => {
-
-                for player_ref in PlayerReference::all_players(game){
-                    if player_ref.has_lost_connection(game) {
-                        let arbitrary_player_ids: Vec<PlayerID> = players.keys().copied().collect();
-                        let mut new_id: PlayerID = 0;
-                        for id in arbitrary_player_ids {
-                            if id >= new_id {
-                                new_id = id + 1;
-                            }
-                        }
-
-                        send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id: new_id});
-
-                        let game_player = GamePlayer{
-                            player_index: player_ref.index(),
-                            host: false,
-                        };
-                        players.insert(new_id, game_player);
-                        player_ref.connect(game, send.clone());
-                        
-                        return Ok(new_id);
-                    }
-                }
-
+            LobbyState::Game{ .. } => {
                 send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::GameAlreadyStarted});
                 Err(RejectJoinReason::GameAlreadyStarted)
             }
@@ -359,6 +327,50 @@ impl Lobby {
                 }
             },
             LobbyState::Closed => {}
+        }
+    }
+    pub fn reconnect_player_to_lobby(&mut self, send: &ClientSender, player_id: PlayerID) -> Result<(), RejectJoinReason>{
+        match &mut self.lobby_state {
+            LobbyState::Lobby { players, settings } => {
+                let Some(player) = players.get_mut(&player_id) else {return Err(RejectJoinReason::InvalidRoomCode)};
+                if let ClientConnection::CouldReconnect { .. } = &mut player.connection {
+                    player.connection = ClientConnection::Connected(send.clone());
+                    send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: false, player_id});
+
+                    Self::send_players_lobby(players);
+                    for player in players.iter(){
+                        Self::send_settings(player.1, settings);
+                    }
+                    
+                    return Ok(());
+                } else {
+                    send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::GameAlreadyStarted});
+                    return Err(RejectJoinReason::InvalidRoomCode);
+                }
+            },
+            LobbyState::Game { game, players } => {
+                let Some(game_player) = players.get_mut(&player_id) else {
+                    send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::InvalidRoomCode});
+                    return Err(RejectJoinReason::InvalidRoomCode)
+                };
+                let Ok(player_ref) = PlayerReference::new(game, game_player.player_index) else {
+                    send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::InvalidRoomCode});
+                    return Err(RejectJoinReason::InvalidRoomCode)
+                };
+                if !player_ref.has_lost_connection(game) {
+                    send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::InvalidRoomCode});
+                    return Err(RejectJoinReason::InvalidRoomCode)
+                };
+
+                send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id});
+                player_ref.connect(game, send.clone());
+
+                return Ok(());
+            },
+            LobbyState::Closed => {
+                send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::InvalidRoomCode});
+                Err(RejectJoinReason::InvalidRoomCode)
+            },
         }
     }
 

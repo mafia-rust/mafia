@@ -95,16 +95,41 @@ impl Listener{
 
     fn connect_player_to_lobby(&mut self, connection: &Connection, room_code: RoomCode){
         let Some(lobby) = self.lobbies.get_mut(&room_code) else {
+            connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::InvalidRoomCode });
             return;
         };
 
         let Some(sender_player_location) = self.players.get_mut(connection.get_address()) else {
             log!(error "Listener"; "{} {}", "Received packet from unconnected player!", connection.get_address());
+            connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::InvalidRoomCode });
             return;
         };
 
         match lobby.connect_player_to_lobby(&connection.get_sender()) {
             Ok(player_id) => {
+                *sender_player_location = PlayerLocation::InLobby { room_code, player_id };
+                return;
+            },
+            Err(_) => {
+                return;
+            }
+        }
+    }
+    fn reconnect_player_to_lobby(&mut self, connection: &Connection, room_code: RoomCode, player_id: PlayerID){
+
+        let Some(lobby) = self.lobbies.get_mut(&room_code) else {
+            connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::InvalidRoomCode });
+            return;
+        };
+
+        let Some(sender_player_location) = self.players.get_mut(connection.get_address()) else {
+            log!(error "Listener"; "{} {}", "Received packet from unconnected player!", connection.get_address());
+            connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::InvalidRoomCode });
+            return;
+        };
+
+        match lobby.reconnect_player_to_lobby(&connection.get_sender(), player_id) {
+            Ok(_) => {
                 *sender_player_location = PlayerLocation::InLobby { room_code, player_id };
                 return;
             },
@@ -137,15 +162,12 @@ impl Listener{
             return Err("Player doesn't exist");
         };
 
-        let PlayerLocation::InLobby { room_code, player_id } = disconnected_player_location else {
-            return Err("Player is not in a lobby, but was removed from listener");
-        };
+        if let PlayerLocation::InLobby { room_code, player_id } = disconnected_player_location {
+            if let Some(lobby) = self.lobbies.get_mut(&room_code) {
+                lobby.lose_player_connection(player_id);
+            }
+        }
 
-        let Some(lobby) = self.lobbies.get_mut(&room_code) else {
-            return Err("Player is in a lobby that doesn't exist, but was removed from listener");
-        };
-
-        lobby.lose_player_connection(player_id);
         Ok(())
     }
 
@@ -171,6 +193,9 @@ impl Listener{
 
                 connection.send(ToClientPacket::LobbyList { room_codes: lobbies });
             },
+            ToServerPacket::ReJoin {room_code, player_id } => {
+                self.reconnect_player_to_lobby(connection, room_code, player_id);
+            }
             ToServerPacket::Join{ room_code } => {
                 self.connect_player_to_lobby(connection, room_code);
             },

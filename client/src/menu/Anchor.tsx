@@ -1,6 +1,7 @@
 import React from "react";
 import "../index.css";
 import "./anchor.css";
+import GAME_MANAGER from "..";
 
 type AnchorProps = {
     content: JSX.Element,
@@ -9,7 +10,8 @@ type AnchorProps = {
 type AnchorState = {
     mobile: boolean,
     content: JSX.Element,
-    info: JSX.Element | null
+    error: JSX.Element | null,
+    rejoinCard: JSX.Element | null
 }
 
 export default class Anchor extends React.Component<AnchorProps, AnchorState> {
@@ -21,7 +23,8 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         this.state = {
             mobile: false,
             content: this.props.content,
-            info: null
+            error: null,
+            rejoinCard: null
         }
     }
     
@@ -32,6 +35,9 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         Anchor.onResize();
 
         this.props.onMount()
+    }
+    componentWillUnmount() {
+        window.removeEventListener("resize", Anchor.onResize);
     }
     
     private static onResize() {
@@ -44,25 +50,37 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         Anchor.instance.setState({mobile});
     }
     
-    componentWillUnmount() {
-        window.removeEventListener("resize", Anchor.onResize);
+    handleRejoin(roomCode: string, playerId: number) {
+        this.setState({rejoinCard: null});
+        GAME_MANAGER.sendRejoinPacket(roomCode, playerId);
+        console.log("Attempting rejoining game: " + roomCode + " " + playerId);
     }
 
     render(){
         return <div className="anchor">
             {this.state.content}
-            {this.state.info}
+            {this.state.error}
+            {this.state.rejoinCard}
         </div>
     }
 
     public static setContent(content: JSX.Element){
         Anchor.instance.setState({content : content});
     }
-    public static pushInfo(title: string, body: string) {
-        Anchor.instance.setState({info: <ErrorCard
-            onClose={() => Anchor.instance.setState({ info: null })}
+    public static pushError(title: string, body: string) {
+        Anchor.instance.setState({error: <ErrorCard
+            onClose={() => Anchor.instance.setState({ error: null })}
             error={{title, body}}
         />});
+    }
+    public static pushRejoin(roomCode: string, playerId: number) {
+        Anchor.instance.setState({rejoinCard:
+            <div className="error-card slide-in">
+                <header><button onClick={() => {Anchor.instance.handleRejoin(roomCode, playerId)}}>TRY REJOIN</button></header>
+                <button onClick={() => {Anchor.instance.setState({ rejoinCard: null })}}>✕</button>
+                <div></div>
+            </div>
+        });
     }
     public static isMobile(): boolean {
         return Anchor.instance.state.mobile;

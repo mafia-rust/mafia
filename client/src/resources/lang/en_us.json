@@ -11,7 +11,7 @@
     "menu.join.title": "Join",
     "menu.join.button.join": "Join Lobby",
     "menu.join.field.roomCode": "Room code",
-    "menu.join.field.name": "Name",
+    "menu.play.button.refresh": "Refresh",
 
     "menu.button.leave": "Leave",
     "menu.button.close": "Close",
