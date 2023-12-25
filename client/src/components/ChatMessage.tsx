@@ -110,7 +110,7 @@ export function translateChatMessage(message: ChatMessage): string {
             let deathCause: string;
             if (message.grave.deathCause.type === "lynching") {
                 deathCause = translate("grave.deathCause.lynching")
-            } else {
+            } else if (message.grave.deathCause.type === "killers"){
                 let killers: string[] = [];
                 for (let killer of message.grave.deathCause.killers) {
                     if(killer.type === "role") {
@@ -122,6 +122,8 @@ export function translateChatMessage(message: ChatMessage): string {
                     }
                 }
                 deathCause = killers.join();
+            }else{
+                deathCause = translate(`grave.deathCause.${message.grave.deathCause.type}`)
             }
 
             return translate(message.grave.will.length === 0 ? "chatMessage.playerDied.noWill": "chatMessage.playerDied",

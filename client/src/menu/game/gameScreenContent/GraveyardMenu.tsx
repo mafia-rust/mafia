@@ -70,7 +70,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
         let deathCauseString: string;
         if(grave.deathCause.type === "lynching"){
             deathCauseString = translate("grave.deathCause.lynching");
-        } else  {
+        } else if(grave.deathCause.type === "killers") {
             deathCauseString = grave.deathCause.killers.map((killer)=>{
                 switch(killer.type){
                     case "role":
@@ -81,6 +81,8 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
                         return translate(killer.type);
                 }
             }).join() + ".";
+        }else{
+            deathCauseString = translate("grave.deathCause.disconnectedFromLife");
         }
 
         let graveRoleString: string;

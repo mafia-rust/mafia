@@ -150,6 +150,7 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     Join{room_code: RoomCode},
     Host,
+    Leave,
 
     // Lobby
     SetName{name: String},
@@ -179,8 +180,6 @@ pub enum ToServerPacket{
     SaveNotes{notes: String},
     #[serde(rename_all = "camelCase")]
     SaveDeathNote{death_note: Option<String>},
-
-    Leave,
 
     // Role-specific
     #[serde(rename_all = "camelCase")]
