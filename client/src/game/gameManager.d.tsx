@@ -22,6 +22,7 @@ export type GameManager = {
     setOutsideLobbyState(): void;
 
     saveReconnectData(roomCode: string, playerId: number): void;
+    deleteReconnectData(): void;
     loadReconnectData(): {
         roomCode: string,
         playerId: number,

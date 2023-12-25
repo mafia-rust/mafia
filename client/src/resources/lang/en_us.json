@@ -12,6 +12,8 @@
     "menu.join.button.join": "Join Lobby",
     "menu.join.field.roomCode": "Room code",
     "menu.play.button.refresh": "Refresh",
+    "menu.play.button.rejoin": "Rejoin",
+    "menu.play.field.playerId": "Player Id",
 
     "menu.button.leave": "Leave",
     "menu.button.close": "Close",

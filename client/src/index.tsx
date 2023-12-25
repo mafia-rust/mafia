@@ -38,7 +38,7 @@ async function route(url: Location) {
     } else if (url.pathname.startsWith('/wiki')) {
         const page = url.pathname.substring(6);
         Anchor.setContent(<StandaloneWiki page={page !== "" ? page as WikiPage : undefined}/>);
-    } else if (reconnectData){
+    } else if (reconnectData) {        
         await GAME_MANAGER.setOutsideLobbyState();
         GAME_MANAGER.sendRejoinPacket(reconnectData.roomCode, reconnectData.playerId);
     } else {

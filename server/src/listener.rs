@@ -209,9 +209,25 @@ impl Listener{
 
                 log!(important "Lobby"; "Created {room_code}");
             },
+            ToServerPacket::Leave => {
+                let Some(sender_player_location) = self.players.get_mut(connection.get_address()) else {
+                    log!(error "Listener"; "{} {}", "Received lobby/game packet from unconnected player!", connection.get_address());
+                    return Ok(());
+                };
+
+                if let PlayerLocation::InLobby { room_code, player_id } = sender_player_location {
+                    if let Some(lobby) = self.lobbies.get_mut(room_code){
+                        lobby.on_client_message(&connection.get_sender(), *player_id, incoming_packet);
+                    } else {
+                        //Player is in a lobby that doesn't exist
+                        panic!("Recieved a message from a player in a lobby that doesnt exist")
+                    }
+                }
+                *sender_player_location = PlayerLocation::OutsideLobby;
+            },
             _ => {
                 let Some(sender_player_location) = self.players.get_mut(connection.get_address()) else {
-                    log!(error "Listener"; "{} {}", "Received packet from unconnected player!", connection.get_address());
+                    log!(error "Listener"; "{} {}", "Received lobby/game packet from unconnected player!", connection.get_address());
                     return Ok(());
                 };
 

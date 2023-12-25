@@ -226,6 +226,21 @@ impl Lobby {
                 settings.excluded_roles = roles.clone();
                 self.send_to_all(ToClientPacket::ExcludedRoles { roles });
             }
+            ToServerPacket::Leave => {
+                match &mut self.lobby_state {
+                    LobbyState::Lobby { players, .. } => {
+                        let Some(player) = players.get_mut(&player_id) else {return};
+                        player.connection = ClientConnection::Disconnected;
+                    },
+                    LobbyState::Game { game, players } => {
+                        let Some(game_player) = players.get_mut(&player_id) else {return};
+                        if let Ok(player_ref) = PlayerReference::new(game, game_player.player_index) {
+                            player_ref.leave(game);
+                        }
+                    },
+                    LobbyState::Closed => {}
+                }
+            }
             _ => {
                 let LobbyState::Game { game, players } = &mut self.lobby_state else {
                     log!(error "Lobby"; "{} {:?}", "ToServerPacket not implemented for lobby was sent during lobby: ", incoming_packet);
@@ -383,7 +398,7 @@ impl Lobby {
             LobbyState::Game { game, .. } => {
                 game.tick(time_passed);
                 
-                if PlayerReference::all_players(game).iter().all(|p| p.has_left(game)) {
+                if !PlayerReference::all_players(game).iter().any(|p| p.is_connected(game)) {
                     self.lobby_state = LobbyState::Closed;
                 }
             }

@@ -2,6 +2,7 @@ import React from "react";
 import "../index.css";
 import "./anchor.css";
 import GAME_MANAGER from "..";
+import translate from "../game/lang";
 
 type AnchorProps = {
     content: JSX.Element,
@@ -55,6 +56,10 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         GAME_MANAGER.sendRejoinPacket(roomCode, playerId);
         console.log("Attempting rejoining game: " + roomCode + " " + playerId);
     }
+    handleCancelRejoin() {
+        this.setState({rejoinCard: null});
+        GAME_MANAGER.deleteReconnectData();
+    }
 
     render(){
         return <div className="anchor">
@@ -76,8 +81,8 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     public static pushRejoin(roomCode: string, playerId: number) {
         Anchor.instance.setState({rejoinCard:
             <div className="error-card slide-in">
-                <header><button onClick={() => {Anchor.instance.handleRejoin(roomCode, playerId)}}>TRY REJOIN</button></header>
-                <button onClick={() => {Anchor.instance.setState({ rejoinCard: null })}}>✕</button>
+                <header><button onClick={() => {Anchor.instance.handleRejoin(roomCode, playerId)}}>{translate("menu.play.button.rejoin")}</button></header>
+                <button onClick={() => {Anchor.instance.handleCancelRejoin()}}>✕</button>
                 <div></div>
             </div>
         });

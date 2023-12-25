@@ -45,6 +45,8 @@ impl PlayerReference{
 
         true
     }
+    /// ### Pre condition:
+    /// self.alive(game) == false
     pub fn die(&self, game: &mut Game, grave: Grave){
         self.set_alive(game, false);
 

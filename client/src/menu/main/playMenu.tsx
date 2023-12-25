@@ -83,7 +83,7 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
             </div>
             <div> 
                 <section>
-                    <label>PLAYER ID</label>
+                    <label>{translate("menu.play.field.playerId")}</label>
                     <input type="text" value={this.state.selectedPlayerId??""} 
                         onChange={(e)=>{this.setState({selectedPlayerId: e.target.value})}}
                         onKeyUp={(e)=>{
@@ -99,7 +99,7 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
                 {translate("menu.start.button.join")}
             </button>
             <button onClick={()=>{this.rejoinGameButton(this.state.selectedRoomCode??"", this.state.selectedPlayerId??"")}}>
-                REJOIN
+                {translate("menu.play.button.rejoin")}
             </button>
             <button onClick={()=>{this.hostGameButton()}}>
                 {translate("menu.start.button.host")}

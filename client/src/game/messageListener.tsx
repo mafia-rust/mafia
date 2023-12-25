@@ -1,10 +1,8 @@
 
 import { createPlayer } from "./gameState";
 import Anchor from "./../menu/Anchor";
-import StartMenu from "./../menu/main/StartMenu";
 import GAME_MANAGER from "./../index";
 import GameScreen, { ContentMenus } from "./../menu/game/GameScreen";
-import React from "react";
 import { ToClientPacket } from "./packet";
 import { Tag } from "./gameState.d";
 import { Role } from "./roleState.d";
@@ -54,7 +52,9 @@ export default function messageListener(packet: ToClientPacket){
                     console.error(packet);
                 break;
             }
-            Anchor.setContent(<StartMenu/>);
+
+            GAME_MANAGER.setDisconnectedState();
+            
         break;
         case "rejectStart":
             /*

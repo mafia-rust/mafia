@@ -13,6 +13,7 @@ import PlayMenu from "../menu/main/PlayMenu";
 import { createGameState, createLobbyState } from "./gameState";
 import LobbyMenu from "../menu/lobby/LobbyMenu";
 import GameScreen from "../menu/game/GameScreen";
+import LoadingScreen from "../menu/LoadingScreen";
 export function createGameManager(): GameManager {
 
     console.log("Game manager created.");
@@ -25,6 +26,7 @@ export function createGameManager(): GameManager {
             GAME_MANAGER.state = {
                 stateType: "disconnected"
             };
+            Anchor.setContent(<StartMenu/>);
         },
         setLobbyState() {
             GAME_MANAGER.state = createLobbyState();
@@ -36,8 +38,11 @@ export function createGameManager(): GameManager {
         },
         async setOutsideLobbyState() {
 
-            GAME_MANAGER.server.close();
-            await GAME_MANAGER.server.open();
+            Anchor.setContent(<LoadingScreen type="default"/>)
+            // GAME_MANAGER.server.close();
+            if (!GAME_MANAGER.server.ws?.OPEN){
+                await GAME_MANAGER.server.open();
+            }
 
             GAME_MANAGER.state = {
                 stateType: "outsideLobby",
@@ -57,6 +62,9 @@ export function createGameManager(): GameManager {
                     "lastSaveTime": Date.now()
                 })
             );
+        },
+        deleteReconnectData() {
+            localStorage.removeItem("reconnectData");
         },
         loadReconnectData() {
             let data = localStorage.getItem("reconnectData");
@@ -112,9 +120,11 @@ export function createGameManager(): GameManager {
             if (this.state.stateType === "game") {
                 this.server.sendPacket({type: "leave"});
             }
+            this.deleteReconnectData();
+            this.setOutsideLobbyState();
             // Set URL to main menu and refresh
             // window.history.replaceState({}, document.title, window.location.pathname);
-            window.location.reload();
+            // window.location.reload();
         },
 
         sendLobbyListRequest() {
