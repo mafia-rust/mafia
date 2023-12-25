@@ -57,12 +57,6 @@ export default function messageListener(packet: ToClientPacket){
             
         break;
         case "rejectStart":
-            /*
-            GameEndsInstantly,
-            RoleListTooSmall,
-            RoleListCannotCreateRoles,
-            ZeroTimeGame,
-            */
             switch(packet.reason) {
                 case "gameEndsInstantly":
                     Anchor.pushError(translate("notification.rejectStart"), translate("notification.rejectStart.gameEndsInstantly"));
