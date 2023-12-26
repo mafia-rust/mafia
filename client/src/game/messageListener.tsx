@@ -34,8 +34,8 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "rejectJoin":
             switch(packet.reason) {
-                case "invalidRoomCode":
-                    Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.invalidRoomCode"));
+                case "rooomDoesntExist":
+                    Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.rooomDoesntExist"));
                 break;
                 case "gameAlreadyStarted":
                     Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.gameAlreadyStarted"));
@@ -45,6 +45,12 @@ export default function messageListener(packet: ToClientPacket){
                 break;
                 case "serverBusy":
                     Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.serverBusy"));
+                break;
+                case "playerTaken":
+                    Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.playerTaken"));
+                break;
+                case "playerDoesntExist":
+                    Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.playerDoesntExist"));
                 break;
                 default:
                     Anchor.pushError(translate("notification.rejectJoin"), "");

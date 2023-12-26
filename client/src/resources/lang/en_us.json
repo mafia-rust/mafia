@@ -76,8 +76,10 @@
     "notification.rejectJoin": "Couldn't join lobby",
     "notification.rejectJoin.roomFull": "Lobby is full",
     "notification.rejectJoin.gameAlreadyStarted": "Game already started",
-    "notification.rejectJoin.invalidRoomCode": "Invalid room code",
+    "notification.rejectJoin.rooomDoesntExist": "That room doesn't exist",
     "notification.rejectJoin.serverBusy": "Server is busy right now due to too many players",
+    "notification.rejectJoin.playerTaken": "Someone is already connected as the player you tried to connect to",
+    "notification.rejectJoin.playerDoesntExist": "The player you tried to connect to no longer exists",
 
     "notification.rejectStart": "Couldn't start game",
     "notification.rejectStart.gameEndsInstantly": "Game would end instantly! Your role list is likely invalid.",

@@ -95,13 +95,13 @@ impl Listener{
 
     fn connect_player_to_lobby(&mut self, connection: &Connection, room_code: RoomCode){
         let Some(lobby) = self.lobbies.get_mut(&room_code) else {
-            connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::InvalidRoomCode });
+            connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomDoesntExist });
             return;
         };
 
         let Some(sender_player_location) = self.players.get_mut(connection.get_address()) else {
             log!(error "Listener"; "{} {}", "Received packet from unconnected player!", connection.get_address());
-            connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::InvalidRoomCode });
+            connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::ServerBusy });
             return;
         };
 
@@ -118,13 +118,13 @@ impl Listener{
     fn reconnect_player_to_lobby(&mut self, connection: &Connection, room_code: RoomCode, player_id: PlayerID){
 
         let Some(lobby) = self.lobbies.get_mut(&room_code) else {
-            connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::InvalidRoomCode });
+            connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomDoesntExist });
             return;
         };
 
         let Some(sender_player_location) = self.players.get_mut(connection.get_address()) else {
             log!(error "Listener"; "{} {}", "Received packet from unconnected player!", connection.get_address());
-            connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::InvalidRoomCode });
+            connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::ServerBusy });
             return;
         };
 

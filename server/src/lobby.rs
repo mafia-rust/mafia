@@ -289,8 +289,8 @@ impl Lobby {
                 Err(RejectJoinReason::GameAlreadyStarted)
             }
             LobbyState::Closed => {
-                send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::InvalidRoomCode});
-                Err(RejectJoinReason::InvalidRoomCode)
+                send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::RoomDoesntExist});
+                Err(RejectJoinReason::RoomDoesntExist)
             }
         }
     }
@@ -347,7 +347,10 @@ impl Lobby {
     pub fn reconnect_player_to_lobby(&mut self, send: &ClientSender, player_id: PlayerID) -> Result<(), RejectJoinReason>{
         match &mut self.lobby_state {
             LobbyState::Lobby { players, settings } => {
-                let Some(player) = players.get_mut(&player_id) else {return Err(RejectJoinReason::InvalidRoomCode)};
+                let Some(player) = players.get_mut(&player_id) else {
+                    send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
+                    return Err(RejectJoinReason::PlayerDoesntExist)
+                };
                 if let ClientConnection::CouldReconnect { .. } = &mut player.connection {
                     player.connection = ClientConnection::Connected(send.clone());
                     send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: false, player_id});
@@ -359,22 +362,21 @@ impl Lobby {
                     
                     return Ok(());
                 } else {
-                    send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::GameAlreadyStarted});
-                    return Err(RejectJoinReason::InvalidRoomCode);
+                    send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
+                    return Err(RejectJoinReason::PlayerDoesntExist);
                 }
             },
             LobbyState::Game { game, players } => {
                 let Some(game_player) = players.get_mut(&player_id) else {
-                    send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::InvalidRoomCode});
-                    return Err(RejectJoinReason::InvalidRoomCode)
+                    send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
+                    return Err(RejectJoinReason::PlayerDoesntExist)
                 };
                 let Ok(player_ref) = PlayerReference::new(game, game_player.player_index) else {
-                    send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::InvalidRoomCode});
-                    return Err(RejectJoinReason::InvalidRoomCode)
+                    unreachable!()
                 };
                 if !player_ref.has_lost_connection(game) {
-                    send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::InvalidRoomCode});
-                    return Err(RejectJoinReason::InvalidRoomCode)
+                    send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerTaken});
+                    return Err(RejectJoinReason::PlayerTaken)
                 };
 
                 send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id});
@@ -383,8 +385,8 @@ impl Lobby {
                 return Ok(());
             },
             LobbyState::Closed => {
-                send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::InvalidRoomCode});
-                Err(RejectJoinReason::InvalidRoomCode)
+                send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::RoomDoesntExist});
+                Err(RejectJoinReason::RoomDoesntExist)
             },
         }
     }

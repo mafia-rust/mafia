@@ -136,8 +136,11 @@ impl ToClientPacket {
 pub enum RejectJoinReason {
     GameAlreadyStarted,
     RoomFull,
-    InvalidRoomCode,
+    RoomDoesntExist,
     ServerBusy,
+
+    PlayerTaken,
+    PlayerDoesntExist,
 }
 
 #[derive(Deserialize, Debug, Clone)]
