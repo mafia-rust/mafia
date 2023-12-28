@@ -46,9 +46,9 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
             ]} maxContent={true}/>
         } else {
             return <GameScreen contentMenus={[
-                ContentMenus.GraveyardMenu,
+                // ContentMenus.GraveyardMenu,
                 ContentMenus.PlayerListMenu,
-                ContentMenus.WikiMenu,
+                // ContentMenus.WikiMenu,
                 ContentMenus.WillMenu
             ]} maxContent={false}/>
         }

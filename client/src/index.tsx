@@ -4,8 +4,6 @@ import './index.css';
 import Anchor from './menu/Anchor';
 import { GameManager, createGameManager } from './game/gameManager';
 import StartMenu from './menu/main/StartMenu';
-import StandaloneWiki from './menu/main/StandaloneWiki';
-import { WikiPage } from './components/WikiSearch';
 import { Player } from './game/gameState.d';
 import LoadingScreen from './menu/LoadingScreen';
 
@@ -35,9 +33,6 @@ async function route(url: Location) {
         await GAME_MANAGER.setOutsideLobbyState();
         GAME_MANAGER.sendJoinPacket(roomCode);
         window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (url.pathname.startsWith('/wiki')) {
-        const page = url.pathname.substring(6);
-        Anchor.setContent(<StandaloneWiki page={page !== "" ? page as WikiPage : undefined}/>);
     } else if (reconnectData) {        
         await GAME_MANAGER.setOutsideLobbyState();
         GAME_MANAGER.sendRejoinPacket(reconnectData.roomCode, reconnectData.playerId);

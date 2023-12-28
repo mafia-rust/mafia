@@ -28,6 +28,7 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
         if(reconnectData) {
             Anchor.pushRejoin(reconnectData.roomCode, reconnectData.playerId);
         }
+        this.refreshButton();
     }
     componentDidMount() {
         GAME_MANAGER.addStateListener(this.listener);
@@ -64,13 +65,13 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
         return <div className="playMenu">
             <header>
                 <h1>
-                    {translate("menu.join.title")}
+                    {translate("menu.play.title")}
                 </h1>
             </header>
 
             <div> 
                 <section>
-                    <label>{translate("menu.join.field.roomCode")}</label>
+                    <label>{translate("menu.play.field.roomCode")}</label>
                     <input type="text" value={this.state.selectedRoomCode??""} 
                         onChange={(e)=>{this.setState({selectedRoomCode: e.target.value})}}
                         onKeyUp={(e)=>{
@@ -79,11 +80,15 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
                             }
                         }}
                     />
+                    <button onClick={()=>{this.joinGameButton(this.state.selectedRoomCode??"")}}>
+                        {translate("menu.play.button.join")}
+                    </button>
                 </section>
             </div>
             <div> 
                 <section>
                     <label>{translate("menu.play.field.playerId")}</label>
+                    
                     <input type="text" value={this.state.selectedPlayerId??""} 
                         onChange={(e)=>{this.setState({selectedPlayerId: e.target.value})}}
                         onKeyUp={(e)=>{
@@ -92,41 +97,28 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
                             }
                         }}
                     />
+                    <button onClick={()=>{this.rejoinGameButton(this.state.selectedRoomCode??"", this.state.selectedPlayerId??"")}}>
+                        {translate("menu.play.button.rejoin")}
+                    </button>
                 </section>
             </div>
             
-            <button onClick={()=>{this.joinGameButton(this.state.selectedRoomCode??"")}}>
-                {translate("menu.start.button.join")}
-            </button>
-            <button onClick={()=>{this.rejoinGameButton(this.state.selectedRoomCode??"", this.state.selectedPlayerId??"")}}>
-                {translate("menu.play.button.rejoin")}
-            </button>
+            
+            
             <button onClick={()=>{this.hostGameButton()}}>
-                {translate("menu.start.button.host")}
+                {translate("menu.play.button.host")}
             </button>
             <button onClick={()=>{this.refreshButton()}}>
                 {translate("menu.play.button.refresh")}
             </button>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ROOM CODE</th>
-                        {/* <th>Players</th>
-                        <th>Host</th> */}
-                    </tr>
-                </thead>
-                <tbody>
-                    {
+            <div>
+                {
                     GAME_MANAGER.state.stateType === "outsideLobby" &&
                     GAME_MANAGER.state.roomCodes.map((roomCode, i)=>{
-                        return <tr key={i}>
-                            <td><button onClick={()=>{this.joinGameButton(roomCode??"")}}>{roomCode}</button></td>
-                            {/* <td>{GAME_MANAGER.state.players.get(roomCode)?.size}</td>
-                            <td>{GAME_MANAGER.state.players.get(roomCode)?.getHost()?.name}</td> */}
-                        </tr>
-                    })}
-                </tbody>
-            </table>
+                        return <button key={i} onClick={()=>{this.joinGameButton(roomCode??"")}}>{roomCode}</button>
+                    })
+                }
+            </div>
         </div>
     }
 }

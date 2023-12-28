@@ -34,8 +34,8 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "rejectJoin":
             switch(packet.reason) {
-                case "rooomDoesntExist":
-                    Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.rooomDoesntExist"));
+                case "roomDoesntExist":
+                    Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.roomDoesntExist"));
                 break;
                 case "gameAlreadyStarted":
                     Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.gameAlreadyStarted"));
@@ -53,14 +53,14 @@ export default function messageListener(packet: ToClientPacket){
                     Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.playerDoesntExist"));
                 break;
                 default:
-                    Anchor.pushError(translate("notification.rejectJoin"), "");
+                    Anchor.pushError(translate("notification.rejectJoin"), `${packet.type} message response not implemented: ${packet.reason}`);
                     console.error(`${packet.type} message response not implemented: ${packet.reason}`);
                     console.error(packet);
                 break;
             }
 
             GAME_MANAGER.setDisconnectedState();
-            
+
         break;
         case "rejectStart":
             switch(packet.reason) {
