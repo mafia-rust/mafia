@@ -40,6 +40,7 @@
     flex-direction: row;
     flex-wrap: wrap;
     gap: 2rem;
+    /* max-width: 100%; */
 }
 
 .lm > main > div {
@@ -83,4 +84,12 @@
 .lm .excluded-roles > div:nth-of-type(1) {
     display: flex;
     flex-direction: row;
+}
+.lm .excluded-roles > .exclusion-preset {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.lm .excluded-roles > .exclusion-preset > select {
+    width: 100%;
 }
