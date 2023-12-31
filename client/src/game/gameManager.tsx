@@ -9,14 +9,71 @@ import { GameManager, Server, StateListener } from "./gameManager.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleOutline } from "./roleListState.d";
 import translate from "./lang";
-
+import PlayMenu from "../menu/main/PlayMenu";
+import { createGameState, createLobbyState } from "./gameState";
+import LobbyMenu from "../menu/lobby/LobbyMenu";
+import GameScreen from "../menu/game/GameScreen";
+import LoadingScreen from "../menu/LoadingScreen";
 export function createGameManager(): GameManager {
 
     console.log("Game manager created.");
     
     let gameManager: GameManager = {
-        roomCode: null,
-        playerId: null,
+
+        setDisconnectedState() {
+            GAME_MANAGER.server.close();
+            
+            GAME_MANAGER.state = {
+                stateType: "disconnected"
+            };
+            Anchor.setContent(<StartMenu/>);
+        },
+        setLobbyState() {
+            GAME_MANAGER.state = createLobbyState();
+            Anchor.setContent(<LobbyMenu/>);
+        },
+        setGameState() {
+            GAME_MANAGER.state = createGameState();
+            Anchor.setContent(GameScreen.createDefault());
+        },
+        async setOutsideLobbyState() {
+
+            Anchor.setContent(<LoadingScreen type="default"/>)
+            // GAME_MANAGER.server.close();
+            if (!GAME_MANAGER.server.ws?.OPEN){
+                await GAME_MANAGER.server.open();
+            }
+
+            GAME_MANAGER.state = {
+                stateType: "outsideLobby",
+                selectedRoomCode: null,
+                roomCodes: []
+            }
+
+            Anchor.setContent(<PlayMenu/>);
+        },
+
+        saveReconnectData(roomCode, playerId) {
+            localStorage.setItem(
+                "reconnectData", 
+                JSON.stringify({
+                    "roomCode": roomCode,
+                    "playerId": playerId,
+                    "lastSaveTime": Date.now()
+                })
+            );
+        },
+        deleteReconnectData() {
+            localStorage.removeItem("reconnectData");
+        },
+        loadReconnectData() {
+            let data = localStorage.getItem("reconnectData");
+            // localStorage.removeItem("reconnectData");
+            if (data) {
+                return JSON.parse(data);
+            }
+            return null;
+        },
 
         state: {
             stateType: "disconnected"
@@ -58,28 +115,47 @@ export function createGameManager(): GameManager {
             }
         },
 
-        async tryJoinGame(roomCode: string) {
-            GAME_MANAGER.roomCode = roomCode;
-            
-            GAME_MANAGER.server.close();
-            await GAME_MANAGER.server.open();
-            
-            await GAME_MANAGER.sendJoinPacket();
-        },
 
         leaveGame() {
             if (this.state.stateType === "game") {
                 this.server.sendPacket({type: "leave"});
             }
+            this.deleteReconnectData();
+            this.setOutsideLobbyState();
             // Set URL to main menu and refresh
-            window.history.replaceState({}, document.title, window.location.pathname);
-            window.location.reload();
+            // window.history.replaceState({}, document.title, window.location.pathname);
+            // window.location.reload();
         },
 
+        sendLobbyListRequest() {
+            this.server.sendPacket({type: "lobbyListRequest"});
+        },
         sendHostPacket() {
             this.server.sendPacket({type: "host"});
         },
-        sendJoinPacket() {
+        sendRejoinPacket(roomCode: string, playerId: number) {
+            let completePromise: () => void;
+            let promise = new Promise<void>((resolver) => {
+                completePromise = resolver;
+            });
+            let onJoined: StateListener = (type) => {
+                if (type==="acceptJoin") {
+                    completePromise();
+                    GAME_MANAGER.removeStateListener(onJoined);
+                }
+            };
+            GAME_MANAGER.addStateListener(onJoined);
+
+            this.server.sendPacket({
+                type: "reJoin",
+                roomCode: parseInt(roomCode, 18),
+                playerId: playerId
+            });
+            
+            
+            return promise;
+        },
+        sendJoinPacket(roomCode: string) {
             let completePromise: () => void;
             let promise = new Promise<void>((resolver) => {
                 completePromise = resolver;
@@ -93,7 +169,7 @@ export function createGameManager(): GameManager {
             };
             GAME_MANAGER.addStateListener(onJoined);
 
-            let actualCode: number = parseInt(gameManager.roomCode!, 18);
+            let actualCode: number = parseInt(roomCode, 18);
 
             this.server.sendPacket({
                 type: "join",
@@ -205,12 +281,6 @@ export function createGameManager(): GameManager {
                 roles:roles
             })
         },
-        sendKickPlayerPacket(playerId){
-            this.server.sendPacket({
-                type:"kickPlayer",
-                playerId:playerId
-            })
-        },
 
         sendSetDoomsayerGuess(guesses) {
             this.server.sendPacket({
@@ -265,11 +335,15 @@ function createServer(){
 
             Server.ws.onopen = (event: Event)=>{
                 completePromise();
+                console.log("Connected to server.");
+                
+                Anchor.setContent(<PlayMenu/>);
             };
             Server.ws.onclose = (event: CloseEvent)=>{
+                console.log("Disconnected from server.");
                 if (Server.ws === null) return; // We closed it ourselves
 
-                Anchor.pushInfo(translate("notification.connectionFailed"), "")
+                Anchor.pushError(translate("notification.connectionFailed"), "");
                 Anchor.setContent(<StartMenu/>);
             };
             Server.ws.onmessage = (event: MessageEvent<string>)=>{
@@ -278,8 +352,8 @@ function createServer(){
                 );
             };
             Server.ws.onerror = (event: Event) => {
-                Server.ws = null;
-                Anchor.pushInfo(translate("notification.connectionFailed"), translate("notification.serverNotFound"));
+                Server.close();
+                Anchor.pushError(translate("notification.connectionFailed"), translate("notification.serverNotFound"));
                 Anchor.setContent(<StartMenu/>);
             };
             

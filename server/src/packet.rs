@@ -35,6 +35,10 @@ use crate::{game::{
 pub enum ToClientPacket{
     // Pre lobby
     #[serde(rename_all = "camelCase")]
+    LobbyList{
+        room_codes: Vec<RoomCode>,
+    },
+    #[serde(rename_all = "camelCase")]
     AcceptJoin{room_code: RoomCode, in_game: bool, player_id: PlayerID},
     RejectJoin{reason: RejectJoinReason},
     
@@ -43,8 +47,6 @@ pub enum ToClientPacket{
     YourId{player_id: PlayerID},
     #[serde(rename_all = "camelCase")]
     LobbyPlayers{players: HashMap<PlayerID, String>},
-    #[serde(rename_all = "camelCase")]
-    KickPlayer{player_id: PlayerID},
     #[serde(rename_all = "camelCase")]
     RejectStart{reason: RejectStartReason},
     PlayersHost{hosts: Vec<PlayerID>},
@@ -134,23 +136,28 @@ impl ToClientPacket {
 pub enum RejectJoinReason {
     GameAlreadyStarted,
     RoomFull,
-    InvalidRoomCode,
+    RoomDoesntExist,
     ServerBusy,
+
+    PlayerTaken,
+    PlayerDoesntExist,
 }
 
 #[derive(Deserialize, Debug, Clone)]
 #[serde(tag = "type", rename_all = "camelCase")]
 pub enum ToServerPacket{
     // Pre Lobby
+    LobbyListRequest,
+    #[serde(rename_all = "camelCase")]
+    ReJoin{room_code: RoomCode, player_id: PlayerID},
     #[serde(rename_all = "camelCase")]
     Join{room_code: RoomCode},
     Host,
+    Leave,
 
     // Lobby
     SetName{name: String},
     StartGame,
-    #[serde(rename_all = "camelCase")]
-    KickPlayer{player_id: PlayerID},
     #[serde(rename_all = "camelCase")]
     SetRoleList{role_list: RoleList},
     #[serde(rename_all = "camelCase")]
@@ -176,8 +183,6 @@ pub enum ToServerPacket{
     SaveNotes{notes: String},
     #[serde(rename_all = "camelCase")]
     SaveDeathNote{death_note: Option<String>},
-
-    Leave,
 
     // Role-specific
     #[serde(rename_all = "camelCase")]

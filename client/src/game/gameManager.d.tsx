@@ -15,8 +15,19 @@ export type StateEventType = ToClientPacket["type"] | "tick";
 export type StateListener = (type?: StateEventType) => void;
 
 export type GameManager = {
-    roomCode: string | null,
-    playerId: number | null,
+
+    setDisconnectedState(): void;
+    setLobbyState(): void;
+    setGameState(): void;
+    setOutsideLobbyState(): void;
+
+    saveReconnectData(roomCode: string, playerId: number): void;
+    deleteReconnectData(): void;
+    loadReconnectData(): {
+        roomCode: string,
+        playerId: number,
+        lastSaveTime: number,
+    } | null;
     
 
     state: State,
@@ -30,11 +41,12 @@ export type GameManager = {
     removeStateListener(listener: StateListener): void;
     invokeStateListeners(type?: StateEventType): void;
 
-    tryJoinGame(roomCode: string): Promise<void>;
     leaveGame(): void;
 
+    sendLobbyListRequest(): void;
     sendHostPacket(): void;
-    sendJoinPacket(): Promise<void>;
+    sendRejoinPacket(roomCode: string, playerId: number): Promise<void>;
+    sendJoinPacket(roomCode: string): Promise<void>;
     sendSetNamePacket(name: string): void;
     sendStartGamePacket(): void;
     sendSetPhaseTimePacket(phase: Phase, time: number): void;
@@ -52,7 +64,6 @@ export type GameManager = {
     sendSendMessagePacket(text: string): void;
     sendSendWhisperPacket(playerIndex: number, text: string): void;
     sendExcludedRolesPacket(roles: RoleOutline[]): void;
-    sendKickPlayerPacket(playerId: PlayerID): void;
 
     sendSetDoomsayerGuess(guesses: [
         [number, DoomsayerGuess],

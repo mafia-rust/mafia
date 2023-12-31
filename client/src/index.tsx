@@ -3,47 +3,56 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import Anchor from './menu/Anchor';
 import { GameManager, createGameManager } from './game/gameManager';
-import { createGameState } from './game/gameState';
 import StartMenu from './menu/main/StartMenu';
-import * as LoadingScreen from './menu/LoadingScreen';
-import StandaloneWiki from './menu/main/StandaloneWiki';
-import { WikiPage } from './components/WikiSearch';
 import { Player } from './game/gameState.d';
+import LoadingScreen from './menu/LoadingScreen';
 
 const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
 const TIME_PERIOD = 1000;
 export default GAME_MANAGER;
 
-GAME_MANAGER.addStateListener((type) => {
-    switch (type) {
-        case "acceptJoin":
-            window.history.pushState({}, document.title, `?code=${GAME_MANAGER.roomCode}`);
-    }
-})
+// GAME_MANAGER.addStateListener((type) => {
+//     switch (type) {
+//         case "acceptJoin":
+//             if (GAME_MANAGER.state.stateType === "lobby") {
+//                 window.history.pushState({}, document.title, `?code=${GAME_MANAGER.state.roomCode}`);
+//             }
+//     }
+// })
 
 setInterval(() => {
     GAME_MANAGER.tick(TIME_PERIOD);
 }, TIME_PERIOD);
 
-function route(url: Location) {
+async function route(url: Location) {
     const roomCode = new URLSearchParams(url.search).get("code");
+    let reconnectData = GAME_MANAGER.loadReconnectData();
+    //if reconnectData last save time is more than an hour ago, set reconnectData to null
+    const hourInSeconds = 3600000;
+    if (reconnectData && reconnectData.lastSaveTime < Date.now() - hourInSeconds) {
+        reconnectData = null;
+        GAME_MANAGER.deleteReconnectData();
+    }
+
 
     if (roomCode !== null) {
-        GAME_MANAGER.state = createGameState();
-        GAME_MANAGER.tryJoinGame(roomCode);
-    } else if (url.pathname.startsWith('/wiki')) {
-        const page = url.pathname.substring(6);
-        Anchor.setContent(<StandaloneWiki page={page !== "" ? page as WikiPage : undefined}/>);
+        await GAME_MANAGER.setOutsideLobbyState();
+        GAME_MANAGER.sendJoinPacket(roomCode);
+        window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (reconnectData) {        
+        await GAME_MANAGER.setOutsideLobbyState();
+        GAME_MANAGER.sendRejoinPacket(reconnectData.roomCode, reconnectData.playerId);
     } else {
         Anchor.setContent(<StartMenu/>)
     }
     // If we ever need more routing than this, use react router instead.
+    Anchor.setContent(<StartMenu/>)
 }
 
 ROOT.render(
     <Anchor 
-        content={LoadingScreen.create()} 
+        content={<LoadingScreen type="default"/>} 
         onMount={() => route(window.location)}
     />
 );

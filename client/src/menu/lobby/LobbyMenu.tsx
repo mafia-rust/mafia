@@ -63,7 +63,11 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
                     <LobbyExcludedRoles/>
                     {Anchor.isMobile() && <section className="wiki-menu-colors">
                         <h2>{translate("menu.wiki.title")}</h2>
-                        <WikiSearch/>
+                        <WikiSearch  excludedRoles={
+                            GAME_MANAGER.state.stateType === "lobby" ?
+                            GAME_MANAGER.state.excludedRoles :
+                            []
+                        }/>
                     </section>}
                 </div>
             </main>
@@ -75,24 +79,31 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
 function LobbyMenuHeader(props: { host?: boolean }): JSX.Element {
     return <header>
         <div>
-            <button className="leave" onClick={() => GAME_MANAGER.leaveGame()}>
-                {translate("menu.button.leave")}
+            <button disabled={!props.host} className="start" onClick={()=>{GAME_MANAGER.sendStartGamePacket()}}>
+                {translate("menu.lobby.button.start")}
             </button>
             <RoomCodeButton/>
         </div>
-        <button disabled={!props.host} className="start" onClick={()=>{GAME_MANAGER.sendStartGamePacket()}}>
-            {translate("menu.lobby.button.start")}
+        <button className="leave" onClick={() => GAME_MANAGER.leaveGame()}>
+            {translate("menu.button.leave")}
         </button>
+        
     </header>
 }
 
 function RoomCodeButton(props: {}): JSX.Element {
     return <button onClick={() => {
         let code = new URL(window.location.href);
-        code.searchParams.set("code", GAME_MANAGER.roomCode!);
+        
+        if (GAME_MANAGER.state.stateType === "lobby")
+            code.searchParams.set("code", GAME_MANAGER.state.roomCode!);
+
         if (navigator.clipboard)
             navigator.clipboard.writeText(code.toString());
     }}>
-        {GAME_MANAGER.roomCode!}
+        {
+            GAME_MANAGER.state.stateType === "lobby" ?
+            GAME_MANAGER.state.roomCode : ""
+        }
     </button>
 }
