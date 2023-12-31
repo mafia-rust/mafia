@@ -81,7 +81,7 @@ export function createPlayer(name: string, index: number): Player {
         host: false,
 
         toString() {
-            return ""+(this.index+1)+"-" + this.name;
+            return ""+(this.index+1)+": " + this.name;
         }
     }
 }

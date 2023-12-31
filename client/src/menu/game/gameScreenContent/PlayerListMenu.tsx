@@ -129,7 +129,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                     <StyledText>{player.toString()}</StyledText>
                     <StyledText>{(player.roleLabel==null?"":("("+translate("role."+player.roleLabel+".name")+")"))}</StyledText>
                 </button>
-                <div>
+                <div className="playerTags">
                     <StyledText>{player.playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
                 </div>
                 {(() => {

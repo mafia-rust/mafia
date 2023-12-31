@@ -78,4 +78,7 @@
     overflow-x: hidden;
     flex-wrap: wrap;
 }
+.player-list-menu .playerTags{
+    font-size:larger;
+}
 
