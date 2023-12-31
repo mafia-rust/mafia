@@ -94,12 +94,12 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             onClick={()=>{
                 GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.PlayerListMenu)
             
-            }}>{translate("menu.playerList.title")}</button>
+            }}>{translate("menu.playerList.icon")}</button>
             <button 
             className={"will-menu-colors"+(GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WillMenu)?" highlighted":"")} 
             onClick={()=>{
                 GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.WillMenu)
-            }}>{translate("menu.will.title")}</button>
+            }}>{translate("menu.will.icon")}</button>
             {(()=>
                 (
                     ROLES[this.state.gameState.roleState?.role as Role] === undefined || !ROLES[this.state.gameState.roleState?.role as Role].largeRoleSpecificMenu
@@ -119,13 +119,13 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             className={"graveyard-menu-colors"+(GameScreen.instance.menusOpen().includes(GameScreenContentMenus.GraveyardMenu)?" highlighted":"")} 
             onClick={()=>{
                 GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.GraveyardMenu)
-            }}>{translate("menu.graveyard.title")}</button>
+            }}>{translate("menu.graveyard.icon")}</button>
             <button 
             className={"wiki-menu-colors"+(GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WikiMenu)?" highlighted":"")} 
             onClick={()=>{
                 GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.WikiMenu)
             
-            }}>{translate("menu.wiki.title")}</button>
+            }}>{translate("menu.wiki.icon")}</button>
 
         </div>
     }

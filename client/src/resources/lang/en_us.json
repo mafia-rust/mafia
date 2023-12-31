@@ -35,24 +35,28 @@
     "menu.loading.join": "Connecting to Lobby",
     "menu.loading.default": "Loading",
 
-    "menu.chat.title": "💬",
+    "menu.chat.title": "Chat",
+    "menu.chat.icon": "💬",
     "menu.chat.button.send": "Send",
     "menu.chat.placeHolder": "Enter message",
     "menu.chat.clearFilter": "Clear Filter",
     
-    "menu.will.title": "📜",
+    "menu.will.title": "Will",
+    "menu.will.icon": "📜",
     "menu.will.will": "Will",
     "menu.will.notes": "Notes",
     "menu.will.deathNote": "Death Note",
     "menu.will.save": "Save",
     "menu.will.post": "Post",
 
-    "menu.wiki.title": "🔎",
-    "menu.wiki.search.placeholder": "Search the wiki...",
+    "menu.wiki.title": "Encyclopedia",
+    "menu.wiki.icon": "🔎",
+    "menu.wiki.search.placeholder": "Search the encyclopedia...",
     "menu.wiki.search.back": "Back",
     "menu.wiki.search.clear": "Clear",
 
-    "menu.playerList.title": "🕵🏾",
+    "menu.playerList.title": "Players",
+    "menu.playerList.icon": "🕵🏾",
     
     "menu.playerList.button.all": "All",
     "menu.playerList.button.living": "Living",
@@ -66,7 +70,8 @@
     "menu.playerList.button.dayTarget":"Day Target",
     "menu.playerList.button.filter":"Filter",
 
-    "menu.graveyard.title": "🪦",
+    "menu.graveyard.title": "Graveyard",
+    "menu.graveyard.icon": "🪦",
     "menu.graveyard.killedBy": "Killed by",
 
     "notification.connectionFailed": "Connection failed",

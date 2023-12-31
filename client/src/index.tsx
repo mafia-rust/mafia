@@ -27,7 +27,14 @@ setInterval(() => {
 
 async function route(url: Location) {
     const roomCode = new URLSearchParams(url.search).get("code");
-    let reconnectData = GAME_MANAGER.loadReconnectData()
+    let reconnectData = GAME_MANAGER.loadReconnectData();
+    //if reconnectData last save time is more than an hour ago, set reconnectData to null
+    const hourInSeconds = 3600000;
+    if (reconnectData && reconnectData.lastSaveTime < Date.now() - hourInSeconds) {
+        reconnectData = null;
+        GAME_MANAGER.deleteReconnectData();
+    }
+
 
     if (roomCode !== null) {
         await GAME_MANAGER.setOutsideLobbyState();

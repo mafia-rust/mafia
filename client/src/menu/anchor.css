@@ -56,6 +56,7 @@
 
 .error-card > div {
     margin-top: 3%;
+    text-align: left;
 }
     
 @keyframes slide-in {
