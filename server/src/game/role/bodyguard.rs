@@ -30,15 +30,15 @@ impl Default for Bodyguard {
     }
 }
 
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaSupport;
-pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
+pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownProtective;
+pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Bodyguard {
     fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
     fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
     fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
-    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::Mafia}
+    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::Town}
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
