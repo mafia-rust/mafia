@@ -46,6 +46,9 @@ export type RoleState = {
 } | {
     role: "retributionist"
 } | {
+    role: "godfather"
+    backup: PlayerIndex | null
+} | {
     role: "mafioso"
 } | {
     role: "consort"

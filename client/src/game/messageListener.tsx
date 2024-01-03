@@ -217,7 +217,11 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "yourPlayerTags":
             if(GAME_MANAGER.state.stateType === "game"){
-                for (const [key, value] of Object.entries(packet.playerTags)) { 
+                for(let i = 0; i < GAME_MANAGER.state.players.length; i++){
+                    GAME_MANAGER.state.players[i].playerTags = [];
+                }
+
+                for(const [key, value] of Object.entries(packet.playerTags)){
                     GAME_MANAGER.state.players[Number.parseInt(key)].playerTags = value as Tag[];
                 }
             }

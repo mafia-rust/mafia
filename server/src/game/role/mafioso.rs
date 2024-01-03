@@ -16,7 +16,7 @@ use super::{Priority, RoleStateImpl};
 pub struct Mafioso;
 
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaKilling;
-pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
+pub(super) const MAXIMUM_COUNT: Option<u8> = Some(0);
 
 impl RoleStateImpl for Mafioso {
     fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {true}

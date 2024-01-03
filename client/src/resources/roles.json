@@ -179,6 +179,16 @@
         "maxCount": 1,
         "largeRoleSpecificMenu": false
     },
+    "godfather": {
+        "factionAlignment": "mafiaKilling",
+        "suspicious": false,
+        "roleblockable": true,
+        "defense": 1,
+        "witchable": true,
+        "endGameCondition": "Faction",
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false
+    },
     "mafioso": {
         "factionAlignment": "mafiaKilling",
         "suspicious": true,
@@ -186,7 +196,7 @@
         "defense": 0,
         "witchable": true,
         "endGameCondition": "Faction",
-        "maxCount": 1,
+        "maxCount": 0,
         "largeRoleSpecificMenu": false
     },
     "consort": {

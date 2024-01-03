@@ -76,6 +76,7 @@ impl RoleStateImpl for Jailor {
         }
     }
     fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {        
+        game.current_phase().is_day() &&
         actor_ref != target_ref &&
         actor_ref.alive(game) && target_ref.alive(game) &&
         self.executions_remaining > 0

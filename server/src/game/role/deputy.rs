@@ -66,6 +66,7 @@ impl RoleStateImpl for Deputy {
         false
     }
     fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+        game.current_phase().is_day() &&
         game.phase_machine.day_number > 1 &&
         self.bullets_remaining > 0 &&
         actor_ref != target_ref &&

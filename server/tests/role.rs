@@ -8,6 +8,7 @@ pub use mafia_server::game::{
     grave::*, 
     role_list::Faction,
     player::PlayerReference,
+    tag::Tag,
     role::{
         Role,
         RoleState,
@@ -35,6 +36,7 @@ pub use mafia_server::game::{
         medium::Medium,
         retributionist::Retributionist,
 
+        godfather::Godfather,
         mafioso::Mafioso,
         
         consort::Consort,
@@ -812,4 +814,27 @@ fn grave_contains_multiple_killers_roles() {
             died_phase: GravePhase::Night,
             day_number: 2,
     });
+}
+
+#[test]
+fn godfathers_backup_tag_works() {
+    kit::scenario!(game in Night 2 where
+        godfather: Godfather,
+        blackmailer: Blackmailer,
+        consort: Consort,
+        _vigi: Vigilante
+    );
+
+    assert!(godfather.day_target(blackmailer));
+    assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).expect("blackmailer doesnt have tag").contains(&Tag::GodfatherBackup));
+    
+    assert!(godfather.day_target(blackmailer));
+    assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).is_none());
+
+    assert!(godfather.day_target(blackmailer));
+    assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).expect("blackmailer doesnt have tag").contains(&Tag::GodfatherBackup));
+    
+    assert!(godfather.day_target(consort));
+    assert!(blackmailer.get_player_tags().get(&consort.player_ref()).expect("consort doesnt have tag").contains(&Tag::GodfatherBackup));
+    assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).is_none());
 }

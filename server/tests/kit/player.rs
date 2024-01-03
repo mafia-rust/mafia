@@ -1,4 +1,6 @@
-use mafia_server::{game::{player::{PlayerReference, PlayerIndex}, Game, chat::ChatMessage, role::RoleState}, packet::ToServerPacket};
+use std::collections::HashMap;
+
+use mafia_server::{game::{player::{PlayerReference, PlayerIndex}, Game, chat::ChatMessage, role::RoleState, tag::Tag}, packet::ToServerPacket};
 
 #[derive(Clone, Copy, Debug)]
 pub struct TestPlayer(PlayerReference, *mut Game);
@@ -24,6 +26,10 @@ impl TestPlayer {
 
     pub fn index(&self) -> PlayerIndex {
         self.0.index()
+    }
+
+    pub fn player_ref(&self) -> PlayerReference {
+        self.0
     }
 
     pub fn set_night_targets(&self, targets: Vec<TestPlayer>)->bool {
@@ -69,6 +75,10 @@ impl TestPlayer {
 
     pub fn set_role_state(&self, new_role_data: RoleState){
         self.0.set_role_state(game!(self), new_role_data);
+    }
+
+    pub fn get_player_tags(&self) -> &HashMap<PlayerReference, Vec<Tag>> {
+        self.0.player_tags(game!(self))
     }
 
     pub fn get_won_game(&self) -> bool {

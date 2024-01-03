@@ -66,6 +66,7 @@ macros::roles! {
 
     // Mafia
     Mafioso : mafioso,
+    Godfather : godfather,
     
     Consort : consort,
     Blackmailer : blackmailer,
@@ -90,7 +91,6 @@ macros::roles! {
 
 macros::priorities! {
     TopPriority,
-    Unswappable,
 
     Transporter,
     

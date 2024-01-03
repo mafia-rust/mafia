@@ -84,6 +84,7 @@ export type PhaseTimes = {
     "night": number,
 }
 export type Tag =
+| "godfatherBackup"
 | "doused"
 | "hexed"
 | "necronomicon"
