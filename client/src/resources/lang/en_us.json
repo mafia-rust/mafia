@@ -369,20 +369,20 @@
     "chatMessage.targeted":"\\0 targeted \\1.",
     "chatMessage.targeted.cleared":"\\0 cleared their targets.",
 
-    "chatMessage.mayorRevealed":"\\0 has revealed as mayor!",
-    "chatMessage.mayorCantWhisper":"You can't whisper as or to a revealed mayor.",
+    "chatMessage.mayorRevealed":"\\0 has revealed as Mayor!",
+    "chatMessage.mayorCantWhisper":"You can't whisper as or to a revealed Mayor.",
     "chatMessage.jailedTarget": "You jailed \\0.",
     "chatMessage.jailedSomeone":"\\0 was dragged off to jail!",
     "chatMessage.jailorDecideExecute":"The Jailor decided to execute \\0!",
     "chatMessage.jailorDecideNotExecute":"The Jailor decided not to execute.",
-    "chatMessage.mediumSeance":"\\0 is being seanced by a medium!",
-    "chatMessage.jesterWon":"The jester will get their revenge from the grave!",
-    "chatMessage.executionerWon":"The executioner got their target lynched and won!",
-    "chatMessage.deathCollectedSouls":"Thanos has collected all the stones, it is the endgame now.",
-    "chatMessage.deputyKilled":"A deputy killed \\0!",
-    "chatMessage.deputyShotSomeoneSurvived":"A deputy shot someone but they survived!",
-    "chatMessage.jailorDecidedToExecute":"The jailor decided to execute \\0",
-    "chatMessage.jailorDecideExecute.nobody":"The jailor decided not to execute!",
+    "chatMessage.mediumSeance":"\\0 is being seanced by a Medium!",
+    "chatMessage.jesterWon":"The Jester will get their revenge from the grave!",
+    "chatMessage.executionerWon":"The Executioner got their target lynched and won!",
+    "chatMessage.deathCollectedSouls":"The apolocolypse begins, everyone will die tonight if Death is alive at nightfall!",
+    "chatMessage.deputyKilled":"The Deputy killed \\0!",
+    "chatMessage.deputyShotSomeoneSurvived":"A Deputy shot someone but they survived!",
+    "chatMessage.jailorDecidedToExecute":"The Jailor decided to execute \\0",
+    "chatMessage.jailorDecideExecute.nobody":"The Jailor decided not to execute!",
     "chatMessage.playerWithNecronomicon":"\\0 has the necronomicon.",
 
     "chatMessage.youDied":"You died!",
@@ -413,8 +413,8 @@
     "chatMessage.retributionistMessage":"Your target got the following message:",
     "chatMessage.necromancerMessage":"Your target got the following message:",
     "chatMessage.witchMessage":"Your target got the following message:",
-    "chatMessage.witchedYou":"You were possessed by a witch.",
-    "chatMessage.witchedYou.immune":"A witch tried to possess you but you were immune.",
+    "chatMessage.witchedYou":"You were possessed by a Witch.",
+    "chatMessage.witchedYou.immune":"A Witch tried to possess you but you were immune.",
     "chatMessage.witchTargetImmune":"Your target was immune to possession.",
     "chatMessage.veteranAttackedYou":"You were attacked by the veteran you visited.",
     "chatMessage.veteranAttackedVisitor":"You attacked a visitor.",
@@ -422,8 +422,8 @@
     "chatMessage.targetWasAttacked":"Your target was attacked.",
     "chatMessage.youWereProtected": "You were attacked but someone protected you.",
     "chatMessage.transported": "You were transported!",
-    "chatMessage.godfatherBackup": "The godfather has selected \\0 to be their backup.",
-    "chatMessage.godfatherBackup.nobody": "The godfather has deselected a backup.",
+    "chatMessage.godfatherBackup": "The Godfather has selected \\0 to be their backup.",
+    "chatMessage.godfatherBackup.nobody": "The Godfather has deselected a backup.",
     "chatMessage.silenced": "You were silenced! You must not speak, chat, point, or otherwise communicate until tomorrow!",
     "chatMessage.playersRoleAndWill": "Your target's role was \\0 and their will stated this: \\1",
     "chatMessage.consigliereResult": "\\0. \\1. \\2.",
@@ -442,7 +442,7 @@
     "wiki.entry.article.404.text": "If you see this, please report this as a bug, along with what steps you took to arrive to this page.",
 
     "wiki.entry.article.roles_and_teams.title":"Roles and Teams",
-    "wiki.entry.article.roles_and_teams.text":"## Roles\nEvery player has a role, including you. Your role is told to you in the first chat message you received and at the top of the screen. Almost every role has an ability that can be used during the night, these abilities help you to win.\n\nThere can be multiple players with almost any role, so you might not be the only person with the role you have.\n\n### Abilities & Attributes\nAbilities are the actions that your role can take. For most roles, this is who you can target at night, but for a few special roles, you have abilities you can perform during the day.\n\nAttributes are special things about your abilities: when they fail, who you can target, etc.\n\n### Faction & Alignment\nEvery role has a faction and alignment which indicate what team you're on and what your goal is. You can see a role's faction and alignment on its encyclopedia page. Town, Mafia, Coven, and Vampire’s goal is to be the only remaining team, and to kill every player from every other team. Neutral roles have different goals that vary depending on the role.\n\n## Teams\nThe major teams are Town, Mafia, Coven, and Vampire. For these teams, their goal is to be the only team remaining. Some special roles have their own teams as well. In most games, there will be Town and one evil team.\n\n### Town\nThe town usually has the majority when the game starts, meaning there are more players with town roles. This means that during the trial period, the town has voting power. Because of this, evil players must say that they are townies even though they are not in order to not get hanged.\n\n### Mafia, Coven, and Vampire\nThese are the evil teams. At night you can (and should) talk to your team to plan how to win. If you are asked to claim a role, It is often best to say that you are a specific town role, such as doctor or sheriff. In order to make your fake claim believable you must keep a will.",
+    "wiki.entry.article.roles_and_teams.text":"## Roles\nEvery player has a role, including you. Your role is told to you in the first chat message you received and at the top of the screen. Almost every role has an ability that can be used during the night, these abilities help you to win.\n\nThere can be multiple players with almost any role, so you might not be the only person with the role you have.\n\n### Abilities & Attributes\nAbilities are the actions that your role can take. For most roles, this is who you can target at night, but for a few special roles, you have abilities you can perform during the day.\n\nAttributes are special things about your abilities: when they fail, who you can target, etc.\n\n### Faction & Alignment\nEvery role has a faction and alignment which indicate what team you're on and what your goal is. You can see a role's faction and alignment on its encyclopedia page. Town, Mafia, Coven, and Vampire’s goal is to be the only remaining team, and to kill every player from every other team. Neutral roles have different goals that vary depending on the role.\n\n## Teams\nThe major teams are Town, Mafia, Coven, and Vampire. For these teams, their goal is to be the only team remaining. Some special roles have their own teams as well. In most games, there will be Town and one evil team.\n\n### Town\nThe town usually has the majority when the game starts, meaning there are more players with town roles. This means that during the trial period, the town has voting power. Because of this, evil players must say that they are townies even though they are not in order to not get hanged.\n\n### Mafia, Coven, and Vampire\nThese are the evil teams. At night you can (and should) talk to your team to plan how to win. If you are asked to claim a role, It is often best to say that you are a specific town role, such as Doctor or Sheriff. In order to make your fake claim believable you must keep a will.",
     
     "wiki.entry.article.phases_and_timeline.title":"Phases",
     "wiki.entry.article.phases_and_timeline.text":"The game is always in a phase. Phases run in this order:\n\n### Night\nThis is when most roles use their abilities. Chat is closed at night so players can not communicate with each other. However, some roles can communicate with others at night, for example, the medium can talk to the dead, and mafia can talk with each other.\n\n### Morning\nPlayers see who died last night, their final will, and any death notes that were placed on the body. \n\n### Discussion\nPlayers discuss information they have to try to find out who the evil players are, or if they’re evil themselves, pretend to. Evil players will often try to throw out red herrings or pin the blame on someone else.\n\n### Voting\nPlayers vote to put a player on trial, but this doesn’t always mean that player is going to be killed. The players need a majority of the votes in order to put someone onto trial. If the voting phase ends before a majority is reached, it goes directly to night after. There can be a maximum of three trials during each day.\n\n### Testimony\nThis phase comes after voting only if a player was voted onto trial. The player on trial gives their testimony while everyone else stays quiet. Usually the player on trial will claim a role and post their will here.\n\nIf you have been voted for a trial, don’t give up. Even if you’re evil, you can lie your way out of getting hanged.### Judgment\nThis phase comes after testimony. Everyone votes either innocent, or guilty. If there are more guilty votes than innocent votes, the player on trial is killed. Players can also choose to abstain. The judgment period is usually how the town gets evil players killed.\n\n### Evening\nA brief period before night. If someone was voted guilty today, this is usually where they get to say their final words.\n\nWhen there are three or less players alive, each phase is half as long as it usually is.",
@@ -451,7 +451,7 @@
     "wiki.entry.article.faction_alignments.text":"",
 
     "wiki.entry.article.wills_and_notes.title":"Wills and Notes",
-    "wiki.entry.article.wills_and_notes.text":"## Wills\n\nWith any role, it is important to keep a final will. This is a document that shows all the information you claim to have and how you got it. Usually, all players are going to claim that they are a town role, so almost every will you see is a will of a town role.\n\nEach night, the sheriff will choose a player and find out if they are innocent or suspicious. (See the encyclopedia page for “sheriff” to learn more).\nHere is a typical sheriff will:\n\n> N1: John-Innocent\nN2: Peter-Innocent\nN3: Jennifer-Suspicious\n\nThis will shows that on night 1, this sheriff found that John was innocent. On night 2, they found Peter innocent. On night 3, they found that Jennifer was suspicious.\n\nThe sheriff can post this will in order to claim, and show that Jennifer is likely evil. As an evil player, keeping a fake will is extremely important because a claim is only believable with a will alongside it.\n\n## Notes\n\nNotes are just for you, nobody else can see them. To keep organized, It is often very helpful to write down what role everyone else claimed. For example, a note page might look like this:\n\n> John - Claims doctor\nPeter - Claims sheriff\nJennifer - Never claimed, probably evil\n\n## Death notes\n\nSome roles have the ability to leave a death note when they kill another player. This note will be displayed to everyone in the game, and is a main way for evil people to communicate with the town.",
+    "wiki.entry.article.wills_and_notes.text":"## Wills\n\nWith any role, it is important to keep a final will. This is a document that shows all the information you claim to have and how you got it. Usually, all players are going to claim that they are a town role, so almost every will you see is a will of a town role.\n\nEach night, the Sheriff will choose a player and find out if they are innocent or suspicious. (See the encyclopedia page for “Sheriff” to learn more).\nHere is a typical Sheriff will:\n\n> N1: John-Innocent\nN2: Peter-Innocent\nN3: Jennifer-Suspicious\n\nThis will shows that on night 1, this Sheriff found that John was innocent. On night 2, they found Peter innocent. On night 3, they found that Jennifer was suspicious.\n\nThe Sheriff can post this will in order to claim, and show that Jennifer is likely evil. As an evil player, keeping a fake will is extremely important because a claim is only believable with a will alongside it.\n\n## Notes\n\nNotes are just for you, nobody else can see them. To keep organized, It is often very helpful to write down what role everyone else claimed. For example, a note page might look like this:\n\n> John - Claims Doctor\nPeter - Claims Sheriff\nJennifer - Never claimed, probably evil\n\n## Death notes\n\nSome roles have the ability to leave a death note when they kill another player. This note will be displayed to everyone in the game, and is a main way for evil people to communicate with the town.",
 
     "wiki.entry.article.all_language.title":"All text",
     "wiki.entry.article.all_language.text":"",
@@ -470,7 +470,7 @@
     
     "wiki.entry.role.transporter.title": "Transporter",
     "wiki.entry.role.transporter.abilities":"* Transport two players with each other.",
-    "wiki.entry.role.transporter.attributes":"* Transporting a target swaps all visitors to them; for example, all visitors that visit target A will instead visit target B, and vice versa\n* You can transport yourself* Your targets do not change due to other transporters (your targets wont change due to your own transport either)",
+    "wiki.entry.role.transporter.attributes":"* Transporting a target swaps all visitors to them; for example, all visitors that visit target A will instead visit target B, and vice versa\n* You can transport yourself* Your targets do not change due to other Transporters (your targets wont change due to your own transport either)",
     
     "wiki.entry.role.sheriff.title": "Sheriff",
     "wiki.entry.role.sheriff.abilities":"* Interrogate a player to find out if they're innocent or suspicious",
@@ -518,7 +518,7 @@
     
     "wiki.entry.role.retributionist.title": "Retributionist",
     "wiki.entry.role.retributionist.abilities":"* Force a dead player to use their ability on a living one",
-    "wiki.entry.role.retributionist.attributes":"* Your ability only works on dead players with graves that show town roles\n* You cant use the same person two times\n* You can use the dead player to target two living players, this is useful for roles like framer, transporter, and seer\n* Your first target is the player you're controlling, the second and third are the players they're targeting\n* If there are multiple retributionists and necromancers, and they both select the same player, the player with the higher player number will take precendence",
+    "wiki.entry.role.retributionist.attributes":"* Your ability only works on dead players with graves that show town roles\n* You cant use the same person two times\n* You can use the dead player to target two living players, this is useful for roles like Framer, Transporter, and Seer\n* Your first target is the player you're controlling, the second and third are the players they're targeting\n* If there are multiple retributionists and necromancers, and they both select the same player, the player with the higher player number will take precendence",
     
     "wiki.entry.role.vigilante.title": "Vigilante",
     "wiki.entry.role.vigilante.abilities":"* Shoot suspicious looking players",
@@ -550,15 +550,15 @@
     
     "wiki.entry.role.consigliere.title": "Consigliere",
     "wiki.entry.role.consigliere.abilities":"* Investigate a player to find out their role, find who they visited, and who visited them",
-    "wiki.entry.role.consigliere.attributes":"* You can read whispers that were not sent to you\n* Your information can be fooled by other roles like framers, arsonists, and hex masters\n* You can never see yourself visit",
+    "wiki.entry.role.consigliere.attributes":"* You can read whispers that were not sent to you\n* Your information can be fooled by other roles like Framers, and Arsonists\n* You can never see yourself visit",
     
     "wiki.entry.role.necromancer.title": "Necromancer",
     "wiki.entry.role.necromancer.abilities":"* Force a dead player to use their ability on a living player",
-    "wiki.entry.role.necromancer.attributes":"* You cant use the same person two times\n* You can use the dead player to target two living players, this is useful for roles like framer, transporter, and seer\n* Your first target is the player you're controlling, the second and third are the players they're targeting\n* If there are multiple retributionists and necromancers, and they both select the same player, the player with the higher player number will take precendence",
+    "wiki.entry.role.necromancer.attributes":"* You cant use the same person two times\n* You can use the dead player to target two living players, this is useful for roles like Framer, Transporter, and Seer\n* Your first target is the player you're controlling, the second and third are the players they're targeting\n* If there are multiple retributionists and necromancers, and they both select the same player, the player with the higher player number will take precendence",
 
     "wiki.entry.role.witch.title": "Witch",
     "wiki.entry.role.witch.abilities":"* Force a player to use their ability on another player",
-    "wiki.entry.role.witch.attributes":"* You can force a player to target up to two living players, this is useful for roles like framer, transporter, and seer\n* Your first target is the player you're possessing, the second and third targets are the players they're targeting",
+    "wiki.entry.role.witch.attributes":"* You can force a player to target up to two living players, this is useful for roles like Framer, Transporter, and Seer\n* Your first target is the player you're possessing, the second and third targets are the players they're targeting",
 
     "wiki.entry.role.janitor.title": "Janitor",
     "wiki.entry.role.janitor.abilities":"* Clean a player on the night they die",
@@ -588,9 +588,9 @@
     "wiki.entry.role.arsonist.abilities":"* Target someone to douse them\n* Target yourself to ignite all doused players",
     "wiki.entry.role.arsonist.attributes":"* When you ignite you deal an unstoppable attack to all doused players\n* You douse all visitors to you\n* You can't be doused\n* You do not douse visiting players who visited using only an astral visit",
     
-    "wiki.entry.role.death.title": "Thanos",
-    "wiki.entry.role.death.abilities":"* Target a player on the night they die to collect a stone\n* Once you've collected six stones, endgame starts, everyone is notified, and at the start of the next night, you kill everyone, and win.",
-    "wiki.entry.role.death.attributes":"* Passively gain a stone each night\n* To collect stones faster, guess what player will die on that night by targeting them\n* You gain powerful defense once you have six stones.",
+    "wiki.entry.role.death.title": "Death",
+    "wiki.entry.role.death.abilities":"* Target a player on the night they die to collect a soul\n* Once you've collected six souls, everyone is notified, and at the start of the next night, you kill everyone, and win.",
+    "wiki.entry.role.death.attributes":"* Passively gain a soul each night\n* To collect souls faster, guess what player will die on that night by targeting them\n* You gain powerful defense once you have six souls.",
     
     "wiki.entry.role.amnesiac.title": "Amnesiac",
     "wiki.entry.role.amnesiac.abilities":"* Choose a role and become that role at night",
