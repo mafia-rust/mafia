@@ -586,7 +586,7 @@
 
     "wiki.entry.role.arsonist.title": "Arsonist",
     "wiki.entry.role.arsonist.abilities":"* Target someone to douse them\n* Target yourself to ignite all doused players",
-    "wiki.entry.role.arsonist.attributes":"* When you ignite you deal an unstoppable attack to all doused players\n* You douse all visitors to you\n* You can't be doused\n* If you are jailed, you will douse all Jailors\n* You do not douse visiting players who visited using only an astral visit",
+    "wiki.entry.role.arsonist.attributes":"* When you ignite you deal an unstoppable attack to all doused players\n* You douse all visitors to you\n* You can't be doused\n* If you are jailed, you will douse all Jailors and will still douse visitors to you\n* You do not douse visiting players who visited using only an astral visit\n* When you ignite, the kill is astral",
     
     "wiki.entry.role.death.title": "Death",
     "wiki.entry.role.death.abilities":"* Target a player on the night they die to collect a soul\n* Once you've collected six souls, everyone is notified, and at the start of the next night, you kill everyone, and win.",

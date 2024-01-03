@@ -45,20 +45,7 @@ impl RoleStateImpl for Arsonist {
                         }
                     }
 
-                    //douse all visitors
-                    for other_player_ref in PlayerReference::all_players(game)
-                        .into_iter()
-                        .filter(|other_player_ref|
-                            *other_player_ref != actor_ref &&
-                            other_player_ref.night_visits(game)
-                                .iter()
-                                .any(|v|!v.astral&&v.target==actor_ref)
-                        ).collect::<Vec<PlayerReference>>()
-                    {
-                        if Role::Arsonist != other_player_ref.role_state(game).role() {
-                            other_player_ref.set_doused(game, true);
-                        }
-                    }
+                    
                 }else{
                     //douse the jailor if jailed
                     for player_ref in PlayerReference::all_players(game){
@@ -68,7 +55,20 @@ impl RoleStateImpl for Arsonist {
                     }
                 }
                 
-
+                //douse all visitors
+                for other_player_ref in PlayerReference::all_players(game)
+                    .into_iter()
+                    .filter(|other_player_ref|
+                        *other_player_ref != actor_ref &&
+                        other_player_ref.night_visits(game)
+                            .iter()
+                            .any(|v|!v.astral&&v.target==actor_ref)
+                    ).collect::<Vec<PlayerReference>>()
+                {
+                    if Role::Arsonist != other_player_ref.role_state(game).role() {
+                        other_player_ref.set_doused(game, true);
+                    }
+                }
 
                 //Make all doused players look like arsonist
                 for player_ref in PlayerReference::all_players(game){
