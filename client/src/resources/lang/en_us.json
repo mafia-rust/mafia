@@ -265,11 +265,11 @@
     "role.arsonist.detarget": "Detarget",
     "role.arsonist.dayTarget": "Special",
 
-    "role.death.name": "Thanos",
+    "role.death.name": "Death",
     "role.death.target": "Collect",
     "role.death.detarget": "Detarget",
     "role.death.dayTarget": "Special",
-    "role.death.roleDataText": "Stones collected: \\0",
+    "role.death.roleDataText": "Souls collected: \\0",
 
     "role.vampire.name": "Vampire",
     "role.vampire.target": "Bite",

@@ -85,6 +85,7 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
         <div className="exclusion-preset">
             <select
                 onChange={(e)=>this.setState({preset: e.target.value})}
+                disabled={!this.state.host}
             >
                 {
                     Object.keys(EXCLUDED_ROLE_PRESETS).map((value, i)=>{
@@ -95,9 +96,11 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
         </div>
             <button 
                 onClick={(e)=>this.handleExcludedRolePreset()}
+                disabled={!this.state.host}
             >{translate("menu.excludedRoles.exclude")}</button>
             <button 
                 onClick={(e)=>this.handleIncludeAll()}
+                disabled={!this.state.host}
             >{translate("menu.excludedRoles.includeAll")}</button>
         <div>
             <RolePicker
