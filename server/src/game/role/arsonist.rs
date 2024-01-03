@@ -59,6 +59,13 @@ impl RoleStateImpl for Arsonist {
                             other_player_ref.set_doused(game, true);
                         }
                     }
+                }else{
+                    //douse the jailor if jailed
+                    for player_ref in PlayerReference::all_players(game){
+                        if player_ref.alive(game) && player_ref.role(game) == Role::Jailor {
+                            player_ref.set_doused(game, true);
+                        }
+                    }
                 }
                 
 
