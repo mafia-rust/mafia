@@ -194,6 +194,11 @@
     "role.deputy.detarget": "Detarget",
     "role.deputy.dayTarget": "Shoot",
 
+    "role.godfather.name": "Godfather",
+    "role.godfather.target": "Kill",
+    "role.godfather.detarget": "Spare",
+    "role.godfather.dayTarget": "Backup",
+
     "role.mafioso.name": "Mafioso",
     "role.mafioso.target": "Kill",
     "role.mafioso.detarget": "Spare",
@@ -299,11 +304,12 @@
     "alignment.chaos": "Chaos",
     "alignment.power": "Power",
 
+    "tag.godfatherBackup":"🌹",
     "tag.executionerTarget":"🎯",
     "tag.necronomicon":"📓",
     "tag.doused":"🔥",
     "tag.insane":"🪬",
-    "tag.dead":"🏴‍☠️",
+    "tag.dead":"💀",
 
     "day": "Day",
     "suspicious": "Suspicious",
@@ -411,6 +417,8 @@
     "chatMessage.targetWasAttacked":"Your target was attacked.",
     "chatMessage.youWereProtected": "You were attacked but someone protected you.",
     "chatMessage.transported": "You were transported!",
+    "chatMessage.godfatherBackup": "The godfather has selected \\0 to be their backup.",
+    "chatMessage.godfatherBackup.nobody": "The godfather has deselected a backup.",
     "chatMessage.silenced": "You were silenced! You must not speak, chat, point, or otherwise communicate until tomorrow!",
     "chatMessage.playersRoleAndWill": "Your target's role was \\0 and their will stated this: \\1",
     "chatMessage.consigliereResult": "\\0. \\1. \\2.",
@@ -440,7 +448,7 @@
     "wiki.entry.article.wills_and_notes.title":"Wills and Notes",
     "wiki.entry.article.wills_and_notes.text":"## Wills\n\nWith any role, it is important to keep a final will. This is a document that shows all the information you claim to have and how you got it. Usually, all players are going to claim that they are a town role, so almost every will you see is a will of a town role.\n\nEach night, the sheriff will choose a player and find out if they are innocent or suspicious. (See the encyclopedia page for “sheriff” to learn more).\nHere is a typical sheriff will:\n\n> N1: John-Innocent\nN2: Peter-Innocent\nN3: Jennifer-Suspicious\n\nThis will shows that on night 1, this sheriff found that John was innocent. On night 2, they found Peter innocent. On night 3, they found that Jennifer was suspicious.\n\nThe sheriff can post this will in order to claim, and show that Jennifer is likely evil. As an evil player, keeping a fake will is extremely important because a claim is only believable with a will alongside it.\n\n## Notes\n\nNotes are just for you, nobody else can see them. To keep organized, It is often very helpful to write down what role everyone else claimed. For example, a note page might look like this:\n\n> John - Claims doctor\nPeter - Claims sheriff\nJennifer - Never claimed, probably evil\n\n## Death notes\n\nSome roles have the ability to leave a death note when they kill another player. This note will be displayed to everyone in the game, and is a main way for evil people to communicate with the town.",
 
-    "wiki.entry.article.all_language.title":"All Language",
+    "wiki.entry.article.all_language.title":"All text",
     "wiki.entry.article.all_language.text":"",
 
     "wiki.entry.role": "# \\0\n### \\1\n<br/>\n\n### Abilities\n\\2\n### Attributes\n\\3\n\n<br/>\n\n### Maximum count: \\4\n### Sheriff result: \\5\n### Defense: \\6",
@@ -519,9 +527,13 @@
     "wiki.entry.role.deputy.abilities":"* Shoot one player during the day",
     "wiki.entry.role.deputy.attributes":"\n* When you kill a player, it will be announced that they were shot by a deputy\n* If the player you attack survives the attack, they will know they were attacked, but it will not be announced that they were shot by a deputy\n* You have a powerful attack\n* You have one bullet",
     
+    "wiki.entry.role.godfather.title": "Godfather",
+    "wiki.entry.role.godfather.abilities":"* Target a player to kill them\n* Choose a backup at any time",
+    "wiki.entry.role.godfather.attributes":"* You have a basic attack\n*  if you are roleblocked or jailed, the backup will attack their first target instead\n* The backup will be first in line to become Godfather after you die\n* If the mafia has no Godfather, a random member of the mafia will become the Godfather",
+    
     "wiki.entry.role.mafioso.title": "Mafioso",
     "wiki.entry.role.mafioso.abilities":"* Target a player to kill them",
-    "wiki.entry.role.mafioso.attributes":"* A Godfather can force you to target someone else\n* You have a basic attack\n* If the mafia has no Mafioso, a member of the mafia will become the Mafioso at the start of night",
+    "wiki.entry.role.mafioso.attributes":"* You have a basic attack",
     
     "wiki.entry.role.consort.title": "Consort",
     "wiki.entry.role.consort.abilities":"* Target a player to roleblock them",

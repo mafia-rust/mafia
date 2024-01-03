@@ -43,7 +43,7 @@ impl RoleStateImpl for Veteran {
         if actor_ref.night_jailed(game) {return;}
         
         match priority {
-            Priority::Unswappable => {
+            Priority::TopPriority => {
                 if self.alerts_remaining > 0 {
                     if let Some(visit) = actor_ref.night_visits(game).first(){
                         if visit.target == actor_ref{

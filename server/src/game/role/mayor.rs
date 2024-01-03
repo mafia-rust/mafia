@@ -45,6 +45,7 @@ impl RoleStateImpl for Mayor {
         false
     }
     fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+        game.current_phase().is_day() &&
         !self.revealed &&
         actor_ref == target_ref &&
         actor_ref.alive(game) &&

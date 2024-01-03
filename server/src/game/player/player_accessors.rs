@@ -90,6 +90,21 @@ impl PlayerReference{
     pub fn remove_player_tag(&self, game: &mut Game, key: PlayerReference, value: Tag){
         let Some(player_tags) = self.deref_mut(game).player_tags.get_mut(&key) else {return};
         *player_tags = player_tags.iter().filter(|t|**t!=value).map(Clone::clone).collect();
+        if player_tags.is_empty() {
+            self.deref_mut(game).player_tags.remove(&key);
+        }
+        self.send_packet(game, ToClientPacket::YourPlayerTags { player_tags: PlayerReference::ref_map_to_index(self.deref(game).player_tags.clone()) });
+    }
+    pub fn remove_player_tag_on_all(&self, game: &mut Game, value: Tag){
+        for player_ref in PlayerReference::all_players(game){
+
+            let Some(player_tags) = self.deref_mut(game).player_tags.get_mut(&player_ref) else {continue;};
+            *player_tags = player_tags.iter().filter(|t|**t!=value).map(Clone::clone).collect();
+            if player_tags.is_empty() {
+                self.deref_mut(game).player_tags.remove(&player_ref);
+            }
+            
+        }
         self.send_packet(game, ToClientPacket::YourPlayerTags { player_tags: PlayerReference::ref_map_to_index(self.deref(game).player_tags.clone()) });
     }
 

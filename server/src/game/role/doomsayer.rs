@@ -48,7 +48,7 @@ impl DoomsayerGuess{
             Role::Medium => Some(DoomsayerGuess::Medium),
             Role::Retributionist => Some(DoomsayerGuess::Retributionist),
             //Mafia
-            Role::Mafioso | 
+            Role::Mafioso | Role::Godfather |
             Role::Consort | Role::Blackmailer | Role::Consigliere | Role::Witch | Role::Necromancer |
             Role::Janitor | Role::Framer => Some(DoomsayerGuess::Mafia),
             //Neutral

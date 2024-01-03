@@ -1,4 +1,4 @@
-use super::{player::PlayerReference, Game, role_list::Faction, role::{mafioso::Mafioso, Role}};
+use super::{player::PlayerReference, Game, role_list::Faction, role::{Role, godfather::Godfather}};
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum Team{
@@ -118,12 +118,15 @@ impl TeamStateImpl for Mafia{
         Team::Mafia
     }
     fn on_phase_start(self, game: &mut Game){
+        //This depends on role_state.on_phase_start being called before this
         Mafia::ensure_mafia_can_kill(game);
     }
     fn on_creation(self, game: &mut Game) {
+        //This depends on role_state.on_any_death being called before this
         Mafia::ensure_mafia_can_kill(game);
     }
     fn on_any_death(self, game: &mut Game){
+        //This depends on role_state.on_any_death being called before this
         Mafia::ensure_mafia_can_kill(game);
     }
     fn on_member_role_switch(self, _game: &mut Game, _actor: PlayerReference) {
@@ -132,23 +135,27 @@ impl TeamStateImpl for Mafia{
 }
 impl Mafia{
     fn ensure_mafia_can_kill(game: &mut Game){
-        let mut main_mafia_killing_exists = false;
 
         for player_ref in PlayerReference::all_players(game){
-            if player_ref.role(game) == Role::Mafioso && player_ref.alive(game) { 
-                main_mafia_killing_exists = true;
-                break;
+            if (player_ref.role(game) == Role::Godfather || player_ref.role(game) == Role::Mafioso) && player_ref.alive(game) { 
+                return;
             }
         }
 
-        // TODO Set an order for roles for conversion
-        if !main_mafia_killing_exists{
-            for player_ref in PlayerReference::all_players(game){
-                if player_ref.role(game).faction_alignment().faction() == Faction::Mafia && player_ref.alive(game){
-                    player_ref.set_role(game, super::role::RoleState::Mafioso(Mafioso));
-                    break;
-                }
-            }
+        //if no mafia killing exists, the code can reach here
+        let list_of_living_mafia = PlayerReference::all_players(game)
+            .into_iter()
+            .filter(|p| 
+                p.role(game).faction_alignment().faction() == Faction::Mafia && p.alive(game)
+            )
+            .collect::<Vec<PlayerReference>>();
+        
+        //choose random mafia to be godfather
+        let random_mafia = 
+            rand::seq::SliceRandom::choose(list_of_living_mafia.as_slice(), &mut rand::thread_rng());
+
+        if let Some(random_mafia) = random_mafia{
+            random_mafia.set_role(game, super::role::RoleState::Godfather(Godfather::default()));
         }
     }
 }

@@ -145,6 +145,9 @@ pub enum ChatMessage {
     NecromancerMessage{message: Box<ChatMessage>},
 
     Silenced,
+    #[serde(rename_all = "camelCase")]
+    GodfatherBackup{backup: Option<PlayerIndex>},
+    
 
     #[serde(rename_all = "camelCase")]
     PlayerRoleAndWill { role: Role, will: String },
