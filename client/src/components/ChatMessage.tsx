@@ -121,7 +121,7 @@ export function translateChatMessage(message: ChatMessage): string {
                         killers.push(translate(`grave.killer.${killer.type}`))
                     }
                 }
-                deathCause = killers.join();
+                deathCause = killers.join(", ");
             }else{
                 deathCause = translate(`grave.deathCause.${message.grave.deathCause.type}`)
             }

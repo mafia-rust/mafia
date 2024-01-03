@@ -80,7 +80,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
                     default:
                         return translate(killer.type);
                 }
-            }).join() + ".";
+            }).join(", ") + ".";
         }else{
             deathCauseString = translate("grave.deathCause.disconnectedFromLife");
         }
