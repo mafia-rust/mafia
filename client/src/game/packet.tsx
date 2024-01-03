@@ -7,6 +7,8 @@ import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus
 
 export type ToClientPacket = 
 {
+    type: "rateLimitExceeded",
+} | {
     type: "lobbyList",
     roomCodes: number[],
 } | {

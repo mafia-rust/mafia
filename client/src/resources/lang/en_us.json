@@ -76,6 +76,7 @@
 
     "notification.connectionFailed": "Connection failed",
     "notification.serverNotFound": "Server not found, it could be offline",
+    "notification.rateLimitExceeded": "Rate Limit Exceeded",
     
     "notification.rejectJoin": "Couldn't join lobby",
     "notification.rejectJoin.roomFull": "Lobby is full",

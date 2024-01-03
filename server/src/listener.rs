@@ -9,7 +9,7 @@ pub type PlayerID = u32;
 pub type RoomCode = usize;
 
 enum PlayerLocation {
-    InLobby {
+    InLobby{
         room_code: RoomCode,
         player_id: PlayerID,
     },
@@ -177,13 +177,11 @@ impl Listener{
         log!(info "Listener"; "{}: {}", &connection.get_address().to_string(), message);
         if let Err(k) = self.handle_message(connection, message){
             log!(error "Listener"; "Serde error when receiving message from {}: {}", &connection.get_address().to_string(), k);
-        }    
+        }
     }
     // TODO sum the error types in this function so they can be handled in on_message
     fn handle_message(&mut self, connection: &Connection, message: &Message) -> Result<(), serde_json::Error> {
         let incoming_packet = serde_json::from_str::<ToServerPacket>(message.to_string().as_str())?;
-
-        
 
         match incoming_packet {
             ToServerPacket::LobbyListRequest => {

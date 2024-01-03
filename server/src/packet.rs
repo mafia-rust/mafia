@@ -33,6 +33,10 @@ use crate::{game::{
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum ToClientPacket{
+    
+    #[serde(rename_all = "camelCase")]
+    RateLimitExceeded,
+
     // Pre lobby
     #[serde(rename_all = "camelCase")]
     LobbyList{

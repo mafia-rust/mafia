@@ -1,4 +1,4 @@
-use std::{collections::{HashMap, HashSet}, time::Duration};
+use std::{collections::{HashMap, HashSet, VecDeque}, time::{Duration, Instant}};
 
 use crate::{
     game::{
@@ -30,6 +30,8 @@ enum LobbyState {
 
 pub const LOBBY_DISCONNECT_TIMER_SECS: u64 = 5;
 pub const GAME_DISCONNECT_TIMER_SECS: u64 = 45;
+pub const MESSAGE_PER_SECOND_LIMIT: u64 = 2;
+pub const MESSAGE_PER_SECOND_LIMIT_TIME: Duration = Duration::from_secs(2);
 
 #[derive(Clone)]
 pub enum ClientConnection {
@@ -64,7 +66,9 @@ impl LobbyPlayer {
 #[derive(Clone)]
 pub struct GamePlayer{
     pub player_index: PlayerIndex,
-    pub host: bool
+    pub host: bool,
+
+    pub last_message_times: VecDeque<Instant>,
 }
 
 impl Lobby {
@@ -81,6 +85,46 @@ impl Lobby {
 
     
     pub fn on_client_message(&mut self, send: &ClientSender, player_id: PlayerID, incoming_packet: ToServerPacket){
+
+
+        //RATE LIMITER
+        match incoming_packet {
+            ToServerPacket::Vote { .. } |
+            ToServerPacket::Judgement { .. } |
+            ToServerPacket::Target { .. } |
+            ToServerPacket::DayTarget { .. } |
+            ToServerPacket::SendMessage { .. } |
+            ToServerPacket::SendWhisper { .. } => {
+                let LobbyState::Game { players, .. } = &mut self.lobby_state else {
+                    return;
+                };
+
+                let Some(game_player) = players.get_mut(&player_id) else {
+                    log!(error "LobbyState::Game"; "{} {:?}", "Message recieved from player not in game", incoming_packet);
+                    return;
+                };
+
+                let ref mut last_message_times = game_player.last_message_times;
+                let now = Instant::now();
+                while let Some(time) = last_message_times.front() {
+                    if now.duration_since(*time) > MESSAGE_PER_SECOND_LIMIT_TIME {
+                        last_message_times.pop_front();
+                    } else {
+                        break;
+                    }
+                }
+                if last_message_times.len() >= (MESSAGE_PER_SECOND_LIMIT_TIME.as_secs() * MESSAGE_PER_SECOND_LIMIT) as usize {
+                    send.send(ToClientPacket::RateLimitExceeded);
+                    return;
+                }
+                last_message_times.push_back(now);
+                
+            },
+            _ => {}
+        }
+
+
+
         match incoming_packet {
             ToServerPacket::SetName{ name } => {
                 let LobbyState::Lobby { players, .. } = &mut self.lobby_state else {
@@ -110,14 +154,17 @@ impl Lobby {
                 let mut player_indices: HashMap<PlayerID,GamePlayer> = HashMap::new();
                 let mut game_players = Vec::new();
 
-                
 
                 let LobbyState::Lobby { settings, players} = &mut self.lobby_state else {
                     unreachable!("LobbyState::Lobby was checked to be to LobbyState::Lobby in the previous line")
                 };
 
                 for (index, (arbitrary_player_id, lobby_player)) in players.iter().map(|(index, tup)| (*index, tup.clone())).enumerate() {
-                    player_indices.insert(arbitrary_player_id, GamePlayer { player_index: index as PlayerIndex, host: lobby_player.host });
+                    player_indices.insert(arbitrary_player_id, GamePlayer {
+                        player_index: index as PlayerIndex,
+                        host: lobby_player.host,
+                        last_message_times: VecDeque::new(),
+                    });
                     game_players.push(lobby_player);
                 }
 
