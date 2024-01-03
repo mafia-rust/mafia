@@ -70,6 +70,8 @@ Doomsayer
 | {
     role: "politician"
 } | {
+    role: "arsonist"
+} | {
     role: "death",
     souls: number
 } | {

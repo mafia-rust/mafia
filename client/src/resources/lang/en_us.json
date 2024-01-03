@@ -260,6 +260,11 @@
     "role.politician.detarget": "Detarget",
     "role.politician.dayTarget": "Special",
 
+    "role.arsonist.name": "Arsonist",
+    "role.arsonist.target": "Target",
+    "role.arsonist.detarget": "Detarget",
+    "role.arsonist.dayTarget": "Special",
+
     "role.death.name": "Thanos",
     "role.death.target": "Collect",
     "role.death.detarget": "Detarget",
@@ -521,11 +526,11 @@
     
     "wiki.entry.role.veteran.title": "Veteran",
     "wiki.entry.role.veteran.abilities":"* Target yourself to alert, killing everyone who visits you",
-    "wiki.entry.role.veteran.attributes":"* You will know if you attack someone\n* You have basic defense while on alert\n* You have a powerful attack\n* You have three alerts",
+    "wiki.entry.role.veteran.attributes":"* You will know if you attack someone\n* You have basic defense while on alert\n* You have a powerful attack\n* You have three alerts\n* You do not kill players who visited using only an astral visit",
     
     "wiki.entry.role.deputy.title": "Deputy",
-    "wiki.entry.role.deputy.abilities":"* Shoot one player during the day",
-    "wiki.entry.role.deputy.attributes":"\n* When you kill a player, it will be announced that they were shot by a deputy\n* If the player you attack survives the attack, they will know they were attacked, but it will not be announced that they were shot by a deputy\n* You have a powerful attack\n* You have one bullet",
+    "wiki.entry.role.deputy.abilities":"* Shoot one player during the discussion or voting",
+    "wiki.entry.role.deputy.attributes":"\n* You have one bullet\n* When you kill a player, it will be announced that they were shot by a deputy\n* If the player you attack survives the attack, they will know they were attacked, but it will not be announced that they were shot by a deputy\n* You have a powerful attack",
     
     "wiki.entry.role.godfather.title": "Godfather",
     "wiki.entry.role.godfather.abilities":"* Target a player to kill them\n* Choose a backup at any time",
@@ -545,7 +550,7 @@
     
     "wiki.entry.role.consigliere.title": "Consigliere",
     "wiki.entry.role.consigliere.abilities":"* Investigate a player to find out their role, find who they visited, and who visited them",
-    "wiki.entry.role.consigliere.attributes":"* Your information can be fooled by other roles like framers, arsonists, and hex masters\n* You can read whispers that were not sent to you\n* You can never see yourself visit",
+    "wiki.entry.role.consigliere.attributes":"* You can read whispers that were not sent to you\n* Your information can be fooled by other roles like framers, arsonists, and hex masters\n* You can never see yourself visit",
     
     "wiki.entry.role.necromancer.title": "Necromancer",
     "wiki.entry.role.necromancer.abilities":"* Force a dead player to use their ability on a living player",
@@ -579,6 +584,10 @@
     "wiki.entry.role.politician.abilities": "* When town would normally win, if you are still alive, you win instead\n* When you win, you kill every townie, and all politicians commit suicide",
     "wiki.entry.role.politician.attributes": "* You win with other polititians\n* The final attack on townies is an unstoppable attack\n* Suicide is an unstoppable attack\n* The politician with the lowest player number will force the other politicians to commit suicide\n* When the game starts or you first become this role, if there is no townies alive, you become a jester",
 
+    "wiki.entry.role.arsonist.title": "Arsonist",
+    "wiki.entry.role.arsonist.abilities":"* Target someone to douse them\n* Target yourself to ignite all doused players",
+    "wiki.entry.role.arsonist.attributes":"* When you ignite you deal an unstoppable attack to all doused players\n* You douse all visitors to you\n* You can't be doused\n* You do not douse visiting players who visited using only an astral visit",
+    
     "wiki.entry.role.death.title": "Thanos",
     "wiki.entry.role.death.abilities":"* Target a player on the night they die to collect a stone\n* Once you've collected six stones, endgame starts, everyone is notified, and at the start of the next night, you kill everyone, and win.",
     "wiki.entry.role.death.attributes":"* Passively gain a stone each night\n* To collect stones faster, guess what player will die on that night by targeting them\n* You gain powerful defense once you have six stones.",

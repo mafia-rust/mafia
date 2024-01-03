@@ -42,6 +42,9 @@ pub struct Player {
 
     last_sent_buttons: Vec<AvailableButtons>,
 
+
+    doused: bool,
+
     voting_variables: PlayerVotingVariables,
     night_variables: PlayerNightVariables,
 }
@@ -91,6 +94,8 @@ impl Player {
             queued_chat_messages: Vec::new(),
             
             last_sent_buttons: Vec::new(),
+
+            doused: false,
 
             voting_variables: PlayerVotingVariables{
                 chosen_vote : None,
@@ -148,6 +153,8 @@ pub mod test {
             queued_chat_messages: Vec::new(),
             
             last_sent_buttons: Vec::new(),
+
+            doused: false,
 
             voting_variables: PlayerVotingVariables{
                 chosen_vote : None,

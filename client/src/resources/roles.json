@@ -309,6 +309,16 @@
         "maxCount": null,
         "largeRoleSpecificMenu": false
     },
+    "arsonist": {
+        "factionAlignment": "neutralKilling",
+        "suspicious": true,
+        "roleblockable": true,
+        "defense": 1,
+        "witchable": true,
+        "endGameCondition": "SingleRole",
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
+    },
     "death":{
         "factionAlignment": "neutralKilling",
         "suspicious": false,

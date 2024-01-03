@@ -83,6 +83,7 @@ macros::roles! {
     Doomsayer : doomsayer,
     Politician : politician,
 
+    Arsonist : arsonist,
     Death : death,
 
     Vampire : vampire,
