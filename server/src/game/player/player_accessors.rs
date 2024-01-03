@@ -118,6 +118,13 @@ impl PlayerReference{
         }
     }
 
+    pub fn set_doused(&self, game: &mut Game, doused: bool){
+        self.deref_mut(game).doused = doused;
+    }
+    pub fn doused(&self, game: &Game) -> bool{
+        self.deref(game).doused
+    }
+
     /* 
     Voting
     */
