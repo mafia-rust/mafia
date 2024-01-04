@@ -6,8 +6,10 @@ use serde::Serialize;
 pub enum Tag{
     GodfatherBackup,
     Doused,
+    WerewolfTracked,
+    ExecutionerTarget,
+
     Hexed,
     Necronomicon,
-    ExecutionerTarget,
     Insane
 }

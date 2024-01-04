@@ -4,6 +4,7 @@ pub enum EndGameCondition {
     Town,
     Vampire,
     Arsonist,
+    Werewolf,
 
     None
 }

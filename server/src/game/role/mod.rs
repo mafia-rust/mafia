@@ -84,6 +84,7 @@ macros::roles! {
     Politician : politician,
 
     Arsonist : arsonist,
+    Werewolf : werewolf,
     Death : death,
 
     Vampire : vampire,

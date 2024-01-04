@@ -85,6 +85,7 @@ export type PhaseTimes = {
 }
 export type Tag =
 | "godfatherBackup"
+| "werewolfTracked"
 | "doused"
 | "hexed"
 | "necronomicon"

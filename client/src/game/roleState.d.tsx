@@ -72,6 +72,9 @@ Doomsayer
 } | {
     role: "arsonist"
 } | {
+    role: "werewolf"
+    trackedPlayers: PlayerIndex[]
+} | {
     role: "death",
     souls: number
 } | {

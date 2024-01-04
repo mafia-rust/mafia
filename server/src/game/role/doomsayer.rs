@@ -53,7 +53,7 @@ impl DoomsayerGuess{
             Role::Janitor | Role::Framer => Some(DoomsayerGuess::Mafia),
             //Neutral
             Role::Jester | Role::Executioner | Role::Doomsayer | Role::Politician |
-            Role::Arsonist | Role::Death |
+            Role::Arsonist | Role::Werewolf | Role::Death |
             Role::Vampire | Role::Amnesiac => Some(DoomsayerGuess::Neutral),
         }
     }
