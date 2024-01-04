@@ -18,7 +18,7 @@ pub struct Death{
     won: bool,
 }
 const NEEDED_SOULS: u8 = 6;
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::NeutralKilling;
+pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::NeutralApocalypse;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 impl RoleStateImpl for Death {

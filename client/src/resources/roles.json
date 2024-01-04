@@ -289,16 +289,7 @@
         "maxCount": null,
         "largeRoleSpecificMenu": false
     },
-    "doomsayer":{
-        "factionAlignment": "neutralEvil",
-        "suspicious": false,
-        "roleblockable": false,
-        "defense": 0,
-        "witchable": false,
-        "endGameCondition": "None",
-        "maxCount": 1,
-        "largeRoleSpecificMenu": true
-    },
+    
     "politician":{
         "factionAlignment": "neutralEvil",
         "suspicious": true,
@@ -329,16 +320,6 @@
         "maxCount": null,
         "largeRoleSpecificMenu": false
     },
-    "death":{
-        "factionAlignment": "neutralKilling",
-        "suspicious": false,
-        "roleblockable": true,
-        "defense": 0,
-        "witchable": true,
-        "endGameCondition": "None",
-        "maxCount": 1,
-        "largeRoleSpecificMenu": false
-    },
     "vampire": {
         "factionAlignment": "neutralChaos",
         "suspicious": true,
@@ -357,6 +338,26 @@
         "witchable": true,
         "endGameCondition": "None",
         "maxCount": null,
+        "largeRoleSpecificMenu": true
+    },
+    "death":{
+        "factionAlignment": "neutralApocalypse",
+        "suspicious": false,
+        "roleblockable": true,
+        "defense": 0,
+        "witchable": true,
+        "endGameCondition": "None",
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false
+    },
+    "doomsayer":{
+        "factionAlignment": "neutralApocalypse",
+        "suspicious": false,
+        "roleblockable": false,
+        "defense": 0,
+        "witchable": false,
+        "endGameCondition": "None",
+        "maxCount": 1,
         "largeRoleSpecificMenu": true
     }
 }

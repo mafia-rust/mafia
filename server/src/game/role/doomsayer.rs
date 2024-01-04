@@ -66,7 +66,7 @@ impl DoomsayerGuess{
     }
 }
 
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::NeutralEvil;
+pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::NeutralApocalypse;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 impl RoleStateImpl for Doomsayer {
