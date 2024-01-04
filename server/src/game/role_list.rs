@@ -36,6 +36,7 @@ impl Faction{
                 FactionAlignment::NeutralEvil,
                 FactionAlignment::NeutralKilling,
                 FactionAlignment::NeutralChaos,
+                FactionAlignment::NeutralApocalypse,
             ],
             Faction::Mafia => vec![
                 FactionAlignment::MafiaKilling,
@@ -74,14 +75,15 @@ make_faction_alignment_enum!{
 
     NeutralEvil,
     NeutralKilling,
-    NeutralChaos
+    NeutralChaos,
+    NeutralApocalypse
 }
 impl FactionAlignment{
     pub fn faction(&self)->Faction{
         match self {
             Self::TownPower | Self::TownInvestigative | Self::TownProtective | Self::TownKilling | Self::TownSupport
                 => Faction::Town,
-            Self::NeutralEvil | Self::NeutralKilling | Self::NeutralChaos 
+            Self::NeutralEvil | Self::NeutralKilling | Self::NeutralChaos | Self::NeutralApocalypse
                 => Faction::Neutral,
             Self::MafiaKilling | Self::MafiaDeception | Self::MafiaSupport | Self::MafiaPower
                 => Faction::Mafia,

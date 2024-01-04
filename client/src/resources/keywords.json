@@ -71,6 +71,9 @@
     "alignment.chaos": { 
         "style": "keyword-info"
     },
+    "alignment.apocalypse": { 
+        "style": "keyword-info"
+    },
     "alignment.power": { 
         "style": "keyword-info"
     },

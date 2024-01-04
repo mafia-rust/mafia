@@ -13,7 +13,7 @@ export function getAllFactionAlignments(faction: Faction): FactionAlignment[] {
             "mafiaKilling", "mafiaDeception", "mafiaSupport", "mafiaPower"
         ];
         case "neutral": return [
-            "neutralKilling", "neutralEvil", "neutralChaos"
+            "neutralKilling", "neutralEvil", "neutralChaos", "neutralApocalypse"
         ];
     }
 }
@@ -27,7 +27,7 @@ export function getRoleOutlineFromFaction(faction: Faction): RoleOutline {
 export const FACTION_ALIGNMENTS = [
     "townPower","townKilling","townProtective","townInvestigative","townSupport",
     "mafiaKilling","mafiaDeception","mafiaSupport","mafiaPower",
-    "neutralKilling","neutralEvil","neutralChaos"
+    "neutralKilling","neutralEvil","neutralChaos","neutralApocalypse"
 ] as const;
 export type FactionAlignment = typeof FACTION_ALIGNMENTS[number]
 
@@ -47,6 +47,7 @@ export function getFactionFromFactionAlignment(factionAlignment: FactionAlignmen
         case "neutralKilling": return "neutral";
         case "neutralEvil": return "neutral";
         case "neutralChaos": return "neutral";
+        case "neutralApocalypse": return "neutral";
     }
 }
 export function getAlignmentStringFromFactionAlignment(factionAlignment: FactionAlignment): string {
@@ -116,7 +117,7 @@ export function sortRoleOutlines(roleOutlines: RoleOutline[]): RoleOutline[] {
     let factionAlignmentOrder = [
         "townPower","townInvestigative","townProtective","townKilling","townSupport",
         "mafiaKilling","mafiaSupport","mafiaDeception","mafiaPower",
-        "neutralEvil","neutralKilling","neutralChaos"
+        "neutralEvil","neutralKilling","neutralChaos","neutralApocalypse"
     ];
 
     
