@@ -1,4 +1,3 @@
-
 use serde::{Serialize, Deserialize};
 use crate::game::{grave::Grave, role::Role, player::{PlayerIndex, PlayerReference}, verdict::Verdict, phase::PhaseType, Game};
 
@@ -157,6 +156,9 @@ pub enum ChatMessage {
     WitchTargetImmune,
     WitchedYou { immune: bool },
     WitchMessage{message: Box<ChatMessage>},
+
+    #[serde(rename_all = "camelCase")]
+    WerewolfTrackingResult{tracked_player: PlayerIndex, players: Vec<PlayerIndex>},
 
     JesterWon,
     // TODO Rename ExecutionerYouWon

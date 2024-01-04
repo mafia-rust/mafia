@@ -310,6 +310,16 @@
         "maxCount": null,
         "largeRoleSpecificMenu": false
     },
+    "werewolf": {
+        "factionAlignment": "neutralKilling",
+        "suspicious": true,
+        "roleblockable": true,
+        "defense": 1,
+        "witchable": true,
+        "endGameCondition": "SingleRole",
+        "maxCount": null,
+        "largeRoleSpecificMenu": false
+    },
     "vampire": {
         "factionAlignment": "neutralChaos",
         "suspicious": true,
