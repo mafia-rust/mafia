@@ -85,6 +85,10 @@
 
         {
             "type": "exact",
+            "role": "werewolf"
+        },
+        {
+            "type": "exact",
             "role": "death"
         },
         
@@ -138,7 +142,11 @@
             "type": "exact",
             "role": "politician"
         },
-
+        
+        {
+            "type": "exact",
+            "role": "werewolf"
+        },
         {
             "type": "exact",
             "role": "death"
