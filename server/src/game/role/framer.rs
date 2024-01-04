@@ -39,7 +39,7 @@ impl RoleStateImpl for Framer {
         if first_visit.target.night_jailed(game) {
             actor_ref.push_night_message(game, ChatMessage::TargetJailed);
         }else{
-            first_visit.target.set_night_appeared_role(game, Role::Mafioso);
+            first_visit.target.set_night_appeared_role(game, Role::Framer);
             first_visit.target.set_night_appeared_visits(game, Some(vec![
                 Visit{ target: second_visit.target, astral: false, attack: false }
             ]));
