@@ -494,7 +494,7 @@
     
     "wiki.entry.role.psychic.title": "Psychic",
     "wiki.entry.role.psychic.abilities":"* Get an evil vision on odd nights\n* Get a good vision on even nights",
-    "wiki.entry.role.psychic.attributes":"* Evil visions show three players, at least one of them is not a townie\n* Good visions show two players, at least one of them is a townie\n* If there aren't enough evil or good players to have a vision, it will fail\n* You can not be in your own vision",
+    "wiki.entry.role.psychic.attributes":"* Evil visions show three players, at least one of them is not a townie\n* Good visions show two players, at least one of them is a townie\n* If there aren't enough evil or good players to have a vision, it will fail\n* You can not be in your own vision\n* You still get visions after you are dead",
     
     "wiki.entry.role.doctor.title": "Doctor",
     "wiki.entry.role.doctor.abilities":"* Heal a player to save them from death\n* You can heal yourself once",
