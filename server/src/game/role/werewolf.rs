@@ -66,12 +66,7 @@ impl RoleStateImpl for Werewolf {
                 }else{
                     //rampage at home
 
-                    for other_player_ref in 
-                        actor_ref.lookout_seen_players(game).into_iter().filter(|p|actor_ref!=*p)
-                        .collect::<Vec<PlayerReference>>()
-                    {
-                        other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
-                    }
+                    
                     
                     if actor_ref.night_jailed(game){
                         //kill all jailors NOT trying to execute me
@@ -83,6 +78,13 @@ impl RoleStateImpl for Werewolf {
                             {
                                 player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
                             }
+                        }
+                    }else{
+                        for other_player_ref in 
+                            actor_ref.lookout_seen_players(game).into_iter().filter(|p|actor_ref!=*p)
+                            .collect::<Vec<PlayerReference>>()
+                        {
+                            other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
                         }
                     }
                 }
@@ -122,11 +124,18 @@ impl RoleStateImpl for Werewolf {
                 }
 
                 //track the scent of players
-
-                
-
-                
-                
+                let RoleState::Werewolf(werewolf) = actor_ref.role_state(game) else {
+                    unreachable!("Werewolf role state should be Werewolf")
+                };
+                let tracked_players = werewolf.tracked_players.clone();
+                tracked_players.into_iter().for_each(|player_ref|{
+                    actor_ref.push_night_message(game, 
+                        ChatMessage::WerewolfTrackingResult{
+                            tracked_player: player_ref.index(), 
+                            players: player_ref.tracker_seen_visits(game).into_iter().map(|p|p.target.index()).collect()
+                        }
+                    );
+                });
             },
             _ => {}
         }

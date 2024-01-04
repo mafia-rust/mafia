@@ -267,12 +267,15 @@ export function translateChatMessage(message: ChatMessage): string {
             return translate("chatMessage.mediumSeance", GAME_MANAGER.state.players[message.player].toString());
         case "witchedYou":
             return translate("chatMessage.witchedYou" + (message.immune ? ".immune" : ""));
+        case "werewolfTrackingResult":
+            return translate("chatMessage.werewolfTrackingResult", 
+                GAME_MANAGER.state.players[message.trackedPlayer].toString(),
+                playerListToString(message.players)
+            );
         case "playerWithNecronomicon":
             return translate("chatMessage.playerWithNecronomicon", GAME_MANAGER.state.players[message.playerIndex].toString());
         case "deputyShotSomeoneSurvived":
         case "deathCollectedSouls":
-        case "arsonistCleanedSelf":
-        case "arsonistDousedPlayers":
         case "targetWasAttacked":
         case "youWereProtected":
         case "executionerWon":
@@ -467,9 +470,8 @@ export type ChatMessage = {
     type: "witchMessage",
     message: ChatMessage
 } | {
-    type: "arsonistCleanedSelf"
-} | {
-    type: "arsonistDousedPlayers", 
+    type: "werewolfTrackingResult",
+    trackedPlayer: PlayerIndex
     players: PlayerIndex[]
 } | {
     type: "jesterWon"

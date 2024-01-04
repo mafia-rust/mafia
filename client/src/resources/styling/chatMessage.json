@@ -35,8 +35,6 @@
     "consigliereResult": "result",
     "silenced": "warning",
     "mediumSeance": "special",
-    "arsonistCleanedSelf": "result",
-    "arsonistDousedPlayers": "result",
     "targetWasAttacked": "result",
     "youWereProtected": "result",
     "executionerWon": "result",
@@ -56,6 +54,7 @@
     "witchMessage": "result",
     "witchTargetImmune": "result",
     "witchedYou": "result",
+    "werewolfTrackingResult": "result",
     "youSurvivedAttack": "result",
     "doomsayerFailed": "result",
     "doomsayerWon": "result"
