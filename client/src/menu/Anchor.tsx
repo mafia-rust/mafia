@@ -15,8 +15,6 @@ type AnchorState = {
     error: JSX.Element | null,
     rejoinCard: JSX.Element | null,
 
-    settings: JSX.Element | null,
-    volume: number,
     audio: HTMLAudioElement
 }
 
@@ -32,10 +30,9 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             error: null,
             rejoinCard: null,
 
-            settings: null,
-            volume: .5,
             audio: new Audio()
         }
+
         this.state.audio.addEventListener("ended", () => {
             console.log("Playing audio: " + Anchor.instance.state.audio.src);
             let playPromise = Anchor.instance.state.audio.play();
@@ -44,6 +41,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
                 console.log("Audio failed to play: " + error);
             });
         });
+        this.state.audio.volume = 0.5;
     }
     
     componentDidMount() {
@@ -115,9 +113,16 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             {this.state.content}
             {this.state.error}
             {this.state.rejoinCard}
-            {this.state.settings}
+            <Settings 
+                volume={this.state.audio.volume} 
+                onVolumeChange={(volume) => {
+                    this.state.audio.volume = volume
+                    // this.setState({audio: this.state.audio});
+                    this.forceUpdate();
+                }}
+            />
             {/** Next line is openSettings button*/}
-            <button className="material-icons-round settings-button" onClick={() => Anchor.openSettings()}>settings</button>
+            <button className="material-icons-round settings-button" onClick={() => {}}>settings</button>
         </div>
     }
 
@@ -137,17 +142,6 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
                 <button onClick={() => {Anchor.instance.handleCancelRejoin()}}>✕</button>
                 <div></div>
             </div>
-        });
-    }
-    public static openSettings() {
-        Anchor.instance.setState({settings:
-            <Settings 
-                volume={Anchor.instance.state.volume} 
-                onVolumeChange={(volume) => {
-                    Anchor.instance.setState({volume: volume});
-                    Anchor.instance.state.audio.volume = volume
-                }}
-            />
         });
     }
 
