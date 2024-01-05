@@ -76,28 +76,28 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         GAME_MANAGER.deleteReconnectData();
     }
 
-    static playAudioFile(src: string | null, timeLeftSeconds: number | undefined = undefined) {
+    static playAudioFile(src: string | null) {
         Anchor.instance.state.audio.pause();
         if(src === null) return;
         Anchor.instance.setState({audio: new Audio(src)}, () => {
             console.log("Playing audio: " + Anchor.instance.state.audio.src);
-            Anchor.startAudio(timeLeftSeconds);
+            Anchor.startAudio();
         });
     }
-    static startAudio(timeLeftSeconds: number | undefined = undefined) {
+    static startAudio() {
         let playPromise = Anchor.instance.state.audio.play();
         playPromise.then(() => {
 
             // Anchor.instance.state.audio.duration;
             // Anchor.instance.state.audio.currentTime = 45;
             // Anchor.instance.state.audio.playbackRate = 2;
-            if(Anchor.instance.state.audio.duration !== Infinity && !Number.isNaN(Anchor.instance.state.audio.duration)){
-                let startTime = Math.ceil(Anchor.instance.state.audio.duration - (timeLeftSeconds ?? 0));
-                if (startTime > 0 && startTime < Anchor.instance.state.audio.duration) {
-                    console.log("Starting audio at " + startTime + " seconds")
-                    Anchor.instance.state.audio.currentTime = startTime;
-                };
-            }
+            // if(Anchor.instance.state.audio.duration !== Infinity && !Number.isNaN(Anchor.instance.state.audio.duration)){
+            //     let startTime = Math.ceil(Anchor.instance.state.audio.duration - (timeLeftSeconds ?? 0));
+            //     if (startTime > 0 && startTime < Anchor.instance.state.audio.duration) {
+            //         console.log("Starting audio at " + startTime + " seconds")
+            //         Anchor.instance.state.audio.currentTime = startTime;
+            //     };
+            // }
         }).catch((error) => {
             console.log("Audio failed to play: " + error);
         });
