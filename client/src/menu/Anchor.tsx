@@ -113,7 +113,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             {this.state.content}
             {this.state.error}
             {this.state.rejoinCard}
-            <Settings 
+            {/* <Settings 
                 volume={this.state.audio.volume} 
                 onVolumeChange={(volume) => {
                     this.state.audio.volume = volume
@@ -121,8 +121,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
                     this.forceUpdate();
                 }}
             />
-            {/** Next line is openSettings button*/}
-            <button className="material-icons-round settings-button" onClick={() => {}}>settings</button>
+            <button className="material-icons-round settings-button" onClick={() => {}}>settings</button> */}
         </div>
     }
 
