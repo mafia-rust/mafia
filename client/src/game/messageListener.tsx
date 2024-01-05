@@ -7,6 +7,7 @@ import { ToClientPacket } from "./packet";
 import { Tag } from "./gameState.d";
 import { Role } from "./roleState.d";
 import translate from "./lang";
+import { getAudioSrcFromString } from "../components/audio";
 
 export default function messageListener(packet: ToClientPacket){
 
@@ -177,6 +178,8 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.phase = packet.phase;
                 GAME_MANAGER.state.dayNumber = packet.dayNumber;
                 GAME_MANAGER.state.timeLeftMs = packet.secondsLeft * 1000;
+        
+                Anchor.playAudioFile(getAudioSrcFromString(packet.phase), packet.secondsLeft);
             }
         break;
         case "playerOnTrial":

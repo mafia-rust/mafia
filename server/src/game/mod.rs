@@ -228,8 +228,9 @@ impl Game {
         self.phase_machine.current_state = phase;
         self.phase_machine.time_remaining = self.settings.phase_times.get_time_for(self.current_phase().phase());
 
+        //if there are less than 3 players alive then the game is sped up by 2x
         if PlayerReference::all_players(self).into_iter().filter(|p|p.alive(self)).collect::<Vec<_>>().len() <= 3{
-            self.phase_machine.time_remaining /= 2
+            self.phase_machine.time_remaining /= 2;
         }
 
         PhaseState::start(self);

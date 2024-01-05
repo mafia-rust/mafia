@@ -37,12 +37,12 @@ impl Default for PhaseTimeSettings{
     fn default() -> Self {
         Self{
             morning: 5, 
-            discussion: 45, 
+            discussion: 46, 
             voting: 30, 
-            testimony: 20, 
+            testimony: 24, 
             judgement: 20, 
             evening: 7, 
-            night: 37 
+            night: 39
         }
     }
 }

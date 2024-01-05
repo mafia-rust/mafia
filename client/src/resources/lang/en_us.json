@@ -14,9 +14,6 @@
     "menu.play.field.roomCode": "Room code",
     "menu.play.field.playerId": "Player Id",
 
-    "menu.button.leave": "Leave",
-    "menu.button.close": "Close",
-
     "menu.lobby.title": "Lobby \\0",
     "menu.lobby.button.start": "Start",
     "menu.lobby.field.namePlaceholder": "Enter name",
