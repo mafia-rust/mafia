@@ -78,6 +78,18 @@ export function createGameManager(): GameManager {
             }
             return null;
         },
+        saveSettings(volume) {
+            localStorage.setItem("settings", JSON.stringify({
+                "volume": volume,
+            }));
+        },
+        loadSettings() {
+            let data = localStorage.getItem("settings");
+            if (data) {
+                return JSON.parse(data);
+            }
+            return null;
+        },
 
         state: {
             stateType: "disconnected"

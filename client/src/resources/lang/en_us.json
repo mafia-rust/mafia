@@ -24,6 +24,9 @@
     "menu.lobby.timeSettings": "Times:",
     "menu.lobby.settings": "Settings:",
 
+    "menu.settings.title": "Settings",
+    "menu.settings.volume": "Volume",
+
     "menu.excludedRoles.exclude": "Exclude",
     "menu.excludedRoles.includeAll": "Include All",
     "menu.excludedRoles.excludedRoles": "Exclusions",

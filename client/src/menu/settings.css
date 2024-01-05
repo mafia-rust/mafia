@@ -8,6 +8,8 @@
     height: fit-content;
     min-width: fit-content;
     box-shadow: 0 0 .5rem #0007;
+
+    border-style: solid;
     
     padding: .8rem;
     background-color: var(--background-color);

@@ -3,7 +3,7 @@ import "../index.css";
 import "./anchor.css";
 import GAME_MANAGER from "..";
 import translate from "../game/lang";
-import Settings from "./Settings";
+import Settings, { DEFAULT_SETTINGS } from "./Settings";
 
 type AnchorProps = {
     content: JSX.Element,
@@ -15,6 +15,7 @@ type AnchorState = {
     error: JSX.Element | null,
     rejoinCard: JSX.Element | null,
 
+    settings_menu: boolean,
     volume: number,
     audio: HTMLAudioElement
 }
@@ -25,13 +26,20 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     constructor(props: AnchorProps) {
         super(props);
 
+        let settings_obj = GAME_MANAGER.loadSettings();
+        //set default settings
+        if(settings_obj === null){
+            settings_obj = DEFAULT_SETTINGS;
+        }
+
         this.state = {
             mobile: false,
             content: this.props.content,
             error: null,
             rejoinCard: null,
 
-            volume: 0.5,
+            settings_menu: false,
+            volume: settings_obj.volume,
             audio: new Audio()
         }
     }
@@ -110,15 +118,17 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             {this.state.content}
             {this.state.error}
             {this.state.rejoinCard}
-            <Settings 
+            {this.state.settings_menu && <Settings 
                 volume={this.state.audio.volume} 
                 onVolumeChange={(volume) => {
                     this.state.audio.volume = volume
                     // this.setState({audio: this.state.audio});
                     this.forceUpdate();
                 }}
-            />
-            <button className="material-icons-round settings-button" onClick={() => {}}>settings</button>
+            />}
+            <button className="material-icons-round settings-button" onClick={() => {
+                this.setState({settings_menu: !this.state.settings_menu});
+            }}>settings</button>
         </div>
     }
 
