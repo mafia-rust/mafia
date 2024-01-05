@@ -80,7 +80,7 @@ impl RoleStateImpl for Death {
                         if !player.alive(game){continue;}
                         if player.defense(game) >= 3 {
                             player.add_chat_message(game, ChatMessage::YouSurvivedAttack);
-                            actor_ref.add_chat_message(game, ChatMessage::TargetSurvivedAttack);
+                            actor_ref.add_chat_message(game, ChatMessage::SomeoneSurvivedYourAttack);
                 
                         }else{
                             let mut grave = Grave::from_player_lynch(game, player);

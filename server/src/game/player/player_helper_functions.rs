@@ -27,7 +27,7 @@ impl PlayerReference{
             self.push_night_message(game,
                 ChatMessage::YouSurvivedAttack
             );
-            attacker_ref.push_night_message(game,ChatMessage::TargetSurvivedAttack);
+            attacker_ref.push_night_message(game,ChatMessage::SomeoneSurvivedYourAttack);
             return false;
         }
 

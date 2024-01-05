@@ -42,7 +42,7 @@ impl RoleStateImpl for Werewolf {
             },
             Priority::Kill => {
 
-                if game.day_number() != 1 && game.day_number() != 3 {
+                if game.day_number() == 1 || game.day_number() == 3 {
                     return;
                 }
 
@@ -114,7 +114,7 @@ impl RoleStateImpl for Werewolf {
 
                     //send the list to the werewolf using tags
                     for player_ref in tracked_players.iter() {
-                        actor_ref.push_player_tag(game, *player_ref, crate::game::tag::Tag::WerewolfTracked);
+                        actor_ref.push_player_tag(game, *player_ref, Tag::WerewolfTracked);
                     }
 
                     actor_ref.set_role_state(game, RoleState::Werewolf(Werewolf {

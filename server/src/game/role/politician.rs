@@ -88,7 +88,7 @@ impl RoleStateImpl for Politician {
                     player_ref.die(game, grave);
                 }else{
                     player_ref.add_chat_message(game, ChatMessage::YouSurvivedAttack);
-                    actor_ref.add_chat_message(game, ChatMessage::TargetSurvivedAttack);
+                    actor_ref.add_chat_message(game, ChatMessage::SomeoneSurvivedYourAttack);
                 }
                 won = true;
             }
@@ -107,7 +107,7 @@ impl RoleStateImpl for Politician {
                         player_ref.die(game, Grave::from_player_suicide(game, player_ref));
                     }else{
                         player_ref.add_chat_message(game, ChatMessage::YouSurvivedAttack);
-                        actor_ref.add_chat_message(game, ChatMessage::TargetSurvivedAttack);
+                        actor_ref.add_chat_message(game, ChatMessage::SomeoneSurvivedYourAttack);
                     }
                 }
             }

@@ -268,10 +268,18 @@ export function translateChatMessage(message: ChatMessage): string {
         case "witchedYou":
             return translate("chatMessage.witchedYou" + (message.immune ? ".immune" : ""));
         case "werewolfTrackingResult":
-            return translate("chatMessage.werewolfTrackingResult", 
-                GAME_MANAGER.state.players[message.trackedPlayer].toString(),
-                playerListToString(message.players)
-            );
+            if(message.players.length === 0){
+                return translate(
+                    "chatMessage.werewolfTrackingResult.nobody", 
+                    GAME_MANAGER.state.players[message.trackedPlayer].toString()
+                );
+            }else{
+                return translate("chatMessage.werewolfTrackingResult", 
+                    GAME_MANAGER.state.players[message.trackedPlayer].toString(),
+                    playerListToString(message.players)
+                );
+            }
+            
         case "playerWithNecronomicon":
             return translate("chatMessage.playerWithNecronomicon", GAME_MANAGER.state.players[message.playerIndex].toString());
         case "deputyShotSomeoneSurvived":
@@ -283,7 +291,7 @@ export function translateChatMessage(message: ChatMessage): string {
         case "jesterWon":
         case "mayorCantWhisper":
         case "targetJailed":
-        case "targetSurvivedAttack":
+        case "someoneSurvivedYourAttack":
         case "transported":
         case "veteranAttackedVisitor":
         case "veteranAttackedYou":
@@ -394,7 +402,7 @@ export type ChatMessage = {
     type: "roleBlocked", 
     immune : boolean
 } | {
-    type: "targetSurvivedAttack"
+    type: "someoneSurvivedYourAttack"
 } | {
     type: "youSurvivedAttack"
 } |

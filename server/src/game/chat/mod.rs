@@ -109,7 +109,7 @@ pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
     PlayerWithNecronomicon{player_index: PlayerIndex},
 
-    TargetSurvivedAttack,
+    SomeoneSurvivedYourAttack,
     YouSurvivedAttack,
     // TODO rename YouWereProtected or ProtectedFromAttack
     TargetWasAttacked,

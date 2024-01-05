@@ -46,7 +46,7 @@
     "playerWithNecronomicon": "special",
     "roleData": "result",
     "targetJailed": "result",
-    "targetSurvivedAttack": "result",
+    "someoneSurvivedYourAttack": "result",
     "transported": "result",
     "veteranAttackedVisitor": "result",
     "veteranAttackedYou": "result",

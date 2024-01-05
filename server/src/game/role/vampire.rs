@@ -38,7 +38,7 @@ impl RoleStateImpl for Vampire {
             return
         }
         if target_ref.night_defense(game) >= 1 {
-            actor_ref.push_night_message(game, ChatMessage::TargetSurvivedAttack);
+            actor_ref.push_night_message(game, ChatMessage::SomeoneSurvivedYourAttack);
             return
         }
 
