@@ -15,6 +15,7 @@ type AnchorState = {
     error: JSX.Element | null,
     rejoinCard: JSX.Element | null,
 
+    volume: number,
     audio: HTMLAudioElement
 }
 
@@ -30,18 +31,9 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             error: null,
             rejoinCard: null,
 
+            volume: 0.5,
             audio: new Audio()
         }
-
-        this.state.audio.addEventListener("ended", () => {
-            console.log("Playing audio: " + Anchor.instance.state.audio.src);
-            let playPromise = Anchor.instance.state.audio.play();
-            playPromise.then(() => {
-            }).catch((error) => {
-                console.log("Audio failed to play: " + error);
-            });
-        });
-        this.state.audio.volume = 0.5;
     }
     
     componentDidMount() {
@@ -81,7 +73,12 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         if(src === null) return;
         Anchor.instance.setState({audio: new Audio(src)}, () => {
             console.log("Playing audio: " + Anchor.instance.state.audio.src);
+            Anchor.instance.state.audio.volume = Anchor.instance.state.volume;
             Anchor.startAudio();
+            Anchor.instance.state.audio.addEventListener("ended", () => {
+                console.log("Playing audio: " + Anchor.instance.state.audio.src);
+                Anchor.startAudio();
+            });
         });
     }
     static startAudio() {
@@ -113,7 +110,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             {this.state.content}
             {this.state.error}
             {this.state.rejoinCard}
-            {/* <Settings 
+            <Settings 
                 volume={this.state.audio.volume} 
                 onVolumeChange={(volume) => {
                     this.state.audio.volume = volume
@@ -121,7 +118,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
                     this.forceUpdate();
                 }}
             />
-            <button className="material-icons-round settings-button" onClick={() => {}}>settings</button> */}
+            <button className="material-icons-round settings-button" onClick={() => {}}>settings</button>
         </div>
     }
 

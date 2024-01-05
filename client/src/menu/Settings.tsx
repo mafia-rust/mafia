@@ -1,4 +1,5 @@
 import React from 'react';
+import "./settings.css";
 
 type SettingsProps = {
     volume: number, // 0-1
@@ -22,8 +23,8 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
     render(): React.ReactNode {
         //volume slider
         return (
-            <div>
-                <div className="settings">
+            <div className="settings slide-in">
+                <div >
                     <div className="settingsTitle">
                         <h1>NO LANG YET</h1>
                         <h1>Settings</h1>
