@@ -69,6 +69,21 @@ impl TestPlayer {
         &self.0.deref(game!(self)).chat_messages
     }
 
+    pub fn get_messages_after_last_message(&self, last_message: ChatMessage) -> Vec<ChatMessage> {
+        let mut found = false;
+        let mut out = Vec::new();
+        for message in self.0.deref(game!(self)).chat_messages.iter() {
+            if *message == last_message {
+                found = true;
+            }else{
+                if found {
+                    out.push(message.clone());
+                }
+            }
+        }
+        out
+    }
+
     pub fn role_state(&self) -> &RoleState{
         self.0.role_state(game!(self))
     }

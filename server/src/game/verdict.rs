@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 
 #[repr(isize)]
-#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub enum Verdict {
     Innocent = 1,
