@@ -10,7 +10,6 @@ import WikiMenu from "./gameScreenContent/WikiMenu";
 
 import "../../index.css";
 import "./gameScreen.css";
-import translate from "../../game/lang";
 import RoleSpecificMenu from "./gameScreenContent/RoleSpecific";
 import Anchor from "../Anchor";
 import StyledText from "../../components/StyledText";
@@ -193,7 +192,6 @@ export function ContentTab(props: { close: ContentMenus | false, children: strin
         {props.close && <button 
             className="material-icons-round close" 
             onClick={()=>GameScreen.instance.closeMenu(props.close as ContentMenus)}
-            aria-label={translate("menu.button.close")}
         >
             close
         </button>}

@@ -38,7 +38,7 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
     }
     private async joinGameButton(roomCode?: string) {
         if(!roomCode){
-            Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.invalidRoomCode"));
+            Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.roomDoesntExist"));
             return;
         };
         Anchor.setContent(<LoadingScreen type="join"/>);
@@ -46,7 +46,7 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
     }
     private rejoinGameButton(roomCode?: string, playerId?: string) {
         if(!roomCode || !playerId){
-            Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.invalidRoomCode"));
+            Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.roomDoesntExist"));
             return;
         };
         GAME_MANAGER.sendRejoinPacket(roomCode, parseInt(playerId, 10));

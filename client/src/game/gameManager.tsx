@@ -21,6 +21,7 @@ export function createGameManager(): GameManager {
     let gameManager: GameManager = {
 
         setDisconnectedState() {
+            Anchor.stopAudio();
             GAME_MANAGER.server.close();
             
             GAME_MANAGER.state = {
@@ -31,12 +32,15 @@ export function createGameManager(): GameManager {
         setLobbyState() {
             GAME_MANAGER.state = createLobbyState();
             Anchor.setContent(<LobbyMenu/>);
+            Anchor.playAudioFile("/audio/01. Calm Before The Storm.mp3");
         },
         setGameState() {
+            Anchor.stopAudio();
             GAME_MANAGER.state = createGameState();
             Anchor.setContent(GameScreen.createDefault());
         },
         async setOutsideLobbyState() {
+            Anchor.stopAudio();
 
             Anchor.setContent(<LoadingScreen type="default"/>)
             // GAME_MANAGER.server.close();
@@ -69,6 +73,18 @@ export function createGameManager(): GameManager {
         loadReconnectData() {
             let data = localStorage.getItem("reconnectData");
             // localStorage.removeItem("reconnectData");
+            if (data) {
+                return JSON.parse(data);
+            }
+            return null;
+        },
+        saveSettings(volume) {
+            localStorage.setItem("settings", JSON.stringify({
+                "volume": volume,
+            }));
+        },
+        loadSettings() {
+            let data = localStorage.getItem("settings");
             if (data) {
                 return JSON.parse(data);
             }

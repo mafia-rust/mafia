@@ -29,6 +29,11 @@ export type GameManager = {
         lastSaveTime: number,
     } | null;
     
+    saveSettings(volume: number): void;
+    loadSettings(): {
+        volume: number
+    } | null;
+    
 
     state: State,
     getMyName(): string | undefined,

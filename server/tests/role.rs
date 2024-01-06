@@ -838,3 +838,32 @@ fn godfathers_backup_tag_works() {
     assert!(blackmailer.get_player_tags().get(&consort.player_ref()).expect("consort doesnt have tag").contains(&Tag::GodfatherBackup));
     assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).is_none());
 }
+
+#[test]
+fn seer_cant_see_godfather() {
+    kit::scenario!(game in Night 1 where
+        seer: Seer,
+        godfather: Godfather,
+        mafioso: Mafioso,
+        townie: Sheriff
+    );
+
+    assert!(seer.set_night_targets(vec![godfather, mafioso]));
+    game.next_phase();
+    assert_contains!(
+        seer.get_messages_after_last_message(
+            ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 1 }
+        ),
+        ChatMessage::SeerResult { enemies: false }
+    );
+    game.skip_to(PhaseType::Night, 2);
+
+    assert!(seer.set_night_targets(vec![godfather, townie]));
+    game.next_phase();
+    assert_contains!(
+        seer.get_messages_after_last_message(
+            ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 2 }
+        ),
+        ChatMessage::SeerResult { enemies: false }
+    );
+}

@@ -84,8 +84,8 @@ function LobbyMenuHeader(props: { host?: boolean }): JSX.Element {
             </button>
             <RoomCodeButton/>
         </div>
-        <button className="leave" onClick={() => GAME_MANAGER.leaveGame()}>
-            {translate("menu.button.leave")}
+        <button className="material-icons-round leave" onClick={() => GAME_MANAGER.leaveGame()}>
+            close
         </button>
         
     </header>

@@ -7,7 +7,7 @@ use super::player::{PlayerIndex, PlayerReference};
 use super::role::Role;
 use super::role_list::Faction;
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Grave {
     #[serde(rename = "playerIndex")]
@@ -22,7 +22,7 @@ pub struct Grave {
     pub day_number: u8,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type", content = "role")]
 pub enum GraveRole {
@@ -38,7 +38,7 @@ impl GraveRole{
         }
     }
 }
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type", content = "killers")]
 pub enum GraveDeathCause {
@@ -46,7 +46,7 @@ pub enum GraveDeathCause {
     DisconnectedFromLife,
     Killers(Vec<GraveKiller>)
 }
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type", content = "value")]
 pub enum GraveKiller {
@@ -55,7 +55,7 @@ pub enum GraveKiller {
     Suicide
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub enum GravePhase {
     Day,

@@ -1,0 +1,25 @@
+
+.settings {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    right: 2%;
+    bottom: 6%;
+    height: fit-content;
+    min-width: fit-content;
+    box-shadow: 0 0 .5rem #0007;
+
+    border-style: solid;
+    
+    padding: .8rem;
+    background-color: var(--background-color);
+    border-color: var(--primary-border-color);
+
+    /* Start off the page and slide in */
+    transform: translateX(100%);
+    animation: slide-in 0.5s forwards;
+    -webkit-animation: slide-in 0.5s forwards;
+}
+@keyframes slide-in {
+    100% { transform: translateX(0%); }
+}

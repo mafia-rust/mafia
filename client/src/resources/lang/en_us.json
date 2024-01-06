@@ -14,9 +14,6 @@
     "menu.play.field.roomCode": "Room code",
     "menu.play.field.playerId": "Player Id",
 
-    "menu.button.leave": "Leave",
-    "menu.button.close": "Close",
-
     "menu.lobby.title": "Lobby \\0",
     "menu.lobby.button.start": "Start",
     "menu.lobby.field.namePlaceholder": "Enter name",
@@ -26,6 +23,9 @@
     "menu.lobby.excludedRoles": "Exclusions:",
     "menu.lobby.timeSettings": "Times:",
     "menu.lobby.settings": "Settings:",
+
+    "menu.settings.title": "Settings",
+    "menu.settings.volume": "Volume",
 
     "menu.excludedRoles.exclude": "Exclude",
     "menu.excludedRoles.includeAll": "Include All",

@@ -1,12 +1,12 @@
 {
     "Classic": {
         "morning": 5,
-        "discussion": 45,
+        "discussion": 46,
         "voting": 30,
-        "testimony": 20,
+        "testimony": 24,
         "judgement": 20,
         "evening": 7,
-        "night": 37
+        "night": 39
     },
     "Lightning": {
         "morning": 1,
@@ -29,8 +29,8 @@
     "Aloud": {
         "morning": 0,
         "discussion": 60,
-        "voting": 60,
-        "testimony": 20,
+        "voting": 30,
+        "testimony": 24,
         "judgement": 20,
         "evening": 15,
         "night": 45
