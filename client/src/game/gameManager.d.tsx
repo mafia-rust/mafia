@@ -1,5 +1,5 @@
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
-import { Phase, PhaseTimes, PlayerID, PlayerIndex, State, Verdict } from "./gameState.d";
+import { Phase, PhaseTimes, PlayerIndex, State, Verdict } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleOutline } from "./roleListState.d";
 

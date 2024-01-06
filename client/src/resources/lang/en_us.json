@@ -465,7 +465,8 @@
     "wiki.entry.article.all_language.title":"All text",
     "wiki.entry.article.all_language.text":"",
 
-    "wiki.entry.role": "# \\0\n### \\1\n<br/>\n\n### Abilities\n\\2\n### Attributes\n\\3\n\n<br/>\n\n### Maximum count: \\4\n### Sheriff result: \\5\n### Defense: \\6",
+    "wiki.entry.role": "# \\0\n### \\1\n<br/>\n\n### How to play\n\\2\n### Abilities\n\\3\n### Attributes\n\\4\n\n<br/>\n\n### Maximum count: \\5\n### Sheriff result: \\6\n### Defense: \\7",
+    "wiki.entry.role.noHowTo": "# \\0\n### \\1\n<br/>\n\n### Abilities\n\\2\n### Attributes\n\\3\n\n<br/>\n\n### Maximum count: \\4\n### Sheriff result: \\5\n### Defense: \\6",
     "wiki.entry.role.abilities": "Abilities",
     "wiki.entry.role.attributes": "Attributes",
 
@@ -502,6 +503,7 @@
     "wiki.entry.role.seer.attributes":"* Two players are friends if they could possibly both win together\n* A jester can win alongside anyone, therefore the jester has no enemies\n* Frames, Douses, Hexes, and Enchants can make your target look like they are a different role",
     
     "wiki.entry.role.psychic.title": "Psychic",
+    "wiki.entry.role.psychic.howToPlay": "The psychic will recieve a vision every night.\nOn odd nights, the vision will give you two players and say that at least one of them is a townie.\nOn even nights, the vision will give you three players and say that at least one of them is not a townie.",
     "wiki.entry.role.psychic.abilities":"* Get an evil vision on odd nights\n* Get a good vision on even nights",
     "wiki.entry.role.psychic.attributes":"* Evil visions show three players, at least one of them is not a townie\n* Good visions show two players, at least one of them is a townie\n* If there aren't enough evil or good players to have a vision, it will fail\n* You can not be in your own vision\n* You still get visions after you are dead",
     
