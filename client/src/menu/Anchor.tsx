@@ -121,8 +121,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             {this.state.settings_menu && <Settings 
                 volume={this.state.audio.volume} 
                 onVolumeChange={(volume) => {
-                    this.state.audio.volume = volume
-                    // this.setState({audio: this.state.audio});
+                    Anchor.instance.state.audio.volume = volume;
                     this.forceUpdate();
                 }}
             />}
