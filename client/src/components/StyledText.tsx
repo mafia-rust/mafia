@@ -1,4 +1,3 @@
-import DOMPurify from "dompurify";
 import { marked } from "marked";
 import React, { ReactElement } from "react";
 import ReactDOMServer from "react-dom/server";
@@ -17,10 +16,6 @@ type TokenData = {
 type KeywordData = TokenData[];
 type KeywordDataMap = { [key: string]: KeywordData };
 
-const SANITIZATION_OPTIONS = {
-    FORBID_TAGS: ['a', 'img']
-}
-
 const MARKDOWN_OPTIONS = {
     breaks: true,
     mangle: false,
@@ -36,6 +31,13 @@ type Token = {
     string: string
 } & KeywordData[number])
 
+/**
+ * Styled Text
+ * 
+ * ***MAKE SURE TO SANITIZE TEXT INPUT INTO THIS ELEMENT*** (If it's from the user)
+ * 
+ * @see sanitizePlayerMessage in ChatMessage.tsx
+ */
 export default function StyledText(props: { children: string[] | string, className?: string, noLinks?: boolean, markdown?: boolean }): ReactElement {
     let tokens: Token[] = [{
         type: "raw",
@@ -59,10 +61,7 @@ export default function StyledText(props: { children: string[] | string, classNa
             return ReactDOMServer.renderToStaticMarkup(
                 <span
                     className={token.style}
-                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(
-                        token.string, 
-                        SANITIZATION_OPTIONS
-                    )}}
+                    dangerouslySetInnerHTML={{ __html: token.string }}
                 />
             );
         } else {
@@ -74,10 +73,7 @@ export default function StyledText(props: { children: string[] | string, classNa
                 <a
                     href={`javascript: window.setWikiSearchPage("${token.link}")`}
                     className={token.style + " keyword-link"}
-                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(
-                        token.string, 
-                        SANITIZATION_OPTIONS
-                    ) }}
+                    dangerouslySetInnerHTML={{ __html: token.string }}
                 />
             );
         }

@@ -7,6 +7,7 @@ import "./chatMessage.css"
 import { Phase, PlayerIndex, Verdict } from "../game/gameState.d";
 import { Role } from "../game/roleState.d";
 import { Grave } from "../game/grave";
+import DOMPurify from "dompurify";
 
 export default function ChatElement(props: {message: ChatMessage}): ReactElement {
     const message = props.message;
@@ -26,11 +27,11 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
         
         if (
             GAME_MANAGER.state.stateType === "game" &&
-            (find(GAME_MANAGER.state.players[GAME_MANAGER.state.myIndex!].name ?? "").test(message.text) ||
+            (find(GAME_MANAGER.state.players[GAME_MANAGER.state.myIndex!].name ?? "").test(sanitizePlayerMessage(message.text)) ||
             (
                 GAME_MANAGER.state.stateType === "game" &&
                 GAME_MANAGER.state.myIndex !== null &&
-                find("" + (GAME_MANAGER.state.myIndex + 1)).test(message.text)
+                find("" + (GAME_MANAGER.state.myIndex + 1)).test(sanitizePlayerMessage(message.text))
             ))
             
         ) {
@@ -45,10 +46,10 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
         return <>
             <StyledText className={"chat-message " + style}>{text}</StyledText>
             {message.grave.will.length !== 0 
-                && <StyledText className={"chat-message will"}>{message.grave.will}</StyledText>}
+                && <StyledText className={"chat-message will"}>{sanitizePlayerMessage(message.grave.will)}</StyledText>}
             {message.grave.deathNotes.length !== 0 && message.grave.deathNotes.map(note => <>
                 <StyledText className={"chat-message " + style}>{translate("chatMessage.deathNote")}</StyledText>
-                <StyledText className={"chat-message deathNote"}>{note}</StyledText>
+                <StyledText className={"chat-message deathNote"}>{sanitizePlayerMessage(note)}</StyledText>
             </>)}
         </>
     }
@@ -66,6 +67,12 @@ function playerListToString(playerList: PlayerIndex[]): string {
     }).join(", ");
 }
 
+export function sanitizePlayerMessage(text: string): string {
+    return DOMPurify.sanitize(text, { 
+        ALLOWED_TAGS: []
+    });
+}
+
 export function translateChatMessage(message: ChatMessage): string {
     if(GAME_MANAGER.state.stateType !== "game"){
         return "ERROR: outside game"
@@ -76,12 +83,12 @@ export function translateChatMessage(message: ChatMessage): string {
             if(message.messageSender.type === "player"){
                 return translate("chatMessage.normal",
                     GAME_MANAGER.state.players[message.messageSender.player].toString(), 
-                    message.text
+                    sanitizePlayerMessage(message.text)
                 );
             } else {
                 return translate("chatMessage.normal",
                     translate("role."+message.messageSender.type+".name"),
-                    message.text
+                    sanitizePlayerMessage(message.text)
                 );
             }
         case "whisper":
@@ -246,7 +253,7 @@ export function translateChatMessage(message: ChatMessage): string {
         case "playerRoleAndWill":
             return translate("chatMessage.playersRoleAndWill", 
                 translate("role."+message.role+".name"), 
-                message.will
+                sanitizePlayerMessage(message.will)
             );
         case "consigliereResult":
             const visitedNobody = message.visited.length === 0;

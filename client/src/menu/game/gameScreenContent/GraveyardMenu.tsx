@@ -8,6 +8,7 @@ import GameState from "../../../game/gameState.d";
 import { sortRoleOutlines, translateRoleOutline } from "../../../game/roleListState.d";
 import StyledText from "../../../components/StyledText";
 import WikiSearch from "../../../components/WikiSearch";
+import { sanitizePlayerMessage } from "../../../components/ChatMessage";
 
 type GraveyardMenuProps = {
 }
@@ -101,7 +102,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
                 {translate("grave.will")}
                 <div className="note-area">
                     <StyledText>
-                        {grave.will}
+                        {sanitizePlayerMessage(grave.will)}
                     </StyledText>
                 </div>
             </>}
@@ -109,7 +110,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
                 {translate("grave.deathNote")}
                 <div className="note-area">
                     <StyledText>
-                        {note}
+                        {sanitizePlayerMessage(note)}
                     </StyledText>
                 </div>
             </>)}
