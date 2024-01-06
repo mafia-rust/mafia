@@ -193,85 +193,20 @@
             "role": "death"
         }
     ],
-    "El opuesto de mi novio": [
+    "Draculas Palace": [
         {
             "type": "exact",
-            "role": "mayor"
-        },
-        {
-            "type": "exact",
-            "role": "transporter"
-        },
-        
-        {
-            "type": "exact",
-            "role": "sheriff"
-        },
-        {
-            "type": "exact",
-            "role": "lookout"
+            "role": "bodyguard"
         },
 
         {
             "type": "exact",
-            "role": "tracker"
-        },
-        {
-            "type": "exact",
-            "role": "seer"
+            "role": "spy"
         },
 
         {
             "type": "exact",
-            "role": "doctor"
-        },
-        {
-            "type": "exact",
-            "role": "crusader"
-        },
-
-        {
-            "type": "exact",
-            "role": "vigilante"
-        },
-        {
-            "type": "exact",
-            "role": "veteran"
-        },
-        {
-            "type": "exact",
-            "role": "deputy"
-        },
-
-        {
-            "type": "exact",
-            "role": "mafioso"
-        },
-        {
-            "type": "exact",
-            "role": "consort"
-        },
-        {
-            "type": "exact",
-            "role": "blackmailer"
-        },
-
-        {
-            "type": "exact",
-            "role": "janitor"
-        },
-
-        {
-            "type": "exact",
-            "role": "jester"
-        },
-        {
-            "type": "exact",
-            "role": "executioner"
-        },
-        {
-            "type": "exact",
-            "role": "doomsayer"
+            "role": "death"
         }
     ]
 

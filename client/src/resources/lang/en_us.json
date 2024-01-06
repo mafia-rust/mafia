@@ -415,7 +415,7 @@
     "chatMessage.spyBug.protected":"Your target was protected from an attack.",
     "chatMessage.spyBug.transported":"Your target was transported.",
     "chatMessage.psychicGood":"At least one of these players is a townie: \\0",
-    "chatMessage.psychicEvil":"At least one of these players is not a townie: \\0",
+    "chatMessage.psychicEvil":"At least one of these players is evil: \\0",
     "chatMessage.psychicFailed":"There are not enough living players to have a vision.",
     "chatMessage.retributionistMessage":"Your target got the following message:",
     "chatMessage.necromancerMessage":"Your target got the following message:",
@@ -523,7 +523,7 @@
     
     "wiki.entry.role.medium.title": "Medium",
     "wiki.entry.role.medium.abilities":"* You can talk with the dead during the night\n* After you died, you can seance a living player twice",
-    "wiki.entry.role.medium.attributes":"* You can talk to other mediums during the night as well\n* A seance lets you communicate with the living after you died\n* Seance has two uses",
+    "wiki.entry.role.medium.attributes":"* You can talk to other mediums during the night\n* A seance lets you communicate with a living player after you died\n* Seance has two uses",
     
     "wiki.entry.role.retributionist.title": "Retributionist",
     "wiki.entry.role.retributionist.abilities":"* Force a dead player to use their ability on a living one",
