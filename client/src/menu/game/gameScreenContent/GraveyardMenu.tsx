@@ -1,6 +1,6 @@
 import React from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER from "../../../index";
+import GAME_MANAGER, { replaceMentions } from "../../../index";
 import { Grave } from "../../../game/grave";
 import { ContentMenus, ContentTab } from "../GameScreen";
 import "./graveyardMenu.css";
@@ -102,7 +102,10 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
                 {translate("grave.will")}
                 <div className="note-area">
                     <StyledText>
-                        {sanitizePlayerMessage(grave.will)}
+                        {sanitizePlayerMessage(replaceMentions(
+                            grave.will,
+                            GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.players : []
+                        ))}
                     </StyledText>
                 </div>
             </>}
@@ -110,7 +113,10 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
                 {translate("grave.deathNote")}
                 <div className="note-area">
                     <StyledText>
-                        {sanitizePlayerMessage(note)}
+                        {sanitizePlayerMessage(replaceMentions(
+                            note,
+                            GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.players : []
+                        ))}
                     </StyledText>
                 </div>
             </>)}

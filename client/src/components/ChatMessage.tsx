@@ -1,7 +1,7 @@
 import { ReactElement } from "react";
 import translate from "../game/lang";
 import React from "react";
-import GAME_MANAGER, { find } from "..";
+import GAME_MANAGER, { find, replaceMentions } from "..";
 import StyledText from "./StyledText";
 import "./chatMessage.css"
 import { Phase, PlayerIndex, Verdict } from "../game/gameState.d";
@@ -27,11 +27,17 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
         
         if (
             GAME_MANAGER.state.stateType === "game" &&
-            (find(GAME_MANAGER.state.players[GAME_MANAGER.state.myIndex!].name ?? "").test(sanitizePlayerMessage(message.text)) ||
+            (find(GAME_MANAGER.state.players[GAME_MANAGER.state.myIndex!].name ?? "").test(sanitizePlayerMessage(replaceMentions(
+                message.text,
+                GAME_MANAGER.state.players
+            ))) ||
             (
                 GAME_MANAGER.state.stateType === "game" &&
                 GAME_MANAGER.state.myIndex !== null &&
-                find("" + (GAME_MANAGER.state.myIndex + 1)).test(sanitizePlayerMessage(message.text))
+                find("" + (GAME_MANAGER.state.myIndex + 1)).test(sanitizePlayerMessage(replaceMentions(
+                    message.text,
+                    GAME_MANAGER.state.players
+                )))
             ))
             
         ) {
@@ -46,10 +52,16 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
         return <>
             <StyledText className={"chat-message " + style}>{text}</StyledText>
             {message.grave.will.length !== 0 
-                && <StyledText className={"chat-message will"}>{sanitizePlayerMessage(message.grave.will)}</StyledText>}
+                && <StyledText className={"chat-message will"}>{sanitizePlayerMessage(replaceMentions(
+                    message.grave.will,
+                    GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.players : []
+                ))}</StyledText>}
             {message.grave.deathNotes.length !== 0 && message.grave.deathNotes.map(note => <>
                 <StyledText className={"chat-message " + style}>{translate("chatMessage.deathNote")}</StyledText>
-                <StyledText className={"chat-message deathNote"}>{sanitizePlayerMessage(note)}</StyledText>
+                <StyledText className={"chat-message deathNote"}>{sanitizePlayerMessage(replaceMentions(
+                    note,
+                    GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.players : []
+                ))}</StyledText>
             </>)}
         </>
     }

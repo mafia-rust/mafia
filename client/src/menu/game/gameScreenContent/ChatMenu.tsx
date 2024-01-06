@@ -1,6 +1,6 @@
 import React from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER, { find, replaceMentions } from "../../../index";
+import GAME_MANAGER, { find } from "../../../index";
 import "../gameScreen.css";
 import "./chatMenu.css"
 import GameState, { PlayerIndex } from "../../../game/gameState.d";
@@ -114,10 +114,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     };
     sendChatField(){
         if(ChatMenu.instance === null) return;
-        const text = replaceMentions(
-            ChatMenu.instance.state.chatField.replace("\n", "").replace("\r", "").trim(),
-            ChatMenu.instance.state.gameState.players
-        );
+        const text = ChatMenu.instance.state.chatField.replace("\n", "").replace("\r", "").trim();
         if (text === "") return;
         ChatMenu.instance.history.push(text);
         ChatMenu.instance.history_poller.reset();
