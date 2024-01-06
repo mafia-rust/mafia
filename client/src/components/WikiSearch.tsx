@@ -237,7 +237,7 @@ function getPageText(page: WikiPage): string {
         case "role":
             const role = path[1] as Role;
             const roleData = ROLES[role];
-            const keywords = ROLES[role].keywords.map(key => {
+            const keywords = roleData.keywords.map(key => {
                 return translate("wiki.keyword", 
                     translate(key), 
                     translate("wiki.keyword." + key)
@@ -251,7 +251,7 @@ function getPageText(page: WikiPage): string {
                 translateChecked("wiki.entry.role."+role+".abilities") ?? translate("wiki.entry.role.noAbilities"),
                 translateChecked("wiki.entry.role."+role+".attributes") ?? translate("wiki.entry.role.noAttributes"),
                 roleData.maxCount === null ? translate("none") : roleData.maxCount,
-                ROLES[role as keyof typeof ROLES].suspicious ? translate("suspicious") : translate("verdict.innocent"),
+                roleData.suspicious ? translate("suspicious") : translate("verdict.innocent"),
                 translate("defense."+roleData.defense),
                 keywords
             )
