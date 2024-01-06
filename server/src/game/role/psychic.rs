@@ -40,7 +40,8 @@ impl RoleStateImpl for Psychic {
 
         let mut rng = rand::thread_rng();
         actor_ref.push_night_message(game, 'a: {match game.day_number() % 2 {
-           0=>{
+            1=>{
+                //evil vision
                 let all_non_townies: Vec<_> = PlayerReference::all_players(game)
                     .into_iter()
                     .filter(|p|p.alive(game)&&*p!=actor_ref&&p.night_appeared_role(game).faction_alignment().faction()!=Faction::Town)
@@ -66,6 +67,7 @@ impl RoleStateImpl for Psychic {
                 ChatMessage::PsychicFailed
             },
             _=>{
+                //good vision
                 let all_townies: Vec<_> = PlayerReference::all_players(game)
                     .into_iter()
                     .filter(|p|p.alive(game)&&*p!=actor_ref&&p.night_appeared_role(game).faction_alignment().faction()==Faction::Town)

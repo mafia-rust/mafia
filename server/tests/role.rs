@@ -867,3 +867,29 @@ fn seer_cant_see_godfather() {
         ChatMessage::SeerResult { enemies: false }
     );
 }
+
+#[test]
+fn vampire_convert_bodyguard() {
+    kit::scenario!(game in Night 1 where
+        vamp: Vampire,
+        bg: Bodyguard,
+        _bg2: Bodyguard
+    );
+
+    assert!(vamp.set_night_targets(vec![bg]));
+    assert!(bg.set_night_targets(vec![bg]));
+
+    game.next_phase();
+
+    assert!(vamp.role_state().role() == Role::Vampire);
+    assert!(bg.role_state().role() == Role::Bodyguard);
+
+    game.skip_to(PhaseType::Night, 2);
+    
+    assert!(vamp.set_night_targets(vec![bg]));
+
+    game.next_phase();
+
+    assert!(vamp.role_state().role() == Role::Vampire);
+    assert!(bg.role_state().role() == Role::Vampire);
+}
