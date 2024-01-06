@@ -8,7 +8,7 @@ import ROLES from "../resources/roles.json";
 import "./styledText.css";
 import WikiSearch, { WikiPage } from "./WikiSearch";
 
-type TokenData = {
+export type TokenData = {
     style?: string, 
     link?: WikiPage,
     replacement?: string
@@ -85,7 +85,7 @@ export default function StyledText(props: { children: string[] | string, classNa
     </span>
 }
 
-function getKeywordData(): KeywordDataMap {
+export function getKeywordData(): KeywordDataMap {
     let keywordData: KeywordDataMap = {};
 
     const DATA = require("../resources/keywords.json");

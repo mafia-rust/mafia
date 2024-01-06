@@ -237,29 +237,24 @@ function getPageText(page: WikiPage): string {
         case "role":
             const role = path[1] as Role;
             const roleData = ROLES[role];
-            const howToPlay = translateChecked("wiki.entry.role."+role+".howToPlay");
-            if (howToPlay) {
-                return translate("wiki.entry.role",
-                    translate("role."+role+".name"),
-                    translateRoleOutline(getRoleOutlineFromFactionAlignment(roleData.factionAlignment as FactionAlignment)) || '',
-                    howToPlay,
-                    translate("wiki.entry.role."+role+".abilities"),
-                    translate("wiki.entry.role."+role+".attributes"),
-                    roleData.maxCount === null ? translate("none") : roleData.maxCount,
-                    ROLES[role as keyof typeof ROLES].suspicious ? translate("suspicious") : translate("verdict.innocent"),
-                    translate("defense."+roleData.defense)
+            const keywords = ROLES[role].keywords.map(key => {
+                return translate("wiki.keyword", 
+                    translate(key), 
+                    translate("wiki.keyword." + key)
                 )
-            } else {
-                return translate("wiki.entry.role.noHowTo",
-                    translate("role."+role+".name"),
-                    translateRoleOutline(getRoleOutlineFromFactionAlignment(roleData.factionAlignment as FactionAlignment)) || '',
-                    translate("wiki.entry.role."+role+".abilities"),
-                    translate("wiki.entry.role."+role+".attributes"),
-                    roleData.maxCount === null ? translate("none") : roleData.maxCount,
-                    ROLES[role as keyof typeof ROLES].suspicious ? translate("suspicious") : translate("verdict.innocent"),
-                    translate("defense."+roleData.defense)
-                )
-            }
+            }).join('\n');
+
+            return translate("wiki.entry.role",
+                translate("role."+role+".name"),
+                translateRoleOutline(getRoleOutlineFromFactionAlignment(roleData.factionAlignment as FactionAlignment)) || '',
+                translateChecked("wiki.entry.role."+role+".basics") ?? translate("wiki.entry.role.noBasics"),
+                translateChecked("wiki.entry.role."+role+".abilities") ?? translate("wiki.entry.role.noAbilities"),
+                translateChecked("wiki.entry.role."+role+".attributes") ?? translate("wiki.entry.role.noAttributes"),
+                roleData.maxCount === null ? translate("none") : roleData.maxCount,
+                ROLES[role as keyof typeof ROLES].suspicious ? translate("suspicious") : translate("verdict.innocent"),
+                translate("defense."+roleData.defense),
+                keywords
+            )
         case "article":
             const article = path[1] as Article;
             return translate("wiki.entry.article",

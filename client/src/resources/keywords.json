@@ -38,6 +38,13 @@
         "style": "keyword-evil",
         "link": "role/seer"
     },
+    "vision": {
+        "style": "keyword-info",
+        "link": "role/psychic"
+    },
+    "good": {
+        "style": "keyword-info"
+    },
     "faction.town": { 
         "style": "keyword-good",
         "link": "article/roles_and_teams"

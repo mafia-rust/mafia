@@ -339,6 +339,8 @@
     "defense.1": "Basic",
     "defense.2": "Powerful",
     "defense.3": "Invincible",
+    "vision": "Vision",
+    "good": "Good",
 
     "verdict.guilty": "Guilty",
     "verdict.innocent": "Innocent",
@@ -445,6 +447,9 @@
     "chatMessage.doomsayerFailed": "At least one of your guesses was incorrect or invalid.",
     "chatMessage.doomsayerWon": "Your guesses were correct, and you won!",
 
+    "wiki.keyword": "<details>\n<summary>\\0</summary>\n\\1\n</details>",
+    "wiki.keyword.vision": "Visions are the investigative result that a Psychic recieves. Good visions show a list of two players that contains at least one townie. Evil visions show a list of three players that contains at least one non-townie.",
+
     "wiki.entry.article": "# \\0\n<br/>\n\n\\1",
 
     "wiki.entry.article.404.title": "Page not found",
@@ -465,10 +470,12 @@
     "wiki.entry.article.all_language.title":"All text",
     "wiki.entry.article.all_language.text":"",
 
-    "wiki.entry.role": "# \\0\n### \\1\n<br/>\n\n### How to play\n\\2\n### Abilities\n\\3\n### Attributes\n\\4\n\n<br/>\n\n### Maximum count: \\5\n### Sheriff result: \\6\n### Defense: \\7",
-    "wiki.entry.role.noHowTo": "# \\0\n### \\1\n<br/>\n\n### Abilities\n\\2\n### Attributes\n\\3\n\n<br/>\n\n### Maximum count: \\4\n### Sheriff result: \\5\n### Defense: \\6",
+    "wiki.entry.role": "# \\0\n### \\1\n<br/>\n\n### Basics\n\\2\n### Abilities\n\\3\n### Attributes\n\\4\n\n<br/>\n\n### Maximum count: \\5\n### Sheriff result: \\6\n### Defense: \\7\n\n<br>\n\n### Keywords:\n\\8",
+    "wiki.entry.role.noBasics": "There is no basics section written for this page.",
     "wiki.entry.role.abilities": "Abilities",
+    "wiki.entry.role.noAbilities": "There is no abilities section written for this page.",
     "wiki.entry.role.attributes": "Attributes",
+    "wiki.entry.role.noAttributes": "There is no attributes section written for this page.",
 
     "wiki.entry.role.jailor.title": "Jailor",
     "wiki.entry.role.jailor.abilities":"* Choose one player to jail during the day\n* You can execute your prisoners up to three times",
@@ -503,7 +510,7 @@
     "wiki.entry.role.seer.attributes":"* Two players are friends if they could possibly both win together\n* A jester can win alongside anyone, therefore the jester has no enemies\n* Frames, Douses, Hexes, and Enchants can make your target look like they are a different role",
     
     "wiki.entry.role.psychic.title": "Psychic",
-    "wiki.entry.role.psychic.howToPlay": "The psychic will recieve a vision every night.\nOn odd nights, the vision will give you two players and say that at least one of them is a townie.\nOn even nights, the vision will give you three players and say that at least one of them is not a townie.",
+    "wiki.entry.role.psychic.basics": "The psychic will recieve a vision every night.\nOn odd nights, the vision will give you two players and say that at least one of them is a townie.\nOn even nights, the vision will give you three players and say that at least one of them is not a townie.",
     "wiki.entry.role.psychic.abilities":"* Get an evil vision on odd nights\n* Get a good vision on even nights",
     "wiki.entry.role.psychic.attributes":"* Evil visions show three players, at least one of them is not a townie\n* Good visions show two players, at least one of them is a townie\n* If there aren't enough evil or good players to have a vision, it will fail\n* You can not be in your own vision\n* You still get visions after you are dead",
     
@@ -512,7 +519,7 @@
     "wiki.entry.role.doctor.attributes":"* You give your target powerful defense\n* You and your target will know if they were attacked and saved",
     
     "wiki.entry.role.bodyguard.title": "Bodyguard",
-    "wiki.entry.role.bodyguard.abilities":"* Protect a to kill their attacker, but getting attacked yourself\n* You can protect yourself once",
+    "wiki.entry.role.bodyguard.abilities":"* Protect a player to kill their attacker, but getting attacked yourself\n* You can protect yourself once",
     "wiki.entry.role.bodyguard.attributes":"* When you guard yourself, you gain powerful defense\n* You and your target will know if they were attacked and protected\n* You will redirect attacks from your target onto yourself, and you will attack those players back\n* Your attack is basic and astral",
     
     "wiki.entry.role.crusader.title": "Crusader",

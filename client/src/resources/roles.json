@@ -7,7 +7,8 @@
         "factionAlignment": "townPower",
         "maxCount": 1,
         "endGameCondition": "Faction",
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "mayor":{
         "defense": 0,
@@ -17,7 +18,8 @@
         "factionAlignment": "townPower",
         "maxCount": 1,
         "endGameCondition": "Faction",
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "transporter":{
         "defense": 0,
@@ -27,7 +29,8 @@
         "factionAlignment": "townPower",
         "maxCount": null,
         "endGameCondition": "Faction",
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "sheriff": {
         "defense": 0,
@@ -37,7 +40,8 @@
         "factionAlignment": "townInvestigative",
         "maxCount": null,
         "endGameCondition": "Faction",
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "lookout": {
         "factionAlignment": "townInvestigative",
@@ -47,7 +51,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "spy": {
         "factionAlignment": "townInvestigative",
@@ -57,7 +62,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "tracker": {
         "factionAlignment": "townInvestigative",
@@ -67,7 +73,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "seer": {
         "factionAlignment": "townInvestigative",
@@ -77,7 +84,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "psychic": {
         "factionAlignment": "townInvestigative",
@@ -87,7 +95,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": ["vision"]
     },
     "doctor": {
         "factionAlignment": "townProtective",
@@ -97,7 +106,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "bodyguard": {
         "factionAlignment": "townProtective",
@@ -107,7 +117,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "crusader": {
         "factionAlignment": "townProtective",
@@ -117,7 +128,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "vigilante": {
         "factionAlignment": "townKilling",
@@ -127,7 +139,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "veteran": {
         "factionAlignment": "townKilling",
@@ -137,7 +150,8 @@
         "witchable": false,
         "endGameCondition": "Faction",
         "maxCount": 1,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "deputy": {
         "factionAlignment": "townKilling",
@@ -147,7 +161,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": 1,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "escort": {
         "factionAlignment": "townSupport",
@@ -157,7 +172,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "medium": {
         "factionAlignment": "townSupport",
@@ -167,7 +183,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "retributionist": {
         "factionAlignment": "townSupport",
@@ -177,7 +194,8 @@
         "witchable": false,
         "endGameCondition": "Faction",
         "maxCount": 1,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "godfather": {
         "factionAlignment": "mafiaKilling",
@@ -187,7 +205,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": 1,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "mafioso": {
         "factionAlignment": "mafiaKilling",
@@ -197,7 +216,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": 0,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "consort": {
         "factionAlignment": "mafiaSupport",
@@ -207,7 +227,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "blackmailer": {
         "factionAlignment": "mafiaSupport",
@@ -217,7 +238,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "consigliere": {
         "factionAlignment": "mafiaSupport",
@@ -227,7 +249,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": 1,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "witch": {
         "factionAlignment": "mafiaPower",
@@ -237,7 +260,8 @@
         "witchable": false,
         "endGameCondition": "Faction",
         "maxCount": 1,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "necromancer": {
         "factionAlignment": "mafiaPower",
@@ -247,7 +271,8 @@
         "witchable": false,
         "endGameCondition": "Faction",
         "maxCount": 1,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "janitor": {
         "factionAlignment": "mafiaDeception",
@@ -257,7 +282,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": 1,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "framer": {
         "factionAlignment": "mafiaDeception",
@@ -267,7 +293,8 @@
         "witchable": true,
         "endGameCondition": "Faction",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "jester": {
         "factionAlignment": "neutralEvil",
@@ -277,7 +304,8 @@
         "witchable": true,
         "endGameCondition": "None",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "executioner": {
         "factionAlignment": "neutralEvil",
@@ -287,7 +315,8 @@
         "witchable": true,
         "endGameCondition": "None",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     
     "politician":{
@@ -298,7 +327,8 @@
         "witchable": true,
         "endGameCondition": "None",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "arsonist": {
         "factionAlignment": "neutralKilling",
@@ -308,7 +338,8 @@
         "witchable": true,
         "endGameCondition": "SingleRole",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "werewolf": {
         "factionAlignment": "neutralKilling",
@@ -318,7 +349,8 @@
         "witchable": true,
         "endGameCondition": "SingleRole",
         "maxCount": null,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "vampire": {
         "factionAlignment": "neutralChaos",
@@ -328,7 +360,8 @@
         "witchable": true,
         "endGameCondition": "SingleRole",
         "maxCount": 2,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "amnesiac": {
         "factionAlignment": "neutralChaos",
@@ -338,7 +371,8 @@
         "witchable": true,
         "endGameCondition": "None",
         "maxCount": null,
-        "largeRoleSpecificMenu": true
+        "largeRoleSpecificMenu": true,
+        "keywords": []
     },
     "death":{
         "factionAlignment": "neutralApocalypse",
@@ -348,7 +382,8 @@
         "witchable": true,
         "endGameCondition": "None",
         "maxCount": 1,
-        "largeRoleSpecificMenu": false
+        "largeRoleSpecificMenu": false,
+        "keywords": []
     },
     "doomsayer":{
         "factionAlignment": "neutralApocalypse",
@@ -358,6 +393,7 @@
         "witchable": false,
         "endGameCondition": "None",
         "maxCount": 1,
-        "largeRoleSpecificMenu": true
+        "largeRoleSpecificMenu": true,
+        "keywords": []
     }
 }
