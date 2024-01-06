@@ -893,3 +893,36 @@ fn vampire_convert_bodyguard() {
     assert!(vamp.role_state().role() == Role::Vampire);
     assert!(bg.role_state().role() == Role::Vampire);
 }
+
+#[test]
+fn bodyguard_gets_single_target_jailed_message() {
+    kit::scenario!(game where
+        bg: Bodyguard,
+        jailor: Jailor,
+        _maf: Mafioso,
+        townie: Sheriff
+    );
+
+    jailor.day_target(townie);
+
+    game.next_phase();
+
+    bg.set_night_target(townie);
+
+    game.next_phase();
+
+    assert_eq!(
+        bg.get_messages_after_last_message(
+            ChatMessage::PhaseChange { 
+                phase_type: PhaseType::Night, day_number: 1
+            }
+        ),
+        vec![
+            ChatMessage::TargetJailed,
+            /* They should not get a second TargetJailed message */
+            ChatMessage::PhaseChange { 
+                phase_type: PhaseType::Morning, day_number: 2 
+            }
+        ]
+    );
+}

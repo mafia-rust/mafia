@@ -82,12 +82,12 @@ impl RoleStateImpl for Bodyguard {
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
                 let target_ref = visit.target;
     
-                if target_ref.night_jailed(game){
-                    actor_ref.push_night_message(game, ChatMessage::TargetJailed);
-                    return
-                }
-    
                 if actor_ref == target_ref {
+                    if target_ref.night_jailed(game){
+                        actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                        return
+                    }
+                    
                     let self_shields_remaining = self.self_shields_remaining - 1;
                     target_ref.increase_defense_to(game, 2);
                     actor_ref.set_role_state(game, RoleState::Bodyguard(Bodyguard{ self_shields_remaining, target_protected_ref: self.target_protected_ref, redirected_player_refs: self.redirected_player_refs }));
