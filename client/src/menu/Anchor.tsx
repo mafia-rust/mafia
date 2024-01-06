@@ -16,7 +16,6 @@ type AnchorState = {
     rejoinCard: JSX.Element | null,
 
     settings_menu: boolean,
-    volume: number,
     audio: HTMLAudioElement
 }
 
@@ -26,12 +25,6 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     constructor(props: AnchorProps) {
         super(props);
 
-        let settings_obj = GAME_MANAGER.loadSettings();
-        //set default settings
-        if(settings_obj === null){
-            settings_obj = DEFAULT_SETTINGS;
-        }
-
         this.state = {
             mobile: false,
             content: this.props.content,
@@ -39,13 +32,14 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             rejoinCard: null,
 
             settings_menu: false,
-            volume: settings_obj.volume,
             audio: new Audio()
         }
     }
     
     componentDidMount() {
         Anchor.instance = this;
+
+        this.state.audio.volume = GAME_MANAGER.loadSettings()?.volume ?? DEFAULT_SETTINGS.volume;
 
         window.addEventListener("resize", Anchor.onResize);
         Anchor.onResize();
@@ -79,9 +73,13 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     static playAudioFile(src: string | null) {
         Anchor.instance.state.audio.pause();
         if(src === null) return;
-        Anchor.instance.setState({audio: new Audio(src)}, () => {
-            console.log("Playing audio: " + Anchor.instance.state.audio.src);
-            Anchor.instance.state.audio.volume = Anchor.instance.state.volume;
+        Anchor.instance.state.audio.src = src;
+        Anchor.instance.state.audio.load();
+
+
+        Anchor.instance.setState({
+            audio: Anchor.instance.state.audio
+        }, () => {
             Anchor.startAudio();
             Anchor.instance.state.audio.addEventListener("ended", () => {
                 console.log("Playing audio: " + Anchor.instance.state.audio.src);
@@ -93,6 +91,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         let playPromise = Anchor.instance.state.audio.play();
         playPromise.then(() => {
 
+            Anchor.instance.state.audio.currentTime = 0;
             // Anchor.instance.state.audio.duration;
             // Anchor.instance.state.audio.currentTime = 45;
             // Anchor.instance.state.audio.playbackRate = 2;
@@ -121,8 +120,11 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             {this.state.settings_menu && <Settings 
                 volume={this.state.audio.volume} 
                 onVolumeChange={(volume) => {
-                    Anchor.instance.state.audio.volume = volume;
-                    this.forceUpdate();
+                    GAME_MANAGER.saveSettings(volume);
+                    this.state.audio.volume = volume;
+                    this.setState({
+                        audio: this.state.audio
+                    });
                 }}
             />}
             <button className="material-icons-round settings-button" onClick={() => {

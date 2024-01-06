@@ -26,8 +26,9 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
     }
     componentWillUnmount() {
     }
-    saveSettings() {
-        GAME_MANAGER.saveSettings(this.props.volume);
+    saveSettings(volume: number) {
+        GAME_MANAGER.saveSettings(volume);
+        console.log("Loaded settings: " + JSON.stringify(volume));
     }
     render(): React.ReactNode {
         //volume slider
@@ -39,12 +40,14 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
                 <div className="settingsContent">
                     <div className="settingsSection">
                         <h2>{translate("menu.settings.volume")}</h2>
-                        <input type="range" min="0" max="1" step="0.01" value={this.props.volume} onChange={(e) => {
-                            let volume = parseFloat(e.target.value);
-                            this.props.onVolumeChange(volume);
-
-                            this.saveSettings();
-                        }}/>
+                        <input type="range" min="0" max="1" step="0.01" 
+                            value={this.props.volume} 
+                            onChange={(e) => {
+                                console.log("Volume changed to " + e.target.value);
+                                let volume = parseFloat(e.target.value);
+                                this.props.onVolumeChange(volume);
+                            }
+                        }/>
                     </div>
                 </div>
             </div>
