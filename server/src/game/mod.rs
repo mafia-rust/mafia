@@ -78,44 +78,66 @@ impl Game {
             return Err(RejectStartReason::ZeroTimeGame);
         }
         
-        
-        let mut roles = match create_random_roles(&settings.excluded_roles, &settings.role_list){
-            Some(roles) => {
-                roles
-            },
-            None => {
+
+        let mut role_generation_tries = 0;
+        const MAX_ROLE_GENERATION_TRIES: u8 = 250;
+        let mut game = loop {
+
+            if role_generation_tries >= MAX_ROLE_GENERATION_TRIES {
                 return Err(RejectStartReason::RoleListCannotCreateRoles);
             }
-        };
-        roles.shuffle(&mut thread_rng());
 
-        let mut players = Vec::new();
-        for (player_index, player) in lobby_players.iter().enumerate() {
-            let ClientConnection::Connected(ref sender) = player.connection else {
-                return Err(RejectStartReason::PlayerDisconnected)
-            };
-            let new_player = Player::new(
-                player.name.clone(),
-                sender.clone(),
-                match roles.get(player_index){
-                    Some(role) => *role,
-                    None => {
-                        return Err(RejectStartReason::RoleListTooSmall);
-                    },
+            let settings = settings.clone();
+            let mut roles = match create_random_roles(&settings.excluded_roles, &settings.role_list){
+                Some(roles) => {
+                    roles
+                },
+                None => {
+                    return Err(RejectStartReason::RoleListCannotCreateRoles);
                 }
-            );
-            players.push(new_player);
-        }
-        drop(roles); // Ensure we don't use the order of roles anywhere
+            };
+            roles.shuffle(&mut thread_rng());
+            
+    
+            let mut players = Vec::new();
+            for (player_index, player) in lobby_players.iter().enumerate() {
+                let ClientConnection::Connected(ref sender) = player.connection else {
+                    return Err(RejectStartReason::PlayerDisconnected)
+                };
+                let new_player = Player::new(
+                    player.name.clone(),
+                    sender.clone(),
+                    match roles.get(player_index){
+                        Some(role) => *role,
+                        None => {
+                            return Err(RejectStartReason::RoleListTooSmall);
+                        },
+                    }
+                );
+                players.push(new_player);
+            }
+            drop(roles); // Ensure we don't use the order of roles anywhere
 
-        let mut game = Self{
-            ticking: true,
-            players: players.into_boxed_slice(),
-            graves: Vec::new(),
-            teams: Teams::default(),
-            phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
-            settings,
+            let game = Self{
+                ticking: true,
+                players: players.into_boxed_slice(),
+                graves: Vec::new(),
+                teams: Teams::default(),
+                phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
+                settings,
+            };
+
+            if !game.game_is_over() {
+                break game;
+            }
+            role_generation_tries += 1;
         };
+
+        if game.game_is_over() {
+            return Err(RejectStartReason::RoleListCannotCreateRoles);
+        }
+
+        
 
         game.send_packet_to_all(ToClientPacket::StartGame);
         for player_ref in PlayerReference::all_players(&game){
