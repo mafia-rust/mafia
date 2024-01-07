@@ -9,6 +9,7 @@ import { StateListener } from "../../game/gameManager.d";
 import LobbyExcludedRoles from "./lobbyExcludedRoles";
 import Anchor from "../Anchor";
 import WikiSearch from "../../components/WikiSearch";
+import { RoomCodeButton } from "../Settings";
 
 type LobbyMenuProps = {}
 
@@ -91,19 +92,3 @@ function LobbyMenuHeader(props: { host?: boolean }): JSX.Element {
     </header>
 }
 
-function RoomCodeButton(props: {}): JSX.Element {
-    return <button onClick={() => {
-        let code = new URL(window.location.href);
-        
-        if (GAME_MANAGER.state.stateType === "lobby")
-            code.searchParams.set("code", GAME_MANAGER.state.roomCode!);
-
-        if (navigator.clipboard)
-            navigator.clipboard.writeText(code.toString());
-    }}>
-        {
-            GAME_MANAGER.state.stateType === "lobby" ?
-            GAME_MANAGER.state.roomCode : ""
-        }
-    </button>
-}

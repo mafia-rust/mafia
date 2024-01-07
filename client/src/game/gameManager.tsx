@@ -35,9 +35,18 @@ export function createGameManager(): GameManager {
             Anchor.playAudioFile("/audio/01. Calm Before The Storm.mp3");
         },
         setGameState() {
+            let roomCode = null;
+            if(GAME_MANAGER.state.stateType === "lobby"){
+                roomCode = GAME_MANAGER.state.roomCode;
+            }
+
+
             Anchor.stopAudio();
             GAME_MANAGER.state = createGameState();
             Anchor.setContent(GameScreen.createDefault());
+            if(roomCode !== null){
+                GAME_MANAGER.state.roomCode = roomCode;
+            }
         },
         async setOutsideLobbyState() {
             Anchor.stopAudio();
