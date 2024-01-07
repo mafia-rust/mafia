@@ -41,7 +41,7 @@ impl RoleStateImpl for Jailor {
 
 
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Kill { return; } 
+        if priority != Priority::Kill { return; }
     
         if let Some(visit) = actor_ref.night_visits(game).first() {
     

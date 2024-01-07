@@ -89,16 +89,12 @@ impl Game {
 
             let settings = settings.clone();
             let mut roles = match create_random_roles(&settings.excluded_roles, &settings.role_list){
-                Some(roles) => {
-                    roles
-                },
-                None => {
-                    return Err(RejectStartReason::RoleListCannotCreateRoles);
-                }
+                Some(roles) => {roles},
+                None => {return Err(RejectStartReason::RoleListCannotCreateRoles);}
             };
             roles.shuffle(&mut thread_rng());
-            
-    
+
+
             let mut players = Vec::new();
             for (player_index, player) in lobby_players.iter().enumerate() {
                 let ClientConnection::Connected(ref sender) = player.connection else {
@@ -137,7 +133,6 @@ impl Game {
             return Err(RejectStartReason::RoleListCannotCreateRoles);
         }
 
-        
 
         game.send_packet_to_all(ToClientPacket::StartGame);
         for player_ref in PlayerReference::all_players(&game){
@@ -188,7 +183,7 @@ impl Game {
                 .collect::<std::collections::HashSet<EndGameCondition>>().into_iter().collect::<Vec<EndGameCondition>>();
 
         //if there are no teams left and multiple amnesiacs alive then the game is not over
-        if 
+        if
             remaining_teams.is_empty() && 
             PlayerReference::all_players(self).into_iter()
                 .filter(|p|p.alive(self) && p.role_state(self).role() == role::Role::Amnesiac)
@@ -197,7 +192,7 @@ impl Game {
             return false;
         }
         
-        remaining_teams.len() <= 1        
+        remaining_teams.len() <= 1
     }
 
     pub fn current_phase(&self) -> &PhaseState {
@@ -227,8 +222,6 @@ impl Game {
                 return;
             }
         }
-        
-        
 
         if self.phase_machine.day_number == u8::MAX {
             self.add_message_to_chat_group(ChatGroup::All, ChatMessage::GameOver);
