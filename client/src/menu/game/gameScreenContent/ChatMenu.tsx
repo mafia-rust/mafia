@@ -23,7 +23,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         
         if(ChatMenu.instance !== null){
             ChatMenu.instance.setState({
-                chatField: "/w @" + (playerIndex + 1) + " " + ChatMenu.instance.state.chatField,
+                chatField: "/w" + (playerIndex + 1) + " " + ChatMenu.instance.state.chatField,
             });
         }
     }
@@ -120,12 +120,12 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         ChatMenu.instance.history_poller.reset();
         if (text.startsWith("/w")) {
             const recipient = ChatMenu.instance.state.gameState.players.find(player => 
-                RegExp(`^@${player.index+1}`).test(text.substring(3))
+                RegExp(`^${player.index+1} +`).test(text.substring(2))
             );
             if (recipient !== undefined) {
                 GAME_MANAGER.sendSendWhisperPacket(
                     recipient.index,
-                    text.substring(5 + recipient.index.toString().length)
+                    text.substring(3 + recipient.index.toString().length)
                 ); 
             } else {
                 // Malformed whisper
