@@ -8,7 +8,7 @@ use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::team::Team;
-use super::{Priority, RoleStateImpl, Role};
+use super::{Priority, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Seer;
@@ -85,27 +85,15 @@ impl RoleStateImpl for Seer {
 }
 impl Seer{
     pub fn players_are_enemies(game: &Game, a: PlayerReference, b: PlayerReference) -> bool {
-
-        if 
-            a.doused(game) || b.doused(game) ||
-            a.night_framed(game) || b.night_framed(game)
-        {
-            return true;
-        }
-
-        if 
-            a.role(game) == Role::Godfather || b.role(game) == Role::Godfather ||
-            (
-                (a.role(game) == Role::Werewolf || b.role(game) == Role::Werewolf) &&
-                (game.day_number() == 1 || game.day_number() == 3)
+        if a.has_suspicious_aura(game) || b.has_suspicious_aura(game){
+            true
+        }else if a.has_innocent_aura(game) || b.has_innocent_aura(game){
+            false
+        }else{
+            !EndGameCondition::can_win_together(
+                a.role(game).end_game_condition(), 
+                b.role(game).end_game_condition()
             )
-        {
-            return false;
         }
-
-        !EndGameCondition::can_win_together(
-            a.role(game).end_game_condition(), 
-            b.role(game).end_game_condition()
-        )
     }
 }

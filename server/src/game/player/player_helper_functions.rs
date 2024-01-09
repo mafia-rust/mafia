@@ -164,6 +164,12 @@ impl PlayerReference{
     pub fn end_game_condition(&self, game: &Game) -> EndGameCondition {
         EndGameCondition::from_role(self.role(game))
     }
+    pub fn has_innocent_aura(&self, game: &Game) -> bool {
+        self.role(game).has_innocent_aura(game)
+    }
+    pub fn has_suspicious_aura(&self, game: &Game) -> bool {
+        self.night_framed(game) || self.doused(game)
+    }
 
     /*
         Role functions

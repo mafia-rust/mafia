@@ -274,6 +274,17 @@ impl Role{
             _ => false,
         }
     }
+    pub fn has_innocent_aura(&self, game: &Game)->bool{
+        match self {
+            Role::Jester => true,
+            Role::Executioner => true,
+            Role::Godfather => true,
+            Role::Werewolf => {
+                game.day_number() == 1 || game.day_number() == 3
+            },
+            _ => false,
+        }
+    }
     pub fn end_game_condition(&self)->EndGameCondition{
         EndGameCondition::from_role(*self)
     }
