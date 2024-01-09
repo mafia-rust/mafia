@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessage};
@@ -100,6 +102,10 @@ impl RoleStateImpl for Werewolf {
                         }
                     }
 
+                    //this should remove duplicates
+                    tracked_players.append(&mut self.tracked_players.clone());
+                    let tracked_players: HashSet<PlayerReference> = tracked_players.into_iter().collect();
+                    let tracked_players: Vec<PlayerReference> = tracked_players.into_iter().collect();
 
                     actor_ref.remove_player_tag_on_all(game, Tag::WerewolfTracked);
 
