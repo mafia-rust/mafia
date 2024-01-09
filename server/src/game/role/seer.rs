@@ -17,11 +17,7 @@ pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownInv
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Seer {
-    fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
-    fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
-    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::Town}
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
 
 
@@ -41,8 +37,8 @@ impl RoleStateImpl for Seer {
 
         let message = ChatMessage::SeerResult{enemies:
             !EndGameCondition::can_win_together(
-                first_visit.target.night_appeared_role(game).default_state().end_game_condition(game, first_visit.target), 
-                second_visit.target.night_appeared_role(game).default_state().end_game_condition(game, second_visit.target)
+                EndGameCondition::from_role(first_visit.target.night_appeared_role(game)),
+                EndGameCondition::from_role(second_visit.target.night_appeared_role(game))
             )
         };
         

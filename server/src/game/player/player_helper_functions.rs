@@ -1,4 +1,14 @@
-use crate::{game::{chat::{ChatMessage, ChatGroup}, Game, grave::{GraveKiller, Grave}, role::{RoleState, Priority}, visit::Visit, team::{Teams, Team}, end_game_condition::EndGameCondition}, packet::ToClientPacket};
+use crate::{
+    game::
+    {
+        chat::{ChatMessage, ChatGroup}, 
+        Game, 
+        grave::{GraveKiller, Grave}, 
+        role::{RoleState, Priority}, 
+        visit::Visit, team::{Teams, Team}, end_game_condition::EndGameCondition
+    }, 
+    packet::ToClientPacket
+};
 
 use super::PlayerReference;
 
@@ -6,7 +16,7 @@ use super::PlayerReference;
 
 impl PlayerReference{
     pub fn roleblock(&self, game: &mut Game) {
-        if !self.role_state(game).roleblock_immune(game, *self) {
+        if !self.role_state(game).role().roleblock_immune() {
             self.set_night_roleblocked(game, true);
             self.set_night_visits(game, vec![]);
             self.push_night_message(game,
@@ -98,6 +108,7 @@ impl PlayerReference{
         }
     }
     
+    
     pub fn tracker_seen_visits(self, game: &Game) -> Vec<&Visit> {
         if let Some(v) = self.night_appeared_visits(game) {
             v.iter().filter(|v|!v.astral).collect()
@@ -130,30 +141,27 @@ impl PlayerReference{
         }
     }
 
+
+    pub fn defense(&self, game: &Game) -> u8 {
+        if game.current_phase().is_night() {
+            self.night_defense(game)
+        }else{
+            self.role_state(game).clone().defense(game, *self)
+        }
+    }
+    pub fn control_immune(&self, game: &Game) -> bool {
+        self.role(game).control_immune()
+    }
+    pub fn team(&self, game: &Game) -> Option<Team> {
+        self.role_state(game).clone().team(game, *self)
+    }
+    pub fn end_game_condition(&self, game: &Game) -> EndGameCondition {
+        EndGameCondition::from_role(self.role(game))
+    }
+
     /*
         Role functions
     */
-    
-    pub fn suspicious(&self, game: &Game) -> bool {
-        self.role_state(game).suspicious(game, *self)
-    }
-    pub fn defense(&self, game: &Game) -> u8 {
-        self.role_state(game).defense(game, *self)
-    }
-    pub fn control_immune(&self, game: &Game) -> bool {
-        self.role_state(game).control_immune(game, *self)
-    }
-    pub fn roleblock_immune(&self, game: &Game) -> bool {
-        self.role_state(game).roleblock_immune(game, *self)
-    }
-    pub fn end_game_condition(&self, game: &Game) -> EndGameCondition {
-        self.role_state(game).end_game_condition(game, *self)
-    }
-    pub fn team(&self, game: &Game) -> Option<Team> {
-        self.role_state(game).team(game, *self)
-    }
-
-
 
     pub fn can_night_target(&self, game: &Game, target_ref: PlayerReference) -> bool {
         self.role_state(game).clone().can_night_target(game, *self, target_ref)

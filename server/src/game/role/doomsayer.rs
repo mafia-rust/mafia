@@ -7,7 +7,6 @@ use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::FactionAlignment;
-use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::team::Team;
@@ -48,12 +47,14 @@ impl DoomsayerGuess{
             Role::Medium => Some(DoomsayerGuess::Medium),
             Role::Retributionist => Some(DoomsayerGuess::Retributionist),
             //Mafia
-            Role::Mafioso | Role::Godfather |
-            Role::Consort | Role::Blackmailer | Role::Consigliere | Role::Witch | Role::Necromancer |
+            Role::Godfather | Role::Mafioso | 
+            Role::Consort | Role::Blackmailer | Role::Consigliere | 
+            Role::Witch | Role::Necromancer |
             Role::Janitor | Role::Framer => Some(DoomsayerGuess::Mafia),
             //Neutral
-            Role::Jester | Role::Executioner | Role::Doomsayer | Role::Politician |
-            Role::Arsonist | Role::Werewolf | Role::Death |
+            Role::Jester | Role::Executioner | Role::Politician |
+            Role::Arsonist | Role::Werewolf | 
+            Role::Doomsayer | Role::Death |
             Role::Vampire | Role::Amnesiac => Some(DoomsayerGuess::Neutral),
         }
     }
@@ -70,11 +71,7 @@ pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::Neutral
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 impl RoleStateImpl for Doomsayer {
-    fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {true}
-    fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
-    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::None}
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
 
 

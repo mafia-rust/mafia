@@ -5,7 +5,6 @@ use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::{FactionAlignment, Faction};
-use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::team::Team;
@@ -24,11 +23,7 @@ pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownInv
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Spy {
-    fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
-    fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
-    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::Town}
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
 
 

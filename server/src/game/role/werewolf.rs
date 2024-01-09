@@ -5,7 +5,6 @@ use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::FactionAlignment;
-use crate::game::end_game_condition::EndGameCondition;
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
@@ -23,23 +22,13 @@ pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::Neutral
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Werewolf {
-    fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {true}
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {1}
-    fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
-    fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
-    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::Werewolf}
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         
 
         match priority {
-            Priority::Deception => {
-                //make werewolf look like jester on night 1 and 3
-                if game.day_number() == 1 || game.day_number() == 3 {
-                    actor_ref.set_night_appeared_role(game, Role::Jester);
-                }
-            },
             Priority::Kill => {
 
                 if game.day_number() == 1 || game.day_number() == 3 {

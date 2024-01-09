@@ -5,7 +5,6 @@ use crate::game::grave::{GraveKiller, Grave, GraveDeathCause};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::{FactionAlignment, Faction};
-use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
 use crate::game::Game;
@@ -22,11 +21,7 @@ pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::Neutral
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Politician {
-    fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {true}
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {1}
-    fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
-    fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
-    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::None}
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
 
 
