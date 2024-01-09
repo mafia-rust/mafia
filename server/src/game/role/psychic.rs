@@ -52,7 +52,6 @@ impl RoleStateImpl for Psychic {
         false
     }
     fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        // crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, false)
         vec![]
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
