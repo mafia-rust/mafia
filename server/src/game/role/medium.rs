@@ -87,7 +87,7 @@ impl RoleStateImpl for Medium {
             },
             PhaseState::Night => {
                 let mut out = vec![];
-                if PlayerReference::all_players(game).into_iter()
+                if PlayerReference::all_players(game)
                     .any(|med|{
                         if let RoleState::Medium(medium_state) = med.role_state(game){
                             if Some(actor_ref) == medium_state.seanced_target{

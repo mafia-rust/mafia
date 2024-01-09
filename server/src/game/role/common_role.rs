@@ -43,7 +43,7 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         },
         PhaseState::Night => {
             let mut out = vec![];
-            if PlayerReference::all_players(game).into_iter()
+            if PlayerReference::all_players(game)
                 .any(|med|{
                     if let RoleState::Medium(medium_state) = med.role_state(game){
                         if Some(actor_ref) == medium_state.seanced_target{
@@ -84,7 +84,7 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
     }
     if
         game.current_phase().phase() == PhaseType::Night &&
-        PlayerReference::all_players(game).into_iter()
+        PlayerReference::all_players(game)
             .any(|med|{
                 if let RoleState::Medium(medium_state) = med.role_state(game){
                     if Some(actor_ref) == medium_state.seanced_target{
@@ -105,18 +105,15 @@ pub(super) fn get_won_game(game: &Game, actor_ref: PlayerReference) -> bool {
     //then the actor_ref's role won the game
     
     //get all remaining endgameconditions THAT ARE NOT the actor_ref's role's endgamecondition
-    let remaining_end_game_conditions = PlayerReference::all_players(game).into_iter()
+    PlayerReference::all_players(game)
         .filter(|player_ref|
             player_ref.alive(game)
         )
         .map(|player_ref|player_ref.role_state(game).end_game_condition(game, player_ref))
-        .collect::<Vec<_>>();
-
-    //if the only remaining endgame conditions are none and or the actor_ref's role's endgamecondition then true
-    remaining_end_game_conditions.iter().all(|end_game_condition|
-        *end_game_condition == EndGameCondition::None || 
-        *end_game_condition == actor_ref.role_state(game).end_game_condition(game, actor_ref)
-    )
+        .all(|end_game_condition|
+            end_game_condition == EndGameCondition::None || 
+            end_game_condition == actor_ref.role_state(game).end_game_condition(game, actor_ref)
+        )
 }
 
 

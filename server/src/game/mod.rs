@@ -177,7 +177,7 @@ impl Game {
     pub fn game_is_over(&self) -> bool {
         //find list of all remaining teams, no duplicates, and remove none
         let remaining_teams: Vec<EndGameCondition> = 
-            PlayerReference::all_players(self).into_iter()
+            PlayerReference::all_players(self)
                 .filter(|p|p.alive(self) && p.end_game_condition(self) != EndGameCondition::None)
                 .map(|p|p.end_game_condition(self))
                 .collect::<std::collections::HashSet<EndGameCondition>>().into_iter().collect::<Vec<EndGameCondition>>();
@@ -185,9 +185,9 @@ impl Game {
         //if there are no teams left and multiple amnesiacs alive then the game is not over
         if
             remaining_teams.is_empty() && 
-            PlayerReference::all_players(self).into_iter()
+            PlayerReference::all_players(self)
                 .filter(|p|p.alive(self) && p.role_state(self).role() == role::Role::Amnesiac)
-                .collect::<Vec<_>>().len() > 1 
+                .count() > 1 
         {
             return false;
         }
@@ -244,7 +244,7 @@ impl Game {
         self.phase_machine.time_remaining = self.settings.phase_times.get_time_for(self.current_phase().phase());
 
         //if there are less than 3 players alive then the game is sped up by 2x
-        if PlayerReference::all_players(self).into_iter().filter(|p|p.alive(self)).collect::<Vec<_>>().len() <= 3{
+        if PlayerReference::all_players(self).filter(|p|p.alive(self)).count() <= 3{
             self.phase_machine.time_remaining /= 2;
         }
 

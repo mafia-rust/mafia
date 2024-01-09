@@ -116,7 +116,6 @@ impl Psychic {
 
     fn get_valid_players(game: &Game, actor_ref: PlayerReference)->Vec<PlayerReference>{
         PlayerReference::all_players(game)
-            .into_iter()
             .filter(|player_ref|player_ref.alive(game) && *player_ref!=actor_ref)
             .collect()
     }

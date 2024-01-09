@@ -107,7 +107,7 @@ impl PlayerReference{
     }
     
     pub fn lookout_seen_players(self, game: &Game) -> Vec<PlayerReference> {
-        PlayerReference::all_players(game).into_iter().filter(|player_ref|{
+        PlayerReference::all_players(game).filter(|player_ref|{
             player_ref.tracker_seen_visits(game).iter().any(|other_visit| 
                 other_visit.target == self && !other_visit.astral
             )
