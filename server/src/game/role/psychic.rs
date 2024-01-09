@@ -115,7 +115,20 @@ impl Psychic {
             .collect()
     }
 
-    fn player_is_evil(game: &Game, player_ref: PlayerReference)->bool{
-        player_ref.role(game).faction_alignment().faction()!=Faction::Town
+    fn player_is_evil(game: &Game, player_ref: PlayerReference)-> bool {
+
+        if player_ref.doused(game) || player_ref.night_framed(game) {return true;}
+
+        match player_ref.role(game).faction_alignment().faction() {
+            Faction::Town => false,
+            _ => match player_ref.role(game) {
+                //exceptions
+                super::Role::Godfather => false,
+                super::Role::Jester => false,
+                super::Role::Executioner => false,
+                super::Role::Werewolf => if game.day_number() == 1 || game.day_number() == 3 {false} else {true},
+                _ => true
+            }
+        }
     }
 }

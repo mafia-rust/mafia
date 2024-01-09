@@ -69,6 +69,9 @@ impl RoleStateImpl for Sheriff {
 
 impl Sheriff {
     pub fn player_is_suspicious(game: &Game, player_ref: PlayerReference) -> bool {
+
+        if player_ref.doused(game) || player_ref.night_framed(game) {return true;}
+
         match player_ref.role(game).faction_alignment().faction() {
             Faction::Town => false,
             _ => match player_ref.role(game) {
