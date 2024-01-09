@@ -162,13 +162,13 @@ impl PlayerReference{
         self.role_state(game).clone().team(game, *self)
     }
     pub fn end_game_condition(&self, game: &Game) -> EndGameCondition {
-        EndGameCondition::from_role(self.role(game))
+        self.role(game).end_game_condition()
     }
     pub fn has_innocent_aura(&self, game: &Game) -> bool {
         self.role(game).has_innocent_aura(game)
     }
     pub fn has_suspicious_aura(&self, game: &Game) -> bool {
-        self.night_framed(game) || self.doused(game)
+        self.night_framed(game)
     }
 
     /*
