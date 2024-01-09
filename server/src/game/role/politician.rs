@@ -111,7 +111,7 @@ impl RoleStateImpl for Politician {
 }
 
 pub fn is_town_remaining(game: &Game) -> bool {
-    PlayerReference::all_players(game).into_iter().any(|player|
+    PlayerReference::all_players(game).any(|player|
         player.alive(game) && player.role(game).faction_alignment().faction() == Faction::Town
     )
 }

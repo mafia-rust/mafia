@@ -95,12 +95,12 @@ export function translateChatMessage(message: ChatMessage): string {
             if(message.messageSender.type === "player"){
                 return translate("chatMessage.normal",
                     GAME_MANAGER.state.players[message.messageSender.player].toString(), 
-                    sanitizePlayerMessage(message.text)
+                    sanitizePlayerMessage(replaceMentions(message.text, GAME_MANAGER.state.players))
                 );
             } else {
                 return translate("chatMessage.normal",
                     translate("role."+message.messageSender.type+".name"),
-                    sanitizePlayerMessage(message.text)
+                    sanitizePlayerMessage(replaceMentions(message.text, GAME_MANAGER.state.players))
                 );
             }
         case "whisper":

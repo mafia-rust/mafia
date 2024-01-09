@@ -447,7 +447,7 @@ impl Lobby {
             LobbyState::Game { game, .. } => {
                 game.tick(time_passed);
                 
-                if !PlayerReference::all_players(game).iter().any(|p| p.is_connected(game)) {
+                if !PlayerReference::all_players(game).any(|p| p.is_connected(game)) {
                     self.lobby_state = LobbyState::Closed;
                 }
             }
@@ -509,7 +509,7 @@ impl Lobby {
     
     fn send_players_game(game: &mut Game){
 
-        let players: Vec<String> = PlayerReference::all_players(game).into_iter().map(|p|
+        let players: Vec<String> = PlayerReference::all_players(game).map(|p|
             p.name(game).clone()
         ).collect();
 

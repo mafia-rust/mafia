@@ -48,7 +48,7 @@ impl PlayerReference{
         // General
         self.send_packets(game, vec![
             ToClientPacket::GamePlayers{ 
-                players: PlayerReference::all_players(game).into_iter().map(|p|p.name(game).clone()).collect()
+                players: PlayerReference::all_players(game).map(|p|p.name(game).clone()).collect()
             },
             ToClientPacket::ExcludedRoles { roles: game.settings.excluded_roles.clone() },
             ToClientPacket::RoleList {role_list: game.settings.role_list.clone()},
@@ -58,7 +58,7 @@ impl PlayerReference{
                 day_number: game.phase_machine.day_number 
             },
             ToClientPacket::PlayerAlive{
-                alive: PlayerReference::all_players(game).into_iter().map(|p|p.alive(game)).collect()
+                alive: PlayerReference::all_players(game).map(|p|p.alive(game)).collect()
             }
         ]);
 

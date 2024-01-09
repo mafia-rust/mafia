@@ -52,7 +52,6 @@ impl RoleStateImpl for Crusader {
                 }
 
                 let non_town_visitor: Option<PlayerReference> = PlayerReference::all_players(game)
-                    .into_iter()
                     .filter(|other_player_ref|
                         *other_player_ref != actor_ref &&
                         other_player_ref.role(game).faction_alignment().faction() != Faction::Town &&
@@ -67,7 +66,6 @@ impl RoleStateImpl for Crusader {
                     non_town_visitor.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Crusader), 1, false);
                 }else{
                     let town_visitor: Option<PlayerReference> = PlayerReference::all_players(game)
-                        .into_iter()
                         .filter(|other_player_ref|
                             *other_player_ref != actor_ref &&
                             other_player_ref.night_visits(game)

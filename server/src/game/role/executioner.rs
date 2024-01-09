@@ -80,7 +80,6 @@ impl RoleStateImpl for Executioner {
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
         
         if let Some(target) = PlayerReference::all_players(game)
-            .into_iter()
             .filter(|p|
                 p.role(game).faction_alignment().faction() == Faction::Town && 
                 p.role(game).faction_alignment() != FactionAlignment::TownPower &&

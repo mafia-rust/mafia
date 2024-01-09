@@ -61,15 +61,39 @@ impl PlayerReference{
         Ok(out)
     }
 
-    pub fn all_players(game: &Game)->Vec<PlayerReference>{
-        let mut out = Vec::new();
-        for player_index in 0..game.players.len(){
-            out.push(PlayerReference::new_unchecked(player_index as PlayerIndex));
+    pub fn all_players(game: &Game) -> PlayerReferenceIterator {
+        PlayerReferenceIterator {
+            current: 0,
+            end: game.players.len() as PlayerIndex
         }
-        out
     }
 }
 
+pub struct PlayerReferenceIterator {
+    current: PlayerIndex,
+    end: PlayerIndex
+}
+
+impl Iterator for PlayerReferenceIterator {
+    type Item = PlayerReference;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.current >= self.end {
+            None
+        } else {
+            let ret = PlayerReference::new_unchecked(self.current);
+            self.current += 1;
+            Some(ret)
+        }
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let size = (self.end - self.current) as usize;
+        (size, Some(size))
+    }
+}
+
+impl ExactSizeIterator for PlayerReferenceIterator {}
 
 impl Serialize for PlayerReference {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {

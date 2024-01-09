@@ -58,7 +58,6 @@ impl RoleStateImpl for Veteran {
                 if !self.alerting_tonight {return}
 
                 for other_player_ref in PlayerReference::all_players(game)
-                    .into_iter()
                     .filter(|other_player_ref|
                         *other_player_ref != actor_ref &&
                         other_player_ref.night_visits(game)

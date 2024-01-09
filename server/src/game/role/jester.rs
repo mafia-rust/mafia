@@ -40,7 +40,6 @@ impl RoleStateImpl for Jester {
         if !self.lynched_yesterday {return}
         
         let all_killable_players: Vec<PlayerReference> = PlayerReference::all_players(game)
-            .into_iter()
             .filter(|player_ref|{
                 player_ref.alive(game) &&
                 *player_ref != actor_ref &&

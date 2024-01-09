@@ -81,7 +81,7 @@ impl PhaseState {
             },
             PhaseState::Voting { trials_left } => {
                 let required_votes = 1+
-                    (PlayerReference::all_players(game).iter().filter(|p| p.alive(game)).collect::<Vec<&PlayerReference>>().len()/2);
+                    (PlayerReference::all_players(game).filter(|p| p.alive(game)).count()/2);
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialInformation { required_votes, trials_left });
                 
 
@@ -125,7 +125,7 @@ impl PhaseState {
             &PhaseState::Judgement { trials_left, player_on_trial } => {
 
                 game.add_messages_to_chat_group(ChatGroup::All, 
-                PlayerReference::all_players(game).into_iter()
+                PlayerReference::all_players(game)
                     .filter(|player_ref|{
                         player_ref.alive(game) && *player_ref != player_on_trial
                     })

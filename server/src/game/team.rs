@@ -1,3 +1,5 @@
+use rand::seq::SliceRandom;
+
 use super::{player::PlayerReference, Game, role_list::Faction, role::{Role, godfather::Godfather}};
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
@@ -14,9 +16,7 @@ impl Team{
 
     pub fn members(&self, game: &Game) -> Vec<PlayerReference> {
         PlayerReference::all_players(game)
-            .iter()
             .filter(|p| p.team(game) == Some(*self))
-            .cloned()
             .collect()
     }
     
@@ -144,15 +144,13 @@ impl Mafia{
 
         //if no mafia killing exists, the code can reach here
         let list_of_living_mafia = PlayerReference::all_players(game)
-            .into_iter()
             .filter(|p| 
                 p.role(game).faction_alignment().faction() == Faction::Mafia && p.alive(game)
             )
             .collect::<Vec<PlayerReference>>();
         
         //choose random mafia to be godfather
-        let random_mafia = 
-            rand::seq::SliceRandom::choose(list_of_living_mafia.as_slice(), &mut rand::thread_rng());
+        let random_mafia = list_of_living_mafia.choose(&mut rand::thread_rng());
 
         if let Some(random_mafia) = random_mafia{
             random_mafia.set_role(game, super::role::RoleState::Godfather(Godfather::default()));

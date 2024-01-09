@@ -145,9 +145,9 @@ impl RoleStateImpl for Doomsayer {
 impl Doomsayer{
     pub fn check_and_convert_to_jester(game: &mut Game, actor_ref: PlayerReference){
         if 
-            PlayerReference::all_players(game).into_iter().filter(|player|
+            PlayerReference::all_players(game).filter(|player|
                 player.alive(game) && DoomsayerGuess::convert_to_guess(player.role(game)).is_some() && *player != actor_ref
-            ).collect::<Vec<PlayerReference>>().len() < 3 && actor_ref.alive(game)
+            ).count() < 3 && actor_ref.alive(game)
         {
             actor_ref.set_role(game, RoleState::Jester(Jester::default()));
         }
