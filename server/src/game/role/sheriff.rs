@@ -3,8 +3,7 @@ use serde::Serialize;
 use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::FactionAlignment;
-use crate::game::end_game_condition::EndGameCondition;
+use crate::game::role_list::{FactionAlignment, Faction};
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::team::Team;
@@ -17,11 +16,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub struct Sheriff;
 
 impl RoleStateImpl for Sheriff {
-    fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
-    fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
-    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::Town}
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
 
 
@@ -74,6 +69,19 @@ impl RoleStateImpl for Sheriff {
 
 impl Sheriff {
     pub fn player_is_suspicious(game: &Game, player_ref: PlayerReference) -> bool {
-        player_ref.night_appeared_role(game).default_state().suspicious(game, player_ref)
+
+        if player_ref.doused(game) || player_ref.night_framed(game) {return true;}
+
+        match player_ref.role(game).faction_alignment().faction() {
+            Faction::Town => false,
+            _ => match player_ref.role(game) {
+                //exceptions
+                super::Role::Godfather => false,
+                super::Role::Jester => false,
+                super::Role::Executioner => false,
+                super::Role::Werewolf => if game.day_number() == 1 || game.day_number() == 3 {false} else {true},
+                _ => true
+            }
+        }
     }
 }

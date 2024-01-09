@@ -112,6 +112,18 @@ fn sheriff_basic() {
 }
 
 #[test]
+fn sheriff_godfather() {
+    kit::scenario!(game in Night 1 where
+        sher: Sheriff,
+        mafia: Godfather
+    );
+    sher.set_night_targets(vec![mafia]);
+    
+    game.skip_to(PhaseType::Morning, 2);
+    assert_contains!(sher.get_messages(), ChatMessage::SheriffResult { suspicious: false });
+}
+
+#[test]
 fn seer_basic() {
     kit::scenario!(game in Night 1 where
         seer: Seer,

@@ -4,7 +4,6 @@ use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::FactionAlignment;
-use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
 use crate::game::Game;
@@ -17,11 +16,7 @@ pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaSu
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 impl RoleStateImpl for Consigliere {
-    fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {true}
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
-    fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
-    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::Mafia}
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Mafia)}
 
 
@@ -38,7 +33,7 @@ impl RoleStateImpl for Consigliere {
             }
 
             let message = ChatMessage::ConsigliereResult{
-                role: target_ref.night_appeared_role(game), 
+                role: target_ref.role(game), 
                 visited_by: visit.target.lookout_seen_players(game).into_iter().filter(|p|actor_ref!=*p).map(|player_ref|player_ref.index()).collect(),
                 visited: target_ref.tracker_seen_visits(game).iter().map(|v|v.target.index()).collect()
             };
@@ -74,5 +69,11 @@ impl RoleStateImpl for Consigliere {
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
     }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
+    }
+}
+
+impl Consigliere {
+    pub fn new() -> Self {
+        Self{}
     }
 }

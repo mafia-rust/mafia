@@ -38,21 +38,21 @@ impl PlayerReference{
             PhaseType::Judgement => {},
             PhaseType::Evening => {},
             PhaseType::Night => {
-                self.set_night_died(game,            false);
-                self.set_night_attacked(game,        false);
-                self.set_night_roleblocked(game,     false);
-                self.set_night_defense(game,         self.role_state(game).defense(game, *self));
-                self.set_night_appeared_role(game,   self.role(game));
+                self.set_night_died(game, false);
+                self.set_night_attacked(game, false);
+                self.set_night_roleblocked(game, false);
+                self.set_night_defense(game, self.role_state(game).defense(game, *self));
                 self.set_night_appeared_visits(game, None);
-                self.set_night_silenced(game,       false);
-                self.set_chosen_targets(game,   vec![]);
-                self.set_night_visits(game,          vec![]);
-                self.set_night_messages(game,  vec![]);
+                self.set_night_framed(game, false);
+                self.set_night_silenced(game, false);
+                self.set_chosen_targets(game, vec![]);
+                self.set_night_visits(game, vec![]);
+                self.set_night_messages(game, vec![]);
                 
-                self.set_night_grave_role(game,  GraveRole::Role(self.role(game)));
-                self.set_night_grave_killers(game,  vec![]);
-                self.set_night_grave_will(game,  self.will(game).clone());
-                self.set_night_grave_death_notes(game,  vec![]);
+                self.set_night_grave_role(game, GraveRole::Role(self.role(game)));
+                self.set_night_grave_killers(game, vec![]);
+                self.set_night_grave_will(game, self.will(game).clone());
+                self.set_night_grave_death_notes(game, vec![]);
             }
         }
 

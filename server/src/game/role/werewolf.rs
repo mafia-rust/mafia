@@ -5,7 +5,6 @@ use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::FactionAlignment;
-use crate::game::end_game_condition::EndGameCondition;
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
@@ -23,70 +22,62 @@ pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::Neutral
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Werewolf {
-    fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {true}
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {1}
-    fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
-    fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
-    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::Werewolf}
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         
 
         match priority {
-            Priority::Deception => {
-                //make werewolf look like jester on night 1 and 3
-                if game.day_number() == 1 || game.day_number() == 3 {
-                    actor_ref.set_night_appeared_role(game, Role::Jester);
-                }
-            },
             Priority::Kill => {
 
                 if game.day_number() == 1 || game.day_number() == 3 {
                     return;
                 }
 
-                if let Some(first_visit) = actor_ref.night_visits(game).first() {
+                match actor_ref.night_visits(game).first() {
                     //rampage at target
-                    let target_ref = first_visit.target;
-                    if target_ref.night_jailed(game){
-                        actor_ref.push_night_message(game, ChatMessage::TargetJailed);
-                        return
-                    }
-                    
-
-                    for other_player_ref in 
-                        target_ref.lookout_seen_players(game).into_iter().filter(|p|actor_ref!=*p)
-                        .collect::<Vec<PlayerReference>>()
-                    {
-                        other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
-                    }
-                    target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
-
-                }else{
-                    //rampage at home
-
-                    
-                    
-                    if actor_ref.night_jailed(game){
-                        //kill all jailors NOT trying to execute me
-                        for player_ref in PlayerReference::all_players(game){
-                            if 
-                                player_ref.alive(game) && 
-                                player_ref.role(game) == Role::Jailor &&
-                                player_ref.tracker_seen_visits(game).into_iter().any(|v|v.target!=actor_ref)
-                            {
-                                player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
-                            }
+                    Some(first_visit) => {
+                        let target_ref = first_visit.target;
+                        if target_ref.night_jailed(game){
+                            actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                            return
                         }
-                    }else{
+                        
+
                         for other_player_ref in 
-                            actor_ref.lookout_seen_players(game).into_iter().filter(|p|actor_ref!=*p)
+                            target_ref.veteran_seen_players(game).into_iter().filter(|p|actor_ref!=*p)
                             .collect::<Vec<PlayerReference>>()
                         {
                             other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
                         }
-                    }
+                        target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
+                    },
+
+
+
+                    //rampage at home
+                    None => {
+                        if actor_ref.night_jailed(game){
+                            //kill all jailors NOT trying to execute me
+                            for jailor_ref in PlayerReference::all_players(game){
+                                if 
+                                    jailor_ref.alive(game) && 
+                                    jailor_ref.role(game) == Role::Jailor &&
+                                    jailor_ref.night_visits(game).into_iter().all(|visit|visit.target!=actor_ref)
+                                {
+                                    jailor_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
+                                }
+                            }
+                        }else{
+                            for other_player_ref in 
+                                actor_ref.veteran_seen_players(game).into_iter().filter(|p|actor_ref!=*p)
+                                .collect::<Vec<PlayerReference>>()
+                            {
+                                other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
+                            }
+                        }
+                    },
                 }
             },
             Priority::Investigative => {
@@ -97,7 +88,7 @@ impl RoleStateImpl for Werewolf {
                 if game.day_number() == 1 || game.day_number() == 3 {
                     
 
-                    let mut tracked_players: Vec<PlayerReference> = actor_ref.lookout_seen_players(game).into_iter().filter(|p|actor_ref!=*p).collect();
+                    let mut tracked_players: Vec<PlayerReference> = actor_ref.veteran_seen_players(game).into_iter().filter(|p|actor_ref!=*p).collect();
                 
                     if let Some(first_visit) = actor_ref.night_visits(game).first() {
                         let target_ref = first_visit.target;
