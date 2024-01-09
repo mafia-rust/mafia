@@ -1,6 +1,6 @@
 import React from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER, { find } from "../../../index";
+import GAME_MANAGER from "../../../index";
 import "../gameScreen.css";
 import "./chatMenu.css"
 import GameState, { PlayerIndex } from "../../../game/gameState.d";
@@ -21,11 +21,11 @@ type ChatMenuState = {
 export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuState> {
     static prependWhisper(playerIndex: PlayerIndex) {
         
-        if(ChatMenu.instance === null)
-            return;
-        ChatMenu.instance!.setState({
-            chatField: "/w @" + (playerIndex + 1) + " " + ChatMenu.instance!.state.chatField,
-        });
+        if(ChatMenu.instance !== null){
+            ChatMenu.instance.setState({
+                chatField: "/w @" + (playerIndex + 1) + " " + ChatMenu.instance.state.chatField,
+            });
+        }
     }
     static setFilter(regex: RegExp | null) {
         if(ChatMenu.instance === null)
@@ -120,12 +120,12 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         ChatMenu.instance.history_poller.reset();
         if (text.startsWith("/w")) {
             const recipient = ChatMenu.instance.state.gameState.players.find(player => 
-                RegExp(`^${find(player.toString()).source}`).test(text.substring(3))
+                RegExp(`^@${player.index+1}`).test(text.substring(3))
             );
             if (recipient !== undefined) {
                 GAME_MANAGER.sendSendWhisperPacket(
                     recipient.index,
-                    text.substring(4 + recipient.toString().length)
+                    text.substring(5 + recipient.index.toString().length)
                 ); 
             } else {
                 // Malformed whisper

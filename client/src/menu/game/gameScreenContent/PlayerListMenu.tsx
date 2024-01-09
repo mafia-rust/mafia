@@ -122,7 +122,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                     this.state.gameState.phase==="voting" ? 
                     player.numVoted+"-> ":""
                 }
-                <button className="whisper" onClick={()=>ChatMenu.prependWhisper(player.index)}>
+                <button className="whisper" onClick={()=>{ChatMenu.prependWhisper(player.index)}}>
                     <h4>
                         <StyledText>{(player.alive?"":" "+translate("tag.dead")+"")}</StyledText>
                     </h4>
