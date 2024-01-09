@@ -79,7 +79,7 @@ impl Psychic {
         let mut rng = rand::thread_rng();
 
         let all_non_townies: Vec<_> = Psychic::get_valid_players(game, actor_ref).into_iter()
-            .filter(|p|p.night_appeared_role(game).faction_alignment().faction()!=Faction::Town) .collect();
+            .filter(|player_ref|!Psychic::player_is_evil(game, *player_ref)).collect();
 
         let Some(selected_ref) = all_non_townies.choose(&mut rng) else {return ChatMessage::PsychicFailed};
 
@@ -99,7 +99,7 @@ impl Psychic {
         let mut rng = rand::thread_rng();
 
         let all_townies: Vec<_> = Psychic::get_valid_players(game, actor_ref).into_iter()
-            .filter(|p|p.night_appeared_role(game).faction_alignment().faction()==Faction::Town).collect();
+            .filter(|player_ref|!Psychic::player_is_evil(game, *player_ref)).collect();
 
         let Some(selected_ref) = all_townies.choose(&mut rng) else {return ChatMessage::PsychicFailed};
 
@@ -120,4 +120,7 @@ impl Psychic {
             .collect()
     }
 
+    fn player_is_evil(game: &Game, player_ref: PlayerReference)->bool{
+        player_ref.night_appeared_role(game).faction_alignment().faction()!=Faction::Town
+    }
 }

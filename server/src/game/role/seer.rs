@@ -39,11 +39,8 @@ impl RoleStateImpl for Seer {
             return
         }
 
-        let message = ChatMessage::SeerResult{enemies:
-            !EndGameCondition::can_win_together(
-                first_visit.target.night_appeared_role(game).default_state().end_game_condition(game, first_visit.target), 
-                second_visit.target.night_appeared_role(game).default_state().end_game_condition(game, second_visit.target)
-            )
+        let message = ChatMessage::SeerResult{
+            enemies: Seer::players_are_enemies(game, first_visit.target, second_visit.target)
         };
         
         actor_ref.push_night_message(game, message);
@@ -88,5 +85,13 @@ impl RoleStateImpl for Seer {
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
     }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
+    }
+}
+impl Seer{
+    pub fn players_are_enemies(game: &Game, a: PlayerReference, b: PlayerReference) -> bool {
+        !EndGameCondition::can_win_together(
+            a.night_appeared_role(game).default_state().end_game_condition(game, a), 
+            b.night_appeared_role(game).default_state().end_game_condition(game, b)
+        )
     }
 }

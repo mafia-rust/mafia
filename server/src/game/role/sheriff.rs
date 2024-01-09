@@ -33,10 +33,12 @@ impl RoleStateImpl for Sheriff {
         if let Some(visit) = actor_ref.night_visits(game).first(){
             
             if visit.target.night_jailed(game){
-                actor_ref.push_night_message(game, ChatMessage::TargetJailed );
+                actor_ref.push_night_message(game, ChatMessage::TargetJailed);
                 return
             }
-            let message = ChatMessage::SheriffResult { suspicious: visit.target.night_appeared_role(game).default_state().suspicious(game, visit.target)};
+            let message = ChatMessage::SheriffResult {
+                suspicious: Sheriff::player_is_suspicious(game, visit.target)
+            };
             
             actor_ref.push_night_message(game, message);
         }
@@ -67,5 +69,11 @@ impl RoleStateImpl for Sheriff {
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
     }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
+    }
+}
+
+impl Sheriff {
+    pub fn player_is_suspicious(game: &Game, player_ref: PlayerReference) -> bool {
+        player_ref.night_appeared_role(game).default_state().suspicious(game, player_ref)
     }
 }
