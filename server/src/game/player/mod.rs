@@ -53,19 +53,19 @@ struct PlayerVotingVariables{
     verdict:        Verdict,
 }
 struct PlayerNightVariables{
-    died:           bool,
-    attacked:       bool,
-    jailed:         bool,
-    roleblocked:    bool,
-    defense:        u8,
+    died: bool,
+    attacked: bool,
+    jailed: bool,
+    roleblocked: bool,
+    defense: u8,
 
     appeared_visits: Option<Vec<Visit>>,
-    appeared_role:    Role,
+    framed: bool,
 
-    silenced:       bool,
+    silenced: bool,
 
     chosen_targets: Vec<PlayerReference>,
-    visits:         Vec<Visit>,
+    visits: Vec<Visit>,
 
     messages: Vec<ChatMessage>,
 
@@ -108,7 +108,7 @@ impl Player {
                 roleblocked:        false,
                 defense:            0,
                 appeared_visits:    None,
-                appeared_role:      role,
+                framed: false,
 
                 silenced:           false,
 
@@ -167,7 +167,7 @@ pub mod test {
                 roleblocked:        false,
                 defense:            0,
                 appeared_visits:    None,
-                appeared_role:      role,
+                framed:      false,
 
                 silenced:           false,
 

@@ -8,7 +8,7 @@ use crate::game::role_list::FactionAlignment;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
 use crate::game::Game;
-use super::{Priority, RoleStateImpl, Role};
+use super::{Priority, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
@@ -34,7 +34,7 @@ impl RoleStateImpl for Framer {
         if first_visit.target.night_jailed(game) {
             actor_ref.push_night_message(game, ChatMessage::TargetJailed);
         }else{
-            first_visit.target.set_night_appeared_role(game, Role::Framer);
+            first_visit.target.set_night_framed(game, true);
             first_visit.target.set_night_appeared_visits(game, Some(vec![
                 Visit{ target: second_visit.target, astral: false, attack: false }
             ]));

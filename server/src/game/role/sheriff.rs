@@ -69,6 +69,16 @@ impl RoleStateImpl for Sheriff {
 
 impl Sheriff {
     pub fn player_is_suspicious(game: &Game, player_ref: PlayerReference) -> bool {
-        player_ref.night_appeared_role(game).default_state().suspicious(game, player_ref)
+        match player_ref.role(game).faction_alignment().faction() {
+            Faction::Town => false,
+            _ => match player_ref.role(game) {
+                //exceptions
+                super::Role::Godfather => false,
+                super::Role::Jester => false,
+                super::Role::Executioner => false,
+                super::Role::Werewolf => if game.day_number() == 1 || game.day_number() == 3 {false} else {true},
+                _ => true
+            }
+        }
     }
 }

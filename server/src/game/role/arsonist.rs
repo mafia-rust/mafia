@@ -64,13 +64,6 @@ impl RoleStateImpl for Arsonist {
                     }
                 }
 
-                //Make all doused players look like arsonist
-                for player_ref in PlayerReference::all_players(game){
-                    if player_ref.doused(game) {
-                        player_ref.set_night_appeared_role(game, Role::Arsonist);
-                    }
-                }
-
                 //undouse me
                 actor_ref.set_doused(game, false);
             },

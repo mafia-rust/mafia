@@ -10,6 +10,8 @@ use crate::game::team::Team;
 
 use serde::{Serialize, Deserialize};
 
+use super::end_game_condition::EndGameCondition;
+
 trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8;
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team>;
@@ -271,5 +273,8 @@ impl Role{
             Role::Necromancer => true,
             _ => false,
         }
+    }
+    pub fn end_game_condition(&self)->EndGameCondition{
+        EndGameCondition::from_role(*self)
     }
 }

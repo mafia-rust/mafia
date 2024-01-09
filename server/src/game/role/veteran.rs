@@ -57,13 +57,8 @@ impl RoleStateImpl for Veteran {
             Priority::Kill => {
                 if !self.alerting_tonight {return}
 
-                for other_player_ref in PlayerReference::all_players(game)
-                    .filter(|other_player_ref|
-                        *other_player_ref != actor_ref &&
-                        other_player_ref.night_visits(game)
-                            .iter()
-                            .any(|v|!v.astral&&v.target==actor_ref)
-                    ).collect::<Vec<PlayerReference>>()
+                for other_player_ref in actor_ref.veteran_seen_players(game)
+                    .into_iter().filter(|other_player_ref|*other_player_ref != actor_ref).collect::<Vec<PlayerReference>>()
                 {
                     other_player_ref.push_night_message(game,
                         ChatMessage::VeteranAttackedYou 

@@ -86,8 +86,8 @@ impl RoleStateImpl for Seer {
 impl Seer{
     pub fn players_are_enemies(game: &Game, a: PlayerReference, b: PlayerReference) -> bool {
         !EndGameCondition::can_win_together(
-            a.night_appeared_role(game).default_state().end_game_condition(game, a), 
-            b.night_appeared_role(game).default_state().end_game_condition(game, b)
+            a.role(game).end_game_condition(), 
+            b.role(game).end_game_condition()
         )
     }
 }

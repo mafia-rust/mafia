@@ -33,7 +33,7 @@ impl RoleStateImpl for Consigliere {
             }
 
             let message = ChatMessage::ConsigliereResult{
-                role: target_ref.night_appeared_role(game), 
+                role: target_ref.role(game), 
                 visited_by: visit.target.lookout_seen_players(game).into_iter().filter(|p|actor_ref!=*p).map(|player_ref|player_ref.index()).collect(),
                 visited: target_ref.tracker_seen_visits(game).iter().map(|v|v.target.index()).collect()
             };
@@ -69,5 +69,11 @@ impl RoleStateImpl for Consigliere {
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
     }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
+    }
+}
+
+impl Consigliere {
+    pub fn new() -> Self {
+        Self{}
     }
 }

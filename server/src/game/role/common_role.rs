@@ -105,16 +105,16 @@ pub(super) fn get_won_game(game: &Game, actor_ref: PlayerReference) -> bool {
     //then the actor_ref's role won the game
     
     //get all remaining endgameconditions THAT ARE NOT the actor_ref's role's endgamecondition
-    PlayerReference::all_players(game)
+    let remaining_end_game_conditions = PlayerReference::all_players(game)
         .filter(|player_ref|
             player_ref.alive(game)
         )
-        .map(|player_ref|EndGameCondition::from_role(player_ref.role_state(game).role()))
+        .map(|player_ref|player_ref.role(game).end_game_condition())
         .collect::<Vec<_>>();
 
     //if the only remaining endgame conditions are none and or the actor_ref's role's endgamecondition then true
     remaining_end_game_conditions.iter().all(|end_game_condition|
         *end_game_condition == EndGameCondition::None || 
-        *end_game_condition == EndGameCondition::from_role(actor_ref.role_state(game).role())
+        *end_game_condition == actor_ref.role(game).end_game_condition()
     )
 }

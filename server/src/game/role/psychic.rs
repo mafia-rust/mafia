@@ -116,6 +116,6 @@ impl Psychic {
     }
 
     fn player_is_evil(game: &Game, player_ref: PlayerReference)->bool{
-        player_ref.night_appeared_role(game).faction_alignment().faction()!=Faction::Town
+        player_ref.role(game).faction_alignment().faction()!=Faction::Town
     }
 }
