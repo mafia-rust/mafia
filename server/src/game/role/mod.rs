@@ -3,7 +3,6 @@
 use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 use crate::game::Game;
-use crate::game::end_game_condition::EndGameCondition;
 use crate::game::chat::ChatGroup;
 use crate::game::role_list::FactionAlignment;
 use crate::game::phase::PhaseType;
@@ -11,14 +10,11 @@ use crate::game::team::Team;
 
 use serde::{Serialize, Deserialize};
 
-trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
-    fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool;
-    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8;
-    fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool;
-    fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool;
-    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition;
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team>;
+use super::end_game_condition::EndGameCondition;
 
+trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
+    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8;
+    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team>;
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority);
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference);
@@ -65,8 +61,8 @@ macros::roles! {
     Retributionist : retributionist,
 
     // Mafia
-    Mafioso : mafioso,
     Godfather : godfather,
+    Mafioso : mafioso,
     
     Consort : consort,
     Blackmailer : blackmailer,
@@ -80,12 +76,13 @@ macros::roles! {
     // Neutral
     Jester : jester,
     Executioner : executioner,
-    Doomsayer : doomsayer,
     Politician : politician,
+
+    Doomsayer : doomsayer,
+    Death : death,
 
     Arsonist : arsonist,
     Werewolf : werewolf,
-    Death : death,
 
     Vampire : vampire,
     Amnesiac : amnesiac
@@ -163,29 +160,9 @@ mod macros {
                         $(Self::$name(_) => Role::$name),*
                     }
                 }
-                pub fn suspicious(&self, game: &Game, actor_ref: PlayerReference) -> bool {
-                    match self {
-                        $(Self::$name(role_struct) => role_struct.suspicious(game, actor_ref)),*
-                    }
-                }
                 pub fn defense(&self, game: &Game, actor_ref: PlayerReference) -> u8 {
                     match self {
                         $(Self::$name(role_struct) => role_struct.defense(game, actor_ref)),*
-                    }
-                }
-                pub fn control_immune(&self, game: &Game, actor_ref: PlayerReference) -> bool {
-                    match self {
-                        $(Self::$name(role_struct) => role_struct.control_immune(game, actor_ref)),*
-                    }
-                }
-                pub fn roleblock_immune(&self, game: &Game, actor_ref: PlayerReference) -> bool {
-                    match self {
-                        $(Self::$name(role_struct) => role_struct.roleblock_immune(game, actor_ref)),*
-                    }
-                }
-                pub fn end_game_condition(&self, game: &Game, actor_ref: PlayerReference) -> EndGameCondition {
-                    match self {
-                        $(Self::$name(role_struct) => role_struct.end_game_condition(game, actor_ref)),*
                     }
                 }
                 pub fn team(&self, game: &Game, actor_ref: PlayerReference) -> Option<Team> {
@@ -276,4 +253,28 @@ mod macros {
     }
 
     pub(super) use {roles, priorities};
+}
+impl Role{
+    pub fn control_immune(&self)->bool{
+        match self {
+            Role::Retributionist => true,
+            Role::Witch => true,
+            Role::Necromancer => true,
+            Role::Doomsayer => true,
+            _ => false,
+        }
+    }
+    pub fn roleblock_immune(&self)->bool{
+        match self {
+            Role::Veteran => true,
+            Role::Escort => true,
+            Role::Retributionist => true,
+            Role::Witch => true,
+            Role::Necromancer => true,
+            _ => false,
+        }
+    }
+    pub fn end_game_condition(&self)->EndGameCondition{
+        EndGameCondition::from_role(*self)
+    }
 }

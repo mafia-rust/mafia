@@ -5,7 +5,6 @@ use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::FactionAlignment;
-use crate::game::end_game_condition::EndGameCondition;
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
@@ -20,11 +19,7 @@ pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::Neutral
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Arsonist {
-    fn suspicious(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {true}
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {1}
-    fn control_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
-    fn roleblock_immune(&self, _game: &Game, _actor_ref: PlayerReference) -> bool {false}
-    fn end_game_condition(&self, _game: &Game, _actor_ref: PlayerReference) -> EndGameCondition {EndGameCondition::Arsonist}
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -66,13 +61,6 @@ impl RoleStateImpl for Arsonist {
                 {
                     if Role::Arsonist != other_player_ref.role_state(game).role() {
                         other_player_ref.set_doused(game, true);
-                    }
-                }
-
-                //Make all doused players look like arsonist
-                for player_ref in PlayerReference::all_players(game){
-                    if player_ref.doused(game) {
-                        player_ref.set_night_appeared_role(game, Role::Arsonist);
                     }
                 }
 
