@@ -32,7 +32,7 @@ impl PlayerReference{
             PhaseType::Discussion => {},
             PhaseType::Voting => {
                 self.set_chosen_vote(game, None, false);
-                self.set_verdict(game, Verdict::Abstain, false);
+                self.set_verdict(game, Verdict::Abstain);
             },
             PhaseType::Testimony => {},
             PhaseType::Judgement => {},

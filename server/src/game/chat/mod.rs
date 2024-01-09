@@ -68,10 +68,6 @@ pub enum ChatMessage {
         player_index: PlayerIndex
     },
     #[serde(rename_all = "camelCase")]
-    JudgementVote{
-        voter_player_index: PlayerIndex
-    },
-    #[serde(rename_all = "camelCase")]
     JudgementVerdict{
         voter_player_index: PlayerIndex, 
         verdict: Verdict

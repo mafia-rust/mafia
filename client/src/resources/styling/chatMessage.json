@@ -8,7 +8,6 @@
     "trialInformation": "trial",
     "voted": "trial",
     "playerOnTrial": "trial",
-    "judgementVote": "trial",
     "judgementVerdict": "trial",
     "trialVerdict": "important",
     "targeted": "target",

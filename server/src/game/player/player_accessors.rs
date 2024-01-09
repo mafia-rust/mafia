@@ -175,20 +175,9 @@ impl PlayerReference{
     pub fn verdict(&self, game: &Game) -> Verdict{
         self.deref(game).voting_variables.verdict
     }
-    pub fn set_verdict(&self, game: &mut Game, verdict: Verdict, send_chat_message: bool){
-        
-        
+    pub fn set_verdict(&self, game: &mut Game, verdict: Verdict){
         self.send_packet(game, ToClientPacket::YourJudgement { verdict });
         self.deref_mut(game).voting_variables.verdict = verdict;
-
-        if send_chat_message {
-            game.add_message_to_chat_group(
-                ChatGroup::All, 
-                ChatMessage::JudgementVote{ 
-                    voter_player_index: self.index() 
-                }
-            );
-        }
     }
 
     /* 

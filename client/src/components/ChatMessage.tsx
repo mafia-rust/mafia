@@ -177,10 +177,6 @@ export function translateChatMessage(message: ChatMessage): string {
             return translate("chatMessage.playerOnTrial",
                 GAME_MANAGER.state.players[message.playerIndex].toString(),
             );
-        case "judgementVote":
-            return translate("chatMessage.judgementVote",
-                GAME_MANAGER.state.players[message.voterPlayerIndex].toString(),
-            );
         case "judgementVerdict":
             return translate("chatMessage.judgementVerdict",
                 GAME_MANAGER.state.players[message.voterPlayerIndex].toString(),
@@ -372,9 +368,6 @@ export type ChatMessage = {
 } | {
     type: "playerOnTrial", 
     playerIndex: PlayerIndex
-} | {
-    type: "judgementVote", 
-    voterPlayerIndex: PlayerIndex
 } | {
     type: "judgementVerdict", 
     voterPlayerIndex: PlayerIndex, 

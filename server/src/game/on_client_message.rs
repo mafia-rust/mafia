@@ -83,7 +83,7 @@ impl Game {
             ToServerPacket::Judgement { verdict } => {
                 if self.current_phase().phase() != PhaseType::Judgement {break 'packet_match;}
                 
-                sender_player_ref.set_verdict(self, verdict, true);
+                sender_player_ref.set_verdict(self, verdict);
             },
             ToServerPacket::Target { player_index_list }=>{
                 if self.current_phase().phase() != PhaseType::Night {break 'packet_match;}
