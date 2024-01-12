@@ -251,7 +251,6 @@ function getPageText(page: WikiPage): string {
                 translateChecked("wiki.entry.role."+role+".abilities") ?? translate("wiki.entry.role.noAbilities"),
                 translateChecked("wiki.entry.role."+role+".attributes") ?? translate("wiki.entry.role.noAttributes"),
                 roleData.maxCount === null ? translate("none") : roleData.maxCount,
-                roleData.suspicious ? translate("suspicious") : translate("verdict.innocent"),
                 translate("defense."+roleData.defense),
                 keywords
             )

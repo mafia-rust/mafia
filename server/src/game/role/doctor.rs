@@ -10,9 +10,6 @@ use crate::game::team::Team;
 use crate::game::Game;
 use super::{Priority, RoleState, RoleStateImpl};
 
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownProtective;
-pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-
 #[derive(Clone, Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Doctor {
@@ -29,6 +26,9 @@ impl Default for Doctor {
     }
 }
 
+pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownProtective;
+pub(super) const MAXIMUM_COUNT: Option<u8> = None;
+
 impl RoleStateImpl for Doctor {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
@@ -38,6 +38,15 @@ impl RoleStateImpl for Doctor {
         if actor_ref.night_jailed(game) {return;}
     
         match priority {
+            Priority::TopPriority => {
+                let mut self_heals_remaining = self.self_heals_remaining;
+                if self_heals_remaining > 0 {
+                    self_heals_remaining -= 1;
+                }
+                actor_ref.set_role_state(game, RoleState::Doctor(
+                    Doctor {self_heals_remaining, target_healed_ref: None}
+                ));
+            }
             Priority::Heal => {
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
                 let target_ref = visit.target;
@@ -45,15 +54,12 @@ impl RoleStateImpl for Doctor {
                     actor_ref.push_night_message(game, ChatMessage::TargetJailed);
                     return
                 }
-                
-                let mut self_heals_remaining = self.self_heals_remaining;
 
-                if actor_ref == target_ref {
-                    self_heals_remaining -= 1;
-                }
                 target_ref.increase_defense_to(game, 2);
     
-                actor_ref.set_role_state(game, RoleState::Doctor(Doctor {self_heals_remaining, target_healed_ref: Some(target_ref)}));
+                actor_ref.set_role_state(game, RoleState::Doctor(
+                    Doctor {self_heals_remaining: self.self_heals_remaining, target_healed_ref: Some(target_ref)}
+                ));
             }
             Priority::Investigative => {
                 if let Some(target_healed_ref) = self.target_healed_ref {

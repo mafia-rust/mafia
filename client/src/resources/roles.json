@@ -1,319 +1,298 @@
 {
     "jailor":{
         "defense": 0,
-        "roleblockable": true,
-        "witchable": true,
-        "suspicious": false,
         "factionAlignment": "townPower",
         "maxCount": 1,
-        "endGameCondition": "Faction",
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "mayor":{
         "defense": 0,
-        "roleblockable": true,
-        "witchable": true,
-        "suspicious": false,
         "factionAlignment": "townPower",
         "maxCount": 1,
-        "endGameCondition": "Faction",
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "transporter":{
         "defense": 0,
-        "roleblockable": false,
-        "witchable": true,
-        "suspicious": false,
         "factionAlignment": "townPower",
         "maxCount": null,
-        "endGameCondition": "Faction",
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "sheriff": {
         "defense": 0,
-        "roleblockable": true,
-        "witchable": true,
-        "suspicious": false,
         "factionAlignment": "townInvestigative",
         "maxCount": null,
-        "endGameCondition": "Faction",
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "lookout": {
         "factionAlignment": "townInvestigative",
-        "suspicious": false,
-        "roleblockable": true,
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "spy": {
         "factionAlignment": "townInvestigative",
-        "suspicious": false,
-        "roleblockable": true,
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "tracker": {
         "factionAlignment": "townInvestigative",
-        "suspicious": false,
-        "roleblockable": true,
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "seer": {
         "factionAlignment": "townInvestigative",
-        "suspicious": false,
-        "roleblockable": true,
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "psychic": {
         "factionAlignment": "townInvestigative",
-        "suspicious": false,
-        "roleblockable": true,
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["vision"]
     },
     "doctor": {
         "factionAlignment": "townProtective",
-        "suspicious": false,
-        "roleblockable": true,
+        
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "bodyguard": {
         "factionAlignment": "townProtective",
-        "suspicious": false,
-        "roleblockable": true,
+        
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "crusader": {
         "factionAlignment": "townProtective",
-        "suspicious": false,
-        "roleblockable": true,
+        
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "vigilante": {
         "factionAlignment": "townKilling",
-        "suspicious": false,
-        "roleblockable": true,
+        
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "veteran": {
         "factionAlignment": "townKilling",
-        "suspicious": false,
-        "roleblockable": false,
+        
+        
         "defense": 0,
-        "witchable": false,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "deputy": {
         "factionAlignment": "townKilling",
-        "suspicious": false,
-        "roleblockable": false,
+        
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "escort": {
         "factionAlignment": "townSupport",
-        "suspicious": false,
-        "roleblockable": false,
+        
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "medium": {
         "factionAlignment": "townSupport",
-        "suspicious": false,
-        "roleblockable": false,
+        
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "retributionist": {
         "factionAlignment": "townSupport",
-        "suspicious": false,
-        "roleblockable": false,
+        
+        
         "defense": 0,
-        "witchable": false,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "godfather": {
         "factionAlignment": "mafiaKilling",
-        "suspicious": false,
-        "roleblockable": true,
+        
+        
         "defense": 1,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "mafioso": {
         "factionAlignment": "mafiaKilling",
-        "suspicious": true,
-        "roleblockable": true,
+        
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": 0,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "consort": {
         "factionAlignment": "mafiaSupport",
-        "suspicious": true,
-        "roleblockable": false,
+        
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "blackmailer": {
         "factionAlignment": "mafiaSupport",
-        "suspicious": true,
-        "roleblockable": true,
+        
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "consigliere": {
         "factionAlignment": "mafiaSupport",
-        "suspicious": true,
-        "roleblockable": true,
+        
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "witch": {
         "factionAlignment": "mafiaPower",
-        "suspicious": true,
-        "roleblockable": false,
+        
+        
         "defense": 0,
-        "witchable": false,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "necromancer": {
         "factionAlignment": "mafiaPower",
-        "suspicious": true,
-        "roleblockable": false,
+        
+        
         "defense": 0,
-        "witchable": false,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "janitor": {
         "factionAlignment": "mafiaDeception",
-        "suspicious": true,
-        "roleblockable": true,
+        
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "framer": {
         "factionAlignment": "mafiaDeception",
-        "suspicious": true,
-        "roleblockable": true,
+        
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "Faction",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "jester": {
         "factionAlignment": "neutralEvil",
-        "suspicious": false,
-        "roleblockable": true,
+        
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "None",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "executioner": {
         "factionAlignment": "neutralEvil",
-        "suspicious": false,
-        "roleblockable": true,
+        
+        
         "defense": 1,
-        "witchable": true,
-        "endGameCondition": "None",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": []
@@ -321,77 +300,77 @@
     
     "politician":{
         "factionAlignment": "neutralEvil",
-        "suspicious": true,
-        "roleblockable": false,
+        
+        
         "defense": 1,
-        "witchable": true,
-        "endGameCondition": "None",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "arsonist": {
         "factionAlignment": "neutralKilling",
-        "suspicious": true,
-        "roleblockable": true,
+        
+        
         "defense": 1,
-        "witchable": true,
-        "endGameCondition": "SingleRole",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "werewolf": {
         "factionAlignment": "neutralKilling",
-        "suspicious": true,
-        "roleblockable": true,
+        
+        
         "defense": 1,
-        "witchable": true,
-        "endGameCondition": "SingleRole",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "vampire": {
         "factionAlignment": "neutralChaos",
-        "suspicious": true,
-        "roleblockable": true,
+        
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "SingleRole",
+        
+        
         "maxCount": 2,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "amnesiac": {
         "factionAlignment": "neutralChaos",
-        "suspicious": false,
-        "roleblockable": true,
+        
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "None",
+        
+        
         "maxCount": null,
         "largeRoleSpecificMenu": true,
         "keywords": []
     },
     "death":{
         "factionAlignment": "neutralApocalypse",
-        "suspicious": false,
-        "roleblockable": true,
+        
+        
         "defense": 0,
-        "witchable": true,
-        "endGameCondition": "None",
+        
+        
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": []
     },
     "doomsayer":{
         "factionAlignment": "neutralApocalypse",
-        "suspicious": false,
-        "roleblockable": false,
+        
+        
         "defense": 0,
-        "witchable": false,
-        "endGameCondition": "None",
+        
+        
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
         "keywords": []

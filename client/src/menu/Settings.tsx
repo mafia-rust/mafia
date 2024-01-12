@@ -39,7 +39,7 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
                 </div>
                 <div className="settingsContent">
                     <h2>{translate("menu.settings.volume")}</h2>
-                    <input type="range" min="0" max="1" step="0.01" 
+                    <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
                         value={this.props.volume} 
                         onChange={(e) => {
                             console.log("Volume changed to " + e.target.value);

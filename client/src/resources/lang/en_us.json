@@ -40,7 +40,7 @@
     "menu.chat.button.send": "Send",
     "menu.chat.placeHolder": "Enter message",
     "menu.chat.clearFilter": "Clear Filter",
-    
+
     "menu.will.title": "Will",
     "menu.will.icon": "📜",
     "menu.will.will": "Will",
@@ -345,7 +345,7 @@
     "verdict.guilty": "Guilty",
     "verdict.innocent": "Innocent",
     "verdict.abstain": "Abstain",
-    
+
     "judgement.cannotVote.onTrial": "You're on trial!",
     "judgement.cannotVote.dead": "You can't vote because you're dead",
 
@@ -400,7 +400,7 @@
     "chatMessage.targetJailed":"Your ability failed because one of your targets was in jail!",
     "chatMessage.roleBlocked.immune": "Someone tried to roleblock you but you are immune.",
     "chatMessage.roleBlocked": "You've been roleblocked.",
-    
+
     "chatMessage.sheriffResult.suspicious":"Your target seems to be suspicious.",
     "chatMessage.sheriffResult.innocent":"Your target seems to be innocent.",
     "chatMessage.lookoutResult":"Your target was visited by \\0.",
@@ -456,10 +456,10 @@
 
     "wiki.entry.article.roles_and_teams.title":"Roles and Teams",
     "wiki.entry.article.roles_and_teams.text":"## Roles\nEvery player has a role, including you. Your role is told to you in the first chat message you received and at the top of the screen. Almost every role has an ability that can be used during the night, these abilities help you to win.\n\nThere can be multiple players with almost any role, so you might not be the only person with the role you have.\n\n### Abilities & Attributes\nAbilities are the actions that your role can take. For most roles, this is who you can target at night, but for a few special roles, you have abilities you can perform during the day.\n\nAttributes are special things about your abilities: when they fail, who you can target, etc.\n\n### Faction & Alignment\nEvery role has a faction and alignment which indicate what team you're on and what your goal is. You can see a role's faction and alignment on its encyclopedia page. Town, Mafia, Coven, and Vampire’s goal is to be the only remaining team, and to kill every player from every other team. Neutral roles have different goals that vary depending on the role.\n\n## Teams\nThe major teams are Town, Mafia, Coven, and Vampire. For these teams, their goal is to be the only team remaining. Some special roles have their own teams as well. In most games, there will be Town and one evil team.\n\n### Town\nThe town usually has the majority when the game starts, meaning there are more players with town roles. This means that during the trial period, the town has voting power. Because of this, evil players must say that they are townies even though they are not in order to not get hanged.\n\n### Mafia, Coven, and Vampire\nThese are the evil teams. At night you can (and should) talk to your team to plan how to win. If you are asked to claim a role, It is often best to say that you are a specific town role, such as Doctor or Sheriff. In order to make your fake claim believable you must keep a will.",
-    
+
     "wiki.entry.article.phases_and_timeline.title":"Phases",
     "wiki.entry.article.phases_and_timeline.text":"The game is always in a phase. Phases run in this order:\n\n### Night\nThis is when most roles use their abilities. Chat is closed at night so players can not communicate with each other. However, some roles can communicate with others at night, for example, the medium can talk to the dead, and mafia can talk with each other.\n\n### Morning\nPlayers see who died last night, their final will, and any death notes that were placed on the body. \n\n### Discussion\nPlayers discuss information they have to try to find out who the evil players are, or if they’re evil themselves, pretend to. Evil players will often try to throw out red herrings or pin the blame on someone else.\n\n### Voting\nPlayers vote to put a player on trial, but this doesn’t always mean that player is going to be killed. The players need a majority of the votes in order to put someone onto trial. If the voting phase ends before a majority is reached, it goes directly to night after. There can be a maximum of three trials during each day.\n\n### Testimony\nThis phase comes after voting only if a player was voted onto trial. The player on trial gives their testimony while everyone else stays quiet. Usually the player on trial will claim a role and post their will here.\n\nIf you have been voted for a trial, don’t give up. Even if you’re evil, you can lie your way out of getting hanged.### Judgment\nThis phase comes after testimony. Everyone votes either innocent, or guilty. If there are more guilty votes than innocent votes, the player on trial is killed. Players can also choose to abstain. The judgment period is usually how the town gets evil players killed.\n\n### Evening\nA brief period before night. If someone was voted guilty today, this is usually where they get to say their final words.\n\nWhen there are three or less players alive, each phase is half as long as it usually is.",
-    
+
     "wiki.entry.article.faction_alignments.title":"Factions and Alignments",
     "wiki.entry.article.faction_alignments.text":"",
 
@@ -469,7 +469,7 @@
     "wiki.entry.article.all_language.title":"All text",
     "wiki.entry.article.all_language.text":"",
 
-    "wiki.entry.role": "# \\0\n### \\1\n<br/>\n\n### Basics\n\\2\n### Abilities\n\\3\n### Attributes\n\\4\n\n<br/>\n\n### Maximum count: \\5\n### Sheriff result: \\6\n### Defense: \\7\n\n<br>\n\n### Keywords:\n\\8",
+    "wiki.entry.role": "# \\0\n### \\1\n<br/>\n\n### Basics\n\\2\n### Abilities\n\\3\n### Attributes\n\\4\n\n<br/>\n\n### Maximum count: \\5\n### Defense: \\6\n\n<br>\n\n### Keywords:\n\\7",
     "wiki.entry.role.noBasics": "There is no basics section written for this page.",
     "wiki.entry.role.abilities": "Abilities",
     "wiki.entry.role.noAbilities": "There is no abilities section written for this page.",
@@ -479,96 +479,96 @@
     "wiki.entry.role.jailor.title": "Jailor",
     "wiki.entry.role.jailor.abilities":"* Choose one player to jail during the day\n* You can execute your prisoners up to three times",
     "wiki.entry.role.jailor.attributes":"* You may anonymously talk with your prisoner at night\n* If you execute a town member, you forfeit the ability to jail prisoners\n* Jailed players are immune to most abilities being used on them\n* Jailed players can't target\n* Other players will know if their target was jailed\n* The Jailor cant choose to execute on night one",
-    
+
     "wiki.entry.role.mayor.title": "Mayor",
     "wiki.entry.role.mayor.abilities":"* Reveal during the day to expose your role to everyone and gain 2 more votes",
     "wiki.entry.role.mayor.attributes":"* Your voting power is increased in both voting phase and judgement phase\n* Revealing does not increase the number of votes required to put someone on trial",
-    
+
     "wiki.entry.role.transporter.title": "Transporter",
     "wiki.entry.role.transporter.abilities":"* Transport two players with each other.",
     "wiki.entry.role.transporter.attributes":"* Transporting a target swaps all visitors to them; for example, all visitors that visit target A will instead visit target B, and vice versa\n* You can transport yourself* Your targets do not change due to other Transporters (your targets wont change due to your own transport either)",
-    
+
     "wiki.entry.role.sheriff.title": "Sheriff",
     "wiki.entry.role.sheriff.abilities":"* Interrogate a player to find out if they're innocent or suspicious",
-    "wiki.entry.role.sheriff.attributes":"* Frames, Douses, Hexes, and Enchants can make your target look suspicious wrongly",
-    
+    "wiki.entry.role.sheriff.attributes":"*Townies will appear to be innocent, and non-townies will appear to be suspicious\n* You can not be in your own interrogation\n* Frames and Douses can mess up your results",
+
     "wiki.entry.role.lookout.title": "Lookout",
     "wiki.entry.role.lookout.abilities":"* Watch a player to find everyone who visited them",
     "wiki.entry.role.lookout.attributes":"* You can not see astral visits\n* You can never see yourself visit",
-    
+
     "wiki.entry.role.spy.title": "Spy",
     "wiki.entry.role.spy.abilities":"* Bug a player to find out what happened to them\n* You will get to know who the mafia visited",
     "wiki.entry.role.spy.attributes":"* Your bug will catch when your target sees a message saying they are silenced, roleblocked, protected or transported\n* The mafia visits can not be fooled, they are always accurate.",
-    
+
     "wiki.entry.role.tracker.title": "Tracker",
     "wiki.entry.role.tracker.abilities":"* Watch a player to find who they visited",
     "wiki.entry.role.tracker.attributes":"* You can not see astral visits",
-    
+
     "wiki.entry.role.seer.title": "Seer",
     "wiki.entry.role.seer.abilities":"* Examine two players to find if they are friends or enemies",
     "wiki.entry.role.seer.attributes":"* Two players are friends if they could possibly both win together\n* A jester can win alongside anyone, therefore the jester has no enemies\n* Frames, Douses, Hexes, and Enchants can make your target look like they are a different role",
-    
+
     "wiki.entry.role.psychic.title": "Psychic",
     "wiki.entry.role.psychic.basics": "The psychic will recieve a vision every night.\nOn odd nights, the vision will give you two players and say that at least one of them is a townie.\nOn even nights, the vision will give you three players and say that at least one of them is not a townie.",
     "wiki.entry.role.psychic.abilities":"* Get an evil vision on odd nights\n* Get a good vision on even nights",
     "wiki.entry.role.psychic.attributes":"* Evil visions show three players, at least one of them is not a townie\n* Good visions show two players, at least one of them is a townie\n* If there aren't enough evil or good players to have a vision, it will fail\n* You can not be in your own vision\n* You still get visions after you are dead",
-    
+
     "wiki.entry.role.doctor.title": "Doctor",
     "wiki.entry.role.doctor.abilities":"* Heal a player to save them from death\n* You can heal yourself once",
     "wiki.entry.role.doctor.attributes":"* You give your target powerful defense\n* You and your target will know if they were attacked and saved",
-    
+
     "wiki.entry.role.bodyguard.title": "Bodyguard",
     "wiki.entry.role.bodyguard.abilities":"* Protect a player to kill their attacker, but getting attacked yourself\n* You can protect yourself once",
     "wiki.entry.role.bodyguard.attributes":"* When you guard yourself, you gain powerful defense\n* You and your target will know if they were attacked and protected\n* You will redirect attacks from your target onto yourself, and you will attack those players back\n* Your attack is basic and astral",
-    
+
     "wiki.entry.role.crusader.title": "Crusader",
     "wiki.entry.role.crusader.abilities":"* Protect a player to save them from death, but killing one other visitor to them",
     "wiki.entry.role.crusader.attributes":"* You give your target powerful defense\n* You will attack A random other player who visited your target\n* If both town members and non town members visit your target then you will kill a non townie\n* Your attack is basic and astral",
-    
+
     "wiki.entry.role.escort.title": "Escort",
     "wiki.entry.role.escort.abilities":"* Target a player to roleblock them",
     "wiki.entry.role.escort.attributes":"* Roleblocking a player prevents them from using most parts of their ability\n* Some roles are immune to roleblocks\n* The player will know that someone tried to roleblock them",
-    
+
     "wiki.entry.role.medium.title": "Medium",
     "wiki.entry.role.medium.abilities":"* You can talk with the dead during the night\n* After you died, you can seance a living player twice",
     "wiki.entry.role.medium.attributes":"* You can talk to other mediums during the night\n* A seance lets you communicate with a living player after you died\n* Seance has two uses",
-    
+
     "wiki.entry.role.retributionist.title": "Retributionist",
     "wiki.entry.role.retributionist.abilities":"* Force a dead player to use their ability on a living one",
     "wiki.entry.role.retributionist.attributes":"* Your ability only works on dead players with graves that show town roles\n* You cant use the same person two times\n* You can use the dead player to target two living players, this is useful for roles like Framer, Transporter, and Seer\n* Your first target is the player you're controlling, the second and third are the players they're targeting\n* If there are multiple retributionists and necromancers, and they both select the same player, the player with the higher player number will take precendence",
-    
+
     "wiki.entry.role.vigilante.title": "Vigilante",
     "wiki.entry.role.vigilante.abilities":"* Shoot suspicious looking players",
     "wiki.entry.role.vigilante.attributes":"* You have three bullets\n* You can't shoot night 1\n* If you shoot a town member, you will commit suicide the next night\n* Your suicide deals an unstoppable attack towards yourself\n* You have a basic attack",
-    
+
     "wiki.entry.role.veteran.title": "Veteran",
     "wiki.entry.role.veteran.abilities":"* Target yourself to alert, killing everyone who visits you",
     "wiki.entry.role.veteran.attributes":"* You will know if you attack someone\n* You have basic defense while on alert\n* You have a powerful attack\n* You have three alerts\n* You do not kill players who visited using only an astral visit",
-    
+
     "wiki.entry.role.deputy.title": "Deputy",
     "wiki.entry.role.deputy.abilities":"* Shoot one player during the discussion or voting",
     "wiki.entry.role.deputy.attributes":"\n* You have one bullet\n* When you kill a player, it will be announced that they were shot by a deputy\n* If the player you attack survives the attack, they will know they were attacked, but it will not be announced that they were shot by a deputy\n* You have a powerful attack",
-    
+
     "wiki.entry.role.godfather.title": "Godfather",
     "wiki.entry.role.godfather.abilities":"* Target a player to kill them\n* Choose a backup at any time",
     "wiki.entry.role.godfather.attributes":"* You have a basic attack\n*  if you are roleblocked or jailed, the backup will attack their first target instead\n* The backup will be first in line to become Godfather after you die\n* If the mafia has no Godfather, a random member of the mafia will become the Godfather\n* You appear good to the Psychic and appear to be friends with everyone to the Seer",
-    
+
     "wiki.entry.role.mafioso.title": "Mafioso",
     "wiki.entry.role.mafioso.abilities":"* Target a player to kill them",
     "wiki.entry.role.mafioso.attributes":"* You have a basic attack",
-    
+
     "wiki.entry.role.consort.title": "Consort",
     "wiki.entry.role.consort.abilities":"* Target a player to roleblock them",
     "wiki.entry.role.consort.attributes":"* Roleblocking a player prevents them from using most parts of their ability\n* Some roles are immune to roleblocks\n* The player will know that someone tried to roleblock them",
-    
+
     "wiki.entry.role.blackmailer.title": "Blackmailer",
     "wiki.entry.role.blackmailer.abilities":"* Blackmail a player to silence them for the next day",
     "wiki.entry.role.blackmailer.attributes":"* Silenced players can not talk or vote",
-    
+
     "wiki.entry.role.consigliere.title": "Consigliere",
     "wiki.entry.role.consigliere.abilities":"* Investigate a player to find out their role, find who they visited, and who visited them",
     "wiki.entry.role.consigliere.attributes":"* You can read whispers that were not sent to you\n* Your information can be fooled by other roles like Framers, and Arsonists\n* You can never see yourself visit",
-    
+
     "wiki.entry.role.necromancer.title": "Necromancer",
     "wiki.entry.role.necromancer.abilities":"* Force a dead player to use their ability on a living player",
     "wiki.entry.role.necromancer.attributes":"* You cant use the same person two times\n* You can use the dead player to target two living players, this is useful for roles like Framer, Transporter, and Seer\n* Your first target is the player you're controlling, the second and third are the players they're targeting\n* If there are multiple retributionists and necromancers, and they both select the same player, the player with the higher player number will take precendence",
@@ -580,19 +580,19 @@
     "wiki.entry.role.janitor.title": "Janitor",
     "wiki.entry.role.janitor.abilities":"* Clean a player on the night they die",
     "wiki.entry.role.janitor.attributes":"* Cleaning a player erases the role and will from their grave\n* You will know the role and will of a player you clean",
-    
+
     "wiki.entry.role.framer.title": "Framer",
     "wiki.entry.role.framer.abilities":"* Target two players to frame the first one",
     "wiki.entry.role.framer.attributes":"* The framed player will look like the mafioso to town investigative roles\n* It will look like first target visited your second target, non attacking\n* You can only choose non mafia members for your first target, but anyone as your second target\n* Your second visit is astral",
-    
+
     "wiki.entry.role.jester.title": "Jester",
     "wiki.entry.role.jester.abilities":"* Get lynched to win\n* After you are lynched, you can haunt a player who didn't vote innocent",
-    "wiki.entry.role.jester.attributes":"* If dont choose to haunt somebody on the night you win, you will haunt a random player\n* You get basic defense on night one\n* Haunting is an unstoppable astral attack",
-    
+    "wiki.entry.role.jester.attributes":"* If dont choose to haunt somebody on the night you win, you will haunt a random player\n* You get basic defense on night one\n* Haunting is an unstoppable astral attack\n* You look innocent to the sheriff",
+
     "wiki.entry.role.executioner.title": "Executioner",
     "wiki.entry.role.executioner.abilities":"* Get your target lynched to win\n* If your target dies by something other than lynching, you will be converted to a jester",
-    "wiki.entry.role.executioner.attributes":"* After you win you will commit suicide\n* Your target will always be a townie, but never town power, or town killing",
-    
+    "wiki.entry.role.executioner.attributes":"* After you win you will commit suicide\n* Your target will always be a townie, but never town power, or town killing\n* You look innocent to the sheriff",
+
     "wiki.entry.role.doomsayer.title": "Doomsayer",
     "wiki.entry.role.doomsayer.abilities":"* Guess the role of three living players in one night, killing them and winning",
     "wiki.entry.role.doomsayer.attributes":"* When you win, you will commit suicide using an unstoppable attack\n* You have to guess the exact role of townies, but just the faction of all other roles\n* You can not try to guess town investigative roles\n* If there are not enough players left for you to guess and win, you will convert to a jester\n* You do not visit\n* Your attack is unstoppable",
@@ -604,19 +604,19 @@
     "wiki.entry.role.arsonist.title": "Arsonist",
     "wiki.entry.role.arsonist.abilities":"* Target someone to douse them\n* Target yourself to ignite all doused players",
     "wiki.entry.role.arsonist.attributes":"* When you ignite you deal an unstoppable attack to all doused players\n* You douse all visitors to you\n* You can't be doused\n* If you are jailed, you will douse all Jailors and will still douse visitors to you\n* You do not douse visiting players who visited using only an astral visit\n* When you ignite, the kill is astral\n* You will know who is doused",
-    
+
     "wiki.entry.role.werewolf.title": "Werewolf",
     "wiki.entry.role.werewolf.abilities":"* On full moon nights target a player to kill them and every player visiting them \n* On non full moon nights target a player to see who they visit this night and every following night, you also gain this ability for anyone who visits you on non full moon nights\n* If you target nobody on a full moon night, you kill everyone who visited you\n* On non full moon nights you appear innocent to the Sheriff, good to the Psychic, and friends with everyone to the Seer",
     "wiki.entry.role.werewolf.attributes":"* Full moon nights are every night except night one and three\n* You have a powerfull attack\n* If you are jailed then you will attack all Jailors who did not execute you, but not their visitors\n* You will still attack or gain the scent of visits to you when you are roleblocked but not when you are jailed\n* You will know who you have the scent of\n* You still track the scent of players after you die\n* You dont kill or gain the scent of astral visitors\n* The visit you do to the visitors to your target when you kill or gain their scent is astral",
-    
+
     "wiki.entry.role.death.title": "Death",
     "wiki.entry.role.death.abilities":"* Target a player on the night they die to collect a soul\n* Once you've collected six souls, everyone is notified, and at the start of the next night, you kill everyone, and win.",
     "wiki.entry.role.death.attributes":"* Passively gain a soul each night\n* To collect souls faster, guess what player will die on that night by targeting them\n* You gain powerful defense once you have six souls.",
-    
+
     "wiki.entry.role.amnesiac.title": "Amnesiac",
     "wiki.entry.role.amnesiac.abilities":"* Choose a role and become that role at night",
     "wiki.entry.role.amnesiac.attributes":"* Roleblocking or jail doesn't effect changing roles",
-    
+
     "wiki.entry.role.vampire.title": "Vampire",
     "wiki.entry.role.vampire.abilities":"* Bite a player to convert them to a vampire",
     "wiki.entry.role.vampire.attributes":"* Only the newest vampire can choose to bite\n* Vampires can not bite on the night immediately following a night that they successfully converted another vampire\n* You can not convert a player with defense\n* If there are four or more vampires, they can not choose to bite someone",

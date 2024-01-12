@@ -20,6 +20,11 @@
     animation: slide-in 0.5s forwards;
     -webkit-animation: slide-in 0.5s forwards;
 }
+.settings .settings-volume {
+    border: 0;
+    padding: 0;
+}
+
 @keyframes slide-in {
     100% { transform: translateX(0%); }
 }
