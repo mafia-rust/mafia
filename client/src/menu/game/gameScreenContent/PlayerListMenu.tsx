@@ -81,7 +81,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 if(this.state.gameState.voted!=null){
                     votedString = this.state.gameState.players[this.state.gameState.voted].name;
                     phaseSpecificJSX = (<div>
-                        <div>{votedString}</div>
+                        <div><StyledText>{votedString}</StyledText></div>
                         <button className="button gm-button" onClick={()=>{
                             GAME_MANAGER.sendVotePacket(null);
                         }}>{translate("menu.playerList.button.resetVote")}</button>
@@ -97,7 +97,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
 
                 if(targetStringList.length > 0){
                     phaseSpecificJSX = (<div>
-                        <div>{targetStringList.join(", ")+"."}</div>
+                        <div><StyledText>{targetStringList.join(", ")+"."}</StyledText></div>
                         <button className="button gm-button" onClick={()=>{
                             GAME_MANAGER.sendTargetPacket([]);
                         }}>{translate("menu.playerList.button.resetTargets")}</button>

@@ -1,4 +1,18 @@
 {
+    "Default": [
+        {
+            "type": "exact",
+            "role": "spy"
+        },
+        {
+            "type": "exact",
+            "role": "bodyguard"
+        },
+        {
+            "type": "exact",
+            "role": "mafioso"
+        }
+    ],
     "Beginner": [
         {
             "type": "exact",

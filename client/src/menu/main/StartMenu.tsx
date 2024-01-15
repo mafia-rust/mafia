@@ -3,7 +3,7 @@ import GAME_MANAGER from "../../index";
 import "../../index.css"
 import "./startMenu.css"
 import translate from "../../game/lang";
-import WikiSearch from "../../components/WikiSearch";
+// import WikiSearch from "../../components/WikiSearch";
 import Anchor from "../Anchor";
 // import * as LoadingScreen from "../LoadingScreen";
 import LoadingScreen from "../LoadingScreen";
@@ -32,10 +32,10 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
                     </button>
                 </div>
             </section>
-            <section id="wiki">
+            {/* <section id="wiki">
                 <h2>{translate("menu.wiki.title")}</h2>
                 <WikiSearch/>
-            </section>
+            </section> */}
         </main>
         <footer>
             <nav>

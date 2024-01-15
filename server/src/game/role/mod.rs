@@ -267,7 +267,10 @@ impl Role{
     pub fn roleblock_immune(&self)->bool{
         match self {
             Role::Veteran => true,
+
             Role::Escort => true,
+            Role::Consort => true,
+            
             Role::Retributionist => true,
             Role::Witch => true,
             Role::Necromancer => true,

@@ -2,6 +2,7 @@ import React from 'react';
 import "./settings.css";
 import translate from '../game/lang';
 import GAME_MANAGER from '..';
+import WikiSearch from '../components/WikiSearch';
 
 type SettingsProps = {
     volume: number, // 0-1
@@ -37,23 +38,36 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
                 <div className="settingsTitle">
                     <h1>{translate("menu.settings.title")}</h1>
                 </div>
-                <div className="settingsContent">
-                    <h2>{translate("menu.settings.volume")}</h2>
-                    <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
-                        value={this.props.volume} 
-                        onChange={(e) => {
-                            console.log("Volume changed to " + e.target.value);
-                            let volume = parseFloat(e.target.value);
-                            this.props.onVolumeChange(volume);
-                        }
-                    }/>
+                <div>
                     {
                         GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 
                         (<>
-                            <h2>{translate("menu.play.field.roomCode")}</h2>
-                            <RoomCodeButton/>
-                        </>) : null
+                            <div>
+                                <button className='settings-leave' onClick={() => {
+                                    GAME_MANAGER.leaveGame();
+                                }}>{translate("menu.settings.exit")}</button>
+                            </div>
+                            <h2>{translate("menu.play.field.roomCode")}
+                            <RoomCodeButton/></h2>
+                        </>
+                        ) : null
                     }
+                    <h2>{translate("menu.settings.volume")}
+                    <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
+                        value={this.props.volume} 
+                        onChange={(e) => {
+                            let volume = parseFloat(e.target.value);
+                            this.props.onVolumeChange(volume);
+                        }
+                    }/></h2>
+                    <section className="settings-wiki-menu .wiki-menu-colors">
+                        <h2>{translate("menu.wiki.title")}</h2>
+                        <WikiSearch  excludedRoles={
+                            GAME_MANAGER.state.stateType === "lobby" ?
+                            GAME_MANAGER.state.excludedRoles :
+                            []
+                        }/>
+                    </section>
                 </div>
             </div>
         );
