@@ -105,14 +105,8 @@ impl Listener{
             return;
         };
 
-        match lobby.connect_player_to_lobby(&connection.get_sender()) {
-            Ok(player_id) => {
-                *sender_player_location = PlayerLocation::InLobby { room_code, player_id };
-                return;
-            },
-            Err(_) => {
-                return;
-            }
+        if let Ok(player_id) = lobby.connect_player_to_lobby(&connection.get_sender()) {
+            *sender_player_location = PlayerLocation::InLobby { room_code, player_id };
         }
     }
     fn reconnect_player_to_lobby(&mut self, connection: &Connection, room_code: RoomCode, player_id: PlayerID){
@@ -128,14 +122,8 @@ impl Listener{
             return;
         };
 
-        match lobby.reconnect_player_to_lobby(&connection.get_sender(), player_id) {
-            Ok(_) => {
-                *sender_player_location = PlayerLocation::InLobby { room_code, player_id };
-                return;
-            },
-            Err(_) => {
-                return;
-            }
+        if lobby.reconnect_player_to_lobby(&connection.get_sender(), player_id).is_ok() {
+            *sender_player_location = PlayerLocation::InLobby { room_code, player_id };
         }
     }
 
@@ -185,11 +173,9 @@ impl Listener{
 
         match incoming_packet {
             ToServerPacket::LobbyListRequest => {
-                let lobbies = self.lobbies.iter().map(|(room_code, _lobby)| {
-                    *room_code
-                }).collect::<Vec<_>>();
-
-                connection.send(ToClientPacket::LobbyList { room_codes: lobbies });
+                connection.send(ToClientPacket::LobbyList { 
+                    room_codes: self.lobbies.keys().cloned().collect() 
+                });
             },
             ToServerPacket::ReJoin {room_code, player_id } => {
                 self.reconnect_player_to_lobby(connection, room_code, player_id);

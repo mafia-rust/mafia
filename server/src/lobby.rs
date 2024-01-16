@@ -104,20 +104,19 @@ impl Lobby {
                     return;
                 };
 
-                let ref mut last_message_times = game_player.last_message_times;
                 let now = Instant::now();
-                while let Some(time) = last_message_times.front() {
+                while let Some(time) = game_player.last_message_times.front() {
                     if now.duration_since(*time) > MESSAGE_PER_SECOND_LIMIT_TIME {
-                        last_message_times.pop_front();
+                        game_player.last_message_times.pop_front();
                     } else {
                         break;
                     }
                 }
-                if last_message_times.len() >= (MESSAGE_PER_SECOND_LIMIT_TIME.as_secs() * MESSAGE_PER_SECOND_LIMIT) as usize {
+                if game_player.last_message_times.len() >= (MESSAGE_PER_SECOND_LIMIT_TIME.as_secs() * MESSAGE_PER_SECOND_LIMIT) as usize {
                     send.send(ToClientPacket::RateLimitExceeded);
                     return;
                 }
-                last_message_times.push_back(now);
+                game_player.last_message_times.push_back(now);
                 
             },
             _ => {}
@@ -407,10 +406,10 @@ impl Lobby {
                         Self::send_settings(player.1, settings);
                     }
                     
-                    return Ok(());
+                    Ok(())
                 } else {
                     send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
-                    return Err(RejectJoinReason::PlayerDoesntExist);
+                    Err(RejectJoinReason::PlayerDoesntExist)
                 }
             },
             LobbyState::Game { game, players } => {
@@ -429,7 +428,7 @@ impl Lobby {
                 send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id});
                 player_ref.connect(game, send.clone());
 
-                return Ok(());
+                Ok(())
             },
             LobbyState::Closed => {
                 send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::RoomDoesntExist});

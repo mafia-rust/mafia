@@ -42,16 +42,14 @@ impl RoleStateImpl for Godfather {
                 }
             }
             
-        } else {
-            if let Some(visit) = actor_ref.night_visits(game).first(){
-                let target_ref = visit.target;
-                if target_ref.night_jailed(game){
-                    actor_ref.push_night_message(game, ChatMessage::TargetJailed);
-                    return
-                }
-        
-                target_ref.try_night_kill(actor_ref, game, GraveKiller::Faction(Faction::Mafia), 1, true);
+        } else if let Some(visit) = actor_ref.night_visits(game).first(){
+            let target_ref = visit.target;
+            if target_ref.night_jailed(game){
+                actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                return
             }
+    
+            target_ref.try_night_kill(actor_ref, game, GraveKiller::Faction(Faction::Mafia), 1, true);
         }        
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -68,10 +66,9 @@ impl RoleStateImpl for Godfather {
             actor_ref.set_role_state(game, RoleState::Godfather(Godfather{backup: Some(target_ref)}));
         }
 
-        let RoleState::Godfather(Godfather { backup }) = actor_ref.role_state(game) else {
+        let RoleState::Godfather(Godfather { backup }) = *actor_ref.role_state(game) else {
             unreachable!("Role was just set to Godfather");
         };
-        let backup = backup.clone();
 
         game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessage::GodfatherBackup { backup: backup.map(|p|p.index()) });
 
@@ -82,7 +79,7 @@ impl RoleStateImpl for Godfather {
             player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
         }
 
-        if let Some(backup) = backup.clone() {
+        if let Some(backup) = backup {
             for player_ref in PlayerReference::all_players(game){
                 if player_ref.role(game).faction_alignment().faction() != Faction::Mafia {
                     continue;
