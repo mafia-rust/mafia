@@ -26,6 +26,15 @@
 }
 .settings .settings-wiki-menu {
     max-width: 50vh;
+    max-height: 60vh;
+    overflow-y: scroll;
+    background-color: var(--background-color);
+    border: solid .13rem var(--primary-border-color);
+    border-bottom-color: black;
+    border-right-color: black;
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-top: 1rem;
 }
 
 @keyframes slide-in {

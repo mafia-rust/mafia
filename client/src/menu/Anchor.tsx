@@ -70,7 +70,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         GAME_MANAGER.deleteReconnectData();
     }
 
-    static playAudioFile(src: string | null) {
+    static playAudioFile(src: string | null, timeLeftSeconds?: number) {
         Anchor.instance.state.audio.pause();
         if(src === null) return;
         Anchor.instance.state.audio.src = src;
@@ -92,6 +92,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         playPromise.then(() => {
 
             Anchor.instance.state.audio.currentTime = 0;
+
             // Anchor.instance.state.audio.duration;
             // Anchor.instance.state.audio.currentTime = 45;
             // Anchor.instance.state.audio.playbackRate = 2;

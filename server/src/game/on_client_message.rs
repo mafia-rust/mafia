@@ -1,6 +1,4 @@
-use std::collections::HashMap;
-
-use crate::{packet::{ToServerPacket, ToClientPacket}, strings::TidyableString, log};
+use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
     Game, 
@@ -26,59 +24,16 @@ impl Game {
 
         'packet_match: {match incoming_packet {
             ToServerPacket::Vote { player_index: player_voted_index } => {
-                let &PhaseState::Voting { trials_left } = self.current_phase() else {break 'packet_match};
+                let &PhaseState::Voting { .. } = self.current_phase() else {break 'packet_match};
 
                 let player_voted_ref = match PlayerReference::index_option_to_ref(self, &player_voted_index){
                     Ok(player_voted_ref) => player_voted_ref,
                     Err(_) => break 'packet_match,
                 };
 
-                let vote_changed_successfully = sender_player_ref.set_chosen_vote(self, player_voted_ref, true);
+                sender_player_ref.set_chosen_vote(self, player_voted_ref, true);
 
-                if !vote_changed_successfully {break 'packet_match;}
-
-                let mut living_players_count = 0;
-                let mut voted_for_player: HashMap<PlayerReference, u8> = HashMap::new();
-
-                for player in PlayerReference::all_players(self){
-                    if !player.alive(self) { continue }
-
-                    living_players_count += 1;
-
-                    let Some(player_voted) = player.chosen_vote(self) else { continue };
-
-                    let mut voting_power = 1;
-                    if let RoleState::Mayor(mayor) = player.role_state(self).clone() {
-                        if mayor.revealed {
-                            voting_power = 3;
-                        }
-                    }
-
-                    if let Some(num_votes) = voted_for_player.get_mut(&player_voted) {
-                        *num_votes += voting_power;
-                    } else {
-                        voted_for_player.insert(player_voted, voting_power);
-                    }
-                }
-                
-                self.send_packet_to_all(
-                    ToClientPacket::PlayerVotes { votes_for_player: 
-                        PlayerReference::ref_map_to_index(voted_for_player.clone())
-                    }
-                );
-                
-                let mut next_player_on_trial = None;
-                for (player, votes) in voted_for_player.iter(){
-                    if *votes > (living_players_count / 2){
-                        next_player_on_trial = Some(*player);
-                        break;
-                    }
-                }
-                
-                if let Some(player_on_trial) = next_player_on_trial {
-                    self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
-                    self.start_phase(PhaseState::Testimony { trials_left: trials_left-1, player_on_trial });
-                }
+                self.count_votes_and_start_trial();
             },
             ToServerPacket::Judgement { verdict } => {
                 if self.current_phase().phase() != PhaseType::Judgement {break 'packet_match;}

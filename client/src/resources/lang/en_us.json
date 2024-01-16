@@ -491,7 +491,7 @@
 
     "wiki.entry.role.sheriff.title": "Sheriff",
     "wiki.entry.role.sheriff.abilities":"* Interrogate a player to find out if they're innocent or suspicious",
-    "wiki.entry.role.sheriff.attributes":"*Townies will appear to be innocent, and non-townies will appear to be suspicious\n* You can not be in your own interrogation\n* Frames and Douses can mess up your results",
+    "wiki.entry.role.sheriff.attributes":"* Townies will appear to be innocent, and non-townies will appear to be suspicious\n* Frames and Douses can mess up your results",
 
     "wiki.entry.role.lookout.title": "Lookout",
     "wiki.entry.role.lookout.abilities":"* Watch a player to find everyone who visited them",

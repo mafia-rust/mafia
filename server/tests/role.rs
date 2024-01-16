@@ -308,6 +308,21 @@ fn bodyguard_protects_transported_target() {
 }
 
 #[test]
+fn mayor_reveals_after_they_vote(){
+    kit::scenario!(game where
+        mayor: Mayor,
+        _townie: Sheriff,
+        mafioso: Mafioso
+    );
+
+    game.skip_to(PhaseType::Voting, 2);
+    mayor.vote_for_player(Some(mafioso));
+    mayor.day_target(mayor);
+    assert_eq!(game.current_phase().phase(), PhaseType::Testimony);
+}
+
+
+#[test]
 fn retributionist_basic(){
     kit::scenario!(game where
         ret: Retributionist,

@@ -60,7 +60,7 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
                             this.props.onVolumeChange(volume);
                         }
                     }/></h2>
-                    <section className="settings-wiki-menu .wiki-menu-colors">
+                    <section className="settings-wiki-menu wiki-menu-colors">
                         <h2>{translate("menu.wiki.title")}</h2>
                         <WikiSearch  excludedRoles={
                             GAME_MANAGER.state.stateType === "lobby" ?

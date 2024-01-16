@@ -35,6 +35,7 @@ impl RoleStateImpl for Mayor {
         for player in PlayerReference::all_players(game){
             player.insert_role_label(game, actor_ref, Role::Mayor);
         }
+        game.count_votes_and_start_trial();
     }
     fn can_night_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false

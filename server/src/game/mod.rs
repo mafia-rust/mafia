@@ -13,6 +13,7 @@ pub mod available_buttons;
 pub mod on_client_message;
 pub mod tag;
 
+use std::collections::HashMap;
 use std::time::Duration;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
@@ -172,6 +173,54 @@ impl Game {
             }
         }
         (guilty, innocent)
+    }
+    pub fn count_votes_and_start_trial(&mut self){
+
+        let &PhaseState::Voting { trials_left } = self.current_phase() else {return};
+
+        let mut living_players_count = 0;
+        let mut voted_player_votes: HashMap<PlayerReference, u8> = HashMap::new();
+
+        for player in PlayerReference::all_players(self){
+            if !player.alive(self) { continue }
+            living_players_count += 1;
+
+
+            let Some(voted_player) = player.chosen_vote(self) else { continue };
+
+            let mut voting_power = 1;
+            if let RoleState::Mayor(mayor) = player.role_state(self).clone() {
+                if mayor.revealed {
+                    voting_power = 3;
+                }
+            }
+
+            if let Some(num_votes) = voted_player_votes.get_mut(&voted_player) {
+                *num_votes += voting_power;
+            } else {
+                voted_player_votes.insert(voted_player, voting_power);
+            }
+        }
+        
+        self.send_packet_to_all(
+            ToClientPacket::PlayerVotes { votes_for_player: 
+                PlayerReference::ref_map_to_index(voted_player_votes.clone())
+            }
+        );
+
+
+        let mut next_player_on_trial = None;
+        for (player, votes) in voted_player_votes.iter(){
+            if *votes > (living_players_count / 2){
+                next_player_on_trial = Some(*player);
+                break;
+            }
+        }
+        
+        if let Some(player_on_trial) = next_player_on_trial {
+            self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
+            self.start_phase(PhaseState::Testimony { trials_left: trials_left-1, player_on_trial });
+        }        
     }
 
     pub fn game_is_over(&self) -> bool {

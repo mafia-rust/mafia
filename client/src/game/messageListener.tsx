@@ -179,8 +179,9 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.dayNumber = packet.dayNumber;
                 GAME_MANAGER.state.timeLeftMs = packet.secondsLeft * 1000;
         
-
-                Anchor.playAudioFile(getAudioSrcFromString(packet.phase));
+                if(packet.phase !== "judgement"){
+                    Anchor.playAudioFile(getAudioSrcFromString(packet.phase));
+                }
             }
         break;
         case "playerOnTrial":

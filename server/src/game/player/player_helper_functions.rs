@@ -29,7 +29,7 @@ impl PlayerReference{
         }
     }
 
-    /// Returns true if successful
+    /// Returns true if attack overpowered defense
     pub fn try_night_kill(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: u8, should_leave_death_note: bool) -> bool {
         self.set_night_attacked(game, true);
 
