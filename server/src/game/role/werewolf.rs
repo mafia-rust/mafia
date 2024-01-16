@@ -66,7 +66,7 @@ impl RoleStateImpl for Werewolf {
                                 if 
                                     jailor_ref.alive(game) && 
                                     jailor_ref.role(game) == Role::Jailor &&
-                                    jailor_ref.night_visits(game).into_iter().all(|visit|visit.target!=actor_ref)
+                                    jailor_ref.night_visits(game).iter().all(|visit|visit.target!=actor_ref)
                                 {
                                     jailor_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
                                 }

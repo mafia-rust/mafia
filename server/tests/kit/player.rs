@@ -75,10 +75,8 @@ impl TestPlayer {
         for message in self.0.deref(game!(self)).chat_messages.iter() {
             if *message == last_message {
                 found = true;
-            }else{
-                if found {
-                    out.push(message.clone());
-                }
+            }else if found {
+                out.push(message.clone());
             }
         }
         out

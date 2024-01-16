@@ -39,12 +39,11 @@ impl RoleStateImpl for Doctor {
     
         match priority {
             Priority::TopPriority => {
-                let mut self_heals_remaining = self.self_heals_remaining;
-                if self_heals_remaining > 0 {
-                    self_heals_remaining -= 1;
-                }
                 actor_ref.set_role_state(game, RoleState::Doctor(
-                    Doctor {self_heals_remaining, target_healed_ref: None}
+                    Doctor {
+                        self_heals_remaining: self.self_heals_remaining.saturating_sub(1), 
+                        target_healed_ref: None
+                    }
                 ));
             }
             Priority::Heal => {

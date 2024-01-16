@@ -121,10 +121,7 @@ impl Psychic {
         }else if player_ref.has_innocent_aura(game){
             false
         }else{
-            match player_ref.role(game).faction_alignment().faction() {
-                Faction::Town => false,
-                _ =>  true
-            }
+            player_ref.role(game).faction_alignment().faction() != Faction::Town
         }        
     }
 }

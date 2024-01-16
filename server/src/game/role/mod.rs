@@ -254,6 +254,7 @@ mod macros {
 
     pub(super) use {roles, priorities};
 }
+#[allow(clippy::match_like_matches_macro)]
 impl Role{
     pub fn control_immune(&self)->bool{
         match self {
