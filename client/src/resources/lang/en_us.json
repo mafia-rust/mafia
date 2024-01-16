@@ -548,7 +548,7 @@
 
     "wiki.entry.role.deputy.title": "Deputy",
     "wiki.entry.role.deputy.abilities":"* Shoot one player during the discussion or voting",
-    "wiki.entry.role.deputy.attributes":"\n* You have one bullet\n* When you kill a player, it will be announced that they were shot by a deputy\n* If the player you attack survives the attack, they will know they were attacked, but it will not be announced that they were shot by a deputy\n* You have a powerful attack",
+    "wiki.entry.role.deputy.attributes":"\n* You have one bullet\n* When you kill a player, it will be announced that they were shot by a deputy\n* If the player you attack survives the attack, they will know they were attacked, but it will not be announced that they were shot by a deputy\n* You have a basic attack",
 
     "wiki.entry.role.godfather.title": "Godfather",
     "wiki.entry.role.godfather.abilities":"* Target a player to kill them\n* Choose a backup at any time",
