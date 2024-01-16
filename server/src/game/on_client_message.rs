@@ -5,7 +5,7 @@ use super::{
     player::{PlayerIndex, PlayerReference}, 
     phase::{PhaseType, PhaseState}, 
     chat::{ChatGroup, ChatMessage, MessageSender}, 
-    role::{Role, RoleState}
+    role::{Role, RoleState},
 };
 
 
@@ -51,28 +51,37 @@ impl Game {
                 };
                 sender_player_ref.set_chosen_targets(self, target_ref_list.clone());
                 
+                let mut target_message_sent = false;
                 sender_player_ref.get_current_send_chat_groups(self)
                     .into_iter().filter(|group|*group != ChatGroup::Seance)
                         .for_each(|chat_group| {
                         match sender_player_ref.role_state(self) {
                             // TODO: Role specific code here
-                            RoleState::Jailor(_) => self.add_message_to_chat_group(
-                                chat_group,
-                                ChatMessage::JailorDecideExecute {
-                                    targets: PlayerReference::ref_vec_to_index(&target_ref_list)
+                            RoleState::Jailor(_) => {
+                                if sender_player_ref.role(self) == Role::Jailor {
+                                    self.add_message_to_chat_group(
+                                        chat_group,
+                                        ChatMessage::JailorDecideExecute {
+                                            targets: PlayerReference::ref_vec_to_index(&target_ref_list)
+                                        }
+                                    );
+                                    target_message_sent = true;
                                 }
-                            ),
-                            _ => self.add_message_to_chat_group(
-                                chat_group,
-                                ChatMessage::Targeted { 
-                                    targeter: sender_player_ref.index(), 
-                                    targets: PlayerReference::ref_vec_to_index(&target_ref_list)
-                                }
-                            )
+                            },
+                            _ => {
+                                self.add_message_to_chat_group(
+                                    chat_group,
+                                    ChatMessage::Targeted { 
+                                        targeter: sender_player_ref.index(), 
+                                        targets: PlayerReference::ref_vec_to_index(&target_ref_list)
+                                    }
+                                );
+                                target_message_sent = true;  
+                            }
                         }
                     });
                 
-                if sender_player_ref.get_current_send_chat_groups(self).is_empty(){
+                if !target_message_sent{
                     sender_player_ref.add_chat_message(self, ChatMessage::Targeted { 
                         targeter: sender_player_ref.index(), 
                         targets: PlayerReference::ref_vec_to_index(&target_ref_list)
