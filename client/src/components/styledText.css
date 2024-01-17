@@ -7,14 +7,14 @@
     text-decoration: underline;
 }
 .keyword-player-number {
-	border-radius: 50%;
+	border-radius: 1rem;
     border: solid 1.5px;
     border-bottom-color: darkgray;
     border-right-color: darkgray;
     background-color: var(--primary-color);
     display: inline-block;
-    width: 1rem;
     height: 1rem;
+    padding: 0.1rem 0.3rem 1rem;
     font-size: 0.8rem;
     text-indent: 0;
     text-align: center !important;
