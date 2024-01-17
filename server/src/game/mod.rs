@@ -19,6 +19,7 @@ use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::Serialize;
 
+use crate::game::role_list::RoleOutline;
 use crate::lobby::{LobbyPlayer, ClientConnection};
 use crate::packet::ToClientPacket;
 use chat::{ChatMessage, ChatGroup};
@@ -89,6 +90,17 @@ impl Game {
             }
 
             let settings = settings.clone();
+            let mut role_list = settings.role_list.clone();
+            //sort roles by exactness
+            role_list.sort_by_key(|role_outline| 
+                match role_outline {
+                    RoleOutline::Any => 3,
+                    RoleOutline::Exact{..} => 0,
+                    RoleOutline::Faction{..} => 2,
+                    RoleOutline::FactionAlignment{..} => 1,
+                }
+            );
+
             let mut roles = match create_random_roles(&settings.excluded_roles, &settings.role_list){
                 Some(roles) => {roles},
                 None => {return Err(RejectStartReason::RoleListCannotCreateRoles);}
