@@ -1,0 +1,42 @@
+.playMenu {
+    margin-top: 1%;
+    overflow-y: hidden;
+}
+.playMenu table, th, td {
+    border: 1px double white;
+    border-collapse: collapse;
+}
+.playMenu th, td {
+    text-align: center;
+    padding: .1rem;
+    /* min-width: max-content; */
+    width: 1%;
+}
+.playMenu table {
+    margin: 0 auto;
+    width: 100%;
+}
+.playMenu thead {
+    display: block;
+    width: 100%;
+}
+.playMenu tbody {
+    overflow-y: scroll;
+    max-height: 65vh;
+    width: 100%;
+    display: block;
+}
+.playMenu div {
+    display: flex;
+    margin: 0 auto;
+    width: 80%;
+    flex-wrap: wrap;
+    justify-content: right;
+}
+.playMenu div section {
+    border: 1px solid gray;
+    padding: .2rem;
+    display: flex;
+    align-items: center;
+    width: min-content;
+}

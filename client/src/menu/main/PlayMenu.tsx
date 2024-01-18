@@ -3,6 +3,7 @@ import translate from "../../game/lang";
 import Anchor from "../Anchor";
 import GAME_MANAGER from "../..";
 import LoadingScreen from "../LoadingScreen";
+import "./playMenu.css";
 
 
 type PlayMenuProps = {
@@ -68,9 +69,31 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
                     {translate("menu.play.title")}
                 </h1>
             </header>
-
-            <div> 
-                <section>
+            
+            
+                <table>
+                    <thead>
+                        <tr>
+                            <th>{translate("menu.play.field.roomCode")}</th>
+                            <th style={{width:"100%"}}></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {
+                        GAME_MANAGER.state.stateType === "outsideLobby" &&
+                        GAME_MANAGER.state.roomCodes.map((roomCode, i)=>{
+                            return <tr>
+                                <td><button key={i} onClick={()=>{this.joinGameButton(roomCode??"")}}>{roomCode}</button></td>
+                                <td></td>
+                            </tr>
+                        })
+                    }
+                    </tbody>
+                    
+                </table>
+            
+            <div>
+                <section>       
                     <label>{translate("menu.play.field.roomCode")}</label>
                     <input type="text" value={this.state.selectedRoomCode??""} 
                         onChange={(e)=>{this.setState({selectedRoomCode: e.target.value})}}
@@ -84,8 +107,6 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
                         {translate("menu.play.button.join")}
                     </button>
                 </section>
-            </div>
-            <div> 
                 <section>
                     <label>{translate("menu.play.field.playerId")}</label>
                     
@@ -101,23 +122,13 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
                         {translate("menu.play.button.rejoin")}
                     </button>
                 </section>
-            </div>
-            
-            
-            
-            <button onClick={()=>{this.hostGameButton()}}>
-                {translate("menu.play.button.host")}
-            </button>
-            <button onClick={()=>{this.refreshButton()}}>
-                {translate("menu.play.button.refresh")}
-            </button>
-            <div>
-                {
-                    GAME_MANAGER.state.stateType === "outsideLobby" &&
-                    GAME_MANAGER.state.roomCodes.map((roomCode, i)=>{
-                        return <button key={i} onClick={()=>{this.joinGameButton(roomCode??"")}}>{roomCode}</button>
-                    })
-                }
+
+                <button onClick={()=>{this.hostGameButton()}}>
+                    {translate("menu.play.button.host")}
+                </button>
+                <button onClick={()=>{this.refreshButton()}}>
+                    {translate("menu.play.button.refresh")}
+                </button>
             </div>
         </div>
     }

@@ -148,7 +148,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             <div className="error-card slide-in">
                 <header><button onClick={() => {Anchor.instance.handleRejoin(roomCode, playerId)}}>{translate("menu.play.button.rejoin")}</button></header>
                 <button onClick={() => {Anchor.instance.handleCancelRejoin()}}>✕</button>
-                <div></div>
+                <div>{translate("menu.play.field.roomCode")}: {roomCode}</div><div> {translate("menu.play.field.playerId")}: {playerId}</div>
             </div>
         });
     }
