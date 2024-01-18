@@ -1,10 +1,9 @@
 
 .anchor {
-    overflow-x: hidden;
-    overflow-y: hidden;
+    overflow: hidden;
     
     height: 100dvh;
-    width: 100%;
+    width: 100dvw;
 
     background-color: var(--background-color);
 }

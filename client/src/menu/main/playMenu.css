@@ -1,42 +1,50 @@
-.playMenu {
-    margin-top: 1%;
+.play-menu {
     overflow-y: hidden;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
-.playMenu table, th, td {
+.play-menu-table {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     border: 1px double white;
     border-collapse: collapse;
+    max-height: calc(100% - 5rem); /*this is bad, this assumes the footer is 5rem tall*/
 }
-.playMenu th, td {
-    text-align: center;
-    padding: .1rem;
-    /* min-width: max-content; */
-    width: 1%;
-}
-.playMenu table {
-    margin: 0 auto;
-    width: 100%;
-}
-.playMenu thead {
-    display: block;
-    width: 100%;
-}
-.playMenu tbody {
+.play-menu-table > div {
+    border-collapse: collapse;
     overflow-y: scroll;
-    max-height: 65vh;
-    width: 100%;
-    display: block;
+    min-height: 2rem;
 }
-.playMenu div {
-    display: flex;
-    margin: 0 auto;
-    width: 80%;
-    flex-wrap: wrap;
-    justify-content: right;
+.play-menu-table > div:first-child {
+    overflow: hidden;
 }
-.playMenu div section {
-    border: 1px solid gray;
-    padding: .2rem;
+.play-menu-table > div > div {
     display: flex;
+    justify-content:space-around;
+    border-collapse: collapse;
+    height: max-content;
+}
+.play-menu-table > div > div > div{
+    border: 1px double white;
+    flex: 1;
+    height: 2rem;
+    display: flex;
+    align-items: center; /* Adjust vertical alignment */
+    justify-content: flex-start; /* Align text to the right */
+}
+.play-menu-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
     align-items: center;
-    width: min-content;
+    border: 1px double white;
+    border-collapse:collapse;
+    flex-shrink: 0;
+    max-height: 5rem;
+}
+.play-menu-footer > section{
+    border: 1px double white;
 }

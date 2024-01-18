@@ -63,36 +63,34 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
     }
 
     render() {
-        return <div className="playMenu">
+        return <div className="play-menu">
             <header>
                 <h1>
                     {translate("menu.play.title")}
                 </h1>
             </header>
-            
-            
-                <table>
-                    <thead>
-                        <tr>
-                            <th>{translate("menu.play.field.roomCode")}</th>
-                            <th style={{width:"100%"}}></th>
-                        </tr>
-                    </thead>
-                    <tbody>
+            <div className="play-menu-table">
+                <div className="play-menu-table-header">
+                    <div>
+                        <div>{translate("menu.play.field.roomCode")}</div>
+                        {/* <div>hi</div> */}
+                    </div>
+                </div>
+                        
+                <div className="play-menu-table-body">
                     {
                         GAME_MANAGER.state.stateType === "outsideLobby" &&
                         GAME_MANAGER.state.roomCodes.map((roomCode, i)=>{
-                            return <tr>
-                                <td><button key={i} onClick={()=>{this.joinGameButton(roomCode??"")}}>{roomCode}</button></td>
-                                <td></td>
-                            </tr>
+                            return <div key={roomCode}>
+                                <div><button key={i} onClick={()=>{this.joinGameButton(roomCode??"")}}>{roomCode}</button></div>
+                                {/* <div>hello</div> */}
+                            </div>
                         })
                     }
-                    </tbody>
-                    
-                </table>
+                </div>
+            </div>
             
-            <div>
+            <div className="play-menu-footer">
                 <section>       
                     <label>{translate("menu.play.field.roomCode")}</label>
                     <input type="text" value={this.state.selectedRoomCode??""} 
