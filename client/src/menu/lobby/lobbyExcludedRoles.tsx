@@ -69,9 +69,13 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
         GAME_MANAGER.sendExcludedRolesPacket(roles);
     }
     handleExcludedRolePreset(){
-        GAME_MANAGER.sendExcludedRolesPacket(
-            EXCLUDED_ROLE_PRESETS[this.state.preset as "Beginner" | "Intermediate" | "Classic"] as RoleOutline[]
-        );
+        let new_exclusions = this.state.excludedRoles;
+        let preset = EXCLUDED_ROLE_PRESETS[this.state.preset as keyof typeof EXCLUDED_ROLE_PRESETS] as RoleOutline[];
+        for(let outline of preset){
+            new_exclusions.push(outline);
+        }
+
+        GAME_MANAGER.sendExcludedRolesPacket(new_exclusions);
     }
     handleIncludeAll(){
         GAME_MANAGER.sendExcludedRolesPacket([]);

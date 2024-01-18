@@ -169,7 +169,7 @@
     "role.medium.target": "Target",
     "role.medium.detarget": "Detarget",
     "role.medium.roleDataText.nobody": "You didn't decide to seance anybody.\n\\0 seances remaining",
-    "role.medium.roleDataText": "You decided to seance \\0.\n\\0 seances remaining",
+    "role.medium.roleDataText": "You decided to seance \\0.\n\\1 seances remaining",
     "role.medium.dayTarget": "Seance",
 
     "role.retributionist.name": "Retributionist",

@@ -64,7 +64,10 @@
             "role": "retributionist"
         },
 
-        
+        {
+            "type": "exact",
+            "role": "mafioso"
+        },
         {
             "type": "exact",
             "role": "consigliere"
@@ -82,88 +85,34 @@
             "type": "exact",
             "role": "janitor"
         },
-        {
-            "type": "exact",
-            "role": "framer"
-        },
 
-        
-        {
-            "type": "exact",
-            "role": "doomsayer"
-        },
         {
             "type": "exact",
             "role": "politician"
         },
+        {
+            "type": "exact",
+            "role": "executioner"
+        },
+
+        {
+            "type": "exact",
+            "role": "doomsayer"
+        },        
+        {
+            "type": "exact",
+            "role": "death"
+        },
+        
 
         {
             "type": "exact",
             "role": "werewolf"
-        },
-        {
-            "type": "exact",
-            "role": "death"
         },
         
         {
             "type": "exact",
             "role": "vampire"
-        }
-    ],
-    "Intermediate": [
-        {
-            "type": "exact",
-            "role": "transporter"
-        },
-        
-
-        {
-            "type": "exact",
-            "role": "spy"
-        },
-        {
-            "type": "exact",
-            "role": "psychic"
-        },
-
-        {
-            "type": "exact",
-            "role": "crusader"
-        },
-
-        {
-            "type": "exact",
-            "role": "deputy"
-        },
-
-        {
-            "type": "exact",
-            "role": "retributionist"
-        },
-
-        
-        {
-            "type": "exact",
-            "role": "witch"
-        },
-        {
-            "type": "exact",
-            "role": "necromancer"
-        },
-        
-        {
-            "type": "exact",
-            "role": "politician"
-        },
-        
-        {
-            "type": "exact",
-            "role": "werewolf"
-        },
-        {
-            "type": "exact",
-            "role": "death"
         }
     ],
     "Classic": [
@@ -192,6 +141,10 @@
 
         {
             "type": "exact",
+            "role": "mafioso"
+        },
+        {
+            "type": "exact",
             "role": "necromancer"
         },
         {
@@ -207,7 +160,16 @@
             "role": "death"
         }
     ],
-    "Draculas Palace": [
+    "Low Player Count": [
+        {
+            "type": "exact",
+            "role": "spy"
+        },
+        {
+            "type": "exact",
+            "role": "psychic"
+        },
+        
         {
             "type": "exact",
             "role": "bodyguard"
@@ -215,12 +177,26 @@
 
         {
             "type": "exact",
-            "role": "spy"
+            "role": "retributionist"
+        },
+
+        {
+            "type": "exact",
+            "role": "mafioso"
+        },
+
+        {
+            "type": "exact",
+            "role": "necromancer"
         },
 
         {
             "type": "exact",
             "role": "death"
+        },
+        {
+            "type": "exact",
+            "role": "doomsayer"
         }
     ]
 
