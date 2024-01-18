@@ -32,7 +32,7 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
                 host: GAME_MANAGER.getMyHost() ?? false
             }
 
-        this.listener = () => {
+        this.listener = (type) => {
             if(GAME_MANAGER.state.stateType === "lobby")
                 this.setState({
                     excludedRoles: GAME_MANAGER.state.excludedRoles,
