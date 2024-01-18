@@ -71,9 +71,22 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
     }
     renderInput(type: FieldType) {
         return (<details open={type === "will"}>
-            <summary>{translate("menu.will." + type)}</summary>
+            <summary onClick={() => {
+                if(type === "notes" && this.state.localFields.notes === "" && GAME_MANAGER.state.stateType === "game"){
+                    let notes = GAME_MANAGER.state.players.map((player) => {
+                        return player.toString();
+                    }).join(" - \n") + " - \n";
+                    this.setState({
+                        localFields: {
+                            will: this.state.localFields.will,
+                            notes: notes,
+                            deathNote: this.state.localFields.deathNote,
+                        }
+                    });
+                }
+            }}>{translate("menu.will." + type)}</summary>
             <div>
-                <button 
+                <button
                     className={"material-icons-round " + (this.state.syncedFields[type] !== this.state.localFields[type] ? "highlighted" : "")}
                     onClick={() => this.save(type)}
                     aria-label={translate("menu.will.save")}
