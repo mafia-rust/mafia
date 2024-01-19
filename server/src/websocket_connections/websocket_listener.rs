@@ -72,7 +72,7 @@ async fn handle_connection(
     let ws_stream = match tokio_tungstenite::accept_async(raw_stream).await {
         Ok(ws_stream) => ws_stream,
         Err(error) => {
-            log!(error "Connection"; "Failed to accept websocket handshake with {}: {}", addr, error);
+            log!(info "Connection"; "Failed to accept websocket handshake with {}: {}", addr, error);
             return Err(ConnectionError);
         }
     };
