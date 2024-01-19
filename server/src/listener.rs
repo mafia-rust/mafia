@@ -89,7 +89,7 @@ impl Listener{
         ).map(|f|f.0.clone()).collect();
 
         for player in players_to_remove{
-            self.set_lobby_outside_lobby(&player);
+            self.set_player_outside_lobby(&player, false);
         }
         self.lobbies.remove(&room_code);
     }
@@ -106,7 +106,7 @@ impl Listener{
             return;
         };
 
-        if let Ok(player_id) = lobby.connect_player_to_lobby(&connection.get_sender()) {
+        if let Ok(player_id) = lobby.join_player(&connection.get_sender()) {
             *sender_player_location = PlayerLocation::InLobby { room_code, player_id };
         }
     }
@@ -123,17 +123,24 @@ impl Listener{
             return;
         };
 
-        if lobby.reconnect_player_to_lobby(&connection.get_sender(), player_id).is_ok() {
+        if lobby.rejoin_player(&connection.get_sender(), player_id).is_ok() {
             *sender_player_location = PlayerLocation::InLobby { room_code, player_id };
         }
     }
     //returns if player was in the lobby
-    fn set_lobby_outside_lobby(&mut self, address: &SocketAddr) -> bool {
+    fn set_player_outside_lobby(&mut self, address: &SocketAddr, rejoinable: bool) -> bool {
         let Some(sender_player_location) = self.players.get_mut(address) else {
             log!(error "Listener"; "{} {}", "Attempted leave a non player that isn't in the map", address);
             return false;
         };
-        let PlayerLocation::InLobby { .. } = sender_player_location else {return false};
+        let PlayerLocation::InLobby { room_code, player_id } = sender_player_location else {return false};
+        if let Some(lobby) = self.lobbies.get_mut(room_code) {
+            if rejoinable {
+                lobby.remove_player_rejoinable(*player_id);
+            }else{
+                lobby.remove_player(*player_id)
+            }
+        }
         *sender_player_location = PlayerLocation::OutsideLobby;
         true
     }
@@ -149,7 +156,7 @@ impl Listener{
 
         if let PlayerLocation::InLobby { room_code, player_id } = disconnected_player_location {
             if let Some(lobby) = self.lobbies.get_mut(&room_code) {
-                lobby.lose_player_connection(player_id);
+                lobby.remove_player(player_id)
             }
         }
 
@@ -163,7 +170,9 @@ impl Listener{
     }
 
     pub fn on_disconnect(&mut self, connection: Connection) -> Result<(), &'static str> {
-        self.delete_player(connection.get_address())
+        self.set_player_outside_lobby(connection.get_address(), true);
+        Ok(())
+        // self.delete_player(connection.get_address())
     }
 
     pub fn on_message(&mut self, connection: &Connection, message: &Message) {
@@ -201,7 +210,7 @@ impl Listener{
                 log!(important "Lobby"; "Created {room_code}");
             },
             ToServerPacket::Leave => {
-                self.set_lobby_outside_lobby(connection.get_address());
+                self.set_player_outside_lobby(connection.get_address(), false);
             },
             _ => {
                 let Some(sender_player_location) = self.players.get_mut(connection.get_address()) else {

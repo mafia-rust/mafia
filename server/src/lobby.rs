@@ -273,19 +273,20 @@ impl Lobby {
                 self.send_to_all(ToClientPacket::ExcludedRoles { roles });
             }
             ToServerPacket::Leave => {
-                match &mut self.lobby_state {
-                    LobbyState::Lobby { players, .. } => {
-                        let Some(player) = players.get_mut(&player_id) else {return};
-                        player.connection = ClientConnection::Disconnected;
-                    },
-                    LobbyState::Game { game, players } => {
-                        let Some(game_player) = players.get_mut(&player_id) else {return};
-                        if let Ok(player_ref) = PlayerReference::new(game, game_player.player_index) {
-                            player_ref.leave(game);
-                        }
-                    },
-                    LobbyState::Closed => {}
-                }
+                // match &mut self.lobby_state {
+                //     LobbyState::Lobby { players, .. } => {
+                //         let Some(player) = players.get_mut(&player_id) else {return};
+                //         player.connection = ClientConnection::Disconnected;
+                //     },
+                //     LobbyState::Game { game, players } => {
+                //         let Some(game_player) = players.get_mut(&player_id) else {return};
+                //         if let Ok(player_ref) = PlayerReference::new(game, game_player.player_index) {
+                //             player_ref.leave(game);
+                //         }
+                //     },
+                //     LobbyState::Closed => {}
+                // }
+                self.remove_player(player_id);
             }
             _ => {
                 let LobbyState::Game { game, players } = &mut self.lobby_state else {
@@ -298,7 +299,7 @@ impl Lobby {
         }
     }
 
-    pub fn connect_player_to_lobby(&mut self, send: &ClientSender) -> Result<PlayerID, RejectJoinReason>{
+    pub fn join_player(&mut self, send: &ClientSender) -> Result<PlayerID, RejectJoinReason>{
         match &mut self.lobby_state {
             LobbyState::Lobby { players, settings } => {
 
@@ -340,33 +341,40 @@ impl Lobby {
             }
         }
     }
-    pub fn disconnect_player_from_lobby(&mut self, id: PlayerID) {
-        let LobbyState::Lobby {players, settings} = &mut self.lobby_state else {
-            panic!("function called wrong");
-        };
-
-        let player = players.remove(&id);
+    pub fn remove_player(&mut self, player_id: PlayerID) {
+        match &mut self.lobby_state {
+            LobbyState::Lobby { players, settings } => {
+                let player = players.remove(&player_id);
         
-        if players.is_empty() {
-            self.lobby_state = LobbyState::Closed;
-            return;
-        }
-        if !players.iter().any(|p|p.1.host) {
-            if let Some(new_host) = players.values_mut().next(){
-                new_host.set_host();
-            }
-        }
+                if players.is_empty() {
+                    self.lobby_state = LobbyState::Closed;
+                    return;
+                }
+                if !players.iter().any(|p|p.1.host) {
+                    if let Some(new_host) = players.values_mut().next(){
+                        new_host.set_host();
+                    }
+                }
 
-        if let Some(_player) = player {
-            settings.role_list.pop();
-        };
+                if let Some(_player) = player {
+                    settings.role_list.pop();
+                };
 
-        Self::send_players_lobby(players);
-        for player in players.iter(){
-            Self::send_settings(player.1, settings);
+                Self::send_players_lobby(players);
+                for player in players.iter(){
+                    Self::send_settings(player.1, settings);
+                }
+            },
+            LobbyState::Game { game, players } => {
+                let Some(game_player) = players.get_mut(&player_id) else {return};
+                if let Ok(player_ref) = PlayerReference::new(game, game_player.player_index) {
+                    player_ref.leave(game);
+                }
+            },
+            LobbyState::Closed => {}
         }
     }
-    pub fn lose_player_connection(&mut self, id: PlayerID) {
+    pub fn remove_player_rejoinable(&mut self, id: PlayerID) {
 
         match &mut self.lobby_state {
             LobbyState::Lobby {players, settings: _settings} => {
@@ -390,7 +398,7 @@ impl Lobby {
             LobbyState::Closed => {}
         }
     }
-    pub fn reconnect_player_to_lobby(&mut self, send: &ClientSender, player_id: PlayerID) -> Result<(), RejectJoinReason>{
+    pub fn rejoin_player(&mut self, send: &ClientSender, player_id: PlayerID) -> Result<(), RejectJoinReason>{
         match &mut self.lobby_state {
             LobbyState::Lobby { players, settings } => {
                 let Some(player) = players.get_mut(&player_id) else {
@@ -467,7 +475,7 @@ impl Lobby {
                 }
 
                 for player in to_remove {
-                    self.disconnect_player_from_lobby(player);
+                    self.remove_player(player);
                 }
             },
             LobbyState::Closed => {}
