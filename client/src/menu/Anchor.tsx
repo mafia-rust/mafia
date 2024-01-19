@@ -112,6 +112,13 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     static stopAudio() {
         Anchor.instance.state.audio.pause();
     }
+    static closeSettings() {
+        Anchor.instance.setState({settings_menu: false});
+    }
+    static openSettings() {
+        Anchor.instance.setState({settings_menu: true});
+    }
+    
 
     render(){
         return <div className="anchor">
@@ -130,7 +137,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             />}
             <button className="material-icons-round settings-button" onClick={() => {
                 this.setState({settings_menu: !this.state.settings_menu});
-            }}>settings</button>
+            }}>menu</button>
         </div>
     }
 

@@ -21,7 +21,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
 
         if(GAME_MANAGER.state.stateType === "game"){
             let gameStateFields = {
-                will: GAME_MANAGER.state.will,
+                will: GAME_MANAGER.state.will === "" ? "ROLE\nN1: \nN2: " : GAME_MANAGER.state.will,
                 notes: GAME_MANAGER.state.notes,
                 deathNote: GAME_MANAGER.state.deathNote,
             };
@@ -33,21 +33,51 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
         }
         
         this.listener = (type) => {
-            if (type === "yourWill" || type === "yourNotes" || type === "yourDeathNote") {
-                if(GAME_MANAGER.state.stateType === "game")
+            if(GAME_MANAGER.state.stateType === "game"){
+                if (type === "yourWill") {
                     this.setState({
                         syncedFields: {
                             will: GAME_MANAGER.state.will,
-                            notes: GAME_MANAGER.state.notes,
-                            deathNote: GAME_MANAGER.state.deathNote,
+                            notes: this.state.syncedFields.notes,
+                            deathNote: this.state.syncedFields.deathNote,
                         },
                         localFields: {
                             will: GAME_MANAGER.state.will,
+                            notes: this.state.localFields.notes,
+                            deathNote: this.state.localFields.deathNote,
+                        }
+                    });
+                }
+                else if(type === "yourNotes"){
+                    this.setState({
+                        syncedFields: {
+                            will: this.state.syncedFields.will,
                             notes: GAME_MANAGER.state.notes,
+                            deathNote: this.state.syncedFields.deathNote,
+                        },
+                        localFields: {
+                            will: this.state.localFields.will,
+                            notes: GAME_MANAGER.state.notes,
+                            deathNote: this.state.localFields.deathNote,
+                        }
+                    });
+                }
+                else if(type === "yourDeathNote"){
+                    this.setState({
+                        syncedFields: {
+                            will: this.state.syncedFields.will,
+                            notes: this.state.syncedFields.notes,
+                            deathNote: GAME_MANAGER.state.deathNote,
+                        },
+                        localFields: {
+                            will: this.state.localFields.will,
+                            notes: this.state.localFields.notes,
                             deathNote: GAME_MANAGER.state.deathNote,
                         }
                     });
+                }
             }
+            
         };  
     }
     componentDidMount() {

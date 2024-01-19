@@ -94,7 +94,7 @@ export function translateChatMessage(message: ChatMessage): string {
         case "normal":
             if(message.messageSender.type === "player"){
                 return translate("chatMessage.normal",
-                    GAME_MANAGER.state.players[message.messageSender.player].toString(), 
+                    "sender-"+GAME_MANAGER.state.players[message.messageSender.player].toString(), 
                     sanitizePlayerMessage(replaceMentions(message.text, GAME_MANAGER.state.players))
                 );
             } else {

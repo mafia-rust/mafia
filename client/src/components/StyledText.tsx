@@ -92,11 +92,17 @@ export function getKeywordData(): KeywordDataMap {
 
     if(GAME_MANAGER.state.stateType === "game")
         for(const player of GAME_MANAGER.state.players) {
+            keywordData["sender-"+player.toString()] = [
+                { style: "keyword-player-number", replacement: (player.index + 1).toString() },
+                { replacement: " " },
+                { style: "keyword-player-sender", replacement: player.name }
+            ];
             keywordData[player.toString()] = [
                 { style: "keyword-player-number", replacement: (player.index + 1).toString() },
                 { replacement: " " },
                 { style: "keyword-player", replacement: player.name }
             ];
+            
         }
 
     for(const role of Object.keys(ROLES)){

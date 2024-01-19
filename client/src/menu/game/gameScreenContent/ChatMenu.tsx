@@ -1,6 +1,6 @@
 import React from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER from "../../../index";
+import GAME_MANAGER, { replaceMentions } from "../../../index";
 import "../gameScreen.css";
 import "./chatMenu.css"
 import GameState, { PlayerIndex } from "../../../game/gameState.d";
@@ -114,7 +114,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     };
     sendChatField(){
         if(ChatMenu.instance === null) return;
-        const text = ChatMenu.instance.state.chatField.replace("\n", "").replace("\r", "").trim();
+        let text = ChatMenu.instance.state.chatField.replace("\n", "").replace("\r", "").trim();
         if (text === "") return;
         ChatMenu.instance.history.push(text);
         ChatMenu.instance.history_poller.reset();
@@ -123,15 +123,23 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
                 RegExp(`^${player.index+1} +`).test(text.substring(2))
             );
             if (recipient !== undefined) {
+                let whisperText = text.substring(3 + recipient.index.toString().length);
+                if(GAME_MANAGER.state.stateType === "game")
+                    whisperText = replaceMentions(whisperText, GAME_MANAGER.state.players);
+                
                 GAME_MANAGER.sendSendWhisperPacket(
                     recipient.index,
-                    text.substring(3 + recipient.index.toString().length)
+                    whisperText
                 ); 
             } else {
                 // Malformed whisper
+                if(GAME_MANAGER.state.stateType === "game")
+                    text = replaceMentions(text, GAME_MANAGER.state.players);
                 GAME_MANAGER.sendSendMessagePacket(text);
             }
         } else {
+            if(GAME_MANAGER.state.stateType === "game")
+                text = replaceMentions(text, GAME_MANAGER.state.players);
             GAME_MANAGER.sendSendMessagePacket(text);
         }
         ChatMenu.instance.setState({

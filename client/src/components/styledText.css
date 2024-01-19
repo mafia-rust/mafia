@@ -19,6 +19,11 @@
     text-indent: 0;
     text-align: center !important;
 }
+.keyword-player-sender {
+    color: rgb(168, 168, 168);
+    font-style: italic; 
+    font-weight: bold;
+}
 .keyword-player {
     color: whitesmoke;
     font-style: italic; 

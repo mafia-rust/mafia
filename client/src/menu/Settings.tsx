@@ -3,6 +3,7 @@ import "./settings.css";
 import translate from '../game/lang';
 import GAME_MANAGER from '..';
 import WikiSearch from '../components/WikiSearch';
+import Anchor from './Anchor';
 
 type SettingsProps = {
     volume: number, // 0-1
@@ -35,9 +36,6 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
         //volume slider
         return (
             <div className="settings slide-in">
-                <div className="settingsTitle">
-                    <h1>{translate("menu.settings.title")}</h1>
-                </div>
                 <div>
                     {
                         GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 
@@ -45,6 +43,7 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
                             <div>
                                 <button className='settings-leave' onClick={() => {
                                     GAME_MANAGER.leaveGame();
+                                    Anchor.closeSettings();
                                 }}>{translate("menu.settings.exit")}</button>
                             </div>
                             <h2>{translate("menu.play.field.roomCode")}

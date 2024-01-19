@@ -2,8 +2,6 @@
     "language": "English (United States)",
 
     "menu.start.title": "Mafia",
-    "menu.start.button.login": "Log in",
-    "menu.start.button.logout": "Log out",
     "menu.start.button.play": "Play",
 
     "menu.play.title": "Play",
@@ -14,17 +12,15 @@
     "menu.play.field.roomCode": "Room code",
     "menu.play.field.playerId": "Player Id",
 
-    "menu.lobby.title": "Lobby \\0",
     "menu.lobby.button.start": "Start",
     "menu.lobby.field.namePlaceholder": "Enter name",
     "menu.lobby.button.setName": "Set Name",
     "menu.lobby.players": "Players:",
-    "menu.lobby.roleList": "Role List:",
+    "menu.lobby.roleList": "Outlines:",
     "menu.lobby.excludedRoles": "Exclusions:",
     "menu.lobby.timeSettings": "Times:",
     "menu.lobby.settings": "Settings:",
 
-    "menu.settings.title": "Settings",
     "menu.settings.volume": "Volume",
     "menu.settings.exit": "Exit Game",
 
