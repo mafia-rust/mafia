@@ -63,7 +63,7 @@ impl LobbyPlayer {
         }
     }
 }
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct GamePlayer{
     pub player_index: PlayerIndex,
     pub host: bool,

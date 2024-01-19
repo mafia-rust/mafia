@@ -142,7 +142,7 @@ export function createGameManager(): GameManager {
 
 
         leaveGame() {
-            if (this.state.stateType === "game") {
+            if (this.state.stateType !== "disconnected") {
                 this.server.sendPacket({type: "leave"});
             }
             this.deleteReconnectData();
