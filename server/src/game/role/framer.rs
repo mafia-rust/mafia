@@ -44,10 +44,10 @@ impl RoleStateImpl for Framer {
         
         !actor_ref.night_jailed(game) &&
         actor_ref.alive(game) &&
-        target_ref.alive(game) &&
         (
             actor_ref.chosen_targets(game).is_empty() &&
             actor_ref != target_ref &&
+            target_ref.alive(game) &&
             !Team::same_team(game, actor_ref, target_ref)
         ) || 
         (

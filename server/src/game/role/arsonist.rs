@@ -63,11 +63,9 @@ impl RoleStateImpl for Arsonist {
                         other_player_ref.set_doused(game, true);
                     }
                 }
-
-                //undouse me
-                actor_ref.set_doused(game, false);
             },
             Priority::Kill => {
+                actor_ref.set_doused(game, false);
                 if actor_ref.night_jailed(game) {return}
                 
                 if let Some(visit) = actor_ref.night_visits(game).first(){
