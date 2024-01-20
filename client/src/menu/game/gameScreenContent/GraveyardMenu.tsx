@@ -132,7 +132,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
                     if (entry.type === "exact") {
                         WikiSearch.setPage(`role/${entry.role}`);
                     } else {
-                        WikiSearch.setPage(`article/roles_and_teams`);
+                        WikiSearch.setPage(`article/how_to_play`);
                     }
                 }}
             >
@@ -159,7 +159,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
                                 if (entry.type === "exact") {
                                     WikiSearch.setPage(`role/${entry.role}`);
                                 } else {
-                                    WikiSearch.setPage(`article/roles_and_teams`);
+                                    WikiSearch.setPage(`article/how_to_play`);
                                 }
                             }}
                         >
