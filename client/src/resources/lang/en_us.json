@@ -445,7 +445,6 @@
     "chatMessage.doomsayerFailed": "At least one of your guesses was incorrect or invalid.",
     "chatMessage.doomsayerWon": "Your guesses were correct, and you won!",
 
-    "wiki.keyword": "<details>\n<summary>\\0</summary>\n> \\1\n</details>",
     "keyword.vision": "Vision",
     "wiki.keyword.vision": "Visions are the investigative result that a Psychic recieves. Good visions show a list of two players that contains at least one townie. Evil visions show a list of three players that contains at least one non-townie.",
     "keyword.visit": "Visit",

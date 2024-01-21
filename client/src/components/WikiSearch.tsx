@@ -236,10 +236,7 @@ function getPageText(page: WikiPage): string {
             const role = path[1] as Role;
             const roleData = ROLES[role];
             const keywords = roleData.keywords.map(key => {
-                return translate("wiki.keyword", 
-                    translate("keyword."+key), 
-                    translate("wiki.keyword." + key)
-                )
+                return `<details><summary>${translate("keyword."+key)}</summary>${translate("wiki.keyword." + key)}</details>`;
             }).join('\n');
 
             return translate("wiki.entry.role",

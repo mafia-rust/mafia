@@ -38,6 +38,15 @@
     margin-bottom: 0.5rem;
     text-align: center;
 }
+.wiki-content-body details {
+    width: 100%;
+    background-color: var(--primary-color);
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.wiki-content-body summary {
+    margin: 0;
+}
 .wiki-content-body blockquote > * {
     display: inline-block;
     margin: auto;
