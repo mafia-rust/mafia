@@ -4,7 +4,7 @@
         "factionAlignment": "townPower",
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["jailed", "attack"]
+        "keywords": ["jail", "defense"]
     },
     "mayor":{
         "defense": 0,

@@ -37,11 +37,8 @@
     "wiki.entry.role.attributes": { "style": "keyword-info","link": "article/how_to_play"},
     "wiki.entry.role.extra": { "style": "keyword-info","link": "article/how_to_play"},
     "grave.killer.suicide": { "style": "keyword-info"},
-    "random.kys": { "style": "keyword-pride","replacement": "random.kys","link": "article/all_language"},
-    "random.kys.shorthand": { "style": "keyword-pride","replacement": "random.kys","link": "article/all_language"},
     "random.gay": { "style": "keyword-pride","replacement": "random.gay"},
     "random.trans": { "style": "keyword-trans","replacement": "random.trans","link": "role/transporter"},
-    "random.fuck_off": { "style": "keyword-pride","replacement": "random.fuck_off"},
 
     "day": {
         "link": "article/phases_and_timeline"

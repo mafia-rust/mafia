@@ -542,8 +542,10 @@
     "wiki.entry.role.noExtra": "There is no extras section written for this page.",
 
     "wiki.entry.role.jailor.title": "Jailor",
-    "wiki.entry.role.jailor.abilities":"* Choose one player to jail during the day\n* You can execute your prisoners up to three times",
-    "wiki.entry.role.jailor.attributes":"* You may anonymously talk with your prisoner at night\n* If you execute a town member, you forfeit the ability to jail prisoners\n* Jailed players are immune to most abilities being used on them\n* Jailed players can't target\n* Other players will know if their target was jailed\n* The Jailor cant choose to execute on night one",
+    "wiki.entry.role.jailor.guide": "During the day, choose one player to jail each night. You can talk to your prisoner during the night, and they wont know who you are. You should interrogate your prisoner to find out what their role is, and if you think they are evil, you can choose to execute them. You can execute up to three times, but if you kill a townie, you can not jail anyone anymore.",
+    "wiki.entry.role.jailor.abilities":"* Choose one player to jail during the day\n* Visit your prisoner to execute them",
+    "wiki.entry.role.jailor.attributes":"* You may anonymously talk with your prisoner at night\n* If you execute a town member, you forfeit the ability to jail prisoners, and loose all execution uses\n* Jailed players are immune to most abilities being used on them\n* Jailed players can't target\n* Other players will know if the player they visit is jailed",
+    "wiki.entry.role.jailor.extra":"* The Jailor cant choose to execute on night one\n* If you execute a townie, or run out of executions, you can not target anymore",
 
     "wiki.entry.role.mayor.title": "Mayor",
     "wiki.entry.role.mayor.guide": "You have no abilities during the night but can reveal that you are the Mayor during the day, from then on your vote counts as three votes.",
@@ -570,10 +572,10 @@
     "wiki.entry.role.lookout.extra": "- You can not see astral visits\n- A framer can change your results",
 
     "wiki.entry.role.spy.title": "Spy",
-    "wiki.entry.role.spy.guide": "",
-    "wiki.entry.role.spy.abilities":"* Bug a player to find out what happened to them\n* You will get to know who the mafia visited",
-    "wiki.entry.role.spy.attributes":"* Your bug will catch when your target sees a message saying they are silenced, roleblocked, protected or transported\n* The mafia visits can not be fooled, they are always accurate.",
-    "wiki.entry.role.spy.extra": "",
+    "wiki.entry.role.spy.guide": "Choose a player to find what happened to them. You will passively learn who the mafia visited. You should tell the town the information you get daily. If the mafia can not visit themselves, then everyone who the mafia visits must not be mafia.",
+    "wiki.entry.role.spy.abilities":"* Bug a player to find out what happened to them\n* You will know who the mafia visited",
+    "wiki.entry.role.spy.attributes":"* Your bug will catch when your target sees a message saying they are silenced, roleblocked, protected or transported",
+    "wiki.entry.role.spy.extra": "* The mafia visits can not be fooled, they are always accurate",
 
     "wiki.entry.role.tracker.title": "Tracker",
     "wiki.entry.role.tracker.guide": "Choose a player each night to find who they chose. You should tell the town the information you get daily. You should try to choose people who you think are lying.",
@@ -756,9 +758,5 @@
     "wiki.entry.role.vampire.extra":"* You can not convert a player with defense\n* You can only target if the number of living vampires is less than or equal to the half of the number of living players ",
 
     "random.gay":"GAY",
-    "random.trans":"TRANS",
-    "random.fuck_off":"FUCK OFF",
-
-    "random.kys":"KILL YOURSELF",
-    "random.kys.shorthand":"kys"
+    "random.trans":"TRANS"
 }
