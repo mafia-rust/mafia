@@ -1,152 +1,47 @@
 {
-    "verdict.guilty": { 
-        "style": "keyword-evil",
-        "link": "article/phases_and_timeline"
-    },
-    "verdict.innocent": { 
-        "style": "keyword-good",
-        "link": "article/phases_and_timeline"
-    },
-    "innocent.shorthand": { 
-        "style": "keyword-good",
-        "link": "article/phases_and_timeline"
-    },
-    "verdict.abstain": { 
-        "style": "keyword-abstain",
-        "link": "article/phases_and_timeline"
-    },
-    "grave.role.cleaned": { 
-        "style": "keyword-hiddenRole",
-        "link": "role/janitor"
-    },
-    "grave.role.petrified": { 
-        "style": "keyword-hiddenRole"
-    },
-    "suspicious": { 
-        "style": "keyword-evil",
-        "link": "role/sheriff"
-    },
-    "suspicious.shorthand": { 
-        "style": "keyword-evil",
-        "link": "role/sheriff"
-    },
-    "friends": { 
-        "style": "keyword-good",
-        "link": "role/seer"
-    },
-    "enemies": { 
-        "style": "keyword-evil",
-        "link": "role/seer"
-    },
-    "vision": {
-        "style": "keyword-info",
-        "link": "role/psychic"
-    },
-    "good": {
-        "style": "keyword-info"
-    },
-    "faction.town": { 
-        "style": "keyword-good",
-        "link": "article/roles_and_teams"
-    },
-    "faction.mafia": { 
-        "style": "keyword-evil",
-        "link": "article/roles_and_teams"
-    },
-    "faction.neutral": { 
-        "style": "keyword-neutral",
-        "link": "article/roles_and_teams"
-    },
-    "alignment.killing": { 
-        "style": "keyword-info"
-    },
-    "alignment.investigative": { 
-        "style": "keyword-info"
-    },
-    "alignment.protective": { 
-        "style": "keyword-info"
-    },
-    "alignment.support": { 
-        "style": "keyword-info"
-    },
-    "alignment.deception": { 
-        "style": "keyword-info"
-    },
-    "alignment.evil": { 
-        "style": "keyword-info"
-    },
-    "alignment.chaos": { 
-        "style": "keyword-info"
-    },
-    "alignment.apocalypse": { 
-        "style": "keyword-info"
-    },
-    "alignment.power": { 
-        "style": "keyword-info"
-    },
-    "any": { 
-        "style": "keyword-info"
-    },
-    "none": { 
-        "style": "keyword-info"
-    },
-    "defense.0": { 
-        "style": "keyword-info"
-    },
-    "defense.1": { 
-        "style": "keyword-info"
-    },
-    "defense.2": { 
-        "style": "keyword-info"
-    },
-    "defense.3": { 
-        "style": "keyword-info"
-    },
-    "faction": { 
-        "style": "keyword-info",
-        "link": "article/roles_and_teams"
-    },
-    "alignment": { 
-        "style": "keyword-info",
-        "link": "article/roles_and_teams"
-    },
-    "dead": { 
-        "style": "keyword-dead"
-    },
-    "wiki.entry.role.abilities": { 
-        "style": "keyword-info",
-        "link": "article/roles_and_teams"
-    },
-    "wiki.entry.role.attributes": { 
-        "style": "keyword-info",
-        "link": "article/roles_and_teams"
-    },
-    "grave.killer.suicide": { 
-        "style": "keyword-info"
-    },
-    "random.kys": { 
-        "style": "keyword-pride",
-        "replacement": "random.kys",
-        "link": "article/all_language"
-    },
-    "random.kys.shorthand": { 
-        "style": "keyword-pride",
-        "replacement": "random.kys",
-        "link": "article/all_language"
-    },
-    "random.gay": { 
-        "style": "keyword-pride",
-        "replacement": "random.gay"
-    },
-    "random.trans": { 
-        "style": "keyword-trans",
-        "replacement": "random.trans",
-        "link": "role/transporter"
-    },
-    "random.fuck_off": { 
-        "style": "keyword-pride",
-        "replacement": "random.fuck_off"
-    },
+    "keyword.priority": { "style": "keyword-info","link": "article/priority"},
+    "verdict.guilty": { "style": "keyword-evil","link": "article/phases_and_timeline"},
+    "verdict.innocent": { "style": "keyword-good","link": "article/phases_and_timeline"},
+    "innocent.shorthand": { "style": "keyword-good","link": "article/phases_and_timeline"},
+    "verdict.abstain": { "style": "keyword-abstain","link": "article/phases_and_timeline"},
+    "grave.role.cleaned": { "style": "keyword-hiddenRole","link": "role/janitor"},
+    "grave.role.petrified": { "style": "keyword-hiddenRole"},
+    "suspicious": { "style": "keyword-evil","link": "role/sheriff"},
+    "suspicious.shorthand": { "style": "keyword-evil","link": "role/sheriff"},
+    "friends": { "style": "keyword-good","link": "role/seer"},
+    "enemies": { "style": "keyword-evil","link": "role/seer"},
+    "vision": {"style": "keyword-info","link": "role/psychic"},
+    "good": {"style": "keyword-info"},
+    "faction.town": { "style": "keyword-good","link": "article/how_to_play"},
+    "faction.mafia": { "style": "keyword-evil","link": "article/how_to_play"},
+    "faction.neutral": { "style": "keyword-neutral","link": "article/how_to_play"},
+    "alignment.killing": { "style": "keyword-info"},
+    "alignment.investigative": { "style": "keyword-info"},
+    "alignment.protective": { "style": "keyword-info"},
+    "alignment.support": { "style": "keyword-info"},
+    "alignment.deception": { "style": "keyword-info"},
+    "alignment.evil": { "style": "keyword-info"},
+    "alignment.chaos": { "style": "keyword-info"},
+    "alignment.apocalypse": { "style": "keyword-info"},
+    "alignment.power": { "style": "keyword-info"},
+    "any": { "style": "keyword-info"},
+    "none": { "style": "keyword-info"},
+    "defense.0": { "style": "keyword-info"},
+    "defense.1": { "style": "keyword-info"},
+    "defense.2": { "style": "keyword-info"},
+    "defense.3": { "style": "keyword-info"},
+    "faction": { "style": "keyword-info","link": "article/how_to_play"},
+    "alignment": { "style": "keyword-info","link": "article/how_to_play"},
+    "dead": { "style": "keyword-dead"},
+    "wiki.entry.role.abilities": { "style": "keyword-info","link": "article/how_to_play"},
+    "wiki.entry.role.attributes": { "style": "keyword-info","link": "article/how_to_play"},
+    "wiki.entry.role.extra": { "style": "keyword-info","link": "article/how_to_play"},
+    "grave.killer.suicide": { "style": "keyword-info"},
+    "random.kys": { "style": "keyword-pride","replacement": "random.kys","link": "article/all_language"},
+    "random.kys.shorthand": { "style": "keyword-pride","replacement": "random.kys","link": "article/all_language"},
+    "random.gay": { "style": "keyword-pride","replacement": "random.gay"},
+    "random.trans": { "style": "keyword-trans","replacement": "random.trans","link": "role/transporter"},
+    "random.fuck_off": { "style": "keyword-pride","replacement": "random.fuck_off"},
 
     "day": {
         "link": "article/phases_and_timeline"
@@ -173,16 +68,16 @@
         "link": "article/phases_and_timeline"
     },
     "wiki.entry.article.wills_and_notes.title":{
-        "link": "article/wills_and_notes"
+        "link": "article/how_to_play"
     },
     "menu.will.will": {
-        "link": "article/wills_and_notes"
+        "link": "article/how_to_play"
     },
     "menu.will.notes": {
-        "link": "article/wills_and_notes"
+        "link": "article/how_to_play"
     },
     "menu.will.deathNote": {
-        "link": "article/wills_and_notes"
+        "link": "article/how_to_play"
     },
     "language":{ 
         "link": "article/all_language"

@@ -329,7 +329,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["defense","rampage","astral", "appearedVisit","innocentAura"]
+        "keywords": ["fullMoon","rampage","defense","astral","appearedVisit","innocentAura"]
     },
     "vampire": {
         "factionAlignment": "neutralChaos",
@@ -351,7 +351,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": true,
-        "keywords": ["convert", "priority"]
+        "keywords": ["convert", "priority", "roleOutline"]
     },
     "death":{
         "factionAlignment": "neutralApocalypse",

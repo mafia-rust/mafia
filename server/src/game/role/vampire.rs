@@ -56,7 +56,7 @@ impl RoleStateImpl for Vampire {
         actor_ref.alive(game) &&
         target_ref.alive(game) &&
         !Team::same_team(game, actor_ref, target_ref) &&
-        game.teams.vampires().ordered_vampires.len() <= 4 &&
+        game.teams.vampires().ordered_vampires.len() <= PlayerReference::all_players(game).filter(|p|p.alive(game)).count() / 2 &&
         game.teams.vampires().ordered_vampires.last() == Some(&actor_ref) &&
         time_passed
     }
