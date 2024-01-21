@@ -27,7 +27,7 @@ export type WikiPage =
     | `role/${Role}`
     | `article/${Article}`;
 
-const ARTICLES = ["roles_and_teams", "phases_and_timeline", "faction_alignments", "wills_and_notes", "all_language"] as const;
+const ARTICLES = ["how_to_play", "phases_and_timeline", "faction_alignments", "priority", "all_language"] as const;
 type Article = typeof ARTICLES[number];
 
 const PAGES: WikiPage[] = Object.keys(ROLES).map(role => `role/${role}`)
@@ -87,8 +87,6 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
     }
 
     renderOpenPageButton(page: WikiPage) {
-
-
         let excludedRolesExact: Role[] = [];
         for(let role in ROLES){
             let faction = getFactionFromRole(role as Role);
@@ -238,18 +236,16 @@ function getPageText(page: WikiPage): string {
             const role = path[1] as Role;
             const roleData = ROLES[role];
             const keywords = roleData.keywords.map(key => {
-                return translate("wiki.keyword", 
-                    translate(key), 
-                    translate("wiki.keyword." + key)
-                )
+                return `<details><summary>${translate("keyword."+key)}</summary>${translate("wiki.keyword." + key)}</details>`;
             }).join('\n');
 
             return translate("wiki.entry.role",
                 translate("role."+role+".name"),
                 translateRoleOutline(getRoleOutlineFromFactionAlignment(roleData.factionAlignment as FactionAlignment)) || '',
-                translateChecked("wiki.entry.role."+role+".basics") ?? translate("wiki.entry.role.noBasics"),
+                translateChecked("wiki.entry.role."+role+".guide") ?? translate("wiki.entry.role.noBasics"),
                 translateChecked("wiki.entry.role."+role+".abilities") ?? translate("wiki.entry.role.noAbilities"),
                 translateChecked("wiki.entry.role."+role+".attributes") ?? translate("wiki.entry.role.noAttributes"),
+                translateChecked("wiki.entry.role."+role+".extra") ?? translate("wiki.entry.role.noExtra"),
                 roleData.maxCount === null ? translate("none") : roleData.maxCount,
                 translate("defense."+roleData.defense),
                 keywords

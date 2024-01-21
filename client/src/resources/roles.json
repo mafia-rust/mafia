@@ -4,7 +4,7 @@
         "factionAlignment": "townPower",
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["jail", "defense"]
     },
     "mayor":{
         "defense": 0,
@@ -18,14 +18,14 @@
         "factionAlignment": "townPower",
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["transport", "priority", "visit"]
     },
     "sheriff": {
         "defense": 0,
         "factionAlignment": "townInvestigative",
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["innocent","suspicious","innocentAura","suspiciousAura"]
     },
     "lookout": {
         "factionAlignment": "townInvestigative",
@@ -35,7 +35,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["visit","astral","appearedVisit"]
     },
     "spy": {
         "factionAlignment": "townInvestigative",
@@ -45,7 +45,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["visit","silenced","roleblock","protect","transport"]
     },
     "tracker": {
         "factionAlignment": "townInvestigative",
@@ -55,7 +55,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["visit","astral","appearedVisit"]
     },
     "seer": {
         "factionAlignment": "townInvestigative",
@@ -65,7 +65,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["friends","enemies","suspiciousAura","innocentAura"]
     },
     "psychic": {
         "factionAlignment": "townInvestigative",
@@ -75,7 +75,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["vision"]
+        "keywords": ["vision","suspiciousAura","innocentAura"]
     },
     "doctor": {
         "factionAlignment": "townProtective",
@@ -86,7 +86,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["protect","defense"]
     },
     "bodyguard": {
         "factionAlignment": "townProtective",
@@ -97,7 +97,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["protect","defense","astral"]
     },
     "crusader": {
         "factionAlignment": "townProtective",
@@ -108,7 +108,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["protect","defense","astral"]
     },
     "vigilante": {
         "factionAlignment": "townKilling",
@@ -119,7 +119,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["defense"]
     },
     "veteran": {
         "factionAlignment": "townKilling",
@@ -130,7 +130,7 @@
         
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["defense","astral","visit","rampage"]
     },
     "deputy": {
         "factionAlignment": "townKilling",
@@ -141,7 +141,7 @@
         
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["defense"]
     },
     "escort": {
         "factionAlignment": "townSupport",
@@ -152,7 +152,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["roleblock"]
     },
     "medium": {
         "factionAlignment": "townSupport",
@@ -163,7 +163,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["haunt","dead"]
     },
     "retributionist": {
         "factionAlignment": "townSupport",
@@ -174,7 +174,7 @@
         
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["dead","visit","possess","priority"]
     },
     "godfather": {
         "factionAlignment": "mafiaKilling",
@@ -185,7 +185,7 @@
         
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["backup","defense","convert"]
     },
     "mafioso": {
         "factionAlignment": "mafiaKilling",
@@ -196,7 +196,7 @@
         
         "maxCount": 0,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["defense"]
     },
     "consort": {
         "factionAlignment": "mafiaSupport",
@@ -207,7 +207,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["roleblock"]
     },
     "blackmailer": {
         "factionAlignment": "mafiaSupport",
@@ -218,7 +218,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["silenced"]
     },
     "consigliere": {
         "factionAlignment": "mafiaSupport",
@@ -229,7 +229,7 @@
         
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["appearedVisit"]
     },
     "witch": {
         "factionAlignment": "mafiaPower",
@@ -240,7 +240,7 @@
         
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["visit","possess","priority"]
     },
     "necromancer": {
         "factionAlignment": "mafiaPower",
@@ -251,7 +251,7 @@
         
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["dead","visit","possess","priority"]
     },
     "janitor": {
         "factionAlignment": "mafiaDeception",
@@ -262,7 +262,7 @@
         
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["cleaned"]
     },
     "framer": {
         "factionAlignment": "mafiaDeception",
@@ -273,7 +273,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["suspiciousAura","appearedVisit"]
     },
     "jester": {
         "factionAlignment": "neutralEvil",
@@ -284,7 +284,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["innocentAura","dead","defense"]
     },
     "executioner": {
         "factionAlignment": "neutralEvil",
@@ -295,7 +295,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["convert","innocentAura"]
     },
     
     "politician":{
@@ -307,7 +307,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["defense"]
     },
     "arsonist": {
         "factionAlignment": "neutralKilling",
@@ -318,7 +318,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["doused","defense","roleblock"]
     },
     "werewolf": {
         "factionAlignment": "neutralKilling",
@@ -329,7 +329,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["fullMoon","rampage","defense","astral","appearedVisit","innocentAura"]
     },
     "vampire": {
         "factionAlignment": "neutralChaos",
@@ -340,7 +340,7 @@
         
         "maxCount": 2,
         "largeRoleSpecificMenu": false,
-        "keywords": []
+        "keywords": ["convert", "priority"]
     },
     "amnesiac": {
         "factionAlignment": "neutralChaos",
@@ -351,7 +351,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": true,
-        "keywords": []
+        "keywords": ["convert", "priority", "roleOutline"]
     },
     "death":{
         "factionAlignment": "neutralApocalypse",
@@ -373,6 +373,6 @@
         
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
-        "keywords": []
+        "keywords": ["convert", "defense"]
     }
 }

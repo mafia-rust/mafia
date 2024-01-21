@@ -21,7 +21,7 @@ pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::Neutral
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 impl RoleStateImpl for Death {
-    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {if self.souls >= NEEDED_SOULS{2}else{0}}
+    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {if self.souls >= NEEDED_SOULS{3}else{0}}
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
 
 

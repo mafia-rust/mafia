@@ -90,7 +90,7 @@ impl RoleStateImpl for Werewolf {
                 if game.day_number() == 1 || game.day_number() == 3 {
                     
 
-                    let mut tracked_players: Vec<PlayerReference> = actor_ref.veteran_seen_players(game).into_iter().filter(|p|actor_ref!=*p).collect();
+                    let mut newly_tracked_players: Vec<PlayerReference> = actor_ref.veteran_seen_players(game).into_iter().filter(|p|actor_ref!=*p).collect();
                 
                     if let Some(first_visit) = actor_ref.night_visits(game).first() {
                         let target_ref = first_visit.target;
@@ -98,13 +98,13 @@ impl RoleStateImpl for Werewolf {
                         if target_ref.night_jailed(game){
                             actor_ref.push_night_message(game, ChatMessage::TargetJailed);
                         }else{
-                            tracked_players.push(target_ref);
+                            newly_tracked_players.push(target_ref);
                         }
                     }
 
                     //this should remove duplicates
-                    tracked_players.append(&mut self.tracked_players.clone());
-                    let tracked_players: HashSet<PlayerReference> = tracked_players.into_iter().collect();
+                    newly_tracked_players.append(&mut self.tracked_players.clone());
+                    let tracked_players: HashSet<PlayerReference> = newly_tracked_players.into_iter().collect();
                     let tracked_players: Vec<PlayerReference> = tracked_players.into_iter().collect();
 
                     actor_ref.remove_player_tag_on_all(game, Tag::WerewolfTracked);
