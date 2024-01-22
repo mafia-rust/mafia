@@ -131,37 +131,40 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
                 return langText;
             } else if (this.state.page === "article/faction_alignments"){
                 
-
-
-
-                let articleText = "## Factions and Alignments\n";
+                let elements = [<StyledText markdown={true}>## Factions and Alignments</StyledText>];
 
                 for(let faction of FACTIONS){
-
-                    articleText+="### "+translateRoleOutline({
-                        type: "faction",
-                        faction: faction
-                    })+"\n";
+                    let factionElements = [];
+                    factionElements.push(<StyledText markdown={true}>
+                        {"### "+translateRoleOutline({
+                            type: "faction",
+                            faction: faction
+                        })+"\n"}
+                    </StyledText>);
 
                     for(let alignment of getAllFactionAlignments(faction)){
 
-                        articleText+="#### "+translateRoleOutline({
-                            type: "factionAlignment",
-                            factionAlignment: alignment,
-                        })+"\n>";
+                        factionElements.push(<StyledText markdown={true}>
+                            #### {translateRoleOutline(
+                                {
+                                    type: "factionAlignment",
+                                    factionAlignment: alignment,
+                                }
+                            ) as string}</StyledText>);
 
                         for(let role in ROLES){
 
-                            if(getFactionAlignmentFromRole(role as Role) === alignment){
-                                articleText+=translate("role."+role+".name")+"\n";
-                            }
+                            if(getFactionAlignmentFromRole(role as Role) !== alignment){continue;}
+
+                            factionElements.push(<button key={role} onClick={()=>{this.setPage("role/"+role as WikiPage)}}>
+                                <StyledText noLinks={true}>{getPageTitle("role/"+role as WikiPage)}</StyledText>
+                            </button>);
                         }
                     }
+                    elements.push(<div>{factionElements}</div>);
                 }
 
-                return <StyledText className="wiki-content-body" markdown={true}>{articleText}</StyledText>
-
-
+                return <div className="wiki-content-body">{elements}</div>;
 
             }else{
                 return <StyledText className="wiki-content-body" markdown={true}>
