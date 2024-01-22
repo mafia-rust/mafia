@@ -4,6 +4,8 @@
     flex-direction: column;
     padding: 2rem;
     gap: 2rem;
+    overflow-y: auto;
+    height: 100%;
 }
 
 .lm > header {
