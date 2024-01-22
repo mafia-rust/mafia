@@ -134,11 +134,6 @@ pub enum ChatMessage {
 
     Transported,
 
-    #[serde(rename_all = "camelCase")]
-    RetributionistMessage{message: Box<ChatMessage>},
-    #[serde(rename_all = "camelCase")]
-    NecromancerMessage{message: Box<ChatMessage>},
-
     Silenced,
     #[serde(rename_all = "camelCase")]
     GodfatherBackup{backup: Option<PlayerIndex>},
@@ -149,9 +144,9 @@ pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
     ConsigliereResult{ role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
 
-    WitchTargetImmune,
-    WitchedYou { immune: bool },
-    WitchMessage{message: Box<ChatMessage>},
+    TargetIsPossessionImmune,
+    YouWerePossessed { immune: bool },
+    TargetsMessage{message: Box<ChatMessage>},
 
     #[serde(rename_all = "camelCase")]
     WerewolfTrackingResult{tracked_player: PlayerIndex, players: Vec<PlayerIndex>},

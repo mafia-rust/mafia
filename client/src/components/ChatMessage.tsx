@@ -43,7 +43,7 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
         ) {
             style += " mention";
         } 
-    } else if (message.type === "retributionistMessage" || message.type === "necromancerMessage" || message.type === "witchMessage") {
+    } else if (message.type === "targetsMessage") {
         return <>
             <StyledText className={"chat-message " + style}>{text}</StyledText>
             <ChatElement message={message.message}/>
@@ -280,8 +280,8 @@ export function translateChatMessage(message: ChatMessage): string {
             return translate("chatMessage.silenced");
         case "mediumSeance":
             return translate("chatMessage.mediumSeance", GAME_MANAGER.state.players[message.player].toString());
-        case "witchedYou":
-            return translate("chatMessage.witchedYou" + (message.immune ? ".immune" : ""));
+        case "youWerePossessed":
+            return translate("chatMessage.youWerePossessed" + (message.immune ? ".immune" : ""));
         case "werewolfTrackingResult":
             if(message.players.length === 0){
                 return translate(
@@ -311,13 +311,13 @@ export function translateChatMessage(message: ChatMessage): string {
         case "veteranAttackedVisitor":
         case "veteranAttackedYou":
         case "vigilanteSuicide":
-        case "witchTargetImmune":
+        case "targetIsPossessionImmune":
         case "youSurvivedAttack":
         case "doomsayerFailed":
         case "doomsayerWon":
         case "retributionistMessage":
         case "necromancerMessage":
-        case "witchMessage":
+        case "targetsMessage":
         case "psychicFailed":
             return translate("chatMessage."+message.type);
         default:
@@ -482,12 +482,12 @@ export type ChatMessage = {
     visitedBy: PlayerIndex[],
     visited: PlayerIndex[]
 } | {
-    type: "witchTargetImmune"
+    type: "targetIsPossessionImmune"
 } | {
-    type: "witchedYou",
+    type: "youWerePossessed",
     immune: boolean
 } | {
-    type: "witchMessage",
+    type: "targetsMessage",
     message: ChatMessage
 } | {
     type: "werewolfTrackingResult",

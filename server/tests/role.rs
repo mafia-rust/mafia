@@ -346,7 +346,7 @@ fn retributionist_basic(){
     game.next_phase();
     assert_eq!(
         *ret.get_messages().get(ret.get_messages().len()-2).unwrap(),
-        ChatMessage::RetributionistMessage{message: Box::new(
+        ChatMessage::TargetsMessage{message: Box::new(
             ChatMessage::SheriffResult{ suspicious: true }
         )}
     );
@@ -356,7 +356,7 @@ fn retributionist_basic(){
     game.next_phase();
     assert_ne!(
         *ret.get_messages().get(ret.get_messages().len()-2).unwrap(), 
-        ChatMessage::RetributionistMessage{message: Box::new(
+        ChatMessage::TargetsMessage{message: Box::new(
             ChatMessage::SheriffResult{suspicious: true}
         )}
     );
@@ -366,7 +366,7 @@ fn retributionist_basic(){
     game.next_phase();
     assert_eq!(
         *ret.get_messages().get(ret.get_messages().len()-2).unwrap(), 
-        ChatMessage::RetributionistMessage{message: Box::new(
+        ChatMessage::TargetsMessage{message: Box::new(
             ChatMessage::SheriffResult{suspicious: false}
         )}
     );
@@ -395,7 +395,7 @@ fn necromancer_basic(){
     game.next_phase();
     assert_eq!(
         *ret.get_messages().get(ret.get_messages().len()-2).unwrap(),
-        ChatMessage::NecromancerMessage{message: Box::new(
+        ChatMessage::TargetsMessage{message: Box::new(
             ChatMessage::SheriffResult{ suspicious: true }
         )}
     );
@@ -405,7 +405,7 @@ fn necromancer_basic(){
     game.next_phase();
     assert_ne!(
         *ret.get_messages().get(ret.get_messages().len()-2).unwrap(), 
-        ChatMessage::NecromancerMessage{message: Box::new(
+        ChatMessage::TargetsMessage{message: Box::new(
             ChatMessage::SheriffResult{suspicious: true}
         )}
     );
@@ -415,7 +415,7 @@ fn necromancer_basic(){
     game.next_phase();
     assert_eq!(
         *ret.get_messages().get(ret.get_messages().len()-2).unwrap(), 
-        ChatMessage::NecromancerMessage{message: Box::new(
+        ChatMessage::TargetsMessage{message: Box::new(
             ChatMessage::ConsigliereResult { role: Role::Jester, visited_by: vec![], visited: vec![] }
         )}
     );
@@ -436,7 +436,7 @@ fn witch_basic(){
     game.next_phase();
     assert_eq!(
         *witch.get_messages().get(witch.get_messages().len()-2).unwrap(),
-        ChatMessage::WitchMessage{message: Box::new(
+        ChatMessage::TargetsMessage{message: Box::new(
             ChatMessage::SheriffResult{ suspicious: true }
         )}
     );
@@ -446,7 +446,7 @@ fn witch_basic(){
     game.next_phase();
     assert_eq!(
         *witch.get_messages().get(witch.get_messages().len()-2).unwrap(), 
-        ChatMessage::WitchMessage{message: Box::new(
+        ChatMessage::TargetsMessage{message: Box::new(
             ChatMessage::SheriffResult{suspicious: true}
         )}
     );
@@ -456,7 +456,7 @@ fn witch_basic(){
     game.next_phase();
     assert_ne!(
         *witch.get_messages().get(witch.get_messages().len()-2).unwrap(), 
-        ChatMessage::WitchMessage{message: Box::new(
+        ChatMessage::TargetsMessage{message: Box::new(
             ChatMessage::ConsigliereResult { role: Role::Jester, visited_by: vec![], visited: vec![] }
         )}
     );
@@ -593,7 +593,11 @@ fn vampire_cant_convert_twice_in_a_row(){
     kit::scenario!(game where
         vamp: Vampire,
         c1: Sheriff,
-        c2: Sheriff
+        c2: Sheriff,
+        _c3: Sheriff,
+        _c4: Sheriff,
+        _c5: Sheriff,
+        _c6: Sheriff
     );
 
     //first convert

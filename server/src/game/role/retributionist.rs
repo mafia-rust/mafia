@@ -32,7 +32,16 @@ impl RoleStateImpl for Retributionist {
                 let Some(first_visit) = retributionist_visits.get(0) else {return};
                 let Some(second_visit) = retributionist_visits.get(1) else {return};
                 if first_visit.target.alive(game) {return;}
-                if first_visit.target.control_immune(game) {return;}
+
+                first_visit.target.push_night_message(game,
+                    ChatMessage::YouWerePossessed { immune: first_visit.target.control_immune(game) }
+                );
+                if first_visit.target.control_immune(game) {
+                    actor_ref.push_night_message(game,
+                        ChatMessage::TargetIsPossessionImmune
+                    );
+                    return;
+                }
 
                 let mut new_chosen_targets = vec![second_visit.target];
                 if let Some(third_visit) = retributionist_visits.get(2){
@@ -52,7 +61,7 @@ impl RoleStateImpl for Retributionist {
                 if let Some(currently_used_player) = self.currently_used_player {
                     for message in currently_used_player.night_messages(game).clone() {
                         actor_ref.push_night_message(game,
-                            ChatMessage::RetributionistMessage { message: Box::new(message.clone()) }
+                            ChatMessage::TargetsMessage { message: Box::new(message.clone()) }
                         );
                     }
                 }
