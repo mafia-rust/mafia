@@ -76,6 +76,8 @@ export type GameManager = {
         [number, DoomsayerGuess]
     ]): void;
     sendSetAmnesiacRoleOutline(roleOutline: RoleOutline): void;
+    sendSetMayorsJournal(journal: string): void;
+    sendSetMayorsJournalPublic(isPublic: boolean): void;
 
     messageListener(serverMessage: ToClientPacket): void;
 

@@ -203,6 +203,10 @@ export function translateChatMessage(message: ChatMessage): string {
             return translate("chatMessage.mayorRevealed",
                 GAME_MANAGER.state.players[message.playerIndex].toString(),
             );
+        case "mayorsJournal":
+            return translate("chatMessage.mayorsJournal",
+                message.journal
+            );
         case "jailedTarget":
             return translate("chatMessage.jailedTarget",
                 GAME_MANAGER.state.players[message.playerIndex].toString(),
@@ -304,7 +308,6 @@ export function translateChatMessage(message: ChatMessage): string {
         case "executionerWon":
         case "gameOver":
         case "jesterWon":
-        case "mayorCantWhisper":
         case "targetJailed":
         case "someoneSurvivedYourAttack":
         case "transported":
@@ -389,7 +392,8 @@ export type ChatMessage = {
     type: "mayorRevealed", 
     playerIndex: PlayerIndex
 } | {
-    type: "mayorCantWhisper"
+    type: "mayorsJournal",
+    journal: string
 } | {
     type: "jailedTarget"
     playerIndex: PlayerIndex

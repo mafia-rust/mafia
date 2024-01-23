@@ -9,7 +9,9 @@ export type RoleState = {
     jailedTargetRef: number | null
 } | {
     role: "mayor",
-    revealed: boolean
+    revealed: boolean,
+    public: boolean,
+    journal: string
 } | {
     role: "transporter"
 } | {

@@ -203,4 +203,10 @@ export type ToServerPacket = {
 } | {
     type: "setAmnesiacRoleOutline",
     roleOutline: RoleOutline
+} | {
+    type: "setMayorsJournal",
+    journal: string
+} | {
+    type: "setMayorsJournalPublic",
+    public: boolean
 }

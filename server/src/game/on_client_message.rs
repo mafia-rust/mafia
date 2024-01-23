@@ -185,6 +185,18 @@ impl Game {
                     sender_player_ref.set_role_state(self, RoleState::Amnesiac(amnesiac));
                 }
             }
+            ToServerPacket::SetMayorsJournal { journal } => {
+                if let RoleState::Mayor(mut mayor) = sender_player_ref.role_state(self).clone(){
+                    mayor.journal = journal;
+                    sender_player_ref.set_role_state(self, RoleState::Mayor(mayor));
+                }
+            }
+            ToServerPacket::SetMayorsJournalPublic { public } => {
+                if let RoleState::Mayor(mut mayor) = sender_player_ref.role_state(self).clone(){
+                    mayor.public = public;
+                    sender_player_ref.set_role_state(self, RoleState::Mayor(mayor));
+                }
+            }
             _ => {
                 log!(fatal "Game"; "Unimplemented ToServerPacket: {incoming_packet:?}");
                 unreachable!();

@@ -98,13 +98,13 @@
     "role.jailor.roleDataText.nobody": "You didn't decide to jail anybody.\n\\0 executions remaining",
     "role.jailor.roleDataText": "You decided to jail \\0.\n\\1 executions remaining",
     "role.jailor.dayTarget": "Jail",
-    "wiki.entry.role.jailor": "",
-    
+
     "role.mayor.name": "Mayor",
     "role.mayor.target": "Target",
     "role.mayor.detarget": "Detarget",
     "role.mayor.dayTarget": "Reveal",
-    "wiki.entry.role.mayor": "Guide\n\nYou have no abilities during the night but can reveal that you are the Mayor during the day, from then on your vote counts as three votes.\n\nAbilities\n\n- Reveal during the day to triple your voting power showing everyone that you are the Mayor\n\nAttributes\n\n- You get three times the voting power during both voting and judgment after you reveal\n\nExtra\n\n- If you are converted to a different role, players will still see that you are the mayor\n\nKeywords\n\n- Voting\n- Judgment\n",
+    "role.mayor.menu.public": "Public",
+    "role.mayor.menu.journal": "Journal",
 
     "role.transporter.name": "Transporter",
     "role.transporter.target": "Transport",
@@ -377,7 +377,7 @@
     "chatMessage.targeted.cleared":"\\0 cleared their targets.",
 
     "chatMessage.mayorRevealed":"\\0 has revealed as Mayor!",
-    "chatMessage.mayorCantWhisper":"You can't whisper as or to a revealed Mayor.",
+    "chatMessage.mayorsJournal":"The Mayor wrote a journal that states this: \\0",
     "chatMessage.jailedTarget": "You jailed \\0.",
     "chatMessage.jailedSomeone":"\\0 was dragged off to jail!",
     "chatMessage.jailorDecideExecute":"The Jailor decided to execute \\0!",
@@ -546,10 +546,10 @@
     "wiki.entry.role.jailor.extra":"* The Jailor cant choose to execute on night one\n* If you execute a townie, or run out of executions, you can not target anymore",
 
     "wiki.entry.role.mayor.title": "Mayor",
-    "wiki.entry.role.mayor.guide": "You have no abilities during the night but can reveal that you are the Mayor during the day, from then on your vote counts as three votes.",
-    "wiki.entry.role.mayor.abilities":"- Reveal during the day to triple your voting power showing everyone that you are the Mayor",
-    "wiki.entry.role.mayor.attributes":"- You get three times the voting power during both voting and judgment after you reveal\n- Revealing does not increase the number of votes required to put someone on trial",
-    "wiki.entry.role.mayor.extra": "- If you are converted to a different role, players will still see that you are the mayor",
+    "wiki.entry.role.mayor.guide": "Reveal during the day to make your vote count as three votes. After you reveal everyone will know that you are the Mayor. You can also write a journal and choose to make it public, if it is public it will posted at the start of every day.",
+    "wiki.entry.role.mayor.abilities":"- Reveal during the day to triple your voting power, showing everyone that you are the Mayor\n- If your journal is public, it will be posted to chat at the start of every morning",
+    "wiki.entry.role.mayor.attributes":"- You get three times the voting power during both voting and judgment after you reveal\n- Your journal will be posted anonymously, nobody will know who wrote it before you reveal",
+    "wiki.entry.role.mayor.extra": "- If you are converted to a different role, players will still see that you are the mayor\n- Revealing does not increase the number of votes required to put someone on trial\n- If there is more than one Mayor with a public journal, their journals will be posted in player order",
 
     "wiki.entry.role.transporter.title": "Transporter",
     "wiki.entry.role.transporter.guide": "You can choose two people at night. If somebody else tries to visit the first player, they will instead visit the second player, and vice versa. Typically you want to transport innocent players with suspicious ones to divert a potential attack onto the suspicious player.",

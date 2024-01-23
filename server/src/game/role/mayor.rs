@@ -14,6 +14,8 @@ use super::{Priority, RoleStateImpl, RoleState, Role};
 #[serde(rename_all = "camelCase")]
 pub struct Mayor {
     pub revealed: bool,
+    pub public: bool,
+    pub journal: String,
 }
 
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownPower;
@@ -25,13 +27,15 @@ impl RoleStateImpl for Mayor {
 
 
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {
-
     }
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, _target_ref: PlayerReference) {
-
         game.add_message_to_chat_group(ChatGroup::All, ChatMessage::MayorRevealed { player_index: actor_ref.index() });
 
-        actor_ref.set_role_state(game, RoleState::Mayor(Mayor{revealed: true}));
+        actor_ref.set_role_state(game, RoleState::Mayor(Mayor{
+            revealed: true,
+            public: self.public,
+            journal: self.journal,
+        }));
         for player in PlayerReference::all_players(game){
             player.insert_role_label(game, actor_ref, Role::Mayor);
         }
@@ -59,8 +63,10 @@ impl RoleStateImpl for Mayor {
     fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
         crate::game::role::common_role::get_won_game(game, actor_ref)
     }
-    fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType) {
-
+    fn on_phase_start(self, game: &mut Game, _actor_ref: PlayerReference, phase: PhaseType) {
+        if phase == PhaseType::Morning && self.public{
+            game.add_message_to_chat_group(ChatGroup::All, ChatMessage::MayorsJournal { journal: self.journal});
+        }
     }
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {
         

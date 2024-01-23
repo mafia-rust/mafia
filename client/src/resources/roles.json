@@ -10,7 +10,7 @@
         "defense": 0,
         "factionAlignment": "townPower",
         "maxCount": 1,
-        "largeRoleSpecificMenu": false,
+        "largeRoleSpecificMenu": true,
         "keywords": []
     },
     "transporter":{

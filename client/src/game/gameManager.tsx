@@ -319,6 +319,18 @@ export function createGameManager(): GameManager {
                 roleOutline: roleOutline
             });
         },
+        sendSetMayorsJournal(journal: string) {
+            this.server.sendPacket({
+                type: "setMayorsJournal",
+                journal: journal,
+            });
+        },
+        sendSetMayorsJournalPublic(isPublic: boolean) {
+            this.server.sendPacket({
+                type: "setMayorsJournalPublic",
+                public: isPublic,
+            });
+        },
         
         messageListener(serverMessage) {
             messageListener(serverMessage);

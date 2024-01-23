@@ -20,7 +20,7 @@ pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
     Normal{
         message_sender: MessageSender, 
-        text: String, 
+        text: String,
         chat_group: ChatGroup,
     },
 
@@ -89,6 +89,8 @@ pub enum ChatMessage {
     /* Role-specific */
     #[serde(rename_all = "camelCase")]
     MayorRevealed{player_index: PlayerIndex},
+    #[serde(rename_all = "camelCase")]
+    MayorsJournal{journal: String},
     #[serde(rename_all = "camelCase")]
     JailedTarget{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]

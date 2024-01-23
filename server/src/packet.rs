@@ -195,4 +195,9 @@ pub enum ToServerPacket{
     SetDoomsayerGuess{ guesses: [(PlayerReference, DoomsayerGuess); 3] },
     #[serde(rename_all = "camelCase")]
     SetAmnesiacRoleOutline{ role_outline: RoleOutline },
+    #[serde(rename_all = "camelCase")]
+    SetMayorsJournal{ journal: String},
+    #[serde(rename_all = "camelCase")]
+    SetMayorsJournalPublic{ public: bool},
+
 }
