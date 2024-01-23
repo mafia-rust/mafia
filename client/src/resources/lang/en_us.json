@@ -661,9 +661,9 @@
     "wiki.entry.role.mafioso.extra":"- You can't target other mafia members",
 
     "wiki.entry.role.consort.title": "Consort",
-    "wiki.entry.role.consort.guide": "Choose a player to roleblock them. You should try to roleblock townies who are likely to stop you from winning.",
-    "wiki.entry.role.consort.abilities":"- Visit a player to Roleblock them",
-    "wiki.entry.role.consort.attributes":"- You can not be Roleblocked\n- The player you visit will know if they were Roleblocked, even if they are immune to being Roleblocked",
+    "wiki.entry.role.consort.guide": "Choose a player to roleblock and hypnotise them. If you roleblock them, they wont be able to use their ability that night. They will be sent whatever messages you select. You can also choose to not roleblock them, and only send them messages.",
+    "wiki.entry.role.consort.abilities":"- Visit a player to roleblock or hypnotise them",
+    "wiki.entry.role.consort.attributes":"- You can not be Roleblocked\n- You can choose not to roleblock them, and only send them messages, but you will always send at least one message",
     "wiki.entry.role.consort.extra":"- You can't target other mafia members\n- When you roleblock someone, their visits will be cleared",
     
     "wiki.entry.role.blackmailer.title": "Blackmailer",

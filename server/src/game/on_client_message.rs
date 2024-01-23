@@ -197,6 +197,31 @@ impl Game {
                     sender_player_ref.set_role_state(self, RoleState::Mayor(mayor));
                 }
             }
+            ToServerPacket::SetConsortOptions { 
+                roleblock, 
+                you_were_roleblocked_message, 
+                you_survived_attack_message, 
+                you_were_protected_message, 
+                you_were_transported_message, 
+                you_were_possessed_message, 
+                your_target_was_jailed_message 
+            } => {
+                if let RoleState::Consort(mut consort) = sender_player_ref.role_state(self).clone(){
+                    consort.roleblock = roleblock;
+
+                    consort.you_were_roleblocked_message = you_were_roleblocked_message;
+                    consort.you_survived_attack_message = you_survived_attack_message;
+                    consort.you_were_protected_message = you_were_protected_message;
+                    consort.you_were_transported_message = you_were_transported_message;
+                    consort.you_were_possessed_message = you_were_possessed_message;
+                    consort.your_target_was_jailed_message = your_target_was_jailed_message;
+
+                    //There must be at least one message enabled, so if none are, enable roleblocked message
+                    consort.ensure_at_least_one_message();
+
+                    sender_player_ref.set_role_state(self, RoleState::Consort(consort));
+                }
+            }
             _ => {
                 log!(fatal "Game"; "Unimplemented ToServerPacket: {incoming_packet:?}");
                 unreachable!();

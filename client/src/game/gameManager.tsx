@@ -331,6 +331,27 @@ export function createGameManager(): GameManager {
                 public: isPublic,
             });
         },
+        sendSetConsortOptions(
+            roleblock: boolean, 
+            youWereRoleblockedMessage: boolean, 
+            youSurvivedAttackMessage: boolean, 
+            youWereProtectedMessage: boolean, 
+            youWereTransportedMessage: boolean, 
+            youWerePossessedMessage: boolean, 
+            yourTargetWasJailedMessage: boolean
+        ): void{
+            this.server.sendPacket({
+                type: "setConsortOptions",
+                roleblock: roleblock,
+                
+                youWereRoleblockedMessage: youWereRoleblockedMessage === undefined || youWereRoleblockedMessage === null ? false : youWereRoleblockedMessage,
+                youSurvivedAttackMessage: youSurvivedAttackMessage === undefined || youSurvivedAttackMessage === null ? false : youSurvivedAttackMessage,
+                youWereProtectedMessage: youWereProtectedMessage === undefined || youWereProtectedMessage === null ? false : youWereProtectedMessage,
+                youWereTransportedMessage: youWereTransportedMessage === undefined || youWereTransportedMessage === null ? false : youWereTransportedMessage,
+                youWerePossessedMessage: youWerePossessedMessage === undefined || youWerePossessedMessage === null ? false : youWerePossessedMessage,
+                yourTargetWasJailedMessage: yourTargetWasJailedMessage === undefined || yourTargetWasJailedMessage === null ? false : yourTargetWasJailedMessage
+            });
+        },
         
         messageListener(serverMessage) {
             messageListener(serverMessage);

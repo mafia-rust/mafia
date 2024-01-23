@@ -206,7 +206,7 @@
         
         
         "maxCount": null,
-        "largeRoleSpecificMenu": false,
+        "largeRoleSpecificMenu": true,
         "keywords": ["roleblock"]
     },
     "blackmailer": {

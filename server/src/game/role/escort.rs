@@ -32,7 +32,7 @@ impl RoleStateImpl for Escort {
             if target_ref.night_jailed(game) {
                 actor_ref.push_night_message(game, ChatMessage::TargetJailed);
             }else{
-                target_ref.roleblock(game);
+                target_ref.roleblock(game, true);
             }
         }
     }

@@ -209,4 +209,14 @@ export type ToServerPacket = {
 } | {
     type: "setMayorsJournalPublic",
     public: boolean
+} | {
+    type: "setConsortOptions",
+    roleblock: boolean,
+    
+    youWereRoleblockedMessage: boolean,
+    youSurvivedAttackMessage: boolean,
+    youWereProtectedMessage: boolean,
+    youWereTransportedMessage: boolean,
+    youWerePossessedMessage: boolean,
+    yourTargetWasJailedMessage: boolean
 }

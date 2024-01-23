@@ -199,5 +199,16 @@ pub enum ToServerPacket{
     SetMayorsJournal{ journal: String},
     #[serde(rename_all = "camelCase")]
     SetMayorsJournalPublic{ public: bool},
+    #[serde(rename_all = "camelCase")]
+    SetConsortOptions{
+        roleblock: bool,
+        
+        you_were_roleblocked_message: bool,
+        you_survived_attack_message: bool,
+        you_were_protected_message: bool,
+        you_were_transported_message: bool,
+        you_were_possessed_message: bool,
+        your_target_was_jailed_message: bool,
+    },
 
 }

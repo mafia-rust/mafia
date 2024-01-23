@@ -15,14 +15,17 @@ use super::PlayerReference;
 
 
 impl PlayerReference{
-    pub fn roleblock(&self, game: &mut Game) {
-        if !self.role_state(game).role().roleblock_immune() {
+    pub fn roleblock(&self, game: &mut Game, send_messages: bool) {
+        if !self.role(game).roleblock_immune() {
             self.set_night_roleblocked(game, true);
             self.set_night_visits(game, vec![]);
-            self.push_night_message(game,
-                ChatMessage::RoleBlocked { immune: false }
-            );
-        } else {
+            
+            if send_messages {
+                self.push_night_message(game,
+                    ChatMessage::RoleBlocked { immune: false }
+                );
+            }
+        } else if send_messages {
             self.push_night_message(game,
                 ChatMessage::RoleBlocked { immune: true }
             );

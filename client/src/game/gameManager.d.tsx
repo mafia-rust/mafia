@@ -78,6 +78,15 @@ export type GameManager = {
     sendSetAmnesiacRoleOutline(roleOutline: RoleOutline): void;
     sendSetMayorsJournal(journal: string): void;
     sendSetMayorsJournalPublic(isPublic: boolean): void;
+    sendSetConsortOptions(
+        roleblock: boolean, 
+        youWereRoleblockedMessage: boolean, 
+        youSurvivedAttackMessage: boolean, 
+        youWereProtectedMessage: boolean, 
+        youWereTransportedMessage: boolean, 
+        youWerePossessedMessage: boolean, 
+        yourTargetWasJailedMessage: boolean
+    ): void
 
     messageListener(serverMessage: ToClientPacket): void;
 

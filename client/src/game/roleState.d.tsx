@@ -54,6 +54,14 @@ export type RoleState = {
     role: "mafioso"
 } | {
     role: "consort"
+    roleblock: boolean,
+    
+    youWereRoleblockedMessage: boolean,
+    youSurvivedAttackMessage: boolean,
+    youWereProtectedMessage: boolean,
+    youWereTransportedMessage: boolean,
+    youWerePossessedMessage: boolean,
+    yourTargetWasJailedMessage: boolean
 } | {
     role: "blackmailer"
 } | {
