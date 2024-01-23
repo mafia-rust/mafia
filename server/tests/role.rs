@@ -187,21 +187,24 @@ fn spy_basic_transported() {
         esc: Escort,
         transp: Transporter,
         bugged: Sheriff,
-        jester: Jester
+        jester: Jester,
+        witch: Witch
     );
     spy.set_night_target(jester);
     transp.set_night_targets(vec![jester, bugged]);
     blackmailer.set_night_target(jester);
     esc.set_night_target(jester);
+    witch.set_night_targets(vec![jester, esc]);
 
     game.next_phase();
 
     assert_contains!(spy.get_messages(), ChatMessage::SpyBug { bug: SpyBug::Silenced });
     assert_contains!(spy.get_messages(), ChatMessage::SpyBug { bug: SpyBug::Roleblocked });
     assert_contains!(spy.get_messages(), ChatMessage::SpyBug { bug: SpyBug::Transported });
+    assert_contains!(spy.get_messages(), ChatMessage::SpyBug { bug: SpyBug::Possessed });
 
     
-    assert_contains!(spy.get_messages(), ChatMessage::SpyMafiaVisit { players: vec![bugged.index()] });
+    assert_contains!(spy.get_messages(), ChatMessage::SpyMafiaVisit { players: vec![bugged.index(), bugged.index()] });
 }
 
 #[test]

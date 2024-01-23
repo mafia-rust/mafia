@@ -123,7 +123,7 @@
     
     "role.spy.name": "Spy",
     "role.spy.target": "Bug",
-    "role.spy.detarget": "Remove bug",
+    "role.spy.detarget": "Dont bug",
     "role.spy.dayTarget": "Special",
 
     "role.tracker.name": "Tracker",
@@ -414,6 +414,7 @@
     "chatMessage.spyBug.roleblocked":"Someone attempted to roleblock your target.",
     "chatMessage.spyBug.protected":"Your target was protected from an attack.",
     "chatMessage.spyBug.transported":"Your target was transported.",
+    "chatMessage.spyBug.possessed":"Someone attempted to possess your target.",
     "chatMessage.psychicGood":"At least one of these players is a townie: \\0",
     "chatMessage.psychicEvil":"At least one of these players is evil: \\0",
     "chatMessage.psychicFailed":"There are not enough living players to have a vision.",
@@ -571,9 +572,9 @@
 
     "wiki.entry.role.spy.title": "Spy",
     "wiki.entry.role.spy.guide": "Choose a player to find what happened to them. You will passively learn who the mafia visited. You should tell the town the information you get daily. If the mafia can not visit themselves, then everyone who the mafia visits must not be mafia.",
-    "wiki.entry.role.spy.abilities":"* Bug a player to find out what happened to them\n* You will know who the mafia visited",
-    "wiki.entry.role.spy.attributes":"* Your bug will catch when your target sees a message saying they are silenced, roleblocked, protected or transported",
-    "wiki.entry.role.spy.extra": "* The mafia visits can not be fooled, they are always accurate",
+    "wiki.entry.role.spy.abilities":"* Visit a player to find out what happened to them\n* You will know who the mafia visited",
+    "wiki.entry.role.spy.attributes":"* Your bug will catch when your target sees a message saying they are silenced, roleblocked, protected, possessed, or transported",
+    "wiki.entry.role.spy.extra": "* The mafia visits can not be fooled, they are always accurate\n* You can not see astral visits",
 
     "wiki.entry.role.tracker.title": "Tracker",
     "wiki.entry.role.tracker.guide": "Choose a player each night to find who they chose. You should tell the town the information you get daily. You should try to choose people who you think are lying.",

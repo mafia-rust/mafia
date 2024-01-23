@@ -16,7 +16,7 @@ pub struct Spy;
 #[derive(Clone, Debug, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub enum SpyBug{
-    Silenced, Roleblocked, Protected, Transported
+    Silenced, Roleblocked, Protected, Transported, Possessed
 }
 
 pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownInvestigative;
@@ -53,20 +53,15 @@ impl RoleStateImpl for Spy {
                 }
 
                 for message in visit.target.night_messages(game).clone(){
-                    match message{
-                        ChatMessage::Silenced => {
-                            actor_ref.push_night_message(game, ChatMessage::SpyBug { bug: SpyBug::Silenced });
-                        },
-                        ChatMessage::RoleBlocked { immune: _ } =>{
-                            actor_ref.push_night_message(game, ChatMessage::SpyBug { bug: SpyBug::Roleblocked });
-                        }
-                        ChatMessage::YouWereProtected => {
-                            actor_ref.push_night_message(game, ChatMessage::SpyBug { bug: SpyBug::Protected });
-                        }
-                        ChatMessage::Transported => {
-                            actor_ref.push_night_message(game, ChatMessage::SpyBug { bug: SpyBug::Transported });
-                        }
-                        _=>{}
+                    if let Some(message) = match message{
+                        ChatMessage::Silenced => Some(ChatMessage::SpyBug { bug: SpyBug::Silenced }),
+                        ChatMessage::RoleBlocked { immune: _ } => Some(ChatMessage::SpyBug { bug: SpyBug::Roleblocked }),
+                        ChatMessage::YouWereProtected => Some(ChatMessage::SpyBug { bug: SpyBug::Protected }),
+                        ChatMessage::Transported => Some(ChatMessage::SpyBug { bug: SpyBug::Transported }),
+                        ChatMessage::YouWerePossessed { immune: _ } => Some(ChatMessage::SpyBug { bug: SpyBug::Possessed }),
+                        _ => None
+                    }{
+                        actor_ref.push_night_message(game, message);
                     }
                 };
             },

@@ -45,7 +45,7 @@
         
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["visit","silenced","roleblock","protect","transport"]
+        "keywords": ["visit","silenced","roleblock","protect","transport","possess"]
     },
     "tracker": {
         "factionAlignment": "townInvestigative",
