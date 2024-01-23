@@ -15,7 +15,7 @@
     },
     "transporter":{
         "defense": 0,
-        "factionAlignment": "townPower",
+        "factionAlignment": "townSupport",
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["transport", "priority", "visit"]

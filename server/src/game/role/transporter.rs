@@ -12,7 +12,7 @@ use super::{Priority, RoleStateImpl, Role};
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Transporter;
 
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownPower;
+pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownSupport;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Transporter {

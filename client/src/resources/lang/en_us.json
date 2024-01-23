@@ -546,7 +546,7 @@
     "wiki.entry.role.jailor.extra":"* The Jailor cant choose to execute on night one\n* If you execute a townie, or run out of executions, you can not target anymore",
 
     "wiki.entry.role.mayor.title": "Mayor",
-    "wiki.entry.role.mayor.guide": "Reveal during the day to make your vote count as three votes. After you reveal everyone will know that you are the Mayor. You can also write a journal and choose to make it public, if it is public it will posted at the start of every day.",
+    "wiki.entry.role.mayor.guide": "Reveal during the day to make your vote count as three votes. After you reveal everyone will know that you are the Mayor. You can also write a journal and choose to make it public, if it is public it will posted at the start of every day. You should write down what everyone claims in your journal so you can remind town of what is true.",
     "wiki.entry.role.mayor.abilities":"- Reveal during the day to triple your voting power, showing everyone that you are the Mayor\n- If your journal is public, it will be posted to chat at the start of every morning",
     "wiki.entry.role.mayor.attributes":"- You get three times the voting power during both voting and judgment after you reveal\n- Your journal will be posted anonymously, nobody will know who wrote it before you reveal",
     "wiki.entry.role.mayor.extra": "- If you are converted to a different role, players will still see that you are the mayor\n- Revealing does not increase the number of votes required to put someone on trial\n- If there is more than one Mayor with a public journal, their journals will be posted in player order",
