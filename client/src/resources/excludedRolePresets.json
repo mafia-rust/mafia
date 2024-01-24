@@ -74,6 +74,14 @@
         },
         {
             "type": "exact",
+            "role": "consort"
+        },
+        {
+            "type": "exact",
+            "role": "forger"
+        },
+        {
+            "type": "exact",
             "role": "witch"
         },
         {
@@ -113,6 +121,68 @@
         {
             "type": "exact",
             "role": "vampire"
+        }
+    ],
+    "Intermediate":[
+        {
+            "type": "exact",
+            "role": "jailor"
+        },
+        {
+            "type": "exact",
+            "role": "transporter"
+        },
+        
+
+        {
+            "type": "exact",
+            "role": "spy"
+        },
+        {
+            "type": "exact",
+            "role": "psychic"
+        },
+
+        {
+            "type": "exact",
+            "role": "bodyguard"
+        },
+        {
+            "type": "exact",
+            "role": "crusader"
+        },
+
+        {
+            "type": "exact",
+            "role": "retributionist"
+        },
+
+        {
+            "type": "exact",
+            "role": "mafioso"
+        },
+        {
+            "type": "exact",
+            "role": "forger"
+        },
+        {
+            "type": "exact",
+            "role": "necromancer"
+        },
+
+        {
+            "type": "exact",
+            "role": "politician"
+        },
+       
+        {
+            "type": "exact",
+            "role": "death"
+        },
+
+        {
+            "type": "exact",
+            "role": "werewolf"
         }
     ],
     "Classic": [
