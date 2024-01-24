@@ -21,14 +21,20 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
 
         if(GAME_MANAGER.state.stateType === "game"){
             let gameStateFields = {
+                will: GAME_MANAGER.state.will,
+                notes: GAME_MANAGER.state.notes,
+                deathNote: GAME_MANAGER.state.deathNote,
+            };
+            let localFields = {
                 will: GAME_MANAGER.state.will === "" ? "ROLE\nN1: \nN2: " : GAME_MANAGER.state.will,
                 notes: GAME_MANAGER.state.notes,
                 deathNote: GAME_MANAGER.state.deathNote,
             };
+            
     
             this.state = {
                 syncedFields: gameStateFields,
-                localFields: gameStateFields
+                localFields: localFields
             };
         }
         

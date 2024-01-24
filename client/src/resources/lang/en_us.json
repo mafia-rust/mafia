@@ -379,12 +379,11 @@
     "chatMessage.broadcastWhisper":"\\0 whispered to \\1.",
 
     "chatMessage.roleAssignment":"Your role is \\0",
-    "chatMessage.playerDied":"\\0 (\\1) died and was killed by \\2.\nTheir will stated:",
-    "chatMessage.playerDied.noWill":"\\0 (\\1) died and was killed by \\2.",
+    "chatMessage.playerDied":"\\0 died.",
     "chatMessage.deathNote": "A note left with the body reads:",
     "chatMessage.phaseChange":"\\0 \\1",
     "chatMessage.gameOver": "Game Over",
-    "chatMessage.playerQuit": "\\0 has quit the game and will certainly die tonight.",
+    "chatMessage.playerQuit": "\\0 has quit the game and will certainly die at the end of the next night.",
 
     "chatMessage.trialInformation":"\\0 votes needed for the \\1 trials left today.",
     "chatMessage.voted":"\\0 voted for \\1.",

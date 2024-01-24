@@ -1,14 +1,14 @@
 import React from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER, { replaceMentions } from "../../../index";
-import { Grave } from "../../../game/grave";
+import GAME_MANAGER from "../../../index";
 import { ContentMenus, ContentTab } from "../GameScreen";
 import "./graveyardMenu.css";
 import GameState from "../../../game/gameState.d";
 import { sortRoleOutlines, translateRoleOutline } from "../../../game/roleListState.d";
 import StyledText from "../../../components/StyledText";
 import WikiSearch from "../../../components/WikiSearch";
-import { sanitizePlayerMessage } from "../../../components/ChatMessage";
+import GraveComponent from "../../../components/grave";
+import { Grave } from "../../../game/graveState";
 
 type GraveyardMenuProps = {
 }
@@ -68,56 +68,8 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
         </button>);
     }
     renderGraveExtended(grave: Grave){
-        let deathCauseString: string;
-        if(grave.deathCause.type === "killers") {
-            deathCauseString = grave.deathCause.killers.map((killer)=>{
-                switch(killer.type){
-                    case "role":
-                        return translate("role."+killer.value+".name");
-                    case "faction":
-                        return translate("faction."+killer.value);
-                    default:
-                        return translate("grave.killer."+killer.type);
-                }
-            }).join(", ") + ".";
-        }else{
-            deathCauseString = translate("grave.deathCause."+grave.deathCause.type);
-        }
-
-        let graveRoleString: string;
-        if (grave.role.type === "role") {
-            graveRoleString = translate(`role.${grave.role.role}.name`);
-        } else {
-            graveRoleString = translate(`grave.role.${grave.role.type}`);
-        }
-
-        let diedPhaseString = grave.diedPhase === "day" ? translate("day") : translate("phase.night");
-        return(<button className="grave" onClick={()=>{this.setState({extendedGraveIndex:null})}}>
-            <div><StyledText>{`${diedPhaseString+" "+grave.dayNumber}`}</StyledText></div>
-            <div><StyledText>{`${this.state.gameState.players[grave.playerIndex]?.toString()+" ("+graveRoleString+")"}`}</StyledText></div>
-            <div><StyledText>{`${translate("menu.graveyard.killedBy")+" "+deathCauseString}`}</StyledText></div>
-            {grave.will.length === 0 || <>
-                {translate("grave.will")}
-                <div className="note-area">
-                    <StyledText>
-                        {sanitizePlayerMessage(replaceMentions(
-                            grave.will,
-                            GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.players : []
-                        ))}
-                    </StyledText>
-                </div>
-            </>}
-            {grave.deathNotes.length === 0 || grave.deathNotes.map(note => <>
-                {translate("grave.deathNote")}
-                <div className="note-area">
-                    <StyledText>
-                        {sanitizePlayerMessage(replaceMentions(
-                            note,
-                            GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.players : []
-                        ))}
-                    </StyledText>
-                </div>
-            </>)}
+        return(<button className="grave-button" onClick={()=>{this.setState({extendedGraveIndex:null})}}>
+            <GraveComponent grave={grave} gameState={this.state.gameState}/>
         </button>);
     }
 

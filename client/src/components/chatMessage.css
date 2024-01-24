@@ -73,3 +73,7 @@
 .chat-message.warning {
     background-color: #660000;
 }
+.grave-message {
+    border-top: var(--primary-border-color) 1px solid;
+    border-bottom: var(--primary-border-color) 1px solid;
+}

@@ -13,17 +13,8 @@
     width: 100%;
     text-align: left;
 }
-.graveyard-menu .grave {
-    white-space: normal;
-    width: 100%;
-}
-.graveyard-menu .grave > div {
-    text-align: left;
-}
-.graveyard-menu .note-area {
-    background-color: var(--secondary-color);
-    margin-bottom: 0.5rem;
-    text-align: left;
+.graveyard-menu .grave-button {
+    width: 98%;
 }
 .graveyard-menu .graveyard-menu-excludedRoles{
     display: flex;

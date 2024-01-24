@@ -1,5 +1,5 @@
 import { Phase, PlayerIndex, Verdict, PhaseTimes, Tag, PlayerID } from "./gameState.d"
-import { Grave } from "./grave"
+import { Grave } from "./graveState"
 import { ChatMessage } from "../components/ChatMessage"
 import { RoleOutline } from "./roleListState.d"
 import { Role, RoleState } from "./roleState.d"

@@ -1,0 +1,11 @@
+
+
+.grave {
+    white-space: normal;
+    width: 100%;
+}
+.grave .note-area {
+    background-color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+    text-align: left;
+}

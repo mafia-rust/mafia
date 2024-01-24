@@ -6,8 +6,9 @@ import StyledText from "./StyledText";
 import "./chatMessage.css"
 import { Phase, PlayerIndex, Verdict } from "../game/gameState.d";
 import { Role } from "../game/roleState.d";
-import { Grave } from "../game/grave";
+import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
+import GraveComponent from "./grave";
 
 export default function ChatElement(props: {message: ChatMessage}): ReactElement {
     const message = props.message;
@@ -49,21 +50,15 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
             <ChatElement message={message.message}/>
         </>
     } else if (message.type === "playerDied") {
-        return <>
-            <StyledText className={"chat-message " + style}>{text}</StyledText>
-            {message.grave.will.length !== 0 
-                && <StyledText className={"chat-message will"}>{sanitizePlayerMessage(replaceMentions(
-                    message.grave.will,
-                    GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.players : []
-                ))}</StyledText>}
-            {message.grave.deathNotes.length !== 0 && message.grave.deathNotes.map(note => <>
-                <StyledText className={"chat-message " + style}>{translate("chatMessage.deathNote")}</StyledText>
-                <StyledText className={"chat-message deathNote"}>{sanitizePlayerMessage(replaceMentions(
-                    note,
-                    GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.players : []
-                ))}</StyledText>
-            </>)}
-        </>
+        if(GAME_MANAGER.state.stateType === "game")
+            return <>
+                <StyledText className={"chat-message " + style}>{translate("chatMessage.playerDied",
+                    GAME_MANAGER.state.players[message.grave.playerIndex].toString(),
+                )}</StyledText>
+                <div className="grave-message">
+                    <GraveComponent grave={message.grave} gameState={GAME_MANAGER.state}/>
+                </div>
+            </>
     }
 
     return <StyledText className={"chat-message " + style}>{text}</StyledText>;
@@ -117,36 +112,6 @@ export function translateChatMessage(message: ChatMessage): string {
         case "roleAssignment":
             return translate("chatMessage.roleAssignment", 
                 translate("role." + message.role + ".name")
-            );
-        case "playerDied":
-            let graveRoleString: string;
-            if (message.grave.role.type === "role") {
-                graveRoleString = translate(`role.${message.grave.role.role}.name`);
-            } else {
-                graveRoleString = translate(`grave.role.${message.grave.role.type}`);
-            }
-
-            let deathCause: string;
-            if (message.grave.deathCause.type === "killers"){
-                let killers: string[] = [];
-                for (let killer of message.grave.deathCause.killers) {
-                    if(killer.type === "role") {
-                        killers.push(translate(`role.${killer.value}.name`))
-                    }else if(killer.type === "faction") {
-                        killers.push(translate(`faction.${killer.value}`))
-                    }else{
-                        killers.push(translate(`grave.killer.${killer.type}`))
-                    }
-                }
-                deathCause = killers.join(", ");
-            }else{
-                deathCause = translate(`grave.deathCause.${message.grave.deathCause.type}`)
-            }
-
-            return translate(message.grave.will.length === 0 ? "chatMessage.playerDied.noWill": "chatMessage.playerDied",
-                GAME_MANAGER.state.players[message.grave.playerIndex].toString(),
-                graveRoleString,
-                deathCause
             );
         case "playerQuit":
             return translate("chatMessage.playerQuit",
