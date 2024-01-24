@@ -58,7 +58,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
             disabled={!this.state.host}
             value={this.state.mode.toString()}
             onChange={(e) => {
-                let mode = e.target.value as PhaseTimeMode;
+                let mode = e.target.options[e.target.selectedIndex].value as PhaseTimeMode;
                 let phaseTimes = this.determinePhaseTimesFromMode(mode);
                 this.setState({
                     mode: mode,
@@ -68,10 +68,10 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
             }}
         >{
             // TODO lang
-            this.state.mode === "Custom" ? <option key={"Custom"}>{"Custom"}</option> : null
+            this.state.mode === "custom" ? <option key={"custom"} value={"custom"}>{translate("menu.timeSettings.custom")}</option> : null
         }{
             Object.keys(phaseTimesJson)
-                .map((phase) => {return <option key={phase}>{phase}</option>})
+                .map((times) => {return <option key={times} value={times}>{translate("menu.timeSettings."+times)}</option>})
         }</select>
     }
 
@@ -134,11 +134,11 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
                 return mode as PhaseTimeMode;
             }
         }
-        return "Custom" as PhaseTimeMode;
+        return "custom" as PhaseTimeMode;
     }
 
     determinePhaseTimesFromMode(mode: PhaseTimeMode): PhaseTimes {
-        if (mode === "Custom") {
+        if (mode === "custom") {
             return this.state.phaseTimes;
         }
         return {...PHASE_TIME_MODES.get(mode.toString())} as PhaseTimes;

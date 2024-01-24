@@ -1,5 +1,5 @@
 {
-    "Default": [
+    "default": [
         {
             "type": "exact",
             "role": "spy"
@@ -13,7 +13,7 @@
             "role": "mafioso"
         }
     ],
-    "Beginner": [
+    "beginner": [
         {
             "type": "exact",
             "role": "jailor"
@@ -123,7 +123,7 @@
             "role": "vampire"
         }
     ],
-    "Intermediate":[
+    "intermediate":[
         {
             "type": "exact",
             "role": "jailor"
@@ -185,7 +185,7 @@
             "role": "werewolf"
         }
     ],
-    "Classic": [
+    "classic": [
         {
             "type": "exact",
             "role": "tracker"
@@ -230,7 +230,7 @@
             "role": "death"
         }
     ],
-    "Low Player Count": [
+    "smallGame": [
         {
             "type": "exact",
             "role": "spy"

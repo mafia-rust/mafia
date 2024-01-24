@@ -3,6 +3,7 @@ import GameState from "../../../../game/gameState.d"
 import GAME_MANAGER from "../../../.."
 import translate, { translateChecked } from "../../../../game/lang"
 import { StateEventType } from "../../../../game/gameManager.d"
+import "./largeDoomsayerMenu.css"
 
 
 export type Doomsayer = {
@@ -105,33 +106,33 @@ export default class LargeDoomsayerMenu extends React.Component<LargeDoomsayerMe
 
         let playerOptions: JSX.Element[] = [];
         for(let i = 0; i < this.state.gameState.players.length; i++){
-            playerOptions.push(<option key={i}>{this.state.gameState.players[i].toString()}</option>);
+            playerOptions.push(<option key={i} value={i}>{this.state.gameState.players[i].toString()}</option>);
         }
         let doomsayerGuessOptions: JSX.Element[] = [];
         for(let i = 0; i < DOOMSAYER_GUESSES.length; i++){
-            doomsayerGuessOptions.push(<option key={i}>{doomsayerGuessTranslate(DOOMSAYER_GUESSES[i])}</option>);
+            doomsayerGuessOptions.push(<option key={i} value={DOOMSAYER_GUESSES[i]}>{doomsayerGuessTranslate(DOOMSAYER_GUESSES[i])}</option>);
         }
         return <div>
             <select
-                value={this.state.gameState.players[this.state.localDoomsayerGuesses[index][0]].toString()}
+                value={this.state.localDoomsayerGuesses[index][0]}
                 onChange={(e)=>{
                     let newGuess = this.state.localDoomsayerGuesses;
-                    newGuess[index][0] = e.target.selectedIndex;
+                    newGuess[index][0] = parseInt(e.target.options[e.target.selectedIndex].value);
                     this.sendAndSetGuesses(newGuess);
                 }}
             >{playerOptions}</select>
             <select
-                value={doomsayerGuessTranslate(this.state.localDoomsayerGuesses[index][1])}
+                value={this.state.localDoomsayerGuesses[index][1]}
                 onChange={(e)=>{
                     let newGuess = this.state.localDoomsayerGuesses;
-                    newGuess[index][1] = DOOMSAYER_GUESSES[e.target.selectedIndex];
+                    newGuess[index][1] = e.target.options[e.target.selectedIndex].value as DoomsayerGuess;
                     this.sendAndSetGuesses(newGuess);
                 }}
             >{doomsayerGuessOptions}</select>
         </div>
     }
     render(){
-        return <div>
+        return <div className="large-doomsayer-menu">
             {this.renderGuessPicker(0)}
             {this.renderGuessPicker(1)}
             {this.renderGuessPicker(2)}

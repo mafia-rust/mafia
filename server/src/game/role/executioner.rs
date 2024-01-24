@@ -98,7 +98,7 @@ impl RoleStateImpl for Executioner {
             if game.current_phase().phase() == PhaseType::Evening {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::ExecutionerWon);
                 actor_ref.set_role_state(game, RoleState::Executioner(Executioner { target: ExecutionerTarget::Won }));
-            }else{
+            }else if self.target != ExecutionerTarget::Won{
                 actor_ref.set_role(game, RoleState::Jester(Jester::default()))
             }
         }

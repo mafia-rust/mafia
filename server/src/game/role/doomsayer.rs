@@ -131,23 +131,24 @@ impl RoleStateImpl for Doomsayer {
         self.won
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType) {
-        Doomsayer::check_and_convert_to_jester(game, actor_ref);
+        Doomsayer::check_and_convert_to_jester(game, self, actor_ref);
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
-        Doomsayer::check_and_convert_to_jester(game, actor_ref);
+        Doomsayer::check_and_convert_to_jester(game, self, actor_ref);
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
-        Doomsayer::check_and_convert_to_jester(game, actor_ref);
+        Doomsayer::check_and_convert_to_jester(game, self, actor_ref);
     }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
 }
 impl Doomsayer{
-    pub fn check_and_convert_to_jester(game: &mut Game, actor_ref: PlayerReference){
-        if 
+    pub fn check_and_convert_to_jester(game: &mut Game, doomsayer: Doomsayer, actor_ref: PlayerReference){
+        if
+            !doomsayer.won && actor_ref.alive(game) &&
             PlayerReference::all_players(game).filter(|player|
                 player.alive(game) && DoomsayerGuess::convert_to_guess(player.role(game)).is_some() && *player != actor_ref
-            ).count() < 3 && actor_ref.alive(game)
+            ).count() < 3
         {
             actor_ref.set_role(game, RoleState::Jester(Jester::default()));
         }

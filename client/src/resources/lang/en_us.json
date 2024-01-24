@@ -27,6 +27,18 @@
     "menu.excludedRoles.exclude": "Exclude",
     "menu.excludedRoles.includeAll": "Include All",
     "menu.excludedRoles.excludedRoles": "Exclusions",
+    "menu.excludedRoles.default": "Default",
+    "menu.excludedRoles.beginner": "Beginner",
+    "menu.excludedRoles.intermediate": "Intermediate",
+    "menu.excludedRoles.classic": "Classic",
+    "menu.excludedRoles.smallGame": "Small Game",
+
+    "menu.timeSettings.custom": "Custom",
+    "menu.timeSettings.classic": "Classic",
+    "menu.timeSettings.lightning": "Lightning",
+    "menu.timeSettings.rapid": "Rapid",
+    "menu.timeSettings.aloud": "Aloud",
+    "menu.timeSettings.beginner": "Beginner",
 
     "menu.loading.host": "Starting Server",
     "menu.loading.join": "Connecting to Lobby",

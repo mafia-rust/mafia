@@ -88,12 +88,12 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
         </header>
         <div className="exclusion-preset">
             <select
-                onChange={(e)=>this.setState({preset: e.target.value})}
+                onChange={(e)=>this.setState({preset: e.target.options[e.target.selectedIndex].value})}
                 disabled={!this.state.host}
             >
                 {
                     Object.keys(EXCLUDED_ROLE_PRESETS).map((value, i)=>{
-                        return <option key={i} value={value}>{value}</option>
+                        return <option key={i} value={value}>{translate("menu.excludedRoles."+value)}</option>
                     })
                 }
             </select>

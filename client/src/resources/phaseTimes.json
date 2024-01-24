@@ -1,5 +1,5 @@
 {
-    "Classic": {
+    "classic": {
         "morning": 5,
         "discussion": 46,
         "voting": 30,
@@ -8,7 +8,7 @@
         "evening": 7,
         "night": 39
     },
-    "Lightning": {
+    "lightning": {
         "morning": 1,
         "discussion": 1,
         "voting": 10,
@@ -17,7 +17,7 @@
         "evening": 1,
         "night": 10
     },
-    "Rapid": {
+    "rapid": {
         "morning": 3,
         "discussion": 23,
         "voting": 15,
@@ -26,7 +26,7 @@
         "evening": 4,
         "night": 19
     },
-    "Aloud": {
+    "aloud": {
         "morning": 0,
         "discussion": 60,
         "voting": 30,
@@ -34,5 +34,14 @@
         "judgement": 20,
         "evening": 15,
         "night": 45
+    },
+    "beginner": {
+        "morning": 10,
+        "discussion": 92,
+        "voting": 30,
+        "testimony": 24,
+        "judgement": 20,
+        "evening": 7,
+        "night": 55
     }
 }

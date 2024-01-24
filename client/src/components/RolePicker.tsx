@@ -39,173 +39,187 @@ export default class RolePicker extends React.Component<RolePickerProps> {
         })
     }
 
-    setFirstBox(e: { target: { selectedIndex: number; }; }){
-        let selected = allFactionsAndAny()[e.target.selectedIndex];
-
-        if(selected === "any"){
+    setFirstBox(value: Faction | "any"){
+        if(value === "any"){
             this.setAny();
         } else {
-            this.setFaction(selected);
+            this.setFaction(value);
         }
     }
-    setSecondBox(e: { target: { selectedIndex: number; }; }){
+    setSecondBox(value: FactionAlignment | "any"){
         let currentFaction = getFactionFromRoleOutline(this.props.roleOutline);
         if(currentFaction === null)
             return;
-        
-        let selected = allFactionAlignmentsAndAny(currentFaction)[e.target.selectedIndex];
 
-        if(selected === "any"){
+        if(value === "any"){
             this.setFaction(currentFaction);
         } else {
-            this.setFactionAlignment(selected);
+            this.setFactionAlignment(value);
         }
     }
-    setThirdBox(e: { target: { selectedIndex: number; }; }){
+    setThirdBox(value: Role | "any"){
         let currentFactionAlignment = getFactionAlignmentFromRoleOutline(this.props.roleOutline);
         if(currentFactionAlignment === null)
             return;
 
-        let selected = allRolesAndAny(currentFactionAlignment)[e.target.selectedIndex];
-
-        if(selected === "any"){
+        if(value === "any"){
             this.setFactionAlignment(currentFactionAlignment);
         } else {
-            this.setExact(selected);
+            this.setExact(value);
         }
     }
     
     render() {
-        let selectors: JSX.Element[] = [];
+        let selectors: JSX.Element;
         
         switch(this.props.roleOutline.type){
 
+
+
+
+
             case "any":
-                selectors = [
+                selectors =
+                <select 
+                    disabled={this.props.disabled}
+                    key="faction" 
+                    value={"any"}
+                    onChange={(e)=>this.setFirstBox(e.target.options[e.target.selectedIndex].value as Faction | "any")}
+                >{
+                    allFactionsAndAny().map((faction: Faction | "any", key) => {
+                        if(faction === "any")
+                            return <option key={key} value={"any"}>{translate("any")}</option>
+                        return <option key={key} value={faction}>{translate("faction."+faction)}</option>
+                    })
+                } 
+                </select>
+            break;
+
+
+
+
+
+            case "faction":
+                selectors = 
+                <>
                     <select 
                         disabled={this.props.disabled}
                         key="faction" 
-                        value={translate("any")}
-                        onChange={(e)=>this.setFirstBox(e)}
+                        value={this.props.roleOutline.faction}
+                        onChange={(e)=>this.setFirstBox(e.target.options[e.target.selectedIndex].value as Faction | "any")}
                     > {
                         allFactionsAndAny().map((faction: Faction | "any", key) => {
                             if(faction === "any")
-                                return <option key={key}>{translate("any")}</option>
-                            return <option key={key}>{translate("faction."+faction)}</option>
+                                return <option key={key} value={"any"}>{translate("any")}</option>
+                            return <option key={key} value={faction}>{translate("faction."+faction)}</option>
                         })
                     } </select>
-                ];
-            break;
-            case "faction":
-                selectors = [
-                    <select 
-                        disabled={this.props.disabled}
-                        key="faction" 
-                        value={translate("faction."+this.props.roleOutline.faction)}
-                        onChange={(e)=>this.setFirstBox(e)}
-                    > {
-                        allFactionsAndAny().map((faction: Faction | "any", key) => {
-                            if(faction === "any")
-                                return <option key={key}>{translate("any")}</option>
-                            return <option key={key}>{translate("faction."+faction)}</option>
-                        })
-                    } </select>,
-                    
                     <select
                         disabled={this.props.disabled}
                         key="alignment"
-                        value={translate("any")}
-                        onChange={(e)=>this.setSecondBox(e)}
+                        value={"any"}
+                        onChange={(e)=>this.setSecondBox(e.target.options[e.target.selectedIndex].value as FactionAlignment | "any")}
                     > {
                         allFactionAlignmentsAndAny(this.props.roleOutline.faction).map((factionAlignment: FactionAlignment | "any", key) => {
                             if(factionAlignment === "any")
-                                return <option key={key}>{translate("any")}</option>
-                            return <option key={key}>{translate("alignment."+getAlignmentStringFromFactionAlignment(factionAlignment))}</option>
+                                return <option key={key} value={"any"}>{translate("any")}</option>
+                            return <option key={key} value={factionAlignment}>{translate("alignment."+getAlignmentStringFromFactionAlignment(factionAlignment))}</option>
                         })
                     } </select>
-                ]
+                </>
             break;
+
+
+
+
+
             case "factionAlignment":
-                selectors = [
+                selectors = 
+                <>
                     <select
                         disabled={this.props.disabled}
                         key="faction" 
-                        value={translate("faction."+getFactionFromFactionAlignment(this.props.roleOutline.factionAlignment))}
-                        onChange={(e)=>this.setFirstBox(e)}
+                        value={getFactionFromFactionAlignment(this.props.roleOutline.factionAlignment)}
+                        onChange={(e)=>this.setFirstBox(e.target.options[e.target.selectedIndex].value as Faction | "any")}
                     > {
                         allFactionsAndAny().map((faction: string, key) => {
                             if(faction === "any")
-                                return <option key={key}>{translate("any")}</option>
-                            return <option key={key}>{translate("faction."+faction)}</option>
+                                return <option key={key} value={"any"}>{translate("any")}</option>
+                            return <option key={key} value={faction}>{translate("faction."+faction)}</option>
                         })
-                    } </select>,
-
+                    } </select>
                     <select
                         disabled={this.props.disabled}
                         key="alignment"
-                        value={translate("alignment."+getAlignmentStringFromFactionAlignment(this.props.roleOutline.factionAlignment))}
-                        onChange={(e)=>this.setSecondBox(e)}
+                        value={this.props.roleOutline.factionAlignment}
+                        onChange={(e)=>this.setSecondBox(e.target.options[e.target.selectedIndex].value as FactionAlignment | "any")}
                     > {
                         allFactionAlignmentsAndAny(getFactionFromFactionAlignment(this.props.roleOutline.factionAlignment)).map((factionAlignment: string, key) => {
                             if(factionAlignment === "any")
-                                return <option key={key}>{translate("any")}</option>
-                            return <option key={key}>{translate("alignment."+getAlignmentStringFromFactionAlignment(factionAlignment as FactionAlignment))}</option>
+                                return <option key={key} value={"any"}>{translate("any")}</option>
+                            return <option key={key} value={factionAlignment}>{translate("alignment."+getAlignmentStringFromFactionAlignment(factionAlignment as FactionAlignment))}</option>
                         })
-                    } </select>,
+                    } </select>
                     <select
                         disabled={this.props.disabled}
                         key="exact"
-                        value={translate("any")}
-                        onChange={(e)=>this.setThirdBox(e)}
+                        value={"any"}
+                        onChange={(e)=>this.setThirdBox(e.target.options[e.target.selectedIndex].value as Role | "any")}
                     > {
                         allRolesAndAny(this.props.roleOutline.factionAlignment).map((role: string, key) => {
                             if(role === "any")
-                                return <option key={key}>{translate("any")}</option>
-                            return <option key={key}>{translate(`role.${role}.name`)}</option>
+                                return <option key={key} value={"any"}>{translate("any")}</option>
+                            return <option key={key} value={role}>{translate(`role.${role}.name`)}</option>
                         })
                     } </select>
-                ]
+                </>
             break;
+
+
+
+
+
+
             case "exact":
-                selectors = [
+                selectors = 
+                <>
                     <select
                         disabled={this.props.disabled}
                         key="faction" 
-                        value={translate("faction."+getFactionFromRole(this.props.roleOutline.role))}
-                        onChange={(e)=>this.setFirstBox(e)}
+                        value={getFactionFromRole(this.props.roleOutline.role)}
+                        onChange={(e)=>this.setFirstBox(e.target.options[e.target.selectedIndex].value as Faction | "any")}
                     > {
                         allFactionsAndAny().map((faction: string, key) => {
                             if(faction === "any")
-                                return <option key={key}>{translate("any")}</option>
-                            return <option key={key}>{translate("faction."+faction)}</option>
+                                return <option key={key} value={"any"}>{translate("any")}</option>
+                            return <option key={key} value={faction}>{translate("faction."+faction)}</option>
                         })
-                    } </select>,
-
+                    } </select>
                     <select
                         disabled={this.props.disabled}
                         key="alignment"
-                        value={translate("alignment."+getAlignmentStringFromFactionAlignment(getFactionAlignmentFromRole(this.props.roleOutline.role)))}
-                        onChange={(e)=>this.setSecondBox(e)}
+                        value={getFactionAlignmentFromRole(this.props.roleOutline.role)}
+                        onChange={(e)=>this.setSecondBox(e.target.options[e.target.selectedIndex].value as FactionAlignment | "any")}
                     > {
                         allFactionAlignmentsAndAny(getFactionFromRole(this.props.roleOutline.role)).map((factionAlignment: string, key) => {
                             if(factionAlignment === "any")
-                                return <option key={key}>{translate("any")}</option>
-                            return <option key={key}>{translate("alignment."+getAlignmentStringFromFactionAlignment(factionAlignment as FactionAlignment))}</option>
+                                return <option key={key} value={"any"}>{translate("any")}</option>
+                            return <option key={key} value={factionAlignment}>{translate("alignment."+getAlignmentStringFromFactionAlignment(factionAlignment as FactionAlignment))}</option>
                         })
-                    } </select>,
+                    } </select>
                     <select
                         disabled={this.props.disabled}
                         key="exact"
-                        value={translate(`role.${this.props.roleOutline.role}.name`)}
-                        onChange={(e)=>this.setThirdBox(e)}
+                        value={this.props.roleOutline.role}
+                        onChange={(e)=>this.setThirdBox(e.target.options[e.target.selectedIndex].value as Role | "any")}
                     > {
                         allRolesAndAny(getFactionAlignmentFromRole(this.props.roleOutline.role)).map((role: string, key) => {
                             if(role === "any")
-                                return <option key={key}>{translate("any")}</option>
-                            return <option key={key}>{translate(`role.${role}.name`)}</option>
+                                return <option key={key} value={"any"}>{translate("any")}</option>
+                            return <option key={key} value={role}>{translate(`role.${role}.name`)}</option>
                         })
                     } </select>
-                ]
+                </>
             break;
         }
         
@@ -220,7 +234,7 @@ function allFactionsAndAny(): (Faction | "any")[] {
 }
 
 function allFactionAlignmentsAndAny(faction: Faction): (FactionAlignment | "any")[] {
-    return ["any" as (FactionAlignment | "any")].concat(getAllFactionAlignments(faction.toLowerCase() as Faction));
+    return ["any" as (FactionAlignment | "any")].concat(getAllFactionAlignments(faction as Faction));
 }
 
 function allRolesAndAny(factionAlignment: FactionAlignment): (Role | "any")[] {
@@ -231,6 +245,5 @@ function allRolesAndAny(factionAlignment: FactionAlignment): (Role | "any")[] {
             roles.push(role as Role);
     }
     
-
     return roles;
 }
