@@ -69,6 +69,13 @@ export type RoleState = {
 } | {
     role: "janitor"
     cleansRemaining: number,
+    // cleanedRef
+} | {
+    role: "forger",
+    fakeRole: Role,
+    fakeWill: string,
+    forgesRemaining: number,
+    // forgedRef
 } | {
     role: "witch"
 } | {

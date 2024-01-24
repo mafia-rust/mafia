@@ -2,6 +2,7 @@ import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus
 import { Phase, PhaseTimes, PlayerIndex, State, Verdict } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleOutline } from "./roleListState.d";
+import { Role } from "./roleState.d";
 
 export type Server = {
     ws: WebSocket | null,
@@ -87,6 +88,7 @@ export type GameManager = {
         youWerePossessedMessage: boolean, 
         yourTargetWasJailedMessage: boolean
     ): void
+    sendSetForgerWill(role: Role | null, will: string): void;
 
     messageListener(serverMessage: ToClientPacket): void;
 

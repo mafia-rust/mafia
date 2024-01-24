@@ -219,4 +219,8 @@ export type ToServerPacket = {
     youWereTransportedMessage: boolean,
     youWerePossessedMessage: boolean,
     yourTargetWasJailedMessage: boolean
+} | {
+    type: "setForgerWill",
+    role: Role | null,
+    will: string
 }

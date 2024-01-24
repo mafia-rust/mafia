@@ -7,6 +7,7 @@ import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
 import LargeAmnesiacMenu from "./RoleSpecificMenus/LargeAmnesiacMenu";
 import LargeMayorMenu from "./RoleSpecificMenus/LargeMayorMenu";
 import LargeConsortMenu from "./RoleSpecificMenus/LargeConsortMenu";
+import LargeForgerMenu from "./RoleSpecificMenus/LargeForgerMenu";
 
 type RoleSpecificMenuProps = {
 }
@@ -48,6 +49,8 @@ export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuPr
                 return <LargeMayorMenu/>;
             case "consort":
                 return <LargeConsortMenu/>;
+            case "forger":
+                return <LargeForgerMenu/>;
         }
     }
     render(){return(<div className="role-specific-colors">

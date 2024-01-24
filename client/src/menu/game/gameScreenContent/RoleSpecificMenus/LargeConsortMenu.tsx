@@ -205,14 +205,7 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
                 <label className="material-icons-round" onClick={()=>this.handleYourTargetWasJailedMessageToggle()}>
                     {this.state.yourTargetWasJailedMessage ? "check" : "close"}
                 </label>
-            </div>
-            
-           
-            
-            
-            
-            
-            
+            </div>            
         </div>
     }
 }

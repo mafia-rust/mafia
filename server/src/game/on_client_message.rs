@@ -221,6 +221,13 @@ impl Game {
 
                     sender_player_ref.set_role_state(self, RoleState::Consort(consort));
                 }
+            },
+            ToServerPacket::SetForgerWill { role, will } => {
+                if let RoleState::Forger(mut forger) = sender_player_ref.role_state(self).clone(){
+                    forger.fake_role = role;
+                    forger.fake_will = will;
+                    sender_player_ref.set_role_state(self, RoleState::Forger(forger));
+                }
             }
             _ => {
                 log!(fatal "Game"; "Unimplemented ToServerPacket: {incoming_packet:?}");

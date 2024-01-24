@@ -190,8 +190,6 @@ pub enum ToServerPacket{
 
     // Role-specific
     #[serde(rename_all = "camelCase")]
-    SetForgerWill{ role: Role, will: String },
-    #[serde(rename_all = "camelCase")]
     SetDoomsayerGuess{ guesses: [(PlayerReference, DoomsayerGuess); 3] },
     #[serde(rename_all = "camelCase")]
     SetAmnesiacRoleOutline{ role_outline: RoleOutline },
@@ -210,5 +208,6 @@ pub enum ToServerPacket{
         you_were_possessed_message: bool,
         your_target_was_jailed_message: bool,
     },
-
+    #[serde(rename_all = "camelCase")]
+    SetForgerWill{ role: Option<Role>, will: String },
 }

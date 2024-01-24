@@ -1,26 +1,40 @@
 import React from "react"
-import GameState from "../../../../game/gameState.d"
 import GAME_MANAGER from "../../../.."
+import { Role } from "../../../../game/roleState.d"
+import translate from "../../../../game/lang"
+import ROLES from "../../../../resources/roles.json";
+import "./largeForgerMenu.css"
 
 type LargeForgerMenuProps = {
 }
 type LargeForgerMenuState = {
-    gameState: GameState
+    localRole: Role,
+    savedRole: Role,
+    localWill: string,
+    savedWill: string,
+    forgesRemaining: number,
 }
 export default class LargeForgerMenu extends React.Component<LargeForgerMenuProps, LargeForgerMenuState> {
     listener: () => void;
     constructor(props: LargeForgerMenuState) {
         super(props);
 
-        if(GAME_MANAGER.state.stateType === "game")
+        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.roleState?.role === "forger")
             this.state = {
-                gameState : GAME_MANAGER.state,
+                localRole: GAME_MANAGER.state.roleState?.fakeRole,
+                savedRole: GAME_MANAGER.state.roleState?.fakeRole,
+                localWill: GAME_MANAGER.state.roleState?.fakeWill,
+                savedWill: GAME_MANAGER.state.roleState?.fakeWill,
+                forgesRemaining: GAME_MANAGER.state.roleState?.forgesRemaining,
             };
         this.listener = ()=>{
-            if(GAME_MANAGER.state.stateType === "game")
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.roleState?.role === "forger"){
                 this.setState({
-                    gameState: GAME_MANAGER.state
+                    savedWill: GAME_MANAGER.state.roleState.fakeWill,
+                    savedRole: GAME_MANAGER.state.roleState.fakeRole,
+                    forgesRemaining: GAME_MANAGER.state.roleState.forgesRemaining,
                 })
+            }
         };  
     }
     componentDidMount() {
@@ -29,8 +43,57 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
     componentWillUnmount() {
         GAME_MANAGER.removeStateListener(this.listener);
     }
+    handleSave(){
+        GAME_MANAGER.sendSetForgerWill(this.state.localRole, this.state.localWill);
+    }
 
     render(){
-        return <div>TODO forger menu</div>
+
+        let forgerRoleOptions: JSX.Element[] = [];
+        forgerRoleOptions.push(
+            <option key={"none"} role={"none"}>{translate("none")}</option>
+        );
+        for(let role of Object.keys(ROLES)){
+            forgerRoleOptions.push(
+                <option key={role} role={role}>{translate("role."+role+".name")}</option>
+            );
+        }
+
+        return <div className="large-forger-menu">
+            <div>                
+                <select
+                    value={translate("role."+this.state.localRole+".name")} 
+                    onChange={(e)=>{
+                        this.setState({localRole: e.target.options[e.target.selectedIndex].role as Role});
+                    }}>
+                    {forgerRoleOptions}
+                </select>
+                <button
+                    className={"material-icons-round " + (this.state.localWill !== this.state.savedWill || this.state.localRole !== this.state.savedRole ? "highlighted" : "")}
+                    onClick={() => this.handleSave()}
+                >
+                    save
+                </button>
+            </div>
+            <textarea
+                value={this.state.localWill}
+                onChange={(e) => {
+                    this.setState({ localWill: e.target.value });
+                }}
+                onKeyDown={(e) => {
+                    if (e.ctrlKey) {
+                        if (e.key === 's') {
+                            e.preventDefault();
+                            this.handleSave();
+                        } else if (e.key === "Enter") {
+                            this.handleSave();
+                        }
+                    }
+                }}>
+            </textarea>
+            <div>
+                {translate("role.forger.menu.forgesRemaining", this.state.forgesRemaining ?? 0)}
+            </div>
+        </div>
     }
 }

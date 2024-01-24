@@ -14,6 +14,7 @@ import { createGameState, createLobbyState } from "./gameState";
 import LobbyMenu from "../menu/lobby/LobbyMenu";
 import GameScreen from "../menu/game/GameScreen";
 import LoadingScreen from "../menu/LoadingScreen";
+import { Role } from "./roleState.d";
 export function createGameManager(): GameManager {
 
     console.log("Game manager created.");
@@ -350,6 +351,13 @@ export function createGameManager(): GameManager {
                 youWereTransportedMessage: youWereTransportedMessage === undefined || youWereTransportedMessage === null ? false : youWereTransportedMessage,
                 youWerePossessedMessage: youWerePossessedMessage === undefined || youWerePossessedMessage === null ? false : youWerePossessedMessage,
                 yourTargetWasJailedMessage: yourTargetWasJailedMessage === undefined || yourTargetWasJailedMessage === null ? false : yourTargetWasJailedMessage
+            });
+        },
+        sendSetForgerWill(role: Role | null, will: string) {
+            this.server.sendPacket({
+                type: "setForgerWill",
+                role: role,
+                will: will
             });
         },
         

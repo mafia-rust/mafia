@@ -1,5 +1,4 @@
 import React from "react"
-import GameState from "../../../../game/gameState.d"
 import GAME_MANAGER from "../../../.."
 import translate from "../../../../game/lang"
 import "./largeMayorMenu.css"
@@ -7,7 +6,6 @@ import "./largeMayorMenu.css"
 type LargeMayorMenuProps = {
 }
 type LargeMayorMenuState = {
-    gameState: GameState,
     syncedPublic: boolean,
     localJournal: string,
     syncedJournal: string,
@@ -19,16 +17,12 @@ export default class LargeMayorMenu extends React.Component<LargeMayorMenuProps,
 
         if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.roleState?.role === "mayor")
             this.state = {
-                gameState : GAME_MANAGER.state,
                 syncedPublic: GAME_MANAGER.state.roleState?.public,
                 localJournal: GAME_MANAGER.state.roleState?.journal,
                 syncedJournal: GAME_MANAGER.state.roleState?.journal,
             };
         this.listener = ()=>{
             if(GAME_MANAGER.state.stateType === "game"){
-                this.setState({
-                    gameState: GAME_MANAGER.state
-                })
                 if(GAME_MANAGER.state.roleState?.role === "mayor"){
                     this.setState({
                         syncedJournal: GAME_MANAGER.state.roleState.journal,
@@ -75,9 +69,7 @@ export default class LargeMayorMenu extends React.Component<LargeMayorMenuProps,
             <textarea
                 value={this.state.localJournal}
                 onChange={(e) => {
-                    let fields = this.state.localJournal;
-                    fields = e.target.value;
-                    this.setState({ localJournal: fields });
+                    this.setState({ localJournal: e.target.value });
                 }}
                 onKeyDown={(e) => {
                     if (e.ctrlKey) {

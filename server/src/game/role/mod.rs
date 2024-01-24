@@ -72,6 +72,7 @@ macros::roles! {
 
     Janitor : janitor,
     Framer : framer,
+    Forger : forger,
 
     // Neutral
     Jester : jester,

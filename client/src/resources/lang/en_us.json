@@ -230,9 +230,15 @@
     
     "role.janitor.name": "Janitor",
     "role.janitor.target": "Clean",
-    "role.janitor.detarget": "Unclean",
+    "role.janitor.detarget": "Un-clean",
     "role.janitor.roleDataText": "\\0 cleans remaining",
     "role.janitor.dayTarget": "Special",
+
+    "role.forger.name": "Forger",
+    "role.forger.target": "Forge",
+    "role.forger.detarget": "Un-forge",
+    "role.forger.dayTarget": "Special",
+    "role.forger.menu.forgesRemaining": "\\0 forges remaining",
 
     "role.framer.name": "Framer",
     "role.framer.target": "Target",
@@ -322,6 +328,7 @@
     "tag.insane":"🪬",
     "tag.dead":"💀",
 
+    "role": "Role",
     "day": "Day",
     "suspicious": "Suspicious",
     "suspicious.shorthand": "sus",
@@ -444,6 +451,8 @@
     "chatMessage.doomsayerFailed": "At least one of your guesses was incorrect or invalid.",
     "chatMessage.doomsayerWon": "Your guesses were correct, and you won!",
 
+    "keyword.forged": "Forged",
+    "wiki.keyword.forged": "A player who is forged had their will and role changed by the forger on their grave.",
     "keyword.fullMoon": "Full Moon",
     "wiki.keyword.fullMoon": "Every night is a full moon night except night one and night three. The Werewolf has a different ability depending on weather or not it is a full moon night.",
     "keyword.vision": "Vision",
@@ -695,6 +704,12 @@
     "wiki.entry.role.janitor.abilities":"- Visit a player on the night they die to clean their grave\n- If you clean a player on the night they die, their role and will does not appear in the graveyard.\n- You will know the role and will of the player you cleaned.",
     "wiki.entry.role.janitor.attributes":"- You have three uses of your ability\n- If you visit a player and attempt to clean them, it costs an ability use, even if they don't die\n- If you are roleblocked, it doesn't cost an ability use\n- If you visit a jailed player, it doesn't cost an ability use",
     "wiki.entry.role.janitor.extra":"- You can't target other mafia members",
+
+    "wiki.entry.role.forger.title": "Forger",
+    "wiki.entry.role.forger.guide": "Choose a player to forge their role and will. Forging a player on the night they daie edits their role and will in their grave. You only can use your ability two times. You should usually choose the same player as the godfather, becuase they will probably die.",
+    "wiki.entry.role.forger.abilities":"- Visit a player on the night they die to forge their grave\n- If you forge a player on the night they die, their role and will will appear to be what you choose in the graveyard.\n- You will know the original role and will of the player you forged.",
+    "wiki.entry.role.forger.attributes":"- You have two uses of your ability\n- If you visit a player and attempt to forge them, it costs an ability use, even if they don't die\n- If you are roleblocked, it doesn't cost an ability use\n- If you visit a jailed player, it doesn't cost an ability use",
+    "wiki.entry.role.forger.extra":"- You can't target other mafia members\n* If you choose no role, their grave will show what their original role is\n* If you left their will completly blank, it will look to be the same as their original will",
 
     "wiki.entry.role.framer.title": "Framer",
     "wiki.entry.role.framer.guide": "Choose two players to frame the first one, making it seem like they killed the second one according to investigative roles. Try to choose players who already look a little suspicious so investigative roles might choose them.",

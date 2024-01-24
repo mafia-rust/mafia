@@ -266,22 +266,21 @@
     },
     "framer": {
         "factionAlignment": "mafiaDeception",
-        
-        
         "defense": 0,
-        
-        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["suspiciousAura","appearedVisit"]
     },
+    "forger": {
+        "factionAlignment": "mafiaDeception",
+        "defense": 0,
+        "maxCount": 1,
+        "largeRoleSpecificMenu": true,
+        "keywords": ["forged"]
+    },
     "jester": {
         "factionAlignment": "neutralEvil",
-        
-        
         "defense": 0,
-        
-        
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["innocentAura","dead","defense"]
