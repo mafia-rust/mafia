@@ -25,14 +25,14 @@ export type GraveDeathCause = {
 } | {
     type: "killers"
     killers: GraveKiller[]
-} | {
-    type: "disconnectedFromLife"
 }
 export type GraveKiller = {
     type: "faction"
     value: Faction
 } | {
     type: "suicide"
+} | {
+    type: "quit"
 } | {
     type: "role"
     value: Role

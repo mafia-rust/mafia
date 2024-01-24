@@ -1,6 +1,10 @@
 use std::time::Duration;
 
-use crate::{game::{Game, available_buttons::AvailableButtons, phase::PhaseState, GameOverReason, grave::{Grave, GraveDeathCause}}, packet::ToClientPacket, websocket_connections::connection::ClientSender, lobby::GAME_DISCONNECT_TIMER_SECS};
+use crate::{
+    game::{available_buttons::AvailableButtons, chat::ChatMessage, phase::PhaseState, Game, GameOverReason}, 
+    packet::ToClientPacket, websocket_connections::connection::ClientSender, 
+    lobby::GAME_DISCONNECT_TIMER_SECS
+};
 
 use super::{PlayerReference, ClientConnection};
 
@@ -12,21 +16,20 @@ impl PlayerReference{
     pub fn lose_connection(&self, game: &mut Game){
         self.deref_mut(game).connection = ClientConnection::CouldReconnect { disconnect_timer: Duration::from_secs(GAME_DISCONNECT_TIMER_SECS) };
     }
-    pub fn leave(&self, game: &mut Game) {
-        if self.alive(game){
-            let mut grave = Grave::from_player_suicide(game, *self);
-            grave.death_cause = GraveDeathCause::DisconnectedFromLife;
-            self.die(game, grave);
-        }
+    pub fn quit(&self, game: &mut Game) {
         self.deref_mut(game).connection = ClientConnection::Disconnected;
+        game.add_message_to_chat_group(
+            crate::game::chat::ChatGroup::All, 
+            ChatMessage::PlayerQuit{player_index: self.index()}
+        );
     }
     pub fn is_connected(&self, game: &Game) -> bool {
         matches!(self.deref(game).connection, ClientConnection::Connected(_))
     }
-    pub fn has_lost_connection(&self, game: &Game) -> bool {
+    pub fn could_reconnect(&self, game: &Game) -> bool {
         matches!(self.deref(game).connection, ClientConnection::CouldReconnect {..})
     }
-    pub fn has_left(&self, game: &Game) -> bool {
+    pub fn is_disconnected(&self, game: &Game) -> bool {
         matches!(self.deref(game).connection, ClientConnection::Disconnected)
     }
 

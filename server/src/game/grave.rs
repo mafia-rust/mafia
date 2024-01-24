@@ -42,7 +42,6 @@ impl GraveRole{
 #[serde(tag = "type", content = "killers")]
 pub enum GraveDeathCause {
     Lynching,
-    DisconnectedFromLife,
     Killers(Vec<GraveKiller>)
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -51,7 +50,8 @@ pub enum GraveDeathCause {
 pub enum GraveKiller {
     Faction(Faction),
     Role(Role),
-    Suicide
+    Suicide,
+    Quit,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]

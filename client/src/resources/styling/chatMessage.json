@@ -4,6 +4,7 @@
     "roleAssignment": "important center",
     "playerDied": "important",
     "youDied": "special",
+    "playerQuit": "special",
     "phaseChange": "phase-change",
     "trialInformation": "trial",
     "voted": "trial",

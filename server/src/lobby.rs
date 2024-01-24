@@ -29,7 +29,7 @@ enum LobbyState {
 }
 
 pub const LOBBY_DISCONNECT_TIMER_SECS: u64 = 5;
-pub const GAME_DISCONNECT_TIMER_SECS: u64 = 45;
+pub const GAME_DISCONNECT_TIMER_SECS: u64 = 60 * 2;
 pub const MESSAGE_PER_SECOND_LIMIT: u64 = 2;
 pub const MESSAGE_PER_SECOND_LIMIT_TIME: Duration = Duration::from_secs(2);
 
@@ -368,7 +368,7 @@ impl Lobby {
             LobbyState::Game { game, players } => {
                 let Some(game_player) = players.get_mut(&player_id) else {return};
                 if let Ok(player_ref) = PlayerReference::new(game, game_player.player_index) {
-                    player_ref.leave(game);
+                    player_ref.quit(game);
                 }
             },
             LobbyState::Closed => {}
@@ -390,7 +390,7 @@ impl Lobby {
                 let Some(game_player) = players.get_mut(&id) else {return};
 
                 if let Ok(player_ref) = PlayerReference::new(game, game_player.player_index) {
-                    if !player_ref.has_left(game) {
+                    if !player_ref.is_disconnected(game) {
                         player_ref.lose_connection(game);
                     }
                 }
@@ -428,7 +428,7 @@ impl Lobby {
                 let Ok(player_ref) = PlayerReference::new(game, game_player.player_index) else {
                     unreachable!()
                 };
-                if !player_ref.has_lost_connection(game) {
+                if !player_ref.could_reconnect(game) {
                     send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerTaken});
                     return Err(RejectJoinReason::PlayerTaken)
                 };

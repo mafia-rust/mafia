@@ -127,9 +127,7 @@ export function translateChatMessage(message: ChatMessage): string {
             }
 
             let deathCause: string;
-            if (message.grave.deathCause.type === "lynching") {
-                deathCause = translate("grave.deathCause.lynching")
-            } else if (message.grave.deathCause.type === "killers"){
+            if (message.grave.deathCause.type === "killers"){
                 let killers: string[] = [];
                 for (let killer of message.grave.deathCause.killers) {
                     if(killer.type === "role") {
@@ -149,6 +147,10 @@ export function translateChatMessage(message: ChatMessage): string {
                 GAME_MANAGER.state.players[message.grave.playerIndex].toString(),
                 graveRoleString,
                 deathCause
+            );
+        case "playerQuit":
+            return translate("chatMessage.playerQuit",
+                GAME_MANAGER.state.players[message.playerIndex].toString()
             );
         case "youDied":
             return translate("chatMessage.youDied");
@@ -354,6 +356,9 @@ export type ChatMessage = {
     grave: Grave
 } | {
     type: "gameOver"
+} | {
+    type: "playerQuit",
+    playerIndex: PlayerIndex
 } | {
     type: "phaseChange", 
     phase: Phase, 

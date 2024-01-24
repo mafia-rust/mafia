@@ -2,7 +2,7 @@
 
 use std::time::Duration;
 
-use crate::game::{phase::PhaseType, Game, verdict::Verdict, grave::GraveRole};
+use crate::game::{grave::{GraveKiller, GraveRole}, phase::PhaseType, verdict::Verdict, Game};
 use super::{PlayerReference, ClientConnection};
 
 
@@ -13,7 +13,7 @@ impl PlayerReference{
             ClientConnection::CouldReconnect { disconnect_timer } => {
                 match disconnect_timer.saturating_sub(time_passed) {
                     Duration::ZERO => {
-                        self.leave(game);
+                        self.quit(game);
                     },
                     time_remaining => {
                         self.deref_mut(game).connection = ClientConnection::CouldReconnect { disconnect_timer: time_remaining }
@@ -53,6 +53,12 @@ impl PlayerReference{
                 self.set_night_grave_killers(game, vec![]);
                 self.set_night_grave_will(game, self.will(game).clone());
                 self.set_night_grave_death_notes(game, vec![]);
+
+                if self.is_disconnected(game) {
+                    self.set_night_died(game, true);
+                    
+                    self.set_night_grave_killers(game, vec![GraveKiller::Quit]);
+                }
             }
         }
 
