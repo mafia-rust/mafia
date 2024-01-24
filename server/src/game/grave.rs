@@ -27,7 +27,6 @@ pub struct Grave {
 #[serde(tag = "type", content = "role")]
 pub enum GraveRole {
     Cleaned,
-    Petrified,
     Role(Role),
 }
 impl GraveRole{

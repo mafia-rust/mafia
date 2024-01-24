@@ -159,8 +159,6 @@ impl PhaseState {
                 let (guilty, innocent) = game.count_verdict_votes(player_on_trial);
                 
                 if innocent < guilty {
-                    player_on_trial.set_alive(game, false);
-
                     let new_grave = Grave::from_player_lynch(game, player_on_trial);
                     player_on_trial.die(game, new_grave);
                 }

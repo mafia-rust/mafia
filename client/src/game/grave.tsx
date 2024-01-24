@@ -15,7 +15,7 @@ export type Grave = {
 }
 
 export type GraveRole = {
-    type: "cleaned" | "petrified"
+    type: "cleaned"
 } |  {
     type: "role"
     role: Role
