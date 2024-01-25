@@ -23,8 +23,6 @@ impl RoleStateImpl for Necromancer {
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Mafia)}
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if actor_ref.night_jailed(game) {return;}
-        
         match priority {
             Priority::Necromancy => {
 

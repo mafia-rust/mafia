@@ -78,7 +78,6 @@ impl RoleStateImpl for Doomsayer {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::TopPriority {return;}
 
-        if actor_ref.night_jailed(game) {return;}
         if actor_ref.night_roleblocked(game) {return;}
         if !actor_ref.alive(game) {return;}
 

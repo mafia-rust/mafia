@@ -23,7 +23,6 @@ impl RoleStateImpl for Psychic {
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if actor_ref.night_jailed(game) {return;}
         if actor_ref.night_roleblocked(game) {return;}
 
         if priority != Priority::Investigative {return}

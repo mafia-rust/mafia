@@ -21,8 +21,6 @@ impl RoleStateImpl for Transporter {
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if actor_ref.night_jailed(game) {return;}
-    
         if priority != Priority::Transporter {return;}
     
         let transporter_visits = actor_ref.night_visits(game).clone();

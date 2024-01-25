@@ -35,8 +35,6 @@ impl RoleStateImpl for Veteran {
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if actor_ref.night_jailed(game) {return;}
-        
         match priority {
             Priority::TopPriority => {
                 if self.alerts_remaining > 0 {

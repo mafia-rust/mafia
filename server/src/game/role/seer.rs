@@ -22,8 +22,6 @@ impl RoleStateImpl for Seer {
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if actor_ref.night_jailed(game) {return;}
-
         if priority != Priority::Investigative {return;}
 
         let Some(first_visit) = actor_ref.night_visits(game).get(0) else {return;};

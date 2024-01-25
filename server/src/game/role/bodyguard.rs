@@ -37,8 +37,6 @@ impl RoleStateImpl for Bodyguard {
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if actor_ref.night_jailed(game) {return;}
-    
         match priority {
             Priority::Bodyguard => {
     

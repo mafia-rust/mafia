@@ -24,7 +24,6 @@ impl RoleStateImpl for Escort {
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if actor_ref.night_jailed(game) {return;}
         if priority != Priority::Roleblock {return;}
         
         if let Some(visit) = actor_ref.night_visits(game).first(){

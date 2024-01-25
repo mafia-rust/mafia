@@ -36,18 +36,26 @@ impl RoleStateImpl for Jailor {
 
 
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Kill { return; }
+        match priority {
+            Priority::Roleblock => {
+                if let Some(jailed) = self.jailed_target_ref{
+                    jailed.roleblock(game, false);
+                }
+            },
+            Priority::Kill => {
+                if let Some(visit) = actor_ref.night_visits(game).first() {
     
-        if let Some(visit) = actor_ref.night_visits(game).first() {
-    
-            let target_ref = visit.target;
-            if target_ref.night_jailed(game){
-                target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Jailor), 3, false);
-
-                self.executions_remaining = if target_ref.role(game).faction_alignment().faction() == Faction::Town { 0 } else { self.executions_remaining - 1 };
-                self.jailed_target_ref = None;
-                actor_ref.set_role_state(game, RoleState::Jailor(self));
-            }
+                    let target_ref = visit.target;
+                    if target_ref.night_jailed(game){
+                        target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Jailor), 3, false);
+        
+                        self.executions_remaining = if target_ref.role(game).faction_alignment().faction() == Faction::Town { 0 } else { self.executions_remaining - 1 };
+                        self.jailed_target_ref = None;
+                        actor_ref.set_role_state(game, RoleState::Jailor(self));
+                    }
+                }
+            },
+            _ => {}
         }
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {

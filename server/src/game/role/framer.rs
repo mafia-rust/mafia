@@ -23,8 +23,6 @@ impl RoleStateImpl for Framer {
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if actor_ref.night_jailed(game) {return;}
-    
         if priority != Priority::Deception {return;}
     
         let framer_visits = actor_ref.night_visits(game).clone();
@@ -39,7 +37,7 @@ impl RoleStateImpl for Framer {
         }
         
 
-        
+
         let Some(second_visit) = framer_visits.get(1) else {return};
     
         if !first_visit.target.night_jailed(game) {

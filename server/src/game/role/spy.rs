@@ -28,8 +28,6 @@ impl RoleStateImpl for Spy {
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if actor_ref.night_jailed(game) {return;}
-
         match priority {
             Priority::Investigative => {
                 if actor_ref.night_roleblocked(game) {return;}

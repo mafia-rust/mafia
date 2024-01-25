@@ -96,8 +96,8 @@ macros::priorities! {
     
     Control,
     Necromancy,
-
     Roleblock,
+
     Deception,
 
     Bodyguard,
