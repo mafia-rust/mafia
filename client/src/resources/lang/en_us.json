@@ -33,6 +33,12 @@
     "menu.excludedRoles.classic": "Classic",
     "menu.excludedRoles.smallGame": "Small Game",
 
+    "menu.roleLists.mafia": "Mafia",
+    "menu.roleLists.neutralKilling": "Neutral Killing",
+    "menu.roleLists.vampires": "Vampires",
+    "menu.roleLists.neutralEvil": "Neutral Evil",
+    "menu.roleLists.set": "Set Role List",
+
     "menu.timeSettings.custom": "Custom",
     "menu.timeSettings.classic": "Classic",
     "menu.timeSettings.lightning": "Lightning",

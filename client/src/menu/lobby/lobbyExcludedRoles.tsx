@@ -14,7 +14,7 @@ import EXCLUDED_ROLE_PRESETS from "./../../resources/excludedRolePresets.json";
 type ExcludedRolesState = {
     excludedRoles: RoleOutline[],
     roleOutline: RoleOutline,
-    preset: string,
+    selectedExcludedRolePreset: string,
     host: boolean
 }
 
@@ -28,7 +28,7 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
             this.state = {
                 excludedRoles: GAME_MANAGER.state.excludedRoles,
                 roleOutline: {type:"any"},
-                preset: Object.keys(EXCLUDED_ROLE_PRESETS)[0],
+                selectedExcludedRolePreset: Object.keys(EXCLUDED_ROLE_PRESETS)[0],
                 host: GAME_MANAGER.getMyHost() ?? false
             }
 
@@ -68,9 +68,10 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
 
         GAME_MANAGER.sendExcludedRolesPacket(roles);
     }
+    
     handleExcludedRolePreset(){
         let new_exclusions = this.state.excludedRoles;
-        let preset = EXCLUDED_ROLE_PRESETS[this.state.preset as keyof typeof EXCLUDED_ROLE_PRESETS] as RoleOutline[];
+        let preset = EXCLUDED_ROLE_PRESETS[this.state.selectedExcludedRolePreset as keyof typeof EXCLUDED_ROLE_PRESETS] as RoleOutline[];
         for(let outline of preset){
             new_exclusions.push(outline);
         }
@@ -88,7 +89,7 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
         </header>
         <div className="exclusion-preset">
             <select
-                onChange={(e)=>this.setState({preset: e.target.options[e.target.selectedIndex].value})}
+                onChange={(e)=>this.setState({selectedExcludedRolePreset: e.target.options[e.target.selectedIndex].value})}
                 disabled={!this.state.host}
             >
                 {
