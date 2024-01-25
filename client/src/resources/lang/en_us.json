@@ -730,9 +730,9 @@
 
     "wiki.entry.role.framer.title": "Framer",
     "wiki.entry.role.framer.guide": "Choose two players to frame the first one, making it seem like they killed the second one according to investigative roles. Try to choose players who already look a little suspicious so investigative roles might choose them.",
-    "wiki.entry.role.framer.abilities":"- Visit two players\n  - The first player you visit will have a suspicious aura for the night\n  - The first player will appear to visit the second player for the night",
+    "wiki.entry.role.framer.abilities":"- Visit one player to give them a suspicious aura\n- Visit two players\n  - The first player you visit will have a suspicious aura for the night\n  - The first player will appear to visit the second player you visited",
     "wiki.entry.role.framer.attributes":"- Your first visit will have a suspicious aura. So they will look suspicious to a Sheriff, they can appear as the evil player to a Psychic, and they will be enemies with everyone to a Seer.",
-    "wiki.entry.role.framer.extra":"- You can't choose other mafia members for your first target, but you can choose any player for your second target",
+    "wiki.entry.role.framer.extra":"- You can't choose other mafia members for your first target, but you can choose any player for your second target, including dead players and other mafia members",
 
     "wiki.entry.role.jester.title": "Jester",
     "wiki.entry.role.jester.guide": "Get lynched during the day to win. If you win, you can attack any living player who voted you guilty or abstained. Try to look suspicious without making it obvious that you are the Jester.",
