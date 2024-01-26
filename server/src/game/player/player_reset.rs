@@ -54,7 +54,7 @@ impl PlayerReference{
                 self.set_night_grave_will(game, self.will(game).clone());
                 self.set_night_grave_death_notes(game, vec![]);
 
-                if self.is_disconnected(game) {
+                if self.is_disconnected(game) && self.alive(game){
                     self.set_night_died(game, true);
                     
                     self.set_night_grave_killers(game, vec![GraveKiller::Quit]);

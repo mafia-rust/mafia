@@ -18,10 +18,12 @@ impl PlayerReference{
     }
     pub fn quit(&self, game: &mut Game) {
         self.deref_mut(game).connection = ClientConnection::Disconnected;
-        game.add_message_to_chat_group(
-            crate::game::chat::ChatGroup::All, 
-            ChatMessage::PlayerQuit{player_index: self.index()}
-        );
+        if self.alive(game) {
+            game.add_message_to_chat_group(
+                crate::game::chat::ChatGroup::All, 
+                ChatMessage::PlayerQuit{player_index: self.index()}
+            );
+        }
     }
     pub fn is_connected(&self, game: &Game) -> bool {
         matches!(self.deref(game).connection, ClientConnection::Connected(_))
