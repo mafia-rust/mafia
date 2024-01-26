@@ -87,7 +87,15 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
         <header>
             <h2>{translate("menu.lobby.excludedRoles")}</h2>
         </header>
+        <button 
+            onClick={()=>this.handleIncludeAll()}
+            disabled={!this.state.host}
+        >{translate("menu.excludedRoles.includeAll")}</button>
         <div className="exclusion-preset">
+            <button 
+                onClick={(e)=>this.handleExcludedRolePreset()}
+                disabled={!this.state.host}
+            >{translate("menu.excludedRoles.exclude")}</button>
             <select
                 onChange={(e)=>this.setState({selectedExcludedRolePreset: e.target.options[e.target.selectedIndex].value})}
                 disabled={!this.state.host}
@@ -99,15 +107,11 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
                 }
             </select>
         </div>
+        <div className="exclusion-preset">
             <button 
-                onClick={(e)=>this.handleExcludedRolePreset()}
                 disabled={!this.state.host}
+                onClick={()=>{this.excludeRole()}}
             >{translate("menu.excludedRoles.exclude")}</button>
-            <button 
-                onClick={(e)=>this.handleIncludeAll()}
-                disabled={!this.state.host}
-            >{translate("menu.excludedRoles.includeAll")}</button>
-        <div>
             <RolePicker
                 disabled={!this.state.host}
                 roleOutline={this.state.roleOutline}
@@ -117,10 +121,6 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
                     })
                 }}
             />
-            <button 
-                disabled={!this.state.host}
-                onClick={()=>{this.excludeRole()}}
-            >{translate("menu.excludedRoles.exclude")}</button>
         </div>
         <div>
             {sortRoleOutlines(Array.from(this.state.excludedRoles.values())).map((value, i)=>{

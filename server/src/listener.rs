@@ -188,6 +188,9 @@ impl Listener{
         let incoming_packet = serde_json::from_str::<ToServerPacket>(message.to_string().as_str())?;
 
         match incoming_packet {
+            ToServerPacket::Ping => {
+                connection.send(ToClientPacket::Pong);
+            },
             ToServerPacket::LobbyListRequest => {
                 connection.send(ToClientPacket::LobbyList { 
                     room_codes: self.lobbies.keys().cloned().collect() 

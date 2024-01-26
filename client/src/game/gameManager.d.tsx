@@ -92,6 +92,8 @@ export type GameManager = {
 
     messageListener(serverMessage: ToClientPacket): void;
 
+    lastPingTime: number,
+    pingCalculation: number,
     tick(timePassedMs: number): void;
 
 }

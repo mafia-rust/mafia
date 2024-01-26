@@ -76,7 +76,7 @@ impl RoleStateImpl for Politician {
                 player_ref.get_won_game(game)
             {
                 
-                if player_ref.defense(game) >= 3 {
+                if player_ref.defense(game) < 3 {
 
                     let mut grave = Grave::from_player_lynch(game, player_ref);
                     grave.death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Politician)]);
@@ -98,7 +98,7 @@ impl RoleStateImpl for Politician {
                 {
                     player_ref.set_role_state(game, RoleState::Politician(Politician{won: true}));
 
-                    if player_ref.defense(game) >= 3 {
+                    if player_ref.defense(game) < 3 {
                         player_ref.die(game, Grave::from_player_suicide(game, player_ref));
                     }else{
                         player_ref.add_chat_message(game, ChatMessage::YouSurvivedAttack);

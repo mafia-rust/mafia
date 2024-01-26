@@ -90,8 +90,11 @@
 .lm .excluded-roles > .exclusion-preset {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
-}
-.lm .excluded-roles > .exclusion-preset > select {
     width: 100%;
+}
+.lm .excluded-roles > .exclusion-preset select {
+    flex-grow: 1;
+    text-align-last: left;
+    margin-right: 0;
+    margin-left: 0;
 }

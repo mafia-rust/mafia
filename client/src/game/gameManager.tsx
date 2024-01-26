@@ -20,24 +20,23 @@ export function createGameManager(): GameManager {
     console.log("Game manager created.");
     
     let gameManager: GameManager = {
-
         setDisconnectedState() {
             Anchor.stopAudio();
             GAME_MANAGER.server.close();
-            
+
             GAME_MANAGER.state = {
                 stateType: "disconnected"
             };
-            Anchor.setContent(<StartMenu/>);
+            Anchor.setContent(<StartMenu />);
         },
         setLobbyState() {
             GAME_MANAGER.state = createLobbyState();
-            Anchor.setContent(<LobbyMenu/>);
+            Anchor.setContent(<LobbyMenu />);
             Anchor.playAudioFile("/audio/01. Calm Before The Storm.mp3");
         },
         setGameState() {
             let roomCode = null;
-            if(GAME_MANAGER.state.stateType === "lobby"){
+            if (GAME_MANAGER.state.stateType === "lobby") {
                 roomCode = GAME_MANAGER.state.roomCode;
             }
 
@@ -45,16 +44,16 @@ export function createGameManager(): GameManager {
             Anchor.stopAudio();
             GAME_MANAGER.state = createGameState();
             Anchor.setContent(GameScreen.createDefault());
-            if(roomCode !== null){
+            if (roomCode !== null) {
                 GAME_MANAGER.state.roomCode = roomCode;
             }
         },
         async setOutsideLobbyState() {
             Anchor.stopAudio();
 
-            Anchor.setContent(<LoadingScreen type="default"/>)
+            Anchor.setContent(<LoadingScreen type="default" />);
             // GAME_MANAGER.server.close();
-            if (!GAME_MANAGER.server.ws?.OPEN){
+            if (!GAME_MANAGER.server.ws?.OPEN) {
                 await GAME_MANAGER.server.open();
             }
 
@@ -62,14 +61,14 @@ export function createGameManager(): GameManager {
                 stateType: "outsideLobby",
                 selectedRoomCode: null,
                 roomCodes: []
-            }
+            };
 
-            Anchor.setContent(<PlayMenu/>);
+            Anchor.setContent(<PlayMenu />);
         },
 
         saveReconnectData(roomCode, playerId) {
             localStorage.setItem(
-                "reconnectData", 
+                "reconnectData",
                 JSON.stringify({
                     "roomCode": roomCode,
                     "playerId": playerId,
@@ -104,38 +103,38 @@ export function createGameManager(): GameManager {
         state: {
             stateType: "disconnected"
         },
-        
+
         getMyName() {
-            if (gameManager.state.stateType === "lobby") 
+            if (gameManager.state.stateType === "lobby")
                 return gameManager.state.players.get(gameManager.state.myId!)?.name;
             if (gameManager.state.stateType === "game")
                 return gameManager.state.players[gameManager.state.myIndex!]?.name;
             return undefined;
         },
         getMyHost() {
-            if (gameManager.state.stateType === "lobby") 
+            if (gameManager.state.stateType === "lobby")
                 return gameManager.state.players.get(gameManager.state.myId!)?.host;
             if (gameManager.state.stateType === "game")
-                return gameManager.state.players[gameManager.state.myIndex!]?.host;            
+                return gameManager.state.players[gameManager.state.myIndex!]?.host;
             return undefined;
         },
 
 
-        server : createServer(),
+        server: createServer(),
 
-        listeners : [],
+        listeners: [],
 
         addStateListener(listener) {
             gameManager.listeners.push(listener);
         },
         removeStateListener(listener) {
             let index = gameManager.listeners.indexOf(listener);
-            if(index !== -1)
+            if (index !== -1)
                 gameManager.listeners.splice(index, 1);
         },
         invokeStateListeners(type) {
-            for(let i = 0; i < gameManager.listeners.length; i++){
-                if(typeof(gameManager.listeners[i])==="function"){
+            for (let i = 0; i < gameManager.listeners.length; i++) {
+                if (typeof (gameManager.listeners[i]) === "function") {
                     gameManager.listeners[i](type);
                 }
             }
@@ -144,7 +143,7 @@ export function createGameManager(): GameManager {
 
         leaveGame() {
             if (this.state.stateType !== "disconnected") {
-                this.server.sendPacket({type: "leave"});
+                this.server.sendPacket({ type: "leave" });
             }
             this.deleteReconnectData();
             this.setOutsideLobbyState();
@@ -154,10 +153,10 @@ export function createGameManager(): GameManager {
         },
 
         sendLobbyListRequest() {
-            this.server.sendPacket({type: "lobbyListRequest"});
+            this.server.sendPacket({ type: "lobbyListRequest" });
         },
         sendHostPacket() {
-            this.server.sendPacket({type: "host"});
+            this.server.sendPacket({ type: "host" });
         },
         sendRejoinPacket(roomCode: string, playerId: number) {
             let completePromise: () => void;
@@ -165,7 +164,7 @@ export function createGameManager(): GameManager {
                 completePromise = resolver;
             });
             let onJoined: StateListener = (type) => {
-                if (type==="acceptJoin") {
+                if (type === "acceptJoin") {
                     completePromise();
                     GAME_MANAGER.removeStateListener(onJoined);
                 }
@@ -177,8 +176,8 @@ export function createGameManager(): GameManager {
                 roomCode: parseInt(roomCode, 18),
                 playerId: playerId
             });
-            
-            
+
+
             return promise;
         },
         sendJoinPacket(roomCode: string) {
@@ -186,9 +185,9 @@ export function createGameManager(): GameManager {
             let promise = new Promise<void>((resolver) => {
                 completePromise = resolver;
             });
-            
+
             let onJoined: StateListener = (type) => {
-                if (type==="acceptJoin") {
+                if (type === "acceptJoin") {
                     completePromise();
                     GAME_MANAGER.removeStateListener(onJoined);
                 }
@@ -301,11 +300,11 @@ export function createGameManager(): GameManager {
                 text: text
             });
         },
-        sendExcludedRolesPacket(roles){
+        sendExcludedRolesPacket(roles) {
             this.server.sendPacket({
-                type:"setExcludedRoles",
-                roles:roles
-            })
+                type: "setExcludedRoles",
+                roles: roles
+            });
         },
 
         sendSetDoomsayerGuess(guesses) {
@@ -333,18 +332,18 @@ export function createGameManager(): GameManager {
             });
         },
         sendSetConsortOptions(
-            roleblock: boolean, 
-            youWereRoleblockedMessage: boolean, 
-            youSurvivedAttackMessage: boolean, 
-            youWereProtectedMessage: boolean, 
-            youWereTransportedMessage: boolean, 
-            youWerePossessedMessage: boolean, 
+            roleblock: boolean,
+            youWereRoleblockedMessage: boolean,
+            youSurvivedAttackMessage: boolean,
+            youWereProtectedMessage: boolean,
+            youWereTransportedMessage: boolean,
+            youWerePossessedMessage: boolean,
             yourTargetWasJailedMessage: boolean
-        ): void{
+        ): void {
             this.server.sendPacket({
                 type: "setConsortOptions",
                 roleblock: roleblock,
-                
+
                 youWereRoleblockedMessage: youWereRoleblockedMessage === undefined || youWereRoleblockedMessage === null ? false : youWereRoleblockedMessage,
                 youSurvivedAttackMessage: youSurvivedAttackMessage === undefined || youSurvivedAttackMessage === null ? false : youSurvivedAttackMessage,
                 youWereProtectedMessage: youWereProtectedMessage === undefined || youWereProtectedMessage === null ? false : youWereProtectedMessage,
@@ -360,13 +359,23 @@ export function createGameManager(): GameManager {
                 will: will
             });
         },
-        
+
         messageListener(serverMessage) {
             messageListener(serverMessage);
         },
-    
+
+        lastPingTime: 0,
+        pingCalculation: 0,
         tick(timePassedMs) {
-            if (gameManager.state.stateType === "game"){
+            if (gameManager.state.stateType !== "disconnected") {
+                if(gameManager.lastPingTime + (30 * 1000) < Date.now()){
+                    gameManager.lastPingTime = Date.now();
+                    this.server.sendPacket({
+                        type: "ping"
+                    });
+                }
+            }
+            if (gameManager.state.stateType === "game") {
                 if (!gameManager.state.ticking) return;
 
                 const newTimeLeft = gameManager.state.timeLeftMs - timePassedMs;
@@ -378,9 +387,6 @@ export function createGameManager(): GameManager {
                     gameManager.state.timeLeftMs = 0;
                 }
             }
-            
-            
-            
         },
     }
     return gameManager;

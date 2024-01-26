@@ -5,8 +5,9 @@ import { RoleOutline } from "./roleListState.d"
 import { Role, RoleState } from "./roleState.d"
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu"
 
-export type ToClientPacket = 
-{
+export type ToClientPacket = {
+    type: "pong",
+} | {
     type: "rateLimitExceeded",
 } | {
     type: "lobbyList",
@@ -123,6 +124,8 @@ export type ToClientPacket =
 }
 
 export type ToServerPacket = {
+    type: "ping",
+} | {
     type: "lobbyListRequest",
 } | {
     type: "reJoin",

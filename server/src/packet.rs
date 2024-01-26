@@ -33,6 +33,7 @@ use crate::{game::{
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum ToClientPacket{
+    Pong,
     
     #[serde(rename_all = "camelCase")]
     RateLimitExceeded,
@@ -150,6 +151,7 @@ pub enum RejectJoinReason {
 #[derive(Deserialize, Debug, Clone)]
 #[serde(tag = "type", rename_all = "camelCase")]
 pub enum ToServerPacket{
+    Ping,
     // Pre Lobby
     LobbyListRequest,
     #[serde(rename_all = "camelCase")]

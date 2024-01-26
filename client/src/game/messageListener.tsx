@@ -15,6 +15,10 @@ export default function messageListener(packet: ToClientPacket){
 
 
     switch(packet.type) {
+        case "pong":
+            GAME_MANAGER.pingCalculation = Date.now() - GAME_MANAGER.lastPingTime;
+            console.log("Ping: "+GAME_MANAGER.pingCalculation);
+        break;
         case "rateLimitExceeded":
             Anchor.pushError(translate("notification.rateLimitExceeded"), "");
         break;
