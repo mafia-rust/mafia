@@ -50,7 +50,7 @@ impl RoleStateImpl for Deputy {
             game.add_message_to_chat_group(ChatGroup::All, ChatMessage::DeputyKilled{shot_index: target_ref.index()});
             
 
-            if target_ref.role(game).faction_alignment().faction() == Faction::Town {
+            if target_ref.role(game).faction() == Faction::Town {
                 actor_ref.die(game, Grave::from_player_suicide(game, actor_ref));
             }
         }

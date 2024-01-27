@@ -81,7 +81,7 @@ impl RoleStateImpl for Executioner {
         
         if let Some(target) = PlayerReference::all_players(game)
             .filter(|p|
-                p.role(game).faction_alignment().faction() == Faction::Town && 
+                p.role(game).faction() == Faction::Town && 
                 p.role(game).faction_alignment() != FactionAlignment::TownPower &&
                 p.role(game).faction_alignment() != FactionAlignment::TownKilling
             ).collect::<Vec<PlayerReference>>()

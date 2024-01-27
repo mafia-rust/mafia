@@ -145,7 +145,7 @@ impl Mafia{
         //if no mafia killing exists, the code can reach here
         let list_of_living_mafia = PlayerReference::all_players(game)
             .filter(|p| 
-                p.role(game).faction_alignment().faction() == Faction::Mafia && p.alive(game)
+                p.role(game).faction() == Faction::Mafia && p.alive(game)
             )
             .collect::<Vec<PlayerReference>>();
         

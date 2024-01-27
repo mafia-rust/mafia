@@ -12,7 +12,7 @@ impl EndGameCondition {
         a == Self::None || b == Self::None || a == b
     }
     pub fn from_role(role: Role) -> EndGameCondition {
-        match role.faction_alignment().faction(){
+        match role.faction(){
             Faction::Mafia => EndGameCondition::Faction(Faction::Mafia),
             Faction::Town => EndGameCondition::Faction(Faction::Town),
             Faction::Neutral => match role {

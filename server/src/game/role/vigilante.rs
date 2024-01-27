@@ -54,7 +54,7 @@ impl RoleStateImpl for Vigilante {
 
                     let killed = target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Vigilante), 1, false);
 
-                    if killed && target_ref.role(game).faction_alignment().faction() == Faction::Town {
+                    if killed && target_ref.role(game).faction() == Faction::Town {
                         self.will_suicide = true;
                     }
 

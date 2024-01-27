@@ -146,6 +146,9 @@ mod macros {
                         $(Self::$name => $file::FACTION_ALIGNMENT),*
                     }
                 }
+                pub fn faction(&self) -> crate::game::role_list::Faction {
+                    self.faction_alignment().faction()
+                }
             }
 
             // This does not need to implement Deserialize or PartialEq!

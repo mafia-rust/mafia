@@ -73,7 +73,7 @@ impl Sheriff {
         }else if player_ref.has_innocent_aura(game){
             false
         }else{
-            player_ref.role(game).faction_alignment().faction() != Faction::Town
+            player_ref.role(game).faction() != Faction::Town
         }
     }
 }

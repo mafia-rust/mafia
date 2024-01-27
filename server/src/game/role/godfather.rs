@@ -73,7 +73,7 @@ impl RoleStateImpl for Godfather {
         game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessage::GodfatherBackup { backup: backup.map(|p|p.index()) });
 
         for player_ref in PlayerReference::all_players(game){
-            if player_ref.role(game).faction_alignment().faction() != Faction::Mafia{
+            if player_ref.role(game).faction() != Faction::Mafia{
                 continue;
             }
             player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
@@ -81,7 +81,7 @@ impl RoleStateImpl for Godfather {
 
         if let Some(backup) = backup {
             for player_ref in PlayerReference::all_players(game){
-                if player_ref.role(game).faction_alignment().faction() != Faction::Mafia {
+                if player_ref.role(game).faction() != Faction::Mafia {
                     continue;
                 }
                 player_ref.push_player_tag(game, backup, Tag::GodfatherBackup);
@@ -92,7 +92,7 @@ impl RoleStateImpl for Godfather {
     fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         actor_ref != target_ref &&
         actor_ref.alive(game) && target_ref.alive(game) &&
-        target_ref.role(game).faction_alignment().faction() == Faction::Mafia
+        target_ref.role(game).faction() == Faction::Mafia
     }
     fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, true)
@@ -118,7 +118,7 @@ impl RoleStateImpl for Godfather {
         actor_ref.set_role_state(game, RoleState::Godfather(Godfather{backup: None}));
 
         for player_ref in PlayerReference::all_players(game){
-            if player_ref.role(game).faction_alignment().faction() != Faction::Mafia{
+            if player_ref.role(game).faction() != Faction::Mafia{
                 continue;
             }
             player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);

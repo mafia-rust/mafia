@@ -72,7 +72,7 @@ impl RoleStateImpl for Politician {
         for player_ref in PlayerReference::all_players(game) {
             if
                 player_ref.alive(game) && 
-                player_ref.role(game).faction_alignment().faction() == Faction::Town &&
+                player_ref.role(game).faction() == Faction::Town &&
                 player_ref.get_won_game(game)
             {
                 
@@ -112,7 +112,7 @@ impl RoleStateImpl for Politician {
 
 pub fn is_town_remaining(game: &Game) -> bool {
     PlayerReference::all_players(game).any(|player|
-        player.alive(game) && player.role(game).faction_alignment().faction() == Faction::Town
+        player.alive(game) && player.role(game).faction() == Faction::Town
     )
 }
 

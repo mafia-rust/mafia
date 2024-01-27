@@ -76,7 +76,7 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
         out.push(ChatGroup::Dead);
     }
 
-    if actor_ref.role(game).faction_alignment().faction() == Faction::Mafia {
+    if actor_ref.role(game).faction() == Faction::Mafia {
         out.push(ChatGroup::Mafia);
     }
     if actor_ref.night_jailed(game){

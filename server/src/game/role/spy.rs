@@ -34,7 +34,7 @@ impl RoleStateImpl for Spy {
 
                 let mut mafia_visits = vec![];
                 for other_player in PlayerReference::all_players(game){
-                    if other_player.role(game).faction_alignment().faction() == Faction::Mafia{
+                    if other_player.role(game).faction() == Faction::Mafia{
                         mafia_visits.append(&mut other_player.night_visits(game).iter().filter(|v|!v.astral).map(|v|v.target.index()).collect());
                     }
                 }

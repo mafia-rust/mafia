@@ -134,7 +134,7 @@ impl RoleOutline{
             },
             RoleOutline::Faction { faction } => {
                 Role::values().into_iter()
-                    .filter(|r|r.faction_alignment().faction() == *faction)
+                    .filter(|r|r.faction() == *faction)
                     .filter(|r|
                         !(
                             excluded_roles.contains(&RoleOutline::Exact { role: *r }) || 
@@ -156,7 +156,7 @@ impl RoleOutline{
                         !(
                             excluded_roles.contains(&RoleOutline::Exact { role: *r }) ||
                             excluded_roles.contains(&RoleOutline::FactionAlignment { faction_alignment: r.faction_alignment() }) ||
-                            excluded_roles.contains(&RoleOutline::Faction { faction: r.faction_alignment().faction() })
+                            excluded_roles.contains(&RoleOutline::Faction { faction: r.faction() })
                         )
                     )
                     .filter(|r|
