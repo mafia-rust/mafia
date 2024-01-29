@@ -6,7 +6,7 @@ use crate::game::chat::ChatGroup;
 use crate::game::grave::GraveRole;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::FactionAlignment;
+use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
 use crate::game::Game;
@@ -34,7 +34,7 @@ impl Default for Forger {
     }
 }
 
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaDeception;
+pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 impl RoleStateImpl for Forger {
@@ -60,8 +60,7 @@ impl RoleStateImpl for Forger {
                     actor_ref.set_role_state(game, RoleState::Forger(Forger { 
                         forges_remaining: self.forges_remaining - 1, 
                         forged_ref: Some(target_ref), 
-                        fake_role: self.fake_role,
-                        fake_will: self.fake_will,
+                        ..self
                     }));
                 }
             },
@@ -100,10 +99,8 @@ impl RoleStateImpl for Forger {
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         actor_ref.set_role_state(game, RoleState::Forger(Forger{
-            forges_remaining: self.forges_remaining,
             forged_ref: None,
-            fake_role: self.fake_role,
-            fake_will: self.fake_will,
+            ..self
         }));
     }
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){

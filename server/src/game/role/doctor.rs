@@ -4,7 +4,7 @@ use serde::Serialize;
 use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::FactionAlignment;
+use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
 use crate::game::Game;
@@ -26,7 +26,7 @@ impl Default for Doctor {
     }
 }
 
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownProtective;
+pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Doctor {
@@ -60,7 +60,7 @@ impl RoleStateImpl for Doctor {
                     ));
                 }else{
                     actor_ref.set_role_state(game, RoleState::Doctor(
-                        Doctor {self_heals_remaining: self.self_heals_remaining, target_healed_ref: Some(target_ref)}
+                        Doctor {target_healed_ref: Some(target_ref), ..self}
                     ));
                 }
 

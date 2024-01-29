@@ -5,7 +5,7 @@ use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::grave::{GraveKiller, Grave, GraveDeathCause};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::{FactionAlignment, Faction};
+use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
 use crate::game::Game;
@@ -25,7 +25,7 @@ impl Default for Deputy {
     }
 }
 
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownKilling;
+pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 impl RoleStateImpl for Deputy {

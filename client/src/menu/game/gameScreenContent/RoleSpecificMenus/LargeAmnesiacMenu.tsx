@@ -2,7 +2,7 @@ import React from "react"
 import GameState from "../../../../game/gameState.d"
 import GAME_MANAGER from "../../../.."
 import { StateEventType } from "../../../../game/gameManager.d"
-import RolePicker from "../../../../components/RolePicker"
+import RoleOutlineDropdown from "../../../../components/RolePicker"
 import { RoleOutline } from "../../../../game/roleListState.d"
 
 
@@ -26,7 +26,7 @@ export default class LargeAmnesiacMenu extends React.Component<LargeAmnesiacMenu
         ){
             defaultRole = GAME_MANAGER.state.roleState.roleOutline;
         }else{
-            defaultRole = {type: "exact", role:"amnesiac"};
+            defaultRole = {type: "any"};
         }
         
         if(GAME_MANAGER.state.stateType === "game")
@@ -62,7 +62,7 @@ export default class LargeAmnesiacMenu extends React.Component<LargeAmnesiacMenu
     }
     render(){
         return <div>
-            <RolePicker roleOutline={this.state.localRoleOutline} onChange={(rle)=>{this.sendAndSetRole(rle)}}/>
+            <RoleOutlineDropdown roleOutline={this.state.localRoleOutline} onChange={(rle)=>{this.sendAndSetRole(rle)}}/>
         </div>
     }
 }

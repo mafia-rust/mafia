@@ -1,7 +1,7 @@
 import { Phase, PlayerIndex, Verdict, PhaseTimes, Tag, PlayerID } from "./gameState.d"
 import { Grave } from "./graveState"
 import { ChatMessage } from "../components/ChatMessage"
-import { RoleOutline } from "./roleListState.d"
+import { RoleList, RoleOutline } from "./roleListState.d"
 import { Role, RoleState } from "./roleState.d"
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu"
 
@@ -47,7 +47,7 @@ export type ToClientPacket = {
     players: string[]
 } | {
     type: "roleList",
-    roleList: RoleOutline[]
+    roleList: RoleList,
 } | {
     type: "roleOutline",
     index: number,
@@ -61,7 +61,7 @@ export type ToClientPacket = {
     phaseTimeSettings: PhaseTimes
 } | {
     type: "excludedRoles",
-    roles: RoleOutline[]
+    roles: Role[]
 } | 
 // Game
 {
@@ -145,11 +145,13 @@ export type ToServerPacket = {
     type: "startGame",
 } | {
     type: "setRoleList", 
-    roleList: RoleOutline[]
+    roleList: RoleList,
 } | {
     type: "setRoleOutline", 
     index: number,
     roleOutline: RoleOutline
+} | {
+    type: "simplifyRoleList"
 } | {
     type: "setPhaseTime", 
     phase: Phase, 
@@ -159,7 +161,7 @@ export type ToServerPacket = {
     phaseTimeSettings: PhaseTimes
 } | {
     type: "setExcludedRoles", 
-    roles: RoleOutline[], 
+    roles: Role[], 
 } | 
 // Game
 {

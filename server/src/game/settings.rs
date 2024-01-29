@@ -2,13 +2,13 @@ use std::time::Duration;
 
 use serde::{Serialize, Deserialize};
 
-use super::{role_list::{RoleList, RoleOutline}, phase::PhaseType};
+use super::{phase::PhaseType, role::Role, role_list::RoleList};
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct Settings{
     pub role_list: RoleList,
     pub phase_times: PhaseTimeSettings,
-    pub excluded_roles: Vec<RoleOutline>,
+    pub excluded_roles: Vec<Role>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PhaseTimeSettings{

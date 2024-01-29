@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::FactionAlignment;
+use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::team::Team;
@@ -13,7 +13,7 @@ use super::{Priority, RoleStateImpl, RoleState, common_role};
 #[serde(rename_all = "camelCase")]
 pub struct Vampire;
 
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::NeutralChaos;
+pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(2);
 
 impl RoleStateImpl for Vampire {

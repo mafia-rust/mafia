@@ -6,7 +6,7 @@ use crate::game::chat::ChatGroup;
 use crate::game::grave::GraveRole;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::FactionAlignment;
+use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
 use crate::game::Game;
@@ -29,7 +29,7 @@ impl Default for Janitor {
     }
 }
 
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::MafiaDeception;
+pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 impl RoleStateImpl for Janitor {

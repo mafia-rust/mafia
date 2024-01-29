@@ -4,7 +4,7 @@ use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::grave::{GraveDeathCause, Grave, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::FactionAlignment;
+use crate::game::role_list::Faction;
 use crate::game::team::Team;
 use crate::game::visit::Visit;
 use crate::game::Game;
@@ -17,7 +17,7 @@ pub struct Death{
     won: bool,
 }
 const NEEDED_SOULS: u8 = 6;
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::NeutralApocalypse;
+pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 impl RoleStateImpl for Death {

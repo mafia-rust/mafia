@@ -2,15 +2,15 @@ import React from "react";
 import ROLES from "./../resources/roles.json";
 import translate, { langText, translateChecked } from "../game/lang";
 import "./wikiSearch.css";
-import { Role, getFactionAlignmentFromRole, getFactionFromRole } from "../game/roleState.d";
-import { FACTIONS, FactionAlignment, RoleOutline, getAllFactionAlignments, getRoleOutlineFromFactionAlignment, translateRoleOutline } from "../game/roleListState.d";
+import { Role, getFactionFromRole } from "../game/roleState.d";
+import { FACTIONS, RoleOutline, translateRoleOutline } from "../game/roleListState.d";
 import StyledText from "../components/StyledText";
 import { HistoryQueue } from "../history";
 import { regEscape } from "..";
 
 type WikiSearchProps = {
     page?: WikiPage,
-    excludedRoles?: RoleOutline[]
+    excludedRoles?: Role[]
     pageChangeCallback?: (page: WikiPage) => void
 }
 
@@ -27,7 +27,7 @@ export type WikiPage =
     | `role/${Role}`
     | `article/${Article}`;
 
-const ARTICLES = ["how_to_play", "phases_and_timeline", "faction_alignments", "priority", "all_language"] as const;
+const ARTICLES = ["how_to_play", "phases_and_timeline", "priority", "all_language"] as const;
 type Article = typeof ARTICLES[number];
 
 const PAGES: WikiPage[] = Object.keys(ROLES).map(role => `role/${role}`)
@@ -81,40 +81,22 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
             page
         }, () => {
             if (this.props.pageChangeCallback !== undefined) {
-                this.props.pageChangeCallback(page);
+                this.props.pageChangeCallback(page); 
             }
         });
     }
 
     renderOpenPageButton(page: WikiPage) {
-        let excludedRolesExact: Role[] = [];
-        for(let role in ROLES){
-            let faction = getFactionFromRole(role as Role);
-            let factionAlignment = getFactionAlignmentFromRole(role as Role);
-            for(let excludedRoleOutline of this.props.excludedRoles ?? []){
-                switch(excludedRoleOutline.type){
-                    case "exact":
-                        if(excludedRoleOutline.role === role)
-                            excludedRolesExact.push(role as Role);
-                    break;
-                    case "factionAlignment":
-                        if(excludedRoleOutline.factionAlignment === factionAlignment)
-                            excludedRolesExact.push(role as Role);
-                    break;
-                    case "faction":
-                        if(excludedRoleOutline.faction === faction)
-                            excludedRolesExact.push(role as Role);
-                    break;
-                }
-            }
-        }
 
-        if(!excludedRolesExact.map((role)=>{return `role/${role}`}).includes(page)){
+        let greyedOutRoles = this.props.excludedRoles
+        if(greyedOutRoles === undefined){greyedOutRoles = [];}
+
+        if(!greyedOutRoles.map((role)=>{return `role/${role}`}).includes(page)){
             return <button key={page} onClick={()=>{this.setPage(page)}}>
                 <StyledText noLinks={true} markdown={true}>{getPageTitle(page)}</StyledText>
             </button>
         }else{
-            //TODO ill fix it says jack
+            //TODO ill fix it says jack keyword-dead
             return <button key={page} onClick={()=>{this.setPage(page)}}>
                 <span className="keyword-dead">{getPageTitle(page)}</span>
             </button>
@@ -129,43 +111,6 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
         if (this.state.type === "page") {
             if (this.state.page === "article/all_language") {
                 return langText;
-            } else if (this.state.page === "article/faction_alignments"){
-                
-                let elements = [<StyledText markdown={true}>## Factions and Alignments</StyledText>];
-
-                for(let faction of FACTIONS){
-                    let factionElements = [];
-                    factionElements.push(<StyledText markdown={true}>
-                        {"### "+translateRoleOutline({
-                            type: "faction",
-                            faction: faction
-                        })+"\n"}
-                    </StyledText>);
-
-                    for(let alignment of getAllFactionAlignments(faction)){
-
-                        factionElements.push(<StyledText markdown={true}>
-                            #### {translateRoleOutline(
-                                {
-                                    type: "factionAlignment",
-                                    factionAlignment: alignment,
-                                }
-                            ) as string}</StyledText>);
-
-                        for(let role in ROLES){
-
-                            if(getFactionAlignmentFromRole(role as Role) !== alignment){continue;}
-
-                            factionElements.push(<button key={role} onClick={()=>{this.setPage("role/"+role as WikiPage)}}>
-                                <StyledText noLinks={true}>{getPageTitle("role/"+role as WikiPage)}</StyledText>
-                            </button>);
-                        }
-                    }
-                    elements.push(<div>{factionElements}</div>);
-                }
-
-                return <div className="wiki-content-body">{elements}</div>;
-
             }else{
                 return <StyledText className="wiki-content-body" markdown={true}>
                     {getPageText(this.state.page)}
@@ -244,7 +189,7 @@ function getPageText(page: WikiPage): string {
 
             return translate("wiki.entry.role",
                 translate("role."+role+".name"),
-                translateRoleOutline(getRoleOutlineFromFactionAlignment(roleData.factionAlignment as FactionAlignment)) || '',
+                // translateRoleOutline(getRoleOutlineFromFactionAlignment(roleData.factionAlignment as FactionAlignment)) || '',
                 translateChecked("wiki.entry.role."+role+".guide") ?? translate("wiki.entry.role.noBasics"),
                 translateChecked("wiki.entry.role."+role+".abilities") ?? translate("wiki.entry.role.noAbilities"),
                 translateChecked("wiki.entry.role."+role+".attributes") ?? translate("wiki.entry.role.noAttributes"),

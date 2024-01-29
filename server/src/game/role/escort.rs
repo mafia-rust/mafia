@@ -5,7 +5,7 @@ use serde::Serialize;
 use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::FactionAlignment;
+use crate::game::role_list::Faction;
 use crate::game::team::Team;
 use crate::game::visit::Visit;
 use crate::game::Game;
@@ -15,7 +15,7 @@ use super::{Priority, RoleStateImpl};
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Escort;
 
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownSupport;
+pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Escort {

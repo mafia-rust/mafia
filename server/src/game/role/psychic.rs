@@ -4,7 +4,7 @@ use serde::Serialize;
 use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::{FactionAlignment, Faction};
+use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
 use crate::game::Game;
@@ -14,7 +14,7 @@ use super::{Priority, RoleStateImpl};
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct Psychic;
 
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownInvestigative;
+pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Psychic {

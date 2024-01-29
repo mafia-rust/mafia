@@ -51,11 +51,11 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
 
         let forgerRoleOptions: JSX.Element[] = [];
         forgerRoleOptions.push(
-            <option key={"none"} role={"none"}>{translate("none")}</option>
+            <option key={"none"} value={"none"}>{translate("none")}</option>
         );
         for(let role of Object.keys(ROLES)){
             forgerRoleOptions.push(
-                <option key={role} role={role}>{translate("role."+role+".name")}</option>
+                <option key={role} value={role}>{translate("role."+role+".name")}</option>
             );
         }
 
@@ -64,7 +64,7 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
                 <select
                     value={translate("role."+this.state.localRole+".name")} 
                     onChange={(e)=>{
-                        this.setState({localRole: e.target.options[e.target.selectedIndex].role as Role});
+                        this.setState({localRole: e.target.options[e.target.selectedIndex].value as Role});
                     }}>
                     {forgerRoleOptions}
                 </select>

@@ -6,7 +6,7 @@ use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::FactionAlignment;
+use crate::game::role_list::Faction;
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
@@ -20,7 +20,7 @@ pub struct Werewolf{
     pub tracked_players: Vec<PlayerReference>,
 }
 
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::NeutralKilling;
+pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Werewolf {

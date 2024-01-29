@@ -27,7 +27,7 @@ export type DoomsayerGuess = typeof DOOMSAYER_GUESSES[number];
 export function doomsayerGuessTranslate(doomsayerGuess: DoomsayerGuess): string{
     let outString = translateChecked("role."+doomsayerGuess+".name");
     if(outString===null){
-        outString = translate("faction."+doomsayerGuess);
+        outString = translate(doomsayerGuess);
     }
     return outString;
 }

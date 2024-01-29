@@ -57,6 +57,8 @@ pub(crate) use {scenario, assert_contains, assert_not_contains};
 /// Stuff that shouldn't be called directly - only in macro invocations.
 #[doc(hidden)]
 pub mod _init {
+    use mafia_server::game::role_list::RoleList;
+
     use super::*;
 
     pub fn create_basic_scenario(roles: Vec<RoleState>) -> TestScenario {
@@ -66,7 +68,7 @@ pub mod _init {
         }
     
         let mut game = match mock_game(Settings {
-            role_list,
+            role_list: RoleList(role_list),
             ..Default::default()
         }, roles.len()){
             Ok(game) => game,

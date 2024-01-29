@@ -4,7 +4,7 @@ use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::{FactionAlignment, Faction};
+use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::team::Team;
@@ -27,7 +27,7 @@ impl Default for Jailor {
     }
 }
 
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownPower;
+pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 impl RoleStateImpl for Jailor {
@@ -81,8 +81,7 @@ impl RoleStateImpl for Jailor {
     fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {        
         game.current_phase().is_day() &&
         actor_ref != target_ref &&
-        actor_ref.alive(game) && target_ref.alive(game) &&
-        self.executions_remaining > 0
+        actor_ref.alive(game) && target_ref.alive(game)
     }
     fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, true)

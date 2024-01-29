@@ -1,7 +1,7 @@
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import { Phase, PhaseTimes, PlayerIndex, State, Verdict } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
-import { RoleOutline } from "./roleListState.d";
+import { RoleList, RoleOutline } from "./roleListState.d";
 import { Role } from "./roleState.d";
 
 export type Server = {
@@ -57,8 +57,9 @@ export type GameManager = {
     sendStartGamePacket(): void;
     sendSetPhaseTimePacket(phase: Phase, time: number): void;
     sendSetPhaseTimesPacket(phaseTimeSettings: PhaseTimes): void;
-    sendSetRoleListPacket(roleListEntries: RoleOutline[]): void;
+    sendSetRoleListPacket(roleListEntries: RoleList): void;
     sendSetRoleOutlinePacket(index: number, roleOutline: RoleOutline): void;
+    sendSimplifyRoleListPacket(): void;
     
     sendJudgementPacket(judgement: Verdict): void;
     sendVotePacket(voteeIndex: PlayerIndex| null): void;
@@ -69,7 +70,7 @@ export type GameManager = {
     sendSaveDeathNotePacket(notes: string): void;
     sendSendMessagePacket(text: string): void;
     sendSendWhisperPacket(playerIndex: number, text: string): void;
-    sendExcludedRolesPacket(roles: RoleOutline[]): void;
+    sendExcludedRolesPacket(roles: Role[]): void;
 
     sendSetDoomsayerGuess(guesses: [
         [number, DoomsayerGuess],

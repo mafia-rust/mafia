@@ -1,8 +1,13 @@
 .role-picker {
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    /* justify-content: space-evenly; */
     width: 100%;
+}
+.role-picker-option {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
 }
 .role-picker select {
     width: 100%;

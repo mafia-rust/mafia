@@ -4,7 +4,7 @@ import GAME_MANAGER from "../../../index";
 import { ContentMenus, ContentTab } from "../GameScreen";
 import "./graveyardMenu.css";
 import GameState from "../../../game/gameState.d";
-import { sortRoleOutlines, translateRoleOutline } from "../../../game/roleListState.d";
+import { translateRoleOutline } from "../../../game/roleListState.d";
 import StyledText from "../../../components/StyledText";
 import WikiSearch from "../../../components/WikiSearch";
 import GraveComponent from "../../../components/grave";
@@ -78,15 +78,8 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             return <button 
                 style={{ gridRow: index + 1, gridColumn:1 }} 
                 key={index}
-                onClick={() => {
-                    if (entry.type === "exact") {
-                        WikiSearch.setPage(`role/${entry.role}`);
-                    } else {
-                        WikiSearch.setPage(`article/how_to_play`);
-                    }
-                }}
             >
-                <StyledText noLinks={true}>
+                <StyledText noLinks={false}>
                     {translateRoleOutline(entry) ?? ""}
                 </StyledText>
             </button>
@@ -102,19 +95,12 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
                 {this.state.gameState.excludedRoles.length === 0 
                     ? <StyledText>{translate("none")}</StyledText>
                     : 
-                    sortRoleOutlines(Array.from(this.state.gameState.excludedRoles.values())).map((entry, i)=>{
+                    Array.from(this.state.gameState.excludedRoles.values()).map((entry, i)=>{
                         return <button 
                             key={i}
-                            onClick={() => {
-                                if (entry.type === "exact") {
-                                    WikiSearch.setPage(`role/${entry.role}`);
-                                } else {
-                                    WikiSearch.setPage(`article/how_to_play`);
-                                }
-                            }}
                         >
-                            <StyledText noLinks={true}>
-                                {translateRoleOutline(entry) ?? ""}
+                            <StyledText noLinks={false}>
+                                {translate("role."+entry+".name") ?? ""}
                             </StyledText>
                         </button>
                     })

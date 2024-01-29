@@ -1,273 +1,50 @@
 {
     "default": [
-        {
-            "type": "exact",
-            "role": "spy"
-        },
-        {
-            "type": "exact",
-            "role": "bodyguard"
-        },
-        {
-            "type": "exact",
-            "role": "mafioso"
-        }
+        "spy",
+        "bodyguard",
+        "mafioso"
     ],
     "beginner": [
-        {
-            "type": "exact",
-            "role": "jailor"
-        },
-        {
-            "type": "exact",
-            "role": "mayor"
-        },
-        {
-            "type": "exact",
-            "role": "transporter"
-        },
-        
-
-        {
-            "type": "exact",
-            "role": "spy"
-        },
-        {
-            "type": "exact",
-            "role": "tracker"
-        },
-        {
-            "type": "exact",
-            "role": "seer"
-        },
-        {
-            "type": "exact",
-            "role": "psychic"
-        },
-
-        {
-            "type": "exact",
-            "role": "bodyguard"
-        },
-        {
-            "type": "exact",
-            "role": "crusader"
-        },
-
-        {
-            "type": "exact",
-            "role": "deputy"
-        },
-
-        {
-            "type": "exact",
-            "role": "retributionist"
-        },
-
-        {
-            "type": "exact",
-            "role": "mafioso"
-        },
-        {
-            "type": "exact",
-            "role": "consigliere"
-        },
-        {
-            "type": "exact",
-            "role": "consort"
-        },
-        {
-            "type": "exact",
-            "role": "forger"
-        },
-        {
-            "type": "exact",
-            "role": "witch"
-        },
-        {
-            "type": "exact",
-            "role": "necromancer"
-        },
-
-        {
-            "type": "exact",
-            "role": "janitor"
-        },
-
-        {
-            "type": "exact",
-            "role": "politician"
-        },
-        {
-            "type": "exact",
-            "role": "executioner"
-        },
-
-        {
-            "type": "exact",
-            "role": "doomsayer"
-        },        
-        {
-            "type": "exact",
-            "role": "death"
-        },
-        
-
-        {
-            "type": "exact",
-            "role": "werewolf"
-        },
-        
-        {
-            "type": "exact",
-            "role": "vampire"
-        }
+        "jailor","mayor",
+        "spy","tracker","seer","psychic",
+        "bodyguard","crusader",
+        "deputy",
+        "transporter","retributionist",
+        "mafioso",
+        "consigliere","consort","forger","witch","necromancer","janitor",
+        "politician","executioner",
+        "doomsayer","death",
+        "werewolf",
+        "vampire"
     ],
     "intermediate":[
-        {
-            "type": "exact",
-            "role": "jailor"
-        },
-        {
-            "type": "exact",
-            "role": "transporter"
-        },
-        
-
-        {
-            "type": "exact",
-            "role": "spy"
-        },
-        {
-            "type": "exact",
-            "role": "psychic"
-        },
-
-        {
-            "type": "exact",
-            "role": "bodyguard"
-        },
-        {
-            "type": "exact",
-            "role": "crusader"
-        },
-
-        {
-            "type": "exact",
-            "role": "retributionist"
-        },
-
-        {
-            "type": "exact",
-            "role": "mafioso"
-        },
-        {
-            "type": "exact",
-            "role": "forger"
-        },
-        {
-            "type": "exact",
-            "role": "necromancer"
-        },
-
-        {
-            "type": "exact",
-            "role": "politician"
-        },
-       
-        {
-            "type": "exact",
-            "role": "death"
-        },
-
-        {
-            "type": "exact",
-            "role": "werewolf"
-        }
+        "jailor",
+        "spy","psychic",
+        "bodyguard","crusader",
+        "deputy",
+        "retributionist",
+        "mafioso",
+        "forger","necromancer",
+        "politician",
+        "death",
+        "werewolf",
+        "vampire"
     ],
     "classic": [
-        {
-            "type": "exact",
-            "role": "tracker"
-        },
-        {
-            "type": "exact",
-            "role": "seer"
-        },
-        {
-            "type": "exact",
-            "role": "psychic"
-        },
-
-        {
-            "type": "exact",
-            "role": "crusader"
-        },
-
-        {
-            "type": "exact",
-            "role": "deputy"
-        },
-
-        {
-            "type": "exact",
-            "role": "mafioso"
-        },
-        {
-            "type": "exact",
-            "role": "necromancer"
-        },
-        {
-            "type": "exact",
-            "role": "doomsayer"
-        },
-        {
-            "type": "exact",
-            "role": "politician"
-        },
-        {
-            "type": "exact",
-            "role": "death"
-        }
+        "tracker","seer","psychic",
+        "crusader",
+        "deputy",
+        "mafioso","necromancer",
+        "politician",
+        "doomsayer","death"
     ],
     "smallGame": [
-        {
-            "type": "exact",
-            "role": "spy"
-        },
-        {
-            "type": "exact",
-            "role": "psychic"
-        },
-        
-        {
-            "type": "exact",
-            "role": "bodyguard"
-        },
-
-        {
-            "type": "exact",
-            "role": "retributionist"
-        },
-
-        {
-            "type": "exact",
-            "role": "mafioso"
-        },
-
-        {
-            "type": "exact",
-            "role": "necromancer"
-        },
-
-        {
-            "type": "exact",
-            "role": "death"
-        },
-        {
-            "type": "exact",
-            "role": "doomsayer"
-        }
+        "spy","psychic",
+        "bodyguard",
+        "retributionist",
+        "mafioso",
+        "necromancer",
+        "death","doomsayer"
     ]
 
 }

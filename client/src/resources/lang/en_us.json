@@ -33,12 +33,6 @@
     "menu.excludedRoles.classic": "Classic",
     "menu.excludedRoles.smallGame": "Small Game",
 
-    "menu.roleLists.mafia": "Mafia",
-    "menu.roleLists.neutralKilling": "Neutral Killing",
-    "menu.roleLists.vampires": "Vampires",
-    "menu.roleLists.neutralEvil": "Neutral Evil",
-    "menu.roleLists.set": "Set Role List",
-
     "menu.timeSettings.custom": "Custom",
     "menu.timeSettings.classic": "Classic",
     "menu.timeSettings.lightning": "Lightning",
@@ -322,20 +316,27 @@
     "grave.deathNote": "A note was found with the body",
 
     "faction":"Faction",
-    "faction.town": "Town",
-    "faction.mafia": "Mafia",
-    "faction.neutral": "Neutral",
+    "town": "Town",
+    "mafia": "Mafia",
+    "neutral": "Neutral",
 
-    "alignment":"Alignment",
-    "alignment.killing": "Killing",
-    "alignment.investigative": "Investigative",
-    "alignment.protective": "Protective",
-    "alignment.support": "Support",
-    "alignment.deception": "Deception",
-    "alignment.evil": "Evil",
-    "alignment.chaos": "Chaos",
-    "alignment.apocalypse": "Apocalypse",
-    "alignment.power": "Power",
+    "townInvestigative":"Town Investigate",
+    "townProtective":"Town Protective",
+    "townSupport":"Town Support",
+    "townKilling":"Town Killing",
+    "townPower":"Town Power",
+    "townCommon":"Town Common",
+
+    "mafiaPower":"Mafia Power",
+    "mafiaSupport":"Mafia Support",
+
+    "neutralEvil":"Neutral Evil",
+    "neutralKilling":"Neutral Killing",
+    "neutralApocalypse":"Neutral Apocalypse",
+    "neutralChaos":"Neutral Chaos",
+    
+    "add":"+",
+    "sub":"-",
 
     "tag.godfatherBackup":"🌹",
     "tag.executionerTarget":"🎯",
@@ -364,6 +365,7 @@
     "defense.3": "Invincible",
     "vision": "Vision",
     "good": "Good",
+    "simplify":"Simplify",
 
     "verdict.guilty": "Guilty",
     "verdict.innocent": "Innocent",
@@ -557,7 +559,7 @@
     "wiki.entry.article.all_language.title":"All text",
     "wiki.entry.article.all_language.text":"",
 
-    "wiki.entry.role": "# \\0\n### \\1\n<br/>\n\n### Guide\n\\2\n### Abilities\n\\3\n### Attributes\n\\4\n### Extra\n\\5\n<br/>\n\n### Role Limit: \\6\n### Defense: \\7\n\n<br>\n\n### Keywords\n\\8",
+    "wiki.entry.role": "# \\0\n<br/>\n\n### Guide\n\\1\n### Abilities\n\\2\n### Attributes\n\\3\n### Extra\n\\4\n<br/>\n\n### Role Limit: \\5\n### Defense: \\6\n\n<br>\n\n### Keywords\n\\7",
     "wiki.entry.role.noBasics": "There is no basics section written for this page.",
     "wiki.entry.role.abilities": "Abilities",
     "wiki.entry.role.noAbilities": "There is no abilities section written for this page.",
@@ -743,7 +745,7 @@
     "wiki.entry.role.executioner.title": "Executioner",
     "wiki.entry.role.executioner.guide":"Get your target lynched to win. If you win, you commit suicide at the start of the next night. You should try to claim something that makes people think your target is suspicious.",
     "wiki.entry.role.executioner.abilities":"",
-    "wiki.entry.role.executioner.attributes":"* After you win you will commit suicide with an unstoppable attack\n* Your target will always be a townie, but never town power, or town killing\n* You have an innocent aura\n* You have basic defense",
+    "wiki.entry.role.executioner.attributes":"* After you win you will commit suicide with an unstoppable attack\n* Your target will always be a townie, but never a Mayor, Jailor, Deputy, Veteran, or Transporter\n* You have an innocent aura\n* You have basic defense",
     "wiki.entry.role.executioner.extra":"* Get your target lynched to win\n* If your target dies by something other than lynching, you will be converted to a jester immedietly\n* If there are no valid targets in the game when you become the executioner, you will be converted to a jester",
 
     "wiki.entry.role.doomsayer.title": "Doomsayer",

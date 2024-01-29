@@ -180,7 +180,7 @@ impl Listener{
 
         log!(info "Listener"; "{}: {}", &connection.get_address().to_string(), message);
         if let Err(k) = self.handle_message(connection, message){
-            log!(error "Listener"; "Serde error when receiving message from {}: {}", &connection.get_address().to_string(), k);
+            log!(error "Listener"; "Serde error when receiving message from {}: {}\n{}", &connection.get_address().to_string(), k, message);
         }
     }
     // TODO sum the error types in this function so they can be handled in on_message

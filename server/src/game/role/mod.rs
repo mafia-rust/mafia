@@ -4,7 +4,6 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::chat::ChatGroup;
-use crate::game::role_list::FactionAlignment;
 use crate::game::phase::PhaseType;
 use crate::game::team::Team;
 
@@ -141,13 +140,10 @@ mod macros {
                         $(Self::$name => $file::MAXIMUM_COUNT),*
                     }
                 }
-                pub fn faction_alignment(&self) -> FactionAlignment {
-                    match self {
-                        $(Self::$name => $file::FACTION_ALIGNMENT),*
-                    }
-                }
                 pub fn faction(&self) -> crate::game::role_list::Faction {
-                    self.faction_alignment().faction()
+                    match self {
+                        $(Self::$name => $file::FACTION),*
+                    }
                 }
             }
 

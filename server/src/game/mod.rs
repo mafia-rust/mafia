@@ -19,12 +19,10 @@ use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::Serialize;
 
-use crate::game::role_list::RoleOutline;
 use crate::lobby::{LobbyPlayer, ClientConnection};
 use crate::packet::ToClientPacket;
 use chat::{ChatMessage, ChatGroup};
 use player::PlayerReference;
-use role_list::create_random_roles;
 use player::Player;
 use phase::PhaseStateMachine;
 use settings::Settings;
@@ -91,21 +89,18 @@ impl Game {
 
             let settings = settings.clone();
             let mut role_list = settings.role_list.clone();
-            //sort roles by exactness
-            role_list.sort_by_key(|role_outline| 
-                match role_outline {
-                    RoleOutline::Any => 3,
-                    RoleOutline::Exact{..} => 0,
-                    RoleOutline::Faction{..} => 2,
-                    RoleOutline::FactionAlignment{..} => 1,
-                }
-            );
+            role_list.sort();
 
-            let mut roles = match create_random_roles(&settings.excluded_roles, &settings.role_list){
+
+            let mut roles = match role_list.create_random_roles(&settings.excluded_roles){
                 Some(roles) => {roles},
                 None => {return Err(RejectStartReason::RoleListCannotCreateRoles);}
             };
             roles.shuffle(&mut thread_rng());
+
+
+
+
 
 
             let mut players = Vec::new();
@@ -352,7 +347,7 @@ impl Game {
 pub mod test {
     use rand::{thread_rng, seq::SliceRandom};
 
-    use super::{Game, settings::Settings, role_list::{create_random_roles, RoleOutline}, player::{PlayerReference, test::mock_player}, phase::PhaseStateMachine, team::Teams, RejectStartReason};
+    use super::{Game, settings::Settings, role_list::RoleOutline, player::{PlayerReference, test::mock_player}, phase::PhaseStateMachine, team::Teams, RejectStartReason};
 
     pub fn mock_game(settings: Settings, number_of_players: usize) -> Result<Game, RejectStartReason> {
 
@@ -366,7 +361,7 @@ pub mod test {
             return Err(RejectStartReason::ZeroTimeGame);
         }
         
-        let mut roles = match create_random_roles(&settings.excluded_roles, &settings.role_list){
+        let mut roles = match settings.role_list.create_random_roles(&settings.excluded_roles){
             Some(roles) => {
                 roles
             },

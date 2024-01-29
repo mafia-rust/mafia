@@ -5,245 +5,174 @@ import {
 } from "../game/gameState.d";
 import translate from "../game/lang";
 import ROLES from "../resources/roles.json";
-import { FACTIONS, Faction, FactionAlignment, RoleOutline, getAlignmentStringFromFactionAlignment, getAllFactionAlignments, getFactionAlignmentFromRoleOutline, getFactionFromFactionAlignment, getFactionFromRoleOutline } from "../game/roleListState.d";
-import { Role, getFactionAlignmentFromRole, getFactionFromRole } from "../game/roleState.d";
+import { FACTIONS, ROLE_SETS, RoleOutline, RoleOutlineOption, translateRoleOutlineOption} from "../game/roleListState.d";
+import { Role } from "../game/roleState.d";
 
-type RolePickerProps = {
+type RoleOutlineSelectorProps = {
     roleOutline: RoleOutline,
     onChange: (value: RoleOutline) => void,
     disabled?: boolean,
 }
 
-export default class RolePicker extends React.Component<RolePickerProps> {
-    setAny(){
-        this.props.onChange({
-            type: "any"
-        })
-    }
-    setFaction(faction: Faction){
-        this.props.onChange({
-            type: "faction",
-            faction: faction
-        })
-    }
-    setFactionAlignment(factionAlignment: FactionAlignment){
-        this.props.onChange({
-            type: "factionAlignment",
-            factionAlignment: factionAlignment
-        })
-    }
-    setExact(role: Role){
-        this.props.onChange({
-            type: "exact",
-            role: role
-        })
-    }
-
-    setFirstBox(value: Faction | "any"){
-        if(value === "any"){
-            this.setAny();
-        } else {
-            this.setFaction(value);
-        }
-    }
-    setSecondBox(value: FactionAlignment | "any"){
-        let currentFaction = getFactionFromRoleOutline(this.props.roleOutline);
-        if(currentFaction === null)
-            return;
-
-        if(value === "any"){
-            this.setFaction(currentFaction);
-        } else {
-            this.setFactionAlignment(value);
-        }
-    }
-    setThirdBox(value: Role | "any"){
-        let currentFactionAlignment = getFactionAlignmentFromRoleOutline(this.props.roleOutline);
-        if(currentFactionAlignment === null)
-            return;
-
-        if(value === "any"){
-            this.setFactionAlignment(currentFactionAlignment);
-        } else {
-            this.setExact(value);
-        }
-    }
+export default class RoleOutlineSelector extends React.Component<RoleOutlineSelectorProps> {
     
-    render() {
-        let selectors: JSX.Element;
+    handleRoleOutlineOptionChange(
+        index: number,
+        value: RoleOutlineOption | "any"
+    ){
+        if(value === "any") {
+            this.props.onChange({
+                type: "any",
+            });
+            return
+        }
+
+        if(this.props.roleOutline.type === "roleOutlineOptions") {
+            let options = [...this.props.roleOutline.options];
+            options[index] = value;
+            this.props.onChange({
+                type: "roleOutlineOptions",
+                options: options
+            });
+        } else {
+            this.props.onChange({
+                type: "roleOutlineOptions",
+                options: [value]
+            });
+        }
+    }
+    handleAddUnion() {
+        if(this.props.roleOutline.type !== "roleOutlineOptions") {return}
+
+        let options = this.props.roleOutline.options;
+        options.push({
+            type: "role",
+            role: "amnesiac"
+        });
+
+        this.props.onChange({
+            type: "roleOutlineOptions",
+            options: options
+        });
         
-        switch(this.props.roleOutline.type){
+    }
 
+    render(): React.ReactNode {
+        if(this.props.roleOutline.type === "any") {
+            return (
+                <div className="role-picker">
+                    <RoleOutlineOptionSelector
+                        disabled={this.props.disabled}
+                        roleOutlineOption={"any"}
+                        onChange={(o) => {
+                            this.handleRoleOutlineOptionChange(0, o);
+                        }}
+                    />
+                </div>
+            )
+        }else{
+            return (
+                <div className="role-picker">
+                    {this.props.roleOutline.options.map((option, index) => {
+                        return (
+                            <div key={index} className="role-picker-option">
+                                <RoleOutlineOptionSelector
+                                    disabled={this.props.disabled}
+                                    roleOutlineOption={option}
+                                    onChange={(o) => {
+                                        this.handleRoleOutlineOptionChange(index, o);
+                                    }}
+                                />
+                                <button
+                                    disabled={this.props.disabled}
+                                    onClick={() => {
+                                        if(this.props.roleOutline.type !== "roleOutlineOptions") {return}
+                                        let options = [...this.props.roleOutline.options];
+                                        options.splice(index, 1);
+                                        if(options.length === 0) {
+                                            this.props.onChange({
+                                                type: "any",
+                                            });
+                                            return
+                                        }
+                                        this.props.onChange({
+                                            type: "roleOutlineOptions",
+                                            options: options
+                                        });
+                                    }}
+                                >
+                                    {translate("sub")}
+                                </button>
+                            </div>
+                        )
+                    })}
+                    <button
+                        disabled={this.props.disabled}
+                        onClick={() => {
+                            this.handleAddUnion();
+                        }}
+                    >
+                        {translate("add")}
+                    </button>
+                </div>
+            )
+        }
+        
+    }
+}
 
+type RoleOutlineOptionSelectorProps = {
+    roleOutlineOption: RoleOutlineOption | "any",
+    onChange: (value: RoleOutlineOption | "any") => void,
+    disabled?: boolean,
+}
+export class RoleOutlineOptionSelector extends React.Component<RoleOutlineOptionSelectorProps> {
 
-
-
-            case "any":
-                selectors =
-                <select 
+    translateRoleOutlineOptionOrAny(roleOutlineOption: RoleOutlineOption | "any"): string {
+        if(roleOutlineOption === "any") {
+            return translate("any");
+        }else
+            return translateRoleOutlineOption(roleOutlineOption);
+    }
+    render(): React.ReactNode {
+        console.log("option", this.translateRoleOutlineOptionOrAny(this.props.roleOutlineOption));
+        return (
+            <div>
+                <select
                     disabled={this.props.disabled}
-                    key="faction" 
-                    value={"any"}
-                    onChange={(e)=>this.setFirstBox(e.target.options[e.target.selectedIndex].value as Faction | "any")}
-                >{
-                    allFactionsAndAny().map((faction: Faction | "any", key) => {
-                        if(faction === "any")
-                            return <option key={key} value={"any"}>{translate("any")}</option>
-                        return <option key={key} value={faction}>{translate("faction."+faction)}</option>
-                    })
-                } 
+                    value={JSON.stringify(this.props.roleOutlineOption)} 
+                    onChange={(e) => {
+                        if(e.target.value === "any") {
+                            this.props.onChange("any");
+                        } else {
+                            this.props.onChange(
+                                JSON.parse(e.target.options[e.target.selectedIndex].value)
+                            );
+                        }
+                    }
+                }>
+                    <option key={"any"} value="any">
+                        {this.translateRoleOutlineOptionOrAny("any")}
+                    </option>
+                    {FACTIONS.map((faction) => {
+                        return <option key={faction} value={JSON.stringify({type: "faction", faction: faction})}>
+                            {this.translateRoleOutlineOptionOrAny({type: "faction", faction: faction})}
+                        </option>
+                    })}
+                    {ROLE_SETS.map((roleSet) => {
+                        return <option key={roleSet} value={JSON.stringify({type: "roleSet", roleSet: roleSet})}>
+                             {this.translateRoleOutlineOptionOrAny({type: "roleSet", roleSet: roleSet})}
+                        </option>
+                    })}
+                    {Object.keys(ROLES).map((role) => {
+                        return <option key={role} value={JSON.stringify({type: "role", role: role})}>
+                             {this.translateRoleOutlineOptionOrAny({type: "role", role: role as Role})}
+                        </option>
+                    })}
                 </select>
-            break;
-
-
-
-
-
-            case "faction":
-                selectors = 
-                <>
-                    <select 
-                        disabled={this.props.disabled}
-                        key="faction" 
-                        value={this.props.roleOutline.faction}
-                        onChange={(e)=>this.setFirstBox(e.target.options[e.target.selectedIndex].value as Faction | "any")}
-                    > {
-                        allFactionsAndAny().map((faction: Faction | "any", key) => {
-                            if(faction === "any")
-                                return <option key={key} value={"any"}>{translate("any")}</option>
-                            return <option key={key} value={faction}>{translate("faction."+faction)}</option>
-                        })
-                    } </select>
-                    <select
-                        disabled={this.props.disabled}
-                        key="alignment"
-                        value={"any"}
-                        onChange={(e)=>this.setSecondBox(e.target.options[e.target.selectedIndex].value as FactionAlignment | "any")}
-                    > {
-                        allFactionAlignmentsAndAny(this.props.roleOutline.faction).map((factionAlignment: FactionAlignment | "any", key) => {
-                            if(factionAlignment === "any")
-                                return <option key={key} value={"any"}>{translate("any")}</option>
-                            return <option key={key} value={factionAlignment}>{translate("alignment."+getAlignmentStringFromFactionAlignment(factionAlignment))}</option>
-                        })
-                    } </select>
-                </>
-            break;
-
-
-
-
-
-            case "factionAlignment":
-                selectors = 
-                <>
-                    <select
-                        disabled={this.props.disabled}
-                        key="faction" 
-                        value={getFactionFromFactionAlignment(this.props.roleOutline.factionAlignment)}
-                        onChange={(e)=>this.setFirstBox(e.target.options[e.target.selectedIndex].value as Faction | "any")}
-                    > {
-                        allFactionsAndAny().map((faction: string, key) => {
-                            if(faction === "any")
-                                return <option key={key} value={"any"}>{translate("any")}</option>
-                            return <option key={key} value={faction}>{translate("faction."+faction)}</option>
-                        })
-                    } </select>
-                    <select
-                        disabled={this.props.disabled}
-                        key="alignment"
-                        value={this.props.roleOutline.factionAlignment}
-                        onChange={(e)=>this.setSecondBox(e.target.options[e.target.selectedIndex].value as FactionAlignment | "any")}
-                    > {
-                        allFactionAlignmentsAndAny(getFactionFromFactionAlignment(this.props.roleOutline.factionAlignment)).map((factionAlignment: string, key) => {
-                            if(factionAlignment === "any")
-                                return <option key={key} value={"any"}>{translate("any")}</option>
-                            return <option key={key} value={factionAlignment}>{translate("alignment."+getAlignmentStringFromFactionAlignment(factionAlignment as FactionAlignment))}</option>
-                        })
-                    } </select>
-                    <select
-                        disabled={this.props.disabled}
-                        key="exact"
-                        value={"any"}
-                        onChange={(e)=>this.setThirdBox(e.target.options[e.target.selectedIndex].value as Role | "any")}
-                    > {
-                        allRolesAndAny(this.props.roleOutline.factionAlignment).map((role: string, key) => {
-                            if(role === "any")
-                                return <option key={key} value={"any"}>{translate("any")}</option>
-                            return <option key={key} value={role}>{translate(`role.${role}.name`)}</option>
-                        })
-                    } </select>
-                </>
-            break;
-
-
-
-
-
-
-            case "exact":
-                selectors = 
-                <>
-                    <select
-                        disabled={this.props.disabled}
-                        key="faction" 
-                        value={getFactionFromRole(this.props.roleOutline.role)}
-                        onChange={(e)=>this.setFirstBox(e.target.options[e.target.selectedIndex].value as Faction | "any")}
-                    > {
-                        allFactionsAndAny().map((faction: string, key) => {
-                            if(faction === "any")
-                                return <option key={key} value={"any"}>{translate("any")}</option>
-                            return <option key={key} value={faction}>{translate("faction."+faction)}</option>
-                        })
-                    } </select>
-                    <select
-                        disabled={this.props.disabled}
-                        key="alignment"
-                        value={getFactionAlignmentFromRole(this.props.roleOutline.role)}
-                        onChange={(e)=>this.setSecondBox(e.target.options[e.target.selectedIndex].value as FactionAlignment | "any")}
-                    > {
-                        allFactionAlignmentsAndAny(getFactionFromRole(this.props.roleOutline.role)).map((factionAlignment: string, key) => {
-                            if(factionAlignment === "any")
-                                return <option key={key} value={"any"}>{translate("any")}</option>
-                            return <option key={key} value={factionAlignment}>{translate("alignment."+getAlignmentStringFromFactionAlignment(factionAlignment as FactionAlignment))}</option>
-                        })
-                    } </select>
-                    <select
-                        disabled={this.props.disabled}
-                        key="exact"
-                        value={this.props.roleOutline.role}
-                        onChange={(e)=>this.setThirdBox(e.target.options[e.target.selectedIndex].value as Role | "any")}
-                    > {
-                        allRolesAndAny(getFactionAlignmentFromRole(this.props.roleOutline.role)).map((role: string, key) => {
-                            if(role === "any")
-                                return <option key={key} value={"any"}>{translate("any")}</option>
-                            return <option key={key} value={role}>{translate(`role.${role}.name`)}</option>
-                        })
-                    } </select>
-                </>
-            break;
-        }
-        
-        return <div className="role-picker">
-            {selectors}
-        </div>
+            </div>
+        )
     }
 }
 
-function allFactionsAndAny(): (Faction | "any")[] {
-    return ["any" as (Faction | "any")].concat(FACTIONS);
-}
 
-function allFactionAlignmentsAndAny(faction: Faction): (FactionAlignment | "any")[] {
-    return ["any" as (FactionAlignment | "any")].concat(getAllFactionAlignments(faction as Faction));
-}
-
-function allRolesAndAny(factionAlignment: FactionAlignment): (Role | "any")[] {
-    let roles: (Role | "any")[] = ["any"];
-
-    for(let role of Object.keys(ROLES)){
-        if(getFactionAlignmentFromRole(role as Role) === factionAlignment)
-            roles.push(role as Role);
-    }
-    
-    return roles;
-}

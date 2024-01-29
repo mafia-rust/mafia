@@ -10,6 +10,7 @@ import LobbyExcludedRoles from "./lobbyExcludedRoles";
 import Anchor from "../Anchor";
 import WikiSearch from "../../components/WikiSearch";
 import { RoomCodeButton } from "../Settings";
+import { getRolesFromRoleListRemoveExclusionsAddConversions, getRolesComplement } from "../../game/roleListState.d";
 
 type LobbyMenuProps = {}
 
@@ -51,9 +52,8 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
                     {Anchor.isMobile() || <section className="wiki-menu-colors">
                         <h2>{translate("menu.wiki.title")}</h2>
                         <WikiSearch excludedRoles={
-                            GAME_MANAGER.state.stateType === "lobby" ?
-                            GAME_MANAGER.state.excludedRoles :
-                            []
+                            GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ?
+                            getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(GAME_MANAGER.state.roleList, GAME_MANAGER.state.excludedRoles)) : []
                         }/>
                     </section>}
                 </div>
@@ -65,9 +65,8 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
                     {Anchor.isMobile() && <section className="wiki-menu-colors">
                         <h2>{translate("menu.wiki.title")}</h2>
                         <WikiSearch  excludedRoles={
-                            GAME_MANAGER.state.stateType === "lobby" ?
-                            GAME_MANAGER.state.excludedRoles :
-                            []
+                            GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ?
+                            getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(GAME_MANAGER.state.roleList, GAME_MANAGER.state.excludedRoles)) : []
                         }/>
                     </section>}
                 </div>

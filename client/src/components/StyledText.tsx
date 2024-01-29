@@ -106,7 +106,7 @@ export function getKeywordData(): KeywordDataMap {
         }
 
     for(const role of Object.keys(ROLES)){
-        const data = DATA["faction." + getFactionFromRole(role as Role)];
+        const data = DATA[getFactionFromRole(role as Role)];
         if (data === undefined || Array.isArray(data)) {
             console.error(`faction.${getFactionFromRole(role as Role)} has malformed keyword data!`);
             continue;

@@ -18,7 +18,7 @@ export default function GraveComponent(props: {grave: Grave, gameState: GameStat
                 case "role":
                     return translate("role."+killer.value+".name");
                 case "faction":
-                    return translate("faction."+killer.value);
+                    return translate(killer.value);
                 default:
                     return translate("grave.killer."+killer.type);
             }

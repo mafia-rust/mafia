@@ -7,13 +7,13 @@ use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role::RoleState;
-use crate::game::role_list::{FactionAlignment, Faction};
+use crate::game::role_list::Faction;
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
 use crate::game::Game;
 use super::jester::Jester;
-use super::{Priority, RoleStateImpl};
+use super::{Priority, Role, RoleStateImpl};
 
 
 #[derive(Clone, Serialize, Debug, Default)]
@@ -41,7 +41,7 @@ impl Default for ExecutionerTarget {
     }
 }
 
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::NeutralEvil;
+pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Executioner {
@@ -81,9 +81,15 @@ impl RoleStateImpl for Executioner {
         
         if let Some(target) = PlayerReference::all_players(game)
             .filter(|p|
-                p.role(game).faction() == Faction::Town && 
-                p.role(game).faction_alignment() != FactionAlignment::TownPower &&
-                p.role(game).faction_alignment() != FactionAlignment::TownKilling
+                p.role(game).faction() == Faction::Town &&
+                
+                p.role(game) != Role::Jailor &&
+                p.role(game) != Role::Mayor &&
+
+                p.role(game) != Role::Deputy &&
+                p.role(game) != Role::Veteran &&
+
+                p.role(game) != Role::Transporter
             ).collect::<Vec<PlayerReference>>()
             .choose(&mut rand::thread_rng())
         {

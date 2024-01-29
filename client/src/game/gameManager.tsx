@@ -243,6 +243,11 @@ export function createGameManager(): GameManager {
                 roleOutline
             });
         },
+        sendSimplifyRoleListPacket() {
+            this.server.sendPacket({
+                type: "simplifyRoleList"
+            });
+        },
 
         sendJudgementPacket(judgement: Verdict) {
             this.server.sendPacket({

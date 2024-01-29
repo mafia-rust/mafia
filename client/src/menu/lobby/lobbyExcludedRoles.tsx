@@ -1,18 +1,17 @@
 
 import React from "react";
 import GAME_MANAGER from "../../index";
-import { RoleOutline, sortRoleOutlines, translateRoleOutline } from "../../game/roleListState.d";
+import { RoleOutline, getRolesFromOutline } from "../../game/roleListState.d";
 import "../../index.css";
 import { StateListener } from "../../game/gameManager.d";
 import translate from "../../game/lang";
-import RolePicker from "../../components/RolePicker";
+import RoleOutlineDropdown from "../../components/RolePicker";
 import StyledText from "../../components/StyledText";
-import ROLES from "./../../resources/roles.json";
 import { Role } from "../../game/roleState.d";
 import EXCLUDED_ROLE_PRESETS from "./../../resources/excludedRolePresets.json";
 
 type ExcludedRolesState = {
-    excludedRoles: RoleOutline[],
+    excludedRoles: Role[],
     roleOutline: RoleOutline,
     selectedExcludedRolePreset: string,
     host: boolean
@@ -49,29 +48,20 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
 
     includeRole(role: RoleOutline){
         let roles = [...this.state.excludedRoles];
-        roles = roles.filter((value)=>value !== role);
+        roles = roles.filter((value)=>{return !getRolesFromOutline(role).includes(value as Role)});
         GAME_MANAGER.sendExcludedRolesPacket(roles);
     }
     excludeRole(){
         let roles = [...this.state.excludedRoles];
-
-        if(this.state.roleOutline.type !== "any"){
-            roles.push(this.state.roleOutline);
-        }else{
-            for(let role in ROLES){
-                roles.push({
-                    type: "exact",
-                    role: role as Role,
-                });
-            }
+        for(let role of getRolesFromOutline(this.state.roleOutline)){
+            roles.push(role as Role);
         }
-
         GAME_MANAGER.sendExcludedRolesPacket(roles);
     }
     
     handleExcludedRolePreset(){
         let new_exclusions = this.state.excludedRoles;
-        let preset = EXCLUDED_ROLE_PRESETS[this.state.selectedExcludedRolePreset as keyof typeof EXCLUDED_ROLE_PRESETS] as RoleOutline[];
+        let preset = EXCLUDED_ROLE_PRESETS[this.state.selectedExcludedRolePreset as keyof typeof EXCLUDED_ROLE_PRESETS] as Role[];
         for(let outline of preset){
             new_exclusions.push(outline);
         }
@@ -112,7 +102,7 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
                 disabled={!this.state.host}
                 onClick={()=>{this.excludeRole()}}
             >{translate("menu.excludedRoles.exclude")}</button>
-            <RolePicker
+            <RoleOutlineDropdown
                 disabled={!this.state.host}
                 roleOutline={this.state.roleOutline}
                 onChange={(value: RoleOutline) => {
@@ -123,13 +113,19 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
             />
         </div>
         <div>
-            {sortRoleOutlines(Array.from(this.state.excludedRoles.values())).map((value, i)=>{
+            {Array.from(this.state.excludedRoles.values()).map((value, i)=>{
                 return <button key={i} 
                     disabled={!this.state.host}
-                    onClick={()=>{this.includeRole(value)}}
+                    onClick={()=>{this.includeRole({
+                        type: "roleOutlineOptions",
+                        options: [{
+                            type: "role",
+                            role: value
+                        }]
+                    })}}
                 >
                     <StyledText noLinks={true}>
-                        {translateRoleOutline(value) ?? ""}
+                        {translate("role."+value+".name")}
                     </StyledText>
                 </button>
             })}

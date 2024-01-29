@@ -1,7 +1,7 @@
 import { Grave } from "./graveState";
 import { ChatMessage } from "../components/ChatMessage";
 import { Role, RoleState } from "./roleState.d";
-import { RoleOutline } from "./roleListState.d";
+import { RoleList, RoleOutline } from "./roleListState.d";
 
 
 export type State = Disconnected | OutsideLobbyState | LobbyState | GameState;
@@ -25,8 +25,8 @@ export type LobbyState = {
 
     myId: number | null,
 
-    roleList: RoleOutline[],
-    excludedRoles: RoleOutline[],
+    roleList: RoleList,
+    excludedRoles: Role[],
     phaseTimes: PhaseTimes,
 
     players: Map<PlayerID, LobbyPlayer>,
@@ -61,8 +61,8 @@ type GameState = {
     voted: PlayerIndex | null,
     judgement: Verdict,
     
-    roleList: RoleOutline[],
-    excludedRoles: RoleOutline[],
+    roleList: RoleList,
+    excludedRoles: Role[],
     phaseTimes: PhaseTimes
 
     ticking: boolean

@@ -1,157 +1,161 @@
+
 import translate from "./lang";
-import { Role, getFactionAlignmentFromRole, getFactionFromRole } from "./roleState.d";
-import ROLES from "./../resources/roles.json";
+import { Role } from "./roleState.d";
+import ROLES from "../resources/roles.json";
 
 export const FACTIONS = ["town", "mafia", "neutral"] as const;
 export type Faction = typeof FACTIONS[number]
-export function getAllFactionAlignments(faction: Faction): FactionAlignment[] {
-    switch(faction){
-        case "town": return [
-            "townPower", "townKilling", "townProtective", "townInvestigative", "townSupport"
-        ];
-        case "mafia": return [
-            "mafiaKilling", "mafiaDeception", "mafiaSupport", "mafiaPower"
-        ];
-        case "neutral": return [
-            "neutralKilling", "neutralEvil", "neutralChaos", "neutralApocalypse"
-        ];
-    }
-}
 export function getRoleOutlineFromFaction(faction: Faction): RoleOutline {
     return {
-        type: "faction",
-        faction: faction
+        type: "roleOutlineOptions",
+        options: [{
+            type: "faction",
+            faction: faction
+        }]
     }
 }
 
-export const FACTION_ALIGNMENTS = [
-    "townPower","townKilling","townProtective","townInvestigative","townSupport",
-    "mafiaKilling","mafiaDeception","mafiaSupport","mafiaPower",
-    "neutralKilling","neutralEvil","neutralChaos","neutralApocalypse"
+export type RoleList = RoleOutline[];
+export function getRolesFromRoleList(roleList: RoleList): Role[] {
+
+    let set = new Set<Role>();
+    for(let roleOutline of roleList){
+        for(let role of getRolesFromOutline(roleOutline)){
+            set.add(role);
+        }
+    }
+
+    return Array.from(set);
+}
+export function getRolesFromRoleListRemoveExclusionsAddConversions(roleList: RoleList, excludedRoles: Role[]): Role[] {
+    let out = [];
+
+    let roles = getRolesFromRoleList(roleList);
+    roles = roles.filter((role) => {
+        return !excludedRoles.includes(role);
+    });
+
+
+    for(let role of roles){
+        out.push(role);
+        for(let converted of ROLES[role].canBeConvertedTo){
+            out.push(converted);
+        }
+    }
+    return out as Role[];
+}
+export function getRolesComplement(roleList: Role[]): Role[] {
+    let roles = Object.keys(ROLES) as Role[];
+    return roles.filter((role) => {
+        return !roleList.includes(role);
+    });
+}
+
+
+
+export const ROLE_SETS = [
+    "townPower", "townSupport", "townKilling", "townProtective", "townInvestigative", "townCommon",
+    "mafiaPower", "mafiaSupport",
+    "neutralEvil", "neutralKilling", "neutralChaos", "neutralApocalypse"
 ] as const;
-export type FactionAlignment = typeof FACTION_ALIGNMENTS[number]
-
-export function getFactionFromFactionAlignment(factionAlignment: FactionAlignment): Faction {
-    switch(factionAlignment){
-        case "townPower": return "town";
-        case "townKilling": return "town";
-        case "townProtective": return "town";
-        case "townInvestigative": return "town";
-        case "townSupport": return "town";
-
-        case "mafiaKilling": return "mafia";
-        case "mafiaDeception": return "mafia";
-        case "mafiaSupport": return "mafia";
-        case "mafiaPower": return "mafia";
-
-        case "neutralKilling": return "neutral";
-        case "neutralEvil": return "neutral";
-        case "neutralChaos": return "neutral";
-        case "neutralApocalypse": return "neutral";
+type RoleSet = typeof ROLE_SETS[number];
+export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
+    switch(roleSet){
+        case "townPower":
+            return ["mayor", "jailor"];
+        case "townSupport":
+            return ["medium", "retributionist", "transporter", "escort"]
+        case "townKilling":
+            return ["vigilante", "veteran", "deputy"]
+        case "townProtective":
+            return ["bodyguard", "crusader", "doctor"]
+        case "townInvestigative":
+            return ["psychic", "lookout", "sheriff", "spy", "tracker", "seer"]
+        case "townCommon":
+            let out = getRolesFromRoleSet("townSupport")
+            out = out.concat(getRolesFromRoleSet("townKilling"))
+            out = out.concat(getRolesFromRoleSet("townProtective"))
+            out = out.concat(getRolesFromRoleSet("townInvestigative"))
+            return out;
+        case "mafiaPower":
+            return ["godfather", "mafioso"]
+        case "mafiaSupport":
+            return [
+                "blackmailer", "consigliere", "consort", 
+                "forger", "framer", "janitor", 
+                "witch", "necromancer"
+            ]
+        case "neutralEvil":
+            return ["jester", "executioner", "politician"]
+        case "neutralKilling":
+            return ["arsonist", "werewolf"]
+        case "neutralChaos":
+            return ["vampire", "amnesiac"]
+        case "neutralApocalypse":
+            return ["death", "doomsayer"]
     }
 }
-export function getAlignmentStringFromFactionAlignment(factionAlignment: FactionAlignment): string {
-    const alignment = factionAlignment.replace(getFactionFromFactionAlignment(factionAlignment).toString(), "");
-    return alignment.charAt(0).toLowerCase() + alignment.slice(1);
-}
-export function getRoleOutlineFromFactionAlignment(factionAlignment: FactionAlignment): RoleOutline {
-    return {
-        type: "factionAlignment",
-        factionAlignment: factionAlignment
-    }
-}
 
 
+export type RoleOutlineType = RoleOutline["type"];
 export type RoleOutline = ({
     type: "any",
-} | { 
+} | {
+    type: "roleOutlineOptions",
+    options: RoleOutlineOption[],
+});
+
+
+export type RoleOutlineOptionType = RoleOutlineOption["type"];
+export type RoleOutlineOption = ({
+    type: "roleSet",
+    roleSet: RoleSet,
+} | {
+    type: "role",
+    role: Role,
+} | {
     type: "faction",
     faction: Faction,
-} | {
-    type: "factionAlignment",
-    factionAlignment: FactionAlignment,
-} | {
-    type: "exact",
-    role: Role,
 });
-export type RoleOutlineType = RoleOutline["type"];
 
-export function getFactionFromRoleOutline(roleOutline: RoleOutline): Faction | null {
+
+
+
+export function translateRoleOutline(roleOutline: RoleOutline): string {
     switch(roleOutline.type){
-        case "any": return null;
-        case "faction": return roleOutline.faction;
-        case "factionAlignment": return getFactionFromFactionAlignment(roleOutline.factionAlignment);
-        case "exact": return getFactionFromRole(roleOutline.role);
+        case "any":
+            return translate("any");
+        case "roleOutlineOptions":
+            return roleOutline.options.map(translateRoleOutlineOption).join(" "+translate("add")+" ");
     }
 }
-export function getFactionAlignmentFromRoleOutline(roleOutline: RoleOutline): FactionAlignment | null {
+export function translateRoleOutlineOption(roleOutlineOption: RoleOutlineOption): string {
+    switch(roleOutlineOption.type){
+        case "roleSet":
+            return translate(roleOutlineOption.roleSet);
+        case "role":
+            return translate("role."+roleOutlineOption.role+".name");
+        case "faction":
+            return translate(roleOutlineOption.faction);
+    }
+}
+export function getRolesFromOutline(roleOutline: RoleOutline): Role[] {
     switch(roleOutline.type){
-        case "any": return null;
-        case "faction": return null;
-        case "factionAlignment": return roleOutline.factionAlignment;
-        case "exact": return getFactionAlignmentFromRole(roleOutline.role);
+        case "any":
+            return Object.keys(ROLES) as Role[];
+        case "roleOutlineOptions":
+            return roleOutline.options.flatMap((option) => getRolesFromOutlineOption(option));
     }
 }
-
-export function translateRoleOutline(roleOutline: RoleOutline): string | null {
-    if(roleOutline.type === "any"){
-        return translate("any");
+function getRolesFromOutlineOption(roleOutlineOption: RoleOutlineOption): Role[] {
+    switch(roleOutlineOption.type){
+        case "roleSet":
+            return getRolesFromRoleSet(roleOutlineOption.roleSet);
+        case "role":
+            return [roleOutlineOption.role];
+        case "faction":
+            return Object.keys(ROLES).filter((role) => {
+                return ROLES[role as Role].faction === roleOutlineOption.faction;
+            }) as Role[];
     }
-    if(roleOutline.type === "faction"){
-        return translate("faction."+roleOutline.faction.toString())+" "+translate("any");
-    }
-    if(roleOutline.type === "factionAlignment"){
-        return translate("faction."+getFactionFromFactionAlignment(roleOutline.factionAlignment))+" "+translate("alignment."+getAlignmentStringFromFactionAlignment(roleOutline.factionAlignment));
-    }
-    if(roleOutline.type === "exact"){
-        return translate("role."+roleOutline.role+".name");
-    }
-    return null
-}
-
-export function sortRoleOutlines(roleOutlines: RoleOutline[]): RoleOutline[] {
-    //sorts by type, then by faction, then by factionAlignment, then by role
-    //need to get faction and factionAlignment from role
-
-    let factionOrder = ["town", "mafia", "neutral"];
-    let factionAlignmentOrder = [
-        "townPower","townInvestigative","townProtective","townKilling","townSupport",
-        "mafiaKilling","mafiaSupport","mafiaDeception","mafiaPower",
-        "neutralEvil","neutralKilling","neutralChaos","neutralApocalypse"
-    ];
-
-    
-    return roleOutlines.sort((a, b)=>{
-        if(a.type === "any" && b.type === "any") return 0;
-        if(a.type === "any") return 1;
-        if(b.type === "any") return -1;
-
-        if(a.type === "faction" && b.type === "faction"){
-            //sort by faction
-            let aFactionIndex = factionOrder.indexOf(a.faction);
-            let bFactionIndex = factionOrder.indexOf(b.faction);
-            if(aFactionIndex !== bFactionIndex) return aFactionIndex - bFactionIndex;
-        }
-        if(a.type === "faction") return 1;
-        if(b.type === "faction") return -1;
-
-        if(a.type === "factionAlignment" && b.type === "factionAlignment"){
-            let aFactionAlignmentIndex = factionAlignmentOrder.indexOf(a.factionAlignment);
-            let bFactionAlignmentIndex = factionAlignmentOrder.indexOf(b.factionAlignment);
-            if(aFactionAlignmentIndex !== bFactionAlignmentIndex) return aFactionAlignmentIndex - bFactionAlignmentIndex;
-        }
-        if(a.type === "factionAlignment") return 1;
-        if(b.type === "factionAlignment") return -1;
-
-        if(a.type === "exact" && b.type === "exact"){
-            //sort roles by order in ROLES
-            let aRoleIndex = Object.keys(ROLES).indexOf(a.role);
-            let bRoleIndex = Object.keys(ROLES).indexOf(b.role);
-            if(aRoleIndex !== bRoleIndex) return aRoleIndex - bRoleIndex;
-        }
-        if(a.type === "exact") return 1;
-        if(b.type === "exact") return -1;
-
-        return 0;
-    });
 }

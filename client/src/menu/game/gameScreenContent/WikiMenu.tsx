@@ -5,6 +5,7 @@ import "./wikiMenu.css"
 import GameState from "../../../game/gameState.d";
 import translate from "../../../game/lang";
 import WikiSearch from "../../../components/WikiSearch";
+import { getRolesFromRoleListRemoveExclusionsAddConversions, getRolesComplement } from "../../../game/roleListState.d";
 
 type WikiMenuProps = {
 }
@@ -40,7 +41,10 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
         <ContentTab close={ContentMenus.WikiMenu}>{translate("menu.wiki.title")}</ContentTab>
         
         <div className="wiki-menu-search">
-            <WikiSearch excludedRoles={this.state.gameState.excludedRoles}/>
+            <WikiSearch excludedRoles={
+                GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ?
+                getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(GAME_MANAGER.state.roleList, GAME_MANAGER.state.excludedRoles)) : []
+            }/>
         </div>
     </div>)}
 }

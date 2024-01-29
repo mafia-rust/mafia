@@ -3,13 +3,13 @@ use serde::Serialize;
 use crate::game::chat::{ChatGroup, ChatMessage};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::{FactionAlignment, Faction};
+use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::team::Team;
 use super::{Priority, RoleState, RoleStateImpl};
 
-pub(super) const FACTION_ALIGNMENT: FactionAlignment = FactionAlignment::TownSupport;
+pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 #[derive(Clone, Debug, Default, Serialize)]
