@@ -68,7 +68,7 @@ export const ROLE_SETS = [
     "mafiaPower", "mafiaSupport",
     "neutralEvil", "neutralKilling", "neutralChaos", "neutralApocalypse"
 ] as const;
-type RoleSet = typeof ROLE_SETS[number];
+export type RoleSet = typeof ROLE_SETS[number];
 export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
     switch(roleSet){
         case "townPower":

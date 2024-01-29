@@ -2,8 +2,8 @@ import React from "react";
 import ROLES from "./../resources/roles.json";
 import translate, { langText, translateChecked } from "../game/lang";
 import "./wikiSearch.css";
-import { Role, getFactionFromRole } from "../game/roleState.d";
-import { FACTIONS, RoleOutline, translateRoleOutline } from "../game/roleListState.d";
+import { Role } from "../game/roleState.d";
+import { ROLE_SETS, RoleSet, getRolesFromRoleSet } from "../game/roleListState.d";
 import StyledText from "../components/StyledText";
 import { HistoryQueue } from "../history";
 import { regEscape } from "..";
@@ -27,7 +27,7 @@ export type WikiPage =
     | `role/${Role}`
     | `article/${Article}`;
 
-const ARTICLES = ["how_to_play", "phases_and_timeline", "priority", "all_language"] as const;
+const ARTICLES = ["how_to_play", "phases_and_timeline", "priority", "all_language", "role_sets"] as const;
 type Article = typeof ARTICLES[number];
 
 const PAGES: WikiPage[] = Object.keys(ROLES).map(role => `role/${role}`)
@@ -111,6 +111,25 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
         if (this.state.type === "page") {
             if (this.state.page === "article/all_language") {
                 return langText;
+            }else if(this.state.page === "article/role_sets"){
+                let mainElements = [];
+                for(let set of ROLE_SETS){
+                    mainElements.push(<StyledText key={set} className="wiki-content-body" markdown={true}>
+                        ### {translate(set)}
+                    </StyledText>);
+                    
+                    let elements = getRolesFromRoleSet(set as RoleSet).map((role)=>{
+                        return <button key={role}>
+                            <StyledText key={set} className="wiki-content-body">
+                                {translate("role."+role+".name")}
+                            </StyledText>
+                        </button>
+                    });
+                    mainElements.push(<blockquote>
+                        {elements}
+                    </blockquote>);
+                }
+                return <div className="wiki-content-body">{mainElements}</div>;
             }else{
                 return <StyledText className="wiki-content-body" markdown={true}>
                     {getPageText(this.state.page)}

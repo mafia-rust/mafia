@@ -33,10 +33,10 @@
 .wiki-content-body blockquote {
     width: 100%;
     background-color: var(--primary-color);
-    padding-top: 0.5rem;
-    padding-bottom: 0.001rem;
+    padding-top: 0.1rem;
+    padding-bottom: 0.01rem;
     margin-bottom: 0.5rem;
-    text-align: center;
+    text-align: left;
 }
 .wiki-content-body details {
     width: 100%;
