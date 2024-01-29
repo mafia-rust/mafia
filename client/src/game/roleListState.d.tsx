@@ -35,6 +35,15 @@ export function getRolesFromRoleListRemoveExclusionsAddConversions(roleList: Rol
         return !excludedRoles.includes(role);
     });
 
+    
+    for(let role of roles){
+        if(role==="amnesiac"){
+            getRolesComplement(excludedRoles).forEach((role) => {
+                out.push(role);
+            });
+            break;
+        }
+    }
 
     for(let role of roles){
         out.push(role);
@@ -42,6 +51,7 @@ export function getRolesFromRoleListRemoveExclusionsAddConversions(roleList: Rol
             out.push(converted);
         }
     }
+
     return out as Role[];
 }
 export function getRolesComplement(roleList: Role[]): Role[] {

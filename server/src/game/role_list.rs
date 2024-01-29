@@ -1,4 +1,4 @@
-use std::vec;
+use std::{collections::HashSet, vec};
 
 use rand::seq::SliceRandom;
 use serde::{Serialize, Deserialize};
@@ -42,7 +42,6 @@ impl RoleList {
         for entry in self.0.iter_mut(){
             entry.simplify();
         }
-        self.sort();
     }
     pub fn sort(&mut self){
         self.0.sort_by_key(|r| r.get_roles().len());
@@ -51,7 +50,7 @@ impl RoleList {
 
 
 
-#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "camelCase")]
 pub enum RoleOutline{
     #[default]
@@ -76,24 +75,23 @@ impl RoleOutline{
     pub fn simplify(&mut self){
         match self {
             RoleOutline::RoleOutlineOptions{options} => {
-                let mut new_options = Vec1::new(RoleOutlineOption::RoleSet{role_set: RoleSet::TownCommon});
-                for option in options.iter(){
-                    let mut found = false;
-                    for new_option in new_options.iter_mut(){
-                        if new_option.is_subset(option){
-                            found = true;
-                            break;
+                let mut new_options = options.to_vec();
+
+                new_options = new_options.into_iter().collect::<HashSet<_>>().into_iter().collect();
+
+                for option_a in options.iter(){
+                    for option_b in options.iter(){
+                        if option_a.is_subset(option_b) && option_a != option_b{
+                            new_options.retain(|r| r != option_a);
                         }
-                        if option.is_subset(new_option){
-                            *new_option = option.clone();
-                            found = true;
-                            break;
-                        }
-                    }
-                    if !found {
-                        new_options.push(option.clone());
                     }
                 }
+
+                let mut new_options = Vec1::try_from_vec(new_options)
+                    .expect("It is impossible to have two sets that are not equal but are subsets of eachother, role_list.rs: RoleOutline::simplify");
+
+                new_options.sort();
+
                 *self = RoleOutline::RoleOutlineOptions{options: new_options};
             }
             _ => {}
@@ -103,7 +101,7 @@ impl RoleOutline{
 
 
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "camelCase")]
 pub enum RoleOutlineOption {
     #[serde(rename_all = "camelCase")]
@@ -129,7 +127,16 @@ impl RoleOutlineOption{
         self.get_roles().iter().all(|r|other.get_roles().contains(r))
     }
 }
-
+impl PartialOrd for RoleOutlineOption {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl Ord for RoleOutlineOption {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        other.get_roles().len().cmp(&self.get_roles().len())
+    }
+}
 
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
