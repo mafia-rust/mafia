@@ -208,7 +208,7 @@ function getPageText(page: WikiPage): string {
 
             return translate("wiki.entry.role",
                 translate("role."+role+".name"),
-                translateChecked("wiki.entry.role."+role+".guide") ?? translate("wiki.entry.role.noBasics"),
+                translateChecked("wiki.entry.role."+role+".guide") ?? translate("wiki.entry.role.noGuide"),
                 translateChecked("wiki.entry.role."+role+".abilities") ?? translate("wiki.entry.role.noAbilities"),
                 translateChecked("wiki.entry.role."+role+".attributes") ?? translate("wiki.entry.role.noAttributes"),
                 translateChecked("wiki.entry.role."+role+".extra") ?? translate("wiki.entry.role.noExtra"),

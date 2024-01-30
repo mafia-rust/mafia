@@ -37,6 +37,7 @@
     "wiki.entry.role.abilities": { "style": "keyword-info","link": "article/how_to_play"},
     "wiki.entry.role.attributes": { "style": "keyword-info","link": "article/how_to_play"},
     "wiki.entry.role.extra": { "style": "keyword-info","link": "article/how_to_play"},
+    "wiki.entry.role.guide": { "style": "keyword-info","link": "article/how_to_play"},
     "grave.killer.suicide": { "style": "keyword-info"},
     "grave.killer.quit": { "style": "keyword-info"},
     "random.gay": { "style": "keyword-pride","replacement": "random.gay","link": "role/transporter"},
