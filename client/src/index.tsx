@@ -87,3 +87,7 @@ export function replaceMentions(rawText: string, players: Player[]) {
     });
     return text;
 }
+
+export function modulus(n: number, m: number) {
+    return ((n % m) + m) % m;
+}

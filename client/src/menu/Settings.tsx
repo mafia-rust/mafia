@@ -34,7 +34,6 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
         console.log("Loaded settings: " + JSON.stringify(volume));
     }
     render(): React.ReactNode {
-        //volume slider
         return (
             <div className="settings slide-in">
                 <div>

@@ -17,7 +17,14 @@ type AnchorState = {
 
     settings_menu: boolean,
     audio: HTMLAudioElement
+
+    touchStartX: number | null,
+    touchCurrentX: number | null,
+
+    swipeEventListeners: Array<(right: boolean) => void>
 }
+
+const MIN_SWIPE_DISTANCE = 100;
 
 export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     private static instance: Anchor;
@@ -32,7 +39,12 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             rejoinCard: null,
 
             settings_menu: false,
-            audio: new Audio()
+            audio: new Audio(),
+
+            touchStartX: null,
+            touchCurrentX: null,
+
+            swipeEventListeners: [],
         }
     }
     
@@ -118,10 +130,58 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     static openSettings() {
         Anchor.instance.setState({settings_menu: true});
     }
+
+    static addSwipeEventListener(listener: (right: boolean) => void) {
+        Anchor.instance.setState({
+            swipeEventListeners: [...Anchor.instance.state.swipeEventListeners, listener]
+        });
+    }
+    static removeSwipeEventListener(listener: (right: boolean) => void) {
+        Anchor.instance.setState({
+            swipeEventListeners: Anchor.instance.state.swipeEventListeners.filter((l) => l !== listener)
+        });
+    }
+
+    onTouchStart(e: React.TouchEvent<HTMLDivElement>) {
+        this.setState({
+            touchStartX: e.targetTouches[0].clientX,
+            touchCurrentX: e.targetTouches[0].clientX
+        });
+    }
+    onTouchMove(e: React.TouchEvent<HTMLDivElement>) {
+        this.setState({
+            touchCurrentX: e.targetTouches[0].clientX
+        });
+    }
+    onTouchEnd(e: React.TouchEvent<HTMLDivElement>) {
+
+        if(this.state.touchStartX === null || this.state.touchCurrentX === null) return;
+        if(this.state.touchStartX - this.state.touchCurrentX > MIN_SWIPE_DISTANCE) {
+            for(let listener of this.state.swipeEventListeners) {
+                listener(false);
+            }
+        }
+        if(this.state.touchStartX - this.state.touchCurrentX < -MIN_SWIPE_DISTANCE) {
+            for(let listener of this.state.swipeEventListeners) {
+                listener(true);
+            }
+        }
+        
+
+        this.setState({
+            touchStartX: null,
+            touchCurrentX: null
+        });
+    }
     
 
     render(){
-        return <div className="anchor">
+        return <div
+            className="anchor"
+            onTouchStart={(e) => {this.onTouchStart(e)}}
+            onTouchMove={(e) => {this.onTouchMove(e)}}
+            onTouchEnd={(e) => {this.onTouchEnd(e)}}
+        >
             {this.state.content}
             {this.state.error}
             {this.state.rejoinCard}

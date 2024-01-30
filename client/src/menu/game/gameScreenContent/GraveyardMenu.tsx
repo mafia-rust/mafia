@@ -6,7 +6,6 @@ import "./graveyardMenu.css";
 import GameState from "../../../game/gameState.d";
 import { translateRoleOutline } from "../../../game/roleListState.d";
 import StyledText from "../../../components/StyledText";
-import WikiSearch from "../../../components/WikiSearch";
 import GraveComponent from "../../../components/grave";
 import { Grave } from "../../../game/graveState";
 
