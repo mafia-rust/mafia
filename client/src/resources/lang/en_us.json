@@ -648,7 +648,7 @@
     "wiki.entry.role.crusader.attributes":"- If any non town members visited the player you visited, the visitor you attack will be one of them\n- If you are the only visitor to the player you protect, you won't attack anyone",
     "wiki.entry.role.crusader.extra":"- You can't target yourself\n- You will be told if the player you visit is attacked\n- The play you visit will be told that they were protected if they were attacked\n- You won't visit the players you attack\n- Your ability will fail if your target is in jail",
 
-    "wiki.entry.role.reveler.title": "Reveler",
+    "wiki.entry.role.reveler.title": "Fisherman",
     "wiki.entry.role.reveler.guide": "Choose someone to roleblock everyone who visits them, preventing them from being attacked. If they are a townie, you will also roleblock them. You should try to protect people you think are townies who you want to keep alive.",
     "wiki.entry.role.reveler.abilities":"- Visit a player to roleblock everyone who visits them",
     "wiki.entry.role.reveler.attributes":"- If you visit a townie, you will also roleblock them",
