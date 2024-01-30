@@ -14,7 +14,6 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
     const message = props.message;
     const chatMessageStyles = require("../resources/styling/chatMessage.json");
     let style = typeof chatMessageStyles[message.type] === "string" ? chatMessageStyles[message.type] : "";
-    const text = translateChatMessage(message);
 
     // Special chat messages that don't play by the rules
     if (message.type === "normal") {
@@ -46,11 +45,11 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
         } 
     } else if (message.type === "targetsMessage") {
         return <>
-            <StyledText className={"chat-message " + style}>{text}</StyledText>
+            <StyledText className={"chat-message " + style}>{translateChatMessage(message)}</StyledText>
             <ChatElement message={message.message}/>
         </>
     } else if (message.type === "playerDied") {
-        if(GAME_MANAGER.state.stateType === "game")
+        if(GAME_MANAGER.state.stateType === "game"){
             return <>
                 <StyledText className={"chat-message " + style}>{translate("chatMessage.playerDied",
                     GAME_MANAGER.state.players[message.grave.playerIndex].toString(),
@@ -58,10 +57,14 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
                 <div className="grave-message">
                     <GraveComponent grave={message.grave} gameState={GAME_MANAGER.state}/>
                 </div>
-            </>
+            </>;
+        }
+        else{
+            return <></>;
+        }
     }
 
-    return <StyledText className={"chat-message " + style}>{text}</StyledText>;
+    return <StyledText className={"chat-message " + style}>{translateChatMessage(message)}</StyledText>;
 }
 
 function playerListToString(playerList: PlayerIndex[]): string {
@@ -268,7 +271,7 @@ export function translateChatMessage(message: ChatMessage): string {
             
         case "playerWithNecronomicon":
             return translate("chatMessage.playerWithNecronomicon", GAME_MANAGER.state.players[message.playerIndex].toString());
-        case "deputyShotSomeoneSurvived":
+        case "deputyShotYouSurvived":
         case "deathCollectedSouls":
         case "targetWasAttacked":
         case "youWereProtected":
@@ -380,7 +383,7 @@ export type ChatMessage = {
     type: "deputyKilled",
     shotIndex: PlayerIndex
 } | {
-    type: "deputyShotSomeoneSurvived"
+    type: "deputyShotYouSurvived"
 } | {
     type: "playerWithNecronomicon",
     playerIndex: PlayerIndex

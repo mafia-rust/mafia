@@ -418,7 +418,7 @@
     "chatMessage.executionerWon":"The Executioner got their target lynched and won!",
     "chatMessage.deathCollectedSouls":"The apolocolypse begins, everyone will die tonight if Death is alive at nightfall!",
     "chatMessage.deputyKilled":"The Deputy killed \\0!",
-    "chatMessage.deputyShotSomeoneSurvived":"A Deputy shot someone but they survived!",
+    "chatMessage.deputyShotYouSurvived":"A Deputy shot you and you survived!",
     "chatMessage.jailorDecidedToExecute":"The Jailor decided to execute \\0",
     "chatMessage.jailorDecideExecute.nobody":"The Jailor decided not to execute!",
     "chatMessage.playerWithNecronomicon":"\\0 has the necronomicon.",
@@ -634,9 +634,9 @@
     "wiki.entry.role.crusader.attributes":"- If any non town members visited the player you visited, the visitor you attack will be one of them\n- If you are the only visitor to the player you protect, you won't attack anyone",
     "wiki.entry.role.crusader.extra":"- You can't target yourself\n- You will be told if the player you visit is attacked\n- The play you visit will be told that they were protected if they were attacked\n- You won't visit the players you attack\n- Your ability will fail if your target is in jail",
 
-    "wiki.entry.role.reveler.guide": "Choose someone to roleblock everyone who visits them, preventing them from being attacked. If they are a townie, you will also roleblock them. You should try to protect people you think are townies who you want to keep alive.",
+    "wiki.entry.role.reveler.guide": "Choose someone to roleblock everyone who visits them, preventing them from being attacked. You should try to protect people you think are townies who you want to keep alive.",
     "wiki.entry.role.reveler.abilities":"- Visit a player to roleblock everyone who visits them",
-    "wiki.entry.role.reveler.attributes":"- If you visit a townie, you will also roleblock them",
+    "wiki.entry.role.reveler.attributes":"- The player you visited won't be told you visited them",
     "wiki.entry.role.reveler.extra":"- You can't target yourself\n- You won't roleblock astral visitors to your target\n- You won't roleblock yourself\n- Your ability will fail if your target is in jail",
 
     "wiki.entry.role.escort.guide": "Choose a player to stop them from using their ability. You should try to choose evil players",
@@ -666,7 +666,7 @@
 
     "wiki.entry.role.deputy.guide":"Once per game, choose a player during the day, attacking them. If you kill them, you will be revealed to the town as the Deputy. If you kill a townsperson, you will instantly commit suicide.",
     "wiki.entry.role.deputy.abilities":"- Use your special ability to shoot a player during discussion or voting once per game",
-    "wiki.entry.role.deputy.attributes":"- If their defense overpowers your attack, they will be told that they were attacked, but you won't be revealed as deputy",
+    "wiki.entry.role.deputy.attributes":"- If their defense overpowers your attack, the player you attacked will be told that they were attacked by a deputy, but you won't be revealed as deputy",
     "wiki.entry.role.deputy.extra":"- You have a basic attack",
 
     "wiki.entry.role.godfather.guide": "Choose a player to kill each night. Choose a backup to kill when you are roleblocked or jailed. You should try to kill townies who are likely to stop you from winning.",

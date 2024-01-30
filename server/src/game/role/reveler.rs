@@ -30,11 +30,7 @@ impl RoleStateImpl for Reveler {
             let target_ref = visit.target;
             if target_ref.night_jailed(game) {
                 actor_ref.push_night_message(game, ChatMessage::TargetJailed);
-            }else{
-                if target_ref.role(game).faction() == Faction::Town {
-                    target_ref.roleblock(game, true);
-                }
-                
+            }else{                
                 target_ref.veteran_seen_players(game).iter().for_each(|&player_ref| {
                     if player_ref != actor_ref {
                         player_ref.roleblock(game, true);

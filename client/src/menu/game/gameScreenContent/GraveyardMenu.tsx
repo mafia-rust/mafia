@@ -57,26 +57,34 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
         }
 
         return(<button 
-            style={{ gridRow: graveIndex + 1, gridColumn:0 }} 
+            className="grave-list-button"
+            style={{ gridRow: graveIndex + 1 }} 
             key={graveIndex} 
             onClick={()=>{this.setState({extendedGraveIndex:graveIndex})}}
         >
             <StyledText noLinks={true}>{this.state.gameState.players[grave.playerIndex]?.toString()}</StyledText>
             <StyledText noLinks={true}>
-                {`(${graveRoleString})`}
+                {` (${graveRoleString})`}
             </StyledText>
         </button>);
     }
     renderGraveExtended(grave: Grave){
-        return(<button className="grave-button" onClick={()=>{this.setState({extendedGraveIndex:null})}}>
+        return(<div className="grave-label">
+            <button
+                className="material-icons-round"
+                onClick={()=>{this.setState({extendedGraveIndex:null})}}
+            >
+                close
+            </button>
             <GraveComponent grave={grave} gameState={this.state.gameState}/>
-        </button>);
+        </div>);
     }
 
     renderRoleList(){return<>
         {this.state.gameState.roleList.map((entry, index)=>{
             return <button 
-                style={{ gridRow: index + 1, gridColumn:1 }} 
+                className="role-list-button"
+                style={{ gridRow: index + 1 }} 
                 key={index}
             >
                 <StyledText noLinks={false}>
@@ -119,8 +127,6 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
         </div>
         {this.renderExcludedRoles()}
 
-        <div>
             {this.state.extendedGraveIndex!==null?this.renderGraveExtended(this.state.gameState.graves[this.state.extendedGraveIndex]):null}
-        </div>
     </div>)}
 }

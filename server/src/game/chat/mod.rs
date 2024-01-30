@@ -103,7 +103,7 @@ pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
     DeputyKilled{shot_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
-    DeputyShotSomeoneSurvived,
+    DeputyShotYouSurvived,
 
 
     #[serde(rename_all = "camelCase")]

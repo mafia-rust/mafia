@@ -89,6 +89,10 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
     
     renderMenuButtons(){
         return <div className="menu-buttons">
+            <button
+            className={"chat-menu-colors"+(GameScreen.instance.menusOpen().includes(GameScreenContentMenus.ChatMenu)?" highlighted":"")}
+            onClick={()=>{GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.ChatMenu)}}>{translate("menu.chat.icon")}</button>
+            
             <button 
             className={"player-list-menu-colors"+ (GameScreen.instance.menusOpen().includes(GameScreenContentMenus.PlayerListMenu)?" highlighted":"")} 
             onClick={()=>{

@@ -15,6 +15,7 @@ import Anchor from "../Anchor";
 import StyledText from "../../components/StyledText";
 
 export enum ContentMenus {
+    ChatMenu = "ChatMenu",
     GraveyardMenu = "GraveyardMenu",
     PlayerListMenu = "PlayerListMenu",
     WillMenu = "WillMenu",
@@ -24,12 +25,13 @@ export enum ContentMenus {
 
 type GameScreenProps = {
     contentMenus: ContentMenus[],
-    maxContent: boolean
+    maxContent?: number | undefined
 }
 type GameScreenState = {
     gameState: GameState,
     maxContent: number,
 
+    chatMenu: boolean,
     graveyardMenu: boolean,
     playerListMenu: boolean,
     willMenu: boolean,
@@ -41,15 +43,16 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
     static createDefault(): JSX.Element{
         if (Anchor.isMobile()) {
             return <GameScreen contentMenus={[
-                ContentMenus.PlayerListMenu,
-            ]} maxContent={true}/>
+                ContentMenus.ChatMenu,
+            ]} maxContent={1}/>
         } else {
             return <GameScreen contentMenus={[
+                ContentMenus.ChatMenu,
                 // ContentMenus.GraveyardMenu,
                 ContentMenus.PlayerListMenu,
                 // ContentMenus.WikiMenu,
                 ContentMenus.WillMenu
-            ]} maxContent={false}/>
+            ]}/>
         }
     }
     static instance: GameScreen;
@@ -61,9 +64,10 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
 
         if(GAME_MANAGER.state.stateType === "game")
             this.state = {
-                maxContent: props.maxContent?props.contentMenus.length:Infinity,
+                maxContent: props.maxContent?props.maxContent:Infinity,
                 gameState: GAME_MANAGER.state,
 
+                chatMenu: props.contentMenus.includes(ContentMenus.ChatMenu),
                 graveyardMenu: props.contentMenus.includes(ContentMenus.GraveyardMenu),
                 playerListMenu: props.contentMenus.includes(ContentMenus.PlayerListMenu),
                 willMenu: props.contentMenus.includes(ContentMenus.WillMenu),
@@ -87,6 +91,9 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
     }
     closeMenu(menu: ContentMenus) {
         switch(menu) {
+            case ContentMenus.ChatMenu:
+                this.setState({chatMenu: false});
+                break;
             case ContentMenus.GraveyardMenu:
                 this.setState({graveyardMenu: false});
                 break;
@@ -111,6 +118,9 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         }
 
         switch(menu) {
+            case ContentMenus.ChatMenu:
+                this.setState({chatMenu: true});
+                break;
             case ContentMenus.GraveyardMenu:
                 this.setState({graveyardMenu: true});
                 break;
@@ -137,6 +147,9 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
     }
     menusOpen(): ContentMenus[] {
         let out = [];
+        if(this.state.chatMenu){
+            out.push(ContentMenus.ChatMenu);
+        }
         if(this.state.graveyardMenu) {
             out.push(ContentMenus.GraveyardMenu);
         }
@@ -166,7 +179,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                     <HeaderMenu phase={GAME_MANAGER.state.phase}/>
                 </div>
                 <div className="content">
-                    <ChatMenu/>
+                    {this.state.chatMenu?<ChatMenu/>:null}
                     {this.state.playerListMenu?<PlayerListMenu/>:null}
                     {this.state.willMenu?<WillMenu/>:null}
                     {this.state.roleSpecificMenu?<RoleSpecificMenu/>:null}
