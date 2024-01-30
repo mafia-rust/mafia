@@ -208,7 +208,6 @@ function getPageText(page: WikiPage): string {
 
             return translate("wiki.entry.role",
                 translate("role."+role+".name"),
-                // translateRoleOutline(getRoleOutlineFromFactionAlignment(roleData.factionAlignment as FactionAlignment)) || '',
                 translateChecked("wiki.entry.role."+role+".guide") ?? translate("wiki.entry.role.noBasics"),
                 translateChecked("wiki.entry.role."+role+".abilities") ?? translate("wiki.entry.role.noAbilities"),
                 translateChecked("wiki.entry.role."+role+".attributes") ?? translate("wiki.entry.role.noAttributes"),
