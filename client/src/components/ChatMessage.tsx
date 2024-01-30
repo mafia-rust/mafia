@@ -271,7 +271,7 @@ export function translateChatMessage(message: ChatMessage): string {
             
         case "playerWithNecronomicon":
             return translate("chatMessage.playerWithNecronomicon", GAME_MANAGER.state.players[message.playerIndex].toString());
-        case "deputyShotYouSurvived":
+        case "deputyShotYou":
         case "deathCollectedSouls":
         case "targetWasAttacked":
         case "youWereProtected":
@@ -383,7 +383,7 @@ export type ChatMessage = {
     type: "deputyKilled",
     shotIndex: PlayerIndex
 } | {
-    type: "deputyShotYouSurvived"
+    type: "deputyShotYou"
 } | {
     type: "playerWithNecronomicon",
     playerIndex: PlayerIndex
