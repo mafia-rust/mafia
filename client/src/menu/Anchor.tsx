@@ -152,8 +152,6 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         this.setState({
             touchCurrentX: e.targetTouches[0].clientX
         });
-    }
-    onTouchEnd(e: React.TouchEvent<HTMLDivElement>) {
 
         if(this.state.touchStartX === null || this.state.touchCurrentX === null) return;
         if(this.state.touchStartX - this.state.touchCurrentX > MIN_SWIPE_DISTANCE) {
@@ -166,6 +164,10 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
                 listener(true);
             }
         }
+    }
+    onTouchEnd(e: React.TouchEvent<HTMLDivElement>) {
+
+        
         
 
         this.setState({
