@@ -82,7 +82,10 @@ impl RoleStateImpl for Bodyguard {
                     }
 
                     let self_shields_remaining = self.self_shields_remaining - 1;
-                    actor_ref.set_role_state(game, RoleState::Bodyguard(Bodyguard{ self_shields_remaining, target_protected_ref: self.target_protected_ref, redirected_player_refs: self.redirected_player_refs }));
+                    actor_ref.set_role_state(game, RoleState::Bodyguard(Bodyguard{
+                        self_shields_remaining, 
+                        ..self
+                    }));
                     
                     
                     target_ref.increase_defense_to(game, 2);

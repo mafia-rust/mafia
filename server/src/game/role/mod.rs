@@ -50,6 +50,7 @@ macros::roles! {
     Doctor : doctor,
     Bodyguard : bodyguard,
     Crusader : crusader,
+    Reveler : reveler,
 
     Vigilante : vigilante,
     Veteran : veteran,
@@ -258,9 +259,12 @@ mod macros {
 impl Role{
     pub fn control_immune(&self)->bool{
         match self {
+            Role::Veteran => true,
+
             Role::Retributionist => true,
             Role::Witch => true,
             Role::Necromancer => true,
+            
             Role::Doomsayer => true,
             _ => false,
         }
@@ -268,6 +272,8 @@ impl Role{
     pub fn roleblock_immune(&self)->bool{
         match self {
             Role::Veteran => true,
+            
+            Role::Reveler => true,
 
             Role::Escort => true,
             Role::Consort => true,

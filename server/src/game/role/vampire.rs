@@ -20,7 +20,6 @@ impl RoleStateImpl for Vampire {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Vampires)}
 
-
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Convert {return;}
 
@@ -41,7 +40,6 @@ impl RoleStateImpl for Vampire {
         game.teams.set_vampires(vampires);
         target_ref.set_role(game, RoleState::Vampire(Vampire));
     }
-    
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         let time_passed = if let Some(night_last_converted) = game.teams.vampires().night_of_last_conversion{
             night_last_converted <= game.phase_machine.day_number - 2
@@ -56,6 +54,7 @@ impl RoleStateImpl for Vampire {
         target_ref.alive(game) &&
         !Team::same_team(game, actor_ref, target_ref) &&
         game.teams.vampires().ordered_vampires.len() <= PlayerReference::all_players(game).filter(|p|p.alive(game)).count() / 2 &&
+        game.teams.vampires().ordered_vampires.len() <= 3 &&
         game.teams.vampires().ordered_vampires.last() == Some(&actor_ref) &&
         time_passed
     }

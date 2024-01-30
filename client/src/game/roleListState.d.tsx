@@ -74,13 +74,13 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
         case "townPower":
             return ["mayor", "jailor"];
         case "townSupport":
-            return ["medium", "retributionist", "transporter", "escort"]
+            return ["medium", "retributionist", "transporter", "escort"];
         case "townKilling":
-            return ["vigilante", "veteran", "deputy"]
+            return ["vigilante", "veteran", "deputy"];
         case "townProtective":
-            return ["bodyguard", "crusader", "doctor"]
+            return ["bodyguard", "crusader", "doctor", "reveler"];
         case "townInvestigative":
-            return ["psychic", "lookout", "sheriff", "spy", "tracker", "seer"]
+            return ["psychic", "lookout", "sheriff", "spy", "tracker", "seer"];
         case "townCommon":
             let out = getRolesFromRoleSet("townSupport")
             out = out.concat(getRolesFromRoleSet("townKilling"))
@@ -88,21 +88,21 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
             out = out.concat(getRolesFromRoleSet("townInvestigative"))
             return out;
         case "mafiaPower":
-            return ["godfather", "mafioso"]
+            return ["godfather", "mafioso"];
         case "mafiaSupport":
             return [
                 "blackmailer", "consigliere", "consort", 
                 "forger", "framer", "janitor", 
                 "witch", "necromancer"
-            ]
+            ];
         case "neutralEvil":
-            return ["jester", "executioner", "politician"]
+            return ["jester", "executioner", "politician"];
         case "neutralKilling":
-            return ["arsonist", "werewolf"]
+            return ["arsonist", "werewolf"];
         case "neutralChaos":
-            return ["vampire", "amnesiac"]
+            return ["vampire", "amnesiac"];
         case "neutralApocalypse":
-            return ["death", "doomsayer"]
+            return ["death", "doomsayer"];
     }
 }
 

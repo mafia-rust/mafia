@@ -33,12 +33,18 @@ export type RoleState = {
     role: "bodyguard",
     selfShieldsRemaining: number,
 } | {
+    role: "crusader",
+} | {
+    role: "reveler"
+} | {
     role: "vigilante",
     bulletsRemaining: number,
     willSuicide: boolean,
 } | {
     role: "veteran"
     alertsRemaining: number,
+} | {
+    role: "deputy"
 } | {
     role: "escort"
 } | {

@@ -7,7 +7,7 @@
     "beginner": [
         "jailor","mayor",
         "spy","tracker","seer","psychic",
-        "bodyguard","crusader",
+        "bodyguard","crusader","reveler",
         "deputy",
         "transporter","retributionist",
         "mafioso",
@@ -32,7 +32,7 @@
     ],
     "classic": [
         "tracker","seer","psychic",
-        "crusader",
+        "crusader","reveler",
         "deputy",
         "mafioso","necromancer",
         "politician",

@@ -55,13 +55,15 @@ impl RoleStateImpl for Doctor {
                 target_ref.increase_defense_to(game, 2);
 
                 if actor_ref == target_ref{
-                    actor_ref.set_role_state(game, RoleState::Doctor(
-                        Doctor {self_heals_remaining: self.self_heals_remaining.saturating_sub(1), target_healed_ref: Some(target_ref)}
-                    ));
+                    actor_ref.set_role_state(game, RoleState::Doctor(Doctor{
+                        self_heals_remaining: self.self_heals_remaining.saturating_sub(1), 
+                        target_healed_ref: Some(target_ref)
+                    }));
                 }else{
-                    actor_ref.set_role_state(game, RoleState::Doctor(
-                        Doctor {target_healed_ref: Some(target_ref), ..self}
-                    ));
+                    actor_ref.set_role_state(game, RoleState::Doctor(Doctor{
+                        target_healed_ref: Some(target_ref),
+                        ..self
+                    }));
                 }
 
             }

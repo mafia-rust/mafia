@@ -170,8 +170,13 @@
     "role.crusader.detarget": "Un-protect",
     "role.crusader.dayTarget": "Special",
 
+    "role.reveler.name": "Reveler",
+    "role.reveler.target": "Party",
+    "role.reveler.detarget": "Detarget",
+    "role.reveler.dayTarget": "Special",
+
     "role.escort.name": "Escort",
-    "role.escort.target": "Roleblock",
+    "role.escort.target": "roleblock",
     "role.escort.detarget": "Detarget",
     "role.escort.dayTarget": "Special",
 
@@ -216,7 +221,7 @@
     "role.mafioso.dayTarget": "Special",
 
     "role.consort.name": "Consort",
-    "role.consort.target": "Roleblock",
+    "role.consort.target": "roleblock",
     "role.consort.detarget": "Detarget",
     "role.consort.dayTarget": "Special",
     
@@ -429,7 +434,7 @@
     "chatMessage.sheriffResult.suspicious":"Your target seems to be suspicious.",
     "chatMessage.sheriffResult.innocent":"Your target seems to be innocent.",
     "chatMessage.lookoutResult":"Your target was visited by \\0.",
-    "chatMessage.lookoutResult.nobody":"Nobody visited your target",
+    "chatMessage.lookoutResult.nobody":"Nobody visited your target.",
     "chatMessage.trackerResult":"Your target visited \\0.",
     "chatMessage.trackerResult.nobody":"Your target did not visit anybody",
     "chatMessage.seerResult.friends":"Your targets are friends.",
@@ -523,7 +528,7 @@
     "keyword.doused": "Doused",
     "wiki.keyword.doused": "Someone's house is doused in gasoline. Arsonists can douse peoples houses, and ignite them. Doused players have a Suspicious Aura.",
     "keyword.backup": "Back Up",
-    "wiki.keyword.backup": "The Godfather can choose another mafia member to be their backup at any time. If the Godfather is Roleblocked or Jailed, then the Backup will attempt to kill their target.",
+    "wiki.keyword.backup": "The Godfather can choose another mafia member to be their backup at any time. If the Godfather is roleblocked or Jailed, then the Backup will attempt to kill their target.",
     "keyword.suspiciousAura": "Suspicious Aura",
     "wiki.keyword.suspiciousAura": "Players with a Suspicious Aura look evil to investigative roles. The Detective will find them suspicious, the Seer will find them as enemies with everyone, and the Psychic could see them in their evil visions. If a player has both an innocent and suspicious aura, the suspicious aura takes priority.",
     "keyword.innocentAura": "Innocent Aura",
@@ -554,7 +559,7 @@
     "wiki.entry.article.faction_alignments.text":"",
     
     "wiki.entry.article.priority.title":"Priority",
-    "wiki.entry.article.priority.text":"Abilities are used in a specific order called priority order. If two players have abilities that go on the same priority, the player with the lower player number will go first. It is recommended that you read a roles encyclopedia page before this page. Some abilities go before night starts. Attacking someone doesn't kill them untill the end of the night. Here are all the priorities and the abilities that happen in them.\n\n**Before Night (Not a priority)**\n\n- Jailor chooses who to jail\n- Death kills everyone\n- Create Visits\n  - All visits are decided by targeting the correct number of players, then roles execute their abilities using visits during their priority to affect other players\n\n**1: Top Priority**\n\n- Amnesiac (Convert)\n- Doomsayer (Kill)\n- Executioner (Suicide)\n- Jester (Haunt)\n- Veteran (Decide to Alert)\n- Vigilante (Suicide)\n\n**2: Transporter**\n\n- Transporter (Swap Visits)\n\n**3: Control**\n\n- Witch (Possess)\n\n**4: Necromancy**\n\n- Retributionist (Possess/Change Visits)\n- Necromancer (Possess/Change Visits)\n\n**5: Roleblock**\n\n- Consort (Roleblock)\n- Escort (Roleblock)\n- Jailor (Invisible Roleblock)\n\n**6: Deception**\n\n- Framer (Frame)\n- Blackmailer (Silence)\n- Janitor (Clean)\n- Consort (Send Fake Messages)\n- Arsonist (Douse)\n\n**7: Bodyguard**\n\n- Bodyguard (Change visits)\n\n**8: Heal**\n\n- Bodyguard (Defend themselves)\n- Crusader (Defend target)\n- Doctor (Defend)\n- Veteran (Defend themselves)\n\n**9: Kill**\n\n- Arsonist (Ignite)\n- Bodyguard (Attack attacker)\n- Crusader (Attack Visitor)\n- Godfather (Attack or Make Backup Attack)\n- Jailor (Attack)\n- Mafioso (Attack)\n- Veteran (Rampage)\n- Vigilante (Attack)\n- Werewolf (Rampage and attacks)\n\n**10: Investigative**\n\n- Arsonist (Find who is doused)\n- Bodyguard (Find if protected)\n- Consigliere (Investigate)\n- Crusader (Find if protected)\n- Death (Collect souls)\n- Doctor (Find if protected)\n- Janitor (Find role and will)\n- Lookout (Investigate)\n- Psychic (Investigate)\n- Seer (Investigate)\n- Detective (Investigate)\n- Spy (Find who the Mafia Visits)\n- Tracker (Investigate)\n- Werewolf (Track players scent)\n\n**11: Spy Bug**\n\n- Spy (Bug)\n\n**12: Steal Messages**\n\n- Witch (Get target messages)\n- Necromancer (Get target messages)\n- Retributionist (Get target messages)\n\n**13: Convert**\n\n- Vampire (Convert)",
+    "wiki.entry.article.priority.text":"Abilities are used in a specific order called priority order. If two players have abilities that go on the same priority, the player with the lower player number will go first. It is recommended that you read a roles encyclopedia page before this page. Some abilities go before night starts. Attacking someone doesn't kill them untill the end of the night. Here are all the priorities and the abilities that happen in them.\n\n**Before Night (Not a priority)**\n\n- Jailor chooses who to jail\n- Death kills everyone\n- Create Visits\n  - All visits are decided by targeting the correct number of players, then roles execute their abilities using visits during their priority to affect other players\n\n**1: Top Priority**\n\n- Amnesiac (Convert)\n- Doomsayer (Kill)\n- Executioner (Suicide)\n- Jester (Haunt)\n- Veteran (Decide to Alert)\n- Vigilante (Suicide)\n\n**2: Transporter**\n\n- Transporter (Swap Visits)\n\n**3: Control**\n\n- Witch (Possess)\n\n**4: Necromancy**\n\n- Retributionist (Possess/Change Visits)\n- Necromancer (Possess/Change Visits)\n\n**5: roleblock**\n\n- Consort (roleblock)\n- Escort (roleblock)\n- Jailor (Invisible roleblock)\n\n**6: Deception**\n\n- Framer (Frame)\n- Blackmailer (Silence)\n- Janitor (Clean)\n- Consort (Send Fake Messages)\n- Arsonist (Douse)\n\n**7: Bodyguard**\n\n- Bodyguard (Change visits)\n\n**8: Heal**\n\n- Bodyguard (Defend themselves)\n- Crusader (Defend target)\n- Doctor (Defend)\n- Veteran (Defend themselves)\n\n**9: Kill**\n\n- Arsonist (Ignite)\n- Bodyguard (Attack attacker)\n- Crusader (Attack Visitor)\n- Godfather (Attack or Make Backup Attack)\n- Jailor (Attack)\n- Mafioso (Attack)\n- Veteran (Rampage)\n- Vigilante (Attack)\n- Werewolf (Rampage and attacks)\n\n**10: Investigative**\n\n- Arsonist (Find who is doused)\n- Bodyguard (Find if protected)\n- Consigliere (Investigate)\n- Crusader (Find if protected)\n- Death (Collect souls)\n- Doctor (Find if protected)\n- Janitor (Find role and will)\n- Lookout (Investigate)\n- Psychic (Investigate)\n- Seer (Investigate)\n- Detective (Investigate)\n- Spy (Find who the Mafia Visits)\n- Tracker (Investigate)\n- Werewolf (Track players scent)\n\n**11: Spy Bug**\n\n- Spy (Bug)\n\n**12: Steal Messages**\n\n- Witch (Get target messages)\n- Necromancer (Get target messages)\n- Retributionist (Get target messages)\n\n**13: Convert**\n\n- Vampire (Convert)",
     
     "wiki.entry.article.role_sets.title":"Role Sets",
     "wiki.entry.article.role_sets.text":"",
@@ -635,18 +640,24 @@
     "wiki.entry.role.bodyguard.guide": "Choose someone to protect each night. If the player you protect is attacked, you will be attacked instead, but you kill the attacker. You should try to protect people you think are townies who will be attacked. You can only target yourself once.",
     "wiki.entry.role.bodyguard.abilities":"- If someone visits the player you protect with an attacking visit, they will be redirected into visiting and attacking you\n- If you redirect a visit into yourself, you will attack the attacker back with a powerful attack",
     "wiki.entry.role.bodyguard.attributes":"- If you protect yourself, you will lose the ability to target yourself, you will not redirect any attacks, instead you will gain powerful defense.\n- If you redirect multiple attackers, you will attack all of them with a powerful attack",
-    "wiki.entry.role.bodyguard.extra":"- You will be told if the player you visit is attacked\n- The play you visit will be told that they were protected if they were attacked",
+    "wiki.entry.role.bodyguard.extra":"- You will be told if the player you visit is attacked\n- The player you visit will be told that they were protected if they were attacked",
 
     "wiki.entry.role.crusader.title": "Crusader",
     "wiki.entry.role.crusader.guide": "Choose someone to protect each night and kill a random visitor to them. You should try to protect people you think are townies who will be attacked. You could easily accidentally kill townies, so you should try to make sure no other townies visit the player you protect.",
     "wiki.entry.role.crusader.abilities":"- Visit a player to grant them powerful defense for that night\n- Kill a random other visitor to the player you protect",
     "wiki.entry.role.crusader.attributes":"- If any non town members visited the player you visited, the visitor you attack will be one of them\n- If you are the only visitor to the player you protect, you won't attack anyone",
-    "wiki.entry.role.crusader.extra":"- You can not target yourself\n- You will be told if the player you visit is attacked\n- The play you visit will be told that they were protected if they were attacked\n- You won't visit the players you attack",
+    "wiki.entry.role.crusader.extra":"- You can't target yourself\n- You will be told if the player you visit is attacked\n- The play you visit will be told that they were protected if they were attacked\n- You won't visit the players you attack\n- Your ability will fail if your target is in jail",
+
+    "wiki.entry.role.reveler.title": "Reveler",
+    "wiki.entry.role.reveler.guide": "Choose someone to roleblock everyone who visits them, preventing them from being attacked. If they are a townie, you will also roleblock them. You should try to protect people you think are townies who you want to keep alive.",
+    "wiki.entry.role.reveler.abilities":"- Visit a player to roleblock everyone who visits them",
+    "wiki.entry.role.reveler.attributes":"- If you visit a townie, you will also roleblock them",
+    "wiki.entry.role.reveler.extra":"- You can't target yourself\n- You won't roleblock astral visitors to your target\n- You won't roleblock yourself\n- Your ability will fail if your target is in jail",
 
     "wiki.entry.role.escort.title": "Escort",
     "wiki.entry.role.escort.guide": "Choose a player to stop them from using their ability. You should try to choose evil players",
-    "wiki.entry.role.escort.abilities":"- Visit a player to Roleblock them",
-    "wiki.entry.role.escort.attributes":"- You can not be Roleblocked\n- The player you visit will know if they were Roleblocked, even if they are immune to being Roleblocked",
+    "wiki.entry.role.escort.abilities":"- Visit a player to roleblock them",
+    "wiki.entry.role.escort.attributes":"- You can not be roleblocked\n- The player you visit will know if they were roleblocked, even if they are immune to being roleblocked",
     "wiki.entry.role.escort.extra":"- When you roleblock someone, their visits will be cleared",
 
     "wiki.entry.role.medium.title": "Medium",
@@ -671,7 +682,7 @@
     "wiki.entry.role.veteran.guide": "Choose yourself to go on Alert, attacking everyone who visits you. You can go on Alert three times. You should try to bait evils into attacking you on nights you alert to kill them.",
     "wiki.entry.role.veteran.abilities":"- Visit yourself to go on alert, attacking everyone who visits you\n- While on alert, you have basic defense",
     "wiki.entry.role.veteran.attributes":"- You have a powerful attack\n- You have three alerts\n- You will know if you attacked a visitor\n- Players who visit you while on alert will know that they were attacked by a veteran",
-    "wiki.entry.role.veteran.extra":"- If you have no alerts left you can not target yourself\n- You are immune to getting roleblocked and possession",
+    "wiki.entry.role.veteran.extra":"- If you have no alerts left you can not target yourself\n- You are immune to getting roleblocked and you are immune to possession",
 
     "wiki.entry.role.deputy.title": "Deputy",
     "wiki.entry.role.deputy.guide":"Once per game, choose a player during the day, attacking them. If you kill them, you will be revealed to the town as the Deputy. If you kill a townsperson, you will instantly commit suicide.",
@@ -694,7 +705,7 @@
     "wiki.entry.role.consort.title": "Consort",
     "wiki.entry.role.consort.guide": "Choose a player to roleblock and hypnotise them. If you roleblock them, they wont be able to use their ability that night. They will be sent whatever messages you select. You can also choose to not roleblock them, and only send them messages.",
     "wiki.entry.role.consort.abilities":"- Visit a player to roleblock or hypnotise them",
-    "wiki.entry.role.consort.attributes":"- You can not be Roleblocked\n- You can choose not to roleblock them, and only send them messages, but you will always send at least one message",
+    "wiki.entry.role.consort.attributes":"- You can not be roleblocked\n- You can choose not to roleblock them, and only send them messages, but you will always send at least one message",
     "wiki.entry.role.consort.extra":"- You can't target other mafia members\n- When you roleblock someone, their visits will be cleared",
     
     "wiki.entry.role.blackmailer.title": "Blackmailer",
@@ -773,7 +784,7 @@
     "wiki.entry.role.werewolf.guide": "On full moon nights, choose someone to kill them and rampage, killing everyone who visits them. On non full moon nights, choose someone to gain their scent and passively gain the scent of everyone who visits you. If you have someones scent, you will know who they visit every night for the rest of the game. Try to attack players who will get visited by alot of people in order to kill more players. Claiming that you are the Tracker could be easy because you know who people visit each night.",
     "wiki.entry.role.werewolf.abilities":"* On full moon nights visit a player to attack them and rampage them\n* On non full moon nights visit a player gain their scent, you also gain the scent of every player that visits you on non full moon nights\n* If you visit nobody on a full moon night, you rampage yourself, but you wont attack yourself unless you visit yourself",
     "wiki.entry.role.werewolf.attributes":"* You have a powerfull attack\n* If you are jailed then you will attack all Jailors who did not execute you\n* You will know who you have the scent of\n* You still track the scent of players after you die\n* On non full moon nights you have an innocent aura",
-    "wiki.entry.role.werewolf.extra":"* You will not rampage the jailor while in jail\n* You will still attack or gain the scent of visits to you when you are jailed\n* You will still track the players you have the scent of while jailed\n* You dont attack or gain the scent of astral visitors\n* A Roleblock has no effect on you besides erasing your visits, if you are roleblocked, it is as if you visited nobody",
+    "wiki.entry.role.werewolf.extra":"* You will not rampage the jailor while in jail\n* You will still attack or gain the scent of visits to you when you are jailed\n* You will still track the players you have the scent of while jailed\n* You dont attack or gain the scent of astral visitors\n* A roleblock has no effect on you besides erasing your visits, if you are roleblocked, it is as if you visited nobody",
 
     "wiki.entry.role.death.title": "Death",
     "wiki.entry.role.death.guide": "Guess what player will die during night by targeting them, If you guess correctly you will collect a soul, you will also collect a soul passively each night. Once you have six souls, everyone will be told at the start of the day, if you survive that day, you will attack everyone and win the game at the start of night.",
@@ -784,14 +795,14 @@
     "wiki.entry.role.amnesiac.title": "Amnesiac",
     "wiki.entry.role.amnesiac.guide": "Choose a role to become on the next night. You can choose a certain outline to and get a random role if you want, or get a specific role.",
     "wiki.entry.role.amnesiac.abilities":"* Choose an outline to become a role from that outline at night",
-    "wiki.entry.role.amnesiac.attributes":"* Roleblocking or jail doesn't effect you",
+    "wiki.entry.role.amnesiac.attributes":"* roleblocking or jail doesn't effect you",
     "wiki.entry.role.amnesiac.extra":"* You can choose an outline like \"Neutral Killing\", and you will get a random neutral killing role, or choose an outline like \"Jailor\" and confirm that you get the jailor\n* If you choose a role that was excluded from the game you will stay as the Amnesiac",
 
     "wiki.entry.role.vampire.title": "Vampire",
     "wiki.entry.role.vampir.guide": "Choose a player to conver them to a vampire, only one of the vampires can actually choose to convert a player. You can only convert a player if you did not the night before.",
     "wiki.entry.role.vampire.abilities":"* Visit a player to convert them to a vampire",
-    "wiki.entry.role.vampire.attributes":"* Only the newest vampire can choose to bite\n* Vampires can not bite on the night immediately following a night that they successfully converted another vampire\n* If there are four or more vampires, they can not choose to bite someone",
-    "wiki.entry.role.vampire.extra":"* You can not convert a player with defense\n* You can only target if the number of living vampires is less than or equal to the half of the number of living players ",
+    "wiki.entry.role.vampire.attributes":"* Only the newest vampire can choose to bite\n* Vampires can not bite on the night immediately following a night that they successfully converted another vampire",
+    "wiki.entry.role.vampire.extra":"* You can not convert a player with any defense\n* If there are not too many vampires alive (up to half of the total players or a maximum of three), then they can keep targeting people.",
 
     "random.gay":"GAY",
     "random.trans":"TRANS"

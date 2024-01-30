@@ -49,7 +49,8 @@ impl RoleStateImpl for Jailor {
                     if target_ref.night_jailed(game){
                         target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Jailor), 3, false);
         
-                        self.executions_remaining = if target_ref.role(game).faction() == Faction::Town { 0 } else { self.executions_remaining - 1 };
+                        self.executions_remaining = 
+                            if target_ref.role(game).faction() == Faction::Town {0} else {self.executions_remaining - 1};
                         self.jailed_target_ref = None;
                         actor_ref.set_role_state(game, RoleState::Jailor(self));
                     }
@@ -59,23 +60,23 @@ impl RoleStateImpl for Jailor {
         }
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        target_ref.night_jailed(game) && 
+        target_ref.night_jailed(game) &&
         actor_ref.chosen_targets(game).is_empty() &&
-        actor_ref != target_ref && 
-        actor_ref.alive(game) && 
-        target_ref.alive(game) && 
+        actor_ref != target_ref &&
+        actor_ref.alive(game) &&
+        target_ref.alive(game) &&
         game.phase_machine.day_number > 1 &&
         self.executions_remaining > 0
     }
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
         if let Some(old_target_ref) = self.jailed_target_ref {
             if old_target_ref == target_ref {
-                actor_ref.set_role_state(game, RoleState::Jailor(Jailor { jailed_target_ref: None, executions_remaining: self.executions_remaining}));
+                actor_ref.set_role_state(game, RoleState::Jailor(Jailor { jailed_target_ref: None, ..self}));
             } else {
-                actor_ref.set_role_state(game, RoleState::Jailor(Jailor { jailed_target_ref: Some(target_ref), executions_remaining: self.executions_remaining }))
+                actor_ref.set_role_state(game, RoleState::Jailor(Jailor { jailed_target_ref: Some(target_ref), ..self }))
             }
         } else {
-            actor_ref.set_role_state(game, RoleState::Jailor(Jailor { jailed_target_ref: Some(target_ref), executions_remaining: self.executions_remaining }))
+            actor_ref.set_role_state(game, RoleState::Jailor(Jailor { jailed_target_ref: Some(target_ref), ..self }))
         }
     }
     fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {        
@@ -126,7 +127,6 @@ impl RoleStateImpl for Jailor {
         actor_ref.set_role_state(game, RoleState::Jailor(self));
     }
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
-        
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
     }

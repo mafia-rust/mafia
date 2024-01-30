@@ -3,6 +3,7 @@ use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
+use mafia_server::game::role::reveler::Reveler;
 pub use mafia_server::game::{
     chat::{ChatMessage, MessageSender, ChatGroup}, 
     grave::*, 
@@ -900,6 +901,45 @@ fn seer_cant_see_godfather() {
         ),
         ChatMessage::SeerResult { enemies: false }
     );
+}
+
+#[test]
+fn reveler_protect_still_kill() {
+    kit::scenario!(game in Night 1 where
+        rev: Reveler,
+        godfather: Godfather,
+        jan: Janitor,
+        townie_a: Sheriff,
+        townie_b: Sheriff
+    );
+
+    assert!(rev.set_night_targets(vec![townie_a]));
+    assert!(godfather.set_night_targets(vec![townie_a]));
+    assert!(godfather.day_target(jan));
+    assert!(jan.set_night_targets(vec![townie_b]));
+
+    game.next_phase();
+    assert_contains!(
+        townie_a.get_messages_after_last_message(
+            ChatMessage::PhaseChange{phase_type: PhaseType::Night, day_number: 1}
+        ),
+        ChatMessage::RoleBlocked{immune: false}
+    );
+    assert_contains!(
+        godfather.get_messages_after_last_message(
+            ChatMessage::PhaseChange{phase_type: PhaseType::Night, day_number: 1}
+        ),
+        ChatMessage::RoleBlocked{immune: false}
+    );
+    assert_not_contains!(
+        jan.get_messages_after_last_message(
+            ChatMessage::PhaseChange{phase_type: PhaseType::Night, day_number: 1}
+        ),
+        ChatMessage::RoleBlocked{immune: false}
+    );
+
+    assert!(!townie_b.alive());
+    assert!(townie_a.alive());
 }
 
 #[test]
