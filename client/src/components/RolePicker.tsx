@@ -135,7 +135,6 @@ export class RoleOutlineOptionSelector extends React.Component<RoleOutlineOption
             return translateRoleOutlineOption(roleOutlineOption);
     }
     render(): React.ReactNode {
-        console.log("option", this.translateRoleOutlineOptionOrAny(this.props.roleOutlineOption));
         return (
             <div>
                 <select
