@@ -759,10 +759,10 @@
     "wiki.entry.role.amnesiac.attributes":"* roleblocking or jail doesn't effect you",
     "wiki.entry.role.amnesiac.extra":"* You can choose an outline like \"Neutral Killing\", and you will get a random neutral killing role, or choose an outline like \"Jailor\" and confirm that you get the jailor\n* If you choose a role that was excluded from the game you will stay as the Amnesiac",
 
-    "wiki.entry.role.vampir.guide": "Choose a player to conver them to a vampire, only one of the vampires can actually choose to convert a player. You can only convert a player if you did not the night before.",
+    "wiki.entry.role.vampire.guide": "Choose a player to conver them to a vampire, only one of the vampires can actually choose to convert a player. You can only convert a player if you did not the night before. You can not convert a player when it would give vampires majority, you also can not convert when there are at least four living vampires.",
     "wiki.entry.role.vampire.abilities":"* Visit a player to convert them to a vampire",
     "wiki.entry.role.vampire.attributes":"* Only the newest vampire can choose to bite\n* Vampires can not bite on the night immediately following a night that they successfully converted another vampire",
-    "wiki.entry.role.vampire.extra":"* You can not convert a player with any defense\n* If there are not too many vampires alive (up to half of the total players or a maximum of three), then they can keep targeting people.",
+    "wiki.entry.role.vampire.extra":"* You can not convert a player with any defense\n* If the number of vampires is less than four and less than half the number of living players, then they can continue targeting people.",
 
     "random.gay":"GAY",
     "random.trans":"TRANS"
