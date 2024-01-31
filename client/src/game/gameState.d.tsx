@@ -1,7 +1,7 @@
 import { Grave } from "./graveState";
 import { ChatMessage } from "../components/ChatMessage";
 import { Role, RoleState } from "./roleState.d";
-import { RoleList, RoleOutline } from "./roleListState.d";
+import { RoleList } from "./roleListState.d";
 
 
 export type State = Disconnected | OutsideLobbyState | LobbyState | GameState;

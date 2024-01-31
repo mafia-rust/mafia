@@ -52,7 +52,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     componentDidMount() {
         Anchor.instance = this;
 
-        this.state.audio.volume = GAME_MANAGER.loadSettings()?.volume ?? DEFAULT_SETTINGS.volume;
+        Anchor.instance.state.audio.volume = GAME_MANAGER.loadSettings()?.volume ?? DEFAULT_SETTINGS.volume;
 
         window.addEventListener("resize", Anchor.onResize);
         Anchor.onResize();
@@ -204,7 +204,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
                 volume={this.state.audio.volume} 
                 onVolumeChange={(volume) => {
                     GAME_MANAGER.saveSettings(volume);
-                    this.state.audio.volume = volume;
+                    Anchor.instance.state.audio.volume = volume;
                     this.setState({
                         audio: this.state.audio
                     });
