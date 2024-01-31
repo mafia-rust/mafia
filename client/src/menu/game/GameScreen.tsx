@@ -14,6 +14,7 @@ import Anchor from "../Anchor";
 import StyledText from "../../components/StyledText";
 import { Role } from "../../game/roleState.d";
 import ROLES from "../../resources/roles.json";
+import { StateEventType } from "../../game/gameManager.d";
 
 export enum ContentMenus {
     ChatMenu = "ChatMenu",
@@ -31,6 +32,8 @@ type GameScreenProps = {
 type GameScreenState = {
     gameState: GameState,
     maxContent: number,
+
+    chatMenuNotification: boolean,
 
     chatMenu: boolean,
     graveyardMenu: boolean,
@@ -57,7 +60,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         }
     }
     static instance: GameScreen;
-    listener: () => void;
+    listener: (type: StateEventType | undefined) => void;
     swipeEventListener: (right: boolean) => void;
 
     constructor(props: GameScreenProps) {
@@ -69,6 +72,8 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                 maxContent: props.maxContent?props.maxContent:Infinity,
                 gameState: GAME_MANAGER.state,
 
+                chatMenuNotification: false,
+
                 chatMenu: props.contentMenus.includes(ContentMenus.ChatMenu),
                 graveyardMenu: props.contentMenus.includes(ContentMenus.GraveyardMenu),
                 playerListMenu: props.contentMenus.includes(ContentMenus.PlayerListMenu),
@@ -78,11 +83,17 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
             }
         
 
-        this.listener = ()=>{
-            if(GAME_MANAGER.state.stateType === "game")
+        this.listener = (type)=>{
+            if(GAME_MANAGER.state.stateType === "game"){
                 this.setState({
                     gameState: GAME_MANAGER.state,
                 });
+                if(type === "addChatMessages" && !GameScreen.instance.menusOpen().includes(ContentMenus.ChatMenu)){
+                    this.setState({
+                        chatMenuNotification: true,
+                    });
+                }
+            }
         }
         this.swipeEventListener = (right)=>{
 
@@ -146,7 +157,11 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
 
         switch(menu) {
             case ContentMenus.ChatMenu:
-                this.setState({chatMenu: true});
+                this.setState({
+                    chatMenu: true,
+                    chatMenuNotification: false
+                });
+
                 break;
             case ContentMenus.PlayerListMenu:
                 this.setState({playerListMenu: true});
@@ -213,7 +228,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         return (
             <div className="game-screen">
                 <div className="header">
-                    <HeaderMenu phase={GAME_MANAGER.state.phase}/>
+                    <HeaderMenu phase={GAME_MANAGER.state.phase} chatMenuNotification={this.state.chatMenuNotification}/>
                 </div>
                 <div className="content">
                     {this.state.chatMenu?<ChatMenu/>:null}

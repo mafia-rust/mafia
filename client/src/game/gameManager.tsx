@@ -27,11 +27,11 @@ export function createGameManager(): GameManager {
             GAME_MANAGER.state = {
                 stateType: "disconnected"
             };
-            Anchor.setContent(<StartMenu />);
+            Anchor.setContent(<StartMenu/>);
         },
         setLobbyState() {
             GAME_MANAGER.state = createLobbyState();
-            Anchor.setContent(<LobbyMenu />);
+            Anchor.setContent(<LobbyMenu/>);
             Anchor.playAudioFile("/audio/01. Calm Before The Storm.mp3");
         },
         setGameState() {

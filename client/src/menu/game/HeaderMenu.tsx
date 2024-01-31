@@ -7,17 +7,19 @@ import ROLES from "../../resources/roles.json"
 import "./headerMenu.css";
 import { Role } from "../../game/roleState.d";
 import StyledText from "../../components/StyledText";
+import { StateEventType } from "../../game/gameManager.d";
 
 
 type HeaderMenuProps = {
     phase: Phase | null,
+    chatMenuNotification: boolean,
 }
-type HeaderMenuState = {
+type HeaderMenuState = {    
     gameState: GameState,
 }
 
 export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderMenuState> {
-    listener: () => void;
+    listener: (type: StateEventType | undefined) => void;
     
     constructor(props: HeaderMenuProps) {
         super(props);
@@ -26,11 +28,13 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             this.state = {
                 gameState: GAME_MANAGER.state,
             };
-        this.listener = () => {
-            if(GAME_MANAGER.state.stateType === "game")
+        this.listener = (type) => {
+            if(GAME_MANAGER.state.stateType === "game"){
                 this.setState({
                     gameState: GAME_MANAGER.state,
                 });
+                
+            }
         };
     }
     componentDidMount() {
@@ -91,7 +95,12 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
         return <div className="menu-buttons">
             <button
             className={"chat-menu-colors"+(GameScreen.instance.menusOpen().includes(GameScreenContentMenus.ChatMenu)?" highlighted":"")}
-            onClick={()=>{GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.ChatMenu)}}>{translate("menu.chat.icon")}</button>
+            onClick={()=>{
+                GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.ChatMenu);
+            }}>
+                {this.props.chatMenuNotification?<div className="chat-notification highlighted">!</div>:null}
+                {translate("menu.chat.icon")}
+            </button>
             
             <button 
             className={"player-list-menu-colors"+ (GameScreen.instance.menusOpen().includes(GameScreenContentMenus.PlayerListMenu)?" highlighted":"")} 
