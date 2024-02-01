@@ -159,13 +159,16 @@ export function createGameManager(): GameManager {
             this.server.sendPacket({ type: "host" });
         },
         sendRejoinPacket(roomCode: string, playerId: number) {
-            let completePromise: () => void;
-            let promise = new Promise<void>((resolver) => {
+            let completePromise: (success: boolean) => void;
+            let promise = new Promise<boolean>((resolver) => {
                 completePromise = resolver;
             });
             let onJoined: StateListener = (type) => {
                 if (type === "acceptJoin") {
-                    completePromise();
+                    completePromise(true);
+                    GAME_MANAGER.removeStateListener(onJoined);
+                } else if (type === "rejectJoin") {
+                    completePromise(false);
                     GAME_MANAGER.removeStateListener(onJoined);
                 }
             };
@@ -181,14 +184,16 @@ export function createGameManager(): GameManager {
             return promise;
         },
         sendJoinPacket(roomCode: string) {
-            let completePromise: () => void;
-            let promise = new Promise<void>((resolver) => {
+            let completePromise: (success: boolean) => void;
+            let promise = new Promise<boolean>((resolver) => {
                 completePromise = resolver;
             });
-
             let onJoined: StateListener = (type) => {
                 if (type === "acceptJoin") {
-                    completePromise();
+                    completePromise(true);
+                    GAME_MANAGER.removeStateListener(onJoined);
+                } else if (type === "rejectJoin") {
+                    completePromise(false);
                     GAME_MANAGER.removeStateListener(onJoined);
                 }
             };

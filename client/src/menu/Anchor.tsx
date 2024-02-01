@@ -225,6 +225,9 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             error={{title, body}}
         />});
     }
+    public static clearError() {
+        Anchor.instance.setState({error: null});
+    }
     public static pushRejoin(roomCode: string, playerId: number) {
         Anchor.instance.setState({rejoinCard:
             <div className="error-card">
@@ -237,6 +240,9 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
                 <div>{translate("menu.play.field.roomCode")}: {roomCode}</div><div> {translate("menu.play.field.playerId")}: {playerId}</div>
             </div>
         });
+    }
+    public static clearRejoin() {
+        Anchor.instance.setState({rejoinCard: null});
     }
 
     public static isMobile(): boolean {

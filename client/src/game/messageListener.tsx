@@ -44,6 +44,9 @@ export default function messageListener(packet: ToClientPacket){
             switch(packet.reason) {
                 case "roomDoesntExist":
                     Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.roomDoesntExist"));
+                    // If the room doesn't exist, don't suggest the user to reconnect to it.
+                    GAME_MANAGER.deleteReconnectData();
+                    Anchor.clearRejoin();
                 break;
                 case "gameAlreadyStarted":
                     Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.gameAlreadyStarted"));

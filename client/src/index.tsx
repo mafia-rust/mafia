@@ -6,6 +6,7 @@ import { GameManager, createGameManager } from './game/gameManager';
 import StartMenu from './menu/main/StartMenu';
 import { Player } from './game/gameState.d';
 import LoadingScreen from './menu/LoadingScreen';
+import { StateListener } from './game/gameManager.d';
 
 const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
@@ -29,26 +30,35 @@ async function route(url: Location) {
     Anchor.stopAudio();
     const roomCode = new URLSearchParams(url.search).get("code");
     let reconnectData = GAME_MANAGER.loadReconnectData();
-    //if reconnectData last save time is more than an hour ago, set reconnectData to null
-    const hourInSeconds = 3600000;
-    if (reconnectData && reconnectData.lastSaveTime < Date.now() - hourInSeconds) {
+    
+    const HOUR_IN_SECONDS = 3_600_000;
+    if (reconnectData && reconnectData.lastSaveTime < Date.now() - HOUR_IN_SECONDS) {
         reconnectData = null;
         GAME_MANAGER.deleteReconnectData();
     }
 
-
     if (roomCode !== null) {
         await GAME_MANAGER.setOutsideLobbyState();
-        GAME_MANAGER.sendJoinPacket(roomCode);
+        
         window.history.replaceState({}, document.title, window.location.pathname);
+
+        const success = await GAME_MANAGER.sendJoinPacket(roomCode);
+        if (!success) {
+            Anchor.setContent(<StartMenu/>)
+        }
     } else if (reconnectData) {        
         await GAME_MANAGER.setOutsideLobbyState();
-        GAME_MANAGER.sendRejoinPacket(reconnectData.roomCode, reconnectData.playerId);
+
+        const success = await GAME_MANAGER.sendRejoinPacket(reconnectData.roomCode, reconnectData.playerId);
+        if (!success) {
+            // Don't show an error message for an auto-rejoin. The user didn't prompt it - they will be confused.
+            // Reconnect data is deleted in messageListener
+            Anchor.clearError();
+            Anchor.setContent(<StartMenu/>);
+        }
     } else {
         Anchor.setContent(<StartMenu/>)
     }
-    // If we ever need more routing than this, use react router instead.
-    Anchor.setContent(<StartMenu/>)
 }
 
 ROOT.render(
