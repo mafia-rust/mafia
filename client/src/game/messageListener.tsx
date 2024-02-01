@@ -39,6 +39,7 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.myId = packet.playerId;
 
             GAME_MANAGER.saveReconnectData(packet.roomCode.toString(18), packet.playerId);
+            Anchor.clearRejoinCard();
         break;
         case "rejectJoin":
             switch(packet.reason) {
@@ -46,7 +47,7 @@ export default function messageListener(packet: ToClientPacket){
                     Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.roomDoesntExist"));
                     // If the room doesn't exist, don't suggest the user to reconnect to it.
                     GAME_MANAGER.deleteReconnectData();
-                    Anchor.clearRejoin();
+                    Anchor.clearRejoinCard();
                 break;
                 case "gameAlreadyStarted":
                     Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.gameAlreadyStarted"));

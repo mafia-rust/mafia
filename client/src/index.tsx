@@ -6,21 +6,11 @@ import { GameManager, createGameManager } from './game/gameManager';
 import StartMenu from './menu/main/StartMenu';
 import { Player } from './game/gameState.d';
 import LoadingScreen from './menu/LoadingScreen';
-import { StateListener } from './game/gameManager.d';
 
 const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
 const TIME_PERIOD = 1000;
 export default GAME_MANAGER;
-
-// GAME_MANAGER.addStateListener((type) => {
-//     switch (type) {
-//         case "acceptJoin":
-//             if (GAME_MANAGER.state.stateType === "lobby") {
-//                 window.history.pushState({}, document.title, `?code=${GAME_MANAGER.state.roomCode}`);
-//             }
-//     }
-// })
 
 setInterval(() => {
     GAME_MANAGER.tick(TIME_PERIOD);

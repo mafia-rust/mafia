@@ -235,7 +235,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             </div>
         });
     }
-    public static clearRejoin() {
+    public static clearRejoinCard() {
         Anchor.instance.setState({rejoinCard: null});
     }
 
