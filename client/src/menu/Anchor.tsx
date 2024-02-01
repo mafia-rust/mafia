@@ -20,8 +20,6 @@ type AnchorState = {
 
     touchStartX: number | null,
     touchCurrentX: number | null,
-
-    swipeEventListeners: Array<(right: boolean) => void>
 }
 
 const MIN_SWIPE_DISTANCE = 40;
@@ -29,6 +27,8 @@ const MAX_SWIPE_DISTANCE = 75;
 
 export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     private static instance: Anchor;
+
+    swipeEventListeners: Array<(right: boolean) => void> = [];
 
     constructor(props: AnchorProps) {
         super(props);
@@ -44,8 +44,6 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
 
             touchStartX: null,
             touchCurrentX: null,
-
-            swipeEventListeners: [],
         }
     }
     
@@ -133,14 +131,10 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     }
 
     static addSwipeEventListener(listener: (right: boolean) => void) {
-        Anchor.instance.setState({
-            swipeEventListeners: [...Anchor.instance.state.swipeEventListeners, listener]
-        });
+        Anchor.instance.swipeEventListeners = [...Anchor.instance.swipeEventListeners, listener];
     }
     static removeSwipeEventListener(listener: (right: boolean) => void) {
-        Anchor.instance.setState({
-            swipeEventListeners: Anchor.instance.state.swipeEventListeners.filter((l) => l !== listener)
-        });
+        Anchor.instance.swipeEventListeners = Anchor.instance.swipeEventListeners.filter((l) => l !== listener);
     }
 
     onTouchStart(e: React.TouchEvent<HTMLDivElement>) {
@@ -153,12 +147,12 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         if(this.state.touchStartX !== null && this.state.touchCurrentX !== null){
             if(this.state.touchStartX - this.state.touchCurrentX > MAX_SWIPE_DISTANCE) {
 
-                for(let listener of this.state.swipeEventListeners) {
+                for(let listener of this.swipeEventListeners) {
                     listener(false);
                 }
             }else if(this.state.touchStartX - this.state.touchCurrentX < -MAX_SWIPE_DISTANCE) {
 
-                for(let listener of this.state.swipeEventListeners) {
+                for(let listener of this.swipeEventListeners) {
                     listener(true);
                 }
             }
@@ -173,11 +167,11 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
 
         if(this.state.touchStartX !== null && this.state.touchCurrentX !== null){
             if(this.state.touchStartX - this.state.touchCurrentX > MIN_SWIPE_DISTANCE) {
-                for(let listener of this.state.swipeEventListeners) {
+                for(let listener of this.swipeEventListeners) {
                     listener(false);
                 }
             }else if(this.state.touchStartX - this.state.touchCurrentX < -MIN_SWIPE_DISTANCE) {
-                for(let listener of this.state.swipeEventListeners) {
+                for(let listener of this.swipeEventListeners) {
                     listener(true);
                 }
             }

@@ -3,19 +3,23 @@ import translate from "../../../game/lang";
 import GAME_MANAGER, { replaceMentions } from "../../../index";
 import "../gameScreen.css";
 import "./chatMenu.css"
-import GameState, { PlayerIndex } from "../../../game/gameState.d";
-import { translateChatMessage } from "../../../components/ChatMessage";
+import { Player, PlayerIndex } from "../../../game/gameState.d";
+import { ChatMessage, translateChatMessage } from "../../../components/ChatMessage";
 import ChatElement from "../../../components/ChatMessage";
 import { ContentTab } from "../GameScreen";
 import { HistoryPoller, HistoryQueue } from "../../../history";
+import { StateEventType } from "../../../game/gameManager.d";
 
 type ChatMenuProps = {
 }
 
 type ChatMenuState = {
-    gameState: GameState,
     chatField: string,
     filter: RegExp | null,
+    topMessageIndex: number,
+
+    chatMessages: ChatMessage[],
+    players: Player[]
 }
 
 export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuState> {
@@ -42,7 +46,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     messageSection: HTMLDivElement | null;
     history: HistoryQueue<string> = new HistoryQueue(40);
     history_poller: HistoryPoller<string> = new HistoryPoller();
-    listener: () => void;
+    listener: (type: StateEventType | undefined) => void;
 
     constructor(props: ChatMenuProps) {
         super(props);
@@ -50,25 +54,45 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         
         if(GAME_MANAGER.state.stateType === "game")
             this.state = {
-                gameState: GAME_MANAGER.state,
                 chatField: "",
                 filter: null,
+                topMessageIndex: 0,
+
+                chatMessages: GAME_MANAGER.state.chatMessages,
+                players: GAME_MANAGER.state.players
             };
 
-        this.listener = () => {
-            let atTop = this.messageSection !== null && this.messageSection.scrollTop >= this.messageSection.scrollHeight - this.messageSection.clientHeight - 100;            
+        this.listener = (type) => {
             
+            let scrollTop = this.messageSection?.scrollTop;
+            let scrollHeight = this.messageSection?.scrollHeight;
+            let clientHeight = this.messageSection?.clientHeight;
+            let atBottom = false;
+
+            if(clientHeight !== undefined && scrollTop !== undefined && scrollHeight !== undefined)
+                atBottom = scrollHeight - 40 <= clientHeight + scrollTop;
             
-            if(GAME_MANAGER.state.stateType === "game")
+            //scrollTop     //top of screen
+            //scrollHeight  //max height of scrollbar, height of div off screen
+            //clientHeight  //height of on screen
+            //clientHeight + scrollTop = scrollheight if at bottom,
+
+
+            if(GAME_MANAGER.state.stateType === "game" && type === "addChatMessages")
                 this.setState({
-                    gameState: GAME_MANAGER.state
+                    chatMessages: GAME_MANAGER.state.chatMessages
                 }, () => {
-                    if(this.messageSection !== null && atTop){
+                    if(this.messageSection !== null && atBottom){
                         this.messageSection.scrollTop = this.messageSection.scrollHeight;
                     }
                 });
+            if(GAME_MANAGER.state.stateType === "game" && type === "gamePlayers")
+                this.setState({
+                    players: GAME_MANAGER.state.players
+                });
         };
         this.messageSection = null;
+        ChatMenu.instance = this;
     }
     componentDidMount() {
         GAME_MANAGER.addStateListener(this.listener);
@@ -119,7 +143,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         ChatMenu.instance.history.push(text);
         ChatMenu.instance.history_poller.reset();
         if (text.startsWith("/w")) {
-            const recipient = ChatMenu.instance.state.gameState.players.find(player => 
+            const recipient = this.state.players.find(player => 
                 RegExp(`^${player.index+1} +`).test(text.substring(2))
             );
             if (recipient !== undefined) {
@@ -175,23 +199,31 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
             </div>
         </div>
     );}
-    render(){return(
-        <div className="chat-menu chat-menu-colors">
-            <ContentTab close={false}>{translate("menu.chat.title")}</ContentTab>
-            <div className="message-section" ref={(el) => { this.messageSection = el; }}>
-                <div className="message-list">
-                    {this.state.gameState.chatMessages.filter((msg) => {
-                        if (this.state.filter === null) {
-                            return true;
-                        } else {
-                            return msg.type === "phaseChange" || this.state.filter.test(translateChatMessage(msg));
-                        }
-                    }).map((msg, index) => {
-                        return <ChatElement key={index} message={msg}/>;
-                    })}
+    render(){
+        ChatMenu.instance = this;
+
+        let messages = this.state.chatMessages.filter((msg) => {
+            if (this.state.filter === null) {
+                return true;
+            } else {
+                return msg.type === "phaseChange" || this.state.filter.test(translateChatMessage(msg));
+            }
+        });
+
+        console.log("chat rerender");
+
+        return(
+            <div className="chat-menu chat-menu-colors">
+                <ContentTab close={false}>{translate("menu.chat.title")}</ContentTab>
+                <div className="message-section" ref={(el) => { this.messageSection = el; }}>
+                    <div className="message-list">
+                        {messages.map((msg, index) => {
+                            return <ChatElement key={index} message={msg}/>;
+                        })}
+                    </div>
                 </div>
+                {this.renderTextInput()}
             </div>
-            {this.renderTextInput()}
-        </div>
-    )}
+        )
+    }
 }

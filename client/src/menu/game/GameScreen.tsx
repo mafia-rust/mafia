@@ -5,7 +5,6 @@ import ChatMenu from "./gameScreenContent/ChatMenu";
 import PlayerListMenu from "./gameScreenContent/PlayerListMenu";
 import WillMenu from "./gameScreenContent/WillMenu";
 import GAME_MANAGER, { modulus } from "../..";
-import GameState from "../../game/gameState.d";
 import WikiMenu from "./gameScreenContent/WikiMenu";
 import "../../index.css";
 import "./gameScreen.css";
@@ -30,8 +29,9 @@ type GameScreenProps = {
     maxContent?: number | undefined
 }
 type GameScreenState = {
-    gameState: GameState,
     maxContent: number,
+
+    role: Role,
 
     chatMenuNotification: boolean,
 
@@ -70,7 +70,8 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         if(GAME_MANAGER.state.stateType === "game")
             this.state = {
                 maxContent: props.maxContent?props.maxContent:Infinity,
-                gameState: GAME_MANAGER.state,
+
+                role: GAME_MANAGER.state.roleState?.role as Role,
 
                 chatMenuNotification: false,
 
@@ -85,9 +86,11 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
 
         this.listener = (type)=>{
             if(GAME_MANAGER.state.stateType === "game"){
-                this.setState({
-                    gameState: GAME_MANAGER.state,
-                });
+                if(type === "yourRoleState"){
+                    this.setState({
+                        role: GAME_MANAGER.state.roleState?.role as Role,
+                    });
+                }
                 if(type === "addChatMessages" && !GameScreen.instance.menusOpen().includes(ContentMenus.ChatMenu)){
                     this.setState({
                         chatMenuNotification: true,
@@ -98,8 +101,8 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         this.swipeEventListener = (right)=>{
 
             let allowedToOpenRoleSpecific = 
-                ROLES[this.state.gameState.roleState?.role as Role] !== undefined && 
-                ROLES[this.state.gameState.roleState?.role as Role].largeRoleSpecificMenu
+                ROLES[this.state.role as Role] !== undefined && 
+                ROLES[this.state.role as Role].largeRoleSpecificMenu
 
             //close this menu and open the next one
             let menusOpen = this.menusOpen();
