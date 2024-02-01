@@ -28,11 +28,6 @@
     border-right-color: black;
     border-width: .13rem;
     color: white;
-
-    /* Start off the page and slide in */
-    transform: translateX(100%);
-    animation: slide-in 0.5s forwards;
-    -webkit-animation: slide-in 0.5s forwards;
 }
 
 .error-card > header {
@@ -43,13 +38,9 @@
     font-size: 125%;
 }
 
-.error-card > button {
-    position: fixed;
-    padding: 0;
-    font-size: 75%;
+.error-card > header > button.close {
+    font-size: 0.75rem;
     font-weight: bold;
-    top: 0.5rem;
-    right: 0.5rem;
     width: 1.5rem;
     height: 1.5rem;
 }
@@ -57,6 +48,15 @@
 .error-card > div {
     margin-top: 3%;
     text-align: left;
+}
+
+@media (prefers-reduced-motion = no-preference) {
+    .error-card {
+        /* Start off the page and slide in */
+        transform: translateX(100%);
+        animation: slide-in 0.5s forwards;
+        -webkit-animation: slide-in 0.5s forwards;
+    }
 }
     
 @keyframes slide-in {

@@ -21,6 +21,12 @@
     animation: sine 0.75s infinite linear;
 }
 
+@media (prefers-reduced-motion) {
+    .loading-dots {
+        display: none;
+    }
+}
+
 @keyframes sine {
     0%   {mask-position: 0% 100% ,50% 50%  ,100% 0%   }
     12.5%{mask-position: 0% 85.4%,50% 14.6%,100% 14.6%}

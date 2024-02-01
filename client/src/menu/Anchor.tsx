@@ -227,9 +227,13 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     }
     public static pushRejoin(roomCode: string, playerId: number) {
         Anchor.instance.setState({rejoinCard:
-            <div className="error-card slide-in">
-                <header><button onClick={() => {Anchor.instance.handleRejoin(roomCode, playerId)}}>{translate("menu.play.button.rejoin")}</button></header>
-                <button onClick={() => {Anchor.instance.handleCancelRejoin()}}>✕</button>
+            <div className="error-card">
+                <header>
+                    <button onClick={() => {Anchor.instance.handleRejoin(roomCode, playerId)}}>
+                        {translate("menu.play.button.rejoin")}
+                    </button>
+                    <button className="close" onClick={() => {Anchor.instance.handleCancelRejoin()}}>✕</button>
+                </header>
                 <div>{translate("menu.play.field.roomCode")}: {roomCode}</div><div> {translate("menu.play.field.playerId")}: {playerId}</div>
             </div>
         });
@@ -246,9 +250,11 @@ type Error = {
 }
 
 function ErrorCard(props: { error: Error, onClose: () => void }) {
-    return <div className="error-card slide-in" onClick={() => props.onClose()}>
-        <header>{props.error.title}</header>
-        <button>✕</button>
+    return <div className="error-card" onClick={() => props.onClose()}>
+        <header>
+            {props.error.title}
+            <button className="close">✕</button>
+        </header>
         <div>{props.error.body}</div>
     </div>
 }

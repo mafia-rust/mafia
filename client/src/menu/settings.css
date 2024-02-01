@@ -14,12 +14,17 @@
     padding: .8rem;
     background-color: var(--background-color);
     border-color: var(--primary-border-color);
-
-    /* Start off the page and slide in */
-    transform: translateX(100%);
-    animation: slide-in 0.5s forwards;
-    -webkit-animation: slide-in 0.5s forwards;
 }
+
+@media (prefers-reduced-motion = no-preference) {
+    .settings {
+        /* Start off the page and slide in */
+        transform: translateX(100%);
+        animation: slide-in 0.5s forwards;
+        -webkit-animation: slide-in 0.5s forwards;
+    }
+}
+
 .settings .settings-volume {
     border: 0;
     padding: 0;
