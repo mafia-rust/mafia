@@ -18,7 +18,7 @@ export type Doomsayer = {
 export const DOOMSAYER_GUESSES = [
     "mafia", "neutral",
     "jailor",  "mayor",  "transporter", 
-    "doctor",  "bodyguard",  "crusader", "reveler",
+    "doctor",  "bodyguard",  "crusader", "reveler", "trapper",
     "vigilante",  "veteran",  "deputy",
     "escort",  "medium",  "retributionist"
 ];

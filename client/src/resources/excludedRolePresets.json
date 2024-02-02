@@ -7,7 +7,7 @@
     "beginner": [
         "jailor","mayor",
         "spy","tracker","seer","psychic",
-        "bodyguard","crusader","reveler",
+        "bodyguard","crusader","reveler","trapper",
         "deputy",
         "transporter","retributionist",
         "mafioso",
@@ -20,7 +20,7 @@
     "intermediate":[
         "jailor",
         "spy","psychic",
-        "bodyguard","crusader",
+        "bodyguard","crusader","trapper",
         "deputy",
         "retributionist",
         "mafioso",

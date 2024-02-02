@@ -51,6 +51,7 @@ macros::roles! {
     Bodyguard : bodyguard,
     Crusader : crusader,
     Reveler : reveler,
+    Trapper : trapper,
 
     Vigilante : vigilante,
     Veteran : veteran,

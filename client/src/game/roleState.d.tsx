@@ -37,6 +37,8 @@ export type RoleState = {
 } | {
     role: "reveler"
 } | {
+    role: "trapper"
+} | {
     role: "vigilante",
     bulletsRemaining: number,
     willSuicide: boolean,

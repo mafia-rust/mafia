@@ -60,6 +60,8 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
             if(playerFilter==="living" && !GAME_MANAGER.state.players.some((player)=>{return player.alive})){
                 playerFilter = "all";
             }
+
+            
             this.setState({
                 gameState: GAME_MANAGER.state,
                 playerFilter: playerFilter
@@ -151,8 +153,9 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 <div className="day-target">
                     {((player)=>{if(player.buttons.dayTarget){
                         const highlighted = 
-                            this.state.gameState.roleState?.role === "jailor" && 
-                                this.state.gameState.roleState.jailedTargetRef === player.index;
+                            (this.state.gameState.roleState?.role === "jailor" && this.state.gameState.roleState.jailedTargetRef === player.index)
+                            || 
+                            (this.state.gameState.roleState?.role === "medium" && this.state.gameState.roleState.seancedTarget === player.index)
                     return(
                         <button className={highlighted ? "highlighted" : undefined} onClick={()=>{
                             GAME_MANAGER.sendDayTargetPacket(player.index)}}

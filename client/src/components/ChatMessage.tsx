@@ -232,6 +232,10 @@ export function translateChatMessage(message: ChatMessage): string {
             return translate("chatMessage.psychicEvil", playerListToString(message.players));
         case "psychicGood":
             return translate("chatMessage.psychicGood", playerListToString(message.players));
+        case "trapperVisitorsRole":
+            return translate("chatMessage.trapperVisitorsRole", translate("role."+message.role+".name"));
+        case "trapState":
+            return translate("chatMessage.trapState."+message.state);
         case "playerRoleAndWill":
             return translate("chatMessage.playersRoleAndWill", 
                 translate("role."+message.role+".name"), 
@@ -268,7 +272,6 @@ export function translateChatMessage(message: ChatMessage): string {
                     playerListToString(message.players)
                 );
             }
-            
         case "playerWithNecronomicon":
             return translate("chatMessage.playerWithNecronomicon", GAME_MANAGER.state.players[message.playerIndex].toString());
         case "deputyShotYou":
@@ -283,6 +286,7 @@ export function translateChatMessage(message: ChatMessage): string {
         case "transported":
         case "veteranAttackedVisitor":
         case "veteranAttackedYou":
+        case "trapperYouAttackedVisitor":
         case "vigilanteSuicide":
         case "targetIsPossessionImmune":
         case "youSurvivedAttack":
@@ -293,6 +297,7 @@ export function translateChatMessage(message: ChatMessage): string {
         case "targetsMessage":
         case "psychicFailed":
             return translate("chatMessage."+message.type);
+        case "playerDied":
         default:
             console.error("Unknown message type " + (message as any).type + ":");
             console.error(message);
@@ -434,6 +439,14 @@ export type ChatMessage = {
     type: "veteranAttackedYou"
 } | {
     type: "veteranAttackedVisitor"
+} | {
+    type: "trapperVisitorsRole",
+    role: Role
+} | {
+    type: "trapState",
+    state: "dismantled" | "ready" | "set"
+} | {
+    type: "trapperYouAttackedVisitor"
 } | {
     type: "vigilanteSuicide"
 } | {

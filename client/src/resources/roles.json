@@ -122,6 +122,14 @@
         "keywords": ["roleblock","jail"],
         "canBeConvertedTo": []
     },
+    "trapper": {
+        "faction": "town",
+        "defense": 0,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "keywords": ["defense"],
+        "canBeConvertedTo": []
+    },
     "vigilante": {
         "faction": "town",
         "defense": 0,

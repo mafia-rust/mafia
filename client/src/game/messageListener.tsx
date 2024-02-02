@@ -133,11 +133,6 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "gamePlayers":
             if(GAME_MANAGER.state.stateType === "game"){
-                // GAME_MANAGER.state.players = [];
-                // for(let i = 0; i < packet.players.length; i++){
-                //     GAME_MANAGER.state.players.push(createPlayer(packet.players[i], i));
-                // }
-
                 //only update the playerlist with the new one if there are any differences
                 let playersChanged = false;
                 if(GAME_MANAGER.state.players.length !== packet.players.length)

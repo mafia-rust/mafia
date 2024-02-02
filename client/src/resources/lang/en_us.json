@@ -175,8 +175,13 @@
     "role.reveler.detarget": "Detarget",
     "role.reveler.dayTarget": "Special",
 
+    "role.trapper.name": "Trapper",
+    "role.trapper.target": "Set Trap",
+    "role.trapper.detarget": "Detarget",
+    "role.trapper.dayTarget": "Special",
+
     "role.escort.name": "Escort",
-    "role.escort.target": "roleblock",
+    "role.escort.target": "Roleblock",
     "role.escort.detarget": "Detarget",
     "role.escort.dayTarget": "Special",
 
@@ -457,6 +462,11 @@
     "chatMessage.werewolfTrackingResult.nobody":"\\0 visited nobody.",
     "chatMessage.veteranAttackedYou":"You were attacked by the veteran you visited.",
     "chatMessage.veteranAttackedVisitor":"You attacked a visitor.",
+    "chatMessage.trapperYouAttackedVisitor": "You attacked a visitor to the player with your trap.",
+    "chatMessage.trapperVisitorsRole": "A visitor to the player with your trap was a \\0.",
+    "chatMessage.trapState.dismantled": "Your trap is currently dismantled.",
+    "chatMessage.trapState.ready": "Your trap is currently ready.",
+    "chatMessage.trapState.set": "Your trap is currently set.",
     "chatMessage.vigilanteSuicide":"You committed suicide over the guilt of killing an innocent person.",
     "chatMessage.targetWasAttacked":"Your target was attacked.",
     "chatMessage.youWereProtected": "You were attacked but someone protected you.",
@@ -589,12 +599,12 @@
     "wiki.entry.role.transporter.attributes":"- All visits to the first player will instead be to the second player\n- All visits to the second player will instead be to the first player\n- The players you visit will get a message saying that they were transported",
     "wiki.entry.role.transporter.extra": "- Some abilities can not be transported, but most can. For example: You can't stop a jester from haunting their target using a transport\n- A transporters visits can not be changed by another transporter",
 
-    "wiki.entry.role.sheriff.guide": "Choose players to find if they're innocent or suspicious. If they're suspicious, they're _likely_ evil. You should tell the town the information you get daily. Targeting suspicious looking players often gives the most important information.",
+    "wiki.entry.role.sheriff.guide": "Choose players to find if they're innocent or suspicious. If they're suspicious, they're _likely_ evil. You should tell the town the information you get daily. Targeting suspicious looking players often gives the most important information. Your information could potentially be wrong, some evil roles have innocent auras, and some evil roles can make other players look suspicious.",
     "wiki.entry.role.sheriff.abilities":"- Visit a player and find out if they're innocent or suspicious",
     "wiki.entry.role.sheriff.attributes":"- Townies show up as innocent\n- Non townies show up as suspicious",
     "wiki.entry.role.sheriff.extra": "- A suspicious aura will make the player you visit look suspicious\n- An innocent aura will make the player you visit look innocent",
 
-    "wiki.entry.role.lookout.guide": "Target players to find out who else visited them. You should tell the town the information you get daily. Targeting players who you think will die will allow you to see who killed them, giving important information.",
+    "wiki.entry.role.lookout.guide": "Target players to find out who else visited them. Targeting players who you think will die will likely allow you to see who killed them, giving important information. You should tell the town the information you get daily.",
     "wiki.entry.role.lookout.abilities":"- Visit a player to find all other visitors to them",
     "wiki.entry.role.lookout.attributes":"- You can not see your own visit",
     "wiki.entry.role.lookout.extra": "- You can not see astral visits\n- A framer can change your results",
@@ -604,7 +614,7 @@
     "wiki.entry.role.spy.attributes":"* Your bug will catch when your target sees a message saying they are silenced, roleblocked, protected, possessed, or transported",
     "wiki.entry.role.spy.extra": "* The mafia visits can not be fooled, they are always accurate\n* You can not see astral visits",
 
-    "wiki.entry.role.tracker.guide": "Choose a player each night to find who they chose. You should tell the town the information you get daily. You should try to choose people who you think are lying.",
+    "wiki.entry.role.tracker.guide": "Choose a player each night to find out who they chose. If your chosen player visited someone on the night they died, it's possible they were the one responsible for the death. You should tell the town the information you get daily. You should try to choose people who you think are lying about where they are going.",
     "wiki.entry.role.tracker.abilities":"- Visit a player to find who they visit",
     "wiki.entry.role.tracker.attributes":"- None",
     "wiki.entry.role.tracker.extra": "- A Framer can make players appear to have visited someone they didn't visit\n- You can't see Astral visits",
@@ -619,7 +629,7 @@
     "wiki.entry.role.psychic.attributes":"- Evil visions show three players, at least one of them is not a townie\n- Good visions show two players, at least one of them is a townie",
     "wiki.entry.role.psychic.extra": "- If there aren't enough evil or good players to have a vision, it will fail\n- You can not be in your own vision\n- You still get visions after you are dead\n- You wont try to Visit the players in your vision\n- Players with suspicious aura can come up as the evil player in your evil vision\n- Players with innocent aura can come up as the good player in your good vision",
 
-    "wiki.entry.role.doctor.guide": "Choose someone to protect each night. You should try to protect people you think are townies who will be attacked. You can only target yourself once.",
+    "wiki.entry.role.doctor.guide": "Choose someone to protect each night. You should try to protect people you think are townies who will be attacked. You can only choose yourself once.",
     "wiki.entry.role.doctor.abilities":"- Visit a player to grant them powerful defense for that night",
     "wiki.entry.role.doctor.attributes":"- If you heal yourself, you lose the ability to target yourself",
     "wiki.entry.role.doctor.extra":"- You will be told if the player you visit is attacked\n- The play you visit will be told that they were protected if they were attacked",
@@ -629,7 +639,7 @@
     "wiki.entry.role.bodyguard.attributes":"- If you protect yourself, you will lose the ability to target yourself, you will not redirect any attacks, instead you will gain powerful defense.\n- If you redirect multiple attackers, you will attack all of them with a powerful attack",
     "wiki.entry.role.bodyguard.extra":"- You will be told if the player you visit is attacked\n- The player you visit will be told that they were protected if they were attacked",
 
-    "wiki.entry.role.crusader.guide": "Choose someone to protect each night and kill a random visitor to them. You should try to protect people you think are townies who will be attacked. You could easily accidentally kill townies, so you should try to make sure no other townies visit the player you protect.",
+    "wiki.entry.role.crusader.guide": "Choose someone to protect each night and kill one random visitor to them. You should try to protect people you think are townies who will be attacked. You could easily accidentally kill townies, so you should try to make sure no other townies visit the player you protect.",
     "wiki.entry.role.crusader.abilities":"- Visit a player to grant them powerful defense for that night\n- Kill a random other visitor to the player you protect",
     "wiki.entry.role.crusader.attributes":"- If any non town members visited the player you visited, the visitor you attack will be one of them\n- If you are the only visitor to the player you protect, you won't attack anyone",
     "wiki.entry.role.crusader.extra":"- You can't target yourself\n- You will be told if the player you visit is attacked\n- The play you visit will be told that they were protected if they were attacked\n- You won't visit the players you attack\n- Your ability will fail if your target is in jail",
@@ -639,22 +649,27 @@
     "wiki.entry.role.reveler.attributes":"- The player you visited won't be told you visited them",
     "wiki.entry.role.reveler.extra":"- You can't target yourself\n- You won't roleblock astral visitors to your target\n- You won't roleblock yourself\n- Your ability will fail if your target is in jail",
 
-    "wiki.entry.role.escort.guide": "Choose a player to stop them from using their ability. You should try to choose evil players",
+    "wiki.entry.role.trapper.guide": "Choose someone to set a trap on them. A trap will protect the player with the trap and attack players who try to attack them. You have to wait a night to build the trap before you can set it. Once the trap is triggered it will be dismantled, and then you have to wait another night to set it. Choose yourself to dismantle the trap. You should try to put the trap on townies to protect them.",
+    "wiki.entry.role.trapper.abilities":"- While the trap is ready\n    - Visit a player to set a trap on them\n    - You can not target yourself\n- While the trap is set\n    - Visit yourself to dismantle the trap\n    - You can only target yourself\n    - The player who has the trap set on them has powerfull defense\n    - If a player visits the player with the trap, the trap will trigger. You will be told which roles trigger the trap and deal a powerfull attack to attackers to the trapped player\n- While the trap is dismantled\n    - Wait one night for the trap to be ready\n    - If you are roleblocked, it wont become ready\n    - You can not target anyone",
+    "wiki.entry.role.trapper.attributes":"- You can only have one trap set at a time\n- Your trap will still trigger even if you are roleblocked\n- When your trap is triggered, you will be told which roles visited the trapped player, even if those roles didn't attack the trapped player\n- The trap will still trigger even if nobody attacks the trapped player\n- The trap will only attack players who attacked the trapped player",
+    "wiki.entry.role.trapper.extra":"- Astral visitors wont trigger the trap\n- You can set a trap on jailed players",
+
+    "wiki.entry.role.escort.guide": "Choose a player to roleblock them, stopping them from using their ability. You should try to choose evil players",
     "wiki.entry.role.escort.abilities":"- Visit a player to roleblock them",
     "wiki.entry.role.escort.attributes":"- You can not be roleblocked\n- The player you visit will know if they were roleblocked, even if they are immune to being roleblocked",
     "wiki.entry.role.escort.extra":"- When you roleblock someone, their visits will be cleared",
 
-    "wiki.entry.role.medium.guide": "You have no active ability, but you can talk with the dead at night. After you die, you can choose to speak with a living player two times, this is called a haunt. You can also speak with other mediums at night. You should try to find out any information from other players and tell the town, and tell the town what dead players think about the game.",
+    "wiki.entry.role.medium.guide": "You can talk with the dead at night. After you die, you can choose to speak with a living player two times, this is called a haunt. You can also speak with other mediums at night. You should try to find information from other players and tell the town what dead players think about the game.",
     "wiki.entry.role.medium.abilities":"- At night, you can read messages from dead chat\n- You can message dead chat anonymously\n- After you are dead, choose a living player during the day to haunt and speak with them that night. You can perform two haunts. All dead mediums take part in a haunt.",
     "wiki.entry.role.medium.attributes":"- You can read dead messages from jail, but you can't send messages to the dead while in jail.\n- You can read messages from other Mediums\n- Your messages will appear to be sent by \"Medium\"",
     "wiki.entry.role.medium.extra":"- A Haunt puts the haunted living player in the haunt chat with all dead mediums\n- If multiple dead mediums haunt multiple living players at the same time then all the dead mediums and haunted players will be together in a haunt chat\n- Every medium can do two haunts, so two mediums can do four haunts",
 
-    "wiki.entry.role.retributionist.guide": "Choose a dead player to possess and force them to visit a player/players of your choosing. You can only choose to possess dead townies. You can't possess the same player twice.",
+    "wiki.entry.role.retributionist.guide": "Choose a dead player to possess and force them to visit a player of your choosing. You can only choose to possess dead townies. You can't possess the same player twice.",
     "wiki.entry.role.retributionist.abilities":"- Visit two players to make the first player visit the second player\n- Visit three players to make the first player visit the second and third player",
     "wiki.entry.role.retributionist.attributes":"- The first player you visit is told that they were possessed, or immune to possession\n- You can see all night information messages that the player you possess gets\n- You can't target a dead player who you have already possessed, if you do not end up possessing that player, you can target them the again\n- You can only target dead players who's gravestones show a town role",
     "wiki.entry.role.retributionist.extra":"- You are immune to getting roleblocked and possession\n- You can force players you possess visit any living player\n- All your visits are astral except the first",
 
-    "wiki.entry.role.vigilante.guide": "Choose a player to attack them, if you kill them and they are a townie, you will commit suicide on the following night (and probably cause town to lose). You have only three bullets and you can not shoot on night one.",
+    "wiki.entry.role.vigilante.guide": "Choose a player to attack them, if you kill a townie, you will commit suicide on the following night (and probably cause town to lose). You have only three bullets and you can not shoot on night one. If you attack someone and they survive it is likely that they were either protected by a protective role, or they are a role that has defense. Most roles that have defense are evil.",
     "wiki.entry.role.vigilante.abilities":"- Visit a player to basic attack them and use up a bullet\n- If you kill a townie you will commit suicide on the following night\n- You have three bullets",
     "wiki.entry.role.vigilante.attributes":"- You can not target players on day one\n- When you have zero bullets left you can not target people\n- If you are going to commit suicide you can not target people\n- You have a basic attack",
     "wiki.entry.role.vigilante.extra": "- If you visit a player while you have zero bullets left you will not attack them\n- If you visit a player while you are about to commit suicide then you will not attack them\n- If your attack overpowers a townies defense and they die, you will commit suicide on the following night\n- If you visit a player on day one you will not attack them",
@@ -664,12 +679,12 @@
     "wiki.entry.role.veteran.attributes":"- You have a powerful attack\n- You have three alerts\n- You will know if you attacked a visitor\n- Players who visit you while on alert will know that they were attacked by a veteran",
     "wiki.entry.role.veteran.extra":"- If you have no alerts left you can not target yourself\n- You are immune to getting roleblocked and you are immune to possession",
 
-    "wiki.entry.role.deputy.guide":"Once per game, choose a player during the day, attacking them. If you kill them, you will be revealed to the town as the Deputy. If you kill a townsperson, you will instantly commit suicide.",
+    "wiki.entry.role.deputy.guide":"Once per game, choose a player during the day, attacking them. If you kill them, you will be revealed to the town as the Deputy. If you kill a townsperson, you will instantly commit suicide. If you attack someone and they survive it is likely that they are a role that has defense. Most roles that have defense are evil.",
     "wiki.entry.role.deputy.abilities":"- Use your special ability to shoot a player during discussion or voting once per game",
     "wiki.entry.role.deputy.attributes":"- If their defense overpowers your attack, the player you attacked will be told that they were attacked by a deputy, but you won't be revealed as deputy",
     "wiki.entry.role.deputy.extra":"- You have a basic attack",
 
-    "wiki.entry.role.godfather.guide": "Choose a player to kill each night. Choose a backup to kill when you are roleblocked or jailed. You should try to kill townies who are likely to stop you from winning.",
+    "wiki.entry.role.godfather.guide": "Choose a player to kill each night. Choose a backup to kill for you when you are roleblocked or jailed. You should try to kill townies who are likely to stop you from winning.",
     "wiki.entry.role.godfather.abilities":"- Visit a player to attack them\n- If you are roleblocked or jailed, your backup will attack the first player they visit\n- Choose another living mafia member to be your backup at any time",
     "wiki.entry.role.godfather.attributes":"- You have a basic attack\n- You always have an innocent aura",
     "wiki.entry.role.godfather.extra":"- If the mafia has no Godfather or Mafioso, then a random mafia member will be converted to a godfather\n- If the Godfather dies, their backup will become the Godfather\n- You can not target other mafia members",
@@ -684,7 +699,7 @@
     "wiki.entry.role.consort.attributes":"- You can not be roleblocked\n- You can choose not to roleblock them, and only send them messages, but you will always send at least one message",
     "wiki.entry.role.consort.extra":"- You can't target other mafia members\n- When you roleblock someone, their visits will be cleared",
     
-    "wiki.entry.role.blackmailer.guide": "Choose a player to silence them. They can't speak during the next day, and they can't vote during the next day. You should choose talkative players who might speak out against a mafia member",
+    "wiki.entry.role.blackmailer.guide": "Choose a player to silence them. They can't speak during the next day, and they can't vote during the next day. You should choose talkative players who might speak out against a mafia member.",
     "wiki.entry.role.blackmailer.abilities":"- Visit a player to silence them",
     "wiki.entry.role.blackmailer.attributes":"- Silenced players can not vote during the voting phase\n- Silenced players can not talk in chat or out loud during the entire next day",
     "wiki.entry.role.blackmailer.extra":"- The silenced player will no longer be silenced at the start of the next night\n- You cannot target other mafia members",
@@ -694,12 +709,12 @@
     "wiki.entry.role.consigliere.attributes":"- None",
     "wiki.entry.role.consigliere.extra":"- You can't target other mafia members",
 
-    "wiki.entry.role.necromancer.guide": "Choose a dead player to possess and force them to visit a player/players of your choosing. You can't possess the same player twice.",
+    "wiki.entry.role.necromancer.guide": "Choose a dead player to possess and force them to visit a player of your choosing. You can't possess the same player twice.",
     "wiki.entry.role.necromancer.abilities":"- Visit two players to make the first player visit the second player\n- Visit three players to make the first player visit the second and third player",
     "wiki.entry.role.necromancer.attributes":"- The first player you visit is told that they were possessed, or immune to possession\n- You can see all night information messages that the player you possess gets\n- You can't target a dead player who you have already possessed, if you do not end up possessing that player, you can target them the again",
     "wiki.entry.role.necromancer.extra":"- You are immune to getting roleblocked and possession\n- You can force players you possess visit any living player\n- All your visits are astral except the first",
 
-    "wiki.entry.role.witch.guide": "Choose a player to possess and force them to visit a player/players of your choosing.",
+    "wiki.entry.role.witch.guide": "Choose a player to possess and force them to visit a player of your choosing.",
     "wiki.entry.role.witch.abilities":"- Visit two players to make the first player visit the second player\n- Visit three players to make the first player visit the second and third player",
     "wiki.entry.role.witch.attributes":"- The first player you visit is told that they were possessed, or immune to possession\n- You can see all night information messages that the player you possess gets",
     "wiki.entry.role.witch.extra":"- You are immune to getting roleblocked and possession\n- You can't target other mafia members for your first target, but you can target living player for your second and third targets\n- All your visits are astral except the first",
@@ -714,7 +729,7 @@
     "wiki.entry.role.forger.attributes":"- You have two uses of your ability\n- If you visit a player and attempt to forge them, it costs an ability use, even if they don't die\n- If you are roleblocked, it doesn't cost an ability use\n- If you visit a jailed player, it doesn't cost an ability use",
     "wiki.entry.role.forger.extra":"- You can't target other mafia members\n* If you choose no role, their grave will show what their original role is\n* If you left their will completly blank, it will look to be the same as their original will",
 
-    "wiki.entry.role.framer.guide": "Choose two players to frame the first one, making it seem like they killed the second one according to investigative roles. Try to choose players who already look a little suspicious so investigative roles might choose them.",
+    "wiki.entry.role.framer.guide": "Choose a player to frame them, making them appear to be evil to investigative roles. If you choose two players, investigative roles will see that the first player visited second one. Try to frame players who already look a little suspicious so investigative roles might choose them.",
     "wiki.entry.role.framer.abilities":"- Visit one player to give them a suspicious aura\n- Visit two players\n  - The first player you visit will have a suspicious aura for the night\n  - The first player will appear to visit the second player you visited",
     "wiki.entry.role.framer.attributes":"- Your first visit will have a suspicious aura. So they will look suspicious to a Detective, they can appear as the evil player to a Psychic, and they will be enemies with everyone to a Seer.",
     "wiki.entry.role.framer.extra":"- You can't choose other mafia members for your first target, but you can choose any player for your second target, including dead players and other mafia members",
@@ -734,12 +749,12 @@
     "wiki.entry.role.doomsayer.attributes":"* When you win, you will commit suicide using an unstoppable attack\n* You have to guess the exact role of townies, but you only need to guess the faction of all other roles\n* You can not try to guess town investigative roles\n* If there are not enough players left for you to guess and win, you will convert to a jester\n* You do not visit when you kill\n* Your attack is unstoppable",
     "wiki.entry.role.doomsayer.extra":"* Your three guesses must be three different players\n* You will still win, even if the players you guessed correctly don't die",
 
-    "wiki.entry.role.politician.guide":"* If the town wins, you win instead. So try to help to the town to win while staying alive.",
+    "wiki.entry.role.politician.guide":"* If the town would win, you kill all of them, and win instead. Try to help to the town to win while staying alive.",
     "wiki.entry.role.politician.abilities": "* When town would normally win, if you are still alive, you win instead\n* When you win, you kill every townie, and all politicians commit suicide",
     "wiki.entry.role.politician.attributes": "* You win with other polititians\n* Your have an unstoppable attack",
     "wiki.entry.role.politician.extra":"\n* Suicide is an unstoppable attack\n* When you first become this role, if there are no townies alive, you become a jester",
 
-    "wiki.entry.role.arsonist.guide":"Choose a player each night to douse them in gasoline. Target yourself to ignite, killing every player who is doused. You will know who is doused. Dont try to douse people you think the mafia will kill, because then you waste your night dousing someone who is going to die anyway.",
+    "wiki.entry.role.arsonist.guide":"Choose a player each night to douse them in gasoline. Target yourself to ignite and kill every player who is doused. You will know who is doused. Try not to douse players you think the mafia will kill, because then you waste your night dousing someone who is going to die anyway.",
     "wiki.entry.role.arsonist.abilities":"- Visit a player to douse them\n- Visit yourself to deal an unstoppable attack to all doused players\n- If a player visits you, you will douse them",
     "wiki.entry.role.arsonist.attributes":"- You can't be doused\n- You will know who is doused\n- If you are in jail, you will douse the jailor, and you will still douse players who visit you",
     "wiki.entry.role.arsonist.extra":"- If you are roleblocked you will still douse visitors",
@@ -749,7 +764,7 @@
     "wiki.entry.role.werewolf.attributes":"* You have a powerfull attack\n* If you are jailed then you will attack all Jailors who did not execute you\n* You will know who you have the scent of\n* You still track the scent of players after you die\n* On non full moon nights you have an innocent aura",
     "wiki.entry.role.werewolf.extra":"* You will not rampage the jailor while in jail\n* You will still attack or gain the scent of visits to you when you are jailed\n* You will still track the players you have the scent of while jailed\n* You dont attack or gain the scent of astral visitors\n* A roleblock has no effect on you besides erasing your visits, if you are roleblocked, it is as if you visited nobody",
 
-    "wiki.entry.role.death.guide": "Guess what player will die during night by targeting them, If you guess correctly you will collect a soul, you will also collect a soul passively each night. Once you have six souls, everyone will be told at the start of the day, if you survive that day, you will attack everyone and win the game at the start of night.",
+    "wiki.entry.role.death.guide": "Guess what player will die during night by targeting them, If you guess correctly you will collect a soul, you will also collect a soul passively each night. Once you collect six souls, everyone will be told that death collected six souls at the start of the day, if you survive that day, you will attack everyone and win the game at the start of night.",
     "wiki.entry.role.death.abilities":"* Visit a player on the night they die to collect a soul\n* Once you've collected six souls, everyone is notified, and at the start of the next night, you kill everyone, and win\n* Passively gain a soul each night",
     "wiki.entry.role.death.attributes":"* You gain invincible defense once you have six souls",
     "wiki.entry.role.death.extra":"* You will still passively gain souls in jail",
@@ -759,10 +774,10 @@
     "wiki.entry.role.amnesiac.attributes":"* roleblocking or jail doesn't effect you",
     "wiki.entry.role.amnesiac.extra":"* You can choose an outline like \"Neutral Killing\", and you will get a random neutral killing role, or choose an outline like \"Jailor\" and confirm that you get the jailor\n* If you choose a role that was excluded from the game you will stay as the Amnesiac",
 
-    "wiki.entry.role.vampire.guide": "Choose a player to conver them to a vampire, only one of the vampires can actually choose to convert a player. You can only convert a player if you did not the night before. You can not convert a player when it would give vampires majority, you also can not convert when there are at least four living vampires.",
+    "wiki.entry.role.vampire.guide": "Choose a player to convert them to a vampire, only one of the vampires can actually choose to convert a player. You can only convert a player if you did not the night before. You can not convert a player when it would give vampires majority, you also can not convert when there are at least four living vampires.",
     "wiki.entry.role.vampire.abilities":"* Visit a player to convert them to a vampire",
     "wiki.entry.role.vampire.attributes":"* Only the newest vampire can choose to bite\n* Vampires can not bite on the night immediately following a night that they successfully converted another vampire",
-    "wiki.entry.role.vampire.extra":"* You can not convert a player with any defense\n* If the number of vampires is less than four and less than half the number of living players, then they can continue targeting people.",
+    "wiki.entry.role.vampire.extra":"* You can not convert a player with any defense\n* If the number of living vampires is less than four and less than half the number of living players, then the vampires can continue targeting people.",
 
     "random.gay":"GAY",
     "random.trans":"TRANS"

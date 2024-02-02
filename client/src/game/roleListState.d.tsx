@@ -78,7 +78,7 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
         case "townKilling":
             return ["vigilante", "veteran", "deputy"];
         case "townProtective":
-            return ["bodyguard", "crusader", "doctor", "reveler"];
+            return ["bodyguard", "crusader", "doctor", "reveler", "trapper"];
         case "townInvestigative":
             return ["psychic", "lookout", "sheriff", "spy", "tracker", "seer"];
         case "townCommon":
