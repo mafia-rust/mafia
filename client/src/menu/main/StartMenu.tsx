@@ -7,6 +7,7 @@ import translate from "../../game/lang";
 import Anchor from "../Anchor";
 // import * as LoadingScreen from "../LoadingScreen";
 import LoadingScreen from "../LoadingScreen";
+import StandaloneWiki from "./StandaloneWiki";
 
 type StartMenuProps = {
 }
@@ -43,6 +44,7 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
                     <li><a href="https://www.github.com/ItsSammyM/mafia-rust">Github</a></li>
                     <li><a href="https://mafia-game-old.vercel.app/">Old Mafia</a></li>
                     <li><a href="https://netgames.io/games/">Net Games</a></li>
+                    <li onClick={()=>{Anchor.setContent(<StandaloneWiki/>)}}>{translate("menu.wiki.title")}</li>
                 </ul>
             </nav>
         </footer>

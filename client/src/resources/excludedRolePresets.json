@@ -32,7 +32,7 @@
     ],
     "classic": [
         "tracker","seer","psychic",
-        "crusader","reveler",
+        "crusader","reveler","trapper",
         "deputy",
         "mafioso","necromancer",
         "politician",
@@ -40,7 +40,7 @@
     ],
     "smallGame": [
         "spy","psychic",
-        "bodyguard",
+        "bodyguard","reveler","trapper",
         "retributionist",
         "mafioso",
         "necromancer",

@@ -29,6 +29,11 @@ impl RoleStateImpl for Mayor {
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {
     }
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, _target_ref: PlayerReference) {
+
+        if !actor_ref.alive(game) || !game.current_phase().is_day() {
+            return;
+        }
+
         game.add_message_to_chat_group(ChatGroup::All, ChatMessage::MayorRevealed { player_index: actor_ref.index() });
 
         actor_ref.set_role_state(game, RoleState::Mayor(Mayor{
@@ -63,8 +68,8 @@ impl RoleStateImpl for Mayor {
     fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
         crate::game::role::common_role::get_won_game(game, actor_ref)
     }
-    fn on_phase_start(self, game: &mut Game, _actor_ref: PlayerReference, phase: PhaseType) {
-        if phase == PhaseType::Morning && self.public{
+    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
+        if phase == PhaseType::Morning && self.public && actor_ref.alive(game){
             game.add_message_to_chat_group(ChatGroup::All, ChatMessage::MayorsJournal { journal: self.journal});
         }
     }

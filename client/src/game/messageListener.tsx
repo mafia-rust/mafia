@@ -243,7 +243,7 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "yourNotes":
             if(GAME_MANAGER.state.stateType === "game")
-            GAME_MANAGER.state.notes = packet.notes;
+                GAME_MANAGER.state.notes = packet.notes;
         break;
         case "yourDeathNote":
             if(GAME_MANAGER.state.stateType === "game")

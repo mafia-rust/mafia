@@ -2,9 +2,8 @@ import React from 'react';
 import "./settings.css";
 import translate from '../game/lang';
 import GAME_MANAGER from '..';
-import WikiSearch from '../components/WikiSearch';
 import Anchor from './Anchor';
-import { getRolesComplement, getRolesFromRoleListRemoveExclusionsAddConversions } from '../game/roleListState.d';
+import StartMenu from './main/StartMenu';
 
 type SettingsProps = {
     volume: number, // 0-1
@@ -33,6 +32,11 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
         GAME_MANAGER.saveSettings(volume);
         console.log("Loaded settings: " + JSON.stringify(volume));
     }
+    quitToMainMenu() {
+        GAME_MANAGER.leaveGame();
+        Anchor.closeSettings();
+        Anchor.setContent(<StartMenu/>);
+    }
     render(): React.ReactNode {
         return (
             <div className="settings slide-in">
@@ -51,6 +55,7 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
                         </>
                         ) : null
                     }
+                    <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
                     <h2>{translate("menu.settings.volume")}
                     <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
                         value={this.props.volume} 
@@ -59,13 +64,6 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
                             this.props.onVolumeChange(volume);
                         }
                     }/></h2>
-                    <section className="settings-wiki-menu wiki-menu-colors">
-                        <h2>{translate("menu.wiki.title")}</h2>
-                        <WikiSearch  excludedRoles={
-                            GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ?
-                            getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(GAME_MANAGER.state.roleList, GAME_MANAGER.state.excludedRoles)) : []
-                        }/>
-                    </section>
                 </div>
             </div>
         );

@@ -160,7 +160,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
         };
         
         return(<div className="header-menu">
-        {this.renderPhase()}
+        <h3>{this.renderPhase()}</h3>
         {(()=>{
             return <StyledText>
                 {(this.state.gameState.players[this.state.gameState.myIndex!] ?? "").toString() +

@@ -7,11 +7,11 @@ import { StateListener } from "../../../game/gameManager.d";
 
 
 type FieldType = "will" | "notes" | "deathNote";
-type Fields = { [key in FieldType]: string };
 
 type WillMenuState = {
-    syncedFields : Fields
-    localFields: Fields
+    will: string,
+    notes: string,
+    deathNote: string,
 }
 
 export default class WillMenu extends React.Component<{}, WillMenuState> {
@@ -19,68 +19,48 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
     constructor(props: {}) {
         super(props);
 
+        
+
         if(GAME_MANAGER.state.stateType === "game"){
-            let gameStateFields = {
-                will: GAME_MANAGER.state.will,
-                notes: GAME_MANAGER.state.notes,
-                deathNote: GAME_MANAGER.state.deathNote,
-            };
-            let localFields = {
-                will: GAME_MANAGER.state.will === "" ? "ROLE\nN1: \nN2: " : GAME_MANAGER.state.will,
-                notes: GAME_MANAGER.state.notes,
-                deathNote: GAME_MANAGER.state.deathNote,
-            };
-            
-    
+            let will = GAME_MANAGER.state.will;
+            let notes = GAME_MANAGER.state.notes;
+
+            if(will === ""){
+                console.log("Will is empty");
+                will = "ROLE\nNight 1: \nNight 2:";
+            }
+            if(notes === ""){
+                console.log("Notes is empty");
+                notes = GAME_MANAGER.state.players.map((player) => {
+                    return player.toString();
+                }).join(" - \n") + " - \n";
+            }
+
             this.state = {
-                syncedFields: gameStateFields,
-                localFields: localFields
+                will,
+                notes,
+                deathNote: GAME_MANAGER.state.deathNote,
             };
         }
         
         this.listener = (type) => {
             if(GAME_MANAGER.state.stateType === "game"){
-                if (type === "yourWill") {
-                    this.setState({
-                        syncedFields: {
+                switch(type){
+                    case "yourWill":
+                        this.setState({
                             will: GAME_MANAGER.state.will,
-                            notes: this.state.syncedFields.notes,
-                            deathNote: this.state.syncedFields.deathNote,
-                        },
-                        localFields: {
-                            will: GAME_MANAGER.state.will,
-                            notes: this.state.localFields.notes,
-                            deathNote: this.state.localFields.deathNote,
-                        }
-                    });
-                }
-                else if(type === "yourNotes"){
-                    this.setState({
-                        syncedFields: {
-                            will: this.state.syncedFields.will,
+                        });
+                        break;
+                    case "yourNotes":
+                        this.setState({
                             notes: GAME_MANAGER.state.notes,
-                            deathNote: this.state.syncedFields.deathNote,
-                        },
-                        localFields: {
-                            will: this.state.localFields.will,
-                            notes: GAME_MANAGER.state.notes,
-                            deathNote: this.state.localFields.deathNote,
-                        }
-                    });
-                }
-                else if(type === "yourDeathNote"){
-                    this.setState({
-                        syncedFields: {
-                            will: this.state.syncedFields.will,
-                            notes: this.state.syncedFields.notes,
+                        });
+                        break;
+                    case "yourDeathNote":
+                        this.setState({
                             deathNote: GAME_MANAGER.state.deathNote,
-                        },
-                        localFields: {
-                            will: this.state.localFields.will,
-                            notes: this.state.localFields.notes,
-                            deathNote: GAME_MANAGER.state.deathNote,
-                        }
-                    });
+                        });
+                        break;
                 }
             }
             
@@ -92,39 +72,50 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
     componentWillUnmount() {
         GAME_MANAGER.removeStateListener(this.listener);
     }
-    send(type: FieldType) {
+    send(type: FieldType){
         this.save(type);
-        if (GAME_MANAGER.state.stateType === "game")
-            GAME_MANAGER.sendSendMessagePacket('\n' + this.state.localFields[type]);
+        if (GAME_MANAGER.state.stateType === "game"){
+            switch(type){
+                case "will":
+                    GAME_MANAGER.sendSendMessagePacket('\n' + this.state.will);
+                    break;
+                case "notes":
+                    GAME_MANAGER.sendSendMessagePacket('\n' + this.state.notes);
+                    break;
+                case "deathNote":
+                    GAME_MANAGER.sendSendMessagePacket('\n' + this.state.deathNote);
+                    break;
+            }   
+        }
     }
     save(type: FieldType) {
-        if (type === "will")
-            GAME_MANAGER.sendSaveWillPacket(this.state.localFields[type])
-        else if (type === "notes")
-            GAME_MANAGER.sendSaveNotesPacket(this.state.localFields[type])
-        else if (type === "deathNote")
-            GAME_MANAGER.sendSaveDeathNotePacket(this.state.localFields[type])
+        switch(type){
+            case "will":
+                GAME_MANAGER.sendSaveWillPacket(this.state.will);
+                break;
+            case "notes":
+                GAME_MANAGER.sendSaveNotesPacket(this.state.notes);
+                break;
+            case "deathNote":
+                GAME_MANAGER.sendSaveDeathNotePacket(this.state.deathNote);
+                break;
+        }
     }
     renderInput(type: FieldType) {
-        return (<details open={type === "will"}>
-            <summary onClick={() => {
-                if(type === "notes" && this.state.localFields.notes === "" && GAME_MANAGER.state.stateType === "game"){
-                    let notes = GAME_MANAGER.state.players.map((player) => {
-                        return player.toString();
-                    }).join(" - \n") + " - \n";
-                    this.setState({
-                        localFields: {
-                            will: this.state.localFields.will,
-                            notes: notes,
-                            deathNote: this.state.localFields.deathNote,
-                        }
-                    });
-                }
-            }}>
+        return (<details open={type !== "deathNote"}>
+            <summary>
                 {translate("menu.will." + type)}
                 <div>
                     <button
-                        className={"material-icons-round " + (this.state.syncedFields[type] !== this.state.localFields[type] ? "highlighted" : "")}
+                        className={"material-icons-round " + (
+                            GAME_MANAGER.state.stateType === "game" &&
+                            (
+                                (type === "will" && GAME_MANAGER.state.will !== this.state.will) ||
+                                (type === "notes" && GAME_MANAGER.state.notes !== this.state.notes) ||
+                                (type === "deathNote" && GAME_MANAGER.state.deathNote !== this.state.deathNote)
+                            )
+                            ? "highlighted" : ""
+                        )}
                         onClick={() => this.save(type)}
                         aria-label={translate("menu.will.save")}
                     >
@@ -142,11 +133,34 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
             
             <div>
                 <textarea
-                    value={this.state.localFields[type]}
+                    value={(()=>{
+                        switch(type){
+                            case "will":
+                                return this.state.will;
+                            case "notes":
+                                return this.state.notes;
+                            case "deathNote":
+                                return this.state.deathNote;
+                        }
+                    })()}
                     onChange={(e) => {
-                        let fields = {...this.state.localFields};
-                        fields[type] = e.target.value;
-                        this.setState({ localFields: fields });
+                        switch(type){
+                            case "will":
+                                this.setState({
+                                    will: e.target.value
+                                });
+                                break;
+                            case "notes":
+                                this.setState({
+                                    notes: e.target.value
+                                });
+                                break;
+                            case "deathNote":
+                                this.setState({
+                                    deathNote: e.target.value
+                                });
+                                break;
+                        }
                     }}
                     onKeyDown={(e) => {
                         if (e.ctrlKey) {

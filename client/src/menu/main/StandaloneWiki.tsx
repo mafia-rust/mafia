@@ -11,9 +11,7 @@ export default function StandaloneWiki(props: { page?: WikiPage }): ReactElement
                 <h2>{translate("menu.wiki.title")}</h2>
             </header>
             
-            <WikiSearch page={props.page} pageChangeCallback={(page) => {
-                window.history.replaceState(null, document.title, `/wiki/${page}`)
-            }}/>
+            <WikiSearch page={props.page}/>
         </div>
     </div>
 }
