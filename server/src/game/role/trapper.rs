@@ -1,4 +1,3 @@
-
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessage};
@@ -106,7 +105,10 @@ impl RoleStateImpl for Trapper {
             Priority::Kill => {
                 if let Trap::Set { target } = self.trap {
                     for attacker in PlayerReference::all_players(game) {
-                        if attacker.night_visits(game).iter().any(|visit| visit.target == target && !visit.astral && visit.attack) {
+                        if 
+                            attacker.night_visits(game).iter().any(|visit| visit.target == target && !visit.astral && visit.attack) &&
+                            attacker != actor_ref
+                        {
                             attacker.try_night_kill(actor_ref, game, crate::game::grave::GraveKiller::Role(Role::Trapper), 2, false);
                             actor_ref.push_night_message(game, ChatMessage::TrapperYouAttackedVisitor);
                         }
@@ -126,7 +128,10 @@ impl RoleStateImpl for Trapper {
 
 
                     for visitor in PlayerReference::all_players(game) {
-                        if visitor.night_visits(game).iter().any(|visit|visit.target == target && !visit.astral) {
+                        if 
+                            visitor.night_visits(game).iter().any(|visit|visit.target == target && !visit.astral) &&
+                            visitor != actor_ref
+                        {
                             should_dismantle = true;
                             actor_ref.push_night_message(game, ChatMessage::TrapperVisitorsRole { role: visitor.role(game) });
                         }
@@ -172,7 +177,7 @@ impl RoleStateImpl for Trapper {
         match phase {
             PhaseType::Night => {
                 if actor_ref.alive(game) {
-                    actor_ref.push_night_message(game, ChatMessage::TrapState { state: self.trap.state() });
+                    actor_ref.add_chat_message(game, ChatMessage::TrapState { state: self.trap.state() });
                 }
             }
             _ => {}

@@ -235,7 +235,7 @@ export function translateChatMessage(message: ChatMessage): string {
         case "trapperVisitorsRole":
             return translate("chatMessage.trapperVisitorsRole", translate("role."+message.role+".name"));
         case "trapState":
-            return translate("chatMessage.trapState."+message.state);
+            return translate("chatMessage.trapState."+message.state.type);
         case "playerRoleAndWill":
             return translate("chatMessage.playersRoleAndWill", 
                 translate("role."+message.role+".name"), 
@@ -444,7 +444,9 @@ export type ChatMessage = {
     role: Role
 } | {
     type: "trapState",
-    state: "dismantled" | "ready" | "set"
+    state: {
+        type: "dismantled" | "ready" | "set"
+    }
 } | {
     type: "trapperYouAttackedVisitor"
 } | {

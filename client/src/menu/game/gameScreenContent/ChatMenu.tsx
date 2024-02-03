@@ -97,6 +97,9 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     componentDidMount() {
         GAME_MANAGER.addStateListener(this.listener);
         ChatMenu.instance = this;
+        if(this.messageSection !== null){
+            this.messageSection.scrollTop = this.messageSection.scrollHeight;
+        }
     }
     componentWillUnmount() {
         GAME_MANAGER.removeStateListener(this.listener);
@@ -209,8 +212,6 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
                 return msg.type === "phaseChange" || this.state.filter.test(translateChatMessage(msg));
             }
         });
-
-        console.log("chat rerender");
 
         return(
             <div className="chat-menu chat-menu-colors">
