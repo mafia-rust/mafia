@@ -8,6 +8,7 @@ import { Tag } from "./gameState.d";
 import { Role } from "./roleState.d";
 import translate from "./lang";
 import { getAudioSrcFromString } from "../components/audio";
+import { computeKeywordDataWithPlayers } from "../components/StyledText";
 
 export default function messageListener(packet: ToClientPacket){
 
@@ -152,6 +153,8 @@ export default function messageListener(packet: ToClientPacket){
                     }
                 }
 
+                // Recompute keyword data, since player names are keywords.
+                computeKeywordDataWithPlayers();
             }
         break;
         case "roleList":

@@ -85,25 +85,17 @@ export default function StyledText(props: { children: string[] | string, classNa
     </span>
 }
 
-export function getKeywordData(): KeywordDataMap {
-    let keywordData: KeywordDataMap = {};
+const KEYWORD_DATA_MAP: KeywordDataMap = {};
 
+function clearKeywordData() {
+    for (const key in KEYWORD_DATA_MAP) {
+        delete KEYWORD_DATA_MAP[key];
+    }
+}
+
+function computeBasicKeywordData() {
+    console.log("recomputed keyword data");
     const DATA = require("../resources/keywords.json");
-
-    if(GAME_MANAGER.state.stateType === "game")
-        for(const player of GAME_MANAGER.state.players) {
-            keywordData["sender-"+player.toString()] = [
-                { style: "keyword-player-number", replacement: (player.index + 1).toString() },
-                { replacement: " " },
-                { style: "keyword-player-sender", replacement: player.name }
-            ];
-            keywordData[player.toString()] = [
-                { style: "keyword-player-number", replacement: (player.index + 1).toString() },
-                { replacement: " " },
-                { style: "keyword-player", replacement: player.name }
-            ];
-            
-        }
 
     for(const role of Object.keys(ROLES)){
         const data = DATA[getFactionFromRole(role as Role)];
@@ -111,7 +103,7 @@ export function getKeywordData(): KeywordDataMap {
             console.error(`faction.${getFactionFromRole(role as Role)} has malformed keyword data!`);
             continue;
         }
-        keywordData[translate(`role.${role}.name`)] = [{
+        KEYWORD_DATA_MAP[translate(`role.${role}.name`)] = [{
             ...data,
             link: `role/${role}` as WikiPage,
             replacement: translate(`role.${role}.name`)   // Capitalize roles
@@ -119,20 +111,38 @@ export function getKeywordData(): KeywordDataMap {
     }
 
     for (const [keyword, data] of Object.entries(DATA)) {
-        keywordData[translate(keyword)] = (Array.isArray(data) ? data : [data]).map(data => {
+        KEYWORD_DATA_MAP[translate(keyword)] = (Array.isArray(data) ? data : [data]).map(data => {
             return {
                 ...data,
                 replacement: data.replacement === undefined ? undefined : translate(data.replacement)
             }
         });
     }
-
-    return keywordData;
 }
 
-function styleKeywords(tokens: Token[]): Token[] {
-    const KEYWORD_DATA_MAP: KeywordDataMap = getKeywordData();
+export function computeKeywordDataWithPlayers() {
+    clearKeywordData();
+    computeBasicKeywordData();
 
+    if(GAME_MANAGER.state.stateType === "game")
+        for(const player of GAME_MANAGER.state.players) {
+            KEYWORD_DATA_MAP["sender-"+player.toString()] = [
+                { style: "keyword-player-number", replacement: (player.index + 1).toString() },
+                { replacement: " " },
+                { style: "keyword-player-sender", replacement: player.name }
+            ];
+            KEYWORD_DATA_MAP[player.toString()] = [
+                { style: "keyword-player-number", replacement: (player.index + 1).toString() },
+                { replacement: " " },
+                { style: "keyword-player", replacement: player.name }
+            ];
+            
+        }
+}
+
+computeBasicKeywordData();
+
+function styleKeywords(tokens: Token[]): Token[] {
     for(const [keyword, data] of Object.entries(KEYWORD_DATA_MAP)) {
         for(let index = 0; index < tokens.length; index++) {
             const token = tokens[index];
