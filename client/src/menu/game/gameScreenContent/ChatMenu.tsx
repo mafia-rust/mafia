@@ -44,8 +44,6 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
         ChatMenu.instance = null;
     }
     render(){
-        console.log("chat rerender");
-
         return <div className="chat-menu chat-menu-colors">
             <ContentTab close={false}>{translate("menu.chat.title")}</ContentTab>
             <ChatMessageSection filter={this.state.filter} />
@@ -109,6 +107,12 @@ function ChatMessageSection(props: { filter: RegExp | null }): ReactElement {
         GAME_MANAGER.addStateListener(stateListener);
         return () => GAME_MANAGER.removeStateListener(stateListener);
     }, [props.filter, setMessages]);
+
+    //scroll chat to bottom when filter is shut off or loaded
+    useEffect(() => {
+        if (self.current === null) return;
+        self.current.scrollTop = self.current.scrollHeight;
+    }, [props.filter])
 
     return <div className="message-section" ref={self}>
         <div className="message-list">
