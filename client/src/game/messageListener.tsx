@@ -241,12 +241,24 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "yourWill":
-            if(GAME_MANAGER.state.stateType === "game")
+            if(GAME_MANAGER.state.stateType === "game"){
                 GAME_MANAGER.state.will = packet.will;
+
+                if(GAME_MANAGER.state.will === ""){
+                    GAME_MANAGER.sendSaveWillPacket("ROLE\nNight 1: \nNight 2:");
+                }
+            }
         break;
         case "yourNotes":
-            if(GAME_MANAGER.state.stateType === "game")
+            if(GAME_MANAGER.state.stateType === "game"){
                 GAME_MANAGER.state.notes = packet.notes;
+                
+                if(GAME_MANAGER.state.notes === ""){
+                    GAME_MANAGER.sendSaveNotesPacket(GAME_MANAGER.state.players.map((player) => {
+                        return player.toString();
+                    }).join(" - \n") + " - \n");
+                }
+            }
         break;
         case "yourDeathNote":
             if(GAME_MANAGER.state.stateType === "game")

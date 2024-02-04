@@ -19,29 +19,12 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
     constructor(props: {}) {
         super(props);
 
-        
-
-        if(GAME_MANAGER.state.stateType === "game"){
-            let will = GAME_MANAGER.state.will;
-            let notes = GAME_MANAGER.state.notes;
-
-            if(will === ""){
-                console.log("Will is empty");
-                will = "ROLE\nNight 1: \nNight 2:";
-            }
-            if(notes === ""){
-                console.log("Notes is empty");
-                notes = GAME_MANAGER.state.players.map((player) => {
-                    return player.toString();
-                }).join(" - \n") + " - \n";
-            }
-
+        if(GAME_MANAGER.state.stateType === "game")
             this.state = {
-                will,
-                notes,
+                will: GAME_MANAGER.state.will,
+                notes: GAME_MANAGER.state.notes,
                 deathNote: GAME_MANAGER.state.deathNote,
             };
-        }
         
         this.listener = (type) => {
             if(GAME_MANAGER.state.stateType === "game"){
