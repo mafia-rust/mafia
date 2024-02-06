@@ -1,9 +1,9 @@
 {
-    "keyword.priority": { "style": "keyword-info","link": "article/priority"},
-    "verdict.guilty": { "style": "keyword-evil","link": "article/phases_and_timeline"},
-    "verdict.innocent": { "style": "keyword-good","link": "article/phases_and_timeline"},
-    "innocent.shorthand": { "style": "keyword-good","link": "article/phases_and_timeline"},
-    "verdict.abstain": { "style": "keyword-abstain","link": "article/phases_and_timeline"},
+    "keyword.priority": { "style": "keyword-info","link": "standard/priority"},
+    "verdict.guilty": { "style": "keyword-evil","link": "standard/phases_and_timeline"},
+    "verdict.innocent": { "style": "keyword-good","link": "standard/phases_and_timeline"},
+    "innocent.shorthand": { "style": "keyword-good","link": "standard/phases_and_timeline"},
+    "verdict.abstain": { "style": "keyword-abstain","link": "standard/phases_and_timeline"},
     "grave.role.cleaned": { "style": "keyword-hiddenRole","link": "role/janitor"},
     "suspicious": { "style": "keyword-evil","link": "role/sheriff"},
     "suspicious.shorthand": { "style": "keyword-evil","link": "role/sheriff"},
@@ -11,22 +11,22 @@
     "enemies": { "style": "keyword-evil","link": "role/seer"},
     "vision": {"style": "keyword-info","link": "role/psychic"},
     "good": {"style": "keyword-info"},
-    "faction": { "style": "keyword-info","link": "article/how_to_play"},
-    "townInvestigative": { "style": "keyword-good","link": "article/role_sets"},
-    "townProtective": { "style": "keyword-good","link": "article/role_sets"},
-    "townSupport": { "style": "keyword-good","link": "article/role_sets"},
-    "townKilling": { "style": "keyword-good","link": "article/role_sets"},
-    "townPower": { "style": "keyword-good","link": "article/role_sets"},
-    "townCommon": { "style": "keyword-good","link": "article/role_sets"},
-    "mafiaPower": { "style": "keyword-evil","link": "article/role_sets"},
-    "mafiaSupport": { "style": "keyword-evil","link": "article/role_sets"},
-    "neutralEvil": { "style": "keyword-neutral","link": "article/role_sets"},
-    "neutralKilling": { "style": "keyword-neutral","link": "article/role_sets"},
-    "neutralApocalypse": { "style": "keyword-neutral","link": "article/role_sets"},
-    "neutralChaos": { "style": "keyword-neutral","link": "article/role_sets"},
-    "town": { "style": "keyword-good","link": "article/how_to_play"},
-    "mafia": { "style": "keyword-evil","link": "article/how_to_play"},
-    "neutral": { "style": "keyword-neutral","link": "article/how_to_play"},
+    "faction": { "style": "keyword-info","link": "standard/how_to_play"},
+    "townInvestigative": { "style": "keyword-good","link": "generated/role_sets"},
+    "townProtective": { "style": "keyword-good","link": "generated/role_sets"},
+    "townSupport": { "style": "keyword-good","link": "generated/role_sets"},
+    "townKilling": { "style": "keyword-good","link": "generated/role_sets"},
+    "townPower": { "style": "keyword-good","link": "generated/role_sets"},
+    "townCommon": { "style": "keyword-good","link": "generated/role_sets"},
+    "mafiaPower": { "style": "keyword-evil","link": "generated/role_sets"},
+    "mafiaSupport": { "style": "keyword-evil","link": "generated/role_sets"},
+    "neutralEvil": { "style": "keyword-neutral","link": "generated/role_sets"},
+    "neutralKilling": { "style": "keyword-neutral","link": "generated/role_sets"},
+    "neutralApocalypse": { "style": "keyword-neutral","link": "generated/role_sets"},
+    "neutralChaos": { "style": "keyword-neutral","link": "generated/role_sets"},
+    "town": { "style": "keyword-good","link": "standard/how_to_play"},
+    "mafia": { "style": "keyword-evil","link": "standard/how_to_play"},
+    "neutral": { "style": "keyword-neutral","link": "standard/how_to_play"},
     "any": { "style": "keyword-info"},
     "none": { "style": "keyword-info"},
     "defense.0": { "style": "keyword-info"},
@@ -34,52 +34,52 @@
     "defense.2": { "style": "keyword-info"},
     "defense.3": { "style": "keyword-info"},
     "dead": { "style": "keyword-dead"},
-    "wiki.article.role.abilities": { "style": "keyword-info","link": "article/how_to_play"},
-    "wiki.article.role.attributes": { "style": "keyword-info","link": "article/how_to_play"},
-    "wiki.article.role.extra": { "style": "keyword-info","link": "article/how_to_play"},
-    "wiki.article.role.guide": { "style": "keyword-info","link": "article/how_to_play"},
+    "wiki.article.role.abilities": { "style": "keyword-info","link": "standard/how_to_play"},
+    "wiki.article.role.attributes": { "style": "keyword-info","link": "standard/how_to_play"},
+    "wiki.article.role.extra": { "style": "keyword-info","link": "standard/how_to_play"},
+    "wiki.article.role.guide": { "style": "keyword-info","link": "standard/how_to_play"},
     "grave.killer.suicide": { "style": "keyword-info"},
     "grave.killer.quit": { "style": "keyword-info"},
     "random.gay": { "style": "keyword-pride","replacement": "random.gay","link": "role/transporter"},
     "random.trans": { "style": "keyword-trans","replacement": "random.trans","link": "role/transporter"},
 
     "day": {
-        "link": "article/phases_and_timeline"
+        "link": "standard/phases_and_timeline"
     },
     "phase.morning": {
-        "link": "article/phases_and_timeline"
+        "link": "standard/phases_and_timeline"
     },
     "phase.discussion": {
-        "link": "article/phases_and_timeline"
+        "link": "standard/phases_and_timeline"
     },
     "phase.voting": {
-        "link": "article/phases_and_timeline"
+        "link": "standard/phases_and_timeline"
     },
     "phase.testimony": {
-        "link": "article/phases_and_timeline"
+        "link": "standard/phases_and_timeline"
     },
     "phase.judgement": {
-        "link": "article/phases_and_timeline"
+        "link": "standard/phases_and_timeline"
     },
     "phase.evening": {
-        "link": "article/phases_and_timeline"
+        "link": "standard/phases_and_timeline"
     },
     "phase.night": {
-        "link": "article/phases_and_timeline"
+        "link": "standard/phases_and_timeline"
     },
     "wiki.article.article.how_to_play.title":{
-        "link": "article/how_to_play"
+        "link": "standard/how_to_play"
     },
     "menu.will.will": {
-        "link": "article/how_to_play"
+        "link": "standard/how_to_play"
     },
     "menu.will.notes": {
-        "link": "article/how_to_play"
+        "link": "standard/how_to_play"
     },
     "menu.will.deathNote": {
-        "link": "article/how_to_play"
+        "link": "standard/how_to_play"
     },
     "language":{ 
-        "link": "article/all_language"
+        "link": "generated/all_text"
     }
 }
