@@ -61,3 +61,12 @@
     background-color: var(--primary-color);
     border-top: var(--primary-border-color) solid .13rem;
 }
+
+.sm nav > ul{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 1rem 2rem;
+}

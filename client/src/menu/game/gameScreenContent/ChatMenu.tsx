@@ -50,8 +50,8 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
             {this.state.filter && <button 
                 onClick={()=>{
                     // TODO: Sammy wtf??
-                    GAME_MANAGER.invokeStateListeners("tick")
-                    ChatMenu.setFilter(null)
+                    GAME_MANAGER.invokeStateListeners("tick");
+                    ChatMenu.setFilter(null);
                 }}
                 className="material-icons-round highlighted"
                 aria-label={translate("menu.chat.clearFilter")}
