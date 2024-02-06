@@ -13,7 +13,8 @@ type GraveyardMenuProps = {
 }
 type GraveyardMenuState = {
     gameState: GameState,
-    extendedGraveIndex: number | null
+    extendedGraveIndex: number | null,
+    strickenRoleListIndex: number[]
 }
 
 export default class GraveyardMenu extends React.Component<GraveyardMenuProps, GraveyardMenuState> {
@@ -24,7 +25,8 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
         if(GAME_MANAGER.state.stateType === "game")
             this.state = {
                 gameState : GAME_MANAGER.state,
-                extendedGraveIndex: null
+                extendedGraveIndex: null,
+                strickenRoleListIndex: []
             };
         this.listener = ()=>{
             if(GAME_MANAGER.state.stateType === "game")
@@ -85,10 +87,31 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
                 className="role-list-button"
                 style={{ gridRow: index + 1 }} 
                 key={index}
+                onClick={()=>{
+                    let strickenRoleListIndex = this.state.strickenRoleListIndex;
+                    if(strickenRoleListIndex.includes(index))
+                        strickenRoleListIndex = strickenRoleListIndex.filter(x=>x!==index);
+                    else
+                        strickenRoleListIndex.push(index);
+
+                    this.setState({strickenRoleListIndex:strickenRoleListIndex})
+                }}
+                onMouseDown={(e)=>{
+                    // on right click, show a list of all roles that can be in this bucket
+                    // if(e.button === 2){
+                    //     e.preventDefault();
+                    // }
+                }}
             >
-                <StyledText noLinks={false}>
-                    {translateRoleOutline(entry) ?? ""}
-                </StyledText>
+                {
+                    this.state.strickenRoleListIndex.includes(index) ? 
+                    <s><StyledText>
+                        {translateRoleOutline(entry) ?? ""}
+                    </StyledText></s> : 
+                    <StyledText>
+                        {translateRoleOutline(entry) ?? ""}
+                    </StyledText>
+                }
             </button>
         }, this)}
     </>}
