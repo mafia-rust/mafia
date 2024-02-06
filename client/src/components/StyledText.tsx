@@ -6,11 +6,12 @@ import translate from "../game/lang";
 import { Role, getFactionFromRole } from "../game/roleState.d";
 import ROLES from "../resources/roles.json";
 import "./styledText.css";
-import WikiSearch, { WikiPage } from "./WikiSearch";
+import WikiSearch from "./WikiSearch";
+import { WikiArticleLink } from "./WikiArticle";
 
 export type TokenData = {
     style?: string, 
-    link?: WikiPage,
+    link?: WikiArticleLink,
     replacement?: string
 };
 type KeywordData = TokenData[];
@@ -105,7 +106,7 @@ function computeBasicKeywordData() {
         }
         KEYWORD_DATA_MAP[translate(`role.${role}.name`)] = [{
             ...data,
-            link: `role/${role}` as WikiPage,
+            link: `role/${role}` as WikiArticleLink,
             replacement: translate(`role.${role}.name`)   // Capitalize roles
         }]
     }

@@ -1,37 +1,26 @@
 import React from "react";
-import ROLES from "./../resources/roles.json";
-import translate, { langText, translateChecked } from "../game/lang";
+import translate from "../game/lang";
 import "./wikiSearch.css";
 import { Role } from "../game/roleState.d";
-import { ROLE_SETS, RoleSet, getRolesFromRoleSet } from "../game/roleListState.d";
 import StyledText from "../components/StyledText";
 import { HistoryQueue } from "../history";
 import { regEscape } from "..";
+import WikiArticle, { ARTICLES, WikiArticleLink, getArticleTitle } from "./WikiArticle";
 
 type WikiSearchProps = {
-    page?: WikiPage,
+    page?: WikiArticleLink,
     excludedRoles?: Role[]
-    pageChangeCallback?: (page: WikiPage) => void
+    pageChangeCallback?: (page: WikiArticleLink) => void
 }
 
 type WikiSearchState = ({
     type: "search",
 } | {
     type: "page",
-    page: WikiPage,
+    page: WikiArticleLink,
 }) & {
     searchQuery: string,
 }
-
-export type WikiPage = 
-    | `role/${Role}`
-    | `article/${Article}`;
-
-const ARTICLES = ["how_to_play", "phases_and_timeline", "priority", "all_language", "role_sets"] as const;
-type Article = typeof ARTICLES[number];
-
-const PAGES: WikiPage[] = Object.keys(ROLES).map(role => `role/${role}`)
-    .concat(ARTICLES.map(article => `article/${article}`)) as WikiPage[];
 
 export default class WikiSearch extends React.Component<WikiSearchProps, WikiSearchState> {
     
@@ -59,7 +48,7 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
         }
     }
 
-    static setPage(page: WikiPage) {
+    static setPage(page: WikiArticleLink) {
         WikiSearch.activeWikis.forEach(wiki => wiki.setPage(page));
     }
 
@@ -70,7 +59,7 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
         WikiSearch.activeWikis.splice(WikiSearch.activeWikis.findIndex(wiki => wiki === this), 1);
     }
 
-    setPage(page: WikiPage) {
+    setPage(page: WikiArticleLink) {
         if (this.state.type === "page" && this.state.page === page) {
             return;
         }
@@ -86,55 +75,30 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
         });
     }
 
-    renderOpenPageButton(page: WikiPage) {
+    renderOpenPageButton(page: WikiArticleLink) {
 
         let greyedOutRoles = this.props.excludedRoles
         if(greyedOutRoles === undefined){greyedOutRoles = [];}
 
         if(!greyedOutRoles.map((role)=>{return `role/${role}`}).includes(page)){
             return <button key={page} onClick={()=>{this.setPage(page)}}>
-                <StyledText noLinks={true} markdown={true}>{getPageTitle(page)}</StyledText>
+                <StyledText noLinks={true} markdown={true}>{getArticleTitle(page)}</StyledText>
             </button>
         }else{
             //TODO ill fix it says jack keyword-dead
             return <button key={page} onClick={()=>{this.setPage(page)}}>
-                <span className="keyword-dead">{getPageTitle(page)}</span>
+                <span className="keyword-dead">{getArticleTitle(page)}</span>
             </button>
         }
     }
 
-    getSearchResults(search: string): WikiPage[] {
-        return PAGES.filter(page => RegExp(regEscape(search), 'i').test(getPageText(page)))
+    getSearchResults(search: string): WikiArticleLink[] {
+        return ARTICLES.filter(page => RegExp(regEscape(search), 'i').test(getArticleTitle(page)))
     }
     
     renderPageOrSearch(){
         if (this.state.type === "page") {
-            if (this.state.page === "article/all_language") {
-                return langText;
-            }else if(this.state.page === "article/role_sets"){
-                let mainElements = [];
-                for(let set of ROLE_SETS){
-                    mainElements.push(<StyledText key={set} className="wiki-content-body" markdown={true}>
-                        ### {translate(set)}
-                    </StyledText>);
-                    
-                    let elements = getRolesFromRoleSet(set as RoleSet).map((role)=>{
-                        return <button key={role}>
-                            <StyledText key={set} className="wiki-content-body">
-                                {translate("role."+role+".name")}
-                            </StyledText>
-                        </button>
-                    });
-                    mainElements.push(<blockquote>
-                        {elements}
-                    </blockquote>);
-                }
-                return <div className="wiki-content-body">{mainElements}</div>;
-            }else{
-                return <StyledText className="wiki-content-body" markdown={true}>
-                    {getPageText(this.state.page)}
-                </StyledText>;
-            }
+            return <WikiArticle article={this.state.page}/>
         } else {
             return this.getSearchResults(this.state.searchQuery)
                 .map(this.renderOpenPageButton.bind(this));
@@ -184,49 +148,3 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
     </div>);}
 }
 
-function getPageTitle(page: WikiPage): string {
-    const path = page.split('/');
-
-    switch (path[0]) {
-        case "role":
-            return translate(`role.${path[1]}.name`);
-        default:
-            return translate(`wiki.entry.${page.replace('/', '.')}.title`)
-    }
-}
-
-function getPageText(page: WikiPage): string {
-    const path = page.split('/');
-
-    switch (path[0]) {
-        case "role":
-            const role = path[1] as Role;
-            const roleData = ROLES[role];
-            const keywords = roleData.keywords.map(key => {
-                return `<details><summary>${translate("keyword."+key)}</summary>${translate("wiki.keyword." + key)}</details>`;
-            }).join('\n');
-
-            return translate("wiki.entry.role",
-                translate("role."+role+".name"),
-                translateChecked("wiki.entry.role."+role+".guide") ?? translate("wiki.entry.role.noGuide"),
-                translateChecked("wiki.entry.role."+role+".abilities") ?? translate("wiki.entry.role.noAbilities"),
-                translateChecked("wiki.entry.role."+role+".attributes") ?? translate("wiki.entry.role.noAttributes"),
-                translateChecked("wiki.entry.role."+role+".extra") ?? translate("wiki.entry.role.noExtra"),
-                roleData.maxCount === null ? translate("none") : roleData.maxCount,
-                translate("defense."+roleData.defense),
-                keywords
-            )
-        case "article":
-            const article = path[1] as Article;
-            return translate("wiki.entry.article",
-                translate("wiki.entry.article."+article+".title"),
-                translate("wiki.entry.article."+article+".text")
-            )
-        default:
-            console.error(`Tried to get nonexistent wiki page at ${page}`);
-            return translate("wiki.entry.article",
-                translate("wiki.entry.article.404.title"),
-                translate("wiki.entry.article.404.text")
-            )
-    }
-}
