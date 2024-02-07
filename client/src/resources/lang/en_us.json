@@ -415,7 +415,7 @@
 
     "chatMessage.mayorRevealed":"\\0 has revealed as Mayor!",
     "chatMessage.mayorsJournal":"The Mayor wrote a journal that states this: \\0",
-    "chatMessage.jailedTarget": "You jailed \\0.",
+    "chatMessage.jailedTarget": "You put \\0 into jail.",
     "chatMessage.jailedSomeone":"\\0 was dragged off to jail!",
     "chatMessage.jailorDecideExecute":"The Jailor decided to execute \\0!",
     "chatMessage.jailorDecideNotExecute":"The Jailor decided not to execute.",
@@ -538,8 +538,8 @@
     "wiki.article.standard.roleLimit.text": "The maximum number of that role that can be generated at the start of a regular game. If there is no limit, then there can be infinite.",
     "wiki.article.standard.doused.title": "Doused",
     "wiki.article.standard.doused.text": "Someone's house is doused in gasoline. Arsonists can douse peoples houses, and ignite them. Doused players have a Suspicious Aura.",
-    "wiki.article.standard.backup.title": "Back Up",
-    "wiki.article.standard.backup.text": "The Godfather can choose another mafia member to be their backup at any time. If the Godfather is roleblocked or Jailed, then the Backup will attempt to kill their target.",
+    "wiki.article.standard.backup.title": "Backup",
+    "wiki.article.standard.backup.text": "The Godfather can choose another mafia member to be their backup at any time. If the Godfather is roleblocked or in jail, then the backup will attempt to kill their target.",
     "wiki.article.standard.suspiciousAura.title": "Suspicious Aura",
     "wiki.article.standard.suspiciousAura.text": "Players with a Suspicious Aura look evil to investigative roles. The Detective will find them suspicious, the Seer will find them as enemies with everyone, and the Psychic could see them in their evil visions. If a player has both an innocent and suspicious aura, the suspicious aura takes priority. Usually suspicious auras are caused by evil roles such as the Framer.",
     "wiki.article.standard.innocentAura.title": "Innocent Aura",
@@ -578,8 +578,8 @@
 
     "wiki.article.role.jailor.guide": "During the day, choose one player to jail each night. You can talk to your prisoner during the night, and they wont know who you are. You should interrogate your prisoner to find out what their role is, and if you think they are evil, you can choose to execute them. You can execute up to three times, but if you kill a townie, you can not jail anyone anymore.",
     "wiki.article.role.jailor.abilities":"* Choose one player to jail during the day\n* Visit your prisoner to execute them",
-    "wiki.article.role.jailor.attributes":"* You may anonymously talk with your prisoner at night\n* If you execute a town member, you forfeit the ability to jail prisoners, and loose all execution uses\n* Jailed players are immune to most abilities being used on them\n* Jailed players can't target\n* Other players will know if the player they visit is jailed",
-    "wiki.article.role.jailor.extra":"* The Jailor cant choose to execute on night one\n* If you execute a townie, or run out of executions, you can not target anymore\n* You will invisibly roleblock the player you jailed",
+    "wiki.article.role.jailor.attributes":"* You may anonymously talk with your prisoner at night\n* If you execute a town member, you forfeit the ability to jail prisoners, and loose all execution uses\n* Players in jail are immune to most abilities being used on them\n* Jailed players can't target\n* Other players will know if the player they visit is jailed",
+    "wiki.article.role.jailor.extra":"* The Jailor cant choose to execute on night one\n* If you execute a townie, or run out of executions, you can not target anymore\n* You will invisibly roleblock the player you put in jail",
 
     "wiki.article.role.mayor.guide": "Reveal during the day to make your vote count as three votes. After you reveal everyone will know that you are the Mayor. You can also write a journal and choose to make it public, if it is public it is posted at the start of every day. You should write down what everyone claims in your journal so you can remind town of what is true.",
     "wiki.article.role.mayor.abilities":"- Reveal during the day to triple your voting power, showing everyone that you are the Mayor\n- If your journal is public, it is posted to chat at the start of every morning",
@@ -679,7 +679,7 @@
     "wiki.article.role.godfather.guide": "Choose a player to kill each night. Choose a backup to kill for you when you are roleblocked or jailed. You should try to kill townies who are likely to stop you from winning.",
     "wiki.article.role.godfather.abilities":"- Visit a player to attack them\n- If you are roleblocked or jailed, your backup will attack the first player they visit\n- Choose another living mafia member to be your backup at any time",
     "wiki.article.role.godfather.attributes":"- You have a basic attack\n- You always have an innocent aura",
-    "wiki.article.role.godfather.extra":"- If the mafia has no Godfather or Mafioso, then a random mafia member will be converted to a godfather\n- If the Godfather dies, their backup will become the Godfather\n- You can not target other mafia members",
+    "wiki.article.role.godfather.extra":"- If the mafia has no Godfather or Mafioso, then a random mafia member will convert to a godfather\n- If the Godfather dies, their backup will become the Godfather\n- You can not target other mafia members",
 
     "wiki.article.role.mafioso.guide": "Target players to kill them. You should try to kill townies who are likely to stop you from winning.",
     "wiki.article.role.mafioso.abilities":"- Visit a player to attack them",
@@ -734,7 +734,7 @@
     "wiki.article.role.executioner.guide":"Get your target lynched to win. If you win, you commit suicide at the start of the next night. You should try to claim something that makes people think your target is suspicious.",
     "wiki.article.role.executioner.abilities":"",
     "wiki.article.role.executioner.attributes":"* After you win you will commit suicide with a protection piecring attack\n* Your target will always be a townie, but never a Mayor, Jailor, Deputy, Veteran, or Transporter\n* You have an innocent aura",
-    "wiki.article.role.executioner.extra":"* Get your target lynched to win\n* If your target dies by something other than lynching, you will be converted to a jester immedietly\n* If there are no valid targets in the game when you become the executioner, you will be converted to a jester",
+    "wiki.article.role.executioner.extra":"* Get your target lynched to win\n* If your target dies by something other than lynching, you will convert to a jester immedietly\n* If there are no valid targets in the game when you become the executioner, you will convert to a jester",
 
     "wiki.article.role.doomsayer.guide": "Guess the role of three different players to win. If you guess the role of three different living players correctly, you kill all three of them, and commit suicide. You can not guess town investigative roles. You should listen to what people claim and try to push for more people to claim roles.",
     "wiki.article.role.doomsayer.abilities":"* Guess the role of three different living players in one night, killing them and winning",
@@ -753,8 +753,8 @@
 
     "wiki.article.role.werewolf.guide": "On full moon nights, choose someone to kill them and rampage, killing everyone who visits them. On non full moon nights, choose someone to gain their scent and passively gain the scent of everyone who visits you. If you have someones scent, you will know who they visit every night for the rest of the game. Try to attack players who will get visited by alot of people in order to kill more players. Claiming that you are the Tracker could be easy because you know who people visit each night.",
     "wiki.article.role.werewolf.abilities":"* On full moon nights visit a player to attack them and rampage them\n* On non full moon nights visit a player gain their scent, you also gain the scent of every player that visits you on non full moon nights\n* If you visit nobody on a full moon night, you rampage yourself, but you wont attack yourself unless you visit yourself",
-    "wiki.article.role.werewolf.attributes":"* You have an armor piecring attack\n* If you are jailed then you will attack all Jailors who did not execute you\n* You will know who you have the scent of\n* You still track the scent of players after you die\n* On non full moon nights you have an innocent aura",
-    "wiki.article.role.werewolf.extra":"* You will not rampage the jailor while in jail\n* You will still attack or gain the scent of visits to you when you are jailed\n* You will still track the players you have the scent of while jailed\n* You dont attack or gain the scent of astral visitors\n* A roleblock has no effect on you besides erasing your visits, if you are roleblocked, it is as if you visited nobody",
+    "wiki.article.role.werewolf.attributes":"* You have an armor piecring attack\n* If you are in jail then you will attack all Jailors who did not execute you\n* You will know who you have the scent of\n* You still track the scent of players after you die\n* On non full moon nights you have an innocent aura",
+    "wiki.article.role.werewolf.extra":"* You will not rampage the jailor while in jail\n* You will still attack or gain the scent of visits to you when you are in jail\n* You will still track the players you have the scent of while you are in jail\n* You dont attack or gain the scent of astral visitors\n* A roleblock has no effect on you besides erasing your visits, if you are roleblocked, it is as if you visited nobody",
 
     "wiki.article.role.death.guide": "Guess what player will die during night by targeting them, If you guess correctly you will collect a soul, you will also collect a soul passively each night. Once you collect six souls, everyone will be told that death collected six souls at the start of the day, if you survive that day, you will attack everyone and win the game at the start of night.",
     "wiki.article.role.death.abilities":"* Visit a player on the night they die to collect a soul\n* Once you've collected six souls, everyone is notified, and at the start of the next night, you kill everyone, and win\n* Passively gain a soul each night",
