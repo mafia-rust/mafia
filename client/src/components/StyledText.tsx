@@ -7,7 +7,7 @@ import { Role, getFactionFromRole } from "../game/roleState.d";
 import ROLES from "../resources/roles.json";
 import "./styledText.css";
 import WikiSearch from "./WikiSearch";
-import { WikiArticleLink } from "./WikiArticle";
+import { ARTICLES, WikiArticleLink, getArticleTitle } from "./WikiArticle";
 
 export type TokenData = {
     style?: string, 
@@ -96,10 +96,24 @@ function clearKeywordData() {
 
 function computeBasicKeywordData() {
     console.log("recomputed keyword data");
-    const DATA = require("../resources/keywords.json");
 
+    //add article keywords
+    const SortedArticles = [...ARTICLES].sort((a, b) => b.length - a.length);
+    for (const article of SortedArticles) {
+        const keySplit = article.split("/");
+
+        KEYWORD_DATA_MAP[getArticleTitle(article)] = [{
+            style: "keyword-info",
+            link: `${keySplit[0]}/${keySplit[1]}` as WikiArticleLink,
+            replacement: getArticleTitle(article)
+        }]
+        
+    }
+
+    const KEYWORD_DATA_JSON = require("../resources/keywords.json");
+    //add role keywords
     for(const role of Object.keys(ROLES)){
-        const data = DATA[getFactionFromRole(role as Role)];
+        const data = KEYWORD_DATA_JSON[getFactionFromRole(role as Role)];
         if (data === undefined || Array.isArray(data)) {
             console.error(`faction.${getFactionFromRole(role as Role)} has malformed keyword data!`);
             continue;
@@ -111,7 +125,9 @@ function computeBasicKeywordData() {
         }]
     }
 
-    for (const [keyword, data] of Object.entries(DATA)) {
+    
+
+    for (const [keyword, data] of Object.entries(KEYWORD_DATA_JSON)) {
         KEYWORD_DATA_MAP[translate(keyword)] = (Array.isArray(data) ? data : [data]).map(data => {
             return {
                 ...data,

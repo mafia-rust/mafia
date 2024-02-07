@@ -137,7 +137,7 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
         return <div className="large-consort-menu">
             <div>
                 
-                {translate("keyword.roleblock")}
+                {translate("wiki.article.standard.roleblock")}
                 <label className="material-icons-round" onClick={()=>this.handleRoleblockToggle()}>
                     {this.state.roleblock ? "check" : "close"}
                 </label>

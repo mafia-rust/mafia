@@ -1,5 +1,4 @@
 {
-    "keyword.priority": { "style": "keyword-info","link": "standard/priority"},
     "verdict.guilty": { "style": "keyword-evil","link": "standard/phases_and_timeline"},
     "verdict.innocent": { "style": "keyword-good","link": "standard/phases_and_timeline"},
     "innocent.shorthand": { "style": "keyword-good","link": "standard/phases_and_timeline"},
@@ -10,7 +9,7 @@
     "friends": { "style": "keyword-good","link": "role/seer"},
     "enemies": { "style": "keyword-evil","link": "role/seer"},
     "vision": {"style": "keyword-info","link": "role/psychic"},
-    "good": {"style": "keyword-info"},
+    "good": {"style": "keyword-info", "link": "role/psychic"},
     "faction": { "style": "keyword-info","link": "standard/how_to_play"},
     "townInvestigative": { "style": "keyword-good","link": "generated/role_sets"},
     "townProtective": { "style": "keyword-good","link": "generated/role_sets"},
@@ -66,9 +65,6 @@
     },
     "phase.night": {
         "link": "standard/phases_and_timeline"
-    },
-    "wiki.article.article.how_to_play.title":{
-        "link": "standard/how_to_play"
     },
     "menu.will.will": {
         "link": "standard/how_to_play"

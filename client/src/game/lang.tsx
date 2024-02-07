@@ -1,17 +1,18 @@
 
-let lang: ReadonlyMap<string, string>;
+export let langMap: ReadonlyMap<string, string>;
 export let langText: string;
+export let langJson: any;
 switchLanguage("en_us");
 
 export function switchLanguage(language: string) {
-    let json = require("../resources/lang/" + language + ".json");
-    lang = new Map<string, string>(Object.entries(json));
-    langText = JSON.stringify(json);
+    langJson = require("../resources/lang/" + language + ".json");
+    langMap = new Map<string, string>(Object.entries(langJson));
+    langText = JSON.stringify(langJson);
 }
 
 /// Returns the translated string with the given key, replacing the placeholders with the given values.
 export default function translate(langKey: string, ...valuesList: (string | number)[]): string {
-    let out = lang.get(langKey);
+    let out = langMap.get(langKey);
     if(out===undefined){
         console.error("Attempted to use non existent lang key: "+langKey);
         return "ERROR: "+langKey;
@@ -23,7 +24,7 @@ export default function translate(langKey: string, ...valuesList: (string | numb
 }
 
 export function translateChecked(langKey: string, ...valuesList: (string | number)[]): string | null {
-    let out = lang.get(langKey);
+    let out = langMap.get(langKey);
     if(out===undefined){
         return null;
     }

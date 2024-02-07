@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 import { Role } from "../game/roleState.d";
 import ROLES from "../resources/roles.json";
 import React from "react";
-import translate, { langText, translateChecked } from "../game/lang";
+import translate, { langJson, langText, translateChecked } from "../game/lang";
 import StyledText from "./StyledText";
 import { ROLE_SETS, RoleSet, getRolesFromRoleSet } from "../game/roleListState.d";
 
@@ -11,7 +11,9 @@ export type WikiArticleLink =
     `standard/${StandardArticle}` |
     `generated/${GeneratedArticle}`;
 
-const STANDARD_ARTICLES = ["how_to_play", "phases_and_timeline", "priority"] as const;
+const STANDARD_ARTICLES = 
+    [...new Set(Object.keys(langJson).filter(key => key.startsWith("wiki.article.standard.")).map(key => key.split(".")[3]))];
+
 type StandardArticle = typeof STANDARD_ARTICLES[number];
 
 const GENERATED_ARTICLES = ["role_sets", "all_text"] as const;
@@ -34,7 +36,7 @@ export default function WikiArticle(props: {
             const role = path[1] as Role;
             const roleData = ROLES[role];
             const keywords = roleData.keywords.map(key => {
-                return `<details><summary>${translate("keyword."+key)}</summary>${translate("wiki.keyword." + key)}</details>`;
+                return `<details><summary>${getArticleTitle("standard/"+key as WikiArticleLink)}</summary>${translate("wiki.article.standard."+key+".text")}</details>`;
             }).join('\n');
 
             return <StyledText className="wiki-content-body" markdown={true}>{
@@ -51,8 +53,8 @@ export default function WikiArticle(props: {
             }</StyledText>
         case "standard":
             return <StyledText className="wiki-content-body" markdown={true}>
-                {"# "+translate(`wiki.article.${props.article.replace('/', '.')}.title`)+"\n"}
-                {translate(`wiki.article.${props.article.replace('/', '.')}.text`)}
+                {"# "+translate(`wiki.article.standard.${props.article.split("/")[1]}.title`)+"\n"}
+                {translate(`wiki.article.standard.${props.article.split("/")[1]}.text`)}
             </StyledText>
         case "generated":
             return getGeneratedArticle(path[1] as GeneratedArticle);
@@ -66,24 +68,24 @@ function getGeneratedArticle(article: GeneratedArticle){
     switch(article){
         case "role_sets":
             let mainElements = [
-                <StyledText key="role_sets" className="wiki-content-body" markdown={true}>
+                <section key="title"><StyledText markdown={true}>
                     {"# "+translate("wiki.article.generated.role_sets.title")}
-                </StyledText>
+                </StyledText></section>
             ];
             
             for(let set of ROLE_SETS){
-                mainElements.push(<StyledText key={set} className="wiki-content-body" markdown={true}>
+                mainElements.push(<section key={set+"title"}><StyledText markdown={true}>
                     {"### "+translate(set)}
-                </StyledText>);
+                </StyledText></section>);
                 
                 let elements = getRolesFromRoleSet(set as RoleSet).map((role)=>{
                     return <button key={role}>
-                        <StyledText key={set} className="wiki-content-body">
+                        <StyledText>
                             {translate("role."+role+".name")}
                         </StyledText>
                     </button>
                 });
-                mainElements.push(<blockquote>
+                mainElements.push(<blockquote key={set}>
                     {elements}
                 </blockquote>);
             }
@@ -99,10 +101,16 @@ function getGeneratedArticle(article: GeneratedArticle){
 export function getArticleTitle(page: WikiArticleLink): string {
     const path = page.split('/');
 
+
     switch (path[0]) {
         case "role":
             return translate(`role.${path[1]}.name`);
+        case "standard":
+            return translate(`wiki.article.standard.${path[1]}.title`);
+        case "generated":
+            return translate(`wiki.article.generated.${path[1]}.title`);
         default:
-            return translate(`wiki.article.${page.replace('/', '.')}.title`)
+            console.error("Invalid article type: "+path[0]);
+            return "ERROR";
     }
 }
