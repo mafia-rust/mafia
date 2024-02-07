@@ -98,7 +98,7 @@ function computeBasicKeywordData() {
     console.log("recomputed keyword data");
 
     //add article keywords
-    const SortedArticles = [...ARTICLES].sort((a, b) => b.length - a.length);
+    const SortedArticles = [...ARTICLES];
     for (const article of SortedArticles) {
         const keySplit = article.split("/");
 
@@ -106,7 +106,6 @@ function computeBasicKeywordData() {
             style: "keyword-info",
             link: `${keySplit[0]}/${keySplit[1]}` as WikiArticleLink,
         }]
-        
     }
 
     const KEYWORD_DATA_JSON = require("../resources/keywords.json");
@@ -125,8 +124,9 @@ function computeBasicKeywordData() {
     }
 
     
-
-    for (const [keyword, data] of Object.entries(KEYWORD_DATA_JSON)) {
+    //add from keywords.json
+    for (const [keyword, data] of Object.entries(KEYWORD_DATA_JSON)
+    ) {
         KEYWORD_DATA_MAP[translate(keyword)] = (Array.isArray(data) ? data : [data]).map(data => {
             return {
                 ...data,
@@ -153,15 +153,14 @@ export function computeKeywordDataWithPlayers() {
             ];
             
         }
-    
-        
+
     computeBasicKeywordData();
 }
 
 computeBasicKeywordData();
 
 function styleKeywords(tokens: Token[]): Token[] {
-    for(const [keyword, data] of Object.entries(KEYWORD_DATA_MAP)) {
+    for(const [keyword, data] of Object.entries(KEYWORD_DATA_MAP).sort((a, b) => b[0].length - a[0].length)){
         for(let index = 0; index < tokens.length; index++) {
             const token = tokens[index];
             if (token.type !== "raw") continue;

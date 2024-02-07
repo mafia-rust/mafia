@@ -23,7 +23,6 @@ type AnchorState = {
 }
 
 const MIN_SWIPE_DISTANCE = 40;
-const MAX_SWIPE_DISTANCE = 75;
 
 export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     private static instance: Anchor;
@@ -144,21 +143,6 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         });
     }
     onTouchMove(e: React.TouchEvent<HTMLDivElement>) {
-        if(this.state.touchStartX !== null && this.state.touchCurrentX !== null){
-            if(this.state.touchStartX - this.state.touchCurrentX > MAX_SWIPE_DISTANCE) {
-
-                for(let listener of this.swipeEventListeners) {
-                    listener(false);
-                }
-            }else if(this.state.touchStartX - this.state.touchCurrentX < -MAX_SWIPE_DISTANCE) {
-
-                for(let listener of this.swipeEventListeners) {
-                    listener(true);
-                }
-            }
-        }
-        
-
         this.setState({
             touchCurrentX: e.targetTouches[0].clientX
         });

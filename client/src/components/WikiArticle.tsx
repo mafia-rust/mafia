@@ -16,7 +16,7 @@ const STANDARD_ARTICLES =
 
 type StandardArticle = typeof STANDARD_ARTICLES[number];
 
-const GENERATED_ARTICLES = ["role_sets", "all_text"] as const;
+const GENERATED_ARTICLES = ["role_set", "all_text"] as const;
 type GeneratedArticle = typeof GENERATED_ARTICLES[number];
 
 export const ARTICLES: WikiArticleLink[] = 
@@ -68,10 +68,10 @@ export default function WikiArticle(props: {
 
 function getGeneratedArticle(article: GeneratedArticle){
     switch(article){
-        case "role_sets":
+        case "role_set":
             let mainElements = [
                 <section key="title"><StyledText markdown={true}>
-                    {"# "+translate("wiki.article.generated.role_sets.title")}
+                    {"# "+translate("wiki.article.generated.role_set.title")}
                 </StyledText></section>
             ];
             

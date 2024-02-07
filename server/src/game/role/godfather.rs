@@ -38,7 +38,9 @@ impl RoleStateImpl for Godfather {
                         return
                     }
             
-                    target_ref.try_night_kill(backup, game, GraveKiller::Faction(Faction::Mafia), 1, true);
+                    target_ref.try_night_kill(
+                        backup, game, GraveKiller::Faction(Faction::Mafia), 1, false
+                    );
                 }
             }
             
@@ -49,7 +51,9 @@ impl RoleStateImpl for Godfather {
                 return
             }
     
-            target_ref.try_night_kill(actor_ref, game, GraveKiller::Faction(Faction::Mafia), 1, true);
+            target_ref.try_night_kill(
+                actor_ref, game, GraveKiller::Faction(Faction::Mafia), 1, false
+            );
         }        
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {

@@ -1,6 +1,6 @@
 import React from "react";
 import GAME_MANAGER from "../../../index";
-import { ContentMenus, ContentTab } from "../GameScreen";
+import { ContentMenu, ContentTab } from "../GameScreen";
 import "./wikiMenu.css"
 import GameState from "../../../game/gameState.d";
 import translate from "../../../game/lang";
@@ -38,7 +38,7 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
     }
 
     render(){return(<div className="wiki-menu wiki-menu-colors">
-        <ContentTab close={ContentMenus.WikiMenu}>{translate("menu.wiki.title")}</ContentTab>
+        <ContentTab close={ContentMenu.WikiMenu}>{translate("menu.wiki.title")}</ContentTab>
         
         <div className="wiki-menu-search">
             <WikiSearch excludedRoles={

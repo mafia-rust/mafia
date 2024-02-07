@@ -6,7 +6,7 @@ import "./chatMenu.css"
 import { Player, PlayerIndex } from "../../../game/gameState.d";
 import { ChatMessage, translateChatMessage } from "../../../components/ChatMessage";
 import ChatElement from "../../../components/ChatMessage";
-import { ContentTab } from "../GameScreen";
+import { ContentMenu, ContentTab } from "../GameScreen";
 import { HistoryPoller, HistoryQueue } from "../../../history";
 import { StateListener } from "../../../game/gameManager.d";
 
@@ -45,7 +45,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     }
     render(){
         return <div className="chat-menu chat-menu-colors">
-            <ContentTab close={false}>{translate("menu.chat.title")}</ContentTab>
+            <ContentTab close={ContentMenu.ChatMenu}>{translate("menu.chat.title")}</ContentTab>
             <ChatMessageSection filter={this.state.filter} />
             {this.state.filter && <button 
                 onClick={()=>{

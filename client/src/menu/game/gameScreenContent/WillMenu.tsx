@@ -1,7 +1,7 @@
 import React from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
-import { ContentMenus, ContentTab } from "../GameScreen";
+import { ContentMenu, ContentTab } from "../GameScreen";
 import "./willMenu.css"
 import { StateListener } from "../../../game/gameManager.d";
 
@@ -160,7 +160,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
         </details>)
     }
     render() {return (<div className="will-menu will-menu-colors">
-        <ContentTab close={ContentMenus.WillMenu}>{translate("menu.will.title")}</ContentTab>
+        <ContentTab close={ContentMenu.WillMenu}>{translate("menu.will.title")}</ContentTab>
         <section>
             {this.renderInput("will")}
             {this.renderInput("notes")}

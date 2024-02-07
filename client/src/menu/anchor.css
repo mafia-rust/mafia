@@ -64,6 +64,7 @@
 }
 
 .settings-button {
+    z-index: 101;
     position: fixed;
     right: 2%;
     top: 2%;

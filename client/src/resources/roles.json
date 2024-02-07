@@ -292,7 +292,7 @@
         "faction": "neutral",
         "armor": false,
         "maxCount": null,
-        "largeRoleSpecificMenu": true,
+        "largeRoleSpecificMenu": false,
         "keywords": ["convert", "priority", "roleOutline"],
         "canBeConvertedTo": []
     },

@@ -2,7 +2,7 @@ import React from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import GameState, { Phase, Verdict } from "../../game/gameState.d";
-import GameScreen, { ContentMenus as GameScreenContentMenus } from "./GameScreen";
+import GameScreen, { ContentMenu as GameScreenContentMenus } from "./GameScreen";
 import ROLES from "../../resources/roles.json"
 import "./headerMenu.css";
 import { Role } from "../../game/roleState.d";

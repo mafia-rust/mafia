@@ -2,7 +2,7 @@
 import { createPlayer } from "./gameState";
 import Anchor from "./../menu/Anchor";
 import GAME_MANAGER from "./../index";
-import GameScreen, { ContentMenus } from "./../menu/game/GameScreen";
+import GameScreen, { ContentMenu } from "./../menu/game/GameScreen";
 import { ToClientPacket } from "./packet";
 import { Tag } from "./gameState.d";
 import { Role } from "./roleState.d";
@@ -267,7 +267,7 @@ export default function messageListener(packet: ToClientPacket){
         case "yourRoleState":
             if(GAME_MANAGER.state.stateType === "game"){
                 if(GAME_MANAGER.state.roleState?.role!== packet.roleState.role){
-                    GameScreen.instance?.closeMenu(ContentMenus.RoleSpecificMenu);
+                    GameScreen.instance?.closeMenu(ContentMenu.RoleSpecificMenu);
                 }
                 GAME_MANAGER.state.roleState = packet.roleState;
             }

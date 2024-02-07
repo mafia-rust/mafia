@@ -1,4 +1,6 @@
 {
+    "suspiciousAura": { "style": "keyword-evil", "link": "standard/aura"},
+    "innocentAura": { "style": "keyword-good", "link": "standard/aura"},
     "verdict.guilty": { "style": "keyword-evil","link": "standard/phases_and_timeline"},
     "verdict.innocent": { "style": "keyword-good","link": "standard/phases_and_timeline"},
     "innocent.shorthand": { "style": "keyword-good","link": "standard/phases_and_timeline"},
@@ -11,18 +13,18 @@
     "vision": {"style": "keyword-info","link": "role/psychic"},
     "good": {"style": "keyword-info", "link": "role/psychic"},
     "faction": { "style": "keyword-info","link": "standard/how_to_play"},
-    "townInvestigative": { "style": "keyword-good","link": "generated/role_sets"},
-    "townProtective": { "style": "keyword-good","link": "generated/role_sets"},
-    "townSupport": { "style": "keyword-good","link": "generated/role_sets"},
-    "townKilling": { "style": "keyword-good","link": "generated/role_sets"},
-    "townPower": { "style": "keyword-good","link": "generated/role_sets"},
-    "townCommon": { "style": "keyword-good","link": "generated/role_sets"},
-    "mafiaPower": { "style": "keyword-evil","link": "generated/role_sets"},
-    "mafiaSupport": { "style": "keyword-evil","link": "generated/role_sets"},
-    "neutralEvil": { "style": "keyword-neutral","link": "generated/role_sets"},
-    "neutralKilling": { "style": "keyword-neutral","link": "generated/role_sets"},
-    "neutralApocalypse": { "style": "keyword-neutral","link": "generated/role_sets"},
-    "neutralChaos": { "style": "keyword-neutral","link": "generated/role_sets"},
+    "townInvestigative": { "style": "keyword-good","link": "generated/role_set"},
+    "townProtective": { "style": "keyword-good","link": "generated/role_set"},
+    "townSupport": { "style": "keyword-good","link": "generated/role_set"},
+    "townKilling": { "style": "keyword-good","link": "generated/role_set"},
+    "townPower": { "style": "keyword-good","link": "generated/role_set"},
+    "townCommon": { "style": "keyword-good","link": "generated/role_set"},
+    "mafiaPower": { "style": "keyword-evil","link": "generated/role_set"},
+    "mafiaSupport": { "style": "keyword-evil","link": "generated/role_set"},
+    "neutralEvil": { "style": "keyword-neutral","link": "generated/role_set"},
+    "neutralKilling": { "style": "keyword-neutral","link": "generated/role_set"},
+    "neutralApocalypse": { "style": "keyword-neutral","link": "generated/role_set"},
+    "neutralChaos": { "style": "keyword-neutral","link": "generated/role_set"},
     "town": { "style": "keyword-good","link": "standard/how_to_play"},
     "mafia": { "style": "keyword-evil","link": "standard/how_to_play"},
     "neutral": { "style": "keyword-neutral","link": "standard/how_to_play"},
@@ -65,9 +67,6 @@
     },
     "phase.night": {
         "link": "standard/phases_and_timeline"
-    },
-    "menu.will.will": {
-        "link": "standard/how_to_play"
     },
     "menu.will.notes": {
         "link": "standard/how_to_play"

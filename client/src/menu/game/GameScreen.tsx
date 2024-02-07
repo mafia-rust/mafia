@@ -15,7 +15,7 @@ import { Role } from "../../game/roleState.d";
 import ROLES from "../../resources/roles.json";
 import { StateEventType } from "../../game/gameManager.d";
 
-export enum ContentMenus {
+export enum ContentMenu {
     ChatMenu = "ChatMenu",
     GraveyardMenu = "GraveyardMenu",
     PlayerListMenu = "PlayerListMenu",
@@ -25,7 +25,7 @@ export enum ContentMenus {
 }
 
 type GameScreenProps = {
-    contentMenus: ContentMenus[],
+    contentMenus: ContentMenu[],
     maxContent?: number | undefined
 }
 type GameScreenState = {
@@ -47,15 +47,15 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
     static createDefault(): JSX.Element{
         if (Anchor.isMobile()) {
             return <GameScreen contentMenus={[
-                ContentMenus.ChatMenu,
+                ContentMenu.ChatMenu,
             ]} maxContent={2}/>
         } else {
             return <GameScreen contentMenus={[
-                ContentMenus.ChatMenu,
+                ContentMenu.ChatMenu,
                 // ContentMenus.GraveyardMenu,
-                ContentMenus.PlayerListMenu,
+                ContentMenu.PlayerListMenu,
                 // ContentMenus.WikiMenu,
-                ContentMenus.WillMenu
+                ContentMenu.WillMenu
             ]}/>
         }
     }
@@ -75,12 +75,12 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
 
                 chatMenuNotification: false,
 
-                chatMenu: props.contentMenus.includes(ContentMenus.ChatMenu),
-                graveyardMenu: props.contentMenus.includes(ContentMenus.GraveyardMenu),
-                playerListMenu: props.contentMenus.includes(ContentMenus.PlayerListMenu),
-                willMenu: props.contentMenus.includes(ContentMenus.WillMenu),
-                wikiMenu: props.contentMenus.includes(ContentMenus.WikiMenu),
-                roleSpecificMenu : props.contentMenus.includes(ContentMenus.RoleSpecificMenu)
+                chatMenu: props.contentMenus.includes(ContentMenu.ChatMenu),
+                graveyardMenu: props.contentMenus.includes(ContentMenu.GraveyardMenu),
+                playerListMenu: props.contentMenus.includes(ContentMenu.PlayerListMenu),
+                willMenu: props.contentMenus.includes(ContentMenu.WillMenu),
+                wikiMenu: props.contentMenus.includes(ContentMenu.WikiMenu),
+                roleSpecificMenu : props.contentMenus.includes(ContentMenu.RoleSpecificMenu)
             }
         
 
@@ -91,7 +91,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                         role: GAME_MANAGER.state.roleState?.role as Role,
                     });
                 }
-                if(type === "addChatMessages" && !GameScreen.instance.menusOpen().includes(ContentMenus.ChatMenu)){
+                if(type === "addChatMessages" && !GameScreen.instance.menusOpen().includes(ContentMenu.ChatMenu)){
                     this.setState({
                         chatMenuNotification: true,
                     });
@@ -110,9 +110,19 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
 
             let indexOfLastOpenMenu = this.menus().indexOf(lastOpenMenu);
 
-            let nextIndex = modulus(indexOfLastOpenMenu + (right?-1:1), this.menus().length);
-            if(nextIndex === this.menus().indexOf(ContentMenus.RoleSpecificMenu) && !allowedToOpenRoleSpecific){
-                nextIndex = modulus(nextIndex + (right?-1:1), this.menus().length);
+            let nextIndex = modulus(
+                indexOfLastOpenMenu + (right?-1:1), 
+                this.menus().length
+            );
+
+            if(
+                (nextIndex === this.menus().indexOf(ContentMenu.RoleSpecificMenu) && !allowedToOpenRoleSpecific) ||
+                (this.menusOpen().includes(this.menus()[nextIndex]))
+            ){
+                nextIndex = modulus(
+                    nextIndex + (right?-1:1),
+                    this.menus().length
+                );
             }
             
             this.closeMenu(lastOpenMenu);
@@ -130,96 +140,96 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         GAME_MANAGER.removeStateListener(this.listener);
         Anchor.removeSwipeEventListener(this.swipeEventListener);
     }
-    closeMenu(menu: ContentMenus) {
+    closeMenu(menu: ContentMenu) {
         switch(menu) {
-            case ContentMenus.ChatMenu:
+            case ContentMenu.ChatMenu:
                 this.setState({chatMenu: false});
                 break;
-            case ContentMenus.PlayerListMenu:
+            case ContentMenu.PlayerListMenu:
                 this.setState({playerListMenu: false});
                 break;
-            case ContentMenus.WillMenu:
+            case ContentMenu.WillMenu:
                 this.setState({willMenu: false});
                 break;
-            case ContentMenus.RoleSpecificMenu:
+            case ContentMenu.RoleSpecificMenu:
                 this.setState({roleSpecificMenu: false});
                 break;
-            case ContentMenus.GraveyardMenu:
+            case ContentMenu.GraveyardMenu:
                 this.setState({graveyardMenu: false});
                 break;
-            case ContentMenus.WikiMenu:
+            case ContentMenu.WikiMenu:
                 this.setState({wikiMenu: false});
                 break;
         }
     }
-    openMenu(menu: ContentMenus) {
+    openMenu(menu: ContentMenu) {
         let menusOpen = this.menusOpen();
         if(menusOpen.length + 1 > this.state.maxContent && menusOpen.length > 0){
-            this.closeMenu(menusOpen[0]);
+            this.closeMenu(menusOpen[menusOpen.length - 1]);
         }
 
         switch(menu) {
-            case ContentMenus.ChatMenu:
+            case ContentMenu.ChatMenu:
                 this.setState({
                     chatMenu: true,
                     chatMenuNotification: false
                 });
 
                 break;
-            case ContentMenus.PlayerListMenu:
+            case ContentMenu.PlayerListMenu:
                 this.setState({playerListMenu: true});
                 break;
-            case ContentMenus.WillMenu:
+            case ContentMenu.WillMenu:
                 this.setState({willMenu: true});
                 break;
-            case ContentMenus.GraveyardMenu:
+            case ContentMenu.GraveyardMenu:
                 this.setState({graveyardMenu: true});
                 break;
-            case ContentMenus.RoleSpecificMenu:
+            case ContentMenu.RoleSpecificMenu:
                 this.setState({roleSpecificMenu: true});
                 break;
-            case ContentMenus.WikiMenu:
+            case ContentMenu.WikiMenu:
                 this.setState({wikiMenu: true});
                 break;
         }
     }
-    closeOrOpenMenu(menu: ContentMenus){
+    closeOrOpenMenu(menu: ContentMenu){
         if(this.menusOpen().includes(menu)){
             this.closeMenu(menu);
         }else{
             this.openMenu(menu);
         }
     }
-    menusOpen(): ContentMenus[] {
+    menusOpen(): ContentMenu[] {
         let out = [];
         if(this.state.chatMenu){
-            out.push(ContentMenus.ChatMenu);
+            out.push(ContentMenu.ChatMenu);
         }
         if(this.state.playerListMenu) {
-            out.push(ContentMenus.PlayerListMenu);
+            out.push(ContentMenu.PlayerListMenu);
         }
         if(this.state.willMenu) {
-            out.push(ContentMenus.WillMenu);
+            out.push(ContentMenu.WillMenu);
         }
         if(this.state.roleSpecificMenu) {
-            out.push(ContentMenus.RoleSpecificMenu);
+            out.push(ContentMenu.RoleSpecificMenu);
         }
         if(this.state.graveyardMenu) {
-            out.push(ContentMenus.GraveyardMenu);
+            out.push(ContentMenu.GraveyardMenu);
         }
         if(this.state.wikiMenu) {
-            out.push(ContentMenus.WikiMenu);
+            out.push(ContentMenu.WikiMenu);
         }
         return out;
     }
-    menus(): ContentMenus[] {
+    menus(): ContentMenu[] {
         let out = [];
-        out.push(ContentMenus.ChatMenu);
-        out.push(ContentMenus.PlayerListMenu);
-        out.push(ContentMenus.WillMenu);
-        out.push(ContentMenus.RoleSpecificMenu);
-        out.push(ContentMenus.GraveyardMenu);
-        out.push(ContentMenus.WikiMenu);
+        out.push(ContentMenu.ChatMenu);
+        out.push(ContentMenu.PlayerListMenu);
+        out.push(ContentMenu.WillMenu);
+        out.push(ContentMenu.RoleSpecificMenu);
+        out.push(ContentMenu.GraveyardMenu);
+        out.push(ContentMenu.WikiMenu);
         return out;
     }
 
@@ -246,7 +256,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
     }
 }
 
-export function ContentTab(props: { close: ContentMenus | false, children: string }): ReactElement {
+export function ContentTab(props: { close: ContentMenu | false, children: string }): ReactElement {
     return <div className="content-tab">
         <div>
             <StyledText>
@@ -256,7 +266,7 @@ export function ContentTab(props: { close: ContentMenus | false, children: strin
 
         {props.close && <button 
             className="material-icons-round close" 
-            onClick={()=>GameScreen.instance.closeMenu(props.close as ContentMenus)}
+            onClick={()=>GameScreen.instance.closeMenu(props.close as ContentMenu)}
         >
             close
         </button>}

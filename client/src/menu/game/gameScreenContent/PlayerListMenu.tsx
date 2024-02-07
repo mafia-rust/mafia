@@ -5,7 +5,7 @@ import "./playerListMenu.css"
 import "./../gameScreen.css"
 import ChatMenu from "./ChatMenu";
 import GameState, { Player, PlayerIndex } from "../../../game/gameState.d";
-import { ContentMenus, ContentTab } from "../GameScreen";
+import { ContentMenu, ContentTab } from "../GameScreen";
 import { StateListener } from "../../../game/gameManager.d";
 import SmallRoleSpecificMenu from "./RoleSpecificMenus/SmallRoleSpecificMenu";
 import StyledText from "../../../components/StyledText";
@@ -79,11 +79,9 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         let phaseSpecificJSX = null;
         switch(this.state.gameState.phase){
             case "voting":
-                let votedString = "";
                 if(this.state.gameState.voted!=null){
-                    votedString = this.state.gameState.players[this.state.gameState.voted].name;
                     phaseSpecificJSX = (<div>
-                        <div><StyledText>{votedString}</StyledText></div>
+                        <div><StyledText>{this.state.gameState.players[this.state.gameState.voted].toString()}</StyledText></div>
                         <button className="button gm-button" onClick={()=>{
                             GAME_MANAGER.sendVotePacket(null);
                         }}>{translate("menu.playerList.button.resetVote")}</button>
@@ -217,7 +215,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     }
 
     render(){return(<div className="player-list-menu player-list-menu-colors">
-        <ContentTab close={ContentMenus.PlayerListMenu}>{translate("menu.playerList.title")}</ContentTab>
+        <ContentTab close={ContentMenu.PlayerListMenu}>{translate("menu.playerList.title")}</ContentTab>
 
         {this.renderFilterButton("all")}
         {this.renderFilterButton("living")}

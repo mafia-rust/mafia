@@ -1,7 +1,7 @@
 import React from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
-import { ContentMenus, ContentTab } from "../GameScreen";
+import { ContentMenu, ContentTab } from "../GameScreen";
 import "./graveyardMenu.css";
 import GameState from "../../../game/gameState.d";
 import { translateRoleOutline } from "../../../game/roleListState.d";
@@ -141,7 +141,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
 
 
     render(){return(<div className="graveyard-menu graveyard-menu-colors">
-        <ContentTab close={ContentMenus.GraveyardMenu}>{translate("menu.graveyard.title")}</ContentTab>
+        <ContentTab close={ContentMenu.GraveyardMenu}>{translate("menu.graveyard.title")}</ContentTab>
             
         <div className="grid">
             {this.renderRoleList()}

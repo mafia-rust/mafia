@@ -255,9 +255,6 @@ impl Game {
     }
 
     pub fn tick(&mut self, time_passed: Duration){
-        for player_ref in PlayerReference::all_players(self){
-            player_ref.tick(self, time_passed)
-        }
 
         if !self.ticking { return }
 
@@ -286,6 +283,7 @@ impl Game {
 
             self.start_phase(new_phase);
         }
+        PlayerReference::all_players(self).for_each(|p|p.tick(self, time_passed));
 
         self.phase_machine.time_remaining = self.phase_machine.time_remaining.saturating_sub(time_passed);
     }

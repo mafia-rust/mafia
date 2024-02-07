@@ -110,7 +110,7 @@ impl PhaseState {
     
     /// Returns the next phase
     pub fn end(game: &mut Game) -> PhaseState {
-        match game.current_phase() {
+        let next = match game.current_phase() {
             PhaseState::Morning => {
                 Self::Discussion
             },
@@ -191,7 +191,8 @@ impl PhaseState {
 
                 Self::Morning
             },
-        }
+        };
+        next
     }
     
     pub fn is_day(&self) -> bool {
