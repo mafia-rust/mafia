@@ -191,9 +191,9 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             onTouchMove={(e) => {this.onTouchMove(e)}}
             onTouchEnd={(e) => {this.onTouchEnd(e)}}
         >
-            {this.state.content}
-            {this.state.error}
-            {this.state.rejoinCard}
+            <button className="material-icons-round settings-button" onClick={() => {
+                this.setState({settings_menu: !this.state.settings_menu});
+            }}>menu</button>
             {this.state.settings_menu && <Settings 
                 volume={this.state.audio.volume} 
                 onVolumeChange={(volume) => {
@@ -204,9 +204,9 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
                     });
                 }}
             />}
-            <button className="material-icons-round settings-button" onClick={() => {
-                this.setState({settings_menu: !this.state.settings_menu});
-            }}>menu</button>
+            {this.state.content}
+            {this.state.error}
+            {this.state.rejoinCard}
         </div>
     }
 
