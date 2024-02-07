@@ -105,7 +105,6 @@ function computeBasicKeywordData() {
         KEYWORD_DATA_MAP[getArticleTitle(article)] = [{
             style: "keyword-info",
             link: `${keySplit[0]}/${keySplit[1]}` as WikiArticleLink,
-            replacement: getArticleTitle(article)
         }]
         
     }
@@ -139,7 +138,6 @@ function computeBasicKeywordData() {
 
 export function computeKeywordDataWithPlayers() {
     clearKeywordData();
-    computeBasicKeywordData();
 
     if(GAME_MANAGER.state.stateType === "game")
         for(const player of GAME_MANAGER.state.players) {
@@ -155,6 +153,9 @@ export function computeKeywordDataWithPlayers() {
             ];
             
         }
+    
+        
+    computeBasicKeywordData();
 }
 
 computeBasicKeywordData();
