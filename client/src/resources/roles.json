@@ -1,7 +1,7 @@
 {
     "jailor":{
         "faction": "town",
-        "defense": 0,
+        "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": ["jail", "defense"],
@@ -9,7 +9,7 @@
     },
     "mayor":{
         "faction": "town",
-        "defense": 0,
+        "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
         "keywords": [],
@@ -17,7 +17,7 @@
     },
     "transporter":{
         "faction": "town",
-        "defense": 0,
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["transport", "priority", "visit"],
@@ -25,7 +25,7 @@
     },
     "sheriff": {
         "faction": "town",
-        "defense": 0,
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["innocent","suspicious","innocentAura","suspiciousAura"],
@@ -33,10 +33,7 @@
     },
     "lookout": {
         "faction": "town",
-        
-        "defense": 0,
-        
-        
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["visit","astral","appearedVisit"],
@@ -44,10 +41,7 @@
     },
     "spy": {
         "faction": "town",
-        
-        "defense": 0,
-        
-        
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["visit","silenced","roleblock","protect","transport","possess"],
@@ -55,10 +49,7 @@
     },
     "tracker": {
         "faction": "town",
-        
-        "defense": 0,
-        
-        
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["visit","astral","appearedVisit"],
@@ -66,10 +57,7 @@
     },
     "seer": {
         "faction": "town",
-        
-        "defense": 0,
-        
-        
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["friends","enemies","suspiciousAura","innocentAura"],
@@ -77,10 +65,7 @@
     },
     "psychic": {
         "faction": "town",
-        
-        "defense": 0,
-        
-        
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["vision","suspiciousAura","innocentAura"],
@@ -88,11 +73,7 @@
     },
     "doctor": {
         "faction": "town",
-        
-        
-        "defense": 0,
-        
-        
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["protect","defense"],
@@ -100,7 +81,7 @@
     },
     "bodyguard": {
         "faction": "town",
-        "defense": 0,
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["protect","defense","astral"],
@@ -108,7 +89,7 @@
     },
     "crusader": {
         "faction": "town",
-        "defense": 0,
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["protect","defense","astral"],
@@ -116,7 +97,7 @@
     },
     "reveler": {
         "faction": "town",
-        "defense": 0,
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["roleblock","jail"],
@@ -124,7 +105,7 @@
     },
     "trapper": {
         "faction": "town",
-        "defense": 0,
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["defense"],
@@ -132,7 +113,7 @@
     },
     "vigilante": {
         "faction": "town",
-        "defense": 0,
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["defense"],
@@ -140,7 +121,7 @@
     },
     "veteran": {
         "faction": "town",
-        "defense": 0,
+        "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": ["defense","astral","visit","rampage"],
@@ -148,7 +129,7 @@
     },
     "deputy": {
         "faction": "town",
-        "defense": 0,
+        "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": ["defense"],
@@ -156,7 +137,7 @@
     },
     "escort": {
         "faction": "town",
-        "defense": 0,
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["roleblock"],
@@ -164,7 +145,7 @@
     },
     "medium": {
         "faction": "town",
-        "defense": 0,
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["haunt","dead"],
@@ -172,7 +153,7 @@
     },
     "retributionist": {
         "faction": "town",
-        "defense": 0,
+        "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": ["dead","visit","possess","priority"],
@@ -180,7 +161,7 @@
     },
     "godfather": {
         "faction": "mafia",
-        "defense": 1,
+        "armor": true,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": ["backup","defense","convert","roleblock","jail"],
@@ -188,7 +169,7 @@
     },
     "mafioso": {
         "faction": "mafia",
-        "defense": 0,
+        "armor": false,
         "maxCount": 0,
         "largeRoleSpecificMenu": false,
         "keywords": ["defense"],
@@ -196,7 +177,7 @@
     },
     "consort": {
         "faction": "mafia",
-        "defense": 0,
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": true,
         "keywords": ["roleblock"],
@@ -204,7 +185,7 @@
     },
     "blackmailer": {
         "faction": "mafia",
-        "defense": 0,
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["silenced"],
@@ -212,7 +193,7 @@
     },
     "consigliere": {
         "faction": "mafia",
-        "defense": 0,
+        "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": ["appearedVisit"],
@@ -220,7 +201,7 @@
     },
     "witch": {
         "faction": "mafia",
-        "defense": 0,
+        "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": ["visit","possess","priority"],
@@ -228,7 +209,7 @@
     },
     "necromancer": {
         "faction": "mafia",
-        "defense": 0,
+        "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": ["dead","visit","possess","priority"],
@@ -236,7 +217,7 @@
     },
     "janitor": {
         "faction": "mafia",
-        "defense": 0,
+        "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": ["cleaned"],
@@ -244,7 +225,7 @@
     },
     "framer": {
         "faction": "mafia",
-        "defense": 0,
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["suspiciousAura","appearedVisit"],
@@ -252,7 +233,7 @@
     },
     "forger": {
         "faction": "mafia",
-        "defense": 0,
+        "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
         "keywords": ["forged"],
@@ -260,7 +241,7 @@
     },
     "jester": {
         "faction": "neutral",
-        "defense": 0,
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["innocentAura","dead","defense"],
@@ -268,20 +249,16 @@
     },
     "executioner": {
         "faction": "neutral",
-        "defense": 1,
+        "armor": true,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["convert","innocentAura"],
+        "keywords": ["convert","innocentAura","defense"],
         "canBeConvertedTo": ["jester"]
     },
     
     "politician":{
         "faction": "neutral",
-        
-        
-        "defense": 1,
-        
-        
+        "armor": true,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["defense"],
@@ -289,11 +266,7 @@
     },
     "arsonist": {
         "faction": "neutral",
-        
-        
-        "defense": 1,
-        
-        
+        "armor": true,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["doused","defense","roleblock"],
@@ -301,11 +274,7 @@
     },
     "werewolf": {
         "faction": "neutral",
-        
-        
-        "defense": 1,
-        
-        
+        "armor": true,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["fullMoon","rampage","defense","astral","appearedVisit","innocentAura"],
@@ -313,23 +282,15 @@
     },
     "vampire": {
         "faction": "neutral",
-        
-        
-        "defense": 0,
-        
-        
+        "armor": false,
         "maxCount": 2,
         "largeRoleSpecificMenu": false,
-        "keywords": ["convert", "priority"],
+        "keywords": ["convert", "priority","defense"],
         "canBeConvertedTo": []
     },
     "amnesiac": {
         "faction": "neutral",
-        
-        
-        "defense": 0,
-        
-        
+        "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": true,
         "keywords": ["convert", "priority", "roleOutline"],
@@ -337,23 +298,15 @@
     },
     "death":{
         "faction": "neutral",
-        
-        
-        "defense": 0,
-        
-        
+        "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": [],
+        "keywords": ["defense"],
         "canBeConvertedTo": []
     },
     "doomsayer":{
         "faction": "neutral",
-        
-        
-        "defense": 0,
-        
-        
+        "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
         "keywords": ["convert", "defense"],

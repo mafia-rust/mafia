@@ -47,7 +47,7 @@ export default function WikiArticle(props: {
                     translateChecked("wiki.article.role."+role+".attributes") ?? translate("wiki.article.role.noAttributes"),
                     translateChecked("wiki.article.role."+role+".extra") ?? translate("wiki.article.role.noExtra"),
                     roleData.maxCount === null ? translate("none") : roleData.maxCount,
-                    translate("defense."+roleData.defense),
+                    translate("defense."+(roleData.armor ? "1" : "0")),
                     keywords
                 )
             }</StyledText>

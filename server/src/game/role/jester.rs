@@ -32,7 +32,7 @@ impl RoleStateImpl for Jester {
         if priority != Priority::TopPriority {return;}
 
         if game.day_number() == 1{
-            actor_ref.increase_defense_to(game, 1);
+            actor_ref.increase_defense_to(game, 2);
         }
 
         if actor_ref.alive(game) {return;}
