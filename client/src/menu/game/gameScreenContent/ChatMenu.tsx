@@ -65,34 +65,31 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
 
 function ChatMessageSection(props: { filter: RegExp | null }): ReactElement {
     const [messages, setMessages] = useState<ChatMessage []>(GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.chatMessages : []);
+    const [scrolledToBottom, setScrolledToBottom] = useState<boolean>(true);
+    
     const self = useRef<HTMLDivElement>(null);
+
+    const AT_BOTTOM_THRESHOLD_PIXELS = 40;
 
     const filteredMessages = useMemo(() => {
         if (props.filter === null) return messages;
         else return messages.filter(msg => props.filter?.test(translateChatMessage(msg)) || msg.type === "phaseChange")
     }, [messages, props.filter]);
 
+    const handleScroll = (e: any) => {
+        const { scrollTop, scrollHeight, clientHeight } = e.target;
+        setScrolledToBottom(scrollTop + clientHeight >= scrollHeight - AT_BOTTOM_THRESHOLD_PIXELS);
+    }
+
+
+
     // Keep chat scrolled to bottom
     useEffect(() => {
-        if (self.current === null) return;
-        const el = self.current;
-
-        const scrollDistanceFromTop = el.scrollTop;
-        const totalHeight = el.scrollHeight;
-        const visibleHeight = el.clientHeight;
-
-        // If at bottom: scrollDistanceFromTop + visibleHeight = totalHeight
-        
-        const AT_BOTTOM_THRESHOLD_PIXELS = 40;
-        const lastMessage = (self.current.firstChild?.lastChild ?? null) as HTMLElement | null;
-
-        const scrollThreshold = AT_BOTTOM_THRESHOLD_PIXELS + (lastMessage ? lastMessage.scrollHeight : 0)
-
-        if (scrollDistanceFromTop + visibleHeight >= totalHeight - scrollThreshold) {
-            el.scrollTop = totalHeight;
+        if (scrolledToBottom && self.current !== null) {
+            const el = self.current;
+            el.scrollTop = el.scrollHeight;
         }
-
-    }, [self, messages, props.filter])
+    }, [self, messages, props.filter, scrolledToBottom])
 
     // Update with new messages
     useEffect(() => {
@@ -114,7 +111,9 @@ function ChatMessageSection(props: { filter: RegExp | null }): ReactElement {
         self.current.scrollTop = self.current.scrollHeight;
     }, [props.filter])
 
-    return <div className="message-section" ref={self}>
+    
+
+    return <div className="message-section" ref={self} onScroll={handleScroll}>
         <div className="message-list">
             {filteredMessages.map((msg, index) => {
                 return <ChatElement key={index} message={msg}/>;

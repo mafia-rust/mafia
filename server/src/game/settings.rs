@@ -32,6 +32,9 @@ impl PhaseTimeSettings {
             PhaseType::Voting => Duration::from_secs(self.voting)
         }
     }
+    pub fn game_ends_instantly(&self)->bool{
+        [self.morning, self.discussion, self.voting, self.night].iter().all(|t| *t == 0)
+    }
 }
 impl Default for PhaseTimeSettings{
     fn default() -> Self {

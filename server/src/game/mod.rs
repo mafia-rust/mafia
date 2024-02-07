@@ -69,12 +69,7 @@ pub enum GameOverReason {
 impl Game {
     pub fn new(settings: Settings, lobby_players: Vec<LobbyPlayer>) -> Result<Self, RejectStartReason>{
         //check settings are not completly off the rails
-        if [
-            settings.phase_times.evening, settings.phase_times.morning,
-            settings.phase_times.discussion, settings.phase_times.voting,
-            settings.phase_times.judgement, settings.phase_times.testimony,
-            settings.phase_times.night,
-        ].iter().all(|t| *t == 0) {
+        if settings.phase_times.game_ends_instantly() {
             return Err(RejectStartReason::ZeroTimeGame);
         }
         
@@ -352,12 +347,7 @@ pub mod test {
     pub fn mock_game(settings: Settings, number_of_players: usize) -> Result<Game, RejectStartReason> {
 
         //check settings are not completly off the rails
-        if [
-            settings.phase_times.evening, settings.phase_times.morning,
-            settings.phase_times.discussion, settings.phase_times.voting,
-            settings.phase_times.judgement, settings.phase_times.testimony,
-            settings.phase_times.night,
-        ].iter().all(|t| *t == 0) {
+        if settings.phase_times.game_ends_instantly() {
             return Err(RejectStartReason::ZeroTimeGame);
         }
         

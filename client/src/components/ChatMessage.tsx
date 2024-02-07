@@ -85,7 +85,7 @@ export function sanitizePlayerMessage(text: string): string {
 
 export function translateChatMessage(message: ChatMessage): string {
     if(GAME_MANAGER.state.stateType !== "game"){
-        return "ERROR: outside game"
+        return "ERROR: chatmessages cant exist outside game"
     }
 
     switch (message.type) {

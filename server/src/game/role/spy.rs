@@ -13,7 +13,7 @@ use super::{Priority, RoleStateImpl};
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Spy;
 
-#[derive(Clone, Debug, Serialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum SpyBug{
     Silenced, Roleblocked, Protected, Transported, Possessed

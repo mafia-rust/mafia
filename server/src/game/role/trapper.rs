@@ -49,7 +49,7 @@ impl Trap {
         }
     }
 }
-#[derive(Clone, Serialize, Debug, PartialEq, Eq)]
+#[derive(Clone, Serialize, Debug, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase", tag = "type")]
 pub enum TrapState {
     Dismantled,

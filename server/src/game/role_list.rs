@@ -8,7 +8,7 @@ use super::role::Role;
 
 macro_rules! make_faction_enum {
     ($($name:ident),*)=>{
-        #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+        #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord)]
         #[serde(rename_all = "camelCase")]
         pub enum Faction { $($name,)*}
         impl Faction {

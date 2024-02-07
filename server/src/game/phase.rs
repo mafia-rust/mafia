@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+use rand::seq::SliceRandom;
 use serde::{Serialize, Deserialize};
 
 use crate::packet::ToClientPacket;
@@ -182,7 +183,10 @@ impl PhaseState {
                 }
 
                 for player_ref in PlayerReference::all_players(game){
-                    player_ref.add_chat_messages(game, player_ref.night_messages(game).to_vec());
+                    let mut messages = player_ref.night_messages(game).to_vec();
+                    messages.shuffle(&mut rand::thread_rng());
+                    messages.sort();
+                    player_ref.add_chat_messages(game, messages);
                 }
 
                 Self::Morning

@@ -3,7 +3,7 @@ use crate::game::{grave::Grave, role::Role, player::{PlayerIndex, PlayerReferenc
 
 use super::role::{spy::SpyBug, trapper::TrapState};
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum MessageSender {
@@ -13,7 +13,7 @@ pub enum MessageSender {
 }
 
 // Determines message color
-#[derive(Clone, Debug, Serialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum ChatMessage {
@@ -169,7 +169,7 @@ pub enum ChatMessage {
 
 
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum ChatGroup {
     All,

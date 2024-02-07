@@ -39,18 +39,20 @@ export default function WikiArticle(props: {
                 return `<details><summary>${getArticleTitle("standard/"+key as WikiArticleLink)}</summary>${translate("wiki.article.standard."+key+".text")}</details>`;
             }).join('\n');
 
-            return <StyledText className="wiki-content-body" markdown={true}>{
-                translate("wiki.article.role",
-                    translate("role."+role+".name"),
-                    translateChecked("wiki.article.role."+role+".guide") ?? translate("wiki.article.role.noGuide"),
-                    translateChecked("wiki.article.role."+role+".abilities") ?? translate("wiki.article.role.noAbilities"),
-                    translateChecked("wiki.article.role."+role+".attributes") ?? translate("wiki.article.role.noAttributes"),
-                    translateChecked("wiki.article.role."+role+".extra") ?? translate("wiki.article.role.noExtra"),
-                    roleData.maxCount === null ? translate("none") : roleData.maxCount,
-                    translate("defense."+(roleData.armor ? "1" : "0")),
-                    keywords
-                )
-            }</StyledText>
+            return <section>
+                <StyledText className="wiki-content-body" markdown={true}>{
+                    translate("wiki.article.role",
+                        translate("role."+role+".name"),
+                        translateChecked("wiki.article.role."+role+".guide") ?? translate("wiki.article.role.noGuide"),
+                        translateChecked("wiki.article.role."+role+".abilities") ?? translate("wiki.article.role.noAbilities"),
+                        translateChecked("wiki.article.role."+role+".attributes") ?? translate("wiki.article.role.noAttributes"),
+                        translateChecked("wiki.article.role."+role+".extra") ?? translate("wiki.article.role.noExtra"),
+                        roleData.maxCount === null ? translate("none") : roleData.maxCount,
+                        translate("defense."+(roleData.armor ? "1" : "0")),
+                        keywords
+                    )
+                }</StyledText>
+            </section>;
         case "standard":
             return <StyledText className="wiki-content-body" markdown={true}>
                 {"# "+translate(`wiki.article.standard.${props.article.split("/")[1]}.title`)+"\n"}
