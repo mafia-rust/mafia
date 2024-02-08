@@ -35,7 +35,16 @@ impl RoleStateImpl for Journalist {
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
 
 
-    fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {
+    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+        if 
+            priority == Priority::Investigative &&
+            self.public && 
+            actor_ref.alive(game) &&
+            !actor_ref.night_roleblocked(game) &&
+            !actor_ref.night_silenced(game)
+        {
+            game.add_message_to_chat_group(ChatGroup::All, ChatMessage::JournalistJournal { journal: self.journal.clone()});    
+        }
     }
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
         if let Some(old_target_ref) = self.interviewed_target {
@@ -121,12 +130,6 @@ impl RoleStateImpl for Journalist {
                 }
             },
             PhaseType::Morning => {
-                if 
-                    self.public && 
-                    (actor_ref.alive(game) || actor_ref.night_died(game))
-                {
-                    game.add_message_to_chat_group(ChatGroup::All, ChatMessage::JournalistJournal { journal: self.journal.clone()});
-                }
                 self.interviewed_target = None;
                 actor_ref.set_role_state(game, RoleState::Journalist(Journalist{interviewed_target: None, ..self}));
             },

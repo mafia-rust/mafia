@@ -642,7 +642,7 @@
     "wiki.article.role.journalist.guide": "During the day, choose one player to interview each night. You can talk to the player you think is interview. Write a journal and choose to make it public to have it posted at the start of every day. If a player you interview doesn't tell you their alibi then they are likely evil, and you should post that in your journal.",
     "wiki.article.role.journalist.abilities":"- Your journal is posted every morning while you alive if it is public\n- Talk with the player you interview at night",
     "wiki.article.role.journalist.attributes":"- Your journal is posted anonymously, nobody knows who wrote it\n- Players you interview wont see your name on your messages, the messages you send appear to be from the journalist.",
-    "wiki.article.role.journalist.extra": "- If there is more than one Journalist with a public journal, the journals are posted in player order",
+    "wiki.article.role.journalist.extra": "- If there is more than one Journalist with a public journal, the journals are posted in player order\n- Your journal wont be posted if you were silenced or roleblocked",
 
     "wiki.article.role.vigilante.guide": "Choose a player to attack them, if you kill a townie, you will commit suicide on the following night (and probably cause town to lose). You have only three bullets and you can not shoot on night one. If you attack someone and they survive it is likely that they were either protected by a protective role, or they are a role that has armor. Most roles that have armor are evil.",
     "wiki.article.role.vigilante.abilities":"- Visit a player to basic attack them and use up a bullet\n- If you kill a townie you will commit suicide on the following night\n- You have three bullets",
