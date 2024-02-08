@@ -7,22 +7,6 @@
         "keywords": ["jail", "defense"],
         "canBeConvertedTo": []
     },
-    "mayor":{
-        "faction": "town",
-        "armor": false,
-        "maxCount": 1,
-        "largeRoleSpecificMenu": false,
-        "keywords": [],
-        "canBeConvertedTo": []
-    },
-    "transporter":{
-        "faction": "town",
-        "armor": false,
-        "maxCount": null,
-        "largeRoleSpecificMenu": false,
-        "keywords": ["transport", "priority", "visit"],
-        "canBeConvertedTo": []
-    },
     "sheriff": {
         "faction": "town",
         "armor": false,
@@ -39,12 +23,12 @@
         "keywords": ["visit","astral","appearedVisit"],
         "canBeConvertedTo": []
     },
-    "spy": {
+    "seer": {
         "faction": "town",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["visit","silenced","roleblock","protect","transport","possess"],
+        "keywords": ["friends","enemies","suspiciousAura","innocentAura"],
         "canBeConvertedTo": []
     },
     "tracker": {
@@ -55,14 +39,6 @@
         "keywords": ["visit","astral","appearedVisit"],
         "canBeConvertedTo": []
     },
-    "seer": {
-        "faction": "town",
-        "armor": false,
-        "maxCount": null,
-        "largeRoleSpecificMenu": false,
-        "keywords": ["friends","enemies","suspiciousAura","innocentAura"],
-        "canBeConvertedTo": []
-    },
     "psychic": {
         "faction": "town",
         "armor": false,
@@ -71,20 +47,20 @@
         "keywords": ["vision","suspiciousAura","innocentAura"],
         "canBeConvertedTo": []
     },
+    "spy": {
+        "faction": "town",
+        "armor": false,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "keywords": ["visit","silenced","roleblock","protect","transport","possess"],
+        "canBeConvertedTo": []
+    },
     "doctor": {
         "faction": "town",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["protect","defense"],
-        "canBeConvertedTo": []
-    },
-    "bodyguard": {
-        "faction": "town",
-        "armor": false,
-        "maxCount": null,
-        "largeRoleSpecificMenu": false,
-        "keywords": ["protect","defense","astral"],
         "canBeConvertedTo": []
     },
     "crusader": {
@@ -109,6 +85,14 @@
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["defense"],
+        "canBeConvertedTo": []
+    },
+    "bodyguard": {
+        "faction": "town",
+        "armor": false,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "keywords": ["protect","defense","astral"],
         "canBeConvertedTo": []
     },
     "vigilante": {
@@ -151,12 +135,12 @@
         "keywords": ["haunt","dead"],
         "canBeConvertedTo": []
     },
-    "retributionist": {
+    "mayor":{
         "faction": "town",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["dead","visit","possess","priority"],
+        "keywords": [],
         "canBeConvertedTo": []
     },
     "journalist": {
@@ -165,6 +149,22 @@
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
         "keywords": [],
+        "canBeConvertedTo": []
+    },
+    "transporter":{
+        "faction": "town",
+        "armor": false,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "keywords": ["transport", "priority", "visit"],
+        "canBeConvertedTo": []
+    },
+    "retributionist": {
+        "faction": "town",
+        "armor": false,
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false,
+        "keywords": ["dead","visit","possess","priority"],
         "canBeConvertedTo": []
     },
     "godfather": {
@@ -207,22 +207,6 @@
         "keywords": ["appearedVisit"],
         "canBeConvertedTo": ["godfather"]
     },
-    "witch": {
-        "faction": "mafia",
-        "armor": false,
-        "maxCount": 1,
-        "largeRoleSpecificMenu": false,
-        "keywords": ["visit","possess","priority"],
-        "canBeConvertedTo": ["godfather"]
-    },
-    "necromancer": {
-        "faction": "mafia",
-        "armor": false,
-        "maxCount": 1,
-        "largeRoleSpecificMenu": false,
-        "keywords": ["dead","visit","possess","priority"],
-        "canBeConvertedTo": ["godfather"]
-    },
     "janitor": {
         "faction": "mafia",
         "armor": false,
@@ -245,6 +229,22 @@
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
         "keywords": ["forged"],
+        "canBeConvertedTo": ["godfather"]
+    },
+    "witch": {
+        "faction": "mafia",
+        "armor": false,
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false,
+        "keywords": ["visit","possess","priority"],
+        "canBeConvertedTo": ["godfather"]
+    },
+    "necromancer": {
+        "faction": "mafia",
+        "armor": false,
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false,
+        "keywords": ["dead","visit","possess","priority"],
         "canBeConvertedTo": ["godfather"]
     },
     "jester": {

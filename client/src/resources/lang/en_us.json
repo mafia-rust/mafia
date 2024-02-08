@@ -111,14 +111,6 @@
     "role.jailor.roleDataText": "You decided to jail \\0.\n\\1 executions remaining",
     "role.jailor.dayTarget": "Jail",
 
-    "role.mayor.name": "Mayor",
-    "role.mayor.target": "Target",
-    "role.mayor.dayTarget": "Reveal",
-
-    "role.transporter.name": "Transporter",
-    "role.transporter.target": "Transport",
-    "role.transporter.dayTarget": "Special",
-
     "role.sheriff.name":"Detective",
     "role.sheriff.target": "Interrogate",
     "role.sheriff.dayTarget": "Special",
@@ -127,21 +119,21 @@
     "role.lookout.target": "Watch",
     "role.lookout.dayTarget": "Special",
     
-    "role.spy.name": "Spy",
-    "role.spy.target": "Bug",
-    "role.spy.dayTarget": "Special",
+    "role.seer.name": "Seer",
+    "role.seer.target": "Examine",
+    "role.seer.dayTarget": "Special",
 
     "role.tracker.name": "Tracker",
     "role.tracker.target": "Track",
     "role.tracker.dayTarget": "Special",
     
-    "role.seer.name": "Seer",
-    "role.seer.target": "Examine",
-    "role.seer.dayTarget": "Special",
-
     "role.psychic.name": "Psychic",
     "role.psychic.target": "Target",
     "role.psychic.dayTarget": "Special",
+    
+    "role.spy.name": "Spy",
+    "role.spy.target": "Bug",
+    "role.spy.dayTarget": "Special",
 
     "role.doctor.name": "Doctor",
     "role.doctor.target": "Heal",
@@ -164,6 +156,14 @@
     "role.trapper.name": "Trapper",
     "role.trapper.target": "Set Trap",
     "role.trapper.dayTarget": "Special",
+
+    "role.mayor.name": "Mayor",
+    "role.mayor.target": "Target",
+    "role.mayor.dayTarget": "Reveal",
+
+    "role.transporter.name": "Transporter",
+    "role.transporter.target": "Transport",
+    "role.transporter.dayTarget": "Special",
 
     "role.escort.name": "Escort",
     "role.escort.target": "Roleblock",
