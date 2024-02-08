@@ -108,7 +108,7 @@ impl PhaseState {
         );
     }
     
-    /// Returns the next phase
+    /// Returns what phase should come next
     pub fn end(game: &mut Game) -> PhaseState {
         let next = match game.current_phase() {
             PhaseState::Morning => {
@@ -141,8 +141,8 @@ impl PhaseState {
                 
                 let (guilty, innocent) = game.count_verdict_votes(player_on_trial);
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialVerdict{ 
-                        player_on_trial: player_on_trial.index(), 
-                        innocent, guilty 
+                    player_on_trial: player_on_trial.index(), 
+                    innocent, guilty 
                 });
                 
                 if innocent < guilty {

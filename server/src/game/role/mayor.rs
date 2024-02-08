@@ -13,9 +13,7 @@ use super::{Priority, RoleStateImpl, RoleState, Role};
 #[derive(Clone, Debug, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Mayor {
-    pub revealed: bool,
-    pub public: bool,
-    pub journal: String,
+    pub revealed: bool
 }
 
 pub(super) const FACTION: Faction = Faction::Town;
@@ -37,44 +35,38 @@ impl RoleStateImpl for Mayor {
         game.add_message_to_chat_group(ChatGroup::All, ChatMessage::MayorRevealed { player_index: actor_ref.index() });
 
         actor_ref.set_role_state(game, RoleState::Mayor(Mayor{
-            revealed: true,
-            public: self.public,
-            journal: self.journal,
+            revealed: true
         }));
         for player in PlayerReference::all_players(game){
             player.insert_role_label(game, actor_ref, Role::Mayor);
         }
         game.count_votes_and_start_trial();
     }
-    fn can_night_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
+    fn can_night_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool{
         false
     }
-    fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+    fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool{
         game.current_phase().is_day() &&
         !self.revealed &&
         actor_ref == target_ref &&
         actor_ref.alive(game) &&
         PhaseType::Night != game.current_phase().phase()
     }
-    fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit>{
         vec![]
     }
-    fn get_current_send_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_send_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>{
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
     }
-    fn get_current_receive_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_receive_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>{
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
-    fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
+    fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool{
         crate::game::role::common_role::get_won_game(game, actor_ref)
     }
-    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
-        if phase == PhaseType::Morning && self.public && actor_ref.alive(game){
-            game.add_message_to_chat_group(ChatGroup::All, ChatMessage::MayorsJournal { journal: self.journal});
-        }
+    fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType) {
     }
-    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {
-        
+    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
     }

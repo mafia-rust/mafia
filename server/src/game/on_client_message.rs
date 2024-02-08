@@ -1,11 +1,11 @@
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    Game, 
-    player::{PlayerIndex, PlayerReference}, 
-    phase::{PhaseType, PhaseState}, 
-    chat::{ChatGroup, ChatMessage, MessageSender}, 
+    chat::{ChatGroup, ChatMessage, MessageSender},
+    phase::{PhaseState, PhaseType},
+    player::{PlayerIndex, PlayerReference},
     role::{Role, RoleState},
+    Game
 };
 
 
@@ -52,34 +52,33 @@ impl Game {
                 sender_player_ref.set_chosen_targets(self, target_ref_list.clone());
                 
                 let mut target_message_sent = false;
-                sender_player_ref.get_current_send_chat_groups(self)
-                    .into_iter().filter(|group|*group != ChatGroup::Seance)
-                        .for_each(|chat_group| {
-                        match sender_player_ref.role_state(self) {
-                            // TODO: Role specific code here
-                            RoleState::Jailor(_) => {
-                                if sender_player_ref.role(self) == Role::Jailor {
-                                    self.add_message_to_chat_group(
-                                        chat_group,
-                                        ChatMessage::JailorDecideExecute {
-                                            targets: PlayerReference::ref_vec_to_index(&target_ref_list)
-                                        }
-                                    );
-                                    target_message_sent = true;
+                for chat_group in sender_player_ref.get_current_send_chat_groups(self){
+                    match chat_group {
+                        ChatGroup::All | ChatGroup::Seance | ChatGroup::Interview => {},
+                        ChatGroup::Dead | ChatGroup::Mafia | ChatGroup::Vampire => {
+                            self.add_message_to_chat_group(
+                                chat_group,
+                                ChatMessage::Targeted { 
+                                    targeter: sender_player_ref.index(), 
+                                    targets: PlayerReference::ref_vec_to_index(&target_ref_list)
                                 }
-                            },
-                            _ => {
+                            );
+                            target_message_sent = true;
+                        },
+                        ChatGroup::Jail => {
+                            if sender_player_ref.role(self) == Role::Jailor {
                                 self.add_message_to_chat_group(
                                     chat_group,
-                                    ChatMessage::Targeted { 
-                                        targeter: sender_player_ref.index(), 
+                                    ChatMessage::JailorDecideExecute {
                                         targets: PlayerReference::ref_vec_to_index(&target_ref_list)
                                     }
                                 );
-                                target_message_sent = true;  
+                                target_message_sent = true;
                             }
-                        }
-                    });
+                        },
+                    }
+                }
+                
                 
                 if !target_message_sent{
                     sender_player_ref.add_chat_message(self, ChatMessage::Targeted { 
@@ -104,26 +103,32 @@ impl Game {
                 }
                 
                 for chat_group in sender_player_ref.get_current_send_chat_groups(self){
-
-                    // TODO possibly move message_sender
-                    let message_sender = 
-                    if sender_player_ref.role(self) == Role::Jailor && chat_group == ChatGroup::Jail {
-                        MessageSender::Jailor
-                    } else if 
-                        sender_player_ref.role(self) == Role::Medium && 
-                        (
-                            (sender_player_ref.alive(self) && chat_group == ChatGroup::Dead) || 
-                            (!sender_player_ref.alive(self) && chat_group==ChatGroup::Seance)
-                        )
-                    {
-                        MessageSender::Medium
-                    } else {
-                        MessageSender::Player {player: sender_player_index}
+                    let message_sender = match sender_player_ref.role(self){
+                        Role::Jailor => {
+                            if chat_group == ChatGroup::Jail {
+                                Some(MessageSender::Jailor)
+                            }else{None}
+                        },
+                        Role::Medium => {
+                            if 
+                                (sender_player_ref.alive(self) && chat_group == ChatGroup::Dead) || 
+                                (!sender_player_ref.alive(self) && chat_group==ChatGroup::Seance)
+                            {
+                                Some(MessageSender::Medium)
+                            }else{None}
+                        },
+                        Role::Journalist => {
+                            if chat_group == ChatGroup::Interview {
+                                Some(MessageSender::Journalist)
+                            }else{None}
+                        },
+                        _ => {None}
                     };
+
+                    let message_sender = message_sender.unwrap_or(MessageSender::Player { player: sender_player_index });
 
                     self.add_message_to_chat_group(
                         chat_group.clone(),
-                        
                         ChatMessage::Normal{
                             message_sender,
                             text: text.trim_newline().trim_whitespace().truncate(400).truncate_lines(20), 
@@ -185,16 +190,16 @@ impl Game {
                     sender_player_ref.set_role_state(self, RoleState::Amnesiac(amnesiac));
                 }
             }
-            ToServerPacket::SetMayorsJournal { journal } => {
-                if let RoleState::Mayor(mut mayor) = sender_player_ref.role_state(self).clone(){
-                    mayor.journal = journal;
-                    sender_player_ref.set_role_state(self, RoleState::Mayor(mayor));
+            ToServerPacket::SetJournalistJournal { journal } => {
+                if let RoleState::Journalist(mut journalist) = sender_player_ref.role_state(self).clone(){
+                    journalist.journal = journal;
+                    sender_player_ref.set_role_state(self, RoleState::Journalist(journalist));
                 }
             }
-            ToServerPacket::SetMayorsJournalPublic { public } => {
-                if let RoleState::Mayor(mut mayor) = sender_player_ref.role_state(self).clone(){
-                    mayor.public = public;
-                    sender_player_ref.set_role_state(self, RoleState::Mayor(mayor));
+            ToServerPacket::SetJournalistJournalPublic { public } => {
+                if let RoleState::Journalist(mut journalist) = sender_player_ref.role_state(self).clone(){
+                    journalist.public = public;
+                    sender_player_ref.set_role_state(self, RoleState::Journalist(journalist));
                 }
             }
             ToServerPacket::SetConsortOptions { 

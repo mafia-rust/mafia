@@ -5,9 +5,9 @@ import { ContentMenu, ContentTab } from "../GameScreen";
 import GameState from "../../../game/gameState.d";
 import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
 import LargeAmnesiacMenu from "./RoleSpecificMenus/LargeAmnesiacMenu";
-import LargeMayorMenu from "./RoleSpecificMenus/LargeMayorMenu";
 import LargeConsortMenu from "./RoleSpecificMenus/LargeConsortMenu";
 import LargeForgerMenu from "./RoleSpecificMenus/LargeForgerMenu";
+import LargeJournalistMenu from "./RoleSpecificMenus/LargeJournalistMenu";
 
 type RoleSpecificMenuProps = {
 }
@@ -45,8 +45,8 @@ export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuPr
                 return <LargeDoomsayerMenu/>;
             case "amnesiac":
                 return <LargeAmnesiacMenu/>;
-            case "mayor":
-                return <LargeMayorMenu/>;
+            case "journalist":
+                return <LargeJournalistMenu/>;
             case "consort":
                 return <LargeConsortMenu/>;
             case "forger":

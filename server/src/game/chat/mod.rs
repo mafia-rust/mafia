@@ -9,6 +9,7 @@ use super::role::{spy::SpyBug, trapper::TrapState};
 pub enum MessageSender {
     Player {player: PlayerIndex},
     Jailor,
+    Journalist,
     Medium,
 }
 
@@ -92,7 +93,12 @@ pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
     MayorRevealed{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
-    MayorsJournal{journal: String},
+    JournalistJournal{journal: String},
+    #[serde(rename_all = "camelCase")]
+    YouAreInterviewingPlayer{player_index: PlayerIndex},
+    #[serde(rename_all = "camelCase")]
+    PlayerIsBeingInterviewed{player_index: PlayerIndex},
+
     #[serde(rename_all = "camelCase")]
     JailedTarget{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
@@ -179,6 +185,7 @@ pub enum ChatGroup {
     Vampire,
 
     Jail,
+    Interview,
     Seance
 }
 impl ChatGroup{

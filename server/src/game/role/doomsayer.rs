@@ -24,18 +24,16 @@ pub struct Doomsayer {
 pub enum DoomsayerGuess{
     Mafia, #[default] Neutral,
 
-    Jailor, Mayor, Transporter, 
+    Jailor, 
     // No TI
     Doctor, Bodyguard, Crusader, Reveler, Trapper,
     Vigilante, Veteran, Deputy,
-    Escort, Medium, Retributionist,
+    Escort, Medium, Retributionist, Journalist, Mayor, Transporter
 }
 impl DoomsayerGuess{
     fn convert_to_guess(role: Role)->Option<DoomsayerGuess>{
         match role {
             Role::Jailor => Some(DoomsayerGuess::Jailor),
-            Role::Mayor => Some(DoomsayerGuess::Mayor),
-            Role::Transporter => Some(DoomsayerGuess::Transporter),
             Role::Sheriff | Role::Lookout | Role::Spy | Role::Tracker | Role::Seer | Role::Psychic => None, 
             Role::Doctor => Some(DoomsayerGuess::Doctor),
             Role::Bodyguard => Some(DoomsayerGuess::Bodyguard),
@@ -48,6 +46,9 @@ impl DoomsayerGuess{
             Role::Escort => Some(DoomsayerGuess::Escort),
             Role::Medium => Some(DoomsayerGuess::Medium),
             Role::Retributionist => Some(DoomsayerGuess::Retributionist),
+            Role::Journalist => Some(DoomsayerGuess::Journalist),
+            Role::Mayor => Some(DoomsayerGuess::Mayor),
+            Role::Transporter => Some(DoomsayerGuess::Transporter),
             //Mafia
             Role::Godfather | Role::Mafioso | 
             Role::Consort | Role::Blackmailer | Role::Consigliere | 

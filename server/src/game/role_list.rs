@@ -142,7 +142,6 @@ impl Ord for RoleOutlineOption {
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum RoleSet {
-    TownPower,
     TownSupport,
     TownKilling,
     TownProtective,
@@ -160,10 +159,8 @@ pub enum RoleSet {
 impl RoleSet{
     pub fn get_roles(&self) -> Vec<Role> {
         match self {
-            RoleSet::TownPower => 
-                vec![Role::Jailor, Role::Mayor],
             RoleSet::TownSupport => 
-                vec![Role::Medium, Role::Retributionist, Role::Transporter, Role::Escort],
+                vec![Role::Medium, Role::Retributionist, Role::Transporter, Role::Escort, Role::Mayor, Role::Journalist],
             RoleSet::TownKilling => 
                 vec![Role::Vigilante, Role::Veteran, Role::Deputy],
             RoleSet::TownProtective => 

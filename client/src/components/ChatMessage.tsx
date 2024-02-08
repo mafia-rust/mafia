@@ -173,9 +173,17 @@ export function translateChatMessage(message: ChatMessage): string {
             return translate("chatMessage.mayorRevealed",
                 GAME_MANAGER.state.players[message.playerIndex].toString(),
             );
-        case "mayorsJournal":
-            return translate("chatMessage.mayorsJournal",
+        case "journalistJournal":
+            return translate("chatMessage.journalistJournal",
                 message.journal
+            );
+        case "youAreInterviewingPlayer":
+            return translate("chatMessage.youAreInterviewingPlayer",
+                GAME_MANAGER.state.players[message.playerIndex].toString(),
+            );
+        case "playerIsBeingInterviewed":
+            return translate("chatMessage.playerIsBeingInterviewed",
+                GAME_MANAGER.state.players[message.playerIndex].toString(),
             );
         case "jailedTarget":
             return translate("chatMessage.jailedTarget",
@@ -370,8 +378,14 @@ export type ChatMessage = {
     type: "mayorRevealed", 
     playerIndex: PlayerIndex
 } | {
-    type: "mayorsJournal",
+    type: "journalistJournal",
     journal: string
+} | {
+    type: "youAreInterviewingPlayer",
+    playerIndex: PlayerIndex
+} | {
+    type: "playerIsBeingInterviewed",
+    playerIndex: PlayerIndex
 } | {
     type: "jailedTarget"
     playerIndex: PlayerIndex
@@ -501,5 +515,5 @@ export type MessageSender = {
     type: "player", 
     player: PlayerIndex
 } | {
-    type: "jailor" | "medium"
+    type: "jailor" | "medium" | "journalist"
 }

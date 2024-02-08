@@ -157,6 +157,8 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                             (this.state.gameState.roleState?.role === "jailor" && this.state.gameState.roleState.jailedTargetRef === player.index)
                             || 
                             (this.state.gameState.roleState?.role === "medium" && this.state.gameState.roleState.seancedTarget === player.index)
+                            || 
+                            (this.state.gameState.roleState?.role === "journalist" && this.state.gameState.roleState.interviewedTarget === player.index)
                     return(
                         <button className={highlighted ? "highlighted" : undefined} onClick={()=>{
                             GAME_MANAGER.sendDayTargetPacket(player.index)}}
@@ -177,7 +179,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                             let newTargets = [...GAME_MANAGER.state.targets];
                             newTargets.splice(newTargets.indexOf(player.index), 1);
                             return <button className="highlighted" onClick={() => GAME_MANAGER.sendTargetPacket(newTargets)}>
-                                {translate("role."+this.state.gameState.roleState?.role+".detarget")}
+                                {translate("cancel")}
                             </button>
                         }
                     })(player)}

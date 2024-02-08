@@ -102,11 +102,10 @@
     "notification.rejectStart.roleListCannotCreateRoles": "Role list cannot create roles",
     "notification.rejectStart.zeroTimeGame": "Game has no time",
 
-
+    "cancel": "Cancel",
 
     "role.jailor.name": "Jailor",
     "role.jailor.target": "Execute",
-    "role.jailor.detarget": "Spare",
     "role.jailor.roleDataText.night": "\\0 executions remaining",
     "role.jailor.roleDataText.nobody": "You didn't decide to jail anybody.\n\\0 executions remaining",
     "role.jailor.roleDataText": "You decided to jail \\0.\n\\1 executions remaining",
@@ -114,209 +113,174 @@
 
     "role.mayor.name": "Mayor",
     "role.mayor.target": "Target",
-    "role.mayor.detarget": "Detarget",
     "role.mayor.dayTarget": "Reveal",
-    "role.mayor.menu.public": "Public",
-    "role.mayor.menu.journal": "Journal",
 
     "role.transporter.name": "Transporter",
     "role.transporter.target": "Transport",
-    "role.transporter.detarget": "Detarget",
     "role.transporter.dayTarget": "Special",
 
     "role.sheriff.name":"Detective",
     "role.sheriff.target": "Interrogate",
-    "role.sheriff.detarget": "Detarget",
     "role.sheriff.dayTarget": "Special",
 
     "role.lookout.name": "Lookout",
     "role.lookout.target": "Watch",
-    "role.lookout.detarget": "Unwatch",
     "role.lookout.dayTarget": "Special",
     
     "role.spy.name": "Spy",
     "role.spy.target": "Bug",
-    "role.spy.detarget": "Dont bug",
     "role.spy.dayTarget": "Special",
 
     "role.tracker.name": "Tracker",
     "role.tracker.target": "Track",
-    "role.tracker.detarget": "Detarget",
     "role.tracker.dayTarget": "Special",
     
     "role.seer.name": "Seer",
     "role.seer.target": "Examine",
-    "role.seer.detarget": "Detarget",
     "role.seer.dayTarget": "Special",
 
     "role.psychic.name": "Psychic",
-    "role.psychic.target": "target",
-    "role.psychic.detarget": "Detarget",
+    "role.psychic.target": "Target",
     "role.psychic.dayTarget": "Special",
 
     "role.doctor.name": "Doctor",
     "role.doctor.target": "Heal",
-    "role.doctor.detarget": "Detarget",
     "role.doctor.roleDataText": "\\0 self-heals remaining",
     "role.doctor.dayTarget": "Special",
 
     "role.bodyguard.name": "Bodyguard",
     "role.bodyguard.target": "Protect",
-    "role.bodyguard.detarget": "Un-protect",
     "role.bodyguard.roleDataText": "\\0 self-shields remaining",
     "role.bodyguard.dayTarget": "Special",
 
     "role.crusader.name": "Crusader",
     "role.crusader.target": "Protect",
-    "role.crusader.detarget": "Un-protect",
     "role.crusader.dayTarget": "Special",
 
     "role.reveler.name": "Fisherman",
     "role.reveler.target": "Party",
-    "role.reveler.detarget": "Detarget",
     "role.reveler.dayTarget": "Special",
 
     "role.trapper.name": "Trapper",
     "role.trapper.target": "Set Trap",
-    "role.trapper.detarget": "Detarget",
     "role.trapper.dayTarget": "Special",
 
     "role.escort.name": "Escort",
     "role.escort.target": "Roleblock",
-    "role.escort.detarget": "Detarget",
     "role.escort.dayTarget": "Special",
 
     "role.medium.name": "Medium",
     "role.medium.target": "Target",
-    "role.medium.detarget": "Detarget",
     "role.medium.roleDataText.nobody": "You didn't decide to seance anybody.\n\\0 seances remaining",
     "role.medium.roleDataText": "You decided to seance \\0.\n\\1 seances remaining",
     "role.medium.dayTarget": "Seance",
 
     "role.retributionist.name": "Retributionist",
     "role.retributionist.target": "Target",
-    "role.retributionist.detarget": "Detarget",
     "role.retributionist.dayTarget": "Special",
+
+    "role.journalist.name": "Journalist",
+    "role.journalist.target": "Target",
+    "role.journalist.dayTarget": "Interview",
+    "role.journalist.menu.public": "Public",
+    "role.journalist.menu.journal": "Journal",
 
     "role.vigilante.name": "Vigilante",
     "role.vigilante.target": "Shoot",
-    "role.vigilante.detarget": "Detarget",
     "role.vigilante.roleDataText.suicide": "You killed a townie and will commit suicide tonight",
     "role.vigilante.roleDataText": "\\0 bullets remaining",
     "role.vigilante.dayTarget": "Special",
 
     "role.veteran.name": "Veteran",
     "role.veteran.target": "Alert",
-    "role.veteran.detarget": "Un-alert",
     "role.veteran.roleDataText": "\\0 alerts remaining",
     "role.veteran.dayTarget": "Special",
 
     "role.deputy.name": "Deputy",
     "role.deputy.target": "Target",
-    "role.deputy.detarget": "Detarget",
     "role.deputy.dayTarget": "Shoot",
 
     "role.godfather.name": "Godfather",
     "role.godfather.target": "Kill",
-    "role.godfather.detarget": "Spare",
     "role.godfather.dayTarget": "Backup",
 
     "role.mafioso.name": "Mafioso",
     "role.mafioso.target": "Kill",
-    "role.mafioso.detarget": "Spare",
     "role.mafioso.dayTarget": "Special",
 
     "role.consort.name": "Consort",
     "role.consort.target": "roleblock",
-    "role.consort.detarget": "Detarget",
     "role.consort.dayTarget": "Special",
     
     "role.blackmailer.name": "Blackmailer",
     "role.blackmailer.target": "Silence",
-    "role.blackmailer.detarget": "Un-silence",
     "role.blackmailer.dayTarget": "Special",
     
     "role.consigliere.name": "Consigliere",
     "role.consigliere.target": "Investigate",
-    "role.consigliere.detarget": "Detarget",
     "role.consigliere.dayTarget": "Special",
 
     "role.necromancer.name": "Necromancer",
     "role.necromancer.target": "Target",
-    "role.necromancer.detarget": "Detarget",
     "role.necromancer.dayTarget": "Special",
 
     "role.witch.name": "Witch",
     "role.witch.target": "Target",
-    "role.witch.detarget": "Detarget",
     "role.witch.dayTarget": "Special",
     
     "role.janitor.name": "Janitor",
     "role.janitor.target": "Clean",
-    "role.janitor.detarget": "Un-clean",
     "role.janitor.roleDataText": "\\0 cleans remaining",
     "role.janitor.dayTarget": "Special",
 
     "role.forger.name": "Forger",
     "role.forger.target": "Forge",
-    "role.forger.detarget": "Un-forge",
     "role.forger.dayTarget": "Special",
     "role.forger.menu.forgesRemaining": "\\0 forges remaining",
 
     "role.framer.name": "Framer",
     "role.framer.target": "Target",
-    "role.framer.detarget": "Detarget",
     "role.framer.dayTarget": "Special",
 
     "role.jester.name": "Jester",
     "role.jester.target": "Haunt",
-    "role.jester.detarget": "Un-haunt",
     "role.jester.dayTarget": "Special",
 
     "role.executioner.name": "Executioner",
     "role.executioner.target": "Target",
-    "role.executioner.detarget": "Detarget",
     "role.executioner.dayTarget": "Special",
     
     "role.doomsayer.name": "Doomsayer",
     "role.doomsayer.target": "Target",
-    "role.doomsayer.detarget": "Detarget",
     "role.doomsayer.dayTarget": "Special",
 
     "role.politician.name": "Politician",
     "role.politician.target": "Target",
-    "role.politician.detarget": "Detarget",
     "role.politician.dayTarget": "Special",
 
     "role.arsonist.name": "Arsonist",
     "role.arsonist.target": "Target",
-    "role.arsonist.detarget": "Detarget",
     "role.arsonist.dayTarget": "Special",
     
     "role.werewolf.name": "Werewolf",
     "role.werewolf.target": "Target",
-    "role.werewolf.detarget": "Detarget",
     "role.werewolf.dayTarget": "Special",
 
     "role.death.name": "Death",
     "role.death.target": "Collect",
-    "role.death.detarget": "Detarget",
     "role.death.dayTarget": "Special",
     "role.death.roleDataText": "Souls collected: \\0",
 
     "role.vampire.name": "Vampire",
     "role.vampire.target": "Bite",
-    "role.vampire.detarget": "Detarget",
     "role.vampire.dayTarget": "Special",
 
     "role.amnesiac.name": "Amnesiac",
     "role.amnesiac.target": "Target",
-    "role.amnesiac.detarget": "Detarget",
     "role.amnesiac.dayTarget": "Special",
 
     "role.unknown.name": "Unknown",
     "role.unknown.target": "Target",
-    "role.unknown.detarget": "Detarget",
     "role.unknown.dayTarget": "Special",
 
     "grave.role.cleaned": "Cleaned",
@@ -335,7 +299,6 @@
     "townProtective":"Town Protective",
     "townSupport":"Town Support",
     "townKilling":"Town Killing",
-    "townPower":"Town Power",
     "townCommon":"Town Common",
 
     "mafiaPower":"Mafia Power",
@@ -416,7 +379,9 @@
     "chatMessage.targeted.cleared":"\\0 cleared their targets.",
 
     "chatMessage.mayorRevealed":"\\0 has revealed as Mayor!",
-    "chatMessage.mayorsJournal":"The Mayor wrote a journal that states this: \\0",
+    "chatMessage.journalistJournal":"The town journal states this: \\0",
+    "chatMessage.youAreInterviewingPlayer":"You are interviewing \\0.",
+    "chatMessage.playerIsBeingInterviewed":"\\0 is being interviewed by a journalist",
     "chatMessage.jailedTarget": "You put \\0 into jail.",
     "chatMessage.jailedSomeone":"\\0 was dragged off to jail!",
     "chatMessage.jailorDecideExecute":"The Jailor decided to execute \\0!",
@@ -587,8 +552,8 @@
 
     "wiki.article.role.jailor.guide": "During the day, choose one player to jail each night. You can talk to your prisoner during the night, and they wont know who you are. You should interrogate your prisoner to find out what their role is, and if you think they are evil, you can choose to execute them. You can execute up to three times, but if you kill a townie, you can not jail anyone anymore.",
     "wiki.article.role.jailor.abilities":"* Choose one player to jail during the day\n* Visit your prisoner to execute them",
-    "wiki.article.role.jailor.attributes":"* You may anonymously talk with your prisoner at night\n* If you execute a town member, you forfeit the ability to jail prisoners, and loose all execution uses\n* Players in jail are immune to most abilities being used on them\n* Jailed players can't target\n* Other players will know if the player they visit is jailed",
-    "wiki.article.role.jailor.extra":"* The Jailor cant choose to execute on night one\n* If you execute a townie, or run out of executions, you can not target anymore\n* You will invisibly roleblock the player you put in jail",
+    "wiki.article.role.jailor.attributes":"* You may talk with your prisoner at night\n* If you execute a town member, you forfeit the ability to jail prisoners, and loose all execution uses\n* Players in jail are immune to most abilities being used on them\n* Jailed players can't target\n* Other players will know if the player they visit is jailed",
+    "wiki.article.role.jailor.extra":"* The Jailor cant choose to execute on night one\n* If you execute a townie, or run out of executions, you can not target anymore\n* You will invisibly roleblock the player you put in jail\n- Players in jail wont see your name on your messages, the messages you send appear to be from the jailor.",
 
     "wiki.article.role.mayor.guide": "Reveal during the day to make your vote count as three votes. After you reveal everyone will know that you are the Mayor. You can also write a journal and choose to make it public, if it is public it is posted at the start of every day. You should write down what everyone claims in your journal so you can remind town of what is true.",
     "wiki.article.role.mayor.abilities":"- Reveal during the day to triple your voting power, showing everyone that you are the Mayor\n- If your journal is public, it is posted to chat at the start of every morning",
@@ -669,6 +634,11 @@
     "wiki.article.role.retributionist.abilities":"- Visit two players to make the first player visit the second player\n- Visit three players to make the first player visit the second and third player",
     "wiki.article.role.retributionist.attributes":"- The first player you visit is told that they were possessed, or immune to possession\n- You can see all night information messages that the player you possess gets\n- You can't target a dead player who you have already possessed, if you do not end up possessing that player, you can target them the again\n- You can only target dead players who's gravestones show a town role",
     "wiki.article.role.retributionist.extra":"- You are immune to getting roleblocked and possession\n- You can force players you possess visit any living player\n- All your visits are astral except the first",
+
+    "wiki.article.role.journalist.guide": "During the day, choose one player to interview each night. You can talk to the player you think is interview. Write a journal and choose to make it public to have it posted at the start of every day. If a player you interview doesn't tell you their alibi then they are likely evil, and you should post that in your journal.",
+    "wiki.article.role.journalist.abilities":"- Your journal is posted every morning while you alive if it is public\n- Talk with the player you interview at night",
+    "wiki.article.role.journalist.attributes":"- Your journal is posted anonymously, nobody knows who wrote it\n- Players you interview wont see your name on your messages, the messages you send appear to be from the journalist.",
+    "wiki.article.role.journalist.extra": "- If there is more than one Journalist with a public journal, the journals are posted in player order",
 
     "wiki.article.role.vigilante.guide": "Choose a player to attack them, if you kill a townie, you will commit suicide on the following night (and probably cause town to lose). You have only three bullets and you can not shoot on night one. If you attack someone and they survive it is likely that they were either protected by a protective role, or they are a role that has armor. Most roles that have armor are evil.",
     "wiki.article.role.vigilante.abilities":"- Visit a player to basic attack them and use up a bullet\n- If you kill a townie you will commit suicide on the following night\n- You have three bullets",

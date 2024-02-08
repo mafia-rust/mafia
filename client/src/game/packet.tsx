@@ -209,10 +209,10 @@ export type ToServerPacket = {
     type: "setAmnesiacRoleOutline",
     roleOutline: RoleOutline
 } | {
-    type: "setMayorsJournal",
+    type: "setJournalistJournal",
     journal: string
 } | {
-    type: "setMayorsJournalPublic",
+    type: "setJournalistJournalPublic",
     public: boolean
 } | {
     type: "setConsortOptions",

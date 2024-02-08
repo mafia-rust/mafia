@@ -37,8 +37,6 @@ trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
 // Creates the Role enum
 macros::roles! {
     Jailor : jailor,
-    Mayor : mayor,
-    Transporter : transporter,
 
     Sheriff : sheriff,
     Lookout : lookout,
@@ -60,6 +58,9 @@ macros::roles! {
     Escort : escort,
     Medium : medium,
     Retributionist : retributionist,
+    Journalist : journalist,
+    Mayor : mayor,
+    Transporter : transporter,
 
     // Mafia
     Godfather : godfather,

@@ -1,21 +1,21 @@
 import React from "react"
 import GAME_MANAGER from "../../../.."
 import translate from "../../../../game/lang"
-import "./largeMayorMenu.css"
+import "./largeJournalistMenu.css"
 
-type LargeMayorMenuProps = {
+type LargeJournalistMenuProps = {
 }
-type LargeMayorMenuState = {
+type LargeJournalistMenuState = {
     syncedPublic: boolean,
     localJournal: string,
     syncedJournal: string,
 }
-export default class LargeMayorMenu extends React.Component<LargeMayorMenuProps, LargeMayorMenuState> {
+export default class LargeJournalistMenu extends React.Component<LargeJournalistMenuProps, LargeJournalistMenuState> {
     listener: () => void;
-    constructor(props: LargeMayorMenuState) {
+    constructor(props: LargeJournalistMenuState) {
         super(props);
 
-        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.roleState?.role === "mayor")
+        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.roleState?.role === "journalist")
             this.state = {
                 syncedPublic: GAME_MANAGER.state.roleState?.public,
                 localJournal: GAME_MANAGER.state.roleState?.journal,
@@ -23,7 +23,7 @@ export default class LargeMayorMenu extends React.Component<LargeMayorMenuProps,
             };
         this.listener = ()=>{
             if(GAME_MANAGER.state.stateType === "game"){
-                if(GAME_MANAGER.state.roleState?.role === "mayor"){
+                if(GAME_MANAGER.state.roleState?.role === "journalist"){
                     this.setState({
                         syncedJournal: GAME_MANAGER.state.roleState.journal,
                         syncedPublic: GAME_MANAGER.state.roleState.public,
@@ -39,20 +39,20 @@ export default class LargeMayorMenu extends React.Component<LargeMayorMenuProps,
         GAME_MANAGER.removeStateListener(this.listener);
     }
     handlePublicToggle(){
-        GAME_MANAGER.sendSetMayorsJournalPublic(
+        GAME_MANAGER.sendSetJournalistJournalPublic(
             !this.state.syncedPublic
         );
     }
     handleSave(){
-        GAME_MANAGER.sendSetMayorsJournal(
+        GAME_MANAGER.sendSetJournalistJournal(
             this.state.localJournal,
         );
     }
 
     render(){
-        return <div className="large-mayor-menu">
+        return <div className="large-journalist-menu">
             <div>
-                {translate("role.mayor.menu.journal")}
+                {translate("role.journalist.menu.journal")}
                 <button
                     className={"material-icons-round " + (this.state.syncedJournal !== this.state.localJournal ? "highlighted" : "")}
                     onClick={() => this.handleSave()}
@@ -61,7 +61,7 @@ export default class LargeMayorMenu extends React.Component<LargeMayorMenuProps,
                 </button>
             </div>
             <div>
-                {translate("role.mayor.menu.public")}
+                {translate("role.journalist.menu.public")}
                 <label className="material-icons-round" onClick={()=>this.handlePublicToggle()}>
                     {this.state.syncedPublic ? "check" : "close"}
                 </label>

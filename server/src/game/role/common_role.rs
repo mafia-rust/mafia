@@ -1,6 +1,6 @@
 use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, role_list::Faction, phase::{PhaseState, PhaseType}, team::Team, end_game_condition::EndGameCondition};
 
-use super::RoleState;
+use super::{journalist::Journalist, medium::Medium, RoleState};
 
 
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -45,15 +45,27 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
             let mut out = vec![];
             if PlayerReference::all_players(game)
                 .any(|med|{
-                    if let RoleState::Medium(medium_state) = med.role_state(game){
-                        if Some(actor_ref) == medium_state.seanced_target{
-                            return true;
-                        }
+                    match med.role_state(game) {
+                        RoleState::Medium(Medium{ seanced_target: Some(seanced_target), .. }) => {
+                            actor_ref == *seanced_target
+                        },
+                        _ => false
                     }
-                    false
                 })
             {
                 out.push(ChatGroup::Seance);
+            }
+            if PlayerReference::all_players(game)
+                .any(|p|
+                    match p.role_state(game) {
+                        RoleState::Journalist(Journalist{interviewed_target: Some(interviewed_target_ref), ..}) => {
+                            *interviewed_target_ref == actor_ref
+                        },
+                        _ => false
+                    }
+                )
+            {
+                out.push(ChatGroup::Interview);
             }
 
 
@@ -62,6 +74,8 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
             } else {
                 night_chat_groups
             };
+
+
             out.append(&mut jail_or_night_chats);
             out
         },
@@ -82,19 +96,29 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
     if actor_ref.night_jailed(game){
         out.push(ChatGroup::Jail);
     }
-    if
-        game.current_phase().phase() == PhaseType::Night &&
-        PlayerReference::all_players(game)
-            .any(|med|{
-                if let RoleState::Medium(medium_state) = med.role_state(game){
-                    if Some(actor_ref) == medium_state.seanced_target{
-                        return true;
-                    }
-                }
-                false
-            })
+    if game.current_phase().phase() == PhaseType::Night && PlayerReference::all_players(game)
+        .any(|med|{
+            match med.role_state(game) {
+                RoleState::Medium(Medium{ seanced_target: Some(seanced_target), .. }) => {
+                    actor_ref == *seanced_target
+                },
+                _ => false
+            }
+        })
     {
         out.push(ChatGroup::Seance);
+    }
+    if PlayerReference::all_players(game)
+        .any(|p|
+            match p.role_state(game) {
+                RoleState::Journalist(Journalist{interviewed_target: Some(interviewed_target_ref), ..}) => {
+                    *interviewed_target_ref == actor_ref
+                },
+                _ => false
+            }
+        )
+    {
+        out.push(ChatGroup::Interview);
     }
 
     out

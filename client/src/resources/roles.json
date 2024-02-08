@@ -11,7 +11,7 @@
         "faction": "town",
         "armor": false,
         "maxCount": 1,
-        "largeRoleSpecificMenu": true,
+        "largeRoleSpecificMenu": false,
         "keywords": [],
         "canBeConvertedTo": []
     },
@@ -157,6 +157,14 @@
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": ["dead","visit","possess","priority"],
+        "canBeConvertedTo": []
+    },
+    "journalist": {
+        "faction": "town",
+        "armor": false,
+        "maxCount": 1,
+        "largeRoleSpecificMenu": true,
+        "keywords": [],
         "canBeConvertedTo": []
     },
     "godfather": {

@@ -86,8 +86,8 @@ export type GameManager = {
         [number, DoomsayerGuess]
     ]): void;
     sendSetAmnesiacRoleOutline(roleOutline: RoleOutline): void;
-    sendSetMayorsJournal(journal: string): void;
-    sendSetMayorsJournalPublic(isPublic: boolean): void;
+    sendSetJournalistJournal(journal: string): void;
+    sendSetJournalistJournalPublic(isPublic: boolean): void;
     sendSetConsortOptions(
         roleblock: boolean, 
         youWereRoleblockedMessage: boolean, 

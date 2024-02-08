@@ -200,9 +200,9 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SetAmnesiacRoleOutline{ role_outline: RoleOutline },
     #[serde(rename_all = "camelCase")]
-    SetMayorsJournal{ journal: String},
+    SetJournalistJournal{ journal: String},
     #[serde(rename_all = "camelCase")]
-    SetMayorsJournalPublic{ public: bool},
+    SetJournalistJournalPublic{ public: bool},
     #[serde(rename_all = "camelCase")]
     SetConsortOptions{
         roleblock: bool,

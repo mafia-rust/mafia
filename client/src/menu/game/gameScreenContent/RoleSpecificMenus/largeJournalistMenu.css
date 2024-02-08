@@ -1,20 +1,20 @@
-.large-mayor-menu {
+.large-journalist-menu {
     padding-top: .2rem;
 }
-.large-mayor-menu textarea {
+.large-journalist-menu textarea {
     text-align: left;
     height: 19rem;
     resize: none;
     width: 100%;
     margin: 0;
 }
-.large-mayor-menu div {
+.large-journalist-menu div {
     margin: .2rem;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 }
-.large-mayor-menu label {
+.large-journalist-menu label {
     display: inline-block;
     height: 100%;
     padding: .2rem;

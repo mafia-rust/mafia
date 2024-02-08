@@ -329,15 +329,15 @@ export function createGameManager(): GameManager {
                 roleOutline: roleOutline
             });
         },
-        sendSetMayorsJournal(journal: string) {
+        sendSetJournalistJournal(journal: string) {
             this.server.sendPacket({
-                type: "setMayorsJournal",
+                type: "setJournalistJournal",
                 journal: journal,
             });
         },
-        sendSetMayorsJournalPublic(isPublic: boolean) {
+        sendSetJournalistJournalPublic(isPublic: boolean) {
             this.server.sendPacket({
-                type: "setMayorsJournalPublic",
+                type: "setJournalistJournalPublic",
                 public: isPublic,
             });
         },

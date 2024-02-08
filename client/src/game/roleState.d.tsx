@@ -9,9 +9,7 @@ export type RoleState = {
     jailedTargetRef: number | null
 } | {
     role: "mayor",
-    revealed: boolean,
-    public: boolean,
-    journal: string
+    revealed: boolean
 } | {
     role: "transporter"
 } | {
@@ -55,6 +53,11 @@ export type RoleState = {
     seancedTarget: PlayerIndex | null
 } | {
     role: "retributionist"
+} | {
+    role: "journalist",
+    public: boolean,
+    journal: string,
+    interviewedTarget: PlayerIndex | null
 } | {
     role: "godfather"
     backup: PlayerIndex | null
