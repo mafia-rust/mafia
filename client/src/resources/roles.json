@@ -140,7 +140,7 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": [],
+        "keywords": ["roleLabel"],
         "canBeConvertedTo": []
     },
     "journalist": {
@@ -148,7 +148,7 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
-        "keywords": [],
+        "keywords": ["interview", "journal"],
         "canBeConvertedTo": []
     },
     "transporter":{

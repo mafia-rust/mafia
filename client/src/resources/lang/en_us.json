@@ -297,8 +297,8 @@
 
     "townInvestigative":"Town Investigate",
     "townProtective":"Town Protective",
-    "townSupport":"Town Support",
     "townKilling":"Town Killing",
+    "townSupport":"Town Support",
     "townCommon":"Town Common",
 
     "mafiaPower":"Mafia Power",
@@ -453,6 +453,8 @@
     "chatMessage.doomsayerFailed": "At least one of your guesses was incorrect or invalid.",
     "chatMessage.doomsayerWon": "Your guesses were correct, and you won!",
 
+    "wiki.article.standard.roleLabel.title": "Role Label",
+    "wiki.article.standard.roleLabel.text": "A role label might appear next to a players name on the player list. It shows what their role is. For example, mafia members can see the roles of their teammates through role labels. Or if a mayor reveals, the mayor will gain a role label. It is possible for a role label to be innacurate, if a mayor is converted to a vampire, their label might not change.",
     "wiki.article.standard.interview.title": "Interview",
     "wiki.article.standard.interview.text": "A journalist can interview a player during the night, allowing the journalist to speak with them. The player being interviewed may not know who the journalist is. ",
     "wiki.article.standard.journal.title": "Journal",
@@ -534,7 +536,7 @@
     "wiki.article.standard.chat.title":"Chat",
     "wiki.article.standard.chat.text":"The chat is where players recieve most information.\n- When night ends chat could show if you were attacked, roleblocked, transported and much more.\n- Usually you can't send messages at night, but some roles can.\n- Not all messages can be seen by everyone.",
     "wiki.article.standard.playerList.title":"Players",
-    "wiki.article.standard.playerList.text":"The players menu shows a list of all players in the game.\n- This is where you go to target a player to use your ability or vote them. When it is possible to target or vote a player, a button comes up.\n- Click on a players name to prepend a whisper command to the chat box.\n- Next to players names, you can see if they are dead, and potentially what their role label is or any tags.\n- Press the filter button to only see messages with that players name in it.",
+    "wiki.article.standard.playerList.text":"The players menu shows a list of all players in the game.\n- This is where you go to target a player to use your ability or vote them. When it is possible to target or vote a player, a button comes up.\n- Click on a players name to prepend a whisper command to the chat box.\n- Next to players names, you can see if they are dead, and potentially see their role label.\n- Press the filter button to only see messages with that players name in it.",
     "wiki.article.standard.alibi.title":"Alibi",
     "wiki.article.standard.alibi.text":"In order to find out who the mafia is, townies need to share information they have in order to deduce who is lying about their role. This is done with the use of alibis, which are records of the abilities you have used and information you have gathered. Alibis are posted in the chat and graveyard when the player dies. Here is an example of a typical alibi that a Detective would have.\n\n> Detective\nNight 1: Deodat Lawson - Innocent\nNight 2: Samuel Parris - Suspicious\n\nWhen the Detective posts this alibi in chat, they provide evidence to other players that on the second night, they found Samuel Parris as suspicious, implying that Samuel Parris is a mafia member. If the town believes the Detective, they will likely vote them out.\n\nFor a mafia member to pretend to be a town role, they need to write a fake alibi to pretend to be a town role. _IF A PLAYER DOES NOT HAVE AN ALIBI, THEY ARE LIKELY A MAFIA MEMBER_ who doesn't know how to write a fake alibi, and they should be directed to this page. ",
     "wiki.article.standard.graveyard.title":"Graveyard",
