@@ -54,8 +54,8 @@ impl Game {
                 let mut target_message_sent = false;
                 for chat_group in sender_player_ref.get_current_send_chat_groups(self){
                     match chat_group {
-                        ChatGroup::All | ChatGroup::Seance | ChatGroup::Interview => {},
-                        ChatGroup::Dead | ChatGroup::Mafia | ChatGroup::Vampire => {
+                        ChatGroup::All | ChatGroup::Seance | ChatGroup::Interview | ChatGroup::Dead => {},
+                        ChatGroup::Mafia | ChatGroup::Vampire => {
                             self.add_message_to_chat_group(
                                 chat_group,
                                 ChatMessage::Targeted { 
