@@ -320,6 +320,13 @@
     "tag.insane":"🪬",
     "tag.dead":"💀",
 
+    "chatGroup.mafia.icon": "🌹",
+    "chatGroup.vampire.icon": "🧛‍♂️",
+    "chatGroup.jail.icon": "⛓️",
+    "chatGroup.interview.icon": "📝",
+    "chatGroup.dead.icon": "💀",
+    "chatGroup.seance.icon": "🔮",
+
     "role": "Role",
     "day": "Day",
     "suspicious": "Suspicious",
@@ -523,6 +530,8 @@
     "wiki.article.standard.roleOutline.text": "A role outline defines a group of roles.\n\nOutlines can either be a predefined role set, an exact role, or a union of multiple.\n\n_Examples_\n\n\"Any\" It could be any role\n\n\"Neutral\" Could be any possible neutral role.\n\n\"Town Support\" Could be an Escort, Retributionist, Transporter, or Medium\n\n\"Godfather\" Could only be a Gofather.\n\n\"Amnesiac + Psychic\" Could either be an Amnesiac or Psychic.",
     "wiki.article.standard.outlineList.title":"Outline List",
     "wiki.article.standard.outlineList.text": "The outline list defines what roles are in the game. Each player gets a role generated randomly from an outline. Each role is equally likely to generate from each outline.",
+    "wiki.article.standard.chatGroup.title": "Chat Group",
+    "wiki.article.standard.chatGroup.text": "Messages are sent to chat groups. The chat groups are:\n    - All (no icon)\n    - Dead 💀\n    - Mafia 🌹\n    - Vampire 🧛‍♂️\n    - Haunt 🔮\n    - Jail ⛓️\n    - Interview 📝\n\n Players can be in multiple chat groups at once, or even read chat groups they are not in.",
 
     "wiki.article.standard.how_to_play.title":"How to play",
     "wiki.article.standard.how_to_play.text":"The game has two major teams, Town and Mafia. The goal is to be the last team remaining alive. The town wins if they find out who the mafia is and vote them out. The mafia wins if they deceive the town and stay hidden so they don't get voted out.\n\nEvery role has abilities that they use to try to win. Abilities can do things like kill players, and prevent kills, and find out what role other people are.\nThe game is about communication, townies need to share information to find the mafia and vote them out, while mafia needs to spread misinformation to try to get townies to turn against eachother and win.\n\n**MULTIPLE PLAYERS CAN HAVE THE SAME ROLE**\n\nThere are also neutral roles that have their own win conditions.",

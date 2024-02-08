@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import translate from "../game/lang";
+import translate, { translateChecked } from "../game/lang";
 import React from "react";
 import GAME_MANAGER, { find, replaceMentions } from "..";
 import StyledText from "./StyledText";
@@ -16,52 +16,54 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
     let style = typeof chatMessageStyles[message.type] === "string" ? chatMessageStyles[message.type] : "";
 
     // Special chat messages that don't play by the rules
-    if (message.type === "normal") {
-        if(message.messageSender.type !== "player"){
-            style += " discreet";
-        } else if (message.chatGroup === "dead") {
-            style += " dead player";
-        } else {
-            style += " player"
-        }
-        
-        if (
-            GAME_MANAGER.state.stateType === "game" &&
-            (find(GAME_MANAGER.state.players[GAME_MANAGER.state.myIndex!].name ?? "").test(sanitizePlayerMessage(replaceMentions(
-                message.text,
-                GAME_MANAGER.state.players
-            ))) ||
-            (
+    switch (message.type) {
+        case "normal":
+            if(message.messageSender.type !== "player"){
+                style += " discreet";
+            } else if (message.chatGroup === "dead") {
+                style += " dead player";
+            } else {
+                style += " player"
+            }
+            
+            if (
                 GAME_MANAGER.state.stateType === "game" &&
-                GAME_MANAGER.state.myIndex !== null &&
-                find("" + (GAME_MANAGER.state.myIndex + 1)).test(sanitizePlayerMessage(replaceMentions(
+                (find(GAME_MANAGER.state.players[GAME_MANAGER.state.myIndex!].name ?? "").test(sanitizePlayerMessage(replaceMentions(
                     message.text,
                     GAME_MANAGER.state.players
-                )))
-            ))
-            
-        ) {
-            style += " mention";
-        } 
-    } else if (message.type === "targetsMessage") {
-        return <>
-            <StyledText className={"chat-message " + style}>{translateChatMessage(message)}</StyledText>
-            <ChatElement message={message.message}/>
-        </>
-    } else if (message.type === "playerDied") {
-        if(GAME_MANAGER.state.stateType === "game"){
+                ))) ||
+                (
+                    GAME_MANAGER.state.stateType === "game" &&
+                    GAME_MANAGER.state.myIndex !== null &&
+                    find("" + (GAME_MANAGER.state.myIndex + 1)).test(sanitizePlayerMessage(replaceMentions(
+                        message.text,
+                        GAME_MANAGER.state.players
+                    )))
+                ))
+                
+            ) {
+                style += " mention";
+            }
+            break;
+        case "targetsMessage":
             return <>
-                <StyledText className={"chat-message " + style}>{translate("chatMessage.playerDied",
-                    GAME_MANAGER.state.players[message.grave.playerIndex].toString(),
-                )}</StyledText>
-                <div className="grave-message">
-                    <GraveComponent grave={message.grave} gameState={GAME_MANAGER.state}/>
-                </div>
-            </>;
-        }
-        else{
-            return <></>;
-        }
+                <StyledText className={"chat-message " + style}>{translateChatMessage(message)}</StyledText>
+                <ChatElement message={message.message}/>
+            </>
+        case "playerDied":
+            if(GAME_MANAGER.state.stateType === "game"){
+                return <>
+                    <StyledText className={"chat-message " + style}>{translate("chatMessage.playerDied",
+                        GAME_MANAGER.state.players[message.grave.playerIndex].toString(),
+                    )}</StyledText>
+                    <div className="grave-message">
+                        <GraveComponent grave={message.grave} gameState={GAME_MANAGER.state}/>
+                    </div>
+                </>;
+            }
+            else{
+                return <></>;
+            }
     }
 
     return <StyledText className={"chat-message " + style}>{translateChatMessage(message)}</StyledText>;
@@ -90,13 +92,15 @@ export function translateChatMessage(message: ChatMessage): string {
 
     switch (message.type) {
         case "normal":
+            let icon = translateChecked("chatGroup."+message.chatGroup+".icon");
+
             if(message.messageSender.type === "player"){
-                return translate("chatMessage.normal",
+                return (icon??"")+translate("chatMessage.normal",
                     "sender-"+GAME_MANAGER.state.players[message.messageSender.player].toString(), 
                     sanitizePlayerMessage(replaceMentions(message.text, GAME_MANAGER.state.players))
                 );
             } else {
-                return translate("chatMessage.normal",
+                return (icon??"")+translate("chatMessage.normal",
                     translate("role."+message.messageSender.type+".name"),
                     sanitizePlayerMessage(replaceMentions(message.text, GAME_MANAGER.state.players))
                 );
@@ -317,7 +321,7 @@ export type ChatMessage = {
     type: "normal", 
     messageSender: MessageSender, 
     text: string, 
-    chatGroup: "all" | "mafia" | "dead" | "vampire"
+    chatGroup: "all" | "dead" | "mafia" | "vampire" | "seance" | "jail" | "interview"
 } | {
     type: "whisper", 
     fromPlayerIndex: PlayerIndex, 
