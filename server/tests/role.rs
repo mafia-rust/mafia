@@ -438,12 +438,9 @@ fn witch_basic(){
     game.next_phase();
     assert!(witch.set_night_targets(vec![sher, mafioso]));
     game.next_phase();
-    assert_eq!(
-        *witch.get_messages().get(witch.get_messages().len()-2).unwrap(),
-        ChatMessage::TargetsMessage{message: Box::new(
-            ChatMessage::SheriffResult{ suspicious: true }
-        )}
-    );
+    assert_contains!(witch.get_messages(), ChatMessage::TargetsMessage{message: Box::new(
+        ChatMessage::SheriffResult{ suspicious: true }
+    )});
     
     game.skip_to(PhaseType::Night, 2);
     assert!(witch.set_night_targets(vec![sher, mafioso, jester]));

@@ -453,6 +453,10 @@
     "chatMessage.doomsayerFailed": "At least one of your guesses was incorrect or invalid.",
     "chatMessage.doomsayerWon": "Your guesses were correct, and you won!",
 
+    "wiki.article.standard.interview.title": "Interview",
+    "wiki.article.standard.interview.text": "A journalist can interview a player during the night, allowing the journalist to speak with them. The player being interviewed may not know who the journalist is. ",
+    "wiki.article.standard.journal.title": "Journal",
+    "wiki.article.standard.journal.text": "The journalist has a journal which is posted publically every morning the journalist chooses to. Everyone knows the journal was written by the journalist so they know the information is trustworthy. The journalist may interview a player each night to gain information to include in the journal.",
     "wiki.article.standard.forged.title": "Forged",
     "wiki.article.standard.forged.text": "A player who is forged had their alibi and role changed by the forger on their grave.",
     "wiki.article.standard.fullMoon.title": "Full Moon",
@@ -555,10 +559,10 @@
     "wiki.article.role.jailor.attributes":"* You may talk with your prisoner at night\n* If you execute a town member, you forfeit the ability to jail prisoners, and loose all execution uses\n* Players in jail are immune to most abilities being used on them\n* Jailed players can't target\n* Other players will know if the player they visit is jailed",
     "wiki.article.role.jailor.extra":"* The Jailor cant choose to execute on night one\n* If you execute a townie, or run out of executions, you can not target anymore\n* You will invisibly roleblock the player you put in jail\n- Players in jail wont see your name on your messages, the messages you send appear to be from the jailor.",
 
-    "wiki.article.role.mayor.guide": "Reveal during the day to make your vote count as three votes. After you reveal everyone will know that you are the Mayor. You can also write a journal and choose to make it public, if it is public it is posted at the start of every day. You should write down what everyone claims in your journal so you can remind town of what is true.",
-    "wiki.article.role.mayor.abilities":"- Reveal during the day to triple your voting power, showing everyone that you are the Mayor\n- If your journal is public, it is posted to chat at the start of every morning",
-    "wiki.article.role.mayor.attributes":"- You get three times the voting power during both voting and judgement after you reveal\n- Your journal is posted anonymously, nobody knows who wrote it until you reveal",
-    "wiki.article.role.mayor.extra": "- If you are converted to a different role, players will still see that you are the mayor\n- Revealing does not increase the number of votes required to put someone on trial\n- If there is more than one Mayor with a public journal, their journals are posted in player order",
+    "wiki.article.role.mayor.guide": "Reveal during the day to make your vote count as three votes. After you reveal everyone will know that you are the Mayor.",
+    "wiki.article.role.mayor.abilities":"- Reveal during the day to triple your voting power, showing everyone that you are the Mayor\n-",
+    "wiki.article.role.mayor.attributes":"- You get three times the voting power during both voting and judgement after you reveal\n-",
+    "wiki.article.role.mayor.extra": "- If you are converted to a different role, players will still see that you are the mayor\n- Revealing does not increase the number of votes required to put someone on trial\n-",
 
     "wiki.article.role.transporter.guide": "You can choose two people at night. If somebody else tries to visit the first player, they will instead visit the second player, and vice versa. Typically you want to transport innocent players with suspicious ones to divert a potential attack onto the suspicious player.",
     "wiki.article.role.transporter.abilities":"- Visit two players to transport them",
