@@ -125,7 +125,7 @@ export default class WikiSearch extends React.Component<WikiSearchProps, WikiSea
                 }}
                 placeholder={translate("menu.wiki.search.placeholder")}
             />
-            {this.state.searchQuery && <button 
+            {<button 
                 tabIndex={-1}
                 className="material-icons-round clear"
                 onClick={() => {

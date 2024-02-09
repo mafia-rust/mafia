@@ -38,7 +38,7 @@ export default class WikiMenu extends React.Component<WikiMenuProps, WikiMenuSta
     }
 
     render(){return(<div className="wiki-menu wiki-menu-colors">
-        <ContentTab close={ContentMenu.WikiMenu}>{translate("menu.wiki.title")}</ContentTab>
+        <ContentTab close={ContentMenu.WikiMenu} helpMenu={null}>{translate("menu.wiki.title")}</ContentTab>
         
         <div className="wiki-menu-search">
             <WikiSearch excludedRoles={

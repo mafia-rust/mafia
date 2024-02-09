@@ -87,6 +87,7 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
                 disabled={!this.state.host}
             >{translate("menu.excludedRoles.exclude")}</button>
             <select
+                value={this.state.selectedExcludedRolePreset}
                 onChange={(e)=>{this.setState({selectedExcludedRolePreset: e.target.options[e.target.selectedIndex].value})}}
                 disabled={!this.state.host}
             >

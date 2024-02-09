@@ -46,6 +46,9 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
     handleSave(){
         GAME_MANAGER.sendSetForgerWill(this.state.localRole, this.state.localWill);
     }
+    handleSend(){
+        GAME_MANAGER.sendSendMessagePacket('\n' + this.state.savedWill);
+    }
 
     render(){
 
@@ -62,18 +65,26 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
         return <div className="large-forger-menu">
             <div>                
                 <select
-                    value={translate("role."+this.state.localRole+".name")} 
+                    value={this.state.localRole} 
                     onChange={(e)=>{
-                        this.setState({localRole: e.target.options[e.target.selectedIndex].value as Role});
+                        this.setState({localRole: e.target.value as Role});
                     }}>
                     {forgerRoleOptions}
                 </select>
-                <button
-                    className={"material-icons-round " + (this.state.localWill !== this.state.savedWill || this.state.localRole !== this.state.savedRole ? "highlighted" : "")}
-                    onClick={() => this.handleSave()}
-                >
-                    save
-                </button>
+                <div>
+                    <button
+                        className={"material-icons-round " + (this.state.localWill !== this.state.savedWill || this.state.localRole !== this.state.savedRole ? "highlighted" : "")}
+                        onClick={() => this.handleSave()}
+                    >
+                        save
+                    </button>
+                    <button
+                        className={"material-icons-round"}
+                        onClick={() => this.handleSend()}
+                    >
+                        send
+                    </button>
+                </div>
             </div>
             <textarea
                 value={this.state.localWill}

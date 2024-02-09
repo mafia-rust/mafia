@@ -3,7 +3,7 @@
     "broadcastWhisper": "discreet",
     "roleAssignment": "important center",
     "playerDied": "important",
-    "youDied": "special",
+    "youDied": "warning",
     "playerQuit": "special",
     "phaseChange": "phase-change",
     "trialInformation": "trial",

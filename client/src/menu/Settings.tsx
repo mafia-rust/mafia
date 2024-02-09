@@ -35,7 +35,7 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
     quitToMainMenu() {
         GAME_MANAGER.leaveGame();
         Anchor.closeSettings();
-        Anchor.setContent(<StartMenu/>);
+        GAME_MANAGER.setDisconnectedState();
     }
     render(): React.ReactNode {
         return (

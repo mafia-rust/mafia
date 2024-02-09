@@ -48,17 +48,28 @@ export default class LargeJournalistMenu extends React.Component<LargeJournalist
             this.state.localJournal,
         );
     }
+    handleSend(){
+        GAME_MANAGER.sendSendMessagePacket('\n' + this.state.syncedJournal);
+    }
 
     render(){
         return <div className="large-journalist-menu">
             <div>
                 {translate("role.journalist.menu.journal")}
-                <button
-                    className={"material-icons-round " + (this.state.syncedJournal !== this.state.localJournal ? "highlighted" : "")}
-                    onClick={() => this.handleSave()}
-                >
-                    save
-                </button>
+                <div>
+                    <button
+                        className={"material-icons-round " + (this.state.syncedJournal !== this.state.localJournal ? "highlighted" : "")}
+                        onClick={() => this.handleSave()}
+                    >
+                        save
+                    </button>
+                    <button
+                        className={"material-icons-round"}
+                        onClick={() => this.handleSend()}
+                    >
+                        send
+                    </button>
+                </div>
             </div>
             <div>
                 {translate("role.journalist.menu.public")}

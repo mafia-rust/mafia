@@ -14,6 +14,8 @@ import StyledText from "../../components/StyledText";
 import { Role } from "../../game/roleState.d";
 import ROLES from "../../resources/roles.json";
 import { StateEventType } from "../../game/gameManager.d";
+import WikiSearch from "../../components/WikiSearch";
+import { WikiArticleLink } from "../../components/WikiArticle";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",
@@ -162,7 +164,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                 break;
         }
     }
-    openMenu(menu: ContentMenu) {
+    openMenu(menu: ContentMenu, callback: ()=>void = ()=>{}) {
         let menusOpen = this.menusOpen();
         if(menusOpen.length + 1 > this.state.maxContent && menusOpen.length > 0){
             this.closeMenu(menusOpen[menusOpen.length - 1]);
@@ -173,23 +175,23 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                 this.setState({
                     chatMenu: true,
                     chatMenuNotification: false
-                });
+                }, callback);
 
                 break;
             case ContentMenu.PlayerListMenu:
-                this.setState({playerListMenu: true});
+                this.setState({playerListMenu: true}, callback);
                 break;
             case ContentMenu.WillMenu:
-                this.setState({willMenu: true});
+                this.setState({willMenu: true}, callback);
                 break;
             case ContentMenu.GraveyardMenu:
-                this.setState({graveyardMenu: true});
+                this.setState({graveyardMenu: true}, callback);
                 break;
             case ContentMenu.RoleSpecificMenu:
-                this.setState({roleSpecificMenu: true});
+                this.setState({roleSpecificMenu: true}, callback);
                 break;
             case ContentMenu.WikiMenu:
-                this.setState({wikiMenu: true});
+                this.setState({wikiMenu: true}, callback);
                 break;
         }
     }
@@ -256,7 +258,12 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
     }
 }
 
-export function ContentTab(props: { close: ContentMenu | false, children: string }): ReactElement {
+export function ContentTab(props: {
+    helpMenu: WikiArticleLink | null
+    close: ContentMenu | false, 
+    children: string 
+}): ReactElement {
+
     return <div className="content-tab">
         <div>
             <StyledText>
@@ -270,5 +277,15 @@ export function ContentTab(props: { close: ContentMenu | false, children: string
         >
             close
         </button>}
+        {props.helpMenu ? <button 
+            className="material-icons-round help" 
+            onClick={()=>{
+                GameScreen.instance.openMenu(ContentMenu.WikiMenu, ()=>{
+                    props.helpMenu && WikiSearch.setPage(props.helpMenu)
+                });
+            }}
+        >
+            question_mark
+        </button>:null}
     </div>
 }

@@ -45,7 +45,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     }
     render(){
         return <div className="chat-menu chat-menu-colors">
-            <ContentTab close={ContentMenu.ChatMenu}>{translate("menu.chat.title")}</ContentTab>
+            <ContentTab close={ContentMenu.ChatMenu} helpMenu={"standard/chat"}>{translate("menu.chat.title")}</ContentTab>
             <ChatMessageSection filter={this.state.filter} />
             {this.state.filter && <button 
                 onClick={()=>{

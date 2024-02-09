@@ -217,12 +217,13 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     }
 
     render(){return(<div className="player-list-menu player-list-menu-colors">
-        <ContentTab close={ContentMenu.PlayerListMenu}>{translate("menu.playerList.title")}</ContentTab>
+        <ContentTab close={ContentMenu.PlayerListMenu} helpMenu={"standard/playerList"}>{translate("menu.playerList.title")}</ContentTab>
 
-        {this.renderFilterButton("all")}
-        {this.renderFilterButton("living")}
-        {this.renderFilterButton("usable")}
-
+        <div>
+            {this.renderFilterButton("all")}
+            {this.renderFilterButton("living")}
+            {this.renderFilterButton("usable")}
+        </div>
         <SmallRoleSpecificMenu/>
         {this.renderPhaseSpecific()}
         {this.renderPlayers(this.state.gameState.players)}

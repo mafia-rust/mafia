@@ -50,7 +50,7 @@ impl RoleStateImpl for Veteran {
             }
             Priority::Heal=>{
                 if !self.alerting_tonight {return}
-                actor_ref.increase_defense_to(game, 1);
+                actor_ref.increase_defense_to(game, 2);
             }
             Priority::Kill => {
                 if !self.alerting_tonight {return}

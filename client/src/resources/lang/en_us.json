@@ -171,9 +171,9 @@
 
     "role.medium.name": "Medium",
     "role.medium.target": "Target",
-    "role.medium.roleDataText.nobody": "You didn't decide to seance anybody.\n\\0 seances remaining",
-    "role.medium.roleDataText": "You decided to seance \\0.\n\\1 seances remaining",
-    "role.medium.dayTarget": "Seance",
+    "role.medium.roleDataText.nobody": "You didn't decide to haunt anybody.\n\\0 haunts remaining",
+    "role.medium.roleDataText": "You decided to haunts \\0.\n\\1 haunts remaining",
+    "role.medium.dayTarget": "Haunt",
 
     "role.retributionist.name": "Retributionist",
     "role.retributionist.target": "Target",
@@ -325,7 +325,7 @@
     "chatGroup.jail.icon": "⛓️",
     "chatGroup.interview.icon": "📝",
     "chatGroup.dead.icon": "💀",
-    "chatGroup.seance.icon": "🔮",
+    "chatGroup.seance.icon": "👻",
 
     "role": "Role",
     "day": "Day",
@@ -393,7 +393,7 @@
     "chatMessage.jailedSomeone":"\\0 was dragged off to jail!",
     "chatMessage.jailorDecideExecute":"The Jailor decided to execute \\0!",
     "chatMessage.jailorDecideNotExecute":"The Jailor decided not to execute.",
-    "chatMessage.mediumSeance":"\\0 is being seanced by a Medium!",
+    "chatMessage.mediumSeance":"\\0 is being haunted by a Medium!",
     "chatMessage.jesterWon":"The Jester will get their revenge from the grave!",
     "chatMessage.executionerWon":"The Executioner got their target lynched and won!",
     "chatMessage.deathCollectedSouls":"The apolocolypse begins, everyone will die tonight if Death is alive at nightfall!",
@@ -531,7 +531,7 @@
     "wiki.article.standard.outlineList.title":"Outline List",
     "wiki.article.standard.outlineList.text": "The outline list defines what roles are in the game. Each player gets a role generated randomly from an outline. Each role is equally likely to generate from each outline.",
     "wiki.article.standard.chatGroup.title": "Chat Group",
-    "wiki.article.standard.chatGroup.text": "Messages are sent to chat groups. The chat groups are:\n    - All (no icon)\n    - Dead 💀\n    - Mafia 🌹\n    - Vampire 🧛‍♂️\n    - Haunt 🔮\n    - Jail ⛓️\n    - Interview 📝\n\n Players can be in multiple chat groups at once, or even read chat groups they are not in.",
+    "wiki.article.standard.chatGroup.text": "Messages are sent to chat groups. The chat groups are:\n - All (no icon)\n - Dead 💀\n - Mafia 🌹\n - Vampire 🧛‍♂️\n - Haunt 👻\n - Jail ⛓️\n - Interview 📝\n\n Players can be in multiple chat groups at once, or even read chat groups they are not in.",
 
     "wiki.article.standard.how_to_play.title":"How to play",
     "wiki.article.standard.how_to_play.text":"The game has two major teams, Town and Mafia. The goal is to be the last team remaining alive. The town wins if they find out who the mafia is and vote them out. The mafia wins if they deceive the town and stay hidden so they don't get voted out.\n\nEvery role has abilities that they use to try to win. Abilities can do things like kill players, and prevent kills, and find out what role other people are.\nThe game is about communication, townies need to share information to find the mafia and vote them out, while mafia needs to spread misinformation to try to get townies to turn against eachother and win.\n\n**MULTIPLE PLAYERS CAN HAVE THE SAME ROLE**\n\nThere are also neutral roles that have their own win conditions.",
@@ -661,7 +661,7 @@
     "wiki.article.role.vigilante.extra": "- If you visit a player while you have zero bullets left you will not attack them\n- If you visit a player while you are about to commit suicide then you will not attack them\n- If your attack overpowers a townies defense and they die, you will commit suicide on the following night\n- If you visit a player on day one you will not attack them",
 
     "wiki.article.role.veteran.guide": "Choose yourself to go on Alert, attacking everyone who visits you. You can go on Alert three times. You should try to bait evils into attacking you on nights you alert to kill them.",
-    "wiki.article.role.veteran.abilities":"- Visit yourself to go on alert, attacking everyone who visits you\n- While on alert, you have armor",
+    "wiki.article.role.veteran.abilities":"- Visit yourself to go on alert, attacking everyone who visits you\n- While on alert, you have protected defense",
     "wiki.article.role.veteran.attributes":"- You have an armor piercing attack\n- You have three alerts\n- You will know if you attacked a visitor\n- Players who visit you while on alert will know that they were attacked by a veteran",
     "wiki.article.role.veteran.extra":"- If you have no alerts left you can not target yourself\n- You are immune to getting roleblocked and you are immune to possession",
 

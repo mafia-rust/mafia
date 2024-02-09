@@ -54,7 +54,7 @@ export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuPr
         }
     }
     render(){return(<div className="role-specific-colors">
-        <ContentTab close={ContentMenu.RoleSpecificMenu}>
+        <ContentTab close={ContentMenu.RoleSpecificMenu} helpMenu={null}>
             {translate("role."+this.state.gameState.roleState?.role+".name")}
         </ContentTab>
         <div>

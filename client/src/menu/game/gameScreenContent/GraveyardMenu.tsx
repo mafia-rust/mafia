@@ -141,7 +141,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
 
 
     render(){return(<div className="graveyard-menu graveyard-menu-colors">
-        <ContentTab close={ContentMenu.GraveyardMenu}>{translate("menu.graveyard.title")}</ContentTab>
+        <ContentTab close={ContentMenu.GraveyardMenu} helpMenu={"standard/graveyard"}>{translate("menu.graveyard.title")}</ContentTab>
             
         <div className="grid">
             {this.renderRoleList()}

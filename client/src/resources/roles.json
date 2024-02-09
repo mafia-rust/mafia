@@ -4,7 +4,7 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["jail", "defense"],
+        "keywords": ["jail","defense","chatGroup","roleLimit"],
         "canBeConvertedTo": []
     },
     "sheriff": {
@@ -12,7 +12,7 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["innocent","suspicious","innocentAura","suspiciousAura"],
+        "keywords": ["innocent","suspicious","aura"],
         "canBeConvertedTo": []
     },
     "lookout": {
@@ -28,7 +28,7 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["friends","enemies","suspiciousAura","innocentAura"],
+        "keywords": ["friends","enemies","aura"],
         "canBeConvertedTo": []
     },
     "tracker": {
@@ -44,7 +44,7 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["vision","suspiciousAura","innocentAura"],
+        "keywords": ["vision","aura"],
         "canBeConvertedTo": []
     },
     "spy": {
@@ -108,7 +108,7 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["defense","astral","visit","rampage"],
+        "keywords": ["defense","astral","visit","rampage","roleLimit"],
         "canBeConvertedTo": []
     },
     "deputy": {
@@ -116,7 +116,7 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["defense"],
+        "keywords": ["defense","roleLimit"],
         "canBeConvertedTo": []
     },
     "escort": {
@@ -132,7 +132,7 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["haunt","dead"],
+        "keywords": ["haunt","dead","chatGroup"],
         "canBeConvertedTo": []
     },
     "mayor":{
@@ -140,7 +140,7 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["roleLabel"],
+        "keywords": ["roleLabel","roleLimit"],
         "canBeConvertedTo": []
     },
     "journalist": {
@@ -148,7 +148,7 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
-        "keywords": ["interview", "journal"],
+        "keywords": ["interview","journal","chatGroup","roleLimit"],
         "canBeConvertedTo": []
     },
     "transporter":{
@@ -156,7 +156,7 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["transport", "priority", "visit"],
+        "keywords": ["transport","priority","visit"],
         "canBeConvertedTo": []
     },
     "retributionist": {
@@ -164,7 +164,7 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["dead","visit","possess","priority"],
+        "keywords": ["dead","visit","possess","priority","roleLimit"],
         "canBeConvertedTo": []
     },
     "godfather": {
@@ -172,7 +172,7 @@
         "armor": true,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["backup","defense","convert","roleblock","jail"],
+        "keywords": ["backup","defense","convert","roleblock","jail","roleLimit"],
         "canBeConvertedTo": []
     },
     "mafioso": {
@@ -204,7 +204,7 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["appearedVisit"],
+        "keywords": ["appearedVisit","roleLimit"],
         "canBeConvertedTo": ["godfather"]
     },
     "janitor": {
@@ -212,7 +212,7 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["cleaned"],
+        "keywords": ["cleaned","roleLimit"],
         "canBeConvertedTo": ["godfather"]
     },
     "framer": {
@@ -220,7 +220,7 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["suspiciousAura","appearedVisit"],
+        "keywords": ["aura","appearedVisit"],
         "canBeConvertedTo": ["godfather"]
     },
     "forger": {
@@ -228,7 +228,7 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
-        "keywords": ["forged"],
+        "keywords": ["forged","roleLimit"],
         "canBeConvertedTo": ["godfather"]
     },
     "witch": {
@@ -236,7 +236,7 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["visit","possess","priority"],
+        "keywords": ["visit","possess","priority","roleLimit"],
         "canBeConvertedTo": ["godfather"]
     },
     "necromancer": {
@@ -244,7 +244,7 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["dead","visit","possess","priority"],
+        "keywords": ["dead","visit","possess","priority","roleLimit"],
         "canBeConvertedTo": ["godfather"]
     },
     "jester": {
@@ -252,7 +252,7 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["innocentAura","dead","defense"],
+        "keywords": ["aura","dead","defense"],
         "canBeConvertedTo": []
     },
     "executioner": {
@@ -260,7 +260,7 @@
         "armor": true,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["convert","innocentAura","defense"],
+        "keywords": ["convert","aura","defense"],
         "canBeConvertedTo": ["jester"]
     },
     
@@ -285,7 +285,7 @@
         "armor": true,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["fullMoon","rampage","defense","astral","appearedVisit","innocentAura"],
+        "keywords": ["fullMoon","rampage","defense","astral","appearedVisit","aura"],
         "canBeConvertedTo": []
     },
     "vampire": {
@@ -309,7 +309,7 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["defense"],
+        "keywords": ["defense","roleLimit"],
         "canBeConvertedTo": []
     },
     "doomsayer":{
@@ -317,7 +317,7 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
-        "keywords": ["convert", "defense"],
+        "keywords": ["convert", "defense","roleLimit"],
         "canBeConvertedTo": ["jester"]
     }
 }
