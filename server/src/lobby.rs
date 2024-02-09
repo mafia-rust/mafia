@@ -488,8 +488,21 @@ impl Lobby {
             LobbyState::Closed => {}
         }
     }
-    
-    
+
+    pub fn get_player_list(&self)->Vec<(PlayerID, String)>{
+        match &self.lobby_state {
+            LobbyState::Lobby { settings:_, players } => {
+                players.iter().map(|p| (*p.0, p.1.name.clone())).collect()
+            },
+            LobbyState::Game { game, players } => {
+                players.iter().map(|(id, player)| {
+                    let player_ref = PlayerReference::new(&game, player.player_index).unwrap();
+                    (*id, player_ref.name(&game).clone())
+                }).collect()
+            },
+            LobbyState::Closed => Vec::new(),
+        }
+    }
 
     /// Catches the sender up with the current lobby settings
     pub fn send_settings(player: &LobbyPlayer, settings: &Settings) {

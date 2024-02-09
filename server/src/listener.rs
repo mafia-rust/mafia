@@ -192,9 +192,13 @@ impl Listener{
                 connection.send(ToClientPacket::Pong);
             },
             ToServerPacket::LobbyListRequest => {
-                connection.send(ToClientPacket::LobbyList { 
-                    room_codes: self.lobbies.keys().cloned().collect() 
-                });
+                connection.send(ToClientPacket::LobbyList{lobbies: self.lobbies.iter()
+                    .map(|(room_code, lobby)|
+                        (*room_code, lobby.get_player_list()
+                    ))
+                    .collect::<
+                        HashMap<RoomCode,Vec<(PlayerID, String)>>
+                    >()});
             },
             ToServerPacket::ReJoin {room_code, player_id } => {
                 self.set_player_in_lobby_reconnect(connection, room_code, player_id);

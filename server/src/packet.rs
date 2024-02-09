@@ -41,7 +41,7 @@ pub enum ToClientPacket{
     // Pre lobby
     #[serde(rename_all = "camelCase")]
     LobbyList{
-        room_codes: Vec<RoomCode>,
+        lobbies: HashMap<RoomCode, Vec<(PlayerID, String)>>,
     },
     #[serde(rename_all = "camelCase")]
     AcceptJoin{room_code: RoomCode, in_game: bool, player_id: PlayerID},

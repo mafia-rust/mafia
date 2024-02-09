@@ -103,6 +103,7 @@
     "notification.rejectStart.zeroTimeGame": "Game has no time",
 
     "cancel": "Cancel",
+    "players": "Players",
 
     "role.jailor.name": "Jailor",
     "role.jailor.target": "Execute",

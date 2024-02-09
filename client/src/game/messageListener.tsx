@@ -24,8 +24,10 @@ export default function messageListener(packet: ToClientPacket){
             Anchor.pushError(translate("notification.rateLimitExceeded"), "");
         break;
         case "lobbyList":
-            if(GAME_MANAGER.state.stateType === "outsideLobby")
-                GAME_MANAGER.state.roomCodes = packet.roomCodes.map((roomCode) => roomCode.toString(18));
+            if(GAME_MANAGER.state.stateType === "outsideLobby"){
+                GAME_MANAGER.state.lobbies = packet.lobbies;
+            }
+                // GAME_MANAGER.state.roomCodes = packet.roomCodes.map((roomCode) => roomCode.toString(18));
         break;
         case "acceptJoin":
             if(packet.inGame){

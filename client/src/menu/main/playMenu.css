@@ -5,6 +5,7 @@
     display: flex;
     flex-direction: column;
 }
+
 .play-menu-table {
     flex: 1;
     display: flex;
@@ -12,11 +13,14 @@
     border: 1px double white;
     border-collapse: collapse;
     max-height: calc(100% - 5rem); /*this is bad, this assumes the footer is 5rem tall*/
+    width: 100%;
 }
 .play-menu-table > div {
     border-collapse: collapse;
     overflow-y: scroll;
     min-height: 2rem;
+    width: 100%;
+    overflow-y: hidden;
 }
 .play-menu-table > div:first-child {
     overflow: hidden;
@@ -26,10 +30,11 @@
     justify-content:space-around;
     border-collapse: collapse;
     height: max-content;
+    width: 100%;
 }
 .play-menu-table > div > div > div{
     border: 1px double white;
-    flex: 1;
+    /* flex: 1; */
     height: 2rem;
     display: flex;
     align-items: center; /* Adjust vertical alignment */
@@ -48,4 +53,13 @@
 }
 .play-menu-footer > section{
     border: 1px double white;
+}
+.play-menu .play-menu-roomcode-column{
+    flex-shrink: 1;
+    width: 10rem;
+    min-width: 10rem;
+}
+.play-menu .play-menu-players-column{
+    flex-grow: 1;
+    overflow-x: scroll;
 }

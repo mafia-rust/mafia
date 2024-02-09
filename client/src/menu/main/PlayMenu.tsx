@@ -4,6 +4,7 @@ import Anchor from "../Anchor";
 import GAME_MANAGER from "../..";
 import LoadingScreen from "../LoadingScreen";
 import "./playMenu.css";
+import { PlayerID } from "../../game/gameState.d";
 
 
 type PlayMenuProps = {
@@ -72,22 +73,31 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
             <div className="play-menu-table">
                 <div className="play-menu-table-header">
                     <div>
-                        <div>{translate("menu.play.field.roomCode")}</div>
-                        {/* <div>hi</div> */}
+                        <div className="play-menu-roomcode-column">{translate("menu.play.field.roomCode")}</div>
+                        <div className="play-menu-players-column">{translate("players")}</div>
                     </div>
                 </div>
                         
-                <div className="play-menu-table-body">
-                    {
-                        GAME_MANAGER.state.stateType === "outsideLobby" &&
-                        GAME_MANAGER.state.roomCodes.map((roomCode, i)=>{
-                            return <div key={roomCode}>
-                                <div><button key={i} onClick={()=>{this.joinGameButton(roomCode??"")}}>{roomCode}</button></div>
-                                {/* <div>hello</div> */}
-                            </div>
-                        })
-                    }
-                </div>
+                <div className="play-menu-table-body">{
+                    GAME_MANAGER.state.stateType === "outsideLobby" &&
+                    Object.entries(GAME_MANAGER.state.lobbies).map((lobby, i)=>{
+
+                        
+                        let roomCode = (Number.parseInt(lobby[0])).toString(18);
+                        console.log(roomCode);
+                        let players: [PlayerID, string][] = lobby[1];
+
+
+                        return <div key={roomCode}>
+                            <div className="play-menu-roomcode-column"><button key={i} onClick={()=>{this.joinGameButton(roomCode??"")}}>{roomCode}</button></div>
+                            <div className="play-menu-players-column">{players.map((player, j)=>{
+                                return <button key={j} onClick={()=>{
+                                    this.rejoinGameButton(roomCode??"", player[0].toString());
+                                }}>{player[1]}</button>
+                            })}</div>
+                        </div>;
+                    })
+                }</div>
             </div>
             
             <div className="play-menu-footer">

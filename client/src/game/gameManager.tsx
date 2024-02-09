@@ -60,7 +60,7 @@ export function createGameManager(): GameManager {
             GAME_MANAGER.state = {
                 stateType: "outsideLobby",
                 selectedRoomCode: null,
-                roomCodes: []
+                lobbies: new Map()
             };
 
             Anchor.setContent(<PlayMenu />);

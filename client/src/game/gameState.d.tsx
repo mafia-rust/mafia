@@ -14,7 +14,7 @@ export type OutsideLobbyState = {
     stateType: "outsideLobby",
 
     selectedRoomCode: string | null,
-    roomCodes: string[],
+    lobbies: Map<number, [PlayerID, string][]>,
 }
 
 

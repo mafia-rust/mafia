@@ -11,7 +11,7 @@ export type ToClientPacket = {
     type: "rateLimitExceeded",
 } | {
     type: "lobbyList",
-    roomCodes: number[],
+    lobbies: Map<number, [PlayerID, string][]>,
 } | {
     type: "acceptJoin",
     roomCode: number,
