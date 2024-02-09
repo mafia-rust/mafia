@@ -80,7 +80,7 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
                         
                 <div className="play-menu-table-body">{
                     GAME_MANAGER.state.stateType === "outsideLobby" &&
-                    GAME_MANAGER.state.lobbies &&
+                    GAME_MANAGER.state.lobbies!==null && GAME_MANAGER.state.lobbies!==undefined &&
                         Object.entries(GAME_MANAGER.state.lobbies).map((lobby, i)=>{
 
                             
