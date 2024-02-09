@@ -80,23 +80,24 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
                         
                 <div className="play-menu-table-body">{
                     GAME_MANAGER.state.stateType === "outsideLobby" &&
-                    Object.entries(GAME_MANAGER.state.lobbies).map((lobby, i)=>{
+                    GAME_MANAGER.state.lobbies &&
+                        Object.entries(GAME_MANAGER.state.lobbies).map((lobby, i)=>{
 
-                        
-                        let roomCode = (Number.parseInt(lobby[0])).toString(18);
-                        console.log(roomCode);
-                        let players: [PlayerID, string][] = lobby[1];
+                            
+                            let roomCode = (Number.parseInt(lobby[0])).toString(18);
+                            console.log(roomCode);
+                            let players: [PlayerID, string][] = lobby[1];
 
 
-                        return <div key={roomCode}>
-                            <div className="play-menu-roomcode-column"><button key={i} onClick={()=>{this.joinGameButton(roomCode??"")}}>{roomCode}</button></div>
-                            <div className="play-menu-players-column">{players.map((player, j)=>{
-                                return <button key={j} onClick={()=>{
-                                    this.rejoinGameButton(roomCode??"", player[0].toString());
-                                }}>{player[1]}</button>
-                            })}</div>
-                        </div>;
-                    })
+                            return <div key={roomCode}>
+                                <div className="play-menu-roomcode-column"><button key={i} onClick={()=>{this.joinGameButton(roomCode??"")}}>{roomCode}</button></div>
+                                <div className="play-menu-players-column">{players.map((player, j)=>{
+                                    return <button key={j} onClick={()=>{
+                                        this.rejoinGameButton(roomCode??"", player[0].toString());
+                                    }}>{player[1]}</button>
+                                })}</div>
+                            </div>;
+                        })
                 }</div>
             </div>
             
