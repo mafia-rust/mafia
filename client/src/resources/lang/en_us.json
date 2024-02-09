@@ -448,7 +448,7 @@
     "chatMessage.transported": "You were transported!",
     "chatMessage.godfatherBackup": "The Godfather has selected \\0 to be their backup.",
     "chatMessage.godfatherBackup.nobody": "The Godfather has deselected a backup.",
-    "chatMessage.godfatherBackupKilled": "The Godfather was roleblocked so \\0 killed for the Godfather",
+    "chatMessage.godfatherBackupKilled": "The Godfather was roleblocked so \\0 killed for the Godfather.",
     "chatMessage.silenced": "You were silenced! You must not speak, chat, point, or otherwise communicate until tomorrow!",
     "chatMessage.playersRoleAndWill": "Your target's role was \\0 and their alibi stated this: \\1",
     "chatMessage.consigliereResult": "\\0. \\1. \\2.",
