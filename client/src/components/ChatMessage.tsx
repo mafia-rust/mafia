@@ -214,6 +214,8 @@ export function translateChatMessage(message: ChatMessage): string {
                 return translate("chatMessage.godfatherBackup.nobody");
             }
         /* NIGHT */
+        case "godfatherBackupKilled":
+            return translate("chatMessage.godfatherBackupKilled", GAME_MANAGER.state.players[message.backup].toString());
         case "roleBlocked":
             return translate("chatMessage.roleBlocked" + (message.immune ? ".immune" : ""));
         case "sheriffResult":
@@ -480,6 +482,9 @@ export type ChatMessage = {
 } | {
     type: "godfatherBackup",
     backup: PlayerIndex | null
+} | {
+    type: "godfatherBackupKilled",
+    backup: PlayerIndex
 } | {
     type: "silenced"
 } | {

@@ -151,6 +151,8 @@ pub enum ChatMessage {
     Silenced,
     #[serde(rename_all = "camelCase")]
     GodfatherBackup{backup: Option<PlayerIndex>},
+    #[serde(rename_all = "camelCase")]
+    GodfatherBackupKilled{backup: PlayerIndex},
     
 
     #[serde(rename_all = "camelCase")]

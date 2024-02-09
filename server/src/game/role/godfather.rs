@@ -29,7 +29,7 @@ impl RoleStateImpl for Godfather {
         
         if priority != Priority::Kill {return}
         
-        if actor_ref.night_jailed(game) || actor_ref.night_roleblocked(game) {
+        if actor_ref.night_roleblocked(game) {
             if let Some(backup) = self.backup {
                 if let Some(visit) = backup.night_visits(game).first(){
                     let target_ref = visit.target;
@@ -38,6 +38,7 @@ impl RoleStateImpl for Godfather {
                         return
                     }
             
+                    game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessage::GodfatherBackupKilled { backup: backup.index() });
                     target_ref.try_night_kill(
                         backup, game, GraveKiller::Faction(Faction::Mafia), 1, false
                     );

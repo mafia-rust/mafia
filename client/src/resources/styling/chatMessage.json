@@ -3,6 +3,8 @@
     "broadcastWhisper": "discreet",
     "roleAssignment": "important center",
     "playerDied": "important",
+    "godfatherBackupKilled": "special",
+    "godfatherBackup": "special",
     "youDied": "warning",
     "playerQuit": "special",
     "phaseChange": "phase-change",

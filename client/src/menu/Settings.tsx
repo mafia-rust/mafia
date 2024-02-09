@@ -3,7 +3,6 @@ import "./settings.css";
 import translate from '../game/lang';
 import GAME_MANAGER from '..';
 import Anchor from './Anchor';
-import StartMenu from './main/StartMenu';
 
 type SettingsProps = {
     volume: number, // 0-1
