@@ -64,6 +64,9 @@ export default class PlayMenu extends React.Component<PlayMenuProps, PlayMenuSta
     }
 
     render() {
+
+        console.log(GAME_MANAGER.state);
+
         return <div className="play-menu">
             <header>
                 <h1>
