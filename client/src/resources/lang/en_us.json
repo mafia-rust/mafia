@@ -671,9 +671,9 @@
     "wiki.article.role.deputy.attributes":"- If their defense overpowers your attack, the player you attacked will be told that they were attacked by a deputy, but you won't be revealed as deputy",
     "wiki.article.role.deputy.extra":"- You have a basic attack",
 
-    "wiki.article.role.godfather.guide": "Choose a player to kill each night. Choose a backup to kill for you when you are roleblocked or jailed. You should try to kill townies who are likely to stop you from winning.",
-    "wiki.article.role.godfather.abilities":"- Visit a player to attack them\n- If you are roleblocked or jailed, your backup will attack the first player they visit\n- Choose another living mafia member to be your backup at any time",
-    "wiki.article.role.godfather.attributes":"- You have a basic attack\n- You always have an innocent aura",
+    "wiki.article.role.godfather.guide": "Choose a player to kill each night. Choose a backup to kill for you when you are roleblocked. You should try to kill townies who are likely to stop you from winning.",
+    "wiki.article.role.godfather.abilities":"- Visit a player to attack them\n- If you are roleblocked, your backup will attack the first player they visit\n- Choose another living mafia member to be your backup at any time",
+    "wiki.article.role.godfather.attributes":"- You have a basic attack\n- You always have an innocent aura\n- The mafia is told when you are roleblocked if your backup kills for you",
     "wiki.article.role.godfather.extra":"- If the mafia has no Godfather or Mafioso, then a random mafia member will convert to a godfather\n- If the Godfather dies, their backup will become the Godfather\n- You can not target other mafia members",
 
     "wiki.article.role.mafioso.guide": "Target players to kill them. You should try to kill townies who are likely to stop you from winning.",
