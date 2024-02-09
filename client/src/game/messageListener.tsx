@@ -25,6 +25,7 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "lobbyList":
             if(GAME_MANAGER.state.stateType === "outsideLobby"){
+                console.log(packet);
                 console.log(packet.lobbies);
                 GAME_MANAGER.state.lobbies = packet.lobbies;
                 console.log(GAME_MANAGER.state.lobbies);
