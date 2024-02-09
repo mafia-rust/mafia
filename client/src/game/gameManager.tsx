@@ -4,7 +4,7 @@ import GAME_MANAGER from "./../index";
 import messageListener from "./messageListener";
 import CONFIG from "./../resources/config.json"
 import React from "react";
-import { Phase, PhaseTimes, Verdict } from "./gameState.d";
+import { Phase, PhaseTimes, PlayerID, Verdict } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleOutline } from "./roleListState.d";
@@ -60,7 +60,7 @@ export function createGameManager(): GameManager {
             GAME_MANAGER.state = {
                 stateType: "outsideLobby",
                 selectedRoomCode: null,
-                lobbies: new Map()
+                lobbies: new Map<number, [PlayerID, string][]>()
             };
 
             Anchor.setContent(<PlayMenu />);
