@@ -1,6 +1,13 @@
 use rand::seq::SliceRandom;
 
-use super::{player::PlayerReference, Game, role_list::Faction, role::{Role, godfather::Godfather}};
+use super::{chat::{ChatGroup, ChatMessage}, player::PlayerReference, role::{
+        dracula::Dracula,
+        godfather::Godfather,
+        renfield::Renfield,
+        thrall::Thrall,
+        Role, RoleState
+    }, role_list::Faction, Game
+};
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum Team{
@@ -129,8 +136,8 @@ impl TeamStateImpl for Mafia{
         //This depends on role_state.on_any_death being called before this
         Mafia::ensure_mafia_can_kill(game);
     }
-    fn on_member_role_switch(self, _game: &mut Game, _actor: PlayerReference) {
-        
+    fn on_member_role_switch(self, game: &mut Game, _actor: PlayerReference) {
+        Mafia::ensure_mafia_can_kill(game);
     }
 }
 impl Mafia{
@@ -169,29 +176,36 @@ impl TeamStateImpl for Vampires{
         Team::Vampires
     }
     fn on_phase_start(self, game: &mut Game){
-        Vampires::ensure_youngest_vamp(self, game);
+        Vampires::set_ordered_vampires(self.clone(), game);
+        if self.can_convert_tonight(game){
+            game.add_message_to_chat_group(ChatGroup::Vampire, ChatMessage::DraculaCanConvertTonight);
+        }else{
+            game.add_message_to_chat_group(ChatGroup::Vampire, ChatMessage::DraculaCantConvertTonight);
+        
+        }
     }
     fn on_creation(self, game: &mut Game) {
-        Vampires::ensure_youngest_vamp(self, game);
+        Vampires::set_ordered_vampires(self, game);
     }
     fn on_any_death(self, game: &mut Game){
-        Vampires::ensure_youngest_vamp(self, game);
+        Vampires::set_ordered_vampires(self, game);
     }
-    fn on_member_role_switch(self, _game: &mut Game, _actor: PlayerReference) {
+    fn on_member_role_switch(self, game: &mut Game, _actor: PlayerReference) {
+        Vampires::set_ordered_vampires(self, game);
     }
 }
 impl Vampires{
-    fn ensure_youngest_vamp(mut self, game: &mut Game){
+    fn set_ordered_vampires(mut self, game: &mut Game){
         // Remove dead
         self.ordered_vampires = self.ordered_vampires.iter().cloned().filter(|p|
-            p.role(game) == Role::Vampire &&
+            p.role(game).faction() == Faction::Vampire &&
             p.alive(game)
         ).collect();
 
         // Add new
         for player in PlayerReference::all_players(game){
             if 
-                player.role(game) == Role::Vampire &&
+                player.role(game).faction() == Faction::Vampire &&
                 player.alive(game) &&
                 !self.ordered_vampires.contains(&player)
             {
@@ -199,7 +213,28 @@ impl Vampires{
             }
         }
 
+        for (i, player_ref) in self.ordered_vampires.iter().enumerate(){
+            let role = if i == 0 {
+                RoleState::Dracula(Dracula::default())
+            }else if i == self.ordered_vampires.len() - 1 {
+                RoleState::Renfield(Renfield::default())
+            }else{
+                RoleState::Thrall(Thrall::default())
+            };
+            
+            if player_ref.role(game) == role.role() {continue}
+            player_ref.set_role(game, role);
+        }
+
         game.teams.set_vampires(self);
+    }
+    pub fn can_convert_tonight(&self, game: &Game)->bool {
+        if self.ordered_vampires.len() >= 4 {return false}
+        
+        match self.night_of_last_conversion{
+            None => game.day_number() != 1,
+            Some(night) => game.day_number() - night >= 2
+        }
     }
 }
 

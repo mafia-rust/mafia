@@ -20,6 +20,7 @@ macro_rules! make_faction_enum {
 }
 make_faction_enum!{
     Mafia,
+    Vampire,
     Town,
     Neutral
 }
@@ -190,7 +191,7 @@ impl RoleSet{
             RoleSet::NeutralKilling => 
                 vec![Role::Arsonist, Role::Werewolf],
             RoleSet::NeutralChaos => 
-                vec![Role::Vampire, Role::Amnesiac],
+                vec![Role::Amnesiac],
             RoleSet::NeutralApocalypse => 
                 vec![Role::Death, Role::Doomsayer],
         }

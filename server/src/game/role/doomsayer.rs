@@ -22,7 +22,7 @@ pub struct Doomsayer {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub enum DoomsayerGuess{
-    Mafia, #[default] Neutral,
+    Mafia, #[default] Neutral, Vampire,
 
     Jailor, 
     // No TI
@@ -58,7 +58,8 @@ impl DoomsayerGuess{
             Role::Jester | Role::Executioner | Role::Politician |
             Role::Arsonist | Role::Werewolf | 
             Role::Doomsayer | Role::Death |
-            Role::Vampire | Role::Amnesiac => Some(DoomsayerGuess::Neutral),
+            Role::Amnesiac => Some(DoomsayerGuess::Neutral),
+            Role::Dracula | Role::Thrall | Role::Renfield => Some(DoomsayerGuess::Vampire),
         }
     }
     fn guess_matches_role(&self, role: Role)->bool{

@@ -87,15 +87,18 @@ macros::roles! {
     Arsonist : arsonist,
     Werewolf : werewolf,
 
-    Vampire : vampire,
-    Amnesiac : amnesiac
+    Amnesiac : amnesiac,
+
+    Dracula : dracula,
+    Thrall : thrall,
+    Renfield : renfield
 }
 
 macros::priorities! {
     TopPriority,
 
     Transporter,
-    
+
     Control,
     Necromancy,
     Roleblock,
@@ -112,7 +115,9 @@ macros::priorities! {
 
     StealMessages,
 
-    Convert
+    Convert,
+
+    SpyVampireCount
 }
 
 mod common_role;

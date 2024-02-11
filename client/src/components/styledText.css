@@ -35,8 +35,8 @@
 .keyword-good {
     color: lime;
 }
-.keyword-magic {
-    color: magenta;
+.keyword-vampire {
+    color: rgb(214, 110, 255);
 }
 .keyword-neutral {
     color: orange;

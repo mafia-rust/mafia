@@ -27,6 +27,7 @@
     "town": { "style": "keyword-good","link": "standard/how_to_play"},
     "mafia": { "style": "keyword-evil","link": "standard/how_to_play"},
     "neutral": { "style": "keyword-neutral","link": "standard/how_to_play"},
+    "vampire": { "style": "keyword-vampire","link": "standard/how_to_play"},
     "any": { "style": "keyword-info"},
     "none": { "style": "keyword-info"},
     "defense.0": { "style": "keyword-info"},

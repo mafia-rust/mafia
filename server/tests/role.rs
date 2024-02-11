@@ -55,7 +55,7 @@ pub use mafia_server::game::{
 
         death::Death,
 
-        vampire::Vampire,
+        dracula::Dracula,
         amnesiac::Amnesiac
     }, 
     phase::{
@@ -566,79 +566,6 @@ fn executioner_instantly_turns_into_jester(){
 }
 
 #[test]
-fn vampire_cant_convert_protected(){
-    kit::scenario!(game where
-        vamp: Vampire,
-        doc: Doctor,
-        sher: Sheriff,
-        _townie1: Sheriff,
-        _townie2: Sheriff
-    );
-
-    game.next_phase();
-
-    assert!(doc.set_night_targets(vec![sher]));
-    assert!(vamp.set_night_targets(vec![sher]));
-
-    game.skip_to(PhaseType::Night, 2);
-
-    assert!(sher.role_state().role() != Role::Vampire);
-    
-    assert!(vamp.set_night_targets(vec![sher]));
-
-    game.next_phase();
-
-    assert!(sher.role_state().role() == Role::Vampire);
-}
-
-#[test]
-fn vampire_cant_convert_twice_in_a_row(){
-    kit::scenario!(game where
-        vamp: Vampire,
-        c1: Sheriff,
-        c2: Sheriff,
-        _c3: Sheriff,
-        _c4: Sheriff,
-        _c5: Sheriff,
-        _c6: Sheriff
-    );
-
-    //first convert
-    game.next_phase();
-    assert!(vamp.set_night_targets(vec![c1]));
-
-    //convert worked
-    game.next_phase();
-    assert!(c1.role_state().role() == Role::Vampire);
-    assert!(c2.role_state().role() != Role::Vampire);
-
-    //second convert should fail
-    game.skip_to(PhaseType::Night, 2);
-
-    assert!(!vamp.set_night_targets(vec![c2]));
-    assert!(!c1.set_night_targets(vec![c2]));
-
-    //check convert failed
-    game.next_phase();
-    
-    assert!(c1.role_state().role() == Role::Vampire);
-    assert!(c2.role_state().role() != Role::Vampire);
-
-    //second attempt at second convert
-    game.skip_to(PhaseType::Night, 3);
-
-    assert!(!vamp.set_night_targets(vec![c2]));
-    assert!(c1.set_night_targets(vec![c2]));
-
-    //final convert should work
-    game.next_phase();
-    
-    assert!(c1.role_state().role() == Role::Vampire);
-    assert!(c2.role_state().role() == Role::Vampire);
-
-}
-
-#[test]
 fn can_type_in_jail() {
     kit::scenario!(game where
         jailor: Jailor,
@@ -939,34 +866,6 @@ fn reveler_protect_still_kill() {
 
     assert!(!townie_b.alive());
     assert!(townie_a.alive());
-}
-
-#[test]
-fn vampire_convert_bodyguard() {
-    kit::scenario!(game in Night 1 where
-        vamp: Vampire,
-        bg: Bodyguard,
-        _bg2: Bodyguard,
-        _townie1: Sheriff,
-        _townie2: Sheriff
-    );
-
-    assert!(vamp.set_night_targets(vec![bg]));
-    assert!(bg.set_night_targets(vec![bg]));
-
-    game.next_phase();
-
-    assert!(vamp.role_state().role() == Role::Vampire);
-    assert!(bg.role_state().role() == Role::Bodyguard);
-
-    game.skip_to(PhaseType::Night, 2);
-    
-    assert!(vamp.set_night_targets(vec![bg]));
-
-    game.next_phase();
-
-    assert!(vamp.role_state().role() == Role::Vampire);
-    assert!(bg.role_state().role() == Role::Vampire);
 }
 
 #[test]

@@ -114,6 +114,9 @@ pub enum ChatMessage {
 
     #[serde(rename_all = "camelCase")]
     PlayerWithNecronomicon{player_index: PlayerIndex},
+    YourConvertFailed,
+    DraculaCanConvertTonight,
+    DraculaCantConvertTonight,
 
     SomeoneSurvivedYourAttack,
     YouSurvivedAttack,
@@ -129,11 +132,12 @@ pub enum ChatMessage {
 
     TargetJailed,
 
-    SheriffResult { suspicious: bool },
+    SheriffResult {suspicious: bool},
     LookoutResult{players: Vec<PlayerIndex>},
     TrackerResult{players: Vec<PlayerIndex>},
-    SeerResult{ enemies: bool},
+    SeerResult{enemies: bool},
     SpyMafiaVisit{players: Vec<PlayerIndex>},
+    SpyVampireCount{count: u8},
     SpyBug{bug: SpyBug},
     PsychicGood{players: [PlayerIndex; 2]},
     PsychicEvil{players: [PlayerIndex; 3]},

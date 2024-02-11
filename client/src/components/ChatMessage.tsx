@@ -232,6 +232,12 @@ export function translateChatMessage(message: ChatMessage): string {
             } else {
                 return translate("chatMessage.spyMafiaVisit", playerListToString(message.players));
             }
+        case "spyVampireCount":
+            if(message.count === 1){
+                return translate("chatMessage.spyVampireCount.one");
+            }else{
+                return translate("chatMessage.spyVampireCount", message.count);
+            }
         case "spyBug":
             return translate("chatMessage.spyBug."+message.bug);
         case "trackerResult":
@@ -296,6 +302,9 @@ export function translateChatMessage(message: ChatMessage): string {
         case "gameOver":
         case "jesterWon":
         case "targetJailed":
+        case "yourConvertFailed":
+        case "draculaCanConvertTonight":
+        case "draculaCantConvertTonight":
         case "someoneSurvivedYourAttack":
         case "transported":
         case "veteranAttackedVisitor":
@@ -402,6 +411,12 @@ export type ChatMessage = {
     type: "jailorDecideExecute"
     targets: PlayerIndex[]
 } | {
+    type: "yourConvertFailed"
+} | {
+    type: "draculaCanConvertTonight"
+} | {
+    type: "draculaCantConvertTonight"
+} | {
     type: "mediumSeance",
     player: PlayerIndex
 } | {
@@ -432,6 +447,9 @@ export type ChatMessage = {
 } | {
     type: "spyMafiaVisit", 
     players: PlayerIndex[]
+} | {
+    type: "spyVampireCount",
+    count: number
 } | {
     type: "spyBug", 
     bug: String

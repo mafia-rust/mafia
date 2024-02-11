@@ -288,14 +288,6 @@
         "keywords": ["fullMoon","rampage","defense","astral","appearedVisit","aura"],
         "canBeConvertedTo": []
     },
-    "vampire": {
-        "faction": "neutral",
-        "armor": false,
-        "maxCount": 2,
-        "largeRoleSpecificMenu": false,
-        "keywords": ["convert", "priority","defense"],
-        "canBeConvertedTo": []
-    },
     "amnesiac": {
         "faction": "neutral",
         "armor": false,
@@ -319,5 +311,29 @@
         "largeRoleSpecificMenu": true,
         "keywords": ["convert", "defense","roleLimit"],
         "canBeConvertedTo": ["jester"]
+    },
+    "dracula": {
+        "faction": "vampire",
+        "armor": false,
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false,
+        "keywords": ["convert","priority","defense"],
+        "canBeConvertedTo": []
+    },
+    "thrall": {
+        "faction": "vampire",
+        "armor": false,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "keywords": ["convert"],
+        "canBeConvertedTo": []
+    },
+    "renfield": {
+        "faction": "vampire",
+        "armor": false,
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false,
+        "keywords": ["convert", "defense"],
+        "canBeConvertedTo": []
     }
 }

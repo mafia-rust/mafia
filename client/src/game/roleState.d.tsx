@@ -106,10 +106,14 @@ Doomsayer
     role: "death",
     souls: number
 } | {
-    role: "vampire"
-} | {
     role: "amnesiac"
     roleOutline: RoleOutline
+} | {
+    role: "dracula"
+} | {
+    role: "thrall"
+} | {
+    role: "renfield"
 }
 
 

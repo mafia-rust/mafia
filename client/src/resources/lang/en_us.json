@@ -272,13 +272,21 @@
     "role.death.dayTarget": "Special",
     "role.death.roleDataText": "Souls collected: \\0",
 
-    "role.vampire.name": "Vampire",
-    "role.vampire.target": "Bite",
-    "role.vampire.dayTarget": "Special",
-
     "role.amnesiac.name": "Amnesiac",
     "role.amnesiac.target": "Target",
     "role.amnesiac.dayTarget": "Special",
+
+    "role.dracula.name": "Dracula",
+    "role.dracula.target": "Bite",
+    "role.dracula.dayTarget": "Special",
+
+    "role.thrall.name": "Thrall",
+    "role.thrall.target": "Target",
+    "role.thrall.dayTarget": "Special",
+
+    "role.renfield.name": "Renfield",
+    "role.renfield.target": "Kill",
+    "role.renfield.dayTarget": "Special",
 
     "role.unknown.name": "Unknown",
     "role.unknown.target": "Target",
@@ -294,6 +302,7 @@
     "faction":"Faction",
     "town": "Town",
     "mafia": "Mafia",
+    "vampire": "Vampire",
     "neutral": "Neutral",
 
     "townInvestigative":"Town Investigate",
@@ -403,6 +412,7 @@
     "chatMessage.jailorDecidedToExecute":"The Jailor decided to execute \\0",
     "chatMessage.jailorDecideExecute.nobody":"The Jailor decided not to execute!",
     "chatMessage.playerWithNecronomicon":"\\0 has the necronomicon.",
+    "chatMessage.yourConvertFailed": "You failed to convert your target.",
 
     "chatMessage.youDied":"You died!",
     "chatMessage.youSurvivedAttack": "You were attacked but had defense and survived.",
@@ -422,6 +432,8 @@
     "chatMessage.seerResult.enemies":"Your targets are enemies!",
     "chatMessage.spyMafiaVisit":"The mafia visited \\0.",
     "chatMessage.spyMafiaVisit.nobody":"The mafia visited nobody.",
+    "chatMessage.spyVampireCount":"There are \\0 vampires alive.",
+    "chatMessage.spyVampireCount.one":"There is 1 vampire alive.",
     "chatMessage.spyBug.silenced":"Your target was silenced.",
     "chatMessage.spyBug.roleblocked":"Someone attempted to roleblock your target.",
     "chatMessage.spyBug.protected":"Your target was protected from an attack.",
@@ -458,6 +470,8 @@
     "chatMessage.consigliereResult.visited.nobody": "They didn't visit anybody",
     "chatMessage.consigliereResult.visitedBy": "They were visited by \\0",
     "chatMessage.consigliereResult.visitedBy.nobody": "They were not visited by anybody",
+    "chatMessage.draculaCanConvertTonight": "Dracula can convert tonight!",
+    "chatMessage.draculaCantConvertTonight": "Dracula can not convert tonight!",
 
     "chatMessage.doomsayerFailed": "At least one of your guesses was incorrect or invalid.",
     "chatMessage.doomsayerWon": "Your guesses were correct, and you won!",
@@ -592,10 +606,10 @@
     "wiki.article.role.lookout.attributes":"- You can not see your own visit",
     "wiki.article.role.lookout.extra": "- You can not see astral visits\n- A framer can change your results",
 
-    "wiki.article.role.spy.guide": "Choose a player to find what happened to them. You will passively learn who the mafia visited. You should tell the town the information you get daily. If the mafia can not visit themselves, then everyone who the mafia visits must not be mafia.",
-    "wiki.article.role.spy.abilities":"* Visit a player to find out what happened to them\n* You will know who the mafia visited",
+    "wiki.article.role.spy.guide": "Choose a player to find what happened to them. Each night you will passively learn who the mafia visited, weather or not dracula can convert, and how many vampires are alive. You should tell the town the information you get daily. Usually, the mafia can not visit themselves, so anyone who you see the maifa visits is likely not a mafia member.",
+    "wiki.article.role.spy.abilities":"* Visit a player to find out what happened to them\n* You will know who the mafia visited\n * At the start of night, you are told weather or not dracula can convert tonight\n* You will know how many vampires are alive",
     "wiki.article.role.spy.attributes":"* Your bug will catch when your target sees a message saying they are silenced, roleblocked, protected, possessed, or transported",
-    "wiki.article.role.spy.extra": "* The mafia visits can not be fooled, they are always accurate\n* You can not see astral visits",
+    "wiki.article.role.spy.extra": "* Your information can not be fooled, it is always accurate\n* You can not see the mafias astral visits\n* If your target is not actually silenced, roleblocked, protected, possessed, or transported, but sees the message saying they were, your bug will catch that they were. This is important if there is a consort in the game",
 
     "wiki.article.role.tracker.guide": "Choose a player each night to find out who they chose. If your chosen player visited someone on the night they died, it's possible they were the killer. You should tell the town the information you get daily. You should try to choose people who you think are lying about where they are going.",
     "wiki.article.role.tracker.abilities":"- Visit a player to find who they visit",
@@ -762,10 +776,20 @@
     "wiki.article.role.amnesiac.attributes":"* roleblocking or jail doesn't effect you",
     "wiki.article.role.amnesiac.extra":"* You can choose an outline like \"Neutral Killing\", and you will get a random neutral killing role, or choose an outline like \"Jailor\" and confirm that you get the jailor\n* If you choose a role that was excluded from the game you will stay as the Amnesiac",
 
-    "wiki.article.role.vampire.guide": "Choose a player to convert them to a vampire, only one of the vampires can actually choose to convert a player. You can only convert a player if you did not the night before. You can not convert a player when it would give vampires majority, you also can not convert when there are at least four living vampires.",
-    "wiki.article.role.vampire.abilities":"* Visit a player to convert them to a vampire",
-    "wiki.article.role.vampire.attributes":"* Only the newest vampire can choose to bite\n* Vampires can not bite on the night immediately following a night that they successfully converted another vampire",
-    "wiki.article.role.vampire.extra":"* You can not convert a player with any defense at all\n* If the number of living vampires is less than four and less than half the number of living players, then the vampires can continue targeting people.",
+    "wiki.article.role.dracula.guide": "Every other night, choose a player to convert them into a vampire. If you are the only vampire, you can kill on nights that you can't convert. If your convert fails, you can attempt to convert the next night.",
+    "wiki.article.role.dracula.abilities":"* Visit a player to convert them to a renfield on nights that you can convert\n* On nights you can't convert, visit a player to deal a basic attack to them",
+    "wiki.article.role.dracula.attributes":"* You can not convert on night one\n* You can not convert on the night immediately following a night that you successfully converted someone",
+    "wiki.article.role.dracula.extra":"* You can not convert a player who has any defense\n* There should only be one dracula, if you die, the next oldest vampire will become dracula\n* You can not target other vampires",
+
+    "wiki.article.role.thrall.guide": "You have no ability except to help the vampires by lying and helping them to lie. If dracula dies, and you are the next oldest vampire, you will be converted to dracula. You should lie and communicate with fellow vampires to convince the town to lynch someone who isn't a vampire.",
+    "wiki.article.role.thrall.abilities":"* If dracula dies and you are the oldest vampire, you will become dracula",
+    "wiki.article.role.thrall.attributes":"* The oldest vampire is the one that has been a vampire the longest, if there is a tie, the oldest vampire is the one with the lowest player number",
+    "wiki.article.role.thrall.extra":"* Even though you have no ability, you are essential to your team, you should help protect dracula by lying.",
+
+    "wiki.article.role.renfield.guide": "Choose a player to kill them.",
+    "wiki.article.role.renfield.abilities":"* Visit a player to deal a basic attack to them",
+    "wiki.article.role.renfield.attributes":"* If another player is converted to a renfield, you will become a thrall, so there will never be more than one renfield",
+    "wiki.article.role.renfield.extra":"* You can not target other vampires",
 
     "random.gay":"GAY",
     "random.trans":"TRANS"
