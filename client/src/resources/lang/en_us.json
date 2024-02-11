@@ -476,6 +476,15 @@
     "chatMessage.doomsayerFailed": "At least one of your guesses was incorrect or invalid.",
     "chatMessage.doomsayerWon": "Your guesses were correct, and you won!",
 
+    "wiki.article.standard.town.title": "Town",
+    "wiki.article.standard.town.text": "Town is the main good faction. Usually, the majority of the players in each game are townies, but they dont start by knowing who eachother are. Town wins by eliminating all apposing teams (mafia, vampire, arsonist, werewolf, etc). Town needs to work together to find out who the evils are. Their main power is in communication and voting, so if you are a townie who doesnt communicate, you are not helping your team win.",
+    "wiki.article.standard.mafia.title": "Mafia",
+    "wiki.article.standard.mafia.text": "Mafia is the main evil faction. There is much less of them, but they know who eachother are. They win by eliminating all opposing teams by killing and lying to get people to vote eachother out. The mafia can communicate at night to create strategies and help eachother lie. Most mafia roles can't select eachother to use their ability. The mafia should always have a godfather who kills someone each night.",
+    "wiki.article.standard.neutral.title": "Neutral",
+    "wiki.article.standard.neutral.text": "Neutrals are not all on the same team. They all have different special win conditions and most of them are against both the town and the mafia. Some neutrals can win before the game ends like the jester, executioner, and doomsayer. Others need to be the last one alive like werewolf and arsonist. All of the werewolves are on the same team but don't start knowing who eachother are, the same goes for arsonists.",
+    "wiki.article.standard.vampire.title": "Vampire",
+    "wiki.article.standard.vampire.text": "Vampires are an evil faction that can convert other players to join their team. They win by eliminating all opposing teams. Vampires can communicate at night and they can not select eachother.",
+    
     "wiki.article.standard.roleLabel.title": "Role Label",
     "wiki.article.standard.roleLabel.text": "A role label might appear next to a players name on the player list. It shows what their role is. For example, mafia members can see the roles of their teammates through role labels. Or if a mayor reveals, the mayor will gain a role label. It is possible for a role label to be innacurate, if a mayor is converted to a vampire, their label might not change.",
     "wiki.article.standard.interview.title": "Interview",
