@@ -1,6 +1,6 @@
 use rand::seq::SliceRandom;
 
-use super::{chat::{ChatGroup, ChatMessage}, player::PlayerReference, role::{
+use super::{chat::{ChatGroup, ChatMessage}, phase::PhaseType, player::PlayerReference, role::{
         dracula::Dracula,
         godfather::Godfather,
         renfield::Renfield,
@@ -52,10 +52,10 @@ impl TeamState{
             TeamState::Vampires(t) => t.on_creation(game),
         }
     }
-    pub fn on_phase_start(self, game: &mut Game){
+    pub fn on_phase_start(self, game: &mut Game, phase: PhaseType){
         match self {
-            TeamState::Mafia(t) => t.on_phase_start(game),
-            TeamState::Vampires(t) => t.on_phase_start(game),
+            TeamState::Mafia(t) => t.on_phase_start(game, phase),
+            TeamState::Vampires(t) => t.on_phase_start(game, phase),
         }
     }
     pub fn on_any_death(self, game: &mut Game){
@@ -78,7 +78,7 @@ impl TeamState{
 pub trait TeamStateImpl : Clone{
     fn team(&self) -> Team;
     fn on_creation(self, game: &mut Game);
-    fn on_phase_start(self, game: &mut Game);
+    fn on_phase_start(self, game: &mut Game, phase: PhaseType);
     fn on_any_death(self, game: &mut Game);
     fn on_member_role_switch(self, game: &mut Game, actor: PlayerReference);
 }
@@ -93,9 +93,9 @@ impl Teams{
         game.teams.mafia.clone().on_creation(game);
         game.teams.vampires.clone().on_creation(game);
     }
-    pub fn on_phase_start(game: &mut Game){
-        game.teams.mafia.clone().on_phase_start(game);
-        game.teams.vampires.clone().on_phase_start(game);
+    pub fn on_phase_start(game: &mut Game, phase: PhaseType){
+        game.teams.mafia.clone().on_phase_start(game, phase);
+        game.teams.vampires.clone().on_phase_start(game, phase);
     }
     pub fn on_any_death(game: &mut Game){
         game.teams.mafia.clone().on_any_death(game);
@@ -124,7 +124,7 @@ impl TeamStateImpl for Mafia{
     fn team(&self) -> Team {
         Team::Mafia
     }
-    fn on_phase_start(self, game: &mut Game){
+    fn on_phase_start(self, game: &mut Game, _phase: PhaseType){
         //This depends on role_state.on_phase_start being called before this
         Mafia::ensure_mafia_can_kill(game);
     }
@@ -175,13 +175,15 @@ impl TeamStateImpl for Vampires{
     fn team(&self) -> Team {
         Team::Vampires
     }
-    fn on_phase_start(self, game: &mut Game){
+    fn on_phase_start(self, game: &mut Game, phase: PhaseType){
         Vampires::set_ordered_vampires(self.clone(), game);
-        if self.can_convert_tonight(game){
-            game.add_message_to_chat_group(ChatGroup::Vampire, ChatMessage::DraculaCanConvertTonight);
-        }else{
-            game.add_message_to_chat_group(ChatGroup::Vampire, ChatMessage::DraculaCantConvertTonight);
         
+        if phase == PhaseType::Night {
+            if self.can_convert_tonight(game){
+                game.add_message_to_chat_group(ChatGroup::Vampire, ChatMessage::DraculaCanConvertTonight);
+            }else{
+                game.add_message_to_chat_group(ChatGroup::Vampire, ChatMessage::DraculaCantConvertTonight);
+            }
         }
     }
     fn on_creation(self, game: &mut Game) {
@@ -230,7 +232,7 @@ impl Vampires{
     }
     pub fn can_convert_tonight(&self, game: &Game)->bool {
         if self.ordered_vampires.len() >= 4 {return false}
-        
+
         match self.night_of_last_conversion{
             None => game.day_number() != 1,
             Some(night) => game.day_number() - night >= 2

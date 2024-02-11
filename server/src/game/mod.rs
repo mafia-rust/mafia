@@ -303,7 +303,7 @@ impl Game {
             player_ref.on_phase_start(self, self.current_phase().phase());
         }
 
-        Teams::on_phase_start(self);
+        Teams::on_phase_start(self, self.current_phase().phase());
 
         self.send_packet_to_all(ToClientPacket::Phase { 
             phase: self.current_phase().phase(),
