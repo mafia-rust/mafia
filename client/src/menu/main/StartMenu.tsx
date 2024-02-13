@@ -21,6 +21,10 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
 
         GAME_MANAGER.setOutsideLobbyState();
     }
+    //Temp func for audio testing
+    private async importantButton(){
+        Anchor.playAudioFile("/audio/longSpeech.mp4",false);
+    }
 
     render(){return(<div className="sm">
         <main>
@@ -30,6 +34,13 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
                 <div>
                     <button onClick={()=>{this.connectButton()}}>
                         {translate("menu.start.button.play")}
+                    </button>
+                </div>
+                {/*
+                test div for audio
+                */}
+                <div>
+                    <button onClick={()=>{this.importantButton()}}>
                     </button>
                 </div>
             </section>
