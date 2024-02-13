@@ -48,6 +48,7 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
                     <li><a href="https://mafia-game-old.vercel.app/">Old Mafia</a></li>
                     <li><a href="https://netgames.io/games/">Net Games</a></li>
                     <li><a href="https://clocktower.online/">Clocktower Online</a></li>
+                    <li><a href="https://secret-hitler.com/">Secret Hitler</a></li>
                 </ul>
             </nav>
         </footer>

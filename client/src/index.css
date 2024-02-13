@@ -34,23 +34,6 @@
     color: white;
 }
 
-nav > ul {
-    list-style: none;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-}
-
-nav > ul > li {
-    padding: 0 1rem;
-    margin: 1rem;
-}
-
-nav > ul > li > a {
-    text-decoration: none;
-}
-
 button, input, select, option, textarea, summary {
     border-radius: 0.4rem;
     margin: .13rem;
