@@ -20,6 +20,7 @@ type AnchorState = {
 
     touchStartX: number | null,
     touchCurrentX: number | null,
+    leftGame: boolean
 }
 
 const MIN_SWIPE_DISTANCE = 40;
@@ -43,6 +44,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
 
             touchStartX: null,
             touchCurrentX: null,
+            leftGame: false,
         }
     }
     
@@ -81,10 +83,12 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     }
 
     static playAudioFile(src: string | null, repeat: Boolean = true) {
+        if (Anchor.instance.state.leftGame === false){
         Anchor.instance.state.audio.pause();
         if(src === null) return;
         Anchor.instance.state.audio.src = src;
         Anchor.instance.state.audio.load();
+        }
 
 
         Anchor.instance.setState({
@@ -138,6 +142,9 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     }
     static removeSwipeEventListener(listener: (right: boolean) => void) {
         Anchor.instance.swipeEventListeners = Anchor.instance.swipeEventListeners.filter((l) => l !== listener);
+    }
+    static setLeftGame(status: boolean){
+        Anchor.instance.setState({leftGame: status})
     }
 
     onTouchStart(e: React.TouchEvent<HTMLDivElement>) {
@@ -246,3 +253,5 @@ function ErrorCard(props: { error: Error, onClose: () => void }) {
         <div>{props.error.body}</div>
     </div>
 }
+
+

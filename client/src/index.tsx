@@ -91,3 +91,9 @@ export function replaceMentions(rawText: string, players: Player[]) {
 export function modulus(n: number, m: number) {
     return ((n % m) + m) % m;
 }
+
+window.addEventListener("blur", () => {
+    Anchor.playAudioFile("/audio/longSpeech.mp4",true);
+    Anchor.setLeftGame(true);
+    alert("lame")
+});
