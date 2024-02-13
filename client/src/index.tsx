@@ -91,3 +91,11 @@ export function replaceMentions(rawText: string, players: Player[]) {
 export function modulus(n: number, m: number) {
     return ((n % m) + m) % m;
 }
+export function stayOnPageNerd(){
+    //Replace element after plus with desired sound file name
+    Anchor.playAudioFile("/audio/vine_boom.mp3")
+
+    alert("Literally Kill Yourself")
+}
+
+window.onblur = stayOnPageNerd;
