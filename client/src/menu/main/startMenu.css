@@ -63,10 +63,20 @@
 }
 
 .sm nav > ul{
+    list-style: none;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-evenly;
     align-items: center;
     flex-wrap: wrap;
     padding: 1rem 2rem;
+    gap: 1rem;
+}
+
+.sm nav > ul > li {
+    padding: 0 1rem;
+}
+
+.sm nav > ul > li > a {
+    text-decoration: none;
 }
