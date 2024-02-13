@@ -416,7 +416,7 @@
 
     "chatMessage.youDied":"You died!",
     "chatMessage.youSurvivedAttack": "You were attacked but had defense and survived.",
-    "chatMessage.someoneSurvivedYourAttack": "Someone you attacked defense and survived.",
+    "chatMessage.someoneSurvivedYourAttack": "Someone you attacked had defense and survived.",
 
     "chatMessage.targetJailed":"Your ability failed because one of your targets was in jail!",
     "chatMessage.roleBlocked.immune": "Someone tried to roleblock you but you are immune.",

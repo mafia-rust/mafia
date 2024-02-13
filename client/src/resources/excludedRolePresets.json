@@ -1,6 +1,5 @@
 {
     "default": [
-        "spy",
         "bodyguard",
         "mafioso"
     ],
@@ -15,11 +14,11 @@
         "politician","executioner",
         "doomsayer","death",
         "werewolf",
-        "vampire"
+        "dracula", "thrall", "renfield"
     ],
     "intermediate":[
         "jailor",
-        "spy","psychic",
+        "psychic",
         "bodyguard","crusader","trapper",
         "deputy",
         "retributionist",
@@ -28,7 +27,7 @@
         "politician",
         "death",
         "werewolf",
-        "vampire"
+        "dracula", "thrall", "renfield"
     ],
     "classic": [
         "tracker","seer","psychic",

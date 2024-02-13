@@ -46,7 +46,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
     render(){
         return <div className="chat-menu chat-menu-colors">
             <ContentTab close={ContentMenu.ChatMenu} helpMenu={"standard/chat"}>{translate("menu.chat.title")}</ContentTab>
-            <ChatMessageSection filter={this.state.filter} />
+            <ChatMessageSection filter={this.state.filter}/>
             {this.state.filter && <button 
                 onClick={()=>{
                     // TODO: Sammy wtf??
@@ -58,7 +58,7 @@ export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuSta
             >
                 filter_alt_off
             </button>}
-            <ChatTextInput setWhisperRef={setWhisper => ChatMenu.prependWhisper = setWhisper}/>
+            <ChatTextInput onComponentRender={(setWhisper) => {ChatMenu.prependWhisper = setWhisper}}/>
         </div>
     }
 }
@@ -123,7 +123,7 @@ function ChatMessageSection(props: { filter: RegExp | null }): ReactElement {
 }
 
 function ChatTextInput(props: { 
-    setWhisperRef: (setWhisper: (index: PlayerIndex) => void) => void
+    onComponentRender: (setWhisper: (index: PlayerIndex) => void) => void
 }): ReactElement {
     const [chatField, setChatField] = useState<string>("");
     const [players, setPlayers] = useState<Player[]>(GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.players : []);
@@ -134,7 +134,7 @@ function ChatTextInput(props: {
         setChatField("/w" + (index + 1) + " " + chatField)
     }, [chatField, setChatField]);
 
-    props.setWhisperRef(setWhisper);
+    props.onComponentRender(setWhisper);
 
     useEffect(() => {
         const playersListener: StateListener = (type) => {
