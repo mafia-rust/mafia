@@ -96,6 +96,8 @@ impl RoleStateImpl for Martyr {
             
             for player in PlayerReference::all_players(game) {
                 if player == actor_ref {continue}
+                if !player.alive(game) {continue}
+                if player.defense(game) >= 3 {continue}
                 player.die(game, Grave::from_player_suicide(game, player));
             }
     
