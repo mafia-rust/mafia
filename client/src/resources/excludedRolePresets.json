@@ -14,7 +14,8 @@
         "politician","executioner",
         "doomsayer","death",
         "werewolf",
-        "dracula", "thrall", "renfield"
+        "dracula", "thrall", "renfield",
+        "martyr"
     ],
     "intermediate":[
         "jailor",
@@ -27,7 +28,8 @@
         "politician",
         "death",
         "werewolf",
-        "dracula", "thrall", "renfield"
+        "dracula", "thrall", "renfield",
+        "martyr"
     ],
     "classic": [
         "tracker","seer","psychic",
@@ -35,7 +37,8 @@
         "deputy",
         "mafioso","necromancer",
         "politician",
-        "doomsayer","death"
+        "doomsayer","death",
+        "martyr"
     ],
     "smallGame": [
         "spy","psychic",
@@ -43,6 +46,7 @@
         "retributionist",
         "mafioso",
         "necromancer",
-        "death","doomsayer"
+        "death","doomsayer",
+        "martyr"
     ]
 }

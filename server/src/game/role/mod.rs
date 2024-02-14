@@ -91,7 +91,9 @@ macros::roles! {
 
     Dracula : dracula,
     Thrall : thrall,
-    Renfield : renfield
+    Renfield : renfield,
+
+    Martyr : martyr
 }
 
 macros::priorities! {

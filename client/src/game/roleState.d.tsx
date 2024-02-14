@@ -114,6 +114,9 @@ Doomsayer
     role: "thrall"
 } | {
     role: "renfield"
+} | {
+    role: "martyr",
+    bullets: number
 }
 
 

@@ -335,5 +335,13 @@
         "largeRoleSpecificMenu": false,
         "keywords": ["convert", "defense"],
         "canBeConvertedTo": []
+    },
+    "martyr": {
+        "faction": "neutral",
+        "armor": false,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "keywords": ["roleLabel", "defense"],
+        "canBeConvertedTo": []
     }
 }

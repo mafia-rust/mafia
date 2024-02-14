@@ -288,6 +288,11 @@
     "role.renfield.target": "Kill",
     "role.renfield.dayTarget": "Special",
 
+    "role.martyr.name": "Martyr",
+    "role.martyr.target": "Shoot",
+    "role.martyr.dayTarget": "Special",
+    "role.martyr.roleDataText": "\\0 bullets remaining\nThe heavens smile at you.",
+
     "role.unknown.name": "Unknown",
     "role.unknown.target": "Target",
     "role.unknown.dayTarget": "Special",
@@ -396,6 +401,7 @@
     "chatMessage.targeted.cleared":"\\0 cleared their targets.",
 
     "chatMessage.mayorRevealed":"\\0 has revealed as Mayor!",
+    "chatMessage.martyrRevealed":"Praise the Martyr \\0, for they will lead us to harmony!",
     "chatMessage.journalistJournal":"The town journal states this: \\0",
     "chatMessage.youAreInterviewingPlayer":"You are interviewing \\0.",
     "chatMessage.playerIsBeingInterviewed":"\\0 is being interviewed by a journalist",
@@ -406,7 +412,7 @@
     "chatMessage.mediumSeance":"\\0 is being haunted by a Medium!",
     "chatMessage.jesterWon":"The Jester will get their revenge from the grave!",
     "chatMessage.executionerWon":"The Executioner got their target lynched and won!",
-    "chatMessage.deathCollectedSouls":"The apolocolypse begins, everyone will die tonight if Death is alive at nightfall!",
+    "chatMessage.deathCollectedSouls":"The apocalypse begins, everyone will die tonight if Death is alive at nightfall!",
     "chatMessage.deputyKilled":"The Deputy killed \\0!",
     "chatMessage.deputyShotYou":"A Deputy shot you!",
     "chatMessage.jailorDecidedToExecute":"The Jailor decided to execute \\0",
@@ -475,6 +481,8 @@
 
     "chatMessage.doomsayerFailed": "At least one of your guesses was incorrect or invalid.",
     "chatMessage.doomsayerWon": "Your guesses were correct, and you won!",
+    "chatMessage.martyrFailed": "The martyr lives, and we endure for another day.",
+    "chatMessage.martyrWon": "The messiah has been killed! May we all enter the kingdom of heaven.",
 
     "wiki.article.standard.town.title": "Town",
     "wiki.article.standard.town.text": "Town is the main good faction. Usually, the majority of the players in each game are townies, but they dont start by knowing who eachother are. Town wins by eliminating all apposing teams (mafia, vampire, arsonist, werewolf, etc). Town needs to work together to find out who the evils are. Their main power is in communication and voting, so if you are a townie who doesnt communicate, you are not helping your team win.",
@@ -799,6 +807,11 @@
     "wiki.article.role.renfield.abilities":"* Visit a player to deal a basic attack to them",
     "wiki.article.role.renfield.attributes":"* If another player is converted to a renfield, you will become a thrall, so there will never be more than one renfield",
     "wiki.article.role.renfield.extra":"* You can not target other vampires",
+
+    "wiki.article.role.martyr.guide": "Lead the people to paradise. To win, sacrifice yourself by dying.",
+    "wiki.article.role.martyr.abilities":"* Visit yourself to basic attack yourself and use one bullet\n* You have 5 bullets\n* When you die, everyone else commits suicide and you win.",
+    "wiki.article.role.martyr.attributes":"- When you have zero bullets left you can not target yourself\n- You have a basic attack",
+    "wiki.article.role.martyr.extra":"- If you visit a player while you have zero bullets left you will not attack them",
 
     "random.gay":"GAY",
     "random.trans":"TRANS"

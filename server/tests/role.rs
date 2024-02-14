@@ -3,7 +3,7 @@ use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::role::reveler::Reveler;
+use mafia_server::game::role::{martyr::Martyr, reveler::Reveler};
 pub use mafia_server::game::{
     chat::{ChatMessage, MessageSender, ChatGroup}, 
     grave::*, 
@@ -898,5 +898,111 @@ fn bodyguard_gets_single_target_jailed_message() {
                 phase_type: PhaseType::Morning, day_number: 2 
             }
         ]
+    );
+}
+
+#[test]
+fn martyr_suicide_ends_game() {
+    kit::scenario!(game where
+        martyr: Martyr,
+        player1: Mafioso,
+        player2: Sheriff,
+        player3: Mafioso,
+        player4: Sheriff
+    );
+
+    game.next_phase();
+
+    assert_contains!(
+        player1.get_messages(),
+        ChatMessage::MartyrRevealed { martyr: martyr.index() }
+    );
+
+    martyr.set_night_target(martyr);
+
+    game.next_phase();
+
+    assert!(!martyr.alive());
+    assert!(martyr.role_state().clone().get_won_game(&game, martyr.player_ref()));
+    assert!(!player1.alive());
+    assert!(!player2.alive());
+    assert!(!player3.alive());
+    assert!(!player4.alive());
+
+    assert_contains!(
+        player1.get_messages(),
+        ChatMessage::MartyrWon
+    );
+
+    assert!(game.game_is_over());
+}
+
+#[test]
+fn martyr_roleblocked() {
+    kit::scenario!(game where
+        martyr: Martyr,
+        player1: Mafioso,
+        player2: Sheriff,
+        consort: Consort,
+        player4: Sheriff
+    );
+
+    game.next_phase();
+
+    assert_contains!(
+        player1.get_messages(),
+        ChatMessage::MartyrRevealed { martyr: martyr.index() }
+    );
+
+    martyr.set_night_target(martyr);
+    consort.set_night_target(martyr);
+
+    game.next_phase();
+
+    assert!(martyr.alive());
+    assert!(!martyr.role_state().clone().get_won_game(&game, martyr.player_ref()));
+    assert!(player1.alive());
+    assert!(player2.alive());
+    assert!(consort.alive());
+    assert!(player4.alive());
+
+    assert_contains!(
+        player1.get_messages(),
+        ChatMessage::MartyrFailed
+    );
+}
+
+#[test]
+fn martyr_healed() {
+    kit::scenario!(game where
+        martyr: Martyr,
+        player1: Mafioso,
+        player2: Sheriff,
+        doctor: Doctor,
+        player4: Sheriff
+    );
+
+    game.next_phase();
+
+    assert_contains!(
+        player1.get_messages(),
+        ChatMessage::MartyrRevealed { martyr: martyr.index() }
+    );
+
+    martyr.set_night_target(martyr);
+    doctor.set_night_target(martyr);
+
+    game.next_phase();
+
+    assert!(martyr.alive());
+    assert!(!martyr.role_state().clone().get_won_game(&game, martyr.player_ref()));
+    assert!(player1.alive());
+    assert!(player2.alive());
+    assert!(doctor.alive());
+    assert!(player4.alive());
+
+    assert_contains!(
+        player1.get_messages(),
+        ChatMessage::MartyrFailed
     );
 }

@@ -191,7 +191,7 @@ impl RoleSet{
             RoleSet::NeutralKilling => 
                 vec![Role::Arsonist, Role::Werewolf],
             RoleSet::NeutralChaos => 
-                vec![Role::Amnesiac],
+                vec![Role::Amnesiac, Role::Martyr],
             RoleSet::NeutralApocalypse => 
                 vec![Role::Death, Role::Doomsayer],
         }

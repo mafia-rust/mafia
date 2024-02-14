@@ -15,6 +15,7 @@
     "trialVerdict": "important",
     "targeted": "target",
     "mayorRevealed": "special",
+    "martyrRevealed": "special",
     "journalistJournal": "result",
     "playerIsBeingInterviewed": "special",
     "youAreInterviewingPlayer": "special",
@@ -70,5 +71,7 @@
     "werewolfTrackingResult": "result",
     "youSurvivedAttack": "result",
     "doomsayerFailed": "result",
-    "doomsayerWon": "result"
+    "doomsayerWon": "result",
+    "martyrFailed": "result",
+    "martyrWon": "result"
 }
