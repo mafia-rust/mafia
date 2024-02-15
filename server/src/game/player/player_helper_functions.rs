@@ -170,7 +170,7 @@ impl PlayerReference{
         self.night_framed(game) || 
         (
             self.doused(game) &&
-            PlayerReference::all_players(game).into_iter().any(|player_ref|
+            PlayerReference::all_players(game).any(|player_ref|
                 player_ref.alive(game) && player_ref.role(game) == Role::Arsonist
             )
         )
