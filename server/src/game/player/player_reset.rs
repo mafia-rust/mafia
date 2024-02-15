@@ -2,7 +2,7 @@
 
 use std::time::Duration;
 
-use crate::game::{grave::{GraveKiller, GraveRole}, phase::PhaseType, verdict::Verdict, Game};
+use crate::game::{grave::GraveKiller, phase::PhaseType, verdict::Verdict, Game};
 use super::{PlayerReference, ClientConnection};
 
 
@@ -49,7 +49,7 @@ impl PlayerReference{
                 self.set_night_visits(game, vec![]);
                 self.set_night_messages(game, vec![]);
                 
-                self.set_night_grave_role(game, GraveRole::Role(self.role(game)));
+                self.set_night_grave_role(game, None);
                 self.set_night_grave_killers(game, vec![]);
                 self.set_night_grave_will(game, self.will(game).clone());
                 self.set_night_grave_death_notes(game, vec![]);

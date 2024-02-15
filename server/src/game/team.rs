@@ -169,7 +169,7 @@ impl Mafia{
 #[derive(Default, Clone)]
 pub struct Vampires {
     pub ordered_vampires: Vec<PlayerReference>,
-    pub night_of_last_conversion: Option<u8>
+    pub sacrifices_needed: Option<u8>
 }
 impl TeamStateImpl for Vampires{
     fn team(&self) -> Team {
@@ -189,14 +189,23 @@ impl TeamStateImpl for Vampires{
     fn on_creation(self, game: &mut Game) {
         Vampires::set_ordered_vampires(self, game);
     }
-    fn on_any_death(self, game: &mut Game){
-        Vampires::set_ordered_vampires(self, game);
+    fn on_any_death(mut self, game: &mut Game){
+        self.sacrifices_needed = self.sacrifices_needed.clone().map(|s| return  s.saturating_sub(1));
+        if let Some(s) = self.sacrifices_needed{
+            game.add_message_to_chat_group(ChatGroup::Vampire, ChatMessage::VampiresSacrificesRequired { required: s });
+        }
+        game.teams.set_vampires(self.clone());
+
+        Vampires::set_ordered_vampires(self.clone(), game);
     }
     fn on_member_role_switch(self, game: &mut Game, _actor: PlayerReference) {
         Vampires::set_ordered_vampires(self, game);
     }
 }
 impl Vampires{
+
+    pub const SACRIFICES_NEEDED: u8 = 2;
+
     fn set_ordered_vampires(mut self, game: &mut Game){
         // Remove dead
         self.ordered_vampires = self.ordered_vampires.iter().cloned().filter(|p|
@@ -233,9 +242,11 @@ impl Vampires{
     pub fn can_convert_tonight(&self, game: &Game)->bool {
         if self.ordered_vampires.len() >= 4 {return false}
 
-        match self.night_of_last_conversion{
+        match self.sacrifices_needed{
             None => game.day_number() != 1,
-            Some(night) => game.day_number() - night >= 2
+            Some(blood) => {
+                blood <= 0
+            }
         }
     }
 }

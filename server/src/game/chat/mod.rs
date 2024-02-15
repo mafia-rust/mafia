@@ -117,6 +117,7 @@ pub enum ChatMessage {
     YourConvertFailed,
     DraculaCanConvertTonight,
     DraculaCantConvertTonight,
+    VampiresSacrificesRequired{required: u8},
 
     SomeoneSurvivedYourAttack,
     YouSurvivedAttack,

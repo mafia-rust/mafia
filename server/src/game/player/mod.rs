@@ -69,7 +69,7 @@ struct PlayerNightVariables{
 
     messages: Vec<ChatMessage>,
 
-    grave_role: GraveRole,
+    grave_role: Option<GraveRole>,
     grave_killers: Vec<GraveKiller>,
     grave_will: String,
     grave_death_notes: Vec<String>,
@@ -117,7 +117,7 @@ impl Player {
 
                 messages:           vec![],
 
-                grave_role: GraveRole::Role(role),
+                grave_role: None,
                 grave_killers: vec![],
                 grave_will: "".to_string(),
                 grave_death_notes: vec![],
@@ -129,7 +129,7 @@ impl Player {
 pub mod test {
     use std::{collections::HashMap, time::Duration};
 
-    use crate::{game::{role::Role, verdict::Verdict, grave::GraveRole}, lobby::ClientConnection};
+    use crate::{game::{role::Role, verdict::Verdict}, lobby::ClientConnection};
 
     use super::{Player, PlayerVotingVariables, PlayerNightVariables};
 
@@ -176,7 +176,7 @@ pub mod test {
 
                 messages:           vec![],
 
-                grave_role: GraveRole::Role(role),
+                grave_role: None,
                 grave_killers: vec![],
                 grave_will: "".to_string(),
                 grave_death_notes: vec![],

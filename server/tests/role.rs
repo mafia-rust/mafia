@@ -869,6 +869,83 @@ fn reveler_protect_still_kill() {
 }
 
 #[test]
+fn vampire_wait_for_two_deaths() {
+    kit::scenario!(game in Night 1 where
+        drac: Dracula,
+        a: Sheriff,
+        b: Sheriff,
+        c: Sheriff,
+        d: Sheriff,
+        e: Sheriff,
+        f: Sheriff,
+        g: Sheriff,
+        h: Sheriff,
+        i: Sheriff,
+        j: Sheriff
+    );
+
+    //dracula kills
+    assert!(drac.set_night_targets(vec![a]));
+    game.next_phase();
+    assert!(!a.alive());
+    assert!(a.role_state().role().faction() != Faction::Vampire);
+
+    //dracula converts
+    game.skip_to(PhaseType::Night, 2);
+    assert!(drac.set_night_targets(vec![b]));
+    game.next_phase();
+    assert!(b.alive());
+    assert!(b.role_state().role().faction() == Faction::Vampire);
+
+    //renfield kills, dracula waits
+    game.skip_to(PhaseType::Night, 3);
+    assert!(!drac.set_night_targets(vec![d]));
+    assert!(b.set_night_targets(vec![c]));
+    game.next_phase();
+    assert!(!c.alive());
+    assert!(d.alive());
+    assert!(d.role_state().role().faction() != Faction::Vampire);
+
+    //renfield kills, dracula waits
+    game.skip_to(PhaseType::Night, 4);
+    assert!(!drac.set_night_targets(vec![d]));
+    assert!(b.set_night_targets(vec![e]));
+    game.next_phase();
+    assert!(!e.alive());
+    assert!(d.alive());
+    assert!(d.role_state().role().faction() != Faction::Vampire);
+
+    //renfield kills, dracula converts
+    game.skip_to(PhaseType::Night, 5);
+    assert!(drac.set_night_targets(vec![f]));
+    assert!(b.set_night_targets(vec![g]));
+    game.next_phase();
+    assert!(f.alive());
+    assert!(f.role_state().role().faction() == Faction::Vampire);
+    assert!(!g.alive());
+
+    //renfield kills, dracula waits
+    game.skip_to(PhaseType::Night, 6);
+    assert!(!drac.set_night_targets(vec![h]));
+    assert!(f.set_night_targets(vec![i]));
+    game.next_phase();
+    assert!(!i.alive());
+    assert!(h.alive());
+    assert!(h.role_state().role().faction() != Faction::Vampire);
+
+    //renfield kills, dracula converts, same person
+    game.skip_to(PhaseType::Night, 7);
+    assert!(drac.set_night_targets(vec![j]));
+    assert!(f.set_night_targets(vec![j]));
+    game.next_phase();
+    assert!(!j.alive());
+    assert!(j.role_state().role().faction() == Faction::Vampire);
+
+
+
+}
+
+#[test]
 fn bodyguard_gets_single_target_jailed_message() {
     kit::scenario!(game where
         bg: Bodyguard,

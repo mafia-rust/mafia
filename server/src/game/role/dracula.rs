@@ -8,7 +8,7 @@ use crate::game::chat::ChatGroup;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
-use crate::game::team::Team;
+use crate::game::team::{Team, Vampires};
 use crate::game::visit::Visit;
 use crate::game::Game;
 use super::renfield::Renfield;
@@ -27,7 +27,7 @@ impl RoleStateImpl for Dracula {
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        let vampires = game.teams.vampires().clone();
+        let mut vampires = game.teams.vampires().clone();
         match priority {
             Priority::Kill => {
                 if vampires.ordered_vampires.len() != 1 {return}
@@ -63,8 +63,7 @@ impl RoleStateImpl for Dracula {
 
                 target_ref.set_role(game, RoleState::Renfield(Renfield::default()));
 
-                let mut vampires = vampires.clone();
-                vampires.night_of_last_conversion = Some(game.day_number());
+                vampires.sacrifices_needed = Some(Vampires::SACRIFICES_NEEDED);
                 game.teams.set_vampires(vampires);
             }
             _ => {}

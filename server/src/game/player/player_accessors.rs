@@ -270,10 +270,10 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.messages = messages;
     }
 
-    pub fn night_grave_role<'a>(&self, game: &'a Game) -> &'a GraveRole {
+    pub fn night_grave_role<'a>(&self, game: &'a Game) -> &'a Option<GraveRole> {
         &self.deref(game).night_variables.grave_role
     }
-    pub fn set_night_grave_role(&self, game: &mut Game, grave_role: GraveRole){
+    pub fn set_night_grave_role(&self, game: &mut Game, grave_role: Option<GraveRole>){
         self.deref_mut(game).night_variables.grave_role = grave_role;
     }
 

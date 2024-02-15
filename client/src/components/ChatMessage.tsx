@@ -292,6 +292,15 @@ export function translateChatMessage(message: ChatMessage): string {
                     playerListToString(message.players)
                 );
             }
+        case "vampiresSacrificesRequired":
+            switch (message.required) {
+                case 0:
+                    return translate("chatMessage.vampiresSacrificesRequired.0");
+                case 1:
+                    return translate("chatMessage.vampiresSacrificesRequired.1");
+                default:
+                    return translate("chatMessage.vampiresSacrificesRequired", message.required);
+            }
         case "playerWithNecronomicon":
             return translate("chatMessage.playerWithNecronomicon", GAME_MANAGER.state.players[message.playerIndex].toString());
         case "deputyShotYou":
@@ -416,6 +425,9 @@ export type ChatMessage = {
     type: "draculaCanConvertTonight"
 } | {
     type: "draculaCantConvertTonight"
+} | {
+    type: "vampiresSacrificesRequired"
+    required: number
 } | {
     type: "mediumSeance",
     player: PlayerIndex

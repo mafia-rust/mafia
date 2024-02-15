@@ -50,7 +50,7 @@ impl RoleStateImpl for Janitor {
                 if target_ref.night_jailed(game) {
                     actor_ref.push_night_message(game, ChatMessage::TargetJailed);
                 }else{
-                    target_ref.set_night_grave_role(game, GraveRole::Cleaned);
+                    target_ref.set_night_grave_role(game, Some(GraveRole::Cleaned));
                     target_ref.set_night_grave_will(game, "".to_owned());
                     actor_ref.set_role_state(game, RoleState::Janitor(Janitor { cleans_remaining: self.cleans_remaining - 1, cleaned_ref: Some(target_ref) }));
                 }

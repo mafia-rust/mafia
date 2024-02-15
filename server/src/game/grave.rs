@@ -67,7 +67,7 @@ impl Grave{
 
         Grave { 
             player: player_ref.index(), 
-            role: player_ref.night_grave_role(game).clone(),
+            role: player_ref.night_grave_role(game).clone().unwrap_or(GraveRole::Role(player_ref.role(game))),
             death_cause: GraveDeathCause::Killers(player_ref.night_grave_killers(game).clone()),
             will: player_ref.night_grave_will(game).clone(),
             died_phase: GravePhase::Night, 
