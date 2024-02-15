@@ -58,7 +58,6 @@ impl RoleStateImpl for Consort {
             Priority::Roleblock => {
                 if target_ref.night_jailed(game) {
                     actor_ref.push_night_message(game, ChatMessage::TargetJailed);
-                    return;
                 }else if self.roleblock {
                     target_ref.roleblock(game, false);
                 }

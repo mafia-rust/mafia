@@ -58,7 +58,7 @@ impl RoleStateImpl for Forger {
                     target_ref.set_night_grave_role(game, Some(
                         GraveRole::Role(if let Some(role) = self.fake_role {role} else {target_ref.role(game)})
                     ));
-                    target_ref.set_night_grave_will(game, if self.fake_will != "" {self.fake_will.clone()} else {target_ref.will(game).to_owned()});
+                    target_ref.set_night_grave_will(game, if !self.fake_will.is_empty() {self.fake_will.clone()} else {target_ref.will(game).to_owned()});
                     actor_ref.set_role_state(game, RoleState::Forger(Forger { 
                         forges_remaining: self.forges_remaining - 1, 
                         forged_ref: Some(target_ref), 

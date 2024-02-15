@@ -190,7 +190,7 @@ impl TeamStateImpl for Vampires{
         Vampires::set_ordered_vampires(self, game);
     }
     fn on_any_death(mut self, game: &mut Game){
-        self.sacrifices_needed = self.sacrifices_needed.clone().map(|s| return  s.saturating_sub(1));
+        self.sacrifices_needed = self.sacrifices_needed.map(|s| s.saturating_sub(1));
         if let Some(s) = self.sacrifices_needed{
             game.add_message_to_chat_group(ChatGroup::Vampire, ChatMessage::VampiresSacrificesRequired { required: s });
         }
@@ -226,11 +226,11 @@ impl Vampires{
 
         for (i, player_ref) in self.ordered_vampires.iter().enumerate(){
             let role = if i == 0 {
-                RoleState::Dracula(Dracula::default())
+                RoleState::Dracula(Dracula)
             }else if i == self.ordered_vampires.len() - 1 {
-                RoleState::Renfield(Renfield::default())
+                RoleState::Renfield(Renfield)
             }else{
-                RoleState::Thrall(Thrall::default())
+                RoleState::Thrall(Thrall)
             };
             
             if player_ref.role(game) == role.role() {continue}
@@ -245,7 +245,7 @@ impl Vampires{
         match self.sacrifices_needed{
             None => game.day_number() != 1,
             Some(blood) => {
-                blood <= 0
+                blood == 0
             }
         }
     }

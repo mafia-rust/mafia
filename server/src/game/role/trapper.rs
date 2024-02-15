@@ -24,22 +24,13 @@ pub enum Trap {
 }
 impl Trap {
     fn is_set(&self) -> bool {
-        match self {
-            Trap::Set{..} => true,
-            _ => false
-        }
+        matches!(self, Trap::Set{..})
     }
     fn is_ready(&self) -> bool {
-        match self {
-            Trap::Ready => true,
-            _ => false
-        }
+        matches!(self, Trap::Ready)
     }
     fn is_dismantled(&self) -> bool {
-        match self {
-            Trap::Dismantled => true,
-            _ => false
-        }
+        matches!(self, Trap::Dismantled)
     }
     fn state(&self) -> TrapState {
         match self {

@@ -496,8 +496,8 @@ impl Lobby {
             },
             LobbyState::Game { game, players } => {
                 players.iter().map(|(id, player)| {
-                    let player_ref = PlayerReference::new(&game, player.player_index).unwrap();
-                    (*id, player_ref.name(&game).clone())
+                    let player_ref = PlayerReference::new(game, player.player_index).unwrap();
+                    (*id, player_ref.name(game).clone())
                 }).collect()
             },
             LobbyState::Closed => Vec::new(),

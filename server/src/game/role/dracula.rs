@@ -61,7 +61,7 @@ impl RoleStateImpl for Dracula {
                     return
                 }                
 
-                target_ref.set_role(game, RoleState::Renfield(Renfield::default()));
+                target_ref.set_role(game, RoleState::Renfield(Renfield));
 
                 vampires.sacrifices_needed = Some(Vampires::SACRIFICES_NEEDED);
                 game.teams.set_vampires(vampires);

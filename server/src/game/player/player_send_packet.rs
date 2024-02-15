@@ -133,7 +133,7 @@ impl PlayerReference{
 
         // Send in chunks
         for _ in 0..5 {
-            let msg_option = self.deref(game).queued_chat_messages.get(0);
+            let msg_option = self.deref(game).queued_chat_messages.first();
             if let Some(msg) = msg_option{
                 chat_messages_out.push(msg.clone());
                 self.deref_mut(game).queued_chat_messages.remove(0);

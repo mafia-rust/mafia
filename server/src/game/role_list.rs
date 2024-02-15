@@ -74,28 +74,25 @@ impl RoleOutline{
         options.choose(&mut rand::thread_rng()).cloned()
     }
     pub fn simplify(&mut self){
-        match self {
-            RoleOutline::RoleOutlineOptions{options} => {
-                let mut new_options = options.to_vec();
+        if let RoleOutline::RoleOutlineOptions{options} = self {
+            let mut new_options = options.to_vec();
 
-                new_options = new_options.into_iter().collect::<HashSet<_>>().into_iter().collect();
+            new_options = new_options.into_iter().collect::<HashSet<_>>().into_iter().collect();
 
-                for option_a in options.iter(){
-                    for option_b in options.iter(){
-                        if option_a.is_subset(option_b) && option_a != option_b{
-                            new_options.retain(|r| r != option_a);
-                        }
+            for option_a in options.iter(){
+                for option_b in options.iter(){
+                    if option_a.is_subset(option_b) && option_a != option_b{
+                        new_options.retain(|r| r != option_a);
                     }
                 }
-
-                let mut new_options = Vec1::try_from_vec(new_options)
-                    .expect("It is impossible to have two sets that are not equal but are subsets of eachother, role_list.rs: RoleOutline::simplify");
-
-                new_options.sort();
-
-                *self = RoleOutline::RoleOutlineOptions{options: new_options};
             }
-            _ => {}
+
+            let mut new_options = Vec1::try_from_vec(new_options)
+                .expect("It is impossible to have two sets that are not equal but are subsets of each other, role_list.rs: RoleOutline::simplify");
+
+            new_options.sort();
+
+            *self = RoleOutline::RoleOutlineOptions{options: new_options};
         }
     }
 }

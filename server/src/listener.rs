@@ -86,7 +86,7 @@ impl Listener{
             }else{
                 false
             }
-        ).map(|f|f.0.clone()).collect();
+        ).map(|f|*f.0).collect();
 
         for player in players_to_remove{
             self.set_player_outside_lobby(&player, false);
