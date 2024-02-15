@@ -51,7 +51,7 @@ impl RoleStateImpl for Deputy {
             
 
             if target_ref.role(game).faction() == Faction::Town {
-                actor_ref.die(game, Grave::from_player_suicide(game, actor_ref));
+                actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
             }
         }
 

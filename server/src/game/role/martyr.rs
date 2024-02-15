@@ -14,8 +14,14 @@ use super::{Priority, RoleStateImpl, Role, RoleState};
 
 #[derive(PartialEq, Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
-#[serde(tag = "state")]
-pub enum Martyr {
+pub struct Martyr {
+    pub state: MartyrState
+}
+
+#[derive(PartialEq, Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+#[serde(tag = "type")]
+pub enum MartyrState {
     Won,
     StillPlaying {
         bullets: u8
@@ -25,7 +31,9 @@ pub enum Martyr {
 
 impl Default for Martyr {
     fn default() -> Self {
-        Self::StillPlaying { bullets: 5 }
+        Self{
+            state: MartyrState::StillPlaying { bullets: 5 }
+        }
     }
 }
 
@@ -38,7 +46,7 @@ impl RoleStateImpl for Martyr {
 
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return}
-        let Martyr::StillPlaying { bullets } = self else {return};
+        let MartyrState::StillPlaying { bullets } = self.state else {return};
         if bullets == 0 {return}
 
         if let Some(visit) = actor_ref.night_visits(game).first() {
@@ -48,11 +56,11 @@ impl RoleStateImpl for Martyr {
                 return;
             }
 
-            self = Self::StillPlaying { bullets: bullets.saturating_sub(1) };
+            self.state = MartyrState::StillPlaying { bullets: bullets.saturating_sub(1) };
 
             if target_ref == actor_ref {
                 if target_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, 1, true) {
-                    self = Martyr::Won;
+                    self.state = MartyrState::Won;
                 }
             } else {
                 target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Martyr), 1, true);
@@ -68,8 +76,8 @@ impl RoleStateImpl for Martyr {
         !actor_ref.night_jailed(game) &&
         actor_ref.chosen_targets(game).is_empty() &&
         actor_ref.alive(game) && 
-        match self {
-            Self::StillPlaying { bullets } => bullets != 0,
+        match self.state {
+            MartyrState::StillPlaying { bullets } => bullets != 0,
             _ => false
         }
     }
@@ -86,14 +94,14 @@ impl RoleStateImpl for Martyr {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
     fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
-        self == Martyr::Won
+        self.state == MartyrState::Won
     }
     fn on_phase_start(self,  game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
-        if phase == PhaseType::Morning && matches!(self, Self::StillPlaying {..}) {
+        if phase == PhaseType::Morning && matches!(self.state, MartyrState::StillPlaying {..}) {
             game.add_message_to_chat_group(ChatGroup::All, ChatMessage::MartyrFailed);
         }
 
-        if actor_ref.alive(game) && matches!(self, Self::StillPlaying { bullets: 0 }) {
+        if phase == PhaseType::Morning && actor_ref.alive(game) && matches!(self.state, MartyrState::StillPlaying { bullets: 0 }) {
             actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }
@@ -115,7 +123,9 @@ impl RoleStateImpl for Martyr {
                 player.die(game, Grave::from_player_suicide(game, player));
             }
     
-            actor_ref.set_role_state(game, RoleState::Martyr(Martyr::Won));
+            actor_ref.set_role_state(game, RoleState::Martyr(Martyr {
+                state: MartyrState::Won
+            }));
         }
     }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){

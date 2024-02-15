@@ -2,6 +2,7 @@ use std::vec;
 
 use serde::{Serialize, Deserialize};
 
+use super::phase::PhaseType;
 use super::Game;
 use super::player::{PlayerIndex, PlayerReference};
 use super::role::Role;
@@ -61,6 +62,14 @@ pub enum GravePhase {
     Day,
     Night
 }
+impl GravePhase{
+    pub fn from_phase_type(phase: PhaseType)->Self{
+        match phase {
+            PhaseType::Night => Self::Night,
+            _ => Self::Day
+        }
+    }
+}
 
 impl Grave{
     pub fn from_player_night(game: &Game, player_ref: PlayerReference) -> Grave {
@@ -95,7 +104,7 @@ impl Grave{
             role: GraveRole::Role(player_ref.role(game)), 
             death_cause: GraveDeathCause::Killers(vec![GraveKiller::Suicide]), 
             will: player_ref.will(game).clone(), 
-            died_phase: GravePhase::Day, 
+            died_phase: GravePhase::from_phase_type(game.current_phase().phase()), 
             day_number: game.phase_machine.day_number,
             death_notes: vec![]
         }
@@ -107,7 +116,7 @@ impl Grave{
             role: GraveRole::Role(player_ref.role(game)), 
             death_cause: GraveDeathCause::LeftTown, 
             will: player_ref.will(game).clone(), 
-            died_phase: GravePhase::Day, 
+            died_phase: GravePhase::from_phase_type(game.current_phase().phase()), 
             day_number: game.phase_machine.day_number,
             death_notes: vec![]
         }
