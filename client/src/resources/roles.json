@@ -296,6 +296,14 @@
         "keywords": ["convert", "priority", "roleOutline"],
         "canBeConvertedTo": []
     },
+    "martyr": {
+        "faction": "neutral",
+        "armor": false,
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false,
+        "keywords": ["roleLabel", "defense"],
+        "canBeConvertedTo": []
+    },
     "death":{
         "faction": "neutral",
         "armor": false,
@@ -334,14 +342,6 @@
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": ["convert", "defense"],
-        "canBeConvertedTo": []
-    },
-    "martyr": {
-        "faction": "neutral",
-        "armor": false,
-        "maxCount": null,
-        "largeRoleSpecificMenu": false,
-        "keywords": ["roleLabel", "defense"],
         "canBeConvertedTo": []
     }
 }

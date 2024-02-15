@@ -88,12 +88,11 @@ macros::roles! {
     Werewolf : werewolf,
 
     Amnesiac : amnesiac,
+    Martyr : martyr,
 
     Dracula : dracula,
     Thrall : thrall,
-    Renfield : renfield,
-
-    Martyr : martyr
+    Renfield : renfield
 }
 
 macros::priorities! {
