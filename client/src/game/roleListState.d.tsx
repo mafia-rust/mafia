@@ -98,7 +98,7 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
         case "neutralKilling":
             return ["arsonist", "werewolf"];
         case "neutralChaos":
-            return ["amnesiac"];
+            return ["amnesiac", "martyr"];
         case "neutralApocalypse":
             return ["death", "doomsayer"];
     }

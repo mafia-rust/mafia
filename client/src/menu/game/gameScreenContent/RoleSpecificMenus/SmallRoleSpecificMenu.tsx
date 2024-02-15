@@ -77,6 +77,8 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
                         GAME_MANAGER.sendSetAmnesiacRoleOutline(rle);
                     }}
                 />;
+            case "martyr":
+                return <StyledText>{translate("role.martyr.roleDataText", this.state.gameState.roleState.bullets)}</StyledText>;
             default:
                 return null;
         }

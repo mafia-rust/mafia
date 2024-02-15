@@ -177,6 +177,10 @@ export function translateChatMessage(message: ChatMessage): string {
             return translate("chatMessage.mayorRevealed",
                 GAME_MANAGER.state.players[message.playerIndex].toString(),
             );
+        case "martyrRevealed":
+            return translate("chatMessage.martyrRevealed",
+                GAME_MANAGER.state.players[message.martyr].toString(),
+            );
         case "journalistJournal":
             return translate("chatMessage.journalistJournal",
                 message.journal
@@ -324,6 +328,8 @@ export function translateChatMessage(message: ChatMessage): string {
         case "youSurvivedAttack":
         case "doomsayerFailed":
         case "doomsayerWon":
+        case "martyrFailed":
+        case "martyrWon":
         case "retributionistMessage":
         case "necromancerMessage":
         case "targetsMessage":
@@ -548,6 +554,13 @@ export type ChatMessage = {
     type: "doomsayerFailed"
 } | {
     type: "doomsayerWon"
+} | {
+    type: "martyrFailed"
+} | {
+    type: "martyrWon"
+} | {
+    type: "martyrRevealed",
+    martyr: PlayerIndex
 }
 
 export type MessageSender = {

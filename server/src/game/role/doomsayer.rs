@@ -59,6 +59,7 @@ impl DoomsayerGuess{
             Role::Arsonist | Role::Werewolf | 
             Role::Doomsayer | Role::Death |
             Role::Amnesiac => Some(DoomsayerGuess::Neutral),
+            Role::Martyr => None,
             //Vampire
             Role::Dracula | Role::Thrall | Role::Renfield => Some(DoomsayerGuess::Vampire),
         }

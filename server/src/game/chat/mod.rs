@@ -178,6 +178,9 @@ pub enum ChatMessage {
     DeathCollectedSouls,
     DoomsayerFailed,
     DoomsayerWon,
+    MartyrRevealed { martyr: PlayerIndex },
+    MartyrWon,
+    MartyrFailed,
 }
 
 
