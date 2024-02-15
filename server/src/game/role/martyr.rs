@@ -13,6 +13,8 @@ use crate::game::team::Team;
 use super::{Priority, RoleStateImpl, Role, RoleState};
 
 #[derive(PartialEq, Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+#[serde(tag = "state")]
 pub enum Martyr {
     Won,
     StillPlaying {

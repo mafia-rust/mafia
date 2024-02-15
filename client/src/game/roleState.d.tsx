@@ -116,6 +116,10 @@ Doomsayer
     role: "renfield"
 } | {
     role: "martyr",
+    state: "won" | "leftTown"
+} | {
+    role: "martyr",
+    state: "stillPlaying"
     bullets: number
 }
 

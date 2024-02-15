@@ -78,7 +78,11 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
                     }}
                 />;
             case "martyr":
-                return <StyledText>{translate("role.martyr.roleDataText", this.state.gameState.roleState.bullets)}</StyledText>;
+                if (this.state.gameState.roleState.state === "stillPlaying") {
+                    return <StyledText>{translate("role.martyr.roleDataText", this.state.gameState.roleState.bullets)}</StyledText>;
+                } else {
+                    return null;
+                }
             default:
                 return null;
         }

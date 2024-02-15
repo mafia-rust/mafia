@@ -21,7 +21,7 @@ export type GraveRole = {
     role: Role
 };
 export type GraveDeathCause = {
-    type: "lynching"
+    type: "lynching" | "leftTown"
 } | {
     type: "killers"
     killers: GraveKiller[]

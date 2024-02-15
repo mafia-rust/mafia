@@ -299,6 +299,7 @@
 
     "grave.role.cleaned": "Cleaned",
     "grave.deathCause.lynching": "Lynching",
+    "grave.deathCause.leftTown": "Ousting",
     "grave.killer.quit": "Quitting",
     "grave.killer.suicide": "Suicide",
     "grave.will": "Alibi",
