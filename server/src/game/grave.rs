@@ -42,6 +42,7 @@ impl GraveRole{
 #[serde(tag = "type", content = "killers")]
 pub enum GraveDeathCause {
     Lynching,
+    LeftTown,
     Killers(Vec<GraveKiller>)
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
@@ -93,6 +94,18 @@ impl Grave{
             player: player_ref.index(), 
             role: GraveRole::Role(player_ref.role(game)), 
             death_cause: GraveDeathCause::Killers(vec![GraveKiller::Suicide]), 
+            will: player_ref.will(game).clone(), 
+            died_phase: GravePhase::Day, 
+            day_number: game.phase_machine.day_number,
+            death_notes: vec![]
+        }
+    }
+
+    pub fn from_player_leave_town(game: &Game, player_ref: PlayerReference) -> Grave {
+        Grave {
+            player: player_ref.index(), 
+            role: GraveRole::Role(player_ref.role(game)), 
+            death_cause: GraveDeathCause::LeftTown, 
             will: player_ref.will(game).clone(), 
             died_phase: GravePhase::Day, 
             day_number: game.phase_machine.day_number,

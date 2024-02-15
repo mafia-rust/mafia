@@ -768,7 +768,7 @@
 
     "wiki.article.role.doomsayer.guide": "Guess the role of three different players to win. If you guess the role of three different living players correctly, you kill all three of them, and commit suicide. You can not guess town investigative roles. You should listen to what people claim and try to push for more people to claim roles.",
     "wiki.article.role.doomsayer.abilities":"* Guess the role of three different living players in one night, killing them and winning",
-    "wiki.article.role.doomsayer.attributes":"* When you win, you will commit suicide using a protection piecring attack\n* You have to guess the exact role of townies, but you only need to guess the faction of all other roles\n* You can not try to guess town investigative roles\n* If there are not enough players left for you to guess and win, you will convert to a jester\n* You do not visit when you kill\n* Your attack is protection piecring",
+    "wiki.article.role.doomsayer.attributes":"* When you win, you will commit suicide using a protection piecring attack\n* You have to guess the exact role of townies, but you only need to guess the faction of all other roles\n* You can not try to guess town investigative roles\n* You can not try to guess a martyr\n* If there are not enough players left for you to guess and win, you will convert to a jester\n* You do not visit when you kill\n* Your attack is protection piecring",
     "wiki.article.role.doomsayer.extra":"* Your three guesses must be three different players\n* You will still win, even if the players you guessed correctly don't die",
 
     "wiki.article.role.politician.guide":"* If the town would win, you kill all of them, and win instead. Try to help to the town to win while staying alive.",
@@ -812,8 +812,8 @@
     "wiki.article.role.renfield.extra":"* You can not target other vampires",
 
     "wiki.article.role.martyr.guide": "Lead the people to paradise. To win, sacrifice yourself by dying.",
-    "wiki.article.role.martyr.abilities":"* Visit yourself to basic attack yourself and use one bullet\n* You have 5 bullets\n* When you die, everyone else commits suicide and you win.",
-    "wiki.article.role.martyr.attributes":"- When you have zero bullets left you can not target yourself\n- You have a basic attack",
+    "wiki.article.role.martyr.abilities":"* Visit yourself to basic attack yourself and use one bullet\n* You start with 5 bullets\n* When you die, everyone else commits suicide and you win.",
+    "wiki.article.role.martyr.attributes":"- When you have zero bullets left, you will leave town and lose.\n- You have a basic attack",
     "wiki.article.role.martyr.extra":"- If you visit a player while you have zero bullets left you will not attack them",
 
     "random.gay":"GAY",

@@ -3,7 +3,7 @@ use std::vec;
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessage};
-use crate::game::grave::{Grave, GraveKiller};
+use crate::game::grave::{Grave, GraveDeathCause, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -12,18 +12,18 @@ use crate::game::Game;
 use crate::game::team::Team;
 use super::{Priority, RoleStateImpl, Role, RoleState};
 
-#[derive(Clone, Debug, Serialize)]
-pub struct Martyr {
-    pub won: bool,
-    pub bullets: u8,
+#[derive(PartialEq, Clone, Debug, Serialize)]
+pub enum Martyr {
+    Won,
+    StillPlaying {
+        bullets: u8
+    },
+    LeftTown
 }
 
 impl Default for Martyr {
     fn default() -> Self {
-        Self { 
-            won: false, 
-            bullets: 5
-        }
+        Self::StillPlaying { bullets: 5 }
     }
 }
 
@@ -36,7 +36,8 @@ impl RoleStateImpl for Martyr {
 
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return}
-        if self.bullets == 0 {return}
+        let Martyr::StillPlaying { bullets } = self else {return};
+        if bullets == 0 {return}
 
         if let Some(visit) = actor_ref.night_visits(game).first() {
             let target_ref = visit.target;
@@ -45,12 +46,15 @@ impl RoleStateImpl for Martyr {
                 return;
             }
 
+            self = Self::StillPlaying { bullets: bullets.saturating_sub(1) };
+
             if target_ref == actor_ref {
-                self.won = target_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, 1, true);
+                if target_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, 1, true) {
+                    self = Martyr::Won;
+                }
             } else {
                 target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Martyr), 1, true);
             }
-            self.bullets = self.bullets.saturating_sub(1);
         };
 
         actor_ref.set_role_state(game, RoleState::Martyr(self));
@@ -62,7 +66,10 @@ impl RoleStateImpl for Martyr {
         !actor_ref.night_jailed(game) &&
         actor_ref.chosen_targets(game).is_empty() &&
         actor_ref.alive(game) && 
-        self.bullets != 0
+        match self {
+            Self::StillPlaying { bullets } => bullets != 0,
+            _ => false
+        }
     }
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false
@@ -77,11 +84,15 @@ impl RoleStateImpl for Martyr {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
     fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
-        self.won
+        self == Martyr::Won
     }
-    fn on_phase_start(self,  game: &mut Game, _actor_ref: PlayerReference, phase: PhaseType) {
-        if phase == PhaseType::Morning && !self.won {
+    fn on_phase_start(self,  game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
+        if phase == PhaseType::Morning && matches!(self, Self::StillPlaying {..}) {
             game.add_message_to_chat_group(ChatGroup::All, ChatMessage::MartyrFailed);
+        }
+
+        if actor_ref.alive(game) && matches!(self, Self::StillPlaying { bullets: 0 }) {
+            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }
     fn on_role_creation(self,  game: &mut Game, actor_ref: PlayerReference) {
@@ -91,7 +102,8 @@ impl RoleStateImpl for Martyr {
         }
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference) {
-        if dead_player_ref == actor_ref {
+        let left_town = game.graves.iter().any(|grave| grave.player == dead_player_ref.index() && grave.death_cause == GraveDeathCause::LeftTown);
+        if dead_player_ref == actor_ref && !left_town {
             game.add_message_to_chat_group(ChatGroup::All, ChatMessage::MartyrWon);
             
             for player in PlayerReference::all_players(game) {
@@ -101,7 +113,7 @@ impl RoleStateImpl for Martyr {
                 player.die(game, Grave::from_player_suicide(game, player));
             }
     
-            actor_ref.set_role_state(game, RoleState::Martyr(Martyr { won: true, bullets: self.bullets }));
+            actor_ref.set_role_state(game, RoleState::Martyr(Martyr::Won));
         }
     }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
