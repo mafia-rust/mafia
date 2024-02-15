@@ -1,11 +1,7 @@
 use crate::{
     game::
     {
-        chat::{ChatMessage, ChatGroup}, 
-        Game, 
-        grave::{GraveKiller, Grave}, 
-        role::{RoleState, Priority}, 
-        visit::Visit, team::{Teams, Team}, end_game_condition::EndGameCondition
+        chat::{ChatGroup, ChatMessage}, end_game_condition::EndGameCondition, grave::{Grave, GraveKiller}, role::{Priority, Role, RoleState}, team::{Team, Teams}, visit::Visit, Game
     }, 
     packet::ToClientPacket
 };
@@ -171,7 +167,13 @@ impl PlayerReference{
         self.role(game).has_innocent_aura(game)
     }
     pub fn has_suspicious_aura(&self, game: &Game) -> bool {
-        self.night_framed(game)
+        self.night_framed(game) || 
+        (
+            self.doused(game) &&
+            PlayerReference::all_players(game).into_iter().any(|player_ref|
+                player_ref.alive(game) && player_ref.role(game) == Role::Arsonist
+            )
+        )
     }
 
     /*

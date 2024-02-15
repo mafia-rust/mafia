@@ -180,6 +180,57 @@ fn seer_basic() {
 }
 
 #[test]
+fn psychic_auras(){
+    for _ in 0..100 {
+        kit::scenario!(game in Night 1 where
+            psy: Psychic,
+            god: Godfather,
+            maf: Framer,
+            town1: Sheriff,
+            town2: Vigilante
+        );
+    
+        game.next_phase();
+        let messages = psy.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 1});
+        let messages: Vec<_> = 
+            messages.into_iter()
+            .filter(|msg|match msg {
+                ChatMessage::PsychicEvil { players } => {
+                    players.contains(&maf.index()) &&
+                    !players.contains(&god.index()) &&
+                    !players.contains(&psy.index())
+                }
+                _ => false
+            }).collect();
+
+        if messages.len() != 1 {
+            panic!("{:?}", messages);
+        }
+
+        game.skip_to(PhaseType::Night, 2);
+        maf.set_night_target(town1);
+        game.next_phase();
+        let messages = psy.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 2});
+        let messages: Vec<_> = 
+            messages.into_iter()
+            .filter(|msg|match msg {
+                ChatMessage::PsychicGood { players } => {
+                    players.contains(&town2.index()) &&
+                    !players.contains(&town1.index()) &&
+                    !players.contains(&psy.index())
+                }
+                _ => false
+            }).collect();
+
+        if messages.len() != 1 {
+            panic!("{:?}", messages);
+        }
+    }
+}
+
+
+
+#[test]
 fn spy_basic_transported() {
     kit::scenario!(game in Night 1 where
         spy: Spy,

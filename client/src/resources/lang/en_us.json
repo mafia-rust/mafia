@@ -508,7 +508,7 @@
     "wiki.article.standard.fullMoon.title": "Full Moon",
     "wiki.article.standard.fullMoon.text": "Every night is a full moon night except night one and night three. The Werewolf has a different ability depending on weather or not it is a full moon night.",
     "wiki.article.standard.vision.title": "Vision",
-    "wiki.article.standard.vision.text": "Visions are the investigative result that a Psychic recieves. Good visions show a list of two players that contains at least one townie. Evil visions show a list of three players that contains at least one non-townie.",
+    "wiki.article.standard.vision.text": "Visions are the investigative result that a Psychic recieves. Good visions show a list of two players that contains at least one townie. Evil visions show a list of three players that contains at least one non-townie. An Aura can effect a psychic vision.",
     "wiki.article.standard.visit.title": "Visit",
     "wiki.article.standard.visit.text": "When you select someone, you will usually visit them. Visits are what actually causes active abilities to work. For example: A Detective could select a player, but a Witch could cause them to visit someone else, and then the Detective will unknowingly get their results from the player that they visited, but not the player they selected.\n\nVisits can have properties such as astral or attacking.\n   - An astral visit is undetected by most roles.\n    - An attacking visit will usually deal an attack to the player being visited, bodyguards and trappers abilities will work differently if the visit is an attack.",
     "wiki.article.standard.convert.title": "Convert",
@@ -554,11 +554,11 @@
     "wiki.article.standard.roleLimit.title": "Role Limit",
     "wiki.article.standard.roleLimit.text": "A roles limit is the maximum number of that role that can be generated at the start of a regular game. If there is no limit, then there can be infinite. Because the veteran has a role limit of one, there usually can not be more than one veteran",
     "wiki.article.standard.doused.title": "Doused",
-    "wiki.article.standard.doused.text": "Someone's house is doused in gasoline. Arsonists can douse peoples houses, and ignite them. Doused players have a Suspicious Aura.",
+    "wiki.article.standard.doused.text": "Arsonists can douse players, and then later ignite, dealing a protection piercing attack to all doused players. If there is an arsonist alive then doused players have a suspicious aura.",
     "wiki.article.standard.backup.title": "Backup",
     "wiki.article.standard.backup.text": "The Godfather can choose another mafia member to be their backup at any time. If the Godfather is roleblocked or in jail, then the backup will attempt to kill their target.",
     "wiki.article.standard.aura.title": "Aura",
-    "wiki.article.standard.aura.text": "Players can have an aura that change how they appear to investigative roles.\n- A player with a suspicious aura is:\n    - Suspicious to a Detective\n    - Enemies with everyone to the seer\n    - Potentially evil in the psychic's evil vision\n- A player with an innocent aura is:\n    - Innocent to the detective\n    - Friends with everyone to the seer\n    - Potentially good in the psychic's good vision",
+    "wiki.article.standard.aura.text": "Players can have an aura that change how they appear to investigative roles.\n- A player with a suspicious aura is:\n    - Suspicious to a Detective\n    - Enemies with everyone to the seer\n    - Never in the psychics good vision\n- A player with an innocent aura is:\n    - Innocent to the detective\n    - Friends with everyone to the seer\n    - Never in the psychics evil vision",
     "wiki.article.standard.appearedVisit.title": "Appeared Visit",
     "wiki.article.standard.appearedVisit.text": "A player could _appear_ to have visited someone, even though they didn't. This is usually caused by evil roles such as Framer.\n\nThis only affects investigative roles.\n\n_Examples_\n\nThe Tracker can see the appeared visit, but not the real visit.\n\nA Veteran wont kill a player who appeared to visit them and didn't actually visit them.",
     "wiki.article.standard.astral.title": "Astral",
@@ -645,7 +645,7 @@
     "wiki.article.role.psychic.guide": "The psychic will receive a vision every night.\n\nOn odd nights, the vision will show two players and say that at least one of them is a townie.\n    \nOn even nights, the vision will show three players and say that at least one of them is not a townie. \n    \nYou should tell the town the information you get daily.",
     "wiki.article.role.psychic.abilities":"- Get an evil vision on odd nights\n- Get a good vision on even nights",
     "wiki.article.role.psychic.attributes":"- Evil visions show three players, at least one of them is not a townie\n- Good visions show two players, at least one of them is a townie",
-    "wiki.article.role.psychic.extra": "- If there aren't enough evil or good players to have a vision, it will fail\n- You can not be in your own vision\n- You still get visions after you are dead\n- You wont try to visit the players in your vision\n- Players with a suspicious aura can come up as the evil player in your evil vision\n- Players with an innocent aura can come up as the good player in your good vision",
+    "wiki.article.role.psychic.extra": "- If there aren't enough evil or good players to have a vision, it will fail\n- You can not be in your own vision\n- You still get visions after you are dead\n- You wont try to visit the players in your vision\n- Players with a suspicious aura can't appear in your good vision\n- Players with an innocent aura can't appear in your evil vision",
 
     "wiki.article.role.doctor.guide": "Choose someone to protect each night. You should try to protect people you think are townies who will be attacked. You can only choose yourself once.",
     "wiki.article.role.doctor.abilities":"- Visit a player to grant them protected defense for that night",
@@ -777,10 +777,10 @@
     "wiki.article.role.politician.attributes": "* You win with other polititians\n* Your have a protection piecring attack",
     "wiki.article.role.politician.extra":"\n* Suicide is a protection piecring attack\n* When you first become this role, if there are no townies alive, you become a jester",
 
-    "wiki.article.role.arsonist.guide":"Select a player each night to douse them in gasoline. Target yourself to ignite and kill every player who is doused. You will know who is doused. Try not to douse players you think the mafia will kill, because then you waste your night dousing someone who is going to die anyway.",
+    "wiki.article.role.arsonist.guide":"Select a player each night to douse them in gasoline. Target yourself to ignite and kill every player who is doused. You know who is doused. Try not to douse players you think the mafia will kill, because then you waste your night dousing someone who is going to die anyway.",
     "wiki.article.role.arsonist.abilities":"- Visit a player to douse them\n- Visit yourself to deal a protection piecring attack to all doused players\n- If a player visits you, you will douse them",
-    "wiki.article.role.arsonist.attributes":"- You can't be doused\n- You will know who is doused\n- If you are in jail, you will douse the jailor, and you will still douse players who visit you",
-    "wiki.article.role.arsonist.extra":"- If you are roleblocked you will still douse visitors",
+    "wiki.article.role.arsonist.attributes":"- You can't be doused\n- You will know who is doused\n- All doused players have a suspicious aura if you are still alive",
+    "wiki.article.role.arsonist.extra":"- If you are roleblocked you still douse visitors\n- If you are in jail, you douse the jailor, and you will still douse players who visit you",
 
     "wiki.article.role.werewolf.guide": "On full moon nights, choose someone to kill them and rampage, killing everyone who visits them. On non full moon nights, choose someone to gain their scent and passively gain the scent of everyone who visits you. If you have someones scent, you will know who they visit every night for the rest of the game. Try to attack players who will get visited by alot of people in order to kill more players. Claiming that you are the Tracker could be easy because you know who people visit each night.",
     "wiki.article.role.werewolf.abilities":"* On full moon nights visit a player to attack them and rampage them\n* On non full moon nights visit a player gain their scent, you also gain the scent of every player that visits you on non full moon nights\n* If you visit nobody on a full moon night, you rampage yourself, but you wont attack yourself unless you visit yourself",
@@ -797,6 +797,11 @@
     "wiki.article.role.amnesiac.attributes":"* roleblocking or jail doesn't effect you",
     "wiki.article.role.amnesiac.extra":"* You can choose an outline like \"Neutral Killing\", and you will get a random neutral killing role, or choose an outline like \"Jailor\" and confirm that you get the jailor\n* If you choose a role that was excluded from the game you will stay as the Amnesiac",
 
+    "wiki.article.role.martyr.guide": "Lead the people to paradise. To win, sacrifice yourself by dying.",
+    "wiki.article.role.martyr.abilities":"* Visit yourself to basic attack yourself and use one bullet\n* You start with 5 bullets\n* When you die, everyone else commits suicide and you win.",
+    "wiki.article.role.martyr.attributes":"- When you have zero bullets left, you will leave town and lose.\n- You have a basic attack",
+    "wiki.article.role.martyr.extra":"- If you visit a player while you have zero bullets left you will not attack them",
+
     "wiki.article.role.dracula.guide": "Select a player to either convert them into a vampire or kill them. You can convert starting on night two, from then on, you need two sacrifices to convert. Each time a player dies, you will gain a sacrifice. If you are the only vampire and you can not convert, you will attack instead of convert.",
     "wiki.article.role.dracula.abilities":"* On nights you can't convert, if you are the only vampire, visit a player to deal a basic attack to them\n* On nights you can convert, visit a player to convert them to a renfield",
     "wiki.article.role.dracula.attributes":"* You can convert on night two\n* After night two, You must spend two sacrifices for each convert\n - A sacrifice is gained each time a player dies, including a player who died the night you converted last",
@@ -811,12 +816,7 @@
     "wiki.article.role.renfield.abilities":"* Visit a player to deal a basic attack to them",
     "wiki.article.role.renfield.attributes":"* If another player is converted to a renfield, you will become a thrall, so there will never be more than one renfield",
     "wiki.article.role.renfield.extra":"* You can not target other vampires",
-
-    "wiki.article.role.martyr.guide": "Lead the people to paradise. To win, sacrifice yourself by dying.",
-    "wiki.article.role.martyr.abilities":"* Visit yourself to basic attack yourself and use one bullet\n* You start with 5 bullets\n* When you die, everyone else commits suicide and you win.",
-    "wiki.article.role.martyr.attributes":"- When you have zero bullets left, you will leave town and lose.\n- You have a basic attack",
-    "wiki.article.role.martyr.extra":"- If you visit a player while you have zero bullets left you will not attack them",
-
+    
     "random.gay":"GAY",
     "random.trans":"TRANS"
 }

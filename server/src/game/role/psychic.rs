@@ -23,10 +23,10 @@ impl RoleStateImpl for Psychic {
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if actor_ref.night_roleblocked(game) {return;}
+        if actor_ref.night_roleblocked(game) {return}
 
         if priority != Priority::Investigative {return}
-        
+
         actor_ref.push_night_message(game, match game.day_number() % 2 {
             1=>{
                 Psychic::get_psychic_result_evil(game, actor_ref)
@@ -35,6 +35,7 @@ impl RoleStateImpl for Psychic {
                 Psychic::get_psychic_result_good(game, actor_ref)
             },
         });
+        
     }
     fn can_night_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false
@@ -72,19 +73,23 @@ impl Psychic {
         
         let mut rng = rand::thread_rng();
 
-        let all_non_townies: Vec<_> = Psychic::get_valid_players(game, actor_ref).into_iter()
-            .filter(|player_ref|!Psychic::player_is_evil(game, *player_ref)).collect();
+        let evil_players: Vec<_> = Psychic::get_valid_players(game, actor_ref).into_iter()
+            .filter(|player_ref|Psychic::player_is_evil(game, *player_ref))
+            .filter(|player_ref|!player_ref.has_innocent_aura(game))
+            .collect();
 
-        let Some(selected_ref) = all_non_townies.choose(&mut rng) else {return ChatMessage::PsychicFailed};
+        let Some(selected_evil) = evil_players.choose(&mut rng) else {return ChatMessage::PsychicFailed};
 
-        let random_players: Vec<PlayerReference> = Psychic::get_valid_players(game, actor_ref).into_iter()
-            .filter(|p|p!=selected_ref).collect::<Vec<_>>()
+        let random_players: Vec<_> = Psychic::get_valid_players(game, actor_ref).into_iter()
+            .filter(|p|p!=selected_evil)
+            .filter(|player_ref|!player_ref.has_innocent_aura(game))
+            .collect::<Vec<_>>()
             .choose_multiple(&mut rng, 2).copied().collect();
         
         let Some(random_player0) = random_players.get(0) else {return ChatMessage::PsychicFailed};
         let Some(random_player1) = random_players.get(1) else {return ChatMessage::PsychicFailed};
 
-        let mut out = [selected_ref, random_player0, random_player1];
+        let mut out = [selected_evil, random_player0, random_player1];
         out.shuffle(&mut rng);
         ChatMessage::PsychicEvil { players: [out[0].index(), out[1].index(), out[2].index()] }
 
@@ -92,17 +97,21 @@ impl Psychic {
     fn get_psychic_result_good(game: &Game, actor_ref: PlayerReference)->ChatMessage{
         let mut rng = rand::thread_rng();
 
-        let all_townies: Vec<_> = Psychic::get_valid_players(game, actor_ref).into_iter()
-            .filter(|player_ref|!Psychic::player_is_evil(game, *player_ref)).collect();
+        let good_players: Vec<_> = Psychic::get_valid_players(game, actor_ref).into_iter()
+            .filter(|player_ref|!Psychic::player_is_evil(game, *player_ref))
+            .filter(|player_ref|!player_ref.has_suspicious_aura(game))
+            .collect();
 
-        let Some(selected_ref) = all_townies.choose(&mut rng) else {return ChatMessage::PsychicFailed};
+        let Some(selected_good) = good_players.choose(&mut rng) else {return ChatMessage::PsychicFailed};
 
         let random_players: Vec<_> = Psychic::get_valid_players(game, actor_ref).into_iter()
-            .filter(|p|p!=selected_ref).collect::<Vec<_>>();
+            .filter(|player_ref|!player_ref.has_suspicious_aura(game))
+            .filter(|p|p!=selected_good)
+            .collect::<Vec<_>>();
         
         let Some(random_player) = random_players.choose(&mut rng) else {return ChatMessage::PsychicFailed};
 
-        let mut out = [selected_ref, random_player];
+        let mut out = [selected_good, random_player];
         out.shuffle(&mut rng);
         ChatMessage::PsychicGood { players: [out[0].index(), out[1].index()] }
     }
@@ -115,12 +124,6 @@ impl Psychic {
     }
 
     fn player_is_evil(game: &Game, player_ref: PlayerReference)-> bool {
-        if player_ref.has_suspicious_aura(game){
-            true
-        }else if player_ref.has_innocent_aura(game){
-            false
-        }else{
-            player_ref.role(game).faction() != Faction::Town
-        }        
+        player_ref.role(game).faction() != Faction::Town
     }
 }
