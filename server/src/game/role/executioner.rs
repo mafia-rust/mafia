@@ -3,8 +3,8 @@ use rand::seq::SliceRandom;
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessage};
-use crate::game::grave::GraveKiller;
-use crate::game::phase::PhaseType;
+use crate::game::grave::Grave;
+use crate::game::phase::{PhaseState, PhaseType};
 use crate::game::player::PlayerReference;
 use crate::game::role::RoleState;
 use crate::game::role_list::Faction;
@@ -49,10 +49,7 @@ impl RoleStateImpl for Executioner {
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
 
 
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority == Priority::TopPriority && self.target == ExecutionerTarget::Won {
-            actor_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, 3, false);
-        }
+    fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {
     }
     fn can_night_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false
@@ -75,7 +72,21 @@ impl RoleStateImpl for Executioner {
     fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
         self.target == ExecutionerTarget::Won
     }
-    fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType){
+    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
+        match game.current_phase() {
+            &PhaseState::Evening { player_on_trial: Some(player_on_trial) } => {
+                if Some(player_on_trial) == self.target.get_target() {
+                    game.add_message_to_chat_group(ChatGroup::All, ChatMessage::ExecutionerWon);
+                    actor_ref.set_role_state(game, RoleState::Executioner(Executioner { target: ExecutionerTarget::Won }));
+                }
+            }
+            &PhaseState::Night => {
+                if self.target == ExecutionerTarget::Won {
+                    actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
+                }
+            },
+            _=>{}
+        }
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
         
@@ -84,12 +95,13 @@ impl RoleStateImpl for Executioner {
                 p.role(game).faction() == Faction::Town &&
                 
                 p.role(game) != Role::Jailor &&
-                p.role(game) != Role::Mayor &&
 
                 p.role(game) != Role::Deputy &&
                 p.role(game) != Role::Veteran &&
 
-                p.role(game) != Role::Transporter
+                p.role(game) != Role::Transporter &&
+                p.role(game) != Role::Mayor &&
+                p.role(game) != Role::Journalist
             ).collect::<Vec<PlayerReference>>()
             .choose(&mut rand::thread_rng())
         {
@@ -100,13 +112,8 @@ impl RoleStateImpl for Executioner {
         };
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
-        if Some(dead_player_ref) == self.target.get_target() {
-            if game.current_phase().phase() == PhaseType::Evening {
-                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::ExecutionerWon);
-                actor_ref.set_role_state(game, RoleState::Executioner(Executioner { target: ExecutionerTarget::Won }));
-            }else if self.target != ExecutionerTarget::Won{
-                actor_ref.set_role(game, RoleState::Jester(Jester::default()))
-            }
+        if Some(dead_player_ref) == self.target.get_target() && self.target != ExecutionerTarget::Won {
+            actor_ref.set_role(game, RoleState::Jester(Jester::default()))
         }
     }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){

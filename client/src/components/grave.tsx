@@ -41,7 +41,7 @@ export default function GraveComponent(props: {grave: Grave, gameState: GameStat
         <div><StyledText>{`${props.gameState.players[props.grave.playerIndex]?.toString()+" ("+graveRoleString+")"}`}</StyledText></div>
         <div><StyledText>{`${translate("menu.graveyard.killedBy")+" "+deathCauseString}`}</StyledText></div>
         {props.grave.will.length === 0 || <>
-            {translate("grave.will")}
+            {translate("alibi")}
             <div className="note-area">
                 <StyledText>
                     {sanitizePlayerMessage(replaceMentions(
