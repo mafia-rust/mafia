@@ -3,7 +3,7 @@ import translate from "./lang";
 import { Role } from "./roleState.d";
 import ROLES from "../resources/roles.json";
 
-export const FACTIONS = ["town", "mafia", "vampire", "neutral"] as const;
+export const FACTIONS = ["town", "mafia", "cult", "neutral"] as const;
 export type Faction = typeof FACTIONS[number]
 export function getRoleOutlineFromFaction(faction: Faction): RoleOutline {
     return {

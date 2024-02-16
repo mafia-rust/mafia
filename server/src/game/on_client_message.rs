@@ -55,7 +55,7 @@ impl Game {
                 for chat_group in sender_player_ref.get_current_send_chat_groups(self){
                     match chat_group {
                         ChatGroup::All | ChatGroup::Seance | ChatGroup::Interview | ChatGroup::Dead => {},
-                        ChatGroup::Mafia | ChatGroup::Vampire => {
+                        ChatGroup::Mafia | ChatGroup::Cult => {
                             self.add_message_to_chat_group(
                                 chat_group,
                                 ChatMessage::Targeted { 
@@ -174,6 +174,9 @@ impl Game {
             },
             ToServerPacket::SaveNotes { notes } => {
                 sender_player_ref.set_notes(self, notes);
+            },
+            ToServerPacket::SaveCrossedOutOutlines { crossed_out_outlines } => {
+                sender_player_ref.set_crossed_out_outlines(self, crossed_out_outlines);
             },
             ToServerPacket::SaveDeathNote { death_note } => {
                 sender_player_ref.set_death_note(self, death_note);

@@ -31,6 +31,7 @@ pub struct Player {
     alive: bool,
     will: String,
     notes: String,
+    crossed_out_outlines: Vec<u8>,
     death_note: Option<String>,
 
     role_labels: HashMap<PlayerReference, Role>,
@@ -84,6 +85,7 @@ impl Player {
             alive: true,
             will: "".to_string(),
             notes: "".to_string(),
+            crossed_out_outlines: vec![],
             death_note: None,
 
             role_labels: HashMap::new(),
@@ -143,6 +145,7 @@ pub mod test {
             alive: true,
             will: "".to_string(),
             notes: "".to_string(),
+            crossed_out_outlines: vec![],
             death_note: None,
 
             role_labels: HashMap::new(),

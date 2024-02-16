@@ -91,9 +91,9 @@ macros::roles! {
     Amnesiac : amnesiac,
     Martyr : martyr,
 
-    Dracula : dracula,
-    Thrall : thrall,
-    Renfield : renfield
+    Apostle : apostle,
+    Disciple : disciple,
+    Zealot : zealot
 }
 
 macros::priorities! {
@@ -119,7 +119,7 @@ macros::priorities! {
 
     Convert,
 
-    SpyVampireCount
+    SpyCultistCount
 }
 
 mod common_role;

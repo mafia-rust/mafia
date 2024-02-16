@@ -109,11 +109,11 @@ Doomsayer
     role: "amnesiac"
     roleOutline: RoleOutline
 } | {
-    role: "dracula"
+    role: "apostle"
 } | {
-    role: "thrall"
+    role: "disciple"
 } | {
-    role: "renfield"
+    role: "zealot"
 } | {
     role: "martyr",
     state: {

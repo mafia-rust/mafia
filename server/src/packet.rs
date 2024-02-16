@@ -97,6 +97,8 @@ pub enum ToClientPacket{
     YourWill{will: String},
     YourNotes{notes: String},
     #[serde(rename_all = "camelCase")]
+    YourCrossedOutOutlines{crossed_out_outlines: Vec<u8>},
+    #[serde(rename_all = "camelCase")]
     YourDeathNote{death_note: Option<String>},
     #[serde(rename_all = "camelCase")]
     YourRoleState{role_state: RoleState},
@@ -194,6 +196,8 @@ pub enum ToServerPacket{
     SendWhisper{player_index: PlayerIndex, text: String},
     SaveWill{will: String},
     SaveNotes{notes: String},
+    #[serde(rename_all = "camelCase")]
+    SaveCrossedOutOutlines{crossed_out_outlines: Vec<u8>},
     #[serde(rename_all = "camelCase")]
     SaveDeathNote{death_note: Option<String>},
 

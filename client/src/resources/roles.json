@@ -586,8 +586,8 @@
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
-    "dracula": {
-        "faction": "vampire",
+    "apostle": {
+        "faction": "cult",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -602,8 +602,8 @@
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
-    "thrall": {
-        "faction": "vampire",
+    "disciple": {
+        "faction": "cult",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -611,8 +611,8 @@
         "canBeConvertedTo": [],
         "chatMessages":[]
     },
-    "renfield": {
-        "faction": "vampire",
+    "zealot": {
+        "faction": "cult",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,

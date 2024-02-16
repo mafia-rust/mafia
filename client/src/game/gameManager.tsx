@@ -291,6 +291,12 @@ export function createGameManager(): GameManager {
                 notes: notes
             });
         },
+        sendSaveCrossedOutOutlinesPacket(crossedOutOutlines) {
+            this.server.sendPacket({
+                type: "saveCrossedOutOutlines",
+                crossedOutOutlines: crossedOutOutlines
+            });
+        },
         sendSaveDeathNotePacket(notes) {
             this.server.sendPacket({
                 type: "saveDeathNote",
