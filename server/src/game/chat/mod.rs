@@ -117,7 +117,7 @@ pub enum ChatMessage {
     YourConvertFailed,
     ApostleCanConvertTonight,
     ApostleCantConvertTonight,
-    cultSacrificesRequired{required: u8},
+    CultSacrificesRequired{required: u8},
 
     SomeoneSurvivedYourAttack,
     YouSurvivedAttack,
