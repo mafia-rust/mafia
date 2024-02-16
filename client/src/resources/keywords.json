@@ -27,7 +27,7 @@
     "town": { "style": "keyword-good", "link": "standard/town"},
     "mafia": { "style": "keyword-evil", "link": "standard/mafia"},
     "neutral": { "style": "keyword-neutral", "link": "standard/neutral"},
-    "vampire": { "style": "keyword-vampire", "link": "standard/vampire"},
+    "cultist": { "style": "keyword-cultist", "link": "standard/cultist"},
     "any": { "style": "keyword-info"},
     "none": { "style": "keyword-info"},
     "defense.0": { "style": "keyword-info"},

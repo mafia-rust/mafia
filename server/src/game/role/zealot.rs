@@ -2,7 +2,8 @@ use std::vec;
 
 use serde::Serialize;
 
-use crate::game::chat::ChatGroup;
+use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -13,20 +14,33 @@ use super::{Priority, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
-pub struct Thrall;
+pub struct Zealot;
 
-pub(super) const FACTION: Faction = Faction::Vampire;
-pub(super) const MAXIMUM_COUNT: Option<u8> = None;
+pub(super) const FACTION: Faction = Faction::Cultist;
+pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
-impl RoleStateImpl for Thrall {
+impl RoleStateImpl for Zealot {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Vampires)}
+    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Cultists)}
 
 
-    fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {
+    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+        if priority != Priority::Kill {return}
+
+        let Some(visit) = actor_ref.night_visits(game).first() else {return};
+        let target_ref = visit.target;
+
+        if target_ref.night_jailed(game){
+            actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+            return
+        }
+
+        target_ref.try_night_kill(
+            actor_ref, game, GraveKiller::Faction(Faction::Cultist), 1, false
+        );
     }
-    fn can_night_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
-        false
+    fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+        crate::game::role::common_role::can_night_target(game, actor_ref, target_ref)
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
         
@@ -35,10 +49,10 @@ impl RoleStateImpl for Thrall {
         false
     }
     fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, false)
+        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, true)
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Vampire])
+        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Cultist])
     }
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)

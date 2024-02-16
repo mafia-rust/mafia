@@ -55,7 +55,7 @@ pub use mafia_server::game::{
 
         death::Death,
 
-        dracula::Dracula,
+        apostle::Apostle,
         amnesiac::Amnesiac
     }, 
     phase::{
@@ -920,9 +920,9 @@ fn reveler_protect_still_kill() {
 }
 
 #[test]
-fn vampire_wait_for_two_deaths() {
+fn cultist_wait_for_two_deaths() {
     kit::scenario!(game in Night 1 where
-        drac: Dracula,
+        drac: Apostle,
         a: Sheriff,
         b: Sheriff,
         c: Sheriff,
@@ -935,62 +935,62 @@ fn vampire_wait_for_two_deaths() {
         j: Sheriff
     );
 
-    //dracula kills
+    //apostle kills
     assert!(drac.set_night_targets(vec![a]));
     game.next_phase();
     assert!(!a.alive());
-    assert!(a.role_state().role().faction() != Faction::Vampire);
+    assert!(a.role_state().role().faction() != Faction::Cultist);
 
-    //dracula converts
+    //apostle converts
     game.skip_to(PhaseType::Night, 2);
     assert!(drac.set_night_targets(vec![b]));
     game.next_phase();
     assert!(b.alive());
-    assert!(b.role_state().role().faction() == Faction::Vampire);
+    assert!(b.role_state().role().faction() == Faction::Cultist);
 
-    //renfield kills, dracula waits
+    //zealot kills, apostle waits
     game.skip_to(PhaseType::Night, 3);
     assert!(!drac.set_night_targets(vec![d]));
     assert!(b.set_night_targets(vec![c]));
     game.next_phase();
     assert!(!c.alive());
     assert!(d.alive());
-    assert!(d.role_state().role().faction() != Faction::Vampire);
+    assert!(d.role_state().role().faction() != Faction::Cultist);
 
-    //renfield kills, dracula waits
+    //zealot kills, apostle waits
     game.skip_to(PhaseType::Night, 4);
     assert!(!drac.set_night_targets(vec![d]));
     assert!(b.set_night_targets(vec![e]));
     game.next_phase();
     assert!(!e.alive());
     assert!(d.alive());
-    assert!(d.role_state().role().faction() != Faction::Vampire);
+    assert!(d.role_state().role().faction() != Faction::Cultist);
 
-    //renfield kills, dracula converts
+    //zealot kills, apostle converts
     game.skip_to(PhaseType::Night, 5);
     assert!(drac.set_night_targets(vec![f]));
     assert!(b.set_night_targets(vec![g]));
     game.next_phase();
     assert!(f.alive());
-    assert!(f.role_state().role().faction() == Faction::Vampire);
+    assert!(f.role_state().role().faction() == Faction::Cultist);
     assert!(!g.alive());
 
-    //renfield kills, dracula waits
+    //zealot kills, apostle waits
     game.skip_to(PhaseType::Night, 6);
     assert!(!drac.set_night_targets(vec![h]));
     assert!(f.set_night_targets(vec![i]));
     game.next_phase();
     assert!(!i.alive());
     assert!(h.alive());
-    assert!(h.role_state().role().faction() != Faction::Vampire);
+    assert!(h.role_state().role().faction() != Faction::Cultist);
 
-    //renfield kills, dracula converts, same person
+    //zealot kills, apostle converts, same person
     game.skip_to(PhaseType::Night, 7);
     assert!(drac.set_night_targets(vec![j]));
     assert!(f.set_night_targets(vec![j]));
     game.next_phase();
     assert!(!j.alive());
-    assert!(j.role_state().role().faction() == Faction::Vampire);
+    assert!(j.role_state().role().faction() == Faction::Cultist);
 
 
 

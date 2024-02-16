@@ -20,7 +20,7 @@ macro_rules! make_faction_enum {
 }
 make_faction_enum!{
     Mafia,
-    Vampire,
+    Cultist,
     Town,
     Neutral
 }
