@@ -10,8 +10,14 @@ import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
 import GraveComponent from "./grave";
 
-export default function ChatElement(props: {message: ChatMessage}): ReactElement {
+export default function ChatElement(
+    props: {
+        message: ChatMessage,
+        players: {name: string, index: number}[]
+    }, 
+): ReactElement {
     const message = props.message;
+    const players = props.players;
     const chatMessageStyles = require("../resources/styling/chatMessage.json");
     let style = typeof chatMessageStyles[message.type] === "string" ? chatMessageStyles[message.type] : "";
 
@@ -48,13 +54,13 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
         case "targetsMessage":
             return <>
                 <StyledText className={"chat-message " + style}>{translateChatMessage(message)}</StyledText>
-                <ChatElement message={message.message}/>
+                <ChatElement message={message.message} players={players}/>
             </>
         case "playerDied":
             if(GAME_MANAGER.state.stateType === "game"){
                 return <>
                     <StyledText className={"chat-message " + style}>{translate("chatMessage.playerDied",
-                        GAME_MANAGER.state.players[message.grave.playerIndex].toString(),
+                        players[message.grave.playerIndex].name,
                     )}</StyledText>
                     <div className="grave-message">
                         <GraveComponent grave={message.grave} gameState={GAME_MANAGER.state}/>
