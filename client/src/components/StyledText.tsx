@@ -44,8 +44,7 @@ export default function StyledText(props: {
         children: string[] | string,
         className?: string,
         noLinks?: boolean,
-        markdown?: boolean,
-        playerNames?: string[] 
+        markdown?: boolean
     }): ReactElement {
 
     let tokens: Token[] = [{
