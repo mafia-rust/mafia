@@ -6,6 +6,7 @@ import { GameManager, createGameManager } from './game/gameManager';
 import StartMenu from './menu/main/StartMenu';
 import { Player } from './game/gameState.d';
 import LoadingScreen from './menu/LoadingScreen';
+import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
 
 const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
@@ -93,7 +94,9 @@ export function modulus(n: number, m: number) {
 }
 
 window.addEventListener("blur", () => {
-    Anchor.playAudioFile("/audio/longSpeech.mp4",true);
-    Anchor.setLeftGame(true);
-    alert("lame")
+    Anchor.onBlur();
 });
+
+window.addEventListener("focus", ()=>{
+    Anchor.onFocus();
+})

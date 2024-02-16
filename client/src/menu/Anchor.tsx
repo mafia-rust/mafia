@@ -84,10 +84,10 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
 
     static playAudioFile(src: string | null, repeat: Boolean = true) {
         if (Anchor.instance.state.leftGame === false){
-        Anchor.instance.state.audio.pause();
-        if(src === null) return;
-        Anchor.instance.state.audio.src = src;
-        Anchor.instance.state.audio.load();
+            Anchor.instance.state.audio.pause();
+            if(src === null) return;
+            Anchor.instance.state.audio.src = src;
+            Anchor.instance.state.audio.load();
         }
 
 
@@ -145,6 +145,18 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     }
     static setLeftGame(status: boolean){
         Anchor.instance.setState({leftGame: status})
+    }
+    static onBlur(){
+        if(GAME_MANAGER.state.stateType === "game"){
+            Anchor.playAudioFile("/audio/longSpeech.mp4",true);
+            Anchor.setLeftGame(true);
+        }
+    }
+    static onFocus(){
+        if(GAME_MANAGER.state.stateType === "game"){
+            Anchor.setLeftGame(false);
+            Anchor.stopAudio();
+        }
     }
 
     onTouchStart(e: React.TouchEvent<HTMLDivElement>) {
