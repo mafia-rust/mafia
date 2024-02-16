@@ -480,9 +480,9 @@
     "chatMessage.consigliereResult.visitedBy.nobody": "They were not visited by anybody.",
     "chatMessage.apostleCanConvertTonight": "The cult can convert tonight.",
     "chatMessage.apostleCantConvertTonight": "The cult can not convert tonight.",
-    "chatMessage.CultSacrificesRequired": "The cult requires \\0 more sacrifices to convert.",
-    "chatMessage.CultSacrificesRequired.1": "The cult requires 1 more sacrifice to convert.",
-    "chatMessage.CultSacrificesRequired.0": "The cult has enough sacrifices to convert.",
+    "chatMessage.cultSacrificesRequired": "The cult requires \\0 more sacrifices to convert.",
+    "chatMessage.cultSacrificesRequired.1": "The cult requires 1 more sacrifice to convert.",
+    "chatMessage.cultSacrificesRequired.0": "The cult has enough sacrifices to convert.",
 
     "chatMessage.doomsayerFailed": "At least one of your guesses was incorrect or invalid.",
     "chatMessage.doomsayerWon": "Your guesses were correct, and you won!",
