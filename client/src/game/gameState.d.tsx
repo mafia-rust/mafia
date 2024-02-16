@@ -56,6 +56,7 @@ type GameState = {
 
     will: string,
     notes: string,
+    crossedOutOutlines: number[],
     deathNote: string,
     targets: PlayerIndex[],
     voted: PlayerIndex | null,

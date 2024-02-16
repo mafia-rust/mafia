@@ -262,6 +262,10 @@ export default function messageListener(packet: ToClientPacket){
                 }
             }
         break;
+        case "yourCrossedOutOutlines":
+            if(GAME_MANAGER.state.stateType === "game")
+                GAME_MANAGER.state.crossedOutOutlines = packet.crossedOutOutlines;
+            break;
         case "yourDeathNote":
             if(GAME_MANAGER.state.stateType === "game")
                 GAME_MANAGER.state.deathNote = packet.deathNote ?? "";

@@ -60,6 +60,14 @@ impl PlayerReference{
         self.deref_mut(game).notes = notes;
         self.send_packet(game, ToClientPacket::YourNotes { notes: self.deref(game).notes.clone() })
     }
+
+    pub fn crossed_out_outlines<'a>(&self, game: &'a Game) -> &'a Vec<u8> {
+        &self.deref(game).crossed_out_outlines
+    }
+    pub fn set_crossed_out_outlines(&self, game: &mut Game, crossed_out_outlines: Vec<u8>){
+        self.deref_mut(game).crossed_out_outlines = crossed_out_outlines;
+        self.send_packet(game, ToClientPacket::YourCrossedOutOutlines { crossed_out_outlines: self.deref(game).crossed_out_outlines.clone() });
+    }
     
     pub fn death_note<'a>(&self, game: &'a Game) -> &'a Option<String> {
         &self.deref(game).death_note
