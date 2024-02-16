@@ -115,6 +115,9 @@ impl PlayerReference{
             ToClientPacket::YourNotes{
                 notes: self.notes(game).clone()
             },
+            ToClientPacket::YourCrossedOutOutlines{
+                crossed_out_outlines: self.crossed_out_outlines(game).clone()
+            },
             ToClientPacket::YourButtons{
                 buttons: AvailableButtons::from_player(game, *self)
             }

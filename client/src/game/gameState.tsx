@@ -44,6 +44,7 @@ export function createGameState(): GameState {
 
         will: "",
         notes: "",
+        crossedOutOutlines: [],
         deathNote: "",
         targets: [],
         voted: null,

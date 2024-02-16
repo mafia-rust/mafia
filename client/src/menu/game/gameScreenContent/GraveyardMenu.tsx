@@ -8,6 +8,7 @@ import { translateRoleOutline } from "../../../game/roleListState.d";
 import StyledText from "../../../components/StyledText";
 import GraveComponent from "../../../components/grave";
 import { Grave } from "../../../game/graveState";
+import { StateListener } from "../../../game/gameManager.d";
 
 type GraveyardMenuProps = {
 }
@@ -18,7 +19,7 @@ type GraveyardMenuState = {
 }
 
 export default class GraveyardMenu extends React.Component<GraveyardMenuProps, GraveyardMenuState> {
-    listener: () => void;
+    listener: StateListener;
     constructor(props: GraveyardMenuProps) {
         super(props);
 
@@ -26,13 +27,19 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             this.state = {
                 gameState : GAME_MANAGER.state,
                 extendedGraveIndex: null,
-                strickenRoleListIndex: []
+                strickenRoleListIndex: GAME_MANAGER.state.crossedOutOutlines
             };
-        this.listener = ()=>{
-            if(GAME_MANAGER.state.stateType === "game")
+        this.listener = (type)=>{
+            if(GAME_MANAGER.state.stateType === "game"){
                 this.setState({
                     gameState: GAME_MANAGER.state
                 });
+                if(type === "yourCrossedOutOutlines"){
+                    this.setState({strickenRoleListIndex: GAME_MANAGER.state.crossedOutOutlines})
+                }
+
+            }
+                
         };  
     }
     componentDidMount() {
@@ -95,6 +102,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
                         strickenRoleListIndex.push(index);
 
                     this.setState({strickenRoleListIndex:strickenRoleListIndex})
+                    GAME_MANAGER.sendSaveCrossedOutOutlinesPacket(strickenRoleListIndex);
                 }}
                 onMouseDown={(e)=>{
                     // on right click, show a list of all roles that can be in this bucket

@@ -98,6 +98,9 @@ export type ToClientPacket = {
     type: "yourNotes",
     notes: string
 } | {
+    type: "yourCrossedOutOutlines",
+    crossedOutOutlines: number[]
+} | {
     type: "yourDeathNote", 
     deathNote: string | null
 } | {
@@ -189,6 +192,9 @@ export type ToServerPacket = {
 } | {
     type: "saveNotes", 
     notes: string
+} | {
+    type: "saveCrossedOutOutlines",
+    crossedOutOutlines: number[]
 } | {
     type: "saveDeathNote", 
     deathNote: string | null

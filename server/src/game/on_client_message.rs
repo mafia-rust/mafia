@@ -175,6 +175,9 @@ impl Game {
             ToServerPacket::SaveNotes { notes } => {
                 sender_player_ref.set_notes(self, notes);
             },
+            ToServerPacket::SaveCrossedOutOutlines { crossed_out_outlines } => {
+                sender_player_ref.set_crossed_out_outlines(self, crossed_out_outlines);
+            },
             ToServerPacket::SaveDeathNote { death_note } => {
                 sender_player_ref.set_death_note(self, death_note);
             },
