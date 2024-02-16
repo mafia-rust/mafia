@@ -208,6 +208,12 @@ export function createGameManager(): GameManager {
 
             return promise;
         },
+        sendKickPlayerPacket(playerId: number) {
+            this.server.sendPacket({
+                type: "kick",
+                playerId: playerId
+            });
+        },
 
         sendSetNamePacket(name) {
             this.server.sendPacket({
