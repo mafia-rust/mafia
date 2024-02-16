@@ -261,15 +261,15 @@ export function translateChatMessage(message: ChatMessage): string {
         case "trapState":
             return translate("chatMessage.trapState."+message.state.type);
         case "playerRoleAndWill":
-            return translate("chatMessage.playersRoleAndWill", 
-                translate("role."+message.role+".name"), 
+            return translate("chatMessage.playersRoleAndWill",
+                translate("role."+message.role+".name"),
                 sanitizePlayerMessage(message.will)
             );
         case "consigliereResult":
             const visitedNobody = message.visited.length === 0;
             const visitedByNobody = message.visitedBy.length === 0;
 
-            return translate("chatMessage.consigliereResult", 
+            return translate("chatMessage.consigliereResult",
                 translate("chatMessage.consigliereResult.role", translate("role."+message.role+".name")),
                 visitedNobody 
                     ? translate("chatMessage.consigliereResult.visited.nobody") 
@@ -345,7 +345,7 @@ export function translateChatMessage(message: ChatMessage): string {
 
 export type ChatMessage = {
     type: "normal", 
-    messageSender: MessageSender, 
+    messageSender: MessageSender,
     text: string, 
     chatGroup: "all" | "dead" | "mafia" | "cult" | "seance" | "jail" | "interview"
 } | {
