@@ -776,7 +776,7 @@
     "wiki.article.role.politician.guide":"* If the town would win, you kill all of them, and win instead. Try to help to the town to win while staying alive.",
     "wiki.article.role.politician.abilities": "* When town would normally win, if you are still alive, you win instead\n* When you win, you kill every townie, and all politicians leave town",
     "wiki.article.role.politician.attributes": "* You win with other polititians\n* Your have a protection piecring attack",
-    "wiki.article.role.politician.extra":"* When you first become this role, if there are no townies alive, you become a jester\n* If all townies die, you leave town",
+    "wiki.article.role.politician.extra":"* When you first become this role, if there are no townies alive, you become a jester\n* If all townies die, you leave town\n- If the only players left are politicians, you win",
 
     "wiki.article.role.arsonist.guide":"Select a player each night to douse them in gasoline. Target yourself to ignite and kill every player who is doused. You know who is doused. Try not to douse players you think the mafia will kill, because then you waste your night dousing someone who is going to die anyway.",
     "wiki.article.role.arsonist.abilities":"- Visit a player to douse them\n- Visit yourself to deal a protection piecring attack to all doused players\n- If a player visits you, you will douse them",
