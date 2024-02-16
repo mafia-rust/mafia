@@ -117,7 +117,7 @@ pub enum ChatMessage {
     YourConvertFailed,
     ApostleCanConvertTonight,
     ApostleCantConvertTonight,
-    CultistsSacrificesRequired{required: u8},
+    cultSacrificesRequired{required: u8},
 
     SomeoneSurvivedYourAttack,
     YouSurvivedAttack,
@@ -192,7 +192,7 @@ pub enum ChatGroup {
     Dead,
 
     Mafia,
-    Cultist,
+    Cult,
 
     Jail,
     Interview,

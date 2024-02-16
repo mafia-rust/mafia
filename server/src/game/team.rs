@@ -11,7 +11,7 @@ use super::{chat::{ChatGroup, ChatMessage}, phase::PhaseType, player::PlayerRefe
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum Team{
-    Mafia, Cultists
+    Mafia, Cult
 }
 impl Team{
     pub fn same_team(game: &Game, a: PlayerReference, b: PlayerReference)->bool{
@@ -30,44 +30,44 @@ impl Team{
     pub fn team_state(&self, teams: &Teams)->TeamState{
         match self{
             Team::Mafia => TeamState::Mafia(teams.mafia().clone()),
-            Team::Cultists => TeamState::Cultists(teams.cultists().clone()),
+            Team::Cult => TeamState::Cult(teams.cult().clone()),
         }
     }
 }
 
 
 pub enum TeamState{
-    Mafia(Mafia), Cultists(Cultists)
+    Mafia(Mafia), Cult(Cult)
 }
 impl TeamState{
     pub fn team(&self) -> Team{
         match self {
             TeamState::Mafia(t) => t.team(),
-            TeamState::Cultists(t) => t.team(),
+            TeamState::Cult(t) => t.team(),
         }
     }
     pub fn on_creation(self, game: &mut Game){
         match self {
             TeamState::Mafia(t) => t.on_creation(game),
-            TeamState::Cultists(t) => t.on_creation(game),
+            TeamState::Cult(t) => t.on_creation(game),
         }
     }
     pub fn on_phase_start(self, game: &mut Game, phase: PhaseType){
         match self {
             TeamState::Mafia(t) => t.on_phase_start(game, phase),
-            TeamState::Cultists(t) => t.on_phase_start(game, phase),
+            TeamState::Cult(t) => t.on_phase_start(game, phase),
         }
     }
     pub fn on_any_death(self, game: &mut Game){
         match self {
             TeamState::Mafia(t) => t.on_any_death(game),
-            TeamState::Cultists(t) => t.on_any_death(game),
+            TeamState::Cult(t) => t.on_any_death(game),
         }
     }
     pub fn on_member_role_switch(self, game: &mut Game, actor: PlayerReference){
         match self {
             TeamState::Mafia(t) => t.on_member_role_switch(game, actor),
-            TeamState::Cultists(t) => t.on_member_role_switch(game, actor),
+            TeamState::Cult(t) => t.on_member_role_switch(game, actor),
         }
     }
 }
@@ -86,34 +86,34 @@ pub trait TeamStateImpl : Clone{
 #[derive(Default)]
 pub struct Teams{
     mafia: Mafia,
-    cultists: Cultists
+    cult: Cult
 }
 impl Teams{
     pub fn on_team_creation(game: &mut Game){
         game.teams.mafia.clone().on_creation(game);
-        game.teams.cultists.clone().on_creation(game);
+        game.teams.cult.clone().on_creation(game);
     }
     pub fn on_phase_start(game: &mut Game, phase: PhaseType){
         game.teams.mafia.clone().on_phase_start(game, phase);
-        game.teams.cultists.clone().on_phase_start(game, phase);
+        game.teams.cult.clone().on_phase_start(game, phase);
     }
     pub fn on_any_death(game: &mut Game){
         game.teams.mafia.clone().on_any_death(game);
-        game.teams.cultists.clone().on_any_death(game);
+        game.teams.cult.clone().on_any_death(game);
     }
 
     pub fn mafia(&self)->&Mafia{
         &self.mafia
     }
-    pub fn cultists(&self)->&Cultists{
-        &self.cultists
+    pub fn cult(&self)->&Cult{
+        &self.cult
     }
 
     pub fn set_mafia(&mut self, mafia: Mafia){
         self.mafia = mafia;
     }
-    pub fn set_cultists(&mut self, cultists: Cultists){
-        self.cultists = cultists;
+    pub fn set_cult(&mut self, cult: Cult){
+        self.cult = cult;
     }
 }
 
@@ -167,56 +167,56 @@ impl Mafia{
 
 
 #[derive(Default, Clone)]
-pub struct Cultists {
+pub struct Cult {
     pub ordered_cultists: Vec<PlayerReference>,
     pub sacrifices_needed: Option<u8>
 }
-impl TeamStateImpl for Cultists{
+impl TeamStateImpl for Cult{
     fn team(&self) -> Team {
-        Team::Cultists
+        Team::Cult
     }
     fn on_phase_start(self, game: &mut Game, phase: PhaseType){
-        Cultists::set_ordered_cultists(self.clone(), game);
+        Cult::set_ordered_cultists(self.clone(), game);
         
         if phase == PhaseType::Night {
             if self.can_convert_tonight(game){
-                game.add_message_to_chat_group(ChatGroup::Cultist, ChatMessage::ApostleCanConvertTonight);
+                game.add_message_to_chat_group(ChatGroup::Cult, ChatMessage::ApostleCanConvertTonight);
             }else{
-                game.add_message_to_chat_group(ChatGroup::Cultist, ChatMessage::ApostleCantConvertTonight);
+                game.add_message_to_chat_group(ChatGroup::Cult, ChatMessage::ApostleCantConvertTonight);
             }
         }
     }
     fn on_creation(self, game: &mut Game) {
-        Cultists::set_ordered_cultists(self, game);
+        Cult::set_ordered_cultists(self, game);
     }
     fn on_any_death(mut self, game: &mut Game){
         self.sacrifices_needed = self.sacrifices_needed.map(|s| s.saturating_sub(1));
         if let Some(s) = self.sacrifices_needed{
-            game.add_message_to_chat_group(ChatGroup::Cultist, ChatMessage::CultistsSacrificesRequired { required: s });
+            game.add_message_to_chat_group(ChatGroup::Cult, ChatMessage::cultSacrificesRequired { required: s });
         }
-        game.teams.set_cultists(self.clone());
+        game.teams.set_cult(self.clone());
 
-        Cultists::set_ordered_cultists(self.clone(), game);
+        Cult::set_ordered_cultists(self.clone(), game);
     }
     fn on_member_role_switch(self, game: &mut Game, _actor: PlayerReference) {
-        Cultists::set_ordered_cultists(self, game);
+        Cult::set_ordered_cultists(self, game);
     }
 }
-impl Cultists{
+impl Cult{
 
     pub const SACRIFICES_NEEDED: u8 = 2;
 
     fn set_ordered_cultists(mut self, game: &mut Game){
         // Remove dead
         self.ordered_cultists = self.ordered_cultists.iter().cloned().filter(|p|
-            p.role(game).faction() == Faction::Cultist &&
+            p.role(game).faction() == Faction::Cult &&
             p.alive(game)
         ).collect();
 
         // Add new
         for player in PlayerReference::all_players(game){
             if 
-                player.role(game).faction() == Faction::Cultist &&
+                player.role(game).faction() == Faction::Cult &&
                 player.alive(game) &&
                 !self.ordered_cultists.contains(&player)
             {
@@ -237,7 +237,7 @@ impl Cultists{
             player_ref.set_role(game, role);
         }
 
-        game.teams.set_cultists(self);
+        game.teams.set_cult(self);
     }
     pub fn can_convert_tonight(&self, game: &Game)->bool {
         if self.ordered_cultists.len() >= 4 {return false}

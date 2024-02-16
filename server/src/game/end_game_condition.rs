@@ -14,7 +14,7 @@ impl EndGameCondition {
     pub fn from_role(role: Role) -> EndGameCondition {
         match role.faction(){
             Faction::Mafia => EndGameCondition::Faction(Faction::Mafia),
-            Faction::Cultist => EndGameCondition::Faction(Faction::Cultist),
+            Faction::Cult => EndGameCondition::Faction(Faction::Cult),
             Faction::Town => EndGameCondition::Faction(Faction::Town),
             Faction::Neutral => match role {
                 Role::Jester | Role::Executioner | Role::Politician |

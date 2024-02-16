@@ -93,8 +93,8 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
     if actor_ref.role(game).faction() == Faction::Mafia {
         out.push(ChatGroup::Mafia);
     }
-    if actor_ref.role(game).faction() == Faction::Cultist {
-        out.push(ChatGroup::Cultist);
+    if actor_ref.role(game).faction() == Faction::Cult {
+        out.push(ChatGroup::Cult);
     }
     if actor_ref.night_jailed(game){
         out.push(ChatGroup::Jail);

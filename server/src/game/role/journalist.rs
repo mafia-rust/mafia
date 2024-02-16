@@ -108,7 +108,7 @@ impl RoleStateImpl for Journalist {
                         for chat_group in interviewed_target_ref.get_current_send_chat_groups(game){
                             match chat_group {
                                 ChatGroup::All | ChatGroup::Jail | ChatGroup::Interview | ChatGroup::Seance | ChatGroup::Dead => {},
-                                ChatGroup::Mafia | ChatGroup::Cultist  => {
+                                ChatGroup::Mafia | ChatGroup::Cult  => {
                                     game.add_message_to_chat_group(
                                         chat_group,
                                         ChatMessage::PlayerIsBeingInterviewed { player_index: interviewed_target_ref.index() }

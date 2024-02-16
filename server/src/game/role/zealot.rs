@@ -16,12 +16,12 @@ use super::{Priority, RoleStateImpl};
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Zealot;
 
-pub(super) const FACTION: Faction = Faction::Cultist;
+pub(super) const FACTION: Faction = Faction::Cult;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 impl RoleStateImpl for Zealot {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Cultists)}
+    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Cult)}
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -36,7 +36,7 @@ impl RoleStateImpl for Zealot {
         }
 
         target_ref.try_night_kill(
-            actor_ref, game, GraveKiller::Faction(Faction::Cultist), 1, false
+            actor_ref, game, GraveKiller::Faction(Faction::Cult), 1, false
         );
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -52,7 +52,7 @@ impl RoleStateImpl for Zealot {
         crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, true)
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Cultist])
+        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Cult])
     }
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)

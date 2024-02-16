@@ -920,7 +920,7 @@ fn reveler_protect_still_kill() {
 }
 
 #[test]
-fn cultist_wait_for_two_deaths() {
+fn cult_wait_for_two_deaths() {
     kit::scenario!(game in Night 1 where
         drac: Apostle,
         a: Sheriff,
@@ -939,14 +939,14 @@ fn cultist_wait_for_two_deaths() {
     assert!(drac.set_night_targets(vec![a]));
     game.next_phase();
     assert!(!a.alive());
-    assert!(a.role_state().role().faction() != Faction::Cultist);
+    assert!(a.role_state().role().faction() != Faction::Cult);
 
     //apostle converts
     game.skip_to(PhaseType::Night, 2);
     assert!(drac.set_night_targets(vec![b]));
     game.next_phase();
     assert!(b.alive());
-    assert!(b.role_state().role().faction() == Faction::Cultist);
+    assert!(b.role_state().role().faction() == Faction::Cult);
 
     //zealot kills, apostle waits
     game.skip_to(PhaseType::Night, 3);
@@ -955,7 +955,7 @@ fn cultist_wait_for_two_deaths() {
     game.next_phase();
     assert!(!c.alive());
     assert!(d.alive());
-    assert!(d.role_state().role().faction() != Faction::Cultist);
+    assert!(d.role_state().role().faction() != Faction::Cult);
 
     //zealot kills, apostle waits
     game.skip_to(PhaseType::Night, 4);
@@ -964,7 +964,7 @@ fn cultist_wait_for_two_deaths() {
     game.next_phase();
     assert!(!e.alive());
     assert!(d.alive());
-    assert!(d.role_state().role().faction() != Faction::Cultist);
+    assert!(d.role_state().role().faction() != Faction::Cult);
 
     //zealot kills, apostle converts
     game.skip_to(PhaseType::Night, 5);
@@ -972,7 +972,7 @@ fn cultist_wait_for_two_deaths() {
     assert!(b.set_night_targets(vec![g]));
     game.next_phase();
     assert!(f.alive());
-    assert!(f.role_state().role().faction() == Faction::Cultist);
+    assert!(f.role_state().role().faction() == Faction::Cult);
     assert!(!g.alive());
 
     //zealot kills, apostle waits
@@ -982,7 +982,7 @@ fn cultist_wait_for_two_deaths() {
     game.next_phase();
     assert!(!i.alive());
     assert!(h.alive());
-    assert!(h.role_state().role().faction() != Faction::Cultist);
+    assert!(h.role_state().role().faction() != Faction::Cult);
 
     //zealot kills, apostle converts, same person
     game.skip_to(PhaseType::Night, 7);
@@ -990,7 +990,7 @@ fn cultist_wait_for_two_deaths() {
     assert!(f.set_night_targets(vec![j]));
     game.next_phase();
     assert!(!j.alive());
-    assert!(j.role_state().role().faction() == Faction::Cultist);
+    assert!(j.role_state().role().faction() == Faction::Cult);
 
 
 

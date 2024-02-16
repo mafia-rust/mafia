@@ -321,7 +321,7 @@
         "canBeConvertedTo": ["jester"]
     },
     "apostle": {
-        "faction": "cultist",
+        "faction": "cult",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -329,7 +329,7 @@
         "canBeConvertedTo": []
     },
     "disciple": {
-        "faction": "cultist",
+        "faction": "cult",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -337,7 +337,7 @@
         "canBeConvertedTo": []
     },
     "zealot": {
-        "faction": "cultist",
+        "faction": "cult",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,

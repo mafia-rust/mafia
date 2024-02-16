@@ -66,7 +66,7 @@ impl RoleStateImpl for Spy {
             Priority::SpyCultistCount => {
                 actor_ref.push_night_message(game, ChatMessage::SpyCultistCount { count: 
                     PlayerReference::all_players(game).filter(|p|
-                        p.role(game).faction() == Faction::Cultist && p.alive(game)
+                        p.role(game).faction() == Faction::Cult && p.alive(game)
                     ).count() as u8
                 }); 
             }
@@ -95,9 +95,9 @@ impl RoleStateImpl for Spy {
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Night => {
-                //if there are any cultists alive, tell the spy if apostle can convert
-                if PlayerReference::all_players(game).any(|p|p.role(game).faction() == Faction::Cultist){
-                    if game.teams.cultists().can_convert_tonight(game) {
+                //if there are any cult alive, tell the spy if apostle can convert
+                if PlayerReference::all_players(game).any(|p|p.role(game).faction() == Faction::Cult){
+                    if game.teams.cult().can_convert_tonight(game) {
                         actor_ref.add_chat_message(game,
                             ChatMessage::ApostleCanConvertTonight
                         )
