@@ -503,6 +503,25 @@ impl Lobby {
             LobbyState::Closed => Vec::new(),
         }
     }
+    pub fn is_host(&self, player_id: PlayerID)->bool{
+        match &self.lobby_state {
+            LobbyState::Lobby { players, .. } => {
+                if let Some(player) = players.get(&player_id){
+                    player.host
+                }else{
+                    false
+                }
+            },
+            LobbyState::Game { players, .. } => {
+                if let Some(player) = players.get(&player_id){
+                    player.host
+                }else{
+                    false
+                }
+            },
+            LobbyState::Closed => false,
+        }
+    }
 
     /// Catches the sender up with the current lobby settings
     pub fn send_settings(player: &LobbyPlayer, settings: &Settings) {
