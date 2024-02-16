@@ -595,10 +595,10 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "yourConvertFailed"},
-            {"type": "draculaCanConvertTonight"},
-            {"type": "draculaCantConvertTonight"},
-            {"type": "vampiresSacrificesRequired","required": 2},
-            {"type": "vampiresSacrificesRequired","required": 0},
+            {"type": "apostleCanConvertTonight"},
+            {"type": "apostleCantConvertTonight"},
+            {"type": "cultSacrificesRequired","required": 2},
+            {"type": "cultSacrificesRequired","required": 0},
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
