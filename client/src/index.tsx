@@ -4,7 +4,6 @@ import './index.css';
 import Anchor from './menu/Anchor';
 import { GameManager, createGameManager } from './game/gameManager';
 import StartMenu from './menu/main/StartMenu';
-import { Player } from './game/gameState.d';
 import LoadingScreen from './menu/LoadingScreen';
 
 const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
@@ -77,13 +76,13 @@ export function regEscape(text: string) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
 }
 
-export function replaceMentions(rawText: string, players: Player[]) {
+export function replaceMentions(rawText: string, playerNames: string[]) {
     let text = rawText;
-    players.forEach(player => {
-        text = text.replace(find(`@${player.index + 1}`), player.toString());
+    playerNames.forEach((player, i) => {
+        text = text.replace(find(`@${i + 1}`), player);
     });
-    players.forEach(player => {
-        text = text.replace(find(`@${player.name}`), player.toString());
+    playerNames.forEach((player, i) => {
+        text = text.replace(find(`@${player}`), player);
     });
     return text;
 }

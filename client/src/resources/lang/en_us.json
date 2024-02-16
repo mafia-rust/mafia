@@ -338,8 +338,8 @@
     "tag.dead":"💀",
 
     "chatGroup.mafia.icon": "🌹",
-    "chatGroup.cult.icon": "🪬",
-    "chatGroup.jail.icon": "⛓️",
+    "chatGroup.vampire.icon": "🧛‍♂️",
+    "chatGroup.jail.icon": "🔒",
     "chatGroup.interview.icon": "📝",
     "chatGroup.dead.icon": "💀",
     "chatGroup.seance.icon": "👻",
@@ -447,7 +447,7 @@
     "chatMessage.spyBug.protected":"Your target was protected from an attack.",
     "chatMessage.spyBug.transported":"Your target was transported.",
     "chatMessage.spyBug.possessed":"Someone attempted to possess your target.",
-    "chatMessage.psychicGood":"At least one of these players is a townie: \\0",
+    "chatMessage.psychicGood":"At least one of these players is good: \\0",
     "chatMessage.psychicEvil":"At least one of these players is evil: \\0",
     "chatMessage.psychicFailed":"There are not enough living players to have a vision.",
     "chatMessage.targetsMessage":"Your target got the following message:",
@@ -535,7 +535,7 @@
     "wiki.article.standard.enemies.title": "Enemies",
     "wiki.article.standard.enemies.text": "A Seer's result which indicates that the two players they visited can not win together.",
     "wiki.article.standard.alert.title": "Alert",
-    "wiki.article.standard.alert.text": "A Veterans ability. If you visit a veteran while they are on alert, they will deal an armor piecring attack to you. A Veteran can up to Alert three times.",
+    "wiki.article.standard.alert.text": "A Veterans ability. If you visit a veteran while they are on alert, they will deal an armor piercing attack to you. A Veteran can up to Alert three times.",
     "wiki.article.standard.haunt.title": "Haunt",
     "wiki.article.standard.haunt.text": "After they die, a Medium can haunt a living player to talk to them during the night. Every dead medium will be in the haunt chat with every haunted player.",
     "wiki.article.standard.transport.title": "Transport",
@@ -569,7 +569,7 @@
     "wiki.article.standard.outlineList.title":"Outline List",
     "wiki.article.standard.outlineList.text": "The outline list defines what roles are in the game. At the start of a game, each player gets assigned to a role outline. Then, their role is generated randomly from that role outline.",
     "wiki.article.standard.chatGroup.title": "Chat Group",
-    "wiki.article.standard.chatGroup.text": "Messages are sent to chat groups. The chat groups are:\n - All (no icon)\n - Dead 💀\n - Mafia 🌹\n - Cult 🪬\n - Haunt 👻\n - Jail ⛓️\n - Interview 📝\n\n Players can be in multiple chat groups at once, or even read chat groups they are not in.",
+    "wiki.article.standard.chatGroup.text": "Messages are sent to chat groups. The chat groups are:\n - All (no icon)\n - Dead 💀\n - Mafia 🌹\n - Cult 🪬\n - Haunt 👻\n - Jail 🔒\n - Interview 📝\n\n Players can be in multiple chat groups at once, or even read chat groups they are not in.",
 
     "wiki.article.standard.how_to_play.title":"How to play",
     "wiki.article.standard.how_to_play.text":"The game has two major teams, Town and Mafia. The goal is to be the last team remaining alive. The town wins if they find out who the mafia is and vote them out. The mafia wins if they deceive the town and stay hidden so they don't get voted out.\n\nEvery role has abilities that they use to try to win. Abilities can do things like kill players, and prevent kills, and find out what role other people are.\nThe game is about communication, townies need to share information to find the mafia and vote them out, while mafia needs to spread misinformation to try to get townies to turn against eachother and win.\n\n**MULTIPLE PLAYERS CAN HAVE THE SAME ROLE**\n\nThere are also neutral roles that have their own win conditions.",
@@ -654,8 +654,8 @@
     "wiki.article.role.doctor.extra":"- You will be told if the player you visit is attacked\n- The player you visit will be told that they were protected if they were attacked",
 
     "wiki.article.role.bodyguard.guide": "Choose someone to protect each night. If the player you protect is attacked, you will be attacked instead, but you kill the attacker. You should try to protect people you think are townies who will be attacked. You can only target yourself once.",
-    "wiki.article.role.bodyguard.abilities":"- If someone visits the player you protect with an attacking visit, they will be redirected into visiting and attacking you\n- If you redirect a visit into yourself, you will attack the attacker back with an armor piecring attack",
-    "wiki.article.role.bodyguard.attributes":"- If you protect yourself, you will lose the ability to target yourself, you will not redirect any attacks, instead you will gain protected defense.\n- If you redirect multiple attackers, you will attack all of them with an armor piecring attack",
+    "wiki.article.role.bodyguard.abilities":"- If someone visits the player you protect with an attacking visit, they will be redirected into visiting and attacking you\n- If you redirect a visit into yourself, you will attack the attacker back with an armor piercing attack",
+    "wiki.article.role.bodyguard.attributes":"- If you protect yourself, you will lose the ability to target yourself, you will not redirect any attacks, instead you will gain protected defense.\n- If you redirect multiple attackers, you will attack all of them with an armor piercing attack",
     "wiki.article.role.bodyguard.extra":"- You will be told if the player you visit is attacked\n- The player you visit will be told that they were protected if they were attacked",
 
     "wiki.article.role.crusader.guide": "Choose someone to protect each night and kill one random visitor to them. You should try to protect people you think are townies who will be attacked. You could easily accidentally kill townies, so you should try to make sure no other townies visit the player you protect.",
@@ -759,9 +759,9 @@
     "wiki.article.role.framer.extra":"- You can't select other mafia members for your first target, but you can choose any player for your second target, including dead players and other mafia members",
 
     "wiki.article.role.jester.guide": "Get lynched during the day to win. If you win, you can attack any living player who voted you guilty or abstained. Try to look suspicious without making it obvious that you are the Jester.",
-    "wiki.article.role.jester.abilities":"- On the night after you were just lynched, deal a protection piecring attack to the first player you visit\n- Gain protected defense on night one",
-    "wiki.article.role.jester.attributes":"- You have an innocent aura\n- If you target nobody on the night after you are lynched. You will visit a random living player who did not vote you innocent, and deal a protection piecring attack to them.",
-    "wiki.article.role.jester.extra":"- Your attack is protection piecring and top priority, So the Transporter, Witch, or Necromancer can not force you to kill someone else.",
+    "wiki.article.role.jester.abilities":"- On the night after you were just lynched, deal a protection piercing attack to the first player you visit\n- Gain protected defense on night one",
+    "wiki.article.role.jester.attributes":"- You have an innocent aura\n- If you target nobody on the night after you are lynched. You will visit a random living player who did not vote you innocent, and deal a protection piercing attack to them.",
+    "wiki.article.role.jester.extra":"- Your attack is protection piercing and top priority, So the Transporter, Witch, or Necromancer can not force you to kill someone else.",
 
     "wiki.article.role.executioner.guide":"Get your target lynched to win. If you win, you leave town at the start of night. You should try to claim something that makes people think your target is suspicious.",
     "wiki.article.role.executioner.abilities":"",
@@ -775,17 +775,17 @@
 
     "wiki.article.role.politician.guide":"* If the town would win, you kill all of them, and win instead. Try to help to the town to win while staying alive.",
     "wiki.article.role.politician.abilities": "* When town would normally win, if you are still alive, you win instead\n* When you win, you kill every townie, and all politicians leave town",
-    "wiki.article.role.politician.attributes": "* You win with other polititians\n* Your have a protection piecring attack",
+    "wiki.article.role.politician.attributes": "* You win with other polititians\n* Your have a protection piercing attack",
     "wiki.article.role.politician.extra":"* When you first become this role, if there are no townies alive, you become a jester\n* If all townies die, you leave town\n- If the only players left are politicians, you win",
 
     "wiki.article.role.arsonist.guide":"Select a player each night to douse them in gasoline. Target yourself to ignite and kill every player who is doused. You know who is doused. Try not to douse players you think the mafia will kill, because then you waste your night dousing someone who is going to die anyway.",
-    "wiki.article.role.arsonist.abilities":"- Visit a player to douse them\n- Visit yourself to deal a protection piecring attack to all doused players\n- If a player visits you, you will douse them",
+    "wiki.article.role.arsonist.abilities":"- Visit a player to douse them\n- Visit yourself to deal a protection piercing attack to all doused players\n- If a player visits you, you will douse them",
     "wiki.article.role.arsonist.attributes":"- You can't be doused\n- You will know who is doused\n- All doused players have a suspicious aura if you are still alive",
     "wiki.article.role.arsonist.extra":"- If you are roleblocked you still douse visitors\n- If you are in jail, you douse the jailor, and you will still douse players who visit you",
 
     "wiki.article.role.werewolf.guide": "On full moon nights, choose someone to kill them and rampage, killing everyone who visits them. On non full moon nights, choose someone to gain their scent and passively gain the scent of everyone who visits you. If you have someones scent, you will know who they visit every night for the rest of the game. Try to attack players who will get visited by alot of people in order to kill more players. Claiming that you are the Tracker could be easy because you know who people visit each night.",
     "wiki.article.role.werewolf.abilities":"* On full moon nights visit a player to attack them and rampage them\n* On non full moon nights visit a player gain their scent, you also gain the scent of every player that visits you on non full moon nights\n* If you visit nobody on a full moon night, you rampage yourself, but you wont attack yourself unless you visit yourself",
-    "wiki.article.role.werewolf.attributes":"* You have an armor piecring attack\n* If you are in jail then you will attack all Jailors who did not execute you\n* You will know who you have the scent of\n* You still track the scent of players after you die\n* On non full moon nights you have an innocent aura",
+    "wiki.article.role.werewolf.attributes":"* You have an armor piercing attack\n* If you are in jail then you will attack all Jailors who did not execute you\n* You will know who you have the scent of\n* You still track the scent of players after you die\n* On non full moon nights you have an innocent aura",
     "wiki.article.role.werewolf.extra":"* You will not rampage the jailor while in jail\n* You will still attack or gain the scent of visits to you when you are in jail\n* You will still track the players you have the scent of while you are in jail\n* You dont attack or gain the scent of astral visitors\n* A roleblock has no effect on you besides erasing your visits, if you are roleblocked, it is as if you visited nobody",
 
     "wiki.article.role.death.guide": "Guess what player will die during night by targeting them, If you guess correctly you will collect a soul, you will also collect a soul passively each night. Once you collect six souls, everyone will be told that death collected six souls at the start of the day, if you survive that day, you will attack everyone and win the game at the start of night.",

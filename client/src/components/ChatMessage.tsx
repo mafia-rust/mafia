@@ -10,8 +10,17 @@ import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
 import GraveComponent from "./grave";
 
-export default function ChatElement(props: {message: ChatMessage}): ReactElement {
+export default function ChatElement(
+    props: {
+        message: ChatMessage,
+        playerNames?: string[]
+    }, 
+): ReactElement {
     const message = props.message;
+    if (props.playerNames === undefined) {
+        props.playerNames = getPlayerNames();
+    }
+    const playerNames = props.playerNames;
     const chatMessageStyles = require("../resources/styling/chatMessage.json");
     let style = typeof chatMessageStyles[message.type] === "string" ? chatMessageStyles[message.type] : "";
 
@@ -30,14 +39,14 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
                 GAME_MANAGER.state.stateType === "game" &&
                 (find(GAME_MANAGER.state.players[GAME_MANAGER.state.myIndex!].name ?? "").test(sanitizePlayerMessage(replaceMentions(
                     message.text,
-                    GAME_MANAGER.state.players
+                    playerNames
                 ))) ||
                 (
                     GAME_MANAGER.state.stateType === "game" &&
                     GAME_MANAGER.state.myIndex !== null &&
                     find("" + (GAME_MANAGER.state.myIndex + 1)).test(sanitizePlayerMessage(replaceMentions(
                         message.text,
-                        GAME_MANAGER.state.players
+                        playerNames
                     )))
                 ))
                 
@@ -47,14 +56,14 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
             break;
         case "targetsMessage":
             return <>
-                <StyledText className={"chat-message " + style}>{translateChatMessage(message)}</StyledText>
-                <ChatElement message={message.message}/>
+                <StyledText className={"chat-message " + style}>{translateChatMessage(message, playerNames)}</StyledText>
+                <ChatElement message={message.message} playerNames={playerNames}/>
             </>
         case "playerDied":
             if(GAME_MANAGER.state.stateType === "game"){
                 return <>
                     <StyledText className={"chat-message " + style}>{translate("chatMessage.playerDied",
-                        GAME_MANAGER.state.players[message.grave.playerIndex].toString(),
+                        playerNames[message.grave.playerIndex],
                     )}</StyledText>
                     <div className="grave-message">
                         <GraveComponent grave={message.grave} gameState={GAME_MANAGER.state}/>
@@ -66,16 +75,22 @@ export default function ChatElement(props: {message: ChatMessage}): ReactElement
             }
     }
 
-    return <StyledText className={"chat-message " + style}>{translateChatMessage(message)}</StyledText>;
+    return <StyledText className={"chat-message " + style}>{translateChatMessage(message, playerNames)}</StyledText>;
 }
 
-function playerListToString(playerList: PlayerIndex[]): string {
+export function getPlayerNames(): string[] {
+    switch (GAME_MANAGER.state.stateType) {
+        case "game":
+            return GAME_MANAGER.state.players.map((player) => player.toString());
+        default:
+            return [];
+    }
+}
+
+function playerListToString(playerList: PlayerIndex[], playerNames: string[]): string {
 
     return playerList.map((playerIndex) => {
-        if(GAME_MANAGER.state.stateType === "game")
-            return GAME_MANAGER.state.players[playerIndex].toString();
-        else
-            return "ERROR: outside game"
+        return playerNames[playerIndex];
     }).join(", ");
 }
 
@@ -85,9 +100,10 @@ export function sanitizePlayerMessage(text: string): string {
     });
 }
 
-export function translateChatMessage(message: ChatMessage): string {
-    if(GAME_MANAGER.state.stateType !== "game"){
-        return "ERROR: chatmessages cant exist outside game"
+export function translateChatMessage(message: ChatMessage, playerNames?: string[]): string {
+
+    if (playerNames === undefined) {
+        playerNames = getPlayerNames();
     }
 
     switch (message.type) {
@@ -96,25 +112,25 @@ export function translateChatMessage(message: ChatMessage): string {
 
             if(message.messageSender.type === "player"){
                 return (icon??"")+translate("chatMessage.normal",
-                    "sender-"+GAME_MANAGER.state.players[message.messageSender.player].toString(), 
-                    sanitizePlayerMessage(replaceMentions(message.text, GAME_MANAGER.state.players))
+                    "sender-"+playerNames[message.messageSender.player], 
+                    sanitizePlayerMessage(replaceMentions(message.text, playerNames))
                 );
             } else {
                 return (icon??"")+translate("chatMessage.normal",
                     translate("role."+message.messageSender.type+".name"),
-                    sanitizePlayerMessage(replaceMentions(message.text, GAME_MANAGER.state.players))
+                    sanitizePlayerMessage(replaceMentions(message.text, playerNames))
                 );
             }
         case "whisper":
             return translate("chatMessage.whisper", 
-                GAME_MANAGER.state.players[message.fromPlayerIndex].toString(),
-                GAME_MANAGER.state.players[message.toPlayerIndex].toString(),
+                playerNames[message.fromPlayerIndex],
+                playerNames[message.toPlayerIndex],
                 message.text
             );
         case "broadcastWhisper":
             return translate("chatMessage.broadcastWhisper",
-                GAME_MANAGER.state.players[message.whisperer].toString(),
-                GAME_MANAGER.state.players[message.whisperee].toString(),
+                playerNames[message.whisperer],
+                playerNames[message.whisperee],
             );
         case "roleAssignment":
             return translate("chatMessage.roleAssignment", 
@@ -122,7 +138,7 @@ export function translateChatMessage(message: ChatMessage): string {
             );
         case "playerQuit":
             return translate("chatMessage.playerQuit",
-                GAME_MANAGER.state.players[message.playerIndex].toString()
+                playerNames[message.playerIndex]
             );
         case "youDied":
             return translate("chatMessage.youDied");
@@ -139,26 +155,26 @@ export function translateChatMessage(message: ChatMessage): string {
         case "voted":
             if (message.votee !== null) {
                 return translate("chatMessage.voted",
-                    GAME_MANAGER.state.players[message.voter].toString(),
-                    GAME_MANAGER.state.players[message.votee].toString(),
+                    playerNames[message.voter],
+                    playerNames[message.votee],
                 );
             } else {
                 return translate("chatMessage.voted.cleared",
-                    GAME_MANAGER.state.players[message.voter].toString(),
+                    playerNames[message.voter],
                 );
             }
         case "playerOnTrial":
             return translate("chatMessage.playerOnTrial",
-                GAME_MANAGER.state.players[message.playerIndex].toString(),
+                playerNames[message.playerIndex],
             );
         case "judgementVerdict":
             return translate("chatMessage.judgementVerdict",
-                GAME_MANAGER.state.players[message.voterPlayerIndex].toString(),
+                playerNames[message.voterPlayerIndex],
                 translate("verdict."+message.verdict.toLowerCase())
             );
         case "trialVerdict":
             return translate("chatMessage.trialVerdict",
-                GAME_MANAGER.state.players[message.playerOnTrial].toString(),
+                playerNames[message.playerOnTrial],
                 message.innocent>=message.guilty?translate("verdict.innocent"):translate("verdict.guilty"),
                 message.innocent,
                 message.guilty
@@ -166,20 +182,20 @@ export function translateChatMessage(message: ChatMessage): string {
         case "targeted":
             if (message.targets.length > 0) {
                 return translate("chatMessage.targeted",
-                    GAME_MANAGER.state.players[message.targeter].toString(),
-                    playerListToString(message.targets));
+                    playerNames[message.targeter],
+                    playerListToString(message.targets, playerNames));
             } else {
                 return translate("chatMessage.targeted.cleared",
-                    GAME_MANAGER.state.players[message.targeter].toString(),
+                    playerNames[message.targeter],
                 );
             }
         case "mayorRevealed":
             return translate("chatMessage.mayorRevealed",
-                GAME_MANAGER.state.players[message.playerIndex].toString(),
+                playerNames[message.playerIndex],
             );
         case "martyrRevealed":
             return translate("chatMessage.martyrRevealed",
-                GAME_MANAGER.state.players[message.martyr].toString(),
+                playerNames[message.martyr],
             );
         case "journalistJournal":
             return translate("chatMessage.journalistJournal",
@@ -187,39 +203,39 @@ export function translateChatMessage(message: ChatMessage): string {
             );
         case "youAreInterviewingPlayer":
             return translate("chatMessage.youAreInterviewingPlayer",
-                GAME_MANAGER.state.players[message.playerIndex].toString(),
+                playerNames[message.playerIndex],
             );
         case "playerIsBeingInterviewed":
             return translate("chatMessage.playerIsBeingInterviewed",
-                GAME_MANAGER.state.players[message.playerIndex].toString(),
+                playerNames[message.playerIndex],
             );
         case "jailedTarget":
             return translate("chatMessage.jailedTarget",
-                GAME_MANAGER.state.players[message.playerIndex].toString(),
+                playerNames[message.playerIndex],
             );
         case "jailedSomeone":
             return translate("chatMessage.jailedSomeone",
-                GAME_MANAGER.state.players[message.playerIndex].toString()
+                playerNames[message.playerIndex]
             );
         case "deputyKilled":
             return translate("chatMessage.deputyKilled",
-                GAME_MANAGER.state.players[message.shotIndex].toString()
+                playerNames[message.shotIndex]
             );
         case "jailorDecideExecute":
             if (message.targets.length > 0) {
-                return translate("chatMessage.jailorDecideExecute", playerListToString(message.targets));
+                return translate("chatMessage.jailorDecideExecute", playerListToString(message.targets, playerNames));
             } else {
                 return translate("chatMessage.jailorDecideExecute.nobody");
             }
         case "godfatherBackup":
             if (message.backup !== null) {
-                return translate("chatMessage.godfatherBackup", GAME_MANAGER.state.players[message.backup].toString());
+                return translate("chatMessage.godfatherBackup", playerNames[message.backup]);
             } else {
                 return translate("chatMessage.godfatherBackup.nobody");
             }
         /* NIGHT */
         case "godfatherBackupKilled":
-            return translate("chatMessage.godfatherBackupKilled", GAME_MANAGER.state.players[message.backup].toString());
+            return translate("chatMessage.godfatherBackupKilled", playerNames[message.backup]);
         case "roleBlocked":
             return translate("chatMessage.roleBlocked" + (message.immune ? ".immune" : ""));
         case "sheriffResult":
@@ -228,13 +244,13 @@ export function translateChatMessage(message: ChatMessage): string {
             if (message.players.length === 0) {
                 return translate("chatMessage.lookoutResult.nobody");
             } else {
-                return translate("chatMessage.lookoutResult", playerListToString(message.players));
+                return translate("chatMessage.lookoutResult", playerListToString(message.players, playerNames));
             }
         case "spyMafiaVisit":
             if (message.players.length === 0) {
                 return translate("chatMessage.spyMafiaVisit.nobody");
             } else {
-                return translate("chatMessage.spyMafiaVisit", playerListToString(message.players));
+                return translate("chatMessage.spyMafiaVisit", playerListToString(message.players, playerNames));
             }
         case "spyCultistCount":
             if(message.count === 1){
@@ -248,14 +264,14 @@ export function translateChatMessage(message: ChatMessage): string {
             if (message.players.length === 0) {
                 return translate("chatMessage.trackerResult.nobody");
             } else {
-                return translate("chatMessage.trackerResult", playerListToString(message.players));
+                return translate("chatMessage.trackerResult", playerListToString(message.players, playerNames));
             }
         case "seerResult":
             return translate("chatMessage.seerResult." + (message.enemies ? "enemies" : "friends"));
         case "psychicEvil":
-            return translate("chatMessage.psychicEvil", playerListToString(message.players));
+            return translate("chatMessage.psychicEvil", playerListToString(message.players, playerNames));
         case "psychicGood":
-            return translate("chatMessage.psychicGood", playerListToString(message.players));
+            return translate("chatMessage.psychicGood", playerListToString(message.players, playerNames));
         case "trapperVisitorsRole":
             return translate("chatMessage.trapperVisitorsRole", translate("role."+message.role+".name"));
         case "trapState":
@@ -273,27 +289,27 @@ export function translateChatMessage(message: ChatMessage): string {
                 translate("chatMessage.consigliereResult.role", translate("role."+message.role+".name")),
                 visitedNobody 
                     ? translate("chatMessage.consigliereResult.visited.nobody") 
-                    : translate("chatMessage.consigliereResult.visited", playerListToString(message.visited)),
+                    : translate("chatMessage.consigliereResult.visited", playerListToString(message.visited, playerNames)),
                 visitedByNobody 
                     ? translate("chatMessage.consigliereResult.visitedBy.nobody") 
-                    : translate("chatMessage.consigliereResult.visitedBy", playerListToString(message.visitedBy))
+                    : translate("chatMessage.consigliereResult.visitedBy", playerListToString(message.visitedBy, playerNames))
             );
         case "silenced":
             return translate("chatMessage.silenced");
         case "mediumSeance":
-            return translate("chatMessage.mediumSeance", GAME_MANAGER.state.players[message.player].toString());
+            return translate("chatMessage.mediumSeance", playerNames[message.player]);
         case "youWerePossessed":
             return translate("chatMessage.youWerePossessed" + (message.immune ? ".immune" : ""));
         case "werewolfTrackingResult":
             if(message.players.length === 0){
                 return translate(
                     "chatMessage.werewolfTrackingResult.nobody", 
-                    GAME_MANAGER.state.players[message.trackedPlayer].toString()
+                    playerNames[message.trackedPlayer]
                 );
             }else{
                 return translate("chatMessage.werewolfTrackingResult", 
-                    GAME_MANAGER.state.players[message.trackedPlayer].toString(),
-                    playerListToString(message.players)
+                    playerNames[message.trackedPlayer],
+                    playerListToString(message.players, playerNames)
                 );
             }
         case "cultSacrificesRequired":
@@ -306,7 +322,7 @@ export function translateChatMessage(message: ChatMessage): string {
                     return translate("chatMessage.cultSacrificesRequired", message.required);
             }
         case "playerWithNecronomicon":
-            return translate("chatMessage.playerWithNecronomicon", GAME_MANAGER.state.players[message.playerIndex].toString());
+            return translate("chatMessage.playerWithNecronomicon", playerNames[message.playerIndex]);
         case "deputyShotYou":
         case "deathCollectedSouls":
         case "targetWasAttacked":
@@ -470,7 +486,7 @@ export type ChatMessage = {
     count: number
 } | {
     type: "spyBug", 
-    bug: String
+    bug: "silenced" | "roleblocked" | "protected" | "transported" | "possessed"
 } | {
     type: "trackerResult",
     players: PlayerIndex[]
