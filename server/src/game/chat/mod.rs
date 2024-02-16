@@ -115,9 +115,9 @@ pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
     PlayerWithNecronomicon{player_index: PlayerIndex},
     YourConvertFailed,
-    DraculaCanConvertTonight,
-    DraculaCantConvertTonight,
-    VampiresSacrificesRequired{required: u8},
+    ApostleCanConvertTonight,
+    ApostleCantConvertTonight,
+    CultSacrificesRequired{required: u8},
 
     SomeoneSurvivedYourAttack,
     YouSurvivedAttack,
@@ -138,7 +138,7 @@ pub enum ChatMessage {
     TrackerResult{players: Vec<PlayerIndex>},
     SeerResult{enemies: bool},
     SpyMafiaVisit{players: Vec<PlayerIndex>},
-    SpyVampireCount{count: u8},
+    SpyCultistCount{count: u8},
     SpyBug{bug: SpyBug},
     PsychicGood{players: [PlayerIndex; 2]},
     PsychicEvil{players: [PlayerIndex; 3]},
@@ -192,7 +192,7 @@ pub enum ChatGroup {
     Dead,
 
     Mafia,
-    Vampire,
+    Cult,
 
     Jail,
     Interview,

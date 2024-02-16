@@ -8,30 +8,30 @@ use crate::game::chat::ChatGroup;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
-use crate::game::team::{Team, Vampires};
+use crate::game::team::{Team, Cult};
 use crate::game::visit::Visit;
 use crate::game::Game;
-use super::renfield::Renfield;
+use super::zealot::Zealot;
 use super::{Priority, RoleState, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
-pub struct Dracula;
+pub struct Apostle;
 
-pub(super) const FACTION: Faction = Faction::Vampire;
+pub(super) const FACTION: Faction = Faction::Cult;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
-impl RoleStateImpl for Dracula {
+impl RoleStateImpl for Apostle {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Vampires)}
+    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Cult)}
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        let mut vampires = game.teams.vampires().clone();
+        let mut cult = game.teams.cult().clone();
         match priority {
             Priority::Kill => {
-                if vampires.ordered_vampires.len() != 1 {return}
-                if vampires.can_convert_tonight(game) {return}
+                if cult.ordered_cultists.len() != 1 {return}
+                if cult.can_convert_tonight(game) {return}
 
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
                 let target_ref = visit.target;
@@ -42,11 +42,11 @@ impl RoleStateImpl for Dracula {
                 }
         
                 target_ref.try_night_kill(
-                    actor_ref, game, GraveKiller::Faction(Faction::Vampire), 1, false
+                    actor_ref, game, GraveKiller::Faction(Faction::Cult), 1, false
                 );
             }
             Priority::Convert => {
-                if !vampires.can_convert_tonight(game) {return}
+                if !cult.can_convert_tonight(game) {return}
                 
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
                 let target_ref = visit.target;
@@ -61,19 +61,19 @@ impl RoleStateImpl for Dracula {
                     return
                 }                
 
-                target_ref.set_role(game, RoleState::Renfield(Renfield));
+                target_ref.set_role(game, RoleState::Zealot(Zealot));
 
-                vampires.sacrifices_needed = Some(Vampires::SACRIFICES_NEEDED);
-                game.teams.set_vampires(vampires);
+                cult.sacrifices_needed = Some(Cult::SACRIFICES_NEEDED);
+                game.teams.set_cult(cult);
             }
             _ => {}
         }
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
 
-        let vampires = game.teams.vampires().clone();
-        let can_kill = vampires.ordered_vampires.len() == 1 && !vampires.can_convert_tonight(game);
-        let can_convert = vampires.can_convert_tonight(game);
+        let cult = game.teams.cult().clone();
+        let can_kill = cult.ordered_cultists.len() == 1 && !cult.can_convert_tonight(game);
+        let can_convert = cult.can_convert_tonight(game);
 
         if !can_convert && !can_kill {return false}
 
@@ -88,7 +88,7 @@ impl RoleStateImpl for Dracula {
         crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, false)
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Vampire])
+        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Cult])
     }
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)

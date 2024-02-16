@@ -14,7 +14,7 @@
         "politician","executioner",
         "doomsayer","death",
         "werewolf",
-        "dracula", "thrall", "renfield",
+        "apostle", "disciple", "zealot",
         "martyr"
     ],
     "intermediate":[
@@ -28,7 +28,7 @@
         "politician",
         "death",
         "werewolf",
-        "dracula", "thrall", "renfield",
+        "apostle", "disciple", "zealot",
         "martyr"
     ],
     "classic": [

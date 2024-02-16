@@ -236,11 +236,11 @@ export function translateChatMessage(message: ChatMessage): string {
             } else {
                 return translate("chatMessage.spyMafiaVisit", playerListToString(message.players));
             }
-        case "spyVampireCount":
+        case "spyCultistCount":
             if(message.count === 1){
-                return translate("chatMessage.spyVampireCount.one");
+                return translate("chatMessage.spyCultistCount.one");
             }else{
-                return translate("chatMessage.spyVampireCount", message.count);
+                return translate("chatMessage.spyCultistCount", message.count);
             }
         case "spyBug":
             return translate("chatMessage.spyBug."+message.bug);
@@ -296,14 +296,14 @@ export function translateChatMessage(message: ChatMessage): string {
                     playerListToString(message.players)
                 );
             }
-        case "vampiresSacrificesRequired":
+        case "CultSacrificesRequired":
             switch (message.required) {
                 case 0:
-                    return translate("chatMessage.vampiresSacrificesRequired.0");
+                    return translate("chatMessage.CultSacrificesRequired.0");
                 case 1:
-                    return translate("chatMessage.vampiresSacrificesRequired.1");
+                    return translate("chatMessage.CultSacrificesRequired.1");
                 default:
-                    return translate("chatMessage.vampiresSacrificesRequired", message.required);
+                    return translate("chatMessage.CultSacrificesRequired", message.required);
             }
         case "playerWithNecronomicon":
             return translate("chatMessage.playerWithNecronomicon", GAME_MANAGER.state.players[message.playerIndex].toString());
@@ -316,8 +316,8 @@ export function translateChatMessage(message: ChatMessage): string {
         case "jesterWon":
         case "targetJailed":
         case "yourConvertFailed":
-        case "draculaCanConvertTonight":
-        case "draculaCantConvertTonight":
+        case "apostleCanConvertTonight":
+        case "apostleCantConvertTonight":
         case "someoneSurvivedYourAttack":
         case "transported":
         case "veteranAttackedVisitor":
@@ -347,7 +347,7 @@ export type ChatMessage = {
     type: "normal", 
     messageSender: MessageSender, 
     text: string, 
-    chatGroup: "all" | "dead" | "mafia" | "vampire" | "seance" | "jail" | "interview"
+    chatGroup: "all" | "dead" | "mafia" | "cult" | "seance" | "jail" | "interview"
 } | {
     type: "whisper", 
     fromPlayerIndex: PlayerIndex, 
@@ -428,11 +428,11 @@ export type ChatMessage = {
 } | {
     type: "yourConvertFailed"
 } | {
-    type: "draculaCanConvertTonight"
+    type: "apostleCanConvertTonight"
 } | {
-    type: "draculaCantConvertTonight"
+    type: "apostleCantConvertTonight"
 } | {
-    type: "vampiresSacrificesRequired"
+    type: "CultSacrificesRequired"
     required: number
 } | {
     type: "mediumSeance",
@@ -466,7 +466,7 @@ export type ChatMessage = {
     type: "spyMafiaVisit", 
     players: PlayerIndex[]
 } | {
-    type: "spyVampireCount",
+    type: "spyCultistCount",
     count: number
 } | {
     type: "spyBug", 

@@ -320,24 +320,24 @@
         "keywords": ["convert", "defense","roleLimit"],
         "canBeConvertedTo": ["jester"]
     },
-    "dracula": {
-        "faction": "vampire",
+    "apostle": {
+        "faction": "cult",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": ["convert","priority","defense"],
         "canBeConvertedTo": []
     },
-    "thrall": {
-        "faction": "vampire",
+    "disciple": {
+        "faction": "cult",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["convert"],
         "canBeConvertedTo": []
     },
-    "renfield": {
-        "faction": "vampire",
+    "zealot": {
+        "faction": "cult",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
