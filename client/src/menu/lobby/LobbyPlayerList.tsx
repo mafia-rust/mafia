@@ -57,15 +57,21 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
         let out = [];
         for(let [id, player] of this.state.players.entries()){
             // TODO: Find an emoji to represent this
+
+            let playerName = <>{player.host ? "👑 " : ""}{player.lostConnection ? "... " : ""}{player.name}</>;
+
             out.push(<li key={id} className={player.lostConnection ? "keyword-dead" : ""}>
-                <button
-                    onClick={()=>{
-                        if(this.state.host)
-                            GAME_MANAGER.sendKickPlayerPacket(id);
-                    }}
-                >
-                    {player.host ? "👑 " : ""}{player.lostConnection ? "... " : ""}{player.name}
-                </button>
+                {this.state.host ? 
+                    <button
+                        onClick={()=>{
+                            if(this.state.host)
+                                GAME_MANAGER.sendKickPlayerPacket(id);
+                        }}
+                    >
+                        {playerName}
+                    </button>
+                    : playerName
+                }
             </li>)
         }
 
