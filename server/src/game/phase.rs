@@ -70,13 +70,19 @@ impl PhaseState {
     pub fn start(game: &mut Game) {
         match game.current_phase().clone() {
             PhaseState::Morning => {
-                for player_ref in PlayerReference::all_players(game){
+                for player_ref in PlayerReference::all_players(game) {
                     if player_ref.night_died(game) {
-
                         let new_grave = Grave::from_player_night(game, player_ref);
-                        player_ref.die(game, new_grave);
+                        player_ref.die(game, new_grave, false);
                     }
                 }
+
+                for player_ref in PlayerReference::all_players(game) {
+                    if player_ref.night_died(game) {
+                        player_ref.invoke_on_any_death(game)
+                    }
+                }
+                
 
                 game.phase_machine.day_number += 1;
             },
@@ -161,7 +167,7 @@ impl PhaseState {
                 
                 if innocent < guilty {
                     let new_grave = Grave::from_player_lynch(game, player_on_trial);
-                    player_on_trial.die(game, new_grave);
+                    player_on_trial.die(game, new_grave, true);
                 }
 
                 Self::Night

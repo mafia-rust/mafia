@@ -70,8 +70,6 @@ export default function WikiArticle(props: {
                 <StyledText className="wiki-content-body" markdown={true}>
                     {keywords}
                 </StyledText>
-                
-                
             </section>;
         case "standard":
             return <StyledText className="wiki-content-body" markdown={true}>

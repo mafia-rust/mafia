@@ -56,7 +56,7 @@ impl PlayerReference{
     }
     /// ### Pre condition:
     /// self.alive(game) == false
-    pub fn die(&self, game: &mut Game, grave: Grave){
+    pub fn die(&self, game: &mut Game, grave: Grave, invoke_on_any_death: bool){
         self.set_alive(game, false);
 
         self.add_chat_message(game, ChatMessage::YouDied);
@@ -70,6 +70,11 @@ impl PlayerReference{
             }
         }
 
+        if invoke_on_any_death {
+            self.invoke_on_any_death(game);
+        }
+    }
+    pub fn invoke_on_any_death(&self, game: &mut Game){
         for player_ref in PlayerReference::all_players(game){
             player_ref.on_any_death(game, *self)
         }
