@@ -244,7 +244,7 @@
                 "messageSender": {
                     "type": "medium"
                 },
-                "text": "Anyone wanna throw me around like a football?", 
+                "text": "Why didn't you claim what your role was while you were alive.", 
                 "chatGroup": "dead"
             },
             {
@@ -253,7 +253,7 @@
                     "type": "player",
                     "player": 37
                 },
-                "text": "I wanna throw you around like a football", 
+                "text": "I was litterally looking it up when they killed me. Google said a lookout is \"a place from which to keep watch or view landscape\".", 
                 "chatGroup": "dead"
             },
             {"type": "mediumSeance", "player": 10}
@@ -285,7 +285,7 @@
                 "messageSender": {
                     "type": "journalist"
                 },
-                "text": "Could you give us your opinion on the situation happening in [REDACTED]?", 
+                "text": "Alright! Who wants to throw me around like a football?", 
                 "chatGroup": "interview"
             },
             {
@@ -294,12 +294,12 @@
                     "type": "player",
                     "player": 1
                 },
-                "text": "Oh golly! I dont know, [REDACTED] [REDACTED]! [REDACTED]? [REDACTED]!", 
+                "text": "I wanna throw you around like a football", 
                 "chatGroup": "interview"
             },
             {
                 "type": "journalistJournal",
-                "journal": "I interviewed @2 last night. He was non compliant, we should vote him out."
+                "journal": "I interviewed @2 last night. He gets it."
             }
         ]
     },
