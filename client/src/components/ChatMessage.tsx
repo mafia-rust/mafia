@@ -296,14 +296,14 @@ export function translateChatMessage(message: ChatMessage): string {
                     playerListToString(message.players)
                 );
             }
-        case "cultSacrificesRequired":
+        case "CultSacrificesRequired":
             switch (message.required) {
                 case 0:
-                    return translate("chatMessage.cultSacrificesRequired.0");
+                    return translate("chatMessage.CultSacrificesRequired.0");
                 case 1:
-                    return translate("chatMessage.cultSacrificesRequired.1");
+                    return translate("chatMessage.CultSacrificesRequired.1");
                 default:
-                    return translate("chatMessage.cultSacrificesRequired", message.required);
+                    return translate("chatMessage.CultSacrificesRequired", message.required);
             }
         case "playerWithNecronomicon":
             return translate("chatMessage.playerWithNecronomicon", GAME_MANAGER.state.players[message.playerIndex].toString());
@@ -432,7 +432,7 @@ export type ChatMessage = {
 } | {
     type: "apostleCantConvertTonight"
 } | {
-    type: "cultSacrificesRequired"
+    type: "CultSacrificesRequired"
     required: number
 } | {
     type: "mediumSeance",
