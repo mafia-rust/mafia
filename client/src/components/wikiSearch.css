@@ -22,6 +22,12 @@
     overflow-y: auto;
     flex: 1 1;
 }
+.wiki-message-section {
+    display: flex;
+    flex-direction: column;
+    margin-top: .1rem;
+    margin-bottom: .6rem;
+}
 .wiki-content-body {
     text-align: left;
     height: max-content;
