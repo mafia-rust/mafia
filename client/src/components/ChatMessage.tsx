@@ -100,9 +100,11 @@ export function sanitizePlayerMessage(text: string): string {
     });
 }
 
-export function translateChatMessage(message: ChatMessage, playerNames: string[]): string {
+export function translateChatMessage(message: ChatMessage, playerNames?: string[]): string {
 
-    
+    if (playerNames === undefined) {
+        playerNames = getPlayerNames();
+    }
 
     switch (message.type) {
         case "normal":

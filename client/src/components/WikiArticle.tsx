@@ -64,7 +64,7 @@ export default function WikiArticle(props: {
                 </StyledText>
                 <div className="wiki-message-section">
                     {roleData.chatMessages.map((msg: any)=>
-                        <><ChatElement message={msg as ChatMessage} playerNames={DUMMY_NAMES}/></>
+                        <ChatElement message={msg as ChatMessage} playerNames={DUMMY_NAMES}/>
                     )}
                 </div>
                 <StyledText className="wiki-content-body" markdown={true}>
