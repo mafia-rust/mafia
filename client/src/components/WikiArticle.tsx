@@ -43,6 +43,7 @@ export default function WikiArticle(props: {
                 <StyledText className="wiki-content-body" markdown={true}>{
                     translate("wiki.article.role",
                         translate("role."+role+".name"),
+                        translate(roleData.faction),
                         translateChecked("wiki.article.role."+role+".guide") ?? translate("wiki.article.role.noGuide"),
                         translateChecked("wiki.article.role."+role+".abilities") ?? translate("wiki.article.role.noAbilities"),
                         translateChecked("wiki.article.role."+role+".attributes") ?? translate("wiki.article.role.noAttributes"),

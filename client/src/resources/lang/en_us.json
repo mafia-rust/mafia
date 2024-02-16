@@ -593,7 +593,7 @@
     "wiki.article.generated.role_set.title":"Role Set",
     "wiki.article.generated.all_text.title":"All text",
 
-    "wiki.article.role": "# \\0\n<br/>\n\n### Guide\n\\1\n### Abilities\n\\2\n### Attributes\n\\3\n### Extra\n\\4\n<br/>\n\n### Role Limit: \\5\n### Defense: \\6\n\n<br>\n\n### Keywords\n\\7",
+    "wiki.article.role": "# \\0\n### \\1\n<br/>\n\n### Guide\n\\2\n### Abilities\n\\3\n### Attributes\n\\4\n### Extra\n\\5\n<br/>\n\n### Role Limit: \\6\n### Defense: \\7\n\n<br>\n\n### Keywords\n\\8",
     "wiki.article.role.guide": "Guide",
     "wiki.article.role.noGuide": "There is no guide section written for this page.",
     "wiki.article.role.abilities": "Abilities",
@@ -768,10 +768,10 @@
     "wiki.article.role.executioner.attributes":"* After you win you leave town at the start of the following night\n* Your target will always be a townie, but never a Mayor, Journalist, Jailor, Deputy, Veteran, or Transporter\n* You have an innocent aura",
     "wiki.article.role.executioner.extra":"* Get your target lynched to win\n* If your target dies by something other than lynching, you will convert to a jester immedietly\n* If there are no valid targets in the game when you become the executioner, you will convert to a jester",
 
-    "wiki.article.role.doomsayer.guide": "Guess the role of three different players to win. If you guess the role of three different living players correctly, you kill all three of them, and leave town. You can not guess town investigative roles or the martyr. You should listen to what people claim and try to push for more people to claim roles.",
+    "wiki.article.role.doomsayer.guide": "Guess the role of three different players to win. If you guess the role of three different living players correctly, you kill all three of them, and leave town. You should listen to what people claim and try to push for more people to claim roles.",
     "wiki.article.role.doomsayer.abilities":"* Guess the role of three different living players in one night, killing them and winning",
-    "wiki.article.role.doomsayer.attributes":"* When you win, you leave town at the start of the next morning\n* You have to guess the exact role of townies, but you only need to guess the faction of all other roles\n* You can't try to guess town investigative roles\n* You can't try to guess a martyr\n* If there are not enough players left for you to guess and win, you will convert to a jester\n* You do not visit when you kill\n* Your attack is protection piecring",
-    "wiki.article.role.doomsayer.extra":"* Your three guesses must be three different players\n* You will still win, even if the players you guessed correctly don't die",
+    "wiki.article.role.doomsayer.attributes":"* When you win, you leave town at the start of the next morning\n* You have to guess the exact role of townies, but you only need to guess the faction of all other roles\n* You can't try to guess town investigative roles\n* If there are not enough players left for you to guess and win, you will convert to a jester\n* Your attack is protection piecring",
+    "wiki.article.role.doomsayer.extra":"* Your three guesses must be three different players\n* You will still win, even if the players you guessed correctly don't die\n* You do not visit when you kill\n* You can't try to guess a martyr",
 
     "wiki.article.role.politician.guide":"* If the town would win, you kill all of them, and win instead. Try to help to the town to win while staying alive.",
     "wiki.article.role.politician.abilities": "* When town would normally win, if you are still alive, you win instead\n* When you win, you kill every townie, and all politicians leave town",

@@ -82,7 +82,7 @@ impl RoleStateImpl for Executioner {
             }
             PhaseState::Night => {
                 if self.target == ExecutionerTarget::Won {
-                    actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
+                    actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref), true);
                 }
             },
             _=>{}
