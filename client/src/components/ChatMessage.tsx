@@ -17,10 +17,7 @@ export default function ChatElement(
     }, 
 ): ReactElement {
     const message = props.message;
-    if (props.playerNames === undefined) {
-        props.playerNames = getPlayerNames();
-    }
-    const playerNames = props.playerNames;
+    const playerNames = props.playerNames ?? getPlayerNames();
     const chatMessageStyles = require("../resources/styling/chatMessage.json");
     let style = typeof chatMessageStyles[message.type] === "string" ? chatMessageStyles[message.type] : "";
 
@@ -108,7 +105,7 @@ export function translateChatMessage(message: ChatMessage, playerNames?: string[
 
     switch (message.type) {
         case "normal":
-            let icon = translateChecked("chatGroup."+message.chatGroup+".icon");
+            const icon = translateChecked("chatGroup."+message.chatGroup+".icon");
 
             if(message.messageSender.type === "player"){
                 return (icon??"")+translate("chatMessage.normal",
