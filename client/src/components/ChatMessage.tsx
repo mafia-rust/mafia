@@ -343,8 +343,6 @@ export function translateChatMessage(message: ChatMessage, playerNames?: string[
         case "doomsayerWon":
         case "martyrFailed":
         case "martyrWon":
-        case "retributionistMessage":
-        case "necromancerMessage":
         case "targetsMessage":
         case "psychicFailed":
             return translate("chatMessage."+message.type);
@@ -498,12 +496,6 @@ export type ChatMessage = {
     players: PlayerIndex[]
 } | {
     type: "psychicFailed"
-} | {
-    type: "retributionistMessage", 
-    message: ChatMessage
-} | {
-    type: "necromancerMessage", 
-    message: ChatMessage
 } | {
     type: "veteranAttackedYou"
 } | {

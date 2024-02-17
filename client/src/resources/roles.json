@@ -323,7 +323,7 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "targetIsPossessionImmune"},
-            {"type": "retributionistMessage", "message": 
+            {"type": "targetsMessage", "message": 
                 {"type": "sheriffResult","suspicious":true}
             },
             {"type": "youWerePossessed", "immune": false},
@@ -455,7 +455,7 @@
         "keywords": ["dead","visit","possess","priority","roleLimit"],
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
-            {"type": "necromancerMessage", "message": 
+            {"type": "targetsMessage", "message": 
                 {"type": "sheriffResult","suspicious":true}
             },
             {"type": "targetIsPossessionImmune"},
