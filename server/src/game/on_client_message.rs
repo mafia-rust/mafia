@@ -70,7 +70,7 @@ impl Game {
                                 self.add_message_to_chat_group(
                                     chat_group,
                                     ChatMessage::JailorDecideExecute {
-                                        targets: PlayerReference::ref_vec_to_index(&target_ref_list)
+                                        target: target_ref_list.first().map(|p|p.index())
                                     }
                                 );
                                 target_message_sent = true;

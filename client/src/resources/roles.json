@@ -26,7 +26,8 @@
                 "text": "I'm the Jailor", 
                 "chatGroup": "jail"
             },
-            {"type": "jailorDecideExecute","targets": [7]},
+            {"type": "jailorDecideExecute","target": 7},
+            {"type": "jailorDecideExecute","target": null},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "targetJailed"}
         ]

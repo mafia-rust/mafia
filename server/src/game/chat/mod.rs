@@ -103,7 +103,7 @@ pub enum ChatMessage {
     JailedTarget{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
     JailedSomeone{player_index: PlayerIndex},
-    JailorDecideExecute {targets: Vec<PlayerIndex>},
+    JailorDecideExecute {target: Option<PlayerIndex>},
     // TODO rename to MediumSeanced
     MediumSeance{player: PlayerIndex},
     #[serde(rename_all = "camelCase")]

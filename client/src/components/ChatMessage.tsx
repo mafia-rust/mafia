@@ -210,8 +210,8 @@ export function translateChatMessage(message: ChatMessage, playerNames?: string[
                 playerNames[message.shotIndex]
             );
         case "jailorDecideExecute":
-            if (message.targets.length > 0) {
-                return translate("chatMessage.jailorDecideExecute", playerListToString(message.targets, playerNames));
+            if (message.target !== null) {
+                return translate("chatMessage.jailorDecideExecute", playerNames[message.target]);
             } else {
                 return translate("chatMessage.jailorDecideExecute.nobody");
             }
@@ -426,7 +426,7 @@ export type ChatMessage = {
     playerIndex: PlayerIndex
 } | {
     type: "jailorDecideExecute"
-    targets: PlayerIndex[]
+    target: PlayerIndex | null
 } | {
     type: "yourConvertFailed"
 } | {
