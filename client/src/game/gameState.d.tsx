@@ -112,7 +112,7 @@ export type Player = {
     toString(): string
 }
 
-export const MODIFIERS = ["voteToSkipPhase", "deadCanVote"] as const;
+export const MODIFIERS = ["voteToEndPhase", "deadCanVote"] as const;
 export type Modifier = typeof MODIFIERS[number];
 
 

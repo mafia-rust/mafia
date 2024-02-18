@@ -2,7 +2,7 @@ use std::{collections::HashSet, time::Duration};
 
 use serde::{Serialize, Deserialize};
 
-use super::{phase::PhaseType, role::Role, role_list::RoleList};
+use super::{modifier::Modifier, phase::PhaseType, role::Role, role_list::RoleList};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Settings{
@@ -59,11 +59,4 @@ impl Default for PhaseTimeSettings{
             night: 39
         }
     }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
-#[serde(rename_all = "camelCase")]
-pub enum Modifier{
-    VoteToSkipPhase,
-    DeadCanVote
 }

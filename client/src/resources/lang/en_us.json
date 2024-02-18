@@ -367,7 +367,7 @@
     "simplify":"Simplify",
     
     "deadCanVote": "Dead Can Vote",
-    "voteToSkipPhase": "Vote To Skip Phase",
+    "voteToEndPhase": "Vote To End Phase",
 
     "verdict.guilty": "Guilty",
     "verdict.innocent": "Innocent",

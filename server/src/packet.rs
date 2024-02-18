@@ -21,7 +21,7 @@ use std::collections::{HashMap, HashSet};
 use serde::{Deserialize, Serialize};
 
 use crate::{game::{
-    available_buttons::AvailableButtons, chat::ChatMessage, grave::Grave, phase::PhaseType, player::{PlayerIndex, PlayerReference}, role::{doomsayer::DoomsayerGuess, Role, RoleState}, role_list::{RoleList, RoleOutline}, settings::{Modifier, PhaseTimeSettings}, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
+    available_buttons::AvailableButtons, chat::ChatMessage, grave::Grave, modifier::Modifier, phase::PhaseType, player::{PlayerIndex, PlayerReference}, role::{doomsayer::DoomsayerGuess, Role, RoleState}, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
 }, listener::{PlayerID, RoomCode}, log};
 
 #[derive(Serialize, Debug, Clone)]

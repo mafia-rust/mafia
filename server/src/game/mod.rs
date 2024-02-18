@@ -12,6 +12,7 @@ pub mod team;
 pub mod available_buttons;
 pub mod on_client_message;
 pub mod tag;
+pub mod modifier;
 
 use std::collections::HashMap;
 use std::time::Duration;
@@ -29,6 +30,7 @@ use settings::Settings;
 use grave::Grave;
 
 use self::end_game_condition::EndGameCondition;
+use self::modifier::Modifiers;
 use self::phase::PhaseState;
 use self::role::RoleState;
 use self::team::Teams;
@@ -42,6 +44,7 @@ pub struct Game {
     pub teams: Teams,
 
     phase_machine : PhaseStateMachine,
+    modifiers: Modifiers,
 
     /// Whether the game is still updating phase times
     pub ticking: bool
@@ -123,6 +126,7 @@ impl Game {
                 graves: Vec::new(),
                 teams: Teams::default(),
                 phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
+                modifiers: Modifiers::default(),
                 settings,
             };
 
@@ -340,7 +344,7 @@ impl Game {
 pub mod test {
     use rand::{thread_rng, seq::SliceRandom};
 
-    use super::{Game, settings::Settings, role_list::RoleOutline, player::{PlayerReference, test::mock_player}, phase::PhaseStateMachine, team::Teams, RejectStartReason};
+    use super::{modifier::Modifiers, phase::PhaseStateMachine, player::{test::mock_player, PlayerReference}, role_list::RoleOutline, settings::Settings, team::Teams, Game, RejectStartReason};
 
     pub fn mock_game(settings: Settings, number_of_players: usize) -> Result<Game, RejectStartReason> {
 
@@ -378,6 +382,7 @@ pub mod test {
             graves: Vec::new(),
             teams: Teams::default(),
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
+            modifiers: Modifiers::default(),
             settings,
         };
 
