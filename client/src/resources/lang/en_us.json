@@ -535,7 +535,7 @@
     "wiki.article.standard.enemies.title": "Enemies",
     "wiki.article.standard.enemies.text": "A Seer's result which indicates that the two players they visited can not win together.",
     "wiki.article.standard.alert.title": "Alert",
-    "wiki.article.standard.alert.text": "A Veterans ability. If you visit a veteran while they are on alert, they will deal an armor-piercing attack to you. A Veteran can up to Alert three times.",
+    "wiki.article.standard.alert.text": "A Veterans ability. If you visit a veteran while they are on alert, they will attack you with an armor-piercing attack. A Veteran can Alert up to three times.",
     "wiki.article.standard.haunt.title": "Haunt",
     "wiki.article.standard.haunt.text": "After they die, a Medium can haunt a living player to talk to them during the night. Every dead medium will be in the haunt chat with every haunted player.",
     "wiki.article.standard.transport.title": "Transport",
@@ -678,7 +678,7 @@
     "wiki.article.role.escort.attributes":"* You can not be roleblocked\n* The player you visit is told when they are roleblocked, even if they are immune to being roleblocked",
     "wiki.article.role.escort.extra":"* When someone is roleblocked, their visits are cleared",
 
-    "wiki.article.role.medium.guide": "You can talk with the dead at night. After you die, you can choose to speak with a living player two times, this is called a haunt. You can also speak with other mediums at night. You should try to find information from other players and tell the town what dead players think about the game.",
+    "wiki.article.role.medium.guide": "This wiki page needs revision. You can talk with the dead at night. After you die, you can choose to speak with a living player two times, this is called a haunt. You can also speak with other mediums at night. You should try to find information from other players and tell the town what dead players think about the game.",
     "wiki.article.role.medium.abilities":"* At night, you can read and send messages in the dead chat group\n* While dead, select a living player during the day to haunt at night, putting that player in the haunt chat group during the night. You may perform two haunts.",
     "wiki.article.role.medium.attributes":"* While in jail, you can read from dead chat group, but you can't send to it\n* Your messages appears to be sent by \"Medium\" to players of the opposite living status",
     "wiki.article.role.medium.extra":"* While any dead medium haunts any living player, all dead mediums and haunted players are together in the haunt chat group\n* Every medium can do two haunts, so two mediums can do four haunts\n* Living mediums do not join the haunt chat group",
@@ -764,8 +764,8 @@
     "wiki.article.role.jester.extra":"* Your attack goes before Transporter, Witch, or Necromancer, so they can not force you to kill someone else.",
 
     "wiki.article.role.executioner.guide":"Get your target lynched to win. If you win, you leave town at the start of night. You should try to claim something that makes people think your target is suspicious.",
-    "wiki.article.role.executioner.abilities":"",
-    "wiki.article.role.executioner.attributes":"* When your target is lynched, you win\n After you win, you will leave town at the start of the following night\n* Your target is a random townie, but never a Mayor, Journalist, Jailor, Deputy, Veteran, or Transporter\n* You always have an innocent aura\n* You have armor",
+    "wiki.article.role.executioner.abilities":"* None",
+    "wiki.article.role.executioner.attributes":"* When your target is lynched, you win\n* After you win, you will leave town at the start of the following night\n* Your target is a random townie, but never a Mayor, Journalist, Jailor, Deputy, Veteran, or Transporter\n* You always have an innocent aura\n* You have armor",
     "wiki.article.role.executioner.extra":"* If your target dies by something other than lynching, you will convert to a jester immediately\n* If there are no valid targets in the game when you become the executioner, you will convert to a jester",
 
     "wiki.article.role.doomsayer.guide": "Guess the role of three different players to win. If you guess the role of three different living players correctly, you attack all three of them, and leave town. You should listen to what people claim and try to push for more people to claim roles.",
@@ -776,7 +776,7 @@
     "wiki.article.role.politician.guide":"* If the town would win, instead you win and they all die. Try to help to the town to win while staying alive.",
     "wiki.article.role.politician.abilities": "* When town would win, you win, instantly attack ever townie, and all politicians leave town",
     "wiki.article.role.politician.attributes": "* You win with other politicians\n* You have a protection-piercing attack when you win the game\n* When you first become this role, if there are no townies alive, you become a jester\n* You have a protection-piercing attack",
-    "wiki.article.role.politician.extra":"* r\n* If all townies die, you leave town\n* If the only players left are politicians, you win",
+    "wiki.article.role.politician.extra":"* If all townies die, you leave town\n* If the only players left are politicians, you win",
 
     "wiki.article.role.arsonist.guide":"You can select a player each night to douse them in gasoline. Target yourself to ignite and kill every player who is doused. You know who is doused. Try not to douse players you think the mafia will kill, because then you waste your night dousing someone who is going to die anyway.",
     "wiki.article.role.arsonist.abilities":"* Visit a player to douse them\n* Visit yourself to ignite to all doused players\n* If a player visits you, you will douse them",
