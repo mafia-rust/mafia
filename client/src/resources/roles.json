@@ -594,7 +594,7 @@
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": ["convert","priority","defense"],
-        "canBeConvertedTo": [],
+        "canBeConvertedTo": ["zealot","disciple"],
         "chatMessages":[
             {"type": "yourConvertFailed"},
             {"type": "apostleCanConvertTonight"},
@@ -610,7 +610,7 @@
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["convert"],
-        "canBeConvertedTo": [],
+        "canBeConvertedTo": ["zealot","apostle"],
         "chatMessages":[]
     },
     "zealot": {
@@ -619,7 +619,7 @@
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": ["convert", "defense"],
-        "canBeConvertedTo": [],
+        "canBeConvertedTo": ["disciple","apostle"],
         "chatMessages":[
             {"type": "someoneSurvivedYourAttack"}
         ]
