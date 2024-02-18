@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::{collections::HashSet, time::Duration};
 
 use serde::{Serialize, Deserialize};
 
@@ -8,14 +8,16 @@ use super::{phase::PhaseType, role::Role, role_list::RoleList};
 pub struct Settings{
     pub role_list: RoleList,
     pub phase_times: PhaseTimeSettings,
-    pub excluded_roles: Vec<Role>,
+    pub excluded_roles: HashSet<Role>,
+    pub modifiers: HashSet<Modifier>,
 }
 impl Default for Settings{
     fn default() -> Self {
         Self{
             role_list: RoleList::default(),
             phase_times: PhaseTimeSettings::default(),
-            excluded_roles: vec![Role::Jailor, Role::Bodyguard, Role::Mafioso, Role::Martyr]
+            excluded_roles: vec![Role::Jailor, Role::Bodyguard, Role::Mafioso, Role::Martyr].into_iter().collect(),
+            modifiers: HashSet::new()
         }
     }
 }
@@ -57,4 +59,11 @@ impl Default for PhaseTimeSettings{
             night: 39
         }
     }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[serde(rename_all = "camelCase")]
+pub enum Modifier{
+    VoteToSkipPhase,
+    DeadCanVote
 }

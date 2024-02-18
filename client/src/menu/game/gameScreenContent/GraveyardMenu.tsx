@@ -163,6 +163,42 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
         </div>
     }
 
+    renderModifiers(){
+
+        if(GAME_MANAGER.state.stateType !== "game"){
+            return <div className="graveyard-menu-modifiers">
+                <section>
+                    {translate("wiki.article.standard.modifiers.title")}
+                </section>
+                <div>
+                    <StyledText>{translate("none")}</StyledText>
+                </div>
+            </div>
+        }
+
+
+        return <div className="graveyard-menu-modifiers">
+            <section>
+                {translate("wiki.article.standard.modifiers.title")}
+            </section>
+            <div>
+                {
+                    GAME_MANAGER.state.modifiers.length === 0 
+                    ? <StyledText>{translate("none")}</StyledText> : 
+                    Array.from(GAME_MANAGER.state.modifiers.values()).map((entry, i)=>{
+                        return <button 
+                            key={i}
+                        >
+                            <StyledText>
+                                {translate(entry) ?? ""}
+                            </StyledText>
+                        </button>
+                    })
+                }
+            </div>
+        </div>
+    }
+
 
     render(){return(<div className="graveyard-menu graveyard-menu-colors">
         <ContentTab close={ContentMenu.GraveyardMenu} helpMenu={"standard/graveyard"}>{translate("menu.graveyard.title")}</ContentTab>
@@ -172,6 +208,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             {this.renderGraves()}
         </div>
         {this.renderExcludedRoles()}
+        {this.renderModifiers()}
 
             {this.state.extendedGraveIndex!==null?this.renderGraveExtended(this.state.graves[this.state.extendedGraveIndex]):null}
     </div>)}

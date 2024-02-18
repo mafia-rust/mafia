@@ -19,6 +19,7 @@ export function createLobbyState(): LobbyState {
             evening: 7, 
             night: 37,
         },
+        modifiers: [],
 
         players: new Map<PlayerID, LobbyPlayer>(),
     }
@@ -61,6 +62,7 @@ export function createGameState(): GameState {
             evening: 7, 
             night: 37,
         },
+        modifiers: [],
 
         ticking: true,
     }

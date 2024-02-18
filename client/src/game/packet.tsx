@@ -1,4 +1,4 @@
-import { Phase, PlayerIndex, Verdict, PhaseTimes, Tag, PlayerID } from "./gameState.d"
+import { Phase, PlayerIndex, Verdict, PhaseTimes, Tag, PlayerID, Modifier } from "./gameState.d"
 import { Grave } from "./graveState"
 import { ChatMessage } from "../components/ChatMessage"
 import { RoleList, RoleOutline } from "./roleListState.d"
@@ -59,6 +59,9 @@ export type ToClientPacket = {
 } | {
     type: "phaseTimes",
     phaseTimeSettings: PhaseTimes
+} | {
+    type: "modifiers",
+    modifiers: Modifier[]
 } | {
     type: "excludedRoles",
     roles: Role[]
@@ -160,11 +163,14 @@ export type ToServerPacket = {
     type: "simplifyRoleList"
 } | {
     type: "setPhaseTime", 
-    phase: Phase, 
+    phase: Phase,
     time: number
 } | {
     type: "setPhaseTimes", 
     phaseTimeSettings: PhaseTimes
+} | {
+    type: "setModifiers",
+    modifiers: Modifier[]
 } | {
     type: "setExcludedRoles", 
     roles: Role[], 

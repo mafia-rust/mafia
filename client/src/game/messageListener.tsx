@@ -177,6 +177,10 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
                 GAME_MANAGER.state.phaseTimes = packet.phaseTimeSettings;
         break;
+        case "modifiers":
+            if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
+                GAME_MANAGER.state.modifiers = packet.modifiers;
+        break;
         case "excludedRoles":
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
                 GAME_MANAGER.state.excludedRoles = packet.roles;

@@ -57,6 +57,7 @@ impl PlayerReference{
             },
             ToClientPacket::ExcludedRoles { roles: game.settings.excluded_roles.clone() },
             ToClientPacket::RoleList {role_list: game.settings.role_list.clone()},
+            ToClientPacket::Modifiers { modifiers: game.settings.modifiers.clone() },
             ToClientPacket::Phase { 
                 phase: game.current_phase().phase(),
                 seconds_left: game.phase_machine.time_remaining.as_secs(), 

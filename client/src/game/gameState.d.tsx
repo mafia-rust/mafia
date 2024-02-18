@@ -28,6 +28,7 @@ export type LobbyState = {
     roleList: RoleList,
     excludedRoles: Role[],
     phaseTimes: PhaseTimes,
+    modifiers: Modifier[],
 
     players: Map<PlayerID, LobbyPlayer>,
 }
@@ -64,7 +65,8 @@ type GameState = {
     
     roleList: RoleList,
     excludedRoles: Role[],
-    phaseTimes: PhaseTimes
+    phaseTimes: PhaseTimes,
+    modifiers: Modifier[],
 
     ticking: boolean
 }
@@ -109,5 +111,8 @@ export type Player = {
 
     toString(): string
 }
+
+export const MODIFIERS = ["voteToSkipPhase", "deadCanVote"] as const;
+export type Modifier = typeof MODIFIERS[number];
 
 

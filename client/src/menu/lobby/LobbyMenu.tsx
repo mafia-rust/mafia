@@ -11,6 +11,7 @@ import Anchor from "../Anchor";
 import WikiSearch from "../../components/WikiSearch";
 import { RoomCodeButton } from "../Settings";
 import { getRolesFromRoleListRemoveExclusionsAddConversions, getRolesComplement } from "../../game/roleListState.d";
+import LobbyModifierMenu from "./LobbyModifierMenu";
 
 type LobbyMenuProps = {}
 
@@ -59,6 +60,7 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
                 </div>
                 <div>
                     {Anchor.isMobile() && <h1>{translate("menu.lobby.settings")}</h1>}
+                    <LobbyModifierMenu isHost={this.state.host}/>
                     <LobbyPhaseTimePane/>
                     <LobbyRolePane/>
                     <LobbyExcludedRoles/>

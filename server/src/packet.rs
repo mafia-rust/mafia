@@ -16,18 +16,13 @@
 //! None.to_json_string()       // null
 //! 
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use serde::{Deserialize, Serialize};
 
 use crate::{game::{
-    player::{PlayerIndex, PlayerReference},
-    role_list::{RoleList, RoleOutline},
-    verdict::Verdict, phase::PhaseType, 
-    chat::ChatMessage,
-    role::{Role, RoleState, doomsayer::DoomsayerGuess}, 
-    Game, grave::Grave, available_buttons::AvailableButtons, tag::Tag, settings::PhaseTimeSettings, RejectStartReason, GameOverReason
-}, listener::{RoomCode, PlayerID}, log};
+    available_buttons::AvailableButtons, chat::ChatMessage, grave::Grave, phase::PhaseType, player::{PlayerIndex, PlayerReference}, role::{doomsayer::DoomsayerGuess, Role, RoleState}, role_list::{RoleList, RoleOutline}, settings::{Modifier, PhaseTimeSettings}, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
+}, listener::{PlayerID, RoomCode}, log};
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -72,7 +67,9 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     PhaseTimes{phase_time_settings: PhaseTimeSettings},
     #[serde(rename_all = "camelCase")]
-    ExcludedRoles{roles: Vec<Role>},
+    Modifiers{modifiers: HashSet<Modifier>},
+    #[serde(rename_all = "camelCase")]
+    ExcludedRoles{roles: HashSet<Role>},
 
     // Game
     
@@ -182,7 +179,9 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SetPhaseTimes{phase_time_settings: PhaseTimeSettings},
     #[serde(rename_all = "camelCase")]
-    SetExcludedRoles{roles: Vec<Role>},
+    SetModifiers{modifiers: HashSet<Modifier>},
+    #[serde(rename_all = "camelCase")]
+    SetExcludedRoles{roles: HashSet<Role>},
 
     // Game
     #[serde(rename_all = "camelCase")]

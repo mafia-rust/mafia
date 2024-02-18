@@ -1,4 +1,4 @@
-use std::{collections::{HashMap, HashSet, VecDeque}, time::{Duration, Instant}};
+use std::{collections::{HashMap, VecDeque}, time::{Duration, Instant}};
 
 use crate::{
     game::{
@@ -229,6 +229,19 @@ impl Lobby {
 
                 self.send_to_all(ToClientPacket::PhaseTimes { phase_time_settings });
             }
+            ToServerPacket::SetModifiers { modifiers } => {
+                let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
+                    log!(error "Lobby"; "{} {}", "Attempted to change modifiers outside of the lobby menu!", player_id);
+                    return;
+                };
+                if let Some(player) = players.get(&player_id){
+                    if !player.host {return}
+                }
+
+                settings.modifiers = modifiers.clone();
+
+                self.send_to_all(ToClientPacket::Modifiers { modifiers });
+            }
             ToServerPacket::SetRoleList { mut role_list } => {
                 let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
                     log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", player_id);
@@ -278,7 +291,7 @@ impl Lobby {
                 
                 self.send_to_all(ToClientPacket::RoleList { role_list });
             }
-            ToServerPacket::SetExcludedRoles {mut roles } => {
+            ToServerPacket::SetExcludedRoles {roles } => {
                 let LobbyState::Lobby{ settings, players } = &mut self.lobby_state else {
                     log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", player_id);
                     return;
@@ -287,8 +300,6 @@ impl Lobby {
                     if !player.host {return;}
                 }
 
-
-                let roles = roles.drain(..).collect::<HashSet<_>>().into_iter().collect::<Vec<_>>();
                 settings.excluded_roles = roles.clone();
                 self.send_to_all(ToClientPacket::ExcludedRoles { roles });
             }
@@ -527,6 +538,7 @@ impl Lobby {
     pub fn send_settings(player: &LobbyPlayer, settings: &Settings) {
         player.send(ToClientPacket::PhaseTimes { phase_time_settings: settings.phase_times.clone() });
         player.send(ToClientPacket::RoleList { role_list: settings.role_list.clone() });
+        player.send(ToClientPacket::Modifiers { modifiers: settings.modifiers.clone() });
         player.send(ToClientPacket::ExcludedRoles { roles: settings.excluded_roles.clone()});
     }
 
