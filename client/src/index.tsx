@@ -5,6 +5,7 @@ import Anchor from './menu/Anchor';
 import { GameManager, createGameManager } from './game/gameManager';
 import StartMenu from './menu/main/StartMenu';
 import LoadingScreen from './menu/LoadingScreen';
+import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
 
 const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
@@ -98,3 +99,11 @@ export function replaceMentions(rawText: string, playerNames?: string[]) {
 export function modulus(n: number, m: number) {
     return ((n % m) + m) % m;
 }
+
+window.addEventListener("blur", () => {
+    Anchor.onBlur();
+});
+
+window.addEventListener("focus", ()=>{
+    Anchor.onFocus();
+})
