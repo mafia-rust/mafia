@@ -42,6 +42,7 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
             <nav>
                 <ul>
                     <li><a href="https://www.github.com/ItsSammyM/mafia-rust">Github</a></li>
+                    <li><a href="https://discord.gg/Vxw7gFPfJj">Discord</a></li>
                     {/* eslint-disable no-script-url */}
                     {/* eslint-disable jsx-a11y/anchor-is-valid */}
                     <li><a href="javascript:" onClick={()=>{Anchor.setContent(<StandaloneWiki/>)}}>{translate("menu.wiki.title")}</a></li>
