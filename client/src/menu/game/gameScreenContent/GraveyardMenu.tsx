@@ -3,17 +3,21 @@ import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import "./graveyardMenu.css";
-import GameState from "../../../game/gameState.d";
-import { translateRoleOutline } from "../../../game/roleListState.d";
+import { Player } from "../../../game/gameState.d";
+import { RoleList, translateRoleOutline } from "../../../game/roleListState.d";
 import StyledText from "../../../components/StyledText";
 import GraveComponent from "../../../components/grave";
 import { Grave } from "../../../game/graveState";
 import { StateListener } from "../../../game/gameManager.d";
+import { Role } from "../../../game/roleState.d";
 
 type GraveyardMenuProps = {
 }
 type GraveyardMenuState = {
-    gameState: GameState,
+    graves: Grave[],
+    players: Player[],
+    roleList: RoleList,
+    excludedRoles: Role[],
     extendedGraveIndex: number | null,
     strickenRoleListIndex: number[]
 }
@@ -25,21 +29,33 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
 
         if(GAME_MANAGER.state.stateType === "game")
             this.state = {
-                gameState : GAME_MANAGER.state,
+                graves: GAME_MANAGER.state.graves,
+                players: GAME_MANAGER.state.players,
+                roleList: GAME_MANAGER.state.roleList,
+                excludedRoles: GAME_MANAGER.state.excludedRoles,
                 extendedGraveIndex: null,
                 strickenRoleListIndex: GAME_MANAGER.state.crossedOutOutlines
             };
         this.listener = (type)=>{
             if(GAME_MANAGER.state.stateType === "game"){
-                this.setState({
-                    gameState: GAME_MANAGER.state
-                });
-                if(type === "yourCrossedOutOutlines"){
-                    this.setState({strickenRoleListIndex: GAME_MANAGER.state.crossedOutOutlines})
+                switch (type) {
+                    case "addGrave":
+                        this.setState({graves: GAME_MANAGER.state.graves})
+                    break;
+                    case "gamePlayers":
+                        this.setState({players: GAME_MANAGER.state.players})
+                    break;
+                    case "roleList":
+                        this.setState({roleList: GAME_MANAGER.state.roleList})
+                    break;
+                    case "excludedRoles":
+                        this.setState({excludedRoles: GAME_MANAGER.state.excludedRoles})
+                    break;
+                    case "yourCrossedOutOutlines":
+                        this.setState({strickenRoleListIndex: GAME_MANAGER.state.crossedOutOutlines})
+                    break;
                 }
-
             }
-                
         };  
     }
     componentDidMount() {
@@ -51,7 +67,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
 
     renderGraves(){
         return <>
-            {this.state.gameState.graves.map((grave, graveIndex)=>{
+            {this.state.graves.map((grave, graveIndex)=>{
                 return this.renderGrave(grave, graveIndex);
             }, this)}
         </>
@@ -70,7 +86,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             key={graveIndex} 
             onClick={()=>{this.setState({extendedGraveIndex:graveIndex})}}
         >
-            <StyledText noLinks={true}>{this.state.gameState.players[grave.playerIndex]?.toString()}</StyledText>
+            <StyledText noLinks={true}>{this.state.players[grave.playerIndex]?.toString()}</StyledText>
             <StyledText noLinks={true}>
                 {` (${graveRoleString})`}
             </StyledText>
@@ -84,12 +100,12 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             >
                 close
             </button>
-            <GraveComponent grave={grave} gameState={this.state.gameState}/>
+            <GraveComponent grave={grave} playerNames={this.state.players.map(p => p.toString())}/>
         </div>);
     }
 
     renderRoleList(){return<>
-        {this.state.gameState.roleList.map((entry, index)=>{
+        {this.state.roleList.map((entry, index)=>{
             return <button 
                 className="role-list-button"
                 style={{ gridRow: index + 1 }} 
@@ -130,10 +146,10 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
                 {translate("menu.excludedRoles.excludedRoles")}
             </section>
             <div>
-                {this.state.gameState.excludedRoles.length === 0 
+                {this.state.excludedRoles.length === 0 
                     ? <StyledText>{translate("none")}</StyledText>
                     : 
-                    Array.from(this.state.gameState.excludedRoles.values()).map((entry, i)=>{
+                    Array.from(this.state.excludedRoles.values()).map((entry, i)=>{
                         return <button 
                             key={i}
                         >
@@ -157,6 +173,6 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
         </div>
         {this.renderExcludedRoles()}
 
-            {this.state.extendedGraveIndex!==null?this.renderGraveExtended(this.state.gameState.graves[this.state.extendedGraveIndex]):null}
+            {this.state.extendedGraveIndex!==null?this.renderGraveExtended(this.state.graves[this.state.extendedGraveIndex]):null}
     </div>)}
 }

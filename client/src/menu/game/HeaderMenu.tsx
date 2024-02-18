@@ -1,11 +1,11 @@
 import React from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
-import GameState, { Phase, Verdict } from "../../game/gameState.d";
+import { Phase, Player, PlayerIndex, Verdict } from "../../game/gameState.d";
 import GameScreen, { ContentMenu as GameScreenContentMenus } from "./GameScreen";
 import ROLES from "../../resources/roles.json"
 import "./headerMenu.css";
-import { Role } from "../../game/roleState.d";
+import { Role, RoleState } from "../../game/roleState.d";
 import StyledText from "../../components/StyledText";
 import { StateEventType } from "../../game/gameManager.d";
 
@@ -15,7 +15,14 @@ type HeaderMenuProps = {
     chatMenuNotification: boolean,
 }
 type HeaderMenuState = {    
-    gameState: GameState,
+    phase: Phase | null,
+    playerOnTrial: PlayerIndex | null,
+    players: Player[],
+    myIndex: PlayerIndex | null,
+    judgement: Verdict,
+    roleState: RoleState | null,
+    dayNumber: number,
+    timeLeftMs: number
 }
 
 export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderMenuState> {
@@ -26,14 +33,43 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
 
         if(GAME_MANAGER.state.stateType === "game")
             this.state = {
-                gameState: GAME_MANAGER.state,
+                phase: GAME_MANAGER.state.phase,
+                playerOnTrial: GAME_MANAGER.state.playerOnTrial,
+                players: GAME_MANAGER.state.players,
+                myIndex: GAME_MANAGER.state.myIndex,
+                judgement: GAME_MANAGER.state.judgement,
+                roleState: GAME_MANAGER.state.roleState,
+                dayNumber: GAME_MANAGER.state.dayNumber,
+                timeLeftMs: GAME_MANAGER.state.timeLeftMs,
             };
         this.listener = (type) => {
             if(GAME_MANAGER.state.stateType === "game"){
-                this.setState({
-                    gameState: GAME_MANAGER.state,
-                });
-                
+                switch (type) {
+                    case "phase":
+                        this.setState({
+                            phase: GAME_MANAGER.state.phase,
+                            dayNumber: GAME_MANAGER.state.dayNumber
+                        })
+                    break;
+                    case "playerOnTrial":
+                        this.setState({playerOnTrial: GAME_MANAGER.state.playerOnTrial})
+                    break;
+                    case "gamePlayers":
+                        this.setState({players: GAME_MANAGER.state.players})
+                    break;
+                    case "yourPlayerIndex":
+                        this.setState({myIndex: GAME_MANAGER.state.myIndex})
+                    break;
+                    case "yourJudgement":
+                        this.setState({judgement: GAME_MANAGER.state.judgement})
+                    break;
+                    case "yourRoleState":
+                        this.setState({roleState: GAME_MANAGER.state.roleState})
+                    break;
+                    case "tick":
+                        this.setState({timeLeftMs: GAME_MANAGER.state.timeLeftMs})
+                    break;
+                }
             }
         };
     }
@@ -46,18 +82,18 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
     renderPhaseSpecific(){
         // TODO: Change to phase state
         
-        switch(this.state.gameState.phase){
+        switch(this.state.phase){
             case "judgement":
-            if(this.state.gameState.playerOnTrial !== null){
+            if(this.state.playerOnTrial !== null){
                 return(<div className="judgement-specific">
                     <div>
                         <StyledText>
-                            {this.state.gameState.players[this.state.gameState.playerOnTrial!]?.toString()}
+                            {this.state.players[this.state.playerOnTrial!]?.toString()}
                         </StyledText>
                     {(()=>{
-                        if (this.state.gameState.playerOnTrial === this.state.gameState.myIndex) {
+                        if (this.state.playerOnTrial === this.state.myIndex) {
                             return <div className="judgement-info">{translate("judgement.cannotVote.onTrial")}</div>;
-                        } else if (!this.state.gameState.players[this.state.gameState.myIndex!].alive){
+                        } else if (!this.state.players[this.state.myIndex!].alive){
                             return <div className="judgement-info">{translate("judgement.cannotVote.dead")}</div>;
                         } else {
                             return(<div className="judgement-info">
@@ -82,7 +118,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
 
     renderVerdictButton(verdict: Verdict) {
         return <button
-            className={this.state.gameState.judgement === verdict ? "highlighted" : undefined}
+            className={this.state.judgement === verdict ? "highlighted" : undefined}
             onClick={()=>{GAME_MANAGER.sendJudgementPacket(verdict)}}
         >
             <StyledText noLinks={true}>
@@ -115,7 +151,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             }}>{translate("menu.will.icon")}</button>
             {(()=>
                 (
-                    ROLES[this.state.gameState.roleState?.role as Role] === undefined || !ROLES[this.state.gameState.roleState?.role as Role].largeRoleSpecificMenu
+                    ROLES[this.state.roleState?.role as Role] === undefined || !ROLES[this.state.roleState?.role as Role].largeRoleSpecificMenu
                 )?null:
                     <button 
                     className={"role-specific-colors" + (GameScreen.instance.menusOpen().includes(GameScreenContentMenus.RoleSpecificMenu)?" highlighted":"")} 
@@ -124,7 +160,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                     
                     }}>
                         <StyledText noLinks={true}>
-                            {translate("role."+this.state.gameState.roleState?.role+".name")}
+                            {translate("role."+this.state.roleState?.role+".name")}
                         </StyledText>
                     </button>
             )()}
@@ -143,9 +179,9 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
         </div>
     }
     renderPhase(){
-        if(this.state.gameState.phase){
+        if(this.state.phase){
             return(<div>
-                {translate("phase."+this.state.gameState.phase)} {this.state.gameState.dayNumber}⏳{Math.floor(this.state.gameState.timeLeftMs/1000)}
+                {translate("phase."+this.state.phase)} {this.state.dayNumber}⏳{Math.floor(this.state.timeLeftMs/1000)}
             </div>);
         }
         return null;
@@ -155,7 +191,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
         const timerStyle = {
             height: "100%",
             backgroundColor: 'red',
-            width: `${(this.state.gameState.timeLeftMs) * (100/(60*1000))}%`,
+            width: `${(this.state.timeLeftMs) * (100/(60*1000))}%`,
             margin: '0 auto', // Center the timer horizontally
         };
         
@@ -163,8 +199,8 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
         <h3>{this.renderPhase()}</h3>
         {(()=>{
             return <StyledText>
-                {(this.state.gameState.players[this.state.gameState.myIndex!] ?? "").toString() +
-                " (" + translate("role."+(this.state.gameState.roleState?.role ?? "unknown")+".name") + ")"}
+                {(this.state.players[this.state.myIndex!] ?? "").toString() +
+                " (" + translate("role."+(this.state.roleState?.role ?? "unknown")+".name") + ")"}
             </StyledText>;
         })()}
         {this.renderPhaseSpecific()}
