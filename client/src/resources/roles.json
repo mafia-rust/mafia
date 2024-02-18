@@ -102,6 +102,8 @@
             {"type": "spyMafiaVisit", "players": [16,17,18]},
             {"type": "spyMafiaVisit", "players": []},
             {"type": "spyCultistCount", "count": 0},
+            {"type": "spyCultistCount", "count": 1},
+            {"type": "spyCultistCount", "count": 2},
             {"type": "spyBug", "bug": "silenced"},
             {"type": "spyBug", "bug": "roleblocked"},
             {"type": "spyBug", "bug": "protected"},
