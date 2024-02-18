@@ -107,11 +107,6 @@ function computeBasicKeywordData() {
     //add dummy names keywords
     for(let i = 0; i < DUMMY_NAMES.length; i++) {
         const name = DUMMY_NAMES[i];
-        KEYWORD_DATA_MAP["@"+(i+1)] = [
-            { style: "keyword-player-number", replacement: (i + 1).toString() },
-            { replacement: " " },
-            { style: "keyword-player-sender", replacement: name }
-        ];
         KEYWORD_DATA_MAP["sender-"+name] = [
             { style: "keyword-player-number", replacement: (i + 1).toString() },
             { replacement: " " },

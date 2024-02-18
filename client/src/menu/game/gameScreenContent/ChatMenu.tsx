@@ -4,7 +4,7 @@ import GAME_MANAGER, { replaceMentions } from "../../../index";
 import "../gameScreen.css";
 import "./chatMenu.css"
 import { Player, PlayerIndex } from "../../../game/gameState.d";
-import { ChatMessage, getPlayerNames, translateChatMessage } from "../../../components/ChatMessage";
+import { ChatMessage, translateChatMessage } from "../../../components/ChatMessage";
 import ChatElement from "../../../components/ChatMessage";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import { HistoryPoller, HistoryQueue } from "../../../history";
@@ -73,7 +73,7 @@ function ChatMessageSection(props: { filter: RegExp | null }): ReactElement {
 
     const filteredMessages = useMemo(() => {
         if (props.filter === null) return messages;
-        else return messages.filter(msg => props.filter?.test(translateChatMessage(msg, getPlayerNames())) || msg.type === "phaseChange")
+        else return messages.filter(msg => props.filter?.test(translateChatMessage(msg, GAME_MANAGER.getPlayerNames())) || msg.type === "phaseChange")
     }, [messages, props.filter]);
 
     const handleScroll = (e: any) => {
@@ -96,7 +96,7 @@ function ChatMessageSection(props: { filter: RegExp | null }): ReactElement {
         const stateListener: StateListener = (type) => {
             if (GAME_MANAGER.state.stateType === "game" && type === "addChatMessages") {
                 setMessages(GAME_MANAGER.state.chatMessages.filter(msg => 
-                    props.filter === null || msg.type === "phaseChange" || props.filter.test(translateChatMessage(msg, getPlayerNames()))
+                    props.filter === null || msg.type === "phaseChange" || props.filter.test(translateChatMessage(msg, GAME_MANAGER.getPlayerNames()))
                 ))
             }
         }
@@ -158,7 +158,7 @@ function ChatTextInput(props: {
             if (recipient !== undefined) {
                 let whisperText = text.substring(3 + recipient.index.toString().length);
                 if(GAME_MANAGER.state.stateType === "game")
-                    whisperText = replaceMentions(whisperText, getPlayerNames());
+                    whisperText = replaceMentions(whisperText, GAME_MANAGER.getPlayerNames());
                 
                 GAME_MANAGER.sendSendWhisperPacket(
                     recipient.index,
@@ -167,12 +167,12 @@ function ChatTextInput(props: {
             } else {
                 // Malformed whisper
                 if(GAME_MANAGER.state.stateType === "game")
-                    text = replaceMentions(text, getPlayerNames());
+                    text = replaceMentions(text, GAME_MANAGER.getPlayerNames());
                 GAME_MANAGER.sendSendMessagePacket(text);
             }
         } else {
             if(GAME_MANAGER.state.stateType === "game")
-                text = replaceMentions(text, getPlayerNames());
+                text = replaceMentions(text, GAME_MANAGER.getPlayerNames());
             GAME_MANAGER.sendSendMessagePacket(text);
         }
         setChatField("");

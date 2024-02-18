@@ -17,7 +17,7 @@ export default function ChatElement(
     }, 
 ): ReactElement {
     const message = props.message;
-    const playerNames = props.playerNames ?? getPlayerNames();
+    const playerNames = props.playerNames ?? GAME_MANAGER.getPlayerNames();
     const chatMessageStyles = require("../resources/styling/chatMessage.json");
     let style = typeof chatMessageStyles[message.type] === "string" ? chatMessageStyles[message.type] : "";
 
@@ -75,15 +75,6 @@ export default function ChatElement(
     return <StyledText className={"chat-message " + style}>{translateChatMessage(message, playerNames)}</StyledText>;
 }
 
-export function getPlayerNames(): string[] {
-    switch (GAME_MANAGER.state.stateType) {
-        case "game":
-            return GAME_MANAGER.state.players.map((player) => player.toString());
-        default:
-            return [];
-    }
-}
-
 function playerListToString(playerList: PlayerIndex[], playerNames: string[]): string {
 
     return playerList.map((playerIndex) => {
@@ -100,7 +91,7 @@ export function sanitizePlayerMessage(text: string): string {
 export function translateChatMessage(message: ChatMessage, playerNames?: string[]): string {
 
     if (playerNames === undefined) {
-        playerNames = getPlayerNames();
+        playerNames = GAME_MANAGER.getPlayerNames();
     }
 
     switch (message.type) {
@@ -196,7 +187,7 @@ export function translateChatMessage(message: ChatMessage, playerNames?: string[
             );
         case "journalistJournal":
             return translate("chatMessage.journalistJournal",
-                message.journal
+                sanitizePlayerMessage(replaceMentions(message.journal))
             );
         case "youAreInterviewingPlayer":
             return translate("chatMessage.youAreInterviewingPlayer",

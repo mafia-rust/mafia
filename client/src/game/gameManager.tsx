@@ -15,6 +15,7 @@ import LobbyMenu from "../menu/lobby/LobbyMenu";
 import GameScreen from "../menu/game/GameScreen";
 import LoadingScreen from "../menu/LoadingScreen";
 import { Role } from "./roleState.d";
+import DUMMY_NAMES from "../resources/dummyNames.json";
 export function createGameManager(): GameManager {
 
     console.log("Game manager created.");
@@ -117,6 +118,14 @@ export function createGameManager(): GameManager {
             if (gameManager.state.stateType === "game")
                 return gameManager.state.players[gameManager.state.myIndex!]?.host;
             return undefined;
+        },
+        getPlayerNames(): string[] {
+            switch (GAME_MANAGER.state.stateType) {
+                case "game":
+                    return GAME_MANAGER.state.players.map((player) => player.toString());
+                default:
+                    return DUMMY_NAMES;
+            }
         },
 
 

@@ -76,7 +76,15 @@ export function regEscape(text: string) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
 }
 
-export function replaceMentions(rawText: string, playerNames: string[]) {
+export function replaceMentions(rawText: string, playerNames?: string[]) {
+
+    if (playerNames === undefined) {
+        playerNames = GAME_MANAGER.getPlayerNames();
+        if (playerNames === undefined) {
+            return rawText;
+        }
+    }
+
     let text = rawText;
     playerNames.forEach((player, i) => {
         text = text.replace(find(`@${i + 1}`), player);

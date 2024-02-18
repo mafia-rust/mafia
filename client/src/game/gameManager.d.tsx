@@ -39,6 +39,7 @@ export type GameManager = {
     state: State,
     getMyName(): string | undefined,
     getMyHost(): boolean | undefined,
+    getPlayerNames(): string[],
 
     server: Server,
     listeners: StateListener[],
