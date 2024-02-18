@@ -240,15 +240,13 @@ impl PlayerReference{
     }
     ///returns true if all targets were valid
     pub fn set_chosen_targets(&self, game: &mut Game, chosen_targets: Vec<PlayerReference>)->bool{
-        let mut out = true;
         self.deref_mut(game).night_variables.chosen_targets = vec![];
 
         for target_ref in chosen_targets {
             if self.can_night_target(game, target_ref){
                 self.deref_mut(game).night_variables.chosen_targets.push(target_ref);
             }else{
-                out = false;
-                break;
+                return false;
             }
         }
 
@@ -258,7 +256,7 @@ impl PlayerReference{
             )
         };
         self.send_packet(game, packet);
-        out
+        true
     }
 
     pub fn night_visits<'a>(&self, game: &'a Game) -> &'a Vec<Visit>{

@@ -180,7 +180,10 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                     
                     return <button 
                         className={"material-icons-round filter" + (isFilterSet ? " highlighted" : "")} 
-                        onClick={() => {isFilterSet ? ChatMenu.setFilter(null) : ChatMenu.setFilter(filter); this.setState({})}}
+                        onClick={() => {
+                            isFilterSet ? ChatMenu.setFilter(null) : ChatMenu.setFilter(filter);
+                            this.setState({})
+                        }}
                         aria-label={translate("menu.playerList.button.filter")}
                     >
                         filter_alt

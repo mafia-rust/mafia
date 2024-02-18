@@ -57,6 +57,7 @@ type GameState = {
     will: string,
     notes: string,
     crossedOutOutlines: number[],
+    chatFilter: PlayerIndex | null,
     deathNote: string,
     targets: PlayerIndex[],
     voted: PlayerIndex | null,
