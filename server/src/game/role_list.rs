@@ -144,7 +144,6 @@ pub enum RoleSet {
     TownKilling,
     TownProtective,
     TownInvestigative,
-    TownCommon,
 
     MafiaPower,
     MafiaSupport,
@@ -165,16 +164,6 @@ impl RoleSet{
                 vec![Role::Bodyguard, Role::Crusader, Role::Doctor, Role::Reveler, Role::Trapper],
             RoleSet::TownInvestigative => 
                 vec![Role::Psychic, Role::Lookout, Role::Sheriff, Role::Spy, Role::Tracker, Role::Seer],
-            RoleSet::TownCommon => 
-                vec![].into_iter().chain(
-                    RoleSet::TownInvestigative.get_roles().iter()
-                ).chain(
-                    RoleSet::TownProtective.get_roles().iter()
-                ).chain(
-                    RoleSet::TownKilling.get_roles().iter()
-                ).chain(
-                    RoleSet::TownSupport.get_roles().iter()
-                ).cloned().collect(),
             RoleSet::MafiaPower => 
                 vec![Role::Godfather, Role::Mafioso],
             RoleSet::MafiaSupport => 

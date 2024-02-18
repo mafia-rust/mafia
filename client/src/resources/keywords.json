@@ -17,7 +17,6 @@
     "townProtective": { "style": "keyword-good","link": "generated/role_set"},
     "townSupport": { "style": "keyword-good","link": "generated/role_set"},
     "townKilling": { "style": "keyword-good","link": "generated/role_set"},
-    "townCommon": { "style": "keyword-good","link": "generated/role_set"},
     "mafiaPower": { "style": "keyword-evil","link": "generated/role_set"},
     "mafiaSupport": { "style": "keyword-evil","link": "generated/role_set"},
     "neutralEvil": { "style": "keyword-neutral","link": "generated/role_set"},

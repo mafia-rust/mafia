@@ -1,7 +1,9 @@
 {
     "default": [
         "bodyguard",
-        "mafioso"
+        "mafioso",
+        "martyr",
+        "jailor"
     ],
     "beginner": [
         "jailor","mayor",
