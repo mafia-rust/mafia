@@ -39,6 +39,7 @@ export type GameManager = {
     state: State,
     getMyName(): string | undefined,
     getMyHost(): boolean | undefined,
+    getPlayerNames(): string[],
 
     server: Server,
     listeners: StateListener[],
@@ -61,6 +62,7 @@ export type GameManager = {
      *          successful and false if the join was unsuccessful
      */
     sendJoinPacket(roomCode: string): Promise<boolean>;
+    sendKickPlayerPacket(playerId: number): void;
     sendSetNamePacket(name: string): void;
     sendStartGamePacket(): void;
     sendSetPhaseTimePacket(phase: Phase, time: number): void;

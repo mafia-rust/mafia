@@ -165,6 +165,8 @@ pub enum ToServerPacket{
     Join{room_code: RoomCode},
     Host,
     Leave,
+    #[serde(rename_all = "camelCase")]
+    Kick{player_id: PlayerID},
 
     // Lobby
     SetName{name: String},

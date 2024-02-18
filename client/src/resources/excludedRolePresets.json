@@ -41,12 +41,12 @@
         "martyr"
     ],
     "smallGame": [
-        "spy","psychic",
-        "bodyguard","reveler","trapper",
-        "retributionist",
+        "spy","seer",
+        "bodyguard","trapper",
+        "retributionist","medium",
         "mafioso",
         "necromancer",
-        "death","doomsayer",
+        "doomsayer","death",
         "martyr"
     ]
 }

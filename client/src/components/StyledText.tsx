@@ -6,6 +6,7 @@ import translate from "../game/lang";
 import { Role, getFactionFromRole } from "../game/roleState.d";
 import ROLES from "../resources/roles.json";
 import "./styledText.css";
+import DUMMY_NAMES from "../resources/dummyNames.json";
 import WikiSearch from "./WikiSearch";
 import { ARTICLES, WikiArticleLink, getArticleTitle } from "./WikiArticle";
 
@@ -39,7 +40,13 @@ type Token = {
  * 
  * @see sanitizePlayerMessage in ChatMessage.tsx
  */
-export default function StyledText(props: { children: string[] | string, className?: string, noLinks?: boolean, markdown?: boolean }): ReactElement {
+export default function StyledText(props: {
+        children: string[] | string,
+        className?: string,
+        noLinks?: boolean,
+        markdown?: boolean
+    }): ReactElement {
+
     let tokens: Token[] = [{
         type: "raw",
         string: typeof props.children === "string" 
@@ -97,6 +104,21 @@ function clearKeywordData() {
 function computeBasicKeywordData() {
     console.log("recomputed keyword data");
 
+    //add dummy names keywords
+    for(let i = 0; i < DUMMY_NAMES.length; i++) {
+        const name = DUMMY_NAMES[i];
+        KEYWORD_DATA_MAP["sender-"+name] = [
+            { style: "keyword-player-number", replacement: (i + 1).toString() },
+            { replacement: " " },
+            { style: "keyword-player-sender", replacement: name }
+        ];
+        KEYWORD_DATA_MAP[name] = [
+            { style: "keyword-player-number", replacement: (i + 1).toString() },
+            { replacement: " " },
+            { style: "keyword-player", replacement: name }
+        ];
+    }
+
     //add article keywords
     const SortedArticles = [...ARTICLES];
     for (const article of SortedArticles) {
@@ -139,13 +161,15 @@ function computeBasicKeywordData() {
 export function computeKeywordDataWithPlayers() {
     clearKeywordData();
 
-    if(GAME_MANAGER.state.stateType === "game")
+    if(GAME_MANAGER.state.stateType === "game"){
+        
         for(const player of GAME_MANAGER.state.players) {
             KEYWORD_DATA_MAP["sender-"+player.toString()] = [
                 { style: "keyword-player-number", replacement: (player.index + 1).toString() },
                 { replacement: " " },
                 { style: "keyword-player-sender", replacement: player.name }
             ];
+            
             KEYWORD_DATA_MAP[player.toString()] = [
                 { style: "keyword-player-number", replacement: (player.index + 1).toString() },
                 { replacement: " " },
@@ -153,6 +177,8 @@ export function computeKeywordDataWithPlayers() {
             ];
             
         }
+    }
+        
 
     computeBasicKeywordData();
 }

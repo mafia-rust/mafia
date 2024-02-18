@@ -139,6 +139,9 @@ export type ToServerPacket = {
     roomCode: number
 } | {
     type: "host",
+} | {
+    type: "kick",
+    playerId: number
 }
 // Lobby
 | {
