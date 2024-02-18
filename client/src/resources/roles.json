@@ -252,7 +252,7 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["aura","dead","defense"],
+        "keywords": ["aura","dead","defense","priority"],
         "canBeConvertedTo": []
     },
     "executioner": {
