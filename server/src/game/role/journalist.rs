@@ -107,7 +107,7 @@ impl RoleStateImpl for Journalist {
                         let mut message_sent = false;
                         for chat_group in interviewed_target_ref.get_current_send_chat_groups(game){
                             match chat_group {
-                                ChatGroup::All | ChatGroup::Jail | ChatGroup::Interview | ChatGroup::Seance | ChatGroup::Dead => {},
+                                ChatGroup::All | ChatGroup::Jail | ChatGroup::Interview | ChatGroup::Dead => {},
                                 ChatGroup::Mafia | ChatGroup::Cult  => {
                                     game.add_message_to_chat_group(
                                         chat_group,

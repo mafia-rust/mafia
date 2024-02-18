@@ -53,7 +53,7 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
                     }
                 })
             {
-                out.push(ChatGroup::Seance);
+                out.push(ChatGroup::Dead);
             }
             if PlayerReference::all_players(game)
                 .any(|p|
@@ -111,7 +111,7 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
                 }
             })
     {
-        out.push(ChatGroup::Seance);
+        out.push(ChatGroup::Dead);
     }
     if 
         game.current_phase().phase() == PhaseType::Night && 

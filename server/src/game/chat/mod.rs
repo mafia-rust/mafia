@@ -7,10 +7,10 @@ use super::role::{spy::SpyBug, trapper::TrapState};
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum MessageSender {
-    Player {player: PlayerIndex},
+    Player{player: PlayerIndex},
     Jailor,
     Journalist,
-    Medium,
+    LivingToDead{player: PlayerIndex},
 }
 
 // Determines message color
@@ -104,8 +104,7 @@ pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
     JailedSomeone{player_index: PlayerIndex},
     JailorDecideExecute {target: Option<PlayerIndex>},
-    // TODO rename to MediumSeanced
-    MediumSeance{player: PlayerIndex},
+    MediumHauntStarted{medium: PlayerIndex, player: PlayerIndex},
     #[serde(rename_all = "camelCase")]
     DeputyKilled{shot_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
@@ -195,8 +194,7 @@ pub enum ChatGroup {
     Cult,
 
     Jail,
-    Interview,
-    Seance
+    Interview
 }
 impl ChatGroup{
     pub fn player_receive_from_chat_group(&self, game: &Game, player_ref: PlayerReference)->bool{
