@@ -775,7 +775,7 @@
 
     "wiki.article.role.politician.guide":"* If the town would win, instead you win and they all die. Try to help to the town to win while staying alive.",
     "wiki.article.role.politician.abilities": "* When town would win, you win, instantly attack ever townie, and all politicians leave town",
-    "wiki.article.role.politician.attributes": "* You win with other politicians\n* You have a protection-piercing attack when you win the game\n* When you first become this role, if there are no townies alive, you become a jester\n* You have a protection-piercing attack",
+    "wiki.article.role.politician.attributes": "* You win with other politicians\n* When you first become this role, if there are no townies alive, you become a jester\n* You have a protection-piercing attack",
     "wiki.article.role.politician.extra":"* If all townies die, you leave town\n* If the only players left are politicians, you win",
 
     "wiki.article.role.arsonist.guide":"You can select a player each night to douse them in gasoline. Target yourself to ignite and kill every player who is doused. You know who is doused. Try not to douse players you think the mafia will kill, because then you waste your night dousing someone who is going to die anyway.",
@@ -790,7 +790,7 @@
 
     "wiki.article.role.death.guide": "Guess what player will die during night by targeting them, If you guess correctly you will collect a soul, you will also collect a soul passively each night. Once you collect six souls, everyone will be told that death collected six souls at the start of the day, if you survive that day, you will attack everyone and win the game at the start of night.",
     "wiki.article.role.death.abilities":"* Select a player. If they die tonight you collect a soul\n* You gain an additional soul each night",
-    "wiki.article.role.death.attributes":"* Once you've collected six souls, you curse the town. At the start of the next night you win and attack everyone. You have invincible defense once you have six souls\n* You have a protection-piercing attack",
+    "wiki.article.role.death.attributes":"* Once you've collected six souls, you curse the town. At the start of the next night you win and attack everyone.\n* You have invincible defense once you have six souls\n* You have a protection-piercing attack",
     "wiki.article.role.death.extra":"* You will still passively gain souls in jail",
 
     "wiki.article.role.amnesiac.guide": "You can choose a role to become on the next night. You can choose a certain outline to and get a random role if you want, or get a specific role.",
