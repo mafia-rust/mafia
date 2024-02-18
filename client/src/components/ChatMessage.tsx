@@ -57,19 +57,14 @@ export default function ChatElement(
                 <ChatElement message={message.message} playerNames={playerNames}/>
             </>
         case "playerDied":
-            if(GAME_MANAGER.state.stateType === "game"){
-                return <>
-                    <StyledText className={"chat-message " + style}>{translate("chatMessage.playerDied",
-                        playerNames[message.grave.playerIndex],
-                    )}</StyledText>
-                    <div className="grave-message">
-                        <GraveComponent grave={message.grave} gameState={GAME_MANAGER.state}/>
-                    </div>
-                </>;
-            }
-            else{
-                return <></>;
-            }
+            return <>
+                <StyledText className={"chat-message " + style}>{translate("chatMessage.playerDied",
+                    playerNames[message.grave.playerIndex],
+                )}</StyledText>
+                <div className="grave-message">
+                    <GraveComponent grave={message.grave} playerNames={playerNames}/>
+                </div>
+            </>;
     }
 
     return <StyledText className={"chat-message " + style}>{translateChatMessage(message, playerNames)}</StyledText>;
