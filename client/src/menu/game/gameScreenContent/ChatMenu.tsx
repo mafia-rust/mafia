@@ -10,78 +10,76 @@ import { ContentMenu, ContentTab } from "../GameScreen";
 import { HistoryPoller, HistoryQueue } from "../../../history";
 import { StateListener } from "../../../game/gameManager.d";
 
-type ChatMenuProps = {
-}
 
-type ChatMenuState = {
-    filter: RegExp | null,
-}
+export default function ChatMenu(): ReactElement {
 
-export default class ChatMenu extends React.Component<ChatMenuProps, ChatMenuState> {
-    static instance: ChatMenu | null = null;
-    static prependWhisper: (index: PlayerIndex) => void = () => {};
+    const [filter, setFilter] = useState<RegExp | null>(GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.chatFilter : null);
+    
+    useEffect(() => {
+        const stateListener: StateListener = (type) => {
+            if (GAME_MANAGER.state.stateType === "game" && type === "tick") 
+                setFilter(GAME_MANAGER.state.chatFilter);
+        }
+        GAME_MANAGER.addStateListener(stateListener);
+        return () => GAME_MANAGER.removeStateListener(stateListener);
+    }, [setFilter]);
 
-    static setFilter(regex: RegExp | null) {
-        ChatMenu.instance?.setState({ filter: regex });
-    }
-    static getFilter(): RegExp | null {
-        return ChatMenu.instance?.state.filter ?? null;
-    }
-
-    constructor(props: ChatMenuProps) {
-        super(props);
-        
-        
-        if(GAME_MANAGER.state.stateType === "game")
-            this.state = {
-                filter: null,
-            };
-    }
-    componentDidMount() {
-        ChatMenu.instance = this;
-    }
-    componentWillUnmount() {
-        ChatMenu.instance = null;
-    }
-    render(){
-        return <div className="chat-menu chat-menu-colors">
-            <ContentTab close={ContentMenu.ChatMenu} helpMenu={"standard/chat"}>{translate("menu.chat.title")}</ContentTab>
-            <ChatMessageSection filter={this.state.filter}/>
-            {this.state.filter && <button 
-                onClick={()=>{
-                    // TODO: Sammy wtf??
+    return <div className="chat-menu chat-menu-colors">
+        <ContentTab close={ContentMenu.ChatMenu} helpMenu={"standard/chat"}>{translate("menu.chat.title")}</ContentTab>
+        <ChatMessageSection/>
+        {filter && <button 
+            onClick={()=>{
+                // TODO: Sammy wtf??
+                if(GAME_MANAGER.state.stateType === "game"){
+                    GAME_MANAGER.state.chatFilter = null;
                     GAME_MANAGER.invokeStateListeners("tick");
-                    ChatMenu.setFilter(null);
-                }}
-                className="material-icons-round highlighted"
-                aria-label={translate("menu.chat.clearFilter")}
-            >
-                filter_alt_off
-            </button>}
-            <ChatTextInput onComponentRender={(setWhisper) => {ChatMenu.prependWhisper = setWhisper}}/>
-        </div>
-    }
+                }
+            }}
+            className="material-icons-round highlighted"
+            aria-label={translate("menu.chat.clearFilter")}
+        >
+            filter_alt_off
+        </button>}
+        <ChatTextInput/>
+    </div>
 }
 
-function ChatMessageSection(props: { filter: RegExp | null }): ReactElement {
+
+function ChatMessageSection(): ReactElement {
     const [messages, setMessages] = useState<ChatMessage []>(GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.chatMessages : []);
     const [scrolledToBottom, setScrolledToBottom] = useState<boolean>(true);
     
     const self = useRef<HTMLDivElement>(null);
 
     const AT_BOTTOM_THRESHOLD_PIXELS = 40;
-
-    const filteredMessages = useMemo(() => {
-        if (props.filter === null) return messages;
-        else return messages.filter(msg => props.filter?.test(translateChatMessage(msg, GAME_MANAGER.getPlayerNames())) || msg.type === "phaseChange")
-    }, [messages, props.filter]);
-
     const handleScroll = (e: any) => {
         const { scrollTop, scrollHeight, clientHeight } = e.target;
         setScrolledToBottom(scrollTop + clientHeight >= scrollHeight - AT_BOTTOM_THRESHOLD_PIXELS);
     }
 
 
+    const filter = GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.chatFilter : null;
+    const filteredMessages = useMemo(() => {
+        if (filter === null) return messages;
+        else return messages.filter(msg => filter?.test(translateChatMessage(msg, GAME_MANAGER.getPlayerNames())) || msg.type === "phaseChange")
+    }, [messages, filter]);
+
+    
+    
+
+    // Update with new messages
+    useEffect(() => {
+        const stateListener: StateListener = (type) => {
+            if (GAME_MANAGER.state.stateType === "game" && type === "addChatMessages") {
+                setMessages(GAME_MANAGER.state.chatMessages.filter(msg => 
+                    filter === null || msg.type === "phaseChange" || filter.test(translateChatMessage(msg, GAME_MANAGER.getPlayerNames()))
+                ))
+            }
+        }
+
+        GAME_MANAGER.addStateListener(stateListener);
+        return () => GAME_MANAGER.removeStateListener(stateListener);
+    }, [filter, setMessages]);
 
     // Keep chat scrolled to bottom
     useEffect(() => {
@@ -89,27 +87,13 @@ function ChatMessageSection(props: { filter: RegExp | null }): ReactElement {
             const el = self.current;
             el.scrollTop = el.scrollHeight;
         }
-    }, [self, messages, props.filter, scrolledToBottom])
-
-    // Update with new messages
-    useEffect(() => {
-        const stateListener: StateListener = (type) => {
-            if (GAME_MANAGER.state.stateType === "game" && type === "addChatMessages") {
-                setMessages(GAME_MANAGER.state.chatMessages.filter(msg => 
-                    props.filter === null || msg.type === "phaseChange" || props.filter.test(translateChatMessage(msg, GAME_MANAGER.getPlayerNames()))
-                ))
-            }
-        }
-
-        GAME_MANAGER.addStateListener(stateListener);
-        return () => GAME_MANAGER.removeStateListener(stateListener);
-    }, [props.filter, setMessages]);
+    }, [self, messages, filter, scrolledToBottom])
 
     //scroll chat to bottom when filter is shut off or loaded
     useEffect(() => {
         if (self.current === null) return;
         self.current.scrollTop = self.current.scrollHeight;
-    }, [props.filter])
+    }, [filter])
 
     
 
@@ -122,19 +106,23 @@ function ChatMessageSection(props: { filter: RegExp | null }): ReactElement {
     </div>
 }
 
-function ChatTextInput(props: { 
-    onComponentRender: (setWhisper: (index: PlayerIndex) => void) => void
-}): ReactElement {
-    const [chatField, setChatField] = useState<string>("");
+function ChatTextInput(): ReactElement {
+    const [chatBoxText, setChatBoxText] = useState<string>("");
+    
+    const setWhisper = useCallback((index: PlayerIndex) => {
+        setChatBoxText("/w" + (index + 1) + " " + chatBoxText)
+    }, [chatBoxText, setChatBoxText]);
+
+    useEffect(() => {
+        GAME_MANAGER.setPrependWhisperFunction(setWhisper);
+        return () => GAME_MANAGER.setPrependWhisperFunction(() => {});
+    }, [setWhisper]);
+
+
     const [players, setPlayers] = useState<Player[]>(GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.players : []);
     const history: HistoryQueue<string> = useMemo(() => new HistoryQueue(40), []);
     const historyPoller: HistoryPoller<string> = useMemo(() => new HistoryPoller(), []);
 
-    const setWhisper = useCallback((index: PlayerIndex) => {
-        setChatField("/w" + (index + 1) + " " + chatField)
-    }, [chatField, setChatField]);
-
-    props.onComponentRender(setWhisper);
 
     useEffect(() => {
         const playersListener: StateListener = (type) => {
@@ -147,7 +135,7 @@ function ChatTextInput(props: {
     });
 
     const sendChatField = useCallback(() => {
-        let text = chatField.replace("\n", "").replace("\r", "").trim();
+        let text = chatBoxText.replace("\n", "").replace("\r", "").trim();
         if (text === "") return;
         history.push(text);
         historyPoller.reset();
@@ -175,17 +163,17 @@ function ChatTextInput(props: {
                 text = replaceMentions(text, GAME_MANAGER.getPlayerNames());
             GAME_MANAGER.sendSendMessagePacket(text);
         }
-        setChatField("");
-    }, [players, history, historyPoller, chatField]);
+        setChatBoxText("");
+    }, [players, history, historyPoller, chatBoxText]);
 
     const handleInputChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setChatField(
+        setChatBoxText(
             event.target.value
                 .replace(/  +/g, ' ')
                 .replace(/\t/g, ' ')
                 .replace(/\n/g, ' ')
         );
-    }, [setChatField]);
+    }, [setChatBoxText]);
 
     const handleInputKeyDown = useCallback((event: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (event.code === "Enter") {
@@ -195,18 +183,18 @@ function ChatTextInput(props: {
             event.preventDefault();
             const text = historyPoller.poll(history);
             if (text !== undefined) 
-                setChatField(text);
+                setChatBoxText(text);
         } else if (event.code === "ArrowDown") {
             event.preventDefault();
             const text = historyPoller.pollPrevious(history);
-            setChatField(text ?? "");
+                setChatBoxText(text ?? "");
         }
     }, [sendChatField, history, historyPoller]);
 
     return <div className="send-section">
         <div>
             <textarea
-                value={chatField}
+                value={chatBoxText}
                 onChange={handleInputChange}
                 onKeyDown={handleInputKeyDown}
             />

@@ -48,6 +48,9 @@ export type GameManager = {
     removeStateListener(listener: StateListener): void;
     invokeStateListeners(type?: StateEventType): void;
 
+    setPrependWhisperFunction: (f: any) => void;
+    prependWhisper: (index: PlayerIndex) => void;
+
     leaveGame(): void;
 
     sendLobbyListRequest(): void;

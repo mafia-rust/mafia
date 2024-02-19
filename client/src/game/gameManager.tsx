@@ -149,6 +149,11 @@ export function createGameManager(): GameManager {
             }
         },
 
+        setPrependWhisperFunction: (f) => {
+            gameManager.prependWhisper = f;
+        },
+        prependWhisper: (index) => {},
+
 
         leaveGame() {
             if (this.state.stateType !== "disconnected") {
