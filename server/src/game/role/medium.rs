@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessage};
-use crate::game::phase::{PhaseType, PhaseState};
+use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
@@ -56,64 +56,13 @@ impl RoleStateImpl for Medium {
         vec![]
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        if !actor_ref.alive(game){
-            let mut out = vec![ChatGroup::Dead];
-            if game.current_phase().phase() == PhaseType::Night{
-                out.push(ChatGroup::Seance);
-            }
-            return out;
-        }
-        if actor_ref.night_silenced(game){
-            return vec![];
-        }
-    
-        match game.current_phase() {
-            PhaseState::Morning => vec![],
-            PhaseState::Discussion 
-            | PhaseState::Voting {..}
-            | PhaseState::Judgement {..} 
-            | PhaseState::Evening {..} => vec![ChatGroup::All],
-            &PhaseState::Testimony { player_on_trial, .. } => {
-                if player_on_trial == actor_ref {
-                    vec![ChatGroup::All]
-                } else {
-                    vec![]
-                }
-            },
-            PhaseState::Night => {
-                let mut out = vec![];
-                if PlayerReference::all_players(game)
-                    .any(|med|{
-                        if let RoleState::Medium(medium_state) = med.role_state(game){
-                            if Some(actor_ref) == medium_state.seanced_target{
-                                return true;
-                            }
-                        }
-                        false
-                    })
-                {
-                    out.push(ChatGroup::Seance);
-                }
-    
-    
-                let mut jail_or_night_chats = if actor_ref.night_jailed(game){
-                    vec![ChatGroup::Jail]
-                } else {
-                    vec![ChatGroup::Dead]
-                };
-                out.append(&mut jail_or_night_chats);
-                out
-            },
-        }
+        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Dead])
     }
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         let mut out = crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref);
 
         if game.current_phase().is_night() && actor_ref.alive(game) {
             out.push(ChatGroup::Dead);
-        }
-        if game.current_phase().is_night() && !actor_ref.alive(game) {
-            out.push(ChatGroup::Seance);
         }
         out
     }
@@ -131,10 +80,10 @@ impl RoleStateImpl for Medium {
                     if seanced.alive(game) && !actor_ref.alive(game){
                 
                         actor_ref.add_chat_message(game, 
-                            ChatMessage::MediumSeance{ player: seanced.index() }
+                            ChatMessage::MediumHauntStarted{ medium: actor_ref.index(), player: seanced.index() }
                         );
                         seanced.add_chat_message(game, 
-                            ChatMessage::MediumSeance{ player: seanced.index() }
+                            ChatMessage::MediumHauntStarted{ medium: actor_ref.index(), player: seanced.index() }
                         );
                         self.seances_remaining -= 1;
                     }

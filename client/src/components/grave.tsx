@@ -1,6 +1,5 @@
 
 import GAME_MANAGER, { replaceMentions } from "..";
-import GameState from "../game/gameState.d";
 import { Grave } from "../game/graveState";
 import translate from "../game/lang";
 import { sanitizePlayerMessage } from "./ChatMessage";
@@ -10,7 +9,7 @@ import "./grave.css";
 
 
 
-export default function GraveComponent(props: {grave: Grave, gameState: GameState}): ReactElement {
+export default function GraveComponent(props: {grave: Grave, playerNames: string[]}): ReactElement {
     let deathCauseString: string;
     if(props.grave.deathCause.type === "killers") {
         deathCauseString = props.grave.deathCause.killers.map((killer)=>{
@@ -38,7 +37,7 @@ export default function GraveComponent(props: {grave: Grave, gameState: GameStat
 
     return <div className="grave">
         <div><StyledText>{`${diedPhaseString+" "+props.grave.dayNumber}`}</StyledText></div>
-        <div><StyledText>{`${props.gameState.players[props.grave.playerIndex]?.toString()+" ("+graveRoleString+")"}`}</StyledText></div>
+        <div><StyledText>{`${props.playerNames[props.grave.playerIndex]+" ("+graveRoleString+")"}`}</StyledText></div>
         <div><StyledText>{`${translate("menu.graveyard.killedBy")+" "+deathCauseString}`}</StyledText></div>
         {props.grave.will.length === 0 || <>
             {translate("alibi")}

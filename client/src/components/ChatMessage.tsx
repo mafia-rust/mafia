@@ -24,7 +24,7 @@ export default function ChatElement(
     // Special chat messages that don't play by the rules
     switch (message.type) {
         case "normal":
-            if(message.messageSender.type !== "player"){
+            if(message.messageSender.type !== "player" && message.messageSender.type !== "livingToDead"){
                 style += " discreet";
             } else if (message.chatGroup === "dead") {
                 style += " dead player";
@@ -57,19 +57,14 @@ export default function ChatElement(
                 <ChatElement message={message.message} playerNames={playerNames}/>
             </>
         case "playerDied":
-            if(GAME_MANAGER.state.stateType === "game"){
-                return <>
-                    <StyledText className={"chat-message " + style}>{translate("chatMessage.playerDied",
-                        playerNames[message.grave.playerIndex],
-                    )}</StyledText>
-                    <div className="grave-message">
-                        <GraveComponent grave={message.grave} gameState={GAME_MANAGER.state}/>
-                    </div>
-                </>;
-            }
-            else{
-                return <></>;
-            }
+            return <>
+                <StyledText className={"chat-message " + style}>{translate("chatMessage.playerDied",
+                    playerNames[message.grave.playerIndex],
+                )}</StyledText>
+                <div className="grave-message">
+                    <GraveComponent grave={message.grave} playerNames={playerNames}/>
+                </div>
+            </>;
     }
 
     return <StyledText className={"chat-message " + style}>{translateChatMessage(message, playerNames)}</StyledText>;
@@ -101,6 +96,11 @@ export function translateChatMessage(message: ChatMessage, playerNames?: string[
             if(message.messageSender.type === "player"){
                 return (icon??"")+translate("chatMessage.normal",
                     "sender-"+playerNames[message.messageSender.player], 
+                    sanitizePlayerMessage(replaceMentions(message.text, playerNames))
+                );
+            } else if (message.messageSender.type === "livingToDead") {
+                return (icon??"")+(translate("messageSender.livingToDead.icon"))+translate("chatMessage.normal",
+                    "sender-"+playerNames[message.messageSender.player],
                     sanitizePlayerMessage(replaceMentions(message.text, playerNames))
                 );
             } else {
@@ -210,8 +210,8 @@ export function translateChatMessage(message: ChatMessage, playerNames?: string[
                 playerNames[message.shotIndex]
             );
         case "jailorDecideExecute":
-            if (message.targets.length > 0) {
-                return translate("chatMessage.jailorDecideExecute", playerListToString(message.targets, playerNames));
+            if (message.target !== null) {
+                return translate("chatMessage.jailorDecideExecute", playerNames[message.target]);
             } else {
                 return translate("chatMessage.jailorDecideExecute.nobody");
             }
@@ -284,8 +284,8 @@ export function translateChatMessage(message: ChatMessage, playerNames?: string[
             );
         case "silenced":
             return translate("chatMessage.silenced");
-        case "mediumSeance":
-            return translate("chatMessage.mediumSeance", playerNames[message.player]);
+        case "mediumHauntStarted":
+            return translate("chatMessage.mediumHauntStarted", playerNames[message.medium], playerNames[message.player]);
         case "youWerePossessed":
             return translate("chatMessage.youWerePossessed" + (message.immune ? ".immune" : ""));
         case "werewolfTrackingResult":
@@ -349,7 +349,7 @@ export type ChatMessage = {
     type: "normal", 
     messageSender: MessageSender,
     text: string, 
-    chatGroup: "all" | "dead" | "mafia" | "cult" | "seance" | "jail" | "interview"
+    chatGroup: "all" | "dead" | "mafia" | "cult" | "jail" | "interview"
 } | {
     type: "whisper", 
     fromPlayerIndex: PlayerIndex, 
@@ -426,7 +426,7 @@ export type ChatMessage = {
     playerIndex: PlayerIndex
 } | {
     type: "jailorDecideExecute"
-    targets: PlayerIndex[]
+    target: PlayerIndex | null
 } | {
     type: "yourConvertFailed"
 } | {
@@ -437,7 +437,8 @@ export type ChatMessage = {
     type: "cultSacrificesRequired"
     required: number
 } | {
-    type: "mediumSeance",
+    type: "mediumHauntStarted",
+    medium: PlayerIndex,
     player: PlayerIndex
 } | {
     type: "deputyKilled",
@@ -563,5 +564,8 @@ export type MessageSender = {
     type: "player", 
     player: PlayerIndex
 } | {
-    type: "jailor" | "medium" | "journalist"
+    type: "livingToDead",
+    player: PlayerIndex,
+} | {
+    type: "jailor" | "journalist"
 }
