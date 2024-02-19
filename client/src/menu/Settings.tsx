@@ -74,7 +74,7 @@ export function RoomCodeButton(props: {}): JSX.Element {
         let code = new URL(window.location.href);
         
         if (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
-            code.searchParams.set("code", GAME_MANAGER.state.roomCode!);
+            code.searchParams.set("code", GAME_MANAGER.state.roomCode.toString(18));
 
         if (navigator.clipboard)
             navigator.clipboard.writeText(code.toString());

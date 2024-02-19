@@ -25,7 +25,26 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "lobbyList":
             if(GAME_MANAGER.state.stateType === "outsideLobby"){
-                GAME_MANAGER.state.lobbies = packet.lobbies;
+                GAME_MANAGER.state.lobbies = JSON.parse(JSON.stringify({
+                    0: [[1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"], [1, "a"], [2, "b"], [3, "c"]],
+                    1: [[1, "hi"]],
+                    2: [[1, "hi"]],
+                    3: [[1, "hi"]],
+                    4: [[1, "hi"]],
+                    5: [[1, "hi"]],
+                    6: [[1, "hi"]],
+                    7: [[1, "hi"]],
+                    8: [[1, "hi"]],
+                    9: [[1, "hi"]],
+                    10: [[1, "hi"]],
+                    11: [[1, "hi"]],
+                    12: [[1, "hi"]],
+                    13: [[1, "hi"]],
+                    14: [[1, "hi"]],
+                    15: [[1, "hi"]],
+                    16: [[1, "hi"]],
+                    17: [[1, "hi"]],
+                }));
             }
                 // GAME_MANAGER.state.roomCodes = packet.roomCodes.map((roomCode) => roomCode.toString(18));
         break;
@@ -36,12 +55,12 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.setLobbyState();
             }
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
-                GAME_MANAGER.state.roomCode = packet.roomCode.toString(18);
+                GAME_MANAGER.state.roomCode = packet.roomCode;
             }
             if(GAME_MANAGER.state.stateType === "lobby")
                 GAME_MANAGER.state.myId = packet.playerId;
 
-            GAME_MANAGER.saveReconnectData(packet.roomCode.toString(18), packet.playerId);
+            GAME_MANAGER.saveReconnectData(packet.roomCode, packet.playerId);
             Anchor.clearRejoinCard();
         break;
         case "rejectJoin":

@@ -1,65 +1,140 @@
 .play-menu {
-    overflow-y: hidden;
+    display: flex;
     height: 100%;
     width: 100%;
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
 }
 
-.play-menu-table {
-    flex: 1;
+.play-menu-browser {
     display: flex;
     flex-direction: column;
-    border: 1px double white;
-    border-collapse: collapse;
-    max-height: calc(100% - 5rem); /*this is bad, this assumes the footer is 5rem tall*/
+
+    background-color: var(--background-color);
+    border: solid .13rem var(--primary-border-color);
+    border-bottom-color: black;
+    border-right-color: black;
+    border-radius: 1rem;
+    padding: 1rem;
+    gap: 1rem;
+    
     width: 100%;
+    height: 100%;
 }
-.play-menu-table > div {
-    border-collapse: collapse;
-    overflow-y: scroll;
-    min-height: 2rem;
-    width: 100%;
-    overflow-y: hidden;
+
+.play-menu-browser > header {
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+    justify-content: space-between;
 }
-.play-menu-table > div:first-child {
+
+.play-menu-browser > footer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: end;
+    gap: 1rem;
+}
+
+.play-menu-browser > footer > div {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: baseline;
+}
+.play-menu-browser > footer > div > label {
+    display: block;
+}
+
+.play-menu-browser > header h1 {
+    text-align: left;
+}
+
+.play-menu-browser > header button {
+    padding: 0.5rem;
+}
+
+.play-menu-browser > .play-menu-center {
+    flex-grow: 1;
+
+    background-color: var(--primary-color);
+    border: solid .13rem var(--primary-border-color);
+    border-top-color: black;
+    border-left-color: black;
+    border-radius: 0.5rem;
+
     overflow: hidden;
 }
-.play-menu-table > div > div {
+
+.play-menu-browser > .play-menu-center > table {
     display: flex;
-    justify-content:space-around;
-    border-collapse: collapse;
-    height: max-content;
+    flex-direction: column;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    background-color: var(--secondary-color);
+    overflow: hidden;
+}
+
+.play-menu-browser table tr:nth-child(even) {
+    background-color: var(--background-color);
+}
+
+.play-menu-browser table > thead {
+    width: 100%;
+    flex-shrink: 0;
+    background-color: var(--primary-color);
+    overflow: hidden;
+}
+
+.play-menu-browser table > tbody {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.play-menu-browser table > tfoot {
+    height: 100%;
+}
+
+.play-menu-browser table tr {
+    display: flex;
+    flex-direction: row;
+    flex: 0 0;
+    height: 2rem;
     width: 100%;
 }
-.play-menu-table > div > div > div{
-    border: 1px double white;
-    /* flex: 1; */
-    height: 2rem;
+
+.play-menu-browser table th, .play-menu-browser table td {
     display: flex;
-    align-items: center; /* Adjust vertical alignment */
-    justify-content: flex-start; /* Align text to the right */
-}
-.play-menu-footer {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: flex-end;
+    padding: 0.25rem 0.5rem;
+    text-align: center;
+    justify-content: center;
     align-items: center;
-    border: 1px double white;
-    border-collapse:collapse;
+    white-space: nowrap;
     flex-shrink: 0;
-    max-height: 10rem;
+    min-width: 0;
 }
-.play-menu-footer > section{
-    border: 1px double white;
+
+.play-menu-browser table th:first-of-type, .play-menu-browser table td:first-of-type {
+    flex-basis: 4rem;
 }
-.play-menu .play-menu-roomcode-column{
-    flex-shrink: 1;
-    width: 10rem;
-    min-width: 10rem;
+
+.play-menu-browser table th:nth-of-type(2), .play-menu-browser table td:nth-of-type(2) {
+    flex-basis: 8rem;
 }
-.play-menu .play-menu-players-column{
-    flex-grow: 1;
+
+.play-menu-browser table th:nth-of-type(3), .play-menu-browser table td:nth-of-type(3) {
+    flex-basis: calc(100% - 12rem);
+    justify-content: left;
+}
+
+.play-menu-browser table td .play-menu-lobby-player-list {
+    text-align: left;
     overflow-x: scroll;
+    scrollbar-width: none;
 }

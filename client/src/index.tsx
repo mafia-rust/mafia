@@ -31,7 +31,13 @@ async function route(url: Location) {
         
         window.history.replaceState({}, document.title, window.location.pathname);
 
-        const success = await GAME_MANAGER.sendJoinPacket(roomCode);
+        let success: boolean;
+        try {
+            const code = parseInt(roomCode, 18)
+            success = await GAME_MANAGER.sendJoinPacket(code);
+        } catch {
+            success = false;
+        }
         if (!success) {
             Anchor.setContent(<StartMenu/>)
         }

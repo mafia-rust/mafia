@@ -36,7 +36,7 @@ export function createGameManager(): GameManager {
             Anchor.playAudioFile("/audio/01. Calm Before The Storm.mp3");
         },
         setGameState() {
-            let roomCode = null;
+            let roomCode: number | null = null;
             if (GAME_MANAGER.state.stateType === "lobby") {
                 roomCode = GAME_MANAGER.state.roomCode;
             }
@@ -167,7 +167,7 @@ export function createGameManager(): GameManager {
         sendHostPacket() {
             this.server.sendPacket({ type: "host" });
         },
-        sendRejoinPacket(roomCode: string, playerId: number) {
+        sendRejoinPacket(roomCode: number, playerId: number) {
             let completePromise: (success: boolean) => void;
             let promise = new Promise<boolean>((resolver) => {
                 completePromise = resolver;
@@ -185,14 +185,14 @@ export function createGameManager(): GameManager {
 
             this.server.sendPacket({
                 type: "reJoin",
-                roomCode: parseInt(roomCode, 18),
-                playerId: playerId
+                roomCode,
+                playerId
             });
 
 
             return promise;
         },
-        sendJoinPacket(roomCode: string) {
+        sendJoinPacket(roomCode: number) {
             let completePromise: (success: boolean) => void;
             let promise = new Promise<boolean>((resolver) => {
                 completePromise = resolver;
@@ -208,11 +208,9 @@ export function createGameManager(): GameManager {
             };
             GAME_MANAGER.addStateListener(onJoined);
 
-            let actualCode: number = parseInt(roomCode, 18);
-
             this.server.sendPacket({
                 type: "join",
-                roomCode: isNaN(actualCode) ? 0 : actualCode
+                roomCode
             });
 
             return promise;

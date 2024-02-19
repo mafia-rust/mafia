@@ -21,7 +21,7 @@ export type OutsideLobbyState = {
 //Change this to use PlayerID for player map and playerID for who I AM instead of myName and host
 export type LobbyState = {
     stateType: "lobby"
-    roomCode: string,
+    roomCode: number,
 
     myId: number | null,
 
@@ -39,7 +39,7 @@ export type LobbyPlayer = {
 
 type GameState = {
     stateType: "game"
-    roomCode: string,
+    roomCode: number,
 
     myIndex: PlayerIndex | null,
 

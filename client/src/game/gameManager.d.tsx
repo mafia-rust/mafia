@@ -22,10 +22,10 @@ export type GameManager = {
     setGameState(): void;
     setOutsideLobbyState(): void;
 
-    saveReconnectData(roomCode: string, playerId: number): void;
+    saveReconnectData(roomCode: number, playerId: number): void;
     deleteReconnectData(): void;
     loadReconnectData(): {
-        roomCode: string,
+        roomCode: number,
         playerId: number,
         lastSaveTime: number,
     } | null;
@@ -56,12 +56,12 @@ export type GameManager = {
      * @returns A promise that will be fulfilled as true if the join was 
      *          successful and false if the join was unsuccessful
      */
-    sendRejoinPacket(roomCode: string, playerId: number): Promise<boolean>;
+    sendRejoinPacket(roomCode: number, playerId: number): Promise<boolean>;
     /**
      * @returns A promise that will be fulfilled as true if the join was 
      *          successful and false if the join was unsuccessful
      */
-    sendJoinPacket(roomCode: string): Promise<boolean>;
+    sendJoinPacket(roomCode: number): Promise<boolean>;
     sendKickPlayerPacket(playerId: number): void;
     sendSetNamePacket(name: string): void;
     sendStartGamePacket(): void;
