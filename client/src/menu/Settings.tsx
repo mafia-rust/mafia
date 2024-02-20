@@ -36,10 +36,6 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
             ...loadSettings()
         };
     }
-    componentDidMount() {
-    }
-    componentWillUnmount() {
-    }
     async quitToMainMenu() {
         GAME_MANAGER.leaveGame();
         Anchor.closeSettings();
