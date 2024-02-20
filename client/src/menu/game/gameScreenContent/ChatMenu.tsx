@@ -3,7 +3,7 @@ import translate from "../../../game/lang";
 import GAME_MANAGER, { replaceMentions } from "../../../index";
 import "../gameScreen.css";
 import "./chatMenu.css"
-import { Player, PlayerIndex } from "../../../game/gameState.d";
+import { PlayerIndex } from "../../../game/gameState.d";
 import { ChatMessage, translateChatMessage } from "../../../components/ChatMessage";
 import ChatElement from "../../../components/ChatMessage";
 import { ContentMenu, ContentTab } from "../GameScreen";
@@ -122,20 +122,9 @@ function ChatTextInput(): ReactElement {
     }, [setWhisper]);
 
 
-    const [players, setPlayers] = useState<Player[]>(GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.players : []);
     const history: HistoryQueue<string> = useMemo(() => new HistoryQueue(40), []);
     const historyPoller: HistoryPoller<string> = useMemo(() => new HistoryPoller(), []);
 
-
-    useEffect(() => {
-        const playersListener: StateListener = (type) => {
-            if(GAME_MANAGER.state.stateType === "game" && type === "gamePlayers")
-                setPlayers(GAME_MANAGER.state.players);
-        };
-
-        GAME_MANAGER.addStateListener(playersListener);
-        return () => GAME_MANAGER.removeStateListener(playersListener);
-    }, [setPlayers]);
 
     const sendChatField = useCallback(() => {
         let text = chatBoxText.replace("\n", "").replace("\r", "").trim();
@@ -143,31 +132,19 @@ function ChatTextInput(): ReactElement {
         history.push(text);
         historyPoller.reset();
         if (text.startsWith("/w")) {
-            const recipient = players.find(player => 
-                RegExp(`^${player.index+1} +`).test(text.substring(2))
-            );
-            if (recipient !== undefined) {
-                let whisperText = text.substring(3 + recipient.index.toString().length);
-                if(GAME_MANAGER.state.stateType === "game")
-                    whisperText = replaceMentions(whisperText, GAME_MANAGER.getPlayerNames());
-                
-                GAME_MANAGER.sendSendWhisperPacket(
-                    recipient.index,
-                    whisperText
-                ); 
-            } else {
-                // Malformed whisper
-                if(GAME_MANAGER.state.stateType === "game")
-                    text = replaceMentions(text, GAME_MANAGER.getPlayerNames());
-                GAME_MANAGER.sendSendMessagePacket(text);
-            }
+            //needs to work with multi digit numbers
+            const match = text.match(/\/w(\d+) /);
+            if (match === null) return;
+            const index = parseInt(match[1]) - 1;
+            GAME_MANAGER.sendSendWhisperPacket(index, text.slice(match[0].length));
+
         } else {
             if(GAME_MANAGER.state.stateType === "game")
                 text = replaceMentions(text, GAME_MANAGER.getPlayerNames());
             GAME_MANAGER.sendSendMessagePacket(text);
         }
         setChatBoxText("");
-    }, [players, history, historyPoller, chatBoxText]);
+    }, [history, historyPoller, chatBoxText]);
 
     const handleInputChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setChatBoxText(
