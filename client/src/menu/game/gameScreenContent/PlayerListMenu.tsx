@@ -1,6 +1,6 @@
 import React from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER, { find } from "../../../index";
+import GAME_MANAGER from "../../../index";
 import "./playerListMenu.css"
 import "./../gameScreen.css"
 import { Phase, Player, PlayerIndex } from "../../../game/gameState.d";
@@ -19,7 +19,7 @@ type PlayerListMenuState = {
     targets: PlayerIndex[],
     roleState: RoleState | null,
     playerFilter: PlayerFilter,
-    chatFilter: RegExp | null
+    chatFilter: PlayerIndex | null
 }
 type PlayerFilter = "all"|"living"|"usable";
 
@@ -180,8 +180,8 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 </div>
                 {(() => {
 
-                    const filter = find(player.name);
-                    const isFilterSet = this.state.chatFilter?.source === filter.source;
+                    const filter = player.index;
+                    const isFilterSet = this.state.chatFilter === filter;
                     
                     return <button 
                         className={"material-icons-round filter" + (isFilterSet ? " highlighted" : "")} 

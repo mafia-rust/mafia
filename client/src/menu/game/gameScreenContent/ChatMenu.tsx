@@ -13,7 +13,7 @@ import { StateListener } from "../../../game/gameManager.d";
 
 export default function ChatMenu(): ReactElement {
 
-    const [filter, setFilter] = useState<RegExp | null>(null);
+    const [filter, setFilter] = useState<PlayerIndex | null>(null);
     useEffect(() => {
         const stateListener: StateListener = (type) => {
             if (GAME_MANAGER.state.stateType === "game") {
@@ -27,7 +27,7 @@ export default function ChatMenu(): ReactElement {
     return <div className="chat-menu chat-menu-colors">
         <ContentTab close={ContentMenu.ChatMenu} helpMenu={"standard/chat"}>{translate("menu.chat.title")}</ContentTab>
         <ChatMessageSection/>
-        {filter && <button 
+        {filter !== null && <button 
             onClick={()=>{
                 // TODO: Sammy wtf??
                 if(GAME_MANAGER.state.stateType === "game"){
@@ -58,7 +58,7 @@ function ChatMessageSection(): ReactElement {
     }
     
     
-    const [filter, setFilter] = useState<RegExp | null>(null);
+    const [filter, setFilter] = useState<PlayerIndex | null>(null);
     useEffect(() => {
         const stateListener: StateListener = (type) => {
             if (GAME_MANAGER.state.stateType === "game") {
@@ -101,7 +101,7 @@ function ChatMessageSection(): ReactElement {
         <div className="message-list">
             {messages.filter((msg)=>{
                 const msgtxt = translateChatMessage(msg, GAME_MANAGER.getPlayerNames());
-                return filter === null || msg.type === "phaseChange" || filter.test(msgtxt)
+                return filter === null || msg.type === "phaseChange" || msgtxt.includes(GAME_MANAGER.getPlayerNames()[filter]);
             }).map((msg, index) => {
                 return <ChatElement key={index} message={msg}/>;
             })}
