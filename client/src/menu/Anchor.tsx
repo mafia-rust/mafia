@@ -46,9 +46,6 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             touchCurrentX: null,
         }
     }
-    static forceUpdate(){
-        Anchor.instance.forceUpdate()
-    }
     componentDidMount() {
         Anchor.instance = this;
 
