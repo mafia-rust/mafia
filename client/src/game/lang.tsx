@@ -3,7 +3,7 @@ export let langMap: ReadonlyMap<string, string>;
 export let langText: string;
 export let langJson: any;
 
-export const LANGUAGES: readonly string[] = ["en_us", "broken_keyboard", "dyslexic"] as const;
+export const LANGUAGES = ["en_us", "broken_keyboard", "dyslexic"] as const;
 export type Language = typeof LANGUAGES[number]
 switchLanguage("en_us");
 

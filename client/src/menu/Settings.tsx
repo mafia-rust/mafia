@@ -72,9 +72,9 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
                     <h2>{translate("menu.settings.language")}
                         <select 
                             name="lang-select" 
-                            defaultValue={loadSettings()?.language ?? "en_us"}
+                            defaultValue={loadSettings().language ?? "en_us"}
                             onChange={e => {
-                                const language = e.target.options[e.target.selectedIndex].value;
+                                const language = e.target.options[e.target.selectedIndex].value as Language;
                                 switchLanguage(language);
                                 saveSettings({language});
                                 window.location.reload();
@@ -95,7 +95,7 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
     }
 }
 
-export function RoomCodeButton(props: {}): JSX.Element {
+export function RoomCodeButton(): JSX.Element {
     return <button onClick={() => {
         let code = new URL(window.location.href);
         

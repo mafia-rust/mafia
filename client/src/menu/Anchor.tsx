@@ -2,7 +2,7 @@ import React from "react";
 import "../index.css";
 import "./anchor.css";
 import GAME_MANAGER from "..";
-import translate from "../game/lang";
+import translate, { switchLanguage } from "../game/lang";
 import SettingsMenu, { DEFAULT_SETTINGS } from "./Settings";
 import GameScreen from "./game/GameScreen";
 import LobbyMenu from "./lobby/LobbyMenu";
@@ -49,7 +49,9 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     componentDidMount() {
         Anchor.instance = this;
 
-        Anchor.instance.state.audio.volume = loadSettings()?.volume ?? DEFAULT_SETTINGS.volume;
+        const settings = loadSettings();
+        Anchor.instance.state.audio.volume = settings.volume ?? DEFAULT_SETTINGS.volume;
+        switchLanguage(settings.language ?? "en_us")
 
         window.addEventListener("resize", Anchor.onResize);
         Anchor.onResize();
