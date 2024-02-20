@@ -18,7 +18,8 @@ type PlayerListMenuState = {
     voted: PlayerIndex | null,
     targets: PlayerIndex[],
     roleState: RoleState | null,
-    playerFilter: PlayerFilter
+    playerFilter: PlayerFilter,
+    chatFilter: RegExp | null
 }
 type PlayerFilter = "all"|"living"|"usable";
 
@@ -38,6 +39,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 targets: GAME_MANAGER.state.targets,
                 roleState: GAME_MANAGER.state.roleState,
                 playerFilter: "living",
+                chatFilter: null
             };
 
         this.updatePlayerFilter = () => {
@@ -74,6 +76,9 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 return;
             }
             switch (type) {
+                case "tick":
+                    this.setState({chatFilter: GAME_MANAGER.state.chatFilter});
+                break;
                 case "phase":
                     this.setState({ phase: GAME_MANAGER.state.phase })
                 break;
@@ -175,10 +180,8 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 </div>
                 {(() => {
 
-                    const currentFilter = GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.chatFilter : null;
-
                     const filter = find(player.name);
-                    const isFilterSet = currentFilter?.source === filter.source;
+                    const isFilterSet = this.state.chatFilter?.source === filter.source;
                     
                     return <button 
                         className={"material-icons-round filter" + (isFilterSet ? " highlighted" : "")} 

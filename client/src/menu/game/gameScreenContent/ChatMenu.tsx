@@ -13,12 +13,12 @@ import { StateListener } from "../../../game/gameManager.d";
 
 export default function ChatMenu(): ReactElement {
 
-    const [filter, setFilter] = useState<RegExp | null>(GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.chatFilter : null);
-    
+    const [filter, setFilter] = useState<RegExp | null>(null);
     useEffect(() => {
         const stateListener: StateListener = (type) => {
-            if (GAME_MANAGER.state.stateType === "game" && type === "tick") 
+            if (GAME_MANAGER.state.stateType === "game") {
                 setFilter(GAME_MANAGER.state.chatFilter);
+            }
         }
         GAME_MANAGER.addStateListener(stateListener);
         return () => GAME_MANAGER.removeStateListener(stateListener);
@@ -56,24 +56,24 @@ function ChatMessageSection(): ReactElement {
         const { scrollTop, scrollHeight, clientHeight } = e.target;
         setScrolledToBottom(scrollTop + clientHeight >= scrollHeight - AT_BOTTOM_THRESHOLD_PIXELS);
     }
-
-
-    const filter = GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.chatFilter : null;
-    const filteredMessages = useMemo(() => {
-        if (filter === null) return messages;
-        else return messages.filter(msg => filter?.test(translateChatMessage(msg, GAME_MANAGER.getPlayerNames())) || msg.type === "phaseChange")
-    }, [messages, filter]);
-
     
     
+    const [filter, setFilter] = useState<RegExp | null>(null);
+    useEffect(() => {
+        const stateListener: StateListener = (type) => {
+            if (GAME_MANAGER.state.stateType === "game") {
+                setFilter(GAME_MANAGER.state.chatFilter);
+            }
+        }
+        GAME_MANAGER.addStateListener(stateListener);
+        return () => GAME_MANAGER.removeStateListener(stateListener);
+    }, [setFilter]);
 
     // Update with new messages
     useEffect(() => {
         const stateListener: StateListener = (type) => {
             if (GAME_MANAGER.state.stateType === "game" && type === "addChatMessages") {
-                setMessages(GAME_MANAGER.state.chatMessages.filter(msg => 
-                    filter === null || msg.type === "phaseChange" || filter.test(translateChatMessage(msg, GAME_MANAGER.getPlayerNames()))
-                ))
+                setMessages(GAME_MANAGER.state.chatMessages)
             }
         }
 
@@ -99,7 +99,10 @@ function ChatMessageSection(): ReactElement {
 
     return <div className="message-section" ref={self} onScroll={handleScroll}>
         <div className="message-list">
-            {filteredMessages.map((msg, index) => {
+            {messages.filter((msg)=>{
+                const msgtxt = translateChatMessage(msg, GAME_MANAGER.getPlayerNames());
+                return filter === null || msg.type === "phaseChange" || filter.test(msgtxt)
+            }).map((msg, index) => {
                 return <ChatElement key={index} message={msg}/>;
             })}
         </div>
@@ -132,7 +135,7 @@ function ChatTextInput(): ReactElement {
 
         GAME_MANAGER.addStateListener(playersListener);
         return () => GAME_MANAGER.removeStateListener(playersListener);
-    });
+    }, [setPlayers]);
 
     const sendChatField = useCallback(() => {
         let text = chatBoxText.replace("\n", "").replace("\r", "").trim();
