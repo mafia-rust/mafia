@@ -49,40 +49,43 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
     }
     changeLang(langFile: string){
         switchLanguage(langFile)
+        Anchor.forceUpdate()
     }
     render(): React.ReactNode {
         return (
             <div className="settings slide-in">
-                {
-                    GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 
-                    (<>
-                        <h2>{translate("menu.play.field.roomCode")}
-                        <RoomCodeButton/></h2>
-                    </>
-                    ) : null
-                }
-                
-                <h2>{translate("menu.settings.volume")}
-                <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
-                    value={this.props.volume} 
-                    onChange={(e) => {
-                        let volume = parseFloat(e.target.value);
-                        this.props.onVolumeChange(volume);
+                <div>
+                    {
+                        GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 
+                        (<>
+                            <h2>{translate("menu.play.field.roomCode")}
+                            <RoomCodeButton/></h2>
+                        </>
+                        ) : null
                     }
-                }/></h2>
-                <label htmlFor="lang-select">Select Language:</label>
-                <select name="lang-file" id="lang-select">
-                    <option value="">--Please choose an option--</option>
-                    <option onClick={(e)=>{this.changeLang("en_us")}} value="English">English(United States)</option>
-                    <option onClick={(e)=>{this.changeLang("broken_keyboard")}} value="Broken">Broken Keyboard (may cause errors)</option>
-                    <option onClick={(e)=>{this.changeLang("dyslexic")}} value="dyslexic">Scrambled (may cause errors)</option>
-                </select>
-                <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
-                <button onClick={() => {this.goToRolelistEditor()}}>{translate("menu.settings.gameSettingsEditor")}</button>
-                <button onClick={()=>{
-                    if(!window.confirm(translate("confirmDelete"))) return;
-                    localStorage.clear();
-                }}>{translate('menu.settings.eraseSaveData')}</button>
+                    <h2>{translate("menu.settings.volume")}
+                    <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
+                        value={this.props.volume} 
+                        onChange={(e) => {
+                            let volume = parseFloat(e.target.value);
+                            this.props.onVolumeChange(volume);
+                        }
+                    }/></h2>
+                    <label htmlFor="lang-select">Select Language:</label>
+
+                    <select name="lang-file" id="lang-select">
+                        <option value="">--Please choose an option--</option>
+                        <option onClick={(e)=>{this.changeLang("en_us")}} value="English">ENGLISH</option>
+                        <option onClick={(e)=>{this.changeLang("broken_keyboard")}} value="Broken">BROKEN KEYBOARD (may cause errors)</option>
+                        <option onClick={(e)=>{this.changeLang("dyslexic")}} value="dyslexic">SCRAMBLED (may cause errors)</option>
+                    </select>
+                    <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
+                    <button onClick={() => {this.goToRolelistEditor()}}>{translate("menu.settings.gameSettingsEditor")}</button>
+                    <button onClick={()=>{
+                        if(!window.confirm(translate("confirmDelete"))) return;
+                        localStorage.clear();
+                    }}>{translate('menu.settings.eraseSaveData')}</button>
+                </div>
             </div>
         );
     }
