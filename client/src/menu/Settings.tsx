@@ -1,39 +1,44 @@
 import React from 'react';
 import "./settings.css";
-import translate, { switchLanguage } from '../game/lang';
+import translate, { LANGUAGES, Language, languageName, switchLanguage } from '../game/lang';
 import GAME_MANAGER from '..';
 import Anchor from './Anchor';
 import StartMenu from './main/StartMenu';
 import LoadingScreen from './LoadingScreen';
-import { saveSettings } from '../game/localStorage';
+import { loadSettings, saveSettings } from '../game/localStorage';
 import GameModesEditor from './GameModesEditor';
 
+export type Settings = {
+    volume: number,
+    language: Language,
+}
+
 type SettingsProps = {
-    volume: number, // 0-1
     onVolumeChange: (volume: number) => void
 }
 type SettingsState = {
+    volume: number, // 0-1
+    language: Language
 }
 
 //default settings
-export const DEFAULT_SETTINGS = {
-    volume: 0.5
+export const DEFAULT_SETTINGS: Settings = {
+    volume: 0.5,
+    language: "en_us"
 }
 
-export default class Settings extends React.Component<SettingsProps, SettingsState> {
+export default class SettingsMenu extends React.Component<SettingsProps, SettingsState> {
     constructor(props: SettingsProps) {
         super(props);
 
         this.state = {
+            ...DEFAULT_SETTINGS,
+            ...loadSettings()
         };
     }
     componentDidMount() {
     }
     componentWillUnmount() {
-    }
-    saveSettings(volume: number) {
-        saveSettings(volume);
-        console.log("Loaded settings: " + JSON.stringify(volume));
     }
     async quitToMainMenu() {
         GAME_MANAGER.leaveGame();
@@ -46,10 +51,6 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
     goToRolelistEditor() {
         Anchor.setCoverCard(<GameModesEditor/>);
         Anchor.closeSettings();
-    }
-    changeLang(langFile: string){
-        switchLanguage(langFile)
-        Anchor.forceUpdate()
     }
     render(): React.ReactNode {
         return (
@@ -65,20 +66,27 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
                     }
                     <h2>{translate("menu.settings.volume")}
                     <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
-                        value={this.props.volume} 
+                        value={this.state.volume} 
                         onChange={(e) => {
-                            let volume = parseFloat(e.target.value);
-                            this.props.onVolumeChange(volume);
+                            const volume = parseFloat(e.target.value);
+                            saveSettings({volume});
+                            this.setState({volume}, () => this.props.onVolumeChange(volume));
                         }
                     }/></h2>
-                    <label htmlFor="lang-select">Select Language:</label>
-
-                    <select name="lang-file" id="lang-select">
-                        <option value="">--Please choose an option--</option>
-                        <option onClick={(e)=>{this.changeLang("en_us")}} value="English">ENGLISH</option>
-                        <option onClick={(e)=>{this.changeLang("broken_keyboard")}} value="Broken">BROKEN KEYBOARD (may cause errors)</option>
-                        <option onClick={(e)=>{this.changeLang("dyslexic")}} value="dyslexic">SCRAMBLED (may cause errors)</option>
-                    </select>
+                    <h2>{translate("menu.settings.language")}
+                        <select 
+                            name="lang-select" 
+                            defaultValue={loadSettings()?.language ?? "en_us"}
+                            onChange={e => {
+                                const language = e.target.options[e.target.selectedIndex].value;
+                                switchLanguage(language);
+                                saveSettings({language});
+                                window.location.reload();
+                            }}
+                        >
+                            {LANGUAGES.map(lang => <option value={lang}>{languageName(lang)}</option>)}
+                        </select>
+                    </h2>
                     <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
                     <button onClick={() => {this.goToRolelistEditor()}}>{translate("menu.settings.gameSettingsEditor")}</button>
                     <button onClick={()=>{

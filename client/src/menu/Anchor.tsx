@@ -3,7 +3,7 @@ import "../index.css";
 import "./anchor.css";
 import GAME_MANAGER from "..";
 import translate from "../game/lang";
-import Settings, { DEFAULT_SETTINGS } from "./Settings";
+import SettingsMenu, { DEFAULT_SETTINGS } from "./Settings";
 import GameScreen from "./game/GameScreen";
 import LobbyMenu from "./lobby/LobbyMenu";
 import { deleteReconnectData, loadSettings, saveSettings } from "../game/localStorage";
@@ -186,10 +186,9 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             <button className="material-icons-round settings-button" onClick={() => {
                 this.setState({settings_menu: !this.state.settings_menu});
             }}>menu</button>
-            {this.state.settings_menu && <Settings 
-                volume={this.state.audio.volume} 
+            {this.state.settings_menu && <SettingsMenu 
                 onVolumeChange={(volume) => {
-                    saveSettings(volume);
+                    saveSettings({volume});
                     Anchor.instance.state.audio.volume = volume;
                     this.setState({
                         audio: this.state.audio
