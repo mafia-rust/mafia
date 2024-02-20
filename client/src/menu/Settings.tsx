@@ -1,6 +1,6 @@
 import React from 'react';
 import "./settings.css";
-import translate from '../game/lang';
+import translate, { switchLanguage } from '../game/lang';
 import GAME_MANAGER from '..';
 import Anchor from './Anchor';
 import StartMenu from './main/StartMenu';
@@ -47,6 +47,9 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
         Anchor.setCoverCard(<GameModesEditor/>);
         Anchor.closeSettings();
     }
+    changeLang(langFile: string){
+        switchLanguage(langFile)
+    }
     render(): React.ReactNode {
         return (
             <div className="settings slide-in">
@@ -67,6 +70,13 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
                         this.props.onVolumeChange(volume);
                     }
                 }/></h2>
+                <label htmlFor="lang-select">Select Language:</label>
+                <select name="lang-file" id="lang-select">
+                    <option value="">--Please choose an option--</option>
+                    <option onClick={(e)=>{this.changeLang("en_us")}} value="English">English(United States)</option>
+                    <option onClick={(e)=>{this.changeLang("broken_keyboard")}} value="Broken">Broken Keyboard (may cause errors)</option>
+                    <option onClick={(e)=>{this.changeLang("dyslexic")}} value="dyslexic">Scrambled (may cause errors)</option>
+                </select>
                 <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
                 <button onClick={() => {this.goToRolelistEditor()}}>{translate("menu.settings.gameSettingsEditor")}</button>
                 <button onClick={()=>{
