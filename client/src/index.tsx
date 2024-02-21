@@ -5,6 +5,7 @@ import Anchor from './menu/Anchor';
 import { GameManager, createGameManager } from './game/gameManager';
 import StartMenu from './menu/main/StartMenu';
 import LoadingScreen from './menu/LoadingScreen';
+import LobbyMenu from './menu/lobby/LobbyMenu';
 
 const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
@@ -38,20 +39,24 @@ async function route(url: Location) {
         } catch {
             success = false;
         }
-        if (!success) {
+        if (success) {
+            Anchor.setContent(<LobbyMenu/>)
+        } else {
+            await GAME_MANAGER.setDisconnectedState();
             Anchor.setContent(<StartMenu/>)
-            GAME_MANAGER.setDisconnectedState();
         }
     } else if (reconnectData) {        
         await GAME_MANAGER.setOutsideLobbyState();
 
         const success = await GAME_MANAGER.sendRejoinPacket(reconnectData.roomCode, reconnectData.playerId);
-        if (!success) {
+        if (success) {
+            Anchor.setContent(<LobbyMenu/>)
+        } else {
             // Don't show an error message for an auto-rejoin. The user didn't prompt it - they will be confused.
             // Reconnect data is deleted in messageListener
+            await GAME_MANAGER.setDisconnectedState();
             Anchor.clearError();
             Anchor.setContent(<StartMenu/>);
-            GAME_MANAGER.setDisconnectedState();
         }
     } else {
         Anchor.setContent(<StartMenu/>)

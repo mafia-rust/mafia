@@ -11,6 +11,8 @@ import Anchor from "../Anchor";
 import WikiSearch from "../../components/WikiSearch";
 import { RoomCodeButton } from "../Settings";
 import { getRolesFromRoleListRemoveExclusionsAddConversions, getRolesComplement } from "../../game/roleListState.d";
+import LoadingScreen from "../LoadingScreen";
+import GameScreen from "../game/GameScreen";
 
 type LobbyMenuProps = {}
 
@@ -82,14 +84,21 @@ function LobbyMenuHeader(props: { host?: boolean }): JSX.Element {
     useEffect(() => {
         GAME_MANAGER.addStateListener(type => {
             if (GAME_MANAGER.state.stateType === "lobby" && type === "lobbyName") {
-                setLobbyName(lobbyName);
+                setLobbyName(GAME_MANAGER.state.lobbyName);
             }
         })
     });
 
     return <header>
         <div>
-            <button disabled={!props.host} className="start" onClick={()=>{GAME_MANAGER.sendStartGamePacket()}}>
+            <button disabled={!props.host} className="start" onClick={async ()=>{
+                Anchor.setContent(<LoadingScreen type="default"/>);
+                if (await GAME_MANAGER.sendStartGamePacket()) {
+                    Anchor.setContent(GameScreen.createDefault());
+                } else {
+                    Anchor.setContent(<LobbyMenu/>)
+                }
+            }}>
                 {translate("menu.lobby.button.start")}
             </button>
             <RoomCodeButton/>

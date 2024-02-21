@@ -6,8 +6,9 @@ import translate from "../../game/lang";
 // import WikiSearch from "../../components/WikiSearch";
 import Anchor from "../Anchor";
 // import * as LoadingScreen from "../LoadingScreen";
-import LoadingScreen from "../LoadingScreen";
 import StandaloneWiki from "./StandaloneWiki";
+import PlayMenu from "./PlayMenu";
+import LoadingScreen from "../LoadingScreen";
 
 type StartMenuProps = {
 }
@@ -18,8 +19,8 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
 
     private async connectButton() {
         Anchor.setContent(<LoadingScreen type="default"/>);
-
-        GAME_MANAGER.setOutsideLobbyState();
+        await GAME_MANAGER.setOutsideLobbyState();
+        Anchor.setContent(<PlayMenu/>);
     }
 
     render(){return(<div className="sm">

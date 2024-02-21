@@ -6,6 +6,7 @@ import LoadingScreen from "../LoadingScreen";
 import "./playMenu.css";
 import { StateListener } from "../../game/gameManager.d";
 import { LobbyPreviewData } from "../../game/packet";
+import LobbyMenu from "../lobby/LobbyMenu";
 
 export default function PlayMenu(): ReactElement {
     useEffect(() => {
@@ -109,14 +110,22 @@ async function joinGame(roomCode?: number, playerId?: number): Promise<boolean> 
         success = await GAME_MANAGER.sendRejoinPacket(roomCode, playerId);
     }
 
-    if (!success) Anchor.setContent(<PlayMenu/>);
+    if (success) {
+        Anchor.setContent(<LobbyMenu/>);
+    } else {
+        Anchor.setContent(<PlayMenu/>);
+    }
 
     return success;
 }
 
 async function hostGame() {
     Anchor.setContent(<LoadingScreen type="host"/>);
-    GAME_MANAGER.sendHostPacket();
+    if (await GAME_MANAGER.sendHostPacket()) {
+        Anchor.setContent(<LobbyMenu/>)
+    } else {
+        Anchor.setContent(<PlayMenu/>)
+    }
 }
 
 function refresh() {

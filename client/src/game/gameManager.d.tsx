@@ -51,7 +51,11 @@ export type GameManager = {
     leaveGame(): void;
 
     sendLobbyListRequest(): void;
-    sendHostPacket(): void;
+    /**
+     * @returns A promise that will be fulfilled as true if the join was 
+     *          successful and false if the join was unsuccessful
+     */
+    sendHostPacket(): Promise<boolean>;
     /**
      * @returns A promise that will be fulfilled as true if the join was 
      *          successful and false if the join was unsuccessful
@@ -65,7 +69,7 @@ export type GameManager = {
     sendKickPlayerPacket(playerId: number): void;
     sendSetNamePacket(name: string): void;
     sendSetLobbyNamePacket(name: string): void;
-    sendStartGamePacket(): void;
+    sendStartGamePacket(): Promise<boolean>;
     sendSetPhaseTimePacket(phase: Phase, time: number): void;
     sendSetPhaseTimesPacket(phaseTimeSettings: PhaseTimes): void;
     sendSetRoleListPacket(roleListEntries: RoleList): void;

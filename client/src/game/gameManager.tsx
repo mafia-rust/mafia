@@ -11,9 +11,6 @@ import { RoleOutline } from "./roleListState.d";
 import translate from "./lang";
 import PlayMenu from "../menu/main/PlayMenu";
 import { createGameState, createLobbyState } from "./gameState";
-import LobbyMenu from "../menu/lobby/LobbyMenu";
-import GameScreen from "../menu/game/GameScreen";
-import LoadingScreen from "../menu/LoadingScreen";
 import { Role } from "./roleState.d";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 export function createGameManager(): GameManager {
@@ -21,19 +18,24 @@ export function createGameManager(): GameManager {
     console.log("Game manager created.");
     
     let gameManager: GameManager = {
-        setDisconnectedState() {
+        async setDisconnectedState(): Promise<void> {
             Anchor.stopAudio();
+
+            let completePromise: () => void;
+            const promise = new Promise<void>((resolver) => {
+                completePromise = resolver;
+            });
+            
+            GAME_MANAGER.server.ws?.addEventListener("close", () => completePromise());
             GAME_MANAGER.server.close();
 
             GAME_MANAGER.state = {
                 stateType: "disconnected"
             };
-            Anchor.setContent(<StartMenu/>);
+            return promise;
         },
         setLobbyState() {
             GAME_MANAGER.state = createLobbyState();
-            Anchor.setContent(<LobbyMenu/>);
-            Anchor.playAudioFile("/audio/01. Calm Before The Storm.mp3");
         },
         setGameState() {
             let roomCode: number | null = null;
@@ -44,16 +46,13 @@ export function createGameManager(): GameManager {
 
             Anchor.stopAudio();
             GAME_MANAGER.state = createGameState();
-            Anchor.setContent(GameScreen.createDefault());
             if (roomCode !== null) {
                 GAME_MANAGER.state.roomCode = roomCode;
             }
         },
         async setOutsideLobbyState() {
             Anchor.stopAudio();
-
-            Anchor.setContent(<LoadingScreen type="default" />);
-            // GAME_MANAGER.server.close();
+            
             if (!GAME_MANAGER.server.ws?.OPEN) {
                 await GAME_MANAGER.server.open();
             }
@@ -63,8 +62,6 @@ export function createGameManager(): GameManager {
                 selectedRoomCode: null,
                 lobbies: new Map<number, LobbyPreviewData>()
             };
-
-            Anchor.setContent(<PlayMenu />);
         },
 
         saveReconnectData(roomCode, playerId) {
@@ -156,20 +153,34 @@ export function createGameManager(): GameManager {
             }
             this.deleteReconnectData();
             this.setOutsideLobbyState();
-            // Set URL to main menu and refresh
-            // window.history.replaceState({}, document.title, window.location.pathname);
-            // window.location.reload();
+            Anchor.setContent(<PlayMenu/>);
         },
 
         sendLobbyListRequest() {
             this.server.sendPacket({ type: "lobbyListRequest" });
         },
         sendHostPacket() {
+            let completePromise: (success: boolean) => void;
+            const promise = new Promise<boolean>((resolver) => {
+                completePromise = resolver;
+            });
+            let onJoined: StateListener = (type) => {
+                if (type === "acceptJoin") {
+                    completePromise(true);
+                    GAME_MANAGER.removeStateListener(onJoined);
+                } else if (type === "rejectJoin") {
+                    completePromise(false);
+                    GAME_MANAGER.removeStateListener(onJoined);
+                }
+            };
+            GAME_MANAGER.addStateListener(onJoined);
             this.server.sendPacket({ type: "host" });
+
+            return promise;
         },
         sendRejoinPacket(roomCode: number, playerId: number) {
             let completePromise: (success: boolean) => void;
-            let promise = new Promise<boolean>((resolver) => {
+            const promise = new Promise<boolean>((resolver) => {
                 completePromise = resolver;
             });
             let onJoined: StateListener = (type) => {
@@ -236,9 +247,26 @@ export function createGameManager(): GameManager {
             });
         },
         sendStartGamePacket() {
+            let completePromise: (success: boolean) => void;
+            let promise = new Promise<boolean>((resolver) => {
+                completePromise = resolver;
+            });
+            let onJoined: StateListener = (type) => {
+                if (type === "startGame") {
+                    completePromise(true);
+                    GAME_MANAGER.removeStateListener(onJoined);
+                } else if (type === "rejectStart") {
+                    completePromise(false);
+                    GAME_MANAGER.removeStateListener(onJoined);
+                }
+            };
+            GAME_MANAGER.addStateListener(onJoined);
+
             this.server.sendPacket({
                 type: "startGame"
             });
+
+            return promise;
         },
         sendSetPhaseTimePacket(phase: Phase, time: number) {
             if (isValidPhaseTime(time)) {
@@ -444,8 +472,6 @@ function createServer(){
             Server.ws.onopen = (event: Event)=>{
                 completePromise();
                 console.log("Connected to server.");
-                
-                Anchor.setContent(<PlayMenu/>);
             };
             Server.ws.onclose = (event: CloseEvent)=>{
                 console.log("Disconnected from server.");
@@ -462,7 +488,6 @@ function createServer(){
             Server.ws.onerror = (event: Event) => {
                 Server.close();
                 Anchor.pushError(translate("notification.connectionFailed"), translate("notification.serverNotFound"));
-                Anchor.setContent(<StartMenu/>);
             };
             
             return promise;
