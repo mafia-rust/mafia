@@ -93,9 +93,7 @@ function LobbyMenuHeader(props: { host?: boolean }): JSX.Element {
         <div>
             <button disabled={!props.host} className="start" onClick={async ()=>{
                 Anchor.setContent(<LoadingScreen type="default"/>);
-                if (await GAME_MANAGER.sendStartGamePacket()) {
-                    Anchor.setContent(GameScreen.createDefault());
-                } else {
+                if (!await GAME_MANAGER.sendStartGamePacket()) {
                     Anchor.setContent(<LobbyMenu/>)
                 }
             }}>

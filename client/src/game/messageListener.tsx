@@ -135,6 +135,7 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "startGame":
             GAME_MANAGER.setGameState();
+            Anchor.setContent(GameScreen.createDefault());
         break;
         case "gamePlayers":
             if(GAME_MANAGER.state.stateType === "game"){
