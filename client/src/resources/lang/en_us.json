@@ -190,6 +190,7 @@
     "role.vigilante.target": "Shoot",
     "role.vigilante.roleDataText.suicide": "You killed a townie and will commit suicide tonight",
     "role.vigilante.roleDataText": "\\0 bullets remaining",
+    "role.vigilante.roleDataText.notLoaded": "You are reloading your gun. You can not shoot yet.",
     "role.vigilante.dayTarget": "Special",
 
     "role.veteran.name": "Veteran",

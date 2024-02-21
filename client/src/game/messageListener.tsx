@@ -276,6 +276,7 @@ export default function messageListener(packet: ToClientPacket){
                     GameScreen.instance?.closeMenu(ContentMenu.RoleSpecificMenu);
                 }
                 GAME_MANAGER.state.roleState = packet.roleState;
+                console.log(packet.roleState);
             }
         break;
         case "yourTarget":

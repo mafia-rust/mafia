@@ -38,8 +38,7 @@ export type RoleState = {
     role: "trapper"
 } | {
     role: "vigilante",
-    bulletsRemaining: number,
-    willSuicide: boolean,
+    state: {type:"notLoaded"} | {type:"willSuicide"} | {type:"loaded",bullets:number} | {type:"suicided"}
 } | {
     role: "veteran"
     alertsRemaining: number,
