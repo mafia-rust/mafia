@@ -9,7 +9,6 @@
         "inno",
         "killable",
         "necronomicon",
-        "zealot",
         "repr",
         "Retributionist",
         "roleblock",
@@ -17,6 +16,7 @@
         "roleblocked",
         "Roleblocking",
         "seanced",
+        "Sussy",
         "targeter",
         "Thanos",
         "Tidyable",
@@ -26,6 +26,7 @@
         "votee",
         "whisperee",
         "witchable",
-        "Worsencroft"
+        "Worsencroft",
+        "zealot"
     ]
 }

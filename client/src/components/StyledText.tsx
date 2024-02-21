@@ -2,7 +2,7 @@ import { marked } from "marked";
 import React, { ReactElement } from "react";
 import ReactDOMServer from "react-dom/server";
 import GAME_MANAGER, { find } from "..";
-import translate from "../game/lang";
+import translate, { translateChecked } from "../game/lang";
 import { Role, getFactionFromRole } from "../game/roleState.d";
 import ROLES from "../resources/roles.json";
 import "./styledText.css";
@@ -155,6 +155,14 @@ function computeBasicKeywordData() {
                 replacement: data.replacement === undefined ? undefined : translate(data.replacement)
             }
         });
+        for (let i = 0, variant; (variant = translateChecked(`${keyword}:var.${i}`)) !== null; i++) {
+            KEYWORD_DATA_MAP[variant] = (Array.isArray(data) ? data : [data]).map(data => {
+                return {
+                    ...data,
+                    replacement: data.replacement === undefined ? undefined : translate(data.replacement)
+                }
+            });
+        }
     }
 }
 
