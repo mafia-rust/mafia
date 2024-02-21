@@ -1,9 +1,9 @@
 {
     "default": [
+        "jailor",
         "bodyguard",
         "mafioso",
-        "martyr",
-        "jailor"
+        "martyr"
     ],
     "beginner": [
         "jailor","mayor",
@@ -45,7 +45,7 @@
     "smallGame": [
         "spy","seer",
         "bodyguard","trapper",
-        "retributionist","medium",
+        "retributionist","medium","journalist",
         "mafioso",
         "necromancer",
         "doomsayer","death",

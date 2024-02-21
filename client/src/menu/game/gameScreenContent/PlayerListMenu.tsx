@@ -25,6 +25,7 @@ type PlayerFilter = "all"|"living"|"usable";
 
 export default class PlayerListMenu extends React.Component<PlayerListMenuProps, PlayerListMenuState> {
     listener: StateListener;
+    updatePlayerFilter: () => void;
 
     constructor(props: PlayerListMenuProps) {
         super(props);
@@ -40,6 +41,35 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 playerFilter: "living",
             };
 
+        this.updatePlayerFilter = () => {
+            if(GAME_MANAGER.state.stateType !== "game"){
+                return;
+            }
+
+            let playerFilter = this.state.playerFilter;
+            if(
+                (GAME_MANAGER.state.myIndex===null || GAME_MANAGER.state.players[GAME_MANAGER.state.myIndex].alive) && 
+                playerFilter !== "all"
+            ){
+                if(GAME_MANAGER.state.phase === "night"){
+                    playerFilter = "usable"
+                }else if(GAME_MANAGER.state.phase === "morning"){
+                    playerFilter = "living";
+                }
+            }
+            //if there are no usable players, switch to living
+            if(playerFilter==="usable" && !GAME_MANAGER.state.players.some((player)=>{return Object.values(player.buttons).includes(true)})){
+                playerFilter = "living";
+            }
+            //if there are no living players, switch to all
+            if(playerFilter==="living" && !GAME_MANAGER.state.players.some((player)=>{return player.alive})){
+                playerFilter = "all";
+            }
+            this.setState({
+                playerFilter: playerFilter
+            })
+        };
+
         this.listener = (type)=>{
             if(GAME_MANAGER.state.stateType !== "game"){
                 return;
@@ -47,33 +77,13 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
             switch (type) {
                 case "phase":
                     this.setState({ phase: GAME_MANAGER.state.phase })
-                    let playerFilter = this.state.playerFilter;
-                    if(
-                        (
-                            GAME_MANAGER.state.myIndex===null || 
-                            GAME_MANAGER.state.players[GAME_MANAGER.state.myIndex].alive
-                        ) && 
-                        playerFilter !== "all"
-                    ){
-                        if(GAME_MANAGER.state.phase === "night"){
-                            playerFilter = "usable"
-                        }else if(GAME_MANAGER.state.phase === "morning"){
-                            playerFilter = "living";
-                        }
-                    }
-                    //if there are no usable players, switch to living
-                    if(playerFilter==="usable" && !GAME_MANAGER.state.players.some((player)=>{return Object.values(player.buttons).includes(true)})){
-                        playerFilter = "living";
-                    }
-                    //if there are no living players, switch to all
-                    if(playerFilter==="living" && !GAME_MANAGER.state.players.some((player)=>{return player.alive})){
-                        playerFilter = "all";
-                    }
-                    this.setState({
-                        playerFilter: playerFilter
-                    })
                 break;
                 case "gamePlayers":
+                case "yourButtons":
+                case "playerAlive":
+                case "yourPlayerTags":
+                case "yourRoleLabels":
+                case "playerVotes":
                     this.setState({ players: GAME_MANAGER.state.players })
                 break;
                 case "yourVoting":
@@ -84,6 +94,15 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 break;
                 case "yourRoleState":
                     this.setState({ roleState: GAME_MANAGER.state.roleState })
+                break;
+            }
+            switch (type) {
+                case "phase":
+                case "gamePlayers":
+                case "yourVoting":
+                case "yourTarget":
+                case "yourRoleState":
+                    this.updatePlayerFilter();
                 break;
             }
         };  
@@ -161,7 +180,10 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                     
                     return <button 
                         className={"material-icons-round filter" + (isFilterSet ? " highlighted" : "")} 
-                        onClick={() => {isFilterSet ? ChatMenu.setFilter(null) : ChatMenu.setFilter(filter); this.setState({})}}
+                        onClick={() => {
+                            isFilterSet ? ChatMenu.setFilter(null) : ChatMenu.setFilter(filter);
+                            this.setState({})
+                        }}
                         aria-label={translate("menu.playerList.button.filter")}
                     >
                         filter_alt

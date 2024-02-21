@@ -242,10 +242,12 @@
         "keywords": ["haunt","dead","chatGroup"],
         "canBeConvertedTo": [],
         "chatMessages":[
+            {"type": "mediumHauntStarted", "medium":32, "player":10},
             {
                 "type": "normal", 
                 "messageSender": {
-                    "type": "medium"
+                    "type": "livingToDead",
+                    "player": 10
                 },
                 "text": "Why didn't you claim what your role was while you were alive.", 
                 "chatGroup": "dead"
@@ -254,12 +256,11 @@
                 "type": "normal", 
                 "messageSender": {
                     "type": "player",
-                    "player": 37
+                    "player": 32
                 },
                 "text": "I was litterally looking it up when they killed me. Google said a lookout is \"a place from which to keep watch or view landscape\".", 
                 "chatGroup": "dead"
-            },
-            {"type": "mediumSeance", "player": 10}
+            }
         ]
     },
     "mayor":{

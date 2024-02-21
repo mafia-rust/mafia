@@ -41,7 +41,7 @@
     "playerRoleAndWill": "result",
     "consigliereResult": "result",
     "silenced": "warning",
-    "mediumSeance": "special",
+    "mediumHauntStarted": "special",
     "targetWasAttacked": "result",
     "youWereProtected": "result",
     "executionerWon": "result",
