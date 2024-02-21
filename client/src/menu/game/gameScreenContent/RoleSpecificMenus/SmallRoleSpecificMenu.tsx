@@ -60,10 +60,16 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
             case "bodyguard":
                 return <StyledText>{translate("role.bodyguard.roleDataText", this.state.gameState.roleState.selfShieldsRemaining)}</StyledText>;
             case "vigilante":
-                if(this.state.gameState.roleState.willSuicide)
-                    return <StyledText>{translate("role.vigilante.roleDataText.suicide")}</StyledText>;
-                else
-                    return <StyledText>{translate("role.vigilante.roleDataText", this.state.gameState.roleState.bulletsRemaining)}</StyledText>;
+                switch(this.state.gameState.roleState.state.type){
+                    case "willSuicide":
+                        return <StyledText>{translate("role.vigilante.roleDataText.suicide")}</StyledText>;
+                    case "notLoaded":
+                        return <StyledText>{translate("role.vigilante.roleDataText.notLoaded")}</StyledText>;
+                    case "loaded":
+                        return <StyledText>{translate("role.vigilante.roleDataText", this.state.gameState.roleState.state.bullets)}</StyledText>;
+                    default:
+                        return null
+                }
             case "veteran":
                 return <StyledText>{translate("role.veteran.roleDataText", this.state.gameState.roleState.alertsRemaining)}</StyledText>;
             case "janitor":

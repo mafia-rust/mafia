@@ -4,12 +4,13 @@
     "menu.start.title": "Mafia",
     "menu.start.button.play": "Play",
 
-    "menu.play.title": "Play",
+    "menu.play.title": "Server Browser",
     "menu.play.button.join": "Join",
     "menu.play.button.host": "Host",
     "menu.play.button.refresh": "Refresh",
     "menu.play.button.rejoin": "Rejoin",
     "menu.play.field.roomCode": "Room code",
+    "menu.play.field.name": "Name",
     "menu.play.field.playerId": "Player Id",
 
     "menu.lobby.button.start": "Start",
@@ -44,6 +45,7 @@
     "menu.loading.host": "Starting Server",
     "menu.loading.join": "Connecting to Lobby",
     "menu.loading.default": "Loading",
+    "menu.loading.disconnect": "Disconnecting",
 
     "menu.chat.title": "Chat",
     "menu.chat.icon": "💬",
@@ -190,6 +192,7 @@
     "role.vigilante.target": "Shoot",
     "role.vigilante.roleDataText.suicide": "You killed an innocent townie and will commit suicide tonight",
     "role.vigilante.roleDataText": "\\0 bullets remaining",
+    "role.vigilante.roleDataText.notLoaded": "You are reloading your gun. You can not shoot yet.",
     "role.vigilante.dayTarget": "Special",
 
     "role.veteran.name": "Veteran",

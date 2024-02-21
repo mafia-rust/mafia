@@ -6,7 +6,7 @@ use tokio_tungstenite::tungstenite::Message;
 use crate::{
     lobby::Lobby, 
     log, 
-    packet::{RejectJoinReason, ToClientPacket, ToServerPacket}, 
+    packet::{LobbyPreviewData, RejectJoinReason, ToClientPacket, ToServerPacket}, 
     websocket_connections::connection::Connection
 };
 
@@ -233,11 +233,12 @@ impl Listener{
             ToServerPacket::LobbyListRequest => {
                 connection.send(ToClientPacket::LobbyList{lobbies: self.lobbies.iter()
                     .map(|(room_code, lobby)|
-                        (*room_code, lobby.get_player_list()
+                        (*room_code, LobbyPreviewData { 
+                            name: lobby.name.clone(), 
+                            players: lobby.get_player_list() 
+                        }
                     ))
-                    .collect::<
-                        HashMap<RoomCode,Vec<(PlayerID, String)>>
-                    >()});
+                    .collect::<HashMap<RoomCode, LobbyPreviewData>>()});
             },
             ToServerPacket::ReJoin {room_code, player_id } => {
                 self.set_player_in_lobby_reconnect(connection, room_code, player_id);

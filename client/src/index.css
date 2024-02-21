@@ -126,6 +126,12 @@ button:hover:not([disabled]), input:hover:not([disabled]), select:hover:not([dis
     position: relative;
 }
 
+code {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    padding: 0.25rem;
+}
+
 ::-webkit-scrollbar {
     width: .3rem;
     height: .3rem;

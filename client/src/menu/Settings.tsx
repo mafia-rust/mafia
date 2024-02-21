@@ -3,6 +3,8 @@ import "./settings.css";
 import translate from '../game/lang';
 import GAME_MANAGER from '..';
 import Anchor from './Anchor';
+import StartMenu from './main/StartMenu';
+import LoadingScreen from './LoadingScreen';
 
 type SettingsProps = {
     volume: number, // 0-1
@@ -31,10 +33,12 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
         GAME_MANAGER.saveSettings(volume);
         console.log("Loaded settings: " + JSON.stringify(volume));
     }
-    quitToMainMenu() {
+    async quitToMainMenu() {
         GAME_MANAGER.leaveGame();
         Anchor.closeSettings();
-        GAME_MANAGER.setDisconnectedState();
+        Anchor.setContent(<LoadingScreen type="disconnect"/>)
+        await GAME_MANAGER.setDisconnectedState();
+        Anchor.setContent(<StartMenu/>)
     }
     render(): React.ReactNode {
         return (
@@ -74,7 +78,7 @@ export function RoomCodeButton(props: {}): JSX.Element {
         let code = new URL(window.location.href);
         
         if (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
-            code.searchParams.set("code", GAME_MANAGER.state.roomCode!);
+            code.searchParams.set("code", GAME_MANAGER.state.roomCode.toString(18));
 
         if (navigator.clipboard)
             navigator.clipboard.writeText(code.toString());
