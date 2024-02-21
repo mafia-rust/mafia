@@ -4,9 +4,9 @@ import GAME_MANAGER from "./../index";
 import messageListener from "./messageListener";
 import CONFIG from "./../resources/config.json"
 import React from "react";
-import { Phase, PhaseTimes, PlayerID, Verdict } from "./gameState.d";
+import { Phase, PhaseTimes, Verdict } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
-import { ToClientPacket, ToServerPacket } from "./packet";
+import { LobbyPreviewData, ToClientPacket, ToServerPacket } from "./packet";
 import { RoleOutline } from "./roleListState.d";
 import translate from "./lang";
 import PlayMenu from "../menu/main/PlayMenu";
@@ -61,7 +61,7 @@ export function createGameManager(): GameManager {
             GAME_MANAGER.state = {
                 stateType: "outsideLobby",
                 selectedRoomCode: null,
-                lobbies: new Map<number, [PlayerID, string][]>()
+                lobbies: new Map<number, LobbyPreviewData>()
             };
 
             Anchor.setContent(<PlayMenu />);
@@ -225,6 +225,13 @@ export function createGameManager(): GameManager {
         sendSetNamePacket(name) {
             this.server.sendPacket({
                 type: "setName",
+                name: name
+            });
+        },
+
+        sendSetLobbyNamePacket(name) {
+            this.server.sendPacket({
+                type: "setLobbyName",
                 name: name
             });
         },

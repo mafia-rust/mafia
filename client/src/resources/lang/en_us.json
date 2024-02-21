@@ -10,6 +10,7 @@
     "menu.play.button.refresh": "Refresh",
     "menu.play.button.rejoin": "Rejoin",
     "menu.play.field.roomCode": "Room code",
+    "menu.play.field.name": "Name",
     "menu.play.field.playerId": "Player Id",
 
     "menu.lobby.button.start": "Start",

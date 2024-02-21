@@ -5,6 +5,7 @@ export function createLobbyState(): LobbyState {
     return {
         stateType: "lobby",
         roomCode: 0,
+        lobbyName: "Mafia Lobby",
 
         myId: null,
 

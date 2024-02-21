@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import GAME_MANAGER from "../../index";
 import LobbyPlayerList from "./LobbyPlayerList";
 import LobbyPhaseTimePane from "./LobbyPhaseTimePane";
@@ -77,6 +77,16 @@ export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenu
 
 // There's probably a better way to do this that doesn't need the mobile check.
 function LobbyMenuHeader(props: { host?: boolean }): JSX.Element {
+    const [lobbyName, setLobbyName] = useState<string>(GAME_MANAGER.state.stateType === "lobby" ? GAME_MANAGER.state.lobbyName : "Mafia Lobby");
+
+    useEffect(() => {
+        GAME_MANAGER.addStateListener(type => {
+            if (GAME_MANAGER.state.stateType === "lobby" && type === "lobbyName") {
+                setLobbyName(lobbyName);
+            }
+        })
+    });
+
     return <header>
         <div>
             <button disabled={!props.host} className="start" onClick={()=>{GAME_MANAGER.sendStartGamePacket()}}>
@@ -84,6 +94,22 @@ function LobbyMenuHeader(props: { host?: boolean }): JSX.Element {
             </button>
             <RoomCodeButton/>
         </div>
+        { props.host ? 
+            <input 
+                type="text" 
+                value={lobbyName}
+                onInput={e => {
+                    setLobbyName((e.target as HTMLInputElement).value);
+                }}
+                onBlur={e => {
+                    const newLobbyName = (e.target as HTMLInputElement).value;
+                    setLobbyName(newLobbyName);
+                    GAME_MANAGER.sendSetLobbyNamePacket(newLobbyName);
+                }}
+            /> : 
+            <h1>{lobbyName}</h1>
+        }
+        
     </header>
 }
 

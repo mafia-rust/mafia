@@ -70,14 +70,13 @@
 .play-menu-browser > .play-menu-center > table {
     display: flex;
     flex-direction: column;
-    position: relative;
     height: 100%;
     width: 100%;
     background-color: var(--secondary-color);
     overflow: hidden;
 }
 
-.play-menu-browser table tr:nth-child(even) {
+.play-menu-browser table tr:nth-last-child(even) {
     background-color: var(--background-color);
 }
 
@@ -90,23 +89,27 @@
 
 .play-menu-browser table > tbody {
     display: flex;
-    align-items: stretch;
     flex-direction: column;
+    flex-shrink: 0;
     width: 100%;
     overflow-y: scroll;
     overflow-x: hidden;
 }
 
 .play-menu-browser table > tfoot {
-    height: 100%;
+    width: 100%;
+    overflow: hidden;
 }
 
 .play-menu-browser table tr {
     display: flex;
     flex-direction: row;
     flex: 0 0;
-    height: 2rem;
     width: 100%;
+}
+
+.play-menu-browser tfoot > tr, .play-menu-browser thead > tr {
+    height: 2rem;
 }
 
 .play-menu-browser table th, .play-menu-browser table td {
@@ -118,6 +121,7 @@
     white-space: nowrap;
     flex-shrink: 0;
     min-width: 0;
+    border-right: .13rem solid var(--primary-border-color);
 }
 
 .play-menu-browser table th:first-of-type, .play-menu-browser table td:first-of-type {
@@ -126,11 +130,14 @@
 
 .play-menu-browser table th:nth-of-type(2), .play-menu-browser table td:nth-of-type(2) {
     flex-basis: 8rem;
+    justify-content: left;
+    overflow: hidden;
 }
 
 .play-menu-browser table th:nth-of-type(3), .play-menu-browser table td:nth-of-type(3) {
     flex-basis: calc(100% - 12rem);
     justify-content: left;
+    border-right: none;
 }
 
 .play-menu-browser table td .play-menu-lobby-player-list {

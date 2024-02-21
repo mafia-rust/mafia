@@ -2,6 +2,7 @@ import { Grave } from "./graveState";
 import { ChatMessage } from "../components/ChatMessage";
 import { Role, RoleState } from "./roleState.d";
 import { RoleList } from "./roleListState.d";
+import { LobbyPreviewData } from "./packet";
 
 
 export type State = Disconnected | OutsideLobbyState | LobbyState | GameState;
@@ -14,7 +15,7 @@ export type OutsideLobbyState = {
     stateType: "outsideLobby",
 
     selectedRoomCode: string | null,
-    lobbies: Map<number, [PlayerID, string][]>,
+    lobbies: Map<number, LobbyPreviewData>,
 }
 
 
@@ -22,6 +23,7 @@ export type OutsideLobbyState = {
 export type LobbyState = {
     stateType: "lobby"
     roomCode: number,
+    lobbyName: string,
 
     myId: number | null,
 

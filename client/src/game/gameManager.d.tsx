@@ -64,6 +64,7 @@ export type GameManager = {
     sendJoinPacket(roomCode: number): Promise<boolean>;
     sendKickPlayerPacket(playerId: number): void;
     sendSetNamePacket(name: string): void;
+    sendSetLobbyNamePacket(name: string): void;
     sendStartGamePacket(): void;
     sendSetPhaseTimePacket(phase: Phase, time: number): void;
     sendSetPhaseTimesPacket(phaseTimeSettings: PhaseTimes): void;

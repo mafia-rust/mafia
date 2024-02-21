@@ -4,8 +4,8 @@ import Anchor from "../Anchor";
 import GAME_MANAGER from "../..";
 import LoadingScreen from "../LoadingScreen";
 import "./playMenu.css";
-import { PlayerID } from "../../game/gameState.d";
 import { StateListener } from "../../game/gameManager.d";
+import { LobbyPreviewData } from "../../game/packet";
 
 export default function PlayMenu(): ReactElement {
     useEffect(() => {
@@ -123,10 +123,10 @@ function refresh() {
     GAME_MANAGER.sendLobbyListRequest();
 }
 
-type Lobbies = Map<number, [PlayerID, string][]>;
+type LobbyMap = Map<number, LobbyPreviewData>;
 
 function PlayMenuTable(): ReactElement {
-    const [lobbies, setLobbies] = useState<Lobbies>(new Map());
+    const [lobbies, setLobbies] = useState<LobbyMap>(new Map());
 
     useEffect(() => {
         const listener: StateListener = (type) => {
@@ -142,21 +142,21 @@ function PlayMenuTable(): ReactElement {
         <thead>
             <tr>
                 <th></th>
-                <th>{translate("menu.play.field.roomCode")}</th>
+                <th>{translate("menu.play.field.name")}</th>
                 <th>{translate("players")}</th>
             </tr>
         </thead>
         <tbody>
-            {Object.entries(lobbies).map(lobby=>{
-                const roomCode = Number.parseInt(lobby[0]);
-                const players: [PlayerID, string][] = lobby[1];
+            {Object.entries(lobbies).map(entry=>{
+                const roomCode = Number.parseInt(entry[0]);
+                const lobby: LobbyPreviewData = entry[1];
 
                 return <tr key={roomCode}>
                     <td><button onClick={() => joinGame(roomCode)}>{translate("menu.play.button.join")}</button></td>
-                    <td><code>{roomCode.toString(18)}</code></td>
+                    <td>{lobby.name}</td>
                     <td>
                         <div className="play-menu-lobby-player-list">
-                            {players.map((player, j)=>{
+                            {lobby.players.map((player, j)=>{
                                 return <button key={j} onClick={()=>{
                                     joinGame(roomCode, player[0]);
                                 }}>{player[1]}</button>
@@ -166,5 +166,14 @@ function PlayMenuTable(): ReactElement {
                 </tr>;
             })}
         </tbody>
+        <tfoot>
+            {new Array(100).fill(0).map((_, i) => {
+                return <tr key={i}>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            })}
+        </tfoot>
     </table>
 }
