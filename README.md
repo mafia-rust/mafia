@@ -4,8 +4,8 @@ Multiplayer Social Deduction game
 ## Getting Started
 First, download and enter the [git](https://git-scm.com/) repository:
 ```bash
-git clone https://www.github.com/ItsSammyM/mafia-rust
-cd mafia-rust
+git clone https://www.github.com/mafia-rust/mafia
+cd mafia
 ```
 From here it's recommended to split terminals (If you're using VSCode), or open up a second terminal - one for client and one for server.
 ## Client setup
@@ -19,20 +19,28 @@ You can now start the client frontend using npm. If you're using WSL, you need t
 npm start
 ```
 ## Server setup
+### Install Rust
+Follow the [tutorial](https://www.rust-lang.org/learn/get-started) on the rust website.
 ### VScode
-If you're using VSCode, it's recommended to download the following extensions to make using rust easier:
- - [Better Toml](https://marketplace.visualstudio.com/items?itemName=bungcip.better-toml) - Language support for .TOML files
+If you're using VSCode, it's recommended to download the following extensions to make working on the project easier:
+ - [Rust Analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) - You probably already have this. You definitely need it.
+ - [Even Better Toml](https://marketplace.visualstudio.com/items?itemName=tamasfe.even-better-toml) - Language support for .TOML files
  - [Crates](https://marketplace.visualstudio.com/items?itemName=serayuzgur.crates) - Helps manage crate versions
  - [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens) - Show error messages inline
  - [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens) - View git blame inline
+ - [Spell checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker) - Spelling corrections
 
-It's also a good idea to change your default linter to clippy using this setting:
+It's also a good idea to install clippy (a linter):
+```bash
+rustup component add clippy
+```
+You can make it the default linter using this setting (but you don't need to):
 ```json
 "rust-analyzer.check.command": "clippy",
 ```
 
 ### Starting the server
-Enter the server directory and build the project using [cargo](https://www.rust-lang.org/).
+Enter the server directory and build the project using cargo.
 ```bash
 cd server
 cargo build
@@ -42,11 +50,4 @@ Note: If the above step fails, and you are using Linux or WSL, you may need to i
 You can now start the server backend:
 ```bash
 cargo run
-```
-It's recommended to use `cargo-watch` to automatically restart the server when a change is made on the server side. You can install and run it like this:
-```bash
-# install
-cargo install cargo-watch
-# run
-cargo watch -x run
 ```
