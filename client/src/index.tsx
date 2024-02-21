@@ -40,6 +40,7 @@ async function route(url: Location) {
         }
         if (!success) {
             Anchor.setContent(<StartMenu/>)
+            GAME_MANAGER.setDisconnectedState();
         }
     } else if (reconnectData) {        
         await GAME_MANAGER.setOutsideLobbyState();
@@ -50,6 +51,7 @@ async function route(url: Location) {
             // Reconnect data is deleted in messageListener
             Anchor.clearError();
             Anchor.setContent(<StartMenu/>);
+            GAME_MANAGER.setDisconnectedState();
         }
     } else {
         Anchor.setContent(<StartMenu/>)

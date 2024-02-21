@@ -73,9 +73,6 @@ export default function messageListener(packet: ToClientPacket){
                     console.error(packet);
                 break;
             }
-
-            GAME_MANAGER.setDisconnectedState();
-
         break;
         case "rejectStart":
             switch(packet.reason) {
