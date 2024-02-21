@@ -16,7 +16,7 @@ export default function ChatMenu(): ReactElement {
     const [filter, setFilter] = useState<PlayerIndex | null>(null);
     useEffect(() => {
         const stateListener: StateListener = (type) => {
-            if (GAME_MANAGER.state.stateType === "game") {
+            if (GAME_MANAGER.state.stateType === "game" && type === "filterUpdate") {
                 setFilter(GAME_MANAGER.state.chatFilter);
             }
         }
@@ -29,10 +29,9 @@ export default function ChatMenu(): ReactElement {
         <ChatMessageSection/>
         {filter !== null && <button 
             onClick={()=>{
-                // TODO: Sammy wtf??
                 if(GAME_MANAGER.state.stateType === "game"){
                     GAME_MANAGER.state.chatFilter = null;
-                    GAME_MANAGER.invokeStateListeners("tick");
+                    GAME_MANAGER.invokeStateListeners("filterUpdate");
                 }
             }}
             className="material-icons-round highlighted"
@@ -61,7 +60,7 @@ function ChatMessageSection(): ReactElement {
     const [filter, setFilter] = useState<PlayerIndex | null>(null);
     useEffect(() => {
         const stateListener: StateListener = (type) => {
-            if (GAME_MANAGER.state.stateType === "game") {
+            if (GAME_MANAGER.state.stateType === "game" && type === "filterUpdate") {
                 setFilter(GAME_MANAGER.state.chatFilter);
             }
         }
@@ -134,7 +133,7 @@ function ChatTextInput(): ReactElement {
         if (text.startsWith("/w")) {
             //needs to work with multi digit numbers
             const match = text.match(/\/w(\d+) /);
-            if (match === null) return;
+            if (match === null || match.length < 2) return;
             const index = parseInt(match[1]) - 1;
             GAME_MANAGER.sendSendWhisperPacket(index, text.slice(match[0].length));
 
@@ -167,7 +166,7 @@ function ChatTextInput(): ReactElement {
         } else if (event.code === "ArrowDown") {
             event.preventDefault();
             const text = historyPoller.pollPrevious(history);
-                setChatBoxText(text ?? "");
+            setChatBoxText(text ?? "");
         }
     }, [sendChatField, history, historyPoller]);
 

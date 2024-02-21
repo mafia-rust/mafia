@@ -12,7 +12,7 @@ export type Server = {
     close(): void;
 }
 
-export type StateEventType = ToClientPacket["type"] | "tick";
+export type StateEventType = ToClientPacket["type"] | "tick" | "filterUpdate";
 export type StateListener = (type?: StateEventType) => void;
 
 export type GameManager = {
