@@ -1,9 +1,8 @@
 import React from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER, { find } from "../../../index";
+import GAME_MANAGER from "../../../index";
 import "./playerListMenu.css"
 import "./../gameScreen.css"
-import ChatMenu from "./ChatMenu";
 import { Phase, Player, PlayerIndex } from "../../../game/gameState.d";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import { StateListener } from "../../../game/gameManager.d";
@@ -19,7 +18,8 @@ type PlayerListMenuState = {
     voted: PlayerIndex | null,
     targets: PlayerIndex[],
     roleState: RoleState | null,
-    playerFilter: PlayerFilter
+    playerFilter: PlayerFilter,
+    chatFilter: PlayerIndex | null
 }
 type PlayerFilter = "all"|"living"|"usable";
 
@@ -39,6 +39,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 targets: GAME_MANAGER.state.targets,
                 roleState: GAME_MANAGER.state.roleState,
                 playerFilter: "living",
+                chatFilter: null
             };
 
         this.updatePlayerFilter = () => {
@@ -75,6 +76,9 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 return;
             }
             switch (type) {
+                case "tick":
+                    this.setState({chatFilter: GAME_MANAGER.state.chatFilter});
+                break;
                 case "phase":
                     this.setState({ phase: GAME_MANAGER.state.phase })
                 break;
@@ -164,7 +168,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         {player.numVoted}
                     </span>
                 : null}
-                <button className="whisper" onClick={()=>{ChatMenu.prependWhisper(player.index)}}>
+                <button className="whisper" onClick={()=>{GAME_MANAGER.prependWhisper(player.index)}}>
                     <h4>
                         <StyledText>{(player.alive?"":" "+translate("tag.dead")+"")}</StyledText>
                     </h4>
@@ -175,13 +179,17 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                     <StyledText>{player.playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
                 </div>
                 {(() => {
-                    const filter = find(player.name);
-                    const isFilterSet = ChatMenu.getFilter()?.source === filter.source;
+
+                    const filter = player.index;
+                    const isFilterSet = this.state.chatFilter === filter;
                     
                     return <button 
                         className={"material-icons-round filter" + (isFilterSet ? " highlighted" : "")} 
                         onClick={() => {
-                            isFilterSet ? ChatMenu.setFilter(null) : ChatMenu.setFilter(filter);
+                            if(GAME_MANAGER.state.stateType === "game"){
+                                GAME_MANAGER.state.chatFilter = isFilterSet ? null : filter;
+                                GAME_MANAGER.invokeStateListeners("tick");
+                            }
                             this.setState({})
                         }}
                         aria-label={translate("menu.playerList.button.filter")}
