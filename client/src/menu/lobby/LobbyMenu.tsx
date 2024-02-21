@@ -12,7 +12,6 @@ import WikiSearch from "../../components/WikiSearch";
 import { RoomCodeButton } from "../Settings";
 import { getRolesFromRoleListRemoveExclusionsAddConversions, getRolesComplement } from "../../game/roleListState.d";
 import LoadingScreen from "../LoadingScreen";
-import GameScreen from "../game/GameScreen";
 
 type LobbyMenuProps = {}
 
