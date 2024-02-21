@@ -25,7 +25,6 @@ pub enum VigilanteState{
     Loaded{bullets: u8},
     WillSuicide,
     Suicided,
-    
 }
 
 impl Default for Vigilante {
@@ -67,7 +66,7 @@ impl RoleStateImpl for Vigilante {
                             }
 
                             let killed = target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Vigilante), 1, false);
-                            self.state = VigilanteState::Loaded { bullets: bullets - 1 };
+                            self.state = VigilanteState::Loaded { bullets: bullets.saturating_sub(1) };
 
                             if killed && target_ref.role(game).faction() == Faction::Town {
                                 self.state = VigilanteState::WillSuicide;
