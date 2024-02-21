@@ -14,7 +14,7 @@ export default function PlayMenu(): ReactElement {
         if(reconnectData) {
             Anchor.pushRejoin(reconnectData.roomCode, reconnectData.playerId);
         }
-        refresh();
+        GAME_MANAGER.sendLobbyListRequest();
     })
 
     return <div className="play-menu">
@@ -27,7 +27,7 @@ export default function PlayMenu(): ReactElement {
                     <button onClick={()=>{hostGame()}}>
                         {translate("menu.play.button.host")}
                     </button>
-                    <button onClick={()=>{refresh()}}>
+                    <button onClick={()=>{GAME_MANAGER.sendLobbyListRequest()}}>
                         {translate("menu.play.button.refresh")}
                     </button>
                 </div>
@@ -126,10 +126,6 @@ async function hostGame() {
     } else {
         Anchor.setContent(<PlayMenu/>)
     }
-}
-
-function refresh() {
-    GAME_MANAGER.sendLobbyListRequest();
 }
 
 type LobbyMap = Map<number, LobbyPreviewData>;

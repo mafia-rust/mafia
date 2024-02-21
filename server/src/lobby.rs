@@ -82,7 +82,7 @@ impl Lobby {
     pub fn new(room_code: RoomCode) -> Lobby {
         Self { 
             room_code,
-            name: "Mafia Lobby".to_string(),
+            name: name_validation::DEFAULT_SERVER_NAME.to_string(),
             lobby_state: LobbyState::Lobby{
                 settings: Settings::default(),
                 players: HashMap::new()
@@ -631,6 +631,7 @@ mod name_validation {
 
     const MAX_NAME_LENGTH: usize = 20;
     const MAX_SERVER_NAME_LENGTH: usize = 20;
+    pub const DEFAULT_SERVER_NAME: &str = "Mafia Lobby";
 
     /// Sanitizes a player name.
     /// If the desired name is invalid or taken, this generates a random acceptable name.
