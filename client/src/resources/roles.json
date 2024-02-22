@@ -370,7 +370,12 @@
         "chatMessages":[
             {"type": "roleBlocked","immune": true},
             {"type": "roleBlocked","immune": false},
-            {"type": "youSurvivedAttack"}
+            {"type": "youSurvivedAttack"},
+            {"type": "youWereProtected"},
+            {"type": "transported"},
+            {"type": "youWerePossessed", "immune": false},
+            {"type": "youWerePossessed", "immune": true},
+            {"type": "targetJailed"}
         ]
     },
     "blackmailer": {
