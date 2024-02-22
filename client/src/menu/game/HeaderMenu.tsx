@@ -22,7 +22,8 @@ type HeaderMenuState = {
     judgement: Verdict,
     roleState: RoleState | null,
     dayNumber: number,
-    timeLeftMs: number
+    timeLeftMs: number,
+    fastForward: boolean,
 }
 
 export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderMenuState> {
@@ -41,6 +42,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                 roleState: GAME_MANAGER.state.roleState,
                 dayNumber: GAME_MANAGER.state.dayNumber,
                 timeLeftMs: GAME_MANAGER.state.timeLeftMs,
+                fastForward: GAME_MANAGER.state.fastForward,
             };
         this.listener = (type) => {
             if(GAME_MANAGER.state.stateType === "game"){
@@ -68,6 +70,9 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                     break;
                     case "tick":
                         this.setState({timeLeftMs: GAME_MANAGER.state.timeLeftMs})
+                    break;
+                    case "yourVoteFastForwardPhase":
+                        this.setState({fastForward: GAME_MANAGER.state.fastForward})
                     break;
                 }
             }
@@ -187,6 +192,17 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
         return null;
     }
 
+    renderFastForwardButton(){
+        return <button 
+            onClick={()=>{
+                GAME_MANAGER.sendVoteFastForwardPhase(true);
+            }}
+            className={"material-icons-round fast-forward-button" + (this.state.fastForward ? " highlighted" : "")}
+        >
+            double_arrow
+        </button>
+    }
+
     render(){
         const timerStyle = {
             height: "100%",
@@ -195,18 +211,20 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             margin: '0 auto', // Center the timer horizontally
         };
         
-        return(<div className="header-menu">
-        <h3>{this.renderPhase()}</h3>
-        {(()=>{
-            return <StyledText>
-                {(this.state.players[this.state.myIndex!] ?? "").toString() +
-                " (" + translate("role."+(this.state.roleState?.role ?? "unknown")+".name") + ")"}
-            </StyledText>;
-        })()}
-        {this.renderPhaseSpecific()}
-        {this.renderMenuButtons()}
-        <div className="timer-box">
-            <div style={timerStyle}/>
+        return <div className="header-menu">
+            <h3>{this.renderPhase()}</h3>
+            {(()=>{
+                return <StyledText>
+                    {(this.state.players[this.state.myIndex!] ?? "").toString() +
+                    " (" + translate("role."+(this.state.roleState?.role ?? "unknown")+".name") + ")"}
+                </StyledText>;
+            })()}
+            {this.renderFastForwardButton()}
+            {this.renderPhaseSpecific()}
+            {this.renderMenuButtons()}
+            <div className="timer-box">
+                <div style={timerStyle}/>
+            </div>
         </div>
-    </div>)}
+    }
 }

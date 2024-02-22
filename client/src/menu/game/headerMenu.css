@@ -15,7 +15,8 @@
 .header-menu .menu-buttons button:hover {
     background-color: var(--hover-color);
 }
-.header-menu{
+.header-menu {
+    position: relative;
     background-color: var(--secondary-color);
 }
 .header-menu .judgement-specific {
@@ -59,4 +60,9 @@
     border-radius: 50%;
     top: 0;
     right: 0;
+}
+.header-menu .fast-forward-button{
+    position: absolute;
+    left: .2rem;
+    top: .2rem;
 }

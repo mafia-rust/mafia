@@ -56,6 +56,8 @@ type GameState = {
 
     roleState: RoleState | null,
 
+    fastForward: boolean,
+
     will: string,
     notes: string,
     crossedOutOutlines: number[],
