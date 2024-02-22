@@ -339,13 +339,16 @@
     "townSupport:var.0":"TS",
 
     "mafiaPower":"Mafia Power",
+    "mafiaPower:var.0":"MP",
     "mafiaSupport":"Mafia Support",
+    "mafiaSupport:var.0":"MS",
 
     "neutralEvil":"Neutral Evil",
     "neutralEvil:var.0":"NE",
     "neutralKilling":"Neutral Killing",
     "neutralKilling:var.0":"NK",
     "neutralApocalypse":"Neutral Apocalypse",
+    "neutralApocalypse:var.0":"NA",
     "neutralChaos":"Neutral Chaos",
     "neutralChaos:var.0":"NC",
     
@@ -545,6 +548,11 @@
     "wiki.article.standard.fullMoon.text": "Every night is a full moon night except night one and night three. The Werewolf has a different ability depending on weather or not it is a full moon night.",
     "wiki.article.standard.vision.title": "Vision",
     "wiki.article.standard.vision.text": "Visions are the investigative result that a Psychic recieves. Good visions show a list of two players that contains at least one townie. Evil visions show a list of three players that contains at least one non-townie. An Aura can effect a psychic vision.",
+    
+    "wiki.article.standard.visit.title:var.0": "Visits",
+    "wiki.article.standard.visit.title:var.1": "Visiting",
+    "wiki.article.standard.visit.title:var.2": "Visited",
+    "wiki.article.standard.visit.title:var.3": "Visitor",
     "wiki.article.standard.visit.title": "Visit",
     "wiki.article.standard.visit.text": "When you select someone, you will usually visit them. Visits are what actually causes active abilities to work. For example: A Detective could select a player, but a Witch could cause them to visit someone else, and then the Detective will unknowingly get their results from the player that they visited, but not the player they selected.\n\nVisits can have properties such as astral or attacking.\n - An astral visit is undetected by most roles.\n - An attacking visit will usually deal an attack to the player being visited, bodyguards and trappers abilities will work differently if the visit is an attack.",
     "wiki.article.standard.convert.title": "Convert",
