@@ -12,3 +12,11 @@
     border-style: solid;
     padding: 1rem;
 }
+
+.role-list-bank .close-button {
+    position: absolute;
+    top: .2rem;
+    right: .2rem;
+    padding: .1rem;
+    cursor: pointer;
+}

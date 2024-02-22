@@ -38,6 +38,7 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
     async quitToMainMenu() {
         GAME_MANAGER.leaveGame();
         Anchor.closeSettings();
+        Anchor.clearCoverCard();
         Anchor.setContent(<LoadingScreen type="disconnect"/>)
         await GAME_MANAGER.setDisconnectedState();
         Anchor.setContent(<StartMenu/>)
@@ -49,36 +50,29 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
     render(): React.ReactNode {
         return (
             <div className="settings slide-in">
-                <div>
-                    {
-                        GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 
-                        (<>
-                            <div>
-                                <button className='settings-leave' onClick={() => {
-                                    GAME_MANAGER.leaveGame();
-                                    Anchor.closeSettings();
-                                }}>{translate("menu.settings.exit")}</button>
-                            </div>
-                            <h2>{translate("menu.play.field.roomCode")}
-                            <RoomCodeButton/></h2>
-                        </>
-                        ) : null
+                {
+                    GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 
+                    (<>
+                        <h2>{translate("menu.play.field.roomCode")}
+                        <RoomCodeButton/></h2>
+                    </>
+                    ) : null
+                }
+                
+                <h2>{translate("menu.settings.volume")}
+                <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
+                    value={this.props.volume} 
+                    onChange={(e) => {
+                        let volume = parseFloat(e.target.value);
+                        this.props.onVolumeChange(volume);
                     }
-                    <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
-                    <h2>{translate("menu.settings.volume")}
-                    <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
-                        value={this.props.volume} 
-                        onChange={(e) => {
-                            let volume = parseFloat(e.target.value);
-                            this.props.onVolumeChange(volume);
-                        }
-                    }/></h2>
-                    <button onClick={() => {this.goToRolelistBank()}}>GO TO BANK</button>
-                    <button onClick={()=>{
-                        if(!window.confirm("CLEAR LOCAL STORAGE?")) return;
-                        localStorage.clear();
-                    }}>ERASE ALL DATA</button>
-                </div>
+                }/></h2>
+                <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
+                <button onClick={() => {this.goToRolelistBank()}}>{translate("menu.settings.gameSettingsBank")}</button>
+                <button onClick={()=>{
+                    if(!window.confirm(translate("confirmDelete"))) return;
+                    localStorage.clear();
+                }}>{translate('menu.settings.eraseSaveData')}</button>
             </div>
         );
     }

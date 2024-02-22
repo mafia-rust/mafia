@@ -20,14 +20,18 @@
     "menu.lobby.field.namePlaceholder": "Enter name",
     "menu.lobby.button.setName": "Set Name",
     "menu.lobby.players": "Players:",
-    "menu.lobby.roleList": "Outlines:",
+    "menu.lobby.roleList": "Outline List",
     "menu.lobby.excludedRoles": "Exclusions:",
     "menu.lobby.timeSettings": "Times:",
     "menu.lobby.settings": "Settings:",
 
     "menu.settings.volume": "Volume",
-    "menu.settings.exit": "Exit Game",
+    "menu.settings.gameSettingsBank": "Game Settings Bank",
+    "menu.settings.eraseSaveData": "Erase Save Data",
     "menu.settings.quitToMenu": "Quit to menu",
+
+    "confirmDelete": "Are you sure you want to delete this?",
+    "confirmOverwrite": "Are you sure you want to overwrite?",
 
     "menu.excludedRoles.exclude": "Exclude",
     "menu.excludedRoles.includeAll": "Include All",

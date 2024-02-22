@@ -180,13 +180,13 @@ export function RoleListSetter(props: {
     }
 
 
-    return <section className="graveyard-menu-colors">
+    return <div>
         <h2>{translate("menu.lobby.roleList")}</h2>
         <button disabled={props.disabled} onClick={simplify}>
             {translate("simplify")}
         </button>
         {props.roleList.map((outline, index) => {
-            return <div className="role-list-setter-outline-div">
+            return <div key={index} className="role-list-setter-outline-div">
 
                 {props.onRemoveOutline ? 
                     <button disabled={props.disabled} onClick={() => {
@@ -207,6 +207,6 @@ export function RoleListSetter(props: {
             <button disabled={props.disabled} onClick={props.onAddNewOutline}>
                 {translate("add")}
             </button> : null}
-    </section>
+    </div>
 }
 

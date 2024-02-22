@@ -5,6 +5,7 @@ import { RoleListSetter } from "../components/RolePicker";
 import { RoleList, RoleOutline } from "../game/roleListState.d";
 import translate from "../game/lang";
 import "./roleListBank.css";
+import Anchor from "./Anchor";
 
 
 export default function RoleListBank(): ReactElement {
@@ -31,9 +32,12 @@ export default function RoleListBank(): ReactElement {
 
     const saveRoleList = () => {
         let name = currentRoleListName;
-        if(!name.match(/^[a-zA-Z0-9_]+$/) || name.length >= 20 || name.length <= 0) return;
+        if(!name.match(/^[a-zA-Z0-9_ \-]+$/) || name.length >= 100 || name.length <= 0) return;
         if(currentRoleList.length === 0) return;
-        if(roleLists.has(name) && !window.confirm("CONFIRM OVERWRITE")) return;
+        if(roleLists.has(name) && !window.confirm(translate("confirmOverwrite"))) return;
+
+
+        console.log("Saving role list: " + name);
 
 
         let newRoleLists = new Map(roleLists);
@@ -46,7 +50,7 @@ export default function RoleListBank(): ReactElement {
         setCurrentRoleList(roleLists.get(roleListName) ?? []);
     }
     const deleteRoleList = (roleListName: string) => {
-        if(!window.confirm("CONFIRM DELETE")) return;
+        if(!window.confirm(translate("confirmDelete"))) return;
 
         let newRoleLists = new Map(roleLists);
         newRoleLists.delete(roleListName);
@@ -60,7 +64,8 @@ export default function RoleListBank(): ReactElement {
 
     
     return <div className="role-list-bank">
-        <h1>ROLE LIST BANK</h1>
+        <h1>{translate("menu.settings.gameSettingsBank")}</h1>
+        <button className="material-icons-round close-button" onClick={()=>{Anchor.clearCoverCard()}}>close</button>
         {Array.from(roleLists.keys()).map((roleListName) => {
             return <section key={roleListName}>
                 <button onClick={()=>{deleteRoleList(roleListName)}}>{translate("sub")}</button>
@@ -72,7 +77,7 @@ export default function RoleListBank(): ReactElement {
             <input type="text" value={currentRoleListName} onChange={(e) => {
                 setCurrentRoleListName(e.target.value);
             }}/>
-            <button onClick={saveRoleList}>SAVE</button>
+            <button onClick={saveRoleList} className="material-icons-round">save</button>
             
 
             <RoleListSetter
