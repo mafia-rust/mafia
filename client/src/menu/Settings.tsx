@@ -46,11 +46,10 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
                 <div>
                     {
                         GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 
-                        (<>
-                            <h2>{translate("menu.play.field.roomCode")}
-                            <RoomCodeButton/></h2>
-                        </>
-                        ) : null
+                        <h2>
+                            {translate("menu.play.field.roomCode")}
+                            <RoomCodeButton/>
+                        </h2> : null
                     }
                     
                     <h2>{translate("menu.settings.volume")}
@@ -60,7 +59,8 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
                             let volume = parseFloat(e.target.value);
                             this.props.onVolumeChange(volume);
                         }
-                    }/></h2> <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.exit")}</button>
+                    }/></h2>
+                    <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.exit")}</button>
                 </div>
             </div>
         );
