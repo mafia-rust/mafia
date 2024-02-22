@@ -1,0 +1,8 @@
+.large-wizard-menu > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.large-wizard-menu > div > * {
+    width: 100%;
+}

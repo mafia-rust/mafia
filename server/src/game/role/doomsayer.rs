@@ -62,6 +62,7 @@ impl DoomsayerGuess{
             Role::Martyr => None,
             //Cult
             Role::Apostle | Role::Disciple | Role::Zealot => Some(DoomsayerGuess::Cult),
+            Role::Wizard => Some(DoomsayerGuess::Neutral)
         }
     }
     fn guess_matches_role(&self, role: Role)->bool{

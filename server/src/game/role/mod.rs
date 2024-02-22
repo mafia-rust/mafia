@@ -87,6 +87,7 @@ macros::roles! {
 
     Arsonist : arsonist,
     Werewolf : werewolf,
+    Wizard : wizard,
 
     Amnesiac : amnesiac,
     Martyr : martyr,
@@ -273,6 +274,7 @@ impl Role{
             Role::Retributionist => true,
             Role::Witch => true,
             Role::Necromancer => true,
+            Role::Wizard => true,
             
             Role::Doomsayer => true,
             _ => false,
