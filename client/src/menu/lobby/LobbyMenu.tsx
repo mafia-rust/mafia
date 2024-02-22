@@ -93,8 +93,11 @@ function LobbyMenuHeader(): JSX.Element {
             }
         }
 
+        setHost(GAME_MANAGER.getMyHost() ?? false);
+        if(GAME_MANAGER.state.stateType === "lobby")
+            setLobbyName(GAME_MANAGER.state.lobbyName);
+
         GAME_MANAGER.addStateListener(listener)
-        
         return ()=>{GAME_MANAGER.removeStateListener(listener);}
     }, [setHost, setLobbyName]);
 

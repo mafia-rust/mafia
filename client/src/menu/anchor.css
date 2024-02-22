@@ -66,8 +66,8 @@
 .settings-button {
     z-index: 101;
     position: fixed;
-    right: 2%;
-    top: 2%;
+    right: .2rem;
+    top: .2rem;
     height: fit-content;
     width: fit-content;
 }

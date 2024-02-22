@@ -293,6 +293,10 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game")
                 GAME_MANAGER.state.judgement = packet.verdict;
         break;
+        case "yourVoteFastForwardPhase":
+            if(GAME_MANAGER.state.stateType === "game")
+                GAME_MANAGER.state.fastForward = packet.fastForward;
+        break;
         case "addChatMessages":
             if(GAME_MANAGER.state.stateType === "game")
                 GAME_MANAGER.state.chatMessages = GAME_MANAGER.state.chatMessages.concat(packet.chatMessages);

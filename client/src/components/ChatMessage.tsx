@@ -336,6 +336,7 @@ export function translateChatMessage(message: ChatMessage, playerNames?: string[
         case "martyrWon":
         case "targetsMessage":
         case "psychicFailed":
+        case "phaseFastForwarded":
             return translate("chatMessage."+message.type);
         case "playerDied":
         default:
@@ -404,7 +405,9 @@ export type ChatMessage = {
     type: "targeted", 
     targeter: PlayerIndex, 
     targets: PlayerIndex[]
-} | 
+} | {
+    type: "phaseFastForwarded"
+} |
 // Role-specific
 {
     type: "mayorRevealed", 

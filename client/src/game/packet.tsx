@@ -124,6 +124,9 @@ export type ToClientPacket = {
     type: "yourJudgement",
     verdict: Verdict
 } | {
+    type: "yourVoteFastForwardPhase",
+    fastForward: boolean
+} | {
     type: "addChatMessages",
     chatMessages: ChatMessage[]
 } | {
@@ -248,4 +251,7 @@ export type ToServerPacket = {
     type: "setForgerWill",
     role: Role | null,
     will: string
+} | {
+    type: "voteFastForwardPhase",
+    fastForward: boolean
 }

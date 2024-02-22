@@ -428,6 +428,12 @@ export function createGameManager(): GameManager {
                 will: will
             });
         },
+        sendVoteFastForwardPhase(fastForward: boolean) {
+            this.server.sendPacket({
+                type: "voteFastForwardPhase",
+                fastForward: fastForward
+            });
+        },
 
         messageListener(serverMessage) {
             messageListener(serverMessage);

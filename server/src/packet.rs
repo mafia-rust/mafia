@@ -109,7 +109,10 @@ pub enum ToClientPacket{
     YourTarget{player_indices: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
     YourVoting{player_index: Option<PlayerIndex>},
+    #[serde(rename_all = "camelCase")]
     YourJudgement{verdict: Verdict},
+    #[serde(rename_all = "camelCase")]
+    YourVoteFastForwardPhase{fast_forward: bool},
 
     #[serde(rename_all = "camelCase")]
     AddChatMessages{chat_messages: Vec<ChatMessage>},
@@ -229,4 +232,7 @@ pub enum ToServerPacket{
     },
     #[serde(rename_all = "camelCase")]
     SetForgerWill{ role: Option<Role>, will: String },
+
+    #[serde(rename_all = "camelCase")]
+    VoteFastForwardPhase{fast_forward: bool},
 }

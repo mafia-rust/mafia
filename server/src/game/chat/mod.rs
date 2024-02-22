@@ -86,8 +86,11 @@ pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
     Targeted {
         targeter: PlayerIndex,
-        targets: Vec<PlayerIndex> 
+        targets: Vec<PlayerIndex>
     },
+
+    #[serde(rename_all = "camelCase")]
+    PhaseFastForwarded,
 
     /* Role-specific */
     #[serde(rename_all = "camelCase")]

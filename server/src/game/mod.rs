@@ -44,7 +44,7 @@ pub struct Game {
     phase_machine : PhaseStateMachine,
 
     /// Whether the game is still updating phase times
-    pub ticking: bool
+    pub ticking: bool,
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -334,7 +334,22 @@ impl Game {
         }
     }
 
+    pub fn fast_forward(&mut self){
+        const FAST_FORWARD_TIME: Duration = Duration::from_secs(10);
 
+        if self.phase_machine.time_remaining <= FAST_FORWARD_TIME {
+            return
+        }
+        self.phase_machine.time_remaining = FAST_FORWARD_TIME;
+        
+        self.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseFastForwarded);
+
+        self.send_packet_to_all(ToClientPacket::Phase { 
+            phase: self.current_phase().phase(),
+            day_number: self.phase_machine.day_number,
+            seconds_left: self.phase_machine.time_remaining.as_secs()
+        });
+    }
 }
 
 pub mod test {

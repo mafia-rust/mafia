@@ -51,6 +51,7 @@ export function createGameState(): GameState {
         targets: [],
         voted: null,
         judgement: "abstain",
+        fastForward: false,
         
         roleList: [],
         excludedRoles: [],

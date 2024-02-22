@@ -234,6 +234,9 @@ impl Game {
                     sender_player_ref.set_role_state(self, RoleState::Forger(forger));
                 }
             }
+            ToServerPacket::VoteFastForwardPhase { fast_forward } => {
+                sender_player_ref.set_fast_forward_vote(self, fast_forward);
+            }
             _ => {
                 log!(fatal "Game"; "Unimplemented ToServerPacket: {incoming_packet:?}");
                 unreachable!();

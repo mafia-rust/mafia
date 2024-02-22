@@ -13,6 +13,7 @@
     "playerOnTrial": "trial",
     "judgementVerdict": "trial",
     "trialVerdict": "important",
+    "phaseFastForwarded": "important",
     "targeted": "target",
     "mayorRevealed": "special",
     "martyrRevealed": "special",
