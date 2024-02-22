@@ -12,6 +12,7 @@ import WikiSearch from "../../components/WikiSearch";
 import { RoomCodeButton } from "../Settings";
 import { getRolesFromRoleListRemoveExclusionsAddConversions, getRolesComplement } from "../../game/roleListState.d";
 import LoadingScreen from "../LoadingScreen";
+import StartMenu from "../main/StartMenu";
 
 export default function LobbyMenu(): ReactElement {
     const [roleList, setRoleList] = useState(
@@ -22,7 +23,7 @@ export default function LobbyMenu(): ReactElement {
     );
 
     useEffect(() => {
-        const listener: StateListener = (type) => {
+        const listener: StateListener = async (type) => {
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
                 switch (type) {
                     case "roleList":
@@ -33,6 +34,12 @@ export default function LobbyMenu(): ReactElement {
                         break;
                     case "excludedRoles":
                         setExcludedRoles([...GAME_MANAGER.state.excludedRoles]);
+                        break;
+                    case "rejectJoin":
+                        // Kicked, probably
+                        Anchor.setContent(<LoadingScreen type="disconnect"/>);
+                        await GAME_MANAGER.setDisconnectedState();
+                        Anchor.setContent(<StartMenu />);
                         break;
                 }
             }
