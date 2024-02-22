@@ -7,6 +7,7 @@ import StartMenu from './menu/main/StartMenu';
 import LoadingScreen from './menu/LoadingScreen';
 import LobbyMenu from './menu/lobby/LobbyMenu';
 import GameScreen from './menu/game/GameScreen';
+import { deleteReconnectData, loadReconnectData } from './game/localStorage';
 
 const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
@@ -20,12 +21,12 @@ setInterval(() => {
 async function route(url: Location) {
     Anchor.stopAudio();
     const roomCode = new URLSearchParams(url.search).get("code");
-    let reconnectData = GAME_MANAGER.loadReconnectData();
+    let reconnectData = loadReconnectData();
     
     const HOUR_IN_SECONDS = 3_600_000;
     if (reconnectData && reconnectData.lastSaveTime < Date.now() - HOUR_IN_SECONDS) {
         reconnectData = null;
-        GAME_MANAGER.deleteReconnectData();
+        deleteReconnectData();
     }
 
     if (roomCode !== null) {

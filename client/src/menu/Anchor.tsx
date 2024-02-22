@@ -6,6 +6,7 @@ import translate from "../game/lang";
 import Settings, { DEFAULT_SETTINGS } from "./Settings";
 import GameScreen from "./game/GameScreen";
 import LobbyMenu from "./lobby/LobbyMenu";
+import { deleteReconnectData, loadSettings, saveSettings } from "../game/localStorage";
 
 type AnchorProps = {
     content: JSX.Element,
@@ -51,7 +52,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     componentDidMount() {
         Anchor.instance = this;
 
-        Anchor.instance.state.audio.volume = GAME_MANAGER.loadSettings()?.volume ?? DEFAULT_SETTINGS.volume;
+        Anchor.instance.state.audio.volume = loadSettings()?.volume ?? DEFAULT_SETTINGS.volume;
 
         window.addEventListener("resize", Anchor.onResize);
         Anchor.onResize();
@@ -84,7 +85,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     }
     handleCancelRejoin() {
         this.setState({rejoinCard: null});
-        GAME_MANAGER.deleteReconnectData();
+        deleteReconnectData();
     }
 
     static playAudioFile(src: string | null, timeLeftSeconds?: number) {
@@ -188,7 +189,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             {this.state.settings_menu && <Settings 
                 volume={this.state.audio.volume} 
                 onVolumeChange={(volume) => {
-                    GAME_MANAGER.saveSettings(volume);
+                    saveSettings(volume);
                     Anchor.instance.state.audio.volume = volume;
                     this.setState({
                         audio: this.state.audio

@@ -5,6 +5,7 @@ import GAME_MANAGER from '..';
 import Anchor from './Anchor';
 import StartMenu from './main/StartMenu';
 import LoadingScreen from './LoadingScreen';
+import { saveSettings } from '../game/localStorage';
 
 type SettingsProps = {
     volume: number, // 0-1
@@ -30,7 +31,7 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
     componentWillUnmount() {
     }
     saveSettings(volume: number) {
-        GAME_MANAGER.saveSettings(volume);
+        saveSettings(volume);
         console.log("Loaded settings: " + JSON.stringify(volume));
     }
     async quitToMainMenu() {

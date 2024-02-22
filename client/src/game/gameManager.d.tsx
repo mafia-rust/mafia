@@ -21,19 +21,6 @@ export type GameManager = {
     setLobbyState(): void;
     setGameState(): void;
     setOutsideLobbyState(): void;
-
-    saveReconnectData(roomCode: number, playerId: number): void;
-    deleteReconnectData(): void;
-    loadReconnectData(): {
-        roomCode: number,
-        playerId: number,
-        lastSaveTime: number,
-    } | null;
-    
-    saveSettings(volume: number): void;
-    loadSettings(): {
-        volume: number
-    } | null;
     
 
     state: State,
