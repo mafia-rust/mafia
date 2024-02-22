@@ -31,7 +31,7 @@
     "defense.1": { "style": "keyword-info"},
     "defense.2": { "style": "keyword-info"},
     "defense.3": { "style": "keyword-info"},
-    "dead": { "style": "keyword-dead"},
+    "dead": { "style": "keyword-dead", "link": "generated/dead"},
     "wiki.article.role.abilities": { "style": "keyword-info","link": "standard/how_to_play"},
     "wiki.article.role.attributes": { "style": "keyword-info","link": "standard/how_to_play"},
     "wiki.article.role.extra": { "style": "keyword-info","link": "standard/how_to_play"},
