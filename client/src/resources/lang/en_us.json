@@ -514,14 +514,14 @@
     "wiki.article.standard.vision.title": "Vision",
     "wiki.article.standard.vision.text": "Visions are the investigative result that a Psychic receives. Good visions show a list of two players that contains at least one townie. Evil visions show a list of three players that contains at least one non-townie. An Aura can effect a psychic vision. A player with a suspicious aura will not show up in a good vision, and a player with an innocent aura will not show up in an evil vision.",
     "wiki.article.standard.select.title":"Select",
-    "wiki.article.standard.select.text": "Selecting is when you click the button under a player to attempt to use your ability on them. Selecting determines who you will visit, before it becomes affected by other effects. Most roles can not select themselves or dead players. Most mafia members and cultists can not select other players on their team.",
+    "wiki.article.standard.select.text": "Selecting is when you click the button under a player at night in order to attempt to use your ability on them. Selecting determines who you will visit, before it becomes affected by other effects. By default, you can select a number of players up to as many targets as your role can have. Most roles can not select themselves or dead players, and some roles have further restrictions on selections. Most mafia members and cultists can not select other players on their team.",
     "wiki.article.standard.visit.title": "Visit",
     "wiki.article.standard.visit.text": "Usually, visits are decided by selecting players. Visits are what actually causes active abilities to work. For example: A Detective could select a player, but a Witch could possess them to make them visit someone else, and then the Detective will unknowingly get their results from the player that they visited instead of the player they selected.\n\nVisits can have properties such as astral or attacking.\n   - An astral visit is undetected by most roles.\n    - An attacking visit will attempt to kill the player being visited. Bodyguards' and trappers' abilities will work differently if the visit is an attack.",
     "wiki.article.standard.target.title": "Target",
     "wiki.article.standard.target.text": "Your target is the player who you visit.",
     
     "wiki.article.standard.indirect.title":"Indirect",
-    "wiki.article.standard.indirect.text": "An indirect ability is one that does not visit.",
+    "wiki.article.standard.indirect.text": "An indirect ability is one that does not visit. Therefore, it is unable to be seen by a lookout or tracker or affected by many other abilities.",
     "wiki.article.standard.convert.title": "Convert",
     "wiki.article.standard.convert.text": "A player's role is changed. All of their ability uses are refilled to maximum. _For Example:_\n- If someone is converted to a Veteran, they get all three alerts.\n- An Apostle can convert players into cultists.",
     "wiki.article.standard.roleblock.title": "Roleblock",
@@ -530,13 +530,10 @@
     "wiki.article.standard.jail.text": "A Jailor can put a player in jail. When a player is in jail, they can talk with the Jailor at night, the Jailor can choose to execute them, they can't select anyone, and most abilities visiting the jailed player will fail.",
     "wiki.article.standard.rampage.title": "Rampage",
     "wiki.article.standard.rampage.text": "All the visitors to a rampaged player are indirectly attacked.",
-
-
-
     "wiki.article.standard.possess.title": "Possess",
     "wiki.article.standard.possess.text": "A player who is possessed had their visits changed by the Witch, Necromancer, or Retributionist. Some roles have immunity to possession: Witch, Necromancer, Retributionist, Veteran",
     "wiki.article.standard.defense.title": "Defense",
-    "wiki.article.standard.defense.text": "Attacks and defense have 3 tiers each. An attack can either be basic, armor-piercing, or protection-piercing.\n\nA defense can either be armored, protected, or invincible.\n\nA basic attack can not kill a player who is armored, and an armor-piercing attack can not kill a player who is protected. A protection-piercing attack can overpower armor as well as protection.\n\n Some roles have armor by default, usually evil ones. Protection can be granted to players through abilities like the Guardian's ability to protect their target. A player with invincible defense can only die by getting lynched or leaving the game.\n\nUnless otherwise indicated, attacks are basic by default and will not be able to kill players who are armored or protected.",
+    "wiki.article.standard.defense.text": "Attacks and defense have 3 tiers each. An attack can either be basic, armor-piercing, or protection-piercing.\n\nA defense can either be armored, protected, or invincible.\n\nA basic attack can not kill a player who is armored, and an armor-piercing attack can not kill a player who is protected. A protection-piercing attack can overpower armor as well as protection.\n\n Some roles have armor by default, usually evil ones. Protection can be granted to players through abilities like the Guardian's ability to protect their target. A player with invincible defense can only die by getting lynched or leaving the game.\n\nUnless otherwise indicated, attacks are basic by default and will not be able to kill players who are armored or protected. Indirect is not a tier of attack.",
     "wiki.article.standard.protect.title": "Protect",
     "wiki.article.standard.protect.text": "Protect means to increase someone's defense to protected for a night.",
     "wiki.article.standard.dead.title": "Dead",
