@@ -879,8 +879,8 @@
     "wiki.article.role.mafioso.extra":"* You can't target other mafia members",
 
     "wiki.article.role.consort.guide": "You can select a player to roleblock and hypnotize. If they are roleblocked, they can not use their ability that night. You can choose a message to send to your target. You can also choose to not roleblock, and only send them messages.",
-    "wiki.article.role.consort.abilities":"* Visit a player to roleblock and choose a message to show them.",
-    "wiki.article.role.consort.attributes":"* You can not be roleblocked\n* You may choose to not roleblock your target\n* Your target is told when you roleblock them.\n* You must always send at least one message",
+    "wiki.article.role.consort.abilities":"* Visit a player to roleblock and choose a message to show them\n    * You can send that they were attempted to be roleblocked\n    * You can send that they were attacked but had defense\n    * You can send that they were protected by someone\n    * You can send that they were transported\n    * You can send that they were attempted to be possessed\n    * You can send that their ability failed due to their target being in jail",
+    "wiki.article.role.consort.attributes":"* You are immune to roleblocks\n* You may choose to not roleblock your target\n* You can't choose to send no messages",
     "wiki.article.role.consort.extra":"* You can't select other mafia members\n* When you roleblock someone, their visits will be cleared",
     
     "wiki.article.role.blackmailer.guide": "You can select a player to silence. The silenced player can't speak during the next day, and they can't vote during the next day. You should choose talkative players who might speak out against a mafia member, or players who have information that you want to suppress.",
