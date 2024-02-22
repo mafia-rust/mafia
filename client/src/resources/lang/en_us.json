@@ -336,11 +336,10 @@
     "tag.werewolfTracked": "🐾",
     "tag.necronomicon":"📓",
     "tag.doused":"🔥",
-    "tag.insane":"🪬",
     "tag.dead":"💀",
 
     "chatGroup.mafia.icon": "🌹",
-    "chatGroup.cult.icon": "🪬",
+    "chatGroup.cult.icon": "🕯️",
     "chatGroup.jail.icon": "🔒",
     "chatGroup.interview.icon": "📝",
     "chatGroup.dead.icon": "💀",
@@ -579,7 +578,7 @@
     "wiki.article.standard.outlineList.title":"Outline List",
     "wiki.article.standard.outlineList.text": "The outline list defines what roles are in the game. At the start of a game, each player gets assigned to a role outline. Then, their role is generated randomly from that role outline.",
     "wiki.article.standard.chatGroup.title": "Chat Group",
-    "wiki.article.standard.chatGroup.text": "Messages are sent to chat groups. The chat groups are:\n - All (no icon)\n - Dead 💀\n - Mafia 🌹\n - Cult 🪬\n - Jail 🔒\n - Interview 📝\n\n Players can be in multiple chat groups at once, or even read chat groups they are not in.",
+    "wiki.article.standard.chatGroup.text": "Messages are sent to chat groups. The chat groups are:\n - All (no icon)\n - Dead 💀\n - Mafia 🌹\n - Cult 🕯️\n - Jail 🔒\n - Interview 📝\n\n Players can be in multiple chat groups at once, or even read chat groups they are not in.",
 
     "wiki.article.standard.how_to_play.title":"How to play",
     "wiki.article.standard.how_to_play.text":"The game has two major teams, Town and Mafia (Or alternatively, the Cult). The goal for each team is to be the last team remaining. The town wins if they find out who the mafia are and vote to execute or kill them. The mafia wins by deceiving the town and staying hidden in order to not get executed or killed.\n\nEvery role has abilities that they can use to try to win. Abilities can do things such as attack players, prevent kills, or find out what role other players are.\nThe game is about communication, so townies need to share information to find the mafia as quick as possible, while mafia needs to spread misinformation to try to get townies to turn against each other to make winning easier.\n\n**MULTIPLE PLAYERS CAN HAVE THE SAME ROLE**\n\nThere are also neutral roles that have their own win conditions as described in their role wiki page.",
