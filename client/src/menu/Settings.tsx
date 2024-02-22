@@ -47,18 +47,12 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
                     {
                         GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 
                         (<>
-                            <div>
-                                <button className='settings-leave' onClick={() => {
-                                    GAME_MANAGER.leaveGame();
-                                    Anchor.closeSettings();
-                                }}>{translate("menu.settings.exit")}</button>
-                            </div>
                             <h2>{translate("menu.play.field.roomCode")}
                             <RoomCodeButton/></h2>
                         </>
                         ) : null
                     }
-                    <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
+                    
                     <h2>{translate("menu.settings.volume")}
                     <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
                         value={this.props.volume} 
@@ -66,7 +60,7 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
                             let volume = parseFloat(e.target.value);
                             this.props.onVolumeChange(volume);
                         }
-                    }/></h2>
+                    }/></h2> <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.exit")}</button>
                 </div>
             </div>
         );
