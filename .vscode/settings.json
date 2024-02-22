@@ -3,13 +3,14 @@
         "cancel",
         "chrono",
         "Consigliere",
+        "Deodat",
         "Doesnt",
         "dompurify",
         "entriy",
         "inno",
         "killable",
         "necronomicon",
-        "zealot",
+        "Parris",
         "repr",
         "Retributionist",
         "roleblock",
@@ -26,6 +27,7 @@
         "votee",
         "whisperee",
         "witchable",
-        "Worsencroft"
+        "Worsencroft",
+        "zealot"
     ]
 }
