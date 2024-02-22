@@ -435,10 +435,8 @@ impl Lobby {
                     player.connection = ClientConnection::Connected(send.clone());
                     send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: false, player_id});
 
+                    Self::send_settings(player, settings);
                     Self::send_players_lobby(players);
-                    for player in players.iter(){
-                        Self::send_settings(player.1, settings);
-                    }
                     
                     Ok(())
                 } else {
@@ -549,7 +547,7 @@ impl Lobby {
         player.send(ToClientPacket::ExcludedRoles { roles: settings.excluded_roles.clone()});
     }
 
-
+    //send the list of players to all players while in the lobby
     fn send_players_lobby(players: &HashMap<PlayerID, LobbyPlayer>){
         let packet = ToClientPacket::LobbyPlayers { 
             players: players.iter().map(|p| {
@@ -566,6 +564,7 @@ impl Lobby {
         // Send Players that have lost connection
         let lost_connection: Vec<PlayerID> = players.iter().filter(|p| matches!(p.1.connection, ClientConnection::CouldReconnect { .. })).map(|p|*p.0).collect();
         let lost_connection_packet = ToClientPacket::PlayersLostConnection { lost_connection };
+        
         for player in players.iter() {
             player.1.send(host_packet.clone());
             player.1.send(lost_connection_packet.clone());

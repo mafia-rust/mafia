@@ -85,7 +85,7 @@ export function RoomCodeButton(props: {}): JSX.Element {
     }}>
         {
             GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 
-            GAME_MANAGER.state.roomCode : ""
+            GAME_MANAGER.state.roomCode.toString(18) : ""
         }
     </button>
 }

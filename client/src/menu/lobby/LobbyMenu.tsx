@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import GAME_MANAGER from "../../index";
 import LobbyPlayerList from "./LobbyPlayerList";
 import LobbyPhaseTimePane from "./LobbyPhaseTimePane";
@@ -13,84 +13,94 @@ import { RoomCodeButton } from "../Settings";
 import { getRolesFromRoleListRemoveExclusionsAddConversions, getRolesComplement } from "../../game/roleListState.d";
 import LoadingScreen from "../LoadingScreen";
 
-type LobbyMenuProps = {}
+export default function LobbyMenu(): ReactElement {
+    const [roleList, setRoleList] = useState(
+        GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.roleList : []
+    );
+    const [excludedRoles, setExcludedRoles] = useState(
+        GAME_MANAGER.state.stateType === "lobby"  || GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.excludedRoles : []
+    );
 
-type LobbyMenuState = {
-    name: string,
-    host: boolean
-}
-export default class LobbyMenu extends React.Component<LobbyMenuProps, LobbyMenuState> {
-    constructor(props: LobbyMenuProps) {
-        super(props);
-        
-        if(GAME_MANAGER.state.stateType === "lobby")
-            this.state = {
-                name: GAME_MANAGER.getMyName() ?? "",
-                host: GAME_MANAGER.getMyHost() ?? false,
+    useEffect(() => {
+        const listener: StateListener = (type) => {
+            if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
+                switch (type) {
+                    case "roleList":
+                        setRoleList([...GAME_MANAGER.state.roleList]);
+                        break;
+                    case "roleOutline":
+                        setRoleList([...GAME_MANAGER.state.roleList]);
+                        break;
+                    case "excludedRoles":
+                        setExcludedRoles([...GAME_MANAGER.state.excludedRoles]);
+                        break;
+                }
             }
-        this.listener = (type)=>{
-            if(GAME_MANAGER.state.stateType === "lobby")
-                this.setState({
-                    name: GAME_MANAGER.getMyName() ?? "",
-                    host: GAME_MANAGER.getMyHost() ?? false,
-                });
         }
-    }
-    listener: StateListener;
-    componentDidMount() {
-        GAME_MANAGER.addStateListener(this.listener);
-    }
-    componentWillUnmount() {
-        GAME_MANAGER.removeStateListener(this.listener);
-    }
 
-    render() {
-        return <div className="lm">
-            <LobbyMenuHeader host={this.state.host}/>
-            <main>
-                <div>
-                    <LobbyPlayerList/>
-                    {Anchor.isMobile() || <section className="wiki-menu-colors">
-                        <h2>{translate("menu.wiki.title")}</h2>
-                        <WikiSearch excludedRoles={
-                            GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ?
-                            getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(GAME_MANAGER.state.roleList, GAME_MANAGER.state.excludedRoles)) : []
-                        }/>
-                    </section>}
-                </div>
-                <div>
-                    {Anchor.isMobile() && <h1>{translate("menu.lobby.settings")}</h1>}
-                    <LobbyPhaseTimePane/>
-                    <LobbyRolePane/>
-                    <LobbyExcludedRoles/>
-                    {Anchor.isMobile() && <section className="wiki-menu-colors">
-                        <h2>{translate("menu.wiki.title")}</h2>
-                        <WikiSearch  excludedRoles={
-                            GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ?
-                            getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(GAME_MANAGER.state.roleList, GAME_MANAGER.state.excludedRoles)) : []
-                        }/>
-                    </section>}
-                </div>
-            </main>
-        </div>
-    }
+        if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
+            setRoleList([...GAME_MANAGER.state.roleList]);
+            setExcludedRoles([...GAME_MANAGER.state.excludedRoles]);
+        }
+        GAME_MANAGER.addStateListener(listener);
+        return ()=>{GAME_MANAGER.removeStateListener(listener);}
+    }, [setRoleList, setExcludedRoles]);
+
+
+    return <div className="lm">
+        <LobbyMenuHeader/>
+        <main>
+            <div>
+                <LobbyPlayerList/>
+                {Anchor.isMobile() || <section className="wiki-menu-colors">
+                    <h2>{translate("menu.wiki.title")}</h2>
+                    <WikiSearch excludedRoles={
+                        getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(roleList, excludedRoles))
+                    }/>
+                </section>}
+            </div>
+            <div>
+                {Anchor.isMobile() && <h1>{translate("menu.lobby.settings")}</h1>}
+                <LobbyPhaseTimePane/>
+                <LobbyRolePane/>
+                <LobbyExcludedRoles/>
+                {Anchor.isMobile() && <section className="wiki-menu-colors">
+                    <h2>{translate("menu.wiki.title")}</h2>
+                    <WikiSearch excludedRoles={
+                        getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(roleList, excludedRoles))
+                    }/>
+                </section>}
+            </div>
+        </main>
+    </div>
 }
 
 // There's probably a better way to do this that doesn't need the mobile check.
-function LobbyMenuHeader(props: { host?: boolean }): JSX.Element {
+function LobbyMenuHeader(): JSX.Element {
     const [lobbyName, setLobbyName] = useState<string>(GAME_MANAGER.state.stateType === "lobby" ? GAME_MANAGER.state.lobbyName : "Mafia Lobby");
+    const [host, setHost] = useState(GAME_MANAGER.getMyHost() ?? false);
 
     useEffect(() => {
-        GAME_MANAGER.addStateListener(type => {
-            if (GAME_MANAGER.state.stateType === "lobby" && type === "lobbyName") {
-                setLobbyName(GAME_MANAGER.state.lobbyName);
+        const listener: StateListener = (type) => {
+            switch (type) {
+                case "playersHost":
+                    setHost(GAME_MANAGER.getMyHost() ?? false);
+                    break;
+                case "lobbyName":
+                    if(GAME_MANAGER.state.stateType === "lobby")
+                        setLobbyName(GAME_MANAGER.state.lobbyName);
+                    break;
             }
-        })
-    });
+        }
+
+        GAME_MANAGER.addStateListener(listener)
+        
+        return ()=>{GAME_MANAGER.removeStateListener(listener);}
+    }, [setHost, setLobbyName]);
 
     return <header>
         <div>
-            <button disabled={!props.host} className="start" onClick={async ()=>{
+            <button disabled={!host} className="start" onClick={async ()=>{
                 Anchor.setContent(<LoadingScreen type="default"/>);
                 if (!await GAME_MANAGER.sendStartGamePacket()) {
                     Anchor.setContent(<LobbyMenu/>)
@@ -100,7 +110,7 @@ function LobbyMenuHeader(props: { host?: boolean }): JSX.Element {
             </button>
             <RoomCodeButton/>
         </div>
-        { props.host ? 
+        { host ? 
             <input 
                 type="text" 
                 value={lobbyName}
