@@ -128,7 +128,6 @@
 
     "role.lookout.name": "Lookout",
     "role.lookout.name:var.0": "Lookouts",
-    "role.lookout.name:var.1": "LO",
     "role.lookout.target": "Watch",
     "role.lookout.dayTarget": "Special",
     
@@ -144,7 +143,6 @@
     
     "role.psychic.name": "Psychic",
     "role.psychic.name:var.0": "Psychics",
-    "role.psychic.name:var.1": "Psy",
     "role.psychic.target": "Target",
     "role.psychic.dayTarget": "Special",
     
@@ -161,17 +159,12 @@
 
     "role.bodyguard.name": "Bodyguard",
     "role.bodyguard.name:var.0": "Bodyguards",
-    "role.bodyguard.name:var.1": "Body guard",
-    "role.bodyguard.name:var.2": "Body guards",
-    "role.bodyguard.name:var.3": "Body",
-    "role.bodyguard.name:var.4": "BG",
     "role.bodyguard.target": "Protect",
     "role.bodyguard.roleDataText": "\\0 self-shields remaining",
     "role.bodyguard.dayTarget": "Special",
 
     "role.crusader.name": "Crusader",
     "role.crusader.name:var.0": "Crusaders",
-    "role.crusader.name:var.1": "Crus",
     "role.crusader.target": "Guard",
     "role.crusader.dayTarget": "Special",
 
@@ -196,13 +189,11 @@
 
     "role.escort.name": "Escort",
     "role.escort.name:var.0": "Escorts",
-    "role.escort.name:var.1": "Esc",
     "role.escort.target": "Roleblock",
     "role.escort.dayTarget": "Special",
 
     "role.medium.name": "Medium",
     "role.medium.name:var.0": "Mediums",
-    "role.medium.name:var.1": "Med",
     "role.medium.target": "Target",
     "role.medium.roleDataText.nobody": "You didn't decide to haunt anybody.\n\\0 haunts remaining",
     "role.medium.roleDataText": "You decided to haunts \\0.\n\\1 haunts remaining",
@@ -210,8 +201,6 @@
 
     "role.retributionist.name": "Retributionist",
     "role.retributionist.name:var.0": "Retributionists",
-    "role.retributionist.name:var.1": "Ret",
-    "role.retributionist.name:var.2": "Retri",
     "role.retributionist.target": "Target",
     "role.retributionist.dayTarget": "Special",
 
@@ -224,8 +213,6 @@
 
     "role.vigilante.name": "Vigilante",
     "role.vigilante.name:var.0": "Vigilantes",
-    "role.vigilante.name:var.1": "Vigi",
-    "role.vigilante.name:var.2": "Vig",
     "role.vigilante.target": "Shoot",
     "role.vigilante.roleDataText.suicide": "You killed an innocent townie and will commit suicide tonight",
     "role.vigilante.roleDataText": "\\0 bullets remaining",
@@ -234,28 +221,22 @@
 
     "role.veteran.name": "Veteran",
     "role.veteran.name:var.0": "Veterans",
-    "role.veteran.name:var.1": "Vet",
     "role.veteran.target": "Alert",
     "role.veteran.roleDataText": "\\0 alerts remaining",
     "role.veteran.dayTarget": "Special",
 
     "role.deputy.name": "Deputy",
-    "role.deputy.name:var.0": "Deputy",
-    "role.deputy.name:var.1": "Dep",
+    "role.deputy.name:var.0": "Deputies",
     "role.deputy.target": "Target",
     "role.deputy.dayTarget": "Shoot",
 
     "role.godfather.name": "Godfather",
-    "role.godfather.name:var.0": "God father",
-    "role.godfather.name:var.1": "Godfathers",
-    "role.godfather.name:var.2": "God fathers",
-    "role.godfather.name:var.3": "GF",
+    "role.godfather.name:var.0": "Godfathers",
     "role.godfather.target": "Attack",
     "role.godfather.dayTarget": "Backup",
 
     "role.mafioso.name": "Mafioso",
     "role.mafioso.name:var.0": "Mafiosos",
-    "role.mafioso.name:var.1": "Maf",
     "role.mafioso.target": "Attack",
     "role.mafioso.dayTarget": "Special",
 
@@ -266,23 +247,16 @@
     
     "role.blackmailer.name": "Blackmailer",
     "role.blackmailer.name:var.0": "Blackmailers",
-    "role.blackmailer.name:var.1": "BM",
     "role.blackmailer.target": "Silence",
     "role.blackmailer.dayTarget": "Special",
     
-<<<<<<< HEAD
-    "role.consigliere.name": "Consigliere",
-    "role.consigliere.name:var.0": "Consiglieres",
-    "role.consigliere.name:var.1": "Consig",
-=======
     "role.consigliere.name": "Informant",
->>>>>>> main
+    "role.consigliere.name:var.0": "Informants",
     "role.consigliere.target": "Investigate",
     "role.consigliere.dayTarget": "Special",
 
     "role.necromancer.name": "Necromancer",
     "role.necromancer.name:var.0": "Necromancers",
-    "role.necromancer.name:var.1": "Necro",
     "role.necromancer.target": "Target",
     "role.necromancer.dayTarget": "Special",
 
@@ -310,13 +284,11 @@
 
     "role.jester.name": "Jester",
     "role.jester.name:var.0": "Jesters",
-    "role.jester.name:var.1": "Jest",
     "role.jester.target": "Haunt",
     "role.jester.dayTarget": "Special",
 
     "role.executioner.name": "Executioner",
     "role.executioner.name:var.0": "Executioners",
-    "role.executioner.name:var.1": "Exe",
     "role.executioner.target": "Target",
     "role.executioner.dayTarget": "Special",
     
@@ -327,13 +299,11 @@
 
     "role.politician.name": "Politician",
     "role.politician.name:var.0": "Politicians",
-    "role.politician.name:var.1": "Poli",
     "role.politician.target": "Target",
     "role.politician.dayTarget": "Special",
 
     "role.arsonist.name": "Arsonist",
     "role.arsonist.name:var.0": "Arsonists",
-    "role.arsonist.name:var.1": "Arso",
     "role.arsonist.target": "Target",
     "role.arsonist.dayTarget": "Special",
     
@@ -349,7 +319,6 @@
 
     "role.amnesiac.name": "Amnesiac",
     "role.amnesiac.name:var.0": "Amnesiacs",
-    "role.amnesiac.name:var.1": "Amne",
     "role.amnesiac.target": "Target",
     "role.amnesiac.dayTarget": "Special",
 
@@ -473,6 +442,7 @@
     "defense.2:var.0": "Protect",
     "defense.2:var.1": "Protects",
     "defense.2:var.2": "Protecting",
+    "defense.2:var.3": "Protection",
     "defense.3": "Invincible",
     "vision": "Vision",
     "good": "Good",
@@ -684,7 +654,6 @@
     "wiki.article.standard.protect.title:var.0": "Protected",
     "wiki.article.standard.protect.title:var.1": "Protects",
     "wiki.article.standard.protect.title:var.2": "Protecting",
-    "wiki.article.standard.protect.title:var.3": "prot",
     "wiki.article.standard.protect.text": "Protect means to increase someone's defense to protected for a night.",
     "wiki.article.standard.dead.title": "Dead",
     "wiki.article.standard.dead.text": "If a player is dead, they can't vote, their grave will likely be in the graveyard, and they usually can't use their ability anymore. Dead players can only speak with other dead players with the exception of the Medium and its target. A player needs to die to become dead. All players start the game alive! (What did you expect…)",
@@ -692,10 +661,6 @@
     "wiki.article.standard.silenced.title:var.0": "Silences",
     "wiki.article.standard.silenced.title:var.1": "Silencer",
     "wiki.article.standard.silenced.title:var.2": "Silencing",
-    "wiki.article.standard.silenced.title:var.3": "Blackmailed",
-    "wiki.article.standard.silenced.title:var.4": "Blackmails",
-    "wiki.article.standard.silenced.title:var.5": "Blackmailer",
-    "wiki.article.standard.silenced.title:var.6": "Blackmailing",
     "wiki.article.standard.silenced.text": "A player who is silenced can not talk or otherwise communicate during that day, and they can not vote for players during the voting phase. They can still vote during the judgement phase. If the silenced player is put on trial, they still can't talk. If the players are talking out loud, silenced players should not speak or use any type of communication, including signals or facial expressions. If a player can't use chat, they are not allowed to communicate.\n\n A Blackmailer can silence a player each night.",
     "wiki.article.standard.friends.title": "Friends",
     "wiki.article.standard.friends.text": "A Seer's result which indicates that the two players they visited can win together.",
@@ -731,7 +696,6 @@
     "wiki.article.standard.evil.title": "Evil",
     "wiki.article.standard.evil.text": "If a role is evil, it means a role is non-town. A psychic can receive evil visions to learn who is not on town.",
     "wiki.article.standard.roleLimit.title": "Role Limit",
-    "wiki.article.standard.roleLimit.title:var.0": "Max count",
     "wiki.article.standard.roleLimit.text": "A roles limit is the maximum number of that role that can be generated at the start of a regular game. If there is no limit, there can be any number of that role. Because the veteran has a role limit of one, there can not be more than one veteran unless manually forced into the role list or an amnesiac becomes one",
     "wiki.article.standard.doused.title": "Doused",
     "wiki.article.standard.doused.title:var.0": "Douses",
@@ -769,12 +733,8 @@
     "wiki.article.standard.phases_and_timeline.text":"The game is always in a phase. Phases run in this order:\n\n### Night\nThis is when most roles use their abilities. Chat is closed at night so most players can not communicate with each other. Some roles have abilities that allow them to communicate with others at night such as the medium, who can talk to the dead, or the mafia, who can talk with each other.\n\n### Morning\nPlayers see who died last night, their alibi, and any death notes that were placed on the body. \n\n### Discussion\nPlayers discuss information they have to try to find out who the evil players are, or if they’re evil themselves, pretend to be a townie. Evil players will often try to throw out red herrings or pin the blame on someone else.\n\n### Voting\nPlayers vote to put a player on trial, but this doesn’t always mean that player is going to be killed. The players need a majority of the votes in order to put someone onto trial. If the voting phase ends before a majority is reached, it goes directly to night after. There can be a maximum of three trials during each day.\n\n### Testimony\nThis phase comes after voting only if a player was voted onto trial. The player on trial gives their testimony while everyone else stays quiet. Usually the player on trial will claim a role and post their alibi here.\n\nIf you have been voted for a trial, don’t give up. Even if you’re evil, you can lie your way out of getting hanged.\n### Judgment\nThis phase comes after testimony. Everyone votes either innocent, or guilty. If there are more guilty votes than innocent votes, the player on trial is killed. Players can also choose to abstain. The judgement period is usually how the town gets evil players killed.\n\n### Evening\nA brief period before night. If someone was voted guilty today, this is usually where they get to say their final words.\n\nWhen there are three or less players alive, each phase is half as long as it usually is.",
     
     "wiki.article.standard.priority.title":"Priority",
-<<<<<<< HEAD
     "wiki.article.standard.priority.title:var.0":"Priorities",
-    "wiki.article.standard.priority.text":"Abilities are used in a specific order called priority order. If two players have abilities that go on the same priority, the player with the lower player number will go first. It is recommended that you read a roles encyclopedia page before this page. Some abilities go before night starts. Attacking someone doesn't kill them until the end of the night. Here are all the priorities and the abilities that happen in them.\n\n**Before Night (Not a priority)**\n\n- Jailor chooses who to jail\n- Journalist chooses who to interview\n- Spy finds if an apostle can convert\n- Death kills everyone\n- Create Visits\n  - All visits are decided by who is selected by each players. During each priority, each associated ability is activated using who is being visited by who, which is not necessarily who the player selected (in the case of a transporter, witch, etc...).\n\n**1: Top Priority**\n\n- Amnesiac (Convert)\n- Doomsayer (Kill)\n- Executioner (Suicide)\n- Jester (Haunt)\n- Veteran (Decide to Alert)\n- Vigilante (Suicide)\n\n**2: Transporter**\n\n- Transporter (Swap Visits)\n\n**3: Control**\n\n- Witch (Possess)\n\n**4: Necromancy**\n\n- Retributionist (Possess/Change Visits)\n- Necromancer (Possess/Change Visits)\n\n**5: roleblock**\n\n- Reveler (roleblock)\n- Hypnotist (roleblock)\n- Escort (roleblock)\n- Jailor (Invisible roleblock)\n\n**6: Deception**\n\n-Hypnotist (Hypnotize)\n- Framer (Frame)\n- Blackmailer (Silence)\n- Janitor (Clean)\n- Arsonist (Douse)\n\n**7: Bodyguard**\n\n- Bodyguard (Change visits)\n\n**8: Heal**\n\n- Trapper (Prepare to dismantle, set, or use trap)\n- Bodyguard (Defend themselves)\n- Crusader (Defend target)\n- Guardian (Defend)\n- Veteran (Defend themselves)\n\n**9: Kill**\n\n- Apostle (Kill)\n- Zealot (Kill)\n- Martyr (Kill)\n- Trapper (Indirect Kill)\n- Arsonist (Ignite)\n- Bodyguard (Attack attacker)\n- Crusader (Attack Visitor)\n- Godfather (Attack or Make Backup Attack)\n- Jailor (Attack)\n- Mafioso (Attack)\n- Veteran (Rampage)\n- Vigilante (Attack)\n- Werewolf (Rampage and attacks)\n\n**10: Investigative**\n\n-Journalist (Add Journal Message)\n- Psychic (Vision)\n- Trapper (Traps report info)\n- Trapper (Dismantle if should) \n- Arsonist (Find who is doused)\n- Bodyguard (Find if protected)\n- Consigliere (Investigate)\n- Crusader (Find if protected)\n- Death (Collect souls)\n- Guardian (Find if protected)\n- Janitor (Find role and alibi)\n- Forger (Find role and alibi)\n- Lookout (Investigate)\n- Seer (Investigate)\n- Detective (Investigate)\n- Spy (Find who the Mafia Visits)\n- Tracker (Investigate)\n- Werewolf (Track players scent)\n\n**11: Spy Bug**\n\n- Spy (Bug)\n\n**12: Steal Messages**\n\n- Witch (Get target messages)\n- Necromancer (Get target messages)\n- Retributionist (Get target messages)\n\n**13: Convert**\n\n- Apostle (Convert)\n\n**14: SpyCultistCount**\n\n- Spy (Get Cult Count)",
-=======
     "wiki.article.standard.priority.text":"Abilities are used in a specific order called priority order. If two players have abilities that go on the same priority, the player with the lower player number will go first. It is recommended that you read a roles encyclopedia page before this page. Some abilities go before night starts. Attacking someone doesn't kill them until the end of the night. Here are all the priorities and the abilities that happen in them.\n\n**Before Night (Not a priority)**\n\n- Jailor chooses who to jail\n- Journalist chooses who to interview\n- Spy finds if an apostle can convert\n- Death kills everyone\n- Create Visits\n  - All visits are decided by who is selected by each players. During each priority, each associated ability is activated using who is being visited by who, which is not necessarily who the player selected (in the case of a transporter, witch, etc...).\n\n**1: Top Priority**\n\n- Amnesiac (Convert)\n- Doomsayer (Kill)\n- Executioner (Suicide)\n- Jester (Haunt)\n- Veteran (Decide to Alert)\n- Vigilante (Suicide)\n\n**2: Transporter**\n\n- Transporter (Swap Visits)\n\n**3: Control**\n\n- Witch (Possess)\n\n**4: Necromancy**\n\n- Retributionist (Possess/Change Visits)\n- Necromancer (Possess/Change Visits)\n\n**5: roleblock**\n\n- Reveler (roleblock)\n- Hypnotist (roleblock)\n- Escort (roleblock)\n- Jailor (Invisible roleblock)\n\n**6: Deception**\n\n-Hypnotist (Hypnotize)\n- Framer (Frame)\n- Blackmailer (Silence)\n- Janitor (Clean)\n- Arsonist (Douse)\n\n**7: Bodyguard**\n\n- Bodyguard (Change visits)\n\n**8: Heal**\n\n- Trapper (Prepare to dismantle, set, or use trap)\n- Bodyguard (Defend themselves)\n- Crusader (Defend target)\n- Guardian (Defend)\n- Veteran (Defend themselves)\n\n**9: Kill**\n\n- Apostle (Kill)\n- Zealot (Kill)\n- Martyr (Kill)\n- Trapper (Indirect Kill)\n- Arsonist (Ignite)\n- Bodyguard (Attack attacker)\n- Crusader (Attack Visitor)\n- Godfather (Attack or Make Backup Attack)\n- Jailor (Attack)\n- Mafioso (Attack)\n- Veteran (Rampage)\n- Vigilante (Attack)\n- Werewolf (Rampage and attacks)\n\n**10: Investigative**\n\n-Journalist (Add Journal Message)\n- Psychic (Vision)\n- Trapper (Traps report info)\n- Trapper (Dismantle if should) \n- Arsonist (Find who is doused)\n- Bodyguard (Find if protected)\n- Informant (Investigate)\n- Crusader (Find if protected)\n- Death (Collect souls)\n- Guardian (Find if protected)\n- Janitor (Find role and alibi)\n- Forger (Find role and alibi)\n- Lookout (Investigate)\n- Seer (Investigate)\n- Detective (Investigate)\n- Spy (Find who the Mafia Visits)\n- Tracker (Investigate)\n- Werewolf (Track players scent)\n\n**11: Spy Bug**\n\n- Spy (Bug)\n\n**12: Steal Messages**\n\n- Witch (Get target messages)\n- Necromancer (Get target messages)\n- Retributionist (Get target messages)\n\n**13: Convert**\n\n- Apostle (Convert)\n\n**14: SpyCultistCount**\n\n- Spy (Get Cult Count)",
->>>>>>> main
     
     "wiki.article.standard.chat.title":"Chat",
     "wiki.article.standard.chat.text":"The chat is where players receive most information.\n- When night ends, the chat will show if you were attacked, roleblocked, transported and much more.\n- Usually, players can't send messages at night, but some roles can.\n- Not all messages can be seen by everyone, normal messages have icons that represent what chat group the message was sent in.",
@@ -791,7 +751,6 @@
     
 
     "wiki.article.generated.role_set.title":"Role Set",
-    "wiki.article.generated.role_set.title:var.0":"Faction alignment",
     "wiki.article.generated.all_text.title":"All text",
 
     "wiki.article.role": "# \\0\n### \\1\n<br/>\n\n### Guide\n\\2\n### Abilities\n\\3\n### Attributes\n\\4\n### Extra\n\\5\n<br/>\n\n### Role Limit: \\6\n### Defense: \\7\n\n<br>\n\n### Keywords\n\\8",
