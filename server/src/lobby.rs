@@ -14,8 +14,11 @@ use crate::{
     log
 };
 
+use self::name_validation::sanitize_server_name;
+
 pub struct Lobby {
     room_code: RoomCode,
+    pub name: String,
     lobby_state: LobbyState,
 }
 
@@ -79,6 +82,7 @@ impl Lobby {
     pub fn new(room_code: RoomCode) -> Lobby {
         Self { 
             room_code,
+            name: name_validation::DEFAULT_SERVER_NAME.to_string(),
             lobby_state: LobbyState::Lobby{
                 settings: Settings::default(),
                 players: HashMap::new()
@@ -142,6 +146,19 @@ impl Lobby {
                 }
 
                 Self::send_players_lobby(players);
+            },
+            ToServerPacket::SetLobbyName{ name } => {
+                let LobbyState::Lobby { .. } = self.lobby_state else {
+                    log!(error "Lobby"; "{} {}", "ToServerPacket::SetLobbyName can not be used outside of LobbyState::Lobby", player_id);
+                    return
+                };
+
+                if !self.is_host(player_id) {return};
+
+                let name = sanitize_server_name(name);
+
+                self.name = name.clone();
+                self.send_to_all(ToClientPacket::LobbyName { name })
             },
             ToServerPacket::StartGame => {
                 let LobbyState::Lobby { settings, players } = &mut self.lobby_state else {
@@ -346,6 +363,8 @@ impl Lobby {
                 for player in players.iter(){
                     Self::send_settings(player.1, settings)
                 }
+
+                send.send(ToClientPacket::LobbyName { name: self.name.clone() });
                 
                 Ok(player_id)
             },
@@ -427,10 +446,8 @@ impl Lobby {
                     player.connection = ClientConnection::Connected(send.clone());
                     send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: false, player_id});
 
+                    Self::send_settings(player, settings);
                     Self::send_players_lobby(players);
-                    for player in players.iter(){
-                        Self::send_settings(player.1, settings);
-                    }
                     
                     Ok(())
                 } else {
@@ -542,7 +559,7 @@ impl Lobby {
         player.send(ToClientPacket::ExcludedRoles { roles: settings.excluded_roles.clone()});
     }
 
-
+    //send the list of players to all players while in the lobby
     fn send_players_lobby(players: &HashMap<PlayerID, LobbyPlayer>){
         let packet = ToClientPacket::LobbyPlayers { 
             players: players.iter().map(|p| {
@@ -559,6 +576,7 @@ impl Lobby {
         // Send Players that have lost connection
         let lost_connection: Vec<PlayerID> = players.iter().filter(|p| matches!(p.1.connection, ClientConnection::CouldReconnect { .. })).map(|p|*p.0).collect();
         let lost_connection_packet = ToClientPacket::PlayersLostConnection { lost_connection };
+        
         for player in players.iter() {
             player.1.send(host_packet.clone());
             player.1.send(lost_connection_packet.clone());
@@ -623,6 +641,8 @@ mod name_validation {
     );
 
     const MAX_NAME_LENGTH: usize = 20;
+    const MAX_SERVER_NAME_LENGTH: usize = 20;
+    pub const DEFAULT_SERVER_NAME: &str = "Mafia Lobby";
 
     /// Sanitizes a player name.
     /// If the desired name is invalid or taken, this generates a random acceptable name.
@@ -641,6 +661,14 @@ mod name_validation {
         } else {
             generate_random_name(&players.values().map(|p| p.name.as_str()).collect::<Vec<&str>>())
         }
+    }
+
+    pub fn sanitize_server_name(desired_name: String) -> String {
+        desired_name
+            .remove_newline()
+            .trim_whitespace()
+            .truncate(MAX_SERVER_NAME_LENGTH)
+            .truncate_lines(1)
     }
 
     pub fn generate_random_name(taken_names: &[&str]) -> String{

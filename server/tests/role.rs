@@ -827,6 +827,16 @@ fn grave_contains_multiple_killers_roles() {
             day_number: 2,
     });
 }
+#[test]
+fn vigilante_cant_select_night_one() {
+    kit::scenario!(game in Night 1 where
+        townie_b: Doctor,
+        _godfather: Godfather,
+        vigilante_suicide: Vigilante
+
+    );
+    assert!(!vigilante_suicide.set_night_target(townie_b));
+}
 
 #[test]
 fn godfathers_backup_tag_works() {

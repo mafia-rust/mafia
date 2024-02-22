@@ -12,7 +12,7 @@ export type Server = {
     close(): void;
 }
 
-export type StateEventType = ToClientPacket["type"] | "tick";
+export type StateEventType = ToClientPacket["type"] | "tick" | "filterUpdate";
 export type StateListener = (type?: StateEventType) => void;
 
 export type GameManager = {
@@ -22,10 +22,10 @@ export type GameManager = {
     setGameState(): void;
     setOutsideLobbyState(): void;
 
-    saveReconnectData(roomCode: string, playerId: number): void;
+    saveReconnectData(roomCode: number, playerId: number): void;
     deleteReconnectData(): void;
     loadReconnectData(): {
-        roomCode: string,
+        roomCode: number,
         playerId: number,
         lastSaveTime: number,
     } | null;
@@ -48,23 +48,31 @@ export type GameManager = {
     removeStateListener(listener: StateListener): void;
     invokeStateListeners(type?: StateEventType): void;
 
+    setPrependWhisperFunction: (f: any) => void;
+    prependWhisper: (index: PlayerIndex) => void;
+
     leaveGame(): void;
 
     sendLobbyListRequest(): void;
-    sendHostPacket(): void;
     /**
      * @returns A promise that will be fulfilled as true if the join was 
      *          successful and false if the join was unsuccessful
      */
-    sendRejoinPacket(roomCode: string, playerId: number): Promise<boolean>;
+    sendHostPacket(): Promise<boolean>;
     /**
      * @returns A promise that will be fulfilled as true if the join was 
      *          successful and false if the join was unsuccessful
      */
-    sendJoinPacket(roomCode: string): Promise<boolean>;
+    sendRejoinPacket(roomCode: number, playerId: number): Promise<boolean>;
+    /**
+     * @returns A promise that will be fulfilled as true if the join was 
+     *          successful and false if the join was unsuccessful
+     */
+    sendJoinPacket(roomCode: number): Promise<boolean>;
     sendKickPlayerPacket(playerId: number): void;
     sendSetNamePacket(name: string): void;
-    sendStartGamePacket(): void;
+    sendSetLobbyNamePacket(name: string): void;
+    sendStartGamePacket(): Promise<boolean>;
     sendSetPhaseTimePacket(phase: Phase, time: number): void;
     sendSetPhaseTimesPacket(phaseTimeSettings: PhaseTimes): void;
     sendSetModifiersPacket(modifiers: string[]): void;

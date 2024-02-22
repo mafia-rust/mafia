@@ -5,13 +5,18 @@ import { RoleList, RoleOutline } from "./roleListState.d"
 import { Role, RoleState } from "./roleState.d"
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu"
 
+export type LobbyPreviewData = {
+    name: string,
+    players: [PlayerID, string][]
+}
+
 export type ToClientPacket = {
     type: "pong",
 } | {
     type: "rateLimitExceeded",
 } | {
     type: "lobbyList",
-    lobbies: Map<number, [PlayerID, string][]>,
+    lobbies: Map<number, LobbyPreviewData>,
 } | {
     type: "acceptJoin",
     roomCode: number,
@@ -28,6 +33,9 @@ export type ToClientPacket = {
 } | {
     type: "lobbyPlayers",
     players: Map<PlayerID, string>
+} | {
+    type: "lobbyName",
+    name: string
 } | {
     type: "yourPlayerIndex",
     playerIndex: PlayerIndex
@@ -149,6 +157,9 @@ export type ToServerPacket = {
 // Lobby
 | {
     type: "setName", 
+    name: string
+} | {
+    type: "setLobbyName", 
     name: string
 } | {
     type: "startGame",

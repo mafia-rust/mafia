@@ -4,6 +4,8 @@ import "./anchor.css";
 import GAME_MANAGER from "..";
 import translate from "../game/lang";
 import Settings, { DEFAULT_SETTINGS } from "./Settings";
+import GameScreen from "./game/GameScreen";
+import LobbyMenu from "./lobby/LobbyMenu";
 
 type AnchorProps = {
     content: JSX.Element,
@@ -70,10 +72,15 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         Anchor.instance.setState({mobile});
     }
     
-    handleRejoin(roomCode: string, playerId: number) {
+    async handleRejoin(roomCode: number, playerId: number) {
         this.setState({rejoinCard: null});
-        GAME_MANAGER.sendRejoinPacket(roomCode, playerId);
-        console.log("Attempting rejoining game: " + roomCode + " " + playerId);
+        const success = await GAME_MANAGER.sendRejoinPacket(roomCode, playerId);
+        if(success){
+            if (GAME_MANAGER.state.stateType === "lobby")
+                    Anchor.setContent(<LobbyMenu/>)
+            else if(GAME_MANAGER.state.stateType === "game")
+                Anchor.setContent(GameScreen.createDefault())
+        }
     }
     handleCancelRejoin() {
         this.setState({rejoinCard: null});
@@ -206,7 +213,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     public static clearError() {
         Anchor.instance.setState({error: null});
     }
-    public static pushRejoin(roomCode: string, playerId: number) {
+    public static pushRejoin(roomCode: number, playerId: number) {
         Anchor.instance.setState({rejoinCard:
             <div className="error-card">
                 <header>

@@ -14,12 +14,22 @@ use super::{Priority, RoleStateImpl, Role, RoleState};
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Vigilante {
-    bullets_remaining: u8,
-    will_suicide: bool,
+    state: VigilanteState
 }
+
+#[derive(Clone, Debug, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+#[serde(tag = "type")]
+pub enum VigilanteState{
+    NotLoaded,
+    Loaded{bullets: u8},
+    WillSuicide,
+    Suicided,
+}
+
 impl Default for Vigilante {
     fn default() -> Self {
-        Self { bullets_remaining: 3, will_suicide: false }
+        Self { state: VigilanteState::NotLoaded }
     }
 }
 
@@ -30,43 +40,60 @@ impl RoleStateImpl for Vigilante {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
 
-
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if actor_ref.night_jailed(game) {return}
-
+        
+    
         match priority{
             Priority::TopPriority => {
-                if self.will_suicide {
+                if VigilanteState::WillSuicide == self.state {
                     actor_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, 3, false);
+                    self.state = VigilanteState::Suicided;
                 }
             },
             Priority::Kill => {
-                if self.bullets_remaining == 0 || self.will_suicide || game.phase_machine.day_number == 1 {return;}
+            
+                match self.state {
+                    VigilanteState::Loaded { bullets } if bullets > 0 => {
 
-                if let Some(visit) = actor_ref.night_visits(game).first(){
-                    self.bullets_remaining -= 1;
+                        if let Some(visit) = actor_ref.night_visits(game).first(){
 
-                    let target_ref = visit.target;
-                    if target_ref.night_jailed(game){
-                        actor_ref.push_night_message(game, ChatMessage::TargetJailed);
-                        return
+                            let target_ref = visit.target;
+
+                            if target_ref.night_jailed(game){
+                                actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                                actor_ref.set_role_state(game, RoleState::Vigilante(self.clone()));
+                                return
+                            }
+
+                            let killed = target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Vigilante), 1, false);
+                            self.state = VigilanteState::Loaded { bullets: bullets.saturating_sub(1) };
+
+                            if killed && target_ref.role(game).faction() == Faction::Town {
+                                self.state = VigilanteState::WillSuicide;
+                            }                            
+                        }
+                    }       
+
+                    VigilanteState::NotLoaded => {
+                        self.state = VigilanteState::Loaded { bullets:3 };
                     }
 
-                    let killed = target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Vigilante), 1, false);
-
-                    if killed && target_ref.role(game).faction() == Faction::Town {
-                        self.will_suicide = true;
-                    }
-
-                    actor_ref.set_role_state(game, RoleState::Vigilante(self));
+                    _ => {},
+                    
                 }
             },
             _ => {}
         }
+    actor_ref.set_role_state(game, RoleState::Vigilante(self));
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_target(game, actor_ref, target_ref) && self.bullets_remaining > 0 && !self.will_suicide && game.phase_machine.day_number != 1
+        crate::game::role::common_role::can_night_target(game, actor_ref, target_ref) && 
+        if let VigilanteState::Loaded { bullets } = &self.state {
+            *bullets >=1
+        } else {
+            false
+        }
     }
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false
@@ -88,6 +115,7 @@ impl RoleStateImpl for Vigilante {
         
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
+        
     }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }

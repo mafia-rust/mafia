@@ -54,7 +54,7 @@ impl Game {
                 let mut target_message_sent = false;
                 for chat_group in sender_player_ref.get_current_send_chat_groups(self){
                     match chat_group {
-                        ChatGroup::All | ChatGroup::Seance | ChatGroup::Interview | ChatGroup::Dead => {},
+                        ChatGroup::All | ChatGroup::Interview | ChatGroup::Dead => {},
                         ChatGroup::Mafia | ChatGroup::Cult => {
                             self.add_message_to_chat_group(
                                 chat_group,
@@ -103,22 +103,19 @@ impl Game {
                 }
                 
                 for chat_group in sender_player_ref.get_current_send_chat_groups(self){
-                    let message_sender = match sender_player_ref.role(self){
-                        Role::Jailor => {
-                            if chat_group == ChatGroup::Jail {
+                    let message_sender = match chat_group {
+                        ChatGroup::Jail => {
+                            if sender_player_ref.role(self) == Role::Jailor {
                                 Some(MessageSender::Jailor)
                             }else{None}
                         },
-                        Role::Medium => {
-                            if 
-                                (sender_player_ref.alive(self) && chat_group == ChatGroup::Dead) || 
-                                (!sender_player_ref.alive(self) && chat_group==ChatGroup::Seance)
-                            {
-                                Some(MessageSender::Medium)
+                        ChatGroup::Dead => {
+                            if sender_player_ref.alive(self) {
+                                Some(MessageSender::LivingToDead{ player: sender_player_index })
                             }else{None}
                         },
-                        Role::Journalist => {
-                            if chat_group == ChatGroup::Interview {
+                        ChatGroup::Interview => {
+                            if sender_player_ref.role(self) == Role::Journalist {
                                 Some(MessageSender::Journalist)
                             }else{None}
                         },

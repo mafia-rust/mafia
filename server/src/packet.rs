@@ -26,6 +26,13 @@ use crate::{game::{
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
+pub struct LobbyPreviewData {
+    pub name: String,
+    pub players: Vec<(PlayerID, String)>
+}
+
+#[derive(Serialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum ToClientPacket{
     Pong,
@@ -35,12 +42,7 @@ pub enum ToClientPacket{
 
     // Pre lobby
     #[serde(rename_all = "camelCase")]
-    LobbyList{
-        lobbies: HashMap<
-            RoomCode,
-            Vec<(PlayerID, String)>
-        >,
-    },
+    LobbyList{lobbies: HashMap<RoomCode, LobbyPreviewData>},
     #[serde(rename_all = "camelCase")]
     AcceptJoin{room_code: RoomCode, in_game: bool, player_id: PlayerID},
     RejectJoin{reason: RejectJoinReason},
@@ -50,6 +52,7 @@ pub enum ToClientPacket{
     YourId{player_id: PlayerID},
     #[serde(rename_all = "camelCase")]
     LobbyPlayers{players: HashMap<PlayerID, String>},
+    LobbyName{name: String},
     #[serde(rename_all = "camelCase")]
     RejectStart{reason: RejectStartReason},
     PlayersHost{hosts: Vec<PlayerID>},
@@ -167,6 +170,7 @@ pub enum ToServerPacket{
 
     // Lobby
     SetName{name: String},
+    SetLobbyName{name: String},
     StartGame,
     #[serde(rename_all = "camelCase")]
     SetRoleList{role_list: RoleList},

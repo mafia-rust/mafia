@@ -4,7 +4,8 @@ import GameState, { LobbyPlayer, LobbyState, Player, PlayerID } from "./gameStat
 export function createLobbyState(): LobbyState {
     return {
         stateType: "lobby",
-        roomCode: "",
+        roomCode: 0,
+        lobbyName: "Mafia Lobby",
 
         myId: null,
 
@@ -28,7 +29,7 @@ export function createLobbyState(): LobbyState {
 export function createGameState(): GameState {
     return {
         stateType: "game",
-        roomCode: "",
+        roomCode: 0,
 
         myIndex: null,
 
@@ -46,6 +47,7 @@ export function createGameState(): GameState {
         will: "",
         notes: "",
         crossedOutOutlines: [],
+        chatFilter: null,
         deathNote: "",
         targets: [],
         voted: null,

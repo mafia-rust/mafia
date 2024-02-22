@@ -27,7 +27,6 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "outsideLobby"){
                 GAME_MANAGER.state.lobbies = packet.lobbies;
             }
-                // GAME_MANAGER.state.roomCodes = packet.roomCodes.map((roomCode) => roomCode.toString(18));
         break;
         case "acceptJoin":
             if(packet.inGame){
@@ -35,13 +34,14 @@ export default function messageListener(packet: ToClientPacket){
             }else{
                 GAME_MANAGER.setLobbyState();
             }
+
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
-                GAME_MANAGER.state.roomCode = packet.roomCode.toString(18);
+                GAME_MANAGER.state.roomCode = packet.roomCode;
             }
             if(GAME_MANAGER.state.stateType === "lobby")
                 GAME_MANAGER.state.myId = packet.playerId;
 
-            GAME_MANAGER.saveReconnectData(packet.roomCode.toString(18), packet.playerId);
+            GAME_MANAGER.saveReconnectData(packet.roomCode, packet.playerId);
             Anchor.clearRejoinCard();
         break;
         case "rejectJoin":
@@ -73,9 +73,6 @@ export default function messageListener(packet: ToClientPacket){
                     console.error(packet);
                 break;
             }
-
-            GAME_MANAGER.setDisconnectedState();
-
         break;
         case "rejectStart":
             switch(packet.reason) {
@@ -131,8 +128,14 @@ export default function messageListener(packet: ToClientPacket){
                 }
             }
         break;
+        case "lobbyName":
+            if(GAME_MANAGER.state.stateType === "lobby"){
+                GAME_MANAGER.state.lobbyName = packet.name;
+            }
+        break;
         case "startGame":
             GAME_MANAGER.setGameState();
+            Anchor.setContent(GameScreen.createDefault());
         break;
         case "gamePlayers":
             if(GAME_MANAGER.state.stateType === "game"){
