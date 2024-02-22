@@ -636,7 +636,7 @@
     "wiki.article.role.sheriff.attributes":"* Townies register as innocent\n* Non-townies register as suspicious",
     "wiki.article.role.sheriff.extra": "* A suspicious aura makes the player with the aura register as suspicious to you\n* An innocent aura makes the player with the aura register as innocent to you",
 
-    "wiki.article.role.lookout.guide": "You can select a player to find out who else visited them. Targeting players who you think will die will likely allow you to see who killed them, giving important information. You should tell the town the information you get daily.",
+    "wiki.article.role.lookout.guide": "You can select a player to find out who else visited them. Selecting players who you think will die will likely allow you to see who killed them, giving important information. You should tell the town the information you get daily.",
     "wiki.article.role.lookout.abilities":"* Visit a player to find all other visitors to them",
     "wiki.article.role.lookout.attributes":"* You can't see yourself visit",
     "wiki.article.role.lookout.extra": "* You can't see astral visits\n* A framer may end up impacting your results",
@@ -801,7 +801,7 @@
     "wiki.article.role.werewolf.attributes":"* You have an armor-piercing attack\n* While you are in jail, you attack all Jailors who do not choose to execute you\n* You are told who you have the scent of\n* You still track the scent of players after you die\n* While it is a non-full moon night, you have an innocent aura\n* Each night, you are told who each player you have the scent of visits",
     "wiki.article.role.werewolf.extra":"* You will attack yourself if you visit yourself\n* You will not rampage the jailor while in jail\n* You will still attack or gain the scent of visits to you when you are in jail\n* You will still track the players you have the scent of while you are in jail\n* You do not attack or gain the scent of astral visitors\n* A roleblock has no effect on you besides erasing your visits. If you are roleblocked, it is as if you visited nobody\n* Players attacked by a rampage are indirectly attacked",
 
-    "wiki.article.role.death.guide": "Guess what player will die during night by targeting them, If you guess correctly you will collect a soul, you will also collect a soul passively each night. Once you collect six souls, everyone will be told that death collected six souls at the start of the day, if you survive that day, you will attack everyone and win the game at the start of night.",
+    "wiki.article.role.death.guide": "Guess what player will die during night by selecting them, If you guess correctly you will collect a soul, you will also collect a soul passively each night. Once you collect six souls, everyone will be told that death collected six souls at the start of the day, if you survive that day, you will attack everyone and win the game at the start of night.",
     "wiki.article.role.death.abilities":"* If the player you visit dies tonight, you collect a soul\n* You gain an additional soul each night",
     "wiki.article.role.death.attributes":"* Once you've collected six souls, you curse the town. At the start of the next night you win and attack everyone.\n* You have invincible defense once you have six souls\n* You have a protection-piercing attack",
     "wiki.article.role.death.extra":"* You will still passively gain souls in jail",
