@@ -60,7 +60,7 @@ async function route(url: Location) {
             // Don't show an error message for an auto-rejoin. The user didn't prompt it - they will be confused.
             // Reconnect data is deleted in messageListener
             await GAME_MANAGER.setDisconnectedState();
-            Anchor.clearError();
+            Anchor.clearCoverCard();
             Anchor.setContent(<StartMenu/>);
         }
     } else {

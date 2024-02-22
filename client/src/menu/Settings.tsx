@@ -6,6 +6,7 @@ import Anchor from './Anchor';
 import StartMenu from './main/StartMenu';
 import LoadingScreen from './LoadingScreen';
 import { saveSettings } from '../game/localStorage';
+import RoleListBank from './RoleListBank';
 
 type SettingsProps = {
     volume: number, // 0-1
@@ -41,6 +42,10 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
         await GAME_MANAGER.setDisconnectedState();
         Anchor.setContent(<StartMenu/>)
     }
+    goToRolelistBank() {
+        Anchor.setCoverCard(<RoleListBank/>);
+        Anchor.closeSettings();
+    }
     render(): React.ReactNode {
         return (
             <div className="settings slide-in">
@@ -68,6 +73,11 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
                             this.props.onVolumeChange(volume);
                         }
                     }/></h2>
+                    <button onClick={() => {this.goToRolelistBank()}}>GO TO BANK</button>
+                    <button onClick={()=>{
+                        if(!window.confirm("CLEAR LOCAL STORAGE?")) return;
+                        localStorage.clear();
+                    }}>ERASE ALL DATA</button>
                 </div>
             </div>
         );

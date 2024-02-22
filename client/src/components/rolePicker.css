@@ -23,3 +23,6 @@
     border-top-right-radius: .4rem;
     border-bottom-right-radius: .4rem;
 }
+.role-list-setter-outline-div {
+    display: flex;
+}

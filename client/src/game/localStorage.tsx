@@ -49,12 +49,33 @@ export function loadSettings(): { volume: number } | null{
 export type SavedRoleLists = Map<string, RoleList>;
 
 export function saveRoleLists(roleList: SavedRoleLists) {
-    localStorage.setItem("savedRoleLists", JSON.stringify(roleList));
+    localStorage.setItem("savedRoleLists", JSON.stringify(roleList, replacer));
 }
 export function loadRoleLists(): SavedRoleLists | null{
     let data = localStorage.getItem("savedRoleLists");
     if (data) {
-        return JSON.parse(data);
+        return JSON.parse(data, reviver);
     }
     return null;
+}
+
+
+
+function replacer(key: any, value: any) {
+    if(value instanceof Map) {
+        return {
+            dataType: 'Map',
+            value: Array.from(value.entries()), // or with spread: value: [...value]
+        };
+    } else {
+      return value;
+    }
+}
+function reviver(key: any, value: any) {
+    if(typeof value === 'object' && value !== null) {
+        if (value.dataType === 'Map') {
+            return new Map(value.value);
+        }
+    }
+    return value;
 }

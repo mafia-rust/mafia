@@ -1,0 +1,14 @@
+.role-list-bank {
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    z-index: 80;
+    top: 5%;
+    left: 5%;
+    background-color: var(--background-color);
+    border-radius: 10px;
+    border-color: var(--border-color);
+    border-width: .1rem;
+    border-style: solid;
+    padding: 1rem;
+}

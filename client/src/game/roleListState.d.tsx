@@ -161,3 +161,33 @@ function getRolesFromOutlineOption(roleOutlineOption: RoleOutlineOption): Role[]
             }) as Role[];
     }
 }
+
+export function simplifyRoleOutline(roleOutline: RoleOutline): RoleOutline {
+
+    if(roleOutline.type === "any") return roleOutline;
+
+    let newOptions = roleOutline.options;
+
+    for(let optionA of roleOutline.options){
+        for(let optionB of roleOutline.options){
+            if(outlineOptionIsSubset(optionA, optionB) && optionA !== optionB){
+                newOptions = newOptions.filter((option) => option !== optionA);
+            }
+        }
+    }
+
+    newOptions = newOptions.sort(outlineOptionCompare);
+    return {type: "roleOutlineOptions", options: newOptions};
+    
+    
+}
+function outlineOptionIsSubset(optionA: RoleOutlineOption, optionB: RoleOutlineOption): boolean {
+    let rolesA = getRolesFromOutlineOption(optionA);
+    let rolesB = getRolesFromOutlineOption(optionB);
+    return rolesA.every((role) => rolesB.includes(role));
+}
+function outlineOptionCompare(optionA: RoleOutlineOption, optionB: RoleOutlineOption): number {
+    let rolesA = getRolesFromOutlineOption(optionA);
+    let rolesB = getRolesFromOutlineOption(optionB);
+    return rolesB.length - rolesA.length;
+}
