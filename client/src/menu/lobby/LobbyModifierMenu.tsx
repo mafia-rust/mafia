@@ -7,33 +7,38 @@ import { StateEventType, StateListener } from "../../game/gameManager.d";
 
 
 
-export default function LobbyModifierMenu(props: {
-    isHost: boolean;
-}) : ReactElement {
+export default function LobbyModifierMenu() : ReactElement {
 
     const [modifiers, setModifiers] = useState<Modifier[]>(
         GAME_MANAGER.state.stateType === "lobby" ? GAME_MANAGER.state.modifiers : [] as Modifier[]
     );
+    const [isHost, setIsHost] = useState(
+        GAME_MANAGER.getMyHost() ?? false
+    );
 
     useEffect(() => {
         const listener: StateListener = (type?: StateEventType) => {
-            if (type === "modifiers" && GAME_MANAGER.state.stateType === "game") {
-                setModifiers(GAME_MANAGER.state.modifiers);
+            switch (type) {
+                case "modifiers":
+                    if (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") {
+                        setModifiers(GAME_MANAGER.state.modifiers);
+                    }
+                    break;
+                case "playersHost":
+                    setIsHost(GAME_MANAGER.getMyHost() ?? false);
+                    break;
             }
         };
 
-        GAME_MANAGER.addStateListener(listener);
-
-        return ()=>{GAME_MANAGER.removeStateListener(listener)};
-    }, []);
-
-    let gameStateModifiers = (GAME_MANAGER.state.stateType === "lobby") ? 
-        GAME_MANAGER.state.modifiers : undefined;
-
-    useEffect(() => {
-        if(GAME_MANAGER.state.stateType === "lobby")
+        if (GAME_MANAGER.state.stateType === "lobby") {
             setModifiers(GAME_MANAGER.state.modifiers);
-    }, [gameStateModifiers]);
+        }
+        setIsHost(GAME_MANAGER.getMyHost() ?? false);
+
+        GAME_MANAGER.addStateListener(listener);
+        return ()=>{GAME_MANAGER.removeStateListener(listener)};
+    }, [setModifiers]);
+
 
     const addModifier = () => {
         let newModifier = MODIFIERS.find(modifier => !modifiers.includes(modifier)) as Modifier;
@@ -62,7 +67,7 @@ export default function LobbyModifierMenu(props: {
             {modifiers.map((modifier, index) => {
                 return <div>
                     <select
-                        disabled={!props.isHost}
+                        disabled={!isHost}
                         key={index}
                         value={modifier}
                         onChange={(e) => {
@@ -74,7 +79,7 @@ export default function LobbyModifierMenu(props: {
                         })}
                     </select>
                     <button
-                        disabled={!props.isHost}
+                        disabled={!isHost}
                         onClick={()=>{
                             removeModifier(index);
                         }}
@@ -84,7 +89,7 @@ export default function LobbyModifierMenu(props: {
                 </div>;
             })}
             <button
-                disabled={!props.isHost}
+                disabled={!isHost}
                 onClick={addModifier}
             >
                 {translate("add")}

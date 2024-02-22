@@ -4,7 +4,7 @@ import GAME_MANAGER from "./../index";
 import messageListener from "./messageListener";
 import CONFIG from "./../resources/config.json"
 import React from "react";
-import { Phase, PhaseTimes, Verdict } from "./gameState.d";
+import { Modifier, Phase, PhaseTimes, Verdict } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
 import { LobbyPreviewData, ToClientPacket, ToServerPacket } from "./packet";
 import { RoleOutline } from "./roleListState.d";
