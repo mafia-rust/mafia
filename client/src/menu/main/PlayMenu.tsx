@@ -7,6 +7,7 @@ import "./playMenu.css";
 import { StateListener } from "../../game/gameManager.d";
 import { LobbyPreviewData } from "../../game/packet";
 import LobbyMenu from "../lobby/LobbyMenu";
+import GameScreen from "../game/GameScreen";
 
 export default function PlayMenu(): ReactElement {
     useEffect(() => {
@@ -111,7 +112,10 @@ async function joinGame(roomCode?: number, playerId?: number): Promise<boolean> 
     }
 
     if (success) {
-        Anchor.setContent(<LobbyMenu/>);
+        if (GAME_MANAGER.state.stateType === "lobby")
+            Anchor.setContent(<LobbyMenu/>)
+        else if(GAME_MANAGER.state.stateType === "game")
+            Anchor.setContent(GameScreen.createDefault())
     } else {
         Anchor.setContent(<PlayMenu/>);
     }
@@ -152,7 +156,7 @@ function PlayMenuTable(): ReactElement {
             </tr>
         </thead>
         <tbody>
-            {Object.entries(lobbies).map(entry=>{
+            {Object.entries(lobbies).map((entry)=>{
                 const roomCode = Number.parseInt(entry[0]);
                 const lobby: LobbyPreviewData = entry[1];
 

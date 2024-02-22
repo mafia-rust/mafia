@@ -25,9 +25,8 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "lobbyList":
             if(GAME_MANAGER.state.stateType === "outsideLobby"){
-                GAME_MANAGER.state.lobbies = packet.lobbies
+                GAME_MANAGER.state.lobbies = packet.lobbies;
             }
-                // GAME_MANAGER.state.roomCodes = packet.roomCodes.map((roomCode) => roomCode.toString(18));
         break;
         case "acceptJoin":
             if(packet.inGame){
@@ -35,6 +34,7 @@ export default function messageListener(packet: ToClientPacket){
             }else{
                 GAME_MANAGER.setLobbyState();
             }
+
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
                 GAME_MANAGER.state.roomCode = packet.roomCode;
             }

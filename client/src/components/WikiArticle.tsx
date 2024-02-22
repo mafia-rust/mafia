@@ -63,8 +63,8 @@ export default function WikiArticle(props: {
                     {"### "+translate("wiki.article.standard.chat.title")+"\n"}
                 </StyledText>
                 <div className="wiki-message-section">
-                    {roleData.chatMessages.map((msg: any)=>
-                        <ChatElement message={msg as ChatMessage} playerNames={DUMMY_NAMES}/>
+                    {roleData.chatMessages.map((msg: any, i)=>
+                        <ChatElement key={i} message={msg as ChatMessage} playerNames={DUMMY_NAMES}/>
                     )}
                 </div>
                 <StyledText className="wiki-content-body" markdown={true}>
