@@ -2,13 +2,13 @@ import { marked } from "marked";
 import React, { ReactElement } from "react";
 import ReactDOMServer from "react-dom/server";
 import GAME_MANAGER, { find } from "..";
-import translate from "../game/lang";
+import translate, { translateChecked } from "../game/lang";
 import { Role, getFactionFromRole } from "../game/roleState.d";
 import ROLES from "../resources/roles.json";
 import "./styledText.css";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import WikiSearch from "./WikiSearch";
-import { ARTICLES, WikiArticleLink, getArticleTitle } from "./WikiArticle";
+import { ARTICLES, WikiArticleLink, getArticleLangKey } from "./WikiArticle";
 
 export type TokenData = {
     style?: string, 
@@ -104,6 +104,13 @@ function clearKeywordData() {
 function computeBasicKeywordData() {
     console.log("recomputed keyword data");
 
+    function addTranslatableKeywordData(langKey: string, data: KeywordData) {
+        KEYWORD_DATA_MAP[translate(langKey)] = data;
+        for (let i = 0, variant; (variant = translateChecked(`${langKey}:var.${i}`)) !== null; i++) {
+            KEYWORD_DATA_MAP[variant] = data;
+        }
+    }
+
     //add dummy names keywords
     for(let i = 0; i < DUMMY_NAMES.length; i++) {
         const name = DUMMY_NAMES[i];
@@ -123,11 +130,12 @@ function computeBasicKeywordData() {
     const SortedArticles = [...ARTICLES];
     for (const article of SortedArticles) {
         const keySplit = article.split("/");
+        const key = getArticleLangKey(article);
 
-        KEYWORD_DATA_MAP[getArticleTitle(article)] = [{
+        addTranslatableKeywordData(key, [{
             style: "keyword-info",
             link: `${keySplit[0]}/${keySplit[1]}` as WikiArticleLink,
-        }]
+        }]);
     }
 
     const KEYWORD_DATA_JSON = require("../resources/keywords.json");
@@ -138,23 +146,23 @@ function computeBasicKeywordData() {
             console.error(`faction.${getFactionFromRole(role as Role)} has malformed keyword data!`);
             continue;
         }
-        KEYWORD_DATA_MAP[translate(`role.${role}.name`)] = [{
+
+        addTranslatableKeywordData(`role.${role}.name`, [{
             ...data,
             link: `role/${role}` as WikiArticleLink,
             replacement: translate(`role.${role}.name`)   // Capitalize roles
-        }]
+        }]);
     }
 
     
     //add from keywords.json
-    for (const [keyword, data] of Object.entries(KEYWORD_DATA_JSON)
-    ) {
-        KEYWORD_DATA_MAP[translate(keyword)] = (Array.isArray(data) ? data : [data]).map(data => {
+    for (const [keyword, data] of Object.entries(KEYWORD_DATA_JSON)) {
+        addTranslatableKeywordData(keyword, (Array.isArray(data) ? data : [data]).map(data => {
             return {
                 ...data,
                 replacement: data.replacement === undefined ? undefined : translate(data.replacement)
             }
-        });
+        }));
     }
 }
 

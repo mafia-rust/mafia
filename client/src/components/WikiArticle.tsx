@@ -118,19 +118,23 @@ function getGeneratedArticle(article: GeneratedArticle){
     }
 }
 
-export function getArticleTitle(page: WikiArticleLink): string {
+export function getArticleLangKey(page: WikiArticleLink): string {
     const path = page.split('/');
 
 
     switch (path[0]) {
         case "role":
-            return translate(`role.${path[1]}.name`);
+            return `role.${path[1]}.name`;
         case "standard":
-            return translate(`wiki.article.standard.${path[1]}.title`);
+            return `wiki.article.standard.${path[1]}.title`;
         case "generated":
-            return translate(`wiki.article.generated.${path[1]}.title`);
+            return `wiki.article.generated.${path[1]}.title`;
         default:
             console.error("Invalid article type: "+path[0]);
             return "ERROR";
     }
+}
+
+export function getArticleTitle(page: WikiArticleLink): string {
+    return translate(getArticleLangKey(page));
 }
