@@ -722,6 +722,9 @@
     "wiki.article.standard.chatGroup.title:var.0": "Chatgroup",
     "wiki.article.standard.chatGroup.text": "Messages are sent to chat groups. The chat groups are:\n - All (no icon)\n - Dead 💀\n - Mafia 🌹\n - Cult 🕯️\n - Jail 🔒\n - Interview 📝\n\n Players can be in multiple chat groups at once, or even read chat groups they are not in.",
     "wiki.article.standard.fastForward.title": "Fast Forward",
+    "wiki.article.standard.fastForward.title:var.0": "Fast Forwarded",
+    "wiki.article.standard.fastForward.title:var.1": "Fast Forwarding",
+    "wiki.article.standard.fastForward.title:var.2": "Fast Forwards",
     "wiki.article.standard.fastForward.text": "If all players vote to fast forward, the current phase skips to having 10 seconds left. Voting to fast forward is completly anonymous. To vote to fast forward, press the fast forward button in the top left",
 
 
