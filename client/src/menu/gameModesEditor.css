@@ -34,6 +34,9 @@
     overflow-y: auto;
     display: block;
 }
+.game-modes-editor input {
+    min-width: 3rem;
+}
 .game-modes-editor .saved-game-modes > div{
     display: inline-block;
     margin-left: 1rem;
