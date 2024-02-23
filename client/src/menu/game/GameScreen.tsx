@@ -14,8 +14,7 @@ import StyledText from "../../components/StyledText";
 import { Role } from "../../game/roleState.d";
 import ROLES from "../../resources/roles.json";
 import { StateEventType } from "../../game/gameManager.d";
-import WikiSearch from "../../components/WikiSearch";
-import { WikiArticleLink } from "../../components/WikiArticle";
+import { WikiArticleLink } from "../../components/WikiArticleLink";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",
@@ -281,7 +280,7 @@ export function ContentTab(props: {
             className="material-icons-round help" 
             onClick={()=>{
                 GameScreen.instance.openMenu(ContentMenu.WikiMenu, ()=>{
-                    props.helpMenu && WikiSearch.setPage(props.helpMenu)
+                    props.helpMenu && GAME_MANAGER.setWikiArticle(props.helpMenu);
                 });
             }}
         >

@@ -1,3 +1,4 @@
+import { WikiArticleLink } from "../components/WikiArticleLink";
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import { Phase, PhaseTimes, PlayerIndex, State, Verdict } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
@@ -35,8 +36,11 @@ export type GameManager = {
     removeStateListener(listener: StateListener): void;
     invokeStateListeners(type?: StateEventType): void;
 
-    setPrependWhisperFunction: (f: any) => void;
+    setPrependWhisperFunction: (f: ((index: PlayerIndex) => void)) => void;
     prependWhisper: (index: PlayerIndex) => void;
+
+    setSetWikiArticleFunction: (f: ((article: WikiArticleLink | null) => void)) => void;
+    setWikiArticle: (article: WikiArticleLink | null) => void;
 
     leaveGame(): void;
 

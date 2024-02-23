@@ -119,6 +119,11 @@ export function createGameManager(): GameManager {
             gameManager.prependWhisper = f;
         },
         prependWhisper: (index) => {},
+        
+        setSetWikiArticleFunction: (f) => {
+            gameManager.setWikiArticle = f;
+        },
+        setWikiArticle: (article) => {},
 
 
         leaveGame() {

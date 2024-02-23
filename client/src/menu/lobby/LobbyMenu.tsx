@@ -8,11 +8,11 @@ import translate from "../../game/lang";
 import { StateListener } from "../../game/gameManager.d";
 import LobbyExcludedRoles from "./lobbyExcludedRoles";
 import Anchor from "../Anchor";
-import WikiSearch from "../../components/WikiSearch";
 import { RoomCodeButton } from "../Settings";
 import { getRolesFromRoleListRemoveExclusionsAddConversions, getRolesComplement } from "../../game/roleListState.d";
 import LoadingScreen from "../LoadingScreen";
 import StartMenu from "../main/StartMenu";
+import Wiki from "../../components/Wiki";
 
 export default function LobbyMenu(): ReactElement {
     const [roleList, setRoleList] = useState(
@@ -74,7 +74,7 @@ export default function LobbyMenu(): ReactElement {
                 <LobbyPlayerList/>
                 {Anchor.isMobile() || <section className="wiki-menu-colors selector-section">
                     <h2>{translate("menu.wiki.title")}</h2>
-                    <WikiSearch excludedRoles={
+                    <Wiki disabledRoles={
                         getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(roleList, excludedRoles))
                     }/>
                 </section>}
@@ -93,7 +93,7 @@ export default function LobbyMenu(): ReactElement {
                 <LobbyExcludedRoles/>
                 {Anchor.isMobile() && <section className="wiki-menu-colors selector-section">
                     <h2>{translate("menu.wiki.title")}</h2>
-                    <WikiSearch excludedRoles={
+                    <Wiki disabledRoles={
                         getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(roleList, excludedRoles))
                     }/>
                 </section>}

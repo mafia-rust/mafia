@@ -7,8 +7,7 @@ import { Role, getFactionFromRole } from "../game/roleState.d";
 import ROLES from "../resources/roles.json";
 import "./styledText.css";
 import DUMMY_NAMES from "../resources/dummyNames.json";
-import WikiSearch from "./WikiSearch";
-import { ARTICLES, WikiArticleLink, getArticleLangKey } from "./WikiArticle";
+import { ARTICLES, WikiArticleLink, getArticleLangKey } from "./WikiArticleLink";
 
 export type TokenData = {
     style?: string, 
@@ -74,7 +73,7 @@ export default function StyledText(props: {
             );
         } else {
             // TODO: This is absolutely terrible. Don't do this.
-            (window as any).setWikiSearchPage = WikiSearch.setPage;
+            (window as any).setWikiSearchPage = (page: WikiArticleLink) => GAME_MANAGER.setWikiArticle(page);
 
             return ReactDOMServer.renderToStaticMarkup(
                 // eslint-disable-next-line jsx-a11y/anchor-is-valid

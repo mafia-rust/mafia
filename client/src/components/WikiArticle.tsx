@@ -2,29 +2,12 @@ import { ReactElement } from "react";
 import { Role } from "../game/roleState.d";
 import ROLES from "../resources/roles.json";
 import React from "react";
-import translate, { langJson, langText, translateChecked } from "../game/lang";
+import translate, { langText, translateChecked } from "../game/lang";
 import StyledText from "./StyledText";
 import { ROLE_SETS, RoleSet, getRolesFromRoleSet } from "../game/roleListState.d";
 import ChatElement, { ChatMessage } from "./ChatMessage";
 import DUMMY_NAMES from "../resources/dummyNames.json";
-
-export type WikiArticleLink = 
-    `role/${Role}` | 
-    `standard/${StandardArticle}` |
-    `generated/${GeneratedArticle}`;
-
-const STANDARD_ARTICLES = 
-    [...new Set(Object.keys(langJson).filter(key => key.startsWith("wiki.article.standard.")).map(key => key.split(".")[3]))];
-
-type StandardArticle = typeof STANDARD_ARTICLES[number];
-
-const GENERATED_ARTICLES = ["role_set", "all_text"] as const;
-type GeneratedArticle = typeof GENERATED_ARTICLES[number];
-
-export const ARTICLES: WikiArticleLink[] = 
-    Object.keys(ROLES).map(role => `role/${role}`)
-    .concat(STANDARD_ARTICLES.map(article => `standard/${article}`))
-    .concat(GENERATED_ARTICLES.map(article => `generated/${article}`)) as WikiArticleLink[];
+import { GeneratedArticle, WikiArticleLink, getArticleTitle } from "./WikiArticleLink";
     
 
 export default function WikiArticle(props: {
@@ -116,25 +99,4 @@ function getGeneratedArticle(article: GeneratedArticle){
                 {langText}
             </>;
     }
-}
-
-export function getArticleLangKey(page: WikiArticleLink): string {
-    const path = page.split('/');
-
-
-    switch (path[0]) {
-        case "role":
-            return `role.${path[1]}.name`;
-        case "standard":
-            return `wiki.article.standard.${path[1]}.title`;
-        case "generated":
-            return `wiki.article.generated.${path[1]}.title`;
-        default:
-            console.error("Invalid article type: "+path[0]);
-            return "ERROR";
-    }
-}
-
-export function getArticleTitle(page: WikiArticleLink): string {
-    return translate(getArticleLangKey(page));
 }
