@@ -4,11 +4,11 @@ import React from "react";
 import { RoleListSetter } from "../components/RolePicker";
 import { RoleList, RoleOutline } from "../game/roleListState.d";
 import translate from "../game/lang";
-import "./roleListBank.css";
+import "./gameSettingsBank.css";
 import Anchor from "./Anchor";
 
 
-export default function RoleListBank(): ReactElement {
+export default function GameSettingsBank(): ReactElement {
 
     const [roleLists, setRoleLists] = useState<SavedRoleLists>(loadRoleLists() ?? new Map());
 
