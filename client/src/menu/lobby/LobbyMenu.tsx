@@ -127,6 +127,14 @@ function LobbyMenuHeader(): JSX.Element {
                 onInput={e => {
                     setLobbyName((e.target as HTMLInputElement).value);
                 }}
+                onKeyUp={(e)=>{
+                    if(e.key !== 'Enter') return;
+                    
+                    const newLobbyName = (e.target as HTMLInputElement).value;
+                    setLobbyName(newLobbyName);
+                    GAME_MANAGER.sendSetLobbyNamePacket(newLobbyName);
+                    
+                }}
                 onBlur={e => {
                     const newLobbyName = (e.target as HTMLInputElement).value;
                     setLobbyName(newLobbyName);
