@@ -1,7 +1,7 @@
 import { ReactElement, useState } from "react";
 import { SavedGameModes, loadGameModes, saveGameModes } from "../game/localStorage";
 import React from "react";
-import { OutlineListSelector } from "../components/RolePicker";
+import { OutlineListSelector } from "../components/OutlineSelector";
 import { RoleList, RoleOutline } from "../game/roleListState.d";
 import translate from "../game/lang";
 import "./gameModesBank.css";
@@ -145,7 +145,7 @@ export default function GameModesBank(): ReactElement {
         </header>
         <main>
             <div>
-                <section className="player-list-menu-colors  selector-section">
+                <section className="player-list-menu-colors selector-section">
                     <div className="saved-game-modes">
                         {Array.from(savedGameModes.keys()).map((gameModeName) => {
                             return <div key={gameModeName}>
@@ -154,12 +154,18 @@ export default function GameModesBank(): ReactElement {
                             </div>
                         })}
                     </div>
-                    <input type="text" value={currentSettingsName} onChange={(e) => {
-                        setCurrentRoleListName(e.target.value);
-                    }}/>
-                    <button onClick={saveGameMode} className="material-icons-round">save</button>
-                    <button onClick={exportGameMode}>{translate("exportToClipboard")}</button>
-                    <button onClick={importGameMode}>{translate("importFromClipboard")}</button>
+                    <div className="save-menu">
+                        <input 
+                            type="text" 
+                            value={currentSettingsName}
+                            placeholder={translate("menu.lobby.field.namePlaceholder")}
+                            onChange={(e) => {
+                            setCurrentRoleListName(e.target.value);
+                        }}/>
+                        <button onClick={saveGameMode} className="material-icons-round">save</button>
+                        <button onClick={exportGameMode}>{translate("exportToClipboard")}</button>
+                        <button onClick={importGameMode}>{translate("importFromClipboard")}</button>
+                    </div>
                 </section>
 
                 <PhaseTimesSelector 

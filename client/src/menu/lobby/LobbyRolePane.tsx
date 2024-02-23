@@ -3,7 +3,7 @@ import GAME_MANAGER from "../../index";
 import "../../index.css";
 import { StateListener } from "../../game/gameManager.d";
 import { RoleOutline } from "../../game/roleListState.d";
-import { OutlineListSelector } from "../../components/RolePicker";
+import { OutlineListSelector } from "../../components/OutlineSelector";
 
 export default function LobbyRolePane(): ReactElement {
 

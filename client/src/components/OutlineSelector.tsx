@@ -1,5 +1,5 @@
 import React from "react";
-import "./rolePicker.css";
+import "./outlineSelector.css";
 import translate from "../game/lang";
 import ROLES from "../resources/roles.json";
 import { FACTIONS, ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, simplifyRoleOutline, translateRoleOutlineOption} from "../game/roleListState.d";

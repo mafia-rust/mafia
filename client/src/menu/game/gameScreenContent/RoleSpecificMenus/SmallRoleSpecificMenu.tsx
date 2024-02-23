@@ -3,7 +3,7 @@ import GameState from "../../../../game/gameState.d"
 import GAME_MANAGER from "../../../.."
 import translate from "../../../../game/lang"
 import StyledText from "../../../../components/StyledText"
-import RoleOutlineDropdown from "../../../../components/RolePicker"
+import RoleOutlineDropdown from "../../../../components/OutlineSelector"
 
 type SmallRoleSpecificMenuProps = {
 }

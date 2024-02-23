@@ -4,7 +4,7 @@ import React from "react"
 import StyledText from "./StyledText"
 import { RoleOutline, getRolesFromOutline } from "../game/roleListState.d";
 import { Role } from "../game/roleState.d";
-import RoleOutlineSelector from "./RolePicker";
+import RoleOutlineSelector from "./OutlineSelector";
 import "./disabledRoleSelector.css"
 
 
