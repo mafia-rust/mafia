@@ -51,7 +51,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
         GAME_MANAGER.removeStateListener(this.listener);
     }
 
-    render() {return<PhaseTimesSelector phaseTimes={this.state.phaseTimes} onChange={(phaseTimes)=>{
+    render() {return<PhaseTimesSelector disabled={!this.state.host} phaseTimes={this.state.phaseTimes} onChange={(phaseTimes)=>{
         GAME_MANAGER.sendSetPhaseTimesPacket(phaseTimes);
     }}/>}
 }

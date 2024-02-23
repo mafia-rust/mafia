@@ -81,7 +81,13 @@ export default function LobbyMenu(): ReactElement {
             </div>
             <div>
                 {Anchor.isMobile() && <h1>{translate("menu.lobby.settings")}</h1>}
-                <button className="player-list-menu-colors" onClick={importFromClipboard}>{translate("importFromClipboard")}</button>
+                <button 
+                    className="player-list-menu-colors" 
+                    onClick={importFromClipboard}
+                    disabled={!GAME_MANAGER.getMyHost() ?? false}
+                >
+                    {translate("importFromClipboard")}
+                </button>
                 <LobbyPhaseTimePane/>
                 <LobbyRolePane/>
                 <LobbyExcludedRoles/>
