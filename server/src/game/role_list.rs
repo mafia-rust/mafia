@@ -145,7 +145,6 @@ pub enum RoleSet {
     TownProtective,
     TownInvestigative,
 
-    MafiaPower,
     MafiaSupport,
 
     NeutralEvil,
@@ -164,8 +163,6 @@ impl RoleSet{
                 vec![Role::Bodyguard, Role::Crusader, Role::Doctor, Role::Reveler, Role::Trapper],
             RoleSet::TownInvestigative => 
                 vec![Role::Psychic, Role::Lookout, Role::Sheriff, Role::Spy, Role::Tracker, Role::Seer],
-            RoleSet::MafiaPower => 
-                vec![Role::Godfather, Role::Mafioso],
             RoleSet::MafiaSupport => 
                 vec![
                     Role::Blackmailer, Role::Consigliere, Role::Consort, 

@@ -26,7 +26,7 @@ export default function WikiArticle(props: {
             return <section>
                 <StyledText className="wiki-content-body" markdown={true}>
                     {"# "+translate("role."+role+".name")+"\n"}
-                    {"### "+translate(roleData.faction)+"\n"}
+                    {roleData.roleSet!==null?("### "+translateChecked(roleData.roleSet)+"\n"):"### "+translate(roleData.faction)+"\n"}
 
                     {"### "+translate("wiki.article.role.guide")+"\n"}
                     {(translateChecked("wiki.article.role."+role+".guide") ?? translate("wiki.article.role.noGuide"))+"\n"}

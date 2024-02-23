@@ -1,6 +1,7 @@
 {
     "jailor":{
         "faction": "town",
+        "roleSet": null,
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -34,6 +35,7 @@
     },
     "sheriff": {
         "faction": "town",
+        "roleSet": "townInvestigative",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -46,6 +48,7 @@
     },
     "lookout": {
         "faction": "town",
+        "roleSet": "townInvestigative",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -58,6 +61,7 @@
     },
     "seer": {
         "faction": "town",
+        "roleSet": "townInvestigative",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -70,6 +74,7 @@
     },
     "tracker": {
         "faction": "town",
+        "roleSet": "townInvestigative",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -82,6 +87,7 @@
     },
     "psychic": {
         "faction": "town",
+        "roleSet": "townInvestigative",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -94,6 +100,7 @@
     },
     "spy": {
         "faction": "town",
+        "roleSet": "townInvestigative",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -114,6 +121,7 @@
     },
     "doctor": {
         "faction": "town",
+        "roleSet": "townProtective",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -127,6 +135,7 @@
     },
     "crusader": {
         "faction": "town",
+        "roleSet": "townProtective",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -141,6 +150,7 @@
     },
     "reveler": {
         "faction": "town",
+        "roleSet": "townProtective",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -153,6 +163,7 @@
     },
     "trapper": {
         "faction": "town",
+        "roleSet": "townProtective",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -161,7 +172,7 @@
         "chatMessages":[
             {"type": "trapState", "state":{"type":"dismantled"}},
             {"type": "trapState", "state":{"type":"ready"}},
-            {"type": "trapState", "state":{"type":"set"}},
+            {"type": "trapState", "state":{"type":"roleSet"}},
             {"type": "trapperYouAttackedVisitor"},
             {"type": "trapperVisitorsRole", "role": "framer"},
             {"type": "targetWasAttacked"},
@@ -172,6 +183,7 @@
     },
     "bodyguard": {
         "faction": "town",
+        "roleSet": "townProtective",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -186,6 +198,7 @@
     },
     "vigilante": {
         "faction": "town",
+        "roleSet": "townKilling",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -198,6 +211,7 @@
     },
     "veteran": {
         "faction": "town",
+        "roleSet": "townKilling",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -211,6 +225,7 @@
     },
     "deputy": {
         "faction": "town",
+        "roleSet": "townKilling",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -224,6 +239,7 @@
     },
     "escort": {
         "faction": "town",
+        "roleSet": "townSupport",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -236,6 +252,7 @@
     },
     "medium": {
         "faction": "town",
+        "roleSet": "townSupport",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -265,6 +282,7 @@
     },
     "mayor":{
         "faction": "town",
+        "roleSet": "townSupport",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -276,6 +294,7 @@
     },
     "journalist": {
         "faction": "town",
+        "roleSet": "townSupport",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
@@ -309,6 +328,7 @@
     },
     "transporter":{
         "faction": "town",
+        "roleSet": "townSupport",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -320,6 +340,7 @@
     },
     "retributionist": {
         "faction": "town",
+        "roleSet": "townSupport",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -336,6 +357,7 @@
     },
     "godfather": {
         "faction": "mafia",
+        "roleSet": null,
         "armor": true,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -351,6 +373,7 @@
     },
     "mafioso": {
         "faction": "mafia",
+        "roleSet": null,
         "armor": false,
         "maxCount": 0,
         "largeRoleSpecificMenu": false,
@@ -362,6 +385,7 @@
     },
     "consort": {
         "faction": "mafia",
+        "roleSet": "mafiaSupport",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": true,
@@ -380,6 +404,7 @@
     },
     "blackmailer": {
         "faction": "mafia",
+        "roleSet": "mafiaSupport",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -391,6 +416,7 @@
     },
     "consigliere": {
         "faction": "mafia",
+        "roleSet": "mafiaSupport",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -403,6 +429,7 @@
     },
     "janitor": {
         "faction": "mafia",
+        "roleSet": "mafiaSupport",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -418,6 +445,7 @@
     },
     "framer": {
         "faction": "mafia",
+        "roleSet": "mafiaSupport",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -427,6 +455,7 @@
     },
     "forger": {
         "faction": "mafia",
+        "roleSet": "mafiaSupport",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
@@ -442,6 +471,7 @@
     },
     "witch": {
         "faction": "mafia",
+        "roleSet": "mafiaSupport",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -458,6 +488,7 @@
     },
     "necromancer": {
         "faction": "mafia",
+        "roleSet": "mafiaSupport",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -474,6 +505,7 @@
     },
     "jester": {
         "faction": "neutral",
+        "roleSet": "neutralEvil",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -486,6 +518,7 @@
     },
     "executioner": {
         "faction": "neutral",
+        "roleSet": "neutralEvil",
         "armor": true,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -499,6 +532,7 @@
     
     "politician":{
         "faction": "neutral",
+        "roleSet": "neutralEvil",
         "armor": true,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -510,6 +544,7 @@
     },
     "arsonist": {
         "faction": "neutral",
+        "roleSet": "neutralKilling",
         "armor": true,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -522,6 +557,7 @@
     },
     "werewolf": {
         "faction": "neutral",
+        "roleSet": "neutralKilling",
         "armor": true,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -549,6 +585,7 @@
     },
     "amnesiac": {
         "faction": "neutral",
+        "roleSet": "neutralChaos",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -558,6 +595,7 @@
     },
     "martyr": {
         "faction": "neutral",
+        "roleSet": "neutralChaos",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -571,6 +609,7 @@
     },
     "death":{
         "faction": "neutral",
+        "roleSet": "neutralApocalypse",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -584,6 +623,7 @@
     },
     "doomsayer":{
         "faction": "neutral",
+        "roleSet": "neutralApocalypse",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
@@ -597,6 +637,7 @@
     },
     "apostle": {
         "faction": "cult",
+        "roleSet": null,
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -613,6 +654,7 @@
     },
     "disciple": {
         "faction": "cult",
+        "roleSet": null,
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -622,6 +664,7 @@
     },
     "zealot": {
         "faction": "cult",
+        "roleSet": null,
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,

@@ -371,7 +371,7 @@
     "cult": "Cult",
     "neutral": "Neutral",
 
-    "townInvestigative":"Town Investigate",
+    "townInvestigative":"Town Investigative",
     "townInvestigative:var.0":"TI",
     "townProtective":"Town Protective",
     "townProtective:var.0":"TP",
@@ -380,8 +380,6 @@
     "townSupport":"Town Support",
     "townSupport:var.0":"TS",
 
-    "mafiaPower":"Mafia Power",
-    "mafiaPower:var.0":"MP",
     "mafiaSupport":"Mafia Support",
     "mafiaSupport:var.0":"MS",
 
