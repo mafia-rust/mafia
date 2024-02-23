@@ -23,30 +23,40 @@ pub struct Wizard{
 pub enum Spell{
     None, //default 
 
-    //Level 1
+    //Level 0
 
     Meditate, //Level up
     Hex, //Hex two players to die at the end of the game if only ones alive
     Poison, //Poison someone to attack 3 days later 
     Shield, //Protect yourself until attacked
-    Invisibility, //Gives innocent aura and visits target
+    Illusion, //Gives innocent aura and visits target
+    Illuminate, //Publically reveal a role
 
-    //Level 3
+    //Level 1
+    Clarity, //Shows all players who are a specific role
+    Teleport, //transport yourself with another player
+
+
+    //Level 2
 
     Absorb, //Protects self and levels up for each attack blocked
     Reflect, //reverses visits
     Medusa, //All visitors cleaned and attacked
-    Clarity, //Shows all players who are a specific role
     Polymorph, //Silence and roleblock a player
 
-    //Level 5
 
-    Smite, //protection-piercing attack
+    //Level 3
     Lightning, //Attacks if create circut
 
-    //Level 7
+    //Level 4
 
-    //Level 9
+    Smite, //protection-piercing attack
+    DaytimeAttack, //deputy ability, no ability at night
+
+    //Level 6
+    Clone, //Convert another player to a wizard
+
+    //Level 8
     Ascend, //Announces that wizard has ascended and will win at end of night if not executed. Hexed players can not vote. requires high level
     
     

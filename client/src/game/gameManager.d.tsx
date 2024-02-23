@@ -1,4 +1,5 @@
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
+import { WizardSpell } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeWizardMenu";
 import { Phase, PhaseTimes, PlayerIndex, State, Verdict } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleList, RoleOutline } from "./roleListState.d";
@@ -96,6 +97,8 @@ export type GameManager = {
         [number, DoomsayerGuess],
         [number, DoomsayerGuess]
     ]): void;
+
+    sendWizardSpell(spell: WizardSpell): void;
     sendSetAmnesiacRoleOutline(roleOutline: RoleOutline): void;
     sendSetJournalistJournal(journal: string): void;
     sendSetJournalistJournalPublic(isPublic: boolean): void;

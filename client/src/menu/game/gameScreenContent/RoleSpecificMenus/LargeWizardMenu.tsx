@@ -3,7 +3,7 @@ import GameState from "../../../../game/gameState.d"
 import GAME_MANAGER from "../../../.."
 import translate, { translateChecked } from "../../../../game/lang"
 import { StateEventType } from "../../../../game/gameManager.d"
-import "./largeDoomsayerMenu.css"
+import "./largeWizardMenu.css"
 
 
 export type Wizard = {
@@ -13,66 +13,43 @@ export type Wizard = {
 
 }
 
-export const DOOMSAYER_GUESSES = [
-    "mafia", "neutral", "cult",
-    "jailor",  
-    "doctor",  "bodyguard",  "crusader", "reveler", "trapper",
-    "vigilante",  "veteran",  "deputy",
-    "escort",  "medium",  "retributionist", "journalist", "mayor",  "transporter", 
+export const WIZARD_SPELLS = [
+    "none", ""
 ];
 
-export type DoomsayerGuess = typeof DOOMSAYER_GUESSES[number];
-export function doomsayerGuessTranslate(doomsayerGuess: DoomsayerGuess): string{
-    let outString = translateChecked("role."+doomsayerGuess+".name");
-    if(outString===null){
-        outString = translate(doomsayerGuess);
-    }
-    return outString;
-}
+export type WizardSpell = typeof WIZARD_SPELLS[number];
 
-type LargeDoomsayerMenuProps = {
+type LargeWizardMenuProps = {
 }
-type LargeDoomsayerMenuState = {
+type LargeWizardMenuState = {
     gameState: GameState
-    localDoomsayerGuesses: [
-        [number, DoomsayerGuess],
-        [number, DoomsayerGuess],
-        [number, DoomsayerGuess]
-    ]
+    localWizardSpell: WizardSpell
 }
-export default class LargeDoomsayerMenu extends React.Component<LargeDoomsayerMenuProps, LargeDoomsayerMenuState> {
+export default class LargeWizardMenu extends React.Component<LargeWizardMenuProps, LargeWizardMenuState> {
     listener: (type?: StateEventType) => void;
-    constructor(props: LargeDoomsayerMenuState) {
+    constructor(props: LargeWizardMenuState) {
         super(props);
 
-        let defaultGuess: [
-            [number, DoomsayerGuess],
-            [number, DoomsayerGuess],
-            [number, DoomsayerGuess]
-        ];
-        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.roleState?.role === "doomsayer"){
-            defaultGuess = GAME_MANAGER.state.roleState.guesses;
+        let defaultSpell: WizardSpell
+        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.roleState?.role === "wizard"){
+            defaultSpell = GAME_MANAGER.state.roleState.guesses;
         }else{
-            defaultGuess = [
-                [0, "neutral"],
-                [0, "neutral"],
-                [0, "neutral"]
-            ];
+            defaultSpell = "none"
         }
         
         if(GAME_MANAGER.state.stateType === "game")
             this.state = {
                 gameState : GAME_MANAGER.state,
-                localDoomsayerGuesses: defaultGuess
+                localWizardGuesses: defaultGuess
             };
         this.listener = (type)=>{
             if(GAME_MANAGER.state.stateType === "game")
                 this.setState({
                     gameState: GAME_MANAGER.state
                 });
-            if(GAME_MANAGER.state.stateType === "game" && type==="yourRoleState" && GAME_MANAGER.state.roleState?.role === "doomsayer"){
+            if(GAME_MANAGER.state.stateType === "game" && type==="yourRoleState" && GAME_MANAGER.state.roleState?.role === "wizard"){
                 this.setState({
-                    localDoomsayerGuesses: GAME_MANAGER.state.roleState.guesses
+                    localWizardGuesses: GAME_MANAGER.state.roleState.guesses
                 });
             }
         };  
@@ -85,17 +62,17 @@ export default class LargeDoomsayerMenu extends React.Component<LargeDoomsayerMe
     }
 
     sendAndSetGuesses(guess: [
-        [number, DoomsayerGuess],
-        [number, DoomsayerGuess],
-        [number, DoomsayerGuess]
+        [number, WizardGuess],
+        [number, WizardGuess],
+        [number, WizardGuess]
     ]){
         this.setState({
-            localDoomsayerGuesses: guess
+            localWizardGuesses: guess
         });
-        GAME_MANAGER.sendSetDoomsayerGuess(guess);
+        GAME_MANAGER.sendSetWizardGuess(guess);
     }
 
-    renderGuessPicker(index: number){
+    renderSpellPicker(index: number){
         //TODO make so cant guess the same player twice without causing weird problems with HTML
 
         //Cant guess a player 2x
@@ -106,31 +83,31 @@ export default class LargeDoomsayerMenu extends React.Component<LargeDoomsayerMe
         for(let i = 0; i < this.state.gameState.players.length; i++){
             playerOptions.push(<option key={i} value={i}>{this.state.gameState.players[i].toString()}</option>);
         }
-        let doomsayerGuessOptions: JSX.Element[] = [];
+        let wizardGuessOptions: JSX.Element[] = [];
         for(let i = 0; i < DOOMSAYER_GUESSES.length; i++){
-            doomsayerGuessOptions.push(<option key={i} value={DOOMSAYER_GUESSES[i]}>{doomsayerGuessTranslate(DOOMSAYER_GUESSES[i])}</option>);
+            wizardGuessOptions.push(<option key={i} value={DOOMSAYER_GUESSES[i]}>{wizardGuessTranslate(DOOMSAYER_GUESSES[i])}</option>);
         }
         return <div>
             <select
-                value={this.state.localDoomsayerGuesses[index][0]}
+                value={this.state.localWizardGuesses[index][0]}
                 onChange={(e)=>{
-                    let newGuess = this.state.localDoomsayerGuesses;
+                    let newGuess = this.state.localWizardGuesses;
                     newGuess[index][0] = parseInt(e.target.options[e.target.selectedIndex].value);
                     this.sendAndSetGuesses(newGuess);
                 }}
             >{playerOptions}</select>
             <select
-                value={this.state.localDoomsayerGuesses[index][1]}
+                value={this.state.localWizardGuesses[index][1]}
                 onChange={(e)=>{
-                    let newGuess = this.state.localDoomsayerGuesses;
-                    newGuess[index][1] = e.target.options[e.target.selectedIndex].value as DoomsayerGuess;
+                    let newGuess = this.state.localWizardGuesses;
+                    newGuess[index][1] = e.target.options[e.target.selectedIndex].value as WizardGuess;
                     this.sendAndSetGuesses(newGuess);
                 }}
-            >{doomsayerGuessOptions}</select>
+            >{wizardGuessOptions}</select>
         </div>
     }
     render(){
-        return <div className="large-doomsayer-menu">
+        return <div className="large-wizard-menu">
             {this.renderGuessPicker(0)}
             {this.renderGuessPicker(1)}
             {this.renderGuessPicker(2)}
