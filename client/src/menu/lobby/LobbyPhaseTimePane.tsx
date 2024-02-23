@@ -1,10 +1,9 @@
 import React from "react";
 import { PhaseTimes } from "../../game/gameState.d";
-import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
 import { StateListener } from "../../game/gameManager.d";
-import PhaseTimesSelector from "../../components/PhaseTimePicker";
+import PhaseTimesSelector from "../../components/PhaseTimeSelector";
 
 
 type PhaseTimePaneState = {
@@ -52,10 +51,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
         GAME_MANAGER.removeStateListener(this.listener);
     }
 
-    render() {return(<section className="will-menu-colors">
-        <h2>{translate("menu.lobby.timeSettings")}</h2>
-        <PhaseTimesSelector phaseTimes={this.state.phaseTimes} onChange={(phaseTimes)=>{
-            GAME_MANAGER.sendSetPhaseTimesPacket(phaseTimes);
-        }}/>
-    </section>)}
+    render() {return<PhaseTimesSelector phaseTimes={this.state.phaseTimes} onChange={(phaseTimes)=>{
+        GAME_MANAGER.sendSetPhaseTimesPacket(phaseTimes);
+    }}/>}
 }

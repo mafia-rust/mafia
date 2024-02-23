@@ -50,14 +50,11 @@ export default function LobbyRolePane(): ReactElement {
         GAME_MANAGER.sendSetRoleOutlinePacket(index, value);
     }
 
-    return <section className="graveyard-menu-colors">
-        <h2>{translate("menu.lobby.roleList")}</h2>
-        <OutlineListSelector
-            disabled={!host}
-            roleList={roleList}
-            onChangeRolePicker={onChangeRolePicker}
-            onAddNewOutline={undefined}
-            onRemoveOutline={undefined}
-        />
-    </section>
+    return <OutlineListSelector
+        disabled={!host}
+        roleList={roleList}
+        onChangeRolePicker={onChangeRolePicker}
+        onAddNewOutline={undefined}
+        onRemoveOutline={undefined}
+    />
 }

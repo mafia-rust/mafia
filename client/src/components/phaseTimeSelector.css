@@ -1,0 +1,10 @@
+
+.phase-time-selector {
+    display: flex;
+    align-items: center;
+    
+}
+.phase-time-selector > input {
+    text-align: center;
+    flex-grow: 1;
+}

@@ -180,7 +180,8 @@ export function OutlineListSelector(props: {
     }
 
 
-    return <div>
+    return <section className="graveyard-menu-colors selector-section">
+        <h2>{translate("menu.lobby.roleList")}</h2>
         <button disabled={props.disabled} onClick={simplify}>
             {translate("simplify")}
         </button>
@@ -206,6 +207,6 @@ export function OutlineListSelector(props: {
             <button disabled={props.disabled} onClick={props.onAddNewOutline}>
                 {translate("add")}
             </button> : null}
-    </div>
+    </section>
 }
 

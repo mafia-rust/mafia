@@ -1,23 +1,61 @@
+
 .game-modes-bank {
+    display: flex;
     position: absolute;
-    width: 90%;
-    height: 90%;
-    z-index: 80;
     top: 5%;
     left: 5%;
+    width: 90%;
+    height: 90%;
     background-color: var(--background-color);
-    border-radius: 10px;
-    border-color: var(--border-color);
-    border-width: .1rem;
-    border-style: solid;
-    padding: 1rem;
+    border: 0.13rem solid var(--primary-border-color);
+    border-radius: 2rem;
+    border-right-color: black;
+    border-bottom-color: black;
+    scrollbar-width: none;
+    flex-direction: column;
+    padding: 2rem;
+    gap: 2rem;
     overflow-y: auto;
 }
 
+.game-modes-bank > header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.game-modes-bank .saved-game-modes {
+    max-height: 50vh;
+    overflow-y: auto;
+    display: block;
+}
+.game-modes-bank .saved-game-modes > div{
+    display: inline-block;
+    margin-left: 1rem;
+}
+
+.game-modes-bank > main {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.game-modes-bank > main > div {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 47%;
+    flex-grow: 1;
+    gap: 1rem;
+}
+
 .game-modes-bank .close-button {
-    position: absolute;
-    top: .2rem;
-    right: .2rem;
-    padding: .1rem;
-    cursor: pointer;
+    position: fixed;
+    padding: 0;
+    top: 8%;
+    right: 8%;
+    border-radius: .5rem;
 }

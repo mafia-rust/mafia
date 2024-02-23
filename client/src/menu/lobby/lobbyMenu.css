@@ -47,7 +47,6 @@
     flex-direction: row;
     flex-wrap: wrap;
     gap: 2rem;
-    /* max-width: 100%; */
 }
 
 .lm > main > div {
@@ -58,32 +57,11 @@
     gap: 1rem;
 }
 
-.lm section {
-    background-color: var(--background-color);
-    border: solid .13rem var(--primary-border-color);
-    border-bottom-color: black;
-    border-right-color: black;
-    border-radius: 1rem;
-    padding: 1rem;
-}
-
-.lm section > h2 {
-    padding-bottom: 0.5rem;
-}
-
 .lm .name-box {
     display: flex;
     flex-direction: row;
 }
 
 .lm .name-box input {
-    width: 100%;
-}
-
-.lm .time-picker {
-    display: flex;
-    align-items: center;
-}
-.lm .time-picker input {
     width: 100%;
 }

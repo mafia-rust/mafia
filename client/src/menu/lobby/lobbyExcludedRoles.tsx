@@ -4,7 +4,6 @@ import GAME_MANAGER from "../../index";
 import { RoleOutline } from "../../game/roleListState.d";
 import "../../index.css";
 import { StateListener } from "../../game/gameManager.d";
-import translate from "../../game/lang";
 import { Role } from "../../game/roleState.d";
 import DisabledRoleSelector from "../../components/DisabledRoleSelector";
 
@@ -44,11 +43,7 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
     }
     
 
-    render(){return(<section className="excluded-roles role-specific-colors">
-        <header>
-            <h2>{translate("menu.lobby.excludedRoles")}</h2>
-        </header>
-
+    render(){return(
         <DisabledRoleSelector
             disabledRoles={this.state.excludedRoles}
             onDisableRoles={(roles)=>{GAME_MANAGER.sendExcludedRolesPacket([...this.state.excludedRoles, ...roles])}}
@@ -56,5 +51,5 @@ export default class LobbyExcludedRoles extends React.Component<{}, ExcludedRole
             onIncludeAll={()=>{GAME_MANAGER.sendExcludedRolesPacket([])}}
             disabled={!this.state.host}
         />
-    </section>)}
+    )}
 }

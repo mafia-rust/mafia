@@ -1,5 +1,6 @@
 import { PhaseTimes } from "./gameState.d";
-import { RoleList, RoleOutline } from "./roleListState.d";
+import { RoleList } from "./roleListState.d";
+import { Role } from "./roleState.d";
 
 export function saveReconnectData(roomCode: number, playerId: number) {
     localStorage.setItem(
@@ -47,11 +48,12 @@ export function loadSettings(): { volume: number } | null{
 
 
 
-export type SavedGameModes = Map<string, {
+export type SavedGameModes = Map<string, GameMode>;
+type GameMode = {
     roleList: RoleList,
     phaseTimes: PhaseTimes,
-    excludedRoles: RoleOutline | null
-}>;
+    disabledRoles: Role[],
+}
 
 export function saveGameModes(roleList: SavedGameModes) {
     localStorage.setItem("savedGameModes", JSON.stringify(roleList, replacer));

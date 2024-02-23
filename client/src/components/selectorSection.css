@@ -1,0 +1,8 @@
+.selector-section {
+    background-color: var(--background-color);
+    border: solid .13rem var(--primary-border-color);
+    border-bottom-color: black;
+    border-right-color: black;
+    border-radius: 1rem;
+    padding: 1rem;
+}

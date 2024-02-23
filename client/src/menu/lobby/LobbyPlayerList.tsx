@@ -81,11 +81,11 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
     }
 
     render(){return(<>
-        <section style={{backgroundColor: "var(--tab-color)"}}>
+        <section className="selector-section" style={{backgroundColor: "var(--tab-color)"}}>
             <h2>{GAME_MANAGER.getMyName() ?? ""}</h2>
             {this.renderName()}
         </section>
-        <section className="player-list-menu-colors">
+        <section className="player-list-menu-colors selector-section">
             <h2>{translate("menu.lobby.players")}</h2>
             {this.renderPlayers()}
         </section>

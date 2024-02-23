@@ -25,8 +25,8 @@ export default function DisabledRoleSelector(props: {
         props.onDisableRoles(roles);
     }
 
-    return <div className="disabled-role-selector">
-
+    return <div className="role-specific-colors selector-section">
+        <h2>{translate("menu.lobby.excludedRoles")}</h2>
         <div>
             <button
                 onClick={props.onIncludeAll}
