@@ -156,8 +156,14 @@ impl Lobby {
                 if !self.is_host(player_id) {return};
 
                 let name = sanitize_server_name(name);
-
-                self.name = name.clone();
+                let name = if name.is_empty() {
+                    self.name = name_validation::DEFAULT_SERVER_NAME.to_string();
+                    self.name.clone()
+                } else {
+                    self.name = name.clone();
+                    self.name.clone()
+                };
+                
                 self.send_to_all(ToClientPacket::LobbyName { name })
             },
             ToServerPacket::StartGame => {
@@ -350,7 +356,7 @@ impl Lobby {
                 Self::send_players_lobby(players);
 
                 for player in players.iter(){
-                    Self::send_settings(player.1, settings)
+                    Self::send_settings(player.1, settings, self.name.clone())
                 }
 
                 send.send(ToClientPacket::LobbyName { name: self.name.clone() });
@@ -388,7 +394,7 @@ impl Lobby {
 
                 Self::send_players_lobby(players);
                 for player in players.iter(){
-                    Self::send_settings(player.1, settings);
+                    Self::send_settings(player.1, settings, self.name.clone());
                 }
             },
             LobbyState::Game { game, players } => {
@@ -435,7 +441,7 @@ impl Lobby {
                     player.connection = ClientConnection::Connected(send.clone());
                     send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: false, player_id});
 
-                    Self::send_settings(player, settings);
+                    Self::send_settings(player, settings, self.name.clone());
                     Self::send_players_lobby(players);
                     
                     Ok(())
@@ -541,7 +547,8 @@ impl Lobby {
     }
 
     /// Catches the sender up with the current lobby settings
-    pub fn send_settings(player: &LobbyPlayer, settings: &Settings) {
+    pub fn send_settings(player: &LobbyPlayer, settings: &Settings, name: String) {
+        player.send(ToClientPacket::LobbyName { name });
         player.send(ToClientPacket::PhaseTimes { phase_time_settings: settings.phase_times.clone() });
         player.send(ToClientPacket::RoleList { role_list: settings.role_list.clone() });
         player.send(ToClientPacket::ExcludedRoles { roles: settings.excluded_roles.clone()});
