@@ -4,7 +4,7 @@ import "../../index.css";
 import { StateListener } from "../../game/gameManager.d";
 import translate from "../../game/lang";
 import { RoleOutline } from "../../game/roleListState.d";
-import RoleOutlineSelector, { RoleListSetter } from "../../components/RolePicker";
+import RoleOutlineSelector, { OutlineListSelector } from "../../components/RolePicker";
 
 export default function LobbyRolePane(): ReactElement {
 
@@ -51,7 +51,8 @@ export default function LobbyRolePane(): ReactElement {
     }
 
     return <section className="graveyard-menu-colors">
-        <RoleListSetter
+        <h2>{translate("menu.lobby.roleList")}</h2>
+        <OutlineListSelector
             disabled={!host}
             roleList={roleList}
             onChangeRolePicker={onChangeRolePicker}

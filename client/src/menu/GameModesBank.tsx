@@ -1,12 +1,12 @@
 import { ReactElement, useState } from "react";
 import { SavedGameModes, loadGameModes, saveGameModes } from "../game/localStorage";
 import React from "react";
-import { RoleListSetter } from "../components/RolePicker";
+import { OutlineListSelector } from "../components/RolePicker";
 import { RoleList, RoleOutline, simplifyRoleOutline } from "../game/roleListState.d";
 import translate from "../game/lang";
 import "./gameModesBank.css";
 import Anchor from "./Anchor";
-import PhaseTimePicker from "../components/PhaseTimePicker";
+import PhaseTimesSelector from "../components/PhaseTimePicker";
 import { PhaseTimes } from "../game/gameState.d";
 import RoleOutlineSelector from "../components/RolePicker";
 
@@ -109,13 +109,14 @@ export default function GameModesBank(): ReactElement {
             }}/>
             <button onClick={saveGameMode} className="material-icons-round">save</button>
             
-            <PhaseTimePicker 
+            <PhaseTimesSelector 
                 phaseTimes={currentPhaseTimes} 
                 onChange={(newPhaseTimes) => {
                     setCurrentPhaseTimes(newPhaseTimes);
                 }}            
             />
-            <RoleListSetter
+            <h2>{translate("menu.lobby.roleList")}</h2>
+            <OutlineListSelector
                 roleList={currentRoleList}
                 onChangeRolePicker={onChangeRolePicker}
                 onAddNewOutline={addOutline}

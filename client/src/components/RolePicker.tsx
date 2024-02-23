@@ -164,7 +164,7 @@ export class RoleOutlineOptionSelector extends React.Component<RoleOutlineOption
     }
 }
 
-export function RoleListSetter(props: {
+export function OutlineListSelector(props: {
     disabled?: boolean,
     roleList: RoleList,
     onChangeRolePicker: (value: RoleOutline, index: number) => void,
@@ -181,7 +181,6 @@ export function RoleListSetter(props: {
 
 
     return <div>
-        <h2>{translate("menu.lobby.roleList")}</h2>
         <button disabled={props.disabled} onClick={simplify}>
             {translate("simplify")}
         </button>
