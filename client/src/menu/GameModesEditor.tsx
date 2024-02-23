@@ -4,7 +4,7 @@ import React from "react";
 import { OutlineListSelector } from "../components/OutlineSelector";
 import { RoleList, RoleOutline } from "../game/roleListState.d";
 import translate from "../game/lang";
-import "./gameModesBank.css";
+import "./gameModesEditor.css";
 import Anchor from "./Anchor";
 import PhaseTimesSelector from "../components/PhaseTimeSelector";
 import { PhaseTimes } from "../game/gameState.d";
@@ -13,7 +13,7 @@ import { Role } from "../game/roleState.d";
 import "../components/selectorSection.css";
 
 
-export default function GameModesBank(): ReactElement {
+export default function GameModesEditor(): ReactElement {
 
     const [savedGameModes, setGameModes] = useState<SavedGameModes>(loadGameModes() ?? new Map());
 
@@ -136,12 +136,12 @@ export default function GameModesBank(): ReactElement {
 
 
     
-    return <div className="game-modes-bank">
+    return <div className="game-modes-editor">
         <button className="material-icons-round close-button" onClick={()=>{Anchor.clearCoverCard()}}>
             close
         </button>
         <header>
-            <h1>{translate("menu.settings.gameSettingsBank")}</h1>
+            <h1>{translate("menu.settings.gameSettingsEditor")}</h1>
         </header>
         <main>
             <div>

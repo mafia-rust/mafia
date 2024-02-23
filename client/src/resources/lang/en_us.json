@@ -29,7 +29,7 @@
     "importFromClipboard": "Import from clipboard",
 
     "menu.settings.volume": "Volume",
-    "menu.settings.gameSettingsBank": "Game Mode Editor",
+    "menu.settings.gameSettingsEditor": "Game Mode Editor",
     "menu.settings.eraseSaveData": "Erase Save Data",
     "menu.settings.quitToMenu": "Quit to menu",
 

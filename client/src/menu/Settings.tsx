@@ -6,7 +6,7 @@ import Anchor from './Anchor';
 import StartMenu from './main/StartMenu';
 import LoadingScreen from './LoadingScreen';
 import { saveSettings } from '../game/localStorage';
-import GameModesBank from './GameModesBank';
+import GameModesEditor from './GameModesEditor';
 
 type SettingsProps = {
     volume: number, // 0-1
@@ -43,8 +43,8 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
         await GAME_MANAGER.setDisconnectedState();
         Anchor.setContent(<StartMenu/>)
     }
-    goToRolelistBank() {
-        Anchor.setCoverCard(<GameModesBank/>);
+    goToRolelistEditor() {
+        Anchor.setCoverCard(<GameModesEditor/>);
         Anchor.closeSettings();
     }
     render(): React.ReactNode {
@@ -68,7 +68,7 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
                     }
                 }/></h2>
                 <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
-                <button onClick={() => {this.goToRolelistBank()}}>{translate("menu.settings.gameSettingsBank")}</button>
+                <button onClick={() => {this.goToRolelistEditor()}}>{translate("menu.settings.gameSettingsEditor")}</button>
                 <button onClick={()=>{
                     if(!window.confirm(translate("confirmDelete"))) return;
                     localStorage.clear();
