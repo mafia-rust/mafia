@@ -52,11 +52,10 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
             <div className="settings slide-in">
                 {
                     GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 
-                    (<>
-                        <h2>{translate("menu.play.field.roomCode")}
-                        <RoomCodeButton/></h2>
-                    </>
-                    ) : null
+                    <h2>
+                        {translate("menu.play.field.roomCode")}
+                        <RoomCodeButton/>
+                    </h2> : null
                 }
                 
                 <h2>{translate("menu.settings.volume")}
@@ -67,12 +66,7 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
                         this.props.onVolumeChange(volume);
                     }
                 }/></h2>
-                <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
-                <button onClick={() => {this.goToRolelistBank()}}>{translate("menu.settings.gameSettingsBank")}</button>
-                <button onClick={()=>{
-                    if(!window.confirm(translate("confirmDelete"))) return;
-                    localStorage.clear();
-                }}>{translate('menu.settings.eraseSaveData')}</button>
+                <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.exit")}</button>
             </div>
         );
     }
