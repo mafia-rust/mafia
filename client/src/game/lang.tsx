@@ -2,9 +2,12 @@
 export let langMap: ReadonlyMap<string, string>;
 export let langText: string;
 export let langJson: any;
+
+export const LANGUAGES = ["en_us", "broken_keyboard", "dyslexic"] as const;
+export type Language = typeof LANGUAGES[number]
 switchLanguage("en_us");
 
-export function switchLanguage(language: string) {
+export function switchLanguage(language: Language) {
     langJson = require("../resources/lang/" + language + ".json");
     langMap = new Map<string, string>(Object.entries(langJson));
     langText = JSON.stringify(langJson);
@@ -32,4 +35,9 @@ export function translateChecked(langKey: string, ...valuesList: (string | numbe
         out = out.replace("\\"+(i), valuesList[i] as string);
     }
     return out;
+}
+
+export function languageName(language: Language): string {
+    const json = require("../resources/lang/" + language + ".json");
+    return json.language;
 }

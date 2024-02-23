@@ -2,11 +2,12 @@ import React from "react";
 import "../index.css";
 import "./anchor.css";
 import GAME_MANAGER from "..";
-import translate from "../game/lang";
-import Settings, { DEFAULT_SETTINGS } from "./Settings";
+import translate, { switchLanguage } from "../game/lang";
+import SettingsMenu, { DEFAULT_SETTINGS } from "./Settings";
 import GameScreen from "./game/GameScreen";
 import LobbyMenu from "./lobby/LobbyMenu";
-import { deleteReconnectData, loadSettings, saveSettings } from "../game/localStorage";
+import { deleteReconnectData, loadSettings } from "../game/localStorage";
+import LoadingScreen from "./LoadingScreen";
 
 type AnchorProps = {
     content: JSX.Element,
@@ -46,11 +47,12 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             touchCurrentX: null,
         }
     }
-    
     componentDidMount() {
         Anchor.instance = this;
 
-        Anchor.instance.state.audio.volume = loadSettings()?.volume ?? DEFAULT_SETTINGS.volume;
+        const settings = loadSettings();
+        Anchor.instance.state.audio.volume = settings.volume ?? DEFAULT_SETTINGS.volume;
+        switchLanguage(settings.language ?? "en_us")
 
         window.addEventListener("resize", Anchor.onResize);
         Anchor.onResize();
@@ -80,6 +82,14 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             else if(GAME_MANAGER.state.stateType === "game")
                 Anchor.setContent(GameScreen.createDefault())
         }
+    }
+
+    static reloadContent() {
+        const content = Anchor.instance.state.content;
+
+        Anchor.instance.setState({content: <LoadingScreen type="default"/>}, () => {
+            Anchor.setContent(content);
+        });
     }
     handleCancelRejoin() {
         this.setState({coverCard: null});
@@ -184,10 +194,8 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             <button className="material-icons-round settings-button" onClick={() => {
                 this.setState({settings_menu: !this.state.settings_menu});
             }}>menu</button>
-            {this.state.settings_menu && <Settings 
-                volume={this.state.audio.volume} 
+            {this.state.settings_menu && <SettingsMenu 
                 onVolumeChange={(volume) => {
-                    saveSettings(volume);
                     Anchor.instance.state.audio.volume = volume;
                     this.setState({
                         audio: this.state.audio

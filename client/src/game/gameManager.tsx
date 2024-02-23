@@ -65,8 +65,6 @@ export function createGameManager(): GameManager {
             };
         },
 
-        
-
         state: {
             stateType: "disconnected"
         },
