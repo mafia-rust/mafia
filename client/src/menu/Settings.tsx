@@ -77,7 +77,7 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
                                 const language = e.target.options[e.target.selectedIndex].value as Language;
                                 switchLanguage(language);
                                 saveSettings({language});
-                                window.location.reload();
+                                Anchor.reloadContent();
                             }}
                         >
                             {LANGUAGES.map(lang => <option value={lang}>{languageName(lang)}</option>)}

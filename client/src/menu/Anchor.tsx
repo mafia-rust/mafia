@@ -6,7 +6,8 @@ import translate, { switchLanguage } from "../game/lang";
 import SettingsMenu, { DEFAULT_SETTINGS } from "./Settings";
 import GameScreen from "./game/GameScreen";
 import LobbyMenu from "./lobby/LobbyMenu";
-import { deleteReconnectData, loadSettings, saveSettings } from "../game/localStorage";
+import { deleteReconnectData, loadSettings } from "../game/localStorage";
+import LoadingScreen from "./LoadingScreen";
 
 type AnchorProps = {
     content: JSX.Element,
@@ -81,6 +82,14 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             else if(GAME_MANAGER.state.stateType === "game")
                 Anchor.setContent(GameScreen.createDefault())
         }
+    }
+
+    static reloadContent() {
+        const content = Anchor.instance.state.content;
+
+        Anchor.instance.setState({content: <LoadingScreen type="default"/>}, () => {
+            Anchor.setContent(content);
+        });
     }
     handleCancelRejoin() {
         this.setState({coverCard: null});
@@ -187,7 +196,6 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             }}>menu</button>
             {this.state.settings_menu && <SettingsMenu 
                 onVolumeChange={(volume) => {
-                    saveSettings({volume});
                     Anchor.instance.state.audio.volume = volume;
                     this.setState({
                         audio: this.state.audio

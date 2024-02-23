@@ -35,12 +35,12 @@ export function loadReconnectData(): {
 export function saveSettings(settings: Partial<Settings>) {
     localStorage.setItem("settings", JSON.stringify({
         ...loadSettings(),
-        settings,
+        ...settings,
     }));
 }
 export function loadSettings(): Partial<Settings>{
-    let data = localStorage.getItem("settings");
-    if (data) {
+    const data = localStorage.getItem("settings");
+    if (data !== null) {
         return JSON.parse(data);
     }
     return {};
