@@ -2,7 +2,7 @@ import React from "react"
 import GameState from "../../../../game/gameState.d"
 import GAME_MANAGER from "../../../.."
 import { StateEventType } from "../../../../game/gameManager.d"
-import RoleOutlineDropdown from "../../../../components/RolePicker"
+import RoleOutlineDropdown from "../../../../components/OutlineSelector"
 import { RoleOutline } from "../../../../game/roleListState.d"
 
 

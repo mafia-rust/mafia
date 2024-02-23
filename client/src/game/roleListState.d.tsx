@@ -64,7 +64,7 @@ export function getRolesComplement(roleList: Role[]): Role[] {
 
 
 export const ROLE_SETS = [
-    "townSupport", "townKilling", "townProtective", "townInvestigative",
+    "townInvestigative", "townProtective","townKilling","townSupport", 
     "mafiaPower", "mafiaSupport",
     "neutralEvil", "neutralKilling", "neutralChaos", "neutralApocalypse"
 ] as const;
@@ -160,4 +160,34 @@ function getRolesFromOutlineOption(roleOutlineOption: RoleOutlineOption): Role[]
                 return ROLES[role as Role].faction === roleOutlineOption.faction;
             }) as Role[];
     }
+}
+
+export function simplifyRoleOutline(roleOutline: RoleOutline): RoleOutline {
+
+    if(roleOutline.type === "any") return roleOutline;
+
+    let newOptions = roleOutline.options;
+
+    for(let optionA of roleOutline.options){
+        for(let optionB of roleOutline.options){
+            if(outlineOptionIsSubset(optionA, optionB) && optionA !== optionB){
+                newOptions = newOptions.filter((option) => option !== optionA);
+            }
+        }
+    }
+
+    newOptions = newOptions.sort(outlineOptionCompare);
+    return {type: "roleOutlineOptions", options: newOptions};
+    
+    
+}
+function outlineOptionIsSubset(optionA: RoleOutlineOption, optionB: RoleOutlineOption): boolean {
+    let rolesA = getRolesFromOutlineOption(optionA);
+    let rolesB = getRolesFromOutlineOption(optionB);
+    return rolesA.every((role) => rolesB.includes(role));
+}
+function outlineOptionCompare(optionA: RoleOutlineOption, optionB: RoleOutlineOption): number {
+    let rolesA = getRolesFromOutlineOption(optionA);
+    let rolesB = getRolesFromOutlineOption(optionB);
+    return rolesB.length - rolesA.length;
 }

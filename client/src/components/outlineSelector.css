@@ -1,7 +1,6 @@
 .role-picker {
     display: flex;
     flex-direction: row;
-    /* justify-content: space-evenly; */
     width: 100%;
 }
 .role-picker-option {
@@ -22,4 +21,7 @@
 .role-picker select:last-of-type {
     border-top-right-radius: .4rem;
     border-bottom-right-radius: .4rem;
+}
+.role-list-setter-outline-div {
+    display: flex;
 }

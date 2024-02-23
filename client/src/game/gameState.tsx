@@ -56,13 +56,13 @@ export function createGameState(): GameState {
         roleList: [],
         excludedRoles: [],
         phaseTimes: {
-            morning: 5,
-            discussion: 45, 
-            voting: 30, 
-            testimony: 20, 
-            judgement: 20, 
-            evening: 7, 
-            night: 37,
+            morning: 15,
+            discussion: 46,
+            voting: 30,
+            testimony: 24,
+            judgement: 20,
+            evening: 10,
+            night: 37
         },
 
         ticking: true,

@@ -2,9 +2,8 @@ import React, { ReactElement, useEffect, useState } from "react";
 import GAME_MANAGER from "../../index";
 import "../../index.css";
 import { StateListener } from "../../game/gameManager.d";
-import translate from "../../game/lang";
 import { RoleOutline } from "../../game/roleListState.d";
-import RoleOutlineSelector from "../../components/RolePicker";
+import { OutlineListSelector } from "../../components/OutlineSelector";
 
 export default function LobbyRolePane(): ReactElement {
 
@@ -43,29 +42,18 @@ export default function LobbyRolePane(): ReactElement {
 
 
 
-    let onChangeRolePicker = (index: number, value: RoleOutline) => {
+    let onChangeRolePicker = (value: RoleOutline, index: number) => {
         let newRoleList = [...roleList];
         newRoleList[index] = value;
         setRoleList(newRoleList);
         GAME_MANAGER.sendSetRoleOutlinePacket(index, value);
     }
 
-    return <section className="graveyard-menu-colors">
-        <h2>{translate("menu.lobby.roleList")}</h2>
-        <button disabled={!host}
-            onClick={()=>{
-                GAME_MANAGER.sendSimplifyRoleListPacket();
-            }}>
-            {translate("simplify")}
-        </button>
-        {roleList.map((outline, index) => {
-            return <RoleOutlineSelector
-                disabled={!host}
-                roleOutline={outline}
-                onChange={(value: RoleOutline) => {onChangeRolePicker(index, value);}}
-                key={index}
-            />
-        })}
-    </section>
-    
+    return <OutlineListSelector
+        disabled={!host}
+        roleList={roleList}
+        onChangeRolePicker={onChangeRolePicker}
+        onAddNewOutline={undefined}
+        onRemoveOutline={undefined}
+    />
 }

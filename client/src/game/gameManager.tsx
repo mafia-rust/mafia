@@ -13,6 +13,7 @@ import PlayMenu from "../menu/main/PlayMenu";
 import { createGameState, createLobbyState } from "./gameState";
 import { Role } from "./roleState.d";
 import DUMMY_NAMES from "../resources/dummyNames.json";
+import { deleteReconnectData } from "./localStorage";
 export function createGameManager(): GameManager {
 
     console.log("Game manager created.");
@@ -64,39 +65,7 @@ export function createGameManager(): GameManager {
             };
         },
 
-        saveReconnectData(roomCode, playerId) {
-            localStorage.setItem(
-                "reconnectData",
-                JSON.stringify({
-                    "roomCode": roomCode,
-                    "playerId": playerId,
-                    "lastSaveTime": Date.now()
-                })
-            );
-        },
-        deleteReconnectData() {
-            localStorage.removeItem("reconnectData");
-        },
-        loadReconnectData() {
-            let data = localStorage.getItem("reconnectData");
-            // localStorage.removeItem("reconnectData");
-            if (data) {
-                return JSON.parse(data);
-            }
-            return null;
-        },
-        saveSettings(volume) {
-            localStorage.setItem("settings", JSON.stringify({
-                "volume": volume,
-            }));
-        },
-        loadSettings() {
-            let data = localStorage.getItem("settings");
-            if (data) {
-                return JSON.parse(data);
-            }
-            return null;
-        },
+        
 
         state: {
             stateType: "disconnected"
@@ -156,7 +125,7 @@ export function createGameManager(): GameManager {
             if (this.state.stateType !== "disconnected") {
                 this.server.sendPacket({ type: "leave" });
             }
-            this.deleteReconnectData();
+            deleteReconnectData();
             this.setOutsideLobbyState();
             Anchor.setContent(<PlayMenu/>);
         },

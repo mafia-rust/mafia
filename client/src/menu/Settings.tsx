@@ -5,6 +5,8 @@ import GAME_MANAGER from '..';
 import Anchor from './Anchor';
 import StartMenu from './main/StartMenu';
 import LoadingScreen from './LoadingScreen';
+import { saveSettings } from '../game/localStorage';
+import GameModesEditor from './GameModesEditor';
 
 type SettingsProps = {
     volume: number, // 0-1
@@ -30,38 +32,47 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
     componentWillUnmount() {
     }
     saveSettings(volume: number) {
-        GAME_MANAGER.saveSettings(volume);
+        saveSettings(volume);
         console.log("Loaded settings: " + JSON.stringify(volume));
     }
     async quitToMainMenu() {
         GAME_MANAGER.leaveGame();
         Anchor.closeSettings();
+        Anchor.clearCoverCard();
         Anchor.setContent(<LoadingScreen type="disconnect"/>)
         await GAME_MANAGER.setDisconnectedState();
         Anchor.setContent(<StartMenu/>)
     }
+    goToRolelistEditor() {
+        Anchor.setCoverCard(<GameModesEditor/>);
+        Anchor.closeSettings();
+    }
     render(): React.ReactNode {
         return (
             <div className="settings slide-in">
-                <div>
-                    {
-                        GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 
-                        <h2>
-                            {translate("menu.play.field.roomCode")}
-                            <RoomCodeButton/>
-                        </h2> : null
+                {
+                    GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 
+                    (<>
+                        <h2>{translate("menu.play.field.roomCode")}
+                        <RoomCodeButton/></h2>
+                    </>
+                    ) : null
+                }
+                
+                <h2>{translate("menu.settings.volume")}
+                <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
+                    value={this.props.volume} 
+                    onChange={(e) => {
+                        let volume = parseFloat(e.target.value);
+                        this.props.onVolumeChange(volume);
                     }
-                    
-                    <h2>{translate("menu.settings.volume")}
-                    <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
-                        value={this.props.volume} 
-                        onChange={(e) => {
-                            let volume = parseFloat(e.target.value);
-                            this.props.onVolumeChange(volume);
-                        }
-                    }/></h2>
-                    <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.exit")}</button>
-                </div>
+                }/></h2>
+                <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
+                <button onClick={() => {this.goToRolelistEditor()}}>{translate("menu.settings.gameSettingsEditor")}</button>
+                <button onClick={()=>{
+                    if(!window.confirm(translate("confirmDelete"))) return;
+                    localStorage.clear();
+                }}>{translate('menu.settings.eraseSaveData')}</button>
             </div>
         );
     }

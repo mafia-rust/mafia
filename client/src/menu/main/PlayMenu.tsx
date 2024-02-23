@@ -8,10 +8,11 @@ import { StateListener } from "../../game/gameManager.d";
 import { LobbyPreviewData } from "../../game/packet";
 import LobbyMenu from "../lobby/LobbyMenu";
 import GameScreen from "../game/GameScreen";
+import { loadReconnectData } from "../../game/localStorage";
 
 export default function PlayMenu(): ReactElement {
     useEffect(() => {
-        const reconnectData = GAME_MANAGER.loadReconnectData();
+        const reconnectData = loadReconnectData();
         if(reconnectData) {
             Anchor.pushRejoin(reconnectData.roomCode, reconnectData.playerId);
         }

@@ -9,6 +9,7 @@ import { Role } from "./roleState.d";
 import translate from "./lang";
 import { getAudioSrcFromString } from "../components/audio";
 import { computeKeywordDataWithPlayers } from "../components/StyledText";
+import { deleteReconnectData, saveReconnectData } from "./localStorage";
 
 export default function messageListener(packet: ToClientPacket){
 
@@ -41,16 +42,16 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "lobby")
                 GAME_MANAGER.state.myId = packet.playerId;
 
-            GAME_MANAGER.saveReconnectData(packet.roomCode, packet.playerId);
-            Anchor.clearRejoinCard();
+            saveReconnectData(packet.roomCode, packet.playerId);
+            Anchor.clearCoverCard();
         break;
         case "rejectJoin":
             switch(packet.reason) {
                 case "roomDoesntExist":
                     Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.roomDoesntExist"));
                     // If the room doesn't exist, don't suggest the user to reconnect to it.
-                    GAME_MANAGER.deleteReconnectData();
-                    Anchor.clearRejoinCard();
+                    deleteReconnectData();
+                    Anchor.clearCoverCard();
                 break;
                 case "gameAlreadyStarted":
                     Anchor.pushError(translate("notification.rejectJoin"), translate("notification.rejectJoin.gameAlreadyStarted"));

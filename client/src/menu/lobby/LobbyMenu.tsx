@@ -53,13 +53,26 @@ export default function LobbyMenu(): ReactElement {
         return ()=>{GAME_MANAGER.removeStateListener(listener);}
     }, [setRoleList, setExcludedRoles]);
 
+    const importFromClipboard = () => {
+        navigator.clipboard.readText().then((text) => {
+            try {
+                const data = JSON.parse(text);
+                if(!data.roleList || !data.phaseTimes || !data.disabledRoles) return;
+                GAME_MANAGER.sendExcludedRolesPacket(data.disabledRoles);
+                GAME_MANAGER.sendSetRoleListPacket(data.roleList);
+                GAME_MANAGER.sendSetPhaseTimesPacket(data.phaseTimes);
+            } catch (e) {
+                console.error(e);
+            }
+        });
+    }
 
     return <div className="lm">
         <LobbyMenuHeader/>
         <main>
             <div>
                 <LobbyPlayerList/>
-                {Anchor.isMobile() || <section className="wiki-menu-colors">
+                {Anchor.isMobile() || <section className="wiki-menu-colors selector-section">
                     <h2>{translate("menu.wiki.title")}</h2>
                     <WikiSearch excludedRoles={
                         getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(roleList, excludedRoles))
@@ -68,10 +81,11 @@ export default function LobbyMenu(): ReactElement {
             </div>
             <div>
                 {Anchor.isMobile() && <h1>{translate("menu.lobby.settings")}</h1>}
+                <button className="player-list-menu-colors" onClick={importFromClipboard}>{translate("importFromClipboard")}</button>
                 <LobbyPhaseTimePane/>
                 <LobbyRolePane/>
                 <LobbyExcludedRoles/>
-                {Anchor.isMobile() && <section className="wiki-menu-colors">
+                {Anchor.isMobile() && <section className="wiki-menu-colors selector-section">
                     <h2>{translate("menu.wiki.title")}</h2>
                     <WikiSearch excludedRoles={
                         getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(roleList, excludedRoles))
@@ -126,6 +140,14 @@ function LobbyMenuHeader(): JSX.Element {
                 value={lobbyName}
                 onInput={e => {
                     setLobbyName((e.target as HTMLInputElement).value);
+                }}
+                onKeyUp={(e)=>{
+                    if(e.key !== 'Enter') return;
+                    
+                    const newLobbyName = (e.target as HTMLInputElement).value;
+                    setLobbyName(newLobbyName);
+                    GAME_MANAGER.sendSetLobbyNamePacket(newLobbyName);
+                    
                 }}
                 onBlur={e => {
                     const newLobbyName = (e.target as HTMLInputElement).value;

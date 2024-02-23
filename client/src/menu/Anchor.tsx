@@ -6,6 +6,7 @@ import translate from "../game/lang";
 import Settings, { DEFAULT_SETTINGS } from "./Settings";
 import GameScreen from "./game/GameScreen";
 import LobbyMenu from "./lobby/LobbyMenu";
+import { deleteReconnectData, loadSettings, saveSettings } from "../game/localStorage";
 
 type AnchorProps = {
     content: JSX.Element,
@@ -14,8 +15,7 @@ type AnchorProps = {
 type AnchorState = {
     mobile: boolean,
     content: JSX.Element,
-    error: JSX.Element | null,
-    rejoinCard: JSX.Element | null,
+    coverCard: JSX.Element | null,
 
     settings_menu: boolean,
     audio: HTMLAudioElement
@@ -37,8 +37,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         this.state = {
             mobile: false,
             content: this.props.content,
-            error: null,
-            rejoinCard: null,
+            coverCard: null,
 
             settings_menu: false,
             audio: new Audio(),
@@ -51,7 +50,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     componentDidMount() {
         Anchor.instance = this;
 
-        Anchor.instance.state.audio.volume = GAME_MANAGER.loadSettings()?.volume ?? DEFAULT_SETTINGS.volume;
+        Anchor.instance.state.audio.volume = loadSettings()?.volume ?? DEFAULT_SETTINGS.volume;
 
         window.addEventListener("resize", Anchor.onResize);
         Anchor.onResize();
@@ -73,7 +72,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     }
     
     async handleRejoin(roomCode: number, playerId: number) {
-        this.setState({rejoinCard: null});
+        this.setState({coverCard: null});
         const success = await GAME_MANAGER.sendRejoinPacket(roomCode, playerId);
         if(success){
             if (GAME_MANAGER.state.stateType === "lobby")
@@ -83,8 +82,8 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         }
     }
     handleCancelRejoin() {
-        this.setState({rejoinCard: null});
-        GAME_MANAGER.deleteReconnectData();
+        this.setState({coverCard: null});
+        deleteReconnectData();
     }
 
     static playAudioFile(src: string | null, timeLeftSeconds?: number) {
@@ -188,7 +187,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             {this.state.settings_menu && <Settings 
                 volume={this.state.audio.volume} 
                 onVolumeChange={(volume) => {
-                    GAME_MANAGER.saveSettings(volume);
+                    saveSettings(volume);
                     Anchor.instance.state.audio.volume = volume;
                     this.setState({
                         audio: this.state.audio
@@ -196,25 +195,24 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
                 }}
             />}
             {this.state.content}
-            {this.state.error}
-            {this.state.rejoinCard}
+            {this.state.coverCard}
         </div>
     }
 
     public static setContent(content: JSX.Element){
         Anchor.instance.setState({content : content});
     }
+    public static setCoverCard(coverCard: JSX.Element){
+        Anchor.instance.setState({coverCard : coverCard});
+    }
     public static pushError(title: string, body: string) {
-        Anchor.instance.setState({error: <ErrorCard
-            onClose={() => Anchor.instance.setState({ error: null })}
+        Anchor.instance.setState({coverCard: <ErrorCard
+            onClose={() => Anchor.instance.setState({ coverCard: null })}
             error={{title, body}}
         />});
     }
-    public static clearError() {
-        Anchor.instance.setState({error: null});
-    }
     public static pushRejoin(roomCode: number, playerId: number) {
-        Anchor.instance.setState({rejoinCard:
+        Anchor.instance.setState({coverCard:
             <div className="error-card">
                 <header>
                     <button onClick={() => {Anchor.instance.handleRejoin(roomCode, playerId)}}>
@@ -226,8 +224,8 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             </div>
         });
     }
-    public static clearRejoinCard() {
-        Anchor.instance.setState({rejoinCard: null});
+    public static clearCoverCard() {
+        Anchor.instance.setState({coverCard: null});
     }
 
     public static isMobile(): boolean {
