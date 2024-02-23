@@ -1,6 +1,5 @@
 import React from "react";
-import { isValidPhaseTime } from "../../game/gameManager";
-import { Phase, PhaseTimes } from "../../game/gameState.d";
+import { PhaseTimes } from "../../game/gameState.d";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";

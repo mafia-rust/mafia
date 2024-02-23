@@ -4,7 +4,7 @@ import "../../index.css";
 import { StateListener } from "../../game/gameManager.d";
 import translate from "../../game/lang";
 import { RoleOutline } from "../../game/roleListState.d";
-import RoleOutlineSelector, { OutlineListSelector } from "../../components/RolePicker";
+import { OutlineListSelector } from "../../components/RolePicker";
 
 export default function LobbyRolePane(): ReactElement {
 
