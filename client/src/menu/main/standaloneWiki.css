@@ -1,33 +1,18 @@
 .standalone-wiki {
-    border-style: solid;
-    border-color: var(--primary-border-color);
-    border-right-color: black;
-    border-width: .13rem;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
     flex-direction: column;
     height: 100%;
-    width: 100%;
-    padding: 0 2rem;
-    border-top: none;
-    border-bottom: none;
+    width: 100vw;
+    padding: 1rem;
     font-size: 110%;
-}
-.standalone-wiki > header {
-    display: flex;
-    align-items: center;
-    height: 20%;
 }
 .standalone-wiki > header > h2 {
     font-size: 400%;
 }
-
 .standalone-wiki > div {
-    height: 80%;
+    overflow-y: auto;
+    width: 100%;
 }
 
 @media only screen and (max-width: 600px) {

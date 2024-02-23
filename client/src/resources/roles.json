@@ -65,7 +65,7 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "seerResult", "enemies": true},
-            {"type": "seerResult", "enemies": true}
+            {"type": "seerResult", "enemies": false}
         ]
     },
     "tracker": {
