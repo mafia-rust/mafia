@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import translate from "../game/lang";
 import "./wikiSearch.css";
-import { Role } from "../game/roleState.d";
+import { Role, getFactionFromRole } from "../game/roleState.d";
 import GAME_MANAGER, { regEscape } from "..";
 import WikiArticle from "./WikiArticle";
 import { ARTICLES, WikiArticleLink, getArticleTitle } from "./WikiArticleLink";
@@ -25,7 +25,11 @@ export default function Wiki(props: {
 
     function chooseArticle(page: WikiArticleLink | null) {
         if (page !== null) {
-            setHistory([...history, page]);
+            if(history[history.length - 1] !== page)
+                setHistory([...history, page]);
+            if(history.length > 50)
+                setHistory(history.slice(1));
+            
         }
         setArticle(page);
     }
@@ -109,7 +113,27 @@ function WikiSearchResults(props: {
 
     let results = getSearchResults(props.searchQuery);
     let elements = [];
+    let lastArticleType = null;
+    let lastArticleRoleFaction = null;
     for(let page of results){
+
+        let articleType = page.split("/")[0];
+
+        if(articleType !== lastArticleType && articleType === "standard"){
+            elements.push(<h3 key={articleType} className="wiki-search-divider"><StyledText>{translate(articleType)}</StyledText></h3>);
+            lastArticleType = articleType;
+        }
+
+        if(articleType === "role"){
+            const role = page.split("/")[1] as Role;
+            const faction = getFactionFromRole(role);
+
+            if(faction !== lastArticleRoleFaction){
+                elements.push(<h3 key={faction} className="wiki-search-divider"><StyledText>{translate(faction)}</StyledText></h3>);
+                lastArticleRoleFaction = faction;
+            }
+        }
+
         if(
             props.disabledRoles !== undefined && 
             props.disabledRoles.map((role)=>{return "role/"+role}).includes(page)

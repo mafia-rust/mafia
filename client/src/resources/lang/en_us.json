@@ -412,6 +412,8 @@
 
     "messageSender.livingToDead.icon": "🔮",
 
+    "standard":"Standard",
+
     "role": "Role",
     "day": "Day",
     "day:var.0": "Daytime",
