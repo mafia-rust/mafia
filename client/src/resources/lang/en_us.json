@@ -27,7 +27,6 @@
 
     "menu.settings.volume": "Volume",
     "menu.settings.exit": "Exit Game",
-    "menu.settings.quitToMenu": "Quit to menu",
 
     "menu.excludedRoles.exclude": "Exclude",
     "menu.excludedRoles.includeAll": "Include All",
