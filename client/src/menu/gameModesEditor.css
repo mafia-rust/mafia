@@ -5,7 +5,9 @@
     top: 5%;
     left: 5%;
     width: 90%;
+    max-width: 90%;
     height: 90%;
+    max-height: 90%;
     background-color: var(--background-color);
     border: 0.13rem solid var(--primary-border-color);
     border-radius: 2rem;
@@ -50,6 +52,7 @@
     flex-basis: 47%;
     flex-grow: 1;
     gap: 1rem;
+    max-width: 100%;
 }
 
 .game-modes-editor .close-button {
@@ -63,4 +66,5 @@
 .game-modes-editor .save-menu {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
 }
