@@ -48,7 +48,13 @@ export default function GameModesBank(): ReactElement {
 
 
     const onDisableRoles = (roles: Role[]) => {
-        setCurrentDisabledRoles([...currentDisabledRoles, ...roles]);
+        const newDisabledRoles = [...currentDisabledRoles];
+        for(const role of roles){
+            if(!newDisabledRoles.includes(role)){
+                newDisabledRoles.push(role);
+            }
+        }
+        setCurrentDisabledRoles(newDisabledRoles);
     }
     const onEnableRoles = (roles: Role[]) => {
         setCurrentDisabledRoles(currentDisabledRoles.filter((role) => !roles.includes(role)));

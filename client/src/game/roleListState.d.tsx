@@ -64,7 +64,7 @@ export function getRolesComplement(roleList: Role[]): Role[] {
 
 
 export const ROLE_SETS = [
-    "townSupport", "townKilling", "townProtective", "townInvestigative",
+    "townInvestigative", "townProtective","townKilling","townSupport", 
     "mafiaPower", "mafiaSupport",
     "neutralEvil", "neutralKilling", "neutralChaos", "neutralApocalypse"
 ] as const;

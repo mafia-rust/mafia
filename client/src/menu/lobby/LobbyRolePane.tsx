@@ -2,7 +2,6 @@ import React, { ReactElement, useEffect, useState } from "react";
 import GAME_MANAGER from "../../index";
 import "../../index.css";
 import { StateListener } from "../../game/gameManager.d";
-import translate from "../../game/lang";
 import { RoleOutline } from "../../game/roleListState.d";
 import { OutlineListSelector } from "../../components/RolePicker";
 
