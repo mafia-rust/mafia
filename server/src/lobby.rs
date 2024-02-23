@@ -689,7 +689,6 @@ mod name_validation {
         if let Some(random_name) = available_random_names.choose(&mut rand::thread_rng()) {
             (*random_name).clone()
         } else {
-            // TODO this can cause a crash if someone is already named this
             (taken_names.len()).to_string()
         }
     }

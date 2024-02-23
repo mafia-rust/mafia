@@ -24,7 +24,7 @@ export type ToClientPacket = {
     playerId: number,
 } | {
     type: "rejectJoin",
-    reason: string /* TODO RejectJoinReason */
+    reason: string
 } | 
 // Lobby
 {
@@ -41,7 +41,7 @@ export type ToClientPacket = {
     playerIndex: PlayerIndex
 } | {
     type: "rejectStart",
-    reason: string /* TODO RejectStartReason */
+    reason: string
 } | {
     type: "playersHost",
     hosts: PlayerID[],
@@ -134,7 +134,7 @@ export type ToClientPacket = {
     grave: Grave
 } | {
     type: "gameOver",
-    reason: string /* TODO GameOverReason */
+    reason: string
 }
 
 export type ToServerPacket = {

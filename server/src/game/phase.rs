@@ -154,7 +154,6 @@ impl PhaseState {
                 if innocent < guilty {
                     Self::Evening { player_on_trial: Some(player_on_trial) }
                 } else if trials_left == 0 {
-                    // TODO send no trials left
                     Self::Evening { player_on_trial: None }
                 }else{
                     Self::Voting { trials_left }

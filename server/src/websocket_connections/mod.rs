@@ -19,7 +19,6 @@ impl<'a, T> ForceLock for &'a Arc<Mutex<T>> {
         match self.lock() {
             Ok(lobbies) => lobbies,
             Err(err) => {
-                // TODO: un-poison mutex https://github.com/rust-lang/rust/issues/96469
                 err.into_inner()
             }
         }

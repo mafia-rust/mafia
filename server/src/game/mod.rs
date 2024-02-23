@@ -63,7 +63,6 @@ pub enum GameOverReason {
     ReachedMaxDay,
     Winner,
     Draw
-    /*TODO Winner { who won? }*/
 }
 
 impl Game {

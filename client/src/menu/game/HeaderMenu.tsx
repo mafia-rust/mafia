@@ -85,8 +85,6 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
         GAME_MANAGER.removeStateListener(this.listener);
     }
     renderPhaseSpecific(){
-        // TODO: Change to phase state
-        
         switch(this.state.phase){
             case "judgement":
             if(this.state.playerOnTrial !== null){

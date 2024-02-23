@@ -123,7 +123,6 @@ pub enum ChatMessage {
 
     SomeoneSurvivedYourAttack,
     YouSurvivedAttack,
-    // TODO rename YouWereProtected or ProtectedFromAttack
     TargetWasAttacked,
     YouWereProtected,
     YouDied,
@@ -175,7 +174,6 @@ pub enum ChatMessage {
     WerewolfTrackingResult{tracked_player: PlayerIndex, players: Vec<PlayerIndex>},
 
     JesterWon,
-    // TODO Rename ExecutionerYouWon
     ExecutionerWon,
     DeathCollectedSouls,
     DoomsayerFailed,
