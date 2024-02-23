@@ -1,4 +1,4 @@
-.role-list-bank {
+.game-modes-bank {
     position: absolute;
     width: 90%;
     height: 90%;
@@ -11,9 +11,10 @@
     border-width: .1rem;
     border-style: solid;
     padding: 1rem;
+    overflow-y: auto;
 }
 
-.role-list-bank .close-button {
+.game-modes-bank .close-button {
     position: absolute;
     top: .2rem;
     right: .2rem;

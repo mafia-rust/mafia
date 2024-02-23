@@ -6,7 +6,7 @@ import Anchor from './Anchor';
 import StartMenu from './main/StartMenu';
 import LoadingScreen from './LoadingScreen';
 import { saveSettings } from '../game/localStorage';
-import GameSettingsBank from './GameSettingsBank';
+import GameModesBank from './GameModesBank';
 
 type SettingsProps = {
     volume: number, // 0-1
@@ -44,7 +44,7 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
         Anchor.setContent(<StartMenu/>)
     }
     goToRolelistBank() {
-        Anchor.setCoverCard(<GameSettingsBank/>);
+        Anchor.setCoverCard(<GameModesBank/>);
         Anchor.closeSettings();
     }
     render(): React.ReactNode {

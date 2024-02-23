@@ -165,7 +165,7 @@ export class RoleOutlineOptionSelector extends React.Component<RoleOutlineOption
 }
 
 export function RoleListSetter(props: {
-    disabled: boolean,
+    disabled?: boolean,
     roleList: RoleList,
     onChangeRolePicker: (value: RoleOutline, index: number) => void,
     onAddNewOutline?: (() => void),
