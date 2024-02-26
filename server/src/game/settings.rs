@@ -27,7 +27,7 @@ pub struct PhaseTimeSettings{
     pub voting: u64,
     pub testimony: u64,
     pub judgement: u64,
-    pub evening: u64,
+    pub final_words: u64,
     pub dusk: u64,
     pub night: u64,
 }
@@ -36,7 +36,7 @@ impl PhaseTimeSettings {
         match phase {
             PhaseType::Briefing => Duration::from_secs(self.briefing),
             PhaseType::Discussion => Duration::from_secs(self.discussion),
-            PhaseType::Evening => Duration::from_secs(self.evening),
+            PhaseType::FinalWords => Duration::from_secs(self.final_words),
             PhaseType::Dusk => Duration::from_secs(self.dusk),
             PhaseType::Judgement => Duration::from_secs(self.judgement),
             PhaseType::Morning => Duration::from_secs(self.morning),
@@ -58,7 +58,7 @@ impl Default for PhaseTimeSettings{
             voting: 60,
             testimony: 30,
             judgement: 30,
-            evening: 7,
+            final_words: 7,
             dusk: 7,
             night: 45,
         }

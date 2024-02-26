@@ -10,7 +10,7 @@ pub struct TestScenario {
 
 #[allow(unused)]
 macro_rules! scenario {
-    ($game:ident in Evening 1 $($tok:tt)*) => {
+    ($game:ident in FinalWords 1 $($tok:tt)*) => {
         kit::scenario!($game $($tok)*);
     };
     ($game:ident in $phase:ident $day:literal $($tok:tt)*) => {

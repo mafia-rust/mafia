@@ -22,7 +22,7 @@ pub enum PhaseType {
     Voting,
     Testimony,
     Judgement,
-    Evening,
+    FinalWords,
     Dusk,
     Night,
 }
@@ -35,7 +35,7 @@ pub enum PhaseState {
     Voting { trials_left: u8 },
     Testimony { trials_left: u8, player_on_trial: PlayerReference },
     Judgement { trials_left: u8, player_on_trial: PlayerReference },
-    Evening { player_on_trial: PlayerReference },
+    FinalWords { player_on_trial: PlayerReference },
     Dusk,
     Night,
 }
@@ -67,7 +67,7 @@ impl PhaseState {
             PhaseState::Voting {..} => PhaseType::Voting,
             PhaseState::Testimony {..} => PhaseType::Testimony,
             PhaseState::Judgement {..} => PhaseType::Judgement,
-            PhaseState::Evening {..} => PhaseType::Evening,
+            PhaseState::FinalWords {..} => PhaseType::FinalWords,
             PhaseState::Dusk => PhaseType::Dusk,
             PhaseState::Night => PhaseType::Night,
         }
@@ -111,7 +111,7 @@ impl PhaseState {
             | PhaseState::Night
             | PhaseState::Discussion
             | PhaseState::Judgement { .. } 
-            | PhaseState::Evening { .. }
+            | PhaseState::FinalWords { .. }
             | PhaseState::Dusk => {}
         }
 
@@ -167,14 +167,14 @@ impl PhaseState {
                 });
                 
                 if innocent < guilty {
-                    Self::Evening { player_on_trial }
+                    Self::FinalWords { player_on_trial }
                 } else if trials_left == 0 {
                     Self::Dusk
                 }else{
                     Self::Voting { trials_left }
                 }
             },
-            &PhaseState::Evening { player_on_trial } => {
+            &PhaseState::FinalWords { player_on_trial } => {
                 let (guilty, innocent) = game.count_verdict_votes(player_on_trial);
                 
                 if innocent < guilty {

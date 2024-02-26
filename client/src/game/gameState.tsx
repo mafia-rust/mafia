@@ -9,7 +9,7 @@ export function defaultPhaseTimes(): PhaseTimes {
         voting: 60,
         testimony: 30,
         judgement: 30,
-        evening: 7,
+        finalWords: 7,
         dusk: 7,
         night: 45,
     }

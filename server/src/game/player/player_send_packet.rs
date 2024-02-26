@@ -68,7 +68,7 @@ impl PlayerReference{
 
         if let PhaseState::Testimony { player_on_trial, .. }
             | PhaseState::Judgement { player_on_trial, .. }
-            | PhaseState::Evening { player_on_trial } = game.current_phase() {
+            | PhaseState::FinalWords { player_on_trial } = game.current_phase() {
             self.send_packet(game, ToClientPacket::PlayerOnTrial{
                 player_index: player_on_trial.index()
             });
