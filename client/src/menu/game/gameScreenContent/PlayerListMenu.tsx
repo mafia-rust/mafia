@@ -54,7 +54,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
             ){
                 if(GAME_MANAGER.state.phase === "night"){
                     playerFilter = "usable"
-                }else if(GAME_MANAGER.state.phase === "morning"){
+                }else if(GAME_MANAGER.state.phase === "obituary"){
                     playerFilter = "living";
                 }
             }

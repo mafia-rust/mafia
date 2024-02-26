@@ -96,7 +96,7 @@ impl RoleStateImpl for Jester {
                     }))
                 }
             }
-            PhaseState::Morning => {
+            PhaseState::Obituary => {
                 actor_ref.set_role_state(game, RoleState::Jester(Jester { 
                     lynched_yesterday: false,
                     won: self.won

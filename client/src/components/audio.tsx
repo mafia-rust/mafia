@@ -1,6 +1,6 @@
 //dont forget, if there is less than 3 people alive then the game goes 2x speed
 const phase_to_audio = {
-    "morning": null,
+    "obituary": null,
     "discussion": "08. Heated.mp3",
     "voting": "16. Suspicion.mp3",
     "testimony": "11. Innocence.mp3",

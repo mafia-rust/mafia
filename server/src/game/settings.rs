@@ -22,7 +22,7 @@ impl Default for Settings{
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PhaseTimeSettings{
     pub briefing: u64,
-    pub morning: u64,
+    pub obituary: u64,
     pub discussion: u64,
     pub voting: u64,
     pub testimony: u64,
@@ -39,21 +39,21 @@ impl PhaseTimeSettings {
             PhaseType::FinalWords => Duration::from_secs(self.final_words),
             PhaseType::Dusk => Duration::from_secs(self.dusk),
             PhaseType::Judgement => Duration::from_secs(self.judgement),
-            PhaseType::Morning => Duration::from_secs(self.morning),
+            PhaseType::Obituary => Duration::from_secs(self.obituary),
             PhaseType::Night => Duration::from_secs(self.night),
             PhaseType::Testimony => Duration::from_secs(self.testimony),
             PhaseType::Voting => Duration::from_secs(self.voting)
         }
     }
     pub fn game_ends_instantly(&self)->bool{
-        [self.morning, self.discussion, self.voting, self.night, self.dusk].iter().all(|t| *t == 0)
+        [self.obituary, self.discussion, self.voting, self.night, self.dusk].iter().all(|t| *t == 0)
     }
 }
 impl Default for PhaseTimeSettings{
     fn default() -> Self {
         Self{
             briefing: 20,
-            morning: 10,
+            obituary: 10,
             discussion: 100,
             voting: 60,
             testimony: 30,

@@ -4,7 +4,7 @@ import GameState, { LobbyPlayer, LobbyState, PhaseTimes, Player, PlayerID } from
 export function defaultPhaseTimes(): PhaseTimes {
     return {
         briefing: 20,
-        morning: 10,
+        obituary: 10,
         discussion: 100,
         voting: 60,
         testimony: 30,

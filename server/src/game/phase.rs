@@ -17,7 +17,7 @@ use super::{
 #[serde(rename_all = "camelCase")]
 pub enum PhaseType {
     Briefing,
-    Morning,
+    Obituary,
     Discussion,
     Voting,
     Testimony,
@@ -30,7 +30,7 @@ pub enum PhaseType {
 #[derive(Clone, PartialEq)]
 pub enum PhaseState {
     Briefing,
-    Morning,
+    Obituary,
     Discussion,
     Voting { trials_left: u8 },
     Testimony { trials_left: u8, player_on_trial: PlayerReference },
@@ -62,7 +62,7 @@ impl PhaseState {
     pub const fn phase(&self) -> PhaseType {
         match self {
             PhaseState::Briefing => PhaseType::Briefing,
-            PhaseState::Morning => PhaseType::Morning,
+            PhaseState::Obituary => PhaseType::Obituary,
             PhaseState::Discussion => PhaseType::Discussion,
             PhaseState::Voting {..} => PhaseType::Voting,
             PhaseState::Testimony {..} => PhaseType::Testimony,
@@ -75,7 +75,7 @@ impl PhaseState {
     
     pub fn start(game: &mut Game) {
         match game.current_phase().clone() {
-            PhaseState::Morning => {
+            PhaseState::Obituary => {
                 for player_ref in PlayerReference::all_players(game) {
                     if player_ref.night_died(game) {
                         let new_grave = Grave::from_player_night(game, player_ref);
@@ -132,7 +132,7 @@ impl PhaseState {
             PhaseState::Briefing => {
                 Self::Dusk
             },
-            PhaseState::Morning => {
+            PhaseState::Obituary => {
                 Self::Discussion
             },
             PhaseState::Discussion => {
@@ -210,7 +210,7 @@ impl PhaseState {
                     player_ref.add_chat_messages(game, messages);
                 }
 
-                Self::Morning
+                Self::Obituary
             },
         };
         next

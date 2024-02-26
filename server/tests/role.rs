@@ -102,13 +102,13 @@ fn sheriff_basic() {
     );
     sher.set_night_targets(vec![mafia]);
     
-    game.skip_to(PhaseType::Morning, 2);
+    game.skip_to(PhaseType::Obituary, 2);
     assert_contains!(sher.get_messages(), ChatMessage::SheriffResult { suspicious: true });
 
     game.skip_to(PhaseType::Night, 2);
     sher.set_night_targets(vec![townie]);
     
-    game.skip_to(PhaseType::Morning, 3);
+    game.skip_to(PhaseType::Obituary, 3);
     assert_contains!(sher.get_messages(), ChatMessage::SheriffResult { suspicious: false });
 }
 
@@ -120,7 +120,7 @@ fn sheriff_godfather() {
     );
     sher.set_night_targets(vec![mafia]);
     
-    game.skip_to(PhaseType::Morning, 2);
+    game.skip_to(PhaseType::Obituary, 2);
     assert_contains!(sher.get_messages(), ChatMessage::SheriffResult { suspicious: false });
 }
 
@@ -136,7 +136,7 @@ fn seer_basic() {
     );
     seer.set_night_targets(vec![mafia1, townie1]);
     
-    game.skip_to(PhaseType::Morning, 2);
+    game.skip_to(PhaseType::Obituary, 2);
     assert_contains!(
         seer.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 1}),
         ChatMessage::SeerResult { enemies: true }
@@ -145,7 +145,7 @@ fn seer_basic() {
     game.skip_to(PhaseType::Night, 2);
     seer.set_night_targets(vec![mafia1, mafia2]);
     
-    game.skip_to(PhaseType::Morning, 3);
+    game.skip_to(PhaseType::Obituary, 3);
     assert_contains!(
         seer.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 2}),
         ChatMessage::SeerResult { enemies: false }
@@ -154,7 +154,7 @@ fn seer_basic() {
     game.skip_to(PhaseType::Night, 3);
     seer.set_night_targets(vec![jester, mafia2]);
     
-    game.skip_to(PhaseType::Morning, 4);
+    game.skip_to(PhaseType::Obituary, 4);
     assert_contains!(
         seer.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 3}),
         ChatMessage::SeerResult { enemies: false }
@@ -163,7 +163,7 @@ fn seer_basic() {
     game.skip_to(PhaseType::Night, 4);
     seer.set_night_targets(vec![townie2, jester]);
     
-    game.skip_to(PhaseType::Morning, 5);
+    game.skip_to(PhaseType::Obituary, 5);
     assert_contains!(
         seer.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 4}),
         ChatMessage::SeerResult { enemies: false }
@@ -172,7 +172,7 @@ fn seer_basic() {
     game.skip_to(PhaseType::Night, 5);
     seer.set_night_targets(vec![townie2, townie1]);
     
-    game.skip_to(PhaseType::Morning, 6);
+    game.skip_to(PhaseType::Obituary, 6);
     assert_contains!(
         seer.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 5}),
         ChatMessage::SeerResult { enemies: false }
@@ -270,7 +270,7 @@ fn bodyguard_basic() {
     maf.set_night_target(townie);
     bg.set_night_target(townie);
 
-    game.skip_to(PhaseType::Morning, 2);
+    game.skip_to(PhaseType::Obituary, 2);
 
     assert!(townie.get_messages().contains(&ChatMessage::YouWereProtected));
 
@@ -294,14 +294,14 @@ fn transporter_basic_vigilante_escort() {
     vigi.set_night_target(town1);
     escort.set_night_target(town2);
 
-    game.skip_to(PhaseType::Morning, 3);
+    game.skip_to(PhaseType::Obituary, 3);
     assert!(town1.alive());
     assert!(!town2.alive());
 
     assert!(town1.was_roleblocked());
     assert!(!town2.was_roleblocked());
     
-    game.skip_to(PhaseType::Morning, 4);
+    game.skip_to(PhaseType::Obituary, 4);
     assert!(!vigi.alive());
 }
 
@@ -321,7 +321,7 @@ fn transporter_basic_seer_sheriff_framer() {
     assert!(town1.set_night_targets(vec![town2]));
     assert!(town2.set_night_targets(vec![town1]));
 
-    game.skip_to(PhaseType::Morning, 2);
+    game.skip_to(PhaseType::Obituary, 2);
     assert_contains!(
         seer.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 1 }),
         ChatMessage::SeerResult { enemies: true }
@@ -350,7 +350,7 @@ fn bodyguard_protects_transported_target() {
     maf.set_night_target(t1);
     bg.set_night_target(t1);
     
-    game.skip_to(PhaseType::Morning, 2);
+    game.skip_to(PhaseType::Obituary, 2);
     assert!(t1.alive());
     assert!(t2.alive());
     assert!(trans.alive());
@@ -1033,7 +1033,7 @@ fn bodyguard_gets_single_target_jailed_message() {
             ChatMessage::TargetJailed,
             /* They should not get a second TargetJailed message */
             ChatMessage::PhaseChange { 
-                phase_type: PhaseType::Morning, day_number: 2 
+                phase_type: PhaseType::Obituary, day_number: 2 
             }
         ]
     );

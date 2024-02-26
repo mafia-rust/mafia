@@ -27,7 +27,7 @@ impl PlayerReference{
     pub fn on_phase_start(&self, game: &mut Game, phase: PhaseType){
         match phase {
             PhaseType::Briefing => {},
-            PhaseType::Morning => {
+            PhaseType::Obituary => {
                 self.set_night_jailed(game, false);
             },
             PhaseType::Discussion => {},

@@ -78,12 +78,12 @@ export default GameState;
 export type PlayerIndex = number;
 export type PlayerID = number;
 export type Verdict = "innocent"|"guilty"|"abstain";
-export type Phase = "briefing" | "morning" | "discussion" | "voting" | "testimony" | "judgement" | "finalWords" | "dusk" |  "night"
+export type Phase = "briefing" | "obituary" | "discussion" | "voting" | "testimony" | "judgement" | "finalWords" | "dusk" |  "night"
 
 
 export type PhaseTimes = {
     "briefing": number,
-    "morning": number,
+    "obituary": number,
     "discussion": number,
     "voting": number,
     "testimony": number,
