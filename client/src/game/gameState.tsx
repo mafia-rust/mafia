@@ -6,7 +6,7 @@ export function defaultPhaseTimes(): PhaseTimes {
         briefing: 20,
         obituary: 10,
         discussion: 100,
-        voting: 60,
+        nomination: 60,
         testimony: 30,
         judgement: 30,
         finalWords: 7,

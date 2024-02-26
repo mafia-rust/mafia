@@ -76,7 +76,7 @@ fn medium_receives_dead_messages_from_jail() {
     );
     game.next_phase();
     mafioso.set_night_target(townie);
-    game.skip_to(PhaseType::Voting, 2);
+    game.skip_to(PhaseType::Nomination, 2);
     
     jailor.day_target(medium);
 
@@ -370,7 +370,7 @@ fn mayor_reveals_after_they_vote(){
         mafioso: Mafioso
     );
 
-    game.skip_to(PhaseType::Voting, 2);
+    game.skip_to(PhaseType::Nomination, 2);
     mayor.vote_for_player(Some(mafioso));
     mayor.day_target(mayor);
     assert_eq!(game.current_phase().phase(), PhaseType::Testimony);
@@ -601,7 +601,7 @@ fn executioner_turns_into_jester(){
 
     assert!(mafioso.set_night_targets(vec![target]));
 
-    game.skip_to(PhaseType::Voting, 2);
+    game.skip_to(PhaseType::Nomination, 2);
 
     assert!(!target.alive());
     assert!(exe.alive());

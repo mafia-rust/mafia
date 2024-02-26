@@ -19,7 +19,7 @@ pub enum PhaseType {
     Briefing,
     Obituary,
     Discussion,
-    Voting,
+    Nomination,
     Testimony,
     Judgement,
     FinalWords,
@@ -32,7 +32,7 @@ pub enum PhaseState {
     Briefing,
     Obituary,
     Discussion,
-    Voting { trials_left: u8 },
+    Nomination { trials_left: u8 },
     Testimony { trials_left: u8, player_on_trial: PlayerReference },
     Judgement { trials_left: u8, player_on_trial: PlayerReference },
     FinalWords { player_on_trial: PlayerReference },
@@ -64,7 +64,7 @@ impl PhaseState {
             PhaseState::Briefing => PhaseType::Briefing,
             PhaseState::Obituary => PhaseType::Obituary,
             PhaseState::Discussion => PhaseType::Discussion,
-            PhaseState::Voting {..} => PhaseType::Voting,
+            PhaseState::Nomination {..} => PhaseType::Nomination,
             PhaseState::Testimony {..} => PhaseType::Testimony,
             PhaseState::Judgement {..} => PhaseType::Judgement,
             PhaseState::FinalWords {..} => PhaseType::FinalWords,
@@ -92,7 +92,7 @@ impl PhaseState {
 
                 game.phase_machine.day_number += 1;
             },
-            PhaseState::Voting { trials_left } => {
+            PhaseState::Nomination { trials_left } => {
                 let required_votes = 1+
                     (PlayerReference::all_players(game).filter(|p| p.alive(game)).count()/2);
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialInformation { required_votes, trials_left });
@@ -136,9 +136,9 @@ impl PhaseState {
                 Self::Discussion
             },
             PhaseState::Discussion => {
-                Self::Voting { trials_left: 3 }
+                Self::Nomination { trials_left: 3 }
             },
-            PhaseState::Voting {..} => {                
+            PhaseState::Nomination {..} => {                
                 Self::Dusk
             },
             &PhaseState::Testimony { trials_left, player_on_trial } => {
@@ -171,7 +171,7 @@ impl PhaseState {
                 } else if trials_left == 0 {
                     Self::Dusk
                 }else{
-                    Self::Voting { trials_left }
+                    Self::Nomination { trials_left }
                 }
             },
             &PhaseState::FinalWords { player_on_trial } => {

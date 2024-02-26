@@ -236,7 +236,7 @@ impl Lobby {
                     PhaseType::Judgement => { settings.phase_times.judgement = time; }
                     PhaseType::Night => { settings.phase_times.night = time; }
                     PhaseType::Testimony => { settings.phase_times.testimony = time; }
-                    PhaseType::Voting => { settings.phase_times.voting = time; }
+                    PhaseType::Nomination => { settings.phase_times.nomination = time; }
                 };
                 
                 self.send_to_all(ToClientPacket::PhaseTime { phase, time });

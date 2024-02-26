@@ -32,7 +32,7 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         PhaseState::Briefing |
         PhaseState::Obituary => vec![],
         PhaseState::Discussion 
-        | PhaseState::Voting {..}
+        | PhaseState::Nomination {..}
         | PhaseState::Judgement {..} 
         | PhaseState::FinalWords {..}
         | PhaseState::Dusk => vec![ChatGroup::All],

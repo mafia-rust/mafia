@@ -23,7 +23,7 @@ export default function PhaseTimesSelector(props: {
         <PhaseTimeSelector disabled={props.disabled} phase={"briefing"} time={props.phaseTimes["briefing"]} onChange={onChange}/>
         <PhaseTimeSelector disabled={props.disabled} phase={"obituary"} time={props.phaseTimes["obituary"]} onChange={onChange}/>
         <PhaseTimeSelector disabled={props.disabled} phase={"discussion"} time={props.phaseTimes["discussion"]} onChange={onChange}/>
-        <PhaseTimeSelector disabled={props.disabled} phase={"voting"} time={props.phaseTimes["voting"]} onChange={onChange}/>
+        <PhaseTimeSelector disabled={props.disabled} phase={"nomination"} time={props.phaseTimes["nomination"]} onChange={onChange}/>
         <PhaseTimeSelector disabled={props.disabled} phase={"testimony"} time={props.phaseTimes["testimony"]} onChange={onChange}/>
         <PhaseTimeSelector disabled={props.disabled} phase={"judgement"} time={props.phaseTimes["judgement"]} onChange={onChange}/>
         <PhaseTimeSelector disabled={props.disabled} phase={"finalWords"} time={props.phaseTimes["finalWords"]} onChange={onChange}/>

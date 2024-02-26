@@ -179,7 +179,7 @@ impl Game {
     }
     pub fn count_votes_and_start_trial(&mut self){
 
-        let &PhaseState::Voting { trials_left } = self.current_phase() else {return};
+        let &PhaseState::Nomination { trials_left } = self.current_phase() else {return};
 
         let mut living_players_count = 0;
         let mut voted_player_votes: HashMap<PlayerReference, u8> = HashMap::new();

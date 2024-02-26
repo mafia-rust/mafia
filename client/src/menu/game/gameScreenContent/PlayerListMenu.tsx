@@ -121,7 +121,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     renderPhaseSpecific(){
         let phaseSpecificJSX = null;
         switch(this.state.phase){
-            case "voting":
+            case "nomination":
                 if(this.state.voted!=null){
                     phaseSpecificJSX = (<div>
                         <div><StyledText>{this.state.players[this.state.voted].toString()}</StyledText></div>
@@ -162,7 +162,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 {(
                     player.numVoted !==null &&
                     player.numVoted !==0 &&
-                    this.state.phase === "voting"
+                    this.state.phase === "nomination"
                 ) ?
                     <span className="keyword-player-number">
                         {player.numVoted}

@@ -463,7 +463,7 @@
     "phase.briefing": "Briefing",
     "phase.obituary": "Obituary",
     "phase.discussion": "Discussion",
-    "phase.voting": "Nomination",
+    "phase.nomination": "Nomination",
     "phase.testimony": "Testimony",
     "phase.testimony:var.0": "Trial",
     "phase.judgement": "Judgement",

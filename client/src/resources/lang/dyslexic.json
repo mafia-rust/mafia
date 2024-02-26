@@ -388,7 +388,7 @@
     "judgement.cannotVote.dead": "oyu 'tnac tVoe eusebac 'rYeuo daDe",
     "phase.obituary": "ogrnMni",
     "phase.discussion": "Dsnisuoics",
-    "phase.voting": "tnogiV",
+    "phase.nomination": "tnogiV",
     "phase.testimony": "enoyTitms",
     "phase.judgement": "uetgeJmdn",
     "phase.judgement:var.0": "arliT",

@@ -388,7 +388,7 @@
     "judgement.cannotVote.dead": "Y cn't vt bcs y'r dd",
     "phase.obituary": "Mrnng",
     "phase.discussion": "Dscssn",
-    "phase.voting": "Vtng",
+    "phase.nomination": "Vtng",
     "phase.testimony": "Tstmny",
     "phase.judgement": "Jdgmnt",
     "phase.judgement:var.0": "Trl",

@@ -24,7 +24,7 @@ pub struct PhaseTimeSettings{
     pub briefing: u64,
     pub obituary: u64,
     pub discussion: u64,
-    pub voting: u64,
+    pub nomination: u64,
     pub testimony: u64,
     pub judgement: u64,
     pub final_words: u64,
@@ -42,11 +42,11 @@ impl PhaseTimeSettings {
             PhaseType::Obituary => Duration::from_secs(self.obituary),
             PhaseType::Night => Duration::from_secs(self.night),
             PhaseType::Testimony => Duration::from_secs(self.testimony),
-            PhaseType::Voting => Duration::from_secs(self.voting)
+            PhaseType::Nomination => Duration::from_secs(self.nomination)
         }
     }
     pub fn game_ends_instantly(&self)->bool{
-        [self.obituary, self.discussion, self.voting, self.night, self.dusk].iter().all(|t| *t == 0)
+        [self.obituary, self.discussion, self.nomination, self.night, self.dusk].iter().all(|t| *t == 0)
     }
 }
 impl Default for PhaseTimeSettings{
@@ -55,7 +55,7 @@ impl Default for PhaseTimeSettings{
             briefing: 20,
             obituary: 10,
             discussion: 100,
-            voting: 60,
+            nomination: 60,
             testimony: 30,
             judgement: 30,
             final_words: 7,

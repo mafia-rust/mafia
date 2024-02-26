@@ -31,7 +31,7 @@ impl PlayerReference{
                 self.set_night_jailed(game, false);
             },
             PhaseType::Discussion => {},
-            PhaseType::Voting => {
+            PhaseType::Nomination => {
                 self.set_chosen_vote(game, None, false);
                 self.set_verdict(game, Verdict::Abstain);
             },
