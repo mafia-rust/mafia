@@ -265,6 +265,17 @@ impl Game {
             if self.game_is_over() {
                 self.add_message_to_chat_group(ChatGroup::All, ChatMessage::GameOver);
                 self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::Draw });
+
+                for player_ref in PlayerReference::all_players(self){
+                    self.add_message_to_chat_group(ChatGroup::All, 
+                        ChatMessage::PlayerWonOrLost{ 
+                            player: player_ref.index(), 
+                            won: player_ref.get_won_game(self), 
+                            role: player_ref.role_state(self).role() 
+                        });
+                }
+
+                
                 self.ticking = false;
                 return;
             }
