@@ -29,7 +29,7 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
     }
 
     match game.current_phase() {
-        PhaseState::Briefing => vec![],
+        PhaseState::Briefing |
         PhaseState::Morning => vec![],
         PhaseState::Discussion 
         | PhaseState::Voting {..}

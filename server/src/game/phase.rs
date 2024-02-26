@@ -35,7 +35,7 @@ pub enum PhaseState {
     Voting { trials_left: u8 },
     Testimony { trials_left: u8, player_on_trial: PlayerReference },
     Judgement { trials_left: u8, player_on_trial: PlayerReference },
-    Evening { player_on_trial: Option<PlayerReference> },
+    Evening { player_on_trial: PlayerReference },
     Dusk,
     Night,
 }
@@ -130,7 +130,7 @@ impl PhaseState {
     pub fn end(game: &mut Game) -> PhaseState {
         let next = match game.current_phase() {
             PhaseState::Briefing => {
-                Self::Evening{ player_on_trial: None}
+                Self::Dusk
             },
             PhaseState::Morning => {
                 Self::Discussion
@@ -167,16 +167,14 @@ impl PhaseState {
                 });
                 
                 if innocent < guilty {
-                    Self::Evening { player_on_trial: Some(player_on_trial) }
+                    Self::Evening { player_on_trial }
                 } else if trials_left == 0 {
-                    Self::Evening { player_on_trial: None }
+                    Self::Dusk
                 }else{
                     Self::Voting { trials_left }
                 }
             },
             &PhaseState::Evening { player_on_trial } => {
-                let Some(player_on_trial) = player_on_trial else { return Self::Night };
-
                 let (guilty, innocent) = game.count_verdict_votes(player_on_trial);
                 
                 if innocent < guilty {

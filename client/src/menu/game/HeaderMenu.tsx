@@ -68,6 +68,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                     case "yourRoleState":
                         this.setState({roleState: GAME_MANAGER.state.roleState})
                     break;
+                    case "phaseTimeLeft":
                     case "tick":
                         this.setState({timeLeftMs: GAME_MANAGER.state.timeLeftMs})
                     break;

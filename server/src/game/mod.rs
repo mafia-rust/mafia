@@ -309,8 +309,8 @@ impl Game {
         self.send_packet_to_all(ToClientPacket::Phase { 
             phase: self.current_phase().phase(),
             day_number: self.phase_machine.day_number,
-            seconds_left: self.phase_machine.time_remaining.as_secs()
         });
+        self.send_packet_to_all(ToClientPacket::PhaseTimeLeft{ seconds_left: self.phase_machine.time_remaining.as_secs() });
     }
 
     pub fn add_message_to_chat_group(&mut self, group: ChatGroup, mut message: ChatMessage){
@@ -336,7 +336,7 @@ impl Game {
     }
 
     pub fn fast_forward(&mut self){
-        const FAST_FORWARD_TIME: Duration = Duration::from_secs(10);
+        const FAST_FORWARD_TIME: Duration = Duration::from_secs(0);
 
         if self.phase_machine.time_remaining <= FAST_FORWARD_TIME {
             return
@@ -344,12 +344,7 @@ impl Game {
         self.phase_machine.time_remaining = FAST_FORWARD_TIME;
         
         self.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseFastForwarded);
-
-        self.send_packet_to_all(ToClientPacket::Phase { 
-            phase: self.current_phase().phase(),
-            day_number: self.phase_machine.day_number,
-            seconds_left: self.phase_machine.time_remaining.as_secs()
-        });
+        self.send_packet_to_all(ToClientPacket::PhaseTimeLeft{ seconds_left: self.phase_machine.time_remaining.as_secs() });
     }
 }
 

@@ -192,7 +192,6 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game"){
                 GAME_MANAGER.state.phase = packet.phase;
                 GAME_MANAGER.state.dayNumber = packet.dayNumber;
-                GAME_MANAGER.state.timeLeftMs = packet.secondsLeft * 1000;
         
                 if(packet.phase === "briefing" && GAME_MANAGER.state.stateType === "game"){
                     const role = GAME_MANAGER.state.roleState?.role;
@@ -205,6 +204,10 @@ export default function messageListener(packet: ToClientPacket){
                     Anchor.playAudioFile(getAudioSrcFromString(packet.phase));
                 }
             }
+        break;
+        case "phaseTimeLeft":
+            if(GAME_MANAGER.state.stateType === "game")
+                GAME_MANAGER.state.timeLeftMs = packet.secondsLeft * 1000;
         break;
         case "playerOnTrial":
             if(GAME_MANAGER.state.stateType === "game")
