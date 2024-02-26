@@ -17,6 +17,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
         super(props);
 
         let phaseTimes = {
+            briefing: 20,
             morning: 15,
             discussion: 46,
             voting: 30,

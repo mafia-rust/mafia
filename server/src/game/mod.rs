@@ -137,9 +137,7 @@ impl Game {
 
 
         game.send_packet_to_all(ToClientPacket::StartGame);
-        for player_ref in PlayerReference::all_players(&game){
-            player_ref.send_join_game_data(&mut game);
-        }
+        
 
         //on role creation needs to be called after all players roles are known
         for player_ref in PlayerReference::all_players(&game){
@@ -148,6 +146,10 @@ impl Game {
         }
 
         Teams::on_team_creation(&mut game);
+
+        for player_ref in PlayerReference::all_players(&game){
+            player_ref.send_join_game_data(&mut game);
+        }
 
         Ok(game)
     }

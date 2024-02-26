@@ -5,7 +5,6 @@ import { OutlineListSelector } from "../components/OutlineSelector";
 import { RoleList, RoleOutline } from "../game/roleListState.d";
 import translate from "../game/lang";
 import "./gameModesEditor.css";
-import Anchor from "./Anchor";
 import PhaseTimesSelector from "../components/PhaseTimeSelector";
 import { PhaseTimes } from "../game/gameState.d";
 import DisabledRoleSelector from "../components/DisabledRoleSelector";
@@ -21,6 +20,7 @@ export default function GameModesEditor(): ReactElement {
 
     const [currentRoleList, setCurrentRoleList] = useState<RoleList>([]);
     const [currentPhaseTimes, setCurrentPhaseTimes] = useState<PhaseTimes>({
+        briefing: 20,
         morning: 15,
         discussion: 46,
         voting: 30,
@@ -90,6 +90,7 @@ export default function GameModesEditor(): ReactElement {
 
         setCurrentRoleListName(settingsName);
         setCurrentPhaseTimes(gameMode?.phaseTimes ?? {
+            briefing: 20,
             morning: 15,
             discussion: 46,
             voting: 30,
@@ -137,9 +138,6 @@ export default function GameModesEditor(): ReactElement {
 
     
     return <div className="game-modes-editor">
-        <button className="material-icons-round close-button" onClick={()=>{Anchor.clearCoverCard()}}>
-            close
-        </button>
         <header>
             <h1>{translate("menu.settings.gameSettingsEditor")}</h1>
         </header>

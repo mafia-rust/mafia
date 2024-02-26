@@ -57,11 +57,6 @@ impl PlayerReference{
             },
             ToClientPacket::ExcludedRoles { roles: game.settings.excluded_roles.clone() },
             ToClientPacket::RoleList {role_list: game.settings.role_list.clone()},
-            ToClientPacket::Phase { 
-                phase: game.current_phase().phase(),
-                seconds_left: game.phase_machine.time_remaining.as_secs(), 
-                day_number: game.phase_machine.day_number 
-            },
             ToClientPacket::PlayerAlive{
                 alive: PlayerReference::all_players(game).map(|p|p.alive(game)).collect()
             }
@@ -120,6 +115,11 @@ impl PlayerReference{
             },
             ToClientPacket::YourButtons{
                 buttons: AvailableButtons::from_player(game, *self)
+            },
+            ToClientPacket::Phase { 
+                phase: game.current_phase().phase(),
+                seconds_left: game.phase_machine.time_remaining.as_secs(), 
+                day_number: game.phase_machine.day_number 
             }
         ]);
     }
@@ -150,9 +150,8 @@ impl PlayerReference{
     }
     #[allow(unused)]
     fn requeue_chat_messages(&self, game: &mut Game){
-        for msg in self.deref(game).chat_messages.clone().into_iter(){
-            self.deref_mut(game).queued_chat_messages.push(msg);
-        };
+        self.deref_mut(game).queued_chat_messages = vec![];
+        self.deref_mut(game).queued_chat_messages = self.deref(game).chat_messages.clone();
     }   
 
     fn send_available_buttons(&self, game: &mut Game){

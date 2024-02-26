@@ -228,6 +228,7 @@ impl Lobby {
                 }
 
                 match phase {
+                    PhaseType::Briefing => { settings.phase_times.briefing = time; }
                     PhaseType::Morning => { settings.phase_times.morning = time; }
                     PhaseType::Discussion => { settings.phase_times.discussion = time; }
                     PhaseType::Evening => { settings.phase_times.evening = time; }

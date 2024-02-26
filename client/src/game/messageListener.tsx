@@ -10,6 +10,9 @@ import translate from "./lang";
 import { getAudioSrcFromString } from "../components/audio";
 import { computeKeywordDataWithPlayers } from "../components/StyledText";
 import { deleteReconnectData, saveReconnectData } from "./localStorage";
+import { WikiArticleLink } from "../components/WikiArticleLink";
+import React from "react";
+import WikiArticle from "../components/WikiArticle";
 
 export default function messageListener(packet: ToClientPacket){
 
@@ -191,6 +194,13 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.dayNumber = packet.dayNumber;
                 GAME_MANAGER.state.timeLeftMs = packet.secondsLeft * 1000;
         
+                if(packet.phase === "briefing" && GAME_MANAGER.state.stateType === "game"){
+                    const role = GAME_MANAGER.state.roleState?.role;
+                    if(role !== undefined){
+                        Anchor.setCoverCard(<WikiArticle article={"role/"+role as WikiArticleLink}/>);
+                    }
+                }
+
                 if(packet.phase !== "judgement"){
                     Anchor.playAudioFile(getAudioSrcFromString(packet.phase));
                 }

@@ -12,6 +12,7 @@ export function createLobbyState(): LobbyState {
         roleList: [],
         excludedRoles: [],
         phaseTimes: {
+            briefing: 20,
             morning: 5,
             discussion: 45, 
             voting: 30, 
@@ -56,6 +57,7 @@ export function createGameState(): GameState {
         roleList: [],
         excludedRoles: [],
         phaseTimes: {
+            briefing: 20,
             morning: 15,
             discussion: 46,
             voting: 30,

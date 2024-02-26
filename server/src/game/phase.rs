@@ -16,6 +16,7 @@ use super::{
 #[derive(Clone, Copy, PartialEq, Debug, Eq, Serialize, Deserialize, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum PhaseType {
+    Briefing,
     Morning,
     Discussion,
     Voting,
@@ -25,8 +26,9 @@ pub enum PhaseType {
     Night,
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub enum PhaseState {
+    Briefing,
     Morning,
     Discussion,
     Voting { trials_left: u8 },
@@ -44,7 +46,7 @@ pub struct PhaseStateMachine {
 
 impl PhaseStateMachine {
     pub fn new(times: PhaseTimeSettings) -> Self {
-        let current_state = PhaseState::Evening { player_on_trial: None };
+        let current_state = PhaseState::Briefing;
 
         Self {
             time_remaining: times.get_time_for(current_state.phase()),
@@ -57,6 +59,7 @@ impl PhaseStateMachine {
 impl PhaseState {
     pub const fn phase(&self) -> PhaseType {
         match self {
+            PhaseState::Briefing => PhaseType::Briefing,
             PhaseState::Morning => PhaseType::Morning,
             PhaseState::Discussion => PhaseType::Discussion,
             PhaseState::Voting {..} => PhaseType::Voting,
@@ -101,22 +104,30 @@ impl PhaseState {
                 );
                 game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() });
             },
-            PhaseState::Night
+            PhaseState::Briefing 
+            | PhaseState::Night
             | PhaseState::Discussion
             | PhaseState::Judgement { .. } 
             | PhaseState::Evening { .. } => {}
         }
+
+        if PhaseState::Briefing == *game.current_phase() {return;}
+
         game.add_message_to_chat_group(ChatGroup::All, 
             ChatMessage::PhaseChange { 
                 phase_type: game.current_phase().phase(), 
                 day_number: game.phase_machine.day_number 
             }
         );
+        
     }
     
     /// Returns what phase should come next
     pub fn end(game: &mut Game) -> PhaseState {
         let next = match game.current_phase() {
+            PhaseState::Briefing => {
+                Self::Evening{ player_on_trial: None}
+            },
             PhaseState::Morning => {
                 Self::Discussion
             },

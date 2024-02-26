@@ -71,3 +71,34 @@
     height: fit-content;
     width: fit-content;
 }
+
+
+.anchor-cover-card {
+    display: flex;
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    width: 90%;
+    max-width: 90%;
+    height: 90%;
+    max-height: 90%;
+    background-color: var(--background-color);
+    border: 0.13rem solid var(--primary-border-color);
+    border-radius: 2rem;
+    border-right-color: black;
+    border-bottom-color: black;
+    scrollbar-width: none;
+    flex-direction: column;
+    padding: 2rem;
+    gap: 2rem;
+    overflow-y: auto;
+    z-index: 80;
+}
+
+.anchor-cover-card .close-button {
+    position: fixed;
+    padding: 0;
+    top: 8%;
+    right: 8%;
+    border-radius: .5rem;
+}

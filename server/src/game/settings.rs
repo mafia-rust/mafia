@@ -21,6 +21,7 @@ impl Default for Settings{
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PhaseTimeSettings{
+    pub briefing: u64,
     pub morning: u64,
     pub discussion: u64,
     pub voting: u64,
@@ -32,6 +33,7 @@ pub struct PhaseTimeSettings{
 impl PhaseTimeSettings {
     pub fn get_time_for(&self, phase: PhaseType) -> Duration {
         match phase {
+            PhaseType::Briefing => Duration::from_secs(self.briefing),
             PhaseType::Discussion => Duration::from_secs(self.discussion),
             PhaseType::Evening => Duration::from_secs(self.evening),
             PhaseType::Judgement => Duration::from_secs(self.judgement),
@@ -48,6 +50,7 @@ impl PhaseTimeSettings {
 impl Default for PhaseTimeSettings{
     fn default() -> Self {
         Self{
+            briefing: 20,
             morning: 5, 
             discussion: 46, 
             voting: 30, 

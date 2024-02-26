@@ -17,6 +17,7 @@ type AnchorState = {
     mobile: boolean,
     content: JSX.Element,
     coverCard: JSX.Element | null,
+    errorCard: JSX.Element | null,
 
     settings_menu: boolean,
     audio: HTMLAudioElement
@@ -39,6 +40,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             mobile: false,
             content: this.props.content,
             coverCard: null,
+            errorCard: null,
 
             settings_menu: false,
             audio: new Audio(),
@@ -203,24 +205,34 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
                 }}
             />}
             {this.state.content}
-            {this.state.coverCard}
+            {this.state.coverCard && 
+                <div className="anchor-cover-card">
+                    <button className="material-icons-round close-button" onClick={()=>{
+                        Anchor.clearCoverCard()
+                    }}>
+                        close
+                    </button>
+                    {this.state.coverCard}
+                </div>
+            }
+            {this.state.errorCard}
         </div>
     }
 
     public static setContent(content: JSX.Element){
         Anchor.instance.setState({content : content});
     }
-    public static setCoverCard(coverCard: JSX.Element){
-        Anchor.instance.setState({coverCard : coverCard});
+    public static setCoverCard(coverCard: JSX.Element, callback?: () => void){
+        Anchor.instance.setState({coverCard : coverCard}, callback);
     }
     public static pushError(title: string, body: string) {
-        Anchor.instance.setState({coverCard: <ErrorCard
-            onClose={() => Anchor.instance.setState({ coverCard: null })}
+        Anchor.instance.setState({errorCard: <ErrorCard
+            onClose={() => Anchor.instance.setState({ errorCard: null })}
             error={{title, body}}
         />});
     }
     public static pushRejoin(roomCode: number, playerId: number) {
-        Anchor.instance.setState({coverCard:
+        Anchor.instance.setState({errorCard:
             <div className="error-card">
                 <header>
                     <button onClick={() => {Anchor.instance.handleRejoin(roomCode, playerId)}}>
