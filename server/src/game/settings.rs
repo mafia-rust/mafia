@@ -28,6 +28,7 @@ pub struct PhaseTimeSettings{
     pub testimony: u64,
     pub judgement: u64,
     pub evening: u64,
+    pub dusk: u64,
     pub night: u64,
 }
 impl PhaseTimeSettings {
@@ -36,6 +37,7 @@ impl PhaseTimeSettings {
             PhaseType::Briefing => Duration::from_secs(self.briefing),
             PhaseType::Discussion => Duration::from_secs(self.discussion),
             PhaseType::Evening => Duration::from_secs(self.evening),
+            PhaseType::Dusk => Duration::from_secs(self.dusk),
             PhaseType::Judgement => Duration::from_secs(self.judgement),
             PhaseType::Morning => Duration::from_secs(self.morning),
             PhaseType::Night => Duration::from_secs(self.night),
@@ -44,20 +46,21 @@ impl PhaseTimeSettings {
         }
     }
     pub fn game_ends_instantly(&self)->bool{
-        [self.morning, self.discussion, self.voting, self.night].iter().all(|t| *t == 0)
+        [self.morning, self.discussion, self.voting, self.night, self.dusk].iter().all(|t| *t == 0)
     }
 }
 impl Default for PhaseTimeSettings{
     fn default() -> Self {
         Self{
             briefing: 20,
-            morning: 5, 
-            discussion: 46, 
-            voting: 30, 
-            testimony: 24, 
-            judgement: 20, 
-            evening: 7, 
-            night: 39
+            morning: 10,
+            discussion: 100,
+            voting: 60,
+            testimony: 30,
+            judgement: 30,
+            evening: 7,
+            dusk: 7,
+            night: 45,
         }
     }
 }

@@ -468,6 +468,7 @@
     "phase.testimony:var.0": "Trial",
     "phase.judgement": "Judgement",
     "phase.evening": "Final Words",
+    "phase.dusk": "Dusk",
     "phase.night": "Night",
     "phase.night:var.0": "Nighttime",
 

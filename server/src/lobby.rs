@@ -232,6 +232,7 @@ impl Lobby {
                     PhaseType::Morning => { settings.phase_times.morning = time; }
                     PhaseType::Discussion => { settings.phase_times.discussion = time; }
                     PhaseType::Evening => { settings.phase_times.evening = time; }
+                    PhaseType::Dusk => { settings.phase_times.dusk = time; }
                     PhaseType::Judgement => { settings.phase_times.judgement = time; }
                     PhaseType::Night => { settings.phase_times.night = time; }
                     PhaseType::Testimony => { settings.phase_times.testimony = time; }

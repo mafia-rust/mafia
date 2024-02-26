@@ -23,6 +23,7 @@ pub enum PhaseType {
     Testimony,
     Judgement,
     Evening,
+    Dusk,
     Night,
 }
 
@@ -35,6 +36,7 @@ pub enum PhaseState {
     Testimony { trials_left: u8, player_on_trial: PlayerReference },
     Judgement { trials_left: u8, player_on_trial: PlayerReference },
     Evening { player_on_trial: Option<PlayerReference> },
+    Dusk,
     Night,
 }
 
@@ -66,6 +68,7 @@ impl PhaseState {
             PhaseState::Testimony {..} => PhaseType::Testimony,
             PhaseState::Judgement {..} => PhaseType::Judgement,
             PhaseState::Evening {..} => PhaseType::Evening,
+            PhaseState::Dusk => PhaseType::Dusk,
             PhaseState::Night => PhaseType::Night,
         }
     }
@@ -108,7 +111,8 @@ impl PhaseState {
             | PhaseState::Night
             | PhaseState::Discussion
             | PhaseState::Judgement { .. } 
-            | PhaseState::Evening { .. } => {}
+            | PhaseState::Evening { .. }
+            | PhaseState::Dusk => {}
         }
 
         if PhaseState::Briefing == *game.current_phase() {return;}
@@ -135,7 +139,7 @@ impl PhaseState {
                 Self::Voting { trials_left: 3 }
             },
             PhaseState::Voting {..} => {                
-                Self::Night
+                Self::Dusk
             },
             &PhaseState::Testimony { trials_left, player_on_trial } => {
                 Self::Judgement { trials_left, player_on_trial }
@@ -180,6 +184,9 @@ impl PhaseState {
                     player_on_trial.die(game, new_grave, true);
                 }
 
+                Self::Dusk
+            },
+            PhaseState::Dusk => {
                 Self::Night
             },
             PhaseState::Night => {

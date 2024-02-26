@@ -1,5 +1,19 @@
-import GameState, { LobbyPlayer, LobbyState, Player, PlayerID } from "./gameState.d"
+import GameState, { LobbyPlayer, LobbyState, PhaseTimes, Player, PlayerID } from "./gameState.d"
 
+
+export function defaultPhaseTimes(): PhaseTimes {
+    return {
+        briefing: 20,
+        morning: 10,
+        discussion: 100,
+        voting: 60,
+        testimony: 30,
+        judgement: 30,
+        evening: 7,
+        dusk: 7,
+        night: 45,
+    }
+}
 
 export function createLobbyState(): LobbyState {
     return {
@@ -11,16 +25,7 @@ export function createLobbyState(): LobbyState {
 
         roleList: [],
         excludedRoles: [],
-        phaseTimes: {
-            briefing: 20,
-            morning: 5,
-            discussion: 45, 
-            voting: 30, 
-            testimony: 20, 
-            judgement: 20, 
-            evening: 7, 
-            night: 37,
-        },
+        phaseTimes: defaultPhaseTimes(),
 
         players: new Map<PlayerID, LobbyPlayer>(),
     }
@@ -56,16 +61,7 @@ export function createGameState(): GameState {
         
         roleList: [],
         excludedRoles: [],
-        phaseTimes: {
-            briefing: 20,
-            morning: 15,
-            discussion: 46,
-            voting: 30,
-            testimony: 24,
-            judgement: 20,
-            evening: 10,
-            night: 37
-        },
+        phaseTimes: defaultPhaseTimes(),
 
         ticking: true,
     }

@@ -27,6 +27,7 @@ export default function PhaseTimesSelector(props: {
         <PhaseTimeSelector disabled={props.disabled} phase={"testimony"} time={props.phaseTimes["testimony"]} onChange={onChange}/>
         <PhaseTimeSelector disabled={props.disabled} phase={"judgement"} time={props.phaseTimes["judgement"]} onChange={onChange}/>
         <PhaseTimeSelector disabled={props.disabled} phase={"evening"} time={props.phaseTimes["evening"]} onChange={onChange}/>
+        <PhaseTimeSelector disabled={props.disabled} phase={"dusk"} time={props.phaseTimes["dusk"]} onChange={onChange}/>
         <PhaseTimeSelector disabled={props.disabled} phase={"night"} time={props.phaseTimes["night"]} onChange={onChange}/>
     </section>
 }

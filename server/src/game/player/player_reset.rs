@@ -38,6 +38,7 @@ impl PlayerReference{
             PhaseType::Testimony => {},
             PhaseType::Judgement => {},
             PhaseType::Evening => {},
+            PhaseType::Dusk => {},
             PhaseType::Night => {
                 self.set_night_died(game, false);
                 self.set_night_attacked(game, false);
