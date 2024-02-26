@@ -2,7 +2,7 @@
 const phase_to_audio = {
     "obituary": null,
     "discussion": "08. Heated.mp3",
-    "voting": "16. Suspicion.mp3",
+    "nomination": "16. Suspicion.mp3",
     "testimony": "11. Innocence.mp3",
     "judgement": null,
     "finalWords": null,

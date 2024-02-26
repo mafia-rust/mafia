@@ -8,7 +8,7 @@
     "youDied": "warning",
     "playerQuit": "special",
     "phaseChange": "phase-change",
-    "trialInformation": "trial",
+    "trialInformation": "special",
     "voted": "trial",
     "playerOnTrial": "trial",
     "judgementVerdict": "trial",
