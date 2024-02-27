@@ -79,6 +79,11 @@ impl PlayerReference{
             player_ref.on_any_death(game, *self)
         }
         Teams::on_any_death(game);
+        for player in PlayerReference::all_players(game){
+            player.send_packet(game, ToClientPacket::YourSendChatGroups { send_chat_groups: 
+                player.get_current_send_chat_groups(game)
+            });
+        }
     }
     /// Swaps this persons role, sends them the role chat message, and makes associated changes
     pub fn set_role(&self, game: &mut Game, new_role_data: RoleState){

@@ -403,6 +403,8 @@
     "tag.doused":"🔥",
     "tag.dead":"💀",
 
+    "noAll.icon": "🔇",
+    "chatGroup.all.icon": "🔊",
     "chatGroup.mafia.icon": "🌹",
     "chatGroup.cult.icon": "🕯️",
     "chatGroup.jail.icon": "🔒",
@@ -608,6 +610,7 @@
     "wiki.article.standard.select.title:var.0":"Selects",
     "wiki.article.standard.select.title:var.1":"Selecting",
     "wiki.article.standard.select.title:var.2":"Selected",
+    "wiki.article.standard.select.title:var.3":"Selection",
     "wiki.article.standard.select.text": "Selecting is when you click the button under a player at night in order to attempt to use your ability on them. Selecting determines who you will visit before it becomes affected by other effects. By default, you can select a number of players up to as many targets as your role can have. Most roles can not select themselves or dead players, and some roles have further restrictions on selections. Most mafia members and cultists can not select other players on their team.",
 
     "wiki.article.standard.visit.title": "Visit",
