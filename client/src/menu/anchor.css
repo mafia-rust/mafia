@@ -1,6 +1,7 @@
 
 .anchor {
     overflow: hidden;
+    position: absolute;
     
     height: 100dvh;
     width: 100dvw;
