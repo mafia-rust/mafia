@@ -1,4 +1,8 @@
-
+.game-modes-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
 
 .game-modes-editor > header {
     display: flex;

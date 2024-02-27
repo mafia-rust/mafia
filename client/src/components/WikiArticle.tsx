@@ -23,7 +23,7 @@ export default function WikiArticle(props: {
             const keywords = roleData.keywords.map(key => {
                 return `<details><summary>${getArticleTitle("standard/"+key as WikiArticleLink)}</summary>${translate("wiki.article.standard."+key+".text")}</details>`;
             }).join('\n');
-            return <section>
+            return <section className="wiki-article">
                 <StyledText className="wiki-content-body" markdown={true}>
                     {"# "+translate("role."+role+".name")+"\n"}
                     {roleData.roleSet!==null?("### "+translateChecked(roleData.roleSet)+"\n"):"### "+translate(roleData.faction)+"\n"}

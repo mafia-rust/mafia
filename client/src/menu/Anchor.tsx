@@ -205,14 +205,18 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
                 }}
             />}
             {this.state.content}
-            {this.state.coverCard && 
-                <div className="anchor-cover-card">
-                    <button className="material-icons-round close-button" onClick={()=>{
-                        Anchor.clearCoverCard()
-                    }}>
-                        close
-                    </button>
-                    {this.state.coverCard}
+            {this.state.coverCard &&
+                <div className="anchor-cover-card-background-cover">
+                    <div className="anchor-cover-card">
+                        <button className="material-icons-round close-button" onClick={()=>{
+                            Anchor.clearCoverCard()
+                        }}>
+                            close
+                        </button>
+                        <div className="anchor-cover-card-content">
+                            {this.state.coverCard}
+                        </div>
+                    </div>
                 </div>
             }
             {this.state.errorCard}
