@@ -150,7 +150,6 @@ impl PlayerReference{
     }
     #[allow(unused)]
     fn requeue_chat_messages(&self, game: &mut Game){
-        self.deref_mut(game).queued_chat_messages = vec![];
         self.deref_mut(game).queued_chat_messages = self.deref(game).chat_messages.clone();
     }   
 
