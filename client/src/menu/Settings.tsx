@@ -82,7 +82,7 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
                             Anchor.reloadContent();
                         }}
                     >
-                        {LANGUAGES.map(lang => <option value={lang}>{languageName(lang)}</option>)}
+                        {LANGUAGES.map(lang => <option key={lang} value={lang}>{languageName(lang)}</option>)}
                     </select>
                 </section>
                 <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
