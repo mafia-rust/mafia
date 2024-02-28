@@ -1,4 +1,4 @@
-import { Phase, PlayerIndex, Verdict, PhaseTimes, Tag, PlayerID } from "./gameState.d"
+import { Phase, PlayerIndex, Verdict, PhaseTimes, Tag, PlayerID, ChatGroup } from "./gameState.d"
 import { Grave } from "./graveState"
 import { ChatMessage } from "../components/ChatMessage"
 import { RoleList, RoleOutline } from "./roleListState.d"
@@ -88,6 +88,9 @@ export type ToClientPacket = {
 } | {
     type: "playerVotes",
     votesForPlayer: Map<PlayerIndex, number>
+} | {
+    type: "yourSendChatGroups",
+    sendChatGroups: ChatGroup[]
 } | {
     type: "yourButtons", 
     buttons: [{

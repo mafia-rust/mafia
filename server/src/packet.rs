@@ -21,13 +21,8 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 
 use crate::{game::{
-    player::{PlayerIndex, PlayerReference},
-    role_list::{RoleList, RoleOutline},
-    verdict::Verdict, phase::PhaseType, 
-    chat::ChatMessage,
-    role::{Role, RoleState, doomsayer::DoomsayerGuess}, 
-    Game, grave::Grave, available_buttons::AvailableButtons, tag::Tag, settings::PhaseTimeSettings, RejectStartReason, GameOverReason
-}, listener::{RoomCode, PlayerID}, log};
+    available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, phase::PhaseType, player::{PlayerIndex, PlayerReference}, role::{doomsayer::DoomsayerGuess, Role, RoleState}, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
+}, listener::{PlayerID, RoomCode}, log};
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -92,8 +87,9 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     PlayerVotes{votes_for_player: HashMap<PlayerIndex, u8>},
 
-    YouAreSilenced,
-    YouAreJailed,
+    #[serde(rename_all = "camelCase")]
+    YourSendChatGroups{send_chat_groups: Vec<ChatGroup>},
+
     YourButtons{buttons: Vec<AvailableButtons>},
     #[serde(rename_all = "camelCase")]
     YourRoleLabels{role_labels: HashMap<PlayerIndex, Role>},

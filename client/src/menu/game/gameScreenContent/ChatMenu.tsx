@@ -20,9 +20,24 @@ export default function ChatMenu(): ReactElement {
                 setFilter(GAME_MANAGER.state.chatFilter);
             }
         }
+        if (GAME_MANAGER.state.stateType === "game")
+            setFilter(GAME_MANAGER.state.chatFilter);
         GAME_MANAGER.addStateListener(stateListener);
         return () => GAME_MANAGER.removeStateListener(stateListener);
     }, [setFilter]);
+
+    const [sendChatGroups, setSendChatGroups] = useState<string[]>([]);
+    useEffect(() => {
+        const stateListener: StateListener = (type) => {
+            if (GAME_MANAGER.state.stateType === "game" && type === "yourSendChatGroups") {
+                setSendChatGroups(GAME_MANAGER.state.sendChatGroups);
+            }
+        }
+        if (GAME_MANAGER.state.stateType === "game")
+            setSendChatGroups(GAME_MANAGER.state.sendChatGroups);
+        GAME_MANAGER.addStateListener(stateListener);
+        return () => GAME_MANAGER.removeStateListener(stateListener);
+    }, [setSendChatGroups]);
 
     return <div className="chat-menu chat-menu-colors">
         <ContentTab close={ContentMenu.ChatMenu} helpMenu={"standard/chat"}>{translate("menu.chat.title")}</ContentTab>
@@ -39,7 +54,13 @@ export default function ChatMenu(): ReactElement {
         >
             filter_alt_off
         </button>}
-        <ChatTextInput/>
+        <div className="chat-menu-icons">
+            {!sendChatGroups.includes("all") && translate("noAll.icon")}
+            {sendChatGroups.map((group) => {
+                return translate("chatGroup."+group+".icon");
+            })}
+        </div>
+        <ChatTextInput disabled={sendChatGroups.length === 0}/>
     </div>
 }
 
@@ -117,7 +138,7 @@ function ChatMessageSection(): ReactElement {
     </div>
 }
 
-function ChatTextInput(): ReactElement {
+function ChatTextInput(props: {disabled: boolean}): ReactElement {
     const [chatBoxText, setChatBoxText] = useState<string>("");
     
     const setWhisper = useCallback((index: PlayerIndex) => {
@@ -180,19 +201,18 @@ function ChatTextInput(): ReactElement {
     }, [sendChatField, history, historyPoller]);
 
     return <div className="send-section">
-        <div>
-            <textarea
-                value={chatBoxText}
-                onChange={handleInputChange}
-                onKeyDown={handleInputKeyDown}
-            />
-            <button 
-                className="material-icons-round"
-                onClick={sendChatField}
-                aria-label={translate("menu.chat.button.send")}
-            >
-                send
-            </button>
-        </div>
+        <textarea
+            value={chatBoxText}
+            onChange={handleInputChange}
+            onKeyDown={handleInputKeyDown}
+        />
+        <button 
+            disabled={props.disabled}
+            className="material-icons-round"
+            onClick={sendChatField}
+            aria-label={translate("menu.chat.button.send")}
+        >
+            send
+        </button>
     </div>
 }

@@ -230,6 +230,11 @@ export default function messageListener(packet: ToClientPacket){
                 }
             }
         break;
+        case "yourSendChatGroups":
+            if(GAME_MANAGER.state.stateType === "game"){
+                GAME_MANAGER.state.sendChatGroups = [...packet.sendChatGroups];
+            }
+        break;
         case "yourButtons":
             if(GAME_MANAGER.state.stateType === "game"){
                 for(let i = 0; i < GAME_MANAGER.state.players.length && i < packet.buttons.length; i++){

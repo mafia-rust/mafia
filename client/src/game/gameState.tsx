@@ -64,6 +64,8 @@ export function createGameState(): GameState {
         phaseTimes: defaultPhaseTimes(),
 
         ticking: true,
+
+        sendChatGroups: [],
     }
 }
 

@@ -71,7 +71,9 @@ type GameState = {
     excludedRoles: Role[],
     phaseTimes: PhaseTimes
 
-    ticking: boolean
+    ticking: boolean,
+
+    sendChatGroups: ChatGroup[],
 }
 export default GameState;
 
@@ -80,6 +82,8 @@ export type PlayerID = number;
 export type Verdict = "innocent"|"guilty"|"abstain";
 export type Phase = "briefing" | "obituary" | "discussion" | "nomination" | "testimony" | "judgement" | "finalWords" | "dusk" |  "night"
 
+
+export type ChatGroup = "all" | "dead" | "mafia" | "cult" | "jail" | "interview";
 
 export type PhaseTimes = {
     "briefing": number,
