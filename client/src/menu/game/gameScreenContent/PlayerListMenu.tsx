@@ -76,7 +76,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 return;
             }
             switch (type) {
-                case "tick":
+                case "filterUpdate":
                     this.setState({chatFilter: GAME_MANAGER.state.chatFilter});
                 break;
                 case "phase":
@@ -188,7 +188,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         onClick={() => {
                             if(GAME_MANAGER.state.stateType === "game"){
                                 GAME_MANAGER.state.chatFilter = isFilterSet ? null : filter;
-                                GAME_MANAGER.invokeStateListeners("tick");
+                                GAME_MANAGER.invokeStateListeners("filterUpdate");
                             }
                             this.setState({})
                         }}

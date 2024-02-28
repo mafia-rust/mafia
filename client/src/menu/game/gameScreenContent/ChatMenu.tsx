@@ -25,6 +25,7 @@ export default function ChatMenu(): ReactElement {
         GAME_MANAGER.addStateListener(stateListener);
         return () => GAME_MANAGER.removeStateListener(stateListener);
     }, [setFilter]);
+    
 
     const [sendChatGroups, setSendChatGroups] = useState<string[]>([]);
     useEffect(() => {
@@ -41,7 +42,7 @@ export default function ChatMenu(): ReactElement {
 
     return <div className="chat-menu chat-menu-colors">
         <ContentTab close={ContentMenu.ChatMenu} helpMenu={"standard/chat"}>{translate("menu.chat.title")}</ContentTab>
-        <ChatMessageSection/>
+        <ChatMessageSection filter={filter}/>
         {filter !== null && <button 
             onClick={()=>{
                 if(GAME_MANAGER.state.stateType === "game"){
@@ -65,7 +66,9 @@ export default function ChatMenu(): ReactElement {
 }
 
 
-function ChatMessageSection(): ReactElement {
+function ChatMessageSection(props:{
+    filter: PlayerIndex | null
+}): ReactElement {
     const [messages, setMessages] = useState<ChatMessage []>(GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.chatMessages : []);
     const [scrolledToBottom, setScrolledToBottom] = useState<boolean>(true);
     
@@ -76,23 +79,6 @@ function ChatMessageSection(): ReactElement {
         const { scrollTop, scrollHeight, clientHeight } = e.target;
         setScrolledToBottom(scrollTop + clientHeight >= scrollHeight - AT_BOTTOM_THRESHOLD_PIXELS);
     }
-    
-    
-    const [filter, setFilter] = useState<PlayerIndex | null>(null);
-    useEffect(() => {
-        const stateListener: StateListener = (type) => {
-            if (GAME_MANAGER.state.stateType === "game" && type === "filterUpdate") {
-                setFilter(GAME_MANAGER.state.chatFilter);
-            }
-        }
-
-        if (GAME_MANAGER.state.stateType === "game") {
-            setFilter(GAME_MANAGER.state.chatFilter);
-        }
-
-        GAME_MANAGER.addStateListener(stateListener);
-        return () => GAME_MANAGER.removeStateListener(stateListener);
-    }, [setFilter]);
 
     // Update with new messages
     useEffect(() => {
@@ -108,7 +94,7 @@ function ChatMessageSection(): ReactElement {
 
         GAME_MANAGER.addStateListener(stateListener);
         return () => GAME_MANAGER.removeStateListener(stateListener);
-    }, [filter, setMessages]);
+    }, [props.filter, setMessages]);
 
     // Keep chat scrolled to bottom
     useEffect(() => {
@@ -116,13 +102,13 @@ function ChatMessageSection(): ReactElement {
             const el = self.current;
             el.scrollTop = el.scrollHeight;
         }
-    }, [self, messages, filter, scrolledToBottom])
+    }, [self, messages, props.filter, scrolledToBottom])
 
     //scroll chat to bottom when filter is shut off or loaded
     useEffect(() => {
         if (self.current === null) return;
         self.current.scrollTop = self.current.scrollHeight;
-    }, [filter])
+    }, [props.filter])
 
     
 
@@ -133,7 +119,7 @@ function ChatMessageSection(): ReactElement {
                 if(msg.type === "playerDied") 
                     return true;
                 const msgtxt = translateChatMessage(msg, GAME_MANAGER.getPlayerNames());
-                return filter === null || msg.type === "phaseChange" || msgtxt.includes(GAME_MANAGER.getPlayerNames()[filter]);
+                return props.filter === null || msg.type === "phaseChange" || msgtxt.includes(GAME_MANAGER.getPlayerNames()[props.filter]);
             }).map((msg, index) => {
                 return <ChatElement key={index} message={msg}/>;
             })}
