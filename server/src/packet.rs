@@ -77,7 +77,9 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     YourPlayerIndex{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
-    Phase{phase: PhaseType, day_number: u8, seconds_left: u64},
+    Phase{phase: PhaseType, day_number: u8},
+    #[serde(rename_all = "camelCase")]
+    PhaseTimeLeft{seconds_left: u64},
     #[serde(rename_all = "camelCase")]
     PlayerOnTrial{player_index: PlayerIndex},
 

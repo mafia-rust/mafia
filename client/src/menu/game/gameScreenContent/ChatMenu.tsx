@@ -85,6 +85,11 @@ function ChatMessageSection(): ReactElement {
                 setFilter(GAME_MANAGER.state.chatFilter);
             }
         }
+
+        if (GAME_MANAGER.state.stateType === "game") {
+            setFilter(GAME_MANAGER.state.chatFilter);
+        }
+
         GAME_MANAGER.addStateListener(stateListener);
         return () => GAME_MANAGER.removeStateListener(stateListener);
     }, [setFilter]);
@@ -95,6 +100,10 @@ function ChatMessageSection(): ReactElement {
             if (GAME_MANAGER.state.stateType === "game" && type === "addChatMessages") {
                 setMessages(GAME_MANAGER.state.chatMessages)
             }
+        }
+
+        if (GAME_MANAGER.state.stateType === "game") {
+            setMessages(GAME_MANAGER.state.chatMessages)
         }
 
         GAME_MANAGER.addStateListener(stateListener);

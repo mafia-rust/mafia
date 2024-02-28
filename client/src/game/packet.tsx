@@ -76,8 +76,10 @@ export type ToClientPacket = {
     type: "phase",
     phase: Phase, 
     dayNumber: number, 
-    secondsLeft: number
 } | {
+    type: "phaseTimeLeft",
+    secondsLeft: number
+} |{
     type: "playerOnTrial",
     playerIndex: PlayerIndex
 } | {

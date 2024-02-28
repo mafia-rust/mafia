@@ -1,23 +1,7 @@
-
 .game-modes-editor {
     display: flex;
-    position: absolute;
-    top: 5%;
-    left: 5%;
-    width: 90%;
-    max-width: 90%;
-    height: 90%;
-    max-height: 90%;
-    background-color: var(--background-color);
-    border: 0.13rem solid var(--primary-border-color);
-    border-radius: 2rem;
-    border-right-color: black;
-    border-bottom-color: black;
-    scrollbar-width: none;
     flex-direction: column;
-    padding: 2rem;
-    gap: 2rem;
-    overflow-y: auto;
+    gap: 1rem;
 }
 
 .game-modes-editor > header {
@@ -56,14 +40,6 @@
     flex-grow: 1;
     gap: 1rem;
     max-width: 100%;
-}
-
-.game-modes-editor .close-button {
-    position: fixed;
-    padding: 0;
-    top: 8%;
-    right: 8%;
-    border-radius: .5rem;
 }
 
 .game-modes-editor .save-menu {

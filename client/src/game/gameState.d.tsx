@@ -80,17 +80,20 @@ export default GameState;
 export type PlayerIndex = number;
 export type PlayerID = number;
 export type Verdict = "innocent"|"guilty"|"abstain";
-export type Phase = "morning" | "discussion" | "voting" | "testimony" | "judgement" | "evening" | "night"
+export type Phase = "briefing" | "obituary" | "discussion" | "nomination" | "testimony" | "judgement" | "finalWords" | "dusk" |  "night"
+
 
 export type ChatGroup = "all" | "dead" | "mafia" | "cult" | "jail" | "interview";
 
 export type PhaseTimes = {
-    "morning": number,
+    "briefing": number,
+    "obituary": number,
     "discussion": number,
-    "voting": number,
+    "nomination": number,
     "testimony": number,
     "judgement": number,
-    "evening": number,
+    "finalWords": number,
+    "dusk": number,
     "night": number,
 }
 export type Tag =

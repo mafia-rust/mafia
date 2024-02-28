@@ -56,13 +56,16 @@
     "day": {
         "link": "standard/phases_and_timeline"
     },
-    "phase.morning": {
+    "phase.briefing": {
+        "link": "standard/phases_and_timeline"
+    },
+    "phase.obituary": {
         "link": "standard/phases_and_timeline"
     },
     "phase.discussion": {
         "link": "standard/phases_and_timeline"
     },
-    "phase.voting": {
+    "phase.nomination": {
         "link": "standard/phases_and_timeline"
     },
     "phase.testimony": {
@@ -71,7 +74,10 @@
     "phase.judgement": {
         "link": "standard/phases_and_timeline"
     },
-    "phase.evening": {
+    "phase.finalWords": {
+        "link": "standard/phases_and_timeline"
+    },
+    "phase.dusk": {
         "link": "standard/phases_and_timeline"
     },
     "phase.night": {

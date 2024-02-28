@@ -462,14 +462,15 @@
     "judgement.cannotVote.onTrial": "You're on trial!",
     "judgement.cannotVote.dead": "You can't vote because you're dead",
 
-    "phase.morning": "Morning",
+    "phase.briefing": "Briefing",
+    "phase.obituary": "Obituary",
     "phase.discussion": "Discussion",
-    "phase.voting": "Voting",
+    "phase.nomination": "Nomination",
     "phase.testimony": "Testimony",
+    "phase.testimony:var.0": "Trial",
     "phase.judgement": "Judgement",
-    "phase.judgement:var.0": "Trial",
-    "phase.evening": "Evening",
-    "phase.evening:var.0": "Final words",
+    "phase.finalWords": "Final Words",
+    "phase.dusk": "Dusk",
     "phase.night": "Night",
     "phase.night:var.0": "Nighttime",
 
@@ -486,7 +487,7 @@
     "chatMessage.playerLost":"\\0 lost! They were the \\1.",
     "chatMessage.playerQuit": "\\0 has quit the game and will certainly die at the end of the next night.",
 
-    "chatMessage.trialInformation":"\\0 votes needed for the \\1 trials left today.",
+    "chatMessage.trialInformation":"\\0 votes are needed for a trial. There are \\1 trials left today.",
     "chatMessage.voted":"\\0 voted for \\1.",
     "chatMessage.voted.cleared":"\\0 decided not to vote.",
     "chatMessage.playerOnTrial":"\\0 is on trial.",
@@ -597,7 +598,7 @@
     "wiki.article.standard.interview.title": "Interview",
     "wiki.article.standard.interview.text": "A journalist can interview a player during the night, allowing the journalist to speak with them. The player being interviewed may not know who the journalist is, but everyone knows the journalist is on the town team.",
     "wiki.article.standard.journal.title": "Journal",
-    "wiki.article.standard.journal.text": "The journalist has a journal which is posted publicly every morning the journalist chooses to. Everyone knows the journal was written by the journalist so they know the information is trustworthy. The journalist may interview a player each night to gain information to include in the journal.",
+    "wiki.article.standard.journal.text": "The journalist has a journal which is posted publicly every obituary the journalist chooses to. Everyone knows the journal was written by the journalist so they know the information is trustworthy. The journalist may interview a player each night to gain information to include in the journal.",
     "wiki.article.standard.forged.title": "Forged",
     "wiki.article.standard.forged.text": "A player who is forged had their alibi and role changed by the forger on their grave.",
     "wiki.article.standard.fullMoon.title": "Full Moon",
@@ -666,7 +667,7 @@
     "wiki.article.standard.silenced.title:var.0": "Silences",
     "wiki.article.standard.silenced.title:var.1": "Silencer",
     "wiki.article.standard.silenced.title:var.2": "Silencing",
-    "wiki.article.standard.silenced.text": "A player who is silenced can not talk or otherwise communicate during that day, and they can not vote for players during the voting phase. They can still vote during the judgement phase. If the silenced player is put on trial, they still can't talk. If the players are talking out loud, silenced players should not speak or use any type of communication, including signals or facial expressions. If a player can't use chat, they are not allowed to communicate.\n\n A Blackmailer can silence a player each night.",
+    "wiki.article.standard.silenced.text": "A player who is silenced can not talk or otherwise communicate during that day, and they can not vote for players during the nomination phase. They can still vote during the judgement phase. If the silenced player is put on trial, they still can't talk. If the players are talking out loud, silenced players should not speak or use any type of communication, including signals or facial expressions. If a player can't use chat, they are not allowed to communicate.\n\n A Blackmailer can silence a player each night.",
     "wiki.article.standard.friends.title": "Friends",
     "wiki.article.standard.friends.text": "A Seer's result which indicates that the two players they visited can win together.",
     "wiki.article.standard.enemies.title": "Enemies",
@@ -742,7 +743,7 @@
 
     "wiki.article.standard.phases_and_timeline.title":"Phases",
     "wiki.article.standard.phases_and_timeline.title:var.0":"Phase",
-    "wiki.article.standard.phases_and_timeline.text":"The game is always in a phase. Phases run in this order:\n\n### Night\nThis is when most roles use their abilities. Chat is closed at night so most players can not communicate with each other. Some roles have abilities that allow them to communicate with others at night such as the medium, who can talk to the dead, or the mafia, who can talk with each other.\n\n### Morning\nPlayers see who died last night, their alibi, and any death notes that were placed on the body. \n\n### Discussion\nPlayers discuss information they have to try to find out who the evil players are, or if they’re evil themselves, pretend to be a townie. Evil players will often try to throw out red herrings or pin the blame on someone else.\n\n### Voting\nPlayers vote to put a player on trial, but this doesn’t always mean that player is going to be killed. The players need a majority of the votes in order to put someone onto trial. If the voting phase ends before a majority is reached, it goes directly to night after. There can be a maximum of three trials during each day.\n\n### Testimony\nThis phase comes after voting only if a player was voted onto trial. The player on trial gives their testimony while everyone else stays quiet. Usually the player on trial will claim a role and post their alibi here.\n\nIf you have been voted for a trial, don’t give up. Even if you’re evil, you can lie your way out of getting hanged.\n### Judgment\nThis phase comes after testimony. Everyone votes either innocent, or guilty. If there are more guilty votes than innocent votes, the player on trial is killed. Players can also choose to abstain. The judgement period is usually how the town gets evil players killed.\n\n### Evening\nA brief period before night. If someone was voted guilty today, this is usually where they get to say their final words.\n\nWhen there are three or less players alive, each phase is half as long as it usually is.",
+    "wiki.article.standard.phases_and_timeline.text":"The game is always in a phase. Phases run in this order:\n\n### Night\nThis is when most roles use their abilities. Chat is closed at night so most players can not communicate with each other. Some roles have abilities that allow them to communicate with others at night such as the medium, who can talk to the dead, or the mafia, who can talk with each other.\n\n### Obituary\nPlayers see who died last night, their alibi, and any death notes that were placed on the body. \n\n### Discussion\nPlayers discuss information they have to try to find out who the evil players are, or if they’re evil themselves, pretend to be a townie. Evil players will often try to throw out red herrings or pin the blame on someone else.\n\n### Nomination\nPlayers vote to put a player on trial, but this doesn’t always mean that player is going to be killed. The players need a majority of the votes in order to put someone onto trial. If the nomination phase ends before a majority is reached, it goes directly to night after. There can be a maximum of three trials during each day.\n\n### Testimony\nThis phase comes after nomination only if a player was voted onto trial. The player on trial gives their testimony while everyone else stays quiet. Usually the player on trial will claim a role and post their alibi here.\n\nIf you have been voted for a trial, don’t give up. Even if you’re evil, you can lie your way out of getting hanged.\n### Judgment\nThis phase comes after testimony. Everyone votes either innocent, or guilty. If there are more guilty votes than innocent votes, the player on trial is killed. Players can also choose to abstain. The judgement period is usually how the town gets evil players killed.\n\n### Final Words\nA brief period before night. If someone was voted guilty today, this is usually where they get to say their final words.\n\nWhen there are three or less players alive, each phase is half as long as it usually is.",
     
     "wiki.article.standard.priority.title":"Priority",
     "wiki.article.standard.priority.title:var.0":"Priorities",
@@ -782,7 +783,7 @@
 
     "wiki.article.role.mayor.guide": "You can choose to reveal during the day to make your vote count as three votes. When you reveal, everyone is told you are the mayor.",
     "wiki.article.role.mayor.abilities":"* Reveal during the day to triple your voting power, showing everyone that you are the Mayor",
-    "wiki.article.role.mayor.attributes":"* You get 3 votes during both voting and judgement after you reveal",
+    "wiki.article.role.mayor.attributes":"* You get 3 votes during both nomination and judgement after you reveal",
     "wiki.article.role.mayor.extra": "* If you are converted to a different role, players will still see that you are the mayor\n* Revealing does not increase the number of votes required to put someone on trial",
 
     "wiki.article.role.transporter.guide": "You can select two players at night. If somebody else tries to visit the first player, they will instead visit the second player, and vice versa. In general, you want to transport innocent players with suspicious ones to divert a potential attack onto the suspicious player.",
@@ -861,7 +862,7 @@
     "wiki.article.role.retributionist.extra":"* You are immune to getting roleblocked and possession\n* You can force your target to visit any living player\n* All your visits are astral except the first\n* If you do not end up possessing that player you select, you can select them the again",
 
     "wiki.article.role.journalist.guide": "During the day, you may select one player to interview each night. You can talk with the player you interview at night. Write a public journal to have it posted at the start of every day. If a player you interview doesn't tell you their alibi then they are likely evil, and you should post that in your journal.",
-    "wiki.article.role.journalist.abilities":"* Your journal is posted publicly every morning while you alive if it is set to public\n* During the day you may choose a player to interview that night",
+    "wiki.article.role.journalist.abilities":"* Your journal is posted publicly every obituary while you alive if it is set to public\n* During the day you may choose a player to interview that night",
     "wiki.article.role.journalist.attributes":"*  You can talk with the player you interview at night\n* Your journal is posted anonymously, nobody knows who wrote it\n* Players you interview do not see your name on your messages, instead, the messages you send appear to be from the journalist.",
     "wiki.article.role.journalist.extra": "* If there is more than one Journalist with a public journal, the journals are posted in player order\n* Your journal does not get posted if you are silenced or roleblocked\n* If you interview a cultist or mafia member, their teammates are told that the player is being interviewed",
 
@@ -876,7 +877,7 @@
     "wiki.article.role.veteran.extra":"* While you have 0 alerts left, you can not select yourself\n* You are immune to getting roleblocked and possession",
 
     "wiki.article.role.deputy.guide":"Once per game, you may select a player during the day to attack them. If you kill a townie, you instantly leave town. If you attack someone and they survive it is likely that they are a role that is armored. Most roles that are armored are evil.",
-    "wiki.article.role.deputy.abilities":"* Once per game, during the discussion or voting phase after day 1, you may choose a player to attack.",
+    "wiki.article.role.deputy.abilities":"* Once per game, during the discussion or nomination phase after day 1, you may choose a player to attack.",
     "wiki.article.role.deputy.attributes":"* If the player you attack has defense, they are told they were attacked by a deputy\n* When you kill someone, everyone is told a deputy shot someone",
     "wiki.article.role.deputy.extra":"* You only have a basic attack\n* You can not attack day 1",
 
@@ -897,7 +898,7 @@
     
     "wiki.article.role.blackmailer.guide": "You can select a player to silence. The silenced player can't speak during the next day, and they can't vote during the next day. You should choose talkative players who might speak out against a mafia member, or players who have information that you want to suppress.",
     "wiki.article.role.blackmailer.abilities":"* Visit a player to silence them during the next day",
-    "wiki.article.role.blackmailer.attributes":"* Silenced players can not vote during the voting phase\n* Silenced players can not talk in chat or out loud during the entire next day",
+    "wiki.article.role.blackmailer.attributes":"* Silenced players can not vote during the nomination phase\n* Silenced players can not talk in chat or out loud during the entire next day",
     "wiki.article.role.blackmailer.extra":"* The silenced player is no longer be silenced at the start of the next night\n* You cannot select other mafia members",
 
     "wiki.article.role.consigliere.guide": "You can select a player to learn their role, who they visited, and who visited them. You should communicate the information you get to the rest of the mafia.",
@@ -942,7 +943,7 @@
 
     "wiki.article.role.doomsayer.guide": "Guess the role of three different players to win. If you guess the role of three different living players correctly, you attack all three of them, and leave town. You should listen to what people claim and try to push for more people to claim roles.",
     "wiki.article.role.doomsayer.abilities":"* Use the Doomsayer menu to guess the role of three different living players in one night, attacking them and winning",
-    "wiki.article.role.doomsayer.attributes":"* When you win, you leave town at the start of the next morning\n* You have to guess the exact role of townies, but you only need to guess the faction of all other roles\n* You can't try to guess town investigative roles\n* When there are not enough players left for you to guess, you convert to a jester\n* You have an indirect, protection-piercing attack",
+    "wiki.article.role.doomsayer.attributes":"* When you win, you leave town at the start of the next obituary\n* You have to guess the exact role of townies, but you only need to guess the faction of all other roles\n* You can't try to guess town investigative roles\n* When there are not enough players left for you to guess, you convert to a jester\n* You have an indirect, protection-piercing attack",
     "wiki.article.role.doomsayer.extra":"* Your three guesses must be three different players\n* You will still win, even if the players you guessed correctly don't die\n* You do not visit when you attack\n* You can't try to guess a martyr",
 
     "wiki.article.role.politician.guide":"* If the town would win, instead you win and they all die. Try to help to the town to win while staying alive.",

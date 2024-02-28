@@ -5,12 +5,12 @@ import { OutlineListSelector } from "../components/OutlineSelector";
 import { RoleList, RoleOutline } from "../game/roleListState.d";
 import translate from "../game/lang";
 import "./gameModesEditor.css";
-import Anchor from "./Anchor";
 import PhaseTimesSelector from "../components/PhaseTimeSelector";
 import { PhaseTimes } from "../game/gameState.d";
 import DisabledRoleSelector from "../components/DisabledRoleSelector";
 import { Role } from "../game/roleState.d";
 import "../components/selectorSection.css";
+import { defaultPhaseTimes } from "../game/gameState";
 
 
 export default function GameModesEditor(): ReactElement {
@@ -20,15 +20,7 @@ export default function GameModesEditor(): ReactElement {
     const [currentSettingsName, setCurrentRoleListName] = useState<string>("");
 
     const [currentRoleList, setCurrentRoleList] = useState<RoleList>([]);
-    const [currentPhaseTimes, setCurrentPhaseTimes] = useState<PhaseTimes>({
-        morning: 15,
-        discussion: 46,
-        voting: 30,
-        testimony: 24,
-        judgement: 20,
-        evening: 10,
-        night: 37
-    });
+    const [currentPhaseTimes, setCurrentPhaseTimes] = useState<PhaseTimes>(defaultPhaseTimes());
     const [currentDisabledRoles, setCurrentDisabledRoles] = useState<Role[]>([]);
 
 
@@ -89,15 +81,7 @@ export default function GameModesEditor(): ReactElement {
         const gameMode = savedGameModes.get(settingsName);
 
         setCurrentRoleListName(settingsName);
-        setCurrentPhaseTimes(gameMode?.phaseTimes ?? {
-            morning: 15,
-            discussion: 46,
-            voting: 30,
-            testimony: 24,
-            judgement: 20,
-            evening: 10,
-            night: 37
-        });
+        setCurrentPhaseTimes(gameMode?.phaseTimes ?? defaultPhaseTimes());
         setCurrentDisabledRoles(gameMode?.disabledRoles ?? []);
         setCurrentRoleList(gameMode?.roleList ?? []);
     }
@@ -137,9 +121,6 @@ export default function GameModesEditor(): ReactElement {
 
     
     return <div className="game-modes-editor">
-        <button className="material-icons-round close-button" onClick={()=>{Anchor.clearCoverCard()}}>
-            close
-        </button>
         <header>
             <h1>{translate("menu.settings.gameSettingsEditor")}</h1>
         </header>

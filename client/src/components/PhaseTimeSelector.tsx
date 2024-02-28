@@ -20,12 +20,14 @@ export default function PhaseTimesSelector(props: {
 
     return <section className="will-menu-colors selector-section">
         <h2>{translate("menu.lobby.timeSettings")}</h2>
-        <PhaseTimeSelector disabled={props.disabled} phase={"morning"} time={props.phaseTimes["morning"]} onChange={onChange}/>
+        <PhaseTimeSelector disabled={props.disabled} phase={"briefing"} time={props.phaseTimes["briefing"]} onChange={onChange}/>
+        <PhaseTimeSelector disabled={props.disabled} phase={"obituary"} time={props.phaseTimes["obituary"]} onChange={onChange}/>
         <PhaseTimeSelector disabled={props.disabled} phase={"discussion"} time={props.phaseTimes["discussion"]} onChange={onChange}/>
-        <PhaseTimeSelector disabled={props.disabled} phase={"voting"} time={props.phaseTimes["voting"]} onChange={onChange}/>
+        <PhaseTimeSelector disabled={props.disabled} phase={"nomination"} time={props.phaseTimes["nomination"]} onChange={onChange}/>
         <PhaseTimeSelector disabled={props.disabled} phase={"testimony"} time={props.phaseTimes["testimony"]} onChange={onChange}/>
         <PhaseTimeSelector disabled={props.disabled} phase={"judgement"} time={props.phaseTimes["judgement"]} onChange={onChange}/>
-        <PhaseTimeSelector disabled={props.disabled} phase={"evening"} time={props.phaseTimes["evening"]} onChange={onChange}/>
+        <PhaseTimeSelector disabled={props.disabled} phase={"finalWords"} time={props.phaseTimes["finalWords"]} onChange={onChange}/>
+        <PhaseTimeSelector disabled={props.disabled} phase={"dusk"} time={props.phaseTimes["dusk"]} onChange={onChange}/>
         <PhaseTimeSelector disabled={props.disabled} phase={"night"} time={props.phaseTimes["night"]} onChange={onChange}/>
     </section>
 }
