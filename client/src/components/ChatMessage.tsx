@@ -4,7 +4,7 @@ import React from "react";
 import GAME_MANAGER, { find, replaceMentions } from "..";
 import StyledText from "./StyledText";
 import "./chatMessage.css"
-import { Phase, PlayerIndex, Verdict } from "../game/gameState.d";
+import { ChatGroup, Phase, PlayerIndex, Verdict } from "../game/gameState.d";
 import { Role } from "../game/roleState.d";
 import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
@@ -91,7 +91,8 @@ export function translateChatMessage(message: ChatMessage, playerNames?: string[
 
     switch (message.type) {
         case "normal":
-            const icon = translateChecked("chatGroup."+message.chatGroup+".icon");
+            
+            const icon = message.chatGroup !== "all" ? translateChecked("chatGroup."+message.chatGroup+".icon") : null;
 
             if(message.messageSender.type === "player"){
                 return (icon??"")+translate("chatMessage.normal",
@@ -360,7 +361,7 @@ export type ChatMessage = {
     type: "normal", 
     messageSender: MessageSender,
     text: string, 
-    chatGroup: "all" | "dead" | "mafia" | "cult" | "jail" | "interview"
+    chatGroup: ChatGroup;
 } | {
     type: "whisper", 
     fromPlayerIndex: PlayerIndex, 

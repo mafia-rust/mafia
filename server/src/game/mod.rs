@@ -320,6 +320,11 @@ impl Game {
             day_number: self.phase_machine.day_number,
             seconds_left: self.phase_machine.time_remaining.as_secs()
         });
+        for player in PlayerReference::all_players(self){
+            player.send_packet(self, ToClientPacket::YourSendChatGroups { send_chat_groups: 
+                player.get_current_send_chat_groups(self)
+            });
+        }
     }
 
     pub fn add_message_to_chat_group(&mut self, group: ChatGroup, mut message: ChatMessage){

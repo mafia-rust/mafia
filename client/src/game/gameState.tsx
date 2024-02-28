@@ -66,6 +66,8 @@ export function createGameState(): GameState {
         },
 
         ticking: true,
+
+        sendChatGroups: [],
     }
 }
 

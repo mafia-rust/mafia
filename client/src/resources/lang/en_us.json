@@ -403,6 +403,8 @@
     "tag.doused":"🔥",
     "tag.dead":"💀",
 
+    "noAll.icon": "🔇",
+    "chatGroup.all.icon": "🔊",
     "chatGroup.mafia.icon": "🌹",
     "chatGroup.cult.icon": "🕯️",
     "chatGroup.jail.icon": "🔒",
@@ -608,6 +610,7 @@
     "wiki.article.standard.select.title:var.0":"Selects",
     "wiki.article.standard.select.title:var.1":"Selecting",
     "wiki.article.standard.select.title:var.2":"Selected",
+    "wiki.article.standard.select.title:var.3":"Selection",
     "wiki.article.standard.select.text": "Selecting is when you click the button under a player at night in order to attempt to use your ability on them. Selecting determines who you will visit before it becomes affected by other effects. By default, you can select a number of players up to as many targets as your role can have. Most roles can not select themselves or dead players, and some roles have further restrictions on selections. Most mafia members and cultists can not select other players on their team.",
 
     "wiki.article.standard.visit.title": "Visit",
@@ -722,7 +725,7 @@
     "wiki.article.standard.outlineList.text": "The outline list defines what roles are in the game. At the start of a game, each player gets assigned to a role outline. Then, their role is generated randomly from that role outline.",
     "wiki.article.standard.chatGroup.title": "Chat Group",
     "wiki.article.standard.chatGroup.title:var.0": "Chatgroup",
-    "wiki.article.standard.chatGroup.text": "Messages are sent to chat groups. The chat groups are:\n - All (no icon)\n - Dead 💀\n - Mafia 🌹\n - Cult 🕯️\n - Jail 🔒\n - Interview 📝\n\n Players can be in multiple chat groups at once, or even read chat groups they are not in.",
+    "wiki.article.standard.chatGroup.text": "All messages are either private or sent one of these chat groups\n - All 🔊 (The icon doesn't display next to messages, You are allowed to speak out loud if you can send to \"All\" chat) \n - Dead 💀\n - Mafia 🌹\n - Cult 🕯️\n - Jail 🔒\n - Interview 📝\n\n Players can be in multiple chat groups at once, or even read chat groups they are not in.\n - 🔇 Means you are not in the \"All\" chat group and are *not allowed to speak out loud*\n - 🔮 means that a living player sent a message to the dead chat group",
     "wiki.article.standard.fastForward.title": "Fast Forward",
     "wiki.article.standard.fastForward.title:var.0": "Fast Forwarded",
     "wiki.article.standard.fastForward.title:var.1": "Fast Forwarding",

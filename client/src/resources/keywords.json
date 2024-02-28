@@ -42,6 +42,17 @@
     "random.gay": { "style": "keyword-pride","replacement": "random.gay","link": "role/transporter"},
     "random.trans": { "style": "keyword-trans","replacement": "random.trans","link": "role/transporter"},
 
+
+    "noAll.icon": {"link":"standard/chatGroup"},
+    "chatGroup.all.icon": {"link":"standard/chatGroup"},
+    "chatGroup.mafia.icon": {"link":"standard/chatGroup"},
+    "chatGroup.cult.icon": {"link":"standard/chatGroup"},
+    "chatGroup.jail.icon": {"link":"standard/chatGroup"},
+    "chatGroup.interview.icon": {"link":"standard/chatGroup"},
+    "chatGroup.dead.icon": {"link":"standard/chatGroup"},
+    "messageSender.livingToDead.icon": {"link":"standard/chatGroup"},
+
+
     "day": {
         "link": "standard/phases_and_timeline"
     },
