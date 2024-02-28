@@ -28,7 +28,14 @@ impl TestGame {
     /// * When the specified day and phase is in the past.
     /// * If this would take the game to a day past the maximum day
     pub fn skip_to(&mut self, phase: PhaseType, day_number: u8) -> &PhaseState {
-        if day_number == 1 && phase < PhaseType::FinalWords {
+        if day_number == 1 && (
+            phase == PhaseType::Obituary ||
+            phase == PhaseType::Discussion || 
+            phase == PhaseType::Nomination ||
+            phase == PhaseType::Judgement ||
+            phase == PhaseType::Testimony ||
+            phase == PhaseType::FinalWords
+        ){
             panic!("There is no {:?} 1, skip_to", phase);
         }
         // If the phase & day is in the past

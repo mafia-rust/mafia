@@ -68,19 +68,18 @@ pub use mafia_server::packet::ToServerPacket;
 
 #[test]
 fn medium_receives_dead_messages_from_jail() {
-    kit::scenario!(game where
+    kit::scenario!(game in Night 1 where
         medium: Medium,
         jailor: Jailor,
         townie: Sheriff,
         mafioso: Mafioso
     );
-    game.next_phase();
     mafioso.set_night_target(townie);
     game.skip_to(PhaseType::Nomination, 2);
     
     jailor.day_target(medium);
 
-    game.next_phase();
+    game.skip_to(PhaseType::Night, 2);
     let dead_message = "Hello medium!! Are you there!?";
     townie.send_message(dead_message);
 
@@ -379,15 +378,13 @@ fn mayor_reveals_after_they_vote(){
 
 #[test]
 fn retributionist_basic(){
-    kit::scenario!(game where
+    kit::scenario!(game in Night 1 where
         ret: Retributionist,
         sher1: Sheriff,
         sher2: Sheriff,
         mafioso: Mafioso,
         jester: Jester
     );
-
-    game.next_phase();
 
     mafioso.set_night_target(sher1);
     game.skip_to(PhaseType::Night, 2);
@@ -429,7 +426,7 @@ fn retributionist_basic(){
 
 #[test]
 fn necromancer_basic(){
-    kit::scenario!(game where
+    kit::scenario!(game in Night 1 where
         ret: Necromancer,
         sher: Sheriff,
         consigliere: Consigliere,
@@ -438,7 +435,6 @@ fn necromancer_basic(){
         vigilante: Vigilante
     );
     
-    game.next_phase();
     mafioso.set_night_target(sher);
     game.skip_to(PhaseType::Night, 2);
     vigilante.set_night_target(consigliere);
@@ -478,7 +474,7 @@ fn necromancer_basic(){
 
 #[test]
 fn witch_basic(){
-    kit::scenario!(game where
+    kit::scenario!(game in Night 1 where
         witch: Witch,
         sher: Sheriff,
         consigliere: Consigliere,
@@ -486,7 +482,6 @@ fn witch_basic(){
         jester: Jester
     );
 
-    game.next_phase();
     assert!(witch.set_night_targets(vec![sher, mafioso]));
     game.next_phase();
     assert_contains!(witch.get_messages(), ChatMessage::TargetsMessage{message: Box::new(
@@ -618,7 +613,7 @@ fn executioner_instantly_turns_into_jester(){
 
 #[test]
 fn can_type_in_jail() {
-    kit::scenario!(game where
+    kit::scenario!(game in Dusk 1 where
         jailor: Jailor,
         sheriff: Sheriff
     );
@@ -1008,7 +1003,7 @@ fn cult_wait_for_two_deaths() {
 
 #[test]
 fn bodyguard_gets_single_target_jailed_message() {
-    kit::scenario!(game where
+    kit::scenario!(game in Dusk 1 where
         bg: Bodyguard,
         jailor: Jailor,
         _maf: Mafioso,
@@ -1041,15 +1036,13 @@ fn bodyguard_gets_single_target_jailed_message() {
 
 #[test]
 fn martyr_suicide_ends_game() {
-    kit::scenario!(game where
+    kit::scenario!(game in Night 1 where
         martyr: Martyr,
         player1: Mafioso,
         player2: Sheriff,
         player3: Mafioso,
         player4: Sheriff
     );
-
-    game.next_phase();
 
     assert_contains!(
         player1.get_messages(),
@@ -1077,15 +1070,13 @@ fn martyr_suicide_ends_game() {
 
 #[test]
 fn martyr_roleblocked() {
-    kit::scenario!(game where
+    kit::scenario!(game in Night 1 where
         martyr: Martyr,
         player1: Mafioso,
         player2: Sheriff,
         consort: Consort,
         player4: Sheriff
     );
-
-    game.next_phase();
 
     assert_contains!(
         player1.get_messages(),
@@ -1112,15 +1103,13 @@ fn martyr_roleblocked() {
 
 #[test]
 fn martyr_healed() {
-    kit::scenario!(game where
+    kit::scenario!(game in Night 1 where
         martyr: Martyr,
         player1: Mafioso,
         player2: Sheriff,
         doctor: Doctor,
         player4: Sheriff
     );
-
-    game.next_phase();
 
     assert_contains!(
         player1.get_messages(),

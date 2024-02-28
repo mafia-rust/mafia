@@ -45,6 +45,9 @@
     "day": {
         "link": "standard/phases_and_timeline"
     },
+    "phase.briefing": {
+        "link": "standard/phases_and_timeline"
+    },
     "phase.obituary": {
         "link": "standard/phases_and_timeline"
     },
@@ -61,6 +64,9 @@
         "link": "standard/phases_and_timeline"
     },
     "phase.finalWords": {
+        "link": "standard/phases_and_timeline"
+    },
+    "phase.dusk": {
         "link": "standard/phases_and_timeline"
     },
     "phase.night": {
