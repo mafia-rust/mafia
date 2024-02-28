@@ -120,6 +120,7 @@ function ChatMessageSection(): ReactElement {
     return <div className="message-section" ref={self} onScroll={handleScroll}>
         <div className="message-list">
             {messages.filter((msg)=>{
+                //translateChatMessage errors for this type.
                 if(msg.type === "playerDied") 
                     return true;
                 const msgtxt = translateChatMessage(msg, GAME_MANAGER.getPlayerNames());
