@@ -98,8 +98,6 @@ export default class LargeDoomsayerMenu extends React.Component<LargeDoomsayerMe
     }
 
     renderGuessPicker(index: number){
-        //TODO make so cant guess the same player twice without causing weird problems with HTML
-
         //Cant guess a player 2x
         //cant guess yourself
         //cant guess a dead player (keep in mind a player could possibly appear dead when their not, so maybe keep it so you can guess dead players?)

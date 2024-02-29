@@ -15,7 +15,6 @@
     "townProtective": { "style": "keyword-good","link": "generated/role_set"},
     "townSupport": { "style": "keyword-good","link": "generated/role_set"},
     "townKilling": { "style": "keyword-good","link": "generated/role_set"},
-    "mafiaPower": { "style": "keyword-evil","link": "generated/role_set"},
     "mafiaSupport": { "style": "keyword-evil","link": "generated/role_set"},
     "neutralEvil": { "style": "keyword-neutral","link": "generated/role_set"},
     "neutralKilling": { "style": "keyword-neutral","link": "generated/role_set"},
@@ -31,7 +30,7 @@
     "defense.1": { "style": "keyword-info"},
     "defense.2": { "style": "keyword-info"},
     "defense.3": { "style": "keyword-info"},
-    "dead": { "style": "keyword-dead", "link": "generated/dead"},
+    "dead": { "style": "keyword-dead", "link": "standard/dead"},
     "wiki.article.role.abilities": { "style": "keyword-info","link": "standard/how_to_play"},
     "wiki.article.role.attributes": { "style": "keyword-info","link": "standard/how_to_play"},
     "wiki.article.role.extra": { "style": "keyword-info","link": "standard/how_to_play"},
@@ -43,16 +42,30 @@
     "random.gay": { "style": "keyword-pride","replacement": "random.gay","link": "role/transporter"},
     "random.trans": { "style": "keyword-trans","replacement": "random.trans","link": "role/transporter"},
 
+
+    "noAll.icon": {"link":"standard/chatGroup"},
+    "chatGroup.all.icon": {"link":"standard/chatGroup"},
+    "chatGroup.mafia.icon": {"link":"standard/chatGroup"},
+    "chatGroup.cult.icon": {"link":"standard/chatGroup"},
+    "chatGroup.jail.icon": {"link":"standard/chatGroup"},
+    "chatGroup.interview.icon": {"link":"standard/chatGroup"},
+    "chatGroup.dead.icon": {"link":"standard/chatGroup"},
+    "messageSender.livingToDead.icon": {"link":"standard/chatGroup"},
+
+
     "day": {
         "link": "standard/phases_and_timeline"
     },
-    "phase.morning": {
+    "phase.briefing": {
+        "link": "standard/phases_and_timeline"
+    },
+    "phase.obituary": {
         "link": "standard/phases_and_timeline"
     },
     "phase.discussion": {
         "link": "standard/phases_and_timeline"
     },
-    "phase.voting": {
+    "phase.nomination": {
         "link": "standard/phases_and_timeline"
     },
     "phase.testimony": {
@@ -61,7 +74,10 @@
     "phase.judgement": {
         "link": "standard/phases_and_timeline"
     },
-    "phase.evening": {
+    "phase.finalWords": {
+        "link": "standard/phases_and_timeline"
+    },
+    "phase.dusk": {
         "link": "standard/phases_and_timeline"
     },
     "phase.night": {

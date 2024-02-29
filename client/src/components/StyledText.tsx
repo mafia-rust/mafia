@@ -72,7 +72,6 @@ export default function StyledText(props: {
                 />
             );
         } else {
-            // TODO: This is absolutely terrible. Don't do this.
             (window as any).setWikiSearchPage = (page: WikiArticleLink) => GAME_MANAGER.setWikiArticle(page);
 
             return ReactDOMServer.renderToStaticMarkup(

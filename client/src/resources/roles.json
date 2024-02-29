@@ -1,6 +1,7 @@
 {
     "jailor":{
         "faction": "town",
+        "roleSet": null,
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -23,17 +24,18 @@
                     "type": "player",
                     "player": 7
                 },
-                "text": "I'm the Jailor", 
+                "text": "I'm jester", 
                 "chatGroup": "jail"
             },
             {"type": "jailorDecideExecute","target": 7},
             {"type": "jailorDecideExecute","target": null},
-            {"type": "someoneSurvivedYourAttack"},
-            {"type": "targetJailed"}
+            {"type": "targetJailed"},
+            {"type": "someoneSurvivedYourAttack"}
         ]
     },
     "sheriff": {
         "faction": "town",
+        "roleSet": "townInvestigative",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -46,6 +48,7 @@
     },
     "lookout": {
         "faction": "town",
+        "roleSet": "townInvestigative",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -58,6 +61,7 @@
     },
     "seer": {
         "faction": "town",
+        "roleSet": "townInvestigative",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -65,11 +69,12 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "seerResult", "enemies": true},
-            {"type": "seerResult", "enemies": true}
+            {"type": "seerResult", "enemies": false}
         ]
     },
     "tracker": {
         "faction": "town",
+        "roleSet": "townInvestigative",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -82,6 +87,7 @@
     },
     "psychic": {
         "faction": "town",
+        "roleSet": "townInvestigative",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -94,26 +100,28 @@
     },
     "spy": {
         "faction": "town",
+        "roleSet": "townInvestigative",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["visit","silenced","roleblock","protect","transport","possess"],
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "spyMafiaVisit", "players": [16,17,18]},
-            {"type": "spyMafiaVisit", "players": []},
-            {"type": "spyCultistCount", "count": 0},
-            {"type": "spyCultistCount", "count": 1},
-            {"type": "spyCultistCount", "count": 2},
             {"type": "spyBug", "bug": "silenced"},
             {"type": "spyBug", "bug": "roleblocked"},
             {"type": "spyBug", "bug": "protected"},
             {"type": "spyBug", "bug": "transported"},
-            {"type": "spyBug", "bug": "possessed"}
+            {"type": "spyBug", "bug": "possessed"},
+            {"type": "spyMafiaVisit", "players": [16,17,18]},
+            {"type": "spyMafiaVisit", "players": []},
+            {"type": "spyCultistCount", "count": 0},
+            {"type": "spyCultistCount", "count": 1},
+            {"type": "spyCultistCount", "count": 2}
         ]
     },
     "doctor": {
         "faction": "town",
+        "roleSet": "townProtective",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -127,6 +135,7 @@
     },
     "crusader": {
         "faction": "town",
+        "roleSet": "townProtective",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -134,25 +143,27 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "targetWasAttacked"},
-            {"type": "someoneSurvivedYourAttack"},
             {"type": "youWereProtected"},
+            {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
     },
     "reveler": {
         "faction": "town",
+        "roleSet": "townProtective",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["roleblock","jail"],
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "roleBlocked","playerIndex": true},
-            {"type": "roleBlocked","playerIndex": false}
+            {"type": "roleBlocked","immune": false},
+            {"type": "roleBlocked","immune": true}
         ]
     },
     "trapper": {
         "faction": "town",
+        "roleSet": "townProtective",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -161,7 +172,7 @@
         "chatMessages":[
             {"type": "trapState", "state":{"type":"dismantled"}},
             {"type": "trapState", "state":{"type":"ready"}},
-            {"type": "trapState", "state":{"type":"set"}},
+            {"type": "trapState", "state":{"type":"roleSet"}},
             {"type": "trapperYouAttackedVisitor"},
             {"type": "trapperVisitorsRole", "role": "framer"},
             {"type": "targetWasAttacked"},
@@ -172,6 +183,7 @@
     },
     "bodyguard": {
         "faction": "town",
+        "roleSet": "townProtective",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -186,6 +198,7 @@
     },
     "vigilante": {
         "faction": "town",
+        "roleSet": "townKilling",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -198,6 +211,7 @@
     },
     "veteran": {
         "faction": "town",
+        "roleSet": "townKilling",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -211,6 +225,7 @@
     },
     "deputy": {
         "faction": "town",
+        "roleSet": "townKilling",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -224,6 +239,7 @@
     },
     "escort": {
         "faction": "town",
+        "roleSet": "townSupport",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -236,6 +252,7 @@
     },
     "medium": {
         "faction": "town",
+        "roleSet": "townSupport",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -265,6 +282,7 @@
     },
     "mayor":{
         "faction": "town",
+        "roleSet": "townSupport",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -276,6 +294,7 @@
     },
     "journalist": {
         "faction": "town",
+        "roleSet": "townSupport",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
@@ -309,6 +328,7 @@
     },
     "transporter":{
         "faction": "town",
+        "roleSet": "townSupport",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -320,22 +340,24 @@
     },
     "retributionist": {
         "faction": "town",
+        "roleSet": "townSupport",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": ["dead","visit","possess","priority","roleLimit"],
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "targetIsPossessionImmune"},
             {"type": "targetsMessage", "message": 
                 {"type": "sheriffResult","suspicious":true}
             },
             {"type": "youWerePossessed", "immune": false},
-            {"type": "youWerePossessed", "immune": true}
+            {"type": "youWerePossessed", "immune": true},
+            {"type": "targetIsPossessionImmune"}
         ]
     },
     "godfather": {
         "faction": "mafia",
+        "roleSet": null,
         "armor": true,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -351,6 +373,7 @@
     },
     "mafioso": {
         "faction": "mafia",
+        "roleSet": null,
         "armor": false,
         "maxCount": 0,
         "largeRoleSpecificMenu": false,
@@ -362,6 +385,7 @@
     },
     "consort": {
         "faction": "mafia",
+        "roleSet": "mafiaSupport",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": true,
@@ -380,6 +404,7 @@
     },
     "blackmailer": {
         "faction": "mafia",
+        "roleSet": "mafiaSupport",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -391,6 +416,7 @@
     },
     "consigliere": {
         "faction": "mafia",
+        "roleSet": "mafiaSupport",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -398,11 +424,12 @@
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type": "consigliereResult", "role": "arsonist", "visitedBy":[31,32], "visited":[33]},
-            {"type": "consigliereResult", "role": "arsonist", "visitedBy":[], "visited":[]}
+            {"type": "consigliereResult", "role": "vigilante", "visitedBy":[], "visited":[]}
         ]
     },
     "janitor": {
         "faction": "mafia",
+        "roleSet": "mafiaSupport",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -418,15 +445,19 @@
     },
     "framer": {
         "faction": "mafia",
+        "roleSet": "mafiaSupport",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["aura","appearedVisit"],
         "canBeConvertedTo": ["godfather"],
-        "chatMessages":[]
+        "chatMessages":[
+            {"type": "sheriffResult","suspicious":true}
+        ]
     },
     "forger": {
         "faction": "mafia",
+        "roleSet": "mafiaSupport",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
@@ -442,6 +473,7 @@
     },
     "witch": {
         "faction": "mafia",
+        "roleSet": "mafiaSupport",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -458,6 +490,7 @@
     },
     "necromancer": {
         "faction": "mafia",
+        "roleSet": "mafiaSupport",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -474,31 +507,33 @@
     },
     "jester": {
         "faction": "neutral",
+        "roleSet": "neutralEvil",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["aura","dead","defense","priority"],
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "someoneSurvivedYourAttack"},
             {"type": "jesterWon"}
         ]
     },
     "executioner": {
         "faction": "neutral",
+        "roleSet": "neutralEvil",
         "armor": true,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["convert","aura","defense"],
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
-            {"type": "youSurvivedAttack"},
-            {"type": "executionerWon"}
+            {"type": "executionerWon"},
+            {"type": "youSurvivedAttack"}
         ]
     },
     
     "politician":{
         "faction": "neutral",
+        "roleSet": "neutralEvil",
         "armor": true,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -510,6 +545,7 @@
     },
     "arsonist": {
         "faction": "neutral",
+        "roleSet": "neutralKilling",
         "armor": true,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -522,6 +558,7 @@
     },
     "werewolf": {
         "faction": "neutral",
+        "roleSet": "neutralKilling",
         "armor": true,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -549,6 +586,7 @@
     },
     "amnesiac": {
         "faction": "neutral",
+        "roleSet": "neutralChaos",
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
@@ -558,6 +596,7 @@
     },
     "martyr": {
         "faction": "neutral",
+        "roleSet": "neutralChaos",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -571,6 +610,7 @@
     },
     "death":{
         "faction": "neutral",
+        "roleSet": "neutralApocalypse",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
@@ -584,6 +624,7 @@
     },
     "doomsayer":{
         "faction": "neutral",
+        "roleSet": "neutralApocalypse",
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
@@ -591,44 +632,55 @@
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
             {"type": "doomsayerWon"},
-            {"type": "doomsayerFailed"},
-            {"type": "someoneSurvivedYourAttack"}
+            {"type": "doomsayerFailed"}
         ]
     },
     "apostle": {
         "faction": "cult",
+        "roleSet": null,
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": ["convert","priority","defense"],
         "canBeConvertedTo": ["zealot","disciple"],
         "chatMessages":[
-            {"type": "yourConvertFailed"},
             {"type": "apostleCanConvertTonight"},
             {"type": "apostleCantConvertTonight"},
             {"type": "cultSacrificesRequired","required": 2},
             {"type": "cultSacrificesRequired","required": 0},
+            {"type": "yourConvertFailed"},
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
     "disciple": {
         "faction": "cult",
+        "roleSet": null,
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "keywords": ["convert"],
         "canBeConvertedTo": ["zealot","apostle"],
-        "chatMessages":[]
+        "chatMessages":[
+            {"type": "apostleCanConvertTonight"},
+            {"type": "apostleCantConvertTonight"},
+            {"type": "cultSacrificesRequired","required": 2},
+            {"type": "cultSacrificesRequired","required": 0}
+        ]
     },
     "zealot": {
         "faction": "cult",
+        "roleSet": null,
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "keywords": ["convert", "defense"],
         "canBeConvertedTo": ["disciple","apostle"],
         "chatMessages":[
-            {"type": "someoneSurvivedYourAttack"}
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "apostleCanConvertTonight"},
+            {"type": "apostleCantConvertTonight"},
+            {"type": "cultSacrificesRequired","required": 2},
+            {"type": "cultSacrificesRequired","required": 0}
         ]
     }
 }

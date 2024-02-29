@@ -1,39 +1,40 @@
 import React from 'react';
 import "./settings.css";
-import translate from '../game/lang';
+import translate, { LANGUAGES, Language, languageName, switchLanguage } from '../game/lang';
 import GAME_MANAGER from '..';
 import Anchor from './Anchor';
 import StartMenu from './main/StartMenu';
 import LoadingScreen from './LoadingScreen';
-import { saveSettings } from '../game/localStorage';
+import { loadSettings, saveSettings } from '../game/localStorage';
 import GameModesEditor from './GameModesEditor';
 
+export type Settings = {
+    volume: number,
+    language: Language,
+}
+
 type SettingsProps = {
-    volume: number, // 0-1
     onVolumeChange: (volume: number) => void
 }
 type SettingsState = {
+    volume: number, // 0-1
+    language: Language
 }
 
 //default settings
-export const DEFAULT_SETTINGS = {
-    volume: 0.5
+export const DEFAULT_SETTINGS: Settings = {
+    volume: 0.5,
+    language: "en_us"
 }
 
-export default class Settings extends React.Component<SettingsProps, SettingsState> {
+export default class SettingsMenu extends React.Component<SettingsProps, SettingsState> {
     constructor(props: SettingsProps) {
         super(props);
 
         this.state = {
+            ...DEFAULT_SETTINGS,
+            ...loadSettings()
         };
-    }
-    componentDidMount() {
-    }
-    componentWillUnmount() {
-    }
-    saveSettings(volume: number) {
-        saveSettings(volume);
-        console.log("Loaded settings: " + JSON.stringify(volume));
     }
     async quitToMainMenu() {
         GAME_MANAGER.leaveGame();
@@ -58,15 +59,32 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
                     </>
                     ) : null
                 }
-                
-                <h2>{translate("menu.settings.volume")}
-                <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
-                    value={this.props.volume} 
-                    onChange={(e) => {
-                        let volume = parseFloat(e.target.value);
-                        this.props.onVolumeChange(volume);
-                    }
-                }/></h2>
+                <section>
+                    <h2>{translate("menu.settings.volume")}</h2>
+                    <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
+                        value={this.state.volume} 
+                        onChange={(e) => {
+                            const volume = parseFloat(e.target.value);
+                            saveSettings({volume});
+                            this.setState({volume}, () => this.props.onVolumeChange(volume));
+                        }
+                    }/>
+                </section>
+                <section>
+                <h2>{translate("menu.settings.language")}</h2>
+                    <select 
+                        name="lang-select" 
+                        defaultValue={loadSettings().language ?? "en_us"}
+                        onChange={e => {
+                            const language = e.target.options[e.target.selectedIndex].value as Language;
+                            switchLanguage(language);
+                            saveSettings({language});
+                            Anchor.reloadContent();
+                        }}
+                    >
+                        {LANGUAGES.map(lang => <option key={lang} value={lang}>{languageName(lang)}</option>)}
+                    </select>
+                </section>
                 <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
                 <button onClick={() => {this.goToRolelistEditor()}}>{translate("menu.settings.gameSettingsEditor")}</button>
                 <button onClick={()=>{
@@ -78,7 +96,7 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
     }
 }
 
-export function RoomCodeButton(props: {}): JSX.Element {
+export function RoomCodeButton(): JSX.Element {
     return <button onClick={() => {
         let code = new URL(window.location.href);
         

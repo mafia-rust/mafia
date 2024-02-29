@@ -71,7 +71,7 @@ impl RoleStateImpl for Medium {
     }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {
-            PhaseType::Morning => {
+            PhaseType::Obituary => {
                 self.seanced_target = None;
                 actor_ref.set_role_state(game, RoleState::Medium(self));
             },

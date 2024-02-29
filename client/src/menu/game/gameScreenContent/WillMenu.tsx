@@ -12,6 +12,8 @@ type WillMenuState = {
     will: string,
     notes: string,
     deathNote: string,
+
+    cantPost: boolean,
 }
 
 export default class WillMenu extends React.Component<{}, WillMenuState> {
@@ -24,6 +26,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
                 will: GAME_MANAGER.state.will,
                 notes: GAME_MANAGER.state.notes,
                 deathNote: GAME_MANAGER.state.deathNote,
+                cantPost: GAME_MANAGER.state.sendChatGroups.length === 0,
             };
         
         this.listener = (type) => {
@@ -42,6 +45,11 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
                     case "yourDeathNote":
                         this.setState({
                             deathNote: GAME_MANAGER.state.deathNote,
+                        });
+                        break;
+                    case "yourSendChatGroups":
+                        this.setState({
+                            cantPost: GAME_MANAGER.state.sendChatGroups.length === 0,
                         });
                         break;
                 }
@@ -104,7 +112,8 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
                     >
                         save
                     </button>
-                    <button 
+                    <button
+                        disabled={this.state.cantPost}
                         className="material-icons-round"
                         onClick={() => this.send(type)}
                         aria-label={translate("menu.will.post")}

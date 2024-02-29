@@ -21,40 +21,46 @@ impl Default for Settings{
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PhaseTimeSettings{
-    pub morning: u64,
+    pub briefing: u64,
+    pub obituary: u64,
     pub discussion: u64,
-    pub voting: u64,
+    pub nomination: u64,
     pub testimony: u64,
     pub judgement: u64,
-    pub evening: u64,
+    pub final_words: u64,
+    pub dusk: u64,
     pub night: u64,
 }
 impl PhaseTimeSettings {
     pub fn get_time_for(&self, phase: PhaseType) -> Duration {
         match phase {
+            PhaseType::Briefing => Duration::from_secs(self.briefing),
             PhaseType::Discussion => Duration::from_secs(self.discussion),
-            PhaseType::Evening => Duration::from_secs(self.evening),
+            PhaseType::FinalWords => Duration::from_secs(self.final_words),
+            PhaseType::Dusk => Duration::from_secs(self.dusk),
             PhaseType::Judgement => Duration::from_secs(self.judgement),
-            PhaseType::Morning => Duration::from_secs(self.morning),
+            PhaseType::Obituary => Duration::from_secs(self.obituary),
             PhaseType::Night => Duration::from_secs(self.night),
             PhaseType::Testimony => Duration::from_secs(self.testimony),
-            PhaseType::Voting => Duration::from_secs(self.voting)
+            PhaseType::Nomination => Duration::from_secs(self.nomination)
         }
     }
     pub fn game_ends_instantly(&self)->bool{
-        [self.morning, self.discussion, self.voting, self.night].iter().all(|t| *t == 0)
+        [self.obituary, self.discussion, self.nomination, self.night, self.dusk].iter().all(|t| *t == 0)
     }
 }
 impl Default for PhaseTimeSettings{
     fn default() -> Self {
         Self{
-            morning: 5, 
-            discussion: 46, 
-            voting: 30, 
-            testimony: 24, 
-            judgement: 20, 
-            evening: 7, 
-            night: 39
+            briefing: 20,
+            obituary: 10,
+            discussion: 100,
+            nomination: 60,
+            testimony: 30,
+            judgement: 30,
+            final_words: 7,
+            dusk: 7,
+            night: 45,
         }
     }
 }

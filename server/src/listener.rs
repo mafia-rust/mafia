@@ -88,7 +88,6 @@ impl Listener{
 
     fn create_lobby(&mut self) -> Option<RoomCode>{
         let Some(room_code) = ((random::<u16>() as usize)..usize::MAX).find(
-            //TODO make this fill up the usize entirely
             |code| !self.lobbies.contains_key(code)
         ) else {
             return None;
@@ -177,7 +176,7 @@ impl Listener{
     pub fn create_player(&mut self, connection: &Connection) {
         self.players.insert(*connection.get_address(), ListenerPlayer::new(connection.clone()));
     }
-    // TODO: DisconnectError enum
+
     pub fn delete_player(&mut self, address: &SocketAddr) -> Result<(), &'static str> {
         let Some(disconnected_player_location) = self.players
             .remove(address)
@@ -222,7 +221,7 @@ impl Listener{
             log!(error "Listener"; "Serde error when receiving message from {}: {}\n{}", &connection.get_address().to_string(), k, message);
         }
     }
-    // TODO sum the error types in this function so they can be handled in on_message
+
     fn handle_message(&mut self, connection: &Connection, message: &Message) -> Result<(), serde_json::Error> {
         let incoming_packet = serde_json::from_str::<ToServerPacket>(message.to_string().as_str())?;
 

@@ -66,7 +66,7 @@ impl RoleStateImpl for Deputy {
         self.bullets_remaining > 0 &&
         actor_ref != target_ref &&
         target_ref.alive(game) && actor_ref.alive(game) &&
-        (PhaseType::Discussion == game.current_phase().phase() || PhaseType::Voting == game.current_phase().phase())
+        (PhaseType::Discussion == game.current_phase().phase() || PhaseType::Nomination == game.current_phase().phase())
     }
     fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         vec![]

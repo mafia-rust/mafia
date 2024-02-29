@@ -44,7 +44,7 @@ impl TestPlayer {
     }
 
     pub fn vote_for_player(&self, target: Option<TestPlayer>) {
-        let &PhaseState::Voting { .. } = game!(self).current_phase() else {return};
+        let &PhaseState::Nomination { .. } = game!(self).current_phase() else {return};
 
         let player_voted_ref = match PlayerReference::index_option_to_ref(game!(self), &target.map(|f|f.0.index())){
             Ok(player_voted_ref) => player_voted_ref,

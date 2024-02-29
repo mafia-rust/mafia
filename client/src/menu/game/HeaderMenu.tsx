@@ -68,6 +68,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                     case "yourRoleState":
                         this.setState({roleState: GAME_MANAGER.state.roleState})
                     break;
+                    case "phaseTimeLeft":
                     case "tick":
                         this.setState({timeLeftMs: GAME_MANAGER.state.timeLeftMs})
                     break;
@@ -85,8 +86,6 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
         GAME_MANAGER.removeStateListener(this.listener);
     }
     renderPhaseSpecific(){
-        // TODO: Change to phase state
-        
         switch(this.state.phase){
             case "judgement":
             if(this.state.playerOnTrial !== null){

@@ -1,3 +1,4 @@
+import { Settings } from "../menu/Settings";
 import { PhaseTimes } from "./gameState.d";
 import { RoleList } from "./roleListState.d";
 import { Role } from "./roleState.d";
@@ -31,17 +32,18 @@ export function loadReconnectData(): {
 
 
 
-export function saveSettings(volume: number) {
+export function saveSettings(settings: Partial<Settings>) {
     localStorage.setItem("settings", JSON.stringify({
-        "volume": volume,
+        ...loadSettings(),
+        ...settings,
     }));
 }
-export function loadSettings(): { volume: number } | null{
-    let data = localStorage.getItem("settings");
-    if (data) {
+export function loadSettings(): Partial<Settings>{
+    const data = localStorage.getItem("settings");
+    if (data !== null) {
         return JSON.parse(data);
     }
-    return null;
+    return {};
 }
 
 

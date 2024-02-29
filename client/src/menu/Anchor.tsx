@@ -1,12 +1,10 @@
 import React from "react";
 import "../index.css";
 import "./anchor.css";
-import GAME_MANAGER from "..";
-import translate from "../game/lang";
-import Settings, { DEFAULT_SETTINGS } from "./Settings";
-import GameScreen from "./game/GameScreen";
-import LobbyMenu from "./lobby/LobbyMenu";
-import { deleteReconnectData, loadSettings, saveSettings } from "../game/localStorage";
+import { switchLanguage } from "../game/lang";
+import SettingsMenu, { DEFAULT_SETTINGS } from "./Settings";
+import { loadSettings } from "../game/localStorage";
+import LoadingScreen from "./LoadingScreen";
 
 type AnchorProps = {
     content: JSX.Element,
@@ -16,6 +14,7 @@ type AnchorState = {
     mobile: boolean,
     content: JSX.Element,
     coverCard: JSX.Element | null,
+    errorCard: JSX.Element | null,
 
     settings_menu: boolean,
     audio: HTMLAudioElement
@@ -38,6 +37,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             mobile: false,
             content: this.props.content,
             coverCard: null,
+            errorCard: null,
 
             settings_menu: false,
             audio: new Audio(),
@@ -46,11 +46,12 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             touchCurrentX: null,
         }
     }
-    
     componentDidMount() {
         Anchor.instance = this;
 
-        Anchor.instance.state.audio.volume = loadSettings()?.volume ?? DEFAULT_SETTINGS.volume;
+        const settings = loadSettings();
+        Anchor.instance.state.audio.volume = settings.volume ?? DEFAULT_SETTINGS.volume;
+        switchLanguage(settings.language ?? "en_us")
 
         window.addEventListener("resize", Anchor.onResize);
         Anchor.onResize();
@@ -70,20 +71,14 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         }
         Anchor.instance.setState({mobile});
     }
-    
-    async handleRejoin(roomCode: number, playerId: number) {
-        this.setState({coverCard: null});
-        const success = await GAME_MANAGER.sendRejoinPacket(roomCode, playerId);
-        if(success){
-            if (GAME_MANAGER.state.stateType === "lobby")
-                    Anchor.setContent(<LobbyMenu/>)
-            else if(GAME_MANAGER.state.stateType === "game")
-                Anchor.setContent(GameScreen.createDefault())
-        }
-    }
-    handleCancelRejoin() {
-        this.setState({coverCard: null});
-        deleteReconnectData();
+
+
+    static reloadContent() {
+        const content = Anchor.instance.state.content;
+
+        Anchor.instance.setState({content: <LoadingScreen type="default"/>}, () => {
+            Anchor.setContent(content);
+        });
     }
 
     static playAudioFile(src: string | null, timeLeftSeconds?: number) {
@@ -184,10 +179,8 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             <button className="material-icons-round settings-button" onClick={() => {
                 this.setState({settings_menu: !this.state.settings_menu});
             }}>menu</button>
-            {this.state.settings_menu && <Settings 
-                volume={this.state.audio.volume} 
+            {this.state.settings_menu && <SettingsMenu 
                 onVolumeChange={(volume) => {
-                    saveSettings(volume);
                     Anchor.instance.state.audio.volume = volume;
                     this.setState({
                         audio: this.state.audio
@@ -195,34 +188,35 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
                 }}
             />}
             {this.state.content}
-            {this.state.coverCard}
+            {this.state.coverCard &&
+                <div className="anchor-cover-card-background-cover">
+                    <div className="anchor-cover-card">
+                        <button className="material-icons-round close-button" onClick={()=>{
+                            Anchor.clearCoverCard()
+                        }}>
+                            close
+                        </button>
+                        <div className="anchor-cover-card-content">
+                            {this.state.coverCard}
+                        </div>
+                    </div>
+                </div>
+            }
+            {this.state.errorCard}
         </div>
     }
 
     public static setContent(content: JSX.Element){
         Anchor.instance.setState({content : content});
     }
-    public static setCoverCard(coverCard: JSX.Element){
-        Anchor.instance.setState({coverCard : coverCard});
+    public static setCoverCard(coverCard: JSX.Element, callback?: () => void){
+        Anchor.instance.setState({coverCard : coverCard}, callback);
     }
     public static pushError(title: string, body: string) {
-        Anchor.instance.setState({coverCard: <ErrorCard
-            onClose={() => Anchor.instance.setState({ coverCard: null })}
+        Anchor.instance.setState({errorCard: <ErrorCard
+            onClose={() => Anchor.instance.setState({ errorCard: null })}
             error={{title, body}}
         />});
-    }
-    public static pushRejoin(roomCode: number, playerId: number) {
-        Anchor.instance.setState({coverCard:
-            <div className="error-card">
-                <header>
-                    <button onClick={() => {Anchor.instance.handleRejoin(roomCode, playerId)}}>
-                        {translate("menu.play.button.rejoin")}
-                    </button>
-                    <button className="close" onClick={() => {Anchor.instance.handleCancelRejoin()}}>✕</button>
-                </header>
-                <div>{translate("menu.play.field.roomCode")}: {roomCode}</div><div> {translate("menu.play.field.playerId")}: {playerId}</div>
-            </div>
-        });
     }
     public static clearCoverCard() {
         Anchor.instance.setState({coverCard: null});

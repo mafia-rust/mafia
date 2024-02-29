@@ -63,7 +63,6 @@ pub enum GameOverReason {
     ReachedMaxDay,
     Winner,
     Draw
-    /*TODO Winner { who won? }*/
 }
 
 impl Game {
@@ -138,9 +137,7 @@ impl Game {
 
 
         game.send_packet_to_all(ToClientPacket::StartGame);
-        for player_ref in PlayerReference::all_players(&game){
-            player_ref.send_join_game_data(&mut game);
-        }
+        
 
         //on role creation needs to be called after all players roles are known
         for player_ref in PlayerReference::all_players(&game){
@@ -149,6 +146,10 @@ impl Game {
         }
 
         Teams::on_team_creation(&mut game);
+
+        for player_ref in PlayerReference::all_players(&game){
+            player_ref.send_join_game_data(&mut game);
+        }
 
         Ok(game)
     }
@@ -178,7 +179,7 @@ impl Game {
     }
     pub fn count_votes_and_start_trial(&mut self){
 
-        let &PhaseState::Voting { trials_left } = self.current_phase() else {return};
+        let &PhaseState::Nomination { trials_left } = self.current_phase() else {return};
 
         let mut living_players_count = 0;
         let mut voted_player_votes: HashMap<PlayerReference, u8> = HashMap::new();
@@ -266,6 +267,17 @@ impl Game {
             if self.game_is_over() {
                 self.add_message_to_chat_group(ChatGroup::All, ChatMessage::GameOver);
                 self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::Draw });
+
+                for player_ref in PlayerReference::all_players(self){
+                    self.add_message_to_chat_group(ChatGroup::All, 
+                        ChatMessage::PlayerWonOrLost{ 
+                            player: player_ref.index(), 
+                            won: player_ref.get_won_game(self), 
+                            role: player_ref.role_state(self).role() 
+                        });
+                }
+
+                
                 self.ticking = false;
                 return;
             }
@@ -308,8 +320,13 @@ impl Game {
         self.send_packet_to_all(ToClientPacket::Phase { 
             phase: self.current_phase().phase(),
             day_number: self.phase_machine.day_number,
-            seconds_left: self.phase_machine.time_remaining.as_secs()
         });
+        self.send_packet_to_all(ToClientPacket::PhaseTimeLeft{ seconds_left: self.phase_machine.time_remaining.as_secs() });
+        for player in PlayerReference::all_players(self){
+            player.send_packet(self, ToClientPacket::YourSendChatGroups { send_chat_groups: 
+                player.get_current_send_chat_groups(self)
+            });
+        }
     }
 
     pub fn add_message_to_chat_group(&mut self, group: ChatGroup, mut message: ChatMessage){
@@ -335,7 +352,7 @@ impl Game {
     }
 
     pub fn fast_forward(&mut self){
-        const FAST_FORWARD_TIME: Duration = Duration::from_secs(10);
+        const FAST_FORWARD_TIME: Duration = Duration::from_secs(0);
 
         if self.phase_machine.time_remaining <= FAST_FORWARD_TIME {
             return
@@ -343,12 +360,7 @@ impl Game {
         self.phase_machine.time_remaining = FAST_FORWARD_TIME;
         
         self.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseFastForwarded);
-
-        self.send_packet_to_all(ToClientPacket::Phase { 
-            phase: self.current_phase().phase(),
-            day_number: self.phase_machine.day_number,
-            seconds_left: self.phase_machine.time_remaining.as_secs()
-        });
+        self.send_packet_to_all(ToClientPacket::PhaseTimeLeft{ seconds_left: self.phase_machine.time_remaining.as_secs() });
     }
 }
 

@@ -129,7 +129,7 @@ impl RoleStateImpl for Journalist {
                     }
                 }
             },
-            PhaseType::Morning => {
+            PhaseType::Obituary => {
                 self.interviewed_target = None;
                 actor_ref.set_role_state(game, RoleState::Journalist(Journalist{interviewed_target: None, ..self}));
             },

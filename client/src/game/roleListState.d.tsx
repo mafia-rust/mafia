@@ -65,7 +65,7 @@ export function getRolesComplement(roleList: Role[]): Role[] {
 
 export const ROLE_SETS = [
     "townInvestigative", "townProtective","townKilling","townSupport", 
-    "mafiaPower", "mafiaSupport",
+    "mafiaSupport",
     "neutralEvil", "neutralKilling", "neutralChaos", "neutralApocalypse"
 ] as const;
 export type RoleSet = typeof ROLE_SETS[number];
@@ -79,8 +79,6 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
             return ["bodyguard", "crusader", "doctor", "reveler", "trapper"];
         case "townInvestigative":
             return ["psychic", "lookout", "sheriff", "spy", "tracker", "seer"];
-        case "mafiaPower":
-            return ["godfather", "mafioso"];
         case "mafiaSupport":
             return [
                 "blackmailer", "consigliere", "consort", 

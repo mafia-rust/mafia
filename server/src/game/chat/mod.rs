@@ -44,6 +44,8 @@ pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
     GameOver,
     #[serde(rename_all = "camelCase")]
+    PlayerWonOrLost{player: PlayerIndex, won: bool, role: Role},
+    #[serde(rename_all = "camelCase")]
     PlayerQuit{player_index: PlayerIndex},
 
 
@@ -123,7 +125,6 @@ pub enum ChatMessage {
 
     SomeoneSurvivedYourAttack,
     YouSurvivedAttack,
-    // TODO rename YouWereProtected or ProtectedFromAttack
     TargetWasAttacked,
     YouWereProtected,
     YouDied,
@@ -175,7 +176,6 @@ pub enum ChatMessage {
     WerewolfTrackingResult{tracked_player: PlayerIndex, players: Vec<PlayerIndex>},
 
     JesterWon,
-    // TODO Rename ExecutionerYouWon
     ExecutionerWon,
     DeathCollectedSouls,
     DoomsayerFailed,

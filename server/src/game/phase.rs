@@ -16,23 +16,27 @@ use super::{
 #[derive(Clone, Copy, PartialEq, Debug, Eq, Serialize, Deserialize, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum PhaseType {
-    Morning,
+    Briefing,
+    Obituary,
     Discussion,
-    Voting,
+    Nomination,
     Testimony,
     Judgement,
-    Evening,
+    FinalWords,
+    Dusk,
     Night,
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub enum PhaseState {
-    Morning,
+    Briefing,
+    Obituary,
     Discussion,
-    Voting { trials_left: u8 },
+    Nomination { trials_left: u8 },
     Testimony { trials_left: u8, player_on_trial: PlayerReference },
     Judgement { trials_left: u8, player_on_trial: PlayerReference },
-    Evening { player_on_trial: Option<PlayerReference> },
+    FinalWords { player_on_trial: PlayerReference },
+    Dusk,
     Night,
 }
 
@@ -44,7 +48,7 @@ pub struct PhaseStateMachine {
 
 impl PhaseStateMachine {
     pub fn new(times: PhaseTimeSettings) -> Self {
-        let current_state = PhaseState::Evening { player_on_trial: None };
+        let current_state = PhaseState::Briefing;
 
         Self {
             time_remaining: times.get_time_for(current_state.phase()),
@@ -57,19 +61,21 @@ impl PhaseStateMachine {
 impl PhaseState {
     pub const fn phase(&self) -> PhaseType {
         match self {
-            PhaseState::Morning => PhaseType::Morning,
+            PhaseState::Briefing => PhaseType::Briefing,
+            PhaseState::Obituary => PhaseType::Obituary,
             PhaseState::Discussion => PhaseType::Discussion,
-            PhaseState::Voting {..} => PhaseType::Voting,
+            PhaseState::Nomination {..} => PhaseType::Nomination,
             PhaseState::Testimony {..} => PhaseType::Testimony,
             PhaseState::Judgement {..} => PhaseType::Judgement,
-            PhaseState::Evening {..} => PhaseType::Evening,
+            PhaseState::FinalWords {..} => PhaseType::FinalWords,
+            PhaseState::Dusk => PhaseType::Dusk,
             PhaseState::Night => PhaseType::Night,
         }
     }
     
     pub fn start(game: &mut Game) {
         match game.current_phase().clone() {
-            PhaseState::Morning => {
+            PhaseState::Obituary => {
                 for player_ref in PlayerReference::all_players(game) {
                     if player_ref.night_died(game) {
                         let new_grave = Grave::from_player_night(game, player_ref);
@@ -86,7 +92,7 @@ impl PhaseState {
 
                 game.phase_machine.day_number += 1;
             },
-            PhaseState::Voting { trials_left } => {
+            PhaseState::Nomination { trials_left } => {
                 let required_votes = 1+
                     (PlayerReference::all_players(game).filter(|p| p.alive(game)).count()/2);
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialInformation { required_votes, trials_left });
@@ -101,30 +107,39 @@ impl PhaseState {
                 );
                 game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() });
             },
-            PhaseState::Night
+            PhaseState::Briefing 
+            | PhaseState::Night
             | PhaseState::Discussion
             | PhaseState::Judgement { .. } 
-            | PhaseState::Evening { .. } => {}
+            | PhaseState::FinalWords { .. }
+            | PhaseState::Dusk => {}
         }
+
+        if PhaseState::Briefing == *game.current_phase() {return;}
+
         game.add_message_to_chat_group(ChatGroup::All, 
             ChatMessage::PhaseChange { 
                 phase_type: game.current_phase().phase(), 
                 day_number: game.phase_machine.day_number 
             }
         );
+        
     }
     
     /// Returns what phase should come next
     pub fn end(game: &mut Game) -> PhaseState {
         let next = match game.current_phase() {
-            PhaseState::Morning => {
+            PhaseState::Briefing => {
+                Self::Dusk
+            },
+            PhaseState::Obituary => {
                 Self::Discussion
             },
             PhaseState::Discussion => {
-                Self::Voting { trials_left: 3 }
+                Self::Nomination { trials_left: 3 }
             },
-            PhaseState::Voting {..} => {                
-                Self::Night
+            PhaseState::Nomination {..} => {                
+                Self::Dusk
             },
             &PhaseState::Testimony { trials_left, player_on_trial } => {
                 Self::Judgement { trials_left, player_on_trial }
@@ -152,17 +167,14 @@ impl PhaseState {
                 });
                 
                 if innocent < guilty {
-                    Self::Evening { player_on_trial: Some(player_on_trial) }
+                    Self::FinalWords { player_on_trial }
                 } else if trials_left == 0 {
-                    // TODO send no trials left
-                    Self::Evening { player_on_trial: None }
+                    Self::Dusk
                 }else{
-                    Self::Voting { trials_left }
+                    Self::Nomination { trials_left }
                 }
             },
-            &PhaseState::Evening { player_on_trial } => {
-                let Some(player_on_trial) = player_on_trial else { return Self::Night };
-
+            &PhaseState::FinalWords { player_on_trial } => {
                 let (guilty, innocent) = game.count_verdict_votes(player_on_trial);
                 
                 if innocent < guilty {
@@ -170,6 +182,9 @@ impl PhaseState {
                     player_on_trial.die(game, new_grave, true);
                 }
 
+                Self::Dusk
+            },
+            PhaseState::Dusk => {
                 Self::Night
             },
             PhaseState::Night => {
@@ -195,7 +210,7 @@ impl PhaseState {
                     player_ref.add_chat_messages(game, messages);
                 }
 
-                Self::Morning
+                Self::Obituary
             },
         };
         next

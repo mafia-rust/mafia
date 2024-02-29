@@ -74,7 +74,7 @@ impl RoleStateImpl for Executioner {
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         match *game.current_phase() {
-            PhaseState::Evening { player_on_trial: Some(player_on_trial) } => {
+            PhaseState::FinalWords { player_on_trial } => {
                 if Some(player_on_trial) == self.target.get_target() {
                     game.add_message_to_chat_group(ChatGroup::All, ChatMessage::ExecutionerWon);
                     actor_ref.set_role_state(game, RoleState::Executioner(Executioner { target: ExecutionerTarget::Won }));

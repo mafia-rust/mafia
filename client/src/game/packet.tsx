@@ -1,4 +1,4 @@
-import { Phase, PlayerIndex, Verdict, PhaseTimes, Tag, PlayerID } from "./gameState.d"
+import { Phase, PlayerIndex, Verdict, PhaseTimes, Tag, PlayerID, ChatGroup } from "./gameState.d"
 import { Grave } from "./graveState"
 import { ChatMessage } from "../components/ChatMessage"
 import { RoleList, RoleOutline } from "./roleListState.d"
@@ -24,7 +24,7 @@ export type ToClientPacket = {
     playerId: number,
 } | {
     type: "rejectJoin",
-    reason: string /* TODO RejectJoinReason */
+    reason: string
 } | 
 // Lobby
 {
@@ -41,7 +41,7 @@ export type ToClientPacket = {
     playerIndex: PlayerIndex
 } | {
     type: "rejectStart",
-    reason: string /* TODO RejectStartReason */
+    reason: string
 } | {
     type: "playersHost",
     hosts: PlayerID[],
@@ -76,8 +76,10 @@ export type ToClientPacket = {
     type: "phase",
     phase: Phase, 
     dayNumber: number, 
-    secondsLeft: number
 } | {
+    type: "phaseTimeLeft",
+    secondsLeft: number
+} |{
     type: "playerOnTrial",
     playerIndex: PlayerIndex
 } | {
@@ -86,6 +88,9 @@ export type ToClientPacket = {
 } | {
     type: "playerVotes",
     votesForPlayer: Map<PlayerIndex, number>
+} | {
+    type: "yourSendChatGroups",
+    sendChatGroups: ChatGroup[]
 } | {
     type: "yourButtons", 
     buttons: [{
@@ -134,7 +139,7 @@ export type ToClientPacket = {
     grave: Grave
 } | {
     type: "gameOver",
-    reason: string /* TODO GameOverReason */
+    reason: string
 }
 
 export type ToServerPacket = {
