@@ -77,6 +77,8 @@ export default function messageListener(packet: ToClientPacket){
                     console.error(packet);
                 break;
             }
+            deleteReconnectData();
+            
         break;
         case "rejectStart":
             switch(packet.reason) {

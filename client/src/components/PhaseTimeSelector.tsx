@@ -47,7 +47,7 @@ function PhaseTimeSelector(props: {
             disabled={props.disabled??false}
             name={phaseKey}
             type="text"
-            value={props.time}
+            value={props.time??10}
             onChange={(e)=>{
                 let value = Number(e.target.value);
 
