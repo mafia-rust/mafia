@@ -24,13 +24,13 @@
                     "type": "player",
                     "player": 7
                 },
-                "text": "I'm the Jailor", 
+                "text": "I'm jester", 
                 "chatGroup": "jail"
             },
             {"type": "jailorDecideExecute","target": 7},
             {"type": "jailorDecideExecute","target": null},
-            {"type": "someoneSurvivedYourAttack"},
-            {"type": "targetJailed"}
+            {"type": "targetJailed"},
+            {"type": "someoneSurvivedYourAttack"}
         ]
     },
     "sheriff": {
@@ -107,16 +107,16 @@
         "keywords": ["visit","silenced","roleblock","protect","transport","possess"],
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "spyMafiaVisit", "players": [16,17,18]},
-            {"type": "spyMafiaVisit", "players": []},
-            {"type": "spyCultistCount", "count": 0},
-            {"type": "spyCultistCount", "count": 1},
-            {"type": "spyCultistCount", "count": 2},
             {"type": "spyBug", "bug": "silenced"},
             {"type": "spyBug", "bug": "roleblocked"},
             {"type": "spyBug", "bug": "protected"},
             {"type": "spyBug", "bug": "transported"},
-            {"type": "spyBug", "bug": "possessed"}
+            {"type": "spyBug", "bug": "possessed"},
+            {"type": "spyMafiaVisit", "players": [16,17,18]},
+            {"type": "spyMafiaVisit", "players": []},
+            {"type": "spyCultistCount", "count": 0},
+            {"type": "spyCultistCount", "count": 1},
+            {"type": "spyCultistCount", "count": 2}
         ]
     },
     "doctor": {
@@ -143,8 +143,8 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "targetWasAttacked"},
-            {"type": "someoneSurvivedYourAttack"},
             {"type": "youWereProtected"},
+            {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
     },
@@ -157,8 +157,8 @@
         "keywords": ["roleblock","jail"],
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "roleBlocked","playerIndex": true},
-            {"type": "roleBlocked","playerIndex": false}
+            {"type": "roleBlocked","immune": false},
+            {"type": "roleBlocked","immune": true}
         ]
     },
     "trapper": {
@@ -347,12 +347,12 @@
         "keywords": ["dead","visit","possess","priority","roleLimit"],
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "targetIsPossessionImmune"},
             {"type": "targetsMessage", "message": 
                 {"type": "sheriffResult","suspicious":true}
             },
             {"type": "youWerePossessed", "immune": false},
-            {"type": "youWerePossessed", "immune": true}
+            {"type": "youWerePossessed", "immune": true},
+            {"type": "targetIsPossessionImmune"}
         ]
     },
     "godfather": {
@@ -424,7 +424,7 @@
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type": "consigliereResult", "role": "arsonist", "visitedBy":[31,32], "visited":[33]},
-            {"type": "consigliereResult", "role": "arsonist", "visitedBy":[], "visited":[]}
+            {"type": "consigliereResult", "role": "vigilante", "visitedBy":[], "visited":[]}
         ]
     },
     "janitor": {
@@ -451,7 +451,9 @@
         "largeRoleSpecificMenu": false,
         "keywords": ["aura","appearedVisit"],
         "canBeConvertedTo": ["godfather"],
-        "chatMessages":[]
+        "chatMessages":[
+            {"type": "sheriffResult","suspicious":true}
+        ]
     },
     "forger": {
         "faction": "mafia",
@@ -512,7 +514,6 @@
         "keywords": ["aura","dead","defense","priority"],
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "someoneSurvivedYourAttack"},
             {"type": "jesterWon"}
         ]
     },
@@ -525,8 +526,8 @@
         "keywords": ["convert","aura","defense"],
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
-            {"type": "youSurvivedAttack"},
-            {"type": "executionerWon"}
+            {"type": "executionerWon"},
+            {"type": "youSurvivedAttack"}
         ]
     },
     
@@ -631,8 +632,7 @@
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
             {"type": "doomsayerWon"},
-            {"type": "doomsayerFailed"},
-            {"type": "someoneSurvivedYourAttack"}
+            {"type": "doomsayerFailed"}
         ]
     },
     "apostle": {
@@ -644,11 +644,11 @@
         "keywords": ["convert","priority","defense"],
         "canBeConvertedTo": ["zealot","disciple"],
         "chatMessages":[
-            {"type": "yourConvertFailed"},
             {"type": "apostleCanConvertTonight"},
             {"type": "apostleCantConvertTonight"},
             {"type": "cultSacrificesRequired","required": 2},
             {"type": "cultSacrificesRequired","required": 0},
+            {"type": "yourConvertFailed"},
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
@@ -660,7 +660,12 @@
         "largeRoleSpecificMenu": false,
         "keywords": ["convert"],
         "canBeConvertedTo": ["zealot","apostle"],
-        "chatMessages":[]
+        "chatMessages":[
+            {"type": "apostleCanConvertTonight"},
+            {"type": "apostleCantConvertTonight"},
+            {"type": "cultSacrificesRequired","required": 2},
+            {"type": "cultSacrificesRequired","required": 0}
+        ]
     },
     "zealot": {
         "faction": "cult",
@@ -671,7 +676,11 @@
         "keywords": ["convert", "defense"],
         "canBeConvertedTo": ["disciple","apostle"],
         "chatMessages":[
-            {"type": "someoneSurvivedYourAttack"}
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "apostleCanConvertTonight"},
+            {"type": "apostleCantConvertTonight"},
+            {"type": "cultSacrificesRequired","required": 2},
+            {"type": "cultSacrificesRequired","required": 0}
         ]
     }
 }
