@@ -884,27 +884,27 @@
     "wiki.article.role.deputy.attributes":"* If the player you attack has defense, they are told they were attacked by a deputy\n* When you kill someone, everyone is told a deputy shot someone",
     "wiki.article.role.deputy.extra":"* You only have a basic attack\n* You can not attack day 1",
 
-    "wiki.article.role.godfather.guide": "You can select a player to attack each night. Choose a backup to attack for you when you are roleblocked. You should try to kill townies who are likely to stop you from winning or have powerful abilities, but be careful about town protective roles.",
+    "wiki.article.role.godfather.guide": "- At night, select a player to attack\n- Choose a backup to attack for you if you are roleblocked\n\n You should try to kill townies who are likely to stop you from winning or have powerful abilities, but be careful about town protective roles.",
     "wiki.article.role.godfather.abilities":"* Visit a player to attack\n* Choose another living mafia member to be your backup at any time\n* While you are roleblocked, the backup will attack the first player they visit",
     "wiki.article.role.godfather.attributes":"* You are armored\n* You always have an innocent aura\n* When you are roleblocked, the mafia is told that the backup attacks for you",
     "wiki.article.role.godfather.extra":"* You only have a basic attack\n* When the mafia has no Godfather or Mafioso, a random mafia member converts to a godfather\n* When the Godfather dies, their current backup becomes the Godfather\n* You can not select other mafia members",
 
-    "wiki.article.role.mafioso.guide": "You can select players to attack them. You should try to kill townies who are likely to stop you from winning.",
+    "wiki.article.role.mafioso.guide": "- At night select a player to attack them\n\nYou should try to kill townies who are likely to stop you from winning.",
     "wiki.article.role.mafioso.abilities":"* Visit a player to attack",
     "wiki.article.role.mafioso.attributes":"* None",
     "wiki.article.role.mafioso.extra":"* You can't target other mafia members",
 
-    "wiki.article.role.consort.guide": "You can select a player to roleblock and hypnotize. If they are roleblocked, they can not use their ability that night. You can choose a message to send to your target. You can also choose to not roleblock, and only send them messages.",
+    "wiki.article.role.consort.guide": "- At night, select a player to roleblock or hypnotize\n- If you roleblock your target, they can not use their ability that night\n- You can choose to send a false message to your target, or to not send them the message saying they are roleblocked",
     "wiki.article.role.consort.abilities":"* Visit a player to roleblock and choose a message to show them\n    * You can send that they were attempted to be roleblocked\n    * You can send that they were attacked but had defense\n    * You can send that they were protected by someone\n    * You can send that they were transported\n    * You can send that they were attempted to be possessed\n    * You can send that their ability failed due to their target being in jail",
     "wiki.article.role.consort.attributes":"* You are immune to roleblocks\n* You may choose to not roleblock your target\n* You can't choose to send no messages",
     "wiki.article.role.consort.extra":"* You can't select other mafia members\n* When you roleblock someone, their visits will be cleared",
     
-    "wiki.article.role.blackmailer.guide": "You can select a player to silence. The silenced player can't speak during the next day, and they can't vote during the next day. You should choose talkative players who might speak out against a mafia member, or players who have information that you want to suppress.",
+    "wiki.article.role.blackmailer.guide": "- At night, select a player to silence\n- The silenced player can't speak during the next day, and they can't vote during the next day\n\nYou should choose talkative players who might speak out against a mafia member, or players who have information that you want to suppress.",
     "wiki.article.role.blackmailer.abilities":"* Visit a player to silence them during the next day",
     "wiki.article.role.blackmailer.attributes":"* Silenced players can not vote during the nomination phase\n* Silenced players can not talk in chat or out loud during the entire next day",
     "wiki.article.role.blackmailer.extra":"* The silenced player is no longer be silenced at the start of the next night\n* You cannot select other mafia members",
 
-    "wiki.article.role.consigliere.guide": "Each night select a player to learn information about them. You should communicate the information you get to the rest of the mafia. It is fairly easy to fake claim lookout or tracker.\n- You can read whispers that were sent to other players\n- Select a player to learn:\n    - Their role\n    - Who they visited\n    - Who visited them",
+    "wiki.article.role.consigliere.guide": "- At night, select a player to learn:\n    - Their role\n    - Who they visited\n    - Who visited them\n- You can read whispers that were sent to other players\n\nYou should communicate the information you get to the rest of the mafia. It is fairly easy to fake claim lookout or tracker.",
     "wiki.article.role.consigliere.abilities":"* Visit a player to\n    * Learn their role\n    * Learn who visited them\n    * Learn who they visited\n* All whispers can be read regardless of whether or not they were sent to you",
     "wiki.article.role.consigliere.attributes":"* None",
     "wiki.article.role.consigliere.extra":"* You can't select other mafia members",
@@ -914,12 +914,12 @@
     "wiki.article.role.necromancer.attributes":"* The first player you visit is told that they were possessed or immune to possession\n* You are told all night information messages that the player you possess gets told\n* You can't select a dead player who you have already possessed",
     "wiki.article.role.necromancer.extra":"* You are immune to getting roleblocked and possession\n* You can force players you possess visit any living player\n* All your visits are astral except the first\n* If you do not end up possessing that player you select, you can select them the again",
 
-    "wiki.article.role.witch.guide": "You can select a player to possess and force them to visit a player you select.",
+    "wiki.article.role.witch.guide": "- At night, possess a player by selecting two players\n    - The first player you select will be forced to visit the second player you select\n- You could instead select three players\n    - The first player will visit the second and third player\n\n_For example_\n- You can posses a vigilante to attack another townie",
     "wiki.article.role.witch.abilities":"* Visit two players to make the first player visit the second player\n* Visit three players to make the first player visit the second and third player",
     "wiki.article.role.witch.attributes":"* The first player you visit is told that they were possessed or immune to possession\n* You are told all night information messages that the player you possess gets told",
     "wiki.article.role.witch.extra":"* You are immune to getting roleblocked and possession\n* You can't select other mafia members for your first target, but you can select any living player for your second and third targets\n* All your visits are astral except the first",
 
-    "wiki.article.role.janitor.guide": "You can select a player to clean them. Cleaning a player on the night they die erases their role and alibi from their grave. You can only use your ability three times. You should usually choose the same player as the godfather, because they will probably die.",
+    "wiki.article.role.janitor.guide": "- At night, select a player to clean them\n    - Cleaning a player on the night they die erases their role and alibi from their grave so nobody knows who they are\n    - You are told the cleaned players role and alibi\n- You can only use your ability three times\n\nYou should usually select the same player as the godfather, because they will probably die.",
     "wiki.article.role.janitor.abilities":"* Visit a player to clean their grave only if they die tonight\n* If a grave is cleaned, that player's role and alibi do not appear in the graveyard\n* You are told the role and alibi of the player you cleaned.",
     "wiki.article.role.janitor.attributes":"* You only have three uses of your ability",
     "wiki.article.role.janitor.extra":"* If you visit a player to attempt to clean them, it costs an ability use, even if they don't die\n* If you are roleblocked, it doesn't cost an ability use\n* If you visit a jailed player, it doesn't cost an ability use\n* You can't target other mafia members",
@@ -929,7 +929,7 @@
     "wiki.article.role.forger.attributes":"* You only have two uses of your ability",
     "wiki.article.role.forger.extra":"* If you visit a player to attempt to clean them, it costs an ability use, even if they don't die\n* If you are roleblocked, it doesn't cost an ability use\n* If you visit a jailed player, it doesn't cost an ability use\n* You can't target other mafia members\n* If you choose no role, their grave will show what their original role is\n* If you leave their alibi completely blank, it looks to be the same as their original alibi",
 
-    "wiki.article.role.framer.guide": "You can select a player to frame them, making them appear to be evil to investigative roles. If you choose two players, investigative roles will see that the first player visited second one. Try to frame players who already look a little suspicious so investigative roles might choose them.",
+    "wiki.article.role.framer.guide": "- At night, select a player to frame them, giving them a suspicious aura\n    - The player you give a suspicious aura appears to be evil to investigatve roles\n- If you select two players\n    - The first one is given a suspicious aura\n    -  Investigative roles (Like tracker and lookout) see that the first player visited second one\n\n_For example_\n- You select @15 and @12. The godfather selects @12. A seperate tracker selects @15 and sees that @15 visits @12. Since @12 dies, the tracker might think that @15 was the killer\n\nTry to frame players who already look a little suspicious so town investigative players might choose them.",
     "wiki.article.role.framer.abilities":"* Visit a player to give them a suspicious aura for the night\n* Visit two players to\n  * give first player you visit a suspicious aura for the night\n  * make the first player appear to visit the second player you visit",
     "wiki.article.role.framer.attributes":"",
     "wiki.article.role.framer.extra":"-A suspicious aura will make the player with it look suspicious to a Detective, they can appear as the evil player to a Psychic, and they will be enemies with everyone to a Seer\n* You can't select other mafia members for your first target, but you can select any player for your second target, including dead players and other mafia members",
