@@ -161,7 +161,7 @@
         "chatMessages":[
             {"type": "trapState", "state":{"type":"dismantled"}},
             {"type": "trapState", "state":{"type":"ready"}},
-            {"type": "trapState", "state":{"type":"roleSet"}},
+            {"type": "trapState", "state":{"type":"set"}},
             {"type": "trapperYouAttackedVisitor"},
             {"type": "trapperVisitorsRole", "role": "framer"},
             {"type": "targetWasAttacked"},
