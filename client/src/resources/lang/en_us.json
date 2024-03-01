@@ -809,10 +809,10 @@
     "wiki.article.role.spy.attributes":"* Your bug will tell you when your target receives a message saying they are silenced, roleblocked, protected, possessed, or transported",
     "wiki.article.role.spy.extra": "* Your passive information is always correct\n* You can not see mafia member's astral visits\n* If a hypnotist makes a player be told they are silenced, roleblocked, protected, possessed, or transported, your bug will report the message they were sent",
 
-    "wiki.article.role.tracker.guide": "You can select a player each night to find out who that player visited. If the selected player visited another player on the night that player died, it's possible they are the killer. You should tell the town the information you get daily. You should try to select people who you think are lying about where they are going.",
+    "wiki.article.role.tracker.guide": "- At night select a player to find out who they visited\n\n_For example:_\n- If you select @5 and they visited @10 on the night @10 died, @5 might have attacked @10\n\n You should tell the town the information you get daily.",
     "wiki.article.role.tracker.abilities":"* Visit a player to see who they visit",
     "wiki.article.role.tracker.attributes":"* None",
-    "wiki.article.role.tracker.extra": "* A Framer can make players appear to have visited someone they didn't visit\n* You can't see Astral visits",
+    "wiki.article.role.tracker.extra": "* Appeared visits can make you get false information, _for example_ a Framer makes a framed player appear to visit someone else\n* You can't see Astral visits",
 
     "wiki.article.role.seer.guide": "You can select two people each night to learn if they are friends or enemies. You should tell the town the information you get daily. You should try to choose one player who you are certain is innocent, and one player who you think is evil.",
     "wiki.article.role.seer.abilities":"* Visit two players to learn if they are friends or enemies",
