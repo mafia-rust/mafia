@@ -879,7 +879,7 @@
     "wiki.article.role.veteran.attributes":"* You have an indirect, armor-piercing attack\n* You have an astral visit\n* You have three alerts\n* You are told when you attack a visitor\n* Players who visit you while on alert are told they are attacked by a veteran",
     "wiki.article.role.veteran.extra":"* While you have 0 alerts left, you can not select yourself\n* You are immune to getting roleblocked and possession",
 
-    "wiki.article.role.deputy.guide":"Once per game, you may select a player during the day to attack them. If you kill a townie, you instantly leave town. If you attack someone and they survive it is likely that they are a role that is armored. Most roles that are armored are evil.",
+    "wiki.article.role.deputy.guide":"- Once per game, you shoot a player during the day\n- If you kill a townie, you instantly leave town\n- If you kill someone, everyone is told that a deputy shot someone\n- If the player you shoot survives your attack, only the player you attacked is told\n\nIf you attack someone and they survive it is likely that they are a role that is armored. Most roles that are armored are evil.",
     "wiki.article.role.deputy.abilities":"* Once per game, during the discussion or nomination phase after day 1, you may choose a player to attack.",
     "wiki.article.role.deputy.attributes":"* If the player you attack has defense, they are told they were attacked by a deputy\n* When you kill someone, everyone is told a deputy shot someone",
     "wiki.article.role.deputy.extra":"* You only have a basic attack\n* You can not attack day 1",
