@@ -854,7 +854,7 @@
     "wiki.article.role.escort.attributes":"* You can't be roleblocked\n* Your target is told when they are roleblocked, even if they are immune to being roleblocked",
     "wiki.article.role.escort.extra":"* When someone is roleblocked, their visits are wiped, so they don't visit anyone",
 
-    "wiki.article.role.medium.guide": "You can talk with the dead at night. After you die, you can choose to allow a living player of your selection to speak with the dead two times, this is called a haunt. You can also speak with other mediums at night. On the first night, you should attempt to contact any other possible mediums to learn if there are any. You should try to find information from other players and tell the town what dead players think about the game.",
+    "wiki.article.role.medium.guide": "- You can message the dead and other mediums at night\n- After you die, you can choose to haunt a living player two times\n    - The player you haunt will be able to speak with the dead\n\n On the first night, you should attempt to contact any other possible mediums to learn if there are any. You should try to find information from other players and tell the town what dead players think about the game.",
     "wiki.article.role.medium.abilities":"* At night, you can read and send messages in the dead chat group\n* While dead, choose a living player during the day to haunt at night, putting that player in the haunt chat group during the night.",
     "wiki.article.role.medium.attributes":"*  You may perform two haunts.",
     "wiki.article.role.medium.extra":"* While in jail, you can read from dead chat group, but you can't send to it. Haunted players can read AND send to dead chat, even if in jail\n* While any dead medium haunts any living player, all dead mediums, haunted players, and dead players are together in the dead chat group\n* Each medium can do two haunts, so two mediums can do four haunts",
@@ -934,12 +934,12 @@
     "wiki.article.role.framer.attributes":"",
     "wiki.article.role.framer.extra":"-A suspicious aura will make the player with it look suspicious to a Detective, they can appear as the evil player to a Psychic, and they will be enemies with everyone to a Seer\n* You can't select other mafia members for your first target, but you can select any player for your second target, including dead players and other mafia members",
 
-    "wiki.article.role.jester.guide": "Get lynched during the day to win. If you win, you can attack any living player who voted you guilty or abstained. Try to look suspicious without making it obvious that you are the Jester.",
+    "wiki.article.role.jester.guide": "- Get lynched during the day to win\n- After you win by getting lynched, you can attack any living player who voted you guilty or abstained\n\nTry to look evil so people vote you, without making it obvious that you are the Jester.",
     "wiki.article.role.jester.abilities":"* When you are lynched, you win\n* On the night after you are lynched, attack the first player you select\n",
     "wiki.article.role.jester.attributes":"* You always have an innocent aura\n* If you select nobody on the night after you are lynched, you will attack a random living player who did not vote you innocent\n* You have a protection-piercing, top priority attack",
     "wiki.article.role.jester.extra":"* Your attack goes before Transporter, Witch, or Necromancer, so they can not force you to kill someone else.",
 
-    "wiki.article.role.executioner.guide":"Get your execution target lynched to win. If you win, you leave town at the start of night. You should try to claim something that makes people think your target is suspicious.",
+    "wiki.article.role.executioner.guide":"- Get your execution target lynched to win\n When you win, you leave town at the start of night\n\nYou should try to claim something that makes people think your target is evil.",
     "wiki.article.role.executioner.abilities":"* At the beginning of the game, you are assigned an execution target. It is a random townie, but never a Mayor, Journalist, Jailor, Deputy, Veteran, or Transporter\n",
     "wiki.article.role.executioner.attributes":"* When your execution target is lynched, you win\n* After you win, you will leave town at the start of the following night\n* You always have an innocent aura\n* You are armored",
     "wiki.article.role.executioner.extra":"* If your target dies by something other than lynching, you will convert to a jester immediately\n* If there are no valid targets in the game when you become the executioner, you will convert to a jester",
