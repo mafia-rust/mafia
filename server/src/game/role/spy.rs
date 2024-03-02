@@ -1,7 +1,7 @@
 use rand::seq::SliceRandom;
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -40,23 +40,23 @@ impl RoleStateImpl for Spy {
                 }
                 mafia_visits.shuffle(&mut rand::thread_rng());
                 
-                actor_ref.push_night_message(game, ChatMessage::SpyMafiaVisit { players: mafia_visits });               
+                actor_ref.push_night_message(game, ChatMessageVariant::SpyMafiaVisit { players: mafia_visits });               
             },
             Priority::SpyBug => {
                 let Some(visit) = actor_ref.night_visits(game).first()else{return};
             
                 if visit.target.night_jailed(game){
-                    actor_ref.push_night_message(game, ChatMessage::TargetJailed );
+                    actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed );
                     return
                 }
 
                 for message in visit.target.night_messages(game).clone(){
                     if let Some(message) = match message{
-                        ChatMessage::Silenced => Some(ChatMessage::SpyBug { bug: SpyBug::Silenced }),
-                        ChatMessage::RoleBlocked { immune: _ } => Some(ChatMessage::SpyBug { bug: SpyBug::Roleblocked }),
-                        ChatMessage::YouWereProtected => Some(ChatMessage::SpyBug { bug: SpyBug::Protected }),
-                        ChatMessage::Transported => Some(ChatMessage::SpyBug { bug: SpyBug::Transported }),
-                        ChatMessage::YouWerePossessed { immune: _ } => Some(ChatMessage::SpyBug { bug: SpyBug::Possessed }),
+                        ChatMessageVariant::Silenced => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Silenced }),
+                        ChatMessageVariant::RoleBlocked { immune: _ } => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Roleblocked }),
+                        ChatMessageVariant::YouWereProtected => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Protected }),
+                        ChatMessageVariant::Transported => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Transported }),
+                        ChatMessageVariant::YouWerePossessed { immune: _ } => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Possessed }),
                         _ => None
                     }{
                         actor_ref.push_night_message(game, message);
@@ -64,7 +64,7 @@ impl RoleStateImpl for Spy {
                 };
             },
             Priority::SpyCultistCount => {
-                actor_ref.push_night_message(game, ChatMessage::SpyCultistCount { count: 
+                actor_ref.push_night_message(game, ChatMessageVariant::SpyCultistCount { count: 
                     PlayerReference::all_players(game).filter(|p|
                         p.role(game).faction() == Faction::Cult && p.alive(game)
                     ).count() as u8
@@ -98,12 +98,12 @@ impl RoleStateImpl for Spy {
                 //if there are any cult alive, tell the spy if apostle can convert
                 if PlayerReference::all_players(game).any(|p|p.role(game).faction() == Faction::Cult){
                     if game.teams.cult().can_convert_tonight(game) {
-                        actor_ref.add_chat_message(game,
-                            ChatMessage::ApostleCanConvertTonight
+                        actor_ref.add_private_chat_message(game,
+                            ChatMessageVariant::ApostleCanConvertTonight
                         )
                     }else{
-                        actor_ref.add_chat_message(game,
-                            ChatMessage::ApostleCantConvertTonight
+                        actor_ref.add_private_chat_message(game,
+                            ChatMessageVariant::ApostleCantConvertTonight
                         )
                     }
                 }

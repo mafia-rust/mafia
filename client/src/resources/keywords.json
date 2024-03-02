@@ -50,6 +50,7 @@
     "chatGroup.jail.icon": {"link":"standard/chatGroup"},
     "chatGroup.interview.icon": {"link":"standard/chatGroup"},
     "chatGroup.dead.icon": {"link":"standard/chatGroup"},
+    "noGroup.icon": {"link":"standard/chatGroup"},
     "messageSender.livingToDead.icon": {"link":"standard/chatGroup"},
 
 

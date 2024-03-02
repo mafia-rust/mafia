@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -28,12 +28,12 @@ impl RoleStateImpl for Transporter {
         let Some(second_visit) = transporter_visits.get(1) else {return};
 
         if first_visit.target.night_jailed(game) || second_visit.target.night_jailed(game){
-            actor_ref.push_night_message(game, ChatMessage::TargetJailed );
+            actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed );
             return
         }
         
-        first_visit.target.push_night_message(game, ChatMessage::Transported);
-        second_visit.target.push_night_message(game, ChatMessage::Transported);
+        first_visit.target.push_night_message(game, ChatMessageVariant::Transported);
+        second_visit.target.push_night_message(game, ChatMessageVariant::Transported);
     
         for player_ref in PlayerReference::all_players(game){
             if player_ref == actor_ref {continue;}

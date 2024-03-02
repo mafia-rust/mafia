@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -118,8 +118,8 @@ impl RoleStateImpl for Jailor {
             if jailed_ref.alive(game) && actor_ref.alive(game){
         
                 jailed_ref.set_night_jailed(game, true);
-                actor_ref.add_chat_message(game, 
-                    ChatMessage::JailedTarget{ player_index: jailed_ref.index() }
+                actor_ref.add_private_chat_message(game, 
+                    ChatMessageVariant::JailedTarget{ player_index: jailed_ref.index() }
                 );
             }
         }

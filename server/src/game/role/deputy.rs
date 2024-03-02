@@ -1,7 +1,7 @@
 
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::{GraveKiller, Grave, GraveDeathCause};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -38,16 +38,16 @@ impl RoleStateImpl for Deputy {
     }
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
 
-        target_ref.add_chat_message(game, ChatMessage::DeputyShotYou);
+        target_ref.add_private_chat_message(game, ChatMessageVariant::DeputyShotYou);
         if target_ref.defense(game) >= 1 {
-            target_ref.add_chat_message(game, ChatMessage::YouSurvivedAttack);
-            actor_ref.add_chat_message(game, ChatMessage::SomeoneSurvivedYourAttack);
+            target_ref.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
+            actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
 
         }else{
             let mut grave = Grave::from_player_lynch(game, target_ref);
             grave.death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Deputy)]);
             target_ref.die(game, grave, true);
-            game.add_message_to_chat_group(ChatGroup::All, ChatMessage::DeputyKilled{shot_index: target_ref.index()});
+            game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::DeputyKilled{shot_index: target_ref.index()});
             
 
             if target_ref.role(game).faction() == Faction::Town {

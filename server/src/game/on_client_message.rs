@@ -1,7 +1,7 @@
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    chat::{ChatGroup, ChatMessage, MessageSender},
+    chat::{ChatGroup, ChatMessageVariant, MessageSender},
     phase::{PhaseState, PhaseType},
     player::{PlayerIndex, PlayerReference},
     role::{Role, RoleState},
@@ -58,7 +58,7 @@ impl Game {
                         ChatGroup::Mafia | ChatGroup::Cult => {
                             self.add_message_to_chat_group(
                                 chat_group,
-                                ChatMessage::Targeted { 
+                                    ChatMessageVariant::Targeted { 
                                     targeter: sender_player_ref.index(), 
                                     targets: PlayerReference::ref_vec_to_index(&target_ref_list)
                                 }
@@ -69,7 +69,7 @@ impl Game {
                             if sender_player_ref.role(self) == Role::Jailor {
                                 self.add_message_to_chat_group(
                                     chat_group,
-                                    ChatMessage::JailorDecideExecute {
+                                        ChatMessageVariant::JailorDecideExecute {
                                         target: target_ref_list.first().map(|p|p.index())
                                     }
                                 );
@@ -81,7 +81,7 @@ impl Game {
                 
                 
                 if !target_message_sent{
-                    sender_player_ref.add_chat_message(self, ChatMessage::Targeted { 
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::Targeted { 
                         targeter: sender_player_ref.index(), 
                         targets: PlayerReference::ref_vec_to_index(&target_ref_list)
                     });
@@ -124,12 +124,12 @@ impl Game {
 
                     let message_sender = message_sender.unwrap_or(MessageSender::Player { player: sender_player_index });
 
+
                     self.add_message_to_chat_group(
                         chat_group.clone(),
-                        ChatMessage::Normal{
+                        ChatMessageVariant::Normal{
                             message_sender,
                             text: text.trim_newline().trim_whitespace().truncate(400).truncate_lines(20), 
-                            chat_group
                         }
                     );
                 }
@@ -150,19 +150,19 @@ impl Game {
                     break 'packet_match;
                 }
 
-                self.add_message_to_chat_group(ChatGroup::All, ChatMessage::BroadcastWhisper { whisperer: sender_player_index, whisperee: whispered_to_player_index });
-                let message = ChatMessage::Whisper { 
+                self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::BroadcastWhisper { whisperer: sender_player_index, whisperee: whispered_to_player_index });
+                let message = ChatMessageVariant::Whisper { 
                     from_player_index: sender_player_index, 
                     to_player_index: whispered_to_player_index, 
                     text 
                 };
         
-                whisperee_ref.add_chat_message(self, message.clone());
-                sender_player_ref.add_chat_message(self, message.clone());
+                whisperee_ref.add_private_chat_message(self, message.clone());
+                sender_player_ref.add_private_chat_message(self, message.clone());
 
                 for player in PlayerReference::all_players(self){
                     if player.role(self) == Role::Consigliere {
-                        whisperee_ref.add_chat_message(self, message.clone());
+                        whisperee_ref.add_private_chat_message(self, message.clone());
                     }
                 }
             },

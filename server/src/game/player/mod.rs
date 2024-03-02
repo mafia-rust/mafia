@@ -13,7 +13,7 @@ use crate::lobby::ClientConnection;
 use crate::{
     game::{
         role::{Role, RoleState}, 
-        chat::ChatMessage, 
+        chat::ChatMessageVariant, 
         visit::Visit, 
         grave::{GraveRole, GraveKiller}, 
         verdict::Verdict, available_buttons::AvailableButtons
@@ -21,6 +21,7 @@ use crate::{
     websocket_connections::connection::ClientSender,
 };
 
+use super::chat::ChatMessage;
 use super::tag::Tag;
 
 pub struct Player {
@@ -69,7 +70,7 @@ struct PlayerNightVariables{
     chosen_targets: Vec<PlayerReference>,
     visits: Vec<Visit>,
 
-    messages: Vec<ChatMessage>,
+    messages: Vec<ChatMessageVariant>,
 
     grave_role: Option<GraveRole>,
     grave_killers: Vec<GraveKiller>,

@@ -5,7 +5,7 @@ import React from "react";
 import translate, { langText, translateChecked } from "../game/lang";
 import StyledText from "./StyledText";
 import { ROLE_SETS, RoleSet, getRolesFromRoleSet } from "../game/roleListState.d";
-import ChatElement, { ChatMessage } from "./ChatMessage";
+import ChatElement from "./ChatMessage";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { GeneratedArticle, WikiArticleLink } from "./WikiArticleLink";
 import { replaceMentions } from "..";
@@ -39,8 +39,13 @@ export default function WikiArticle(props: {
                     <StyledText markdown={true}>
                         {"### "+translate("wiki.article.role.chatMessages")+"\n"}
                     </StyledText>
-                    {roleData.chatMessages.map((msg: any, i)=>
-                        <ChatElement key={i} message={msg as ChatMessage} playerNames={DUMMY_NAMES}/>
+                    {roleData.chatMessages.map((msgvariant: any, i)=>
+                        <ChatElement key={i} message={
+                            {
+                                variant: msgvariant,
+                                chatGroup: "all",
+                            }
+                        } playerNames={DUMMY_NAMES}/>
                     )}
                 </div>
                 {roleData.armor && <div>
