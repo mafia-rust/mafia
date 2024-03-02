@@ -43,6 +43,11 @@ export default function WikiArticle(props: {
                         <ChatElement key={i} message={msg as ChatMessage} playerNames={DUMMY_NAMES}/>
                     )}
                 </div>
+                {roleData.armor && <div>
+                    <StyledText markdown={true}>
+                        {"### "+translate("defense")+": "+translate("defense.1")+"\n"}
+                    </StyledText>
+                </div>}
                 <details>
                     <summary>{translate("wiki.article.role.details")}</summary>
                     <div>
