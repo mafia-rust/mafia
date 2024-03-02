@@ -33,11 +33,25 @@
     height: max-content;
 }
 /* Markdown */
-.wiki-article > div {
-    margin-bottom: 2rem;
+.wiki-article div {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
 }
 .wiki-article * {
     text-align: left;
+}
+.wiki-article summary {
+    padding: 0.5rem;
+    border: 2px solid var(--primary-border-color);
+    border-radius: 0.5rem;
+    text-align: center;
+}
+.wiki-article details > div{
+    margin-top: 0;
+    padding: 0.5rem;
+    border: 2px solid var(--primary-border-color);
+    border-radius: 0.5rem;
+    
 }
 .wiki-article blockquote {
     width: 100%;
@@ -46,15 +60,6 @@
     padding-bottom: 0.01rem;
     margin-bottom: 0.5rem;
     text-align: left;
-}
-.wiki-article details {
-    width: 100%;
-    background-color: var(--primary-color);
-    border-radius: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-.wiki-article summary {
-    margin: 0;
 }
 .wiki-article blockquote > * {
     display: inline-block;
