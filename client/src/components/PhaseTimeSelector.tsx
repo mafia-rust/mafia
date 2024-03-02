@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { Phase, PhaseTimes } from "../game/gameState.d";
+import { PhaseType, PhaseTimes } from "../game/gameState.d";
 import translate from "../game/lang";
 import { isValidPhaseTime } from "../game/gameManager";
 import "./phaseTimeSelector.css";
@@ -12,7 +12,7 @@ export default function PhaseTimesSelector(props: {
     onChange: (phaseTimes: PhaseTimes) => void,
 }): ReactElement {
 
-    const onChange = (phase: Phase, time: number) => {
+    const onChange = (phase: PhaseType, time: number) => {
         let newPhaseTimes = {...props.phaseTimes};
         newPhaseTimes[phase] = time;
         props.onChange(newPhaseTimes);
@@ -35,9 +35,9 @@ export default function PhaseTimesSelector(props: {
 
 function PhaseTimeSelector(props: {
     disabled?: boolean,
-    phase: Phase,
+    phase: PhaseType,
     time: number,
-    onChange: (phase: Phase, time: number) => void,
+    onChange: (phase: PhaseType, time: number) => void,
 }): ReactElement {
     let phaseKey = "phase." + props.phase;
     

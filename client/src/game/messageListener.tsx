@@ -262,7 +262,11 @@ export default function messageListener(packet: ToClientPacket){
                 }
 
                 for(const [key, value] of Object.entries(packet.playerTags)){
-                    GAME_MANAGER.state.players[Number.parseInt(key)].playerTags = value as Tag[];
+                    if(
+                        GAME_MANAGER.state.players !== undefined && 
+                        GAME_MANAGER.state.players[Number.parseInt(key)] !== undefined
+                    )
+                        GAME_MANAGER.state.players[Number.parseInt(key)].playerTags = value as Tag[];
                 }
             }
         break;

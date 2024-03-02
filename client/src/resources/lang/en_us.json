@@ -482,6 +482,8 @@
     "chatMessage.playerDied":"\\0 died.",
     "chatMessage.deathNote": "A note left with the body reads:",
     "chatMessage.phaseChange":"\\0 \\1",
+    "chatMessage.phaseChange.nomination":"\\0 \\1, \\2 nominations left",
+    "chatMessage.phaseChange.trial":"\\0 \\1, \\2 is on trial",
     "chatMessage.gameOver": "Game Over",
     "chatMessage.playerWon":"\\0 won! They were the \\1.",
     "chatMessage.playerLost":"\\0 lost! They were the \\1.",

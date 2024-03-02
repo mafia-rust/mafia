@@ -4,7 +4,7 @@ import React from "react";
 import GAME_MANAGER, { find, replaceMentions } from "..";
 import StyledText from "./StyledText";
 import "./chatMessage.css"
-import { ChatGroup, Phase, PlayerIndex, Verdict } from "../game/gameState.d";
+import { ChatGroup, PhaseState, PlayerIndex, Verdict } from "../game/gameState.d";
 import { Role } from "../game/roleState.d";
 import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
@@ -142,10 +142,28 @@ export function translateChatMessage(message: ChatMessage, playerNames?: string[
         case "youDied":
             return translate("chatMessage.youDied");
         case "phaseChange":
-            return translate("chatMessage.phaseChange",
-                translate("phase."+message.phase),
-                message.dayNumber
-            );
+            switch (message.phase.type) {
+                case "nomination":
+                    return translate("chatMessage.phaseChange.nomination",
+                        translate("phase."+message.phase.type),
+                        message.dayNumber,
+                        message.phase.trialsLeft
+                    );
+                case "testimony":
+                case "judgement":
+                case "finalWords":
+                    return translate("chatMessage.phaseChange.trial",
+                        translate("phase."+message.phase.type),
+                        message.dayNumber,
+                        playerNames[message.phase.playerOnTrial]
+                    );
+                default:
+                    return translate("chatMessage.phaseChange",
+                        translate("phase."+message.phase.type),
+                        message.dayNumber
+                    );
+            }
+            
         case "trialInformation":
             return translate("chatMessage.trialInformation",
                 message.requiredVotes,
@@ -391,7 +409,7 @@ export type ChatMessage = {
     playerIndex: PlayerIndex
 } | {
     type: "phaseChange", 
-    phase: Phase, 
+    phase: PhaseState,
     dayNumber: number
 } | 
 // Trial
