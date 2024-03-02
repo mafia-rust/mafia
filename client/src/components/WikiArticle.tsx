@@ -43,9 +43,9 @@ export default function WikiArticle(props: {
                         <ChatElement key={i} message={msg as ChatMessage} playerNames={DUMMY_NAMES}/>
                     )}
                 </div>
-                    <details>
-                        <summary>{translate("wiki.article.role.details")}</summary>
-                <div>
+                <details>
+                    <summary>{translate("wiki.article.role.details")}</summary>
+                    <div>
                         <StyledText markdown={true}>
                             {"### "+translate("wiki.article.role.abilities")+"\n"}
                             {(translateChecked("wiki.article.role."+role+".abilities") ?? translate("wiki.article.role.noAbilities"))+"\n"}
@@ -59,8 +59,8 @@ export default function WikiArticle(props: {
                             {"### "+translate("wiki.article.standard.roleLimit.title")+": "+(roleData.maxCount === null ? translate("none") : roleData.maxCount)+"\n"}
                             {"### "+translate("defense")+": "+translate("defense."+(roleData.armor ? "1" : "0"))+"\n"}
                         </StyledText>
-                </div>
-                    </details>
+                    </div>
+                </details>
             </section>;
         case "standard":
             return <section className="wiki-article">
