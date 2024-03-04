@@ -14,14 +14,19 @@
     display: flex;
     flex-direction: column;
 }
-.chat-menu .send-section {
-    display: flex;
-    flex-direction: column;
-    border-top: 1px solid var(--primary-border-color);
-}
-.chat-menu .send-section > div{
+.chat-menu .chat-menu-icons {
     display: flex;
     flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    padding: 0 10px;
+    border-top: 1px solid var(--primary-border-color);
+    background-color: var(--secondary-color);
+}
+.chat-menu .send-section {
+    display: flex;
+    flex-direction: row;
+    border-top: 1px solid var(--primary-border-color);
     align-items: center;
 }
 .chat-menu .send-section button{

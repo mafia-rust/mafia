@@ -5,7 +5,6 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["jail","defense","chatGroup","roleLimit"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "jailedTarget","playerIndex": 7},
@@ -24,13 +23,13 @@
                     "type": "player",
                     "player": 7
                 },
-                "text": "I'm the Jailor", 
+                "text": "I'm jester", 
                 "chatGroup": "jail"
             },
             {"type": "jailorDecideExecute","target": 7},
             {"type": "jailorDecideExecute","target": null},
-            {"type": "someoneSurvivedYourAttack"},
-            {"type": "targetJailed"}
+            {"type": "targetJailed"},
+            {"type": "someoneSurvivedYourAttack"}
         ]
     },
     "sheriff": {
@@ -39,7 +38,6 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["innocent","suspicious","aura"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type":"sheriffResult","suspicious":true},
@@ -52,7 +50,6 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["visit","astral","appearedVisit"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "lookoutResult", "players": [9,15,4]},
@@ -65,7 +62,6 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["friends","enemies","aura"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "seerResult", "enemies": true},
@@ -78,7 +74,6 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["visit","astral","appearedVisit"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "trackerResult", "players": [20]},
@@ -91,7 +86,6 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["vision","aura"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "psychicEvil", "players": [19,27,3]},
@@ -104,19 +98,18 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["visit","silenced","roleblock","protect","transport","possess"],
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "spyMafiaVisit", "players": [16,17,18]},
-            {"type": "spyMafiaVisit", "players": []},
-            {"type": "spyCultistCount", "count": 0},
-            {"type": "spyCultistCount", "count": 1},
-            {"type": "spyCultistCount", "count": 2},
             {"type": "spyBug", "bug": "silenced"},
             {"type": "spyBug", "bug": "roleblocked"},
             {"type": "spyBug", "bug": "protected"},
             {"type": "spyBug", "bug": "transported"},
-            {"type": "spyBug", "bug": "possessed"}
+            {"type": "spyBug", "bug": "possessed"},
+            {"type": "spyMafiaVisit", "players": [16,17,18]},
+            {"type": "spyMafiaVisit", "players": []},
+            {"type": "spyCultistCount", "count": 0},
+            {"type": "spyCultistCount", "count": 1},
+            {"type": "spyCultistCount", "count": 2}
         ]
     },
     "doctor": {
@@ -125,7 +118,6 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["protect","defense"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "targetWasAttacked"},
@@ -139,12 +131,11 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["protect","defense","astral"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "targetWasAttacked"},
-            {"type": "someoneSurvivedYourAttack"},
             {"type": "youWereProtected"},
+            {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
     },
@@ -154,11 +145,10 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["roleblock","jail"],
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "roleBlocked","playerIndex": true},
-            {"type": "roleBlocked","playerIndex": false}
+            {"type": "roleBlocked","immune": false},
+            {"type": "roleBlocked","immune": true}
         ]
     },
     "trapper": {
@@ -167,12 +157,11 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["defense"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "trapState", "state":{"type":"dismantled"}},
             {"type": "trapState", "state":{"type":"ready"}},
-            {"type": "trapState", "state":{"type":"roleSet"}},
+            {"type": "trapState", "state":{"type":"set"}},
             {"type": "trapperYouAttackedVisitor"},
             {"type": "trapperVisitorsRole", "role": "framer"},
             {"type": "targetWasAttacked"},
@@ -187,7 +176,6 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["protect","defense","astral"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "targetWasAttacked"},
@@ -202,7 +190,6 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["defense"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "vigilanteSuicide"},
@@ -215,7 +202,6 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["defense","astral","visit","rampage","roleLimit"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "veteranAttackedVisitor"},
@@ -229,7 +215,6 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["defense","roleLimit"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "deputyKilled", "shotIndex": 11},
@@ -243,7 +228,6 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["roleblock"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "roleBlocked", "immune": true},
@@ -256,7 +240,6 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["haunt","dead","chatGroup"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "mediumHauntStarted", "medium":32, "player":10},
@@ -286,7 +269,6 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["roleLabel","roleLimit"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "mayorRevealed","playerIndex": 3}
@@ -298,7 +280,6 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
-        "keywords": ["interview","journal","chatGroup","roleLimit"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "youAreInterviewingPlayer","playerIndex": 1},
@@ -332,7 +313,6 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["transport","priority","visit"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "transported"}
@@ -344,15 +324,14 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["dead","visit","possess","priority","roleLimit"],
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "targetIsPossessionImmune"},
             {"type": "targetsMessage", "message": 
                 {"type": "sheriffResult","suspicious":true}
             },
             {"type": "youWerePossessed", "immune": false},
-            {"type": "youWerePossessed", "immune": true}
+            {"type": "youWerePossessed", "immune": true},
+            {"type": "targetIsPossessionImmune"}
         ]
     },
     "godfather": {
@@ -361,7 +340,6 @@
         "armor": true,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["backup","defense","convert","roleblock","jail","roleLimit"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "godfatherBackup", "backup": null},
@@ -377,7 +355,6 @@
         "armor": false,
         "maxCount": 0,
         "largeRoleSpecificMenu": false,
-        "keywords": ["defense"],
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type": "someoneSurvivedYourAttack"}
@@ -389,7 +366,6 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": true,
-        "keywords": ["roleblock"],
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type": "roleBlocked","immune": true},
@@ -408,7 +384,6 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["silenced"],
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type":"silenced"}
@@ -420,11 +395,10 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["appearedVisit","roleLimit"],
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type": "consigliereResult", "role": "arsonist", "visitedBy":[31,32], "visited":[33]},
-            {"type": "consigliereResult", "role": "arsonist", "visitedBy":[], "visited":[]}
+            {"type": "consigliereResult", "role": "vigilante", "visitedBy":[], "visited":[]}
         ]
     },
     "janitor": {
@@ -433,7 +407,6 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["cleaned","roleLimit"],
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {
@@ -449,9 +422,10 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["aura","appearedVisit"],
         "canBeConvertedTo": ["godfather"],
-        "chatMessages":[]
+        "chatMessages":[
+            {"type": "sheriffResult","suspicious":true}
+        ]
     },
     "forger": {
         "faction": "mafia",
@@ -459,7 +433,6 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
-        "keywords": ["forged","roleLimit"],
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {
@@ -475,7 +448,6 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["visit","possess","priority","roleLimit"],
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type": "targetsMessage", "message": 
@@ -492,7 +464,6 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["dead","visit","possess","priority","roleLimit"],
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type": "targetsMessage", "message": 
@@ -509,10 +480,8 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["aura","dead","defense","priority"],
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "someoneSurvivedYourAttack"},
             {"type": "jesterWon"}
         ]
     },
@@ -522,11 +491,10 @@
         "armor": true,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["convert","aura","defense"],
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
-            {"type": "youSurvivedAttack"},
-            {"type": "executionerWon"}
+            {"type": "executionerWon"},
+            {"type": "youSurvivedAttack"}
         ]
     },
     
@@ -536,7 +504,6 @@
         "armor": true,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["defense"],
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
             {"type": "youSurvivedAttack"}
@@ -548,7 +515,6 @@
         "armor": true,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["doused","defense","roleblock"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "someoneSurvivedYourAttack"},
@@ -561,7 +527,6 @@
         "armor": true,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["fullMoon","rampage","defense","astral","appearedVisit","aura"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {
@@ -589,7 +554,6 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["convert", "priority", "roleOutline"],
         "canBeConvertedTo": [],
         "chatMessages":[]
     },
@@ -599,7 +563,6 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["roleLabel", "defense"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "martyrRevealed", "martyr": 30},
@@ -613,7 +576,6 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["defense","roleLimit"],
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "deathCollectedSouls"},
@@ -627,12 +589,10 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": true,
-        "keywords": ["convert", "defense","roleLimit"],
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
             {"type": "doomsayerWon"},
-            {"type": "doomsayerFailed"},
-            {"type": "someoneSurvivedYourAttack"}
+            {"type": "doomsayerFailed"}
         ]
     },
     "apostle": {
@@ -641,14 +601,13 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["convert","priority","defense"],
         "canBeConvertedTo": ["zealot","disciple"],
         "chatMessages":[
-            {"type": "yourConvertFailed"},
             {"type": "apostleCanConvertTonight"},
             {"type": "apostleCantConvertTonight"},
             {"type": "cultSacrificesRequired","required": 2},
             {"type": "cultSacrificesRequired","required": 0},
+            {"type": "yourConvertFailed"},
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
@@ -658,9 +617,13 @@
         "armor": false,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "keywords": ["convert"],
         "canBeConvertedTo": ["zealot","apostle"],
-        "chatMessages":[]
+        "chatMessages":[
+            {"type": "apostleCanConvertTonight"},
+            {"type": "apostleCantConvertTonight"},
+            {"type": "cultSacrificesRequired","required": 2},
+            {"type": "cultSacrificesRequired","required": 0}
+        ]
     },
     "zealot": {
         "faction": "cult",
@@ -668,10 +631,13 @@
         "armor": false,
         "maxCount": 1,
         "largeRoleSpecificMenu": false,
-        "keywords": ["convert", "defense"],
         "canBeConvertedTo": ["disciple","apostle"],
         "chatMessages":[
-            {"type": "someoneSurvivedYourAttack"}
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "apostleCanConvertTonight"},
+            {"type": "apostleCantConvertTonight"},
+            {"type": "cultSacrificesRequired","required": 2},
+            {"type": "cultSacrificesRequired","required": 0}
         ]
     }
 }

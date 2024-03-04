@@ -1,7 +1,7 @@
 import React from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
-import { Phase, Player, PlayerIndex, Verdict } from "../../game/gameState.d";
+import { PhaseType, Player, PlayerIndex, Verdict } from "../../game/gameState.d";
 import GameScreen, { ContentMenu as GameScreenContentMenus } from "./GameScreen";
 import ROLES from "../../resources/roles.json"
 import "./headerMenu.css";
@@ -11,11 +11,11 @@ import { StateEventType } from "../../game/gameManager.d";
 
 
 type HeaderMenuProps = {
-    phase: Phase | null,
+    phase: PhaseType | null,
     chatMenuNotification: boolean,
 }
 type HeaderMenuState = {    
-    phase: Phase | null,
+    phase: PhaseType | null,
     playerOnTrial: PlayerIndex | null,
     players: Player[],
     myIndex: PlayerIndex | null,
@@ -68,6 +68,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                     case "yourRoleState":
                         this.setState({roleState: GAME_MANAGER.state.roleState})
                     break;
+                    case "phaseTimeLeft":
                     case "tick":
                         this.setState({timeLeftMs: GAME_MANAGER.state.timeLeftMs})
                     break;
@@ -85,38 +86,49 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
         GAME_MANAGER.removeStateListener(this.listener);
     }
     renderPhaseSpecific(){
+
+        let phaseSpecific = null;
+
         switch(this.state.phase){
+            case "testimony":
+            case "finalWords":
+                phaseSpecific = <div>
+                    <StyledText>
+                        {this.state.players[this.state.playerOnTrial!]?.toString()}
+                    </StyledText>
+                </div>;
+            break;
             case "judgement":
-            if(this.state.playerOnTrial !== null){
-                return(<div className="judgement-specific">
-                    <div>
+                if(this.state.playerOnTrial !== null){
+
+                    let verdictButtons = null;
+                    if (this.state.playerOnTrial === this.state.myIndex) {
+                        verdictButtons = <div className="judgement-info">{translate("judgement.cannotVote.onTrial")}</div>;
+                    } else if (!this.state.players[this.state.myIndex!].alive){
+                        verdictButtons = <div className="judgement-info">{translate("judgement.cannotVote.dead")}</div>;
+                    } else {
+                        verdictButtons = <div className="judgement-info">
+                            {this.renderVerdictButton("guilty")}
+                            {this.renderVerdictButton("abstain")}
+                            {this.renderVerdictButton("innocent")}
+                        </div>;
+                    }
+
+
+                    phaseSpecific = <div>
                         <StyledText>
                             {this.state.players[this.state.playerOnTrial!]?.toString()}
                         </StyledText>
-                    {(()=>{
-                        if (this.state.playerOnTrial === this.state.myIndex) {
-                            return <div className="judgement-info">{translate("judgement.cannotVote.onTrial")}</div>;
-                        } else if (!this.state.players[this.state.myIndex!].alive){
-                            return <div className="judgement-info">{translate("judgement.cannotVote.dead")}</div>;
-                        } else {
-                            return(<div className="judgement-info">
-                                {this.renderVerdictButton("guilty")}
-                                {this.renderVerdictButton("abstain")}
-                                {this.renderVerdictButton("innocent")}
-                            </div>);
-                        }
-                    })()}
-                    </div>
-                </div>);
-            }else{
-                return(<div> 
-                    ERROR NO PLAYER ON TRIAL FOUND IN JUDGEMENT PHASE TODO 
-                </div>);
-            }
-            
-            default:
-            return null;
+                        {verdictButtons}
+                    </div>;
+                }else{
+                    return(<div> 
+                        ERROR NO PLAYER ON TRIAL FOUND IN JUDGEMENT PHASE 
+                    </div>);
+                }
         }
+
+        return phaseSpecific ? <div className="phase-specific">{phaseSpecific}</div> : null;
     }
 
     renderVerdictButton(verdict: Verdict) {

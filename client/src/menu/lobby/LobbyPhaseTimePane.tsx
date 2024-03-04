@@ -4,6 +4,7 @@ import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
 import { StateListener } from "../../game/gameManager.d";
 import PhaseTimesSelector from "../../components/PhaseTimeSelector";
+import { defaultPhaseTimes } from "../../game/gameState";
 
 
 type PhaseTimePaneState = {
@@ -16,15 +17,7 @@ export default class LobbyPhaseTimePane extends React.Component<{}, PhaseTimePan
     constructor(props: {}) {
         super(props);
 
-        let phaseTimes = {
-            morning: 15,
-            discussion: 46,
-            voting: 30,
-            testimony: 24,
-            judgement: 20,
-            evening: 10,
-            night: 37
-        };
+        let phaseTimes = defaultPhaseTimes();
         if(GAME_MANAGER.state.stateType === "lobby"){
             phaseTimes = GAME_MANAGER.state.phaseTimes;
         }

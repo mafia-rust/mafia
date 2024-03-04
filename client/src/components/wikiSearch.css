@@ -28,15 +28,32 @@
     margin-top: .1rem;
     margin-bottom: .6rem;
 }
-.wiki-content-body {
+.wiki-article {
     text-align: left;
     height: max-content;
 }
 /* Markdown */
-.wiki-content-body * {
+.wiki-article div {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+.wiki-article * {
     text-align: left;
 }
-.wiki-content-body blockquote {
+.wiki-article summary {
+    padding: 0.5rem;
+    border: 2px solid var(--primary-border-color);
+    border-radius: 0.5rem;
+    text-align: center;
+}
+.wiki-article details > div{
+    margin-top: 0;
+    padding: 0.5rem;
+    border: 2px solid var(--primary-border-color);
+    border-radius: 0.5rem;
+    
+}
+.wiki-article blockquote {
     width: 100%;
     background-color: var(--primary-color);
     padding-top: 0.1rem;
@@ -44,38 +61,29 @@
     margin-bottom: 0.5rem;
     text-align: left;
 }
-.wiki-content-body details {
-    width: 100%;
-    background-color: var(--primary-color);
-    border-radius: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-.wiki-content-body summary {
-    margin: 0;
-}
-.wiki-content-body blockquote > * {
+.wiki-article blockquote > * {
     display: inline-block;
     margin: auto;
     text-align: left;
 }
-.wiki-content-body h1 {
+.wiki-article h1 {
     text-align: center;
     font-size: 150%;
     margin-bottom: 0.25rem;
 }
-.wiki-content-body h2 {
+.wiki-article h2 {
     text-align: center;
     font-size: 125%;
     margin-bottom: 0.25rem;
 }
-.wiki-content-body h3 {
+.wiki-article h3 {
     text-align: center;
     margin-bottom: 0.5rem;
 }
-.wiki-content-body p {
+.wiki-article p {
     margin-bottom: 0.5rem;
 }
-.wiki-content-body ul, .wiki-content-body ol {
+.wiki-article ul, .wiki-article ol {
     padding-left: 1.5rem;
     margin-bottom: 0.5rem;
 }
@@ -84,4 +92,7 @@
     padding: 0.3rem;
     border-radius: 1rem;
     background-color: var(--primary-color);
+}
+.wiki-article-standard {
+    text-align: left;
 }

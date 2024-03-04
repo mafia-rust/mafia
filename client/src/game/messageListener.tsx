@@ -10,6 +10,9 @@ import translate from "./lang";
 import { getAudioSrcFromString } from "../components/audio";
 import { computeKeywordDataWithPlayers } from "../components/StyledText";
 import { deleteReconnectData, saveReconnectData } from "./localStorage";
+import { WikiArticleLink } from "../components/WikiArticleLink";
+import React from "react";
+import WikiArticle from "../components/WikiArticle";
 
 export default function messageListener(packet: ToClientPacket){
 
@@ -74,6 +77,8 @@ export default function messageListener(packet: ToClientPacket){
                     console.error(packet);
                 break;
             }
+            deleteReconnectData();
+            
         break;
         case "rejectStart":
             switch(packet.reason) {
@@ -189,12 +194,22 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game"){
                 GAME_MANAGER.state.phase = packet.phase;
                 GAME_MANAGER.state.dayNumber = packet.dayNumber;
-                GAME_MANAGER.state.timeLeftMs = packet.secondsLeft * 1000;
         
+                if(packet.phase === "briefing" && GAME_MANAGER.state.stateType === "game"){
+                    const role = GAME_MANAGER.state.roleState?.role;
+                    if(role !== undefined){
+                        Anchor.setCoverCard(<WikiArticle article={"role/"+role as WikiArticleLink}/>);
+                    }
+                }
+
                 if(packet.phase !== "judgement"){
                     Anchor.playAudioFile(getAudioSrcFromString(packet.phase));
                 }
             }
+        break;
+        case "phaseTimeLeft":
+            if(GAME_MANAGER.state.stateType === "game")
+                GAME_MANAGER.state.timeLeftMs = packet.secondsLeft * 1000;
         break;
         case "playerOnTrial":
             if(GAME_MANAGER.state.stateType === "game")
@@ -215,6 +230,11 @@ export default function messageListener(packet: ToClientPacket){
                 for(let [playerIndex, numVoted] of Object.entries(packet.votesForPlayer)){
                     GAME_MANAGER.state.players[Number.parseInt(playerIndex)].numVoted = numVoted;
                 }
+            }
+        break;
+        case "yourSendChatGroups":
+            if(GAME_MANAGER.state.stateType === "game"){
+                GAME_MANAGER.state.sendChatGroups = [...packet.sendChatGroups];
             }
         break;
         case "yourButtons":
@@ -242,7 +262,11 @@ export default function messageListener(packet: ToClientPacket){
                 }
 
                 for(const [key, value] of Object.entries(packet.playerTags)){
-                    GAME_MANAGER.state.players[Number.parseInt(key)].playerTags = value as Tag[];
+                    if(
+                        GAME_MANAGER.state.players !== undefined && 
+                        GAME_MANAGER.state.players[Number.parseInt(key)] !== undefined
+                    )
+                        GAME_MANAGER.state.players[Number.parseInt(key)].playerTags = value as Tag[];
                 }
             }
         break;
