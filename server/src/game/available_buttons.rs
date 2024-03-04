@@ -15,7 +15,7 @@ impl AvailableButtons{
         Self{
             vote: 
                 actor_ref != target_ref &&
-                game.current_phase().phase() == PhaseType::Voting &&
+                game.current_phase().phase() == PhaseType::Nomination &&
                 actor_ref.chosen_vote(game).is_none() && 
                 !actor_ref.night_silenced(game) &&
                 actor_ref.alive(game) && target_ref.alive(game),

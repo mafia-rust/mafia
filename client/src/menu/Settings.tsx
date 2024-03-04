@@ -51,16 +51,16 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
     render(): React.ReactNode {
         return (
             <div className="settings slide-in">
-                <div>
-                    {
-                        GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 
-                        (<>
-                            <h2>{translate("menu.play.field.roomCode")}
-                            <RoomCodeButton/></h2>
-                        </>
-                        ) : null
-                    }
-                    <h2>{translate("menu.settings.volume")}
+                {
+                    GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 
+                    (<>
+                        <h2>{translate("menu.play.field.roomCode")}
+                        <RoomCodeButton/></h2>
+                    </>
+                    ) : null
+                }
+                <section>
+                    <h2>{translate("menu.settings.volume")}</h2>
                     <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
                         value={this.state.volume} 
                         onChange={(e) => {
@@ -68,28 +68,29 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
                             saveSettings({volume});
                             this.setState({volume}, () => this.props.onVolumeChange(volume));
                         }
-                    }/></h2>
-                    <h2>{translate("menu.settings.language")}
-                        <select 
-                            name="lang-select" 
-                            defaultValue={loadSettings().language ?? "en_us"}
-                            onChange={e => {
-                                const language = e.target.options[e.target.selectedIndex].value as Language;
-                                switchLanguage(language);
-                                saveSettings({language});
-                                Anchor.reloadContent();
-                            }}
-                        >
-                            {LANGUAGES.map(lang => <option value={lang}>{languageName(lang)}</option>)}
-                        </select>
-                    </h2>
-                    <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
-                    <button onClick={() => {this.goToRolelistEditor()}}>{translate("menu.settings.gameSettingsEditor")}</button>
-                    <button onClick={()=>{
-                        if(!window.confirm(translate("confirmDelete"))) return;
-                        localStorage.clear();
-                    }}>{translate('menu.settings.eraseSaveData')}</button>
-                </div>
+                    }/>
+                </section>
+                <section>
+                <h2>{translate("menu.settings.language")}</h2>
+                    <select 
+                        name="lang-select" 
+                        defaultValue={loadSettings().language ?? "en_us"}
+                        onChange={e => {
+                            const language = e.target.options[e.target.selectedIndex].value as Language;
+                            switchLanguage(language);
+                            saveSettings({language});
+                            Anchor.reloadContent();
+                        }}
+                    >
+                        {LANGUAGES.map(lang => <option key={lang} value={lang}>{languageName(lang)}</option>)}
+                    </select>
+                </section>
+                <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
+                <button onClick={() => {this.goToRolelistEditor()}}>{translate("menu.settings.gameSettingsEditor")}</button>
+                <button onClick={()=>{
+                    if(!window.confirm(translate("confirmDelete"))) return;
+                    localStorage.clear();
+                }}>{translate('menu.settings.eraseSaveData')}</button>
             </div>
         );
     }

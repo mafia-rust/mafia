@@ -97,11 +97,11 @@ impl RoleStateImpl for Martyr {
         self.state == MartyrState::Won
     }
     fn on_phase_start(self,  game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
-        if phase == PhaseType::Morning && matches!(self.state, MartyrState::StillPlaying {..}) {
+        if phase == PhaseType::Obituary && matches!(self.state, MartyrState::StillPlaying {..}) {
             game.add_message_to_chat_group(ChatGroup::All, ChatMessage::MartyrFailed);
         }
 
-        if phase == PhaseType::Morning && actor_ref.alive(game) && matches!(self.state, MartyrState::StillPlaying { bullets: 0 }) {
+        if phase == PhaseType::Obituary && actor_ref.alive(game) && matches!(self.state, MartyrState::StillPlaying { bullets: 0 }) {
             actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref), true);
         }
     }

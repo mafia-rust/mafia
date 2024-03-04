@@ -228,13 +228,15 @@ impl Lobby {
                 }
 
                 match phase {
-                    PhaseType::Morning => { settings.phase_times.morning = time; }
+                    PhaseType::Briefing => { settings.phase_times.briefing = time; }
+                    PhaseType::Obituary => { settings.phase_times.obituary = time; }
                     PhaseType::Discussion => { settings.phase_times.discussion = time; }
-                    PhaseType::Evening => { settings.phase_times.evening = time; }
+                    PhaseType::FinalWords => { settings.phase_times.final_words = time; }
+                    PhaseType::Dusk => { settings.phase_times.dusk = time; }
                     PhaseType::Judgement => { settings.phase_times.judgement = time; }
                     PhaseType::Night => { settings.phase_times.night = time; }
                     PhaseType::Testimony => { settings.phase_times.testimony = time; }
-                    PhaseType::Voting => { settings.phase_times.voting = time; }
+                    PhaseType::Nomination => { settings.phase_times.nomination = time; }
                 };
                 
                 self.send_to_all(ToClientPacket::PhaseTime { phase, time });

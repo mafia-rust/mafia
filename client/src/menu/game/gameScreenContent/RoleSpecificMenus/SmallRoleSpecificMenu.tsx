@@ -4,6 +4,7 @@ import GAME_MANAGER from "../../../.."
 import translate from "../../../../game/lang"
 import StyledText from "../../../../components/StyledText"
 import RoleOutlineDropdown from "../../../../components/OutlineSelector"
+import "./smallRoleSpecificMenu.css"
 
 type SmallRoleSpecificMenuProps = {
 }
@@ -34,6 +35,15 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
     }
 
     render(): JSX.Element | null {
+        const specific = this.renderSpecific();
+        if(specific !== null)
+            return <div className="small-role-specific-menu">
+                {specific}
+            </div>
+        return null;
+    }
+
+    renderSpecific(): JSX.Element | null {
         switch(this.state.gameState.roleState?.role){
             case "jailor":
                 if(this.state.gameState.phase==="night") {

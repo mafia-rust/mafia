@@ -68,19 +68,18 @@ pub use mafia_server::packet::ToServerPacket;
 
 #[test]
 fn medium_receives_dead_messages_from_jail() {
-    kit::scenario!(game where
+    kit::scenario!(game in Night 1 where
         medium: Medium,
         jailor: Jailor,
         townie: Sheriff,
         mafioso: Mafioso
     );
-    game.next_phase();
     mafioso.set_night_target(townie);
-    game.skip_to(PhaseType::Voting, 2);
+    game.skip_to(PhaseType::Nomination, 2);
     
     jailor.day_target(medium);
 
-    game.next_phase();
+    game.skip_to(PhaseType::Night, 2);
     let dead_message = "Hello medium!! Are you there!?";
     townie.send_message(dead_message);
 
@@ -102,13 +101,13 @@ fn sheriff_basic() {
     );
     sher.set_night_targets(vec![mafia]);
     
-    game.skip_to(PhaseType::Morning, 2);
+    game.skip_to(PhaseType::Obituary, 2);
     assert_contains!(sher.get_messages(), ChatMessage::SheriffResult { suspicious: true });
 
     game.skip_to(PhaseType::Night, 2);
     sher.set_night_targets(vec![townie]);
     
-    game.skip_to(PhaseType::Morning, 3);
+    game.skip_to(PhaseType::Obituary, 3);
     assert_contains!(sher.get_messages(), ChatMessage::SheriffResult { suspicious: false });
 }
 
@@ -120,7 +119,7 @@ fn sheriff_godfather() {
     );
     sher.set_night_targets(vec![mafia]);
     
-    game.skip_to(PhaseType::Morning, 2);
+    game.skip_to(PhaseType::Obituary, 2);
     assert_contains!(sher.get_messages(), ChatMessage::SheriffResult { suspicious: false });
 }
 
@@ -136,45 +135,45 @@ fn seer_basic() {
     );
     seer.set_night_targets(vec![mafia1, townie1]);
     
-    game.skip_to(PhaseType::Morning, 2);
+    game.skip_to(PhaseType::Obituary, 2);
     assert_contains!(
-        seer.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 1}),
+        seer.get_messages_after_last_message(ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 1}),
         ChatMessage::SeerResult { enemies: true }
     );
 
     game.skip_to(PhaseType::Night, 2);
     seer.set_night_targets(vec![mafia1, mafia2]);
     
-    game.skip_to(PhaseType::Morning, 3);
+    game.skip_to(PhaseType::Obituary, 3);
     assert_contains!(
-        seer.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 2}),
+        seer.get_messages_after_last_message(ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 2}),
         ChatMessage::SeerResult { enemies: false }
     );
 
     game.skip_to(PhaseType::Night, 3);
     seer.set_night_targets(vec![jester, mafia2]);
     
-    game.skip_to(PhaseType::Morning, 4);
+    game.skip_to(PhaseType::Obituary, 4);
     assert_contains!(
-        seer.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 3}),
+        seer.get_messages_after_last_message(ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 3}),
         ChatMessage::SeerResult { enemies: false }
     );
 
     game.skip_to(PhaseType::Night, 4);
     seer.set_night_targets(vec![townie2, jester]);
     
-    game.skip_to(PhaseType::Morning, 5);
+    game.skip_to(PhaseType::Obituary, 5);
     assert_contains!(
-        seer.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 4}),
+        seer.get_messages_after_last_message(ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 4}),
         ChatMessage::SeerResult { enemies: false }
     );
 
     game.skip_to(PhaseType::Night, 5);
     seer.set_night_targets(vec![townie2, townie1]);
     
-    game.skip_to(PhaseType::Morning, 6);
+    game.skip_to(PhaseType::Obituary, 6);
     assert_contains!(
-        seer.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 5}),
+        seer.get_messages_after_last_message(ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 5}),
         ChatMessage::SeerResult { enemies: false }
     );
 }
@@ -191,7 +190,7 @@ fn psychic_auras(){
         );
     
         game.next_phase();
-        let messages = psy.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 1});
+        let messages = psy.get_messages_after_last_message(ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 1});
         let messages: Vec<_> = 
             messages.into_iter()
             .filter(|msg|match msg {
@@ -210,7 +209,7 @@ fn psychic_auras(){
         game.skip_to(PhaseType::Night, 2);
         maf.set_night_target(town1);
         game.next_phase();
-        let messages = psy.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 2});
+        let messages = psy.get_messages_after_last_message(ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 2});
         let messages: Vec<_> = 
             messages.into_iter()
             .filter(|msg|match msg {
@@ -270,7 +269,7 @@ fn bodyguard_basic() {
     maf.set_night_target(townie);
     bg.set_night_target(townie);
 
-    game.skip_to(PhaseType::Morning, 2);
+    game.skip_to(PhaseType::Obituary, 2);
 
     assert!(townie.get_messages().contains(&ChatMessage::YouWereProtected));
 
@@ -294,14 +293,14 @@ fn transporter_basic_vigilante_escort() {
     vigi.set_night_target(town1);
     escort.set_night_target(town2);
 
-    game.skip_to(PhaseType::Morning, 3);
+    game.skip_to(PhaseType::Obituary, 3);
     assert!(town1.alive());
     assert!(!town2.alive());
 
     assert!(town1.was_roleblocked());
     assert!(!town2.was_roleblocked());
     
-    game.skip_to(PhaseType::Morning, 4);
+    game.skip_to(PhaseType::Obituary, 4);
     assert!(!vigi.alive());
 }
 
@@ -321,17 +320,17 @@ fn transporter_basic_seer_sheriff_framer() {
     assert!(town1.set_night_targets(vec![town2]));
     assert!(town2.set_night_targets(vec![town1]));
 
-    game.skip_to(PhaseType::Morning, 2);
+    game.skip_to(PhaseType::Obituary, 2);
     assert_contains!(
-        seer.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 1 }),
+        seer.get_messages_after_last_message(ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 1 }),
         ChatMessage::SeerResult { enemies: true }
     );
     assert_contains!(
-        town1.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 1 }),
+        town1.get_messages_after_last_message(ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 1 }),
         ChatMessage::SheriffResult { suspicious: false }
     );
     assert_contains!(
-        town2.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 1 }),
+        town2.get_messages_after_last_message(ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 1 }),
         ChatMessage::SheriffResult { suspicious: true }
     );
 }
@@ -350,7 +349,7 @@ fn bodyguard_protects_transported_target() {
     maf.set_night_target(t1);
     bg.set_night_target(t1);
     
-    game.skip_to(PhaseType::Morning, 2);
+    game.skip_to(PhaseType::Obituary, 2);
     assert!(t1.alive());
     assert!(t2.alive());
     assert!(trans.alive());
@@ -370,7 +369,7 @@ fn mayor_reveals_after_they_vote(){
         mafioso: Mafioso
     );
 
-    game.skip_to(PhaseType::Voting, 2);
+    game.skip_to(PhaseType::Nomination, 2);
     mayor.vote_for_player(Some(mafioso));
     mayor.day_target(mayor);
     assert_eq!(game.current_phase().phase(), PhaseType::Testimony);
@@ -379,15 +378,13 @@ fn mayor_reveals_after_they_vote(){
 
 #[test]
 fn retributionist_basic(){
-    kit::scenario!(game where
+    kit::scenario!(game in Night 1 where
         ret: Retributionist,
         sher1: Sheriff,
         sher2: Sheriff,
         mafioso: Mafioso,
         jester: Jester
     );
-
-    game.next_phase();
 
     mafioso.set_night_target(sher1);
     game.skip_to(PhaseType::Night, 2);
@@ -400,7 +397,7 @@ fn retributionist_basic(){
     assert!(ret.set_night_targets(vec![sher1, mafioso]));
     game.next_phase();
     assert_contains!(
-        ret.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 3 }),
+        ret.get_messages_after_last_message(ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 3 }),
         ChatMessage::TargetsMessage{message: Box::new(
             ChatMessage::SheriffResult{ suspicious: true }
         )}
@@ -410,7 +407,7 @@ fn retributionist_basic(){
     assert!(!ret.set_night_targets(vec![sher1, mafioso, jester]));
     game.next_phase();
     assert_not_contains!(
-        ret.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 4 }),
+        ret.get_messages_after_last_message(ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 4 }),
         ChatMessage::TargetsMessage{message: Box::new(
             ChatMessage::SheriffResult{suspicious: true}
         )}
@@ -420,7 +417,7 @@ fn retributionist_basic(){
     assert!(ret.set_night_targets(vec![sher2, jester, mafioso]));
     game.next_phase();
     assert_contains!(
-        ret.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 5 }),
+        ret.get_messages_after_last_message(ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 5 }),
         ChatMessage::TargetsMessage{message: Box::new(
             ChatMessage::SheriffResult{suspicious: false}
         )}
@@ -429,7 +426,7 @@ fn retributionist_basic(){
 
 #[test]
 fn necromancer_basic(){
-    kit::scenario!(game where
+    kit::scenario!(game in Night 1 where
         ret: Necromancer,
         sher: Sheriff,
         consigliere: Consigliere,
@@ -438,7 +435,6 @@ fn necromancer_basic(){
         vigilante: Vigilante
     );
     
-    game.next_phase();
     mafioso.set_night_target(sher);
     game.skip_to(PhaseType::Night, 2);
     vigilante.set_night_target(consigliere);
@@ -449,7 +445,7 @@ fn necromancer_basic(){
     assert!(ret.set_night_targets(vec![sher, mafioso]));
     game.next_phase();
     assert_contains!(
-        ret.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 3 }),
+        ret.get_messages_after_last_message(ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 3 }),
         ChatMessage::TargetsMessage{message: Box::new(
             ChatMessage::SheriffResult{ suspicious: true }
         )}
@@ -459,7 +455,7 @@ fn necromancer_basic(){
     assert!(!ret.set_night_targets(vec![sher, mafioso, jester]));
     game.next_phase();
     assert_not_contains!(
-        ret.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 4 }),
+        ret.get_messages_after_last_message(ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 4 }),
         ChatMessage::TargetsMessage{message: Box::new(
             ChatMessage::SheriffResult{suspicious: true}
         )}
@@ -469,7 +465,7 @@ fn necromancer_basic(){
     assert!(ret.set_night_targets(vec![consigliere, jester, mafioso]));
     game.next_phase();
     assert_contains!(
-        ret.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 5 }),
+        ret.get_messages_after_last_message(ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 5 }),
         ChatMessage::TargetsMessage{message: Box::new(
             ChatMessage::ConsigliereResult { role: Role::Jester, visited_by: vec![], visited: vec![] }
         )}
@@ -478,7 +474,7 @@ fn necromancer_basic(){
 
 #[test]
 fn witch_basic(){
-    kit::scenario!(game where
+    kit::scenario!(game in Night 1 where
         witch: Witch,
         sher: Sheriff,
         consigliere: Consigliere,
@@ -486,7 +482,6 @@ fn witch_basic(){
         jester: Jester
     );
 
-    game.next_phase();
     assert!(witch.set_night_targets(vec![sher, mafioso]));
     game.next_phase();
     assert_contains!(witch.get_messages(), ChatMessage::TargetsMessage{message: Box::new(
@@ -497,7 +492,7 @@ fn witch_basic(){
     assert!(witch.set_night_targets(vec![sher, mafioso, jester]));
     game.next_phase();
     assert_contains!(
-        witch.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 2 }),
+        witch.get_messages_after_last_message(ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 2 }),
         ChatMessage::TargetsMessage{message: Box::new(
             ChatMessage::SheriffResult{suspicious: true}
         )}
@@ -507,7 +502,7 @@ fn witch_basic(){
     assert!(!witch.set_night_targets(vec![consigliere, jester, mafioso]));
     game.next_phase();
     assert_not_contains!(
-        witch.get_messages_after_last_message(ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 3 }),
+        witch.get_messages_after_last_message(ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 3 }),
         ChatMessage::TargetsMessage{message: Box::new(
             ChatMessage::ConsigliereResult { role: Role::Jester, visited_by: vec![], visited: vec![] }
         )}
@@ -601,7 +596,7 @@ fn executioner_turns_into_jester(){
 
     assert!(mafioso.set_night_targets(vec![target]));
 
-    game.skip_to(PhaseType::Voting, 2);
+    game.skip_to(PhaseType::Nomination, 2);
 
     assert!(!target.alive());
     assert!(exe.alive());
@@ -618,7 +613,7 @@ fn executioner_instantly_turns_into_jester(){
 
 #[test]
 fn can_type_in_jail() {
-    kit::scenario!(game where
+    kit::scenario!(game in Dusk 1 where
         jailor: Jailor,
         sheriff: Sheriff
     );
@@ -874,7 +869,7 @@ fn seer_cant_see_godfather() {
     game.next_phase();
     assert_contains!(
         seer.get_messages_after_last_message(
-            ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 1 }
+            ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 1 }
         ),
         ChatMessage::SeerResult { enemies: false }
     );
@@ -884,7 +879,7 @@ fn seer_cant_see_godfather() {
     game.next_phase();
     assert_contains!(
         seer.get_messages_after_last_message(
-            ChatMessage::PhaseChange { phase_type: PhaseType::Night, day_number: 2 }
+            ChatMessage::PhaseChange { phase: PhaseState::Night, day_number: 2 }
         ),
         ChatMessage::SeerResult { enemies: false }
     );
@@ -908,19 +903,19 @@ fn reveler_protect_still_kill() {
     game.next_phase();
     assert_not_contains!(
         townie_a.get_messages_after_last_message(
-            ChatMessage::PhaseChange{phase_type: PhaseType::Night, day_number: 1}
+            ChatMessage::PhaseChange{phase: PhaseState::Night, day_number: 1}
         ),
         ChatMessage::RoleBlocked{immune: false}
     );
     assert_contains!(
         godfather.get_messages_after_last_message(
-            ChatMessage::PhaseChange{phase_type: PhaseType::Night, day_number: 1}
+            ChatMessage::PhaseChange{phase: PhaseState::Night, day_number: 1}
         ),
         ChatMessage::RoleBlocked{immune: false}
     );
     assert_not_contains!(
         jan.get_messages_after_last_message(
-            ChatMessage::PhaseChange{phase_type: PhaseType::Night, day_number: 1}
+            ChatMessage::PhaseChange{phase: PhaseState::Night, day_number: 1}
         ),
         ChatMessage::RoleBlocked{immune: false}
     );
@@ -1008,7 +1003,7 @@ fn cult_wait_for_two_deaths() {
 
 #[test]
 fn bodyguard_gets_single_target_jailed_message() {
-    kit::scenario!(game where
+    kit::scenario!(game in Dusk 1 where
         bg: Bodyguard,
         jailor: Jailor,
         _maf: Mafioso,
@@ -1026,14 +1021,14 @@ fn bodyguard_gets_single_target_jailed_message() {
     assert_eq!(
         bg.get_messages_after_last_message(
             ChatMessage::PhaseChange { 
-                phase_type: PhaseType::Night, day_number: 1
+                phase: PhaseState::Night, day_number: 1
             }
         ),
         vec![
             ChatMessage::TargetJailed,
             /* They should not get a second TargetJailed message */
             ChatMessage::PhaseChange { 
-                phase_type: PhaseType::Morning, day_number: 2 
+                phase: PhaseState::Obituary, day_number: 2 
             }
         ]
     );
@@ -1041,15 +1036,13 @@ fn bodyguard_gets_single_target_jailed_message() {
 
 #[test]
 fn martyr_suicide_ends_game() {
-    kit::scenario!(game where
+    kit::scenario!(game in Night 1 where
         martyr: Martyr,
         player1: Mafioso,
         player2: Sheriff,
         player3: Mafioso,
         player4: Sheriff
     );
-
-    game.next_phase();
 
     assert_contains!(
         player1.get_messages(),
@@ -1077,15 +1070,13 @@ fn martyr_suicide_ends_game() {
 
 #[test]
 fn martyr_roleblocked() {
-    kit::scenario!(game where
+    kit::scenario!(game in Night 1 where
         martyr: Martyr,
         player1: Mafioso,
         player2: Sheriff,
         consort: Consort,
         player4: Sheriff
     );
-
-    game.next_phase();
 
     assert_contains!(
         player1.get_messages(),
@@ -1112,15 +1103,13 @@ fn martyr_roleblocked() {
 
 #[test]
 fn martyr_healed() {
-    kit::scenario!(game where
+    kit::scenario!(game in Night 1 where
         martyr: Martyr,
         player1: Mafioso,
         player2: Sheriff,
         doctor: Doctor,
         player4: Sheriff
     );
-
-    game.next_phase();
 
     assert_contains!(
         player1.get_messages(),

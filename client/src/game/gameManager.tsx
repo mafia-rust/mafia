@@ -4,7 +4,7 @@ import GAME_MANAGER from "./../index";
 import messageListener from "./messageListener";
 import CONFIG from "./../resources/config.json"
 import React from "react";
-import { Phase, PhaseTimes, Verdict } from "./gameState.d";
+import { PhaseType, PhaseTimes, Verdict } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
 import { LobbyPreviewData, ToClientPacket, ToServerPacket } from "./packet";
 import { RoleOutline } from "./roleListState.d";
@@ -245,7 +245,7 @@ export function createGameManager(): GameManager {
 
             return promise;
         },
-        sendSetPhaseTimePacket(phase: Phase, time: number) {
+        sendSetPhaseTimePacket(phase: PhaseType, time: number) {
             if (isValidPhaseTime(time)) {
                 this.server.sendPacket({
                     type: "setPhaseTime",

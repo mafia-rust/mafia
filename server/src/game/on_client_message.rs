@@ -24,7 +24,7 @@ impl Game {
 
         'packet_match: {match incoming_packet {
             ToServerPacket::Vote { player_index: player_voted_index } => {
-                let &PhaseState::Voting { .. } = self.current_phase() else {break 'packet_match};
+                let &PhaseState::Nomination { .. } = self.current_phase() else {break 'packet_match};
 
                 let player_voted_ref = match PlayerReference::index_option_to_ref(self, &player_voted_index){
                     Ok(player_voted_ref) => player_voted_ref,
