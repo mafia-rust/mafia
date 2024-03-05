@@ -50,7 +50,7 @@ type GameState = {
     players: Player[],
     
     playerOnTrial: PlayerIndex | null,
-    phase: Phase | null,
+    phase: PhaseType | null,
     timeLeftMs: number,
     dayNumber: number,
 
@@ -80,8 +80,23 @@ export default GameState;
 export type PlayerIndex = number;
 export type PlayerID = number;
 export type Verdict = "innocent"|"guilty"|"abstain";
-export type Phase = "briefing" | "obituary" | "discussion" | "nomination" | "testimony" | "judgement" | "finalWords" | "dusk" |  "night"
-
+export type PhaseType = "briefing" | "obituary" | "discussion" | "nomination" | "testimony" | "judgement" | "finalWords" | "dusk" |  "night"
+export type PhaseState = {type: "briefing"} | {type: "dusk"} | {type: "night"} | {type: "obituary"} | {type: "discussion"} | 
+{
+    type: "nomination",
+    trialsLeft: number
+} | {
+    type: "testimony",
+    playerOnTrial: PlayerIndex
+    trialsLeft: number
+} | {
+    type: "judgement",
+    playerOnTrial: PlayerIndex
+    trialsLeft: number
+} | {
+    type: "finalWords",
+    playerOnTrial: PlayerIndex
+}
 
 export type ChatGroup = "all" | "dead" | "mafia" | "cult" | "jail" | "interview";
 

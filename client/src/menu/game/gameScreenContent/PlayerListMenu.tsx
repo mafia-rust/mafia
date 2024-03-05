@@ -3,7 +3,7 @@ import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import "./playerListMenu.css"
 import "./../gameScreen.css"
-import { Phase, Player, PlayerIndex } from "../../../game/gameState.d";
+import { PhaseType, Player, PlayerIndex } from "../../../game/gameState.d";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import { StateListener } from "../../../game/gameManager.d";
 import SmallRoleSpecificMenu from "./RoleSpecificMenus/SmallRoleSpecificMenu";
@@ -14,7 +14,7 @@ type PlayerListMenuProps = {
 }
 type PlayerListMenuState = {
     players: Player[],
-    phase: Phase | null,
+    phase: PhaseType | null,
     voted: PlayerIndex | null,
     targets: PlayerIndex[],
     roleState: RoleState | null,

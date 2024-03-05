@@ -73,6 +73,11 @@ impl RoleStateImpl for Executioner {
         self.target == ExecutionerTarget::Won
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
+
+        if self.target == ExecutionerTarget::Won || !actor_ref.alive(game){
+            return;
+        }
+
         match *game.current_phase() {
             PhaseState::FinalWords { player_on_trial } => {
                 if Some(player_on_trial) == self.target.get_target() {
