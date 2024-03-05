@@ -174,15 +174,15 @@ function ChatTextInput(props: {disabled: boolean}): ReactElement {
     }, [setChatBoxText]);
 
     const handleInputKeyDown = useCallback((event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (event.code === "Enter") {
+        if (event.key === "Enter") {
             event.preventDefault();
             sendChatField();
-        } else if (event.code === "ArrowUp") {
+        } else if (event.key === "ArrowUp") {
             event.preventDefault();
             const text = historyPoller.poll(history);
             if (text !== undefined) 
                 setChatBoxText(text);
-        } else if (event.code === "ArrowDown") {
+        } else if (event.key === "ArrowDown") {
             event.preventDefault();
             const text = historyPoller.pollPrevious(history);
             setChatBoxText(text ?? "");

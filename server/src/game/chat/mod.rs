@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
-use crate::game::{grave::Grave, role::Role, player::{PlayerIndex, PlayerReference}, verdict::Verdict, phase::PhaseType, Game};
+use crate::game::{grave::Grave, role::Role, player::{PlayerIndex, PlayerReference}, verdict::Verdict, Game};
 
-use super::role::{spy::SpyBug, trapper::TrapState};
+use super::{phase::PhaseState, role::{spy::SpyBug, trapper::TrapState}};
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
@@ -52,8 +52,7 @@ pub enum ChatMessage {
     
     #[serde(rename_all = "camelCase")]
     PhaseChange{
-        #[serde(rename = "phase")]
-        phase_type: PhaseType, 
+        phase: PhaseState, 
         day_number: u8
     },
     /* Trial */

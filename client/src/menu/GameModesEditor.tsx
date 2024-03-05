@@ -70,6 +70,7 @@ export default function GameModesEditor(): ReactElement {
 
         let newGameMode = new Map(savedGameModes);
         newGameMode.set(name, {
+            name: currentSettingsName,
             roleList: currentRoleList,
             phaseTimes: currentPhaseTimes,
             disabledRoles: currentDisabledRoles
@@ -98,6 +99,7 @@ export default function GameModesEditor(): ReactElement {
     const exportGameMode = () => {
         //copies current gamemode to clipboard
         navigator.clipboard.writeText(JSON.stringify({
+            name: currentSettingsName==="" ? "Unnamed Game Mode" : currentSettingsName,
             roleList: currentRoleList,
             phaseTimes: currentPhaseTimes,
             disabledRoles: currentDisabledRoles
@@ -109,6 +111,7 @@ export default function GameModesEditor(): ReactElement {
             try {
                 const data = JSON.parse(text);
                 if(!data.roleList || !data.phaseTimes || !data.disabledRoles) return;
+                setCurrentRoleListName(data.name ?? "")
                 setCurrentRoleList(data.roleList);
                 setCurrentPhaseTimes(data.phaseTimes);
                 setCurrentDisabledRoles(data.disabledRoles);

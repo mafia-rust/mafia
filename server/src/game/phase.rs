@@ -26,15 +26,20 @@ pub enum PhaseType {
     Dusk,
     Night,
 }
-
-#[derive(Clone, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "camelCase")]
+#[serde(tag = "type")]
 pub enum PhaseState {
     Briefing,
     Obituary,
     Discussion,
+    #[serde(rename_all = "camelCase")]
     Nomination { trials_left: u8 },
+    #[serde(rename_all = "camelCase")]
     Testimony { trials_left: u8, player_on_trial: PlayerReference },
+    #[serde(rename_all = "camelCase")]
     Judgement { trials_left: u8, player_on_trial: PlayerReference },
+    #[serde(rename_all = "camelCase")]
     FinalWords { player_on_trial: PlayerReference },
     Dusk,
     Night,
@@ -119,7 +124,7 @@ impl PhaseState {
 
         game.add_message_to_chat_group(ChatGroup::All, 
             ChatMessage::PhaseChange { 
-                phase_type: game.current_phase().phase(), 
+                phase: game.current_phase().clone(), 
                 day_number: game.phase_machine.day_number 
             }
         );
