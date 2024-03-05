@@ -446,7 +446,7 @@
     "defense.2:var.3": "Protection",
     "defense.3": "Invincible",
     "vision": "Vision",
-    "good": "Good",
+    
     "simplify":"Simplify",
 
     "verdict.guilty": "Guilty",
@@ -585,13 +585,14 @@
     "chatMessage.martyrWon": "The messiah has been killed! May we all enter the kingdom of heaven.",
 
     "wiki.article.standard.town.title": "Town",
+    "wiki.article.standard.town.title:var.0":"Good",
     "wiki.article.standard.town.text": "Town is the main good faction. Usually, the majority of the players in each game are townies. They don't start knowing who each other are, unlike the mafia or the cult. Town wins by eliminating all opposing teams (mafia, cult, arsonist, werewolf, etc). Town needs to work together to find out who the evils are. Their main power is in communication and voting, so if you are a townie who does not communicate, you are not helping your team win.",
     "wiki.article.standard.mafia.title": "Mafia",
     "wiki.article.standard.mafia.text": "The Mafia is the main evil faction. There are fewer mafia members than townies, but they know who each other are. The mafia wins by eliminating all opposing teams. The mafia kills and lies to get people to execute innocent townies in order to get rid of the town. The mafia can communicate at night to create strategies and help each other lie. Most mafia roles can't select each other to use their ability. The mafia always has a godfather who attacks someone each night. If the godfather dies, a new mafia member becomes the godfather.",
     "wiki.article.standard.neutral.title": "Neutral",
     "wiki.article.standard.neutral.text": "Neutrals are not all on the same team. Each neutral role has special win conditions. Most of them are against both the town and the mafia. Some neutral roles can win before the game ends like the jester, executioner, and doomsayer. Other roles need to be the last one alive like werewolf and arsonist. All of the werewolves are on the same team but don't start knowing who each other are, the same goes for arsonists.",
     "wiki.article.standard.cult.title": "Cult",
-    "wiki.article.standard.cult.text": "The Cult is an alternative evil faction that can convert other players to join their cult. They win by eliminating all opposing teams. Cultists can communicate at night and they can not select each other, much like the mafia.",
+    "wiki.article.standard.cult.text": "The Cult is an alternative evil faction that can convert other players to join their cult. They win by eliminating all opposing teams. Cultists can communicate at night and they can not select each other, much like the mafia. Unlike the mafia, the cultists do not have supporting roles that can help them, but instead convert other players to join them.\n\nCult roles include:\n- Apostle (Chooses who to convert to a zealot)\n- Disciple (Oldest one becomes Apostle after it dies)\n- Zealot (Attacks every night and becomes disciple if a new zealot is made)",
     
     "wiki.article.standard.roleLabel.title": "Role Label",
     "wiki.article.standard.roleLabel.text": "A role label might appear next to a players name on the player list. It shows what their role is. For example, mafia members can see the roles of their teammates through role labels. If a mayor reveals, the mayor will gain a role label. It is possible for a role label to be inaccurate, for instance, if a mayor is converted to a cultist, their label might not change.",
@@ -700,7 +701,7 @@
     "wiki.article.standard.cleaned.title": "Cleaned",
     "wiki.article.standard.cleaned.text": "A player who is cleaned had their role and alibi erased from the graveyard. A Janitor can visit people on the night that they die to clean their grave.",
     "wiki.article.standard.evil.title": "Evil",
-    "wiki.article.standard.evil.text": "If a role is evil, it means a role is non-town. A psychic can receive evil visions to learn who is not on town.",
+    "wiki.article.standard.evil.text": "If a role is evil, it means a role is non-town. A psychic can receive evil visions to learn who is not on town. A detective will see someone as suspicious if they are evil or have a suspicious aura.",
     "wiki.article.standard.roleLimit.title": "Role Limit",
     "wiki.article.standard.roleLimit.text": "A roles limit is the maximum number of that role that can be generated at the start of a regular game. If there is no limit, there can be any number of that role. Because the veteran has a role limit of one, there can not be more than one veteran unless manually forced into the role list or an amnesiac becomes one",
     "wiki.article.standard.doused.title": "Doused",
@@ -790,7 +791,7 @@
     "wiki.article.role.transporter.guide": "- At night, select two players\n    - If somebody else tries to visit the first player, they will instead visit the second player, and vice versa\n\n _For example_\n- If a godfather tries to attack @1, but you transported @1 and @4, then @4 will die instead\n\nIts often a good strategy to transport innocent looking players with suspicious looking ones to divert a potential attack from the innocent player onto the suspicious player.\n\n",
     "wiki.article.role.transporter.abilities":"* Visit two players to transport them",
     "wiki.article.role.transporter.attributes":"* All visits to first player instead visit the second player\n* All visits to the second player instead visit first player\n* The players you visit get a message saying that they were transported",
-    "wiki.article.role.transporter.extra": "* Some abilities are not affected by yours due to the priority system. _For example_ You can't stop a jester from haunting their target using a transport, this depends on priorities and whether or not an ability is indirect\n* A transporters visits can not be changed by another transporter\n* Astral visits will still be transported",
+    "wiki.article.role.transporter.extra": "* Some abilities are not affected by yours due to the priority system. _For example_ You can't stop a jester from haunting their target using a transport, this depends on priorities and whether or not an ability is indirect\n* A transporters visits can not be changed by another transporter",
 
     "wiki.article.role.sheriff.guide": "- At night, select a player to find if they're innocent or suspicious\n\nYour information could potentially be wrong, _for example_\n - Godfather and Jester have an innocent aura\n - If a player is doused by an arsonist or visited by a framer, they will have a suspicious aura\n\nYou should tell the town the information you get daily.",
     "wiki.article.role.sheriff.abilities":"* Visit a player to learn if they're innocent or suspicious",
@@ -810,7 +811,7 @@
     "wiki.article.role.tracker.guide": "- At night select a player to find out who they visited\n\n_For example_\n- If you select @5 and they visited @10 on the night @10 died, @5 might have attacked @10\n\n You should tell the town the information you get daily.",
     "wiki.article.role.tracker.abilities":"* Visit a player to see who they visit",
     "wiki.article.role.tracker.attributes":"* None",
-    "wiki.article.role.tracker.extra": "* Appeared visits can make you get false information, _for example_ a Framer makes their target player appear to visit someone else\n* You can't see Astral visits",
+    "wiki.article.role.tracker.extra": "* Appeared visits can make you get false information, _for example_ a Framer makes their target player appear to visit someone else (See appeared visits)",
 
     "wiki.article.role.seer.guide": "- At night, select two players and learn if they are friends or enemies\n    - If they're friends, it is possible for both of them to win in the same game\n\n_For example_\n- A jester is friends with a detective, because they can both win in the same game\n- A Guardian is enemies with a godfather because they need the other person to loose in order to win\n- A hypnotist is enemies with a disciple because they can't win together\n\n You should tell the town the information you get daily.",
     "wiki.article.role.seer.abilities":"* Visit two players to learn if they are friends or enemies",
@@ -845,7 +846,7 @@
     "wiki.article.role.trapper.guide": "- At night, select a player to set a trap on them\n    - A player with a trap is protected\n    - The trap is triggered if anyone visits the player with the trap\n- When the trap is triggered\n    - You are told the role of every visitor who triggered the trap and it dismantles\n    - If someone attacks the player with the trap, they are attacked, and the player who you protect is told they were protected\n- You must wait 1 night to build a trap before you can set it\n- You can select yourself to dismantle the trap\n\nYou should try to put the trap on townies to protect them.",
     "wiki.article.role.trapper.abilities":"* While the trap is ready\n    * Visit a player to set a trap on them\n    * You can't select yourself\n* While the trap is set\n    * Visit yourself to dismantle the trap\n    * You can only select yourself\n    * The player with the trap on them is protected\n    * If a player visits the player with the trap, the trap will trigger and dismantle. You will be told which roles trigger the trap and indirectly attack all players attacking the trapped player.\n* While the trap is dismantled\n    * Wait one night for the trap to be ready\n    * If you are roleblocked, it the trap will not become ready\n    * You can not select anyone",
     "wiki.article.role.trapper.attributes":"* You can only have one trap set at a time\n* The trap still triggers even if you are roleblocked or dead\n* When your trap is triggered, you will be told which roles visited the trapped player, even if those roles didn't attack the trapped player\n* The trap will still trigger even if nobody attacks the trapped player\n* The trap will only attack players who attacked the trapped player\n* You have an indirect, armor-piercing attack",
-    "wiki.article.role.trapper.extra":"* Astral visits don't trigger the trap\n* You can set a trap on jailed players\n* You can't trigger your own trap. You don't register yourself in the traps results, nor ever be attacked by your own trap\n* When the player with the trap is attacked, you are told they are attacked, and they are told they are protected",
+    "wiki.article.role.trapper.extra":"* You can set a trap on jailed players\n* You can't trigger your own trap. You don't register yourself in the traps results, nor ever be attacked by your own trap\n* When the player with the trap is attacked, you are told they are attacked, and they are told they are protected",
 
     "wiki.article.role.escort.guide": "- At night, select a player to roleblock them, stopping them from using their ability\n- Your target is told they were roleblocked\n\n_For example_\n- An escort selects the godfather, so the godfather cant kill anyone, and nobody dies\n\nYou should try to choose evil players, especially the ones with powerful abilities",
     "wiki.article.role.escort.abilities":"* Visit a player to roleblock them",
@@ -930,7 +931,7 @@
     "wiki.article.role.framer.guide": "- At night, select a player to frame\n    - The player you visit will have a suspicious aura (appears to be evil to investigative roles)\n- If you select two players\n    - The first one is given a suspicious aura\n    -  Investigative roles (Like tracker and lookout) see that the first player visited second one\n\n_For example_\n- You select @15 and @12. The godfather selects @12. A separate tracker selects @15 and sees that @15 visits @12. Since @12 dies, the tracker might think that @15 was the killer\n\nTry to frame players who already look a little suspicious so town investigative players might choose them.",
     "wiki.article.role.framer.abilities":"* Visit a player to give them a suspicious aura for the night\n* Visit two players to\n  * give the first player you visit a suspicious aura for the night\n  * make the first player appear to visit the second player you visit",
     "wiki.article.role.framer.attributes":"",
-    "wiki.article.role.framer.extra":"-A suspicious aura will make the player with it look suspicious to a Detective, they can appear as the evil player to a Psychic, and they will be enemies with everyone to a Seer\n* You can't select other mafia members for your first target, but you can select any player for your second target, including dead players and other mafia members",
+    "wiki.article.role.framer.extra":"-A suspicious aura will make the player with it look suspicious to a Detective, they can appear as the evil player to a Psychic, and they will be enemies with everyone to a Seer\n* You can't select other mafia members for your first target, but you can select any player for your second target, including dead players and other mafia members\n* For more information, see appeared visits",
 
     "wiki.article.role.jester.guide": "- Get lynched during the day to win\n- After you win by getting lynched, you can attack any living player who voted you guilty or abstained\n\nTry to look evil so people vote you, without making it obvious that you are the Jester.",
     "wiki.article.role.jester.abilities":"* When you are lynched, you win\n* On the night after you are lynched, attack the first player you select\n",
@@ -972,7 +973,7 @@
     "wiki.article.role.amnesiac.attributes":"* You are immune to being roleblocked and jailed",
     "wiki.article.role.amnesiac.extra":"* You can choose an outline like \"Neutral Killing\", and you will get a random neutral killing role, or choose an outline like \"Jailor\" and confirm that you get the jailor\n* If you choose a role that was disabled you will stay as the Amnesiac",
 
-    "wiki.article.role.martyr.guide": "If you die, you win, and everyone commits suicide in an attempt to follow you to the afterlife. The entire town knows that you're the martyr. Good Luck",
+    "wiki.article.role.martyr.guide": "If you die, you win, and everyone commits suicide in an attempt to follow you to the afterlife. The entire town knows that you're the martyr. Good Luck!",
     "wiki.article.role.martyr.abilities":"* Visit yourself to attack yourself and spend one bullet\n* You start with 5 bullets\n* When you die, everyone else commits suicide and you win.",
     "wiki.article.role.martyr.attributes":"* When you have zero bullets left, you leave town and lose\n* You have a basic attack",
     "wiki.article.role.martyr.extra":"* When you visit a player while you have zero bullets left you will not attack them\n* You're an ex-cultist, they rejected you because you told the truth",
