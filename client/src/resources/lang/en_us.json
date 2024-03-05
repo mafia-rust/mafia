@@ -661,7 +661,7 @@
     "wiki.article.standard.protect.title:var.0": "Protected",
     "wiki.article.standard.protect.title:var.1": "Protects",
     "wiki.article.standard.protect.title:var.2": "Protecting",
-    "wiki.article.standard.protect.text": "Protect means to increase someone's defense to protected. The protection will only last the night unless otherwise indicated.",
+    "wiki.article.standard.protect.text": "Protect means to increase someone's defense to protected. The protection will only last the night unless otherwise indicated. A protected player is told when they are attacked but saved by protection",
     "wiki.article.standard.dead.title": "Dead",
     "wiki.article.standard.dead.text": "If a player is dead, they can't vote, their grave will likely be in the graveyard, and they usually can't use their ability anymore. Dead players can only speak with other dead players with the exception of the Medium and its target. A player needs to die to become dead. All players start the game alive! (What did you expect…)",
     "wiki.article.standard.silenced.title": "Silenced",
@@ -878,7 +878,7 @@
     "wiki.article.role.veteran.attributes":"* You have an indirect, armor-piercing attack\n* You are told when you attack a visitor\n* Players who visit you while your ability is active are told they are attacked by a veteran",
     "wiki.article.role.veteran.extra":"* While you have 0 alerts left, you can not select yourself\n* You are immune to getting roleblocked and possession",
 
-    "wiki.article.role.deputy.guide":"- Once per game, you shoot a player during the day\n- If you kill a townie, you instantly leave town\n- If you kill someone, everyone is told that a deputy shot someone\n- If the player you shoot survives your attack, only the player you attacked is told\n\nIf you attack someone and they survive it is likely that they are a role that is armored. Most roles that are armored are evil.",
+    "wiki.article.role.deputy.guide":"- Once per game, you can shoot a player during the day\n- If you kill a townie, you instantly leave town\n- If you kill someone, everyone is told that a deputy shot someone\n- If the player you shoot survives your attack, only the player you attacked is told\n\nIf you attack someone and they survive it is likely that they are a role that is armored. Most roles that are armored are evil.",
     "wiki.article.role.deputy.abilities":"* Once per game, during the discussion or nomination phase after day 1, you may choose a player to attack.",
     "wiki.article.role.deputy.attributes":"* If the player you attack has defense, they are told they were attacked by a deputy\n* When you kill someone, everyone is told a deputy shot someone",
     "wiki.article.role.deputy.extra":"* You only have a basic attack\n* You can not attack day 1",
