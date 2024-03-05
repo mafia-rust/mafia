@@ -656,6 +656,8 @@
     "wiki.article.standard.possess.title:var.3": "Possession",
     "wiki.article.standard.possess.text": "A player who is possessed had their visits changed by the Witch, Necromancer, or Retributionist. Some roles have immunity to possession: Witch, Necromancer, Retributionist, Veteran",
     "wiki.article.standard.defense.title": "Defense",
+    "wiki.article.standard.defense.title:var.0": "Protection-piercing",
+
     "wiki.article.standard.defense.text": "Attacks and defense have 3 tiers each. An attack can either be basic, armor-piercing, or protection-piercing.\n\nA defense can either be armored, protected, or invincible.\n\nA basic attack can not kill a player who is armored, and an armor-piercing attack can not kill a player who is protected. A protection-piercing attack can overpower armor as well as protection.\n\n Some roles have armor by default, usually evil ones. Protection can be granted to players through abilities like the Guardian's ability to protect their target. A player with invincible defense can only die by getting lynched or leaving the game.\n\nUnless otherwise indicated, attacks are basic by default and will not be able to kill players who are armored or protected. Indirect is not a tier of attack.",
     "wiki.article.standard.protect.title": "Protect",
     "wiki.article.standard.protect.title:var.0": "Protected",
