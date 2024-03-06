@@ -21,12 +21,16 @@ export default function ChatElement(
     const chatMessageStyles = require("../resources/styling/chatMessage.json");
     let style = typeof chatMessageStyles[message.variant.type] === "string" ? chatMessageStyles[message.variant.type] : "";
 
-    const icon = 
-        message.chatGroup !== null ? 
-            message.chatGroup !== "all" ?
-                translateChecked("chatGroup."+message.chatGroup+".icon") : 
-                null :
-            translate("noGroup.icon");
+    let icon = null;
+    if(message.chatGroup !== null){
+        if(message.chatGroup !== "all"){
+            icon = translateChecked("chatGroup."+message.chatGroup+".icon");
+        }else{
+            icon = null;
+        }
+    }else{
+        icon = translate("noGroup.icon");
+    }
 
     // Special chat messages that don't play by the rules
     switch (message.variant.type) {

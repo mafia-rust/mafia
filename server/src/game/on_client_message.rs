@@ -56,9 +56,8 @@ impl Game {
                     match chat_group {
                         ChatGroup::All | ChatGroup::Interview | ChatGroup::Dead => {},
                         ChatGroup::Mafia | ChatGroup::Cult => {
-                            self.add_message_to_chat_group(
-                                chat_group,
-                                    ChatMessageVariant::Targeted { 
+                            self.add_message_to_chat_group( chat_group,
+                                ChatMessageVariant::Targeted { 
                                     targeter: sender_player_ref.index(), 
                                     targets: PlayerReference::ref_vec_to_index(&target_ref_list)
                                 }
@@ -67,9 +66,8 @@ impl Game {
                         },
                         ChatGroup::Jail => {
                             if sender_player_ref.role(self) == Role::Jailor {
-                                self.add_message_to_chat_group(
-                                    chat_group,
-                                        ChatMessageVariant::JailorDecideExecute {
+                                self.add_message_to_chat_group(chat_group,
+                                    ChatMessageVariant::JailorDecideExecute {
                                         target: target_ref_list.first().map(|p|p.index())
                                     }
                                 );

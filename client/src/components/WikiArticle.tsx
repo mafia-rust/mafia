@@ -5,7 +5,7 @@ import React from "react";
 import translate, { langText, translateChecked } from "../game/lang";
 import StyledText from "./StyledText";
 import { ROLE_SETS, RoleSet, getRolesFromRoleSet } from "../game/roleListState.d";
-import ChatElement from "./ChatMessage";
+import ChatElement, { ChatMessageVariant } from "./ChatMessage";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { GeneratedArticle, WikiArticleLink } from "./WikiArticleLink";
 import { replaceMentions } from "..";
@@ -21,6 +21,7 @@ export default function WikiArticle(props: {
         case "role":
             const role = path[1] as Role;
             const roleData = ROLES[role];
+            const chatMessages = roleData.chatMessages as ChatMessageVariant[];
 
             return <section className="wiki-article">
                 <div>
@@ -39,7 +40,7 @@ export default function WikiArticle(props: {
                     <StyledText markdown={true}>
                         {"### "+translate("wiki.article.role.chatMessages")+"\n"}
                     </StyledText>
-                    {roleData.chatMessages.map((msgvariant: any, i)=>
+                    {chatMessages.map((msgvariant, i)=>
                         <ChatElement key={i} message={
                             {
                                 variant: msgvariant,
