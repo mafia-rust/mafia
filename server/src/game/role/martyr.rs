@@ -102,7 +102,7 @@ impl RoleStateImpl for Martyr {
         }
 
         if phase == PhaseType::Obituary && actor_ref.alive(game) && matches!(self.state, MartyrState::StillPlaying { bullets: 0 }) {
-            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref), true);
+            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }
     fn on_role_creation(self,  game: &mut Game, actor_ref: PlayerReference) {
@@ -120,7 +120,7 @@ impl RoleStateImpl for Martyr {
                 if player == actor_ref {continue}
                 if !player.alive(game) {continue}
                 if player.defense(game) >= 3 {continue}
-                player.die(game, Grave::from_player_suicide(game, player), true);
+                player.die(game, Grave::from_player_suicide(game, player));
             }
     
             actor_ref.set_role_state(game, RoleState::Martyr(Martyr {

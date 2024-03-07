@@ -30,6 +30,7 @@ use settings::Settings;
 use grave::Grave;
 
 use self::end_game_condition::EndGameCondition;
+use self::event::{OnGameEnding, OnPhaseStart};
 use self::phase::PhaseState;
 use self::role::RoleState;
 use self::team::Teams;
@@ -261,25 +262,7 @@ impl Game {
         if !self.ticking { return }
 
         if self.game_is_over() {
-            self.invoke_on_game_ending();
-
-            if self.game_is_over() {
-                self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::GameOver);
-                self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::Draw });
-
-                for player_ref in PlayerReference::all_players(self){
-                    self.add_message_to_chat_group(ChatGroup::All, 
-                        ChatMessageVariant::PlayerWonOrLost{ 
-                            player: player_ref.index(), 
-                            won: player_ref.get_won_game(self), 
-                            role: player_ref.role_state(self).role() 
-                        });
-                }
-
-                
-                self.ticking = false;
-                return;
-            }
+            OnGameEnding::invoke(self);
         }
 
         if self.phase_machine.day_number == u8::MAX {
@@ -309,18 +292,7 @@ impl Game {
         }
 
         PhaseState::start(self);
-        self.invoke_on_phase_start(self.current_phase().phase());
-
-        self.send_packet_to_all(ToClientPacket::Phase { 
-            phase: self.current_phase().phase(),
-            day_number: self.phase_machine.day_number,
-        });
-        self.send_packet_to_all(ToClientPacket::PhaseTimeLeft{ seconds_left: self.phase_machine.time_remaining.as_secs() });
-        for player in PlayerReference::all_players(self){
-            player.send_packet(self, ToClientPacket::YourSendChatGroups { send_chat_groups: 
-                player.get_current_send_chat_groups(self)
-            });
-        }
+        OnPhaseStart::create_and_invoke(self.current_phase().phase(), self);
     }
 
     pub fn add_message_to_chat_group(&mut self, group: ChatGroup, message: ChatMessageVariant){
