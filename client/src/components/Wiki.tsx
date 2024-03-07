@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useCallback, useEffect, useState } from "react";
 import translate from "../game/lang";
 import "./wikiSearch.css";
 import { Role, getFactionFromRole } from "../game/roleState.d";
@@ -18,12 +18,7 @@ export default function Wiki(props: {
     const [article, setArticle] = useState<WikiArticleLink | null>(null);
     const [history, setHistory] = useState<WikiArticleLink[]>([]);
 
-    useEffect(() => {
-        GAME_MANAGER.setSetWikiArticleFunction(chooseArticle);
-    }, [setArticle, chooseArticle]);
-    GAME_MANAGER.setSetWikiArticleFunction(chooseArticle);
-
-    function chooseArticle(page: WikiArticleLink | null) {
+    const chooseArticle = useCallback((page: WikiArticleLink | null) => {
         if (page !== null) {
             if(history[history.length - 1] !== page)
                 setHistory([...history, page]);
@@ -32,7 +27,13 @@ export default function Wiki(props: {
             
         }
         setArticle(page);
-    }
+    }, [history]);
+
+    useEffect(() => {
+        GAME_MANAGER.setSetWikiArticleFunction(chooseArticle);
+    }, [setArticle, chooseArticle]);
+    GAME_MANAGER.setSetWikiArticleFunction(chooseArticle);
+
     function goBack() {
         if (history.length > 1) {
             let newHistory = [...history];
