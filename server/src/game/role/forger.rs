@@ -1,7 +1,7 @@
 
 use serde::Serialize;
 
-use crate::game::chat::ChatMessage;
+use crate::game::chat::ChatMessageVariant;
 use crate::game::chat::ChatGroup;
 use crate::game::grave::GraveRole;
 use crate::game::phase::PhaseType;
@@ -53,7 +53,7 @@ impl RoleStateImpl for Forger {
 
                 let target_ref = visit.target;
                 if target_ref.night_jailed(game) {
-                    actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                    actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
                 }else{
                     target_ref.set_night_grave_role(game, Some(
                         GraveRole::Role(if let Some(role) = self.fake_role {role} else {target_ref.role(game)})
@@ -69,7 +69,7 @@ impl RoleStateImpl for Forger {
             Priority::Investigative=>{
                 if let Some(forged_ref) = self.forged_ref {
                     if forged_ref.night_died(game) {
-                        actor_ref.push_night_message(game, ChatMessage::PlayerRoleAndWill{
+                        actor_ref.push_night_message(game, ChatMessageVariant::PlayerRoleAndWill{
                             role: forged_ref.role(game),
                             will: forged_ref.will(game).to_string(),
                         });

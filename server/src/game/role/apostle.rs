@@ -2,7 +2,7 @@ use std::vec;
 
 use serde::Serialize;
 
-use crate::game::chat::ChatMessage;
+use crate::game::chat::ChatMessageVariant;
 use crate::game::grave::GraveKiller;
 use crate::game::chat::ChatGroup;
 use crate::game::phase::PhaseType;
@@ -37,7 +37,7 @@ impl RoleStateImpl for Apostle {
                 let target_ref = visit.target;
 
                 if target_ref.night_jailed(game){
-                    actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                    actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
                     return
                 }
         
@@ -52,12 +52,12 @@ impl RoleStateImpl for Apostle {
                 let target_ref = visit.target;
 
                 if target_ref.night_jailed(game){
-                    actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                    actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
                     return
                 }
 
                 if target_ref.night_defense(game) > 0 {
-                    actor_ref.push_night_message(game, ChatMessage::YourConvertFailed);
+                    actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
                     return
                 }                
 

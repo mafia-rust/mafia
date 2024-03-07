@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -30,7 +30,7 @@ impl RoleStateImpl for Framer {
         let Some(first_visit) = framer_visits.get(0) else {return};
 
         if first_visit.target.night_jailed(game) {
-            actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+            actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
         }else{
             first_visit.target.set_night_framed(game, true);
         }

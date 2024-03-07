@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use crate::{
-    game::{available_buttons::AvailableButtons, chat::ChatMessage, phase::PhaseState, Game, GameOverReason}, 
+    game::{available_buttons::AvailableButtons, chat::ChatMessageVariant, phase::PhaseState, Game, GameOverReason}, 
     packet::ToClientPacket, websocket_connections::connection::ClientSender, 
     lobby::GAME_DISCONNECT_TIMER_SECS
 };
@@ -21,7 +21,7 @@ impl PlayerReference{
         if self.alive(game) {
             game.add_message_to_chat_group(
                 crate::game::chat::ChatGroup::All, 
-                ChatMessage::PlayerQuit{player_index: self.index()}
+                ChatMessageVariant::PlayerQuit{player_index: self.index()}
             );
         }
     }

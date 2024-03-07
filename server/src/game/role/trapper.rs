@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -101,7 +101,7 @@ impl RoleStateImpl for Trapper {
                             attacker != actor_ref
                         {
                             attacker.try_night_kill(actor_ref, game, crate::game::grave::GraveKiller::Role(Role::Trapper), 2, false);
-                            actor_ref.push_night_message(game, ChatMessage::TrapperYouAttackedVisitor);
+                            actor_ref.push_night_message(game, ChatMessageVariant::TrapperYouAttackedVisitor);
                         }
                     }
                 }
@@ -113,8 +113,8 @@ impl RoleStateImpl for Trapper {
                 if let Trap::Set { target } = self.trap {
 
                     if target.night_attacked(game){
-                        actor_ref.push_night_message(game, ChatMessage::TargetWasAttacked);
-                        target.push_night_message(game, ChatMessage::YouWereProtected);
+                        actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
+                        target.push_night_message(game, ChatMessageVariant::YouWereProtected);
                     }
 
 
@@ -124,7 +124,7 @@ impl RoleStateImpl for Trapper {
                             visitor != actor_ref
                         {
                             should_dismantle = true;
-                            actor_ref.push_night_message(game, ChatMessage::TrapperVisitorsRole { role: visitor.role(game) });
+                            actor_ref.push_night_message(game, ChatMessageVariant::TrapperVisitorsRole { role: visitor.role(game) });
                         }
                     }
                 }
@@ -168,7 +168,7 @@ impl RoleStateImpl for Trapper {
         match phase {
             PhaseType::Night => {
                 if actor_ref.alive(game) {
-                    actor_ref.add_chat_message(game, ChatMessage::TrapState { state: self.trap.state() });
+                    actor_ref.add_private_chat_message(game, ChatMessageVariant::TrapState { state: self.trap.state() });
                 }
             }
             _ => {}

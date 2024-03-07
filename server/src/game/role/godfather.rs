@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -34,11 +34,11 @@ impl RoleStateImpl for Godfather {
                 if let Some(visit) = backup.night_visits(game).first(){
                     let target_ref = visit.target;
                     if target_ref.night_jailed(game){
-                        backup.push_night_message(game, ChatMessage::TargetJailed);
+                        backup.push_night_message(game, ChatMessageVariant::TargetJailed);
                         return
                     }
             
-                    game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessage::GodfatherBackupKilled { backup: backup.index() });
+                    game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackupKilled { backup: backup.index() });
                     target_ref.try_night_kill(
                         backup, game, GraveKiller::Faction(Faction::Mafia), 1, false
                     );
@@ -48,7 +48,7 @@ impl RoleStateImpl for Godfather {
         } else if let Some(visit) = actor_ref.night_visits(game).first(){
             let target_ref = visit.target;
             if target_ref.night_jailed(game){
-                actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
                 return
             }
     
@@ -75,7 +75,7 @@ impl RoleStateImpl for Godfather {
             unreachable!("Role was just set to Godfather");
         };
 
-        game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessage::GodfatherBackup { backup: backup.map(|p|p.index()) });
+        game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackup { backup: backup.map(|p|p.index()) });
 
         for player_ref in PlayerReference::all_players(game){
             if player_ref.role(game).faction() != Faction::Mafia{

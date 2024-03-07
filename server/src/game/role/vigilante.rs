@@ -1,7 +1,7 @@
 
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -60,7 +60,7 @@ impl RoleStateImpl for Vigilante {
                             let target_ref = visit.target;
 
                             if target_ref.night_jailed(game){
-                                actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                                actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
                                 actor_ref.set_role_state(game, RoleState::Vigilante(self.clone()));
                                 return
                             }

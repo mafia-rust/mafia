@@ -1,7 +1,7 @@
 use crate::{
     game::
     {
-        chat::{ChatGroup, ChatMessage},
+        chat::{ChatGroup, ChatMessageVariant},
         end_game_condition::EndGameCondition,
         grave::{Grave, GraveKiller},
         role::{Priority, Role, RoleState},
@@ -23,12 +23,12 @@ impl PlayerReference{
             
             if send_messages {
                 self.push_night_message(game,
-                    ChatMessage::RoleBlocked { immune: false }
+                    ChatMessageVariant::RoleBlocked { immune: false }
                 );
             }
         } else if send_messages {
             self.push_night_message(game,
-                ChatMessage::RoleBlocked { immune: true }
+                ChatMessageVariant::RoleBlocked { immune: true }
             );
         }
     }
@@ -39,9 +39,9 @@ impl PlayerReference{
 
         if self.night_defense(game) >= attack {
             self.push_night_message(game,
-                ChatMessage::YouSurvivedAttack
+                ChatMessageVariant::YouSurvivedAttack
             );
-            attacker_ref.push_night_message(game,ChatMessage::SomeoneSurvivedYourAttack);
+            attacker_ref.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
             return false;
         }
 
@@ -64,10 +64,10 @@ impl PlayerReference{
     pub fn die(&self, game: &mut Game, grave: Grave, invoke_on_any_death: bool){
         self.set_alive(game, false);
 
-        self.add_chat_message(game, ChatMessage::YouDied);
+        self.add_private_chat_message(game, ChatMessageVariant::YouDied);
         game.graves.push(grave.clone());
         game.send_packet_to_all(ToClientPacket::AddGrave{grave: grave.clone()});
-        game.add_message_to_chat_group(ChatGroup::All, ChatMessage::PlayerDied { grave: grave.clone() });
+        game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::PlayerDied { grave: grave.clone() });
 
         if let Some(role) = grave.role.get_role(){
             for other_player_ref in PlayerReference::all_players(game){
@@ -96,7 +96,7 @@ impl PlayerReference{
         self.set_role_state(game, new_role_data.clone());
         self.on_role_creation(game);
         if new_role_data.role() == self.role(game) {
-            self.add_chat_message(game, ChatMessage::RoleAssignment{role: self.role(game)});
+            self.add_private_chat_message(game, ChatMessageVariant::RoleAssignment{role: self.role(game)});
         }
 
         self.insert_role_label(game, *self, self.role(game));

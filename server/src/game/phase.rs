@@ -8,7 +8,7 @@ use crate::packet::ToClientPacket;
 use super::{
     settings::PhaseTimeSettings,
     Game, player::PlayerReference,
-    chat::{ChatGroup, ChatMessage},
+    chat::{ChatGroup, ChatMessageVariant},
     grave::Grave, role::Priority,
 };
 
@@ -100,7 +100,7 @@ impl PhaseState {
             PhaseState::Nomination { trials_left } => {
                 let required_votes = 1+
                     (PlayerReference::all_players(game).filter(|p| p.alive(game)).count()/2);
-                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialInformation { required_votes, trials_left });
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::TrialInformation { required_votes, trials_left });
                 
 
                 let packet = ToClientPacket::new_player_votes(game);
@@ -108,7 +108,7 @@ impl PhaseState {
             },
             PhaseState::Testimony { player_on_trial, .. } => {
                 game.add_message_to_chat_group(ChatGroup::All, 
-                    ChatMessage::PlayerOnTrial { player_index: player_on_trial.index() }
+                    ChatMessageVariant::PlayerOnTrial { player_index: player_on_trial.index() }
                 );
                 game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() });
             },
@@ -123,7 +123,7 @@ impl PhaseState {
         if PhaseState::Briefing == *game.current_phase() {return;}
 
         game.add_message_to_chat_group(ChatGroup::All, 
-            ChatMessage::PhaseChange { 
+            ChatMessageVariant::PhaseChange { 
                 phase: game.current_phase().clone(), 
                 day_number: game.phase_machine.day_number 
             }
@@ -157,7 +157,7 @@ impl PhaseState {
                         player_ref.alive(game) && *player_ref != player_on_trial
                     })
                     .map(|player_ref|
-                        ChatMessage::JudgementVerdict{
+                        ChatMessageVariant::JudgementVerdict{
                             voter_player_index: player_ref.index(),
                             verdict: player_ref.verdict(game)
                         }
@@ -166,7 +166,7 @@ impl PhaseState {
                 );
                 
                 let (guilty, innocent) = game.count_verdict_votes(player_on_trial);
-                game.add_message_to_chat_group(ChatGroup::All, ChatMessage::TrialVerdict{ 
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::TrialVerdict{ 
                     player_on_trial: player_on_trial.index(), 
                     innocent, guilty 
                 });
@@ -212,7 +212,7 @@ impl PhaseState {
                     let mut messages = player_ref.night_messages(game).to_vec();
                     messages.shuffle(&mut rand::thread_rng());
                     messages.sort();
-                    player_ref.add_chat_messages(game, messages);
+                    player_ref.add_private_chat_messages(game, messages);
                 }
 
                 Self::Obituary
