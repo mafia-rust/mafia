@@ -110,11 +110,11 @@ export default function GameModesEditor(): ReactElement {
         navigator.clipboard.readText().then((text) => {
             try {
                 const data = JSON.parse(text);
-                if(!data.roleList || !data.phaseTimes || !data.disabledRoles) return;
+
                 setCurrentRoleListName(data.name ?? "")
-                setCurrentRoleList(data.roleList);
-                setCurrentPhaseTimes(data.phaseTimes);
-                setCurrentDisabledRoles(data.disabledRoles);
+                setCurrentRoleList(data.roleList ?? []);
+                setCurrentPhaseTimes(data.phaseTimes ?? defaultPhaseTimes());
+                setCurrentDisabledRoles(data.disabledRoles ?? []);
             } catch (e) {
                 console.error(e);
             }

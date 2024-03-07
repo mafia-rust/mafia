@@ -5,6 +5,7 @@ use serde::{Serialize, Deserialize};
 use super::{phase::PhaseType, role::Role, role_list::RoleList};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Settings{
     pub role_list: RoleList,
     pub phase_times: PhaseTimeSettings,
@@ -20,6 +21,7 @@ impl Default for Settings{
     }
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct PhaseTimeSettings{
     pub briefing: u64,
     pub obituary: u64,
