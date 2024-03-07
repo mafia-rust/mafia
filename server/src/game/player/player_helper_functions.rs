@@ -5,7 +5,7 @@ use crate::{
         end_game_condition::EndGameCondition,
         grave::{Grave, GraveKiller},
         role::{Priority, Role, RoleState},
-        team::{Team, Teams},
+        team::Team,
         visit::Visit,
         Game
     }, packet::ToClientPacket
@@ -76,18 +76,7 @@ impl PlayerReference{
         }
 
         if invoke_on_any_death {
-            self.invoke_on_any_death(game);
-        }
-    }
-    pub fn invoke_on_any_death(&self, game: &mut Game){
-        for player_ref in PlayerReference::all_players(game){
-            player_ref.on_any_death(game, *self)
-        }
-        Teams::on_any_death(game);
-        for player in PlayerReference::all_players(game){
-            player.send_packet(game, ToClientPacket::YourSendChatGroups { send_chat_groups: 
-                player.get_current_send_chat_groups(game)
-            });
+            game.invoke_on_any_death(*self);
         }
     }
     /// Swaps this persons role, sends them the role chat message, and makes associated changes

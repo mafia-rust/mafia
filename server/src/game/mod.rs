@@ -12,6 +12,7 @@ pub mod team;
 pub mod available_buttons;
 pub mod on_client_message;
 pub mod tag;
+pub mod event;
 
 use std::collections::HashMap;
 use std::time::Duration;
@@ -260,9 +261,7 @@ impl Game {
         if !self.ticking { return }
 
         if self.game_is_over() {
-            for player_ref in PlayerReference::all_players(self){
-                player_ref.on_game_ending(self);
-            }
+            self.invoke_on_game_ending();
 
             if self.game_is_over() {
                 self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::GameOver);
@@ -310,12 +309,7 @@ impl Game {
         }
 
         PhaseState::start(self);
-
-        for player_ref in PlayerReference::all_players(self){
-            player_ref.on_phase_start(self, self.current_phase().phase());
-        }
-
-        Teams::on_phase_start(self, self.current_phase().phase());
+        self.invoke_on_phase_start(self.current_phase().phase());
 
         self.send_packet_to_all(ToClientPacket::Phase { 
             phase: self.current_phase().phase(),

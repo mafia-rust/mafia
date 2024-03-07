@@ -90,7 +90,7 @@ impl PhaseState {
 
                 for player_ref in PlayerReference::all_players(game) {
                     if player_ref.night_died(game) {
-                        player_ref.invoke_on_any_death(game)
+                        game.invoke_on_any_death(player_ref);
                     }
                 }
                 
