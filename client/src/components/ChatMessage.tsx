@@ -67,7 +67,7 @@ export default function ChatElement(
             }
             break;
         case "targetsMessage":
-            return <>
+            return <span className="chat-message result">
                 <StyledText className={"chat-message " + style}>{(icon??"")} {translateChatMessage(message.variant, playerNames)}</StyledText>
                 <ChatElement message={
                     {
@@ -75,7 +75,7 @@ export default function ChatElement(
                         chatGroup: message.chatGroup,
                     }
                 } playerNames={playerNames}/>
-            </>
+            </span>
         case "playerDied":
             return <>
                 <StyledText className={"chat-message " + style}>{(icon??"")} {translate("chatMessage.playerDied",
