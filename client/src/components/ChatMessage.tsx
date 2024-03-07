@@ -19,6 +19,10 @@ export default function ChatElement(
     const message = props.message;
     const playerNames = props.playerNames ?? GAME_MANAGER.getPlayerNames();
     const chatMessageStyles = require("../resources/styling/chatMessage.json");
+    if(message.variant === undefined){
+        console.error("ChatElement message with undefined variant:");
+        console.error(message);
+    }
     let style = typeof chatMessageStyles[message.variant.type] === "string" ? chatMessageStyles[message.variant.type] : "";
 
     let icon = null;
@@ -65,7 +69,12 @@ export default function ChatElement(
         case "targetsMessage":
             return <>
                 <StyledText className={"chat-message " + style}>{(icon??"")} {translateChatMessage(message.variant, playerNames)}</StyledText>
-                <ChatElement message={message.variant.message} playerNames={playerNames}/>
+                <ChatElement message={
+                    {
+                        variant: message.variant.message,
+                        chatGroup: message.chatGroup,
+                    }
+                } playerNames={playerNames}/>
             </>
         case "playerDied":
             return <>
@@ -584,7 +593,7 @@ export type ChatMessageVariant = {
     immune: boolean
 } | {
     type: "targetsMessage",
-    message: ChatMessage
+    message: ChatMessageVariant
 } | {
     type: "werewolfTrackingResult",
     trackedPlayer: PlayerIndex

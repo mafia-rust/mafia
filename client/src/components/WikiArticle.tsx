@@ -121,3 +121,66 @@ function getGeneratedArticle(article: GeneratedArticle){
             </>;
     }
 }
+
+function getSearchStringsGenerated(article: GeneratedArticle): string[]{
+    switch(article){
+        case "role_set":
+            let out = [translate("wiki.article.generated.role_set.title")];
+            for(let set of ROLE_SETS){
+                out.push(translate(set));
+            }
+            return out;
+        case "all_text":
+            return [];
+    }
+}
+
+export function getSearchStrings(article: WikiArticleLink): string[]{
+    const path = article.split('/');
+
+    switch (path[0]) {
+        case "role":
+
+            const role = path[1] as Role;
+            const roleData = ROLES[role];
+            let out = [];
+
+            out.push(translate("role."+role+".name"));
+            out.push(translate(roleData.faction));
+
+            if(roleData.roleSet!==null)
+                out.push(translate(roleData.roleSet));
+
+            let guide = translateChecked("wiki.article.role."+role+".guide");
+            if(guide)
+                out.push(guide);
+            if(roleData.armor){
+                out.push(translate("defense.1"));
+                out.push(translate("defense"));
+            }
+            let abilities = translateChecked("wiki.article.role."+role+".abilities");
+            if(abilities)
+                out.push(abilities);
+            let attributes = translateChecked("wiki.article.role."+role+".attributes");
+            if(attributes)
+                out.push(attributes);
+            let extra = translateChecked("wiki.article.role."+role+".extra");
+            if(extra)
+                out.push(extra);
+            let roleLimit = roleData.maxCount !== null;
+            if(roleLimit)
+                out.push(translate("wiki.article.standard.roleLimit.title"));
+
+            return out;            
+            
+        case "standard":
+            return [
+                translate(`wiki.article.standard.${path[1]}.title`),
+                translate(`wiki.article.standard.${path[1]}.text`),
+            ]
+        case "generated":
+            return getSearchStringsGenerated(path[1] as GeneratedArticle);
+        default:
+            return [];
+    }
+}

@@ -3,7 +3,7 @@ import translate from "../game/lang";
 import "./wikiSearch.css";
 import { Role, getFactionFromRole } from "../game/roleState.d";
 import GAME_MANAGER, { regEscape } from "..";
-import WikiArticle from "./WikiArticle";
+import WikiArticle, { getSearchStrings } from "./WikiArticle";
 import { ARTICLES, WikiArticleLink, getArticleTitle } from "./WikiArticleLink";
 import StyledText from "./StyledText";
 
@@ -108,20 +108,25 @@ function WikiSearchResults(props: {
 }): ReactElement {
 
     function getSearchResults(search: string): WikiArticleLink[] {
-        return ARTICLES.filter(page => RegExp(regEscape(search), 'i').test(getArticleTitle(page)))
+        return ARTICLES.filter(
+            (page) => {
+                return RegExp(regEscape(search.trim()), 'i').test(getArticleTitle(page)) || 
+                getSearchStrings(page).some((str) => RegExp(regEscape(search.trim()), 'i').test(str))
+            }
+        );
     }
 
     let results = getSearchResults(props.searchQuery);
     let elements = [];
-    let lastArticleType = null;
+    let standardHeaderAdded = false;
     let lastArticleRoleFaction = null;
     for(let page of results){
 
         let articleType = page.split("/")[0];
 
-        if(articleType !== lastArticleType && articleType === "standard"){
+        if(!standardHeaderAdded && articleType === "standard"){
             elements.push(<h3 key={articleType} className="wiki-search-divider"><StyledText>{translate(articleType)}</StyledText></h3>);
-            lastArticleType = articleType;
+            standardHeaderAdded = true;
         }
 
         if(articleType === "role"){
