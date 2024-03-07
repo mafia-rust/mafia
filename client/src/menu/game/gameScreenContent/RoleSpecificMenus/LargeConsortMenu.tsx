@@ -137,7 +137,7 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
         return <div className="large-consort-menu">
             <div>
                 
-                {translate("wiki.article.standard.roleblock")}
+                {translate("wiki.article.standard.roleblock.title")}
                 <label className="material-icons-round" onClick={()=>this.handleRoleblockToggle()}>
                     {this.state.roleblock ? "check" : "close"}
                 </label>
@@ -145,12 +145,18 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
             </div>
             <div>
                 <ChatElement message={{
-                    type: "roleBlocked",
-                    immune: false,
+                    variant: {
+                        type: "roleBlocked",
+                        immune: false,
+                    },
+                    chatGroup:null
                 }}/>
                 <ChatElement message={{
-                    type: "roleBlocked",
-                    immune: true,
+                    variant: {
+                        type: "roleBlocked",
+                        immune: true,
+                    },
+                    chatGroup:null
                 }}/>
                 <label className="material-icons-round" onClick={()=>this.handleYouWereRoleblockedMessageToggle()}>
                     {this.state.youWereRoleblockedMessage ? "check" : "close"}
@@ -159,7 +165,10 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
             </div>
             <div>
                 <ChatElement message={{
-                    type: "youSurvivedAttack",
+                    variant: {
+                        type: "youSurvivedAttack",
+                    },
+                    chatGroup:null
                 }}/>
                 <label className="material-icons-round" onClick={()=>this.handleYouSurvivedAttackMessageToggle()}>
                     {this.state.youSurvivedAttackMessage ? "check" : "close"}
@@ -168,7 +177,10 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
             </div>
             <div>
                 <ChatElement message={{
-                    type: "youWereProtected",
+                    variant: {
+                        type: "youWereProtected",
+                    },
+                    chatGroup:null
                 }}/>
                 <label className="material-icons-round" onClick={()=>this.handleYouWereProtectedMessageToggle()}>
                     {this.state.youWereProtectedMessage ? "check" : "close"}
@@ -177,7 +189,10 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
             </div>
             <div>
                 <ChatElement message={{
-                    type: "transported",
+                    variant: {
+                        type: "transported",
+                    },
+                    chatGroup:null
                 }}/>
                 <label className="material-icons-round" onClick={()=>this.handleYouWereTransportedMessageToggle()}>
                     {this.state.youWereTransportedMessage ? "check" : "close"}
@@ -186,12 +201,18 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
             </div>
             <div>
                 <ChatElement message={{
-                    type: "youWerePossessed",
-                    immune: false,
+                    variant: {
+                        type: "youWerePossessed",
+                        immune: false,
+                    },
+                    chatGroup:null
                 }}/>
                 <ChatElement message={{
-                    type: "youWerePossessed",
-                    immune: true,
+                    variant: {
+                        type: "youWerePossessed",
+                        immune: true,
+                    },
+                    chatGroup:null
                 }}/>
                 <label className="material-icons-round" onClick={()=>this.handleYouWerePossessedMessageToggle()}>
                     {this.state.youWerePossessedMessage ? "check" : "close"}
@@ -200,7 +221,10 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
             </div>
             <div>
                 <ChatElement message={{
-                    type: "targetJailed",
+                    variant: {
+                        type: "targetJailed",
+                    },
+                    chatGroup:null
                 }}/>
                 <label className="material-icons-round" onClick={()=>this.handleYourTargetWasJailedMessageToggle()}>
                     {this.state.yourTargetWasJailedMessage ? "check" : "close"}

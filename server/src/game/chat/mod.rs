@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
-use crate::game::{grave::Grave, role::Role, player::{PlayerIndex, PlayerReference}, verdict::Verdict, phase::PhaseType, Game};
+use crate::game::{grave::Grave, role::Role, player::{PlayerIndex, PlayerReference}, verdict::Verdict, Game};
 
-use super::role::{spy::SpyBug, trapper::TrapState};
+use super::{phase::PhaseState, role::{spy::SpyBug, trapper::TrapState}};
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
@@ -13,16 +13,37 @@ pub enum MessageSender {
     LivingToDead{player: PlayerIndex},
 }
 
+#[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "camelCase")]
+pub struct ChatMessage{
+    pub variant: ChatMessageVariant,
+    pub chat_group: Option<ChatGroup>,
+}
+impl ChatMessage{
+    pub fn new(variant: ChatMessageVariant, chat_group: Option<ChatGroup>)->Self{
+        Self{variant,chat_group}
+    }
+    pub fn new_private(variant: ChatMessageVariant)->Self{
+        Self{variant, chat_group: None}
+    }
+    pub fn new_non_private(variant: ChatMessageVariant, chat_group: ChatGroup)->Self{
+        Self{variant, chat_group: Some(chat_group)}
+    }
+    pub fn get_variant(&self)->&ChatMessageVariant{
+        &self.variant
+    }
+}
+
+
 // Determines message color
 #[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
-pub enum ChatMessage {
+pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     Normal{
         message_sender: MessageSender, 
         text: String,
-        chat_group: ChatGroup,
     },
 
     #[serde(rename_all = "camelCase")]
@@ -44,14 +65,15 @@ pub enum ChatMessage {
     #[serde(rename_all = "camelCase")]
     GameOver,
     #[serde(rename_all = "camelCase")]
+    PlayerWonOrLost{player: PlayerIndex, won: bool, role: Role},
+    #[serde(rename_all = "camelCase")]
     PlayerQuit{player_index: PlayerIndex},
 
 
     
     #[serde(rename_all = "camelCase")]
     PhaseChange{
-        #[serde(rename = "phase")]
-        phase_type: PhaseType, 
+        phase: PhaseState, 
         day_number: u8
     },
     /* Trial */
@@ -168,7 +190,7 @@ pub enum ChatMessage {
 
     TargetIsPossessionImmune,
     YouWerePossessed { immune: bool },
-    TargetsMessage{message: Box<ChatMessage>},
+    TargetsMessage{message: Box<ChatMessageVariant>},
 
     #[serde(rename_all = "camelCase")]
     WerewolfTrackingResult{tracked_player: PlayerIndex, players: Vec<PlayerIndex>},

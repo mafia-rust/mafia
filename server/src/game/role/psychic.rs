@@ -1,7 +1,7 @@
 use rand::seq::SliceRandom;
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -69,7 +69,7 @@ impl RoleStateImpl for Psychic {
 }
 
 impl Psychic {
-    fn get_psychic_result_evil(game: &Game, actor_ref: PlayerReference)->ChatMessage{
+    fn get_psychic_result_evil(game: &Game, actor_ref: PlayerReference)->ChatMessageVariant{
         
         let mut rng = rand::thread_rng();
 
@@ -78,7 +78,7 @@ impl Psychic {
             .filter(|player_ref|!player_ref.has_innocent_aura(game))
             .collect();
 
-        let Some(selected_evil) = evil_players.choose(&mut rng) else {return ChatMessage::PsychicFailed};
+        let Some(selected_evil) = evil_players.choose(&mut rng) else {return ChatMessageVariant::PsychicFailed};
 
         let random_players: Vec<_> = Psychic::get_valid_players(game, actor_ref).into_iter()
             .filter(|p|p!=selected_evil)
@@ -86,15 +86,15 @@ impl Psychic {
             .collect::<Vec<_>>()
             .choose_multiple(&mut rng, 2).copied().collect();
         
-        let Some(random_player0) = random_players.get(0) else {return ChatMessage::PsychicFailed};
-        let Some(random_player1) = random_players.get(1) else {return ChatMessage::PsychicFailed};
+        let Some(random_player0) = random_players.get(0) else {return ChatMessageVariant::PsychicFailed};
+        let Some(random_player1) = random_players.get(1) else {return ChatMessageVariant::PsychicFailed};
 
         let mut out = [selected_evil, random_player0, random_player1];
         out.shuffle(&mut rng);
-        ChatMessage::PsychicEvil { players: [out[0].index(), out[1].index(), out[2].index()] }
+        ChatMessageVariant::PsychicEvil { players: [out[0].index(), out[1].index(), out[2].index()] }
 
     }
-    fn get_psychic_result_good(game: &Game, actor_ref: PlayerReference)->ChatMessage{
+    fn get_psychic_result_good(game: &Game, actor_ref: PlayerReference)->ChatMessageVariant{
         let mut rng = rand::thread_rng();
 
         let good_players: Vec<_> = Psychic::get_valid_players(game, actor_ref).into_iter()
@@ -102,18 +102,18 @@ impl Psychic {
             .filter(|player_ref|!player_ref.has_suspicious_aura(game))
             .collect();
 
-        let Some(selected_good) = good_players.choose(&mut rng) else {return ChatMessage::PsychicFailed};
+        let Some(selected_good) = good_players.choose(&mut rng) else {return ChatMessageVariant::PsychicFailed};
 
         let random_players: Vec<_> = Psychic::get_valid_players(game, actor_ref).into_iter()
             .filter(|player_ref|!player_ref.has_suspicious_aura(game))
             .filter(|p|p!=selected_good)
             .collect::<Vec<_>>();
         
-        let Some(random_player) = random_players.choose(&mut rng) else {return ChatMessage::PsychicFailed};
+        let Some(random_player) = random_players.choose(&mut rng) else {return ChatMessageVariant::PsychicFailed};
 
         let mut out = [selected_good, random_player];
         out.shuffle(&mut rng);
-        ChatMessage::PsychicGood { players: [out[0].index(), out[1].index()] }
+        ChatMessageVariant::PsychicGood { players: [out[0].index(), out[1].index()] }
     }
 
 

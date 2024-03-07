@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -26,10 +26,10 @@ impl RoleStateImpl for Sheriff {
         if let Some(visit) = actor_ref.night_visits(game).first(){
             
             if visit.target.night_jailed(game){
-                actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
                 return
             }
-            let message = ChatMessage::SheriffResult {
+            let message = ChatMessageVariant::SheriffResult {
                 suspicious: Sheriff::player_is_suspicious(game, visit.target)
             };
             

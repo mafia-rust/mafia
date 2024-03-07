@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -29,11 +29,11 @@ impl RoleStateImpl for Seer {
 
             
         if first_visit.target.night_jailed(game) || second_visit.target.night_jailed(game){
-            actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+            actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
             return
         }
 
-        let message = ChatMessage::SeerResult{
+        let message = ChatMessageVariant::SeerResult{
             enemies: Seer::players_are_enemies(game, first_visit.target, second_visit.target)
         };
         

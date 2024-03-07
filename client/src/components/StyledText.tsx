@@ -8,6 +8,7 @@ import ROLES from "../resources/roles.json";
 import "./styledText.css";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { ARTICLES, WikiArticleLink, getArticleLangKey } from "./WikiArticleLink";
+import GameScreen, { ContentMenu } from "../menu/game/GameScreen";
 
 export type TokenData = {
     style?: string, 
@@ -31,6 +32,16 @@ type Token = {
     type: "data"
     string: string
 } & KeywordData[number])
+
+(window as any).setWikiSearchPage = (page: WikiArticleLink) => {
+    if (GameScreen.instance) {
+        GameScreen.instance?.openMenu(ContentMenu.WikiMenu, () => {
+            GAME_MANAGER.setWikiArticle(page);
+        });
+    } else {
+        GAME_MANAGER.setWikiArticle(page);
+    }
+};
 
 /**
  * Styled Text
@@ -72,8 +83,6 @@ export default function StyledText(props: {
                 />
             );
         } else {
-            (window as any).setWikiSearchPage = (page: WikiArticleLink) => GAME_MANAGER.setWikiArticle(page);
-
             return ReactDOMServer.renderToStaticMarkup(
                 // eslint-disable-next-line jsx-a11y/anchor-is-valid
                 <a

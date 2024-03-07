@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use crate::{
-    game::{available_buttons::AvailableButtons, chat::ChatMessage, phase::PhaseState, Game, GameOverReason}, 
+    game::{available_buttons::AvailableButtons, chat::ChatMessageVariant, phase::PhaseState, Game, GameOverReason}, 
     packet::ToClientPacket, websocket_connections::connection::ClientSender, 
     lobby::GAME_DISCONNECT_TIMER_SECS
 };
@@ -21,7 +21,7 @@ impl PlayerReference{
         if self.alive(game) {
             game.add_message_to_chat_group(
                 crate::game::chat::ChatGroup::All, 
-                ChatMessage::PlayerQuit{player_index: self.index()}
+                ChatMessageVariant::PlayerQuit{player_index: self.index()}
             );
         }
     }
@@ -57,11 +57,6 @@ impl PlayerReference{
             },
             ToClientPacket::ExcludedRoles { roles: game.settings.excluded_roles.clone() },
             ToClientPacket::RoleList {role_list: game.settings.role_list.clone()},
-            ToClientPacket::Phase { 
-                phase: game.current_phase().phase(),
-                seconds_left: game.phase_machine.time_remaining.as_secs(), 
-                day_number: game.phase_machine.day_number 
-            },
             ToClientPacket::PlayerAlive{
                 alive: PlayerReference::all_players(game).map(|p|p.alive(game)).collect()
             }
@@ -73,7 +68,7 @@ impl PlayerReference{
 
         if let PhaseState::Testimony { player_on_trial, .. }
             | PhaseState::Judgement { player_on_trial, .. }
-            | PhaseState::Evening { player_on_trial: Some(player_on_trial) } = game.current_phase() {
+            | PhaseState::FinalWords { player_on_trial } = game.current_phase() {
             self.send_packet(game, ToClientPacket::PlayerOnTrial{
                 player_index: player_on_trial.index()
             });
@@ -120,7 +115,12 @@ impl PlayerReference{
             },
             ToClientPacket::YourButtons{
                 buttons: AvailableButtons::from_player(game, *self)
-            }
+            },
+            ToClientPacket::Phase { 
+                phase: game.current_phase().phase(),
+                day_number: game.phase_machine.day_number 
+            },
+            ToClientPacket::PhaseTimeLeft { seconds_left: game.phase_machine.time_remaining.as_secs() }
         ]);
     }
 
@@ -150,9 +150,7 @@ impl PlayerReference{
     }
     #[allow(unused)]
     fn requeue_chat_messages(&self, game: &mut Game){
-        for msg in self.deref(game).chat_messages.clone().into_iter(){
-            self.deref_mut(game).queued_chat_messages.push(msg);
-        };
+        self.deref_mut(game).queued_chat_messages = self.deref(game).chat_messages.clone();
     }   
 
     fn send_available_buttons(&self, game: &mut Game){

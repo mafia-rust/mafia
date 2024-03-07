@@ -26,10 +26,10 @@
     "cult": { "style": "keyword-cult", "link": "standard/cult"},
     "any": { "style": "keyword-info"},
     "none": { "style": "keyword-info"},
-    "defense.0": { "style": "keyword-info"},
-    "defense.1": { "style": "keyword-info"},
-    "defense.2": { "style": "keyword-info"},
-    "defense.3": { "style": "keyword-info"},
+    "defense.0": { "style": "keyword-info", "link": "standard/defense"},
+    "defense.1": { "style": "keyword-info", "link": "standard/defense"},
+    "defense.2": { "style": "keyword-info", "link": "standard/defense"},
+    "defense.3": { "style": "keyword-info", "link": "standard/defense"},
     "dead": { "style": "keyword-dead", "link": "standard/dead"},
     "wiki.article.role.abilities": { "style": "keyword-info","link": "standard/how_to_play"},
     "wiki.article.role.attributes": { "style": "keyword-info","link": "standard/how_to_play"},
@@ -42,37 +42,32 @@
     "random.gay": { "style": "keyword-pride","replacement": "random.gay","link": "role/transporter"},
     "random.trans": { "style": "keyword-trans","replacement": "random.trans","link": "role/transporter"},
 
-    "day": {
-        "link": "standard/phases_and_timeline"
-    },
-    "phase.morning": {
-        "link": "standard/phases_and_timeline"
-    },
-    "phase.discussion": {
-        "link": "standard/phases_and_timeline"
-    },
-    "phase.voting": {
-        "link": "standard/phases_and_timeline"
-    },
-    "phase.testimony": {
-        "link": "standard/phases_and_timeline"
-    },
-    "phase.judgement": {
-        "link": "standard/phases_and_timeline"
-    },
-    "phase.evening": {
-        "link": "standard/phases_and_timeline"
-    },
-    "phase.night": {
-        "link": "standard/phases_and_timeline"
-    },
-    "menu.will.notes": {
-        "link": "standard/how_to_play"
-    },
-    "menu.will.deathNote": {
-        "link": "standard/how_to_play"
-    },
-    "language":{ 
-        "link": "generated/all_text"
-    }
+
+    "noAll.icon": {"link":"standard/chatGroup"},
+    "chatGroup.all.icon": {"link":"standard/chatGroup"},
+    "chatGroup.mafia.icon": {"link":"standard/chatGroup"},
+    "chatGroup.cult.icon": {"link":"standard/chatGroup"},
+    "chatGroup.jail.icon": {"link":"standard/chatGroup"},
+    "chatGroup.interview.icon": {"link":"standard/chatGroup"},
+    "chatGroup.dead.icon": {"link":"standard/chatGroup"},
+    "noGroup.icon": {"link":"standard/chatGroup"},
+    "messageSender.livingToDead.icon": {"link":"standard/chatGroup"},
+
+
+    "day": {"link": "standard/phases_and_timeline"},
+
+    "phase.briefing": {"link": "standard/phases_and_timeline"},
+    "phase.obituary": {"link": "standard/phases_and_timeline"},
+    "phase.discussion": {"link": "standard/phases_and_timeline"},
+    "phase.nomination": {"link": "standard/phases_and_timeline"},
+    "phase.testimony": {"link": "standard/phases_and_timeline"},
+    "phase.judgement": {"link": "standard/phases_and_timeline"},
+    "phase.finalWords": {"link": "standard/phases_and_timeline"},
+    "phase.dusk": {"link": "standard/phases_and_timeline"},
+    "phase.night": {"link": "standard/phases_and_timeline"},
+
+    "menu.will.notes": {"link": "standard/how_to_play"},
+    "menu.will.deathNote": {"link": "standard/how_to_play"},
+    
+    "language":{ "link": "generated/all_text"}
 }

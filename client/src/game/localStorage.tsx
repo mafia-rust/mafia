@@ -52,6 +52,7 @@ export function loadSettings(): Partial<Settings>{
 
 export type SavedGameModes = Map<string, GameMode>;
 type GameMode = {
+    name: string,
     roleList: RoleList,
     phaseTimes: PhaseTimes,
     disabledRoles: Role[],

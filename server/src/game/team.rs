@@ -1,6 +1,6 @@
 use rand::seq::SliceRandom;
 
-use super::{chat::{ChatGroup, ChatMessage}, phase::PhaseType, player::PlayerReference, role::{
+use super::{chat::{ChatGroup, ChatMessageVariant}, phase::PhaseType, player::PlayerReference, role::{
         apostle::Apostle,
         godfather::Godfather,
         zealot::Zealot,
@@ -180,9 +180,9 @@ impl TeamStateImpl for Cult{
         
         if phase == PhaseType::Night {
             if self.can_convert_tonight(game){
-                game.add_message_to_chat_group(ChatGroup::Cult, ChatMessage::ApostleCanConvertTonight);
+                game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::ApostleCanConvertTonight);
             }else{
-                game.add_message_to_chat_group(ChatGroup::Cult, ChatMessage::ApostleCantConvertTonight);
+                game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::ApostleCantConvertTonight);
             }
         }
     }
@@ -192,7 +192,7 @@ impl TeamStateImpl for Cult{
     fn on_any_death(mut self, game: &mut Game){
         self.sacrifices_needed = self.sacrifices_needed.map(|s| s.saturating_sub(1));
         if let Some(s) = self.sacrifices_needed{
-            game.add_message_to_chat_group(ChatGroup::Cult, ChatMessage::CultSacrificesRequired { required: s });
+            game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::CultSacrificesRequired { required: s });
         }
         game.teams.set_cult(self.clone());
 

@@ -270,6 +270,8 @@ impl Role{
         match self {
             Role::Veteran => true,
 
+            Role::Transporter => true,
+            
             Role::Retributionist => true,
             Role::Witch => true,
             Role::Necromancer => true,
@@ -282,6 +284,7 @@ impl Role{
         match self {
             Role::Veteran => true,
             
+            Role::Transporter => true,
             Role::Reveler => true,
 
             Role::Escort => true,

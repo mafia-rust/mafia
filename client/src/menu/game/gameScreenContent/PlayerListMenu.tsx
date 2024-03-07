@@ -3,7 +3,7 @@ import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import "./playerListMenu.css"
 import "./../gameScreen.css"
-import { Phase, Player, PlayerIndex } from "../../../game/gameState.d";
+import { PhaseType, Player, PlayerIndex } from "../../../game/gameState.d";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import { StateListener } from "../../../game/gameManager.d";
 import SmallRoleSpecificMenu from "./RoleSpecificMenus/SmallRoleSpecificMenu";
@@ -14,7 +14,7 @@ type PlayerListMenuProps = {
 }
 type PlayerListMenuState = {
     players: Player[],
-    phase: Phase | null,
+    phase: PhaseType | null,
     voted: PlayerIndex | null,
     targets: PlayerIndex[],
     roleState: RoleState | null,
@@ -54,7 +54,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
             ){
                 if(GAME_MANAGER.state.phase === "night"){
                     playerFilter = "usable"
-                }else if(GAME_MANAGER.state.phase === "morning"){
+                }else if(GAME_MANAGER.state.phase === "obituary"){
                     playerFilter = "living";
                 }
             }
@@ -76,7 +76,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 return;
             }
             switch (type) {
-                case "tick":
+                case "filterUpdate":
                     this.setState({chatFilter: GAME_MANAGER.state.chatFilter});
                 break;
                 case "phase":
@@ -121,7 +121,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     renderPhaseSpecific(){
         let phaseSpecificJSX = null;
         switch(this.state.phase){
-            case "voting":
+            case "nomination":
                 if(this.state.voted!=null){
                     phaseSpecificJSX = (<div>
                         <div><StyledText>{this.state.players[this.state.voted].toString()}</StyledText></div>
@@ -162,7 +162,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 {(
                     player.numVoted !==null &&
                     player.numVoted !==0 &&
-                    this.state.phase === "voting"
+                    this.state.phase === "nomination"
                 ) ?
                     <span className="keyword-player-number">
                         {player.numVoted}
@@ -188,7 +188,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         onClick={() => {
                             if(GAME_MANAGER.state.stateType === "game"){
                                 GAME_MANAGER.state.chatFilter = isFilterSet ? null : filter;
-                                GAME_MANAGER.invokeStateListeners("tick");
+                                GAME_MANAGER.invokeStateListeners("filterUpdate");
                             }
                             this.setState({})
                         }}

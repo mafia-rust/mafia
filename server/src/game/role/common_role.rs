@@ -29,11 +29,13 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
     }
 
     match game.current_phase() {
-        PhaseState::Morning => vec![],
+        PhaseState::Briefing |
+        PhaseState::Obituary => vec![],
         PhaseState::Discussion 
-        | PhaseState::Voting {..}
+        | PhaseState::Nomination {..}
         | PhaseState::Judgement {..} 
-        | PhaseState::Evening {..} => vec![ChatGroup::All],
+        | PhaseState::FinalWords {..}
+        | PhaseState::Dusk => vec![ChatGroup::All],
         &PhaseState::Testimony { player_on_trial, .. } => {
             if player_on_trial == actor_ref {
                 vec![ChatGroup::All]

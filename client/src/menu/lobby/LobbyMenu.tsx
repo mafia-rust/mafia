@@ -13,6 +13,7 @@ import { getRolesFromRoleListRemoveExclusionsAddConversions, getRolesComplement 
 import LoadingScreen from "../LoadingScreen";
 import StartMenu from "../main/StartMenu";
 import Wiki from "../../components/Wiki";
+import { defaultPhaseTimes } from "../../game/gameState";
 
 export default function LobbyMenu(): ReactElement {
     const [roleList, setRoleList] = useState(
@@ -54,13 +55,14 @@ export default function LobbyMenu(): ReactElement {
     }, [setRoleList, setExcludedRoles]);
 
     const importFromClipboard = () => {
+
         navigator.clipboard.readText().then((text) => {
             try {
                 const data = JSON.parse(text);
-                if(!data.roleList || !data.phaseTimes || !data.disabledRoles) return;
-                GAME_MANAGER.sendExcludedRolesPacket(data.disabledRoles);
-                GAME_MANAGER.sendSetRoleListPacket(data.roleList);
-                GAME_MANAGER.sendSetPhaseTimesPacket(data.phaseTimes);
+
+                GAME_MANAGER.sendExcludedRolesPacket(data.disabledRoles ?? []);
+                GAME_MANAGER.sendSetRoleListPacket(data.roleList ?? []);
+                GAME_MANAGER.sendSetPhaseTimesPacket(data.phaseTimes ?? defaultPhaseTimes());
             } catch (e) {
                 console.error(e);
             }

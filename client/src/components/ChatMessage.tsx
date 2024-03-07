@@ -4,7 +4,7 @@ import React from "react";
 import GAME_MANAGER, { find, replaceMentions } from "..";
 import StyledText from "./StyledText";
 import "./chatMessage.css"
-import { Phase, PlayerIndex, Verdict } from "../game/gameState.d";
+import { ChatGroup, PhaseState, PlayerIndex, Verdict } from "../game/gameState.d";
 import { Role } from "../game/roleState.d";
 import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
@@ -19,12 +19,27 @@ export default function ChatElement(
     const message = props.message;
     const playerNames = props.playerNames ?? GAME_MANAGER.getPlayerNames();
     const chatMessageStyles = require("../resources/styling/chatMessage.json");
-    let style = typeof chatMessageStyles[message.type] === "string" ? chatMessageStyles[message.type] : "";
+    if(message.variant === undefined){
+        console.error("ChatElement message with undefined variant:");
+        console.error(message);
+    }
+    let style = typeof chatMessageStyles[message.variant.type] === "string" ? chatMessageStyles[message.variant.type] : "";
+
+    let icon = null;
+    if(message.chatGroup !== null){
+        if(message.chatGroup !== "all"){
+            icon = translateChecked("chatGroup."+message.chatGroup+".icon");
+        }else{
+            icon = null;
+        }
+    }else{
+        icon = translate("noGroup.icon");
+    }
 
     // Special chat messages that don't play by the rules
-    switch (message.type) {
+    switch (message.variant.type) {
         case "normal":
-            if(message.messageSender.type !== "player" && message.messageSender.type !== "livingToDead"){
+            if(message.variant.messageSender.type !== "player" && message.variant.messageSender.type !== "livingToDead"){
                 style += " discreet";
             } else if (message.chatGroup === "dead") {
                 style += " dead player";
@@ -35,14 +50,14 @@ export default function ChatElement(
             if (
                 GAME_MANAGER.state.stateType === "game" &&
                 (find(GAME_MANAGER.state.players[GAME_MANAGER.state.myIndex!].name ?? "").test(sanitizePlayerMessage(replaceMentions(
-                    message.text,
+                    message.variant.text,
                     playerNames
                 ))) ||
                 (
                     GAME_MANAGER.state.stateType === "game" &&
                     GAME_MANAGER.state.myIndex !== null &&
                     find("" + (GAME_MANAGER.state.myIndex + 1)).test(sanitizePlayerMessage(replaceMentions(
-                        message.text,
+                        message.variant.text,
                         playerNames
                     )))
                 ))
@@ -52,22 +67,27 @@ export default function ChatElement(
             }
             break;
         case "targetsMessage":
-            return <>
-                <StyledText className={"chat-message " + style}>{translateChatMessage(message, playerNames)}</StyledText>
-                <ChatElement message={message.message} playerNames={playerNames}/>
-            </>
+            return <span className="chat-message result">
+                <StyledText className={"chat-message " + style}>{(icon??"")} {translateChatMessage(message.variant, playerNames)}</StyledText>
+                <ChatElement message={
+                    {
+                        variant: message.variant.message,
+                        chatGroup: message.chatGroup,
+                    }
+                } playerNames={playerNames}/>
+            </span>
         case "playerDied":
             return <>
-                <StyledText className={"chat-message " + style}>{translate("chatMessage.playerDied",
-                    playerNames[message.grave.playerIndex],
+                <StyledText className={"chat-message " + style}>{(icon??"")} {translate("chatMessage.playerDied",
+                    playerNames[message.variant.grave.playerIndex],
                 )}</StyledText>
                 <div className="grave-message">
-                    <GraveComponent grave={message.grave} playerNames={playerNames}/>
+                    <GraveComponent grave={message.variant.grave} playerNames={playerNames}/>
                 </div>
             </>;
     }
 
-    return <StyledText className={"chat-message " + style}>{translateChatMessage(message, playerNames)}</StyledText>;
+    return <StyledText className={"chat-message " + style}>{(icon??"")} {translateChatMessage(message.variant, playerNames)}</StyledText>;
 }
 
 function playerListToString(playerList: PlayerIndex[], playerNames: string[]): string {
@@ -83,7 +103,7 @@ export function sanitizePlayerMessage(text: string): string {
     });
 }
 
-export function translateChatMessage(message: ChatMessage, playerNames?: string[]): string {
+export function translateChatMessage(message: ChatMessageVariant, playerNames?: string[]): string {
 
     if (playerNames === undefined) {
         playerNames = GAME_MANAGER.getPlayerNames();
@@ -91,20 +111,19 @@ export function translateChatMessage(message: ChatMessage, playerNames?: string[
 
     switch (message.type) {
         case "normal":
-            const icon = translateChecked("chatGroup."+message.chatGroup+".icon");
 
             if(message.messageSender.type === "player"){
-                return (icon??"")+translate("chatMessage.normal",
+                return translate("chatMessage.normal",
                     "sender-"+playerNames[message.messageSender.player], 
                     sanitizePlayerMessage(replaceMentions(message.text, playerNames))
                 );
             } else if (message.messageSender.type === "livingToDead") {
-                return (icon??"")+(translate("messageSender.livingToDead.icon"))+translate("chatMessage.normal",
+                return (translate("messageSender.livingToDead.icon"))+translate("chatMessage.normal",
                     "sender-"+playerNames[message.messageSender.player],
                     sanitizePlayerMessage(replaceMentions(message.text, playerNames))
                 );
             } else {
-                return (icon??"")+translate("chatMessage.normal",
+                return translate("chatMessage.normal",
                     translate("role."+message.messageSender.type+".name"),
                     sanitizePlayerMessage(replaceMentions(message.text, playerNames))
                 );
@@ -124,6 +143,16 @@ export function translateChatMessage(message: ChatMessage, playerNames?: string[
             return translate("chatMessage.roleAssignment", 
                 translate("role." + message.role + ".name")
             );
+        case "playerWonOrLost":
+            if(message.won){
+                return translate("chatMessage.playerWon",
+                    playerNames[message.player], message.role
+                );
+            }else{
+                return translate("chatMessage.playerLost",
+                    playerNames[message.player], message.role
+                );
+            }
         case "playerQuit":
             return translate("chatMessage.playerQuit",
                 playerNames[message.playerIndex]
@@ -131,10 +160,28 @@ export function translateChatMessage(message: ChatMessage, playerNames?: string[
         case "youDied":
             return translate("chatMessage.youDied");
         case "phaseChange":
-            return translate("chatMessage.phaseChange",
-                translate("phase."+message.phase),
-                message.dayNumber
-            );
+            switch (message.phase.type) {
+                case "nomination":
+                    return translate("chatMessage.phaseChange.nomination",
+                        translate("phase."+message.phase.type),
+                        message.dayNumber,
+                        message.phase.trialsLeft
+                    );
+                case "testimony":
+                case "judgement":
+                case "finalWords":
+                    return translate("chatMessage.phaseChange.trial",
+                        translate("phase."+message.phase.type),
+                        message.dayNumber,
+                        playerNames[message.phase.playerOnTrial]
+                    );
+                default:
+                    return translate("chatMessage.phaseChange",
+                        translate("phase."+message.phase.type),
+                        message.dayNumber
+                    );
+            }
+            
         case "trialInformation":
             return translate("chatMessage.trialInformation",
                 message.requiredVotes,
@@ -345,12 +392,14 @@ export function translateChatMessage(message: ChatMessage, playerNames?: string[
             return "FIXME: " + translate("chatMessage." + message);
     }
 }
-
 export type ChatMessage = {
+    variant: ChatMessageVariant
+    chatGroup: ChatGroup | null
+}
+export type ChatMessageVariant = {
     type: "normal", 
     messageSender: MessageSender,
-    text: string, 
-    chatGroup: "all" | "dead" | "mafia" | "cult" | "jail" | "interview"
+    text: string
 } | {
     type: "whisper", 
     fromPlayerIndex: PlayerIndex, 
@@ -371,11 +420,16 @@ export type ChatMessage = {
 } | {
     type: "gameOver"
 } | {
+    type: "playerWonOrLost",
+    player: PlayerIndex,
+    won: boolean,
+    role: Role
+} | {
     type: "playerQuit",
     playerIndex: PlayerIndex
 } | {
     type: "phaseChange", 
-    phase: Phase, 
+    phase: PhaseState,
     dayNumber: number
 } | 
 // Trial
@@ -539,7 +593,7 @@ export type ChatMessage = {
     immune: boolean
 } | {
     type: "targetsMessage",
-    message: ChatMessage
+    message: ChatMessageVariant
 } | {
     type: "werewolfTrackingResult",
     trackedPlayer: PlayerIndex

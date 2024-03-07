@@ -28,9 +28,6 @@ impl TestGame {
     /// * When the specified day and phase is in the past.
     /// * If this would take the game to a day past the maximum day
     pub fn skip_to(&mut self, phase: PhaseType, day_number: u8) -> &PhaseState {
-        if day_number == 1 && phase < PhaseType::Evening {
-            panic!("There is no {:?} 1, skip_to", phase);
-        }
         // If the phase & day is in the past
         if self.day_number() > day_number || (self.day_number() == day_number && self.current_phase().phase() > phase) {
             panic!("Can't skip back in time! Tried to go to {:?} {}, but was already on {:?} {}, skip_to", phase, day_number, self.current_phase().phase(), self.day_number());
@@ -46,6 +43,10 @@ impl TestGame {
             }
 
             self.next_phase();
+
+            if self.day_number() > day_number || (self.day_number() == day_number && self.current_phase().phase() > phase) {
+                panic!("That phase was skipped past. Maybe your test subjects need to vote someone? Tried to go to {:?} {}, but was already on {:?} {}, skip_to", phase, day_number, self.current_phase().phase(), self.day_number());
+            }
         }
 
         self.current_phase()

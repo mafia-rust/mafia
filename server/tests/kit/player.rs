@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use mafia_server::{game::{player::{PlayerReference, PlayerIndex}, Game, chat::ChatMessage, role::RoleState, tag::Tag, phase::PhaseState}, packet::ToServerPacket};
+use mafia_server::{game::{chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::RoleState, tag::Tag, Game}, packet::ToServerPacket};
 
 #[derive(Clone, Copy, Debug)]
 pub struct TestPlayer(PlayerReference, *mut Game);
@@ -44,7 +44,7 @@ impl TestPlayer {
     }
 
     pub fn vote_for_player(&self, target: Option<TestPlayer>) {
-        let &PhaseState::Voting { .. } = game!(self).current_phase() else {return};
+        let &PhaseState::Nomination { .. } = game!(self).current_phase() else {return};
 
         let player_voted_ref = match PlayerReference::index_option_to_ref(game!(self), &target.map(|f|f.0.index())){
             Ok(player_voted_ref) => player_voted_ref,
@@ -78,14 +78,16 @@ impl TestPlayer {
         self.0.night_roleblocked(game!(self))
     }
 
-    pub fn get_messages(&self) -> &Vec<ChatMessage> {
-        &self.0.deref(game!(self)).chat_messages
+    pub fn get_messages(&self) -> Vec<ChatMessageVariant> {
+        self.0.deref(game!(self)).chat_messages.iter().map(|m|{
+            m.get_variant().clone()
+        }).collect()
     }
 
-    pub fn get_messages_after_last_message(&self, last_message: ChatMessage) -> Vec<ChatMessage> {
+    pub fn get_messages_after_last_message(&self, last_message: ChatMessageVariant) -> Vec<ChatMessageVariant> {
         let mut found = false;
         let mut out = Vec::new();
-        for message in self.0.deref(game!(self)).chat_messages.iter() {
+        for message in self.get_messages().iter() {
             if *message == last_message {
                 found = true;
             }else if found {

@@ -26,17 +26,19 @@ impl PlayerReference{
 
     pub fn on_phase_start(&self, game: &mut Game, phase: PhaseType){
         match phase {
-            PhaseType::Morning => {
+            PhaseType::Briefing => {},
+            PhaseType::Obituary => {
                 self.set_night_jailed(game, false);
             },
             PhaseType::Discussion => {},
-            PhaseType::Voting => {
+            PhaseType::Nomination => {
                 self.set_chosen_vote(game, None, false);
                 self.set_verdict(game, Verdict::Abstain);
             },
             PhaseType::Testimony => {},
             PhaseType::Judgement => {},
-            PhaseType::Evening => {},
+            PhaseType::FinalWords => {},
+            PhaseType::Dusk => {},
             PhaseType::Night => {
                 self.set_night_died(game, false);
                 self.set_night_attacked(game, false);

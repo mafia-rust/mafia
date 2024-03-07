@@ -2,7 +2,7 @@
 use rand::seq::SliceRandom;
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::Grave;
 use crate::game::phase::{PhaseState, PhaseType};
 use crate::game::player::PlayerReference;
@@ -73,10 +73,15 @@ impl RoleStateImpl for Executioner {
         self.target == ExecutionerTarget::Won
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
+
+        if self.target == ExecutionerTarget::Won || !actor_ref.alive(game){
+            return;
+        }
+
         match *game.current_phase() {
-            PhaseState::Evening { player_on_trial: Some(player_on_trial) } => {
+            PhaseState::FinalWords { player_on_trial } => {
                 if Some(player_on_trial) == self.target.get_target() {
-                    game.add_message_to_chat_group(ChatGroup::All, ChatMessage::ExecutionerWon);
+                    game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::ExecutionerWon);
                     actor_ref.set_role_state(game, RoleState::Executioner(Executioner { target: ExecutionerTarget::Won }));
                 }
             }
