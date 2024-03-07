@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::{GraveKiller, Grave, GraveDeathCause};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -82,8 +82,8 @@ impl RoleStateImpl for Politician {
                     grave.death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Politician)]);
                     player_ref.die(game, grave, true);
                 }else{
-                    player_ref.add_chat_message(game, ChatMessage::YouSurvivedAttack);
-                    actor_ref.add_chat_message(game, ChatMessage::SomeoneSurvivedYourAttack);
+                    player_ref.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
+                    actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
                 }
                 won = true;
             }

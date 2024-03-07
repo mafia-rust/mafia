@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -57,7 +57,7 @@ impl RoleStateImpl for Consort {
             },
             Priority::Roleblock => {
                 if target_ref.night_jailed(game) {
-                    actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                    actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
                 }else if self.roleblock {
                     target_ref.roleblock(game, false);
                 }
@@ -65,29 +65,29 @@ impl RoleStateImpl for Consort {
             Priority::Deception => {
                 if self.you_were_roleblocked_message {
                     if target_ref.role(game).roleblock_immune() {
-                        target_ref.push_night_message(game, ChatMessage::RoleBlocked { immune: true });
+                        target_ref.push_night_message(game, ChatMessageVariant::RoleBlocked { immune: true });
                     } else {
-                        target_ref.push_night_message(game, ChatMessage::RoleBlocked { immune: false });
+                        target_ref.push_night_message(game, ChatMessageVariant::RoleBlocked { immune: false });
                     }
                 }
                 if self.you_survived_attack_message {
-                    target_ref.push_night_message(game, ChatMessage::YouSurvivedAttack);
+                    target_ref.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
                 }
                 if self.you_were_protected_message {
-                    target_ref.push_night_message(game, ChatMessage::YouWereProtected);
+                    target_ref.push_night_message(game, ChatMessageVariant::YouWereProtected);
                 }
                 if self.you_were_transported_message {
-                    target_ref.push_night_message(game, ChatMessage::Transported);
+                    target_ref.push_night_message(game, ChatMessageVariant::Transported);
                 }
                 if self.you_were_possessed_message {
                     if target_ref.role(game).control_immune() {
-                        target_ref.push_night_message(game, ChatMessage::YouWerePossessed { immune: true });
+                        target_ref.push_night_message(game, ChatMessageVariant::YouWerePossessed { immune: true });
                     } else {
-                        target_ref.push_night_message(game, ChatMessage::YouWerePossessed { immune: false });
+                        target_ref.push_night_message(game, ChatMessageVariant::YouWerePossessed { immune: false });
                     }
                 }
                 if self.your_target_was_jailed_message {
-                    target_ref.push_night_message(game, ChatMessage::TargetJailed);
+                    target_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
                 }
             },
             _ => {}

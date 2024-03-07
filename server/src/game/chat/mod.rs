@@ -13,16 +13,37 @@ pub enum MessageSender {
     LivingToDead{player: PlayerIndex},
 }
 
+#[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "camelCase")]
+pub struct ChatMessage{
+    pub variant: ChatMessageVariant,
+    pub chat_group: Option<ChatGroup>,
+}
+impl ChatMessage{
+    pub fn new(variant: ChatMessageVariant, chat_group: Option<ChatGroup>)->Self{
+        Self{variant,chat_group}
+    }
+    pub fn new_private(variant: ChatMessageVariant)->Self{
+        Self{variant, chat_group: None}
+    }
+    pub fn new_non_private(variant: ChatMessageVariant, chat_group: ChatGroup)->Self{
+        Self{variant, chat_group: Some(chat_group)}
+    }
+    pub fn get_variant(&self)->&ChatMessageVariant{
+        &self.variant
+    }
+}
+
+
 // Determines message color
 #[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
-pub enum ChatMessage {
+pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     Normal{
         message_sender: MessageSender, 
         text: String,
-        chat_group: ChatGroup,
     },
 
     #[serde(rename_all = "camelCase")]
@@ -169,7 +190,7 @@ pub enum ChatMessage {
 
     TargetIsPossessionImmune,
     YouWerePossessed { immune: bool },
-    TargetsMessage{message: Box<ChatMessage>},
+    TargetsMessage{message: Box<ChatMessageVariant>},
 
     #[serde(rename_all = "camelCase")]
     WerewolfTrackingResult{tracked_player: PlayerIndex, players: Vec<PlayerIndex>},

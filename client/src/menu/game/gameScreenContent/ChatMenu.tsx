@@ -116,10 +116,10 @@ function ChatMessageSection(props:{
         <div className="message-list">
             {messages.filter((msg)=>{
                 //translateChatMessage errors for this type.
-                if(msg.type === "playerDied") 
+                if(msg.variant.type === "playerDied") 
                     return true;
-                const msgtxt = translateChatMessage(msg, GAME_MANAGER.getPlayerNames());
-                return props.filter === null || msg.type === "phaseChange" || msgtxt.includes(GAME_MANAGER.getPlayerNames()[props.filter]);
+                const msgtxt = translateChatMessage(msg.variant, GAME_MANAGER.getPlayerNames());
+                return props.filter === null || msg.variant.type === "phaseChange" || msgtxt.includes(GAME_MANAGER.getPlayerNames()[props.filter]);
             }).map((msg, index) => {
                 return <ChatElement key={index} message={msg}/>;
             })}

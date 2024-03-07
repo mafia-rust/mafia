@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -79,12 +79,10 @@ impl RoleStateImpl for Medium {
                 if let Some(seanced) = self.seanced_target {
                     if seanced.alive(game) && !actor_ref.alive(game){
                 
-                        actor_ref.add_chat_message(game, 
-                            ChatMessage::MediumHauntStarted{ medium: actor_ref.index(), player: seanced.index() }
+                        game.add_message_to_chat_group(ChatGroup::Dead,
+                            ChatMessageVariant::MediumHauntStarted{ medium: actor_ref.index(), player: seanced.index() }
                         );
-                        seanced.add_chat_message(game, 
-                            ChatMessage::MediumHauntStarted{ medium: actor_ref.index(), player: seanced.index() }
-                        );
+
                         self.seances_remaining -= 1;
                     }
                 }

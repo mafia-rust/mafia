@@ -1,7 +1,7 @@
 
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -32,7 +32,7 @@ impl RoleStateImpl for Mayor {
             return;
         }
 
-        game.add_message_to_chat_group(ChatGroup::All, ChatMessage::MayorRevealed { player_index: actor_ref.index() });
+        game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::MayorRevealed { player_index: actor_ref.index() });
 
         actor_ref.set_role_state(game, RoleState::Mayor(Mayor{
             revealed: true

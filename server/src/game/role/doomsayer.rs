@@ -2,7 +2,7 @@ use std::vec;
 
 use serde::{Serialize, Deserialize};
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -104,14 +104,14 @@ impl RoleStateImpl for Doomsayer {
         };
 
         if won{
-            actor_ref.add_chat_message(game, ChatMessage::DoomsayerWon);
+            actor_ref.add_private_chat_message(game, ChatMessageVariant::DoomsayerWon);
             self.guesses[0].0.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), 3, true);
             self.guesses[1].0.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), 3, true);
             self.guesses[2].0.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), 3, true);
             actor_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, 3, false);
             actor_ref.set_role_state(game, RoleState::Doomsayer(Doomsayer { guesses: self.guesses, won: true }));
         }else{
-            actor_ref.add_chat_message(game, ChatMessage::DoomsayerFailed);
+            actor_ref.add_private_chat_message(game, ChatMessageVariant::DoomsayerFailed);
         }
     
     }

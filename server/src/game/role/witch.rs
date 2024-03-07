@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -32,11 +32,11 @@ impl RoleStateImpl for Witch {
                 if !first_visit.target.alive(game) {return;}
                 
                 first_visit.target.push_night_message(game,
-                    ChatMessage::YouWerePossessed { immune: first_visit.target.control_immune(game) }
+                    ChatMessageVariant::YouWerePossessed { immune: first_visit.target.control_immune(game) }
                 );
                 if first_visit.target.control_immune(game) {
                     actor_ref.push_night_message(game,
-                        ChatMessage::TargetIsPossessionImmune
+                        ChatMessageVariant::TargetIsPossessionImmune
                     );
                     return;
                 }
@@ -57,7 +57,7 @@ impl RoleStateImpl for Witch {
                 if let Some(currently_used_player) = self.currently_used_player {
                     for message in currently_used_player.night_messages(game).clone() {
                         actor_ref.push_night_message(game,
-                            ChatMessage::TargetsMessage { message: Box::new(message.clone()) }
+                            ChatMessageVariant::TargetsMessage { message: Box::new(message.clone()) }
                         );
                     }
                 }

@@ -21,7 +21,7 @@ use serde::Serialize;
 
 use crate::lobby::{LobbyPlayer, ClientConnection};
 use crate::packet::ToClientPacket;
-use chat::{ChatMessage, ChatGroup};
+use chat::{ChatMessageVariant, ChatGroup, ChatMessage};
 use player::PlayerReference;
 use player::Player;
 use phase::PhaseStateMachine;
@@ -265,12 +265,12 @@ impl Game {
             }
 
             if self.game_is_over() {
-                self.add_message_to_chat_group(ChatGroup::All, ChatMessage::GameOver);
+                self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::GameOver);
                 self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::Draw });
 
                 for player_ref in PlayerReference::all_players(self){
                     self.add_message_to_chat_group(ChatGroup::All, 
-                        ChatMessage::PlayerWonOrLost{ 
+                        ChatMessageVariant::PlayerWonOrLost{ 
                             player: player_ref.index(), 
                             won: player_ref.get_won_game(self), 
                             role: player_ref.role_state(self).role() 
@@ -284,7 +284,7 @@ impl Game {
         }
 
         if self.phase_machine.day_number == u8::MAX {
-            self.add_message_to_chat_group(ChatGroup::All, ChatMessage::GameOver);
+            self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::GameOver);
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
             self.ticking = false;
             return;
@@ -329,17 +329,17 @@ impl Game {
         }
     }
 
-    pub fn add_message_to_chat_group(&mut self, group: ChatGroup, mut message: ChatMessage){
-        if let ChatMessage::Normal { chat_group, .. } = &mut message {
-            *chat_group = group.clone();
-        }
+    pub fn add_message_to_chat_group(&mut self, group: ChatGroup, message: ChatMessageVariant){
+
+        let message = ChatMessage::new_non_private(message, group.clone());
 
         for player_ref in group.all_players_in_group(self){
             player_ref.add_chat_message(self, message.clone());
             player_ref.send_chat_messages(self);
         }
     }
-    pub fn add_messages_to_chat_group(&mut self, group: ChatGroup, messages: Vec<ChatMessage>){
+    pub fn add_messages_to_chat_group(&mut self, group: ChatGroup, messages: Vec<ChatMessageVariant>){
+
         for message in messages.into_iter(){
             self.add_message_to_chat_group(group.clone(), message);
         }
@@ -359,7 +359,7 @@ impl Game {
         }
         self.phase_machine.time_remaining = FAST_FORWARD_TIME;
         
-        self.add_message_to_chat_group(ChatGroup::All, ChatMessage::PhaseFastForwarded);
+        self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::PhaseFastForwarded);
         self.send_packet_to_all(ToClientPacket::PhaseTimeLeft{ seconds_left: self.phase_machine.time_remaining.as_secs() });
     }
 }
