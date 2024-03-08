@@ -22,7 +22,8 @@ export enum ContentMenu {
     PlayerListMenu = "PlayerListMenu",
     WillMenu = "WillMenu",
     WikiMenu = "WikiMenu",
-    RoleSpecificMenu = "RoleSpecificMenu"
+    RoleSpecificMenu = "RoleSpecificMenu",
+    PopupMenu = "PopupMenu"
 }
 
 type GameScreenProps = {
@@ -42,6 +43,7 @@ type GameScreenState = {
     willMenu: boolean,
     wikiMenu: boolean,
     roleSpecificMenu: boolean,
+    PopupMenu: boolean,
 }
 
 export default class GameScreen extends React.Component<GameScreenProps, GameScreenState> {
@@ -81,7 +83,8 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                 playerListMenu: props.contentMenus.includes(ContentMenu.PlayerListMenu),
                 willMenu: props.contentMenus.includes(ContentMenu.WillMenu),
                 wikiMenu: props.contentMenus.includes(ContentMenu.WikiMenu),
-                roleSpecificMenu : props.contentMenus.includes(ContentMenu.RoleSpecificMenu)
+                roleSpecificMenu : props.contentMenus.includes(ContentMenu.RoleSpecificMenu),
+                PopupMenu : false,
             }
         
 
@@ -97,6 +100,9 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                         chatMenuNotification: true,
                     });
                 }
+                //Add If to set Popup true on death ( can be expanded to other popups later on)
+                //Wihtin If, when popup is set true add listener to window to set popup false on click to have
+                //popup leave when screen is clicked
             }
         }
         this.swipeEventListener = (right)=>{
