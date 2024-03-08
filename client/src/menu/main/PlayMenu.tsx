@@ -14,7 +14,7 @@ export default function PlayMenu(): ReactElement {
     useEffect(() => {
         GAME_MANAGER.sendLobbyListRequest();
         //Sets the browser to refresh every 5 seconds when component mounts and stops interval when umount
-        const autoRefresh = setInterval(() => {GAME_MANAGER.sendLobbyListRequest()}, 5000);
+        const autoRefresh = setInterval(() => {GAME_MANAGER.sendLobbyListRequest()}, 2500);
         return () => clearInterval(autoRefresh);
     })
 
