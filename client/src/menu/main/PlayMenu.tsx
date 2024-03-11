@@ -10,8 +10,12 @@ import LobbyMenu from "../lobby/LobbyMenu";
 import GameScreen from "../game/GameScreen";
 
 export default function PlayMenu(): ReactElement {
+    
     useEffect(() => {
         GAME_MANAGER.sendLobbyListRequest();
+        
+        const autoRefresh = setInterval(() => {GAME_MANAGER.sendLobbyListRequest()}, 2500);
+        return () => clearInterval(autoRefresh);
     })
 
     return <div className="play-menu">
