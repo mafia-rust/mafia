@@ -114,8 +114,7 @@ impl PlayerReference{
     pub fn add_private_chat_message(&self, game: &mut Game, message: ChatMessageVariant) {
         let message = ChatMessage::new_private(message);
 
-        self.deref_mut(game).chat_messages.push(message.clone());
-        self.deref_mut(game).queued_chat_messages.push(message);
+        self.add_chat_message(game, message.clone());
     }
     pub fn add_private_chat_messages(&self, game: &mut Game, messages: Vec<ChatMessageVariant>){
         for message in messages.into_iter(){
@@ -125,11 +124,6 @@ impl PlayerReference{
     pub fn add_chat_message(&self, game: &mut Game, message: ChatMessage) {
         self.deref_mut(game).chat_messages.push(message.clone());
         self.deref_mut(game).queued_chat_messages.push(message);
-    }
-    pub fn add_chat_messages(&self, game: &mut Game, messages: Vec<ChatMessage>){
-        for message in messages.into_iter(){
-            self.add_chat_message(game, message);
-        }
     }
 
     pub fn set_doused(&self, game: &mut Game, doused: bool){
