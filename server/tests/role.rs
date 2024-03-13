@@ -1130,3 +1130,19 @@ fn martyr_healed() {
         ChatMessageVariant::MartyrFailed
     );
 }
+
+#[test]
+fn deputy_fails(){
+    kit::scenario!(game in Discussion 2 where
+        deputy: Deputy,
+        player1: Mafioso,
+        player2: Sheriff
+    );
+
+    assert!(deputy.day_target(player2));
+    assert!(!deputy.alive());
+    assert!(!player2.alive());
+    assert!(player1.alive());
+    assert!(player1.get_won_game());
+    assert!(game.game_is_over());
+}

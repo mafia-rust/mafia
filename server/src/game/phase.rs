@@ -6,10 +6,7 @@ use serde::{Serialize, Deserialize};
 use crate::packet::ToClientPacket;
 
 use super::{
-    settings::PhaseTimeSettings,
-    Game, player::PlayerReference,
-    chat::{ChatGroup, ChatMessageVariant},
-    grave::Grave, role::Priority,
+    chat::{ChatGroup, ChatMessageVariant}, event, grave::Grave, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
 };
 
 
@@ -81,19 +78,16 @@ impl PhaseState {
     pub fn start(game: &mut Game) {
         match game.current_phase().clone() {
             PhaseState::Obituary => {
-                for player_ref in PlayerReference::all_players(game) {
-                    if player_ref.night_died(game) {
-                        let new_grave = Grave::from_player_night(game, player_ref);
-                        player_ref.die(game, new_grave, false);
-                    }
-                }
+                let mut events = Vec::<event::OnAnyDeath>::new();
 
                 for player_ref in PlayerReference::all_players(game) {
                     if player_ref.night_died(game) {
-                        player_ref.invoke_on_any_death(game)
+                        let new_grave = Grave::from_player_night(game, player_ref);
+                        events.push(player_ref.die_return_event(game, new_grave));
                     }
                 }
-                
+
+                events.into_iter().for_each(|f| f.invoke(game));
 
                 game.phase_machine.day_number += 1;
             },
@@ -184,7 +178,7 @@ impl PhaseState {
                 
                 if innocent < guilty {
                     let new_grave = Grave::from_player_lynch(game, player_on_trial);
-                    player_on_trial.die(game, new_grave, true);
+                    player_on_trial.die(game, new_grave);
                 }
 
                 Self::Dusk

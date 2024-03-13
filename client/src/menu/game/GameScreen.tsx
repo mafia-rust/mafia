@@ -224,14 +224,14 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         return out;
     }
     menus(): ContentMenu[] {
-        let out = [];
-        out.push(ContentMenu.ChatMenu);
-        out.push(ContentMenu.PlayerListMenu);
-        out.push(ContentMenu.WillMenu);
-        out.push(ContentMenu.RoleSpecificMenu);
-        out.push(ContentMenu.GraveyardMenu);
-        out.push(ContentMenu.WikiMenu);
-        return out;
+        return [
+            ContentMenu.ChatMenu,
+            ContentMenu.PlayerListMenu,
+            ContentMenu.WillMenu,
+            ContentMenu.RoleSpecificMenu,
+            ContentMenu.GraveyardMenu,
+            ContentMenu.WikiMenu
+        ];
     }
 
     render() {

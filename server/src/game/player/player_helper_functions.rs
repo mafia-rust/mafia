@@ -1,19 +1,11 @@
 use crate::{
     game::
     {
-        chat::{ChatGroup, ChatMessageVariant},
-        end_game_condition::EndGameCondition,
-        grave::{Grave, GraveKiller},
-        role::{Priority, Role, RoleState},
-        team::{Team, Teams},
-        visit::Visit,
-        Game
+        chat::{ChatGroup, ChatMessageVariant}, end_game_condition::EndGameCondition, event::OnAnyDeath, grave::{Grave, GraveKiller}, role::{Priority, Role, RoleState}, team::Team, visit::Visit, Game
     }, packet::ToClientPacket
 };
 
 use super::PlayerReference;
-
-
 
 impl PlayerReference{
     pub fn roleblock(&self, game: &mut Game, send_messages: bool) {
@@ -59,9 +51,13 @@ impl PlayerReference{
 
         true
     }
+
     /// ### Pre condition:
     /// self.alive(game) == false
-    pub fn die(&self, game: &mut Game, grave: Grave, invoke_on_any_death: bool){
+    pub fn die(&self, game: &mut Game, grave: Grave){
+        self.die_return_event(game, grave).invoke(game);
+    }
+    pub fn die_return_event(&self, game: &mut Game, grave: Grave)->OnAnyDeath{
         self.set_alive(game, false);
 
         self.add_private_chat_message(game, ChatMessageVariant::YouDied);
@@ -75,20 +71,7 @@ impl PlayerReference{
             }
         }
 
-        if invoke_on_any_death {
-            self.invoke_on_any_death(game);
-        }
-    }
-    pub fn invoke_on_any_death(&self, game: &mut Game){
-        for player_ref in PlayerReference::all_players(game){
-            player_ref.on_any_death(game, *self)
-        }
-        Teams::on_any_death(game);
-        for player in PlayerReference::all_players(game){
-            player.send_packet(game, ToClientPacket::YourSendChatGroups { send_chat_groups: 
-                player.get_current_send_chat_groups(game)
-            });
-        }
+        return OnAnyDeath::new(*self);
     }
     /// Swaps this persons role, sends them the role chat message, and makes associated changes
     pub fn set_role(&self, game: &mut Game, new_role_data: RoleState){

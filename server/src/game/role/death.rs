@@ -80,7 +80,7 @@ impl RoleStateImpl for Death {
                         }else{
                             let mut grave = Grave::from_player_lynch(game, player);
                             grave.death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Death)]);
-                            player.die(game, grave, true);
+                            player.die(game, grave);
                             actor_ref.set_role_state(game, RoleState::Death(Death{won: true, souls: self.souls}));
                         }
                     }
