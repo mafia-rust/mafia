@@ -1,8 +1,13 @@
-use crate::{
-    game::
-    {
-        chat::{ChatGroup, ChatMessageVariant}, end_game_condition::EndGameCondition, event::OnAnyDeath, grave::{Grave, GraveKiller}, role::{Priority, Role, RoleState}, team::Team, visit::Visit, Game
-    }, packet::ToClientPacket
+use crate::game::
+{
+    chat::{ChatGroup, ChatMessageVariant}, 
+    end_game_condition::EndGameCondition, 
+    event::OnAnyDeath, 
+    grave::{Grave, GraveKiller}, 
+    role::{Priority, Role, RoleState}, 
+    team::Team, 
+    visit::Visit, 
+    Game
 };
 
 use super::PlayerReference;
@@ -59,17 +64,8 @@ impl PlayerReference{
     }
     pub fn die_return_event(&self, game: &mut Game, grave: Grave)->OnAnyDeath{
         self.set_alive(game, false);
-
         self.add_private_chat_message(game, ChatMessageVariant::YouDied);
-        game.graves.push(grave.clone());
-        game.send_packet_to_all(ToClientPacket::AddGrave{grave: grave.clone()});
-        game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::PlayerDied { grave: grave.clone() });
-
-        if let Some(role) = grave.role.get_role(){
-            for other_player_ref in PlayerReference::all_players(game){
-                other_player_ref.insert_role_label(game, *self, role);
-            }
-        }
+        game.add_grave(grave.clone());
 
         return OnAnyDeath::new(*self);
     }

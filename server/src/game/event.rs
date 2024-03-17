@@ -1,12 +1,8 @@
 use crate::packet::ToClientPacket;
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant},
-    phase::PhaseType,
-    player::PlayerReference,
-    team::Teams,
-    Game,
-    GameOverReason
+    chat::{ChatGroup, ChatMessage, ChatMessageVariant},
+    grave::Grave, phase::PhaseType, player::PlayerReference, team::Teams, Game, GameOverReason
 };
 
 
@@ -28,6 +24,14 @@ use super::{
 // }
 
 
+
+pub struct OnGameStart;
+impl OnGameStart{
+    pub fn invoke(game: &mut Game){
+        game.on_game_starting();
+    }
+}
+
 #[must_use = "Event must be invoked"]
 pub struct OnPhaseStart{
     pub phase: PhaseType
@@ -45,7 +49,7 @@ impl OnPhaseStart{
 
         game.on_phase_start(self.phase);
     }
-    pub fn create_and_invoke(phase: PhaseType, game: &mut Game){
+    pub fn create_and_invoke(game: &mut Game, phase: PhaseType){
         Self::new(phase).invoke(game);
     }
 }
@@ -81,8 +85,62 @@ impl OnGameEnding{
     }
 }
 
+#[must_use = "Event must be invoked"]
+pub struct OnFastForward;
+impl OnFastForward{
+    pub fn invoke(game: &mut Game){
+        game.on_fast_forward();
+    }
+}
+
+#[must_use = "Event must be invoked"]
+pub struct OnChatMessageSentToGroup{
+    pub message: ChatMessage
+}
+impl OnChatMessageSentToGroup{
+    pub fn new(message: ChatMessage) -> Self{
+        Self{ message }
+    }
+    pub fn invoke(self, game: &mut Game){
+        game.on_chat_message_sent_to_group(self.message.clone());
+    }
+    pub fn create_and_invoke(game: &mut Game, message: ChatMessage){
+        Self::new(message).invoke(game);
+    }
+}
+
+pub struct OnGraveAdded{
+    pub grave: Grave
+}
+impl OnGraveAdded{
+    pub fn new(grave: Grave) -> Self{
+        Self{ grave }
+    }
+    pub fn invoke(self, game: &mut Game){
+        game.on_grave_added(self.grave);
+    }
+    pub fn create_and_invoke(game: &mut Game, grave: Grave){
+        Self::new(grave).invoke(game);
+    }
+}
+
 //Event listerner functions for game defined here
 impl Game{
+    fn on_game_starting(&mut self){
+        self.send_packet_to_all(ToClientPacket::StartGame);
+        
+        //on role creation needs to be called after all players roles are known
+        for player_ref in PlayerReference::all_players(self){
+            let role_data_copy = player_ref.role_state(self).clone();
+            player_ref.set_role(self, role_data_copy);
+        }
+
+        Teams::on_team_creation(self);
+
+        for player_ref in PlayerReference::all_players(&self){
+            player_ref.send_join_game_data(self);
+        }
+    }
     fn on_phase_start(&mut self, _phase: PhaseType){
         self.send_packet_to_all(ToClientPacket::Phase { 
             phase: self.current_phase().phase(),
@@ -108,16 +166,36 @@ impl Game{
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::Draw });
 
             for player_ref in PlayerReference::all_players(self){
-                self.add_message_to_chat_group(ChatGroup::All, 
+                self.add_message_to_chat_group(ChatGroup::All,
                     ChatMessageVariant::PlayerWonOrLost{ 
                         player: player_ref.index(), 
                         won: player_ref.get_won_game(self), 
                         role: player_ref.role_state(self).role() 
-                    });
+                    }
+                );
             }
 
             
             self.ticking = false;
+        }
+    }
+    fn on_fast_forward(&mut self){
+        self.phase_machine.time_remaining = std::time::Duration::from_secs(0);
+        
+        self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::PhaseFastForwarded);
+        self.send_packet_to_all(ToClientPacket::PhaseTimeLeft{ seconds_left: self.phase_machine.time_remaining.as_secs() });
+    }
+    fn on_chat_message_sent_to_group(&mut self, _message: ChatMessage){
+        
+    }
+    fn on_grave_added(&mut self, grave: Grave){        
+        self.send_packet_to_all(ToClientPacket::AddGrave{grave: grave.clone()});
+        self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::PlayerDied { grave: grave.clone() });
+
+        if let Some(role) = grave.role.get_role(){
+            for other_player_ref in PlayerReference::all_players(self){
+                other_player_ref.insert_role_label(self, grave.player, role);
+            }
         }
     }
 }

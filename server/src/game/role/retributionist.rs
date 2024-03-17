@@ -74,7 +74,7 @@ impl RoleStateImpl for Retributionist {
             actor_ref.chosen_targets(game).is_empty() &&
             !target_ref.alive(game) &&
             game.graves.iter().any(|grave|
-                grave.player == target_ref.index() && 
+                grave.player == target_ref && 
                 match grave.role {
                     crate::game::grave::GraveRole::Role(r) => r.faction() == Faction::Town,
                     _ => false

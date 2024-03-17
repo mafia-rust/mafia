@@ -4,7 +4,7 @@ use serde::{Serialize, Deserialize};
 
 use super::phase::PhaseType;
 use super::Game;
-use super::player::{PlayerIndex, PlayerReference};
+use super::player::PlayerReference;
 use super::role::Role;
 use super::role_list::Faction;
 
@@ -12,7 +12,7 @@ use super::role_list::Faction;
 #[serde(rename_all = "camelCase")]
 pub struct Grave {
     #[serde(rename = "playerIndex")]
-    pub player: PlayerIndex,
+    pub player: PlayerReference,
 
     pub role: GraveRole,
     pub death_cause: GraveDeathCause,
@@ -76,7 +76,7 @@ impl Grave{
         let day_number = game.phase_machine.day_number;
 
         Grave { 
-            player: player_ref.index(), 
+            player: player_ref, 
             role: player_ref.night_grave_role(game).clone().unwrap_or(GraveRole::Role(player_ref.role(game))),
             death_cause: GraveDeathCause::Killers(player_ref.night_grave_killers(game).clone()),
             will: player_ref.night_grave_will(game).clone(),
@@ -88,7 +88,7 @@ impl Grave{
     pub fn from_player_lynch(game: &Game, player_ref: PlayerReference) -> Grave {
 
         Grave { 
-            player: player_ref.index(), 
+            player: player_ref, 
             role: GraveRole::Role(player_ref.role(game)), 
             death_cause: GraveDeathCause::Lynching, 
             will: player_ref.will(game).clone(), 
@@ -100,7 +100,7 @@ impl Grave{
 
     pub fn from_player_suicide(game: &Game, player_ref: PlayerReference) -> Grave {
         Grave {
-            player: player_ref.index(), 
+            player: player_ref, 
             role: GraveRole::Role(player_ref.role(game)), 
             death_cause: GraveDeathCause::Killers(vec![GraveKiller::Suicide]), 
             will: player_ref.will(game).clone(), 
@@ -112,7 +112,7 @@ impl Grave{
 
     pub fn from_player_leave_town(game: &Game, player_ref: PlayerReference) -> Grave {
         Grave {
-            player: player_ref.index(), 
+            player: player_ref, 
             role: GraveRole::Role(player_ref.role(game)), 
             death_cause: GraveDeathCause::LeftTown, 
             will: player_ref.will(game).clone(), 

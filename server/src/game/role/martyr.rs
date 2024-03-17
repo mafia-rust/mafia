@@ -112,7 +112,7 @@ impl RoleStateImpl for Martyr {
         }
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference) {
-        let left_town = game.graves.iter().any(|grave| grave.player == dead_player_ref.index() && grave.death_cause == GraveDeathCause::LeftTown);
+        let left_town = game.graves.iter().any(|grave| grave.player == dead_player_ref && grave.death_cause == GraveDeathCause::LeftTown);
         if dead_player_ref == actor_ref && !left_town {
             game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::MartyrWon);
             

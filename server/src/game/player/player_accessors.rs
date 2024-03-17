@@ -4,7 +4,7 @@ use crate::{
     game::{
         chat::{
             ChatGroup, ChatMessage, ChatMessageVariant
-        }, grave::{GraveKiller, GraveRole}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, Game}, packet::ToClientPacket, 
+        }, event, grave::{GraveKiller, GraveRole}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, Game}, packet::ToClientPacket, 
     };
 use super::PlayerReference;
 
@@ -142,7 +142,7 @@ impl PlayerReference{
             .filter(|p|p.alive(game))
             .all(|p| p.fast_forward_vote(game))
         {
-            game.fast_forward();
+            event::OnFastForward::invoke(game);
         }
     }
     pub fn fast_forward_vote(&self, game: &Game) -> bool{

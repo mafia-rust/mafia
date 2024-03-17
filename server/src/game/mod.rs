@@ -20,6 +20,7 @@ use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::Serialize;
 
+use crate::game::event::OnGameStart;
 use crate::lobby::{LobbyPlayer, ClientConnection};
 use crate::packet::ToClientPacket;
 use chat::{ChatMessageVariant, ChatGroup, ChatMessage};
@@ -138,20 +139,7 @@ impl Game {
         }
 
 
-        game.send_packet_to_all(ToClientPacket::StartGame);
-        
-
-        //on role creation needs to be called after all players roles are known
-        for player_ref in PlayerReference::all_players(&game){
-            let role_data_copy = player_ref.role_state(&game).clone();
-            player_ref.set_role(&mut game, role_data_copy);
-        }
-
-        Teams::on_team_creation(&mut game);
-
-        for player_ref in PlayerReference::all_players(&game){
-            player_ref.send_join_game_data(&mut game);
-        }
+        OnGameStart::invoke(&mut game);
 
         Ok(game)
     }
@@ -292,20 +280,25 @@ impl Game {
         }
 
         PhaseState::start(self);
-        OnPhaseStart::create_and_invoke(self.current_phase().phase(), self);
+        OnPhaseStart::create_and_invoke(self, self.current_phase().phase());
+    }
+
+    pub fn add_grave(&mut self, grave: Grave){
+        self.graves.push(grave.clone());
+        event::OnGraveAdded::create_and_invoke(self, grave);
     }
 
     pub fn add_message_to_chat_group(&mut self, group: ChatGroup, message: ChatMessageVariant){
-
         let message = ChatMessage::new_non_private(message, group.clone());
 
         for player_ref in group.all_players_in_group(self){
             player_ref.add_chat_message(self, message.clone());
             player_ref.send_chat_messages(self);
         }
+
+        event::OnChatMessageSentToGroup::create_and_invoke(self, message);
     }
     pub fn add_messages_to_chat_group(&mut self, group: ChatGroup, messages: Vec<ChatMessageVariant>){
-
         for message in messages.into_iter(){
             self.add_message_to_chat_group(group.clone(), message);
         }
@@ -315,18 +308,6 @@ impl Game {
         for player_ref in PlayerReference::all_players(self){
             player_ref.send_packet(self, packet.clone());
         }
-    }
-
-    pub fn fast_forward(&mut self){
-        const FAST_FORWARD_TIME: Duration = Duration::from_secs(0);
-
-        if self.phase_machine.time_remaining <= FAST_FORWARD_TIME {
-            return
-        }
-        self.phase_machine.time_remaining = FAST_FORWARD_TIME;
-        
-        self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::PhaseFastForwarded);
-        self.send_packet_to_all(ToClientPacket::PhaseTimeLeft{ seconds_left: self.phase_machine.time_remaining.as_secs() });
     }
 }
 

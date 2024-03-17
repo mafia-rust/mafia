@@ -770,7 +770,7 @@ fn grave_contains_multiple_killers() {
     assert_eq!(
         *game.graves.first().unwrap(), 
         Grave {
-            player: townie.index(),
+            player: townie.player_ref(),
         
             role: GraveRole::Role(Role::Sheriff),
             death_cause: GraveDeathCause::Killers(vec![GraveKiller::Faction(Faction::Mafia), GraveKiller::Role(Role::Vigilante)]),
@@ -808,7 +808,7 @@ fn grave_contains_multiple_killers_roles() {
     assert_eq!(
         *game.graves.first().unwrap(), 
         Grave {
-            player: townie_b.index(),
+            player: townie_b.player_ref(),
         
             role: GraveRole::Role(Role::Doctor),
             death_cause: GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Doomsayer), GraveKiller::Faction(Faction::Mafia), GraveKiller::Role(Role::Vigilante)]),
