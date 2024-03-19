@@ -114,7 +114,11 @@ function computeBasicKeywordData() {
     function addTranslatableKeywordData(langKey: string, data: KeywordData) {
         KEYWORD_DATA_MAP[translate(langKey)] = data;
         for (let i = 0, variant; (variant = translateChecked(`${langKey}:var.${i}`)) !== null; i++) {
-            KEYWORD_DATA_MAP[variant] = data;
+            const variantData = data.map(datum => ({
+                ...datum,
+                replacement: datum.replacement === translate(langKey) ? translate(`${langKey}:var.${i}`) : datum.replacement
+            }));
+            KEYWORD_DATA_MAP[variant] = variantData;
         }
     }
 
