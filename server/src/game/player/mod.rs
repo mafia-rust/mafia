@@ -9,7 +9,7 @@ pub use player_reference::PlayerReference;
 
 use std::collections::HashMap;
 
-use crate::lobby::ClientConnection;
+use crate::client_connection::ClientConnection;
 use crate::{
     game::{
         role::{Role, RoleState}, 
@@ -24,6 +24,11 @@ use crate::{
 use super::chat::ChatMessage;
 use super::tag::Tag;
 
+pub struct PlayerInitializeParameters {
+    pub connection: ClientConnection,
+    pub name: String,
+    pub host: bool,
+}
 pub struct Player {
     connection: ClientConnection,
 
@@ -134,7 +139,7 @@ impl Player {
 pub mod test {
     use std::{collections::HashMap, time::Duration};
 
-    use crate::{game::{role::Role, verdict::Verdict}, lobby::ClientConnection};
+    use crate::{client_connection::ClientConnection, game::{role::Role, verdict::Verdict}};
 
     use super::{Player, PlayerVotingVariables, PlayerNightVariables};
 

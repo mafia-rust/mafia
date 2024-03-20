@@ -1,7 +1,7 @@
 use crate::packet::ToClientPacket;
 
 use super::{
-    chat::{ChatGroup, ChatMessage, ChatMessageVariant},
+    chat::{ChatGroup, ChatMessageVariant},
     grave::Grave, phase::PhaseType, player::PlayerReference, team::Teams, Game, GameOverReason
 };
 
@@ -93,22 +93,6 @@ impl OnFastForward{
     }
 }
 
-#[must_use = "Event must be invoked"]
-pub struct OnChatMessageSentToGroup{
-    pub message: ChatMessage
-}
-impl OnChatMessageSentToGroup{
-    pub fn new(message: ChatMessage) -> Self{
-        Self{ message }
-    }
-    pub fn invoke(self, game: &mut Game){
-        game.on_chat_message_sent_to_group(self.message.clone());
-    }
-    pub fn create_and_invoke(game: &mut Game, message: ChatMessage){
-        Self::new(message).invoke(game);
-    }
-}
-
 pub struct OnGraveAdded{
     pub grave: Grave
 }
@@ -184,9 +168,6 @@ impl Game{
         
         self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::PhaseFastForwarded);
         self.send_packet_to_all(ToClientPacket::PhaseTimeLeft{ seconds_left: self.phase_machine.time_remaining.as_secs() });
-    }
-    fn on_chat_message_sent_to_group(&mut self, _message: ChatMessage){
-        
     }
     fn on_grave_added(&mut self, grave: Grave){        
         self.send_packet_to_all(ToClientPacket::AddGrave{grave: grave.clone()});

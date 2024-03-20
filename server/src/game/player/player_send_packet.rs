@@ -1,12 +1,10 @@
 use std::time::Duration;
 
 use crate::{
-    game::{available_buttons::AvailableButtons, chat::ChatMessageVariant, phase::PhaseState, Game, GameOverReason}, 
-    packet::ToClientPacket, websocket_connections::connection::ClientSender, 
-    lobby::GAME_DISCONNECT_TIMER_SECS
+    client_connection::ClientConnection, game::{available_buttons::AvailableButtons, chat::ChatMessageVariant, phase::PhaseState, Game, GameOverReason}, lobby::GAME_DISCONNECT_TIMER_SECS, packet::ToClientPacket, websocket_connections::connection::ClientSender
 };
 
-use super::{PlayerReference, ClientConnection};
+use super::PlayerReference;
 
 impl PlayerReference{
     pub fn connect(&self, game: &mut Game, sender: ClientSender){
@@ -36,9 +34,7 @@ impl PlayerReference{
     }
 
     pub fn send_packet(&self, game: &Game, packet: ToClientPacket){
-        if let ClientConnection::Connected(sender) = &self.deref(game).connection{
-            sender.send(packet);
-        }
+        self.deref(game).connection.send_packet(packet);
     }
     pub fn send_packets(&self, game: &Game, packets: Vec<ToClientPacket>){
         for packet in packets{

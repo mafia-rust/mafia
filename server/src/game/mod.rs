@@ -13,6 +13,7 @@ pub mod available_buttons;
 pub mod on_client_message;
 pub mod tag;
 pub mod event;
+pub mod spectator;
 
 use std::collections::HashMap;
 use std::time::Duration;
@@ -20,8 +21,8 @@ use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::Serialize;
 
+use crate::client_connection::ClientConnection;
 use crate::game::event::OnGameStart;
-use crate::lobby::{LobbyPlayer, ClientConnection};
 use crate::packet::ToClientPacket;
 use chat::{ChatMessageVariant, ChatGroup, ChatMessage};
 use player::PlayerReference;
@@ -33,12 +34,19 @@ use grave::Grave;
 use self::end_game_condition::EndGameCondition;
 use self::event::{OnGameEnding, OnPhaseStart};
 use self::phase::PhaseState;
+use self::player::PlayerInitializeParameters;
 use self::role::RoleState;
+use self::spectator::Spectator;
+use self::spectator::SpectatorInitializeParameters;
 use self::team::Teams;
 use self::verdict::Verdict;
 
+
 pub struct Game {
     pub settings : Settings,
+
+    pub spectators: Vec<Spectator>,
+    pub spectator_chat_messages: Vec<ChatMessageVariant>,
 
     pub players: Box<[Player]>,
     pub graves: Vec<Grave>,
@@ -68,8 +76,10 @@ pub enum GameOverReason {
     Draw
 }
 
+
+
 impl Game {
-    pub fn new(settings: Settings, lobby_players: Vec<LobbyPlayer>) -> Result<Self, RejectStartReason>{
+    pub fn new(settings: Settings, players: Vec<PlayerInitializeParameters>, spectators: Vec<SpectatorInitializeParameters>) -> Result<Self, RejectStartReason>{
         //check settings are not completly off the rails
         if settings.phase_times.game_ends_instantly() {
             return Err(RejectStartReason::ZeroTimeGame);
@@ -100,8 +110,8 @@ impl Game {
 
 
 
-            let mut players = Vec::new();
-            for (player_index, player) in lobby_players.iter().enumerate() {
+            let mut new_players = Vec::new();
+            for (player_index, player) in players.iter().enumerate() {
                 let ClientConnection::Connected(ref sender) = player.connection else {
                     return Err(RejectStartReason::PlayerDisconnected)
                 };
@@ -115,13 +125,15 @@ impl Game {
                         },
                     }
                 );
-                players.push(new_player);
+                new_players.push(new_player);
             }
             drop(roles); // Ensure we don't use the order of roles anywhere
 
             let game = Self{
                 ticking: true,
-                players: players.into_boxed_slice(),
+                spectators: spectators.clone().into_iter().map(|spectator|Spectator::new(spectator)).collect(),
+                spectator_chat_messages: Vec::new(),
+                players: new_players.into_boxed_slice(),
                 graves: Vec::new(),
                 teams: Teams::default(),
                 phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
@@ -288,25 +300,36 @@ impl Game {
         event::OnGraveAdded::create_and_invoke(self, grave);
     }
 
-    pub fn add_message_to_chat_group(&mut self, group: ChatGroup, message: ChatMessageVariant){
-        let message = ChatMessage::new_non_private(message, group.clone());
+    pub fn add_message_to_chat_group(&mut self, group: ChatGroup, variant: ChatMessageVariant){
+        let message = ChatMessage::new_non_private(variant.clone(), group.clone());
 
         for player_ref in group.all_players_in_group(self){
             player_ref.add_chat_message(self, message.clone());
             player_ref.send_chat_messages(self);
         }
 
-        event::OnChatMessageSentToGroup::create_and_invoke(self, message);
+        if group == ChatGroup::All {
+            self.add_chat_message_to_spectators(variant);
+        }
     }
     pub fn add_messages_to_chat_group(&mut self, group: ChatGroup, messages: Vec<ChatMessageVariant>){
         for message in messages.into_iter(){
             self.add_message_to_chat_group(group.clone(), message);
         }
     }
+    pub fn add_chat_message_to_spectators(&mut self, message: ChatMessageVariant){
+        for spectator in self.spectators.iter_mut(){
+            spectator.queued_chat_messages.push(message.clone());
+        }
+        self.spectator_chat_messages.push(message);
+    }
 
     pub fn send_packet_to_all(&mut self, packet: ToClientPacket){
         for player_ref in PlayerReference::all_players(self){
             player_ref.send_packet(self, packet.clone());
+        }
+        for spectator in self.spectators.iter(){
+            spectator.send_packet(packet.clone());
         }
     }
 }
@@ -348,6 +371,8 @@ pub mod test {
 
         let mut game = Game{
             ticking: true,
+            spectators: Vec::new(),
+            spectator_chat_messages: Vec::new(),
             players: players.into_boxed_slice(),
             graves: Vec::new(),
             teams: Teams::default(),

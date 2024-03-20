@@ -22,13 +22,13 @@ use serde::{Deserialize, Serialize};
 
 use crate::{game::{
     available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, phase::PhaseType, player::{PlayerIndex, PlayerReference}, role::{doomsayer::DoomsayerGuess, Role, RoleState}, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
-}, listener::{PlayerID, RoomCode}, log};
+}, listener::RoomCode, lobby::LobbyClientID, log};
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct LobbyPreviewData {
     pub name: String,
-    pub players: Vec<(PlayerID, String)>
+    pub players: Vec<(LobbyClientID, String)>
 }
 
 #[derive(Serialize, Debug, Clone)]
@@ -44,20 +44,20 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     LobbyList{lobbies: HashMap<RoomCode, LobbyPreviewData>},
     #[serde(rename_all = "camelCase")]
-    AcceptJoin{room_code: RoomCode, in_game: bool, player_id: PlayerID},
+    AcceptJoin{room_code: RoomCode, in_game: bool, player_id: LobbyClientID},
     RejectJoin{reason: RejectJoinReason},
     
     // Lobby
     #[serde(rename_all = "camelCase")]
-    YourId{player_id: PlayerID},
+    YourId{player_id: LobbyClientID},
     #[serde(rename_all = "camelCase")]
-    LobbyPlayers{players: HashMap<PlayerID, String>},
+    LobbyPlayers{players: HashMap<LobbyClientID, String>},
     LobbyName{name: String},
     #[serde(rename_all = "camelCase")]
     RejectStart{reason: RejectStartReason},
-    PlayersHost{hosts: Vec<PlayerID>},
+    PlayersHost{hosts: Vec<LobbyClientID>},
     #[serde(rename_all = "camelCase")]
-    PlayersLostConnection{lost_connection: Vec<PlayerID>},
+    PlayersLostConnection{lost_connection: Vec<LobbyClientID>},
     StartGame,
 
     GamePlayers{players: Vec<String>},
@@ -164,13 +164,13 @@ pub enum ToServerPacket{
     // Pre Lobby
     LobbyListRequest,
     #[serde(rename_all = "camelCase")]
-    ReJoin{room_code: RoomCode, player_id: PlayerID},
+    ReJoin{room_code: RoomCode, player_id: LobbyClientID},
     #[serde(rename_all = "camelCase")]
     Join{room_code: RoomCode},
     Host,
     Leave,
     #[serde(rename_all = "camelCase")]
-    Kick{player_id: PlayerID},
+    Kick{player_id: LobbyClientID},
 
     // Lobby
     SetName{name: String},

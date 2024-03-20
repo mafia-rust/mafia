@@ -41,5 +41,9 @@
         "witchable",
         "Worsencroft",
         "zealot"
+    ],
+    "rust-analyzer.linkedProjects": [
+        ".\\server\\Cargo.toml",
+        ".\\server\\Cargo.toml"
     ]
 }
