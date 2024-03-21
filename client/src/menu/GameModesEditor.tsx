@@ -134,7 +134,10 @@ export default function GameModesEditor(): ReactElement {
                     setCurrentPhaseTimes(data.phaseTimes ?? defaultPhaseTimes());
                     setCurrentDisabledRoles(data.disabledRoles ?? []);
                 } catch (e) {
-                    console.error(e);
+                    Anchor.pushError(
+                        translate("notification.clipboard.gameMode.read.failure"), 
+                        translate("notification.clipboard.gameMode.read.failure.notFound")
+                    );
                 }
             break;
             case "noClipboard":

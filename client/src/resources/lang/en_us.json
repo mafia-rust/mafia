@@ -117,7 +117,7 @@
     
     "notification.clipboard.gameMode.read.failure": "Failed to import game mode from clipboard",
     "notification.clipboard.gameMode.read.failure.notAllowed": "Allow clipboard access to import game modes",
-    "notification.clipboard.gameMode.read.failure.notFound": "The clipboard doesn't contain text",
+    "notification.clipboard.gameMode.read.failure.notFound": "The clipboard doesn't contain a valid game mode",
 
     "cancel": "Cancel",
     "players": "Players",
