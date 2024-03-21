@@ -54,10 +54,10 @@ export default function LobbyMenu(): ReactElement {
         return ()=>{GAME_MANAGER.removeStateListener(listener);}
     }, [setRoleList, setExcludedRoles]);
 
-    const importFromClipboard = async () => {
-        const text = await readFromClipboard();
+    const importFromClipboard = () => {
+        readFromClipboard().then((text) => {
+            if (text === null) return;
 
-        if (text !== null) {
             try {
                 const data = JSON.parse(text);
 
@@ -70,7 +70,7 @@ export default function LobbyMenu(): ReactElement {
                     translate("notification.importGameMode.failure.details")
                 );
             }
-        }
+        });
     }
 
     return <div className="lm">

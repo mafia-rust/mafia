@@ -106,13 +106,13 @@ export default function GameModesEditor(): ReactElement {
             disabledRoles: currentDisabledRoles
         }));
     }
-    const importGameMode = async () => {
-        const text = await readFromClipboard();
+    const importGameMode = () => {
+        readFromClipboard().then((text) => {
+            if (text === null) return;
 
-        if (text !== null) {
             try {
                 const data = JSON.parse(text);
-    
+
                 setCurrentRoleListName(data.name ?? "")
                 setCurrentRoleList(data.roleList ?? []);
                 setCurrentPhaseTimes(data.phaseTimes ?? defaultPhaseTimes());
@@ -123,7 +123,7 @@ export default function GameModesEditor(): ReactElement {
                     translate("notification.importGameMode.failure.details")
                 );
             }
-        }
+        });
     }
 
 
