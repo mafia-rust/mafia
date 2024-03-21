@@ -98,63 +98,31 @@ export default function GameModesEditor(): ReactElement {
 
 
 
-    const exportGameMode = async () => {
-        const result = await writeToClipboard(JSON.stringify({
+    const exportGameMode = () => {
+        writeToClipboard(JSON.stringify({
             name: currentSettingsName==="" ? "Unnamed Game Mode" : currentSettingsName,
             roleList: currentRoleList,
             phaseTimes: currentPhaseTimes,
             disabledRoles: currentDisabledRoles
         }));
-
-        switch (result) {
-            case "success":
-                Anchor.pushError(translate("notification.clipboard.gameMode.write.success"), "");
-            break;
-            case "noClipboard":
-                Anchor.pushError(translate("notification.clipboard.gameMode.write.failure"), "");
-            break;
-            case "notAllowed":
-                Anchor.pushError(
-                    translate("notification.clipboard.gameMode.write.failure"), 
-                    translate("notification.clipboard.gameMode.write.failure.notAllowed")
-                );
-            break;
-        }
     }
     const importGameMode = async () => {
         const result = await readFromClipboard();
 
-        switch (result.type) {
-            case "success":
-                try {
-                    const data = JSON.parse(result.text);
-        
-                    setCurrentRoleListName(data.name ?? "")
-                    setCurrentRoleList(data.roleList ?? []);
-                    setCurrentPhaseTimes(data.phaseTimes ?? defaultPhaseTimes());
-                    setCurrentDisabledRoles(data.disabledRoles ?? []);
-                } catch (e) {
-                    Anchor.pushError(
-                        translate("notification.clipboard.gameMode.read.failure"), 
-                        translate("notification.clipboard.gameMode.read.failure.notFound")
-                    );
-                }
-            break;
-            case "noClipboard":
-                Anchor.pushError(translate("notification.clipboard.gameMode.read.failure"), "");
-            break;
-            case "notAllowed":
+        if (result !== null) {
+            try {
+                const data = JSON.parse(result);
+    
+                setCurrentRoleListName(data.name ?? "")
+                setCurrentRoleList(data.roleList ?? []);
+                setCurrentPhaseTimes(data.phaseTimes ?? defaultPhaseTimes());
+                setCurrentDisabledRoles(data.disabledRoles ?? []);
+            } catch (e) {
                 Anchor.pushError(
-                    translate("notification.clipboard.gameMode.read.failure"), 
-                    translate("notification.clipboard.gameMode.read.failure.notAllowed")
+                    translate("notification.importGameMode.failure"), 
+                    translate("notification.importGameMode.failure.details")
                 );
-            break;
-            case "notFound":
-                Anchor.pushError(
-                    translate("notification.clipboard.gameMode.read.failure"), 
-                    translate("notification.clipboard.gameMode.read.failure.notFound")
-                );
-            break;
+            }
         }
     }
 

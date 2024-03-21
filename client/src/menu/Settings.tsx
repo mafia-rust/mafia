@@ -97,26 +97,13 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
 }
 
 export function RoomCodeButton(): JSX.Element {
-    return <button onClick={async () => {
+    return <button onClick={() => {
         let code = new URL(window.location.href);
         
         if (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
             code.searchParams.set("code", GAME_MANAGER.state.roomCode.toString(18));
 
-        switch (await writeToClipboard(code.toString())) {
-            case "success":
-                Anchor.pushError(translate("notification.clipboard.roomCode.success"), "");
-            break;
-            case "noClipboard":
-                Anchor.pushError(translate("notification.clipboard.roomCode.failure"), "");
-            break;
-            case "notAllowed":
-                Anchor.pushError(
-                    translate("notification.clipboard.roomCode.failure"), 
-                    translate("notification.clipboard.roomCode.failure.notAllowed")
-                );
-            break;
-        }
+        writeToClipboard(code.toString())
     }}>
         {
             GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 

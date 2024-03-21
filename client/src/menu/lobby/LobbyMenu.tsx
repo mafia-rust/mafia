@@ -56,36 +56,20 @@ export default function LobbyMenu(): ReactElement {
 
     const importFromClipboard = async () => {
         const result = await readFromClipboard();
-        switch (result.type) {
-            case "success":
-                try {
-                    const data = JSON.parse(result.text);
-    
-                    GAME_MANAGER.sendExcludedRolesPacket(data.disabledRoles ?? []);
-                    GAME_MANAGER.sendSetRoleListPacket(data.roleList ?? []);
-                    GAME_MANAGER.sendSetPhaseTimesPacket(data.phaseTimes ?? defaultPhaseTimes());
-                } catch (e) {
-                    Anchor.pushError(
-                        translate("notification.clipboard.gameMode.read.failure"), 
-                        translate("notification.clipboard.gameMode.read.failure.notFound")
-                    );
-                }
-            break;
-            case "noClipboard":
-                Anchor.pushError(translate("notification.clipboard.gameMode.read.failure"), "");
-            break;
-            case "notAllowed":
+
+        if (result !== null) {
+            try {
+                const data = JSON.parse(result);
+
+                GAME_MANAGER.sendExcludedRolesPacket(data.disabledRoles ?? []);
+                GAME_MANAGER.sendSetRoleListPacket(data.roleList ?? []);
+                GAME_MANAGER.sendSetPhaseTimesPacket(data.phaseTimes ?? defaultPhaseTimes());
+            } catch (e) {
                 Anchor.pushError(
-                    translate("notification.clipboard.gameMode.read.failure"), 
-                    translate("notification.clipboard.gameMode.read.failure.notAllowed")
+                    translate("notification.importGameMode.failure"), 
+                    translate("notification.importGameMode.failure.details")
                 );
-            break;
-            case "notFound":
-                Anchor.pushError(
-                    translate("notification.clipboard.gameMode.read.failure"), 
-                    translate("notification.clipboard.gameMode.read.failure.notFound")
-                );
-            break;
+            }
         }
     }
 

@@ -107,17 +107,18 @@
     "notification.rejectStart.roleListCannotCreateRoles": "Role list cannot create roles",
     "notification.rejectStart.zeroTimeGame": "Game has no time",
     
-    "notification.clipboard.roomCode.success": "Link copied to clipboard",
-    "notification.clipboard.roomCode.failure": "Failed to copy link to clipboard",
-    "notification.clipboard.roomCode.failure.notAllowed": "Allow clipboard access to copy room links",
+    "notification.clipboard.write.success": "Copied to clipboard",
+    "notification.clipboard.write.failure": "Couldn't copy to clipboard",
+    "notification.clipboard.write.failure.noClipboard": "No clipboard found to write to",
+    "notification.clipboard.write.failure.notAllowed": "Not allowed to write to clipboard",
+    "notification.clipboard.read.success": "Successfully read from clipboard",
+    "notification.clipboard.read.failure": "Couldn't read from clipboard",
+    "notification.clipboard.read.failure.notFound": "The clipboard contains invalid data",
+    "notification.clipboard.read.failure.noClipboard": "No clipboard found to read from",
+    "notification.clipboard.read.failure.notAllowed": "Not allowed to read from clipboard",
     
-    "notification.clipboard.gameMode.write.success": "Game mode copied to clipboard",
-    "notification.clipboard.gameMode.write.failure": "Failed to copy game mode to clipboard",
-    "notification.clipboard.gameMode.write.failure.notAllowed": "Allow clipboard access to copy game modes",
-    
-    "notification.clipboard.gameMode.read.failure": "Failed to import game mode from clipboard",
-    "notification.clipboard.gameMode.read.failure.notAllowed": "Allow clipboard access to import game modes",
-    "notification.clipboard.gameMode.read.failure.notFound": "The clipboard doesn't contain a valid game mode",
+    "notification.importGameMode.failure": "Failed to import game mode",
+    "notification.importGameMode.failure.details": "Tried to read invalid game mode data",
 
     "cancel": "Cancel",
     "players": "Players",

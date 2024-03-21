@@ -8,6 +8,7 @@ import LoadingScreen from './menu/LoadingScreen';
 import LobbyMenu from './menu/lobby/LobbyMenu';
 import GameScreen from './menu/game/GameScreen';
 import { deleteReconnectData, loadReconnectData } from './game/localStorage';
+import translate from './game/lang';
 
 const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
@@ -117,42 +118,50 @@ export function modulus(n: number, m: number) {
     return ((n % m) + m) % m;
 }
 
-export async function writeToClipboard(text: string): Promise<"success" | "notAllowed" | "noClipboard"> {
-    if (!navigator.clipboard) return "noClipboard";
+export async function writeToClipboard(text: string): Promise<boolean> {
+    if (!navigator.clipboard) {
+        Anchor.pushError(translate("notification.clipboard.write.failure"), translate("notification.clipboard.write.failure.noClipboard"));
+        return false;
+    }
 
     try {
         await navigator.clipboard.writeText(text);
-        return "success";
+        Anchor.pushError(translate("notification.clipboard.write.success"), "");
+        return true;
     } catch (error) {
-        return "notAllowed";
+        Anchor.pushError(
+            translate("notification.clipboard.read.failure"), 
+            translate("notification.clipboard.read.failure.notAllowed")
+        );
+        return false;
     }
 }
 
-type ClipboardResult = {
-    type: "success",
-    text: string
-} | {
-    type: "notAllowed" | "notFound" | "noClipboard"
-}
-
-export async function readFromClipboard(): Promise<ClipboardResult> {
+export async function readFromClipboard(): Promise<string | null> {
     if (!navigator.clipboard) {
-        return { type: "noClipboard" };
+        Anchor.pushError(translate("notification.clipboard.read.failure"), translate("notification.clipboard.read.failure.noClipboard"));
+        return null;
     }
 
     try {
         const text = await navigator.clipboard.readText();
-        return {
-            type: "success",
-            text
-        }
+        Anchor.pushError(translate("notification.clipboard.read.success"), "");
+        return text;
     } catch (error) {
         switch ((error as any as DOMException).name) {
             case "NotFoundError":
-                return { type: "notFound" };
+                Anchor.pushError(
+                    translate("notification.clipboard.read.failure"), 
+                    translate("notification.clipboard.read.failure.notFound")
+                );
+                return null;
             case "NotAllowedError":
             default:
-                return { type: "notAllowed" };
+                Anchor.pushError(
+                    translate("notification.clipboard.read.failure"), 
+                    translate("notification.clipboard.read.failure.notAllowed")
+                );
+                return null;
         }
     }
 }
