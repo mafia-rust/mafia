@@ -54,20 +54,39 @@ export default function LobbyMenu(): ReactElement {
         return ()=>{GAME_MANAGER.removeStateListener(listener);}
     }, [setRoleList, setExcludedRoles]);
 
-    const importFromClipboard = () => {
-        readFromClipboard().then((res) => {
-            if (res.result !== "success") return;
-
-            try {
-                const data = JSON.parse(res.text);
-
-                GAME_MANAGER.sendExcludedRolesPacket(data.disabledRoles ?? []);
-                GAME_MANAGER.sendSetRoleListPacket(data.roleList ?? []);
-                GAME_MANAGER.sendSetPhaseTimesPacket(data.phaseTimes ?? defaultPhaseTimes());
-            } catch (e) {
-                console.error(e);
-            }
-        });
+    const importFromClipboard = async () => {
+        const res = await readFromClipboard();
+        switch (res.result) {
+            case "success":
+                try {
+                    const data = JSON.parse(res.text);
+    
+                    GAME_MANAGER.sendExcludedRolesPacket(data.disabledRoles ?? []);
+                    GAME_MANAGER.sendSetRoleListPacket(data.roleList ?? []);
+                    GAME_MANAGER.sendSetPhaseTimesPacket(data.phaseTimes ?? defaultPhaseTimes());
+                } catch (e) {
+                    Anchor.pushError(
+                        translate("notification.clipboard.gameMode.read.failure"), 
+                        translate("notification.clipboard.gameMode.read.failure.notFound")
+                    );
+                }
+            break;
+            case "noClipboard":
+                Anchor.pushError(translate("notification.clipboard.gameMode.read.failure"), "");
+            break;
+            case "notAllowed":
+                Anchor.pushError(
+                    translate("notification.clipboard.gameMode.read.failure"), 
+                    translate("notification.clipboard.gameMode.read.failure.notAllowed")
+                );
+            break;
+            case "notFound":
+                Anchor.pushError(
+                    translate("notification.clipboard.gameMode.read.failure"), 
+                    translate("notification.clipboard.gameMode.read.failure.notFound")
+                );
+            break;
+        }
     }
 
     return <div className="lm">
