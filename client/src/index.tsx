@@ -118,6 +118,10 @@ export function modulus(n: number, m: number) {
     return ((n % m) + m) % m;
 }
 
+/**
+ * Note: This function pushes an error card if it is unsuccessful
+ * @returns Whether the clipboard was successfully written to.
+ */
 export async function writeToClipboard(text: string): Promise<boolean> {
     if (!navigator.clipboard) {
         Anchor.pushError(translate("notification.clipboard.write.failure"), translate("notification.clipboard.write.failure.noClipboard"));
@@ -137,6 +141,10 @@ export async function writeToClipboard(text: string): Promise<boolean> {
     }
 }
 
+/**
+ * Note: This function pushes an error card if it is unsuccessful
+ * @returns The string read from the clipboard, and null on any kind of failure.
+ */
 export async function readFromClipboard(): Promise<string | null> {
     if (!navigator.clipboard) {
         Anchor.pushError(translate("notification.clipboard.read.failure"), translate("notification.clipboard.read.failure.noClipboard"));
