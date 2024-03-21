@@ -83,7 +83,6 @@
     border-right-color: black;
     border-bottom-color: black;
     overflow-y: hidden;
-    z-index: 80;
 }
 
 .anchor-cover-card-content {
