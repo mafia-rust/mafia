@@ -122,12 +122,12 @@ export default function GameModesEditor(): ReactElement {
         }
     }
     const importGameMode = async () => {
-        const res = await readFromClipboard();
+        const result = await readFromClipboard();
 
-        switch (res.result) {
+        switch (result.type) {
             case "success":
                 try {
-                    const data = JSON.parse(res.text);
+                    const data = JSON.parse(result.text);
         
                     setCurrentRoleListName(data.name ?? "")
                     setCurrentRoleList(data.roleList ?? []);

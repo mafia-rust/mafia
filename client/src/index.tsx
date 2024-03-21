@@ -129,30 +129,30 @@ export async function writeToClipboard(text: string): Promise<"success" | "notAl
 }
 
 type ClipboardResult = {
-    result: "success",
+    type: "success",
     text: string
 } | {
-    result: "notAllowed" | "notFound" | "noClipboard"
+    type: "notAllowed" | "notFound" | "noClipboard"
 }
 
 export async function readFromClipboard(): Promise<ClipboardResult> {
     if (!navigator.clipboard) {
-        return { result: "noClipboard" };
+        return { type: "noClipboard" };
     }
 
     try {
         const text = await navigator.clipboard.readText();
         return {
-            result: "success",
+            type: "success",
             text
         }
     } catch (error) {
         switch ((error as any as DOMException).name) {
             case "NotFoundError":
-                return { result: "notFound" };
+                return { type: "notFound" };
             case "NotAllowedError":
             default:
-                return { result: "notAllowed" };
+                return { type: "notAllowed" };
         }
     }
 }

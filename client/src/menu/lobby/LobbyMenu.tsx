@@ -55,11 +55,11 @@ export default function LobbyMenu(): ReactElement {
     }, [setRoleList, setExcludedRoles]);
 
     const importFromClipboard = async () => {
-        const res = await readFromClipboard();
-        switch (res.result) {
+        const result = await readFromClipboard();
+        switch (result.type) {
             case "success":
                 try {
-                    const data = JSON.parse(res.text);
+                    const data = JSON.parse(result.text);
     
                     GAME_MANAGER.sendExcludedRolesPacket(data.disabledRoles ?? []);
                     GAME_MANAGER.sendSetRoleListPacket(data.roleList ?? []);
