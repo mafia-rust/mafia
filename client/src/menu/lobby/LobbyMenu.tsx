@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useState } from "react";
-import GAME_MANAGER from "../../index";
+import GAME_MANAGER, { readFromClipboard } from "../../index";
 import LobbyPlayerList from "./LobbyPlayerList";
 import LobbyPhaseTimePane from "./LobbyPhaseTimePane";
 import LobbyRolePane from "./LobbyRolePane";
@@ -55,10 +55,11 @@ export default function LobbyMenu(): ReactElement {
     }, [setRoleList, setExcludedRoles]);
 
     const importFromClipboard = () => {
+        readFromClipboard().then((res) => {
+            if (res.result !== "success") return;
 
-        navigator.clipboard.readText().then((text) => {
             try {
-                const data = JSON.parse(text);
+                const data = JSON.parse(res.text);
 
                 GAME_MANAGER.sendExcludedRolesPacket(data.disabledRoles ?? []);
                 GAME_MANAGER.sendSetRoleListPacket(data.roleList ?? []);

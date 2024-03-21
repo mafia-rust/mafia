@@ -11,6 +11,8 @@ import DisabledRoleSelector from "../components/DisabledRoleSelector";
 import { Role } from "../game/roleState.d";
 import "../components/selectorSection.css";
 import { defaultPhaseTimes } from "../game/gameState";
+import { readFromClipboard, writeToClipboard } from "..";
+import Anchor from "./Anchor";
 
 
 export default function GameModesEditor(): ReactElement {
@@ -96,29 +98,61 @@ export default function GameModesEditor(): ReactElement {
 
 
 
-    const exportGameMode = () => {
-        //copies current gamemode to clipboard
-        navigator.clipboard.writeText(JSON.stringify({
+    const exportGameMode = async () => {
+        const result = await writeToClipboard(JSON.stringify({
             name: currentSettingsName==="" ? "Unnamed Game Mode" : currentSettingsName,
             roleList: currentRoleList,
             phaseTimes: currentPhaseTimes,
             disabledRoles: currentDisabledRoles
         }));
-    }
-    const importGameMode = () => {
-        //imports gamemode from clipboard
-        navigator.clipboard.readText().then((text) => {
-            try {
-                const data = JSON.parse(text);
 
-                setCurrentRoleListName(data.name ?? "")
-                setCurrentRoleList(data.roleList ?? []);
-                setCurrentPhaseTimes(data.phaseTimes ?? defaultPhaseTimes());
-                setCurrentDisabledRoles(data.disabledRoles ?? []);
-            } catch (e) {
-                console.error(e);
-            }
-        });
+        switch (result) {
+            case "success":
+                Anchor.pushError(translate("notification.clipboard.gameMode.write.success"), "");
+            break;
+            case "noClipboard":
+                Anchor.pushError(translate("notification.clipboard.gameMode.write.failure"), "");
+            break;
+            case "notAllowed":
+                Anchor.pushError(
+                    translate("notification.clipboard.gameMode.write.failure"), 
+                    translate("notification.clipboard.gameMode.write.failure.notAllowed")
+                );
+            break;
+        }
+    }
+    const importGameMode = async () => {
+        const res = await readFromClipboard();
+
+        switch (res.result) {
+            case "success":
+                try {
+                    const data = JSON.parse(res.text);
+        
+                    setCurrentRoleListName(data.name ?? "")
+                    setCurrentRoleList(data.roleList ?? []);
+                    setCurrentPhaseTimes(data.phaseTimes ?? defaultPhaseTimes());
+                    setCurrentDisabledRoles(data.disabledRoles ?? []);
+                } catch (e) {
+                    console.error(e);
+                }
+            break;
+            case "noClipboard":
+                Anchor.pushError(translate("notification.clipboard.gameMode.read.failure"), "");
+            break;
+            case "notAllowed":
+                Anchor.pushError(
+                    translate("notification.clipboard.gameMode.read.failure"), 
+                    translate("notification.clipboard.gameMode.read.failure.notAllowed")
+                );
+            break;
+            case "notFound":
+                Anchor.pushError(
+                    translate("notification.clipboard.gameMode.read.failure"), 
+                    translate("notification.clipboard.gameMode.read.failure.notFound")
+                );
+            break;
+        }
     }
 
 

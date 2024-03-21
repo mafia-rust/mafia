@@ -106,6 +106,18 @@
     "notification.rejectStart.roleListTooSmall": "Role list is too small",
     "notification.rejectStart.roleListCannotCreateRoles": "Role list cannot create roles",
     "notification.rejectStart.zeroTimeGame": "Game has no time",
+    
+    "notification.clipboard.roomCode.success": "Link copied to clipboard",
+    "notification.clipboard.roomCode.failure": "Failed to copy link to clipboard",
+    "notification.clipboard.roomCode.failure.notAllowed": "Allow clipboard access to copy room links",
+    
+    "notification.clipboard.gameMode.write.success": "Game mode copied to clipboard",
+    "notification.clipboard.gameMode.write.failure": "Failed to copy game mode to clipboard",
+    "notification.clipboard.gameMode.write.failure.notAllowed": "Allow clipboard access to copy game modes",
+    
+    "notification.clipboard.gameMode.read.failure": "Failed to import game mode from clipboard",
+    "notification.clipboard.gameMode.read.failure.notAllowed": "Allow clipboard access to import game modes",
+    "notification.clipboard.gameMode.read.failure.notFound": "The clipboard doesn't contain text",
 
     "cancel": "Cancel",
     "players": "Players",

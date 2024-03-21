@@ -1,7 +1,7 @@
 import React from 'react';
 import "./settings.css";
 import translate, { LANGUAGES, Language, languageName, switchLanguage } from '../game/lang';
-import GAME_MANAGER from '..';
+import GAME_MANAGER, { writeToClipboard } from '..';
 import Anchor from './Anchor';
 import StartMenu from './main/StartMenu';
 import LoadingScreen from './LoadingScreen';
@@ -97,14 +97,26 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
 }
 
 export function RoomCodeButton(): JSX.Element {
-    return <button onClick={() => {
+    return <button onClick={async () => {
         let code = new URL(window.location.href);
         
         if (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
             code.searchParams.set("code", GAME_MANAGER.state.roomCode.toString(18));
 
-        if (navigator.clipboard)
-            navigator.clipboard.writeText(code.toString());
+        switch (await writeToClipboard(code.toString())) {
+            case "success":
+                Anchor.pushError(translate("notification.clipboard.roomCode.success"), "");
+            break;
+            case "noClipboard":
+                Anchor.pushError(translate("notification.clipboard.roomCode.failure"), "");
+            break;
+            case "notAllowed":
+                Anchor.pushError(
+                    translate("notification.clipboard.roomCode.failure"), 
+                    translate("notification.clipboard.roomCode.failure.notAllowed")
+                );
+            break;
+        }
     }}>
         {
             GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 

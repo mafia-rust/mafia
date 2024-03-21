@@ -8,6 +8,7 @@ import LoadingScreen from './menu/LoadingScreen';
 import LobbyMenu from './menu/lobby/LobbyMenu';
 import GameScreen from './menu/game/GameScreen';
 import { deleteReconnectData, loadReconnectData } from './game/localStorage';
+import translate from './game/lang';
 
 const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
@@ -115,4 +116,44 @@ export function replaceMentions(rawText: string, playerNames?: string[]) {
 
 export function modulus(n: number, m: number) {
     return ((n % m) + m) % m;
+}
+
+export async function writeToClipboard(text: string): Promise<"success" | "notAllowed" | "noClipboard"> {
+    if (!navigator.clipboard) return "noClipboard";
+
+    try {
+        await navigator.clipboard.writeText(text);
+        return "success";
+    } catch (error) {
+        return "notAllowed";
+    }
+}
+
+type ClipboardResult = {
+    result: "success",
+    text: string
+} | {
+    result: "notAllowed" | "notFound" | "noClipboard"
+}
+
+export async function readFromClipboard(): Promise<ClipboardResult> {
+    if (!navigator.clipboard) {
+        return { result: "noClipboard" };
+    }
+
+    try {
+        const text = await navigator.clipboard.readText();
+        return {
+            result: "success",
+            text
+        }
+    } catch (error) {
+        switch ((error as any as DOMException).name) {
+            case "NotFoundError":
+                return { result: "notFound" };
+            case "NotAllowedError":
+            default:
+                return { result: "notAllowed" };
+        }
+    }
 }
