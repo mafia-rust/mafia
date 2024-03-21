@@ -8,7 +8,6 @@ import LoadingScreen from './menu/LoadingScreen';
 import LobbyMenu from './menu/lobby/LobbyMenu';
 import GameScreen from './menu/game/GameScreen';
 import { deleteReconnectData, loadReconnectData } from './game/localStorage';
-import translate from './game/lang';
 
 const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
