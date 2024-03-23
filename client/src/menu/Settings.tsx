@@ -89,7 +89,9 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
                         {LANGUAGES.map(lang => <option key={lang} value={lang}>{languageName(lang)}</option>)}
                     </select>
                 </section>
-                <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
+                { GAME_MANAGER.state.stateType !== "disconnected" ? 
+                    <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
+                : null}
                 <button onClick={() => {this.goToRolelistEditor()}}>{translate("menu.settings.gameSettingsEditor")}</button>
                 <button onClick={()=>{
                     if(!window.confirm(translate("confirmDelete"))) return;
