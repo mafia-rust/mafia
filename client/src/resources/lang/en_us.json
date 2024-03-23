@@ -63,6 +63,8 @@
     "menu.will.notes": "Notes",
     "menu.will.deathNote": "Death Note",
     "menu.will.deathNote:var.0": "DeathNote",
+    "menu.will.deathNote:var.1": "DeathNotes",
+    "menu.will.deathNote:var.2": "Death Notes",
     "menu.will.save": "Save",
     "menu.will.post": "Post",
 
@@ -168,6 +170,7 @@
     "role.crusader.dayTarget": "Special",
 
     "role.reveler.name": "Reveler",
+    "role.reveler.name:var.0": "Revelers",
     "role.reveler.target": "Party",
     "role.reveler.dayTarget": "Special",
 
