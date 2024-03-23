@@ -73,11 +73,20 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     }
 
 
-    static reloadContent() {
+    static reload() {
         const content = Anchor.instance.state.content;
-
         Anchor.instance.setState({content: <LoadingScreen type="default"/>}, () => {
-            Anchor.setContent(content);
+            Anchor.instance.setState({content});
+        });
+
+        const coverCard = Anchor.instance.state.coverCard;
+        Anchor.instance.setState({coverCard: null}, () => {
+            Anchor.instance.setState({coverCard});;
+        });
+
+        const errorCard = Anchor.instance.state.errorCard;
+        Anchor.instance.setState({errorCard: null}, () => {
+            Anchor.instance.setState({errorCard});;
         });
     }
 
