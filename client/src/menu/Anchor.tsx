@@ -1,4 +1,4 @@
-import React from "react";
+import React, { JSXElementConstructor } from "react";
 import "../index.css";
 import "./anchor.css";
 import { switchLanguage } from "../game/lang";
@@ -217,6 +217,9 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
 
     public static setContent(content: JSX.Element){
         Anchor.instance.setState({content : content});
+    }
+    public static contentType(): string | JSXElementConstructor<any> {
+        return Anchor.instance.state.content.type;
     }
     public static setCoverCard(coverCard: JSX.Element, callback?: () => void){
         Anchor.instance.setState({coverCard : coverCard}, callback);
