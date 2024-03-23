@@ -161,6 +161,9 @@ export type ToServerPacket = {
 }
 // Lobby
 | {
+    type: "setSpectator",
+    spectator: boolean
+} | {
     type: "setName", 
     name: string
 } | {

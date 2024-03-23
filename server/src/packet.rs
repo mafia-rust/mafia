@@ -173,6 +173,7 @@ pub enum ToServerPacket{
     Kick{player_id: LobbyClientID},
 
     // Lobby
+    SetSpectator{spectator: bool},
     SetName{name: String},
     SetLobbyName{name: String},
     StartGame,

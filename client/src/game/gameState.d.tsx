@@ -34,9 +34,15 @@ export type LobbyState = {
     players: Map<PlayerID, LobbyPlayer>,
 }
 export type LobbyPlayer = {
-    name: string,
     host: boolean,
     lostConnection: boolean,
+    clientType: LobbyClientType
+}
+export type LobbyClientType = {
+    type: "spectator"
+} | {
+    type: "player",
+    name: string
 }
 
 type GameState = {

@@ -10,6 +10,8 @@ use std::{
     }
 };
 
+use serde::{Deserialize, Serialize};
+
 use crate::{
     client_connection::ClientConnection,
     game::{
@@ -63,13 +65,13 @@ pub const MESSAGE_PER_SECOND_LIMIT_TIME: Duration = Duration::from_secs(2);
 
 
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct LobbyClient{
     pub connection: ClientConnection,
     pub host: bool,
     pub client_type: LobbyClientType,
 }
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum LobbyClientType{
     Spectator,
     Player{
@@ -160,6 +162,30 @@ impl Lobby {
 
 
         match incoming_packet {
+            ToServerPacket::SetSpectator { spectator } => {
+                let LobbyState::Lobby { clients, .. } = &mut self.lobby_state else {
+                    log!(error "Lobby"; "{} {}", "ToServerPacket::SetName can not be used outside of LobbyState::Lobby", player_id);
+                    return
+                };
+                
+                let new_name = name_validation::sanitize_name("".to_string(), &clients);
+                if let Some(player) = clients.get_mut(&player_id){
+                    match &player.client_type {
+                        LobbyClientType::Spectator => {
+                            if !spectator {
+                                player.client_type = LobbyClientType::Player { name: new_name}
+                            }
+                        },
+                        LobbyClientType::Player { .. } => {
+                            if spectator {
+                                player.client_type = LobbyClientType::Spectator;
+                            }
+                        },
+                    }
+                }
+
+                Self::send_players_lobby(clients);
+            }
             ToServerPacket::SetName{ name } => {
                 let LobbyState::Lobby { clients: players, .. } = &mut self.lobby_state else {
                     log!(error "Lobby"; "{} {}", "ToServerPacket::SetName can not be used outside of LobbyState::Lobby", player_id);
