@@ -41,7 +41,9 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
         };
     }
     async quitToMainMenu() {
-        GAME_MANAGER.leaveGame();
+        if (GAME_MANAGER.state.stateType === "game") {
+            GAME_MANAGER.leaveGame();
+        }
         Anchor.closeSettings();
         Anchor.clearCoverCard();
         Anchor.setContent(<LoadingScreen type="disconnect"/>)
@@ -54,7 +56,7 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
     }
     render(): React.ReactNode {
         const quitButtonBlacklist: (string | JSXElementConstructor<any>)[] = [StartMenu, LoadingScreen];
-        
+
         return (
             <div className="settings slide-in">
                 {

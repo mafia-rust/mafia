@@ -39,7 +39,7 @@ export function createGameManager(): GameManager {
                 GAME_MANAGER.state = {
                     stateType: "disconnected"
                 };
-                return new Promise<void>((resolver) => resolver());
+                return Promise.resolve();
             }
         },
         setLobbyState() {
