@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { JSXElementConstructor, ReactElement, useEffect, useState } from 'react';
 import "./settings.css";
 import translate, { LANGUAGES, Language, languageName, switchLanguage } from '../game/lang';
 import GAME_MANAGER from '..';
@@ -53,6 +53,8 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
         Anchor.closeSettings();
     }
     render(): React.ReactNode {
+        const quitButtonBlacklist: (string | JSXElementConstructor<any>)[] = [StartMenu, LoadingScreen];
+        
         return (
             <div className="settings slide-in">
                 {
@@ -89,9 +91,9 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
                         {LANGUAGES.map(lang => <option key={lang} value={lang}>{languageName(lang)}</option>)}
                     </select>
                 </section>
-                { Anchor.contentType() !== StartMenu ? 
+                { quitButtonBlacklist.includes(Anchor.contentType()) ||
                     <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
-                : null }
+                }
                 <button onClick={() => {this.goToRolelistEditor()}}>{translate("menu.settings.gameSettingsEditor")}</button>
                 <button onClick={()=>{
                     if(!window.confirm(translate("confirmDelete"))) return;
