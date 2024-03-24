@@ -3,17 +3,19 @@
     position: fixed;
     display: flex;
     flex-direction: column;
-    right: 2%;
-    top: 6%;
+    right: 1rem;
+    top: 2.5rem;
     height: fit-content;
     min-width: fit-content;
     box-shadow: 0 0 .5rem #0007;
 
-    border-style: solid;
+    border: solid .13rem var(--primary-border-color);
+    border-bottom-color: black;
+    border-right-color: black;
+    border-radius: 0.5rem;
     
     padding: .8rem;
-    background-color: var(--background-color);
-    border-color: var(--primary-border-color);
+    background-color: var(--secondary-color);
 
     z-index: 100;
 }
