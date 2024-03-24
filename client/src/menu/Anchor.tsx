@@ -195,6 +195,9 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
                         audio: this.state.audio
                     });
                 }}
+                onClickOutside={() => {
+                    this.setState({settings_menu: false});
+                }}
             />}
             {this.state.content}
             {this.state.coverCard &&

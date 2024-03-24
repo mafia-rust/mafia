@@ -11,6 +11,7 @@ import { CopyButton } from '../components/ClipboardButtons';
 import Wiki from '../components/Wiki';
 import { Role } from '../game/roleState.d';
 import { StateListener } from '../game/gameManager.d';
+import ReactDOM from 'react-dom';
 
 export type Settings = {
     volume: number,
@@ -18,7 +19,8 @@ export type Settings = {
 }
 
 type SettingsProps = {
-    onVolumeChange: (volume: number) => void
+    onVolumeChange: (volume: number) => void,
+    onClickOutside: (event: MouseEvent) => void,
 }
 type SettingsState = {
     volume: number, // 0-1
@@ -32,6 +34,14 @@ export const DEFAULT_SETTINGS: Settings = {
 }
 
 export default class SettingsMenu extends React.Component<SettingsProps, SettingsState> {
+    handleClickOutside = (event: MouseEvent) => {
+        // https://stackoverflow.com/a/45323523
+        const domNode = ReactDOM.findDOMNode(this);
+
+        if (!domNode || !domNode.contains(event.target as Node)) {
+            this.props.onClickOutside(event);
+        }
+    }
     constructor(props: SettingsProps) {
         super(props);
 
@@ -39,6 +49,16 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
             ...DEFAULT_SETTINGS,
             ...loadSettings()
         };
+
+        this.handleClickOutside = this.handleClickOutside.bind(this);
+    }
+    componentDidMount(): void {
+        setTimeout(() => {
+            document.addEventListener("click", this.handleClickOutside);
+        });
+    }
+    componentWillUnmount(): void {
+        document.removeEventListener("click", this.handleClickOutside);
     }
     async quitToMainMenu() {
         if (GAME_MANAGER.state.stateType === "game") {
