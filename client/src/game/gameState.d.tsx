@@ -32,16 +32,11 @@ export type LobbyState = {
     phaseTimes: PhaseTimes,
 
     players: Map<PlayerID, LobbyPlayer>,
+    spectatorCount: number,
 }
 export type LobbyPlayer = {
     host: boolean,
     lostConnection: boolean,
-    clientType: LobbyClientType
-}
-export type LobbyClientType = {
-    type: "spectator"
-} | {
-    type: "player",
     name: string
 }
 

@@ -28,6 +28,7 @@ export function createLobbyState(): LobbyState {
         phaseTimes: defaultPhaseTimes(),
 
         players: new Map<PlayerID, LobbyPlayer>(),
+        spectatorCount: 0,
     }
 }
 

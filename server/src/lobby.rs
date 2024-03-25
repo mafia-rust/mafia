@@ -10,8 +10,6 @@ use std::{
     }
 };
 
-use serde::{Deserialize, Serialize};
-
 use crate::{
     client_connection::ClientConnection,
     game::{
@@ -71,7 +69,7 @@ pub struct LobbyClient{
     pub host: bool,
     pub client_type: LobbyClientType,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug)]
 pub enum LobbyClientType{
     Spectator,
     Player{
