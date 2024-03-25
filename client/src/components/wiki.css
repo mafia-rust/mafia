@@ -96,3 +96,7 @@
 .wiki-article-standard {
     text-align: left;
 }
+.wiki-cover-card {
+    max-height: 30rem;
+    max-width: 50rem;
+}

@@ -37,8 +37,3 @@
 @keyframes slide-in {
     100% { transform: translateX(0%); }
 }
-
-.wiki-cover-card {
-    max-height: 30rem;
-    max-width: 50rem;
-}

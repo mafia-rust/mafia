@@ -8,6 +8,7 @@ import { ROLE_SETS, RoleSet, getRolesFromRoleSet } from "../game/roleListState.d
 import ChatElement, { ChatMessageVariant } from "./ChatMessage";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { GeneratedArticle, WikiArticleLink } from "./WikiArticleLink";
+import "./wiki.css";
 import { replaceMentions } from "..";
     
 

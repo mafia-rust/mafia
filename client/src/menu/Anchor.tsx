@@ -5,6 +5,7 @@ import { switchLanguage } from "../game/lang";
 import SettingsMenu, { DEFAULT_SETTINGS } from "./Settings";
 import { loadSettings } from "../game/localStorage";
 import LoadingScreen from "./LoadingScreen";
+import { Theme } from "..";
 
 type AnchorProps = {
     content: JSX.Element,
@@ -14,6 +15,7 @@ type AnchorState = {
     mobile: boolean,
     content: JSX.Element,
     coverCard: JSX.Element | null,
+    coverCardTheme: Theme,
     errorCard: JSX.Element | null,
 
     settings_menu: boolean,
@@ -37,6 +39,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             mobile: false,
             content: this.props.content,
             coverCard: null,
+            coverCardTheme: null,
             errorCard: null,
 
             settings_menu: false,
@@ -201,7 +204,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             />}
             {this.state.content}
             {this.state.coverCard &&
-                <div className="anchor-cover-card-background-cover">
+                <div className={`anchor-cover-card-background-cover ${this.state.coverCardTheme ?? ""}`}>
                     <div className="anchor-cover-card">
                         <button className="material-icons-round close-button" onClick={()=>{
                             Anchor.clearCoverCard()
@@ -224,8 +227,9 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     public static contentType(): string | JSXElementConstructor<any> {
         return Anchor.instance.state.content.type;
     }
-    public static setCoverCard(coverCard: JSX.Element, callback?: () => void){
-        Anchor.instance.setState({coverCard : coverCard}, callback);
+    public static setCoverCard(coverCard: JSX.Element, theme?: Theme, callback?: () => void){
+        const coverCardTheme = theme === undefined ? null : theme;
+        Anchor.instance.setState({ coverCard, coverCardTheme }, callback);
     }
     public static pushError(title: string, body: string) {
         Anchor.instance.setState({errorCard: <ErrorCard
@@ -234,7 +238,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         />});
     }
     public static clearCoverCard() {
-        Anchor.instance.setState({coverCard: null});
+        Anchor.instance.setState({coverCard: null, coverCardTheme: null});
     }
 
     public static isMobile(): boolean {
