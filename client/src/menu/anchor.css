@@ -86,9 +86,8 @@
 }
 
 .anchor-cover-card-content {
+    display: flex;
     padding: 2rem;
-    overflow-y: auto;
-    scrollbar-width: none;
 }
 
 .anchor-cover-card .anchor-cover-card-content > .wiki-article {
