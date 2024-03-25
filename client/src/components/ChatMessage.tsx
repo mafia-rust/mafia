@@ -141,16 +141,16 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             );
         case "roleAssignment":
             return translate("chatMessage.roleAssignment", 
-                translate("role." + message.role + ".name")
+                translate("role."+message.role+".name")
             );
         case "playerWonOrLost":
             if(message.won){
                 return translate("chatMessage.playerWon",
-                    playerNames[message.player], message.role
+                    playerNames[message.player], translate("role."+message.role+".name")
                 );
             }else{
                 return translate("chatMessage.playerLost",
-                    playerNames[message.player], message.role
+                    playerNames[message.player], translate("role."+message.role+".name")
                 );
             }
         case "playerQuit":
