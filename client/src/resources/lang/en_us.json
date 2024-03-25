@@ -25,7 +25,6 @@
     "menu.lobby.timeSettings": "Phase Times",
     "menu.lobby.settings": "Settings:",
 
-    "exportToClipboard": "Export to clipboard",
     "importFromClipboard": "Import from clipboard",
 
     "menu.settings.volume": "Volume",
@@ -107,11 +106,9 @@
     "notification.rejectStart.roleListCannotCreateRoles": "Role list cannot create roles",
     "notification.rejectStart.zeroTimeGame": "Game has no time",
     
-    "notification.clipboard.write.success": "Copied to clipboard",
     "notification.clipboard.write.failure": "Couldn't copy to clipboard",
     "notification.clipboard.write.failure.noClipboard": "No clipboard found to write to",
     "notification.clipboard.write.failure.notAllowed": "Not allowed to write to clipboard",
-    "notification.clipboard.read.success": "Successfully read from clipboard",
     "notification.clipboard.read.failure": "Couldn't read from clipboard",
     "notification.clipboard.read.failure.notFound": "The clipboard contains invalid data",
     "notification.clipboard.read.failure.noClipboard": "No clipboard found to read from",

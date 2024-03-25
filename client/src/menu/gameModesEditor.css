@@ -45,5 +45,4 @@
 .game-modes-editor .save-menu {
     display: flex;
     justify-content: center;
-    flex-wrap: wrap;
 }

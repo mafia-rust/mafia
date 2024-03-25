@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useState } from "react";
-import GAME_MANAGER, { readFromClipboard } from "../../index";
+import GAME_MANAGER from "../../index";
 import LobbyPlayerList from "./LobbyPlayerList";
 import LobbyPhaseTimePane from "./LobbyPhaseTimePane";
 import LobbyRolePane from "./LobbyRolePane";
@@ -14,6 +14,7 @@ import LoadingScreen from "../LoadingScreen";
 import StartMenu from "../main/StartMenu";
 import Wiki from "../../components/Wiki";
 import { defaultPhaseTimes } from "../../game/gameState";
+import { PasteButton } from "../../components/ClipboardButtons";
 
 export default function LobbyMenu(): ReactElement {
     const [roleList, setRoleList] = useState(
@@ -54,25 +55,6 @@ export default function LobbyMenu(): ReactElement {
         return ()=>{GAME_MANAGER.removeStateListener(listener);}
     }, [setRoleList, setExcludedRoles]);
 
-    const importFromClipboard = () => {
-        readFromClipboard().then((text) => {
-            if (text === null) return;
-
-            try {
-                const data = JSON.parse(text);
-
-                GAME_MANAGER.sendExcludedRolesPacket(data.disabledRoles ?? []);
-                GAME_MANAGER.sendSetRoleListPacket(data.roleList ?? []);
-                GAME_MANAGER.sendSetPhaseTimesPacket(data.phaseTimes ?? defaultPhaseTimes());
-            } catch (e) {
-                Anchor.pushError(
-                    translate("notification.importGameMode.failure"), 
-                    translate("notification.importGameMode.failure.details")
-                );
-            }
-        });
-    }
-
     return <div className="lm">
         <LobbyMenuHeader/>
         <main>
@@ -87,13 +69,24 @@ export default function LobbyMenu(): ReactElement {
             </div>
             <div>
                 {Anchor.isMobile() && <h1>{translate("menu.lobby.settings")}</h1>}
-                <button 
+                <PasteButton 
                     className="player-list-menu-colors" 
-                    onClick={importFromClipboard}
                     disabled={!GAME_MANAGER.getMyHost() ?? false}
-                >
-                    {translate("importFromClipboard")}
-                </button>
+                    onPasteSuccessful={text => {
+                        try {
+                            const data = JSON.parse(text);
+
+                            GAME_MANAGER.sendExcludedRolesPacket(data.disabledRoles ?? []);
+                            GAME_MANAGER.sendSetRoleListPacket(data.roleList ?? []);
+                            GAME_MANAGER.sendSetPhaseTimesPacket(data.phaseTimes ?? defaultPhaseTimes());
+                        } catch (e) {
+                            Anchor.pushError(
+                                translate("notification.importGameMode.failure"), 
+                                translate("notification.importGameMode.failure.details")
+                            );
+                        }
+                    }}
+                >{translate("importFromClipboard")}</PasteButton>
                 <LobbyPhaseTimePane/>
                 <LobbyRolePane/>
                 <LobbyExcludedRoles/>

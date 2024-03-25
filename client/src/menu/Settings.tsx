@@ -1,12 +1,13 @@
 import React from 'react';
 import "./settings.css";
 import translate, { LANGUAGES, Language, languageName, switchLanguage } from '../game/lang';
-import GAME_MANAGER, { writeToClipboard } from '..';
+import GAME_MANAGER from '..';
 import Anchor from './Anchor';
 import StartMenu from './main/StartMenu';
 import LoadingScreen from './LoadingScreen';
 import { loadSettings, saveSettings } from '../game/localStorage';
 import GameModesEditor from './GameModesEditor';
+import { CopyButton } from '../components/ClipboardButtons';
 
 export type Settings = {
     volume: number,
@@ -97,17 +98,15 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
 }
 
 export function RoomCodeButton(): JSX.Element {
-    return <button onClick={() => {
-        let code = new URL(window.location.href);
-        
-        if (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
-            code.searchParams.set("code", GAME_MANAGER.state.roomCode.toString(18));
-
-        writeToClipboard(code.toString())
-    }}>
+    let code = new URL(window.location.href);
+    
+    if (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
+        code.searchParams.set("code", GAME_MANAGER.state.roomCode.toString(18));
+    
+    return <CopyButton text={code.toString()}>
         {
             GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 
-            GAME_MANAGER.state.roomCode.toString(18) : ""
+            GAME_MANAGER.state.roomCode.toString(18) : undefined
         }
-    </button>
+    </CopyButton>
 }

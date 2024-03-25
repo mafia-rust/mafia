@@ -8,7 +8,6 @@ import LoadingScreen from './menu/LoadingScreen';
 import LobbyMenu from './menu/lobby/LobbyMenu';
 import GameScreen from './menu/game/GameScreen';
 import { deleteReconnectData, loadReconnectData } from './game/localStorage';
-import translate from './game/lang';
 
 const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
@@ -116,60 +115,4 @@ export function replaceMentions(rawText: string, playerNames?: string[]) {
 
 export function modulus(n: number, m: number) {
     return ((n % m) + m) % m;
-}
-
-/**
- * Note: This function pushes an error card if it is unsuccessful
- * @returns Whether the clipboard was successfully written to.
- */
-export async function writeToClipboard(text: string): Promise<boolean> {
-    if (!navigator.clipboard) {
-        Anchor.pushError(translate("notification.clipboard.write.failure"), translate("notification.clipboard.write.failure.noClipboard"));
-        return false;
-    }
-
-    try {
-        await navigator.clipboard.writeText(text);
-        Anchor.pushError(translate("notification.clipboard.write.success"), "");
-        return true;
-    } catch (error) {
-        Anchor.pushError(
-            translate("notification.clipboard.read.failure"), 
-            translate("notification.clipboard.read.failure.notAllowed")
-        );
-        return false;
-    }
-}
-
-/**
- * Note: This function pushes an error card if it is unsuccessful
- * @returns The string read from the clipboard, and null on any kind of failure.
- */
-export async function readFromClipboard(): Promise<string | null> {
-    if (!navigator.clipboard) {
-        Anchor.pushError(translate("notification.clipboard.read.failure"), translate("notification.clipboard.read.failure.noClipboard"));
-        return null;
-    }
-
-    try {
-        const text = await navigator.clipboard.readText();
-        Anchor.pushError(translate("notification.clipboard.read.success"), "");
-        return text;
-    } catch (error) {
-        switch ((error as any as DOMException).name) {
-            case "NotFoundError":
-                Anchor.pushError(
-                    translate("notification.clipboard.read.failure"), 
-                    translate("notification.clipboard.read.failure.notFound")
-                );
-                return null;
-            case "NotAllowedError":
-            default:
-                Anchor.pushError(
-                    translate("notification.clipboard.read.failure"), 
-                    translate("notification.clipboard.read.failure.notAllowed")
-                );
-                return null;
-        }
-    }
 }
