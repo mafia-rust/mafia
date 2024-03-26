@@ -32,14 +32,7 @@ export const DEFAULT_SETTINGS: Settings = {
 }
 
 export default class SettingsMenu extends React.Component<SettingsProps, SettingsState> {
-    handleClickOutside = (event: MouseEvent) => {
-        // https://stackoverflow.com/a/45323523
-        const domNode = ReactDOM.findDOMNode(this);
-
-        if (!domNode || !domNode.contains(event.target as Node)) {
-            this.props.onClickOutside(event);
-        }
-    }
+    handleClickOutside: (event: MouseEvent) => void;
     constructor(props: SettingsProps) {
         super(props);
 
@@ -48,7 +41,16 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
             ...loadSettings()
         };
 
-        this.handleClickOutside = this.handleClickOutside.bind(this);
+        this.handleClickOutside = (event: MouseEvent) => {
+            // https://stackoverflow.com/a/45323523
+            const domNode = ReactDOM.findDOMNode(this);
+    
+            if (!domNode || !domNode.contains(event.target as Node)) {
+                setTimeout(() => {
+                    this.props.onClickOutside(event);
+                })
+            }
+        };
     }
     componentDidMount(): void {
         setTimeout(() => {

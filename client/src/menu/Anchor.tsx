@@ -1,4 +1,4 @@
-import React, { JSXElementConstructor } from "react";
+import React, { JSXElementConstructor, MouseEventHandler, ReactElement, useRef } from "react";
 import "../index.css";
 import "./anchor.css";
 import { switchLanguage } from "../game/lang";
@@ -198,25 +198,13 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
                         audio: this.state.audio
                     });
                 }}
-                onClickOutside={() => {
-                    this.setState({settings_menu: false});
-                }}
+                onClickOutside={() => this.setState({settings_menu: false})}
             />}
             {this.state.content}
-            {this.state.coverCard &&
-                <div className={`anchor-cover-card-background-cover ${this.state.coverCardTheme ?? ""}`}>
-                    <div className="anchor-cover-card">
-                        <button className="material-icons-round close-button" onClick={()=>{
-                            Anchor.clearCoverCard()
-                        }}>
-                            close
-                        </button>
-                        <div className="anchor-cover-card-content">
-                            {this.state.coverCard}
-                        </div>
-                    </div>
-                </div>
-            }
+            {this.state.coverCard && <CoverCard 
+                theme={this.state.coverCardTheme}
+                onClickOutside={() => this.setState({coverCard: null})}
+            >{this.state.coverCard}</CoverCard>}
             {this.state.errorCard}
         </div>
     }
@@ -244,6 +232,28 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     public static isMobile(): boolean {
         return Anchor.instance.state.mobile;
     }
+}
+
+function CoverCard(props: { children: React.ReactNode, theme: Theme, onClickOutside: MouseEventHandler<HTMLDivElement> }): ReactElement {
+    const ref = useRef<HTMLDivElement>(null);
+    return <div 
+        className={`anchor-cover-card-background-cover ${props.theme ?? ""}`} 
+        onClick={e => {
+            if (e.target === ref.current) props.onClickOutside(e)
+        }}
+        ref={ref}
+    >
+        <div className="anchor-cover-card">
+            <button className="material-icons-round close-button" onClick={()=>{
+                Anchor.clearCoverCard()
+            }}>
+                close
+            </button>
+            <div className="anchor-cover-card-content">
+                {props.children}
+            </div>
+        </div>
+    </div>
 }
 
 type Error = {
