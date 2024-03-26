@@ -49,6 +49,14 @@
     border-right: var(--primary-border-color) solid 1px;
 }
 
+.game-screen .content .no-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3em;
+    text-align: center;
+}
+
 .content-tab {
     display: flex;
     flex-direction: row;
