@@ -49,6 +49,11 @@ export default function WikiArticle(props: {
                         } playerNames={DUMMY_NAMES}/>
                     )}
                 </div>
+                {roleData.aura && <div>
+                    <StyledText markdown={true}>
+                        {"### "+translate("wiki.article.standard.aura.title")+": "+translate(roleData.aura+"Aura")+"\n"}
+                    </StyledText>
+                </div>}
                 {roleData.armor && <div>
                     <StyledText markdown={true}>
                         {"### "+translate("defense")+": "+translate("defense.1")+"\n"}
@@ -69,6 +74,7 @@ export default function WikiArticle(props: {
 
                             {"### "+translate("wiki.article.standard.roleLimit.title")+": "+(roleData.maxCount === null ? translate("none") : roleData.maxCount)+"\n"}
                             {"### "+translate("defense")+": "+translate("defense."+(roleData.armor ? "1" : "0"))+"\n"}
+                            {"### "+translate("wiki.article.standard.aura.title")+": "+(roleData.aura?translate(roleData.aura+"Aura"):translate("none"))+"\n"}
                         </StyledText>
                     </div>
                 </details>

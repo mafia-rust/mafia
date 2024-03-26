@@ -70,15 +70,15 @@ export default function GameModesEditor(): ReactElement {
 
 
 
-        let newGameMode = new Map(savedGameModes);
-        newGameMode.set(name, {
+        let newGameModes = new Map(savedGameModes);
+        newGameModes.set(name, {
             name: currentSettingsName,
             roleList: currentRoleList,
             phaseTimes: currentPhaseTimes,
             disabledRoles: currentDisabledRoles
         });
-        setGameModes(newGameMode);
-        saveGameModes(newGameMode);
+        setGameModes(newGameModes);
+        saveGameModes(newGameModes);
     }
     const loadGameMode = (settingsName: string) => {
         const gameMode = savedGameModes.get(settingsName);
@@ -91,9 +91,10 @@ export default function GameModesEditor(): ReactElement {
     const deleteGameMode = (roleListName: string) => {
         if(!window.confirm(translate("confirmDelete"))) return;
 
-        let newRoleLists = new Map(savedGameModes);
-        newRoleLists.delete(roleListName);
-        setGameModes(newRoleLists);
+        let newGameModes = new Map(savedGameModes);
+        newGameModes.delete(roleListName);
+        setGameModes(newGameModes);
+        saveGameModes(newGameModes);
     }
     
     return <div className="game-modes-editor">
