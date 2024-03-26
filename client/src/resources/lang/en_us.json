@@ -90,6 +90,8 @@
     "menu.graveyard.icon": "🪦",
     "menu.graveyard.killedBy": "Killed by",
 
+    "menu.gameScreen.noContent": "Click on one of the tabs above to open",
+
     "notification.connectionFailed": "Connection failed",
     "notification.serverNotFound": "Server not found, it could be offline",
     "notification.rateLimitExceeded": "Rate Limit Exceeded",

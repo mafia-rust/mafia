@@ -15,6 +15,7 @@ import { Role } from "../../game/roleState.d";
 import ROLES from "../../resources/roles.json";
 import { StateEventType } from "../../game/gameManager.d";
 import { WikiArticleLink } from "../../components/WikiArticleLink";
+import translate from "../../game/lang";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",
@@ -239,18 +240,23 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
             return;
         }
 
+        const allMenusClosed = !this.state.chatMenu && !this.state.playerListMenu && !this.state.willMenu && !this.state.roleSpecificMenu && !this.state.graveyardMenu && !this.state.wikiMenu;
+
         return (
             <div className="game-screen">
                 <div className="header">
                     <HeaderMenu phase={GAME_MANAGER.state.phase} chatMenuNotification={this.state.chatMenuNotification}/>
                 </div>
                 <div className="content">
-                    {this.state.chatMenu?<ChatMenu/>:null}
-                    {this.state.playerListMenu?<PlayerListMenu/>:null}
-                    {this.state.willMenu?<WillMenu/>:null}
-                    {this.state.roleSpecificMenu?<RoleSpecificMenu/>:null}
-                    {this.state.graveyardMenu?<GraveyardMenu/>:null}
-                    {this.state.wikiMenu?<WikiMenu/>:null}
+                    {this.state.chatMenu && <ChatMenu/>}
+                    {this.state.playerListMenu && <PlayerListMenu/>}
+                    {this.state.willMenu && <WillMenu/>}
+                    {this.state.roleSpecificMenu && <RoleSpecificMenu/>}
+                    {this.state.graveyardMenu && <GraveyardMenu/>}
+                    {this.state.wikiMenu && <WikiMenu/>}
+                    {allMenusClosed && <div className="no-content">
+                        {translate("menu.gameScreen.noContent")}
+                    </div>}
                 </div>
             </div>
         );
