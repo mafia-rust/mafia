@@ -122,10 +122,10 @@ function getGeneratedArticle(article: GeneratedArticle){
             }
             return <div>{mainElements}</div>;
         case "all_text":
-            return <>
+            return <pre>
                 <h1>{translate("wiki.article.generated.all_text.title")}</h1>
-                {langText}
-            </>;
+                <StyledText className="code">{langText.substring(1, langText.length - 1)}</StyledText>
+            </pre>;
     }
 }
 
