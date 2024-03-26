@@ -11,7 +11,7 @@ import DisabledRoleSelector from "../components/DisabledRoleSelector";
 import { Role } from "../game/roleState.d";
 import "../components/selectorSection.css";
 import { defaultPhaseTimes } from "../game/gameState";
-import Anchor from "./Anchor";
+import Anchor from "../menu/Anchor";
 import { CopyButton, PasteButton } from "../components/ClipboardButtons";
 
 

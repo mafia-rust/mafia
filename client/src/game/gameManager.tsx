@@ -22,18 +22,25 @@ export function createGameManager(): GameManager {
         async setDisconnectedState(): Promise<void> {
             Anchor.stopAudio();
 
-            let completePromise: () => void;
-            const promise = new Promise<void>((resolver) => {
-                completePromise = resolver;
-            });
-            
-            GAME_MANAGER.server.ws?.addEventListener("close", () => completePromise());
-            GAME_MANAGER.server.close();
+            if (GAME_MANAGER.server.ws) {
+                let completePromise: () => void;
+                const promise = new Promise<void>((resolver) => {
+                    completePromise = resolver;
+                });
 
-            GAME_MANAGER.state = {
-                stateType: "disconnected"
-            };
-            return promise;
+                GAME_MANAGER.server.ws?.addEventListener("close", () => completePromise());
+                GAME_MANAGER.server.close();
+
+                GAME_MANAGER.state = {
+                    stateType: "disconnected"
+                };
+                return promise;
+            } else {
+                GAME_MANAGER.state = {
+                    stateType: "disconnected"
+                };
+                return Promise.resolve();
+            }
         },
         setLobbyState() {
             GAME_MANAGER.state = createLobbyState();

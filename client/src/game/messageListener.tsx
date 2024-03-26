@@ -198,7 +198,7 @@ export default function messageListener(packet: ToClientPacket){
                 if(packet.phase === "briefing" && GAME_MANAGER.state.stateType === "game"){
                     const role = GAME_MANAGER.state.roleState?.role;
                     if(role !== undefined){
-                        Anchor.setCoverCard(<WikiArticle article={"role/"+role as WikiArticleLink}/>);
+                        Anchor.setCoverCard(<WikiArticle article={"role/"+role as WikiArticleLink}/>, "wiki-menu-colors");
                     }
                 }
 
