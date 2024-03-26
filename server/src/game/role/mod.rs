@@ -307,6 +307,12 @@ impl Role{
             _ => false,
         }
     }
+    pub fn has_suspicious_aura(&self, _game: &Game)->bool{
+        match self {
+            Role::Politician => true,
+            _ => false,
+        }
+    }
     pub fn end_game_condition(&self)->EndGameCondition{
         EndGameCondition::from_role(*self)
     }

@@ -155,6 +155,7 @@ impl PlayerReference{
         self.role(game).has_innocent_aura(game)
     }
     pub fn has_suspicious_aura(&self, game: &Game) -> bool {
+        self.role(game).has_suspicious_aura(game) || 
         self.night_framed(game) || 
         (
             self.doused(game) &&
