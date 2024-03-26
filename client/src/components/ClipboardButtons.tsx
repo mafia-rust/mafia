@@ -2,42 +2,63 @@ import React, { useState } from "react";
 import { ReactElement } from "react";
 import Anchor from "../menu/Anchor";
 import translate from "../game/lang";
+import "./clipboardButtons.css";
 
-export function CopyButton(props: JSX.IntrinsicElements['button'] & { onClick?: undefined, text: string }): ReactElement {
-    const buttonText = props.children ?? <span className="material-icons-round">content_copy</span>;
-    const [content, setContent] = useState<React.ReactNode>(buttonText);
+export function CopyButton(props: JSX.IntrinsicElements['button'] & { onClick?: undefined, ref?: undefined, text: string }): ReactElement {
+    const iconMode = props.children === undefined;
+    const [success, setSuccess] = useState<boolean>(false);
 
-    return <button {...props}
+    return <button {...props} className={"clipboard-button " + (props.className ?? "")}
         onClick={() => {
             writeToClipboard(props.text).then(success => {
                 if (!success) return;
 
-                setContent(<span className="material-icons-round">done</span>);
+                setSuccess(true);
                 setTimeout(() => {
-                    setContent(buttonText);
+                    setSuccess(false);
                 }, 1000);
             });
         }}
-    >{content}</button>
+    >
+        {props.children}
+        {iconMode && (
+            success 
+                ? <span className="material-icons-round">done</span> 
+                : <span className="material-icons-round">content_copy</span>
+        )}
+        {success && <div className="clipboard-popup">
+            {translate("notification.clipboard.write.success")}
+        </div>}
+    </button>
 }
 
 export function PasteButton(props: JSX.IntrinsicElements['button'] & { onClick?: undefined, onPasteSuccessful: (text: string) => (void | boolean) } ): ReactElement {
-    const buttonText = props.children ?? <span className="material-icons-round">content_paste</span>;
-    const [content, setContent] = useState<React.ReactNode>(buttonText);
+    const iconMode = props.children === undefined;
+    const [success, setSuccess] = useState<boolean>(false);
 
-    return <button {...props}
+    return <button {...props} className={"clipboard-button " + (props.className ?? "")}
         onClick={() => {
             readFromClipboard().then(text => {
                 if (text === null) return;
                 if (!(props.onPasteSuccessful(text) ?? true)) return;
 
-                setContent(<span className="material-icons-round">done</span>);
+                setSuccess(true);
                 setTimeout(() => {
-                    setContent(buttonText);
+                    setSuccess(false)
                 }, 1000);
             });
         }}
-    >{content}</button>
+    >
+        {props.children}
+        {iconMode && (
+            success 
+                ? <span className="material-icons-round">done</span> 
+                : <span className="material-icons-round">paste</span>
+        )}
+        {success && <div className="clipboard-popup">
+            {translate("notification.clipboard.read.success")}
+        </div>}
+    </button>
 }
 
 /**
@@ -46,7 +67,10 @@ export function PasteButton(props: JSX.IntrinsicElements['button'] & { onClick?:
  */
 async function writeToClipboard(text: string): Promise<boolean> {
     if (!navigator.clipboard) {
-        Anchor.pushError(translate("notification.clipboard.write.failure"), translate("notification.clipboard.write.failure.noClipboard"));
+        Anchor.pushError(
+            translate("notification.clipboard.write.failure"), 
+            translate("notification.clipboard.write.failure.noClipboard")
+        );
         return false;
     }
 
@@ -68,7 +92,10 @@ async function writeToClipboard(text: string): Promise<boolean> {
  */
 async function readFromClipboard(): Promise<string | null> {
     if (!navigator.clipboard) {
-        Anchor.pushError(translate("notification.clipboard.read.failure"), translate("notification.clipboard.read.failure.noClipboard"));
+        Anchor.pushError(
+            translate("notification.clipboard.read.failure"), 
+            translate("notification.clipboard.read.failure.noClipboard")
+        );
         return null;
     }
 
