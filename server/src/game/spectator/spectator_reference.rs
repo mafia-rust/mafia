@@ -5,10 +5,12 @@ use crate::{
 
 use super::Spectator;
 
-pub struct SpectatorReference {
+///
+/// This does not garuntee that the spectator exists
+pub struct SpectatorPointer {
     pub index: u8,
 }
-impl SpectatorReference {
+impl SpectatorPointer {
     //THESE FUNCTIONS SHOULD NOT TAKE &self
     //Instead there should be some sort of spectator reference like player reference
     //This is because self and game will make a double borrow

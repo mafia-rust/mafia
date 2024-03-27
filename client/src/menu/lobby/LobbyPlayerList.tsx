@@ -2,12 +2,13 @@ import React from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
-import { LobbyPlayer, PlayerID } from "../../game/gameState.d";
+import { LobbyClient, LobbyClientID } from "../../game/gameState.d";
 import { StateListener } from "../../game/gameManager.d";
+import LobbyNamePane from "./LobbyNamePane";
 
 type PlayerListState = {
     enteredName: string,
-    players: Map<PlayerID, LobbyPlayer>,
+    players: Map<LobbyClientID, LobbyClient>,
     host: boolean
 }
 
@@ -17,7 +18,7 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
         super(props);
 
         if(GAME_MANAGER.state.stateType === "lobby")
-            this.state = {     
+            this.state = {
                 enteredName: "",
                 players: GAME_MANAGER.state.players,
                 host: GAME_MANAGER.getMyHost() ?? false
@@ -56,9 +57,10 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
     renderPlayers() {
         let out = [];
         for(let [id, player] of this.state.players.entries()){
-            let playerName = <>{player.host ? "👑 " : ""}{player.lostConnection ? "... " : ""}{player.name}</>;
+            if(player.clientType.type === "spectator") continue;
+            let playerName = <>{player.host ? "👑 " : ""}{player.connection==="couldReconnect" ? "... " : ""}{player.clientType.name}</>;
 
-            out.push(<li key={id} className={player.lostConnection ? "keyword-dead" : ""}>
+            out.push(<li key={id} className={player.connection==="couldReconnect" ? "keyword-dead" : ""}>
                 {this.state.host ? 
                     <button
                         onClick={()=>{
@@ -79,10 +81,7 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
     }
 
     render(){return(<>
-        <section className="selector-section" style={{backgroundColor: "var(--tab-color)"}}>
-            <h2>{GAME_MANAGER.getMyName() ?? ""}</h2>
-            {this.renderName()}
-        </section>
+        <LobbyNamePane/>
         <section className="player-list-menu-colors selector-section">
             <h2>{translate("menu.lobby.players")}</h2>
             {this.renderPlayers()}

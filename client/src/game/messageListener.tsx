@@ -111,7 +111,8 @@ export default function messageListener(packet: ToClientPacket){
         case "playersLostConnection":
             if(GAME_MANAGER.state.stateType === "lobby"){
                 for(let [playerId, player] of GAME_MANAGER.state.players){
-                    player.lostConnection = packet.lostConnection.includes(playerId);
+                    if(packet.lostConnection.includes(playerId))
+                        player.connection = "couldReconnect";
                 }
             }
         break;
@@ -126,11 +127,11 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game")
                 GAME_MANAGER.state.myIndex = packet.playerIndex;
         break;
-        case "lobbyPlayers":
+        case "lobbyClients":
             if(GAME_MANAGER.state.stateType === "lobby"){
                 GAME_MANAGER.state.players = new Map();
-                for(let [playerId, name] of Object.entries(packet.players)){
-                    GAME_MANAGER.state.players.set(Number.parseInt(playerId), {name: name, host: false, lostConnection: false});
+                for(let [clientId, lobbyClient] of Object.entries(packet.clients)){
+                    GAME_MANAGER.state.players.set(Number.parseInt(clientId), lobbyClient);
                 }
             }
         break;

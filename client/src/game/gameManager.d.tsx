@@ -61,6 +61,7 @@ export type GameManager = {
      */
     sendJoinPacket(roomCode: number): Promise<boolean>;
     sendKickPlayerPacket(playerId: number): void;
+    sendSetSpectatorPacket(spectator: boolean): void;
     sendSetNamePacket(name: string): void;
     sendSetLobbyNamePacket(name: string): void;
     sendStartGamePacket(): Promise<boolean>;

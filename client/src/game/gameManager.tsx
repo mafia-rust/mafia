@@ -77,8 +77,12 @@ export function createGameManager(): GameManager {
         },
 
         getMyName() {
-            if (gameManager.state.stateType === "lobby")
-                return gameManager.state.players.get(gameManager.state.myId!)?.name;
+            if (gameManager.state.stateType === "lobby"){
+                let client = gameManager.state.players.get(gameManager.state.myId!);
+                if(client === undefined) return undefined;
+                if(client.clientType.type === "spectator") return undefined;
+                return client.clientType.name;
+            }
             if (gameManager.state.stateType === "game")
                 return gameManager.state.players[gameManager.state.myIndex!]?.name;
             return undefined;
@@ -214,6 +218,13 @@ export function createGameManager(): GameManager {
             this.server.sendPacket({
                 type: "kick",
                 playerId: playerId
+            });
+        },
+
+        sendSetSpectatorPacket(spectator) {
+            this.server.sendPacket({
+                type: "setSpectator",
+                spectator: spectator
             });
         },
 

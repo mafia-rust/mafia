@@ -4,7 +4,7 @@ use rand::random;
 use tokio_tungstenite::tungstenite::Message;
 
 use crate::{
-    lobby::{Lobby, LobbyClientID}, 
+    lobby::{lobby_client::LobbyClientID, Lobby}, 
     log, 
     packet::{LobbyPreviewData, RejectJoinReason, ToClientPacket, ToServerPacket}, 
     websocket_connections::connection::Connection

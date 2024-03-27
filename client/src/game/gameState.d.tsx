@@ -5,7 +5,7 @@ import { RoleList } from "./roleListState.d";
 import { LobbyPreviewData } from "./packet";
 
 
-export type State = Disconnected | OutsideLobbyState | LobbyState | GameState;
+export type State = Disconnected | OutsideLobbyState | LobbyState | GameState | SpectatorGameState;
 
 export type Disconnected = {
     stateType: "disconnected"
@@ -31,13 +31,18 @@ export type LobbyState = {
     excludedRoles: Role[],
     phaseTimes: PhaseTimes,
 
-    players: Map<PlayerID, LobbyPlayer>,
-    spectatorCount: number,
+    players: Map<LobbyClientID, LobbyClient>,
 }
-export type LobbyPlayer = {
+export type LobbyClient = {
     host: boolean,
-    lostConnection: boolean,
-    name: string
+    connection: "connected" | "disconnected" | "couldReconnect",
+    clientType: LobbyClientType
+}
+export type LobbyClientType = {
+    type: "spectator"
+} | {
+    type: "player",
+    name: string,
 }
 
 type GameState = {
@@ -78,8 +83,30 @@ type GameState = {
 }
 export default GameState;
 
+export type SpectatorGameState = {
+    stateType: "spectator"
+    roomCode: number,
+
+    chatMessages : ChatMessage[],
+    graves: Grave[],
+    players: Player[],
+    
+    playerOnTrial: PlayerIndex | null,
+    phase: PhaseType | null,
+    timeLeftMs: number,
+    dayNumber: number,
+
+    fastForward: boolean,
+    
+    roleList: RoleList,
+    excludedRoles: Role[],
+    phaseTimes: PhaseTimes
+
+    ticking: boolean,
+}
+
 export type PlayerIndex = number;
-export type PlayerID = number;
+export type LobbyClientID = number;
 export type Verdict = "innocent"|"guilty"|"abstain";
 export type PhaseType = "briefing" | "obituary" | "discussion" | "nomination" | "testimony" | "judgement" | "finalWords" | "dusk" |  "night"
 export type PhaseState = {type: "briefing"} | {type: "dusk"} | {type: "night"} | {type: "obituary"} | {type: "discussion"} | 

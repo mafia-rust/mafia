@@ -1,4 +1,4 @@
-import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, PlayerID, ChatGroup } from "./gameState.d"
+import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, LobbyClientID, ChatGroup, LobbyClient } from "./gameState.d"
 import { Grave } from "./graveState"
 import { ChatMessage } from "../components/ChatMessage"
 import { RoleList, RoleOutline } from "./roleListState.d"
@@ -7,7 +7,7 @@ import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus
 
 export type LobbyPreviewData = {
     name: string,
-    players: [PlayerID, string][]
+    players: [LobbyClientID, string][]
 }
 
 export type ToClientPacket = {
@@ -29,10 +29,10 @@ export type ToClientPacket = {
 // Lobby
 {
     type: "yourId",
-    playerId: PlayerID
+    playerId: LobbyClientID
 } | {
-    type: "lobbyPlayers",
-    players: Map<PlayerID, string>
+    type: "lobbyClients",
+    clients: Map<LobbyClientID, LobbyClient>
 } | {
     type: "lobbyName",
     name: string
@@ -44,10 +44,10 @@ export type ToClientPacket = {
     reason: string
 } | {
     type: "playersHost",
-    hosts: PlayerID[],
+    hosts: LobbyClientID[],
 } | {
     type: "playersLostConnection",
-    lostConnection: PlayerID[],
+    lostConnection: LobbyClientID[],
 } | {
     type: "startGame"
 } | {

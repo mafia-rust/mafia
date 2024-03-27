@@ -22,7 +22,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{game::{
     available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, phase::PhaseType, player::{PlayerIndex, PlayerReference}, role::{doomsayer::DoomsayerGuess, Role, RoleState}, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
-}, listener::RoomCode, lobby::LobbyClientID, log};
+}, listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log};
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -51,7 +51,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     YourId{player_id: LobbyClientID},
     #[serde(rename_all = "camelCase")]
-    LobbyPlayers{players: HashMap<LobbyClientID, String>},
+    LobbyClients{clients: HashMap<LobbyClientID, LobbyClient>},
     LobbyName{name: String},
     #[serde(rename_all = "camelCase")]
     RejectStart{reason: RejectStartReason},

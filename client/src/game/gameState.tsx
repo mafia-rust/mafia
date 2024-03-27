@@ -1,4 +1,4 @@
-import GameState, { LobbyPlayer, LobbyState, PhaseTimes, Player, PlayerID } from "./gameState.d"
+import GameState, { LobbyClient, LobbyState, PhaseTimes, Player, LobbyClientID, SpectatorGameState } from "./gameState.d"
 
 
 export function defaultPhaseTimes(): PhaseTimes {
@@ -27,8 +27,7 @@ export function createLobbyState(): LobbyState {
         excludedRoles: [],
         phaseTimes: defaultPhaseTimes(),
 
-        players: new Map<PlayerID, LobbyPlayer>(),
-        spectatorCount: 0,
+        players: new Map<LobbyClientID, LobbyClient>()
     }
 }
 
@@ -67,6 +66,30 @@ export function createGameState(): GameState {
         ticking: true,
 
         sendChatGroups: [],
+    }
+}
+
+export function createSpectatorGameState(): SpectatorGameState {
+    return {
+        stateType: "spectator",
+        roomCode: 0,
+
+        chatMessages : [],
+        graves: [],
+        players: [],
+        
+        playerOnTrial: null,
+        phase: null,
+        timeLeftMs: 0,
+        dayNumber: 1,
+
+        fastForward: false,
+        
+        roleList: [],
+        excludedRoles: [],
+        phaseTimes: defaultPhaseTimes(),
+
+        ticking: true,
     }
 }
 
