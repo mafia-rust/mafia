@@ -8,6 +8,7 @@ import { ROLE_SETS, RoleSet, getRolesFromRoleSet } from "../game/roleListState.d
 import ChatElement, { ChatMessageVariant } from "./ChatMessage";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { GeneratedArticle, WikiArticleLink } from "./WikiArticleLink";
+import "./wiki.css";
 import { replaceMentions } from "..";
     
 
@@ -49,6 +50,11 @@ export default function WikiArticle(props: {
                         } playerNames={DUMMY_NAMES}/>
                     )}
                 </div>
+                {roleData.aura && <div>
+                    <StyledText markdown={true}>
+                        {"### "+translate("wiki.article.standard.aura.title")+": "+translate(roleData.aura+"Aura")+"\n"}
+                    </StyledText>
+                </div>}
                 {roleData.armor && <div>
                     <StyledText markdown={true}>
                         {"### "+translate("defense")+": "+translate("defense.1")+"\n"}
@@ -69,6 +75,7 @@ export default function WikiArticle(props: {
 
                             {"### "+translate("wiki.article.standard.roleLimit.title")+": "+(roleData.maxCount === null ? translate("none") : roleData.maxCount)+"\n"}
                             {"### "+translate("defense")+": "+translate("defense."+(roleData.armor ? "1" : "0"))+"\n"}
+                            {"### "+translate("wiki.article.standard.aura.title")+": "+(roleData.aura?translate(roleData.aura+"Aura"):translate("none"))+"\n"}
                         </StyledText>
                     </div>
                 </details>
@@ -115,10 +122,10 @@ function getGeneratedArticle(article: GeneratedArticle){
             }
             return <div>{mainElements}</div>;
         case "all_text":
-            return <>
+            return <pre>
                 <h1>{translate("wiki.article.generated.all_text.title")}</h1>
-                {langText}
-            </>;
+                <StyledText className="code">{langText.substring(1, langText.length - 1)}</StyledText>
+            </pre>;
     }
 }
 

@@ -93,20 +93,20 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
         }
     }
     renderInput(type: FieldType) {
+        const unsaved = GAME_MANAGER.state.stateType === "game" && (
+            (type === "will" && GAME_MANAGER.state.will !== this.state.will) ||
+            (type === "notes" && GAME_MANAGER.state.notes !== this.state.notes) ||
+            (type === "deathNote" && GAME_MANAGER.state.deathNote !== this.state.deathNote)
+        );
+
+
         return (<details open={type !== "deathNote"}>
             <summary>
                 {translate("menu.will." + type)}
                 <div>
+                    {unsaved ? "Unsaved" : "Saved"}
                     <button
-                        className={"material-icons-round " + (
-                            GAME_MANAGER.state.stateType === "game" &&
-                            (
-                                (type === "will" && GAME_MANAGER.state.will !== this.state.will) ||
-                                (type === "notes" && GAME_MANAGER.state.notes !== this.state.notes) ||
-                                (type === "deathNote" && GAME_MANAGER.state.deathNote !== this.state.deathNote)
-                            )
-                            ? "highlighted" : ""
-                        )}
+                        className={"material-icons-round " + (unsaved ? "highlighted" : "")}
                         onClick={() => this.save(type)}
                         aria-label={translate("menu.will.save")}
                     >

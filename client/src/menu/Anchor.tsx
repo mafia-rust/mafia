@@ -1,10 +1,11 @@
-import React from "react";
+import React, { JSXElementConstructor, MouseEventHandler, ReactElement, useRef } from "react";
 import "../index.css";
 import "./anchor.css";
 import { switchLanguage } from "../game/lang";
 import SettingsMenu, { DEFAULT_SETTINGS } from "./Settings";
 import { loadSettings } from "../game/localStorage";
 import LoadingScreen from "./LoadingScreen";
+import { Theme } from "..";
 
 type AnchorProps = {
     content: JSX.Element,
@@ -14,6 +15,7 @@ type AnchorState = {
     mobile: boolean,
     content: JSX.Element,
     coverCard: JSX.Element | null,
+    coverCardTheme: Theme,
     errorCard: JSX.Element | null,
 
     settings_menu: boolean,
@@ -37,6 +39,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             mobile: false,
             content: this.props.content,
             coverCard: null,
+            coverCardTheme: null,
             errorCard: null,
 
             settings_menu: false,
@@ -73,11 +76,20 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     }
 
 
-    static reloadContent() {
+    static reload() {
         const content = Anchor.instance.state.content;
-
         Anchor.instance.setState({content: <LoadingScreen type="default"/>}, () => {
-            Anchor.setContent(content);
+            Anchor.instance.setState({content});
+        });
+
+        const coverCard = Anchor.instance.state.coverCard;
+        Anchor.instance.setState({coverCard: null}, () => {
+            Anchor.instance.setState({coverCard});;
+        });
+
+        const errorCard = Anchor.instance.state.errorCard;
+        Anchor.instance.setState({errorCard: null}, () => {
+            Anchor.instance.setState({errorCard});;
         });
     }
 
@@ -186,22 +198,13 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
                         audio: this.state.audio
                     });
                 }}
+                onClickOutside={() => this.setState({settings_menu: false})}
             />}
             {this.state.content}
-            {this.state.coverCard &&
-                <div className="anchor-cover-card-background-cover">
-                    <div className="anchor-cover-card">
-                        <button className="material-icons-round close-button" onClick={()=>{
-                            Anchor.clearCoverCard()
-                        }}>
-                            close
-                        </button>
-                        <div className="anchor-cover-card-content">
-                            {this.state.coverCard}
-                        </div>
-                    </div>
-                </div>
-            }
+            {this.state.coverCard && <CoverCard 
+                theme={this.state.coverCardTheme}
+                onClickOutside={() => this.setState({coverCard: null})}
+            >{this.state.coverCard}</CoverCard>}
             {this.state.errorCard}
         </div>
     }
@@ -209,8 +212,12 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     public static setContent(content: JSX.Element){
         Anchor.instance.setState({content : content});
     }
-    public static setCoverCard(coverCard: JSX.Element, callback?: () => void){
-        Anchor.instance.setState({coverCard : coverCard}, callback);
+    public static contentType(): string | JSXElementConstructor<any> {
+        return Anchor.instance.state.content.type;
+    }
+    public static setCoverCard(coverCard: JSX.Element, theme?: Theme, callback?: () => void){
+        const coverCardTheme = theme === undefined ? null : theme;
+        Anchor.instance.setState({ coverCard, coverCardTheme }, callback);
     }
     public static pushError(title: string, body: string) {
         Anchor.instance.setState({errorCard: <ErrorCard
@@ -219,12 +226,34 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         />});
     }
     public static clearCoverCard() {
-        Anchor.instance.setState({coverCard: null});
+        Anchor.instance.setState({coverCard: null, coverCardTheme: null});
     }
 
     public static isMobile(): boolean {
         return Anchor.instance.state.mobile;
     }
+}
+
+function CoverCard(props: { children: React.ReactNode, theme: Theme, onClickOutside: MouseEventHandler<HTMLDivElement> }): ReactElement {
+    const ref = useRef<HTMLDivElement>(null);
+    return <div 
+        className={`anchor-cover-card-background-cover ${props.theme ?? ""}`} 
+        onClick={e => {
+            if (e.target === ref.current) props.onClickOutside(e)
+        }}
+        ref={ref}
+    >
+        <div className="anchor-cover-card">
+            <button className="material-icons-round close-button" onClick={()=>{
+                Anchor.clearCoverCard()
+            }}>
+                close
+            </button>
+            <div className="anchor-cover-card-content">
+                {props.children}
+            </div>
+        </div>
+    </div>
 }
 
 type Error = {

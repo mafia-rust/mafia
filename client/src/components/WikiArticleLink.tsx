@@ -1,6 +1,7 @@
 import translate, { langJson } from "../game/lang";
 import { Role } from "../game/roleState.d";
 import ROLES from "../resources/roles.json";
+import "./wiki.css";
 
 export type WikiArticleLink = 
     `role/${Role}` | 

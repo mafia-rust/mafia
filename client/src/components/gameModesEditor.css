@@ -31,6 +31,8 @@
     flex-direction: row;
     flex-wrap: wrap;
     gap: 2rem;
+    overflow-y: scroll;
+    scrollbar-width: none;
 }
 
 .game-modes-editor > main > div {
@@ -45,5 +47,4 @@
 .game-modes-editor .save-menu {
     display: flex;
     justify-content: center;
-    flex-wrap: wrap;
 }

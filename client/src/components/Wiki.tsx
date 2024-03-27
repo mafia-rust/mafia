@@ -1,6 +1,6 @@
 import React, { ReactElement, useCallback, useEffect, useState } from "react";
 import translate from "../game/lang";
-import "./wikiSearch.css";
+import "./wiki.css";
 import { Role, getFactionFromRole } from "../game/roleState.d";
 import GAME_MANAGER, { regEscape } from "..";
 import WikiArticle, { getSearchStrings } from "./WikiArticle";

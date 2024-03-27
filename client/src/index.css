@@ -126,10 +126,11 @@ button:hover:not([disabled]), input:hover:not([disabled]), select:hover:not([dis
     position: relative;
 }
 
-code {
+code, .code {
     font-family: 'Courier New', Courier, monospace;
     font-weight: bold;
     padding: 0.25rem;
+    white-space: pre;
 }
 
 ::-webkit-scrollbar {
@@ -188,7 +189,7 @@ code {
 }
 
 .wiki-menu-colors {
-    --background-color: #2a2518;
+    --background-color: #282317;
     --primary-color: #1c160d;
     --primary-border-color: #52402e;
     --secondary-color: #362c24;

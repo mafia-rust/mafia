@@ -10,7 +10,7 @@ switchLanguage("en_us");
 export function switchLanguage(language: Language) {
     langJson = require("../resources/lang/" + language + ".json");
     langMap = new Map<string, string>(Object.entries(langJson));
-    langText = JSON.stringify(langJson);
+    langText = JSON.stringify(langJson, null, 1);
 }
 
 /// Returns the translated string with the given key, replacing the placeholders with the given values.

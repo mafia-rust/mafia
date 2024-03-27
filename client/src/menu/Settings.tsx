@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { JSXElementConstructor } from 'react';
 import "./settings.css";
 import translate, { LANGUAGES, Language, languageName, switchLanguage } from '../game/lang';
 import GAME_MANAGER from '..';
@@ -6,7 +6,10 @@ import Anchor from './Anchor';
 import StartMenu from './main/StartMenu';
 import LoadingScreen from './LoadingScreen';
 import { loadSettings, saveSettings } from '../game/localStorage';
-import GameModesEditor from './GameModesEditor';
+import GameModesEditor from '../components/GameModesEditor';
+import { CopyButton } from '../components/ClipboardButtons';
+import ReactDOM from 'react-dom';
+import WikiCoverCard from '../components/WikiCoverCard';
 
 export type Settings = {
     volume: number,
@@ -14,7 +17,8 @@ export type Settings = {
 }
 
 type SettingsProps = {
-    onVolumeChange: (volume: number) => void
+    onVolumeChange: (volume: number) => void,
+    onClickOutside: (event: MouseEvent) => void,
 }
 type SettingsState = {
     volume: number, // 0-1
@@ -28,6 +32,7 @@ export const DEFAULT_SETTINGS: Settings = {
 }
 
 export default class SettingsMenu extends React.Component<SettingsProps, SettingsState> {
+    handleClickOutside: (event: MouseEvent) => void;
     constructor(props: SettingsProps) {
         super(props);
 
@@ -35,9 +40,30 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
             ...DEFAULT_SETTINGS,
             ...loadSettings()
         };
+
+        this.handleClickOutside = (event: MouseEvent) => {
+            // https://stackoverflow.com/a/45323523
+            const domNode = ReactDOM.findDOMNode(this);
+    
+            if (!domNode || !domNode.contains(event.target as Node)) {
+                setTimeout(() => {
+                    this.props.onClickOutside(event);
+                })
+            }
+        };
+    }
+    componentDidMount(): void {
+        setTimeout(() => {
+            document.addEventListener("click", this.handleClickOutside);
+        });
+    }
+    componentWillUnmount(): void {
+        document.removeEventListener("click", this.handleClickOutside);
     }
     async quitToMainMenu() {
-        GAME_MANAGER.leaveGame();
+        if (GAME_MANAGER.state.stateType === "game") {
+            GAME_MANAGER.leaveGame();
+        }
         Anchor.closeSettings();
         Anchor.clearCoverCard();
         Anchor.setContent(<LoadingScreen type="disconnect"/>)
@@ -49,6 +75,8 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
         Anchor.closeSettings();
     }
     render(): React.ReactNode {
+        const quitButtonBlacklist: (string | JSXElementConstructor<any>)[] = [StartMenu, LoadingScreen];
+
         return (
             <div className="settings slide-in">
                 {
@@ -79,36 +107,39 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
                             const language = e.target.options[e.target.selectedIndex].value as Language;
                             switchLanguage(language);
                             saveSettings({language});
-                            Anchor.reloadContent();
+                            Anchor.reload();
                         }}
                     >
                         {LANGUAGES.map(lang => <option key={lang} value={lang}>{languageName(lang)}</option>)}
                     </select>
                 </section>
-                <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
+                { quitButtonBlacklist.includes(Anchor.contentType()) ||
+                    <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
+                }
                 <button onClick={() => {this.goToRolelistEditor()}}>{translate("menu.settings.gameSettingsEditor")}</button>
                 <button onClick={()=>{
                     if(!window.confirm(translate("confirmDelete"))) return;
                     localStorage.clear();
                 }}>{translate('menu.settings.eraseSaveData')}</button>
+                <button onClick={() => {
+                    Anchor.setCoverCard(<WikiCoverCard />, "wiki-menu-colors");
+                    Anchor.closeSettings();
+                }}>{translate("menu.wiki.title")}</button>
             </div>
         );
     }
 }
 
 export function RoomCodeButton(): JSX.Element {
-    return <button onClick={() => {
-        let code = new URL(window.location.href);
-        
-        if (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
-            code.searchParams.set("code", GAME_MANAGER.state.roomCode.toString(18));
-
-        if (navigator.clipboard)
-            navigator.clipboard.writeText(code.toString());
-    }}>
+    let code = new URL(window.location.href);
+    
+    if (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
+        code.searchParams.set("code", GAME_MANAGER.state.roomCode.toString(18));
+    
+    return <CopyButton text={code.toString()}>
         {
             GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 
-            GAME_MANAGER.state.roomCode.toString(18) : ""
+            GAME_MANAGER.state.roomCode.toString(18) : undefined
         }
-    </button>
+    </CopyButton>
 }
