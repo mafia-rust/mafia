@@ -124,8 +124,8 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.myId = packet.playerId;
         break;
         case "yourPlayerIndex":
-            if(GAME_MANAGER.state.stateType === "game")
-                GAME_MANAGER.state.myIndex = packet.playerIndex;
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+                GAME_MANAGER.state.clientState.myIndex = packet.playerIndex;
         break;
         case "lobbyClients":
             if(GAME_MANAGER.state.stateType === "lobby"){
@@ -192,12 +192,12 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.excludedRoles = packet.roles;
         break;
         case "phase":
-            if(GAME_MANAGER.state.stateType === "game"){
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 GAME_MANAGER.state.phase = packet.phase;
                 GAME_MANAGER.state.dayNumber = packet.dayNumber;
         
-                if(packet.phase === "briefing" && GAME_MANAGER.state.stateType === "game"){
-                    const role = GAME_MANAGER.state.roleState?.role;
+                if(packet.phase === "briefing"){
+                    const role = GAME_MANAGER.state.clientState.roleState?.role;
                     if(role !== undefined){
                         Anchor.setCoverCard(<WikiArticle article={"role/"+role as WikiArticleLink}/>, "wiki-menu-colors");
                     }
@@ -234,8 +234,8 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "yourSendChatGroups":
-            if(GAME_MANAGER.state.stateType === "game"){
-                GAME_MANAGER.state.sendChatGroups = [...packet.sendChatGroups];
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                GAME_MANAGER.state.clientState.sendChatGroups = [...packet.sendChatGroups];
             }
         break;
         case "yourButtons":
@@ -272,19 +272,19 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "yourWill":
-            if(GAME_MANAGER.state.stateType === "game"){
-                GAME_MANAGER.state.will = packet.will;
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                GAME_MANAGER.state.clientState.will = packet.will;
 
-                if(GAME_MANAGER.state.will === ""){
+                if(GAME_MANAGER.state.clientState.will === ""){
                     GAME_MANAGER.sendSaveWillPacket("ROLE\nNight 1: \nNight 2:");
                 }
             }
         break;
         case "yourNotes":
-            if(GAME_MANAGER.state.stateType === "game"){
-                GAME_MANAGER.state.notes = packet.notes;
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                GAME_MANAGER.state.clientState.notes = packet.notes;
                 
-                if(GAME_MANAGER.state.notes === ""){
+                if(GAME_MANAGER.state.clientState.notes === ""){
                     GAME_MANAGER.sendSaveNotesPacket(GAME_MANAGER.state.players.map((player) => {
                         return player.toString();
                     }).join(" - \n") + " - \n");
@@ -292,32 +292,32 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "yourCrossedOutOutlines":
-            if(GAME_MANAGER.state.stateType === "game")
-                GAME_MANAGER.state.crossedOutOutlines = packet.crossedOutOutlines;
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+                GAME_MANAGER.state.clientState.crossedOutOutlines = packet.crossedOutOutlines;
             break;
         case "yourDeathNote":
-            if(GAME_MANAGER.state.stateType === "game")
-                GAME_MANAGER.state.deathNote = packet.deathNote ?? "";
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+                GAME_MANAGER.state.clientState.deathNote = packet.deathNote ?? "";
         break;
         case "yourRoleState":
-            if(GAME_MANAGER.state.stateType === "game"){
-                if(GAME_MANAGER.state.roleState?.role!== packet.roleState.role){
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                if(GAME_MANAGER.state.clientState.roleState?.role!== packet.roleState.role){
                     GameScreen.instance?.closeMenu(ContentMenu.RoleSpecificMenu);
                 }
-                GAME_MANAGER.state.roleState = packet.roleState;
+                GAME_MANAGER.state.clientState.roleState = packet.roleState;
             }
         break;
         case "yourTarget":
-            if(GAME_MANAGER.state.stateType === "game")
-                GAME_MANAGER.state.targets = packet.playerIndices;
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+                GAME_MANAGER.state.clientState.targets = packet.playerIndices;
         break;
         case "yourVoting":
-            if(GAME_MANAGER.state.stateType === "game")
-                GAME_MANAGER.state.voted = packet.playerIndex;
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+                GAME_MANAGER.state.clientState.voted = packet.playerIndex;
         break;
         case "yourJudgement":
-            if(GAME_MANAGER.state.stateType === "game")
-                GAME_MANAGER.state.judgement = packet.verdict;
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+                GAME_MANAGER.state.clientState.judgement = packet.verdict;
         break;
         case "yourVoteFastForwardPhase":
             if(GAME_MANAGER.state.stateType === "game")

@@ -14,7 +14,6 @@ export default function WikiCoverCard(): ReactElement {
             defaultDisabledRoles = [];
             break;
         case "game":
-        case "spectator":
         case "lobby":
             defaultDisabledRoles = GAME_MANAGER.state.excludedRoles;
             break;

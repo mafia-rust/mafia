@@ -1,4 +1,4 @@
-mod spectator_reference;
+pub mod spectator_pointer;
 
 use crate::{
     client_connection::ClientConnection,

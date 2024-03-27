@@ -5,7 +5,7 @@ import { RoleList } from "./roleListState.d";
 import { LobbyPreviewData } from "./packet";
 
 
-export type State = Disconnected | OutsideLobbyState | LobbyState | GameState | SpectatorGameState;
+export type State = Disconnected | OutsideLobbyState | LobbyState | GameState;
 
 export type Disconnected = {
     stateType: "disconnected"
@@ -49,8 +49,6 @@ type GameState = {
     stateType: "game"
     roomCode: number,
 
-    myIndex: PlayerIndex | null,
-
     chatMessages : ChatMessage[],
     graves: Grave[],
     players: Player[],
@@ -60,9 +58,25 @@ type GameState = {
     timeLeftMs: number,
     dayNumber: number,
 
-    roleState: RoleState | null,
-
     fastForward: boolean,
+    
+    roleList: RoleList,
+    excludedRoles: Role[],
+    phaseTimes: PhaseTimes
+
+    ticking: boolean,
+
+    clientState: PlayerGameState | {type: "spectator"},
+
+}
+export default GameState;
+
+export type PlayerGameState = {
+    type: "player",
+
+    myIndex: PlayerIndex | null,
+    
+    roleState: RoleState | null,
 
     will: string,
     notes: string,
@@ -72,37 +86,8 @@ type GameState = {
     targets: PlayerIndex[],
     voted: PlayerIndex | null,
     judgement: Verdict,
-    
-    roleList: RoleList,
-    excludedRoles: Role[],
-    phaseTimes: PhaseTimes
-
-    ticking: boolean,
 
     sendChatGroups: ChatGroup[],
-}
-export default GameState;
-
-export type SpectatorGameState = {
-    stateType: "spectator"
-    roomCode: number,
-
-    chatMessages : ChatMessage[],
-    graves: Grave[],
-    players: Player[],
-    
-    playerOnTrial: PlayerIndex | null,
-    phase: PhaseType | null,
-    timeLeftMs: number,
-    dayNumber: number,
-
-    fastForward: boolean,
-    
-    roleList: RoleList,
-    excludedRoles: Role[],
-    phaseTimes: PhaseTimes
-
-    ticking: boolean,
 }
 
 export type PlayerIndex = number;

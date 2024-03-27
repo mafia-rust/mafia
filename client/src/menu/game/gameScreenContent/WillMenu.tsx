@@ -21,35 +21,35 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
     constructor(props: {}) {
         super(props);
 
-        if(GAME_MANAGER.state.stateType === "game")
+        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
             this.state = {
-                will: GAME_MANAGER.state.will,
-                notes: GAME_MANAGER.state.notes,
-                deathNote: GAME_MANAGER.state.deathNote,
-                cantPost: GAME_MANAGER.state.sendChatGroups.length === 0,
+                will: GAME_MANAGER.state.clientState.will,
+                notes: GAME_MANAGER.state.clientState.notes,
+                deathNote: GAME_MANAGER.state.clientState.deathNote,
+                cantPost: GAME_MANAGER.state.clientState.sendChatGroups.length === 0,
             };
         
         this.listener = (type) => {
-            if(GAME_MANAGER.state.stateType === "game"){
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 switch(type){
                     case "yourWill":
                         this.setState({
-                            will: GAME_MANAGER.state.will,
+                            will: GAME_MANAGER.state.clientState.will,
                         });
                         break;
                     case "yourNotes":
                         this.setState({
-                            notes: GAME_MANAGER.state.notes,
+                            notes: GAME_MANAGER.state.clientState.notes,
                         });
                         break;
                     case "yourDeathNote":
                         this.setState({
-                            deathNote: GAME_MANAGER.state.deathNote,
+                            deathNote: GAME_MANAGER.state.clientState.deathNote,
                         });
                         break;
                     case "yourSendChatGroups":
                         this.setState({
-                            cantPost: GAME_MANAGER.state.sendChatGroups.length === 0,
+                            cantPost: GAME_MANAGER.state.clientState.sendChatGroups.length === 0,
                         });
                         break;
                 }
@@ -93,10 +93,10 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
         }
     }
     renderInput(type: FieldType) {
-        const unsaved = GAME_MANAGER.state.stateType === "game" && (
-            (type === "will" && GAME_MANAGER.state.will !== this.state.will) ||
-            (type === "notes" && GAME_MANAGER.state.notes !== this.state.notes) ||
-            (type === "deathNote" && GAME_MANAGER.state.deathNote !== this.state.deathNote)
+        const unsaved = GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && (
+            (type === "will" && GAME_MANAGER.state.clientState.will !== this.state.will) ||
+            (type === "notes" && GAME_MANAGER.state.clientState.notes !== this.state.notes) ||
+            (type === "deathNote" && GAME_MANAGER.state.clientState.deathNote !== this.state.deathNote)
         );
 
 

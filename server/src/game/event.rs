@@ -2,7 +2,13 @@ use crate::packet::ToClientPacket;
 
 use super::{
     chat::{ChatGroup, ChatMessageVariant},
-    grave::Grave, phase::PhaseType, player::PlayerReference, team::Teams, Game, GameOverReason
+    grave::Grave,
+    phase::PhaseType,
+    player::PlayerReference,
+    spectator::spectator_pointer::SpectatorPointer,
+    team::Teams,
+    Game,
+    GameOverReason
 };
 
 
@@ -123,6 +129,9 @@ impl Game{
 
         for player_ref in PlayerReference::all_players(&self){
             player_ref.send_join_game_data(self);
+        }
+        for spectator in SpectatorPointer::all_spectators(self){
+            spectator.send_join_game_data(self);
         }
     }
     fn on_phase_start(&mut self, _phase: PhaseType){

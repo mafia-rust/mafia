@@ -44,58 +44,63 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
     }
 
     renderSpecific(): JSX.Element | null {
-        switch(this.state.gameState.roleState?.role){
+
+        if(this.state.gameState.clientState.type === "spectator")
+            return null;
+
+
+        switch(this.state.gameState.clientState.roleState?.role){
             case "jailor":
                 if(this.state.gameState.phase==="night") {
-                    return <StyledText>{translate("role.jailor.roleDataText.night", this.state.gameState.roleState.executionsRemaining)}</StyledText>;
-                } else if (this.state.gameState.roleState.jailedTargetRef === null) {
-                    return <StyledText>{translate("role.jailor.roleDataText.nobody", this.state.gameState.roleState.executionsRemaining)}</StyledText>;
+                    return <StyledText>{translate("role.jailor.roleDataText.night", this.state.gameState.clientState.roleState.executionsRemaining)}</StyledText>;
+                } else if (this.state.gameState.clientState.roleState.jailedTargetRef === null) {
+                    return <StyledText>{translate("role.jailor.roleDataText.nobody", this.state.gameState.clientState.roleState.executionsRemaining)}</StyledText>;
                 } else {
                     return <StyledText>{translate("role.jailor.roleDataText", 
-                        this.state.gameState.players[this.state.gameState.roleState.jailedTargetRef].toString(), 
-                        this.state.gameState.roleState.executionsRemaining
+                        this.state.gameState.players[this.state.gameState.clientState.roleState.jailedTargetRef].toString(), 
+                        this.state.gameState.clientState.roleState.executionsRemaining
                     )}</StyledText>;;
                 }
             case "medium":
-                if (this.state.gameState.roleState.seancedTarget === null) {
-                    return <StyledText>{translate("role.medium.roleDataText.nobody", this.state.gameState.roleState.seancesRemaining)}</StyledText>;
+                if (this.state.gameState.clientState.roleState.seancedTarget === null) {
+                    return <StyledText>{translate("role.medium.roleDataText.nobody", this.state.gameState.clientState.roleState.seancesRemaining)}</StyledText>;
                 } else {
                     return <StyledText>{translate("role.medium.roleDataText", 
-                        this.state.gameState.players[this.state.gameState.roleState.seancedTarget].toString(),
-                        this.state.gameState.roleState.seancesRemaining
+                        this.state.gameState.players[this.state.gameState.clientState.roleState.seancedTarget].toString(),
+                        this.state.gameState.clientState.roleState.seancesRemaining
                     )}</StyledText>;
                 }
             case "doctor":
-                return <StyledText>{translate("role.doctor.roleDataText", this.state.gameState.roleState.selfHealsRemaining)}</StyledText>;
+                return <StyledText>{translate("role.doctor.roleDataText", this.state.gameState.clientState.roleState.selfHealsRemaining)}</StyledText>;
             case "bodyguard":
-                return <StyledText>{translate("role.bodyguard.roleDataText", this.state.gameState.roleState.selfShieldsRemaining)}</StyledText>;
+                return <StyledText>{translate("role.bodyguard.roleDataText", this.state.gameState.clientState.roleState.selfShieldsRemaining)}</StyledText>;
             case "vigilante":
-                switch(this.state.gameState.roleState.state.type){
+                switch(this.state.gameState.clientState.roleState.state.type){
                     case "willSuicide":
                         return <StyledText>{translate("role.vigilante.roleDataText.suicide")}</StyledText>;
                     case "notLoaded":
                         return <StyledText>{translate("role.vigilante.roleDataText.notLoaded")}</StyledText>;
                     case "loaded":
-                        return <StyledText>{translate("role.vigilante.roleDataText", this.state.gameState.roleState.state.bullets)}</StyledText>;
+                        return <StyledText>{translate("role.vigilante.roleDataText", this.state.gameState.clientState.roleState.state.bullets)}</StyledText>;
                     default:
                         return null
                 }
             case "veteran":
-                return <StyledText>{translate("role.veteran.roleDataText", this.state.gameState.roleState.alertsRemaining)}</StyledText>;
+                return <StyledText>{translate("role.veteran.roleDataText", this.state.gameState.clientState.roleState.alertsRemaining)}</StyledText>;
             case "janitor":
-                return <StyledText>{translate("role.janitor.roleDataText", this.state.gameState.roleState.cleansRemaining)}</StyledText>;
+                return <StyledText>{translate("role.janitor.roleDataText", this.state.gameState.clientState.roleState.cleansRemaining)}</StyledText>;
             case "death":
-                return <StyledText>{translate("role.death.roleDataText", this.state.gameState.roleState.souls)}</StyledText>;
+                return <StyledText>{translate("role.death.roleDataText", this.state.gameState.clientState.roleState.souls)}</StyledText>;
             case "amnesiac":
                 return <RoleOutlineDropdown 
-                    roleOutline={this.state.gameState.roleState.roleOutline ?? {type: "any"}} 
+                    roleOutline={this.state.gameState.clientState.roleState.roleOutline ?? {type: "any"}} 
                     onChange={(rle)=>{
                         GAME_MANAGER.sendSetAmnesiacRoleOutline(rle);
                     }}
                 />;
             case "martyr":
-                if (this.state.gameState.roleState.state.type === "stillPlaying") {
-                    return <StyledText>{translate("role.martyr.roleDataText", this.state.gameState.roleState.state.bullets)}</StyledText>;
+                if (this.state.gameState.clientState.roleState.state.type === "stillPlaying") {
+                    return <StyledText>{translate("role.martyr.roleDataText", this.state.gameState.clientState.roleState.state.bullets)}</StyledText>;
                 } else {
                     return null;
                 }

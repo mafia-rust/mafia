@@ -1,6 +1,7 @@
+use std::time::Duration;
+
 use crate::{
-    game::{chat::{ChatGroup, ChatMessage}, phase::PhaseState, player::PlayerReference, Game, GameOverReason}, 
-    packet::ToClientPacket
+    client_connection::ClientConnection, game::{chat::{ChatGroup, ChatMessage}, phase::PhaseState, player::PlayerReference, Game, GameOverReason}, packet::ToClientPacket
 };
 
 use super::Spectator;
@@ -11,9 +12,9 @@ pub struct SpectatorPointer {
     pub index: u8,
 }
 impl SpectatorPointer {
-    //THESE FUNCTIONS SHOULD NOT TAKE &self
-    //Instead there should be some sort of spectator reference like player reference
-    //This is because self and game will make a double borrow
+    pub fn new(index: u8) -> Self {
+        SpectatorPointer { index }
+    }
 
     pub fn deref_mut<'a>(&self, game: &'a mut Game)->Option<&'a mut Spectator>{
         game.spectators.get_mut(self.index as usize)
@@ -34,7 +35,28 @@ impl SpectatorPointer {
             None => (),
         }
     }
-    pub fn send_repeating_data(&mut self, game: &mut Game){
+
+    pub fn all_spectators(game: &Game) -> SpectatorPointerIterator {
+        SpectatorPointerIterator {
+            current: 0,
+            end: game.spectators.len() as u8
+        }
+    }
+
+
+    pub fn tick(&self, game: &mut Game, _time_passed: Duration){
+
+        let s = match self.deref_mut(game){
+            Some(s) => s,
+            None => return
+        };
+
+        match s.connection {
+            ClientConnection::Connected(_) => self.send_repeating_data(game),
+            _ => {}
+        }
+    }
+    pub fn send_repeating_data(&self, game: &mut Game){
         self.send_chat_messages(game);
     }
     pub fn send_join_game_data(&self, game: &mut Game){
@@ -81,7 +103,7 @@ impl SpectatorPointer {
 
 
 
-    pub fn send_chat_messages(&mut self, game: &mut Game){
+    pub fn send_chat_messages(&self, game: &mut Game){
         
         let s = match self.deref_mut(game){
             Some(s)=>s,
@@ -114,3 +136,29 @@ impl SpectatorPointer {
         self.send_chat_messages(game);
     }
 }
+
+pub struct SpectatorPointerIterator {
+    current: u8,
+    end: u8
+}
+
+impl Iterator for SpectatorPointerIterator {
+    type Item = SpectatorPointer;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.current >= self.end {
+            None
+        } else {
+            let ret = SpectatorPointer::new(self.current);
+            self.current += 1;
+            Some(ret)
+        }
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let size = (self.end - self.current) as usize;
+        (size, Some(size))
+    }
+}
+
+impl ExactSizeIterator for SpectatorPointerIterator {}

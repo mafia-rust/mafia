@@ -83,15 +83,15 @@ export function createGameManager(): GameManager {
                 if(client.clientType.type === "spectator") return undefined;
                 return client.clientType.name;
             }
-            if (gameManager.state.stateType === "game")
-                return gameManager.state.players[gameManager.state.myIndex!]?.name;
+            if (gameManager.state.stateType === "game" && gameManager.state.clientState.type === "player")
+                return gameManager.state.players[gameManager.state.clientState.myIndex!]?.name;
             return undefined;
         },
         getMyHost() {
             if (gameManager.state.stateType === "lobby")
                 return gameManager.state.players.get(gameManager.state.myId!)?.host;
-            if (gameManager.state.stateType === "game")
-                return gameManager.state.players[gameManager.state.myIndex!]?.host;
+            if (gameManager.state.stateType === "game" && gameManager.state.clientState.type === "player")
+                return gameManager.state.players[gameManager.state.clientState.myIndex!]?.host;
             return undefined;
         },
         getPlayerNames(): string[] {

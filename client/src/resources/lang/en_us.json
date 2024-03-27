@@ -357,10 +357,6 @@
     "role.martyr.dayTarget": "Special",
     "role.martyr.roleDataText": "\\0 bullets remaining\nThe heavens smile at you.",
 
-    "role.unknown.name": "Unknown",
-    "role.unknown.target": "Target",
-    "role.unknown.dayTarget": "Special",
-
     "grave.role.cleaned": "Cleaned",
     "grave.role.cleaned:var.0": "Clean",
     "grave.role.cleaned:var.1": "Cleans",

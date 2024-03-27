@@ -1,11 +1,7 @@
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender},
-    phase::{PhaseState, PhaseType},
-    player::{PlayerIndex, PlayerReference},
-    role::{Role, RoleState},
-    Game
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, spectator::spectator_pointer::SpectatorPointer, Game
 };
 
 
@@ -243,6 +239,9 @@ impl Game {
         
         for player_ref in PlayerReference::all_players(self){
             player_ref.send_repeating_data(self)
+        }
+        for spectator_ref in SpectatorPointer::all_spectators(self){
+            spectator_ref.send_repeating_data(self)
         }
 
     }

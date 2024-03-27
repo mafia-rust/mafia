@@ -36,6 +36,7 @@ use self::event::{OnGameEnding, OnPhaseStart};
 use self::phase::PhaseState;
 use self::player::PlayerInitializeParameters;
 use self::role::RoleState;
+use self::spectator::spectator_pointer::SpectatorPointer;
 use self::spectator::Spectator;
 use self::spectator::SpectatorInitializeParameters;
 use self::team::Teams;
@@ -278,6 +279,7 @@ impl Game {
             self.start_phase(new_phase);
         }
         PlayerReference::all_players(self).for_each(|p|p.tick(self, time_passed));
+        SpectatorPointer::all_spectators(self).for_each(|s|s.tick(self, time_passed));
 
         self.phase_machine.time_remaining = self.phase_machine.time_remaining.saturating_sub(time_passed);
     }
@@ -337,7 +339,7 @@ impl Game {
 pub mod test {
     use rand::{thread_rng, seq::SliceRandom};
 
-    use super::{Game, settings::Settings, role_list::RoleOutline, player::{PlayerReference, test::mock_player}, phase::PhaseStateMachine, team::Teams, RejectStartReason};
+    use super::{phase::PhaseStateMachine, player::{test::mock_player, PlayerReference}, role_list::RoleOutline, settings::Settings, spectator::spectator_pointer::SpectatorPointer, team::Teams, Game, RejectStartReason};
 
     pub fn mock_game(settings: Settings, number_of_players: usize) -> Result<Game, RejectStartReason> {
 
@@ -383,6 +385,10 @@ pub mod test {
         for player_ref in PlayerReference::all_players(&game){
             player_ref.send_join_game_data(&mut game);
         }
+        for spectator in SpectatorPointer::all_spectators(&game){
+            spectator.send_join_game_data(&mut game);
+        }
+
 
         //on role creation needs to be called after all players roles are known
         for player_ref in PlayerReference::all_players(&game){

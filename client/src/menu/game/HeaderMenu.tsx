@@ -32,20 +32,20 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
     constructor(props: HeaderMenuProps) {
         super(props);
 
-        if(GAME_MANAGER.state.stateType === "game")
+        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
             this.state = {
                 phase: GAME_MANAGER.state.phase,
                 playerOnTrial: GAME_MANAGER.state.playerOnTrial,
                 players: GAME_MANAGER.state.players,
-                myIndex: GAME_MANAGER.state.myIndex,
-                judgement: GAME_MANAGER.state.judgement,
-                roleState: GAME_MANAGER.state.roleState,
+                myIndex: GAME_MANAGER.state.clientState.myIndex,
+                judgement: GAME_MANAGER.state.clientState.judgement,
+                roleState: GAME_MANAGER.state.clientState.roleState,
                 dayNumber: GAME_MANAGER.state.dayNumber,
                 timeLeftMs: GAME_MANAGER.state.timeLeftMs,
                 fastForward: GAME_MANAGER.state.fastForward,
             };
         this.listener = (type) => {
-            if(GAME_MANAGER.state.stateType === "game"){
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 switch (type) {
                     case "phase":
                         this.setState({
@@ -60,13 +60,13 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                         this.setState({players: GAME_MANAGER.state.players})
                     break;
                     case "yourPlayerIndex":
-                        this.setState({myIndex: GAME_MANAGER.state.myIndex})
+                        this.setState({myIndex: GAME_MANAGER.state.clientState.myIndex})
                     break;
                     case "yourJudgement":
-                        this.setState({judgement: GAME_MANAGER.state.judgement})
+                        this.setState({judgement: GAME_MANAGER.state.clientState.judgement})
                     break;
                     case "yourRoleState":
-                        this.setState({roleState: GAME_MANAGER.state.roleState})
+                        this.setState({roleState: GAME_MANAGER.state.clientState.roleState})
                     break;
                     case "phaseTimeLeft":
                     case "tick":
@@ -226,7 +226,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             {(()=>{
                 return <StyledText>
                     {(this.state.players[this.state.myIndex!] ?? "").toString() +
-                    " (" + translate("role."+(this.state.roleState?.role ?? "unknown")+".name") + ")"}
+                    " (" + translate("role."+(this.state.roleState?.role)+".name") + ")"}
                 </StyledText>;
             })()}
             {this.renderFastForwardButton()}

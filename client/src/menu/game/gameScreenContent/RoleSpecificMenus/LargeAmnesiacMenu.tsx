@@ -20,11 +20,12 @@ export default class LargeAmnesiacMenu extends React.Component<LargeAmnesiacMenu
         let defaultRole: RoleOutline;
         if(
             GAME_MANAGER.state.stateType === "game" &&
-            GAME_MANAGER.state.roleState?.role === "amnesiac" && 
-            GAME_MANAGER.state.roleState.roleOutline!==undefined &&
-            GAME_MANAGER.state.roleState.roleOutline!==null
+            GAME_MANAGER.state.clientState.type === "player" &&
+            GAME_MANAGER.state.clientState.roleState?.role === "amnesiac" && 
+            GAME_MANAGER.state.clientState.roleState.roleOutline!==undefined &&
+            GAME_MANAGER.state.clientState.roleState.roleOutline!==null
         ){
-            defaultRole = GAME_MANAGER.state.roleState.roleOutline;
+            defaultRole = GAME_MANAGER.state.clientState.roleState.roleOutline;
         }else{
             defaultRole = {type: "any"};
         }
@@ -40,9 +41,13 @@ export default class LargeAmnesiacMenu extends React.Component<LargeAmnesiacMenu
                 this.setState({
                     gameState: GAME_MANAGER.state
                 });
-            if(GAME_MANAGER.state.stateType === "game" && type==="yourRoleState" && GAME_MANAGER.state.roleState?.role === "amnesiac"){
+            if(
+                GAME_MANAGER.state.stateType === "game" &&
+                GAME_MANAGER.state.clientState.type === "player" &&
+                type==="yourRoleState" && GAME_MANAGER.state.clientState.roleState?.role === "amnesiac"
+            ){
                 this.setState({
-                    localRoleOutline: GAME_MANAGER.state.roleState.roleOutline
+                    localRoleOutline: GAME_MANAGER.state.clientState.roleState.roleOutline
                 });
             }
         };  
