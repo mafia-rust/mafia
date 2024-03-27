@@ -18,7 +18,7 @@ impl Lobby {
             ToServerPacket::DayTarget { .. } |
             ToServerPacket::SendMessage { .. } |
             ToServerPacket::SendWhisper { .. } => {
-                let LobbyState::Game { players, .. } = &mut self.lobby_state else {
+                let LobbyState::Game { clients: players, .. } = &mut self.lobby_state else {
                     return;
                 };
 
@@ -183,9 +183,9 @@ impl Lobby {
 
                 self.lobby_state = LobbyState::Game{
                     game,
-                    players: player_indices,
+                    clients: player_indices,
                 };
-                let LobbyState::Game { game, players: _player } = &mut self.lobby_state else {
+                let LobbyState::Game { game, clients: _player } = &mut self.lobby_state else {
                     unreachable!("LobbyState::Game was set to be to LobbyState::Game in the previous line");
                 };
 
@@ -288,7 +288,7 @@ impl Lobby {
                 self.remove_player(player_id);
             }
             _ => {
-                let LobbyState::Game { game, players } = &mut self.lobby_state else {
+                let LobbyState::Game { game, clients: players } = &mut self.lobby_state else {
                     log!(error "Lobby"; "{} {:?}", "ToServerPacket not implemented for lobby was sent during lobby: ", incoming_packet);
                     return;
                 };

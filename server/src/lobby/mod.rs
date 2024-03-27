@@ -31,7 +31,7 @@ enum LobbyState {
     },
     Game {
         game: Game,
-        players: HashMap<LobbyClientID, GameClient>,
+        clients: HashMap<LobbyClientID, GameClient>,
     },
     Closed
 }
@@ -83,7 +83,7 @@ impl Lobby {
 
                 Lobby::set_rolelist_length(settings, clients);
 
-                send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: false, player_id});
+                send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: false, player_id, spectator: false});
 
                 Self::send_players_lobby(clients);
 
@@ -93,9 +93,26 @@ impl Lobby {
                 
                 Ok(player_id)
             },
-            LobbyState::Game{ .. } => {
-                send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::GameAlreadyStarted});
-                Err(RejectJoinReason::GameAlreadyStarted)
+            LobbyState::Game{ clients, ..} => {
+
+                let mut new_client = GameClient::new_spectator(clients.is_empty());
+                let player_id: LobbyClientID = 
+                    clients
+                        .iter()
+                        .map(|(i,_)|*i)
+                        .fold(0u32, u32::max) as LobbyClientID + 1u32;
+
+                if !clients.iter().any(|p|p.1.host) {
+                    new_client.set_host();
+                }
+
+                clients.insert(player_id, new_client);
+                send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id, spectator: true});
+
+
+                // send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::GameAlreadyStarted});
+                // Err(RejectJoinReason::GameAlreadyStarted)
+                Ok(player_id)
             }
             LobbyState::Closed => {
                 send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::RoomDoesntExist});
@@ -127,7 +144,7 @@ impl Lobby {
                     Self::send_settings(player.1, settings, self.name.clone());
                 }
             },
-            LobbyState::Game { game, players } => {
+            LobbyState::Game { game, clients: players } => {
                 let Some(game_player) = players.get_mut(&player_id) else {return};
                 if let GameClientLocation::Player(player_index) = game_player.client_location {
                     if let Ok(player_ref) = PlayerReference::new(game, player_index) {
@@ -150,7 +167,7 @@ impl Lobby {
                 Self::send_players_lobby(players);
                 
             },
-            LobbyState::Game {game, players} => {
+            LobbyState::Game {game, clients: players} => {
                 let Some(game_player) = players.get_mut(&id) else {return};
 
                 if let GameClientLocation::Player(player_index) = game_player.client_location {
@@ -174,7 +191,7 @@ impl Lobby {
                 };
                 if let ClientConnection::CouldReconnect { .. } = &mut player.connection {
                     player.connection = ClientConnection::Connected(send.clone());
-                    send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: false, player_id});
+                    send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: false, player_id, spectator: false});
 
                     Self::send_settings(player, settings, self.name.clone());
                     Self::send_players_lobby(players);
@@ -185,7 +202,7 @@ impl Lobby {
                     Err(RejectJoinReason::PlayerDoesntExist)
                 }
             },
-            LobbyState::Game { game, players } => {
+            LobbyState::Game { game, clients: players } => {
                 let Some(game_player) = players.get_mut(&player_id) else {
                     send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
                     return Err(RejectJoinReason::PlayerDoesntExist)
@@ -200,7 +217,7 @@ impl Lobby {
                         return Err(RejectJoinReason::PlayerTaken)
                     };
     
-                    send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id});
+                    send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id, spectator: false});
                     player_ref.connect(game, send.clone());
                     
                     Ok(())
@@ -264,7 +281,7 @@ impl Lobby {
                     }
                 ).collect()
             },
-            LobbyState::Game { game, players } => {
+            LobbyState::Game { game, clients: players } => {
                 players.iter()
                     .filter(|(_, player)| matches!(player.client_location, GameClientLocation::Player(_)))
                     .map(|(id, player)| {
@@ -289,7 +306,7 @@ impl Lobby {
                     false
                 }
             },
-            LobbyState::Game { players, .. } => {
+            LobbyState::Game { clients: players, .. } => {
                 if let Some(player) = players.get(&player_id){
                     player.host
                 }else{

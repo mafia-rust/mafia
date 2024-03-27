@@ -14,3 +14,15 @@ pub enum GameClientLocation {
     Player(PlayerIndex),
     Spectator
 }
+impl GameClient {
+    pub fn new_spectator(host: bool)->Self{
+        GameClient{
+            client_location: GameClientLocation::Spectator,
+            host,
+            last_message_times: VecDeque::new(),
+        }
+    }
+    pub fn set_host(&mut self) {
+        self.host = true;
+    }
+}

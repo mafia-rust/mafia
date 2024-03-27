@@ -44,7 +44,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     LobbyList{lobbies: HashMap<RoomCode, LobbyPreviewData>},
     #[serde(rename_all = "camelCase")]
-    AcceptJoin{room_code: RoomCode, in_game: bool, player_id: LobbyClientID},
+    AcceptJoin{room_code: RoomCode, in_game: bool, player_id: LobbyClientID, spectator: bool},
     RejectJoin{reason: RejectJoinReason},
     
     // Lobby

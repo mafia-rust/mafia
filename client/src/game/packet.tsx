@@ -22,6 +22,7 @@ export type ToClientPacket = {
     roomCode: number,
     inGame: boolean,
     playerId: number,
+    spectator: boolean
 } | {
     type: "rejectJoin",
     reason: string
