@@ -1,7 +1,7 @@
 
 use serde::Serialize;
 
-use crate::game::chat::ChatMessage;
+use crate::game::chat::ChatMessageVariant;
 use crate::game::chat::ChatGroup;
 use crate::game::grave::GraveRole;
 use crate::game::phase::PhaseType;
@@ -48,7 +48,7 @@ impl RoleStateImpl for Janitor {
 
                 let target_ref = visit.target;
                 if target_ref.night_jailed(game) {
-                    actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                    actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
                 }else{
                     target_ref.set_night_grave_role(game, Some(GraveRole::Cleaned));
                     target_ref.set_night_grave_will(game, "".to_owned());
@@ -58,7 +58,7 @@ impl RoleStateImpl for Janitor {
             Priority::Investigative=>{
                 if let Some(cleaned_ref) = self.cleaned_ref {
                     if cleaned_ref.night_died(game) {
-                        actor_ref.push_night_message(game, ChatMessage::PlayerRoleAndWill{
+                        actor_ref.push_night_message(game, ChatMessageVariant::PlayerRoleAndWill{
                             role: cleaned_ref.role(game),
                             will: cleaned_ref.will(game).to_string(),
                         });

@@ -2,7 +2,7 @@ use std::vec;
 
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::{Grave, GraveDeathCause, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -52,7 +52,7 @@ impl RoleStateImpl for Martyr {
         if let Some(visit) = actor_ref.night_visits(game).first() {
             let target_ref = visit.target;
             if target_ref.night_jailed(game){
-                actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
                 return;
             }
 
@@ -98,29 +98,29 @@ impl RoleStateImpl for Martyr {
     }
     fn on_phase_start(self,  game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         if phase == PhaseType::Obituary && matches!(self.state, MartyrState::StillPlaying {..}) {
-            game.add_message_to_chat_group(ChatGroup::All, ChatMessage::MartyrFailed);
+            game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::MartyrFailed);
         }
 
         if phase == PhaseType::Obituary && actor_ref.alive(game) && matches!(self.state, MartyrState::StillPlaying { bullets: 0 }) {
-            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref), true);
+            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }
     fn on_role_creation(self,  game: &mut Game, actor_ref: PlayerReference) {
-        game.add_message_to_chat_group(ChatGroup::All, ChatMessage::MartyrRevealed { martyr: actor_ref.index() });
+        game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::MartyrRevealed { martyr: actor_ref.index() });
         for player in PlayerReference::all_players(game){
             player.insert_role_label(game, actor_ref, Role::Martyr);
         }
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference) {
-        let left_town = game.graves.iter().any(|grave| grave.player == dead_player_ref.index() && grave.death_cause == GraveDeathCause::LeftTown);
+        let left_town = game.graves.iter().any(|grave| grave.player == dead_player_ref && grave.death_cause == GraveDeathCause::LeftTown);
         if dead_player_ref == actor_ref && !left_town {
-            game.add_message_to_chat_group(ChatGroup::All, ChatMessage::MartyrWon);
+            game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::MartyrWon);
             
             for player in PlayerReference::all_players(game) {
                 if player == actor_ref {continue}
                 if !player.alive(game) {continue}
                 if player.defense(game) >= 3 {continue}
-                player.die(game, Grave::from_player_suicide(game, player), true);
+                player.die(game, Grave::from_player_suicide(game, player));
             }
     
             actor_ref.set_role_state(game, RoleState::Martyr(Martyr {

@@ -2,15 +2,9 @@ use std::collections::HashMap;
 
 use crate::{
     game::{
-        role::{Role, RoleState}, 
-        Game, 
-        verdict::Verdict, 
         chat::{
-            ChatGroup, 
-            ChatMessage,
-        }, 
-        visit::Visit, 
-        grave::{GraveRole, GraveKiller}, tag::Tag}, packet::ToClientPacket, 
+            ChatGroup, ChatMessage, ChatMessageVariant
+        }, event, grave::{GraveKiller, GraveRole}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, Game}, packet::ToClientPacket, 
     };
 use super::PlayerReference;
 
@@ -117,14 +111,19 @@ impl PlayerReference{
         self.send_packet(game, ToClientPacket::YourPlayerTags { player_tags: PlayerReference::ref_map_to_index(self.deref(game).player_tags.clone()) });
     }
 
+    pub fn add_private_chat_message(&self, game: &mut Game, message: ChatMessageVariant) {
+        let message = ChatMessage::new_private(message);
+
+        self.add_chat_message(game, message.clone());
+    }
+    pub fn add_private_chat_messages(&self, game: &mut Game, messages: Vec<ChatMessageVariant>){
+        for message in messages.into_iter(){
+            self.add_private_chat_message(game, message);
+        }
+    }
     pub fn add_chat_message(&self, game: &mut Game, message: ChatMessage) {
         self.deref_mut(game).chat_messages.push(message.clone());
         self.deref_mut(game).queued_chat_messages.push(message);
-    }
-    pub fn add_chat_messages(&self, game: &mut Game, messages: Vec<ChatMessage>){
-        for message in messages.into_iter(){
-            self.add_chat_message(game, message);
-        }
     }
 
     pub fn set_doused(&self, game: &mut Game, doused: bool){
@@ -143,7 +142,7 @@ impl PlayerReference{
             .filter(|p|p.alive(game))
             .all(|p| p.fast_forward_vote(game))
         {
-            game.fast_forward();
+            event::OnFastForward::invoke(game);
         }
     }
     pub fn fast_forward_vote(&self, game: &Game) -> bool{
@@ -187,7 +186,7 @@ impl PlayerReference{
         game.send_packet_to_all(player_votes_packet);
         
         if send_chat_message {
-            game.add_message_to_chat_group(ChatGroup::All, ChatMessage::Voted{
+            game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::Voted{
                 voter: self.index(), 
                 votee: chosen_vote.as_ref().map(PlayerReference::index)
             });
@@ -282,13 +281,13 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.visits = visits;
     }
 
-    pub fn night_messages<'a>(&self, game: &'a Game) -> &'a Vec<ChatMessage> {
+    pub fn night_messages<'a>(&self, game: &'a Game) -> &'a Vec<ChatMessageVariant> {
         &self.deref(game).night_variables.messages
     }
-    pub fn push_night_message(&self, game: &mut Game, message: ChatMessage){
+    pub fn push_night_message(&self, game: &mut Game, message: ChatMessageVariant){
         self.deref_mut(game).night_variables.messages.push(message);
     }
-    pub fn set_night_messages(&self, game: &mut Game, messages: Vec<ChatMessage>){
+    pub fn set_night_messages(&self, game: &mut Game, messages: Vec<ChatMessageVariant>){
         self.deref_mut(game).night_variables.messages = messages;
     }
 
@@ -340,15 +339,15 @@ impl PlayerReference{
                     ChatGroup::Mafia | ChatGroup::Cult  => {
                         game.add_message_to_chat_group(
                             chat_group,
-                            ChatMessage::JailedSomeone { player_index: self.index() }
+                            ChatMessageVariant::JailedSomeone { player_index: self.index() }
                         );
                         message_sent = true;
                     },
                 }
             }
             if !message_sent {
-                self.add_chat_message(game, 
-                    ChatMessage::JailedSomeone { player_index: self.index() }
+                self.add_private_chat_message(game,
+                    ChatMessageVariant::JailedSomeone { player_index: self.index() }
                 );
             }
         }
@@ -361,7 +360,7 @@ impl PlayerReference{
     pub fn set_night_silenced(&self, game: &mut Game, silenced: bool){
         self.deref_mut(game).night_variables.silenced = silenced;
         if silenced {
-            self.push_night_message(game, ChatMessage::Silenced);
+            self.push_night_message(game, ChatMessageVariant::Silenced);
             self.send_packet(game, ToClientPacket::YourSendChatGroups { send_chat_groups: 
                 self.get_current_send_chat_groups(game)
             });

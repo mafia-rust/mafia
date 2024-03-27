@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -42,7 +42,7 @@ impl RoleStateImpl for Werewolf {
                     Some(first_visit) => {
                         let target_ref = first_visit.target;
                         if target_ref.night_jailed(game){
-                            actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                            actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
                             return
                         }
                         
@@ -96,7 +96,7 @@ impl RoleStateImpl for Werewolf {
                         let target_ref = first_visit.target;
 
                         if target_ref.night_jailed(game){
-                            actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                            actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
                         }else{
                             newly_tracked_players.push(target_ref);
                         }
@@ -127,7 +127,7 @@ impl RoleStateImpl for Werewolf {
                 let tracked_players = werewolf.tracked_players.clone();
                 tracked_players.into_iter().for_each(|player_ref|{
                     actor_ref.push_night_message(game, 
-                        ChatMessage::WerewolfTrackingResult{
+                        ChatMessageVariant::WerewolfTrackingResult{
                             tracked_player: player_ref.index(), 
                             players: player_ref.tracker_seen_visits(game).into_iter().map(|p|p.target.index()).collect()
                         }

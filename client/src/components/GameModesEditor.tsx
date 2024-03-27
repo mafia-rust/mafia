@@ -11,6 +11,8 @@ import DisabledRoleSelector from "../components/DisabledRoleSelector";
 import { Role } from "../game/roleState.d";
 import "../components/selectorSection.css";
 import { defaultPhaseTimes } from "../game/gameState";
+import Anchor from "../menu/Anchor";
+import { CopyButton, PasteButton } from "../components/ClipboardButtons";
 
 
 export default function GameModesEditor(): ReactElement {
@@ -68,15 +70,15 @@ export default function GameModesEditor(): ReactElement {
 
 
 
-        let newGameMode = new Map(savedGameModes);
-        newGameMode.set(name, {
+        let newGameModes = new Map(savedGameModes);
+        newGameModes.set(name, {
             name: currentSettingsName,
             roleList: currentRoleList,
             phaseTimes: currentPhaseTimes,
             disabledRoles: currentDisabledRoles
         });
-        setGameModes(newGameMode);
-        saveGameModes(newGameMode);
+        setGameModes(newGameModes);
+        saveGameModes(newGameModes);
     }
     const loadGameMode = (settingsName: string) => {
         const gameMode = savedGameModes.get(settingsName);
@@ -89,39 +91,11 @@ export default function GameModesEditor(): ReactElement {
     const deleteGameMode = (roleListName: string) => {
         if(!window.confirm(translate("confirmDelete"))) return;
 
-        let newRoleLists = new Map(savedGameModes);
-        newRoleLists.delete(roleListName);
-        setGameModes(newRoleLists);
+        let newGameModes = new Map(savedGameModes);
+        newGameModes.delete(roleListName);
+        setGameModes(newGameModes);
+        saveGameModes(newGameModes);
     }
-
-
-
-    const exportGameMode = () => {
-        //copies current gamemode to clipboard
-        navigator.clipboard.writeText(JSON.stringify({
-            name: currentSettingsName==="" ? "Unnamed Game Mode" : currentSettingsName,
-            roleList: currentRoleList,
-            phaseTimes: currentPhaseTimes,
-            disabledRoles: currentDisabledRoles
-        }));
-    }
-    const importGameMode = () => {
-        //imports gamemode from clipboard
-        navigator.clipboard.readText().then((text) => {
-            try {
-                const data = JSON.parse(text);
-                if(!data.roleList || !data.phaseTimes || !data.disabledRoles) return;
-                setCurrentRoleListName(data.name ?? "")
-                setCurrentRoleList(data.roleList);
-                setCurrentPhaseTimes(data.phaseTimes);
-                setCurrentDisabledRoles(data.disabledRoles);
-            } catch (e) {
-                console.error(e);
-            }
-        });
-    }
-
-
     
     return <div className="game-modes-editor">
         <header>
@@ -147,8 +121,28 @@ export default function GameModesEditor(): ReactElement {
                             setCurrentRoleListName(e.target.value);
                         }}/>
                         <button onClick={saveGameMode} className="material-icons-round">save</button>
-                        <button onClick={exportGameMode}>{translate("exportToClipboard")}</button>
-                        <button onClick={importGameMode}>{translate("importFromClipboard")}</button>
+                        <CopyButton text={JSON.stringify({
+                            name: currentSettingsName==="" ? "Unnamed Game Mode" : currentSettingsName,
+                            roleList: currentRoleList,
+                            phaseTimes: currentPhaseTimes,
+                            disabledRoles: currentDisabledRoles
+                        })}/>
+                        <PasteButton onPasteSuccessful={text => {
+                            try {
+                                const data = JSON.parse(text);
+
+                                setCurrentRoleListName(data.name ?? "")
+                                setCurrentRoleList(data.roleList ?? []);
+                                setCurrentPhaseTimes(data.phaseTimes ?? defaultPhaseTimes());
+                                setCurrentDisabledRoles(data.disabledRoles ?? []);
+                            } catch (e) {
+                                Anchor.pushError(
+                                    translate("notification.importGameMode.failure"), 
+                                    translate("notification.importGameMode.failure.details")
+                                );
+                                return false;
+                            }}
+                        }/>
                     </div>
                 </section>
 

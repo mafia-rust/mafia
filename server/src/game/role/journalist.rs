@@ -1,7 +1,7 @@
 
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -43,7 +43,7 @@ impl RoleStateImpl for Journalist {
             !actor_ref.night_roleblocked(game) &&
             !actor_ref.night_silenced(game)
         {
-            game.add_message_to_chat_group(ChatGroup::All, ChatMessage::JournalistJournal { journal: self.journal.clone()});    
+            game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::JournalistJournal { journal: self.journal.clone()});    
         }
     }
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
@@ -100,8 +100,8 @@ impl RoleStateImpl for Journalist {
             PhaseType::Night => {
                 if let Some(interviewed_target_ref) = self.interviewed_target {
                     if interviewed_target_ref.alive(game) && actor_ref.alive(game){
-                        actor_ref.add_chat_message(game, 
-                            ChatMessage::YouAreInterviewingPlayer { player_index: interviewed_target_ref.index() }
+                        actor_ref.add_private_chat_message(game, 
+                            ChatMessageVariant::YouAreInterviewingPlayer { player_index: interviewed_target_ref.index() }
                         );
 
                         let mut message_sent = false;
@@ -111,15 +111,15 @@ impl RoleStateImpl for Journalist {
                                 ChatGroup::Mafia | ChatGroup::Cult  => {
                                     game.add_message_to_chat_group(
                                         chat_group,
-                                        ChatMessage::PlayerIsBeingInterviewed { player_index: interviewed_target_ref.index() }
+                                        ChatMessageVariant::PlayerIsBeingInterviewed { player_index: interviewed_target_ref.index() }
                                     );
                                     message_sent = true;
                                 },
                             }
                         }
                         if !message_sent {
-                            interviewed_target_ref.add_chat_message(game, 
-                                ChatMessage::PlayerIsBeingInterviewed { player_index: interviewed_target_ref.index() }
+                            interviewed_target_ref.add_private_chat_message(game, 
+                                ChatMessageVariant::PlayerIsBeingInterviewed { player_index: interviewed_target_ref.index() }
                             );
                         }
 

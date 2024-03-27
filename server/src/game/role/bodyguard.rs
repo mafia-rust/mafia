@@ -1,7 +1,7 @@
 
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -45,7 +45,7 @@ impl RoleStateImpl for Bodyguard {
                 if actor_ref == target_ref {return}
     
                 if target_ref.night_jailed(game){
-                    actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                    actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
                     return
                 }
 
@@ -77,7 +77,7 @@ impl RoleStateImpl for Bodyguard {
     
                 if actor_ref == target_ref {
                     if target_ref.night_jailed(game){
-                        actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                        actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
                         return
                     }
 
@@ -98,8 +98,8 @@ impl RoleStateImpl for Bodyguard {
             }
             Priority::Investigative => {
                 if let Some(target_protected_ref) = self.target_protected_ref {
-                    actor_ref.push_night_message(game, ChatMessage::TargetWasAttacked);
-                    target_protected_ref.push_night_message(game, ChatMessage::YouWereProtected);
+                    actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
+                    target_protected_ref.push_night_message(game, ChatMessageVariant::YouWereProtected);
                 }
             }
             _ => {}

@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::{GraveDeathCause, Grave, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -42,7 +42,7 @@ impl RoleStateImpl for Death {
 
         self.souls += souls_to_gain;
         if self.souls >= NEEDED_SOULS {
-            game.add_message_to_chat_group(ChatGroup::All, ChatMessage::DeathCollectedSouls);
+            game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::DeathCollectedSouls);
         }
         actor_ref.set_role_state(game, RoleState::Death(self));
     }
@@ -74,13 +74,13 @@ impl RoleStateImpl for Death {
                     for player in PlayerReference::all_players(game){
                         if !player.alive(game){continue;}
                         if player.defense(game) >= 3 {
-                            player.add_chat_message(game, ChatMessage::YouSurvivedAttack);
-                            actor_ref.add_chat_message(game, ChatMessage::SomeoneSurvivedYourAttack);
+                            player.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
+                            actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
                 
                         }else{
                             let mut grave = Grave::from_player_lynch(game, player);
                             grave.death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Death)]);
-                            player.die(game, grave, true);
+                            player.die(game, grave);
                             actor_ref.set_role_state(game, RoleState::Death(Death{won: true, souls: self.souls}));
                         }
                     }

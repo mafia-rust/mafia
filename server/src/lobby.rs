@@ -54,9 +54,9 @@ pub struct LobbyPlayer{
 }
 
 impl LobbyPlayer {
-    pub fn new(name: String, connection: ClientConnection, host: bool)->Self{
+    pub fn new(name: String, connection: ClientSender, host: bool)->Self{
         LobbyPlayer{
-            name, connection, host
+            name, connection: ClientConnection::Connected(connection), host
         }
     }
     pub fn set_host(&mut self) {
@@ -337,7 +337,7 @@ impl Lobby {
 
                 let name = name_validation::sanitize_name("".to_string(), players);
                 
-                let mut new_player = LobbyPlayer::new(name.clone(), ClientConnection::Connected(send.clone()), players.is_empty());
+                let mut new_player = LobbyPlayer::new(name.clone(), send.clone(), players.is_empty());
                 let player_id: PlayerID = 
                     players
                         .iter()
@@ -360,8 +360,6 @@ impl Lobby {
                 for player in players.iter(){
                     Self::send_settings(player.1, settings, self.name.clone())
                 }
-
-                send.send(ToClientPacket::LobbyName { name: self.name.clone() });
                 
                 Ok(player_id)
             },

@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -26,11 +26,11 @@ impl RoleStateImpl for Consigliere {
         if let Some(visit) = actor_ref.night_visits(game).first(){
             let target_ref = visit.target;
             if target_ref.night_jailed(game){
-                actor_ref.push_night_message(game, ChatMessage::TargetJailed);
+                actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
                 return
             }
 
-            let message = ChatMessage::ConsigliereResult{
+            let message = ChatMessageVariant::ConsigliereResult{
                 role: target_ref.role(game), 
                 visited_by: visit.target.lookout_seen_players(game).into_iter().filter(|p|actor_ref!=*p).map(|player_ref|player_ref.index()).collect(),
                 visited: target_ref.tracker_seen_visits(game).iter().map(|v|v.target.index()).collect()

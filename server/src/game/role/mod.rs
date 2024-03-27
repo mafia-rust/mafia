@@ -270,6 +270,8 @@ impl Role{
         match self {
             Role::Veteran => true,
 
+            Role::Transporter => true,
+            
             Role::Retributionist => true,
             Role::Witch => true,
             Role::Necromancer => true,
@@ -282,6 +284,7 @@ impl Role{
         match self {
             Role::Veteran => true,
             
+            Role::Transporter => true,
             Role::Reveler => true,
 
             Role::Escort => true,
@@ -301,6 +304,12 @@ impl Role{
             Role::Werewolf => {
                 game.day_number() == 1 || game.day_number() == 3
             },
+            _ => false,
+        }
+    }
+    pub fn has_suspicious_aura(&self, _game: &Game)->bool{
+        match self {
+            Role::Politician => true,
             _ => false,
         }
     }

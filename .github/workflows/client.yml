@@ -3,14 +3,14 @@ name: Client
 on:
   push:
     branches: 
-      - '*.*.*/main'
+      - 'main'
     paths:
       - '.github/workflows/client.yml'
       - 'client/**'
       - '!client/public/**'
   pull_request:
     branches: 
-      - '*.*.*/main'
+      - 'main'
     paths:
       - '.github/workflows/client.yml'
       - 'client/**'

@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -59,13 +59,13 @@ impl RoleStateImpl for Veteran {
                     .into_iter().filter(|other_player_ref|*other_player_ref != actor_ref).collect::<Vec<PlayerReference>>()
                 {
                     other_player_ref.push_night_message(game,
-                        ChatMessage::VeteranAttackedYou 
+                        ChatMessageVariant::VeteranAttackedYou 
                     );
 
                     other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Veteran), 2, false);
                     
                     actor_ref.push_night_message(game, 
-                        ChatMessage::VeteranAttackedVisitor 
+                        ChatMessageVariant::VeteranAttackedVisitor 
                     );
                 }
             }

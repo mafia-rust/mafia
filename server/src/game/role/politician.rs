@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessage};
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::{GraveKiller, Grave, GraveDeathCause};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -51,7 +51,7 @@ impl RoleStateImpl for Politician {
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         if self.should_suicide(game, actor_ref) {
-            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref), true);
+            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
@@ -61,7 +61,7 @@ impl RoleStateImpl for Politician {
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
         if self.should_suicide(game, actor_ref){
-            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref), true);
+            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }
     fn on_game_ending(self, game: &mut Game, actor_ref: PlayerReference){
@@ -80,10 +80,10 @@ impl RoleStateImpl for Politician {
 
                     let mut grave = Grave::from_player_lynch(game, player_ref);
                     grave.death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Politician)]);
-                    player_ref.die(game, grave, true);
+                    player_ref.die(game, grave);
                 }else{
-                    player_ref.add_chat_message(game, ChatMessage::YouSurvivedAttack);
-                    actor_ref.add_chat_message(game, ChatMessage::SomeoneSurvivedYourAttack);
+                    player_ref.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
+                    actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
                 }
                 won = true;
             }
@@ -100,7 +100,7 @@ impl RoleStateImpl for Politician {
                     player_ref.role(game) == Role::Politician
                 {
                     player_ref.set_role_state(game, RoleState::Politician(Politician{won: true}));
-                    player_ref.die(game, Grave::from_player_leave_town(game, actor_ref), true);
+                    player_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
                 }
             }
         }

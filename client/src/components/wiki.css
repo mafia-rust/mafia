@@ -31,6 +31,7 @@
 .wiki-article {
     text-align: left;
     height: max-content;
+    overflow-y: auto;
 }
 /* Markdown */
 .wiki-article div {
@@ -95,4 +96,8 @@
 }
 .wiki-article-standard {
     text-align: left;
+}
+.wiki-cover-card {
+    max-height: 40rem;
+    max-width: 50rem;
 }
