@@ -906,9 +906,9 @@
     "wiki.article.role.vigilante.extra": "* You only have a basic attack\n* Even while dead, killing someone requires and spends a bullet (such as when you get possessed)",
 
     "wiki.article.role.veteran.guide": "- At night, select yourself to protect yourself and attack everyone who visits you, going 'on alert.'\n- You can only use your ability three times\n\nYou should try to bait evil players into visiting you, so you can block the attack and kill them.",
-    "wiki.article.role.veteran.abilities":"* Visit yourself to protect yourself and attack everyone who visits you\n* You can only use this ability 3 times.",
-    "wiki.article.role.veteran.attributes":"* You have an indirect, armor-piercing attack\n* You are told when you attack a visitor\n* Players who visit you while your ability is active are told they are attacked by a veteran",
-    "wiki.article.role.veteran.extra":"* While you have 0 alerts left, you can not select yourself\n* You are immune to getting roleblocked and possession",
+    "wiki.article.role.veteran.abilities":"* Select yourself to protect yourself and attack everyone who visits you\n* You can only use this ability 3 times.",
+    "wiki.article.role.veteran.attributes":"* You are told when you attack a visitor\n* Players who visit you while your ability is active are told they are attacked by a veteran\n* You have an indirect, armor-piercing attack",
+    "wiki.article.role.veteran.extra":"* While you have 0 alerts left, you can not select yourself\n* You are immune to getting roleblocked and possession\n* When you select yourself, you don't visit yourself, it is indirect",
 
     "wiki.article.role.deputy.guide":"- Once per game, you can shoot a player during the day\n- If you kill a townie, you instantly leave town\n- If you kill someone, everyone is told that a deputy shot someone\n- If the player you shoot survives your attack, only the player you attacked is told\n\nIf you attack someone and they survive it is likely that they are a role that is armored. Most roles that are armored are evil.",
     "wiki.article.role.deputy.abilities":"* Once per game, during the discussion or nomination phase after day 1, you may choose a player to attack.",
@@ -966,9 +966,9 @@
     "wiki.article.role.framer.extra":"-A suspicious aura will make the player with it look suspicious to a Detective, they can appear as the evil player to a Psychic, and they will be enemies with everyone to a Seer\n* You can't select other mafia members for your first target, but you can select any player for your second target, including dead players and other mafia members\n* For more information, see appeared visits",
 
     "wiki.article.role.jester.guide": "- Get lynched during the day to win\n- After you win by getting lynched, you can attack any living player who voted you guilty or abstained\n\nTry to look evil so people vote you, without making it obvious that you are the Jester.",
-    "wiki.article.role.jester.abilities":"* When you are lynched, you win\n* On the night after you are lynched, attack the first player you select\n",
+    "wiki.article.role.jester.abilities":"* When you are lynched, you win\n* On the night after you are lynched, attack the player you select\n",
     "wiki.article.role.jester.attributes":"* You always have an innocent aura\n* If you select nobody on the night after you are lynched, you will attack a random living player who did not vote you innocent\n* You have a protection-piercing, indirect attack",
-    "wiki.article.role.jester.extra":"* Your attack goes before Transporter, Witch, or Necromancer, so they can not force you to kill someone else.",
+    "wiki.article.role.jester.extra":"* Your attack is indirect, so nothing can effect it",
 
     "wiki.article.role.executioner.guide":"- Get your execution target lynched to win\n When you win, you leave town at the start of night\n\nYou should try to claim something that makes people think your target is evil.",
     "wiki.article.role.executioner.abilities":"* At the beginning of the game, you are assigned an execution target. It is a random townie, but never a Mayor, Journalist, Jailor, Deputy, Veteran, or Transporter\n",
