@@ -35,7 +35,7 @@ impl RoleStateImpl for Spy {
                 let mut mafia_visits = vec![];
                 for other_player in PlayerReference::all_players(game){
                     if other_player.role(game).faction() == Faction::Mafia{
-                        mafia_visits.append(&mut other_player.night_visits(game).iter().filter(|v|!v.astral).map(|v|v.target.index()).collect());
+                        mafia_visits.append(&mut other_player.night_visits(game).iter().map(|v|v.target.index()).collect());
                     }
                 }
                 mafia_visits.shuffle(&mut rand::thread_rng());
@@ -81,7 +81,7 @@ impl RoleStateImpl for Spy {
         false
     }
     fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, false)
+        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false)
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])

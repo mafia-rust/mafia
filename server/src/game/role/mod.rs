@@ -102,7 +102,6 @@ macros::priorities! {
     Transporter,
 
     Control,
-    Necromancy,
     Roleblock,
 
     Deception,

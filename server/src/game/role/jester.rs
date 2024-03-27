@@ -52,13 +52,16 @@ impl RoleStateImpl for Jester {
                 let Some(target_ref) = all_killable_players.choose(&mut rand::thread_rng()) else {return};
                 Visit{
                     target: *target_ref,
-                    astral: true,
                     attack: true,
                 }
             },
         };
     
-        visit.target.try_night_kill(actor_ref, game, crate::game::grave::GraveKiller::Role(super::Role::Jester), 3, true);
+        visit.target.try_night_kill(actor_ref, game, 
+            crate::game::grave::GraveKiller::Role(super::Role::Jester), 3, true
+        );
+
+        actor_ref.set_night_visits(game, vec![])
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         actor_ref != target_ref &&
@@ -75,7 +78,7 @@ impl RoleStateImpl for Jester {
         false
     }
     fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, true, true)
+        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, true)
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])

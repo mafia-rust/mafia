@@ -31,7 +31,7 @@ impl RoleStateImpl for Reveler {
             if target_ref.night_jailed(game) {
                 actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
             }else{                
-                target_ref.veteran_seen_players(game).iter().for_each(|&player_ref| {
+                target_ref.all_visitors(game).iter().for_each(|&player_ref| {
                     if player_ref != actor_ref {
                         player_ref.roleblock(game, true);
                     }
@@ -48,7 +48,7 @@ impl RoleStateImpl for Reveler {
         false
     }
     fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, false)
+        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false)
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
