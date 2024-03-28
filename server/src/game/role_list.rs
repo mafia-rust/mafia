@@ -51,7 +51,7 @@ impl RoleList {
 
 
 
-#[derive(Default, Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize, PartialOrd, Ord)]
 #[serde(tag = "type", rename_all = "camelCase")]
 pub enum RoleOutline{
     #[default]
@@ -162,7 +162,7 @@ impl RoleSet{
             RoleSet::TownProtective => 
                 vec![Role::Bodyguard, Role::Crusader, Role::Doctor, Role::Reveler, Role::Trapper],
             RoleSet::TownInvestigative => 
-                vec![Role::Psychic, Role::Lookout, Role::Sheriff, Role::Spy, Role::Tracker, Role::Seer],
+                vec![Role::Psychic, Role::Lookout, Role::Sheriff, Role::Spy, Role::Tracker, Role::Seer, Role::Auditor],
             RoleSet::MafiaSupport => 
                 vec![
                     Role::Blackmailer, Role::Consigliere, Role::Consort, 

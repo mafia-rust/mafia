@@ -8,6 +8,7 @@ import LargeAmnesiacMenu from "./RoleSpecificMenus/LargeAmnesiacMenu";
 import LargeConsortMenu from "./RoleSpecificMenus/LargeConsortMenu";
 import LargeForgerMenu from "./RoleSpecificMenus/LargeForgerMenu";
 import LargeJournalistMenu from "./RoleSpecificMenus/LargeJournalistMenu";
+import LargeAuditorMenu from "./RoleSpecificMenus/LargeAuditorMenu";
 
 type RoleSpecificMenuProps = {
 }
@@ -41,16 +42,18 @@ export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuPr
     
     renderRoleSpecificMenu(){
         switch(this.state.gameState.roleState?.role){
-            case "doomsayer":
-                return <LargeDoomsayerMenu/>;
-            case "amnesiac":
-                return <LargeAmnesiacMenu/>;
+            case "auditor":
+                return <LargeAuditorMenu/>;
             case "journalist":
                 return <LargeJournalistMenu/>;
             case "consort":
                 return <LargeConsortMenu/>;
             case "forger":
                 return <LargeForgerMenu/>;
+            case "doomsayer":
+                return <LargeDoomsayerMenu/>;
+            case "amnesiac":
+                return <LargeAmnesiacMenu/>;
         }
     }
     render(){return(<div className="role-specific-colors">

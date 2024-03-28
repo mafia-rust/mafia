@@ -9,6 +9,8 @@ import { Role } from "../game/roleState.d";
 import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
 import GraveComponent from "./grave";
+import { RoleOutline, translateRoleOutline } from "../game/roleListState.d";
+import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
 
 export default function ChatElement(
     props: {
@@ -307,6 +309,19 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.psychicEvil", playerListToString(message.players, playerNames));
         case "psychicGood":
             return translate("chatMessage.psychicGood", playerListToString(message.players, playerNames));
+        case "auditorResult":
+            if(message.result.type === "one"){
+                return translate("chatMessage.auditorResult.one", 
+                    translateRoleOutline(message.roleOutline),
+                    translate("role."+message.result.role+".name")
+                );
+            }else{
+                return translate("chatMessage.auditorResult.two", 
+                    translateRoleOutline(message.roleOutline),
+                    translate("role."+message.result.roles[0]+".name"),
+                    translate("role."+message.result.roles[1]+".name")
+                );
+            }
         case "trapperVisitorsRole":
             return translate("chatMessage.trapperVisitorsRole", translate("role."+message.role+".name"));
         case "trapState":
@@ -545,6 +560,10 @@ export type ChatMessageVariant = {
     players: PlayerIndex[]
 } | {
     type: "psychicFailed"
+} | {
+    type: "auditorResult",
+    roleOutline: RoleOutline,
+    result: AuditorResult,
 } | {
     type: "veteranAttackedYou"
 } | {
