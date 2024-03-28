@@ -10,7 +10,7 @@ import SmallRoleSpecificMenu from "./RoleSpecificMenus/SmallRoleSpecificMenu";
 import StyledText from "../../../components/StyledText";
 import { RoleState } from "../../../game/roleState.d";
 import Icon from "../../../components/Icon";
-import { Button } from "../../../components/FallibleButton";
+import { Button } from "../../../components/Button";
 
 type PlayerListMenuProps = {
 }

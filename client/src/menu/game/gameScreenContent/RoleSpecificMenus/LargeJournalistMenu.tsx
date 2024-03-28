@@ -2,7 +2,7 @@ import React from "react"
 import GAME_MANAGER from "../../../.."
 import translate from "../../../../game/lang"
 import "./largeJournalistMenu.css"
-import { Button } from "../../../../components/FallibleButton"
+import { Button } from "../../../../components/Button"
 import Icon from "../../../../components/Icon"
 
 type LargeJournalistMenuProps = {

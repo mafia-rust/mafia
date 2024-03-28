@@ -1,7 +1,7 @@
 import React, { isValidElement, useMemo } from "react";
 import { ReactElement, useState } from "react";
 import Icon from "./Icon";
-
+import "./button.css";
 
 export type ButtonProps = Omit<JSX.IntrinsicElements['button'], 'onClick'> & {
     onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => (boolean | void | Promise<boolean | void>)
@@ -32,19 +32,19 @@ export function Button(props: ButtonProps): ReactElement {
             case "success":
                 return <>
                     {successChildren || props.children}
-                    {props.successText && <div className="fallible-button-popup">{props.successText}</div>}
+                    {props.successText && <div className="button-popup">{props.successText}</div>}
                 </>
             case "failure":
                 return <>
                     {failureChildren || props.children}
-                    {props.failureText && <div className="fallible-button-popup">{props.failureText}</div>}
+                    {props.failureText && <div className="button-popup">{props.failureText}</div>}
                 </>
         }
     }, [props.children, failureChildren, props.failureText, successChildren, props.successText, success]);
 
     return <button {...props} 
         className={
-            "fallible-button " + (props.className ?? "") + (props.highlighted ? " highlighted" : "")
+            "button " + (props.className ?? "") + (props.highlighted ? " highlighted" : "")
         }
         onClick={async e => {
             if (props.onClick) {

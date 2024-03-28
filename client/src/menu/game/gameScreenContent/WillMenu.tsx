@@ -4,7 +4,7 @@ import GAME_MANAGER from "../../../index";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import "./willMenu.css"
 import { StateListener } from "../../../game/gameManager.d";
-import { Button } from "../../../components/FallibleButton";
+import { Button } from "../../../components/Button";
 import Icon from "../../../components/Icon";
 
 

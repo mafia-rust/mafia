@@ -4,7 +4,7 @@ import { Role } from "../../../../game/roleState.d"
 import translate from "../../../../game/lang"
 import ROLES from "../../../../resources/roles.json";
 import "./largeForgerMenu.css"
-import { Button } from "../../../../components/FallibleButton";
+import { Button } from "../../../../components/Button";
 import Icon from "../../../../components/Icon";
 
 type LargeForgerMenuProps = {

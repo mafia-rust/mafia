@@ -16,7 +16,7 @@ import ROLES from "../../resources/roles.json";
 import { StateEventType } from "../../game/gameManager.d";
 import { WikiArticleLink } from "../../components/WikiArticleLink";
 import Icon from "../../components/Icon";
-import { Button } from "../../components/FallibleButton";
+import { Button } from "../../components/Button";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",

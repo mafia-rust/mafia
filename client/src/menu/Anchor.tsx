@@ -7,7 +7,7 @@ import { loadSettings } from "../game/localStorage";
 import LoadingScreen from "./LoadingScreen";
 import { Theme } from "..";
 import Icon from "../components/Icon";
-import { Button } from "../components/FallibleButton";
+import { Button } from "../components/Button";
 
 type AnchorProps = {
     content: JSX.Element,

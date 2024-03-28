@@ -14,7 +14,7 @@ import { defaultPhaseTimes } from "../game/gameState";
 import Anchor from "../menu/Anchor";
 import { CopyButton, PasteButton } from "../components/ClipboardButtons";
 import Icon from "./Icon";
-import { Button } from "./FallibleButton";
+import { Button } from "./Button";
 
 
 export default function GameModesEditor(): ReactElement {

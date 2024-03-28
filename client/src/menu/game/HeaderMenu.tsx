@@ -9,7 +9,7 @@ import { Role, RoleState } from "../../game/roleState.d";
 import StyledText from "../../components/StyledText";
 import { StateEventType } from "../../game/gameManager.d";
 import Icon from "../../components/Icon";
-import { Button } from "../../components/FallibleButton";
+import { Button } from "../../components/Button";
 
 
 type HeaderMenuProps = {

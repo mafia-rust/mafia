@@ -1,8 +1,7 @@
-.fallible-button {
-    position: relative
+button {
+    position: relative;
 }
-
-.fallible-button-popup {
+button > .button-popup {
     top: 100%;
     left: 50%;
     transform: translateX(-50%);

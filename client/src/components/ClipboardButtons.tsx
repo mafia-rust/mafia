@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { ReactElement } from "react";
 import Anchor from "../menu/Anchor";
 import translate from "../game/lang";
-import "./fallibleButton.css";
-import { Button, ButtonProps } from "./FallibleButton";
+import { Button, ButtonProps } from "./Button";
 import Icon from "./Icon";
 
 export function CopyButton(props: ButtonProps & { onClick?: undefined, ref?: undefined, text: string }): ReactElement {
