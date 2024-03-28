@@ -233,6 +233,8 @@ impl Game {
                 }
             },
             ToServerPacket::SetAuditorChosenOutline { index } => {
+                if !sender_player_ref.alive(self) {break 'packet_match;}
+
                 if let RoleState::Auditor(mut auditor) = sender_player_ref.role_state(self).clone(){
 
                     if auditor.chosen_outline.is_some_and(|f|f == index) {
