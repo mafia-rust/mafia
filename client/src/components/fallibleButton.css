@@ -1,8 +1,8 @@
-.clipboard-button {
+.fallible-button {
     position: relative
 }
 
-.clipboard-popup {
+.fallible-button-popup {
     top: 100%;
     left: 50%;
     transform: translateX(-50%);

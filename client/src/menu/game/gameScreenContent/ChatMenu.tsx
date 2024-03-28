@@ -9,6 +9,8 @@ import ChatElement from "../../../components/ChatMessage";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import { HistoryPoller, HistoryQueue } from "../../../history";
 import { StateListener } from "../../../game/gameManager.d";
+import { Button } from "../../../components/FallibleButton";
+import Icon from "../../../components/Icon";
 
 
 export default function ChatMenu(): ReactElement {
@@ -43,18 +45,18 @@ export default function ChatMenu(): ReactElement {
     return <div className="chat-menu chat-menu-colors">
         <ContentTab close={ContentMenu.ChatMenu} helpMenu={"standard/chat"}>{translate("menu.chat.title")}</ContentTab>
         <ChatMessageSection filter={filter}/>
-        {filter !== null && <button 
+        {filter !== null && <Button 
             onClick={()=>{
                 if(GAME_MANAGER.state.stateType === "game"){
                     GAME_MANAGER.state.chatFilter = null;
                     GAME_MANAGER.invokeStateListeners("filterUpdate");
                 }
             }}
-            className="material-icons-round highlighted"
+            highlighted={true}
             aria-label={translate("menu.chat.clearFilter")}
         >
-            filter_alt_off
-        </button>}
+            <Icon>filter_alt_off</Icon>
+        </Button>}
         <div className="chat-menu-icons">
             {!sendChatGroups.includes("all") && translate("noAll.icon")}
             {sendChatGroups.map((group) => {
@@ -195,13 +197,12 @@ function ChatTextInput(props: {disabled: boolean}): ReactElement {
             onChange={handleInputChange}
             onKeyDown={handleInputKeyDown}
         />
-        <button 
+        <Button 
             disabled={props.disabled}
-            className="material-icons-round"
             onClick={sendChatField}
             aria-label={translate("menu.chat.button.send")}
         >
-            send
-        </button>
+            <Icon>send</Icon>
+        </Button>
     </div>
 }

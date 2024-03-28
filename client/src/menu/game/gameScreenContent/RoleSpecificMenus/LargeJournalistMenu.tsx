@@ -2,6 +2,8 @@ import React from "react"
 import GAME_MANAGER from "../../../.."
 import translate from "../../../../game/lang"
 import "./largeJournalistMenu.css"
+import { Button } from "../../../../components/FallibleButton"
+import Icon from "../../../../components/Icon"
 
 type LargeJournalistMenuProps = {
 }
@@ -57,24 +59,29 @@ export default class LargeJournalistMenu extends React.Component<LargeJournalist
             <div>
                 {translate("role.journalist.menu.journal")}
                 <div>
-                    <button
-                        className={"material-icons-round " + (this.state.syncedJournal !== this.state.localJournal ? "highlighted" : "")}
-                        onClick={() => this.handleSave()}
+                    <Button
+                        highlighted={this.state.syncedJournal !== this.state.localJournal}
+                        onClick={() => {
+                            this.handleSave();
+                            return true;
+                        }}
                     >
-                        save
-                    </button>
-                    <button
-                        className={"material-icons-round"}
-                        onClick={() => this.handleSend()}
+                        <Icon>save</Icon>
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            this.handleSend();
+                            return true;
+                        }}
                     >
-                        send
-                    </button>
+                        <Icon>send</Icon>
+                    </Button>
                 </div>
             </div>
             <div>
                 {translate("role.journalist.menu.public")}
-                <label className="material-icons-round" onClick={()=>this.handlePublicToggle()}>
-                    {this.state.syncedPublic ? "check" : "close"}
+                <label onClick={()=>this.handlePublicToggle()}>
+                    <Icon>{this.state.syncedPublic ? "check" : "close"}</Icon>
                 </label>
             </div>
             <textarea

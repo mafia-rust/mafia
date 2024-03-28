@@ -2,63 +2,44 @@ import React, { useState } from "react";
 import { ReactElement } from "react";
 import Anchor from "../menu/Anchor";
 import translate from "../game/lang";
-import "./clipboardButtons.css";
+import "./fallibleButton.css";
+import { Button, ButtonProps } from "./FallibleButton";
+import Icon from "./Icon";
 
-export function CopyButton(props: JSX.IntrinsicElements['button'] & { onClick?: undefined, ref?: undefined, text: string }): ReactElement {
-    const iconMode = props.children === undefined;
-    const [success, setSuccess] = useState<boolean>(false);
-
-    return <button {...props} className={"clipboard-button " + (props.className ?? "")}
-        onClick={() => {
-            writeToClipboard(props.text).then(success => {
-                if (!success) return;
-
-                setSuccess(true);
-                setTimeout(() => {
-                    setSuccess(false);
-                }, 1000);
-            });
-        }}
+export function CopyButton(props: ButtonProps & { onClick?: undefined, ref?: undefined, text: string }): ReactElement {
+    return <Button {...props} 
+        onClick={() => writeToClipboard(props.text)}
+        successText={translate("notification.clipboard.write.success")}
+        failureText={translate("notification.clipboard.write.failure")}
     >
-        {props.children}
-        {iconMode && (
-            success 
-                ? <span className="material-icons-round">done</span> 
-                : <span className="material-icons-round">content_copy</span>
-        )}
-        {success && <div className="clipboard-popup">
-            {translate("notification.clipboard.write.success")}
-        </div>}
-    </button>
+        {props.children ?? <Icon>content_copy</Icon>}
+    </Button>
 }
 
-export function PasteButton(props: JSX.IntrinsicElements['button'] & { onClick?: undefined, onPasteSuccessful: (text: string) => (void | boolean) } ): ReactElement {
-    const iconMode = props.children === undefined;
-    const [success, setSuccess] = useState<boolean>(false);
-
-    return <button {...props} className={"clipboard-button " + (props.className ?? "")}
-        onClick={() => {
-            readFromClipboard().then(text => {
-                if (text === null) return;
-                if (!(props.onPasteSuccessful(text) ?? true)) return;
-
-                setSuccess(true);
-                setTimeout(() => {
-                    setSuccess(false)
-                }, 1000);
-            });
-        }}
-    >
-        {props.children}
-        {iconMode && (
-            success 
-                ? <span className="material-icons-round">done</span> 
-                : <span className="material-icons-round">paste</span>
+export function PasteButton(props: ButtonProps & { onClick?: undefined, onPasteSuccessful?: (text: string) => (void | boolean) } ): ReactElement {
+    const [failureReason, setFailureReason] = useState<"clipboard" | "handler">("clipboard");
+    
+    return <Button {...props}
+        onClick={() => readFromClipboard().then(text => {
+            if (text === null) {
+                setFailureReason("clipboard");
+                return false;
+            } else if (props.onPasteSuccessful === undefined) {
+                return true;
+            } else {
+                setFailureReason("handler");
+                return props.onPasteSuccessful(text) ?? true;
+            }
+        })}
+        successText={translate("notification.clipboard.read.success")}
+        failureText={translate(
+            failureReason === "clipboard" 
+                ? "notification.clipboard.read.failure" 
+                : "notification.clipboard.handleRead.failure"
         )}
-        {success && <div className="clipboard-popup">
-            {translate("notification.clipboard.read.success")}
-        </div>}
-    </button>
+    >
+        {props.children ?? <Icon>paste</Icon>}
+    </Button>
 }
 
 /**

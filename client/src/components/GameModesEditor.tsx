@@ -13,6 +13,8 @@ import "../components/selectorSection.css";
 import { defaultPhaseTimes } from "../game/gameState";
 import Anchor from "../menu/Anchor";
 import { CopyButton, PasteButton } from "../components/ClipboardButtons";
+import Icon from "./Icon";
+import { Button } from "./FallibleButton";
 
 
 export default function GameModesEditor(): ReactElement {
@@ -62,13 +64,10 @@ export default function GameModesEditor(): ReactElement {
 
 
     const saveGameMode = () => {
-        let name = currentSettingsName;
-        if(!name.match(/^[a-zA-Z0-9_ ]+$/) || name.length >= 100 || name.length <= 0) return;
-        if(currentRoleList.length === 0) return;
-        if(savedGameModes.has(name) && !window.confirm(translate("confirmOverwrite"))) return;
-
-
-
+        const name = currentSettingsName;
+        if(!name.match(/^[a-zA-Z0-9_ ]+$/) || name.length >= 100 || name.length <= 0) return false;
+        if(currentRoleList.length === 0) return false;
+        if(savedGameModes.has(name) && !window.confirm(translate("confirmOverwrite"))) return false;
 
         let newGameModes = new Map(savedGameModes);
         newGameModes.set(name, {
@@ -79,6 +78,7 @@ export default function GameModesEditor(): ReactElement {
         });
         setGameModes(newGameModes);
         saveGameModes(newGameModes);
+        return true;
     }
     const loadGameMode = (settingsName: string) => {
         const gameMode = savedGameModes.get(settingsName);
@@ -120,7 +120,9 @@ export default function GameModesEditor(): ReactElement {
                             onChange={(e) => {
                             setCurrentRoleListName(e.target.value);
                         }}/>
-                        <button onClick={saveGameMode} className="material-icons-round">save</button>
+                        <Button onClick={saveGameMode}>
+                            <Icon>save</Icon>
+                        </Button>
                         <CopyButton text={JSON.stringify({
                             name: currentSettingsName==="" ? "Unnamed Game Mode" : currentSettingsName,
                             roleList: currentRoleList,
@@ -135,6 +137,7 @@ export default function GameModesEditor(): ReactElement {
                                 setCurrentRoleList(data.roleList ?? []);
                                 setCurrentPhaseTimes(data.phaseTimes ?? defaultPhaseTimes());
                                 setCurrentDisabledRoles(data.disabledRoles ?? []);
+                                return true;
                             } catch (e) {
                                 Anchor.pushError(
                                     translate("notification.importGameMode.failure"), 

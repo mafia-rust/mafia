@@ -15,6 +15,8 @@ import { Role } from "../../game/roleState.d";
 import ROLES from "../../resources/roles.json";
 import { StateEventType } from "../../game/gameManager.d";
 import { WikiArticleLink } from "../../components/WikiArticleLink";
+import Icon from "../../components/Icon";
+import { Button } from "../../components/FallibleButton";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",
@@ -270,21 +272,19 @@ export function ContentTab(props: {
             </StyledText>
         </div>
 
-        {props.close && <button 
-            className="material-icons-round close" 
+        {props.close && <Button className="close"
             onClick={()=>GameScreen.instance.closeMenu(props.close as ContentMenu)}
         >
-            close
-        </button>}
-        {props.helpMenu ? <button 
-            className="material-icons-round help" 
+            <Icon>close</Icon>
+        </Button>}
+        {props.helpMenu ? <Button className="help"
             onClick={()=>{
                 GameScreen.instance.openMenu(ContentMenu.WikiMenu, ()=>{
                     props.helpMenu && GAME_MANAGER.setWikiArticle(props.helpMenu);
                 });
             }}
         >
-            question_mark
-        </button>:null}
+            <Icon>question_mark</Icon>
+        </Button>:null}
     </div>
 }

@@ -10,6 +10,7 @@ import GraveComponent from "../../../components/grave";
 import { Grave } from "../../../game/graveState";
 import { StateListener } from "../../../game/gameManager.d";
 import { Role } from "../../../game/roleState.d";
+import Icon from "../../../components/Icon";
 
 type GraveyardMenuProps = {
 }
@@ -94,11 +95,8 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
     }
     renderGraveExtended(grave: Grave){
         return(<div className="grave-label">
-            <button
-                className="material-icons-round"
-                onClick={()=>{this.setState({extendedGraveIndex:null})}}
-            >
-                close
+            <button onClick={()=>this.setState({extendedGraveIndex:null})}>
+                <Icon>close</Icon>
             </button>
             <GraveComponent grave={grave} playerNames={this.state.players.map(p => p.toString())}/>
         </div>);

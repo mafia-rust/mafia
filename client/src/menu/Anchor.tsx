@@ -6,6 +6,8 @@ import SettingsMenu, { DEFAULT_SETTINGS } from "./Settings";
 import { loadSettings } from "../game/localStorage";
 import LoadingScreen from "./LoadingScreen";
 import { Theme } from "..";
+import Icon from "../components/Icon";
+import { Button } from "../components/FallibleButton";
 
 type AnchorProps = {
     content: JSX.Element,
@@ -188,9 +190,11 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             onTouchMove={(e) => {this.onTouchMove(e)}}
             onTouchEnd={(e) => {this.onTouchEnd(e)}}
         >
-            <button className="material-icons-round settings-button" onClick={() => {
-                this.setState({settings_menu: !this.state.settings_menu});
-            }}>menu</button>
+            <Button className="settings-button" 
+                onClick={() => this.setState({settings_menu: !this.state.settings_menu})}
+            >
+                <Icon>menu</Icon>
+            </Button>
             {this.state.settings_menu && <SettingsMenu 
                 onVolumeChange={(volume) => {
                     Anchor.instance.state.audio.volume = volume;
@@ -244,11 +248,9 @@ function CoverCard(props: { children: React.ReactNode, theme: Theme, onClickOuts
         ref={ref}
     >
         <div className="anchor-cover-card">
-            <button className="material-icons-round close-button" onClick={()=>{
-                Anchor.clearCoverCard()
-            }}>
-                close
-            </button>
+            <Button className="close-button" onClick={Anchor.clearCoverCard}>
+                <Icon>close</Icon>
+            </Button>
             <div className="anchor-cover-card-content">
                 {props.children}
             </div>

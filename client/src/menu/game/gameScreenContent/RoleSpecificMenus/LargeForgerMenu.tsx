@@ -4,6 +4,8 @@ import { Role } from "../../../../game/roleState.d"
 import translate from "../../../../game/lang"
 import ROLES from "../../../../resources/roles.json";
 import "./largeForgerMenu.css"
+import { Button } from "../../../../components/FallibleButton";
+import Icon from "../../../../components/Icon";
 
 type LargeForgerMenuProps = {
 }
@@ -72,18 +74,23 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
                     {forgerRoleOptions}
                 </select>
                 <div>
-                    <button
-                        className={"material-icons-round " + (this.state.localWill !== this.state.savedWill || this.state.localRole !== this.state.savedRole ? "highlighted" : "")}
-                        onClick={() => this.handleSave()}
+                    <Button
+                        highlighted={this.state.localWill !== this.state.savedWill || this.state.localRole !== this.state.savedRole}
+                        onClick={() => {
+                            this.handleSave();
+                            return true;
+                        }}
                     >
-                        save
-                    </button>
-                    <button
-                        className={"material-icons-round"}
-                        onClick={() => this.handleSend()}
+                        <Icon>save</Icon>
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            this.handleSend()
+                            return true;
+                        }}
                     >
-                        send
-                    </button>
+                        <Icon>send</Icon>
+                    </Button>
                 </div>
             </div>
             <textarea
