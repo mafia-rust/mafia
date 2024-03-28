@@ -85,7 +85,7 @@ impl RoleStateImpl for Jailor {
         actor_ref.alive(game) && target_ref.alive(game)
     }
     fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, true)
+        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, true)
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, 

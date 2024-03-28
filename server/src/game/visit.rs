@@ -4,6 +4,5 @@ use super::player::PlayerReference;
 pub struct Visit {
     pub target: PlayerReference,
 
-    pub astral: bool,
     pub attack: bool,
 }

@@ -38,8 +38,8 @@ impl RoleStateImpl for Veteran {
         match priority {
             Priority::TopPriority => {
                 if self.alerts_remaining > 0 {
-                    if let Some(visit) = actor_ref.night_visits(game).first(){
-                        if visit.target == actor_ref{
+                    if let Some(selection) = actor_ref.chosen_targets(game).first(){
+                        if *selection == actor_ref{
                             actor_ref.set_role_state(game, RoleState::Veteran(Veteran { 
                                 alerts_remaining: self.alerts_remaining - 1, 
                                 alerting_tonight: true 
@@ -55,7 +55,7 @@ impl RoleStateImpl for Veteran {
             Priority::Kill => {
                 if !self.alerting_tonight {return}
 
-                for other_player_ref in actor_ref.veteran_seen_players(game)
+                for other_player_ref in actor_ref.all_visitors(game)
                     .into_iter().filter(|other_player_ref|*other_player_ref != actor_ref).collect::<Vec<PlayerReference>>()
                 {
                     other_player_ref.push_night_message(game,
@@ -86,8 +86,8 @@ impl RoleStateImpl for Veteran {
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target: PlayerReference) -> bool {
         false
     }
-    fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, true, false)
+    fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        vec![]
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])

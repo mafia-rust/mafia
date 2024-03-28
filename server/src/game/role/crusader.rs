@@ -55,7 +55,7 @@ impl RoleStateImpl for Crusader {
                         other_player_ref.role(game).faction() != Faction::Town &&
                         other_player_ref.night_visits(game)
                             .iter()
-                            .any(|v|!v.astral&&v.target==target_ref)
+                            .any(|v|v.target==target_ref)
                     ).collect::<Vec<PlayerReference>>()
                     .choose(&mut rand::thread_rng())
                     .copied();
@@ -68,7 +68,7 @@ impl RoleStateImpl for Crusader {
                             *other_player_ref != actor_ref &&
                             other_player_ref.night_visits(game)
                                 .iter()
-                                .any(|v|!v.astral&&v.target==target_ref)
+                                .any(|v|v.target==target_ref)
                         ).collect::<Vec<PlayerReference>>()
                         .choose(&mut rand::thread_rng())
                         .copied();
@@ -100,7 +100,7 @@ impl RoleStateImpl for Crusader {
         false
     }
     fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, false)
+        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false)
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])

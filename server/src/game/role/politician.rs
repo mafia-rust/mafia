@@ -90,8 +90,9 @@ impl RoleStateImpl for Politician {
         }
 
         if 
-            won || 
-            PlayerReference::all_players(game).filter(|p|p.alive(game)).all(|player_ref| player_ref.role(game) == Role::Politician)
+            won ||
+            PlayerReference::all_players(game).filter(|p|p.alive(game))
+                .all(|player_ref| player_ref.role(game) == Role::Politician)
         {
             //kill all politicians because they all won
             for player_ref in PlayerReference::all_players(game) {

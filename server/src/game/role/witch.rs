@@ -41,9 +41,12 @@ impl RoleStateImpl for Witch {
                     return;
                 }
 
-                let mut new_chosen_targets = vec![second_visit.target];
-                if let Some(third_visit) = witch_visits.get(2){
-                    new_chosen_targets.push(third_visit.target);
+                let mut new_chosen_targets = 
+                    first_visit.target.night_visits(game).into_iter().map(|v|v.target).collect::<Vec<PlayerReference>>();
+                if let Some(target) = new_chosen_targets.first_mut(){
+                    *target = second_visit.target;
+                }else{
+                    new_chosen_targets = vec![second_visit.target];
                 }
 
                 first_visit.target.set_night_visits(
@@ -52,6 +55,7 @@ impl RoleStateImpl for Witch {
                 );
 
                 actor_ref.set_role_state(game, RoleState::Witch(Witch { currently_used_player: Some(first_visit.target) }));
+                actor_ref.set_night_visits(game, vec![first_visit.clone()]);
             },
             Priority::StealMessages => {
                 if let Some(currently_used_player) = self.currently_used_player {
@@ -74,7 +78,7 @@ impl RoleStateImpl for Witch {
             !Team::same_team(game, actor_ref, target_ref)
         ) || (
             actor_ref != target_ref &&
-            (actor_ref.chosen_targets(game).len() == 1 || actor_ref.chosen_targets(game).len() == 2)
+            actor_ref.chosen_targets(game).len() == 1
         ))
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
@@ -86,14 +90,8 @@ impl RoleStateImpl for Witch {
     fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() == 2 {
             vec![
-                Visit{target: target_refs[0], astral: false, attack: false}, 
-                Visit{target: target_refs[1], astral: true, attack: false},
-            ]
-        } else if target_refs.len() >= 3 {
-            vec![
-                Visit{target: target_refs[0], astral: false, attack: false}, 
-                Visit{target: target_refs[1], astral: true, attack: false},
-                Visit{target: target_refs[2], astral: true, attack: false}
+                Visit{target: target_refs[0], attack: false}, 
+                Visit{target: target_refs[1], attack: false},
             ]
         }else{
             Vec::new()

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use mafia_server::{game::{chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::RoleState, tag::Tag, Game}, packet::ToServerPacket};
+use mafia_server::{game::{chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::RoleState, tag::Tag, verdict::Verdict, Game}, packet::ToServerPacket};
 
 #[derive(Clone, Copy, Debug)]
 pub struct TestPlayer(PlayerReference, *mut Game);
@@ -54,6 +54,9 @@ impl TestPlayer {
         self.0.set_chosen_vote(game!(self), player_voted_ref, true);
 
         game!(self).count_votes_and_start_trial();
+    }
+    pub fn set_verdict(&self, verdict: Verdict) {
+        self.0.set_verdict(game!(self), verdict);
     }
 
     pub fn send_message(&self, message: &str) {

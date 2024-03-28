@@ -97,7 +97,7 @@ impl RoleStateImpl for Trapper {
                 if let Trap::Set { target } = self.trap {
                     for attacker in PlayerReference::all_players(game) {
                         if 
-                            attacker.night_visits(game).iter().any(|visit| visit.target == target && !visit.astral && visit.attack) &&
+                            attacker.night_visits(game).iter().any(|visit| visit.target == target && visit.attack) &&
                             attacker != actor_ref
                         {
                             attacker.try_night_kill(actor_ref, game, crate::game::grave::GraveKiller::Role(Role::Trapper), 2, false);
@@ -120,7 +120,7 @@ impl RoleStateImpl for Trapper {
 
                     for visitor in PlayerReference::all_players(game) {
                         if 
-                            visitor.night_visits(game).iter().any(|visit|visit.target == target && !visit.astral) &&
+                            visitor.night_visits(game).iter().any(|visit|visit.target == target) &&
                             visitor != actor_ref
                         {
                             should_dismantle = true;
@@ -153,7 +153,7 @@ impl RoleStateImpl for Trapper {
         false
     }
     fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, false)
+        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false)
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])

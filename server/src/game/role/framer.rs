@@ -27,7 +27,7 @@ impl RoleStateImpl for Framer {
         let framer_visits = actor_ref.night_visits(game).clone();
 
 
-        let Some(first_visit) = framer_visits.get(0) else {return};
+        let Some(first_visit) = framer_visits.first() else {return};
 
         if first_visit.target.night_jailed(game) {
             actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
@@ -41,10 +41,11 @@ impl RoleStateImpl for Framer {
     
         if !first_visit.target.night_jailed(game) {
             first_visit.target.set_night_appeared_visits(game, Some(vec![
-                Visit{ target: second_visit.target, astral: false, attack: false }
+                Visit{ target: second_visit.target, attack: false }
             ]));
         }
-        
+
+        actor_ref.set_night_visits(game, vec![first_visit.clone()]);
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         
@@ -70,12 +71,12 @@ impl RoleStateImpl for Framer {
     fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() == 2 {
             vec![
-                Visit{ target: target_refs[0], astral: false, attack: false }, 
-                Visit{ target: target_refs[1], astral: true, attack: false }
+                Visit{ target: target_refs[0], attack: false }, 
+                Visit{ target: target_refs[1], attack: false }
             ]
         } else if target_refs.len() == 1 {
             vec![
-                Visit{ target: target_refs[0], astral: false, attack: false }
+                Visit{ target: target_refs[0], attack: false }
             ]
         } else {
             Vec::new()

@@ -24,7 +24,7 @@ impl RoleStateImpl for Necromancer {
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
-            Priority::Necromancy => {
+            Priority::Control => {
 
                 let retributionist_visits = actor_ref.night_visits(game).clone();
                 let Some(first_visit) = retributionist_visits.get(0) else {return};
@@ -41,9 +41,12 @@ impl RoleStateImpl for Necromancer {
                     return;
                 }
 
-                let mut new_chosen_targets = vec![second_visit.target];
-                if let Some(third_visit) = retributionist_visits.get(2){
-                    new_chosen_targets.push(third_visit.target);
+                let mut new_chosen_targets = 
+                    first_visit.target.night_visits(game).into_iter().map(|v|v.target).collect::<Vec<PlayerReference>>();
+                if let Some(target) = new_chosen_targets.first_mut(){
+                    *target = second_visit.target;
+                }else{
+                    new_chosen_targets = vec![second_visit.target];
                 }
 
                 first_visit.target.set_night_visits(
@@ -54,6 +57,7 @@ impl RoleStateImpl for Necromancer {
                 let mut used_bodies = self.used_bodies;
                 used_bodies.push(first_visit.target);
                 actor_ref.set_role_state(game, RoleState::Necromancer(Necromancer { used_bodies, currently_used_player: Some(first_visit.target) }));
+                actor_ref.set_night_visits(game, vec![first_visit.clone()]);
             },
             Priority::StealMessages => {
                 if let Some(currently_used_player) = self.currently_used_player {
@@ -76,9 +80,8 @@ impl RoleStateImpl for Necromancer {
             !self.used_bodies.iter().any(|p| *p == target_ref)
         ) || (
             actor_ref != target_ref &&
-            (actor_ref.chosen_targets(game).len() == 1 || actor_ref.chosen_targets(game).len() == 2) &&
+            actor_ref.chosen_targets(game).len() == 1 &&
             target_ref.alive(game)
-    
         ))
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
@@ -90,14 +93,8 @@ impl RoleStateImpl for Necromancer {
     fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() == 2 {
             vec![
-                Visit{target: target_refs[0], astral: false, attack: false}, 
-                Visit{target: target_refs[1], astral: true, attack: false},
-            ]
-        } else if target_refs.len() >= 3 {
-            vec![
-                Visit{target: target_refs[0], astral: false, attack: false}, 
-                Visit{target: target_refs[1], astral: true, attack: false},
-                Visit{target: target_refs[2], astral: true, attack: false}
+                Visit{target: target_refs[0], attack: false}, 
+                Visit{target: target_refs[1], attack: false},
             ]
         }else{
             Vec::new()

@@ -178,6 +178,53 @@ fn seer_basic() {
 }
 
 #[test]
+fn jester_basic() {
+    kit::scenario!(game in Night 1 where
+        jester: Jester,
+        townie: Sheriff,
+        mafia: Godfather,
+        lookout1: Lookout,
+        lookout2: Lookout,
+        mafia2: Mafioso
+    );
+
+    game.skip_to(PhaseType::Nomination, 2);
+    mafia.vote_for_player(Some(jester));
+    townie.vote_for_player(Some(jester));
+    lookout1.vote_for_player(Some(jester));
+    lookout2.vote_for_player(Some(jester));
+
+
+    game.skip_to(PhaseType::Judgement, 2);
+    townie.set_verdict(mafia_server::game::verdict::Verdict::Guilty);
+    mafia.set_verdict(mafia_server::game::verdict::Verdict::Guilty);
+    mafia2.set_verdict(mafia_server::game::verdict::Verdict::Guilty);
+    lookout1.set_verdict(mafia_server::game::verdict::Verdict::Innocent);
+    lookout2.set_verdict(mafia_server::game::verdict::Verdict::Innocent);
+
+    game.skip_to(PhaseType::Night, 2);
+    assert!(!jester.alive());
+    lookout1.set_night_target(townie);
+    lookout2.set_night_target(mafia);
+
+
+    game.skip_to(PhaseType::Obituary, 3);
+
+    assert_eq!(
+        PlayerReference::all_players(&game)
+            .filter(|p|!p.alive(&game)).count(), 2
+    );
+    assert_contains!(
+        lookout1.get_messages(), 
+        ChatMessageVariant::LookoutResult { players: vec![] }
+    );
+    assert_contains!(
+        lookout2.get_messages(), 
+        ChatMessageVariant::LookoutResult { players: vec![] }
+    );
+}
+
+#[test]
 fn psychic_auras(){
     for _ in 0..100 {
         kit::scenario!(game in Night 1 where
@@ -381,8 +428,7 @@ fn retributionist_basic(){
         ret: Retributionist,
         sher1: Sheriff,
         sher2: Sheriff,
-        mafioso: Mafioso,
-        jester: Jester
+        mafioso: Mafioso
     );
 
     mafioso.set_night_target(sher1);
@@ -401,26 +447,6 @@ fn retributionist_basic(){
             ChatMessageVariant::SheriffResult{ suspicious: true }
         )}
     );
-    
-    game.skip_to(PhaseType::Night, 4);
-    assert!(!ret.set_night_targets(vec![sher1, mafioso, jester]));
-    game.next_phase();
-    assert_not_contains!(
-        ret.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 4 }),
-        ChatMessageVariant::TargetsMessage{message: Box::new(
-            ChatMessageVariant::SheriffResult{suspicious: true}
-        )}
-    );
-    
-    game.skip_to(PhaseType::Night, 5);
-    assert!(ret.set_night_targets(vec![sher2, jester, mafioso]));
-    game.next_phase();
-    assert_contains!(
-        ret.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 5 }),
-        ChatMessageVariant::TargetsMessage{message: Box::new(
-            ChatMessageVariant::SheriffResult{suspicious: false}
-        )}
-    );
 }
 
 #[test]
@@ -430,7 +456,6 @@ fn necromancer_basic(){
         sher: Sheriff,
         consigliere: Consigliere,
         mafioso: Mafioso,
-        jester: Jester,
         vigilante: Vigilante
     );
     
@@ -449,26 +474,6 @@ fn necromancer_basic(){
             ChatMessageVariant::SheriffResult{ suspicious: true }
         )}
     );
-    
-    game.skip_to(PhaseType::Night, 4);
-    assert!(!ret.set_night_targets(vec![sher, mafioso, jester]));
-    game.next_phase();
-    assert_not_contains!(
-        ret.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 4 }),
-        ChatMessageVariant::TargetsMessage{message: Box::new(
-            ChatMessageVariant::SheriffResult{suspicious: true}
-        )}
-    );
-    
-    game.skip_to(PhaseType::Night, 5);
-    assert!(ret.set_night_targets(vec![consigliere, jester, mafioso]));
-    game.next_phase();
-    assert_contains!(
-        ret.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 5 }),
-        ChatMessageVariant::TargetsMessage{message: Box::new(
-            ChatMessageVariant::ConsigliereResult { role: Role::Jester, visited_by: vec![], visited: vec![] }
-        )}
-    );
 }
 
 #[test]
@@ -478,7 +483,7 @@ fn witch_basic(){
         sher: Sheriff,
         consigliere: Consigliere,
         mafioso: Mafioso,
-        jester: Jester
+        seer: Seer
     );
 
     assert!(witch.set_night_targets(vec![sher, mafioso]));
@@ -488,22 +493,13 @@ fn witch_basic(){
     )});
     
     game.skip_to(PhaseType::Night, 2);
-    assert!(witch.set_night_targets(vec![sher, mafioso, jester]));
+    assert!(seer.set_night_targets(vec![sher, consigliere]));
+    assert!(witch.set_night_targets(vec![seer, mafioso]));
     game.next_phase();
     assert_contains!(
         witch.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 2 }),
         ChatMessageVariant::TargetsMessage{message: Box::new(
-            ChatMessageVariant::SheriffResult{suspicious: true}
-        )}
-    );
-    
-    game.skip_to(PhaseType::Night, 3);
-    assert!(!witch.set_night_targets(vec![consigliere, jester, mafioso]));
-    game.next_phase();
-    assert_not_contains!(
-        witch.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 3 }),
-        ChatMessageVariant::TargetsMessage{message: Box::new(
-            ChatMessageVariant::ConsigliereResult { role: Role::Jester, visited_by: vec![], visited: vec![] }
+            ChatMessageVariant::SeerResult { enemies: false }
         )}
     );
 }
@@ -563,6 +559,46 @@ fn crusader_does_not_kill_framed_player(){
     assert!(framer.alive());
     assert!(mafioso.alive());
     assert!(townie.alive());
+}
+
+#[test]
+fn veteran_basic(){
+    kit::scenario!(game in Night 1 where
+        vet: Veteran,
+        townie: Lookout,
+        _godfather: Godfather,
+        mafioso: Mafioso,
+        tracker: Tracker
+    );
+
+    assert!(vet.set_night_targets(vec![vet]));
+    assert!(mafioso.set_night_targets(vec![vet]));
+    assert!(townie.set_night_targets(vec![vet]));
+    assert!(tracker.set_night_targets(vec![vet]));
+
+    game.next_phase();
+
+    assert!(vet.alive());
+    assert!(!mafioso.alive());
+    assert!(!townie.alive());
+
+    assert_contains!(
+        townie.get_messages(),
+        ChatMessageVariant::LookoutResult { players: vec![mafioso.index(), tracker.index()] }
+    );
+    assert_contains!(
+        tracker.get_messages(),
+        ChatMessageVariant::TrackerResult { players: vec![] }
+    );
+
+    game.skip_to(PhaseType::Night, 2);
+    assert!(vet.set_night_targets(vec![vet]));
+    
+    game.skip_to(PhaseType::Night, 3);
+    assert!(vet.set_night_targets(vec![vet]));
+    
+    game.skip_to(PhaseType::Night, 4);
+    assert!(!vet.set_night_targets(vec![vet]));
 }
 
 #[test]
