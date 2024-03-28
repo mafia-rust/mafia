@@ -128,9 +128,9 @@
         "largeRoleSpecificMenu": true,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "auditorResult", "roleOutline":{"type":"any"},"result": ["godfather","jester"]},
-            {"type": "auditorResult", "roleOutline":{"type":"roleOutlineOptions", "roleOutlineOptions":[{"type":"role","role":"vigilante"}]},"result": ["vigilante"]},
-            {"type": "auditorResult", "roleOutline":{"type":"roleOutlineOptions", "roleOutlineOptions":[{"type":"roleSet","roleSet":"townSupport"}]},"result": ["escort","medium"]}
+            {"type": "auditorResult", "roleOutline":{"type":"any"},"result": {"type":"two","roles":["godfather","jester"]}},
+            {"type": "auditorResult", "roleOutline":{"type":"roleOutlineOptions", "options":[{"type":"role","role":"vigilante"}]},"result": {"type":"one","role":["vigilante"]}},
+            {"type": "auditorResult", "roleOutline":{"type":"roleOutlineOptions", "options":[{"type":"roleSet","roleSet":"townSupport"}]},"result": {"type":"two","roles":["escort","medium"]}}
         ]
     },
     "doctor": {

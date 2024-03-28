@@ -257,6 +257,9 @@ export type ToServerPacket = {
     role: Role | null,
     will: string
 } | {
+    type: "setAuditorChosenOutline",
+    index: number
+} | {
     type: "voteFastForwardPhase",
     fastForward: boolean
 }

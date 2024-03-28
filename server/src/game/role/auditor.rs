@@ -16,8 +16,8 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 #[derive(Clone, Debug, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Auditor{
-    chosen_outline: Option<u8>,
-    previously_given_results: Vec<(u8, AuditorResult)>,
+    pub chosen_outline: Option<u8>,
+    pub previously_given_results: Vec<(u8, AuditorResult)>,
 }
 
 #[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
@@ -45,13 +45,17 @@ impl RoleStateImpl for Auditor {
             None => unreachable!("Auditor role outline not found")
         };
         
-        let fake_role = 
-            match game.settings.role_list.0.get(chosen_outline as usize){
-                Some(outline) => 
-                    outline.get_roles().into_iter().filter(|x|!game.settings.excluded_roles.contains(x)).collect::<Vec<Role>>(),
-                None => unreachable!("Auditor role outline not found")
-            }
-                .choose(&mut rand::thread_rng()).cloned();
+        let outline = match game.settings.role_list.0.get(chosen_outline as usize){
+            Some(outline) => outline,
+            None => unreachable!("Auditor role outline not found")
+        };
+        let fake_role = outline
+            .get_roles()
+            .into_iter()
+            .filter(|x|!game.settings.excluded_roles.contains(x))
+            .collect::<Vec<Role>>()
+            .choose(&mut rand::thread_rng())
+            .cloned();
 
         let result = if let Some(fake_role) = fake_role{
             if fake_role != role{
@@ -66,7 +70,7 @@ impl RoleStateImpl for Auditor {
         };
 
         let message = ChatMessageVariant::AuditorResult {
-            role_outline: chosen_outline,
+            role_outline: outline.clone(),
             result: result.clone()
         };
         self.previously_given_results.push((chosen_outline, result));
@@ -76,8 +80,8 @@ impl RoleStateImpl for Auditor {
             
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
-    fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_target(game, actor_ref, target_ref)
+    fn can_night_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
+        false
     }
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false
@@ -101,7 +105,15 @@ impl RoleStateImpl for Auditor {
     fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
         crate::game::role::common_role::get_won_game(game, actor_ref)
     }
-    fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType) {}
+    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
+        match phase {
+            PhaseType::Obituary => {
+                self.chosen_outline = None;
+                actor_ref.set_role_state(game, super::RoleState::Auditor(self));
+            },
+            _ => {}
+        }
+    }
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){

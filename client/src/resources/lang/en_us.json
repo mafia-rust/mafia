@@ -164,6 +164,11 @@
     "role.spy.target": "Bug",
     "role.spy.dayTarget": "Special",
 
+    "role.auditor.name": "Auditor",
+    "role.auditor.name:var.0": "Auditors",
+    "role.auditor.target": "Target",
+    "role.auditor.dayTarget": "Special",
+
     "role.doctor.name": "Guardian",
     "role.doctor.name:var.0": "Guardians",
     "role.doctor.target": "Protect",
@@ -431,6 +436,7 @@
 
     "standard":"Standard",
 
+    "choose":"Choose",
     "role": "Role",
     "day": "Day",
     "day:var.0": "Daytime",
@@ -562,6 +568,8 @@
     "chatMessage.psychicGood":"At least one of these players is good: \\0",
     "chatMessage.psychicEvil":"At least one of these players is evil: \\0",
     "chatMessage.psychicFailed":"There are not enough living players to have a vision.",
+    "chatMessage.auditorResult.one":"You audited \\0. That is \\1.",
+    "chatMessage.auditorResult.two":"You audited \\0. That could be either \\1 or \\2.",
     "chatMessage.targetsMessage":"Your target got the following message:",
     "chatMessage.youWerePossessed":"You were possessed.",
     "chatMessage.youWerePossessed.immune":"Someone tried to possess you but you are immune.",
@@ -851,6 +859,11 @@
     "wiki.article.role.psychic.abilities":"* Get an evil vision on odd nights\n* Get a good vision on even nights",
     "wiki.article.role.psychic.attributes":"* Evil visions list three players, at least one of them is not a townie\n* Good visions list two players, at least one of them is a townie",
     "wiki.article.role.psychic.extra": "* If there aren't enough evil or good players to have a vision, the ability fails\n* You can not be listed in your own vision\n* You still get visions after you are dead\n* You do not visit the players in your vision\n* Players with a suspicious aura can't be listed in your good vision\n* Players with an innocent aura can't be listed in your evil vision",
+
+    "wiki.article.role.auditor.guide": "- At night, choose an outline from the list\n    - You are told two roles, one of those roles were assigned to a player from that outline\n    - You visit the player who was assigned that role, but you are not told who that player is\n\n_For Example_\n- You choose the outline \"Town Killing\" and are told that a vigilante or a veteran generated from that outline, and you are attacked by the veteran",
+    "wiki.article.role.auditor.abilities":"- Choose an outline\n    - You are told what role was generated from that outline and one other random role\n    - You visit the player who was assigned the role from the outline",
+    "wiki.article.role.auditor.attributes":"- You are not told who the player with the role is\n- The random role you are told is from the outline you chose",
+    "wiki.article.role.auditor.extra":"- Your ability works independently of your visits\n    - Your visit getting possessed or transported doesn't impact your ability\n    - If you visit a player in jail, you aren't told, and you still get results\n    - If you are roleblocked, you don't get results",
 
     "wiki.article.role.doctor.guide": "- At night, select a player to protect\n    - Whoever you protect doesn't die if they're attacked\n    - You and the player you protected are both told if they are attacked\n- You can select yourself to protect yourself once per game\n- If your target is attacked by a protection-piercing attack they still die\n\nYou should try to protect people you think are townies who will be attacked.",
     "wiki.article.role.doctor.abilities":"* Visit a player to grant protected defense for that night",

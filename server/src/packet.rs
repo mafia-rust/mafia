@@ -230,6 +230,8 @@ pub enum ToServerPacket{
     },
     #[serde(rename_all = "camelCase")]
     SetForgerWill{ role: Option<Role>, will: String },
+    SetAuditorChosenOutline{index: u8},
+
 
     #[serde(rename_all = "camelCase")]
     VoteFastForwardPhase{fast_forward: bool},
