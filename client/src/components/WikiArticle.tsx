@@ -37,6 +37,16 @@ export default function WikiArticle(props: {
                         {replaceMentions(translateChecked("wiki.article.role."+role+".guide") ?? translate("wiki.article.role.noGuide"), DUMMY_NAMES)}
                     </StyledText>
                 </div>
+                {roleData.aura && <div>
+                    <StyledText markdown={true}>
+                        {"### "+translate("wiki.article.standard.aura.title")+": "+translate(roleData.aura+"Aura")+"\n"}
+                    </StyledText>
+                </div>}
+                {roleData.armor && <div>
+                    <StyledText markdown={true}>
+                        {"### "+translate("defense")+": "+translate("defense.1")+"\n"}
+                    </StyledText>
+                </div>}
                 <div className="wiki-message-section">
                     <StyledText markdown={true}>
                         {"### "+translate("wiki.article.role.chatMessages")+"\n"}
@@ -50,16 +60,6 @@ export default function WikiArticle(props: {
                         } playerNames={DUMMY_NAMES}/>
                     )}
                 </div>
-                {roleData.aura && <div>
-                    <StyledText markdown={true}>
-                        {"### "+translate("wiki.article.standard.aura.title")+": "+translate(roleData.aura+"Aura")+"\n"}
-                    </StyledText>
-                </div>}
-                {roleData.armor && <div>
-                    <StyledText markdown={true}>
-                        {"### "+translate("defense")+": "+translate("defense.1")+"\n"}
-                    </StyledText>
-                </div>}
                 <details>
                     <summary>{translate("wiki.article.role.details")}</summary>
                     <div>
