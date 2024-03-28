@@ -26,9 +26,7 @@ export default function LobbyNamePane(): ReactElement {
         {!isSpectator && <NameSelector/>}
         {isSpectator && <button
             onClick={()=>{GAME_MANAGER.sendSetSpectatorPacket(false)}}
-        >BECOME PLAYER</button>}
-        
-
+        >{translate("switchToPlayer")}</button>}
     </section>
 }
 
@@ -37,11 +35,11 @@ function NameSelector(): ReactElement {
     const [enteredName, setEnteredName] = React.useState("");
 
     return <>
-        <div>
-            <h2>{GAME_MANAGER.getMyName() ?? ""}</h2>
+        <div className="lobby-name">
+            <section><h2>{GAME_MANAGER.getMyName() ?? ""}</h2></section>
             <button
                 onClick={()=>{GAME_MANAGER.sendSetSpectatorPacket(true)}}
-            >BECOME SPECTATOR</button>
+            >{translate("switchToSpectator")}</button>
         </div>
         <div className="name-box">
             <input type="text" value={enteredName}

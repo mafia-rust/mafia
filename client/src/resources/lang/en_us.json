@@ -26,6 +26,8 @@
     "menu.lobby.settings": "Settings:",
 
     "importFromClipboard": "Import from clipboard",
+    "switchToSpectator": "Spectate",
+    "switchToPlayer": "Play",
 
     "menu.settings.volume": "Volume",
     "menu.settings.gameSettingsEditor": "Game Mode Editor",
