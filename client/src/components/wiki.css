@@ -30,7 +30,8 @@
 }
 .wiki-article {
     text-align: left;
-    height: max-content;
+    height: 100%;
+    width: 100%;
     overflow-y: auto;
 }
 /* Markdown */
@@ -98,6 +99,6 @@
     text-align: left;
 }
 .wiki-cover-card {
-    max-height: 40rem;
-    max-width: 50rem;
+    height: 100%;
+    width: 100%;
 }
