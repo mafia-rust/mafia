@@ -20,10 +20,6 @@ s {
     text-decoration-thickness: 2px;
 }
 
-*.material-icons-round {
-    font-size: 1.2em;
-}
-
 *{
     text-align: center;
     box-sizing: border-box;

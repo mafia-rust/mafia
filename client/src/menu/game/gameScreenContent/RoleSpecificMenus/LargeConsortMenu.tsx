@@ -3,6 +3,7 @@ import GAME_MANAGER from "../../../.."
 import translate from "../../../../game/lang"
 import "./largeConsortMenu.css"
 import ChatElement from "../../../../components/ChatMessage"
+import Icon from "../../../../components/Icon"
 
 type LargeConsortMenuProps = {
 }
@@ -138,8 +139,8 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
             <div>
                 
                 {translate("wiki.article.standard.roleblock.title")}
-                <label className="material-icons-round" onClick={()=>this.handleRoleblockToggle()}>
-                    {this.state.roleblock ? "check" : "close"}
+                <label onClick={()=>this.handleRoleblockToggle()}>
+                    <Icon>{this.state.roleblock ? "check" : "close"}</Icon>
                 </label>
 
             </div>
@@ -158,8 +159,8 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
                     },
                     chatGroup:null
                 }}/>
-                <label className="material-icons-round" onClick={()=>this.handleYouWereRoleblockedMessageToggle()}>
-                    {this.state.youWereRoleblockedMessage ? "check" : "close"}
+                <label onClick={()=>this.handleYouWereRoleblockedMessageToggle()}>
+                    <Icon>{this.state.youWereRoleblockedMessage ? "check" : "close"}</Icon>
                 </label>
                 
             </div>
@@ -170,8 +171,8 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
                     },
                     chatGroup:null
                 }}/>
-                <label className="material-icons-round" onClick={()=>this.handleYouSurvivedAttackMessageToggle()}>
-                    {this.state.youSurvivedAttackMessage ? "check" : "close"}
+                <label onClick={()=>this.handleYouSurvivedAttackMessageToggle()}>
+                    <Icon>{this.state.youSurvivedAttackMessage ? "check" : "close"}</Icon>
                 </label>
                 
             </div>
@@ -182,8 +183,8 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
                     },
                     chatGroup:null
                 }}/>
-                <label className="material-icons-round" onClick={()=>this.handleYouWereProtectedMessageToggle()}>
-                    {this.state.youWereProtectedMessage ? "check" : "close"}
+                <label onClick={()=>this.handleYouWereProtectedMessageToggle()}>
+                    <Icon>{this.state.youWereProtectedMessage ? "check" : "close"}</Icon>
                 </label>
                 
             </div>
@@ -194,8 +195,8 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
                     },
                     chatGroup:null
                 }}/>
-                <label className="material-icons-round" onClick={()=>this.handleYouWereTransportedMessageToggle()}>
-                    {this.state.youWereTransportedMessage ? "check" : "close"}
+                <label onClick={()=>this.handleYouWereTransportedMessageToggle()}>
+                    <Icon>{this.state.youWereTransportedMessage ? "check" : "close"}</Icon>
                 </label>
                 
             </div>
@@ -214,8 +215,8 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
                     },
                     chatGroup:null
                 }}/>
-                <label className="material-icons-round" onClick={()=>this.handleYouWerePossessedMessageToggle()}>
-                    {this.state.youWerePossessedMessage ? "check" : "close"}
+                <label onClick={()=>this.handleYouWerePossessedMessageToggle()}>
+                    <Icon>{this.state.youWerePossessedMessage ? "check" : "close"}</Icon>
                 </label>
                 
             </div>
@@ -226,8 +227,8 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
                     },
                     chatGroup:null
                 }}/>
-                <label className="material-icons-round" onClick={()=>this.handleYourTargetWasJailedMessageToggle()}>
-                    {this.state.yourTargetWasJailedMessage ? "check" : "close"}
+                <label onClick={()=>this.handleYourTargetWasJailedMessageToggle()}>
+                    <Icon>{this.state.yourTargetWasJailedMessage ? "check" : "close"}</Icon>
                 </label>
             </div>            
         </div>

@@ -64,7 +64,7 @@
     100% { transform: translateX(0%); }
 }
 
-.settings-button {
+.anchor .settings-button {
     z-index: 101;
     position: fixed;
     right: .2rem;
