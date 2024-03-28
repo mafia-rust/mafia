@@ -119,6 +119,20 @@
             {"type": "spyCultistCount", "count": 2}
         ]
     },
+    "auditor": {
+        "faction": "town",
+        "roleSet": "townInvestigative",
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "auditorResult", "roleOutline":{"type":"any"},"result": ["godfather","jester"]},
+            {"type": "auditorResult", "roleOutline":{"type":"roleOutlineOptions", "roleOutlineOptions":[{"type":"role","role":"vigilante"}]},"result": ["vigilante"]},
+            {"type": "auditorResult", "roleOutline":{"type":"roleOutlineOptions", "roleOutlineOptions":[{"type":"roleSet","roleSet":"townSupport"}]},"result": ["escort","medium"]}
+        ]
+    },
     "doctor": {
         "faction": "town",
         "roleSet": "townProtective",
