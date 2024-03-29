@@ -21,12 +21,14 @@ export type GameManager = {
     setDisconnectedState(): void;
     setLobbyState(): void;
     setGameState(): void;
+    setSpectatorGameState(): void;
     setOutsideLobbyState(): void;
     
 
     state: State,
     getMyName(): string | undefined,
     getMyHost(): boolean | undefined,
+    getMySpectator(): boolean,
     getPlayerNames(): string[],
 
     server: Server,

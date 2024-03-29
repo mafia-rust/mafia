@@ -112,10 +112,10 @@ async function joinGame(roomCode?: number, playerId?: number): Promise<boolean> 
     }
 
     if (success) {
-        if (GAME_MANAGER.state.stateType === "lobby")
-            Anchor.setContent(<LobbyMenu/>)
-        else if(GAME_MANAGER.state.stateType === "game")
-            Anchor.setContent(GameScreen.createDefault())
+        // if (GAME_MANAGER.state.stateType === "lobby")
+        //     Anchor.setContent(<LobbyMenu/>)
+        // else if(GAME_MANAGER.state.stateType === "game")
+        //     Anchor.setContent(GameScreen.createDefault())
     } else {
         Anchor.setContent(<PlayMenu/>);
     }

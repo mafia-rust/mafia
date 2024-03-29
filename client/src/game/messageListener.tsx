@@ -13,6 +13,7 @@ import { deleteReconnectData, saveReconnectData } from "./localStorage";
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import React from "react";
 import WikiArticle from "../components/WikiArticle";
+import SpectatorGameScreen from "../menu/spectator/SpectatorGameScreen";
 
 export default function messageListener(packet: ToClientPacket){
 
@@ -33,14 +34,15 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "acceptJoin":
-            if(packet.inGame){
+            if(packet.inGame && packet.spectator){
+                GAME_MANAGER.setSpectatorGameState();
+                Anchor.setContent(<SpectatorGameScreen/>);
+            }else if(packet.inGame && !packet.spectator){
                 GAME_MANAGER.setGameState();
             }else{
                 GAME_MANAGER.setLobbyState();
             }
-            if(GAME_MANAGER.state.stateType === "game" && packet.spectator){
-                GAME_MANAGER.state.clientState = {type: "spectator"};
-            }
+            
 
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
                 GAME_MANAGER.state.roomCode = packet.roomCode;
@@ -145,8 +147,14 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "startGame":
-            GAME_MANAGER.setGameState();
-            Anchor.setContent(GameScreen.createDefault());
+            const isSpectator = GAME_MANAGER.getMySpectator();
+            if(isSpectator){
+                GAME_MANAGER.setSpectatorGameState();
+                Anchor.setContent(<SpectatorGameScreen/>);
+            }else{
+                GAME_MANAGER.setGameState();
+                Anchor.setContent(GameScreen.createDefault());
+            }
         break;
         case "gamePlayers":
             if(GAME_MANAGER.state.stateType === "game"){

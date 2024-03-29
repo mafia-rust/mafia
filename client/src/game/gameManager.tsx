@@ -58,6 +58,13 @@ export function createGameManager(): GameManager {
                 GAME_MANAGER.state.roomCode = roomCode;
             }
         },
+        setSpectatorGameState() {
+            this.setGameState();
+            if(GAME_MANAGER.state.stateType === "game")
+                GAME_MANAGER.state.clientState = {
+                    type: "spectator"
+                };
+        },
         async setOutsideLobbyState() {
             Anchor.stopAudio();
             
@@ -93,6 +100,13 @@ export function createGameManager(): GameManager {
             if (gameManager.state.stateType === "game" && gameManager.state.clientState.type === "player")
                 return gameManager.state.players[gameManager.state.clientState.myIndex!]?.host;
             return undefined;
+        },
+        getMySpectator() {
+            if (gameManager.state.stateType === "lobby")
+                return gameManager.state.players.get(gameManager.state.myId!)?.clientType.type === "spectator";
+            if (gameManager.state.stateType === "game")
+                return gameManager.state.clientState.type === "spectator";
+            return false;
         },
         getPlayerNames(): string[] {
             switch (GAME_MANAGER.state.stateType) {
