@@ -94,7 +94,7 @@ impl RoleStateImpl for Auditor {
             None => unreachable!("Auditor role outline not found")
         };
 
-        vec![Visit{ target: player, astral: false, attack: false }]
+        vec![Visit{ target: player, attack: false }]
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
