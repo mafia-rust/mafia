@@ -96,24 +96,24 @@ impl PlayerReference{
     }
     
     
-    pub fn tracker_seen_visits(self, game: &Game) -> Vec<&Visit> {
+    pub fn tracker_seen_visits(self, game: &Game) -> Vec<Visit> {
         if let Some(v) = self.night_appeared_visits(game) {
-            v.iter().filter(|v|!v.astral).collect()
+            v.clone()
         } else {
-            self.night_visits(game).iter().filter(|v|!v.astral).collect()
+            self.night_visits(game).clone()
         }
     }
-    pub fn lookout_seen_players(self, game: &Game) -> Vec<PlayerReference> {
+    pub fn appeared_visitors(self, game: &Game) -> Vec<PlayerReference> {
         PlayerReference::all_players(game).filter(|player_ref|{
             player_ref.tracker_seen_visits(game).iter().any(|other_visit| 
-                other_visit.target == self && !other_visit.astral
+                other_visit.target == self
             )
         }).collect()
     }
-    pub fn veteran_seen_players(self, game: &Game) -> Vec<PlayerReference> {
+    pub fn all_visitors(self, game: &Game) -> Vec<PlayerReference> {
         PlayerReference::all_players(game).filter(|player_ref|{
             player_ref.night_visits(game).iter().any(|other_visit| 
-                other_visit.target == self && !other_visit.astral
+                other_visit.target == self
             )
         }).collect()
     }

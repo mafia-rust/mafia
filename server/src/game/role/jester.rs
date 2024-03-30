@@ -31,7 +31,7 @@ impl RoleStateImpl for Jester {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::TopPriority {return;}
 
-        if game.day_number() == 1{
+        if game.day_number() == 1 {
             actor_ref.increase_defense_to(game, 2);
         }
 
@@ -46,19 +46,16 @@ impl RoleStateImpl for Jester {
                 player_ref.verdict(game) == Verdict::Guilty
             }).collect();
     
-        let visit: Visit = match actor_ref.night_visits(game).first() {
-            Some(v) => v.clone(),
+        let player = match actor_ref.chosen_targets(game).first() {
+            Some(v) => *v,
             None => {
                 let Some(target_ref) = all_killable_players.choose(&mut rand::thread_rng()) else {return};
-                Visit{
-                    target: *target_ref,
-                    astral: true,
-                    attack: true,
-                }
+                *target_ref
             },
         };
-    
-        visit.target.try_night_kill(actor_ref, game, crate::game::grave::GraveKiller::Role(super::Role::Jester), 3, true);
+        player.try_night_kill(actor_ref, game, 
+            crate::game::grave::GraveKiller::Role(super::Role::Jester), 3, true
+        );
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         actor_ref != target_ref &&
@@ -74,8 +71,8 @@ impl RoleStateImpl for Jester {
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false
     }
-    fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, true, true)
+    fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        vec![]
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
