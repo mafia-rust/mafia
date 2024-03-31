@@ -14,6 +14,7 @@ import { WikiArticleLink } from "../components/WikiArticleLink";
 import React from "react";
 import WikiArticle from "../components/WikiArticle";
 import SpectatorGameScreen from "../menu/spectator/SpectatorGameScreen";
+import LobbyMenu from "../menu/lobby/LobbyMenu";
 
 export default function messageListener(packet: ToClientPacket){
 
@@ -39,8 +40,10 @@ export default function messageListener(packet: ToClientPacket){
                 Anchor.setContent(<SpectatorGameScreen/>);
             }else if(packet.inGame && !packet.spectator){
                 GAME_MANAGER.setGameState();
+                Anchor.setContent(GameScreen.createDefault());
             }else{
                 GAME_MANAGER.setLobbyState();
+                Anchor.setContent(<LobbyMenu/>);
             }
             
 

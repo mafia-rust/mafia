@@ -5,8 +5,6 @@ import Anchor from './menu/Anchor';
 import { GameManager, createGameManager } from './game/gameManager';
 import StartMenu from './menu/main/StartMenu';
 import LoadingScreen from './menu/LoadingScreen';
-import LobbyMenu from './menu/lobby/LobbyMenu';
-import GameScreen from './menu/game/GameScreen';
 import { deleteReconnectData, loadReconnectData } from './game/localStorage';
 
 export type Theme = "player-list-menu-colors" | "will-menu-colors" | "role-specific-colors" | "graveyard-menu-colors" | "wiki-menu-colors" | null
@@ -43,9 +41,7 @@ async function route(url: Location) {
         } catch {
             success = false;
         }
-        if (success) {
-            Anchor.setContent(<LobbyMenu/>)
-        } else {
+        if (!success) {
             await GAME_MANAGER.setDisconnectedState();
             Anchor.setContent(<StartMenu/>)
         }
@@ -53,12 +49,7 @@ async function route(url: Location) {
         await GAME_MANAGER.setOutsideLobbyState();
 
         const success = await GAME_MANAGER.sendRejoinPacket(reconnectData.roomCode, reconnectData.playerId);
-        if (success) {
-            if (GAME_MANAGER.state.stateType === "lobby")
-                Anchor.setContent(<LobbyMenu/>)
-            else if(GAME_MANAGER.state.stateType === "game")
-                Anchor.setContent(GameScreen.createDefault())
-        } else {
+        if (!success) {
             // Don't show an error message for an auto-rejoin. The user didn't prompt it - they will be confused.
             // Reconnect data is deleted in messageListener
             await GAME_MANAGER.setDisconnectedState();
