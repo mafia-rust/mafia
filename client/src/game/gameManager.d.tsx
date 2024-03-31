@@ -103,6 +103,8 @@ export type GameManager = {
         yourTargetWasJailedMessage: boolean
     ): void
     sendSetForgerWill(role: Role | null, will: string): void;
+    sendSetAuditorChosenOutline(index: number): void;
+
     sendVoteFastForwardPhase(fastForward: boolean): void;
 
     messageListener(serverMessage: ToClientPacket): void;

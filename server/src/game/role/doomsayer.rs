@@ -34,7 +34,7 @@ impl DoomsayerGuess{
     fn convert_to_guess(role: Role)->Option<DoomsayerGuess>{
         match role {
             Role::Jailor => Some(DoomsayerGuess::Jailor),
-            Role::Sheriff | Role::Lookout | Role::Spy | Role::Tracker | Role::Seer | Role::Psychic => None, 
+            Role::Sheriff | Role::Lookout | Role::Spy | Role::Tracker | Role::Seer | Role::Psychic | Role::Auditor => None, 
             Role::Doctor => Some(DoomsayerGuess::Doctor),
             Role::Bodyguard => Some(DoomsayerGuess::Bodyguard),
             Role::Crusader => Some(DoomsayerGuess::Crusader),

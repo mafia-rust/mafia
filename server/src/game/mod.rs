@@ -23,6 +23,7 @@ use serde::Serialize;
 
 use crate::client_connection::ClientConnection;
 use crate::game::event::OnGameStart;
+use crate::game::player::PlayerIndex;
 use crate::packet::ToClientPacket;
 use chat::{ChatMessageVariant, ChatGroup, ChatMessage};
 use player::PlayerReference;
@@ -35,10 +36,10 @@ use self::end_game_condition::EndGameCondition;
 use self::event::{OnGameEnding, OnPhaseStart};
 use self::phase::PhaseState;
 use self::player::PlayerInitializeParameters;
-use self::role::RoleState;
 use self::spectator::spectator_pointer::SpectatorPointer;
 use self::spectator::Spectator;
 use self::spectator::SpectatorInitializeParameters;
+use self::role::{Role, RoleState};
 use self::team::Teams;
 use self::verdict::Verdict;
 
@@ -48,6 +49,7 @@ pub struct Game {
 
     pub spectators: Vec<Spectator>,
     pub spectator_chat_messages: Vec<ChatMessageVariant>,
+    pub roles_to_players: Vec<(Role, PlayerReference)>,
 
     pub players: Box<[Player]>,
     pub graves: Vec<Grave>,
@@ -96,19 +98,17 @@ impl Game {
             }
 
             let settings = settings.clone();
-            let mut role_list = settings.role_list.clone();
-            role_list.sort();
+            let role_list = settings.role_list.clone();
 
 
-            let mut roles = match role_list.create_random_roles(&settings.excluded_roles){
+            let roles_to_players = Self::assign_players_to_roles(match role_list.create_random_roles(&settings.excluded_roles){
                 Some(roles) => {roles},
                 None => {return Err(RejectStartReason::RoleListCannotCreateRoles);}
-            };
-            roles.shuffle(&mut thread_rng());
+            });
 
-
-
-
+            let mut roles_to_players_clone = roles_to_players.clone();
+            roles_to_players_clone.sort_by(|(_, i), (_,j)| i.cmp(j));
+            let shuffled_roles = roles_to_players_clone.into_iter().map(|(r,_)|r).collect::<Vec<Role>>();
 
 
             let mut new_players = Vec::new();
@@ -119,18 +119,17 @@ impl Game {
                 let new_player = Player::new(
                     player.name.clone(),
                     sender.clone(),
-                    match roles.get(player_index){
+                    match shuffled_roles.get(player_index){
                         Some(role) => *role,
-                        None => {
-                            return Err(RejectStartReason::RoleListTooSmall);
-                        },
+                        None => return Err(RejectStartReason::RoleListTooSmall),
                     }
                 );
                 new_players.push(new_player);
             }
-            drop(roles); // Ensure we don't use the order of roles anywhere
+            drop(shuffled_roles); // Ensure we don't use the order of roles anywhere
 
             let game = Self{
+                roles_to_players: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
                 ticking: true,
                 spectators: spectators.clone().into_iter().map(|spectator|Spectator::new(spectator)).collect(),
                 spectator_chat_messages: Vec::new(),
@@ -156,6 +155,12 @@ impl Game {
 
         Ok(game)
     }
+    fn assign_players_to_roles(roles: Vec<Role>)->Vec<(Role, PlayerIndex)>{
+        let mut player_indices: Vec<PlayerIndex> = (0..roles.len() as PlayerIndex).collect();
+        player_indices.shuffle(&mut thread_rng());
+        roles.into_iter().zip(player_indices.into_iter()).collect()
+    }
+
 
     /// Returns a tuple containing the number of guilty votes and the number of innocent votes
     pub fn count_verdict_votes(&self, player_on_trial: PlayerReference)->(u8,u8){
@@ -339,7 +344,17 @@ impl Game {
 pub mod test {
     use rand::{thread_rng, seq::SliceRandom};
 
-    use super::{phase::PhaseStateMachine, player::{test::mock_player, PlayerReference}, role_list::RoleOutline, settings::Settings, spectator::spectator_pointer::SpectatorPointer, team::Teams, Game, RejectStartReason};
+    use super::{
+        phase::PhaseStateMachine,
+        player::{test::mock_player, PlayerIndex, PlayerReference},
+        role::Role,
+        settings::Settings,
+        spectator::spectator_pointer::SpectatorPointer,
+        team::Teams,
+        Game,
+        RejectStartReason
+    };
+
 
     pub fn mock_game(settings: Settings, number_of_players: usize) -> Result<Game, RejectStartReason> {
 
@@ -347,31 +362,35 @@ pub mod test {
         if settings.phase_times.game_ends_instantly() {
             return Err(RejectStartReason::ZeroTimeGame);
         }
+
+        let settings = settings.clone();
+        let role_list = settings.role_list.clone();
         
-        let mut roles = match settings.role_list.create_random_roles(&settings.excluded_roles){
-            Some(roles) => {
-                roles
-            },
-            None => {
-                return Err(RejectStartReason::RoleListCannotCreateRoles);
-            }
-        };
-        roles.shuffle(&mut thread_rng());
+        let roles_to_players = assign_players_to_roles(match role_list.create_random_roles(&settings.excluded_roles){
+            Some(roles) => {roles},
+            None => {return Err(RejectStartReason::RoleListCannotCreateRoles);}
+        });
+        
+        let mut roles_to_players_clone = roles_to_players.clone();
+        roles_to_players_clone.sort_by(|(_, i), (_,j)| i.cmp(j));
+        let shuffled_roles = roles_to_players_clone.into_iter().map(|(r,_)|r).collect::<Vec<Role>>();
+
 
         let mut players = Vec::new();
         for player_index in 0..number_of_players {
             let new_player = mock_player(
                 format!("{}",player_index),
-                match roles.get(player_index){
+                match shuffled_roles.get(player_index){
                     Some(role) => *role,
-                    None => RoleOutline::Any.get_random_role(&settings.excluded_roles, &roles).expect("Any should have open roles"),
+                    None => return Err(RejectStartReason::RoleListTooSmall),
                 }
             );
             players.push(new_player);
         }
-        drop(roles); // Ensure we don't use the order of roles anywhere
+        drop(shuffled_roles); // Ensure we don't use the order of roles anywhere
 
         let mut game = Game{
+            roles_to_players: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
             ticking: true,
             spectators: Vec::new(),
             spectator_chat_messages: Vec::new(),
@@ -400,4 +419,10 @@ pub mod test {
 
         Ok(game)
     }
+    fn assign_players_to_roles(roles: Vec<Role>)->Vec<(Role, PlayerIndex)>{
+        let mut player_indices: Vec<PlayerIndex> = (0..roles.len() as PlayerIndex).collect();
+        player_indices.shuffle(&mut thread_rng());
+        roles.into_iter().zip(player_indices.into_iter()).collect()
+    }
+
 }

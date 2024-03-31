@@ -432,6 +432,13 @@ export function createGameManager(): GameManager {
                 will: will
             });
         },
+        sendSetAuditorChosenOutline(index) {
+            this.server.sendPacket({
+                type: "setAuditorChosenOutline",
+                index: index
+            });
+        },
+
         sendVoteFastForwardPhase(fastForward: boolean) {
             this.server.sendPacket({
                 type: "voteFastForwardPhase",

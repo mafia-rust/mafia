@@ -54,7 +54,7 @@ impl RoleStateImpl for Bodyguard {
                 for attacker_ref in PlayerReference::all_players(game){
                     let mut new_visits = vec![];
                     for mut attacking_visit in attacker_ref.night_visits(game).clone(){
-                        if attacking_visit.target == target_ref && !attacking_visit.astral && attacking_visit.attack {
+                        if attacking_visit.target == target_ref && attacking_visit.attack {
                             attacking_visit.target = actor_ref;
                             redirected_player_refs.push(attacker_ref);
                             target_protected_ref = Some(target_ref);
@@ -119,7 +119,7 @@ impl RoleStateImpl for Bodyguard {
         false
     }
     fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false, false)
+        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false)
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])

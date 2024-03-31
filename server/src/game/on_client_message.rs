@@ -227,7 +227,25 @@ impl Game {
                     forger.fake_will = will;
                     sender_player_ref.set_role_state(self, RoleState::Forger(forger));
                 }
-            }
+            },
+            ToServerPacket::SetAuditorChosenOutline { index } => {
+                if !sender_player_ref.alive(self) {break 'packet_match;}
+
+                if let RoleState::Auditor(mut auditor) = sender_player_ref.role_state(self).clone(){
+
+                    if auditor.chosen_outline.is_some_and(|f|f == index) {
+                        auditor.chosen_outline = None;
+                    }
+
+                    if  !self.roles_to_players.get(index as usize).is_none() && 
+                        !auditor.previously_given_results.iter().any(|(i, _)| *i == index)
+                    {
+                        auditor.chosen_outline = Some(index);
+                    }
+
+                    sender_player_ref.set_role_state(self, RoleState::Auditor(auditor));
+                }
+            },
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {
                 sender_player_ref.set_fast_forward_vote(self, fast_forward);
             }
