@@ -1,6 +1,6 @@
 use std::{collections::VecDeque, time::Instant};
 
-use crate::game::player::PlayerIndex;
+use crate::game::{player::PlayerIndex, spectator::spectator_pointer::SpectatorIndex};
 
 #[derive(Clone, Debug)]
 pub struct GameClient{
@@ -12,12 +12,12 @@ pub struct GameClient{
 #[derive(Clone, Debug)]
 pub enum GameClientLocation {
     Player(PlayerIndex),
-    Spectator
+    Spectator(SpectatorIndex)
 }
 impl GameClient {
-    pub fn new_spectator(host: bool)->Self{
+    pub fn new_spectator(index: SpectatorIndex, host: bool)->Self{
         GameClient{
-            client_location: GameClientLocation::Spectator,
+            client_location: GameClientLocation::Spectator(index),
             host,
             last_message_times: VecDeque::new(),
         }

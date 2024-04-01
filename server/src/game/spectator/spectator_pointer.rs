@@ -6,13 +6,14 @@ use crate::{
 
 use super::Spectator;
 
+pub type SpectatorIndex = u8;
 ///
 /// This does not garuntee that the spectator exists
 pub struct SpectatorPointer {
-    pub index: u8,
+    pub index: SpectatorIndex,
 }
 impl SpectatorPointer {
-    pub fn new(index: u8) -> Self {
+    pub fn new(index: SpectatorIndex) -> Self {
         SpectatorPointer { index }
     }
 
@@ -39,7 +40,7 @@ impl SpectatorPointer {
     pub fn all_spectators(game: &Game) -> SpectatorPointerIterator {
         SpectatorPointerIterator {
             current: 0,
-            end: game.spectators.len() as u8
+            end: game.spectators.len() as SpectatorIndex
         }
     }
 

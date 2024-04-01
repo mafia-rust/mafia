@@ -1,6 +1,6 @@
 use std::{collections::{HashMap, HashSet, VecDeque}, time::{Duration, Instant}};
 
-use crate::{game::{phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::SpectatorInitializeParameters, Game}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, websocket_connections::connection::ClientSender};
+use crate::{game::{phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, websocket_connections::connection::ClientSender};
 
 use super::{lobby_client::{LobbyClientID, LobbyClientType}, name_validation::{self, sanitize_server_name}, Lobby, LobbyState};
 
@@ -113,11 +113,11 @@ impl Lobby {
                 self.send_to_all(ToClientPacket::LobbyName { name })
             },
             ToServerPacket::StartGame => {
-                let LobbyState::Lobby { settings, clients: players } = &mut self.lobby_state else {
+                let LobbyState::Lobby { settings, clients } = &mut self.lobby_state else {
                     log!(error "Lobby"; "{} {}", "ToServerPacket::StartGame can not be used outside of LobbyState::Lobby", player_id);
                     return
                 };
-                if let Some(player) = players.get(&player_id){
+                if let Some(player) = clients.get(&player_id){
                     if !player.host {return}
                 }
 
@@ -126,9 +126,9 @@ impl Lobby {
                 
                 self.send_to_all(ToClientPacket::RoleList { role_list });
 
-                let mut player_indices: HashMap<LobbyClientID, GameClient> = HashMap::new();
-                let mut game_players = Vec::new();
-                let mut game_spectators = Vec::new();
+                let mut game_clients: HashMap<LobbyClientID, GameClient> = HashMap::new();
+                let mut game_player_params = Vec::new();
+                let mut game_spectator_params = Vec::new();
 
 
                 let LobbyState::Lobby { settings, clients} = &mut self.lobby_state else {
@@ -136,25 +136,29 @@ impl Lobby {
                 };
 
                 let mut next_player_index: PlayerIndex = 0;
+                let mut next_spectator_index: SpectatorIndex = 0;
+
                 for (lobby_client_id, lobby_client) in clients.clone().into_iter() {
                     
-                    player_indices.insert(lobby_client_id, if let LobbyClientType::Spectator = lobby_client.client_type {
-                        GameClient {
-                            client_location: GameClientLocation::Spectator,
-                            host: lobby_client.host,
-                            last_message_times: VecDeque::new(),
+                    game_clients.insert(lobby_client_id, 
+                        if let LobbyClientType::Spectator = lobby_client.client_type {
+                            GameClient {
+                                client_location: GameClientLocation::Spectator(next_spectator_index),
+                                host: lobby_client.host,
+                                last_message_times: VecDeque::new(),
+                            }
+                        } else {
+                            GameClient {
+                                client_location: GameClientLocation::Player(next_player_index),
+                                host: lobby_client.host,
+                                last_message_times: VecDeque::new(),
+                            }
                         }
-                    } else {
-                        GameClient {
-                            client_location: GameClientLocation::Player(next_player_index),
-                            host: lobby_client.host,
-                            last_message_times: VecDeque::new(),
-                        }
-                    });
+                    );
                     
                     match lobby_client.client_type {
                         LobbyClientType::Player { name } => {
-                            game_players.push(PlayerInitializeParameters{
+                            game_player_params.push(PlayerInitializeParameters{
                                 connection: lobby_client.connection,
                                 name,
                                 host: lobby_client.host,
@@ -162,15 +166,16 @@ impl Lobby {
                             next_player_index += 1;
                         },
                         LobbyClientType::Spectator => {
-                            game_spectators.push(SpectatorInitializeParameters{
+                            game_spectator_params.push(SpectatorInitializeParameters{
                                 connection: lobby_client.connection,
                                 host: lobby_client.host,
                             });
-                        }   
+                            next_spectator_index += 1;
+                        }
                     }
                 }
 
-                let game = match Game::new(settings.clone(), game_players, game_spectators){
+                let game = match Game::new(settings.clone(), game_player_params, game_spectator_params){
                     Ok(game) => game,
                     Err(err) => {
                         send.send(ToClientPacket::RejectStart { reason: err });
@@ -183,7 +188,7 @@ impl Lobby {
 
                 self.lobby_state = LobbyState::Game{
                     game,
-                    clients: player_indices,
+                    clients: game_clients,
                 };
                 let LobbyState::Game { game, clients: _player } = &mut self.lobby_state else {
                     unreachable!("LobbyState::Game was set to be to LobbyState::Game in the previous line");

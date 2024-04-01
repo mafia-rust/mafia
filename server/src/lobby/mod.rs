@@ -8,7 +8,7 @@ use std::{collections::HashMap, time::Duration,};
 
 use crate::{
     client_connection::ClientConnection, game::{
-        player::PlayerReference, role_list::RoleOutline, settings::Settings, Game
+        player::PlayerReference, role_list::RoleOutline, settings::Settings, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game
     }, listener::RoomCode, lobby::game_client::GameClientLocation, packet::{
         RejectJoinReason,
         ToClientPacket,
@@ -93,20 +93,28 @@ impl Lobby {
                 
                 Ok(player_id)
             },
-            LobbyState::Game{ clients, ..} => {
+            LobbyState::Game{ clients, game} => {
 
-                let mut new_client = GameClient::new_spectator(clients.is_empty());
+                let is_host = !clients.iter().any(|p|p.1.host);
+
+                let new_index: SpectatorIndex = game.add_spectator(SpectatorInitializeParameters {
+                    connection: ClientConnection::Connected(send.clone()),
+                    host: is_host,
+                });
+
+
+                let new_client = GameClient::new_spectator(new_index, is_host);
+
                 let player_id: LobbyClientID = 
                     clients
                         .iter()
                         .map(|(i,_)|*i)
                         .fold(0u32, u32::max) as LobbyClientID + 1u32;
 
-                if !clients.iter().any(|p|p.1.host) {
-                    new_client.set_host();
-                }
 
                 clients.insert(player_id, new_client);
+                
+
                 send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id, spectator: true});
 
 
@@ -144,11 +152,16 @@ impl Lobby {
                     Self::send_settings(player.1, settings, self.name.clone());
                 }
             },
-            LobbyState::Game { game, clients: players } => {
-                let Some(game_player) = players.get_mut(&player_id) else {return};
-                if let GameClientLocation::Player(player_index) = game_player.client_location {
-                    if let Ok(player_ref) = PlayerReference::new(game, player_index) {
-                        player_ref.quit(game);
+            LobbyState::Game { game, clients } => {
+                let Some(game_player) = clients.get_mut(&player_id) else {return};
+                match game_player.client_location {
+                    GameClientLocation::Player(player_index) => {
+                        if let Ok(player_ref) = PlayerReference::new(game, player_index) {
+                            player_ref.quit(game);
+                        }
+                    },
+                    GameClientLocation::Spectator(idx) => {
+                        game.remove_spectator(idx);
                     }
                 }
             },

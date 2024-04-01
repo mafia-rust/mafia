@@ -1,0 +1,13 @@
+
+.spectator-game-screen {
+    height: 100%;
+}
+
+.phase-started-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-size: 5rem;
+}

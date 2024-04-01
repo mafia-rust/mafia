@@ -36,9 +36,13 @@ use self::end_game_condition::EndGameCondition;
 use self::event::{OnGameEnding, OnPhaseStart};
 use self::phase::PhaseState;
 use self::player::PlayerInitializeParameters;
-use self::spectator::spectator_pointer::SpectatorPointer;
-use self::spectator::Spectator;
-use self::spectator::SpectatorInitializeParameters;
+use self::spectator::{
+    spectator_pointer::{
+        SpectatorIndex, SpectatorPointer
+    },
+    Spectator,
+    SpectatorInitializeParameters
+};
 use self::role::{Role, RoleState};
 use self::team::Teams;
 use self::verdict::Verdict;
@@ -329,6 +333,18 @@ impl Game {
             spectator.queued_chat_messages.push(message.clone());
         }
         self.spectator_chat_messages.push(message);
+    }
+
+    pub fn add_spectator(&mut self, params: SpectatorInitializeParameters) -> SpectatorIndex {
+        self.spectators.push(Spectator::new(params));
+        let spectator_pointer = SpectatorPointer::new(self.spectators.len() as SpectatorIndex - 1);
+
+        spectator_pointer.send_join_game_data(self);
+
+        spectator_pointer.index
+    }
+    pub fn remove_spectator(&mut self, i: SpectatorIndex){
+        self.spectators.remove(i as usize);
     }
 
     pub fn send_packet_to_all(&mut self, packet: ToClientPacket){

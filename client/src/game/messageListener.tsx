@@ -207,11 +207,11 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.excludedRoles = packet.roles;
         break;
         case "phase":
-            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+            if(GAME_MANAGER.state.stateType === "game"){
                 GAME_MANAGER.state.phase = packet.phase;
                 GAME_MANAGER.state.dayNumber = packet.dayNumber;
         
-                if(packet.phase === "briefing"){
+                if(packet.phase === "briefing" && GAME_MANAGER.state.clientState.type === "player"){
                     const role = GAME_MANAGER.state.clientState.roleState?.role;
                     if(role !== undefined){
                         Anchor.setCoverCard(<WikiArticle article={"role/"+role as WikiArticleLink}/>, "wiki-menu-colors");

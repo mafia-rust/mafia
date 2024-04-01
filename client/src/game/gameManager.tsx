@@ -4,7 +4,7 @@ import GAME_MANAGER from "./../index";
 import messageListener from "./messageListener";
 import CONFIG from "./../resources/config.json"
 import React from "react";
-import { PhaseType, PhaseTimes, Verdict } from "./gameState.d";
+import { PhaseType, PhaseTimes, Verdict, Player } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
 import { LobbyPreviewData, ToClientPacket, ToServerPacket } from "./packet";
 import { RoleOutline } from "./roleListState.d";
@@ -115,6 +115,15 @@ export function createGameManager(): GameManager {
                 default:
                     return DUMMY_NAMES;
             }
+        },
+        getLivingPlayers(): Player[] | null{
+            if(GAME_MANAGER.state.stateType !== "game") return null;
+            return GAME_MANAGER.state.players.filter(player => player.alive)
+        },
+        getVotesRequired(): number | null{
+            let livingPlayers = GAME_MANAGER.getVotesRequired();
+            if(livingPlayers === null) return null;
+            return Math.ceil((livingPlayers + 1)/ 2);
         },
 
 
