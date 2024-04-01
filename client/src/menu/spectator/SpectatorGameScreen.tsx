@@ -4,7 +4,6 @@ import React from "react";
 import PhaseStartedScreen from "./PhaseStartedScreen";
 import GAME_MANAGER from "../..";
 import { StateEventType, StateListener } from "../../game/gameManager.d";
-import translate from "../../game/lang";
 
 
 
@@ -31,7 +30,7 @@ export default function SpectatorGameScreen (props: {}): ReactElement {
 
 
     const [phase, setPhase] = React.useState(
-        GAME_MANAGER.state.stateType==="game" ? GAME_MANAGER.state.phase : "briefing"
+        GAME_MANAGER.state.stateType==="game" ? GAME_MANAGER.state.phaseState.type : "briefing"
     );
     const [timeLeftMs, setTimeLeftMs] = React.useState(
         GAME_MANAGER.state.stateType==="game" ? GAME_MANAGER.state.timeLeftMs : 0
@@ -44,8 +43,8 @@ export default function SpectatorGameScreen (props: {}): ReactElement {
 
             switch (type) {
                 case "phase":
-                    if(GAME_MANAGER.state.phase !== null)
-                        setPhase(GAME_MANAGER.state.phase);
+                    if(GAME_MANAGER.state.phaseState !== null)
+                        setPhase(GAME_MANAGER.state.phaseState.type);
                     break;
                 case "phaseTimeLeft":
                     if(GAME_MANAGER.state.timeLeftMs !== null)

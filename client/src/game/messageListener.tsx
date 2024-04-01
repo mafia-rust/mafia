@@ -211,7 +211,7 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.phaseState = packet.phase;
                 GAME_MANAGER.state.dayNumber = packet.dayNumber;
         
-                if(packet.phase === "briefing" && GAME_MANAGER.state.clientState.type === "player"){
+                if(packet.phase.type === "briefing" && GAME_MANAGER.state.clientState.type === "player"){
                     const role = GAME_MANAGER.state.clientState.roleState?.role;
                     if(role !== undefined){
                         Anchor.setCoverCard(<WikiArticle article={"role/"+role as WikiArticleLink}/>, "wiki-menu-colors");
@@ -246,9 +246,11 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game"){
                 for(let i = 0; i < GAME_MANAGER.state.players.length; i++){
                     GAME_MANAGER.state.players[i].numVoted = 0;
-                }
-                for(let [playerIndex, numVoted] of Object.entries(packet.votesForPlayer)){
-                    GAME_MANAGER.state.players[Number.parseInt(playerIndex)].numVoted = numVoted;
+
+                    let numVoted = packet.votesForPlayer[i];
+                    if(numVoted !== undefined){
+                        GAME_MANAGER.state.players[i].numVoted = numVoted;
+                    }
                 }
             }
         break;

@@ -503,10 +503,10 @@
     
     "phase.testimony": "Testimony",
     "phase.testimony:var.0": "Trial",
-    "phase.testimony.subtitle": "\\0 is on trial. Let them defend themselves.",
+    "phase.testimony.subtitle": "\\0 is on trial.\nLet them defend themselves.",
     
     "phase.judgement": "Judgement",
-    "phase.judgement.subtitle": "\\0 is on trial. Vote guilty or innocent.",
+    "phase.judgement.subtitle": "\\0 is on trial.\nVote guilty or innocent.",
     
     "phase.finalWords": "Final Words",
     "phase.finalWords.subtitle": "The town has decided to execute \\0.",

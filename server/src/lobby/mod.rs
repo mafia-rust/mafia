@@ -96,6 +96,14 @@ impl Lobby {
             LobbyState::Game{ clients, game} => {
 
                 let is_host = !clients.iter().any(|p|p.1.host);
+                
+                let player_id: LobbyClientID = 
+                    clients
+                        .iter()
+                        .map(|(i,_)|*i)
+                        .fold(0u32, u32::max) as LobbyClientID + 1u32;
+
+                send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id, spectator: true});
 
                 let new_index: SpectatorIndex = game.add_spectator(SpectatorInitializeParameters {
                     connection: ClientConnection::Connected(send.clone()),
@@ -105,18 +113,10 @@ impl Lobby {
 
                 let new_client = GameClient::new_spectator(new_index, is_host);
 
-                let player_id: LobbyClientID = 
-                    clients
-                        .iter()
-                        .map(|(i,_)|*i)
-                        .fold(0u32, u32::max) as LobbyClientID + 1u32;
 
 
                 clients.insert(player_id, new_client);
                 
-
-                send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id, spectator: true});
-
 
                 // send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::GameAlreadyStarted});
                 // Err(RejectJoinReason::GameAlreadyStarted)

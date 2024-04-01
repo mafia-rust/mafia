@@ -95,7 +95,7 @@ impl SpectatorPointer {
 
         self.send_packets(game, vec![
             ToClientPacket::Phase { 
-                phase: game.current_phase().phase(),
+                phase: game.current_phase().clone(),
                 day_number: game.phase_machine.day_number 
             },
             ToClientPacket::PhaseTimeLeft { seconds_left: game.phase_machine.time_remaining.as_secs() }

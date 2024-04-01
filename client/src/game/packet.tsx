@@ -88,7 +88,7 @@ export type ToClientPacket = {
     alive: [boolean]
 } | {
     type: "playerVotes",
-    votesForPlayer: Map<PlayerIndex, number>
+    votesForPlayer: any
 } | {
     type: "yourSendChatGroups",
     sendChatGroups: ChatGroup[]

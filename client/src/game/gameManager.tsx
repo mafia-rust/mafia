@@ -121,9 +121,9 @@ export function createGameManager(): GameManager {
             return GAME_MANAGER.state.players.filter(player => player.alive)
         },
         getVotesRequired(): number | null{
-            let livingPlayers = GAME_MANAGER.getVotesRequired();
+            let livingPlayers = GAME_MANAGER.getLivingPlayers();
             if(livingPlayers === null) return null;
-            return Math.ceil((livingPlayers + 1)/ 2);
+            return Math.ceil((livingPlayers.length + 1)/ 2);
         },
 
 

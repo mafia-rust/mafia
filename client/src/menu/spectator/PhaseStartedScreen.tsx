@@ -1,15 +1,16 @@
 import React, { useEffect } from "react";
 import { ReactElement } from "react";
-import GAME_MANAGER from "../..";
+import GAME_MANAGER, { replaceMentions } from "../..";
 import { StateEventType, StateListener } from "../../game/gameManager.d";
 import translate from "../../game/lang";
+import StyledText from "../../components/StyledText";
 
 
 
 export default function PhaseStartedScreen(props: {}): ReactElement {
 
     const [phase, setPhase] = React.useState(
-        GAME_MANAGER.state.stateType==="game" ? GAME_MANAGER.state.phase : "briefing"
+        GAME_MANAGER.state.stateType==="game" ? GAME_MANAGER.state.phaseState : {type:"briefing" as "briefing"}
     );
     const [dayNumber, setDayNumber] = React.useState(
         GAME_MANAGER.state.stateType==="game" ? GAME_MANAGER.state.dayNumber : 0
@@ -21,8 +22,8 @@ export default function PhaseStartedScreen(props: {}): ReactElement {
 
             switch (type) {
                 case "phase":
-                    if(GAME_MANAGER.state.phase !== null)
-                        setPhase(GAME_MANAGER.state.phase);
+                    if(GAME_MANAGER.state.phaseState !== null)
+                        setPhase(GAME_MANAGER.state.phaseState);
                         setDayNumber(GAME_MANAGER.state.dayNumber);
                     break;
             }
@@ -32,28 +33,29 @@ export default function PhaseStartedScreen(props: {}): ReactElement {
     }, [setPhase, setDayNumber]);
 
     let subtitleText = "";
-    switch (phase) {
+    switch (phase.type) {
         case "briefing":
         case "night":
         case "discussion":
-            subtitleText = translate("phase."+phase+".subtitle");
+            subtitleText = translate("phase."+phase.type+".subtitle");
             break;
         case "nomination":
             if(GAME_MANAGER.state.stateType === "game"){
                 let votesRequired = GAME_MANAGER.getVotesRequired();
-                
-                subtitleText += votesRequired === 1 ? translate("votesRequired.1") : translate("votesRequired", votesRequired);
-                subtitleText = translate("votesRequired", 7) + translate("trialsRemaining", 3);
+
+                if(votesRequired !== null){
+                    subtitleText += votesRequired === 1 ? translate("votesRequired.1") : translate("votesRequired", votesRequired);
+                }
+
+                subtitleText += " "+translate("trialsRemaining", phase.trialsLeft);
             }
             break;
         case "testimony":
         case "judgement":
         case "finalWords":
-            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.playerOnTrial !== null)
-                subtitleText = translate(
-                    "phase."+phase+"subtitle", 
-                    GAME_MANAGER.state.players[GAME_MANAGER.state.playerOnTrial].name
-                );
+            if(GAME_MANAGER.state.stateType === "game" && phase.playerOnTrial !== null){
+                subtitleText = translate("phase."+phase.type+".subtitle", replaceMentions("@"+(phase.playerOnTrial+1)));
+            }
             break;
         default:
             break;
@@ -62,10 +64,10 @@ export default function PhaseStartedScreen(props: {}): ReactElement {
     return (
         <div className="phase-started-screen">
             <div className="header">
-                <h1>{translate("phase."+phase)+" "+dayNumber}</h1>
+                <h1><StyledText>{translate("phase."+phase.type)+" "+dayNumber}</StyledText></h1>
             </div>
             <div className="content">
-                <p>{props.subtitleText}</p>
+                <p><StyledText>{subtitleText}</StyledText></p>
             </div>
         </div>
     );
