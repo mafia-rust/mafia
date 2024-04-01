@@ -245,7 +245,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         return (
             <div className="game-screen">
                 <div className="header">
-                    <HeaderMenu phase={GAME_MANAGER.state.phase} chatMenuNotification={this.state.chatMenuNotification}/>
+                    <HeaderMenu phase={GAME_MANAGER.state.phaseState.type} chatMenuNotification={this.state.chatMenuNotification}/>
                 </div>
                 <div className="content">
                     {this.state.chatMenu && <ChatMenu/>}

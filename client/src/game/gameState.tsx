@@ -40,8 +40,7 @@ export function createGameState(): GameState {
         graves: [],
         players: [],
         
-        playerOnTrial: null,
-        phase: null,
+        phaseState: {type:"briefing"},
         timeLeftMs: 0,
         dayNumber: 1,
 

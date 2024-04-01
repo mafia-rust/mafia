@@ -136,7 +136,7 @@ impl Game{
     }
     fn on_phase_start(&mut self, _phase: PhaseType){
         self.send_packet_to_all(ToClientPacket::Phase { 
-            phase: self.current_phase().phase(),
+            phase: self.current_phase().clone(),
             day_number: self.phase_machine.day_number,
         });
         self.send_packet_to_all(ToClientPacket::PhaseTimeLeft{ seconds_left: self.phase_machine.time_remaining.as_secs() });

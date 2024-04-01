@@ -54,8 +54,7 @@ type GameState = {
     graves: Grave[],
     players: Player[],
     
-    playerOnTrial: PlayerIndex | null,
-    phase: PhaseType | null,
+    phaseState: PhaseState,
     timeLeftMs: number,
     dayNumber: number,
 

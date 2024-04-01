@@ -34,8 +34,12 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
 
         if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
             this.state = {
-                phase: GAME_MANAGER.state.phase,
-                playerOnTrial: GAME_MANAGER.state.playerOnTrial,
+                phase: GAME_MANAGER.state.phaseState.type,
+                playerOnTrial: 
+                    GAME_MANAGER.state.phaseState.type === "testimony" ||
+                    GAME_MANAGER.state.phaseState.type === "judgement" ||
+                    GAME_MANAGER.state.phaseState.type === "finalWords" ? 
+                        GAME_MANAGER.state.phaseState.playerOnTrial : null,
                 players: GAME_MANAGER.state.players,
                 myIndex: GAME_MANAGER.state.clientState.myIndex,
                 judgement: GAME_MANAGER.state.clientState.judgement,
@@ -48,13 +52,19 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 switch (type) {
                     case "phase":
-                        this.setState({
-                            phase: GAME_MANAGER.state.phase,
-                            dayNumber: GAME_MANAGER.state.dayNumber
-                        })
-                    break;
                     case "playerOnTrial":
-                        this.setState({playerOnTrial: GAME_MANAGER.state.playerOnTrial})
+                        if(type==="phase")
+                            this.setState({
+                                phase: GAME_MANAGER.state.phaseState.type,
+                                dayNumber: GAME_MANAGER.state.dayNumber
+                            });
+                            
+                        if(
+                            GAME_MANAGER.state.phaseState.type === "testimony" ||
+                            GAME_MANAGER.state.phaseState.type === "judgement" ||
+                            GAME_MANAGER.state.phaseState.type === "finalWords"
+                        )
+                        this.setState({playerOnTrial: GAME_MANAGER.state.phaseState.playerOnTrial})
                     break;
                     case "gamePlayers":
                         this.setState({players: GAME_MANAGER.state.players})

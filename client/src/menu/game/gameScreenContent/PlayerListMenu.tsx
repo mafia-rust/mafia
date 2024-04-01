@@ -34,7 +34,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
             this.state = {
                 players: GAME_MANAGER.state.players,
-                phase: GAME_MANAGER.state.phase,
+                phase: GAME_MANAGER.state.phaseState.type,
                 voted: GAME_MANAGER.state.clientState.voted,
                 targets: GAME_MANAGER.state.clientState.targets,
                 roleState: GAME_MANAGER.state.clientState.roleState,
@@ -52,9 +52,9 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 (GAME_MANAGER.state.clientState.myIndex===null || GAME_MANAGER.state.players[GAME_MANAGER.state.clientState.myIndex].alive) && 
                 playerFilter !== "all"
             ){
-                if(GAME_MANAGER.state.phase === "night"){
+                if(GAME_MANAGER.state.phaseState.type === "night"){
                     playerFilter = "usable"
-                }else if(GAME_MANAGER.state.phase === "obituary"){
+                }else if(GAME_MANAGER.state.phaseState.type === "obituary"){
                     playerFilter = "living";
                 }
             }
@@ -81,7 +81,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         this.setState({chatFilter: GAME_MANAGER.state.clientState.chatFilter});
                 break;
                 case "phase":
-                    this.setState({ phase: GAME_MANAGER.state.phase })
+                    this.setState({ phase: GAME_MANAGER.state.phaseState.type })
                 break;
                 case "gamePlayers":
                 case "yourButtons":
