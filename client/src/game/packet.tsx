@@ -1,4 +1,4 @@
-import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, PlayerID, ChatGroup } from "./gameState.d"
+import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, PlayerID, ChatGroup, PhaseState } from "./gameState.d"
 import { Grave } from "./graveState"
 import { ChatMessage } from "../components/ChatMessage"
 import { RoleList, RoleOutline } from "./roleListState.d"
@@ -62,7 +62,7 @@ export type ToClientPacket = {
     roleOutline: RoleOutline
 } | {
     type: "phaseTime",
-    phase: PhaseType, 
+    phase: PhaseState, 
     time: number
 } | {
     type: "phaseTimes",
@@ -74,7 +74,7 @@ export type ToClientPacket = {
 // Game
 {
     type: "phase",
-    phase: PhaseType, 
+    phase: PhaseState, 
     dayNumber: number, 
 } | {
     type: "phaseTimeLeft",

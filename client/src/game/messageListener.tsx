@@ -180,7 +180,7 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "phaseTime":
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
-                GAME_MANAGER.state.phaseTimes[packet.phase as keyof typeof GAME_MANAGER.state.phaseTimes] = packet.time;
+                GAME_MANAGER.state.phaseTimes[packet.phase.type as keyof typeof GAME_MANAGER.state.phaseTimes] = packet.time;
         break;
         case "phaseTimes":
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
@@ -192,18 +192,18 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "phase":
             if(GAME_MANAGER.state.stateType === "game"){
-                GAME_MANAGER.state.phase = packet.phase;
+                GAME_MANAGER.state.phaseState = packet.phase;
                 GAME_MANAGER.state.dayNumber = packet.dayNumber;
         
-                if(packet.phase === "briefing" && GAME_MANAGER.state.stateType === "game"){
+                if(packet.phase.type === "briefing" && GAME_MANAGER.state.stateType === "game"){
                     const role = GAME_MANAGER.state.roleState?.role;
                     if(role !== undefined){
                         Anchor.setCoverCard(<WikiArticle article={"role/"+role as WikiArticleLink}/>, "wiki-menu-colors");
                     }
                 }
 
-                if(packet.phase !== "judgement"){
-                    Anchor.playAudioFile(getAudioSrcFromString(packet.phase));
+                if(packet.phase.type !== "judgement"){
+                    Anchor.playAudioFile(getAudioSrcFromString(packet.phase.type));
                 }
             }
         break;
@@ -212,8 +212,12 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.timeLeftMs = packet.secondsLeft * 1000;
         break;
         case "playerOnTrial":
-            if(GAME_MANAGER.state.stateType === "game")
-                GAME_MANAGER.state.playerOnTrial = packet.playerIndex;
+            if(GAME_MANAGER.state.stateType === "game" && (
+                GAME_MANAGER.state.phaseState.type === "testimony" || 
+                GAME_MANAGER.state.phaseState.type === "judgement" || 
+                GAME_MANAGER.state.phaseState.type === "finalWords"
+            ))
+                GAME_MANAGER.state.phaseState.playerOnTrial = packet.playerIndex;
         break;
         case "playerAlive":
             if(GAME_MANAGER.state.stateType === "game"){

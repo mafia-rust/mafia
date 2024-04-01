@@ -46,7 +46,7 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
     renderSpecific(): JSX.Element | null {
         switch(this.state.gameState.roleState?.role){
             case "jailor":
-                if(this.state.gameState.phase==="night") {
+                if(this.state.gameState.phaseState.type==="night") {
                     return <StyledText>{translate("role.jailor.roleDataText.night", this.state.gameState.roleState.executionsRemaining)}</StyledText>;
                 } else if (this.state.gameState.roleState.jailedTargetRef === null) {
                     return <StyledText>{translate("role.jailor.roleDataText.nobody", this.state.gameState.roleState.executionsRemaining)}</StyledText>;

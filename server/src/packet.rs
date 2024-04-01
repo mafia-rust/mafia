@@ -21,7 +21,7 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 
 use crate::{game::{
-    available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, phase::PhaseType, player::{PlayerIndex, PlayerReference}, role::{doomsayer::DoomsayerGuess, Role, RoleState}, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
+    available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{doomsayer::DoomsayerGuess, Role, RoleState}, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
 }, listener::{PlayerID, RoomCode}, log};
 
 #[derive(Serialize, Debug, Clone)]
@@ -77,7 +77,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     YourPlayerIndex{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
-    Phase{phase: PhaseType, day_number: u8},
+    Phase{phase: PhaseState, day_number: u8},
     #[serde(rename_all = "camelCase")]
     PhaseTimeLeft{seconds_left: u64},
     #[serde(rename_all = "camelCase")]
