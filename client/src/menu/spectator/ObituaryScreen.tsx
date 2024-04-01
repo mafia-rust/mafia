@@ -44,7 +44,7 @@ export default function ObituaryScreen(props: {}): ReactElement {
 
     if(newGraves.length === 0)
         return (
-            <div className="obituary-spectator-body">
+            <div className="obituary-spectator-body-text">
                 <h1>{translate("nobodyDiedLastNight")}</h1>
             </div>
         );

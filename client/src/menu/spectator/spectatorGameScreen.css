@@ -32,3 +32,8 @@
     border: .2rem solid var(--primary-border-color);
     border-radius: 1rem;
 }
+.obituary-spectator-body-text {
+    height: 100%;
+    text-align: center;
+    padding: 1rem;
+}
