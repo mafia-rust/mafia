@@ -70,6 +70,9 @@ impl SpectatorPointer {
             ToClientPacket::RoleList {role_list: game.settings.role_list.clone()},
             ToClientPacket::PlayerAlive{
                 alive: PlayerReference::all_players(game).map(|p|p.alive(game)).collect()
+            },
+            ToClientPacket::PhaseTimes {
+                phase_time_settings: game.settings.phase_times.clone()
             }
         ]);
 

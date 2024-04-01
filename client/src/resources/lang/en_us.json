@@ -436,6 +436,7 @@
 
     "standard":"Standard",
 
+    "good":"Good",
     "choose":"Choose",
     "role": "Role",
     "day": "Day",
@@ -468,6 +469,7 @@
     "defense.2:var.3": "Protection",
     "defense.3": "Invincible",
     "vision": "Vision",
+    "nobodyDiedLastNight": "Nobody died last night.",
     
     "simplify":"Simplify",
 
@@ -482,7 +484,7 @@
     "verdict.abstain:var.4": "Abstainers",
 
     "judgement.cannotVote.onTrial": "You're on trial!",
-    "judgement.cannotVote.dead": "You can't vote because you're dead",
+    "judgement.cannotVote.dead": "You can't vote because you're dead.",
 
 
 

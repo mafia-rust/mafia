@@ -3,6 +3,10 @@
     height: 100%;
 }
 
+.spectator-header {
+    font-size: 2rem;
+}
+
 .phase-started-screen {
     display: flex;
     flex-direction: column;
@@ -10,4 +14,21 @@
     align-items: center;
     height: 100%;
     font-size: 5rem;
+}
+
+
+
+.obituary-spectator-body {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    font-size: 1.7rem;
+    flex-wrap: wrap;
+    height: 100%;
+}
+.obituary-spectator-body > .grave {
+    max-width: 33%;
+    min-width: 25rem;
+    border: .2rem solid var(--primary-border-color);
+    border-radius: 1rem;
 }

@@ -224,10 +224,15 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
     }
 
     render(){
+
+        let timeBarPercentage = (this.state.timeLeftMs) * (100/(60*1000));
+        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.phaseTimes[this.state.phase!] !== undefined)
+            timeBarPercentage = 100*this.state.timeLeftMs/(GAME_MANAGER.state.phaseTimes[this.state.phase!] * 1000);
+
         const timerStyle = {
             height: "100%",
             backgroundColor: 'red',
-            width: `${(this.state.timeLeftMs) * (100/(60*1000))}%`,
+            width: `${timeBarPercentage}%`,
             margin: '0 auto', // Center the timer horizontally
         };
         

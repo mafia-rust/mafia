@@ -4,13 +4,15 @@ import React from "react";
 import PhaseStartedScreen from "./PhaseStartedScreen";
 import GAME_MANAGER from "../..";
 import { StateEventType, StateListener } from "../../game/gameManager.d";
+import SpectatorHeader from "./SpectatorHeader";
+import SpectatorBody from "./SpectatorBody";
 
 
 
 /*
     briefing - Click the fast forward button to vote to start the game
-    dusk 
-        (Chat, rolelist, playerlist (if possible, sorted by verdict))
+    dusk (grave as subtitle if possible from final words)
+        (Chat, rolelist, playerlist (if possible, sorted by verdict) )
     night - use your ability
         (Playerlist)
     obituary
@@ -26,15 +28,18 @@ import { StateEventType, StateListener } from "../../game/gameManager.d";
     final words - Sammy will be executed 
         (shows chat, rolelist, and playerlist (sorted by verdict))
 */
+
+const DEFAULT_START_PHASE_SCREEN_TIME = 3;
+
 export default function SpectatorGameScreen (props: {}): ReactElement {
 
 
-    const [phase, setPhase] = React.useState(
-        GAME_MANAGER.state.stateType==="game" ? GAME_MANAGER.state.phaseState.type : "briefing"
-    );
-    const [timeLeftMs, setTimeLeftMs] = React.useState(
-        GAME_MANAGER.state.stateType==="game" ? GAME_MANAGER.state.timeLeftMs : 0
-    );
+    const [phase, setPhase] = React.useState(()=>{
+        return GAME_MANAGER.state.stateType==="game" ? GAME_MANAGER.state.phaseState : {type:"briefing" as "briefing"}
+    });
+    const [timeLeftMs, setTimeLeftMs] = React.useState(()=>{
+        return GAME_MANAGER.state.stateType==="game" ? GAME_MANAGER.state.timeLeftMs : 0
+    });
 
     useEffect(() => {
         const listener: StateListener = (type?: StateEventType) => {
@@ -43,12 +48,11 @@ export default function SpectatorGameScreen (props: {}): ReactElement {
 
             switch (type) {
                 case "phase":
-                    if(GAME_MANAGER.state.phaseState !== null)
-                        setPhase(GAME_MANAGER.state.phaseState.type);
+                    setPhase(GAME_MANAGER.state.phaseState);
                     break;
                 case "phaseTimeLeft":
-                    if(GAME_MANAGER.state.timeLeftMs !== null)
-                        setTimeLeftMs(GAME_MANAGER.state.timeLeftMs);
+                case "tick":
+                    setTimeLeftMs(GAME_MANAGER.state.timeLeftMs);
                     break;
             }
         };
@@ -59,12 +63,26 @@ export default function SpectatorGameScreen (props: {}): ReactElement {
         setTimeLeftMs
     ]);
 
-    
+    let showStartedScreen = true;
+    let maxTime = 0;
+    if(GAME_MANAGER.state.stateType === "game"){
+        maxTime = GAME_MANAGER.state.phaseTimes[phase.type];
+        let timePassed = maxTime - Math.floor(timeLeftMs/1000);
+        showStartedScreen = timePassed < DEFAULT_START_PHASE_SCREEN_TIME;
+    }
 
-
-    return (
-        <div className="spectator-game-screen">
-            <PhaseStartedScreen/>
-        </div>
-    );
+    if(showStartedScreen){
+        return (
+            <div className="spectator-game-screen">
+                <PhaseStartedScreen/>
+            </div>
+        );
+    }else{
+        return (
+            <div className="spectator-game-screen">
+                <SpectatorHeader phase={phase} timeLeftMs={timeLeftMs} timeBarPercentage={timeLeftMs/(maxTime*1000)}/>
+                <SpectatorBody/>
+            </div>
+        );
+    }
 }
