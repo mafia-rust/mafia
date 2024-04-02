@@ -70,6 +70,7 @@ export default function SpectatorGameScreen (props: {}): ReactElement {
         let timePassed = maxTime - Math.floor(timeLeftMs/1000);
         showStartedScreen = timePassed < DEFAULT_START_PHASE_SCREEN_TIME;
     }
+    if(phase.type === "briefing") showStartedScreen = true;
 
     if(showStartedScreen){
         return (

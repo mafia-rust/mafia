@@ -51,6 +51,7 @@
     overflow-y: auto;
     flex-grow: 1;
     min-height: 0;
+    border-top: .2rem solid var(--primary-border-color);
 }
 
 
