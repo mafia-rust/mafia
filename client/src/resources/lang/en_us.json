@@ -785,6 +785,7 @@
     "wiki.article.standard.outlineList.title":"Outline List",
     "wiki.article.standard.outlineList.title:var.0":"Role List",
     "wiki.article.standard.outlineList.title:var.1":"Rolelist",
+    "wiki.article.standard.outlineList.title:var.2":"Outlines",
     "wiki.article.standard.outlineList.text": "The outline list defines what roles are in the game. At the start of a game, each player gets assigned to a role outline. Then, their role is generated randomly from that role outline.",
     "wiki.article.standard.chatGroup.title": "Chat Group",
     "wiki.article.standard.chatGroup.title:var.0": "Chat Groups",

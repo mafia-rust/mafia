@@ -31,9 +31,9 @@ export default function SpectatorHeader(props: {
     return (
         <div className="spectator-header">
             <div>
-                <h1><StyledText>
+                <StyledText>
                     {translate("phase."+props.phase.type)+" "+ dayNumber} ⏳{Math.floor(props.timeLeftMs/1000).toString()}
-                </StyledText></h1>
+                </StyledText>
                 <div className="timer-box">
                     <div style={{
                         width:(100*props.timeBarPercentage).toString()+"%",

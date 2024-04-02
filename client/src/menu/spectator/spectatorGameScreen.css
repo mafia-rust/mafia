@@ -1,10 +1,12 @@
 
 .spectator-game-screen {
     height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
-.spectator-header {
-    font-size: 2rem;
+.spectator-game-screen h1 {
+    font-size: 3rem;
 }
 
 .phase-started-screen {
@@ -18,23 +20,98 @@
 
 
 
+.spectator-header {
+    font-size: 5rem;
+    font-weight: bold;
+    flex-shrink: 1;
+}
+
+
+
+.spectator-body {
+    display: flex;
+    flex-direction: row;
+    font-size: 1.5rem;
+    flex-grow: 1;
+    min-height: 0;
+}
+
+
+
+.spectator-chat{
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background-color);
+    border: .2rem solid var(--primary-border-color);
+    flex-grow: 1;
+}
+.spectator-chat > ul {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    min-height: 0;
+}
+
+.spectator-chat > ul > *{
+    width: 33%;
+}
+
+
+.spectator-role-list {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background-color);
+    border: .2rem solid var(--primary-border-color);
+    padding: .5rem;
+}
+.spectator-role-list > ul > div {
+    text-align: left;
+    margin: 0;
+}
+
+.spectator-player-list {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background-color);
+    border: .2rem solid var(--primary-border-color);
+    padding: .5rem;
+}
+
+.spectator-player-list section {
+    margin-top: 1rem;
+}
+
+
+.spectator-player-list div {
+    justify-content: left;
+    text-align: left;
+}
+
+
+
 .obituary-spectator-body {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
-    font-size: 1.7rem;
     flex-wrap: wrap;
-    height: 100%;
+    flex-grow: 1;
 }
 .obituary-spectator-body > .grave {
     max-width: 33%;
     min-width: 25rem;
     border: .2rem solid var(--primary-border-color);
     border-radius: 1rem;
+    font-size: 1.5rem;
 }
 .obituary-spectator-body-text {
-    height: 100%;
+    flex-grow: 1;
     text-align: center;
     padding: 1rem;
-    font-size: 1.5rem;
+}
+
+
+/*keep at bottom*/
+.phase-started-screen h1 {
+    font-size: 8rem;
 }

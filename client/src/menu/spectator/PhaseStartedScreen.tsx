@@ -54,7 +54,7 @@ export default function PhaseStartedScreen(props: {}): ReactElement {
         case "judgement":
         case "finalWords":
             if(GAME_MANAGER.state.stateType === "game" && phase.playerOnTrial !== null){
-                subtitleText = translate("phase."+phase.type+".subtitle", replaceMentions("@"+(phase.playerOnTrial+1)));
+                subtitleText = translate("phase."+phase.type+".subtitle", GAME_MANAGER.getPlayerNames()[phase.playerOnTrial+1].toString());
             }
             break;
         default:

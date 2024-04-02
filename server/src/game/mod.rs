@@ -53,6 +53,7 @@ pub struct Game {
 
     pub spectators: Vec<Spectator>,
     pub spectator_chat_messages: Vec<ChatMessageVariant>,
+
     pub roles_to_players: Vec<(Role, PlayerReference)>,
 
     pub players: Box<[Player]>,

@@ -93,9 +93,6 @@ impl SpectatorPointer {
             self.send_packet(game, ToClientPacket::AddGrave { grave: grave.clone() });
         }
 
-        // // Player specific
-        // self.requeue_chat_messages(game);
-
         self.send_packets(game, vec![
             ToClientPacket::Phase { 
                 phase: game.current_phase().clone(),
@@ -103,9 +100,23 @@ impl SpectatorPointer {
             },
             ToClientPacket::PhaseTimeLeft { seconds_left: game.phase_machine.time_remaining.as_secs() }
         ]);
+
+        self.requeue_chat_messages(game);
+        self.send_chat_messages(game);
     }
 
+    pub fn requeue_chat_messages(&self, game: &mut Game){
+        let msgs = game.spectator_chat_messages.clone();
 
+        let s = match self.deref_mut(game){
+            Some(s)=>s,
+            None=> return
+        };
+
+        for msg in msgs.into_iter(){
+            s.queued_chat_messages.push(msg);
+        }
+    }
 
     pub fn send_chat_messages(&self, game: &mut Game){
         
