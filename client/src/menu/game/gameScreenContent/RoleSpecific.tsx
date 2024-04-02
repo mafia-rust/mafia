@@ -4,7 +4,6 @@ import GAME_MANAGER from "../../../index";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import GameState from "../../../game/gameState.d";
 import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
-import LargeAmnesiacMenu from "./RoleSpecificMenus/LargeAmnesiacMenu";
 import LargeConsortMenu from "./RoleSpecificMenus/LargeConsortMenu";
 import LargeForgerMenu from "./RoleSpecificMenus/LargeForgerMenu";
 import LargeJournalistMenu from "./RoleSpecificMenus/LargeJournalistMenu";
@@ -53,8 +52,6 @@ export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuPr
                 return <LargeForgerMenu/>;
             case "doomsayer":
                 return <LargeDoomsayerMenu/>;
-            case "amnesiac":
-                return <LargeAmnesiacMenu/>;
         }
     }
     render(){

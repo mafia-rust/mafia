@@ -344,6 +344,7 @@
     "role.amnesiac.name:var.0": "Amnesiacs",
     "role.amnesiac.target": "Target",
     "role.amnesiac.dayTarget": "Special",
+    "role.amnesiac.smallRoleMenu": "Choose a role to become",
 
     "role.apostle.name": "Apostle",
     "role.apostle.name:var.0": "Apostles",
@@ -1041,10 +1042,10 @@
     "wiki.article.role.death.attributes":"* Once you've collected six souls, you curse the town. At the start of the next night you win and attack everyone.\n* You have invincible defense once you have six souls\n* You have a protection-piercing attack",
     "wiki.article.role.death.extra":"* You will still passively gain souls in jail",
 
-    "wiki.article.role.amnesiac.guide": "You can choose a role to become on the next night. You can choose a certain outline to and get a random role if you want, or get a specific role.",
-    "wiki.article.role.amnesiac.abilities":"* Choose an outline to become a role from that outline at night",
-    "wiki.article.role.amnesiac.attributes":"* You are immune to being roleblocked and jailed",
-    "wiki.article.role.amnesiac.extra":"* You can choose an outline like \"Neutral Killing\", and you will get a random neutral killing role, or choose an outline like \"Jailor\" and confirm that you get the jailor\n* If you choose a role that was disabled you will stay as the Amnesiac",
+    "wiki.article.role.amnesiac.guide": "* Choose a role to become that role\n    * You become that role when night starts\n* You can choose any outline, so you can get a random role\n* You can't become a role that is disabled",
+    "wiki.article.role.amnesiac.abilities":"* Become a random role from the chosen outline at the start of night",
+    "wiki.article.role.amnesiac.attributes":"* You can not become a role that is disabled\n* You can become a role that is taken, for example, you can become a veteran even if there is already one in the game",
+    "wiki.article.role.amnesiac.extra":"* If you choose a role that was disabled you stay as the Amnesiac\n* You can choose amnesiac to stay as amnesiac",
 
     "wiki.article.role.martyr.guide": "If you die, you win, and everyone commits suicide in an attempt to follow you to the afterlife. The entire town knows that you're the martyr. Good Luck!",
     "wiki.article.role.martyr.abilities":"* Visit yourself to attack yourself and spend one bullet\n* You start with 5 bullets\n* When you die, everyone else commits suicide and you win.",
