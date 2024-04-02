@@ -138,7 +138,7 @@ impl PlayerReference{
 
         self.send_packet(game, ToClientPacket::YourVoteFastForwardPhase { fast_forward: fast_forward_vote });
 
-        if fast_forward_vote && PlayerReference::all_players(game)
+        if fast_forward_vote && !game.phase_machine.time_remaining.is_zero() && PlayerReference::all_players(game)
             .filter(|p|p.alive(game))
             .all(|p| p.fast_forward_vote(game))
         {

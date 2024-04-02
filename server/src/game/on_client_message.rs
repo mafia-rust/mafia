@@ -1,13 +1,24 @@
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender}, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, spectator::spectator_pointer::SpectatorPointer, Game
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, event, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
 
 
 
 impl Game {
+    pub fn on_spectator_message(&mut self, _sender_index: SpectatorIndex, incoming_packet: ToServerPacket){
+        match incoming_packet {
+            ToServerPacket::VoteFastForwardPhase { fast_forward } => {
+                if fast_forward && !self.phase_machine.time_remaining.is_zero(){
+                    event::OnFastForward::invoke(self);
+                }
+            },
+            _ => {
+            }
+        }
+    }
     pub fn on_client_message(&mut self, sender_player_index: PlayerIndex, incoming_packet: ToServerPacket){
 
         let sender_player_ref = match PlayerReference::new(self, sender_player_index){

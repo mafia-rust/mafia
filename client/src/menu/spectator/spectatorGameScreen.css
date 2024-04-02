@@ -5,6 +5,12 @@
     flex-direction: column;
 }
 
+.spectator-game-screen .fast-forward-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
 .spectator-game-screen h1 {
     font-size: 3rem;
 }

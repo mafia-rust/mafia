@@ -293,13 +293,18 @@ impl Lobby {
                 self.remove_player(player_id);
             }
             _ => {
-                let LobbyState::Game { game, clients: players } = &mut self.lobby_state else {
+                let LobbyState::Game { game, clients } = &mut self.lobby_state else {
                     log!(error "Lobby"; "{} {:?}", "ToServerPacket not implemented for lobby was sent during lobby: ", incoming_packet);
                     return;
                 };
                 
-                if let GameClientLocation::Player(player_index) = players[&player_id].client_location {
-                    game.on_client_message(player_index, incoming_packet)
+                match clients[&player_id].client_location {
+                    GameClientLocation::Player(player_index) => {
+                        game.on_client_message(player_index, incoming_packet)
+                    }
+                    GameClientLocation::Spectator(spectator_index) => {
+                        game.on_spectator_message(spectator_index, incoming_packet)
+                    }
                 }
             }
         }

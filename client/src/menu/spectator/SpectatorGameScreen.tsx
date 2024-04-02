@@ -40,6 +40,9 @@ export default function SpectatorGameScreen (props: {}): ReactElement {
     const [timeLeftMs, setTimeLeftMs] = React.useState(()=>{
         return GAME_MANAGER.state.stateType==="game" ? GAME_MANAGER.state.timeLeftMs : 0
     });
+    const [fastForward, setFastForward] = React.useState(()=>{
+        return GAME_MANAGER.state.stateType==="game" ? GAME_MANAGER.state.fastForward : false
+    });
 
     useEffect(() => {
         const listener: StateListener = (type?: StateEventType) => {
@@ -47,6 +50,9 @@ export default function SpectatorGameScreen (props: {}): ReactElement {
             if(GAME_MANAGER.state.stateType !== "game") return;
 
             switch (type) {
+                case "yourVoteFastForwardPhase":
+                    setFastForward(GAME_MANAGER.state.fastForward);
+                    break;
                 case "phase":
                     setPhase(GAME_MANAGER.state.phaseState);
                     break;
@@ -75,12 +81,28 @@ export default function SpectatorGameScreen (props: {}): ReactElement {
     if(showStartedScreen){
         return (
             <div className="spectator-game-screen">
+                <button 
+                    onClick={()=>{
+                        GAME_MANAGER.sendVoteFastForwardPhase(true);
+                    }}
+                    className={"material-icons-round fast-forward-button" + (fastForward ? " highlighted" : "")}
+                >
+                    double_arrow
+                </button>
                 <PhaseStartedScreen/>
             </div>
         );
     }else{
         return (
             <div className="spectator-game-screen">
+                <button 
+                    onClick={()=>{
+                        GAME_MANAGER.sendVoteFastForwardPhase(true);
+                    }}
+                    className={"material-icons-round fast-forward-button" + (fastForward ? " highlighted" : "")}
+                >
+                    double_arrow
+                </button>
                 <SpectatorHeader phase={phase} timeLeftMs={timeLeftMs} timeBarPercentage={timeLeftMs/(maxTime*1000)}/>
                 <SpectatorBody/>
             </div>
