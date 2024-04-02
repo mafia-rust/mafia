@@ -81,6 +81,8 @@ impl PlayerReference{
 
         // Player specific
         self.requeue_chat_messages(game);
+        self.send_chat_messages(game);
+        self.send_available_buttons(game);
 
         self.send_packets(game, vec![
             ToClientPacket::YourPlayerIndex { 
