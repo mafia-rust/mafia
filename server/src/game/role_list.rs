@@ -2,7 +2,10 @@ use std::{collections::HashSet, vec};
 
 use rand::seq::SliceRandom;
 use serde::{Serialize, Deserialize};
-use vec1::Vec1;
+use vec1::{
+    vec1,
+    Vec1
+};
 
 use super::role::Role;
 
@@ -61,6 +64,9 @@ pub enum RoleOutline{
     },
 }
 impl RoleOutline{
+    pub fn new_exact(role: Role)->RoleOutline{
+        RoleOutline::RoleOutlineOptions{options: vec1![RoleOutlineOption::Role{role}]}
+    }
     pub fn get_roles(&self) -> Vec<Role> {
         match self {
             RoleOutline::RoleOutlineOptions{options} => 

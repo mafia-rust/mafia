@@ -87,12 +87,12 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
             case "death":
                 return <StyledText>{translate("role.death.roleDataText", this.state.gameState.roleState.souls)}</StyledText>;
             case "amnesiac":
-                return <RoleOutlineDropdown 
+                return <><StyledText>{translate("role.amnesiac.smallRoleMenu")}</StyledText><RoleOutlineDropdown 
                     roleOutline={this.state.gameState.roleState.roleOutline ?? {type: "any"}} 
                     onChange={(rle)=>{
                         GAME_MANAGER.sendSetAmnesiacRoleOutline(rle);
                     }}
-                />;
+                /></>;
             case "martyr":
                 if (this.state.gameState.roleState.state.type === "stillPlaying") {
                     return <StyledText>{translate("role.martyr.roleDataText", this.state.gameState.roleState.state.bullets)}</StyledText>;
