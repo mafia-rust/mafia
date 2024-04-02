@@ -76,6 +76,13 @@ impl PhaseState {
     }
     
     pub fn start(game: &mut Game) {
+        game.add_message_to_chat_group(ChatGroup::All, 
+            ChatMessageVariant::PhaseChange { 
+                phase: game.current_phase().clone(), 
+                day_number: game.phase_machine.day_number 
+            }
+        );
+        
         match game.current_phase().clone() {
             PhaseState::Obituary => {
                 let mut events = Vec::<event::OnAnyDeath>::new();
@@ -113,15 +120,6 @@ impl PhaseState {
             | PhaseState::FinalWords { .. }
             | PhaseState::Dusk => {}
         }
-
-        if PhaseState::Briefing == *game.current_phase() {return;}
-
-        game.add_message_to_chat_group(ChatGroup::All, 
-            ChatMessageVariant::PhaseChange { 
-                phase: game.current_phase().clone(), 
-                day_number: game.phase_machine.day_number 
-            }
-        );
         
     }
     
