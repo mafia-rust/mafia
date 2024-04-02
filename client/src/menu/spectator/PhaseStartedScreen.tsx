@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { ReactElement } from "react";
-import GAME_MANAGER, { replaceMentions } from "../..";
+import GAME_MANAGER from "../..";
 import { StateEventType, StateListener } from "../../game/gameManager.d";
 import translate from "../../game/lang";
 import StyledText from "../../components/StyledText";
@@ -54,7 +54,7 @@ export default function PhaseStartedScreen(props: {}): ReactElement {
         case "judgement":
         case "finalWords":
             if(GAME_MANAGER.state.stateType === "game" && phase.playerOnTrial !== null){
-                subtitleText = translate("phase."+phase.type+".subtitle", GAME_MANAGER.getPlayerNames()[phase.playerOnTrial+1].toString());
+                subtitleText = translate("phase."+phase.type+".subtitle", GAME_MANAGER.getPlayerNames()[phase.playerOnTrial].toString());
             }
             break;
         default:

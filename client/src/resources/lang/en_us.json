@@ -436,6 +436,8 @@
 
     "standard":"Standard",
 
+    "onTrial": "On Trial",
+    "voted": "Voted",
     "good":"Good",
     "choose":"Choose",
     "role": "Role",

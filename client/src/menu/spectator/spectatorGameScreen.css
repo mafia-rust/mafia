@@ -47,14 +47,10 @@
 }
 .spectator-chat > ul {
     display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
+    flex-direction:column-reverse;
+    overflow-y: auto;
     flex-grow: 1;
     min-height: 0;
-}
-
-.spectator-chat > ul > *{
-    width: 33%;
 }
 
 
@@ -63,7 +59,7 @@
     flex-direction: column;
     background-color: var(--background-color);
     border: .2rem solid var(--primary-border-color);
-    padding: .5rem;
+    padding: .3rem;
 }
 .spectator-role-list > ul > div {
     text-align: left;
@@ -75,13 +71,28 @@
     flex-direction: column;
     background-color: var(--background-color);
     border: .2rem solid var(--primary-border-color);
-    padding: .5rem;
 }
 
-.spectator-player-list section {
-    margin-top: 1rem;
+.spectator-player-list > section {
+    border-top: .2rem solid var(--primary-border-color);
+    margin-top: .5rem;
+    padding: .3rem;
 }
 
+.spectator-player-list .vote-bar {
+    width: 10rem;
+    background-color: rgb(105, 68, 0);
+    border: .15rem solid black;
+    width: 10rem;
+    margin-left: .3rem;
+}
+
+.spectator-player-list .player {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    text-wrap:nowrap;
+}
 
 .spectator-player-list div {
     justify-content: left;
