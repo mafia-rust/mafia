@@ -76,10 +76,13 @@ impl PhaseState {
     }
     
     pub fn start(game: &mut Game) {
+
+        
         game.add_message_to_chat_group(ChatGroup::All, 
             ChatMessageVariant::PhaseChange { 
-                phase: game.current_phase().clone(), 
-                day_number: game.phase_machine.day_number 
+                phase: game.current_phase().clone(),
+                //need this if statement because the day number should be increased for obituary phase
+                day_number: if game.current_phase().phase() != PhaseType::Obituary {game.phase_machine.day_number} else {game.phase_machine.day_number+1}
             }
         );
         
