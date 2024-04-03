@@ -8,7 +8,7 @@ pub const MESSAGE_PER_SECOND_LIMIT: u64 = 2;
 pub const MESSAGE_PER_SECOND_LIMIT_TIME: Duration = Duration::from_secs(2);
 
 impl Lobby {
-    pub fn on_client_message(&mut self, send: &ClientSender, player_id: LobbyClientID, incoming_packet: ToServerPacket){
+    pub fn on_client_message(&mut self, send: &ClientSender, lobby_client_id: LobbyClientID, incoming_packet: ToServerPacket){
 
         //RATE LIMITER
         match incoming_packet {
@@ -18,11 +18,11 @@ impl Lobby {
             ToServerPacket::DayTarget { .. } |
             ToServerPacket::SendMessage { .. } |
             ToServerPacket::SendWhisper { .. } => {
-                let LobbyState::Game { clients: players, .. } = &mut self.lobby_state else {
+                let LobbyState::Game { clients, .. } = &mut self.lobby_state else {
                     return;
                 };
 
-                let Some(game_player) = players.get_mut(&player_id) else {
+                let Some(game_player) = clients.get_mut(&lobby_client_id) else {
                     log!(error "LobbyState::Game"; "{} {:?}", "Message recieved from player not in game", incoming_packet);
                     return;
                 };
@@ -50,12 +50,12 @@ impl Lobby {
         match incoming_packet {
             ToServerPacket::SetSpectator { spectator } => {
                 let LobbyState::Lobby { clients, settings } = &mut self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "ToServerPacket::SetName can not be used outside of LobbyState::Lobby", player_id);
+                    log!(error "Lobby"; "{} {}", "ToServerPacket::SetName can not be used outside of LobbyState::Lobby", lobby_client_id);
                     return
                 };
                 
                 let new_name = name_validation::sanitize_name("".to_string(), &clients);
-                if let Some(player) = clients.get_mut(&player_id){
+                if let Some(player) = clients.get_mut(&lobby_client_id){
                     match &player.client_type {
                         LobbyClientType::Spectator => {
                             if !spectator {
@@ -76,30 +76,30 @@ impl Lobby {
                 self.send_to_all(ToClientPacket::RoleList { role_list: role_list } );
             }
             ToServerPacket::SetName{ name } => {
-                let LobbyState::Lobby { clients: players, .. } = &mut self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "ToServerPacket::SetName can not be used outside of LobbyState::Lobby", player_id);
+                let LobbyState::Lobby { clients, .. } = &mut self.lobby_state else {
+                    log!(error "Lobby"; "{} {}", "ToServerPacket::SetName can not be used outside of LobbyState::Lobby", lobby_client_id);
                     return
                 };
 
-                let mut other_players = players.clone();
-                other_players.remove(&player_id);
+                let mut other_players = clients.clone();
+                other_players.remove(&lobby_client_id);
                 
                 let new_name: String = name_validation::sanitize_name(name, &other_players);
-                if let Some(player) = players.get_mut(&player_id){
+                if let Some(player) = clients.get_mut(&lobby_client_id){
                     if let LobbyClientType::Player { name } = &mut player.client_type {
                         *name = new_name;
                     }
                 }
 
-                Self::send_players_lobby(players);
+                Self::send_players_lobby(clients);
             },
             ToServerPacket::SetLobbyName{ name } => {
                 let LobbyState::Lobby { .. } = self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "ToServerPacket::SetLobbyName can not be used outside of LobbyState::Lobby", player_id);
+                    log!(error "Lobby"; "{} {}", "ToServerPacket::SetLobbyName can not be used outside of LobbyState::Lobby", lobby_client_id);
                     return
                 };
 
-                if !self.is_host(player_id) {return};
+                if !self.is_host(lobby_client_id) {return};
 
                 let name = sanitize_server_name(name);
                 let name = if name.is_empty() {
@@ -114,10 +114,10 @@ impl Lobby {
             },
             ToServerPacket::StartGame => {
                 let LobbyState::Lobby { settings, clients } = &mut self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "ToServerPacket::StartGame can not be used outside of LobbyState::Lobby", player_id);
+                    log!(error "Lobby"; "{} {}", "ToServerPacket::StartGame can not be used outside of LobbyState::Lobby", lobby_client_id);
                     return
                 };
-                if let Some(player) = clients.get(&player_id){
+                if let Some(player) = clients.get(&lobby_client_id){
                     if !player.host {return}
                 }
 
@@ -197,11 +197,11 @@ impl Lobby {
                 Lobby::send_players_game(game);
             },
             ToServerPacket::SetPhaseTime{phase, time} => {
-                let LobbyState::Lobby{ settings, clients: players  } = &mut self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "Attempted to change phase time outside of the lobby menu!", player_id);
+                let LobbyState::Lobby{ settings, clients  } = &mut self.lobby_state else {
+                    log!(error "Lobby"; "{} {}", "Attempted to change phase time outside of the lobby menu!", lobby_client_id);
                     return;
                 };
-                if let Some(player) = players.get(&player_id){
+                if let Some(player) = clients.get(&lobby_client_id){
                     if !player.host {return}
                 }
 
@@ -220,11 +220,11 @@ impl Lobby {
                 self.send_to_all(ToClientPacket::PhaseTime { phase, time });
             },
             ToServerPacket::SetPhaseTimes { phase_time_settings } => {
-                let LobbyState::Lobby{ settings, clients: players } = &mut self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "Attempted to change phase time outside of the lobby menu!", player_id);
+                let LobbyState::Lobby{ settings, clients } = &mut self.lobby_state else {
+                    log!(error "Lobby"; "{} {}", "Attempted to change phase time outside of the lobby menu!", lobby_client_id);
                     return;
                 };
-                if let Some(player) = players.get(&player_id){
+                if let Some(player) = clients.get(&lobby_client_id){
                     if !player.host {return}
                 }
 
@@ -234,10 +234,10 @@ impl Lobby {
             }
             ToServerPacket::SetRoleList { role_list } => {
                 let LobbyState::Lobby{ settings, clients } = &mut self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", player_id);
+                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", lobby_client_id);
                     return;
                 };
-                if let Some(player) = clients.get(&player_id){
+                if let Some(player) = clients.get(&lobby_client_id){
                     if !player.host {return}
                 }
 
@@ -247,11 +247,11 @@ impl Lobby {
                 self.send_to_all(ToClientPacket::RoleList { role_list });
             }
             ToServerPacket::SetRoleOutline { index, role_outline } => {
-                let LobbyState::Lobby{ settings, clients: players } = &mut self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", player_id);
+                let LobbyState::Lobby{ settings, clients } = &mut self.lobby_state else {
+                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", lobby_client_id);
                     return;
                 };
-                if let Some(player) = players.get(&player_id){
+                if let Some(player) = clients.get(&lobby_client_id){
                     if !player.host {return}
                 }
 
@@ -262,11 +262,11 @@ impl Lobby {
                 self.send_to_all(ToClientPacket::RoleOutline { index, role_outline });
             }
             ToServerPacket::SimplifyRoleList => {
-                let LobbyState::Lobby{ settings, clients: players } = &mut self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", player_id);
+                let LobbyState::Lobby{ settings, clients } = &mut self.lobby_state else {
+                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", lobby_client_id);
                     return;
                 };
-                if let Some(player) = players.get(&player_id){
+                if let Some(player) = clients.get(&lobby_client_id){
                     if !player.host {return}
                 }
 
@@ -276,11 +276,11 @@ impl Lobby {
                 self.send_to_all(ToClientPacket::RoleList { role_list });
             }
             ToServerPacket::SetExcludedRoles {mut roles } => {
-                let LobbyState::Lobby{ settings, clients: players } = &mut self.lobby_state else {
-                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", player_id);
+                let LobbyState::Lobby{ settings, clients } = &mut self.lobby_state else {
+                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", lobby_client_id);
                     return;
                 };
-                if let Some(player) = players.get(&player_id){
+                if let Some(player) = clients.get(&lobby_client_id){
                     if !player.host {return;}
                 }
 
@@ -290,7 +290,7 @@ impl Lobby {
                 self.send_to_all(ToClientPacket::ExcludedRoles { roles });
             }
             ToServerPacket::Leave => {
-                self.remove_player(player_id);
+                self.remove_player(lobby_client_id);
             }
             _ => {
                 let LobbyState::Game { game, clients } = &mut self.lobby_state else {
@@ -298,7 +298,7 @@ impl Lobby {
                     return;
                 };
                 
-                match clients[&player_id].client_location {
+                match clients[&lobby_client_id].client_location {
                     GameClientLocation::Player(player_index) => {
                         game.on_client_message(player_index, incoming_packet)
                     }

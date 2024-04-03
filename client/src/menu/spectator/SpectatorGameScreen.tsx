@@ -6,6 +6,7 @@ import GAME_MANAGER from "../..";
 import { StateEventType, StateListener } from "../../game/gameManager.d";
 import SpectatorHeader from "./SpectatorHeader";
 import SpectatorBody from "./SpectatorBody";
+import translate from "../../game/lang";
 
 
 
@@ -73,39 +74,65 @@ export default function SpectatorGameScreen (props: {}): ReactElement {
     let maxTime = 0;
     if(GAME_MANAGER.state.stateType === "game"){
         maxTime = GAME_MANAGER.state.phaseTimes[phase.type];
-        let timePassed = maxTime - Math.floor(timeLeftMs/1000);
+        let timePassed = Math.floor(maxTime - timeLeftMs/1000);
         showStartedScreen = timePassed < DEFAULT_START_PHASE_SCREEN_TIME;
     }
     if(phase.type === "briefing") showStartedScreen = true;
 
-    if(showStartedScreen){
-        return (
-            <div className="spectator-game-screen">
-                <button 
-                    onClick={()=>{
-                        GAME_MANAGER.sendVoteFastForwardPhase(true);
-                    }}
-                    className={"material-icons-round fast-forward-button" + (fastForward ? " highlighted" : "")}
-                >
-                    double_arrow
-                </button>
+    return (
+        <div className="spectator-game-screen">
+            <button 
+                onClick={()=>{
+                    GAME_MANAGER.sendVoteFastForwardPhase(true);
+                }}
+                className={"material-icons-round fast-forward-button" + (fastForward ? " highlighted" : "")}
+            >
+                double_arrow
+            </button>
+            {showStartedScreen ? 
                 <PhaseStartedScreen/>
-            </div>
-        );
-    }else{
-        return (
-            <div className="spectator-game-screen">
-                <button 
-                    onClick={()=>{
-                        GAME_MANAGER.sendVoteFastForwardPhase(true);
-                    }}
-                    className={"material-icons-round fast-forward-button" + (fastForward ? " highlighted" : "")}
-                >
-                    double_arrow
-                </button>
-                <SpectatorHeader phase={phase} timeLeftMs={timeLeftMs} timeBarPercentage={timeLeftMs/(maxTime*1000)}/>
-                <SpectatorBody/>
-            </div>
-        );
+            : 
+                <>
+                    <SpectatorHeader phase={phase} timeLeftMs={timeLeftMs} timeBarPercentage={timeLeftMs/(maxTime*1000)}/>
+                    <SpectatorBody/>
+                </>
+            }
+        </div>
+    );
+    
+}
+
+
+export function getTranslatedSubtitle(): string {
+    if(GAME_MANAGER.state.stateType !== "game") return "";
+    let subtitleText = "";
+
+    switch (GAME_MANAGER.state.phaseState.type) {
+        case "briefing":
+        case "night":
+        case "discussion":
+            subtitleText = translate("phase."+GAME_MANAGER.state.phaseState.type+".subtitle");
+            break;
+        case "nomination":
+            if(GAME_MANAGER.state.stateType === "game"){
+                let votesRequired = GAME_MANAGER.getVotesRequired();
+
+                if(votesRequired !== null){
+                    subtitleText += votesRequired === 1 ? translate("votesRequired.1") : translate("votesRequired", votesRequired);
+                }
+
+                subtitleText += " "+translate("trialsRemaining", GAME_MANAGER.state.phaseState.trialsLeft);
+            }
+            break;
+        case "testimony":
+        case "judgement":
+        case "finalWords":
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.phaseState.playerOnTrial !== null){
+                subtitleText = translate("phase."+GAME_MANAGER.state.phaseState.type+".subtitle", GAME_MANAGER.getPlayerNames()[GAME_MANAGER.state.phaseState.playerOnTrial].toString());
+            }
+            break;
+        default:
+            break;
     }
+    return subtitleText;
 }

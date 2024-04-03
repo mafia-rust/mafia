@@ -68,7 +68,7 @@ impl Lobby {
                 let name = name_validation::sanitize_name("".to_string(), clients);
                 
                 let mut new_player = LobbyClient::new(name.clone(), send.clone(), clients.is_empty());
-                let player_id: LobbyClientID = 
+                let lobby_client_id: LobbyClientID = 
                     clients
                         .iter()
                         .map(|(i,_)|*i)
@@ -79,11 +79,11 @@ impl Lobby {
                     new_player.set_host();
                 }
 
-                clients.insert(player_id, new_player);
+                clients.insert(lobby_client_id, new_player);
 
                 Lobby::set_rolelist_length(settings, clients);
 
-                send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: false, player_id, spectator: false});
+                send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: false, player_id: lobby_client_id, spectator: false});
 
                 Self::send_players_lobby(clients);
 
@@ -91,19 +91,19 @@ impl Lobby {
                     Self::send_settings(player.1, settings, self.name.clone())
                 }
                 
-                Ok(player_id)
+                Ok(lobby_client_id)
             },
             LobbyState::Game{ clients, game} => {
 
                 let is_host = !clients.iter().any(|p|p.1.host);
                 
-                let player_id: LobbyClientID = 
+                let lobby_client_id: LobbyClientID = 
                     clients
                         .iter()
                         .map(|(i,_)|*i)
                         .fold(0u32, u32::max) as LobbyClientID + 1u32;
 
-                send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id, spectator: true});
+                send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id: lobby_client_id, spectator: true});
 
                 let new_index: SpectatorIndex = game.add_spectator(SpectatorInitializeParameters {
                     connection: ClientConnection::Connected(send.clone()),
@@ -115,12 +115,12 @@ impl Lobby {
 
 
 
-                clients.insert(player_id, new_client);
+                clients.insert(lobby_client_id, new_client);
                 
 
                 // send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::GameAlreadyStarted});
                 // Err(RejectJoinReason::GameAlreadyStarted)
-                Ok(player_id)
+                Ok(lobby_client_id)
             }
             LobbyState::Closed => {
                 send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::RoomDoesntExist});
@@ -128,10 +128,10 @@ impl Lobby {
             }
         }
     }
-    pub fn remove_player(&mut self, player_id: LobbyClientID) {
+    pub fn remove_player(&mut self, lobby_client_id: LobbyClientID) {
         match &mut self.lobby_state {
             LobbyState::Lobby { clients, settings } => {
-                let player = clients.remove(&player_id);
+                let player = clients.remove(&lobby_client_id);
         
                 if clients.is_empty() {
                     self.lobby_state = LobbyState::Closed;
@@ -153,7 +153,7 @@ impl Lobby {
                 }
             },
             LobbyState::Game { game, clients } => {
-                let Some(game_player) = clients.get_mut(&player_id) else {return};
+                let Some(game_player) = clients.get_mut(&lobby_client_id) else {return};
                 match game_player.client_location {
                     GameClientLocation::Player(player_index) => {
                         if let Ok(player_ref) = PlayerReference::new(game, player_index) {
@@ -195,16 +195,16 @@ impl Lobby {
             LobbyState::Closed => {}
         }
     }
-    pub fn rejoin_player(&mut self, send: &ClientSender, player_id: LobbyClientID) -> Result<(), RejectJoinReason>{
+    pub fn rejoin_player(&mut self, send: &ClientSender, lobby_client_id: LobbyClientID) -> Result<(), RejectJoinReason>{
         match &mut self.lobby_state {
             LobbyState::Lobby { clients: players, settings } => {
-                let Some(player) = players.get_mut(&player_id) else {
+                let Some(player) = players.get_mut(&lobby_client_id) else {
                     send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
                     return Err(RejectJoinReason::PlayerDoesntExist)
                 };
                 if let ClientConnection::CouldReconnect { .. } = &mut player.connection {
                     player.connection = ClientConnection::Connected(send.clone());
-                    send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: false, player_id, spectator: false});
+                    send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: false, player_id: lobby_client_id, spectator: false});
 
                     Self::send_settings(player, settings, self.name.clone());
                     Self::send_players_lobby(players);
@@ -216,7 +216,7 @@ impl Lobby {
                 }
             },
             LobbyState::Game { game, clients: players } => {
-                let Some(game_player) = players.get_mut(&player_id) else {
+                let Some(game_player) = players.get_mut(&lobby_client_id) else {
                     send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
                     return Err(RejectJoinReason::PlayerDoesntExist)
                 };
@@ -230,7 +230,7 @@ impl Lobby {
                         return Err(RejectJoinReason::PlayerTaken)
                     };
     
-                    send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id, spectator: false});
+                    send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id: lobby_client_id, spectator: false});
                     player_ref.connect(game, send.clone());
                     
                     Ok(())
@@ -310,17 +310,17 @@ impl Lobby {
             LobbyState::Closed => Vec::new(),
         }
     }
-    pub fn is_host(&self, player_id: LobbyClientID)->bool{
+    pub fn is_host(&self, lobby_client_id: LobbyClientID)->bool{
         match &self.lobby_state {
             LobbyState::Lobby { clients: players, .. } => {
-                if let Some(player) = players.get(&player_id){
+                if let Some(player) = players.get(&lobby_client_id){
                     player.host
                 }else{
                     false
                 }
             },
             LobbyState::Game { clients: players, .. } => {
-                if let Some(player) = players.get(&player_id){
+                if let Some(player) = players.get(&lobby_client_id){
                     player.host
                 }else{
                     false

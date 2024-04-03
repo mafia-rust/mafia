@@ -8,10 +8,12 @@ use super::{
 
 
 impl Game {
-    pub fn on_spectator_message(&mut self, _sender_index: SpectatorIndex, incoming_packet: ToServerPacket){
+    pub fn on_spectator_message(&mut self, sender_index: SpectatorIndex, incoming_packet: ToServerPacket){
+        let sender_pointer = SpectatorPointer::new(sender_index);
+
         match incoming_packet {
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {
-                if fast_forward && !self.phase_machine.time_remaining.is_zero(){
+                if sender_pointer.host(self) && fast_forward && !self.phase_machine.time_remaining.is_zero(){
                     event::OnFastForward::invoke(self);
                 }
             },

@@ -8,7 +8,7 @@ use super::Spectator;
 
 pub type SpectatorIndex = u8;
 ///
-/// This does not garuntee that the spectator exists
+/// This does not guarantee that the spectator exists
 pub struct SpectatorPointer {
     pub index: SpectatorIndex,
 }
@@ -22,6 +22,10 @@ impl SpectatorPointer {
     }
     pub fn deref<'a>(&self, game: &'a Game)->Option<&'a Spectator>{
         game.spectators.get(self.index as usize)
+    }
+
+    pub fn host(&self, game: &Game)->bool {
+        self.deref(game).map(|s|s.host).unwrap_or(false)
     }
 
     pub fn send_packet(&self, game: &Game, packet: ToClientPacket){

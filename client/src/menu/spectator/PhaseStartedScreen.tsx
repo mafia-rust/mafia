@@ -4,6 +4,7 @@ import GAME_MANAGER from "../..";
 import { StateEventType, StateListener } from "../../game/gameManager.d";
 import translate from "../../game/lang";
 import StyledText from "../../components/StyledText";
+import { getTranslatedSubtitle } from "./SpectatorGameScreen";
 
 
 
@@ -32,34 +33,7 @@ export default function PhaseStartedScreen(props: {}): ReactElement {
         return () => GAME_MANAGER.removeStateListener(listener);
     }, [setPhase, setDayNumber]);
 
-    let subtitleText = "";
-    switch (phase.type) {
-        case "briefing":
-        case "night":
-        case "discussion":
-            subtitleText = translate("phase."+phase.type+".subtitle");
-            break;
-        case "nomination":
-            if(GAME_MANAGER.state.stateType === "game"){
-                let votesRequired = GAME_MANAGER.getVotesRequired();
-
-                if(votesRequired !== null){
-                    subtitleText += votesRequired === 1 ? translate("votesRequired.1") : translate("votesRequired", votesRequired);
-                }
-
-                subtitleText += " "+translate("trialsRemaining", phase.trialsLeft);
-            }
-            break;
-        case "testimony":
-        case "judgement":
-        case "finalWords":
-            if(GAME_MANAGER.state.stateType === "game" && phase.playerOnTrial !== null){
-                subtitleText = translate("phase."+phase.type+".subtitle", GAME_MANAGER.getPlayerNames()[phase.playerOnTrial].toString());
-            }
-            break;
-        default:
-            break;
-    }
+    let subtitleText = getTranslatedSubtitle();
 
     return (
         <div className="phase-started-screen">

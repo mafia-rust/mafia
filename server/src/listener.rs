@@ -126,11 +126,11 @@ impl Listener{
             return;
         };
 
-        if let Ok(player_id) = lobby.join_player(&connection.get_sender()) {
-            *sender_player_location = ListenerClientLocation::InLobby { room_code, lobby_client_id: player_id };
+        if let Ok(lobby_client_id) = lobby.join_player(&connection.get_sender()) {
+            *sender_player_location = ListenerClientLocation::InLobby { room_code, lobby_client_id };
         }
     }
-    fn set_player_in_lobby_reconnect(&mut self, connection: &Connection, room_code: RoomCode, player_id: LobbyClientID){
+    fn set_player_in_lobby_reconnect(&mut self, connection: &Connection, room_code: RoomCode, lobby_client_id: LobbyClientID){
 
         let Some(lobby) = self.lobbies.get_mut(&room_code) else {
             connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomDoesntExist });
@@ -147,8 +147,8 @@ impl Listener{
             return;
         };
 
-        if lobby.rejoin_player(&connection.get_sender(), player_id).is_ok() {
-            *sender_player_location = ListenerClientLocation::InLobby { room_code, lobby_client_id: player_id };
+        if lobby.rejoin_player(&connection.get_sender(), lobby_client_id).is_ok() {
+            *sender_player_location = ListenerClientLocation::InLobby { room_code, lobby_client_id };
         }
     }
     //returns if player was in the lobby
@@ -160,12 +160,12 @@ impl Listener{
             log!(error "Listener"; "{} {}", "Attempted leave a non player that isn't in the map", address);
             return false;
         };
-        let ListenerClientLocation::InLobby { room_code, lobby_client_id: player_id } = sender_player_location else {return false};
+        let ListenerClientLocation::InLobby { room_code, lobby_client_id } = sender_player_location else {return false};
         if let Some(lobby) = self.lobbies.get_mut(room_code) {
             if rejoinable {
-                lobby.remove_player_rejoinable(*player_id);
+                lobby.remove_player_rejoinable(*lobby_client_id);
             }else{
-                lobby.remove_player(*player_id)
+                lobby.remove_player(*lobby_client_id)
             }
         }
         *sender_player_location = ListenerClientLocation::OutsideLobby;
@@ -184,9 +184,9 @@ impl Listener{
             return Err("Player doesn't exist");
         };
 
-        if let ListenerClientLocation::InLobby { room_code, lobby_client_id: player_id } = disconnected_player_location {
+        if let ListenerClientLocation::InLobby { room_code, lobby_client_id } = disconnected_player_location {
             if let Some(lobby) = self.lobbies.get_mut(&room_code) {
-                lobby.remove_player(player_id)
+                lobby.remove_player(lobby_client_id)
             }
         }
 
@@ -292,9 +292,9 @@ impl Listener{
                     return Ok(());
                 };
 
-                if let ListenerClientLocation::InLobby { room_code, lobby_client_id: player_id } = sender_player_location {
+                if let ListenerClientLocation::InLobby { room_code, lobby_client_id } = sender_player_location {
                     if let Some(lobby) = self.lobbies.get_mut(room_code){
-                        lobby.on_client_message(&connection.get_sender(), *player_id, incoming_packet);
+                        lobby.on_client_message(&connection.get_sender(), *lobby_client_id, incoming_packet);
                     } else {
                         //Player is in a lobby that doesn't exist
                         panic!("Recieved a message from a player in a lobby that doesnt exist")

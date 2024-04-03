@@ -51,7 +51,7 @@ export default function ChatElement(
             
             if (
                 GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.myIndex !== null &&
-                (find(GAME_MANAGER.state.players[GAME_MANAGER.state.clientState.myIndex!].name ?? "").test(sanitizePlayerMessage(replaceMentions(
+                (find(GAME_MANAGER.state.players[GAME_MANAGER.state.clientState.myIndex].name ?? "").test(sanitizePlayerMessage(replaceMentions(
                     message.variant.text,
                     playerNames
                 ))) ||

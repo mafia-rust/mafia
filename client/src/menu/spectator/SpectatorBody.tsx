@@ -9,6 +9,7 @@ import ChatElement from "../../components/ChatMessage";
 import { translateRoleOutline } from "../../game/roleListState.d";
 import { PhaseState, Player, PlayerIndex } from "../../game/gameState.d";
 import { GraveRole } from "../../game/graveState";
+import { getTranslatedSubtitle } from "./SpectatorGameScreen";
 
 export default function SpectatorBody(): ReactElement {
 
@@ -42,22 +43,13 @@ export default function SpectatorBody(): ReactElement {
             let subtitleText = undefined;
             switch (phase.type) {
                 case "nomination":
-                    if(GAME_MANAGER.state.stateType === "game"){
-                        let votesRequired = GAME_MANAGER.getVotesRequired();
-                        if(votesRequired !== null){
-                            subtitleText = votesRequired === 1 ? translate("votesRequired.1") : translate("votesRequired", votesRequired);
-                        }
-                        subtitleText += " "+translate("trialsRemaining", phase.trialsLeft);
-                    }
-                    break;
                 case "testimony":
                 case "judgement":
                 case "finalWords":
-                    if(GAME_MANAGER.state.stateType === "game" && phase.playerOnTrial !== null){
-                        subtitleText = translate("phase."+phase.type+".subtitle", GAME_MANAGER.getPlayerNames()[phase.playerOnTrial].toString());
-                    }
+                    subtitleText = getTranslatedSubtitle();
                     break;
             }
+
             return (
                 <div className="spectator-body">
                     <Chat subtitle={subtitleText}/>
@@ -141,7 +133,7 @@ function Chat(props: {
 }
 
 
-function LivingPlayers(props: {
+function SpectatorPlayerList(props: {
     players: Player[],
     phase?: PhaseState
 }): ReactElement {
@@ -326,7 +318,7 @@ function Playerlist(): ReactElement {
 
     return <div className="spectator-player-list player-list-menu-colors">
         <h1><StyledText>{translate("wiki.article.standard.playerList.title")}</StyledText></h1>
-        <LivingPlayers players={players} phase={phase}/>
+        <SpectatorPlayerList players={players} phase={phase}/>
         <section>
             <StyledText>{translate("dead")}</StyledText>
             <ul>
