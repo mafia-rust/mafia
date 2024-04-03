@@ -139,11 +139,9 @@ export default function messageListener(packet: ToClientPacket){
         case "lobbyClients":
             if(GAME_MANAGER.state.stateType === "lobby"){
                 GAME_MANAGER.state.players = new Map();
-                packet.clients.forEach((lobbyClient, id) => {
-                    if(GAME_MANAGER.state.stateType === "lobby"){
-                        GAME_MANAGER.state.players.set(id, lobbyClient);
-                    }
-                });
+                for(let [clientId, lobbyClient] of Object.entries(packet.clients)){
+                    GAME_MANAGER.state.players.set(Number.parseInt(clientId), lobbyClient);
+                }
             }
         break;
         case "lobbyName":
