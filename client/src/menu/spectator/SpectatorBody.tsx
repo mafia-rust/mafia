@@ -159,25 +159,25 @@ function SpectatorPlayerList(props: {
         {guiltiedPlayers.length>0 && <section>
             <StyledText>{translate("verdict.guilty")}</StyledText>
             <ul>
-                {guiltiedPlayers.map(player => {return <LivingPlayer player={player} phaseState={props.phase}/>})}
+                {guiltiedPlayers.map(player => {return <LivingPlayer key={player.name} player={player} phaseState={props.phase}/>})}
             </ul>
         </section>}
         {innocentedPlayers.length>0 && <section>
             <StyledText>{translate("verdict.innocent")}</StyledText>
             <ul>
-                {innocentedPlayers.map(player => {return <LivingPlayer player={player} phaseState={props.phase}/>})}
+                {innocentedPlayers.map(player => {return <LivingPlayer key={player.name} player={player} phaseState={props.phase}/>})}
             </ul>
         </section>}
         {abstainedPlayers.length>0&&<section>
             <StyledText>{translate("verdict.abstain")}</StyledText>
             <ul>
-                {abstainedPlayers.map(player => {return <LivingPlayer player={player} phaseState={props.phase}/>})}
+                {abstainedPlayers.map(player => {return <LivingPlayer key={player.name} player={player} phaseState={props.phase}/>})}
             </ul>
         </section>}
         <section>
             <StyledText>{translate("menu.playerList.button.living")}</StyledText>
             <ul>
-                {otherPlayers.map(player => {return <LivingPlayer player={player} phaseState={props.phase}/>})}
+                {otherPlayers.map(player => {return <LivingPlayer key={player.name} player={player} phaseState={props.phase}/>})}
             </ul>
         </section>
     </>

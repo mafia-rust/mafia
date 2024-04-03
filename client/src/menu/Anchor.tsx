@@ -6,6 +6,7 @@ import SettingsMenu, { DEFAULT_SETTINGS } from "./Settings";
 import { loadSettings } from "../game/localStorage";
 import LoadingScreen from "./LoadingScreen";
 import { Theme } from "..";
+import { ChatMessage } from "../components/ChatMessage";
 
 type AnchorProps = {
     content: JSX.Element,
@@ -19,7 +20,8 @@ type AnchorState = {
     errorCard: JSX.Element | null,
 
     settings_menu: boolean,
-    audio: HTMLAudioElement
+
+    audio: HTMLAudioElement,
 
     touchStartX: number | null,
     touchCurrentX: number | null,
@@ -29,6 +31,8 @@ const MIN_SWIPE_DISTANCE = 40;
 
 export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     private static instance: Anchor;
+    private static queueIsPlaying: boolean = false;
+    private static audioQueue: Array<string> = [];
 
     swipeEventListeners: Array<(right: boolean) => void> = [];
 
@@ -43,6 +47,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             errorCard: null,
 
             settings_menu: false,
+
             audio: new Audio(),
 
             touchStartX: null,
@@ -93,22 +98,48 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         });
     }
 
-    static playAudioFile(src: string | null, timeLeftSeconds?: number) {
+    static queueAudioFile(src: string) {
+        Anchor.audioQueue.push(src);
+
+        if(!Anchor.queueIsPlaying) {
+            Anchor.playAudioQueue();
+        }
+    }
+    static playAudioQueue() {
+        if(Anchor.audioQueue.length > 0) {
+
+            Anchor.queueIsPlaying = true;
+            Anchor.playAudioFile(Anchor.audioQueue[0], () => {
+                Anchor.audioQueue = Anchor.audioQueue.slice(1)
+                Anchor.playAudioQueue();
+            });
+        }else{
+            Anchor.queueIsPlaying = false;
+        }
+    }
+    static clearAudioQueue() {
+        Anchor.audioQueue = [];
+        Anchor.stopAudio();
+    }
+    static playAudioFile(src: string | null, onEnd?: () => void){
         Anchor.instance.state.audio.pause();
         if(src === null) return;
         Anchor.instance.state.audio.src = src;
         Anchor.instance.state.audio.load();
 
+        const setStateCallback = () => {
+            const onEnded = () => {
+                if(onEnd !== undefined) onEnd();
+                Anchor.instance.state.audio.removeEventListener("ended", onEnded);
+            }
+
+            Anchor.startAudio();
+            Anchor.instance.state.audio.addEventListener("ended", onEnded);
+        }
 
         Anchor.instance.setState({
             audio: Anchor.instance.state.audio
-        }, () => {
-            Anchor.startAudio();
-            Anchor.instance.state.audio.addEventListener("ended", () => {
-                console.log("Playing audio: " + Anchor.instance.state.audio.src);
-                Anchor.startAudio();
-            });
-        });
+        }, setStateCallback);
     }
     static startAudio() {
         let playPromise = Anchor.instance.state.audio.play();
@@ -118,7 +149,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
 
             // Anchor.instance.state.audio.duration;
             // Anchor.instance.state.audio.currentTime = 45;
-            // Anchor.instance.state.audio.playbackRate = 2;
+            Anchor.instance.state.audio.playbackRate = 1;
             // if(Anchor.instance.state.audio.duration !== Infinity && !Number.isNaN(Anchor.instance.state.audio.duration)){
             //     let startTime = Math.ceil(Anchor.instance.state.audio.duration - (timeLeftSeconds ?? 0));
             //     if (startTime > 0 && startTime < Anchor.instance.state.audio.duration) {
@@ -128,13 +159,14 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             // }
         }).catch((error) => {
             console.log("Audio failed to play: " + error);
-        });
-        
-            
+        }); 
     }
     static stopAudio() {
         Anchor.instance.state.audio.pause();
     }
+
+
+
     static closeSettings() {
         Anchor.instance.setState({settings_menu: false});
     }
@@ -269,4 +301,33 @@ function ErrorCard(props: { error: Error, onClose: () => void }) {
         </header>
         <div>{props.error.body}</div>
     </div>
+}
+
+
+export type AudioFile = "church_bell.mp3" | "alarm.mp3" | "vine_boom.mp3" | "sniper_shot.mp3";
+export type AudioFilePath = `audio/${AudioFile}`;
+
+export function chatMessageToAudio(msg: ChatMessage): AudioFilePath | null {
+    let file: AudioFile|null = null;
+
+    switch(msg.variant.type){
+        case "playerDied": 
+            file = "church_bell.mp3";
+            break;
+        case "phaseChange":
+            if(msg.variant.phase.type === "testimony") 
+                file = "alarm.mp3";
+            else if(msg.variant.phase.type === "night")
+                file = "vine_boom.mp3";
+            break;
+        case "deputyKilled": 
+            file = "sniper_shot.mp3";
+            break;
+    }
+
+    if(file){
+        return `audio/${file}`;
+    }else{
+        return null
+    }
 }
