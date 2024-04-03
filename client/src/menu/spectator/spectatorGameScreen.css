@@ -121,6 +121,7 @@
     border: .2rem solid var(--primary-border-color);
     border-radius: 1rem;
     font-size: 1.5rem;
+    background-color: var(--background-color);
 }
 .obituary-spectator-body-text {
     flex-grow: 1;

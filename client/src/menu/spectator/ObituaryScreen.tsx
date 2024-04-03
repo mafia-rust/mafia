@@ -49,7 +49,7 @@ export default function ObituaryScreen(props: {}): ReactElement {
             </div>
         );
     return (
-        <div className="obituary-spectator-body">
+        <div className="graveyard-menu-colors obituary-spectator-body">
             {newGraves}
         </div>
     );
