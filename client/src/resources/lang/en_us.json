@@ -244,8 +244,8 @@
 
     "role.veteran.name": "Veteran",
     "role.veteran.name:var.0": "Veterans",
-    "role.veteran.target": "Alert",
-    "role.veteran.roleDataText": "\\0 alerts remaining",
+    "role.veteran.target": "Rampage",
+    "role.veteran.roleDataText": "\\0 uses remaining",
     "role.veteran.dayTarget": "Special",
 
     "role.deputy.name": "Deputy",
@@ -604,7 +604,7 @@
     "chatMessage.targetIsPossessionImmune":"Your target was immune to possession.",
     "chatMessage.werewolfTrackingResult":"\\0 visited \\1.",
     "chatMessage.werewolfTrackingResult.nobody":"\\0 visited nobody.",
-    "chatMessage.veteranAttackedYou":"You were attacked by the veteran you visited.",
+    "chatMessage.veteranAttackedYou":"You were attacked by a veteran you visited.",
     "chatMessage.veteranAttackedVisitor":"You attacked a visitor.",
     "chatMessage.trapperYouAttackedVisitor": "Your trap attacked someone!",
     "chatMessage.trapperVisitorsRole": "A \\0 visited the trapped player.",
@@ -680,6 +680,7 @@
     "wiki.article.standard.target.text": "Your target is the player who you visit.",
     
     "wiki.article.standard.indirect.title":"Indirect",
+    "wiki.article.standard.indirect.title:var.0": "Indirectly",
     "wiki.article.standard.indirect.text": "An indirect ability is one that does not visit. Therefore, it is unable to be seen by a lookout or tracker or affected by many other abilities.",
 
     "wiki.article.standard.hypnotize.title": "Hypnotize",
@@ -696,7 +697,7 @@
     "wiki.article.standard.convert.title:var.0": "Converted",
     "wiki.article.standard.convert.title:var.1": "Converts",
     "wiki.article.standard.convert.title:var.2": "Converting",
-    "wiki.article.standard.convert.text": "A player's role is changed. All of their ability uses are refilled to maximum. _For Example:_\n- If someone is converted to a Veteran, they get all three alerts.\n- An Apostle can convert players into cultists.",
+    "wiki.article.standard.convert.text": "A player's role is changed. All of their ability uses are refilled to maximum. _For Example:_\n- If someone is converted to a Veteran, they get all three ability uses.\n- An Apostle can convert players into cultists.",
     "wiki.article.standard.roleblock.title": "Roleblock",
     "wiki.article.standard.roleblock.title:var.0": "Roleblocked",
     "wiki.article.standard.roleblock.title:var.1": "Roleblocks",
@@ -712,7 +713,7 @@
     "wiki.article.standard.rampage.title:var.0": "Rampaged",
     "wiki.article.standard.rampage.title:var.1": "Rampages",
     "wiki.article.standard.rampage.title:var.2": "Rampaging",
-    "wiki.article.standard.rampage.text": "All the visitors to a rampaged player are indirectly attacked.",
+    "wiki.article.standard.rampage.text": "All visitors to a rampaged player are indirectly attacked. The rampage shares the attack level of the rampaging character.",
     "wiki.article.standard.possess.title": "Possess",
     "wiki.article.standard.possess.title:var.0": "Possesses",
     "wiki.article.standard.possess.title:var.1": "Possessed",
@@ -739,11 +740,6 @@
     "wiki.article.standard.friends.text": "A Seer's result which indicates that the two players they visited can win together.",
     "wiki.article.standard.enemies.title": "Enemies",
     "wiki.article.standard.enemies.text": "A Seer's result which indicates that the two players they visited can not win together.",
-    "wiki.article.standard.alert.title": "Alert",
-    "wiki.article.standard.alert.title:var.0": "Alerting",
-    "wiki.article.standard.alert.title:var.1": "Alerted",
-    "wiki.article.standard.alert.title:var.2": "Alerts",
-    "wiki.article.standard.alert.text": "A Veterans ability. If you visit a veteran on the night they are on alert, they will indirectly attack you with an armor-piercing attack. A Veteran can go on Alert up to three times.",
     "wiki.article.standard.haunt.title": "Haunt",
     "wiki.article.standard.haunt.title:var.0": "Haunted",
     "wiki.article.standard.haunt.title:var.1": "Haunting",
@@ -815,7 +811,7 @@
     
     "wiki.article.standard.priority.title":"Priority",
     "wiki.article.standard.priority.title:var.0":"Priorities",
-    "wiki.article.standard.priority.text":"Abilities are used in a specific order called priority order. If two players have abilities that go on the same priority, the player with the lower player number will go first. It is recommended that you read a roles encyclopedia page before this page. Some abilities go before night starts. Attacking someone doesn't kill them until the end of the night. Here are all the priorities and the abilities that happen in them.\n\n**Before Night (Not a priority)**\n\n- Jailor chooses who to jail\n- Journalist chooses who to interview\n- Spy finds if an apostle can convert\n- Death kills everyone\n- Create Visits\n  - All visits are decided by who is selected by each players. During each priority, each associated ability is activated using who is being visited by who, which is not necessarily who the player selected (in the case of a transporter, witch, etc...).\n\n**1: Top Priority**\n\n- Amnesiac (Convert)\n- Doomsayer (Kill)\n- Executioner (Suicide)\n- Jester (Haunt)\n- Veteran (Decide to Alert)\n- Vigilante (Suicide)\n\n**2: Transporter**\n\n- Transporter (Swap Visits)\n\n**3: Control**\n\n- Witch (Possess)\n\n**4: Necromancy**\n\n- Retributionist (Possess/Change Visits)\n- Necromancer (Possess/Change Visits)\n\n**5: roleblock**\n\n- Reveler (roleblock)\n- Hypnotist (roleblock)\n- Escort (roleblock)\n- Jailor (Invisible roleblock)\n\n**6: Deception**\n\n- Hypnotist (Hypnotize)\n- Framer (Frame)\n- Blackmailer (Silence)\n- Janitor (Clean)\n- Arsonist (Douse)\n\n**7: Bodyguard**\n\n- Bodyguard (Change visits)\n\n**8: Heal**\n\n- Trapper (Intentially dismanle, set, or use trap)\n- Bodyguard (Defend themselves)\n- Sentinel (Defend target)\n- Guardian (Defend)\n- Veteran (Defend themselves)\n\n**9: Kill**\n\n- Apostle (Kill)\n- Zealot (Kill)\n- Martyr (Kill)\n- Trapper (Indirect Kill)\n- Arsonist (Ignite)\n- Bodyguard (Attack attacker)\n- Sentinel (Attack Visitor)\n- Godfather (Attack or Make Backup Attack)\n- Jailor (Attack)\n- Mafioso (Attack)\n- Veteran (Rampage)\n- Vigilante (Attack)\n- Werewolf (Rampage and attacks)\n\n**10: Investigative**\n\n- Journalist (Add Journal Message)\n- Psychic (Vision)\n- Trapper (Traps report info)\n- Trapper (Dismantle if triggered) \n- Arsonist (Find who is doused)\n- Bodyguard (Find if protected)\n- Informant (Investigate)\n- Sentinel (Find if protected)\n- Death (Collect souls)\n- Guardian (Find if protected)\n- Janitor (Find role and alibi)\n- Forger (Find role and alibi)\n- Lookout (Investigate)\n- Seer (Investigate)\n- Detective (Investigate)\n- Spy (Find who the Mafia Visits)\n- Tracker (Investigate)\n- Werewolf (Track players scent)\n\n**11: Spy Bug**\n\n- Spy (Bug)\n\n**12: Steal Messages**\n\n- Witch (Get target messages)\n- Necromancer (Get target messages)\n- Retributionist (Get target messages)\n\n**13: Convert**\n\n- Apostle (Convert)\n\n**14: SpyCultistCount**\n\n- Spy (Get Cult Count)",
+    "wiki.article.standard.priority.text":"Abilities are used in a specific order called priority order. If two players have abilities that go on the same priority, the player with the lower player number will go first. It is recommended that you read a roles encyclopedia page before this page. Some abilities go before night starts. Attacking someone doesn't kill them until the end of the night. Here are all the priorities and the abilities that happen in them.\n\n**Before Night (Not a priority)**\n\n- Jailor chooses who to jail\n- Journalist chooses who to interview\n- Spy finds if an apostle can convert\n- Death kills everyone\n- Create Visits\n  - All visits are decided by who is selected by each players. During each priority, each associated ability is activated using who is being visited by who, which is not necessarily who the player selected (in the case of a transporter, witch, etc...).\n\n**1: Top Priority**\n\n- Amnesiac (Convert)\n- Doomsayer (Kill)\n- Executioner (Suicide)\n- Jester (Haunt)\n- Veteran (Decide to Rampage)\n- Vigilante (Suicide)\n\n**2: Transporter**\n\n- Transporter (Swap Visits)\n\n**3: Control**\n\n- Witch (Possess)\n\n**4: Necromancy**\n\n- Retributionist (Possess/Change Visits)\n- Necromancer (Possess/Change Visits)\n\n**5: roleblock**\n\n- Reveler (roleblock)\n- Hypnotist (roleblock)\n- Escort (roleblock)\n- Jailor (Invisible roleblock)\n\n**6: Deception**\n\n- Hypnotist (Hypnotize)\n- Framer (Frame)\n- Blackmailer (Silence)\n- Janitor (Clean)\n- Arsonist (Douse)\n\n**7: Bodyguard**\n\n- Bodyguard (Change visits)\n\n**8: Heal**\n\n- Trapper (Intentionally dismantle, set, or use trap)\n- Bodyguard (Defend themselves)\n- Sentinel (Protect target)\n- Guardian (Defend)\n- Veteran (Defend themselves)\n\n**9: Kill**\n\n- Apostle (Kill)\n- Zealot (Kill)\n- Martyr (Kill)\n- Trapper (Indirect Kill)\n- Arsonist (Ignite)\n- Bodyguard (Attack attacker)\n- Sentinel (Attack Visitor)\n- Godfather (Attack or Make Backup Attack)\n- Jailor (Attack)\n- Mafioso (Attack)\n- Veteran (Rampage)\n- Vigilante (Attack)\n- Werewolf (Rampage and attacks)\n\n**10: Investigative**\n\n- Journalist (Add Journal Message)\n- Psychic (Vision)\n- Trapper (Traps report info)\n- Trapper (Dismantle if triggered) \n- Arsonist (Find who is doused)\n- Bodyguard (Find if protected)\n- Informant (Investigate)\n- Sentinel (Find if protected)\n- Death (Collect souls)\n- Guardian (Find if protected)\n- Janitor (Find role and alibi)\n- Forger (Find role and alibi)\n- Lookout (Investigate)\n- Seer (Investigate)\n- Detective (Investigate)\n- Spy (Find who the Mafia Visits)\n- Tracker (Investigate)\n- Werewolf (Track players scent)\n\n**11: Spy Bug**\n\n- Spy (Bug)\n\n**12: Steal Messages**\n\n- Witch (Get target messages)\n- Necromancer (Get target messages)\n- Retributionist (Get target messages)\n\n**13: Convert**\n\n- Apostle (Convert)\n\n**14: SpyCultistCount**\n\n- Spy (Get Cult Count)",
     
     "wiki.article.standard.chat.title:var.0":"Chat Messages",
     "wiki.article.standard.chat.title":"Chat",
@@ -947,10 +943,10 @@
     "wiki.article.role.vigilante.attributes":"* If your attack overpowers a townies defense and they die, you commit suicide on the following night\n* When it is night one, when you have 0 bullets left, when you are going to commit suicide, or when you have already committed suicide, you can not select or attack anyone",
     "wiki.article.role.vigilante.extra": "* You only have a basic attack\n* Even while dead, killing someone requires and spends a bullet (such as when you get possessed)",
 
-    "wiki.article.role.veteran.guide": "- At night, select yourself to protect yourself and attack everyone who visits you, going 'on alert.'\n- You can only use your ability three times\n\nYou should try to bait evil players into visiting you, so you can block the attack and kill them.",
-    "wiki.article.role.veteran.abilities":"* Select yourself to protect yourself and attack everyone who visits you\n* You can only use this ability 3 times.",
-    "wiki.article.role.veteran.attributes":"* You are told when you attack a visitor\n* Players who visit you while your ability is active are told they are attacked by a veteran\n* You have an indirect, armor-piercing attack",
-    "wiki.article.role.veteran.extra":"* While you have 0 alerts left, you can not select yourself\n* You are immune to getting roleblocked and possession\n* When you select yourself, you don't visit yourself, it is indirect",
+    "wiki.article.role.veteran.guide": "- At night, you can select yourself to gain protected defense for the night and rampage yourself, attacking everyone who visits you\n- You can only use your ability three times\n* You should try to trick evil players into visiting you, so you can block the attack and kill them. Try to avoid killing unnecessary townies.\n* There can only be one veteran in a game.",
+    "wiki.article.role.veteran.abilities":"* Select yourself\n    - rampage yourself\n    - gain protected defense for the night",
+    "wiki.article.role.veteran.attributes":"* You only have three uses of your ability\n* You are told when a visitor is attacked by your rampage\n* You have an indirect, armor-piercing attack",
+    "wiki.article.role.veteran.extra":"* While you have 0 uses left, you can not select yourself\n* You are immune to getting roleblocked and getting possessed\n* Players who visit you while your ability is active are told they are attacked by a veteran\n* When you select yourself, you don't visit yourself.",
 
     "wiki.article.role.deputy.guide":"- Once per game, you can shoot a player during the day\n- If you kill a townie, you instantly leave town\n- If you kill someone, everyone is told that a deputy shot someone\n- If the player you shoot survives your attack, only the player you attacked is told\n\nIf you attack someone and they survive it is likely that they are a role that is armored. Most roles that are armored are evil.",
     "wiki.article.role.deputy.abilities":"* Once per game, during the discussion or nomination phase after day 1, you may choose a player to attack.",
@@ -1032,9 +1028,9 @@
     "wiki.article.role.arsonist.attributes":"* You can't be doused\n* You are shown who is doused\n* All doused players have a suspicious aura while you are alive",
     "wiki.article.role.arsonist.extra":"* If you are roleblocked, you still douse visitors\n* If you are in jail, you douse the jailor, and you will still douse players who visit you\n* Igniting a doused player is an indirect, protection-piercing attack",
 
-    "wiki.article.role.werewolf.guide": "You have a different ability depending on whether or not it is a full moon tonight. It is a full moon every night except night 1 and 3.\n- On full moon nights\n    - Select someone to attack them and rampage, attacking everyone else who visits that player\n    - Select nobody to attack everyone who visits you\n- On non full moon nights\n    - Select someone to gain their scent\n    - Passively gain the scent of everyone who visits you\n- On any night\n    - If you have someones scent, you will know who they visit every night for the rest of the game\n\n Try to attack players who will get visited by many people in order to kill more players. The information you receive can help you claim town investigative roles such as the Tracker",
-    "wiki.article.role.werewolf.abilities":"* On full moon nights\n    * Visit a player to attack and rampage\n    * If you visit nobody on a full moon night, you rampage yourself\n* On non-full moon nights\n    * Visit a player to gain their scent.\n You passively gain the scent of every player that visits you.",
-    "wiki.article.role.werewolf.attributes":"* You have an armor-piercing attack\n* While you are in jail, you attack all Jailors who do not choose to execute you\n* You are told who you have the scent of\n* You still track the scent of players after you die\n* While it is a non-full moon night, you have an innocent aura\n* Each night, you are told who each player you have the scent of visits",
+    "wiki.article.role.werewolf.guide": "You have a different ability depending on whether or not it is a full moon tonight. It is a full moon every night except night 1 and 3.\n- On full moon nights\n    - Select someone to attack them and rampage, attacking everyone else who visits that player\n    - Select nobody to rampage yourself, attacking everyone who visits you\n- On non full moon nights\n    - Select someone to gain their scent\n    - Passively gain the scent of everyone who visits you\n    - You have an innocent aura\n- Every night\n    - If you have someones scent, you are told who they visit\n\n Try to attack players who will get visited by many people in order to kill more players. The information you receive can help you claim town investigative roles such as the Tracker",
+    "wiki.article.role.werewolf.abilities":"* On full moon nights\n    * Visit a player to attack and rampage\n    * If you visit nobody, you rampage yourself\n* On non-full moon nights\n    * Visit a player to gain their scent\n    * You passively gain the scent of every player that visits you\n    * You have an innocent aura",
+    "wiki.article.role.werewolf.attributes":"* You track each player you have the scent of. You are told who each player you are tracking visits.\n* You still track the scent of players after you die\n* While you are in jail, you attack all Jailors who do not choose to execute you\n* You have an armor-piercing attack\n",
     "wiki.article.role.werewolf.extra":"* You will attack yourself if you visit yourself\n* You will not rampage the jailor while in jail\n* You will still attack or gain the scent of visits to you when you are in jail\n* You will still track the players you have the scent of while you are in jail\n* A roleblock has no effect on you besides erasing your visits. If you are roleblocked, it is as if you visited nobody\n* Players attacked by a rampage are indirectly attacked",
 
     "wiki.article.role.death.guide": "Guess what player will die during night by selecting them, If you guess correctly you will collect a soul, you will also collect a soul passively each night. Once you collect six souls, everyone will be told that death collected six souls at the start of the day, if you survive that day, you will attack everyone and win the game at the start of night.",
@@ -1044,8 +1040,8 @@
 
     "wiki.article.role.amnesiac.guide": "* Choose a role to become that role\n    * You become that role when night starts\n* You can choose any outline, so you can get a random role\n* You can't become a role that is disabled",
     "wiki.article.role.amnesiac.abilities":"* Become a random role from the chosen outline at the start of night",
-    "wiki.article.role.amnesiac.attributes":"* You can not become a role that is disabled\n* You can become a role that is taken, for example, you can become a veteran even if there is already one in the game",
-    "wiki.article.role.amnesiac.extra":"* If you choose a role that was disabled you stay as the Amnesiac\n* You can choose amnesiac to stay as amnesiac",
+    "wiki.article.role.amnesiac.attributes":"* You can not become a role that is disabled",
+    "wiki.article.role.amnesiac.extra":"* If you choose a role that was disabled you stay as the Amnesiac\n* You can choose amnesiac to stay as amnesiac\n* You can become a unique role that already exists, for example, you can become a veteran even if there is already one in the game",
 
     "wiki.article.role.martyr.guide": "If you die, you win, and everyone commits suicide in an attempt to follow you to the afterlife. The entire town knows that you're the martyr. Good Luck!",
     "wiki.article.role.martyr.abilities":"* Visit yourself to attack yourself and spend one bullet\n* You start with 5 bullets\n* When you die, everyone else commits suicide and you win.",
