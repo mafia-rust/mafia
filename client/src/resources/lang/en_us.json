@@ -1044,8 +1044,8 @@
 
     "wiki.article.role.amnesiac.guide": "* Choose a role to become that role\n    * You become that role when night starts\n* You can choose any outline, so you can get a random role\n* You can't become a role that is disabled",
     "wiki.article.role.amnesiac.abilities":"* Become a random role from the chosen outline at the start of night",
-    "wiki.article.role.amnesiac.attributes":"* You can not become a role that is disabled\n* You can become a role that is taken, for example, you can become a veteran even if there is already one in the game",
-    "wiki.article.role.amnesiac.extra":"* If you choose a role that was disabled you stay as the Amnesiac\n* You can choose amnesiac to stay as amnesiac",
+    "wiki.article.role.amnesiac.attributes":"* You can not become a role that is disabled",
+    "wiki.article.role.amnesiac.extra":"* If you choose a role that was disabled you stay as the Amnesiac\n* You can choose amnesiac to stay as amnesiac\n* You can become a role that is taken, for example, you can become a veteran even if there is already one in the game",
 
     "wiki.article.role.martyr.guide": "If you die, you win, and everyone commits suicide in an attempt to follow you to the afterlife. The entire town knows that you're the martyr. Good Luck!",
     "wiki.article.role.martyr.abilities":"* Visit yourself to attack yourself and spend one bullet\n* You start with 5 bullets\n* When you die, everyone else commits suicide and you win.",
