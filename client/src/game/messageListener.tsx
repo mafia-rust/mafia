@@ -1,13 +1,12 @@
 
 import { createPlayer } from "./gameState";
-import Anchor from "./../menu/Anchor";
+import Anchor, { chatMessageToAudio } from "./../menu/Anchor";
 import GAME_MANAGER from "./../index";
 import GameScreen, { ContentMenu } from "./../menu/game/GameScreen";
 import { ToClientPacket } from "./packet";
 import { Tag } from "./gameState.d";
 import { Role } from "./roleState.d";
 import translate from "./lang";
-import { getAudioSrcFromString } from "../components/audio";
 import { computeKeywordDataWithPlayers } from "../components/StyledText";
 import { deleteReconnectData, saveReconnectData } from "./localStorage";
 import { WikiArticleLink } from "../components/WikiArticleLink";
@@ -135,6 +134,9 @@ export default function messageListener(packet: ToClientPacket){
         case "yourPlayerIndex":
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
                 GAME_MANAGER.state.clientState.myIndex = packet.playerIndex;
+
+            //TODO jack Im sorry
+            Anchor.clearAudioQueue();
         break;
         case "lobbyClients":
             if(GAME_MANAGER.state.stateType === "lobby"){
@@ -216,10 +218,6 @@ export default function messageListener(packet: ToClientPacket){
                     if(role !== undefined){
                         Anchor.setCoverCard(<WikiArticle article={"role/"+role as WikiArticleLink}/>, "wiki-menu-colors");
                     }
-                }
-
-                if(packet.phase.type !== "judgement"){
-                    Anchor.playAudioFile(getAudioSrcFromString(packet.phase.type));
                 }
             }
         break;
@@ -345,8 +343,15 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.fastForward = packet.fastForward;
         break;
         case "addChatMessages":
-            if(GAME_MANAGER.state.stateType === "game")
+            if(GAME_MANAGER.state.stateType === "game"){
                 GAME_MANAGER.state.chatMessages = GAME_MANAGER.state.chatMessages.concat(packet.chatMessages);
+                
+                for(let chatMessage of packet.chatMessages){
+                    let audioSrc = chatMessageToAudio(chatMessage);
+                    if(audioSrc)
+                        Anchor.queueAudioFile(audioSrc);
+                }
+            }
         break;
         case "addGrave":
             if(GAME_MANAGER.state.stateType === "game")
