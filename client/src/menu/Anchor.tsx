@@ -304,13 +304,27 @@ function ErrorCard(props: { error: Error, onClose: () => void }) {
 }
 
 
-export type AudioFile = "church_bell.mp3" | "alarm.mp3" | "vine_boom.mp3" | "sniper_shot.mp3";
+export type AudioFile = 
+    "church_bell.mp3" | 
+    "alarm.mp3" | 
+    "vine_boom.mp3" | 
+    "sniper_shot.mp3" | 
+    "normal_message.mp3" | 
+    "whisper_broadcast.mp3";
+
 export type AudioFilePath = `audio/${AudioFile}`;
 
 export function chatMessageToAudio(msg: ChatMessage): AudioFilePath | null {
     let file: AudioFile|null = null;
 
     switch(msg.variant.type){
+        case "normal":
+        case "voted":
+            file = "normal_message.mp3";
+            break;
+        case "broadcastWhisper":
+            file = "whisper_broadcast.mp3";
+            break;
         case "playerDied": 
             file = "church_bell.mp3";
             break;
