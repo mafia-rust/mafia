@@ -4,48 +4,47 @@ use rand::random;
 use tokio_tungstenite::tungstenite::Message;
 
 use crate::{
-    lobby::Lobby, 
+    lobby::{lobby_client::LobbyClientID, Lobby}, 
     log, 
     packet::{LobbyPreviewData, RejectJoinReason, ToClientPacket, ToServerPacket}, 
     websocket_connections::connection::Connection
 };
 
-pub type PlayerID = u32;
 pub type RoomCode = usize;
 
-struct ListenerPlayer {
+struct ListenerClient {
     connection: Connection,
-    location: PlayerLocation,
+    location: ListenerClientLocation,
 }
-impl ListenerPlayer{
+impl ListenerClient{
     fn new(connection: Connection) -> Self {
         Self {
             connection,
-            location: PlayerLocation::OutsideLobby,
+            location: ListenerClientLocation::OutsideLobby,
         }
     }
 
 }
 
 #[derive(Debug, PartialEq, Eq)]
-enum PlayerLocation {
+enum ListenerClientLocation {
     InLobby{
         room_code: RoomCode,
-        player_id: PlayerID,
+        lobby_client_id: LobbyClientID,
     },
     OutsideLobby
 }
 
 pub struct Listener {
     lobbies: HashMap<RoomCode, Lobby>,
-    players: HashMap<SocketAddr, ListenerPlayer>,
+    clients: HashMap<SocketAddr, ListenerClient>,
 }
 impl Listener{
     #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
         Self {
             lobbies: HashMap::new(),
-            players: HashMap::new(),
+            clients: HashMap::new(),
         }
     }
 
@@ -61,7 +60,7 @@ impl Listener{
                 if let Ok(mut listener) = listener.lock() {
                     let mut closed_lobbies = Vec::new();
                     
-                    let Listener { ref mut lobbies, players: ref _players} = *listener;
+                    let Listener { ref mut lobbies, clients: ref _players} = *listener;
 
                     // log!(info "Listener"; "lobbies: {:?} players: {:?}", lobbies.keys(), _players.len());
 
@@ -98,8 +97,8 @@ impl Listener{
         Some(room_code)
     }
     fn delete_lobby(&mut self, room_code: RoomCode){
-        let players_to_remove: Vec<_> = self.players.iter().filter(|p| 
-            if let PlayerLocation::InLobby{room_code: player_room_code, ..} = p.1.location {
+        let players_to_remove: Vec<_> = self.clients.iter().filter(|p| 
+            if let ListenerClientLocation::InLobby{room_code: player_room_code, ..} = p.1.location {
                 player_room_code == room_code 
             }else{
                 false
@@ -118,7 +117,7 @@ impl Listener{
             return;
         };
 
-        let Some(sender_player_location) = self.players
+        let Some(sender_player_location) = self.clients
             .get_mut(connection.get_address())
             .map(|p|&mut p.location)
         else{
@@ -127,11 +126,11 @@ impl Listener{
             return;
         };
 
-        if let Ok(player_id) = lobby.join_player(&connection.get_sender()) {
-            *sender_player_location = PlayerLocation::InLobby { room_code, player_id };
+        if let Ok(lobby_client_id) = lobby.join_player(&connection.get_sender()) {
+            *sender_player_location = ListenerClientLocation::InLobby { room_code, lobby_client_id };
         }
     }
-    fn set_player_in_lobby_reconnect(&mut self, connection: &Connection, room_code: RoomCode, player_id: PlayerID){
+    fn set_player_in_lobby_reconnect(&mut self, connection: &Connection, room_code: RoomCode, lobby_client_id: LobbyClientID){
 
         let Some(lobby) = self.lobbies.get_mut(&room_code) else {
             connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomDoesntExist });
@@ -139,7 +138,7 @@ impl Listener{
         };
 
         let Some(sender_player_location) = 
-            self.players
+            self.clients
             .get_mut(connection.get_address())
             .map(|p|&mut p.location)
         else{
@@ -148,54 +147,54 @@ impl Listener{
             return;
         };
 
-        if lobby.rejoin_player(&connection.get_sender(), player_id).is_ok() {
-            *sender_player_location = PlayerLocation::InLobby { room_code, player_id };
+        if lobby.rejoin_player(&connection.get_sender(), lobby_client_id).is_ok() {
+            *sender_player_location = ListenerClientLocation::InLobby { room_code, lobby_client_id };
         }
     }
     //returns if player was in the lobby
     fn set_player_outside_lobby(&mut self, address: &SocketAddr, rejoinable: bool) -> bool {
-        let Some(sender_player_location) = self.players
+        let Some(sender_player_location) = self.clients
             .get_mut(address)
             .map(|p|&mut p.location)
         else{
             log!(error "Listener"; "{} {}", "Attempted leave a non player that isn't in the map", address);
             return false;
         };
-        let PlayerLocation::InLobby { room_code, player_id } = sender_player_location else {return false};
+        let ListenerClientLocation::InLobby { room_code, lobby_client_id } = sender_player_location else {return false};
         if let Some(lobby) = self.lobbies.get_mut(room_code) {
             if rejoinable {
-                lobby.remove_player_rejoinable(*player_id);
+                lobby.remove_player_rejoinable(*lobby_client_id);
             }else{
-                lobby.remove_player(*player_id)
+                lobby.remove_player(*lobby_client_id)
             }
         }
-        *sender_player_location = PlayerLocation::OutsideLobby;
+        *sender_player_location = ListenerClientLocation::OutsideLobby;
         true
     }
     
     pub fn create_player(&mut self, connection: &Connection) {
-        self.players.insert(*connection.get_address(), ListenerPlayer::new(connection.clone()));
+        self.clients.insert(*connection.get_address(), ListenerClient::new(connection.clone()));
     }
 
     pub fn delete_player(&mut self, address: &SocketAddr) -> Result<(), &'static str> {
-        let Some(disconnected_player_location) = self.players
+        let Some(disconnected_player_location) = self.clients
             .remove(address)
             .map(|p|p.location)
         else{
             return Err("Player doesn't exist");
         };
 
-        if let PlayerLocation::InLobby { room_code, player_id } = disconnected_player_location {
+        if let ListenerClientLocation::InLobby { room_code, lobby_client_id } = disconnected_player_location {
             if let Some(lobby) = self.lobbies.get_mut(&room_code) {
-                lobby.remove_player(player_id)
+                lobby.remove_player(lobby_client_id)
             }
         }
 
         Ok(())
     }
 
-    fn get_address_from_location(&self, location: PlayerLocation) -> Option<SocketAddr> {
-        for (address, player) in self.players.iter() {
+    fn get_address_from_location(&self, location: ListenerClientLocation) -> Option<SocketAddr> {
+        for (address, player) in self.clients.iter() {
             if location == player.location{
                 return Some(*address);
             }
@@ -259,7 +258,7 @@ impl Listener{
                 self.set_player_outside_lobby(connection.get_address(), false);
             },
             ToServerPacket::Kick { player_id: kicked_player_id } => {
-                let Some(host_location) = self.players
+                let Some(host_location) = self.clients
                     .get(connection.get_address())
                     .map(|p|&p.location)
                 else{
@@ -267,7 +266,7 @@ impl Listener{
                     return Ok(());
                 };
 
-                let PlayerLocation::InLobby{room_code, player_id: host_id} = host_location else {
+                let ListenerClientLocation::InLobby{room_code, lobby_client_id: host_id} = host_location else {
                     log!(error "Listener"; "{} {}", "Received lobby/game packet from player not in a lobby!", connection.get_address());
                     return Ok(());
                 };
@@ -275,9 +274,9 @@ impl Listener{
                 if let Some(lobby) = self.lobbies.get_mut(room_code){
                     if !lobby.is_host(*host_id) {return Ok(());}
 
-                    let kicked_player = self.get_address_from_location(PlayerLocation::InLobby { room_code: *room_code, player_id: kicked_player_id });
+                    let kicked_player = self.get_address_from_location(ListenerClientLocation::InLobby { room_code: *room_code, lobby_client_id: kicked_player_id });
                     if let Some(kicked_player_address) = kicked_player {
-                        if let Some(connection) = self.players.get(&kicked_player_address).map(|p|p.connection.clone()) {
+                        if let Some(connection) = self.clients.get(&kicked_player_address).map(|p|p.connection.clone()) {
                             connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::ServerBusy });
                             self.set_player_outside_lobby(&kicked_player_address, false);
                         }
@@ -285,7 +284,7 @@ impl Listener{
                 }
             },
             _ => {
-                let Some(sender_player_location) = self.players
+                let Some(sender_player_location) = self.clients
                     .get_mut(connection.get_address())
                     .map(|p|&mut p.location)
                 else{
@@ -293,9 +292,9 @@ impl Listener{
                     return Ok(());
                 };
 
-                if let PlayerLocation::InLobby { room_code, player_id } = sender_player_location {
+                if let ListenerClientLocation::InLobby { room_code, lobby_client_id } = sender_player_location {
                     if let Some(lobby) = self.lobbies.get_mut(room_code){
-                        lobby.on_client_message(&connection.get_sender(), *player_id, incoming_packet);
+                        lobby.on_client_message(&connection.get_sender(), *lobby_client_id, incoming_packet);
                     } else {
                         //Player is in a lobby that doesn't exist
                         panic!("Recieved a message from a player in a lobby that doesnt exist")

@@ -3,6 +3,7 @@ pub mod websocket_connections;
 pub mod listener;
 pub mod lobby;
 pub mod packet;
+pub mod client_connection;
 
 pub mod log {
     #[macro_export]

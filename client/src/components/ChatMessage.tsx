@@ -50,15 +50,15 @@ export default function ChatElement(
             }
             
             if (
-                GAME_MANAGER.state.stateType === "game" &&
-                (find(GAME_MANAGER.state.players[GAME_MANAGER.state.myIndex!].name ?? "").test(sanitizePlayerMessage(replaceMentions(
+                GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.myIndex !== null &&
+                (find(GAME_MANAGER.state.players[GAME_MANAGER.state.clientState.myIndex].name ?? "").test(sanitizePlayerMessage(replaceMentions(
                     message.variant.text,
                     playerNames
                 ))) ||
                 (
-                    GAME_MANAGER.state.stateType === "game" &&
-                    GAME_MANAGER.state.myIndex !== null &&
-                    find("" + (GAME_MANAGER.state.myIndex + 1)).test(sanitizePlayerMessage(replaceMentions(
+                    GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" &&
+                    GAME_MANAGER.state.clientState.myIndex !== null &&
+                    find("" + (GAME_MANAGER.state.clientState.myIndex + 1)).test(sanitizePlayerMessage(replaceMentions(
                         message.variant.text,
                         playerNames
                     )))

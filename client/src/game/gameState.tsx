@@ -1,4 +1,4 @@
-import GameState, { LobbyPlayer, LobbyState, PhaseTimes, Player, PlayerID } from "./gameState.d"
+import GameState, { LobbyClient, LobbyState, PhaseTimes, Player, LobbyClientID, PlayerGameState } from "./gameState.d"
 
 
 export function defaultPhaseTimes(): PhaseTimes {
@@ -27,7 +27,7 @@ export function createLobbyState(): LobbyState {
         excludedRoles: [],
         phaseTimes: defaultPhaseTimes(),
 
-        players: new Map<PlayerID, LobbyPlayer>(),
+        players: new Map<LobbyClientID, LobbyClient>()
     }
 }
 
@@ -35,8 +35,6 @@ export function createGameState(): GameState {
     return {
         stateType: "game",
         roomCode: 0,
-
-        myIndex: null,
 
         chatMessages : [],
         graves: [],
@@ -46,6 +44,25 @@ export function createGameState(): GameState {
         timeLeftMs: 0,
         dayNumber: 1,
 
+        fastForward: false,
+        
+        roleList: [],
+        excludedRoles: [],
+        phaseTimes: defaultPhaseTimes(),
+
+        ticking: true,
+
+        clientState: createPlayerGameState(),
+
+    }
+}
+
+export function createPlayerGameState(): PlayerGameState {
+    return {
+        type: "player",
+
+        myIndex: null,
+        
         roleState: null,
 
         will: "",
@@ -56,13 +73,6 @@ export function createGameState(): GameState {
         targets: [],
         voted: null,
         judgement: "abstain",
-        fastForward: false,
-        
-        roleList: [],
-        excludedRoles: [],
-        phaseTimes: defaultPhaseTimes(),
-
-        ticking: true,
 
         sendChatGroups: [],
     }

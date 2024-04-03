@@ -40,7 +40,8 @@ export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuPr
 
     
     renderRoleSpecificMenu(){
-        switch(this.state.gameState.roleState?.role){
+        if(this.state.gameState.clientState.type !== "player") return null;
+        switch(this.state.gameState.clientState.roleState?.role){
             case "auditor":
                 return <LargeAuditorMenu/>;
             case "journalist":
@@ -53,12 +54,17 @@ export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuPr
                 return <LargeDoomsayerMenu/>;
         }
     }
-    render(){return(<div className="role-specific-colors">
-        <ContentTab close={ContentMenu.RoleSpecificMenu} helpMenu={null}>
-            {translate("role."+this.state.gameState.roleState?.role+".name")}
-        </ContentTab>
-        <div>
-            {this.renderRoleSpecificMenu()}
-        </div>
-    </div>)}
+    render(){
+        if(this.state.gameState.clientState.type === "player")
+            return(
+                <div className="role-specific-colors">
+                    <ContentTab close={ContentMenu.RoleSpecificMenu} helpMenu={null}>
+                        {translate("role."+this.state.gameState.clientState.roleState?.role+".name")}
+                    </ContentTab>
+                    <div>
+                        {this.renderRoleSpecificMenu()}
+                    </div>
+                </div>
+            )
+    }
 }

@@ -23,17 +23,21 @@ export default function LargeAuditorMenu(props: {}): ReactElement {
 
     useEffect(()=>{
         const listener = ()=>{
-            if(GAME_MANAGER.state.stateType !== "game" || GAME_MANAGER.state.roleState?.role !== "auditor"){
+            if(
+                GAME_MANAGER.state.stateType !== "game" ||
+                GAME_MANAGER.state.clientState.type !== "player" ||
+                GAME_MANAGER.state.clientState.roleState?.role !== "auditor"
+            ){
                 return;
             }
     
             let new_buttons = [];
             for(let i = 0; i < GAME_MANAGER.state.roleList.length; i++){
-                let found = GAME_MANAGER.state.roleState.previouslyGivenResults.find(result=>result[0] === i);
+                let found = GAME_MANAGER.state.clientState.roleState.previouslyGivenResults.find(result=>result[0] === i);
                 if(found){
                     new_buttons.push({type:"used" as "used", result: found[1]});
                 }else{
-                    new_buttons.push({type:"notUsed"  as "notUsed", chosen: GAME_MANAGER.state.roleState.chosenOutline === i});
+                    new_buttons.push({type:"notUsed"  as "notUsed", chosen: GAME_MANAGER.state.clientState.roleState.chosenOutline === i});
                 }
             }
             setButtons(new_buttons);
@@ -44,7 +48,11 @@ export default function LargeAuditorMenu(props: {}): ReactElement {
         return ()=>GAME_MANAGER.removeStateListener(listener);
     }, [setButtons])
 
-    if(GAME_MANAGER.state.stateType !== "game" || GAME_MANAGER.state.roleState?.role !== "auditor")
+    if(
+        GAME_MANAGER.state.stateType !== "game" ||
+        GAME_MANAGER.state.clientState.type !== "player" ||
+        GAME_MANAGER.state.clientState.roleState?.role !== "auditor"
+    )
         return <></>
     
     
@@ -53,7 +61,7 @@ export default function LargeAuditorMenu(props: {}): ReactElement {
             <RoleListDisplay
                 roleList={GAME_MANAGER.state.roleList}
                 strikenOutlineIndexs={
-                    GAME_MANAGER.state.roleState.previouslyGivenResults.map(result=>{return result[0] as number})
+                    GAME_MANAGER.state.clientState.roleState.previouslyGivenResults.map(result=>{return result[0] as number})
                 }
             />
             <ChooseButtons

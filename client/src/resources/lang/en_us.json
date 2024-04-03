@@ -26,6 +26,8 @@
     "menu.lobby.settings": "Settings:",
 
     "importFromClipboard": "Import from clipboard",
+    "switchToSpectator": "Spectate",
+    "switchToPlayer": "Play",
 
     "menu.settings.volume": "Volume",
     "menu.settings.gameSettingsEditor": "Game Mode Editor",
@@ -365,10 +367,6 @@
     "role.martyr.dayTarget": "Special",
     "role.martyr.roleDataText": "\\0 bullets remaining\nThe heavens smile at you.",
 
-    "role.unknown.name": "Unknown",
-    "role.unknown.target": "Target",
-    "role.unknown.dayTarget": "Special",
-
     "grave.role.cleaned": "Cleaned",
     "grave.role.cleaned:var.0": "Clean",
     "grave.role.cleaned:var.1": "Cleans",
@@ -439,6 +437,9 @@
 
     "standard":"Standard",
 
+    "onTrial": "On Trial",
+    "voted": "Voted",
+    "good":"Good",
     "choose":"Choose",
     "role": "Role",
     "day": "Day",
@@ -471,6 +472,7 @@
     "defense.2:var.3": "Protection",
     "defense.3": "Invincible",
     "vision": "Vision",
+    "nobodyDiedLastNight": "Nobody died last night.",
     
     "simplify":"Simplify",
 
@@ -485,19 +487,42 @@
     "verdict.abstain:var.4": "Abstainers",
 
     "judgement.cannotVote.onTrial": "You're on trial!",
-    "judgement.cannotVote.dead": "You can't vote because you're dead",
+    "judgement.cannotVote.dead": "You can't vote because you're dead.",
+
+
 
     "phase.briefing": "Briefing",
+    "phase.briefing.subtitle": "Vote to start the game by clicking fast forward.",
+
     "phase.obituary": "Obituary",
+    
     "phase.discussion": "Discussion",
+    "phase.discussion.subtitle": "Discuss information you gathered during the night.",
+    
     "phase.nomination": "Nomination",
+    "phase.nomination:var.0": "Nominations",
+    "votesRequired": "\\0 votes required.",
+    "votesRequired.1": "1 vote required.",
+    "trialsRemaining": "\\0 trials remaining.",
+    "trialsRemaining.1": "1 trial remaining.",
+    
     "phase.testimony": "Testimony",
     "phase.testimony:var.0": "Trial",
+    "phase.testimony.subtitle": "\\0 is on trial.\nLet them defend themselves.",
+    
     "phase.judgement": "Judgement",
+    "phase.judgement.subtitle": "\\0 is on trial.\nVote guilty or innocent.",
+    
     "phase.finalWords": "Final Words",
+    "phase.finalWords.subtitle": "The town has decided to execute \\0.",
+    
     "phase.dusk": "Dusk",
+    
     "phase.night": "Night",
     "phase.night:var.0": "Nighttime",
+    "phase.night.subtitle": "Use your abilities to help your team.",
+
+
 
     "chatMessage.normal":"\\0: \\1",
     "chatMessage.whisper":"\\0 whispered to \\1: \\2",
@@ -763,6 +788,7 @@
     "wiki.article.standard.outlineList.title":"Outline List",
     "wiki.article.standard.outlineList.title:var.0":"Role List",
     "wiki.article.standard.outlineList.title:var.1":"Rolelist",
+    "wiki.article.standard.outlineList.title:var.2":"Outlines",
     "wiki.article.standard.outlineList.text": "The outline list defines what roles are in the game. At the start of a game, each player gets assigned to a role outline. Then, their role is generated randomly from that role outline.",
     "wiki.article.standard.chatGroup.title": "Chat Group",
     "wiki.article.standard.chatGroup.title:var.0": "Chat Groups",

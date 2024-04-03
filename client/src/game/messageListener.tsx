@@ -13,6 +13,8 @@ import { deleteReconnectData, saveReconnectData } from "./localStorage";
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import React from "react";
 import WikiArticle from "../components/WikiArticle";
+import SpectatorGameScreen from "../menu/spectator/SpectatorGameScreen";
+import LobbyMenu from "../menu/lobby/LobbyMenu";
 
 export default function messageListener(packet: ToClientPacket){
 
@@ -33,17 +35,24 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "acceptJoin":
-            if(packet.inGame){
+            if(packet.inGame && packet.spectator){
+                GAME_MANAGER.setSpectatorGameState();
+                Anchor.setContent(<SpectatorGameScreen/>);
+            }else if(packet.inGame && !packet.spectator){
                 GAME_MANAGER.setGameState();
+                Anchor.setContent(GameScreen.createDefault());
             }else{
                 GAME_MANAGER.setLobbyState();
+                Anchor.setContent(<LobbyMenu/>);
             }
+            
 
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
                 GAME_MANAGER.state.roomCode = packet.roomCode;
             }
             if(GAME_MANAGER.state.stateType === "lobby")
                 GAME_MANAGER.state.myId = packet.playerId;
+        
 
             saveReconnectData(packet.roomCode, packet.playerId);
             Anchor.clearCoverCard();
@@ -111,7 +120,8 @@ export default function messageListener(packet: ToClientPacket){
         case "playersLostConnection":
             if(GAME_MANAGER.state.stateType === "lobby"){
                 for(let [playerId, player] of GAME_MANAGER.state.players){
-                    player.lostConnection = packet.lostConnection.includes(playerId);
+                    if(packet.lostConnection.includes(playerId))
+                        player.connection = "couldReconnect";
                 }
             }
         break;
@@ -123,15 +133,17 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.myId = packet.playerId;
         break;
         case "yourPlayerIndex":
-            if(GAME_MANAGER.state.stateType === "game")
-                GAME_MANAGER.state.myIndex = packet.playerIndex;
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+                GAME_MANAGER.state.clientState.myIndex = packet.playerIndex;
         break;
-        case "lobbyPlayers":
+        case "lobbyClients":
             if(GAME_MANAGER.state.stateType === "lobby"){
                 GAME_MANAGER.state.players = new Map();
-                for(let [playerId, name] of Object.entries(packet.players)){
-                    GAME_MANAGER.state.players.set(Number.parseInt(playerId), {name: name, host: false, lostConnection: false});
-                }
+                packet.clients.forEach((lobbyClient, id) => {
+                    if(GAME_MANAGER.state.stateType === "lobby"){
+                        GAME_MANAGER.state.players.set(id, lobbyClient);
+                    }
+                });
             }
         break;
         case "lobbyName":
@@ -140,8 +152,14 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "startGame":
-            GAME_MANAGER.setGameState();
-            Anchor.setContent(GameScreen.createDefault());
+            const isSpectator = GAME_MANAGER.getMySpectator();
+            if(isSpectator){
+                GAME_MANAGER.setSpectatorGameState();
+                Anchor.setContent(<SpectatorGameScreen/>);
+            }else{
+                GAME_MANAGER.setGameState();
+                Anchor.setContent(GameScreen.createDefault());
+            }
         break;
         case "gamePlayers":
             if(GAME_MANAGER.state.stateType === "game"){
@@ -195,8 +213,8 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.phaseState = packet.phase;
                 GAME_MANAGER.state.dayNumber = packet.dayNumber;
         
-                if(packet.phase.type === "briefing" && GAME_MANAGER.state.stateType === "game"){
-                    const role = GAME_MANAGER.state.roleState?.role;
+                if(packet.phase.type === "briefing" && GAME_MANAGER.state.clientState.type === "player"){
+                    const role = GAME_MANAGER.state.clientState.roleState?.role;
                     if(role !== undefined){
                         Anchor.setCoverCard(<WikiArticle article={"role/"+role as WikiArticleLink}/>, "wiki-menu-colors");
                     }
@@ -230,15 +248,17 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game"){
                 for(let i = 0; i < GAME_MANAGER.state.players.length; i++){
                     GAME_MANAGER.state.players[i].numVoted = 0;
-                }
-                for(let [playerIndex, numVoted] of Object.entries(packet.votesForPlayer)){
-                    GAME_MANAGER.state.players[Number.parseInt(playerIndex)].numVoted = numVoted;
+
+                    let numVoted = packet.votesForPlayer[i];
+                    if(numVoted !== undefined){
+                        GAME_MANAGER.state.players[i].numVoted = numVoted;
+                    }
                 }
             }
         break;
         case "yourSendChatGroups":
-            if(GAME_MANAGER.state.stateType === "game"){
-                GAME_MANAGER.state.sendChatGroups = [...packet.sendChatGroups];
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                GAME_MANAGER.state.clientState.sendChatGroups = [...packet.sendChatGroups];
             }
         break;
         case "yourButtons":
@@ -275,19 +295,19 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "yourWill":
-            if(GAME_MANAGER.state.stateType === "game"){
-                GAME_MANAGER.state.will = packet.will;
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                GAME_MANAGER.state.clientState.will = packet.will;
 
-                if(GAME_MANAGER.state.will === ""){
+                if(GAME_MANAGER.state.clientState.will === ""){
                     GAME_MANAGER.sendSaveWillPacket("ROLE\nNight 1: \nNight 2:");
                 }
             }
         break;
         case "yourNotes":
-            if(GAME_MANAGER.state.stateType === "game"){
-                GAME_MANAGER.state.notes = packet.notes;
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                GAME_MANAGER.state.clientState.notes = packet.notes;
                 
-                if(GAME_MANAGER.state.notes === ""){
+                if(GAME_MANAGER.state.clientState.notes === ""){
                     GAME_MANAGER.sendSaveNotesPacket(GAME_MANAGER.state.players.map((player) => {
                         return player.toString();
                     }).join(" - \n") + " - \n");
@@ -295,32 +315,32 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "yourCrossedOutOutlines":
-            if(GAME_MANAGER.state.stateType === "game")
-                GAME_MANAGER.state.crossedOutOutlines = packet.crossedOutOutlines;
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+                GAME_MANAGER.state.clientState.crossedOutOutlines = packet.crossedOutOutlines;
             break;
         case "yourDeathNote":
-            if(GAME_MANAGER.state.stateType === "game")
-                GAME_MANAGER.state.deathNote = packet.deathNote ?? "";
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+                GAME_MANAGER.state.clientState.deathNote = packet.deathNote ?? "";
         break;
         case "yourRoleState":
-            if(GAME_MANAGER.state.stateType === "game"){
-                if(GAME_MANAGER.state.roleState?.role!== packet.roleState.role){
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                if(GAME_MANAGER.state.clientState.roleState?.role!== packet.roleState.role){
                     GameScreen.instance?.closeMenu(ContentMenu.RoleSpecificMenu);
                 }
-                GAME_MANAGER.state.roleState = packet.roleState;
+                GAME_MANAGER.state.clientState.roleState = packet.roleState;
             }
         break;
         case "yourTarget":
-            if(GAME_MANAGER.state.stateType === "game")
-                GAME_MANAGER.state.targets = packet.playerIndices;
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+                GAME_MANAGER.state.clientState.targets = packet.playerIndices;
         break;
         case "yourVoting":
-            if(GAME_MANAGER.state.stateType === "game")
-                GAME_MANAGER.state.voted = packet.playerIndex;
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+                GAME_MANAGER.state.clientState.voted = packet.playerIndex;
         break;
         case "yourJudgement":
-            if(GAME_MANAGER.state.stateType === "game")
-                GAME_MANAGER.state.judgement = packet.verdict;
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+                GAME_MANAGER.state.clientState.judgement = packet.verdict;
         break;
         case "yourVoteFastForwardPhase":
             if(GAME_MANAGER.state.stateType === "game")

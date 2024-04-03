@@ -65,3 +65,15 @@
 .lm .name-box input {
     width: 100%;
 }
+
+.lobby-name {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+.lobby-name button{
+    flex-shrink: 1;
+}
+.lobby-name section{
+    flex-grow: 1;
+}

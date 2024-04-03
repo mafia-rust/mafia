@@ -1,6 +1,6 @@
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
-import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict } from "./gameState.d";
+import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleList, RoleOutline } from "./roleListState.d";
 import { Role } from "./roleState.d";
@@ -21,13 +21,17 @@ export type GameManager = {
     setDisconnectedState(): void;
     setLobbyState(): void;
     setGameState(): void;
+    setSpectatorGameState(): void;
     setOutsideLobbyState(): void;
     
 
     state: State,
     getMyName(): string | undefined,
     getMyHost(): boolean | undefined,
+    getMySpectator(): boolean,
     getPlayerNames(): string[],
+    getLivingPlayers(): Player[] | null,
+    getVotesRequired(): number | null,
 
     server: Server,
     listeners: StateListener[],
@@ -61,6 +65,7 @@ export type GameManager = {
      */
     sendJoinPacket(roomCode: number): Promise<boolean>;
     sendKickPlayerPacket(playerId: number): void;
+    sendSetSpectatorPacket(spectator: boolean): void;
     sendSetNamePacket(name: string): void;
     sendSetLobbyNamePacket(name: string): void;
     sendStartGamePacket(): Promise<boolean>;

@@ -21,28 +21,28 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
     constructor(props: LargeConsortMenuState) {
         super(props);
 
-        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.roleState?.role === "consort")
+        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.roleState?.role === "consort")
             this.state = {
-                roleblock: GAME_MANAGER.state.roleState?.roleblock,
+                roleblock: GAME_MANAGER.state.clientState.roleState?.roleblock,
                 
-                youWereRoleblockedMessage: GAME_MANAGER.state.roleState?.youWereRoleblockedMessage === undefined || GAME_MANAGER.state.roleState?.youWereRoleblockedMessage === null ? false : GAME_MANAGER.state.roleState?.youWereRoleblockedMessage,
-                youSurvivedAttackMessage: GAME_MANAGER.state.roleState?.youSurvivedAttackMessage === undefined || GAME_MANAGER.state.roleState?.youSurvivedAttackMessage === null ? false : GAME_MANAGER.state.roleState?.youSurvivedAttackMessage,
-                youWereProtectedMessage: GAME_MANAGER.state.roleState?.youWereProtectedMessage === undefined || GAME_MANAGER.state.roleState?.youWereProtectedMessage === null ? false : GAME_MANAGER.state.roleState?.youWereProtectedMessage,
-                youWereTransportedMessage: GAME_MANAGER.state.roleState?.youWereTransportedMessage === undefined || GAME_MANAGER.state.roleState?.youWereTransportedMessage === null ? false : GAME_MANAGER.state.roleState?.youWereTransportedMessage,
-                youWerePossessedMessage: GAME_MANAGER.state.roleState?.youWerePossessedMessage === undefined || GAME_MANAGER.state.roleState?.youWerePossessedMessage === null ? false : GAME_MANAGER.state.roleState?.youWerePossessedMessage,
-                yourTargetWasJailedMessage: GAME_MANAGER.state.roleState?.yourTargetWasJailedMessage === undefined || GAME_MANAGER.state.roleState?.yourTargetWasJailedMessage === null ? false : GAME_MANAGER.state.roleState?.yourTargetWasJailedMessage
+                youWereRoleblockedMessage: GAME_MANAGER.state.clientState.roleState?.youWereRoleblockedMessage === undefined || GAME_MANAGER.state.clientState.roleState?.youWereRoleblockedMessage === null ? false : GAME_MANAGER.state.clientState.roleState?.youWereRoleblockedMessage,
+                youSurvivedAttackMessage: GAME_MANAGER.state.clientState.roleState?.youSurvivedAttackMessage === undefined || GAME_MANAGER.state.clientState.roleState?.youSurvivedAttackMessage === null ? false : GAME_MANAGER.state.clientState.roleState?.youSurvivedAttackMessage,
+                youWereProtectedMessage: GAME_MANAGER.state.clientState.roleState?.youWereProtectedMessage === undefined || GAME_MANAGER.state.clientState.roleState?.youWereProtectedMessage === null ? false : GAME_MANAGER.state.clientState.roleState?.youWereProtectedMessage,
+                youWereTransportedMessage: GAME_MANAGER.state.clientState.roleState?.youWereTransportedMessage === undefined || GAME_MANAGER.state.clientState.roleState?.youWereTransportedMessage === null ? false : GAME_MANAGER.state.clientState.roleState?.youWereTransportedMessage,
+                youWerePossessedMessage: GAME_MANAGER.state.clientState.roleState?.youWerePossessedMessage === undefined || GAME_MANAGER.state.clientState.roleState?.youWerePossessedMessage === null ? false : GAME_MANAGER.state.clientState.roleState?.youWerePossessedMessage,
+                yourTargetWasJailedMessage: GAME_MANAGER.state.clientState.roleState?.yourTargetWasJailedMessage === undefined || GAME_MANAGER.state.clientState.roleState?.yourTargetWasJailedMessage === null ? false : GAME_MANAGER.state.clientState.roleState?.yourTargetWasJailedMessage
             };
         this.listener = ()=>{
-            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.roleState?.role === "consort"){
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.roleState?.role === "consort"){
                 this.setState({
-                    roleblock: GAME_MANAGER.state.roleState.roleblock,
+                    roleblock: GAME_MANAGER.state.clientState.roleState.roleblock,
             
-                    youWereRoleblockedMessage: GAME_MANAGER.state.roleState.youWereRoleblockedMessage,
-                    youSurvivedAttackMessage: GAME_MANAGER.state.roleState.youSurvivedAttackMessage,
-                    youWereProtectedMessage: GAME_MANAGER.state.roleState.youWereProtectedMessage,
-                    youWereTransportedMessage: GAME_MANAGER.state.roleState.youWereTransportedMessage,
-                    youWerePossessedMessage: GAME_MANAGER.state.roleState.youWerePossessedMessage,
-                    yourTargetWasJailedMessage: GAME_MANAGER.state.roleState.yourTargetWasJailedMessage
+                    youWereRoleblockedMessage: GAME_MANAGER.state.clientState.roleState.youWereRoleblockedMessage,
+                    youSurvivedAttackMessage: GAME_MANAGER.state.clientState.roleState.youSurvivedAttackMessage,
+                    youWereProtectedMessage: GAME_MANAGER.state.clientState.roleState.youWereProtectedMessage,
+                    youWereTransportedMessage: GAME_MANAGER.state.clientState.roleState.youWereTransportedMessage,
+                    youWerePossessedMessage: GAME_MANAGER.state.clientState.roleState.youWerePossessedMessage,
+                    yourTargetWasJailedMessage: GAME_MANAGER.state.clientState.roleState.yourTargetWasJailedMessage
                 })
             }
         };  

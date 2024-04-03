@@ -32,7 +32,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
     constructor(props: HeaderMenuProps) {
         super(props);
 
-        if(GAME_MANAGER.state.stateType === "game")
+        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
             this.state = {
                 phase: GAME_MANAGER.state.phaseState.type,
                 playerOnTrial: 
@@ -41,15 +41,15 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                     GAME_MANAGER.state.phaseState.type === "finalWords" ? 
                         GAME_MANAGER.state.phaseState.playerOnTrial : null,
                 players: GAME_MANAGER.state.players,
-                myIndex: GAME_MANAGER.state.myIndex,
-                judgement: GAME_MANAGER.state.judgement,
-                roleState: GAME_MANAGER.state.roleState,
+                myIndex: GAME_MANAGER.state.clientState.myIndex,
+                judgement: GAME_MANAGER.state.clientState.judgement,
+                roleState: GAME_MANAGER.state.clientState.roleState,
                 dayNumber: GAME_MANAGER.state.dayNumber,
                 timeLeftMs: GAME_MANAGER.state.timeLeftMs,
                 fastForward: GAME_MANAGER.state.fastForward,
             };
         this.listener = (type) => {
-            if(GAME_MANAGER.state.stateType === "game"){
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 switch (type) {
                     case "phase":
                     case "playerOnTrial":
@@ -70,13 +70,13 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                         this.setState({players: GAME_MANAGER.state.players})
                     break;
                     case "yourPlayerIndex":
-                        this.setState({myIndex: GAME_MANAGER.state.myIndex})
+                        this.setState({myIndex: GAME_MANAGER.state.clientState.myIndex})
                     break;
                     case "yourJudgement":
-                        this.setState({judgement: GAME_MANAGER.state.judgement})
+                        this.setState({judgement: GAME_MANAGER.state.clientState.judgement})
                     break;
                     case "yourRoleState":
-                        this.setState({roleState: GAME_MANAGER.state.roleState})
+                        this.setState({roleState: GAME_MANAGER.state.clientState.roleState})
                     break;
                     case "phaseTimeLeft":
                     case "tick":
@@ -224,10 +224,17 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
     }
 
     render(){
+
+        const DEFAULT_MAX_TIME = 60*1000;
+        let timeBarPercentage = (this.state.timeLeftMs) * (100/DEFAULT_MAX_TIME);
+        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.phaseTimes[this.state.phase!] !== undefined)
+            //The 10 * is 100/1000. 100 for converting to percent. 1000 for converting to seconds.
+            timeBarPercentage = this.state.timeLeftMs/(GAME_MANAGER.state.phaseTimes[this.state.phase!] * 10);
+
         const timerStyle = {
             height: "100%",
             backgroundColor: 'red',
-            width: `${(this.state.timeLeftMs) * (100/(60*1000))}%`,
+            width: `${timeBarPercentage}%`,
             margin: '0 auto', // Center the timer horizontally
         };
         
@@ -236,7 +243,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             {(()=>{
                 return <StyledText>
                     {(this.state.players[this.state.myIndex!] ?? "").toString() +
-                    " (" + translate("role."+(this.state.roleState?.role ?? "unknown")+".name") + ")"}
+                    " (" + translate("role."+(this.state.roleState?.role)+".name") + ")"}
                 </StyledText>;
             })()}
             {this.renderFastForwardButton()}
