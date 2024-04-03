@@ -218,7 +218,7 @@ function playerLastVerdict(player: Player): "guilty" | "innocent" | "abstain" | 
 
     return null;
 }
-function votedThis(player: Player, playerOnTrial: PlayerIndex): boolean {
+function votedForThisPlayersTrialToday(player: Player, playerOnTrial: PlayerIndex): boolean {
     if (GAME_MANAGER.state.stateType !== "game") {return false;}
 
     //iterate backwards untill we find the last judgement verdict OR the judegement phase start
@@ -272,7 +272,7 @@ function LivingPlayer(props: {
                 return <div className="player" key={props.player.name}><StyledText>
                     {props.player.toString()} ({translate("onTrial")})
                 </StyledText></div>
-            }else if(votedThis(props.player, props.phaseState.playerOnTrial)){
+            }else if(votedForThisPlayersTrialToday(props.player, props.phaseState.playerOnTrial)){
                 return <div className="player" key={props.player.name}><StyledText>
                     {props.player.toString()} ({translate("voted")})
                 </StyledText></div>
