@@ -147,7 +147,7 @@ export function getRolesFromOutline(roleOutline: RoleOutline): Role[] {
             return roleOutline.options.flatMap((option) => getRolesFromOutlineOption(option));
     }
 }
-function getRolesFromOutlineOption(roleOutlineOption: RoleOutlineOption): Role[] {
+export function getRolesFromOutlineOption(roleOutlineOption: RoleOutlineOption): Role[] {
     switch(roleOutlineOption.type){
         case "roleSet":
             return getRolesFromRoleSet(roleOutlineOption.roleSet);
@@ -188,4 +188,8 @@ function outlineOptionCompare(optionA: RoleOutlineOption, optionB: RoleOutlineOp
     let rolesA = getRolesFromOutlineOption(optionA);
     let rolesB = getRolesFromOutlineOption(optionB);
     return rolesB.length - rolesA.length;
+}
+
+export function getAllRoles(): Role[] {
+    return Object.keys(ROLES) as Role[];
 }

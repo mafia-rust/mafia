@@ -2,10 +2,12 @@ import { ReactElement, useState } from "react"
 import translate from "../game/lang"
 import React from "react"
 import StyledText from "./StyledText"
-import { RoleOutline, getRolesFromOutline } from "../game/roleListState.d";
+import { RoleOutlineOption, getAllRoles, getRolesFromOutlineOption } from "../game/roleListState.d";
 import { Role } from "../game/roleState.d";
-import RoleOutlineSelector from "./OutlineSelector";
+import { RoleOutlineOptionSelector } from "./OutlineSelector";
 import "./disabledRoleSelector.css"
+import Icon from "./Icon";
+import { Button } from "./Button";
 
 
 
@@ -18,43 +20,46 @@ export default function DisabledRoleSelector(props: {
     onIncludeAll: () => void
 }): ReactElement {
 
-    const [roleOutline, setRoleOutline] = useState<RoleOutline>({type:"any"});
+    const [roleOutlineOption, setRoleOutlineOption] = useState<RoleOutlineOption | "any">("any");
 
-    const disableOutline = (outline: RoleOutline) => {
-        let roles = getRolesFromOutline(outline);
+    const disableOutlineOption = (outline: RoleOutlineOption | "any") => {
+        let roles;
+        if (outline === "any") roles = getAllRoles()
+        else roles = getRolesFromOutlineOption(outline);
         props.onDisableRoles(roles);
     }
 
     return <div className="role-specific-colors selector-section">
         <h2>{translate("menu.lobby.excludedRoles")}</h2>
         <div>
-            <button
+            <Button
                 onClick={props.onIncludeAll}
                 disabled={props.disabled}
-            >{translate("menu.excludedRoles.includeAll")}</button>
+            ><Icon>deselect</Icon> {translate("menu.excludedRoles.includeAll")}</Button>
 
-            <button 
-                onClick={()=>{disableOutline(roleOutline)}}
-                disabled={props.disabled}
-            >{translate("menu.excludedRoles.exclude")}</button>
-
-            <RoleOutlineSelector
-                disabled={props.disabled}
-                roleOutline={roleOutline}
-                onChange={setRoleOutline}
-            />
+            <div className="disabled-role-selector-area">
+                <Button
+                    onClick={()=>{disableOutlineOption(roleOutlineOption)}}
+                    disabled={props.disabled}
+                ><Icon>select_all</Icon> {translate("menu.excludedRoles.exclude")}</Button>
+                <RoleOutlineOptionSelector
+                    disabled={props.disabled}
+                    roleOutlineOption={roleOutlineOption}
+                    onChange={setRoleOutlineOption}
+                />
+            </div>
         </div>
 
         <div>
             {Array.from(props.disabledRoles.values()).map((value, i)=>{
-                return <button key={i}
+                return <Button key={i}
                     disabled={props.disabled}
                     onClick={()=>{props.onEnableRoles([value])}}
                 >
                     <StyledText noLinks={true}>
                         {translate("role."+value+".name")}
                     </StyledText>
-                </button>
+                </Button>
             })}
         </div>
     </div>

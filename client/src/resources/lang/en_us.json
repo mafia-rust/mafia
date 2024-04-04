@@ -39,6 +39,7 @@
     "confirmOverwrite": "Are you sure you want to overwrite?",
 
     "menu.excludedRoles.exclude": "Disable",
+    "menu.excludedRoles.excludeAll": "Disable All",
     "menu.excludedRoles.includeAll": "Enable All",
     "menu.excludedRoles.excludedRoles": "Disabled Roles",
     "menu.excludedRoles.default": "Default",
