@@ -125,6 +125,8 @@
     
     "notification.importGameMode.failure": "Failed to import game mode",
     "notification.importGameMode.failure.details": "Tried to read invalid game mode data",
+    "notification.saveGameMode.success": "Saved!",
+    "notification.saveGameMode.failure": "Failed to save",
 
     "cancel": "Cancel",
     "players": "Players",

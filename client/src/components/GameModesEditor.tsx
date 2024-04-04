@@ -120,7 +120,11 @@ export default function GameModesEditor(): ReactElement {
                             onChange={(e) => {
                             setCurrentRoleListName(e.target.value);
                         }}/>
-                        <Button onClick={saveGameMode}>
+                        <Button 
+                            onClick={saveGameMode}
+                            successText={translate("notification.saveGameMode.success")}
+                            failureText={translate("notification.saveGameMode.failure")}
+                        >
                             <Icon>save</Icon>
                         </Button>
                         <CopyButton text={JSON.stringify({
