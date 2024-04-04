@@ -3,6 +3,7 @@ import { ChatMessage } from "../components/ChatMessage";
 import { Role, RoleState } from "./roleState.d";
 import { RoleList } from "./roleListState.d";
 import { LobbyPreviewData } from "./packet";
+import GAME_MANAGER from "..";
 
 
 export type State = Disconnected | OutsideLobbyState | LobbyState | GameState;
@@ -31,32 +32,51 @@ export type LobbyState = {
     excludedRoles: Role[],
     phaseTimes: PhaseTimes,
 
-    players: Map<PlayerID, LobbyPlayer>,
+    players: Map<LobbyClientID, LobbyClient>,
 }
-export type LobbyPlayer = {
-    name: string,
+export type LobbyClient = {
     host: boolean,
-    lostConnection: boolean,
+    connection: "connected" | "disconnected" | "couldReconnect",
+    clientType: LobbyClientType
+}
+export type LobbyClientType = {
+    type: "spectator"
+} | {
+    type: "player",
+    name: string,
 }
 
 type GameState = {
     stateType: "game"
     roomCode: number,
 
-    myIndex: PlayerIndex | null,
-
     chatMessages : ChatMessage[],
     graves: Grave[],
     players: Player[],
     
-    playerOnTrial: PlayerIndex | null,
-    phase: PhaseType | null,
+    phaseState: PhaseState,
     timeLeftMs: number,
     dayNumber: number,
 
-    roleState: RoleState | null,
-
     fastForward: boolean,
+    
+    roleList: RoleList,
+    excludedRoles: Role[],
+    phaseTimes: PhaseTimes
+
+    ticking: boolean,
+
+    clientState: PlayerGameState | {type: "spectator"},
+
+}
+export default GameState;
+
+export type PlayerGameState = {
+    type: "player",
+
+    myIndex: PlayerIndex | null,
+    
+    roleState: RoleState | null,
 
     will: string,
     notes: string,
@@ -66,19 +86,12 @@ type GameState = {
     targets: PlayerIndex[],
     voted: PlayerIndex | null,
     judgement: Verdict,
-    
-    roleList: RoleList,
-    excludedRoles: Role[],
-    phaseTimes: PhaseTimes
-
-    ticking: boolean,
 
     sendChatGroups: ChatGroup[],
 }
-export default GameState;
 
 export type PlayerIndex = number;
-export type PlayerID = number;
+export type LobbyClientID = number;
 export type Verdict = "innocent"|"guilty"|"abstain";
 export type PhaseType = "briefing" | "obituary" | "discussion" | "nomination" | "testimony" | "judgement" | "finalWords" | "dusk" |  "night"
 export type PhaseState = {type: "briefing"} | {type: "dusk"} | {type: "night"} | {type: "obituary"} | {type: "discussion"} | 

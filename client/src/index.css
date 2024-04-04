@@ -34,6 +34,13 @@ s {
 
     color: white;
 }
+.timer-box{
+    width: 100%;
+    height: .5rem;
+    margin: 0%;
+    padding: 0%;
+    background-color: #220000;
+}
 
 button, input, select, option, textarea, summary {
     border-radius: 0.4rem;

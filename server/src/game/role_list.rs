@@ -2,7 +2,10 @@ use std::{collections::HashSet, vec};
 
 use rand::seq::SliceRandom;
 use serde::{Serialize, Deserialize};
-use vec1::Vec1;
+use vec1::{
+    vec1,
+    Vec1
+};
 
 use super::role::Role;
 
@@ -51,7 +54,7 @@ impl RoleList {
 
 
 
-#[derive(Default, Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize, PartialOrd, Ord)]
 #[serde(tag = "type", rename_all = "camelCase")]
 pub enum RoleOutline{
     #[default]
@@ -61,6 +64,9 @@ pub enum RoleOutline{
     },
 }
 impl RoleOutline{
+    pub fn new_exact(role: Role)->RoleOutline{
+        RoleOutline::RoleOutlineOptions{options: vec1![RoleOutlineOption::Role{role}]}
+    }
     pub fn get_roles(&self) -> Vec<Role> {
         match self {
             RoleOutline::RoleOutlineOptions{options} => 
@@ -162,7 +168,7 @@ impl RoleSet{
             RoleSet::TownProtective => 
                 vec![Role::Bodyguard, Role::Crusader, Role::Doctor, Role::Reveler, Role::Trapper],
             RoleSet::TownInvestigative => 
-                vec![Role::Psychic, Role::Lookout, Role::Sheriff, Role::Spy, Role::Tracker, Role::Seer],
+                vec![Role::Psychic, Role::Lookout, Role::Sheriff, Role::Spy, Role::Tracker, Role::Seer, Role::Auditor],
             RoleSet::MafiaSupport => 
                 vec![
                     Role::Blackmailer, Role::Consigliere, Role::Consort, 

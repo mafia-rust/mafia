@@ -1,4 +1,4 @@
-import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, PlayerID, ChatGroup } from "./gameState.d"
+import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, LobbyClientID, ChatGroup, PhaseState, LobbyClient } from "./gameState.d"
 import { Grave } from "./graveState"
 import { ChatMessage } from "../components/ChatMessage"
 import { RoleList, RoleOutline } from "./roleListState.d"
@@ -7,7 +7,7 @@ import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus
 
 export type LobbyPreviewData = {
     name: string,
-    players: [PlayerID, string][]
+    players: [LobbyClientID, string][]
 }
 
 export type ToClientPacket = {
@@ -22,6 +22,7 @@ export type ToClientPacket = {
     roomCode: number,
     inGame: boolean,
     playerId: number,
+    spectator: boolean
 } | {
     type: "rejectJoin",
     reason: string
@@ -29,10 +30,10 @@ export type ToClientPacket = {
 // Lobby
 {
     type: "yourId",
-    playerId: PlayerID
+    playerId: LobbyClientID
 } | {
-    type: "lobbyPlayers",
-    players: Map<PlayerID, string>
+    type: "lobbyClients",
+    clients: Map<LobbyClientID, LobbyClient>
 } | {
     type: "lobbyName",
     name: string
@@ -44,10 +45,10 @@ export type ToClientPacket = {
     reason: string
 } | {
     type: "playersHost",
-    hosts: PlayerID[],
+    hosts: LobbyClientID[],
 } | {
     type: "playersLostConnection",
-    lostConnection: PlayerID[],
+    lostConnection: LobbyClientID[],
 } | {
     type: "startGame"
 } | {
@@ -62,7 +63,7 @@ export type ToClientPacket = {
     roleOutline: RoleOutline
 } | {
     type: "phaseTime",
-    phase: PhaseType, 
+    phase: PhaseState, 
     time: number
 } | {
     type: "phaseTimes",
@@ -74,7 +75,7 @@ export type ToClientPacket = {
 // Game
 {
     type: "phase",
-    phase: PhaseType, 
+    phase: PhaseState, 
     dayNumber: number, 
 } | {
     type: "phaseTimeLeft",
@@ -87,7 +88,7 @@ export type ToClientPacket = {
     alive: [boolean]
 } | {
     type: "playerVotes",
-    votesForPlayer: Map<PlayerIndex, number>
+    votesForPlayer: any
 } | {
     type: "yourSendChatGroups",
     sendChatGroups: ChatGroup[]
@@ -161,6 +162,9 @@ export type ToServerPacket = {
 }
 // Lobby
 | {
+    type: "setSpectator",
+    spectator: boolean
+} | {
     type: "setName", 
     name: string
 } | {
@@ -256,6 +260,9 @@ export type ToServerPacket = {
     type: "setForgerWill",
     role: Role | null,
     will: string
+} | {
+    type: "setAuditorChosenOutline",
+    index: number
 } | {
     type: "voteFastForwardPhase",
     fastForward: boolean

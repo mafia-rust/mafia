@@ -28,17 +28,17 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
     constructor(props: GraveyardMenuProps) {
         super(props);
 
-        if(GAME_MANAGER.state.stateType === "game")
+        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
             this.state = {
                 graves: GAME_MANAGER.state.graves,
                 players: GAME_MANAGER.state.players,
                 roleList: GAME_MANAGER.state.roleList,
                 excludedRoles: GAME_MANAGER.state.excludedRoles,
                 extendedGraveIndex: null,
-                strickenRoleListIndex: GAME_MANAGER.state.crossedOutOutlines
+                strickenRoleListIndex: GAME_MANAGER.state.clientState.crossedOutOutlines
             };
         this.listener = (type)=>{
-            if(GAME_MANAGER.state.stateType === "game"){
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 switch (type) {
                     case "addGrave":
                         this.setState({graves: GAME_MANAGER.state.graves})
@@ -53,7 +53,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
                         this.setState({excludedRoles: GAME_MANAGER.state.excludedRoles})
                     break;
                     case "yourCrossedOutOutlines":
-                        this.setState({strickenRoleListIndex: GAME_MANAGER.state.crossedOutOutlines})
+                        this.setState({strickenRoleListIndex: GAME_MANAGER.state.clientState.crossedOutOutlines})
                     break;
                 }
             }

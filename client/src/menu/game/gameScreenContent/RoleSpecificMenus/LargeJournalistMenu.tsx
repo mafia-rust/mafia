@@ -17,18 +17,25 @@ export default class LargeJournalistMenu extends React.Component<LargeJournalist
     constructor(props: LargeJournalistMenuState) {
         super(props);
 
-        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.roleState?.role === "journalist")
+        if(
+            GAME_MANAGER.state.stateType === "game" && 
+            GAME_MANAGER.state.clientState.type === "player" &&
+            GAME_MANAGER.state.clientState.roleState?.role === "journalist"
+        )
             this.state = {
-                syncedPublic: GAME_MANAGER.state.roleState?.public,
-                localJournal: GAME_MANAGER.state.roleState?.journal,
-                syncedJournal: GAME_MANAGER.state.roleState?.journal,
+                syncedPublic: GAME_MANAGER.state.clientState.roleState?.public,
+                localJournal: GAME_MANAGER.state.clientState.roleState?.journal,
+                syncedJournal: GAME_MANAGER.state.clientState.roleState?.journal,
             };
         this.listener = ()=>{
-            if(GAME_MANAGER.state.stateType === "game"){
-                if(GAME_MANAGER.state.roleState?.role === "journalist"){
+            if(
+                GAME_MANAGER.state.stateType === "game" &&
+                GAME_MANAGER.state.clientState.type === "player"
+            ){
+                if(GAME_MANAGER.state.clientState.roleState?.role === "journalist"){
                     this.setState({
-                        syncedJournal: GAME_MANAGER.state.roleState.journal,
-                        syncedPublic: GAME_MANAGER.state.roleState.public,
+                        syncedJournal: GAME_MANAGER.state.clientState.roleState.journal,
+                        syncedPublic: GAME_MANAGER.state.clientState.roleState.public,
                     })
                 }
             }

@@ -9,6 +9,7 @@ import Anchor from "../Anchor";
 import StandaloneWiki from "./StandaloneWiki";
 import PlayMenu from "./PlayMenu";
 import LoadingScreen from "../LoadingScreen";
+import GameModesEditor from "../../components/GameModesEditor";
 
 type StartMenuProps = {
 }
@@ -28,11 +29,14 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
             <section id="main">
                 <h1>{translate("menu.start.title")}</h1>
                 
-                <div>
                     <button onClick={()=>{this.connectButton()}}>
                         {translate("menu.start.button.play")}
                     </button>
+                <div>
+                    <button onClick={() => {Anchor.setCoverCard(<GameModesEditor/>)}}>{translate("menu.settings.gameSettingsEditor")}</button>
+                    <button onClick={()=>{Anchor.setContent(<StandaloneWiki/>)}}>{translate("menu.wiki.title")}</button>
                 </div>
+                
             </section>
             {/* <section id="wiki">
                 <h2>{translate("menu.wiki.title")}</h2>
@@ -46,8 +50,6 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
                     <li><a href="https://discord.gg/Vxw7gFPfJj">Discord</a></li>
                     {/* eslint-disable no-script-url */}
                     {/* eslint-disable jsx-a11y/anchor-is-valid */}
-                    <li><a href="javascript:" onClick={()=>{Anchor.setContent(<StandaloneWiki/>)}}>{translate("menu.wiki.title")}</a></li>
-                    <li><a href="https://mafia-game-old.vercel.app/">Old Mafia</a></li>
                     <li><a href="https://netgames.io/games/">Net Games</a></li>
                     <li><a href="https://clocktower.online/">Clocktower Online</a></li>
                     <li><a href="https://secret-hitler.com/">Secret Hitler</a></li>

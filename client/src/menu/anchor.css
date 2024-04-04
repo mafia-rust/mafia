@@ -83,16 +83,15 @@
     border-right-color: black;
     border-bottom-color: black;
     overflow-y: hidden;
+    width: 100%;
+    height: 100%;
 }
 
 .anchor-cover-card-content {
     display: flex;
-    padding: 2rem;
-}
-
-.anchor-cover-card .anchor-cover-card-content > .wiki-article {
-    max-height: 30rem;
-    max-width: 50rem;
+    padding: 1.5rem;
+    width: 100%;
+    height: 100%;
 }
 
 .anchor-cover-card .close-button {

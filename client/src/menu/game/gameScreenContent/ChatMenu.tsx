@@ -18,12 +18,12 @@ export default function ChatMenu(): ReactElement {
     const [filter, setFilter] = useState<PlayerIndex | null>(null);
     useEffect(() => {
         const stateListener: StateListener = (type) => {
-            if (GAME_MANAGER.state.stateType === "game" && type === "filterUpdate") {
-                setFilter(GAME_MANAGER.state.chatFilter);
+            if (GAME_MANAGER.state.stateType === "game" && type === "filterUpdate" && GAME_MANAGER.state.clientState.type === "player") {
+                setFilter(GAME_MANAGER.state.clientState.chatFilter);
             }
         }
-        if (GAME_MANAGER.state.stateType === "game")
-            setFilter(GAME_MANAGER.state.chatFilter);
+        if (GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+            setFilter(GAME_MANAGER.state.clientState.chatFilter);
         GAME_MANAGER.addStateListener(stateListener);
         return () => GAME_MANAGER.removeStateListener(stateListener);
     }, [setFilter]);
@@ -32,12 +32,12 @@ export default function ChatMenu(): ReactElement {
     const [sendChatGroups, setSendChatGroups] = useState<string[]>([]);
     useEffect(() => {
         const stateListener: StateListener = (type) => {
-            if (GAME_MANAGER.state.stateType === "game" && type === "yourSendChatGroups") {
-                setSendChatGroups(GAME_MANAGER.state.sendChatGroups);
+            if (GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && type === "yourSendChatGroups") {
+                setSendChatGroups(GAME_MANAGER.state.clientState.sendChatGroups);
             }
         }
-        if (GAME_MANAGER.state.stateType === "game")
-            setSendChatGroups(GAME_MANAGER.state.sendChatGroups);
+        if (GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+            setSendChatGroups(GAME_MANAGER.state.clientState.sendChatGroups);
         GAME_MANAGER.addStateListener(stateListener);
         return () => GAME_MANAGER.removeStateListener(stateListener);
     }, [setSendChatGroups]);
@@ -47,8 +47,8 @@ export default function ChatMenu(): ReactElement {
         <ChatMessageSection filter={filter}/>
         {filter !== null && <Button 
             onClick={()=>{
-                if(GAME_MANAGER.state.stateType === "game"){
-                    GAME_MANAGER.state.chatFilter = null;
+                if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                    GAME_MANAGER.state.clientState.chatFilter = null;
                     GAME_MANAGER.invokeStateListeners("filterUpdate");
                 }
             }}

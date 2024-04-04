@@ -4,10 +4,10 @@ import GAME_MANAGER from "../../../index";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import GameState from "../../../game/gameState.d";
 import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
-import LargeAmnesiacMenu from "./RoleSpecificMenus/LargeAmnesiacMenu";
 import LargeConsortMenu from "./RoleSpecificMenus/LargeConsortMenu";
 import LargeForgerMenu from "./RoleSpecificMenus/LargeForgerMenu";
 import LargeJournalistMenu from "./RoleSpecificMenus/LargeJournalistMenu";
+import LargeAuditorMenu from "./RoleSpecificMenus/LargeAuditorMenu";
 
 type RoleSpecificMenuProps = {
 }
@@ -40,25 +40,31 @@ export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuPr
 
     
     renderRoleSpecificMenu(){
-        switch(this.state.gameState.roleState?.role){
-            case "doomsayer":
-                return <LargeDoomsayerMenu/>;
-            case "amnesiac":
-                return <LargeAmnesiacMenu/>;
+        if(this.state.gameState.clientState.type !== "player") return null;
+        switch(this.state.gameState.clientState.roleState?.role){
+            case "auditor":
+                return <LargeAuditorMenu/>;
             case "journalist":
                 return <LargeJournalistMenu/>;
             case "consort":
                 return <LargeConsortMenu/>;
             case "forger":
                 return <LargeForgerMenu/>;
+            case "doomsayer":
+                return <LargeDoomsayerMenu/>;
         }
     }
-    render(){return(<div className="role-specific-colors">
-        <ContentTab close={ContentMenu.RoleSpecificMenu} helpMenu={null}>
-            {translate("role."+this.state.gameState.roleState?.role+".name")}
-        </ContentTab>
-        <div>
-            {this.renderRoleSpecificMenu()}
-        </div>
-    </div>)}
+    render(){
+        if(this.state.gameState.clientState.type === "player")
+            return(
+                <div className="role-specific-colors">
+                    <ContentTab close={ContentMenu.RoleSpecificMenu} helpMenu={null}>
+                        {translate("role."+this.state.gameState.clientState.roleState?.role+".name")}
+                    </ContentTab>
+                    <div>
+                        {this.renderRoleSpecificMenu()}
+                    </div>
+                </div>
+            )
+    }
 }

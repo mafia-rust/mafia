@@ -40,6 +40,7 @@
     "psychicFailed":"result",
     "psychicEvil":"result",
     "psychicGood":"result",
+    "auditorResult": "result",
     "playerRoleAndWill": "result",
     "consigliereResult": "result",
     "silenced": "warning",

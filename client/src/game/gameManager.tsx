@@ -4,7 +4,7 @@ import GAME_MANAGER from "./../index";
 import messageListener from "./messageListener";
 import CONFIG from "./../resources/config.json"
 import React from "react";
-import { PhaseType, PhaseTimes, Verdict } from "./gameState.d";
+import { PhaseType, PhaseTimes, Verdict, Player } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
 import { LobbyPreviewData, ToClientPacket, ToServerPacket } from "./packet";
 import { RoleOutline } from "./roleListState.d";
@@ -58,6 +58,13 @@ export function createGameManager(): GameManager {
                 GAME_MANAGER.state.roomCode = roomCode;
             }
         },
+        setSpectatorGameState() {
+            this.setGameState();
+            if(GAME_MANAGER.state.stateType === "game")
+                GAME_MANAGER.state.clientState = {
+                    type: "spectator"
+                };
+        },
         async setOutsideLobbyState() {
             Anchor.stopAudio();
             
@@ -77,18 +84,29 @@ export function createGameManager(): GameManager {
         },
 
         getMyName() {
-            if (gameManager.state.stateType === "lobby")
-                return gameManager.state.players.get(gameManager.state.myId!)?.name;
-            if (gameManager.state.stateType === "game")
-                return gameManager.state.players[gameManager.state.myIndex!]?.name;
+            if (gameManager.state.stateType === "lobby"){
+                let client = gameManager.state.players.get(gameManager.state.myId!);
+                if(client === undefined) return undefined;
+                if(client.clientType.type === "spectator") return undefined;
+                return client.clientType.name;
+            }
+            if (gameManager.state.stateType === "game" && gameManager.state.clientState.type === "player")
+                return gameManager.state.players[gameManager.state.clientState.myIndex!]?.name;
             return undefined;
         },
         getMyHost() {
             if (gameManager.state.stateType === "lobby")
                 return gameManager.state.players.get(gameManager.state.myId!)?.host;
-            if (gameManager.state.stateType === "game")
-                return gameManager.state.players[gameManager.state.myIndex!]?.host;
+            if (gameManager.state.stateType === "game" && gameManager.state.clientState.type === "player")
+                return gameManager.state.players[gameManager.state.clientState.myIndex!]?.host;
             return undefined;
+        },
+        getMySpectator() {
+            if (gameManager.state.stateType === "lobby")
+                return gameManager.state.players.get(gameManager.state.myId!)?.clientType.type === "spectator";
+            if (gameManager.state.stateType === "game")
+                return gameManager.state.clientState.type === "spectator";
+            return false;
         },
         getPlayerNames(): string[] {
             switch (GAME_MANAGER.state.stateType) {
@@ -97,6 +115,15 @@ export function createGameManager(): GameManager {
                 default:
                     return DUMMY_NAMES;
             }
+        },
+        getLivingPlayers(): Player[] | null{
+            if(GAME_MANAGER.state.stateType !== "game") return null;
+            return GAME_MANAGER.state.players.filter(player => player.alive)
+        },
+        getVotesRequired(): number | null{
+            let livingPlayers = GAME_MANAGER.getLivingPlayers();
+            if(livingPlayers === null) return null;
+            return Math.ceil((livingPlayers.length + 1)/ 2);
         },
 
 
@@ -214,6 +241,13 @@ export function createGameManager(): GameManager {
             this.server.sendPacket({
                 type: "kick",
                 playerId: playerId
+            });
+        },
+
+        sendSetSpectatorPacket(spectator) {
+            this.server.sendPacket({
+                type: "setSpectator",
+                spectator: spectator
             });
         },
 
@@ -407,6 +441,13 @@ export function createGameManager(): GameManager {
                 will: will
             });
         },
+        sendSetAuditorChosenOutline(index) {
+            this.server.sendPacket({
+                type: "setAuditorChosenOutline",
+                index: index
+            });
+        },
+
         sendVoteFastForwardPhase(fastForward: boolean) {
             this.server.sendPacket({
                 type: "voteFastForwardPhase",

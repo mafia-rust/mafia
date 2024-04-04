@@ -17,6 +17,7 @@ import { StateEventType } from "../../game/gameManager.d";
 import { WikiArticleLink } from "../../components/WikiArticleLink";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
+import translate from "../../game/lang";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",
@@ -70,11 +71,11 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         super(props);
         GameScreen.instance = this;
 
-        if(GAME_MANAGER.state.stateType === "game")
+        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
             this.state = {
                 maxContent: props.maxContent?props.maxContent:Infinity,
 
-                role: GAME_MANAGER.state.roleState?.role as Role,
+                role: GAME_MANAGER.state.clientState.roleState?.role as Role,
 
                 chatMenuNotification: false,
 
@@ -88,10 +89,10 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         
 
         this.listener = (type)=>{
-            if(GAME_MANAGER.state.stateType === "game"){
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 if(type === "yourRoleState"){
                     this.setState({
-                        role: GAME_MANAGER.state.roleState?.role as Role,
+                        role: GAME_MANAGER.state.clientState.roleState?.role as Role,
                     });
                 }
                 if(type === "addChatMessages" && !GameScreen.instance.menusOpen().includes(ContentMenu.ChatMenu)){
@@ -241,18 +242,23 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
             return;
         }
 
+        const allMenusClosed = !this.state.chatMenu && !this.state.playerListMenu && !this.state.willMenu && !this.state.roleSpecificMenu && !this.state.graveyardMenu && !this.state.wikiMenu;
+
         return (
             <div className="game-screen">
                 <div className="header">
-                    <HeaderMenu phase={GAME_MANAGER.state.phase} chatMenuNotification={this.state.chatMenuNotification}/>
+                    <HeaderMenu phase={GAME_MANAGER.state.phaseState.type} chatMenuNotification={this.state.chatMenuNotification}/>
                 </div>
                 <div className="content">
-                    {this.state.chatMenu?<ChatMenu/>:null}
-                    {this.state.playerListMenu?<PlayerListMenu/>:null}
-                    {this.state.willMenu?<WillMenu/>:null}
-                    {this.state.roleSpecificMenu?<RoleSpecificMenu/>:null}
-                    {this.state.graveyardMenu?<GraveyardMenu/>:null}
-                    {this.state.wikiMenu?<WikiMenu/>:null}
+                    {this.state.chatMenu && <ChatMenu/>}
+                    {this.state.playerListMenu && <PlayerListMenu/>}
+                    {this.state.willMenu && <WillMenu/>}
+                    {this.state.roleSpecificMenu && <RoleSpecificMenu/>}
+                    {this.state.graveyardMenu && <GraveyardMenu/>}
+                    {this.state.wikiMenu && <WikiMenu/>}
+                    {allMenusClosed && <div className="no-content">
+                        {translate("menu.gameScreen.noContent")}
+                    </div>}
                 </div>
             </div>
         );

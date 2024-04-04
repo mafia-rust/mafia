@@ -56,8 +56,8 @@ impl RoleStateImpl for Seer {
     fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() == 2 {
             vec![
-                Visit{ target: target_refs[0], astral:false, attack:false },
-                Visit{ target: target_refs[1], astral:false, attack:false }
+                Visit{ target: target_refs[0], attack:false },
+                Visit{ target: target_refs[1], attack:false }
             ]
         } else {
             Vec::new()

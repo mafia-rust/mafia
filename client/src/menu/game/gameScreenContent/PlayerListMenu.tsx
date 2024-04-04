@@ -33,30 +33,30 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         super(props);
 
         
-        if(GAME_MANAGER.state.stateType === "game")
+        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
             this.state = {
                 players: GAME_MANAGER.state.players,
-                phase: GAME_MANAGER.state.phase,
-                voted: GAME_MANAGER.state.voted,
-                targets: GAME_MANAGER.state.targets,
-                roleState: GAME_MANAGER.state.roleState,
+                phase: GAME_MANAGER.state.phaseState.type,
+                voted: GAME_MANAGER.state.clientState.voted,
+                targets: GAME_MANAGER.state.clientState.targets,
+                roleState: GAME_MANAGER.state.clientState.roleState,
                 playerFilter: "living",
                 chatFilter: null
             };
 
         this.updatePlayerFilter = () => {
-            if(GAME_MANAGER.state.stateType !== "game"){
+            if(GAME_MANAGER.state.stateType !== "game" || GAME_MANAGER.state.clientState.type !== "player"){
                 return;
             }
 
             let playerFilter = this.state.playerFilter;
             if(
-                (GAME_MANAGER.state.myIndex===null || GAME_MANAGER.state.players[GAME_MANAGER.state.myIndex].alive) && 
+                (GAME_MANAGER.state.clientState.myIndex===null || GAME_MANAGER.state.players[GAME_MANAGER.state.clientState.myIndex].alive) && 
                 playerFilter !== "all"
             ){
-                if(GAME_MANAGER.state.phase === "night"){
+                if(GAME_MANAGER.state.phaseState.type === "night"){
                     playerFilter = "usable"
-                }else if(GAME_MANAGER.state.phase === "obituary"){
+                }else if(GAME_MANAGER.state.phaseState.type === "obituary"){
                     playerFilter = "living";
                 }
             }
@@ -74,15 +74,16 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
         };
 
         this.listener = (type)=>{
-            if(GAME_MANAGER.state.stateType !== "game"){
+            if(GAME_MANAGER.state.stateType !== "game")
                 return;
-            }
+            
             switch (type) {
                 case "filterUpdate":
-                    this.setState({chatFilter: GAME_MANAGER.state.chatFilter});
+                    if(GAME_MANAGER.state.clientState.type === "player")
+                        this.setState({chatFilter: GAME_MANAGER.state.clientState.chatFilter});
                 break;
                 case "phase":
-                    this.setState({ phase: GAME_MANAGER.state.phase })
+                    this.setState({ phase: GAME_MANAGER.state.phaseState.type })
                 break;
                 case "gamePlayers":
                 case "yourButtons":
@@ -93,13 +94,16 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                     this.setState({ players: GAME_MANAGER.state.players })
                 break;
                 case "yourVoting":
-                    this.setState({ voted: GAME_MANAGER.state.voted })
+                    if(GAME_MANAGER.state.clientState.type === "player")
+                        this.setState({ voted: GAME_MANAGER.state.clientState.voted })
                 break;
                 case "yourTarget":
-                    this.setState({ targets: GAME_MANAGER.state.targets })
+                    if(GAME_MANAGER.state.clientState.type === "player")
+                        this.setState({ targets: GAME_MANAGER.state.clientState.targets })
                 break;
                 case "yourRoleState":
-                    this.setState({ roleState: GAME_MANAGER.state.roleState })
+                    if(GAME_MANAGER.state.clientState.type === "player")
+                        this.setState({ roleState: GAME_MANAGER.state.clientState.roleState })
                 break;
             }
             switch (type) {
@@ -189,8 +193,8 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         className={"filter"} 
                         highlighted={isFilterSet}
                         onClick={() => {
-                            if(GAME_MANAGER.state.stateType === "game"){
-                                GAME_MANAGER.state.chatFilter = isFilterSet ? null : filter;
+                            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                                GAME_MANAGER.state.clientState.chatFilter = isFilterSet ? null : filter;
                                 GAME_MANAGER.invokeStateListeners("filterUpdate");
                             }
                             this.setState({})
@@ -223,13 +227,13 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                     {((player) => {
                         if(player.buttons.target) {
                             return <button onClick={() => {
-                                if(GAME_MANAGER.state.stateType === "game")
-                                    GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.state.targets, player.index])
+                                if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+                                    GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.state.clientState.targets, player.index])
                             }}>
                                 {translate("role."+this.state.roleState?.role+".target")}
                             </button>
-                        } else if (GAME_MANAGER.state.stateType === "game" && this.state.phase === "night" && this.state.targets.includes(player.index)) {
-                            let newTargets = [...GAME_MANAGER.state.targets];
+                        } else if (GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && this.state.phase === "night" && this.state.targets.includes(player.index)) {
+                            let newTargets = [...GAME_MANAGER.state.clientState.targets];
                             newTargets.splice(newTargets.indexOf(player.index), 1);
                             return <Button highlighted={true} onClick={() => GAME_MANAGER.sendTargetPacket(newTargets)}>
                                 {translate("cancel")}

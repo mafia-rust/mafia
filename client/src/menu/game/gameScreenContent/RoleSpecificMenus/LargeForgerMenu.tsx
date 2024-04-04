@@ -21,20 +21,28 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
     constructor(props: LargeForgerMenuState) {
         super(props);
 
-        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.roleState?.role === "forger")
+        if(
+            GAME_MANAGER.state.stateType === "game" && 
+            GAME_MANAGER.state.clientState.type === "player" && 
+            GAME_MANAGER.state.clientState.roleState?.role === "forger"
+        )
             this.state = {
-                localRole: GAME_MANAGER.state.roleState?.fakeRole,
-                savedRole: GAME_MANAGER.state.roleState?.fakeRole,
-                localWill: GAME_MANAGER.state.roleState?.fakeWill,
-                savedWill: GAME_MANAGER.state.roleState?.fakeWill,
-                forgesRemaining: GAME_MANAGER.state.roleState?.forgesRemaining,
+                localRole: GAME_MANAGER.state.clientState.roleState?.fakeRole,
+                savedRole: GAME_MANAGER.state.clientState.roleState?.fakeRole,
+                localWill: GAME_MANAGER.state.clientState.roleState?.fakeWill,
+                savedWill: GAME_MANAGER.state.clientState.roleState?.fakeWill,
+                forgesRemaining: GAME_MANAGER.state.clientState.roleState?.forgesRemaining,
             };
         this.listener = ()=>{
-            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.roleState?.role === "forger"){
+            if(
+                GAME_MANAGER.state.stateType === "game" &&
+                GAME_MANAGER.state.clientState.type === "player" &&
+                GAME_MANAGER.state.clientState.roleState?.role === "forger"
+            ){
                 this.setState({
-                    savedWill: GAME_MANAGER.state.roleState.fakeWill,
-                    savedRole: GAME_MANAGER.state.roleState.fakeRole,
-                    forgesRemaining: GAME_MANAGER.state.roleState.forgesRemaining,
+                    savedWill: GAME_MANAGER.state.clientState.roleState.fakeWill,
+                    savedRole: GAME_MANAGER.state.clientState.roleState.fakeRole,
+                    forgesRemaining: GAME_MANAGER.state.clientState.roleState.forgesRemaining,
                 })
             }
         };  

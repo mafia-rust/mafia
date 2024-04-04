@@ -11,10 +11,17 @@ use crate::game::Game;
 use crate::game::team::Team;
 use super::{Priority, RoleStateImpl, Role};
 
-#[derive(Default, Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Amnesiac{
     pub role_outline: RoleOutline
+}
+impl Default for Amnesiac {
+    fn default() -> Self {
+        Self {
+            role_outline: RoleOutline::new_exact(Role::Amnesiac)
+        }
+    }
 }
 
 pub(super) const FACTION: Faction = Faction::Neutral;
@@ -25,16 +32,7 @@ impl RoleStateImpl for Amnesiac {
     fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
 
 
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::TopPriority {return;}
-        if !actor_ref.alive(game) {return;}
-        let new_role_data = self.role_outline
-            .get_random_role(&game.settings.excluded_roles, &[])
-            .unwrap_or(Role::Amnesiac)
-            .default_state();
-        if new_role_data.role() != Role::Amnesiac {
-            actor_ref.set_role(game, new_role_data);
-        }
+    fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
     }
@@ -56,12 +54,31 @@ impl RoleStateImpl for Amnesiac {
     fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
         false
     }
-    fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType) {
+    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
+        match phase {
+            PhaseType::Night => {
+                if !actor_ref.alive(game) {return;}
+                self.become_role(game, actor_ref);
+            },
+            _ => {}
+        }
     }
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
     }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
+    }
+}
+
+impl Amnesiac {
+    fn become_role(&self, game: &mut Game, actor_ref: PlayerReference) {
+        let new_role_data = self.role_outline
+            .get_random_role(&game.settings.excluded_roles, &[])
+            .unwrap_or(Role::Amnesiac)
+            .default_state();
+        if new_role_data.role() != Role::Amnesiac {
+            actor_ref.set_role(game, new_role_data);
+        }
     }
 }

@@ -2,8 +2,8 @@
 
 use std::time::Duration;
 
-use crate::game::{grave::GraveKiller, phase::PhaseType, verdict::Verdict, Game};
-use super::{PlayerReference, ClientConnection};
+use crate::{client_connection::ClientConnection, game::{grave::GraveKiller, phase::PhaseType, verdict::Verdict, Game}};
+use super::PlayerReference;
 
 
 impl PlayerReference{

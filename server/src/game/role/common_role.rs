@@ -12,9 +12,9 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
     target_ref.alive(game) &&
     !Team::same_team(game, actor_ref, target_ref)
 }
-pub(super) fn convert_targets_to_visits(_game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, astral: bool, attack: bool) -> Vec<Visit> {
+pub(super) fn convert_targets_to_visits(_game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, attack: bool) -> Vec<Visit> {
     if !target_refs.is_empty() {
-        vec![Visit{ target: target_refs[0], astral, attack }]
+        vec![Visit{ target: target_refs[0], attack }]
     } else {
         Vec::new()
     }
