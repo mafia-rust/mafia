@@ -1,7 +1,7 @@
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender}, event, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, event::on_fast_forward::OnFastForward, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
 
@@ -14,7 +14,7 @@ impl Game {
         match incoming_packet {
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {
                 if sender_pointer.host(self) && fast_forward && !self.phase_machine.time_remaining.is_zero(){
-                    event::OnFastForward::invoke(self);
+                    OnFastForward::invoke(self);
                 }
             },
             _ => {
