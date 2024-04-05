@@ -5,7 +5,7 @@ impl OnGameStart{
     pub fn invoke(game: &mut Game){
         game.on_game_starting();
         
-        game.mafia().on_game_start(game);
-        game.cult().on_game_start(game);
+        game.mafia().clone().on_game_start(game);
+        game.cult().clone().on_game_start(game);
     }
 }

@@ -34,12 +34,27 @@ impl Cult{
         if let Some(s) = self.sacrifices_needed{
             game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::CultSacrificesRequired { required: s });
         }
-        game.teams.set_cult(self.clone());
+        game.set_cult(self.clone());
 
         Cult::set_ordered_cultists(self.clone(), game);
     }
-    pub fn on_member_role_switch(self, game: &mut Game, _actor: PlayerReference) {
-        Cult::set_ordered_cultists(self, game);
+    pub fn on_role_switch(self, game: &mut Game, actor: PlayerReference) {
+        if actor.role(game).faction() == Faction::Cult {
+            Cult::set_ordered_cultists(self.clone(), game);
+        }
+        let cult = game.cult().clone();
+
+        for a in cult.get_living_members(game) {
+            for b in cult.get_living_members(game) {
+                a.insert_role_label(game, b, b.role(game));
+                b.insert_role_label(game, a, a.role(game));
+            }
+        }
+    }
+    pub fn get_living_members(&self, game: &Game)->Vec<PlayerReference>{
+        PlayerReference::all_players(game).filter(
+            |p| p.role(game).faction() == Faction::Cult && p.alive(game)
+        ).collect()
     }
 
 
@@ -76,7 +91,7 @@ impl Cult{
             player_ref.set_role(game, role);
         }
 
-        game.teams.set_cult(self);
+        game.set_cult(self);
     }
     pub fn can_convert_tonight(&self, game: &Game)->bool {
         if self.ordered_cultists.len() >= 4 {return false}

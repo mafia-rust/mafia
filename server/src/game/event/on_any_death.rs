@@ -14,8 +14,8 @@ impl OnAnyDeath{
             player_ref.on_any_death(game, self.dead_player)
         }
 
-        game.mafia().on_any_death(game);
-        game.cult().on_any_death(game);
+        game.mafia().clone().on_any_death(game, self.dead_player);
+        game.cult().clone().on_any_death(game);
 
         game.on_any_death(self.dead_player);
     }

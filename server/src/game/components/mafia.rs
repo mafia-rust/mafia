@@ -20,12 +20,28 @@ impl Mafia{
         //This depends on role_state.on_any_death being called before this
         Mafia::ensure_mafia_can_kill(game);
     }
-    pub fn on_any_death(self, game: &mut Game){
+    pub fn on_any_death(self, game: &mut Game, dead_player: PlayerReference){
         //This depends on role_state.on_any_death being called before this
-        Mafia::ensure_mafia_can_kill(game);
+        if dead_player.role(game).faction() == Faction::Mafia {
+            Mafia::ensure_mafia_can_kill(game);
+        }
     }
-    pub fn on_member_role_switch(self, game: &mut Game, _actor: PlayerReference) {
-        Mafia::ensure_mafia_can_kill(game);
+    pub fn on_role_switch(self, game: &mut Game, actor: PlayerReference) {
+        if actor.role(game).faction() == Faction::Mafia {
+            Mafia::ensure_mafia_can_kill(game);
+        }
+
+        for a in self.get_living_members(game) {
+            for b in self.get_living_members(game) {
+                a.insert_role_label(game, b, b.role(game));
+                b.insert_role_label(game, a, a.role(game));
+            }
+        }
+    }
+    pub fn get_living_members(&self, game: &Game)->Vec<PlayerReference>{
+        PlayerReference::all_players(game).filter(
+            |p| p.role(game).faction() == Faction::Mafia && p.alive(game)
+        ).collect()
     }
 
     fn ensure_mafia_can_kill(game: &mut Game){

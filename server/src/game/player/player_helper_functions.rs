@@ -72,15 +72,7 @@ impl PlayerReference{
         }
 
         self.insert_role_label(game, *self, self.role(game));
-        if let Some(team) = self.team(game) {
-
-            OnRoleSwitch::create_and_invoke(game, *self, self.role(game));
-
-            for player in team.members(game) {
-                player.insert_role_label(game, *self, self.role(game));
-                self.insert_role_label(game, player, player.role(game));
-            }
-        }
+        OnRoleSwitch::create_and_invoke(game, *self);
     }
     pub fn increase_defense_to(&self, game: &mut Game, defense: u8){
         if self.night_defense(game) < defense {

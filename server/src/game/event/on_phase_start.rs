@@ -13,8 +13,8 @@ impl OnPhaseStart{
             player_ref.on_phase_start(game, self.phase);
         }
 
-        game.mafia().on_phase_start(game, self.phase);
-        game.cult().on_phase_start(game, self.phase);
+        game.mafia().clone().on_phase_start(game, self.phase);
+        game.cult().clone().on_phase_start(game, self.phase);
 
         game.on_phase_start(self.phase);
     }
