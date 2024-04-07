@@ -50,8 +50,8 @@ export function loadSettings(): Partial<Settings>{
 
 
 
-export type SavedGameModes = Map<string, GameMode>;
-type GameMode = {
+export type SavedGameModes = Record<string, GameMode>;
+export type GameMode = {
     name: string,
     roleList: RoleList,
     phaseTimes: PhaseTimes,
@@ -78,7 +78,7 @@ function replacer(key: any, value: any) {
             value: Array.from(value.entries()), // or with spread: value: [...value]
         };
     } else {
-      return value;
+        return value;
     }
 }
 function reviver(key: any, value: any) {

@@ -1,0 +1,8 @@
+div.draggable {
+    cursor: grab
+}
+
+div.draggable.dragged {
+    opacity: 40%;
+    border-style: dashed;
+}
