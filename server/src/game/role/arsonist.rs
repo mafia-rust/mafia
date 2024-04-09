@@ -97,7 +97,8 @@ impl RoleStateImpl for Arsonist {
     }
     fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType){
     }
-    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
+    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
+        game.arsonist_doused().clone().clean_doused(game, actor_ref)
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
     }

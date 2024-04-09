@@ -26,10 +26,17 @@ impl ArsonistDoused {
 
         game.set_arsonist_doused(self.clone());
     }
+    pub fn clean_doused(mut self, game: &mut Game, player: PlayerReference) {
+        self.doused_players.remove(&player);
+
+        ArsonistDoused::tag_doused_players_for_arsonists(&self, game);
+
+        game.set_arsonist_doused(self.clone());
+    }
     pub fn ignite(&self, game: &mut Game, igniter: PlayerReference) {
         for player in self.doused_players.clone() {
             if player.role(game) == Role::Arsonist {continue;}
-            if player.alive(game) {continue;}
+            if !player.alive(game) {continue;}
             player.try_night_kill(igniter, game, GraveKiller::Role(Role::Arsonist), 3, true);
         }
     }
