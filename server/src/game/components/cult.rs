@@ -42,14 +42,18 @@ impl Cult{
         if actor.role(game).faction() == Faction::Cult {
             Cult::set_ordered_cultists(self.clone(), game);
         }
-        let cult = game.cult().clone();
 
-        for a in cult.get_living_members(game) {
-            for b in cult.get_living_members(game) {
+        for a in Cult::get_members(game) {
+            for b in Cult::get_members(game) {
                 a.insert_role_label(game, b, b.role(game));
                 b.insert_role_label(game, a, a.role(game));
             }
         }
+    }
+    pub fn get_members(game: &Game)->Vec<PlayerReference>{
+        PlayerReference::all_players(game).filter(
+            |p| p.role(game).faction() == Faction::Cult
+        ).collect()
     }
     pub fn get_living_members(&self, game: &Game)->Vec<PlayerReference>{
         PlayerReference::all_players(game).filter(

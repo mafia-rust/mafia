@@ -31,12 +31,17 @@ impl Mafia{
             Mafia::ensure_mafia_can_kill(game);
         }
 
-        for a in self.get_living_members(game) {
-            for b in self.get_living_members(game) {
+        for a in Mafia::get_members(game) {
+            for b in Mafia::get_members(game) {
                 a.insert_role_label(game, b, b.role(game));
                 b.insert_role_label(game, a, a.role(game));
             }
         }
+    }
+    pub fn get_members(game: &Game)->Vec<PlayerReference>{
+        PlayerReference::all_players(game).filter(
+            |p| p.role(game).faction() == Faction::Mafia
+        ).collect()
     }
     pub fn get_living_members(&self, game: &Game)->Vec<PlayerReference>{
         PlayerReference::all_players(game).filter(
