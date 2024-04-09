@@ -1,11 +1,9 @@
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
-use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
@@ -35,9 +33,7 @@ impl RoleStateImpl for Arsonist {
                             actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
                             return
                         }
-                        if Role::Arsonist != target_ref.role_state(game).role() {
-                            target_ref.set_doused(game, true);
-                        }
+                        game.arsonist_doused().clone().douse(game, target_ref);
                     }
 
                     
@@ -45,7 +41,7 @@ impl RoleStateImpl for Arsonist {
                     //douse the jailor if jailed
                     for player_ref in PlayerReference::all_players(game){
                         if player_ref.alive(game) && player_ref.role(game) == Role::Jailor {
-                            player_ref.set_doused(game, true);
+                            game.arsonist_doused().clone().douse(game, player_ref);
                         }
                     }
                 }
@@ -58,36 +54,20 @@ impl RoleStateImpl for Arsonist {
                             .iter()
                             .any(|v|v.target==actor_ref)
                     ).collect::<Vec<PlayerReference>>()
-                {
-                    if Role::Arsonist != other_player_ref.role_state(game).role() {
-                        other_player_ref.set_doused(game, true);
-                    }
+                {   
+                    game.arsonist_doused().clone().douse(game, other_player_ref);
                 }
             },
             Priority::Kill => {
-                actor_ref.set_doused(game, false);
                 if actor_ref.night_jailed(game) {return}
                 
                 if let Some(visit) = actor_ref.night_visits(game).first(){
                     if actor_ref == visit.target{
-                        for player_ref in PlayerReference::all_players(game){
-                            if player_ref.doused(game) {
-                                player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Arsonist), 3, true);
-                            }
-                        }
+                        game.arsonist_doused().clone().ignite(game, actor_ref);
                     }
                 }
                 
-            },
-            Priority::Investigative => {
-                //show player tags on doused players
-                actor_ref.remove_player_tag_on_all(game, Tag::Doused);
-                for player_ref in PlayerReference::all_players(game){
-                    if player_ref.doused(game) {
-                        actor_ref.push_player_tag(game, player_ref, Tag::Doused)
-                    }
-                }
-            },
+            }
             _ => {}
         }
     }

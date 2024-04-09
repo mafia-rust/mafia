@@ -33,6 +33,7 @@ use phase::PhaseStateMachine;
 use settings::Settings;
 use grave::Grave;
 
+use self::components::arsonist_doused::ArsonistDoused;
 use self::components::mafia::Mafia;
 use self::components::cult::Cult;
 use self::end_game_condition::EndGameCondition;
@@ -71,7 +72,7 @@ pub struct Game {
     //components
     pub mafia: Mafia,
     pub cult: Cult,
-    // pub doused: Doused,
+    pub arsonist_doused: ArsonistDoused,
     // pub cleaned: Cleaned,
     // pub framed: Framed,
 }
@@ -155,6 +156,7 @@ impl Game {
 
                 mafia: Mafia::default(),
                 cult: Cult::default(),
+                arsonist_doused: ArsonistDoused::default(),
             };
 
             if !game.game_is_over() {
@@ -374,7 +376,7 @@ pub mod test {
     use rand::{thread_rng, seq::SliceRandom};
 
     use super::{
-        components::{cult::Cult, mafia::Mafia},
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, mafia::Mafia},
         event::on_game_start::OnGameStart,
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
@@ -430,6 +432,7 @@ pub mod test {
 
             mafia: Mafia::default(),
             cult: Cult::default(),
+            arsonist_doused: ArsonistDoused::default(),
         };
 
         OnGameStart::invoke(&mut game);

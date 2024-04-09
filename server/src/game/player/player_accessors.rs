@@ -134,13 +134,6 @@ impl PlayerReference{
         self.deref_mut(game).queued_chat_messages.push(message);
     }
 
-    pub fn set_doused(&self, game: &mut Game, doused: bool){
-        self.deref_mut(game).doused = doused;
-    }
-    pub fn doused(&self, game: &Game) -> bool{
-        self.deref(game).doused
-    }
-
     pub fn set_fast_forward_vote(&self, game: &mut Game, fast_forward_vote: bool) {
         self.deref_mut(game).fast_forward_vote = fast_forward_vote;
 

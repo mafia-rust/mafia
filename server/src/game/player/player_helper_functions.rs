@@ -140,7 +140,7 @@ impl PlayerReference{
         self.role(game).has_suspicious_aura(game) || 
         self.night_framed(game) || 
         (
-            self.doused(game) &&
+            game.arsonist_doused().doused(*self) &&
             PlayerReference::all_players(game).any(|player_ref|
                 player_ref.alive(game) && player_ref.role(game) == Role::Arsonist
             )
