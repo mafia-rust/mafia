@@ -12,7 +12,7 @@ export default function LobbyNamePane(): ReactElement {
     const spectatorDependency = 
         GAME_MANAGER.state.stateType === "lobby" &&
         GAME_MANAGER.state.myId !== null &&
-        GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId)?.clientType.type === "spectator";
+        GAME_MANAGER.state.players[GAME_MANAGER.state.myId]?.clientType.type === "spectator";
 
     
     const [isSpectator, setIsSpectator] = React.useState(spectatorDependency);
@@ -23,7 +23,7 @@ export default function LobbyNamePane(): ReactElement {
                 case "lobbyClients":
                     const x = GAME_MANAGER.state.stateType === "lobby" &&
                         GAME_MANAGER.state.myId !== null &&
-                        GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId)?.clientType.type === "spectator"
+                        GAME_MANAGER.state.players[GAME_MANAGER.state.myId]?.clientType.type === "spectator"
                     setIsSpectator(x);
                     break;
             }

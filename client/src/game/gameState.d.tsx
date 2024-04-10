@@ -16,7 +16,7 @@ export type OutsideLobbyState = {
     stateType: "outsideLobby",
 
     selectedRoomCode: string | null,
-    lobbies: Map<number, LobbyPreviewData>,
+    lobbies: Record<number, LobbyPreviewData>,
 }
 
 
@@ -32,7 +32,7 @@ export type LobbyState = {
     excludedRoles: Role[],
     phaseTimes: PhaseTimes,
 
-    players: Map<LobbyClientID, LobbyClient>,
+    players: Record<LobbyClientID, LobbyClient>,
 }
 export type LobbyClient = {
     host: boolean,

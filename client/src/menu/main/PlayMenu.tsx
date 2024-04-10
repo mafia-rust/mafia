@@ -126,10 +126,10 @@ async function hostGame() {
     }
 }
 
-type LobbyMap = Map<number, LobbyPreviewData>;
+type LobbyMap = Record<number, LobbyPreviewData>;
 
 function PlayMenuTable(): ReactElement {
-    const [lobbies, setLobbies] = useState<LobbyMap>(new Map());
+    const [lobbies, setLobbies] = useState<LobbyMap>({});
 
     useEffect(() => {
         const listener: StateListener = (type) => {

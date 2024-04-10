@@ -111,16 +111,16 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "playersHost":
             if(GAME_MANAGER.state.stateType === "lobby"){
-                for(let [playerId, player] of GAME_MANAGER.state.players){
-                    player.host = packet.hosts.includes(playerId);
+                for(const playerId in GAME_MANAGER.state.players){
+                    GAME_MANAGER.state.players[playerId].host = packet.hosts.includes(Number.parseInt(playerId));
                 }
             }
         break;
         case "playersLostConnection":
             if(GAME_MANAGER.state.stateType === "lobby"){
-                for(let [playerId, player] of GAME_MANAGER.state.players){
-                    if(packet.lostConnection.includes(playerId))
-                        player.connection = "couldReconnect";
+                for(const playerId in GAME_MANAGER.state.players){
+                    if(packet.lostConnection.includes(Number.parseInt(playerId)))
+                        GAME_MANAGER.state.players[playerId].connection = "disconnected";
                 }
             }
         break;
@@ -140,9 +140,9 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "lobbyClients":
             if(GAME_MANAGER.state.stateType === "lobby"){
-                GAME_MANAGER.state.players = new Map();
-                for(let [clientId, lobbyClient] of Object.entries(packet.clients)){
-                    GAME_MANAGER.state.players.set(Number.parseInt(clientId), lobbyClient);
+                GAME_MANAGER.state.players = {};
+                for(const clientId in packet.clients){
+                    GAME_MANAGER.state.players[clientId] = packet.clients[clientId];
                 }
             }
         break;
@@ -346,7 +346,7 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game"){
                 GAME_MANAGER.state.chatMessages = GAME_MANAGER.state.chatMessages.concat(packet.chatMessages);
                 
-                for(let chatMessage of packet.chatMessages){
+                for(const chatMessage of packet.chatMessages){
                     let audioSrc = chatMessageToAudio(chatMessage);
                     if(audioSrc)
                         Anchor.queueAudioFile(audioSrc);

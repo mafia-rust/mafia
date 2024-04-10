@@ -27,7 +27,7 @@ export function createLobbyState(): LobbyState {
         excludedRoles: [],
         phaseTimes: defaultPhaseTimes(),
 
-        players: new Map<LobbyClientID, LobbyClient>()
+        players: {}
     }
 }
 

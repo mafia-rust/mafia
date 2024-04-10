@@ -8,7 +8,7 @@ import LobbyNamePane from "./LobbyNamePane";
 
 type PlayerListState = {
     enteredName: string,
-    players: Map<LobbyClientID, LobbyClient>,
+    players: Record<LobbyClientID, LobbyClient>,
     host: boolean
 }
 
@@ -56,7 +56,11 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
 
     renderPlayers() {
         let out = [];
-        for(let [id, player] of this.state.players.entries()){
+
+        for(const id in this.state.players){
+            const player = this.state.players[id];
+
+
             if(player.clientType.type === "spectator") continue;
             let playerName = <>{player.host ? "👑 " : ""}{player.connection==="couldReconnect" ? "... " : ""}{player.clientType.name}</>;
 
@@ -65,7 +69,7 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
                     <button
                         onClick={()=>{
                             if(this.state.host)
-                                GAME_MANAGER.sendKickPlayerPacket(id);
+                                GAME_MANAGER.sendKickPlayerPacket(Number.parseInt(id));
                         }}
                     >
                         {playerName}
