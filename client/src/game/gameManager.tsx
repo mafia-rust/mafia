@@ -6,7 +6,7 @@ import CONFIG from "./../resources/config.json"
 import React from "react";
 import { PhaseType, PhaseTimes, Verdict, Player } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
-import { LobbyPreviewData, ToClientPacket, ToServerPacket } from "./packet";
+import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleOutline } from "./roleListState.d";
 import translate from "./lang";
 import PlayMenu from "../menu/main/PlayMenu";

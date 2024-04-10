@@ -1,4 +1,4 @@
-import GameState, { LobbyClient, LobbyState, PhaseTimes, Player, LobbyClientID, PlayerGameState } from "./gameState.d"
+import GameState, { LobbyState, PhaseTimes, Player, PlayerGameState } from "./gameState.d"
 
 
 export function defaultPhaseTimes(): PhaseTimes {
