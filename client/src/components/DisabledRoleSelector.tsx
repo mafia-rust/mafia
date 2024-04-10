@@ -1,4 +1,4 @@
-import { ReactElement, useState } from "react"
+import { ReactElement, useContext, useState } from "react"
 import translate from "../game/lang"
 import React from "react"
 import StyledText from "./StyledText"
@@ -8,25 +8,27 @@ import { RoleOutlineOptionSelector } from "./OutlineSelector";
 import "./disabledRoleSelector.css"
 import Icon from "./Icon";
 import { Button } from "./Button";
+import { GameModeContext } from "./GameModesEditor";
 
 
 
 
 export default function DisabledRoleSelector(props: {
     disabled?: boolean,
-    disabledRoles: Role[],
     onDisableRoles: (role: Role[]) => void,
     onEnableRoles: (role: Role[]) => void,
     onIncludeAll: () => void
 }): ReactElement {
+    const {disabledRoles} = useContext(GameModeContext);
 
-    const [roleOutlineOption, setRoleOutlineOption] = useState<RoleOutlineOption | "any">("any");
+    const [roleOutlineOption, setRoleOutlineOption] = useState<RoleOutlineOption>({ type: "faction", faction: "town" });
 
-    const disableOutlineOption = (outline: RoleOutlineOption | "any") => {
-        let roles;
-        if (outline === "any") roles = getAllRoles()
-        else roles = getRolesFromOutlineOption(outline);
-        props.onDisableRoles(roles);
+    const disableOutlineOption = (outline: RoleOutlineOption) => {
+        props.onDisableRoles(getRolesFromOutlineOption(outline));
+    }
+
+    const disableAll = () => {
+        props.onDisableRoles(getAllRoles());
     }
 
     return <div className="role-specific-colors selector-section">
@@ -36,13 +38,18 @@ export default function DisabledRoleSelector(props: {
                 onClick={props.onIncludeAll}
                 disabled={props.disabled}
             ><Icon>deselect</Icon> {translate("menu.excludedRoles.includeAll")}</Button>
+            <Button
+                onClick={disableAll}
+                disabled={props.disabled}
+            ><Icon>select_all</Icon> {translate("menu.excludedRoles.excludeAll")}</Button>
 
             <div className="disabled-role-selector-area">
                 <Button
                     onClick={()=>{disableOutlineOption(roleOutlineOption)}}
                     disabled={props.disabled}
-                ><Icon>select_all</Icon> {translate("menu.excludedRoles.exclude")}</Button>
+                >{translate("menu.excludedRoles.exclude")}</Button>
                 <RoleOutlineOptionSelector
+                    excludeAny={true}
                     disabled={props.disabled}
                     roleOutlineOption={roleOutlineOption}
                     onChange={setRoleOutlineOption}
@@ -51,15 +58,22 @@ export default function DisabledRoleSelector(props: {
         </div>
 
         <div>
-            {Array.from(props.disabledRoles.values()).map((value, i)=>{
-                return <Button key={i}
-                    disabled={props.disabled}
-                    onClick={()=>{props.onEnableRoles([value])}}
-                >
-                    <StyledText noLinks={true}>
-                        {translate("role."+value+".name")}
-                    </StyledText>
-                </Button>
+            {getAllRoles().map((role, i) => {
+                if (disabledRoles.includes(role)) {
+                    return <Button key={i}
+                        disabled={props.disabled}
+                        onClick={() => props.onEnableRoles([role])}
+                    >
+                        <span className="keyword-disabled">{translate("role."+role+".name")}</span>
+                    </Button>
+                } else {
+                    return <Button key={i}
+                        disabled={props.disabled}
+                        onClick={() => props.onDisableRoles([role])}
+                    >
+                        <StyledText noLinks={true}>{translate("role."+role+".name")}</StyledText>
+                    </Button>
+                }
             })}
         </div>
     </div>

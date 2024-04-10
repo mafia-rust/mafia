@@ -281,7 +281,7 @@ export function ContentTab(props: {
         {props.close && <Button className="close"
             onClick={()=>GameScreen.instance.closeMenu(props.close as ContentMenu)}
         >
-            <Icon>close</Icon>
+            <Icon size="small">close</Icon>
         </Button>}
         {props.helpMenu ? <Button className="help"
             onClick={()=>{
@@ -290,7 +290,7 @@ export function ContentTab(props: {
                 });
             }}
         >
-            <Icon>question_mark</Icon>
+            <Icon size="small">question_mark</Icon>
         </Button>:null}
     </div>
 }

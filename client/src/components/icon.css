@@ -1,4 +1,15 @@
 .icon {
     font-size: 1.2em;
     vertical-align:text-top;
+    user-select: none;
+}
+
+.icon-small {
+    font-size: 1em;
+    vertical-align:auto;
+}
+
+.icon-tiny {
+    font-size: 0.75em;
+    vertical-align:auto;
 }

@@ -22,6 +22,7 @@ const GameModeContext = createContext({
     phaseTimes: defaultPhaseTimes(),
     disabledRoles: [] as Role[]
 });
+export {GameModeContext};
 
 
 export default function GameModesEditor(): ReactElement {
@@ -74,7 +75,6 @@ export default function GameModesEditor(): ReactElement {
                         setPhaseTimes={setPhaseTimes}
                     />
                     <PhaseTimesSelector 
-                        phaseTimes={phaseTimes} 
                         onChange={(newPhaseTimes) => {
                             setPhaseTimes(newPhaseTimes);
                         }}            
@@ -82,16 +82,15 @@ export default function GameModesEditor(): ReactElement {
                 </div>
                 <div>
                     <OutlineListSelector
-                        roleList={roleList}
                         onChangeRolePicker={onChangeRolePicker}
                         onAddNewOutline={addOutline}
                         onRemoveOutline={removeOutline}
+                        setRoleList={setRoleList}
                     />
                     <DisabledRoleSelector
                         onDisableRoles={onDisableRoles}
                         onEnableRoles={onEnableRoles}
-                        onIncludeAll={onIncludeAll}
-                        disabledRoles={disabledRoles}            
+                        onIncludeAll={onIncludeAll}         
                     />
                 </div>
             </main>
@@ -169,14 +168,14 @@ function GameModeSelector(props: {
                     <span>{gameModeName}: {savedGameModes[gameModeName]?.roleList.length}</span>
                     <div>
                         <Button 
-                            onClick={()=>deleteGameMode(gameModeName)}
-                        ><Icon>delete</Icon></Button>
-                        <Button 
                             onClick={()=>{
                                 loadGameMode(gameModeName)
                                 return true;
                             }}
                         ><Icon>edit</Icon></Button>
+                        <Button 
+                            onClick={()=>deleteGameMode(gameModeName)}
+                        ><Icon>delete</Icon></Button>
                     </div>
                 </>}
             />

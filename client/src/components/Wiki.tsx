@@ -135,7 +135,7 @@ function WikiSearchResults(props: {
             props.disabledRoles !== undefined && 
             props.disabledRoles.map((role)=>{return "role/"+role}).includes(page)
         ){
-            elements.push(<button key={page} onClick={() => props.onChooseArticle(page)}><span className="keyword-dead">{getArticleTitle(page)}</span></button>);
+            elements.push(<button key={page} onClick={() => props.onChooseArticle(page)}><span className="keyword-disabled">{getArticleTitle(page)}</span></button>);
         }else{
             elements.push(<button key={page} onClick={() => props.onChooseArticle(page)}><StyledText>{getArticleTitle(page)}</StyledText></button>);
         }

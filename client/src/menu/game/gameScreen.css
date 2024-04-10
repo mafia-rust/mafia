@@ -84,9 +84,6 @@
     margin: 0 .30rem;
     padding: 0;
 }
-.content-tab > button > .icon {
-    font-size: 1em;
-}
 .content-tab > .close {
     position: absolute;
     right: 0;

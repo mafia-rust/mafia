@@ -6,8 +6,9 @@ import "./dragAndDrop.css"
 export function DragAndDrop<T>(props: { 
     items: T[], 
     render: (item: T, index: number) => React.ReactNode, 
-    onDragEnd: (newItems: T[]) => void }
-): React.ReactElement {
+    onDragEnd: (newItems: T[]) => void,
+    disabled?: boolean
+}): React.ReactElement {
     const [temporaryItems, setTemporaryItems] = useState<T[] | null>(null);
     const [draggedItem, setDraggedItem] = useState<T | null>(null);
 
@@ -16,8 +17,8 @@ export function DragAndDrop<T>(props: {
     return <>
         {renderedItems.map((item, index) => <div
             key={index}
-            className={"draggable" + (item === draggedItem ? " dragged" : "")}
-            draggable
+            className={(props.disabled ? "" : "draggable") + (item === draggedItem ? " dragged" : "")}
+            draggable={!props.disabled}
             onDragStart={() => setDraggedItem(item)}
             onDragOver={(e) => {
                 e.preventDefault();

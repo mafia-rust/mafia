@@ -56,6 +56,9 @@
     font-style: italic;
     color: gray
 }
+.keyword-disabled {
+    color: gray
+}
 .keyword-pride, .keyword-trans {
     background-clip: text;
     color: rgba(255,255,255,.2);

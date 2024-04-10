@@ -1,41 +1,52 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import GAME_MANAGER from "../../index";
 import LobbyPlayerList from "./LobbyPlayerList";
-import LobbyPhaseTimePane from "./LobbyPhaseTimePane";
-import LobbyRolePane from "./LobbyRolePane";
 import "./lobbyMenu.css";
 import translate from "../../game/lang";
 import { StateListener } from "../../game/gameManager.d";
-import LobbyExcludedRoles from "./lobbyExcludedRoles";
 import Anchor from "../Anchor";
 import { RoomCodeButton } from "../Settings";
-import { getRolesFromRoleListRemoveExclusionsAddConversions, getRolesComplement } from "../../game/roleListState.d";
+import { getRolesFromRoleListRemoveExclusionsAddConversions, getRolesComplement, RoleOutline } from "../../game/roleListState.d";
 import LoadingScreen from "../LoadingScreen";
 import StartMenu from "../main/StartMenu";
 import Wiki from "../../components/Wiki";
 import { defaultPhaseTimes } from "../../game/gameState";
 import { PasteButton } from "../../components/ClipboardButtons";
+import { GameModeContext } from "../../components/GameModesEditor";
+import PhaseTimesSelector from "../../components/PhaseTimeSelector";
+import { OutlineListSelector } from "../../components/OutlineSelector";
+import DisabledRoleSelector from "../../components/DisabledRoleSelector";
 
 export default function LobbyMenu(): ReactElement {
     const [roleList, setRoleList] = useState(
         GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.roleList : []
     );
-    const [excludedRoles, setExcludedRoles] = useState(
+    const [disabledRoles, setDisabledRoles] = useState(
         GAME_MANAGER.state.stateType === "lobby"  || GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.excludedRoles : []
     );
+    const [phaseTimes, setPhaseTimes] = useState(
+        GAME_MANAGER.state.stateType === "lobby"  || GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.phaseTimes : defaultPhaseTimes()
+    );
+    const [isHost, setHost] = useState(GAME_MANAGER.getMyHost() ?? false);
 
     useEffect(() => {
         const listener: StateListener = async (type) => {
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
                 switch (type) {
                     case "roleList":
-                        setRoleList([...GAME_MANAGER.state.roleList]);
-                        break;
                     case "roleOutline":
                         setRoleList([...GAME_MANAGER.state.roleList]);
                         break;
                     case "excludedRoles":
-                        setExcludedRoles([...GAME_MANAGER.state.excludedRoles]);
+                        setDisabledRoles([...GAME_MANAGER.state.excludedRoles]);
+                        break;
+                    case "phaseTimes":
+                    case "phaseTime":
+                        setPhaseTimes({...GAME_MANAGER.state.phaseTimes})
+                        break;
+                    case "playersHost":
+                    case "lobbyClients":
+                        setHost(GAME_MANAGER.getMyHost() ?? false)
                         break;
                     case "rejectJoin":
                         // Kicked, probably
@@ -49,55 +60,86 @@ export default function LobbyMenu(): ReactElement {
 
         if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
             setRoleList([...GAME_MANAGER.state.roleList]);
-            setExcludedRoles([...GAME_MANAGER.state.excludedRoles]);
+            setDisabledRoles([...GAME_MANAGER.state.excludedRoles]);
+            setPhaseTimes({...GAME_MANAGER.state.phaseTimes})
+            setHost(GAME_MANAGER.getMyHost() ?? false)
         }
         GAME_MANAGER.addStateListener(listener);
         return ()=>{GAME_MANAGER.removeStateListener(listener);}
-    }, [setRoleList, setExcludedRoles]);
+    }, [setRoleList, setDisabledRoles]);
+    
+    let onChangeRolePicker = (value: RoleOutline, index: number) => {
+        let newRoleList = [...roleList];
+        newRoleList[index] = value;
+        setRoleList(newRoleList);
+        GAME_MANAGER.sendSetRoleOutlinePacket(index, value);
+    }
 
     return <div className="lm">
         <LobbyMenuHeader/>
-        <main>
-            <div>
-                <LobbyPlayerList/>
-                {Anchor.isMobile() || <section className="wiki-menu-colors selector-section">
-                    <h2>{translate("menu.wiki.title")}</h2>
-                    <Wiki disabledRoles={
-                        getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(roleList, excludedRoles))
-                    }/>
-                </section>}
-            </div>
-            <div>
-                {Anchor.isMobile() && <h1>{translate("menu.lobby.settings")}</h1>}
-                <PasteButton 
-                    className="player-list-menu-colors" 
-                    disabled={!GAME_MANAGER.getMyHost() ?? false}
-                    onPasteSuccessful={text => {
-                        try {
-                            const data = JSON.parse(text);
+        <GameModeContext.Provider value={{roleList, disabledRoles, phaseTimes}}>
+            <main>
+                <div>
+                    <LobbyPlayerList/>
+                    {Anchor.isMobile() || <section className="wiki-menu-colors selector-section">
+                        <h2>{translate("menu.wiki.title")}</h2>
+                        <Wiki disabledRoles={
+                            getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(roleList, disabledRoles))
+                        }/>
+                    </section>}
+                </div>
+                <div>
+                    {Anchor.isMobile() && <h1>{translate("menu.lobby.settings")}</h1>}
+                    <PasteButton 
+                        className="player-list-menu-colors" 
+                        disabled={!GAME_MANAGER.getMyHost() ?? false}
+                        onPasteSuccessful={text => {
+                            try {
+                                const data = JSON.parse(text);
 
-                            GAME_MANAGER.sendExcludedRolesPacket(data.disabledRoles ?? []);
-                            GAME_MANAGER.sendSetRoleListPacket(data.roleList ?? []);
-                            GAME_MANAGER.sendSetPhaseTimesPacket(data.phaseTimes ?? defaultPhaseTimes());
-                        } catch (e) {
-                            Anchor.pushError(
-                                translate("notification.importGameMode.failure"), 
-                                translate("notification.importGameMode.failure.details")
-                            );
-                        }
-                    }}
-                >{translate("importFromClipboard")}</PasteButton>
-                <LobbyPhaseTimePane/>
-                <LobbyRolePane/>
-                <LobbyExcludedRoles/>
-                {Anchor.isMobile() && <section className="wiki-menu-colors selector-section">
-                    <h2>{translate("menu.wiki.title")}</h2>
-                    <Wiki disabledRoles={
-                        getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(roleList, excludedRoles))
-                    }/>
-                </section>}
-            </div>
-        </main>
+                                GAME_MANAGER.sendExcludedRolesPacket(data.disabledRoles ?? []);
+                                GAME_MANAGER.sendSetRoleListPacket(data.roleList ?? []);
+                                GAME_MANAGER.sendSetPhaseTimesPacket(data.phaseTimes ?? defaultPhaseTimes());
+                            } catch (e) {
+                                Anchor.pushError(
+                                    translate("notification.importGameMode.failure"), 
+                                    translate("notification.importGameMode.failure.details")
+                                );
+                            }
+                        }}
+                    >{translate("importFromClipboard")}</PasteButton>
+                    <PhaseTimesSelector 
+                        disabled={!isHost}
+                        onChange={GAME_MANAGER.sendSetPhaseTimesPacket}
+                    />
+                    <OutlineListSelector
+                        disabled={!isHost}
+                        onChangeRolePicker={onChangeRolePicker}
+                        onAddNewOutline={undefined}
+                        onRemoveOutline={undefined}
+                        setRoleList={newRoleList => {
+                            const combinedRoleList = [...roleList];
+                            newRoleList.forEach((role, index) => {
+                                combinedRoleList[index] = role
+                            })
+                            setRoleList(combinedRoleList)
+                        }}
+                    />
+                    <DisabledRoleSelector
+                        onDisableRoles={roles => GAME_MANAGER.sendExcludedRolesPacket([...disabledRoles, ...roles])}
+                        onEnableRoles={roles => GAME_MANAGER.sendExcludedRolesPacket(disabledRoles.filter(role => !roles.includes(role)))}
+                        onIncludeAll={() => GAME_MANAGER.sendExcludedRolesPacket([])}
+                        disabled={!isHost}
+                    />
+                    {Anchor.isMobile() && <section className="wiki-menu-colors selector-section">
+                        <h2>{translate("menu.wiki.title")}</h2>
+                        <Wiki disabledRoles={
+                            getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(roleList, disabledRoles))
+                        }/>
+                    </section>}
+                </div>
+            </main>
+        </GameModeContext.Provider>
     </div>
 }
 
