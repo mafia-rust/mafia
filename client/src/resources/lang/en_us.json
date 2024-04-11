@@ -124,10 +124,13 @@
     "notification.clipboard.read.failure.noClipboard": "No clipboard found to read from",
     "notification.clipboard.read.failure.notAllowed": "Not allowed to read from clipboard",
     
-    "notification.importGameMode.failure": "Failed to import game mode",
+    "notification.importGameMode.failure": "Invalid game mode data",
     "notification.importGameMode.failure.details": "Tried to read invalid game mode data",
     "notification.saveGameMode.success": "Saved!",
     "notification.saveGameMode.failure": "Failed to save",
+    "notification.saveGameMode.failure.invalidName": "Invalid name",
+    "notification.saveGameMode.failure.noRoles": "Role list is empty",
+    "notification.saveGameMode.failure.didNotConfirm": "Confirmation failed",
 
     "cancel": "Cancel",
     "players": "Players",

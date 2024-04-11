@@ -113,6 +113,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
                             this.save(type);
                             return true;
                         }}
+                        pressedChildren={() => <Icon>done</Icon>}
                         aria-label={translate("menu.will.save")}
                     >
                         <Icon>save</Icon>
@@ -123,6 +124,7 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
                             this.send(type);
                             return true;
                         }}
+                        pressedChildren={() => <Icon>done</Icon>}
                         aria-label={translate("menu.will.post")}
                     >
                         <Icon>send</Icon>

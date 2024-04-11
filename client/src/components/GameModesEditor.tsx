@@ -109,9 +109,9 @@ function GameModeSelector(props: {
     
     const saveGameMode = useCallback(() => {
         const name = gameModeName;
-        if(!name.match(/^[a-zA-Z0-9_ ]+$/) || name.length >= 100 || name.length <= 0) return false;
-        if(roleList.length === 0) return false;
-        if(savedGameModes[name] !== undefined && !window.confirm(translate("confirmOverwrite"))) return false;
+        if(!name.match(/^[a-zA-Z0-9_ ]+$/) || name.length >= 100 || name.length <= 0) return "invalidName";
+        if(roleList.length === 0) return "noRoles";
+        if(savedGameModes[name] !== undefined && !window.confirm(translate("confirmOverwrite"))) return "didNotConfirm";
 
         const newGameModes = {...savedGameModes};
         newGameModes[name] = {
@@ -122,7 +122,7 @@ function GameModeSelector(props: {
         };
         setGameModes(newGameModes);
         saveGameModes(newGameModes);
-        return true;
+        return "success";
     }, [disabledRoles, gameModeName, phaseTimes, roleList, savedGameModes]);
 
     useEffect(() => {
@@ -130,8 +130,9 @@ function GameModeSelector(props: {
             if (e.ctrlKey && e.key === 's') {
                 e.preventDefault();
 
-                if (!saveGameMode()) {
-                    Anchor.pushError(translate("notification.saveGameMode.failure"), "");
+                const result = saveGameMode();
+                if (result !== "success") {
+                    Anchor.pushError(translate("notification.saveGameMode.failure"), translate("notification.saveGameMode.failure." + result));
                 }
             }
         }
@@ -146,6 +147,7 @@ function GameModeSelector(props: {
         props.setPhaseTimes(gameMode?.phaseTimes ?? defaultPhaseTimes());
         props.setDisabledRoles(gameMode?.disabledRoles ?? []);
         props.setRoleList(gameMode?.roleList ?? []);
+        return true;
     }
 
     const deleteGameMode = (roleListName: string) => {
@@ -160,9 +162,9 @@ function GameModeSelector(props: {
 
     return <section className="player-list-menu-colors selector-section">
         <div className="saved-game-modes">
-            <DragAndDrop<string> 
+            <DragAndDrop
                 items={Object.keys(savedGameModes)}
-                onDragEnd={(newItems: string[]) => {
+                onDragEnd={newItems => {
                     // Reordering object keys: https://stackoverflow.com/a/31102605/9157590
                     const oldOrder = {...savedGameModes};
                     
@@ -184,13 +186,12 @@ function GameModeSelector(props: {
                     <span>{gameModeName}: {savedGameModes[gameModeName]?.roleList.length}</span>
                     <div>
                         <Button 
-                            onClick={()=>{
-                                loadGameMode(gameModeName)
-                                return true;
-                            }}
+                            onClick={() => loadGameMode(gameModeName)}
+                            pressedChildren={result => <Icon>{result ? "done" : "warning"}</Icon>}
                         ><Icon>edit</Icon></Button>
                         <Button 
-                            onClick={()=>deleteGameMode(gameModeName)}
+                            onClick={() => deleteGameMode(gameModeName)}
+                            pressedChildren={result => <Icon>{result ? "done" : "warning"}</Icon>}
                         ><Icon>delete</Icon></Button>
                     </div>
                 </>}
@@ -201,39 +202,43 @@ function GameModeSelector(props: {
                 type="text" 
                 value={gameModeName}
                 placeholder={translate("menu.lobby.field.namePlaceholder")}
-                onChange={(e) => {
-                setGameModeName(e.target.value);
-            }}/>
+                onChange={(e) => setGameModeName(e.target.value)}
+            />
             <Button 
                 onClick={saveGameMode}
-                successText={translate("notification.saveGameMode.success")}
-                failureText={translate("notification.saveGameMode.failure")}
+                pressedChildren={result => <Icon>{result === "success" ? "done" : "warning"}</Icon>}
+                pressedText={result => {
+                    if (result === "success") {
+                        return translate("notification.saveGameMode.success");
+                    } else {
+                        return translate("notification.saveGameMode.failure." + result)
+                    }
+                }}
             >
                 <Icon>save</Icon>
             </Button>
             <CopyButton text={JSON.stringify({
-                name: gameModeName==="" ? "Unnamed Game Mode" : gameModeName,
+                name: gameModeName === "" ? "Unnamed Game Mode" : gameModeName,
                 roleList,
                 phaseTimes,
                 disabledRoles
             })}/>
-            <PasteButton onPasteSuccessful={text => {
-                try {
-                    const data = JSON.parse(text);
+            <PasteButton 
+                onClipboardRead={text => {
+                    try {
+                        const data = JSON.parse(text);
 
-                    setGameModeName(data.name ?? "")
-                    props.setRoleList(data.roleList ?? []);
-                    props.setPhaseTimes(data.phaseTimes ?? defaultPhaseTimes());
-                    props.setDisabledRoles(data.disabledRoles ?? []);
-                    return true;
-                } catch (e) {
-                    Anchor.pushError(
-                        translate("notification.importGameMode.failure"), 
-                        translate("notification.importGameMode.failure.details")
-                    );
-                    return false;
+                        setGameModeName(data.name ?? "")
+                        props.setRoleList(data.roleList ?? []);
+                        props.setPhaseTimes(data.phaseTimes ?? defaultPhaseTimes());
+                        props.setDisabledRoles(data.disabledRoles ?? []);
+                        return "success";
+                    } catch (e) {
+                        return "invalidData";
+                    }
                 }}
-            }/>
+                failureText={() => translate("notification.importGameMode.failure")}
+            />
         </div>
     </section>
 }

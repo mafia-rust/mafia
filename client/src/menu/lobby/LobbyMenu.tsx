@@ -93,7 +93,7 @@ export default function LobbyMenu(): ReactElement {
                     <PasteButton 
                         className="player-list-menu-colors" 
                         disabled={!GAME_MANAGER.getMyHost() ?? false}
-                        onPasteSuccessful={text => {
+                        onClipboardRead={text => {
                             try {
                                 const data = JSON.parse(text);
 

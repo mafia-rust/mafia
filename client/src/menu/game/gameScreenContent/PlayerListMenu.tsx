@@ -200,6 +200,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                             this.setState({})
                             return true;
                         }}
+                        pressedChildren={result => <Icon>{result ? "done" : "warning"}</Icon>}
                         aria-label={translate("menu.playerList.button.filter")}
                     >
                         <Icon>filter_alt</Icon>

@@ -88,6 +88,7 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
                             this.handleSave();
                             return true;
                         }}
+                        pressedChildren={() => <Icon>done</Icon>}
                     >
                         <Icon>save</Icon>
                     </Button>
@@ -96,6 +97,7 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
                             this.handleSend()
                             return true;
                         }}
+                        pressedChildren={() => <Icon>done</Icon>}
                     >
                         <Icon>send</Icon>
                     </Button>

@@ -72,6 +72,7 @@ export default class LargeJournalistMenu extends React.Component<LargeJournalist
                             this.handleSave();
                             return true;
                         }}
+                        pressedChildren={() => <Icon>done</Icon>}
                     >
                         <Icon>save</Icon>
                     </Button>
@@ -80,6 +81,7 @@ export default class LargeJournalistMenu extends React.Component<LargeJournalist
                             this.handleSend();
                             return true;
                         }}
+                        pressedChildren={() => <Icon>done</Icon>}
                     >
                         <Icon>send</Icon>
                     </Button>
