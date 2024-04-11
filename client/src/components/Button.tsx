@@ -13,6 +13,18 @@ export type ButtonProps = Omit<JSX.IntrinsicElements['button'], 'onClick' | 'ref
     failureText?: React.ReactNode
 };
 
+function reconcileProps(props: ButtonProps): JSX.IntrinsicElements['button'] {
+    const newProps = {...props};
+    delete newProps.onClick;
+    delete newProps.highlighted;
+    delete newProps.successChildren;
+    delete newProps.successText;
+    delete newProps.failureChildren;
+    delete newProps.failureText;
+
+    return newProps;
+}
+
 const POPUP_TIMEOUT_MS = 1000;
 
 export function Button(props: ButtonProps): ReactElement {
@@ -52,7 +64,7 @@ export function Button(props: ButtonProps): ReactElement {
         }
     }, [props.children, failureChildren, successChildren, success]);
 
-    return <button {...props} ref={ref}
+    return <button {...reconcileProps(props)} ref={ref}
         className={
             "button " + (props.className ?? "") + (props.highlighted ? " highlighted" : "")
         }

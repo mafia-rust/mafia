@@ -1,4 +1,4 @@
-import { ReactElement, createContext, useContext, useState } from "react";
+import { ReactElement, createContext, useCallback, useContext, useEffect, useState } from "react";
 import { SavedGameModes, loadGameModes, saveGameModes } from "../game/localStorage";
 import React from "react";
 import { OutlineListSelector } from "../components/OutlineSelector";
@@ -107,13 +107,13 @@ function GameModeSelector(props: {
     const [gameModeName, setGameModeName] = useState<string>("");
     const {roleList, phaseTimes, disabledRoles} = useContext(GameModeContext);
     
-    const saveGameMode = () => {
+    const saveGameMode = useCallback(() => {
         const name = gameModeName;
         if(!name.match(/^[a-zA-Z0-9_ ]+$/) || name.length >= 100 || name.length <= 0) return false;
         if(roleList.length === 0) return false;
         if(savedGameModes[name] !== undefined && !window.confirm(translate("confirmOverwrite"))) return false;
 
-        let newGameModes = {...savedGameModes};
+        const newGameModes = {...savedGameModes};
         newGameModes[name] = {
             name: gameModeName,
             roleList,
@@ -123,7 +123,22 @@ function GameModeSelector(props: {
         setGameModes(newGameModes);
         saveGameModes(newGameModes);
         return true;
-    }
+    }, [disabledRoles, gameModeName, phaseTimes, roleList, savedGameModes]);
+
+    useEffect(() => {
+        const listener = (e: KeyboardEvent) => {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+
+                if (!saveGameMode()) {
+                    Anchor.pushError(translate("notification.saveGameMode.failure"), "");
+                }
+            }
+        }
+        document.addEventListener('keydown', listener);
+        return () => document.removeEventListener('keydown', listener);
+    }, [saveGameMode]);
+
     const loadGameMode = (gameModeName: string) => {
         const gameMode = savedGameModes[gameModeName];
 
@@ -132,6 +147,7 @@ function GameModeSelector(props: {
         props.setDisabledRoles(gameMode?.disabledRoles ?? []);
         props.setRoleList(gameMode?.roleList ?? []);
     }
+
     const deleteGameMode = (roleListName: string) => {
         if(!window.confirm(translate("confirmDelete"))) return false;
 

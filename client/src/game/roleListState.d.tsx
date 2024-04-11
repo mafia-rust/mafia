@@ -164,7 +164,7 @@ export function simplifyRoleOutline(roleOutline: RoleOutline): RoleOutline {
 
     if(roleOutline.type === "any") return roleOutline;
 
-    let newOptions = roleOutline.options;
+    let newOptions = [...roleOutline.options];
 
     for(let optionA of roleOutline.options){
         for(let optionB of roleOutline.options){

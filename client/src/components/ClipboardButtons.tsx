@@ -5,8 +5,20 @@ import translate from "../game/lang";
 import { Button, ButtonProps } from "./Button";
 import Icon from "./Icon";
 
-export function CopyButton(props: ButtonProps & { onClick?: undefined, ref?: undefined, text: string }): ReactElement {
-    return <Button {...props} 
+type CopyButtonProps = ButtonProps & { onClick?: undefined, ref?: undefined, text: string };
+
+function reconcileCopyProps(props: CopyButtonProps): ButtonProps {
+    let newProps: any = {...props};
+    delete newProps.onClick;
+    delete newProps.ref;
+    newProps.text = undefined;
+    delete newProps.text;
+
+    return newProps;
+}
+
+export function CopyButton(props: CopyButtonProps): ReactElement {
+    return <Button {...reconcileCopyProps(props)} 
         onClick={() => writeToClipboard(props.text)}
         successText={translate("notification.clipboard.write.success")}
         failureText={translate("notification.clipboard.write.failure")}
@@ -15,10 +27,20 @@ export function CopyButton(props: ButtonProps & { onClick?: undefined, ref?: und
     </Button>
 }
 
-export function PasteButton(props: ButtonProps & { onClick?: undefined, onPasteSuccessful?: (text: string) => (void | boolean) } ): ReactElement {
+type PasteButtonProps = ButtonProps & { onClick?: undefined, onPasteSuccessful?: (text: string) => (void | boolean) };
+
+function reconcilePasteProps(props: PasteButtonProps): ButtonProps {
+    const newProps: any = {...props};
+    delete newProps.onClick;
+    delete newProps.onPasteSuccessful;
+
+    return newProps;
+}
+
+export function PasteButton(props: PasteButtonProps): ReactElement {
     const [failureReason, setFailureReason] = useState<"clipboard" | "handler">("clipboard");
     
-    return <Button {...props}
+    return <Button {...reconcilePasteProps(props)}
         onClick={() => readFromClipboard().then(text => {
             if (text === null) {
                 setFailureReason("clipboard");
