@@ -182,7 +182,9 @@ impl Game{
         self.send_packet_to_all(ToClientPacket::AddGrave{grave: grave.clone()});
         self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::PlayerDied { grave: grave.clone() });
 
-        if grave.role.get_role().is_some(){
+        
+        if grave.role.get_role().is_some(){ se
+            //TODO, this is a problem because of forger or janitor
             for other_player_ref in PlayerReference::all_players(self){
                 other_player_ref.insert_role_label(self, grave.player);
             }
