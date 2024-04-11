@@ -8,7 +8,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::team::Team;
 use crate::game::Game;
-use super::{Priority, RoleStateImpl, RoleState, Role};
+use super::{Priority, RoleStateImpl, RoleState};
 
 #[derive(Clone, Debug, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
@@ -38,7 +38,7 @@ impl RoleStateImpl for Mayor {
             revealed: true
         }));
         for player in PlayerReference::all_players(game){
-            player.insert_role_label(game, actor_ref, Role::Mayor);
+            player.insert_role_label(game, actor_ref);
         }
         game.count_votes_and_start_trial();
     }

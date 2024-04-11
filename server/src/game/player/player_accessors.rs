@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use crate::{
     game::{
@@ -71,12 +71,22 @@ impl PlayerReference{
         self.send_packet(game, ToClientPacket::YourDeathNote { death_note: self.deref(game).death_note.clone() })
     }
     
-    pub fn role_labels<'a>(&self, game: &'a Game) -> &'a HashMap<PlayerReference, Role>{
+    pub fn role_labels<'a>(&self, game: &'a Game) -> &'a HashSet<PlayerReference>{
         &self.deref(game).role_labels
     }  
-    pub fn insert_role_label(&self, game: &mut Game, key: PlayerReference, value: Role){
-        self.deref_mut(game).role_labels.insert(key, value);
-        self.send_packet(game, ToClientPacket::YourRoleLabels { role_labels: PlayerReference::ref_map_to_index(self.deref(game).role_labels.clone()) });
+    pub fn insert_role_label(&self, game: &mut Game, key: PlayerReference){
+        self.deref_mut(game).role_labels.insert(key);
+
+        self.send_packet(game, ToClientPacket::YourRoleLabels{
+            role_labels: PlayerReference::ref_map_to_index(self.role_label_map(game)) 
+        });
+    }
+    pub fn remove_role_label(&self, game: &mut Game, key: PlayerReference){
+        self.deref_mut(game).role_labels.remove(&key);
+
+        self.send_packet(game, ToClientPacket::YourRoleLabels{
+            role_labels: PlayerReference::ref_map_to_index(self.role_label_map(game)) 
+        });
     }
 
     pub fn player_tags<'a>(&self, game: &'a Game) -> &'a HashMap<PlayerReference, Vec<Tag>>{

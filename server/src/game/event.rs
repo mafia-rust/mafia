@@ -182,9 +182,9 @@ impl Game{
         self.send_packet_to_all(ToClientPacket::AddGrave{grave: grave.clone()});
         self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::PlayerDied { grave: grave.clone() });
 
-        if let Some(role) = grave.role.get_role(){
+        if grave.role.get_role().is_some(){
             for other_player_ref in PlayerReference::all_players(self){
-                other_player_ref.insert_role_label(self, grave.player, role);
+                other_player_ref.insert_role_label(self, grave.player);
             }
         }
     }

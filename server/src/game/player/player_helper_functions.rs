@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::game::
 {
     chat::{ChatGroup, ChatMessageVariant}, 
@@ -78,14 +80,14 @@ impl PlayerReference{
             self.add_private_chat_message(game, ChatMessageVariant::RoleAssignment{role: self.role(game)});
         }
 
-        self.insert_role_label(game, *self, self.role(game));
+        self.insert_role_label(game, *self);
         if let Some(team) = self.team(game) {
 
             team.team_state(&game.teams).on_member_role_switch(game, *self);
 
             for player in team.members(game) {
-                player.insert_role_label(game, *self, self.role(game));
-                self.insert_role_label(game, player, player.role(game));
+                player.insert_role_label(game, *self);
+                self.insert_role_label(game, player);
             }
         }
     }
@@ -121,19 +123,23 @@ impl PlayerReference{
 
 
     pub fn insert_role_label_for_teammates(&self, game: &mut Game){
-        let actor_role = self.role(game);
-    
         for other in PlayerReference::all_players(game){
             if *self == other { continue }
             
             if Team::same_team(game, *self, other) {
-                let other_role = other.role(game);
-                other.insert_role_label(game, *self, actor_role);
-                self.insert_role_label(game, other, other_role);
+                other.insert_role_label(game, *self);
+                self.insert_role_label(game, other);
             }
         }
     }
 
+    pub fn role_label_map(&self, game: &Game) -> HashMap<PlayerReference, Role> {
+        let mut map = HashMap::new();
+        for player in self.role_labels(game) {
+            map.insert(*player, player.role(game));
+        }
+        map
+    }
 
     pub fn defense(&self, game: &Game) -> u8 {
         if game.current_phase().is_night() {
