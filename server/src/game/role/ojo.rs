@@ -80,16 +80,20 @@ impl RoleStateImpl for Ojo {
                 }
             },
             Priority::Investigative => {
-                for player in 
-                    actor_ref.night_visits(game)
-                        .iter()
-                        .map(|visit| visit.target)
-                        .collect::<Vec<PlayerReference>>()
-                {
-                    actor_ref.insert_role_label(game, player, player.role(game));
-                    actor_ref.push_night_message(game, 
-                        ChatMessageVariant::OjoResult{player: player.index(), role: player.role(game)}
-                    );
+                let players = actor_ref.night_visits(game)
+                    .iter()
+                    .map(|visit| visit.target)
+                    .collect::<Vec<PlayerReference>>();
+                
+                if players.len() == 0 {
+                    actor_ref.push_night_message(game, ChatMessageVariant::OjoResultNone);
+                }else{
+                    for player in players{
+                        actor_ref.insert_role_label(game, player, player.role(game));
+                        actor_ref.push_night_message(game, 
+                            ChatMessageVariant::OjoResult{player: player.index(), role: player.role(game)}
+                        );
+                    }
                 }
             },
             _ => {}

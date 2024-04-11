@@ -610,6 +610,7 @@
             {"type": "ojoResult", "player":17, "role":"auditor"},
             {"type": "ojoResult", "player":5, "role":"auditor"},
             {"type": "ojoResult", "player":40, "role":"auditor"},
+            {"type": "ojoResultNone"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
