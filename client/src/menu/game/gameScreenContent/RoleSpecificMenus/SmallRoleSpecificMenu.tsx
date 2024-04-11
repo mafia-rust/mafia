@@ -5,6 +5,9 @@ import translate from "../../../../game/lang"
 import StyledText from "../../../../components/StyledText"
 import RoleOutlineDropdown from "../../../../components/OutlineSelector"
 import "./smallRoleSpecificMenu.css"
+import SmallOjoMenu from "./SmallOjoMenu"
+
+
 
 type SmallRoleSpecificMenuProps = {
 }
@@ -91,6 +94,10 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
                 return <StyledText>{translate("role.janitor.roleDataText", this.state.gameState.clientState.roleState.cleansRemaining)}</StyledText>;
             case "death":
                 return <StyledText>{translate("role.death.roleDataText", this.state.gameState.clientState.roleState.souls)}</StyledText>;
+            case "ojo":
+                if(this.state.gameState.phaseState.type === "night" && this.state.gameState.clientState.myIndex!==null && this.state.gameState.players[this.state.gameState.clientState.myIndex].alive)
+                    return <SmallOjoMenu action={this.state.gameState.clientState.roleState.chosenAction}/>;
+                return null;
             case "amnesiac":
                 return <><StyledText>{translate("role.amnesiac.smallRoleMenu")}</StyledText><RoleOutlineDropdown 
                     roleOutline={this.state.gameState.clientState.roleState.roleOutline ?? {type: "any"}} 

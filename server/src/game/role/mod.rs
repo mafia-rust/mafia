@@ -88,6 +88,7 @@ macros::roles! {
 
     Arsonist : arsonist,
     Werewolf : werewolf,
+    Ojo : ojo,
 
     Amnesiac : amnesiac,
     Martyr : martyr,

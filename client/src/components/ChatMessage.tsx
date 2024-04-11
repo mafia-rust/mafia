@@ -344,6 +344,11 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                     ? translate("chatMessage.consigliereResult.visitedBy.nobody") 
                     : translate("chatMessage.consigliereResult.visitedBy", playerListToString(message.visitedBy, playerNames))
             );
+        case "ojoResult":
+            return translate("chatMessage.ojoResult",
+                playerNames[message.player],
+                translate("role."+message.role+".name")
+            );
         case "silenced":
             return translate("chatMessage.silenced");
         case "mediumHauntStarted":
@@ -605,6 +610,10 @@ export type ChatMessageVariant = {
     role: Role,
     visitedBy: PlayerIndex[],
     visited: PlayerIndex[]
+} | {
+    type: "ojoResult",
+    player: PlayerIndex,
+    role: Role
 } | {
     type: "targetIsPossessionImmune"
 } | {
