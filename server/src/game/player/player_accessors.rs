@@ -75,7 +75,10 @@ impl PlayerReference{
         &self.deref(game).role_labels
     }  
     pub fn insert_role_label(&self, game: &mut Game, key: PlayerReference){
-        self.deref_mut(game).role_labels.insert(key);
+        if self.deref_mut(game).role_labels.insert(key) {
+            self.add_private_chat_message(game, ChatMessageVariant::PlayersRoleRevealed { player: key, role: key.role(game) })
+        }
+
 
         self.send_packet(game, ToClientPacket::YourRoleLabels{
             role_labels: PlayerReference::ref_map_to_index(self.role_label_map(game)) 
