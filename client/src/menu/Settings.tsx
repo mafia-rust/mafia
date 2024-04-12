@@ -10,6 +10,7 @@ import GameModesEditor from '../components/GameModesEditor';
 import { CopyButton } from '../components/ClipboardButtons';
 import ReactDOM from 'react-dom';
 import WikiCoverCard from '../components/WikiCoverCard';
+import Icon from '../components/Icon';
 
 export type Settings = {
     volume: number,
@@ -79,16 +80,8 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
 
         return (
             <div className="settings slide-in">
-                {
-                    GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 
-                    (<>
-                        <h2>{translate("menu.play.field.roomCode")}
-                        <RoomCodeButton/></h2>
-                    </>
-                    ) : null
-                }
                 <section>
-                    <h2>{translate("menu.settings.volume")}</h2>
+                    <h2><Icon>volume_up</Icon> {translate("menu.settings.volume")}</h2>
                     <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
                         value={this.state.volume} 
                         onChange={(e) => {
@@ -99,7 +92,7 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
                     }/>
                 </section>
                 <section>
-                <h2>{translate("menu.settings.language")}</h2>
+                    <h2><Icon>language</Icon> {translate("menu.settings.language")}</h2>
                     <select 
                         name="lang-select" 
                         defaultValue={loadSettings().language ?? "en_us"}
@@ -114,32 +107,30 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
                     </select>
                 </section>
                 { quitButtonBlacklist.includes(Anchor.contentType()) ||
-                    <button onClick={(e)=>{this.quitToMainMenu()}}>{translate("menu.settings.quitToMenu")}</button>
+                    <button onClick={(e)=>{this.quitToMainMenu()}}><Icon>not_interested</Icon> {translate("menu.settings.quitToMenu")}</button>
                 }
-                <button onClick={() => {this.goToRolelistEditor()}}>{translate("menu.settings.gameSettingsEditor")}</button>
+                <button onClick={() => {this.goToRolelistEditor()}}><Icon>edit</Icon> {translate("menu.settings.gameSettingsEditor")}</button>
                 <button onClick={()=>{
                     if(!window.confirm(translate("confirmDelete"))) return;
                     localStorage.clear();
-                }}>{translate('menu.settings.eraseSaveData')}</button>
+                }}><Icon>delete_forever</Icon> {translate('menu.settings.eraseSaveData')}</button>
                 <button onClick={() => {
                     Anchor.setCoverCard(<WikiCoverCard />, "wiki-menu-colors");
                     Anchor.closeSettings();
-                }}>{translate("menu.wiki.title")}</button>
+                }}><Icon>menu_book</Icon> {translate("menu.wiki.title")}</button>
+                {(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") && <RoomLinkButton/>}
             </div>
         );
     }
 }
 
-export function RoomCodeButton(): JSX.Element {
+export function RoomLinkButton(): JSX.Element {
     let code = new URL(window.location.href);
     
     if (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
         code.searchParams.set("code", GAME_MANAGER.state.roomCode.toString(18));
     
     return <CopyButton text={code.toString()}>
-        {
-            GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? 
-            GAME_MANAGER.state.roomCode.toString(18) : undefined
-        }
+        <Icon>link</Icon> {translate("menu.play.field.roomCode")}
     </CopyButton>
 }

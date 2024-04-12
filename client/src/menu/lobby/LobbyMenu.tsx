@@ -5,7 +5,7 @@ import "./lobbyMenu.css";
 import translate from "../../game/lang";
 import { StateListener } from "../../game/gameManager.d";
 import Anchor from "../Anchor";
-import { RoomCodeButton } from "../Settings";
+import { RoomLinkButton } from "../Settings";
 import { getRolesFromRoleListRemoveExclusionsAddConversions, getRolesComplement, RoleOutline } from "../../game/roleListState.d";
 import LoadingScreen from "../LoadingScreen";
 import StartMenu from "../main/StartMenu";
@@ -179,7 +179,7 @@ function LobbyMenuHeader(): JSX.Element {
             }}>
                 {translate("menu.lobby.button.start")}
             </button>
-            <RoomCodeButton/>
+            <RoomLinkButton/>
         </div>
         { host ? 
             <input 

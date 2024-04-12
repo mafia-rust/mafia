@@ -38,6 +38,10 @@
     padding: .5rem;
 }
 
+.lm > header button .icon {
+    font-size: 1.5rem;
+}
+
 .lm > main ol {
     list-style: none;
 }

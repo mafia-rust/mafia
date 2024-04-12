@@ -20,6 +20,12 @@
     z-index: 100;
 }
 
+.settings button {
+    display: flex;
+    flex-direction: row;
+    gap: .25rem;
+}
+
 @media (prefers-reduced-motion = no-preference) {
     .settings {
         /* Start off the page and slide in */
