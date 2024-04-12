@@ -38,7 +38,6 @@ impl RoleStateImpl for Ojo {
         
         match priority {
             Priority::TopPriority => {
-
                 if !actor_ref.alive(game) {return;}
 
                 let (chosen_role, attack) = match self.chosen_action {
@@ -80,19 +79,21 @@ impl RoleStateImpl for Ojo {
                 }
             },
             Priority::Investigative => {
-                let players = actor_ref.night_visits(game)
+                if let OjoAction::See{..} = self.chosen_action {
+                    let players = actor_ref.night_visits(game)
                     .iter()
                     .map(|visit| visit.target)
                     .collect::<Vec<PlayerReference>>();
                 
-                if players.len() == 0 {
-                    actor_ref.push_night_message(game, ChatMessageVariant::OjoResultNone);
-                }else{
-                    for player in players{
-                        actor_ref.insert_role_label(game, player, player.role(game));
-                        actor_ref.push_night_message(game, 
-                            ChatMessageVariant::OjoResult{player: player.index(), role: player.role(game)}
-                        );
+                    if players.len() == 0 {
+                        actor_ref.push_night_message(game, ChatMessageVariant::OjoResultNone);
+                    }else{
+                        for player in players{
+                            actor_ref.insert_role_label(game, player, player.role(game));
+                            actor_ref.push_night_message(game, 
+                                ChatMessageVariant::OjoResult{player: player.index(), role: player.role(game)}
+                            );
+                        }
                     }
                 }
             },
@@ -107,8 +108,8 @@ impl RoleStateImpl for Ojo {
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false
     }
-    fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false)
+    fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        vec![]
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])

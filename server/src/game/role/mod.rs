@@ -278,6 +278,8 @@ impl Role{
             Role::Necromancer => true,
             
             Role::Doomsayer => true,
+
+            Role::Ojo => true,
             _ => false,
         }
     }
