@@ -43,10 +43,10 @@ impl Cult{
             Cult::set_ordered_cultists(self.clone(), game);
         }
 
-        for a in Cult::get_members(game) {
-            for b in Cult::get_members(game) {
-                a.insert_role_label(game, b, b.role(game));
-                b.insert_role_label(game, a, a.role(game));
+        for unnamed_cult_member_with_arbitrary_name_a in Cult::get_members(game) {
+            for unnamed_cult_member_with_arbitrary_name_b in Cult::get_members(game) {
+                unnamed_cult_member_with_arbitrary_name_a.insert_role_label(game, unnamed_cult_member_with_arbitrary_name_b, unnamed_cult_member_with_arbitrary_name_b.role(game));
+                unnamed_cult_member_with_arbitrary_name_b.insert_role_label(game, unnamed_cult_member_with_arbitrary_name_a, unnamed_cult_member_with_arbitrary_name_a.role(game));
             }
         }
     }
