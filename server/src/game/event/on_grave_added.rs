@@ -2,7 +2,7 @@ use crate::game::{grave::Grave, Game};
 
 
 pub struct OnGraveAdded{
-    pub grave: Grave
+    grave: Grave
 }
 impl OnGraveAdded{
     pub fn new(grave: Grave) -> Self{

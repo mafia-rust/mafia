@@ -12,7 +12,7 @@ impl Game {
 #[derive(Default, Clone)]
 pub struct Cult {
     pub ordered_cultists: Vec<PlayerReference>,
-    pub sacrifices_needed: Option<u8>
+    pub sacrifices_required: Option<u8>
 }
 impl Cult{
     pub fn on_phase_start(self, game: &mut Game, phase: PhaseType){
@@ -30,8 +30,8 @@ impl Cult{
         Cult::set_ordered_cultists(self, game);
     }
     pub fn on_any_death(mut self, game: &mut Game){
-        self.sacrifices_needed = self.sacrifices_needed.map(|s| s.saturating_sub(1));
-        if let Some(s) = self.sacrifices_needed{
+        self.sacrifices_required = self.sacrifices_required.map(|s| s.saturating_sub(1));
+        if let Some(s) = self.sacrifices_required{
             game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::CultSacrificesRequired { required: s });
         }
         game.set_cult(self.clone());
@@ -53,11 +53,6 @@ impl Cult{
     pub fn get_members(game: &Game)->Vec<PlayerReference>{
         PlayerReference::all_players(game).filter(
             |p| p.role(game).faction() == Faction::Cult
-        ).collect()
-    }
-    pub fn get_living_members(&self, game: &Game)->Vec<PlayerReference>{
-        PlayerReference::all_players(game).filter(
-            |p| p.role(game).faction() == Faction::Cult && p.alive(game)
         ).collect()
     }
 
@@ -100,7 +95,7 @@ impl Cult{
     pub fn can_convert_tonight(&self, game: &Game)->bool {
         if self.ordered_cultists.len() >= 4 {return false}
 
-        match self.sacrifices_needed{
+        match self.sacrifices_required{
             None => game.day_number() != 1,
             Some(blood) => {
                 blood == 0

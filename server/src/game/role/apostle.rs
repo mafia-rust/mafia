@@ -63,7 +63,7 @@ impl RoleStateImpl for Apostle {
 
                 target_ref.set_role(game, RoleState::Zealot(Zealot));
 
-                cult.sacrifices_needed = Some(Cult::SACRIFICES_NEEDED);
+                cult.sacrifices_required = Some(Cult::SACRIFICES_NEEDED);
                 game.set_cult(cult);
             }
             _ => {}
@@ -85,7 +85,7 @@ impl RoleStateImpl for Apostle {
         false
     }
     fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, !game.teams.cult().can_convert_tonight(game))
+        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, !game.cult().can_convert_tonight(game))
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Cult])

@@ -17,7 +17,7 @@ impl Mafia{
         Mafia::ensure_mafia_can_kill(game);
     }
     pub fn on_game_start(self, game: &mut Game) {
-        //This depends on role_state.on_any_death being called before this
+        //This depends on role_state.on_game_start being called before this
         Mafia::ensure_mafia_can_kill(game);
     }
     pub fn on_any_death(self, game: &mut Game, dead_player: PlayerReference){

@@ -2,7 +2,7 @@ use crate::game::{phase::PhaseType, player::PlayerReference, Game};
 
 #[must_use = "Event must be invoked"]
 pub struct OnPhaseStart{
-    pub phase: PhaseType
+    phase: PhaseType
 }
 impl OnPhaseStart{
     pub fn new(phase: PhaseType) -> Self{
