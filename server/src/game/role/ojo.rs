@@ -68,7 +68,7 @@ impl RoleStateImpl for Ojo {
                 );
             }
             Priority::Kill => {
-                if matches!(self.chosen_action, OjoAction::Kill{..}) {
+                if let OjoAction::Kill{..} = self.chosen_action {
                     for player in 
                         actor_ref.night_visits(game)
                             .iter()

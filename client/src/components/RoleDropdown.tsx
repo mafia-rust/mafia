@@ -9,19 +9,14 @@ export default function RoleDropdown(props: {
     onChange: (role: Role) => void,
     disabledRoles?: Role[]
 }): ReactElement {
-
-
-    let options = Object.keys(ROLES)
-        .filter((role)=>!props.disabledRoles?.includes(role as Role))
-        .map((role)=>{
-        return <option value={role}>{translate("role."+role+".name")}</option>
-    })
-    
     return <select
         value={props.value}
-        onChange={(e)=>{
-            props.onChange(e.target.value as Role)
-        }}>
-            {options}
-    </select>
+        onChange={e => props.onChange(e.target.value as Role)}
+    >{
+        Object.keys(ROLES)
+            .filter((role)=>!props.disabledRoles?.includes(role as Role))
+            .map((role)=>{
+                return <option value={role} key={role}>{translate("role."+role+".name")}</option>
+            })
+    }</select>
 }

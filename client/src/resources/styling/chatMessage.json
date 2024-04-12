@@ -44,6 +44,7 @@
     "playerRoleAndWill": "result",
     "consigliereResult": "result",
     "ojoResult": "result",
+    "ojoResultNone": "result",
     "silenced": "warning",
     "mediumHauntStarted": "special",
     "targetWasAttacked": "result",

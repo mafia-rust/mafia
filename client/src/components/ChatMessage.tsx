@@ -404,6 +404,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "targetsMessage":
         case "psychicFailed":
         case "phaseFastForwarded":
+        case "ojoResultNone":
             return translate("chatMessage."+message.type);
         case "playerDied":
         default:
@@ -614,6 +615,8 @@ export type ChatMessageVariant = {
     type: "ojoResult",
     player: PlayerIndex,
     role: Role
+} | {
+    type: "ojoResultNone",
 } | {
     type: "targetIsPossessionImmune"
 } | {

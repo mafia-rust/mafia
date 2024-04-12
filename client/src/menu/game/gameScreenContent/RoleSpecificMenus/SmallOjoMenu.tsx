@@ -4,6 +4,7 @@ import React from "react"
 import RoleDropdown from "../../../../components/RoleDropdown"
 import GAME_MANAGER from "../../../.."
 import translate from "../../../../game/lang"
+import StyledText from "../../../../components/StyledText"
 
 export type OjoAction = {
     type: "none"
@@ -21,35 +22,22 @@ export default function SmallOjoMenu(props: {action: OjoAction}): ReactElement {
         GAME_MANAGER.sendSetOjoAction(action);
     }
 
-    let actionTypeDropdown = <ActionTypeDropdown action={props.action} onChange={(a)=>{sendAction(a)}}/>
-
-    let roleDropdown = null; 
-    if(props.action.type !== "none"){
-        roleDropdown = <RoleDropdown value={props.action.role} onChange={(role)=>{
-            if(props.action.type === "none") return;
-            sendAction({...props.action, role: role})
-        }}/>;
-    }
-
-    switch(props.action.type){
-        case "none":
-            return <>{actionTypeDropdown}</>
-        case "kill":
-            return <>{actionTypeDropdown}{roleDropdown}</>
-        case "see":
-            return <>{actionTypeDropdown}{roleDropdown}</>
-    }
+    return <>
+        <StyledText>{translate("role.ojo.smallRoleMenu")}</StyledText>
+        <div>
+            <ActionTypeDropdown action={props.action} onChange={(a)=>{sendAction(a)}}/>
+            {props.action.type === "none" ? null : <RoleDropdown value={props.action.role} onChange={(role)=>{
+                if(props.action.type === "none") return;
+                sendAction({...props.action, role: role})
+            }}/>}
+        </div>
+    </>
 }
 
 function ActionTypeDropdown(props: {
     action: OjoAction,
     onChange: (action: OjoAction) => void
 }): ReactElement {
-    let options = [
-        <option value="none">{translate("none")}</option>,
-        <option value="see">{translate("see")}</option>,
-        <option value="kill">{translate("kill")}</option>,
-    ]
     return <select
         value={props.action.type}
         onChange={(e)=>{
@@ -67,9 +55,9 @@ function ActionTypeDropdown(props: {
                     props.onChange({type: e.target.value as "kill" | "see", role: props.action.role})
                     break;
             }
-
-            
         }}>
-            {options}
+            <option value="none">{translate("none")}</option>
+            <option value="see">{translate("see")}</option>
+            <option value="kill">{translate("kill")}</option>
     </select>
 }
