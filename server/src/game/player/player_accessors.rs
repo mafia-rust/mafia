@@ -75,7 +75,7 @@ impl PlayerReference{
         &self.deref(game).role_labels
     }  
     pub fn insert_role_label(&self, game: &mut Game, revealed_player: PlayerReference){
-        if self.deref_mut(game).role_labels.insert(revealed_player) {
+        if revealed_player != *self && self.deref_mut(game).role_labels.insert(revealed_player) {
             self.add_private_chat_message(game, ChatMessageVariant::PlayersRoleRevealed { player: revealed_player.index(), role: revealed_player.role(game) })
         }
 
@@ -85,7 +85,9 @@ impl PlayerReference{
         });
     }
     pub fn remove_role_label(&self, game: &mut Game, concealed_player: PlayerReference){
-        self.deref_mut(game).role_labels.remove(&concealed_player);
+        if self.deref_mut(game).role_labels.remove(&concealed_player) {
+            self.add_private_chat_message(game, ChatMessageVariant::PlayersRoleConcealed { player: concealed_player.index() })
+        }
 
         self.send_packet(game, ToClientPacket::YourRoleLabels{
             role_labels: PlayerReference::ref_map_to_index(self.role_label_map(game)) 
