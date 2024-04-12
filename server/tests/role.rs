@@ -1195,14 +1195,14 @@ fn ojo_transporter(){
     );
 
     ojo.set_role_state(
-        RoleState::Ojo(Ojo{chosen_action:OjoAction::Kill{role:Role::Seer} })
+        RoleState::Ojo(Ojo{chosen_action:OjoAction::See{role:Role::Seer} })
     );
     transporter.set_night_targets(vec![player1, player2]);
     game.next_phase();
 
     assert!(player1.alive());
-    assert!(!player2.alive());
-    assert!(!player3.alive());
+    assert!(player2.alive());
+    assert!(player3.alive());
     assert!(gf.alive());
 
 
