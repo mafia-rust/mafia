@@ -31,8 +31,8 @@ impl Cult{
     }
     pub fn on_any_death(mut self, game: &mut Game){
         self.sacrifices_required = self.sacrifices_required.map(|s| s.saturating_sub(1));
-        if let Some(s) = self.sacrifices_required{
-            game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::CultSacrificesRequired { required: s });
+        if let Some(required) = self.sacrifices_required{
+            game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::CultSacrificesRequired { required });
         }
         game.set_cult(self.clone());
 
