@@ -6,7 +6,7 @@ use serde::{Serialize, Deserialize};
 use crate::packet::ToClientPacket;
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant}, event, grave::Grave, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
+    chat::{ChatGroup, ChatMessageVariant}, event::on_any_death::OnAnyDeath, grave::Grave, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
 };
 
 
@@ -88,7 +88,7 @@ impl PhaseState {
         
         match game.current_phase().clone() {
             PhaseState::Obituary => {
-                let mut events = Vec::<event::OnAnyDeath>::new();
+                let mut events = Vec::<OnAnyDeath>::new();
 
                 for player_ref in PlayerReference::all_players(game) {
                     if player_ref.night_died(game) {

@@ -6,7 +6,6 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::chat::ChatGroup;
 use crate::game::phase::PhaseType;
-use crate::game::team::Team;
 
 use serde::{Serialize, Deserialize};
 
@@ -14,7 +13,6 @@ use super::end_game_condition::EndGameCondition;
 
 trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8;
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team>;
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority);
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference);
@@ -176,11 +174,6 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.defense(game, actor_ref)),*
                     }
                 }
-                pub fn team(&self, game: &Game, actor_ref: PlayerReference) -> Option<Team> {
-                    match self {
-                        $(Self::$name(role_struct) => role_struct.team(game, actor_ref)),*
-                    }
-                }
                 
                 pub fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority){
                     match self {
@@ -319,4 +312,8 @@ impl Role{
     pub fn end_game_condition(&self)->EndGameCondition{
         EndGameCondition::from_role(*self)
     }
+}
+pub fn same_evil_team(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+    (actor_ref.role(game).faction() == super::role_list::Faction::Mafia && target_ref.role(game).faction() == super::role_list::Faction::Mafia) ||
+    (actor_ref.role(game).faction() == super::role_list::Faction::Cult && target_ref.role(game).faction() == super::role_list::Faction::Cult)
 }

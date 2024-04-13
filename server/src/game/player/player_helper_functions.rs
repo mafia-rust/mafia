@@ -1,13 +1,6 @@
 use crate::game::
 {
-    chat::{ChatGroup, ChatMessageVariant}, 
-    end_game_condition::EndGameCondition, 
-    event::OnAnyDeath, 
-    grave::{Grave, GraveKiller}, 
-    role::{Priority, Role, RoleState}, 
-    team::Team, 
-    visit::Visit, 
-    Game
+    chat::{ChatGroup, ChatMessageVariant}, end_game_condition::EndGameCondition, event::{on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, grave::{Grave, GraveKiller}, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
 };
 
 use super::PlayerReference;
@@ -79,15 +72,7 @@ impl PlayerReference{
         }
 
         self.insert_role_label(game, *self, self.role(game));
-        if let Some(team) = self.team(game) {
-
-            team.team_state(&game.teams).on_member_role_switch(game, *self);
-
-            for player in team.members(game) {
-                player.insert_role_label(game, *self, self.role(game));
-                self.insert_role_label(game, player, player.role(game));
-            }
-        }
+        OnRoleSwitch::new(*self).invoke(game);
     }
     pub fn increase_defense_to(&self, game: &mut Game, defense: u8){
         if self.night_defense(game) < defense {
@@ -126,7 +111,7 @@ impl PlayerReference{
         for other in PlayerReference::all_players(game){
             if *self == other { continue }
             
-            if Team::same_team(game, *self, other) {
+            if same_evil_team(game, *self, other) {
                 let other_role = other.role(game);
                 other.insert_role_label(game, *self, actor_role);
                 self.insert_role_label(game, other, other_role);
@@ -145,9 +130,6 @@ impl PlayerReference{
     pub fn control_immune(&self, game: &Game) -> bool {
         self.role(game).control_immune()
     }
-    pub fn team(&self, game: &Game) -> Option<Team> {
-        self.role_state(game).clone().team(game, *self)
-    }
     pub fn end_game_condition(&self, game: &Game) -> EndGameCondition {
         self.role(game).end_game_condition()
     }
@@ -158,7 +140,7 @@ impl PlayerReference{
         self.role(game).has_suspicious_aura(game) || 
         self.night_framed(game) || 
         (
-            self.doused(game) &&
+            game.arsonist_doused().doused(*self) &&
             PlayerReference::all_players(game).any(|player_ref|
                 player_ref.alive(game) && player_ref.role(game) == Role::Arsonist
             )

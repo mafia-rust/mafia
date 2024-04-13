@@ -1,6 +1,6 @@
-use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, role_list::Faction, phase::{PhaseState, PhaseType}, team::Team, end_game_condition::EndGameCondition};
+use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, role_list::Faction, phase::{PhaseState, PhaseType}, end_game_condition::EndGameCondition};
 
-use super::{journalist::Journalist, medium::Medium, RoleState};
+use super::{journalist::Journalist, medium::Medium, same_evil_team, RoleState};
 
 
 pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -10,8 +10,9 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
     actor_ref.chosen_targets(game).is_empty() &&
     actor_ref.alive(game) &&
     target_ref.alive(game) &&
-    !Team::same_team(game, actor_ref, target_ref)
+    !same_evil_team(game, actor_ref, target_ref)
 }
+
 pub(super) fn convert_targets_to_visits(_game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, attack: bool) -> Vec<Visit> {
     if !target_refs.is_empty() {
         vec![Visit{ target: target_refs[0], attack }]

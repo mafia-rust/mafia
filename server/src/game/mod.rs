@@ -8,12 +8,13 @@ pub mod verdict;
 pub mod role_list;
 pub mod settings;
 pub mod end_game_condition;
-pub mod team;
+pub mod components;
 pub mod available_buttons;
 pub mod on_client_message;
 pub mod tag;
 pub mod event;
 pub mod spectator;
+pub mod game_listeners;
 
 use std::collections::HashMap;
 use std::time::Duration;
@@ -22,7 +23,7 @@ use rand::thread_rng;
 use serde::Serialize;
 
 use crate::client_connection::ClientConnection;
-use crate::game::event::OnGameStart;
+use crate::game::event::on_game_start::OnGameStart;
 use crate::game::player::PlayerIndex;
 use crate::packet::ToClientPacket;
 use chat::{ChatMessageVariant, ChatGroup, ChatMessage};
@@ -32,8 +33,13 @@ use phase::PhaseStateMachine;
 use settings::Settings;
 use grave::Grave;
 
+use self::components::arsonist_doused::ArsonistDoused;
+use self::components::mafia::Mafia;
+use self::components::cult::Cult;
 use self::end_game_condition::EndGameCondition;
-use self::event::{OnGameEnding, OnPhaseStart};
+use self::event::on_game_ending::OnGameEnding;
+use self::event::on_grave_added::OnGraveAdded;
+use self::event::on_phase_start::OnPhaseStart;
 use self::phase::PhaseState;
 use self::player::PlayerInitializeParameters;
 use self::spectator::{
@@ -44,7 +50,6 @@ use self::spectator::{
     SpectatorInitializeParameters
 };
 use self::role::{Role, RoleState};
-use self::team::Teams;
 use self::verdict::Verdict;
 
 
@@ -58,12 +63,19 @@ pub struct Game {
 
     pub players: Box<[Player]>,
     pub graves: Vec<Grave>,
-    pub teams: Teams,
 
     phase_machine : PhaseStateMachine,
 
     /// Whether the game is still updating phase times
     pub ticking: bool,
+
+
+    //components
+    pub mafia: Mafia,
+    pub cult: Cult,
+    pub arsonist_doused: ArsonistDoused,
+    // pub cleaned: Cleaned,
+    // pub framed: Framed,
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -140,9 +152,12 @@ impl Game {
                 spectator_chat_messages: Vec::new(),
                 players: new_players.into_boxed_slice(),
                 graves: Vec::new(),
-                teams: Teams::default(),
                 phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
                 settings,
+
+                mafia: Mafia::default(),
+                cult: Cult::default(),
+                arsonist_doused: ArsonistDoused::default(),
             };
 
             if !game.game_is_over() {
@@ -304,12 +319,12 @@ impl Game {
         }
 
         PhaseState::start(self);
-        OnPhaseStart::create_and_invoke(self, self.current_phase().phase());
+        OnPhaseStart::new(self.current_phase().phase()).invoke(self);
     }
 
     pub fn add_grave(&mut self, grave: Grave){
         self.graves.push(grave.clone());
-        event::OnGraveAdded::create_and_invoke(self, grave);
+        OnGraveAdded::new(grave).invoke(self);
     }
 
     pub fn add_message_to_chat_group(&mut self, group: ChatGroup, variant: ChatMessageVariant){
@@ -362,12 +377,12 @@ pub mod test {
     use rand::{thread_rng, seq::SliceRandom};
 
     use super::{
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, mafia::Mafia},
+        event::on_game_start::OnGameStart,
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
         role::Role,
-        settings::Settings,
-        spectator::spectator_pointer::SpectatorPointer,
-        team::Teams,
+        settings::Settings, 
         Game,
         RejectStartReason
     };
@@ -413,26 +428,15 @@ pub mod test {
             spectator_chat_messages: Vec::new(),
             players: players.into_boxed_slice(),
             graves: Vec::new(),
-            teams: Teams::default(),
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
+
+            mafia: Mafia::default(),
+            cult: Cult::default(),
+            arsonist_doused: ArsonistDoused::default(),
         };
 
-        for player_ref in PlayerReference::all_players(&game){
-            player_ref.send_join_game_data(&mut game);
-        }
-        for spectator in SpectatorPointer::all_spectators(&game){
-            spectator.send_join_game_data(&mut game);
-        }
-
-
-        //on role creation needs to be called after all players roles are known
-        for player_ref in PlayerReference::all_players(&game){
-            let role_data_copy = player_ref.role_state(&game).clone();
-            player_ref.set_role(&mut game, role_data_copy);
-        }
-
-        Teams::on_team_creation(&mut game);
+        OnGameStart::invoke(&mut game);
 
         Ok(game)
     }

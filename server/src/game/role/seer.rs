@@ -7,7 +7,7 @@ use crate::game::role_list::Faction;
 use crate::game::end_game_condition::EndGameCondition;
 use crate::game::visit::Visit;
 use crate::game::Game;
-use crate::game::team::Team;
+
 use super::{Priority, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -18,7 +18,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Seer {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
+    
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {

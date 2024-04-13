@@ -3,7 +3,7 @@ use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::role::{martyr::Martyr, ojo::{Ojo, OjoAction}, reveler::Reveler};
+
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
@@ -28,6 +28,7 @@ pub use mafia_server::game::{
         doctor::Doctor,
         bodyguard::Bodyguard,
         crusader::Crusader,
+        reveler::Reveler,
 
         vigilante::Vigilante,
         veteran::Veteran,
@@ -53,10 +54,14 @@ pub use mafia_server::game::{
         executioner::Executioner,
         doomsayer::{Doomsayer, DoomsayerGuess},
 
+        arsonist::Arsonist,
+        ojo::{Ojo, OjoAction},
+
         death::Death,
 
         apostle::Apostle,
-        amnesiac::Amnesiac
+        amnesiac::Amnesiac,
+        martyr::Martyr,
     }, 
     phase::{
         PhaseState, 
@@ -1032,6 +1037,67 @@ fn cult_wait_for_two_deaths() {
 
 
 
+}
+
+#[test]
+fn arsonist_ignites_and_aura(){
+    kit::scenario!(game in Night 1 where
+        arso: Arsonist,
+        townie: Sheriff,
+        townie2: Sheriff,
+        gf: Godfather,
+        vigi: Vigilante,
+        sher: Sheriff
+    );
+
+    assert!(townie.set_night_target(arso));
+    assert!(arso.set_night_target(arso));
+    assert!(sher.set_night_target(townie));
+
+    game.next_phase();
+
+    assert!(arso.alive());
+    assert!(!townie.alive());
+    assert!(sher.alive());
+    assert!(gf.alive());
+    assert!(vigi.alive());
+
+    assert_contains!(sher.get_messages_after_last_message(
+        ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 1}
+    ), ChatMessageVariant::SheriffResult{ suspicious: true });
+
+    game.skip_to(PhaseType::Night, 2);
+    
+    assert!(arso.set_night_target(townie2));
+    assert!(sher.set_night_target(townie2));
+
+    game.next_phase();
+
+    assert_contains!(sher.get_messages_after_last_message(
+        ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 2}
+    ), ChatMessageVariant::SheriffResult{ suspicious: true });
+
+    game.skip_to(PhaseType::Nomination, 3);
+
+    townie2.vote_for_player(Some(arso));
+    gf.vote_for_player(Some(arso));
+    vigi.vote_for_player(Some(arso));
+
+    game.skip_to(PhaseType::Judgement, 3);
+
+    gf.set_verdict(mafia_server::game::verdict::Verdict::Guilty);
+
+    game.skip_to(PhaseType::Night, 3);
+
+    assert!(sher.set_night_target(townie2));
+
+    game.next_phase();
+    
+    assert_contains!(sher.get_messages_after_last_message(
+        ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 3}
+    ), ChatMessageVariant::SheriffResult{ suspicious: false });
+
+    
 }
 
 #[test]

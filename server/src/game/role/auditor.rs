@@ -6,7 +6,7 @@ use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
-use crate::game::team::Team;
+
 use rand::prelude::SliceRandom;
 use super::{Priority, Role, RoleStateImpl};
 
@@ -30,7 +30,7 @@ pub enum AuditorResult{
 
 impl RoleStateImpl for Auditor {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
+    
 
 
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
