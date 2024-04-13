@@ -166,21 +166,21 @@ impl RoleSet{
             RoleSet::TownKilling => 
                 vec![Role::Vigilante, Role::Veteran, Role::Deputy],
             RoleSet::TownProtective => 
-                vec![Role::Bodyguard, Role::Crusader, Role::Doctor, Role::Reveler, Role::Trapper],
+                vec![Role::Bodyguard, Role::Cop, Role::Doctor, Role::Bouncer, Role::Trapper],
             RoleSet::TownInvestigative => 
-                vec![Role::Psychic, Role::Lookout, Role::Sheriff, Role::Spy, Role::Tracker, Role::Seer, Role::Auditor],
+                vec![Role::Psychic, Role::Lookout, Role::Detective, Role::Spy, Role::Tracker, Role::Seer, Role::Auditor],
             RoleSet::MafiaSupport => 
                 vec![
-                    Role::Blackmailer, Role::Consigliere, Role::Consort, 
+                    Role::Blackmailer, Role::Informant, Role::Hypnotist, 
                     Role::Forger, Role::Framer, Role::Janitor, 
                     Role::Witch, Role::Necromancer
                 ],
             RoleSet::NeutralEvil => 
-                vec![Role::Jester, Role::Executioner, Role::Politician],
+                vec![Role::Jester, Role::Hater, Role::Politician],
             RoleSet::NeutralKilling => 
                 vec![Role::Arsonist, Role::Werewolf, Role::Ojo],
             RoleSet::NeutralChaos => 
-                vec![Role::Amnesiac, Role::Martyr],
+                vec![Role::WildCard, Role::Martyr],
             RoleSet::NeutralApocalypse => 
                 vec![Role::Death, Role::Doomsayer],
         }

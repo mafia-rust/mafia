@@ -168,7 +168,7 @@ impl Game {
                 sender_player_ref.add_private_chat_message(self, message.clone());
 
                 for player in PlayerReference::all_players(self){
-                    if player.role(self) == Role::Consigliere {
+                    if player.role(self) == Role::Informant {
                         whisperee_ref.add_private_chat_message(self, message.clone());
                     }
                 }
@@ -192,9 +192,9 @@ impl Game {
                 }
             }
             ToServerPacket::SetAmnesiacRoleOutline { role_outline } => {
-                if let RoleState::Amnesiac(mut amnesiac) = sender_player_ref.role_state(self).clone(){
-                    amnesiac.role_outline = role_outline;
-                    sender_player_ref.set_role_state(self, RoleState::Amnesiac(amnesiac));
+                if let RoleState::WildCard(mut wild_card) = sender_player_ref.role_state(self).clone(){
+                    wild_card.role_outline = role_outline;
+                    sender_player_ref.set_role_state(self, RoleState::WildCard(wild_card));
                 }
             }
             ToServerPacket::SetJournalistJournal { journal } => {
@@ -218,20 +218,20 @@ impl Game {
                 you_were_possessed_message, 
                 your_target_was_jailed_message 
             } => {
-                if let RoleState::Consort(mut consort) = sender_player_ref.role_state(self).clone(){
-                    consort.roleblock = roleblock;
+                if let RoleState::Hypnotist(mut hypnotist) = sender_player_ref.role_state(self).clone(){
+                    hypnotist.roleblock = roleblock;
 
-                    consort.you_were_roleblocked_message = you_were_roleblocked_message;
-                    consort.you_survived_attack_message = you_survived_attack_message;
-                    consort.you_were_protected_message = you_were_protected_message;
-                    consort.you_were_transported_message = you_were_transported_message;
-                    consort.you_were_possessed_message = you_were_possessed_message;
-                    consort.your_target_was_jailed_message = your_target_was_jailed_message;
+                    hypnotist.you_were_roleblocked_message = you_were_roleblocked_message;
+                    hypnotist.you_survived_attack_message = you_survived_attack_message;
+                    hypnotist.you_were_protected_message = you_were_protected_message;
+                    hypnotist.you_were_transported_message = you_were_transported_message;
+                    hypnotist.you_were_possessed_message = you_were_possessed_message;
+                    hypnotist.your_target_was_jailed_message = your_target_was_jailed_message;
 
                     //There must be at least one message enabled, so if none are, enable roleblocked message
-                    consort.ensure_at_least_one_message();
+                    hypnotist.ensure_at_least_one_message();
 
-                    sender_player_ref.set_role_state(self, RoleState::Consort(consort));
+                    sender_player_ref.set_role_state(self, RoleState::Hypnotist(hypnotist));
                 }
             },
             ToServerPacket::SetForgerWill { role, will } => {

@@ -3,7 +3,7 @@ use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-
+use mafia_server::game::role::bouncer::Bouncer;
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
@@ -18,7 +18,7 @@ pub use mafia_server::game::{
         mayor::Mayor,
         transporter::Transporter,
 
-        sheriff::Sheriff,
+        detective::Detective,
         lookout::Lookout,
         spy::{Spy, SpyBug},
         tracker::Tracker,
@@ -27,8 +27,7 @@ pub use mafia_server::game::{
 
         doctor::Doctor,
         bodyguard::Bodyguard,
-        crusader::Crusader,
-        reveler::Reveler,
+        cop::Cop,
 
         vigilante::Vigilante,
         veteran::Veteran,
@@ -41,9 +40,9 @@ pub use mafia_server::game::{
         godfather::Godfather,
         mafioso::Mafioso,
         
-        consort::Consort,
+        hypnotist::Hypnotist,
         blackmailer::Blackmailer,
-        consigliere::Consigliere,
+        informant::Informant,
         witch::Witch,
         necromancer::Necromancer,
 
@@ -51,7 +50,7 @@ pub use mafia_server::game::{
         framer::Framer,
 
         jester::Jester,
-        executioner::Executioner,
+        hater::Hater,
         doomsayer::{Doomsayer, DoomsayerGuess},
 
         arsonist::Arsonist,
@@ -60,8 +59,8 @@ pub use mafia_server::game::{
         death::Death,
 
         apostle::Apostle,
-        amnesiac::Amnesiac,
         martyr::Martyr,
+        wild_card::WildCard
     }, 
     phase::{
         PhaseState, 
@@ -76,7 +75,7 @@ fn medium_receives_dead_messages_from_jail() {
     kit::scenario!(game in Night 1 where
         medium: Medium,
         jailor: Jailor,
-        townie: Sheriff,
+        townie: Detective,
         mafioso: Mafioso
     );
     mafioso.set_night_target(townie);
@@ -99,9 +98,9 @@ fn medium_receives_dead_messages_from_jail() {
 #[test]
 fn sheriff_basic() {
     kit::scenario!(game in Night 1 where
-        sher: Sheriff,
+        sher: Detective,
         mafia: Mafioso,
-        townie: Sheriff
+        townie: Detective
     );
     sher.set_night_targets(vec![mafia]);
     
@@ -118,7 +117,7 @@ fn sheriff_basic() {
 #[test]
 fn sheriff_godfather() {
     kit::scenario!(game in Night 1 where
-        sher: Sheriff,
+        sher: Detective,
         mafia: Godfather
     );
     sher.set_night_targets(vec![mafia]);
@@ -132,8 +131,8 @@ fn seer_basic() {
     kit::scenario!(game in Night 1 where
         seer: Seer,
         mafia1: Mafioso,
-        mafia2: Consigliere,
-        townie1: Sheriff,
+        mafia2: Informant,
+        townie1: Detective,
         townie2: Vigilante,
         jester: Jester
     );
@@ -186,7 +185,7 @@ fn seer_basic() {
 fn jester_basic() {
     kit::scenario!(game in Night 1 where
         jester: Jester,
-        townie: Sheriff,
+        townie: Detective,
         mafia: Godfather,
         lookout1: Lookout,
         lookout2: Lookout,
@@ -236,7 +235,7 @@ fn psychic_auras(){
             psy: Psychic,
             god: Godfather,
             maf: Framer,
-            town1: Sheriff,
+            town1: Detective,
             town2: Vigilante
         );
     
@@ -288,7 +287,7 @@ fn spy_basic_transported() {
         blackmailer: Blackmailer,
         esc: Escort,
         transp: Transporter,
-        bugged: Sheriff,
+        bugged: Detective,
         jester: Jester,
         witch: Witch
     );
@@ -314,7 +313,7 @@ fn bodyguard_basic() {
     kit::scenario!(game in Night 1 where
         maf: Mafioso,
         bg: Bodyguard,
-        townie: Sheriff
+        townie: Detective
     );
 
     maf.set_night_target(townie);
@@ -337,8 +336,8 @@ fn transporter_basic_vigilante_escort() {
         trans: Transporter,
         vigi: Vigilante,
         escort: Escort,
-        town1: Sheriff,
-        town2: Sheriff
+        town1: Detective,
+        town2: Detective
     );
     trans.set_night_targets(vec![town1, town2]);
     vigi.set_night_target(town1);
@@ -362,8 +361,8 @@ fn transporter_basic_seer_sheriff_framer() {
         seer: Seer,
         _mafioso: Mafioso,
         framer: Framer,
-        town1: Sheriff,
-        town2: Sheriff
+        town1: Detective,
+        town2: Detective
     );
     assert!(trans.set_night_targets(vec![town1, town2]));
     assert!(framer.set_night_targets(vec![town1, seer]));
@@ -393,8 +392,8 @@ fn bodyguard_protects_transported_target() {
         trans: Transporter,
         maf: Mafioso,
         bg: Bodyguard,
-        t1: Sheriff,
-        t2: Sheriff
+        t1: Detective,
+        t2: Detective
     );
     trans.set_night_targets(vec![t1, t2]);
     maf.set_night_target(t1);
@@ -416,7 +415,7 @@ fn bodyguard_protects_transported_target() {
 fn mayor_reveals_after_they_vote(){
     kit::scenario!(game where
         mayor: Mayor,
-        _townie: Sheriff,
+        _townie: Detective,
         mafioso: Mafioso
     );
 
@@ -431,8 +430,8 @@ fn mayor_reveals_after_they_vote(){
 fn retributionist_basic(){
     kit::scenario!(game in Night 1 where
         ret: Retributionist,
-        sher1: Sheriff,
-        sher2: Sheriff,
+        sher1: Detective,
+        sher2: Detective,
         mafioso: Mafioso
     );
 
@@ -458,15 +457,15 @@ fn retributionist_basic(){
 fn necromancer_basic(){
     kit::scenario!(game in Night 1 where
         ret: Necromancer,
-        sher: Sheriff,
-        consigliere: Consigliere,
+        sher: Detective,
+        informant: Informant,
         mafioso: Mafioso,
         vigilante: Vigilante
     );
     
     mafioso.set_night_target(sher);
     game.skip_to(PhaseType::Night, 2);
-    vigilante.set_night_target(consigliere);
+    vigilante.set_night_target(informant);
     game.skip_to(PhaseType::Night, 3);
 
 
@@ -485,8 +484,8 @@ fn necromancer_basic(){
 fn witch_basic(){
     kit::scenario!(game in Night 1 where
         witch: Witch,
-        sher: Sheriff,
-        consigliere: Consigliere,
+        sher: Detective,
+        informant: Informant,
         mafioso: Mafioso,
         seer: Seer
     );
@@ -498,7 +497,7 @@ fn witch_basic(){
     )});
     
     game.skip_to(PhaseType::Night, 2);
-    assert!(seer.set_night_targets(vec![sher, consigliere]));
+    assert!(seer.set_night_targets(vec![sher, informant]));
     assert!(witch.set_night_targets(vec![seer, mafioso]));
     game.next_phase();
     assert_contains!(
@@ -512,10 +511,10 @@ fn witch_basic(){
 #[test]
 fn crusader_basic(){
     kit::scenario!(game in Night 1 where
-        crus: Crusader,
+        crus: Cop,
         protected: Jester,
-        townie1: Sheriff,
-        townie2: Sheriff,
+        townie1: Detective,
+        townie2: Detective,
         mafioso: Mafioso
     );
 
@@ -547,9 +546,9 @@ fn crusader_basic(){
 #[test]
 fn crusader_does_not_kill_framed_player(){
     kit::scenario!(game in Night 1 where
-        crus: Crusader,
+        crus: Cop,
         protected: Jester,
-        townie: Sheriff,
+        townie: Detective,
         framer: Framer,
         mafioso: Mafioso
     );
@@ -610,7 +609,7 @@ fn veteran_basic(){
 fn veteran_does_not_kill_framed_player(){
     kit::scenario!(game in Night 1 where
         vet: Veteran,
-        townie: Sheriff,
+        townie: Detective,
         framer: Framer,
         mafioso: Mafioso
     );
@@ -629,9 +628,9 @@ fn veteran_does_not_kill_framed_player(){
 #[test]
 fn executioner_turns_into_jester(){
     kit::scenario!(game in Night 1 where
-        target: Sheriff,
+        target: Detective,
         mafioso: Mafioso,
-        exe: Executioner
+        exe: Hater
     );
 
     assert!(mafioso.set_night_targets(vec![target]));
@@ -646,7 +645,7 @@ fn executioner_turns_into_jester(){
 #[test]
 fn executioner_instantly_turns_into_jester(){
     kit::scenario!(_game where
-        exe: Executioner
+        exe: Hater
     );
     let RoleState::Jester(_) = exe.role_state() else {panic!()};
 }
@@ -655,24 +654,24 @@ fn executioner_instantly_turns_into_jester(){
 fn can_type_in_jail() {
     kit::scenario!(game in Dusk 1 where
         jailor: Jailor,
-        sheriff: Sheriff
+        detective: Detective
     );
 
-    jailor.day_target(sheriff);
+    jailor.day_target(detective);
     game.next_phase();
 
-    sheriff.send_message("Hello!");
+    detective.send_message("Hello!");
     
     assert_contains!(jailor.get_messages(), 
         ChatMessageVariant::Normal { 
-            message_sender: MessageSender::Player { player: sheriff.index() }, 
+            message_sender: MessageSender::Player { player: detective.index() }, 
             text: "Hello!".to_string()
         }
     );
     
-    assert_contains!(sheriff.get_messages(), 
+    assert_contains!(detective.get_messages(), 
         ChatMessageVariant::Normal { 
-            message_sender: MessageSender::Player { player: sheriff.index() }, 
+            message_sender: MessageSender::Player { player: detective.index() }, 
             text: "Hello!".to_string()
         }
     );
@@ -699,7 +698,7 @@ fn transporter_cant_transport_dead() {
         _vet: Veteran,
         _necro: Necromancer,
         _seer: Seer,
-        townie: Sheriff,
+        townie: Detective,
         thomas: Jailor,
         trans: Transporter
     );
@@ -726,7 +725,7 @@ fn double_transport() {
     kit::scenario!(game in Night 1 where
         mafioso: Mafioso,
  
-        townie_a: Sheriff,
+        townie_a: Detective,
         townie_b: Jailor,
 
         trans_a: Transporter,
@@ -749,7 +748,7 @@ fn double_transport_single_player() {
     kit::scenario!(game in Night 1 where
         mafioso: Mafioso,
  
-        townie_a: Sheriff,
+        townie_a: Detective,
         townie_b: Jailor,
         townie_c: Vigilante,
 
@@ -774,7 +773,7 @@ fn double_transport_three_players() {
     kit::scenario!(game in Night 1 where
         mafioso: Mafioso,
  
-        townie_a: Sheriff,
+        townie_a: Detective,
         townie_b: Jailor,
         townie_c: Vigilante,
 
@@ -802,7 +801,7 @@ fn grave_contains_multiple_killers() {
     kit::scenario!(game in Night 2 where
         mafioso: Mafioso,
         vigilante: Vigilante,
-        townie: Sheriff
+        townie: Detective
     );
 
     assert!(mafioso.set_night_target(townie));
@@ -813,7 +812,7 @@ fn grave_contains_multiple_killers() {
         Grave {
             player: townie.player_ref(),
         
-            role: GraveRole::Role(Role::Sheriff),
+            role: GraveRole::Role(Role::Detective),
             death_cause: GraveDeathCause::Killers(vec![GraveKiller::Faction(Faction::Mafia), GraveKiller::Role(Role::Vigilante)]),
             will: "".to_string(),
             death_notes: vec![],
@@ -876,7 +875,7 @@ fn godfathers_backup_tag_works() {
     kit::scenario!(game in Night 2 where
         godfather: Godfather,
         blackmailer: Blackmailer,
-        consort: Consort,
+        hypnotist: Hypnotist,
         _vigi: Vigilante
     );
 
@@ -889,8 +888,8 @@ fn godfathers_backup_tag_works() {
     assert!(godfather.day_target(blackmailer));
     assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).expect("blackmailer doesnt have tag").contains(&Tag::GodfatherBackup));
     
-    assert!(godfather.day_target(consort));
-    assert!(blackmailer.get_player_tags().get(&consort.player_ref()).expect("consort doesnt have tag").contains(&Tag::GodfatherBackup));
+    assert!(godfather.day_target(hypnotist));
+    assert!(blackmailer.get_player_tags().get(&hypnotist.player_ref()).expect("hypnotist doesnt have tag").contains(&Tag::GodfatherBackup));
     assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).is_none());
 }
 
@@ -900,7 +899,7 @@ fn seer_cant_see_godfather() {
         seer: Seer,
         godfather: Godfather,
         mafioso: Mafioso,
-        townie: Sheriff
+        townie: Detective
     );
 
     assert!(seer.set_night_targets(vec![godfather, mafioso]));
@@ -926,11 +925,11 @@ fn seer_cant_see_godfather() {
 #[test]
 fn reveler_protect_still_kill() {
     kit::scenario!(game in Night 1 where
-        rev: Reveler,
+        rev: Bouncer,
         godfather: Godfather,
         jan: Janitor,
-        townie_a: Sheriff,
-        townie_b: Sheriff
+        townie_a: Detective,
+        townie_b: Detective
     );
 
     assert!(rev.set_night_targets(vec![townie_a]));
@@ -966,16 +965,16 @@ fn reveler_protect_still_kill() {
 fn cult_wait_for_two_deaths() {
     kit::scenario!(game in Night 1 where
         drac: Apostle,
-        a: Sheriff,
-        b: Sheriff,
-        c: Sheriff,
-        d: Sheriff,
-        e: Sheriff,
-        f: Sheriff,
-        g: Sheriff,
-        h: Sheriff,
-        i: Sheriff,
-        j: Sheriff
+        a: Detective,
+        b: Detective,
+        c: Detective,
+        d: Detective,
+        e: Detective,
+        f: Detective,
+        g: Detective,
+        h: Detective,
+        i: Detective,
+        j: Detective
     );
 
     //apostle kills
@@ -1043,11 +1042,11 @@ fn cult_wait_for_two_deaths() {
 fn arsonist_ignites_and_aura(){
     kit::scenario!(game in Night 1 where
         arso: Arsonist,
-        townie: Sheriff,
-        townie2: Sheriff,
+        townie: Detective,
+        townie2: Detective,
         gf: Godfather,
         vigi: Vigilante,
-        sher: Sheriff
+        sher: Detective
     );
 
     assert!(townie.set_night_target(arso));
@@ -1106,7 +1105,7 @@ fn bodyguard_gets_single_target_jailed_message() {
         bg: Bodyguard,
         jailor: Jailor,
         _maf: Mafioso,
-        townie: Sheriff
+        townie: Detective
     );
 
     jailor.day_target(townie);
@@ -1138,9 +1137,9 @@ fn martyr_suicide_ends_game() {
     kit::scenario!(game in Night 1 where
         martyr: Martyr,
         player1: Mafioso,
-        player2: Sheriff,
+        player2: Detective,
         player3: Mafioso,
-        player4: Sheriff
+        player4: Detective
     );
 
     assert_contains!(
@@ -1172,9 +1171,9 @@ fn martyr_roleblocked() {
     kit::scenario!(game in Night 1 where
         martyr: Martyr,
         player1: Mafioso,
-        player2: Sheriff,
-        consort: Consort,
-        player4: Sheriff
+        player2: Detective,
+        hypnotist: Hypnotist,
+        player4: Detective
     );
 
     assert_contains!(
@@ -1183,7 +1182,7 @@ fn martyr_roleblocked() {
     );
 
     martyr.set_night_target(martyr);
-    consort.set_night_target(martyr);
+    hypnotist.set_night_target(martyr);
 
     game.next_phase();
 
@@ -1191,7 +1190,7 @@ fn martyr_roleblocked() {
     assert!(!martyr.role_state().clone().get_won_game(&game, martyr.player_ref()));
     assert!(player1.alive());
     assert!(player2.alive());
-    assert!(consort.alive());
+    assert!(hypnotist.alive());
     assert!(player4.alive());
 
     assert_contains!(
@@ -1205,9 +1204,9 @@ fn martyr_healed() {
     kit::scenario!(game in Night 1 where
         martyr: Martyr,
         player1: Mafioso,
-        player2: Sheriff,
+        player2: Detective,
         doctor: Doctor,
-        player4: Sheriff
+        player4: Detective
     );
 
     assert_contains!(
@@ -1238,7 +1237,7 @@ fn deputy_fails(){
     kit::scenario!(game in Discussion 2 where
         deputy: Deputy,
         player1: Mafioso,
-        player2: Sheriff
+        player2: Detective
     );
 
     assert!(deputy.day_target(player2));
@@ -1255,7 +1254,7 @@ fn ojo_transporter(){
         ojo: Ojo,
         transporter: Transporter,
         player1: Seer,
-        player2: Sheriff,
+        player2: Detective,
         player3: Seer,
         gf: Godfather
     );
@@ -1274,7 +1273,7 @@ fn ojo_transporter(){
 
     assert_contains!(
         ojo.get_messages(),
-        ChatMessageVariant::OjoResult{role:Role::Sheriff, player: player2.index() }
+        ChatMessageVariant::OjoResult{role:Role::Detective, player: player2.index() }
     );
     assert_contains!(
         ojo.get_messages(),

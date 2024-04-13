@@ -46,7 +46,7 @@ export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuPr
                 return <LargeAuditorMenu/>;
             case "journalist":
                 return <LargeJournalistMenu/>;
-            case "consort":
+            case "hypnotist":
                 return <LargeConsortMenu/>;
             case "forger":
                 return <LargeForgerMenu/>;

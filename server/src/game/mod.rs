@@ -266,7 +266,7 @@ impl Game {
         if
             remaining_teams.is_empty() && 
             PlayerReference::all_players(self)
-                .filter(|p|p.alive(self) && p.role_state(self).role() == role::Role::Amnesiac)
+                .filter(|p|p.alive(self) && p.role_state(self).role() == role::Role::WildCard)
                 .count() > 1 
         {
             return false;

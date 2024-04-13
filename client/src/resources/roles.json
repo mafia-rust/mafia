@@ -33,7 +33,7 @@
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
-    "sheriff": {
+    "detective": {
         "faction": "town",
         "roleSet": "townInvestigative",
         "armor": false,
@@ -147,7 +147,7 @@
             {"type": "youSurvivedAttack"}
         ]
     },
-    "crusader": {
+    "cop": {
         "faction": "town",
         "roleSet": "townProtective",
         "armor": false,
@@ -162,7 +162,7 @@
             {"type": "youSurvivedAttack"}
         ]
     },
-    "reveler": {
+    "bouncer": {
         "faction": "town",
         "roleSet": "townProtective",
         "armor": false,
@@ -397,7 +397,7 @@
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
-    "consort": {
+    "hypnotist": {
         "faction": "mafia",
         "roleSet": "mafiaSupport",
         "armor": false,
@@ -428,7 +428,7 @@
             {"type":"silenced"}
         ]
     },
-    "consigliere": {
+    "informant": {
         "faction": "mafia",
         "roleSet": "mafiaSupport",
         "armor": false,
@@ -531,7 +531,7 @@
             {"type": "jesterWon"}
         ]
     },
-    "executioner": {
+    "hater": {
         "faction": "neutral",
         "roleSet": "neutralEvil",
         "armor": true,
@@ -615,7 +615,7 @@
             {"type": "youSurvivedAttack"}
         ]
     },
-    "amnesiac": {
+    "wildCard": {
         "faction": "neutral",
         "roleSet": "neutralChaos",
         "armor": false,

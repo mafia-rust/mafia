@@ -98,8 +98,8 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
                 if(this.state.gameState.phaseState.type === "night" && this.state.gameState.clientState.myIndex!==null && this.state.gameState.players[this.state.gameState.clientState.myIndex].alive)
                     return <SmallOjoMenu action={this.state.gameState.clientState.roleState.chosenAction}/>;
                 return null;
-            case "amnesiac":
-                return <><StyledText>{translate("role.amnesiac.smallRoleMenu")}</StyledText><RoleOutlineDropdown 
+            case "wildCard":
+                return <><StyledText>{translate("role.wildCard.smallRoleMenu")}</StyledText><RoleOutlineDropdown 
                     roleOutline={this.state.gameState.clientState.roleState.roleOutline ?? {type: "any"}} 
                     onChange={(rle)=>{
                         GAME_MANAGER.sendSetAmnesiacRoleOutline(rle);

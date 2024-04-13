@@ -37,7 +37,7 @@ trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
 macros::roles! {
     Jailor : jailor,
 
-    Sheriff : sheriff,
+    Detective : detective,
     Lookout : lookout,
     Spy : spy,
     Tracker : tracker,
@@ -47,8 +47,8 @@ macros::roles! {
 
     Doctor : doctor,
     Bodyguard : bodyguard,
-    Crusader : crusader,
-    Reveler : reveler,
+    Cop : cop,
+    Bouncer : bouncer,
     Trapper : trapper,
 
     Vigilante : vigilante,
@@ -66,9 +66,9 @@ macros::roles! {
     Godfather : godfather,
     Mafioso : mafioso,
     
-    Consort : consort,
+    Hypnotist : hypnotist,
     Blackmailer : blackmailer,
-    Consigliere: consigliere,
+    Informant: informant,
     Witch : witch,
     Necromancer : necromancer,
 
@@ -78,7 +78,7 @@ macros::roles! {
 
     // Neutral
     Jester : jester,
-    Executioner : executioner,
+    Hater : hater,
     Politician : politician,
 
     Doomsayer : doomsayer,
@@ -88,7 +88,7 @@ macros::roles! {
     Werewolf : werewolf,
     Ojo : ojo,
 
-    Amnesiac : amnesiac,
+    WildCard : wild_card,
     Martyr : martyr,
 
     Apostle : apostle,
@@ -281,10 +281,10 @@ impl Role{
             Role::Veteran => true,
             
             Role::Transporter => true,
-            Role::Reveler => true,
+            Role::Bouncer => true,
 
             Role::Escort => true,
-            Role::Consort => true,
+            Role::Hypnotist => true,
             
             Role::Retributionist => true,
             Role::Witch => true,
@@ -295,7 +295,7 @@ impl Role{
     pub fn has_innocent_aura(&self, game: &Game)->bool{
         match self {
             Role::Jester => true,
-            Role::Executioner => true,
+            Role::Hater => true,
             Role::Godfather => true,
             Role::Werewolf => {
                 game.day_number() == 1 || game.day_number() == 3

@@ -37,7 +37,7 @@ export function getRolesFromRoleListRemoveExclusionsAddConversions(roleList: Rol
 
     
     for(let role of roles){
-        if(role==="amnesiac"){
+        if(role==="wildCard"){
             getRolesComplement(excludedRoles).forEach((role) => {
                 out.push(role);
             });
@@ -76,21 +76,21 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
         case "townKilling":
             return ["vigilante", "veteran", "deputy"];
         case "townProtective":
-            return ["bodyguard", "crusader", "doctor", "reveler", "trapper"];
+            return ["bodyguard", "cop", "doctor", "bouncer", "trapper"];
         case "townInvestigative":
-            return ["psychic", "lookout", "sheriff", "spy", "tracker", "seer"];
+            return ["psychic", "lookout", "detective", "spy", "tracker", "seer"];
         case "mafiaSupport":
             return [
-                "blackmailer", "consigliere", "consort", 
+                "blackmailer", "informant", "hypnotist", 
                 "forger", "framer", "janitor", 
                 "witch", "necromancer"
             ];
         case "neutralEvil":
-            return ["jester", "executioner", "politician"];
+            return ["jester", "hater", "politician"];
         case "neutralKilling":
             return ["arsonist", "werewolf", "ojo"];
         case "neutralChaos":
-            return ["amnesiac", "martyr"];
+            return ["wildCard", "martyr"];
         case "neutralApocalypse":
             return ["death", "doomsayer"];
     }

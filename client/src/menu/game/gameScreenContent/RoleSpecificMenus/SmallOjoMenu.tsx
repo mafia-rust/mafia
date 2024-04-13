@@ -48,7 +48,7 @@ function ActionTypeDropdown(props: {
 
             switch(props.action.type){
                 case "none":
-                    props.onChange({type: e.target.value as "kill" | "see", role: "amnesiac"})
+                    props.onChange({type: e.target.value as "kill" | "see", role: "wildCard"})
                     break;
                 case "see":
                 case "kill":

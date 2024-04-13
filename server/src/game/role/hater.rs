@@ -18,7 +18,7 @@ use super::{Priority, Role, RoleStateImpl};
 
 #[derive(Clone, Serialize, Debug, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct Executioner {
+pub struct Hater {
     target: ExecutionerTarget,
 }
 #[derive(Clone, Serialize, Debug, PartialEq, Eq)]
@@ -44,7 +44,7 @@ impl Default for ExecutionerTarget {
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
-impl RoleStateImpl for Executioner {
+impl RoleStateImpl for Hater {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {1}
     
 
@@ -82,7 +82,7 @@ impl RoleStateImpl for Executioner {
             PhaseState::FinalWords { player_on_trial } => {
                 if Some(player_on_trial) == self.target.get_target() {
                     game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::ExecutionerWon);
-                    actor_ref.set_role_state(game, RoleState::Executioner(Executioner { target: ExecutionerTarget::Won }));
+                    actor_ref.set_role_state(game, RoleState::Hater(Hater { target: ExecutionerTarget::Won }));
                 }
             }
             PhaseState::Night => {
@@ -111,7 +111,7 @@ impl RoleStateImpl for Executioner {
             .choose(&mut rand::thread_rng())
         {
             actor_ref.push_player_tag(game, *target, Tag::ExecutionerTarget);
-            actor_ref.set_role_state(game, RoleState::Executioner(Executioner{target: ExecutionerTarget::Target(*target)}));
+            actor_ref.set_role_state(game, RoleState::Hater(Hater{target: ExecutionerTarget::Target(*target)}));
         }else{
             actor_ref.set_role(game, RoleState::Jester(Jester::default()))
         };

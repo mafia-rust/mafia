@@ -15,7 +15,7 @@ export type RoleState = {
 } | {
     role: "transporter"
 } | {
-    role: "sheriff"
+    role: "detective"
 } | {
     role: "lookout"
 } | {
@@ -37,9 +37,9 @@ export type RoleState = {
     role: "bodyguard",
     selfShieldsRemaining: number,
 } | {
-    role: "crusader",
+    role: "cop",
 } | {
-    role: "reveler"
+    role: "bouncer"
 } | {
     role: "trapper"
 } | {
@@ -69,7 +69,7 @@ export type RoleState = {
 } | {
     role: "mafioso"
 } | {
-    role: "consort"
+    role: "hypnotist"
     roleblock: boolean,
     
     youWereRoleblockedMessage: boolean,
@@ -81,7 +81,7 @@ export type RoleState = {
 } | {
     role: "blackmailer"
 } | {
-    role: "consigliere",
+    role: "informant",
 } | {
     role: "janitor"
     cleansRemaining: number,
@@ -97,7 +97,7 @@ export type RoleState = {
 } | {
     role: "jester"
 } | {
-    role: "executioner"
+    role: "hater"
 } | 
 Doomsayer 
 | {
@@ -114,7 +114,7 @@ Doomsayer
     role: "death",
     souls: number
 } | {
-    role: "amnesiac"
+    role: "wildCard"
     roleOutline: RoleOutline
 } | {
     role: "apostle"

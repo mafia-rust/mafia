@@ -12,7 +12,7 @@ use super::{Priority, RoleState, RoleStateImpl};
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Consort{
+pub struct Hypnotist{
     pub roleblock: bool,
     pub you_were_roleblocked_message: bool,
     pub you_survived_attack_message: bool,
@@ -21,7 +21,7 @@ pub struct Consort{
     pub you_were_possessed_message: bool,
     pub your_target_was_jailed_message: bool,
 }
-impl Default for Consort {
+impl Default for Hypnotist {
     fn default() -> Self {
         Self {
             roleblock: true,
@@ -37,7 +37,7 @@ impl Default for Consort {
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
-impl RoleStateImpl for Consort {
+impl RoleStateImpl for Hypnotist {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
     
 
@@ -51,9 +51,9 @@ impl RoleStateImpl for Consort {
 
         match priority {
             Priority::TopPriority => {
-                let mut consort = self.clone();
-                consort.ensure_at_least_one_message();
-                actor_ref.set_role_state(game, RoleState::Consort(self));
+                let mut hypnotist = self.clone();
+                hypnotist.ensure_at_least_one_message();
+                actor_ref.set_role_state(game, RoleState::Hypnotist(self));
             },
             Priority::Roleblock => {
                 if target_ref.night_jailed(game) {
@@ -124,7 +124,7 @@ impl RoleStateImpl for Consort {
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
 }
-impl Consort {
+impl Hypnotist {
     pub fn ensure_at_least_one_message(&mut self){
         if
             !self.you_were_roleblocked_message && 

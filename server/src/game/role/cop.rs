@@ -16,14 +16,14 @@ use super::{Priority, RoleState, RoleStateImpl, common_role, Role};
 
 #[derive(Clone, Serialize, Debug, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct Crusader {
+pub struct Cop {
     target_protected_ref: Option<PlayerReference>
 }
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
-impl RoleStateImpl for Crusader {
+impl RoleStateImpl for Cop {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
     
 
@@ -39,7 +39,7 @@ impl RoleStateImpl for Crusader {
                 }
 
                 target_ref.increase_defense_to(game, 2);
-                actor_ref.set_role_state(game, RoleState::Crusader(Crusader {target_protected_ref: Some(target_ref)}));
+                actor_ref.set_role_state(game, RoleState::Cop(Cop {target_protected_ref: Some(target_ref)}));
             }
             Priority::Kill => {
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
@@ -61,7 +61,7 @@ impl RoleStateImpl for Crusader {
                     .copied();
 
                 if let Some(non_town_visitor) = non_town_visitor{
-                    non_town_visitor.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Crusader), 1, false);
+                    non_town_visitor.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Cop), 1, false);
                 }else{
                     let town_visitor: Option<PlayerReference> = PlayerReference::all_players(game)
                         .filter(|other_player_ref|
@@ -74,7 +74,7 @@ impl RoleStateImpl for Crusader {
                         .copied();
 
                     if let Some(town_visitor) = town_visitor{
-                        town_visitor.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Crusader), 1, false);
+                        town_visitor.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Cop), 1, false);
                     }
                 }
             }
@@ -113,7 +113,7 @@ impl RoleStateImpl for Crusader {
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         if phase != PhaseType::Night {return;}
-        actor_ref.set_role_state(game, RoleState::Crusader(Crusader {target_protected_ref: None}));
+        actor_ref.set_role_state(game, RoleState::Cop(Cop {target_protected_ref: None}));
     }
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
         

@@ -13,13 +13,13 @@ use super::{Priority, RoleStateImpl, Role};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Amnesiac{
+pub struct WildCard{
     pub role_outline: RoleOutline
 }
-impl Default for Amnesiac {
+impl Default for WildCard {
     fn default() -> Self {
         Self {
-            role_outline: RoleOutline::new_exact(Role::Amnesiac)
+            role_outline: RoleOutline::new_exact(Role::WildCard)
         }
     }
 }
@@ -27,7 +27,7 @@ impl Default for Amnesiac {
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
-impl RoleStateImpl for Amnesiac {
+impl RoleStateImpl for WildCard {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
     
 
@@ -71,13 +71,13 @@ impl RoleStateImpl for Amnesiac {
     }
 }
 
-impl Amnesiac {
+impl WildCard {
     fn become_role(&self, game: &mut Game, actor_ref: PlayerReference) {
         let new_role_data = self.role_outline
             .get_random_role(&game.settings.excluded_roles, &[])
-            .unwrap_or(Role::Amnesiac)
+            .unwrap_or(Role::WildCard)
             .default_state();
-        if new_role_data.role() != Role::Amnesiac {
+        if new_role_data.role() != Role::WildCard {
             actor_ref.set_role(game, new_role_data);
         }
     }

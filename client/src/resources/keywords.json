@@ -5,7 +5,7 @@
     "verdict.innocent": { "style": "keyword-good","link": "standard/phases_and_timeline"},
     "verdict.abstain": { "style": "keyword-abstain","link": "standard/phases_and_timeline"},
     "grave.role.cleaned": { "style": "keyword-hiddenRole","link": "role/janitor"},
-    "suspicious": { "style": "keyword-evil","link": "role/sheriff"},
+    "suspicious": { "style": "keyword-evil","link": "role/detective"},
     "friends": { "style": "keyword-good","link": "role/seer"},
     "enemies": { "style": "keyword-evil","link": "role/seer"},
     "vision": {"style": "keyword-info","link": "role/psychic"},

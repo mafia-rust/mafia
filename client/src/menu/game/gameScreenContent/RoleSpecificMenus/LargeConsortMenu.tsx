@@ -21,7 +21,7 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
     constructor(props: LargeConsortMenuState) {
         super(props);
 
-        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.roleState?.role === "consort")
+        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.roleState?.role === "hypnotist")
             this.state = {
                 roleblock: GAME_MANAGER.state.clientState.roleState?.roleblock,
                 
@@ -33,7 +33,7 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
                 yourTargetWasJailedMessage: GAME_MANAGER.state.clientState.roleState?.yourTargetWasJailedMessage === undefined || GAME_MANAGER.state.clientState.roleState?.yourTargetWasJailedMessage === null ? false : GAME_MANAGER.state.clientState.roleState?.yourTargetWasJailedMessage
             };
         this.listener = ()=>{
-            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.roleState?.role === "consort"){
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.roleState?.role === "hypnotist"){
                 this.setState({
                     roleblock: GAME_MANAGER.state.clientState.roleState.roleblock,
             
@@ -134,7 +134,7 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
 
 
     render(){
-        return <div className="large-consort-menu">
+        return <div className="large-hypnotist-menu">
             <div>
                 
                 {translate("wiki.article.standard.roleblock.title")}
