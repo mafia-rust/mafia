@@ -39,7 +39,7 @@ impl RoleStateImpl for Ojo {
                 if !actor_ref.alive(game) {return;}
 
                 let (chosen_role, attack) = match self.chosen_action {
-                    OjoAction::Kill{role} => (role, true),
+                    OjoAction::Kill{role} => (role, game.day_number() > 1),
                     OjoAction::See{role} => (role, false),
                     OjoAction::None => return,
                     
@@ -65,6 +65,7 @@ impl RoleStateImpl for Ojo {
                 );
             }
             Priority::Kill => {
+                if game.day_number() == 1 {return;}
                 if let OjoAction::Kill{..} = self.chosen_action {
                     for player in 
                         actor_ref.night_visits(game)

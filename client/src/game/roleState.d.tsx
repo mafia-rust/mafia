@@ -1,5 +1,5 @@
 import { PlayerIndex } from "./gameState.d"
-import { Faction, RoleOutline } from "./roleListState.d"
+import { Faction } from "./roleListState.d"
 import ROLES from "./../resources/roles.json";
 import { Doomsayer } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
