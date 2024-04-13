@@ -26,7 +26,7 @@ export default function LargeAuditorMenu(props: {}): ReactElement {
             if(
                 GAME_MANAGER.state.stateType !== "game" ||
                 GAME_MANAGER.state.clientState.type !== "player" ||
-                GAME_MANAGER.state.clientState.roleState?.role !== "auditor"
+                GAME_MANAGER.state.clientState.roleState?.type !== "auditor"
             ){
                 return;
             }
@@ -51,7 +51,7 @@ export default function LargeAuditorMenu(props: {}): ReactElement {
     if(
         GAME_MANAGER.state.stateType !== "game" ||
         GAME_MANAGER.state.clientState.type !== "player" ||
-        GAME_MANAGER.state.clientState.roleState?.role !== "auditor"
+        GAME_MANAGER.state.clientState.roleState?.type !== "auditor"
     )
         return <></>
     

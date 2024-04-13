@@ -9,7 +9,7 @@ use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
-use crate::game::team::Team;
+
 use crate::game::Game;
 use super::{Priority, RoleStateImpl, Role, RoleState};
 
@@ -25,7 +25,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Werewolf {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {1}
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
+    
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         

@@ -256,16 +256,16 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 <div className="day-target">
                     {((player)=>{if(player.buttons.dayTarget){
                         const highlighted = 
-                            (this.state.roleState?.role === "jailor" && this.state.roleState.jailedTargetRef === player.index)
+                            (this.state.roleState?.type === "jailor" && this.state.roleState.jailedTargetRef === player.index)
                             || 
-                            (this.state.roleState?.role === "medium" && this.state.roleState.seancedTarget === player.index)
+                            (this.state.roleState?.type === "medium" && this.state.roleState.seancedTarget === player.index)
                             || 
-                            (this.state.roleState?.role === "journalist" && this.state.roleState.interviewedTarget === player.index)
+                            (this.state.roleState?.type === "journalist" && this.state.roleState.interviewedTarget === player.index)
                     return(
                         <button className={highlighted ? "highlighted" : undefined} onClick={()=>{
                             GAME_MANAGER.sendDayTargetPacket(player.index)}}
                     >{
-                        translate("role."+this.state.roleState?.role+".dayTarget")
+                        translate("role."+this.state.roleState?.type+".dayTarget")
                     }</button>)}})(player)}
                 </div>
                 <div className="target">
@@ -275,7 +275,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                                 if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
                                     GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.state.clientState.targets, player.index])
                             }}>
-                                {translate("role."+this.state.roleState?.role+".target")}
+                                {translate("role."+this.state.roleState?.type+".target")}
                             </button>
                         } else if (GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && this.state.phase === "night" && this.state.targets.includes(player.index)) {
                             let newTargets = [...GAME_MANAGER.state.clientState.targets];

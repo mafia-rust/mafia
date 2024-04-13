@@ -16,7 +16,11 @@ impl Default for Settings{
         Self{
             role_list: RoleList::default(),
             phase_times: PhaseTimeSettings::default(),
-            excluded_roles: vec![Role::Jailor, Role::Bodyguard, Role::Mafioso, Role::Martyr]
+            excluded_roles: vec![
+                Role::Jailor, Role::Bodyguard,
+                Role::Mafioso, Role::Necromancer,
+                Role::Martyr
+            ]
         }
     }
 }

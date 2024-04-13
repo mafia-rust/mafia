@@ -7,7 +7,7 @@ use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
-use crate::game::team::Team;
+
 use super::{Priority, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -24,7 +24,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Spy {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
+    
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -97,7 +97,7 @@ impl RoleStateImpl for Spy {
             PhaseType::Night => {
                 //if there are any cult alive, tell the spy if apostle can convert
                 if PlayerReference::all_players(game).any(|p|p.role(game).faction() == Faction::Cult){
-                    if game.teams.cult().can_convert_tonight(game) {
+                    if game.cult().can_convert_tonight(game) {
                         actor_ref.add_private_chat_message(game,
                             ChatMessageVariant::ApostleCanConvertTonight
                         )

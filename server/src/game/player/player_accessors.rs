@@ -4,8 +4,16 @@ use crate::{
     game::{
         chat::{
             ChatGroup, ChatMessage, ChatMessageVariant
-        }, event, grave::{GraveKiller, GraveRole}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, Game}, packet::ToClientPacket, 
-    };
+        }, event::on_fast_forward::OnFastForward,
+        grave::{GraveKiller, GraveRole},
+        role::{Role, RoleState},
+        tag::Tag,
+        verdict::Verdict,
+        visit::Visit,
+        Game
+    }, 
+    packet::ToClientPacket, 
+};
 use super::PlayerReference;
 
 
@@ -141,13 +149,6 @@ impl PlayerReference{
         self.deref_mut(game).queued_chat_messages.push(message);
     }
 
-    pub fn set_doused(&self, game: &mut Game, doused: bool){
-        self.deref_mut(game).doused = doused;
-    }
-    pub fn doused(&self, game: &Game) -> bool{
-        self.deref(game).doused
-    }
-
     pub fn set_fast_forward_vote(&self, game: &mut Game, fast_forward_vote: bool) {
         self.deref_mut(game).fast_forward_vote = fast_forward_vote;
 
@@ -157,7 +158,7 @@ impl PlayerReference{
             .filter(|p|p.alive(game))
             .all(|p| p.fast_forward_vote(game))
         {
-            event::OnFastForward::invoke(game);
+            OnFastForward::invoke(game);
         }
     }
     pub fn fast_forward_vote(&self, game: &Game) -> bool{
