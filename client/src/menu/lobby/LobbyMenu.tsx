@@ -101,13 +101,12 @@ export default function LobbyMenu(): ReactElement {
                                 GAME_MANAGER.sendExcludedRolesPacket(data.disabledRoles ?? []);
                                 GAME_MANAGER.sendSetRoleListPacket(data.roleList ?? []);
                                 GAME_MANAGER.sendSetPhaseTimesPacket(data.phaseTimes ?? defaultPhaseTimes());
+                                return "success"
                             } catch (e) {
-                                Anchor.pushError(
-                                    translate("notification.importGameMode.failure"), 
-                                    translate("notification.importGameMode.failure.details")
-                                );
+                                return "invalidData"
                             }
                         }}
+                        failureText={() => translate("notification.importGameMode.failure")}
                     ><Icon>content_paste</Icon> {translate("importFromClipboard")}</PasteButton>
                     <PhaseTimesSelector 
                         disabled={!isHost}
