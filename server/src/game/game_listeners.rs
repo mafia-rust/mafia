@@ -75,5 +75,10 @@ impl Game{
             other_player_ref.remove_role_label(self, grave.player);
         }
     }
+    pub fn on_role_switch(&mut self, actor: PlayerReference){
+        for player_ref in PlayerReference::all_players(self){
+            player_ref.remove_role_label(self, actor);
+        }
+    }
 }
 

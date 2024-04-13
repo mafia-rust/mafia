@@ -194,7 +194,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
 
         let roleString = (()=>{
             if(player.index === this.state.myIndex){
-                return ("("+translate("role."+this.state.roleState?.role+".name")+")");
+                return ("("+translate("role."+this.state.roleState?.type+".name")+")");
             }
 
             if(player.alive && player.roleLabel != null){

@@ -9,6 +9,8 @@ impl OnRoleSwitch{
     }
     pub fn invoke(self, game: &mut Game){
 
+        game.on_role_switch(self.player);
+
         game.cult().clone().on_role_switch(game, self.player);
         game.mafia().clone().on_role_switch(game, self.player);
     }

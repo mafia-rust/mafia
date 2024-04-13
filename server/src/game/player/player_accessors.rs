@@ -83,7 +83,11 @@ impl PlayerReference{
         &self.deref(game).role_labels
     }  
     pub fn insert_role_label(&self, game: &mut Game, revealed_player: PlayerReference){
-        if revealed_player != *self && self.deref_mut(game).role_labels.insert(revealed_player) {
+        if
+            revealed_player != *self &&
+            revealed_player.alive(game) &&
+            self.deref_mut(game).role_labels.insert(revealed_player)
+        {
             self.add_private_chat_message(game, ChatMessageVariant::PlayersRoleRevealed { player: revealed_player.index(), role: revealed_player.role(game) })
         }
 
