@@ -3,6 +3,7 @@ import { ReactElement } from "react";
 import GAME_MANAGER from "../..";
 import translate from "../../game/lang";
 import { StateEventType, StateListener } from "../../game/gameManager.d";
+import Icon from "../../components/Icon";
 
 
 
@@ -39,7 +40,7 @@ export default function LobbyNamePane(): ReactElement {
         {!isSpectator && <NameSelector/>}
         {isSpectator && <button
             onClick={()=>{GAME_MANAGER.sendSetSpectatorPacket(false)}}
-        >{translate("switchToPlayer")}</button>}
+        ><Icon>sports_esports</Icon> {translate("switchToPlayer")}</button>}
     </section>
 }
 
@@ -52,7 +53,7 @@ function NameSelector(): ReactElement {
             <section><h2>{GAME_MANAGER.getMyName() ?? ""}</h2></section>
             <button
                 onClick={()=>{GAME_MANAGER.sendSetSpectatorPacket(true)}}
-            >{translate("switchToSpectator")}</button>
+            ><Icon>visibility</Icon> {translate("switchToSpectator")}</button>
         </div>
         <div className="name-box">
             <input type="text" value={enteredName}

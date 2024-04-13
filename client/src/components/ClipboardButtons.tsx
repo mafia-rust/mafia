@@ -9,7 +9,7 @@ type CopyButtonResult = boolean;
 type CopyButtonProps = ButtonProps<CopyButtonResult> & { onClick?: undefined, ref?: undefined, text: string };
 
 function reconcileCopyProps(props: CopyButtonProps): ButtonProps<CopyButtonResult> {
-    let newProps: any = {...props};
+    let newProps: Partial<CopyButtonProps> = {...props};
     delete newProps.onClick;
     delete newProps.ref;
     newProps.text = undefined;
@@ -42,10 +42,10 @@ type PasteButtonProps<H> = ButtonProps<PasteButtonResult<H>> & {
 };
 
 function reconcilePasteProps<H>(props: PasteButtonProps<H>): ButtonProps<PasteButtonResult<H>> {
-    const newProps: any = {...props};
+    const newProps: Partial<PasteButtonProps<H>> = {...props};
     delete newProps.onClick;
-    delete newProps.onPasteSuccessful;
-    delete newProps.handlerFailureText;
+    delete newProps.onClipboardRead;
+    delete newProps.failureText;
 
     return newProps;
 }

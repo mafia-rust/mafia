@@ -35,11 +35,14 @@
 
 .lm > header button{
     font-size: 1.5rem;
-    padding: .5rem;
+    display: flex;
+    flex-direction: row;
+    gap: .25rem;
+    padding: .25rem .5rem;
 }
 
 .lm > header button .icon {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
 }
 
 .lm > main ol {
@@ -80,4 +83,31 @@
 }
 .lobby-name section{
     flex-grow: 1;
+}
+
+.lm .player-list > div {
+    border: .13rem solid var(--primary-border-color);
+    border-top-color: black;
+    border-left-color: black;
+    border-radius: .5rem;
+}
+
+.lm .player-list ol li {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: .13rem .25rem;
+    gap: .5rem;
+    align-items: center;
+    min-height: 2rem;
+}
+
+.lm .player-list ol li:nth-of-type(even) {
+    background-color: var(--secondary-color);
+}
+
+.lm .player-list ol li > div {
+    display: flex;
+    flex-direction: row;
+    gap: .25rem;
 }

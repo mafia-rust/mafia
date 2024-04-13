@@ -16,6 +16,7 @@ import { GameModeContext } from "../../components/GameModesEditor";
 import PhaseTimesSelector from "../../components/PhaseTimeSelector";
 import { OutlineListSelector } from "../../components/OutlineSelector";
 import DisabledRoleSelector from "../../components/DisabledRoleSelector";
+import Icon from "../../components/Icon";
 
 export default function LobbyMenu(): ReactElement {
     const [roleList, setRoleList] = useState(
@@ -107,10 +108,10 @@ export default function LobbyMenu(): ReactElement {
                                 );
                             }
                         }}
-                    >{translate("importFromClipboard")}</PasteButton>
+                    ><Icon>content_paste</Icon> {translate("importFromClipboard")}</PasteButton>
                     <PhaseTimesSelector 
                         disabled={!isHost}
-                        onChange={GAME_MANAGER.sendSetPhaseTimesPacket}
+                        onChange={pts => GAME_MANAGER.sendSetPhaseTimesPacket(pts)}
                     />
                     <OutlineListSelector
                         disabled={!isHost}
@@ -177,7 +178,7 @@ function LobbyMenuHeader(): JSX.Element {
                     Anchor.setContent(<LobbyMenu/>)
                 }
             }}>
-                {translate("menu.lobby.button.start")}
+                <Icon>play_arrow</Icon>{translate("menu.lobby.button.start")}
             </button>
             <RoomLinkButton/>
         </div>

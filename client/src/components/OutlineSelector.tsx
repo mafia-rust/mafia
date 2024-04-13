@@ -178,9 +178,7 @@ export function OutlineListSelector(props: {
     const {roleList} = useContext(GameModeContext);
 
     const simplify = () => {
-        for(let i = 0; i < roleList.length; i++) {
-            props.onChangeRolePicker(simplifyRoleOutline(roleList[i]), i);
-        }
+        props.setRoleList(roleList.map(simplifyRoleOutline));
     }
 
     return <section className="graveyard-menu-colors selector-section">

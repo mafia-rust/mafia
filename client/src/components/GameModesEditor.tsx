@@ -31,11 +31,12 @@ export default function GameModesEditor(): ReactElement {
     const [disabledRoles, setDisabledRoles] = useState<Role[]>([]);
 
 
-    const onChangeRolePicker = (value: RoleOutline, index: number) => {
-        let newRoleList = [...roleList];
+    const onChangeRolePicker = useCallback((value: RoleOutline, index: number) => {
+        const newRoleList = [...roleList];
         newRoleList[index] = value;
         setRoleList(newRoleList);
-    }
+    }, [roleList]);
+    
     const addOutline = () => {
         setRoleList([...roleList, {type: "any"}]);
     }

@@ -19,7 +19,7 @@
     "menu.lobby.button.start": "Start",
     "menu.lobby.field.namePlaceholder": "Enter name",
     "menu.lobby.button.setName": "Set Name",
-    "menu.lobby.players": "Players:",
+    "menu.lobby.players": "Players",
     "menu.lobby.roleList": "Outline List",
     "menu.lobby.excludedRoles": "Disabled Roles",
     "menu.lobby.timeSettings": "Phase Times",
