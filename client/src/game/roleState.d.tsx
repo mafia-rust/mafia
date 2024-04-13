@@ -3,6 +3,7 @@ import { Faction, RoleOutline } from "./roleListState.d"
 import ROLES from "./../resources/roles.json";
 import { Doomsayer } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
+import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
 
 export type RoleState = {
     role: "jailor",
@@ -104,8 +105,11 @@ Doomsayer
 } | {
     role: "arsonist"
 } | {
-    role: "werewolf"
+    role: "werewolf",
     trackedPlayers: PlayerIndex[]
+} | {
+    role: "ojo"
+    chosenAction: OjoAction
 } | {
     role: "death",
     souls: number

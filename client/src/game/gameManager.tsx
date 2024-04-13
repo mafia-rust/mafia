@@ -447,6 +447,12 @@ export function createGameManager(): GameManager {
                 index: index
             });
         },
+        sendSetOjoAction(action) {
+            this.server.sendPacket({
+                type: "setOjoAction",
+                action: action
+            });
+        },
 
         sendVoteFastForwardPhase(fastForward: boolean) {
             this.server.sendPacket({

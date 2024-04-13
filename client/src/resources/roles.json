@@ -598,6 +598,23 @@
             {"type": "youSurvivedAttack"}
         ]
     },
+    "ojo": {
+        "faction": "neutral",
+        "roleSet": "neutralKilling",
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "ojoResult", "player":17, "role":"auditor"},
+            {"type": "ojoResult", "player":5, "role":"auditor"},
+            {"type": "ojoResult", "player":40, "role":"auditor"},
+            {"type": "ojoResultNone"},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+        ]
+    },
     "amnesiac": {
         "faction": "neutral",
         "roleSet": "neutralChaos",

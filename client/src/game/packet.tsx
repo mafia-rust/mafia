@@ -4,6 +4,7 @@ import { ChatMessage } from "../components/ChatMessage"
 import { RoleList, RoleOutline } from "./roleListState.d"
 import { Role, RoleState } from "./roleState.d"
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu"
+import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu"
 
 export type LobbyPreviewData = {
     name: string,
@@ -263,6 +264,9 @@ export type ToServerPacket = {
 } | {
     type: "setAuditorChosenOutline",
     index: number
+} | {
+    type: "setOjoAction",
+    action: OjoAction
 } | {
     type: "voteFastForwardPhase",
     fastForward: boolean
