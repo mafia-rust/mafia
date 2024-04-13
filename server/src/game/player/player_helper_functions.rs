@@ -73,7 +73,6 @@ impl PlayerReference{
             self.add_private_chat_message(game, ChatMessageVariant::RoleAssignment{role: self.role(game)});
         }
 
-        self.insert_role_label(game, *self);
         OnRoleSwitch::new(*self).invoke(game);
     }
     pub fn increase_defense_to(&self, game: &mut Game, defense: u8){

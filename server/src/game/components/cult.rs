@@ -43,9 +43,9 @@ impl Cult{
             Cult::set_ordered_cultists(self.clone(), game);
         }
 
-        for unnamed_cult_member_with_arbitrary_name_a in Cult::get_members(game) {
-            for unnamed_cult_member_with_arbitrary_name_b in Cult::get_members(game) {
-                unnamed_cult_member_with_arbitrary_name_a.insert_role_label(game, unnamed_cult_member_with_arbitrary_name_b, unnamed_cult_member_with_arbitrary_name_b.role(game));
+        for a in Cult::get_members(game) {
+            for b in Cult::get_members(game) {
+                a.insert_role_label(game, b);
             }
         }
     }

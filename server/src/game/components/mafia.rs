@@ -33,8 +33,7 @@ impl Mafia{
 
         for a in Mafia::get_members(game) {
             for b in Mafia::get_members(game) {
-                a.insert_role_label(game, b, b.role(game));
-                b.insert_role_label(game, a, a.role(game));
+                a.insert_role_label(game, b);
             }
         }
     }

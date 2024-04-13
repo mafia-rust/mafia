@@ -88,7 +88,7 @@ impl RoleStateImpl for Ojo {
                         actor_ref.push_night_message(game, ChatMessageVariant::OjoResultNone);
                     }else{
                         for player in players{
-                            actor_ref.insert_role_label(game, player, player.role(game));
+                            actor_ref.insert_role_label(game, player);
                             actor_ref.push_night_message(game, 
                                 ChatMessageVariant::OjoResult{player: player.index(), role: player.role(game)}
                             );
