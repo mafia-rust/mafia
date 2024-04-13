@@ -1273,10 +1273,6 @@ fn ojo_transporter(){
 
     assert_contains!(
         ojo.get_messages(),
-        ChatMessageVariant::OjoResult{role:Role::Detective, player: player2.index() }
-    );
-    assert_contains!(
-        ojo.get_messages(),
-        ChatMessageVariant::OjoResult{role:Role::Philosopher, player: player3.index() }
-    );   
+        ChatMessageVariant::OjoResult{players: vec![player2.index(), player3.index()] }
+    );  
 }
