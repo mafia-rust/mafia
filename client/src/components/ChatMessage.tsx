@@ -354,9 +354,12 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                     : translate("chatMessage.consigliereResult.visitedBy", playerListToString(message.visitedBy, playerNames))
             );
         case "ojoResult":
+            if(message.players.length === 0 || message.players === undefined){
+                return translate("chatMessage.ojoResult.nobody");
+            }
+
             return translate("chatMessage.ojoResult",
-                playerNames[message.player],
-                translate("role."+message.role+".name")
+                message.players.map((playerIndex) => {return playerNames![playerIndex]}).join(", ")
             );
         case "silenced":
             return translate("chatMessage.silenced");
@@ -413,7 +416,6 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "targetsMessage":
         case "psychicFailed":
         case "phaseFastForwarded":
-        case "ojoResultNone":
             return translate("chatMessage."+message.type);
         case "playerDied":
         default:
@@ -629,10 +631,7 @@ export type ChatMessageVariant = {
     visited: PlayerIndex[]
 } | {
     type: "ojoResult",
-    player: PlayerIndex,
-    role: Role
-} | {
-    type: "ojoResultNone",
+    players: PlayerIndex[]
 } | {
     type: "targetIsPossessionImmune"
 } | {

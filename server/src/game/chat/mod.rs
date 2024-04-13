@@ -192,8 +192,7 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     ConsigliereResult{ role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
-    OjoResult{player: PlayerIndex, role: Role},
-    OjoResultNone,
+    OjoResult{players: Vec<PlayerIndex>},
 
     TargetIsPossessionImmune,
     YouWerePossessed { immune: bool },
