@@ -3,7 +3,7 @@ use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::role::{arsonist::Arsonist, martyr::Martyr, reveler::Reveler};
+
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
@@ -28,6 +28,7 @@ pub use mafia_server::game::{
         doctor::Doctor,
         bodyguard::Bodyguard,
         crusader::Crusader,
+        reveler::Reveler,
 
         vigilante::Vigilante,
         veteran::Veteran,
@@ -53,10 +54,14 @@ pub use mafia_server::game::{
         executioner::Executioner,
         doomsayer::{Doomsayer, DoomsayerGuess},
 
+        arsonist::Arsonist,
+        ojo::{Ojo, OjoAction},
+
         death::Death,
 
         apostle::Apostle,
-        amnesiac::Amnesiac
+        amnesiac::Amnesiac,
+        martyr::Martyr,
     }, 
     phase::{
         PhaseState, 
@@ -1242,4 +1247,37 @@ fn deputy_fails(){
     assert!(player1.alive());
     assert!(player1.get_won_game());
     assert!(game.game_is_over());
+}
+
+#[test]
+fn ojo_transporter(){
+    kit::scenario!(game in Night 1 where
+        ojo: Ojo,
+        transporter: Transporter,
+        player1: Seer,
+        player2: Sheriff,
+        player3: Seer,
+        gf: Godfather
+    );
+
+    ojo.set_role_state(
+        RoleState::Ojo(Ojo{chosen_action:OjoAction::See{role:Role::Seer} })
+    );
+    transporter.set_night_targets(vec![player1, player2]);
+    game.next_phase();
+
+    assert!(player1.alive());
+    assert!(player2.alive());
+    assert!(player3.alive());
+    assert!(gf.alive());
+
+
+    assert_contains!(
+        ojo.get_messages(),
+        ChatMessageVariant::OjoResult{role:Role::Sheriff, player: player2.index() }
+    );
+    assert_contains!(
+        ojo.get_messages(),
+        ChatMessageVariant::OjoResult{role:Role::Seer, player: player3.index() }
+    );   
 }

@@ -335,6 +335,12 @@
     "role.werewolf.target": "Target",
     "role.werewolf.dayTarget": "Special",
 
+    "role.ojo.name": "Ojo",
+    "role.ojo.name:var.0": "Ojos",
+    "role.ojo.target": "Target",
+    "role.ojo.dayTarget": "Special",
+    "role.ojo.smallRoleMenu": "Choose a role to see or kill",
+
     "role.death.name": "Death",
     "role.death.target": "Collect",
     "role.death.dayTarget": "Special",
@@ -463,6 +469,8 @@
     "any": "Any",
     "attack": "Attack",
     "none": "None",
+    "see": "See",
+    "kill": "Kill",
     "defense": "Defense",
     "defense.0": "None",
     "defense.1": "Armored",
@@ -628,6 +636,8 @@
     "chatMessage.consigliereResult.visited.nobody": "Your target didn't visit anybody",
     "chatMessage.consigliereResult.visitedBy": "Your target was visited by \\0",
     "chatMessage.consigliereResult.visitedBy.nobody": "Your target was not visited by anybody",
+    "chatMessage.ojoResult": "\\0 has the role \\1.",
+    "chatMessage.ojoResultNone": "You see no one.",
     "chatMessage.apostleCanConvertTonight": "The cult can convert tonight.",
     "chatMessage.apostleCantConvertTonight": "The cult can not convert tonight.",
     "chatMessage.cultSacrificesRequired": "The cult requires \\0 more sacrifices to convert.",
@@ -676,7 +686,7 @@
     "wiki.article.standard.visit.title:var.1": "Visiting",
     "wiki.article.standard.visit.title:var.2": "Visited",
     "wiki.article.standard.visit.title:var.3": "Visitor",
-    "wiki.article.standard.visit.text": "Usually, visits are decided by selecting players. Visits are what actually causes active abilities to work. For example: A Detective could select a player, but a Witch could possess them to make them visit someone else, and then the Detective will unknowingly get their results from the player that they visited instead of the player they selected.\n\n An attacking visit is a visit that attempts to kill a player. Bodyguards' and trappers' abilities will work differently if the visit is an attack.",
+    "wiki.article.standard.visit.text": "Usually, visits are decided by selecting players. Visits are what actually causes active abilities to work. For example: A Detective could select a player, but a Witch could possess them to make them visit someone else, and then the Detective will unknowingly get their results from the player that they visited instead of the player they selected.\n\n An attacking visit is a visit that attempts to kill a player. Some roles like Ojo, Bodyguard, and Trapper work differently if a visit is an attacking visit.",
 
     "wiki.article.standard.target.title": "Target",
     "wiki.article.standard.target.text": "Your target is the player who you visit.",
@@ -813,7 +823,8 @@
     
     "wiki.article.standard.priority.title":"Priority",
     "wiki.article.standard.priority.title:var.0":"Priorities",
-    "wiki.article.standard.priority.text":"Abilities are used in a specific order called priority order. If two players have abilities that go on the same priority, the player with the lower player number will go first. It is recommended that you read a roles encyclopedia page before this page. Some abilities go before night starts. Attacking someone doesn't kill them until the end of the night. Here are all the priorities and the abilities that happen in them.\n\n**Before Night (Not a priority)**\n\n- Jailor chooses who to jail\n- Journalist chooses who to interview\n- Spy finds if an apostle can convert\n- Death kills everyone\n- Create Visits\n  - All visits are decided by who is selected by each players. During each priority, each associated ability is activated using who is being visited by who, which is not necessarily who the player selected (in the case of a transporter, witch, etc...).\n\n**1: Top Priority**\n\n- Amnesiac (Convert)\n- Doomsayer (Kill)\n- Executioner (Suicide)\n- Jester (Haunt)\n- Veteran (Decide to Rampage)\n- Vigilante (Suicide)\n\n**2: Transporter**\n\n- Transporter (Swap Visits)\n\n**3: Control**\n\n- Witch (Possess)\n\n**4: Necromancy**\n\n- Retributionist (Possess/Change Visits)\n- Necromancer (Possess/Change Visits)\n\n**5: roleblock**\n\n- Reveler (roleblock)\n- Hypnotist (roleblock)\n- Escort (roleblock)\n- Jailor (Invisible roleblock)\n\n**6: Deception**\n\n- Hypnotist (Hypnotize)\n- Framer (Frame)\n- Blackmailer (Silence)\n- Janitor (Clean)\n- Arsonist (Douse)\n\n**7: Bodyguard**\n\n- Bodyguard (Change visits)\n\n**8: Heal**\n\n- Trapper (Intentionally dismantle, set, or use trap)\n- Bodyguard (Defend themselves)\n- Sentinel (Protect target)\n- Guardian (Defend)\n- Veteran (Defend themselves)\n\n**9: Kill**\n\n- Apostle (Kill)\n- Zealot (Kill)\n- Martyr (Kill)\n- Trapper (Indirect Kill)\n- Arsonist (Ignite)\n- Bodyguard (Attack attacker)\n- Sentinel (Attack Visitor)\n- Godfather (Attack or Make Backup Attack)\n- Jailor (Attack)\n- Mafioso (Attack)\n- Veteran (Rampage)\n- Vigilante (Attack)\n- Werewolf (Rampage and attacks)\n\n**10: Investigative**\n\n- Journalist (Add Journal Message)\n- Psychic (Vision)\n- Trapper (Traps report info)\n- Trapper (Dismantle if triggered)\n- Bodyguard (Find if protected)\n- Informant (Investigate)\n- Sentinel (Find if protected)\n- Death (Collect souls)\n- Guardian (Find if protected)\n- Janitor (Find role and alibi)\n- Forger (Find role and alibi)\n- Lookout (Investigate)\n- Seer (Investigate)\n- Detective (Investigate)\n- Spy (Find who the Mafia Visits)\n- Tracker (Investigate)\n- Werewolf (Track players scent)\n\n**11: Spy Bug**\n\n- Spy (Bug)\n\n**12: Steal Messages**\n\n- Witch (Get target messages)\n- Necromancer (Get target messages)\n- Retributionist (Get target messages)\n\n**13: Convert**\n\n- Apostle (Convert)\n\n**14: SpyCultistCount**\n\n- Spy (Get Cult Count)",
+    "wiki.article.standard.priority.text":"THIS NEEDS TO BE REWRITTEN",
+
     
     "wiki.article.standard.chat.title:var.0":"Chat Messages",
     "wiki.article.standard.chat.title":"Chat",
@@ -1034,6 +1045,11 @@
     "wiki.article.role.werewolf.abilities":"* On full moon nights\n    * Visit a player to attack and rampage\n    * If you visit nobody, you rampage yourself\n* On non-full moon nights\n    * Visit a player to gain their scent\n    * You passively gain the scent of every player that visits you\n    * You have an innocent aura",
     "wiki.article.role.werewolf.attributes":"* You track each player you have the scent of. You are told who each player you are tracking visits.\n* You still track the scent of players after you die\n* While you are in jail, you attack all Jailors who do not choose to execute you\n* You have an armor-piercing attack\n",
     "wiki.article.role.werewolf.extra":"* You will attack yourself if you visit yourself\n* You will not rampage the jailor while in jail\n* You will still attack or gain the scent of visits to you when you are in jail\n* You will still track the players you have the scent of while you are in jail\n* A roleblock has no effect on you besides erasing your visits. If you are roleblocked, it is as if you visited nobody\n* Players attacked by a rampage are indirectly attacked",
+
+    "wiki.article.role.ojo.guide":"- You may choose to either kill every player with a certain role, or find out every player with a certain role\n\n_For Example_\n- You choose to kill all lookouts and then @1 and @2 who are both lookouts both die\n- You choose to see all trackers, and you see nobody, so you know there is no tracker",
+    "wiki.article.role.ojo.abilities":"- You may choose to do one of the following\n    - See all players with a certain role, you visit all players with that role\n    - Kill all players with a certain role, you visit all players with that role with an attacking visit",
+    "wiki.article.role.ojo.attributes":"- When you choose to see, you are told the name and role of all players you visit, you get a message and they are revealed to you\n- If you are dead, you can not choose to see or kill",
+    "wiki.article.role.ojo.extra":"- Your ability will work on the person you actually visited, so if a transporter transports a player you visit with someone else, you see or attack the other player, and you are be told their actual role\n- You don't visit yourself\n- You don't visit dead players\n- You are immune to possession",
 
     "wiki.article.role.death.guide": "Guess what player will die during night by selecting them, If you guess correctly you will collect a soul, you will also collect a soul passively each night. Once you collect six souls, everyone will be told that death collected six souls at the start of the day, if you survive that day, you will attack everyone and win the game at the start of night.",
     "wiki.article.role.death.abilities":"* If the player you visit dies tonight, you collect a soul\n* You gain an additional soul each night",

@@ -34,32 +34,39 @@ impl DoomsayerGuess{
     fn convert_to_guess(role: Role)->Option<DoomsayerGuess>{
         match role {
             Role::Jailor => Some(DoomsayerGuess::Jailor),
+
             Role::Sheriff | Role::Lookout | Role::Spy | Role::Tracker | Role::Seer | Role::Psychic | Role::Auditor => None, 
+
             Role::Doctor => Some(DoomsayerGuess::Doctor),
             Role::Bodyguard => Some(DoomsayerGuess::Bodyguard),
             Role::Crusader => Some(DoomsayerGuess::Crusader),
             Role::Reveler => Some(DoomsayerGuess::Reveler),
             Role::Trapper => Some(DoomsayerGuess::Trapper),
+
             Role::Vigilante => Some(DoomsayerGuess::Vigilante),
             Role::Veteran => Some(DoomsayerGuess::Veteran),
             Role::Deputy => Some(DoomsayerGuess::Deputy),
+
             Role::Escort => Some(DoomsayerGuess::Escort),
             Role::Medium => Some(DoomsayerGuess::Medium),
             Role::Retributionist => Some(DoomsayerGuess::Retributionist),
             Role::Journalist => Some(DoomsayerGuess::Journalist),
             Role::Mayor => Some(DoomsayerGuess::Mayor),
             Role::Transporter => Some(DoomsayerGuess::Transporter),
+
             //Mafia
             Role::Godfather | Role::Mafioso | 
             Role::Consort | Role::Blackmailer | Role::Consigliere | 
             Role::Witch | Role::Necromancer |
             Role::Janitor | Role::Framer | Role::Forger => Some(DoomsayerGuess::Mafia),
+
             //Neutral
             Role::Jester | Role::Executioner | Role::Politician |
-            Role::Arsonist | Role::Werewolf | 
+            Role::Arsonist | Role::Werewolf | Role::Ojo |
             Role::Doomsayer | Role::Death |
             Role::Amnesiac => Some(DoomsayerGuess::Neutral),
             Role::Martyr => None,
+            
             //Cult
             Role::Apostle | Role::Disciple | Role::Zealot => Some(DoomsayerGuess::Cult),
         }

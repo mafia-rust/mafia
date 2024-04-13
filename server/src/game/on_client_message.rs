@@ -259,6 +259,12 @@ impl Game {
                     sender_player_ref.set_role_state(self, RoleState::Auditor(auditor));
                 }
             },
+            ToServerPacket::SetOjoAction { action } => {
+                if let RoleState::Ojo(mut ojo) = sender_player_ref.role_state(self).clone(){
+                    ojo.chosen_action = action;
+                    sender_player_ref.set_role_state(self, RoleState::Ojo(ojo));
+                }
+            },
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {
                 sender_player_ref.set_fast_forward_vote(self, fast_forward);
             }
