@@ -18,7 +18,4 @@ impl OnPhaseStart{
 
         game.on_phase_start(self.phase);
     }
-    pub fn create_and_invoke(game: &mut Game, phase: PhaseType){
-        Self::new(phase).invoke(game);
-    }
 }

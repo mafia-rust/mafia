@@ -72,7 +72,7 @@ impl PlayerReference{
         }
 
         self.insert_role_label(game, *self, self.role(game));
-        OnRoleSwitch::create_and_invoke(game, *self);
+        OnRoleSwitch::new(*self).invoke(game);
     }
     pub fn increase_defense_to(&self, game: &mut Game, defense: u8){
         if self.night_defense(game) < defense {

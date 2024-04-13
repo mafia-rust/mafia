@@ -38,6 +38,7 @@ use self::components::mafia::Mafia;
 use self::components::cult::Cult;
 use self::end_game_condition::EndGameCondition;
 use self::event::on_game_ending::OnGameEnding;
+use self::event::on_grave_added::OnGraveAdded;
 use self::event::on_phase_start::OnPhaseStart;
 use self::phase::PhaseState;
 use self::player::PlayerInitializeParameters;
@@ -318,12 +319,12 @@ impl Game {
         }
 
         PhaseState::start(self);
-        OnPhaseStart::create_and_invoke(self, self.current_phase().phase());
+        OnPhaseStart::new(self.current_phase().phase()).invoke(self);
     }
 
     pub fn add_grave(&mut self, grave: Grave){
         self.graves.push(grave.clone());
-        event::on_grave_added::OnGraveAdded::create_and_invoke(self, grave);
+        OnGraveAdded::new(grave).invoke(self);
     }
 
     pub fn add_message_to_chat_group(&mut self, group: ChatGroup, variant: ChatMessageVariant){

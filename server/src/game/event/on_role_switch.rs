@@ -12,7 +12,4 @@ impl OnRoleSwitch{
         game.cult().clone().on_role_switch(game, self.player);
         game.mafia().clone().on_role_switch(game, self.player);
     }
-    pub fn create_and_invoke(game: &mut Game, player: PlayerReference){
-        Self::new(player).invoke(game);
-    }
 }
