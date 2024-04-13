@@ -41,7 +41,7 @@ macros::roles! {
     Lookout : lookout,
     Spy : spy,
     Tracker : tracker,
-    Seer : seer,
+    Philosopher : philosopher,
     Psychic : psychic,
     Auditor : auditor,
 

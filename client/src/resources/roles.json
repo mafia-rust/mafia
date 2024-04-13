@@ -59,7 +59,7 @@
             {"type": "lookoutResult", "players": []}
         ]
     },
-    "seer": {
+    "philosopher": {
         "faction": "town",
         "roleSet": "townInvestigative",
         "armor": false,

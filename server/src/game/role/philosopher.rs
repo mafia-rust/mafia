@@ -11,12 +11,12 @@ use crate::game::Game;
 use super::{Priority, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
-pub struct Seer;
+pub struct Philosopher;
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
-impl RoleStateImpl for Seer {
+impl RoleStateImpl for Philosopher {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
     
 
@@ -34,7 +34,7 @@ impl RoleStateImpl for Seer {
         }
 
         let message = ChatMessageVariant::SeerResult{
-            enemies: Seer::players_are_enemies(game, first_visit.target, second_visit.target)
+            enemies: Philosopher::players_are_enemies(game, first_visit.target, second_visit.target)
         };
         
         actor_ref.push_night_message(game, message);
@@ -81,7 +81,7 @@ impl RoleStateImpl for Seer {
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
 }
-impl Seer{
+impl Philosopher{
     pub fn players_are_enemies(game: &Game, a: PlayerReference, b: PlayerReference) -> bool {
         if a.has_suspicious_aura(game) || b.has_suspicious_aura(game){
             true

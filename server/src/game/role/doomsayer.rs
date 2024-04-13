@@ -35,7 +35,7 @@ impl DoomsayerGuess{
         match role {
             Role::Jailor => Some(DoomsayerGuess::Jailor),
 
-            Role::Detective | Role::Lookout | Role::Spy | Role::Tracker | Role::Seer | Role::Psychic | Role::Auditor => None, 
+            Role::Detective | Role::Lookout | Role::Spy | Role::Tracker | Role::Philosopher | Role::Psychic | Role::Auditor => None, 
 
             Role::Doctor => Some(DoomsayerGuess::Doctor),
             Role::Bodyguard => Some(DoomsayerGuess::Bodyguard),

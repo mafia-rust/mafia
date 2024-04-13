@@ -23,7 +23,7 @@ export type RoleState = {
 } | {
     role: "tracker"
 } | {
-    role: "seer"
+    role: "philosopher"
 } | {
     role: "psychic"
 } | {
