@@ -1,6 +1,6 @@
 
 import translate from "./lang";
-import { Role } from "./roleState.d";
+import { Role, getFactionFromRole } from "./roleState.d";
 import ROLES from "../resources/roles.json";
 
 export const FACTIONS = ["town", "mafia", "cult", "neutral"] as const;
@@ -37,10 +37,20 @@ export function getRolesFromRoleListRemoveExclusionsAddConversions(roleList: Rol
 
     
     for(let role of roles){
-        if(role==="wildCard"){
+        if(role==="wildcard"){
             getRolesComplement(excludedRoles).forEach((role) => {
                 out.push(role);
             });
+            break;
+        }
+        if(role==="mafiaWildCard"){
+            getRolesComplement(excludedRoles)
+                .filter((role)=>getFactionFromRole(role)==="mafia")
+                .filter((role)=>role!=="godfather" && role!=="mafioso")
+                .forEach((role) => {
+                    out.push(role);
+                }
+            );
             break;
         }
     }
@@ -90,7 +100,7 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
         case "neutralKilling":
             return ["arsonist", "werewolf", "ojo"];
         case "neutralChaos":
-            return ["wildCard", "martyr"];
+            return ["wildcard", "martyr"];
         case "neutralApocalypse":
             return ["death", "doomsayer"];
     }

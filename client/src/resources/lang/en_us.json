@@ -305,6 +305,12 @@
     "role.framer.target": "Frame",
     "role.framer.dayTarget": "Special",
 
+    "role.mafiaWildCard.name": "Mafia Wildcard",
+    "role.mafiaWildCard.name:var.0": "Mafia Wildcards",
+    "role.mafiaWildCard.target": "Target",
+    "role.mafiaWildCard.dayTarget": "Special",
+    "role.mafiaWildCard.smallRoleMenu": "Choose a mafia role to become",
+
     "role.jester.name": "Jester",
     "role.jester.name:var.0": "Jesters",
     "role.jester.target": "Haunt",
@@ -346,11 +352,11 @@
     "role.death.dayTarget": "Special",
     "role.death.roleDataText": "Souls collected: \\0",
 
-    "role.wildCard.name": "WildCard",
-    "role.wildCard.name:var.0": "Amnesiacs",
-    "role.wildCard.target": "Target",
-    "role.wildCard.dayTarget": "Special",
-    "role.wildCard.smallRoleMenu": "Choose a role to become",
+    "role.wildcard.name": "Wildcard",
+    "role.wildcard.name:var.0": "WildCards",
+    "role.wildcard.target": "Target",
+    "role.wildcard.dayTarget": "Special",
+    "role.wildcard.smallRoleMenu": "Choose a role to become",
 
     "role.apostle.name": "Apostle",
     "role.apostle.name:var.0": "Apostles",
@@ -777,7 +783,7 @@
     "wiki.article.standard.evil.title": "Evil",
     "wiki.article.standard.evil.text": "If a role is evil, it means a role is non-town. A psychic can receive evil visions to learn who is not on town. A detective will see someone as suspicious if they are evil or have a suspicious aura.",
     "wiki.article.standard.roleLimit.title": "Role Limit",
-    "wiki.article.standard.roleLimit.text": "A roles limit is the maximum number of that role that can be generated at the start of a regular game. If there is no limit, there can be any number of that role. Because the veteran has a role limit of one, there can not be more than one veteran unless manually forced into the role list or an wildCard becomes one",
+    "wiki.article.standard.roleLimit.text": "A roles limit is the maximum number of that role that can be generated at the start of a regular game. If there is no limit, there can be any number of that role. Because the veteran has a role limit of one, there can not be more than one veteran",
     "wiki.article.standard.douse.title": "Douse",
     "wiki.article.standard.douse.title:var.0": "Douses",
     "wiki.article.standard.douse.title:var.1": "Doused",
@@ -792,7 +798,7 @@
     "wiki.article.standard.appearedVisit.title": "Appeared Visit",
     "wiki.article.standard.appearedVisit.text": "A player could _appear_ to have visited someone, even though they didn't. This is usually caused by evil roles such as Framer.\n\nThis only affects investigative roles.\n\n_Examples_\n\nThe Tracker can see the appeared visit, but not the real visit.\n\nA Veteran doesn't attack a player who appeared to visit them and didn't actually visit them.",
     "wiki.article.standard.roleOutline.title": "Role Outline",
-    "wiki.article.standard.roleOutline.text": "A role outline defines a group of roles.\n\nOutlines can either be a predefined role set, an exact role, or a union of multiple.\n\n_Examples_\n\n\"Any\" It could be any role\n\n\"Neutral\" Could be any possible neutral role.\n\n\"Town Support\" Could be an Escort, Retributionist, Transporter, or Medium\n\n\"Godfather\" Could only be a Godfather.\n\n\"WildCard + Psychic\" Could either be an WildCard or Psychic.\n\n- When roles are generated randomly from a role outline, each possible role is equally likely to generate.\n- Role outlines are used in the outline list to show what roles could be in the game.",
+    "wiki.article.standard.roleOutline.text": "A role outline defines a group of roles.\n\nOutlines can either be a predefined role set, an exact role, or a union of multiple.\n\n_Examples_\n\n\"Any\" It could be any role\n\n\"Neutral\" Could be any possible neutral role.\n\n\"Town Support\" Could be an Escort, Retributionist, Transporter, or Medium\n\n\"Godfather\" Could only be a Godfather.\n\n\"Wildcard + Psychic\" Could either be an Wildcard or Psychic.\n\n- When roles are generated randomly from a role outline, each possible role is equally likely to generate.\n- Role outlines are used in the outline list to show what roles could be in the game.",
     "wiki.article.standard.outlineList.title":"Outline List",
     "wiki.article.standard.outlineList.title:var.0":"Role List",
     "wiki.article.standard.outlineList.title:var.1":"Rolelist",
@@ -890,7 +896,7 @@
     "wiki.article.role.tracker.attributes":"* None",
     "wiki.article.role.tracker.extra": "* Appeared visits can make you get false information, _for example_ a Framer makes their target player appear to visit someone else (See appeared visits)",
 
-    "wiki.article.role.philosopher.guide": "- At night, select two players and learn if they are friends or enemies\n    - If they're friends, it is possible for both of them to win in the same game\n\n_For example_\n- A jester is friends with a detective, because they can both win in the same game\n- A Doctor is enemies with a godfather because they need the other person to loose in order to win\n- A hypnotist is enemies with a disciple because they can't win together\n\n You should tell the town the information you get daily.",
+    "wiki.article.role.philosopher.guide": "- At night, select two players and learn if they are friends or enemies\n    - If they're friends, it is possible for both of them to win in the same game\n\n_For example_\n- A jester is friends with a detective, because they can both win in the same game\n- A Doctor is enemies with a godfather because they need the other person to lose in order to win\n- A hypnotist is enemies with a disciple because they can't win together\n\n You should tell the town the information you get daily.",
     "wiki.article.role.philosopher.abilities":"* Visit two players to learn if they are friends or enemies",
     "wiki.article.role.philosopher.attributes":"* If two players are friends they can win together\n* If two players are enemies they can't win together",
     "wiki.article.role.philosopher.extra": "* Players with a suspicious aura register as enemies with everyone\n* Players with an innocent aura register as friends with everyone",
@@ -930,7 +936,7 @@
     "wiki.article.role.trapper.attributes":"* You can only have one trap set at a time\n* The trap still triggers even if you are roleblocked or dead\n* When your trap is triggered, you will be told which roles visited the trapped player, even if those roles didn't attack the trapped player\n* The trap will still trigger even if nobody attacks the trapped player\n* The trap will only attack players who attacked the trapped player\n* You have an indirect, armor-piercing attack",
     "wiki.article.role.trapper.extra":"* You can set a trap on jailed players\n* You can't trigger your own trap. You don't register yourself in the traps results, nor ever be attacked by your own trap\n* When the player with the trap is attacked, you are told they are attacked, and they are told they are protected",
 
-    "wiki.article.role.escort.guide": "- At night, select a player to roleblock them, stopping them from using their ability\n- Your target is told they were roleblocked\n\n_For example_\n- An escort selects the godfather, so the godfather cant kill anyone, and nobody dies\n\nYou should try to choose evil players, especially the ones with powerful abilities",
+    "wiki.article.role.escort.guide": "- At night, select a player to roleblock them, stopping them from using their ability\n- Your target is told they were roleblocked\n\n_For example_\n- An escort selects the godfather, so the godfather can't kill anyone, and nobody dies\n\nYou should try to choose evil players, especially the ones with powerful abilities",
     "wiki.article.role.escort.abilities":"* Visit a player to roleblock them",
     "wiki.article.role.escort.attributes":"* You can't be roleblocked\n* Your target is told when they are roleblocked, even if they are immune to being roleblocked",
     "wiki.article.role.escort.extra":"* When someone is roleblocked, their visits are wiped, so they don't visit anyone",
@@ -1015,6 +1021,11 @@
     "wiki.article.role.framer.attributes":"",
     "wiki.article.role.framer.extra":"-A suspicious aura will make the player with it look suspicious to a Detective, they can appear as the evil player to a Psychic, and they will be enemies with everyone to a Philosopher\n* You can't select other mafia members for your first target, but you can select any player for your second target, including dead players and other mafia members\n* For more information, see appeared visits",
 
+    "wiki.article.role.mafiaWildCard.guide": "* Choose a mafia role to become that role\n    * You become that role when night starts\n* You can't become a role that has exceeded its role limit",
+    "wiki.article.role.mafiaWildCard.abilities":"* Become a role you choose at the start of night",
+    "wiki.article.role.mafiaWildCard.attributes":"* You can't become a mafioso or godfather\n* You can not become a role that is disabled\n* You can not become a role that is taken by too many players",
+    "wiki.article.role.mafiaWildCard.extra":"* If you choose a role that was disabled you stay as the Mafia Wildcard\n* You can choose Mafia Wildcard to stay as Mafia Wildcard\n* You can't become a role that is at its role limit, for example, you can't become a witch even if there is already one in the game, even if that witch is dead",
+
     "wiki.article.role.jester.guide": "- Get lynched during the day to win\n- After you win by getting lynched, you can attack any living player who voted you guilty or abstained\n\nTry to look evil so people vote you, without making it obvious that you are the Jester.",
     "wiki.article.role.jester.abilities":"* When you are lynched, you win\n* On the night after you are lynched, attack the player you select\n",
     "wiki.article.role.jester.attributes":"* You always have an innocent aura\n* If you select nobody on the night after you are lynched, you will attack a random living player who did not vote you innocent\n* You have a protection-piercing, indirect attack",
@@ -1055,10 +1066,10 @@
     "wiki.article.role.death.attributes":"* Once you've collected six souls, you curse the town. At the start of the next night you win and attack everyone.\n* You have invincible defense once you have six souls\n* You have a protection-piercing attack",
     "wiki.article.role.death.extra":"* You will still passively gain souls in jail",
 
-    "wiki.article.role.wildCard.guide": "* Choose a role to become that role\n    * You become that role when night starts\n* You can choose any outline, so you can get a random role\n* You can't become a role that is disabled",
-    "wiki.article.role.wildCard.abilities":"* Become a random role from the chosen outline at the start of night",
-    "wiki.article.role.wildCard.attributes":"* You can not become a role that is disabled",
-    "wiki.article.role.wildCard.extra":"* If you choose a role that was disabled you stay as the WildCard\n* You can choose wildCard to stay as wildCard\n* You can become a role that is taken, for example, you can become a veteran even if there is already one in the game",
+    "wiki.article.role.wildcard.guide": "* Choose a role to become that role\n    * You become that role when night starts\n* You can't become a role that is disabled or taken by too many players",
+    "wiki.article.role.wildcard.abilities":"* Become a role you choose at the start of night",
+    "wiki.article.role.wildcard.attributes":"* You can not become a role that is disabled\n* You can not become a role that is taken by too many players",
+    "wiki.article.role.wildcard.extra":"* If you choose a role that was disabled you stay as the Wildcard\n* You can choose wildcard to stay as wildcard\n* You can't become a role that is at its role limit, if there is a veteran in the game, you can't become one, even if the veteran is dead",
 
     "wiki.article.role.martyr.guide": "If you die, you win, and everyone commits suicide in an attempt to follow you to the afterlife. The entire town knows that you're the martyr. Good Luck!",
     "wiki.article.role.martyr.abilities":"* Visit yourself to attack yourself and spend one bullet\n* You start with 5 bullets\n* When you die, everyone else commits suicide and you win.",

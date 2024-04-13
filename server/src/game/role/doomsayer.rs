@@ -58,13 +58,13 @@ impl DoomsayerGuess{
             Role::Godfather | Role::Mafioso | 
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::Witch | Role::Necromancer |
-            Role::Janitor | Role::Framer | Role::Forger => Some(DoomsayerGuess::Mafia),
+            Role::Janitor | Role::Framer | Role::Forger | Role::MafiaWildCard => Some(DoomsayerGuess::Mafia),
 
             //Neutral
             Role::Jester | Role::Hater | Role::Politician |
             Role::Arsonist | Role::Werewolf | Role::Ojo |
             Role::Doomsayer | Role::Death |
-            Role::WildCard => Some(DoomsayerGuess::Neutral),
+            Role::Wildcard => Some(DoomsayerGuess::Neutral),
             Role::Martyr => None,
             
             //Cult

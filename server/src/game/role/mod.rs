@@ -71,6 +71,7 @@ macros::roles! {
     Informant: informant,
     Witch : witch,
     Necromancer : necromancer,
+    MafiaWildCard: mafia_wild_card,
 
     Janitor : janitor,
     Framer : framer,
@@ -88,7 +89,7 @@ macros::roles! {
     Werewolf : werewolf,
     Ojo : ojo,
 
-    WildCard : wild_card,
+    Wildcard : wild_card,
     Martyr : martyr,
 
     Apostle : apostle,
@@ -159,7 +160,7 @@ mod macros {
             // This does not need to implement Deserialize or PartialEq!
             // Use Role for those things!
             #[derive(Clone, Debug, Serialize)]
-            #[serde(tag = "role", rename_all = "camelCase")]
+            #[serde(tag = "type", rename_all = "camelCase")]
             pub enum RoleState {
                 $($name($file::$name)),*
             }

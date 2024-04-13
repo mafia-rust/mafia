@@ -1,7 +1,7 @@
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender}, event::on_fast_forward::OnFastForward, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, event::on_fast_forward::OnFastForward, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, role_list::Faction, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
 
@@ -191,10 +191,17 @@ impl Game {
                     sender_player_ref.set_role_state(self, RoleState::Doomsayer(doomsayer));
                 }
             }
-            ToServerPacket::SetAmnesiacRoleOutline { role_outline } => {
-                if let RoleState::WildCard(mut wild_card) = sender_player_ref.role_state(self).clone(){
-                    wild_card.role_outline = role_outline;
-                    sender_player_ref.set_role_state(self, RoleState::WildCard(wild_card));
+            ToServerPacket::SetWildCardRole { role } => {
+                if let RoleState::Wildcard(mut wild_card) = sender_player_ref.role_state(self).clone(){
+                    wild_card.role = role;
+                    sender_player_ref.set_role_state(self, RoleState::Wildcard(wild_card));
+                }else if let RoleState::MafiaWildCard(mut mafia_wild_card) = sender_player_ref.role_state(self).clone(){
+                    if role.faction() == Faction::Mafia {
+                        mafia_wild_card.role = role;
+                        sender_player_ref.set_role_state(self, RoleState::MafiaWildCard(mafia_wild_card));
+                    }else{
+                        sender_player_ref.set_role_state(self, RoleState::MafiaWildCard(mafia_wild_card));
+                    }
                 }
             }
             ToServerPacket::SetJournalistJournal { journal } => {

@@ -60,7 +60,7 @@ pub use mafia_server::game::{
 
         apostle::Apostle,
         martyr::Martyr,
-        wild_card::WildCard
+        wild_card::Wildcard
     }, 
     phase::{
         PhaseState, 

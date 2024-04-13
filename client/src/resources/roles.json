@@ -519,6 +519,16 @@
             {"type": "youWerePossessed", "immune": true}
         ]
     },
+    "mafiaWildCard": {
+        "faction": "mafia",
+        "roleSet": null,
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[]
+    },
     "jester": {
         "faction": "neutral",
         "roleSet": "neutralEvil",
@@ -615,7 +625,7 @@
             {"type": "youSurvivedAttack"}
         ]
     },
-    "wildCard": {
+    "wildcard": {
         "faction": "neutral",
         "roleSet": "neutralChaos",
         "armor": false,

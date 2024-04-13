@@ -3,9 +3,12 @@ import GameState from "../../../../game/gameState.d"
 import GAME_MANAGER from "../../../.."
 import translate from "../../../../game/lang"
 import StyledText from "../../../../components/StyledText"
-import RoleOutlineDropdown from "../../../../components/OutlineSelector"
 import "./smallRoleSpecificMenu.css"
 import SmallOjoMenu from "./SmallOjoMenu"
+import RoleDropdown from "../../../../components/RoleDropdown"
+import ROLES from "../../../../resources/roles.json"
+import { getRolesComplement } from "../../../../game/roleListState.d"
+import { Role } from "../../../../game/roleState.d"
 
 
 
@@ -52,7 +55,7 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
             return null;
 
 
-        switch(this.state.gameState.clientState.roleState?.role){
+        switch(this.state.gameState.clientState.roleState?.type){
             case "jailor":
                 if(this.state.gameState.phaseState.type==="night") {
                     return <StyledText>{translate("role.jailor.roleDataText.night", this.state.gameState.clientState.roleState.executionsRemaining)}</StyledText>;
@@ -98,11 +101,27 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
                 if(this.state.gameState.phaseState.type === "night" && this.state.gameState.clientState.myIndex!==null && this.state.gameState.players[this.state.gameState.clientState.myIndex].alive)
                     return <SmallOjoMenu action={this.state.gameState.clientState.roleState.chosenAction}/>;
                 return null;
-            case "wildCard":
-                return <><StyledText>{translate("role.wildCard.smallRoleMenu")}</StyledText><RoleOutlineDropdown 
-                    roleOutline={this.state.gameState.clientState.roleState.roleOutline ?? {type: "any"}} 
+            case "wildcard":
+                return <><StyledText>{translate("role.wildcard.smallRoleMenu")}</StyledText><RoleDropdown 
+                    value={this.state.gameState.clientState.roleState.role ?? "wildcard"}
+                    disabledRoles={this.state.gameState.excludedRoles} 
                     onChange={(rle)=>{
-                        GAME_MANAGER.sendSetAmnesiacRoleOutline(rle);
+                        GAME_MANAGER.sendSetWildCardRoleOutline(rle);
+                    }}
+                /></>;
+            case "mafiaWildCard":
+                const all_choosable_mafia: Role[] = Object.keys(ROLES).filter((rle)=>
+                    ROLES[rle as keyof typeof ROLES].faction === "mafia" &&
+                    rle !== "godfather" &&
+                    rle !== "mafioso" &&
+                    !this.state.gameState.excludedRoles.includes(rle as Role)
+                ).map((r)=>r as Role);
+
+                return <><StyledText>{translate("role.mafiaWildCard.smallRoleMenu")}</StyledText><RoleDropdown 
+                    value={this.state.gameState.clientState.roleState.role ?? "mafiaWildCard"} 
+                    disabledRoles={getRolesComplement(all_choosable_mafia)}
+                    onChange={(rle)=>{
+                        GAME_MANAGER.sendSetWildCardRoleOutline(rle);
                     }}
                 /></>;
             case "martyr":

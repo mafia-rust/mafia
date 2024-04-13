@@ -125,7 +125,7 @@ impl Game {
 
             let mut roles_to_players_clone = roles_to_players.clone();
             roles_to_players_clone.sort_by(|(_, i), (_,j)| i.cmp(j));
-            let shuffled_roles = roles_to_players_clone.into_iter().map(|(r,_)|r).collect::<Vec<Role>>();
+            let shuffled_roles = roles_to_players_clone.into_iter().map(|(r,_)|r).collect::<Vec<Role>>();            
 
 
             let mut new_players = Vec::new();
@@ -262,11 +262,11 @@ impl Game {
                 .map(|p|p.end_game_condition(self))
                 .collect::<std::collections::HashSet<EndGameCondition>>().into_iter().collect::<Vec<EndGameCondition>>();
 
-        //if there are no teams left and multiple amnesiacs alive then the game is not over
+        //if there are no teams left and multiple wildCards alive then the game is not over
         if
             remaining_teams.is_empty() && 
             PlayerReference::all_players(self)
-                .filter(|p|p.alive(self) && p.role_state(self).role() == role::Role::WildCard)
+                .filter(|p|p.alive(self) && p.role_state(self).role() == role::Role::Wildcard)
                 .count() > 1 
         {
             return false;

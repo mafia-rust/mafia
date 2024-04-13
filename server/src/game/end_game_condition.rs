@@ -19,7 +19,7 @@ impl EndGameCondition {
             Faction::Neutral => match role {
                 Role::Jester | Role::Hater | Role::Politician |
                 Role::Doomsayer | Role::Death |
-                Role::WildCard => EndGameCondition::None,
+                Role::Wildcard => EndGameCondition::None,
                 _ => EndGameCondition::Role(role)
             },
         }
