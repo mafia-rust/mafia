@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 use crate::game::{grave::Grave, role::Role, player::{PlayerIndex, PlayerReference}, verdict::Verdict, Game};
 
-use super::{phase::PhaseState, role::{auditor::AuditorResult, spy::SpyBug, trapper::TrapState}, role_list::RoleOutline};
+use super::{phase::PhaseState, role::{auditor::AuditorResult, spy::SpyBug, engineer::TrapState}, role_list::RoleOutline};
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
@@ -174,8 +174,8 @@ pub enum ChatMessageVariant {
 
     CopAttackedVisitor,
 
-    TrapperVisitorsRole{role: Role},
-    TrapperYouAttackedVisitor,
+    EngineerVisitorsRole{role: Role},
+    EngineerYouAttackedVisitor,
     TrapState{state: TrapState},
 
     Transported,

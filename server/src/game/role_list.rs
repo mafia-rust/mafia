@@ -166,7 +166,7 @@ impl RoleSet{
             RoleSet::TownKilling => 
                 vec![Role::Vigilante, Role::Veteran, Role::Deputy],
             RoleSet::TownProtective => 
-                vec![Role::Bodyguard, Role::Cop, Role::Doctor, Role::Bouncer, Role::Trapper],
+                vec![Role::Bodyguard, Role::Cop, Role::Doctor, Role::Bouncer, Role::Engineer],
             RoleSet::TownInvestigative => 
                 vec![Role::Psychic, Role::Lookout, Role::Detective, Role::Spy, Role::Tracker, Role::Philosopher, Role::Auditor],
             RoleSet::MafiaSupport => 

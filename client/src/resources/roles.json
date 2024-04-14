@@ -176,7 +176,7 @@
             {"type": "roleBlocked","immune": true}
         ]
     },
-    "trapper": {
+    "engineer": {
         "faction": "town",
         "roleSet": "townProtective",
         "armor": false,
@@ -187,8 +187,8 @@
         "chatMessages":[
             {"type": "trapState", "state":{"type":"dismantled"}},
             {"type": "trapState", "state":{"type":"set"}},
-            {"type": "trapperYouAttackedVisitor"},
-            {"type": "trapperVisitorsRole", "role": "framer"},
+            {"type": "engineerYouAttackedVisitor"},
+            {"type": "engineerVisitorsRole", "role": "framer"},
             {"type": "targetWasAttacked"},
             {"type": "youWereProtected"},
             {"type": "someoneSurvivedYourAttack"},

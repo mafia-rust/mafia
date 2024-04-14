@@ -42,7 +42,7 @@ export type RoleState = {
 } | {
     type: "bouncer"
 } | {
-    type: "trapper"
+    type: "engineer"
 } | {
     type: "vigilante",
     state: {type:"notLoaded"} | {type:"willSuicide"} | {type:"loaded",bullets:number} | {type:"suicided"}

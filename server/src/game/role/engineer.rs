@@ -11,7 +11,7 @@ use super::{Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Default, Clone, Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct Trapper {
+pub struct Engineer {
     trap: Trap
 }
 #[derive(Default, Clone, Serialize, Debug)]
@@ -39,7 +39,7 @@ pub enum TrapState {
     Set
 }
 
-//trapper prioritys
+//engineer prioritys
 
 //protect, kill & investigate
 //Set trap
@@ -48,7 +48,7 @@ pub enum TrapState {
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
-impl RoleStateImpl for Trapper {
+impl RoleStateImpl for Engineer {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
     
 
@@ -64,8 +64,8 @@ impl RoleStateImpl for Trapper {
                 if let Trap::Set { target } = self.trap {
                     for attacker in PlayerReference::all_players(game) {
                         if attacker.night_visits(game).iter().any(|visit| visit.target == target && visit.attack){
-                            attacker.try_night_kill(actor_ref, game, crate::game::grave::GraveKiller::Role(Role::Trapper), 2, false);
-                            actor_ref.push_night_message(game, ChatMessageVariant::TrapperYouAttackedVisitor);
+                            attacker.try_night_kill(actor_ref, game, crate::game::grave::GraveKiller::Role(Role::Engineer), 2, false);
+                            actor_ref.push_night_message(game, ChatMessageVariant::EngineerYouAttackedVisitor);
                         }
                     }
                 }
@@ -80,7 +80,7 @@ impl RoleStateImpl for Trapper {
 
                     for visitor in PlayerReference::all_players(game) {
                         if visitor.night_visits(game).iter().any(|visit|visit.target == target){
-                            actor_ref.push_night_message(game, ChatMessageVariant::TrapperVisitorsRole { role: visitor.role(game) });
+                            actor_ref.push_night_message(game, ChatMessageVariant::EngineerVisitorsRole { role: visitor.role(game) });
                         }
                     }
                 }
@@ -103,13 +103,13 @@ impl RoleStateImpl for Trapper {
                     caught_role ||
                     actor_ref.night_visits(game).iter().any(|visit| visit.target == actor_ref)
                 {
-                    actor_ref.set_role_state(game, RoleState::Trapper(Trapper {trap: Trap::Dismantled}));
+                    actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Dismantled}));
                 }else
                 //set trap
                 if let Some(visit) = actor_ref.night_visits(game).first(){
                     
                     if self.trap.is_dismantled(){
-                        actor_ref.set_role_state(game, RoleState::Trapper(Trapper {trap: Trap::Set{target: visit.target}}));
+                        actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Set{target: visit.target}}));
                     }
                 }
                 
