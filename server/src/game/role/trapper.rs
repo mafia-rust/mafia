@@ -83,13 +83,15 @@ impl RoleStateImpl for Trapper {
                     }
                 }
 
+                let RoleState::Trapper(trapper) = actor_ref.role_state(game).clone() else { unreachable!() };
+
                 //build trap
-                if self.trap.is_dismantled() && !actor_ref.night_roleblocked(game){
+                if trapper.trap.is_dismantled() && !actor_ref.night_roleblocked(game){
                     actor_ref.set_role_state(game, RoleState::Trapper(Trapper {trap: Trap::Ready}));
                 }
 
                 //use trap
-                if let Trap::Set { target } = self.trap {
+                if let Trap::Set { target } = trapper.trap {
                     target.increase_defense_to(game, 2);
                 }
             }

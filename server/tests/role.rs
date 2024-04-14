@@ -3,7 +3,7 @@ use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::role::bouncer::Bouncer;
+use mafia_server::game::role::{bouncer::Bouncer, trapper::Trapper, zealot::Zealot};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
@@ -1273,10 +1273,45 @@ fn ojo_transporter(){
 
     assert_contains!(
         ojo.get_messages(),
-        ChatMessageVariant::OjoResult{role:Role::Detective, player: player2.index() }
+        ChatMessageVariant::OjoResult{players: vec![player2.index(), player3.index()] }
     );
-    assert_contains!(
-        ojo.get_messages(),
-        ChatMessageVariant::OjoResult{role:Role::Philosopher, player: player3.index() }
-    );   
+}
+
+#[test]
+fn apostle_converting_trapped_player_day_later(){
+    kit::scenario!(game in Night 2 where
+        apostle: Apostle,
+        _zealot: Zealot,
+        trapped: Detective,
+        trapper: Trapper
+    );
+
+
+    assert!(trapper.set_night_target(trapped));
+
+    game.skip_to(PhaseType::Night, 3);
+
+    assert!(apostle.set_night_target(trapped));
+
+    game.next_phase();
+
+    assert!(trapped.role_state().role() == Role::Detective);
+}
+
+#[test]
+fn apostle_converting_trapped_player_same_day(){
+    kit::scenario!(game in Night 2 where
+        apostle: Apostle,
+        _zealot: Zealot,
+        trapped: Detective,
+        trapper: Trapper
+    );
+
+
+    assert!(trapper.set_night_target(trapped));
+    assert!(apostle.set_night_target(trapped));
+
+    game.next_phase();
+
+    assert!(trapped.role_state().role() == Role::Detective);
 }
