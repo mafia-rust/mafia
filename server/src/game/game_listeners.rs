@@ -61,9 +61,7 @@ impl Game{
     }
     pub fn on_role_switch(&mut self, actor: PlayerReference, old: Role, new: Role){
 
-        if old == new {
-            return;
-        }
+        if old == new {return;}
 
         for player_ref in PlayerReference::all_players(self){
             player_ref.remove_role_label(self, actor);
