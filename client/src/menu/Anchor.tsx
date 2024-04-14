@@ -329,11 +329,11 @@ export function chatMessageToAudio(msg: ChatMessage): AudioFilePath | null {
             file = "church_bell.mp3";
             break;
         case "phaseChange":
-            if(msg.variant.phase.type === "testimony") 
-                file = "alarm.mp3";
-            else if(msg.variant.phase.type === "night")
-                file = "vine_boom.mp3";
-            break;
+            // if(msg.variant.phase.type === "testimony") 
+            //     file = "alarm.mp3";
+            // else if(msg.variant.phase.type === "night")
+            //     file = "vine_boom.mp3";
+            // break;
         case "deputyKilled": 
             file = "sniper_shot.mp3";
             break;
