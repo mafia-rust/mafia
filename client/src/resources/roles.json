@@ -497,6 +497,7 @@
             {"type": "targetsMessage", "message": 
                 {"type": "sheriffResult","suspicious":true}
             },
+            {"type": "possessionTargetsRole", "role":"detective"},
             {"type": "targetIsPossessionImmune"},
             {"type": "youWerePossessed", "immune": false},
             {"type": "youWerePossessed", "immune": true}
@@ -676,6 +677,24 @@
         "chatMessages":[
             {"type": "doomsayerWon"},
             {"type": "doomsayerFailed"}
+        ]
+    },
+    "minion":{
+        "faction": "neutral",
+        "roleSet": null,
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "targetsMessage", "message": 
+                {"type": "sheriffResult","suspicious":true}
+            },
+            {"type": "possessionTargetsRole", "role":"detective"},
+            {"type": "targetIsPossessionImmune"},
+            {"type": "youWerePossessed", "immune": false},
+            {"type": "youWerePossessed", "immune": true}
         ]
     },
     "apostle": {

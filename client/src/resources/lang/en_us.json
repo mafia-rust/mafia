@@ -325,6 +325,11 @@
     "role.doomsayer.name:var.0": "Doomsayers",
     "role.doomsayer.target": "Target",
     "role.doomsayer.dayTarget": "Special",
+    
+    "role.minion.name": "Minion",
+    "role.minion.name:var.0": "Minions",
+    "role.minion.target": "Target",
+    "role.minion.dayTarget": "Special",
 
     "role.politician.name": "Politician",
     "role.politician.name:var.0": "Politicians",
@@ -617,6 +622,7 @@
     "chatMessage.targetsMessage":"Your target got the following message:",
     "chatMessage.youWerePossessed":"You were possessed.",
     "chatMessage.youWerePossessed.immune":"Someone tried to possess you but you are immune.",
+    "chatMessage.possessionTargetsRole":"Your target has the role \\0.",
     "chatMessage.targetIsPossessionImmune":"Your target was immune to possession.",
     "chatMessage.werewolfTrackingResult":"\\0 visited \\1.",
     "chatMessage.werewolfTrackingResult.nobody":"\\0 visited nobody.",
@@ -1040,6 +1046,11 @@
     "wiki.article.role.doomsayer.abilities":"* Use the Doomsayer menu to guess the role of three different living players in one night, attacking them and winning",
     "wiki.article.role.doomsayer.attributes":"* When you win, you leave town at the start of the next obituary\n* You have to guess the exact role of townies, but you only need to guess the faction of all other roles\n* You can't try to guess town investigative roles\n* When there are not enough players left for you to guess, you convert to a jester\n* You have an indirect, protection-piercing attack",
     "wiki.article.role.doomsayer.extra":"* Your three guesses must be three different players\n* You will still win, even if the players you guessed correctly don't die\n* You do not visit when you attack\n* You can't try to guess a martyr",
+
+    "wiki.article.role.minion.guide": "",
+    "wiki.article.role.minion.abilities":"",
+    "wiki.article.role.minion.attributes":"",
+    "wiki.article.role.minion.extra":"",
 
     "wiki.article.role.politician.guide":"* If the town would win, instead you win and they all die. Try to help to the town to win while staying alive.",
     "wiki.article.role.politician.abilities": "* When town would win, you win, instantly attack ever townie, and all politicians leave town",
