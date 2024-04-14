@@ -26,8 +26,8 @@ impl Mafia{
             Mafia::ensure_mafia_can_kill(game);
         }
     }
-    pub fn on_role_switch(self, game: &mut Game, actor: PlayerReference) {
-        if actor.role(game).faction() == Faction::Mafia {
+    pub fn on_role_switch(self, game: &mut Game, old: Role, new: Role) {
+        if old.faction() == Faction::Mafia || new.faction() == Faction::Mafia {
             Mafia::ensure_mafia_can_kill(game);
         }
 

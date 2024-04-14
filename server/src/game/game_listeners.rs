@@ -1,27 +1,11 @@
 use crate::packet::ToClientPacket;
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant}, grave::Grave, phase::PhaseType, player::PlayerReference, spectator::spectator_pointer::SpectatorPointer, Game, GameOverReason
+    chat::{ChatGroup, ChatMessageVariant}, grave::Grave, phase::PhaseType, player::PlayerReference, role::Role, Game, GameOverReason
 };
 
 //Event listerner functions for game defined here
 impl Game{
-    pub fn on_game_starting(&mut self){
-        self.send_packet_to_all(ToClientPacket::StartGame);
-        
-        //on role creation needs to be called after all players roles are known
-        for player_ref in PlayerReference::all_players(self){
-            let role_data_copy = player_ref.role_state(self).clone();
-            player_ref.set_role(self, role_data_copy);
-        }
-
-        for player_ref in PlayerReference::all_players(&self){
-            player_ref.send_join_game_data(self);
-        }
-        for spectator in SpectatorPointer::all_spectators(self){
-            spectator.send_join_game_data(self);
-        }
-    }
     pub fn on_phase_start(&mut self, _phase: PhaseType){
         self.send_packet_to_all(ToClientPacket::Phase { 
             phase: self.current_phase().clone(),
@@ -75,7 +59,12 @@ impl Game{
             other_player_ref.remove_role_label(self, grave.player);
         }
     }
-    pub fn on_role_switch(&mut self, actor: PlayerReference){
+    pub fn on_role_switch(&mut self, actor: PlayerReference, old: Role, new: Role){
+
+        if old == new {
+            return;
+        }
+
         for player_ref in PlayerReference::all_players(self){
             player_ref.remove_role_label(self, actor);
         }

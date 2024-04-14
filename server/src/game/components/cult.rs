@@ -1,4 +1,4 @@
-use crate::game::{chat::{ChatGroup, ChatMessageVariant}, phase::PhaseType, player::PlayerReference, role::{apostle::Apostle, disciple::Disciple, zealot::Zealot, RoleState}, role_list::Faction, Game};
+use crate::game::{chat::{ChatGroup, ChatMessageVariant}, phase::PhaseType, player::PlayerReference, role::{apostle::Apostle, disciple::Disciple, zealot::Zealot, Role, RoleState}, role_list::Faction, Game};
 
 
 impl Game {
@@ -38,8 +38,8 @@ impl Cult{
 
         Cult::set_ordered_cultists(self.clone(), game);
     }
-    pub fn on_role_switch(self, game: &mut Game, actor: PlayerReference) {
-        if actor.role(game).faction() == Faction::Cult {
+    pub fn on_role_switch(self, game: &mut Game, old: Role, new: Role) {
+        if old.faction() == Faction::Cult || new.faction() == Faction::Cult {
             Cult::set_ordered_cultists(self.clone(), game);
         }
 

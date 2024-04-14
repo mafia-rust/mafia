@@ -67,13 +67,15 @@ impl PlayerReference{
     /// Swaps this persons role, sends them the role chat message, and makes associated changes
     pub fn set_role(&self, game: &mut Game, new_role_data: RoleState){
 
+        let old: Role = self.role(game);
+
         self.set_role_state(game, new_role_data.clone());
         self.on_role_creation(game);
         if new_role_data.role() == self.role(game) {
             self.add_private_chat_message(game, ChatMessageVariant::RoleAssignment{role: self.role(game)});
         }
 
-        OnRoleSwitch::new(*self).invoke(game);
+        OnRoleSwitch::new(*self, old, self.role(game)).invoke(game);
     }
     pub fn increase_defense_to(&self, game: &mut Game, defense: u8){
         if self.night_defense(game) < defense {
