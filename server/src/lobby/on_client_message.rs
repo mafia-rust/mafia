@@ -241,9 +241,11 @@ impl Lobby {
                     if !player.host {return}
                 }
 
-                settings.role_list = role_list.clone();
+                settings.role_list = role_list;
                 Lobby::set_rolelist_length(settings, clients);
                 
+                let role_list = settings.role_list.clone();
+
                 self.send_to_all(ToClientPacket::RoleList { role_list });
             }
             ToServerPacket::SetRoleOutline { index, role_outline } => {

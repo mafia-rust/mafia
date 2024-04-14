@@ -45,7 +45,7 @@ async function route(url: Location) {
             await GAME_MANAGER.setDisconnectedState();
             Anchor.setContent(<StartMenu/>)
         }
-    } else if (reconnectData) {        
+    } else if (reconnectData) {
         await GAME_MANAGER.setOutsideLobbyState();
 
         const success = await GAME_MANAGER.sendRejoinPacket(reconnectData.roomCode, reconnectData.playerId);
