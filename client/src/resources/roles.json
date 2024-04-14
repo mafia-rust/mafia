@@ -186,7 +186,6 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "trapState", "state":{"type":"dismantled"}},
-            {"type": "trapState", "state":{"type":"ready"}},
             {"type": "trapState", "state":{"type":"set"}},
             {"type": "trapperYouAttackedVisitor"},
             {"type": "trapperVisitorsRole", "role": "framer"},
@@ -528,7 +527,9 @@
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
-        "chatMessages":[]
+        "chatMessages":[
+            {"type": "roleAssignment", "role":"mafiaWildCard"}
+        ]
     },
     "jester": {
         "faction": "neutral",
@@ -632,7 +633,9 @@
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
-        "chatMessages":[]
+        "chatMessages":[
+            {"type": "roleAssignment", "role":"wildcard"}
+        ]
     },
     "martyr": {
         "faction": "neutral",
