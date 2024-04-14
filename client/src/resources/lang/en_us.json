@@ -22,10 +22,12 @@
     "menu.lobby.players": "Players",
     "menu.lobby.roleList": "Outline List",
     "menu.lobby.excludedRoles": "Disabled Roles",
+    "menu.lobby.gameModes": "Game Modes",
     "menu.lobby.timeSettings": "Phase Times",
     "menu.lobby.settings": "Settings:",
 
     "importFromClipboard": "Import from clipboard",
+    "copyToClipboard": "Copy to clipboard",
     "switchToSpectator": "Spectate",
     "switchToPlayer": "Play",
 

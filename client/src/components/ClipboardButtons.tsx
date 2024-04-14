@@ -20,7 +20,8 @@ function reconcileCopyProps(props: CopyButtonProps): ButtonProps<CopyButtonResul
 
 export function CopyButton(props: CopyButtonProps): ReactElement {
     let pressedChildren = props.pressedChildren;
-    if (pressedChildren === undefined && isValidElement(props.children) && props.children.type === Icon) {
+    const children = props.children ?? <Icon>content_copy</Icon>;
+    if (pressedChildren === undefined && isValidElement(children) && children.type === Icon) {
         pressedChildren = success => success ? <Icon>done</Icon> : <Icon>warning</Icon>;
     }
 
@@ -29,7 +30,7 @@ export function CopyButton(props: CopyButtonProps): ReactElement {
         pressedText={success => translate("notification.clipboard.write." + (success ? "success" : "failure"))}
         pressedChildren={pressedChildren}
     >
-        {props.children ?? <Icon>content_copy</Icon>}
+        {children ?? <Icon>content_copy</Icon>}
     </Button>
 }
 
@@ -52,7 +53,8 @@ function reconcilePasteProps<H>(props: PasteButtonProps<H>): ButtonProps<PasteBu
 
 export function PasteButton<H>(props: PasteButtonProps<H>): ReactElement {
     let pressedChildren = props.pressedChildren;
-    if (pressedChildren === undefined && isValidElement(props.children) && props.children.type === Icon) {
+    const children = props.children ?? <Icon>paste</Icon>;
+    if (pressedChildren === undefined && isValidElement(children) && children.type === Icon) {
         pressedChildren = success => success === "success" ? <Icon>done</Icon> : <Icon>warning</Icon>;
     }
     
@@ -77,7 +79,7 @@ export function PasteButton<H>(props: PasteButtonProps<H>): ReactElement {
         }}
         pressedChildren={pressedChildren}
     >
-        {props.children ?? <Icon>paste</Icon>}
+        {children}
     </Button>
 }
 

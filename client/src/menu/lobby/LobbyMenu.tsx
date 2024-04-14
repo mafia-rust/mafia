@@ -6,17 +6,17 @@ import translate from "../../game/lang";
 import { StateListener } from "../../game/gameManager.d";
 import Anchor from "../Anchor";
 import { RoomLinkButton } from "../Settings";
-import { getRolesFromRoleListRemoveExclusionsAddConversions, getRolesComplement, RoleOutline } from "../../game/roleListState.d";
+import { getRolesFromRoleListRemoveExclusionsAddConversions, getRolesComplement, RoleOutline, RoleList } from "../../game/roleListState.d";
 import LoadingScreen from "../LoadingScreen";
 import StartMenu from "../main/StartMenu";
 import Wiki from "../../components/Wiki";
 import { defaultPhaseTimes } from "../../game/gameState";
-import { PasteButton } from "../../components/ClipboardButtons";
 import { GameModeContext } from "../../components/GameModesEditor";
 import PhaseTimesSelector from "../../components/PhaseTimeSelector";
 import { OutlineListSelector } from "../../components/OutlineSelector";
 import DisabledRoleSelector from "../../components/DisabledRoleSelector";
 import Icon from "../../components/Icon";
+import { GameModeSelector } from "../../components/GameModeSelector";
 
 export default function LobbyMenu(): ReactElement {
     const [roleList, setRoleList] = useState(
@@ -76,6 +76,14 @@ export default function LobbyMenu(): ReactElement {
         GAME_MANAGER.sendSetRoleOutlinePacket(index, value);
     }
 
+    const sendRoleList = (newRoleList: RoleList) => {
+        const combinedRoleList = [...roleList];
+        newRoleList.forEach((role, index) => {
+            combinedRoleList[index] = role
+        })
+        GAME_MANAGER.sendSetRoleListPacket(combinedRoleList);
+    };
+
     return <div className="lm">
         <LobbyMenuHeader/>
         <GameModeContext.Provider value={{roleList, disabledRoles, phaseTimes}}>
@@ -91,23 +99,12 @@ export default function LobbyMenu(): ReactElement {
                 </div>
                 <div>
                     {Anchor.isMobile() && <h1>{translate("menu.lobby.settings")}</h1>}
-                    <PasteButton 
-                        className="player-list-menu-colors" 
-                        disabled={!GAME_MANAGER.getMyHost() ?? false}
-                        onClipboardRead={text => {
-                            try {
-                                const data = JSON.parse(text);
-
-                                GAME_MANAGER.sendExcludedRolesPacket(data.disabledRoles ?? []);
-                                GAME_MANAGER.sendSetRoleListPacket(data.roleList ?? []);
-                                GAME_MANAGER.sendSetPhaseTimesPacket(data.phaseTimes ?? defaultPhaseTimes());
-                                return "success"
-                            } catch (e) {
-                                return "invalidData"
-                            }
-                        }}
-                        failureText={() => translate("notification.importGameMode.failure")}
-                    ><Icon>content_paste</Icon> {translate("importFromClipboard")}</PasteButton>
+                    {isHost && <GameModeSelector 
+                        canModifySavedGameModes={false}
+                        setPhaseTimes={pts => GAME_MANAGER.sendSetPhaseTimesPacket(pts)}
+                        setDisabledRoles={roles => GAME_MANAGER.sendExcludedRolesPacket(roles)}
+                        setRoleList={sendRoleList}
+                    />}
                     <PhaseTimesSelector 
                         disabled={!isHost}
                         onChange={pts => GAME_MANAGER.sendSetPhaseTimesPacket(pts)}
@@ -117,13 +114,7 @@ export default function LobbyMenu(): ReactElement {
                         onChangeRolePicker={onChangeRolePicker}
                         onAddNewOutline={undefined}
                         onRemoveOutline={undefined}
-                        setRoleList={newRoleList => {
-                            const combinedRoleList = [...roleList];
-                            newRoleList.forEach((role, index) => {
-                                combinedRoleList[index] = role
-                            })
-                            setRoleList(combinedRoleList)
-                        }}
+                        setRoleList={sendRoleList}
                     />
                     <DisabledRoleSelector
                         onDisableRoles={roles => GAME_MANAGER.sendExcludedRolesPacket([...disabledRoles, ...roles])}

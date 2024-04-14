@@ -155,6 +155,10 @@ code, .code {
     background: #a1a1a1;
 }
 
+.chat-menu-colors {
+    --background-color: #151f2e;
+}
+
 .player-list-menu-colors {
     --background-color: #14271e;
     --primary-color: #0c1a0c;
