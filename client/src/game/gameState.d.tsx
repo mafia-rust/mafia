@@ -3,7 +3,6 @@ import { ChatMessage } from "../components/ChatMessage";
 import { Role, RoleState } from "./roleState.d";
 import { RoleList } from "./roleListState.d";
 import { LobbyPreviewData } from "./packet";
-import GAME_MANAGER from "..";
 
 
 export type State = Disconnected | OutsideLobbyState | LobbyState | GameState;
