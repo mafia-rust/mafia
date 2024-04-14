@@ -622,6 +622,7 @@
     "chatMessage.werewolfTrackingResult.nobody":"\\0 visited nobody.",
     "chatMessage.veteranAttackedYou":"You were attacked by a veteran you visited.",
     "chatMessage.veteranAttackedVisitor":"You attacked a visitor.",
+    "chatMessage.copAttackedVisitor":"You attacked a player who visited your target.",
     "chatMessage.trapperYouAttackedVisitor": "Your trap attacked someone!",
     "chatMessage.trapperVisitorsRole": "A \\0 visited the trapped player.",
     "chatMessage.trapState.dismantled": "Your trap is currently dismantled.",

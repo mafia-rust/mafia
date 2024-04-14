@@ -65,6 +65,7 @@
     "cultSacrificesRequired.1": "special",
     "cultSacrificesRequired.0": "special",
     "transported": "result",
+    "copAttackedVisitor": "result",
     "veteranAttackedVisitor": "result",
     "veteranAttackedYou": "result",
     "trapperVisitorsRole": "result",

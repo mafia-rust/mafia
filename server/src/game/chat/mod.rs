@@ -172,6 +172,8 @@ pub enum ChatMessageVariant {
     VeteranAttackedYou,
     VeteranAttackedVisitor,
 
+    CopAttackedVisitor,
+
     TrapperVisitorsRole{role: Role},
     TrapperYouAttackedVisitor,
     TrapState{state: TrapState},
