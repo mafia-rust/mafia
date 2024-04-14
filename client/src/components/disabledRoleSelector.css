@@ -4,4 +4,5 @@
 }
 .disabled-role-selector-area > select {
     flex-grow: 1;
+    width: 5rem;
 }
