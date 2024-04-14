@@ -59,7 +59,7 @@ impl RoleStateImpl for Apostle {
                 if target_ref.night_defense(game) > 0 {
                     actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
                     return
-                }                
+                }
 
                 target_ref.set_role(game, RoleState::Zealot(Zealot));
 
