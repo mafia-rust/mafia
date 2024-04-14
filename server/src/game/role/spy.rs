@@ -63,7 +63,7 @@ impl RoleStateImpl for Spy {
                     }
                 };
             },
-            Priority::SpyCultistCount => {
+            Priority::FinalPriority => {
                 actor_ref.push_night_message(game, ChatMessageVariant::SpyCultistCount { count: 
                     PlayerReference::all_players(game).filter(|p|
                         p.role(game).faction() == Faction::Cult && p.alive(game)
