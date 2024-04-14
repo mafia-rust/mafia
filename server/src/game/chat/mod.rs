@@ -172,6 +172,8 @@ pub enum ChatMessageVariant {
     VeteranAttackedYou,
     VeteranAttackedVisitor,
 
+    CopAttackedVisitor,
+
     TrapperVisitorsRole{role: Role},
     TrapperYouAttackedVisitor,
     TrapState{state: TrapState},
@@ -189,6 +191,8 @@ pub enum ChatMessageVariant {
     PlayerRoleAndWill { role: Role, will: String },
     #[serde(rename_all = "camelCase")]
     ConsigliereResult{ role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
+    #[serde(rename_all = "camelCase")]
+    OjoResult{players: Vec<PlayerIndex>},
 
     TargetIsPossessionImmune,
     YouWerePossessed { immune: bool },

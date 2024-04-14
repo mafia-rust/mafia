@@ -344,6 +344,14 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                     ? translate("chatMessage.consigliereResult.visitedBy.nobody") 
                     : translate("chatMessage.consigliereResult.visitedBy", playerListToString(message.visitedBy, playerNames))
             );
+        case "ojoResult":
+            if(message.players.length === 0 || message.players === undefined){
+                return translate("chatMessage.ojoResult.nobody");
+            }
+
+            return translate("chatMessage.ojoResult",
+                message.players.map((playerIndex) => {return playerNames![playerIndex]}).join(", ")
+            );
         case "silenced":
             return translate("chatMessage.silenced");
         case "mediumHauntStarted":
@@ -399,6 +407,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "targetsMessage":
         case "psychicFailed":
         case "phaseFastForwarded":
+        case "copAttackedVisitor":
             return translate("chatMessage."+message.type);
         case "playerDied":
         default:
@@ -565,6 +574,8 @@ export type ChatMessageVariant = {
     roleOutline: RoleOutline,
     result: AuditorResult,
 } | {
+    type: "copAttackedVisitor"
+} | {
     type: "veteranAttackedYou"
 } | {
     type: "veteranAttackedVisitor"
@@ -605,6 +616,9 @@ export type ChatMessageVariant = {
     role: Role,
     visitedBy: PlayerIndex[],
     visited: PlayerIndex[]
+} | {
+    type: "ojoResult",
+    players: PlayerIndex[]
 } | {
     type: "targetIsPossessionImmune"
 } | {

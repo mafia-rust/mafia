@@ -20,7 +20,7 @@ export default class LargeJournalistMenu extends React.Component<LargeJournalist
         if(
             GAME_MANAGER.state.stateType === "game" && 
             GAME_MANAGER.state.clientState.type === "player" &&
-            GAME_MANAGER.state.clientState.roleState?.role === "journalist"
+            GAME_MANAGER.state.clientState.roleState?.type === "journalist"
         )
             this.state = {
                 syncedPublic: GAME_MANAGER.state.clientState.roleState?.public,
@@ -32,7 +32,7 @@ export default class LargeJournalistMenu extends React.Component<LargeJournalist
                 GAME_MANAGER.state.stateType === "game" &&
                 GAME_MANAGER.state.clientState.type === "player"
             ){
-                if(GAME_MANAGER.state.clientState.roleState?.role === "journalist"){
+                if(GAME_MANAGER.state.clientState.roleState?.type === "journalist"){
                     this.setState({
                         syncedJournal: GAME_MANAGER.state.clientState.roleState.journal,
                         syncedPublic: GAME_MANAGER.state.clientState.roleState.public,

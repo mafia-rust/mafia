@@ -5,11 +5,22 @@ import "./largeConsortMenu.css"
 import ChatElement from "../../../../components/ChatMessage"
 import Icon from "../../../../components/Icon"
 
+export type Hypnotist = {
+    roleblock: boolean,
+    
+    youWereRoleblockedMessage: boolean,
+    youSurvivedAttackMessage: boolean,
+    youWereProtectedMessage: boolean,
+    youWereTransportedMessage: boolean,
+    youWerePossessedMessage: boolean,
+    yourTargetWasJailedMessage: boolean
+}
+
 type LargeConsortMenuProps = {
 }
 type LargeConsortMenuState = {
     roleblock: boolean,
-
+    
     youWereRoleblockedMessage: boolean,
     youSurvivedAttackMessage: boolean,
     youWereProtectedMessage: boolean,
@@ -22,28 +33,28 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
     constructor(props: LargeConsortMenuState) {
         super(props);
 
-        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.roleState?.role === "consort")
+        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.roleState?.type === "hypnotist")
             this.state = {
                 roleblock: GAME_MANAGER.state.clientState.roleState?.roleblock,
                 
-                youWereRoleblockedMessage: GAME_MANAGER.state.clientState.roleState?.youWereRoleblockedMessage === undefined || GAME_MANAGER.state.clientState.roleState?.youWereRoleblockedMessage === null ? false : GAME_MANAGER.state.clientState.roleState?.youWereRoleblockedMessage,
-                youSurvivedAttackMessage: GAME_MANAGER.state.clientState.roleState?.youSurvivedAttackMessage === undefined || GAME_MANAGER.state.clientState.roleState?.youSurvivedAttackMessage === null ? false : GAME_MANAGER.state.clientState.roleState?.youSurvivedAttackMessage,
-                youWereProtectedMessage: GAME_MANAGER.state.clientState.roleState?.youWereProtectedMessage === undefined || GAME_MANAGER.state.clientState.roleState?.youWereProtectedMessage === null ? false : GAME_MANAGER.state.clientState.roleState?.youWereProtectedMessage,
-                youWereTransportedMessage: GAME_MANAGER.state.clientState.roleState?.youWereTransportedMessage === undefined || GAME_MANAGER.state.clientState.roleState?.youWereTransportedMessage === null ? false : GAME_MANAGER.state.clientState.roleState?.youWereTransportedMessage,
-                youWerePossessedMessage: GAME_MANAGER.state.clientState.roleState?.youWerePossessedMessage === undefined || GAME_MANAGER.state.clientState.roleState?.youWerePossessedMessage === null ? false : GAME_MANAGER.state.clientState.roleState?.youWerePossessedMessage,
-                yourTargetWasJailedMessage: GAME_MANAGER.state.clientState.roleState?.yourTargetWasJailedMessage === undefined || GAME_MANAGER.state.clientState.roleState?.yourTargetWasJailedMessage === null ? false : GAME_MANAGER.state.clientState.roleState?.yourTargetWasJailedMessage
+                youWereRoleblockedMessage: GAME_MANAGER.state.clientState.roleState?.youWereRoleblockedMessage?? false,
+                youSurvivedAttackMessage: GAME_MANAGER.state.clientState.roleState?.youSurvivedAttackMessage?? false,
+                youWereProtectedMessage: GAME_MANAGER.state.clientState.roleState?.youWereProtectedMessage?? false,
+                youWereTransportedMessage: GAME_MANAGER.state.clientState.roleState?.youWereTransportedMessage?? false,
+                youWerePossessedMessage: GAME_MANAGER.state.clientState.roleState?.youWerePossessedMessage?? false,
+                yourTargetWasJailedMessage: GAME_MANAGER.state.clientState.roleState?.yourTargetWasJailedMessage?? false
             };
         this.listener = ()=>{
-            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.roleState?.role === "consort"){
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.roleState?.type === "hypnotist"){
                 this.setState({
-                    roleblock: GAME_MANAGER.state.clientState.roleState.roleblock,
-            
-                    youWereRoleblockedMessage: GAME_MANAGER.state.clientState.roleState.youWereRoleblockedMessage,
-                    youSurvivedAttackMessage: GAME_MANAGER.state.clientState.roleState.youSurvivedAttackMessage,
-                    youWereProtectedMessage: GAME_MANAGER.state.clientState.roleState.youWereProtectedMessage,
-                    youWereTransportedMessage: GAME_MANAGER.state.clientState.roleState.youWereTransportedMessage,
-                    youWerePossessedMessage: GAME_MANAGER.state.clientState.roleState.youWerePossessedMessage,
-                    yourTargetWasJailedMessage: GAME_MANAGER.state.clientState.roleState.yourTargetWasJailedMessage
+                    roleblock: GAME_MANAGER.state.clientState.roleState?.roleblock,
+                
+                    youWereRoleblockedMessage: GAME_MANAGER.state.clientState.roleState?.youWereRoleblockedMessage?? false,
+                    youSurvivedAttackMessage: GAME_MANAGER.state.clientState.roleState?.youSurvivedAttackMessage?? false,
+                    youWereProtectedMessage: GAME_MANAGER.state.clientState.roleState?.youWereProtectedMessage?? false,
+                    youWereTransportedMessage: GAME_MANAGER.state.clientState.roleState?.youWereTransportedMessage?? false,
+                    youWerePossessedMessage: GAME_MANAGER.state.clientState.roleState?.youWerePossessedMessage?? false,
+                    yourTargetWasJailedMessage: GAME_MANAGER.state.clientState.roleState?.yourTargetWasJailedMessage?? false
                 })
             }
         };  
@@ -135,7 +146,7 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
 
 
     render(){
-        return <div className="large-consort-menu">
+        return <div className="large-hypnotist-menu">
             <div>
                 
                 {translate("wiki.article.standard.roleblock.title")}

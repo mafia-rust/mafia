@@ -24,7 +24,7 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
         if(
             GAME_MANAGER.state.stateType === "game" && 
             GAME_MANAGER.state.clientState.type === "player" && 
-            GAME_MANAGER.state.clientState.roleState?.role === "forger"
+            GAME_MANAGER.state.clientState.roleState?.type === "forger"
         )
             this.state = {
                 localRole: GAME_MANAGER.state.clientState.roleState?.fakeRole,
@@ -37,7 +37,7 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
             if(
                 GAME_MANAGER.state.stateType === "game" &&
                 GAME_MANAGER.state.clientState.type === "player" &&
-                GAME_MANAGER.state.clientState.roleState?.role === "forger"
+                GAME_MANAGER.state.clientState.roleState?.type === "forger"
             ){
                 this.setState({
                     savedWill: GAME_MANAGER.state.clientState.roleState.fakeWill,

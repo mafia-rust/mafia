@@ -3,12 +3,12 @@ use std::vec;
 use serde::Serialize;
 
 use crate::game::chat::ChatMessageVariant;
+use crate::game::components::cult::Cult;
 use crate::game::grave::GraveKiller;
 use crate::game::chat::ChatGroup;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
-use crate::game::team::{Team, Cult};
 use crate::game::visit::Visit;
 use crate::game::Game;
 use super::zealot::Zealot;
@@ -23,11 +23,11 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 impl RoleStateImpl for Apostle {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Cult)}
+    
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        let mut cult = game.teams.cult().clone();
+        let mut cult = game.cult().clone();
         match priority {
             Priority::Kill => {
                 if cult.ordered_cultists.len() != 1 {return}
@@ -59,19 +59,19 @@ impl RoleStateImpl for Apostle {
                 if target_ref.night_defense(game) > 0 {
                     actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
                     return
-                }                
+                }
 
                 target_ref.set_role(game, RoleState::Zealot(Zealot));
 
-                cult.sacrifices_needed = Some(Cult::SACRIFICES_NEEDED);
-                game.teams.set_cult(cult);
+                cult.sacrifices_required = Some(Cult::SACRIFICES_NEEDED);
+                game.set_cult(cult);
             }
             _ => {}
         }
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
 
-        let cult = game.teams.cult().clone();
+        let cult = game.cult().clone();
         let can_kill = cult.ordered_cultists.len() == 1 && !cult.can_convert_tonight(game);
         let can_convert = cult.can_convert_tonight(game);
 
@@ -85,7 +85,7 @@ impl RoleStateImpl for Apostle {
         false
     }
     fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false)
+        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, !game.cult().can_convert_tonight(game))
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Cult])

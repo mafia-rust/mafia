@@ -49,7 +49,7 @@ export default class RoleOutlineSelector extends React.Component<RoleOutlineSele
             type: "roleOutlineOptions",
             options: [...this.props.roleOutline.options, {
                 type: "role",
-                role: "amnesiac"
+                role: "wildcard"
             }]
         });
         

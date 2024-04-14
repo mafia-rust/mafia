@@ -6,7 +6,6 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::chat::ChatGroup;
 use crate::game::phase::PhaseType;
-use crate::game::team::Team;
 
 use serde::{Serialize, Deserialize};
 
@@ -14,7 +13,6 @@ use super::end_game_condition::EndGameCondition;
 
 trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8;
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team>;
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority);
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference);
@@ -39,18 +37,18 @@ trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
 macros::roles! {
     Jailor : jailor,
 
-    Sheriff : sheriff,
+    Detective : detective,
     Lookout : lookout,
     Spy : spy,
     Tracker : tracker,
-    Seer : seer,
+    Philosopher : philosopher,
     Psychic : psychic,
     Auditor : auditor,
 
     Doctor : doctor,
     Bodyguard : bodyguard,
-    Crusader : crusader,
-    Reveler : reveler,
+    Cop : cop,
+    Bouncer : bouncer,
     Trapper : trapper,
 
     Vigilante : vigilante,
@@ -68,11 +66,12 @@ macros::roles! {
     Godfather : godfather,
     Mafioso : mafioso,
     
-    Consort : consort,
+    Hypnotist : hypnotist,
     Blackmailer : blackmailer,
-    Consigliere: consigliere,
+    Informant: informant,
     Witch : witch,
     Necromancer : necromancer,
+    MafiaWildCard: mafia_wild_card,
 
     Janitor : janitor,
     Framer : framer,
@@ -80,7 +79,7 @@ macros::roles! {
 
     // Neutral
     Jester : jester,
-    Executioner : executioner,
+    Hater : hater,
     Politician : politician,
 
     Doomsayer : doomsayer,
@@ -88,8 +87,9 @@ macros::roles! {
 
     Arsonist : arsonist,
     Werewolf : werewolf,
+    Ojo : ojo,
 
-    Amnesiac : amnesiac,
+    Wildcard : wild_card,
     Martyr : martyr,
 
     Apostle : apostle,
@@ -119,7 +119,7 @@ macros::priorities! {
 
     Convert,
 
-    SpyCultistCount
+    FinalPriority
 }
 
 mod common_role;
@@ -160,7 +160,7 @@ mod macros {
             // This does not need to implement Deserialize or PartialEq!
             // Use Role for those things!
             #[derive(Clone, Debug, Serialize)]
-            #[serde(tag = "role", rename_all = "camelCase")]
+            #[serde(tag = "type", rename_all = "camelCase")]
             pub enum RoleState {
                 $($name($file::$name)),*
             }
@@ -173,11 +173,6 @@ mod macros {
                 pub fn defense(&self, game: &Game, actor_ref: PlayerReference) -> u8 {
                     match self {
                         $(Self::$name(role_struct) => role_struct.defense(game, actor_ref)),*
-                    }
-                }
-                pub fn team(&self, game: &Game, actor_ref: PlayerReference) -> Option<Team> {
-                    match self {
-                        $(Self::$name(role_struct) => role_struct.team(game, actor_ref)),*
                     }
                 }
                 
@@ -277,6 +272,8 @@ impl Role{
             Role::Necromancer => true,
             
             Role::Doomsayer => true,
+
+            Role::Ojo => true,
             _ => false,
         }
     }
@@ -285,10 +282,10 @@ impl Role{
             Role::Veteran => true,
             
             Role::Transporter => true,
-            Role::Reveler => true,
+            Role::Bouncer => true,
 
             Role::Escort => true,
-            Role::Consort => true,
+            Role::Hypnotist => true,
             
             Role::Retributionist => true,
             Role::Witch => true,
@@ -299,7 +296,7 @@ impl Role{
     pub fn has_innocent_aura(&self, game: &Game)->bool{
         match self {
             Role::Jester => true,
-            Role::Executioner => true,
+            Role::Hater => true,
             Role::Godfather => true,
             Role::Werewolf => {
                 game.day_number() == 1 || game.day_number() == 3
@@ -316,4 +313,8 @@ impl Role{
     pub fn end_game_condition(&self)->EndGameCondition{
         EndGameCondition::from_role(*self)
     }
+}
+pub fn same_evil_team(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+    (actor_ref.role(game).faction() == super::role_list::Faction::Mafia && target_ref.role(game).faction() == super::role_list::Faction::Mafia) ||
+    (actor_ref.role(game).faction() == super::role_list::Faction::Cult && target_ref.role(game).faction() == super::role_list::Faction::Cult)
 }

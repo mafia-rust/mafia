@@ -5,9 +5,9 @@ use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
-use crate::game::team::Team;
+
 use crate::game::Game;
-use super::{Priority, RoleStateImpl};
+use super::{same_evil_team, Priority, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
@@ -18,7 +18,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Framer {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Mafia)}
+    
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -55,7 +55,7 @@ impl RoleStateImpl for Framer {
             actor_ref.chosen_targets(game).is_empty() &&
             actor_ref != target_ref &&
             target_ref.alive(game) &&
-            !Team::same_team(game, actor_ref, target_ref)
+            !same_evil_team(game, actor_ref, target_ref)
         ) || 
         (
             actor_ref.chosen_targets(game).len() == 1

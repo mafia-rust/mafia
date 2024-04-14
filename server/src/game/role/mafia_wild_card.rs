@@ -4,32 +4,31 @@ use serde::{Serialize, Deserialize};
 
 use crate::game::{chat::ChatGroup, phase::PhaseType};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::RoleOutline;
-use crate::game::role_list::Faction;
+use crate::game::role_list::{role_can_generate, Faction};
 use crate::game::visit::Visit;
 use crate::game::Game;
-use crate::game::team::Team;
+
 use super::{Priority, RoleStateImpl, Role};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Amnesiac{
-    pub role_outline: RoleOutline
+pub struct MafiaWildCard{
+    pub role: Role
 }
-impl Default for Amnesiac {
+impl Default for MafiaWildCard {
     fn default() -> Self {
         Self {
-            role_outline: RoleOutline::new_exact(Role::Amnesiac)
+            role: Role::MafiaWildCard
         }
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
-impl RoleStateImpl for Amnesiac {
+impl RoleStateImpl for MafiaWildCard {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
+    
 
 
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {
@@ -46,7 +45,7 @@ impl RoleStateImpl for Amnesiac {
         vec![]
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
+        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Mafia])
     }
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
@@ -71,14 +70,20 @@ impl RoleStateImpl for Amnesiac {
     }
 }
 
-impl Amnesiac {
+impl MafiaWildCard {
     fn become_role(&self, game: &mut Game, actor_ref: PlayerReference) {
-        let new_role_data = self.role_outline
-            .get_random_role(&game.settings.excluded_roles, &[])
-            .unwrap_or(Role::Amnesiac)
-            .default_state();
-        if new_role_data.role() != Role::Amnesiac {
-            actor_ref.set_role(game, new_role_data);
+        if 
+            self.role != Role::MafiaWildCard &&
+            self.role.faction() == Faction::Mafia &&
+            role_can_generate(
+                self.role, 
+                &game.settings.excluded_roles, 
+                &PlayerReference::all_players(game)
+                    .map(|player_ref| player_ref.role(game))
+                    .collect::<Vec<Role>>()
+            )
+        {
+            actor_ref.set_role(game, self.role.default_state());
         }
     }
 }

@@ -1,125 +1,125 @@
 import { PlayerIndex } from "./gameState.d"
-import { Faction, RoleOutline } from "./roleListState.d"
+import { Faction } from "./roleListState.d"
 import ROLES from "./../resources/roles.json";
 import { Doomsayer } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
+import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
+import { Hypnotist } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeConsortMenu";
 
 export type RoleState = {
-    role: "jailor",
+    type: "jailor",
     executionsRemaining: number,
     jailedTargetRef: number | null
 } | {
-    role: "mayor",
+    type: "mayor",
     revealed: boolean
 } | {
-    role: "transporter"
+    type: "transporter"
 } | {
-    role: "sheriff"
+    type: "detective"
 } | {
-    role: "lookout"
+    type: "lookout"
 } | {
-    role: "spy"
+    type: "spy"
 } | {
-    role: "tracker"
+    type: "tracker"
 } | {
-    role: "seer"
+    type: "philosopher"
 } | {
-    role: "psychic"
+    type: "psychic"
 } | {
-    role: "auditor",
+    type: "auditor",
     chosenOutline: number,
     previouslyGivenResults: [number, AuditorResult][]
 } | {
-    role: "doctor",
+    type: "doctor",
     selfHealsRemaining: number,
 } | {
-    role: "bodyguard",
+    type: "bodyguard",
     selfShieldsRemaining: number,
 } | {
-    role: "crusader",
+    type: "cop",
 } | {
-    role: "reveler"
+    type: "bouncer"
 } | {
-    role: "trapper"
+    type: "trapper"
 } | {
-    role: "vigilante",
+    type: "vigilante",
     state: {type:"notLoaded"} | {type:"willSuicide"} | {type:"loaded",bullets:number} | {type:"suicided"}
 } | {
-    role: "veteran"
+    type: "veteran"
     alertsRemaining: number,
 } | {
-    role: "deputy"
+    type: "deputy"
 } | {
-    role: "escort"
+    type: "escort"
 } | {
-    role: "medium",
+    type: "medium",
     seancesRemaining: number,
     seancedTarget: PlayerIndex | null
 } | {
-    role: "retributionist"
+    type: "retributionist"
 } | {
-    role: "journalist",
+    type: "journalist",
     public: boolean,
     journal: string,
     interviewedTarget: PlayerIndex | null
 } | {
-    role: "godfather"
+    type: "godfather"
     backup: PlayerIndex | null
 } | {
-    role: "mafioso"
+    type: "mafioso"
+} | 
+(Hypnotist & {type: "hypnotist"})
+ | {
+    type: "blackmailer"
 } | {
-    role: "consort"
-    roleblock: boolean,
-    
-    youWereRoleblockedMessage: boolean,
-    youSurvivedAttackMessage: boolean,
-    youWereProtectedMessage: boolean,
-    youWereTransportedMessage: boolean,
-    youWerePossessedMessage: boolean,
-    yourTargetWasJailedMessage: boolean
+    type: "informant",
 } | {
-    role: "blackmailer"
-} | {
-    role: "consigliere",
-} | {
-    role: "janitor"
+    type: "janitor"
     cleansRemaining: number,
     // cleanedRef
 } | {
-    role: "forger",
+    type: "forger",
     fakeRole: Role,
     fakeWill: string,
     forgesRemaining: number,
     // forgedRef
 } | {
-    role: "witch"
+    type: "witch"
 } | {
-    role: "jester"
+    type: "mafiaWildCard"
+    role: Role
 } | {
-    role: "executioner"
+    type: "jester"
+} | {
+    type: "hater"
 } | 
 Doomsayer 
 | {
-    role: "politician"
+    type: "politician"
 } | {
-    role: "arsonist"
+    type: "arsonist"
 } | {
-    role: "werewolf"
+    type: "werewolf",
     trackedPlayers: PlayerIndex[]
 } | {
-    role: "death",
+    type: "ojo"
+    chosenAction: OjoAction
+} | {
+    type: "death",
     souls: number
 } | {
-    role: "amnesiac"
-    roleOutline: RoleOutline
+    type: "wildcard"
+    role: Role
 } | {
-    role: "apostle"
+    type: "apostle"
 } | {
-    role: "disciple"
+    type: "disciple"
 } | {
-    role: "zealot"
+    type: "zealot"
 } | {
-    role: "martyr",
+    type: "martyr",
     state: {
         type: "won"
     } | {

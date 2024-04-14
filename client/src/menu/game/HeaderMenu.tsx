@@ -173,14 +173,14 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             >{translate("menu.will.icon")}</Button>
             {(()=>
                 (
-                    ROLES[this.state.roleState?.role as Role] === undefined || !ROLES[this.state.roleState?.role as Role].largeRoleSpecificMenu
+                    ROLES[this.state.roleState?.type as Role] === undefined || !ROLES[this.state.roleState?.type as Role].largeRoleSpecificMenu
                 )?null:
                     <Button className="role-specific-colors" 
                         highlighted={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.RoleSpecificMenu)}
                         onClick={()=>GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.RoleSpecificMenu)}
                     >
                         <StyledText noLinks={true}>
-                            {translate("role."+this.state.roleState?.role+".name")}
+                            {translate("role."+this.state.roleState?.type+".name")}
                         </StyledText>
                     </Button>
             )()}
@@ -233,7 +233,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             {(()=>{
                 return <StyledText>
                     {(this.state.players[this.state.myIndex!] ?? "").toString() +
-                    " (" + translate("role."+(this.state.roleState?.role)+".name") + ")"}
+                    " (" + translate("role."+(this.state.roleState?.type)+".name") + ")"}
                 </StyledText>;
             })()}
             {this.renderFastForwardButton()}

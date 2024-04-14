@@ -1,5 +1,5 @@
 {
-    "whisper": "discreet",
+    "whisper": "special",
     "broadcastWhisper": "discreet",
     "roleAssignment": "important center",
     "playerDied": "important",
@@ -43,6 +43,8 @@
     "auditorResult": "result",
     "playerRoleAndWill": "result",
     "consigliereResult": "result",
+    "ojoResult": "result",
+    "ojoResult.nobody": "result",
     "silenced": "warning",
     "mediumHauntStarted": "special",
     "targetWasAttacked": "result",
@@ -63,6 +65,7 @@
     "cultSacrificesRequired.1": "special",
     "cultSacrificesRequired.0": "special",
     "transported": "result",
+    "copAttackedVisitor": "result",
     "veteranAttackedVisitor": "result",
     "veteranAttackedYou": "result",
     "trapperVisitorsRole": "result",

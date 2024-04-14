@@ -1,7 +1,7 @@
-.large-consort-menu {
+.large-hypnotist-menu {
     padding-top: .2rem;
 }
-.large-consort-menu div {
+.large-hypnotist-menu div {
     margin: .2rem;
     display: flex;
     flex-direction: row;
@@ -10,11 +10,11 @@
     align-items: center;
     background-color: var(--primary-color);
 }
-.large-consort-menu > div:first-child {
+.large-hypnotist-menu > div:first-child {
     margin-bottom: 1rem;
     margin-top: 1rem;
 }
-.large-consort-menu label {
+.large-hypnotist-menu label {
     display: inline-block;
     height: 100%;
     padding: .2rem;

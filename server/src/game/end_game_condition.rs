@@ -17,9 +17,9 @@ impl EndGameCondition {
             Faction::Cult => EndGameCondition::Faction(Faction::Cult),
             Faction::Town => EndGameCondition::Faction(Faction::Town),
             Faction::Neutral => match role {
-                Role::Jester | Role::Executioner | Role::Politician |
+                Role::Jester | Role::Hater | Role::Politician |
                 Role::Doomsayer | Role::Death |
-                Role::Amnesiac => EndGameCondition::None,
+                Role::Wildcard => EndGameCondition::None,
                 _ => EndGameCondition::Role(role)
             },
         }

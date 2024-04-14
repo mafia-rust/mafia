@@ -75,7 +75,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
             this.state = {
                 maxContent: props.maxContent?props.maxContent:Infinity,
 
-                role: GAME_MANAGER.state.clientState.roleState?.role as Role,
+                role: GAME_MANAGER.state.clientState.roleState?.type as Role,
 
                 chatMenuNotification: false,
 
@@ -92,7 +92,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 if(type === "yourRoleState"){
                     this.setState({
-                        role: GAME_MANAGER.state.clientState.roleState?.role as Role,
+                        role: GAME_MANAGER.state.clientState.roleState?.type as Role,
                     });
                 }
                 if(type === "addChatMessages" && !GameScreen.instance.menusOpen().includes(ContentMenu.ChatMenu)){
