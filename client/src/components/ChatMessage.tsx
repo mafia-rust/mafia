@@ -322,8 +322,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                     translate("role."+message.result.roles[1]+".name")
                 );
             }
-        case "trapperVisitorsRole":
-            return translate("chatMessage.trapperVisitorsRole", translate("role."+message.role+".name"));
+        case "engineerVisitorsRole":
+            return translate("chatMessage.engineerVisitorsRole", translate("role."+message.role+".name"));
         case "trapState":
             return translate("chatMessage.trapState."+message.state.type);
         case "playerRoleAndWill":
@@ -396,7 +396,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "transported":
         case "veteranAttackedVisitor":
         case "veteranAttackedYou":
-        case "trapperYouAttackedVisitor":
+        case "engineerYouAttackedVisitor":
         case "vigilanteSuicide":
         case "targetIsPossessionImmune":
         case "youSurvivedAttack":
@@ -580,7 +580,7 @@ export type ChatMessageVariant = {
 } | {
     type: "veteranAttackedVisitor"
 } | {
-    type: "trapperVisitorsRole",
+    type: "engineerVisitorsRole",
     role: Role
 } | {
     type: "trapState",
@@ -588,7 +588,7 @@ export type ChatMessageVariant = {
         type: "dismantled" | "ready" | "set"
     }
 } | {
-    type: "trapperYouAttackedVisitor"
+    type: "engineerYouAttackedVisitor"
 } | {
     type: "vigilanteSuicide"
 } | {

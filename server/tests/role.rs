@@ -3,7 +3,7 @@ use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::role::{bouncer::Bouncer, trapper::Trapper, zealot::Zealot};
+use mafia_server::game::role::{bouncer::Bouncer, engineer::Engineer, zealot::Zealot};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
@@ -1283,11 +1283,11 @@ fn apostle_converting_trapped_player_day_later(){
         apostle: Apostle,
         _zealot: Zealot,
         trapped: Detective,
-        trapper: Trapper
+        engineer: Engineer
     );
 
 
-    assert!(trapper.set_night_target(trapped));
+    assert!(engineer.set_night_target(trapped));
 
     game.skip_to(PhaseType::Night, 2);
 
@@ -1304,11 +1304,11 @@ fn apostle_converting_trapped_player_same_day(){
         apostle: Apostle,
         _zealot: Zealot,
         trapped: Detective,
-        trapper: Trapper
+        engineer: Engineer
     );
 
 
-    assert!(trapper.set_night_target(trapped));
+    assert!(engineer.set_night_target(trapped));
     assert!(apostle.set_night_target(trapped));
 
     game.next_phase();

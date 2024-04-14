@@ -49,7 +49,7 @@ macros::roles! {
     Bodyguard : bodyguard,
     Cop : cop,
     Bouncer : bouncer,
-    Trapper : trapper,
+    Engineer : engineer,
 
     Vigilante : vigilante,
     Veteran : veteran,

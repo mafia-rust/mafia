@@ -176,7 +176,7 @@
             {"type": "roleBlocked","immune": true}
         ]
     },
-    "trapper": {
+    "engineer": {
         "faction": "town",
         "roleSet": "townProtective",
         "armor": false,
@@ -186,10 +186,9 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "trapState", "state":{"type":"dismantled"}},
-            {"type": "trapState", "state":{"type":"ready"}},
             {"type": "trapState", "state":{"type":"set"}},
-            {"type": "trapperYouAttackedVisitor"},
-            {"type": "trapperVisitorsRole", "role": "framer"},
+            {"type": "engineerYouAttackedVisitor"},
+            {"type": "engineerVisitorsRole", "role": "framer"},
             {"type": "targetWasAttacked"},
             {"type": "youWereProtected"},
             {"type": "someoneSurvivedYourAttack"},
@@ -528,7 +527,9 @@
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
-        "chatMessages":[]
+        "chatMessages":[
+            {"type": "roleAssignment", "role":"mafiaWildCard"}
+        ]
     },
     "jester": {
         "faction": "neutral",
@@ -632,7 +633,9 @@
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
-        "chatMessages":[]
+        "chatMessages":[
+            {"type": "roleAssignment", "role":"wildcard"}
+        ]
     },
     "martyr": {
         "faction": "neutral",
