@@ -625,7 +625,6 @@
     "chatMessage.trapperYouAttackedVisitor": "Your trap attacked someone!",
     "chatMessage.trapperVisitorsRole": "A \\0 visited the trapped player.",
     "chatMessage.trapState.dismantled": "Your trap is currently dismantled.",
-    "chatMessage.trapState.ready": "Your trap is currently ready.",
     "chatMessage.trapState.set": "Your trap is currently set.",
     "chatMessage.vigilanteSuicide":"You committed suicide over the guilt of killing a townie.",
     "chatMessage.targetWasAttacked":"Your target was attacked.",
