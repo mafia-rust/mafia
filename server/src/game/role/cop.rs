@@ -49,7 +49,9 @@ impl RoleStateImpl for Cop {
                     return
                 }
 
-                let non_town_visitor: Option<PlayerReference> = PlayerReference::all_players(game)
+                let mut player_to_attack = None;
+
+                if let Some(non_town_visitor) = PlayerReference::all_players(game)
                     .filter(|other_player_ref|
                         *other_player_ref != actor_ref &&
                         other_player_ref.role(game).faction() != Faction::Town &&
@@ -58,24 +60,23 @@ impl RoleStateImpl for Cop {
                             .any(|v|v.target==target_ref)
                     ).collect::<Vec<PlayerReference>>()
                     .choose(&mut rand::thread_rng())
-                    .copied();
+                    .copied(){
+                    player_to_attack = Some(non_town_visitor);
+                }else if let Some(town_visitor) = PlayerReference::all_players(game)
+                    .filter(|other_player_ref|
+                        *other_player_ref != actor_ref &&
+                        other_player_ref.night_visits(game)
+                            .iter()
+                            .any(|v|v.target==target_ref)
+                    ).collect::<Vec<PlayerReference>>()
+                    .choose(&mut rand::thread_rng())
+                    .copied(){
+                    player_to_attack = Some(town_visitor)
+                }
 
-                if let Some(non_town_visitor) = non_town_visitor{
-                    non_town_visitor.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Cop), 1, false);
-                }else{
-                    let town_visitor: Option<PlayerReference> = PlayerReference::all_players(game)
-                        .filter(|other_player_ref|
-                            *other_player_ref != actor_ref &&
-                            other_player_ref.night_visits(game)
-                                .iter()
-                                .any(|v|v.target==target_ref)
-                        ).collect::<Vec<PlayerReference>>()
-                        .choose(&mut rand::thread_rng())
-                        .copied();
-
-                    if let Some(town_visitor) = town_visitor{
-                        town_visitor.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Cop), 1, false);
-                    }
+                if let Some(player_to_attack) = player_to_attack{
+                    actor_ref.push_night_message(game, ChatMessageVariant::CopAttackedVisitor);
+                    player_to_attack.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Cop), 1, false);
                 }
             }
             Priority::Investigative => {

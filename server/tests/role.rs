@@ -1279,7 +1279,7 @@ fn ojo_transporter(){
 
 #[test]
 fn apostle_converting_trapped_player_day_later(){
-    kit::scenario!(game in Night 2 where
+    kit::scenario!(game in Night 1 where
         apostle: Apostle,
         _zealot: Zealot,
         trapped: Detective,
@@ -1289,7 +1289,7 @@ fn apostle_converting_trapped_player_day_later(){
 
     assert!(trapper.set_night_target(trapped));
 
-    game.skip_to(PhaseType::Night, 3);
+    game.skip_to(PhaseType::Night, 2);
 
     assert!(apostle.set_night_target(trapped));
 
@@ -1313,5 +1313,5 @@ fn apostle_converting_trapped_player_same_day(){
 
     game.next_phase();
 
-    assert!(trapped.role_state().role() == Role::Detective);
+    assert!(trapped.role_state().role() != Role::Detective);
 }

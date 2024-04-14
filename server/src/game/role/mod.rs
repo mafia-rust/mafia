@@ -119,7 +119,7 @@ macros::priorities! {
 
     Convert,
 
-    SpyCultistCount
+    FinalPriority
 }
 
 mod common_role;
