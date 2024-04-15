@@ -17,7 +17,7 @@ export type ToClientPacket = {
     type: "rateLimitExceeded",
 } | {
     type: "lobbyList",
-    lobbies: Map<number, LobbyPreviewData>,
+    lobbies: Record<number, LobbyPreviewData>,
 } | {
     type: "acceptJoin",
     roomCode: number,
@@ -34,7 +34,7 @@ export type ToClientPacket = {
     playerId: LobbyClientID
 } | {
     type: "lobbyClients",
-    clients: Map<LobbyClientID, LobbyClient>
+    clients: Record<LobbyClientID, LobbyClient>
 } | {
     type: "lobbyName",
     name: string
@@ -89,7 +89,7 @@ export type ToClientPacket = {
     alive: [boolean]
 } | {
     type: "playerVotes",
-    votesForPlayer: any
+    votesForPlayer: Record<number, number> 
 } | {
     type: "yourSendChatGroups",
     sendChatGroups: ChatGroup[]
@@ -102,10 +102,10 @@ export type ToClientPacket = {
     }]
 } | {
     type: "yourRoleLabels",
-    roleLabels: Map<PlayerIndex, Role>
+    roleLabels: Record<PlayerIndex, Role> 
 } | {
     type: "yourPlayerTags",
-    playerTags: Map<PlayerIndex, Tag[]>
+    playerTags: Record<PlayerIndex, Tag[]> 
 } | {
     type: "yourWill",
     will: string

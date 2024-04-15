@@ -30,7 +30,10 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "lobbyList":
             if(GAME_MANAGER.state.stateType === "outsideLobby"){
-                GAME_MANAGER.state.lobbies = packet.lobbies;
+                GAME_MANAGER.state.lobbies = new Map();
+
+                for(let [lobbyId, lobbyData] of Object.entries(packet.lobbies))
+                    GAME_MANAGER.state.lobbies.set(Number.parseInt(lobbyId), lobbyData);
             }
         break;
         case "acceptJoin":
