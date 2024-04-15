@@ -42,7 +42,7 @@ impl RoleStateImpl for Necromancer {
                 }
 
                 let mut new_chosen_targets = 
-                    first_visit.target.night_visits(game).into_iter().map(|v|v.target).collect::<Vec<PlayerReference>>();
+                    first_visit.target.night_visits(game).iter().map(|v|v.target).collect::<Vec<PlayerReference>>();
                 if let Some(target) = new_chosen_targets.first_mut(){
                     *target = second_visit.target;
                 }else{

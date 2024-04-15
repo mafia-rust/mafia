@@ -41,7 +41,7 @@ impl RoleStateImpl for Auditor {
         let Some(chosen_outline) = self.chosen_outline else {return;};
 
         let (role, _) = match game.roles_to_players.get(chosen_outline as usize) {
-            Some(map) => map.clone(),
+            Some(map) => *map,
             None => unreachable!("Auditor role outline not found")
         };
         
@@ -90,7 +90,7 @@ impl RoleStateImpl for Auditor {
         let Some(chosen_outline) = self.chosen_outline else {return vec![]};
 
         let (_, player) = match game.roles_to_players.get(chosen_outline as usize) {
-            Some(map) => map.clone(),
+            Some(map) => *map,
             None => unreachable!("Auditor role outline not found")
         };
 

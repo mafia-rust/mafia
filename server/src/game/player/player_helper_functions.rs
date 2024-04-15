@@ -62,7 +62,7 @@ impl PlayerReference{
         self.add_private_chat_message(game, ChatMessageVariant::YouDied);
         game.add_grave(grave.clone());
 
-        return OnAnyDeath::new(*self);
+        OnAnyDeath::new(*self)
     }
     /// Swaps this persons role, sends them the role chat message, and makes associated changes
     pub fn set_role(&self, game: &mut Game, new_role_data: RoleState){

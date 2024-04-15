@@ -17,6 +17,7 @@ impl Game {
     pub fn on_spectator_message(&mut self, sender_index: SpectatorIndex, incoming_packet: ToServerPacket){
         let sender_pointer = SpectatorPointer::new(sender_index);
 
+        #[allow(clippy::single_match)]
         match incoming_packet {
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {
                 if sender_pointer.host(self) && fast_forward && !self.phase_machine.time_remaining.is_zero(){
@@ -263,7 +264,7 @@ impl Game {
                         auditor.chosen_outline = None;
                     }
 
-                    if  !self.roles_to_players.get(index as usize).is_none() && 
+                    if  self.roles_to_players.get(index as usize).is_some() && 
                         !auditor.previously_given_results.iter().any(|(i, _)| *i == index)
                     {
                         auditor.chosen_outline = Some(index);

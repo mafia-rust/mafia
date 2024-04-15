@@ -104,10 +104,9 @@ impl RoleStateImpl for Engineer {
                     actor_ref.night_visits(game).iter().any(|visit| visit.target == actor_ref)
                 {
                     actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Dismantled}));
-                }else
+                }
                 //set trap
-                if let Some(visit) = actor_ref.night_visits(game).first(){
-                    
+                else if let Some(visit) = actor_ref.night_visits(game).first(){
                     if self.trap.is_dismantled(){
                         actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Set{target: visit.target}}));
                     }

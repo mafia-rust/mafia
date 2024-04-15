@@ -29,15 +29,13 @@ impl SpectatorPointer {
     }
 
     pub fn send_packet(&self, game: &Game, packet: ToClientPacket){
-        match self.deref(game) {
-            Some(s) => s.send_packet(packet),
-            None => (),
+        if let Some(s) = self.deref(game) { 
+            s.send_packet(packet)
         }
     }
     pub fn send_packets(&self, game: &Game, packets: Vec<ToClientPacket>){
-        match self.deref(game){
-            Some(s) => s.send_packets(packets),
-            None => (),
+        if let Some(s) = self.deref(game) { 
+            s.send_packets(packets) 
         }
     }
 
@@ -56,9 +54,8 @@ impl SpectatorPointer {
             None => return
         };
 
-        match s.connection {
-            ClientConnection::Connected(_) => self.send_repeating_data(game),
-            _ => {}
+        if let ClientConnection::Connected(_) = s.connection {
+            self.send_repeating_data(game)
         }
     }
     pub fn send_repeating_data(&self, game: &mut Game){

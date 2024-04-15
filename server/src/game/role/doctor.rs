@@ -80,7 +80,7 @@ impl RoleStateImpl for Doctor {
         }
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        ((actor_ref == target_ref && self.self_heals_remaining > 0) || actor_ref != target_ref) &&
+        (actor_ref != target_ref || self.self_heals_remaining > 0) &&
         !actor_ref.night_jailed(game) &&
         actor_ref.chosen_targets(game).is_empty() &&
         actor_ref.alive(game) &&
