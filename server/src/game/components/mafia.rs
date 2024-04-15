@@ -26,15 +26,14 @@ impl Mafia{
             Mafia::ensure_mafia_can_kill(game);
         }
     }
-    pub fn on_role_switch(self, game: &mut Game, actor: PlayerReference) {
-        if actor.role(game).faction() == Faction::Mafia {
+    pub fn on_role_switch(self, game: &mut Game, old: Role, new: Role) {
+        if old.faction() == Faction::Mafia || new.faction() == Faction::Mafia {
             Mafia::ensure_mafia_can_kill(game);
         }
 
         for a in Mafia::get_members(game) {
             for b in Mafia::get_members(game) {
-                a.insert_role_label(game, b, b.role(game));
-                b.insert_role_label(game, a, a.role(game));
+                a.insert_role_label(game, b);
             }
         }
     }

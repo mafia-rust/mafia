@@ -266,6 +266,9 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "yourRoleLabels":
             if(GAME_MANAGER.state.stateType === "game"){
+                for (const player of GAME_MANAGER.state.players) {
+                    player.roleLabel = null;
+                }
                 for (const [key, value] of Object.entries(packet.roleLabels)) { 
                     if(
                         GAME_MANAGER.state.players !== undefined && 
