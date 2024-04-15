@@ -3,7 +3,7 @@ use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::role::{bouncer::Bouncer, engineer::Engineer, zealot::Zealot};
+use mafia_server::game::role::{bouncer::Bouncer, engineer::Engineer, minion::Minion, zealot::Zealot};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
@@ -1314,4 +1314,40 @@ fn apostle_converting_trapped_player_same_day(){
     game.next_phase();
 
     assert!(trapped.role_state().role() != Role::Detective);
+}
+
+#[test]
+fn godfather_dies_to_veteran(){
+    kit::scenario!(game in Night 1 where
+        vet: Veteran,
+        gf: Godfather,
+        _maf: Janitor
+    );
+
+    assert!(gf.set_night_target(vet));
+    assert!(vet.set_night_target(vet));
+
+    game.next_phase();
+
+    assert!(!gf.alive());
+    assert!(vet.alive());
+}
+
+#[test]
+fn godfather_dies_to_veteran_after_possessed(){
+    kit::scenario!(game in Night 1 where
+        vet: Veteran,
+        gf: Godfather,
+        _maf: Janitor,
+        min: Minion
+    );
+
+    assert!(min.set_night_targets(vec![gf, vet]));
+    assert!(vet.set_night_target(vet));
+
+    game.next_phase();
+
+    assert!(!gf.alive());
+    assert!(vet.alive());
+    assert!(min.alive());
 }

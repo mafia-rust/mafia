@@ -113,9 +113,12 @@ impl RoleStateImpl for Minion {
             player_ref.alive(game) && player_ref.role(game).faction() == Faction::Town
         }).count() == 0
     }
-    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
+    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         if actor_ref.get_won_game(game) && actor_ref.alive(game) {
             actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
+        }
+        if phase == PhaseType::Night {
+            actor_ref.set_role_state(game, RoleState::Minion(Minion { currently_used_player: None }));
         }
     }
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
