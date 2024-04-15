@@ -155,8 +155,6 @@ pub enum RoleSet {
 
     NeutralEvil,
     NeutralKilling,
-    NeutralChaos,
-    NeutralApocalypse,
 }
 impl RoleSet{
     pub fn get_roles(&self) -> Vec<Role> {
@@ -176,13 +174,9 @@ impl RoleSet{
                     Role::Witch, Role::Necromancer
                 ],
             RoleSet::NeutralEvil => 
-                vec![Role::Jester, Role::Hater, Role::Politician],
+                vec![Role::Jester, Role::Hater, Role::Politician, Role::Doomsayer, Role::Minion],
             RoleSet::NeutralKilling => 
                 vec![Role::Arsonist, Role::Werewolf, Role::Ojo],
-            RoleSet::NeutralChaos => 
-                vec![Role::Wildcard, Role::Martyr],
-            RoleSet::NeutralApocalypse => 
-                vec![Role::Death, Role::Doomsayer],
         }
     }
 }

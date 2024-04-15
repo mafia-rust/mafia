@@ -557,7 +557,6 @@
             {"type": "youSurvivedAttack"}
         ]
     },
-    
     "politician":{
         "faction": "neutral",
         "roleSet": "neutralEvil",
@@ -568,6 +567,37 @@
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
             {"type": "youSurvivedAttack"}
+        ]
+    },
+    "doomsayer":{
+        "faction": "neutral",
+        "roleSet": "neutralEvil",
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "largeRoleSpecificMenu": true,
+        "canBeConvertedTo": ["jester"],
+        "chatMessages":[
+            {"type": "doomsayerWon"},
+            {"type": "doomsayerFailed"}
+        ]
+    },
+    "minion":{
+        "faction": "neutral",
+        "roleSet": "neutralEvil",
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "targetsMessage", "message": 
+                {"type": "sheriffResult","suspicious":true}
+            },
+            {"type": "possessionTargetsRole", "role":"detective"},
+            {"type": "targetIsPossessionImmune"},
+            {"type": "youWerePossessed", "immune": false},
+            {"type": "youWerePossessed", "immune": true}
         ]
     },
     "arsonist": {
@@ -626,21 +656,9 @@
             {"type": "youSurvivedAttack"}
         ]
     },
-    "wildcard": {
-        "faction": "neutral",
-        "roleSet": "neutralChaos",
-        "armor": false,
-        "aura": null,
-        "maxCount": null,
-        "largeRoleSpecificMenu": false,
-        "canBeConvertedTo": [],
-        "chatMessages":[
-            {"type": "roleAssignment", "role":"wildcard"}
-        ]
-    },
     "martyr": {
         "faction": "neutral",
-        "roleSet": "neutralChaos",
+        "roleSet": null,
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -654,7 +672,7 @@
     },
     "death":{
         "faction": "neutral",
-        "roleSet": "neutralApocalypse",
+        "roleSet": null,
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -666,20 +684,7 @@
             {"type": "youSurvivedAttack"}
         ]
     },
-    "doomsayer":{
-        "faction": "neutral",
-        "roleSet": "neutralApocalypse",
-        "armor": false,
-        "aura": null,
-        "maxCount": 1,
-        "largeRoleSpecificMenu": true,
-        "canBeConvertedTo": ["jester"],
-        "chatMessages":[
-            {"type": "doomsayerWon"},
-            {"type": "doomsayerFailed"}
-        ]
-    },
-    "minion":{
+    "wildcard": {
         "faction": "neutral",
         "roleSet": null,
         "armor": false,
@@ -688,13 +693,7 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "targetsMessage", "message": 
-                {"type": "sheriffResult","suspicious":true}
-            },
-            {"type": "possessionTargetsRole", "role":"detective"},
-            {"type": "targetIsPossessionImmune"},
-            {"type": "youWerePossessed", "immune": false},
-            {"type": "youWerePossessed", "immune": true}
+            {"type": "roleAssignment", "role":"wildcard"}
         ]
     },
     "apostle": {
