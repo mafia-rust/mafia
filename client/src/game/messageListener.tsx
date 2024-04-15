@@ -30,7 +30,10 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "lobbyList":
             if(GAME_MANAGER.state.stateType === "outsideLobby"){
-                GAME_MANAGER.state.lobbies = packet.lobbies;
+                GAME_MANAGER.state.lobbies = new Map();
+
+                for(let [lobbyId, lobbyData] of Object.entries(packet.lobbies))
+                    GAME_MANAGER.state.lobbies.set(Number.parseInt(lobbyId), lobbyData);
             }
         break;
         case "acceptJoin":
@@ -266,6 +269,9 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "yourRoleLabels":
             if(GAME_MANAGER.state.stateType === "game"){
+                for (const player of GAME_MANAGER.state.players) {
+                    player.roleLabel = null;
+                }
                 for (const [key, value] of Object.entries(packet.roleLabels)) { 
                     if(
                         GAME_MANAGER.state.players !== undefined && 

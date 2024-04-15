@@ -60,6 +60,8 @@ pub enum ChatMessageVariant {
 
     RoleAssignment{role: Role},
     PlayerDied{grave: Grave},
+    PlayersRoleRevealed{player: PlayerIndex, role: Role},
+    PlayersRoleConcealed{player: PlayerIndex},
 
     
     #[serde(rename_all = "camelCase")]
@@ -197,6 +199,7 @@ pub enum ChatMessageVariant {
     TargetIsPossessionImmune,
     YouWerePossessed { immune: bool },
     TargetsMessage{message: Box<ChatMessageVariant>},
+    PossessionTargetsRole { role: Role },
 
     #[serde(rename_all = "camelCase")]
     WerewolfTrackingResult{tracked_player: PlayerIndex, players: Vec<PlayerIndex>},

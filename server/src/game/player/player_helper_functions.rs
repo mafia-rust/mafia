@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::game::
 {
     chat::{ChatGroup, ChatMessageVariant}, end_game_condition::EndGameCondition, event::{on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, grave::{Grave, GraveKiller}, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
@@ -60,10 +62,12 @@ impl PlayerReference{
         self.add_private_chat_message(game, ChatMessageVariant::YouDied);
         game.add_grave(grave.clone());
 
-        return OnAnyDeath::new(*self);
+        OnAnyDeath::new(*self)
     }
     /// Swaps this persons role, sends them the role chat message, and makes associated changes
     pub fn set_role(&self, game: &mut Game, new_role_data: RoleState){
+
+        let old: Role = self.role(game);
 
         self.set_role_state(game, new_role_data.clone());
         self.on_role_creation(game);
@@ -71,8 +75,7 @@ impl PlayerReference{
             self.add_private_chat_message(game, ChatMessageVariant::RoleAssignment{role: self.role(game)});
         }
 
-        self.insert_role_label(game, *self, self.role(game));
-        OnRoleSwitch::new(*self).invoke(game);
+        OnRoleSwitch::new(*self, old, self.role(game)).invoke(game);
     }
     pub fn increase_defense_to(&self, game: &mut Game, defense: u8){
         if self.night_defense(game) < defense {
@@ -106,19 +109,24 @@ impl PlayerReference{
 
 
     pub fn insert_role_label_for_teammates(&self, game: &mut Game){
-        let actor_role = self.role(game);
-    
         for other in PlayerReference::all_players(game){
             if *self == other { continue }
             
+
             if same_evil_team(game, *self, other) {
-                let other_role = other.role(game);
-                other.insert_role_label(game, *self, actor_role);
-                self.insert_role_label(game, other, other_role);
+                other.insert_role_label(game, *self);
+                self.insert_role_label(game, other);
             }
         }
     }
 
+    pub fn role_label_map(&self, game: &Game) -> HashMap<PlayerReference, Role> {
+        let mut map = HashMap::new();
+        for player in self.role_labels(game) {
+            map.insert(*player, player.role(game));
+        }
+        map
+    }
 
     pub fn defense(&self, game: &Game) -> u8 {
         if game.current_phase().is_night() {

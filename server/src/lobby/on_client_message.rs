@@ -54,7 +54,7 @@ impl Lobby {
                     return
                 };
                 
-                let new_name = name_validation::sanitize_name("".to_string(), &clients);
+                let new_name = name_validation::sanitize_name("".to_string(), clients);
                 if let Some(player) = clients.get_mut(&lobby_client_id){
                     match &player.client_type {
                         LobbyClientType::Spectator => {
@@ -73,7 +73,7 @@ impl Lobby {
                 Lobby::set_rolelist_length(settings, clients);
                 Self::send_players_lobby(clients);
                 let role_list = settings.role_list.clone();
-                self.send_to_all(ToClientPacket::RoleList { role_list: role_list } );
+                self.send_to_all(ToClientPacket::RoleList { role_list } );
             }
             ToServerPacket::SetName{ name } => {
                 let LobbyState::Lobby { clients, .. } = &mut self.lobby_state else {

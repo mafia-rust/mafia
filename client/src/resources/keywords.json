@@ -18,8 +18,6 @@
     "mafiaSupport": { "style": "keyword-evil","link": "generated/role_set"},
     "neutralEvil": { "style": "keyword-neutral","link": "generated/role_set"},
     "neutralKilling": { "style": "keyword-neutral","link": "generated/role_set"},
-    "neutralApocalypse": { "style": "keyword-neutral","link": "generated/role_set"},
-    "neutralChaos": { "style": "keyword-neutral","link": "generated/role_set"},
     "town": { "style": "keyword-good", "link": "standard/town"},
     "mafia": { "style": "keyword-evil", "link": "standard/mafia"},
     "neutral": { "style": "keyword-neutral", "link": "standard/neutral"},

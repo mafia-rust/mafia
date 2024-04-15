@@ -148,14 +148,14 @@ impl Game {
             let game = Self{
                 roles_to_players: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
                 ticking: true,
-                spectators: spectators.clone().into_iter().map(|spectator|Spectator::new(spectator)).collect(),
+                spectators: spectators.clone().into_iter().map(Spectator::new).collect(),
                 spectator_chat_messages: Vec::new(),
                 players: new_players.into_boxed_slice(),
                 graves: Vec::new(),
                 phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
                 settings,
 
-                mafia: Mafia::default(),
+                mafia: Mafia,
                 cult: Cult::default(),
                 arsonist_doused: ArsonistDoused::default(),
             };
@@ -170,6 +170,21 @@ impl Game {
             return Err(RejectStartReason::RoleListCannotCreateRoles);
         }
 
+        
+        game.send_packet_to_all(ToClientPacket::StartGame);
+        
+        //on role creation needs to be called after all players roles are known
+        for player_ref in PlayerReference::all_players(&game){
+            let role_data_copy = player_ref.role_state(&game).clone();
+            player_ref.set_role(&mut game, role_data_copy);
+        }
+
+        for player_ref in PlayerReference::all_players(&game){
+            player_ref.send_join_game_data(&mut game);
+        }
+        for spectator in SpectatorPointer::all_spectators(&game){
+            spectator.send_join_game_data(&mut game);
+        }
 
         OnGameStart::invoke(&mut game);
 
@@ -178,7 +193,7 @@ impl Game {
     fn assign_players_to_roles(roles: Vec<Role>)->Vec<(Role, PlayerIndex)>{
         let mut player_indices: Vec<PlayerIndex> = (0..roles.len() as PlayerIndex).collect();
         player_indices.shuffle(&mut thread_rng());
-        roles.into_iter().zip(player_indices.into_iter()).collect()
+        roles.into_iter().zip(player_indices).collect()
     }
 
 
@@ -431,7 +446,7 @@ pub mod test {
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
 
-            mafia: Mafia::default(),
+            mafia: Mafia,
             cult: Cult::default(),
             arsonist_doused: ArsonistDoused::default(),
         };
@@ -443,7 +458,7 @@ pub mod test {
     fn assign_players_to_roles(roles: Vec<Role>)->Vec<(Role, PlayerIndex)>{
         let mut player_indices: Vec<PlayerIndex> = (0..roles.len() as PlayerIndex).collect();
         player_indices.shuffle(&mut thread_rng());
-        roles.into_iter().zip(player_indices.into_iter()).collect()
+        roles.into_iter().zip(player_indices).collect()
     }
 
 }

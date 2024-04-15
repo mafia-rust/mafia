@@ -87,7 +87,6 @@ impl RoleStateImpl for Ojo {
                     actor_ref.push_night_message(game, 
                         ChatMessageVariant::OjoResult{players: PlayerReference::ref_vec_to_index(&players)}
                     );
-                    
                 }
             },
             _ => {}

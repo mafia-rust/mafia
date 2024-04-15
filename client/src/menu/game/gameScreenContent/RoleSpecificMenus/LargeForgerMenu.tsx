@@ -43,7 +43,11 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
                     savedWill: GAME_MANAGER.state.clientState.roleState.fakeWill,
                     savedRole: GAME_MANAGER.state.clientState.roleState.fakeRole,
                     forgesRemaining: GAME_MANAGER.state.clientState.roleState.forgesRemaining,
-                })
+                });
+
+                if(GAME_MANAGER.state.clientState.roleState.fakeWill){
+                    GAME_MANAGER.sendSetForgerWill(this.state.localRole, "ROLE\nNight 1: \nNight 2:");
+                }
             }
         };  
     }

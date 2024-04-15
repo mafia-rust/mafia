@@ -42,7 +42,7 @@ impl RoleStateImpl for Necromancer {
                 }
 
                 let mut new_chosen_targets = 
-                    first_visit.target.night_visits(game).into_iter().map(|v|v.target).collect::<Vec<PlayerReference>>();
+                    first_visit.target.night_visits(game).iter().map(|v|v.target).collect::<Vec<PlayerReference>>();
                 if let Some(target) = new_chosen_targets.first_mut(){
                     *target = second_visit.target;
                 }else{
@@ -58,6 +58,13 @@ impl RoleStateImpl for Necromancer {
                 used_bodies.push(first_visit.target);
                 actor_ref.set_role_state(game, RoleState::Necromancer(Necromancer { used_bodies, currently_used_player: Some(first_visit.target) }));
                 actor_ref.set_night_visits(game, vec![first_visit.clone()]);
+            },
+            Priority::Investigative => {
+                if let Some(currently_used_player) = self.currently_used_player {
+                    actor_ref.push_night_message(game,
+                        ChatMessageVariant::PossessionTargetsRole { role: currently_used_player.role(game) }
+                    );
+                }
             },
             Priority::StealMessages => {
                 if let Some(currently_used_player) = self.currently_used_player {

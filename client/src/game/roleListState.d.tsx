@@ -76,7 +76,7 @@ export function getRolesComplement(roleList: Role[]): Role[] {
 export const ROLE_SETS = [
     "townInvestigative", "townProtective","townKilling","townSupport", 
     "mafiaSupport",
-    "neutralEvil", "neutralKilling", "neutralChaos", "neutralApocalypse"
+    "neutralEvil", "neutralKilling"
 ] as const;
 export type RoleSet = typeof ROLE_SETS[number];
 export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
@@ -96,13 +96,9 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
                 "witch", "necromancer"
             ];
         case "neutralEvil":
-            return ["jester", "hater", "politician"];
+            return ["jester", "hater", "politician", "doomsayer", "minion"];
         case "neutralKilling":
             return ["arsonist", "werewolf", "ojo"];
-        case "neutralChaos":
-            return ["wildcard", "martyr"];
-        case "neutralApocalypse":
-            return ["death", "doomsayer"];
     }
 }
 
