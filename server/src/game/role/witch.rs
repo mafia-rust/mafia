@@ -5,9 +5,9 @@ use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
-use crate::game::team::Team;
+
 use crate::game::Game;
-use super::{Priority, RoleStateImpl, RoleState};
+use super::{same_evil_team, Priority, RoleState, RoleStateImpl};
 
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
@@ -19,7 +19,7 @@ pub struct Witch{
 
 impl RoleStateImpl for Witch {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Mafia)}
+    
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -57,6 +57,13 @@ impl RoleStateImpl for Witch {
                 actor_ref.set_role_state(game, RoleState::Witch(Witch { currently_used_player: Some(first_visit.target) }));
                 actor_ref.set_night_visits(game, vec![first_visit.clone()]);
             },
+            Priority::Investigative => {
+                if let Some(currently_used_player) = self.currently_used_player {
+                    actor_ref.push_night_message(game,
+                        ChatMessageVariant::PossessionTargetsRole { role: currently_used_player.role(game) }
+                    );
+                }
+            },
             Priority::StealMessages => {
                 if let Some(currently_used_player) = self.currently_used_player {
                     for message in currently_used_player.night_messages(game).clone() {
@@ -75,7 +82,7 @@ impl RoleStateImpl for Witch {
         target_ref.alive(game) &&
         ((
             actor_ref.chosen_targets(game).is_empty() &&
-            !Team::same_team(game, actor_ref, target_ref)
+            !same_evil_team(game, actor_ref, target_ref)
         ) || (
             actor_ref != target_ref &&
             actor_ref.chosen_targets(game).len() == 1

@@ -76,7 +76,7 @@ impl RoleOutline{
         }
     }
     pub fn get_random_role(&self, excluded_roles: &[Role], taken_roles: &[Role]) -> Option<Role> {
-        let options = self.get_roles().into_iter().filter_taken_roles(excluded_roles, taken_roles).collect::<Vec<_>>();
+        let options = self.get_roles().into_iter().filter(|r|role_can_generate(*r, excluded_roles, taken_roles)).collect::<Vec<_>>();
         options.choose(&mut rand::thread_rng()).cloned()
     }
     pub fn simplify(&mut self){
@@ -166,21 +166,21 @@ impl RoleSet{
             RoleSet::TownKilling => 
                 vec![Role::Vigilante, Role::Veteran, Role::Deputy],
             RoleSet::TownProtective => 
-                vec![Role::Bodyguard, Role::Crusader, Role::Doctor, Role::Reveler, Role::Trapper],
+                vec![Role::Bodyguard, Role::Cop, Role::Doctor, Role::Bouncer, Role::Engineer],
             RoleSet::TownInvestigative => 
-                vec![Role::Psychic, Role::Lookout, Role::Sheriff, Role::Spy, Role::Tracker, Role::Seer, Role::Auditor],
+                vec![Role::Psychic, Role::Lookout, Role::Detective, Role::Spy, Role::Tracker, Role::Philosopher, Role::Auditor],
             RoleSet::MafiaSupport => 
                 vec![
-                    Role::Blackmailer, Role::Consigliere, Role::Consort, 
+                    Role::Blackmailer, Role::Informant, Role::Hypnotist, 
                     Role::Forger, Role::Framer, Role::Janitor, 
                     Role::Witch, Role::Necromancer
                 ],
             RoleSet::NeutralEvil => 
-                vec![Role::Jester, Role::Executioner, Role::Politician],
+                vec![Role::Jester, Role::Hater, Role::Politician],
             RoleSet::NeutralKilling => 
-                vec![Role::Arsonist, Role::Werewolf],
+                vec![Role::Arsonist, Role::Werewolf, Role::Ojo],
             RoleSet::NeutralChaos => 
-                vec![Role::Amnesiac, Role::Martyr],
+                vec![Role::Wildcard, Role::Martyr],
             RoleSet::NeutralApocalypse => 
                 vec![Role::Death, Role::Doomsayer],
         }
@@ -189,23 +189,13 @@ impl RoleSet{
 
 
 
+pub fn role_can_generate(role: Role, excluded_roles: &[Role], taken_roles: &[Role]) -> bool {
+    if excluded_roles.contains(&role) {
+        return false;
+    }
 
-
-trait RoleIterator {
-    fn filter_taken_roles(self, excluded_roles: &[Role], taken_roles: &[Role]) -> impl Iterator<Item = Role>;
-}
-
-impl<T: Iterator<Item = Role>> RoleIterator for T {
-    fn filter_taken_roles(self, excluded_roles: &[Role], taken_roles: &[Role]) -> impl Iterator<Item = Role> {
-        self
-            .filter(|r|
-                !excluded_roles.contains(r)
-            )
-            .filter(|r|
-                match r.maximum_count() {
-                    Some(max) => taken_roles.iter().filter(|r2|**r2==*r).count() < max.into(),
-                    None => true,
-                }
-            )
+    match role.maximum_count() {
+        Some(max) => taken_roles.iter().filter(|r|**r==role).count() < max.into(),
+        None => true,
     }
 }

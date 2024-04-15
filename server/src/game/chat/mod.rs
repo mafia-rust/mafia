@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 use crate::game::{grave::Grave, role::Role, player::{PlayerIndex, PlayerReference}, verdict::Verdict, Game};
 
-use super::{phase::PhaseState, role::{auditor::AuditorResult, spy::SpyBug, trapper::TrapState}, role_list::RoleOutline};
+use super::{phase::PhaseState, role::{auditor::AuditorResult, spy::SpyBug, engineer::TrapState}, role_list::RoleOutline};
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
@@ -60,6 +60,8 @@ pub enum ChatMessageVariant {
 
     RoleAssignment{role: Role},
     PlayerDied{grave: Grave},
+    PlayersRoleRevealed{player: PlayerIndex, role: Role},
+    PlayersRoleConcealed{player: PlayerIndex},
 
     
     #[serde(rename_all = "camelCase")]
@@ -172,8 +174,10 @@ pub enum ChatMessageVariant {
     VeteranAttackedYou,
     VeteranAttackedVisitor,
 
-    TrapperVisitorsRole{role: Role},
-    TrapperYouAttackedVisitor,
+    CopAttackedVisitor,
+
+    EngineerVisitorsRole{role: Role},
+    EngineerYouAttackedVisitor,
     TrapState{state: TrapState},
 
     Transported,
@@ -189,10 +193,13 @@ pub enum ChatMessageVariant {
     PlayerRoleAndWill { role: Role, will: String },
     #[serde(rename_all = "camelCase")]
     ConsigliereResult{ role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
+    #[serde(rename_all = "camelCase")]
+    OjoResult{players: Vec<PlayerIndex>},
 
     TargetIsPossessionImmune,
     YouWerePossessed { immune: bool },
     TargetsMessage{message: Box<ChatMessageVariant>},
+    PossessionTargetsRole { role: Role },
 
     #[serde(rename_all = "camelCase")]
     WerewolfTrackingResult{tracked_player: PlayerIndex, players: Vec<PlayerIndex>},

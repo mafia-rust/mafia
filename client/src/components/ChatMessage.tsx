@@ -145,6 +145,15 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.roleAssignment", 
                 translate("role."+message.role+".name")
             );
+        case "playersRoleRevealed":
+            return translate("chatMessage.playersRoleRevealed",
+                playerNames[message.player],
+                translate("role."+message.role+".name")
+            );
+        case "playersRoleConcealed":
+            return translate("chatMessage.playersRoleConcealed",
+                playerNames[message.player]
+            );
         case "playerWonOrLost":
             if(message.won){
                 return translate("chatMessage.playerWon",
@@ -322,8 +331,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                     translate("role."+message.result.roles[1]+".name")
                 );
             }
-        case "trapperVisitorsRole":
-            return translate("chatMessage.trapperVisitorsRole", translate("role."+message.role+".name"));
+        case "engineerVisitorsRole":
+            return translate("chatMessage.engineerVisitorsRole", translate("role."+message.role+".name"));
         case "trapState":
             return translate("chatMessage.trapState."+message.state.type);
         case "playerRoleAndWill":
@@ -344,12 +353,22 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                     ? translate("chatMessage.consigliereResult.visitedBy.nobody") 
                     : translate("chatMessage.consigliereResult.visitedBy", playerListToString(message.visitedBy, playerNames))
             );
+        case "ojoResult":
+            if(message.players.length === 0 || message.players === undefined){
+                return translate("chatMessage.ojoResult.nobody");
+            }
+
+            return translate("chatMessage.ojoResult",
+                message.players.map((playerIndex) => {return playerNames![playerIndex]}).join(", ")
+            );
         case "silenced":
             return translate("chatMessage.silenced");
         case "mediumHauntStarted":
             return translate("chatMessage.mediumHauntStarted", playerNames[message.medium], playerNames[message.player]);
         case "youWerePossessed":
             return translate("chatMessage.youWerePossessed" + (message.immune ? ".immune" : ""));
+        case "possessionTargetsRole":
+            return translate("chatMessage.possessionTargetsRole", translate("role."+message.role+".name"));
         case "werewolfTrackingResult":
             if(message.players.length === 0){
                 return translate(
@@ -388,7 +407,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "transported":
         case "veteranAttackedVisitor":
         case "veteranAttackedYou":
-        case "trapperYouAttackedVisitor":
+        case "engineerYouAttackedVisitor":
         case "vigilanteSuicide":
         case "targetIsPossessionImmune":
         case "youSurvivedAttack":
@@ -399,6 +418,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "targetsMessage":
         case "psychicFailed":
         case "phaseFastForwarded":
+        case "copAttackedVisitor":
             return translate("chatMessage."+message.type);
         case "playerDied":
         default:
@@ -432,6 +452,13 @@ export type ChatMessageVariant = {
 } | {
     type: "playerDied", 
     grave: Grave
+} | {
+    type: "playersRoleRevealed",
+    role: Role,
+    player: PlayerIndex
+} | {
+    type: "playersRoleConcealed",
+    player: PlayerIndex
 } | {
     type: "gameOver"
 } | {
@@ -565,11 +592,13 @@ export type ChatMessageVariant = {
     roleOutline: RoleOutline,
     result: AuditorResult,
 } | {
+    type: "copAttackedVisitor"
+} | {
     type: "veteranAttackedYou"
 } | {
     type: "veteranAttackedVisitor"
 } | {
-    type: "trapperVisitorsRole",
+    type: "engineerVisitorsRole",
     role: Role
 } | {
     type: "trapState",
@@ -577,7 +606,7 @@ export type ChatMessageVariant = {
         type: "dismantled" | "ready" | "set"
     }
 } | {
-    type: "trapperYouAttackedVisitor"
+    type: "engineerYouAttackedVisitor"
 } | {
     type: "vigilanteSuicide"
 } | {
@@ -606,10 +635,16 @@ export type ChatMessageVariant = {
     visitedBy: PlayerIndex[],
     visited: PlayerIndex[]
 } | {
+    type: "ojoResult",
+    players: PlayerIndex[]
+} | {
     type: "targetIsPossessionImmune"
 } | {
     type: "youWerePossessed",
     immune: boolean
+} | {
+    type: "possessionTargetsRole",
+    role: Role
 } | {
     type: "targetsMessage",
     message: ChatMessageVariant

@@ -41,12 +41,12 @@ export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuPr
     
     renderRoleSpecificMenu(){
         if(this.state.gameState.clientState.type !== "player") return null;
-        switch(this.state.gameState.clientState.roleState?.role){
+        switch(this.state.gameState.clientState.roleState?.type){
             case "auditor":
                 return <LargeAuditorMenu/>;
             case "journalist":
                 return <LargeJournalistMenu/>;
-            case "consort":
+            case "hypnotist":
                 return <LargeConsortMenu/>;
             case "forger":
                 return <LargeForgerMenu/>;
@@ -59,7 +59,7 @@ export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuPr
             return(
                 <div className="role-specific-colors">
                     <ContentTab close={ContentMenu.RoleSpecificMenu} helpMenu={null}>
-                        {translate("role."+this.state.gameState.clientState.roleState?.role+".name")}
+                        {translate("role."+this.state.gameState.clientState.roleState?.type+".name")}
                     </ContentTab>
                     <div>
                         {this.renderRoleSpecificMenu()}

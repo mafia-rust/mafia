@@ -9,7 +9,7 @@ use crate::game::role::RoleState;
 use crate::game::role_list::Faction;
 use crate::game::verdict::Verdict;
 use crate::game::visit::Visit;
-use crate::game::team::Team;
+
 use crate::game::Game;
 use super::{Priority, RoleStateImpl};
 
@@ -25,7 +25,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Jester {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
+    
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {

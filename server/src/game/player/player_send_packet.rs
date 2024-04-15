@@ -88,7 +88,7 @@ impl PlayerReference{
                 role_state: self.role_state(game).clone()
             },
             ToClientPacket::YourRoleLabels { 
-                role_labels: PlayerReference::ref_map_to_index(self.role_labels(game).clone()) 
+                role_labels: PlayerReference::ref_map_to_index(self.role_label_map(game)) 
             },
             ToClientPacket::YourPlayerTags { 
                 player_tags: PlayerReference::ref_map_to_index(self.player_tags(game).clone())

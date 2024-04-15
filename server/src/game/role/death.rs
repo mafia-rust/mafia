@@ -5,7 +5,7 @@ use crate::game::grave::{GraveDeathCause, Grave, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
-use crate::game::team::Team;
+
 use crate::game::visit::Visit;
 use crate::game::Game;
 use super::{Priority, RoleStateImpl, RoleState, Role};
@@ -22,7 +22,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 impl RoleStateImpl for Death {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {if self.souls >= NEEDED_SOULS{3}else{0}}
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
+    
 
 
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {

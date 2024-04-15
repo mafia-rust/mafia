@@ -395,10 +395,10 @@ export function createGameManager(): GameManager {
                 guesses: guesses
             });
         },
-        sendSetAmnesiacRoleOutline(roleOutline) {
+        sendSetWildCardRoleOutline(role) {
             this.server.sendPacket({
-                type: "setAmnesiacRoleOutline",
-                roleOutline: roleOutline
+                type: "setWildCardRole",
+                role: role
             });
         },
         sendSetJournalistJournal(journal: string) {
@@ -426,12 +426,12 @@ export function createGameManager(): GameManager {
                 type: "setConsortOptions",
                 roleblock: roleblock,
 
-                youWereRoleblockedMessage: youWereRoleblockedMessage === undefined || youWereRoleblockedMessage === null ? false : youWereRoleblockedMessage,
-                youSurvivedAttackMessage: youSurvivedAttackMessage === undefined || youSurvivedAttackMessage === null ? false : youSurvivedAttackMessage,
-                youWereProtectedMessage: youWereProtectedMessage === undefined || youWereProtectedMessage === null ? false : youWereProtectedMessage,
-                youWereTransportedMessage: youWereTransportedMessage === undefined || youWereTransportedMessage === null ? false : youWereTransportedMessage,
-                youWerePossessedMessage: youWerePossessedMessage === undefined || youWerePossessedMessage === null ? false : youWerePossessedMessage,
-                yourTargetWasJailedMessage: yourTargetWasJailedMessage === undefined || yourTargetWasJailedMessage === null ? false : yourTargetWasJailedMessage
+                youWereRoleblockedMessage: youWereRoleblockedMessage ?? false,
+                youSurvivedAttackMessage: youSurvivedAttackMessage ?? false,
+                youWereProtectedMessage: youWereProtectedMessage ?? false,
+                youWereTransportedMessage: youWereTransportedMessage ?? false,
+                youWerePossessedMessage: youWerePossessedMessage ?? false,
+                yourTargetWasJailedMessage: yourTargetWasJailedMessage ?? false
             });
         },
         sendSetForgerWill(role: Role | null, will: string) {
@@ -445,6 +445,12 @@ export function createGameManager(): GameManager {
             this.server.sendPacket({
                 type: "setAuditorChosenOutline",
                 index: index
+            });
+        },
+        sendSetOjoAction(action) {
+            this.server.sendPacket({
+                type: "setOjoAction",
+                action: action
             });
         },
 

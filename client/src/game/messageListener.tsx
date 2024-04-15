@@ -214,7 +214,7 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.dayNumber = packet.dayNumber;
         
                 if(packet.phase.type === "briefing" && GAME_MANAGER.state.clientState.type === "player"){
-                    const role = GAME_MANAGER.state.clientState.roleState?.role;
+                    const role = GAME_MANAGER.state.clientState.roleState?.type;
                     if(role !== undefined){
                         Anchor.setCoverCard(<WikiArticle article={"role/"+role as WikiArticleLink}/>, "wiki-menu-colors");
                     }
@@ -266,6 +266,9 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "yourRoleLabels":
             if(GAME_MANAGER.state.stateType === "game"){
+                for (const player of GAME_MANAGER.state.players) {
+                    player.roleLabel = null;
+                }
                 for (const [key, value] of Object.entries(packet.roleLabels)) { 
                     if(
                         GAME_MANAGER.state.players !== undefined && 
@@ -320,7 +323,7 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "yourRoleState":
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
-                if(GAME_MANAGER.state.clientState.roleState?.role!== packet.roleState.role){
+                if(GAME_MANAGER.state.clientState.roleState?.type!== packet.roleState.type){
                     GameScreen.instance?.closeMenu(ContentMenu.RoleSpecificMenu);
                 }
                 GAME_MANAGER.state.clientState.roleState = packet.roleState;

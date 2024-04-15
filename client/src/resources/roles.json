@@ -33,7 +33,7 @@
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
-    "sheriff": {
+    "detective": {
         "faction": "town",
         "roleSet": "townInvestigative",
         "armor": false,
@@ -59,7 +59,7 @@
             {"type": "lookoutResult", "players": []}
         ]
     },
-    "seer": {
+    "philosopher": {
         "faction": "town",
         "roleSet": "townInvestigative",
         "armor": false,
@@ -147,7 +147,7 @@
             {"type": "youSurvivedAttack"}
         ]
     },
-    "crusader": {
+    "cop": {
         "faction": "town",
         "roleSet": "townProtective",
         "armor": false,
@@ -156,13 +156,14 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
+            {"type": "copAttackedVisitor"},
             {"type": "targetWasAttacked"},
             {"type": "youWereProtected"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
     },
-    "reveler": {
+    "bouncer": {
         "faction": "town",
         "roleSet": "townProtective",
         "armor": false,
@@ -175,7 +176,7 @@
             {"type": "roleBlocked","immune": true}
         ]
     },
-    "trapper": {
+    "engineer": {
         "faction": "town",
         "roleSet": "townProtective",
         "armor": false,
@@ -185,10 +186,9 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "trapState", "state":{"type":"dismantled"}},
-            {"type": "trapState", "state":{"type":"ready"}},
             {"type": "trapState", "state":{"type":"set"}},
-            {"type": "trapperYouAttackedVisitor"},
-            {"type": "trapperVisitorsRole", "role": "framer"},
+            {"type": "engineerYouAttackedVisitor"},
+            {"type": "engineerVisitorsRole", "role": "framer"},
             {"type": "targetWasAttacked"},
             {"type": "youWereProtected"},
             {"type": "someoneSurvivedYourAttack"},
@@ -397,7 +397,7 @@
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
-    "consort": {
+    "hypnotist": {
         "faction": "mafia",
         "roleSet": "mafiaSupport",
         "armor": false,
@@ -428,7 +428,7 @@
             {"type":"silenced"}
         ]
     },
-    "consigliere": {
+    "informant": {
         "faction": "mafia",
         "roleSet": "mafiaSupport",
         "armor": false,
@@ -497,6 +497,7 @@
             {"type": "targetsMessage", "message": 
                 {"type": "sheriffResult","suspicious":true}
             },
+            {"type": "possessionTargetsRole", "role":"detective"},
             {"type": "targetIsPossessionImmune"},
             {"type": "youWerePossessed", "immune": false},
             {"type": "youWerePossessed", "immune": true}
@@ -519,6 +520,18 @@
             {"type": "youWerePossessed", "immune": true}
         ]
     },
+    "mafiaWildCard": {
+        "faction": "mafia",
+        "roleSet": null,
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "roleAssignment", "role":"mafiaWildCard"}
+        ]
+    },
     "jester": {
         "faction": "neutral",
         "roleSet": "neutralEvil",
@@ -531,7 +544,7 @@
             {"type": "jesterWon"}
         ]
     },
-    "executioner": {
+    "hater": {
         "faction": "neutral",
         "roleSet": "neutralEvil",
         "armor": true,
@@ -598,7 +611,22 @@
             {"type": "youSurvivedAttack"}
         ]
     },
-    "amnesiac": {
+    "ojo": {
+        "faction": "neutral",
+        "roleSet": "neutralKilling",
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "ojoResult", "players":[17, 8]},
+            {"type": "ojoResult", "players":[]},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+        ]
+    },
+    "wildcard": {
         "faction": "neutral",
         "roleSet": "neutralChaos",
         "armor": false,
@@ -606,7 +634,9 @@
         "maxCount": null,
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
-        "chatMessages":[]
+        "chatMessages":[
+            {"type": "roleAssignment", "role":"wildcard"}
+        ]
     },
     "martyr": {
         "faction": "neutral",
@@ -647,6 +677,24 @@
         "chatMessages":[
             {"type": "doomsayerWon"},
             {"type": "doomsayerFailed"}
+        ]
+    },
+    "minion":{
+        "faction": "neutral",
+        "roleSet": null,
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "targetsMessage", "message": 
+                {"type": "sheriffResult","suspicious":true}
+            },
+            {"type": "possessionTargetsRole", "role":"detective"},
+            {"type": "targetIsPossessionImmune"},
+            {"type": "youWerePossessed", "immune": false},
+            {"type": "youWerePossessed", "immune": true}
         ]
     },
     "apostle": {

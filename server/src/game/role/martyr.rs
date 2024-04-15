@@ -9,7 +9,7 @@ use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
-use crate::game::team::Team;
+
 use super::{Priority, RoleStateImpl, Role, RoleState};
 
 #[derive(PartialEq, Clone, Debug, Serialize)]
@@ -42,7 +42,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 impl RoleStateImpl for Martyr {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {None}
+    
 
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return}
@@ -108,7 +108,7 @@ impl RoleStateImpl for Martyr {
     fn on_role_creation(self,  game: &mut Game, actor_ref: PlayerReference) {
         game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::MartyrRevealed { martyr: actor_ref.index() });
         for player in PlayerReference::all_players(game){
-            player.insert_role_label(game, actor_ref, Role::Martyr);
+            player.insert_role_label(game, actor_ref);
         }
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference) {

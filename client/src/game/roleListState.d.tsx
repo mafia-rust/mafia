@@ -1,6 +1,6 @@
 
 import translate from "./lang";
-import { Role } from "./roleState.d";
+import { Role, getFactionFromRole } from "./roleState.d";
 import ROLES from "../resources/roles.json";
 
 export const FACTIONS = ["town", "mafia", "cult", "neutral"] as const;
@@ -37,10 +37,20 @@ export function getRolesFromRoleListRemoveExclusionsAddConversions(roleList: Rol
 
     
     for(let role of roles){
-        if(role==="amnesiac"){
+        if(role==="wildcard"){
             getRolesComplement(excludedRoles).forEach((role) => {
                 out.push(role);
             });
+            break;
+        }
+        if(role==="mafiaWildCard"){
+            getRolesComplement(excludedRoles)
+                .filter((role)=>getFactionFromRole(role)==="mafia")
+                .filter((role)=>role!=="godfather" && role!=="mafioso")
+                .forEach((role) => {
+                    out.push(role);
+                }
+            );
             break;
         }
     }
@@ -76,21 +86,21 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
         case "townKilling":
             return ["vigilante", "veteran", "deputy"];
         case "townProtective":
-            return ["bodyguard", "crusader", "doctor", "reveler", "trapper"];
+            return ["bodyguard", "cop", "doctor", "bouncer", "engineer"];
         case "townInvestigative":
-            return ["psychic", "lookout", "sheriff", "spy", "tracker", "seer"];
+            return ["psychic", "lookout", "detective", "spy", "tracker", "philosopher"];
         case "mafiaSupport":
             return [
-                "blackmailer", "consigliere", "consort", 
+                "blackmailer", "informant", "hypnotist", 
                 "forger", "framer", "janitor", 
                 "witch", "necromancer"
             ];
         case "neutralEvil":
-            return ["jester", "executioner", "politician"];
+            return ["jester", "hater", "politician"];
         case "neutralKilling":
-            return ["arsonist", "werewolf"];
+            return ["arsonist", "werewolf", "ojo"];
         case "neutralChaos":
-            return ["amnesiac", "martyr"];
+            return ["wildcard", "martyr"];
         case "neutralApocalypse":
             return ["death", "doomsayer"];
     }

@@ -1,0 +1,21 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  deployment:
+    name: Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.JP_SERVER_HOSTNAME }}
+          username: ${{ secrets.JP_SERVER_USER }}
+          password: ${{ secrets.JP_SERVER_PASSWORD }}
+          script: |
+            cd /mafia-app/updater
+            ./auth.sh

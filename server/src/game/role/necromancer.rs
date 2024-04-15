@@ -6,7 +6,7 @@ use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
-use crate::game::team::Team;
+
 use super::{Priority, RoleState, RoleStateImpl};
 
 pub(super) const FACTION: Faction = Faction::Mafia;
@@ -20,7 +20,7 @@ pub struct Necromancer {
 }
 impl RoleStateImpl for Necromancer {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    fn team(&self, _game: &Game, _actor_ref: PlayerReference) -> Option<Team> {Some(Team::Mafia)}
+    
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
@@ -58,6 +58,13 @@ impl RoleStateImpl for Necromancer {
                 used_bodies.push(first_visit.target);
                 actor_ref.set_role_state(game, RoleState::Necromancer(Necromancer { used_bodies, currently_used_player: Some(first_visit.target) }));
                 actor_ref.set_night_visits(game, vec![first_visit.clone()]);
+            },
+            Priority::Investigative => {
+                if let Some(currently_used_player) = self.currently_used_player {
+                    actor_ref.push_night_message(game,
+                        ChatMessageVariant::PossessionTargetsRole { role: currently_used_player.role(game) }
+                    );
+                }
             },
             Priority::StealMessages => {
                 if let Some(currently_used_player) = self.currently_used_player {
