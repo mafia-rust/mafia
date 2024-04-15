@@ -1,4 +1,4 @@
-use crate::game::{chat::{ChatGroup, ChatMessageVariant}, phase::PhaseType, player::PlayerReference, role::{apostle::Apostle, disciple::Disciple, zealot::Zealot, RoleState}, role_list::Faction, Game};
+use crate::game::{chat::{ChatGroup, ChatMessageVariant}, phase::PhaseType, player::PlayerReference, role::{apostle::Apostle, disciple::Disciple, zealot::Zealot, Role, RoleState}, role_list::Faction, Game};
 
 
 impl Game {
@@ -38,14 +38,14 @@ impl Cult{
 
         Cult::set_ordered_cultists(self.clone(), game);
     }
-    pub fn on_role_switch(self, game: &mut Game, actor: PlayerReference) {
-        if actor.role(game).faction() == Faction::Cult {
+    pub fn on_role_switch(self, game: &mut Game, old: Role, new: Role) {
+        if old.faction() == Faction::Cult || new.faction() == Faction::Cult {
             Cult::set_ordered_cultists(self.clone(), game);
         }
 
-        for unnamed_cult_member_with_arbitrary_name_a in Cult::get_members(game) {
-            for unnamed_cult_member_with_arbitrary_name_b in Cult::get_members(game) {
-                unnamed_cult_member_with_arbitrary_name_a.insert_role_label(game, unnamed_cult_member_with_arbitrary_name_b, unnamed_cult_member_with_arbitrary_name_b.role(game));
+        for a in Cult::get_members(game) {
+            for b in Cult::get_members(game) {
+                a.insert_role_label(game, b);
             }
         }
     }

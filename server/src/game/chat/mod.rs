@@ -60,6 +60,8 @@ pub enum ChatMessageVariant {
 
     RoleAssignment{role: Role},
     PlayerDied{grave: Grave},
+    PlayersRoleRevealed{player: PlayerIndex, role: Role},
+    PlayersRoleConcealed{player: PlayerIndex},
 
     
     #[serde(rename_all = "camelCase")]

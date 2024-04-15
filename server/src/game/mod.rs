@@ -170,6 +170,21 @@ impl Game {
             return Err(RejectStartReason::RoleListCannotCreateRoles);
         }
 
+        
+        game.send_packet_to_all(ToClientPacket::StartGame);
+        
+        //on role creation needs to be called after all players roles are known
+        for player_ref in PlayerReference::all_players(&game){
+            let role_data_copy = player_ref.role_state(&game).clone();
+            player_ref.set_role(&mut game, role_data_copy);
+        }
+
+        for player_ref in PlayerReference::all_players(&game){
+            player_ref.send_join_game_data(&mut game);
+        }
+        for spectator in SpectatorPointer::all_spectators(&game){
+            spectator.send_join_game_data(&mut game);
+        }
 
         OnGameStart::invoke(&mut game);
 

@@ -203,7 +203,7 @@
     "role.mayor.name": "Mayor",
     "role.mayor.name:var.0": "Mayors",
     "role.mayor.target": "Target",
-    "role.mayor.dayTarget": "Reveal",
+    "role.mayor.dayTarget": "Enfranchise",
 
     "role.transporter.name": "Transporter",
     "role.transporter.name:var.0": "Transporters",
@@ -546,6 +546,8 @@
 
     "chatMessage.roleAssignment":"Your role is \\0",
     "chatMessage.playerDied":"\\0 died.",
+    "chatMessage.playersRoleRevealed":"\\0 was revealed to be the \\1 to you.",
+    "chatMessage.playersRoleConcealed":"\\0 had their role concealed from you.",
     "chatMessage.deathNote": "A note left with the body reads:",
     "chatMessage.phaseChange":"\\0 \\1",
     "chatMessage.phaseChange.nomination":"\\0 \\1\n\\2 nominations left",
@@ -564,7 +566,7 @@
     "chatMessage.targeted":"\\0 selected \\1.",
     "chatMessage.targeted.cleared":"\\0 cleared their selection.",
 
-    "chatMessage.mayorRevealed":"\\0 has revealed as Mayor!",
+    "chatMessage.mayorRevealed":"The mayor, \\0, is using emergency executive voting power!",
     "chatMessage.martyrRevealed":"Praise the Martyr \\0, for they will lead us to harmony!",
     "chatMessage.journalistJournal":"The town journal states this: \\0",
     "chatMessage.youAreInterviewingPlayer":"You are interviewing \\0.",
@@ -667,7 +669,7 @@
     "wiki.article.standard.cult.text": "The Cult is an alternative evil faction that can convert other players to join their cult. They win by eliminating all opposing teams. Cultists can communicate at night and they can not select each other, much like the mafia. Unlike the mafia, the cultists do not have supporting roles that can help them, but instead convert other players to join them.\n\nCult roles include:\n- Apostle (Chooses who to convert to a zealot)\n- Disciple (Oldest one becomes Apostle after it dies)\n- Zealot (Attacks every night and becomes disciple if a new zealot is made)",
     
     "wiki.article.standard.roleLabel.title": "Role Label",
-    "wiki.article.standard.roleLabel.text": "A role label might appear next to a players name on the player list. It shows what their role is. For example, mafia members can see the roles of their teammates through role labels. If a mayor reveals, the mayor will gain a role label. It is possible for a role label to be inaccurate, for instance, if a mayor is converted to a cultist, their label might not change.",
+    "wiki.article.standard.roleLabel.text": "- Role labels appear next to player names, it shows what role that player is\n- Role labels are not always public, for example, you can see your own role label at all times, but other players can not\n- A mafia member can see the other mafia members role labels\n- When you gain a role label on another player, you get a chat message saying that players role was revealed to you\n- When you lose a role label on another player, you get a chat message saying that players role was concealed from you\n- If a player that is revealed to you switches roles or dies, their role label will be concealed\n- Dead players can not have role lables, the role that appears next to their name is just the role on their grave. These can be innacurate for reasons like the janitor or forgers ability",
     "wiki.article.standard.interview.title": "Interview",
     "wiki.article.standard.interview.text": "A journalist can interview a player during the night, allowing the journalist to speak with them. The player being interviewed may not know who the journalist is, but everyone knows the journalist is on the town team.",
     "wiki.article.standard.journal.title": "Journal",
@@ -866,10 +868,10 @@
     "wiki.article.role.jailor.attributes":"* You may talk with your prisoner at night\n* If you execute a townie, you forfeit the ability to jail prisoners, and lose all execution uses\n* Players in jail are immune to most abilities while in jail\n* Jailed players can't visit\n* Other players are told when their target is jailed",
     "wiki.article.role.jailor.extra":"* The Jailor can not execute on night one\n* If you execute a townie, or run out of executions, you can not select anymore\n* You will invisibly roleblock the player you put in jail\n* Players in jail don't see your name on your messages. The messages you send appear to be from the jailor\n* If you jail a cult or mafia member, their teammates know that that player is in jail",
 
-    "wiki.article.role.mayor.guide": "You can choose to reveal during the day to make your vote count as three votes. When you reveal, everyone is told you are the mayor.",
-    "wiki.article.role.mayor.abilities":"* Reveal during the day to triple your voting power, showing everyone that you are the Mayor",
-    "wiki.article.role.mayor.attributes":"* You get 3 votes during both nomination and judgement after you reveal",
-    "wiki.article.role.mayor.extra": "* If you are converted to a different role, players will still see that you are the mayor\n* Revealing does not increase the number of votes required to put someone on trial",
+    "wiki.article.role.mayor.guide": "You can choose to enfranchise during the day to make your vote count as three votes. When you enfranchise, everyone is told you are the mayor.",
+    "wiki.article.role.mayor.abilities":"* Enfranchise during the day to triple your voting power, showing everyone that you are the Mayor",
+    "wiki.article.role.mayor.attributes":"* You get 3 votes during both nomination and judgement after you enfranchise",
+    "wiki.article.role.mayor.extra": "* If you are converted to a different role, players will still see that you are the mayor\n* Enfranchising does not increase the number of votes required to put someone on trial",
 
     "wiki.article.role.transporter.guide": "- At night, select two players\n    - If somebody else tries to visit the first player, they will instead visit the second player, and vice versa\n\n _For example_\n- If a godfather tries to attack @1, but you transported @1 and @4, then @4 will die instead\n\nIts often a good strategy to transport innocent looking players with suspicious looking ones to divert a potential attack from the innocent player onto the suspicious player.\n\n",
     "wiki.article.role.transporter.abilities":"* Visit two players to transport them",
