@@ -59,6 +59,13 @@ impl RoleStateImpl for Retributionist {
                 actor_ref.set_role_state(game, RoleState::Retributionist(Retributionist { used_bodies, currently_used_player: Some(first_visit.target) }));
                 actor_ref.set_night_visits(game, vec![first_visit.clone()]);
             },
+            Priority::Investigative => {
+                if let Some(currently_used_player) = self.currently_used_player {
+                    actor_ref.push_night_message(game,
+                        ChatMessageVariant::PossessionTargetsRole { role: currently_used_player.role(game) }
+                    );
+                }
+            },
             Priority::StealMessages => {
                 if let Some(currently_used_player) = self.currently_used_player {
                     for message in currently_used_player.night_messages(game).clone() {

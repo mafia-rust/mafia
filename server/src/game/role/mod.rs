@@ -82,6 +82,7 @@ macros::roles! {
     Hater : hater,
     Politician : politician,
 
+    Minion : minion,
     Doomsayer : doomsayer,
     Death : death,
 

@@ -367,6 +367,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.mediumHauntStarted", playerNames[message.medium], playerNames[message.player]);
         case "youWerePossessed":
             return translate("chatMessage.youWerePossessed" + (message.immune ? ".immune" : ""));
+        case "possessionTargetsRole":
+            return translate("chatMessage.possessionTargetsRole", translate("role."+message.role+".name"));
         case "werewolfTrackingResult":
             if(message.players.length === 0){
                 return translate(
@@ -640,6 +642,9 @@ export type ChatMessageVariant = {
 } | {
     type: "youWerePossessed",
     immune: boolean
+} | {
+    type: "possessionTargetsRole",
+    role: Role
 } | {
     type: "targetsMessage",
     message: ChatMessageVariant
