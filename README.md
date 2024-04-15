@@ -1,4 +1,4 @@
-# Mafia (Rust)
+# Mafia
 Multiplayer Social Deduction game
 
 ## Getting Started
