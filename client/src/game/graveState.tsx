@@ -1,4 +1,5 @@
 import { PlayerIndex } from "./gameState.d";
+import translate from "./lang";
 import { Faction } from "./roleListState.d";
 import { Role } from "./roleState.d";
 
@@ -39,3 +40,12 @@ export type GraveKiller = {
 };
 
 export type GravePhase = "day" | "night"
+
+export function translateGraveRole(graveRole: GraveRole): string{
+    switch(graveRole.type){
+        case "cleaned":
+            return translate("grave.role.cleaned");
+        case "role":
+            return translate("role."+graveRole.role+".name");
+    }
+}

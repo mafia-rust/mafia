@@ -8,6 +8,7 @@ pub use player_reference::PlayerIndex;
 pub use player_reference::PlayerReference;
 
 use std::collections::HashMap;
+use std::collections::HashSet;
 
 use crate::client_connection::ClientConnection;
 use crate::{
@@ -40,7 +41,7 @@ pub struct Player {
     crossed_out_outlines: Vec<u8>,
     death_note: Option<String>,
 
-    role_labels: HashMap<PlayerReference, Role>,
+    role_labels: HashSet<PlayerReference>,
     player_tags: HashMap<PlayerReference, Vec<Tag>>,
 
 
@@ -94,7 +95,7 @@ impl Player {
             crossed_out_outlines: vec![],
             death_note: None,
 
-            role_labels: HashMap::new(),
+            role_labels: HashSet::new(),
             player_tags: HashMap::new(),
 
 
@@ -135,7 +136,7 @@ impl Player {
 }
 
 pub mod test {
-    use std::{collections::HashMap, time::Duration};
+    use std::{collections::{HashMap, HashSet}, time::Duration};
 
     use crate::{client_connection::ClientConnection, game::{role::Role, verdict::Verdict}};
 
@@ -154,7 +155,7 @@ pub mod test {
             crossed_out_outlines: vec![],
             death_note: None,
 
-            role_labels: HashMap::new(),
+            role_labels: HashSet::new(),
             player_tags: HashMap::new(),
 
 

@@ -145,6 +145,15 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.roleAssignment", 
                 translate("role."+message.role+".name")
             );
+        case "playersRoleRevealed":
+            return translate("chatMessage.playersRoleRevealed",
+                playerNames[message.player],
+                translate("role."+message.role+".name")
+            );
+        case "playersRoleConcealed":
+            return translate("chatMessage.playersRoleConcealed",
+                playerNames[message.player]
+            );
         case "playerWonOrLost":
             if(message.won){
                 return translate("chatMessage.playerWon",
@@ -443,6 +452,13 @@ export type ChatMessageVariant = {
 } | {
     type: "playerDied", 
     grave: Grave
+} | {
+    type: "playersRoleRevealed",
+    role: Role,
+    player: PlayerIndex
+} | {
+    type: "playersRoleConcealed",
+    player: PlayerIndex
 } | {
     type: "gameOver"
 } | {
