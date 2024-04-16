@@ -195,6 +195,8 @@ impl Lobby {
                 };
 
                 Lobby::send_players_game(game);
+                
+                self.send_to_all(ToClientPacket::LobbyName { name: self.name.clone() })
             },
             ToServerPacket::SetPhaseTime{phase, time} => {
                 let LobbyState::Lobby{ settings, clients  } = &mut self.lobby_state else {

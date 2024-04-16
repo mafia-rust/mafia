@@ -35,6 +35,7 @@ export function createGameState(): GameState {
     return {
         stateType: "game",
         roomCode: 0,
+        lobbyName: "",
 
         chatMessages : [],
         graves: [],

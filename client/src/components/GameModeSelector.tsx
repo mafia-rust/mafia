@@ -156,6 +156,7 @@ export function GameModeSelector(props: {
                 />
                 : Object.keys(savedGameModes).map(gameModeName => <div>
                     <GameModeLabel 
+                        key={gameModeName}
                         gameModeName={gameModeName} 
                         numberOfPlayers={savedGameModes[gameModeName]?.roleList.length}
                         modifiable={props.canModifySavedGameModes}

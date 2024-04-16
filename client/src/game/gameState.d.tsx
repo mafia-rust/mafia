@@ -48,6 +48,7 @@ export type LobbyClientType = {
 type GameState = {
     stateType: "game"
     roomCode: number,
+    lobbyName: string,
 
     chatMessages : ChatMessage[],
     graves: Grave[],

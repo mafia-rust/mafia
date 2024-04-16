@@ -23,7 +23,7 @@ export default function PhaseTimesSelector(props: {
         <h2>{translate("menu.lobby.timeSettings")}</h2>
         <div className="phase-times">
             {PHASES.map(phase => 
-                <PhaseTimeSelector disabled={props.disabled} phase={phase} time={phaseTimes[phase]} onChange={onChange}/>
+                <PhaseTimeSelector key={phase} disabled={props.disabled} phase={phase} time={phaseTimes[phase]} onChange={onChange}/>
             )}
         </div>
     </section>

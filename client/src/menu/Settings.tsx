@@ -11,6 +11,7 @@ import { CopyButton } from '../components/ClipboardButtons';
 import ReactDOM from 'react-dom';
 import WikiCoverCard from '../components/WikiCoverCard';
 import Icon from '../components/Icon';
+import { StateListener } from '../game/gameManager.d';
 
 export type Settings = {
     volume: number,
@@ -23,7 +24,8 @@ type SettingsProps = {
 }
 type SettingsState = {
     volume: number, // 0-1
-    language: Language
+    language: Language,
+    lobbyName: string,
 }
 
 //default settings
@@ -34,12 +36,15 @@ export const DEFAULT_SETTINGS: Settings = {
 
 export default class SettingsMenu extends React.Component<SettingsProps, SettingsState> {
     handleClickOutside: (event: MouseEvent) => void;
+    listener: StateListener;
+
     constructor(props: SettingsProps) {
         super(props);
 
         this.state = {
             ...DEFAULT_SETTINGS,
-            ...loadSettings()
+            ...loadSettings(),
+            lobbyName: (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") ? GAME_MANAGER.state.lobbyName : ""
         };
 
         this.handleClickOutside = (event: MouseEvent) => {
@@ -52,14 +57,22 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
                 })
             }
         };
+
+        this.listener = type => {
+            if (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") {
+                this.setState({ lobbyName: GAME_MANAGER.state.lobbyName });
+            }
+        }
     }
     componentDidMount(): void {
         setTimeout(() => {
             document.addEventListener("click", this.handleClickOutside);
         });
+        GAME_MANAGER.addStateListener(this.listener);
     }
     componentWillUnmount(): void {
         document.removeEventListener("click", this.handleClickOutside);
+        GAME_MANAGER.removeStateListener(this.listener);
     }
     async quitToMainMenu() {
         if (GAME_MANAGER.state.stateType === "game") {
@@ -79,8 +92,8 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
         const quitButtonBlacklist: (string | JSXElementConstructor<any>)[] = [StartMenu, LoadingScreen];
 
         return (
-            <div className="settings slide-in">
-                <section>
+            <div className="chat-menu-colors settings slide-in">
+                <section className="standout">
                     <h2><Icon>volume_up</Icon> {translate("menu.settings.volume")}</h2>
                     <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
                         value={this.state.volume} 
@@ -91,7 +104,7 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
                         }
                     }/>
                 </section>
-                <section>
+                <section className="standout">
                     <h2><Icon>language</Icon> {translate("menu.settings.language")}</h2>
                     <select 
                         name="lang-select" 
@@ -106,19 +119,26 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
                         {LANGUAGES.map(lang => <option key={lang} value={lang}>{languageName(lang)}</option>)}
                     </select>
                 </section>
-                { quitButtonBlacklist.includes(Anchor.contentType()) ||
-                    <button onClick={(e)=>{this.quitToMainMenu()}}><Icon>not_interested</Icon> {translate("menu.settings.quitToMenu")}</button>
+                {(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") && 
+                    <section className="standout">
+                        <h2>{GAME_MANAGER.state.lobbyName}</h2>
+                        <RoomLinkButton/>
+                    </section>
                 }
-                <button onClick={() => {this.goToRolelistEditor()}}><Icon>edit</Icon> {translate("menu.settings.gameSettingsEditor")}</button>
-                <button onClick={()=>{
-                    if(!window.confirm(translate("confirmDelete"))) return;
-                    localStorage.clear();
-                }}><Icon>delete_forever</Icon> {translate('menu.settings.eraseSaveData')}</button>
-                <button onClick={() => {
-                    Anchor.setCoverCard(<WikiCoverCard />, "wiki-menu-colors");
-                    Anchor.closeSettings();
-                }}><Icon>menu_book</Icon> {translate("menu.wiki.title")}</button>
-                {(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") && <RoomLinkButton/>}
+                <section>
+                    { quitButtonBlacklist.includes(Anchor.contentType()) ||
+                        <button onClick={(e)=>{this.quitToMainMenu()}}><Icon>not_interested</Icon> {translate("menu.settings.quitToMenu")}</button>
+                    }
+                    <button onClick={() => {this.goToRolelistEditor()}}><Icon>edit</Icon> {translate("menu.settings.gameSettingsEditor")}</button>
+                    <button onClick={() => {
+                        Anchor.setCoverCard(<WikiCoverCard />, "wiki-menu-colors");
+                        Anchor.closeSettings();
+                    }}><Icon>menu_book</Icon> {translate("menu.wiki.title")}</button>
+                    <button onClick={()=>{
+                        if(!window.confirm(translate("confirmDelete"))) return;
+                        localStorage.clear();
+                    }}><Icon>delete_forever</Icon> {translate('menu.settings.eraseSaveData')}</button>
+                </section>
             </div>
         );
     }

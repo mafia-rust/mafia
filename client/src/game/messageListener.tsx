@@ -150,7 +150,7 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "lobbyName":
-            if(GAME_MANAGER.state.stateType === "lobby"){
+            if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
                 GAME_MANAGER.state.lobbyName = packet.name;
             }
         break;

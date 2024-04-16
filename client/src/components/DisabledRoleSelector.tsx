@@ -1,4 +1,4 @@
-import { ReactElement, useContext, useState } from "react"
+import { ReactElement, useCallback, useContext, useState } from "react"
 import translate from "../game/lang"
 import React from "react"
 import StyledText from "./StyledText"
@@ -27,6 +27,10 @@ export default function DisabledRoleSelector(props: {
         props.onDisableRoles(getRolesFromOutlineOption(outline));
     }
 
+    const enableOutlineOption = (outline: RoleOutlineOption) => {
+        props.onEnableRoles(getRolesFromOutlineOption(outline));
+    }
+
     const disableAll = () => {
         props.onDisableRoles(getAllRoles());
     }
@@ -45,6 +49,10 @@ export default function DisabledRoleSelector(props: {
 
             <div className="disabled-role-selector-area">
                 <Button
+                    onClick={()=>{enableOutlineOption(roleOutlineOption)}}
+                    disabled={props.disabled}
+                >{translate("menu.excludedRoles.include")}</Button>
+                <Button
                     onClick={()=>{disableOutlineOption(roleOutlineOption)}}
                     disabled={props.disabled}
                 >{translate("menu.excludedRoles.exclude")}</Button>
@@ -57,24 +65,55 @@ export default function DisabledRoleSelector(props: {
             </div>
         </div>
 
-        <div>
-            {getAllRoles().map((role, i) => {
-                if (disabledRoles.includes(role)) {
-                    return <Button key={i}
-                        disabled={props.disabled}
-                        onClick={() => props.onEnableRoles([role])}
-                    >
-                        <span className="keyword-disabled">{translate("role."+role+".name")}</span>
-                    </Button>
-                } else {
-                    return <Button key={i}
-                        disabled={props.disabled}
-                        onClick={() => props.onDisableRoles([role])}
-                    >
-                        <StyledText noLinks={true}>{translate("role."+role+".name")}</StyledText>
-                    </Button>
-                }
-            })}
-        </div>
+        <DisabledRolesDisplay 
+            disabledRoles={disabledRoles}
+            modifiable={true}
+            onDisableRoles={props.onDisableRoles}
+            onEnableRoles={props.onEnableRoles}
+            disabled={props.disabled}
+        />
+    </div>
+}
+
+type DisabledRoleDisplayProps = {
+    disabledRoles: Role[],
+} & (
+    {
+        modifiable: true,
+        onDisableRoles: (role: Role[]) => void,
+        onEnableRoles: (role: Role[]) => void,
+        disabled?: boolean,
+    } |
+    {
+        modifiable?: false,
+    }
+)
+
+export function DisabledRolesDisplay(props: DisabledRoleDisplayProps): ReactElement {
+    const isDisabled = useCallback((role: Role) => props.disabledRoles.includes(role), [props.disabledRoles]);
+
+    const roleTextElement = (role: Role) => {
+        return <StyledText 
+            noLinks={props.modifiable}
+            className={isDisabled(role) ? "keyword-disabled" : undefined}
+        >
+            {translate("role."+role+".name")}
+        </StyledText>
+    }
+
+    return <div>
+        {getAllRoles().map((role, i) => 
+            props.modifiable 
+                ? <Button key={i}
+                    disabled={props.disabled}
+                    onClick={() => (isDisabled(role) ? props.onEnableRoles : props.onDisableRoles)([role])}
+                >
+                    {roleTextElement(role)}
+                </Button> 
+                : <div key={i} className={"disabled-role-element" + (isDisabled(role) ? " disabled" : "")}>
+                    {roleTextElement(role)}
+                </div>
+            
+        )}
     </div>
 }

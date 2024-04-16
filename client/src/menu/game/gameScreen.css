@@ -83,6 +83,7 @@
     width: max-content;
     margin: 0 .30rem;
     padding: 0;
+    height: 1.2rem;
 }
 .content-tab > .close {
     position: absolute;

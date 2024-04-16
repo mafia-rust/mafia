@@ -131,14 +131,18 @@ function WikiSearchResults(props: {
             }
         }
 
-        if(
-            props.disabledRoles !== undefined && 
-            props.disabledRoles.map((role)=>{return "role/"+role}).includes(page)
-        ){
-            elements.push(<button key={page} onClick={() => props.onChooseArticle(page)}><span className="keyword-disabled">{getArticleTitle(page)}</span></button>);
-        }else{
-            elements.push(<button key={page} onClick={() => props.onChooseArticle(page)}><StyledText>{getArticleTitle(page)}</StyledText></button>);
+        let className = undefined;
+        if(props.disabledRoles !== undefined && props.disabledRoles.map(role => `role/${role}`).includes(page)) {
+            className = "keyword-disabled";
         }
+
+        elements.push(
+            <button key={page} onClick={() => props.onChooseArticle(page)}>
+                <StyledText noLinks={true} className={className}>
+                    {getArticleTitle(page)}
+                </StyledText>
+            </button>
+        );
     }
 
     return <div className="wiki-results">
