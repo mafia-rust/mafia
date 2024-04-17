@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 use crate::game::{grave::Grave, role::Role, player::{PlayerIndex, PlayerReference}, verdict::Verdict, Game};
 
-use super::{phase::PhaseState, role::{auditor::AuditorResult, spy::SpyBug, engineer::TrapState}, role_list::RoleOutline};
+use super::{phase::PhaseState, role::{auditor::AuditorResult, engineer::TrapState, ojo::OjoAction, spy::SpyBug}, role_list::RoleOutline};
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
@@ -187,6 +187,9 @@ pub enum ChatMessageVariant {
     GodfatherBackup{backup: Option<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
     GodfatherBackupKilled{backup: PlayerIndex},
+
+    #[serde(rename_all = "camelCase")]
+    EngineerRemoveTrap{unset: bool},
     
 
     #[serde(rename_all = "camelCase")]
@@ -195,6 +198,8 @@ pub enum ChatMessageVariant {
     ConsigliereResult{ role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
     OjoResult{players: Vec<PlayerIndex>},
+    #[serde(rename_all = "camelCase")]
+    OjoSelection{action: OjoAction},
 
     TargetIsPossessionImmune,
     YouWerePossessed { immune: bool },

@@ -16,7 +16,7 @@ pub struct Ojo{
     pub chosen_action: OjoAction,
 }
 
-#[derive(Default, Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Default, Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum OjoAction {

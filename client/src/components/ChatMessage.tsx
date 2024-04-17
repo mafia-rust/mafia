@@ -11,6 +11,7 @@ import DOMPurify from "dompurify";
 import GraveComponent from "./grave";
 import { RoleOutline, translateRoleOutline } from "../game/roleListState.d";
 import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
+import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
 
 export default function ChatElement(
     props: {
@@ -361,6 +362,16 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.ojoResult",
                 message.players.map((playerIndex) => {return playerNames![playerIndex]}).join(", ")
             );
+        case "ojoSelection":
+            switch (message.action.type) {
+                case "kill":
+                    return translate("chatMessage.ojoSelection.kill", translate("role."+message.action.role+".name"));
+                case "see":
+                    return translate("chatMessage.ojoSelection.see", translate("role."+message.action.role+".name"));
+                case "none":
+                    return translate("chatMessage.ojoSelection.none");
+            }
+            break;
         case "silenced":
             return translate("chatMessage.silenced");
         case "mediumHauntStarted":
@@ -390,6 +401,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                 default:
                     return translate("chatMessage.cultSacrificesRequired", message.required);
             }
+        case "engineerRemoveTrap":
+            return translate("chatMessage.engineerRemoveTrap." + (message.unset ? "remove" : "keep"));
         case "playerWithNecronomicon":
             return translate("chatMessage.playerWithNecronomicon", playerNames[message.playerIndex]);
         case "deputyShotYou":
@@ -624,6 +637,9 @@ export type ChatMessageVariant = {
     type: "godfatherBackupKilled",
     backup: PlayerIndex
 } | {
+    type: "engineerRemoveTrap",
+    unset: boolean
+} | {
     type: "silenced"
 } | {
     type: "playerRoleAndWill", 
@@ -637,6 +653,9 @@ export type ChatMessageVariant = {
 } | {
     type: "ojoResult",
     players: PlayerIndex[]
+} | {
+    type: "ojoSelection",
+    action: OjoAction,
 } | {
     type: "targetIsPossessionImmune"
 } | {

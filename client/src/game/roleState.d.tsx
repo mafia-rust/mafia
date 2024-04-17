@@ -42,7 +42,8 @@ export type RoleState = {
 } | {
     type: "bouncer"
 } | {
-    type: "engineer"
+    type: "engineer",
+    trap: {type: "dismantled"} | {type: "ready"} | {type: "set", target: PlayerIndex, shouldUnset: boolean}
 } | {
     type: "vigilante",
     state: {type:"notLoaded"} | {type:"willSuicide"} | {type:"loaded",bullets:number} | {type:"suicided"}

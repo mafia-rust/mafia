@@ -186,6 +186,7 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "trapState", "state":{"type":"dismantled"}},
+            {"type": "trapState", "state":{"type":"ready"}},
             {"type": "trapState", "state":{"type":"set"}},
             {"type": "engineerYouAttackedVisitor"},
             {"type": "engineerVisitorsRole", "role": "framer"},
