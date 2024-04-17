@@ -4,6 +4,8 @@ import GAME_MANAGER from "../../../index";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import "./willMenu.css"
 import { StateListener } from "../../../game/gameManager.d";
+import { Button } from "../../../components/Button";
+import Icon from "../../../components/Icon";
 
 
 type FieldType = "will" | "notes" | "deathNote";
@@ -105,21 +107,28 @@ export default class WillMenu extends React.Component<{}, WillMenuState> {
                 {translate("menu.will." + type)}
                 <div>
                     {unsaved ? "Unsaved" : "Saved"}
-                    <button
-                        className={"material-icons-round " + (unsaved ? "highlighted" : "")}
-                        onClick={() => this.save(type)}
+                    <Button
+                        highlighted={unsaved}
+                        onClick={() => {
+                            this.save(type);
+                            return true;
+                        }}
+                        pressedChildren={() => <Icon>done</Icon>}
                         aria-label={translate("menu.will.save")}
                     >
-                        save
-                    </button>
-                    <button
+                        <Icon>save</Icon>
+                    </Button>
+                    <Button
                         disabled={this.state.cantPost}
-                        className="material-icons-round"
-                        onClick={() => this.send(type)}
+                        onClick={() => {
+                            this.send(type);
+                            return true;
+                        }}
+                        pressedChildren={() => <Icon>done</Icon>}
                         aria-label={translate("menu.will.post")}
                     >
-                        send
-                    </button>
+                        <Icon>send</Icon>
+                    </Button>
                 </div>
             </summary>
             

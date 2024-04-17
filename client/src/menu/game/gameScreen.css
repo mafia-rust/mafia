@@ -79,17 +79,17 @@
 .content-tab > div{
     flex-grow: 1;
 }
-.content-tab > .close{
+.content-tab > button {
     width: max-content;
     margin: 0 .30rem;
+    padding: 0;
+    height: 1.2rem;
+}
+.content-tab > .close {
     position: absolute;
     right: 0;
 }
-.content-tab > .help{
-    width: max-content;
-    margin: 0 .30rem;
+.content-tab > .help {
     position: absolute;
     left: 0;
-    font-size: 1rem;
-    padding: 0;
 }

@@ -24,7 +24,7 @@
 }
 
 .sm > main > section#main > div {
-    margin-top: .5rem;
+    margin-top: 1rem;
     display: flex;
     flex-direction: column;
 }
@@ -33,14 +33,15 @@
     padding: 0;
     margin: 0;
 }
-.sm > main > section#main > button {
-    padding: 0.2rem 0.5rem;
-    margin: 0rem 0.5rem;
-    font-size: 3rem;
-}
 .sm > main > section#main > div > button {
+    display: flex;
+    flex-direction: row;
+    gap: .5rem;
     padding: 0.3rem 0.5rem;
     font-size: 1.5rem;
+}
+.sm > main > section#main > div > button .icon {
+    font-size: 1.8rem;
 }
 
 .sm > main > section#main {

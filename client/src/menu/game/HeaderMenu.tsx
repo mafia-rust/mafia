@@ -8,6 +8,8 @@ import "./headerMenu.css";
 import { Role, RoleState } from "../../game/roleState.d";
 import StyledText from "../../components/StyledText";
 import { StateEventType } from "../../game/gameManager.d";
+import Icon from "../../components/Icon";
+import { Button } from "../../components/Button";
 
 
 type HeaderMenuProps = {
@@ -142,65 +144,54 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
     }
 
     renderVerdictButton(verdict: Verdict) {
-        return <button
-            className={this.state.judgement === verdict ? "highlighted" : undefined}
+        return <Button
+            highlighted={this.state.judgement === verdict}
             onClick={()=>{GAME_MANAGER.sendJudgementPacket(verdict)}}
         >
             <StyledText noLinks={true}>
                 {translate("verdict." + verdict)}
             </StyledText>
-        </button>
+        </Button>
     }
     
     renderMenuButtons(){
         return <div className="menu-buttons">
-            <button
-            className={"chat-menu-colors"+(GameScreen.instance.menusOpen().includes(GameScreenContentMenus.ChatMenu)?" highlighted":"")}
-            onClick={()=>{
-                GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.ChatMenu);
-            }}>
+            <Button className="chat-menu-colors"
+                highlighted={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.ChatMenu)}
+                onClick={()=>GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.ChatMenu)}
+            >
                 {this.props.chatMenuNotification?<div className="chat-notification highlighted">!</div>:null}
                 {translate("menu.chat.icon")}
-            </button>
-            
-            <button 
-            className={"player-list-menu-colors"+ (GameScreen.instance.menusOpen().includes(GameScreenContentMenus.PlayerListMenu)?" highlighted":"")} 
-            onClick={()=>{
-                GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.PlayerListMenu)
-            
-            }}>{translate("menu.playerList.icon")}</button>
-            <button 
-            className={"will-menu-colors"+(GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WillMenu)?" highlighted":"")} 
-            onClick={()=>{
-                GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.WillMenu)
-            }}>{translate("menu.will.icon")}</button>
+            </Button>
+            <Button className="player-list-menu-colors"
+                highlighted={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.PlayerListMenu)}
+                onClick={()=>GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.PlayerListMenu)}
+            >{translate("menu.playerList.icon")}</Button>
+            <Button className="will-menu-colors" 
+                highlighted={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WillMenu)}
+                onClick={()=>GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.WillMenu)}
+            >{translate("menu.will.icon")}</Button>
             {(()=>
                 (
                     ROLES[this.state.roleState?.type as Role] === undefined || !ROLES[this.state.roleState?.type as Role].largeRoleSpecificMenu
                 )?null:
-                    <button 
-                    className={"role-specific-colors" + (GameScreen.instance.menusOpen().includes(GameScreenContentMenus.RoleSpecificMenu)?" highlighted":"")} 
-                    onClick={()=>{
-                        GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.RoleSpecificMenu)
-                    
-                    }}>
+                    <Button className="role-specific-colors" 
+                        highlighted={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.RoleSpecificMenu)}
+                        onClick={()=>GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.RoleSpecificMenu)}
+                    >
                         <StyledText noLinks={true}>
                             {translate("role."+this.state.roleState?.type+".name")}
                         </StyledText>
-                    </button>
+                    </Button>
             )()}
-            <button 
-            className={"graveyard-menu-colors"+(GameScreen.instance.menusOpen().includes(GameScreenContentMenus.GraveyardMenu)?" highlighted":"")} 
-            onClick={()=>{
-                GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.GraveyardMenu)
-            }}>{translate("menu.graveyard.icon")}</button>
-            <button 
-            className={"wiki-menu-colors"+(GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WikiMenu)?" highlighted":"")} 
-            onClick={()=>{
-                GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.WikiMenu)
-            
-            }}>{translate("menu.wiki.icon")}</button>
-
+            <Button className="graveyard-menu-colors" 
+                highlighted={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.GraveyardMenu)}
+                onClick={()=>GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.GraveyardMenu)}
+            >{translate("menu.graveyard.icon")}</Button>
+            <Button className="wiki-menu-colors"
+                highlighted={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WikiMenu)} 
+                onClick={()=>GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.WikiMenu)}
+            >{translate("menu.wiki.icon")}</Button>
         </div>
     }
     renderPhase(){
@@ -213,14 +204,13 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
     }
 
     renderFastForwardButton(){
-        return <button 
-            onClick={()=>{
-                GAME_MANAGER.sendVoteFastForwardPhase(true);
-            }}
-            className={"material-icons-round fast-forward-button" + (this.state.fastForward ? " highlighted" : "")}
+        return <Button 
+            onClick={()=>GAME_MANAGER.sendVoteFastForwardPhase(true)}
+            className="fast-forward-button"
+            highlighted={this.state.fastForward}
         >
-            double_arrow
-        </button>
+            <Icon>double_arrow</Icon>
+        </Button>
     }
 
     render(){

@@ -5,6 +5,7 @@ import "./lobbyMenu.css";
 import { LobbyClient, LobbyClientID } from "../../game/gameState.d";
 import { StateListener } from "../../game/gameManager.d";
 import LobbyNamePane from "./LobbyNamePane";
+import Icon from "../../components/Icon";
 
 type PlayerListState = {
     enteredName: string,
@@ -58,20 +59,18 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
         let out = [];
         for(let [id, player] of this.state.players.entries()){
             if(player.clientType.type === "spectator") continue;
-            let playerName = <>{player.host ? "👑 " : ""}{player.connection==="couldReconnect" ? "... " : ""}{player.clientType.name}</>;
-
             out.push(<li key={id} className={player.connection==="couldReconnect" ? "keyword-dead" : ""}>
-                {this.state.host ? 
-                    <button
-                        onClick={()=>{
-                            if(this.state.host)
-                                GAME_MANAGER.sendKickPlayerPacket(id);
-                        }}
-                    >
-                        {playerName}
-                    </button>
-                    : playerName
-                }
+                <div>
+                    {player.connection === "couldReconnect" && <Icon>signal_cellular_connected_no_internet_4_bar</Icon>}
+                    {player.host && <Icon>shield</Icon>}
+                    {player.clientType.name}
+                </div>
+                {this.state.host && <button
+                    onClick={()=>{
+                        if(this.state.host)
+                            GAME_MANAGER.sendKickPlayerPacket(id);
+                    }}
+                ><Icon>person_remove</Icon></button>}
             </li>)
         }
 
@@ -82,9 +81,11 @@ export default class LobbyPlayerList extends React.Component<{}, PlayerListState
 
     render(){return(<>
         <LobbyNamePane/>
-        <section className="player-list-menu-colors selector-section">
+        <section className="player-list player-list-menu-colors selector-section">
             <h2>{translate("menu.lobby.players")}</h2>
-            {this.renderPlayers()}
+            <div>
+                {this.renderPlayers()}
+            </div>
         </section>
     </>)}
 }

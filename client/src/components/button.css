@@ -1,10 +1,6 @@
-.clipboard-button {
-    position: relative
-}
-
-.clipboard-popup {
-    top: 100%;
-    left: 50%;
+.button-popup {
+    position: absolute;
+    z-index: 99999999;
     transform: translateX(-50%);
 
     padding: .13rem .25rem;
@@ -12,5 +8,4 @@
     background-color: var(--secondary-color);
     border-radius: .25rem;
     border: .13rem solid var(--primary-border-color);
-    position: absolute
 }

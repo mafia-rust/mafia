@@ -22,6 +22,21 @@
     border-top-right-radius: .4rem;
     border-bottom-right-radius: .4rem;
 }
+.role-list-setter-list {
+    border: .13rem solid var(--primary-border-color);
+    border-radius: .5rem;
+    border-top-color: black;
+    border-left-color: black;
+}
+.role-list-setter-list>div:nth-of-type(even) {
+    background-color: var(--secondary-color);
+}
 .role-list-setter-outline-div {
+    padding: 0 .25rem;
+    align-items:center;
+    gap: .25rem;
     display: flex;
+}
+.role-list-setter-add-button-div {
+    justify-content: center;
 }

@@ -10,6 +10,8 @@ import GraveComponent from "../../../components/grave";
 import { Grave } from "../../../game/graveState";
 import { StateListener } from "../../../game/gameManager.d";
 import { Role } from "../../../game/roleState.d";
+import Icon from "../../../components/Icon";
+import { DisabledRolesDisplay } from "../../../components/DisabledRoleSelector";
 
 type GraveyardMenuProps = {
 }
@@ -94,11 +96,8 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
     }
     renderGraveExtended(grave: Grave){
         return(<div className="grave-label">
-            <button
-                className="material-icons-round"
-                onClick={()=>{this.setState({extendedGraveIndex:null})}}
-            >
-                close
+            <button onClick={()=>this.setState({extendedGraveIndex:null})}>
+                <Icon>close</Icon>
             </button>
             <GraveComponent grave={grave} playerNames={this.state.players.map(p => p.toString())}/>
         </div>);
@@ -141,26 +140,12 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
     </>}
 
     renderExcludedRoles(){
-        return<div className="graveyard-menu-excludedRoles">
-            <section>
+        return<details className="graveyard-menu-excludedRoles">
+            <summary>
                 {translate("menu.excludedRoles.excludedRoles")}
-            </section>
-            <div>
-                {this.state.excludedRoles.length === 0 
-                    ? <StyledText>{translate("none")}</StyledText>
-                    : 
-                    Array.from(this.state.excludedRoles.values()).map((entry, i)=>{
-                        return <button 
-                            key={i}
-                        >
-                            <StyledText noLinks={false}>
-                                {translate("role."+entry+".name") ?? ""}
-                            </StyledText>
-                        </button>
-                    })
-                }
-            </div>
-        </div>
+            </summary>
+            <DisabledRolesDisplay disabledRoles={this.state.excludedRoles}/>
+        </details>
     }
 
 
@@ -171,8 +156,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             {this.renderRoleList()}
             {this.renderGraves()}
         </div>
+        {this.state.extendedGraveIndex!==null?this.renderGraveExtended(this.state.graves[this.state.extendedGraveIndex]):null}
         {this.renderExcludedRoles()}
-
-            {this.state.extendedGraveIndex!==null?this.renderGraveExtended(this.state.graves[this.state.extendedGraveIndex]):null}
     </div>)}
 }

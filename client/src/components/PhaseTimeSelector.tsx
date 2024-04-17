@@ -1,34 +1,31 @@
-import React, { ReactElement } from "react";
-import { PhaseType, PhaseTimes } from "../game/gameState.d";
+import React, { ReactElement, useContext } from "react";
+import { PhaseType, PhaseTimes, PHASES } from "../game/gameState.d";
 import translate from "../game/lang";
 import { isValidPhaseTime } from "../game/gameManager";
 import "./phaseTimeSelector.css";
+import { GameModeContext } from "./GameModesEditor";
 
 
 
 export default function PhaseTimesSelector(props: {
     disabled?: boolean,
-    phaseTimes: PhaseTimes,
     onChange: (phaseTimes: PhaseTimes) => void,
 }): ReactElement {
+    const {phaseTimes} = useContext(GameModeContext);
 
     const onChange = (phase: PhaseType, time: number) => {
-        let newPhaseTimes = {...props.phaseTimes};
+        let newPhaseTimes = {...phaseTimes};
         newPhaseTimes[phase] = time;
         props.onChange(newPhaseTimes);
     }
 
-    return <section className="will-menu-colors selector-section">
+    return <section className="phase-times-selector will-menu-colors selector-section">
         <h2>{translate("menu.lobby.timeSettings")}</h2>
-        <PhaseTimeSelector disabled={props.disabled} phase={"briefing"} time={props.phaseTimes["briefing"]} onChange={onChange}/>
-        <PhaseTimeSelector disabled={props.disabled} phase={"obituary"} time={props.phaseTimes["obituary"]} onChange={onChange}/>
-        <PhaseTimeSelector disabled={props.disabled} phase={"discussion"} time={props.phaseTimes["discussion"]} onChange={onChange}/>
-        <PhaseTimeSelector disabled={props.disabled} phase={"nomination"} time={props.phaseTimes["nomination"]} onChange={onChange}/>
-        <PhaseTimeSelector disabled={props.disabled} phase={"testimony"} time={props.phaseTimes["testimony"]} onChange={onChange}/>
-        <PhaseTimeSelector disabled={props.disabled} phase={"judgement"} time={props.phaseTimes["judgement"]} onChange={onChange}/>
-        <PhaseTimeSelector disabled={props.disabled} phase={"finalWords"} time={props.phaseTimes["finalWords"]} onChange={onChange}/>
-        <PhaseTimeSelector disabled={props.disabled} phase={"dusk"} time={props.phaseTimes["dusk"]} onChange={onChange}/>
-        <PhaseTimeSelector disabled={props.disabled} phase={"night"} time={props.phaseTimes["night"]} onChange={onChange}/>
+        <div className="phase-times">
+            {PHASES.map(phase => 
+                <PhaseTimeSelector key={phase} disabled={props.disabled} phase={phase} time={phaseTimes[phase]} onChange={onChange}/>
+            )}
+        </div>
     </section>
 }
 
@@ -39,17 +36,17 @@ function PhaseTimeSelector(props: {
     time: number,
     onChange: (phase: PhaseType, time: number) => void,
 }): ReactElement {
-    let phaseKey = "phase." + props.phase;
+    const phaseKey = "phase." + props.phase;
     
-    return <div className="phase-time-selector">
-        <label htmlFor={phaseKey}>{translate(phaseKey)}:</label>
+    return <div>
+        <span>{translate(phaseKey)}</span>
         <input
-            disabled={props.disabled??false}
+            disabled={props.disabled ?? false}
             name={phaseKey}
             type="text"
-            value={props.time??10}
+            value={props.time}
             onChange={(e)=>{
-                let value = Number(e.target.value);
+                const value = Number(e.target.value);
 
                 if (!isValidPhaseTime(value)) return
                 

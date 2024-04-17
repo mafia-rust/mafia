@@ -1,64 +1,86 @@
-import React, { useState } from "react";
+import React, { isValidElement } from "react";
 import { ReactElement } from "react";
 import Anchor from "../menu/Anchor";
 import translate from "../game/lang";
-import "./clipboardButtons.css";
+import { Button, ButtonProps } from "./Button";
+import Icon from "./Icon";
 
-export function CopyButton(props: JSX.IntrinsicElements['button'] & { onClick?: undefined, ref?: undefined, text: string }): ReactElement {
-    const iconMode = props.children === undefined;
-    const [success, setSuccess] = useState<boolean>(false);
+type CopyButtonResult = boolean;
+type CopyButtonProps = ButtonProps<CopyButtonResult> & { onClick?: undefined, ref?: undefined, text: string };
 
-    return <button {...props} className={"clipboard-button " + (props.className ?? "")}
-        onClick={() => {
-            writeToClipboard(props.text).then(success => {
-                if (!success) return;
+function reconcileCopyProps(props: CopyButtonProps): ButtonProps<CopyButtonResult> {
+    let newProps: Partial<CopyButtonProps> = {...props};
+    delete newProps.onClick;
+    delete newProps.ref;
+    newProps.text = undefined;
+    delete newProps.text;
 
-                setSuccess(true);
-                setTimeout(() => {
-                    setSuccess(false);
-                }, 1000);
-            });
-        }}
-    >
-        {props.children}
-        {iconMode && (
-            success 
-                ? <span className="material-icons-round">done</span> 
-                : <span className="material-icons-round">content_copy</span>
-        )}
-        {success && <div className="clipboard-popup">
-            {translate("notification.clipboard.write.success")}
-        </div>}
-    </button>
+    return newProps;
 }
 
-export function PasteButton(props: JSX.IntrinsicElements['button'] & { onClick?: undefined, onPasteSuccessful: (text: string) => (void | boolean) } ): ReactElement {
-    const iconMode = props.children === undefined;
-    const [success, setSuccess] = useState<boolean>(false);
+export function CopyButton(props: CopyButtonProps): ReactElement {
+    let pressedChildren = props.pressedChildren;
+    const children = props.children ?? <Icon>content_copy</Icon>;
+    if (pressedChildren === undefined && isValidElement(children) && children.type === Icon) {
+        pressedChildren = success => success ? <Icon>done</Icon> : <Icon>warning</Icon>;
+    }
 
-    return <button {...props} className={"clipboard-button " + (props.className ?? "")}
-        onClick={() => {
-            readFromClipboard().then(text => {
-                if (text === null) return;
-                if (!(props.onPasteSuccessful(text) ?? true)) return;
-
-                setSuccess(true);
-                setTimeout(() => {
-                    setSuccess(false)
-                }, 1000);
-            });
-        }}
+    return <Button {...reconcileCopyProps(props)} 
+        onClick={() => writeToClipboard(props.text)}
+        pressedText={success => translate("notification.clipboard.write." + (success ? "success" : "failure"))}
+        pressedChildren={pressedChildren}
     >
-        {props.children}
-        {iconMode && (
-            success 
-                ? <span className="material-icons-round">done</span> 
-                : <span className="material-icons-round">paste</span>
-        )}
-        {success && <div className="clipboard-popup">
-            {translate("notification.clipboard.read.success")}
-        </div>}
-    </button>
+        {children ?? <Icon>content_copy</Icon>}
+    </Button>
+}
+
+type PasteButtonResult<H> = "success" | "clipboardError" | H;
+type PasteButtonProps<H> = ButtonProps<PasteButtonResult<H>> & { 
+    onClick?: undefined, 
+    onClipboardRead?: (text: string) => (void | "success" | H)
+    pressedText?: never,
+    failureText?: (result: H) => React.ReactNode
+};
+
+function reconcilePasteProps<H>(props: PasteButtonProps<H>): ButtonProps<PasteButtonResult<H>> {
+    const newProps: Partial<PasteButtonProps<H>> = {...props};
+    delete newProps.onClick;
+    delete newProps.onClipboardRead;
+    delete newProps.failureText;
+
+    return newProps;
+}
+
+export function PasteButton<H>(props: PasteButtonProps<H>): ReactElement {
+    let pressedChildren = props.pressedChildren;
+    const children = props.children ?? <Icon>paste</Icon>;
+    if (pressedChildren === undefined && isValidElement(children) && children.type === Icon) {
+        pressedChildren = success => success === "success" ? <Icon>done</Icon> : <Icon>warning</Icon>;
+    }
+    
+    return <Button {...reconcilePasteProps(props)}
+        onClick={() => readFromClipboard().then(text => {
+            if (text === null) return "clipboardError";
+            if (props.onClipboardRead === undefined) return "success";
+
+            return props.onClipboardRead(text) ?? "success";
+        })}
+        pressedText={result => {
+            if (result === "success" || (typeof result === "boolean" && result)) {
+                return translate("notification.clipboard.read.success")
+            }
+            if (result === "clipboardError") {
+                return translate("notification.clipboard.read.failure")
+            }
+            if (props.failureText === undefined) {
+                return translate("notification.clipboard.handleRead.failure")
+            }
+            return props.failureText(result)
+        }}
+        pressedChildren={pressedChildren}
+    >
+        {children}
+    </Button>
 }
 
 /**

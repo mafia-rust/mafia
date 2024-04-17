@@ -54,6 +54,9 @@
 }
 .keyword-dead {
     font-style: italic;
+    color: gray;
+}
+.keyword-disabled, .keyword-disabled * {
     color: gray
 }
 .keyword-pride, .keyword-trans {

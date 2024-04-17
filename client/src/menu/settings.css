@@ -13,11 +13,33 @@
     border-bottom-color: black;
     border-right-color: black;
     border-radius: 0.5rem;
+
+    gap: 0.5rem;
     
-    padding: .8rem;
-    background-color: var(--secondary-color);
+    padding: .5rem;
+    background-color: var(--background-color);
 
     z-index: 100;
+}
+
+.settings > section {
+    display: flex;
+    flex-direction: column;
+}
+
+.settings > section.standout {
+    border: solid .13rem var(--primary-border-color);
+    border-top-color: black;
+    border-left-color: black;
+    border-radius: .5rem;
+    padding: 0.25rem;
+    background-color: var(--secondary-color);
+}
+
+.settings button {
+    display: flex;
+    flex-direction: row;
+    gap: .25rem;
 }
 
 @media (prefers-reduced-motion = no-preference) {

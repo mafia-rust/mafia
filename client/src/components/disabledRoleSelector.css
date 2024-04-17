@@ -1,6 +1,26 @@
-.disabled-role-selector {
+.disabled-role-selector-area {
     display: flex;
-    flex-direction: column;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    flex-direction: row;
+    background-color: var(--secondary-color);
+    border: .13rem solid var(--primary-border-color);
+    border-top-color: black;
+    border-left-color: black;
+    border-radius: .5rem;
+    margin: .13rem 0;
+}
+.disabled-role-selector-area > select {
+    flex-grow: 1;
+    width: 5rem;
+}
+.disabled-role-element {
+    display: inline-block;
+    background-color: var(--primary-color);
+    border: .13rem solid var(--primary-border-color);
+    padding: .13rem .25rem;
+    margin: .13rem;
+    border-radius: .25rem;
+    white-space: pre;
+}
+.disabled-role-element.disabled {
+    background-color: var(--secondary-color);
 }

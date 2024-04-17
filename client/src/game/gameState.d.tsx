@@ -3,7 +3,6 @@ import { ChatMessage } from "../components/ChatMessage";
 import { Role, RoleState } from "./roleState.d";
 import { RoleList } from "./roleListState.d";
 import { LobbyPreviewData } from "./packet";
-import GAME_MANAGER from "..";
 
 
 export type State = Disconnected | OutsideLobbyState | LobbyState | GameState;
@@ -49,6 +48,7 @@ export type LobbyClientType = {
 type GameState = {
     stateType: "game"
     roomCode: number,
+    lobbyName: string,
 
     chatMessages : ChatMessage[],
     graves: Grave[],
@@ -93,7 +93,8 @@ export type PlayerGameState = {
 export type PlayerIndex = number;
 export type LobbyClientID = number;
 export type Verdict = "innocent"|"guilty"|"abstain";
-export type PhaseType = "briefing" | "obituary" | "discussion" | "nomination" | "testimony" | "judgement" | "finalWords" | "dusk" |  "night"
+export const PHASES = ["briefing", "obituary", "discussion", "nomination", "testimony", "judgement", "finalWords", "dusk", "night"] as const;
+export type PhaseType = (typeof PHASES)[number];
 export type PhaseState = {type: "briefing"} | {type: "dusk"} | {type: "night"} | {type: "obituary"} | {type: "discussion"} | 
 {
     type: "nomination",
@@ -113,17 +114,8 @@ export type PhaseState = {type: "briefing"} | {type: "dusk"} | {type: "night"} |
 
 export type ChatGroup = "all" | "dead" | "mafia" | "cult" | "jail" | "interview";
 
-export type PhaseTimes = {
-    "briefing": number,
-    "obituary": number,
-    "discussion": number,
-    "nomination": number,
-    "testimony": number,
-    "judgement": number,
-    "finalWords": number,
-    "dusk": number,
-    "night": number,
-}
+export type PhaseTimes = Record<PhaseType, number>;
+
 export type Tag =
 | "godfatherBackup"
 | "werewolfTracked"

@@ -1,10 +1,27 @@
-
-.phase-time-selector {
+.phase-times-selector > .phase-times {
+    max-height: 50vh;
+    overflow-y: auto;
     display: flex;
-    align-items: center;
+    gap: .25rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 0.25rem;
 }
-.phase-time-selector > input {
-    text-align: center;
+
+.phase-times-selector > .phase-times > div {
+    display: flex;
+    flex-basis: 11rem;
     flex-grow: 1;
+    border: .13rem solid var(--primary-border-color);
+    background-color: var(--secondary-color);
+    border-radius: 0.5rem;
+    align-items: center;
+    justify-content: space-between;
+}
+.phase-times-selector > .phase-times > div > span {
+    margin: 0 .25rem;
+    white-space: pre;
+}
+.phase-times-selector > .phase-times > div > input {
     width: 3rem;
 }

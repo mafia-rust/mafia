@@ -3,13 +3,12 @@ import GAME_MANAGER from "../../index";
 import "../../index.css"
 import "./startMenu.css"
 import translate from "../../game/lang";
-// import WikiSearch from "../../components/WikiSearch";
 import Anchor from "../Anchor";
-// import * as LoadingScreen from "../LoadingScreen";
-import StandaloneWiki from "./StandaloneWiki";
 import PlayMenu from "./PlayMenu";
 import LoadingScreen from "../LoadingScreen";
 import GameModesEditor from "../../components/GameModesEditor";
+import Icon from "../../components/Icon";
+import WikiCoverCard from "../../components/WikiCoverCard";
 
 type StartMenuProps = {
 }
@@ -28,13 +27,16 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
         <main>
             <section id="main">
                 <h1>{translate("menu.start.title")}</h1>
-                
-                    <button onClick={()=>{this.connectButton()}}>
-                        {translate("menu.start.button.play")}
-                    </button>
                 <div>
-                    <button onClick={() => {Anchor.setCoverCard(<GameModesEditor/>)}}>{translate("menu.settings.gameSettingsEditor")}</button>
-                    <button onClick={()=>{Anchor.setContent(<StandaloneWiki/>)}}>{translate("menu.wiki.title")}</button>
+                    <button onClick={() => this.connectButton()}>
+                        <Icon>play_arrow</Icon> {translate("menu.start.button.play")}
+                    </button>
+                    <button onClick={() => Anchor.setCoverCard(<GameModesEditor/>)}>
+                        <Icon>edit</Icon> {translate("menu.settings.gameSettingsEditor")}
+                    </button>
+                    <button onClick={() => Anchor.setCoverCard(<WikiCoverCard />, "wiki-menu-colors")}>
+                        <Icon>menu_book</Icon> {translate("menu.wiki.title")}
+                    </button>
                 </div>
                 
             </section>

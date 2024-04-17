@@ -9,6 +9,8 @@ import { StateListener } from "../../../game/gameManager.d";
 import SmallRoleSpecificMenu from "./RoleSpecificMenus/SmallRoleSpecificMenu";
 import StyledText from "../../../components/StyledText";
 import { RoleState } from "../../../game/roleState.d";
+import Icon from "../../../components/Icon";
+import { Button } from "../../../components/Button";
 import { Grave, GraveRole, translateGraveRole } from "../../../game/graveState";
 
 type PlayerListMenuProps = {
@@ -235,38 +237,40 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                     const filter = player.index;
                     const isFilterSet = this.state.chatFilter === filter;
                     
-                    return <button 
-                        className={"material-icons-round filter" + (isFilterSet ? " highlighted" : "")} 
+                    return <Button 
+                        className={"filter"} 
+                        highlighted={isFilterSet}
                         onClick={() => {
                             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                                 GAME_MANAGER.state.clientState.chatFilter = isFilterSet ? null : filter;
                                 GAME_MANAGER.invokeStateListeners("filterUpdate");
                             }
                             this.setState({})
+                            return true;
                         }}
+                        pressedChildren={result => <Icon>{result ? "done" : "warning"}</Icon>}
                         aria-label={translate("menu.playerList.button.filter")}
                     >
-                        filter_alt
-                    </button>
+                        <Icon>filter_alt</Icon>
+                    </Button>
                 })()}
             </div>
             
 
             <div className="buttons">
                 <div className="day-target">
-                    {((player)=>{if(player.buttons.dayTarget){
-                        const highlighted = 
+                    {player.buttons.dayTarget && <Button 
+                        highlighted={
                             (this.state.roleState?.type === "jailor" && this.state.roleState.jailedTargetRef === player.index)
                             || 
                             (this.state.roleState?.type === "medium" && this.state.roleState.seancedTarget === player.index)
                             || 
                             (this.state.roleState?.type === "journalist" && this.state.roleState.interviewedTarget === player.index)
-                    return(
-                        <button className={highlighted ? "highlighted" : undefined} onClick={()=>{
-                            GAME_MANAGER.sendDayTargetPacket(player.index)}}
-                    >{
-                        translate("role."+this.state.roleState?.type+".dayTarget")
-                    }</button>)}})(player)}
+                        } 
+                        onClick={()=>GAME_MANAGER.sendDayTargetPacket(player.index)}
+                    >
+                        {translate("role."+this.state.roleState?.type+".dayTarget")}
+                    </Button>}
                 </div>
                 <div className="target">
                     {((player) => {
@@ -280,18 +284,16 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         } else if (GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && this.state.phase === "night" && this.state.targets.includes(player.index)) {
                             let newTargets = [...GAME_MANAGER.state.clientState.targets];
                             newTargets.splice(newTargets.indexOf(player.index), 1);
-                            return <button className="highlighted" onClick={() => GAME_MANAGER.sendTargetPacket(newTargets)}>
+                            return <Button highlighted={true} onClick={() => GAME_MANAGER.sendTargetPacket(newTargets)}>
                                 {translate("cancel")}
-                            </button>
+                            </Button>
                         }
                     })(player)}
                 </div>
                 <div className="vote">
-                    {((player)=>{if(player.buttons.vote){return(
-                        <button onClick={()=>{
-                            GAME_MANAGER.sendVotePacket(player.index)}}
-                        >{translate("menu.playerList.button.vote")}</button>
-                    )}})(player)}
+                    {player.buttons.vote && <button 
+                        onClick={()=>GAME_MANAGER.sendVotePacket(player.index)}
+                    >{translate("menu.playerList.button.vote")}</button>}
                 </div>
             </div>            
         </div>)
@@ -310,12 +312,12 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     }
 
     renderFilterButton(filter: PlayerFilter) {
-        return <button 
-            className={this.state.playerFilter === filter ? "highlighted" : undefined}
-            onClick={()=>{this.setState({playerFilter: filter})}}
+        return <Button 
+            highlighted={this.state.playerFilter === filter}
+            onClick={()=>this.setState({playerFilter: filter})}
         >
             {translate("menu.playerList.button." + filter)}
-        </button>
+        </Button>
     }
 
     render(){return(<div className="player-list-menu player-list-menu-colors">

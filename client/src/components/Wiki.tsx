@@ -6,6 +6,7 @@ import GAME_MANAGER, { regEscape } from "..";
 import WikiArticle, { getSearchStrings } from "./WikiArticle";
 import { ARTICLES, WikiArticleLink, getArticleTitle } from "./WikiArticleLink";
 import StyledText from "./StyledText";
+import Icon from "./Icon";
 
 
 
@@ -78,25 +79,15 @@ function WikiSearchBar(props: {
     onClear: () => void,
 }): ReactElement {
     return <div className="wiki-search-bar">
-        <button 
-            tabIndex={-1}
-            className="material-icons-round"
-            onClick={() => {
-                props.onBack();
-            }}
-        >
-            arrow_back
+        <button tabIndex={-1} onClick={() => props.onBack()}>
+            <Icon>arrow_back</Icon>
         </button>
         <input type="text" value={props.searchQuery}
             onChange={(e)=>{props.onSearchChange(e.target.value)}}
             placeholder={translate("menu.wiki.search.placeholder")}
         />
-        <button 
-            tabIndex={-1}
-            className="material-icons-round"
-            onClick={props.onClear}
-        >
-            close
+        <button tabIndex={-1} onClick={props.onClear}>
+            <Icon>close</Icon>
         </button>
     </div>
 }
@@ -140,14 +131,18 @@ function WikiSearchResults(props: {
             }
         }
 
-        if(
-            props.disabledRoles !== undefined && 
-            props.disabledRoles.map((role)=>{return "role/"+role}).includes(page)
-        ){
-            elements.push(<button key={page} onClick={() => props.onChooseArticle(page)}><span className="keyword-dead">{getArticleTitle(page)}</span></button>);
-        }else{
-            elements.push(<button key={page} onClick={() => props.onChooseArticle(page)}><StyledText>{getArticleTitle(page)}</StyledText></button>);
+        let className = undefined;
+        if(props.disabledRoles !== undefined && props.disabledRoles.map(role => `role/${role}`).includes(page)) {
+            className = "keyword-disabled";
         }
+
+        elements.push(
+            <button key={page} onClick={() => props.onChooseArticle(page)}>
+                <StyledText noLinks={true} className={className}>
+                    {getArticleTitle(page)}
+                </StyledText>
+            </button>
+        );
     }
 
     return <div className="wiki-results">
