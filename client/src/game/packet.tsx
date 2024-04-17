@@ -268,6 +268,9 @@ export type ToServerPacket = {
     type: "setOjoAction",
     action: OjoAction
 } | {
+    type: "setEngineerShouldUnset",
+    unset: boolean
+} | {
     type: "voteFastForwardPhase",
     fastForward: boolean
 }

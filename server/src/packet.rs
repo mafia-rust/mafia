@@ -233,6 +233,7 @@ pub enum ToServerPacket{
     SetForgerWill{ role: Option<Role>, will: String },
     SetAuditorChosenOutline{index: u8},
     SetOjoAction{action: OjoAction},
+    SetEngineerShouldUnset{unset: bool},
 
 
     #[serde(rename_all = "camelCase")]

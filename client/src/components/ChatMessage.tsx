@@ -390,6 +390,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                 default:
                     return translate("chatMessage.cultSacrificesRequired", message.required);
             }
+        case "engineerRemoveTrap":
+            return translate("chatMessage.engineerRemoveTrap." + (message.unset ? "remove" : "keep"));
         case "playerWithNecronomicon":
             return translate("chatMessage.playerWithNecronomicon", playerNames[message.playerIndex]);
         case "deputyShotYou":
@@ -623,6 +625,9 @@ export type ChatMessageVariant = {
 } | {
     type: "godfatherBackupKilled",
     backup: PlayerIndex
+} | {
+    type: "engineerRemoveTrap",
+    unset: boolean
 } | {
     type: "silenced"
 } | {

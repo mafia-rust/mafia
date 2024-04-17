@@ -5,7 +5,7 @@ use super::{
     event::on_fast_forward::OnFastForward,
     phase::{PhaseState, PhaseType},
     player::{PlayerIndex, PlayerReference},
-    role::{Role, RoleState}, role_list::Faction, 
+    role::{engineer::{Engineer, Trap}, Role, RoleState}, role_list::Faction, 
     spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
     Game
 };
@@ -277,6 +277,16 @@ impl Game {
                 if let RoleState::Ojo(mut ojo) = sender_player_ref.role_state(self).clone(){
                     ojo.chosen_action = action;
                     sender_player_ref.set_role_state(self, RoleState::Ojo(ojo));
+                }
+            },
+            ToServerPacket::SetEngineerShouldUnset { unset } => {
+                if let RoleState::Engineer(engineer) = sender_player_ref.role_state(self).clone(){
+                    if let Trap::Set { target, ..} = engineer.trap {
+                        sender_player_ref.set_role_state(self, 
+                            RoleState::Engineer(Engineer { trap: Trap::Set { target, should_unset: unset } })
+                        );
+                        sender_player_ref.add_private_chat_message(self, ChatMessageVariant::EngineerRemoveTrap { unset });
+                    }
                 }
             },
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {
