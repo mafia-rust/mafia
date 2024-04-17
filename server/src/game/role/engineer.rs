@@ -12,21 +12,23 @@ use super::{Priority, Role, RoleState, RoleStateImpl};
 #[derive(Default, Clone, Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Engineer {
-    trap: Trap
+    pub trap: Trap
 }
 #[derive(Default, Clone, Serialize, Debug)]
+#[serde(tag = "type")]
+#[serde(rename_all = "camelCase")]
 pub enum Trap {
     #[default]
     Dismantled,
-    Set{target: PlayerReference}
+    Ready,
+    #[serde(rename_all = "camelCase")]
+    Set{target: PlayerReference, should_unset: bool}
 }
 impl Trap {
-    fn is_dismantled(&self) -> bool {
-        matches!(self, Trap::Dismantled)
-    }
     fn state(&self) -> TrapState {
         match self {
             Trap::Dismantled => TrapState::Dismantled,
+            Trap::Ready => TrapState::Ready,
             Trap::Set{..} => TrapState::Set
         }
     }
@@ -36,13 +38,15 @@ impl Trap {
 pub enum TrapState {
     #[default]
     Dismantled,
+    Ready,
     Set
 }
 
 //engineer prioritys
+//tell player state
 
-//protect, kill & investigate
-//Set trap
+//Set trap / ready up / choose to unset and bring to ready
+//protect, kill & investigate, dismantle
 
 
 pub(super) const FACTION: Faction = Faction::Town;
@@ -56,14 +60,36 @@ impl RoleStateImpl for Engineer {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Heal => {
-                if let Trap::Set { target } = self.trap {
+                //upgrade state
+
+                if !actor_ref.night_roleblocked(game) {
+                    match self.trap {
+                        Trap::Dismantled => {
+                            actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Ready}))
+                        },
+                        Trap::Ready => {
+                            if let Some(visit) = actor_ref.night_visits(game).first(){
+                                actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Set{target: visit.target, should_unset: false}}))
+                            }
+                        },
+                        Trap::Set { should_unset: true, .. } => {
+                            actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Ready}))
+                        },
+                        _ => {}
+                    }
+                }
+    
+                if let RoleState::Engineer(Engineer{trap: Trap::Set{target, ..}}) = actor_ref.role_state(game).clone(){
                     target.increase_defense_to(game, 2);
                 }
             }
             Priority::Kill => {
-                if let Trap::Set { target } = self.trap {
+                if let Trap::Set { target, .. } = self.trap {
                     for attacker in PlayerReference::all_players(game) {
-                        if attacker.night_visits(game).iter().any(|visit| visit.target == target && visit.attack){
+                        if 
+                            attacker.night_visits(game).iter().any(|visit| visit.target == target && visit.attack) &&
+                            attacker != actor_ref
+                        {
                             attacker.try_night_kill(actor_ref, game, crate::game::grave::GraveKiller::Role(Role::Engineer), 2, false);
                             actor_ref.push_night_message(game, ChatMessageVariant::EngineerYouAttackedVisitor);
                         }
@@ -71,7 +97,9 @@ impl RoleStateImpl for Engineer {
                 }
             }
             Priority::Investigative => {
-                if let Trap::Set { target } = self.trap {
+                if let Trap::Set { target, .. } = self.trap {
+
+                    let mut should_dismantle = false;
 
                     if target.night_attacked(game){
                         actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
@@ -79,47 +107,28 @@ impl RoleStateImpl for Engineer {
                     }
 
                     for visitor in PlayerReference::all_players(game) {
-                        if visitor.night_visits(game).iter().any(|visit|visit.target == target){
+                        if 
+                            visitor.night_visits(game).iter().any(|visit|visit.target == target) &&
+                            visitor != actor_ref
+                        {
                             actor_ref.push_night_message(game, ChatMessageVariant::EngineerVisitorsRole { role: visitor.role(game) });
+                            should_dismantle = true;
                         }
                     }
-                }
-            }
-            Priority::FinalPriority => {
 
-                let mut caught_role = false;
-                if let Trap::Set { target } = self.trap {
-                    for visitor in PlayerReference::all_players(game) {
-                        if visitor.night_visits(game).iter().any(|visit|visit.target == target){
-                            caught_role = true;
-                            break;
-                        }
+                    if should_dismantle {
+                        actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Dismantled}));
                     }
                 }
-                
-
-                //if trap just triggered or manual dismantle, then dismantle
-                if
-                    caught_role ||
-                    actor_ref.night_visits(game).iter().any(|visit| visit.target == actor_ref)
-                {
-                    actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Dismantled}));
-                }
-                //set trap
-                else if let Some(visit) = actor_ref.night_visits(game).first(){
-                    if self.trap.is_dismantled(){
-                        actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Set{target: visit.target}}));
-                    }
-                }
-                
             }
             _ => {}
         }
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         (match self.trap {
-            Trap::Set { target } => actor_ref == target,
-            Trap::Dismantled => actor_ref != target_ref,
+            Trap::Dismantled => false,
+            Trap::Ready => actor_ref != target_ref,
+            Trap::Set { .. } => false,
         }) &&
         !actor_ref.night_jailed(game) &&
         actor_ref.chosen_targets(game).is_empty() &&

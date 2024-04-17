@@ -72,6 +72,7 @@
     "engineerVisitorsRole": "result",
     "engineerYouAttackedVisitor": "result",
     "trapState": "special",
+    "engineerRemoveTrap": "special",
     "vigilanteSuicide": "result",
     "targetsMessage": "result",
     "targetIsPossessionImmune": "result",

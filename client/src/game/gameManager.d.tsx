@@ -108,6 +108,7 @@ export type GameManager = {
     sendSetForgerWill(role: Role | null, will: string): void;
     sendSetAuditorChosenOutline(index: number): void;
     sendSetOjoAction(action: OjoAction): void;
+    sendSetEngineerShouldUnset(unset: boolean): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;
 
