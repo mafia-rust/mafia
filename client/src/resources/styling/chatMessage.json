@@ -45,6 +45,7 @@
     "consigliereResult": "result",
     "ojoResult": "result",
     "ojoResult.nobody": "result",
+    "ojoSelection": "special",
     "silenced": "warning",
     "mediumHauntStarted": "special",
     "targetWasAttacked": "result",
