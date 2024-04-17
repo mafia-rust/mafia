@@ -129,6 +129,8 @@ impl Listener{
         if let Ok(lobby_client_id) = lobby.join_player(&connection.get_sender()) {
             *sender_player_location = ListenerClientLocation::InLobby { room_code, lobby_client_id };
         }
+        
+        connection.send(ToClientPacket::LobbyName { name: lobby.name.clone() })
     }
     fn set_player_in_lobby_reconnect(&mut self, connection: &Connection, room_code: RoomCode, lobby_client_id: LobbyClientID){
 
@@ -150,6 +152,8 @@ impl Listener{
         if lobby.rejoin_player(&connection.get_sender(), lobby_client_id).is_ok() {
             *sender_player_location = ListenerClientLocation::InLobby { room_code, lobby_client_id };
         }
+        
+        connection.send(ToClientPacket::LobbyName { name: lobby.name.clone() })
     }
     //returns if player was in the lobby
     fn set_player_outside_lobby(&mut self, address: &SocketAddr, rejoinable: bool) -> bool {

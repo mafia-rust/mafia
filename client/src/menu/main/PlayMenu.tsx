@@ -150,8 +150,8 @@ function PlayMenuTable(): ReactElement {
             </tr>
         </thead>
         <tbody>
-            {Object.entries(lobbies).map((entry)=>{
-                const roomCode = Number.parseInt(entry[0]);
+            {Array.from(lobbies.entries()).map((entry)=>{
+                const roomCode = entry[0];
                 const lobby: LobbyPreviewData = entry[1];
 
                 return <tr key={roomCode}>
