@@ -275,8 +275,9 @@ impl Game {
             },
             ToServerPacket::SetOjoAction { action } => {
                 if let RoleState::Ojo(mut ojo) = sender_player_ref.role_state(self).clone(){
-                    ojo.chosen_action = action;
+                    ojo.chosen_action = action.clone();
                     sender_player_ref.set_role_state(self, RoleState::Ojo(ojo));
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::OjoSelection { action })
                 }
             },
             ToServerPacket::SetEngineerShouldUnset { unset } => {

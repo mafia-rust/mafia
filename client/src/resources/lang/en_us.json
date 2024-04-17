@@ -653,6 +653,9 @@
     "chatMessage.consigliereResult.visitedBy.nobody": "Your target was not visited by anybody",
     "chatMessage.ojoResult": "You see these players: \\0.",
     "chatMessage.ojoResult.nobody": "You see no one.",
+    "chatMessage.ojoSelection.see": "You choose to see \\0.",
+    "chatMessage.ojoSelection.kill": "You choose to kill \\0.",
+    "chatMessage.ojoSelection.none": "You choose nothing.",
     "chatMessage.apostleCanConvertTonight": "The cult can convert tonight.",
     "chatMessage.apostleCantConvertTonight": "The cult can not convert tonight.",
     "chatMessage.cultSacrificesRequired": "The cult requires \\0 more sacrifices to convert.",
@@ -828,7 +831,7 @@
     "wiki.article.standard.fastForward.title:var.4": "Skips",
     "wiki.article.standard.fastForward.title:var.5": "Skipping",
     "wiki.article.standard.fastForward.title:var.6": "Skipped",
-    "wiki.article.standard.fastForward.text": "If all players vote to fast forward, the current phase skips to having 10 seconds left. Voting to fast forward is completely anonymous. To vote to fast forward, press the fast forward button in the top left.",
+    "wiki.article.standard.fastForward.text": "If all living players vote to fast forward, the current phase instantly ends. Voting to fast forward is completely anonymous, nobody even knows when you press the button. To vote to fast forward, press the fast forward button in the top left.",
 
 
     "wiki.article.standard.how_to_play.title":"How to play",
