@@ -463,6 +463,7 @@
 
     "standard":"Standard",
 
+    "union": "∪",
     "onTrial": "On Trial",
     "voted": "Voted",
     "good":"Good",
@@ -820,7 +821,7 @@
     "wiki.article.standard.appearedVisit.title": "Appeared Visit",
     "wiki.article.standard.appearedVisit.text": "A player could _appear_ to have visited someone, even though they didn't. This is usually caused by evil roles such as Framer.\n\nThis only affects investigative roles.\n\n_Examples_\n\nThe Tracker can see the appeared visit, but not the real visit.\n\nA Veteran doesn't attack a player who appeared to visit them and didn't actually visit them.",
     "wiki.article.standard.roleOutline.title": "Role Outline",
-    "wiki.article.standard.roleOutline.text": "A role outline defines a group of roles.\n\nOutlines can either be a predefined role set, an exact role, or a union of multiple.\n\n_Examples_\n\n\"Any\" It could be any role\n\n\"Neutral\" Could be any possible neutral role.\n\n\"Town Support\" Could be an Escort, Retributionist, Transporter, or Medium\n\n\"Godfather\" Could only be a Godfather.\n\n\"Wildcard + Psychic\" Could either be an Wildcard or Psychic.\n\n- When roles are generated randomly from a role outline, each possible role is equally likely to generate.\n- Role outlines are used in the outline list to show what roles could be in the game.",
+    "wiki.article.standard.roleOutline.text": "A role outline defines a group of roles.\n\nOutlines can either be a predefined role set, an exact role, or a union of multiple.\n\n_Examples_\n\n\"Any\" It could be any role\n\n\"Neutral\" Could be any possible neutral role.\n\n\"Town Support\" Could be an Escort, Retributionist, Transporter, or Medium\n\n\"Godfather\" Could only be a Godfather.\n\n\"Wildcard ∪ Psychic\" Could either be an Wildcard or Psychic.\n\n- When roles are generated randomly from a role outline, each possible role is equally likely to generate.\n- Role outlines are used in the outline list to show what roles could be in the game.",
     "wiki.article.standard.outlineList.title":"Outline List",
     "wiki.article.standard.outlineList.title:var.0":"Role List",
     "wiki.article.standard.outlineList.title:var.1":"Rolelist",
