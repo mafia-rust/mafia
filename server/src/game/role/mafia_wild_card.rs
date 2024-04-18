@@ -2,6 +2,7 @@ use std::vec;
 
 use serde::{Serialize, Deserialize};
 
+use crate::game::chat::ChatMessageVariant;
 use crate::game::{chat::ChatGroup, phase::PhaseType};
 use crate::game::player::PlayerReference;
 use crate::game::role_list::{role_can_generate, Faction};
@@ -72,8 +73,11 @@ impl RoleStateImpl for MafiaWildCard {
 
 impl MafiaWildCard {
     fn become_role(&self, game: &mut Game, actor_ref: PlayerReference) {
-        if 
-            self.role != Role::MafiaWildCard &&
+
+
+        if self.role == Role::MafiaWildCard {return;}
+
+        if
             self.role.faction() == Faction::Mafia &&
             role_can_generate(
                 self.role, 
@@ -84,6 +88,8 @@ impl MafiaWildCard {
             )
         {
             actor_ref.set_role(game, self.role.default_state());
+        }else{
+            actor_ref.add_private_chat_message(game, ChatMessageVariant::WildcardConvertFailed{role: self.role.clone()})
         }
     }
 }

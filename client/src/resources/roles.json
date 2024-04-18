@@ -530,7 +530,8 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "roleAssignment", "role":"mafiaWildCard"}
+            {"type": "roleAssignment", "role":"mafiaWildCard"},
+            {"type": "wildcardConvertFailed", "role": "godfather"}
         ]
     },
     "jester": {
@@ -694,7 +695,8 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "roleAssignment", "role":"wildcard"}
+            {"type": "roleAssignment", "role":"wildcard"},
+            {"type": "wildcardConvertFailed", "role": "veteran"}
         ]
     },
     "apostle": {

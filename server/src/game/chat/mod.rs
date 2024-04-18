@@ -217,6 +217,7 @@ pub enum ChatMessageVariant {
     MartyrRevealed { martyr: PlayerIndex },
     MartyrWon,
     MartyrFailed,
+    WildcardConvertFailed{ role: Role }
 }
 
 

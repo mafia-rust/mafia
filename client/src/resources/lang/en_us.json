@@ -658,6 +658,7 @@
     "chatMessage.consigliereResult.visited.nobody": "Your target didn't visit anybody",
     "chatMessage.consigliereResult.visitedBy": "Your target was visited by \\0",
     "chatMessage.consigliereResult.visitedBy.nobody": "Your target was not visited by anybody",
+    "chatMessage.wildcardConvertFailed": "You failed to convert to the role \\0. The role might have been disabled or taken.",
     "chatMessage.ojoResult": "You see these players: \\0.",
     "chatMessage.ojoResult.nobody": "You see no one.",
     "chatMessage.ojoSelection.see": "You choose to see \\0.",

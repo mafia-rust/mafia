@@ -2,6 +2,7 @@ use std::vec;
 
 use serde::{Serialize, Deserialize};
 
+use crate::game::chat::ChatMessageVariant;
 use crate::game::{chat::ChatGroup, phase::PhaseType};
 use crate::game::player::PlayerReference;
 use crate::game::role_list::{role_can_generate, Faction};
@@ -73,8 +74,9 @@ impl RoleStateImpl for Wildcard {
 impl Wildcard {
     fn become_role(&self, game: &mut Game, actor_ref: PlayerReference) {
 
+        if self.role == Role::Wildcard {return;}
+
         if 
-            self.role != Role::Wildcard &&
             role_can_generate(
                 self.role, 
                 &game.settings.excluded_roles, 
@@ -84,6 +86,8 @@ impl Wildcard {
             )
         {
             actor_ref.set_role(game, self.role.default_state());
+        }else{
+            actor_ref.add_private_chat_message(game, ChatMessageVariant::WildcardConvertFailed{role: self.role.clone()})
         }
     }
 }

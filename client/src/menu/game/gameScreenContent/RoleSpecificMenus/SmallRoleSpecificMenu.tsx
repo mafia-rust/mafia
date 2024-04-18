@@ -120,13 +120,13 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
                     return <SmallOjoMenu action={this.state.gameState.clientState.roleState.chosenAction}/>;
                 return null;
             case "wildcard":
-                return <><StyledText>{translate("role.wildcard.smallRoleMenu")}</StyledText><RoleDropdown 
+                return <><StyledText>{translate("role.wildcard.smallRoleMenu")}</StyledText><div><RoleDropdown 
                     value={this.state.gameState.clientState.roleState.role ?? "wildcard"}
                     disabledRoles={this.state.gameState.excludedRoles} 
                     onChange={(rle)=>{
                         GAME_MANAGER.sendSetWildCardRoleOutline(rle);
                     }}
-                /></>;
+                /></div></>;
             case "mafiaWildCard":
                 const all_choosable_mafia: Role[] = Object.keys(ROLES).filter((rle)=>
                     ROLES[rle as keyof typeof ROLES].faction === "mafia" &&
@@ -135,13 +135,13 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
                     !this.state.gameState.excludedRoles.includes(rle as Role)
                 ).map((r)=>r as Role);
 
-                return <><StyledText>{translate("role.mafiaWildCard.smallRoleMenu")}</StyledText><RoleDropdown 
+                return <><StyledText>{translate("role.mafiaWildCard.smallRoleMenu")}</StyledText><div><RoleDropdown 
                     value={this.state.gameState.clientState.roleState.role ?? "mafiaWildCard"} 
                     disabledRoles={getRolesComplement(all_choosable_mafia)}
                     onChange={(rle)=>{
                         GAME_MANAGER.sendSetWildCardRoleOutline(rle);
                     }}
-                /></>;
+                /></div></>;
             case "martyr":
                 if (this.state.gameState.clientState.roleState.state.type === "stillPlaying") {
                     return <StyledText>{translate("role.martyr.roleDataText", this.state.gameState.clientState.roleState.state.bullets)}</StyledText>;

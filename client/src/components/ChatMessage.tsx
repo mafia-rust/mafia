@@ -405,6 +405,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.engineerRemoveTrap." + (message.unset ? "remove" : "keep"));
         case "playerWithNecronomicon":
             return translate("chatMessage.playerWithNecronomicon", playerNames[message.playerIndex]);
+        case "wildcardConvertFailed":
+            return translate("chatMessage.wildcardConvertFailed", translate("role."+message.role+".name"));
         case "deputyShotYou":
         case "deathCollectedSouls":
         case "targetWasAttacked":
@@ -673,6 +675,9 @@ export type ChatMessageVariant = {
     players: PlayerIndex[]
 } | {
     type: "jesterWon"
+} | {
+    type: "wildcardConvertFailed",
+    role: Role
 } | {
     type: "deathCollectedSouls"
 } | {
