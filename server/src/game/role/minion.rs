@@ -81,9 +81,9 @@ impl RoleStateImpl for Minion {
         actor_ref.alive(game) &&
         target_ref.alive(game) &&
         ((
+            actor_ref != target_ref &&
             actor_ref.chosen_targets(game).is_empty()
         ) || (
-            actor_ref != target_ref &&
             actor_ref.chosen_targets(game).len() == 1
         ))
     }

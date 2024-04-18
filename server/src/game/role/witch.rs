@@ -84,7 +84,6 @@ impl RoleStateImpl for Witch {
             actor_ref.chosen_targets(game).is_empty() &&
             !same_evil_team(game, actor_ref, target_ref)
         ) || (
-            actor_ref != target_ref &&
             actor_ref.chosen_targets(game).len() == 1
         ))
     }

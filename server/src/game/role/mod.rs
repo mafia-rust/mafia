@@ -270,6 +270,7 @@ impl Role{
             
             Role::Retributionist => true,
             Role::Witch => true,
+            Role::Minion => true,
             Role::Necromancer => true,
             
             Role::Doomsayer => true,
@@ -290,6 +291,7 @@ impl Role{
             
             Role::Retributionist => true,
             Role::Witch => true,
+            Role::Minion => true,
             Role::Necromancer => true,
             _ => false,
         }
