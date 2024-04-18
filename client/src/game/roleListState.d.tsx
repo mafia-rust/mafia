@@ -132,7 +132,7 @@ export function translateRoleOutline(roleOutline: RoleOutline): string {
         case "any":
             return translate("any");
         case "roleOutlineOptions":
-            return roleOutline.options.map(translateRoleOutlineOption).join(" "+translate("add")+" ");
+            return roleOutline.options.map(translateRoleOutlineOption).join(" "+translate("union")+" ");
     }
 }
 export function translateRoleOutlineOption(roleOutlineOption: RoleOutlineOption): string {
