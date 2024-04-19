@@ -280,7 +280,7 @@ impl Lobby {
                 self.send_to_all(ToClientPacket::RoleList { role_list });
             }
             ToServerPacket::SetExcludedRoles {mut roles } => {
-                let LobbyState::Lobby{ settings, clients } = &mut self.lobby_state else {
+                let LobbyState::Lobby{ settings, .. } = &mut self.lobby_state else {
                     log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", lobby_client_id);
                     return;
                 };
