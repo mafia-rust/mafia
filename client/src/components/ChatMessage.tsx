@@ -434,6 +434,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "psychicFailed":
         case "phaseFastForwarded":
         case "copAttackedVisitor":
+        case "mayorCantWhisper":
             return translate("chatMessage."+message.type);
         case "playerDied":
         default:
@@ -523,6 +524,8 @@ export type ChatMessageVariant = {
 {
     type: "mayorRevealed", 
     playerIndex: PlayerIndex
+} | {
+    type: "mayorCantWhisper"
 } | {
     type: "journalistJournal",
     journal: string

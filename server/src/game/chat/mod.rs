@@ -119,6 +119,7 @@ pub enum ChatMessageVariant {
     /* Role-specific */
     #[serde(rename_all = "camelCase")]
     MayorRevealed{player_index: PlayerIndex},
+    MayorCantWhisper,
     #[serde(rename_all = "camelCase")]
     JournalistJournal{journal: String},
     #[serde(rename_all = "camelCase")]

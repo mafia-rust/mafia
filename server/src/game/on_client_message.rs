@@ -5,7 +5,7 @@ use super::{
     event::on_fast_forward::OnFastForward,
     phase::{PhaseState, PhaseType},
     player::{PlayerIndex, PlayerReference},
-    role::{engineer::{Engineer, Trap}, Role, RoleState}, role_list::Faction, 
+    role::{engineer::{Engineer, Trap}, mayor::Mayor, Role, RoleState}, role_list::Faction, 
     spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
     Game
 };
@@ -161,6 +161,15 @@ impl Game {
                     !sender_player_ref.get_current_send_chat_groups(self).contains(&ChatGroup::All) ||
                     text.replace(['\n', '\r'], "").trim().is_empty()
                 {
+                    break 'packet_match;
+                }
+
+                if let RoleState::Mayor(Mayor{revealed: true}) = whisperee_ref.role_state(self) {
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::MayorCantWhisper);
+                    break 'packet_match;
+                }
+                if let RoleState::Mayor(Mayor{revealed: true}) = sender_player_ref.role_state(self) {
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::MayorCantWhisper);
                     break 'packet_match;
                 }
 
