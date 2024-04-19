@@ -378,7 +378,7 @@ impl Game {
         self.spectators.remove(i as usize);
     }
 
-    pub fn send_packet_to_all(&mut self, packet: ToClientPacket){
+    pub fn send_packet_to_all(&self, packet: ToClientPacket){
         for player_ref in PlayerReference::all_players(self){
             player_ref.send_packet(self, packet.clone());
         }

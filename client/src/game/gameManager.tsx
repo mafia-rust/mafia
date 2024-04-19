@@ -4,7 +4,7 @@ import GAME_MANAGER from "./../index";
 import messageListener from "./messageListener";
 import CONFIG from "./../resources/config.json"
 import React from "react";
-import { PhaseType, PhaseTimes, Verdict, Player } from "./gameState.d";
+import GameState, { PhaseType, PhaseTimes, Verdict, Player } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
 import { LobbyPreviewData, ToClientPacket, ToServerPacket } from "./packet";
 import { RoleOutline } from "./roleListState.d";
@@ -42,8 +42,11 @@ export function createGameManager(): GameManager {
                 return Promise.resolve();
             }
         },
-        setLobbyState() {
+        setLobbyState(gameState?: GameState) {
             GAME_MANAGER.state = createLobbyState();
+            if (gameState !== undefined && GAME_MANAGER.state.stateType === "lobby") {
+                GAME_MANAGER.state.roomCode = gameState.roomCode;
+            }
         },
         setGameState() {
             let roomCode: number | null = null;
@@ -285,6 +288,11 @@ export function createGameManager(): GameManager {
             });
 
             return promise;
+        },
+        sendBackToLobbyPacket() {
+            this.server.sendPacket({
+                type: "backToLobby"
+            });
         },
         sendSetPhaseTimePacket(phase: PhaseType, time: number) {
             if (isValidPhaseTime(time)) {

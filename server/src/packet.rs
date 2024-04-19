@@ -59,6 +59,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     PlayersLostConnection{lost_connection: Vec<LobbyClientID>},
     StartGame,
+    BackToLobby,
 
     GamePlayers{players: Vec<String>},
     #[serde(rename_all = "camelCase")]
@@ -189,6 +190,7 @@ pub enum ToServerPacket{
     SetPhaseTimes{phase_time_settings: PhaseTimeSettings},
     #[serde(rename_all = "camelCase")]
     SetExcludedRoles{roles: Vec<Role>},
+    BackToLobby,
 
     // Game
     #[serde(rename_all = "camelCase")]

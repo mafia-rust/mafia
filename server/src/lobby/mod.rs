@@ -373,10 +373,10 @@ impl Lobby {
         game.send_packet_to_all(packet.clone());
     }
 
-    fn send_to_all(&mut self, packet: ToClientPacket){
-        match &mut self.lobby_state {
-            LobbyState::Lobby { clients: players, .. } => {
-                for player in players.iter() {
+    fn send_to_all(&self, packet: ToClientPacket){
+        match &self.lobby_state {
+            LobbyState::Lobby { clients, .. } => {
+                for player in clients.iter() {
                     player.1.send(packet.clone());
                 }
             }

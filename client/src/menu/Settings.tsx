@@ -123,6 +123,9 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
                     <section className="standout">
                         <h2>{GAME_MANAGER.state.lobbyName}</h2>
                         <RoomLinkButton/>
+                        <button onClick={() => {
+                            GAME_MANAGER.sendBackToLobbyPacket();
+                        }}><Icon>content_copy</Icon> BACK TO LOBBY </button>
                     </section>
                 }
                 <section>
