@@ -137,8 +137,7 @@ export type Player = {
     numVoted: number,
     alive: boolean,
     roleLabel: Role | null,
-    playerTags: Tag[],
-    host: boolean,
+    playerTags: Tag[]
 
     toString(): string
 }
