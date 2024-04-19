@@ -284,9 +284,6 @@ impl Lobby {
                     log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", lobby_client_id);
                     return;
                 };
-                if let Some(player) = clients.get(&lobby_client_id){
-                    if !player.host {return;}
-                }
 
 
                 let roles = roles.drain(..).collect::<HashSet<_>>().into_iter().collect::<Vec<_>>();
@@ -301,6 +298,9 @@ impl Lobby {
                     log!(error "Lobby"; "{} {}", "Can't go back to lobby from while in lobby", lobby_client_id);
                     return;
                 };
+                if let Some(player) = clients.get(&lobby_client_id){
+                    if !player.host {return;}
+                }
 
                 let mut new_clients = HashMap::new();
                 for (lobby_client_id, game_client) in clients.clone().into_iter() {

@@ -67,6 +67,7 @@ type GameState = {
     ticking: boolean,
 
     clientState: PlayerGameState | {type: "spectator"},
+    host: boolean,
 
 }
 export default GameState;

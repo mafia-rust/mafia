@@ -20,7 +20,7 @@ export type StateListener = (type?: StateEventType) => void;
 export type GameManager = {
 
     setDisconnectedState(): void;
-    setLobbyState(gameState?: GameState): void;
+    setLobbyState(): void;
     setGameState(): void;
     setSpectatorGameState(): void;
     setOutsideLobbyState(): void;

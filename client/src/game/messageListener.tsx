@@ -165,7 +165,7 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "backToLobby":
-            GAME_MANAGER.setLobbyState(GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state : undefined);
+            GAME_MANAGER.setLobbyState();
             Anchor.setContent(<LobbyMenu/>);
         break;
         case "gamePlayers":
