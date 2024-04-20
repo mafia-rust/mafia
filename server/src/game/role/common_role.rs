@@ -134,21 +134,16 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
     out
 }
 
+///Only works for roles connected to a faction/team
 pub(super) fn get_won_game(game: &Game, actor_ref: PlayerReference) -> bool {
-    //if the only endgamecondition left is the one for the actor_ref's role
-    //then the actor_ref's role won the game
-    
-    //get all remaining endgameconditions THAT ARE NOT the actor_ref's role's endgamecondition
-    let remaining_end_game_conditions = PlayerReference::all_players(game)
-        .filter(|player_ref|
-            player_ref.alive(game)
-        )
-        .map(|player_ref|player_ref.role(game).end_game_condition())
-        .collect::<Vec<_>>();
-
-    //if the only remaining endgame conditions are none and or the actor_ref's role's endgamecondition then true
-    remaining_end_game_conditions.iter().all(|end_game_condition|
-        *end_game_condition == EndGameCondition::None || 
-        *end_game_condition == actor_ref.role(game).end_game_condition()
-    )
+    let living_roles = PlayerReference::all_players(game)
+        .filter_map(|p| 
+            if p.alive(game) {Some(p.role(game))}else{None}
+        ).collect();
+    let end_game_condition = EndGameCondition::game_is_over(living_roles);
+    if let Some(end_game_condition) = end_game_condition {
+        EndGameCondition::required_conditions_for_win(actor_ref.role(game)).contains(&end_game_condition)
+    } else {
+        false
+    }
 }

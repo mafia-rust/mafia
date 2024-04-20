@@ -159,7 +159,7 @@
     "role.lookout.dayTarget": "Special",
     
     "role.philosopher.name": "Philosopher",
-    "role.philosopher.name:var.0": "Seers",
+    "role.philosopher.name:var.0": "Philosopher",
     "role.philosopher.target": "Examine",
     "role.philosopher.dayTarget": "Special",
 
@@ -779,9 +779,9 @@
     "wiki.article.standard.silenced.title:var.2": "Silencing",
     "wiki.article.standard.silenced.text": "A player who is silenced can not talk or otherwise communicate during that day, and they can not vote for players during the nomination phase. They can still vote during the judgement phase. If the silenced player is put on trial, they still can't talk. If the players are talking out loud, silenced players should not speak or use any type of communication, including signals or facial expressions. If a player can't use chat, they are not allowed to communicate.\n\n A Blackmailer can silence a player each night.",
     "wiki.article.standard.friends.title": "Friends",
-    "wiki.article.standard.friends.text": "A Philosopher's result which indicates that the two players they visited can win together.",
+    "wiki.article.standard.friends.text": "If two players can win the same game, they are friends.\n- A godfather can not win in the same game as a detective, they both need the other to lose, so they are enemies.\n - A jester can win in the same game as a detective, so they are friends.\n\n The philosopher and detective can use their abilities to see if people are friends or enemies.",
     "wiki.article.standard.enemies.title": "Enemies",
-    "wiki.article.standard.enemies.text": "A Philosopher's result which indicates that the two players they visited can not win together.",
+    "wiki.article.standard.enemies.text": "If two players need the other to lose in order for themselves to win, they are enemies.\n- A Politician can't win alongside a mayor, so they are enemies.\n- A godfather can't win in the same game as a jailor, so they are enemies.\n- A jester can win in the same game as a detective, so they are friends.\n- An Apostle can't win with a godfather, so they are enemies.\n\n The philosopher and detective can use their abilities to see if people are friends or enemies.",
     "wiki.article.standard.haunt.title": "Haunt",
     "wiki.article.standard.haunt.title:var.0": "Haunted",
     "wiki.article.standard.haunt.title:var.1": "Haunting",
@@ -900,15 +900,15 @@
     "wiki.article.role.transporter.attributes":"* All visits to first player instead visit the second player\n* All visits to the second player instead visit first player\n* The players you visit get a message saying that they were transported",
     "wiki.article.role.transporter.extra": "* Some abilities are not affected by yours due to the priority system. _For example_ You can't stop a jester from haunting their target using a transport, this depends on priorities and whether or not an ability is indirect\n* A transporters visits can not be changed by another transporter",
 
-    "wiki.article.role.detective.guide": "- At night, select a player to find if they're innocent or suspicious\n\nYour information could potentially be wrong, _for example_\n - Godfather and Jester have an innocent aura\n - If a player is doused by an arsonist or visited by a framer, they will have a suspicious aura\n\nYou should tell the town the information you get daily.",
+    "wiki.article.role.detective.guide": "- At night, select a player to find if they're innocent or suspicious\n- If a player registers as suspicious, that means that you are enemies, and you can not both win together. You most likely want them voted out.\n- Auras can mess with your results\n    - Godfathers have innocent aura",
     "wiki.article.role.detective.abilities":"* Visit a player to learn if they're innocent or suspicious",
-    "wiki.article.role.detective.attributes":"* Townies register as innocent\n* Non-townies register as suspicious",
+    "wiki.article.role.detective.attributes":"* If they are innocent, they are friends with you\n* If they are suspicious, they are enemies with you",
     "wiki.article.role.detective.extra": "* A suspicious aura makes the player with the aura register as suspicious to you\n* An innocent aura makes the player with the aura register as innocent to you",
 
     "wiki.article.role.lookout.guide": "- At night, select a player to find out who visits them\n\n_For Example_\n- If you select @1 on the night they die, and @2 visited them then it's likely @2 killed them.\n\nYou should tell the town the information you get daily.",
     "wiki.article.role.lookout.abilities":"* Visit a player to find all other visitors to them",
     "wiki.article.role.lookout.attributes":"* You can't see yourself visit",
-    "wiki.article.role.lookout.extra": "* A framer may end up impacting your results",
+    "wiki.article.role.lookout.extra": "* A framer may end up impacting your results using appeared visits",
 
     "wiki.article.role.spy.guide": "- At night, select a player to be told what seems to happen to them\n    - You are told if they are roleblocked, silenced, transported, possessed, or protected from an attack\n- Each night you will passively learn:\n    - Who the mafia visited\n    - Whether or not the cult can convert\n    - How many cultists are alive\n\n You should tell the town the information you get daily. Usually, the mafia can not visit themselves, so anyone who you see the mafia visits is likely not a mafia member.",
     "wiki.article.role.spy.abilities":"* You are told who each mafia member visits, but not the mafia members' names\n* You are told how many cultists are alive\n* At the start of night, you are told whether or not the cult can convert tonight\n* Visit a player to bug their house",
@@ -923,7 +923,7 @@
     "wiki.article.role.philosopher.guide": "- At night, select two players and learn if they are friends or enemies\n    - If they're friends, it is possible for both of them to win in the same game\n\n_For example_\n- A jester is friends with a detective, because they can both win in the same game\n- A Doctor is enemies with a godfather because they need the other person to lose in order to win\n- A hypnotist is enemies with a disciple because they can't win together\n\n You should tell the town the information you get daily.",
     "wiki.article.role.philosopher.abilities":"* Visit two players to learn if they are friends or enemies",
     "wiki.article.role.philosopher.attributes":"* If two players are friends they can win together\n* If two players are enemies they can't win together",
-    "wiki.article.role.philosopher.extra": "* Players with a suspicious aura register as enemies with everyone\n* Players with an innocent aura register as friends with everyone",
+    "wiki.article.role.philosopher.extra": "* Players with a suspicious aura register as enemies with everyone\n* Players with an innocent aura register as friends with everyone\n- If both a suspicious aura and innocent aura are involved in your investigation, they will be enemies. A godfather and a player who is framed by a framer are enemies",
 
     "wiki.article.role.psychic.guide": "- You receive a vision every night\n    - On even nights, the vision lists two players. At least one of them is a townie\n    - On odd nights, the vision will list three players. At least one of them is not a townie\n\nYou should tell the town the information you get daily.",
     "wiki.article.role.psychic.abilities":"* Get an evil vision on odd nights\n* Get a good vision on even nights",
