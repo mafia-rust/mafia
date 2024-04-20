@@ -96,14 +96,11 @@ fn medium_receives_dead_messages_from_jail() {
 }
 
 #[test]
-fn sheriff_basic() {
+fn detective_basic() {
     kit::scenario!(game in Night 1 where
         sher: Detective,
         mafia: Mafioso,
-        townie: Detective,
-        minion: Minion,
-        jester: Jester,
-        politician: Politician
+        townie: Detective
     );
     sher.set_night_targets(vec![mafia]);
     game.next_phase();
@@ -119,55 +116,64 @@ fn sheriff_basic() {
         sher.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 2 }),
         ChatMessageVariant::SheriffResult { suspicious: false }
     );
+}
+
+#[test]
+fn detective_neutrals(){
+    kit::scenario!(game in Night 1 where
+        sher: Detective,
+        _mafia: Godfather,
+        minion: Minion,
+        jester: Jester,
+        politician: Politician
+    );
+
+    sher.set_night_targets(vec![minion]);
+    game.next_phase();
+    assert_contains!(
+        sher.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 1 }),
+        ChatMessageVariant::SheriffResult { suspicious: true }
+    );
+    
+    game.skip_to(PhaseType::Night, 2);
+    sher.set_night_targets(vec![jester]);
+    game.next_phase();
+    assert_contains!(
+        sher.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 2 }),
+        ChatMessageVariant::SheriffResult { suspicious: false }
+    );
     
     game.skip_to(PhaseType::Night, 3);
-    sher.set_night_targets(vec![minion]);
+    sher.set_night_targets(vec![politician]);
     game.next_phase();
     assert_contains!(
         sher.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 3 }),
         ChatMessageVariant::SheriffResult { suspicious: true }
     );
-    
-    game.skip_to(PhaseType::Night, 4);
-    sher.set_night_targets(vec![jester]);
-    game.next_phase();
-    assert_contains!(
-        sher.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 4 }),
-        ChatMessageVariant::SheriffResult { suspicious: false }
-    );
-    
-    game.skip_to(PhaseType::Night, 5);
-    sher.set_night_targets(vec![politician]);
-    game.next_phase();
-    assert_contains!(
-        sher.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 5 }),
-        ChatMessageVariant::SheriffResult { suspicious: true }
-    );
+
 }
 
 #[test]
-fn sheriff_godfather() {
+fn detective_godfather() {
     kit::scenario!(game in Night 1 where
         sher: Detective,
         mafia: Godfather
     );
     sher.set_night_targets(vec![mafia]);
-    
-    game.skip_to(PhaseType::Obituary, 2);
+    game.next_phase();
     assert_contains!(sher.get_messages(), ChatMessageVariant::SheriffResult { suspicious: false });
 }
 
 #[test]
-fn seer_basic() {
+fn philosopher_basic() {
     kit::scenario!(game in Night 1 where
         philosopher: Philosopher,
         mafia1: Mafioso,
         mafia2: Informant,
         townie1: Detective,
-        townie2: Vigilante,
-        jester: Jester,
-        minion: Minion
+        townie2: Vigilante
     );
+
     philosopher.set_night_targets(vec![mafia1, townie1]);
     
     game.next_phase();
@@ -186,7 +192,27 @@ fn seer_basic() {
     );
 
     game.skip_to(PhaseType::Night, 3);
-    philosopher.set_night_targets(vec![jester, mafia2]);
+    philosopher.set_night_targets(vec![townie2, townie1]);
+    
+    game.next_phase();
+    assert_contains!(
+        philosopher.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 3}),
+        ChatMessageVariant::SeerResult { enemies: false }
+    );
+}
+
+#[test]
+fn philosopher_neutrals() {
+    kit::scenario!(game in Night 1 where
+        philosopher: Philosopher,
+        mafia1: Mafioso,
+        townie1: Vigilante,
+        jester: Jester,
+        minion: Minion
+    );
+
+    game.skip_to(PhaseType::Night, 3);
+    philosopher.set_night_targets(vec![jester, mafia1]);
     
     game.next_phase();
     assert_contains!(
@@ -195,7 +221,7 @@ fn seer_basic() {
     );
 
     game.skip_to(PhaseType::Night, 4);
-    philosopher.set_night_targets(vec![townie2, jester]);
+    philosopher.set_night_targets(vec![townie1, jester]);
     
     game.next_phase();
     assert_contains!(
@@ -203,17 +229,8 @@ fn seer_basic() {
         ChatMessageVariant::SeerResult { enemies: false }
     );
 
-    game.skip_to(PhaseType::Night, 5);
-    philosopher.set_night_targets(vec![townie2, townie1]);
-    
-    game.next_phase();
-    assert_contains!(
-        philosopher.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 5}),
-        ChatMessageVariant::SeerResult { enemies: false }
-    );
-
     game.skip_to(PhaseType::Night, 6);
-    philosopher.set_night_targets(vec![townie2, minion]);
+    philosopher.set_night_targets(vec![townie1, minion]);
     
     game.next_phase();
     assert_contains!(

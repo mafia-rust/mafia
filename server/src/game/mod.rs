@@ -272,8 +272,7 @@ impl Game {
     pub fn game_is_over(&self) -> bool {
         if let Some(_) = EndGameCondition::game_is_over(
             PlayerReference::all_players(self)
-                .filter_map(|p|
-                    if p.alive(self){Some(p.role(self))}else{None})
+                .filter_map(|p|if p.alive(self){Some(p.role(self))}else{None})
                 .collect()
             )
         {

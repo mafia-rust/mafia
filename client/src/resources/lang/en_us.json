@@ -159,7 +159,7 @@
     "role.lookout.dayTarget": "Special",
     
     "role.philosopher.name": "Philosopher",
-    "role.philosopher.name:var.0": "Philosopher",
+    "role.philosopher.name:var.0": "Philosophers",
     "role.philosopher.target": "Examine",
     "role.philosopher.dayTarget": "Special",
 
@@ -779,7 +779,7 @@
     "wiki.article.standard.silenced.title:var.2": "Silencing",
     "wiki.article.standard.silenced.text": "A player who is silenced can not talk or otherwise communicate during that day, and they can not vote for players during the nomination phase. They can still vote during the judgement phase. If the silenced player is put on trial, they still can't talk. If the players are talking out loud, silenced players should not speak or use any type of communication, including signals or facial expressions. If a player can't use chat, they are not allowed to communicate.\n\n A Blackmailer can silence a player each night.",
     "wiki.article.standard.friends.title": "Friends",
-    "wiki.article.standard.friends.text": "If two players can win the same game, they are friends.\n- A godfather can not win in the same game as a detective, they both need the other to lose, so they are enemies.\n - A jester can win in the same game as a detective, so they are friends.\n\n The philosopher and detective can use their abilities to see if people are friends or enemies.",
+    "wiki.article.standard.friends.text": "If two players can win the same game, they are friends.\n - A jester can win in the same game as a detective, so they are friends\n- An Apostle can win in the same game as a disciple so they are friends\n- A godfather can't win in the same game as a detective, they both need the other to lose, so they are enemies. However, the godfather has an innocent aura, so they might appear as friends\n The philosopher and detective can use their abilities to see if people are friends or enemies.",
     "wiki.article.standard.enemies.title": "Enemies",
     "wiki.article.standard.enemies.text": "If two players need the other to lose in order for themselves to win, they are enemies.\n- A Politician can't win alongside a mayor, so they are enemies.\n- A godfather can't win in the same game as a jailor, so they are enemies.\n- A jester can win in the same game as a detective, so they are friends.\n- An Apostle can't win with a godfather, so they are enemies.\n\n The philosopher and detective can use their abilities to see if people are friends or enemies.",
     "wiki.article.standard.haunt.title": "Haunt",

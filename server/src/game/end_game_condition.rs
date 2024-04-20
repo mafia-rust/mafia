@@ -43,15 +43,12 @@ impl EndGameCondition {
 
         //find one end game condition that everyone agrees on
         for end_game_condition in EndGameCondition::all() {
-            let mut all_agree = true;
-            for living_role in &living_roles {
-                if !EndGameCondition::keeps_game_running(*living_role) {continue;}
-                if !EndGameCondition::required_conditions_for_win(*living_role).contains(&end_game_condition) {
-                    all_agree = false;
-                    break;
-                }
-            }
-            if all_agree {
+            //if everyone who keeps the game running agrees on this end game condition, return it
+            if
+                living_roles.iter()
+                    .filter(|r|EndGameCondition::keeps_game_running(**r))
+                    .all(|r|EndGameCondition::required_conditions_for_win(*r).contains(&end_game_condition))
+            {
                 return Some(end_game_condition);
             }
         }
