@@ -689,7 +689,13 @@
     "wiki.article.standard.neutral.text": "Neutrals are not all on the same team. Each neutral role has special win conditions. Most of them are against both the town and the mafia. Some neutral roles can win before the game ends like the jester, hater, and doomsayer. Other roles need to be the last one alive like werewolf and arsonist. All of the werewolves are on the same team but don't start knowing who each other are, the same goes for arsonists.",
     "wiki.article.standard.cult.title": "Cult",
     "wiki.article.standard.cult.text": "The Cult is an alternative evil faction that can convert other players to join their cult. They win by eliminating all opposing teams. Cultists can communicate at night and they can not select each other, much like the mafia. Unlike the mafia, the cultists do not have supporting roles that can help them, but instead convert other players to join them.\n\nCult roles include:\n- Apostle (Chooses who to convert to a zealot)\n- Disciple (Oldest one becomes Apostle after it dies)\n- Zealot (Attacks every night and becomes disciple if a new zealot is made)",
-    
+    "wiki.article.standard.reveal.title": "Reveal",
+    "wiki.article.standard.reveal.title:var.0": "Revealed",
+    "wiki.article.standard.reveal.title:var.1": "Revealing",
+    "wiki.article.standard.reveal.title:var.2": "Conceal",
+    "wiki.article.standard.reveal.title:var.3": "Concealed",
+    "wiki.article.standard.reveal.title:var.4": "Concealing",
+    "wiki.article.standard.reveal.text": "- When a player is revealed to you, you can see their role label, and you are given a message saying their role\n- When a player is concealed from you, you lose their role label, and are given a chat message saying they are concealed form you\n    - A player gets concealed when they die or switch roles.\n\n Revealing and role labels are private. so if you see a role label, others might not also see that role label. Mafia members are always revealed to each other while alive",
     "wiki.article.standard.roleLabel.title": "Role Label",
     "wiki.article.standard.roleLabel.text": "- Role labels appear next to player names, it shows what role that player is\n- Role labels are not always public, for example, you can see your own role label at all times, but other players can not\n- A mafia member can see the other mafia members role labels\n- When you gain a role label on another player, you get a chat message saying that players role was revealed to you\n- When you lose a role label on another player, you get a chat message saying that players role was concealed from you\n- If a player that is revealed to you switches roles or dies, their role label will be concealed\n- Dead players can not have role labels, the role that appears next to their name is just the role on their grave. These can be inaccurate for reasons like the janitor or forger's ability",
     "wiki.article.standard.interview.title": "Interview",
@@ -703,28 +709,23 @@
     "wiki.article.standard.vision.title": "Vision",
     "wiki.article.standard.vision.title:var.0": "Visions",
     "wiki.article.standard.vision.text": "Visions are the investigative result that a Psychic receives. Good visions show a list of two players that contains at least one townie. Evil visions show a list of three players that contains at least one non-townie. An Aura can effect a psychic vision. A player with a suspicious aura will not show up in a good vision, and a player with an innocent aura will not show up in an evil vision.",
-    
     "wiki.article.standard.select.title":"Select",
     "wiki.article.standard.select.title:var.0":"Selects",
     "wiki.article.standard.select.title:var.1":"Selecting",
     "wiki.article.standard.select.title:var.2":"Selected",
     "wiki.article.standard.select.title:var.3":"Selection",
     "wiki.article.standard.select.text": "Selecting is when you click the button under a player at night in order to attempt to use your ability on them. Selecting determines who you will visit before it becomes affected by other effects. By default, you can select a number of players up to as many targets as your role can have. Most roles can not select themselves or dead players, and some roles have further restrictions on selections. Most mafia members and cultists can not select other players on their team.",
-
     "wiki.article.standard.visit.title": "Visit",
     "wiki.article.standard.visit.title:var.0": "Visits",
     "wiki.article.standard.visit.title:var.1": "Visiting",
     "wiki.article.standard.visit.title:var.2": "Visited",
     "wiki.article.standard.visit.title:var.3": "Visitor",
     "wiki.article.standard.visit.text": "Usually, visits are decided by selecting players. Visits are what actually causes active abilities to work. For example: A Detective could select a player, but a Witch could possess them to make them visit someone else, and then the Detective will unknowingly get their results from the player that they visited instead of the player they selected.\n\n An attacking visit is a visit that attempts to kill a player. Some roles like Ojo, Bodyguard, and Engineer work differently if a visit is an attacking visit.",
-
     "wiki.article.standard.target.title": "Target",
     "wiki.article.standard.target.text": "Your target is the player who you visit.",
-    
     "wiki.article.standard.indirect.title":"Indirect",
     "wiki.article.standard.indirect.title:var.0": "Indirectly",
     "wiki.article.standard.indirect.text": "An indirect ability is one that does not visit. Therefore, it is unable to be seen by a lookout or tracker or affected by many other abilities.",
-
     "wiki.article.standard.hypnotize.title": "Hypnotize",
     "wiki.article.standard.hypnotize.title:var.0": "Hypnotized",
     "wiki.article.standard.hypnotize.title:var.1": "Hypnotizes",
@@ -764,7 +765,6 @@
     "wiki.article.standard.possess.text": "A player who is possessed had their visits changed by the Witch, Necromancer, or Retributionist. Some roles have immunity to possession like Witch, Necromancer, Transporter, Retributionist and Veteran.\n If a player selected two players (such as a philosopher), the possession will only change their first target, and their second target will remain the same.",
     "wiki.article.standard.defense.title": "Defense",
     "wiki.article.standard.defense.title:var.0": "Protection-piercing",
-
     "wiki.article.standard.defense.text": "Attacks and defense have 3 tiers each. An attack can either be basic, armor-piercing, or protection-piercing.\n\nA defense can either be armored, protected, or invincible.\n\nA basic attack can not kill a player who is armored, and an armor-piercing attack can not kill a player who is protected. A protection-piercing attack can overpower armor as well as protection.\n\n Some roles have armor by default, usually evil ones. Protection can be granted to players through abilities like the Doctor's ability to protect their target. A player with invincible defense can only die by getting executed or leaving the game.\n\nUnless otherwise indicated, attacks are basic by default and will not be able to kill players who are armored or protected. Indirect is not a tier of attack.",
     "wiki.article.standard.protect.title": "Protect",
     "wiki.article.standard.protect.title:var.0": "Protected",
