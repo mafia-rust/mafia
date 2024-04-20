@@ -5,6 +5,7 @@ import GAME_MANAGER from "../..";
 import { StateListener } from "../../game/gameManager.d";
 import "./lobbyChatMenu.css";
 import translate from "../../game/lang";
+import StyledText from "../../components/StyledText";
 
 
 export default function LobbyChatMenu(): ReactElement {
@@ -34,7 +35,7 @@ export default function LobbyChatMenu(): ReactElement {
     }, [setChatMessages]);
     
     return <section className="lobby-chat-menu chat-menu-colors selector-section">
-        <h3>{translate("menu.chat.title")}</h3>
+        <h3><StyledText>{translate("menu.chat.title")}</StyledText></h3>
         <div className="lobby-chat-menu-chat">{/* the div that lets the one inside move expands*/}
             <div>   {/* the div that expands*/}
                 {chatMessages.map((message, index) => {
