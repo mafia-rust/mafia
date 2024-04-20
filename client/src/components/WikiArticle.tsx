@@ -37,17 +37,24 @@ export default function WikiArticle(props: {
                         {replaceMentions(translateChecked("wiki.article.role."+role+".guide") ?? translate("wiki.article.role.noGuide"), DUMMY_NAMES)}
                     </StyledText>
                 </div>
-                {roleData.aura && <div>
-                    <StyledText markdown={true}>
-                        {"### "+translate("wiki.article.standard.aura.title")+": "+translate(roleData.aura+"Aura")+"\n"}
-                    </StyledText>
-                </div>}
-                {roleData.armor && <div>
-                    <StyledText markdown={true}>
-                        {"### "+translate("defense")+": "+translate("defense.1")+"\n"}
-                    </StyledText>
-                </div>}
-                <div className="wiki-message-section">
+                <div>
+                    {roleData.aura &&
+                        <StyledText markdown={true}>
+                            {"### "+translate("wiki.article.standard.aura.title")+": "+translate(roleData.aura+"Aura")+"\n"}
+                        </StyledText>
+                    }
+                    {roleData.armor && 
+                        <StyledText markdown={true}>
+                            {"### "+translate("defense")+": "+translate("defense.1")+"\n"}
+                        </StyledText>
+                    }
+                    {roleData.maxCount !== null &&
+                        <StyledText markdown={true}>
+                        {"### "+translate("wiki.article.standard.roleLimit.title")+": "+(roleData.maxCount)+"\n"}
+                        </StyledText>
+                    }
+                </div>
+                {chatMessages.length!==0 && <div className="wiki-message-section">
                     <StyledText markdown={true}>
                         {"### "+translate("wiki.article.role.chatMessages")+"\n"}
                     </StyledText>
@@ -59,7 +66,7 @@ export default function WikiArticle(props: {
                             }
                         } playerNames={DUMMY_NAMES}/>
                     )}
-                </div>
+                </div>}
                 <details>
                     <summary>{translate("wiki.article.role.details")}</summary>
                     <div>
