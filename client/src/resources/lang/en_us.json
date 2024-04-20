@@ -766,13 +766,6 @@
     "wiki.article.standard.defense.title": "Defense",
     "wiki.article.standard.defense.title:var.0": "Protection-piercing",
 
-    "wiki.article.standard.reveal.title": "Reveal",
-    "wiki.article.standard.reveal.title:var.0": "Revealed",
-    "wiki.article.standard.reveal.title:var.1": "Revealing",
-    "wiki.article.standard.reveal.title:var.2": "Conceal",
-    "wiki.article.standard.reveal.title:var.3": "Concealed",
-    "wiki.article.standard.reveal.title:var.4": "Concealing",
-    "wiki.article.standard.reveal.text": "- When a player is revealed to you, you can see their role label, and you are given a message saying their role\n- When a player is concealed from you, you lose their role label, and are given a chat message saying they are concealed form you\n    - A player gets concealed when they die or switch roles.\n\n Revealing and role labels are private. so if you see a role label, others might not also see that role label. Mafia members are always revealed to each other while alive",
     "wiki.article.standard.defense.text": "Attacks and defense have 3 tiers each. An attack can either be basic, armor-piercing, or protection-piercing.\n\nA defense can either be armored, protected, or invincible.\n\nA basic attack can not kill a player who is armored, and an armor-piercing attack can not kill a player who is protected. A protection-piercing attack can overpower armor as well as protection.\n\n Some roles have armor by default, usually evil ones. Protection can be granted to players through abilities like the Doctor's ability to protect their target. A player with invincible defense can only die by getting executed or leaving the game.\n\nUnless otherwise indicated, attacks are basic by default and will not be able to kill players who are armored or protected. Indirect is not a tier of attack.",
     "wiki.article.standard.protect.title": "Protect",
     "wiki.article.standard.protect.title:var.0": "Protected",
