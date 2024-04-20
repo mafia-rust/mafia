@@ -349,9 +349,9 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.fastForward = packet.fastForward;
         break;
         case "addChatMessages":
-            if(GAME_MANAGER.state.stateType === "game"){
+            if(GAME_MANAGER.state.stateType === "game" || GAME_MANAGER.state.stateType === "lobby"){
                 GAME_MANAGER.state.chatMessages = GAME_MANAGER.state.chatMessages.concat(packet.chatMessages);
-                
+
                 for(let chatMessage of packet.chatMessages){
                     let audioSrc = chatMessageToAudio(chatMessage);
                     if(audioSrc)

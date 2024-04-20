@@ -113,6 +113,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
     }
 
     switch (message.type) {
+        case "rawText":
+            return message.text;
         case "normal":
 
             if(message.messageSender.type === "player"){
@@ -448,6 +450,9 @@ export type ChatMessage = {
     chatGroup: ChatGroup | null
 }
 export type ChatMessageVariant = {
+    type: "rawText",
+    text: string
+} | {
     type: "normal", 
     messageSender: MessageSender,
     text: string

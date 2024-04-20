@@ -32,6 +32,7 @@ export type LobbyState = {
     phaseTimes: PhaseTimes,
 
     players: Map<LobbyClientID, LobbyClient>,
+    chatMessages: ChatMessage[],
 }
 export type LobbyClient = {
     host: boolean,

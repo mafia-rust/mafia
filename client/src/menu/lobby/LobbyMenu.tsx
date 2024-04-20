@@ -17,6 +17,7 @@ import { OutlineListSelector } from "../../components/OutlineSelector";
 import DisabledRoleSelector from "../../components/DisabledRoleSelector";
 import Icon from "../../components/Icon";
 import { GameModeSelector } from "../../components/GameModeSelector";
+import LobbyChatMenu from "./LobbyChatMenu";
 
 export default function LobbyMenu(): ReactElement {
     const [roleList, setRoleList] = useState(
@@ -90,12 +91,14 @@ export default function LobbyMenu(): ReactElement {
             <main>
                 <div>
                     <LobbyPlayerList/>
+                    {Anchor.isMobile() || <LobbyChatMenu/>}
                     {Anchor.isMobile() || <section className="wiki-menu-colors selector-section">
                         <h2>{translate("menu.wiki.title")}</h2>
                         <Wiki disabledRoles={
                             getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(roleList, disabledRoles))
                         }/>
                     </section>}
+                    
                 </div>
                 <div>
                     {Anchor.isMobile() && <h1>{translate("menu.lobby.settings")}</h1>}
@@ -122,6 +125,7 @@ export default function LobbyMenu(): ReactElement {
                         onIncludeAll={() => GAME_MANAGER.sendExcludedRolesPacket([])}
                         disabled={!isHost}
                     />
+                    {Anchor.isMobile() && <LobbyChatMenu/>}
                     {Anchor.isMobile() && <section className="wiki-menu-colors selector-section">
                         <h2>{translate("menu.wiki.title")}</h2>
                         <Wiki disabledRoles={

@@ -257,6 +257,12 @@ export function createGameManager(): GameManager {
                 name: name
             });
         },
+        sendSendLobbyMessagePacket(text) {
+            this.server.sendPacket({
+                type: "sendLobbyMessage",
+                text: text
+            });
+        },
 
         sendSetLobbyNamePacket(name) {
             this.server.sendPacket({

@@ -40,6 +40,10 @@ impl ChatMessage{
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum ChatMessageVariant {
+    RawText{
+        text: String
+    },
+
     #[serde(rename_all = "camelCase")]
     Normal{
         message_sender: MessageSender, 
