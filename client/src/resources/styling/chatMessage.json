@@ -17,6 +17,7 @@
     "playerWonOrLost": "trial",
     "targeted": "target",
     "mayorRevealed": "special",
+    "mayorCantWhisper": "special",
     "martyrRevealed": "special",
     "journalistJournal": "result",
     "playerIsBeingInterviewed": "special",
