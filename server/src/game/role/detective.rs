@@ -1,13 +1,14 @@
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::end_game_condition::EndGameCondition;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{Priority, RoleStateImpl};
+use super::{Priority, Role, RoleStateImpl};
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -73,7 +74,10 @@ impl Detective {
         }else if player_ref.has_innocent_aura(game){
             false
         }else{
-            player_ref.role(game).faction() != Faction::Town
+            !EndGameCondition::can_win_together(
+                Role::Detective, 
+                player_ref.role(game)
+            )
         }
     }
 }

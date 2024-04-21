@@ -270,24 +270,16 @@ impl Game {
     }
 
     pub fn game_is_over(&self) -> bool {
-        //find list of all remaining teams, no duplicates, and remove none
-        let remaining_teams: Vec<EndGameCondition> = 
+        if let Some(_) = EndGameCondition::game_is_over(
             PlayerReference::all_players(self)
-                .filter(|p|p.alive(self) && p.end_game_condition(self) != EndGameCondition::None)
-                .map(|p|p.end_game_condition(self))
-                .collect::<std::collections::HashSet<EndGameCondition>>().into_iter().collect::<Vec<EndGameCondition>>();
-
-        //if there are no teams left and multiple wildCards alive then the game is not over
-        if
-            remaining_teams.is_empty() && 
-            PlayerReference::all_players(self)
-                .filter(|p|p.alive(self) && p.role_state(self).role() == role::Role::Wildcard)
-                .count() > 1 
+                .filter_map(|p|if p.alive(self){Some(p.role(self))}else{None})
+                .collect()
+            )
         {
-            return false;
+            true
+        }else{
+            false
         }
-        
-        remaining_teams.len() <= 1
     }
 
     pub fn current_phase(&self) -> &PhaseState {
