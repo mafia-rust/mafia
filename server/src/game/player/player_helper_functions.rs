@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::game::
 {
-    chat::{ChatGroup, ChatMessageVariant}, end_game_condition::EndGameCondition, event::{on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, grave::{Grave, GraveKiller}, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
+    chat::{ChatGroup, ChatMessageVariant}, event::{on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, grave::{Grave, GraveKiller}, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
 };
 
 use super::PlayerReference;
@@ -137,9 +137,6 @@ impl PlayerReference{
     }
     pub fn control_immune(&self, game: &Game) -> bool {
         self.role(game).control_immune()
-    }
-    pub fn end_game_condition(&self, game: &Game) -> EndGameCondition {
-        self.role(game).end_game_condition()
     }
     pub fn has_innocent_aura(&self, game: &Game) -> bool {
         self.role(game).has_innocent_aura(game)
