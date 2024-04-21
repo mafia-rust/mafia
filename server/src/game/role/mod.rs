@@ -9,8 +9,6 @@ use crate::game::phase::PhaseType;
 
 use serde::{Serialize, Deserialize};
 
-use super::end_game_condition::EndGameCondition;
-
 trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8;
 
@@ -298,8 +296,6 @@ impl Role{
     }
     pub fn has_innocent_aura(&self, game: &Game)->bool{
         match self {
-            Role::Jester => true,
-            Role::Hater => true,
             Role::Godfather => true,
             Role::Werewolf => {
                 game.day_number() == 1 || game.day_number() == 3
@@ -309,12 +305,8 @@ impl Role{
     }
     pub fn has_suspicious_aura(&self, _game: &Game)->bool{
         match self {
-            Role::Politician => true,
             _ => false,
         }
-    }
-    pub fn end_game_condition(&self)->EndGameCondition{
-        EndGameCondition::from_role(*self)
     }
 }
 pub fn same_evil_team(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
