@@ -89,8 +89,8 @@ impl Philosopher{
             false
         }else{
             !EndGameCondition::can_win_together(
-                a.role(game).end_game_condition(), 
-                b.role(game).end_game_condition()
+                a.role(game), 
+                b.role(game)
             )
         }
     }
