@@ -39,10 +39,10 @@ impl RoleStateImpl for Medium {
             if old_target_ref == target_ref {
                 actor_ref.set_role_state(game, RoleState::Medium(Medium { seanced_target: None, seances_remaining: self.seances_remaining}));
             } else {
-                actor_ref.set_role_state(game, RoleState::Medium(Medium { seanced_target: Some(target_ref), seances_remaining: self.seances_remaining }))
+                actor_ref.set_role_state(game, RoleState::Medium(Medium { seanced_target: Some(target_ref), seances_remaining: self.seances_remaining }));
             }
         } else {
-            actor_ref.set_role_state(game, RoleState::Medium(Medium { seanced_target: Some(target_ref), seances_remaining: self.seances_remaining }))
+            actor_ref.set_role_state(game, RoleState::Medium(Medium { seanced_target: Some(target_ref), seances_remaining: self.seances_remaining }));
         }
     }
     fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
