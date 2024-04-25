@@ -146,7 +146,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.whisper", 
                 playerNames[message.fromPlayerIndex],
                 playerNames[message.toPlayerIndex],
-                message.text
+                sanitizePlayerMessage(replaceMentions(message.text, playerNames))
             );
         case "broadcastWhisper":
             return translate("chatMessage.broadcastWhisper",
