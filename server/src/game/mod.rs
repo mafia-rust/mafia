@@ -40,6 +40,7 @@ use self::end_game_condition::EndGameCondition;
 use self::event::on_game_ending::OnGameEnding;
 use self::event::on_grave_added::OnGraveAdded;
 use self::event::on_phase_start::OnPhaseStart;
+use self::grave::GraveReference;
 use self::phase::PhaseState;
 use self::player::PlayerInitializeParameters;
 use self::spectator::{
@@ -74,8 +75,6 @@ pub struct Game {
     pub mafia: Mafia,
     pub cult: Cult,
     pub arsonist_doused: ArsonistDoused,
-    // pub cleaned: Cleaned,
-    // pub framed: Framed,
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -331,7 +330,9 @@ impl Game {
 
     pub fn add_grave(&mut self, grave: Grave){
         self.graves.push(grave.clone());
-        OnGraveAdded::new(grave).invoke(self);
+        if let Some(grave_ref) = GraveReference::new(self, self.graves.len() as u8 - 1){
+            OnGraveAdded::new(grave_ref).invoke(self);
+        }
     }
 
     pub fn add_message_to_chat_group(&mut self, group: ChatGroup, variant: ChatMessageVariant){

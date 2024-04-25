@@ -3,7 +3,7 @@ use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::role::{bouncer::Bouncer, engineer::Engineer, minion::Minion, politician::Politician, zealot::Zealot};
+use mafia_server::game::{role::{bouncer::Bouncer, engineer::Engineer, minion::Minion, politician::Politician, zealot::Zealot}, verdict::Verdict};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
@@ -46,7 +46,7 @@ pub use mafia_server::game::{
         witch::Witch,
         necromancer::Necromancer,
 
-        janitor::Janitor,
+        mortician::Mortician,
         framer::Framer,
 
         jester::Jester,
@@ -151,6 +151,57 @@ fn detective_neutrals(){
         ChatMessageVariant::SheriffResult { suspicious: true }
     );
 
+}
+
+#[test]
+fn mortician_cremates_on_stand(){
+    kit::scenario!(game in Night 1 where
+        mortician: Mortician,
+        townie: Detective,
+        jail: Jailor,
+        gf: Godfather
+    );
+
+    mortician.set_night_target(townie);
+    game.skip_to(PhaseType::Nomination, 2);
+    
+    jail.vote_for_player(Some(townie));
+    gf.vote_for_player(Some(townie));
+    mortician.vote_for_player(Some(townie));
+
+    game.skip_to(PhaseType::Judgement, 2);
+    jail.set_verdict(Verdict::Guilty);
+
+    game.skip_to(PhaseType::Night, 2);
+    
+    assert_eq!(game.graves[0].role, GraveRole::Cremated);
+    assert_contains!(mortician.get_messages(), ChatMessageVariant::PlayerRoleAndWill { role: Role::Detective, will: "".to_string() });
+}
+
+#[test]
+fn mortician_cremates_fail_after_death(){
+    kit::scenario!(game in Night 1 where
+        mortician: Mortician,
+        townie: Detective,
+        jail: Jailor,
+        gf: Godfather
+    );
+
+    mortician.set_night_target(townie);
+    game.skip_to(PhaseType::Nomination, 2);
+    
+    jail.vote_for_player(Some(mortician));
+    gf.vote_for_player(Some(mortician));
+    townie.vote_for_player(Some(mortician));
+
+    game.skip_to(PhaseType::Judgement, 2);
+    jail.set_verdict(Verdict::Guilty);
+
+    game.skip_to(PhaseType::Night, 2);
+    gf.set_night_target(townie);
+    game.next_phase();
+    assert_eq!(game.graves[1].role, GraveRole::Role(Role::Detective));
+    assert_not_contains!(mortician.get_messages(), ChatMessageVariant::PlayerRoleAndWill { role: Role::Detective, will: "".to_string() });
 }
 
 #[test]
@@ -757,14 +808,14 @@ fn can_type_in_jail() {
 fn mafioso_cant_kill_mafia() {
     kit::scenario!(game in Night 1 where
         mafioso: Mafioso,
-        janitor: Janitor
+        mortician: Mortician
     );
 
-    mafioso.set_night_target(janitor);
+    mafioso.set_night_target(mortician);
 
     game.next_phase();
 
-    assert!(janitor.alive());
+    assert!(mortician.alive());
 }
 
 #[test]
@@ -1003,7 +1054,7 @@ fn reveler_protect_still_kill() {
     kit::scenario!(game in Night 1 where
         rev: Bouncer,
         godfather: Godfather,
-        jan: Janitor,
+        jan: Mortician,
         townie_a: Detective,
         townie_b: Detective
     );
@@ -1400,7 +1451,7 @@ fn godfather_dies_to_veteran(){
     kit::scenario!(game in Night 1 where
         vet: Veteran,
         gf: Godfather,
-        _maf: Janitor
+        _maf: Mortician
     );
 
     assert!(gf.set_night_target(vet));
@@ -1417,7 +1468,7 @@ fn godfather_dies_to_veteran_after_possessed(){
     kit::scenario!(game in Night 1 where
         vet: Veteran,
         gf: Godfather,
-        _maf: Janitor,
+        _maf: Mortician,
         min: Minion
     );
 

@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -14,7 +15,7 @@ use super::{same_evil_team, Priority, RoleStateImpl};
 pub struct Framer;
 
 pub(super) const FACTION: Faction = Faction::Mafia;
-pub(super) const MAXIMUM_COUNT: Option<u8> = None;
+pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
 impl RoleStateImpl for Framer {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
@@ -97,6 +98,8 @@ impl RoleStateImpl for Framer {
         
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
+    }
+    fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave_ref: GraveReference){
     }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }

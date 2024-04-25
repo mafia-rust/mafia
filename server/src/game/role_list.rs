@@ -170,7 +170,7 @@ impl RoleSet{
             RoleSet::MafiaSupport => 
                 vec![
                     Role::Blackmailer, Role::Informant, Role::Hypnotist, 
-                    Role::Forger, Role::Framer, Role::Janitor, 
+                    Role::Forger, Role::Framer, Role::Mortician, 
                     Role::Witch, Role::Necromancer
                 ],
             RoleSet::NeutralEvil => 

@@ -77,9 +77,8 @@ export type RoleState = {
 } | {
     type: "informant",
 } | {
-    type: "janitor"
-    cleansRemaining: number,
-    // cleanedRef
+    type: "mortician"
+    crematedPlayers: PlayerIndex[]
 } | {
     type: "forger",
     fakeRole: Role,

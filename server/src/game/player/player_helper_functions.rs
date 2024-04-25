@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::game::
 {
-    chat::{ChatGroup, ChatMessageVariant}, event::{on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, grave::{Grave, GraveKiller}, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
+    chat::{ChatGroup, ChatMessageVariant}, event::{on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, grave::{Grave, GraveKiller, GraveReference}, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
 };
 
 use super::PlayerReference;
@@ -185,6 +185,9 @@ impl PlayerReference{
     }
     pub fn on_any_death(&self, game: &mut Game, dead_player_ref: PlayerReference){
         self.role_state(game).clone().on_any_death(game, *self, dead_player_ref)
+    }
+    pub fn on_grave_added(&self, game: &mut Game, grave: GraveReference){
+        self.role_state(game).clone().on_grave_added(game, *self, grave)
     }
     pub fn on_game_ending(&self, game: &mut Game){
         self.role_state(game).clone().on_game_ending(game, *self)

@@ -3,44 +3,38 @@ use serde::Serialize;
 
 use crate::game::chat::ChatMessageVariant;
 use crate::game::chat::ChatGroup;
+use crate::game::grave::GraveReference;
 use crate::game::grave::GraveRole;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
+use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
 use super::{Priority, RoleState, RoleStateImpl};
 
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Default, Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Janitor {
-    cleans_remaining: u8,
-    cleaned_ref: Option<PlayerReference>
-}
-
-impl Default for Janitor {
-    fn default() -> Self {
-        Janitor {
-            cleans_remaining: 3,
-            cleaned_ref: None
-        }
-    }
+pub struct Mortician {
+    cremated_players: Vec<PlayerReference>
 }
 
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
-impl RoleStateImpl for Janitor {
+const MAX_CREMATIONS: u8 = 3;
+
+impl RoleStateImpl for Mortician {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
     
 
 
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return}
 
-        if self.cleans_remaining == 0 {return}
+        if self.cremated_players.len() as u8 >= MAX_CREMATIONS {return}
 
         match priority {
             Priority::Deception=>{
@@ -49,30 +43,25 @@ impl RoleStateImpl for Janitor {
                 let target_ref = visit.target;
                 if target_ref.night_jailed(game) {
                     actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
-                }else{
-                    target_ref.set_night_grave_role(game, Some(GraveRole::Cleaned));
-                    target_ref.set_night_grave_will(game, "".to_owned());
-                    actor_ref.set_role_state(game, RoleState::Janitor(Janitor { cleans_remaining: self.cleans_remaining - 1, cleaned_ref: Some(target_ref) }));
-                }
-            },
-            Priority::Investigative=>{
-                if let Some(cleaned_ref) = self.cleaned_ref {
-                    if cleaned_ref.night_died(game) {
-                        actor_ref.push_night_message(game, ChatMessageVariant::PlayerRoleAndWill{
-                            role: cleaned_ref.role(game),
-                            will: cleaned_ref.will(game).to_string(),
-                        });
-                    }
+                }else if !self.cremated_players.contains(&target_ref){
+                    self.cremated_players.push(target_ref);
+                    actor_ref.set_role_state(game, RoleState::Mortician(self));
+                    actor_ref.push_player_tag(game, target_ref, Tag::MorticianTagged);
                 }
             },
             _ => {}
         }
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_target(game, actor_ref, target_ref) && self.cleans_remaining > 0
+        actor_ref != target_ref &&
+        !actor_ref.night_jailed(game) &&
+        actor_ref.chosen_targets(game).is_empty() &&
+        actor_ref.alive(game) &&
+        target_ref.alive(game) &&
+        (self.cremated_players.len() as u8) < MAX_CREMATIONS && 
+        !self.cremated_players.contains(&target_ref)
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
-        
     }
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false
@@ -89,13 +78,23 @@ impl RoleStateImpl for Janitor {
     fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
         crate::game::role::common_role::get_won_game(game, actor_ref)
     }
-    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
-        actor_ref.set_role_state(game, RoleState::Janitor(Janitor { cleans_remaining: self.cleans_remaining, cleaned_ref: None }));
+    fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType){
     }
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
-        
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
+    }
+    fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave_ref: GraveReference){
+        if actor_ref.alive(game) && self.cremated_players.contains(&grave_ref.deref(game).player) {
+            let grave = grave_ref.deref_mut(game);
+            grave.role = GraveRole::Cremated;
+            grave.will = "".to_owned();
+            let grave = grave.clone();
+            actor_ref.add_private_chat_message(game, ChatMessageVariant::PlayerRoleAndWill{
+                role: grave.player.role(game),
+                will: grave.player.will(game).to_string(),
+            });
+        }
     }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
