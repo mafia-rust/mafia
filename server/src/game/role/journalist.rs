@@ -51,10 +51,10 @@ impl RoleStateImpl for Journalist {
             if old_target_ref == target_ref {
                 actor_ref.set_role_state(game, RoleState::Journalist(Journalist { interviewed_target: None, ..self}));
             } else {
-                actor_ref.set_role_state(game, RoleState::Journalist(Journalist { interviewed_target: Some(target_ref), ..self }))
+                actor_ref.set_role_state(game, RoleState::Journalist(Journalist { interviewed_target: Some(target_ref), ..self }));
             }
         } else {
-            actor_ref.set_role_state(game, RoleState::Journalist(Journalist { interviewed_target: Some(target_ref), ..self }))
+            actor_ref.set_role_state(game, RoleState::Journalist(Journalist { interviewed_target: Some(target_ref), ..self }));
         }
     }
     fn can_night_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
