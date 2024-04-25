@@ -9,6 +9,7 @@ import "./styledText.css";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { ARTICLES, WikiArticleLink, getArticleLangKey } from "./WikiArticleLink";
 import GameScreen, { ContentMenu } from "../menu/game/GameScreen";
+import { Player } from "../game/gameState.d";
 
 export type TokenData = {
     style?: string, 
@@ -16,7 +17,7 @@ export type TokenData = {
     replacement?: string
 };
 type KeywordData = TokenData[];
-type KeywordDataMap = { [key: string]: KeywordData };
+export type KeywordDataMap = { [key: string]: KeywordData };
 
 const MARKDOWN_OPTIONS = {
     breaks: true,
@@ -43,19 +44,24 @@ type Token = {
     }
 };
 
+export type StyledTextProps = {
+    children: string[] | string,
+    className?: string,
+    noLinks?: boolean,
+    markdown?: boolean,
+    playerKeywordData?: KeywordDataMap
+};
+
 /**
  * Styled Text
  * 
  * ***MAKE SURE TO SANITIZE TEXT INPUT INTO THIS ELEMENT*** (If it's from the user)
  * 
+ * @param props.playerKeywordData  If omitted, defaults to {@link PLAYER_KEYWORD_DATA} 
  * @see sanitizePlayerMessage in ChatMessage.tsx
  */
-export default function StyledText(props: {
-        children: string[] | string,
-        className?: string,
-        noLinks?: boolean,
-        markdown?: boolean
-    }): ReactElement {
+export default function StyledText(props: StyledTextProps): ReactElement {
+    const playerKeywordData = props.playerKeywordData ?? PLAYER_KEYWORD_DATA;
 
     let tokens: Token[] = [{
         type: "raw",
@@ -70,7 +76,7 @@ export default function StyledText(props: {
         tokens[0].string = tokens[0].string.replace(/\n/g, '<br>');
     }
 
-    tokens = styleKeywords(tokens);
+    tokens = styleKeywords(tokens, playerKeywordData);
 
     const jsxString = tokens.map(token => {
         if (token.type === "raw") {
@@ -100,41 +106,23 @@ export default function StyledText(props: {
     </span>
 }
 
-const KEYWORD_DATA_MAP: KeywordDataMap = {};
+const KEYWORD_DATA: KeywordDataMap = {};
+computeKeywordData();
 
-function clearKeywordData() {
-    for (const key in KEYWORD_DATA_MAP) {
-        delete KEYWORD_DATA_MAP[key];
+function computeKeywordData() {
+    for (const key in KEYWORD_DATA) {
+        delete KEYWORD_DATA[key];
     }
-}
-
-function computeBasicKeywordData() {
-    console.log("recomputed keyword data");
 
     function addTranslatableKeywordData(langKey: string, data: KeywordData) {
-        KEYWORD_DATA_MAP[translate(langKey)] = data;
+        KEYWORD_DATA[translate(langKey)] = data;
         for (let i = 0, variant; (variant = translateChecked(`${langKey}:var.${i}`)) !== null; i++) {
             const variantData = data.map(datum => ({
                 ...datum,
                 replacement: datum.replacement === translate(langKey) ? translate(`${langKey}:var.${i}`) : datum.replacement
             }));
-            KEYWORD_DATA_MAP[variant] = variantData;
+            KEYWORD_DATA[variant] = variantData;
         }
-    }
-
-    //add dummy names keywords
-    for(let i = 0; i < DUMMY_NAMES.length; i++) {
-        const name = DUMMY_NAMES[i];
-        KEYWORD_DATA_MAP["sender-"+name] = [
-            { style: "keyword-player-number", replacement: (i + 1).toString() },
-            { replacement: " " },
-            { style: "keyword-player-sender", replacement: name }
-        ];
-        KEYWORD_DATA_MAP[name] = [
-            { style: "keyword-player-number", replacement: (i + 1).toString() },
-            { replacement: " " },
-            { style: "keyword-player", replacement: name }
-        ];
     }
 
     //add article keywords
@@ -164,7 +152,6 @@ function computeBasicKeywordData() {
             replacement: translate(`role.${role}.name`)   // Capitalize roles
         }]);
     }
-
     
     //add from keywords.json
     for (const [keyword, data] of Object.entries(KEYWORD_DATA_JSON)) {
@@ -177,35 +164,59 @@ function computeBasicKeywordData() {
     }
 }
 
-export function computeKeywordDataWithPlayers() {
-    clearKeywordData();
+export const PLAYER_SENDER_KEYWORD_DATA: KeywordDataMap = {};
+export const PLAYER_KEYWORD_DATA: KeywordDataMap = {};
 
-    if(GAME_MANAGER.state.stateType === "game"){
-        
-        for(const player of GAME_MANAGER.state.players) {
-            KEYWORD_DATA_MAP["sender-"+player.toString()] = [
-                { style: "keyword-player-number", replacement: (player.index + 1).toString() },
-                { replacement: " " },
-                { style: "keyword-player-sender", replacement: player.name }
-            ];
-            
-            KEYWORD_DATA_MAP[player.toString()] = [
-                { style: "keyword-player-number", replacement: (player.index + 1).toString() },
-                { replacement: " " },
-                { style: "keyword-player", replacement: player.name }
-            ];
-            
-        }
+export function computePlayerKeywordData(players: Player[]) {
+    for (const key in PLAYER_KEYWORD_DATA) {
+        delete PLAYER_KEYWORD_DATA[key];
     }
-        
+    for (const key in PLAYER_SENDER_KEYWORD_DATA) {
+        delete PLAYER_SENDER_KEYWORD_DATA[key];
+    }
 
-    computeBasicKeywordData();
+    for(const player of players) {
+        PLAYER_SENDER_KEYWORD_DATA["sender-"+player.toString()] = [
+            { style: "keyword-player-number", replacement: (player.index + 1).toString() },
+            { replacement: " " },
+            { style: "keyword-player-sender", replacement: player.name }
+        ];
+        
+        PLAYER_KEYWORD_DATA[player.toString()] = [
+            { style: "keyword-player-number", replacement: (player.index + 1).toString() },
+            { replacement: " " },
+            { style: "keyword-player", replacement: player.name }
+        ];
+        
+    }
 }
 
-computeBasicKeywordData();
+export const DUMMY_NAMES_KEYWORD_DATA: KeywordDataMap = {};
+computeDummyNamesKeywordData();
 
-function styleKeywords(tokens: Token[]): Token[] {
-    for(const [keyword, data] of Object.entries(KEYWORD_DATA_MAP).sort((a, b) => b[0].length - a[0].length)){
+function computeDummyNamesKeywordData() {
+    for (const key in DUMMY_NAMES_KEYWORD_DATA) {
+        delete DUMMY_NAMES_KEYWORD_DATA[key];
+    }
+    for(let i = 0; i < DUMMY_NAMES.length; i++) {
+        const name = DUMMY_NAMES[i];
+        DUMMY_NAMES_KEYWORD_DATA["sender-"+name] = [
+            { style: "keyword-player-number", replacement: (i + 1).toString() },
+            { replacement: " " },
+            { style: "keyword-player-sender", replacement: name }
+        ];
+        DUMMY_NAMES_KEYWORD_DATA[name] = [
+            { style: "keyword-player-number", replacement: (i + 1).toString() },
+            { replacement: " " },
+            { style: "keyword-player", replacement: name }
+        ];
+    }
+}
+
+function styleKeywords(tokens: Token[], extraData?: KeywordDataMap): Token[] {
+    const keywordDataMap = { ...KEYWORD_DATA, ...extraData };
+
+    for(const [keyword, data] of Object.entries(keywordDataMap).sort((a, b) => b[0].length - a[0].length)){
         for(let index = 0; index < tokens.length; index++) {
             const token = tokens[index];
             if (token.type !== "raw") continue;

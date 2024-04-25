@@ -554,7 +554,6 @@
 
 
 
-    "chatMessage.normal":"\\0: \\1",
     "chatMessage.whisper":"\\0 whispered to \\1: \\2",
     "chatMessage.broadcastWhisper":"\\0 whispered to \\1.",
 

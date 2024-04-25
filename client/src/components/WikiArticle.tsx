@@ -3,14 +3,17 @@ import { Role } from "../game/roleState.d";
 import ROLES from "../resources/roles.json";
 import React from "react";
 import translate, { langText, translateChecked } from "../game/lang";
-import StyledText from "./StyledText";
+import StyledText, { DUMMY_NAMES_KEYWORD_DATA, StyledTextProps } from "./StyledText";
 import { ROLE_SETS, RoleSet, getRolesFromRoleSet } from "../game/roleListState.d";
 import ChatElement, { ChatMessageVariant } from "./ChatMessage";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { GeneratedArticle, WikiArticleLink } from "./WikiArticleLink";
 import "./wiki.css";
 import { replaceMentions } from "..";
-    
+
+function WikiStyledText(props: Omit<StyledTextProps, 'markdown' | 'playerKeywordData'>): ReactElement {
+    return <StyledText {...props} markdown={true} playerKeywordData={DUMMY_NAMES_KEYWORD_DATA} />
+}
 
 export default function WikiArticle(props: {
     article: WikiArticleLink
@@ -26,51 +29,56 @@ export default function WikiArticle(props: {
 
             return <section className="wiki-article">
                 <div>
-                    <StyledText markdown={true}>
+                    <WikiStyledText>
                         {"# "+translate("role."+role+".name")+"\n"}
                         {roleData.roleSet!==null?("### "+translateChecked(roleData.roleSet)+"\n"):"### "+translate(roleData.faction)+"\n"}
-                    </StyledText>
+                    </WikiStyledText>
                 </div>
                 <div>
-                    <StyledText markdown={true}>
+                    <WikiStyledText>
                         {"### "+translate("wiki.article.role.guide")+"\n"}
                         {replaceMentions(translateChecked("wiki.article.role."+role+".guide") ?? translate("wiki.article.role.noGuide"), DUMMY_NAMES)}
-                    </StyledText>
+                    </WikiStyledText>
                 </div>
                 <div>
                     {roleData.aura &&
-                        <StyledText markdown={true}>
+                        <WikiStyledText>
                             {"### "+translate("wiki.article.standard.aura.title")+": "+translate(roleData.aura+"Aura")+"\n"}
-                        </StyledText>
+                        </WikiStyledText>
                     }
                     {roleData.armor && 
-                        <StyledText markdown={true}>
+                        <WikiStyledText>
                             {"### "+translate("defense")+": "+translate("defense.1")+"\n"}
-                        </StyledText>
+                        </WikiStyledText>
                     }
                     {roleData.maxCount !== null &&
-                        <StyledText markdown={true}>
+                        <WikiStyledText>
                         {"### "+translate("wiki.article.standard.roleLimit.title")+": "+(roleData.maxCount)+"\n"}
-                        </StyledText>
+                        </WikiStyledText>
                     }
                 </div>
                 {chatMessages.length!==0 && <div className="wiki-message-section">
-                    <StyledText markdown={true}>
+                    <WikiStyledText>
                         {"### "+translate("wiki.article.role.chatMessages")+"\n"}
-                    </StyledText>
+                    </WikiStyledText>
                     {chatMessages.map((msgvariant, i)=>
-                        <ChatElement key={i} message={
-                            {
-                                variant: msgvariant,
-                                chatGroup: "all",
-                            }
-                        } playerNames={DUMMY_NAMES}/>
+                        <ChatElement key={i} 
+                            message={
+                                {
+                                    variant: msgvariant,
+                                    chatGroup: "all",
+                                }
+                            } 
+                            playerNames={DUMMY_NAMES} 
+                            playerKeywordData={DUMMY_NAMES_KEYWORD_DATA}
+                            playerSenderKeywordData={DUMMY_NAMES_KEYWORD_DATA}
+                        />
                     )}
                 </div>}
                 <details>
                     <summary>{translate("wiki.article.role.details")}</summary>
                     <div>
-                        <StyledText markdown={true}>
+                        <WikiStyledText>
                             {"### "+translate("wiki.article.role.abilities")+"\n"}
                             {(translateChecked("wiki.article.role."+role+".abilities") ?? translate("wiki.article.role.noAbilities"))+"\n"}
 
@@ -83,16 +91,16 @@ export default function WikiArticle(props: {
                             {"### "+translate("wiki.article.standard.roleLimit.title")+": "+(roleData.maxCount === null ? translate("none") : roleData.maxCount)+"\n"}
                             {"### "+translate("defense")+": "+translate("defense."+(roleData.armor ? "1" : "0"))+"\n"}
                             {"### "+translate("wiki.article.standard.aura.title")+": "+(roleData.aura?translate(roleData.aura+"Aura"):translate("none"))+"\n"}
-                        </StyledText>
+                        </WikiStyledText>
                     </div>
                 </details>
             </section>;
         case "standard":
             return <section className="wiki-article">
-                <StyledText className="wiki-article-standard" markdown={true}>
+                <WikiStyledText className="wiki-article-standard">
                     {"# "+translate(`wiki.article.standard.${props.article.split("/")[1]}.title`)+"\n"}
                     {translate(`wiki.article.standard.${props.article.split("/")[1]}.text`)}
-                </StyledText>
+                </WikiStyledText>
             </section>
         case "generated":
             return <section className="wiki-article">{getGeneratedArticle(path[1] as GeneratedArticle)}</section>
@@ -106,15 +114,15 @@ function getGeneratedArticle(article: GeneratedArticle){
     switch(article){
         case "role_set":
             let mainElements = [
-                <section key="title"><StyledText markdown={true}>
+                <section key="title"><WikiStyledText>
                     {"# "+translate("wiki.article.generated.role_set.title")}
-                </StyledText></section>
+                </WikiStyledText></section>
             ];
             
             for(let set of ROLE_SETS){
-                mainElements.push(<section key={set+"title"}><StyledText markdown={true}>
+                mainElements.push(<section key={set+"title"}><WikiStyledText>
                     {"### "+translate(set)}
-                </StyledText></section>);
+                </WikiStyledText></section>);
                 
                 let elements = getRolesFromRoleSet(set as RoleSet).map((role)=>{
                     return <button key={role}>

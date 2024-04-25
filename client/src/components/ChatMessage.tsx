@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 import translate, { translateChecked } from "../game/lang";
 import React from "react";
 import GAME_MANAGER, { find, replaceMentions } from "..";
-import StyledText from "./StyledText";
+import StyledText, { KeywordDataMap, PLAYER_SENDER_KEYWORD_DATA } from "./StyledText";
 import "./chatMessage.css"
 import { ChatGroup, PhaseState, PlayerIndex, Verdict } from "../game/gameState.d";
 import { Role } from "../game/roleState.d";
@@ -16,7 +16,9 @@ import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/Smal
 export default function ChatElement(
     props: {
         message: ChatMessage,
-        playerNames?: string[]
+        playerNames?: string[],
+        playerKeywordData?: KeywordDataMap,
+        playerSenderKeywordData?: KeywordDataMap
     }, 
 ): ReactElement {
     const message = props.message;
@@ -49,6 +51,13 @@ export default function ChatElement(
             } else {
                 style += " player"
             }
+
+            let messageSender = "";
+            if (message.variant.messageSender.type === "player") {
+                messageSender = "sender-"+playerNames[message.variant.messageSender.player];
+            } else {
+                messageSender = translate("role."+message.variant.messageSender.type+".name");
+            }
             
             if (
                 GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.myIndex !== null &&
@@ -68,20 +77,32 @@ export default function ChatElement(
             ) {
                 style += " mention";
             }
-            break;
+
+            return <span className="chat-message">
+                <StyledText className={style} 
+                    playerKeywordData={props.playerSenderKeywordData ?? PLAYER_SENDER_KEYWORD_DATA}
+                >{icon ?? ""} {messageSender}: </StyledText>
+                <StyledText className={style}
+                    playerKeywordData={props.playerKeywordData}
+                >{translateChatMessage(message.variant, playerNames)}</StyledText>
+            </span>;
         case "targetsMessage":
             return <span className="chat-message result">
-                <StyledText className={"chat-message " + style}>{(icon??"")} {translateChatMessage(message.variant, playerNames)}</StyledText>
-                <ChatElement message={
+                <StyledText className={"chat-message " + style}
+                    playerKeywordData={props.playerKeywordData}
+                >{(icon??"")} {translateChatMessage(message.variant, playerNames)}</StyledText>
+                <ChatElement {...props} message={
                     {
                         variant: message.variant.message,
                         chatGroup: message.chatGroup,
                     }
-                } playerNames={playerNames}/>
+                }/>
             </span>
         case "playerDied":
             return <>
-                <StyledText className={"chat-message " + style}>{(icon??"")} {translate("chatMessage.playerDied",
+                <StyledText className={"chat-message " + style}
+                    playerKeywordData={props.playerKeywordData}
+                >{(icon??"")} {translate("chatMessage.playerDied",
                     playerNames[message.variant.grave.playerIndex],
                 )}</StyledText>
                 <div className="grave-message">
@@ -90,7 +111,9 @@ export default function ChatElement(
             </>;
     }
 
-    return <StyledText className={"chat-message " + style}>{(icon??"")} {translateChatMessage(message.variant, playerNames)}</StyledText>;
+    return <StyledText className={"chat-message " + style}
+        playerKeywordData={props.playerKeywordData}
+    >{(icon??"")} {translateChatMessage(message.variant, playerNames)}</StyledText>;
 }
 
 function playerListToString(playerList: PlayerIndex[], playerNames: string[]): string {
@@ -114,22 +137,10 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
 
     switch (message.type) {
         case "normal":
-
-            if(message.messageSender.type === "player"){
-                return translate("chatMessage.normal",
-                    "sender-"+playerNames[message.messageSender.player], 
-                    sanitizePlayerMessage(replaceMentions(message.text, playerNames))
-                );
-            } else if (message.messageSender.type === "livingToDead") {
-                return (translate("messageSender.livingToDead.icon"))+translate("chatMessage.normal",
-                    "sender-"+playerNames[message.messageSender.player],
-                    sanitizePlayerMessage(replaceMentions(message.text, playerNames))
-                );
+            if (message.messageSender.type === "livingToDead") {
+                return translate("messageSender.livingToDead.icon") + sanitizePlayerMessage(replaceMentions(message.text, playerNames))
             } else {
-                return translate("chatMessage.normal",
-                    translate("role."+message.messageSender.type+".name"),
-                    sanitizePlayerMessage(replaceMentions(message.text, playerNames))
-                );
+                return sanitizePlayerMessage(replaceMentions(message.text, playerNames));
             }
         case "whisper":
             return translate("chatMessage.whisper", 
@@ -246,7 +257,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             );
         case "journalistJournal":
             return translate("chatMessage.journalistJournal",
-                sanitizePlayerMessage(replaceMentions(message.journal))
+                sanitizePlayerMessage(replaceMentions(message.journal, playerNames))
             );
         case "youAreInterviewingPlayer":
             return translate("chatMessage.youAreInterviewingPlayer",
