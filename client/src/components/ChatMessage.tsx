@@ -51,6 +51,10 @@ export default function ChatElement(
             } else {
                 style += " player"
             }
+            
+            if (message.variant.messageSender.type === "livingToDead") {
+                icon += translate("messageSender.livingToDead.icon")
+            }
 
             let messageSender = "";
             if (message.variant.messageSender.type === "player") {
@@ -137,11 +141,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
 
     switch (message.type) {
         case "normal":
-            if (message.messageSender.type === "livingToDead") {
-                return translate("messageSender.livingToDead.icon") + sanitizePlayerMessage(replaceMentions(message.text, playerNames))
-            } else {
-                return sanitizePlayerMessage(replaceMentions(message.text, playerNames));
-            }
+            return sanitizePlayerMessage(replaceMentions(message.text, playerNames));
         case "whisper":
             return translate("chatMessage.whisper", 
                 playerNames[message.fromPlayerIndex],
