@@ -392,7 +392,7 @@
         "roleSet": null,
         "armor": false,
         "aura": null,
-        "maxCount": 0,
+        "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
@@ -404,7 +404,7 @@
         "roleSet": "mafiaSupport",
         "armor": false,
         "aura": null,
-        "maxCount": null,
+        "maxCount": 1,
         "largeRoleSpecificMenu": true,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
@@ -423,7 +423,7 @@
         "roleSet": "mafiaSupport",
         "armor": false,
         "aura": null,
-        "maxCount": null,
+        "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
@@ -443,7 +443,7 @@
             {"type": "consigliereResult", "role": "vigilante", "visitedBy":[], "visited":[]}
         ]
     },
-    "janitor": {
+    "mortician": {
         "faction": "mafia",
         "roleSet": "mafiaSupport",
         "armor": false,
@@ -455,7 +455,7 @@
             {
                 "type": "playerRoleAndWill",
                 "role":"medium",
-                "will":"I always get medium and every game I get cleaned by a janitor, im calling it right now."
+                "will":"I always get medium and every game I get cremated by a mortician, im calling it right now."
             }
         ]
     },
@@ -464,7 +464,7 @@
         "roleSet": "mafiaSupport",
         "armor": false,
         "aura": null,
-        "maxCount": null,
+        "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[

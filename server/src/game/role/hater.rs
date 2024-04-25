@@ -3,7 +3,7 @@ use rand::seq::SliceRandom;
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::grave::Grave;
+use crate::game::grave::{Grave, GraveReference};
 use crate::game::phase::{PhaseState, PhaseType};
 use crate::game::player::PlayerReference;
 use crate::game::role::RoleState;
@@ -120,6 +120,8 @@ impl RoleStateImpl for Hater {
         if Some(dead_player_ref) == self.target.get_target() && self.target != ExecutionerTarget::Won {
             actor_ref.set_role(game, RoleState::Jester(Jester::default()))
         }
+    }
+    fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave_ref: GraveReference){
     }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }

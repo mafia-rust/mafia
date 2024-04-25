@@ -8,8 +8,5 @@ pub enum Tag{
     Doused,
     WerewolfTracked,
     ExecutionerTarget,
-
-    Hexed,
-    Necronomicon,
-    Insane
+    MorticianTagged,
 }

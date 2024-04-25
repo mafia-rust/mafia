@@ -112,10 +112,10 @@ impl RoleStateImpl for Vigilante {
     }
     fn on_phase_start(self,  _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType) {}
     fn on_role_creation(self,  _game: &mut Game, _actor_ref: PlayerReference) {
-        
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
-        
+    }
+    fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave: crate::game::grave::GraveReference) {
     }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }

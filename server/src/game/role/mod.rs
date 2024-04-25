@@ -9,6 +9,8 @@ use crate::game::phase::PhaseType;
 
 use serde::{Serialize, Deserialize};
 
+use super::grave::GraveReference;
+
 trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8;
 
@@ -28,6 +30,7 @@ trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType);
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference);
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference);
+    fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: GraveReference);
     fn on_game_ending(self, game: &mut Game, actor_ref: PlayerReference);
 }
 
@@ -71,7 +74,7 @@ macros::roles! {
     Necromancer : necromancer,
     MafiaWildCard: mafia_wild_card,
 
-    Janitor : janitor,
+    Mortician : mortician,
     Framer : framer,
     Forger : forger,
 
@@ -228,6 +231,11 @@ mod macros {
                 pub fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
                     match self {
                         $(Self::$name(role_struct) => role_struct.on_any_death(game, actor_ref, dead_player_ref)),*
+                    }
+                }
+                pub fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: GraveReference){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_grave_added(game, actor_ref, grave)),*
                     }
                 }
                 pub fn on_game_ending(self, game: &mut Game, actor_ref: PlayerReference){
