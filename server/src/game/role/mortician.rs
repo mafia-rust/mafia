@@ -24,7 +24,7 @@ pub struct Mortician {
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 
-const NUM_CREMATIONS: u8 = 3;
+const MAX_CREMATIONS: u8 = 3;
 
 impl RoleStateImpl for Mortician {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
@@ -34,7 +34,7 @@ impl RoleStateImpl for Mortician {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return}
 
-        if self.cremated_players.len() as u8 >= NUM_CREMATIONS {return}
+        if self.cremated_players.len() as u8 >= MAX_CREMATIONS {return}
 
         match priority {
             Priority::Deception=>{
@@ -58,7 +58,7 @@ impl RoleStateImpl for Mortician {
         actor_ref.chosen_targets(game).is_empty() &&
         actor_ref.alive(game) &&
         target_ref.alive(game) &&
-        (self.cremated_players.len() as u8) < NUM_CREMATIONS && 
+        (self.cremated_players.len() as u8) < MAX_CREMATIONS && 
         !self.cremated_players.contains(&target_ref)
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {

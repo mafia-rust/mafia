@@ -75,8 +75,6 @@ pub struct Game {
     pub mafia: Mafia,
     pub cult: Cult,
     pub arsonist_doused: ArsonistDoused,
-    // pub cremated: Cremated,
-    // pub framed: Framed,
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
