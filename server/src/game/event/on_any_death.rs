@@ -3,11 +3,11 @@ use crate::game::{player::PlayerReference, Game};
 
 #[must_use = "Event must be invoked"]
 pub struct OnAnyDeath{
-    dead_player: PlayerReference
+    dead_player: PlayerReference,
 }
 impl OnAnyDeath{
     pub fn new(dead_player: PlayerReference) -> Self{
-        Self{ dead_player }
+        Self{dead_player}
     }
     pub fn invoke(self, game: &mut Game){
         for player_ref in PlayerReference::all_players(game){

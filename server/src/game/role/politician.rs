@@ -64,6 +64,9 @@ impl RoleStateImpl for Politician {
             actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }
+    fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave: crate::game::grave::GraveReference) {
+        
+    }
     fn on_game_ending(self, game: &mut Game, actor_ref: PlayerReference){
         if !actor_ref.alive(game) {return}
 

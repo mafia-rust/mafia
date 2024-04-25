@@ -328,8 +328,8 @@ function Playerlist(): ReactElement {
                     let graveRoleString = "";
                     if(graveRole && graveRole.type === "role"){
                         graveRoleString = "("+translate("role."+graveRole.role+".name")+")";
-                    }else if(graveRole && graveRole.type === "cleaned"){
-                        graveRoleString = "("+translate("cleaned")+")";
+                    }else if(graveRole && graveRole.type === "cremated"){
+                        graveRoleString = "("+translate("cremated")+")";
                     }
 
 

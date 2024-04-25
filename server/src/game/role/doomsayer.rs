@@ -3,7 +3,7 @@ use std::vec;
 use serde::{Serialize, Deserialize};
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::grave::GraveKiller;
+use crate::game::grave::{GraveKiller, GraveReference};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -58,7 +58,7 @@ impl DoomsayerGuess{
             Role::Godfather | Role::Mafioso | 
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::Witch | Role::Necromancer |
-            Role::Janitor | Role::Framer | Role::Forger | Role::MafiaWildCard => Some(DoomsayerGuess::Mafia),
+            Role::Mortician | Role::Framer | Role::Forger | Role::MafiaWildCard => Some(DoomsayerGuess::Mafia),
 
             //Neutral
             Role::Jester | Role::Hater | Role::Politician |
@@ -150,6 +150,8 @@ impl RoleStateImpl for Doomsayer {
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
         Doomsayer::check_and_convert_to_jester(game, self, actor_ref);
+    }
+    fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave_ref: GraveReference){
     }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }

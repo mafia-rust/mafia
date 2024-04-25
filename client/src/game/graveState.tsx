@@ -16,7 +16,7 @@ export type Grave = {
 }
 
 export type GraveRole = {
-    type: "cleaned"
+    type: "cremated"
 } |  {
     type: "role"
     role: Role
@@ -43,8 +43,8 @@ export type GravePhase = "day" | "night"
 
 export function translateGraveRole(graveRole: GraveRole): string{
     switch(graveRole.type){
-        case "cleaned":
-            return translate("grave.role.cleaned");
+        case "cremated":
+            return translate("grave.role.cremated");
         case "role":
             return translate("role."+graveRole.role+".name");
     }
