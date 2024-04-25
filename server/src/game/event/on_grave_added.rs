@@ -10,7 +10,7 @@ impl OnGraveAdded{
     }
     pub fn invoke(self, game: &mut Game){
         for player in PlayerReference::all_players(game){
-            player.on_grave_added(game, self.grave.clone())
+            player.on_grave_added(game, self.grave)
         }
 
         game.on_grave_added(self.grave);
