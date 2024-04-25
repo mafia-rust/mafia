@@ -3,6 +3,7 @@ use std::vec;
 use serde::{Serialize, Deserialize};
 
 use crate::game::chat::ChatMessageVariant;
+use crate::game::grave::GraveReference;
 use crate::game::{chat::ChatGroup, phase::PhaseType};
 use crate::game::player::PlayerReference;
 use crate::game::role_list::{role_can_generate, Faction};
@@ -66,6 +67,8 @@ impl RoleStateImpl for Wildcard {
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
+    }
+    fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave_ref: GraveReference){
     }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }

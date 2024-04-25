@@ -26,6 +26,8 @@ type SettingsState = {
     volume: number, // 0-1
     language: Language,
     lobbyName: string,
+    host: boolean,
+    lobbyState: "lobby" | "game" | "disconnected" | "outsideLobby",
 }
 
 //default settings
@@ -44,7 +46,9 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
         this.state = {
             ...DEFAULT_SETTINGS,
             ...loadSettings(),
-            lobbyName: (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") ? GAME_MANAGER.state.lobbyName : ""
+            lobbyName: (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") ? GAME_MANAGER.state.lobbyName : "",
+            host: GAME_MANAGER.getMyHost() ?? false,
+            lobbyState: GAME_MANAGER.state.stateType,
         };
 
         this.handleClickOutside = (event: MouseEvent) => {
@@ -60,7 +64,11 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
 
         this.listener = type => {
             if (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") {
-                this.setState({ lobbyName: GAME_MANAGER.state.lobbyName });
+                this.setState({
+                    lobbyName: GAME_MANAGER.state.lobbyName,
+                    host: GAME_MANAGER.getMyHost() ?? false,
+                    lobbyState: GAME_MANAGER.state.stateType,
+                });
             }
         }
     }
@@ -119,10 +127,13 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
                         {LANGUAGES.map(lang => <option key={lang} value={lang}>{languageName(lang)}</option>)}
                     </select>
                 </section>
-                {(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") && 
+                {(this.state.lobbyState === "lobby" || this.state.lobbyState === "game") && 
                     <section className="standout">
-                        <h2>{GAME_MANAGER.state.lobbyName}</h2>
+                        <h2>{this.state.lobbyName}</h2>
                         <RoomLinkButton/>
+                        {(this.state.lobbyState === "game" && this.state.host) && <button onClick={()=>GAME_MANAGER.sendBackToLobbyPacket()}>
+                            {translate("backToLobby")}
+                        </button>}
                     </section>
                 }
                 <section>

@@ -111,8 +111,8 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
                 }
             case "veteran":
                 return <StyledText>{translate("role.veteran.roleDataText", this.state.gameState.clientState.roleState.alertsRemaining)}</StyledText>;
-            case "janitor":
-                return <StyledText>{translate("role.janitor.roleDataText", this.state.gameState.clientState.roleState.cleansRemaining)}</StyledText>;
+            case "mortician":
+                return <StyledText>{translate("role.mortician.roleDataText", (3-this.state.gameState.clientState.roleState.crematedPlayers.length))}</StyledText>;
             case "death":
                 return <StyledText>{translate("role.death.roleDataText", this.state.gameState.clientState.roleState.souls)}</StyledText>;
             case "ojo":

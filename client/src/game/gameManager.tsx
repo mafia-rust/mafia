@@ -43,19 +43,39 @@ export function createGameManager(): GameManager {
             }
         },
         setLobbyState() {
+            
+            let gameState = null
+            if (GAME_MANAGER.state.stateType === "game") {
+                gameState = {...GAME_MANAGER.state};
+            }
+
             GAME_MANAGER.state = createLobbyState();
+
+            if(gameState!=null){
+                GAME_MANAGER.state.roomCode = gameState.roomCode;
+                GAME_MANAGER.state.lobbyName = gameState.lobbyName;
+                GAME_MANAGER.state.roleList = gameState.roleList;
+                GAME_MANAGER.state.phaseTimes = gameState.phaseTimes;
+                GAME_MANAGER.state.excludedRoles = gameState.excludedRoles;
+            }
         },
         setGameState() {
-            let roomCode: number | null = null;
+
+            let lobbyState = null;
             if (GAME_MANAGER.state.stateType === "lobby") {
-                roomCode = GAME_MANAGER.state.roomCode;
+                lobbyState = {...GAME_MANAGER.state};
             }
 
 
             Anchor.stopAudio();
             GAME_MANAGER.state = createGameState();
-            if (roomCode !== null) {
-                GAME_MANAGER.state.roomCode = roomCode;
+            if (lobbyState !== null && GAME_MANAGER.state.stateType === "game") {
+                GAME_MANAGER.state.roomCode = lobbyState.roomCode;
+                GAME_MANAGER.state.lobbyName = lobbyState.lobbyName;
+                GAME_MANAGER.state.roleList = lobbyState.roleList;
+                GAME_MANAGER.state.phaseTimes = lobbyState.phaseTimes;
+                GAME_MANAGER.state.excludedRoles = lobbyState.excludedRoles;
+                GAME_MANAGER.state.host = lobbyState.players.get(lobbyState.myId!)?.host ?? false;
             }
         },
         setSpectatorGameState() {
@@ -97,8 +117,8 @@ export function createGameManager(): GameManager {
         getMyHost() {
             if (gameManager.state.stateType === "lobby")
                 return gameManager.state.players.get(gameManager.state.myId!)?.host;
-            if (gameManager.state.stateType === "game" && gameManager.state.clientState.type === "player")
-                return gameManager.state.players[gameManager.state.clientState.myIndex!]?.host;
+            if (gameManager.state.stateType === "game")
+                return gameManager.state.host;
             return undefined;
         },
         getMySpectator() {
@@ -291,6 +311,11 @@ export function createGameManager(): GameManager {
             });
 
             return promise;
+        },
+        sendBackToLobbyPacket() {
+            this.server.sendPacket({
+                type: "backToLobby"
+            });
         },
         sendSetPhaseTimePacket(phase: PhaseType, time: number) {
             if (isValidPhaseTime(time)) {

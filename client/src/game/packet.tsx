@@ -53,6 +53,8 @@ export type ToClientPacket = {
 } | {
     type: "startGame"
 } | {
+    type: "backToLobby",
+} | {
     type: "gamePlayers",
     players: string[]
 } | {
@@ -195,7 +197,9 @@ export type ToServerPacket = {
 } | {
     type: "setExcludedRoles", 
     roles: Role[], 
-} | 
+} | {
+    type: "backToLobby",
+} |
 // Game
 {
     type: "vote", 

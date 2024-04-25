@@ -124,6 +124,7 @@ export function GameModeSelector(props: {
                 }}
                 failureText={() => translate("notification.importGameMode.failure")}
             >{verbose ? <><Icon>paste</Icon> {translate("importFromClipboard")}</> : undefined}</PasteButton>
+            <button onClick={()=>{setGameModes(loadGameModes() ?? {})}}>{translate("refresh")}</button>
         </div>
         <div className="saved-game-modes">
             {props.canModifySavedGameModes
@@ -154,7 +155,7 @@ export function GameModeSelector(props: {
                         deleteGameMode={deleteGameMode}
                     />}
                 />
-                : Object.keys(savedGameModes).map(gameModeName => <div>
+                : Object.keys(savedGameModes).map(gameModeName => <div key={gameModeName}>
                     <GameModeLabel 
                         key={gameModeName}
                         gameModeName={gameModeName} 

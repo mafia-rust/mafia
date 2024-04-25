@@ -92,7 +92,7 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
         case "mafiaSupport":
             return [
                 "blackmailer", "informant", "hypnotist", 
-                "forger", "framer", "janitor", 
+                "forger", "framer", "mortician", 
                 "witch", "necromancer"
             ];
         case "neutralEvil":

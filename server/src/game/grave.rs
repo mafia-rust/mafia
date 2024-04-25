@@ -27,7 +27,7 @@ pub struct Grave {
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type", content = "role")]
 pub enum GraveRole {
-    Cleaned,
+    Cremated,
     Role(Role),
 }
 impl GraveRole{
@@ -120,5 +120,25 @@ impl Grave{
             day_number: game.phase_machine.day_number,
             death_notes: vec![]
         }
+    }
+}
+
+#[derive(Clone, Copy)]
+pub struct GraveReference{
+    index: u8
+}
+impl GraveReference{
+    pub fn new(game: &Game, index: u8)->Option<GraveReference> {
+        if (index as usize) < game.graves.len() {
+            Some(GraveReference { index })
+        }else{
+            None
+        }
+    }
+    pub fn deref<'a>(self, game: &'a Game)->&'a Grave{
+        &game.graves[self.index as usize]
+    }
+    pub fn deref_mut<'a>(self, game: &'a mut Game)->&'a mut Grave{
+        &mut game.graves[self.index as usize]
     }
 }

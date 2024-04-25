@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -65,15 +66,15 @@ impl RoleStateImpl for Engineer {
                 if !actor_ref.night_roleblocked(game) {
                     match self.trap {
                         Trap::Dismantled => {
-                            actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Ready}))
+                            actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Ready}));
                         },
                         Trap::Ready => {
                             if let Some(visit) = actor_ref.night_visits(game).first(){
-                                actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Set{target: visit.target, should_unset: false}}))
+                                actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Set{target: visit.target, should_unset: false}}));
                             }
                         },
                         Trap::Set { should_unset: true, .. } => {
-                            actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Ready}))
+                            actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Ready}));
                         },
                         _ => {}
                     }
@@ -165,6 +166,8 @@ impl RoleStateImpl for Engineer {
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
+    }
+    fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave_ref: GraveReference){
     }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }

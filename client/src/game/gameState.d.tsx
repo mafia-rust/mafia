@@ -68,6 +68,7 @@ type GameState = {
     ticking: boolean,
 
     clientState: PlayerGameState | {type: "spectator"},
+    host: boolean,
 
 }
 export default GameState;
@@ -117,14 +118,7 @@ export type ChatGroup = "all" | "dead" | "mafia" | "cult" | "jail" | "interview"
 
 export type PhaseTimes = Record<PhaseType, number>;
 
-export type Tag =
-| "godfatherBackup"
-| "werewolfTracked"
-| "doused"
-| "hexed"
-| "necronomicon"
-| "executionerTarget"
-| "insane"
+export type Tag = | "godfatherBackup" | "werewolfTracked" | "doused" | "executionerTarget" | "morticianTagged";
 
 export type Player = {
     name: string,
@@ -137,8 +131,7 @@ export type Player = {
     numVoted: number,
     alive: boolean,
     roleLabel: Role | null,
-    playerTags: Tag[],
-    host: boolean,
+    playerTags: Tag[]
 
     toString(): string
 }

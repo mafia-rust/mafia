@@ -128,6 +128,9 @@ impl RoleStateImpl for Martyr {
             }));
         }
     }
+    fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave: crate::game::grave::GraveReference) {
+        
+    }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
 }

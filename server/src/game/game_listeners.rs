@@ -1,7 +1,7 @@
 use crate::packet::ToClientPacket;
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant}, grave::Grave, phase::PhaseType, player::PlayerReference, role::Role, Game, GameOverReason
+    chat::{ChatGroup, ChatMessageVariant}, grave::GraveReference, phase::PhaseType, player::PlayerReference, role::Role, Game, GameOverReason
 };
 
 //Event listerner functions for game defined here
@@ -50,7 +50,8 @@ impl Game{
         self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::PhaseFastForwarded);
         self.send_packet_to_all(ToClientPacket::PhaseTimeLeft{ seconds_left: self.phase_machine.time_remaining.as_secs() });
     }
-    pub fn on_grave_added(&mut self, grave: Grave){        
+    pub fn on_grave_added(&mut self, grave: GraveReference){   
+        let grave = grave.deref(self).clone();     
         self.send_packet_to_all(ToClientPacket::AddGrave{grave: grave.clone()});
         self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::PlayerDied { grave: grave.clone() });
 
