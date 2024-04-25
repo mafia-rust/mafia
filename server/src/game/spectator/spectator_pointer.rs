@@ -27,6 +27,9 @@ impl SpectatorPointer {
     pub fn host(&self, game: &Game)->bool {
         self.deref(game).map(|s|s.host).unwrap_or(false)
     }
+    pub fn connection(&self, game: &Game) -> ClientConnection {
+        self.deref(game).map(|s|s.connection.clone()).unwrap_or(ClientConnection::Disconnected)
+    }
 
     pub fn send_packet(&self, game: &Game, packet: ToClientPacket){
         if let Some(s) = self.deref(game) { 

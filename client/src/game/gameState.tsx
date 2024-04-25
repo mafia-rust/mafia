@@ -54,6 +54,7 @@ export function createGameState(): GameState {
         ticking: true,
 
         clientState: createPlayerGameState(),
+        host: false
 
     }
 }
@@ -92,7 +93,6 @@ export function createPlayer(name: string, index: number): Player {
         alive: true,
         roleLabel: null,
         playerTags: [],
-        host: false,
 
         toString() {
             return ""+(this.index+1)+": " + this.name;

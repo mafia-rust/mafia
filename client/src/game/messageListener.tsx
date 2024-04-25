@@ -164,6 +164,10 @@ export default function messageListener(packet: ToClientPacket){
                 Anchor.setContent(GameScreen.createDefault());
             }
         break;
+        case "backToLobby":
+            GAME_MANAGER.setLobbyState();
+            Anchor.setContent(<LobbyMenu/>);
+        break;
         case "gamePlayers":
             if(GAME_MANAGER.state.stateType === "game"){
                 //only update the playerlist with the new one if there are any differences
