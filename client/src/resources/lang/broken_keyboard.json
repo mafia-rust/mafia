@@ -8,7 +8,7 @@
     "menu.play.title": "Srvr Brwsr",
     "menu.play.button.join": "Jn",
     "menu.play.button.host": "Hst",
-    "menu.play.button.refresh": "Rfrsh",
+    "refresh": "Rfrsh",
     "menu.play.button.rejoin": "Rjn",
     "menu.play.field.roomCode": "Rm cd",
     "menu.play.field.name": "Nm",

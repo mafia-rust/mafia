@@ -28,7 +28,7 @@ export default function PlayMenu(): ReactElement {
                         {translate("menu.play.button.host")}
                     </button>
                     <button onClick={()=>{GAME_MANAGER.sendLobbyListRequest()}}>
-                        {translate("menu.play.button.refresh")}
+                        {translate("refresh")}
                     </button>
                 </div>
             </header>
