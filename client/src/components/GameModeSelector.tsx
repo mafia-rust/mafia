@@ -154,7 +154,7 @@ export function GameModeSelector(props: {
                         deleteGameMode={deleteGameMode}
                     />}
                 />
-                : Object.keys(savedGameModes).map(gameModeName => <div>
+                : Object.keys(savedGameModes).map(gameModeName => <div key={gameModeName}>
                     <GameModeLabel 
                         key={gameModeName}
                         gameModeName={gameModeName} 

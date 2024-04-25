@@ -10,29 +10,30 @@ import Icon from "../../components/Icon";
 export default function LobbyNamePane(): ReactElement {
 
 
-    const spectatorDependency = 
+    let spectatorDependency = 
         GAME_MANAGER.state.stateType === "lobby" &&
         GAME_MANAGER.state.myId !== null &&
         GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId)?.clientType.type === "spectator";
 
-    
     const [isSpectator, setIsSpectator] = React.useState(spectatorDependency);
 
     useEffect(()=>{
-        const listener: StateListener = (type?: StateEventType) => {if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
+        setIsSpectator(GAME_MANAGER.state.stateType === "lobby" &&
+        GAME_MANAGER.state.myId !== null &&
+        GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId)?.clientType.type === "spectator");
+        const listener: StateListener = (type?: StateEventType) => {
             switch (type) {
                 case "lobbyClients":
-                    const x = GAME_MANAGER.state.stateType === "lobby" &&
-                        GAME_MANAGER.state.myId !== null &&
-                        GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId)?.clientType.type === "spectator"
-                    setIsSpectator(x);
+                    if(GAME_MANAGER.state.stateType === "lobby" && GAME_MANAGER.state.myId !== null){
+                        setIsSpectator(GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId)?.clientType.type === "spectator");
+                    }
                     break;
             }
-        }}
+        }
 
         GAME_MANAGER.addStateListener(listener);
         return ()=>{GAME_MANAGER.removeStateListener(listener);}
-    }, [spectatorDependency, setIsSpectator]);
+    }, [setIsSpectator]);
 
 
 

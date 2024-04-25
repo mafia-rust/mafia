@@ -23,6 +23,10 @@ impl PlayerReference{
             );
         }
     }
+
+    pub fn connection<'a>(&self, game: &'a Game) -> &'a ClientConnection {
+        &self.deref(game).connection
+    }
     pub fn is_connected(&self, game: &Game) -> bool {
         matches!(self.deref(game).connection, ClientConnection::Connected(_))
     }
