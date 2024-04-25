@@ -3,36 +3,32 @@
     display: flex;
     flex-direction: column;
 }
-.chat-menu .message-section {
-    display: grid;
+.chat-message-section {
     height: 100%;
     overflow-y: auto;
 }
-.chat-menu .message-list {
+.chat-message-list {
     width: 100%;
     max-width: 100%;
     display: flex;
     flex-direction: column;
 }
-.chat-menu .chat-menu-icons {
+.chat-menu-icons {
     display: flex;
     flex-direction: row;
     justify-content: left;
     align-items: center;
     padding: 0 10px;
-    border-top: 1px solid var(--primary-border-color);
+    border-top: .13rem solid var(--primary-border-color);
     background-color: var(--secondary-color);
 }
-.chat-menu .send-section {
+.chat-send-section {
     display: flex;
     flex-direction: row;
-    border-top: 1px solid var(--primary-border-color);
-    align-items: center;
+    border-top: .13rem solid var(--primary-border-color);
+    align-items: stretch;
 }
-.chat-menu .send-section button{
-    height: 92%;
-}
-.chat-menu textarea {
+.chat-send-section textarea {
     resize: none;
     width: 100%;
     text-align: left;

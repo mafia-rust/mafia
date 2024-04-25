@@ -6,10 +6,9 @@ import translate from "../../game/lang";
 import { StateListener } from "../../game/gameManager.d";
 import Anchor from "../Anchor";
 import { RoomLinkButton } from "../Settings";
-import { getRolesFromRoleListRemoveExclusionsAddConversions, getRolesComplement, RoleOutline, RoleList } from "../../game/roleListState.d";
+import { RoleOutline, RoleList } from "../../game/roleListState.d";
 import LoadingScreen from "../LoadingScreen";
 import StartMenu from "../main/StartMenu";
-import Wiki from "../../components/Wiki";
 import { defaultPhaseTimes } from "../../game/gameState";
 import { GameModeContext } from "../../components/GameModesEditor";
 import PhaseTimesSelector from "../../components/PhaseTimeSelector";
@@ -91,14 +90,7 @@ export default function LobbyMenu(): ReactElement {
             <main>
                 <div>
                     <LobbyPlayerList/>
-                    {Anchor.isMobile() || <LobbyChatMenu/>}
-                    {Anchor.isMobile() || <section className="wiki-menu-colors selector-section">
-                        <h2>{translate("menu.wiki.title")}</h2>
-                        <Wiki disabledRoles={
-                            getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(roleList, disabledRoles))
-                        }/>
-                    </section>}
-                    
+                    <LobbyChatMenu/>
                 </div>
                 <div>
                     {Anchor.isMobile() && <h1>{translate("menu.lobby.settings")}</h1>}
@@ -125,13 +117,6 @@ export default function LobbyMenu(): ReactElement {
                         onIncludeAll={() => GAME_MANAGER.sendExcludedRolesPacket([])}
                         disabled={!isHost}
                     />
-                    {Anchor.isMobile() && <LobbyChatMenu/>}
-                    {Anchor.isMobile() && <section className="wiki-menu-colors selector-section">
-                        <h2>{translate("menu.wiki.title")}</h2>
-                        <Wiki disabledRoles={
-                            getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(roleList, disabledRoles))
-                        }/>
-                    </section>}
                 </div>
             </main>
         </GameModeContext.Provider>

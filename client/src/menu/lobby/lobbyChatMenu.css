@@ -1,27 +1,16 @@
 .lobby-chat-menu {
-    position: relative;
-    padding-bottom: 3rem;
-}
-.lobby-chat-menu > .lobby-chat-menu-chat {
-    max-height: 20rem;
-    overflow-y: scroll;
-    overflow-x: hidden;
-}
-.lobby-chat-menu > .lobby-chat-menu-chat > div{
     display: flex;
-    flex-direction: column-reverse;
-    flex-wrap: nowrap;
-    text-align: left;
+    flex-direction: column;
 }
-.lobby-chat-menu > .lobby-chat-menu-chat > div > div{
-    text-align: left;
-}
-.lobby-chat-menu > :last-child {
-    position: absolute;
-    bottom: .5rem;
-    width: 80%;
-    display: flex;
-}
-.lobby-chat-menu > :last-child > input{
-    flex-grow: 1;
+
+.lobby-menu-chat {
+    border: .13rem solid var(--primary-border-color);
+    border-top-color: black;
+    border-left-color: black;
+    border-radius: .5rem;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom: none;
+    height: 20rem;
+    overflow: auto;
 }
