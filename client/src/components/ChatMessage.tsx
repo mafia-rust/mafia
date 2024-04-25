@@ -350,7 +350,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "playerRoleAndWill":
             return translate("chatMessage.playersRoleAndWill",
                 translate("role."+message.role+".name"),
-                sanitizePlayerMessage(message.will)
+                sanitizePlayerMessage(replaceMentions(message.will, playerNames))
             );
         case "consigliereResult":
             const visitedNobody = message.visited.length === 0;
