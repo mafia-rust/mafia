@@ -44,7 +44,9 @@ export type GameManager = {
     setPrependWhisperFunction: (f: ((index: PlayerIndex) => void)) => void;
     prependWhisper: (index: PlayerIndex) => void;
 
-    setSetWikiArticleFunction: (f: ((article: WikiArticleLink | null) => void)) => void;
+    wikiArticleCallbacks: ((article: WikiArticleLink | null) => void)[];
+    addSetWikiArticleCallback: (callback: ((article: WikiArticleLink | null) => void)) => void;
+    removeSetWikiArticleCallback: (callback: ((article: WikiArticleLink | null) => void)) => void;
     setWikiArticle: (article: WikiArticleLink | null) => void;
 
     leaveGame(): void;

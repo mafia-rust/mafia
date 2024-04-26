@@ -142,7 +142,7 @@ export default class SettingsMenu extends React.Component<SettingsProps, Setting
                     }
                     <button onClick={() => {this.goToRolelistEditor()}}><Icon>edit</Icon> {translate("menu.settings.gameSettingsEditor")}</button>
                     <button onClick={() => {
-                        Anchor.setCoverCard(<WikiCoverCard />, "wiki-menu-colors");
+                        Anchor.setCoverCard(<WikiCoverCard />);
                         Anchor.closeSettings();
                     }}><Icon>menu_book</Icon> {translate("menu.wiki.title")}</button>
                     <button onClick={()=>{

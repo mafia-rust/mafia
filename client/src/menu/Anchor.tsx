@@ -9,6 +9,8 @@ import { Theme } from "..";
 import Icon from "../components/Icon";
 import { Button } from "../components/Button";
 import { ChatMessage } from "../components/ChatMessage";
+import WikiCoverCard from "../components/WikiCoverCard";
+import WikiArticle from "../components/WikiArticle";
 
 type AnchorProps = {
     content: JSX.Element,
@@ -251,8 +253,12 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     public static contentType(): string | JSXElementConstructor<any> {
         return Anchor.instance.state.content.type;
     }
-    public static setCoverCard(coverCard: JSX.Element, theme?: Theme, callback?: () => void){
-        const coverCardTheme = theme === undefined ? null : theme;
+    public static setCoverCard(coverCard: JSX.Element, callback?: () => void){
+        let coverCardTheme: Theme = "player-list-menu-colors";
+        if (coverCard.type === WikiCoverCard || coverCard.type === WikiArticle) {
+            coverCardTheme = "wiki-menu-colors"
+        }
+
         Anchor.instance.setState({ coverCard, coverCardTheme }, callback);
     }
     public static pushError(title: string, body: string) {
@@ -273,7 +279,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
 function CoverCard(props: { children: React.ReactNode, theme: Theme, onClickOutside: MouseEventHandler<HTMLDivElement> }): ReactElement {
     const ref = useRef<HTMLDivElement>(null);
     return <div 
-        className={`anchor-cover-card-background-cover ${props.theme ?? ""}`} 
+        className={`anchor-cover-card-background-cover ${props.theme}`} 
         onClick={e => {
             if (e.target === ref.current) props.onClickOutside(e)
         }}

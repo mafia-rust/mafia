@@ -31,9 +31,13 @@ export default function Wiki(props: {
     }, [history]);
 
     useEffect(() => {
-        GAME_MANAGER.setSetWikiArticleFunction(chooseArticle);
+        if (!GAME_MANAGER.wikiArticleCallbacks.includes(chooseArticle))
+            GAME_MANAGER.addSetWikiArticleCallback(chooseArticle);
+
+        return () => GAME_MANAGER.removeSetWikiArticleCallback(chooseArticle);
     }, [setArticle, chooseArticle]);
-    GAME_MANAGER.setSetWikiArticleFunction(chooseArticle);
+    
+    GAME_MANAGER.addSetWikiArticleCallback(chooseArticle);
 
     function goBack() {
         if (history.length > 1) {

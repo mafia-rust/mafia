@@ -174,10 +174,18 @@ export function createGameManager(): GameManager {
         },
         prependWhisper: (index) => {},
         
-        setSetWikiArticleFunction: (f) => {
-            gameManager.setWikiArticle = f;
+        wikiArticleCallbacks: [],
+        addSetWikiArticleCallback: (callback) => {
+            gameManager.wikiArticleCallbacks.push(callback);
         },
-        setWikiArticle: (article) => {},
+        removeSetWikiArticleCallback: (callback) => {
+            gameManager.wikiArticleCallbacks.splice(gameManager.wikiArticleCallbacks.indexOf(callback), 1)
+        },
+        setWikiArticle: (article) => {
+            for (const callback of gameManager.wikiArticleCallbacks) {
+                callback(article);
+            }
+        },
 
 
         leaveGame() {
