@@ -1,5 +1,5 @@
 
-import GAME_MANAGER, { replaceMentions } from "..";
+import { replaceMentions } from "..";
 import { Grave } from "../game/graveState";
 import translate from "../game/lang";
 import { sanitizePlayerMessage } from "./ChatMessage";
@@ -45,7 +45,7 @@ export default function GraveComponent(props: {grave: Grave, playerNames: string
                 <StyledText>
                     {sanitizePlayerMessage(replaceMentions(
                         props.grave.will,
-                        GAME_MANAGER.getPlayerNames()
+                        props.playerNames
                     ))}
                 </StyledText>
             </div>
@@ -56,7 +56,7 @@ export default function GraveComponent(props: {grave: Grave, playerNames: string
                 <StyledText>
                     {sanitizePlayerMessage(replaceMentions(
                         note,
-                        GAME_MANAGER.getPlayerNames()
+                        props.playerNames
                     ))}
                 </StyledText>
             </div>
