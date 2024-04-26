@@ -1,4 +1,5 @@
 {
+    "lobbyMessage": "player",
     "whisper": "special",
     "broadcastWhisper": "discreet",
     "roleAssignment": "important center",

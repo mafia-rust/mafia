@@ -43,11 +43,15 @@ const ChatElement = React.memo((
     // Special chat messages that don't play by the rules
     switch (message.variant.type) {
         case "lobbyMessage":
-            return <span className="chat-message">
-                <StyledText className={style} 
+            if (containsMention(message.variant, playerNames)) {
+                style += " mention";
+            }
+
+            return <span className={`chat-message ${style}`}>
+                <StyledText
                     playerKeywordData={props.playerSenderKeywordData ?? PLAYER_SENDER_KEYWORD_DATA}
                 >{icon ?? ""} {`sender-${message.variant.sender}`}: </StyledText>
-                <StyledText className={style}
+                <StyledText
                     playerKeywordData={props.playerKeywordData}
                 >{translateChatMessage(message.variant, playerNames)}</StyledText>
             </span>;
@@ -71,30 +75,15 @@ const ChatElement = React.memo((
                 messageSender = translate("role."+message.variant.messageSender.type+".name");
             }
             
-            if (
-                GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.myIndex !== null &&
-                (find(GAME_MANAGER.state.players[GAME_MANAGER.state.clientState.myIndex].name ?? "").test(sanitizePlayerMessage(replaceMentions(
-                    message.variant.text,
-                    playerNames
-                ))) ||
-                (
-                    GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" &&
-                    GAME_MANAGER.state.clientState.myIndex !== null &&
-                    find("" + (GAME_MANAGER.state.clientState.myIndex + 1)).test(sanitizePlayerMessage(replaceMentions(
-                        message.variant.text,
-                        playerNames
-                    )))
-                ))
-                
-            ) {
+            if (containsMention(message.variant, playerNames)) {
                 style += " mention";
             }
 
-            return <span className="chat-message">
-                <StyledText className={style} 
+            return <span className={`chat-message ${style}`}>
+                <StyledText
                     playerKeywordData={props.playerSenderKeywordData ?? PLAYER_SENDER_KEYWORD_DATA}
                 >{icon ?? ""} {messageSender}: </StyledText>
-                <StyledText className={style}
+                <StyledText
                     playerKeywordData={props.playerKeywordData}
                 >{translateChatMessage(message.variant, playerNames)}</StyledText>
             </span>;
@@ -127,6 +116,32 @@ const ChatElement = React.memo((
         playerKeywordData={props.playerKeywordData}
     >{(icon??"")} {translateChatMessage(message.variant, playerNames)}</StyledText>;
 });
+
+function containsMention(message: ChatMessageVariant & { text: string }, playerNames: string[]): boolean {
+    let myNumber: number | null = null;
+    let myName: string | null = null;
+    if (GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.myIndex !== null) {
+        myName = GAME_MANAGER.state.players[GAME_MANAGER.state.clientState.myIndex].name ?? ""
+        myNumber = GAME_MANAGER.state.clientState.myIndex;
+    } else if (GAME_MANAGER.state.stateType === "lobby") {
+        const myPlayer = GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId!);
+        if (myPlayer !== null && myPlayer?.clientType.type === "player") {
+            myName = myPlayer.clientType.name;
+        } else {
+            return false
+        }
+    }
+    if (myName === null) {
+        return false;
+    }
+    return (
+        find(myName).test(sanitizePlayerMessage(replaceMentions(message.text, playerNames))) ||
+        (
+            myNumber !== null && 
+            find("" + (myNumber + 1)).test(sanitizePlayerMessage(replaceMentions(message.text, playerNames)))
+        )
+    )
+}
 
 export default ChatElement;
 
