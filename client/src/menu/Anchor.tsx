@@ -20,7 +20,7 @@ type AnchorState = {
     mobile: boolean,
     content: JSX.Element,
     coverCard: JSX.Element | null,
-    coverCardTheme: Theme,
+    coverCardTheme: Theme | null,
     errorCard: JSX.Element | null,
 
     settings_menu: boolean,
@@ -254,7 +254,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         return Anchor.instance.state.content.type;
     }
     public static setCoverCard(coverCard: JSX.Element, callback?: () => void){
-        let coverCardTheme: Theme = "player-list-menu-colors";
+        let coverCardTheme: Theme | null = null;
         if (coverCard.type === WikiCoverCard || coverCard.type === WikiArticle) {
             coverCardTheme = "wiki-menu-colors"
         }
@@ -276,10 +276,10 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     }
 }
 
-function CoverCard(props: { children: React.ReactNode, theme: Theme, onClickOutside: MouseEventHandler<HTMLDivElement> }): ReactElement {
+function CoverCard(props: { children: React.ReactNode, theme: Theme | null, onClickOutside: MouseEventHandler<HTMLDivElement> }): ReactElement {
     const ref = useRef<HTMLDivElement>(null);
     return <div 
-        className={`anchor-cover-card-background-cover ${props.theme}`} 
+        className={`anchor-cover-card-background-cover ${props.theme ?? ""}`} 
         onClick={e => {
             if (e.target === ref.current) props.onClickOutside(e)
         }}
