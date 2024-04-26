@@ -578,6 +578,26 @@ fn retributionist_basic(){
             ChatMessageVariant::SheriffResult{ suspicious: true }
         )}
     );
+
+    game.skip_to(PhaseType::Night, 4);
+    assert!(ret.set_night_targets(vec![sher1, mafioso]));
+    game.next_phase();
+    assert_contains!(
+        ret.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 4 }),
+        ChatMessageVariant::TargetsMessage{message: Box::new(
+            ChatMessageVariant::SheriffResult{ suspicious: true }
+        )}
+    );
+
+    game.skip_to(PhaseType::Night, 5);
+    assert!(!ret.set_night_targets(vec![sher1, mafioso]));
+    game.next_phase();
+    assert_not_contains!(
+        ret.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 5 }),
+        ChatMessageVariant::TargetsMessage{message: Box::new(
+            ChatMessageVariant::SheriffResult{ suspicious: true }
+        )}
+    );
 }
 
 #[test]
@@ -1405,6 +1425,8 @@ fn ojo_transporter(){
 }
 
 #[test]
+/// Sometimes this test fails because of the way tests work
+/// if the engineer starts as the apostle and is instantly converted to engineer, then the test might fail
 fn apostle_converting_trapped_player_day_later(){
     kit::scenario!(game in Night 2 where
         apostle: Apostle,
