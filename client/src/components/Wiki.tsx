@@ -31,13 +31,16 @@ export default function Wiki(props: {
     }, [history]);
 
     useEffect(() => {
-        if (!GAME_MANAGER.wikiArticleCallbacks.includes(chooseArticle))
-            GAME_MANAGER.addSetWikiArticleCallback(chooseArticle);
+        GAME_MANAGER.addSetWikiArticleCallback(chooseArticle);
 
         return () => GAME_MANAGER.removeSetWikiArticleCallback(chooseArticle);
     }, [setArticle, chooseArticle]);
-    
+
+    // This makes sure you can call GAME_MANAGER.setWikiArticle immediately after this component is added
     GAME_MANAGER.addSetWikiArticleCallback(chooseArticle);
+    setTimeout(() => {
+        GAME_MANAGER.removeSetWikiArticleCallback(chooseArticle);
+    }, 100)
 
     function goBack() {
         if (history.length > 1) {
