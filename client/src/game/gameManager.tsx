@@ -132,6 +132,8 @@ export function createGameManager(): GameManager {
             switch (GAME_MANAGER.state.stateType) {
                 case "game":
                     return GAME_MANAGER.state.players.map((player) => player.toString());
+                case "lobby":
+                    return [];
                 default:
                     return DUMMY_NAMES;
             }
@@ -172,10 +174,18 @@ export function createGameManager(): GameManager {
         },
         prependWhisper: (index) => {},
         
-        setSetWikiArticleFunction: (f) => {
-            gameManager.setWikiArticle = f;
+        wikiArticleCallbacks: [],
+        addSetWikiArticleCallback: (callback) => {
+            gameManager.wikiArticleCallbacks.push(callback);
         },
-        setWikiArticle: (article) => {},
+        removeSetWikiArticleCallback: (callback) => {
+            gameManager.wikiArticleCallbacks.splice(gameManager.wikiArticleCallbacks.indexOf(callback), 1)
+        },
+        setWikiArticle: (article) => {
+            for (const callback of gameManager.wikiArticleCallbacks) {
+                callback(article);
+            }
+        },
 
 
         leaveGame() {
@@ -275,6 +285,12 @@ export function createGameManager(): GameManager {
             this.server.sendPacket({
                 type: "setName",
                 name: name
+            });
+        },
+        sendSendLobbyMessagePacket(text) {
+            this.server.sendPacket({
+                type: "sendLobbyMessage",
+                text: text
             });
         },
 

@@ -7,7 +7,7 @@ import { ToClientPacket } from "./packet";
 import { Tag } from "./gameState.d";
 import { Role } from "./roleState.d";
 import translate from "./lang";
-import { computePlayerKeywordData } from "../components/StyledText";
+import { computePlayerKeywordData, computePlayerKeywordDataForLobby } from "../components/StyledText";
 import { deleteReconnectData, saveReconnectData } from "./localStorage";
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import React from "react";
@@ -147,6 +147,13 @@ export default function messageListener(packet: ToClientPacket){
                 for(let [clientId, lobbyClient] of Object.entries(packet.clients)){
                     GAME_MANAGER.state.players.set(Number.parseInt(clientId), lobbyClient);
                 }
+
+                // Recompute keyword data, since player names are keywords.
+                computePlayerKeywordDataForLobby(
+                    Array.from(GAME_MANAGER.state.players.values())
+                        .filter(client => client.clientType.type === "player")
+                        .map(client => (client.clientType as { type: "player", name: string }).name)
+                );
             }
         break;
         case "lobbyName":
@@ -223,7 +230,7 @@ export default function messageListener(packet: ToClientPacket){
                 if(packet.phase.type === "briefing" && GAME_MANAGER.state.clientState.type === "player"){
                     const role = GAME_MANAGER.state.clientState.roleState?.type;
                     if(role !== undefined){
-                        Anchor.setCoverCard(<WikiArticle article={"role/"+role as WikiArticleLink}/>, "wiki-menu-colors");
+                        Anchor.setCoverCard(<WikiArticle article={"role/"+role as WikiArticleLink}/>);
                     }
                 }
             }
@@ -353,9 +360,9 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.fastForward = packet.fastForward;
         break;
         case "addChatMessages":
-            if(GAME_MANAGER.state.stateType === "game"){
+            if(GAME_MANAGER.state.stateType === "game" || GAME_MANAGER.state.stateType === "lobby"){
                 GAME_MANAGER.state.chatMessages = GAME_MANAGER.state.chatMessages.concat(packet.chatMessages);
-                
+
                 for(let chatMessage of packet.chatMessages){
                     let audioSrc = chatMessageToAudio(chatMessage);
                     if(audioSrc)

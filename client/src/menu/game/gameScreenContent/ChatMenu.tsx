@@ -68,10 +68,16 @@ export default function ChatMenu(): ReactElement {
 }
 
 
-function ChatMessageSection(props:{
-    filter: PlayerIndex | null
+export function ChatMessageSection(props:{
+    filter?: PlayerIndex | null
 }): ReactElement {
-    const [messages, setMessages] = useState<ChatMessage []>(GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.chatMessages : []);
+    const filter = useMemo(() => props.filter ?? null, [props.filter]);
+    const [messages, setMessages] = useState<ChatMessage []>(() => {
+        if (GAME_MANAGER.state.stateType === "game" || GAME_MANAGER.state.stateType === "lobby")
+            return GAME_MANAGER.state.chatMessages;
+        else
+            return [];
+    });
     const [scrolledToBottom, setScrolledToBottom] = useState<boolean>(true);
     
     const self = useRef<HTMLDivElement>(null);
@@ -85,18 +91,21 @@ function ChatMessageSection(props:{
     // Update with new messages
     useEffect(() => {
         const stateListener: StateListener = (type) => {
-            if (GAME_MANAGER.state.stateType === "game" && type === "addChatMessages") {
+            if (
+                (GAME_MANAGER.state.stateType === "game" || GAME_MANAGER.state.stateType === "lobby") 
+                && type === "addChatMessages"
+            ) {
                 setMessages(GAME_MANAGER.state.chatMessages)
             }
         }
 
-        if (GAME_MANAGER.state.stateType === "game") {
+        if (GAME_MANAGER.state.stateType === "game" || GAME_MANAGER.state.stateType === "lobby") {
             setMessages(GAME_MANAGER.state.chatMessages)
         }
 
         GAME_MANAGER.addStateListener(stateListener);
         return () => GAME_MANAGER.removeStateListener(stateListener);
-    }, [props.filter, setMessages]);
+    }, [filter, setMessages]);
 
     // Keep chat scrolled to bottom
     useEffect(() => {
@@ -104,24 +113,24 @@ function ChatMessageSection(props:{
             const el = self.current;
             el.scrollTop = el.scrollHeight;
         }
-    }, [self, messages, props.filter, scrolledToBottom])
+    }, [self, messages, filter, scrolledToBottom])
 
     //scroll chat to bottom when filter is shut off or loaded
     useEffect(() => {
         if (self.current === null) return;
         self.current.scrollTop = self.current.scrollHeight;
-    }, [props.filter])
+    }, [filter])
 
     
 
-    return <div className="message-section" ref={self} onScroll={handleScroll}>
-        <div className="message-list">
+    return <div className="chat-message-section" ref={self} onScroll={handleScroll}>
+        <div className="chat-message-list">
             {messages.filter((msg)=>{
                 //translateChatMessage errors for this type.
                 if(msg.variant.type === "playerDied") 
                     return true;
-                const msgtxt = translateChatMessage(msg.variant, GAME_MANAGER.getPlayerNames());
-                return props.filter === null || msg.variant.type === "phaseChange" || msgtxt.includes(GAME_MANAGER.getPlayerNames()[props.filter]);
+                const msgTxt = translateChatMessage(msg.variant, GAME_MANAGER.getPlayerNames());
+                return filter === null || msg.variant.type === "phaseChange" || msgTxt.includes(GAME_MANAGER.getPlayerNames()[filter]);
             }).map((msg, index) => {
                 return <ChatElement key={index} message={msg}/>;
             })}
@@ -129,7 +138,7 @@ function ChatMessageSection(props:{
     </div>
 }
 
-function ChatTextInput(props: {disabled: boolean}): ReactElement {
+export function ChatTextInput(props: {disabled?: boolean}): ReactElement {
     const [chatBoxText, setChatBoxText] = useState<string>("");
     
     const setWhisper = useCallback((index: PlayerIndex) => {
@@ -151,7 +160,7 @@ function ChatTextInput(props: {disabled: boolean}): ReactElement {
         if (text === "") return;
         history.push(text);
         historyPoller.reset();
-        if (text.startsWith("/w")) {
+        if (text.startsWith("/w") && GAME_MANAGER.state.stateType === "game") {
             //needs to work with multi digit numbers
             const match = text.match(/\/w(\d+) /);
             if (match === null || match.length < 2) return;
@@ -159,9 +168,12 @@ function ChatTextInput(props: {disabled: boolean}): ReactElement {
             GAME_MANAGER.sendSendWhisperPacket(index, text.slice(match[0].length));
 
         } else {
-            if(GAME_MANAGER.state.stateType === "game")
-                text = replaceMentions(text, GAME_MANAGER.getPlayerNames());
-            GAME_MANAGER.sendSendMessagePacket(text);
+            text = replaceMentions(text, GAME_MANAGER.getPlayerNames());
+            if(GAME_MANAGER.state.stateType === "game") {
+                GAME_MANAGER.sendSendMessagePacket(text);
+            } else if (GAME_MANAGER.state.stateType === "lobby") {
+                GAME_MANAGER.sendSendLobbyMessagePacket(text);
+            }
         }
         setChatBoxText("");
     }, [history, historyPoller, chatBoxText]);
@@ -191,7 +203,7 @@ function ChatTextInput(props: {disabled: boolean}): ReactElement {
         }
     }, [sendChatField, history, historyPoller]);
 
-    return <div className="send-section">
+    return <div className="chat-send-section">
         <textarea
             value={chatBoxText}
             onChange={handleInputChange}

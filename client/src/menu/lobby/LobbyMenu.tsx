@@ -6,10 +6,9 @@ import translate from "../../game/lang";
 import { StateListener } from "../../game/gameManager.d";
 import Anchor from "../Anchor";
 import { RoomLinkButton } from "../Settings";
-import { getRolesFromRoleListRemoveExclusionsAddConversions, getRolesComplement, RoleOutline, RoleList } from "../../game/roleListState.d";
+import { RoleOutline, RoleList } from "../../game/roleListState.d";
 import LoadingScreen from "../LoadingScreen";
 import StartMenu from "../main/StartMenu";
-import Wiki from "../../components/Wiki";
 import { defaultPhaseTimes } from "../../game/gameState";
 import { GameModeContext } from "../../components/GameModesEditor";
 import PhaseTimesSelector from "../../components/PhaseTimeSelector";
@@ -17,6 +16,7 @@ import { OutlineListSelector } from "../../components/OutlineSelector";
 import DisabledRoleSelector from "../../components/DisabledRoleSelector";
 import Icon from "../../components/Icon";
 import { GameModeSelector } from "../../components/GameModeSelector";
+import LobbyChatMenu from "./LobbyChatMenu";
 
 export default function LobbyMenu(): ReactElement {
     const [roleList, setRoleList] = useState(
@@ -28,6 +28,9 @@ export default function LobbyMenu(): ReactElement {
     const [phaseTimes, setPhaseTimes] = useState(
         GAME_MANAGER.state.stateType === "lobby"  || GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.phaseTimes : defaultPhaseTimes()
     );
+    const [isSpectator, setIsSpectator] = useState(()=>{
+        return GAME_MANAGER.state.stateType === "lobby" ? GAME_MANAGER.getMySpectator() : false
+    });
     const [isHost, setHost] = useState(GAME_MANAGER.getMyHost() ?? false);
 
     useEffect(() => {
@@ -48,6 +51,7 @@ export default function LobbyMenu(): ReactElement {
                     case "playersHost":
                     case "lobbyClients":
                         setHost(GAME_MANAGER.getMyHost() ?? false)
+                        setIsSpectator(GAME_MANAGER.state.stateType === "lobby" ? GAME_MANAGER.getMySpectator() : false)
                         break;
                     case "rejectJoin":
                         // Kicked, probably
@@ -90,12 +94,7 @@ export default function LobbyMenu(): ReactElement {
             <main>
                 <div>
                     <LobbyPlayerList/>
-                    {Anchor.isMobile() || <section className="wiki-menu-colors selector-section">
-                        <h2>{translate("menu.wiki.title")}</h2>
-                        <Wiki disabledRoles={
-                            getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(roleList, disabledRoles))
-                        }/>
-                    </section>}
+                    <LobbyChatMenu spectator={isSpectator}/>
                 </div>
                 <div>
                     {Anchor.isMobile() && <h1>{translate("menu.lobby.settings")}</h1>}
@@ -122,12 +121,6 @@ export default function LobbyMenu(): ReactElement {
                         onIncludeAll={() => GAME_MANAGER.sendExcludedRolesPacket([])}
                         disabled={!isHost}
                     />
-                    {Anchor.isMobile() && <section className="wiki-menu-colors selector-section">
-                        <h2>{translate("menu.wiki.title")}</h2>
-                        <Wiki disabledRoles={
-                            getRolesComplement(getRolesFromRoleListRemoveExclusionsAddConversions(roleList, disabledRoles))
-                        }/>
-                    </section>}
                 </div>
             </main>
         </GameModeContext.Provider>

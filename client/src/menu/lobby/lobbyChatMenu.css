@@ -1,0 +1,18 @@
+.lobby-chat-menu {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.lobby-menu-chat {
+    border: .13rem solid var(--primary-border-color);
+    border-top-color: black;
+    border-left-color: black;
+    border-radius: .5rem;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom: none;
+    height: 20rem;
+    overflow: auto;
+    flex-grow: 1;
+}

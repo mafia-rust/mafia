@@ -10,6 +10,8 @@ import DUMMY_NAMES from "../resources/dummyNames.json";
 import { ARTICLES, WikiArticleLink, getArticleLangKey } from "./WikiArticleLink";
 import GameScreen, { ContentMenu } from "../menu/game/GameScreen";
 import { Player } from "../game/gameState.d";
+import Anchor from "../menu/Anchor";
+import WikiCoverCard from "./WikiCoverCard";
 
 export type TokenData = {
     style?: string, 
@@ -35,10 +37,16 @@ type Token = {
 } & KeywordData[number])
 
 (window as any).setWikiSearchPage = (page: WikiArticleLink) => {
-    if (GameScreen.instance) {
-        GameScreen.instance?.openMenu(ContentMenu.WikiMenu, () => {
-            GAME_MANAGER.setWikiArticle(page);
-        });
+    if (GAME_MANAGER.wikiArticleCallbacks.length === 0) {
+        if (GameScreen.instance) {
+            GameScreen.instance.openMenu(ContentMenu.WikiMenu, () => {
+                GAME_MANAGER.setWikiArticle(page);
+            });
+        } else {
+            Anchor.setCoverCard(<WikiCoverCard />, () => {
+                GAME_MANAGER.setWikiArticle(page);
+            })
+        }
     } else {
         GAME_MANAGER.setWikiArticle(page);
     }
@@ -188,6 +196,20 @@ export function computePlayerKeywordData(players: Player[]) {
             { style: "keyword-player", replacement: player.name }
         ];
         
+    }
+}
+
+export function computePlayerKeywordDataForLobby(playerNames: string[]) {
+    for (const key in PLAYER_KEYWORD_DATA) {
+        delete PLAYER_KEYWORD_DATA[key];
+    }
+    for (const key in PLAYER_SENDER_KEYWORD_DATA) {
+        delete PLAYER_SENDER_KEYWORD_DATA[key];
+    }
+
+    for(const name of playerNames) {
+        PLAYER_SENDER_KEYWORD_DATA["sender-"+name] = [{ style: "keyword-player-sender", replacement: name }];
+        PLAYER_KEYWORD_DATA[name] = [{ style: "keyword-player", replacement: name }];
     }
 }
 

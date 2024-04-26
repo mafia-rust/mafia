@@ -34,7 +34,7 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
                     <button onClick={() => Anchor.setCoverCard(<GameModesEditor/>)}>
                         <Icon>edit</Icon> {translate("menu.settings.gameSettingsEditor")}
                     </button>
-                    <button onClick={() => Anchor.setCoverCard(<WikiCoverCard />, "wiki-menu-colors")}>
+                    <button onClick={() => Anchor.setCoverCard(<WikiCoverCard />)}>
                         <Icon>menu_book</Icon> {translate("menu.wiki.title")}
                     </button>
                 </div>

@@ -171,6 +171,9 @@ export type ToServerPacket = {
     type: "setName", 
     name: string
 } | {
+    type: "sendLobbyMessage",
+    text: string
+} | {
     type: "setLobbyName", 
     name: string
 } | {

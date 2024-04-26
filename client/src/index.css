@@ -155,6 +155,10 @@ code, .code {
     background: #a1a1a1;
 }
 
+::-webkit-scrollbar-corner {
+    background: transparent
+}
+
 .chat-menu-colors {
     --background-color: #151f2e;
 }
