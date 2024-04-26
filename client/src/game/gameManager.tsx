@@ -132,6 +132,8 @@ export function createGameManager(): GameManager {
             switch (GAME_MANAGER.state.stateType) {
                 case "game":
                     return GAME_MANAGER.state.players.map((player) => player.toString());
+                case "lobby":
+                    return [];
                 default:
                     return DUMMY_NAMES;
             }

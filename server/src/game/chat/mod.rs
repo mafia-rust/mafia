@@ -1,5 +1,5 @@
 use serde::{Serialize, Deserialize};
-use crate::game::{grave::Grave, role::Role, player::{PlayerIndex, PlayerReference}, verdict::Verdict, Game};
+use crate::{game::{grave::Grave, player::{PlayerIndex, PlayerReference}, role::Role, verdict::Verdict, Game}, lobby::lobby_client::LobbyClientID};
 
 use super::{phase::PhaseState, role::{auditor::AuditorResult, engineer::TrapState, ojo::OjoAction, spy::SpyBug}, role_list::RoleOutline};
 
@@ -40,7 +40,8 @@ impl ChatMessage{
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum ChatMessageVariant {
-    RawText{
+    LobbyMessage {
+        sender: String,
         text: String
     },
 

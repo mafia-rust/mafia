@@ -1,6 +1,6 @@
 use std::{collections::{HashMap, HashSet, VecDeque}, time::{Duration, Instant}};
 
-use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, websocket_connections::connection::ClientSender};
+use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, strings::TidyableString, websocket_connections::connection::ClientSender};
 
 use super::{lobby_client::{LobbyClient, LobbyClientID, LobbyClientType}, name_validation::{self, sanitize_server_name}, Lobby, LobbyState};
 
@@ -54,25 +54,20 @@ impl Lobby {
                     return
                 };
 
-                //make sure text has no \ and isnt empty
-                let mut text = text.replace("\\", "");
-                text.truncate(100);
-                let text = text.trim();
+                let text = text.trim_newline().trim_whitespace().truncate(100).truncate_lines(1);
                 if text.is_empty() {return}
                 
-                
-                let name = if let Some(player) = clients.get(&lobby_client_id) {
-                    match &player.client_type {
-                        LobbyClientType::Player { name } => name.clone(),
-                        LobbyClientType::Spectator => "Spectator".to_string(),
-                    }
+                let name = if let Some(
+                    LobbyClient { client_type: LobbyClientType::Player { name }, .. }
+                ) = clients.get(&lobby_client_id) {
+                    name.clone()
                 } else {
                     return
                 };
 
                 self.send_to_all(ToClientPacket::AddChatMessages { chat_messages: vec![
                     ChatMessage::new_non_private(
-                        ChatMessageVariant::RawText { text: name + ": " + &text }, 
+                        ChatMessageVariant::LobbyMessage { sender: name, text }, 
                         crate::game::chat::ChatGroup::All
                     )
                 ]});

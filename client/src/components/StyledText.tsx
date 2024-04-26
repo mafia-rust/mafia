@@ -191,6 +191,20 @@ export function computePlayerKeywordData(players: Player[]) {
     }
 }
 
+export function computePlayerKeywordDataForLobby(playerNames: string[]) {
+    for (const key in PLAYER_KEYWORD_DATA) {
+        delete PLAYER_KEYWORD_DATA[key];
+    }
+    for (const key in PLAYER_SENDER_KEYWORD_DATA) {
+        delete PLAYER_SENDER_KEYWORD_DATA[key];
+    }
+
+    for(const name of playerNames) {
+        PLAYER_SENDER_KEYWORD_DATA["sender-"+name] = [{ style: "keyword-player-sender", replacement: name }];
+        PLAYER_KEYWORD_DATA[name] = [{ style: "keyword-player", replacement: name }];
+    }
+}
+
 export const DUMMY_NAMES_KEYWORD_DATA: KeywordDataMap = {};
 computeDummyNamesKeywordData();
 

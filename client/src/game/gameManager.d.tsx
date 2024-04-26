@@ -1,7 +1,7 @@
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
-import GameState, { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player } from "./gameState.d";
+import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleList, RoleOutline } from "./roleListState.d";
 import { Role } from "./roleState.d";
