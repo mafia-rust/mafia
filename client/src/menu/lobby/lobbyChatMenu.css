@@ -1,6 +1,7 @@
 .lobby-chat-menu {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
 }
 
 .lobby-menu-chat {
@@ -13,4 +14,5 @@
     border-bottom: none;
     height: 20rem;
     overflow: auto;
+    flex-grow: 1;
 }
