@@ -28,6 +28,9 @@ export default function LobbyMenu(): ReactElement {
     const [phaseTimes, setPhaseTimes] = useState(
         GAME_MANAGER.state.stateType === "lobby"  || GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.phaseTimes : defaultPhaseTimes()
     );
+    const [isSpectator, setIsSpectator] = useState(()=>{
+        return GAME_MANAGER.state.stateType === "lobby" ? GAME_MANAGER.getMySpectator() : false
+    });
     const [isHost, setHost] = useState(GAME_MANAGER.getMyHost() ?? false);
 
     useEffect(() => {
@@ -48,6 +51,7 @@ export default function LobbyMenu(): ReactElement {
                     case "playersHost":
                     case "lobbyClients":
                         setHost(GAME_MANAGER.getMyHost() ?? false)
+                        setIsSpectator(GAME_MANAGER.state.stateType === "lobby" ? GAME_MANAGER.getMySpectator() : false)
                         break;
                     case "rejectJoin":
                         // Kicked, probably
@@ -90,7 +94,7 @@ export default function LobbyMenu(): ReactElement {
             <main>
                 <div>
                     <LobbyPlayerList/>
-                    <LobbyChatMenu/>
+                    <LobbyChatMenu spectator={isSpectator}/>
                 </div>
                 <div>
                     {Anchor.isMobile() && <h1>{translate("menu.lobby.settings")}</h1>}

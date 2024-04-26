@@ -5,12 +5,12 @@ import translate from "../../game/lang";
 import { ChatMessageSection, ChatTextInput } from "../game/gameScreenContent/ChatMenu";
 
 
-export default function LobbyChatMenu(): ReactElement {
+export default function LobbyChatMenu(props: {spectator: boolean}): ReactElement {
     return <section className="lobby-chat-menu chat-menu-colors selector-section">
         <h2>{translate("menu.chat.title")}</h2>
         <div className="lobby-menu-chat">
             <ChatMessageSection/>
         </div>
-        <ChatTextInput/>
+        <ChatTextInput disabled={props.spectator}/>
     </section>
 }
