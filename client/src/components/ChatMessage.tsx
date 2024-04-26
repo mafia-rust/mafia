@@ -1,4 +1,3 @@
-import { ReactElement } from "react";
 import translate, { translateChecked } from "../game/lang";
 import React from "react";
 import GAME_MANAGER, { find, replaceMentions } from "..";
@@ -13,14 +12,14 @@ import { RoleOutline, translateRoleOutline } from "../game/roleListState.d";
 import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
 
-export default function ChatElement(
+const ChatElement = React.memo((
     props: {
         message: ChatMessage,
         playerNames?: string[],
         playerKeywordData?: KeywordDataMap,
         playerSenderKeywordData?: KeywordDataMap
     }, 
-): ReactElement {
+) => {
     const message = props.message;
     const playerNames = props.playerNames ?? GAME_MANAGER.getPlayerNames();
     const chatMessageStyles = require("../resources/styling/chatMessage.json");
@@ -43,6 +42,19 @@ export default function ChatElement(
 
     // Special chat messages that don't play by the rules
     switch (message.variant.type) {
+        case "lobbyMessage":
+            if (containsMention(message.variant, playerNames)) {
+                style += " mention";
+            }
+
+            return <span className={`chat-message ${style}`}>
+                <StyledText
+                    playerKeywordData={props.playerSenderKeywordData ?? PLAYER_SENDER_KEYWORD_DATA}
+                >{icon ?? ""} {`sender-${message.variant.sender}`}: </StyledText>
+                <StyledText
+                    playerKeywordData={props.playerKeywordData}
+                >{translateChatMessage(message.variant, playerNames)}</StyledText>
+            </span>;
         case "normal":
             if(message.variant.messageSender.type !== "player" && message.variant.messageSender.type !== "livingToDead"){
                 style += " discreet";
@@ -63,30 +75,15 @@ export default function ChatElement(
                 messageSender = translate("role."+message.variant.messageSender.type+".name");
             }
             
-            if (
-                GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.myIndex !== null &&
-                (find(GAME_MANAGER.state.players[GAME_MANAGER.state.clientState.myIndex].name ?? "").test(sanitizePlayerMessage(replaceMentions(
-                    message.variant.text,
-                    playerNames
-                ))) ||
-                (
-                    GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" &&
-                    GAME_MANAGER.state.clientState.myIndex !== null &&
-                    find("" + (GAME_MANAGER.state.clientState.myIndex + 1)).test(sanitizePlayerMessage(replaceMentions(
-                        message.variant.text,
-                        playerNames
-                    )))
-                ))
-                
-            ) {
+            if (containsMention(message.variant, playerNames)) {
                 style += " mention";
             }
 
-            return <span className="chat-message">
-                <StyledText className={style} 
+            return <span className={`chat-message ${style}`}>
+                <StyledText
                     playerKeywordData={props.playerSenderKeywordData ?? PLAYER_SENDER_KEYWORD_DATA}
                 >{icon ?? ""} {messageSender}: </StyledText>
-                <StyledText className={style}
+                <StyledText
                     playerKeywordData={props.playerKeywordData}
                 >{translateChatMessage(message.variant, playerNames)}</StyledText>
             </span>;
@@ -118,7 +115,35 @@ export default function ChatElement(
     return <StyledText className={"chat-message " + style}
         playerKeywordData={props.playerKeywordData}
     >{(icon??"")} {translateChatMessage(message.variant, playerNames)}</StyledText>;
+});
+
+function containsMention(message: ChatMessageVariant & { text: string }, playerNames: string[]): boolean {
+    let myNumber: number | null = null;
+    let myName: string | null = null;
+    if (GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.myIndex !== null) {
+        myName = GAME_MANAGER.state.players[GAME_MANAGER.state.clientState.myIndex].name ?? ""
+        myNumber = GAME_MANAGER.state.clientState.myIndex;
+    } else if (GAME_MANAGER.state.stateType === "lobby") {
+        const myPlayer = GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId!);
+        if (myPlayer !== null && myPlayer?.clientType.type === "player") {
+            myName = myPlayer.clientType.name;
+        } else {
+            return false
+        }
+    }
+    if (myName === null) {
+        return false;
+    }
+    return (
+        find(myName).test(sanitizePlayerMessage(replaceMentions(message.text, playerNames))) ||
+        (
+            myNumber !== null && 
+            find("" + (myNumber + 1)).test(sanitizePlayerMessage(replaceMentions(message.text, playerNames)))
+        )
+    )
 }
+
+export default ChatElement;
 
 function playerListToString(playerList: PlayerIndex[], playerNames: string[]): string {
 
@@ -140,6 +165,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
     }
 
     switch (message.type) {
+        case "lobbyMessage":
+            return sanitizePlayerMessage(replaceMentions(message.text, playerNames));
         case "normal":
             return sanitizePlayerMessage(replaceMentions(message.text, playerNames));
         case "whisper":
@@ -459,6 +486,10 @@ export type ChatMessage = {
     chatGroup: ChatGroup | null
 }
 export type ChatMessageVariant = {
+    type: "lobbyMessage",
+    sender: string,
+    text: string
+} | {
     type: "normal", 
     messageSender: MessageSender,
     text: string

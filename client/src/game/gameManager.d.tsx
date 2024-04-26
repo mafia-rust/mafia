@@ -1,7 +1,7 @@
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
-import GameState, { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player } from "./gameState.d";
+import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleList, RoleOutline } from "./roleListState.d";
 import { Role } from "./roleState.d";
@@ -44,7 +44,9 @@ export type GameManager = {
     setPrependWhisperFunction: (f: ((index: PlayerIndex) => void)) => void;
     prependWhisper: (index: PlayerIndex) => void;
 
-    setSetWikiArticleFunction: (f: ((article: WikiArticleLink | null) => void)) => void;
+    wikiArticleCallbacks: ((article: WikiArticleLink | null) => void)[];
+    addSetWikiArticleCallback: (callback: ((article: WikiArticleLink | null) => void)) => void;
+    removeSetWikiArticleCallback: (callback: ((article: WikiArticleLink | null) => void)) => void;
     setWikiArticle: (article: WikiArticleLink | null) => void;
 
     leaveGame(): void;
@@ -68,6 +70,7 @@ export type GameManager = {
     sendKickPlayerPacket(playerId: number): void;
     sendSetSpectatorPacket(spectator: boolean): void;
     sendSetNamePacket(name: string): void;
+    sendSendLobbyMessagePacket(text: string): void;
     sendSetLobbyNamePacket(name: string): void;
     sendStartGamePacket(): Promise<boolean>;
     sendBackToLobbyPacket(): void;

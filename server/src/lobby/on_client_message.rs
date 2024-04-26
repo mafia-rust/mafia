@@ -1,6 +1,6 @@
 use std::{collections::{HashMap, HashSet, VecDeque}, time::{Duration, Instant}};
 
-use crate::{game::{phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, websocket_connections::connection::ClientSender};
+use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, strings::TidyableString, websocket_connections::connection::ClientSender};
 
 use super::{lobby_client::{LobbyClient, LobbyClientID, LobbyClientType}, name_validation::{self, sanitize_server_name}, Lobby, LobbyState};
 
@@ -48,6 +48,30 @@ impl Lobby {
 
 
         match incoming_packet {
+            ToServerPacket::SendLobbyMessage { text } => {
+                let LobbyState::Lobby { clients, .. } = &mut self.lobby_state else {
+                    log!(error "Lobby"; "{} {}", "ToServerPacket::SendLobbyMessage can not be used outside of LobbyState::Lobby", lobby_client_id);
+                    return
+                };
+
+                let text = text.trim_newline().trim_whitespace().truncate(100).truncate_lines(1);
+                if text.is_empty() {return}
+                
+                let name = if let Some(
+                    LobbyClient { client_type: LobbyClientType::Player { name }, .. }
+                ) = clients.get(&lobby_client_id) {
+                    name.clone()
+                } else {
+                    return
+                };
+
+                self.send_to_all(ToClientPacket::AddChatMessages { chat_messages: vec![
+                    ChatMessage::new_non_private(
+                        ChatMessageVariant::LobbyMessage { sender: name, text }, 
+                        crate::game::chat::ChatGroup::All
+                    )
+                ]});
+            }
             ToServerPacket::SetSpectator { spectator } => {
                 let LobbyState::Lobby { clients, settings } = &mut self.lobby_state else {
                     log!(error "Lobby"; "{} {}", "ToServerPacket::SetName can not be used outside of LobbyState::Lobby", lobby_client_id);

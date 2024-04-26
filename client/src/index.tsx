@@ -7,7 +7,7 @@ import StartMenu from './menu/main/StartMenu';
 import LoadingScreen from './menu/LoadingScreen';
 import { deleteReconnectData, loadReconnectData } from './game/localStorage';
 
-export type Theme = "player-list-menu-colors" | "will-menu-colors" | "role-specific-colors" | "graveyard-menu-colors" | "wiki-menu-colors" | null
+export type Theme = "player-list-menu-colors" | "will-menu-colors" | "role-specific-colors" | "graveyard-menu-colors" | "wiki-menu-colors"
 
 const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();

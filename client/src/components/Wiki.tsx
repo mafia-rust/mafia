@@ -31,9 +31,16 @@ export default function Wiki(props: {
     }, [history]);
 
     useEffect(() => {
-        GAME_MANAGER.setSetWikiArticleFunction(chooseArticle);
+        GAME_MANAGER.addSetWikiArticleCallback(chooseArticle);
+
+        return () => GAME_MANAGER.removeSetWikiArticleCallback(chooseArticle);
     }, [setArticle, chooseArticle]);
-    GAME_MANAGER.setSetWikiArticleFunction(chooseArticle);
+
+    // This makes sure you can call GAME_MANAGER.setWikiArticle immediately after this component is added
+    GAME_MANAGER.addSetWikiArticleCallback(chooseArticle);
+    setTimeout(() => {
+        GAME_MANAGER.removeSetWikiArticleCallback(chooseArticle);
+    }, 100)
 
     function goBack() {
         if (history.length > 1) {
