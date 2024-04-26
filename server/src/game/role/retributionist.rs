@@ -92,7 +92,7 @@ impl RoleStateImpl for Retributionist {
                     _ => false
                 }
             ) &&
-            !self.used_bodies.iter().any(|p| *p == target_ref)
+            (self.used_bodies.iter().filter(|p| **p == target_ref).count() < 2)
         ) || (
             actor_ref != target_ref &&
             actor_ref.chosen_targets(game).len() == 1 &&
