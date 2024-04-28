@@ -2,6 +2,7 @@ import { Settings } from "../menu/Settings";
 import { PhaseTimes } from "./gameState.d";
 import { RoleList } from "./roleListState.d";
 import { Role } from "./roleState.d";
+import DEFAULT_GAME_MODES from "../resources/defaultGameModes.json";
 
 export function saveReconnectData(roomCode: number, playerId: number) {
     localStorage.setItem(
@@ -48,7 +49,9 @@ export function loadSettings(): Partial<Settings>{
 
 
 
-
+export function defaultGameModes(): SavedGameModes {
+    return DEFAULT_GAME_MODES as SavedGameModes;
+}
 
 export type SavedGameModes = Record<string, GameMode>;
 export type GameMode = {
@@ -61,12 +64,12 @@ export type GameMode = {
 export function saveGameModes(roleList: SavedGameModes) {
     localStorage.setItem("savedGameModes", JSON.stringify(roleList, replacer));
 }
-export function loadGameModes(): SavedGameModes | null{
+export function loadGameModes(): SavedGameModes{
     let data = localStorage.getItem("savedGameModes");
     if (data) {
         return JSON.parse(data, reviver);
     }
-    return null;
+    return defaultGameModes();
 }
 
 
