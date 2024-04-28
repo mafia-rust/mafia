@@ -9,18 +9,16 @@ use super::PlayerReference;
 
 impl PlayerReference{
     pub fn roleblock(&self, game: &mut Game, send_messages: bool) {
-        if !self.role(game).roleblock_immune() {
+        let roleblock_immune = self.role(game).roleblock_immune();
+
+        if !roleblock_immune {
             self.set_night_roleblocked(game, true);
             self.set_night_visits(game, vec![]);
-            
-            if send_messages {
-                self.push_night_message(game,
-                    ChatMessageVariant::RoleBlocked { immune: false }
-                );
-            }
-        } else if send_messages {
+        }
+
+        if send_messages {
             self.push_night_message(game,
-                ChatMessageVariant::RoleBlocked { immune: true }
+                ChatMessageVariant::RoleBlocked { immune: roleblock_immune }
             );
         }
     }

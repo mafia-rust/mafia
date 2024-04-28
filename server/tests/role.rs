@@ -1018,6 +1018,50 @@ fn vigilante_cant_select_night_one() {
 }
 
 #[test]
+fn godfather_backup_kills_esc() {
+    kit::scenario!(game in Night 1 where
+        godfather: Godfather,
+        hypnotist: Hypnotist,
+        det: Detective,
+        esc: Escort
+    );
+
+    assert!(godfather.day_target(hypnotist));
+
+    assert!(hypnotist.set_night_target(det));
+    assert!(esc.set_night_target(godfather));
+
+    game.next_phase();
+    assert!(!det.alive());
+    assert!(godfather.alive());
+    assert!(hypnotist.alive());
+    assert!(esc.alive());
+}
+
+#[test]
+fn godfather_backup_kills_jail() {
+    kit::scenario!(game in Dusk 1 where
+        godfather: Godfather,
+        hypnotist: Hypnotist,
+        det: Detective,
+        jail: Jailor
+    );
+
+    assert!(jail.day_target(godfather));
+    assert!(godfather.day_target(hypnotist));
+
+    game.next_phase();
+    assert!(hypnotist.set_night_target(det));
+
+    game.next_phase();
+
+    assert!(!det.alive());
+    assert!(godfather.alive());
+    assert!(hypnotist.alive());
+    assert!(jail.alive());
+}
+
+#[test]
 fn godfathers_backup_tag_works() {
     kit::scenario!(game in Night 2 where
         godfather: Godfather,

@@ -36,10 +36,14 @@ impl RoleStateImpl for Jailor {
 
 
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+
+
         match priority {
             Priority::Roleblock => {
-                if let Some(jailed) = self.jailed_target_ref{
-                    jailed.roleblock(game, false);
+                for player in PlayerReference::all_players(game){
+                    if player.night_jailed(game){
+                        player.roleblock(game, false);
+                    }
                 }
             },
             Priority::Kill => {
