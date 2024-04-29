@@ -165,6 +165,6 @@
 
 .play-menu-browser table td .play-menu-lobby-player-list {
     text-align: left;
-    overflow-x: scroll;
-    scrollbar-width: none;
+    overflow-x: auto;
+    width: 100%;
 }
