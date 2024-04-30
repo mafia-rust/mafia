@@ -4,7 +4,7 @@ import "./dragAndDrop.css"
 
 // From: https://github.com/atlassian/react-beautiful-dnd/issues/316#issuecomment-1860490084
 export function DragAndDrop<T>(props: { 
-    items: T[], 
+    items: T[],
     render: (item: T, index: number) => React.ReactNode, 
     onDragEnd: (newItems: T[]) => void,
     disabled?: boolean

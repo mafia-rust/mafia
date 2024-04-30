@@ -134,6 +134,10 @@
     "notification.saveGameMode.failure.invalidName": "Invalid name",
     "notification.saveGameMode.failure.noRoles": "Role list is empty",
     "notification.saveGameMode.failure.didNotConfirm": "Confirmation failed",
+    "notification.saveGameMode.failure.invalidLocation": "Name can only have one '/'",
+
+    "outdatedGameModeSaveData": "Your game modes were last saved in a previous version using an unsupported save format, or have become corrupted. Delete your game mode save data to be able to save and load game modes.",
+    "deleteOutdatedGameModeSaveData": "Delete game mode data",
 
     "cancel": "Cancel",
     "players": "Players",

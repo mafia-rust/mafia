@@ -11,7 +11,7 @@ import { Grave } from "../../../game/graveState";
 import { StateListener } from "../../../game/gameManager.d";
 import { Role } from "../../../game/roleState.d";
 import Icon from "../../../components/Icon";
-import { DisabledRolesDisplay } from "../../../components/DisabledRoleSelector";
+import { DisabledRolesDisplay } from "../../../components/gameModeSettings/DisabledRoleSelector";
 
 type GraveyardMenuProps = {
 }

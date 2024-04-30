@@ -53,42 +53,34 @@ export function defaultGameModes(): SavedGameModes {
     return DEFAULT_GAME_MODES as SavedGameModes;
 }
 
-export type SavedGameModes = Record<string, GameMode>;
+export type SavedGameModes = GameMode[];
+
 export type GameMode = {
     name: string,
+    // A mapping from number-of-players to game mode data
+    data: Record<number, GameModeData>
+};
+
+export type GameModeData = {
     roleList: RoleList,
     phaseTimes: PhaseTimes,
     disabledRoles: Role[],
 }
 
 export function saveGameModes(roleList: SavedGameModes) {
-    localStorage.setItem("savedGameModes", JSON.stringify(roleList, replacer));
+    localStorage.setItem("savedGameModes", JSON.stringify(roleList));
 }
-export function loadGameModes(): SavedGameModes{
-    let data = localStorage.getItem("savedGameModes");
-    if (data) {
-        return JSON.parse(data, reviver);
+export function loadGameModes(): NonNullable<unknown> | SavedGameModes | null {
+    const data = localStorage.getItem("savedGameModes");
+    if (data !== null) {
+        try {
+            return JSON.parse(data);
+        } catch {
+            return null;
+        }
     }
     return defaultGameModes();
 }
-
-
-
-function replacer(key: any, value: any) {
-    if(value instanceof Map) {
-        return {
-            dataType: 'Map',
-            value: Array.from(value.entries()), // or with spread: value: [...value]
-        };
-    } else {
-        return value;
-    }
-}
-function reviver(key: any, value: any) {
-    if(typeof value === 'object' && value !== null) {
-        if (value.dataType === 'Map') {
-            return new Map(value.value);
-        }
-    }
-    return value;
+export function deleteGameModes() {
+    localStorage.removeItem("savedGameModes");
 }
