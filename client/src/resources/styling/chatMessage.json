@@ -43,6 +43,7 @@
     "psychicEvil":"result",
     "psychicGood":"result",
     "auditorResult": "result",
+    "snoopResult": "result",
     "playerRoleAndWill": "result",
     "consigliereResult": "result",
     "wildcardConvertFailed": "special",
