@@ -575,7 +575,7 @@
     "chatMessage.trialInformation":"\\0 votes are needed for a trial. There are \\1 trials left today.",
     "chatMessage.voted":"\\0 voted for \\1.",
     "chatMessage.voted.cleared":"\\0 decided not to vote.",
-    "chatMessage.playerOnTrial":"\\0 is on trial.",
+    "chatMessage.playerNominated":"\\0 was nominated by these players: \\1.",
     "chatMessage.judgementVerdict":"\\0 decided \\1.",
     "chatMessage.trialVerdict":"\\0 was voted \\1 with \\2 innocent votes and \\3 guilty votes.",
     "chatMessage.targeted":"\\0 selected \\1.",

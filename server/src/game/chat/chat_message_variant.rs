@@ -74,8 +74,9 @@ pub enum ChatMessageVariant {
         votee: Option<PlayerIndex> 
     },
     #[serde(rename_all = "camelCase")]
-    PlayerOnTrial{
-        player_index: PlayerIndex
+    PlayerNominated{
+        player_index: PlayerIndex,
+        players_voted: Vec<PlayerIndex>
     },
     #[serde(rename_all = "camelCase")]
     JudgementVerdict{

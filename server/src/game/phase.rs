@@ -112,7 +112,13 @@ impl PhaseState {
             },
             PhaseState::Testimony { player_on_trial, .. } => {
                 game.add_message_to_chat_group(ChatGroup::All, 
-                    ChatMessageVariant::PlayerOnTrial { player_index: player_on_trial.index() }
+                    ChatMessageVariant::PlayerNominated {
+                        player_index: player_on_trial.index(),
+                        players_voted: PlayerReference::all_players(game)
+                            .filter(|player_ref| player_ref.chosen_vote(game) == Some(player_on_trial))
+                            .map(|player_ref| player_ref.index())
+                            .collect()
+                    }
                 );
                 game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() });
             },
