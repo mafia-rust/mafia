@@ -1,5 +1,5 @@
 import React, { ReactElement, useCallback, useContext, useEffect, useState } from "react";
-import { GameMode, GameModeData, SavedGameModes, deleteGameModes, loadGameModes, saveGameModes } from "../../game/localStorage";
+import { deleteGameModes, loadGameModes, saveGameModes } from "../../game/localStorage";
 import Anchor from "../../menu/Anchor";
 import { CopyButton, PasteButton } from "../../components/ClipboardButtons";
 import Icon from "../Icon";
@@ -8,7 +8,9 @@ import { DragAndDrop } from "../DragAndDrop";
 import { GameModeContext } from "./GameModesEditor";
 import translate from "../../game/lang";
 import "./gameModeSelector.css"
-import parseShareableGameModeData, { parseGameModeStorage } from "./parse";
+import parseFromJson from "./gameMode/dataFixer";
+import { GameMode, GameModeData, GameModeStorage } from "./gameMode";
+import { isFailure, parseJsonObject } from "./gameMode/parse";
 
 type GameModeLocation = {
     name: string,
@@ -19,23 +21,27 @@ export function GameModeSelector(props: {
     canModifySavedGameModes?: boolean,
     loadGameMode: (gameMode: GameModeData) => void,
 }): ReactElement {
-    const [gameModeParseResult, setGameModeParseResult] = useState(parseGameModeStorage(loadGameModes()));
+    const [gameModeParseResult, setGameModeParseResult] = useState(parseFromJson("GameModeStorage", loadGameModes()));
 
     return <section className="chat-menu-colors selector-section">
         <h2>{translate("menu.lobby.gameModes")}</h2>
-        {gameModeParseResult.type === "failure" 
+        {isFailure(gameModeParseResult)
             ? <div>
-                <div>{translate("outdatedGameModeSaveData")}</div>
+                <div>
+                    {translate("outdatedGameModesSaveData")}
+                    <br />
+                    <code>{gameModeParseResult.toString()}</code>
+                </div>
                 <button onClick={() => {
                     deleteGameModes();
-                    setGameModeParseResult(parseGameModeStorage(loadGameModes()));
+                    setGameModeParseResult(parseFromJson("GameModeStorage", loadGameModes()));
                 }}>
                     <Icon>delete</Icon>{translate("deleteOutdatedGameModeSaveData")}
                 </button>
             </div>
             : <GameModeSelectorPanel {...props} 
                 gameModeStorage={gameModeParseResult.value}
-                reloadGameModeStorage={() => setGameModeParseResult(parseGameModeStorage(loadGameModes()))}
+                reloadGameModeStorage={() => setGameModeParseResult(parseFromJson("GameModeStorage", loadGameModes()))}
             />
         }
     </section>
@@ -43,7 +49,7 @@ export function GameModeSelector(props: {
 
 function GameModeSelectorPanel(props: {
     canModifySavedGameModes?: boolean,
-    gameModeStorage: SavedGameModes,
+    gameModeStorage: GameModeStorage,
     reloadGameModeStorage: () => void,
     loadGameMode: (gameMode: GameModeData) => void,
 }): ReactElement {
@@ -57,13 +63,13 @@ function GameModeSelectorPanel(props: {
     const saveGameMode = useCallback((name: string) => {
         if(roleList.length === 0) return "noRoles";
 
-        const newGameModeStorage: SavedGameModes = JSON.parse(JSON.stringify(props.gameModeStorage));
+        const newGameModeStorage: GameModeStorage = JSON.parse(JSON.stringify(props.gameModeStorage));
 
-        const gameMode = newGameModeStorage.find(gameMode => gameMode.name === name);
+        const gameMode = newGameModeStorage.gameModes.find(gameMode => gameMode.name === name);
 
         if (gameMode === undefined) {
             if (validateName(name)) {
-                newGameModeStorage.push({
+                newGameModeStorage.gameModes.push({
                     name,
                     data: { [roleList.length]: { disabledRoles, phaseTimes, roleList } }
                 })
@@ -105,7 +111,7 @@ function GameModeSelectorPanel(props: {
 
     // Caller must ensure location is valid
     const loadGameMode = (location: GameModeLocation) => {
-        const gameMode = props.gameModeStorage.find(gameMode => gameMode.name === location.name)!;
+        const gameMode = props.gameModeStorage.gameModes.find(gameMode => gameMode.name === location.name)!;
 
         setGameModeNameField(gameMode.name)
         props.loadGameMode(gameMode.data[location.players]);
@@ -117,15 +123,15 @@ function GameModeSelectorPanel(props: {
     const deleteGameMode = (location: GameModeLocation) => {
         if(!window.confirm(translate("confirmDelete"))) return false;
         
-        const newGameModeStorage: SavedGameModes = JSON.parse(JSON.stringify(props.gameModeStorage));
+        const newGameModeStorage: GameModeStorage = JSON.parse(JSON.stringify(props.gameModeStorage));
 
-        const gameModeIndex = newGameModeStorage.findIndex(gameMode => gameMode.name === location.name);
-        const gameMode = newGameModeStorage[gameModeIndex];
+        const gameModeIndex = newGameModeStorage.gameModes.findIndex(gameMode => gameMode.name === location.name);
+        const gameMode = newGameModeStorage.gameModes[gameModeIndex];
 
         delete gameMode.data[location.players];
 
         if (Object.keys(gameMode.data).length === 0) {
-            newGameModeStorage.splice(gameModeIndex, 1);
+            newGameModeStorage.gameModes.splice(gameModeIndex, 1);
         }
 
         saveGameModes(newGameModeStorage);
@@ -169,7 +175,11 @@ function GameModeSelectorPanel(props: {
                 })}>{verbose ? <><Icon>content_copy</Icon> {translate("copyToClipboard")}</> : undefined}</CopyButton>
                 <PasteButton 
                     onClipboardRead={text => {
-                        const parsedGameMode = parseShareableGameModeData(text);
+                        const json = parseJsonObject(text);
+                        if (json === null) {
+                            return "invalidData";
+                        }
+                        const parsedGameMode = parseFromJson("ShareableGameMode", json);
                         if (parsedGameMode.type === "success") {
                             if (parsedGameMode.value.name !== undefined) {
                                 setGameModeNameField(parsedGameMode.value.name);
@@ -180,6 +190,7 @@ function GameModeSelectorPanel(props: {
                                 disabledRoles: parsedGameMode.value.disabledRoles
                             })
                         } else {
+                            Anchor.pushError(translate("outdatedGameModeSaveData"), translate("outdatedGameModeSaveData.details") + parsedGameMode.toString())
                             return "invalidData";
                         }
                     }}
@@ -191,11 +202,11 @@ function GameModeSelectorPanel(props: {
         <div className="saved-game-modes">
             {props.canModifySavedGameModes
                 ? <DragAndDrop
-                    items={props.gameModeStorage}
+                    items={props.gameModeStorage.gameModes}
                     onDragEnd={newItems => {
-                        const newGameModeStorage: SavedGameModes = [...props.gameModeStorage];
+                        const newGameModeStorage: GameModeStorage = {format: "v0", gameModes: [...props.gameModeStorage.gameModes]};
                         
-                        newGameModeStorage.sort((a, b) => newItems.indexOf(a) - newItems.indexOf(b))
+                        newGameModeStorage.gameModes.sort((a, b) => newItems.indexOf(a) - newItems.indexOf(b))
                         
                         saveGameModes(newGameModeStorage);
                         props.reloadGameModeStorage();
@@ -210,7 +221,7 @@ function GameModeSelectorPanel(props: {
                         />
                     }
                 />
-                : props.gameModeStorage.map((gameMode, index) => <div key={index}>
+                : props.gameModeStorage.gameModes.map((gameMode, index) => <div key={index}>
                     <GameModeLabel
                         gameMode={gameMode}
                         modifiable={props.canModifySavedGameModes ?? true}
@@ -228,7 +239,7 @@ function GameModeSelectorPanel(props: {
 function GameModeLabel(props: { 
     gameMode: GameMode,
     modifiable: boolean,
-    gameModeStorage: SavedGameModes,
+    gameModeStorage: GameModeStorage,
     loadGameMode: (location: GameModeLocation) => boolean, 
     deleteGameMode: (location: GameModeLocation) => boolean
 }): ReactElement {
@@ -254,7 +265,7 @@ function GameModeLabel(props: {
 function GameModeFolderLabel(props: {
     gameModeName: string,
     modifiable: boolean,
-    gameModeStorage: SavedGameModes,
+    gameModeStorage: GameModeStorage,
     loadGameMode: (location: GameModeLocation) => boolean,
     deleteGameMode: (location: GameModeLocation) => boolean,
 }): ReactElement {
@@ -264,7 +275,7 @@ function GameModeFolderLabel(props: {
         setExpanded(false)
     }, [props.gameModeName])
     
-    const gameMode = props.gameModeStorage.find(gameMode => gameMode.name === props.gameModeName)!
+    const gameMode = props.gameModeStorage.gameModes.find(gameMode => gameMode.name === props.gameModeName)!
 
     return <div className="game-mode-label">
         {props.modifiable && <Icon>drag_indicator</Icon>}
@@ -293,7 +304,7 @@ function GameModeFolderLabel(props: {
 
 function GameModeSingleLabel(props: { 
     location: GameModeLocation, 
-    gameModeStorage: SavedGameModes,
+    gameModeStorage: GameModeStorage,
     loadGameMode: (location: GameModeLocation) => boolean, 
 } & (
     {
