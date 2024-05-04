@@ -1,8 +1,6 @@
 import { Settings } from "../menu/Settings";
-import { PhaseTimes } from "./gameState.d";
-import { RoleList } from "./roleListState.d";
-import { Role } from "./roleState.d";
 import DEFAULT_GAME_MODES from "../resources/defaultGameModes.json";
+import { GameModeStorage } from "../components/gameModeSettings/gameMode";
 
 export function saveReconnectData(roomCode: number, playerId: number) {
     localStorage.setItem(
@@ -49,28 +47,14 @@ export function loadSettings(): Partial<Settings>{
 
 
 
-export function defaultGameModes(): SavedGameModes {
-    return DEFAULT_GAME_MODES as SavedGameModes;
+export function defaultGameModes(): GameModeStorage {
+    return DEFAULT_GAME_MODES as GameModeStorage;
 }
 
-export type SavedGameModes = GameMode[];
-
-export type GameMode = {
-    name: string,
-    // A mapping from number-of-players to game mode data
-    data: Record<number, GameModeData>
-};
-
-export type GameModeData = {
-    roleList: RoleList,
-    phaseTimes: PhaseTimes,
-    disabledRoles: Role[],
-}
-
-export function saveGameModes(roleList: SavedGameModes) {
+export function saveGameModes(roleList: GameModeStorage) {
     localStorage.setItem("savedGameModes", JSON.stringify(roleList));
 }
-export function loadGameModes(): NonNullable<unknown> | SavedGameModes | null {
+export function loadGameModes(): NonNullable<unknown> | null {
     const data = localStorage.getItem("savedGameModes");
     if (data !== null) {
         try {

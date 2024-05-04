@@ -1,144 +1,107 @@
-import { Role } from "../../game/roleState.d";
-import { PHASES, PhaseTimes, PhaseType } from "../../game/gameState.d";
-import { GameMode, GameModeData, SavedGameModes } from "../../game/localStorage";
-import { FACTIONS, Faction, ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, RoleSet, getAllRoles } from "../../game/roleListState.d";
+import { VersionConverter } from ".";
+import { GameModeStorage, ShareableGameMode } from "..";
+import { PHASES, PhaseTimes } from "../../../../game/gameState.d";
+import { FACTIONS, Faction, ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, RoleSet, getAllRoles } from "../../../../game/roleListState.d";
+import { Role } from "../../../../game/roleState.d";
+import { Failure, ParseResult, ParseSuccess, Success, isFailure } from "../parse";
 
-export type ParseSuccess<T> = {
-    type: "success",
-    value: T
-}
-export type ParseFailure = {
-    type: "failure",
-    reason: "gameModeNotObject" | "invalidJSON" | `${keyof GameMode}KeyMissingFromGameMode` | "nameIsNotString" | "roleListIsNotArray" | "roleOutlineMissingTypeKey" | 
-        "roleOutlineMissingOptionsKey" | "roleOutlineInvalidType" | "roleOutlineOptionListIsNotArray" | "roleOutlineOptionMissingTypeKey" | 
-        "roleOutlineOptionMissingRoleKey" | "roleOutlineOptionMissingRoleSetKey" | "roleOutlineOptionMissingFactionKey" | "nameContainsNewline" |
-        "roleOutlineOptionInvalidType" | `${PhaseType}KeyMissingFromPhaseTimes` | `${PhaseType}ValueOfPhaseTimesIsNotNumber` | "disabledRolesIsNotArray" | 
-        "roleIsNotString" | "invalidRole" | "roleSetIsNotString" | "invalidRoleSet" | "factionIsNotString" | "invalidFaction" | "roleListIsEmpty" | 
-        `${'name' | keyof GameModeData}KeyMissingFromGameModeData` | "gameModeDataRecordNotObject" | "gameModeDataRecordKeyNotNumber" | "gameModeStorageIsNotArray" |
-        "gameModeDataRecordKeyDoesNotMatchRoleListLength",
-    snippet: string
-}
-type ParseResult<T> = ParseSuccess<T> | ParseFailure;
-
-export function isFailure(result: ParseResult<any>): result is ParseFailure {
-    return result.type === "failure";
+const initial: VersionConverter = {
+    matchGameModeStorage: (json: NonNullable<any>) => typeof json === "object" && !Array.isArray(json) && json.format === undefined,
+    matchShareableGameMode: (json: NonNullable<any>) => typeof json === "object" && !Array.isArray(json) && json.format === undefined,
+    convertGameModeStorage,
+    convertShareableGameMode
 }
 
-function Success<T>(result: T): ParseSuccess<T> {
-    return {
-        type: "success",
-        value: result
-    }
-}
+function convertGameModeStorage(json: NonNullable<any>): ParseResult<GameModeStorage> {
+    const storage = parseGameModeStorage(json);
 
-function Failure(reason: ParseFailure["reason"], snippet: any): ParseFailure {
-    return {
-        type: 'failure',
-        reason,
-        snippet: JSON.stringify(snippet)
-    }
-}
+    if (isFailure(storage)) return storage;
 
-export function parseJsonObject(jsonString: string): NonNullable<any> | null {
-    let json: any;
-    try {
-        console.log(`Parsing: ${jsonString}`);
-        json = JSON.parse(jsonString);
-    } catch {
-        return null;
-    }
+    const gameModes = [];
 
-    return json;
-}
+    for (const gameMode of Object.values(storage.value)) {
+        let name = gameMode.name;
+        const indexOfNumber = name.search(/\d*$/);
+        if (indexOfNumber > 0 && name.charAt(indexOfNumber - 1) === ' ') {
+            name = name.substring(0, indexOfNumber - 1);
+        }
 
-export function parseGameModeStorage(json: NonNullable<any>): ParseResult<SavedGameModes> {
-    if (!Array.isArray(json)) {
-        return Failure("gameModeStorageIsNotArray", json);
-    }
+        const existingEntry = gameModes.find(entry => entry.name === name);
 
-    const gameModeList = json.map(parseGameMode);
-    for (const gameMode of gameModeList) {
-        if (isFailure(gameMode)) return gameMode;
-    }
-
-    return Success(gameModeList.map(success => (success as ParseSuccess<GameMode>).value) as GameMode[]);
-}
-
-export function parseGameMode(json: NonNullable<any>): ParseResult<GameMode> {
-    for (const key of ['name', 'data']) {
-        if (!Object.keys(json).includes(key)) {
-            return Failure(`${key as keyof GameMode}KeyMissingFromGameMode`, json)
+        if (existingEntry !== undefined) {
+            existingEntry.data[gameMode.roleList.length] = {
+                roleList: gameMode.roleList,
+                phaseTimes: gameMode.phaseTimes,
+                disabledRoles: gameMode.disabledRoles
+            }
+        } else {
+            gameModes.push({
+                name: name,
+                data: {
+                    [gameMode.roleList.length]: {
+                        roleList: gameMode.roleList,
+                        phaseTimes: gameMode.phaseTimes,
+                        disabledRoles: gameMode.disabledRoles
+                    }
+                }
+            })
         }
     }
-
-    const name = parseName(json.name);
-    if (isFailure(name)) return name;
-
-    const gameModeDataRecord = parseGameModeDataRecord(json.data);
-    if (isFailure(gameModeDataRecord)) return gameModeDataRecord;
 
     return Success({
-        name: name.value,
-        data: gameModeDataRecord.value
-    })
+        format: "v0",
+        gameModes
+    });
 }
 
-export default function parseShareableGameModeData(json: NonNullable<any>): ParseResult<GameModeData & { name?: string }> {
-    const gameMode = parseGameModeData(json);
-    if (isFailure(gameMode)) {
-        return gameMode;
-    } else {
-        if (!Object.keys(json).includes('name')) {
-            return gameMode;
-        }
+export function convertShareableGameMode(json: NonNullable<any>): ParseResult<ShareableGameMode> {
+    const gameMode = parseGameMode(json);
 
-        const name = parseName(json.name);
-        if (isFailure(name)) return name;
+    if (isFailure(gameMode)) return gameMode;
 
-        return Success({ name: name.value, ...gameMode.value });
-    }
+    return Success({
+        format: "v0",
+        ...gameMode.value
+    });
 }
 
-export function parseGameModeDataRecord(json: NonNullable<any>): ParseResult<Record<number, GameModeData>> {
+export default initial;
+
+type InitialGameMode = { name: string, roleList: RoleList, phaseTimes: PhaseTimes, disabledRoles: Role[] }
+type InitialGameModeStorage = Record<string, InitialGameMode>;
+
+function parseGameModeStorage(json: NonNullable<any>): ParseResult<InitialGameModeStorage> {
     if (typeof json !== "object" || Array.isArray(json)) {
-        return Failure("gameModeDataRecordNotObject", json);
+        return Failure("gameModeStorageNotObject", json);
     }
     
-    const parsedEntries: Record<number, GameModeData> = {};
+    const parsedEntries: Record<string, any> = {};
     for (const [key, value] of Object.entries(json)) {
-        let players;
-        try {
-            players = parseInt(key)
-        } catch {
-            return Failure("gameModeDataRecordKeyNotNumber", key);
-        }
+        const gameMode = parseGameMode(value);
 
-        const datum = parseGameModeData(value);
-
-        if (isFailure(datum)) {
-            return datum;
-        }
-
-        if (datum.value.roleList.length !== players) {
-            return Failure("gameModeDataRecordKeyDoesNotMatchRoleListLength", json);
+        if (isFailure(gameMode)) {
+            return gameMode;
         }
         
-        parsedEntries[players] = datum.value
+        parsedEntries[key] = gameMode.value
     }
 
     return Success(parsedEntries);
 }
 
-export function parseGameModeData(json: NonNullable<any>): ParseResult<GameModeData> {
+function parseGameMode(json: NonNullable<any>): ParseResult<InitialGameMode> {
     if (typeof json !== "object" || Array.isArray(json)) {
         return Failure("gameModeNotObject", json);
     }
 
-    for (const key of ['roleList', 'phaseTimes', 'disabledRoles']) {
+    for (const key of ['name', 'roleList', 'phaseTimes', 'disabledRoles']) {
         if (!Object.keys(json).includes(key)) {
-            return Failure(`${key as keyof GameModeData}KeyMissingFromGameModeData`, json)
+            return Failure(`${key}KeyMissingFromGameMode`, json)
         }
     }
+
+    const name = parseName(json.name);
+    if (isFailure(name)) return name;
 
     const roleList = parseRoleList(json.roleList);
     if (isFailure(roleList)) return roleList;
@@ -149,25 +112,26 @@ export function parseGameModeData(json: NonNullable<any>): ParseResult<GameModeD
     const disabledRoles = parseDisabledRoles(json.disabledRoles);
     if (isFailure(disabledRoles)) return disabledRoles;
 
-    return Success({
+    return Success({ 
+        name: name.value, 
         roleList: roleList.value, 
         phaseTimes: phaseTimes.value, 
         disabledRoles: disabledRoles.value 
     });
 }
 
-function parseName(json: NonNullable<any>): ParseResult<string> {
+export function parseName(json: NonNullable<any>): ParseResult<string> {
     if (typeof json !== "string") {
-        return Failure("nameIsNotString", json)
+        return Failure("gameModeNameIsNotString", json)
     } else {
         if (json.includes('\n') || json.includes('\r')) {
-            return Failure("nameContainsNewline", json)
+            return Failure("gameModeNameContainsNewline", json)
         }
         return Success(json);
     }
 }
 
-function parseRoleList(json: NonNullable<any>): ParseResult<RoleList> {
+export function parseRoleList(json: NonNullable<any>): ParseResult<RoleList> {
     if (!Array.isArray(json)) {
         return Failure("roleListIsNotArray", json);
     }
@@ -270,7 +234,7 @@ function parseRoleOutlineOption(json: NonNullable<any>): ParseResult<RoleOutline
     }
 }
 
-function parsePhaseTimes(json: NonNullable<any>): ParseResult<PhaseTimes> {
+export function parsePhaseTimes(json: NonNullable<any>): ParseResult<PhaseTimes> {
     for (const phase of PHASES) {
         if (!Object.keys(json).includes(phase)) {
             return Failure(`${phase}KeyMissingFromPhaseTimes`, json);
@@ -296,7 +260,7 @@ function parsePhaseTimes(json: NonNullable<any>): ParseResult<PhaseTimes> {
     return phaseTimes as ParseResult<PhaseTimes>;
 }
 
-function parseDisabledRoles(json: NonNullable<any>): ParseResult<Role[]> {
+export function parseDisabledRoles(json: NonNullable<any>): ParseResult<Role[]> {
     if (!Array.isArray(json)) {
         return Failure("disabledRolesIsNotArray", json);
     }
