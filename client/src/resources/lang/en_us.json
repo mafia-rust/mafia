@@ -185,7 +185,7 @@
 
     "role.snoop.name": "Snoop",
     "role.snoop.name:var.0": "Snoops",
-    "role.snoop.target": "Target",
+    "role.snoop.target": "Snoop",
     "role.snoop.dayTarget": "Special",
 
     "role.doctor.name": "Doctor",
