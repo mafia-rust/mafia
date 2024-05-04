@@ -34,7 +34,7 @@ impl RoleStateImpl for Snoop {
             actor_ref.push_night_message(game, 
                 ChatMessageVariant::SnoopResult { townie: 
                     visit.target.role(game).faction() == Faction::Town &&
-                    actor_ref.all_visitors(game).len() == 0 ||
+                    actor_ref.all_visitors(game).len() == 0 &&
                     !visit.target.has_suspicious_aura(game)
                 }
             );
