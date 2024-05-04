@@ -653,6 +653,7 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
+            {"type": "playersRoleRevealed","role": "veteran","player": 7},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
