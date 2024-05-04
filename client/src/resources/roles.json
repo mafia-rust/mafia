@@ -653,8 +653,6 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "ojoResult", "players":[17, 8]},
-            {"type": "ojoResult", "players":[]},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]

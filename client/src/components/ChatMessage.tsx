@@ -393,14 +393,6 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                     ? translate("chatMessage.consigliereResult.visitedBy.nobody") 
                     : translate("chatMessage.consigliereResult.visitedBy", playerListToString(message.visitedBy, playerNames))
             );
-        case "ojoResult":
-            if(message.players.length === 0 || message.players === undefined){
-                return translate("chatMessage.ojoResult.nobody");
-            }
-
-            return translate("chatMessage.ojoResult",
-                message.players.map((playerIndex) => {return playerNames![playerIndex]}).join(", ")
-            );
         case "ojoSelection":
             switch (message.action.type) {
                 case "kill":
@@ -699,9 +691,6 @@ export type ChatMessageVariant = {
     role: Role,
     visitedBy: PlayerIndex[],
     visited: PlayerIndex[]
-} | {
-    type: "ojoResult",
-    players: PlayerIndex[]
 } | {
     type: "ojoSelection",
     action: OjoAction,
