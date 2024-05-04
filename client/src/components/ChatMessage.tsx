@@ -248,9 +248,10 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                     playerNames[message.voter],
                 );
             }
-        case "playerOnTrial":
-            return translate("chatMessage.playerOnTrial",
+        case "playerNominated":
+            return translate("chatMessage.playerNominated",
                 playerNames[message.playerIndex],
+                playerListToString(message.playersVoted, playerNames)
             );
         case "judgementVerdict":
             return translate("chatMessage.judgementVerdict",
@@ -542,8 +543,9 @@ export type ChatMessageVariant = {
     voter: PlayerIndex, 
     votee: PlayerIndex | null 
 } | {
-    type: "playerOnTrial", 
-    playerIndex: PlayerIndex
+    type: "playerNominated", 
+    playerIndex: PlayerIndex,
+    playersVoted: PlayerIndex[]
 } | {
     type: "judgementVerdict", 
     voterPlayerIndex: PlayerIndex, 

@@ -56,7 +56,10 @@ impl RoleStateImpl for Veteran {
                 if !self.alerting_tonight {return}
 
                 for other_player_ref in actor_ref.all_visitors(game)
-                    .into_iter().filter(|other_player_ref|*other_player_ref != actor_ref).collect::<Vec<PlayerReference>>()
+                    .into_iter().filter(|other_player_ref|
+                        other_player_ref.alive(game) &&
+                        *other_player_ref != actor_ref
+                    ).collect::<Vec<PlayerReference>>()
                 {
                     other_player_ref.push_night_message(game,
                         ChatMessageVariant::VeteranAttackedYou 

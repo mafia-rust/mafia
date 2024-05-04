@@ -53,6 +53,7 @@ impl RoleStateImpl for Cop {
 
                 if let Some(non_town_visitor) = PlayerReference::all_players(game)
                     .filter(|other_player_ref|
+                        other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref &&
                         other_player_ref.role(game).faction() != Faction::Town &&
                         other_player_ref.night_visits(game)
@@ -64,6 +65,7 @@ impl RoleStateImpl for Cop {
                     player_to_attack = Some(non_town_visitor);
                 }else if let Some(town_visitor) = PlayerReference::all_players(game)
                     .filter(|other_player_ref|
+                        other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref &&
                         other_player_ref.night_visits(game)
                             .iter()

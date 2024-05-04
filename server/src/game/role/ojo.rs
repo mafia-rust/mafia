@@ -49,7 +49,6 @@ impl RoleStateImpl for Ojo {
                     PlayerReference::all_players(game)
                     .filter_map(|player|
                         if 
-                            player.alive(game) && 
                             player != actor_ref &&
                             player.role(game) == chosen_role
                         {
