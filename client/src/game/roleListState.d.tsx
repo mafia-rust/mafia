@@ -3,7 +3,7 @@ import translate from "./lang";
 import { Role, getFactionFromRole } from "./roleState.d";
 import ROLES from "../resources/roles.json";
 
-export const FACTIONS = ["town", "mafia", "cult", "neutral"] as const;
+export const FACTIONS = ["town", "mafia", "cult", "neutral", "fiends"] as const;
 export type Faction = typeof FACTIONS[number]
 export function getRoleOutlineFromFaction(faction: Faction): RoleOutline {
     return {
@@ -76,7 +76,7 @@ export function getRolesComplement(roleList: Role[]): Role[] {
 export const ROLE_SETS = [
     "townInvestigative", "townProtective","townKilling","townSupport", 
     "mafiaSupport",
-    "neutralEvil", "neutralKilling"
+    "neutralEvil"
 ] as const;
 export type RoleSet = typeof ROLE_SETS[number];
 export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
@@ -97,8 +97,6 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
             ];
         case "neutralEvil":
             return ["jester", "hater", "politician", "doomsayer", "minion"];
-        case "neutralKilling":
-            return ["arsonist", "werewolf", "ojo"];
     }
 }
 

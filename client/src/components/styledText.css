@@ -35,11 +35,14 @@
 .keyword-good {
     color: lime;
 }
-.keyword-cult {
-    color: rgb(214, 110, 255);
-}
 .keyword-neutral {
+    color: rgb(255, 200, 252);
+}
+.keyword-fiends {
     color: orange;
+}
+.keyword-cult {
+    color: rgb(255, 64, 128);
 }
 .keyword-info {
     color: lightblue;

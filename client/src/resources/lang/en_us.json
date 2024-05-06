@@ -434,6 +434,9 @@
     "cult:var.0": "Cultist",
     "cult:var.1": "Cultists",
     "neutral": "Neutral",
+    "fiends": "Fiends",
+    "fiends:var.0": "Fiend",
+    "fiends:var.1": "Neutral Killing",
 
     "townInvestigative":"Town Investigative",
     "townInvestigative:var.0":"TI",
@@ -449,8 +452,6 @@
 
     "neutralEvil":"Neutral Evil",
     "neutralEvil:var.0":"NE",
-    "neutralKilling":"Neutral Killing",
-    "neutralKilling:var.0":"NK",
 
     "tag.godfatherBackup":"🌹",
     "tag.executionerTarget":"🎯",
@@ -697,6 +698,8 @@
     "wiki.article.standard.mafia.text": "The Mafia is the main evil faction. There are fewer mafia members than townies, but they know who each other are. The mafia wins by eliminating all opposing teams. The mafia kills and lies to get people to execute innocent townies in order to get rid of the town. The mafia can communicate at night to create strategies and help each other lie. Most mafia roles can't select each other to use their ability. The mafia always has a godfather who attacks someone each night. If the godfather dies, a new mafia member becomes the godfather.",
     "wiki.article.standard.neutral.title": "Neutral",
     "wiki.article.standard.neutral.text": "Neutrals are not all on the same team. Each neutral role has special win conditions. Most of them are against both the town and the mafia. Some neutral roles can win before the game ends like the jester, hater, and doomsayer. Other roles need to be the last one alive like werewolf and arsonist. All of the werewolves are on the same team but don't start knowing who each other are, the same goes for arsonists.",
+    "wiki.article.standard.fiends.title": "Fiends",
+    "wiki.article.standard.fiends.text": "Fiends win by eliminating all opposing teams. Fiends are on the same team, but they can't communicate at night. Fiends are usually very powerful and can kill multiple players in one night. Unlike mafia and cult, most games should have at most one fiend, in addition to the town and mafia.",
     "wiki.article.standard.cult.title": "Cult",
     "wiki.article.standard.cult.text": "The Cult is an alternative evil faction that can convert other players to join their cult. They win by eliminating all opposing teams. Cultists can communicate at night and they can not select each other, much like the mafia. Unlike the mafia, the cultists do not have supporting roles that can help them, but instead convert other players to join them.\n\nCult roles include:\n- Apostle (Chooses who to convert to a zealot)\n- Disciple (Oldest one becomes Apostle after it dies)\n- Zealot (Attacks every night and becomes disciple if a new zealot is made)",
     "wiki.article.standard.reveal.title": "Reveal",
