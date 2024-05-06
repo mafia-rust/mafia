@@ -155,6 +155,7 @@ pub enum ChatMessageVariant {
     PsychicFailed,
     #[serde(rename_all = "camelCase")]
     AuditorResult{role_outline: RoleOutline, result: AuditorResult},
+    SnoopResult{townie: bool},
 
     VeteranAttackedYou,
     VeteranAttackedVisitor,

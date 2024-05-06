@@ -326,6 +326,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.roleBlocked" + (message.immune ? ".immune" : ""));
         case "sheriffResult":
             return translate("chatMessage.sheriffResult." + (message.suspicious ? "suspicious" : "innocent"));
+        case "snoopResult":
+            return translate("chatMessage.snoopResult." + (message.townie ? "townie" : "inconclusive"));
         case "lookoutResult":
             if (message.players.length === 0) {
                 return translate("chatMessage.lookoutResult.nobody");
@@ -615,6 +617,9 @@ export type ChatMessageVariant = {
 } | {
     type: "sheriffResult", 
     suspicious: boolean
+} | {
+    type: "snoopResult", 
+    townie: boolean
 } | {
     type: "lookoutResult", 
     players: PlayerIndex[]

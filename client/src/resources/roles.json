@@ -133,6 +133,19 @@
             {"type": "auditorResult", "roleOutline":{"type":"roleOutlineOptions", "options":[{"type":"roleSet","roleSet":"townSupport"}]},"result": {"type":"two","roles":["escort","medium"]}}
         ]
     },
+    "snoop": {
+        "faction": "town",
+        "roleSet": "townInvestigative",
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "snoopResult", "townie":true},
+            {"type": "snoopResult", "townie":false}
+        ]
+    },
     "doctor": {
         "faction": "town",
         "roleSet": "townProtective",
