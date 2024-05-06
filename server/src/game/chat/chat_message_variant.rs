@@ -155,6 +155,7 @@ pub enum ChatMessageVariant {
     PsychicFailed,
     #[serde(rename_all = "camelCase")]
     AuditorResult{role_outline: RoleOutline, result: AuditorResult},
+    SnoopResult{townie: bool},
 
     VeteranAttackedYou,
     VeteranAttackedVisitor,
@@ -181,8 +182,6 @@ pub enum ChatMessageVariant {
     PlayerRoleAndWill { role: Role, will: String },
     #[serde(rename_all = "camelCase")]
     ConsigliereResult{ role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
-    #[serde(rename_all = "camelCase")]
-    OjoResult{players: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
     OjoSelection{action: OjoAction},
 

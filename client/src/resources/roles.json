@@ -133,6 +133,19 @@
             {"type": "auditorResult", "roleOutline":{"type":"roleOutlineOptions", "options":[{"type":"roleSet","roleSet":"townSupport"}]},"result": {"type":"two","roles":["escort","medium"]}}
         ]
     },
+    "snoop": {
+        "faction": "town",
+        "roleSet": "townInvestigative",
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "snoopResult", "townie":true},
+            {"type": "snoopResult", "townie":false}
+        ]
+    },
     "doctor": {
         "faction": "town",
         "roleSet": "townProtective",
@@ -653,8 +666,8 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "ojoResult", "players":[17, 8]},
-            {"type": "ojoResult", "players":[]},
+            {"type": "playersRoleRevealed","role": "veteran","player": 7},
+            {"type": "playersRoleConcealed","player": 7},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]

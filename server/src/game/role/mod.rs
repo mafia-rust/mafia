@@ -45,6 +45,7 @@ macros::roles! {
     Philosopher : philosopher,
     Psychic : psychic,
     Auditor : auditor,
+    Snoop : snoop,
 
     Doctor : doctor,
     Bodyguard : bodyguard,

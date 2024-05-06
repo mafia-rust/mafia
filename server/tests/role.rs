@@ -3,13 +3,13 @@ use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::{role::{bouncer::Bouncer, engineer::Engineer, minion::Minion, politician::Politician, zealot::Zealot}, verdict::Verdict};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
     role_list::Faction,
     player::PlayerReference,
     tag::Tag,
+    verdict::Verdict,
     role::{
         Role,
         RoleState,
@@ -19,6 +19,7 @@ pub use mafia_server::game::{
         transporter::Transporter,
 
         detective::Detective,
+        snoop::Snoop,
         lookout::Lookout,
         spy::{Spy, SpyBug},
         tracker::Tracker,
@@ -28,6 +29,8 @@ pub use mafia_server::game::{
         doctor::Doctor,
         bodyguard::Bodyguard,
         cop::Cop,
+        bouncer::Bouncer,
+        engineer::Engineer,
 
         vigilante::Vigilante,
         veteran::Veteran,
@@ -51,6 +54,8 @@ pub use mafia_server::game::{
 
         jester::Jester,
         hater::Hater,
+        minion::Minion,
+        politician::Politician,
         doomsayer::{Doomsayer, DoomsayerGuess},
 
         arsonist::Arsonist,
@@ -59,6 +64,8 @@ pub use mafia_server::game::{
         death::Death,
 
         apostle::Apostle,
+        zealot::Zealot,
+
         martyr::Martyr,
         wild_card::Wildcard
     }, 
@@ -1039,6 +1046,43 @@ fn godfather_backup_kills_esc() {
 }
 
 #[test]
+fn snoop_basic() {
+    kit::scenario!(game in Night 1 where
+        gf: Godfather,
+        det: Detective,
+        snoop: Snoop
+    );
+
+    assert!(snoop.set_night_target(det));
+    assert!(det.set_night_target(snoop));
+    game.next_phase();
+    assert_contains!(
+        snoop.get_messages(),
+        ChatMessageVariant::SnoopResult { townie: false }
+    );
+
+    game.skip_to(PhaseType::Night, 2);
+
+    assert!(snoop.set_night_target(det));
+    game.next_phase();
+    assert_contains!(
+        snoop.get_messages(),
+        ChatMessageVariant::SnoopResult { townie: true }
+    );
+
+    game.skip_to(PhaseType::Night, 3);
+
+    assert!(snoop.set_night_target(gf));
+    game.next_phase();
+    assert_contains!(
+        snoop.get_messages_after_last_message(
+            ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 3 }
+        ),
+        ChatMessageVariant::SnoopResult { townie: false }
+    );
+}
+
+#[test]
 fn godfather_backup_kills_jail() {
     kit::scenario!(game in Dusk 1 where
         godfather: Godfather,
@@ -1453,7 +1497,10 @@ fn ojo_transporter(){
     ojo.set_role_state(
         RoleState::Ojo(Ojo{chosen_action:OjoAction::See{role:Role::Philosopher} })
     );
+
     transporter.set_night_targets(vec![player1, player2]);
+    gf.set_night_target(ojo);
+
     game.next_phase();
 
     assert!(player1.alive());
@@ -1461,10 +1508,14 @@ fn ojo_transporter(){
     assert!(player3.alive());
     assert!(gf.alive());
 
-
     assert_contains!(
-        ojo.get_messages(),
-        ChatMessageVariant::OjoResult{players: vec![player2.index(), player3.index()] }
+        ojo.get_messages(), ChatMessageVariant::PlayersRoleRevealed{player: player2.index(), role: Role::Detective}
+    );
+    assert_contains!(
+        ojo.get_messages(), ChatMessageVariant::PlayersRoleRevealed{player: player3.index(), role: Role::Philosopher}
+    );
+    assert_contains!(
+        ojo.get_messages(), ChatMessageVariant::PlayersRoleRevealed{player: gf.index(), role: Role::Godfather}
     );
 }
 

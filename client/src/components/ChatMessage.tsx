@@ -326,6 +326,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.roleBlocked" + (message.immune ? ".immune" : ""));
         case "sheriffResult":
             return translate("chatMessage.sheriffResult." + (message.suspicious ? "suspicious" : "innocent"));
+        case "snoopResult":
+            return translate("chatMessage.snoopResult." + (message.townie ? "townie" : "inconclusive"));
         case "lookoutResult":
             if (message.players.length === 0) {
                 return translate("chatMessage.lookoutResult.nobody");
@@ -392,14 +394,6 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                 visitedByNobody 
                     ? translate("chatMessage.consigliereResult.visitedBy.nobody") 
                     : translate("chatMessage.consigliereResult.visitedBy", playerListToString(message.visitedBy, playerNames))
-            );
-        case "ojoResult":
-            if(message.players.length === 0 || message.players === undefined){
-                return translate("chatMessage.ojoResult.nobody");
-            }
-
-            return translate("chatMessage.ojoResult",
-                message.players.map((playerIndex) => {return playerNames![playerIndex]}).join(", ")
             );
         case "ojoSelection":
             switch (message.action.type) {
@@ -624,6 +618,9 @@ export type ChatMessageVariant = {
     type: "sheriffResult", 
     suspicious: boolean
 } | {
+    type: "snoopResult", 
+    townie: boolean
+} | {
     type: "lookoutResult", 
     players: PlayerIndex[]
 } | {
@@ -699,9 +696,6 @@ export type ChatMessageVariant = {
     role: Role,
     visitedBy: PlayerIndex[],
     visited: PlayerIndex[]
-} | {
-    type: "ojoResult",
-    players: PlayerIndex[]
 } | {
     type: "ojoSelection",
     action: OjoAction,
