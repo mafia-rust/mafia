@@ -14,7 +14,7 @@ use super::{Priority, RoleStateImpl, Role};
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Arsonist;
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Arsonist {
