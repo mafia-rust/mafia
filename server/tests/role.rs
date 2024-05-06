@@ -53,7 +53,7 @@ pub use mafia_server::game::{
         framer::Framer,
 
         jester::Jester,
-        hater::Hater,
+        provocateur::Provocateur,
         minion::Minion,
         politician::Politician,
         doomsayer::{Doomsayer, DoomsayerGuess},
@@ -784,7 +784,7 @@ fn executioner_turns_into_jester(){
     kit::scenario!(game in Night 1 where
         target: Detective,
         mafioso: Mafioso,
-        exe: Hater
+        exe: Provocateur
     );
 
     assert!(mafioso.set_night_targets(vec![target]));
@@ -799,7 +799,7 @@ fn executioner_turns_into_jester(){
 #[test]
 fn executioner_instantly_turns_into_jester(){
     kit::scenario!(_game where
-        exe: Hater
+        exe: Provocateur
     );
     let RoleState::Jester(_) = exe.role_state() else {panic!()};
 }

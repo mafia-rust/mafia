@@ -560,7 +560,7 @@
             {"type": "jesterWon"}
         ]
     },
-    "hater": {
+    "provocateur": {
         "faction": "neutral",
         "roleSet": "neutralEvil",
         "armor": true,
