@@ -183,6 +183,11 @@
     "role.auditor.target": "Target",
     "role.auditor.dayTarget": "Special",
 
+    "role.snoop.name": "Snoop",
+    "role.snoop.name:var.0": "Snoops",
+    "role.snoop.target": "Snoop",
+    "role.snoop.dayTarget": "Special",
+
     "role.doctor.name": "Doctor",
     "role.doctor.name:var.0": "Guardians",
     "role.doctor.target": "Protect",
@@ -632,6 +637,8 @@
     "chatMessage.psychicFailed":"There are not enough living players to have a vision.",
     "chatMessage.auditorResult.one":"You audited \\0. It generated \\1.",
     "chatMessage.auditorResult.two":"You audited \\0. It generated either \\1 or \\2.",
+    "chatMessage.snoopResult.townie":"Your target is a townie.",
+    "chatMessage.snoopResult.inconclusive":"You can't tell what your target is.",
     "chatMessage.targetsMessage":"Your target got the following message:",
     "chatMessage.youWerePossessed":"You were possessed.",
     "chatMessage.youWerePossessed.immune":"Someone tried to possess you but you are immune.",
@@ -936,6 +943,11 @@
     "wiki.article.role.auditor.abilities":"- Choose an outline\n    - You are told what role was generated from that outline and one other random role\n    - You visit the player who was assigned the role from the outline",
     "wiki.article.role.auditor.attributes":"- You are not told who the player with the role is\n- The random role you are told is from the outline you chose",
     "wiki.article.role.auditor.extra":"- Your ability works independently of your visits\n    - Your visit getting possessed or transported doesn't impact your ability\n    - If you visit a player in jail, you aren't told they're in jail, and you still get results\n    - If you are roleblocked, you don't get results, but you can select that outline again\n- It is possible for you to visit dead players",
+
+    "wiki.article.role.snoop.guide": "- At night, select a player, you are either told that they are a townie, or that you can't tell if they are a townie\n    - You can't tell what your target was if:\n        - They aren't a townie\n        - You were visited by anyone at all\n        - They have a suspicious aura\n\n    - Otherwise, you are told they are a townie",
+    "wiki.article.role.snoop.abilities":"- Visit a player to search them\n    - If your target is a townie, and you are not visited by anyone, you are told they are a townie",
+    "wiki.article.role.snoop.attributes":"- If your target has a suspicious auras, your results will be inconclusive",
+    "wiki.article.role.snoop.extra":"- You are still told if you are roleblocked, or if your target was in jail",
 
     "wiki.article.role.doctor.guide": "- At night, select a player to protect\n    - Whoever you protect doesn't die if they're attacked\n    - You and the player you protected are both told if they are attacked\n- You can select yourself to protect yourself once per game\n- If your target is attacked by a protection-piercing attack they still die\n\nYou should try to protect people you think are townies who will be attacked.",
     "wiki.article.role.doctor.abilities":"* Visit a player to protect for the night",
