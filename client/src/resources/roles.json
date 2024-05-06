@@ -666,8 +666,8 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "ojoResult", "players":[17, 8]},
-            {"type": "ojoResult", "players":[]},
+            {"type": "playersRoleRevealed","role": "veteran","player": 7},
+            {"type": "playersRoleConcealed","player": 7},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]

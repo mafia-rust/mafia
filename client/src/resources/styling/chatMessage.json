@@ -47,8 +47,6 @@
     "playerRoleAndWill": "result",
     "consigliereResult": "result",
     "wildcardConvertFailed": "special",
-    "ojoResult": "result",
-    "ojoResult.nobody": "result",
     "ojoSelection": "special",
     "silenced": "warning",
     "mediumHauntStarted": "special",

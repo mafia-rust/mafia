@@ -1497,7 +1497,10 @@ fn ojo_transporter(){
     ojo.set_role_state(
         RoleState::Ojo(Ojo{chosen_action:OjoAction::See{role:Role::Philosopher} })
     );
+
     transporter.set_night_targets(vec![player1, player2]);
+    gf.set_night_target(ojo);
+
     game.next_phase();
 
     assert!(player1.alive());
@@ -1505,10 +1508,14 @@ fn ojo_transporter(){
     assert!(player3.alive());
     assert!(gf.alive());
 
-
     assert_contains!(
-        ojo.get_messages(),
-        ChatMessageVariant::OjoResult{players: vec![player2.index(), player3.index()] }
+        ojo.get_messages(), ChatMessageVariant::PlayersRoleRevealed{player: player2.index(), role: Role::Detective}
+    );
+    assert_contains!(
+        ojo.get_messages(), ChatMessageVariant::PlayersRoleRevealed{player: player3.index(), role: Role::Philosopher}
+    );
+    assert_contains!(
+        ojo.get_messages(), ChatMessageVariant::PlayersRoleRevealed{player: gf.index(), role: Role::Godfather}
     );
 }
 
