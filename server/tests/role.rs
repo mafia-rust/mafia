@@ -780,7 +780,7 @@ fn veteran_does_not_kill_framed_player(){
 }
 
 #[test]
-fn executioner_turns_into_jester(){
+fn provacateur_turns_into_jester(){
     kit::scenario!(game in Night 1 where
         target: Detective,
         mafioso: Mafioso,
@@ -797,7 +797,7 @@ fn executioner_turns_into_jester(){
     let RoleState::Jester(_) = exe.role_state() else {panic!()};
 }
 #[test]
-fn executioner_instantly_turns_into_jester(){
+fn provacateur_instantly_turns_into_jester(){
     kit::scenario!(_game where
         exe: Provocateur
     );

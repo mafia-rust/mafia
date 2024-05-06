@@ -569,7 +569,7 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
-            {"type": "executionerWon"},
+            {"type": "provacateurWon"},
             {"type": "youSurvivedAttack"}
         ]
     },

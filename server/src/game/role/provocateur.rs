@@ -19,14 +19,14 @@ use super::{Priority, Role, RoleStateImpl};
 #[derive(Clone, Serialize, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Provocateur {
-    target: ExecutionerTarget,
+    target: ProvacateurTarget,
 }
 #[derive(Clone, Serialize, Debug, PartialEq, Eq)]
-pub enum ExecutionerTarget{
+pub enum ProvacateurTarget{
     Target(PlayerReference),
     Won,
 }
-impl ExecutionerTarget {
+impl ProvacateurTarget {
     fn get_target(&self)->Option<PlayerReference>{
         if let Self::Target(p) = self {
             Some(*p)
@@ -35,7 +35,7 @@ impl ExecutionerTarget {
         }
     }
 }
-impl Default for ExecutionerTarget {
+impl Default for ProvacateurTarget {
     fn default() -> Self {
         Self::Won
     }
@@ -70,23 +70,23 @@ impl RoleStateImpl for Provocateur {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
     fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
-        self.target == ExecutionerTarget::Won
+        self.target == ProvacateurTarget::Won
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
 
-        if self.target == ExecutionerTarget::Won || !actor_ref.alive(game){
+        if self.target == ProvacateurTarget::Won || !actor_ref.alive(game){
             return;
         }
 
         match *game.current_phase() {
             PhaseState::FinalWords { player_on_trial } => {
                 if Some(player_on_trial) == self.target.get_target() {
-                    game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::ExecutionerWon);
-                    actor_ref.set_role_state(game, RoleState::Provocateur(Provocateur { target: ExecutionerTarget::Won }));
+                    game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::ProvacateurWon);
+                    actor_ref.set_role_state(game, RoleState::Provocateur(Provocateur { target: ProvacateurTarget::Won }));
                 }
             }
             PhaseState::Night => {
-                if self.target == ExecutionerTarget::Won {
+                if self.target == ProvacateurTarget::Won {
                     actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
                 }
             },
@@ -110,14 +110,14 @@ impl RoleStateImpl for Provocateur {
             ).collect::<Vec<PlayerReference>>()
             .choose(&mut rand::thread_rng())
         {
-            actor_ref.push_player_tag(game, *target, Tag::ExecutionerTarget);
-            actor_ref.set_role_state(game, RoleState::Provocateur(Provocateur{target: ExecutionerTarget::Target(*target)}));
+            actor_ref.push_player_tag(game, *target, Tag::ProvacateurTarget);
+            actor_ref.set_role_state(game, RoleState::Provocateur(Provocateur{target: ProvacateurTarget::Target(*target)}));
         }else{
             actor_ref.set_role(game, RoleState::Jester(Jester::default()))
         };
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
-        if Some(dead_player_ref) == self.target.get_target() && self.target != ExecutionerTarget::Won {
+        if Some(dead_player_ref) == self.target.get_target() && self.target != ProvacateurTarget::Won {
             actor_ref.set_role(game, RoleState::Jester(Jester::default()))
         }
     }

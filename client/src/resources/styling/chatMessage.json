@@ -52,7 +52,7 @@
     "mediumHauntStarted": "special",
     "targetWasAttacked": "result",
     "youWereProtected": "result",
-    "executionerWon": "special",
+    "provacateurWon": "special",
     "gameOver": "important center",
     "godfatherForcedMafioso": "result",
     "godfatherForcedYou": "result",
