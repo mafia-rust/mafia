@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::chat::ChatGroup;
 use crate::game::grave::{GraveKiller, GraveReference};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -26,7 +26,7 @@ pub enum OjoAction {
     None
 }
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Ojo {
@@ -50,7 +50,8 @@ impl RoleStateImpl for Ojo {
                     .filter_map(|player|
                         if 
                             player != actor_ref &&
-                            player.role(game) == chosen_role
+                            player.role(game) == chosen_role &&
+                            player.alive(game)
                         {
                             Some(Visit {
                                 target: player,
@@ -78,14 +79,18 @@ impl RoleStateImpl for Ojo {
             },
             Priority::Investigative => {
                 if let OjoAction::See{..} = self.chosen_action {
-                    let players = actor_ref.night_visits(game)
-                    .iter()
-                    .map(|visit| visit.target)
-                    .collect::<Vec<PlayerReference>>();
-                
-                    actor_ref.push_night_message(game, 
-                        ChatMessageVariant::OjoResult{players: PlayerReference::ref_vec_to_index(&players)}
-                    );
+                    let i_visited = actor_ref.night_visits(game)
+                        .iter()
+                        .map(|visit| visit.target)
+                        .collect::<Vec<PlayerReference>>();
+
+                    let visited_me = actor_ref.all_visitors(game);
+
+                    for player in PlayerReference::all_players(game) {
+                        if i_visited.contains(&player) || visited_me.contains(&player) {
+                            actor_ref.insert_role_label(game, player);
+                        }
+                    }
                 }
             },
             _ => {}

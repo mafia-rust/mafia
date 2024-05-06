@@ -188,6 +188,14 @@
     "role.auditor.target": "Target",
     "role.auditor.dayTarget": "Special",
 
+    "role.snoop.name": "Snoop",
+    "role.snoop.name:var.0": "Snoops",
+    "role.snoop.name:var.1": "Snoopy",
+    "role.snoop.name:var.2": "Snoopies",
+    "role.snoop.name:var.3": "Snoopys",
+    "role.snoop.target": "Snoop",
+    "role.snoop.dayTarget": "Special",
+
     "role.doctor.name": "Doctor",
     "role.doctor.name:var.0": "Guardians",
     "role.doctor.target": "Protect",
@@ -431,6 +439,8 @@
     "cult:var.0": "Cultist",
     "cult:var.1": "Cultists",
     "neutral": "Neutral",
+    "fiends": "Fiends",
+    "fiends:var.0": "Fiend",
 
     "townInvestigative":"Town Investigative",
     "townInvestigative:var.0":"TI",
@@ -446,8 +456,6 @@
 
     "neutralEvil":"Neutral Evil",
     "neutralEvil:var.0":"NE",
-    "neutralKilling":"Neutral Killing",
-    "neutralKilling:var.0":"NK",
 
     "tag.godfatherBackup":"🌹",
     "tag.executionerTarget":"🎯",
@@ -637,6 +645,8 @@
     "chatMessage.psychicFailed":"There are not enough living players to have a vision.",
     "chatMessage.auditorResult.one":"You audited \\0. It generated \\1.",
     "chatMessage.auditorResult.two":"You audited \\0. It generated either \\1 or \\2.",
+    "chatMessage.snoopResult.townie":"Your target is a townie.",
+    "chatMessage.snoopResult.inconclusive":"You can't tell what your target is.",
     "chatMessage.targetsMessage":"Your target got the following message:",
     "chatMessage.youWerePossessed":"You were possessed.",
     "chatMessage.youWerePossessed.immune":"Someone tried to possess you but you are immune.",
@@ -668,8 +678,6 @@
     "chatMessage.consigliereResult.visitedBy": "Your target was visited by \\0",
     "chatMessage.consigliereResult.visitedBy.nobody": "Your target was not visited by anybody",
     "chatMessage.wildcardConvertFailed": "You failed to convert to the role \\0. The role might have been disabled or taken.",
-    "chatMessage.ojoResult": "You see these players: \\0.",
-    "chatMessage.ojoResult.nobody": "You see no one.",
     "chatMessage.ojoSelection.see": "You choose to see \\0.",
     "chatMessage.ojoSelection.kill": "You choose to kill \\0.",
     "chatMessage.ojoSelection.none": "You choose nothing.",
@@ -693,7 +701,9 @@
     "wiki.article.standard.mafia.title": "Mafia",
     "wiki.article.standard.mafia.text": "The Mafia is the main evil faction. There are fewer mafia members than townies, but they know who each other are. The mafia wins by eliminating all opposing teams. The mafia kills and lies to get people to execute innocent townies in order to get rid of the town. The mafia can communicate at night to create strategies and help each other lie. Most mafia roles can't select each other to use their ability. The mafia always has a godfather who attacks someone each night. If the godfather dies, a new mafia member becomes the godfather.",
     "wiki.article.standard.neutral.title": "Neutral",
-    "wiki.article.standard.neutral.text": "Neutrals are not all on the same team. Each neutral role has special win conditions. Most of them are against both the town and the mafia. Some neutral roles can win before the game ends like the jester, hater, and doomsayer. Other roles need to be the last one alive like werewolf and arsonist. All of the werewolves are on the same team but don't start knowing who each other are, the same goes for arsonists.",
+    "wiki.article.standard.neutral.text": "Neutrals are not all on the same team. Each neutral role has special win conditions. Most of them are against both the town and the mafia. Some neutral roles can win before the game ends like the jester, hater, and doomsayer.",
+    "wiki.article.standard.fiends.title": "Fiends",
+    "wiki.article.standard.fiends.text": "Fiends win by eliminating all opposing teams. Fiends are on the same team, but they can't communicate at night. Fiends are usually very powerful and can kill multiple players in one night. Unlike mafia and cult, most games should have at most one fiend, in addition to the town and mafia.",
     "wiki.article.standard.cult.title": "Cult",
     "wiki.article.standard.cult.text": "The Cult is an alternative evil faction that can convert other players to join their cult. They win by eliminating all opposing teams. Cultists can communicate at night and they can not select each other, much like the mafia. Unlike the mafia, the cultists do not have supporting roles that can help them, but instead convert other players to join them.\n\nCult roles include:\n- Apostle (Chooses who to convert to a zealot)\n- Disciple (Oldest one becomes Apostle after it dies)\n- Zealot (Attacks every night and becomes disciple if a new zealot is made)",
     "wiki.article.standard.reveal.title": "Reveal",
@@ -942,6 +952,11 @@
     "wiki.article.role.auditor.attributes":"- You are not told who the player with the role is\n- The random role you are told is from the outline you chose",
     "wiki.article.role.auditor.extra":"- Your ability works independently of your visits\n    - Your visit getting possessed or transported doesn't impact your ability\n    - If you visit a player in jail, you aren't told they're in jail, and you still get results\n    - If you are roleblocked, you don't get results, but you can select that outline again\n- It is possible for you to visit dead players",
 
+    "wiki.article.role.snoop.guide": "- At night, select a player. You are either told that they are a townie, or that you can't tell if they are a townie\n    - You can't tell what your target was if:\n        - They aren't a townie\n        - You were visited by anyone at all\n        - They have a suspicious aura\n\n    - Otherwise, you are told they are a townie",
+    "wiki.article.role.snoop.abilities":"- Visit a player to search them\n    - If your target is a townie, and you are not visited by anyone, you are told they are a townie",
+    "wiki.article.role.snoop.attributes":"- If your target has a suspicious aura, your results will be inconclusive",
+    "wiki.article.role.snoop.extra":"- innocent aura doesn't effect your results",
+
     "wiki.article.role.doctor.guide": "- At night, select a player to protect\n    - Whoever you protect doesn't die if they're attacked\n    - You and the player you protected are both told if they are attacked\n- You can select yourself to protect yourself once per game\n- If your target is attacked by a protection-piercing attack they still die\n\nYou should try to protect people you think are townies who will be attacked.",
     "wiki.article.role.doctor.abilities":"* Visit a player to protect for the night",
     "wiki.article.role.doctor.attributes":"* If you visit yourself, you lose the ability to select yourself",
@@ -1092,10 +1107,10 @@
     "wiki.article.role.werewolf.attributes":"* You track each player you have the scent of. You are told who each player you are tracking visits.\n* You still track the scent of players after you die\n* While you are in jail, you attack all Jailors who do not choose to execute you\n* You have an armor-piercing attack\n",
     "wiki.article.role.werewolf.extra":"* You will attack yourself if you visit yourself\n* You will not rampage the jailor while in jail\n* You will still attack or gain the scent of visits to you when you are in jail\n* You will still track the players you have the scent of while you are in jail\n* A roleblock has no effect on you besides erasing your visits. If you are roleblocked, it is as if you visited nobody\n* Players attacked by a rampage are indirectly attacked",
 
-    "wiki.article.role.ojo.guide":"- You may choose to either kill every player with a certain role, or find out every player with a certain role\n    - You can not kill night 1\n\n_For Example_\n- You choose to kill all lookouts and then @1 and @2 who are both lookouts both die\n- You choose to see all trackers, and you see nobody, so you know there is no tracker",
-    "wiki.article.role.ojo.abilities":"- You may choose to do one of the following\n    - See all players with a certain role, you visit all players with that role\n    - Kill all players with a certain role, you visit all players with that role with an attacking visit",
-    "wiki.article.role.ojo.attributes":"- When you choose to see, you are told the name and role of all players you visit, you get a message and they are revealed to you\n- If you are dead, you can not choose to see or kill\n* Your attack is an armor-piercing attack\n* You can't choose kill on night 1",
-    "wiki.article.role.ojo.extra":"- Your ability will work on the person you actually visited, so if a transporter transports a player you visit with someone else, you see or attack the other player, and you are be told their actual role\n- You don't visit yourself\n- You don't visit dead players\n- You are immune to possession\n- It is possible for you to visit dead players",
+    "wiki.article.role.ojo.guide":"- You may choose to either kill every player with a certain role, or reveal every player with a certain role\n    - When you choose to see, players who visit you are also revealed to you\n    - You can't kill night 1\n\n_For Example_\n- You choose to kill all lookouts and then @1 and @2 who are both lookouts both die\n- You choose to see all trackers, and you see nobody, so you know there is no tracker, and nobody visited you",
+    "wiki.article.role.ojo.abilities":"- You may choose to do one of the following\n    - See all players with a certain role\n        - You visit all players with that role\n        - Players you visit are revealed to you\n        - Players who visit you are revealed to you\n\n    - Kill all players with a certain role\n        - You visit all players with that role with an attacking visit",
+    "wiki.article.role.ojo.attributes":"- If you are dead, you can not choose to see or kill\n* Your attack is an armor-piercing attack\n* You can't choose kill on night 1",
+    "wiki.article.role.ojo.extra":"- Your ability will work on the person you actually visited, so if a transporter transports a player you visit with someone else, you see or attack the other player, and you are be told their actual role\n- You don't visit yourself\n- You don't visit dead players\n- You are immune to possession",
 
     "wiki.article.role.death.guide": "Guess what player will die during night by selecting them, If you guess correctly you will collect a soul, you will also collect a soul passively each night. Once you collect six souls, everyone will be told that death collected six souls at the start of the day, if you survive that day, you will attack everyone and win the game at the start of night.",
     "wiki.article.role.death.abilities":"* If the player you visit dies tonight, you collect a soul\n* You gain an additional soul each night",
