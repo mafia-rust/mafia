@@ -194,7 +194,7 @@ pub enum ChatMessageVariant {
     WerewolfTrackingResult{tracked_player: PlayerIndex, players: Vec<PlayerIndex>},
 
     JesterWon,
-    ProvacateurWon,
+    ProvocateurWon,
     DeathCollectedSouls,
     DoomsayerFailed,
     DoomsayerWon,

@@ -7,6 +7,6 @@ pub enum Tag{
     GodfatherBackup,
     Doused,
     WerewolfTracked,
-    ProvacateurTarget,
+    ProvocateurTarget,
     MorticianTagged,
 }
