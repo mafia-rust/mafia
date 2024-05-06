@@ -180,12 +180,14 @@ impl Game {
                     text 
                 };
         
-                whisperee_ref.add_private_chat_message(self, message.clone());
                 sender_player_ref.add_private_chat_message(self, message.clone());
 
                 for player in PlayerReference::all_players(self){
-                    if player.role(self) == Role::Informant {
-                        whisperee_ref.add_private_chat_message(self, message.clone());
+                    if 
+                        player.role(self) == Role::Informant ||
+                        whisperee_ref == player
+                    {
+                        player.add_private_chat_message(self, message.clone());
                     }
                 }
             },
