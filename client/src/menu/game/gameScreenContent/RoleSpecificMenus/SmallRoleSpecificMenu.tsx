@@ -120,6 +120,7 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
                     return <SmallOjoMenu action={this.state.gameState.clientState.roleState.chosenAction}/>;
                 return null;
             case "wildcard":
+            case "trueWildcard":
                 return <><StyledText>{translate("role.wildcard.smallRoleMenu")}</StyledText><div><RoleDropdown 
                     value={this.state.gameState.clientState.roleState.role ?? "wildcard"}
                     disabledRoles={this.state.gameState.excludedRoles} 

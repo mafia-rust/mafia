@@ -92,6 +92,7 @@ macros::roles! {
     Ojo : ojo,
 
     Wildcard : wild_card,
+    TrueWildcard : true_wildcard,
     Martyr : martyr,
 
     Apostle : apostle,

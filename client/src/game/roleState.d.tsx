@@ -113,6 +113,9 @@ Doomsayer
     type: "wildcard"
     role: Role
 } | {
+    type: "trueWildcard"
+    role: Role
+} | {
     type: "apostle"
 } | {
     type: "disciple"

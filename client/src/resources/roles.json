@@ -700,6 +700,19 @@
             {"type": "wildcardConvertFailed", "role": "veteran"}
         ]
     },
+    "trueWildcard": {
+        "faction": "neutral",
+        "roleSet": null,
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "roleAssignment", "role":"trueWildcard"},
+            {"type": "wildcardConvertFailed", "role": "apostle"}
+        ]
+    },
     "apostle": {
         "faction": "cult",
         "roleSet": null,
