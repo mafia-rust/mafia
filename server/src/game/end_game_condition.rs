@@ -32,7 +32,9 @@ impl EndGameCondition {
     pub fn game_is_over(living_roles: Vec<Role>) -> Option<EndGameCondition> {
 
         //Special wildcard case
-        if living_roles.iter().all(|role|role==&Role::Wildcard)&&living_roles.len()>1{
+        if living_roles.iter().all(|role|
+            matches!(role, Role::Wildcard|Role::TrueWildcard)
+        )&&living_roles.len()>1{
             return None;
         }
 

@@ -220,6 +220,9 @@ impl Game {
                     }else{
                         sender_player_ref.set_role_state(self, RoleState::MafiaWildCard(mafia_wild_card));
                     }
+                }else if let RoleState::TrueWildcard(mut true_wildcard) = sender_player_ref.role_state(self).clone(){
+                    true_wildcard.role = role;
+                    sender_player_ref.set_role_state(self, RoleState::TrueWildcard(true_wildcard));
                 }
             }
             ToServerPacket::SetJournalistJournal { journal } => {
