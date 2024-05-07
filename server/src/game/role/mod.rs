@@ -81,7 +81,7 @@ macros::roles! {
 
     // Neutral
     Jester : jester,
-    Hater : hater,
+    Provocateur : provocateur,
     Politician : politician,
 
     Minion : minion,

@@ -338,10 +338,10 @@
     "role.jester.target": "Haunt",
     "role.jester.dayTarget": "Special",
 
-    "role.hater.name": "Hater",
-    "role.hater.name:var.0": "Executioners",
-    "role.hater.target": "Target",
-    "role.hater.dayTarget": "Special",
+    "role.provocateur.name": "Provocateur",
+    "role.provocateur.name:var.0": "Provocateurs",
+    "role.provocateur.target": "Target",
+    "role.provocateur.dayTarget": "Special",
     
     "role.doomsayer.name": "Doomsayer",
     "role.doomsayer.name:var.0": "Doomsayers",
@@ -453,7 +453,7 @@
     "neutralEvil:var.0":"NE",
 
     "tag.godfatherBackup":"🌹",
-    "tag.executionerTarget":"🎯",
+    "tag.provocateurTarget":"🎯",
     "tag.werewolfTracked": "🐾",
     "tag.necronomicon":"📓",
     "tag.morticianTagged":"🏺",
@@ -601,7 +601,7 @@
     "chatMessage.jailorDecideNotExecute":"The Jailor decided not to execute.",
     "chatMessage.mediumHauntStarted":"\\0 has brought the dead to haunt \\1!",
     "chatMessage.jesterWon":"The Jester will get their revenge from the grave!",
-    "chatMessage.executionerWon":"The Hater got their target executed and won!",
+    "chatMessage.provocateurWon":"The Provocateur got their target executed and won!",
     "chatMessage.deathCollectedSouls":"The apocalypse begins, everyone will die tonight if Death is alive at nightfall!",
     "chatMessage.deputyKilled":"The Deputy killed \\0!",
     "chatMessage.deputyShotYou":"A Deputy shot you!",
@@ -696,7 +696,7 @@
     "wiki.article.standard.mafia.title": "Mafia",
     "wiki.article.standard.mafia.text": "The Mafia is the main evil faction. There are fewer mafia members than townies, but they know who each other are. The mafia wins by eliminating all opposing teams. The mafia kills and lies to get people to execute innocent townies in order to get rid of the town. The mafia can communicate at night to create strategies and help each other lie. Most mafia roles can't select each other to use their ability. The mafia always has a godfather who attacks someone each night. If the godfather dies, a new mafia member becomes the godfather.",
     "wiki.article.standard.neutral.title": "Neutral",
-    "wiki.article.standard.neutral.text": "Neutrals are not all on the same team. Each neutral role has special win conditions. Most of them are against both the town and the mafia. Some neutral roles can win before the game ends like the jester, hater, and doomsayer.",
+    "wiki.article.standard.neutral.text": "Neutrals are not all on the same team. Each neutral role has special win conditions. Most of them are against both the town and the mafia. Some neutral roles can win before the game ends like the jester, provocateur, and doomsayer.",
     "wiki.article.standard.fiends.title": "Fiends",
     "wiki.article.standard.fiends.text": "Fiends win by eliminating all opposing teams. Fiends are on the same team, but they can't communicate at night. Fiends are usually very powerful and can kill multiple players in one night. Unlike mafia and cult, most games should have at most one fiend, in addition to the town and mafia.",
     "wiki.article.standard.cult.title": "Cult",
@@ -865,7 +865,7 @@
     
     "wiki.article.standard.priority.title":"Priority",
     "wiki.article.standard.priority.title:var.0":"Priorities",
-    "wiki.article.standard.priority.text":"Abilities are used in a specific order called priority order. If two players have abilities that go on the same priority, the player with the lower player number will go first. It is recommended that you read a roles encyclopedia page before this page. Some abilities go before night starts. Attacking someone doesn't kill them until the end of the night. Here are all the priorities and the abilities that happen in them.\n\n**Before Night (Not a priority)**\n\n- Jailor chooses who to jail\n- Journalist chooses who to interview\n- Spy finds if an apostle can convert\n- Death kills everyone\n- Create Visits\n  - All visits are decided by who is selected by each players. During each priority, each associated ability is activated using who is being visited by who, which is not necessarily who the player selected (in the case of a transporter, witch, etc...).\n\n**1: Top Priority**\n\n- Ojo (Visit every player with certain role)\n- Doomsayer (Kill)\n- Executioner (Suicide)\n- Jester (Haunt)\n- Veteran (Decide to Rampage)\n- Vigilante (Suicide)\n\n**2: Transporter**\n\n- Transporter (Swap Visits)\n\n**3: Control**\n\n- Witch (Possess)\n\n**4: Necromancy**\n\n- Retributionist (Possess/Change Visits)\n- Necromancer (Possess/Change Visits)\n\n**5: roleblock**\n\n- Reveler (roleblock)\n- Hypnotist (roleblock)\n- Escort (roleblock)\n- Jailor (Invisible roleblock)\n\n**6: Deception**\n\n- Hypnotist (Hypnotize)\n- Framer (Frame)\n- Blackmailer (Silence)\n- Mortician (Tag)\n- Arsonist (Douse)\n\n**7: Bodyguard**\n\n- Bodyguard (Change visits)\n\n**8: Heal**\n\n- Engineer (Intentionally dismantle, set, or use trap)\n- Bodyguard (Defend themselves)\n- Sentinel (Protect target)\n- Guardian (Defend)\n- Veteran (Defend themselves)\n\n**9: Kill**\n\n- Ojo (Kill)\n- Apostle (Kill)\n- Zealot (Kill)\n- Martyr (Kill)\n- Engineer (Indirect Kill)\n- Arsonist (Ignite)\n- Bodyguard (Attack attacker)\n- Sentinel (Attack Visitor)\n- Godfather (Attack or Make Backup Attack)\n- Jailor (Attack)\n- Mafioso (Attack)\n- Veteran (Rampage)\n- Vigilante (Attack)\n- Werewolf (Rampage and attacks)\n\n**10: Investigative**\n\n- Ojo (See)\n- Journalist (Add Journal Message)\n- Psychic (Vision)\n- Engineer (Traps report info)\n- Engineer (Dismantle if triggered) \n- Arsonist (Find who is doused)\n- Bodyguard (Find if protected)\n- Informant (Investigate)\n- Sentinel (Find if protected)\n- Death (Collect souls)\n- Guardian (Find if protected)\n- Mortician (Find role and alibi)\n- Forger (Find role and alibi)\n- Lookout (Investigate)\n- Philosopher (Investigate)\n- Detective (Investigate)\n- Spy (Find who the Mafia Visits)\n- Tracker (Investigate)\n- Werewolf (Track players scent)\n\n**11: Spy Bug**\n\n- Spy (Bug)\n\n**12: Steal Messages**\n\n- Witch (Get target messages)\n- Necromancer (Get target messages)\n- Retributionist (Get target messages)\n\n**13: Convert**\n\n- Apostle (Convert)\n\n**14: SpyCultistCount**\n\n- Spy (Get Cult Count)",
+    "wiki.article.standard.priority.text":"Abilities are used in a specific order called priority order. If two players have abilities that go on the same priority, the player with the lower player number will go first. It is recommended that you read a roles encyclopedia page before this page. Some abilities go before night starts. Attacking someone doesn't kill them until the end of the night. Here are all the priorities and the abilities that happen in them.\n\n**Before Night (Not a priority)**\n\n- Jailor chooses who to jail\n- Journalist chooses who to interview\n- Spy finds if an apostle can convert\n- Death kills everyone\n- Create Visits\n  - All visits are decided by who is selected by each players. During each priority, each associated ability is activated using who is being visited by who, which is not necessarily who the player selected (in the case of a transporter, witch, etc...).\n\n**1: Top Priority**\n\n- Ojo (Visit every player with certain role)\n- Doomsayer (Kill)\n- Provocateur (Suicide)\n- Jester (Haunt)\n- Veteran (Decide to Rampage)\n- Vigilante (Suicide)\n\n**2: Transporter**\n\n- Transporter (Swap Visits)\n\n**3: Control**\n\n- Witch (Possess)\n\n**4: Necromancy**\n\n- Retributionist (Possess/Change Visits)\n- Necromancer (Possess/Change Visits)\n\n**5: roleblock**\n\n- Reveler (roleblock)\n- Hypnotist (roleblock)\n- Escort (roleblock)\n- Jailor (Invisible roleblock)\n\n**6: Deception**\n\n- Hypnotist (Hypnotize)\n- Framer (Frame)\n- Blackmailer (Silence)\n- Mortician (Tag)\n- Arsonist (Douse)\n\n**7: Bodyguard**\n\n- Bodyguard (Change visits)\n\n**8: Heal**\n\n- Engineer (Intentionally dismantle, set, or use trap)\n- Bodyguard (Defend themselves)\n- Sentinel (Protect target)\n- Guardian (Defend)\n- Veteran (Defend themselves)\n\n**9: Kill**\n\n- Ojo (Kill)\n- Apostle (Kill)\n- Zealot (Kill)\n- Martyr (Kill)\n- Engineer (Indirect Kill)\n- Arsonist (Ignite)\n- Bodyguard (Attack attacker)\n- Sentinel (Attack Visitor)\n- Godfather (Attack or Make Backup Attack)\n- Jailor (Attack)\n- Mafioso (Attack)\n- Veteran (Rampage)\n- Vigilante (Attack)\n- Werewolf (Rampage and attacks)\n\n**10: Investigative**\n\n- Ojo (See)\n- Journalist (Add Journal Message)\n- Psychic (Vision)\n- Engineer (Traps report info)\n- Engineer (Dismantle if triggered) \n- Arsonist (Find who is doused)\n- Bodyguard (Find if protected)\n- Informant (Investigate)\n- Sentinel (Find if protected)\n- Death (Collect souls)\n- Guardian (Find if protected)\n- Mortician (Find role and alibi)\n- Forger (Find role and alibi)\n- Lookout (Investigate)\n- Philosopher (Investigate)\n- Detective (Investigate)\n- Spy (Find who the Mafia Visits)\n- Tracker (Investigate)\n- Werewolf (Track players scent)\n\n**11: Spy Bug**\n\n- Spy (Bug)\n\n**12: Steal Messages**\n\n- Witch (Get target messages)\n- Necromancer (Get target messages)\n- Retributionist (Get target messages)\n\n**13: Convert**\n\n- Apostle (Convert)\n\n**14: SpyCultistCount**\n\n- Spy (Get Cult Count)",
 
     "wiki.article.standard.chat.title:var.0":"Chat Messages",
     "wiki.article.standard.chat.title":"Chat",
@@ -1072,10 +1072,10 @@
     "wiki.article.role.jester.attributes":"* You always have an innocent aura\n* If you select nobody on the night after you are executed, you will attack a random living player who did not vote you innocent\n* You have a protection-piercing, indirect attack",
     "wiki.article.role.jester.extra":"* Your attack is indirect, so nothing can effect it",
 
-    "wiki.article.role.hater.guide":"- Get your execution target executed to win\n When you win, you leave town at the start of night\n\nYou should try to claim something that makes people think your target is evil.",
-    "wiki.article.role.hater.abilities":"* At the beginning of the game, you are assigned an execution target. It is a random townie, but never a Mayor, Journalist, Jailor, Deputy, Veteran, or Transporter\n",
-    "wiki.article.role.hater.attributes":"* When your execution target is executed, you win\n* After you win, you will leave town at the start of the following night\n* You always have an innocent aura\n* You are armored",
-    "wiki.article.role.hater.extra":"* If your target dies by something other than execution, you will convert to a jester immediately\n* If there are no valid targets in the game when you become the hater, you will convert to a jester",
+    "wiki.article.role.provocateur.guide":"- Get your execution target executed to win\n When you win, you leave town at the start of night\n\nYou should try to claim something that makes people think your target is evil.",
+    "wiki.article.role.provocateur.abilities":"* At the beginning of the game, you are assigned an execution target. It is a random townie, but never a Mayor, Journalist, Jailor, Deputy, Veteran, or Transporter\n",
+    "wiki.article.role.provocateur.attributes":"* When your execution target is executed, you win\n* After you win, you will leave town at the start of the following night\n* You always have an innocent aura\n* You are armored",
+    "wiki.article.role.provocateur.extra":"* If your target dies by something other than execution, you will convert to a jester immediately\n* If there are no valid targets in the game when you become the provocateur, you will convert to a jester",
 
     "wiki.article.role.doomsayer.guide": "Guess the role of three different players to win. If you guess the role of three different living players correctly, you attack all three of them, and leave town. You should listen to what people claim and try to push for more people to claim roles.",
     "wiki.article.role.doomsayer.abilities":"* Use the Doomsayer menu to guess the role of three different living players in one night, attacking them and winning",
