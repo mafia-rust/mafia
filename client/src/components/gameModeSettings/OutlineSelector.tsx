@@ -1,11 +1,11 @@
 import React, { useContext } from "react";
 import "./outlineSelector.css";
-import translate from "../game/lang";
-import ROLES from "../resources/roles.json";
-import { FACTIONS, ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, simplifyRoleOutline, translateRoleOutlineOption} from "../game/roleListState.d";
-import { Role } from "../game/roleState.d";
-import Icon from "./Icon";
-import { DragAndDrop } from "./DragAndDrop";
+import translate from "../../game/lang";
+import ROLES from "../../resources/roles.json";
+import { FACTIONS, ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, simplifyRoleOutline, translateRoleOutlineOption} from "../../game/roleListState.d";
+import { Role } from "../../game/roleState.d";
+import Icon from "../Icon";
+import { DragAndDrop } from "../DragAndDrop";
 import { GameModeContext } from "./GameModesEditor";
 
 type RoleOutlineSelectorProps = {

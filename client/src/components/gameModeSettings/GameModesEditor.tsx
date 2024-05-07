@@ -1,15 +1,15 @@
 import { ReactElement, createContext, useCallback, useState } from "react";
 import React from "react";
-import { OutlineListSelector } from "../components/OutlineSelector";
-import { RoleList, RoleOutline } from "../game/roleListState.d";
-import translate from "../game/lang";
+import { OutlineListSelector } from "./OutlineSelector";
+import { RoleList, RoleOutline } from "../../game/roleListState.d";
+import translate from "../../game/lang";
 import "./gameModesEditor.css";
-import PhaseTimesSelector from "../components/PhaseTimeSelector";
-import { PhaseTimes } from "../game/gameState.d";
-import DisabledRoleSelector from "../components/DisabledRoleSelector";
-import { Role } from "../game/roleState.d";
-import "../components/selectorSection.css";
-import { defaultPhaseTimes } from "../game/gameState";
+import PhaseTimesSelector from "./PhaseTimeSelector";
+import { PhaseTimes } from "../../game/gameState.d";
+import DisabledRoleSelector from "./DisabledRoleSelector";
+import { Role } from "../../game/roleState.d";
+import "./selectorSection.css";
+import { defaultPhaseTimes } from "../../game/gameState";
 import { GameModeSelector } from "./GameModeSelector";
 
 const GameModeContext = createContext({
@@ -67,9 +67,11 @@ export default function GameModesEditor(): ReactElement {
                 <div>
                     <GameModeSelector 
                         canModifySavedGameModes={true}
-                        setRoleList={setRoleList}
-                        setDisabledRoles={setDisabledRoles}
-                        setPhaseTimes={setPhaseTimes}
+                        loadGameMode={gameMode => {
+                            setRoleList(gameMode.roleList);
+                            setDisabledRoles(gameMode.disabledRoles);
+                            setPhaseTimes(gameMode.phaseTimes);
+                        }}
                     />
                     <PhaseTimesSelector 
                         onChange={(newPhaseTimes) => {
