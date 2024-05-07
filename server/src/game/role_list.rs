@@ -174,7 +174,7 @@ impl RoleSet{
                     Role::Witch, Role::Necromancer
                 ],
             RoleSet::NeutralEvil => 
-                vec![Role::Jester, Role::Hater, Role::Politician, Role::Doomsayer, Role::Minion],
+                vec![Role::Jester, Role::Provocateur, Role::Politician, Role::Doomsayer, Role::Minion],
         }
     }
 }

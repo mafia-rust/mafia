@@ -63,7 +63,7 @@ impl DoomsayerGuess{
             Role::Mortician | Role::Framer | Role::Forger | Role::MafiaWildCard => Some(DoomsayerGuess::Mafia),
 
             //Neutral
-            Role::Jester | Role::Hater | Role::Politician |
+            Role::Jester | Role::Provocateur | Role::Politician |
             Role::Arsonist | Role::Werewolf | Role::Ojo |
             Role::Doomsayer | Role::Death | Role::Minion |
             Role::Wildcard => Some(DoomsayerGuess::Neutral),

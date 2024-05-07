@@ -84,7 +84,7 @@ impl EndGameCondition {
     pub fn keeps_game_running(role: Role)->bool{
         match role {
             Role::Jester | 
-            Role::Hater |
+            Role::Provocateur |
             Role::Politician |
             Role::Death |
             Role::Minion |

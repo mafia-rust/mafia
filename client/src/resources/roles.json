@@ -560,7 +560,7 @@
             {"type": "jesterWon"}
         ]
     },
-    "hater": {
+    "provocateur": {
         "faction": "neutral",
         "roleSet": "neutralEvil",
         "armor": true,
@@ -569,7 +569,7 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
-            {"type": "executionerWon"},
+            {"type": "provocateurWon"},
             {"type": "youSurvivedAttack"}
         ]
     },
