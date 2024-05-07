@@ -6,9 +6,7 @@ pub enum EndGameCondition {
     Mafia,
     Cult,
 
-    Arsonist,
-    Werewolf,
-    Ojo,
+    Fiends,
 
     Death,
     Politician,
@@ -21,9 +19,7 @@ impl EndGameCondition {
             EndGameCondition::Town,
             EndGameCondition::Mafia,
             EndGameCondition::Cult,
-            EndGameCondition::Arsonist,
-            EndGameCondition::Werewolf,
-            EndGameCondition::Ojo,
+            EndGameCondition::Fiends,
             EndGameCondition::Death,
             EndGameCondition::Politician
         ]
@@ -71,6 +67,7 @@ impl EndGameCondition {
             Faction::Mafia => vec![EndGameCondition::Mafia],
             Faction::Cult => vec![EndGameCondition::Cult],
             Faction::Town => vec![EndGameCondition::Town],
+            Faction::Fiends => vec![EndGameCondition::Fiends],
             Faction::Neutral => match role {
                 Role::Minion => {
                     EndGameCondition::all().into_iter().filter(|end_game_condition|
@@ -80,13 +77,6 @@ impl EndGameCondition {
                         }
                     ).collect()
                 },
-
-                Role::Arsonist => vec![EndGameCondition::Arsonist],
-                Role::Werewolf => vec![EndGameCondition::Werewolf],
-                Role::Ojo => vec![EndGameCondition::Ojo],
-
-                Role::Death => vec![EndGameCondition::Death],
-                
                 Role::Politician => vec![EndGameCondition::Politician],
                 _ => vec![]
             },
@@ -96,7 +86,7 @@ impl EndGameCondition {
     pub fn keeps_game_running(role: Role)->bool{
         match role {
             Role::Jester | 
-            Role::Hater |
+            Role::Provocateur |
             Role::Politician |
             Role::Death |
             Role::Minion |

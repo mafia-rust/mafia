@@ -560,7 +560,7 @@
             {"type": "jesterWon"}
         ]
     },
-    "hater": {
+    "provocateur": {
         "faction": "neutral",
         "roleSet": "neutralEvil",
         "armor": true,
@@ -569,7 +569,7 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
-            {"type": "executionerWon"},
+            {"type": "provocateurWon"},
             {"type": "youSurvivedAttack"}
         ]
     },
@@ -614,62 +614,6 @@
             {"type": "targetIsPossessionImmune"},
             {"type": "youWerePossessed", "immune": false},
             {"type": "youWerePossessed", "immune": true}
-        ]
-    },
-    "arsonist": {
-        "faction": "neutral",
-        "roleSet": "neutralKilling",
-        "armor": true,
-        "aura": null,
-        "maxCount": null,
-        "largeRoleSpecificMenu": false,
-        "canBeConvertedTo": [],
-        "chatMessages":[
-            {"type": "someoneSurvivedYourAttack"},
-            {"type": "youSurvivedAttack"}
-        ]
-    },
-    "werewolf": {
-        "faction": "neutral",
-        "roleSet": "neutralKilling",
-        "armor": true,
-        "aura": null,
-        "maxCount": null,
-        "largeRoleSpecificMenu": false,
-        "canBeConvertedTo": [],
-        "chatMessages":[
-            {
-                "type":"werewolfTrackingResult",
-                "trackedPlayer": 18,
-                "players":[36]
-            },
-            {
-                "type":"werewolfTrackingResult",
-                "trackedPlayer": 41,
-                "players":[40,38]
-            },
-            {
-                "type":"werewolfTrackingResult",
-                "trackedPlayer": 42,
-                "players":[]
-            },
-            {"type": "someoneSurvivedYourAttack"},
-            {"type": "youSurvivedAttack"}
-        ]
-    },
-    "ojo": {
-        "faction": "neutral",
-        "roleSet": "neutralKilling",
-        "armor": true,
-        "aura": null,
-        "maxCount": null,
-        "largeRoleSpecificMenu": false,
-        "canBeConvertedTo": [],
-        "chatMessages":[
-            {"type": "playersRoleRevealed","role": "veteran","player": 7},
-            {"type": "playersRoleConcealed","player": 7},
-            {"type": "someoneSurvivedYourAttack"},
-            {"type": "youSurvivedAttack"}
         ]
     },
     "martyr": {
@@ -724,6 +668,62 @@
         "chatMessages":[
             {"type": "roleAssignment", "role":"trueWildcard"},
             {"type": "wildcardConvertFailed", "role": "apostle"}
+        ]
+    },
+    "arsonist": {
+        "faction": "fiends",
+        "roleSet": null,
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+        ]
+    },
+    "werewolf": {
+        "faction": "fiends",
+        "roleSet": null,
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {
+                "type":"werewolfTrackingResult",
+                "trackedPlayer": 18,
+                "players":[36]
+            },
+            {
+                "type":"werewolfTrackingResult",
+                "trackedPlayer": 41,
+                "players":[40,38]
+            },
+            {
+                "type":"werewolfTrackingResult",
+                "trackedPlayer": 42,
+                "players":[]
+            },
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+        ]
+    },
+    "ojo": {
+        "faction": "fiends",
+        "roleSet": null,
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "playersRoleRevealed","role": "veteran","player": 7},
+            {"type": "playersRoleConcealed","player": 7},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
         ]
     },
     "apostle": {

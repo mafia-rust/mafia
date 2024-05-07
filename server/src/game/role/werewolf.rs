@@ -20,7 +20,7 @@ pub struct Werewolf{
     pub tracked_players: Vec<PlayerReference>,
 }
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Werewolf {

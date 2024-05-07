@@ -26,7 +26,7 @@ pub enum OjoAction {
     None
 }
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 impl RoleStateImpl for Ojo {
