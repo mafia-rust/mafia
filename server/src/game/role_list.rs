@@ -25,7 +25,8 @@ make_faction_enum!{
     Mafia,
     Cult,
     Town,
-    Neutral
+    Neutral,
+    Fiends
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -154,7 +155,6 @@ pub enum RoleSet {
     MafiaSupport,
 
     NeutralEvil,
-    NeutralKilling,
 }
 impl RoleSet{
     pub fn get_roles(&self) -> Vec<Role> {
