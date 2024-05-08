@@ -1,7 +1,7 @@
 import React, { ReactElement, useContext } from "react";
-import { PhaseType, PhaseTimes, PHASES } from "../game/gameState.d";
-import translate from "../game/lang";
-import { isValidPhaseTime } from "../game/gameManager";
+import { PhaseType, PhaseTimes, PHASES } from "../../game/gameState.d";
+import translate from "../../game/lang";
+import { isValidPhaseTime } from "../../game/gameManager";
 import "./phaseTimeSelector.css";
 import { GameModeContext } from "./GameModesEditor";
 

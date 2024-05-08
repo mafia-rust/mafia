@@ -1,8 +1,6 @@
 import { Settings } from "../menu/Settings";
-import { PhaseTimes } from "./gameState.d";
-import { RoleList } from "./roleListState.d";
-import { Role } from "./roleState.d";
 import DEFAULT_GAME_MODES from "../resources/defaultGameModes.json";
+import { GameModeStorage } from "../components/gameModeSettings/gameMode";
 
 export function saveReconnectData(roomCode: number, playerId: number) {
     localStorage.setItem(
@@ -49,46 +47,24 @@ export function loadSettings(): Partial<Settings>{
 
 
 
-export function defaultGameModes(): SavedGameModes {
-    return DEFAULT_GAME_MODES as SavedGameModes;
+export function defaultGameModes(): GameModeStorage {
+    return DEFAULT_GAME_MODES as GameModeStorage;
 }
 
-export type SavedGameModes = Record<string, GameMode>;
-export type GameMode = {
-    name: string,
-    roleList: RoleList,
-    phaseTimes: PhaseTimes,
-    disabledRoles: Role[],
+export function saveGameModes(roleList: GameModeStorage) {
+    localStorage.setItem("savedGameModes", JSON.stringify(roleList));
 }
-
-export function saveGameModes(roleList: SavedGameModes) {
-    localStorage.setItem("savedGameModes", JSON.stringify(roleList, replacer));
-}
-export function loadGameModes(): SavedGameModes{
-    let data = localStorage.getItem("savedGameModes");
-    if (data) {
-        return JSON.parse(data, reviver);
+export function loadGameModes(): NonNullable<unknown> | null {
+    const data = localStorage.getItem("savedGameModes");
+    if (data !== null) {
+        try {
+            return JSON.parse(data);
+        } catch {
+            return null;
+        }
     }
     return defaultGameModes();
 }
-
-
-
-function replacer(key: any, value: any) {
-    if(value instanceof Map) {
-        return {
-            dataType: 'Map',
-            value: Array.from(value.entries()), // or with spread: value: [...value]
-        };
-    } else {
-        return value;
-    }
-}
-function reviver(key: any, value: any) {
-    if(typeof value === 'object' && value !== null) {
-        if (value.dataType === 'Map') {
-            return new Map(value.value);
-        }
-    }
-    return value;
+export function deleteGameModes() {
+    localStorage.removeItem("savedGameModes");
 }
