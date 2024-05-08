@@ -6,7 +6,7 @@ import translate from "../../game/lang";
 import Anchor from "../Anchor";
 import PlayMenu from "./PlayMenu";
 import LoadingScreen from "../LoadingScreen";
-import GameModesEditor from "../../components/GameModesEditor";
+import GameModesEditor from "../../components/gameModeSettings/GameModesEditor";
 import Icon from "../../components/Icon";
 import WikiCoverCard from "../../components/WikiCoverCard";
 

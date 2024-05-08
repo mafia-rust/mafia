@@ -1,13 +1,13 @@
 import { ReactElement, useCallback, useContext, useState } from "react"
-import translate from "../game/lang"
+import translate from "../../game/lang"
 import React from "react"
-import StyledText from "./StyledText"
-import { RoleOutlineOption, getAllRoles, getRolesFromOutlineOption } from "../game/roleListState.d";
-import { Role } from "../game/roleState.d";
+import StyledText from "../StyledText"
+import { RoleOutlineOption, getAllRoles, getRolesFromOutlineOption } from "../../game/roleListState.d";
+import { Role } from "../../game/roleState.d";
 import { RoleOutlineOptionSelector } from "./OutlineSelector";
 import "./disabledRoleSelector.css"
-import Icon from "./Icon";
-import { Button } from "./Button";
+import Icon from "../Icon";
+import { Button } from "../Button";
 import { GameModeContext } from "./GameModesEditor";
 
 

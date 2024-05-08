@@ -10,12 +10,12 @@ import { RoleOutline, RoleList } from "../../game/roleListState.d";
 import LoadingScreen from "../LoadingScreen";
 import StartMenu from "../main/StartMenu";
 import { defaultPhaseTimes } from "../../game/gameState";
-import { GameModeContext } from "../../components/GameModesEditor";
-import PhaseTimesSelector from "../../components/PhaseTimeSelector";
-import { OutlineListSelector } from "../../components/OutlineSelector";
-import DisabledRoleSelector from "../../components/DisabledRoleSelector";
+import { GameModeContext } from "../../components/gameModeSettings/GameModesEditor";
+import PhaseTimesSelector from "../../components/gameModeSettings/PhaseTimeSelector";
+import { OutlineListSelector } from "../../components/gameModeSettings/OutlineSelector";
+import DisabledRoleSelector from "../../components/gameModeSettings/DisabledRoleSelector";
 import Icon from "../../components/Icon";
-import { GameModeSelector } from "../../components/GameModeSelector";
+import { GameModeSelector } from "../../components/gameModeSettings/GameModeSelector";
 import LobbyChatMenu from "./LobbyChatMenu";
 
 export default function LobbyMenu(): ReactElement {
@@ -100,9 +100,11 @@ export default function LobbyMenu(): ReactElement {
                     {Anchor.isMobile() && <h1>{translate("menu.lobby.settings")}</h1>}
                     {isHost && <GameModeSelector 
                         canModifySavedGameModes={false}
-                        setPhaseTimes={pts => GAME_MANAGER.sendSetPhaseTimesPacket(pts)}
-                        setDisabledRoles={roles => GAME_MANAGER.sendExcludedRolesPacket(roles)}
-                        setRoleList={sendRoleList}
+                        loadGameMode={gameMode => {
+                            GAME_MANAGER.sendSetPhaseTimesPacket(gameMode.phaseTimes)
+                            GAME_MANAGER.sendExcludedRolesPacket(gameMode.disabledRoles)
+                            sendRoleList(gameMode.roleList);
+                        }}
                     />}
                     <PhaseTimesSelector 
                         disabled={!isHost}

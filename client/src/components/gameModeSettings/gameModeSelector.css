@@ -1,0 +1,57 @@
+
+.saved-game-modes {
+    max-height: 50vh;
+    overflow-y: auto;
+    display: flex;
+    gap: .25rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
+}
+.save-menu {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.saved-game-modes > div {
+    flex-basis: 40%;
+    flex-grow: 1;
+}
+.saved-game-modes .game-mode-label {
+    display: flex;
+    border: .13rem solid var(--primary-border-color);
+    background-color: var(--secondary-color);
+    border-radius: 0.5rem;
+    align-items: center;
+    justify-content: space-between;
+}
+.saved-game-modes .game-mode-label > span {
+    margin: 0 .25rem;
+}
+.saved-game-modes .game-mode-label span.game-mode-name {
+    flex-grow: 1;
+}
+.saved-game-modes .game-mode-label .game-mode-label-buttons {
+    display: flex;
+    flex-direction: row;
+}
+.saved-game-modes .game-mode-label .game-mode-folder {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+}
+.saved-game-modes .game-mode-label .game-mode-folder .game-mode-folder-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+}
+.saved-game-modes .game-mode-label .game-mode-folder .game-mode-folder-content {
+    display: flex;
+    flex-direction: column;
+    padding: .13rem;
+    gap: .13rem;
+}
+.saved-game-modes .game-mode-label .game-mode-label-buttons > button {
+    margin: .1rem;
+}

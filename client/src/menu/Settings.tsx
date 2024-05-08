@@ -6,7 +6,7 @@ import Anchor from './Anchor';
 import StartMenu from './main/StartMenu';
 import LoadingScreen from './LoadingScreen';
 import { loadSettings, saveSettings } from '../game/localStorage';
-import GameModesEditor from '../components/GameModesEditor';
+import GameModesEditor from '../components/gameModeSettings/GameModesEditor';
 import { CopyButton } from '../components/ClipboardButtons';
 import ReactDOM from 'react-dom';
 import WikiCoverCard from '../components/WikiCoverCard';
