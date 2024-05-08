@@ -88,7 +88,7 @@ export type RoleState = {
 } | {
     type: "witch"
 } | {
-    type: "mafiaWildCard"
+    type: "mafiaWildcard"
     role: Role
 } | {
     type: "jester"
@@ -111,6 +111,9 @@ Doomsayer
     souls: number
 } | {
     type: "wildcard"
+    role: Role
+} | {
+    type: "trueWildcard"
     role: Role
 } | {
     type: "apostle"

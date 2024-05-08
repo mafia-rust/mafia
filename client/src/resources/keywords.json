@@ -39,6 +39,9 @@
     "grave.killer.quit": { "style": "keyword-info"},
     "random.gay": { "style": "keyword-pride","replacement": "random.gay","link": "role/transporter"},
     "random.trans": { "style": "keyword-trans","replacement": "random.trans","link": "role/transporter"},
+    
+    "role.wildcard.name": { "style": "keyword-pride","replacement": "role.wildcard.name"},
+    "role.trueWildcard.name": { "style": "keyword-pride","replacement": "role.trueWildcard.name"},
 
 
     "noAll.icon": {"link":"standard/chatGroup"},

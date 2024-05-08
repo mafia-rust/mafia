@@ -59,9 +59,6 @@
     font-style: italic;
     color: gray;
 }
-.keyword-disabled, .keyword-disabled * {
-    color: gray
-}
 .keyword-pride, .keyword-trans {
     background-clip: text;
     color: rgba(255,255,255,.2);
@@ -69,8 +66,31 @@
     -webkit-text-fill-color: rgba(255,255,255,.2);
 }
 .keyword-pride {
-    background-image: linear-gradient(to left, violet, indigo, cyan, green, yellow, orange, red);
+    background-image: linear-gradient(to left, red, violet, rgb(103, 0, 177), rgb(0, 202, 202), green, rgb(216, 216, 0), orange, red);
+    background-size: 100px;
+    animation: scrolling-rainbow 3s linear infinite;
+    text-shadow: -.05rem -.05rem .1rem #ffffff66, .1rem .1rem .1rem rgb(0, 0, 0);
+
 }
 .keyword-trans {
     background-image: linear-gradient(to left, cyan, pink, white, pink, cyan);
+}
+.keyword-disabled * {
+    color: gray;
+    background-color: gray;
+    background-clip: text;
+    background-image: unset;
+    text-shadow: none;
+    
+}
+@keyframes scrolling-rainbow {
+    0% {
+        background-position: 0;
+    }
+    50% {
+        background-position: 50px;
+    }
+    100% {
+        background-position: 100px;
+    }
 }

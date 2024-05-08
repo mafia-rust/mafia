@@ -535,7 +535,7 @@
             {"type": "youWerePossessed", "immune": true}
         ]
     },
-    "mafiaWildCard": {
+    "mafiaWildcard": {
         "faction": "mafia",
         "roleSet": null,
         "armor": false,
@@ -544,7 +544,7 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "roleAssignment", "role":"mafiaWildCard"},
+            {"type": "roleAssignment", "role":"mafiaWildcard"},
             {"type": "wildcardConvertFailed", "role": "godfather"}
         ]
     },
@@ -655,6 +655,19 @@
         "chatMessages":[
             {"type": "roleAssignment", "role":"wildcard"},
             {"type": "wildcardConvertFailed", "role": "veteran"}
+        ]
+    },
+    "trueWildcard": {
+        "faction": "neutral",
+        "roleSet": null,
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "roleAssignment", "role":"trueWildcard"},
+            {"type": "wildcardConvertFailed", "role": "apostle"}
         ]
     },
     "arsonist": {

@@ -209,17 +209,20 @@ impl Game {
                     sender_player_ref.set_role_state(self, RoleState::Doomsayer(doomsayer));
                 }
             }
-            ToServerPacket::SetWildCardRole { role } => {
+            ToServerPacket::SetWildcardRole { role } => {
                 if let RoleState::Wildcard(mut wild_card) = sender_player_ref.role_state(self).clone(){
                     wild_card.role = role;
                     sender_player_ref.set_role_state(self, RoleState::Wildcard(wild_card));
-                }else if let RoleState::MafiaWildCard(mut mafia_wild_card) = sender_player_ref.role_state(self).clone(){
+                }else if let RoleState::MafiaWildcard(mut mafia_wild_card) = sender_player_ref.role_state(self).clone(){
                     if role.faction() == Faction::Mafia {
                         mafia_wild_card.role = role;
-                        sender_player_ref.set_role_state(self, RoleState::MafiaWildCard(mafia_wild_card));
+                        sender_player_ref.set_role_state(self, RoleState::MafiaWildcard(mafia_wild_card));
                     }else{
-                        sender_player_ref.set_role_state(self, RoleState::MafiaWildCard(mafia_wild_card));
+                        sender_player_ref.set_role_state(self, RoleState::MafiaWildcard(mafia_wild_card));
                     }
+                }else if let RoleState::TrueWildcard(mut true_wildcard) = sender_player_ref.role_state(self).clone(){
+                    true_wildcard.role = role;
+                    sender_player_ref.set_role_state(self, RoleState::TrueWildcard(true_wildcard));
                 }
             }
             ToServerPacket::SetJournalistJournal { journal } => {

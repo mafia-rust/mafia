@@ -332,11 +332,11 @@
     "role.framer.target": "Frame",
     "role.framer.dayTarget": "Special",
 
-    "role.mafiaWildCard.name": "Mafia Wildcard",
-    "role.mafiaWildCard.name:var.0": "Mafia Wildcards",
-    "role.mafiaWildCard.target": "Target",
-    "role.mafiaWildCard.dayTarget": "Special",
-    "role.mafiaWildCard.smallRoleMenu": "Choose a mafia role to become",
+    "role.mafiaWildcard.name": "Mafia Wildcard",
+    "role.mafiaWildcard.name:var.0": "Mafia Wildcards",
+    "role.mafiaWildcard.target": "Target",
+    "role.mafiaWildcard.dayTarget": "Special",
+    "role.mafiaWildcard.smallRoleMenu": "Choose a mafia role to become",
 
     "role.jester.name": "Jester",
     "role.jester.name:var.0": "Jesters",
@@ -385,10 +385,16 @@
     "role.death.roleDataText": "Souls collected: \\0",
 
     "role.wildcard.name": "Wildcard",
-    "role.wildcard.name:var.0": "WildCards",
+    "role.wildcard.name:var.0": "Wildcards",
     "role.wildcard.target": "Target",
     "role.wildcard.dayTarget": "Special",
     "role.wildcard.smallRoleMenu": "Choose a role to become",
+
+    "role.trueWildcard.name": "True Wildcard",
+    "role.trueWildcard.name:var.0": "True Wildcards",
+    "role.trueWildcard.target": "Target",
+    "role.trueWildcard.dayTarget": "Special",
+    "role.trueWildcard.smallRoleMenu": "Choose a role to become",
 
     "role.apostle.name": "Apostle",
     "role.apostle.name:var.0": "Apostles",
@@ -1067,10 +1073,10 @@
     "wiki.article.role.framer.attributes":"",
     "wiki.article.role.framer.extra":"-A suspicious aura will make the player with it look suspicious to a Detective, they can appear as the evil player to a Psychic, and they will be enemies with everyone to a Philosopher\n* You can't select other mafia members for your first target, but you can select any player for your second target, including dead players and other mafia members\n* For more information, see appeared visits",
 
-    "wiki.article.role.mafiaWildCard.guide": "* Choose a mafia role to become that role\n    * You become that role when night starts\n* You can't become a role that has exceeded its role limit",
-    "wiki.article.role.mafiaWildCard.abilities":"* Become a role you choose at the start of night",
-    "wiki.article.role.mafiaWildCard.attributes":"* You can't become a mafioso or godfather\n* You can not become a role that is disabled\n* You can not become a role that is taken by too many players",
-    "wiki.article.role.mafiaWildCard.extra":"* If you choose a role that was disabled you stay as the Mafia Wildcard\n* You can choose Mafia Wildcard to stay as Mafia Wildcard\n* You can't become a role that is at its role limit, for example, you can't become a witch even if there is already one in the game, even if that witch is dead",
+    "wiki.article.role.mafiaWildcard.guide": "* Choose a mafia role to become that role\n    * You become that role when night starts\n* You can't become a role that has exceeded its role limit",
+    "wiki.article.role.mafiaWildcard.abilities":"* Become a role you choose at the start of night",
+    "wiki.article.role.mafiaWildcard.attributes":"* You can't become a mafioso or godfather\n* You can not become a role that is disabled\n* You can not become a role that is taken by too many players",
+    "wiki.article.role.mafiaWildcard.extra":"* If you choose a role that was disabled you stay as the Mafia Wildcard\n* You can choose Mafia Wildcard to stay as Mafia Wildcard\n* You can't become a role that is at its role limit, for example, you can't become a witch even if there is already one in the game, even if that witch is dead",
 
     "wiki.article.role.jester.guide": "- Get executed during the day to win\n- After you win by getting executed, you can attack any living player who voted you guilty or abstained\n\nTry to look evil so people vote you, without making it obvious that you are the Jester.",
     "wiki.article.role.jester.abilities":"* When you are executed, you win\n* On the night after you are executed, attack the player you select\n",
@@ -1121,6 +1127,11 @@
     "wiki.article.role.wildcard.abilities":"* Become a role you choose at the start of night",
     "wiki.article.role.wildcard.attributes":"* You can not become a role that is disabled\n* You can not become a role that is taken by too many players",
     "wiki.article.role.wildcard.extra":"* If you choose a role that was disabled you stay as the Wildcard\n* You can choose wildcard to stay as wildcard\n* You can't become a role that is at its role limit, if there is a veteran in the game, you can't become one, even if the veteran is dead",
+    
+    "wiki.article.role.trueWildcard.guide": "* Choose a role to become that role\n    * You become that role when night starts\n* You can't become a role that is disabled, but you can become a role that is taken, so there can be two veterans",
+    "wiki.article.role.trueWildcard.abilities":"* Become a role you choose at the start of night",
+    "wiki.article.role.trueWildcard.attributes":"* You can not become a role that is disabled\n* You can become a role that is taken by too many players",
+    "wiki.article.role.trueWildcard.extra":"* If you choose a role that was disabled you stay as the True Wildcard\n* You can choose true wildcard to stay as true wildcard\n* You can become a role that is at its role limit, if there is a veteran in the game, you still can become one",
 
     "wiki.article.role.martyr.guide": "If you die, you win, and everyone commits suicide in an attempt to follow you to the afterlife. The entire town knows that you're the martyr. Good Luck!",
     "wiki.article.role.martyr.abilities":"* Visit yourself to attack yourself and spend one bullet\n* You start with 5 bullets\n* When you die, everyone else commits suicide and you win.",

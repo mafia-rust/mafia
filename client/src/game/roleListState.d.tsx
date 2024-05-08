@@ -37,13 +37,13 @@ export function getRolesFromRoleListRemoveExclusionsAddConversions(roleList: Rol
 
     
     for(let role of roles){
-        if(role==="wildcard"){
+        if(role==="wildcard"||role==="trueWildcard"){
             getRolesComplement(excludedRoles).forEach((role) => {
                 out.push(role);
             });
             break;
         }
-        if(role==="mafiaWildCard"){
+        if(role==="mafiaWildcard"){
             getRolesComplement(excludedRoles)
                 .filter((role)=>getFactionFromRole(role)==="mafia")
                 .filter((role)=>role!=="godfather" && role!=="mafioso")

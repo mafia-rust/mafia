@@ -14,21 +14,21 @@ use super::{Priority, RoleStateImpl, Role};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct MafiaWildcard{
+pub struct TrueWildcard{
     pub role: Role
 }
-impl Default for MafiaWildcard {
+impl Default for TrueWildcard {
     fn default() -> Self {
         Self {
-            role: Role::MafiaWildcard
+            role: Role::TrueWildcard
         }
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Mafia;
+pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
-impl RoleStateImpl for MafiaWildcard {
+impl RoleStateImpl for TrueWildcard {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
     
 
@@ -47,7 +47,7 @@ impl RoleStateImpl for MafiaWildcard {
         vec![]
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Mafia])
+        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
     }
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
@@ -74,20 +74,16 @@ impl RoleStateImpl for MafiaWildcard {
     }
 }
 
-impl MafiaWildcard {
+impl TrueWildcard {
     fn become_role(&self, game: &mut Game, actor_ref: PlayerReference) {
 
+        if self.role == Role::TrueWildcard {return;}
 
-        if self.role == Role::MafiaWildcard {return;}
-
-        if
-            self.role.faction() == Faction::Mafia &&
+        if 
             role_can_generate(
                 self.role, 
                 &game.settings.excluded_roles, 
-                &PlayerReference::all_players(game)
-                    .map(|player_ref| player_ref.role(game))
-                    .collect::<Vec<Role>>()
+                &[]
             )
         {
             actor_ref.set_role(game, self.role.default_state());
