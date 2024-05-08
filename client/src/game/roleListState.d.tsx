@@ -43,7 +43,7 @@ export function getRolesFromRoleListRemoveExclusionsAddConversions(roleList: Rol
             });
             break;
         }
-        if(role==="mafiaWildCard"){
+        if(role==="mafiaWildcard"){
             getRolesComplement(excludedRoles)
                 .filter((role)=>getFactionFromRole(role)==="mafia")
                 .filter((role)=>role!=="godfather" && role!=="mafioso")

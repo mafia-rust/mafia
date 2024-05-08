@@ -436,9 +436,9 @@ export function createGameManager(): GameManager {
                 guesses: guesses
             });
         },
-        sendSetWildCardRoleOutline(role) {
+        sendSetWildcardRoleOutline(role) {
             this.server.sendPacket({
-                type: "setWildCardRole",
+                type: "setWildcardRole",
                 role: role
             });
         },

@@ -216,7 +216,7 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SetDoomsayerGuess{ guesses: [(PlayerReference, DoomsayerGuess); 3] },
     #[serde(rename_all = "camelCase")]
-    SetWildCardRole{ role: Role },
+    SetWildcardRole{ role: Role },
     #[serde(rename_all = "camelCase")]
     SetJournalistJournal{ journal: String},
     #[serde(rename_all = "camelCase")]

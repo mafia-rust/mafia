@@ -14,13 +14,13 @@ use super::{Priority, RoleStateImpl, Role};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct MafiaWildCard{
+pub struct MafiaWildcard{
     pub role: Role
 }
-impl Default for MafiaWildCard {
+impl Default for MafiaWildcard {
     fn default() -> Self {
         Self {
-            role: Role::MafiaWildCard
+            role: Role::MafiaWildcard
         }
     }
 }
@@ -28,7 +28,7 @@ impl Default for MafiaWildCard {
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
-impl RoleStateImpl for MafiaWildCard {
+impl RoleStateImpl for MafiaWildcard {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
     
 
@@ -74,11 +74,11 @@ impl RoleStateImpl for MafiaWildCard {
     }
 }
 
-impl MafiaWildCard {
+impl MafiaWildcard {
     fn become_role(&self, game: &mut Game, actor_ref: PlayerReference) {
 
 
-        if self.role == Role::MafiaWildCard {return;}
+        if self.role == Role::MafiaWildcard {return;}
 
         if
             self.role.faction() == Faction::Mafia &&

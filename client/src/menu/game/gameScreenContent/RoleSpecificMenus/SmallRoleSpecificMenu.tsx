@@ -125,10 +125,10 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
                     value={this.state.gameState.clientState.roleState.role ?? "wildcard"}
                     disabledRoles={this.state.gameState.excludedRoles} 
                     onChange={(rle)=>{
-                        GAME_MANAGER.sendSetWildCardRoleOutline(rle);
+                        GAME_MANAGER.sendSetWildcardRoleOutline(rle);
                     }}
                 /></div></>;
-            case "mafiaWildCard":
+            case "mafiaWildcard":
                 const all_choosable_mafia: Role[] = Object.keys(ROLES).filter((rle)=>
                     ROLES[rle as keyof typeof ROLES].faction === "mafia" &&
                     rle !== "godfather" &&
@@ -136,11 +136,11 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
                     !this.state.gameState.excludedRoles.includes(rle as Role)
                 ).map((r)=>r as Role);
 
-                return <><StyledText>{translate("role.mafiaWildCard.smallRoleMenu")}</StyledText><div><RoleDropdown 
-                    value={this.state.gameState.clientState.roleState.role ?? "mafiaWildCard"} 
+                return <><StyledText>{translate("role.mafiaWildcard.smallRoleMenu")}</StyledText><div><RoleDropdown 
+                    value={this.state.gameState.clientState.roleState.role ?? "mafiaWildcard"} 
                     disabledRoles={getRolesComplement(all_choosable_mafia)}
                     onChange={(rle)=>{
-                        GAME_MANAGER.sendSetWildCardRoleOutline(rle);
+                        GAME_MANAGER.sendSetWildcardRoleOutline(rle);
                     }}
                 /></div></>;
             case "martyr":

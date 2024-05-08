@@ -246,7 +246,7 @@ export type ToServerPacket = {
         [number, DoomsayerGuess]
     ]
 } | {
-    type: "setWildCardRole",
+    type: "setWildcardRole",
     role: Role
 } | {
     type: "setJournalistJournal",

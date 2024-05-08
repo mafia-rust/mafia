@@ -20,7 +20,7 @@ pub struct TrueWildcard{
 impl Default for TrueWildcard {
     fn default() -> Self {
         Self {
-            role: Role::Wildcard
+            role: Role::TrueWildcard
         }
     }
 }

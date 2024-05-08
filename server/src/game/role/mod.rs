@@ -73,7 +73,7 @@ macros::roles! {
     Informant: informant,
     Witch : witch,
     Necromancer : necromancer,
-    MafiaWildCard: mafia_wild_card,
+    MafiaWildcard: mafia_wild_card,
 
     Mortician : mortician,
     Framer : framer,

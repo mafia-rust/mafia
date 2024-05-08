@@ -97,7 +97,7 @@ export type GameManager = {
         [number, DoomsayerGuess],
         [number, DoomsayerGuess]
     ]): void;
-    sendSetWildCardRoleOutline(roleOutline: Role): void;
+    sendSetWildcardRoleOutline(roleOutline: Role): void;
     sendSetJournalistJournal(journal: string): void;
     sendSetJournalistJournalPublic(isPublic: boolean): void;
     sendSetConsortOptions(

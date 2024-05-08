@@ -535,7 +535,7 @@
             {"type": "youWerePossessed", "immune": true}
         ]
     },
-    "mafiaWildCard": {
+    "mafiaWildcard": {
         "faction": "mafia",
         "roleSet": null,
         "armor": false,
@@ -544,7 +544,7 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "roleAssignment", "role":"mafiaWildCard"},
+            {"type": "roleAssignment", "role":"mafiaWildcard"},
             {"type": "wildcardConvertFailed", "role": "godfather"}
         ]
     },
