@@ -84,15 +84,10 @@ impl EndGameCondition {
     }
     ///Town, Mafia, Cult, NK
     pub fn keeps_game_running(role: Role)->bool{
-        match role {
-            Role::Jester | 
-            Role::Provocateur |
-            Role::Politician |
-            Role::Death |
-            Role::Minion |
-            Role::Doomsayer |
-            Role::Wildcard => false,
-            _ => true
+        if role.faction() == Faction::Neutral{
+            false
+        }else{
+            true
         }
     }
 }

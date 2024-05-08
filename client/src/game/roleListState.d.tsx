@@ -37,7 +37,7 @@ export function getRolesFromRoleListRemoveExclusionsAddConversions(roleList: Rol
 
     
     for(let role of roles){
-        if(role==="wildcard"){
+        if(role==="wildcard"||role==="trueWildcard"){
             getRolesComplement(excludedRoles).forEach((role) => {
                 out.push(role);
             });
