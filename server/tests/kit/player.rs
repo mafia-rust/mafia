@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use mafia_server::{game::{chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::RoleState, tag::Tag, verdict::Verdict, Game}, packet::ToServerPacket};
+use vec1::Vec1;
 
 #[derive(Clone, Copy, Debug)]
 pub struct TestPlayer(PlayerReference, *mut Game);
@@ -108,7 +109,7 @@ impl TestPlayer {
         self.0.set_role_state(game!(self), new_role_data);
     }
 
-    pub fn get_player_tags(&self) -> &HashMap<PlayerReference, Vec<Tag>> {
+    pub fn get_player_tags(&self) -> &HashMap<PlayerReference, Vec1<Tag>> {
         self.0.player_tags(game!(self))
     }
 

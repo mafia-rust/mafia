@@ -1,5 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
+use vec1::Vec1;
+
 use crate::{
     game::{
         chat::{
@@ -106,36 +108,39 @@ impl PlayerReference{
         });
     }
 
-    pub fn player_tags<'a>(&self, game: &'a Game) -> &'a HashMap<PlayerReference, Vec<Tag>>{
+    pub fn player_tags<'a>(&self, game: &'a Game) -> &'a HashMap<PlayerReference, Vec1<Tag>>{
         &self.deref(game).player_tags
     }  
     pub fn push_player_tag(&self, game: &mut Game, key: PlayerReference, value: Tag){
         if let Some(player_tags) = self.deref_mut(game).player_tags.get_mut(&key){
             player_tags.push(value);
         }else{
-            self.deref_mut(game).player_tags.insert(key, vec![value]);
+            self.deref_mut(game).player_tags.insert(key, vec1::vec1![value]);
         }
         self.send_packet(game, ToClientPacket::YourPlayerTags { player_tags: PlayerReference::ref_map_to_index(self.deref(game).player_tags.clone()) });
     }
     pub fn remove_player_tag(&self, game: &mut Game, key: PlayerReference, value: Tag){
         let Some(player_tags) = self.deref_mut(game).player_tags.get_mut(&key) else {return};
-        *player_tags = player_tags.iter().filter(|t|**t!=value).map(Clone::clone).collect();
-        if player_tags.is_empty() {
-            self.deref_mut(game).player_tags.remove(&key);
+
+        match Vec1::try_from_vec(
+            player_tags.clone()
+                .into_iter()
+                .filter(|t|*t!=value)
+                .collect()
+        ){
+            Ok(new_player_tags) => *player_tags = new_player_tags,
+            Err(_) => {
+                self.deref_mut(game).player_tags.remove(&key);
+            },
         }
-        self.send_packet(game, ToClientPacket::YourPlayerTags { player_tags: PlayerReference::ref_map_to_index(self.deref(game).player_tags.clone()) });
+        self.send_packet(game, ToClientPacket::YourPlayerTags{
+            player_tags: PlayerReference::ref_map_to_index(self.deref(game).player_tags.clone())
+        });
     }
     pub fn remove_player_tag_on_all(&self, game: &mut Game, value: Tag){
         for player_ref in PlayerReference::all_players(game){
-
-            let Some(player_tags) = self.deref_mut(game).player_tags.get_mut(&player_ref) else {continue;};
-            *player_tags = player_tags.iter().filter(|t|**t!=value).map(Clone::clone).collect();
-            if player_tags.is_empty() {
-                self.deref_mut(game).player_tags.remove(&player_ref);
-            }
-            
+            self.remove_player_tag(game, player_ref, value)
         }
-        self.send_packet(game, ToClientPacket::YourPlayerTags { player_tags: PlayerReference::ref_map_to_index(self.deref(game).player_tags.clone()) });
     }
 
     pub fn add_private_chat_message(&self, game: &mut Game, message: ChatMessageVariant) {

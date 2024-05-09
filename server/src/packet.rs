@@ -19,6 +19,7 @@
 use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
+use vec1::Vec1;
 
 use crate::{game::{
     available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{doomsayer::DoomsayerGuess, ojo::OjoAction, Role, RoleState}, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
@@ -95,7 +96,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     YourRoleLabels{role_labels: HashMap<PlayerIndex, Role>},
     #[serde(rename_all = "camelCase")]
-    YourPlayerTags{player_tags: HashMap<PlayerIndex, Vec<Tag>>},
+    YourPlayerTags{player_tags: HashMap<PlayerIndex, Vec1<Tag>>},
     YourWill{will: String},
     YourNotes{notes: String},
     #[serde(rename_all = "camelCase")]

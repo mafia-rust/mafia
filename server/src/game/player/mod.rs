@@ -6,6 +6,7 @@ mod player_helper_functions;
 
 pub use player_reference::PlayerIndex;
 pub use player_reference::PlayerReference;
+use vec1::Vec1;
 
 use std::collections::HashMap;
 use std::collections::HashSet;
@@ -42,7 +43,7 @@ pub struct Player {
     death_note: Option<String>,
 
     role_labels: HashSet<PlayerReference>,
-    player_tags: HashMap<PlayerReference, Vec<Tag>>,
+    player_tags: HashMap<PlayerReference, Vec1<Tag>>,
 
 
     pub chat_messages: Vec<ChatMessage>,
