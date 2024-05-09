@@ -63,7 +63,7 @@ export default function Wiki(props: {
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             onBack={goBack}
-            onClear={() => {setSearchQuery(""); setArticle(null)}}
+            onClear={() => {setSearchQuery(""); setArticle(null); setHistory([]);}}
         />
         {
             article === null ?
@@ -90,7 +90,9 @@ function WikiSearchBar(props: {
             <Icon>arrow_back</Icon>
         </button>
         <input type="text" value={props.searchQuery}
-            onChange={(e)=>{props.onSearchChange(e.target.value)}}
+            onChange={(e)=>{
+                props.onSearchChange(e.target.value.trimStart())}
+            }
             placeholder={translate("menu.wiki.search.placeholder")}
         />
         <button tabIndex={-1} onClick={props.onClear}>
@@ -107,52 +109,75 @@ function WikiSearchResults(props: {
 }): ReactElement {
 
     function getSearchResults(search: string): WikiArticleLink[] {
-        return ARTICLES.filter(
-            (page) => {
-                return RegExp(regEscape(search.trim()), 'i').test(getArticleTitle(page)) || 
-                getSearchStrings(page).some((str) => RegExp(regEscape(search.trim()), 'i').test(str))
-            }
-        );
+        const out = [
+            ...ARTICLES.filter((page) => {return RegExp(regEscape(search.trim()), 'i').test(getArticleTitle(page))}), 
+            ...ARTICLES.filter((page) => {return getSearchStrings(page).some((str) => RegExp(regEscape(search.trim()), 'i').test(str))})
+        ];
+        return out.filter((item, index) => out.indexOf(item) === index);
     }
 
-    let results = getSearchResults(props.searchQuery);
-    let elements = [];
-    let standardHeaderAdded = false;
-    let lastArticleRoleFaction = null;
-    for(let page of results){
+    let searchResultsHtml = [];
+    const results = getSearchResults(props.searchQuery);
+    if (props.searchQuery === ""){
+        let standardHeaderAdded = false;
+        let lastArticleRoleFaction = null;
+        for(let page of results){
 
-        let articleType = page.split("/")[0];
+            let articleType = page.split("/")[0];
 
-        if(!standardHeaderAdded && articleType === "standard"){
-            elements.push(<h3 key={articleType} className="wiki-search-divider"><StyledText>{translate(articleType)}</StyledText></h3>);
-            standardHeaderAdded = true;
-        }
-
-        if(articleType === "role"){
-            const role = page.split("/")[1] as Role;
-            const faction = getFactionFromRole(role);
-
-            if(faction !== lastArticleRoleFaction){
-                elements.push(<h3 key={faction} className="wiki-search-divider"><StyledText>{translate(faction)}</StyledText></h3>);
-                lastArticleRoleFaction = faction;
+            if(!standardHeaderAdded && articleType === "standard"){
+                searchResultsHtml.push(<h3 key={articleType} className="wiki-search-divider"><StyledText>{translate(articleType)}</StyledText></h3>);
+                standardHeaderAdded = true;
             }
-        }
 
-        let className = undefined;
-        if(props.disabledRoles !== undefined && props.disabledRoles.map(role => `role/${role}`).includes(page)) {
-            className = "keyword-disabled";
-        }
+            if(articleType === "role"){
+                const role = page.split("/")[1] as Role;
+                const faction = getFactionFromRole(role);
 
-        elements.push(
-            <button key={page} onClick={() => props.onChooseArticle(page)}>
-                <StyledText noLinks={true} className={className}>
-                    {getArticleTitle(page)}
-                </StyledText>
-            </button>
-        );
+                if(faction !== lastArticleRoleFaction){
+                    searchResultsHtml.push(<h3 key={faction} className="wiki-search-divider"><StyledText>{translate(faction)}</StyledText></h3>);
+                    lastArticleRoleFaction = faction;
+                }
+            }
+
+            let className = undefined;
+            if(props.disabledRoles !== undefined && props.disabledRoles.map(role => `role/${role}`).includes(page)) {
+                className = "keyword-disabled";
+            }
+
+            searchResultsHtml.push(
+                <WikiSearchResult key={page} page={page} className={className} onChooseArticle={() => props.onChooseArticle(page)}/>
+            );
+        }
+    }else{
+        for(let page of results){
+
+            let className = undefined;
+            if(props.disabledRoles !== undefined && props.disabledRoles.map(role => `role/${role}`).includes(page)) {
+                className = "keyword-disabled";
+            }
+
+            searchResultsHtml.push(
+                <WikiSearchResult key={page} page={page} className={className} onChooseArticle={() => props.onChooseArticle(page)}/>
+            );
+        }
     }
+
+    
 
     return <div className="wiki-results">
-        {elements}
+        {searchResultsHtml}
     </div>
+}
+
+function WikiSearchResult(props: {
+    page: WikiArticleLink,
+    className?: string,
+    onChooseArticle: (article: WikiArticleLink) => void
+}): ReactElement {
+    return <button key={props.page} onClick={() => props.onChooseArticle(props.page)}>
+        <StyledText noLinks={true} className={props.className}>
+            {getArticleTitle(props.page)}
+        </StyledText>
+</button>
 }
