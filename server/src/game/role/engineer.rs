@@ -92,7 +92,6 @@ impl RoleStateImpl for Engineer {
                             attacker != actor_ref
                         {
                             attacker.try_night_kill(actor_ref, game, crate::game::grave::GraveKiller::Role(Role::Engineer), 2, false);
-                            actor_ref.push_night_message(game, ChatMessageVariant::EngineerYouAttackedVisitor);
                         }
                     }
                 }
