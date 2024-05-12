@@ -136,6 +136,9 @@ impl RoleStateImpl for Marksman {
     }
     fn do_day_action(mut self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
         self.state.toggle_mark(target_ref);
+        if self.state.marks().len() == 0 {
+            actor_ref.set_chosen_targets(game, vec![]);
+        }
         actor_ref.set_role_state(game, RoleState::Marksman(self))
     }
     fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
