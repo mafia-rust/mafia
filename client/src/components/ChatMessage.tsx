@@ -467,6 +467,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "psychicFailed":
         case "phaseFastForwarded":
         case "copAttackedVisitor":
+        case "marksmanAttackedVisitor":
         case "mayorCantWhisper":
             return translate("chatMessage."+message.type);
         case "playerDied":
@@ -652,6 +653,8 @@ export type ChatMessageVariant = {
     result: AuditorResult,
 } | {
     type: "copAttackedVisitor"
+} | {
+    type: "marksmanAttackedVisitor"
 } | {
     type: "veteranAttackedYou"
 } | {

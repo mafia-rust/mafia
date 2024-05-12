@@ -161,6 +161,7 @@ pub enum ChatMessageVariant {
     VeteranAttackedVisitor,
 
     CopAttackedVisitor,
+    MarksmanAttackedVisitor,
 
     EngineerVisitorsRole{role: Role},
     EngineerYouAttackedVisitor,

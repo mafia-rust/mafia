@@ -1,7 +1,7 @@
 
 use serde::Serialize;
 
-use crate::game::chat::ChatGroup;
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -120,6 +120,7 @@ impl RoleStateImpl for Marksman {
                     
                     if !visiting_players.contains(&mark) {continue};
                     
+                    actor_ref.push_night_message(game, ChatMessageVariant::MarksmanAttackedVisitor);
                     let killed = mark.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Marksman), 1, false);
 
                     if killed && mark.role(game).faction() == Faction::Town {
