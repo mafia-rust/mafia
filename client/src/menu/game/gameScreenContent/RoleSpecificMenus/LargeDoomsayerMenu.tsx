@@ -19,7 +19,7 @@ export const DOOMSAYER_GUESSES = [
     "mafia", "neutral", "fiends", "cult",
     "jailor",  
     "doctor",  "bodyguard",  "cop", "bouncer", "engineer",
-    "vigilante",  "veteran",  "deputy",
+    "vigilante",  "veteran", "marksman", "deputy",
     "escort",  "medium",  "retributionist", "journalist", "mayor",  "transporter", 
 ];
 

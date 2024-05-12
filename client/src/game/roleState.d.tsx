@@ -51,6 +51,13 @@ export type RoleState = {
     type: "veteran"
     alertsRemaining: number,
 } | {
+    type: "marksman"
+    state: {type:"notLoaded"} | {type:"shotTownie"} | 
+    {
+        type: "marks"
+        marks: {type:"none"}|{type:"one",a:PlayerIndex}|{type:"two",a:PlayerIndex,b:PlayerIndex}
+    }
+} | {
     type: "deputy"
 } | {
     type: "escort"

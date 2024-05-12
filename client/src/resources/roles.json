@@ -251,6 +251,18 @@
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
+    "marksman":{
+        "faction": "town",
+        "roleSet": "townKilling",
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "someoneSurvivedYourAttack"}
+        ]
+    },
     "deputy": {
         "faction": "town",
         "roleSet": "townKilling",
