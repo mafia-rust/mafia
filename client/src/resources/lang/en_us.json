@@ -698,6 +698,8 @@
     "chatMessage.ojoSelection.see": "You choose to see \\0.",
     "chatMessage.ojoSelection.kill": "You choose to kill \\0.",
     "chatMessage.ojoSelection.none": "You choose nothing.",
+    "chatMessage.marksmanChosenMarks": "The marksman chose their marks to be these players: \\0.",
+    "chatMessage.marksmanChosenMarks.none": "The marksman chose to mark nobody.",
     "chatMessage.apostleCanConvertTonight": "The cult can convert tonight.",
     "chatMessage.apostleCantConvertTonight": "The cult can not convert tonight.",
     "chatMessage.cultSacrificesRequired": "The cult requires \\0 more sacrifices to convert.",

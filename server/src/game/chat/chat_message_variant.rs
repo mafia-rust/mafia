@@ -1,6 +1,19 @@
 use serde::{Deserialize, Serialize};
 
-use crate::game::{grave::Grave, phase::PhaseState, player::PlayerIndex, role::{auditor::AuditorResult, engineer::TrapState, ojo::OjoAction, spy::SpyBug, Role}, role_list::RoleOutline, verdict::Verdict};
+use crate::game::{
+    grave::Grave,
+    phase::PhaseState,
+    player::PlayerIndex,
+    role::{
+        auditor::AuditorResult,
+        engineer::TrapState,
+        ojo::OjoAction,
+        spy::SpyBug,
+        Role
+    },
+    role_list::RoleOutline,
+    verdict::Verdict
+};
 
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
@@ -185,6 +198,8 @@ pub enum ChatMessageVariant {
     ConsigliereResult{ role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
     OjoSelection{action: OjoAction},
+    #[serde(rename_all = "camelCase")]
+    MarksmanChosenMarks{marks: Vec<PlayerIndex>},
 
     TargetIsPossessionImmune,
     YouWerePossessed { immune: bool },
