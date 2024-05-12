@@ -189,7 +189,7 @@ impl RoleStateImpl for Marksman {
         crate::game::role::common_role::get_won_game(game, actor_ref)
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
-        if phase == PhaseType::Night && game.day_number()!=1{
+        if matches!(phase, PhaseType::Night|PhaseType::Obituary) && game.day_number() != 1 {
             actor_ref.set_role_state(game, 
                 RoleState::Marksman(Marksman{
                     state:MarksmanState::Marks { marks: MarksmanMarks::None }
