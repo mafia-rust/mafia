@@ -106,7 +106,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     YourRoleState{role_state: RoleState},
     #[serde(rename_all = "camelCase")]
-    YourTarget{player_indices: Vec<PlayerIndex>},
+    YourSelection{player_indices: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
     YourVoting{player_index: Option<PlayerIndex>},
     #[serde(rename_all = "camelCase")]

@@ -63,9 +63,9 @@ impl RoleStateImpl for Jailor {
             _ => {}
         }
     }
-    fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         target_ref.night_jailed(game) &&
-        actor_ref.chosen_targets(game).is_empty() &&
+        actor_ref.selection(game).is_empty() &&
         actor_ref != target_ref &&
         actor_ref.alive(game) &&
         target_ref.alive(game) &&
@@ -88,7 +88,7 @@ impl RoleStateImpl for Jailor {
         actor_ref != target_ref &&
         actor_ref.alive(game) && target_ref.alive(game)
     }
-    fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, true)
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {

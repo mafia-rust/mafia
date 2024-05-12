@@ -7,7 +7,7 @@ pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_r
     
     actor_ref != target_ref &&
     !actor_ref.night_jailed(game) &&
-    actor_ref.chosen_targets(game).is_empty() &&
+    actor_ref.selection(game).is_empty() &&
     actor_ref.alive(game) &&
     target_ref.alive(game) &&
     !same_evil_team(game, actor_ref, target_ref)

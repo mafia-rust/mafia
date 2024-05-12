@@ -65,7 +65,7 @@ impl Game {
                         break 'packet_match;
                     },
                 };
-                sender_player_ref.set_chosen_targets(self, target_ref_list.clone());
+                sender_player_ref.set_selection(self, target_ref_list.clone());
                 
                 let mut target_message_sent = false;
                 for chat_group in sender_player_ref.get_current_send_chat_groups(self){

@@ -38,7 +38,7 @@ impl RoleStateImpl for Veteran {
         match priority {
             Priority::TopPriority => {
                 if self.alerts_remaining > 0 {
-                    if let Some(selection) = actor_ref.chosen_targets(game).first(){
+                    if let Some(selection) = actor_ref.selection(game).first(){
                         if *selection == actor_ref{
                             actor_ref.set_role_state(game, RoleState::Veteran(Veteran { 
                                 alerts_remaining: self.alerts_remaining - 1, 
@@ -76,11 +76,11 @@ impl RoleStateImpl for Veteran {
         }
     }
     
-    fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         actor_ref == target_ref &&
         !actor_ref.night_jailed(game) &&
         self.alerts_remaining > 0 &&
-        actor_ref.chosen_targets(game).is_empty() &&
+        actor_ref.selection(game).is_empty() &&
         actor_ref.alive(game)
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
@@ -89,7 +89,7 @@ impl RoleStateImpl for Veteran {
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target: PlayerReference) -> bool {
         false
     }
-    fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         vec![]
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {

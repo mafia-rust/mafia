@@ -41,20 +41,20 @@ impl RoleStateImpl for Philosopher {
         actor_ref.push_night_message(game, message);
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
-    fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         actor_ref != target_ref &&
         !actor_ref.night_jailed(game) &&
         actor_ref.alive(game) &&
         target_ref.alive(game) &&
         (
-            actor_ref.chosen_targets(game).is_empty() || 
-            actor_ref.chosen_targets(game).len() == 1 && *actor_ref.chosen_targets(game).get(0).unwrap() != target_ref
+            actor_ref.selection(game).is_empty() || 
+            actor_ref.selection(game).len() == 1 && *actor_ref.selection(game).get(0).unwrap() != target_ref
         )
     }
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false
     }
-    fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() == 2 {
             vec![
                 Visit{ target: target_refs[0], attack:false },
