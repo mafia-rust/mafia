@@ -79,7 +79,7 @@
     "youWerePossessed": "result",
     "possessionTargetsRole": "result",
     "werewolfTrackingResult": "result",
-    "youSurvivedAttack": "result",
+    "youSurvivedAttack": "important",
     "doomsayerFailed": "result",
     "doomsayerWon": "result",
     "martyrFailed": "result",
