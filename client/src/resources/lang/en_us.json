@@ -759,7 +759,7 @@
     "wiki.article.standard.target.text": "Your target is the player who you visit.",
     "wiki.article.standard.indirect.title":"Indirect",
     "wiki.article.standard.indirect.title:var.0": "Indirectly",
-    "wiki.article.standard.indirect.text": "An indirect ability is one that does not visit. Therefore, it is unable to be seen by a lookout or tracker or affected by many other abilities._For Example_:\n- If a marksman attacks a player with the engineers trap on them, as long as the marksman does not visit that player, the trap isn't set off, even when the marked player is attacked. This is because the attack is indirect.",
+    "wiki.article.standard.indirect.text": "An indirect ability is one that does not visit. Therefore, it is unable to be seen by a lookout or tracker or affected by many other abilities._For Example_:\n- If a marksman attacks a player with the engineers trap on them, as long as the marksman does not visit the trapped player, the trap isn't set off, even when the marked player is attacked. This is because the attack is indirect.",
     "wiki.article.standard.hypnotize.title": "Hypnotize",
     "wiki.article.standard.hypnotize.title:var.0": "Hypnotized",
     "wiki.article.standard.hypnotize.title:var.1": "Hypnotizes",
