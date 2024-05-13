@@ -77,7 +77,6 @@ impl RoleStateImpl for Cop {
                 }
 
                 if let Some(player_to_attack) = player_to_attack{
-                    actor_ref.push_night_message(game, ChatMessageVariant::CopAttackedVisitor);
                     player_to_attack.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Cop), 1, false);
                 }
             }
