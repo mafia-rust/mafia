@@ -111,6 +111,27 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
                 }
             case "veteran":
                 return <StyledText>{translate("role.veteran.roleDataText", this.state.gameState.clientState.roleState.alertsRemaining)}</StyledText>;
+            case "marksman":
+                switch(this.state.gameState.clientState.roleState.state.type){
+                    case "notLoaded":
+                    case "shotTownie":
+                        return <StyledText>{translate("role.marksman.roleDataText."+this.state.gameState.clientState.roleState.state.type)}</StyledText>
+                    case "marks":
+                        switch(this.state.gameState.clientState.roleState.state.marks.type){
+                            case "none":
+                                return <StyledText>{translate("role.marksman.roleDataText.marks.none")}</StyledText>
+                            case "one":
+                                return <StyledText>{translate("role.marksman.roleDataText.marks.one", 
+                                    this.state.gameState.players[this.state.gameState.clientState.roleState.state.marks.a].toString()
+                                )}</StyledText>
+                            case "two":
+                                return <StyledText>{translate("role.marksman.roleDataText.marks.two", 
+                                    this.state.gameState.players[this.state.gameState.clientState.roleState.state.marks.a].toString(), 
+                                    this.state.gameState.players[this.state.gameState.clientState.roleState.state.marks.b].toString()
+                                )}</StyledText>
+                        }
+                }
+                return null;
             case "mortician":
                 return <StyledText>{translate("role.mortician.roleDataText", (3-this.state.gameState.clientState.roleState.crematedPlayers.length))}</StyledText>;
             case "death":

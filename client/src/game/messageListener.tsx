@@ -343,7 +343,7 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.clientState.roleState = packet.roleState;
             }
         break;
-        case "yourTarget":
+        case "yourSelection":
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
                 GAME_MANAGER.state.clientState.targets = packet.playerIndices;
         break;

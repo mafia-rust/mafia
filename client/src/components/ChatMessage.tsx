@@ -405,6 +405,11 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                     return translate("chatMessage.ojoSelection.none");
             }
             break;
+        case "marksmanChosenMarks":
+            if(message.marks.length === 0){
+                return translate("chatMessage.marksmanChosenMarks.none");
+            }
+            return translate("chatMessage.marksmanChosenMarks", playerListToString(message.marks, playerNames));
         case "silenced":
             return translate("chatMessage.silenced");
         case "mediumHauntStarted":
@@ -455,7 +460,6 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "transported":
         case "veteranAttackedVisitor":
         case "veteranAttackedYou":
-        case "engineerYouAttackedVisitor":
         case "vigilanteSuicide":
         case "targetIsPossessionImmune":
         case "youSurvivedAttack":
@@ -466,8 +470,9 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "targetsMessage":
         case "psychicFailed":
         case "phaseFastForwarded":
-        case "copAttackedVisitor":
         case "mayorCantWhisper":
+        case "youAttackedSomeone":
+        case "youWereAttacked":
             return translate("chatMessage."+message.type);
         case "playerDied":
         default:
@@ -610,6 +615,10 @@ export type ChatMessageVariant = {
     type: "someoneSurvivedYourAttack"
 } | {
     type: "youSurvivedAttack"
+} | {
+    type: "youWereAttacked"
+} | {
+    type: "youAttackedSomeone"
 } |
 /* Role-specific */
 {
@@ -651,8 +660,6 @@ export type ChatMessageVariant = {
     roleOutline: RoleOutline,
     result: AuditorResult,
 } | {
-    type: "copAttackedVisitor"
-} | {
     type: "veteranAttackedYou"
 } | {
     type: "veteranAttackedVisitor"
@@ -664,8 +671,6 @@ export type ChatMessageVariant = {
     state: {
         type: "dismantled" | "ready" | "set"
     }
-} | {
-    type: "engineerYouAttackedVisitor"
 } | {
     type: "vigilanteSuicide"
 } | {
@@ -699,6 +704,9 @@ export type ChatMessageVariant = {
 } | {
     type: "ojoSelection",
     action: OjoAction,
+} | {
+    type: "marksmanChosenMarks",
+    marks: PlayerIndex[],
 } | {
     type: "targetIsPossessionImmune"
 } | {

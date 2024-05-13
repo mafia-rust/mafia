@@ -36,12 +36,13 @@ impl PlayerReference{
         self.set_night_attacked(game, true);
 
         if self.night_defense(game) >= attack {
-            self.push_night_message(game,
-                ChatMessageVariant::YouSurvivedAttack
-            );
+            self.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
             attacker_ref.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
             return false;
         }
+        
+        self.push_night_message(game, ChatMessageVariant::YouWereAttacked);
+        attacker_ref.push_night_message(game,ChatMessageVariant::YouAttackedSomeone);
 
         self.push_night_grave_killers(game, grave_killer);
         if should_leave_death_note {
@@ -162,8 +163,8 @@ impl PlayerReference{
         Role functions
     */
 
-    pub fn can_night_target(&self, game: &Game, target_ref: PlayerReference) -> bool {
-        self.role_state(game).clone().can_night_target(game, *self, target_ref)
+    pub fn can_select(&self, game: &Game, target_ref: PlayerReference) -> bool {
+        self.role_state(game).clone().can_select(game, *self, target_ref)
     }
     pub fn can_day_target(&self, game: &Game, target_ref: PlayerReference) -> bool {
         self.role_state(game).clone().can_day_target(game, *self, target_ref)
@@ -186,8 +187,8 @@ impl PlayerReference{
     pub fn get_won_game(&self, game: &Game) -> bool {
         self.role_state(game).clone().get_won_game(game, *self)
     }
-    pub fn convert_targets_to_visits(&self, game: &Game, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        self.role_state(game).clone().convert_targets_to_visits(game, *self, target_refs)
+    pub fn convert_selection_to_visits(&self, game: &Game, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        self.role_state(game).clone().convert_selection_to_visits(game, *self, target_refs)
     }
     pub fn on_any_death(&self, game: &mut Game, dead_player_ref: PlayerReference){
         self.role_state(game).clone().on_any_death(game, *self, dead_player_ref)

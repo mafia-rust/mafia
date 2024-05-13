@@ -124,7 +124,7 @@ export type ToClientPacket = {
     type: "yourRoleState",
     roleState: RoleState
 } | {
-    type: "yourTarget",
+    type: "yourSelection",
     playerIndices: [PlayerIndex]
 } | {
     type: "yourVoting",

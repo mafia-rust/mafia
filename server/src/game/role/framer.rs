@@ -42,18 +42,18 @@ impl RoleStateImpl for Framer {
 
         actor_ref.set_night_visits(game, vec![first_visit.clone()]);
     }
-    fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         
         !actor_ref.night_jailed(game) &&
         actor_ref.alive(game) &&
         (
-            actor_ref.chosen_targets(game).is_empty() &&
+            actor_ref.selection(game).is_empty() &&
             actor_ref != target_ref &&
             target_ref.alive(game) &&
             !same_evil_team(game, actor_ref, target_ref)
         ) || 
         (
-            actor_ref.chosen_targets(game).len() == 1
+            actor_ref.selection(game).len() == 1
         )
         
     }
@@ -63,7 +63,7 @@ impl RoleStateImpl for Framer {
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false
     }
-    fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() == 2 {
             vec![
                 Visit{ target: target_refs[0], attack: false }, 

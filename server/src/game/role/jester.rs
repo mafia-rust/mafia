@@ -46,7 +46,7 @@ impl RoleStateImpl for Jester {
                 player_ref.verdict(game) == Verdict::Guilty
             }).collect();
     
-        let player = match actor_ref.chosen_targets(game).first() {
+        let player = match actor_ref.selection(game).first() {
             Some(v) => *v,
             None => {
                 let Some(target_ref) = all_killable_players.choose(&mut rand::thread_rng()) else {return};
@@ -57,9 +57,9 @@ impl RoleStateImpl for Jester {
             crate::game::grave::GraveKiller::Role(super::Role::Jester), 3, true
         );
     }
-    fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         actor_ref != target_ref &&
-        actor_ref.chosen_targets(game).is_empty() &&
+        actor_ref.selection(game).is_empty() &&
         !actor_ref.alive(game) &&
         target_ref.alive(game) &&
         target_ref.verdict(game) != Verdict::Innocent &&
@@ -71,7 +71,7 @@ impl RoleStateImpl for Jester {
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false
     }
-    fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         vec![]
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {

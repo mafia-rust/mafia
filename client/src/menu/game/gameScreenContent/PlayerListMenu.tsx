@@ -120,7 +120,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                     if(GAME_MANAGER.state.clientState.type === "player")
                         this.setState({ voted: GAME_MANAGER.state.clientState.voted });
                 break;
-                case "yourTarget":
+                case "yourSelection":
                     if(GAME_MANAGER.state.clientState.type === "player")
                         this.setState({ targets: GAME_MANAGER.state.clientState.targets });
                 break;
@@ -140,7 +140,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 case "phase":
                 case "gamePlayers":
                 case "yourVoting":
-                case "yourTarget":
+                case "yourSelection":
                 case "yourRoleState":
                     this.updatePlayerFilter();
                 break;
@@ -266,6 +266,18 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                             (this.state.roleState?.type === "medium" && this.state.roleState.seancedTarget === player.index)
                             || 
                             (this.state.roleState?.type === "journalist" && this.state.roleState.interviewedTarget === player.index)
+                            || 
+                            (
+                                this.state.roleState?.type === "marksman" && 
+                                this.state.roleState.state.type === "marks" &&
+                                (
+                                    (this.state.roleState.state.marks.type === "one" && this.state.roleState.state.marks.a === player.index) ||
+                                    (this.state.roleState.state.marks.type === "two" && (
+                                        this.state.roleState.state.marks.a === player.index || 
+                                        this.state.roleState.state.marks.b === player.index
+                                    ))
+                                )
+                            )
                         } 
                         onClick={()=>GAME_MANAGER.sendDayTargetPacket(player.index)}
                     >

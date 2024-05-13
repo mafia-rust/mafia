@@ -169,7 +169,7 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "copAttackedVisitor"},
+            {"type": "youAttackedSomeone"},
             {"type": "targetWasAttacked"},
             {"type": "youWereProtected"},
             {"type": "someoneSurvivedYourAttack"},
@@ -201,7 +201,7 @@
             {"type": "trapState", "state":{"type":"dismantled"}},
             {"type": "trapState", "state":{"type":"ready"}},
             {"type": "trapState", "state":{"type":"set"}},
-            {"type": "engineerYouAttackedVisitor"},
+            {"type": "youAttackedSomeone"},
             {"type": "engineerVisitorsRole", "role": "framer"},
             {"type": "targetWasAttacked"},
             {"type": "youWereProtected"},
@@ -234,7 +234,8 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "vigilanteSuicide"},
-            {"type": "someoneSurvivedYourAttack"}
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youAttackedSomeone"}
         ]
     },
     "veteran": {
@@ -246,8 +247,21 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "veteranAttackedVisitor"},
-            {"type": "veteranAttackedYou"},
+            {"type": "youAttackedSomeone"},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+        ]
+    },
+    "marksman":{
+        "faction": "town",
+        "roleSet": "townKilling",
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "youAttackedSomeone"},
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
@@ -262,7 +276,8 @@
         "chatMessages":[
             {"type": "deputyKilled", "shotIndex": 11},
             {"type": "deputyShotYou"},
-            {"type": "someoneSurvivedYourAttack"}
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youAttackedSomeone"}
         ]
     },
     "escort": {
