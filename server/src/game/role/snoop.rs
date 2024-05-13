@@ -25,11 +25,6 @@ impl RoleStateImpl for Snoop {
         if priority != Priority::Investigative {return;}
 
         if let Some(visit) = actor_ref.night_visits(game).first(){
-            
-            if visit.target.night_jailed(game){
-                actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
-                return
-            }
 
             actor_ref.push_night_message(game, 
                 ChatMessageVariant::SnoopResult { townie: 

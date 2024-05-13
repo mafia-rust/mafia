@@ -53,19 +53,16 @@ impl RoleStateImpl for Forger {
                 let Some(visit) = actor_ref.night_visits(game).first() else{return};
 
                 let target_ref = visit.target;
-                if target_ref.night_jailed(game) {
-                    actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
-                }else{
-                    target_ref.set_night_grave_role(game, Some(
-                        GraveRole::Role(if let Some(role) = self.fake_role {role} else {target_ref.role(game)})
-                    ));
-                    target_ref.set_night_grave_will(game, if !self.fake_will.is_empty() {self.fake_will.clone()} else {target_ref.will(game).to_owned()});
-                    actor_ref.set_role_state(game, RoleState::Forger(Forger { 
-                        forges_remaining: self.forges_remaining - 1, 
-                        forged_ref: Some(target_ref), 
-                        ..self
-                    }));
-                }
+
+                target_ref.set_night_grave_role(game, Some(
+                    GraveRole::Role(if let Some(role) = self.fake_role {role} else {target_ref.role(game)})
+                ));
+                target_ref.set_night_grave_will(game, if !self.fake_will.is_empty() {self.fake_will.clone()} else {target_ref.will(game).to_owned()});
+                actor_ref.set_role_state(game, RoleState::Forger(Forger { 
+                    forges_remaining: self.forges_remaining - 1, 
+                    forged_ref: Some(target_ref), 
+                    ..self
+                }));
             },
             Priority::Investigative=>{
                 if let Some(forged_ref) = self.forged_ref {

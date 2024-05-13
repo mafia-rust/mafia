@@ -42,7 +42,7 @@ impl RoleStateImpl for Werewolf {
                     Some(first_visit) => {
                         let target_ref = first_visit.target;
                         if target_ref.night_jailed(game){
-                            actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
+                            actor_ref.push_night_message(game, ChatMessageVariant::TargetRestricted);
                             return
                         }
                         
@@ -96,7 +96,7 @@ impl RoleStateImpl for Werewolf {
                         let target_ref = first_visit.target;
 
                         if target_ref.night_jailed(game){
-                            actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
+                            actor_ref.push_night_message(game, ChatMessageVariant::TargetRestricted);
                         }else{
                             newly_tracked_players.push(target_ref);
                         }

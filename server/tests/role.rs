@@ -1158,7 +1158,55 @@ fn seer_cant_see_godfather() {
 }
 
 #[test]
-fn reveler_protect_still_kill() {
+fn bouncer_jailor_double_block() {
+    kit::scenario!(game in Dusk 1 where
+        b: Bouncer,
+        jail: Jailor,
+        gf: Godfather,
+        det: Detective
+    );
+
+    jail.day_target(gf);
+
+    game.next_phase();
+
+    det.set_night_target(gf);
+    b.set_night_target(gf);
+
+    game.next_phase();
+
+    assert_contains!(
+        det.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 1 }),
+        ChatMessageVariant::TargetRestricted
+    );
+}
+
+#[test]
+fn bouncer_ojo_block() {
+    kit::scenario!(game in Night 2 where
+        b: Bouncer,
+        ojo: Ojo,
+        det1: Detective,
+        det2: Detective,
+        det3: Detective,
+        det4: Detective
+    );
+
+    ojo.set_role_state(RoleState::Ojo(Ojo{
+        chosen_action: OjoAction::Kill { role: Role::Detective }
+    }));
+    b.set_night_target(det1);
+
+    game.next_phase();
+
+    assert!(det1.alive());
+    assert!(det2.alive());
+    assert!(det3.alive());
+    assert!(det4.alive());
+}
+
+#[test]
+fn bouncer_protect_no_kill() {
     kit::scenario!(game in Night 1 where
         rev: Bouncer,
         godfather: Godfather,
@@ -1177,22 +1225,22 @@ fn reveler_protect_still_kill() {
         townie_a.get_messages_after_last_message(
             ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 1}
         ),
-        ChatMessageVariant::RoleBlocked{immune: false}
+        ChatMessageVariant::TargetRestricted
     );
     assert_contains!(
         godfather.get_messages_after_last_message(
             ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 1}
         ),
-        ChatMessageVariant::RoleBlocked{immune: false}
+        ChatMessageVariant::TargetRestricted
     );
     assert_not_contains!(
         jan.get_messages_after_last_message(
             ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 1}
         ),
-        ChatMessageVariant::RoleBlocked{immune: false}
+        ChatMessageVariant::TargetRestricted
     );
 
-    assert!(!townie_b.alive());
+    assert!(townie_b.alive());
     assert!(townie_a.alive());
 }
 
@@ -1358,8 +1406,8 @@ fn bodyguard_gets_single_target_jailed_message() {
             }
         ),
         vec![
-            ChatMessageVariant::TargetJailed,
-            /* They should not get a second TargetJailed message */
+            ChatMessageVariant::TargetRestricted,
+            /* They should not get a second TargetRestricted message */
             ChatMessageVariant::PhaseChange { 
                 phase: PhaseState::Obituary, day_number: 2 
             }

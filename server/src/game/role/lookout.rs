@@ -26,11 +26,6 @@ impl RoleStateImpl for Lookout {
 
         if let Some(visit) = actor_ref.night_visits(game).first(){
             
-            if visit.target.night_jailed(game){
-                actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed );
-                return
-            }
-            
             let message = ChatMessageVariant::LookoutResult { players:
                 visit.target.appeared_visitors(game).into_iter().filter(|p|actor_ref!=*p).map(|player_ref|player_ref.index()).collect()
             };

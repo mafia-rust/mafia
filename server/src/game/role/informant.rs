@@ -26,10 +26,6 @@ impl RoleStateImpl for Informant {
         
         if let Some(visit) = actor_ref.night_visits(game).first(){
             let target_ref = visit.target;
-            if target_ref.night_jailed(game){
-                actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
-                return
-            }
 
             let message = ChatMessageVariant::ConsigliereResult{
                 role: target_ref.role(game), 

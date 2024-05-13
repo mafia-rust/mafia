@@ -39,6 +39,13 @@ impl RoleStateImpl for Jailor {
 
 
         match priority {
+            Priority::Block => {
+                for player in PlayerReference::all_players(game){
+                    if player.night_jailed(game){
+                        player.restrict(game);
+                    }
+                }
+            }
             Priority::Roleblock => {
                 for player in PlayerReference::all_players(game){
                     if player.night_jailed(game){

@@ -48,10 +48,6 @@ impl RoleStateImpl for Doctor {
             Priority::Heal => {
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
                 let target_ref = visit.target;
-                if target_ref.night_jailed(game){
-                    actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
-                    return
-                }
 
                 target_ref.increase_defense_to(game, 2);
 

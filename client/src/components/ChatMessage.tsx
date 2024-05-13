@@ -447,7 +447,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "provocateurWon":
         case "gameOver":
         case "jesterWon":
-        case "targetJailed":
+        case "targetRestricted":
         case "yourConvertFailed":
         case "apostleCanConvertTonight":
         case "apostleCantConvertTonight":
@@ -613,7 +613,7 @@ export type ChatMessageVariant = {
 } |
 /* Role-specific */
 {
-    type: "targetJailed"
+    type: "targetRestricted"
 } | {
     type: "sheriffResult", 
     suspicious: boolean
