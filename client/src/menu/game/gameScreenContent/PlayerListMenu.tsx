@@ -120,7 +120,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                     if(GAME_MANAGER.state.clientState.type === "player")
                         this.setState({ voted: GAME_MANAGER.state.clientState.voted });
                 break;
-                case "yourTarget":
+                case "yourSelection":
                     if(GAME_MANAGER.state.clientState.type === "player")
                         this.setState({ targets: GAME_MANAGER.state.clientState.targets });
                 break;
@@ -140,7 +140,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 case "phase":
                 case "gamePlayers":
                 case "yourVoting":
-                case "yourTarget":
+                case "yourSelection":
                 case "yourRoleState":
                     this.updatePlayerFilter();
                 break;

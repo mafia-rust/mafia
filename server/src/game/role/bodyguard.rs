@@ -105,10 +105,10 @@ impl RoleStateImpl for Bodyguard {
             _ => {}
         }
     }
-    fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         (actor_ref != target_ref || self.self_shields_remaining > 0) &&
         !actor_ref.night_jailed(game) &&
-        actor_ref.chosen_targets(game).is_empty() &&
+        actor_ref.selection(game).is_empty() &&
         actor_ref.alive(game) &&
         target_ref.alive(game)
     }
@@ -118,8 +118,8 @@ impl RoleStateImpl for Bodyguard {
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false
     }
-    fn convert_targets_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_targets_to_visits(game, actor_ref, target_refs, false)
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
