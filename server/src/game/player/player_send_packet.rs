@@ -97,8 +97,8 @@ impl PlayerReference{
             ToClientPacket::YourPlayerTags { 
                 player_tags: PlayerReference::ref_map_to_index(self.player_tags(game).clone())
             },
-            ToClientPacket::YourTarget{
-                player_indices: PlayerReference::ref_vec_to_index(self.chosen_targets(game))
+            ToClientPacket::YourSelection{
+                player_indices: PlayerReference::ref_vec_to_index(self.selection(game))
             },
             ToClientPacket::YourJudgement{
                 verdict: self.verdict(game)

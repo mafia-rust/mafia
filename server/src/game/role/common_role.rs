@@ -3,17 +3,17 @@ use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, 
 use super::{journalist::Journalist, medium::Medium, same_evil_team, RoleState};
 
 
-pub(super) fn can_night_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+pub(super) fn can_night_select(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
     
     actor_ref != target_ref &&
     !actor_ref.night_jailed(game) &&
-    actor_ref.chosen_targets(game).is_empty() &&
+    actor_ref.selection(game).is_empty() &&
     actor_ref.alive(game) &&
     target_ref.alive(game) &&
     !same_evil_team(game, actor_ref, target_ref)
 }
 
-pub(super) fn convert_targets_to_visits(_game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, attack: bool) -> Vec<Visit> {
+pub(super) fn convert_selection_to_visits(_game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, attack: bool) -> Vec<Visit> {
     if !target_refs.is_empty() {
         vec![Visit{ target: target_refs[0], attack }]
     } else {

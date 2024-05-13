@@ -73,7 +73,7 @@ struct PlayerNightVariables{
 
     silenced: bool,
 
-    chosen_targets: Vec<PlayerReference>,
+    selection: Vec<PlayerReference>,
     visits: Vec<Visit>,
 
     messages: Vec<ChatMessageVariant>,
@@ -122,7 +122,7 @@ impl Player {
 
                 silenced:           false,
 
-                chosen_targets:     vec![],
+                selection:     vec![],
                 visits:             vec![],
 
                 messages:           vec![],
@@ -182,7 +182,7 @@ pub mod test {
 
                 silenced:           false,
 
-                chosen_targets:     vec![],
+                selection:     vec![],
                 visits:             vec![],
 
                 messages:           vec![],

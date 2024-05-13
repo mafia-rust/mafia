@@ -43,7 +43,7 @@ impl RoleStateImpl for Mayor {
         }
         game.count_votes_and_start_trial();
     }
-    fn can_night_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool{
+    fn can_select(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool{
         false
     }
     fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool{
@@ -53,7 +53,7 @@ impl RoleStateImpl for Mayor {
         actor_ref.alive(game) &&
         PhaseType::Night != game.current_phase().phase()
     }
-    fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit>{
+    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit>{
         vec![]
     }
     fn get_current_send_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>{

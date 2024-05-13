@@ -21,7 +21,7 @@ impl AvailableButtons{
                 actor_ref.alive(game) && target_ref.alive(game),
 
             target: 
-                actor_ref.can_night_target(game, target_ref) && 
+                actor_ref.can_select(game, target_ref) && 
                 game.current_phase().is_night(),
 
             day_target: 
