@@ -33,15 +33,15 @@ impl TestPlayer {
         self.0
     }
 
-    pub fn set_night_targets(&self, targets: Vec<TestPlayer>)->bool {
+    pub fn set_night_selection(&self, selection: Vec<TestPlayer>)->bool {
         self.0.set_selection(
             game!(self), 
-            targets.into_iter().map(|t|t.0).collect()
+            selection.into_iter().map(|t|t.0).collect()
         )
     }
 
-    pub fn set_night_target(&self, target: TestPlayer)->bool {
-        self.0.set_selection(game!(self), vec![target.0])
+    pub fn set_night_selection_single(&self, selection: TestPlayer)->bool {
+        self.0.set_selection(game!(self), vec![selection.0])
     }
 
     pub fn vote_for_player(&self, target: Option<TestPlayer>) {
