@@ -161,8 +161,10 @@ impl RoleStateImpl for Marksman {
     }
     fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         game.current_phase().is_night() &&
+        actor_ref.alive(game) &&
+        !actor_ref.night_jailed(game) &&
         target_ref.alive(game) &&
-        if let MarksmanState::Marks {..} = self.state {true}else{false} &&
+        matches!(self.state, MarksmanState::Marks { .. }) &&
         actor_ref != target_ref
     }
     fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {

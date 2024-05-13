@@ -276,7 +276,7 @@
     "role.veteran.dayTarget": "Special",
 
     "role.marksman.name": "Marksman",
-    "role.marksman.name:var.0": "Marksmans",
+    "role.marksman.name:var.0": "Marksmen",
     "role.marksman.target": "Camp",
     "role.marksman.roleDataText.marks.none": "You haven't marked anyone.",
     "role.marksman.roleDataText.marks.one": "You marked \\0.",

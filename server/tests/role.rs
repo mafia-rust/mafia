@@ -856,7 +856,6 @@ fn marksman_basic() {
 
     assert!(dt.set_night_target(gf));
     assert!(mk.day_target(dt));
-    // assert!(mk.day_target(gf));
     assert!(mk.set_night_targets(vec![dt, gf]));
 
     game.next_phase();

@@ -272,8 +272,10 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                                 this.state.roleState.state.type === "marks" &&
                                 (
                                     (this.state.roleState.state.marks.type === "one" && this.state.roleState.state.marks.a === player.index) ||
-                                    (this.state.roleState.state.marks.type === "two" && this.state.roleState.state.marks.a === player.index) ||
-                                    (this.state.roleState.state.marks.type === "two" && this.state.roleState.state.marks.b === player.index)
+                                    (this.state.roleState.state.marks.type === "two" && (
+                                        this.state.roleState.state.marks.a === player.index || 
+                                        this.state.roleState.state.marks.b === player.index
+                                    ))
                                 )
                             )
                         } 
