@@ -459,7 +459,6 @@
     "chatMessage.werewolfTrackingResult.nobody": "\\0 vstd nbdy.",
     "chatMessage.veteranAttackedYou": "Y wr ttckd by th vtrn y vstd.",
     "chatMessage.veteranAttackedVisitor": "Y ttckd  vstr.",
-    "chatMessage.engineerYouAttackedVisitor": "Yr trp ttckd smn!",
     "chatMessage.engineerVisitorsRole": " \\0 vstd th trppd plyr.",
     "chatMessage.trapState.dismantled": "Yr trp s crrntly dsmntld.",
     "chatMessage.trapState.ready": "Yr trp s crrntly rdy.",

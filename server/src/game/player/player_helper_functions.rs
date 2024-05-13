@@ -28,12 +28,13 @@ impl PlayerReference{
         self.set_night_attacked(game, true);
 
         if self.night_defense(game) >= attack {
-            self.push_night_message(game,
-                ChatMessageVariant::YouSurvivedAttack
-            );
+            self.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
             attacker_ref.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
             return false;
         }
+        
+        self.push_night_message(game, ChatMessageVariant::YouWereAttacked);
+        attacker_ref.push_night_message(game,ChatMessageVariant::YouAttackedSomeone);
 
         self.push_night_grave_killers(game, grave_killer);
         if should_leave_death_note {

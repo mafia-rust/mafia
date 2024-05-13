@@ -148,6 +148,8 @@ pub enum ChatMessageVariant {
     TargetWasAttacked,
     YouWereProtected,
     YouDied,
+    YouWereAttacked,
+    YouAttackedSomeone,
 
     /*
     Night Information
@@ -170,14 +172,7 @@ pub enum ChatMessageVariant {
     AuditorResult{role_outline: RoleOutline, result: AuditorResult},
     SnoopResult{townie: bool},
 
-    VeteranAttackedYou,
-    VeteranAttackedVisitor,
-
-    CopAttackedVisitor,
-    MarksmanAttackedVisitor,
-
     EngineerVisitorsRole{role: Role},
-    EngineerYouAttackedVisitor,
     TrapState{state: TrapState},
 
     Transported,

@@ -460,7 +460,6 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "transported":
         case "veteranAttackedVisitor":
         case "veteranAttackedYou":
-        case "engineerYouAttackedVisitor":
         case "vigilanteSuicide":
         case "targetIsPossessionImmune":
         case "youSurvivedAttack":
@@ -471,9 +470,9 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "targetsMessage":
         case "psychicFailed":
         case "phaseFastForwarded":
-        case "copAttackedVisitor":
-        case "marksmanAttackedVisitor":
         case "mayorCantWhisper":
+        case "youAttackedSomeone":
+        case "youWereAttacked":
             return translate("chatMessage."+message.type);
         case "playerDied":
         default:
@@ -616,6 +615,10 @@ export type ChatMessageVariant = {
     type: "someoneSurvivedYourAttack"
 } | {
     type: "youSurvivedAttack"
+} | {
+    type: "youWereAttacked"
+} | {
+    type: "youAttackedSomeone"
 } |
 /* Role-specific */
 {
@@ -657,10 +660,6 @@ export type ChatMessageVariant = {
     roleOutline: RoleOutline,
     result: AuditorResult,
 } | {
-    type: "copAttackedVisitor"
-} | {
-    type: "marksmanAttackedVisitor"
-} | {
     type: "veteranAttackedYou"
 } | {
     type: "veteranAttackedVisitor"
@@ -672,8 +671,6 @@ export type ChatMessageVariant = {
     state: {
         type: "dismantled" | "ready" | "set"
     }
-} | {
-    type: "engineerYouAttackedVisitor"
 } | {
     type: "vigilanteSuicide"
 } | {

@@ -169,7 +169,7 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "copAttackedVisitor"},
+            {"type": "youAttackedSomeone"},
             {"type": "targetWasAttacked"},
             {"type": "youWereProtected"},
             {"type": "someoneSurvivedYourAttack"},
@@ -201,7 +201,7 @@
             {"type": "trapState", "state":{"type":"dismantled"}},
             {"type": "trapState", "state":{"type":"ready"}},
             {"type": "trapState", "state":{"type":"set"}},
-            {"type": "engineerYouAttackedVisitor"},
+            {"type": "youAttackedSomeone"},
             {"type": "engineerVisitorsRole", "role": "framer"},
             {"type": "targetWasAttacked"},
             {"type": "youWereProtected"},
@@ -246,9 +246,9 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "veteranAttackedVisitor"},
-            {"type": "veteranAttackedYou"},
-            {"type": "someoneSurvivedYourAttack"}
+            {"type": "youAttackedSomeone"},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
         ]
     },
     "marksman":{
