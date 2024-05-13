@@ -138,13 +138,13 @@ impl RoleStateImpl for Marksman {
     fn do_day_action(mut self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
         self.state.toggle_mark(target_ref);
         if self.state.marks().len() == 0 {
-            actor_ref.set_chosen_targets(game, vec![]);
+            actor_ref.set_selection(game, vec![]);
         }
         actor_ref.add_private_chat_message(game, ChatMessageVariant::MarksmanChosenMarks { marks: PlayerReference::ref_vec_to_index(self.state.marks().deref()) });
         actor_ref.set_role_state(game, RoleState::Marksman(self))
     }
-    fn can_night_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        let chosen_targets = actor_ref.chosen_targets(game);
+    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+        let chosen_targets = actor_ref.selection(game);
         
         !self.state.no_marks() &&
         actor_ref != target_ref &&
@@ -166,7 +166,7 @@ impl RoleStateImpl for Marksman {
         matches!(self.state, MarksmanState::Marks { .. }) &&
         actor_ref != target_ref
     }
-    fn convert_targets_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() == 2 {
             vec![
                 Visit{ target: target_refs[0], attack: false }, 

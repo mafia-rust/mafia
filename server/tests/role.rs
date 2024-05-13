@@ -854,9 +854,9 @@ fn marksman_basic() {
         gf: Godfather
     );
 
-    assert!(dt.set_night_target(gf));
+    assert!(dt.set_night_selection_single(gf));
     assert!(mk.day_target(dt));
-    assert!(mk.set_night_targets(vec![dt, gf]));
+    assert!(mk.set_night_selection(vec![dt, gf]));
 
     game.next_phase();
 
