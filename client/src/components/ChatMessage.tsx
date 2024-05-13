@@ -406,7 +406,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             }
             break;
         case "marksmanChosenMarks":
-            if(message.marks.length == 0){
+            if(message.marks.length === 0){
                 return translate("chatMessage.marksmanChosenMarks.none");
             }
             return translate("chatMessage.marksmanChosenMarks", playerListToString(message.marks, playerNames));
