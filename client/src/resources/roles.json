@@ -234,7 +234,8 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "vigilanteSuicide"},
-            {"type": "someoneSurvivedYourAttack"}
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youAttackedSomeone"}
         ]
     },
     "veteran": {
@@ -260,6 +261,7 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
+            {"type": "youAttackedSomeone"},
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
@@ -274,7 +276,8 @@
         "chatMessages":[
             {"type": "deputyKilled", "shotIndex": 11},
             {"type": "deputyShotYou"},
-            {"type": "someoneSurvivedYourAttack"}
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youAttackedSomeone"}
         ]
     },
     "escort": {
