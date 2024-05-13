@@ -234,7 +234,8 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "vigilanteSuicide"},
-            {"type": "someoneSurvivedYourAttack"}
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youAttackedSomeone"}
         ]
     },
     "veteran": {
@@ -251,6 +252,19 @@
             {"type": "youSurvivedAttack"}
         ]
     },
+    "marksman":{
+        "faction": "town",
+        "roleSet": "townKilling",
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "youAttackedSomeone"},
+            {"type": "someoneSurvivedYourAttack"}
+        ]
+    },
     "deputy": {
         "faction": "town",
         "roleSet": "townKilling",
@@ -262,7 +276,8 @@
         "chatMessages":[
             {"type": "deputyKilled", "shotIndex": 11},
             {"type": "deputyShotYou"},
-            {"type": "someoneSurvivedYourAttack"}
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youAttackedSomeone"}
         ]
     },
     "escort": {

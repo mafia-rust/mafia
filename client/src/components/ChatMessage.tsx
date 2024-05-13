@@ -405,6 +405,11 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                     return translate("chatMessage.ojoSelection.none");
             }
             break;
+        case "marksmanChosenMarks":
+            if(message.marks.length === 0){
+                return translate("chatMessage.marksmanChosenMarks.none");
+            }
+            return translate("chatMessage.marksmanChosenMarks", playerListToString(message.marks, playerNames));
         case "silenced":
             return translate("chatMessage.silenced");
         case "mediumHauntStarted":
@@ -699,6 +704,9 @@ export type ChatMessageVariant = {
 } | {
     type: "ojoSelection",
     action: OjoAction,
+} | {
+    type: "marksmanChosenMarks",
+    marks: PlayerIndex[],
 } | {
     type: "targetIsPossessionImmune"
 } | {

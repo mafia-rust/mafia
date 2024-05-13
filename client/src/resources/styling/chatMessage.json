@@ -48,6 +48,7 @@
     "consigliereResult": "result",
     "wildcardConvertFailed": "special",
     "ojoSelection": "special",
+    "marksmanChosenMarks": "special",
     "silenced": "warning",
     "mediumHauntStarted": "special",
     "targetWasAttacked": "result",

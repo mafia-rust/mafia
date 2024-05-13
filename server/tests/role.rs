@@ -3,6 +3,7 @@ use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
+use mafia_server::game::role::marksman::Marksman;
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
@@ -843,6 +844,25 @@ fn mafioso_cant_kill_mafia() {
     game.next_phase();
 
     assert!(mortician.alive());
+}
+
+#[test]
+fn marksman_basic() {
+    kit::scenario!(game in Night 2 where
+        mk: Marksman,
+        dt: Detective,
+        gf: Godfather
+    );
+
+    assert!(dt.set_night_selection_single(gf));
+    assert!(mk.day_target(dt));
+    assert!(mk.set_night_selection(vec![dt, gf]));
+
+    game.next_phase();
+
+    assert!(!dt.alive());
+    assert!(gf.alive());
+    assert!(mk.alive());
 }
 
 #[test]
