@@ -135,6 +135,8 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     DeputyShotYou,
 
+    LichPlayerIsNowZombie{player: PlayerIndex},
+
 
     #[serde(rename_all = "camelCase")]
     PlayerWithNecronomicon{player_index: PlayerIndex},

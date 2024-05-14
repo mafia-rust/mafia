@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::components::lich_zombie::{self, LichZombie};
+use crate::game::components::lich_zombie::LichZombie;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -9,7 +9,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{Priority, Role, RoleStateImpl};
+use super::{Priority, RoleStateImpl};
 
 pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -29,8 +29,8 @@ impl RoleStateImpl for Lich {
 
         if let Some(visit) = actor_ref.night_visits(game).first(){
             let target = visit.target;
-
-            LichZombie::zombify(game, target);            
+            LichZombie::zombify(game, target);
+            actor_ref.push_night_message(game, ChatMessageVariant::LichPlayerIsNowZombie{player: target.index()});
         }
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
