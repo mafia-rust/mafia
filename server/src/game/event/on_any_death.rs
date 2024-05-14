@@ -1,4 +1,4 @@
-use crate::game::{player::PlayerReference, Game};
+use crate::game::{components::lich_zombie::LichZombie, player::PlayerReference, Game};
 
 
 #[must_use = "Event must be invoked"]
@@ -16,6 +16,7 @@ impl OnAnyDeath{
 
         game.mafia().clone().on_any_death(game, self.dead_player);
         game.cult().clone().on_any_death(game);
+        LichZombie::on_any_death(game, self.dead_player);
 
         game.on_any_death(self.dead_player);
     }

@@ -92,6 +92,8 @@ macros::roles! {
     Arsonist : arsonist,
     Werewolf : werewolf,
     Ojo : ojo,
+    Lich: lich,
+    Zombie : zombie,
 
     Wildcard : wild_card,
     TrueWildcard : true_wildcard,
