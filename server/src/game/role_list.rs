@@ -162,11 +162,15 @@ impl RoleSet{
             RoleSet::TownSupport => 
                 vec![Role::Medium, Role::Retributionist, Role::Transporter, Role::Escort, Role::Mayor, Role::Journalist],
             RoleSet::TownKilling => 
-                vec![Role::Vigilante, Role::Veteran, Role::Deputy],
+                vec![Role::Vigilante, Role::Veteran, Role::Deputy, Role::Marksman],
             RoleSet::TownProtective => 
                 vec![Role::Bodyguard, Role::Cop, Role::Doctor, Role::Bouncer, Role::Engineer],
             RoleSet::TownInvestigative => 
-                vec![Role::Psychic, Role::Lookout, Role::Detective, Role::Spy, Role::Tracker, Role::Philosopher, Role::Auditor],
+                vec![
+                    Role::Detective, Role::Philosopher, Role::Gossip, 
+                    Role::Psychic, Role::Auditor, Role::Spy, 
+                    Role::Lookout, Role::Tracker, Role::Snoop,
+                ],
             RoleSet::MafiaSupport => 
                 vec![
                     Role::Blackmailer, Role::Informant, Role::Hypnotist, 

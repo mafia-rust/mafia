@@ -33,6 +33,10 @@ export type RoleState = {
     chosenOutline: number,
     previouslyGivenResults: [number, AuditorResult][]
 } | {
+    type: "snoop",
+} | {
+    type: "gossip",
+} | {
     type: "doctor",
     selfHealsRemaining: number,
 } | {
