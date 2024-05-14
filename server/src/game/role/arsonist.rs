@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::chat::ChatGroup;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -30,10 +30,6 @@ impl RoleStateImpl for Arsonist {
                     //douse target
                     if let Some(visit) = actor_ref.night_visits(game).first(){
                         let target_ref = visit.target;
-                        if target_ref.night_jailed(game){
-                            actor_ref.push_night_message(game, ChatMessageVariant::TargetRestricted);
-                            return
-                        }
                         game.arsonist_doused().clone().douse(game, target_ref);
                     }
 
