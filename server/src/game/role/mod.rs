@@ -46,6 +46,7 @@ macros::roles! {
     Psychic : psychic,
     Auditor : auditor,
     Snoop : snoop,
+    Gossip : gossip,
 
     Doctor : doctor,
     Bodyguard : bodyguard,

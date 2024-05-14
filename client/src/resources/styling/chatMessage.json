@@ -44,6 +44,7 @@
     "psychicGood":"result",
     "auditorResult": "result",
     "snoopResult": "result",
+    "gossipResult": "result",
     "playerRoleAndWill": "result",
     "consigliereResult": "result",
     "wildcardConvertFailed": "special",
