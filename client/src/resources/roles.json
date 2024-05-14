@@ -146,6 +146,19 @@
             {"type": "snoopResult", "townie":false}
         ]
     },
+    "gossip": {
+        "faction": "town",
+        "roleSet": "townInvestigative",
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "gossipResult", "enemies":true},
+            {"type": "gossipResult", "enemies":false}
+        ]
+    },
     "doctor": {
         "faction": "town",
         "roleSet": "townProtective",
