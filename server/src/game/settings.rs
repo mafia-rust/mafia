@@ -4,25 +4,12 @@ use serde::{Serialize, Deserialize};
 
 use super::{phase::PhaseType, role::Role, role_list::RoleList};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Settings{
     pub role_list: RoleList,
     pub phase_times: PhaseTimeSettings,
     pub excluded_roles: Vec<Role>,
-}
-impl Default for Settings{
-    fn default() -> Self {
-        Self{
-            role_list: RoleList::default(),
-            phase_times: PhaseTimeSettings::default(),
-            excluded_roles: vec![
-                Role::Jailor, Role::Bodyguard,
-                Role::Mafioso, Role::Necromancer,
-                Role::Martyr
-            ]
-        }
-    }
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
