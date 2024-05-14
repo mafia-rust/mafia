@@ -5,6 +5,7 @@ import { RoleList, RoleOutline } from "./roleListState.d"
 import { Role, RoleState } from "./roleState.d"
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu"
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu"
+import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu"
 
 export type LobbyPreviewData = {
     name: string,
@@ -274,6 +275,9 @@ export type ToServerPacket = {
 } | {
     type: "setOjoAction",
     action: OjoAction
+} | {
+    type: "setPuppeteerAction",
+    action: PuppeteerAction
 } | {
     type: "setEngineerShouldUnset",
     unset: boolean

@@ -5,6 +5,7 @@ import { Doomsayer } from "../menu/game/gameScreenContent/RoleSpecificMenus/Larg
 import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
 import { Hypnotist } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeConsortMenu";
+import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 
 export type RoleState = {
     type: "jailor",
@@ -113,6 +114,12 @@ Doomsayer
 } | {
     type: "ojo"
     chosenAction: OjoAction
+} | {
+    type: "puppeteer"
+    action: PuppeteerAction,
+    marionettesRemaining: number
+} | {
+    type: "marionette"
 } | {
     type: "death",
     souls: number

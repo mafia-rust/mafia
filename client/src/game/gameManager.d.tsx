@@ -1,6 +1,7 @@
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
+import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleList, RoleOutline } from "./roleListState.d";
@@ -112,6 +113,7 @@ export type GameManager = {
     sendSetForgerWill(role: Role | null, will: string): void;
     sendSetAuditorChosenOutline(index: number): void;
     sendSetOjoAction(action: OjoAction): void;
+    sendSetPuppeteerAction(action: PuppeteerAction): void;
     sendSetEngineerShouldUnset(unset: boolean): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;

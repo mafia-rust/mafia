@@ -11,6 +11,7 @@ import GraveComponent from "./grave";
 import { RoleOutline, translateRoleOutline } from "../game/roleListState.d";
 import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
+import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 
 const ChatElement = React.memo((
     props: {
@@ -307,6 +308,10 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.deputyKilled",
                 playerNames[message.shotIndex]
             );
+        case "puppeteerPlayerIsNowMarionette":
+            return translate("chatMessage.puppeteerPlayerIsNowMarionette",
+                playerNames[message.player]
+            );
         case "jailorDecideExecute":
             if (message.target !== null) {
                 return translate("chatMessage.jailorDecideExecute", playerNames[message.target]);
@@ -405,6 +410,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                     return translate("chatMessage.ojoSelection.none");
             }
             break;
+        case "puppeteerActionChosen":
+            return translate("chatMessage.puppeteerActionChosen."+message.action);
         case "marksmanChosenMarks":
             if(message.marks.length === 0){
                 return translate("chatMessage.marksmanChosenMarks.none");
@@ -473,6 +480,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "mayorCantWhisper":
         case "youAttackedSomeone":
         case "youWereAttacked":
+        case "puppeteerYouArePoisoned":
             return translate("chatMessage."+message.type);
         case "playerDied":
         default:
@@ -606,6 +614,11 @@ export type ChatMessageVariant = {
 } | {
     type: "deputyShotYou"
 } | {
+    type: "puppeteerPlayerIsNowMarionette",
+    player: PlayerIndex
+} | {
+    type: "puppeteerYouArePoisoned"
+} | {
     type: "playerWithNecronomicon",
     playerIndex: PlayerIndex
 } | {
@@ -704,6 +717,9 @@ export type ChatMessageVariant = {
 } | {
     type: "ojoSelection",
     action: OjoAction,
+} | {
+    type: "puppeteerActionChosen",
+    action: PuppeteerAction,
 } | {
     type: "marksmanChosenMarks",
     marks: PlayerIndex[],

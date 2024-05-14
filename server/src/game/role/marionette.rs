@@ -13,12 +13,12 @@ use super::{Priority, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
-pub struct Zombie;
+pub struct Marionette;
 
 pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
-impl RoleStateImpl for Zombie {
+impl RoleStateImpl for Marionette {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
     
 

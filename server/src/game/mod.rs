@@ -37,7 +37,7 @@ use self::components::{
     arsonist_doused::ArsonistDoused,
     mafia::Mafia,
     cult::Cult,
-    lich_zombie::LichZombie
+    puppeteer_marionette::PuppeteerMarionette
 };
 use self::end_game_condition::EndGameCondition;
 use self::event::on_game_ending::OnGameEnding;
@@ -78,7 +78,7 @@ pub struct Game {
     pub mafia: Mafia,
     pub cult: Cult,
     pub arsonist_doused: ArsonistDoused,
-    pub lich_zombie: LichZombie
+    pub puppeteer_marionette: PuppeteerMarionette
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -161,7 +161,7 @@ impl Game {
                 mafia: Mafia,
                 cult: Cult::default(),
                 arsonist_doused: ArsonistDoused::default(),
-                lich_zombie: LichZombie::default()
+                puppeteer_marionette: PuppeteerMarionette::default()
             };
 
             if !game.game_is_over() {
@@ -391,7 +391,7 @@ pub mod test {
     use rand::{thread_rng, seq::SliceRandom};
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, lich_zombie::LichZombie, mafia::Mafia},
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, puppeteer_marionette::PuppeteerMarionette, mafia::Mafia},
         event::on_game_start::OnGameStart,
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
@@ -448,7 +448,7 @@ pub mod test {
             mafia: Mafia,
             cult: Cult::default(),
             arsonist_doused: ArsonistDoused::default(),
-            lich_zombie: LichZombie::default()
+            puppeteer_marionette: PuppeteerMarionette::default()
         };
 
         OnGameStart::invoke(&mut game);

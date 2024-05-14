@@ -1,7 +1,7 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::components::lich_zombie::LichZombie;
+use crate::game::components::puppeteer_marionette::PuppeteerMarionette;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -9,15 +9,32 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{Priority, RoleStateImpl};
+use super::{Priority, RoleState, RoleStateImpl};
 
 pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
-#[derive(Clone, Debug, Serialize, Default)]
-pub struct Lich;
+#[derive(Clone, Debug, Serialize)]
+pub struct Puppeteer{
+    pub marionettes_remaining: u8,
+    pub action: PuppeteerAction,
+}
+impl Default for Puppeteer{
+    fn default() -> Self {
+        Self {
+            marionettes_remaining: 3,
+            action: PuppeteerAction::Poison
+        }
+    }
+}
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "camelCase")]
+pub enum PuppeteerAction{
+    String,
+    Poison
+}
 
-impl RoleStateImpl for Lich {
+impl RoleStateImpl for Puppeteer {
     fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {1}
     
 
@@ -25,13 +42,26 @@ impl RoleStateImpl for Lich {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return;}
 
-        LichZombie::kill_zombies(game);
+        PuppeteerMarionette::kill_marionettes(game);
+        PuppeteerMarionette::kill_poisoned(game);
 
         if let Some(visit) = actor_ref.night_visits(game).first(){
             let target = visit.target;
-            LichZombie::zombify(game, target);
-            actor_ref.push_night_message(game, ChatMessageVariant::LichPlayerIsNowZombie{player: target.index()});
+            
+            match self.action {
+                PuppeteerAction::String => {
+                    PuppeteerMarionette::zombify(game, target);
+                    actor_ref.push_night_message(game, ChatMessageVariant::PuppeteerPlayerIsNowMarionette{player: target.index()});
+                    target.insert_role_label(game, actor_ref);
+                    actor_ref.insert_role_label(game, target);
+                }
+                PuppeteerAction::Poison => {
+                    PuppeteerMarionette::poison(game, target);
+                },
+            }
         }
+
+        
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -52,7 +82,12 @@ impl RoleStateImpl for Lich {
     fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
         crate::game::role::common_role::get_won_game(game, actor_ref)
     }
-    fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType) {}
+    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
+        if phase == PhaseType::Night {
+            self.action = PuppeteerAction::Poison;
+            actor_ref.set_role_state(game, RoleState::Puppeteer(self))
+        }
+    }
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
