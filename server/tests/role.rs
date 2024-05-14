@@ -1190,8 +1190,8 @@ fn bouncer_jailor_double_block() {
 
     game.next_phase();
 
-    det.set_night_target(gf);
-    b.set_night_target(gf);
+    det.set_night_selection_single(gf);
+    b.set_night_selection_single(gf);
 
     game.next_phase();
 
@@ -1215,7 +1215,7 @@ fn bouncer_ojo_block() {
     ojo.set_role_state(RoleState::Ojo(Ojo{
         chosen_action: OjoAction::Kill { role: Role::Detective }
     }));
-    b.set_night_target(det1);
+    b.set_night_selection_single(det1);
 
     game.next_phase();
 
