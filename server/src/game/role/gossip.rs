@@ -8,7 +8,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::philosopher::Philosopher;
+use super::detective::Detective;
 use super::{Priority, RoleStateImpl};
 
 pub(super) const FACTION: Faction = Faction::Town;
@@ -66,11 +66,14 @@ impl RoleStateImpl for Gossip {
 
 impl Gossip {
     pub fn enemies(game: &Game, player_ref: PlayerReference) -> bool {
-        player_ref.night_visits(game)
+        match player_ref.night_appeared_visits(game) {
+            Some(x) => x,
+            None => player_ref.night_visits(game),
+        }
             .iter()
             .map(|v|v.target.clone())
             .any(|p|
-                Philosopher::players_are_enemies(game, p, player_ref)
+                Detective::player_is_suspicious(game, p)
             )
     }
 }
