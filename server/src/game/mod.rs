@@ -34,7 +34,6 @@ use settings::Settings;
 use grave::Grave;
 
 use self::components::arsonist_doused::ArsonistDoused;
-use self::components::mafia::Mafia;
 use self::components::cult::Cult;
 use self::end_game_condition::EndGameCondition;
 use self::event::on_game_ending::OnGameEnding;
@@ -71,8 +70,7 @@ pub struct Game {
     pub ticking: bool,
 
 
-    //components
-    pub mafia: Mafia,
+    //components with data
     pub cult: Cult,
     pub arsonist_doused: ArsonistDoused,
 }
@@ -154,7 +152,6 @@ impl Game {
                 phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
                 settings,
 
-                mafia: Mafia,
                 cult: Cult::default(),
                 arsonist_doused: ArsonistDoused::default(),
             };
@@ -386,7 +383,7 @@ pub mod test {
     use rand::{thread_rng, seq::SliceRandom};
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, mafia::Mafia},
+        components::{arsonist_doused::ArsonistDoused, cult::Cult},
         event::on_game_start::OnGameStart,
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
@@ -440,7 +437,6 @@ pub mod test {
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
 
-            mafia: Mafia,
             cult: Cult::default(),
             arsonist_doused: ArsonistDoused::default(),
         };

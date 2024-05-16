@@ -1,32 +1,24 @@
 use crate::game::{phase::PhaseType, player::PlayerReference, role::{godfather::Godfather, Role, RoleState}, role_list::Faction, Game};
 use rand::prelude::SliceRandom;
 
-impl Game {
-    pub fn mafia(&self)->&Mafia{
-        &self.mafia
-    }
-    pub fn set_mafia(&mut self, mafia: Mafia){
-        self.mafia = mafia;
-    }
-}
 #[derive(Default, Clone)]
 pub struct Mafia;
 impl Mafia{
-    pub fn on_phase_start(self, game: &mut Game, _phase: PhaseType){
+    pub fn on_phase_start(game: &mut Game, _phase: PhaseType){
         //This depends on role_state.on_phase_start being called before this
         Mafia::ensure_mafia_can_kill(game);
     }
-    pub fn on_game_start(self, game: &mut Game) {
+    pub fn on_game_start(game: &mut Game) {
         //This depends on role_state.on_game_start being called before this
         Mafia::ensure_mafia_can_kill(game);
     }
-    pub fn on_any_death(self, game: &mut Game, dead_player: PlayerReference){
+    pub fn on_any_death(game: &mut Game, dead_player: PlayerReference){
         //This depends on role_state.on_any_death being called before this
         if dead_player.role(game).faction() == Faction::Mafia {
             Mafia::ensure_mafia_can_kill(game);
         }
     }
-    pub fn on_role_switch(self, game: &mut Game, old: Role, new: Role) {
+    pub fn on_role_switch(game: &mut Game, old: Role, new: Role) {
         if old.faction() == Faction::Mafia || new.faction() == Faction::Mafia {
             Mafia::ensure_mafia_can_kill(game);
         }

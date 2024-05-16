@@ -31,7 +31,7 @@ impl RoleStateImpl for Apostle {
         match priority {
             Priority::Kill => {
                 if cult.ordered_cultists.len() != 1 {return}
-                if cult.can_convert_tonight(game) {return}
+                if Cult::can_convert_tonight(game) {return}
 
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
                 let target_ref = visit.target;
@@ -46,7 +46,7 @@ impl RoleStateImpl for Apostle {
                 );
             }
             Priority::Convert => {
-                if !cult.can_convert_tonight(game) {return}
+                if !Cult::can_convert_tonight(game) {return}
                 
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
                 let target_ref = visit.target;
@@ -72,8 +72,8 @@ impl RoleStateImpl for Apostle {
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
 
         let cult = game.cult().clone();
-        let can_kill = cult.ordered_cultists.len() == 1 && !cult.can_convert_tonight(game);
-        let can_convert = cult.can_convert_tonight(game);
+        let can_kill = cult.ordered_cultists.len() == 1 && !Cult::can_convert_tonight(game);
+        let can_convert = Cult::can_convert_tonight(game);
 
         if !can_convert && !can_kill {return false}
 
@@ -85,7 +85,7 @@ impl RoleStateImpl for Apostle {
         false
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, !game.cult().can_convert_tonight(game))
+        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, !Cult::can_convert_tonight(game))
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Cult])
