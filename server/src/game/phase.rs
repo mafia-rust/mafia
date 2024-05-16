@@ -6,7 +6,7 @@ use serde::{Serialize, Deserialize};
 use crate::packet::ToClientPacket;
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant}, event::on_any_death::OnAnyDeath, grave::Grave, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
+    chat::{ChatGroup, ChatMessageVariant}, event::{on_any_death::OnAnyDeath, on_night_priority::OnNightPriority}, grave::Grave, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
 };
 
 
@@ -204,6 +204,7 @@ impl PhaseState {
                 }
 
                 for priority in Priority::values(){
+                    OnNightPriority::new(priority).invoke(game);
                     for player_ref in PlayerReference::all_players(game){
                         player_ref.do_night_action(game, priority);
                     }

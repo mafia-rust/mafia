@@ -42,9 +42,6 @@ impl RoleStateImpl for Puppeteer {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return;}
 
-        PuppeteerMarionette::kill_marionettes(game);
-        PuppeteerMarionette::kill_poisoned(game);
-
         if let Some(visit) = actor_ref.night_visits(game).first(){
             let target = visit.target;
             

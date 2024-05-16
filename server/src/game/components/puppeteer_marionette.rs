@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::game::{chat::ChatMessageVariant, player::PlayerReference, role::{marionette::Marionette, Role, RoleState}, Game};
+use crate::game::{chat::ChatMessageVariant, player::PlayerReference, role::{marionette::Marionette, Priority, Role, RoleState}, Game};
 
 #[derive(Default, Clone)]
 pub struct PuppeteerMarionette{
@@ -64,6 +64,12 @@ impl PuppeteerMarionette{
             puppeteer_marionette.to_be_zombified.remove(&marionette);
         }
         game.set_puppeteer_marionette(puppeteer_marionette);
+    }
+    pub fn on_night_priority(game: &mut Game, priority: Priority){
+        if priority == Priority::Kill{
+            PuppeteerMarionette::kill_marionettes(game);
+            PuppeteerMarionette::kill_poisoned(game);
+        }
     }
 }
 
