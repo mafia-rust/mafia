@@ -1,7 +1,9 @@
-use crate::game::{components::puppeteer_marionette::PuppeteerMarionette, player::PlayerReference, Game};
-use crate::game::{components::{cult::Cult, mafia::Mafia}, player::PlayerReference, Game};
+use crate::game::{
+    components::{cult::Cult, mafia::Mafia, puppeteer_marionette::PuppeteerMarionette}, 
+    player::PlayerReference, 
+    Game
+};
 
-#[must_use = "Event must be invoked"]
 pub struct OnAnyDeath{
     dead_player: PlayerReference,
 }

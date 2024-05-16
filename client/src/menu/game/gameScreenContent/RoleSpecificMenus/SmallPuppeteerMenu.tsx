@@ -1,11 +1,8 @@
-import { ReactElement, useEffect } from "react"
-import { Role } from "../../../../game/roleState.d"
+import { ReactElement } from "react"
 import React from "react"
-import RoleDropdown from "../../../../components/RoleDropdown"
 import GAME_MANAGER from "../../../.."
 import translate from "../../../../game/lang"
 import StyledText from "../../../../components/StyledText"
-import { StateListener } from "../../../../game/gameManager.d"
 import { PhaseType } from "../../../../game/gameState.d"
 
 export type PuppeteerAction = "string" | "poison"
@@ -18,8 +15,8 @@ export default function SmallPuppeteerMenu(props: {action: PuppeteerAction, mari
 
     return <>
         {props.marionettesRemaining > 0 && <StyledText>{translate("role.puppeteer.smallRoleMenu", props.marionettesRemaining)}</StyledText>}
-        {props.marionettesRemaining == 0 && <StyledText>{translate("role.puppeteer.smallRoleMenu.noneRemaining")}</StyledText>}
-        {props.marionettesRemaining > 0 && props.phase == "night" ? <div>
+        {props.marionettesRemaining === 0 && <StyledText>{translate("role.puppeteer.smallRoleMenu.noneRemaining")}</StyledText>}
+        {props.marionettesRemaining > 0 && props.phase === "night" ? <div>
             <ActionTypeDropdown
                 action={props.action}
                 onChange={(a)=>{sendAction(a)}}

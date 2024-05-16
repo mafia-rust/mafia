@@ -34,7 +34,6 @@ use settings::Settings;
 use grave::Grave;
 use self::components::{
     arsonist_doused::ArsonistDoused,
-    mafia::Mafia,
     cult::Cult,
     puppeteer_marionette::PuppeteerMarionette
 };
@@ -388,7 +387,7 @@ pub mod test {
     use rand::{thread_rng, seq::SliceRandom};
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, puppeteer_marionette::PuppeteerMarionette, mafia::Mafia},
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, puppeteer_marionette::PuppeteerMarionette},
         event::on_game_start::OnGameStart,
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
