@@ -29,6 +29,8 @@
     "deputyShotYou": "special",
     "puppeteerPlayerIsNowMarionette": "result",
     "puppeteerYouArePoisoned": "result",
+    "puppeteerActionChosen.string": "special",
+    "puppeteerActionChosen.poison": "special",
     "deathCollectedSouls": "special",
     "jailorDecideExecute": "special",
     "roleBlocked": "result",

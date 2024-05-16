@@ -15,6 +15,7 @@ pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 
 #[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Puppeteer{
     pub marionettes_remaining: u8,
     pub action: PuppeteerAction,

@@ -50,6 +50,24 @@ impl PlayerReference{
 
         true
     }
+    pub fn try_night_kill_anonymous(&self, game: &mut Game, grave_killer: GraveKiller, attack: u8) -> bool {
+        self.set_night_attacked(game, true);
+
+        if self.night_defense(game) >= attack {
+            self.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
+            return false;
+        }
+        
+        self.push_night_message(game, ChatMessageVariant::YouWereAttacked);
+
+        self.push_night_grave_killers(game, grave_killer);        
+
+        if !self.alive(game) { return true }
+
+        self.set_night_died(game, true);
+
+        true
+    }
 
     /// ### Pre condition:
     /// self.alive(game) == false
