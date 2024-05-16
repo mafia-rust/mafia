@@ -100,6 +100,11 @@ impl TestPlayer {
         }
         out
     }
+    pub fn get_messages_after_night(&self, day_number: u8) -> Vec<ChatMessageVariant> {
+        self.get_messages_after_last_message(
+            ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number }
+        )
+    }
 
     pub fn role_state(&self) -> &RoleState{
         self.0.role_state(game!(self))

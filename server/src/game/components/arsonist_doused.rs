@@ -15,26 +15,32 @@ pub struct ArsonistDoused {
     pub doused_players: HashSet<PlayerReference>,
 }
 impl ArsonistDoused {
-    pub fn douse(mut self, game: &mut Game, player: PlayerReference) {
+    pub fn douse(game: &mut Game, player: PlayerReference) {
+        let mut arsonist_doused = game.arsonist_doused().clone();
+
         if player.role(game) == Role::Arsonist {
             return
         }
 
-        self.doused_players.insert(player);
+        arsonist_doused.doused_players.insert(player);
 
-        ArsonistDoused::tag_doused_players_for_arsonists(&self, game);
+        game.set_arsonist_doused(arsonist_doused);
 
-        game.set_arsonist_doused(self.clone());
+        ArsonistDoused::tag_doused_players_for_arsonists(game);
     }
-    pub fn clean_doused(mut self, game: &mut Game, player: PlayerReference) {
-        self.doused_players.remove(&player);
+    pub fn clean_doused(game: &mut Game, player: PlayerReference) {
+        let mut arsonist_doused = game.arsonist_doused().clone();
 
-        ArsonistDoused::tag_doused_players_for_arsonists(&self, game);
+        arsonist_doused.doused_players.remove(&player);
+        
+        game.set_arsonist_doused(arsonist_doused);
 
-        game.set_arsonist_doused(self.clone());
+        ArsonistDoused::tag_doused_players_for_arsonists(game);
     }
-    pub fn ignite(&self, game: &mut Game, igniter: PlayerReference) {
-        for player in self.doused_players.clone() {
+    pub fn ignite(game: &mut Game, igniter: PlayerReference) {
+        let arso_doused = game.arsonist_doused();
+
+        for player in arso_doused.doused_players.clone() {
             if player.role(game) == Role::Arsonist {continue;}
             if !player.alive(game) {continue;}
             player.try_night_kill(igniter, game, GraveKiller::Role(Role::Arsonist), 3, true);
@@ -43,12 +49,14 @@ impl ArsonistDoused {
     pub fn doused(&self, player: PlayerReference) -> bool {
         self.doused_players.contains(&player)
     }
-    pub fn tag_doused_players_for_arsonists(&self, game: &mut Game) {
+    pub fn tag_doused_players_for_arsonists(game: &mut Game) {
+        let arso_doused = game.arsonist_doused().clone();
+
         for arsonist in PlayerReference::all_players(game){
             if arsonist.role(game) != Role::Arsonist {continue;}
 
             arsonist.remove_player_tag_on_all(game, Tag::Doused);
-            for player in self.doused_players.clone() {
+            for player in arso_doused.doused_players.clone() {
                 arsonist.push_player_tag(game, player, Tag::Doused)
             }
         }

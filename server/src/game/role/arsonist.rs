@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::components::arsonist_doused::ArsonistDoused;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -34,7 +35,7 @@ impl RoleStateImpl for Arsonist {
                             actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
                             return
                         }
-                        game.arsonist_doused().clone().douse(game, target_ref);
+                        ArsonistDoused::douse(game, target_ref);
                     }
 
                     
@@ -42,7 +43,7 @@ impl RoleStateImpl for Arsonist {
                     //douse the jailor if jailed
                     for player_ref in PlayerReference::all_players(game){
                         if player_ref.alive(game) && player_ref.role(game) == Role::Jailor {
-                            game.arsonist_doused().clone().douse(game, player_ref);
+                            ArsonistDoused::douse(game, player_ref);
                         }
                     }
                 }
@@ -56,7 +57,7 @@ impl RoleStateImpl for Arsonist {
                             .any(|v|v.target==actor_ref)
                     ).collect::<Vec<PlayerReference>>()
                 {   
-                    game.arsonist_doused().clone().douse(game, other_player_ref);
+                    ArsonistDoused::douse(game, other_player_ref);
                 }
             },
             Priority::Kill => {
@@ -64,7 +65,7 @@ impl RoleStateImpl for Arsonist {
                 
                 if let Some(visit) = actor_ref.night_visits(game).first(){
                     if actor_ref == visit.target{
-                        game.arsonist_doused().clone().ignite(game, actor_ref);
+                        ArsonistDoused::ignite(game, actor_ref);
                     }
                 }
                 
@@ -99,7 +100,7 @@ impl RoleStateImpl for Arsonist {
     fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType){
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
-        game.arsonist_doused().clone().clean_doused(game, actor_ref)
+        ArsonistDoused::clean_doused(game, actor_ref);
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
     }

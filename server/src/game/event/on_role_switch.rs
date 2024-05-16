@@ -1,4 +1,4 @@
-use crate::game::{player::PlayerReference, role::Role, Game};
+use crate::game::{components::{cult::Cult, mafia::Mafia}, player::PlayerReference, role::Role, Game};
 
 pub struct OnRoleSwitch{
     player: PlayerReference,
@@ -13,7 +13,7 @@ impl OnRoleSwitch{
 
         game.on_role_switch(self.player, self.old, self.new);
 
-        game.cult().clone().on_role_switch(game, self.old, self.new);
-        game.mafia().clone().on_role_switch(game, self.old, self.new);
+        Cult::on_role_switch(game, self.old, self.new);
+        Mafia::on_role_switch(game, self.old, self.new);
     }
 }

@@ -1,5 +1,5 @@
 use crate::game::{components::puppeteer_marionette::PuppeteerMarionette, player::PlayerReference, Game};
-
+use crate::game::{components::{cult::Cult, mafia::Mafia}, player::PlayerReference, Game};
 
 #[must_use = "Event must be invoked"]
 pub struct OnAnyDeath{
@@ -14,9 +14,9 @@ impl OnAnyDeath{
             player_ref.on_any_death(game, self.dead_player)
         }
 
-        game.mafia().clone().on_any_death(game, self.dead_player);
-        game.cult().clone().on_any_death(game);
         PuppeteerMarionette::on_any_death(game, self.dead_player);
+        Mafia::on_any_death(game, self.dead_player);
+        Cult::on_any_death(game);
 
         game.on_any_death(self.dead_player);
     }

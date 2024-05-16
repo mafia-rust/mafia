@@ -32,7 +32,6 @@ use player::Player;
 use phase::PhaseStateMachine;
 use settings::Settings;
 use grave::Grave;
-
 use self::components::{
     arsonist_doused::ArsonistDoused,
     mafia::Mafia,
@@ -74,8 +73,7 @@ pub struct Game {
     pub ticking: bool,
 
 
-    //components
-    pub mafia: Mafia,
+    //components with data
     pub cult: Cult,
     pub arsonist_doused: ArsonistDoused,
     pub puppeteer_marionette: PuppeteerMarionette
@@ -158,7 +156,6 @@ impl Game {
                 phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
                 settings,
 
-                mafia: Mafia,
                 cult: Cult::default(),
                 arsonist_doused: ArsonistDoused::default(),
                 puppeteer_marionette: PuppeteerMarionette::default()
@@ -445,7 +442,6 @@ pub mod test {
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
 
-            mafia: Mafia,
             cult: Cult::default(),
             arsonist_doused: ArsonistDoused::default(),
             puppeteer_marionette: PuppeteerMarionette::default()
