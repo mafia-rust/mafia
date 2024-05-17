@@ -766,7 +766,9 @@
         ],
         "chatMessages":[
             {"type": "puppeteerPlayerIsNowMarionette","player": 32},
-            {"type": "puppeteerYouArePoisoned"}
+            {"type": "puppeteerYouArePoisoned"},
+            {"type": "puppeteerActionChosen", "action": "poison"},
+            {"type": "puppeteerActionChosen", "action": "string"}
         ]
     },
     "marionette": {
@@ -776,7 +778,9 @@
         "aura": null,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "canBeConvertedTo": [],
+        "canBeConvertedTo": [
+            "puppeteer"
+        ],
         "chatMessages":[
             {"type": "puppeteerPlayerIsNowMarionette","player": 31}
         ]

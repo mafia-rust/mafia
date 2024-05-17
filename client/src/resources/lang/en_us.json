@@ -1176,7 +1176,7 @@
     "wiki.article.role.puppeteer.extra":"- Your ability will work on the person you actually visited, so if a transporter transports a player you visit with someone else, you see or attack the other player, and you are be told their actual role\n- You don't visit yourself\n- You don't visit dead players\n- You are immune to possession",
 
     "wiki.article.role.marionette.guide":"You have no ability, but you are still important to the fiends. You should help your team gather information and make up lies to deceive the town.",
-    "wiki.article.role.marionette.abilities":"None",
+    "wiki.article.role.marionette.abilities":"- If a marionette is generated when the game starts, they are converted to a puppeteer",
     "wiki.article.role.marionette.attributes":"None",
     "wiki.article.role.marionette.extra":"None",
 

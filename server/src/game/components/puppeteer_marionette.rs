@@ -4,8 +4,7 @@ use crate::game::{
     chat::ChatMessageVariant,
     player::PlayerReference,
     role::{
-        marionette::Marionette,
-        Priority, Role, RoleState
+        marionette::Marionette, puppeteer::Puppeteer, Priority, Role, RoleState
     }, 
     Game
 };
@@ -67,6 +66,24 @@ impl PuppeteerMarionette{
         }
     }
 
+    pub fn on_game_start(game: &mut Game){
+        if 
+            PlayerReference::all_players(game)
+                .any(|p|p.role(game)==Role::Marionette) &&
+            !PlayerReference::all_players(game)
+                .any(|p|p.role(game)==Role::Puppeteer)
+        {
+            let marionettes = PlayerReference::all_players(game)
+                .filter(|p|p.role(game)==Role::Marionette)
+                .filter(|p|p.alive(game))
+                .map(|p|p.clone())
+                .collect::<Vec<_>>();
+
+            for marionette in marionettes{
+                marionette.set_role(game, RoleState::Puppeteer(Puppeteer::default()));
+            }
+        }
+    }
     pub fn on_any_death(game: &mut Game, dead_player: PlayerReference){
         let mut puppeteer_marionette: PuppeteerMarionette = game.puppeteer_marionette().clone();
 
