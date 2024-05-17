@@ -22,6 +22,14 @@ impl PlayerReference{
             );
         }
     }
+    pub fn restrict(&self, game: &mut Game) {
+        for visitor in self.all_visitors(game){
+            if !visitor.role(game).restrict_immune() {
+                visitor.set_night_visits(game, vec![]);
+                visitor.push_night_message(game, ChatMessageVariant::TargetRestricted);
+            }
+        }
+    }
 
     /// Returns true if attack overpowered defense
     pub fn try_night_kill(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: u8, should_leave_death_note: bool) -> bool {

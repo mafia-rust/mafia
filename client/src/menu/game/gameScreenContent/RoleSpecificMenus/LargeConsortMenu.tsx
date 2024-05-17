@@ -234,7 +234,7 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
             <div>
                 <ChatElement message={{
                     variant: {
-                        type: "targetJailed",
+                        type: "targetRestricted",
                     },
                     chatGroup:null
                 }}/>

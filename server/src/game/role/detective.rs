@@ -27,10 +27,6 @@ impl RoleStateImpl for Detective {
 
         if let Some(visit) = actor_ref.night_visits(game).first(){
             
-            if visit.target.night_jailed(game){
-                actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
-                return
-            }
             let message = ChatMessageVariant::SheriffResult {
                 suspicious: Detective::player_is_suspicious(game, visit.target)
             };

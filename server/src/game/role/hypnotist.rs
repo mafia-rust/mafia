@@ -57,9 +57,7 @@ impl RoleStateImpl for Hypnotist {
                 actor_ref.set_role_state(game, RoleState::Hypnotist(self));
             },
             Priority::Roleblock => {
-                if target_ref.night_jailed(game) {
-                    actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
-                }else if self.roleblock {
+                if self.roleblock {
                     target_ref.roleblock(game, false);
                 }
             },
@@ -88,7 +86,7 @@ impl RoleStateImpl for Hypnotist {
                     }
                 }
                 if self.your_target_was_jailed_message {
-                    target_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
+                    target_ref.push_night_message(game, ChatMessageVariant::TargetRestricted);
                 }
             },
             _ => {}

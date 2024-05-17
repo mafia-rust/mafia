@@ -2,7 +2,7 @@ use std::vec;
 
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::chat::ChatGroup;
 use crate::game::grave::{GraveKiller, GraveReference};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -29,11 +29,6 @@ impl RoleStateImpl for Zealot {
 
         let Some(visit) = actor_ref.night_visits(game).first() else {return};
         let target_ref = visit.target;
-
-        if target_ref.night_jailed(game){
-            actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
-            return
-        }
 
         target_ref.try_night_kill(
             actor_ref, game, GraveKiller::Faction(Faction::Cult), 1, false

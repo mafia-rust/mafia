@@ -28,12 +28,6 @@ impl RoleStateImpl for Philosopher {
         let Some(first_visit) = actor_ref.night_visits(game).get(0) else {return;};
         let Some(second_visit) = actor_ref.night_visits(game).get(1) else {return;};
 
-            
-        if first_visit.target.night_jailed(game) || second_visit.target.night_jailed(game){
-            actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
-            return
-        }
-
         let message = ChatMessageVariant::SeerResult{
             enemies: Philosopher::players_are_enemies(game, first_visit.target, second_visit.target)
         };

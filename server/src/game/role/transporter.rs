@@ -27,11 +27,7 @@ impl RoleStateImpl for Transporter {
         let transporter_visits = actor_ref.night_visits(game).clone();
         let Some(first_visit) = transporter_visits.get(0) else {return};
         let Some(second_visit) = transporter_visits.get(1) else {return};
-
-        if first_visit.target.night_jailed(game) || second_visit.target.night_jailed(game){
-            actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed );
-            return
-        }
+        
         
         first_visit.target.push_night_message(game, ChatMessageVariant::Transported);
         second_visit.target.push_night_message(game, ChatMessageVariant::Transported);
