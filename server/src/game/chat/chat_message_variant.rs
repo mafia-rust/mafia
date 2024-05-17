@@ -155,7 +155,7 @@ pub enum ChatMessageVariant {
     */
     RoleBlocked { immune : bool },
 
-    TargetJailed,
+    TargetRestricted,
 
     SheriffResult {suspicious: bool},
     LookoutResult{players: Vec<PlayerIndex>},

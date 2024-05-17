@@ -107,6 +107,7 @@ macros::roles! {
 
 macros::priorities! {
     TopPriority,
+    Block,
 
     Transporter,
 
@@ -276,36 +277,39 @@ mod macros {
 impl Role{
     pub fn control_immune(&self)->bool{
         match self {
-            Role::Veteran => true,
-
-            Role::Transporter => true,
-            
-            Role::Retributionist => true,
-            Role::Witch => true,
-            Role::Minion => true,
-            Role::Necromancer => true,
-            
-            Role::Doomsayer => true,
-
-            Role::Ojo => true,
+            Role::Bouncer
+            | Role::Veteran
+            | Role::Transporter
+            | Role::Retributionist
+            | Role::Minion
+            | Role::Doomsayer
+            | Role::Witch
+            | Role::Necromancer
+            | Role::Ojo => true,
             _ => false,
         }
     }
     pub fn roleblock_immune(&self)->bool{
         match self {
-            Role::Veteran => true,
-            
-            Role::Transporter => true,
-            Role::Bouncer => true,
-
-            Role::Escort => true,
-            Role::Hypnotist => true,
-            
-            Role::Retributionist => true,
-            Role::Witch => true,
-            Role::Minion => true,
-            Role::Necromancer => true,
+            | Role::Bouncer
+            | Role::Veteran
+            | Role::Transporter
+            | Role::Escort
+            | Role::Retributionist
+            | Role::Jester
+            | Role::Minion
+            | Role::Hypnotist
+            | Role::Witch
+            | Role::Necromancer => true,
             _ => false,
+        }
+    }
+    pub fn restrict_immune(&self)->bool{
+        match self {
+            Role::Jailor
+            | Role::Bouncer
+            | Role::Jester => true,
+            _ => false
         }
     }
     pub fn has_innocent_aura(&self, game: &Game)->bool{

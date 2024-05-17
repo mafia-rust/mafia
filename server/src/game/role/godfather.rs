@@ -33,10 +33,6 @@ impl RoleStateImpl for Godfather {
             if let Some(backup) = self.backup {
                 if let Some(visit) = backup.night_visits(game).first(){
                     let target_ref = visit.target;
-                    if target_ref.night_jailed(game){
-                        backup.push_night_message(game, ChatMessageVariant::TargetJailed);
-                        return
-                    }
             
                     game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackupKilled { backup: backup.index() });
                     target_ref.try_night_kill(
@@ -47,10 +43,6 @@ impl RoleStateImpl for Godfather {
             
         } else if let Some(visit) = actor_ref.night_visits(game).first(){
             let target_ref = visit.target;
-            if target_ref.night_jailed(game){
-                actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
-                return
-            }
     
             target_ref.try_night_kill(
                 actor_ref, game, GraveKiller::Faction(Faction::Mafia), 1, false

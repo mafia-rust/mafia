@@ -41,9 +41,8 @@ impl RoleStateImpl for Mortician {
                 let Some(visit) = actor_ref.night_visits(game).first() else{return};
 
                 let target_ref = visit.target;
-                if target_ref.night_jailed(game) {
-                    actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
-                }else if !self.cremated_players.contains(&target_ref){
+                
+                if !self.cremated_players.contains(&target_ref){
                     self.cremated_players.push(target_ref);
                     actor_ref.set_role_state(game, RoleState::Mortician(self));
                     actor_ref.push_player_tag(game, target_ref, Tag::MorticianTagged);

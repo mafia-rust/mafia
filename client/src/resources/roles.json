@@ -29,7 +29,7 @@
             },
             {"type": "jailorDecideExecute","target": 7},
             {"type": "jailorDecideExecute","target": null},
-            {"type": "targetJailed"},
+            {"type": "targetRestricted"},
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
@@ -456,7 +456,7 @@
             {"type": "transported"},
             {"type": "youWerePossessed", "immune": false},
             {"type": "youWerePossessed", "immune": true},
-            {"type": "targetJailed"}
+            {"type": "targetRestricted"}
         ]
     },
     "blackmailer": {

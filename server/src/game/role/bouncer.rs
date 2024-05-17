@@ -2,7 +2,7 @@ use std::vec;
 
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::chat::ChatGroup;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -25,19 +25,11 @@ impl RoleStateImpl for Bouncer {
 
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Roleblock {return;}
+        if priority != Priority::Block {return;}
         
         if let Some(visit) = actor_ref.night_visits(game).first(){
             let target_ref = visit.target;
-            if target_ref.night_jailed(game) {
-                actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
-            }else{                
-                target_ref.all_visitors(game).iter().for_each(|&player_ref| {
-                    if player_ref != actor_ref {
-                        player_ref.roleblock(game, true);
-                    }
-                });
-            }
+            target_ref.restrict(game);
         }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {

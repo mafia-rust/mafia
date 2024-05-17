@@ -46,11 +46,6 @@ impl RoleStateImpl for Spy {
             },
             Priority::SpyBug => {
                 let Some(visit) = actor_ref.night_visits(game).first()else{return};
-            
-                if visit.target.night_jailed(game){
-                    actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed );
-                    return
-                }
 
                 for message in visit.target.night_messages(game).clone(){
                     if let Some(message) = match message{

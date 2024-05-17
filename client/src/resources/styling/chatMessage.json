@@ -64,7 +64,7 @@
     "jesterWon": "special",
     "playerWithNecronomicon": "special",
     "roleData": "result",
-    "targetJailed": "result",
+    "targetRestricted": "result",
     "someoneSurvivedYourAttack": "result",
     "yourConvertFailed": "result",
     "apostleCanConvertTonight": "special",

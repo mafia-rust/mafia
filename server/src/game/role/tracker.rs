@@ -26,11 +26,6 @@ impl RoleStateImpl for Tracker {
 
         if let Some(visit) = actor_ref.night_visits(game).first(){
             
-            if visit.target.night_jailed(game){
-                actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed );
-                return
-            }
-            
             let message = ChatMessageVariant::TrackerResult { players:
                 visit.target.tracker_seen_visits(game).into_iter().map(|v|v.target.index()).collect()
             };

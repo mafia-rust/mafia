@@ -40,12 +40,7 @@ impl RoleStateImpl for Werewolf {
                 match actor_ref.night_visits(game).first() {
                     //rampage at target
                     Some(first_visit) => {
-                        let target_ref = first_visit.target;
-                        if target_ref.night_jailed(game){
-                            actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
-                            return
-                        }
-                        
+                        let target_ref = first_visit.target;                        
 
                         for other_player_ref in 
                             target_ref.all_visitors(game).into_iter().filter(|p|actor_ref!=*p)
@@ -94,12 +89,8 @@ impl RoleStateImpl for Werewolf {
                 
                     if let Some(first_visit) = actor_ref.night_visits(game).first() {
                         let target_ref = first_visit.target;
-
-                        if target_ref.night_jailed(game){
-                            actor_ref.push_night_message(game, ChatMessageVariant::TargetJailed);
-                        }else{
-                            newly_tracked_players.push(target_ref);
-                        }
+                        
+                        newly_tracked_players.push(target_ref);
                     }
 
                     //this should remove duplicates
