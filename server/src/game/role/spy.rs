@@ -2,6 +2,7 @@ use rand::seq::SliceRandom;
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::components::cult::Cult;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -93,7 +94,7 @@ impl RoleStateImpl for Spy {
             PhaseType::Night => {
                 //if there are any cult alive, tell the spy if apostle can convert
                 if PlayerReference::all_players(game).any(|p|p.role(game).faction() == Faction::Cult){
-                    if game.cult().can_convert_tonight(game) {
+                    if Cult::can_convert_tonight(game) {
                         actor_ref.add_private_chat_message(game,
                             ChatMessageVariant::ApostleCanConvertTonight
                         )

@@ -919,7 +919,9 @@
     "wiki.article.standard.graveyard.title":"Graveyard",
     "wiki.article.standard.graveyard.title:var.0":"Grave yard",
     "wiki.article.standard.graveyard.text":"The graveyard can help keep track of what roles are in the game and who has them\n- The outline list on the left shows what roles can be in the game\n    - Click on an outline to cross it out to help keep track of what roles people are.\n- The graves on the right show who is dead\n   - If you click on a grave, you can see what their alibi and role was, as well as other related information",
-    
+    "wiki.article.standard.shwompt.title":"Shwompt",
+    "wiki.article.standard.shwompt.text":"Shwompt \nPronunciation: ʃwɒmpt \nA sudden whooshing sound that contains a siblant conclusion. This describes the sound that is made when objects phase through a solid wall. \nOther forms: Shwompter, Shwompting, Shwompted, Shwomptee",
+
 
     "wiki.article.generated.role_set.title":"Role Set",
     "wiki.article.generated.all_text.title":"All text",
