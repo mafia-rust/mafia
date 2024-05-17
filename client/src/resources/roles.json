@@ -761,7 +761,9 @@
         "aura": null,
         "maxCount": null,
         "largeRoleSpecificMenu": false,
-        "canBeConvertedTo": [],
+        "canBeConvertedTo": [
+            "marionette"
+        ],
         "chatMessages":[
             {"type": "puppeteerPlayerIsNowMarionette","player": 32},
             {"type": "puppeteerYouArePoisoned"}
