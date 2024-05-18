@@ -364,6 +364,28 @@ fn jester_basic() {
 }
 
 #[test]
+fn provocateur_dies(){
+    kit::scenario!(game in Night 1 where
+        exe: Provocateur,
+        townie: Detective,
+        mafioso: Mafioso
+    );
+
+    game.skip_to(PhaseType::Nomination, 2);
+    mafioso.vote_for_player(Some(townie));
+    exe.vote_for_player(Some(townie));
+
+    game.skip_to(PhaseType::Judgement, 2);
+    exe.set_verdict(Verdict::Guilty);
+    mafioso.set_verdict(Verdict::Guilty);
+
+    game.skip_to(PhaseType::FinalWords, 2);
+    assert!(!exe.alive());
+    assert!(townie.alive());
+    assert!(mafioso.alive());
+}
+
+#[test]
 fn psychic_auras(){
     for _ in 0..100 {
         kit::scenario!(game in Night 1 where

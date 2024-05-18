@@ -83,13 +83,9 @@ impl RoleStateImpl for Provocateur {
                 if Some(player_on_trial) == self.target.get_target() {
                     game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::ProvocateurWon);
                     actor_ref.set_role_state(game, RoleState::Provocateur(Provocateur { target: ProvocateurTarget::Won }));
-                }
-            }
-            PhaseState::Night => {
-                if self.target == ProvocateurTarget::Won {
                     actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
                 }
-            },
+            }
             _=>{}
         }
     }
