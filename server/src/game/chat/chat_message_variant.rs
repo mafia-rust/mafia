@@ -5,11 +5,7 @@ use crate::game::{
     phase::PhaseState,
     player::PlayerIndex,
     role::{
-        auditor::AuditorResult,
-        engineer::TrapState,
-        ojo::OjoAction,
-        spy::SpyBug,
-        Role
+        auditor::AuditorResult, engineer::TrapState, ojo::OjoAction, puppeteer::PuppeteerAction, spy::SpyBug, Role
     },
     role_list::RoleOutline,
     verdict::Verdict
@@ -135,6 +131,9 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     DeputyShotYou,
 
+    PuppeteerPlayerIsNowMarionette{player: PlayerIndex},
+    PuppeteerYouArePoisoned,
+
 
     #[serde(rename_all = "camelCase")]
     PlayerWithNecronomicon{player_index: PlayerIndex},
@@ -194,6 +193,8 @@ pub enum ChatMessageVariant {
     ConsigliereResult{ role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
     OjoSelection{action: OjoAction},
+    #[serde(rename_all = "camelCase")]
+    PuppeteerActionChosen{action: PuppeteerAction},
     #[serde(rename_all = "camelCase")]
     MarksmanChosenMarks{marks: Vec<PlayerIndex>},
 

@@ -754,6 +754,37 @@
             {"type": "youSurvivedAttack"}
         ]
     },
+    "puppeteer": {
+        "faction": "fiends",
+        "roleSet": null,
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [
+            "marionette"
+        ],
+        "chatMessages":[
+            {"type": "puppeteerPlayerIsNowMarionette","player": 32},
+            {"type": "puppeteerYouArePoisoned"},
+            {"type": "puppeteerActionChosen", "action": "poison"},
+            {"type": "puppeteerActionChosen", "action": "string"}
+        ]
+    },
+    "marionette": {
+        "faction": "fiends",
+        "roleSet": null,
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [
+            "puppeteer"
+        ],
+        "chatMessages":[
+            {"type": "puppeteerPlayerIsNowMarionette","player": 31}
+        ]
+    },
     "apostle": {
         "faction": "cult",
         "roleSet": null,

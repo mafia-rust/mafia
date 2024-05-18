@@ -32,9 +32,11 @@ use player::Player;
 use phase::PhaseStateMachine;
 use settings::Settings;
 use grave::Grave;
-
-use self::components::arsonist_doused::ArsonistDoused;
-use self::components::cult::Cult;
+use self::components::{
+    arsonist_doused::ArsonistDoused,
+    cult::Cult,
+    puppeteer_marionette::PuppeteerMarionette
+};
 use self::end_game_condition::EndGameCondition;
 use self::event::on_game_ending::OnGameEnding;
 use self::event::on_grave_added::OnGraveAdded;
@@ -73,6 +75,7 @@ pub struct Game {
     //components with data
     pub cult: Cult,
     pub arsonist_doused: ArsonistDoused,
+    pub puppeteer_marionette: PuppeteerMarionette
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -154,6 +157,7 @@ impl Game {
 
                 cult: Cult::default(),
                 arsonist_doused: ArsonistDoused::default(),
+                puppeteer_marionette: PuppeteerMarionette::default()
             };
 
             if !game.game_is_over() {
@@ -383,7 +387,7 @@ pub mod test {
     use rand::{thread_rng, seq::SliceRandom};
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult},
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, puppeteer_marionette::PuppeteerMarionette},
         event::on_game_start::OnGameStart,
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
@@ -439,6 +443,7 @@ pub mod test {
 
             cult: Cult::default(),
             arsonist_doused: ArsonistDoused::default(),
+            puppeteer_marionette: PuppeteerMarionette::default()
         };
 
         OnGameStart::invoke(&mut game);

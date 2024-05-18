@@ -9,6 +9,7 @@ import RoleDropdown from "../../../../components/RoleDropdown"
 import ROLES from "../../../../resources/roles.json"
 import { getRolesComplement } from "../../../../game/roleListState.d"
 import { Role } from "../../../../game/roleState.d"
+import SmallPuppeteerMenu from "./SmallPuppeteerMenu"
 
 
 
@@ -140,6 +141,12 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
                 if(this.state.gameState.phaseState.type === "night" && this.state.gameState.clientState.myIndex!==null && this.state.gameState.players[this.state.gameState.clientState.myIndex].alive)
                     return <SmallOjoMenu action={this.state.gameState.clientState.roleState.chosenAction}/>;
                 return null;
+            case "puppeteer":
+                return <SmallPuppeteerMenu 
+                    action={this.state.gameState.clientState.roleState.action} 
+                    marionettesRemaining={this.state.gameState.clientState.roleState.marionettesRemaining}
+                    phase={this.state.gameState.phaseState.type}
+                />;
             case "wildcard":
             case "trueWildcard":
                 return <><StyledText>{translate("role.wildcard.smallRoleMenu")}</StyledText><div><RoleDropdown 

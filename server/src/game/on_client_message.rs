@@ -5,7 +5,7 @@ use super::{
     event::on_fast_forward::OnFastForward,
     phase::{PhaseState, PhaseType},
     player::{PlayerIndex, PlayerReference},
-    role::{engineer::{Engineer, Trap}, mayor::Mayor, Role, RoleState}, role_list::Faction, 
+    role::{engineer::{Engineer, Trap}, mayor::Mayor, puppeteer::PuppeteerAction, Role, RoleState}, role_list::Faction, 
     spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
     Game
 };
@@ -292,6 +292,16 @@ impl Game {
                     ojo.chosen_action = action.clone();
                     sender_player_ref.set_role_state(self, RoleState::Ojo(ojo));
                     sender_player_ref.add_private_chat_message(self, ChatMessageVariant::OjoSelection { action })
+                }
+            },
+            ToServerPacket::SetPuppeteerAction { action } => {
+                if let RoleState::Puppeteer(mut pup) = sender_player_ref.role_state(self).clone(){
+                    pup.action = action.clone();
+                    if pup.marionettes_remaining == 0 {
+                        pup.action = PuppeteerAction::Poison;
+                    }
+                    sender_player_ref.set_role_state(self, RoleState::Puppeteer(pup));
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::PuppeteerActionChosen { action })
                 }
             },
             ToServerPacket::SetEngineerShouldUnset { unset } => {

@@ -494,6 +494,12 @@ export function createGameManager(): GameManager {
                 action: action
             });
         },
+        sendSetPuppeteerAction(action) {
+            this.server.sendPacket({
+                type: "setPuppeteerAction",
+                action: action
+            });
+        },
         sendSetEngineerShouldUnset(unset) {
             this.server.sendPacket({
                 type: "setEngineerShouldUnset",
