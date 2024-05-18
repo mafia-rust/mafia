@@ -27,6 +27,7 @@
     "jailedSomeone": "special",
     "deputyKilled": "special",
     "deputyShotYou": "special",
+    "playerNominated": "trial",
     "puppeteerPlayerIsNowMarionette": "result",
     "puppeteerYouArePoisoned": "result",
     "puppeteerActionChosen": "special",
