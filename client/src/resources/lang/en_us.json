@@ -495,6 +495,7 @@
     "tag.werewolfTracked": "🐾",
     "tag.necronomicon":"📓",
     "tag.morticianTagged":"🏺",
+    "tag.puppeteerMarionette": "🧵",
     "tag.doused":"🔥",
     "tag.dead":"💀",
 
@@ -647,8 +648,8 @@
     "chatMessage.deathCollectedSouls":"The apocalypse begins, everyone will die tonight if Death is alive at nightfall!",
     "chatMessage.deputyKilled":"The Deputy killed \\0!",
     "chatMessage.deputyShotYou":"A Deputy shot you!",
-    "chatMessage.puppeteerPlayerIsNowMarionette":"\\0 is being strung into a marionette. They will be attacked and turned into a marionette during the following night.",
-    "chatMessage.puppeteerYouArePoisoned":"You have been poisoned by the puppeteer, you will be attacked the next night.",
+    "chatMessage.puppeteerPlayerIsNowMarionette":"\\0 is being strung up into a marionette. They will be indirectly attacked the following night and now win with fiends.",
+    "chatMessage.puppeteerYouArePoisoned":"You have been poisoned by the puppeteer, you will be indirectly attacked the next night.",
     "chatMessage.jailorDecidedToExecute":"The Jailor decided to execute \\0",
     "chatMessage.jailorDecideExecute.nobody":"The Jailor decided not to execute!",
     "chatMessage.playerWithNecronomicon":"\\0 has the necronomicon.",
@@ -1177,9 +1178,9 @@
     "wiki.article.role.ojo.extra":"- Your ability will work on the person you actually visited, so if a transporter transports a player you visit with someone else, you see or attack the other player, and you are be told their actual role\n- You don't visit yourself\n- You don't visit dead players\n- You are immune to possession",
 
     "wiki.article.role.puppeteer.guide":"- ",
-    "wiki.article.role.puppeteer.abilities":"- You may choose to do one of the following\n    - See all players with a certain role\n        - You visit all players with that role\n        - Players you visit are revealed to you\n        - Players who visit you are revealed to you\n\n    - Kill all players with a certain role\n        - You visit all players with that role with an attacking visit",
-    "wiki.article.role.puppeteer.attributes":"- If you are dead, you can not choose to see or kill\n* Your attack is an armor-piercing attack\n* You can't choose kill on night 1",
-    "wiki.article.role.puppeteer.extra":"- Your ability will work on the person you actually visited, so if a transporter transports a player you visit with someone else, you see or attack the other player, and you are be told their actual role\n- You don't visit yourself\n- You don't visit dead players\n- You are immune to possession",
+    "wiki.article.role.puppeteer.abilities":"- You may choose to do one of the following\n    - Visit a player to poison them\n        - They are told they are poisoned\n        - They are indirectly attacked on the following night\n\n    - Visit a player to string up into a marionette \n        - They are told they will be strung up and gain a suspicious aura        - They will be indirectly attacked the following night        - At the end of the game, they become a Marionette that wins with fiends",
+    "wiki.article.role.puppeteer.attributes":"- You and the marionettes are shown who all puppeteers and marionettes are\n- You are armored\n- You have an armor-piercing indirect attack",
+    "wiki.article.role.puppeteer.extra":"- Defense does not stop a player from being poisoned or strung up",
 
     "wiki.article.role.marionette.guide":"You have no ability, but you are still important to the fiends. You should help your team gather information and make up lies to deceive the town.",
     "wiki.article.role.marionette.abilities":"- If a marionette is generated when the game starts, they are converted to a puppeteer",
