@@ -24,7 +24,7 @@ pub struct PuppeteerMarionette{
     poisoned: HashSet<PlayerReference>,
 }
 impl PuppeteerMarionette{
-    pub fn zombify(game: &mut Game, player: PlayerReference){
+    pub fn string(game: &mut Game, player: PlayerReference){
         let mut puppeteer_marionette = game.puppeteer_marionette().clone();
         if puppeteer_marionette.to_be_converted.insert(player){
             game.set_puppeteer_marionette(puppeteer_marionette);

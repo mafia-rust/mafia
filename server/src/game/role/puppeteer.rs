@@ -48,7 +48,7 @@ impl RoleStateImpl for Puppeteer {
             
             match self.action {
                 PuppeteerAction::String => {
-                    PuppeteerMarionette::zombify(game, target);
+                    PuppeteerMarionette::string(game, target);
                     actor_ref.push_night_message(game, ChatMessageVariant::PuppeteerPlayerIsNowMarionette{player: target.index()});
                     target.insert_role_label(game, actor_ref);
                     actor_ref.insert_role_label(game, target);
