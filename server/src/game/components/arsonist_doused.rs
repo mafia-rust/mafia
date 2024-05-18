@@ -61,4 +61,10 @@ impl ArsonistDoused {
             }
         }
     }
+    pub fn has_suspicious_aura_douse(game: &Game, player: PlayerReference) -> bool {
+        game.arsonist_doused().doused(player) &&
+        PlayerReference::all_players(game).any(|player_ref|
+            player_ref.alive(game) && player_ref.role(game) == Role::Arsonist
+        )
+    }
 }

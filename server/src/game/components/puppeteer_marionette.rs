@@ -1,12 +1,9 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    chat::ChatMessageVariant,
-    player::PlayerReference,
-    role::{
+    chat::ChatMessageVariant, player::PlayerReference, role::{
         marionette::Marionette, puppeteer::Puppeteer, Priority, Role, RoleState
-    }, 
-    Game
+    }, tag::Tag, Game
 };
 
 impl Game{
@@ -26,10 +23,17 @@ pub struct PuppeteerMarionette{
 impl PuppeteerMarionette{
     pub fn string(game: &mut Game, player: PlayerReference){
         let mut puppeteer_marionette = game.puppeteer_marionette().clone();
-        if puppeteer_marionette.to_be_converted.insert(player){
-            game.set_puppeteer_marionette(puppeteer_marionette);
-            player.push_night_message(game, ChatMessageVariant::PuppeteerPlayerIsNowMarionette{player: player.index()});
+
+        if player.role(game) == Role::Puppeteer {return;}
+        if !puppeteer_marionette.to_be_converted.insert(player){return;}
+
+        game.set_puppeteer_marionette(puppeteer_marionette);
+
+        for fiend in PuppeteerMarionette::marionettes_and_puppeteer(game){
+            fiend.push_night_message(game, ChatMessageVariant::PuppeteerPlayerIsNowMarionette{player: player.index()});
         }
+
+        PuppeteerMarionette::give_tags_and_labels(game);
     }
     pub fn poison(game: &mut Game, player: PlayerReference){
         let mut p = game.puppeteer_marionette().clone();
@@ -66,6 +70,46 @@ impl PuppeteerMarionette{
         }
     }
 
+    pub fn give_tags_and_labels(game: &mut Game){
+        let marionettes_and_puppeteer = PuppeteerMarionette::marionettes_and_puppeteer(game);
+
+        for player_a in marionettes_and_puppeteer.clone() {
+            for player_b in marionettes_and_puppeteer.clone() {
+
+                player_a.insert_role_label(game, player_b);
+                
+                if 
+                    player_a.player_has_tag(game, player_b, Tag::PuppeteerMarionette) == 0 &&
+                    player_b.role(game) != Role::Puppeteer
+                {
+                    player_a.push_player_tag(game, player_b, Tag::PuppeteerMarionette);
+                }
+            }
+        }
+    }
+
+    pub fn has_suspicious_aura_marionette(game: &Game, player: PlayerReference)->bool{
+        game.puppeteer_marionette().to_be_converted.contains(&player)
+    }
+    pub fn marionettes(game: &Game)->HashSet<PlayerReference>{
+        game.puppeteer_marionette().clone().to_be_converted
+    }
+    pub fn puppeteers(game: &Game)->HashSet<PlayerReference>{
+        PlayerReference::all_players(game)
+            .filter(|p|p.role(game)==Role::Puppeteer)
+            .map(|p|p.clone())
+            .collect()
+    }
+    pub fn marionettes_and_puppeteer(game: &Game)->HashSet<PlayerReference>{
+        let mut marionettes_and_puppeteer = PuppeteerMarionette::marionettes(game);
+        marionettes_and_puppeteer.extend(PuppeteerMarionette::puppeteers(game));
+        marionettes_and_puppeteer
+    }
+
+
+
+    //event listeners
+
     pub fn on_game_start(game: &mut Game){
         if 
             PlayerReference::all_players(game)
@@ -84,20 +128,10 @@ impl PuppeteerMarionette{
             }
         }
     }
-    pub fn on_any_death(game: &mut Game, dead_player: PlayerReference){
-        let mut puppeteer_marionette: PuppeteerMarionette = game.puppeteer_marionette().clone();
-
-        if puppeteer_marionette.to_be_converted.contains(&dead_player) {
-            dead_player.set_role(game, RoleState::Marionette(Marionette::default()));
-            puppeteer_marionette.to_be_converted.remove(&dead_player);
-            game.set_puppeteer_marionette(puppeteer_marionette);
-        }
-    }
     pub fn on_game_ending(game: &mut Game){
         let mut puppeteer_marionette: PuppeteerMarionette = game.puppeteer_marionette().clone();
 
         for marionette in puppeteer_marionette.to_be_converted.clone(){
-            if marionette.role(game) == Role::Marionette {continue;}
             marionette.set_role(game, RoleState::Marionette(Marionette::default()));
             puppeteer_marionette.to_be_converted.remove(&marionette);
         }

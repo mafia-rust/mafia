@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::game::
 {
-    chat::{ChatGroup, ChatMessageVariant}, event::{on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, grave::{Grave, GraveKiller, GraveReference}, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
+    chat::{ChatGroup, ChatMessageVariant}, components::{arsonist_doused::ArsonistDoused, puppeteer_marionette::PuppeteerMarionette}, event::{on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, grave::{Grave, GraveKiller, GraveReference}, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
 };
 
 use super::PlayerReference;
@@ -168,13 +168,9 @@ impl PlayerReference{
     }
     pub fn has_suspicious_aura(&self, game: &Game) -> bool {
         self.role(game).has_suspicious_aura(game) || 
-        self.night_framed(game) || 
-        (
-            game.arsonist_doused().doused(*self) &&
-            PlayerReference::all_players(game).any(|player_ref|
-                player_ref.alive(game) && player_ref.role(game) == Role::Arsonist
-            )
-        )
+        self.night_framed(game) ||
+        PuppeteerMarionette::has_suspicious_aura_marionette(game, *self) ||
+        ArsonistDoused::has_suspicious_aura_douse(game, *self)
     }
 
     /*
