@@ -7,7 +7,7 @@ pub mod visit;
 pub mod verdict;
 pub mod role_list;
 pub mod settings;
-pub mod end_game_condition;
+pub mod game_over_state;
 pub mod components;
 pub mod available_buttons;
 pub mod on_client_message;
@@ -37,7 +37,7 @@ use self::components::{
     cult::Cult,
     puppeteer_marionette::PuppeteerMarionette
 };
-use self::end_game_condition::EndGameCondition;
+use self::game_over_state::GameOverState;
 use self::event::on_game_ending::OnGameEnding;
 use self::event::on_grave_added::OnGraveAdded;
 use self::event::on_phase_start::OnPhaseStart;
@@ -270,7 +270,7 @@ impl Game {
     }
 
     pub fn game_is_over(&self) -> bool {
-        if let Some(_) = EndGameCondition::game_is_over(
+        if let Some(_) = GameOverState::game_is_over(
             PlayerReference::all_players(self)
                 .filter(|p|p.alive(self))
                 .map(|p|p.role(self))

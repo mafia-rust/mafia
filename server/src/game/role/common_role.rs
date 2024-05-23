@@ -1,4 +1,4 @@
-use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, role_list::Faction, phase::{PhaseState, PhaseType}, end_game_condition::EndGameCondition};
+use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, role_list::Faction, phase::{PhaseState, PhaseType}, game_over_state::GameOverState};
 
 use super::{journalist::Journalist, medium::Medium, same_evil_team, RoleState};
 
@@ -140,8 +140,8 @@ pub(super) fn get_won_game(game: &Game, actor_ref: PlayerReference) -> bool {
         .filter_map(|p|if p.alive(game) {Some(p.role(game))}else{None})
         .collect();
 
-    if let Some(end_game_condition) = EndGameCondition::game_is_over(living_roles) {
-        EndGameCondition::required_conditions_for_win(actor_ref.role(game)).contains(&end_game_condition)
+    if let Some(end_game_condition) = GameOverState::game_is_over(living_roles) {
+        GameOverState::required_conditions_for_win(actor_ref.role(game)).contains(&end_game_condition)
     } else {
         false
     }

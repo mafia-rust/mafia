@@ -9,4 +9,5 @@ pub enum Tag{
     WerewolfTracked,
     ProvocateurTarget,
     MorticianTagged,
+    PuppeteerMarionette,
 }

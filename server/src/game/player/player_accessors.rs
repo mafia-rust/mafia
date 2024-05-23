@@ -110,7 +110,14 @@ impl PlayerReference{
 
     pub fn player_tags<'a>(&self, game: &'a Game) -> &'a HashMap<PlayerReference, Vec1<Tag>>{
         &self.deref(game).player_tags
-    }  
+    }
+    pub fn player_has_tag(&self, game: &Game, key: PlayerReference, value: Tag) -> u8{
+        if let Some(player_tags) = self.deref(game).player_tags.get(&key){
+            player_tags.iter().filter(|t|**t==value).count() as u8
+        }else{
+            0
+        }
+    }
     pub fn push_player_tag(&self, game: &mut Game, key: PlayerReference, value: Tag){
         if let Some(player_tags) = self.deref_mut(game).player_tags.get_mut(&key){
             player_tags.push(value);

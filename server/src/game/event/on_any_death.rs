@@ -1,5 +1,5 @@
 use crate::game::{
-    components::{cult::Cult, mafia::Mafia, puppeteer_marionette::PuppeteerMarionette}, 
+    components::{cult::Cult, mafia::Mafia}, 
     player::PlayerReference, 
     Game
 };
@@ -16,7 +16,6 @@ impl OnAnyDeath{
             player_ref.on_any_death(game, self.dead_player)
         }
 
-        PuppeteerMarionette::on_any_death(game, self.dead_player);
         Mafia::on_any_death(game, self.dead_player);
         Cult::on_any_death(game);
 

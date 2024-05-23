@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::chat::ChatGroup;
 use crate::game::components::puppeteer_marionette::PuppeteerMarionette;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
@@ -40,7 +40,7 @@ impl RoleStateImpl for Puppeteer {
     
 
 
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return;}
 
         if let Some(visit) = actor_ref.night_visits(game).first(){
@@ -49,9 +49,8 @@ impl RoleStateImpl for Puppeteer {
             match self.action {
                 PuppeteerAction::String => {
                     PuppeteerMarionette::string(game, target);
-                    actor_ref.push_night_message(game, ChatMessageVariant::PuppeteerPlayerIsNowMarionette{player: target.index()});
-                    target.insert_role_label(game, actor_ref);
-                    actor_ref.insert_role_label(game, target);
+                    self.marionettes_remaining -= 1;
+                    actor_ref.set_role_state(game, RoleState::Puppeteer(self));
                 }
                 PuppeteerAction::Poison => {
                     PuppeteerMarionette::poison(game, target);
@@ -63,7 +62,12 @@ impl RoleStateImpl for Puppeteer {
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
+        actor_ref != target_ref &&
+        !actor_ref.night_jailed(game) &&
+        actor_ref.selection(game).is_empty() &&
+        actor_ref.alive(game) &&
+        target_ref.alive(game) &&
+        !PuppeteerMarionette::marionettes_and_puppeteer(game).contains(&target_ref)
     }
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false
@@ -81,7 +85,7 @@ impl RoleStateImpl for Puppeteer {
         crate::game::role::common_role::get_won_game(game, actor_ref)
     }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
-        if phase == PhaseType::Night {
+        if phase == PhaseType::Night && self.marionettes_remaining == 0{
             self.action = PuppeteerAction::Poison;
             actor_ref.set_role_state(game, RoleState::Puppeteer(self))
         }
