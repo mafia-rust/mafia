@@ -1,8 +1,8 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use crate::game::
 {
-    chat::{ChatGroup, ChatMessageVariant}, components::{arsonist_doused::ArsonistDoused, puppeteer_marionette::PuppeteerMarionette}, event::{on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, grave::{Grave, GraveKiller, GraveReference}, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
+    chat::{ChatGroup, ChatMessageVariant}, components::{arsonist_doused::ArsonistDoused, puppeteer_marionette::PuppeteerMarionette}, event::{on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, game_over_state::GameOverState, grave::{Grave, GraveKiller, GraveReference}, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
 };
 
 use super::PlayerReference;
@@ -171,6 +171,9 @@ impl PlayerReference{
         self.night_framed(game) ||
         PuppeteerMarionette::has_suspicious_aura_marionette(game, *self) ||
         ArsonistDoused::has_suspicious_aura_douse(game, *self)
+    }
+    pub fn required_conditions_for_win(&self, game: &Game) -> HashSet<GameOverState> {
+        GameOverState::required_conditions_for_win(self.role(game))
     }
 
     /*

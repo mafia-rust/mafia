@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::end_game_condition::EndGameCondition;
+use crate::game::game_over_state::GameOverState;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -72,7 +72,7 @@ impl Detective {
         }else if player_ref.has_innocent_aura(game){
             false
         }else{
-            !EndGameCondition::can_win_together(
+            !GameOverState::can_win_together(
                 Role::Detective, 
                 player_ref.role(game)
             )

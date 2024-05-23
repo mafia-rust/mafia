@@ -37,9 +37,9 @@ impl PuppeteerMarionette{
     }
     pub fn poison(game: &mut Game, player: PlayerReference){
         let mut p = game.puppeteer_marionette().clone();
+        player.push_night_message(game, ChatMessageVariant::PuppeteerYouArePoisoned);
         if p.poisoned.insert(player){
             game.set_puppeteer_marionette(p);
-            player.push_night_message(game, ChatMessageVariant::PuppeteerYouArePoisoned);
         }
     }
 
@@ -55,17 +55,20 @@ impl PuppeteerMarionette{
         game.set_puppeteer_marionette(puppeteer_marionette)
     }
     fn attack_players(game: &mut Game, players: Vec<PlayerReference>){
+        
+        let puppeteers: Vec<_> = PlayerReference::all_players(game)
+            .filter(|p|p.role(game)==Role::Puppeteer)
+            .map(|p|p.clone())
+            .collect();
+
         for player in players{
-            let puppeteers: Vec<_> = PlayerReference::all_players(game)
-                .filter(|p|p.role(game)==Role::Puppeteer)
-                .map(|p|p.clone())
-                .collect();
+            if player.alive(game) {continue;}
 
             if puppeteers.len() == 0 {
                 player.try_night_kill_anonymous(game, crate::game::grave::GraveKiller::Role(Role::Puppeteer), 2);
             }
-            for puppeteer in puppeteers{
-                player.try_night_kill(puppeteer, game, crate::game::grave::GraveKiller::Role(Role::Puppeteer), 2, true);
+            for puppeteer in puppeteers.iter(){
+                player.try_night_kill(*puppeteer, game, crate::game::grave::GraveKiller::Role(Role::Puppeteer), 2, true);
             }
         }
     }
@@ -92,7 +95,11 @@ impl PuppeteerMarionette{
         game.puppeteer_marionette().to_be_converted.contains(&player)
     }
     pub fn marionettes(game: &Game)->HashSet<PlayerReference>{
-        game.puppeteer_marionette().clone().to_be_converted
+        PlayerReference::all_players(game)
+            .filter(|p|
+                p.role(game)==Role::Marionette || game.puppeteer_marionette().to_be_converted.contains(p)
+            )
+            .collect()
     }
     pub fn puppeteers(game: &Game)->HashSet<PlayerReference>{
         PlayerReference::all_players(game)
@@ -127,6 +134,8 @@ impl PuppeteerMarionette{
                 marionette.set_role(game, RoleState::Puppeteer(Puppeteer::default()));
             }
         }
+
+        PuppeteerMarionette::give_tags_and_labels(game);
     }
     pub fn on_game_ending(game: &mut Game){
         let mut puppeteer_marionette: PuppeteerMarionette = game.puppeteer_marionette().clone();

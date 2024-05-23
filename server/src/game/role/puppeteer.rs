@@ -62,7 +62,12 @@ impl RoleStateImpl for Puppeteer {
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
+        actor_ref != target_ref &&
+        !actor_ref.night_jailed(game) &&
+        actor_ref.selection(game).is_empty() &&
+        actor_ref.alive(game) &&
+        target_ref.alive(game) &&
+        !PuppeteerMarionette::marionettes_and_puppeteer(game).contains(&target_ref)
     }
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false

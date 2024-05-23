@@ -1,7 +1,9 @@
+use std::collections::HashSet;
+
 use super::{role_list::Faction, role::Role};
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash)]
-pub enum EndGameCondition {
+pub enum GameOverState {
     Town,
     Mafia,
     Cult,
@@ -13,19 +15,19 @@ pub enum EndGameCondition {
 
     Draw
 }
-impl EndGameCondition {
-    pub fn all()->Vec<EndGameCondition>{
+impl GameOverState {
+    pub fn all()->Vec<GameOverState>{
         vec![
-            EndGameCondition::Town,
-            EndGameCondition::Mafia,
-            EndGameCondition::Cult,
-            EndGameCondition::Fiends,
-            EndGameCondition::Death,
-            EndGameCondition::Politician
+            GameOverState::Town,
+            GameOverState::Mafia,
+            GameOverState::Cult,
+            GameOverState::Fiends,
+            GameOverState::Death,
+            GameOverState::Politician
         ]
     }
     ///either return Some(EndGameCondition) or None (if the game is not over yet)
-    pub fn game_is_over(living_roles: Vec<Role>) -> Option<EndGameCondition> {
+    pub fn game_is_over(living_roles: Vec<Role>) -> Option<GameOverState> {
 
         //Special wildcard case
         if living_roles.iter().all(|role|
@@ -35,17 +37,17 @@ impl EndGameCondition {
         }
 
         //if nobody is left to hold game hostage
-        if !living_roles.iter().any(|role|EndGameCondition::keeps_game_running(*role)){
-            return Some(EndGameCondition::Draw);
+        if !living_roles.iter().any(|role|GameOverState::keeps_game_running(*role)){
+            return Some(GameOverState::Draw);
         }
 
         //find one end game condition that everyone agrees on
-        for end_game_condition in EndGameCondition::all() {
+        for end_game_condition in GameOverState::all() {
             //if everyone who keeps the game running agrees on this end game condition, return it
             if
                 living_roles.iter()
-                    .filter(|r|EndGameCondition::keeps_game_running(**r))
-                    .all(|r|EndGameCondition::required_conditions_for_win(*r).contains(&end_game_condition))
+                    .filter(|r|GameOverState::keeps_game_running(**r))
+                    .all(|r|GameOverState::required_conditions_for_win(*r).contains(&end_game_condition))
             {
                 return Some(end_game_condition);
             }
@@ -54,33 +56,33 @@ impl EndGameCondition {
         None
     }
     pub fn can_win_together(a: Role, b: Role)->bool{
-        let a_conditions = EndGameCondition::required_conditions_for_win(a);
-        let b_conditions = EndGameCondition::required_conditions_for_win(b);
+        let a_conditions = GameOverState::required_conditions_for_win(a);
+        let b_conditions = GameOverState::required_conditions_for_win(b);
 
         if a_conditions.is_empty() || b_conditions.is_empty(){return true;}
 
         a_conditions.iter().any(|a_condition| b_conditions.contains(a_condition))
     }
     ///this role wins if the end game state is in this list
-    pub fn required_conditions_for_win(role: Role)->Vec<EndGameCondition>{
+    pub fn required_conditions_for_win(role: Role)->HashSet<GameOverState>{
         match role.faction(){
-            Faction::Mafia => vec![EndGameCondition::Mafia],
-            Faction::Cult => vec![EndGameCondition::Cult],
-            Faction::Town => vec![EndGameCondition::Town],
-            Faction::Fiends => vec![EndGameCondition::Fiends],
+            Faction::Mafia => vec![GameOverState::Mafia],
+            Faction::Cult => vec![GameOverState::Cult],
+            Faction::Town => vec![GameOverState::Town],
+            Faction::Fiends => vec![GameOverState::Fiends],
             Faction::Neutral => match role {
                 Role::Minion => {
-                    EndGameCondition::all().into_iter().filter(|end_game_condition|
+                    GameOverState::all().into_iter().filter(|end_game_condition|
                         match end_game_condition {
-                            EndGameCondition::Town => false,
+                            GameOverState::Town => false,
                             _ => true
                         }
                     ).collect()
                 },
-                Role::Politician => vec![EndGameCondition::Politician],
+                Role::Politician => vec![GameOverState::Politician],
                 _ => vec![]
             },
-        }
+        }.into_iter().collect()
     }
     ///Town, Mafia, Cult, NK
     pub fn keeps_game_running(role: Role)->bool{
