@@ -335,7 +335,7 @@ impl Lobby {
         client.send(ToClientPacket::LobbyName { name });
         client.send(ToClientPacket::PhaseTimes { phase_time_settings: settings.phase_times.clone() });
         client.send(ToClientPacket::RoleList { role_list: settings.role_list.clone() });
-        client.send(ToClientPacket::ExcludedRoles { roles: settings.excluded_roles.clone()});
+        client.send(ToClientPacket::ExcludedRoles { roles: settings.excluded_roles.clone().into_iter().collect() });
     }
 
     //send the list of players to all players while in the lobby

@@ -70,7 +70,7 @@ impl SpectatorPointer {
             ToClientPacket::GamePlayers{ 
                 players: PlayerReference::all_players(game).map(|p|p.name(game).clone()).collect()
             },
-            ToClientPacket::ExcludedRoles { roles: game.settings.excluded_roles.clone() },
+            ToClientPacket::ExcludedRoles { roles: game.settings.excluded_roles.clone().into_iter().collect() },
             ToClientPacket::RoleList {role_list: game.settings.role_list.clone()},
             ToClientPacket::PlayerAlive{
                 alive: PlayerReference::all_players(game).map(|p|p.alive(game)).collect()

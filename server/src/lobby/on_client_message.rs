@@ -1,4 +1,4 @@
-use std::{collections::{HashMap, HashSet, VecDeque}, time::{Duration, Instant}};
+use std::{collections::{HashMap, VecDeque}, time::{Duration, Instant}};
 
 use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, strings::TidyableString, websocket_connections::connection::ClientSender};
 
@@ -303,15 +303,15 @@ impl Lobby {
                 
                 self.send_to_all(ToClientPacket::RoleList { role_list });
             }
-            ToServerPacket::SetExcludedRoles {mut roles } => {
+            ToServerPacket::SetExcludedRoles {roles } => {
                 let LobbyState::Lobby{ settings, .. } = &mut self.lobby_state else {
                     log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", lobby_client_id);
                     return;
                 };
 
 
-                let roles = roles.drain(..).collect::<HashSet<_>>().into_iter().collect::<Vec<_>>();
-                settings.excluded_roles = roles.clone();
+                settings.excluded_roles = roles.into_iter().collect();
+                let roles = settings.excluded_roles.clone().into_iter().collect();
                 self.send_to_all(ToClientPacket::ExcludedRoles { roles });
             }
             ToServerPacket::Leave => {
