@@ -123,8 +123,6 @@ Doomsayer
     action: PuppeteerAction,
     marionettesRemaining: number
 } | {
-    type: "marionette"
-} | {
     type: "death",
     souls: number
 } | {

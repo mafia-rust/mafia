@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::game_over_state::GameOverState;
 use crate::game::grave::{GraveKiller, GraveReference};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -61,7 +62,7 @@ impl RoleStateImpl for Jailor {
                         target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Jailor), 3, false);
         
                         self.executions_remaining = 
-                            if target_ref.role(game).faction() == Faction::Town {0} else {self.executions_remaining - 1};
+                            if GameOverState::exclusively_wins_with(game, target_ref, GameOverState::Town) {0} else {self.executions_remaining - 1};
                         self.jailed_target_ref = None;
                         actor_ref.set_role_state(game, RoleState::Jailor(self));
                     }

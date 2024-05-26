@@ -9,7 +9,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{Priority, Role, RoleStateImpl};
+use super::{Priority, RoleStateImpl};
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -72,10 +72,7 @@ impl Detective {
         }else if player_ref.has_innocent_aura(game){
             false
         }else{
-            !GameOverState::can_win_together(
-                Role::Detective, 
-                player_ref.role(game)
-            )
+            !GameOverState::can_win_with(game, player_ref, GameOverState::Town)
         }
     }
 }

@@ -400,11 +400,6 @@
     "role.puppeteer.dayTarget": "Special",
     "role.puppeteer.smallRoleMenu.noneRemaining": "No marionettes remain, you can only poison.",
     "role.puppeteer.smallRoleMenu": "Choose to poison someone or string them into a marionette. \\0 marionettes remaining.",
-    
-    "role.marionette.name": "Marionette",
-    "role.marionette.name:var.0": "Marionettes",
-    "role.marionette.target": "Target",
-    "role.marionette.dayTarget": "Special",
 
     "role.death.name": "Death",
     "role.death.target": "Collect",
@@ -886,6 +881,10 @@
     "wiki.article.standard.backup.title": "Backup",
     "wiki.article.standard.backup.title:var.0": "Backups",
     "wiki.article.standard.backup.text": "The Godfather can choose another mafia member to be their backup at any time. If the Godfather is roleblocked or in jail, the backup will attack their selection instead.",
+    "wiki.article.standard.marionette.title": "Marionette",
+    "wiki.article.standard.marionette.title:var.0": "Marionettes",
+    "wiki.article.standard.marionette.title:var.1": "Puppet",
+    "wiki.article.standard.marionette.text": "A player who is a marionette has been strung up by the Puppeteer. They keep their old role, but they now win with fiends. They are attacked every night by all puppeteers, if there are no puppeteers they are still attacked by an invisible puppeteer.",
     "wiki.article.standard.aura.title": "Aura",
     "wiki.article.standard.aura.title:var.0": "Auras",
     "wiki.article.standard.aura.text": "Players can have an aura that change how they appear to investigative roles.\n- A player with a suspicious aura is:\n    - Suspicious to a Detective\n    - Enemies with everyone to the philosopher\n    - Never in the psychics good vision\n    - Enemies with your target to the gossip\n    - Never a townie to the snoop\n- A player with an innocent aura is:\n    - Innocent to the detective\n    - Friends with everyone to the philosopher\n    - Friends with your target to the gossip\n    - Never in the psychics evil vision\n\n Some roles have an aura by default\n_For Example_\n- The godfather has an innocent aura by default\n- The werewolf has an innocent aura on non full moon nights\n\n If a player has both an innocent and suspicious aura at the same time, the suspicious aura *usually* overrides.\n- The detective sees them as suspicious\n- The philosopher sees them as enemies\n- The psychic can't see them in any vision\n- They can't register to the snoop\n- They are enemies with your target to the gossip",
@@ -959,7 +958,7 @@
 
     "wiki.article.role.jailor.guide": "Each day, choose a player to jail. At night, you interrogate them in text chat, if you think they're evil, you should execute them.\n\n- During the day, choose one player to put in jail that night\n- You can talk to your prisoner during the night, and they will not be told who you are\n- You can choose to execute your prisoner up to three times, but if you execute a townie, you can't jail anymore\n- The players you jail are immune to many abilities being used on them including attacks. They're also roleblocked.",
     "wiki.article.role.jailor.abilities":"* Choose one player to jail during the day\n* Visit your prisoner to attack them",
-    "wiki.article.role.jailor.attributes":"* You may talk with your prisoner at night\n* If you execute a townie, you forfeit the ability to jail prisoners, and lose all execution uses\n* Players in jail are restricted, and immune to most abilities being used on them\n* Jailed players can't visit\n* Other players are told when their target is jailed",
+    "wiki.article.role.jailor.attributes":"* You may talk with your prisoner at night\n* If you execute a player who exclusively wins with town, you forfeit the ability to jail prisoners, and lose all execution uses\n* Players in jail are restricted, and immune to most abilities being used on them\n* Jailed players can't visit\n* Other players are told when their target is jailed",
     "wiki.article.role.jailor.extra":"* The Jailor can not execute on night one\n* If you execute a townie, or run out of executions, you can not select anymore\n* You will invisibly roleblock the player you put in jail\n* Players in jail don't see your name on your messages. The messages you send appear to be from the jailor\n* If you jail a cult or mafia member, their teammates know that that player is in jail",
 
     "wiki.article.role.mayor.guide": "Choose to enfranchise during the day to make your vote count as three votes for the rest of the game.\n- When you enfranchise\n    - Everyone is told you are the mayor\n    - You can't whisper or be whispered to\n    - You have triple voting power every day",
@@ -999,7 +998,7 @@
 
     "wiki.article.role.psychic.guide": "- You receive a vision every night\n    - On even nights, the vision lists two players. At least one of them is a townie\n    - On odd nights, the vision will list three players. At least one of them is not a townie\n\nYou should tell the town the information you get daily.",
     "wiki.article.role.psychic.abilities":"* Get an evil vision on odd nights\n* Get a good vision on even nights",
-    "wiki.article.role.psychic.attributes":"* Evil visions list three players, at least one of them is not a townie\n* Good visions list two players, at least one of them is a townie",
+    "wiki.article.role.psychic.attributes":"* Evil visions list three players, at least one of them does not exclusively win with town\n* Good visions list two players, at least one of them exclusively wins with town",
     "wiki.article.role.psychic.extra": "* If there aren't enough evil or good players to have a vision, the ability fails\n* You can not be listed in your own vision\n* You still get visions after you are dead\n* You do not visit the players in your vision\n* Players with a suspicious aura can't be listed in your good vision\n* Players with an innocent aura can't be listed in your evil vision",
 
     "wiki.article.role.auditor.guide": "- At night, choose an outline from the list\n    - You are told two roles, one of those roles were assigned to a player from that outline\n    - You visit the player who was assigned that role, but you are not told who that player is\n\n_For Example_\n- You choose the outline \"Town Killing\" and are told that a vigilante or a veteran generated from that outline, and you are attacked by the veteran",
@@ -1008,7 +1007,7 @@
     "wiki.article.role.auditor.extra":"- Your ability works independently of your visits\n    - Your visit getting possessed or transported doesn't impact your ability\n    - If you visit a player who is restricted, you aren't told they're restricted, and you still get results\n    - If you are roleblocked, you don't get results, but you can select that outline again\n- It is possible for you to visit dead players",
 
     "wiki.article.role.snoop.guide": "- At night, select a player. You are either told that they are a townie, or that you can't tell if they are a townie\n    - You can't tell what your target was if:\n        - They aren't a townie\n        - You were visited by anyone at all\n        - They have a suspicious aura\n\n    - Otherwise, you are told they are a townie",
-    "wiki.article.role.snoop.abilities":"- Visit a player to search them\n    - If your target is a townie, and you are not visited by anyone, you are told they are a townie",
+    "wiki.article.role.snoop.abilities":"- Visit a player to search them\n    - If your target is a exclusively wins with town, and you are not visited by anyone, you are told they are a townie",
     "wiki.article.role.snoop.attributes":"- If your target has a suspicious aura, your results will be inconclusive",
     "wiki.article.role.snoop.extra":"- innocent aura doesn't effect your results",
     
@@ -1029,7 +1028,7 @@
 
     "wiki.article.role.cop.guide": "- At night, select a player to protect\n - You attack one random other player who visits your target\n\n You should try to protect people you think are townies who will be attacked. You could easily accidentally kill townies, so you should try to make sure no other townies visit the player you protect.",
     "wiki.article.role.cop.abilities":"* Visit a player to protect for the night\n* Attack a random visitor of the player you protect",
-    "wiki.article.role.cop.attributes":"* Your attack prioritizes a random evil player over townies\n* You can't attack yourself",
+    "wiki.article.role.cop.attributes":"* Your attack prioritizes a random evil player over players who exclusively win with town\n* You can't attack yourself",
     "wiki.article.role.cop.extra":"* You can't select yourself\n* You are told if your target is attacked\n* Your target is only be told that they are protected if they are attacked\n* Your attack is indirect and basic\n* You can't attack dead players\n* Your ability fails if your target is in restricted",
 
     "wiki.article.role.bouncer.guide": "- At night, select a player to restrict them, stopping almost all abilities from working on them.\n\n_For Example_\n- A godfather attempts to kill @11 but you restricted @11, so the godfathers ability fails and doesn't kill @11\n\nYou should try to select people you think are townies who you want to keep alive.",
@@ -1064,7 +1063,7 @@
 
     "wiki.article.role.vigilante.guide": "- At night, select a player to attack\n- If you kill a townie, you will commit suicide on the following night (and probably cause town to lose)\n- You have three bullets\n- You can't shoot on night one\n\n If you attack someone and they survive it is likely that they were either protected by a protective role, or they are a role that is armored. Most roles that are armored are evil.",
     "wiki.article.role.vigilante.abilities":"* Visit a player to attack and spend a bullet\n* If you kill a townie you will commit suicide on the following night\n* You have three bullets",
-    "wiki.article.role.vigilante.attributes":"* If your attack overpowers a townies defense and they die, you commit suicide on the following night\n* When it is night one, when you have 0 bullets left, when you are going to commit suicide, or when you have already committed suicide, you can not select or attack anyone",
+    "wiki.article.role.vigilante.attributes":"* If your attack overpowers a player who exclusively wins with towns defense and they die, you commit suicide on the following night\n* When it is night one, when you have 0 bullets left, when you are going to commit suicide, or when you have already committed suicide, you can not select or attack anyone",
     "wiki.article.role.vigilante.extra": "* You only have a basic attack\n* Even while dead, killing someone requires and spends a bullet (such as when you get possessed)",
 
     "wiki.article.role.veteran.guide": "- At night, you can select yourself to gain protected defense for the night and rampage yourself, attacking everyone who visits you\n- You can only use your ability three times\n* You should try to trick evil players into visiting you, so you can block the attack and kill them. Try to avoid killing unnecessary townies.\n* There can only be one veteran in a game.",
@@ -1074,12 +1073,12 @@
 
     "wiki.article.role.marksman.guide": "- At night, choose up to two players to mark, and select up to two players to visit. If any marked player visits any player you select, you attack them.\n\n_For Example_: You mark someone claiming detective and select a revealed mayor, if the detective is telling the truth, they likely wont visit the mayor. It turns out, you kill the \"detective\" who turns out to be a blackmailer.",
     "wiki.article.role.marksman.abilities":"* Choose to mark 0, 1, or 2 players\n* Select 0, 1, or 2 players, if you have nobody marked, you can't select anyone\n    - If a marked player visits any of your targets, you attack them",
-    "wiki.article.role.marksman.attributes":"* You can't mark or select on night 1\n* If you kill a townie, you can't mark or select again\n* You have an indirect, basic attack",
+    "wiki.article.role.marksman.attributes":"* You can't mark or select on night 1\n* If you kill a player who exclusively wins with town, you can't mark or select again\n* You have an indirect, basic attack",
     "wiki.article.role.marksman.extra":"* You can't select yourself\n- You only visit the players you select, not the players you mark, even if you attack them",
 
     "wiki.article.role.deputy.guide":"- Once per game, you can shoot a player during the day\n- If you kill a townie, you instantly leave town\n- If you kill someone, everyone is told that a deputy shot someone\n- If the player you shoot survives your attack, only the player you attacked is told\n\nIf you attack someone and they survive it is likely that they are a role that is armored. Most roles that are armored are evil.",
     "wiki.article.role.deputy.abilities":"* Once per game, during the discussion or nomination phase after day 1, you may choose a player to attack.",
-    "wiki.article.role.deputy.attributes":"* If the player you attack has defense, they are told they were attacked by a deputy\n* When you kill someone, everyone is told a deputy shot someone",
+    "wiki.article.role.deputy.attributes":"* If the player you attack has defense, they are told they were attacked by a deputy\n* When you kill someone, everyone is told a deputy shot someone\n* If you kill a player who exclusively wins with town, you instantly leave town",
     "wiki.article.role.deputy.extra":"* You only have a basic attack\n* You can not attack day 1",
 
     "wiki.article.role.godfather.guide": "- At night, select a player to attack\n- Choose a backup to attack for you if you are roleblocked\n\n You should try to kill townies who are likely to stop you from winning or have powerful abilities, but be careful about town protective roles.",
@@ -1160,7 +1159,7 @@
     "wiki.article.role.politician.guide":"* If the town would win, instead you win and they all die. Try to help to the town to win while staying alive.",
     "wiki.article.role.politician.abilities": "* When town would win, you win, instantly attack ever townie, and all politicians leave town",
     "wiki.article.role.politician.attributes": "* You win with other politicians\n* When you first become this role, if there are no townies alive, you become a jester\n* You have a protection-piercing attack",
-    "wiki.article.role.politician.extra":"* If all townies die, you leave town\n* If the only players left are politicians, you win",
+    "wiki.article.role.politician.extra":"* If all players who exclusively win with town die, you leave town\n* If the only players left are politicians, you win",
 
     "wiki.article.role.arsonist.guide":"- Select a player to douse them in gasoline\n- Select yourself to ignite and attack every player who is doused\n- You know who is doused\n\nTry not to douse players you think the mafia will kill, because then you waste your night dousing someone who is going to die anyway.",
     "wiki.article.role.arsonist.abilities":"* Visit a player to douse them\n* Visit yourself to ignite to all doused players\n* If a player visits you, you will douse them",
@@ -1177,15 +1176,10 @@
     "wiki.article.role.ojo.attributes":"- If you are dead, you can not choose to see or kill\n* Your attack is an armor-piercing attack\n* You can't choose kill on night 1",
     "wiki.article.role.ojo.extra":"- Your ability will work on the person you actually visited, so if a transporter transports a player you visit with someone else, you see or attack the other player, and you are be told their actual role\n- You don't visit yourself\n- You don't visit dead players\n- You are immune to possession",
 
-    "wiki.article.role.puppeteer.guide":"- You may choose to do one of the following\n    - Select and poison a player\n        - They are told they are poisoned, and then they are attacked the next night\n\n    - Select a player to string up into a marionette\n        - They are told they will be strung up, and that they will win with fiends, but keep their current role\n        - They attacked the following night, and every night until they die\n        - They have a suspicious aura\n        - At the end of the game, they become a Marionette that wins with fiends\n        - They should try their hardest to help you and should NOT say they were strung up",
-    "wiki.article.role.puppeteer.abilities":"- You may choose to do one of the following\n    - Visit a player to poison them\n        - They are told they are poisoned\n        - They are indirectly attacked on the following night\n\n    - Visit a player to string up into a marionette\n        - They are told they will be strung up\n        -They have a suspicious aura for the rest of the game\n        - They will be indirectly attacked every night by all puppeteers until they die, if there are no puppeteers they are still attacked\n        - At the end of the game, they become a Marionette that wins with fiends",
+    "wiki.article.role.puppeteer.guide":"- You may choose to do one of the following\n    - Select and poison a player\n        - They are told they are poisoned, and then they are attacked the next night\n\n    - Select a player to string up into a marionette\n        - They are told they are strung up, and that they will win with fiends, but keep their current role\n        - They attacked the following night, and every night until they die\n        - They have a suspicious aura\n        - They should try their hardest to help you and should NOT say they were strung up",
+    "wiki.article.role.puppeteer.abilities":"- You may choose to do one of the following\n    - Visit a player to poison them\n        - They are told they are poisoned\n        - They are indirectly attacked on the following night\n\n    - Visit a player to string up into a marionette\n        - They are told they will be strung up\n        -They have a suspicious aura for the rest of the game\n        - They will be indirectly attacked every night by all puppeteers until they die, if there are no puppeteers they are still attacked",
     "wiki.article.role.puppeteer.attributes":"- You and the marionettes are shown who all puppeteers and marionettes are\n- You have an armor-piercing indirect attack",
     "wiki.article.role.puppeteer.extra":"- You can't select anybody who is a puppeteer, marionette, or is being strung into a marionette\n- A puppeteer can't be stringed into a marionette\n- A marionette can't be stringed into a marionette twice, if two puppeteers choose a player to be turned into a marionette on the same night, they get the message only once\n- Defense does not stop a player from being poisoned or strung up",
-
-    "wiki.article.role.marionette.guide":"You have no ability, but you are still important to the fiends. You should help your team gather information and make up lies to deceive the town.",
-    "wiki.article.role.marionette.abilities":"- If a marionette is generated when the game starts, they are converted to a puppeteer",
-    "wiki.article.role.marionette.attributes":"None",
-    "wiki.article.role.marionette.extra":"None",
 
     "wiki.article.role.death.guide": "Guess what player will die during night by selecting them, If you guess correctly you will collect a soul, you will also collect a soul passively each night. Once you collect six souls, everyone will be told that death collected six souls at the start of the day, if you survive that day, you will attack everyone and win the game at the start of night.",
     "wiki.article.role.death.abilities":"* If the player you visit dies tonight, you collect a soul\n* You gain an additional soul each night",

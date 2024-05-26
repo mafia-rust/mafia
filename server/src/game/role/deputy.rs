@@ -2,6 +2,7 @@
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::game_over_state::GameOverState;
 use crate::game::grave::{Grave, GraveDeathCause, GraveKiller, GraveReference};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -52,7 +53,7 @@ impl RoleStateImpl for Deputy {
             target_ref.die(game, grave);
             
 
-            if target_ref.role(game).faction() == Faction::Town {
+            if GameOverState::exclusively_wins_with(game, target_ref, GameOverState::Town) {
                 actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
             }
         }

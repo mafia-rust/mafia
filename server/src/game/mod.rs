@@ -270,13 +270,7 @@ impl Game {
     }
 
     pub fn game_is_over(&self) -> bool {
-        if let Some(_) = GameOverState::game_is_over(
-            PlayerReference::all_players(self)
-                .filter(|p|p.alive(self))
-                .map(|p|p.role(self))
-                .collect()
-            )
-        {
+        if let Some(_) = GameOverState::game_is_over(self){
             true
         }else{
             false
@@ -384,7 +378,6 @@ impl Game {
 }
 
 pub mod test {
-    use rand::{thread_rng, seq::SliceRandom};
 
     use super::{
         components::{arsonist_doused::ArsonistDoused, cult::Cult, puppeteer_marionette::PuppeteerMarionette},
@@ -446,13 +439,18 @@ pub mod test {
             puppeteer_marionette: PuppeteerMarionette::default()
         };
 
+        //on role creation needs to be called after all players roles are known
+        for player_ref in PlayerReference::all_players(&game){
+            let role_data_copy = player_ref.role_state(&game).clone();
+            player_ref.set_role(&mut game, role_data_copy);
+        }
+
         OnGameStart::invoke(&mut game);
 
         Ok(game)
     }
     fn assign_players_to_roles(roles: Vec<Role>)->Vec<(Role, PlayerIndex)>{
-        let mut player_indices: Vec<PlayerIndex> = (0..roles.len() as PlayerIndex).collect();
-        player_indices.shuffle(&mut thread_rng());
+        let player_indices: Vec<PlayerIndex> = (0..roles.len() as PlayerIndex).collect();
         roles.into_iter().zip(player_indices).collect()
     }
 

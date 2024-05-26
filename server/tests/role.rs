@@ -3,7 +3,7 @@ use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::role::{gossip::Gossip, marksman::Marksman};
+use mafia_server::game::role::{gossip::Gossip, marksman::Marksman, puppeteer::{Puppeteer, PuppeteerAction}};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
@@ -1423,6 +1423,121 @@ fn cult_wait_for_two_deaths() {
 }
 
 #[test]
+fn puppeteer_marionettes_philosipher(){
+    kit::scenario!(game in Night 1 where
+        puppeteer: Puppeteer,
+        philo: Philosopher,
+        townie: Detective,
+        townie2: Detective
+    );
+
+    puppeteer.set_role_state(RoleState::Puppeteer(Puppeteer{
+        marionettes_remaining: 3,
+        action: PuppeteerAction::String
+    }));
+
+    assert!(puppeteer.set_night_selection_single(townie));
+    assert!(philo.set_night_selection(vec![townie2, townie]));
+
+    game.next_phase();
+    assert_contains!(
+        philo.get_messages_after_night(1),
+        ChatMessageVariant::SeerResult{ enemies: true }
+    );
+
+    game.skip_to(PhaseType::Night, 2);
+
+    assert!(philo.set_night_selection(vec![puppeteer, townie]));
+
+    game.next_phase();
+    assert_contains!(
+        philo.get_messages_after_night(2),
+        ChatMessageVariant::SeerResult{ enemies: false }
+    );
+}
+
+#[test]
+fn puppeteer_marionettes_win(){
+    kit::scenario!(game in Night 1 where
+        puppeteer: Puppeteer,
+        townie: Detective,
+        townie2: Detective
+    );
+
+    puppeteer.set_role_state(RoleState::Puppeteer(Puppeteer{
+        marionettes_remaining: 3,
+        action: PuppeteerAction::String
+    }));
+
+    assert!(puppeteer.set_night_selection_single(townie));
+
+    game.skip_to(PhaseType::Nomination, 2);
+
+    puppeteer.vote_for_player(Some(townie2));
+    townie.vote_for_player(Some(townie2));
+
+    game.skip_to(PhaseType::Judgement, 2);
+
+    puppeteer.set_verdict(Verdict::Guilty);
+
+    game.skip_to(PhaseType::Dusk, 2);
+
+    assert!(puppeteer.alive());
+    assert!(townie.alive());
+    assert!(!townie2.alive());
+
+    assert!(puppeteer.get_won_game());
+    assert!(townie.get_won_game());
+    assert!(!townie2.get_won_game());
+}
+
+#[test]
+fn deputy_shoots_marionette(){
+    kit::scenario!(game in Night 1 where
+        deputy: Deputy,
+        puppeteer: Puppeteer,
+        townie: Detective
+    );
+
+    puppeteer.set_role_state(RoleState::Puppeteer(Puppeteer{
+        marionettes_remaining: 3,
+        action: PuppeteerAction::String
+    }));
+    assert!(puppeteer.set_night_selection_single(townie));
+
+    game.skip_to(PhaseType::Discussion, 2);
+
+    deputy.day_target(townie);
+
+    assert!(puppeteer.alive());
+    assert!(!townie.alive());
+    assert!(deputy.alive());
+}
+
+#[test]
+fn vigilante_shoots_marionette(){
+    kit::scenario!(game in Night 2 where
+        vigilante: Vigilante,
+        puppeteer: Puppeteer,
+        townie: Detective
+    );
+
+    puppeteer.set_role_state(RoleState::Puppeteer(Puppeteer{
+        marionettes_remaining: 3,
+        action: PuppeteerAction::String
+    }));
+    assert!(puppeteer.set_night_selection_single(townie));
+    assert!(vigilante.set_night_selection_single(townie));
+
+    game.next_phase();
+
+    assert!(puppeteer.alive());
+    assert!(!townie.alive());
+    assert!(vigilante.alive());
+}
+
+
+#[test]
 fn arsonist_ignites_and_aura(){
     kit::scenario!(game in Night 1 where
         arso: Arsonist,
@@ -1522,7 +1637,7 @@ fn martyr_suicide_ends_game() {
         martyr: Martyr,
         player1: Mafioso,
         player2: Detective,
-        player3: Mafioso,
+        player3: Mortician,
         player4: Detective
     );
 

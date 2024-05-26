@@ -1,9 +1,13 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    chat::ChatMessageVariant, player::PlayerReference, role::{
-        marionette::Marionette, puppeteer::Puppeteer, Priority, Role, RoleState
-    }, tag::Tag, Game
+    chat::ChatMessageVariant, 
+    player::PlayerReference,
+    role::{
+        Priority, Role
+    }, 
+    tag::Tag,
+    Game
 };
 
 impl Game{
@@ -91,13 +95,13 @@ impl PuppeteerMarionette{
         }
     }
 
-    pub fn has_suspicious_aura_marionette(game: &Game, player: PlayerReference)->bool{
+    pub fn is_marionette(game: &Game, player: PlayerReference)->bool{
         game.puppeteer_marionette().to_be_converted.contains(&player)
     }
     pub fn marionettes(game: &Game)->HashSet<PlayerReference>{
         PlayerReference::all_players(game)
             .filter(|p|
-                p.role(game)==Role::Marionette || game.puppeteer_marionette().to_be_converted.contains(p)
+                game.puppeteer_marionette().to_be_converted.contains(p)
             )
             .collect()
     }
@@ -118,33 +122,7 @@ impl PuppeteerMarionette{
     //event listeners
 
     pub fn on_game_start(game: &mut Game){
-        if 
-            PlayerReference::all_players(game)
-                .any(|p|p.role(game)==Role::Marionette) &&
-            !PlayerReference::all_players(game)
-                .any(|p|p.role(game)==Role::Puppeteer)
-        {
-            let marionettes = PlayerReference::all_players(game)
-                .filter(|p|p.role(game)==Role::Marionette)
-                .filter(|p|p.alive(game))
-                .map(|p|p.clone())
-                .collect::<Vec<_>>();
-
-            for marionette in marionettes{
-                marionette.set_role(game, RoleState::Puppeteer(Puppeteer::default()));
-            }
-        }
-
         PuppeteerMarionette::give_tags_and_labels(game);
-    }
-    pub fn on_game_ending(game: &mut Game){
-        let mut puppeteer_marionette: PuppeteerMarionette = game.puppeteer_marionette().clone();
-
-        for marionette in puppeteer_marionette.to_be_converted.clone(){
-            marionette.set_role(game, RoleState::Marionette(Marionette::default()));
-            puppeteer_marionette.to_be_converted.remove(&marionette);
-        }
-        game.set_puppeteer_marionette(puppeteer_marionette);
     }
     pub fn on_night_priority(game: &mut Game, priority: Priority){
         if priority == Priority::Kill{

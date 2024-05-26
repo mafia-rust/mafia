@@ -136,12 +136,8 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
 
 ///Only works for roles that win based on end game condition
 pub(super) fn get_won_game(game: &Game, actor_ref: PlayerReference) -> bool {
-    let living_roles = PlayerReference::all_players(game)
-        .filter_map(|p|if p.alive(game) {Some(p.role(game))}else{None})
-        .collect();
-
-    if let Some(end_game_condition) = GameOverState::game_is_over(living_roles) {
-        GameOverState::required_conditions_for_win(actor_ref.role(game)).contains(&end_game_condition)
+    if let Some(end_game_condition) = GameOverState::game_is_over(game) {
+        GameOverState::can_win_with(game, actor_ref, end_game_condition)
     } else {
         false
     }

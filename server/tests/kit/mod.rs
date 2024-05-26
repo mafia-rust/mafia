@@ -58,16 +58,19 @@ pub(crate) use {scenario, assert_contains, assert_not_contains};
 #[doc(hidden)]
 pub mod _init {
     use mafia_server::game::role_list::RoleList;
+    use vec1::vec1;
 
     use super::*;
 
     pub fn create_basic_scenario(roles: Vec<RoleState>) -> TestScenario {
         let mut role_list = Vec::new();
-        for _ in 0..roles.len() {
-            role_list.push(RoleOutline::Any);
+        for role in roles.iter() {
+            role_list.push(RoleOutline::RoleOutlineOptions { options: 
+                vec1![mafia_server::game::role_list::RoleOutlineOption::Role { role: role.role() }]
+            });
         }
     
-        let mut game = match mock_game(Settings {
+        let game = match mock_game(Settings {
             role_list: RoleList(role_list),
             ..Default::default()
         }, roles.len()){
@@ -75,20 +78,7 @@ pub mod _init {
             Err(err) => panic!("Failed to create game: {:?}", err),
         };
     
-        let mut players = Vec::new();
-        
-        // Assign role state manually before setting role, so on_role_creation knows the correct other roles in the game.
-        // (set_role calls on_role_creation)
-        for (index, role) in roles.iter().enumerate() {
-            let player = PlayerReference::new(&game, index as u8).unwrap();
-            player.set_role_state(&mut game, role.clone());
-        }
-
-        for (index, role) in roles.into_iter().enumerate() {
-            let player = PlayerReference::new(&game, index as u8).unwrap();
-            player.set_role(&mut game, role);
-            players.push(player);
-        }
+        let players = PlayerReference::all_players(&game).collect();
     
         TestScenario { game, players }
     }

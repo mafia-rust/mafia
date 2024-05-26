@@ -169,11 +169,15 @@ impl PlayerReference{
     pub fn has_suspicious_aura(&self, game: &Game) -> bool {
         self.role(game).has_suspicious_aura(game) || 
         self.night_framed(game) ||
-        PuppeteerMarionette::has_suspicious_aura_marionette(game, *self) ||
         ArsonistDoused::has_suspicious_aura_douse(game, *self)
     }
-    pub fn required_conditions_for_win(&self, game: &Game) -> HashSet<GameOverState> {
-        GameOverState::required_conditions_for_win(self.role(game))
+    pub fn required_game_over_states_for_win(&self, game: &Game) -> Option<HashSet<GameOverState>> {
+        if PuppeteerMarionette::is_marionette(game, *self) {return Some(vec![GameOverState::Fiends].into_iter().collect());}
+        GameOverState::required_game_over_states_for_win(self.role(game))
+    }
+    pub fn keeps_game_running(&self, game: &Game) -> bool {
+        if PuppeteerMarionette::is_marionette(game, *self) {return false;}
+        GameOverState::keeps_game_running(self.role(game))
     }
 
     /*

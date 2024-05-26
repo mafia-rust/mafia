@@ -70,7 +70,7 @@ impl DoomsayerGuess{
             Role::Martyr => None,
 
             //Fiends
-            Role::Arsonist | Role::Werewolf | Role::Ojo | Role::Puppeteer | Role::Marionette => Some(DoomsayerGuess::Fiends),
+            Role::Arsonist | Role::Werewolf | Role::Ojo | Role::Puppeteer => Some(DoomsayerGuess::Fiends),
             
             //Cult
             Role::Apostle | Role::Disciple | Role::Zealot => Some(DoomsayerGuess::Cult),

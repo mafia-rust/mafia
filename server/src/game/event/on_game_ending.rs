@@ -1,4 +1,7 @@
-use crate::game::{components::puppeteer_marionette::PuppeteerMarionette, player::PlayerReference, Game};
+use crate::game::{
+    player::PlayerReference,
+    Game
+};
 
 #[must_use = "Event must be invoked"]
 pub struct OnGameEnding;
@@ -8,7 +11,6 @@ impl OnGameEnding{
             player_ref.on_game_ending(game);
         }
 
-        PuppeteerMarionette::on_game_ending(game);
         game.on_game_ending();
     }
 }

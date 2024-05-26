@@ -85,10 +85,7 @@ impl Philosopher{
         }else if a.has_innocent_aura(game) || b.has_innocent_aura(game){
             false
         }else{
-            !GameOverState::can_win_together(
-                a.role(game), 
-                b.role(game)
-            )
+            !GameOverState::can_win_together(game, a, b)
         }
     }
 }
