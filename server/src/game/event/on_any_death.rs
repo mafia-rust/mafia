@@ -4,6 +4,7 @@ use crate::game::{
     Game
 };
 
+#[must_use = "Event must be invoked"]
 pub struct OnAnyDeath{
     dead_player: PlayerReference,
 }

@@ -1,5 +1,6 @@
 use crate::game::{components::{cult::Cult, mafia::Mafia}, player::PlayerReference, role::Role, Game};
 
+#[must_use = "Event must be invoked"]
 pub struct OnRoleSwitch{
     player: PlayerReference,
     old: Role,

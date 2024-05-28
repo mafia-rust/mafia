@@ -1,6 +1,7 @@
 use crate::game::{grave::GraveReference, player::PlayerReference, Game};
 
 
+#[must_use = "Event must be invoked"]
 pub struct OnGraveAdded{
     grave: GraveReference,
 }

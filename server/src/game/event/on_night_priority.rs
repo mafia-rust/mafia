@@ -1,6 +1,7 @@
 use crate::game::{components::puppeteer_marionette::PuppeteerMarionette, role::Priority, Game};
 
 ///runs before all players' night actions
+#[must_use = "Event must be invoked"]
 pub struct OnNightPriority{
     priority: Priority
 }
