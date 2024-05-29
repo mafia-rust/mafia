@@ -400,6 +400,12 @@
     "role.puppeteer.dayTarget": "Special",
     "role.puppeteer.smallRoleMenu.noneRemaining": "No marionettes remain, you can only poison.",
     "role.puppeteer.smallRoleMenu": "Choose to poison someone or string them into a marionette. \\0 marionettes remaining.",
+    
+    "role.fiendsWildcard.name": "Fiends Wildcard",
+    "role.fiendsWildcard.name:var.0": "Fiends Wildcards",
+    "role.fiendsWildcard.target": "Target",
+    "role.fiendsWildcard.dayTarget": "Special",
+    "role.fiendsWildcard.smallRoleMenu": "Choose a fiends role to become",
 
     "role.death.name": "Death",
     "role.death.target": "Collect",
@@ -1180,6 +1186,11 @@
     "wiki.article.role.puppeteer.abilities":"- You may choose to do one of the following\n    - Visit a player to poison them\n        - They are told they are poisoned\n        - They are indirectly attacked on the following night\n\n    - Visit a player to string up into a marionette\n        - They are told they are strung up, and they now win with fiends, regardless of their role\n        -They have a suspicious aura for the rest of the game\n        - They will be indirectly attacked every night by all puppeteers until they die, if there are no puppeteers they are still attacked",
     "wiki.article.role.puppeteer.attributes":"- You and the marionettes are shown who all puppeteers and marionettes are\n- You have an armor-piercing indirect attack",
     "wiki.article.role.puppeteer.extra":"- You can't select anybody who is a puppeteer, marionette, or is being strung into a marionette\n- A puppeteer can't be stringed into a marionette\n- A marionette can't be stringed into a marionette twice, if two puppeteers choose a player to be turned into a marionette on the same night, they get the message only once\n- Defense does not stop a player from being poisoned or strung up",
+
+    "wiki.article.role.fiendsWildcard.guide": "* Choose a fiends role to become that role\n    * You become that role when night starts\n* You can't become a role that has exceeded its role limit",
+    "wiki.article.role.fiendsWildcard.abilities":"* Become a role you choose at the start of night",
+    "wiki.article.role.fiendsWildcard.attributes":"* You can not become a role that is disabled\n* You can not become a role that is taken by too many players",
+    "wiki.article.role.fiendsWildcard.extra":"* If you choose a role that was disabled you stay as the Fiends Wildcard\n* You can choose Fiends Wildcard to stay as Fiends Wildcard\n* You can't become a role that is at its role limit",
 
     "wiki.article.role.death.guide": "Guess what player will die during night by selecting them, If you guess correctly you will collect a soul, you will also collect a soul passively each night. Once you collect six souls, everyone will be told that death collected six souls at the start of the day, if you survive that day, you will attack everyone and win the game at the start of night.",
     "wiki.article.role.death.abilities":"* If the player you visit dies tonight, you collect a soul\n* You gain an additional soul each night",

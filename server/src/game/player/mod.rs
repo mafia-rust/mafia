@@ -66,7 +66,7 @@ struct PlayerNightVariables{
     attacked: bool,
     jailed: bool,
     roleblocked: bool,
-    defense: u8,
+    upgraded_defense: Option<u8>,
 
     appeared_visits: Option<Vec<Visit>>,
     framed: bool,
@@ -116,7 +116,7 @@ impl Player {
                 attacked:           false,
                 jailed:             false,
                 roleblocked:        false,
-                defense:            0,
+                upgraded_defense:   None,
                 appeared_visits:    None,
                 framed: false,
 
@@ -176,7 +176,7 @@ pub mod test {
                 attacked:           false,
                 jailed:             false,
                 roleblocked:        false,
-                defense:            0,
+                upgraded_defense:   None,
                 appeared_visits:    None,
                 framed:      false,
 

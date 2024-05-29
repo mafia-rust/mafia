@@ -123,6 +123,9 @@ Doomsayer
     action: PuppeteerAction,
     marionettesRemaining: number
 } | {
+    type: "fiendsWildcard"
+    role: Role
+} | {
     type: "death",
     souls: number
 } | {

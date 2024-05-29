@@ -23,9 +23,10 @@ pub enum SpyBug{
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
+pub(super) const DEFENSE: u8 = 0;
 
 impl RoleStateImpl for Spy {
-    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
+    
     
 
 

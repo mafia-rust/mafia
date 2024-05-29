@@ -22,11 +22,9 @@ pub struct Werewolf{
 
 pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
+pub(super) const DEFENSE: u8 = 1;
 
 impl RoleStateImpl for Werewolf {
-    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {1}
-    
-
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         
 

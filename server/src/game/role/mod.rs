@@ -12,8 +12,6 @@ use serde::{Serialize, Deserialize};
 use super::grave::GraveReference;
 
 trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
-    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8;
-
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority);
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference);
 
@@ -94,6 +92,7 @@ macros::roles! {
     Werewolf : werewolf,
     Ojo : ojo,
     Puppeteer: puppeteer,
+    FiendsWildcard : fiends_wildcard,
 
     Wildcard : wild_card,
     TrueWildcard : true_wildcard,
@@ -163,6 +162,11 @@ mod macros {
                         $(Self::$name => $file::FACTION),*
                     }
                 }
+                pub fn defense(&self) -> u8 {
+                    match self {
+                        $(Self::$name => $file::DEFENSE),*
+                    }
+                }
             }
 
             // This does not need to implement Deserialize or PartialEq!
@@ -176,11 +180,6 @@ mod macros {
                 pub fn role(&self) -> Role {
                     match self {
                         $(Self::$name(_) => Role::$name),*
-                    }
-                }
-                pub fn defense(&self, game: &Game, actor_ref: PlayerReference) -> u8 {
-                    match self {
-                        $(Self::$name(role_struct) => role_struct.defense(game, actor_ref)),*
                     }
                 }
                 

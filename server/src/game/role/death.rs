@@ -19,13 +19,14 @@ pub struct Death{
 const NEEDED_SOULS: u8 = 6;
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
+pub(super) const DEFENSE: u8 = 0;
 
 impl RoleStateImpl for Death {
-    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {if self.souls >= NEEDED_SOULS{3}else{0}}
-    
-
-
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+        if priority == Priority::Heal && self.souls >= NEEDED_SOULS{
+            actor_ref.set_night_upgraded_defense(game, Some(3))
+        }
+
         if priority != Priority::Investigative {return;}
         if !actor_ref.alive(game) {return;}
 

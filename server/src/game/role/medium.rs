@@ -24,12 +24,9 @@ impl Default for Medium{
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
+pub(super) const DEFENSE: u8 = 0;
 
 impl RoleStateImpl for Medium {
-    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    
-
-
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {
     }
     fn can_select(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {

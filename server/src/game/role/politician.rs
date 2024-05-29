@@ -20,12 +20,9 @@ pub struct Politician{
 
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
+pub(super) const DEFENSE: u8 = 1;
 
 impl RoleStateImpl for Politician {
-    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {1}
-    
-
-
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {
 
     }

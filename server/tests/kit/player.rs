@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use mafia_server::{game::{chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::RoleState, tag::Tag, verdict::Verdict, Game}, packet::ToServerPacket};
+use mafia_server::{game::{chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, Game}, packet::ToServerPacket};
 use vec1::Vec1;
 
 #[derive(Clone, Copy, Debug)]
@@ -104,6 +104,10 @@ impl TestPlayer {
         self.get_messages_after_last_message(
             ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number }
         )
+    }
+
+    pub fn role(&self) -> Role {
+        self.0.role(game!(self))
     }
 
     pub fn role_state(&self) -> &RoleState{

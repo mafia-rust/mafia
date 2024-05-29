@@ -28,12 +28,9 @@ impl Default for Deputy {
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
+pub(super) const DEFENSE: u8 = 0;
 
 impl RoleStateImpl for Deputy {
-    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    
-
-
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {
 
     }

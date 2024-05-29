@@ -23,14 +23,11 @@ pub struct Mortician {
 
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
+pub(super) const DEFENSE: u8 = 0;
 
 const MAX_CREMATIONS: u8 = 3;
 
 impl RoleStateImpl for Mortician {
-    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    
-
-
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return}
 

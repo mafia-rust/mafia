@@ -262,10 +262,14 @@ impl PlayerReference{
     }
 
     pub fn night_defense(&self, game: &Game) -> u8 {
-        self.deref(game).night_variables.defense
+        if let Some(defense) = self.deref(game).night_variables.upgraded_defense {
+            defense
+        }else{
+            self.role(game).defense()
+        }
     }
-    pub fn set_night_defense(&self, game: &mut Game, defense: u8){
-        self.deref_mut(game).night_variables.defense = defense;
+    pub fn set_night_upgraded_defense(&self, game: &mut Game, defense: Option<u8>){
+        self.deref_mut(game).night_variables.upgraded_defense = defense;
     }
 
     pub fn night_framed(&self, game: &Game) -> bool {

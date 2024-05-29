@@ -70,7 +70,9 @@ impl DoomsayerGuess{
             Role::Martyr => None,
 
             //Fiends
-            Role::Arsonist | Role::Werewolf | Role::Ojo | Role::Puppeteer => Some(DoomsayerGuess::Fiends),
+            Role::Arsonist | Role::Werewolf | 
+            Role::Ojo | Role::Puppeteer | 
+            Role::FiendsWildcard => Some(DoomsayerGuess::Fiends),
             
             //Cult
             Role::Apostle | Role::Disciple | Role::Zealot => Some(DoomsayerGuess::Cult),
@@ -87,12 +89,9 @@ impl DoomsayerGuess{
 
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
+pub(super) const DEFENSE: u8 = 0;
 
 impl RoleStateImpl for Doomsayer {
-    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {0}
-    
-
-
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::TopPriority {return;}
 

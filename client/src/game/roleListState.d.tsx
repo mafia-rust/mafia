@@ -37,21 +37,30 @@ export function getRolesFromRoleListRemoveExclusionsAddConversions(roleList: Rol
 
     
     for(let role of roles){
-        if(role==="wildcard"||role==="trueWildcard"){
-            getRolesComplement(excludedRoles).forEach((role) => {
-                out.push(role);
-            });
-            break;
-        }
-        if(role==="mafiaWildcard"){
-            getRolesComplement(excludedRoles)
-                .filter((role)=>getFactionFromRole(role)==="mafia")
-                .filter((role)=>role!=="godfather" && role!=="mafioso")
-                .forEach((role) => {
+        switch (role) {
+            case "wildcard":
+            case "trueWildcard":
+                getRolesComplement(excludedRoles).forEach((role) => {
                     out.push(role);
-                }
-            );
-            break;
+                });
+                break;
+            case "mafiaWildcard":
+                getRolesComplement(excludedRoles)
+                    .filter((role)=>getFactionFromRole(role)==="mafia")
+                    .filter((role)=>role!=="godfather" && role!=="mafioso")
+                    .forEach((role) => {
+                        out.push(role);
+                    }
+                );
+                break;
+            case "fiendsWildcard":
+                getRolesComplement(excludedRoles)
+                    .filter((role)=>getFactionFromRole(role)==="fiends")
+                    .forEach((role) => {
+                        out.push(role);
+                    }
+                );
+                break;
         }
     }
 

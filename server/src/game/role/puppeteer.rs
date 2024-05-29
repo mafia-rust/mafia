@@ -11,9 +11,6 @@ use crate::game::Game;
 
 use super::{Priority, RoleState, RoleStateImpl};
 
-pub(super) const FACTION: Faction = Faction::Fiends;
-pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Puppeteer{
@@ -35,11 +32,11 @@ pub enum PuppeteerAction{
     Poison
 }
 
+pub(super) const FACTION: Faction = Faction::Fiends;
+pub(super) const MAXIMUM_COUNT: Option<u8> = None;
+pub(super) const DEFENSE: u8 = 1;
+
 impl RoleStateImpl for Puppeteer {
-    fn defense(&self, _game: &Game, _actor_ref: PlayerReference) -> u8 {1}
-    
-
-
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return;}
 

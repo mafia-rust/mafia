@@ -104,7 +104,7 @@ impl PlayerReference{
     }
     pub fn increase_defense_to(&self, game: &mut Game, defense: u8){
         if self.night_defense(game) < defense {
-            self.set_night_defense(game, defense);
+            self.set_night_upgraded_defense(game, Some(defense));
         }
     }
     
@@ -157,7 +157,7 @@ impl PlayerReference{
         if game.current_phase().is_night() {
             self.night_defense(game)
         }else{
-            self.role_state(game).clone().defense(game, *self)
+            self.role(game).defense()
         }
     }
     pub fn control_immune(&self, game: &Game) -> bool {

@@ -3,7 +3,7 @@ use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::role::{gossip::Gossip, marksman::Marksman, puppeteer::{Puppeteer, PuppeteerAction}};
+use mafia_server::game::role::{fiends_wildcard::FiendsWildcard, gossip::Gossip, mafia_wild_card::MafiaWildcard, marksman::Marksman, puppeteer::{Puppeteer, PuppeteerAction}};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
@@ -1861,4 +1861,34 @@ fn godfather_dies_to_veteran_after_possessed(){
     assert!(!gf.alive());
     assert!(vet.alive());
     assert!(min.alive());
+}
+
+#[test]
+fn fiends_wildcard_defense_upgrade(){
+    kit::scenario!(game in Dusk 1 where
+        fiend: FiendsWildcard,
+        mafia: MafiaWildcard
+    );
+    
+    fiend.set_role_state(RoleState::FiendsWildcard(FiendsWildcard{
+        role: Role::Puppeteer
+    }));
+
+    game.next_phase();
+
+    fiend.set_role_state(RoleState::Puppeteer(Puppeteer{
+        marionettes_remaining: 3,
+        action: PuppeteerAction::String
+    }));
+
+    assert!(fiend.role() == Role::Puppeteer);
+    assert!(mafia.set_night_selection_single(fiend));
+    assert!(fiend.set_night_selection_single(mafia));
+
+    game.next_phase();
+
+    assert!(fiend.alive());
+    assert!(mafia.alive());
+
+    assert!(game.game_is_over());
 }

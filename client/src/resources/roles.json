@@ -769,6 +769,19 @@
             {"type": "puppeteerActionChosen", "action": "string"}
         ]
     },
+    "fiendsWildcard": {
+        "faction": "fiends",
+        "roleSet": null,
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "roleAssignment", "role":"fiendsWildcard"},
+            {"type": "wildcardConvertFailed", "role": "werewolf"}
+        ]
+    },
     "apostle": {
         "faction": "cult",
         "roleSet": null,

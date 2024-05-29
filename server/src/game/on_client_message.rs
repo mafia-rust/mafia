@@ -210,19 +210,33 @@ impl Game {
                 }
             }
             ToServerPacket::SetWildcardRole { role } => {
-                if let RoleState::Wildcard(mut wild_card) = sender_player_ref.role_state(self).clone(){
-                    wild_card.role = role;
-                    sender_player_ref.set_role_state(self, RoleState::Wildcard(wild_card));
-                }else if let RoleState::MafiaWildcard(mut mafia_wild_card) = sender_player_ref.role_state(self).clone(){
-                    if role.faction() == Faction::Mafia {
-                        mafia_wild_card.role = role;
-                        sender_player_ref.set_role_state(self, RoleState::MafiaWildcard(mafia_wild_card));
-                    }else{
+
+                if self.settings.excluded_roles.contains(&role) {
+                    break 'packet_match;
+                }
+                
+                match sender_player_ref.role_state(self).clone() {
+                    RoleState::Wildcard(mut wild_card) => {
+                        wild_card.role = role;
+                        sender_player_ref.set_role_state(self, RoleState::Wildcard(wild_card));
+                    }
+                    RoleState::TrueWildcard(mut true_wildcard) => {
+                        true_wildcard.role = role;
+                        sender_player_ref.set_role_state(self, RoleState::TrueWildcard(true_wildcard));
+                    }
+                    RoleState::MafiaWildcard(mut mafia_wild_card) => {
+                        if role.faction() == Faction::Mafia {
+                            mafia_wild_card.role = role;
+                        }
                         sender_player_ref.set_role_state(self, RoleState::MafiaWildcard(mafia_wild_card));
                     }
-                }else if let RoleState::TrueWildcard(mut true_wildcard) = sender_player_ref.role_state(self).clone(){
-                    true_wildcard.role = role;
-                    sender_player_ref.set_role_state(self, RoleState::TrueWildcard(true_wildcard));
+                    RoleState::FiendsWildcard(mut fiends_wild_card) => {
+                        if role.faction() == Faction::Fiends {
+                            fiends_wild_card.role = role;
+                        }
+                        sender_player_ref.set_role_state(self, RoleState::FiendsWildcard(fiends_wild_card));
+                    }
+                    _ => {}
                 }
             }
             ToServerPacket::SetJournalistJournal { journal } => {

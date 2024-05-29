@@ -14,22 +14,22 @@ use super::{Priority, RoleStateImpl, Role};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct MafiaWildcard{
+pub struct FiendsWildcard{
     pub role: Role
 }
-impl Default for MafiaWildcard {
+impl Default for FiendsWildcard {
     fn default() -> Self {
         Self {
-            role: Role::MafiaWildcard
+            role: Role::FiendsWildcard
         }
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Mafia;
+pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: u8 = 0;
 
-impl RoleStateImpl for MafiaWildcard {
+impl RoleStateImpl for FiendsWildcard {
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
@@ -71,14 +71,14 @@ impl RoleStateImpl for MafiaWildcard {
     }
 }
 
-impl MafiaWildcard {
+impl FiendsWildcard {
     fn become_role(&self, game: &mut Game, actor_ref: PlayerReference) {
 
 
-        if self.role == Role::MafiaWildcard {return;}
+        if self.role == Role::FiendsWildcard {return;}
 
         if
-            self.role.faction() == Faction::Mafia &&
+            self.role.faction() == Faction::Fiends &&
             role_can_generate(
                 self.role, 
                 &game.settings.excluded_roles, 

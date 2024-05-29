@@ -43,7 +43,7 @@ impl PlayerReference{
                 self.set_night_died(game, false);
                 self.set_night_attacked(game, false);
                 self.set_night_roleblocked(game, false);
-                self.set_night_defense(game, self.role_state(game).defense(game, *self));
+                self.set_night_upgraded_defense(game, None);
                 self.set_night_appeared_visits(game, None);
                 self.set_night_framed(game, false);
                 self.set_night_silenced(game, false);

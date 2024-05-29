@@ -171,6 +171,19 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
                         GAME_MANAGER.sendSetWildcardRoleOutline(rle);
                     }}
                 /></div></>;
+            case "fiendsWildcard":
+                const all_choosable_fiends: Role[] = Object.keys(ROLES).filter((rle)=>
+                    ROLES[rle as keyof typeof ROLES].faction === "fiends" &&
+                    !this.state.gameState.excludedRoles.includes(rle as Role)
+                ).map((r)=>r as Role);
+
+                return <><StyledText>{translate("role.fiendsWildcard.smallRoleMenu")}</StyledText><div><RoleDropdown 
+                    value={this.state.gameState.clientState.roleState.role ?? "fiendsWildcard"} 
+                    disabledRoles={getRolesComplement(all_choosable_fiends)}
+                    onChange={(rle)=>{
+                        GAME_MANAGER.sendSetWildcardRoleOutline(rle);
+                    }}
+                /></div></>;
             case "martyr":
                 if (this.state.gameState.clientState.roleState.state.type === "stillPlaying") {
                     return <StyledText>{translate("role.martyr.roleDataText", this.state.gameState.clientState.roleState.state.bullets)}</StyledText>;
