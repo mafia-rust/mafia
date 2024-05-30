@@ -24,6 +24,8 @@ pub(super) const DEFENSE: u8 = 0;
 
 impl RoleStateImpl for Apostle {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+        if game.day_number() == 1 {return}
+
         let mut cult = game.cult().clone();
         match priority {
             Priority::Kill => {
@@ -62,7 +64,8 @@ impl RoleStateImpl for Apostle {
         let can_kill = cult.ordered_cultists.len() == 1 && !Cult::can_convert_tonight(game);
         let can_convert = Cult::can_convert_tonight(game);
 
-        if !can_convert && !can_kill {return false}
+        if !can_convert && !can_kill{return false}
+        if game.day_number() == 1 {return false}
 
         crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
     }

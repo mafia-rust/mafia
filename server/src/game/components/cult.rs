@@ -51,6 +51,8 @@ impl Cult{
             }
         }
     }
+    
+    
     pub fn get_members(game: &Game)->Vec<PlayerReference>{
         PlayerReference::all_players(game).filter(
             |p| p.role(game).faction() == Faction::Cult
@@ -100,11 +102,11 @@ impl Cult{
         let cult = game.cult();
         if cult.ordered_cultists.len() >= 4 {return false}
 
-        match cult.sacrifices_required{
-            None => game.day_number() != 1,
-            Some(blood) => {
-                blood == 0
-            }
+        if let Some(sacrifices_required) = cult.sacrifices_required {
+            sacrifices_required == 0
+        } else {
+            false
         }
+        
     }
 }
