@@ -101,9 +101,9 @@ export default function LobbyMenu(): ReactElement {
                     {isHost && <GameModeSelector 
                         canModifySavedGameModes={false}
                         loadGameMode={gameMode => {
-                            GAME_MANAGER.sendSetPhaseTimesPacket(gameMode.phaseTimes)
-                            GAME_MANAGER.sendExcludedRolesPacket(gameMode.disabledRoles)
-                            sendRoleList(gameMode.roleList);
+                            GAME_MANAGER.sendSetPhaseTimesPacket(gameMode.phaseTimes);
+                            GAME_MANAGER.sendExcludedRolesPacket(gameMode.disabledRoles);
+                            GAME_MANAGER.sendSetRoleListPacket(gameMode.roleList);
                         }}
                     />}
                     <PhaseTimesSelector 
