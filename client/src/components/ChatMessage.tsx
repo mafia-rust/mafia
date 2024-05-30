@@ -35,7 +35,7 @@ const ChatElement = React.memo((
         if(message.chatGroup !== "all"){
             icon = translateChecked("chatGroup."+message.chatGroup+".icon");
         }else{
-            icon = null;
+            icon = "";
         }
     }else{
         icon = translate("noGroup.icon");
@@ -70,9 +70,9 @@ const ChatElement = React.memo((
             }
 
             let messageSender = "";
-            if (message.variant.messageSender.type === "player") {
+            if (message.variant.messageSender.type === "player"||message.variant.messageSender.type === "livingToDead") {
                 messageSender = "sender-"+playerNames[message.variant.messageSender.player];
-            } else {
+            }else if(message.variant.messageSender.type === "jailor" || message.variant.messageSender.type === "journalist"){
                 messageSender = translate("role."+message.variant.messageSender.type+".name");
             }
             
