@@ -25,6 +25,7 @@ impl RoleStateImpl for Godfather {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         
         if priority != Priority::Kill {return}
+        if game.day_number() == 1 {return}
         
         if actor_ref.night_roleblocked(game) {
             if let Some(backup) = self.backup {
@@ -47,7 +48,8 @@ impl RoleStateImpl for Godfather {
         }        
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
+        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref) &&
+        game.day_number() > 1
     }
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
         if let Some(old_target_ref) = self.backup {

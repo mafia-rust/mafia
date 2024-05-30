@@ -1068,7 +1068,7 @@ fn vigilante_cant_select_night_one() {
 
 #[test]
 fn godfather_backup_kills_esc() {
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         godfather: Godfather,
         hypnotist: Hypnotist,
         det: Detective,
@@ -1126,7 +1126,7 @@ fn snoop_basic() {
 
 #[test]
 fn godfather_backup_kills_jail() {
-    kit::scenario!(game in Dusk 1 where
+    kit::scenario!(game in Dusk 2 where
         godfather: Godfather,
         hypnotist: Hypnotist,
         det: Detective,
@@ -1308,7 +1308,7 @@ fn bouncer_ojo_block() {
 
 #[test]
 fn bouncer_protect_no_kill() {
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         rev: Bouncer,
         godfather: Godfather,
         jan: Mortician,
@@ -1749,7 +1749,7 @@ fn deputy_fails(){
 
 #[test]
 fn ojo_transporter(){
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         ojo: Ojo,
         transporter: Transporter,
         player1: Philosopher,
@@ -1829,7 +1829,7 @@ fn apostle_converting_trapped_player_same_day(){
 
 #[test]
 fn godfather_dies_to_veteran(){
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         vet: Veteran,
         gf: Godfather,
         _maf: Mortician
@@ -1865,7 +1865,7 @@ fn godfather_dies_to_veteran_after_possessed(){
 
 #[test]
 fn fiends_wildcard_defense_upgrade(){
-    kit::scenario!(game in Dusk 1 where
+    kit::scenario!(game in Dusk 2 where
         fiend: FiendsWildcard,
         mafia: MafiaWildcard
     );
