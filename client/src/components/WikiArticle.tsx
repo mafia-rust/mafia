@@ -99,7 +99,7 @@ export default function WikiArticle(props: {
             return <section className="wiki-article">
                 <WikiStyledText className="wiki-article-standard">
                     {"# "+translate(`wiki.article.standard.${props.article.split("/")[1]}.title`)+"\n"}
-                    {translate(`wiki.article.standard.${props.article.split("/")[1]}.text`)}
+                    {replaceMentions(translate(`wiki.article.standard.${props.article.split("/")[1]}.text`))}
                 </WikiStyledText>
             </section>
         case "generated":

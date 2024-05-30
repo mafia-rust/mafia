@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::chat::ChatGroup;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -22,59 +22,14 @@ pub struct Necromancer {
 }
 impl RoleStateImpl for Necromancer {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        match priority {
-            Priority::Control => {
+        if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
+            let mut used_bodies = self.used_bodies;
+            used_bodies.push(currently_used_player);
 
-                let retributionist_visits = actor_ref.night_visits(game).clone();
-                let Some(first_visit) = retributionist_visits.get(0) else {return};
-                let Some(second_visit) = retributionist_visits.get(1) else {return};
-                if first_visit.target.alive(game) {return;}
-                
-                first_visit.target.push_night_message(game,
-                    ChatMessageVariant::YouWerePossessed { immune: first_visit.target.control_immune(game) }
-                );
-                if first_visit.target.control_immune(game) {
-                    actor_ref.push_night_message(game,
-                        ChatMessageVariant::TargetIsPossessionImmune
-                    );
-                    return;
-                }
-
-                let mut new_chosen_targets = 
-                    first_visit.target.night_visits(game).iter().map(|v|v.target).collect::<Vec<PlayerReference>>();
-                if let Some(target) = new_chosen_targets.first_mut(){
-                    *target = second_visit.target;
-                }else{
-                    new_chosen_targets = vec![second_visit.target];
-                }
-
-                first_visit.target.set_night_visits(
-                    game,
-                    first_visit.target.convert_selection_to_visits(game, new_chosen_targets)
-                );
-
-                let mut used_bodies = self.used_bodies;
-                used_bodies.push(first_visit.target);
-                actor_ref.set_role_state(game, RoleState::Necromancer(Necromancer { used_bodies, currently_used_player: Some(first_visit.target) }));
-                actor_ref.set_night_visits(game, vec![first_visit.clone()]);
-            },
-            Priority::Investigative => {
-                if let Some(currently_used_player) = self.currently_used_player {
-                    actor_ref.push_night_message(game,
-                        ChatMessageVariant::PossessionTargetsRole { role: currently_used_player.role(game) }
-                    );
-                }
-            },
-            Priority::StealMessages => {
-                if let Some(currently_used_player) = self.currently_used_player {
-                    for message in currently_used_player.night_messages(game).clone() {
-                        actor_ref.push_night_message(game,
-                            ChatMessageVariant::TargetsMessage { message: Box::new(message.clone()) }
-                        );
-                    }
-                }
-            },
-            _ => {}
+            actor_ref.set_role_state(game, RoleState::Necromancer(Necromancer{
+                used_bodies,
+                currently_used_player: Some(currently_used_player)
+            }))
         }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {

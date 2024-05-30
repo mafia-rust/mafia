@@ -77,6 +77,77 @@ impl PlayerReference{
         true
     }
 
+    /**
+    ### Example use in minion case
+        
+    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+        if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
+            actor_ref.set_role_state(game, RoleState::Minion(Minion{
+                currently_used_player: Some(currently_used_player)
+            }))
+        }
+    }
+    */
+    pub fn possess_night_action(&self, game: &mut Game, priority: Priority, currently_used_player: Option<PlayerReference>)->Option<PlayerReference>{
+        match priority {
+            Priority::Control => {
+                let possessor_visits = self.night_visits(game).clone();
+                let Some(possessed_visit) = possessor_visits.get(0) else {return None};
+                let Some(possessed_into_visit) = possessor_visits.get(1) else {return None};
+                
+                possessed_visit.target.push_night_message(game,
+                    ChatMessageVariant::YouWerePossessed { immune: possessed_visit.target.control_immune(game) }
+                );
+                if possessed_visit.target.control_immune(game) {
+                    self.push_night_message(game,
+                        ChatMessageVariant::TargetIsPossessionImmune
+                    );
+                    return None;
+                }
+
+                let mut new_selection = possessed_visit.target
+                    .night_visits(game)
+                    .iter()
+                    .map(|v|v.target)
+                    .collect::<Vec<PlayerReference>>();
+
+                if let Some(target) = new_selection.first_mut(){
+                    *target = possessed_into_visit.target;
+                }else{
+                    new_selection = vec![possessed_into_visit.target];
+                }
+
+                possessed_visit.target.set_night_visits(game,
+                    possessed_visit.target.convert_selection_to_visits(game, new_selection)
+                );
+
+                self.set_night_visits(game, vec![possessed_visit.clone()]);
+                return Some(possessed_visit.target);
+            },
+            Priority::Investigative => {
+                if let Some(currently_used_player) = currently_used_player {
+                    self.push_night_message(game,
+                        ChatMessageVariant::PossessionTargetsRole { role: currently_used_player.role(game) }
+                    );
+                }
+                return None;
+            },
+            Priority::StealMessages => {
+                if let Some(currently_used_player) = currently_used_player {
+                    for message in currently_used_player.night_messages(game).clone() {
+                        self.push_night_message(game,
+                            ChatMessageVariant::TargetsMessage { message: Box::new(message.clone()) }
+                        );
+                    }
+                }
+                return None;
+            },
+            _ => {
+                return None;
+            }
+        }
+    }
+
     /// ### Pre condition:
     /// self.alive(game) == false
     pub fn die(&self, game: &mut Game, grave: Grave){
