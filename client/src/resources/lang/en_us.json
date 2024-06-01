@@ -1091,7 +1091,7 @@
     "wiki.article.role.deputy.attributes":"* If the player you attack has defense, they are told they were attacked by a deputy\n* When you kill someone, everyone is told a deputy shot someone\n* If you kill a player who exclusively wins with town, you instantly leave town",
     "wiki.article.role.deputy.extra":"* You only have a basic attack\n* You can not attack day 1",
 
-    "wiki.article.role.godfather.guide": "- At night, select a player to attack, you can't select night 1\n- Choose a backup to attack for you if you are roleblocked\n\n You should try to kill townies who are likely to stop you from winning or have powerful abilities, but be careful about town protective roles.",
+    "wiki.article.role.godfather.guide": "- At night, select a player to attack\n- You can't attack night 1\n- Choose a backup to attack for you if you are roleblocked\n\n You should try to kill townies who are likely to stop you from winning or have powerful abilities, but be careful about town protective roles.",
     "wiki.article.role.godfather.abilities":"* Visit a player to attack\n* Choose another living mafia member to be your backup at any time\n* While you are roleblocked, the backup will attack the first player they visit",
     "wiki.article.role.godfather.attributes":"* You are armored\n* You always have an innocent aura\n* When you are roleblocked, the mafia is told that the backup attacks for you\n- Neither you or the backup can select or attack night 1",
     "wiki.article.role.godfather.extra":"* You only have a basic attack\n* When the mafia has no Godfather or Mafioso, a random mafia member converts to a godfather\n* When the Godfather dies, their current backup becomes the Godfather\n* You can not select other mafia members",
