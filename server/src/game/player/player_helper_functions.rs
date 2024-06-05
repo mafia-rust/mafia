@@ -22,13 +22,16 @@ impl PlayerReference{
             );
         }
     }
-    pub fn restrict(&self, game: &mut Game) {
+    pub fn restrict(&self, game: &mut Game) -> Vec<PlayerReference> {
+        let mut restricted = vec![];
         for visitor in self.all_visitors(game){
-            if !visitor.role(game).restrict_immune() {
+            if !visitor.role(game).restriction_immune() {
                 visitor.set_night_visits(game, vec![]);
                 visitor.push_night_message(game, ChatMessageVariant::TargetRestricted);
+                restricted.push(visitor);
             }
         }
+        restricted
     }
 
     /// Returns true if attack overpowered defense
@@ -90,15 +93,15 @@ impl PlayerReference{
     */
     pub fn possess_night_action(&self, game: &mut Game, priority: Priority, currently_used_player: Option<PlayerReference>)->Option<PlayerReference>{
         match priority {
-            Priority::Control => {
+            Priority::Possess => {
                 let possessor_visits = self.night_visits(game).clone();
                 let Some(possessed_visit) = possessor_visits.get(0) else {return None};
                 let Some(possessed_into_visit) = possessor_visits.get(1) else {return None};
                 
                 possessed_visit.target.push_night_message(game,
-                    ChatMessageVariant::YouWerePossessed { immune: possessed_visit.target.control_immune(game) }
+                    ChatMessageVariant::YouWerePossessed { immune: possessed_visit.target.possession_immune(game) }
                 );
-                if possessed_visit.target.control_immune(game) {
+                if possessed_visit.target.possession_immune(game) {
                     self.push_night_message(game,
                         ChatMessageVariant::TargetIsPossessionImmune
                     );
@@ -231,8 +234,8 @@ impl PlayerReference{
             self.role(game).defense()
         }
     }
-    pub fn control_immune(&self, game: &Game) -> bool {
-        self.role(game).control_immune()
+    pub fn possession_immune(&self, game: &Game) -> bool {
+        self.role(game).possession_immune()
     }
     pub fn has_innocent_aura(&self, game: &Game) -> bool {
         self.role(game).has_innocent_aura(game)

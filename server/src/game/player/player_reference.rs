@@ -69,6 +69,14 @@ impl PlayerReference{
     }
 }
 
+
+impl From<PlayerReference> for PlayerIndex {
+    fn from(player_ref: PlayerReference) -> PlayerIndex {
+        player_ref.index()
+    }
+}
+
+
 pub struct PlayerReferenceIterator {
     current: PlayerIndex,
     end: PlayerIndex

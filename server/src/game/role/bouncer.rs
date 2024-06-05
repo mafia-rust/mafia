@@ -22,7 +22,7 @@ pub(super) const DEFENSE: u8 = 0;
 
 impl RoleStateImpl for Bouncer {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Block {return;}
+        if priority != Priority::Restrict {return;}
         
         if let Some(visit) = actor_ref.night_visits(game).first(){
             let target_ref = visit.target;

@@ -76,7 +76,7 @@ impl RoleStateImpl for Hypnotist {
                     target_ref.push_night_message(game, ChatMessageVariant::Transported);
                 }
                 if self.you_were_possessed_message {
-                    if target_ref.role(game).control_immune() {
+                    if target_ref.role(game).possession_immune() {
                         target_ref.push_night_message(game, ChatMessageVariant::YouWerePossessed { immune: true });
                     } else {
                         target_ref.push_night_message(game, ChatMessageVariant::YouWerePossessed { immune: false });

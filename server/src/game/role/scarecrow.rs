@@ -1,39 +1,37 @@
 use rand::thread_rng;
-use rand::prelude::SliceRandom;
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::grave::GraveReference;
+use crate::game::grave::{Grave, GraveReference};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
-
 use super::{Priority, RoleStateImpl};
+use rand::prelude::SliceRandom;
 
-#[derive(Clone, Serialize, Debug, Default)]
-pub struct Tracker;
 
-pub(super) const FACTION: Faction = Faction::Town;
+#[derive(Clone, Debug, Serialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct Scarecrow;
+
+pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: u8 = 0;
 
-impl RoleStateImpl for Tracker {
-    
-    
-
-
+impl RoleStateImpl for Scarecrow {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Investigative {return;}
-
+        if priority != Priority::Restrict {return;}
+        
         if let Some(visit) = actor_ref.night_visits(game).first(){
-            
-            let mut seen_players: Vec<PlayerReference> = visit.target.tracker_seen_visits(game).into_iter().map(|v|v.target).collect();
-            seen_players.shuffle(&mut thread_rng());
+            let target_ref = visit.target;
 
-            let message = ChatMessageVariant::TrackerResult { players:
-                PlayerReference::ref_vec_to_index(seen_players.as_slice())
+            let mut blocked_players = target_ref.restrict(game);
+            blocked_players.shuffle(&mut thread_rng());
+
+            let message = ChatMessageVariant::ScarecrowResult { players:
+                PlayerReference::ref_vec_to_index(target_ref.restrict(game).as_slice())
             };
             
             actor_ref.push_night_message(game, message);
@@ -43,7 +41,6 @@ impl RoleStateImpl for Tracker {
         crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
-        
     }
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false
@@ -57,13 +54,17 @@ impl RoleStateImpl for Tracker {
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
-    fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::get_won_game(game, actor_ref)
+    fn get_won_game(self, game: &Game, _actor_ref: PlayerReference) -> bool {
+        PlayerReference::all_players(game).filter(|player_ref|{
+            player_ref.alive(game) && player_ref.role(game).faction() == Faction::Town
+        }).count() == 0
     }
-    fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType){
+    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
+        if actor_ref.get_won_game(game) && actor_ref.alive(game) {
+            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
+        }
     }
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
-        
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
     }

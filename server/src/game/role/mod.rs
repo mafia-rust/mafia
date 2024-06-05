@@ -85,6 +85,7 @@ macros::roles! {
     Politician : politician,
 
     Minion : minion,
+    Scarecrow : scarecrow,
     Doomsayer : doomsayer,
     Death : death,
 
@@ -105,11 +106,11 @@ macros::roles! {
 
 macros::priorities! {
     TopPriority,
-    Block,
+    Restrict,
 
     Transporter,
 
-    Control,
+    Possess,
     Roleblock,
 
     Deception,
@@ -273,40 +274,32 @@ mod macros {
 }
 #[allow(clippy::match_like_matches_macro)]
 impl Role{
-    pub fn control_immune(&self)->bool{
+    pub fn possession_immune(&self)->bool{
         match self {
             Role::Bouncer
             | Role::Veteran
-            | Role::Transporter
-            | Role::Retributionist
-            | Role::Minion
-            | Role::Doomsayer
-            | Role::Witch
-            | Role::Necromancer
+            | Role::Transporter | Role::Retributionist
+            | Role::Minion | Role::Doomsayer | Role::Scarecrow
+            | Role::Witch | Role::Necromancer
             | Role::Ojo => true,
             _ => false,
         }
     }
     pub fn roleblock_immune(&self)->bool{
         match self {
-            | Role::Bouncer
-            | Role::Veteran
-            | Role::Transporter
-            | Role::Escort
-            | Role::Retributionist
-            | Role::Jester
-            | Role::Minion
-            | Role::Hypnotist
-            | Role::Witch
-            | Role::Necromancer => true,
+            Role::Bouncer | 
+            Role::Veteran | 
+            Role::Transporter | Role::Escort | Role::Retributionist | 
+            Role::Jester | Role::Minion | Role::Scarecrow |
+            Role::Hypnotist | Role::Witch | Role::Necromancer => true,
             _ => false,
         }
     }
-    pub fn restrict_immune(&self)->bool{
+    pub fn restriction_immune(&self)->bool{
         match self {
             Role::Jailor
-            | Role::Bouncer
-            | Role::Jester => true,
+            | Role::Bouncer 
+            | Role::Scarecrow => true,
             _ => false
         }
     }

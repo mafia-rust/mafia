@@ -190,7 +190,9 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     PlayerRoleAndWill { role: Role, will: String },
     #[serde(rename_all = "camelCase")]
-    ConsigliereResult{ role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
+    InformantResult{ role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
+    #[serde(rename_all = "camelCase")]
+    ScarecrowResult{players: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
     OjoSelection{action: OjoAction},
     #[serde(rename_all = "camelCase")]

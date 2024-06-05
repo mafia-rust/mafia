@@ -111,6 +111,29 @@ Doomsayer
 | {
     type: "politician"
 } | {
+    type: "minion"
+} | {
+    type: "scarecrow"
+} | {
+    type: "death",
+    souls: number
+} | {
+    type: "wildcard"
+    role: Role
+} | {
+    type: "trueWildcard"
+    role: Role
+} | {
+    type: "martyr",
+    state: {
+        type: "won"
+    } | {
+        type: "leftTown"
+    } | {
+        type: "stillPlaying",
+        bullets: number
+    }
+} | {
     type: "arsonist"
 } | {
     type: "werewolf",
@@ -126,30 +149,11 @@ Doomsayer
     type: "fiendsWildcard"
     role: Role
 } | {
-    type: "death",
-    souls: number
-} | {
-    type: "wildcard"
-    role: Role
-} | {
-    type: "trueWildcard"
-    role: Role
-} | {
     type: "apostle"
 } | {
     type: "disciple"
 } | {
     type: "zealot"
-} | {
-    type: "martyr",
-    state: {
-        type: "won"
-    } | {
-        type: "leftTown"
-    } | {
-        type: "stillPlaying",
-        bullets: number
-    }
 }
 
 

@@ -389,18 +389,26 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                 translate("role."+message.role+".name"),
                 sanitizePlayerMessage(replaceMentions(message.will, playerNames))
             );
-        case "consigliereResult":
+        case "informantResult":
             const visitedNobody = message.visited.length === 0;
             const visitedByNobody = message.visitedBy.length === 0;
 
-            return translate("chatMessage.consigliereResult",
-                translate("chatMessage.consigliereResult.role", translate("role."+message.role+".name")),
+            return translate("chatMessage.informantResult",
+                translate("chatMessage.informantResult.role", translate("role."+message.role+".name")),
                 visitedNobody 
-                    ? translate("chatMessage.consigliereResult.visited.nobody") 
-                    : translate("chatMessage.consigliereResult.visited", playerListToString(message.visited, playerNames)),
+                    ? translate("chatMessage.informantResult.visited.nobody") 
+                    : translate("chatMessage.informantResult.visited", playerListToString(message.visited, playerNames)),
                 visitedByNobody 
-                    ? translate("chatMessage.consigliereResult.visitedBy.nobody") 
-                    : translate("chatMessage.consigliereResult.visitedBy", playerListToString(message.visitedBy, playerNames))
+                    ? translate("chatMessage.informantResult.visitedBy.nobody") 
+                    : translate("chatMessage.informantResult.visitedBy", playerListToString(message.visitedBy, playerNames))
+            );
+        case "scarecrowResult":
+            if(message.players.length === 0){
+                return translate("chatMessage.scarecrowResult.nobody");
+            }
+
+            return translate("chatMessage.scarecrowResult",
+                playerListToString(message.players, playerNames)
             );
         case "ojoSelection":
             switch (message.action.type) {
@@ -715,10 +723,13 @@ export type ChatMessageVariant = {
     role: Role,
     will: string
 } | {
-    type: "consigliereResult", 
+    type: "informantResult", 
     role: Role,
     visitedBy: PlayerIndex[],
     visited: PlayerIndex[]
+} | {
+    type: "scarecrowResult",
+    players: PlayerIndex[]
 } | {
     type: "ojoSelection",
     action: OjoAction,

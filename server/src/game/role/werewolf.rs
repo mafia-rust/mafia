@@ -1,11 +1,14 @@
 use std::collections::HashSet;
 
+use rand::thread_rng;
+use rand::seq::SliceRandom;
+
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::{GraveKiller, GraveReference};
 use crate::game::phase::PhaseType;
-use crate::game::player::PlayerReference;
+use crate::game::player::{PlayerIndex, PlayerReference};
 use crate::game::role_list::Faction;
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
@@ -115,10 +118,14 @@ impl RoleStateImpl for Werewolf {
                 };
                 let tracked_players = werewolf.tracked_players.clone();
                 tracked_players.into_iter().for_each(|player_ref|{
+
+                    let mut players: Vec<PlayerIndex> = player_ref.tracker_seen_visits(game).into_iter().map(|p|p.target.index()).collect();
+                    players.shuffle(&mut thread_rng());
+
                     actor_ref.push_night_message(game, 
                         ChatMessageVariant::WerewolfTrackingResult{
                             tracked_player: player_ref.index(), 
-                            players: player_ref.tracker_seen_visits(game).into_iter().map(|p|p.target.index()).collect()
+                            players
                         }
                     );
                 });

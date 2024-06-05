@@ -1,3 +1,5 @@
+use rand::thread_rng;
+use rand::prelude::SliceRandom;
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
@@ -24,10 +26,16 @@ impl RoleStateImpl for Informant {
         if let Some(visit) = actor_ref.night_visits(game).first(){
             let target_ref = visit.target;
 
-            let message = ChatMessageVariant::ConsigliereResult{
+            let mut visited_by: Vec<PlayerReference> =  visit.target.appeared_visitors(game).into_iter().filter(|p|actor_ref!=*p).collect();
+            visited_by.shuffle(&mut thread_rng());
+
+            let mut visited: Vec<PlayerReference> = target_ref.tracker_seen_visits(game).iter().map(|v|v.target).collect();
+            visited.shuffle(&mut thread_rng());
+
+            let message = ChatMessageVariant::InformantResult{
                 role: target_ref.role(game), 
-                visited_by: visit.target.appeared_visitors(game).into_iter().filter(|p|actor_ref!=*p).map(|player_ref|player_ref.index()).collect(),
-                visited: target_ref.tracker_seen_visits(game).iter().map(|v|v.target.index()).collect()
+                visited_by: PlayerReference::ref_vec_to_index(&visited_by.as_mut_slice()),
+                visited: PlayerReference::ref_vec_to_index(visited.as_slice())
             };
             actor_ref.push_night_message(game, message);
         }

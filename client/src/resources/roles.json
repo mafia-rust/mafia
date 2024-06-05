@@ -198,8 +198,7 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "roleBlocked","immune": false},
-            {"type": "roleBlocked","immune": true}
+            {"type": "targetRestricted"}
         ]
     },
     "engineer": {
@@ -480,8 +479,8 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
-            {"type": "consigliereResult", "role": "arsonist", "visitedBy":[31,32], "visited":[33]},
-            {"type": "consigliereResult", "role": "vigilante", "visitedBy":[], "visited":[]}
+            {"type": "informantResult", "role": "arsonist", "visitedBy":[31,32], "visited":[33]},
+            {"type": "informantResult", "role": "vigilante", "visitedBy":[], "visited":[]}
         ]
     },
     "mortician": {
@@ -642,6 +641,19 @@
             {"type": "targetIsPossessionImmune"},
             {"type": "youWerePossessed", "immune": false},
             {"type": "youWerePossessed", "immune": true}
+        ]
+    },
+    "scarecrow":{
+        "faction": "neutral",
+        "roleSet": "neutralEvil",
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "targetRestricted"},
+            {"type": "scarecrowResult", "players": [9,15,4]}
         ]
     },
     "martyr": {
