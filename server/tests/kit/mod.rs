@@ -1,4 +1,11 @@
-use mafia_server::game::{player::PlayerReference, Game, role::RoleState, role_list::RoleOutline, settings::Settings, test::mock_game};
+use mafia_server::game::{
+    player::PlayerReference, 
+    Game, 
+    role::RoleState,
+    role_list::RoleOutline,
+    settings::Settings,
+    test::mock_game
+};
 
 pub mod player;
 pub mod game;

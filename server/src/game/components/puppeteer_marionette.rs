@@ -48,14 +48,30 @@ impl PuppeteerMarionette{
     }
 
     pub fn kill_marionettes(game: &mut Game){
-        let marionettes = game.puppeteer_marionette().to_be_converted.iter().filter(|p|p.alive(game)).map(|p|p.clone()).collect::<Vec<_>>();
+        let marionettes = 
+            game.puppeteer_marionette()
+                .to_be_converted
+                .iter()
+                .filter(|p|p.alive(game))
+                .map(|p|p.clone())
+                .collect::<Vec<_>>();
+
         PuppeteerMarionette::attack_players(game, marionettes);
     }
     pub fn kill_poisoned(game: &mut Game){
         let mut puppeteer_marionette = game.puppeteer_marionette().clone();
-        let poisoned = game.puppeteer_marionette().poisoned.iter().filter(|p|p.alive(game)).map(|p|p.clone()).collect::<Vec<_>>();
+
+        let poisoned = game.puppeteer_marionette()
+            .poisoned
+            .iter()
+            .filter(|p|p.alive(game))
+            .map(|p|p.clone())
+            .collect::<Vec<_>>();
+
         PuppeteerMarionette::attack_players(game, poisoned);
+
         puppeteer_marionette.poisoned = HashSet::new();
+
         game.set_puppeteer_marionette(puppeteer_marionette)
     }
     fn attack_players(game: &mut Game, players: Vec<PlayerReference>){
@@ -65,14 +81,15 @@ impl PuppeteerMarionette{
             .map(|p|p.clone())
             .collect();
 
-        for player in players{
-            if player.alive(game) {continue;}
-
-            if puppeteers.len() == 0 {
+        if puppeteers.is_empty() {
+            for player in players{
                 player.try_night_kill_anonymous(game, crate::game::grave::GraveKiller::Role(Role::Puppeteer), 2);
             }
-            for puppeteer in puppeteers.iter(){
-                player.try_night_kill(*puppeteer, game, crate::game::grave::GraveKiller::Role(Role::Puppeteer), 2, true);
+        }else{
+            for player in players{
+                for puppeteer in puppeteers.iter(){
+                    player.try_night_kill(*puppeteer, game, crate::game::grave::GraveKiller::Role(Role::Puppeteer), 2, true);
+                }
             }
         }
     }

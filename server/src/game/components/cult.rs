@@ -102,11 +102,9 @@ impl Cult{
         let cult = game.cult();
         if cult.ordered_cultists.len() >= 4 {return false}
 
-        if let Some(sacrifices_required) = cult.sacrifices_required {
-            sacrifices_required == 0
-        } else {
-            false
+        match cult.sacrifices_required {
+            None | Some(0) => true,
+            _ => false
         }
-        
     }
 }

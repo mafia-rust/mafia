@@ -28,20 +28,16 @@ impl RoleStateImpl for Apostle {
 
         let mut cult = game.cult().clone();
         match priority {
-            Priority::Kill => {
-                if cult.ordered_cultists.len() != 1 {return}
-                if Cult::can_convert_tonight(game) {return}
+            Priority::Kill if !Cult::can_convert_tonight(game) && cult.ordered_cultists.len() == 1 => {
 
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
                 let target_ref = visit.target;
-        
+                
                 target_ref.try_night_kill(
                     actor_ref, game, GraveKiller::Faction(Faction::Cult), 1, false
                 );
             }
-            Priority::Convert => {
-                if !Cult::can_convert_tonight(game) {return}
-                
+            Priority::Convert if Cult::can_convert_tonight(game) => {
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
                 let target_ref = visit.target;
 
