@@ -126,11 +126,34 @@ export function ChatMessageSection(props:{
     return <div className="chat-message-section" ref={self} onScroll={handleScroll}>
         <div className="chat-message-list">
             {messages.filter((msg)=>{
-                //translateChatMessage errors for this type.
-                if(msg.variant.type === "playerDied") 
+
+                if(filter === null)
                     return true;
-                const msgTxt = translateChatMessage(msg.variant, GAME_MANAGER.getPlayerNames());
-                return filter === null || msg.variant.type === "phaseChange" || msgTxt.includes(GAME_MANAGER.getPlayerNames()[filter]);
+                
+                let msgTxt = "";
+                //special case messages, where translate chat message doesnt work properly, or it should be let through anyway
+                switch (msg.variant.type) {
+                    //translateChatMessage errors for playerDied type.
+                    case "playerDied":
+                    case "phaseChange":
+                        return true;
+                    case "normal":
+                        switch(msg.variant.messageSender.type) {
+                            case "player":
+                            case "livingToDead":
+                                if(msg.variant.messageSender.player === filter)
+                                    return true;
+                                break;
+                        }
+                        break;
+                    case "targetsMessage":
+                        msgTxt = translateChatMessage(msg.variant.message, GAME_MANAGER.getPlayerNames());
+                        break;
+                }
+
+                msgTxt += translateChatMessage(msg.variant, GAME_MANAGER.getPlayerNames());
+                
+                return msgTxt.includes(GAME_MANAGER.getPlayerNames()[filter]);
             }).map((msg, index) => {
                 return <ChatElement key={index} message={msg}/>;
             })}
