@@ -21,6 +21,8 @@ s {
 }
 
 *{
+    user-select: none;
+    
     text-align: center;
     box-sizing: border-box;
 
