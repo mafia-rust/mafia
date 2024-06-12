@@ -309,6 +309,11 @@
     "role.hypnotist.name:var.0": "Hypnotists",
     "role.hypnotist.target": "Hypnotize",
     "role.hypnotist.dayTarget": "Special",
+
+    "role.consort.name": "Consort",
+    "role.consort.name:var.0": "Consorts",
+    "role.consort.target": "Roleblock",
+    "role.consort.dayTarget": "Special",
     
     "role.blackmailer.name": "Blackmailer",
     "role.blackmailer.name:var.0": "Blackmailers",
@@ -1117,6 +1122,11 @@
     "wiki.article.role.hypnotist.attributes":"* You are immune to roleblocks\n* You may choose to not roleblock your target\n* You can't choose to send no messages",
     "wiki.article.role.hypnotist.extra":"* You can't select other mafia members\n* When you roleblock someone, their visits will be cleared",
     
+    "wiki.article.role.consort.guide": "- At night, select a player to roleblock them, stopping them from using their ability\n- Your target is told they were roleblocked\n\n_For example_\n- A consort selects the vigilante, so the vigilante can't kill anyone, and nobody dies",
+    "wiki.article.role.consort.abilities":"* Visit a player to roleblock them",
+    "wiki.article.role.consort.attributes":"* You can't be roleblocked\n* Your target is told when they are roleblocked, even if they are immune to being roleblocked",
+    "wiki.article.role.consort.extra":"* When someone is roleblocked, their visits are wiped, so they don't visit anyone\n* You can't select other mafia members",
+
     "wiki.article.role.blackmailer.guide": "- At night, select a player to silence\n- The silenced player can't speak during the next day, and they can't vote during the next day\n\nYou should choose talkative players who might speak out against a mafia member, or players who have information that you want to suppress.",
     "wiki.article.role.blackmailer.abilities":"* Visit a player to silence them during the next day",
     "wiki.article.role.blackmailer.attributes":"* Silenced players can not vote during the nomination phase\n* Silenced players can not talk in chat or out loud during the entire next day",

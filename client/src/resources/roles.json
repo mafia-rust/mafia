@@ -458,6 +458,19 @@
             {"type": "targetRestricted"}
         ]
     },
+    "consort": {
+        "faction": "mafia",
+        "roleSet": "mafiaSupport",
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[
+            {"type": "roleBlocked", "immune": true},
+            {"type": "roleBlocked", "immune": false}
+        ]
+    },
     "blackmailer": {
         "faction": "mafia",
         "roleSet": "mafiaSupport",

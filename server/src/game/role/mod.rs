@@ -67,17 +67,18 @@ macros::roles! {
     // Mafia
     Godfather : godfather,
     Mafioso : mafioso,
+
+    Consort : consort,
     
     Hypnotist : hypnotist,
     Blackmailer : blackmailer,
     Informant: informant,
     Witch : witch,
     Necromancer : necromancer,
-    MafiaWildcard: mafia_wild_card,
-
     Mortician : mortician,
     Framer : framer,
     Forger : forger,
+    MafiaWildcard: mafia_wild_card,
 
     // Neutral
     Jester : jester,
@@ -291,7 +292,7 @@ impl Role{
             Role::Veteran | 
             Role::Transporter | Role::Escort | Role::Retributionist | 
             Role::Jester | Role::Minion | Role::Scarecrow |
-            Role::Hypnotist | Role::Witch | Role::Necromancer => true,
+            Role::Hypnotist | Role::Consort | Role::Witch | Role::Necromancer => true,
             _ => false,
         }
     }
