@@ -52,14 +52,13 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         if (Anchor.isMobile()) {
             return <GameScreen contentMenus={[
                 ContentMenu.ChatMenu,
+                ContentMenu.PlayerListMenu
             ]} maxContent={2}/>
         } else {
             return <GameScreen contentMenus={[
                 ContentMenu.ChatMenu,
-                // ContentMenus.GraveyardMenu,
                 ContentMenu.PlayerListMenu,
-                // ContentMenus.WikiMenu,
-                ContentMenu.WillMenu
+                ContentMenu.GraveyardMenu
             ]}/>
         }
     }
@@ -84,7 +83,8 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                 playerListMenu: props.contentMenus.includes(ContentMenu.PlayerListMenu),
                 willMenu: props.contentMenus.includes(ContentMenu.WillMenu),
                 wikiMenu: props.contentMenus.includes(ContentMenu.WikiMenu),
-                roleSpecificMenu : props.contentMenus.includes(ContentMenu.RoleSpecificMenu)
+                roleSpecificMenu : ROLES[GAME_MANAGER.state.clientState.roleState?.type as Role] !== undefined && 
+                    ROLES[GAME_MANAGER.state.clientState.roleState?.type as Role].largeRoleSpecificMenu,
             }
         
 
@@ -190,7 +190,8 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                 this.setState({graveyardMenu: true}, callback);
                 break;
             case ContentMenu.RoleSpecificMenu:
-                this.setState({roleSpecificMenu: true}, callback);
+                if(ROLES[this.state.role as Role] !== undefined && ROLES[this.state.role as Role].largeRoleSpecificMenu)
+                    this.setState({roleSpecificMenu: true}, callback);
                 break;
             case ContentMenu.WikiMenu:
                 this.setState({wikiMenu: true}, callback);
