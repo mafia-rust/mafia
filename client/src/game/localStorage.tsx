@@ -48,7 +48,8 @@ export function loadSettings(): Partial<Settings>{
 
 
 export function defaultGameModes(): GameModeStorage {
-    return DEFAULT_GAME_MODES as GameModeStorage;
+    // Typescript is a Division One tweaker
+    return DEFAULT_GAME_MODES as unknown as GameModeStorage;
 }
 
 export function saveGameModes(roleList: GameModeStorage) {
