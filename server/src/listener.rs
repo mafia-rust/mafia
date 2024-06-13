@@ -284,6 +284,13 @@ impl Listener{
                             connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::ServerBusy });
                             self.set_player_outside_lobby(&kicked_player_address, false);
                         }
+                    }else{
+                        //Nobody is connected to that lobby with that id,
+                        //Maybe they already left
+
+                        if let Some(lobby) = self.lobbies.get_mut(room_code){
+                            lobby.remove_player(kicked_player_id);
+                        }
                     }
                 }
             },
