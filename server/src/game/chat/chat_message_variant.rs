@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::game::{
     grave::Grave,
     phase::PhaseState,
-    player::PlayerIndex,
+    player::{PlayerIndex, PlayerReference},
     role::{
         auditor::AuditorResult, engineer::TrapState, ojo::OjoAction, puppeteer::PuppeteerAction, spy::SpyBug, Role
     },
@@ -188,7 +188,7 @@ pub enum ChatMessageVariant {
     
 
     #[serde(rename_all = "camelCase")]
-    PlayerRoleAndWill { role: Role, will: String },
+    PlayerRoleAndAlibi { player: PlayerReference, role: Role, will: String },
     #[serde(rename_all = "camelCase")]
     InformantResult{ role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]

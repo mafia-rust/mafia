@@ -506,7 +506,8 @@
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {
-                "type": "playerRoleAndWill",
+                "type": "playerRoleAndAlibi",
+                "player":10,
                 "role":"medium",
                 "will":"I always get medium and every game I get obscured by a mortician, im calling it right now."
             }
@@ -534,7 +535,8 @@
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {
-                "type": "playerRoleAndWill",
+                "type": "playerRoleAndAlibi",
+                "player": 13,
                 "role": "jailor",
                 "will": "I am very confident in my doctors ability to protect me, especially because he knows there could be a forger in the game."
             }
@@ -792,6 +794,26 @@
             {"type": "puppeteerYouArePoisoned"},
             {"type": "puppeteerActionChosen", "action": "poison"},
             {"type": "puppeteerActionChosen", "action": "string"}
+        ]
+    },
+    "pyrolisk": {
+        "faction": "fiends",
+        "roleSet": null,
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {
+                "type": "playerRoleAndAlibi",
+                "player": 10,
+                "role":"medium",
+                "will":"I always get medium and every game I get obscured by a pyrolisk, im calling it right now."
+            },
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"},
+            {"type": "youAttackedSomeone"}
         ]
     },
     "fiendsWildcard": {

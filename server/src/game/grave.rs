@@ -26,6 +26,7 @@ pub struct Grave {
 #[serde(tag = "type")]
 pub enum GraveInformation {
     Obscured,
+    #[serde(rename_all = "camelCase")]
     Normal{
         role: Role,
         will: String,

@@ -404,6 +404,11 @@
     "role.ojo.dayTarget": "Special",
     "role.ojo.smallRoleMenu": "Choose a role to see or kill",
     
+    "role.pyrolisk.name": "Pyrolisk",
+    "role.pyrolisk.name:var.0": "Pyrolisks",
+    "role.pyrolisk.target": "Glare",
+    "role.pyrolisk.dayTarget": "Special",
+    
     "role.puppeteer.name": "Puppeteer",
     "role.puppeteer.name:var.0": "Puppeteers",
     "role.puppeteer.target": "Target",
@@ -718,7 +723,7 @@
     "chatMessage.godfatherBackup.nobody": "The Godfather has deselected a backup.",
     "chatMessage.godfatherBackupKilled": "The Godfather was roleblocked, so \\0 attacked for the Godfather.",
     "chatMessage.silenced": "You are silenced! You must not speak, chat, point, or otherwise communicate until tomorrow!",
-    "chatMessage.playersRoleAndWill": "Your target's role was \\0 and their alibi stated this: \\1",
+    "chatMessage.playerRoleAndAlibi": "\\0 had the role \\1 and their alibi stated this: \\2",
     "chatMessage.informantResult": "\\0. \\1. \\2.",
     "chatMessage.informantResult.role": "Your target's role was \\0",
     "chatMessage.informantResult.visited": "Your target visited \\0",
@@ -1215,6 +1220,11 @@
     "wiki.article.role.puppeteer.abilities":"- You may choose to do one of the following\n    - Visit a player to poison them\n        - They are told they are poisoned\n        - They are indirectly attacked on the following night\n\n    - Visit a player to string up into a marionette\n        - They are told they are strung up, and they now win with fiends, regardless of their role\n        -They have a suspicious aura for the rest of the game\n        - They will be indirectly attacked every night by all puppeteers until they die, if there are no puppeteers they are still attacked",
     "wiki.article.role.puppeteer.attributes":"- You and the marionettes are shown who all puppeteers and marionettes are\n- You have an armor-piercing indirect attack",
     "wiki.article.role.puppeteer.extra":"- You can't select anybody who is a puppeteer, marionette, or is being strung into a marionette\n- A puppeteer can't be stringed into a marionette\n- A marionette can't be stringed into a marionette twice, if two puppeteers choose a player to be turned into a marionette on the same night, they get the message only once\n- Defense does not stop a player from being poisoned or strung up",
+    
+    "wiki.article.role.pyrolisk.guide":"- Select a player to attack them, and obscure them\n    - You can't do this night 1\n- You passively attack and obscure everyone who visits you\n- You are told the players you kills role and alibi",
+    "wiki.article.role.pyrolisk.abilities":"* Visit a player to attack them, if it is night 1, you don't attack them\n* All players who visit you are attacked by you\n* You are told the role and alibi of all players any pyrolisk kills",
+    "wiki.article.role.pyrolisk.attributes":"* If you are roleblocked, you still attack visitors, but don't attack the person you visit\n* Your attack is armor piercing",
+    "wiki.article.role.pyrolisk.extra":"* You learn the role and alibi of all players who die to pyrolisks, even if they died to a different pyrolisk",
 
     "wiki.article.role.fiendsWildcard.guide": "* Choose a fiends role to become that role\n    * You become that role when night starts\n* You can't become a role that has exceeded its role limit",
     "wiki.article.role.fiendsWildcard.abilities":"* Become a role you choose at the start of night",

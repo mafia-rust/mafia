@@ -82,15 +82,13 @@ impl RoleStateImpl for Mortician {
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave_ref: GraveReference){
         if actor_ref.alive(game) && self.obscured_players.contains(&grave_ref.deref(game).player) {
-            let grave = grave_ref.deref_mut(game);
-            let old_grave = grave.clone();
-
-            grave.information = GraveInformation::Obscured;
-            
-            actor_ref.add_private_chat_message(game, ChatMessageVariant::PlayerRoleAndWill{
-                role: old_grave.player.role(game),
-                will: old_grave.player.will(game).to_string(),
+            actor_ref.add_private_chat_message(game, ChatMessageVariant::PlayerRoleAndAlibi{
+                player: grave_ref.deref(game).player,
+                role: grave_ref.deref(game).player.role(game),
+                will: grave_ref.deref(game).player.will(game).to_string(),
             });
+
+            grave_ref.deref_mut(game).information = GraveInformation::Obscured;
         }
     }
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){

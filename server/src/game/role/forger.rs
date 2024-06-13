@@ -63,7 +63,8 @@ impl RoleStateImpl for Forger {
             Priority::Investigative=>{
                 if let Some(forged_ref) = self.forged_ref {
                     if forged_ref.night_died(game) {
-                        actor_ref.push_night_message(game, ChatMessageVariant::PlayerRoleAndWill{
+                        actor_ref.push_night_message(game, ChatMessageVariant::PlayerRoleAndAlibi{
+                            player: forged_ref,
                             role: forged_ref.role(game),
                             will: forged_ref.will(game).to_string(),
                         });

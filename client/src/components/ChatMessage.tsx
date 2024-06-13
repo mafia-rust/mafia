@@ -384,8 +384,9 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.engineerVisitorsRole", translate("role."+message.role+".name"));
         case "trapState":
             return translate("chatMessage.trapState."+message.state.type);
-        case "playerRoleAndWill":
-            return translate("chatMessage.playersRoleAndWill",
+        case "playerRoleAndAlibi":
+            return translate("chatMessage.playerRoleAndAlibi",
+                playerNames[message.player],
                 translate("role."+message.role+".name"),
                 sanitizePlayerMessage(replaceMentions(message.will, playerNames))
             );
@@ -719,7 +720,8 @@ export type ChatMessageVariant = {
 } | {
     type: "silenced"
 } | {
-    type: "playerRoleAndWill", 
+    type: "playerRoleAndAlibi",
+    player: PlayerIndex,
     role: Role,
     will: string
 } | {

@@ -471,7 +471,7 @@
     "chatMessage.godfatherBackup.nobody": "Th Gdfthr hs dslctd  bckp.",
     "chatMessage.godfatherBackupKilled": "Th Gdfthr ws rlblckd, s \\0 ttckd fr th Gdfthr.",
     "chatMessage.silenced": "Y r slncd! Y mst nt spk, cht, pnt, r thrws cmmnct ntl tmrrw!",
-    "chatMessage.playersRoleAndWill": "Yr trgt's rl ws \\0 nd thr lb sttd ths: \\1",
+    "chatMessage.playerRoleAndAlibi": "Yr trgt's rl ws \\0 nd thr lb sttd ths: \\1",
     "chatMessage.informantResult": "\\0. \\1. \\2.",
     "chatMessage.informantResult.role": "Yr trgt's rl ws \\0",
     "chatMessage.informantResult.visited": "Yr trgt vstd \\0",

@@ -94,6 +94,7 @@ macros::roles! {
     Werewolf : werewolf,
     Ojo : ojo,
     Puppeteer: puppeteer,
+    Pyrolisk : pyrolisk,
     FiendsWildcard : fiends_wildcard,
 
     Wildcard : wild_card,

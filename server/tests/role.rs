@@ -189,7 +189,7 @@ fn mortician_obscures_on_stand(){
     game.skip_to(Night, 2);
     
     assert_eq!(game.graves[0].information, GraveInformation::Obscured);
-    assert_contains!(mortician.get_messages(), ChatMessageVariant::PlayerRoleAndWill { role: Role::Detective, will: "".to_string() });
+    assert_contains!(mortician.get_messages(), ChatMessageVariant::PlayerRoleAndAlibi { player: townie.player_ref(), role: Role::Detective, will: "".to_string() });
 }
 
 #[test]
@@ -215,7 +215,7 @@ fn mortician_obscures_fail_after_death(){
     gf.set_night_selection_single(townie);
     game.next_phase();
     assert!(matches!(game.graves[1].information, GraveInformation::Normal { role: Role::Detective, .. }));
-    assert_not_contains!(mortician.get_messages(), ChatMessageVariant::PlayerRoleAndWill { role: Role::Detective, will: "".to_string() });
+    assert_not_contains!(mortician.get_messages(), ChatMessageVariant::PlayerRoleAndAlibi { player: townie.player_ref(), role: Role::Detective, will: "".to_string() });
 }
 
 #[test]
