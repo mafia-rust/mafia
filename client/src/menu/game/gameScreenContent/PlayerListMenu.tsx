@@ -11,7 +11,7 @@ import StyledText from "../../../components/StyledText";
 import { RoleState } from "../../../game/roleState.d";
 import Icon from "../../../components/Icon";
 import { Button } from "../../../components/Button";
-import { Grave, GraveRole, translateGraveRole } from "../../../game/graveState";
+import { Grave } from "../../../game/graveState";
 
 type PlayerListMenuProps = {
 }
@@ -21,7 +21,7 @@ type PlayerListMenuState = {
     voted: PlayerIndex | null,
     targets: PlayerIndex[],
     roleState: RoleState | null,
-    graveRoles: (GraveRole | null)[],
+    graveRolesStrings: (string | null)[],
     playerFilter: PlayerFilter,
     chatFilter: PlayerIndex | null,
 
@@ -31,18 +31,24 @@ type PlayerFilter = "all"|"living"|"usable";
 
 
 //indexed by player index, returns the role on the players grave
-function getRolesFromGraves(graves: Grave[], playerCount: number): (GraveRole | null)[] {
-    let roles: (null | GraveRole)[] = [];
+function getGraveRolesStrings(graves: Grave[], playerCount: number): (string | null)[] {
+
+
+    let rolesStrings: (string | null)[] = [];
     
     for(let i = 0; i < playerCount; i++){
-        roles.push(null);
+        rolesStrings.push(null);
     }
 
     graves.forEach((grave: Grave)=>{
-        roles[grave.playerIndex] = grave.role;
+        if (grave.information.type === "normal"){
+            rolesStrings[grave.player] = "("+translate("role."+grave.information.role+".name")+")";
+        } else {
+            rolesStrings[grave.player] = "("+translate("obscured")+")";
+        }
     });
 
-    return roles;
+    return rolesStrings;
 }
 
 export default class PlayerListMenu extends React.Component<PlayerListMenuProps, PlayerListMenuState> {
@@ -60,7 +66,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 voted: GAME_MANAGER.state.clientState.voted,
                 targets: GAME_MANAGER.state.clientState.targets,
                 roleState: GAME_MANAGER.state.clientState.roleState,
-                graveRoles: getRolesFromGraves(GAME_MANAGER.state.graves, GAME_MANAGER.state.players.length),
+                graveRolesStrings: getGraveRolesStrings(GAME_MANAGER.state.graves, GAME_MANAGER.state.players.length),
                 playerFilter: "living",
                 chatFilter: null,
                 myIndex: GAME_MANAGER.state.clientState.myIndex??0,
@@ -114,7 +120,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 case "yourRoleLabels":
                 case "playerVotes":
                     this.setState({ players: GAME_MANAGER.state.players });
-                    this.setState({ graveRoles: getRolesFromGraves(GAME_MANAGER.state.graves, GAME_MANAGER.state.players.length) });
+                    this.setState({ graveRolesStrings: getGraveRolesStrings(GAME_MANAGER.state.graves, GAME_MANAGER.state.players.length) });
                 break;
                 case "yourVoting":
                     if(GAME_MANAGER.state.clientState.type === "player")
@@ -129,7 +135,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         this.setState({ roleState: GAME_MANAGER.state.clientState.roleState });
                 break;
                 case "addGrave":
-                    this.setState({ graveRoles: getRolesFromGraves(GAME_MANAGER.state.graves, GAME_MANAGER.state.players.length) });
+                    this.setState({ graveRolesStrings: getGraveRolesStrings(GAME_MANAGER.state.graves, GAME_MANAGER.state.players.length) });
                 break;
                 case "yourPlayerIndex":
                     if(GAME_MANAGER.state.clientState.type === "player")
@@ -203,9 +209,8 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 return ("("+translate("role."+player.roleLabel+".name")+")");
             }
             
-            let graveRole = this.state.graveRoles[player.index];
-            if (!player.alive && graveRole != null){
-                return "("+translateGraveRole(graveRole)+")";
+            if (!player.alive && this.state.graveRolesStrings[player.index] != null){
+                return this.state.graveRolesStrings[player.index];
             }
 
             return "";
@@ -227,7 +232,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         <StyledText>{(player.alive?"":" "+translate("tag.dead")+"")}</StyledText>
                     </h4>
                     <StyledText>{player.toString()}</StyledText>
-                    <StyledText>{roleString}</StyledText>
+                    {roleString!==null&&<StyledText>{roleString}</StyledText>}
                 </button>
                 <div className="playerTags">
                     <StyledText>{player.playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>

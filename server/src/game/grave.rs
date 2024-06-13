@@ -8,36 +8,32 @@ use super::player::PlayerReference;
 use super::role::Role;
 use super::role_list::Faction;
 
+
+
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub struct Grave {
-    #[serde(rename = "playerIndex")]
     pub player: PlayerReference,
-
-    pub role: GraveRole,
-    pub death_cause: GraveDeathCause,
-    pub will: String,
-    pub death_notes: Vec<String>,
-
     pub died_phase: GravePhase,
     pub day_number: u8,
+
+    pub information: GraveInformation,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
-#[serde(tag = "type", content = "role")]
-pub enum GraveRole {
-    Cremated,
-    Role(Role),
-}
-impl GraveRole{
-    pub fn get_role(&self)->Option<Role>{
-        match self {
-            GraveRole::Role(role) => Some(*role),
-            _ => None
-        }
+#[serde(tag = "type")]
+pub enum GraveInformation {
+    Obscured,
+    Normal{
+        role: Role,
+        will: String,
+        death_cause: GraveDeathCause,
+        death_notes: Vec<String>,
     }
 }
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type", content = "killers")]
@@ -72,53 +68,68 @@ impl GravePhase{
 }
 
 impl Grave{
-    pub fn from_player_night(game: &Game, player_ref: PlayerReference) -> Grave {
-        let day_number = game.phase_machine.day_number;
 
-        Grave { 
-            player: player_ref, 
-            role: player_ref.night_grave_role(game).clone().unwrap_or(GraveRole::Role(player_ref.role(game))),
-            death_cause: GraveDeathCause::Killers(player_ref.night_grave_killers(game).clone()),
-            will: player_ref.night_grave_will(game).clone(),
-            died_phase: GravePhase::Night, 
-            day_number,
-            death_notes: player_ref.night_grave_death_notes(game).clone()
+    pub fn role(&self)->Option<Role>{
+        match self.information {
+            GraveInformation::Obscured => None,
+            GraveInformation::Normal { role, .. } => Some(role),
+        }
+    }
+
+
+    pub fn from_player_night(game: &Game, player_ref: PlayerReference) -> Grave {
+        Grave {
+            player: player_ref,
+            died_phase: GravePhase::Night,
+            day_number:  game.phase_machine.day_number,
+            information: GraveInformation::Normal{
+                role: player_ref.night_grave_role(game).clone().unwrap_or(player_ref.role(game)),
+                will: player_ref.night_grave_will(game).clone(),
+                death_cause: GraveDeathCause::Killers(player_ref.night_grave_killers(game).clone()),
+                death_notes: player_ref.night_grave_death_notes(game).clone()
+            },
         }
     }
     pub fn from_player_lynch(game: &Game, player_ref: PlayerReference) -> Grave {
-
         Grave { 
-            player: player_ref, 
-            role: GraveRole::Role(player_ref.role(game)), 
-            death_cause: GraveDeathCause::Lynching, 
-            will: player_ref.will(game).clone(), 
+            player: player_ref,
             died_phase: GravePhase::Day, 
             day_number: game.phase_machine.day_number,
-            death_notes: vec![]
+            information: GraveInformation::Normal{
+                role: player_ref.role(game), 
+                death_cause: GraveDeathCause::Lynching, 
+                will: player_ref.will(game).clone(), 
+                death_notes: vec![]
+            }
         }
     }
 
     pub fn from_player_suicide(game: &Game, player_ref: PlayerReference) -> Grave {
         Grave {
-            player: player_ref, 
-            role: GraveRole::Role(player_ref.role(game)), 
-            death_cause: GraveDeathCause::Killers(vec![GraveKiller::Suicide]), 
-            will: player_ref.will(game).clone(), 
+            player: player_ref,
             died_phase: GravePhase::from_phase_type(game.current_phase().phase()), 
             day_number: game.phase_machine.day_number,
-            death_notes: vec![]
+            information: GraveInformation::Normal { 
+                role: player_ref.role(game), 
+                death_cause: GraveDeathCause::Killers(vec![GraveKiller::Suicide]), 
+                death_notes: vec![],
+                will: player_ref.will(game).clone(), 
+
+            }
         }
     }
 
     pub fn from_player_leave_town(game: &Game, player_ref: PlayerReference) -> Grave {
         Grave {
-            player: player_ref, 
-            role: GraveRole::Role(player_ref.role(game)), 
-            death_cause: GraveDeathCause::LeftTown, 
-            will: player_ref.will(game).clone(), 
+            player: player_ref,
             died_phase: GravePhase::from_phase_type(game.current_phase().phase()), 
             day_number: game.phase_machine.day_number,
-            death_notes: vec![]
+            information: GraveInformation::Normal { 
+                role: player_ref.role(game), 
+                death_cause: GraveDeathCause::LeftTown, 
+                will: player_ref.will(game).clone(), 
+                death_notes: vec![]
+            }
         }
     }
 }

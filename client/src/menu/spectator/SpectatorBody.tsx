@@ -8,8 +8,8 @@ import translate from "../../game/lang";
 import ChatElement from "../../components/ChatMessage";
 import { translateRoleOutline } from "../../game/roleListState.d";
 import { PhaseState, Player, PlayerIndex } from "../../game/gameState.d";
-import { GraveRole } from "../../game/graveState";
 import { getTranslatedSubtitle } from "./SpectatorGameScreen";
+import { Role } from "../../game/roleState.d";
 
 export default function SpectatorBody(): ReactElement {
 
@@ -328,8 +328,8 @@ function Playerlist(): ReactElement {
                     let graveRoleString = "";
                     if(graveRole && graveRole.type === "role"){
                         graveRoleString = "("+translate("role."+graveRole.role+".name")+")";
-                    }else if(graveRole && graveRole.type === "cremated"){
-                        graveRoleString = "("+translate("cremated")+")";
+                    }else if(graveRole && graveRole.type === "obscured"){
+                        graveRoleString = "("+translate("obscured")+")";
                     }
 
 
@@ -343,11 +343,19 @@ function Playerlist(): ReactElement {
 }
 
 
-function getGraveRole(player: PlayerIndex): GraveRole | null{
+function getGraveRole(player: PlayerIndex): 
+    {type: "role", role: Role} | 
+    {type: "obscured"} | 
+    null
+{
     if(GAME_MANAGER.state.stateType !== "game") return null;
     for(let grave of GAME_MANAGER.state.graves){
-        if(grave.playerIndex === player){
-            return grave.role;
+        if(grave.player === player){
+            if(grave.information.type==="normal"){
+                return {type:"role", role: grave.information.role};
+            }else{
+                return {type:"obscured"};
+            }
         }
     }
     return null;

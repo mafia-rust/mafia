@@ -43,10 +43,9 @@ impl RoleStateImpl for Retributionist {
             !target_ref.alive(game) &&
             game.graves.iter().any(|grave|
                 grave.player == target_ref && 
-                match grave.role {
-                    crate::game::grave::GraveRole::Role(r) => r.faction() == Faction::Town,
-                    _ => false
-                }
+                if let Some(role) = grave.role(){
+                    role.faction() == Faction::Town
+                }else{false}
             ) &&
             (self.used_bodies.iter().filter(|p| **p == target_ref).count() < 2)
         ) || (

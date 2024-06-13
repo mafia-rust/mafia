@@ -168,7 +168,7 @@ fn detective_neutrals(){
 }
 
 #[test]
-fn mortician_cremates_on_stand(){
+fn mortician_obscures_on_stand(){
     kit::scenario!(game in Night 1 where
         mortician: Mortician,
         townie: Detective,
@@ -188,12 +188,12 @@ fn mortician_cremates_on_stand(){
 
     game.skip_to(Night, 2);
     
-    assert_eq!(game.graves[0].role, GraveRole::Cremated);
+    assert_eq!(game.graves[0].information, GraveInformation::Obscured);
     assert_contains!(mortician.get_messages(), ChatMessageVariant::PlayerRoleAndWill { role: Role::Detective, will: "".to_string() });
 }
 
 #[test]
-fn mortician_cremates_fail_after_death(){
+fn mortician_obscures_fail_after_death(){
     kit::scenario!(game in Night 1 where
         mortician: Mortician,
         townie: Detective,
@@ -214,7 +214,7 @@ fn mortician_cremates_fail_after_death(){
     game.skip_to(Night, 2);
     gf.set_night_selection_single(townie);
     game.next_phase();
-    assert_eq!(game.graves[1].role, GraveRole::Role(Role::Detective));
+    assert!(matches!(game.graves[1].information, GraveInformation::Normal { role: Role::Detective, .. }));
     assert_not_contains!(mortician.get_messages(), ChatMessageVariant::PlayerRoleAndWill { role: Role::Detective, will: "".to_string() });
 }
 
@@ -1015,18 +1015,19 @@ fn grave_contains_multiple_killers() {
     assert!(vigilante.set_night_selection_single(townie));
     game.next_phase();
     assert_eq!(
-        *game.graves.first().unwrap(), 
-        Grave {
+        *game.graves.first().unwrap(),
+        Grave{ 
             player: townie.player_ref(),
-        
-            role: GraveRole::Role(Role::Detective),
-            death_cause: GraveDeathCause::Killers(vec![GraveKiller::Faction(Faction::Mafia), GraveKiller::Role(Role::Vigilante)]),
-            will: "".to_string(),
-            death_notes: vec![],
-        
             died_phase: GravePhase::Night,
             day_number: 2,
-    });
+            information: GraveInformation::Normal{
+                role: Role::Detective,
+                death_cause: GraveDeathCause::Killers(vec![GraveKiller::Faction(Faction::Mafia), GraveKiller::Role(Role::Vigilante)]),
+                will: "".to_string(),
+                death_notes: vec![],
+            }
+        }
+    )
 }
 
 #[test]
@@ -1056,15 +1057,16 @@ fn grave_contains_multiple_killers_roles() {
         *game.graves.first().unwrap(), 
         Grave {
             player: townie_b.player_ref(),
-        
-            role: GraveRole::Role(Role::Doctor),
-            death_cause: GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Doomsayer), GraveKiller::Faction(Faction::Mafia), GraveKiller::Role(Role::Vigilante)]),
-            will: "".to_string(),
-            death_notes: vec![],
-        
             died_phase: GravePhase::Night,
             day_number: 2,
-    });
+            information: GraveInformation::Normal{
+                role: Role::Doctor,
+                death_cause: GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Doomsayer), GraveKiller::Faction(Faction::Mafia), GraveKiller::Role(Role::Vigilante)]),
+                will: "".to_string(),
+                death_notes: vec![],
+            }
+        }
+    );
 }
 #[test]
 fn vigilante_cant_select_night_one() {

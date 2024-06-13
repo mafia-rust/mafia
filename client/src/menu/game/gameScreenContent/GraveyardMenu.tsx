@@ -76,10 +76,10 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
     }
     renderGrave(grave: Grave, graveIndex: number){
         let graveRoleString: string;
-        if (grave.role.type === "role") {
-            graveRoleString = translate(`role.${grave.role.role}.name`);
+        if (grave.information.type === "normal") {
+            graveRoleString = translate(`role.${grave.information.role}.name`);
         } else {
-            graveRoleString = translate(`grave.role.${grave.role.type}`);
+            graveRoleString = translate("obscured");
         }
 
         return(<button 
@@ -88,7 +88,7 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             key={graveIndex} 
             onClick={()=>{this.setState({extendedGraveIndex:graveIndex})}}
         >
-            <StyledText noLinks={true}>{this.state.players[grave.playerIndex]?.toString()}</StyledText>
+            <StyledText noLinks={true}>{this.state.players[grave.player]?.toString()}</StyledText>
             <StyledText noLinks={true}>
                 {` (${graveRoleString})`}
             </StyledText>

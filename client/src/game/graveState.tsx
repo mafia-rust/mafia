@@ -1,26 +1,25 @@
 import { PlayerIndex } from "./gameState.d";
-import translate from "./lang";
 import { Faction } from "./roleListState.d";
 import { Role } from "./roleState.d";
 
 export type Grave = {
-    playerIndex: PlayerIndex,
-
-    role: GraveRole,
-    deathCause: GraveDeathCause,
-    will: string,
-    deathNotes: string[],
-
+    player: PlayerIndex,
     diedPhase: GravePhase,
     dayNumber: number,
+    information: GraveInformation,
 }
 
-export type GraveRole = {
-    type: "cremated"
-} |  {
-    type: "role"
-    role: Role
-};
+export type GraveInformation ={ 
+    type: "obscured",
+} | {
+    type: "normal",
+    
+    role: Role,
+    will: string,
+    deathCause: GraveDeathCause,
+    deathNotes: string[],
+}
+
 export type GraveDeathCause = {
     type: "lynching" | "leftTown"
 } | {
@@ -40,12 +39,3 @@ export type GraveKiller = {
 };
 
 export type GravePhase = "day" | "night"
-
-export function translateGraveRole(graveRole: GraveRole): string{
-    switch(graveRole.type){
-        case "cremated":
-            return translate("grave.role.cremated");
-        case "role":
-            return translate("role."+graveRole.role+".name");
-    }
-}

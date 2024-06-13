@@ -4,7 +4,6 @@ use serde::Serialize;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::chat::ChatGroup;
 use crate::game::grave::GraveReference;
-use crate::game::grave::GraveRole;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -52,7 +51,7 @@ impl RoleStateImpl for Forger {
                 let target_ref = visit.target;
 
                 target_ref.set_night_grave_role(game, Some(
-                    GraveRole::Role(if let Some(role) = self.fake_role {role} else {target_ref.role(game)})
+                    if let Some(role) = self.fake_role {role} else {target_ref.role(game)}
                 ));
                 target_ref.set_night_grave_will(game, if !self.fake_will.is_empty() {self.fake_will.clone()} else {target_ref.will(game).to_owned()});
                 actor_ref.set_role_state(game, RoleState::Forger(Forger { 

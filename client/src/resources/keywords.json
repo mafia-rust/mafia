@@ -4,7 +4,7 @@
     "verdict.guilty": { "style": "keyword-evil","link": "standard/phases_and_timeline"},
     "verdict.innocent": { "style": "keyword-good"},
     "verdict.abstain": { "style": "keyword-abstain","link": "standard/phases_and_timeline"},
-    "grave.role.cremated": { "style": "keyword-hiddenRole","link": "standard/cremated"},
+    "obscured": { "style": "keyword-hiddenRole","link": "standard/obscured"},
     "suspicious": { "style": "keyword-evil"},
     "friends": { "style": "keyword-good", "link": "standard/friends"},
     "enemies": { "style": "keyword-evil", "link": "standard/enemies"},

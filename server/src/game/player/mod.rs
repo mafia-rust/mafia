@@ -17,7 +17,7 @@ use crate::{
         role::{Role, RoleState}, 
         chat::ChatMessageVariant, 
         visit::Visit, 
-        grave::{GraveRole, GraveKiller}, 
+        grave::GraveKiller, 
         verdict::Verdict, available_buttons::AvailableButtons
     },
     websocket_connections::connection::ClientSender,
@@ -78,7 +78,7 @@ struct PlayerNightVariables{
 
     messages: Vec<ChatMessageVariant>,
 
-    grave_role: Option<GraveRole>,
+    grave_role: Option<Role>,
     grave_killers: Vec<GraveKiller>,
     grave_will: String,
     grave_death_notes: Vec<String>,

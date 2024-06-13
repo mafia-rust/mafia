@@ -7,7 +7,7 @@ use crate::{
         chat::{
             ChatGroup, ChatMessage, ChatMessageVariant
         }, event::on_fast_forward::OnFastForward,
-        grave::{GraveKiller, GraveRole},
+        grave::GraveKiller,
         role::{Role, RoleState},
         tag::Tag,
         verdict::Verdict,
@@ -327,10 +327,10 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.messages = messages;
     }
 
-    pub fn night_grave_role<'a>(&self, game: &'a Game) -> &'a Option<GraveRole> {
+    pub fn night_grave_role<'a>(&self, game: &'a Game) -> &'a Option<Role> {
         &self.deref(game).night_variables.grave_role
     }
-    pub fn set_night_grave_role(&self, game: &mut Game, grave_role: Option<GraveRole>){
+    pub fn set_night_grave_role(&self, game: &mut Game, grave_role: Option<Role>){
         self.deref_mut(game).night_variables.grave_role = grave_role;
     }
 

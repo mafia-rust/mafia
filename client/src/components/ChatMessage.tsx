@@ -105,7 +105,7 @@ const ChatElement = React.memo((
                 <StyledText className={"chat-message " + style}
                     playerKeywordData={props.playerKeywordData}
                 >{(icon??"")} {translate("chatMessage.playerDied",
-                    playerNames[message.variant.grave.playerIndex],
+                    playerNames[message.variant.grave.player],
                 )}</StyledText>
                 <div className="grave-message">
                     <GraveComponent grave={message.variant.grave} playerNames={playerNames}/>

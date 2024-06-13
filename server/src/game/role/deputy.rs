@@ -3,7 +3,7 @@ use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::game_over_state::GameOverState;
-use crate::game::grave::{Grave, GraveDeathCause, GraveKiller, GraveReference};
+use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller, GraveReference};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -46,7 +46,9 @@ impl RoleStateImpl for Deputy {
             
             
             let mut grave = Grave::from_player_lynch(game, target_ref);
-            grave.death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Deputy)]);
+            if let GraveInformation::Normal{death_cause, ..} = &mut grave.information {
+                *death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Deputy)]);
+            }
             target_ref.die(game, grave);
             
 

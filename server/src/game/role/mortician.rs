@@ -3,8 +3,8 @@ use serde::Serialize;
 
 use crate::game::chat::ChatMessageVariant;
 use crate::game::chat::ChatGroup;
+use crate::game::grave::GraveInformation;
 use crate::game::grave::GraveReference;
-use crate::game::grave::GraveRole;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -18,7 +18,7 @@ use super::{Priority, RoleState, RoleStateImpl};
 #[derive(Default, Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Mortician {
-    cremated_players: Vec<PlayerReference>
+    obscured_players: Vec<PlayerReference>
 }
 
 pub(super) const FACTION: Faction = Faction::Mafia;
@@ -31,7 +31,7 @@ impl RoleStateImpl for Mortician {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return}
 
-        if self.cremated_players.len() as u8 >= MAX_CREMATIONS {return}
+        if self.obscured_players.len() as u8 >= MAX_CREMATIONS {return}
 
         match priority {
             Priority::Deception=>{
@@ -39,8 +39,8 @@ impl RoleStateImpl for Mortician {
 
                 let target_ref = visit.target;
                 
-                if !self.cremated_players.contains(&target_ref){
-                    self.cremated_players.push(target_ref);
+                if !self.obscured_players.contains(&target_ref){
+                    self.obscured_players.push(target_ref);
                     actor_ref.set_role_state(game, RoleState::Mortician(self));
                     actor_ref.push_player_tag(game, target_ref, Tag::MorticianTagged);
                 }
@@ -54,8 +54,8 @@ impl RoleStateImpl for Mortician {
         actor_ref.selection(game).is_empty() &&
         actor_ref.alive(game) &&
         target_ref.alive(game) &&
-        (self.cremated_players.len() as u8) < MAX_CREMATIONS && 
-        !self.cremated_players.contains(&target_ref)
+        (self.obscured_players.len() as u8) < MAX_CREMATIONS && 
+        !self.obscured_players.contains(&target_ref)
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
     }
@@ -81,14 +81,15 @@ impl RoleStateImpl for Mortician {
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave_ref: GraveReference){
-        if actor_ref.alive(game) && self.cremated_players.contains(&grave_ref.deref(game).player) {
+        if actor_ref.alive(game) && self.obscured_players.contains(&grave_ref.deref(game).player) {
             let grave = grave_ref.deref_mut(game);
-            grave.role = GraveRole::Cremated;
-            grave.will = "".to_owned();
-            let grave = grave.clone();
+            let old_grave = grave.clone();
+
+            grave.information = GraveInformation::Obscured;
+            
             actor_ref.add_private_chat_message(game, ChatMessageVariant::PlayerRoleAndWill{
-                role: grave.player.role(game),
-                will: grave.player.will(game).to_string(),
+                role: old_grave.player.role(game),
+                will: old_grave.player.will(game).to_string(),
             });
         }
     }

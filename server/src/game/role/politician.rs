@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::game_over_state::GameOverState;
-use crate::game::grave::{GraveKiller, Grave, GraveDeathCause};
+use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -80,7 +80,9 @@ impl RoleStateImpl for Politician {
                 if player_ref.defense(game) < 3 {
 
                     let mut grave = Grave::from_player_lynch(game, player_ref);
-                    grave.death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Politician)]);
+                    if let GraveInformation::Normal {death_cause, ..} = &mut grave.information {
+                        *death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Politician)]);
+                    }
                     player_ref.die(game, grave);
                 }else{
                     player_ref.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
