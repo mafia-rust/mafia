@@ -34,7 +34,7 @@ impl RoleStateImpl for Veteran {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::TopPriority => {
-                if self.alerts_remaining > 0 {
+                if self.alerts_remaining > 0 && game.day_number() > 1{
                     if let Some(selection) = actor_ref.selection(game).first(){
                         if *selection == actor_ref{
                             actor_ref.set_role_state(game, RoleState::Veteran(Veteran { 
@@ -70,7 +70,8 @@ impl RoleStateImpl for Veteran {
         !actor_ref.night_jailed(game) &&
         self.alerts_remaining > 0 &&
         actor_ref.selection(game).is_empty() &&
-        actor_ref.alive(game)
+        actor_ref.alive(game) &&
+        game.day_number() > 1
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
 

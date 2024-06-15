@@ -101,6 +101,7 @@ impl Cult{
     pub fn can_convert_tonight(game: &Game)->bool {
         let cult = game.cult();
         if cult.ordered_cultists.len() >= 4 {return false}
+        if game.day_number() == 1 {return false}
 
         match cult.sacrifices_required {
             None | Some(0) => true,

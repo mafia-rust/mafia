@@ -1,49 +1,81 @@
+use std::collections::HashSet;
+
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::grave::{GraveDeathCause, GraveInformation, GraveKiller, GraveReference};
+use crate::game::grave::{GraveInformation, GraveKiller, GraveReference};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
+use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{Priority, Role, RoleStateImpl};
+use super::{Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct Pyrolisk;
+pub struct Pyrolisk{
+    pub tagged_for_obscure: HashSet<PlayerReference>
+}
 
 pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: u8 = 1;
 
 impl RoleStateImpl for Pyrolisk {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+        let mut tagged_for_obscure = self.tagged_for_obscure.clone();
+        
         match priority {
             Priority::Kill => {
                 if game.day_number() != 1 {
                     if let Some(visit) = actor_ref.night_visits(game).first(){
                         let target_ref = visit.target;
                         target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Pyrolisk), 2, true);
+                        
+                        tagged_for_obscure.insert(target_ref);
+                        actor_ref.push_player_tag(game, target_ref, Tag::MorticianTagged);
                     }
-                }
 
-                for other_player_ref in actor_ref.all_visitors(game)
-                    .into_iter().filter(|other_player_ref|
-                        other_player_ref.alive(game) &&
-                        *other_player_ref != actor_ref
-                    ).collect::<Vec<PlayerReference>>()
-                {
-                    other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Pyrolisk), 2, true);
+                    for other_player_ref in actor_ref.all_visitors(game)
+                        .into_iter().filter(|other_player_ref|
+                            other_player_ref.alive(game) &&
+                            *other_player_ref != actor_ref
+                        ).collect::<Vec<PlayerReference>>()
+                    {
+                        other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Pyrolisk), 2, true);
+                        
+                        tagged_for_obscure.insert(other_player_ref);
+                        actor_ref.push_player_tag(game, other_player_ref, Tag::MorticianTagged);
+                    }
+                }else{
+                    if let Some(visit) = actor_ref.night_visits(game).first(){
+                        let target_ref = visit.target;
+
+                        tagged_for_obscure.insert(target_ref);
+                        actor_ref.push_player_tag(game, target_ref, Tag::MorticianTagged);
+                    }
+
+                    for other_player_ref in actor_ref.all_visitors(game)
+                        .into_iter().filter(|other_player_ref|
+                            other_player_ref.alive(game) &&
+                            *other_player_ref != actor_ref
+                        ).collect::<Vec<PlayerReference>>()
+                    {
+                        tagged_for_obscure.insert(other_player_ref);
+                        actor_ref.push_player_tag(game, other_player_ref, Tag::MorticianTagged);
+                    }
                 }
             }
             _=>{}
         }
+
+        actor_ref.set_role_state(game, RoleState::Pyrolisk(Pyrolisk{tagged_for_obscure}));
     }
     
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref) && game.day_number() != 1
+        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
     }
@@ -64,22 +96,20 @@ impl RoleStateImpl for Pyrolisk {
     }
     fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType){
     }
-    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
+    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
+        let mut tagged_for_obscure = self.tagged_for_obscure.clone();
+        tagged_for_obscure.insert(actor_ref);
+        actor_ref.push_player_tag(game, actor_ref, Tag::MorticianTagged);
+        actor_ref.set_role_state(game, RoleState::Pyrolisk(Pyrolisk{tagged_for_obscure}));
     }
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave_ref: GraveReference){
 
         let should_obscure = 
-        //killed by pyro, or is pyro
-        if let GraveInformation::Normal {ref death_cause, role, .. } = grave_ref.deref(game).information {
-            if role == Role::Pyrolisk {
-                true
-            }else if let GraveDeathCause::Killers(killers) = death_cause {
-                if killers.iter().any(|killer| matches!(killer, GraveKiller::Role(Role::Pyrolisk))){
-                    true
-                }else{false}
-            }else{false}
+        //if they are tagged for obscure
+        if let RoleState::Pyrolisk(Pyrolisk{tagged_for_obscure}) = actor_ref.role_state(game) {
+            tagged_for_obscure.contains(&grave_ref.deref(game).player)
         }else{false};
 
         if should_obscure {

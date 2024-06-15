@@ -27,6 +27,8 @@ pub(super) const DEFENSE: u8 = 0;
 
 impl RoleStateImpl for Cop {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+        if game.day_number() == 1 {return}
+
         match priority {
             Priority::Heal => {
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
@@ -84,7 +86,7 @@ impl RoleStateImpl for Cop {
         }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        common_role::can_night_select(game, actor_ref, target_ref)
+        common_role::can_night_select(game, actor_ref, target_ref) && game.day_number() > 1
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
         

@@ -62,11 +62,25 @@ impl RoleStateImpl for Spy {
                 };
             },
             Priority::FinalPriority => {
-                actor_ref.push_night_message(game, ChatMessageVariant::SpyCultistCount { count: 
-                    PlayerReference::all_players(game).filter(|p|
-                        p.role(game).faction() == Faction::Cult && p.alive(game)
-                    ).count() as u8
-                }); 
+                if actor_ref.night_roleblocked(game) {return;}
+
+                let count = PlayerReference::all_players(game).filter(|p|
+                    p.role(game).faction() == Faction::Cult && p.alive(game)
+                ).count() as u8;
+
+                if count > 0 {
+                    if Cult::can_convert_tonight(game) {
+                        actor_ref.push_night_message(game,
+                            ChatMessageVariant::ApostleCanConvertTonight
+                        )
+                    }else{
+                        actor_ref.push_night_message(game,
+                            ChatMessageVariant::ApostleCantConvertTonight
+                        )
+                    }
+
+                    actor_ref.push_night_message(game, ChatMessageVariant::SpyCultistCount { count });
+                }
             }
             _=>{}
         }
@@ -90,24 +104,7 @@ impl RoleStateImpl for Spy {
     fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
         crate::game::role::common_role::get_won_game(game, actor_ref)
     }
-    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
-        match phase {
-            PhaseType::Night => {
-                //if there are any cult alive, tell the spy if apostle can convert
-                if PlayerReference::all_players(game).any(|p|p.role(game).faction() == Faction::Cult){
-                    if Cult::can_convert_tonight(game) {
-                        actor_ref.add_private_chat_message(game,
-                            ChatMessageVariant::ApostleCanConvertTonight
-                        )
-                    }else{
-                        actor_ref.add_private_chat_message(game,
-                            ChatMessageVariant::ApostleCantConvertTonight
-                        )
-                    }
-                }
-            },
-            _=>{}
-        }
+    fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType) {
     }
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {
     }
