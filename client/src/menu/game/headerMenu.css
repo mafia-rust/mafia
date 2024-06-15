@@ -5,12 +5,14 @@
 .header-menu .menu-buttons button{
     margin: .2%;
     margin-bottom: 0;
-    width: 100%;
-    max-width: 110px;
+    min-width: 10%;
+    padding-right: .5rem;
+    padding-left: .5rem;
     border-bottom: 0;
     border-radius: 8px 8px 0 0;
     background-color: var(--tab-color);
     position: relative;
+    overflow-x: hidden;
 }
 .header-menu .menu-buttons button:hover {
     background-color: var(--hover-color);
