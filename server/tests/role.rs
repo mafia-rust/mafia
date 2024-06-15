@@ -15,9 +15,7 @@ pub use mafia_server::game::{
         RoleState,
 
         jailor::Jailor,
-        mayor::Mayor,
-        transporter::Transporter,
-
+        
         detective::Detective,
         snoop::Snoop,
         lookout::Lookout,
@@ -25,7 +23,8 @@ pub use mafia_server::game::{
         tracker::Tracker,
         philosopher::Philosopher,
         psychic::Psychic,
-
+        gossip::Gossip, 
+        
         doctor::Doctor,
         bodyguard::Bodyguard,
         cop::Cop,
@@ -35,46 +34,44 @@ pub use mafia_server::game::{
         vigilante::Vigilante,
         veteran::Veteran,
         deputy::Deputy,
-
+        marksman::Marksman, 
+        
+        transporter::Transporter,
         escort::Escort,
+        mayor::Mayor,
         medium::Medium,
         retributionist::Retributionist,
 
         godfather::Godfather,
         mafioso::Mafioso,
         
+        framer::Framer,
         hypnotist::Hypnotist,
         blackmailer::Blackmailer,
         informant::Informant,
         witch::Witch,
         necromancer::Necromancer,
-
         mortician::Mortician,
-        framer::Framer,
+        mafia_wild_card::MafiaWildcard, 
+        
 
         jester::Jester,
         provocateur::Provocateur,
         minion::Minion,
         politician::Politician,
         doomsayer::{Doomsayer, DoomsayerGuess},
-
-        arsonist::Arsonist,
-        ojo::{Ojo, OjoAction},
-
         death::Death,
+        wild_card::Wildcard,
+        martyr::Martyr,
 
         apostle::Apostle,
         zealot::Zealot,
-
-        martyr::Martyr,
-
-        wild_card::Wildcard,
-        fiends_wildcard::FiendsWildcard, 
         
-        gossip::Gossip, 
-        mafia_wild_card::MafiaWildcard, 
-        marksman::Marksman, 
-        puppeteer::{Puppeteer, PuppeteerAction}
+        arsonist::Arsonist,
+        ojo::{Ojo, OjoAction},
+        pyrolisk::Pyrolisk,
+        puppeteer::{Puppeteer, PuppeteerAction},
+        fiends_wildcard::FiendsWildcard, 
     }, 
     phase::{
         PhaseState, 
@@ -86,18 +83,18 @@ pub use mafia_server::packet::ToServerPacket;
 
 #[test]
 fn medium_receives_dead_messages_from_jail() {
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         medium: Medium,
         jailor: Jailor,
         townie: Detective,
         mafioso: Mafioso
     );
     mafioso.set_night_selection_single(townie);
-    game.skip_to(Nomination, 2);
+    game.skip_to(Nomination, 3);
     
     jailor.day_target(medium);
 
-    game.skip_to(Night, 2);
+    game.skip_to(Night, 3);
     let dead_message = "Hello medium!! Are you there!?";
     townie.send_message(dead_message);
 
@@ -473,7 +470,7 @@ fn spy_basic_transported() {
 
 #[test]
 fn bodyguard_basic() {
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         maf: Mafioso,
         bg: Bodyguard,
         townie: Detective
@@ -482,7 +479,7 @@ fn bodyguard_basic() {
     maf.set_night_selection_single(townie);
     bg.set_night_selection_single(townie);
 
-    game.skip_to(Obituary, 2);
+    game.skip_to(Obituary, 3);
 
     assert!(townie.get_messages().contains(&ChatMessageVariant::YouWereProtected));
 
@@ -551,7 +548,7 @@ fn transporter_basic_seer_sheriff_framer() {
 /// Test that the bodyguard protects the person their target was swapped with
 #[test]
 fn bodyguard_protects_transported_target() {
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         trans: Transporter,
         maf: Mafioso,
         bg: Bodyguard,
@@ -562,7 +559,7 @@ fn bodyguard_protects_transported_target() {
     maf.set_night_selection_single(t1);
     bg.set_night_selection_single(t1);
     
-    game.skip_to(Obituary, 2);
+    game.skip_to(Obituary, 3);
     assert!(t1.alive());
     assert!(t2.alive());
     assert!(trans.alive());
@@ -591,7 +588,7 @@ fn mayor_reveals_after_they_vote(){
 
 #[test]
 fn retributionist_basic(){
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         ret: Retributionist,
         sher1: Detective,
         sher2: Detective,
@@ -599,23 +596,13 @@ fn retributionist_basic(){
     );
 
     mafioso.set_night_selection_single(sher1);
-    game.skip_to(Night, 2);
-    mafioso.set_night_selection_single(sher2);
     game.skip_to(Night, 3);
+    mafioso.set_night_selection_single(sher2);
+    game.skip_to(Night, 4);
 
     assert!(!sher1.alive());
     assert!(!sher2.alive());
 
-    assert!(ret.set_night_selection(vec![sher1, mafioso]));
-    game.next_phase();
-    assert_contains!(
-        ret.get_messages_after_night(3),
-        ChatMessageVariant::TargetsMessage{message: Box::new(
-            ChatMessageVariant::SheriffResult{ suspicious: true }
-        )}
-    );
-
-    game.skip_to(Night, 4);
     assert!(ret.set_night_selection(vec![sher1, mafioso]));
     game.next_phase();
     assert_contains!(
@@ -626,10 +613,20 @@ fn retributionist_basic(){
     );
 
     game.skip_to(Night, 5);
+    assert!(ret.set_night_selection(vec![sher1, mafioso]));
+    game.next_phase();
+    assert_contains!(
+        ret.get_messages_after_night(5),
+        ChatMessageVariant::TargetsMessage{message: Box::new(
+            ChatMessageVariant::SheriffResult{ suspicious: true }
+        )}
+    );
+
+    game.skip_to(Night, 6);
     assert!(!ret.set_night_selection(vec![sher1, mafioso]));
     game.next_phase();
     assert_not_contains!(
-        ret.get_messages_after_night(5),
+        ret.get_messages_after_night(6),
         ChatMessageVariant::TargetsMessage{message: Box::new(
             ChatMessageVariant::SheriffResult{ suspicious: true }
         )}
@@ -638,7 +635,7 @@ fn retributionist_basic(){
 
 #[test]
 fn necromancer_basic(){
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         ret: Necromancer,
         sher: Detective,
         informant: Informant,
@@ -647,9 +644,9 @@ fn necromancer_basic(){
     );
     
     mafioso.set_night_selection_single(sher);
-    game.skip_to(Night, 2);
-    vigilante.set_night_selection_single(informant);
     game.skip_to(Night, 3);
+    vigilante.set_night_selection_single(informant);
+    game.skip_to(Night, 4);
 
 
 
@@ -692,8 +689,8 @@ fn witch_basic(){
 }
 
 #[test]
-fn crusader_basic(){
-    kit::scenario!(game in Night 1 where
+fn cop_basic(){
+    kit::scenario!(game in Night 2 where
         crus: Cop,
         protected: Jester,
         townie1: Detective,
@@ -706,7 +703,7 @@ fn crusader_basic(){
     townie2.set_night_selection(vec![protected]);
     mafioso.set_night_selection(vec![protected]);
 
-    game.skip_to(Night, 2);
+    game.skip_to(Night, 3);
 
     assert!(crus.alive());
     assert!(protected.alive());
@@ -727,8 +724,8 @@ fn crusader_basic(){
 }
 
 #[test]
-fn crusader_does_not_kill_framed_player(){
-    kit::scenario!(game in Night 1 where
+fn cop_does_not_kill_framed_player(){
+    kit::scenario!(game in Night 2 where
         crus: Cop,
         protected: Jester,
         townie: Detective,
@@ -795,7 +792,7 @@ fn veteran_basic(){
 
 #[test]
 fn veteran_does_not_kill_framed_player(){
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         vet: Veteran,
         townie: Detective,
         framer: Framer,
@@ -815,7 +812,7 @@ fn veteran_does_not_kill_framed_player(){
 
 #[test]
 fn provocateur_turns_into_jester(){
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         target: Detective,
         mafioso: Mafioso,
         exe: Provocateur
@@ -823,7 +820,7 @@ fn provocateur_turns_into_jester(){
 
     assert!(mafioso.set_night_selection(vec![target]));
 
-    game.skip_to(Nomination, 2);
+    game.skip_to(Nomination, 3);
 
     assert!(!target.alive());
     assert!(exe.alive());
@@ -900,7 +897,7 @@ fn marksman_basic() {
 
 #[test]
 fn transporter_cant_transport_dead() {
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         mafioso: Mafioso,
         _vet: Veteran,
         _necro: Necromancer,
@@ -916,7 +913,7 @@ fn transporter_cant_transport_dead() {
 
     assert!(!thomas.alive());
 
-    game.skip_to(Night, 2);
+    game.skip_to(Night, 3);
 
     assert!(trans.set_night_selection_single(townie));
     assert!(!trans.set_night_selection(vec![townie, thomas]), "Transporter targeted dead player");
@@ -929,7 +926,7 @@ fn transporter_cant_transport_dead() {
 
 #[test]
 fn double_transport() {
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         mafioso: Mafioso,
  
         townie_a: Detective,
@@ -952,7 +949,7 @@ fn double_transport() {
 
 #[test]
 fn double_transport_single_player() {
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         mafioso: Mafioso,
  
         townie_a: Detective,
@@ -977,7 +974,7 @@ fn double_transport_single_player() {
 
 #[test]
 fn double_transport_three_players() {
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         mafioso: Mafioso,
  
         townie_a: Detective,
@@ -1637,6 +1634,56 @@ fn arsonist_ignites_and_aura(){
 }
 
 #[test]
+fn pyrolisk_tags_day_one() {
+    kit::scenario!(game in Night 1 where
+        pyro: Pyrolisk,
+        townie: Detective,
+        townie2: Detective,
+        townie3: Detective,
+        townie4: Detective
+    );
+
+    assert!(pyro.set_night_selection_single(townie));
+    assert!(townie3.set_night_selection_single(pyro));
+
+    game.next_phase();
+
+    assert!(pyro.alive());
+    assert!(townie.alive());
+    assert!(townie2.alive());
+    assert!(townie3.alive());
+    assert!(townie4.alive());
+    
+    assert!(pyro.get_player_tags().get(&pyro.player_ref()).unwrap().contains(&Tag::MorticianTagged));
+    assert!(pyro.get_player_tags().get(&townie.player_ref()).unwrap().contains(&Tag::MorticianTagged));
+    assert!(pyro.get_player_tags().get(&townie2.player_ref()).is_none());
+    assert!(pyro.get_player_tags().get(&townie3.player_ref()).unwrap().contains(&Tag::MorticianTagged));
+    assert!(pyro.get_player_tags().get(&townie4.player_ref()).is_none());
+
+    //vote out townie
+    game.skip_to(Nomination, 2);
+
+    townie.vote_for_player(Some(townie3));
+    townie2.vote_for_player(Some(townie3));
+    pyro.vote_for_player(Some(townie3));
+
+    game.skip_to(Judgement, 2);
+
+    townie.set_verdict(Verdict::Guilty);
+
+    game.skip_to(Dusk, 2);
+
+    assert!(game.graves.len() == 1);
+    assert!(game.graves.first().unwrap().player == townie3.player_ref());
+    assert!(game.graves.first().unwrap().information == GraveInformation::Obscured);
+    assert_contains!(pyro.get_messages_after_night(1), ChatMessageVariant::PlayerRoleAndAlibi{
+        player: townie3.player_ref(),
+        role: Role::Detective,
+        will: "".to_string(),
+    });
+} 
+
+#[test]
 fn bodyguard_gets_single_target_jailed_message() {
     kit::scenario!(game in Dusk 1 where
         bg: Bodyguard,
@@ -1884,7 +1931,7 @@ fn godfather_dies_to_veteran(){
 
 #[test]
 fn godfather_dies_to_veteran_after_possessed(){
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         vet: Veteran,
         gf: Godfather,
         _maf: Mortician,
