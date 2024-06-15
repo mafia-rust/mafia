@@ -49,24 +49,26 @@ impl RoleStateImpl for Auditor {
             Some(outline) => outline,
             None => unreachable!("Auditor role outline not found")
         };
-        let fake_role = outline
-            .get_roles()
-            .into_iter()
-            .filter(|x|!game.settings.excluded_roles.contains(x))
-            .collect::<Vec<Role>>()
-            .choose(&mut rand::thread_rng())
-            .cloned();
 
-        let result = if let Some(fake_role) = fake_role{
-            if fake_role != role{
+        let result = if outline.get_roles().len() == 1 || outline.get_roles().len() == 2 {
+            AuditorResult::One{role}
+        }else{
+            let fake_role = outline
+                .get_roles()
+                .into_iter()
+                .filter(|x|!game.settings.excluded_roles.contains(x))
+                .filter(|x|*x != role)
+                .collect::<Vec<Role>>()
+                .choose(&mut rand::thread_rng())
+                .cloned();
+
+            if let Some(fake_role) = fake_role{
                 let mut two = [role, fake_role];
                 two.shuffle(&mut rand::thread_rng());
                 AuditorResult::Two{roles: [two[0], two[1]]}
-            }else{
+            } else {
                 AuditorResult::One{role}
             }
-        } else {
-            AuditorResult::One{role}
         };
 
         let message = ChatMessageVariant::AuditorResult {

@@ -114,7 +114,6 @@
             {"type": "spyBug", "bug": "possessed"},
             {"type": "spyMafiaVisit", "players": [16,17,18]},
             {"type": "spyMafiaVisit", "players": []},
-            {"type": "spyCultistCount", "count": 0},
             {"type": "spyCultistCount", "count": 1},
             {"type": "spyCultistCount", "count": 2}
         ]
@@ -129,7 +128,8 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "auditorResult", "roleOutline":{"type":"any"},"result": {"type":"two","roles":["godfather","jester"]}},
-            {"type": "auditorResult", "roleOutline":{"type":"roleOutlineOptions", "options":[{"type":"role","role":"vigilante"}]},"result": {"type":"one","role":["vigilante"]}},
+            {"type": "auditorResult", "roleOutline":{"type":"roleOutlineOptions", "options":[{"type":"role","role":"vigilante"},{"type":"role","role":"marksman"}]},"result": {"type":"one","role":["vigilante"]}},
+            {"type": "auditorResult", "roleOutline":{"type":"roleOutlineOptions", "options":[{"type":"role","role":"fiendsWildcard"}]},"result": {"type":"one","role":["fiendsWildcard"]}},
             {"type": "auditorResult", "roleOutline":{"type":"roleOutlineOptions", "options":[{"type":"roleSet","roleSet":"townSupport"}]},"result": {"type":"two","roles":["escort","medium"]}}
         ]
     },
