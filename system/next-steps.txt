@@ -1,0 +1,6 @@
+Your next step is to setup nginx, a reverse proxy. This script can only take you so far.
+Be sure to change the client config to use the port defined in your nginx websocket config.
+If you need to buy a domain, checkout porkbun. If you have a domain, use a subdomain.
+If you already have nginx on this server, just copy over the files.
+
+If you want to read this again, look for the next-steps.txt file

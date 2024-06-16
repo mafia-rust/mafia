@@ -51,3 +51,7 @@ You can now start the server backend:
 ```bash
 cargo run
 ```
+
+### Production Enviornment
+We have built an install script that automatically pulls all the dependencies.
+Simply clone the repo to the root directory of your debian server.
