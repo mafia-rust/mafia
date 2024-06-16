@@ -37,6 +37,3 @@ client/yarn-error.log*
 
 # Py cache
 dev/__pycache__
-
-# Config Files (Do not overwrite)
-system-config/

@@ -6,7 +6,7 @@ fi
 
 cd /
 echo Updating Debian
-apt-get update &&
+apt-get update
 apt-get upgrade -y
 apt-get install -y curl nano sudo git build-essential
 
@@ -25,6 +25,12 @@ echo Linking Services
 ln -s /mafia/system/mafia-game-client.service /etc/systemd/system/mafia-game-client.service
 ln -s /mafia/system/mafia-game-server.service /etc/systemd/system/mafia-game-server.service
 
+echo Edit Client Configuration File
+nano client/src/resources/config.json
+
+echo Edit Server Configuration File
+nano server/resources/config.json
+
 echo Creating mafia user
 adduser -disabled-password --gecos "" mafia
 usermod -aG sudo mafia
@@ -35,17 +41,6 @@ chmod +x update-rootless.sh
 chmod +x start-game-client.sh
 chmod +x start-game-server.sh
 chown -R mafia:mafia /mafia
-
-echo Creating configuration files
-mkdir system-config
-cp client/src/resources/config.json system-config/client-config.json
-cp server/resources/config.json system-config/server-config.json
-
-echo Edit Client Configuration File
-nano system-config/client-config.json
-
-echo Edit Server Configuration File
-nano system-config/server-config.json
 
 echo Bootstrapping Mafia
 runuser -l mafia -c './update-rootless.sh'
