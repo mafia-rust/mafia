@@ -61,6 +61,7 @@ export function loadGameModes(): NonNullable<unknown> | null {
         try {
             return JSON.parse(data);
         } catch {
+            localStorage.clear();
             return null;
         }
     }
