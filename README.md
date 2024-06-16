@@ -51,3 +51,16 @@ You can now start the server backend:
 ```bash
 cargo run
 ```
+
+### Production Enviornment
+#### Install
+We have built an install script that automatically pulls all the dependencies.
+Run the following command as the root user
+```bash
+curl -fSsL https://raw.githubusercontent.com/mafia-rust/mafia/main/system/install.sh | sh
+```
+
+#### Update
+```bash
+./mafia/system/update.sh
+```

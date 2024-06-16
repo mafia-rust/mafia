@@ -1,0 +1,12 @@
+[Unit]
+Description=mafia-game-server
+After=network.target
+
+[Service]
+Type=Simple
+User=mafia
+ExecStart=/bin/bash /mafia/system/start-server.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
