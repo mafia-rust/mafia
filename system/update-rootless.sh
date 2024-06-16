@@ -3,10 +3,7 @@ cd /mafia
 echo Pulling Updates
 git stash
 git pull --rebase
-
-echo Refreshing Configs
-cp system-config/client-config.json client/src/resources/config.json
-cp system-config/server-config.json server/resources/config.json
+git stash pop
 
 echo Building Server
 cd /mafia/server

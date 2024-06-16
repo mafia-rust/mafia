@@ -1,5 +1,10 @@
+#!/bin/bash
+if [ $EUID != 0 ]; then
+	echo "Please run this script as root!"
+    exit
+fi	
+
 cd /
-echo Make sure you run this as root!
 echo Updating Debian
 apt-get update &&
 apt-get upgrade -y

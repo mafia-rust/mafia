@@ -53,5 +53,14 @@ cargo run
 ```
 
 ### Production Enviornment
+#### Install
 We have built an install script that automatically pulls all the dependencies.
-Simply clone the repo to the root directory of your debian server.
+Run the following command as the root user
+```bash
+curl -fSsL https://raw.githubusercontent.com/mafia-rust/mafia/main/system/install.sh | sh
+```
+
+#### Update
+```bash
+./mafia/system/update.sh
+```
