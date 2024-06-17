@@ -8,7 +8,9 @@ cd /
 echo Updating Debian
 apt-get update
 apt-get upgrade -y
-apt-get install -y curl nano sudo git build-essential
+
+echo Installing Extras
+apt-get install -y curl nano git build-essential
 
 echo Cloning game files
 git clone https://github.com/mafia-rust/mafia.git
@@ -25,14 +27,9 @@ nano server/resources/config.json
 
 echo Creating mafia user
 adduser -disabled-password --gecos "" mafia
-usermod -aG sudo mafia
 
 echo Setting Permissions
-chmod +x update.sh
-chmod +x install-deps.sh
-chmod +x update-rootless.sh
-chmod +x start-game-client.sh
-chmod +x start-game-server.sh
+chmod +x *.sh
 chown -R mafia:mafia /mafia
 
 echo Installing Build Dependencies
