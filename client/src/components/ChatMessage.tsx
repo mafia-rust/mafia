@@ -102,14 +102,20 @@ const ChatElement = React.memo((
             </span>
         case "playerDied":
             return <>
-                <StyledText className={"chat-message " + style}
-                    playerKeywordData={props.playerKeywordData}
-                >{(icon??"")} {translate("chatMessage.playerDied",
-                    playerNames[message.variant.grave.player],
-                )}</StyledText>
-                <div className="grave-message">
-                    <GraveComponent grave={message.variant.grave} playerNames={playerNames}/>
-                </div>
+                <details>
+                    <summary>
+                        <StyledText className={"chat-message " + style}
+                            playerKeywordData={props.playerKeywordData}
+                        >
+                            {(icon??"")} {translate("chatMessage.playerDied",
+                                playerNames[message.variant.grave.player],
+                            )}
+                        </StyledText>
+                    </summary>
+                    <div className="grave-message">
+                        <GraveComponent grave={message.variant.grave} playerNames={playerNames}/>
+                    </div>
+                </details>
             </>;
     }
 
