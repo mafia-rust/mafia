@@ -82,16 +82,30 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
             graveRoleString = translate("obscured");
         }
 
-        return(<button 
+        return(<button
             className="grave-list-button"
             style={{ gridRow: graveIndex + 1 }} 
-            key={graveIndex} 
-            onClick={()=>{this.setState({extendedGraveIndex:graveIndex})}}
+            key={graveIndex}
+            onClick={()=>{
+                let extendedGraveIndex = this.state.extendedGraveIndex;
+                if(extendedGraveIndex === graveIndex)
+                    extendedGraveIndex = null;
+                else
+                    extendedGraveIndex = graveIndex;
+                this.setState({extendedGraveIndex:extendedGraveIndex})
+            }}
         >
-            <StyledText noLinks={true}>{this.state.players[grave.player]?.toString()}</StyledText>
-            <StyledText noLinks={true}>
-                {` (${graveRoleString})`}
-            </StyledText>
+            <span>
+                {
+                    this.state.extendedGraveIndex === graveIndex ? 
+                        <Icon>menu</Icon> :
+                        <Icon>menu_open</Icon>
+                }
+                <StyledText noLinks={true}>{this.state.players[grave.player]?.toString()}</StyledText>
+                <StyledText noLinks={true}>
+                    {` (${graveRoleString})`}
+                </StyledText>
+            </span>
         </button>);
     }
     renderGraveExtended(grave: Grave){

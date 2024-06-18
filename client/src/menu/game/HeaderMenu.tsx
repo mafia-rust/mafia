@@ -104,7 +104,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
         switch(this.state.phase){
             case "testimony":
             case "finalWords":
-                phaseSpecific = <div>
+                phaseSpecific = <div  className="highlighted">
                     <StyledText>
                         {this.state.players[this.state.playerOnTrial!]?.toString()}
                     </StyledText>
@@ -127,7 +127,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                     }
 
 
-                    phaseSpecific = <div>
+                    phaseSpecific = <div className="highlighted">
                         <StyledText>
                             {this.state.players[this.state.playerOnTrial!]?.toString()}
                         </StyledText>
