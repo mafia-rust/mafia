@@ -53,6 +53,10 @@ impl Lobby {
         }
     }
 
+    pub fn is_in_game(&self) -> bool {
+        matches!(self.lobby_state, LobbyState::Game { .. })
+    }
+
     pub fn set_rolelist_length(settings: &mut Settings, clients: &HashMap<LobbyClientID, LobbyClient>) {
         let length = clients.iter()
             .filter(|p| matches!(p.1.client_type, LobbyClientType::Player{..}))

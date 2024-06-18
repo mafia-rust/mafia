@@ -7,6 +7,7 @@ import "./playMenu.css";
 import { StateListener } from "../../game/gameManager.d";
 import { LobbyPreviewData } from "../../game/packet";
 import LobbyMenu from "../lobby/LobbyMenu";
+import PlayMenuJoinPopup from "./PlayMenuJoinPopup";
 
 export default function PlayMenu(): ReactElement {
     
@@ -98,7 +99,7 @@ function PlayMenuFooter(): ReactElement {
     </footer>
 }
 
-async function joinGame(roomCode?: number, playerId?: number): Promise<boolean> {
+export async function joinGame(roomCode?: number, playerId?: number): Promise<boolean> {
     if (roomCode === undefined) return false;
 
     Anchor.setContent(<LoadingScreen type="join"/>);
@@ -155,7 +156,18 @@ function PlayMenuTable(): ReactElement {
                 const lobby: LobbyPreviewData = entry[1];
 
                 return <tr key={roomCode}>
-                    <td><button onClick={() => joinGame(roomCode)}>{translate("menu.play.button.join")}</button></td>
+                    <td>
+                        <button onClick={() => {
+                            if(lobby.inGame){
+                                Anchor.setCoverCard(<PlayMenuJoinPopup 
+                                    roomCode={roomCode}
+                                    lobbyData={lobby}
+                                />);
+                            }else{
+                                joinGame(roomCode);
+                            }
+                        }}>{translate("menu.play.button.join")}</button>
+                    </td>
                     <td>{lobby.name}</td>
                     <td>
                         <div className="play-menu-lobby-player-list">

@@ -30,6 +30,8 @@ async function route(url: Location) {
     }
 
     if (roomCode !== null) {
+
+        
         await GAME_MANAGER.setOutsideLobbyState();
         
         window.history.replaceState({}, document.title, window.location.pathname);
@@ -37,12 +39,25 @@ async function route(url: Location) {
         let success: boolean;
         try {
             const code = parseInt(roomCode, 18)
-            success = await GAME_MANAGER.sendJoinPacket(code);
+            if (reconnectData) {
+                success = await GAME_MANAGER.sendRejoinPacket(code, reconnectData.playerId);
+                
+
+                if(!success) {
+                    reconnectData = null;
+                    deleteReconnectData();
+                    success = await GAME_MANAGER.sendJoinPacket(code);
+                }
+            }else{
+                success = await GAME_MANAGER.sendJoinPacket(code);
+            }
         } catch {
             success = false;
         }
+        
         if (!success) {
             await GAME_MANAGER.setDisconnectedState();
+            Anchor.clearCoverCard();
             Anchor.setContent(<StartMenu/>)
         }
     } else if (reconnectData) {

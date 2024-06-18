@@ -9,6 +9,7 @@ import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenu
 
 export type LobbyPreviewData = {
     name: string,
+    inGame : boolean,
     players: [LobbyClientID, string][]
 }
 

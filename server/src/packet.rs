@@ -29,6 +29,7 @@ use crate::{game::{
 #[serde(rename_all = "camelCase")]
 pub struct LobbyPreviewData {
     pub name: String,
+    pub in_game: bool,
     pub players: Vec<(LobbyClientID, String)>
 }
 

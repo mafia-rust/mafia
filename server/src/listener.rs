@@ -236,7 +236,8 @@ impl Listener{
                 connection.send(ToClientPacket::LobbyList{lobbies: self.lobbies.iter()
                     .map(|(room_code, lobby)|
                         (*room_code, LobbyPreviewData { 
-                            name: lobby.name.clone(), 
+                            name: lobby.name.clone(),
+                            in_game: lobby.is_in_game(),
                             players: lobby.get_player_list() 
                         }
                     ))

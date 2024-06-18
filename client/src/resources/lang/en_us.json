@@ -10,6 +10,7 @@
     "menu.play.title": "Server Browser",
     "menu.play.button.join": "Join",
     "menu.play.button.host": "Host",
+    "menu.play.button.spectate": "Spectate",
     "refresh": "Refresh",
     "menu.play.button.rejoin": "Rejoin",
     "menu.play.field.roomCode": "Copy room link",
