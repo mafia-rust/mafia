@@ -58,6 +58,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
             return <GameScreen contentMenus={[
                 ContentMenu.ChatMenu,
                 ContentMenu.PlayerListMenu,
+                ContentMenu.WillMenu,
                 ContentMenu.GraveyardMenu
             ]}/>
         }

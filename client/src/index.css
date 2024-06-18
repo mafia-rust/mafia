@@ -209,3 +209,10 @@ code, .code {
     --hover-color: #3d3023;
     --tab-color: #39352a;
 }
+
+
+@media only screen and (max-width: 600px) {
+    .mobile-hidden {
+        display: none;
+    }
+}

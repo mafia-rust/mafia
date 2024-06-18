@@ -161,16 +161,23 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
                 onClick={()=>GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.ChatMenu)}
             >
                 {this.props.chatMenuNotification?<div className="chat-notification highlighted">!</div>:null}
-                {translate("menu.chat.icon")}{translate("menu.chat.title")}
+                {translate("menu.chat.icon")}
+                <span className="mobile-hidden">{translate("menu.chat.title")}</span>
             </Button>
             <Button className="player-list-menu-colors"
                 highlighted={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.PlayerListMenu)}
                 onClick={()=>GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.PlayerListMenu)}
-            >{translate("menu.playerList.icon")}{translate("menu.playerList.title")}</Button>
+            >
+                {translate("menu.playerList.icon")}
+                <span className="mobile-hidden">{translate("menu.playerList.title")}</span>
+            </Button>
             <Button className="will-menu-colors" 
                 highlighted={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WillMenu)}
                 onClick={()=>GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.WillMenu)}
-            >{translate("menu.will.icon")}{translate("menu.will.title")}</Button>
+            >
+                {translate("menu.will.icon")}
+                <span className="mobile-hidden">{translate("menu.will.title")}</span>
+            </Button>
             {(()=>
                 (
                     ROLES[this.state.roleState?.type as Role] === undefined || !ROLES[this.state.roleState?.type as Role].largeRoleSpecificMenu
@@ -187,11 +194,17 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
             <Button className="graveyard-menu-colors" 
                 highlighted={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.GraveyardMenu)}
                 onClick={()=>GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.GraveyardMenu)}
-            >{translate("menu.graveyard.icon")}{translate("menu.graveyard.title")}</Button>
+            >
+                {translate("menu.graveyard.icon")}
+                <span className="mobile-hidden">{translate("menu.graveyard.title")}</span>
+            </Button>
             <Button className="wiki-menu-colors"
                 highlighted={GameScreen.instance.menusOpen().includes(GameScreenContentMenus.WikiMenu)} 
                 onClick={()=>GameScreen.instance.closeOrOpenMenu(GameScreenContentMenus.WikiMenu)}
-            >{translate("menu.wiki.icon")}{translate("menu.wiki.title")}</Button>
+            >
+                {translate("menu.wiki.icon")}
+                <span className="mobile-hidden">{translate("menu.wiki.title")}</span>
+            </Button>
         </div>
     }
     renderPhase(){

@@ -1,7 +1,13 @@
 
-.chat-menu {
+.game-screen .content > .chat-menu {
     display: flex;
     flex-direction: column;
+    width: 55%;
+}
+@media only screen and (max-width: 600px) {
+    .game-screen .content > .chat-menu {
+        width: 100%;
+    }
 }
 .chat-message-section {
     height: 100%;
