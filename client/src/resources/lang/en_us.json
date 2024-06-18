@@ -1164,7 +1164,7 @@
     "wiki.article.role.framer.attributes":"",
     "wiki.article.role.framer.extra":"-A suspicious aura will make the player with it look suspicious to a Detective, they can appear as the evil player to a Psychic, and they will be enemies with everyone to a Philosopher\n* You can't select other mafia members for your first target, but you can select any player for your second target, including dead players and other mafia members\n* For more information, see appeared visits",
 
-    "wiki.article.role.mafiaWildcard.guide": "* Choose a mafia role to become that role\n    * You become that role when night starts\n* You can't become a role that has exceeded its role limit",
+    "wiki.article.role.mafiaWildcard.guide": "* Choose a mafia role to become that role\n    * You become that role when night starts\n* You likely can't become a role if someone already has that role (You can't become a role that has exceeded its role limit)",
     "wiki.article.role.mafiaWildcard.abilities":"* Become a role you choose at the start of night",
     "wiki.article.role.mafiaWildcard.attributes":"* You can't become a mafioso or godfather\n* You can not become a role that is disabled\n* You can not become a role that is taken by too many players",
     "wiki.article.role.mafiaWildcard.extra":"* If you choose a role that was disabled you stay as the Mafia Wildcard\n* You can choose Mafia Wildcard to stay as Mafia Wildcard\n* You can't become a role that is at its role limit, for example, you can't become a witch even if there is already one in the game, even if that witch is dead",
