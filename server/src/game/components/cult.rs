@@ -29,14 +29,17 @@ impl Cult{
     pub fn on_game_start(game: &mut Game) {
         Cult::set_ordered_cultists(game);
     }
-    pub fn on_any_death(game: &mut Game){
+    pub fn on_any_death(game: &mut Game, player: PlayerReference) {
         let mut cult = game.cult().clone();
 
-        cult.sacrifices_required = cult.sacrifices_required.map(|s| s.saturating_sub(1));
+        if player.role(game).faction() != Faction::Cult {
+            cult.sacrifices_required = cult.sacrifices_required.map(|s| s.saturating_sub(1));
+        }
         if let Some(required) = cult.sacrifices_required{
             game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::CultSacrificesRequired { required });
         }
         game.set_cult(cult);
+        
 
         Cult::set_ordered_cultists(game);
     }

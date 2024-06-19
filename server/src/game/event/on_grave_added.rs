@@ -1,4 +1,8 @@
-use crate::game::{grave::GraveReference, player::PlayerReference, Game};
+use crate::game::{
+    grave::GraveReference,
+    player::PlayerReference,
+    Game
+};
 
 
 #[must_use = "Event must be invoked"]

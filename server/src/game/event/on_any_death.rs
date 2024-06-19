@@ -18,7 +18,7 @@ impl OnAnyDeath{
         }
 
         Mafia::on_any_death(game, self.dead_player);
-        Cult::on_any_death(game);
+        Cult::on_any_death(game, self.dead_player);
 
         game.on_any_death(self.dead_player);
     }
