@@ -14,6 +14,7 @@ apt-get install -y curl nano git build-essential
 
 echo Cloning game files
 git clone https://github.com/mafia-rust/mafia.git
+cd /mafia
 
 echo Linking Services
 ln -s /mafia/system/mafia-game-client.service /etc/systemd/system/mafia-game-client.service
@@ -29,14 +30,15 @@ echo Creating mafia user
 adduser -disabled-password --gecos "" mafia
 
 echo Setting Permissions
-chmod +x *.sh
+chmod +x update-rootless.sh
+chmod +x install-deps.sh
 chown -R mafia:mafia /mafia
 
 echo Installing Build Dependencies
-runuser -l mafia -c './install-deps.sh'
+runuser -l mafia -c 'cd /mafia/system && ./install-deps.sh'
 
 echo Bootstrapping Mafia
-runuser -l mafia -c './update-rootless.sh'
+runuser -l mafia -c 'cd /mafia/system && ./update-rootless.sh'
 
 echo Reloading Daemons
 systemctl daemon-reload
