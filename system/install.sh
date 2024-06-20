@@ -10,7 +10,7 @@ apt-get update
 apt-get upgrade -y
 
 echo Installing Extras
-apt-get install -y curl nano git build-essential
+apt-get install -y curl nano git build-essential pkg-config libssl-devel
 
 echo Cloning game files
 git clone https://github.com/mafia-rust/mafia.git
