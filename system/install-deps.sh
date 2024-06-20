@@ -7,3 +7,4 @@ nvm install 20
 echo Installing Rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain none -y
 rustup toolchain install nightly --allow-downgrade --profile minimal --component clippy
+rustup default stable
