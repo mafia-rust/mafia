@@ -1181,6 +1181,66 @@ fn godfathers_backup_tag_works() {
 }
 
 #[test]
+fn gossip_basic_friends() {
+    kit::scenario!(game in Night 1 where
+        gossip: Gossip,
+        t1: Detective,
+        t2: Detective,
+        _gf: Godfather
+    );
+
+    assert!(gossip.set_night_selection_single(t1));
+    assert!(t1.set_night_selection_single(t2));
+
+    game.next_phase();
+
+    assert_contains!(
+        gossip.get_messages(),
+        ChatMessageVariant::GossipResult { enemies: false }
+    );
+}
+
+#[test]
+fn gossip_basic_enemies_inverted() {
+    kit::scenario!(game in Night 1 where
+        gossip: Gossip,
+        t1: Detective,
+        _t2: Detective,
+        py: Pyrolisk
+    );
+
+    assert!(gossip.set_night_selection_single(py));
+    assert!(py.set_night_selection_single(t1));
+
+    game.next_phase();
+
+    assert_contains!(
+        gossip.get_messages(),
+        ChatMessageVariant::GossipResult { enemies: true }
+    );
+}
+
+#[test]
+fn gossip_basic_enemies() {
+    kit::scenario!(game in Night 1 where
+        gossip: Gossip,
+        t1: Detective,
+        _t2: Detective,
+        py: Pyrolisk
+    );
+
+    assert!(gossip.set_night_selection_single(t1));
+    assert!(t1.set_night_selection_single(py));
+
+    game.next_phase();
+
+    assert_contains!(
+        gossip.get_messages(),
+        ChatMessageVariant::GossipResult { enemies: true }
+    );
+}
+
+#[test]
 fn gossip_framer() {
     kit::scenario!(game in Night 1 where 
         gossip: Gossip,

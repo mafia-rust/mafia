@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::game_over_state::GameOverState;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -8,7 +9,6 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::detective::Detective;
 use super::{Priority, RoleStateImpl};
 
 pub(super) const FACTION: Faction = Faction::Town;
@@ -69,8 +69,14 @@ impl Gossip {
         }
             .iter()
             .map(|v|v.target.clone())
-            .any(|p|
-                Detective::player_is_suspicious(game, p)
+            .any(|visited_player|
+                if visited_player.has_suspicious_aura(game){
+                    true
+                }else if visited_player.has_innocent_aura(game){
+                    false
+                }else{
+                    !GameOverState::can_win_together(game, player_ref, visited_player)
+                }
             )
     }
 }

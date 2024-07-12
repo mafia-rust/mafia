@@ -624,7 +624,7 @@
     "chatMessage.broadcastWhisper":"\\0 whispered to \\1.",
 
     "chatMessage.roleAssignment":"Your role is \\0",
-    "chatMessage.playerDied":"\\0 died.",
+    "chatMessage.playerDied":"\\0 (\\1) died.",
     "chatMessage.playersRoleRevealed":"\\0 was revealed to be the \\1 to you.",
     "chatMessage.playersRoleConcealed":"\\0 had their role concealed from you.",
     "chatMessage.deathNote": "A note left with the body reads:",
@@ -1223,7 +1223,7 @@
     "wiki.article.role.pyrolisk.guide":"- Select a player to attack them, and obscure them\n- You passively attack and obscure everyone who visits you\n- On night 1, you don't attack anyone, but still tag them for obscuring, if they die later you obscure them\n- You are told the players you obscures role and alibi",
     "wiki.article.role.pyrolisk.abilities":"* On night one\n    * Visit a player to tag them for obscuring\n    * All players who visit you are tagged for obscuring\n* On other nights\n    * Visit a player to attack them and tag them for obscuring\n    * All players who visit you are attacked by you and tagged for obscuring\n* All players you tagged for obscuring are obscured when they die, you are told their role and alibi",
     "wiki.article.role.pyrolisk.attributes":"* If you are roleblocked, you still attack or tag visitors, but don't attack or tag the person you visit\n* Your attack is armor piercing",
-    "wiki.article.role.pyrolisk.extra":"* When you first become a pyrolisk, you tag yourself for obscuring",
+    "wiki.article.role.pyrolisk.extra":"* When you first become a pyrolisk, you tag yourself for obscuring\n* As long as a pyrolisk exists, dead or alive, players marked for obscuring by pyrolisks are obscured when they die",
 
     "wiki.article.role.fiendsWildcard.guide": "* Choose a fiends role to become that role\n    * You become that role when night starts\n* You can't become a role that has exceeded its role limit",
     "wiki.article.role.fiendsWildcard.abilities":"* Become a role you choose at the start of night",

@@ -218,7 +218,7 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
 
     renderFastForwardButton(){
         return <Button 
-            onClick={()=>GAME_MANAGER.sendVoteFastForwardPhase(true)}
+            onClick={()=>GAME_MANAGER.sendVoteFastForwardPhase(!this.state.fastForward)}
             className="fast-forward-button"
             highlighted={this.state.fastForward}
         >

@@ -101,6 +101,17 @@ const ChatElement = React.memo((
                 }/>
             </span>
         case "playerDied":
+
+            let graveRoleString: string;
+            switch (message.variant.grave.information.type) {
+                case "obscured":
+                    graveRoleString = translate("obscured");
+                    break;
+                case "normal":
+                    graveRoleString = translate("role."+message.variant.grave.information.role+".name");
+                    break;
+            }
+
             return <>
                 <details>
                     <summary>
@@ -108,7 +119,7 @@ const ChatElement = React.memo((
                             playerKeywordData={props.playerKeywordData}
                         >
                             {(icon??"")} {translate("chatMessage.playerDied",
-                                playerNames[message.variant.grave.player],
+                                playerNames[message.variant.grave.player], graveRoleString
                             )}
                         </StyledText>
                     </summary>
