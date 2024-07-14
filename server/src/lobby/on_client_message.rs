@@ -1,6 +1,6 @@
 use std::{collections::{HashMap, VecDeque}, time::{Duration, Instant}};
 
-use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, strings::TidyableString, websocket_connections::connection::ClientSender};
+use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters, PlayerReference}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, strings::TidyableString, websocket_connections::connection::ClientSender};
 
 use super::{lobby_client::{LobbyClient, LobbyClientID, LobbyClientType}, name_validation::{self, sanitize_server_name}, Lobby, LobbyState};
 
@@ -327,7 +327,21 @@ impl Lobby {
                 }
 
                 let mut new_clients = HashMap::new();
+                let mut new_clients_messages = HashMap::new();
                 for (lobby_client_id, game_client) in clients.clone().into_iter() {
+
+                    //get all the chat messages that player got while in game
+                    new_clients_messages.insert(lobby_client_id, if let GameClientLocation::Player(player_index) = game_client.client_location {
+                        if let Ok(player) = PlayerReference::new(&game, player_index) {
+                            player.chat_messages(game).clone()
+                        }else{
+                            Vec::new()
+                        }
+                    }else{
+                        Vec::new()
+                    });
+                    
+                    
                     new_clients.insert(lobby_client_id, LobbyClient::new_from_game_client(&game, game_client));
                 }
 
@@ -344,11 +358,23 @@ impl Lobby {
                         for (id, client) in clients {
                             client.send(ToClientPacket::YourId { player_id: id.clone() });
                             Self::send_settings(client, settings, self.name.clone());
+
+                            if let Some(messages) = new_clients_messages.get(&id) {
+                                for i in 0..(messages.len() / 5) {
+                                    //get the next 5 messages
+                                    client.send(ToClientPacket::AddChatMessages {
+                                        chat_messages: messages.iter().skip(i * 5).take(5).cloned().collect()
+                                    });
+                                }
+                            }
                         }
                         Self::send_players_lobby(clients);
                     }
                     _ => unreachable!("LobbyState::Lobby was set to be to LobbyState::Lobby in the previous line")
                 }
+
+                
+                
             }
             _ => {
                 let LobbyState::Game { game, clients } = &mut self.lobby_state else {

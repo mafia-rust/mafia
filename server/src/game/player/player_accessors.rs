@@ -164,6 +164,9 @@ impl PlayerReference{
         self.deref_mut(game).chat_messages.push(message.clone());
         self.deref_mut(game).queued_chat_messages.push(message);
     }
+    pub fn chat_messages<'a>(&self, game: &'a Game) -> &'a Vec<ChatMessage> {
+        &self.deref(game).chat_messages
+    }
 
     pub fn set_fast_forward_vote(&self, game: &mut Game, fast_forward_vote: bool) {
         self.deref_mut(game).fast_forward_vote = fast_forward_vote;
