@@ -6,12 +6,12 @@ import "./../gameScreen.css"
 import { PhaseType, Player, PlayerIndex } from "../../../game/gameState.d";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import { StateListener } from "../../../game/gameManager.d";
-import SmallRoleSpecificMenu from "./RoleSpecificMenus/SmallRoleSpecificMenu";
 import StyledText from "../../../components/StyledText";
 import { RoleState } from "../../../game/roleState.d";
 import Icon from "../../../components/Icon";
 import { Button } from "../../../components/Button";
 import { Grave } from "../../../game/graveState";
+import RoleSpecificSection from "../../../components/RoleSpecific";
 
 type PlayerListMenuProps = {
 }
@@ -340,12 +340,17 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     render(){return(<div className="player-list-menu player-list-menu-colors">
         <ContentTab close={ContentMenu.PlayerListMenu} helpMenu={"standard/playerList"}>{translate("menu.playerList.title")}</ContentTab>
 
+        
+            {/* !(ROLES[this.state.roleState?.type as Role] === undefined || !ROLES[this.state.roleState?.type as Role].largeRoleSpecificMenu)? */}
+        <details className="role-specific-colors small-role-specific-menu">
+            <summary>{translate("role."+this.state.roleState?.type+".name")}</summary>
+            <RoleSpecificSection/>
+        </details>
         <div>
             {this.renderFilterButton("all")}
             {this.renderFilterButton("living")}
             {this.renderFilterButton("usable")}
         </div>
-        <SmallRoleSpecificMenu/>
         {this.renderPhaseSpecific()}
         {this.renderPlayers(this.state.players)}
     </div>)}
