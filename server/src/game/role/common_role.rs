@@ -1,4 +1,4 @@
-use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, role_list::Faction, phase::{PhaseState, PhaseType}, game_over_state::GameOverState};
+use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, role_list::Faction, phase::{PhaseState, PhaseType}, resolution_state::ResolutionState};
 
 use super::{journalist::Journalist, medium::Medium, same_evil_team, RoleState};
 
@@ -136,8 +136,8 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
 
 ///Only works for roles that win based on end game condition
 pub(super) fn get_won_game(game: &Game, actor_ref: PlayerReference) -> bool {
-    if let Some(end_game_condition) = GameOverState::game_is_over(game) {
-        GameOverState::can_win_with(game, actor_ref, end_game_condition)
+    if let Some(end_game_condition) = ResolutionState::game_is_over(game) {
+        ResolutionState::can_win_with(game, actor_ref, end_game_condition)
     } else {
         false
     }

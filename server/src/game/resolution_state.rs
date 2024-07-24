@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use super::{player::PlayerReference, role::Role, role_list::Faction, Game};
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash)]
-pub enum GameOverState {
+pub enum ResolutionState {
     Town,
     Mafia,
     Cult,
@@ -15,19 +15,19 @@ pub enum GameOverState {
 
     Draw
 }
-impl GameOverState {
-    pub fn all()->Vec<GameOverState>{
+impl ResolutionState {
+    pub fn all()->Vec<ResolutionState>{
         vec![
-            GameOverState::Town,
-            GameOverState::Mafia,
-            GameOverState::Cult,
-            GameOverState::Fiends,
-            GameOverState::Death,
-            GameOverState::Politician
+            ResolutionState::Town,
+            ResolutionState::Mafia,
+            ResolutionState::Cult,
+            ResolutionState::Fiends,
+            ResolutionState::Death,
+            ResolutionState::Politician
         ]
     }
     ///either return Some(EndGameCondition) or None (if the game is not over yet)
-    pub fn game_is_over(game: &Game)->Option<GameOverState> {
+    pub fn game_is_over(game: &Game)->Option<ResolutionState> {
 
         //Special wildcard case
         let living_roles = PlayerReference::all_players(game).filter_map(|player|{
@@ -44,18 +44,18 @@ impl GameOverState {
         
         //if nobody is left to hold game hostage
         if !PlayerReference::all_players(game).any(|player|player.keeps_game_running(game)){
-            return Some(GameOverState::Draw);
+            return Some(ResolutionState::Draw);
         }
 
         //find one end game condition that everyone agrees on
-        for end_game_condition in GameOverState::all() {
+        for end_game_condition in ResolutionState::all() {
             //if everyone who keeps the game running agrees on this end game condition, return it
             if
                 PlayerReference::all_players(game)
                     .filter(|p|p.alive(game))
                     .filter(|p|p.keeps_game_running(game))
                     .all(|p|
-                        if let Some(set) = p.required_game_over_states_for_win(game){
+                        if let Some(set) = p.required_resolution_states_for_win(game){
                             set.contains(&end_game_condition)
                         }else{
                             true
@@ -69,25 +69,25 @@ impl GameOverState {
         None
     }
     
-    pub fn can_win_with(game: &Game, player: PlayerReference, game_over_state: GameOverState)->bool{
-        if let Some(set) = player.required_game_over_states_for_win(game){
-            set.contains(&game_over_state)
+    pub fn can_win_with(game: &Game, player: PlayerReference, resolution_state: ResolutionState)->bool{
+        if let Some(set) = player.required_resolution_states_for_win(game){
+            set.contains(&resolution_state)
         }else{
             true
         }
         
     }
-    pub fn exclusively_wins_with(game: &Game, player: PlayerReference, game_over_state: GameOverState)->bool{
-        if let Some(set) = player.required_game_over_states_for_win(game) {
-            set.len() == 1 && set.contains(&game_over_state)
+    pub fn requires_only_this_resolution_state(game: &Game, player: PlayerReference, resolution_state: ResolutionState)->bool{
+        if let Some(set) = player.required_resolution_states_for_win(game) {
+            set.len() == 1 && set.contains(&resolution_state)
         }else{
             false
         }
     }
     
     pub fn can_win_together(game: &Game, a: PlayerReference, b: PlayerReference)->bool{
-        let a_conditions = a.required_game_over_states_for_win(game);
-        let b_conditions = b.required_game_over_states_for_win(game);
+        let a_conditions = a.required_resolution_states_for_win(game);
+        let b_conditions = b.required_resolution_states_for_win(game);
 
         match (a_conditions, b_conditions){
             (Some(a), Some(b)) => a.intersection(&b).count() > 0,
@@ -97,27 +97,30 @@ impl GameOverState {
     
 
     ///this role wins if the end game state is in this list
-    pub fn required_game_over_states_for_win(role: Role)->Option<HashSet<GameOverState>>{
+    pub fn required_resolution_states_for_win(role: Role)->Option<HashSet<ResolutionState>>{
         Some(match role.faction(){
-            Faction::Mafia => vec![GameOverState::Mafia],
-            Faction::Cult => vec![GameOverState::Cult],
-            Faction::Town => vec![GameOverState::Town],
-            Faction::Fiends => vec![GameOverState::Fiends],
+            Faction::Mafia => vec![ResolutionState::Mafia],
+            Faction::Cult => vec![ResolutionState::Cult],
+            Faction::Town => vec![ResolutionState::Town],
+            Faction::Fiends => vec![ResolutionState::Fiends],
             Faction::Neutral => match role {
-                Role::Minion => {
-                    GameOverState::all().into_iter().filter(|end_game_condition|
+                Role::Minion | Role::Scarecrow => {
+                    ResolutionState::all().into_iter().filter(|end_game_condition|
                         match end_game_condition {
-                            GameOverState::Town => false,
+                            ResolutionState::Town => false,
                             _ => true
                         }
                     ).collect()
                 },
-                Role::Politician => vec![GameOverState::Politician],
+                Role::Politician => vec![ResolutionState::Politician],
                 _ => {return None;}
             },
         }.into_iter().collect())
     }
     ///Town, Mafia, Cult, NK
+    /// Is either town, or has the ability to consistently kill till the end of the game
+    /// *has the ability to change what the set of living players win conditions are until game over (convert, marionette, kill)*
+    /// A detective and a minion game never ends
     pub fn keeps_game_running(role: Role)->bool{
         if role.faction() == Faction::Neutral{
             false

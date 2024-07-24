@@ -5,7 +5,7 @@ use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
-use crate::game::game_over_state::GameOverState;
+use crate::game::resolution_state::ResolutionState;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
@@ -82,7 +82,7 @@ impl Philosopher{
         }else if a.has_innocent_aura(game) || b.has_innocent_aura(game){
             false
         }else{
-            !GameOverState::can_win_together(game, a, b)
+            !ResolutionState::can_win_together(game, a, b)
         }
     }
 }
