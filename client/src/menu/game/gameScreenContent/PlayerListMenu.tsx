@@ -26,6 +26,7 @@ type PlayerListMenuState = {
     chatFilter: PlayerIndex | null,
 
     myIndex: PlayerIndex,
+    roleSpecificOpen: boolean,
 }
 type PlayerFilter = "all"|"living"|"usable";
 
@@ -70,6 +71,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 playerFilter: "living",
                 chatFilter: null,
                 myIndex: GAME_MANAGER.state.clientState.myIndex??0,
+                roleSpecificOpen: false
             };
 
         this.updatePlayerFilter = () => {
@@ -111,7 +113,9 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         this.setState({chatFilter: GAME_MANAGER.state.clientState.chatFilter});
                 break;
                 case "phase":
-                    this.setState({ phase: GAME_MANAGER.state.phaseState.type })
+                    this.setState({ phase: GAME_MANAGER.state.phaseState.type });
+                    if (GAME_MANAGER.state.phaseState.type === "night")
+                        this.setState({ roleSpecificOpen: true });
                 break;
                 case "gamePlayers":
                 case "yourButtons":
@@ -340,12 +344,11 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     render(){return(<div className="player-list-menu player-list-menu-colors">
         <ContentTab close={ContentMenu.PlayerListMenu} helpMenu={"standard/playerList"}>{translate("menu.playerList.title")}</ContentTab>
 
-        
-            {/* !(ROLES[this.state.roleState?.type as Role] === undefined || !ROLES[this.state.roleState?.type as Role].largeRoleSpecificMenu)? */}
-        <details className="role-specific-colors small-role-specific-menu">
+        <details className="role-specific-colors small-role-specific-menu" onClick={()=>{this.setState({roleSpecificOpen: !this.state.roleSpecificOpen});}} open={this.state.roleSpecificOpen}>
             <summary>{translate("role."+this.state.roleState?.type+".name")}</summary>
             <RoleSpecificSection/>
         </details>
+        
         <div>
             {this.renderFilterButton("all")}
             {this.renderFilterButton("living")}
