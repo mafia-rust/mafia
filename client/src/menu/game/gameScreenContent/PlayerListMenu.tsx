@@ -344,8 +344,13 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
     render(){return(<div className="player-list-menu player-list-menu-colors">
         <ContentTab close={ContentMenu.PlayerListMenu} helpMenu={"standard/playerList"}>{translate("menu.playerList.title")}</ContentTab>
 
-        <details className="role-specific-colors small-role-specific-menu" onClick={()=>{this.setState({roleSpecificOpen: !this.state.roleSpecificOpen});}} open={this.state.roleSpecificOpen}>
-            <summary>{translate("role."+this.state.roleState?.type+".name")}</summary>
+        <details className="role-specific-colors small-role-specific-menu" open={this.state.roleSpecificOpen}>
+            <summary
+                onClick={(e)=>{
+                    e.preventDefault();
+                    this.setState({roleSpecificOpen: !this.state.roleSpecificOpen});
+                }}
+            >{translate("role."+this.state.roleState?.type+".name")}</summary>
             <RoleSpecificSection/>
         </details>
         
