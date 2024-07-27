@@ -1,7 +1,7 @@
 
 use serde::Serialize;
 
-use crate::game::{chat::ChatGroup, game_over_state::GameOverState};
+use crate::game::{chat::ChatGroup, resolution_state::ResolutionState};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -60,7 +60,7 @@ impl RoleStateImpl for Vigilante {
                             let killed = target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Vigilante), 1, false);
                             self.state = VigilanteState::Loaded { bullets: bullets.saturating_sub(1) };
 
-                            if killed && GameOverState::exclusively_wins_with(game, target_ref, GameOverState::Town) {
+                            if killed && ResolutionState::requires_only_this_resolution_state(game, target_ref, ResolutionState::Town) {
                                 self.state = VigilanteState::WillSuicide;
                             }                            
                         }

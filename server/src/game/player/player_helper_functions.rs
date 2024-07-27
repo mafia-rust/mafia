@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use crate::game::
 {
-    chat::{ChatGroup, ChatMessageVariant}, components::{arsonist_doused::ArsonistDoused, puppeteer_marionette::PuppeteerMarionette}, event::{on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, game_over_state::GameOverState, grave::{Grave, GraveKiller, GraveReference}, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
+    chat::{ChatGroup, ChatMessageVariant}, components::{arsonist_doused::ArsonistDoused, puppeteer_marionette::PuppeteerMarionette}, event::{on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, resolution_state::ResolutionState, grave::{Grave, GraveKiller, GraveReference}, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
 };
 
 use super::PlayerReference;
@@ -245,13 +245,13 @@ impl PlayerReference{
         self.night_framed(game) ||
         ArsonistDoused::has_suspicious_aura_douse(game, *self)
     }
-    pub fn required_game_over_states_for_win(&self, game: &Game) -> Option<HashSet<GameOverState>> {
-        if PuppeteerMarionette::is_marionette(game, *self) {return Some(vec![GameOverState::Fiends].into_iter().collect());}
-        GameOverState::required_game_over_states_for_win(self.role(game))
+    pub fn required_resolution_states_for_win(&self, game: &Game) -> Option<HashSet<ResolutionState>> {
+        if PuppeteerMarionette::is_marionette(game, *self) {return Some(vec![ResolutionState::Fiends].into_iter().collect());}
+        ResolutionState::required_resolution_states_for_win(self.role(game))
     }
     pub fn keeps_game_running(&self, game: &Game) -> bool {
         if PuppeteerMarionette::is_marionette(game, *self) {return false;}
-        GameOverState::keeps_game_running(self.role(game))
+        ResolutionState::keeps_game_running(self.role(game))
     }
 
     /*

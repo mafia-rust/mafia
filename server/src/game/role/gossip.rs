@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::game_over_state::GameOverState;
+use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -75,7 +75,7 @@ impl Gossip {
                 }else if visited_player.has_innocent_aura(game){
                     false
                 }else{
-                    !GameOverState::can_win_together(game, player_ref, visited_player)
+                    !ResolutionState::can_win_together(game, player_ref, visited_player)
                 }
             )
     }
