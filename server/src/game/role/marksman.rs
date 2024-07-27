@@ -4,7 +4,7 @@ use std::ops::Deref;
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::game_over_state::GameOverState;
+use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -123,7 +123,7 @@ impl RoleStateImpl for Marksman {
                     
                     let killed = mark.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Marksman), 1, false);
 
-                    if killed && GameOverState::exclusively_wins_with(game, *mark, GameOverState::Town) {
+                    if killed && ResolutionState::requires_only_this_resolution_state(game, *mark, ResolutionState::Town) {
                         self.state = MarksmanState::ShotTownie;
                     }
                 }

@@ -3,7 +3,7 @@ use rand::seq::SliceRandom;
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::game_over_state::GameOverState;
+use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::{GraveKiller, GraveReference};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -48,7 +48,7 @@ impl RoleStateImpl for Cop {
                     .filter(|other_player_ref|
                         other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref &&
-                        !GameOverState::exclusively_wins_with(game, *other_player_ref, GameOverState::Town) &&
+                        !ResolutionState::requires_only_this_resolution_state(game, *other_player_ref, ResolutionState::Town) &&
                         other_player_ref.night_visits(game)
                             .iter()
                             .any(|v|v.target==target_ref)

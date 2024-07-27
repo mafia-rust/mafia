@@ -31,8 +31,12 @@ impl RoleStateImpl for Scarecrow {
             blocked_players.shuffle(&mut thread_rng());
 
             let message = ChatMessageVariant::ScarecrowResult { players:
-                PlayerReference::ref_vec_to_index(target_ref.restrict(game).as_slice())
+                PlayerReference::ref_vec_to_index(blocked_players.as_slice())
             };
+
+            for player_ref in blocked_players.iter(){
+                actor_ref.insert_role_label(game, *player_ref);
+            }
             
             actor_ref.push_night_message(game, message);
         }

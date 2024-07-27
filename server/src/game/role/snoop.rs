@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::game_over_state::GameOverState;
+use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -30,7 +30,7 @@ impl RoleStateImpl for Snoop {
 
             actor_ref.push_night_message(game, 
                 ChatMessageVariant::SnoopResult { townie: 
-                    GameOverState::exclusively_wins_with(game, visit.target, GameOverState::Town) &&
+                    ResolutionState::requires_only_this_resolution_state(game, visit.target, ResolutionState::Town) &&
                     actor_ref.all_visitors(game).len() == 0 &&
                     !visit.target.has_suspicious_aura(game)
                 }
