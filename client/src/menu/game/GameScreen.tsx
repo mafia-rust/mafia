@@ -8,7 +8,7 @@ import GAME_MANAGER, { modulus } from "../..";
 import WikiMenu from "./gameScreenContent/WikiMenu";
 import "../../index.css";
 import "./gameScreen.css";
-import RoleSpecificMenu from "./gameScreenContent/RoleSpecific";
+import RoleSpecificMenu from "./gameScreenContent/RoleSpecificMenu";
 import Anchor from "../Anchor";
 import StyledText from "../../components/StyledText";
 import { Role } from "../../game/roleState.d";

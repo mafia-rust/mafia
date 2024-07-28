@@ -32,7 +32,7 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
                 this.setState({
                     gameState: GAME_MANAGER.state
                 });
-        };  
+        };
     }
     componentDidMount() {
         GAME_MANAGER.addStateListener(this.listener);

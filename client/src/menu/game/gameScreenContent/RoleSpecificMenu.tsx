@@ -3,11 +3,7 @@ import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import GameState from "../../../game/gameState.d";
-import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
-import LargeConsortMenu from "./RoleSpecificMenus/LargeConsortMenu";
-import LargeForgerMenu from "./RoleSpecificMenus/LargeForgerMenu";
-import LargeJournalistMenu from "./RoleSpecificMenus/LargeJournalistMenu";
-import LargeAuditorMenu from "./RoleSpecificMenus/LargeAuditorMenu";
+import RoleSpecificSection from "../../../components/RoleSpecific";
 
 type RoleSpecificMenuProps = {
 }
@@ -41,18 +37,7 @@ export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuPr
     
     renderRoleSpecificMenu(){
         if(this.state.gameState.clientState.type !== "player") return null;
-        switch(this.state.gameState.clientState.roleState?.type){
-            case "auditor":
-                return <LargeAuditorMenu/>;
-            case "journalist":
-                return <LargeJournalistMenu/>;
-            case "hypnotist":
-                return <LargeConsortMenu/>;
-            case "forger":
-                return <LargeForgerMenu/>;
-            case "doomsayer":
-                return <LargeDoomsayerMenu/>;
-        }
+        return <RoleSpecificSection/>
     }
     render(){
         if(this.state.gameState.clientState.type === "player")
