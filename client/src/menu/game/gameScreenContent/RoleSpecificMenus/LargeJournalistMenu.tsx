@@ -30,14 +30,13 @@ export default class LargeJournalistMenu extends React.Component<LargeJournalist
         this.listener = ()=>{
             if(
                 GAME_MANAGER.state.stateType === "game" &&
-                GAME_MANAGER.state.clientState.type === "player"
+                GAME_MANAGER.state.clientState.type === "player" &&
+                GAME_MANAGER.state.clientState.roleState?.type === "journalist"
             ){
-                if(GAME_MANAGER.state.clientState.roleState?.type === "journalist"){
-                    this.setState({
-                        syncedJournal: GAME_MANAGER.state.clientState.roleState.journal,
-                        syncedPublic: GAME_MANAGER.state.clientState.roleState.public,
-                    })
-                }
+                this.setState({
+                    syncedJournal: GAME_MANAGER.state.clientState.roleState.journal,
+                    syncedPublic: GAME_MANAGER.state.clientState.roleState.public,
+                })
             }
         };  
     }

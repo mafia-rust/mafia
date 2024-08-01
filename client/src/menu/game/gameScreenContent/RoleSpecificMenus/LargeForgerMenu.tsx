@@ -10,8 +10,8 @@ import Icon from "../../../../components/Icon";
 type LargeForgerMenuProps = {
 }
 type LargeForgerMenuState = {
-    localRole: Role,
-    savedRole: Role,
+    localRole: Role | null,
+    savedRole: Role | null,
     localWill: string,
     savedWill: string,
     forgesRemaining: number,
@@ -42,8 +42,6 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
                 this.setState({
                     savedWill: GAME_MANAGER.state.clientState.roleState.fakeWill,
                     savedRole: GAME_MANAGER.state.clientState.roleState.fakeRole,
-                    localRole: GAME_MANAGER.state.clientState.roleState.fakeRole,
-                    localWill: GAME_MANAGER.state.clientState.roleState.fakeWill,
                     forgesRemaining: GAME_MANAGER.state.clientState.roleState.forgesRemaining,
                 });
             }
@@ -62,6 +60,10 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
         if(will === ""){
             will = "ROLE\nNight 1: \nNight 2:";
         }
+
+        this.setState({
+            localWill: will,
+        });
 
         GAME_MANAGER.sendSetForgerWill(role, will);
     }
@@ -82,9 +84,9 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
         }
 
         return <div className="large-forger-menu">
-            <div>                
+            <div>
                 <select
-                    value={this.state.localRole} 
+                    value={this.state.localRole?this.state.localRole:"none"} 
                     onChange={(e)=>{
                         this.setState({localRole: e.target.value as Role});
                     }}>
