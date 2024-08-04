@@ -33,7 +33,7 @@ impl RoleStateImpl for Spy {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Investigative => {
-                if actor_ref.night_roleblocked(game) {return;}
+                if actor_ref.night_blocked(game) {return;}
 
                 let mut mafia_visits = vec![];
                 for other_player in PlayerReference::all_players(game){
@@ -62,7 +62,7 @@ impl RoleStateImpl for Spy {
                 };
             },
             Priority::FinalPriority => {
-                if actor_ref.night_roleblocked(game) {return;}
+                if actor_ref.night_blocked(game) {return;}
 
                 let count = PlayerReference::all_players(game).filter(|p|
                     p.role(game).faction() == Faction::Cult && p.alive(game)

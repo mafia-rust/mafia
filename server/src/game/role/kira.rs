@@ -151,7 +151,7 @@ pub(super) const DEFENSE: u8 = 1;
 
 impl RoleStateImpl for Kira {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if actor_ref.night_roleblocked(game) {return;}
+        if actor_ref.night_blocked(game) {return;}
         if !actor_ref.alive(game) {return;}
 
         let result = KiraResult::new(self.guesses.clone(), game);

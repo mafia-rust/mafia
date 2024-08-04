@@ -38,7 +38,7 @@ impl RoleStateImpl for Journalist {
             priority == Priority::Investigative &&
             self.public && 
             actor_ref.alive(game) &&
-            !actor_ref.night_roleblocked(game) &&
+            !actor_ref.night_blocked(game) &&
             !actor_ref.night_silenced(game)
         {
             game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::JournalistJournal { journal: self.journal.clone()});    

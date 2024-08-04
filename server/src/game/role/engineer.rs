@@ -60,7 +60,7 @@ impl RoleStateImpl for Engineer {
             Priority::Heal => {
                 //upgrade state
 
-                if !actor_ref.night_roleblocked(game) {
+                if !actor_ref.night_blocked(game) {
                     match self.trap {
                         Trap::Dismantled => {
                             actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Ready}));

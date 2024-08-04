@@ -34,6 +34,9 @@ impl PlayerReference{
         }
         wardblocked
     }
+    pub fn night_blocked(&self, game: &mut Game)->bool{
+        self.night_roleblocked(game) || self.night_wardblocked(game)
+    }
 
     /// Returns true if attack overpowered defense
     pub fn try_night_kill(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: u8, should_leave_death_note: bool) -> bool {

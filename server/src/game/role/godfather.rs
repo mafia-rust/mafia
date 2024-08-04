@@ -27,7 +27,7 @@ impl RoleStateImpl for Godfather {
         if priority != Priority::Kill {return}
         if game.day_number() == 1 {return}
         
-        if actor_ref.night_roleblocked(game) || actor_ref.night_wardblocked(game) {
+        if actor_ref.night_blocked(game) {
             if let Some(backup) = self.backup {
                 if let Some(visit) = backup.night_visits(game).first(){
                     let target_ref = visit.target;

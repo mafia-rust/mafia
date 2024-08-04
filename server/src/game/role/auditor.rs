@@ -36,7 +36,7 @@ impl RoleStateImpl for Auditor {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
         if priority != Priority::Investigative {return;}
-        if actor_ref.night_roleblocked(game) {return;}
+        if actor_ref.night_blocked(game) {return;}
 
         let Some(chosen_outline) = self.chosen_outline else {return;};
 
