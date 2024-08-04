@@ -83,7 +83,7 @@ impl RoleStateImpl for Hypnotist {
                     }
                 }
                 if self.your_target_was_jailed_message {
-                    target_ref.push_night_message(game, ChatMessageVariant::TargetRestricted);
+                    target_ref.push_night_message(game, ChatMessageVariant::Wardblocked);
                 }
             },
             _ => {}

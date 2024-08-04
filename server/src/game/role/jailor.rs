@@ -37,10 +37,10 @@ impl RoleStateImpl for Jailor {
 
 
         match priority {
-            Priority::Restrict => {
+            Priority::Ward => {
                 for player in PlayerReference::all_players(game){
                     if player.night_jailed(game){
-                        player.restrict(game);
+                        player.ward(game);
                     }
                 }
             }

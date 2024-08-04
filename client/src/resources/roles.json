@@ -29,7 +29,7 @@
             },
             {"type": "jailorDecideExecute","target": 7},
             {"type": "jailorDecideExecute","target": null},
-            {"type": "targetRestricted"},
+            {"type": "wardblocked"},
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
@@ -198,7 +198,7 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "targetRestricted"}
+            {"type": "wardblocked"}
         ]
     },
     "engineer": {
@@ -455,7 +455,7 @@
             {"type": "transported"},
             {"type": "youWerePossessed", "immune": false},
             {"type": "youWerePossessed", "immune": true},
-            {"type": "targetRestricted"}
+            {"type": "wardblocked"}
         ]
     },
     "consort": {
@@ -667,7 +667,7 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "targetRestricted"},
+            {"type": "wardblocked"},
             {"type": "scarecrowResult", "players": [9,15,4]}
         ]
     },

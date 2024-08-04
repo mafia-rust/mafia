@@ -22,17 +22,17 @@ impl PlayerReference{
             );
         }
     }
-    pub fn restrict(&self, game: &mut Game) -> Vec<PlayerReference> {
-        let mut restricted = vec![];
+    pub fn ward(&self, game: &mut Game) -> Vec<PlayerReference> {
+        let mut wardblocked = vec![];
         for visitor in self.all_visitors(game){
-            if !visitor.role(game).restriction_immune() {
-                visitor.set_night_restricted(game, true);
+            if !visitor.role(game).wardblock_immune() {
+                visitor.set_night_wardblocked(game, true);
                 visitor.set_night_visits(game, vec![]);
-                visitor.push_night_message(game, ChatMessageVariant::TargetRestricted);
-                restricted.push(visitor);
+                visitor.push_night_message(game, ChatMessageVariant::Wardblocked);
+                wardblocked.push(visitor);
             }
         }
-        restricted
+        wardblocked
     }
 
     /// Returns true if attack overpowered defense

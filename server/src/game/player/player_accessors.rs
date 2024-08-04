@@ -261,10 +261,10 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.roleblocked = roleblocked;
     }
 
-    pub fn night_restricted(&self, game: &Game) -> bool {
+    pub fn night_wardblocked(&self, game: &Game) -> bool {
         self.deref(game).night_variables.roleblocked
     }
-    pub fn set_night_restricted(&self, game: &mut Game, roleblocked: bool){
+    pub fn set_night_wardblocked(&self, game: &mut Game, roleblocked: bool){
         self.deref_mut(game).night_variables.roleblocked = roleblocked;
     }
 

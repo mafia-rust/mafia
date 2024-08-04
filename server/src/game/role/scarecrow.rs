@@ -22,12 +22,12 @@ pub(super) const DEFENSE: u8 = 0;
 
 impl RoleStateImpl for Scarecrow {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Restrict {return;}
+        if priority != Priority::Ward {return;}
         
         if let Some(visit) = actor_ref.night_visits(game).first(){
             let target_ref = visit.target;
 
-            let mut blocked_players = target_ref.restrict(game);
+            let mut blocked_players = target_ref.ward(game);
             blocked_players.shuffle(&mut thread_rng());
 
             let message = ChatMessageVariant::ScarecrowResult { players:

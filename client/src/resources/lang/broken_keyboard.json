@@ -428,7 +428,7 @@
     "chatMessage.youDied": "Y dd!",
     "chatMessage.youSurvivedAttack": "Y wr ttckd bt hd dfns nd srvvd.",
     "chatMessage.someoneSurvivedYourAttack": "Smn y ttckd hd dfns nd srvvd.",
-    "chatMessage.targetRestricted": "Yr blty fld bcs n f yr trgts ws n jl!",
+    "chatMessage.wardblocked": "Yr blty fld bcs n f yr trgts ws n jl!",
     "chatMessage.roleBlocked.immune": "Smn trd t rlblck y bt y r mmn.",
     "chatMessage.roleBlocked": "Y'v bn rlblckd.",
     "chatMessage.sheriffResult.suspicious": "Yr trgt sms t b sspcs.",

@@ -1348,7 +1348,7 @@ fn bouncer_jailor_double_block() {
 
     assert_contains!(
         det.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 1 }),
-        ChatMessageVariant::TargetRestricted
+        ChatMessageVariant::Wardblocked
     );
 }
 
@@ -1377,7 +1377,7 @@ fn bouncer_ojo_block() {
 }
 
 #[test]
-fn bouncer_protect_no_kill() {
+fn godfather_wardblock_still_kills() {
     kit::scenario!(game in Night 2 where
         rev: Bouncer,
         godfather: Godfather,
@@ -1396,22 +1396,22 @@ fn bouncer_protect_no_kill() {
         townie_a.get_messages_after_last_message(
             ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 1}
         ),
-        ChatMessageVariant::TargetRestricted
+        ChatMessageVariant::Wardblocked
     );
     assert_contains!(
         godfather.get_messages_after_last_message(
             ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 1}
         ),
-        ChatMessageVariant::TargetRestricted
+        ChatMessageVariant::Wardblocked
     );
     assert_not_contains!(
         jan.get_messages_after_last_message(
             ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 1}
         ),
-        ChatMessageVariant::TargetRestricted
+        ChatMessageVariant::Wardblocked
     );
 
-    assert!(townie_b.alive());
+    assert!(!townie_b.alive());
     assert!(townie_a.alive());
 }
 
@@ -1767,8 +1767,8 @@ fn bodyguard_gets_single_target_jailed_message() {
             }
         ),
         vec![
-            ChatMessageVariant::TargetRestricted,
-            /* They should not get a second TargetRestricted message */
+            ChatMessageVariant::Wardblocked,
+            /* They should not get a second Wardblocked message */
             ChatMessageVariant::PhaseChange { 
                 phase: PhaseState::Obituary, day_number: 2 
             }

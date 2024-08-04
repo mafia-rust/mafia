@@ -109,7 +109,7 @@ macros::roles! {
 
 macros::priorities! {
     TopPriority,
-    Restrict,
+    Ward,
 
     Transporter,
 
@@ -298,7 +298,7 @@ impl Role{
             _ => false,
         }
     }
-    pub fn restriction_immune(&self)->bool{
+    pub fn wardblock_immune(&self)->bool{
         match self {
             Role::Jailor
             | Role::Bouncer 
