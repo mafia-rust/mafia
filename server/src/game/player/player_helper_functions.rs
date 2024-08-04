@@ -26,6 +26,7 @@ impl PlayerReference{
         let mut restricted = vec![];
         for visitor in self.all_visitors(game){
             if !visitor.role(game).restriction_immune() {
+                visitor.set_night_restricted(game, true);
                 visitor.set_night_visits(game, vec![]);
                 visitor.push_night_message(game, ChatMessageVariant::TargetRestricted);
                 restricted.push(visitor);

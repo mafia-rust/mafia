@@ -12,6 +12,7 @@ import { RoleOutline, translateRoleOutline } from "../game/roleListState.d";
 import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
+import { KiraGuess, KiraGuessResult, kiraGuessTranslate } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 
 const ChatElement = React.memo((
     props: {
@@ -30,15 +31,15 @@ const ChatElement = React.memo((
     }
     let style = typeof chatMessageStyles[message.variant.type] === "string" ? chatMessageStyles[message.variant.type] : "";
 
-    let icon = null;
+    let chatGroupIcon = null;
     if(message.chatGroup !== null){
         if(message.chatGroup !== "all"){
-            icon = translateChecked("chatGroup."+message.chatGroup+".icon");
+            chatGroupIcon = translateChecked("chatGroup."+message.chatGroup+".icon");
         }else{
-            icon = "";
+            chatGroupIcon = "";
         }
     }else{
-        icon = translate("noGroup.icon");
+        chatGroupIcon = translate("noGroup.icon");
     }
 
     // Special chat messages that don't play by the rules
@@ -51,7 +52,7 @@ const ChatElement = React.memo((
             return <span className={`chat-message ${style}`}>
                 <StyledText
                     playerKeywordData={props.playerSenderKeywordData ?? PLAYER_SENDER_KEYWORD_DATA}
-                >{icon ?? ""} {`sender-${message.variant.sender}`}: </StyledText>
+                >{chatGroupIcon ?? ""} {`sender-${message.variant.sender}`}: </StyledText>
                 <StyledText
                     playerKeywordData={props.playerKeywordData}
                 >{translateChatMessage(message.variant, playerNames)}</StyledText>
@@ -66,7 +67,7 @@ const ChatElement = React.memo((
             }
             
             if (message.variant.messageSender.type === "livingToDead") {
-                icon += translate("messageSender.livingToDead.icon")
+                chatGroupIcon += translate("messageSender.livingToDead.icon")
             }
 
             let messageSender = "";
@@ -83,7 +84,7 @@ const ChatElement = React.memo((
             return <span className={`chat-message ${style}`}>
                 <StyledText
                     playerKeywordData={props.playerSenderKeywordData ?? PLAYER_SENDER_KEYWORD_DATA}
-                >{icon ?? ""} {messageSender}: </StyledText>
+                >{chatGroupIcon ?? ""} {messageSender}: </StyledText>
                 <StyledText
                     playerKeywordData={props.playerKeywordData}
                 >{translateChatMessage(message.variant, playerNames)}</StyledText>
@@ -92,7 +93,7 @@ const ChatElement = React.memo((
             return <span className="chat-message result">
                 <StyledText className={"chat-message " + style}
                     playerKeywordData={props.playerKeywordData}
-                >{(icon??"")} {translateChatMessage(message.variant, playerNames)}</StyledText>
+                >{(chatGroupIcon??"")} {translateChatMessage(message.variant, playerNames)}</StyledText>
                 <ChatElement {...props} message={
                     {
                         variant: message.variant.message,
@@ -100,6 +101,51 @@ const ChatElement = React.memo((
                     }
                 }/>
             </span>
+        case "kiraResult":
+            let out = [];
+
+            let sortedPlayerIndexes = Object.keys(message.variant.result.guesses).map((k)=>{return Number.parseInt(k)}).sort();
+
+            for(let playerIndex of sortedPlayerIndexes){
+                let resultStyle = "";
+                let resultIcon = "";
+                let resultString = "";
+
+                if(message.variant.result.guesses[playerIndex][1] === "correct"){
+                    resultStyle = "correct";
+                    resultIcon = "🟩";
+                    resultString = translate("kiraResult.correct");
+                }else if(message.variant.result.guesses[playerIndex][1] === "wrongSpot"){
+                    resultStyle = "wrongSpot";
+                    resultIcon = "🟨";
+                    resultString = translate("kiraResult.wrongSpot");
+                }else if(message.variant.result.guesses[playerIndex][1] === "notInGame"){
+                    resultStyle = "notInGame";
+                    resultIcon = "🟥";
+                    resultString = translate("kiraResult.notInGame");
+                }
+
+                if(message.variant.result.guesses[playerIndex][0] === "none"){
+                    resultStyle = "";
+                    resultIcon = "";
+                    resultString = "";
+                }
+
+                out.push(<div key={playerIndex} className={"kira-guess-result "+resultStyle}>
+                    <StyledText
+                        playerKeywordData={props.playerKeywordData}
+                    >
+                        {playerNames[playerIndex]} {kiraGuessTranslate(message.variant.result.guesses[playerIndex][0])} {resultIcon} {resultString}
+                    </StyledText>
+                </div>)
+            }
+
+            return <div className={"chat-message " + style}>
+                {chatGroupIcon ?? ""} {translate("chatMessage.kiraResult")}
+                <div>
+                    {out}
+                </div>
+            </div>
         case "playerDied":
 
             let graveRoleString: string;
@@ -118,7 +164,7 @@ const ChatElement = React.memo((
                         <StyledText className={"chat-message " + style}
                             playerKeywordData={props.playerKeywordData}
                         >
-                            {(icon??"")} {translate("chatMessage.playerDied",
+                            {(chatGroupIcon??"")} {translate("chatMessage.playerDied",
                                 playerNames[message.variant.grave.player], graveRoleString
                             )}
                         </StyledText>
@@ -132,7 +178,7 @@ const ChatElement = React.memo((
 
     return <StyledText className={"chat-message " + style}
         playerKeywordData={props.playerKeywordData}
-    >{(icon??"")} {translateChatMessage(message.variant, playerNames)}</StyledText>;
+    >{(chatGroupIcon??"")} {translateChatMessage(message.variant, playerNames)}</StyledText>;
 });
 
 function containsMention(message: ChatMessageVariant & { text: string }, playerNames: string[]): boolean {
@@ -511,6 +557,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "puppeteerYouArePoisoned":
             return translate("chatMessage."+message.type);
         case "playerDied":
+        case "kiraResult":
         default:
             console.error("Unknown message type " + (message as any).type + ":");
             console.error(message);
@@ -786,6 +833,11 @@ export type ChatMessageVariant = {
     type: "doomsayerFailed"
 } | {
     type: "doomsayerWon"
+} | {
+    type: "kiraResult",
+    result: {
+        guesses: Record<PlayerIndex, [KiraGuess, KiraGuessResult]>
+    }
 } | {
     type: "martyrFailed"
 } | {

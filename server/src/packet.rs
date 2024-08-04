@@ -22,7 +22,7 @@ use serde::{Deserialize, Serialize};
 use vec1::Vec1;
 
 use crate::{game::{
-    available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{doomsayer::DoomsayerGuess, ojo::OjoAction, puppeteer::PuppeteerAction, Role, RoleState}, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
+    available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{doomsayer::DoomsayerGuess, kira::KiraGuess, ojo::OjoAction, puppeteer::PuppeteerAction, Role, RoleState}, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
 }, listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log};
 
 #[derive(Serialize, Debug, Clone)]
@@ -217,6 +217,8 @@ pub enum ToServerPacket{
     // Role-specific
     #[serde(rename_all = "camelCase")]
     SetDoomsayerGuess{ guesses: [(PlayerReference, DoomsayerGuess); 3] },
+    #[serde(rename_all = "camelCase")]
+    SetKiraGuess{ guesses: Vec<(PlayerReference, KiraGuess)> },
     #[serde(rename_all = "camelCase")]
     SetWildcardRole{ role: Role },
     #[serde(rename_all = "camelCase")]

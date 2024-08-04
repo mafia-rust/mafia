@@ -52,6 +52,7 @@
     "playerRoleAndAlibi": "result",
     "informantResult": "result",
     "scarecrowResult": "result",
+    "kiraResult": "result",
     "wildcardConvertFailed": "special",
     "ojoSelection": "special",
     "marksmanChosenMarks": "special",

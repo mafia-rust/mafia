@@ -401,7 +401,7 @@
 
     "role.ojo.name": "Ojo",
     "role.ojo.name:var.0": "Ojos",
-    "role.ojo.target": "Target",
+    "role.ojo.target": "Select",
     "role.ojo.dayTarget": "Special",
     "role.ojo.smallRoleMenu": "Choose a role to see or kill",
     
@@ -417,6 +417,11 @@
     "role.puppeteer.smallRoleMenu.noneRemaining": "No marionettes remain, you can only poison.",
     "role.puppeteer.smallRoleMenu": "Choose to poison someone or string them into a marionette. \\0 marionettes remaining.",
     
+    "role.kira.name": "Kira",
+    "role.kira.name:var.0": "Kiras",
+    "role.kira.target": "Select",
+    "role.kira.dayTarget": "Special",
+
     "role.fiendsWildcard.name": "Fiends Wildcard",
     "role.fiendsWildcard.name:var.0": "Fiends Wildcards",
     "role.fiendsWildcard.target": "Target",
@@ -511,7 +516,7 @@
     "tag.puppeteerMarionette": "🧵",
     "tag.doused":"🔥",
     "tag.dead":"💀",
-
+    
     "noGroup.icon": "✉️",
     "noAll.icon": "🔇",
     "chatGroup.all.icon": "🔊",
@@ -737,6 +742,7 @@
     "chatMessage.ojoSelection.see": "You choose to see \\0.",
     "chatMessage.ojoSelection.kill": "You choose to kill \\0.",
     "chatMessage.ojoSelection.none": "You choose nothing.",
+    "chatMessage.kiraResult": "Kira result",
     "chatMessage.puppeteerActionChosen.string": "You choose to string up a marionette.",
     "chatMessage.puppeteerActionChosen.poison": "You choose to poison.",
     "chatMessage.marksmanChosenMarks": "The marksman chose their marks to be these players: \\0.",
@@ -754,6 +760,10 @@
     "chatMessage.doomsayerWon": "Your guesses were correct. You win!",
     "chatMessage.martyrFailed": "The martyr lives, and we endure for another day.",
     "chatMessage.martyrWon": "The messiah has been killed! May we all enter the kingdom of heaven.",
+
+    "kiraResult.correct": "Correct",
+    "kiraResult.wrongSpot": "Somebody has this role, but not this player",
+    "kiraResult.notInGame": "Nobody has this role",
 
     "wiki.article.standard.town.title": "Town",
     "wiki.article.standard.town.title:var.0":"Good",
@@ -1219,6 +1229,11 @@
     "wiki.article.role.puppeteer.abilities":"- You may choose to do one of the following\n    - Visit a player to poison them\n        - They are told they are poisoned\n        - They are indirectly attacked on the following night\n\n    - Visit a player to string up into a marionette\n        - They are told they are strung up, and they now win with fiends, regardless of their role\n        -They have a suspicious aura for the rest of the game\n        - They will be indirectly attacked every night by all puppeteers until they die, if there are no puppeteers they are still attacked",
     "wiki.article.role.puppeteer.attributes":"- You and the marionettes are shown who all puppeteers and marionettes are\n- You have an armor-piercing indirect attack",
     "wiki.article.role.puppeteer.extra":"- You can't select anybody who is a puppeteer, marionette, or is being strung into a marionette\n- A puppeteer can't be stringed into a marionette\n- A marionette can't be stringed into a marionette twice, if two puppeteers choose a player to be turned into a marionette on the same night, they get the message only once\n- Defense does not stop a player from being poisoned or strung up",
+    
+    "wiki.article.role.kira.guide":"- Each night, guess players roles, if all your guesses are correct, you attack all of the players you guessed.\n- You can choose not to guess a players role by selecting none, this doesn't count as a wrong guess\n- Each night you get a result, for each guess, you are told if your guess was correct, incorrect but someone has that role, or incorrect and nobody has that role\n- You can't attack night 1, but you can still make guesses\n\n_For Example_\n- You guess @1 is a lookout, @2 is a tracker, and don't guess anyone else by selecting none. If @1 is a lookout, @2 is a tracker, you attack @1 and @2, but nobody else.",
+    "wiki.article.role.kira.abilities":"- Each night, make a guess for every living player\n    - Your options for guesses are, any specific town role, none, mafia, fiends, neutral, and cult\n    - If all of your guesses are one of either correct or none, you attack all of the players you guessed correctly with an indirect armor-piercing attack\n- Every night, you get a result\n    - For each player you guessed as something non none, you learn one of three things\n        - Your guess is correct, that player has that role\n        - Your guess is incorrect, that player doesn't have that role, but someone else in the game does have that role\n        - Your guess is incorrect, that player doesn't have that role, and nobody else in the game has that role\n- If it is night 1, you wont attack anyone, but you still get your result",
+    "wiki.article.role.kira.attributes":"- You don't visit anyone\n You attack is armor-piercing\n- You wont attack anyone night 1",
+    "wiki.article.role.kira.extra":"- You can't guess dead players or yourself, nor can you attack them",
     
     "wiki.article.role.pyrolisk.guide":"- Select a player to attack them, and obscure them\n- You passively attack and obscure everyone who visits you\n- On night 1, you don't attack anyone, but still tag them for obscuring, if they die later you obscure them\n- You are told the players you obscures role and alibi",
     "wiki.article.role.pyrolisk.abilities":"* On night one\n    * Visit a player to tag them for obscuring\n    * All players who visit you are tagged for obscuring\n* On other nights\n    * Visit a player to attack them and tag them for obscuring\n    * All players who visit you are attacked by you and tagged for obscuring\n* All players you tagged for obscuring are obscured when they die, you are told their role and alibi",

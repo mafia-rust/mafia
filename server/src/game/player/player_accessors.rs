@@ -261,6 +261,13 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.roleblocked = roleblocked;
     }
 
+    pub fn night_restricted(&self, game: &Game) -> bool {
+        self.deref(game).night_variables.roleblocked
+    }
+    pub fn set_night_restricted(&self, game: &mut Game, roleblocked: bool){
+        self.deref_mut(game).night_variables.roleblocked = roleblocked;
+    }
+
     pub fn night_defense(&self, game: &Game) -> u8 {
         if let Some(defense) = self.deref(game).night_variables.upgraded_defense {
             defense

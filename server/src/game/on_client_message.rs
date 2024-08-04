@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
@@ -5,7 +7,7 @@ use super::{
     event::on_fast_forward::OnFastForward,
     phase::{PhaseState, PhaseType},
     player::{PlayerIndex, PlayerReference},
-    role::{engineer::{Engineer, Trap}, mayor::Mayor, puppeteer::PuppeteerAction, Role, RoleState}, role_list::Faction, 
+    role::{engineer::{Engineer, Trap}, kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, Role, RoleState}, role_list::Faction, 
     spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
     Game
 };
@@ -208,7 +210,23 @@ impl Game {
                     doomsayer.guesses = guesses;
                     sender_player_ref.set_role_state(self, RoleState::Doomsayer(doomsayer));
                 }
-            }
+            },
+            ToServerPacket::SetKiraGuess{guesses} => {
+                if let RoleState::Kira(mut kira) = sender_player_ref.role_state(self).clone(){
+
+                    let mut new_guesses: HashMap<PlayerReference, KiraGuess> = HashMap::new();
+
+                    for (player_ref, guess) in guesses {
+                        if Kira::allowed_to_guess(sender_player_ref, player_ref, self){
+                            new_guesses.insert(player_ref, guess);
+                        }
+                    }
+
+                    kira.guesses = new_guesses;
+                    sender_player_ref.set_role_state(self, RoleState::Kira(kira));
+                    Kira::set_guesses(sender_player_ref, self);
+                }
+            },
             ToServerPacket::SetWildcardRole { role } => {
 
                 if self.settings.excluded_roles.contains(&role) {

@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use super::{chat_group::ChatGroup, chat_message_variant::ChatMessageVariant};
 
-#[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct ChatMessage{
     pub variant: ChatMessageVariant,

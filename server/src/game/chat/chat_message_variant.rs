@@ -5,7 +5,7 @@ use crate::game::{
     phase::PhaseState,
     player::{PlayerIndex, PlayerReference},
     role::{
-        auditor::AuditorResult, engineer::TrapState, ojo::OjoAction, puppeteer::PuppeteerAction, spy::SpyBug, Role
+        auditor::AuditorResult, engineer::TrapState, kira::KiraResult, ojo::OjoAction, puppeteer::PuppeteerAction, spy::SpyBug, Role
     },
     role_list::RoleOutline,
     verdict::Verdict
@@ -23,7 +23,7 @@ pub enum MessageSender {
 }
 
 // Determines message color
-#[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(PartialOrd, Ord, Clone, Debug, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum ChatMessageVariant {
@@ -211,8 +211,9 @@ pub enum ChatMessageVariant {
     JesterWon,
     ProvocateurWon,
     DeathCollectedSouls,
-    DoomsayerFailed,
     DoomsayerWon,
+    DoomsayerFailed,
+    KiraResult{result: KiraResult},
     MartyrRevealed { martyr: PlayerIndex },
     MartyrWon,
     MartyrFailed,

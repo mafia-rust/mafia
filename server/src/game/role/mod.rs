@@ -95,6 +95,7 @@ macros::roles! {
     Ojo : ojo,
     Puppeteer: puppeteer,
     Pyrolisk : pyrolisk,
+    Kira : kira,
     FiendsWildcard : fiends_wildcard,
 
     Wildcard : wild_card,

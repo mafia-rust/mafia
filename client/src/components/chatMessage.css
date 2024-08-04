@@ -77,3 +77,24 @@
     border-top: var(--primary-border-color) 1px solid;
     border-bottom: var(--primary-border-color) 1px solid;
 }
+
+.kira-guess-result {
+    align-items: center;
+    flex-direction: row;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    width: max-content;
+    border-radius: 0.4rem;
+    border-width: .07rem;
+    border-style: solid;
+    border-color: black;
+}
+.kira-guess-result.correct{
+    border-color: limegreen;
+}
+.kira-guess-result.wrongSpot{
+    border-color: yellow;
+}
+.kira-guess-result.notInGame{
+    border-color: red;
+}

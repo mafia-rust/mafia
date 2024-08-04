@@ -16,6 +16,7 @@ import RoleDropdown from "./RoleDropdown";
 import { getRolesComplement } from "../game/roleListState.d";
 import ROLES from "../resources/roles.json";
 import "../menu/game/gameScreenContent/RoleSpecificMenus/smallRoleSpecificMenu.css";
+import LargeKiraMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 
 export default function RoleSpecificSection(){
     
@@ -60,6 +61,8 @@ export default function RoleSpecificSection(){
             return <LargeForgerMenu/>;
         case "doomsayer":
             return <LargeDoomsayerMenu/>;
+        case "kira":
+            return <LargeKiraMenu/>;
             
 
 

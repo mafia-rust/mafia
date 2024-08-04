@@ -4,7 +4,7 @@ import GAME_MANAGER from "./../index";
 import messageListener from "./messageListener";
 import CONFIG from "./../resources/config.json"
 import React from "react";
-import { PhaseType, PhaseTimes, Verdict, Player } from "./gameState.d";
+import { PhaseType, PhaseTimes, Verdict, Player, PlayerIndex } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
 import { LobbyPreviewData, ToClientPacket, ToServerPacket } from "./packet";
 import { RoleOutline } from "./roleListState.d";
@@ -14,6 +14,7 @@ import { createGameState, createLobbyState } from "./gameState";
 import { Role } from "./roleState.d";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
+import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 export function createGameManager(): GameManager {
 
     console.log("Game manager created.");
@@ -433,6 +434,18 @@ export function createGameManager(): GameManager {
         sendSetDoomsayerGuess(guesses) {
             this.server.sendPacket({
                 type: "setDoomsayerGuess",
+                guesses: guesses
+            });
+        },
+        sendSetKiraGuess(guessesRecord) {
+
+            let guesses: [PlayerIndex, KiraGuess][] = [];
+            for(let [player, guess] of Object.entries(guessesRecord)){
+                guesses.push([Number.parseInt(player), guess]);
+            }
+
+            this.server.sendPacket({
+                type: "setKiraGuess",
                 guesses: guesses
             });
         },

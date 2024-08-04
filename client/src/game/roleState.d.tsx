@@ -6,6 +6,7 @@ import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
 import { Hypnotist } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeConsortMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
+import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 
 export type RoleState = {
     type: "jailor",
@@ -147,6 +148,9 @@ Doomsayer
     type: "puppeteer"
     action: PuppeteerAction,
     marionettesRemaining: number
+} | {
+    type: "kira"
+    guesses: Record<PlayerIndex, KiraGuess>
 } | {
     type: "fiendsWildcard"
     role: Role

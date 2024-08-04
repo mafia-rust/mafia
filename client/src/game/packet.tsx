@@ -241,6 +241,9 @@ export type ToServerPacket = {
     role: Role,
     will: string
 } | {
+    type: "setKiraGuess",
+    guesses: [PlayerIndex, DoomsayerGuess][]
+} | {
     type: "setDoomsayerGuess",
     guesses: [
         [number, DoomsayerGuess],

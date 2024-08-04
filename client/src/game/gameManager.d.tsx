@@ -1,5 +1,6 @@
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
+import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player } from "./gameState.d";
@@ -98,6 +99,7 @@ export type GameManager = {
         [number, DoomsayerGuess],
         [number, DoomsayerGuess]
     ]): void;
+    sendSetKiraGuess(guesses: Record<PlayerIndex, KiraGuess>): void;
     sendSetWildcardRoleOutline(roleOutline: Role): void;
     sendSetJournalistJournal(journal: string): void;
     sendSetJournalistJournalPublic(isPublic: boolean): void;

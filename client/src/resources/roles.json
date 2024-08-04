@@ -816,6 +816,42 @@
             {"type": "youAttackedSomeone"}
         ]
     },
+    "kira": {
+        "faction": "fiends",
+        "roleSet": null,
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {
+                "type": "kiraResult",
+                "result": {
+                    "guesses": {
+                        "0": ["veteran","correct"],
+                        "1": ["cult","notInGame"],
+                        "2": ["mafia","wrongSpot"],
+                        "3": ["mafia","correct"]
+                    }
+                }
+            },
+            {
+                "type": "kiraResult",
+                "result": {
+                    "guesses": {
+                        "0": ["veteran","correct"],
+                        "1": ["none","notInGame"],
+                        "2": ["neutral","correct"],
+                        "3": ["mafia","correct"]
+                    }
+                }
+            },
+            {"type": "youAttackedSomeone"},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+        ]
+    },
     "fiendsWildcard": {
         "faction": "fiends",
         "roleSet": null,
