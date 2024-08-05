@@ -78,7 +78,7 @@ impl PhaseState {
     pub fn start(game: &mut Game) {
 
         
-        game.add_message_to_chat_group(PlayerGroup::All, 
+        game.add_message(PlayerGroup::All, 
             ChatMessageVariant::PhaseChange { 
                 phase: game.current_phase().clone(),
                 //need this if statement because the day number should be increased for obituary phase
@@ -104,14 +104,14 @@ impl PhaseState {
             PhaseState::Nomination { trials_left } => {
                 let required_votes = 1+
                     (PlayerReference::all_players(game).filter(|p| p.alive(game)).count()/2);
-                game.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::TrialInformation { required_votes, trials_left });
+                game.add_message(PlayerGroup::All, ChatMessageVariant::TrialInformation { required_votes, trials_left });
                 
 
                 let packet = ToClientPacket::new_player_votes(game);
                 game.send_packet_to_all(packet);
             },
             PhaseState::Testimony { player_on_trial, .. } => {
-                game.add_message_to_chat_group(PlayerGroup::All, 
+                game.add_message(PlayerGroup::All, 
                     ChatMessageVariant::PlayerNominated {
                         player_index: player_on_trial.index(),
                         players_voted: PlayerReference::all_players(game)
@@ -151,8 +151,7 @@ impl PhaseState {
                 Self::Judgement { trials_left, player_on_trial }
             },
             &PhaseState::Judgement { trials_left, player_on_trial } => {
-
-                game.add_messages_to_chat_group(PlayerGroup::All, 
+                game.add_messages(PlayerGroup::All, 
                 PlayerReference::all_players(game)
                     .filter(|player_ref|{
                         player_ref.alive(game) && *player_ref != player_on_trial
@@ -167,7 +166,7 @@ impl PhaseState {
                 );
                 
                 let (guilty, innocent) = game.count_verdict_votes(player_on_trial);
-                game.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::TrialVerdict{ 
+                game.add_message(PlayerGroup::All, ChatMessageVariant::TrialVerdict{ 
                     player_on_trial: player_on_trial.index(), 
                     innocent, guilty 
                 });

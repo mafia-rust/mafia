@@ -42,7 +42,7 @@ impl RoleStateImpl for Journalist {
             !actor_ref.night_blocked(game) &&
             !actor_ref.night_silenced(game)
         {
-            game.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::JournalistJournal { journal: self.journal.clone()});    
+            game.add_message(PlayerGroup::All, ChatMessageVariant::JournalistJournal { journal: self.journal.clone()});    
         }
     }
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
@@ -108,7 +108,7 @@ impl RoleStateImpl for Journalist {
                             match chat_group {
                                 PlayerGroup::All | PlayerGroup::Jail | PlayerGroup::Interview | PlayerGroup::Dead => {},
                                 PlayerGroup::Mafia | PlayerGroup::Cult  => {
-                                    game.add_message_to_chat_group(
+                                    game.add_message(
                                         chat_group,
                                         ChatMessageVariant::PlayerIsBeingInterviewed { player_index: interviewed_target_ref.index() }
                                     );

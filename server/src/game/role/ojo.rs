@@ -87,7 +87,7 @@ impl RoleStateImpl for Ojo {
 
                     for player in PlayerReference::all_players(game) {
                         if i_visited.contains(&player) || visited_me.contains(&player) {
-                            actor_ref.insert_role_label(game, player);
+                            player.reveal_role(game, actor_ref);
                         }
                     }
                 }

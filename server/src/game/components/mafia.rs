@@ -24,7 +24,7 @@ impl Mafia{
         }
 
         for member in Mafia::get_members(game) {
-            PlayerGroup::Mafia.insert_role_label(game, member)
+            member.reveal_role(game, PlayerGroup::Mafia)
         }
     }
     pub fn get_members(game: &Game)->Vec<PlayerReference>{

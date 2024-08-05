@@ -108,7 +108,7 @@ impl RoleStateImpl for Jester {
             actor_ref == dead_player_ref && 
             game.current_phase().phase() == PhaseType::FinalWords
         {
-            game.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::JesterWon);
+            game.add_message(PlayerGroup::All, ChatMessageVariant::JesterWon);
         }
     }
     fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave: crate::game::grave::GraveReference) {

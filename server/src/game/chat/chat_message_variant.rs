@@ -8,8 +8,10 @@ use crate::game::{
         auditor::AuditorResult, engineer::TrapState, kira::KiraResult, ojo::OjoAction, puppeteer::PuppeteerAction, spy::SpyBug, Role
     },
     role_list::RoleOutline,
-    verdict::Verdict
+    verdict::Verdict, Game
 };
+
+use super::{ChatMessage, Recipient};
 
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
@@ -218,4 +220,10 @@ pub enum ChatMessageVariant {
     MartyrWon,
     MartyrFailed,
     WildcardConvertFailed{ role: Role }
+}
+
+impl ChatMessageVariant {
+    pub fn send_to(self, game: &mut Game, recipient: impl Into<Recipient>) {
+        ChatMessage::new(self, recipient).send(game)
+    }
 }

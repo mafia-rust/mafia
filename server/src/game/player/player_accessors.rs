@@ -5,15 +5,8 @@ use vec1::Vec1;
 use crate::{
     game::{
         chat::{
-            ChatMessage, ChatMessageVariant
-        }, event::on_fast_forward::OnFastForward,
-        player_group::PlayerGroup, 
-        grave::GraveKiller,
-        role::{Role, RoleState},
-        tag::Tag,
-        verdict::Verdict,
-        visit::Visit,
-        Game
+            ChatMessage, ChatMessageVariant, Recipient
+        }, event::on_fast_forward::OnFastForward, grave::GraveKiller, player_group::PlayerGroup, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, Game
     }, 
     packet::ToClientPacket, 
 };
@@ -84,29 +77,12 @@ impl PlayerReference{
     
     pub fn role_labels<'a>(&self, game: &'a Game) -> &'a HashSet<PlayerReference>{
         &self.deref(game).role_labels
-    }  
-    pub fn insert_role_label(&self, game: &mut Game, revealed_player: PlayerReference){
-        if
-            revealed_player != *self &&
-            revealed_player.alive(game) &&
-            self.deref_mut(game).role_labels.insert(revealed_player)
-        {
-            self.add_private_chat_message(game, ChatMessageVariant::PlayersRoleRevealed { player: revealed_player.index(), role: revealed_player.role(game) })
-        }
-
-
-        self.send_packet(game, ToClientPacket::YourRoleLabels{
-            role_labels: PlayerReference::ref_map_to_index(self.role_label_map(game)) 
-        });
     }
-    pub fn remove_role_label(&self, game: &mut Game, concealed_player: PlayerReference){
-        if self.deref_mut(game).role_labels.remove(&concealed_player) {
-            self.add_private_chat_message(game, ChatMessageVariant::PlayersRoleConcealed { player: concealed_player.index() })
-        }
-
-        self.send_packet(game, ToClientPacket::YourRoleLabels{
-            role_labels: PlayerReference::ref_map_to_index(self.role_label_map(game)) 
-        });
+    pub fn reveal_role(&self, game: &mut Game, recipient: impl Into<Recipient>){
+        recipient.into().insert_role_label(game, *self);
+    }
+    pub fn conceal_role(&self, game: &mut Game, recipient: impl Into<Recipient>){
+        recipient.into().remove_role_label(game, *self);
     }
 
     pub fn player_tags<'a>(&self, game: &'a Game) -> &'a HashMap<PlayerReference, Vec1<Tag>>{
@@ -152,9 +128,7 @@ impl PlayerReference{
     }
 
     pub fn add_private_chat_message(&self, game: &mut Game, message: ChatMessageVariant) {
-        let message = ChatMessage::new_private(message);
-
-        self.add_chat_message(game, message.clone());
+        self.add_chat_message(game, ChatMessage::new(message, *self));
     }
     pub fn add_private_chat_messages(&self, game: &mut Game, messages: Vec<ChatMessageVariant>){
         for message in messages.into_iter(){
@@ -219,7 +193,7 @@ impl PlayerReference{
         game.send_packet_to_all(player_votes_packet);
         
         if send_chat_message {
-            game.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::Voted{
+            game.add_message(PlayerGroup::All, ChatMessageVariant::Voted{
                 voter: self.index(), 
                 votee: chosen_vote.as_ref().map(PlayerReference::index)
             });
@@ -381,7 +355,7 @@ impl PlayerReference{
                 match chat_group {
                     PlayerGroup::All | PlayerGroup::Jail | PlayerGroup::Interview | PlayerGroup::Dead => {},
                     PlayerGroup::Mafia | PlayerGroup::Cult  => {
-                        game.add_message_to_chat_group(
+                        game.add_message(
                             chat_group,
                             ChatMessageVariant::JailedSomeone { player_index: self.index() }
                         );

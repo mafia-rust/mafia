@@ -71,11 +71,12 @@ impl Game {
                 sender_player_ref.set_selection(self, target_ref_list.clone());
                 
                 let mut target_message_sent = false;
-                for chat_group in sender_player_ref.get_current_send_chat_groups(self){
-                    match chat_group {
+
+                for group in sender_player_ref.get_current_receive_chat_groups(self){
+                    match group {
                         PlayerGroup::All | PlayerGroup::Interview | PlayerGroup::Dead => {},
                         PlayerGroup::Mafia | PlayerGroup::Cult => {
-                            self.add_message_to_chat_group( chat_group,
+                            self.add_message(group,
                                 ChatMessageVariant::Targeted { 
                                     targeter: sender_player_ref.index(), 
                                     targets: PlayerReference::ref_vec_to_index(&target_ref_list)
@@ -85,7 +86,7 @@ impl Game {
                         },
                         PlayerGroup::Jail => {
                             if sender_player_ref.role(self) == Role::Jailor {
-                                self.add_message_to_chat_group(chat_group,
+                                self.add_message(group,
                                     ChatMessageVariant::JailorDecideExecute {
                                         target: target_ref_list.first().map(|p|p.index())
                                     }
@@ -142,7 +143,7 @@ impl Game {
                     let message_sender = message_sender.unwrap_or(MessageSender::Player { player: sender_player_index });
 
 
-                    self.add_message_to_chat_group(
+                    self.add_message(
                         chat_group.clone(),
                         ChatMessageVariant::Normal{
                             message_sender,
@@ -176,7 +177,7 @@ impl Game {
                     break 'packet_match;
                 }
 
-                self.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::BroadcastWhisper { whisperer: sender_player_index, whisperee: whispered_to_player_index });
+                self.add_message(PlayerGroup::All, ChatMessageVariant::BroadcastWhisper { whisperer: sender_player_index, whisperee: whispered_to_player_index });
                 let message = ChatMessageVariant::Whisper { 
                     from_player_index: sender_player_index, 
                     to_player_index: whispered_to_player_index, 

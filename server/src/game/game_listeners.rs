@@ -27,11 +27,12 @@ impl Game{
     }
     pub fn on_game_ending(&mut self){
         if self.game_is_over() {
-            self.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::GameOver);
+            ChatMessageVariant::GameOver.send_to(self, PlayerGroup::All);
+            self.add_message(PlayerGroup::All, ChatMessageVariant::GameOver);
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::Draw });
 
             for player_ref in PlayerReference::all_players(self){
-                self.add_message_to_chat_group(PlayerGroup::All,
+                self.add_message(PlayerGroup::All,
                     ChatMessageVariant::PlayerWonOrLost{ 
                         player: player_ref.index(), 
                         won: player_ref.get_won_game(self), 
@@ -47,20 +48,20 @@ impl Game{
     pub fn on_fast_forward(&mut self){
         self.phase_machine.time_remaining = std::time::Duration::from_secs(0);
         
-        self.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::PhaseFastForwarded);
+        self.add_message(PlayerGroup::All, ChatMessageVariant::PhaseFastForwarded);
         self.send_packet_to_all(ToClientPacket::PhaseTimeLeft{ seconds_left: self.phase_machine.time_remaining.as_secs() });
     }
     pub fn on_grave_added(&mut self, grave: GraveReference){   
         let grave = grave.deref(self).clone();     
         self.send_packet_to_all(ToClientPacket::AddGrave{grave: grave.clone()});
-        self.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::PlayerDied { grave: grave.clone() });
+        self.add_message(PlayerGroup::All, ChatMessageVariant::PlayerDied { grave: grave.clone() });
 
-        PlayerGroup::All.remove_role_label(self, grave.player);
+        grave.player.conceal_role(self, PlayerGroup::All);
     }
     pub fn on_role_switch(&mut self, actor: PlayerReference, old: Role, new: Role){
         if old == new {return;}
 
-        PlayerGroup::All.remove_role_label(self, actor);
+        actor.conceal_role(self, PlayerGroup::All);
     }
 }
 

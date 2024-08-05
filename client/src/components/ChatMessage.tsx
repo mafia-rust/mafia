@@ -25,7 +25,7 @@ const ChatElement = React.memo((
     const message = props.message;
     const playerNames = props.playerNames ?? GAME_MANAGER.getPlayerNames();
     const chatMessageStyles = require("../resources/styling/chatMessage.json");
-    if(message.variant === undefined){
+    if(message === undefined){
         console.error("ChatElement message with undefined variant:");
         console.error(message);
     }
@@ -57,7 +57,7 @@ const ChatElement = React.memo((
                     playerKeywordData={props.playerKeywordData}
                 >{translateChatMessage(message.variant, playerNames)}</StyledText>
             </span>;
-        case "normal":
+        case "normal": {
             if(message.variant.messageSender.type !== "player" && message.variant.messageSender.type !== "livingToDead"){
                 style += " discreet";
             } else if (message.chatGroup === "dead") {
@@ -89,6 +89,7 @@ const ChatElement = React.memo((
                     playerKeywordData={props.playerKeywordData}
                 >{translateChatMessage(message.variant, playerNames)}</StyledText>
             </span>;
+        }
         case "targetsMessage":
             return <span className="chat-message result">
                 <StyledText className={"chat-message " + style}
@@ -101,7 +102,7 @@ const ChatElement = React.memo((
                     }
                 }/>
             </span>
-        case "kiraResult":
+        case "kiraResult": {
             let out = [];
 
             let sortedPlayerIndexes = Object.keys(message.variant.result.guesses).map((k)=>{return Number.parseInt(k)}).sort();
@@ -146,7 +147,8 @@ const ChatElement = React.memo((
                     {out}
                 </div>
             </div>
-        case "playerDied":
+        }
+        case "playerDied": {
 
             let graveRoleString: string;
             switch (message.variant.grave.information.type) {
@@ -174,6 +176,7 @@ const ChatElement = React.memo((
                     </div>
                 </details>
             </>;
+        }
     }
 
     return <StyledText className={"chat-message " + style}
@@ -566,7 +569,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
 }
 export type ChatMessage = {
     variant: ChatMessageVariant
-    chatGroup: ChatGroup | null
+    chatGroup: ChatGroup | null,
 }
 export type ChatMessageVariant = {
     type: "lobbyMessage",

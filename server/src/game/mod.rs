@@ -19,6 +19,7 @@ pub mod game_listeners;
 
 use std::collections::HashMap;
 use std::time::Duration;
+use chat::Recipient;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::Serialize;
@@ -296,7 +297,7 @@ impl Game {
         }
 
         if self.phase_machine.day_number == u8::MAX {
-            self.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::GameOver);
+            self.add_message(PlayerGroup::All, ChatMessageVariant::GameOver);
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
             self.ticking = false;
             return;
@@ -333,21 +334,23 @@ impl Game {
         }
     }
 
-    pub fn add_message_to_chat_group(&mut self, group: PlayerGroup, variant: ChatMessageVariant){
-        let message = ChatMessage::new_non_private(variant.clone(), group.clone());
+    pub fn add_message(&mut self, recipient: impl Into<Recipient> + Copy, variant: ChatMessageVariant){
+        let message = ChatMessage::new(variant.clone(), recipient.into());
 
-        for player_ref in group.players_that_receive_chat(self){
-            player_ref.add_chat_message(self, message.clone());
-            player_ref.send_chat_messages(self);
+        for player_ref in PlayerReference::all_players(self) {
+            if recipient.into().contains(self, player_ref) {
+                player_ref.add_chat_message(self, message.clone());
+                player_ref.send_chat_messages(self);
+            }
         }
 
-        if group == PlayerGroup::All {
+        if recipient.into() == Recipient::Group(PlayerGroup::All) {
             self.add_chat_message_to_spectators(variant);
         }
     }
-    pub fn add_messages_to_chat_group(&mut self, group: PlayerGroup, messages: Vec<ChatMessageVariant>){
-        for message in messages.into_iter(){
-            self.add_message_to_chat_group(group.clone(), message);
+    pub fn add_messages(&mut self, recipient: impl Into<Recipient> + Copy, variants: Vec<ChatMessageVariant>) {
+        for message in variants.into_iter(){
+            self.add_message(recipient, message);
         }
     }
     pub fn add_chat_message_to_spectators(&mut self, message: ChatMessageVariant){

@@ -33,7 +33,7 @@ impl RoleStateImpl for Godfather {
                 if let Some(visit) = backup.night_visits(game).first(){
                     let target_ref = visit.target;
             
-                    game.add_message_to_chat_group(PlayerGroup::Mafia, ChatMessageVariant::GodfatherBackupKilled { backup: backup.index() });
+                    game.add_message(PlayerGroup::Mafia, ChatMessageVariant::GodfatherBackupKilled { backup: backup.index() });
                     target_ref.try_night_kill(
                         backup, game, GraveKiller::Faction(Faction::Mafia), 1, false
                     );
@@ -67,7 +67,7 @@ impl RoleStateImpl for Godfather {
             unreachable!("Role was just set to Godfather");
         };
 
-        game.add_message_to_chat_group(PlayerGroup::Mafia, ChatMessageVariant::GodfatherBackup { backup: backup.map(|p|p.index()) });
+        game.add_message(PlayerGroup::Mafia, ChatMessageVariant::GodfatherBackup { backup: backup.map(|p|p.index()) });
 
         for player_ref in PlayerReference::all_players(game){
             if player_ref.role(game).faction() != Faction::Mafia{

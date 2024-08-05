@@ -31,12 +31,12 @@ impl RoleStateImpl for Mayor {
             return;
         }
 
-        game.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::MayorRevealed { player_index: actor_ref.index() });
+        game.add_message(PlayerGroup::All, ChatMessageVariant::MayorRevealed { player_index: actor_ref.index() });
 
         actor_ref.set_role_state(game, RoleState::Mayor(Mayor{
             revealed: true
         }));
-        PlayerGroup::All.insert_role_label(game, actor_ref);
+        actor_ref.reveal_role(game, PlayerGroup::All);
         game.count_votes_and_start_trial();
     }
     fn can_select(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool{

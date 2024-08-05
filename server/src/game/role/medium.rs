@@ -78,7 +78,7 @@ impl RoleStateImpl for Medium {
                 if let Some(seanced) = self.seanced_target {
                     if seanced.alive(game) && !actor_ref.alive(game){
                 
-                        game.add_message_to_chat_group(PlayerGroup::Dead,
+                        game.add_message(PlayerGroup::Dead,
                             ChatMessageVariant::MediumHauntStarted{ medium: actor_ref.index(), player: seanced.index() }
                         );
 

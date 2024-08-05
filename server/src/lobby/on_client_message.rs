@@ -1,6 +1,6 @@
 use std::{collections::{HashMap, VecDeque}, time::{Duration, Instant}};
 
-use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, strings::TidyableString, websocket_connections::connection::ClientSender};
+use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, player_group::PlayerGroup, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, strings::TidyableString, websocket_connections::connection::ClientSender};
 
 use super::{lobby_client::{LobbyClient, LobbyClientID, LobbyClientType}, name_validation::{self, sanitize_server_name}, Lobby, LobbyState};
 
@@ -66,9 +66,9 @@ impl Lobby {
                 };
 
                 self.send_to_all(ToClientPacket::AddChatMessages { chat_messages: vec![
-                    ChatMessage::new_non_private(
+                    ChatMessage::new(
                         ChatMessageVariant::LobbyMessage { sender: name, text }, 
-                        crate::game::player_group::PlayerGroup::All
+                        PlayerGroup::All
                     )
                 ]});
             }

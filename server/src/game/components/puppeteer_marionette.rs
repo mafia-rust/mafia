@@ -95,8 +95,7 @@ impl PuppeteerMarionette{
 
         for player_a in marionettes_and_puppeteer.clone() {
             for player_b in marionettes_and_puppeteer.clone() {
-
-                player_a.insert_role_label(game, player_b);
+                player_b.reveal_role(game, player_a);
                 
                 if 
                     player_a.player_has_tag(game, player_b, Tag::PuppeteerMarionette) == 0 &&

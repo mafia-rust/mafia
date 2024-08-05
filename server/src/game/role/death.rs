@@ -44,7 +44,7 @@ impl RoleStateImpl for Death {
 
         self.souls += souls_to_gain;
         if self.souls >= NEEDED_SOULS {
-            game.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::DeathCollectedSouls);
+            game.add_message(PlayerGroup::All, ChatMessageVariant::DeathCollectedSouls);
         }
         actor_ref.set_role_state(game, RoleState::Death(self));
     }

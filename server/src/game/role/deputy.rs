@@ -43,7 +43,7 @@ impl RoleStateImpl for Deputy {
             actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
 
         }else{
-            game.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::DeputyKilled{shot_index: target_ref.index()});
+            game.add_message(PlayerGroup::All, ChatMessageVariant::DeputyKilled{shot_index: target_ref.index()});
             
             
             let mut grave = Grave::from_player_lynch(game, target_ref);

@@ -361,10 +361,17 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "addChatMessages":
             if(GAME_MANAGER.state.stateType === "game" || GAME_MANAGER.state.stateType === "lobby"){
-                GAME_MANAGER.state.chatMessages = GAME_MANAGER.state.chatMessages.concat(packet.chatMessages);
+                const chatMessages = packet.chatMessages.map(packet => {
+                    return { 
+                        variant: packet.variant, 
+                        chatGroup: packet.recipient.type === "group" ? packet.recipient.value : null 
+                    }
+                })
 
-                for(let chatMessage of packet.chatMessages){
-                    let audioSrc = chatMessageToAudio(chatMessage);
+                GAME_MANAGER.state.chatMessages = GAME_MANAGER.state.chatMessages.concat(chatMessages);
+
+                for(const chatMessage of chatMessages){
+                    const audioSrc = chatMessageToAudio(chatMessage);
                     if(audioSrc)
                         Anchor.queueAudioFile(audioSrc);
                 }
