@@ -3,7 +3,7 @@ import React from "react";
 import GAME_MANAGER, { find, replaceMentions } from "..";
 import StyledText, { KeywordDataMap, PLAYER_SENDER_KEYWORD_DATA } from "./StyledText";
 import "./chatMessage.css"
-import { ChatGroup, PhaseState, PlayerIndex, Verdict } from "../game/gameState.d";
+import { ChatGroup, PhaseState, PlayerIndex, Tag, Verdict } from "../game/gameState.d";
 import { Role } from "../game/roleState.d";
 import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
@@ -256,6 +256,18 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "playersRoleConcealed":
             return translate("chatMessage.playersRoleConcealed",
                 playerNames[message.player]
+            );
+        case "tagAdded":
+            return translate("chatMessage.tagAdded",
+                playerNames[message.player],
+                translate("tag."+message.tag+".name"),
+                translate("tag."+message.tag)
+            );
+        case "tagRemoved":
+            return translate("chatMessage.tagRemoved",
+                playerNames[message.player],
+                translate("tag."+message.tag+".name"),
+                translate("tag."+message.tag)
             );
         case "playerWonOrLost":
             if(message.won){
@@ -600,6 +612,14 @@ export type ChatMessageVariant = {
 } | {
     type: "playersRoleConcealed",
     player: PlayerIndex
+} | {
+    type: "tagAdded",
+    player: PlayerIndex,
+    tag: Tag
+} | {
+    type: "tagRemoved",
+    player: PlayerIndex,
+    tag: Tag
 } | {
     type: "gameOver"
 } | {

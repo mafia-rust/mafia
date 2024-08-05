@@ -124,6 +124,7 @@ impl PlayerReference{
         }else{
             self.deref_mut(game).player_tags.insert(key, vec1::vec1![value]);
         }
+        self.add_private_chat_message(game, ChatMessageVariant::TagAdded { player: key.index(), tag: value });
         self.send_packet(game, ToClientPacket::YourPlayerTags { player_tags: PlayerReference::ref_map_to_index(self.deref(game).player_tags.clone()) });
     }
     pub fn remove_player_tag(&self, game: &mut Game, key: PlayerReference, value: Tag){
@@ -135,11 +136,14 @@ impl PlayerReference{
                 .filter(|t|*t!=value)
                 .collect()
         ){
-            Ok(new_player_tags) => *player_tags = new_player_tags,
+            Ok(new_player_tags) => {
+                *player_tags = new_player_tags
+            },
             Err(_) => {
                 self.deref_mut(game).player_tags.remove(&key);
             },
         }
+        self.add_private_chat_message(game, ChatMessageVariant::TagRemoved { player: key.index(), tag: value });
         self.send_packet(game, ToClientPacket::YourPlayerTags{
             player_tags: PlayerReference::ref_map_to_index(self.deref(game).player_tags.clone())
         });
