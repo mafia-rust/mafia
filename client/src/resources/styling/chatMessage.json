@@ -93,5 +93,7 @@
     "martyrFailed": "result",
     "martyrWon": "result",
     "playersRoleRevealed": "special",
-    "playersRoleConcealed": "special"
+    "playersRoleConcealed": "special",
+    "tagAdded": "special",
+    "tagRemoved": "special"
 }

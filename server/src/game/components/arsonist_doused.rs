@@ -55,9 +55,10 @@ impl ArsonistDoused {
         for arsonist in PlayerReference::all_players(game){
             if arsonist.role(game) != Role::Arsonist {continue;}
 
-            arsonist.remove_player_tag_on_all(game, Tag::Doused);
             for player in arso_doused.doused_players.clone() {
-                arsonist.push_player_tag(game, player, Tag::Doused)
+                if arsonist.player_has_tag(game, player, Tag::Doused) == 0{
+                    arsonist.push_player_tag(game, player, Tag::Doused)
+                }
             }
         }
     }

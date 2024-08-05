@@ -233,7 +233,7 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                 : null}
                 <button className="whisper" onClick={()=>{GAME_MANAGER.prependWhisper(player.index)}}>
                     <h4>
-                        <StyledText>{(player.alive?"":" "+translate("tag.dead")+"")}</StyledText>
+                        <StyledText>{(player.alive?"":" "+translate("dead.icon")+"")}</StyledText>
                     </h4>
                     <StyledText>{player.toString()}</StyledText>
                     {roleString!==null&&<StyledText>{roleString}</StyledText>}

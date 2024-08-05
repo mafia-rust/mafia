@@ -100,11 +100,11 @@ impl RoleStateImpl for Werewolf {
                     let tracked_players: HashSet<PlayerReference> = newly_tracked_players.into_iter().collect();
                     let tracked_players: Vec<PlayerReference> = tracked_players.into_iter().collect();
 
-                    actor_ref.remove_player_tag_on_all(game, Tag::WerewolfTracked);
-
                     //send the list to the werewolf using tags
                     for player_ref in tracked_players.iter() {
-                        actor_ref.push_player_tag(game, *player_ref, Tag::WerewolfTracked);
+                        if actor_ref.player_has_tag(game, *player_ref, Tag::WerewolfTracked) == 0 {
+                            actor_ref.push_player_tag(game, *player_ref, Tag::WerewolfTracked);
+                        }
                     }
 
                     actor_ref.set_role_state(game, RoleState::Werewolf(Werewolf {

@@ -328,7 +328,7 @@
     "tag.werewolfTracked": "\ud83d\udc3e",
     "tag.necronomicon": "\ud83d\udcd3",
     "tag.doused": "\ud83d\udd25",
-    "tag.dead": "\ud83d\udc80",
+    "dead.icon": "\ud83d\udc80",
     "chatGroup.mafia.icon": "\ud83c\udf39",
     "chatGroup.cult.icon": "\ud83d\udd6f\ufe0f",
     "chatGroup.jail.icon": "\ud83d\udd12",

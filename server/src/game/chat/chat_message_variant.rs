@@ -1,13 +1,10 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::{
-    grave::Grave,
-    phase::PhaseState,
-    player::{PlayerIndex, PlayerReference},
-    role::{
+    grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
         auditor::AuditorResult, engineer::TrapState, kira::KiraResult, ojo::OjoAction, puppeteer::PuppeteerAction, spy::SpyBug, Role
     },
-    role_list::RoleOutline,
+    role_list::RoleOutline, tag::Tag,
     verdict::Verdict, Game
 };
 
@@ -56,7 +53,8 @@ pub enum ChatMessageVariant {
     PlayerDied{grave: Grave},
     PlayersRoleRevealed{player: PlayerIndex, role: Role},
     PlayersRoleConcealed{player: PlayerIndex},
-
+    TagAdded{player: PlayerIndex, tag: Tag},
+    TagRemoved{player: PlayerIndex, tag: Tag},
     
     #[serde(rename_all = "camelCase")]
     GameOver,
