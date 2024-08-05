@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Role, RoleState } from "../game/roleState.d";
 import LargeAuditorMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
-import LargeConsortMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeConsortMenu";
+import LargeHypnotistMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeHypnotistMenu";
 import LargeDoomsayerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import LargeForgerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeForgerMenu";
 import LargeJournalistMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeJournalistMenu";
@@ -56,7 +56,7 @@ export default function RoleSpecificSection(){
         case "journalist":
             return <LargeJournalistMenu/>;
         case "hypnotist":
-            return <LargeConsortMenu/>;
+            return <LargeHypnotistMenu/>;
         case "forger":
             return <LargeForgerMenu/>;
         case "doomsayer":

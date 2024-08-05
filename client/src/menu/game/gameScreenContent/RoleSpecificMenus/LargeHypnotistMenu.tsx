@@ -1,9 +1,10 @@
 import React from "react"
 import GAME_MANAGER from "../../../.."
 import translate from "../../../../game/lang"
-import "./largeConsortMenu.css"
+import "./largeHypnotistMenu.css"
 import ChatElement from "../../../../components/ChatMessage"
 import Icon from "../../../../components/Icon"
+import StyledText from "../../../../components/StyledText"
 
 export type Hypnotist = {
     roleblock: boolean,
@@ -16,9 +17,9 @@ export type Hypnotist = {
     yourTargetWasJailedMessage: boolean
 }
 
-type LargeConsortMenuProps = {
+type LargeHypnotistMenuProps = {
 }
-type LargeConsortMenuState = {
+type LargeHypnotistMenuState = {
     roleblock: boolean,
     
     youWereRoleblockedMessage: boolean,
@@ -28,9 +29,9 @@ type LargeConsortMenuState = {
     youWerePossessedMessage: boolean,
     yourTargetWasJailedMessage: boolean
 }
-export default class LargeConsortMenu extends React.Component<LargeConsortMenuProps, LargeConsortMenuState> {
+export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMenuProps, LargeHypnotistMenuState> {
     listener: () => void;
-    constructor(props: LargeConsortMenuState) {
+    constructor(props: LargeHypnotistMenuState) {
         super(props);
 
         if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.roleState?.type === "hypnotist")
@@ -148,12 +149,12 @@ export default class LargeConsortMenu extends React.Component<LargeConsortMenuPr
     render(){
         return <div className="large-hypnotist-menu">
             <div>
-                
-                {translate("wiki.article.standard.roleblock.title")}
+                <StyledText>
+                    {translate("wiki.article.standard.roleblock.title")}
+                </StyledText>
                 <label onClick={()=>this.handleRoleblockToggle()}>
                     <Icon>{this.state.roleblock ? "check" : "close"}</Icon>
                 </label>
-
             </div>
             <div>
                 <ChatElement message={{
