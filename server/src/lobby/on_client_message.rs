@@ -68,7 +68,7 @@ impl Lobby {
                 self.send_to_all(ToClientPacket::AddChatMessages { chat_messages: vec![
                     ChatMessage::new_non_private(
                         ChatMessageVariant::LobbyMessage { sender: name, text }, 
-                        crate::game::chat::ChatGroup::All
+                        crate::game::player_group::PlayerGroup::All
                     )
                 ]});
             }

@@ -1,6 +1,7 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::chat::ChatMessageVariant;
+use crate::game::player_group::PlayerGroup;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -53,14 +54,14 @@ impl RoleStateImpl for Medium {
     fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         vec![]
     }
-    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Dead])
+    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup> {
+        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![PlayerGroup::Dead])
     }
-    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup> {
         let mut out = crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref);
 
         if game.current_phase().is_night() && actor_ref.alive(game) {
-            out.push(ChatGroup::Dead);
+            out.push(PlayerGroup::Dead);
         }
         out
     }
@@ -77,7 +78,7 @@ impl RoleStateImpl for Medium {
                 if let Some(seanced) = self.seanced_target {
                     if seanced.alive(game) && !actor_ref.alive(game){
                 
-                        game.add_message_to_chat_group(ChatGroup::Dead,
+                        game.add_message_to_chat_group(PlayerGroup::Dead,
                             ChatMessageVariant::MediumHauntStarted{ medium: actor_ref.index(), player: seanced.index() }
                         );
 

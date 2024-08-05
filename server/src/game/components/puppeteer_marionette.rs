@@ -1,13 +1,9 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    chat::ChatMessageVariant, 
-    player::PlayerReference,
-    role::{
+    chat::ChatMessageVariant, player::PlayerReference, player_group::PlayerGroup, role::{
         Priority, Role
-    }, 
-    tag::Tag,
-    Game
+    }, tag::Tag, Game
 };
 
 impl Game{

@@ -2,7 +2,8 @@
 use rand::seq::SliceRandom;
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::chat::ChatMessageVariant;
+use crate::game::player_group::PlayerGroup;
 use crate::game::grave::{Grave, GraveReference};
 use crate::game::phase::{PhaseState, PhaseType};
 use crate::game::player::PlayerReference;
@@ -60,10 +61,10 @@ impl RoleStateImpl for Provocateur {
     fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         vec![]
     }
-    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
     }
-    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
     fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
@@ -78,7 +79,7 @@ impl RoleStateImpl for Provocateur {
         match *game.current_phase() {
             PhaseState::FinalWords { player_on_trial } => {
                 if Some(player_on_trial) == self.target.get_target() {
-                    game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::ProvocateurWon);
+                    game.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::ProvocateurWon);
                     actor_ref.set_role_state(game, RoleState::Provocateur(Provocateur { target: ProvocateurTarget::Won }));
                     actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
                 }

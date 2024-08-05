@@ -18,7 +18,7 @@ impl PlayerReference{
         self.deref_mut(game).connection = ClientConnection::Disconnected;
         if self.alive(game) {
             game.add_message_to_chat_group(
-                crate::game::chat::ChatGroup::All, 
+                crate::game::player_group::PlayerGroup::All, 
                 ChatMessageVariant::PlayerQuit{player_index: self.index()}
             );
         }

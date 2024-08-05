@@ -5,8 +5,9 @@ use vec1::Vec1;
 use crate::{
     game::{
         chat::{
-            ChatGroup, ChatMessage, ChatMessageVariant
+            ChatMessage, ChatMessageVariant
         }, event::on_fast_forward::OnFastForward,
+        player_group::PlayerGroup, 
         grave::GraveKiller,
         role::{Role, RoleState},
         tag::Tag,
@@ -218,7 +219,7 @@ impl PlayerReference{
         game.send_packet_to_all(player_votes_packet);
         
         if send_chat_message {
-            game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::Voted{
+            game.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::Voted{
                 voter: self.index(), 
                 votee: chosen_vote.as_ref().map(PlayerReference::index)
             });
@@ -378,8 +379,8 @@ impl PlayerReference{
             let mut message_sent = false;
             for chat_group in self.get_current_send_chat_groups(game){
                 match chat_group {
-                    ChatGroup::All | ChatGroup::Jail | ChatGroup::Interview | ChatGroup::Dead => {},
-                    ChatGroup::Mafia | ChatGroup::Cult  => {
+                    PlayerGroup::All | PlayerGroup::Jail | PlayerGroup::Interview | PlayerGroup::Dead => {},
+                    PlayerGroup::Mafia | PlayerGroup::Cult  => {
                         game.add_message_to_chat_group(
                             chat_group,
                             ChatMessageVariant::JailedSomeone { player_index: self.index() }

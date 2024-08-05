@@ -42,7 +42,7 @@ pub struct Player {
     crossed_out_outlines: Vec<u8>,
     death_note: Option<String>,
 
-    role_labels: HashSet<PlayerReference>,
+    pub role_labels: HashSet<PlayerReference>,
     player_tags: HashMap<PlayerReference, Vec1<Tag>>,
 
 

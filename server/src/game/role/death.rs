@@ -1,9 +1,10 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::chat::ChatMessageVariant;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller, GraveReference};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
+use crate::game::player_group::PlayerGroup;
 use crate::game::role_list::Faction;
 
 use crate::game::visit::Visit;
@@ -43,7 +44,7 @@ impl RoleStateImpl for Death {
 
         self.souls += souls_to_gain;
         if self.souls >= NEEDED_SOULS {
-            game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::DeathCollectedSouls);
+            game.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::DeathCollectedSouls);
         }
         actor_ref.set_role_state(game, RoleState::Death(self));
     }
@@ -59,10 +60,10 @@ impl RoleStateImpl for Death {
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
     }
-    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
     }
-    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
     fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {

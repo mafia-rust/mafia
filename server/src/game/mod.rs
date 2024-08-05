@@ -7,6 +7,7 @@ pub mod visit;
 pub mod verdict;
 pub mod role_list;
 pub mod settings;
+pub mod player_group;
 pub mod resolution_state;
 pub mod components;
 pub mod available_buttons;
@@ -26,9 +27,10 @@ use crate::client_connection::ClientConnection;
 use crate::game::event::on_game_start::OnGameStart;
 use crate::game::player::PlayerIndex;
 use crate::packet::ToClientPacket;
-use chat::{ChatMessageVariant, ChatGroup, ChatMessage};
+use chat::{ChatMessageVariant, ChatMessage};
 use player::PlayerReference;
 use player::Player;
+use player_group::PlayerGroup;
 use phase::PhaseStateMachine;
 use settings::Settings;
 use grave::Grave;
@@ -294,7 +296,7 @@ impl Game {
         }
 
         if self.phase_machine.day_number == u8::MAX {
-            self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::GameOver);
+            self.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::GameOver);
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
             self.ticking = false;
             return;
@@ -331,19 +333,19 @@ impl Game {
         }
     }
 
-    pub fn add_message_to_chat_group(&mut self, group: ChatGroup, variant: ChatMessageVariant){
+    pub fn add_message_to_chat_group(&mut self, group: PlayerGroup, variant: ChatMessageVariant){
         let message = ChatMessage::new_non_private(variant.clone(), group.clone());
 
-        for player_ref in group.all_players_in_group(self){
+        for player_ref in group.players_that_receive_chat(self){
             player_ref.add_chat_message(self, message.clone());
             player_ref.send_chat_messages(self);
         }
 
-        if group == ChatGroup::All {
+        if group == PlayerGroup::All {
             self.add_chat_message_to_spectators(variant);
         }
     }
-    pub fn add_messages_to_chat_group(&mut self, group: ChatGroup, messages: Vec<ChatMessageVariant>){
+    pub fn add_messages_to_chat_group(&mut self, group: PlayerGroup, messages: Vec<ChatMessageVariant>){
         for message in messages.into_iter(){
             self.add_message_to_chat_group(group.clone(), message);
         }

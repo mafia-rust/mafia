@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use crate::{
-    client_connection::ClientConnection, game::{chat::{ChatGroup, ChatMessage}, phase::PhaseState, player::PlayerReference, Game, GameOverReason}, packet::ToClientPacket
+    client_connection::ClientConnection, game::{chat::ChatMessage, player_group::PlayerGroup, phase::PhaseState, player::PlayerReference, Game, GameOverReason}, packet::ToClientPacket
 };
 
 use super::Spectator;
@@ -146,7 +146,7 @@ impl SpectatorPointer {
         
         self.send_packet(game, ToClientPacket::AddChatMessages { chat_messages: chat_messages_out
                 .into_iter()
-                .map(|p|ChatMessage::new_non_private(p, ChatGroup::All))
+                .map(|p|ChatMessage::new_non_private(p, PlayerGroup::All))
                 .collect() 
             }
         );

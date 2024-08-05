@@ -4,7 +4,7 @@ use std::vec;
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
 pub use mafia_server::game::{
-    chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
+    chat::{ChatMessageVariant, MessageSender, PlayerGroup}, 
     grave::*, 
     role_list::Faction,
     player::PlayerReference,

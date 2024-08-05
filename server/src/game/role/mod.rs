@@ -4,7 +4,7 @@
 use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 use crate::game::Game;
-use crate::game::chat::ChatGroup;
+use crate::game::player_group::PlayerGroup;
 use crate::game::phase::PhaseType;
 
 use serde::{Serialize, Deserialize};
@@ -20,8 +20,8 @@ trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
 
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit>;
 
-    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
-    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
+    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup>;
+    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup>;
 
     fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool;
 
@@ -212,12 +212,12 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.convert_selection_to_visits(game, actor_ref, target_refs)),*
                     }
                 }
-                pub fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>{
+                pub fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup>{
                     match self {
                         $(Self::$name(role_struct) => role_struct.get_current_send_chat_groups(game, actor_ref)),*
                     }
                 }
-                pub fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>{
+                pub fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup>{
                     match self {
                         $(Self::$name(role_struct) => role_struct.get_current_receive_chat_groups(game, actor_ref)),*
                     }

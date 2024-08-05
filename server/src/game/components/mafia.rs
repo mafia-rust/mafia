@@ -1,4 +1,4 @@
-use crate::game::{phase::PhaseType, player::PlayerReference, role::{godfather::Godfather, Role, RoleState}, role_list::Faction, Game};
+use crate::game::{phase::PhaseType, player::PlayerReference, player_group::PlayerGroup, role::{godfather::Godfather, Role, RoleState}, role_list::Faction, Game};
 use rand::prelude::SliceRandom;
 
 #[derive(Default, Clone)]
@@ -23,10 +23,8 @@ impl Mafia{
             Mafia::ensure_mafia_can_kill(game);
         }
 
-        for a in Mafia::get_members(game) {
-            for b in Mafia::get_members(game) {
-                a.insert_role_label(game, b);
-            }
+        for member in Mafia::get_members(game) {
+            PlayerGroup::Mafia.insert_role_label(game, member)
         }
     }
     pub fn get_members(game: &Game)->Vec<PlayerReference>{

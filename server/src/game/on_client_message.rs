@@ -3,10 +3,11 @@ use std::collections::HashMap;
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender},
+    chat::{ChatMessageVariant, MessageSender},
     event::on_fast_forward::OnFastForward,
     phase::{PhaseState, PhaseType},
     player::{PlayerIndex, PlayerReference},
+    player_group::PlayerGroup, 
     role::{engineer::{Engineer, Trap}, kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, Role, RoleState}, role_list::Faction, 
     spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
     Game
@@ -72,8 +73,8 @@ impl Game {
                 let mut target_message_sent = false;
                 for chat_group in sender_player_ref.get_current_send_chat_groups(self){
                     match chat_group {
-                        ChatGroup::All | ChatGroup::Interview | ChatGroup::Dead => {},
-                        ChatGroup::Mafia | ChatGroup::Cult => {
+                        PlayerGroup::All | PlayerGroup::Interview | PlayerGroup::Dead => {},
+                        PlayerGroup::Mafia | PlayerGroup::Cult => {
                             self.add_message_to_chat_group( chat_group,
                                 ChatMessageVariant::Targeted { 
                                     targeter: sender_player_ref.index(), 
@@ -82,7 +83,7 @@ impl Game {
                             );
                             target_message_sent = true;
                         },
-                        ChatGroup::Jail => {
+                        PlayerGroup::Jail => {
                             if sender_player_ref.role(self) == Role::Jailor {
                                 self.add_message_to_chat_group(chat_group,
                                     ChatMessageVariant::JailorDecideExecute {
@@ -120,17 +121,17 @@ impl Game {
                 
                 for chat_group in sender_player_ref.get_current_send_chat_groups(self){
                     let message_sender = match chat_group {
-                        ChatGroup::Jail => {
+                        PlayerGroup::Jail => {
                             if sender_player_ref.role(self) == Role::Jailor {
                                 Some(MessageSender::Jailor)
                             }else{None}
                         },
-                        ChatGroup::Dead => {
+                        PlayerGroup::Dead => {
                             if sender_player_ref.alive(self) {
                                 Some(MessageSender::LivingToDead{ player: sender_player_index })
                             }else{None}
                         },
-                        ChatGroup::Interview => {
+                        PlayerGroup::Interview => {
                             if sender_player_ref.role(self) == Role::Journalist {
                                 Some(MessageSender::Journalist)
                             }else{None}
@@ -160,7 +161,7 @@ impl Game {
                 if !self.current_phase().is_day() || 
                     whisperee_ref.alive(self) != sender_player_ref.alive(self) ||
                     whisperee_ref == sender_player_ref || 
-                    !sender_player_ref.get_current_send_chat_groups(self).contains(&ChatGroup::All) ||
+                    !sender_player_ref.get_current_send_chat_groups(self).contains(&PlayerGroup::All) ||
                     text.replace(['\n', '\r'], "").trim().is_empty()
                 {
                     break 'packet_match;
@@ -175,7 +176,7 @@ impl Game {
                     break 'packet_match;
                 }
 
-                self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::BroadcastWhisper { whisperer: sender_player_index, whisperee: whispered_to_player_index });
+                self.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::BroadcastWhisper { whisperer: sender_player_index, whisperee: whispered_to_player_index });
                 let message = ChatMessageVariant::Whisper { 
                     from_player_index: sender_player_index, 
                     to_player_index: whispered_to_player_index, 

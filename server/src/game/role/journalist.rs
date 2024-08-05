@@ -1,7 +1,8 @@
 
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::chat::ChatMessageVariant;
+use crate::game::player_group::PlayerGroup;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -41,7 +42,7 @@ impl RoleStateImpl for Journalist {
             !actor_ref.night_blocked(game) &&
             !actor_ref.night_silenced(game)
         {
-            game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::JournalistJournal { journal: self.journal.clone()});    
+            game.add_message_to_chat_group(PlayerGroup::All, ChatMessageVariant::JournalistJournal { journal: self.journal.clone()});    
         }
     }
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
@@ -66,27 +67,27 @@ impl RoleStateImpl for Journalist {
     fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         vec![]
     }
-    fn get_current_send_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_send_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, 
             if 
                 game.current_phase().is_night() &&
                 actor_ref.alive(game) &&
                 self.interviewed_target.map_or_else(||false, |p|p.alive(game))
             {
-                vec![ChatGroup::Interview]
+                vec![PlayerGroup::Interview]
             }else{
                 vec![]
             }
         )
     }
-    fn get_current_receive_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_receive_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup> {
         let mut out = crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref);
         if 
             game.current_phase().is_night() &&
             actor_ref.alive(game) &&
             self.interviewed_target.map_or_else(||false, |p|p.alive(game))
         {
-            out.push(ChatGroup::Interview);
+            out.push(PlayerGroup::Interview);
         }
         out
     }
@@ -105,8 +106,8 @@ impl RoleStateImpl for Journalist {
                         let mut message_sent = false;
                         for chat_group in interviewed_target_ref.get_current_send_chat_groups(game){
                             match chat_group {
-                                ChatGroup::All | ChatGroup::Jail | ChatGroup::Interview | ChatGroup::Dead => {},
-                                ChatGroup::Mafia | ChatGroup::Cult  => {
+                                PlayerGroup::All | PlayerGroup::Jail | PlayerGroup::Interview | PlayerGroup::Dead => {},
+                                PlayerGroup::Mafia | PlayerGroup::Cult  => {
                                     game.add_message_to_chat_group(
                                         chat_group,
                                         ChatMessageVariant::PlayerIsBeingInterviewed { player_index: interviewed_target_ref.index() }

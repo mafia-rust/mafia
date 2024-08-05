@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use crate::game::
 {
-    chat::{ChatGroup, ChatMessageVariant}, components::{arsonist_doused::ArsonistDoused, puppeteer_marionette::PuppeteerMarionette}, event::{on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, resolution_state::ResolutionState, grave::{Grave, GraveKiller, GraveReference}, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
+    chat::ChatMessageVariant, player_group::PlayerGroup, components::{arsonist_doused::ArsonistDoused, puppeteer_marionette::PuppeteerMarionette}, event::{on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, resolution_state::ResolutionState, grave::{Grave, GraveKiller, GraveReference}, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
 };
 
 use super::PlayerReference;
@@ -211,17 +211,6 @@ impl PlayerReference{
 
 
 
-    pub fn insert_role_label_for_teammates(&self, game: &mut Game){
-        for other in PlayerReference::all_players(game){
-            if *self == other { continue }
-            
-
-            if same_evil_team(game, *self, other) {
-                other.insert_role_label(game, *self);
-                self.insert_role_label(game, other);
-            }
-        }
-    }
 
     pub fn role_label_map(&self, game: &Game) -> HashMap<PlayerReference, Role> {
         let mut map = HashMap::new();
@@ -277,10 +266,10 @@ impl PlayerReference{
     pub fn on_role_creation(&self, game: &mut Game) {
         self.role_state(game).clone().on_role_creation(game, *self)
     }
-    pub fn get_current_send_chat_groups(&self, game: &Game) -> Vec<ChatGroup> {
+    pub fn get_current_send_chat_groups(&self, game: &Game) -> Vec<PlayerGroup> {
         self.role_state(game).clone().get_current_send_chat_groups(game, *self)
     }
-    pub fn get_current_receive_chat_groups(&self, game: &Game) -> Vec<ChatGroup> {
+    pub fn get_current_receive_chat_groups(&self, game: &Game) -> Vec<PlayerGroup> {
         self.role_state(game).clone().get_current_receive_chat_groups(game, *self)
     }
     pub fn get_won_game(&self, game: &Game) -> bool {
