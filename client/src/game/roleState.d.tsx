@@ -51,6 +51,12 @@ export type RoleState = {
     type: "engineer",
     trap: {type: "dismantled"} | {type: "ready"} | {type: "set", target: PlayerIndex, shouldUnset: boolean}
 } | {
+    type: "armorsmith",
+    openShopsRemaining: number,
+    // nightOpenShop: boolean,
+    // nightProtectedPlayers: Vec<PlayerReference>,
+    // playersArmor: Vec<PlayerReference>
+} | {
     type: "vigilante",
     state: {type:"notLoaded"} | {type:"willSuicide"} | {type:"loaded",bullets:number} | {type:"suicided"}
 } | {

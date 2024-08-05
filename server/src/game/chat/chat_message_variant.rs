@@ -170,6 +170,8 @@ pub enum ChatMessageVariant {
 
     EngineerVisitorsRole{role: Role},
     TrapState{state: TrapState},
+    
+    ArmorsmithArmorBroke,
 
     Transported,
 

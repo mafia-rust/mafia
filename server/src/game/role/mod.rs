@@ -51,6 +51,7 @@ macros::roles! {
     Cop : cop,
     Bouncer : bouncer,
     Engineer : engineer,
+    Armorsmith : armorsmith,
 
     Vigilante : vigilante,
     Veteran : veteran,
