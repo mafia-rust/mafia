@@ -1107,8 +1107,8 @@
     "wiki.article.role.engineer.extra":"* You can set a trap on jailed players\n* When the player with the trap is attacked, you are told they are attacked, and they are told they are protected\n* You can't activate your own trap\n* It is possible to set the trap on yourself with the help of other roles like transporter\n* If you stop being the engineer your trap disappears",
 
     "wiki.article.role.armorsmith.guide": "- At night, select yourself to open shop up to two times per game\n    - You and all visitors to you are protected for the night\n    - One random visitor to you is given temporary armor, they have armor defense until they are attacked, when they are attacked, armor breaks.",
-    "wiki.article.role.armorsmith.abilities":"* Select yourself to open shop\n    * You and all visitors to you are protected\n    * One random visitor to you is given temporary armor",
-    "wiki.article.role.armorsmith.attributes":"* You have only two uses of your ability\n* PLayers with temporary armor are told when their armor breaks, but not when they gain it\n* You are not told who has temporary armor",
+    "wiki.article.role.armorsmith.abilities":"* Visit anyone to open shop\n    * You and all visitors to you are protected\n    * One random visitor to you is given temporary armor",
+    "wiki.article.role.armorsmith.attributes":"* You have only two uses of your ability\n* PLayers with temporary armor are told when their armor breaks, but not when they gain it\n* You are not told who has temporary armor\n* You open shop if you visit anyone, so possession can force you to open shop, but blocking can stop you from opening shop",
     "wiki.article.role.armorsmith.extra":"* Your target is told they are protected if they get attacked\n* You can't select anyone other than yourself",
 
     "wiki.article.role.escort.guide": "- At night, select a player to roleblock them, stopping them from using their ability\n- Your target is told they were roleblocked\n\n_For example_\n- An escort selects the godfather, so the godfather can't kill anyone, and nobody dies\n\nYou should try to choose evil players, especially the ones with powerful abilities",

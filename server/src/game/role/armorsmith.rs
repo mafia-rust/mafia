@@ -39,7 +39,7 @@ pub(super) const DEFENSE: u8 = 0;
 impl RoleStateImpl for Armorsmith {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
-            Priority::TopPriority => {
+            Priority::Armorsmith => {
 
                 if let Some(_) = actor_ref.night_visits(game).first(){
                     if self.open_shops_remaining > 0 {

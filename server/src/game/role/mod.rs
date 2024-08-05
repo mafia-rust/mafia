@@ -117,6 +117,8 @@ macros::priorities! {
     Possess,
     Roleblock,
 
+    Armorsmith,
+
     Deception,
 
     Bodyguard,
@@ -291,7 +293,7 @@ impl Role{
     }
     pub fn roleblock_immune(&self)->bool{
         match self {
-            Role::Bouncer | 
+            Role::Bouncer |
             Role::Veteran | 
             Role::Transporter | Role::Escort | Role::Retributionist | 
             Role::Jester | Role::Minion | Role::Scarecrow |
@@ -302,7 +304,7 @@ impl Role{
     pub fn wardblock_immune(&self)->bool{
         match self {
             Role::Jailor
-            | Role::Bouncer 
+            | Role::Bouncer
             | Role::Scarecrow => true,
             _ => false
         }
