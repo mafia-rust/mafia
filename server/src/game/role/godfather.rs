@@ -29,7 +29,10 @@ impl RoleStateImpl for Godfather {
         
         if actor_ref.night_blocked(game) {
             if let Some(backup) = self.backup {
-                if let Some(visit) = backup.night_visits(game).first(){
+
+                let mut visits = backup.night_visits(game).clone();
+                if let Some(visit) = visits.first_mut(){
+                    visit.attack = true;
                     let target_ref = visit.target;
             
                     game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackupKilled { backup: backup.index() });
@@ -37,6 +40,7 @@ impl RoleStateImpl for Godfather {
                         backup, game, GraveKiller::Faction(Faction::Mafia), 1, false
                     );
                 }
+                backup.set_night_visits(game, visits);
             }
             
         } else if let Some(visit) = actor_ref.night_visits(game).first(){
