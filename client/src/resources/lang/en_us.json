@@ -203,7 +203,7 @@
     "role.gossip.dayTarget": "Special",
 
     "role.doctor.name": "Doctor",
-    "role.doctor.name:var.0": "Guardians",
+    "role.doctor.name:var.0": "Doctors",
     "role.doctor.target": "Protect",
     "role.doctor.roleDataText": "\\0 self-protects remaining",
     "role.doctor.dayTarget": "Special",
@@ -1081,12 +1081,12 @@
     "wiki.article.role.gossip.attributes":"- If any of your targets targets have a suspicious aura, then you are told they visited an enemy",
     "wiki.article.role.gossip.extra":"- Suspicious aura overrides innocent aura\n- If your target visits multiple other players, you learn if at least one of them is an enemy with your target\n- False appeared visits can mess with your results\n- Your target having an aura does not mess with the results, however, their targets having an aura does",
     
-    "wiki.article.role.doctor.guide": "- At night, select a player to protect\n    - Whoever you protect doesn't die if they're attacked\n    - You and the player you protected are both told if they are attacked\n- You can select yourself to protect yourself once per game\n- If your target is attacked by a protection-piercing attack they still die\n\nYou should try to protect people you think are townies who will be attacked.",
-    "wiki.article.role.doctor.abilities":"* Visit a player to protect for the night",
+    "wiki.article.role.doctor.guide": "- At night, select a player to protect\n    - Whoever you protect doesn't die if they're attacked\n    - You and the player you protected are both told if they are attacked\n- You can select yourself to protect yourself once per game\n- If your target is attacked by a protection-piercing attack they still die\n- You can't select anyone night 1\n\nYou should try to protect people you think are townies who will be attacked.",
+    "wiki.article.role.doctor.abilities":"* Visit a player to protect for the night\n* You can't select a player night 1",
     "wiki.article.role.doctor.attributes":"* If you visit yourself, you lose the ability to select yourself",
     "wiki.article.role.doctor.extra":"* You are told if your target is attacked\n* Your target is told they are protected only if they get attacked",
 
-    "wiki.article.role.bodyguard.guide": "You can select a player to protect each night. If the player you protect is attacked, you are attacked instead, but you attack the attacker. You should try to protect people you think are townies who will be attacked. You can only target yourself once.",
+    "wiki.article.role.bodyguard.guide": "- Select a player to protect each night\n    - If the player you protect is attacked, you are attacked instead, and you attack the attacker back\n - You can't select anyone night 1\n- You can target yourself once per game\n\n- You should try to protect people you think are townies who will be attacked.",
     "wiki.article.role.bodyguard.abilities":"* Visit another player\n    * When any players visit your target with an attacking visit, they are redirected into visiting and attacking you\n    * If you redirect an attackers visit into yourself, you attack all attackers\n* Visit yourself\n    * You protect yourself tonight\n    * You don't redirect any attacks\n    * You lose the ability to select yourself",
     "wiki.article.role.bodyguard.attributes":"* You have an indirect armor-piercing attack",
     "wiki.article.role.bodyguard.extra":"* You will be told if your target is attacked\n* Your target is told that they were protected if they were attacked\n* If your target is attacked by multiple visits, you will attack back for each visit",
