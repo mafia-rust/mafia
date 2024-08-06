@@ -16,9 +16,6 @@ impl ChatMessage{
     pub fn new(variant: ChatMessageVariant, recipient: impl Into<Recipient>)->Self{
         Self{variant, recipient: recipient.into()}
     }
-    pub fn send(self, game: &mut Game) {
-        self.recipient.send_chat_message(game, self.variant);
-    }
     pub fn get_variant(&self)->&ChatMessageVariant{
         &self.variant
     }

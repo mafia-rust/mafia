@@ -27,7 +27,6 @@ impl Game{
     }
     pub fn on_game_ending(&mut self){
         if self.game_is_over() {
-            ChatMessageVariant::GameOver.send_to(self, PlayerGroup::All);
             PlayerGroup::All.send_chat_message(self, ChatMessageVariant::GameOver);
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::Draw });
 
@@ -54,7 +53,7 @@ impl Game{
     pub fn on_grave_added(&mut self, grave: GraveReference){   
         let grave = grave.deref(self).clone();     
         self.send_packet_to_all(ToClientPacket::AddGrave{grave: grave.clone()});
-        
+
         PlayerGroup::All.send_chat_message(self, ChatMessageVariant::PlayerDied { grave: grave.clone() });
         PlayerGroup::All.remove_role_label(self, grave.player);
     }

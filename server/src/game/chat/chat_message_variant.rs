@@ -221,9 +221,3 @@ pub enum ChatMessageVariant {
     MartyrFailed,
     WildcardConvertFailed{ role: Role }
 }
-
-impl ChatMessageVariant {
-    pub fn send_to(self, game: &mut Game, recipient: impl Into<Recipient>) {
-        ChatMessage::new(self, recipient).send(game)
-    }
-}

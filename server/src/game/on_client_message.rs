@@ -72,7 +72,7 @@ impl Game {
                 
                 let mut target_message_sent = false;
 
-                for group in sender_player_ref.get_current_receive_chat_groups(self){
+                for group in sender_player_ref.get_current_send_chat_groups(self){
                     match group {
                         PlayerGroup::All | PlayerGroup::Interview | PlayerGroup::Dead => {},
                         PlayerGroup::Mafia | PlayerGroup::Cult => {
