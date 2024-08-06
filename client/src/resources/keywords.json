@@ -33,7 +33,7 @@
     "wiki.article.role.attributes": { "style": "keyword-info","link": "standard/how_to_play"},
     "wiki.article.role.extra": { "style": "keyword-info","link": "standard/how_to_play"},
     "wiki.article.role.guide": { "style": "keyword-info","link": "standard/how_to_play"},
-    "grave.deathCause.lynching": { "style": "keyword-info"},
+    "grave.deathCause.execution": { "style": "keyword-info"},
     "grave.deathCause.leftTown": { "style": "keyword-info"},
     "grave.killer.suicide": { "style": "keyword-info"},
     "grave.killer.quit": { "style": "keyword-info"},

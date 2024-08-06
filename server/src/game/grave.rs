@@ -39,7 +39,7 @@ pub enum GraveInformation {
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type", content = "killers")]
 pub enum GraveDeathCause {
-    Lynching,
+    Execution,
     LeftTown,
     Killers(Vec<GraveKiller>)
 }
@@ -98,7 +98,7 @@ impl Grave{
             day_number: game.phase_machine.day_number,
             information: GraveInformation::Normal{
                 role: player_ref.role(game), 
-                death_cause: GraveDeathCause::Lynching, 
+                death_cause: GraveDeathCause::Execution, 
                 will: player_ref.will(game).clone(), 
                 death_notes: vec![]
             }
