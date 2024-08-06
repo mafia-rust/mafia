@@ -42,12 +42,12 @@ pub struct Player {
     crossed_out_outlines: Vec<u8>,
     death_note: Option<String>,
 
-    role_labels: HashSet<PlayerReference>,
-    player_tags: HashMap<PlayerReference, Vec1<Tag>>,
+    pub role_labels: HashSet<PlayerReference>,
+    pub player_tags: HashMap<PlayerReference, Vec1<Tag>>,
 
 
     pub chat_messages: Vec<ChatMessage>,
-    queued_chat_messages: Vec<ChatMessage>, // Not yet sent to the client
+    pub queued_chat_messages: Vec<ChatMessage>, // Not yet sent to the client
 
     last_sent_buttons: Vec<AvailableButtons>,
 

@@ -1,11 +1,12 @@
 
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::chat::{ChatMessageVariant, RecipientLike};
 use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller, GraveReference};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
+use crate::game::player_group::PlayerGroup;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
@@ -36,13 +37,13 @@ impl RoleStateImpl for Deputy {
     }
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
 
-        target_ref.add_private_chat_message(game, ChatMessageVariant::DeputyShotYou);
+        target_ref.add_chat_message(game, ChatMessageVariant::DeputyShotYou);
         if target_ref.defense(game) >= 1 {
-            target_ref.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
-            actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
+            target_ref.add_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
+            actor_ref.add_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
 
         }else{
-            game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::DeputyKilled{shot_index: target_ref.index()});
+            PlayerGroup::All.send_chat_message(game, ChatMessageVariant::DeputyKilled{shot_index: target_ref.index()});
             
             
             let mut grave = Grave::from_player_lynch(game, target_ref);
@@ -73,10 +74,10 @@ impl RoleStateImpl for Deputy {
     fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         vec![]
     }
-    fn get_current_send_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_send_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
     }
-    fn get_current_receive_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_receive_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
     fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {

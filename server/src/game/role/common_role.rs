@@ -1,4 +1,4 @@
-use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, role_list::Faction, phase::{PhaseState, PhaseType}, resolution_state::ResolutionState};
+use crate::game::{player_group::PlayerGroup, player::PlayerReference, Game, visit::Visit, role_list::Faction, phase::{PhaseState, PhaseType}, resolution_state::ResolutionState};
 
 use super::{journalist::Journalist, medium::Medium, same_evil_team, RoleState};
 
@@ -21,9 +21,9 @@ pub(super) fn convert_selection_to_visits(_game: &Game, _actor_ref: PlayerRefere
     }
 }
 
-pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference, night_chat_groups: Vec<ChatGroup>) -> Vec<ChatGroup> {
+pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference, night_chat_groups: Vec<PlayerGroup>) -> Vec<PlayerGroup> {
     if !actor_ref.alive(game){
-        return vec![ChatGroup::Dead];
+        return vec![PlayerGroup::Dead];
     }
     if actor_ref.night_silenced(game){
         return vec![];
@@ -36,10 +36,10 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         | PhaseState::Nomination {..}
         | PhaseState::Judgement {..} 
         | PhaseState::FinalWords {..}
-        | PhaseState::Dusk => vec![ChatGroup::All],
+        | PhaseState::Dusk => vec![PlayerGroup::All],
         &PhaseState::Testimony { player_on_trial, .. } => {
             if player_on_trial == actor_ref {
-                vec![ChatGroup::All]
+                vec![PlayerGroup::All]
             } else {
                 vec![]
             }
@@ -56,7 +56,7 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
                     }
                 })
             {
-                out.push(ChatGroup::Dead);
+                out.push(PlayerGroup::Dead);
             }
             if PlayerReference::all_players(game)
                 .any(|p|
@@ -68,12 +68,12 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
                     }
                 )
             {
-                out.push(ChatGroup::Interview);
+                out.push(PlayerGroup::Interview);
             }
 
 
             let mut jail_or_night_chats = if actor_ref.night_jailed(game){
-                vec![ChatGroup::Jail]
+                vec![PlayerGroup::Jail]
             } else {
                 night_chat_groups
             };
@@ -84,23 +84,23 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         },
     }
 }
-pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup> {
     let mut out = Vec::new();
 
-    out.push(ChatGroup::All);
+    out.push(PlayerGroup::All);
 
     if !actor_ref.alive(game){
-        out.push(ChatGroup::Dead);
+        out.push(PlayerGroup::Dead);
     }
 
     if actor_ref.role(game).faction() == Faction::Mafia {
-        out.push(ChatGroup::Mafia);
+        out.push(PlayerGroup::Mafia);
     }
     if actor_ref.role(game).faction() == Faction::Cult {
-        out.push(ChatGroup::Cult);
+        out.push(PlayerGroup::Cult);
     }
     if actor_ref.night_jailed(game){
-        out.push(ChatGroup::Jail);
+        out.push(PlayerGroup::Jail);
     }
     if 
         game.current_phase().phase() == PhaseType::Night && 
@@ -114,7 +114,7 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
                 }
             })
     {
-        out.push(ChatGroup::Dead);
+        out.push(PlayerGroup::Dead);
     }
     if 
         game.current_phase().phase() == PhaseType::Night && 
@@ -128,7 +128,7 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
                 }
             )
     {
-        out.push(ChatGroup::Interview);
+        out.push(PlayerGroup::Interview);
     }
 
     out

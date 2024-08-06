@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::game::{grave::GraveKiller, player::PlayerReference, role::Role, tag::Tag, Game};
+use crate::game::{chat::{Recipient, RecipientLike}, grave::GraveKiller, player::PlayerReference, role::Role, tag::Tag, Game};
 
 impl Game {
     pub fn arsonist_doused(&self)->&ArsonistDoused{

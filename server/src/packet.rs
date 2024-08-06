@@ -22,7 +22,7 @@ use serde::{Deserialize, Serialize};
 use vec1::Vec1;
 
 use crate::{game::{
-    available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{doomsayer::DoomsayerGuess, kira::KiraGuess, ojo::OjoAction, puppeteer::PuppeteerAction, Role, RoleState}, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
+    available_buttons::AvailableButtons, chat::ChatMessage, player_group::PlayerGroup, grave::Grave, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{doomsayer::DoomsayerGuess, kira::KiraGuess, ojo::OjoAction, puppeteer::PuppeteerAction, Role, RoleState}, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
 }, listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log};
 
 #[derive(Serialize, Debug, Clone)]
@@ -91,7 +91,7 @@ pub enum ToClientPacket{
     PlayerVotes{votes_for_player: HashMap<PlayerIndex, u8>},
 
     #[serde(rename_all = "camelCase")]
-    YourSendChatGroups{send_chat_groups: Vec<ChatGroup>},
+    YourSendChatGroups{send_chat_groups: Vec<PlayerGroup>},
 
     YourButtons{buttons: Vec<AvailableButtons>},
     #[serde(rename_all = "camelCase")]

@@ -7,6 +7,7 @@ pub mod visit;
 pub mod verdict;
 pub mod role_list;
 pub mod settings;
+pub mod player_group;
 pub mod resolution_state;
 pub mod components;
 pub mod available_buttons;
@@ -18,6 +19,8 @@ pub mod game_listeners;
 
 use std::collections::HashMap;
 use std::time::Duration;
+use chat::Recipient;
+use chat::RecipientLike;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::Serialize;
@@ -26,9 +29,10 @@ use crate::client_connection::ClientConnection;
 use crate::game::event::on_game_start::OnGameStart;
 use crate::game::player::PlayerIndex;
 use crate::packet::ToClientPacket;
-use chat::{ChatMessageVariant, ChatGroup, ChatMessage};
+use chat::{ChatMessageVariant, ChatMessage};
 use player::PlayerReference;
 use player::Player;
+use player_group::PlayerGroup;
 use phase::PhaseStateMachine;
 use settings::Settings;
 use grave::Grave;
@@ -294,7 +298,7 @@ impl Game {
         }
 
         if self.phase_machine.day_number == u8::MAX {
-            self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::GameOver);
+            PlayerGroup::All.send_chat_message(self, ChatMessageVariant::GameOver);
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
             self.ticking = false;
             return;
@@ -331,24 +335,7 @@ impl Game {
         }
     }
 
-    pub fn add_message_to_chat_group(&mut self, group: ChatGroup, variant: ChatMessageVariant){
-        let message = ChatMessage::new_non_private(variant.clone(), group.clone());
-
-        for player_ref in group.all_players_in_group(self){
-            player_ref.add_chat_message(self, message.clone());
-            player_ref.send_chat_messages(self);
-        }
-
-        if group == ChatGroup::All {
-            self.add_chat_message_to_spectators(variant);
-        }
-    }
-    pub fn add_messages_to_chat_group(&mut self, group: ChatGroup, messages: Vec<ChatMessageVariant>){
-        for message in messages.into_iter(){
-            self.add_message_to_chat_group(group.clone(), message);
-        }
-    }
-    pub fn add_chat_message_to_spectators(&mut self, message: ChatMessageVariant){
+    pub fn send_chat_message_to_spectators(&mut self, message: ChatMessageVariant){
         for spectator in self.spectators.iter_mut(){
             spectator.queued_chat_messages.push(message.clone());
         }

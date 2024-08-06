@@ -3,7 +3,8 @@ use std::ops::Deref;
 
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::chat::{ChatMessageVariant, RecipientLike};
+use crate::game::player_group::PlayerGroup;
 use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -139,7 +140,7 @@ impl RoleStateImpl for Marksman {
         if self.state.marks().len() == 0 {
             actor_ref.set_selection(game, vec![]);
         }
-        actor_ref.add_private_chat_message(game, ChatMessageVariant::MarksmanChosenMarks { marks: PlayerReference::ref_vec_to_index(self.state.marks().deref()) });
+        actor_ref.add_chat_message(game, ChatMessageVariant::MarksmanChosenMarks { marks: PlayerReference::ref_vec_to_index(self.state.marks().deref()) });
         actor_ref.set_role_state(game, RoleState::Marksman(self))
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -179,10 +180,10 @@ impl RoleStateImpl for Marksman {
             Vec::new()
         }
     }
-    fn get_current_send_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_send_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
     }
-    fn get_current_receive_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_receive_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
     fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {

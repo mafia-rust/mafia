@@ -1,13 +1,9 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    chat::ChatMessageVariant, 
-    player::PlayerReference,
-    role::{
+    chat::{ChatMessageVariant, RecipientLike}, player::PlayerReference, player_group::PlayerGroup, role::{
         Priority, Role
-    }, 
-    tag::Tag,
-    Game
+    }, tag::Tag, Game
 };
 
 impl Game{
@@ -99,7 +95,6 @@ impl PuppeteerMarionette{
 
         for player_a in marionettes_and_puppeteer.clone() {
             for player_b in marionettes_and_puppeteer.clone() {
-
                 player_a.insert_role_label(game, player_b);
                 
                 if 

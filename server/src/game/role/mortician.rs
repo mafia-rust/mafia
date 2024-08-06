@@ -2,7 +2,8 @@
 use serde::Serialize;
 
 use crate::game::chat::ChatMessageVariant;
-use crate::game::chat::ChatGroup;
+use crate::game::chat::RecipientLike;
+use crate::game::player_group::PlayerGroup;
 use crate::game::grave::GraveInformation;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
@@ -65,10 +66,10 @@ impl RoleStateImpl for Mortician {
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
     }
-    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Mafia])
+    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup> {
+        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![PlayerGroup::Mafia])
     }
-    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
     fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
@@ -82,7 +83,7 @@ impl RoleStateImpl for Mortician {
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave_ref: GraveReference){
         if actor_ref.alive(game) && self.obscured_players.contains(&grave_ref.deref(game).player) {
-            actor_ref.add_private_chat_message(game, ChatMessageVariant::PlayerRoleAndAlibi{
+            actor_ref.add_chat_message(game, ChatMessageVariant::PlayerRoleAndAlibi{
                 player: grave_ref.deref(game).player,
                 role: grave_ref.deref(game).player.role(game),
                 will: grave_ref.deref(game).player.will(game).to_string(),

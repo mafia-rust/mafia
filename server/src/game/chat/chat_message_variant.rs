@@ -3,8 +3,12 @@ use serde::{Deserialize, Serialize};
 use crate::game::{
     grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
         auditor::AuditorResult, engineer::TrapState, kira::KiraResult, ojo::OjoAction, puppeteer::PuppeteerAction, spy::SpyBug, Role
-    }, role_list::RoleOutline, tag::Tag, verdict::Verdict
+    },
+    role_list::RoleOutline, tag::Tag,
+    verdict::Verdict, Game
 };
+
+use super::{ChatMessage, Recipient};
 
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]

@@ -1,6 +1,7 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::chat::{ChatMessageVariant, RecipientLike};
+use crate::game::player_group::PlayerGroup;
 use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
@@ -38,10 +39,10 @@ impl RoleStateImpl for Politician {
     fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         vec![]
     }
-    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
     }
-    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<PlayerGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
     fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
@@ -85,8 +86,8 @@ impl RoleStateImpl for Politician {
                     }
                     player_ref.die(game, grave);
                 }else{
-                    player_ref.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
-                    actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
+                    player_ref.add_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
+                    actor_ref.add_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
                 }
                 won = true;
             }
