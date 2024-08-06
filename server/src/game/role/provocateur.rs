@@ -2,7 +2,7 @@
 use rand::seq::SliceRandom;
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::chat::{ChatMessageVariant, RecipientLike};
 use crate::game::player_group::PlayerGroup;
 use crate::game::grave::{Grave, GraveReference};
 use crate::game::phase::{PhaseState, PhaseType};
@@ -79,7 +79,7 @@ impl RoleStateImpl for Provocateur {
         match *game.current_phase() {
             PhaseState::FinalWords { player_on_trial } => {
                 if Some(player_on_trial) == self.target.get_target() {
-                    game.add_message(PlayerGroup::All, ChatMessageVariant::ProvocateurWon);
+                    PlayerGroup::All.send_chat_message(game, ChatMessageVariant::ProvocateurWon);
                     actor_ref.set_role_state(game, RoleState::Provocateur(Provocateur { target: ProvocateurTarget::Won }));
                     actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
                 }

@@ -2,7 +2,7 @@
 use rand::seq::SliceRandom;
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::chat::{ChatMessageVariant, RecipientLike};
 use crate::game::player_group::PlayerGroup;
 use crate::game::phase::{PhaseType, PhaseState};
 use crate::game::player::PlayerReference;
@@ -108,7 +108,7 @@ impl RoleStateImpl for Jester {
             actor_ref == dead_player_ref && 
             game.current_phase().phase() == PhaseType::FinalWords
         {
-            game.add_message(PlayerGroup::All, ChatMessageVariant::JesterWon);
+            PlayerGroup::All.send_chat_message(game, ChatMessageVariant::JesterWon);
         }
     }
     fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave: crate::game::grave::GraveReference) {

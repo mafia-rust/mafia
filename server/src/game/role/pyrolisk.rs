@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::chat::{ChatMessageVariant, RecipientLike};
 use crate::game::player_group::PlayerGroup;
 use crate::game::grave::{GraveInformation, GraveKiller, GraveReference};
 use crate::game::phase::PhaseType;
@@ -114,7 +114,7 @@ impl RoleStateImpl for Pyrolisk {
         }else{false};
 
         if should_obscure {
-            actor_ref.add_private_chat_message(game, ChatMessageVariant::PlayerRoleAndAlibi{
+            actor_ref.add_chat_message(game, ChatMessageVariant::PlayerRoleAndAlibi{
                 player: grave_ref.deref(game).player,
                 role: grave_ref.deref(game).player.role(game),
                 will: grave_ref.deref(game).player.will(game).to_string(),

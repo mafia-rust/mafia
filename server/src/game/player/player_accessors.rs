@@ -5,7 +5,7 @@ use vec1::Vec1;
 use crate::{
     game::{
         chat::{
-            ChatMessage, ChatMessageVariant, Recipient
+            ChatMessage, ChatMessageVariant, Recipient, RecipientLike
         }, event::on_fast_forward::OnFastForward, grave::GraveKiller, player_group::PlayerGroup, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, Game
     }, 
     packet::ToClientPacket, 
@@ -78,12 +78,6 @@ impl PlayerReference{
     pub fn role_labels<'a>(&self, game: &'a Game) -> &'a HashSet<PlayerReference>{
         &self.deref(game).role_labels
     }
-    pub fn reveal_role(&self, game: &mut Game, recipient: impl Into<Recipient>){
-        recipient.into().insert_role_label(game, *self);
-    }
-    pub fn conceal_role(&self, game: &mut Game, recipient: impl Into<Recipient>){
-        recipient.into().remove_role_label(game, *self);
-    }
 
     pub fn player_tags<'a>(&self, game: &'a Game) -> &'a HashMap<PlayerReference, Vec1<Tag>>{
         &self.deref(game).player_tags
@@ -94,54 +88,6 @@ impl PlayerReference{
         }else{
             0
         }
-    }
-    pub fn push_player_tag(&self, game: &mut Game, key: PlayerReference, value: Tag){
-        if let Some(player_tags) = self.deref_mut(game).player_tags.get_mut(&key){
-            player_tags.push(value);
-        }else{
-            self.deref_mut(game).player_tags.insert(key, vec1::vec1![value]);
-        }
-        self.add_private_chat_message(game, ChatMessageVariant::TagAdded { player: key.index(), tag: value });
-        self.send_packet(game, ToClientPacket::YourPlayerTags { player_tags: PlayerReference::ref_map_to_index(self.deref(game).player_tags.clone()) });
-    }
-    pub fn remove_player_tag(&self, game: &mut Game, key: PlayerReference, value: Tag){
-        let Some(player_tags) = self.deref_mut(game).player_tags.get_mut(&key) else {return};
-
-        match Vec1::try_from_vec(
-            player_tags.clone()
-                .into_iter()
-                .filter(|t|*t!=value)
-                .collect()
-        ){
-            Ok(new_player_tags) => {
-                *player_tags = new_player_tags
-            },
-            Err(_) => {
-                self.deref_mut(game).player_tags.remove(&key);
-            },
-        }
-        self.add_private_chat_message(game, ChatMessageVariant::TagRemoved { player: key.index(), tag: value });
-        self.send_packet(game, ToClientPacket::YourPlayerTags{
-            player_tags: PlayerReference::ref_map_to_index(self.deref(game).player_tags.clone())
-        });
-    }
-    pub fn remove_player_tag_on_all(&self, game: &mut Game, value: Tag){
-        for player_ref in PlayerReference::all_players(game){
-            self.remove_player_tag(game, player_ref, value)
-        }
-    }
-
-    pub fn add_private_chat_message(&self, game: &mut Game, message: ChatMessageVariant) {
-        self.add_chat_message(game, ChatMessage::new(message, *self));
-    }
-    pub fn add_private_chat_messages(&self, game: &mut Game, messages: Vec<ChatMessageVariant>){
-        for message in messages.into_iter(){
-            self.add_private_chat_message(game, message);
-        }
-    }
-    pub fn add_chat_message(&self, game: &mut Game, message: ChatMessage) {
-        self.deref_mut(game).chat_messages.push(message.clone());
-        self.deref_mut(game).queued_chat_messages.push(message);
     }
 
     pub fn set_fast_forward_vote(&self, game: &mut Game, fast_forward_vote: bool) {
@@ -197,7 +143,7 @@ impl PlayerReference{
         game.send_packet_to_all(player_votes_packet);
         
         if send_chat_message {
-            game.add_message(PlayerGroup::All, ChatMessageVariant::Voted{
+            PlayerGroup::All.send_chat_message(game, ChatMessageVariant::Voted{
                 voter: self.index(), 
                 votee: chosen_vote.as_ref().map(PlayerReference::index)
             });
@@ -359,8 +305,7 @@ impl PlayerReference{
                 match chat_group {
                     PlayerGroup::All | PlayerGroup::Jail | PlayerGroup::Interview | PlayerGroup::Dead => {},
                     PlayerGroup::Mafia | PlayerGroup::Cult  => {
-                        game.add_message(
-                            chat_group,
+                        chat_group.send_chat_message(game,
                             ChatMessageVariant::JailedSomeone { player_index: self.index() }
                         );
                         message_sent = true;
@@ -368,9 +313,7 @@ impl PlayerReference{
                 }
             }
             if !message_sent {
-                self.add_private_chat_message(game,
-                    ChatMessageVariant::JailedSomeone { player_index: self.index() }
-                );
+                self.add_chat_message(game, ChatMessageVariant::JailedSomeone { player_index: self.index() });
             }
         }
         self.deref_mut(game).night_variables.jailed = jailed;

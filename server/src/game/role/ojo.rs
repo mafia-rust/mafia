@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+use crate::game::chat::RecipientLike;
 use crate::game::player_group::PlayerGroup;
 use crate::game::grave::{GraveKiller, GraveReference};
 use crate::game::phase::PhaseType;
@@ -87,7 +88,7 @@ impl RoleStateImpl for Ojo {
 
                     for player in PlayerReference::all_players(game) {
                         if i_visited.contains(&player) || visited_me.contains(&player) {
-                            player.reveal_role(game, actor_ref);
+                            actor_ref.insert_role_label(game, player);
                         }
                     }
                 }

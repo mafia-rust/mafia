@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    chat::{ChatMessageVariant, MessageSender},
+    chat::{ChatMessageVariant, MessageSender, RecipientLike},
     event::on_fast_forward::OnFastForward,
     phase::{PhaseState, PhaseType},
     player::{PlayerIndex, PlayerReference},
@@ -76,7 +76,7 @@ impl Game {
                     match group {
                         PlayerGroup::All | PlayerGroup::Interview | PlayerGroup::Dead => {},
                         PlayerGroup::Mafia | PlayerGroup::Cult => {
-                            self.add_message(group,
+                            group.send_chat_message(self,
                                 ChatMessageVariant::Targeted { 
                                     targeter: sender_player_ref.index(), 
                                     targets: PlayerReference::ref_vec_to_index(&target_ref_list)
@@ -86,7 +86,7 @@ impl Game {
                         },
                         PlayerGroup::Jail => {
                             if sender_player_ref.role(self) == Role::Jailor {
-                                self.add_message(group,
+                                group.send_chat_message(self,
                                     ChatMessageVariant::JailorDecideExecute {
                                         target: target_ref_list.first().map(|p|p.index())
                                     }
@@ -99,7 +99,7 @@ impl Game {
                 
                 
                 if !target_message_sent{
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::Targeted { 
+                    sender_player_ref.add_chat_message(self, ChatMessageVariant::Targeted { 
                         targeter: sender_player_ref.index(), 
                         targets: PlayerReference::ref_vec_to_index(&target_ref_list)
                     });
@@ -143,8 +143,8 @@ impl Game {
                     let message_sender = message_sender.unwrap_or(MessageSender::Player { player: sender_player_index });
 
 
-                    self.add_message(
-                        chat_group.clone(),
+                    chat_group.send_chat_message(
+                        self,
                         ChatMessageVariant::Normal{
                             message_sender,
                             text: text.trim_newline().trim_whitespace().truncate(400).truncate_lines(20), 
@@ -169,29 +169,29 @@ impl Game {
                 }
 
                 if let RoleState::Mayor(Mayor{revealed: true}) = whisperee_ref.role_state(self) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::MayorCantWhisper);
+                    sender_player_ref.add_chat_message(self, ChatMessageVariant::MayorCantWhisper);
                     break 'packet_match;
                 }
                 if let RoleState::Mayor(Mayor{revealed: true}) = sender_player_ref.role_state(self) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::MayorCantWhisper);
+                    sender_player_ref.add_chat_message(self, ChatMessageVariant::MayorCantWhisper);
                     break 'packet_match;
                 }
 
-                self.add_message(PlayerGroup::All, ChatMessageVariant::BroadcastWhisper { whisperer: sender_player_index, whisperee: whispered_to_player_index });
+                PlayerGroup::All.send_chat_message(self, ChatMessageVariant::BroadcastWhisper { whisperer: sender_player_index, whisperee: whispered_to_player_index });
                 let message = ChatMessageVariant::Whisper { 
                     from_player_index: sender_player_index, 
                     to_player_index: whispered_to_player_index, 
                     text 
                 };
         
-                sender_player_ref.add_private_chat_message(self, message.clone());
+                sender_player_ref.add_chat_message(self, message.clone());
 
                 for player in PlayerReference::all_players(self){
                     if 
                         player.role(self) == Role::Informant ||
                         whisperee_ref == player
                     {
-                        player.add_private_chat_message(self, message.clone());
+                        player.add_chat_message(self, message.clone());
                     }
                 }
             },
@@ -325,7 +325,7 @@ impl Game {
                 if let RoleState::Ojo(mut ojo) = sender_player_ref.role_state(self).clone(){
                     ojo.chosen_action = action.clone();
                     sender_player_ref.set_role_state(self, RoleState::Ojo(ojo));
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::OjoSelection { action })
+                    sender_player_ref.add_chat_message(self, ChatMessageVariant::OjoSelection { action })
                 }
             },
             ToServerPacket::SetPuppeteerAction { action } => {
@@ -335,7 +335,7 @@ impl Game {
                         pup.action = PuppeteerAction::Poison;
                     }
                     sender_player_ref.set_role_state(self, RoleState::Puppeteer(pup));
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::PuppeteerActionChosen { action })
+                    sender_player_ref.add_chat_message(self, ChatMessageVariant::PuppeteerActionChosen { action })
                 }
             },
             ToServerPacket::SetEngineerShouldUnset { unset } => {
@@ -344,7 +344,7 @@ impl Game {
                         sender_player_ref.set_role_state(self, 
                             RoleState::Engineer(Engineer { trap: Trap::Set { target, should_unset: unset } })
                         );
-                        sender_player_ref.add_private_chat_message(self, ChatMessageVariant::EngineerRemoveTrap { unset });
+                        sender_player_ref.add_chat_message(self, ChatMessageVariant::EngineerRemoveTrap { unset });
                     }
                 }
             },

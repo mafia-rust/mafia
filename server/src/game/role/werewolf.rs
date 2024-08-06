@@ -5,7 +5,7 @@ use rand::seq::SliceRandom;
 
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::chat::{ChatMessageVariant, RecipientLike};
 use crate::game::player_group::PlayerGroup;
 use crate::game::grave::{GraveKiller, GraveReference};
 use crate::game::phase::PhaseType;

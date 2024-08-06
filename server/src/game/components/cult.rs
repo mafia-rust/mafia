@@ -1,4 +1,4 @@
-use crate::game::{chat::ChatMessageVariant, phase::PhaseType, player::PlayerReference, player_group::PlayerGroup, role::{apostle::Apostle, disciple::Disciple, zealot::Zealot, Role, RoleState}, role_list::Faction, Game};
+use crate::game::{chat::{ChatMessageVariant, Recipient, RecipientLike}, phase::PhaseType, player::PlayerReference, player_group::PlayerGroup, role::{apostle::Apostle, disciple::Disciple, zealot::Zealot, Role, RoleState}, role_list::Faction, Game};
 
 
 impl Game {
@@ -20,9 +20,9 @@ impl Cult{
         
         if phase == PhaseType::Night {
             if Cult::can_convert_tonight(game){
-                game.add_message(PlayerGroup::Cult, ChatMessageVariant::ApostleCanConvertTonight);
+                PlayerGroup::Cult.send_chat_message(game, ChatMessageVariant::ApostleCanConvertTonight);
             }else{
-                game.add_message(PlayerGroup::Cult, ChatMessageVariant::ApostleCantConvertTonight);
+                PlayerGroup::Cult.send_chat_message(game, ChatMessageVariant::ApostleCantConvertTonight);
             }
         }
     }
@@ -36,7 +36,7 @@ impl Cult{
             cult.sacrifices_required = cult.sacrifices_required.map(|s| s.saturating_sub(1));
         }
         if let Some(required) = cult.sacrifices_required{
-            game.add_message(PlayerGroup::Cult, ChatMessageVariant::CultSacrificesRequired { required });
+            PlayerGroup::Cult.send_chat_message(game, ChatMessageVariant::CultSacrificesRequired { required });
         }
         game.set_cult(cult);
         
@@ -49,7 +49,7 @@ impl Cult{
         }
 
         for member in Cult::get_members(game) {
-            member.reveal_role(game, PlayerGroup::Cult)
+            PlayerGroup::Cult.insert_role_label(game, member)
         }
     }
     

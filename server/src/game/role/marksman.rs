@@ -3,7 +3,7 @@ use std::ops::Deref;
 
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::chat::{ChatMessageVariant, RecipientLike};
 use crate::game::player_group::PlayerGroup;
 use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::GraveKiller;
@@ -140,7 +140,7 @@ impl RoleStateImpl for Marksman {
         if self.state.marks().len() == 0 {
             actor_ref.set_selection(game, vec![]);
         }
-        actor_ref.add_private_chat_message(game, ChatMessageVariant::MarksmanChosenMarks { marks: PlayerReference::ref_vec_to_index(self.state.marks().deref()) });
+        actor_ref.add_chat_message(game, ChatMessageVariant::MarksmanChosenMarks { marks: PlayerReference::ref_vec_to_index(self.state.marks().deref()) });
         actor_ref.set_role_state(game, RoleState::Marksman(self))
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {

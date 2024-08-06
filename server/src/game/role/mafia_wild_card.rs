@@ -2,7 +2,7 @@ use std::vec;
 
 use serde::{Serialize, Deserialize};
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::chat::{ChatMessageVariant, RecipientLike};
 use crate::game::grave::GraveReference;
 use crate::game::{player_group::PlayerGroup, phase::PhaseType};
 use crate::game::player::PlayerReference;
@@ -89,7 +89,7 @@ impl MafiaWildcard {
         {
             actor_ref.set_role(game, self.role.default_state());
         }else{
-            actor_ref.add_private_chat_message(game, ChatMessageVariant::WildcardConvertFailed{role: self.role.clone()})
+            actor_ref.add_chat_message(game, ChatMessageVariant::WildcardConvertFailed{role: self.role.clone()})
         }
     }
 }

@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::chat::{ChatMessageVariant, RecipientLike};
 use crate::game::player_group::PlayerGroup;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
@@ -78,7 +78,7 @@ impl RoleStateImpl for Medium {
                 if let Some(seanced) = self.seanced_target {
                     if seanced.alive(game) && !actor_ref.alive(game){
                 
-                        game.add_message(PlayerGroup::Dead,
+                        PlayerGroup::Dead.send_chat_message(game,
                             ChatMessageVariant::MediumHauntStarted{ medium: actor_ref.index(), player: seanced.index() }
                         );
 

@@ -1,7 +1,7 @@
 
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::chat::{ChatMessageVariant, RecipientLike};
 use crate::game::player_group::PlayerGroup;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
@@ -42,7 +42,7 @@ impl RoleStateImpl for Journalist {
             !actor_ref.night_blocked(game) &&
             !actor_ref.night_silenced(game)
         {
-            game.add_message(PlayerGroup::All, ChatMessageVariant::JournalistJournal { journal: self.journal.clone()});    
+            PlayerGroup::All.send_chat_message(game, ChatMessageVariant::JournalistJournal { journal: self.journal.clone()});    
         }
     }
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
@@ -99,7 +99,7 @@ impl RoleStateImpl for Journalist {
             PhaseType::Night => {
                 if let Some(interviewed_target_ref) = self.interviewed_target {
                     if interviewed_target_ref.alive(game) && actor_ref.alive(game){
-                        actor_ref.add_private_chat_message(game, 
+                        actor_ref.add_chat_message(game, 
                             ChatMessageVariant::YouAreInterviewingPlayer { player_index: interviewed_target_ref.index() }
                         );
 
@@ -108,8 +108,7 @@ impl RoleStateImpl for Journalist {
                             match chat_group {
                                 PlayerGroup::All | PlayerGroup::Jail | PlayerGroup::Interview | PlayerGroup::Dead => {},
                                 PlayerGroup::Mafia | PlayerGroup::Cult  => {
-                                    game.add_message(
-                                        chat_group,
+                                    chat_group.send_chat_message(game,
                                         ChatMessageVariant::PlayerIsBeingInterviewed { player_index: interviewed_target_ref.index() }
                                     );
                                     message_sent = true;
@@ -117,7 +116,7 @@ impl RoleStateImpl for Journalist {
                             }
                         }
                         if !message_sent {
-                            interviewed_target_ref.add_private_chat_message(game, 
+                            interviewed_target_ref.add_chat_message(game, 
                                 ChatMessageVariant::PlayerIsBeingInterviewed { player_index: interviewed_target_ref.index() }
                             );
                         }

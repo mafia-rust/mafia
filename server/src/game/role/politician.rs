@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::chat::{ChatMessageVariant, RecipientLike};
 use crate::game::player_group::PlayerGroup;
 use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
@@ -86,8 +86,8 @@ impl RoleStateImpl for Politician {
                     }
                     player_ref.die(game, grave);
                 }else{
-                    player_ref.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
-                    actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
+                    player_ref.add_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
+                    actor_ref.add_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
                 }
                 won = true;
             }

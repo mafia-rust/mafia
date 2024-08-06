@@ -25,7 +25,7 @@ const ChatElement = React.memo((
     const message = props.message;
     const playerNames = props.playerNames ?? GAME_MANAGER.getPlayerNames();
     const chatMessageStyles = require("../resources/styling/chatMessage.json");
-    if(message === undefined){
+    if(message.variant === undefined){
         console.error("ChatElement message with undefined variant:");
         console.error(message);
     }
@@ -581,7 +581,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
 }
 export type ChatMessage = {
     variant: ChatMessageVariant
-    chatGroup: ChatGroup | null,
+    chatGroup: ChatGroup | null
 }
 export type ChatMessageVariant = {
     type: "lobbyMessage",

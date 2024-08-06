@@ -1,11 +1,11 @@
 use rand::thread_rng;
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::chat::{ChatMessageVariant, RecipientLike};
 use crate::game::player_group::PlayerGroup;
 use crate::game::grave::{Grave, GraveReference};
 use crate::game::phase::PhaseType;
-use crate::game::player::PlayerReference;
+use crate::game::player::{self, PlayerReference};
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
@@ -36,7 +36,7 @@ impl RoleStateImpl for Scarecrow {
             };
 
             for player_ref in blocked_players.iter(){
-                player_ref.reveal_role(game, actor_ref);
+                actor_ref.insert_role_label(game, *player_ref);
             }
             
             actor_ref.push_night_message(game, message);

@@ -1,7 +1,7 @@
 
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::chat::{ChatMessageVariant, RecipientLike};
 use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller, GraveReference};
 use crate::game::phase::PhaseType;
@@ -37,13 +37,13 @@ impl RoleStateImpl for Deputy {
     }
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
 
-        target_ref.add_private_chat_message(game, ChatMessageVariant::DeputyShotYou);
+        target_ref.add_chat_message(game, ChatMessageVariant::DeputyShotYou);
         if target_ref.defense(game) >= 1 {
-            target_ref.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
-            actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
+            target_ref.add_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
+            actor_ref.add_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
 
         }else{
-            game.add_message(PlayerGroup::All, ChatMessageVariant::DeputyKilled{shot_index: target_ref.index()});
+            PlayerGroup::All.send_chat_message(game, ChatMessageVariant::DeputyKilled{shot_index: target_ref.index()});
             
             
             let mut grave = Grave::from_player_lynch(game, target_ref);

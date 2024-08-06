@@ -1,7 +1,7 @@
 
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::chat::{ChatMessageVariant, RecipientLike};
 use crate::game::player_group::PlayerGroup;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
@@ -31,12 +31,12 @@ impl RoleStateImpl for Mayor {
             return;
         }
 
-        game.add_message(PlayerGroup::All, ChatMessageVariant::MayorRevealed { player_index: actor_ref.index() });
+        PlayerGroup::All.send_chat_message(game, ChatMessageVariant::MayorRevealed { player_index: actor_ref.index() });
+        PlayerGroup::All.insert_role_label(game, actor_ref);
 
         actor_ref.set_role_state(game, RoleState::Mayor(Mayor{
             revealed: true
         }));
-        actor_ref.reveal_role(game, PlayerGroup::All);
         game.count_votes_and_start_trial();
     }
     fn can_select(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool{

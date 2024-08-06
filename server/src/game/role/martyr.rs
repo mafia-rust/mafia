@@ -2,7 +2,7 @@ use std::vec;
 
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::chat::{ChatMessageVariant, RecipientLike};
 use crate::game::player_group::PlayerGroup;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
@@ -93,7 +93,7 @@ impl RoleStateImpl for Martyr {
     }
     fn on_phase_start(self,  game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         if phase == PhaseType::Obituary && matches!(self.state, MartyrState::StillPlaying {..}) {
-            game.add_message(PlayerGroup::All, ChatMessageVariant::MartyrFailed);
+            PlayerGroup::All.send_chat_message(game, ChatMessageVariant::MartyrFailed);
         }
 
         if phase == PhaseType::Obituary && actor_ref.alive(game) && matches!(self.state, MartyrState::StillPlaying { bullets: 0 }) {
@@ -101,8 +101,8 @@ impl RoleStateImpl for Martyr {
         }
     }
     fn on_role_creation(self,  game: &mut Game, actor_ref: PlayerReference) {
-        game.add_message(PlayerGroup::All, ChatMessageVariant::MartyrRevealed { martyr: actor_ref.index() });
-        actor_ref.reveal_role(game, PlayerGroup::All);
+        PlayerGroup::All.send_chat_message(game, ChatMessageVariant::MartyrRevealed { martyr: actor_ref.index() });
+        PlayerGroup::All.insert_role_label(game, actor_ref);
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference) {
         let left_town = game.graves.iter().any(|grave| 
@@ -113,7 +113,7 @@ impl RoleStateImpl for Martyr {
         );
 
         if dead_player_ref == actor_ref && !left_town {
-            game.add_message(PlayerGroup::All, ChatMessageVariant::MartyrWon);
+            PlayerGroup::All.send_chat_message(game, ChatMessageVariant::MartyrWon);
             
             for player in PlayerReference::all_players(game) {
                 if player == actor_ref {continue}

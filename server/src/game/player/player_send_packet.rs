@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use crate::{
-    client_connection::ClientConnection, game::{available_buttons::AvailableButtons, chat::ChatMessageVariant, phase::PhaseState, Game, GameOverReason}, lobby::GAME_DISCONNECT_TIMER_SECS, packet::ToClientPacket, websocket_connections::connection::ClientSender
+    client_connection::ClientConnection, game::{available_buttons::AvailableButtons, chat::{ChatMessageVariant, RecipientLike}, phase::PhaseState, player_group::PlayerGroup, Game, GameOverReason}, lobby::GAME_DISCONNECT_TIMER_SECS, packet::ToClientPacket, websocket_connections::connection::ClientSender
 };
 
 use super::PlayerReference;
@@ -17,8 +17,7 @@ impl PlayerReference{
     pub fn quit(&self, game: &mut Game) {
         self.deref_mut(game).connection = ClientConnection::Disconnected;
         if self.alive(game) {
-            game.add_message(
-                crate::game::player_group::PlayerGroup::All, 
+            PlayerGroup::All.send_chat_message(game, 
                 ChatMessageVariant::PlayerQuit{player_index: self.index()}
             );
         }

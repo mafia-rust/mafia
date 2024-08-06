@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use crate::game::
 {
-    chat::ChatMessageVariant, player_group::PlayerGroup, components::{arsonist_doused::ArsonistDoused, puppeteer_marionette::PuppeteerMarionette}, event::{on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, resolution_state::ResolutionState, grave::{Grave, GraveKiller, GraveReference}, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
+    chat::{ChatMessageVariant, RecipientLike}, components::{arsonist_doused::ArsonistDoused, puppeteer_marionette::PuppeteerMarionette}, event::{on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, grave::{Grave, GraveKiller, GraveReference}, player_group::PlayerGroup, resolution_state::ResolutionState, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
 };
 
 use super::PlayerReference;
@@ -162,7 +162,7 @@ impl PlayerReference{
     }
     pub fn die_return_event(&self, game: &mut Game, grave: Grave)->OnAnyDeath{
         self.set_alive(game, false);
-        self.add_private_chat_message(game, ChatMessageVariant::YouDied);
+        self.add_chat_message(game, ChatMessageVariant::YouDied);
         game.add_grave(grave.clone());
 
         OnAnyDeath::new(*self)
@@ -175,7 +175,7 @@ impl PlayerReference{
         self.set_role_state(game, new_role_data.clone());
         self.on_role_creation(game);
         if new_role_data.role() == self.role(game) {
-            self.add_private_chat_message(game, ChatMessageVariant::RoleAssignment{role: self.role(game)});
+            self.add_chat_message(game, ChatMessageVariant::RoleAssignment{role: self.role(game)});
         }
 
         OnRoleSwitch::new(*self, old, self.role(game)).invoke(game);

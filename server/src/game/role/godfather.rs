@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::chat::{ChatMessageVariant, RecipientLike};
 use crate::game::grave::{GraveKiller, GraveReference};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -33,7 +33,7 @@ impl RoleStateImpl for Godfather {
                 if let Some(visit) = backup.night_visits(game).first(){
                     let target_ref = visit.target;
             
-                    game.add_message(PlayerGroup::Mafia, ChatMessageVariant::GodfatherBackupKilled { backup: backup.index() });
+                    PlayerGroup::Mafia.send_chat_message(game, ChatMessageVariant::GodfatherBackupKilled { backup: backup.index() });
                     target_ref.try_night_kill(
                         backup, game, GraveKiller::Faction(Faction::Mafia), 1, false
                     );
@@ -67,22 +67,11 @@ impl RoleStateImpl for Godfather {
             unreachable!("Role was just set to Godfather");
         };
 
-        game.add_message(PlayerGroup::Mafia, ChatMessageVariant::GodfatherBackup { backup: backup.map(|p|p.index()) });
-
-        for player_ref in PlayerReference::all_players(game){
-            if player_ref.role(game).faction() != Faction::Mafia{
-                continue;
-            }
-            player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
-        }
+        PlayerGroup::Mafia.send_chat_message(game, ChatMessageVariant::GodfatherBackup { backup: backup.map(|p|p.index()) });
+        PlayerGroup::Mafia.remove_player_tag_on_all(game, Tag::GodfatherBackup);
 
         if let Some(backup) = backup {
-            for player_ref in PlayerReference::all_players(game){
-                if player_ref.role(game).faction() != Faction::Mafia {
-                    continue;
-                }
-                player_ref.push_player_tag(game, backup, Tag::GodfatherBackup);
-            }
+            PlayerGroup::Mafia.push_player_tag(game, backup, Tag::GodfatherBackup);
         }
         
     }
@@ -113,12 +102,7 @@ impl RoleStateImpl for Godfather {
         let Some(backup) = self.backup else {return};
 
         actor_ref.set_role_state(game, RoleState::Godfather(Godfather{backup: None}));
-        for player_ref in PlayerReference::all_players(game){
-            if player_ref.role(game).faction() != Faction::Mafia{
-                continue;
-            }
-            player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
-        }
+        PlayerGroup::Mafia.remove_player_tag_on_all(game, Tag::GodfatherBackup);
         
         if !backup.alive(game){return}
 

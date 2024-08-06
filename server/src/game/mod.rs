@@ -20,6 +20,7 @@ pub mod game_listeners;
 use std::collections::HashMap;
 use std::time::Duration;
 use chat::Recipient;
+use chat::RecipientLike;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::Serialize;
@@ -297,7 +298,7 @@ impl Game {
         }
 
         if self.phase_machine.day_number == u8::MAX {
-            self.add_message(PlayerGroup::All, ChatMessageVariant::GameOver);
+            PlayerGroup::All.send_chat_message(self, ChatMessageVariant::GameOver);
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
             self.ticking = false;
             return;
@@ -334,26 +335,7 @@ impl Game {
         }
     }
 
-    pub fn add_message(&mut self, recipient: impl Into<Recipient> + Copy, variant: ChatMessageVariant){
-        let message = ChatMessage::new(variant.clone(), recipient.into());
-
-        for player_ref in PlayerReference::all_players(self) {
-            if recipient.into().contains(self, player_ref) {
-                player_ref.add_chat_message(self, message.clone());
-                player_ref.send_chat_messages(self);
-            }
-        }
-
-        if recipient.into() == Recipient::Group(PlayerGroup::All) {
-            self.add_chat_message_to_spectators(variant);
-        }
-    }
-    pub fn add_messages(&mut self, recipient: impl Into<Recipient> + Copy, variants: Vec<ChatMessageVariant>) {
-        for message in variants.into_iter(){
-            self.add_message(recipient, message);
-        }
-    }
-    pub fn add_chat_message_to_spectators(&mut self, message: ChatMessageVariant){
+    pub fn send_chat_message_to_spectators(&mut self, message: ChatMessageVariant){
         for spectator in self.spectators.iter_mut(){
             spectator.queued_chat_messages.push(message.clone());
         }

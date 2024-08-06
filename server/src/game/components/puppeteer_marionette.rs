@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    chat::ChatMessageVariant, player::PlayerReference, player_group::PlayerGroup, role::{
+    chat::{ChatMessageVariant, RecipientLike}, player::PlayerReference, player_group::PlayerGroup, role::{
         Priority, Role
     }, tag::Tag, Game
 };
@@ -95,7 +95,7 @@ impl PuppeteerMarionette{
 
         for player_a in marionettes_and_puppeteer.clone() {
             for player_b in marionettes_and_puppeteer.clone() {
-                player_b.reveal_role(game, player_a);
+                player_a.insert_role_label(game, player_b);
                 
                 if 
                     player_a.player_has_tag(game, player_b, Tag::PuppeteerMarionette) == 0 &&

@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::chat::{ChatMessageVariant, RecipientLike};
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -154,7 +154,7 @@ impl RoleStateImpl for Engineer {
         match phase {
             PhaseType::Night => {
                 if actor_ref.alive(game) {
-                    actor_ref.add_private_chat_message(game, ChatMessageVariant::TrapState { state: self.trap.state() });
+                    actor_ref.add_chat_message(game, ChatMessageVariant::TrapState { state: self.trap.state() });
                 }
             }
             _ => {}
