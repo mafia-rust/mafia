@@ -17,7 +17,7 @@ use super::{Priority, RoleStateImpl};
 pub struct Bouncer;
 
 pub(super) const FACTION: Faction = Faction::Town;
-pub(super) const MAXIMUM_COUNT: Option<u8> = None;
+pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: u8 = 0;
 
 impl RoleStateImpl for Bouncer {

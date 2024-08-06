@@ -123,6 +123,8 @@ export default function RoleSpecificSection(){
             }
         case "veteran":
             return <StyledText>{translate("role.veteran.roleDataText", roleState.alertsRemaining)}</StyledText>;
+        case "armorsmith":
+            return <StyledText>{translate("role.armorsmith.roleDataText", roleState.openShopsRemaining)}</StyledText>;
         case "marksman":
             switch(roleState.state.type){
                 case "notLoaded":

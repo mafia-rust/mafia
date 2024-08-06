@@ -194,7 +194,7 @@
         "roleSet": "townProtective",
         "armor": false,
         "aura": null,
-        "maxCount": null,
+        "maxCount": 1,
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
@@ -230,6 +230,22 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
+            {"type": "targetWasAttacked"},
+            {"type": "youWereProtected"},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+        ]
+    },
+    "armorsmith": {
+        "faction": "town",
+        "roleSet": "townProtective",
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "armorsmithArmorBroke"},
             {"type": "targetWasAttacked"},
             {"type": "youWereProtected"},
             {"type": "someoneSurvivedYourAttack"},

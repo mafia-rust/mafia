@@ -1378,6 +1378,28 @@ fn bouncer_ojo_block() {
 }
 
 #[test]
+fn godfather_backup_sets_off_engineer_trap() {
+    kit::scenario!(game in Night 2 where
+        gf: Godfather,
+        backup: Framer,
+        eng: Engineer,
+        esc: Escort
+    );
+
+    assert!(gf.day_target(backup));
+    assert!(backup.set_night_selection_single(esc));
+    assert!(esc.set_night_selection_single(gf));
+    assert!(eng.set_night_selection_single(esc));
+
+    game.next_phase();
+
+    assert!(gf.alive());
+    assert!(!backup.alive());
+    assert!(esc.alive());
+    assert!(eng.alive());
+}
+
+#[test]
 fn godfather_wardblock_still_kills() {
     kit::scenario!(game in Night 2 where
         rev: Bouncer,

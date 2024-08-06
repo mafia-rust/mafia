@@ -27,7 +27,7 @@ pub enum DoomsayerGuess{
 
     Jailor, 
     // No TI
-    Doctor, Bodyguard, Cop, Bouncer, Engineer,
+    Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith,
     Vigilante, Veteran, Marksman, Deputy,
     Escort, Medium, Retributionist, Journalist, Mayor, Transporter
 }
@@ -45,6 +45,7 @@ impl DoomsayerGuess{
             Role::Cop => Some(DoomsayerGuess::Cop),
             Role::Bouncer => Some(DoomsayerGuess::Bouncer),
             Role::Engineer => Some(DoomsayerGuess::Engineer),
+            Role::Armorsmith => Some(DoomsayerGuess::Armorsmith),
 
             Role::Vigilante => Some(DoomsayerGuess::Vigilante),
             Role::Veteran => Some(DoomsayerGuess::Veteran),

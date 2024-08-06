@@ -570,6 +570,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "youAttackedSomeone":
         case "youWereAttacked":
         case "puppeteerYouArePoisoned":
+        case "armorsmithArmorBroke":
             return translate("chatMessage."+message.type);
         case "playerDied":
         case "kiraResult":
@@ -785,6 +786,8 @@ export type ChatMessageVariant = {
     state: {
         type: "dismantled" | "ready" | "set"
     }
+} | {
+    type: "armorsmithArmorBroke"
 } | {
     type: "vigilanteSuicide"
 } | {

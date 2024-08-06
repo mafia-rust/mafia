@@ -79,6 +79,7 @@
     "youAttackedSomeone": "result",
     "youWereAttacked": "result",
     "engineerVisitorsRole": "result",
+    "armorsmithArmorBroke": "result",
     "trapState": "special",
     "engineerRemoveTrap": "special",
     "vigilanteSuicide": "result",
