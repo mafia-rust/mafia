@@ -1,7 +1,7 @@
 use crate::packet::ToClientPacket;
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant}, grave::GraveReference, phase::PhaseType, player::PlayerReference, role::Role, Game, GameOverReason
+    chat::{ChatGroup, ChatMessageVariant}, grave::GraveReference, phase::PhaseType, player::PlayerReference, resolution_state::ResolutionState, role::Role, Game, GameOverReason
 };
 
 //Event listerner functions for game defined here
@@ -42,6 +42,7 @@ impl Game{
 
             
             self.ticking = false;
+            self.game_over = Some(ResolutionState::Draw);
         }
     }
     pub fn on_fast_forward(&mut self){

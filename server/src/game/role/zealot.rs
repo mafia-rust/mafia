@@ -28,7 +28,7 @@ impl RoleStateImpl for Zealot {
         let target_ref = visit.target;
 
         target_ref.try_night_kill(
-            actor_ref, game, GraveKiller::Faction(Faction::Cult), 1, false
+            actor_ref, game, GraveKiller::Faction{value: Faction::Cult}, 1, false
         );
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {

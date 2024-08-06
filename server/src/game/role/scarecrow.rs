@@ -2,13 +2,13 @@ use rand::thread_rng;
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::grave::{Grave, GraveReference};
+use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
-use super::{Priority, RoleStateImpl};
+use super::{common_role, Priority, RoleStateImpl};
 use rand::prelude::SliceRandom;
 
 
@@ -58,15 +58,10 @@ impl RoleStateImpl for Scarecrow {
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
-    fn get_won_game(self, game: &Game, _actor_ref: PlayerReference) -> bool {
-        PlayerReference::all_players(game).filter(|player_ref|{
-            player_ref.alive(game) && player_ref.role(game).faction() == Faction::Town
-        }).count() == 0
+    fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
+        common_role::get_won_game(game, actor_ref)
     }
-    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
-        if actor_ref.get_won_game(game) && actor_ref.alive(game) {
-            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
-        }
+    fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType){
     }
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
     }

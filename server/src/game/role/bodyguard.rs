@@ -81,7 +81,7 @@ impl RoleStateImpl for Bodyguard {
             },
             Priority::Kill => {
                 for redirected_player_ref in self.redirected_player_refs {
-                    redirected_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Bodyguard), 2, false);
+                    redirected_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role{value: Role::Bodyguard}, 2, false);
                 }
             }
             Priority::Investigative => {

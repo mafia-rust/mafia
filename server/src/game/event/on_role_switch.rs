@@ -1,4 +1,4 @@
-use crate::game::{components::{cult::Cult, mafia::Mafia}, player::PlayerReference, role::Role, Game};
+use crate::game::{components::{ascension::Ascension, cult::Cult, mafia::Mafia}, player::PlayerReference, role::Role, Game};
 
 #[must_use = "Event must be invoked"]
 pub struct OnRoleSwitch{
@@ -16,5 +16,6 @@ impl OnRoleSwitch{
 
         Cult::on_role_switch(game, self.old, self.new);
         Mafia::on_role_switch(game, self.old, self.new);
+        Ascension::on_role_switch(game);
     }
 }

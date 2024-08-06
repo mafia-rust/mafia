@@ -35,20 +35,22 @@ pub enum GraveInformation {
     }
 }
 
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
-#[serde(tag = "type", content = "killers")]
+#[serde(tag = "type")]
 pub enum GraveDeathCause {
     Execution,
     LeftTown,
-    Killers(Vec<GraveKiller>)
+    Ascension,
+    Killers{killers: Vec<GraveKiller>}
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
-#[serde(tag = "type", content = "value")]
+#[serde(tag = "type")]
 pub enum GraveKiller {
-    Faction(Faction),
-    Role(Role),
+    Faction{value: Faction},
+    Role{value: Role},
     Suicide,
     Quit,
 }
@@ -86,7 +88,7 @@ impl Grave{
             information: GraveInformation::Normal{
                 role: player_ref.night_grave_role(game).clone().unwrap_or(player_ref.role(game)),
                 will: player_ref.night_grave_will(game).clone(),
-                death_cause: GraveDeathCause::Killers(player_ref.night_grave_killers(game).clone()),
+                death_cause: GraveDeathCause::Killers{killers: player_ref.night_grave_killers(game).clone()},
                 death_notes: player_ref.night_grave_death_notes(game).clone()
             },
         }
@@ -112,7 +114,7 @@ impl Grave{
             day_number: game.phase_machine.day_number,
             information: GraveInformation::Normal { 
                 role: player_ref.role(game), 
-                death_cause: GraveDeathCause::Killers(vec![GraveKiller::Suicide]), 
+                death_cause: GraveDeathCause::Killers{killers: vec![GraveKiller::Suicide]}, 
                 death_notes: vec![],
                 will: player_ref.will(game).clone(), 
 
@@ -128,6 +130,20 @@ impl Grave{
             information: GraveInformation::Normal { 
                 role: player_ref.role(game), 
                 death_cause: GraveDeathCause::LeftTown, 
+                will: player_ref.will(game).clone(), 
+                death_notes: vec![]
+            }
+        }
+    }
+    
+    pub fn from_player_ascension(game: &Game, player_ref: PlayerReference) -> Grave {
+        Grave {
+            player: player_ref,
+            died_phase: GravePhase::from_phase_type(game.current_phase().phase()), 
+            day_number: game.phase_machine.day_number,
+            information: GraveInformation::Normal { 
+                role: player_ref.role(game), 
+                death_cause: GraveDeathCause::Ascension, 
                 will: player_ref.will(game).clone(), 
                 death_notes: vec![]
             }

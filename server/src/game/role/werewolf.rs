@@ -47,9 +47,9 @@ impl RoleStateImpl for Werewolf {
                             target_ref.all_visitors(game).into_iter().filter(|p|actor_ref!=*p)
                             .collect::<Vec<PlayerReference>>()
                         {
-                            other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
+                            other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role{value: Role::Werewolf}, 2, true);
                         }
-                        target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
+                        target_ref.try_night_kill(actor_ref, game, GraveKiller::Role{value: Role::Werewolf}, 2, true);
                     },
 
 
@@ -64,7 +64,7 @@ impl RoleStateImpl for Werewolf {
                                     jailor_ref.role(game) == Role::Jailor &&
                                     jailor_ref.night_visits(game).iter().all(|visit|visit.target!=actor_ref)
                                 {
-                                    jailor_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
+                                    jailor_ref.try_night_kill(actor_ref, game, GraveKiller::Role{value: Role::Werewolf}, 2, true);
                                 }
                             }
                         }else{
@@ -72,7 +72,7 @@ impl RoleStateImpl for Werewolf {
                                 actor_ref.all_visitors(game).into_iter().filter(|p|actor_ref!=*p)
                                 .collect::<Vec<PlayerReference>>()
                             {
-                                other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
+                                other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role{value: Role::Werewolf}, 2, true);
                             }
                         }
                     },

@@ -1019,7 +1019,7 @@ fn grave_contains_multiple_killers() {
             day_number: 2,
             information: GraveInformation::Normal{
                 role: Role::Detective,
-                death_cause: GraveDeathCause::Killers(vec![GraveKiller::Faction(Faction::Mafia), GraveKiller::Role(Role::Vigilante)]),
+                death_cause: GraveDeathCause::Killers{killers: vec![GraveKiller::Faction{value: Faction::Mafia}, GraveKiller::Role{value: Role::Vigilante}]},
                 will: "".to_string(),
                 death_notes: vec![],
             }
@@ -1058,7 +1058,7 @@ fn grave_contains_multiple_killers_roles() {
             day_number: 2,
             information: GraveInformation::Normal{
                 role: Role::Doctor,
-                death_cause: GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Doomsayer), GraveKiller::Faction(Faction::Mafia), GraveKiller::Role(Role::Vigilante)]),
+                death_cause: GraveDeathCause::Killers{killers: vec![GraveKiller::Role{value: Role::Doomsayer}, GraveKiller::Faction{value: Faction::Mafia}, GraveKiller::Role{value: Role::Vigilante}]},
                 will: "".to_string(),
                 death_notes: vec![],
             }
@@ -1767,7 +1767,7 @@ fn pyrolisk_tags_day_one() {
 
 #[test]
 fn bodyguard_gets_single_target_jailed_message() {
-    kit::scenario!(game in Dusk 1 where
+    kit::scenario!(game in Dusk 2 where
         bg: Bodyguard,
         jailor: Jailor,
         _maf: Mafioso,
@@ -1785,14 +1785,13 @@ fn bodyguard_gets_single_target_jailed_message() {
     assert_eq!(
         bg.get_messages_after_last_message(
             ChatMessageVariant::PhaseChange { 
-                phase: PhaseState::Night, day_number: 1
+                phase: PhaseState::Night, day_number: 2
             }
         ),
         vec![
             ChatMessageVariant::Wardblocked,
-            /* They should not get a second Wardblocked message */
             ChatMessageVariant::PhaseChange { 
-                phase: PhaseState::Obituary, day_number: 2 
+                phase: PhaseState::Obituary, day_number: 3
             }
         ]
     );
@@ -1867,7 +1866,7 @@ fn martyr_roleblocked() {
 
 #[test]
 fn martyr_healed() {
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         martyr: Martyr,
         player1: Mafioso,
         player2: Detective,

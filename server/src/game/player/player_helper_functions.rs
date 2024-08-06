@@ -254,6 +254,7 @@ impl PlayerReference{
         ResolutionState::required_resolution_states_for_win(self.role(game))
     }
     pub fn keeps_game_running(&self, game: &Game) -> bool {
+        if !self.alive(game) {return false;}
         if PuppeteerMarionette::is_marionette(game, *self) {return false;}
         ResolutionState::keeps_game_running(self.role(game))
     }

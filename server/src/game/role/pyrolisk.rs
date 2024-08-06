@@ -32,7 +32,7 @@ impl RoleStateImpl for Pyrolisk {
                 if game.day_number() != 1 {
                     if let Some(visit) = actor_ref.night_visits(game).first(){
                         let target_ref = visit.target;
-                        target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Pyrolisk), 2, true);
+                        target_ref.try_night_kill(actor_ref, game, GraveKiller::Role{value: Role::Pyrolisk}, 2, true);
                         
                         tagged_for_obscure.insert(target_ref);
                         actor_ref.push_player_tag(game, target_ref, Tag::MorticianTagged);
@@ -44,7 +44,7 @@ impl RoleStateImpl for Pyrolisk {
                             *other_player_ref != actor_ref
                         ).collect::<Vec<PlayerReference>>()
                     {
-                        other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Pyrolisk), 2, true);
+                        other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role{value: Role::Pyrolisk}, 2, true);
                         
                         tagged_for_obscure.insert(other_player_ref);
                         actor_ref.push_player_tag(game, other_player_ref, Tag::MorticianTagged);

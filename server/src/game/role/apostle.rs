@@ -34,7 +34,7 @@ impl RoleStateImpl for Apostle {
                 let target_ref = visit.target;
                 
                 target_ref.try_night_kill(
-                    actor_ref, game, GraveKiller::Faction(Faction::Cult), 1, false
+                    actor_ref, game, GraveKiller::Faction{value: Faction::Cult}, 1, false
                 );
             }
             Priority::Convert if Cult::can_convert_tonight(game) => {

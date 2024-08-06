@@ -163,7 +163,7 @@ impl RoleStateImpl for Kira {
                 
                 for (player, (guess, result)) in result.guesses.iter(){
                     if player.alive(game) && *result == KiraGuessResult::Correct && *guess != KiraGuess::None {
-                        player.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Kira), 2, true);
+                        player.try_night_kill(actor_ref, game, GraveKiller::Role{value: Role::Kira}, 2, true);
                     }
                 }
             },

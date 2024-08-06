@@ -37,7 +37,7 @@ impl RoleStateImpl for Godfather {
             
                     game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackupKilled { backup: backup.index() });
                     target_ref.try_night_kill(
-                        backup, game, GraveKiller::Faction(Faction::Mafia), 1, false
+                        backup, game, GraveKiller::Faction{value: Faction::Mafia}, 1, false
                     );
                 }
                 backup.set_night_visits(game, visits);
@@ -47,7 +47,7 @@ impl RoleStateImpl for Godfather {
             let target_ref = visit.target;
     
             target_ref.try_night_kill(
-                actor_ref, game, GraveKiller::Faction(Faction::Mafia), 1, false
+                actor_ref, game, GraveKiller::Faction{value: Faction::Mafia}, 1, false
             );
         }        
     }

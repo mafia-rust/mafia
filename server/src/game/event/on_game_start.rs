@@ -1,4 +1,4 @@
-use crate::game::{components::{cult::Cult, mafia::Mafia, puppeteer_marionette::PuppeteerMarionette}, Game};
+use crate::game::{components::{ascension::Ascension, cult::Cult, mafia::Mafia, puppeteer_marionette::PuppeteerMarionette}, Game};
 
 #[must_use = "Event must be invoked"]
 pub struct OnGameStart;
@@ -7,5 +7,6 @@ impl OnGameStart{
         Mafia::on_game_start(game);
         Cult::on_game_start(game);
         PuppeteerMarionette::on_game_start(game);
+        Ascension::on_game_start(game);
     }
 }

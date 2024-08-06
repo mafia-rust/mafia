@@ -81,7 +81,7 @@ impl RoleStateImpl for Politician {
 
                     let mut grave = Grave::from_player_lynch(game, player_ref);
                     if let GraveInformation::Normal {death_cause, ..} = &mut grave.information {
-                        *death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Politician)]);
+                        *death_cause = GraveDeathCause::Killers{killers: vec![GraveKiller::Role{value: Role::Politician}] };
                     }
                     player_ref.die(game, grave);
                 }else{

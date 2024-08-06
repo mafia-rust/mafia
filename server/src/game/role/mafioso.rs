@@ -26,7 +26,7 @@ impl RoleStateImpl for Mafioso {
         if let Some(visit) = actor_ref.night_visits(game).first(){
             let target_ref = visit.target;
     
-            target_ref.try_night_kill(actor_ref, game, GraveKiller::Faction(Faction::Mafia), 1, true);
+            target_ref.try_night_kill(actor_ref, game, GraveKiller::Faction{value: Faction::Mafia}, 1, true);
         }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {

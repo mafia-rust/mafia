@@ -72,7 +72,7 @@ impl RoleStateImpl for Ojo {
                             .map(|visit| visit.target)
                             .collect::<Vec<PlayerReference>>()
                     {
-                        player.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Ojo), 2, true);
+                        player.try_night_kill(actor_ref, game, GraveKiller::Role{value: Role::Ojo}, 2, true);
                     }
                 }
             },
