@@ -66,10 +66,10 @@ impl Lobby {
                 };
 
                 self.send_to_all(ToClientPacket::AddChatMessages { chat_messages: vec![
-                    ChatMessage::new(
-                        ChatMessageVariant::LobbyMessage { sender: name, text }, 
-                        PlayerGroup::All
-                    )
+                    ChatMessage {
+                        variant: ChatMessageVariant::LobbyMessage { sender: name, text }, 
+                        chat_group: Some(PlayerGroup::All)
+                    }
                 ]});
             }
             ToServerPacket::SetSpectator { spectator } => {

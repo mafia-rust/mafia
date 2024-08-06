@@ -146,7 +146,7 @@ impl SpectatorPointer {
         
         self.send_packet(game, ToClientPacket::AddChatMessages { chat_messages: chat_messages_out
                 .into_iter()
-                .map(|p|ChatMessage::new(p, PlayerGroup::All))
+                .map(|p|ChatMessage { variant: p, chat_group: Some(PlayerGroup::All) })
                 .collect() 
             }
         );

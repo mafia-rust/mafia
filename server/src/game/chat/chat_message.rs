@@ -9,16 +9,7 @@ use super::chat_message_variant::ChatMessageVariant;
 #[serde(rename_all = "camelCase")]
 pub struct ChatMessage{
     pub variant: ChatMessageVariant,
-    pub recipient: Recipient,
-}
-
-impl ChatMessage{
-    pub fn new(variant: ChatMessageVariant, recipient: impl Into<Recipient>)->Self{
-        Self{variant, recipient: recipient.into()}
-    }
-    pub fn get_variant(&self)->&ChatMessageVariant{
-        &self.variant
-    }
+    pub chat_group: Option<PlayerGroup>,
 }
 
 #[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
@@ -30,7 +21,12 @@ pub enum Recipient {
 
 impl Recipient {
     pub fn add_chat_message(&self, game: &mut Game, message: ChatMessageVariant) {
-        let message = ChatMessage::new(message, *self);
+        let chat_group = match self {
+            Self::Player(_) => None,
+            Self::Group(chat_group) => Some(*chat_group)
+        };
+
+        let message = ChatMessage { variant: message, chat_group };
 
         for player in self.players(game) {
             player.deref_mut(game).chat_messages.push(message.clone());
