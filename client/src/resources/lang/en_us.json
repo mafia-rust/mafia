@@ -226,12 +226,11 @@
 
     "role.engineer.name": "Engineer",
     "role.engineer.name:var.0": "Engineers",
-    "role.engineer.target": "Set Trap",
+    "role.engineer.target": "Target",
     "role.engineer.dayTarget": "Special",
-    "role.engineer.roleDataText.dismantled": "The trap is dismantled",
-    "role.engineer.roleDataText.ready": "The trap is ready",
-    "role.engineer.roleDataText.set": "The trap is currently set",
-    "role.engineer.roleDataText.unset": "Remove trap",
+    "role.engineer.roleDataText.dismantled": "The trap is dismantled, wait for it to be ready.",
+    "role.engineer.roleDataText.ready": "The trap is ready, visit someone to set it on them.",
+    "role.engineer.roleDataText.set": "The trap is currently set, visit anyone to dismantle it, and have it be ready next night.",
 
     "role.armorsmith.name": "Armorsmith",
     "role.armorsmith.name:var.0": "Armorsmiths",
@@ -1111,7 +1110,7 @@
     "wiki.article.role.bouncer.extra":"* You can't select yourself\n* You are immune to roleblocks, wardblocks, and possession",
 
     "wiki.article.role.engineer.guide": "Set a trap on a player, protecting them and killing attackers\n- It takes one night for the trap to be ready, it is not ready on the first night\n- When the trap is ready, you can set it on a player\n\nThe trap triggers if anyone visits the player with the trap on them\n- You attack any players who attack the trapped player\n- You are be told the role of every visitor to the trapped player\n- The trap will be dismantled the next night after it triggers\n- If you dismantle the trap manually, you can use it the next night",
-    "wiki.article.role.engineer.abilities":"* While the trap is dismantled\n    * You can't select anyone\n    * If you aren't blocked, the trap will become ready the next night\n* While the trap is ready\n    * Visit a player to set the trap\n    * You can't select yourself\n* While the trap is set\n    * The player with the trap on them is protected\n    * If a player visits the player with the trap, the trap triggers\n    * You can choose to manually dismantle the trap, this only works if you aren't blocked\n    * You can't select anyone\n* When the trap triggers\n    * You are told the roles of the players who visited the trapped player\n    * You indirectly attack all players attacking the trapped player\n    * The trap dismantles, the next night you wait again",
+    "wiki.article.role.engineer.abilities":"* While the trap is dismantled\n    * You can't select anyone\n    * If you aren't blocked, the trap will become ready the next night\n* While the trap is ready\n    * Visit a player to set the trap\n    * You can't select yourself\n* While the trap is set\n    * The player with the trap on them is protected\n    * If a player visits the player with the trap, the trap triggers\n    * Visit anyone to manually dismantle the trap\n    * You can only select yourself\n* When the trap triggers\n    * You are told the roles of the players who visited the trapped player\n    * You indirectly attack all players attacking the trapped player\n    * The trap dismantles, the next night you wait again",
     "wiki.article.role.engineer.attributes":"* You can only have one trap set at a time\n* The trap still triggers even if you are blocked or dead\n* When your trap is triggered, you are told which roles visited the trapped player, even if the players with those roles didn't attack the trapped player\n* The trap still triggers even if none of the trapped players visitors are attackers\n* The trap only attacks attackers to the trapped player\n* You have an indirect, armor-piercing attack",
     "wiki.article.role.engineer.extra":"* You can set a trap on jailed players\n* When the player with the trap is attacked, you are told they are attacked, and they are told they are protected\n* You can't activate your own trap\n* It is possible to set the trap on yourself with the help of other roles like transporter\n* If you stop being the engineer your trap disappears",
 

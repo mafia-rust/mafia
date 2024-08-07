@@ -283,9 +283,6 @@ export type ToServerPacket = {
     type: "setPuppeteerAction",
     action: PuppeteerAction
 } | {
-    type: "setEngineerShouldUnset",
-    unset: boolean
-} | {
     type: "voteFastForwardPhase",
     fastForward: boolean
 }

@@ -93,22 +93,7 @@ export default function RoleSpecificSection(){
             return <StyledText>{translate("role.bodyguard.roleDataText", roleState.selfShieldsRemaining)}</StyledText>;
         case "engineer":
             return <>
-                <div>
-                    <StyledText>{translate("role.engineer.roleDataText." + roleState.trap.type)}</StyledText>
-                </div>
-                {
-                    roleState.trap.type === "set" &&
-                    phaseState.type === "night" &&
-                    <button className={roleState.trap.shouldUnset?"highlighted":""} onClick={()=>{
-                        if(
-                            GAME_MANAGER.state.stateType === "game" &&
-                            GAME_MANAGER.state.clientState.type === "player" && 
-                            roleState?.type === "engineer" && 
-                            roleState.trap.type === "set"
-                        )
-                            GAME_MANAGER.sendSetEngineerShouldUnset(!roleState.trap.shouldUnset);
-                    }}>{translate("role.engineer.roleDataText.unset")}</button>
-                }
+                <StyledText>{translate("role.engineer.roleDataText." + roleState.trap.type)}</StyledText>
             </>;
         case "vigilante":
             switch(roleState.state.type){

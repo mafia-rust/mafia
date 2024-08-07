@@ -23,7 +23,7 @@ pub enum Trap {
     Dismantled,
     Ready,
     #[serde(rename_all = "camelCase")]
-    Set{target: PlayerReference, should_unset: bool}
+    Set{target: PlayerReference}
 }
 impl Trap {
     fn state(&self) -> TrapState {
@@ -67,10 +67,10 @@ impl RoleStateImpl for Engineer {
                         },
                         Trap::Ready => {
                             if let Some(visit) = actor_ref.night_visits(game).first(){
-                                actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Set{target: visit.target, should_unset: false}}));
+                                actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Set{target: visit.target}}));
                             }
                         },
-                        Trap::Set { should_unset: true, .. } => {
+                        Trap::Set { .. } if actor_ref.night_visits(game).first().is_some() => {
                             actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Ready}));
                         },
                         _ => {}
@@ -125,7 +125,7 @@ impl RoleStateImpl for Engineer {
         (match self.trap {
             Trap::Dismantled => false,
             Trap::Ready => actor_ref != target_ref,
-            Trap::Set { .. } => false,
+            Trap::Set { .. } => actor_ref == target_ref,
         }) &&
         !actor_ref.night_jailed(game) &&
         actor_ref.selection(game).is_empty() &&

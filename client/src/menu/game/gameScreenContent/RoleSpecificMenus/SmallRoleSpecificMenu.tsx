@@ -82,23 +82,7 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
             case "bodyguard":
                 return <StyledText>{translate("role.bodyguard.roleDataText", this.state.gameState.clientState.roleState.selfShieldsRemaining)}</StyledText>;
             case "engineer":
-                return <>
-                    <div>
-                        <StyledText>{translate("role.engineer.roleDataText." + this.state.gameState.clientState.roleState.trap.type)}</StyledText>
-                    </div>
-                    {
-                        this.state.gameState.clientState.roleState.trap.type === "set" &&
-                        this.state.gameState.phaseState.type === "night" &&
-                        <button className={this.state.gameState.clientState.roleState.trap.shouldUnset?"highlighted":""} onClick={()=>{
-                            if(
-                                this.state.gameState.clientState.type === "player" && 
-                                this.state.gameState.clientState.roleState?.type === "engineer" && 
-                                this.state.gameState.clientState.roleState.trap.type === "set"
-                            )
-                                GAME_MANAGER.sendSetEngineerShouldUnset(!this.state.gameState.clientState.roleState.trap.shouldUnset);
-                        }}>{translate("role.engineer.roleDataText.unset")}</button>
-                    }
-                </>;
+                return <StyledText>{translate("role.engineer.roleDataText." + this.state.gameState.clientState.roleState.trap.type)}</StyledText>;
             case "vigilante":
                 switch(this.state.gameState.clientState.roleState.state.type){
                     case "willSuicide":
