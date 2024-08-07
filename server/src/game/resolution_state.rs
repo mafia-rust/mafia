@@ -30,20 +30,15 @@ impl ResolutionState {
     pub fn game_is_over(game: &Game)->Option<ResolutionState> {
 
         //Special wildcard case
-        if 
-            PlayerReference::all_players(game)
-                .filter_map(|player|{
-                    if player.alive(game){
-                        Some(player.role(game))
-                    }else{
-                        None
-                    }
-                })
-                .all(|role|matches!(role, Role::Wildcard|Role::TrueWildcard)) && 
-            PlayerReference::all_players(game)
-                .filter(|player|player.alive(game))
-                .count() > 1
-        {
+        let living_roles = PlayerReference::all_players(game).filter_map(|player|{
+            if player.alive(game){
+                Some(player.role(game))
+            }else{
+                None
+            }
+        }).collect::<Vec<_>>();
+
+        if living_roles.iter().all(|role|matches!(role, Role::Wildcard|Role::TrueWildcard)) && living_roles.len() > 1 {
             return None;
         }
         
@@ -57,6 +52,7 @@ impl ResolutionState {
             //if everyone who keeps the game running agrees on this end game condition, return it
             if
                 PlayerReference::all_players(game)
+                    .filter(|p|p.alive(game))
                     .filter(|p|p.keeps_game_running(game))
                     .all(|p|
                         if let Some(set) = p.required_resolution_states_for_win(game){
@@ -72,7 +68,7 @@ impl ResolutionState {
 
         None
     }
-
+    
     pub fn can_win_with(game: &Game, player: PlayerReference, resolution_state: ResolutionState)->bool{
         if let Some(set) = player.required_resolution_states_for_win(game){
             set.contains(&resolution_state)
@@ -81,7 +77,6 @@ impl ResolutionState {
         }
         
     }
-    
     pub fn requires_only_this_resolution_state(game: &Game, player: PlayerReference, resolution_state: ResolutionState)->bool{
         if let Some(set) = player.required_resolution_states_for_win(game) {
             set.len() == 1 && set.contains(&resolution_state)
@@ -100,6 +95,7 @@ impl ResolutionState {
         }
     }
     
+
     ///this role wins if the end game state is in this list
     pub fn required_resolution_states_for_win(role: Role)->Option<HashSet<ResolutionState>>{
         Some(match role.faction(){

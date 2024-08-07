@@ -11,7 +11,7 @@ use crate::game::verdict::Verdict;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, Role, RoleStateImpl};
+use super::{Priority, RoleStateImpl};
 
 #[derive(Clone, Serialize, Debug, Default)]
 #[serde(rename_all = "camelCase")]
@@ -51,7 +51,7 @@ impl RoleStateImpl for Jester {
             },
         };
         player.try_night_kill(actor_ref, game, 
-            crate::game::grave::GraveKiller::Role{value: Role::Jester}, 3, true
+            crate::game::grave::GraveKiller::Role(super::Role::Jester), 3, true
         );
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {

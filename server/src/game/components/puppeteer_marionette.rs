@@ -83,12 +83,12 @@ impl PuppeteerMarionette{
 
         if puppeteers.is_empty() {
             for player in players{
-                player.try_night_kill_anonymous(game, crate::game::grave::GraveKiller::Role{value: Role::Puppeteer}, 2);
+                player.try_night_kill_anonymous(game, crate::game::grave::GraveKiller::Role(Role::Puppeteer), 2);
             }
         }else{
             for player in players{
                 for puppeteer in puppeteers.iter(){
-                    player.try_night_kill(*puppeteer, game, crate::game::grave::GraveKiller::Role{value: Role::Puppeteer}, 2, true);
+                    player.try_night_kill(*puppeteer, game, crate::game::grave::GraveKiller::Role(Role::Puppeteer), 2, true);
                 }
             }
         }

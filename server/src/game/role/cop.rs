@@ -70,7 +70,7 @@ impl RoleStateImpl for Cop {
                 }
 
                 if let Some(player_to_attack) = player_to_attack{
-                    player_to_attack.try_night_kill(actor_ref, game, GraveKiller::Role{value: Role::Cop}, 1, false);
+                    player_to_attack.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Cop), 1, false);
                 }
             }
             Priority::Investigative => {

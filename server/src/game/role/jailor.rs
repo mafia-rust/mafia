@@ -56,7 +56,7 @@ impl RoleStateImpl for Jailor {
     
                     let target_ref = visit.target;
                     if target_ref.night_jailed(game){
-                        target_ref.try_night_kill(actor_ref, game, GraveKiller::Role{value: Role::Jailor}, 3, false);
+                        target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Jailor), 3, false);
         
                         self.executions_remaining = 
                             if ResolutionState::requires_only_this_resolution_state(game, target_ref, ResolutionState::Town) {0} else {self.executions_remaining - 1};

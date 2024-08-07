@@ -47,7 +47,7 @@ impl RoleStateImpl for Deputy {
             
             let mut grave = Grave::from_player_lynch(game, target_ref);
             if let GraveInformation::Normal{death_cause, ..} = &mut grave.information {
-                *death_cause = GraveDeathCause::Killers{killers: vec![GraveKiller::Role{value: Role::Deputy}]};
+                *death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Deputy)]);
             }
             target_ref.die(game, grave);
             

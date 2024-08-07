@@ -57,7 +57,7 @@ impl RoleStateImpl for Martyr {
                     self.state = MartyrState::Won;
                 }
             } else {
-                target_ref.try_night_kill(actor_ref, game, GraveKiller::Role{value: Role::Martyr}, 1, true);
+                target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Martyr), 1, true);
             }
         };
 

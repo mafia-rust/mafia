@@ -71,9 +71,6 @@ pub struct Game {
     /// Whether the game is still updating phase times
     pub ticking: bool,
 
-    //none if game isnt over
-    pub game_over: Option<ResolutionState>,
-
 
     //components with data
     pub cult: Cult,
@@ -157,8 +154,6 @@ impl Game {
                 graves: Vec::new(),
                 phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
                 settings,
-
-                game_over: None,
 
                 cult: Cult::default(),
                 arsonist_doused: ArsonistDoused::default(),
@@ -331,7 +326,7 @@ impl Game {
 
     pub fn add_grave(&mut self, grave: Grave){
         self.graves.push(grave.clone());
-        if let Some(grave_ref) = GraveReference::new(self, (self.graves.len() as u8) - 1){
+        if let Some(grave_ref) = GraveReference::new(self, self.graves.len() as u8 - 1){
             OnGraveAdded::new(grave_ref).invoke(self);
         }
     }
@@ -438,8 +433,6 @@ pub mod test {
             graves: Vec::new(),
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
-
-            game_over: None,
 
             cult: Cult::default(),
             arsonist_doused: ArsonistDoused::default(),

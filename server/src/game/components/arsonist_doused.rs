@@ -43,7 +43,7 @@ impl ArsonistDoused {
         for player in arso_doused.doused_players.clone() {
             if player.role(game) == Role::Arsonist {continue;}
             if !player.alive(game) {continue;}
-            player.try_night_kill(igniter, game, GraveKiller::Role{value: Role::Arsonist}, 3, true);
+            player.try_night_kill(igniter, game, GraveKiller::Role(Role::Arsonist), 3, true);
         }
     }
     pub fn doused(&self, player: PlayerReference) -> bool {
