@@ -1004,6 +1004,21 @@
     "wiki.article.standard.graveyard.title:var.0":"Grave yard",
     "wiki.article.standard.graveyard.text":"The graveyard can help keep track of what roles are in the game and who has them\n- The outline list on the left shows what roles can be in the game\n    - Click on an outline to cross it out to help keep track of what roles people are.\n- The graves on the right show who is dead\n   - If you click on a grave, you can see what their alibi and role was, as well as other related information",
     
+    "wiki.article.standard.vfr.title":"Vote-For-Role",
+    "wiki.article.standard.vfr.title:var.0":"VFR",
+    "wiki.article.standard.vfr.text":"Vote for role is the name of a common strategy. Players will choose a player and force them to claim under the threat of getting voted out. If that player claims they will likely be spared. Usually there is not much of a reason why a specific player is chosen, the strategy is often used to just get starting information.",
+
+    "wiki.article.standard.claim.title":"Claim",
+    "wiki.article.standard.claim.title:var.0":"Claiming",
+    "wiki.article.standard.claim.title:var.1":"Claimed",
+    "wiki.article.standard.claim.text":"When a player asks you to claim. They are likely asking you to say what your role is, and send your alibi in chat. This is not necessarily because they think your evil, but they want information from you.",
+
+    "wiki.article.standard.claimswap.title":"Claim swap",
+    "wiki.article.standard.claimswap.title:var.0":"Claimswap",
+    "wiki.article.standard.claimswap.title:var.1":"Claim swaped",
+    "wiki.article.standard.claimswap.title:var.2":"Claim swapping",
+    "wiki.article.standard.claimswap.text":"When two players do a claim swap, they are both claiming each others roles. John Proctor is claiming engineer even though Deodat Lawson is engineer, and Deodat Lawson is claiming detective even thought John Proctor is detective. This is in order to hide information from evil players while still giving information to town. A doomsayer or kira can easily kill alot of townies if they know the exact roles of townies. Claim swap might help a veteran kill evil players.",
+
     "wiki.article.standard.shwompt.title":"Shwompt",
     "wiki.article.standard.shwompt.text":"Shwompt \nPronunciation: ʃwɒmpt \nA sudden whooshing sound that contains a siblant conclusion. This describes the sound that is made when objects phase through a solid wall. \nOther forms: Shwompter, Shwompting, Shwompted, Shwomptee",
 
