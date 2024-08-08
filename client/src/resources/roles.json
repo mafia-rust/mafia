@@ -596,6 +596,19 @@
             {"type": "youWerePossessed", "immune": true}
         ]
     },
+    "cupid": {
+        "faction": "mafia",
+        "roleSet": "mafiaSupport",
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[
+            {"type": "youAreLoveLinked", "player": 20},
+            {"type": "playerDiedOfABrokenHeart", "player": 20, "lover": 25}
+        ]
+    },
     "mafiaWildcard": {
         "faction": "mafia",
         "roleSet": null,

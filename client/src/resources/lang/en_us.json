@@ -357,6 +357,11 @@
     "role.framer.name:var.0": "Framers",
     "role.framer.target": "Frame",
     "role.framer.dayTarget": "Special",
+    
+    "role.cupid.name": "Cupid",
+    "role.cupid.name:var.0": "Cupids",
+    "role.cupid.target": "Link",
+    "role.cupid.dayTarget": "Special",
 
     "role.mafiaWildcard.name": "Mafia Wildcard",
     "role.mafiaWildcard.name:var.0": "Mafia Wildcards",
@@ -480,6 +485,7 @@
     "grave.deathCause.leftTown:var.0": "Left Town",
     "grave.deathCause.leftTown:var.1": "Leave Town",
     "grave.deathCause.leftTown:var.2": "Leaves Town",
+    "grave.deathCause.brokenHeart": "Broken Heart",
     "grave.killer.quit": "Quitting",
     "grave.killer.quit:var.0": "Quit",
     "grave.killer.quit:var.1": "Quits",
@@ -522,9 +528,11 @@
     "tag.morticianTagged":"🏺",
     "tag.morticianTagged.name":"Obscure tagged",
     "tag.puppeteerMarionette": "🧵",
-    "tag.puppeteerMarionette.name": "Puppeteer marionette",
+    "tag.puppeteerMarionette.name": "Puppeteer Marionette",
     "tag.doused":"🔥",
     "tag.doused.name":"Arsonist doused",
+    "tag.loveLinked":"💘",
+    "tag.loveLinked.name":"Love Linked",
 
     "dead.icon":"💀",
     
@@ -683,7 +691,6 @@
     "chatMessage.puppeteerYouArePoisoned":"You have been poisoned by the puppeteer, you will be indirectly attacked the next night.",
     "chatMessage.jailorDecidedToExecute":"The Jailor decided to execute \\0",
     "chatMessage.jailorDecideExecute.nobody":"The Jailor decided not to execute!",
-    "chatMessage.playerWithNecronomicon":"\\0 has the necronomicon.",
     "chatMessage.yourConvertFailed": "You failed to convert your target.",
 
     "chatMessage.youDied":"You died!",
@@ -772,11 +779,12 @@
     "chatMessage.cultSacrificesRequired.1": "The cult requires 1 more sacrifice to convert.",
     "chatMessage.cultSacrificesRequired.0": "The cult has enough sacrifices to convert.",
     "chatMessage.phaseFastForwarded": "The phase has been fast forwarded.",
-
     "chatMessage.doomsayerFailed": "At least one of your guesses was incorrect or invalid.",
     "chatMessage.doomsayerWon": "Your guesses were correct. You win!",
     "chatMessage.martyrFailed": "The martyr lives, and we endure for another day.",
     "chatMessage.martyrWon": "The messiah has been killed! May we all enter the kingdom of heaven.",
+    "chatMessage.youAreLoveLinked": "You are now love linked to \\0.",
+    "chatMessage.playerDiedOfBrokenHeart": "\\0 died of a broken heart, joining their lover \\1 in their next life.",
 
     "kiraResult.correct": "Correct",
     "kiraResult.wrongSpot": "Somebody has this role, but not this player",
@@ -979,6 +987,13 @@
     "wiki.article.standard.fastForward.title:var.5": "Skipping",
     "wiki.article.standard.fastForward.title:var.6": "Skipped",
     "wiki.article.standard.fastForward.text": "If all living players vote to fast forward, the current phase instantly ends. Voting to fast forward is completely anonymous, nobody even knows when you press the button. To vote to fast forward, press the fast forward button in the top left.",
+    "wiki.article.standard.loveLinked.title": "Love Linked",
+    "wiki.article.standard.loveLinked.title:var.0": "Broken Heart",
+    "wiki.article.standard.loveLinked.title:var.1": "Love Link",
+    "wiki.article.standard.loveLinked.title:var.2": "Love Links",
+    "wiki.article.standard.loveLinked.title:var.3": "Broken Hearts",
+    "wiki.article.standard.loveLinked.title:var.4": "Love Linking",
+    "wiki.article.standard.loveLinked.text": "Two players who are love linked are told who each other are. If one dies, the other dies of a broken heart. Cupid love link players.",
 
     "wiki.article.standard.howToPlay.title":"How To Play",
     "wiki.article.standard.howToPlay.title:var.0":"Phase",
@@ -1222,6 +1237,11 @@
     "wiki.article.role.framer.abilities":"* Visit a player to give them a suspicious aura for the night\n* Visit two players to\n  * give the first player you visit a suspicious aura for the night\n  * make the first player appear to visit the second player you visit",
     "wiki.article.role.framer.attributes":"",
     "wiki.article.role.framer.extra":"-A suspicious aura will make the player with it look suspicious to a Detective, they can appear as the evil player to a Psychic, and they will be enemies with everyone to a Philosopher\n* You can't select other mafia members for your first target, but you can select any player for your second target, including dead players and other mafia members\n* For more information, see appeared visits",
+
+    "wiki.article.role.cupid.guide": "- At night, select two players to love link\n* The players are told they are love linked, if one of them dies, the other dies of a broken heart",
+    "wiki.article.role.cupid.abilities":"- Visit two players to love link them\n    - If one of them dies, the other dies of a broken heart immediately\n    - If one of the players you visit dies on the night you try to love link them, they don't link.",
+    "wiki.article.role.cupid.attributes":"- The player that dies of a broken heart dies separate from night deaths\n-    The love linked players are told that they are love linked",
+    "wiki.article.role.cupid.extra":"- You can't select yourself or other mafia members",
 
     "wiki.article.role.mafiaWildcard.guide": "* Choose a mafia role to become that role\n    * You become that role when night starts\n* You likely can't become a role if someone already has that role (You can't become a role that has exceeded its role limit)",
     "wiki.article.role.mafiaWildcard.abilities":"* Become a role you choose at the start of night",

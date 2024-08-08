@@ -69,7 +69,8 @@ impl KiraGuess{
             Role::Godfather | Role::Mafioso | 
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::Witch | Role::Necromancer | Role::Consort |
-            Role::Mortician | Role::Framer | Role::Forger | Role::MafiaWildcard => Some(Self::Mafia),
+            Role::Mortician | Role::Framer | Role::Forger | 
+            Role::Cupid | Role::MafiaWildcard => Some(Self::Mafia),
 
             //Neutral
             Role::Jester | Role::Provocateur | Role::Politician |

@@ -175,7 +175,7 @@ impl RoleSet{
                 vec![
                     Role::Blackmailer, Role::Informant, Role::Hypnotist, Role::Consort,
                     Role::Forger, Role::Framer, Role::Mortician, 
-                    Role::Witch, Role::Necromancer
+                    Role::Witch, Role::Necromancer, Role::Cupid
                 ],
             RoleSet::NeutralEvil => 
                 vec![

@@ -534,10 +534,12 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                 default:
                     return translate("chatMessage.cultSacrificesRequired", message.required);
             }
-        case "playerWithNecronomicon":
-            return translate("chatMessage.playerWithNecronomicon", playerNames[message.playerIndex]);
         case "wildcardConvertFailed":
             return translate("chatMessage.wildcardConvertFailed", translate("role."+message.role+".name"));
+        case "youAreLoveLinked":
+            return translate("chatMessage.youAreLoveLinked", playerNames[message.player]);
+        case "playerDiedOfABrokenHeart":
+            return translate("chatMessage.playerDiedOfBrokenHeart", playerNames[message.player], playerNames[message.lover]);
         case "deputyShotYou":
         case "deathCollectedSouls":
         case "targetWasAttacked":
@@ -715,9 +717,6 @@ export type ChatMessageVariant = {
 } | {
     type: "puppeteerYouArePoisoned"
 } | {
-    type: "playerWithNecronomicon",
-    playerIndex: PlayerIndex
-} | {
     type: "roleBlocked", 
     immune : boolean
 } | {
@@ -794,6 +793,13 @@ export type ChatMessageVariant = {
     type: "vigilanteSuicide"
 } | {
     type: "targetWasAttacked"
+} | {
+    type: "youAreLoveLinked",
+    player: PlayerIndex
+} | {
+    type: "playerDiedOfABrokenHeart",
+    player: PlayerIndex
+    lover: PlayerIndex
 } | {
     type: "youWereProtected"
 } | {
