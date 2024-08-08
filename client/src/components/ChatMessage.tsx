@@ -459,6 +459,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.engineerVisitorsRole", translate("role."+message.role+".name"));
         case "trapState":
             return translate("chatMessage.trapState."+message.state.type);
+        case "trapStateEndOfNight":
+            return translate("chatMessage.trapStateEndOfNight."+message.state.type);
         case "playerRoleAndAlibi":
             return translate("chatMessage.playerRoleAndAlibi",
                 playerNames[message.player],
@@ -532,8 +534,6 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                 default:
                     return translate("chatMessage.cultSacrificesRequired", message.required);
             }
-        case "engineerRemoveTrap":
-            return translate("chatMessage.engineerRemoveTrap." + (message.unset ? "remove" : "keep"));
         case "playerWithNecronomicon":
             return translate("chatMessage.playerWithNecronomicon", playerNames[message.playerIndex]);
         case "wildcardConvertFailed":
@@ -784,6 +784,11 @@ export type ChatMessageVariant = {
         type: "dismantled" | "ready" | "set"
     }
 } | {
+    type: "trapStateEndOfNight",
+    state: {
+        type: "dismantled" | "ready" | "set"
+    }
+} | {
     type: "armorsmithArmorBroke"
 } | {
     type: "vigilanteSuicide"
@@ -801,9 +806,6 @@ export type ChatMessageVariant = {
 } | {
     type: "godfatherBackupKilled",
     backup: PlayerIndex
-} | {
-    type: "engineerRemoveTrap",
-    unset: boolean
 } | {
     type: "silenced"
 } | {

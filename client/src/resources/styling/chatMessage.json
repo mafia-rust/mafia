@@ -81,7 +81,7 @@
     "engineerVisitorsRole": "result",
     "armorsmithArmorBroke": "result",
     "trapState": "special",
-    "engineerRemoveTrap": "special",
+    "trapStateEndOfNight": "result",
     "vigilanteSuicide": "result",
     "targetsMessage": "result",
     "targetIsPossessionImmune": "result",

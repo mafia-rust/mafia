@@ -170,6 +170,8 @@ pub enum ChatMessageVariant {
 
     EngineerVisitorsRole{role: Role},
     TrapState{state: TrapState},
+    TrapStateEndOfNight{state: TrapState},
+
     
     ArmorsmithArmorBroke,
 
@@ -180,9 +182,6 @@ pub enum ChatMessageVariant {
     GodfatherBackup{backup: Option<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
     GodfatherBackupKilled{backup: PlayerIndex},
-
-    #[serde(rename_all = "camelCase")]
-    EngineerRemoveTrap{unset: bool},
     
 
     #[serde(rename_all = "camelCase")]

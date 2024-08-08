@@ -226,7 +226,7 @@
 
     "role.engineer.name": "Engineer",
     "role.engineer.name:var.0": "Engineers",
-    "role.engineer.target": "Target",
+    "role.engineer.target": "Visit",
     "role.engineer.dayTarget": "Special",
     "role.engineer.roleDataText.dismantled": "The trap is dismantled, wait for it to be ready.",
     "role.engineer.roleDataText.ready": "The trap is ready, visit someone to set it on them.",
@@ -520,7 +520,7 @@
     "tag.werewolfTracked": "🐾",
     "tag.werewolfTracked.name": "Werewolf tracked",
     "tag.morticianTagged":"🏺",
-    "tag.morticianTagged.name":"Mortician tagged",
+    "tag.morticianTagged.name":"Obscure tagged",
     "tag.puppeteerMarionette": "🧵",
     "tag.puppeteerMarionette.name": "Puppeteer marionette",
     "tag.doused":"🔥",
@@ -732,11 +732,16 @@
     "chatMessage.targetIsPossessionImmune":"Your target was immune to possession.",
     "chatMessage.werewolfTrackingResult":"\\0 visited \\1.",
     "chatMessage.werewolfTrackingResult.nobody":"\\0 visited nobody.",
-    "chatMessage.engineerVisitorsRole": "A \\0 visited the trapped player.",
     "chatMessage.armorsmithArmorBroke": "The temporary armor, secretly given to you by an armorsmith, has been used and is now broken.",
+    "chatMessage.engineerVisitorsRole": "A \\0 visited the trapped player.",
     "chatMessage.trapState.dismantled": "Your trap is currently dismantled. You can't set it yet.",
     "chatMessage.trapState.ready": "Your trap is currently ready. It can be set and potentially triggered tonight.",
     "chatMessage.trapState.set": "Your trap is currently set. You can dismantle it or wait for it to trigger.",
+    "chatMessage.trapStateEndOfNight.dismantled": "Your trap is dismantled.",
+    "chatMessage.trapStateEndOfNight.ready": "Your trap is ready.",
+    "chatMessage.trapStateEndOfNight.set": "Your trap is set.",
+    
+    
     "chatMessage.vigilanteSuicide":"You committed suicide over the guilt of killing a townie.",
     "chatMessage.transported": "You were transported!",
     "chatMessage.godfatherBackup": "The Godfather has selected \\0 to be their backup.",
@@ -766,8 +771,6 @@
     "chatMessage.cultSacrificesRequired": "The cult requires \\0 more sacrifices to convert.",
     "chatMessage.cultSacrificesRequired.1": "The cult requires 1 more sacrifice to convert.",
     "chatMessage.cultSacrificesRequired.0": "The cult has enough sacrifices to convert.",
-    "chatMessage.engineerRemoveTrap.remove": "You have decided to remove your trap tonight.",
-    "chatMessage.engineerRemoveTrap.keep": "You have decided to keep your trap set.",
     "chatMessage.phaseFastForwarded": "The phase has been fast forwarded.",
 
     "chatMessage.doomsayerFailed": "At least one of your guesses was incorrect or invalid.",
@@ -1102,7 +1105,7 @@
 
     "wiki.article.role.engineer.guide": "Set a trap on a player, protecting them and killing attackers\n- It takes one night for the trap to be ready, it is not ready on the first night\n- When the trap is ready, you can set it on a player\n\nThe trap triggers if anyone visits the player with the trap on them\n- You attack any players who attack the trapped player\n- You are be told the role of every visitor to the trapped player\n- The trap will be dismantled the next night after it triggers\n- If you dismantle the trap manually, you can use it the next night",
     "wiki.article.role.engineer.abilities":"* While the trap is dismantled\n    * You can't select anyone\n    * If you aren't blocked, the trap will become ready the next night\n* While the trap is ready\n    * Visit a player to set the trap\n    * You can't select yourself\n* While the trap is set\n    * The player with the trap on them is protected\n    * If a player visits the player with the trap, the trap triggers\n    * Visit anyone to manually dismantle the trap\n    * You can only select yourself\n* When the trap triggers\n    * You are told the roles of the players who visited the trapped player\n    * You indirectly attack all players attacking the trapped player\n    * The trap dismantles, the next night you wait again",
-    "wiki.article.role.engineer.attributes":"* You can only have one trap set at a time\n* The trap still triggers even if you are blocked or dead\n* When your trap is triggered, you are told which roles visited the trapped player, even if the players with those roles didn't attack the trapped player\n* The trap still triggers even if none of the trapped players visitors are attackers\n* The trap only attacks attackers to the trapped player\n* You have an indirect, armor-piercing attack",
+    "wiki.article.role.engineer.attributes":"* You can only have one trap set at a time\n* The trap still triggers even if you are blocked or dead\n* When your trap is triggered, you are told which roles visited the trapped player, even if the players with those roles didn't attack the trapped player\n* The trap still triggers even if none of the trapped players visitors are attackers\n* The trap only attacks attackers to the trapped player\n* You have an indirect, armor-piercing attack\n* You are told the state of your trap at the start of night, and again at the end of night, even while dead.",
     "wiki.article.role.engineer.extra":"* You can set a trap on jailed players\n* When the player with the trap is attacked, you are told they are attacked, and they are told they are protected\n* You can't activate your own trap\n* It is possible to set the trap on yourself with the help of other roles like transporter\n* If you stop being the engineer your trap disappears",
 
     "wiki.article.role.armorsmith.guide": "- At night, select yourself to open shop up to two times per game\n    - You and all visitors to you are protected for the night\n    - One random visitor to you is given temporary armor, they have armor defense until they are attacked, when they are attacked, armor breaks.",
@@ -1218,7 +1221,7 @@
     "wiki.article.role.provocateur.guide":"- Get your execution target executed to win\n When you win, you leave town at the start of night\n\nYou should try to claim something that makes people think your target is evil.",
     "wiki.article.role.provocateur.abilities":"* At the beginning of the game, you are assigned an execution target. It is a random townie, but never a Mayor, Journalist, Jailor, Deputy, Veteran, or Transporter\n",
     "wiki.article.role.provocateur.attributes":"* When your execution target is executed, you win\n* After you win, you will leave town at the start of the following night\n* You always have an innocent aura\n* You are armored",
-    "wiki.article.role.provocateur.extra":"* If your target dies by something other than execution, you will convert to a jester immediately\n* If there are no valid targets in the game when you become the provocateur, you will convert to a jester",
+    "wiki.article.role.provocateur.extra":"* If your target dies by something other than execution, you will convert to a jester immediately, even while dead\n* If there are no valid targets in the game when you become the provocateur, you will convert to a jester",
 
     "wiki.article.role.doomsayer.guide": "Guess the role of three different players to win. If you guess the role of three different living players correctly, you attack all three of them, and leave town. You should listen to what people claim and try to push for more people to claim roles.",
     "wiki.article.role.doomsayer.abilities":"* Use the Doomsayer menu to guess the role of three different living players in one night, attacking them and winning",

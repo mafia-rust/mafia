@@ -117,6 +117,8 @@ impl RoleStateImpl for Engineer {
                         actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Dismantled}));
                     }
                 }
+
+                actor_ref.push_night_message(game, ChatMessageVariant::TrapStateEndOfNight { state: self.trap.state() });
             }
             _ => {}
         }
@@ -152,9 +154,7 @@ impl RoleStateImpl for Engineer {
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {
             PhaseType::Night => {
-                if actor_ref.alive(game) {
-                    actor_ref.add_private_chat_message(game, ChatMessageVariant::TrapState { state: self.trap.state() });
-                }
+                actor_ref.add_private_chat_message(game, ChatMessageVariant::TrapState { state: self.trap.state() });
             }
             _ => {}
         }
