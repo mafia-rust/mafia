@@ -32,7 +32,7 @@ pub enum MartyrState {
 impl Default for Martyr {
     fn default() -> Self {
         Self{
-            state: MartyrState::StillPlaying { bullets: 5 }
+            state: MartyrState::StillPlaying { bullets: 2 }
         }
     }
 }
