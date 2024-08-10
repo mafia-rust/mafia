@@ -1,8 +1,12 @@
 .selector-section {
     background-color: var(--background-color);
-    border: solid .13rem var(--primary-border-color);
-    border-bottom-color: black;
-    border-right-color: black;
+    border: solid .13rem var(--background-border-color);
+    border-bottom-color: var(--background-border-shadow-color);
+    border-right-color: var(--background-border-shadow-color);
     border-radius: 1rem;
     padding: 1rem;
+}
+
+.selector-section > h2 {
+    margin-bottom: 0.25rem;
 }

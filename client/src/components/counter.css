@@ -1,0 +1,32 @@
+.counter {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--primary-color);
+    border: .13rem solid var(--primary-border-color);
+    border-radius: .25rem;
+    padding: .25rem;
+    margin: .13rem;
+    justify-content: space-between;
+}
+
+.counter-count {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 0 .25rem;
+    gap: .25rem;
+}
+
+.counter-count .counter-circle {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.5rem;
+    background-color: var(--focus-outline-color);
+    border: .13rem solid var(--primary-border-color);
+    border-bottom-color: var(--primary-border-shadow-color);
+    border-right-color: var(--primary-border-shadow-color);
+}
+
+.counter-count .counter-circle-empty {
+    background: var(--secondary-color);
+}

@@ -30,7 +30,7 @@
 }
 .chat-message.dead {
     background-color: black;
-    border-radius: 5px;
+    border-radius: .5rem;
     color: grey;
 }
 .chat-message.phase-change {
@@ -74,8 +74,12 @@
     background-color: #660000;
 }
 .grave-message {
-    border-top: var(--primary-border-color) 1px solid;
-    border-bottom: var(--primary-border-color) 1px solid;
+    border: .13rem solid var(--background-border-color);
+    border-bottom-color: var(--background-border-shadow-color);
+    border-right-color: var(--background-border-shadow-color);
+    border-radius: .5rem;
+    margin: .13rem;
+    padding: .25rem;
 }
 
 .kira-guess-result {

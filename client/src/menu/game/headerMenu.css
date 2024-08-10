@@ -9,8 +9,8 @@
     padding-right: .5rem;
     padding-left: .5rem;
     border-bottom: 0;
-    border-radius: 8px 8px 0 0;
-    background-color: var(--tab-color);
+    border-radius: .5rem .5rem 0 0;
+    background-color: var(--primary-color);
     position: relative;
     overflow-x: hidden;
 }
@@ -19,7 +19,13 @@
 }
 .header-menu {
     position: relative;
-    background-color: var(--secondary-color);
+    background-color: var(--background-color);
+}
+.header-menu > .information {
+    padding: .25rem;
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
 }
 .header-menu .phase-specific {
     display: flex;
@@ -29,15 +35,15 @@
 .header-menu .phase-specific > div {
     width: fit-content;
     background-color: var(--background-color);
-    border-width: .15em;
+    border-width: .13rem;
     border-style: solid;
-    border-radius: 8px;
-    padding: .1em .3em;
+    border-radius: .5rem;
+    padding: .13rem .25rem;
 }
 .header-menu .judgement-info > button{
     width: max-content;
-    padding: .1em 1em;
-    margin: .1em;
+    padding: .13rem .13rem;
+    margin: .13rem;
 } 
 .header-menu .chat-notification{
     font-size: 0.83rem;

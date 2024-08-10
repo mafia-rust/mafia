@@ -242,15 +242,19 @@ export default class HeaderMenu extends React.Component<HeaderMenuProps, HeaderM
         };
         
         return <div className="header-menu">
-            <h3>{this.renderPhase()}</h3>
-            {(()=>{
-                return <StyledText>
-                    {(this.state.players[this.state.myIndex!] ?? "").toString() +
-                    " (" + translate("role."+(this.state.roleState?.type)+".name") + ")"}
-                </StyledText>;
-            })()}
             {this.renderFastForwardButton()}
-            {this.renderPhaseSpecific()}
+            <div className="information">
+                <div>
+                    <h3>{this.renderPhase()}</h3>
+                    {(()=>{
+                        return <StyledText>
+                            {(this.state.players[this.state.myIndex!] ?? "").toString() +
+                            " (" + translate("role."+(this.state.roleState?.type)+".name") + ")"}
+                        </StyledText>;
+                    })()}
+                </div>
+                {this.renderPhaseSpecific()}
+            </div>
             {this.renderMenuButtons()}
             <div className="timer-box">
                 <div style={timerStyle}/>

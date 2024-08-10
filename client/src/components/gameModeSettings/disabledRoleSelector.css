@@ -3,8 +3,8 @@
     flex-direction: row;
     background-color: var(--secondary-color);
     border: .13rem solid var(--primary-border-color);
-    border-top-color: black;
-    border-left-color: black;
+    border-top-color: var(--primary-border-shadow-color);
+    border-left-color: var(--primary-border-shadow-color);
     border-radius: .5rem;
     margin: .13rem 0;
 }

@@ -17,6 +17,7 @@ import { getRolesComplement } from "../game/roleListState.d";
 import ROLES from "../resources/roles.json";
 import "../menu/game/gameScreenContent/RoleSpecificMenus/smallRoleSpecificMenu.css";
 import LargeKiraMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
+import Counter from "./Counter";
 
 export default function RoleSpecificSection(){
     
@@ -67,30 +68,65 @@ export default function RoleSpecificSection(){
 
 
 
-        case "jailor":
+        case "jailor": {
+            const counter = <Counter 
+                max={3} 
+                current={roleState.executionsRemaining}
+            >
+                <StyledText>{translate("role.jailor.roleDataText.executionsRemaining", roleState.executionsRemaining)}</StyledText>
+            </Counter>;
             if(phaseState.type==="night") {
-                return <StyledText>{translate("role.jailor.roleDataText.night", roleState.executionsRemaining)}</StyledText>;
+                return counter;
             } else if (roleState.jailedTargetRef === null) {
-                return <StyledText>{translate("role.jailor.roleDataText.nobody", roleState.executionsRemaining)}</StyledText>;
+                return <>
+                    {counter}
+                    <StyledText>{translate("role.jailor.roleDataText.nobody")}</StyledText>
+                </>
             } else {
-                return <StyledText>{translate("role.jailor.roleDataText", 
-                    GAME_MANAGER.state.players[roleState.jailedTargetRef].toString(), 
-                    roleState.executionsRemaining
-                )}</StyledText>;;
+                return <>
+                    {counter}
+                    <StyledText>{translate("role.jailor.roleDataText", 
+                        GAME_MANAGER.state.players[roleState.jailedTargetRef].toString(), 
+                    )}</StyledText>
+                </>
             }
-        case "medium":
+        }
+        case "medium": {
+            const counter = <Counter
+                max={2}
+                current={roleState.seancesRemaining}
+            >
+                <StyledText>{translate("role.medium.roleDataText.hauntsRemaining", roleState.seancesRemaining)}</StyledText>
+            </Counter>
             if (roleState.seancedTarget === null) {
-                return <StyledText>{translate("role.medium.roleDataText.nobody", roleState.seancesRemaining)}</StyledText>;
+                return <>
+                    {counter}
+                    <StyledText>{translate("role.medium.roleDataText.nobody")}</StyledText>
+                </>
             } else {
-                return <StyledText>{translate("role.medium.roleDataText", 
-                    GAME_MANAGER.state.players[roleState.seancedTarget].toString(),
-                    roleState.seancesRemaining
-                )}</StyledText>;
+                return <>
+                    {counter}
+                    <StyledText>{translate("role.medium.roleDataText", 
+                        GAME_MANAGER.state.players[roleState.seancedTarget].toString(),
+                    )}</StyledText>
+                </>;
             }
-        case "doctor":
-            return <StyledText>{translate("role.doctor.roleDataText", roleState.selfHealsRemaining)}</StyledText>;
+        }
+        case "doctor": {
+            return <Counter
+                max={1}
+                current={roleState.selfHealsRemaining}
+            >
+                <StyledText>{translate("role.doctor.roleDataText", roleState.selfHealsRemaining)}</StyledText>
+            </Counter>
+        }
         case "bodyguard":
-            return <StyledText>{translate("role.bodyguard.roleDataText", roleState.selfShieldsRemaining)}</StyledText>;
+            return <Counter
+                max={1}
+                current={roleState.selfShieldsRemaining}
+            >
+                <StyledText>{translate("role.bodyguard.roleDataText", roleState.selfShieldsRemaining)}</StyledText>
+            </Counter>
         case "engineer":
             return <>
                 <div>
@@ -117,14 +153,29 @@ export default function RoleSpecificSection(){
                 case "notLoaded":
                     return <StyledText>{translate("role.vigilante.roleDataText.notLoaded")}</StyledText>;
                 case "loaded":
-                    return <StyledText>{translate("role.vigilante.roleDataText", roleState.state.bullets)}</StyledText>;
+                    return <Counter 
+                        max={3} 
+                        current={roleState.state.bullets}
+                    >
+                        <StyledText>{translate("role.vigilante.roleDataText", roleState.state.bullets)}</StyledText>
+                    </Counter>
                 default:
                     return null
             }
         case "veteran":
-            return <StyledText>{translate("role.veteran.roleDataText", roleState.alertsRemaining)}</StyledText>;
+            return <Counter
+                max={3}
+                current={roleState.alertsRemaining}
+            >
+                <StyledText>{translate("role.veteran.roleDataText", roleState.alertsRemaining)}</StyledText>
+            </Counter>
         case "armorsmith":
-            return <StyledText>{translate("role.armorsmith.roleDataText", roleState.openShopsRemaining)}</StyledText>;
+            return <Counter
+                max={2}
+                current={roleState.openShopsRemaining}
+            >
+                <StyledText>{translate("role.armorsmith.roleDataText", roleState.openShopsRemaining)}</StyledText>
+            </Counter>
         case "marksman":
             switch(roleState.state.type){
                 case "notLoaded":
@@ -147,9 +198,19 @@ export default function RoleSpecificSection(){
             }
             return null;
         case "mortician":
-            return <StyledText>{translate("role.mortician.roleDataText", (3-roleState.obscuredPlayers.length))}</StyledText>;
+            return <Counter
+                max={3}
+                current={3-roleState.obscuredPlayers.length}
+            >
+                <StyledText>{translate("role.mortician.roleDataText", (3-roleState.obscuredPlayers.length))}</StyledText>
+            </Counter>
         case "death":
-            return <StyledText>{translate("role.death.roleDataText", roleState.souls)}</StyledText>;
+            return <Counter
+                max={6}
+                current={roleState.souls}
+            >
+                <StyledText>{translate("role.death.roleDataText", roleState.souls)}</StyledText>
+            </Counter>
         case "ojo":
             if(phaseState.type === "night" && GAME_MANAGER.state.clientState.myIndex!==null && GAME_MANAGER.state.players[GAME_MANAGER.state.clientState.myIndex].alive)
                 return <SmallOjoMenu action={roleState.chosenAction}/>;
@@ -201,7 +262,15 @@ export default function RoleSpecificSection(){
             /></div></>;
         case "martyr":
             if (roleState.state.type === "stillPlaying") {
-                return <StyledText>{translate("role.martyr.roleDataText", roleState.state.bullets)}</StyledText>;
+                return <>
+                    <StyledText>{translate("role.martyr.roleDataText.eccentric")}</StyledText>
+                    <Counter
+                        max={5}
+                        current={roleState.state.bullets}
+                    >
+                        <StyledText>{translate("role.martyr.roleDataText", roleState.state.bullets)}</StyledText>
+                    </Counter>
+                </>
             } else {
                 return null;
             }

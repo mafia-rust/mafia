@@ -28,9 +28,9 @@
     position: relative;
     background-color: var(--primary-color);
     margin: 0;
-    padding: .1rem;
-    border-top: 1px solid var(--primary-border-color);
-    border-bottom: 1px solid var(--primary-border-color);
+    padding: .25rem;
+    border-top: .13rem solid var(--primary-border-color);
+    border-bottom: .13rem solid var(--primary-border-shadow-color);
     border-left: 0;
     border-right: 0;
 }

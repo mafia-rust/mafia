@@ -87,9 +87,9 @@
 }
 
 .lm .player-list > div {
-    border: .13rem solid var(--primary-border-color);
-    border-top-color: black;
-    border-left-color: black;
+    border: .13rem solid var(--background-border-color);
+    border-top-color: var(--background-border-shadow-color);
+    border-left-color: var(--background-border-shadow-color);
     border-radius: .5rem;
 }
 
@@ -104,7 +104,7 @@
 }
 
 .lm .player-list ol li:nth-of-type(even) {
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
 }
 
 .lm .player-list ol li > div {

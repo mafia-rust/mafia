@@ -13,8 +13,6 @@
 
 .game-screen .header {
     height: fit-content;
-    border: var(--primary-border-color) solid 2px;
-    border-bottom: 0;
 
     flex-grow: 0;
     flex-basis: 0px;
@@ -32,7 +30,6 @@
     overflow-x: hidden;
 }
 .game-screen .content > div {
-    
     overflow-x: hidden;
     resize: horizontal;
 
@@ -44,8 +41,9 @@
     min-width: 10%;
     
     background-color: var(--background-color);
-    border-left: var(--primary-border-color) solid 1px;
-    border-right: var(--primary-border-color) solid 1px;
+    border: .13rem solid var(--background-border-color);
+    border-bottom-color: var(--background-border-shadow-color);
+    border-right-color: var(--background-border-shadow-color);
 }
 
 @media only screen and (max-width: 600px) {
@@ -57,26 +55,24 @@
 
 .game-screen .content .no-content {
     display: flex;
+    resize: none;
+    border: none;
     justify-content: center;
     align-items: center;
-    font-size: 3em;
+    font-size: 3rem;
     text-align: center;
+    width: 100%;
 }
 
 .content-tab {
     display: flex;
     flex-direction: row;
     height: max-content;
-    border-top: 0;
-    border-left: 0;
-    border-right: 0;
-    border-bottom: 1px;
-    border-style: solid;
-    border-color: var(--primary-border-color);
+    border-bottom: .13rem solid var(--background-border-shadow-color);
     width: 100%;
     margin: 0;
     padding: .15rem .15rem;
-    background-color: var(--tab-color);
+    background-color: var(--primary-color);
     justify-content: space-between;
     align-items: center;
     user-select: none;

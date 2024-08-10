@@ -1,14 +1,13 @@
 .keyword-link {
     font: inherit;
     color: inherit;
-    text-decoration: none;
 }
 .keyword-link:hover {
     text-decoration: underline;
 }
 .keyword-player-number {
 	border-radius: 1rem;
-    border: solid 1.5px;
+    border: solid .13rem;
     border-bottom-color: darkgray;
     border-right-color: darkgray;
     background-color: var(--primary-color);

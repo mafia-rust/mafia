@@ -5,9 +5,10 @@
 }
 
 .lobby-menu-chat {
-    border: .13rem solid var(--primary-border-color);
-    border-top-color: black;
-    border-left-color: black;
+    background-color: var(--primary-color);
+    border: .13rem solid var(--background-border-color);
+    border-top-color: var(--background-border-shadow-color);
+    border-left-color: var(--background-border-shadow-color);
     border-radius: .5rem;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;

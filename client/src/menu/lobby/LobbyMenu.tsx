@@ -38,7 +38,6 @@ export default function LobbyMenu(): ReactElement {
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
                 switch (type) {
                     case "roleList":
-                    case "roleOutline":
                         setRoleList([...GAME_MANAGER.state.roleList]);
                         break;
                     case "excludedRoles":

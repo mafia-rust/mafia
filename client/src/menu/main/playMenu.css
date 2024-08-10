@@ -10,9 +10,9 @@
     flex-direction: column;
 
     background-color: var(--background-color);
-    border: solid .13rem var(--primary-border-color);
-    border-bottom-color: black;
-    border-right-color: black;
+    border: solid .13rem var(--background-border-color);
+    border-bottom-color: var(--background-border-shadow-color);
+    border-right-color: var(--background-border-shadow-color);
     border-radius: 1rem;
     padding: 1rem;
     gap: 1rem;
@@ -58,10 +58,9 @@
 .play-menu-browser > .play-menu-center {
     flex-grow: 1;
 
-    background-color: var(--primary-color);
-    border: solid .13rem var(--primary-border-color);
-    border-top-color: black;
-    border-left-color: black;
+    border: solid .13rem var(--background-border-color);
+    border-top-color: var(--background-border-shadow-color);
+    border-left-color: var(--background-border-shadow-color);
     border-radius: 0.5rem;
 
     overflow: hidden;
@@ -95,18 +94,18 @@
     flex-direction: column;
     height: 100%;
     width: 100%;
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
     overflow: hidden;
 }
 
 .play-menu-browser table tr:nth-last-child(even) {
-    background-color: var(--background-color);
+    background-color: var(--secondary-color);
 }
 
 .play-menu-browser table > thead {
     width: 100%;
     flex-shrink: 0;
-    background-color: var(--primary-color);
+    background-color: var(--background-color);
     overflow: hidden;
 }
 

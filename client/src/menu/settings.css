@@ -10,8 +10,8 @@
     box-shadow: 0 0 .5rem #0007;
 
     border: solid .13rem var(--primary-border-color);
-    border-bottom-color: black;
-    border-right-color: black;
+    border-bottom-color: var(--primary-border-shadow-color);
+    border-right-color: var(--primary-border-shadow-color);
     border-radius: 0.5rem;
 
     gap: 0.5rem;
@@ -29,8 +29,8 @@
 
 .settings > section.standout {
     border: solid .13rem var(--primary-border-color);
-    border-top-color: black;
-    border-left-color: black;
+    border-top-color: var(--primary-border-shadow-color);
+    border-left-color: var(--primary-border-shadow-color);
     border-radius: .5rem;
     padding: 0.25rem;
     background-color: var(--secondary-color);
