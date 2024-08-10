@@ -515,12 +515,14 @@
 
     "mafiaSupport":"Mafia Support",
     "mafiaSupport:var.0":"MS",
+    "mafiaKilling":"Mafia Killing",
+    "mafiaKilling:var.0":"MK",
 
     "neutralEvil":"Neutral Evil",
     "neutralEvil:var.0":"NE",
 
     "tag.godfatherBackup":"🌹",
-    "tag.godfatherBackup.name":"Godfathers backup",
+    "tag.godfatherBackup.name":"Killing backup",
     "tag.provocateurTarget":"🎯",
     "tag.provocateurTarget.name":"Provocateur target",
     "tag.werewolfTracked": "🐾",

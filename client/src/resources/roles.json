@@ -432,7 +432,7 @@
     },
     "godfather": {
         "faction": "mafia",
-        "roleSet": null,
+        "roleSet": "mafiaKilling",
         "armor": true,
         "aura": "innocent",
         "maxCount": 1,
@@ -448,7 +448,7 @@
     },
     "mafioso": {
         "faction": "mafia",
-        "roleSet": null,
+        "roleSet": "mafiaKilling",
         "armor": false,
         "aura": null,
         "maxCount": 1,
