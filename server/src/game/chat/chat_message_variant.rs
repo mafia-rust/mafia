@@ -126,13 +126,13 @@ pub enum ChatMessageVariant {
     DeputyKilled{shot_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
     DeputyShotYou,
+    
+    #[serde(rename_all = "camelCase")]
+    PlayerDiedOfABrokenHeart{player: PlayerIndex, lover: PlayerIndex},
 
     PuppeteerPlayerIsNowMarionette{player: PlayerIndex},
     PuppeteerYouArePoisoned,
 
-
-    #[serde(rename_all = "camelCase")]
-    PlayerWithNecronomicon{player_index: PlayerIndex},
     YourConvertFailed,
     ApostleCanConvertTonight,
     ApostleCantConvertTonight,
@@ -170,6 +170,8 @@ pub enum ChatMessageVariant {
 
     EngineerVisitorsRole{role: Role},
     TrapState{state: TrapState},
+    TrapStateEndOfNight{state: TrapState},
+
     
     ArmorsmithArmorBroke,
 
@@ -180,9 +182,6 @@ pub enum ChatMessageVariant {
     GodfatherBackup{backup: Option<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
     GodfatherBackupKilled{backup: PlayerIndex},
-
-    #[serde(rename_all = "camelCase")]
-    EngineerRemoveTrap{unset: bool},
     
 
     #[serde(rename_all = "camelCase")]
@@ -205,6 +204,9 @@ pub enum ChatMessageVariant {
 
     #[serde(rename_all = "camelCase")]
     WerewolfTrackingResult{tracked_player: PlayerIndex, players: Vec<PlayerIndex>},
+
+    #[serde(rename_all = "camelCase")]
+    YouAreLoveLinked{player: PlayerIndex},
 
     JesterWon,
     ProvocateurWon,

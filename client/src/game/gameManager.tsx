@@ -513,12 +513,6 @@ export function createGameManager(): GameManager {
                 action: action
             });
         },
-        sendSetEngineerShouldUnset(unset) {
-            this.server.sendPacket({
-                type: "setEngineerShouldUnset",
-                unset: unset
-            });
-        },
 
         sendVoteFastForwardPhase(fastForward: boolean) {
             this.server.sendPacket({

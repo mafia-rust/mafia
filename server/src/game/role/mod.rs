@@ -79,6 +79,7 @@ macros::roles! {
     Mortician : mortician,
     Framer : framer,
     Forger : forger,
+    Cupid : cupid,
     MafiaWildcard: mafia_wild_card,
 
     // Neutral
@@ -127,6 +128,7 @@ macros::priorities! {
     Kill,
     Investigative,
 
+    Cupid,
     SpyBug,
 
     StealMessages,

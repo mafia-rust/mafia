@@ -106,7 +106,7 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
             return [
                 "blackmailer", "informant", "hypnotist", "consort",
                 "forger", "framer", "mortician", 
-                "witch", "necromancer"
+                "witch", "necromancer", "cupid"
             ];
         case "neutralEvil":
             return ["jester", "provocateur", "politician", "doomsayer", "minion", "scarecrow"];

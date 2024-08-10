@@ -213,8 +213,11 @@
             {"type": "trapState", "state":{"type":"dismantled"}},
             {"type": "trapState", "state":{"type":"ready"}},
             {"type": "trapState", "state":{"type":"set"}},
-            {"type": "youAttackedSomeone"},
+            {"type": "trapStateEndOfNight", "state":{"type":"dismantled"}},
+            {"type": "trapStateEndOfNight", "state":{"type":"ready"}},
+            {"type": "trapStateEndOfNight", "state":{"type":"set"}},
             {"type": "engineerVisitorsRole", "role": "framer"},
+            {"type": "youAttackedSomeone"},
             {"type": "targetWasAttacked"},
             {"type": "youWereProtected"},
             {"type": "someoneSurvivedYourAttack"},
@@ -591,6 +594,19 @@
             {"type": "targetIsPossessionImmune"},
             {"type": "youWerePossessed", "immune": false},
             {"type": "youWerePossessed", "immune": true}
+        ]
+    },
+    "cupid": {
+        "faction": "mafia",
+        "roleSet": "mafiaSupport",
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[
+            {"type": "youAreLoveLinked", "player": 20},
+            {"type": "playerDiedOfABrokenHeart", "player": 20, "lover": 25}
         ]
     },
     "mafiaWildcard": {

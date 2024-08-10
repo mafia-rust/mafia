@@ -244,10 +244,10 @@
 
     "role.engineer.name": "Engineer",
     "role.engineer.name:var.0": "Engineers",
-    "role.engineer.target": "Set Trap",
-    "role.engineer.roleDataText.dismantled": "The trap is dismantled",
-    "role.engineer.roleDataText.ready": "The trap is ready",
-    "role.engineer.roleDataText.set": "The trap is currently set",
+    "role.engineer.target": "Visit",
+    "role.engineer.roleDataText.dismantled": "The trap is dismantled, wait for it to be ready.",
+    "role.engineer.roleDataText.ready": "The trap is ready, visit someone to set it on them.",
+    "role.engineer.roleDataText.set": "The trap is currently set, visit anyone to dismantle it, and have it be ready next night.",
     "role.engineer.roleDataText.unset": "Remove trap",
     "role.engineer.youAreSelecting": "You are placing a trap on \\0.",
     "role.engineer.youAreSelecting.null": "You aren't placing a trap on anyone.",
@@ -392,6 +392,10 @@
     "role.framer.youAreSelecting": "You are framing \\0.",
     "role.framer.youAreSelecting.2": "You are framing \\0 into visiting \\1.",
     "role.framer.youAreSelecting.null": "You aren't framing anyone.",
+    
+    "role.cupid.name": "Cupid",
+    "role.cupid.name:var.0": "Cupids",
+    "role.cupid.target": "Link",
 
     "role.mafiaWildcard.name": "Mafia Wildcard",
     "role.mafiaWildcard.name:var.0": "Mafia Wildcards",
@@ -498,6 +502,7 @@
     "grave.deathCause.leftTown:var.0": "Left Town",
     "grave.deathCause.leftTown:var.1": "Leave Town",
     "grave.deathCause.leftTown:var.2": "Leaves Town",
+    "grave.deathCause.brokenHeart": "Broken Heart",
     "grave.killer.quit": "Quitting",
     "grave.killer.quit:var.0": "Quit",
     "grave.killer.quit:var.1": "Quits",
@@ -538,11 +543,13 @@
     "tag.werewolfTracked": "🐾",
     "tag.werewolfTracked.name": "Werewolf tracked",
     "tag.morticianTagged":"🏺",
-    "tag.morticianTagged.name":"Mortician tagged",
+    "tag.morticianTagged.name":"Obscure tagged",
     "tag.puppeteerMarionette": "🧵",
-    "tag.puppeteerMarionette.name": "Puppeteer marionette",
+    "tag.puppeteerMarionette.name": "Puppeteer Marionette",
     "tag.doused":"🔥",
     "tag.doused.name":"Arsonist doused",
+    "tag.loveLinked":"💘",
+    "tag.loveLinked.name":"Love Linked",
 
     "dead.icon":"💀",
     
@@ -702,7 +709,6 @@
     "chatMessage.puppeteerYouArePoisoned":"You have been poisoned by the puppeteer, you will be indirectly attacked the next night.",
     "chatMessage.jailorDecidedToExecute":"The Jailor decided to execute \\0",
     "chatMessage.jailorDecideExecute.nobody":"The Jailor decided not to execute!",
-    "chatMessage.playerWithNecronomicon":"\\0 has the necronomicon.",
     "chatMessage.yourConvertFailed": "You failed to convert your target.",
 
     "chatMessage.youDied":"You died!",
@@ -751,11 +757,16 @@
     "chatMessage.targetIsPossessionImmune":"Your target was immune to possession.",
     "chatMessage.werewolfTrackingResult":"\\0 visited \\1.",
     "chatMessage.werewolfTrackingResult.nobody":"\\0 visited nobody.",
-    "chatMessage.engineerVisitorsRole": "A \\0 visited the trapped player.",
     "chatMessage.armorsmithArmorBroke": "The temporary armor, secretly given to you by an armorsmith, has been used and is now broken.",
+    "chatMessage.engineerVisitorsRole": "A \\0 visited the trapped player.",
     "chatMessage.trapState.dismantled": "Your trap is currently dismantled. You can't set it yet.",
     "chatMessage.trapState.ready": "Your trap is currently ready. It can be set and potentially triggered tonight.",
     "chatMessage.trapState.set": "Your trap is currently set. You can dismantle it or wait for it to trigger.",
+    "chatMessage.trapStateEndOfNight.dismantled": "Your trap is dismantled.",
+    "chatMessage.trapStateEndOfNight.ready": "Your trap is ready.",
+    "chatMessage.trapStateEndOfNight.set": "Your trap is set.",
+    
+    
     "chatMessage.vigilanteSuicide":"You committed suicide over the guilt of killing a townie.",
     "chatMessage.transported": "You were transported!",
     "chatMessage.godfatherBackup": "The Godfather has selected \\0 to be their backup.",
@@ -785,14 +796,13 @@
     "chatMessage.cultSacrificesRequired": "The cult requires \\0 more sacrifices to convert.",
     "chatMessage.cultSacrificesRequired.1": "The cult requires 1 more sacrifice to convert.",
     "chatMessage.cultSacrificesRequired.0": "The cult has enough sacrifices to convert.",
-    "chatMessage.engineerRemoveTrap.remove": "You have decided to remove your trap tonight.",
-    "chatMessage.engineerRemoveTrap.keep": "You have decided to keep your trap set.",
     "chatMessage.phaseFastForwarded": "The phase has been fast forwarded.",
-
     "chatMessage.doomsayerFailed": "At least one of your guesses was incorrect or invalid.",
     "chatMessage.doomsayerWon": "Your guesses were correct. You win!",
     "chatMessage.martyrFailed": "The martyr lives, and we endure for another day.",
     "chatMessage.martyrWon": "The messiah has been killed! May we all enter the kingdom of heaven.",
+    "chatMessage.youAreLoveLinked": "You are now love linked to \\0.",
+    "chatMessage.playerDiedOfBrokenHeart": "\\0 died of a broken heart, joining their lover \\1 in their next life.",
 
     "kiraResult.correct": "Correct",
     "kiraResult.wrongSpot": "Somebody has this role, but not this player",
@@ -995,6 +1005,13 @@
     "wiki.article.standard.fastForward.title:var.5": "Skipping",
     "wiki.article.standard.fastForward.title:var.6": "Skipped",
     "wiki.article.standard.fastForward.text": "If all living players vote to fast forward, the current phase instantly ends. Voting to fast forward is completely anonymous, nobody even knows when you press the button. To vote to fast forward, press the fast forward button in the top left.",
+    "wiki.article.standard.loveLinked.title": "Love Linked",
+    "wiki.article.standard.loveLinked.title:var.0": "Broken Heart",
+    "wiki.article.standard.loveLinked.title:var.1": "Love Link",
+    "wiki.article.standard.loveLinked.title:var.2": "Love Links",
+    "wiki.article.standard.loveLinked.title:var.3": "Broken Hearts",
+    "wiki.article.standard.loveLinked.title:var.4": "Love Linking",
+    "wiki.article.standard.loveLinked.text": "Two players who are love linked are told who each other are. If one dies, the other dies of a broken heart. Cupid love link players.",
 
     "wiki.article.standard.howToPlay.title":"How To Play",
     "wiki.article.standard.howToPlay.title:var.0":"Phase",
@@ -1025,6 +1042,21 @@
     "wiki.article.standard.nobody.title:var.1":"No one",
     "wiki.article.standard.nobody.title:var.2":"Noone",
     "wiki.article.standard.nobody.text":"Nobody means nobody. If you have further questions, please contact us.",
+
+    "wiki.article.standard.vfr.title":"Vote-For-Role",
+    "wiki.article.standard.vfr.title:var.0":"VFR",
+    "wiki.article.standard.vfr.text":"Vote for role is the name of a common strategy. Players will choose a player and force them to claim under the threat of getting voted out. If that player claims they will likely be spared. Usually there is not much of a reason why a specific player is chosen, the strategy is often used to just get starting information.",
+
+    "wiki.article.standard.claim.title":"Claim",
+    "wiki.article.standard.claim.title:var.0":"Claiming",
+    "wiki.article.standard.claim.title:var.1":"Claimed",
+    "wiki.article.standard.claim.text":"When a player asks you to claim. They are likely asking you to say what your role is, and send your alibi in chat. This is not necessarily because they think your evil, but they want information from you.",
+
+    "wiki.article.standard.claimswap.title":"Claim swap",
+    "wiki.article.standard.claimswap.title:var.0":"Claimswap",
+    "wiki.article.standard.claimswap.title:var.1":"Claim swaped",
+    "wiki.article.standard.claimswap.title:var.2":"Claim swapping",
+    "wiki.article.standard.claimswap.text":"When two players do a claim swap, they are both claiming each others roles. John Proctor is claiming engineer even though Deodat Lawson is engineer, and Deodat Lawson is claiming detective even thought John Proctor is detective. This is in order to hide information from evil players while still giving information to town. A doomsayer or kira can easily kill alot of townies if they know the exact roles of townies. Claim swap might help a veteran kill evil players.",
 
     "wiki.article.standard.shwompt.title":"Shwompt",
     "wiki.article.standard.shwompt.text":"Shwompt \nPronunciation: ʃwɒmpt \nA sudden whooshing sound that contains a siblant conclusion. This describes the sound that is made when objects phase through a solid wall. \nOther forms: Shwompter, Shwompting, Shwompted, Shwomptee",
@@ -1126,8 +1158,8 @@
     "wiki.article.role.bouncer.extra":"* You can't select yourself\n* You are immune to roleblocks, wardblocks, and possession",
 
     "wiki.article.role.engineer.guide": "Set a trap on a player, protecting them and killing attackers\n- It takes one night for the trap to be ready, it is not ready on the first night\n- When the trap is ready, you can set it on a player\n\nThe trap triggers if anyone visits the player with the trap on them\n- You attack any players who attack the trapped player\n- You are be told the role of every visitor to the trapped player\n- The trap will be dismantled the next night after it triggers\n- If you dismantle the trap manually, you can use it the next night",
-    "wiki.article.role.engineer.abilities":"* While the trap is dismantled\n    * You can't select anyone\n    * If you aren't blocked, the trap will become ready the next night\n* While the trap is ready\n    * Visit a player to set the trap\n    * You can't select yourself\n* While the trap is set\n    * The player with the trap on them is protected\n    * If a player visits the player with the trap, the trap triggers\n    * You can choose to manually dismantle the trap, this only works if you aren't blocked\n    * You can't select anyone\n* When the trap triggers\n    * You are told the roles of the players who visited the trapped player\n    * You indirectly attack all players attacking the trapped player\n    * The trap dismantles, the next night you wait again",
-    "wiki.article.role.engineer.attributes":"* You can only have one trap set at a time\n* The trap still triggers even if you are blocked or dead\n* When your trap is triggered, you are told which roles visited the trapped player, even if the players with those roles didn't attack the trapped player\n* The trap still triggers even if none of the trapped players visitors are attackers\n* The trap only attacks attackers to the trapped player\n* You have an indirect, armor-piercing attack",
+    "wiki.article.role.engineer.abilities":"* While the trap is dismantled\n    * You can't select anyone\n    * If you aren't blocked, the trap will become ready the next night\n* While the trap is ready\n    * Visit a player to set the trap\n    * You can't select yourself\n* While the trap is set\n    * The player with the trap on them is protected\n    * If a player visits the player with the trap, the trap triggers\n    * Visit anyone to manually dismantle the trap\n    * You can only select yourself\n* When the trap triggers\n    * You are told the roles of the players who visited the trapped player\n    * You indirectly attack all players attacking the trapped player\n    * The trap dismantles, the next night you wait again",
+    "wiki.article.role.engineer.attributes":"* You can only have one trap set at a time\n* The trap still triggers even if you are blocked or dead\n* When your trap is triggered, you are told which roles visited the trapped player, even if the players with those roles didn't attack the trapped player\n* The trap still triggers even if none of the trapped players visitors are attackers\n* The trap only attacks attackers to the trapped player\n* You have an indirect, armor-piercing attack\n* You are told the state of your trap at the start of night, and again at the end of night, even while dead.",
     "wiki.article.role.engineer.extra":"* You can set a trap on jailed players\n* When the player with the trap is attacked, you are told they are attacked, and they are told they are protected\n* You can't activate your own trap\n* It is possible to set the trap on yourself with the help of other roles like transporter\n* If you stop being the engineer your trap disappears",
 
     "wiki.article.role.armorsmith.guide": "- At night, select yourself to open shop up to two times per game\n    - You and all visitors to you are protected for the night\n    - One random visitor to you is given temporary armor, they have armor defense until they are attacked, when they are attacked, armor breaks.",
@@ -1230,6 +1262,11 @@
     "wiki.article.role.framer.attributes":"",
     "wiki.article.role.framer.extra":"-A suspicious aura will make the player with it look suspicious to a Detective, they can appear as the evil player to a Psychic, and they will be enemies with everyone to a Philosopher\n* You can't select other mafia members for your first target, but you can select any player for your second target, including dead players and other mafia members\n* For more information, see appeared visits",
 
+    "wiki.article.role.cupid.guide": "- At night, select two players to love link\n* The players are told they are love linked, if one of them dies, the other dies of a broken heart",
+    "wiki.article.role.cupid.abilities":"- Visit two players to love link them\n    - If one of them dies, the other dies of a broken heart immediately\n    - If one of the players you visit dies on the night you try to love link them, they don't link.",
+    "wiki.article.role.cupid.attributes":"- The player that dies of a broken heart dies separate from night deaths\n-    The love linked players are told that they are love linked",
+    "wiki.article.role.cupid.extra":"- You can't select yourself or other mafia members",
+
     "wiki.article.role.mafiaWildcard.guide": "* Choose a mafia role to become that role\n    * You become that role when night starts\n* You likely can't become a role if someone already has that role (You can't become a role that has exceeded its role limit)",
     "wiki.article.role.mafiaWildcard.abilities":"* Become a role you choose at the start of night",
     "wiki.article.role.mafiaWildcard.attributes":"* You can't become a mafioso or godfather\n* You can not become a role that is disabled\n* You can not become a role that is taken by too many players",
@@ -1243,7 +1280,7 @@
     "wiki.article.role.provocateur.guide":"- Get your execution target executed to win\n When you win, you leave town at the start of night\n\nYou should try to claim something that makes people think your target is evil.",
     "wiki.article.role.provocateur.abilities":"* At the beginning of the game, you are assigned an execution target. It is a random townie, but never a Mayor, Journalist, Jailor, Deputy, Veteran, or Transporter\n",
     "wiki.article.role.provocateur.attributes":"* When your execution target is executed, you win\n* After you win, you will leave town at the start of the following night\n* You always have an innocent aura\n* You are armored",
-    "wiki.article.role.provocateur.extra":"* If your target dies by something other than execution, you will convert to a jester immediately\n* If there are no valid targets in the game when you become the provocateur, you will convert to a jester",
+    "wiki.article.role.provocateur.extra":"* If your target dies by something other than execution, you will convert to a jester immediately, even while dead\n* If there are no valid targets in the game when you become the provocateur, you will convert to a jester",
 
     "wiki.article.role.doomsayer.guide": "Guess the role of three different players to win. If you guess the role of three different living players correctly, you attack all three of them, and leave town. You should listen to what people claim and try to push for more people to claim roles.",
     "wiki.article.role.doomsayer.abilities":"* Use the Doomsayer menu to guess the role of three different living players in one night, attacking them and winning",
@@ -1316,7 +1353,7 @@
     "wiki.article.role.trueWildcard.extra":"* If you choose a role that was disabled you stay as the True Wildcard\n* You can choose true wildcard to stay as true wildcard\n* You can become a role that is at its role limit, if there is a veteran in the game, you still can become one",
 
     "wiki.article.role.martyr.guide": "If you die, you win, and everyone commits suicide in an attempt to follow you to the afterlife. The entire town knows that you're the martyr. Good Luck!",
-    "wiki.article.role.martyr.abilities":"* Visit yourself to attack yourself and spend one bullet\n* You start with 5 bullets\n* When you die, everyone else commits suicide and you win.",
+    "wiki.article.role.martyr.abilities":"* Visit yourself to attack yourself and spend one bullet\n* You start with 2 bullets\n* When you die, everyone else commits suicide and you win.",
     "wiki.article.role.martyr.attributes":"* When you have zero bullets left, you leave town and lose\n* You have a basic attack",
     "wiki.article.role.martyr.extra":"* When you visit a player while you have zero bullets left you will not attack them\n* You're an ex-cultist, they rejected you because you told the truth",
 

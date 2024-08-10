@@ -116,7 +116,6 @@ export type GameManager = {
     sendSetAuditorChosenOutline(index: number): void;
     sendSetOjoAction(action: OjoAction): void;
     sendSetPuppeteerAction(action: PuppeteerAction): void;
-    sendSetEngineerShouldUnset(unset: boolean): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;
 

@@ -459,6 +459,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.engineerVisitorsRole", translate("role."+message.role+".name"));
         case "trapState":
             return translate("chatMessage.trapState."+message.state.type);
+        case "trapStateEndOfNight":
+            return translate("chatMessage.trapStateEndOfNight."+message.state.type);
         case "playerRoleAndAlibi":
             return translate("chatMessage.playerRoleAndAlibi",
                 playerNames[message.player],
@@ -532,12 +534,12 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                 default:
                     return translate("chatMessage.cultSacrificesRequired", message.required);
             }
-        case "engineerRemoveTrap":
-            return translate("chatMessage.engineerRemoveTrap." + (message.unset ? "remove" : "keep"));
-        case "playerWithNecronomicon":
-            return translate("chatMessage.playerWithNecronomicon", playerNames[message.playerIndex]);
         case "wildcardConvertFailed":
             return translate("chatMessage.wildcardConvertFailed", translate("role."+message.role+".name"));
+        case "youAreLoveLinked":
+            return translate("chatMessage.youAreLoveLinked", playerNames[message.player]);
+        case "playerDiedOfABrokenHeart":
+            return translate("chatMessage.playerDiedOfBrokenHeart", playerNames[message.player], playerNames[message.lover]);
         case "deputyShotYou":
         case "deathCollectedSouls":
         case "targetWasAttacked":
@@ -715,9 +717,6 @@ export type ChatMessageVariant = {
 } | {
     type: "puppeteerYouArePoisoned"
 } | {
-    type: "playerWithNecronomicon",
-    playerIndex: PlayerIndex
-} | {
     type: "roleBlocked", 
     immune : boolean
 } | {
@@ -784,11 +783,23 @@ export type ChatMessageVariant = {
         type: "dismantled" | "ready" | "set"
     }
 } | {
+    type: "trapStateEndOfNight",
+    state: {
+        type: "dismantled" | "ready" | "set"
+    }
+} | {
     type: "armorsmithArmorBroke"
 } | {
     type: "vigilanteSuicide"
 } | {
     type: "targetWasAttacked"
+} | {
+    type: "youAreLoveLinked",
+    player: PlayerIndex
+} | {
+    type: "playerDiedOfABrokenHeart",
+    player: PlayerIndex
+    lover: PlayerIndex
 } | {
     type: "youWereProtected"
 } | {
@@ -801,9 +812,6 @@ export type ChatMessageVariant = {
 } | {
     type: "godfatherBackupKilled",
     backup: PlayerIndex
-} | {
-    type: "engineerRemoveTrap",
-    unset: boolean
 } | {
     type: "silenced"
 } | {

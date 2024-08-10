@@ -7,7 +7,7 @@ use super::{
     event::on_fast_forward::OnFastForward,
     phase::{PhaseState, PhaseType},
     player::{PlayerIndex, PlayerReference},
-    role::{engineer::{Engineer, Trap}, kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, Role, RoleState}, role_list::Faction, 
+    role::{kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, Role, RoleState}, role_list::Faction, 
     spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
     Game
 };
@@ -334,16 +334,6 @@ impl Game {
                     }
                     sender_player_ref.set_role_state(self, RoleState::Puppeteer(pup));
                     sender_player_ref.add_private_chat_message(self, ChatMessageVariant::PuppeteerActionChosen { action })
-                }
-            },
-            ToServerPacket::SetEngineerShouldUnset { unset } => {
-                if let RoleState::Engineer(engineer) = sender_player_ref.role_state(self).clone(){
-                    if let Trap::Set { target, ..} = engineer.trap {
-                        sender_player_ref.set_role_state(self, 
-                            RoleState::Engineer(Engineer { trap: Trap::Set { target, should_unset: unset } })
-                        );
-                        sender_player_ref.add_private_chat_message(self, ChatMessageVariant::EngineerRemoveTrap { unset });
-                    }
                 }
             },
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {

@@ -8,7 +8,7 @@ use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
-use super::{Priority, RoleStateImpl};
+use super::{common_role, Priority, RoleStateImpl};
 use rand::prelude::SliceRandom;
 
 
@@ -58,13 +58,22 @@ impl RoleStateImpl for Scarecrow {
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
-    fn get_won_game(self, game: &Game, _actor_ref: PlayerReference) -> bool {
-        PlayerReference::all_players(game).filter(|player_ref|{
-            player_ref.alive(game) && player_ref.role(game).faction() == Faction::Town
-        }).count() == 0
+    fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
+        common_role::get_won_game(game, actor_ref)
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
-        if actor_ref.get_won_game(game) && actor_ref.alive(game) {
+        if
+            actor_ref.alive(game) &&
+            !PlayerReference::all_players(game)
+                .filter(|p|p.alive(game))
+                .filter(|p|p.keeps_game_running(game))
+                .any(|p|
+                    p.required_resolution_states_for_win(game).is_some_and(|s1|
+                        actor_ref.required_resolution_states_for_win(game).is_some_and(|s2|
+                            s1.is_disjoint(&s2)
+                )))
+
+        {
             actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }

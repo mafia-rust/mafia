@@ -23,7 +23,8 @@ impl ResolutionState {
             ResolutionState::Cult,
             ResolutionState::Fiends,
             ResolutionState::Death,
-            ResolutionState::Politician
+            ResolutionState::Politician,
+            ResolutionState::Draw
         ]
     }
     ///either return Some(EndGameCondition) or None (if the game is not over yet)
@@ -107,7 +108,7 @@ impl ResolutionState {
                 Role::Minion | Role::Scarecrow => {
                     ResolutionState::all().into_iter().filter(|end_game_condition|
                         match end_game_condition {
-                            ResolutionState::Town => false,
+                            ResolutionState::Town | ResolutionState::Draw => false,
                             _ => true
                         }
                     ).collect()

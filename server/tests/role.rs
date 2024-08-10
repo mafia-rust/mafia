@@ -3,6 +3,7 @@ use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
+use mafia_server::game::role::{armorsmith::Armorsmith, scarecrow::Scarecrow};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
@@ -1767,7 +1768,7 @@ fn pyrolisk_tags_day_one() {
 
 #[test]
 fn bodyguard_gets_single_target_jailed_message() {
-    kit::scenario!(game in Dusk 1 where
+    kit::scenario!(game in Dusk 2 where
         bg: Bodyguard,
         jailor: Jailor,
         _maf: Mafioso,
@@ -1785,14 +1786,14 @@ fn bodyguard_gets_single_target_jailed_message() {
     assert_eq!(
         bg.get_messages_after_last_message(
             ChatMessageVariant::PhaseChange { 
-                phase: PhaseState::Night, day_number: 1
+                phase: PhaseState::Night, day_number: 2
             }
         ),
         vec![
             ChatMessageVariant::Wardblocked,
             /* They should not get a second Wardblocked message */
             ChatMessageVariant::PhaseChange { 
-                phase: PhaseState::Obituary, day_number: 2 
+                phase: PhaseState::Obituary, day_number: 3
             }
         ]
     );
@@ -1867,7 +1868,7 @@ fn martyr_roleblocked() {
 
 #[test]
 fn martyr_healed() {
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         martyr: Martyr,
         player1: Mafioso,
         player2: Detective,
@@ -2010,6 +2011,73 @@ fn godfather_dies_to_veteran(){
     assert!(!gf.alive());
     assert!(vet.alive());
 }
+
+#[test]
+fn minion_leaves_by_winning(){
+    kit::scenario!(game in Night 2 where
+        t: Veteran,
+        gf: Godfather,
+        arso: Arsonist,
+        min: Minion
+    );
+
+    assert!(gf.set_night_selection_single(t));
+
+    game.next_phase();
+
+    assert!(gf.alive());
+    assert!(!min.alive());
+    assert!(arso.alive());
+    assert!(!t.alive());
+}
+#[test]
+fn scarecrow_leaves_by_winning(){
+    kit::scenario!(game in Night 2 where
+        t: Veteran,
+        gf: Godfather,
+        arso: Arsonist,
+        min: Scarecrow
+    );
+
+    assert!(gf.set_night_selection_single(t));
+
+    game.next_phase();
+
+    assert!(gf.alive());
+    assert!(!min.alive());
+    assert!(arso.alive());
+    assert!(!t.alive());
+}
+#[test]
+fn minion_leaves_by_winning_puppeteer(){
+    kit::scenario!(game in Night 2 where
+        pup: Puppeteer,
+        t: Armorsmith,
+        t2: Detective,
+        gf: Godfather,
+        min: Minion
+    );
+
+    pup.set_role_state(RoleState::Puppeteer(Puppeteer{
+        marionettes_remaining: 3,
+        action: PuppeteerAction::String
+    }));
+    assert!(pup.set_night_selection_single(t));
+
+    game.skip_to(Night, 3);
+
+    assert!(t.set_night_selection_single(t));
+    assert!(gf.set_night_selection_single(t2));
+
+    game.next_phase();
+
+    assert!(gf.alive());
+    assert!(!min.alive());
+    assert!(t.alive());
+    assert!(!t2.alive());
+    assert!(pup.alive());
+}
+
 
 #[test]
 fn godfather_dies_to_veteran_after_possessed(){

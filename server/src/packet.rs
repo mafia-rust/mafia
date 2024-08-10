@@ -241,7 +241,6 @@ pub enum ToServerPacket{
     SetAuditorChosenOutline{index: u8},
     SetOjoAction{action: OjoAction},
     SetPuppeteerAction{action: PuppeteerAction},
-    SetEngineerShouldUnset{unset: bool},
 
 
     #[serde(rename_all = "camelCase")]

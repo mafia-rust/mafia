@@ -18,6 +18,7 @@ pub mod game_listeners;
 
 use std::collections::HashMap;
 use std::time::Duration;
+use components::love_linked::LoveLinked;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::Serialize;
@@ -75,7 +76,8 @@ pub struct Game {
     //components with data
     pub cult: Cult,
     pub arsonist_doused: ArsonistDoused,
-    pub puppeteer_marionette: PuppeteerMarionette
+    pub puppeteer_marionette: PuppeteerMarionette,
+    pub love_linked: LoveLinked,
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -157,7 +159,8 @@ impl Game {
 
                 cult: Cult::default(),
                 arsonist_doused: ArsonistDoused::default(),
-                puppeteer_marionette: PuppeteerMarionette::default()
+                puppeteer_marionette: PuppeteerMarionette::default(),
+                love_linked: LoveLinked::default()
             };
 
             if !game.game_is_over() {
@@ -380,7 +383,7 @@ impl Game {
 pub mod test {
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, puppeteer_marionette::PuppeteerMarionette},
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, puppeteer_marionette::PuppeteerMarionette},
         event::on_game_start::OnGameStart,
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
@@ -436,7 +439,8 @@ pub mod test {
 
             cult: Cult::default(),
             arsonist_doused: ArsonistDoused::default(),
-            puppeteer_marionette: PuppeteerMarionette::default()
+            puppeteer_marionette: PuppeteerMarionette::default(),
+            love_linked: LoveLinked::default()
         };
 
         //on role creation needs to be called after all players roles are known

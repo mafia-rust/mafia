@@ -10,4 +10,5 @@ pub enum Tag{
     ProvocateurTarget,
     MorticianTagged,
     PuppeteerMarionette,
+    LoveLinked,
 }

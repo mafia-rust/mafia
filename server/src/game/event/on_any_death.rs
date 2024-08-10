@@ -1,5 +1,5 @@
 use crate::game::{
-    components::{cult::Cult, mafia::Mafia}, 
+    components::{cult::Cult, love_linked::LoveLinked, mafia::Mafia}, 
     player::PlayerReference, 
     Game
 };
@@ -19,6 +19,7 @@ impl OnAnyDeath{
 
         Mafia::on_any_death(game, self.dead_player);
         Cult::on_any_death(game, self.dead_player);
+        LoveLinked::on_any_death(game, self.dead_player);
 
         game.on_any_death(self.dead_player);
     }
