@@ -9,6 +9,17 @@
         width: 100%;
     }
 }
+.chat-filter-zone {
+    display: flex;
+    flex-direction: row;
+    gap: .25rem;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--secondary-color);
+    padding: 0 .25rem;
+    border-radius: .13rem;
+    border-style: solid;
+}
 .chat-message-section {
     height: 100%;
     overflow-y: auto;

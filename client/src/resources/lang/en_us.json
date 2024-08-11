@@ -62,6 +62,7 @@
     "menu.chat.button.send": "Send",
     "menu.chat.placeHolder": "Enter message",
     "menu.chat.clearFilter": "Clear Filter",
+    "menu.chat.playerFilter": "Only showing messages related to \\0",
 
     "menu.will.title": "Alibi",
     "menu.will.icon": "📜",

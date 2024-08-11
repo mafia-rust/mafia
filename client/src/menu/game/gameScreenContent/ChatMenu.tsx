@@ -45,19 +45,22 @@ export default function ChatMenu(): ReactElement {
 
     return <div className="chat-menu chat-menu-colors">
         <ContentTab close={ContentMenu.ChatMenu} helpMenu={"standard/chat"}>{translate("menu.chat.title")}</ContentTab>
+        {filter !== null && <div className="chat-filter-zone highlighted">
+            <StyledText>{translate("menu.chat.playerFilter", GAME_MANAGER.getPlayerNames()[filter])}</StyledText>
+            <Button 
+                onClick={()=>{
+                    if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                        GAME_MANAGER.state.clientState.chatFilter = null;
+                        GAME_MANAGER.invokeStateListeners("filterUpdate");
+                    }
+                }}
+                highlighted={true}
+                aria-label={translate("menu.chat.clearFilter")}
+            >
+                <Icon>filter_alt_off</Icon>
+            </Button>
+        </div>}
         <ChatMessageSection filter={filter}/>
-        {filter !== null && <Button 
-            onClick={()=>{
-                if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
-                    GAME_MANAGER.state.clientState.chatFilter = null;
-                    GAME_MANAGER.invokeStateListeners("filterUpdate");
-                }
-            }}
-            highlighted={true}
-            aria-label={translate("menu.chat.clearFilter")}
-        >
-            <Icon>filter_alt_off</Icon>
-        </Button>}
         <div className="chat-menu-icons">
             {!sendChatGroups.includes("all") && translate("noAll.icon")}
             {sendChatGroups.map((group) => {

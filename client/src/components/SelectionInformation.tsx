@@ -2,7 +2,7 @@ import React, { ReactElement } from "react";
 import GAME_MANAGER from "..";
 import translate, { translateAny } from "../game/lang";
 import StyledText from "./StyledText";
-import "./selectionInformation.css";
+import "./roleSpecific.css";
 import { useGameState, usePlayerState } from "./useHooks";
 
 export default function SelectionInformation(): ReactElement | null {
@@ -40,7 +40,7 @@ export default function SelectionInformation(): ReactElement | null {
             }
         }
         
-        return <div className="selection-information">
+        return <div className="role-information">
             <div>
                 <StyledText>{selectionText}</StyledText>
             </div>

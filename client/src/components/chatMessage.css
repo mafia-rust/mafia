@@ -33,6 +33,9 @@
     border-radius: .5rem;
     color: grey;
 }
+.chat-message.phase-change *{
+    color: yellow;
+}
 .chat-message.phase-change {
     text-align: center;
     background-color: var(--primary-color);
