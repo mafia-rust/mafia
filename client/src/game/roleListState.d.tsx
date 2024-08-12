@@ -104,7 +104,7 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
             ];
         case "mafiaKilling":
             return [
-                "godfather", "mafioso"
+                "godfather", "mafioso", "eros"
             ];
         case "mafiaSupport":
             return [

@@ -323,7 +323,7 @@ impl Game {
                 if let RoleState::Ojo(mut ojo) = sender_player_ref.role_state(self).clone(){
                     ojo.chosen_action = action.clone();
                     sender_player_ref.set_role_state(self, RoleState::Ojo(ojo));
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::OjoSelection { action })
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::OjoActionChosen { action });
                 }
             },
             ToServerPacket::SetPuppeteerAction { action } => {
@@ -333,7 +333,20 @@ impl Game {
                         pup.action = PuppeteerAction::Poison;
                     }
                     sender_player_ref.set_role_state(self, RoleState::Puppeteer(pup));
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::PuppeteerActionChosen { action })
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::PuppeteerActionChosen { action });
+                    
+                    //Updates selection if it was invalid
+                    sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
+                }
+            },
+            ToServerPacket::SetErosAction { action } => {
+                if let RoleState::Eros(mut eros) = sender_player_ref.role_state(self).clone(){
+                    eros.action = action.clone();
+                    sender_player_ref.set_role_state(self, RoleState::Eros(eros));
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::ErosActionChosen{ action });
+
+                    //Updates selection if it was invalid
+                    sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
                 }
             },
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {

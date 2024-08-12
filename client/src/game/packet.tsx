@@ -283,6 +283,9 @@ export type ToServerPacket = {
     type: "setPuppeteerAction",
     action: PuppeteerAction
 } | {
+    type: "setErosAction",
+    action: "loveLink" | "kill"
+} | {
     type: "voteFastForwardPhase",
     fastForward: boolean
 }

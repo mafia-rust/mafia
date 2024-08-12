@@ -446,6 +446,21 @@
             {"type": "youSurvivedAttack"}
         ]
     },
+    "eros": {
+        "faction": "mafia",
+        "roleSet": "mafiaKilling",
+        "armor": true,
+        "aura": "innocent",
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[
+            {"type": "youAreLoveLinked", "player": 20},
+            {"type": "playerDiedOfABrokenHeart", "player": 20, "lover": 25},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+        ]
+    },
     "mafioso": {
         "faction": "mafia",
         "roleSet": "mafiaKilling",

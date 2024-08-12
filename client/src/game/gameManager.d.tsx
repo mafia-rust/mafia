@@ -116,6 +116,7 @@ export type GameManager = {
     sendSetAuditorChosenOutline(index: number): void;
     sendSetOjoAction(action: OjoAction): void;
     sendSetPuppeteerAction(action: PuppeteerAction): void;
+    sendSetErosAction(action: "loveLink" | "kill"): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;
 

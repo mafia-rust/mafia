@@ -17,6 +17,7 @@ import { getRolesComplement } from "../game/roleListState.d";
 import ROLES from "../resources/roles.json";
 import "../menu/game/gameScreenContent/RoleSpecificMenus/smallRoleSpecificMenu.css";
 import LargeKiraMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
+import ErosMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/ErosMenu";
 
 export default function RoleSpecificSection(){
     
@@ -131,6 +132,8 @@ export default function RoleSpecificSection(){
                     }
             }
             return null;
+        case "eros":
+            return <ErosMenu/>;
         case "mortician":
             return <StyledText>{translate("role.mortician.roleDataText", (3-roleState.obscuredPlayers.length))}</StyledText>;
         case "death":
