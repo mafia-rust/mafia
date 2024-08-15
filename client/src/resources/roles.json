@@ -624,7 +624,7 @@
             {"type": "playerDiedOfABrokenHeart", "player": 20, "lover": 25}
         ]
     },
-    "mafiaWildcard": {
+    "mafiaSupportWildcard": {
         "faction": "mafia",
         "roleSet": null,
         "armor": false,
@@ -633,8 +633,8 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "roleAssignment", "role":"mafiaWildcard"},
-            {"type": "wildcardConvertFailed", "role": "godfather"}
+            {"type": "roleAssignment", "role":"mafiaSupportWildcard"},
+            {"type": "wildcardConvertFailed", "role": "framer"}
         ]
     },
     "jester": {

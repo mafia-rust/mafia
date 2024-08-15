@@ -112,7 +112,7 @@ export type RoleState = {
 } | {
     type: "witch"
 } | {
-    type: "mafiaWildcard"
+    type: "mafiaSupportWildcard"
     role: Role
 } | {
     type: "jester"

@@ -6,7 +6,7 @@ use crate::game::chat::ChatMessageVariant;
 use crate::game::grave::GraveReference;
 use crate::game::{chat::ChatGroup, phase::PhaseType};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::{role_can_generate, Faction};
+use crate::game::role_list::{role_can_generate, Faction, RoleSet};
 use crate::game::visit::Visit;
 use crate::game::Game;
 
@@ -14,13 +14,13 @@ use super::{Priority, RoleStateImpl, Role};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct MafiaWildcard{
+pub struct MafiaSupportWildcard{
     pub role: Role
 }
-impl Default for MafiaWildcard {
+impl Default for MafiaSupportWildcard {
     fn default() -> Self {
         Self {
-            role: Role::MafiaWildcard
+            role: Role::MafiaSupportWildcard
         }
     }
 }
@@ -29,7 +29,7 @@ pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: u8 = 0;
 
-impl RoleStateImpl for MafiaWildcard {
+impl RoleStateImpl for MafiaSupportWildcard {
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
@@ -71,14 +71,13 @@ impl RoleStateImpl for MafiaWildcard {
     }
 }
 
-impl MafiaWildcard {
+impl MafiaSupportWildcard {
     fn become_role(&self, game: &mut Game, actor_ref: PlayerReference) {
-
-
-        if self.role == Role::MafiaWildcard {return;}
+        
+        if self.role == Role::MafiaSupportWildcard {return;}
 
         if
-            self.role.faction() == Faction::Mafia &&
+            RoleSet::MafiaSupport.get_roles().contains(&self.role) &&
             role_can_generate(
                 self.role, 
                 &game.settings.excluded_roles, 

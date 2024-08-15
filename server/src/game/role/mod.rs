@@ -81,7 +81,7 @@ macros::roles! {
     Framer : framer,
     Forger : forger,
     Cupid : cupid,
-    MafiaWildcard: mafia_wild_card,
+    MafiaSupportWildcard: mafia_support_wildcard,
 
     // Neutral
     Jester : jester,

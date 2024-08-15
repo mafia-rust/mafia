@@ -7,7 +7,7 @@ use super::{
     event::on_fast_forward::OnFastForward,
     phase::{PhaseState, PhaseType},
     player::{PlayerIndex, PlayerReference},
-    role::{kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, Role, RoleState}, role_list::Faction, 
+    role::{kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, Role, RoleState}, role_list::{Faction, RoleSet}, 
     spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
     Game
 };
@@ -242,11 +242,11 @@ impl Game {
                         true_wildcard.role = role;
                         sender_player_ref.set_role_state(self, RoleState::TrueWildcard(true_wildcard));
                     }
-                    RoleState::MafiaWildcard(mut mafia_wild_card) => {
-                        if role.faction() == Faction::Mafia {
+                    RoleState::MafiaSupportWildcard(mut mafia_wild_card) => {
+                        if RoleSet::MafiaSupport.get_roles().contains(&role) {
                             mafia_wild_card.role = role;
                         }
-                        sender_player_ref.set_role_state(self, RoleState::MafiaWildcard(mafia_wild_card));
+                        sender_player_ref.set_role_state(self, RoleState::MafiaSupportWildcard(mafia_wild_card));
                     }
                     RoleState::FiendsWildcard(mut fiends_wild_card) => {
                         if role.faction() == Faction::Fiends {
