@@ -47,21 +47,9 @@
 }
 
 .player-list-menu .player .top {
-    display: flex;
-    flex-direction: row;
     text-align: left;
-    align-items: center;
     text-wrap: wrap;
-    padding-top: 0.13rem;
-}
-.player-list-menu .player .top > div{
-    flex-shrink: 1;
-    overflow-x: hidden;
-    display: flex;     
-}
-.player-list-menu .player .top > div > *{
-    flex-shrink: 1;
-    overflow-x: hidden;
+    padding: 0.25rem 0;
 }
 .player-list-menu .player .voted-popup {
     position: relative;

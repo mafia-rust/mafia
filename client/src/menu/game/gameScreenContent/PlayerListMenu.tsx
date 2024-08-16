@@ -266,16 +266,10 @@ function PlayerCard(props: Readonly<{
             ? <div className="voted-popup">{translate("menu.playerList.player.youAreVoting")}</div>
             : undefined}
         <div className="top">  
-            <h4>
-                <StyledText>{(player.alive?"":" "+translate("dead.icon")+"")}</StyledText>
-            </h4>
-            <span>
-                <StyledText>{player.toString()}</StyledText>
-                {roleString!==null&&<StyledText> {roleString}</StyledText>}
-            </span>
-            <span className="playerTags">
-                <StyledText>{player.playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
-            </span>
+            <StyledText>{(player.alive?"":" "+translate("dead.icon")+"")}</StyledText>
+            <StyledText>{player.toString()}</StyledText>
+            {roleString!==null&&<StyledText> {roleString}</StyledText>}
+            <StyledText>{player.playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
         </div>
         
         {phaseState.type === "nomination" && player.alive && 
