@@ -1,7 +1,7 @@
 import React, { ReactElement, useMemo } from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
-import { PhaseState, PhaseType, Player, Verdict } from "../../game/gameState.d";
+import { PhaseState, Player, Verdict } from "../../game/gameState.d";
 import GameScreen, { ContentMenu as GameScreenContentMenus } from "./GameScreen";
 import ROLES from "../../resources/roles.json"
 import "./headerMenu.css";
