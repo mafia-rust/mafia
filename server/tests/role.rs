@@ -53,7 +53,7 @@ pub use mafia_server::game::{
         witch::Witch,
         necromancer::Necromancer,
         mortician::Mortician,
-        mafia_wild_card::MafiaWildcard, 
+        mafia_support_wildcard::MafiaSupportWildcard, 
         
 
         jester::Jester,
@@ -2102,7 +2102,7 @@ fn godfather_dies_to_veteran_after_possessed(){
 fn fiends_wildcard_defense_upgrade(){
     kit::scenario!(game in Dusk 2 where
         fiend: FiendsWildcard,
-        mafia: MafiaWildcard
+        mafia: MafiaSupportWildcard
     );
     
     fiend.set_role_state(RoleState::FiendsWildcard(FiendsWildcard{

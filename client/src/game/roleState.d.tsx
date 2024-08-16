@@ -88,6 +88,9 @@ export type RoleState = {
     type: "godfather"
     backup: PlayerIndex | null
 } | {
+    type: "eros"
+    action: "loveLink" | "kill"
+} | {
     type: "mafioso"
 } | 
 (Hypnotist & {type: "hypnotist"})
@@ -111,7 +114,7 @@ export type RoleState = {
 } | {
     type: "witch"
 } | {
-    type: "mafiaWildcard"
+    type: "mafiaSupportWildcard"
     role: Role
 } | {
     type: "jester"

@@ -59,11 +59,11 @@ impl DoomsayerGuess{
             Role::Transporter => Some(DoomsayerGuess::Transporter),
 
             //Mafia
-            Role::Godfather | Role::Mafioso | 
+            Role::Godfather | Role::Mafioso | Role::Eros | 
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::Witch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 
-            Role::Cupid | Role::MafiaWildcard => Some(DoomsayerGuess::Mafia),
+            Role::Cupid | Role::MafiaSupportWildcard => Some(DoomsayerGuess::Mafia),
 
             //Neutral
             Role::Jester | Role::Provocateur | Role::Politician |

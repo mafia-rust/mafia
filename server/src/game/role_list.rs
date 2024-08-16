@@ -153,6 +153,7 @@ pub enum RoleSet {
     TownInvestigative,
 
     MafiaSupport,
+    MafiaKilling,
 
     NeutralEvil,
 }
@@ -176,6 +177,10 @@ impl RoleSet{
                     Role::Blackmailer, Role::Informant, Role::Hypnotist, Role::Consort,
                     Role::Forger, Role::Framer, Role::Mortician, 
                     Role::Witch, Role::Necromancer, Role::Cupid
+                ],
+            RoleSet::MafiaKilling => 
+                vec![
+                    Role::Godfather, Role::Eros, Role::Mafioso
                 ],
             RoleSet::NeutralEvil => 
                 vec![

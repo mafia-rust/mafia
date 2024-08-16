@@ -19,6 +19,7 @@ pub mod game_listeners;
 use std::collections::HashMap;
 use std::time::Duration;
 use components::love_linked::LoveLinked;
+use components::mafia::Mafia;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::Serialize;
@@ -75,6 +76,7 @@ pub struct Game {
 
     //components with data
     pub cult: Cult,
+    pub mafia: Mafia,
     pub arsonist_doused: ArsonistDoused,
     pub puppeteer_marionette: PuppeteerMarionette,
     pub love_linked: LoveLinked,
@@ -158,6 +160,7 @@ impl Game {
                 settings,
 
                 cult: Cult::default(),
+                mafia: Mafia::default(),
                 arsonist_doused: ArsonistDoused::default(),
                 puppeteer_marionette: PuppeteerMarionette::default(),
                 love_linked: LoveLinked::default()
@@ -383,7 +386,7 @@ impl Game {
 pub mod test {
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, puppeteer_marionette::PuppeteerMarionette},
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, puppeteer_marionette::PuppeteerMarionette},
         event::on_game_start::OnGameStart,
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
@@ -438,6 +441,7 @@ pub mod test {
             settings,
 
             cult: Cult::default(),
+            mafia: Mafia::default(),
             arsonist_doused: ArsonistDoused::default(),
             puppeteer_marionette: PuppeteerMarionette::default(),
             love_linked: LoveLinked::default()

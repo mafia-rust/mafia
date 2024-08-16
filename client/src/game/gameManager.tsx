@@ -513,6 +513,12 @@ export function createGameManager(): GameManager {
                 action: action
             });
         },
+        sendSetErosAction(action) {
+            this.server.sendPacket({
+                type: "setErosAction",
+                action: action
+            });
+        },
 
         sendVoteFastForwardPhase(fastForward: boolean) {
             this.server.sendPacket({

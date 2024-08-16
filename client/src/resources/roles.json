@@ -432,7 +432,7 @@
     },
     "godfather": {
         "faction": "mafia",
-        "roleSet": null,
+        "roleSet": "mafiaKilling",
         "armor": true,
         "aura": "innocent",
         "maxCount": 1,
@@ -446,9 +446,24 @@
             {"type": "youSurvivedAttack"}
         ]
     },
+    "eros": {
+        "faction": "mafia",
+        "roleSet": "mafiaKilling",
+        "armor": true,
+        "aura": "innocent",
+        "maxCount": 1,
+        "largeRoleSpecificMenu": false,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[
+            {"type": "youAreLoveLinked", "player": 20},
+            {"type": "playerDiedOfABrokenHeart", "player": 20, "lover": 25},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+        ]
+    },
     "mafioso": {
         "faction": "mafia",
-        "roleSet": null,
+        "roleSet": "mafiaKilling",
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -609,7 +624,7 @@
             {"type": "playerDiedOfABrokenHeart", "player": 20, "lover": 25}
         ]
     },
-    "mafiaWildcard": {
+    "mafiaSupportWildcard": {
         "faction": "mafia",
         "roleSet": null,
         "armor": false,
@@ -618,8 +633,8 @@
         "largeRoleSpecificMenu": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "roleAssignment", "role":"mafiaWildcard"},
-            {"type": "wildcardConvertFailed", "role": "godfather"}
+            {"type": "roleAssignment", "role":"mafiaSupportWildcard"},
+            {"type": "wildcardConvertFailed", "role": "framer"}
         ]
     },
     "jester": {

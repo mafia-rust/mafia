@@ -333,6 +333,12 @@
     "role.godfather.youAreSelecting": "You are organizing an attack on \\0.",
     "role.godfather.youAreSelecting.null": "You aren't attacking anyone.",
 
+    "role.eros.name": "Eros",
+    "role.eros.name:var.0": "Eroses",
+    "role.eros.target": "Visit",
+    "role.eros.dayTarget": "Special",
+    "role.eros.roleDataText": "You have chosen to \\0 tonight",
+
     "role.mafioso.name": "Mafioso",
     "role.mafioso.name:var.0": "Mafiosos",
     "role.mafioso.target": "Attack",
@@ -398,8 +404,8 @@
     "role.cupid.name:var.0": "Cupids",
     "role.cupid.target": "Link",
 
-    "role.mafiaWildcard.name": "Mafia Wildcard",
-    "role.mafiaWildcard.name:var.0": "Mafia Wildcards",
+    "role.mafiaWildcard.name": "Mafia Support Wildcard",
+    "role.mafiaWildcard.name:var.0": "Mafia Support Wildcards",
     "role.mafiaWildcard.smallRoleMenu": "Choose a mafia role to become",
 
     "role.jester.name": "Jester",
@@ -533,12 +539,14 @@
 
     "mafiaSupport":"Mafia Support",
     "mafiaSupport:var.0":"MS",
+    "mafiaKilling":"Mafia Killing",
+    "mafiaKilling:var.0":"MK",
 
     "neutralEvil":"Neutral Evil",
     "neutralEvil:var.0":"NE",
 
     "tag.godfatherBackup":"🌹",
-    "tag.godfatherBackup.name":"Godfathers backup",
+    "tag.godfatherBackup.name":"Killing backup",
     "tag.provocateurTarget":"🎯",
     "tag.provocateurTarget.name":"Provocateur target",
     "tag.werewolfTracked": "🐾",
@@ -597,6 +605,7 @@
     "none": "None",
     "see": "See",
     "kill": "Kill",
+    "loveLink": "Love Link",
     "poison": "Poison",
     "string": "String",
     "defense": "Defense",
@@ -788,12 +797,14 @@
     "chatMessage.scarecrowResult": "You wardblocked these players: \\0.",
     "chatMessage.scarecrowResult.nobody": "You didn't wardblock anybody.",
     "chatMessage.wildcardConvertFailed": "You failed to convert to the role \\0. The role might have been disabled or taken.",
-    "chatMessage.ojoSelection.see": "You choose to see \\0.",
-    "chatMessage.ojoSelection.kill": "You choose to kill \\0.",
-    "chatMessage.ojoSelection.none": "You choose nothing.",
+    "chatMessage.ojoActionChosen.see": "You choose to see \\0.",
+    "chatMessage.ojoActionChosen.kill": "You choose to kill \\0.",
+    "chatMessage.ojoActionChosen.none": "You choose nothing.",
     "chatMessage.kiraResult": "Kira result",
     "chatMessage.puppeteerActionChosen.string": "You choose to string up a marionette.",
     "chatMessage.puppeteerActionChosen.poison": "You choose to poison.",
+    "chatMessage.erosActionChosen.loveLink": "You choose to love link.",
+    "chatMessage.erosActionChosen.kill": "You choose to kill.",
     "chatMessage.marksmanChosenMarks": "The marksman chose their marks to be these players: \\0.",
     "chatMessage.marksmanChosenMarks.none": "The marksman chose to mark nobody.",
     "chatMessage.apostleCanConvertTonight": "The cult can convert tonight.",
@@ -1215,7 +1226,12 @@
     "wiki.article.role.godfather.guide": "- At night, select a player to attack\n- You can't attack night 1\n- Choose a backup to attack for you if you are blocked\n\n You should try to kill townies who are likely to stop you from winning or have powerful abilities, but be careful about town protective roles.",
     "wiki.article.role.godfather.abilities":"* Visit a player to attack\n* Choose another living mafia member to be your backup at any time\n* While you are blocked, the backup will attack the first player they visit",
     "wiki.article.role.godfather.attributes":"* You are armored\n* You always have an innocent aura\n* When you are blocked, the mafia is told that the backup attacks for you\n- Neither you or the backup can select or attack night 1",
-    "wiki.article.role.godfather.extra":"* You only have a basic attack\n* When the mafia has no Godfather or Mafioso, a random mafia member converts to a godfather\n* When the Godfather dies, their current backup becomes the Godfather\n* You can not select other mafia members",
+    "wiki.article.role.godfather.extra":"* You only have a basic attack\n* When the Godfather dies, their current backup becomes the Godfather\n* You can not select other mafia members",
+    
+    "wiki.article.role.eros.guide": "- At night, either kill a player, or love link two players\n    - You can't attack night 1\n    - Whenever a player who is love linked to another player dies, the other love linked player dies as well\n- You have an innocent aura and armor\n\nIf you are roleblocked by an escort, it might be a good idea to claim that you were love linked to another mafia member that night. Doing that hides the fact that the eros was roleblocked, and might hide that your eros from that escort.",
+    "wiki.article.role.eros.abilities": "- If you chose to kill\n    - Visit a player attack\n- If you chose to love link\n    - Visit two players to love link them, if one dies tonight, they do not love link",
+    "wiki.article.role.eros.attributes": "- You have a basic attack\n- You have armor\n- You have an innocent aura",
+    "wiki.article.role.eros.extra": "- You can't select mafia members to kill\n- You can select mafia members to love link, but not yourself",
 
     "wiki.article.role.mafioso.guide": "- At night select a player to attack them\n- You can't use your ability night 1\n\nYou should try to kill townies who are likely to stop you from winning.",
     "wiki.article.role.mafioso.abilities":"* Visit a player to attack",
@@ -1272,10 +1288,10 @@
     "wiki.article.role.cupid.attributes":"- The player that dies of a broken heart dies separate from night deaths\n-    The love linked players are told that they are love linked",
     "wiki.article.role.cupid.extra":"- You can't select yourself or other mafia members",
 
-    "wiki.article.role.mafiaWildcard.guide": "* Choose a mafia role to become that role\n    * You become that role when night starts\n* You likely can't become a role if someone already has that role (You can't become a role that has exceeded its role limit)",
-    "wiki.article.role.mafiaWildcard.abilities":"* Become a role you choose at the start of night",
-    "wiki.article.role.mafiaWildcard.attributes":"* You can't become a mafioso or godfather\n* You can not become a role that is disabled\n* You can not become a role that is taken by too many players",
-    "wiki.article.role.mafiaWildcard.extra":"* If you choose a role that was disabled you stay as the Mafia Wildcard\n* You can choose Mafia Wildcard to stay as Mafia Wildcard\n* You can't become a role that is at its role limit, for example, you can't become a witch even if there is already one in the game, even if that witch is dead",
+    "wiki.article.role.mafiaSupportWildcard.guide": "* Choose a mafia support role to become that role\n    * You become that role when night starts\n* You likely can't become a role if someone already has that role (You can't become a role that has exceeded its role limit)",
+    "wiki.article.role.mafiaSupportWildcard.abilities":"* Become a role you choose at the start of night",
+    "wiki.article.role.mafiaSupportWildcard.attributes":"* You can not become a role that is disabled\n* You can not become a role that is taken by too many players",
+    "wiki.article.role.mafiaSupportWildcard.extra":"* If you choose a role that was disabled you stay as the Mafia Support Wildcard\n* You can choose Mafia Wildcard to stay as Mafia Wildcard\n* You can't become a role that is at its role limit, for example, you can't become a witch even if there is already one in the game, even if that witch is dead",
 
     "wiki.article.role.jester.guide": "- Get executed during the day to win\n- After you win by getting executed, you can attack any living player who voted you guilty or abstained\n\nTry to look evil so people vote you, without making it obvious that you are the Jester.",
     "wiki.article.role.jester.abilities":"* When you are executed, you win\n* On the night after you are executed, attack the player you select\n",
@@ -1287,10 +1303,10 @@
     "wiki.article.role.provocateur.attributes":"* When your execution target is executed, you win\n* After you win, you will leave town at the start of the following night\n* You always have an innocent aura\n* You are armored",
     "wiki.article.role.provocateur.extra":"* If your target dies by something other than execution, you will convert to a jester immediately, even while dead\n* If there are no valid targets in the game when you become the provocateur, you will convert to a jester",
 
-    "wiki.article.role.doomsayer.guide": "Guess the role of three different players to win. If you guess the role of three different living players correctly, you attack all three of them, and leave town. You should listen to what people claim and try to push for more people to claim roles.",
+    "wiki.article.role.doomsayer.guide": "- Guess the role of three different players correctly to win\n- If you get all your guesses correct and win, you attack all three players, and then leave town\n- You can't guess town investigative roles\n- You don't need to guess the exact mafia, fiends, cult, or neutral role someone is\n\n In order to counter a doomsayer, players often claimswap",
     "wiki.article.role.doomsayer.abilities":"* Use the Doomsayer menu to guess the role of three different living players in one night, attacking them and winning",
     "wiki.article.role.doomsayer.attributes":"* When you win, you leave town at the start of the next obituary\n* You have to guess the exact role of townies, but you only need to guess the faction of all other roles\n* You can't try to guess town investigative roles\n* When there are not enough players left for you to guess, you convert to a jester\n* You have an indirect, protection-piercing attack",
-    "wiki.article.role.doomsayer.extra":"* Your three guesses must be three different players\n* You will still win, even if the players you guessed correctly don't die\n* You do not visit when you attack\n* You can't try to guess a martyr\n* If you are blocked, your ability does nothing",
+    "wiki.article.role.doomsayer.extra":"* Your three guesses must be three different players\n* If the players you guessed correctly don't die, you still win\n* You do not visit when you attack\n* You can't try to guess a martyr\n* If you are blocked, your ability does nothing",
 
     "wiki.article.role.minion.guide": "- You win if town loses, when town loses you leave town\n- At night, possess a player by selecting two players\n    - The first player you select will be forced to visit the second player you select\n\n_For example_\n- You can posses a vigilante to attack another townie by selecting the vigilante first and the townie second",
     "wiki.article.role.minion.abilities":"* Visit two players to make the first player visit the second player\n* If there are no living townies, you win, and leave town at the start of the next phase",

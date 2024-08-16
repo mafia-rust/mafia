@@ -488,18 +488,20 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.scarecrowResult",
                 playerListToString(message.players, playerNames)
             );
-        case "ojoSelection":
+        case "ojoActionChosen":
             switch (message.action.type) {
                 case "kill":
-                    return translate("chatMessage.ojoSelection.kill", translate("role."+message.action.role+".name"));
+                    return translate("chatMessage.ojoActionChosen.kill", translate("role."+message.action.role+".name"));
                 case "see":
-                    return translate("chatMessage.ojoSelection.see", translate("role."+message.action.role+".name"));
+                    return translate("chatMessage.ojoActionChosen.see", translate("role."+message.action.role+".name"));
                 case "none":
-                    return translate("chatMessage.ojoSelection.none");
+                    return translate("chatMessage.ojoActionChosen.none");
             }
             break;
         case "puppeteerActionChosen":
             return translate("chatMessage.puppeteerActionChosen."+message.action);
+        case "erosActionChosen":
+            return translate("chatMessage.erosActionChosen."+message.action);
         case "marksmanChosenMarks":
             if(message.marks.length === 0){
                 return translate("chatMessage.marksmanChosenMarks.none");
@@ -828,11 +830,14 @@ export type ChatMessageVariant = {
     type: "scarecrowResult",
     players: PlayerIndex[]
 } | {
-    type: "ojoSelection",
+    type: "ojoActionChosen",
     action: OjoAction,
 } | {
     type: "puppeteerActionChosen",
     action: PuppeteerAction,
+} | {
+    type: "erosActionChosen",
+    action: "loveLink" | "kill",
 } | {
     type: "marksmanChosenMarks",
     marks: PlayerIndex[],

@@ -19,6 +19,7 @@ import "../menu/game/gameScreenContent/RoleSpecificMenus/smallRoleSpecificMenu.c
 import LargeKiraMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import Counter from "./Counter";
 import "./roleSpecific.css";
+import ErosMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/ErosMenu";
 
 export default function RoleSpecificSection(){
     
@@ -205,6 +206,8 @@ export default function RoleSpecificSection(){
                 <StyledText>{stateText}</StyledText>
             </div>
         }
+        case "eros":
+            return <ErosMenu/>;
         case "mortician":
             return <Counter
                 max={3}
@@ -243,20 +246,21 @@ export default function RoleSpecificSection(){
                     />
                 </div>
             </div>;
-        case "mafiaWildcard": {
+        case "mafiaSupportWildcard":
             const all_choosable_mafia: Role[] = Object.keys(ROLES).filter((rle)=>
-                ROLES[rle as keyof typeof ROLES].faction === "mafia" &&
-                rle !== "godfather" &&
-                rle !== "mafioso" &&
-                GAME_MANAGER.state.stateType === "game" &&
-                !GAME_MANAGER.state.excludedRoles.includes(rle as Role)
+                rle === "mafiaSupportWildcard" ||
+                (
+                    ROLES[rle as keyof typeof ROLES].roleSet === "mafiaSupport" &&
+                    GAME_MANAGER.state.stateType === "game" &&
+                    !GAME_MANAGER.state.excludedRoles.includes(rle as Role)
+                )
             ).map((r)=>r as Role);
 
             return <div className="role-information">
-                <StyledText>{translate("role.mafiaWildcard.smallRoleMenu")}</StyledText>
+                <StyledText>{translate("role.mafiaSupportWildcard.smallRoleMenu")}</StyledText>
                 <div>
                     <RoleDropdown 
-                        value={roleState.role ?? "mafiaWildcard"} 
+                        value={roleState.role ?? "mafiaSupportWildcard"} 
                         disabledRoles={getRolesComplement(all_choosable_mafia)}
                         onChange={(rle)=>{
                             GAME_MANAGER.sendSetWildcardRoleOutline(rle);
