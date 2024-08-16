@@ -1,136 +1,47 @@
-
 .spectator-game-screen {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+    font-size: 1.5em;
 }
-
 .spectator-game-screen .fast-forward-button {
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: fixed;
+    top: 0.2rem;
+    left: 0.2rem;
+    font-size: 1rem;
 }
-
-.spectator-game-screen h1 {
-    font-size: 3rem;
-}
-
-.phase-started-screen {
+.spectator-game-screen .phase-started {
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100%;
-    font-size: 5rem;
+    font-size: 1.5em;
 }
-
-
-
-.spectator-header {
-    font-size: 5rem;
-    font-weight: bold;
-    flex-shrink: 1;
-}
-
-
-
-.spectator-body {
+.spectator-game-screen .obituary-screen,
+.spectator-game-screen .briefing-screen {
     display: flex;
     flex-direction: row;
-    font-size: 1.5rem;
-    flex-grow: 1;
-    min-height: 0;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
 }
-
-
-
-.spectator-chat{
+.spectator-game-screen .nomination-screen,
+.spectator-game-screen .trial-screen {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+.spectator-game-screen .obituary-screen .grave {
     background-color: var(--background-color);
-    border: .2rem solid var(--background-border-color);
-    flex-grow: 1;
-}
-.spectator-chat > ul {
-    display: flex;
-    flex-direction:column-reverse;
-    overflow-y: auto;
-    flex-grow: 1;
-    min-height: 0;
-    border-top: .2rem solid var(--backgrounf-border-color);
-}
-
-
-.spectator-role-list {
-    display: flex;
-    flex-direction: column;
-    background-color: var(--background-color);
-    border: .2rem solid var(--background-border-color);
-    padding: .3rem;
-}
-.spectator-role-list > ul > div {
-    text-align: left;
-    margin: 0;
-}
-
-.spectator-player-list {
-    display: flex;
-    flex-direction: column;
-    background-color: var(--background-color);
-    border: .2rem solid var(--background-border-color);
-}
-
-.spectator-player-list > section {
-    border-top: .2rem solid var(--background-border-color);
-    margin-top: .5rem;
-    padding: .3rem;
-}
-
-.spectator-player-list .vote-bar {
-    width: 10rem;
-    background-color: rgb(105, 68, 0);
-    border: .15rem solid black;
-    width: 10rem;
-    margin-left: .3rem;
-}
-
-.spectator-player-list .player {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    text-wrap:nowrap;
-}
-
-.spectator-player-list div {
-    justify-content: left;
-    text-align: left;
-}
-
-
-
-.obituary-spectator-body {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
-    flex-grow: 1;
-}
-.obituary-spectator-body > .grave {
-    max-width: 33%;
-    min-width: 25rem;
-    border: .2rem solid var(--primary-border-color);
+    border: .13rem solid var(--background-border-color);
+    border-right-color: var(--background-border-shadow-color);
+    border-bottom-color: var(--background-border-shadow-color);
     border-radius: 1rem;
-    font-size: 1.5rem;
-    background-color: var(--background-color);
-}
-.obituary-spectator-body-text {
-    flex-grow: 1;
-    text-align: center;
     padding: 1rem;
 }
-
-
-/*keep at bottom*/
-.phase-started-screen h1 {
-    font-size: 8rem;
+.spectator-game-screen .briefing-screen .fast-forward-button {
+    position: static;
+    font-size: 1em;
+    outline: .13rem yellow solid;
 }

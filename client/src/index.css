@@ -57,7 +57,7 @@ button, input, select, option, textarea, summary {
     border-style: solid;
     border-width: .13rem;
     color: white;
-    font-size: 1rem;
+    font-size: 1em;
     padding: 0.13rem 0.25rem;
 }
 
@@ -105,7 +105,7 @@ input, option, textarea {
 
 button.clear {
     display: none;
-    font-size: 0.8rem;
+    font-size: 0.8em;
     position: absolute;
     right: 0.5rem;
     top: 0.4rem;
@@ -115,7 +115,7 @@ button.clear {
 }
 
 button.close {
-    font-size: 1rem;
+    font-size: 1em;
     padding: 0;
 }
 

@@ -64,9 +64,9 @@ export function createPlayerGameState(): PlayerGameState {
     return {
         type: "player",
 
-        myIndex: null,
+        myIndex: 0,
         
-        roleState: null,
+        roleState: { type: "detective" },
 
         will: "",
         notes: "",

@@ -12,7 +12,7 @@
     border-right-color: darkgray;
     background-color: var(--primary-color);
     display: inline-block;
-    height: 1rem;
+    height: 1em;
     padding: 0.1em 0.35em 1.2em;
     font-size: 0.8em;
     text-indent: 0;

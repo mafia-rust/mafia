@@ -249,7 +249,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         return (
             <div className="game-screen">
                 <div className="header">
-                    <HeaderMenu phase={GAME_MANAGER.state.phaseState.type} chatMenuNotification={this.state.chatMenuNotification}/>
+                    <HeaderMenu chatMenuNotification={this.state.chatMenuNotification}/>
                 </div>
                 <div className="content">
                     {this.state.chatMenu && <ChatMenu/>}
@@ -267,11 +267,11 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
     }
 }
 
-export function ContentTab(props: {
+export function ContentTab(props: Readonly<{
     helpMenu: WikiArticleLink | null
     close: ContentMenu | false, 
     children: string 
-}): ReactElement {
+}>): ReactElement {
 
     return <div className="content-tab">
         <div>
@@ -280,12 +280,12 @@ export function ContentTab(props: {
             </StyledText>
         </div>
 
-        {props.close && <Button className="close"
+        {props.close && !GAME_MANAGER.getMySpectator() && <Button className="close"
             onClick={()=>GameScreen.instance.closeMenu(props.close as ContentMenu)}
         >
             <Icon size="small">close</Icon>
         </Button>}
-        {props.helpMenu ? <Button className="help"
+        {props.helpMenu && !GAME_MANAGER.getMySpectator() && <Button className="help"
             onClick={()=>{
                 GameScreen.instance.openMenu(ContentMenu.WikiMenu, ()=>{
                     props.helpMenu && GAME_MANAGER.setWikiArticle(props.helpMenu);
@@ -293,6 +293,6 @@ export function ContentTab(props: {
             }}
         >
             <Icon size="small">question_mark</Icon>
-        </Button>:null}
+        </Button>}
     </div>
 }

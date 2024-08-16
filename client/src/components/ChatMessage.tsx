@@ -159,7 +159,7 @@ const ChatElement = React.memo((
             }
 
             return <>
-                <details>
+                <details open={GAME_MANAGER.getMySpectator()}>
                     <summary>
                         <StyledText className={"chat-message " + style}
                             playerKeywordData={props.playerKeywordData}

@@ -76,9 +76,9 @@ export default GameState;
 export type PlayerGameState = {
     type: "player",
 
-    myIndex: PlayerIndex | null,
+    myIndex: PlayerIndex,
     
-    roleState: RoleState | null,
+    roleState: RoleState,
 
     will: string,
     notes: string,

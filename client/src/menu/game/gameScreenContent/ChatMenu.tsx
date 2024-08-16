@@ -1,11 +1,10 @@
 import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER, { replaceMentions } from "../../../index";
+import GAME_MANAGER from "../../../index";
 import "../gameScreen.css";
 import "./chatMenu.css"
 import { PlayerIndex } from "../../../game/gameState.d";
-import { ChatMessage, translateChatMessage } from "../../../components/ChatMessage";
-import ChatElement from "../../../components/ChatMessage";
+import ChatElement, { ChatMessage, translateChatMessage } from "../../../components/ChatMessage";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import { HistoryPoller, HistoryQueue } from "../../../history";
 import { StateListener } from "../../../game/gameManager.d";
@@ -15,7 +14,6 @@ import StyledText from "../../../components/StyledText";
 
 
 export default function ChatMenu(): ReactElement {
-
     const [filter, setFilter] = useState<PlayerIndex | null>(null);
     useEffect(() => {
         const stateListener: StateListener = (type) => {
@@ -28,7 +26,6 @@ export default function ChatMenu(): ReactElement {
         GAME_MANAGER.addStateListener(stateListener);
         return () => GAME_MANAGER.removeStateListener(stateListener);
     }, [setFilter]);
-    
 
     const [sendChatGroups, setSendChatGroups] = useState<string[]>([]);
     useEffect(() => {
@@ -45,7 +42,7 @@ export default function ChatMenu(): ReactElement {
 
     return <div className="chat-menu chat-menu-colors">
         <ContentTab close={ContentMenu.ChatMenu} helpMenu={"standard/chat"}>{translate("menu.chat.title")}</ContentTab>
-        {filter !== null && <div className="chat-filter-zone highlighted">
+        {!GAME_MANAGER.getMySpectator() && (filter !== null) && <div className="chat-filter-zone highlighted">
             <StyledText>{translate("menu.chat.playerFilter", GAME_MANAGER.getPlayerNames()[filter])}</StyledText>
             <Button 
                 onClick={()=>{
@@ -61,20 +58,22 @@ export default function ChatMenu(): ReactElement {
             </Button>
         </div>}
         <ChatMessageSection filter={filter}/>
-        <div className="chat-menu-icons">
-            {!sendChatGroups.includes("all") && translate("noAll.icon")}
-            {sendChatGroups.map((group) => {
-                return translate("chatGroup."+group+".icon");
-            })}
-        </div>
-        <ChatTextInput disabled={sendChatGroups.length === 0}/>
+        {GAME_MANAGER.getMySpectator() || <>
+            <div className="chat-menu-icons">
+                {!sendChatGroups.includes("all") && translate("noAll.icon")}
+                {sendChatGroups.map((group) => {
+                    return translate("chatGroup."+group+".icon");
+                })}
+            </div>
+            <ChatTextInput disabled={sendChatGroups.length === 0}/>
+        </>}
     </div>
 }
 
 
-export function ChatMessageSection(props:{
+export function ChatMessageSection(props: Readonly<{
     filter?: PlayerIndex | null
-}): ReactElement {
+}>): ReactElement {
     const filter = useMemo(() => props.filter ?? null, [props.filter]);
     const [messages, setMessages] = useState<ChatMessage []>(() => {
         if (GAME_MANAGER.state.stateType === "game" || GAME_MANAGER.state.stateType === "lobby")
@@ -165,9 +164,10 @@ export function ChatMessageSection(props:{
     </div>
 }
 
-export function ChatTextInput(props: {disabled?: boolean}): ReactElement {
+export function ChatTextInput(props: Readonly<{ disabled?: boolean }>): ReactElement {
     const [chatBoxText, setChatBoxText] = useState<string>("");
     const [drawAttentionSeconds, setDrawAttentionSeconds] = useState<number>(0);
+    const ref = useRef<HTMLTextAreaElement>(null);
     const [whispering, setWhispering] = useState<PlayerIndex | null>(null);
 
     const whisperingPlayer = useMemo(() => {
@@ -187,6 +187,7 @@ export function ChatTextInput(props: {disabled?: boolean}): ReactElement {
         ) {
             setWhispering(index);
             setDrawAttentionSeconds(1.5);
+            ref.current?.focus()
         }
     }, []);
 
@@ -279,7 +280,7 @@ export function ChatTextInput(props: {disabled?: boolean}): ReactElement {
 
     return <>
         {whispering !== null && <div className="chat-whisper-notification">
-            <StyledText>{translate("youAreWhispering", whisperingPlayer)}</StyledText>
+            <StyledText className="discreet">{translate("youAreWhispering", whisperingPlayer)}</StyledText>
             <Button
                 highlighted={true}
                 onClick={() => setWhispering(null)}
@@ -290,6 +291,7 @@ export function ChatTextInput(props: {disabled?: boolean}): ReactElement {
         <div className="chat-send-section">
             <textarea
                 className={drawAttentionSeconds * 2 % 2 === 1 ? "highlighted" : undefined}
+                ref={ref}
                 value={chatBoxText}
                 onChange={handleInputChange}
                 onKeyDown={handleInputKeyDown}

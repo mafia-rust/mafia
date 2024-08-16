@@ -639,9 +639,10 @@
     "phase.discussion.subtitle": "Discuss information you gathered during the night.",
     
     "phase.nomination": "Nomination",
+    "phase.nomination.subtitle": "Try to vote out the evils.",
     "phase.nomination:var.0": "Nominations",
-    "votesRequired": "\\0 votes required.",
-    "votesRequired.1": "1 vote required.",
+    "votesRequired": "\\0 votes required to nominate.",
+    "votesRequired.1": "1 vote required to nominate.",
     "trialsRemaining": "\\0 trials remaining.",
     "trialsRemaining.1": "1 trial remaining.",
     
@@ -656,6 +657,7 @@
     "phase.finalWords.subtitle": "The town has decided to execute \\0.",
     
     "phase.dusk": "Dusk",
+    "phase.dusk.subtitle": "It will be night very soon.",
     
     "phase.night": "Night",
     "phase.night:var.0": "Nighttime",

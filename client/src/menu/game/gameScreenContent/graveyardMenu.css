@@ -1,3 +1,12 @@
+.game-screen .content > .graveyard-menu {
+    width: 20%;
+}
+@media only screen and (max-width: 600px) {
+    .game-screen .content > .graveyard-menu {
+        width: 100%;
+    }
+}
+
 .graveyard-menu > .grid {
     display: grid;
     padding: .13rem;
@@ -9,9 +18,7 @@
 .graveyard-menu > .grid button {
     text-align: left;
     margin: 0;
-    text-wrap:pretty;
-    overflow-x: auto;
-    overflow-y: hidden;
+    text-wrap: wrap;
 }
 .graveyard-menu > .grid button.role-list-button {
     grid-column: role-list-start / role-list-end;
@@ -22,7 +29,6 @@
 .graveyard-menu > .grid button > *{
     width: 100%;
     text-align: left;
-    overflow-x: scroll;
 }
 .graveyard-menu .grave-label {
     position: relative;
@@ -39,7 +45,7 @@
     top: 0;
     right: 0;
     padding: 0;
-    font-size: 1rem;
+    font-size: 1em;
 }
 .graveyard-menu .graveyard-menu-excludedRoles{
     display: flex;

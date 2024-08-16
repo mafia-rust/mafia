@@ -13,7 +13,7 @@
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     border-bottom: none;
-    height: 20rem;
+    height: 20em;
     overflow: auto;
     flex-grow: 1;
 }

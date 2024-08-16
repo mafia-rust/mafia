@@ -14,6 +14,7 @@ import React from "react";
 import WikiArticle from "../components/WikiArticle";
 import SpectatorGameScreen from "../menu/spectator/SpectatorGameScreen";
 import LobbyMenu from "../menu/lobby/LobbyMenu";
+import LoadingScreen from "../menu/LoadingScreen";
 
 export default function messageListener(packet: ToClientPacket){
 
@@ -396,7 +397,16 @@ export default function messageListener(packet: ToClientPacket){
         break;
     }
 
-    GAME_MANAGER.invokeStateListeners(packet.type);
+    // Sammy, I'm sorry you had to see this.
+    //
+    // This is to fix the HeaderMenu myIndex issues that have been vexing us this entire project long.
+    // At least on my machine, this small delay in invoking the state listeners is enough for `myIndex`
+    // to never be set as the default value in a component.
+    // I truly think the HeaderMenu is just loaded at an unfortunate time, and this timeout can
+    // provide a much needed break for such an overlooked and essential component.
+    setTimeout(() => {
+        GAME_MANAGER.invokeStateListeners(packet.type)
+    })
 }
 
 

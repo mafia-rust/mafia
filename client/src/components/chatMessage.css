@@ -33,14 +33,14 @@
     border-radius: .5rem;
     color: grey;
 }
-.chat-message.phase-change *{
-    color: yellow;
-}
 .chat-message.phase-change {
     text-align: center;
     background-color: var(--primary-color);
     color: yellow;
     text-decoration: underline;
+}
+.chat-message.phase-change .keyword-info{
+    color: yellow;
 }
 .chat-message.center {
     text-align: center;
@@ -48,7 +48,7 @@
 .chat-message.special {
     color: violet;
 }
-.chat-message.discreet {
+.chat-message.discreet, .discreet {
     color: turquoise;
 }
 .chat-message.important {

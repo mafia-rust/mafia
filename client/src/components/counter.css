@@ -18,9 +18,9 @@
 }
 
 .counter-count .counter-circle {
-    width: 1rem;
-    height: 1rem;
-    border-radius: 0.5rem;
+    width: 1em;
+    height: 1em;
+    border-radius: 0.5em;
     background-color: var(--focus-outline-color);
     border: .13rem solid var(--primary-border-color);
     border-bottom-color: var(--primary-border-shadow-color);

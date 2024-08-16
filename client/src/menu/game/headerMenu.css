@@ -46,8 +46,8 @@
     margin: .13rem;
 } 
 .header-menu .chat-notification{
-    font-size: 0.83rem;
-    height: 0.83rem;
+    font-size: 0.83em;
+    height: 0.83em;
     aspect-ratio: 1;
     background-color: var(--primary-color);
     position: absolute;

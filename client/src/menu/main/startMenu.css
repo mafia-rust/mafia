@@ -29,7 +29,7 @@
     flex-direction: column;
 }
 .sm > main > section#main > h1 {
-    font-size: 8rem;
+    font-size: 8em;
     padding: 0;
     margin: 0;
 }
@@ -38,10 +38,7 @@
     flex-direction: row;
     gap: .5rem;
     padding: 0.3rem 0.5rem;
-    font-size: 1.5rem;
-}
-.sm > main > section#main > div > button .icon {
-    font-size: 1.8rem;
+    font-size: 1.5em;
 }
 
 .sm > main > section#main {

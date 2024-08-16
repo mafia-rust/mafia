@@ -40,10 +40,10 @@
 }
 
 .error-card > header > button.close {
-    font-size: 0.75rem;
+    font-size: 0.6em;
     font-weight: bold;
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.2em;
+    height: 1.2em;
 }
 
 .error-card > div {

@@ -31,14 +31,14 @@ export function useGameState<T>(
 }
 
 export function usePlayerState<T>(
-    getValue: (playerState: PlayerGameState) => T,
+    getValue: (playerState: PlayerGameState, gameState: GameState) => T,
     events?: StateEventType[],
     fallback?: T
 ): T | undefined {
     return useGameState(
         gameState => {
             if (gameState.clientState.type === "player") {
-                return getValue(gameState.clientState);
+                return getValue(gameState.clientState, gameState);
             } else {
                 return fallback;
             }
