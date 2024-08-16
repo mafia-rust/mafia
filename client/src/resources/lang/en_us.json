@@ -627,6 +627,7 @@
 
     "judgement.cannotVote.onTrial": "You're on trial!",
     "judgement.cannotVote.dead": "You can't vote because you're dead.",
+    "judgement.playerOnTrial": "\\0 is on trial.",
 
 
 

@@ -106,7 +106,7 @@ export function PhaseSpecificInformation(props: Readonly<{
         return <div className="phase-specific">
             <div className="highlighted">
                 <StyledText>
-                    {props.players[props.phaseState.playerOnTrial].toString()}
+                    {translate("judgement.playerOnTrial", props.players[props.phaseState.playerOnTrial].toString())}
                 </StyledText>
                 {GAME_MANAGER.getMySpectator() || <div className="judgement-info">
                     {(() => {
