@@ -40,7 +40,7 @@
 }
 
 .error-card > header > button.close {
-    font-size: 0.6em;
+    font-size: 0.75em;
     font-weight: bold;
     width: 1.2em;
     height: 1.2em;
@@ -83,6 +83,7 @@
     border-right-color: var(--background-border-shadow-color);
     border-bottom-color: var(--background-border-shadow-color);
     overflow-y: hidden;
+    box-shadow: 0 0 .5rem #0007;
 }
 
 .anchor-cover-card-content {

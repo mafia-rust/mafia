@@ -246,7 +246,7 @@ export default function RoleSpecificSection(){
                     />
                 </div>
             </div>;
-        case "mafiaSupportWildcard":
+        case "mafiaSupportWildcard": {
             const all_choosable_mafia: Role[] = Object.keys(ROLES).filter((rle)=>
                 rle === "mafiaSupportWildcard" ||
                 (
