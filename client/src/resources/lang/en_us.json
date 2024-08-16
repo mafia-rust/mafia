@@ -404,9 +404,9 @@
     "role.cupid.name:var.0": "Cupids",
     "role.cupid.target": "Link",
 
-    "role.mafiaWildcard.name": "Mafia Support Wildcard",
-    "role.mafiaWildcard.name:var.0": "Mafia Support Wildcards",
-    "role.mafiaWildcard.smallRoleMenu": "Choose a mafia role to become",
+    "role.mafiaSupportWildcard.name": "Mafia Support Wildcard",
+    "role.mafiaSupportWildcard.name:var.0": "Mafia Support Wildcards",
+    "role.mafiaSupportWildcard.smallRoleMenu": "Choose a mafia role to become",
 
     "role.jester.name": "Jester",
     "role.jester.name:var.0": "Jesters",
@@ -637,7 +637,9 @@
 
     "judgement.cannotVote.onTrial": "You're on trial!",
     "judgement.cannotVote.dead": "You can't vote because you're dead.",
+    "testimony.playerOnTrial": "\\0 is giving their testimony.",
     "judgement.playerOnTrial": "\\0 is on trial.",
+    "finalWords.playerOnTrial": "\\0 has been voted guilty.",
 
 
 

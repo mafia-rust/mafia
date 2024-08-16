@@ -55,6 +55,8 @@ export type ToClientPacket = {
 } | {
     type: "startGame"
 } | {
+    type: "gameInitializationComplete"
+} | {
     type: "backToLobby",
 } | {
     type: "gamePlayers",

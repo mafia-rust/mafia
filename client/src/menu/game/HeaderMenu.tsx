@@ -1,4 +1,4 @@
-import React, { ReactElement, useMemo } from "react";
+import React, { ReactElement, useEffect, useMemo } from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import { PhaseState, Player, Verdict } from "../../game/gameState.d";
@@ -71,9 +71,8 @@ function Information(): ReactElement {
         clientState => clientState.roleState,
         ["yourRoleState"]
     )
-
     const myName = useMemo(() => {
-        return myIndex === undefined ? undefined : players[myIndex]?.toString()
+        return myIndex === undefined ? undefined : players[myIndex].toString()
     }, [myIndex, players])
 
     return <div className="information">
@@ -106,9 +105,9 @@ export function PhaseSpecificInformation(props: Readonly<{
         return <div className="phase-specific">
             <div className="highlighted">
                 <StyledText>
-                    {translate("judgement.playerOnTrial", props.players[props.phaseState.playerOnTrial].toString())}
+                    {translate(`${props.phaseState.type}.playerOnTrial`, props.players[props.phaseState.playerOnTrial].toString())}
                 </StyledText>
-                {GAME_MANAGER.getMySpectator() || <div className="judgement-info">
+                {!GAME_MANAGER.getMySpectator() && props.phaseState.type === "judgement" && <div className="judgement-info">
                     {(() => {
                         if (props.phaseState.playerOnTrial === props.myIndex) {
                             return translate("judgement.cannotVote.onTrial");

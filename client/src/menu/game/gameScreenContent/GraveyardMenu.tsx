@@ -52,7 +52,7 @@ function RoleListElement(): ReactElement {
             return <button 
                 className="role-list-button"
                 style={{ gridRow: index + 1 }} 
-                key={roleOutlineName + crossedOutOutlines?.includes(index)}
+                key={roleOutlineName + crossedOutOutlines?.includes(index) + index}
                 onClick={()=>{
                     if (GAME_MANAGER.getMySpectator()) return;
 

@@ -107,6 +107,8 @@ impl SpectatorPointer {
 
         self.requeue_chat_messages(game);
         self.send_chat_messages(game);
+
+        self.send_packet(game, ToClientPacket::GameInitializationComplete);
     }
 
     pub fn requeue_chat_messages(&self, game: &mut Game){

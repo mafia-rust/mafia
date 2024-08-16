@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import GAME_MANAGER from "..";
 import { StateEventType } from "../game/gameManager.d";
-import GameState, { LobbyState, PlayerGameState, State } from "../game/gameState.d";
+import GameState, { PlayerGameState } from "../game/gameState.d";
 
 export function useGameState<T>(
     getValue: (gameState: GameState) => T, 

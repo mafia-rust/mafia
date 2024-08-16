@@ -40,10 +40,10 @@ export default function messageListener(packet: ToClientPacket){
         case "acceptJoin":
             if(packet.inGame && packet.spectator){
                 GAME_MANAGER.setSpectatorGameState();
-                Anchor.setContent(<SpectatorGameScreen/>);
+                Anchor.setContent(<LoadingScreen type="join" />)
             }else if(packet.inGame && !packet.spectator){
                 GAME_MANAGER.setGameState();
-                Anchor.setContent(GameScreen.createDefault());
+                Anchor.setContent(<LoadingScreen type="join" />)
             }else{
                 GAME_MANAGER.setLobbyState();
                 Anchor.setContent(<LobbyMenu/>);
@@ -162,15 +162,25 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.lobbyName = packet.name;
             }
         break;
-        case "startGame":
+        case "startGame": {
             const isSpectator = GAME_MANAGER.getMySpectator();
             if(isSpectator){
                 GAME_MANAGER.setSpectatorGameState();
-                Anchor.setContent(<SpectatorGameScreen/>);
+                Anchor.setContent(<LoadingScreen type="join" />)
             }else{
                 GAME_MANAGER.setGameState();
+                Anchor.setContent(<LoadingScreen type="join" />)
+            }
+        }
+        break;
+        case "gameInitializationComplete": {
+            const isSpectator = GAME_MANAGER.getMySpectator();
+            if(isSpectator){
+                Anchor.setContent(<SpectatorGameScreen/>);
+            }else{
                 Anchor.setContent(GameScreen.createDefault());
             }
+        }
         break;
         case "backToLobby":
             GAME_MANAGER.setLobbyState();
@@ -397,16 +407,7 @@ export default function messageListener(packet: ToClientPacket){
         break;
     }
 
-    // Sammy, I'm sorry you had to see this.
-    //
-    // This is to fix the HeaderMenu myIndex issues that have been vexing us this entire project long.
-    // At least on my machine, this small delay in invoking the state listeners is enough for `myIndex`
-    // to never be set as the default value in a component.
-    // I truly think the HeaderMenu is just loaded at an unfortunate time, and this timeout can
-    // provide a much needed break for such an overlooked and essential component.
-    setTimeout(() => {
-        GAME_MANAGER.invokeStateListeners(packet.type)
-    })
+    GAME_MANAGER.invokeStateListeners(packet.type)
 }
 
 

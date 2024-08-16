@@ -61,6 +61,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     PlayersLostConnection{lost_connection: Vec<LobbyClientID>},
     StartGame,
+    GameInitializationComplete,
     BackToLobby,
 
     GamePlayers{players: Vec<String>},
