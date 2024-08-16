@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useMemo } from "react";
+import React, { ReactElement, useMemo } from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import { PhaseState, Player, Verdict } from "../../game/gameState.d";
