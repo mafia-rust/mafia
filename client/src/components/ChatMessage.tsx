@@ -22,6 +22,8 @@ const ChatElement = React.memo((
         playerSenderKeywordData?: KeywordDataMap
     }, 
 ) => {
+    const [mouseHovering, setMouseHovering] = React.useState(false); 
+
     const message = props.message;
     const playerNames = props.playerNames ?? GAME_MANAGER.getPlayerNames();
     const chatMessageStyles = require("../resources/styling/chatMessage.json");
@@ -49,14 +51,14 @@ const ChatElement = React.memo((
                 style += " mention";
             }
 
-            return <span className={`chat-message ${style}`}>
+            return <div className={"chat-message-div"}><span className={`chat-message ${style}`}>
                 <StyledText
                     playerKeywordData={props.playerSenderKeywordData ?? PLAYER_SENDER_KEYWORD_DATA}
                 >{chatGroupIcon ?? ""} {`sender-${message.variant.sender}`}: </StyledText>
                 <StyledText
                     playerKeywordData={props.playerKeywordData}
                 >{translateChatMessage(message.variant, playerNames)}</StyledText>
-            </span>;
+            </span></div>;
         case "normal":
             if(message.variant.messageSender.type !== "player" && message.variant.messageSender.type !== "livingToDead"){
                 style += " discreet";
@@ -81,26 +83,48 @@ const ChatElement = React.memo((
                 style += " mention";
             }
 
-            return <span className={`chat-message ${style}`}>
-                <StyledText
-                    playerKeywordData={props.playerSenderKeywordData ?? PLAYER_SENDER_KEYWORD_DATA}
-                >{chatGroupIcon ?? ""} {messageSender}: </StyledText>
-                <StyledText
-                    playerKeywordData={props.playerKeywordData}
-                >{translateChatMessage(message.variant, playerNames)}</StyledText>
-            </span>;
+            return <div
+                className={"chat-message-div"}
+                onMouseOver={() => setMouseHovering(true)}
+                onMouseOut={() => setMouseHovering(false)}
+            >
+                <span className={`chat-message ${style}`}>
+                    <StyledText
+                        playerKeywordData={props.playerSenderKeywordData ?? PLAYER_SENDER_KEYWORD_DATA}
+                    >
+                        {chatGroupIcon ?? ""} {messageSender}: </StyledText>
+                    <StyledText
+                        playerKeywordData={props.playerSenderKeywordData}
+                    >
+                        {translateChatMessage(message.variant, playerNames)}
+                    </StyledText>
+                </span>
+                {
+                    mouseHovering &&
+                    GAME_MANAGER.state.stateType === "game" && 
+                    GAME_MANAGER.state.clientState.type === "player" && 
+                    GAME_MANAGER.state.clientState.roleState?.type === "forger" &&
+                    <button
+                        className="chat-message-div-copy-button material-icons-round"
+                        onClick={() => navigator.clipboard.writeText(translateChatMessage(message.variant, playerNames))}
+                    >
+                        content_copy
+                    </button>
+                }
+            </div>;
         case "targetsMessage":
-            return <span className="chat-message result">
+            return <div className={"chat-message-div"}><span className="chat-message result">
                 <StyledText className={"chat-message " + style}
                     playerKeywordData={props.playerKeywordData}
-                >{(chatGroupIcon??"")} {translateChatMessage(message.variant, playerNames)}</StyledText>
-                <ChatElement {...props} message={
-                    {
-                        variant: message.variant.message,
-                        chatGroup: message.chatGroup,
-                    }
-                }/>
+                >
+                    {(chatGroupIcon??"")} {translateChatMessage(message.variant, playerNames)}
+                </StyledText>
+                <ChatElement {...props} message={{
+                    variant: message.variant.message,
+                    chatGroup: message.chatGroup,
+                }}/>
             </span>
+        </div>
         case "kiraResult":
             let out = [];
 
@@ -140,11 +164,12 @@ const ChatElement = React.memo((
                 </div>)
             }
 
-            return <div className={"chat-message " + style}>
-                {chatGroupIcon ?? ""} {translate("chatMessage.kiraResult")}
-                <div>
-                    {out}
-                </div>
+            return <div className={"chat-message-div chat-message kira-guess-results " + style}>
+                <StyledText
+                    className="chat-message result"
+                    playerKeywordData={props.playerKeywordData}
+                >{chatGroupIcon ?? ""} {translate("chatMessage.kiraResult")}</StyledText>
+                {out}
             </div>
         case "playerDied":
 
@@ -158,8 +183,8 @@ const ChatElement = React.memo((
                     break;
             }
 
-            return <>
-                <details>
+            return <div className={"chat-message-div"}>
+                <details open={GAME_MANAGER.getMySpectator()}>
                     <summary>
                         <StyledText className={"chat-message " + style}
                             playerKeywordData={props.playerKeywordData}
@@ -173,12 +198,30 @@ const ChatElement = React.memo((
                         <GraveComponent grave={message.variant.grave} playerNames={playerNames}/>
                     </div>
                 </details>
-            </>;
+            </div>;
     }
 
-    return <StyledText className={"chat-message " + style}
-        playerKeywordData={props.playerKeywordData}
-    >{(chatGroupIcon??"")} {translateChatMessage(message.variant, playerNames)}</StyledText>;
+    return <div
+        className={"chat-message-div " + style}
+        onMouseOver={() => setMouseHovering(true)}
+        onMouseOut={() => setMouseHovering(false)}
+    >
+        <StyledText className={"chat-message " + style} playerKeywordData={props.playerKeywordData}>
+            {(chatGroupIcon??"")} {translateChatMessage(message.variant, playerNames)}
+        </StyledText>
+        {
+            mouseHovering &&
+            GAME_MANAGER.state.stateType === "game" && 
+            GAME_MANAGER.state.clientState.type === "player" && 
+            GAME_MANAGER.state.clientState.roleState?.type === "forger" &&
+            <button
+                className="chat-message-div-copy-button material-icons-round"
+                onClick={() => navigator.clipboard.writeText(translateChatMessage(message.variant, playerNames))}
+            >
+                content_copy
+            </button>
+        }
+    </div>;
 });
 
 function containsMention(message: ChatMessageVariant & { text: string }, playerNames: string[]): boolean {

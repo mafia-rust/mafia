@@ -14,6 +14,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
 }
 /* .large-mayor-menu label {
     display: inline-block;
