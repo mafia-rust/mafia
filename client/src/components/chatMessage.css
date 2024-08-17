@@ -7,6 +7,9 @@
     padding: 0.1rem;
     border-radius: 0.2rem;
 }
+.chat-message-div > details {
+    width: 100%;
+}
 .chat-message-div {
     position: relative;
     max-width: 100%;

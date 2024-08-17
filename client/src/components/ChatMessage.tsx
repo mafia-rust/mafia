@@ -13,6 +13,7 @@ import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 import { KiraGuess, KiraGuessResult, kiraGuessTranslate } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
+import { CopyButton } from "./ClipboardButtons";
 
 const ChatElement = React.memo((
     props: {
@@ -104,12 +105,10 @@ const ChatElement = React.memo((
                     GAME_MANAGER.state.stateType === "game" && 
                     GAME_MANAGER.state.clientState.type === "player" && 
                     GAME_MANAGER.state.clientState.roleState?.type === "forger" &&
-                    <button
-                        className="chat-message-div-copy-button material-icons-round"
-                        onClick={() => navigator.clipboard.writeText(translateChatMessage(message.variant, playerNames))}
-                    >
-                        content_copy
-                    </button>
+                    <CopyButton
+                        className="chat-message-div-copy-button"
+                        text={translateChatMessage(message.variant, playerNames)}
+                    />
                 }
             </div>;
         case "targetsMessage":
@@ -214,12 +213,10 @@ const ChatElement = React.memo((
             GAME_MANAGER.state.stateType === "game" && 
             GAME_MANAGER.state.clientState.type === "player" && 
             GAME_MANAGER.state.clientState.roleState?.type === "forger" &&
-            <button
-                className="chat-message-div-copy-button material-icons-round"
-                onClick={() => navigator.clipboard.writeText(translateChatMessage(message.variant, playerNames))}
-            >
-                content_copy
-            </button>
+            <CopyButton
+                className="chat-message-div-copy-button"
+                text={translateChatMessage(message.variant, playerNames)}
+            />
         }
     </div>;
 });

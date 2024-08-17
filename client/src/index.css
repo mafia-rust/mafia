@@ -134,7 +134,7 @@ option {
     background-color: var(--background-color);
 }
 
-button:hover:not([disabled]), input:hover:not([disabled]), select:hover:not([disabled]), option:hover:not([disabled]), summary:hover:not([disabled]) {
+button:hover:not([disabled]):not(:active), input:hover:not([disabled]):not(:active), select:hover:not([disabled]):not(:active), option:hover:not([disabled]):not(:active), summary:hover:not([disabled]):not(:active) {
     background-color: var(--hover-color);
 }
 
@@ -206,7 +206,7 @@ code, .code {
     --primary-border-shadow-color: #250d2b;
     --background-border-color: #352d56;
     --background-border-shadow-color: #110d18;
-    --hover-color: #362345;
+    --hover-color: #38254e;
     --focus-outline-color: #9c84a9;
 }
 
@@ -234,7 +234,7 @@ code, .code {
     --primary-border-shadow-color: #202027;
     --background-border-color: #3d3c4d;
     --background-border-shadow-color: #19181f;
-    --hover-color: #37364b;
+    --hover-color: #3c3b4d;
     --focus-outline-color: #9896ae;
 }
 
