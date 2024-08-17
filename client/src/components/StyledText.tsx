@@ -38,8 +38,9 @@ type Token = {
 
 (window as any).setWikiSearchPage = (page: WikiArticleLink) => {
     if (GAME_MANAGER.wikiArticleCallbacks.length === 0) {
-        if (GameScreen.instance) {
-            GameScreen.instance.openMenu(ContentMenu.WikiMenu, () => {
+        const gameScreenContentController = GameScreen.getContentController();
+        if (gameScreenContentController) {
+            gameScreenContentController.openMenu(ContentMenu.WikiMenu, () => {
                 GAME_MANAGER.setWikiArticle(page);
             });
         } else {

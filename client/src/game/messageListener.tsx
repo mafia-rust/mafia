@@ -176,7 +176,11 @@ export default function messageListener(packet: ToClientPacket){
         case "gameInitializationComplete": {
             const isSpectator = GAME_MANAGER.getMySpectator();
             if(isSpectator){
-                Anchor.setContent(<SpectatorGameScreen/>);
+                if (Anchor.isMobile()) {
+                    Anchor.setContent(<SpectatorGameScreen maxContent={2}/>);
+                } else {
+                    Anchor.setContent(<SpectatorGameScreen/>);
+                }
             }else{
                 Anchor.setContent(GameScreen.createDefault());
             }
@@ -349,7 +353,7 @@ export default function messageListener(packet: ToClientPacket){
         case "yourRoleState":
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 if(GAME_MANAGER.state.clientState.roleState?.type!== packet.roleState.type){
-                    GameScreen.instance?.closeMenu(ContentMenu.RoleSpecificMenu);
+                    GameScreen.getContentController()?.closeMenu(ContentMenu.RoleSpecificMenu);
                 }
                 GAME_MANAGER.state.clientState.roleState = packet.roleState;
             }

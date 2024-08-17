@@ -30,7 +30,7 @@ export enum ContentMenu {
 
 type GameScreenProps = {
     contentMenus: ContentMenu[],
-    maxContent?: number | undefined
+    maxContent?: number
 }
 type GameScreenState = {
     maxContent: number,
@@ -47,7 +47,14 @@ type GameScreenState = {
     roleSpecificMenu: boolean,
 }
 
-export default class GameScreen extends React.Component<GameScreenProps, GameScreenState> {
+export interface ContentController {
+    closeOrOpenMenu(menu: ContentMenu): void;
+    closeMenu(menu: ContentMenu): void;
+    openMenu(menu: ContentMenu, callback: ()=>void): void;
+    menusOpen(): ContentMenu[];
+}
+
+export default class GameScreen extends React.Component<GameScreenProps, GameScreenState> implements ContentController {
     static createDefault(): JSX.Element{
         if (Anchor.isMobile()) {
             return <GameScreen contentMenus={[
@@ -63,7 +70,10 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
             ]}/>
         }
     }
-    static instance: GameScreen;
+    static getContentController(): ContentController | undefined {
+        return this.instance;
+    }
+    private static instance: GameScreen | undefined;
     listener: (type: StateEventType | undefined) => void;
     swipeEventListener: (right: boolean) => void;
 
@@ -96,7 +106,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                         role: GAME_MANAGER.state.clientState.roleState?.type as Role,
                     });
                 }
-                if(type === "addChatMessages" && !GameScreen.instance.menusOpen().includes(ContentMenu.ChatMenu)){
+                if(type === "addChatMessages" && !this.menusOpen().includes(ContentMenu.ChatMenu)){
                     this.setState({
                         chatMenuNotification: true,
                     });
@@ -280,14 +290,14 @@ export function ContentTab(props: Readonly<{
             </StyledText>
         </div>
 
-        {props.close && !GAME_MANAGER.getMySpectator() && <Button className="close"
-            onClick={()=>GameScreen.instance.closeMenu(props.close as ContentMenu)}
+        {props.close && (!GAME_MANAGER.getMySpectator() || Anchor.isMobile()) && <Button className="close"
+            onClick={()=>GAME_MANAGER.getContentController()!.closeMenu(props.close as ContentMenu)}
         >
             <Icon size="small">close</Icon>
         </Button>}
         {props.helpMenu && !GAME_MANAGER.getMySpectator() && <Button className="help"
             onClick={()=>{
-                GameScreen.instance.openMenu(ContentMenu.WikiMenu, ()=>{
+                GAME_MANAGER.getContentController()!.openMenu(ContentMenu.WikiMenu, ()=>{
                     props.helpMenu && GAME_MANAGER.setWikiArticle(props.helpMenu);
                 });
             }}
