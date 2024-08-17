@@ -55,7 +55,7 @@ const ChatElement = React.memo((
             return <div className={"chat-message-div"}><span className={`chat-message ${style}`}>
                 <StyledText
                     playerKeywordData={props.playerSenderKeywordData ?? PLAYER_SENDER_KEYWORD_DATA}
-                >{chatGroupIcon ?? ""} {`sender-${message.variant.sender}`}: </StyledText>
+                >{chatGroupIcon ?? ""} {message.variant.sender}: </StyledText>
                 <StyledText
                     playerKeywordData={props.playerKeywordData}
                 >{translateChatMessage(message.variant, playerNames)}</StyledText>
@@ -75,7 +75,7 @@ const ChatElement = React.memo((
 
             let messageSender = "";
             if (message.variant.messageSender.type === "player"||message.variant.messageSender.type === "livingToDead") {
-                messageSender = "sender-"+playerNames[message.variant.messageSender.player];
+                messageSender = playerNames[message.variant.messageSender.player];
             }else if(message.variant.messageSender.type === "jailor" || message.variant.messageSender.type === "journalist"){
                 messageSender = translate("role."+message.variant.messageSender.type+".name");
             }
