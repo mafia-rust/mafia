@@ -1,8 +1,24 @@
 
-.chat-message {
+.chat-message-div-copy-button {
+    position: absolute;
+    font-size: 1rem;
+    right: 0;
+    bottom: 0;
+    padding: 0.1rem;
+    border-radius: 0.2rem;
+}
+.chat-message-div {
+    position: relative;
     max-width: 100%;
+    display: flex;
+    align-items: center;
+}
+.chat-message {
+    width: 100%;
     text-align: left;
     margin: .1rem;
+    margin-left: 0;
+    margin-right: 0;
     overflow-wrap: anywhere;
     tab-size: 1rem;
 }
@@ -85,12 +101,17 @@
     padding: .25rem;
 }
 
+.kira-guess-results {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+}
 .kira-guess-result {
-    align-items: center;
+    width: 100%;
+    align-items: left;
     flex-direction: row;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
-    width: max-content;
     border-radius: 0.4rem;
     border-width: .07rem;
     border-style: solid;
