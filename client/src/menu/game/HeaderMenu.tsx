@@ -151,8 +151,6 @@ function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactE
         ["yourRoleState"]
     )
 
-    // GAME_MANAGER.getContentController() might be undefined at component load,
-    // since this component is loaded very soon after the Game Screen (or spectator screen)
     const contentController: ContentController = GAME_MANAGER.getContentController()!;
 
     return <div className="menu-buttons">
