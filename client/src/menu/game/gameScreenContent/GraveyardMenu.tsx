@@ -172,7 +172,7 @@ function ExcludedRoles(): ReactElement {
 
     return <details className="graveyard-menu-excludedRoles">
         <summary>
-            {translate("menu.excludedRoles.excludedRoles")}
+            {translate("menu.enabledRoles.enabledRoles")}
         </summary>
         <EnabledRolesDisplay enabledRoles={enabledRoles}/>
     </details>
