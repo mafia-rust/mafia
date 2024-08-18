@@ -18,7 +18,6 @@ import { WikiArticleLink } from "../../components/WikiArticleLink";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import translate from "../../game/lang";
-import { loadSettings } from "../../game/localStorage";
 import { roleSpecificMenuType } from "../Settings";
 
 export enum ContentMenu {

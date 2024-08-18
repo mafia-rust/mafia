@@ -1,11 +1,11 @@
 import React, { JSXElementConstructor } from 'react';
 import "./globalMenu.css";
-import translate, { LANGUAGES, Language, languageName, switchLanguage } from '../game/lang';
+import translate, { Language } from '../game/lang';
 import GAME_MANAGER from '..';
 import Anchor from './Anchor';
 import StartMenu from './main/StartMenu';
 import LoadingScreen from './LoadingScreen';
-import { loadSettings, saveSettings } from '../game/localStorage';
+import { loadSettings } from '../game/localStorage';
 import GameModesEditor from '../components/gameModeSettings/GameModesEditor';
 import { CopyButton } from '../components/ClipboardButtons';
 import ReactDOM from 'react-dom';

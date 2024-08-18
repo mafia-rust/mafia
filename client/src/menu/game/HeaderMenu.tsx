@@ -3,15 +3,12 @@ import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import { PhaseState, Player, Verdict } from "../../game/gameState.d";
 import { ContentController, ContentMenu } from "./GameScreen";
-import ROLES from "../../resources/roles.json"
 import "./headerMenu.css";
-import { Role } from "../../game/roleState.d";
 import StyledText from "../../components/StyledText";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import { useGameState, usePlayerState } from "../../components/useHooks";
 import Anchor from "../Anchor";
-import { loadSettings } from "../../game/localStorage";
 import { roleSpecificMenuType } from "../Settings";
 
 
