@@ -7,23 +7,23 @@ import { StateListener } from '../game/gameManager.d';
 import "./wiki.css";
 
 export default function WikiCoverCard(): ReactElement {
-    let defaultDisabledRoles: Role[];
+    let defaultEnabledRoles: Role[];
     switch (GAME_MANAGER.state.stateType) {
         case "disconnected":
         case "outsideLobby":
-            defaultDisabledRoles = [];
+            defaultEnabledRoles = [];
             break;
         case "game":
         case "lobby":
-            defaultDisabledRoles = GAME_MANAGER.state.excludedRoles;
+            defaultEnabledRoles = GAME_MANAGER.state.enabledRoles;
             break;
     }
-    const [disabledRoles, setDisabledRoles] = useState(defaultDisabledRoles);
+    const [enabledRoles, setEnabledRoles] = useState(defaultEnabledRoles);
 
     useEffect(() => {
         const listener: StateListener = (type) => {
-            if (type === "excludedRoles" && (GAME_MANAGER.state.stateType === "game" || GAME_MANAGER.state.stateType === "lobby")) {
-                setDisabledRoles(GAME_MANAGER.state.excludedRoles);
+            if (type === "enabledRoles" && (GAME_MANAGER.state.stateType === "game" || GAME_MANAGER.state.stateType === "lobby")) {
+                setEnabledRoles(GAME_MANAGER.state.enabledRoles);
             }
         };
         GAME_MANAGER.addStateListener(listener);
@@ -32,6 +32,6 @@ export default function WikiCoverCard(): ReactElement {
 
     return <div className='wiki-cover-card'>
         <h1>{translate("menu.wiki.title")}</h1>
-        <Wiki disabledRoles={disabledRoles} />
+        <Wiki enabledRoles={enabledRoles} />
     </div>;
 }

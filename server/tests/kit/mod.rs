@@ -64,7 +64,7 @@ pub(crate) use {scenario, assert_contains, assert_not_contains};
 /// Stuff that shouldn't be called directly - only in macro invocations.
 #[doc(hidden)]
 pub mod _init {
-    use mafia_server::game::role_list::RoleList;
+    use mafia_server::game::{role::Role, role_list::RoleList};
     use vec1::vec1;
 
     use super::*;
@@ -79,6 +79,7 @@ pub mod _init {
     
         let game = match mock_game(Settings {
             role_list: RoleList(role_list),
+            enabled_roles: Role::values().into_iter().collect(),
             ..Default::default()
         }, roles.len()){
             Ok(game) => game,

@@ -92,7 +92,7 @@ export type GameManager = {
     sendSaveDeathNotePacket(notes: string): void;
     sendSendMessagePacket(text: string): void;
     sendSendWhisperPacket(playerIndex: number, text: string): void;
-    sendExcludedRolesPacket(roles: Role[]): void;
+    sendEnabledRolesPacket(roles: Role[]): void;
 
     sendSetDoomsayerGuess(guesses: [
         [number, DoomsayerGuess],

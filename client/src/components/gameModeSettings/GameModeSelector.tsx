@@ -54,7 +54,7 @@ function GameModeSelectorPanel(props: {
     loadGameMode: (gameMode: GameModeData) => void,
 }): ReactElement {
     const [gameModeNameField, setGameModeNameField] = useState<string>("");
-    const {roleList, phaseTimes, disabledRoles} = useContext(GameModeContext);
+    const {roleList, phaseTimes, enabledRoles} = useContext(GameModeContext);
 
     const validateName = (name: string) => {
         return name.length < 100 && name.length !== 0
@@ -71,7 +71,7 @@ function GameModeSelectorPanel(props: {
             if (validateName(name)) {
                 newGameModeStorage.gameModes.push({
                     name,
-                    data: { [roleList.length]: { disabledRoles, phaseTimes, roleList } }
+                    data: { [roleList.length]: { enabledRoles, phaseTimes, roleList } }
                 })
             } else {
                 return "invalidName";
@@ -84,14 +84,14 @@ function GameModeSelectorPanel(props: {
             gameMode.data[roleList.length] = {
                 roleList,
                 phaseTimes,
-                disabledRoles
+                enabledRoles
             }
         }
 
         saveGameModes(newGameModeStorage);
         props.reloadGameModeStorage();
         return "success";
-    }, [disabledRoles, props, phaseTimes, roleList]);
+    }, [enabledRoles, props, phaseTimes, roleList]);
 
     useEffect(() => {
         const listener = (e: KeyboardEvent) => {
@@ -171,7 +171,7 @@ function GameModeSelectorPanel(props: {
                     name: gameModeNameField === "" ? "Unnamed Game Mode" : gameModeNameField,
                     roleList,
                     phaseTimes,
-                    disabledRoles
+                    enabledRoles
                 })}>{verbose ? <><Icon>content_copy</Icon> {translate("copyToClipboard")}</> : undefined}</CopyButton>
                 <PasteButton 
                     onClipboardRead={text => {
@@ -187,7 +187,7 @@ function GameModeSelectorPanel(props: {
                             props.loadGameMode({
                                 roleList: parsedGameMode.value.roleList,
                                 phaseTimes: parsedGameMode.value.phaseTimes,
-                                disabledRoles: parsedGameMode.value.disabledRoles
+                                enabledRoles: parsedGameMode.value.enabledRoles
                             })
                         } else {
                             Anchor.pushError(translate("outdatedGameModeSaveData"), translate("outdatedGameModeSaveData.details") + parsedGameMode.toString())
@@ -204,7 +204,7 @@ function GameModeSelectorPanel(props: {
                 ? <DragAndDrop
                     items={props.gameModeStorage.gameModes}
                     onDragEnd={newItems => {
-                        const newGameModeStorage: GameModeStorage = {format: "v0", gameModes: [...props.gameModeStorage.gameModes]};
+                        const newGameModeStorage: GameModeStorage = {format: "v1", gameModes: [...props.gameModeStorage.gameModes]};
                         
                         newGameModeStorage.gameModes.sort((a, b) => newItems.indexOf(a) - newItems.indexOf(b))
                         

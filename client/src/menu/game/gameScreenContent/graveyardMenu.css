@@ -41,18 +41,18 @@
     padding: 0;
     font-size: 1rem;
 }
-.graveyard-menu .graveyard-menu-excludedRoles{
+.graveyard-menu .graveyard-menu-enabledRoles{
     display: flex;
     flex-direction: column;
     margin-bottom: 1rem;
     user-select: none;
 }
-.graveyard-menu .graveyard-menu-excludedRoles > section{
+.graveyard-menu .graveyard-menu-enabledRoles > section{
     flex: 0 0 1;
 }
-.graveyard-menu .graveyard-menu-excludedRoles > div{
+.graveyard-menu .graveyard-menu-enabledRoles > div{
     display: block;
 }
-.graveyard-menu .graveyard-menu-excludedRoles > div > *{
+.graveyard-menu .graveyard-menu-enabledRoles > div > *{
     width: min-content;
 }
