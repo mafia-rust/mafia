@@ -11,6 +11,8 @@ import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import { useGameState, usePlayerState } from "../../components/useHooks";
 import Anchor from "../Anchor";
+import { loadSettings } from "../../game/localStorage";
+import { roleSpecificMenuType } from "../Settings";
 
 
 export default function HeaderMenu(props: Readonly<{
@@ -176,19 +178,15 @@ function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactE
             {translate("menu.will.icon")}
             <span className="mobile-hidden">{translate("menu.will.title")}</span>
         </Button>}
-        {(()=>
-            (
-                GAME_MANAGER.getMySpectator() || (!ROLES[roleState?.type as Role]?.largeRoleSpecificMenu)
-            )?null:
-                <Button className="role-specific-colors" 
-                    highlighted={contentController.menusOpen().includes(ContentMenu.RoleSpecificMenu)}
-                    onClick={()=>contentController.closeOrOpenMenu(ContentMenu.RoleSpecificMenu)}
-                >
-                    <StyledText noLinks={true}>
-                        {translate("role."+roleState?.type+".name")}
-                    </StyledText>
-                </Button>
-        )()}
+        {!GAME_MANAGER.getMySpectator() && roleSpecificMenuType(roleState!.type) === "standalone"
+            && <Button className="role-specific-colors" 
+                highlighted={contentController.menusOpen().includes(ContentMenu.RoleSpecificMenu)}
+                onClick={()=>contentController.closeOrOpenMenu(ContentMenu.RoleSpecificMenu)}
+            >
+                <StyledText noLinks={true}>
+                    {translate("role."+roleState?.type+".name")}
+                </StyledText>
+            </Button>}
         <Button className="graveyard-menu-colors" 
             highlighted={contentController.menusOpen().includes(ContentMenu.GraveyardMenu)}
             onClick={()=>contentController.closeOrOpenMenu(ContentMenu.GraveyardMenu)}

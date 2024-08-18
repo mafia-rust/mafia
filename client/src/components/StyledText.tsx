@@ -69,7 +69,7 @@ export type StyledTextProps = {
  * @param props.playerKeywordData  If omitted, defaults to {@link PLAYER_KEYWORD_DATA} 
  * @see sanitizePlayerMessage in ChatMessage.tsx
  */
-export default function StyledText(props: StyledTextProps): ReactElement {
+export default function StyledText(props: Readonly<StyledTextProps>): ReactElement {
     const playerKeywordData = props.playerKeywordData ?? PLAYER_KEYWORD_DATA;
 
     let tokens: Token[] = [{

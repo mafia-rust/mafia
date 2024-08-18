@@ -1,33 +1,75 @@
-
-.settings {
-    position: fixed;
+.settings-menu-card {
     display: flex;
     flex-direction: column;
-    right: 1rem;
-    top: 2.5rem;
-    height: fit-content;
-    min-width: fit-content;
-    box-shadow: 0 0 .5rem #0007;
+    gap: .5rem;
+    width: 100%;
+}
 
-    border: solid .13rem var(--primary-border-color);
-    border-bottom-color: var(--primary-border-shadow-color);
-    border-right-color: var(--primary-border-shadow-color);
-    border-radius: 0.5rem;
-
+.settings-menu-card > header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
     gap: 0.5rem;
-    
-    padding: .5rem;
-    background-color: var(--background-color);
-
-    z-index: 100;
 }
 
-.settings > section {
+.settings-menu {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
+.settings-menu > div {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 47%;
+    flex-grow: 1;
+    gap: 1rem;
+    max-width: 100%;
+}
+.settings-menu > div > section {
     display: flex;
     flex-direction: column;
 }
 
-.settings > section.standout {
+.settings-menu > div .horizontal {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.settings-menu > div .horizontal > * {
+    flex-grow: 1;
+}
+
+.role-specific-menu-settings {
+    display: flex;
+    flex-direction: column;
+    max-height: 20rem;
+    overflow-y: scroll;
+    gap: 0.25rem;
+}
+
+.role-specific-menu-settings-selector {
+    display: flex;
+    border: .13rem solid var(--primary-border-color);
+    background-color: var(--secondary-color);
+    border-radius: 0.5rem;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.25rem;
+}
+.role-specific-menu-settings-selector > span {
+    margin: 0 .25rem;
+    white-space: pre;
+}
+
+.settings-menu > div .standout {
     border: solid .13rem var(--primary-border-color);
     border-top-color: var(--primary-border-shadow-color);
     border-left-color: var(--primary-border-shadow-color);
@@ -36,26 +78,7 @@
     background-color: var(--secondary-color);
 }
 
-.settings button {
-    display: flex;
-    flex-direction: row;
-    gap: .25rem;
-}
-
-@media (prefers-reduced-motion = no-preference) {
-    .settings {
-        /* Start off the page and slide in */
-        transform: translateX(100%);
-        animation: slide-in 0.5s forwards;
-        -webkit-animation: slide-in 0.5s forwards;
-    }
-}
-
-.settings .settings-volume {
+.settings-menu div .settings-volume {
     border: 0;
     padding: 0;
-}
-
-@keyframes slide-in {
-    100% { transform: translateX(0%); }
 }

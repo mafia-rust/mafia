@@ -15,6 +15,7 @@ import RoleSpecificSection from "../../../components/RoleSpecific";
 import Counter from "../../../components/Counter";
 import SelectionInformation from "../../../components/SelectionInformation";
 import { useGameState, usePlayerState } from "../../../components/useHooks";
+import { roleSpecificMenuType } from "../../Settings";
 
 type PlayerFilter = "all"|"living"|"usable";
 
@@ -170,8 +171,8 @@ export default function PlayerListMenu(): ReactElement {
     return <div className="player-list-menu player-list-menu-colors">
         <ContentTab close={ContentMenu.PlayerListMenu} helpMenu={"standard/playerList"}>{translate("menu.playerList.title")}</ContentTab>
 
-        {GAME_MANAGER.getMySpectator() 
-            || <details className="role-specific-colors small-role-specific-menu" open={roleSpecificOpen}>
+        {!GAME_MANAGER.getMySpectator() && roleSpecificMenuType(roleState!.type) === "playerList"
+        && <details className="role-specific-colors small-role-specific-menu" open={roleSpecificOpen}>
                 <summary
                     onClick={(e)=>{
                         e.preventDefault();

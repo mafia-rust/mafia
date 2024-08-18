@@ -32,11 +32,19 @@
     "switchToSpectator": "Spectate",
     "switchToPlayer": "Play",
 
+    "menu.globalMenu.quitToMenu": "Quit to menu",
+    "menu.globalMenu.settings": "Settings",
+    "menu.globalMenu.gameSettingsEditor": "Game Mode Editor",
+
+    "menu.settings.title": "Settings",
+    "menu.settings.advanced": "Advanced Settings",
+    "menu.settings.dangerZone": "Danger zone",
     "menu.settings.volume": "Volume",
-    "menu.settings.gameSettingsEditor": "Game Mode Editor",
-    "menu.settings.eraseSaveData": "Erase Save Data",
     "menu.settings.language": "Language",
-    "menu.settings.quitToMenu": "Quit to menu",
+    "menu.settings.eraseSaveData": "Erase Save Data",
+    "menu.settings.roleSpecificMenus": "Role Specific Menus",
+    "menu.settings.roleSpecificMenus.playerList": "Player list",
+    "menu.settings.roleSpecificMenus.standalone": "Standalone",
 
     "confirmDelete": "Are you sure you want to delete this?",
     "confirmOverwrite": "Are you sure you want to overwrite?",

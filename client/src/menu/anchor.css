@@ -64,7 +64,7 @@
     100% { transform: translateX(0%); }
 }
 
-.anchor .settings-button {
+.anchor .global-menu-button {
     z-index: 101;
     position: fixed;
     right: .2rem;

@@ -5,7 +5,7 @@ import "./lobbyMenu.css";
 import translate from "../../game/lang";
 import { StateListener } from "../../game/gameManager.d";
 import Anchor from "../Anchor";
-import { RoomLinkButton } from "../Settings";
+import { RoomLinkButton } from "../GlobalMenu";
 import { RoleOutline, RoleList } from "../../game/roleListState.d";
 import LoadingScreen from "../LoadingScreen";
 import StartMenu from "../main/StartMenu";

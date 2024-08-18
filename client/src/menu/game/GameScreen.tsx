@@ -18,6 +18,8 @@ import { WikiArticleLink } from "../../components/WikiArticleLink";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import translate from "../../game/lang";
+import { loadSettings } from "../../game/localStorage";
+import { roleSpecificMenuType } from "../Settings";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",
@@ -81,11 +83,13 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         super(props);
         GameScreen.instance = this;
 
-        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player") {
+            const role = GAME_MANAGER.state.clientState.roleState.type;
+
             this.state = {
                 maxContent: props.maxContent?props.maxContent:Infinity,
 
-                role: GAME_MANAGER.state.clientState.roleState?.type as Role,
+                role: role,
 
                 chatMenuNotification: false,
 
@@ -94,10 +98,9 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                 playerListMenu: props.contentMenus.includes(ContentMenu.PlayerListMenu),
                 willMenu: props.contentMenus.includes(ContentMenu.WillMenu),
                 wikiMenu: props.contentMenus.includes(ContentMenu.WikiMenu),
-                roleSpecificMenu : ROLES[GAME_MANAGER.state.clientState.roleState?.type as Role] !== undefined && 
-                    ROLES[GAME_MANAGER.state.clientState.roleState?.type as Role].largeRoleSpecificMenu,
+                roleSpecificMenu : roleSpecificMenuType(role) === "standalone"
             }
-        
+        }
 
         this.listener = (type)=>{
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
@@ -115,9 +118,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         }
         this.swipeEventListener = (right)=>{
 
-            let allowedToOpenRoleSpecific = 
-                ROLES[this.state.role as Role] !== undefined && 
-                ROLES[this.state.role as Role].largeRoleSpecificMenu
+            let allowedToOpenRoleSpecific = ROLES[this.state.role].roleSpecificMenu
 
             //close this menu and open the next one
             let menusOpen = this.menusOpen();
@@ -201,7 +202,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                 this.setState({graveyardMenu: true}, callback);
                 break;
             case ContentMenu.RoleSpecificMenu:
-                if(ROLES[this.state.role as Role] !== undefined && ROLES[this.state.role as Role].largeRoleSpecificMenu)
+                if(roleSpecificMenuType(this.state.role) === "standalone")
                     this.setState({roleSpecificMenu: true}, callback);
                 break;
             case ContentMenu.WikiMenu:

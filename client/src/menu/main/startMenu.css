@@ -43,6 +43,7 @@
 
 .sm > main > section#main {
     width: 60%;
+    margin-top: 5%;
     min-height: 40vh;
 }
 
