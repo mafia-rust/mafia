@@ -98,11 +98,11 @@ function GraveList(props: Readonly<{
     return <>
         {props.graves.map((grave, graveIndex)=>{
             return <GraveButton
-                key={playerNames[graveIndex]} 
+                key={playerNames[grave.player]} 
                 grave={grave} 
                 graveIndex={graveIndex}
                 extended={props.extendedGraveIndex === graveIndex}
-                playerName={playerNames[graveIndex]}
+                playerName={playerNames[grave.player]}
                 setExtendedGraveIndex={props.setExtendedGraveIndex}
             />;
         })}
