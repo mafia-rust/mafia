@@ -9,6 +9,7 @@ import LoadingScreen from "../LoadingScreen";
 import GameModesEditor from "../../components/gameModeSettings/GameModesEditor";
 import Icon from "../../components/Icon";
 import WikiCoverCard from "../../components/WikiCoverCard";
+import SettingsMenu from "../Settings";
 
 type StartMenuProps = {
 }
@@ -31,8 +32,11 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
                     <button onClick={() => this.connectButton()}>
                         <Icon>play_arrow</Icon> {translate("menu.start.button.play")}
                     </button>
+                    <button onClick={() => Anchor.setCoverCard(<SettingsMenu />)}>
+                        <Icon>settings</Icon> {translate("menu.settings.title")}
+                    </button>
                     <button onClick={() => Anchor.setCoverCard(<GameModesEditor/>)}>
-                        <Icon>edit</Icon> {translate("menu.settings.gameSettingsEditor")}
+                        <Icon>edit</Icon> {translate("menu.globalMenu.gameSettingsEditor")}
                     </button>
                     <button onClick={() => Anchor.setCoverCard(<WikiCoverCard />)}>
                         <Icon>menu_book</Icon> {translate("menu.wiki.title")}

@@ -23,5 +23,9 @@
     white-space: pre;
 }
 .phase-times-selector > .phase-times > div > input {
+    border-top-color: var(--primary-border-shadow-color);
+    border-left-color: var(--primary-border-shadow-color);
+    border-bottom-color: var(--primary-border-color);
+    border-right-color: var(--primary-border-color);
     width: 3rem;
 }

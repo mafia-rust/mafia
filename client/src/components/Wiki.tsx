@@ -12,7 +12,7 @@ import Icon from "./Icon";
 
 
 export default function Wiki(props: {
-    disabledRoles?: Role[]
+    enabledRoles?: Role[]
 }): ReactElement {
 
     const [searchQuery, setSearchQuery] = useState("");
@@ -70,7 +70,7 @@ export default function Wiki(props: {
             <WikiSearchResults 
                 searchQuery={searchQuery}
                 article={article}
-                disabledRoles={props.disabledRoles}
+                enabledRoles={props.enabledRoles}
                 onChooseArticle={chooseArticle}
             />
             :
@@ -104,7 +104,7 @@ function WikiSearchBar(props: {
 function WikiSearchResults(props: {
     searchQuery: string,
     article: WikiArticleLink | null,
-    disabledRoles?: Role[],
+    enabledRoles?: Role[],
     onChooseArticle: (article: WikiArticleLink) => void
 }): ReactElement {
 
@@ -141,7 +141,10 @@ function WikiSearchResults(props: {
             }
 
             let className = undefined;
-            if(props.disabledRoles !== undefined && props.disabledRoles.map(role => `role/${role}`).includes(page)) {
+            if(
+                page.includes("role/") &&
+                props.enabledRoles !== undefined && props.enabledRoles.length !== 0 && !props.enabledRoles.map(role => `role/${role}`).includes(page)
+            ) {
                 className = "keyword-disabled";
             }
 
@@ -153,7 +156,10 @@ function WikiSearchResults(props: {
         for(let page of results){
 
             let className = undefined;
-            if(props.disabledRoles !== undefined && props.disabledRoles.map(role => `role/${role}`).includes(page)) {
+            if(
+                page.includes("role/") &&
+                props.enabledRoles !== undefined && props.enabledRoles.length !== 0 && !props.enabledRoles.map(role => `role/${role}`).includes(page)
+            ) {
                 className = "keyword-disabled";
             }
 
@@ -165,7 +171,7 @@ function WikiSearchResults(props: {
 
     
 
-    return <div className="wiki-results">
+    return <div className="wiki-results" tabIndex={-1}>
         {searchResultsHtml}
     </div>
 }

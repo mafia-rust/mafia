@@ -1,48 +1,89 @@
-import React, { useEffect } from "react";
-import { ReactElement } from "react";
+import React, { ReactElement, useMemo } from "react";
 import GAME_MANAGER from "../..";
-import { StateEventType, StateListener } from "../../game/gameManager.d";
 import translate from "../../game/lang";
 import StyledText from "../../components/StyledText";
-import { getTranslatedSubtitle } from "./SpectatorGameScreen";
+import { useGameState } from "../../components/useHooks";
+import GraveComponent from "../../components/grave";
+import { FastForwardButton } from "../game/HeaderMenu";
+import Counter from "../../components/Counter";
 
 
 
-export default function PhaseStartedScreen(props: {}): ReactElement {
+export default function PhaseStartedScreen(): ReactElement {
+    const phaseState = useGameState(
+        gameState => gameState.phaseState,
+        ["phase", "playerOnTrial"]
+    )!
 
-    const [phase, setPhase] = React.useState(
-        GAME_MANAGER.state.stateType==="game" ? GAME_MANAGER.state.phaseState : {type:"briefing" as "briefing"}
-    );
-    const [dayNumber, setDayNumber] = React.useState(
-        GAME_MANAGER.state.stateType==="game" ? GAME_MANAGER.state.dayNumber : 0
-    );
+    return <div className="phase-started">
+        {(() => {
+            switch (phaseState.type) {
+                case "briefing":
+                    return <div className="briefing-screen">
+                        <StyledText>{translate("phase."+phaseState.type+".subtitle")}</StyledText>
+                        <FastForwardButton />
+                    </div>
+                case "dusk":
+                case "night":
+                case "discussion":
+                    return <StyledText>{translate("phase."+phaseState.type+".subtitle")}</StyledText>;
+                case "nomination": {
+                    const votesRequired = GAME_MANAGER.getVotesRequired()!;
 
-    useEffect(() => {
-        const listener: StateListener = (type?: StateEventType) => {
-            if(GAME_MANAGER.state.stateType !== "game") return;
-
-            switch (type) {
-                case "phase":
-                    if(GAME_MANAGER.state.phaseState !== null)
-                        setPhase(GAME_MANAGER.state.phaseState);
-                        setDayNumber(GAME_MANAGER.state.dayNumber);
-                    break;
+                    return <div className="nomination-screen player-list-menu-colors">
+                        <StyledText>{
+                            (votesRequired === 1 ? translate("votesRequired.1") : translate("votesRequired", votesRequired)) 
+                            + " " + translate("trialsRemaining", phaseState.trialsLeft)
+                        }</StyledText>
+                        <Counter max={votesRequired} current={votesRequired}>
+                            {translate("menu.playerList.player.votes", votesRequired)}
+                        </Counter>
+                    </div>
+                }
+                case "testimony":
+                case "judgement":
+                case "finalWords":
+                    return <StyledText>{
+                        translate("phase."+phaseState.type+".subtitle", GAME_MANAGER.getPlayerNames()[phaseState.playerOnTrial].toString())
+                    }</StyledText>
+                case "obituary":
+                    return <ObituaryScreen />
             }
-        };
-        GAME_MANAGER.addStateListener(listener);
-        return () => GAME_MANAGER.removeStateListener(listener);
-    }, [setPhase, setDayNumber]);
+        })()}
+    </div>
+}
 
-    let subtitleText = getTranslatedSubtitle();
+function ObituaryScreen(): ReactElement {
+    const graves = useGameState(
+        gameState => gameState.graves,
+        ["addGrave"]
+    )!
 
-    return (
-        <div className="phase-started-screen">
-            <div className="header">
-                <h1><StyledText>{translate("phase."+phase.type)+" "+dayNumber}</StyledText></h1>
-            </div>
-            <div className="content">
-                <p><StyledText>{subtitleText}</StyledText></p>
-            </div>
-        </div>
-    );
+    const dayNumber = useGameState(
+        gameState => gameState.dayNumber,
+        ["phase"]
+    )!
+
+    const playerNames = useGameState(
+        gameState => gameState.players.map(player => player.toString()),
+        ["gamePlayers"]
+    )!
+
+    const newGraves = useMemo(() => {
+        return graves.filter(grave => grave.diedPhase === "night" && grave.dayNumber === dayNumber - 1);
+    }, [graves, dayNumber])
+
+    if(newGraves.length === 0)
+        return (
+            <StyledText>{translate("nobodyDiedLastNight")}</StyledText>
+        );
+    return <div className="obituary-screen graveyard-menu-colors">
+        {newGraves.map(grave => 
+            <GraveComponent 
+                key={grave.player.toString()} 
+                grave={grave} 
+                playerNames={playerNames}
+            />
+        )}
+    </div>;
 }

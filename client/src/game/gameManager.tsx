@@ -15,6 +15,8 @@ import { Role } from "./roleState.d";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
+import GameScreen, { ContentController } from "../menu/game/GameScreen";
+import { getSpectatorScreenContentController } from "../menu/spectator/SpectatorGameScreen";
 export function createGameManager(): GameManager {
 
     console.log("Game manager created.");
@@ -57,7 +59,7 @@ export function createGameManager(): GameManager {
                 GAME_MANAGER.state.lobbyName = gameState.lobbyName;
                 GAME_MANAGER.state.roleList = gameState.roleList;
                 GAME_MANAGER.state.phaseTimes = gameState.phaseTimes;
-                GAME_MANAGER.state.excludedRoles = gameState.excludedRoles;
+                GAME_MANAGER.state.enabledRoles = gameState.enabledRoles;
             }
         },
         setGameState() {
@@ -75,7 +77,7 @@ export function createGameManager(): GameManager {
                 GAME_MANAGER.state.lobbyName = lobbyState.lobbyName;
                 GAME_MANAGER.state.roleList = lobbyState.roleList;
                 GAME_MANAGER.state.phaseTimes = lobbyState.phaseTimes;
-                GAME_MANAGER.state.excludedRoles = lobbyState.excludedRoles;
+                GAME_MANAGER.state.enabledRoles = lobbyState.enabledRoles;
                 GAME_MANAGER.state.host = lobbyState.players.get(lobbyState.myId!)?.host ?? false;
             }
         },
@@ -147,6 +149,11 @@ export function createGameManager(): GameManager {
             let livingPlayers = GAME_MANAGER.getLivingPlayers();
             if(livingPlayers === null) return null;
             return Math.ceil((livingPlayers.length + 1)/ 2);
+        },
+        getContentController(): ContentController | undefined {
+            return GAME_MANAGER.getMySpectator() 
+                ? getSpectatorScreenContentController()
+                : GameScreen.getContentController();
         },
 
 
@@ -424,9 +431,9 @@ export function createGameManager(): GameManager {
                 text: text
             });
         },
-        sendExcludedRolesPacket(roles) {
+        sendEnabledRolesPacket(roles) {
             this.server.sendPacket({
-                type: "setExcludedRoles",
+                type: "setEnabledRoles",
                 roles: roles
             });
         },

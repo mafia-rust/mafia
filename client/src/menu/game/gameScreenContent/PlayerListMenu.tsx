@@ -1,33 +1,22 @@
-import React from "react";
-import translate from "../../../game/lang";
+import React, { ReactElement, useEffect, useState } from "react";
+import translate, { translateAny } from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import "./playerListMenu.css"
 import "./../gameScreen.css"
-import { PhaseType, Player, PlayerIndex } from "../../../game/gameState.d";
+import { ChatGroup, PhaseState, Player, PlayerIndex } from "../../../game/gameState.d";
 import { ContentMenu, ContentTab } from "../GameScreen";
-import { StateListener } from "../../../game/gameManager.d";
+import { StateEventType } from "../../../game/gameManager.d";
 import StyledText from "../../../components/StyledText";
 import { RoleState } from "../../../game/roleState.d";
 import Icon from "../../../components/Icon";
 import { Button } from "../../../components/Button";
 import { Grave } from "../../../game/graveState";
 import RoleSpecificSection from "../../../components/RoleSpecific";
+import Counter from "../../../components/Counter";
+import SelectionInformation from "../../../components/SelectionInformation";
+import { useGameState, usePlayerState } from "../../../components/useHooks";
+import { roleSpecificMenuType } from "../../Settings";
 
-type PlayerListMenuProps = {
-}
-type PlayerListMenuState = {
-    players: Player[],
-    phase: PhaseType | null,
-    voted: PlayerIndex | null,
-    targets: PlayerIndex[],
-    roleState: RoleState | null,
-    graveRolesStrings: (string | null)[],
-    playerFilter: PlayerFilter,
-    chatFilter: PlayerIndex | null,
-
-    myIndex: PlayerIndex,
-    roleSpecificOpen: boolean,
-}
 type PlayerFilter = "all"|"living"|"usable";
 
 
@@ -52,199 +41,259 @@ function getGraveRolesStrings(graves: Grave[], playerCount: number): (string | n
     return rolesStrings;
 }
 
-export default class PlayerListMenu extends React.Component<PlayerListMenuProps, PlayerListMenuState> {
-    listener: StateListener;
-    updatePlayerFilter: () => void;
+function votedForPlayer(player: Player) {
+    return GAME_MANAGER.state.stateType === "game"
+        && GAME_MANAGER.state.clientState.type === "player" 
+        && GAME_MANAGER.state.phaseState.type === "nomination"
+        && GAME_MANAGER.state.clientState.voted === player.index;
+}
 
-    constructor(props: PlayerListMenuProps) {
-        super(props);
+function selectedPlayer(player: Player) {
+    return GAME_MANAGER.state.stateType === "game" 
+        && GAME_MANAGER.state.clientState.type === "player" 
+        && GAME_MANAGER.state.phaseState.type === "night" 
+        && GAME_MANAGER.state.clientState.targets.includes(player.index);
+}
 
-        
-        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
-            this.state = {
-                players: GAME_MANAGER.state.players,
-                phase: GAME_MANAGER.state.phaseState.type,
-                voted: GAME_MANAGER.state.clientState.voted,
-                targets: GAME_MANAGER.state.clientState.targets,
-                roleState: GAME_MANAGER.state.clientState.roleState,
-                graveRolesStrings: getGraveRolesStrings(GAME_MANAGER.state.graves, GAME_MANAGER.state.players.length),
-                playerFilter: "living",
-                chatFilter: null,
-                myIndex: GAME_MANAGER.state.clientState.myIndex??0,
-                roleSpecificOpen: false
-            };
+function dayTargetedPlayer(player: Player) {
+    if (GAME_MANAGER.state.stateType !== "game" || GAME_MANAGER.state.clientState.type !== "player") {
+        return false;
+    }
+    const roleState = GAME_MANAGER.state.clientState.roleState;
 
-        this.updatePlayerFilter = () => {
-            if(GAME_MANAGER.state.stateType !== "game" || GAME_MANAGER.state.clientState.type !== "player"){
+    return GAME_MANAGER.state.stateType === "game"
+        && GAME_MANAGER.state.clientState.type === "player"
+        && (
+            (roleState?.type === "godfather" && roleState.backup === player.index)
+            ||
+            (roleState?.type === "jailor" && roleState.jailedTargetRef === player.index)
+            || 
+            (roleState?.type === "medium" && roleState.seancedTarget === player.index)
+            || 
+            (roleState?.type === "journalist" && roleState.interviewedTarget === player.index)
+            || 
+            (
+                roleState?.type === "marksman" && 
+                roleState.state.type === "marks" &&
+                (
+                    (roleState.state.marks.type === "one" && roleState.state.marks.a === player.index) ||
+                    (roleState.state.marks.type === "two" && (
+                        roleState.state.marks.a === player.index || 
+                        roleState.state.marks.b === player.index
+                    ))
+                )
+            )
+        )
+}
+
+export default function PlayerListMenu(): ReactElement {
+    const players = useGameState(
+        gameState => gameState.players,
+        ["gamePlayers", "yourButtons", "playerAlive", "yourPlayerTags", "yourRoleLabels", "playerVotes"]
+    )!
+    const graveRolesStrings = useGameState(
+        gameState => getGraveRolesStrings(gameState.graves, gameState.players.length),
+        ["addGrave", "yourButtons", "playerAlive", "yourPlayerTags", "yourRoleLabels", "playerVotes"]
+    )!
+    const phaseState = useGameState(
+        gameState => gameState.phaseState,
+        ["phase", "playerOnTrial"]
+    )!
+
+    const roleState = usePlayerState(
+        gameState => gameState.roleState,
+        ["yourRoleState"]
+    )
+    const myIndex = usePlayerState(
+        gameState => gameState.myIndex,
+        ["yourPlayerIndex"]
+    )
+    const chatGroups = usePlayerState(
+        gameState => gameState.sendChatGroups,
+        ["yourSendChatGroups"]
+    )
+
+    const [playerFilter, setPlayerFilter] = useState<PlayerFilter>(GAME_MANAGER.getMySpectator() ? "all" : "living");
+
+    useEffect(() => {
+        const listener = (type?: StateEventType) => {
+            if (type !== "phase" && type !== "gamePlayers" && type !== "yourVoting" && type !== "yourSelection" && type !== "yourRoleState") {
                 return;
             }
 
-            let playerFilter = this.state.playerFilter;
-            if(
-                (GAME_MANAGER.state.clientState.myIndex===null || GAME_MANAGER.state.players[GAME_MANAGER.state.clientState.myIndex].alive) && 
-                playerFilter !== "all"
-            ){
-                if(GAME_MANAGER.state.phaseState.type === "night"){
-                    playerFilter = "usable"
-                }else if(GAME_MANAGER.state.phaseState.type === "obituary"){
-                    playerFilter = "living";
+            if(GAME_MANAGER.getMySpectator()){
+                setPlayerFilter("all");
+                return;
+            }
+    
+            if(playerFilter !== "all" && players[myIndex!]?.alive){
+                if(phaseState.type === "night"){
+                    setPlayerFilter("usable");
+                }else if(phaseState.type === "obituary"){
+                    setPlayerFilter("living");
                 }
             }
             //if there are no usable players, switch to living
-            if(playerFilter==="usable" && !GAME_MANAGER.state.players.some((player)=>{return Object.values(player.buttons).includes(true)})){
-                playerFilter = "living";
+            if(playerFilter==="usable" && !players.some((player)=>{return Object.values(player.buttons).includes(true)})){
+                setPlayerFilter("living");
             }
             //if there are no living players, switch to all
-            if(playerFilter==="living" && !GAME_MANAGER.state.players.some((player)=>{return player.alive})){
-                playerFilter = "all";
+            if(playerFilter==="living" && !players.some((player)=>{return player.alive})){
+                setPlayerFilter("all");
             }
-            this.setState({
-                playerFilter: playerFilter
-            })
         };
 
-        this.listener = (type)=>{
-            if(GAME_MANAGER.state.stateType !== "game")
-                return;
-            
-            switch (type) {
-                case "filterUpdate":
-                    if(GAME_MANAGER.state.clientState.type === "player")
-                        this.setState({chatFilter: GAME_MANAGER.state.clientState.chatFilter});
-                break;
-                case "phase":
-                    this.setState({ phase: GAME_MANAGER.state.phaseState.type });
-                    if (GAME_MANAGER.state.phaseState.type === "night")
-                        this.setState({ roleSpecificOpen: true });
-                break;
-                case "gamePlayers":
-                case "yourButtons":
-                case "playerAlive":
-                case "yourPlayerTags":
-                case "yourRoleLabels":
-                case "playerVotes":
-                    this.setState({ players: GAME_MANAGER.state.players });
-                    this.setState({ graveRolesStrings: getGraveRolesStrings(GAME_MANAGER.state.graves, GAME_MANAGER.state.players.length) });
-                break;
-                case "yourVoting":
-                    if(GAME_MANAGER.state.clientState.type === "player")
-                        this.setState({ voted: GAME_MANAGER.state.clientState.voted });
-                break;
-                case "yourSelection":
-                    if(GAME_MANAGER.state.clientState.type === "player")
-                        this.setState({ targets: GAME_MANAGER.state.clientState.targets });
-                break;
-                case "yourRoleState":
-                    if(GAME_MANAGER.state.clientState.type === "player")
-                        this.setState({ roleState: GAME_MANAGER.state.clientState.roleState });
-                break;
-                case "addGrave":
-                    this.setState({ graveRolesStrings: getGraveRolesStrings(GAME_MANAGER.state.graves, GAME_MANAGER.state.players.length) });
-                break;
-                case "yourPlayerIndex":
-                    if(GAME_MANAGER.state.clientState.type === "player")
-                        this.setState({ myIndex: GAME_MANAGER.state.clientState.myIndex??0 });
-                break;
-            }
-            switch (type) {
-                case "phase":
-                case "gamePlayers":
-                case "yourVoting":
-                case "yourSelection":
-                case "yourRoleState":
-                    this.updatePlayerFilter();
-                break;
-            }
-        };  
-    }
-    componentDidMount() {
-        GAME_MANAGER.addStateListener(this.listener);
-    }
-    componentWillUnmount() {
-        GAME_MANAGER.removeStateListener(this.listener);
+        GAME_MANAGER.addStateListener(listener);
+        return () => GAME_MANAGER.removeStateListener(listener);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [myIndex, players, phaseState]);
+
+    const chatFilter = usePlayerState(
+        playerState => playerState.chatFilter,
+        ["filterUpdate"]
+    );
+
+    const shouldShowPlayer = function (player: Player) {
+        const chosen = selectedPlayer(player) 
+            || dayTargetedPlayer(player) 
+            || votedForPlayer(player);
+        switch(playerFilter){
+            case "all": return true;
+            case "living": return player.alive;
+            case "usable": return Object.values(player.buttons).includes(true) || chosen
+            default: return false;
+        }
     }
 
-    renderPhaseSpecific(){
-        let phaseSpecificJSX = null;
-        switch(this.state.phase){
-            case "nomination":
-                if(this.state.voted!=null){
-                    phaseSpecificJSX = (<div>
-                        <div><StyledText>{this.state.players[this.state.voted].toString()}</StyledText></div>
-                        <button className="button gm-button" onClick={()=>{
-                            GAME_MANAGER.sendVotePacket(null);
-                        }}>{translate("menu.playerList.button.resetVote")}</button>
-                    </div>);
-                }
-                else
-                    phaseSpecificJSX = null;
-                break;
-            case "night":
-                let targetStringList = this.state.targets.map((playerIndex: PlayerIndex)=>{
-                    return this.state.players[playerIndex].toString();
-                });
+    const [roleSpecificOpen, setRoleSpecificOpen] = useState<boolean>(true);
 
-                if(targetStringList.length > 0){
-                    phaseSpecificJSX = (<div>
-                        <div><StyledText>{targetStringList.join(", ")+"."}</StyledText></div>
-                        <button className="button gm-button" onClick={()=>{
-                            GAME_MANAGER.sendTargetPacket([]);
-                        }}>{translate("menu.playerList.button.resetTargets")}</button>
-                    </div>);
-                }
-                else
-                    phaseSpecificJSX =  null;
+
+    return <div className="player-list-menu player-list-menu-colors">
+        <ContentTab close={ContentMenu.PlayerListMenu} helpMenu={"standard/playerList"}>{translate("menu.playerList.title")}</ContentTab>
+
+        {!GAME_MANAGER.getMySpectator() && roleSpecificMenuType(roleState!.type) === "playerList"
+        && <details className="role-specific-colors small-role-specific-menu" open={roleSpecificOpen}>
+                <summary
+                    onClick={(e)=>{
+                        e.preventDefault();
+                        setRoleSpecificOpen(!roleSpecificOpen);
+                    }}
+                >{translate("role."+roleState?.type+".name")}</summary>
+                <SelectionInformation />
+                <RoleSpecificSection/>
+            </details>
         }
         
-        if(phaseSpecificJSX!==null){
-            return <div className="phase-specific">{phaseSpecificJSX}</div>
+        {GAME_MANAGER.getMySpectator() || <div>
+            {(["all", "living", "usable"] as const)
+                .map(filter => 
+                    <Button key={filter}
+                        highlighted={playerFilter === filter}
+                        onClick={()=>setPlayerFilter(filter)}
+                    >
+                        {translate("menu.playerList.button." + filter)}
+                    </Button>
+                )}
+        </div>}
+
+        <div className="player-list">
+            {players
+                .filter(shouldShowPlayer)
+                .filter(player => player.alive)
+                .map(player => <PlayerCard 
+                    key={player.name} 
+                    player={player}
+                    myIndex={myIndex}
+                    roleState={roleState}
+                    graveRolesStrings={graveRolesStrings}
+                    chatFilter={chatFilter}
+                    phaseState={phaseState}
+                    chatGroups={chatGroups}
+                />)}
+            {players.filter(shouldShowPlayer).filter(player => !player.alive).length === 0 || <>
+                <div className="dead-players-separator">{translate("dead.icon")} {translate("dead")}</div>
+                {players
+                    .filter(shouldShowPlayer)
+                    .filter(player => !player.alive)
+                    .map(player => <PlayerCard 
+                        key={player.name} 
+                        player={player}
+                        myIndex={myIndex}
+                        roleState={roleState}
+                        graveRolesStrings={graveRolesStrings}
+                        chatFilter={chatFilter}
+                        phaseState={phaseState}
+                        chatGroups={chatGroups}
+                    />)}
+            </>}
+        </div>
+    </div>
+}
+
+function PlayerCard(props: Readonly<{ 
+    player: Player, 
+    myIndex: PlayerIndex | undefined, 
+    roleState: RoleState | undefined, 
+    chatFilter: number | null | undefined
+    graveRolesStrings: (string | null)[],
+    phaseState: PhaseState,
+    chatGroups: ChatGroup[] | undefined
+}>): ReactElement{
+    const { player, myIndex, roleState, graveRolesStrings, chatFilter, phaseState, chatGroups } = props;
+
+    let roleString = (()=>{
+        if(player.index === myIndex){
+            return ("("+translate("role."+roleState?.type+".name")+")");
         }
-        return null;
-    }
 
-    renderPlayer(player: Player){
+        if(player.alive && player.roleLabel != null){
+            return ("("+translate("role."+player.roleLabel+".name")+")");
+        }
+        
+        if (!player.alive && graveRolesStrings[player.index] != null){
+            return graveRolesStrings[player.index];
+        }
 
-        let roleString = (()=>{
-            if(player.index === this.state.myIndex){
-                return ("("+translate("role."+this.state.roleState?.type+".name")+")");
-            }
+        return "";
+    })();
 
-            if(player.alive && player.roleLabel != null){
-                return ("("+translate("role."+player.roleLabel+".name")+")");
-            }
-            
-            if (!player.alive && this.state.graveRolesStrings[player.index] != null){
-                return this.state.graveRolesStrings[player.index];
-            }
+    const isPlayerSelf = player.index === myIndex;
 
-            return "";
-        })();
+    return <div 
+        className={`player ${(votedForPlayer(player) || selectedPlayer(player) || dayTargetedPlayer(player)) ? "highlighted" : ""}`}
+        key={player.index}
+    >
+        {votedForPlayer(player)
+            ? <div className="voted-popup">{translate("menu.playerList.player.youAreVoting")}</div>
+            : undefined}
+        <div className="top">  
+            {(() => {
+                if (phaseState.type === "testimony" || phaseState.type === "judgement" || phaseState.type === "finalWords") {
+                    if (phaseState.playerOnTrial === player.index) {
+                        return <StyledText>{translate("trial.icon")} </StyledText>
+                    }
+                }
+            })()}
+            <StyledText>{(player.alive?"":translate("dead.icon"))} </StyledText>
+            <StyledText>{player.toString()}</StyledText>
+            {roleString!==null&&<StyledText> {roleString}</StyledText>}
+            <StyledText>{player.playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
+        </div>
+        
+        {phaseState.type === "nomination" && player.alive && 
+            <Counter 
+                max={GAME_MANAGER.getVotesRequired()!} 
+                current={player.numVoted}
+            >
+                <StyledText>{translate("menu.playerList.player.votes", player.numVoted)}</StyledText>
+            </Counter>}
 
-        return(<div className="player" key={player.index}>
-            <div className="top">
-                {(
-                    player.numVoted !==null &&
-                    player.numVoted !==0 &&
-                    this.state.phase === "nomination"
-                ) ?
-                    <span className="keyword-player-number">
-                        {player.numVoted}
-                    </span>
-                : null}
-                <button className="whisper" onClick={()=>{GAME_MANAGER.prependWhisper(player.index)}}>
-                    <h4>
-                        <StyledText>{(player.alive?"":" "+translate("dead.icon")+"")}</StyledText>
-                    </h4>
-                    <StyledText>{player.toString()}</StyledText>
-                    {roleString!==null&&<StyledText>{roleString}</StyledText>}
-                </button>
-                <div className="playerTags">
-                    <StyledText>{player.playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
-                </div>
+        {GAME_MANAGER.getMySpectator() || <div className="buttons">
+            <div className="chat-buttons">
                 {(() => {
 
                     const filter = player.index;
-                    const isFilterSet = this.state.chatFilter === filter;
+                    const isFilterSet = chatFilter === filter;
                     
                     return <Button 
                         className={"filter"} 
@@ -254,7 +303,6 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                                 GAME_MANAGER.state.clientState.chatFilter = isFilterSet ? null : filter;
                                 GAME_MANAGER.invokeStateListeners("filterUpdate");
                             }
-                            this.setState({})
                             return true;
                         }}
                         pressedChildren={result => <Icon>{result ? "done" : "warning"}</Icon>}
@@ -263,103 +311,51 @@ export default class PlayerListMenu extends React.Component<PlayerListMenuProps,
                         <Icon>filter_alt</Icon>
                     </Button>
                 })()}
+                {!isPlayerSelf && player.alive && (chatGroups ?? []).includes("all") && <Button 
+                    onClick={()=>{GAME_MANAGER.prependWhisper(player.index); return true;}}
+                    pressedChildren={() => <Icon>done</Icon>}
+                >
+                    <Icon>chat</Icon>
+                </Button>}
             </div>
-            
-
-            <div className="buttons">
-                <div className="day-target">
-                    {player.buttons.dayTarget && <Button 
-                        highlighted={
-                            (this.state.roleState?.type === "jailor" && this.state.roleState.jailedTargetRef === player.index)
-                            || 
-                            (this.state.roleState?.type === "medium" && this.state.roleState.seancedTarget === player.index)
-                            || 
-                            (this.state.roleState?.type === "journalist" && this.state.roleState.interviewedTarget === player.index)
-                            || 
-                            (
-                                this.state.roleState?.type === "marksman" && 
-                                this.state.roleState.state.type === "marks" &&
-                                (
-                                    (this.state.roleState.state.marks.type === "one" && this.state.roleState.state.marks.a === player.index) ||
-                                    (this.state.roleState.state.marks.type === "two" && (
-                                        this.state.roleState.state.marks.a === player.index || 
-                                        this.state.roleState.state.marks.b === player.index
-                                    ))
-                                )
-                            )
-                        } 
-                        onClick={()=>GAME_MANAGER.sendDayTargetPacket(player.index)}
-                    >
-                        {translate("role."+this.state.roleState?.type+".dayTarget")}
-                    </Button>}
-                </div>
-                <div className="target">
-                    {((player) => {
-                        if(player.buttons.target) {
-                            return <button onClick={() => {
-                                if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
-                                    GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.state.clientState.targets, player.index])
-                            }}>
-                                {translate("role."+this.state.roleState?.type+".target")}
-                            </button>
-                        } else if (GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && this.state.phase === "night" && this.state.targets.includes(player.index)) {
-                            let newTargets = [...GAME_MANAGER.state.clientState.targets];
-                            newTargets.splice(newTargets.indexOf(player.index), 1);
-                            return <Button highlighted={true} onClick={() => GAME_MANAGER.sendTargetPacket(newTargets)}>
-                                {translate("cancel")}
-                            </Button>
-                        }
-                    })(player)}
-                </div>
-                <div className="vote">
-                    {player.buttons.vote && <button 
-                        onClick={()=>GAME_MANAGER.sendVotePacket(player.index)}
-                    >{translate("menu.playerList.button.vote")}</button>}
-                </div>
-            </div>            
-        </div>)
-    }
-    renderPlayers(players: Player[]){
-        return <div className="player-list">{
-            players.filter((player: Player) => {
-                switch(this.state.playerFilter){
-                    case "all": return true;
-                    case "living": return player.alive;
-                    case "usable": return Object.values(player.buttons).includes(true);
-                    default: return false;
-                }
-            }).map(player => this.renderPlayer(player))
-        }</div>
-    }
-
-    renderFilterButton(filter: PlayerFilter) {
-        return <Button 
-            highlighted={this.state.playerFilter === filter}
-            onClick={()=>this.setState({playerFilter: filter})}
-        >
-            {translate("menu.playerList.button." + filter)}
-        </Button>
-    }
-
-    render(){return(<div className="player-list-menu player-list-menu-colors">
-        <ContentTab close={ContentMenu.PlayerListMenu} helpMenu={"standard/playerList"}>{translate("menu.playerList.title")}</ContentTab>
-
-        <details className="role-specific-colors small-role-specific-menu" open={this.state.roleSpecificOpen}>
-            <summary
-                onClick={(e)=>{
-                    e.preventDefault();
-                    this.setState({roleSpecificOpen: !this.state.roleSpecificOpen});
-                }}
-            >{translate("role."+this.state.roleState?.type+".name")}</summary>
-            <RoleSpecificSection/>
-        </details>
-        
-        <div>
-            {this.renderFilterButton("all")}
-            {this.renderFilterButton("living")}
-            {this.renderFilterButton("usable")}
-        </div>
-        {this.renderPhaseSpecific()}
-        {this.renderPlayers(this.state.players)}
-    </div>)}
+            <div className="day-target">
+                {player.buttons.dayTarget && <Button 
+                    highlighted={dayTargetedPlayer(player)} 
+                    onClick={()=>GAME_MANAGER.sendDayTargetPacket(player.index)}
+                >
+                    {translateAny(["role."+roleState?.type+".dayTarget", "dayTarget"])}
+                </Button>}
+            </div>
+            <div className="target-or-vote">
+                {((player) => {
+                    if(player.buttons.target) {
+                        return <button onClick={() => {
+                            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+                                GAME_MANAGER.sendTargetPacket([...GAME_MANAGER.state.clientState.targets, player.index])
+                        }}>
+                            {translateAny(["role."+roleState?.type+".target", "target"])}
+                        </button>
+                    } else if (selectedPlayer(player) && GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player") {
+                        let newTargets = [...GAME_MANAGER.state.clientState.targets];
+                        newTargets.splice(newTargets.indexOf(player.index), 1);
+                        return <Button highlighted={true} onClick={() => GAME_MANAGER.sendTargetPacket(newTargets)}>
+                            {translate("cancel")}
+                        </Button>
+                    }
+                })(player)}
+                {(() => {
+                    if (player.buttons.vote) {
+                        return <button 
+                            onClick={()=>GAME_MANAGER.sendVotePacket(player.index)}
+                        >{translate("menu.playerList.button.vote")}</button>
+                    } else if (votedForPlayer(player)) {
+                        return <Button
+                            highlighted={true}
+                            onClick={() => GAME_MANAGER.sendVotePacket(null)}
+                        >{translate("button.clear")}</Button>
+                    }
+                })()}
+            </div>
+        </div>}
+    </div>
 }

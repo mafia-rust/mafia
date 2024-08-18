@@ -55,6 +55,8 @@ export type ToClientPacket = {
 } | {
     type: "startGame"
 } | {
+    type: "gameInitializationComplete"
+} | {
     type: "backToLobby",
 } | {
     type: "gamePlayers",
@@ -74,7 +76,7 @@ export type ToClientPacket = {
     type: "phaseTimes",
     phaseTimeSettings: PhaseTimes
 } | {
-    type: "excludedRoles",
+    type: "enabledRoles",
     roles: Role[]
 } | 
 // Game
@@ -197,7 +199,7 @@ export type ToServerPacket = {
     type: "setPhaseTimes", 
     phaseTimeSettings: PhaseTimes
 } | {
-    type: "setExcludedRoles", 
+    type: "setEnabledRoles", 
     roles: Role[], 
 } | {
     type: "backToLobby",

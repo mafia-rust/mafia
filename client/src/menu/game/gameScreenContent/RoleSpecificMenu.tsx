@@ -4,6 +4,7 @@ import GAME_MANAGER from "../../../index";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import GameState from "../../../game/gameState.d";
 import RoleSpecificSection from "../../../components/RoleSpecific";
+import SelectionInformation from "../../../components/SelectionInformation";
 
 type RoleSpecificMenuProps = {
 }
@@ -37,7 +38,10 @@ export default class RoleSpecificMenu extends React.Component<RoleSpecificMenuPr
     
     renderRoleSpecificMenu(){
         if(this.state.gameState.clientState.type !== "player") return null;
-        return <RoleSpecificSection/>
+        return <>
+            <SelectionInformation />
+            <RoleSpecificSection/>
+        </>
     }
     render(){
         if(this.state.gameState.clientState.type === "player")

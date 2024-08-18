@@ -1,8 +1,27 @@
 
-.chat-message {
+.chat-message-div-copy-button {
+    position: absolute;
+    font-size: 1rem;
+    right: 0;
+    bottom: 0;
+    padding: 0.1rem;
+    border-radius: 0.2rem;
+}
+.chat-message-div > details {
+    width: 100%;
+}
+.chat-message-div {
+    position: relative;
     max-width: 100%;
+    display: flex;
+    align-items: center;
+}
+.chat-message {
+    width: 100%;
     text-align: left;
     margin: .1rem;
+    margin-left: 0;
+    margin-right: 0;
     overflow-wrap: anywhere;
     tab-size: 1rem;
 }
@@ -30,7 +49,7 @@
 }
 .chat-message.dead {
     background-color: black;
-    border-radius: 5px;
+    border-radius: .5rem;
     color: grey;
 }
 .chat-message.phase-change {
@@ -39,13 +58,16 @@
     color: yellow;
     text-decoration: underline;
 }
+.chat-message.phase-change .keyword-info{
+    color: yellow;
+}
 .chat-message.center {
     text-align: center;
 }
 .chat-message.special {
     color: violet;
 }
-.chat-message.discreet {
+.chat-message.discreet, .discreet {
     color: turquoise;
 }
 .chat-message.important {
@@ -74,16 +96,25 @@
     background-color: #660000;
 }
 .grave-message {
-    border-top: var(--primary-border-color) 1px solid;
-    border-bottom: var(--primary-border-color) 1px solid;
+    border: .13rem solid var(--background-border-color);
+    border-bottom-color: var(--background-border-shadow-color);
+    border-right-color: var(--background-border-shadow-color);
+    border-radius: .5rem;
+    margin: .13rem;
+    padding: .25rem;
 }
 
+.kira-guess-results {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+}
 .kira-guess-result {
-    align-items: center;
+    width: 100%;
+    align-items: left;
     flex-direction: row;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
-    width: max-content;
     border-radius: 0.4rem;
     border-width: .07rem;
     border-style: solid;

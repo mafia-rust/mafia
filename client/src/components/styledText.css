@@ -1,21 +1,20 @@
 .keyword-link {
     font: inherit;
     color: inherit;
-    text-decoration: none;
 }
 .keyword-link:hover {
     text-decoration: underline;
 }
 .keyword-player-number {
-	border-radius: 1rem;
-    border: solid 1.5px;
+	border-radius: 1em;
+    border: solid .13rem;
     border-bottom-color: darkgray;
     border-right-color: darkgray;
     background-color: var(--primary-color);
     display: inline-block;
-    height: 1rem;
-    padding: 0.1rem 0.3rem 1rem;
-    font-size: 0.8rem;
+    height: 1em;
+    padding: 0.1em 0.35em 1.2em;
+    font-size: 0.8em;
     text-indent: 0;
     text-align: center !important;
 }

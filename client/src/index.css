@@ -1,28 +1,34 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
 :root{
-    --background-color: #0e1c26;
+    --background-color: #0E1026;
 
-    --primary-color: #0E1026;
-    --secondary-color: #21293a;
+    --fade-color: #161b34;
 
-    --primary-border-color: #2A454B;
+    --primary-color: #1c244e;
+    --secondary-color: #232754;
+    --text-color: #ffffff;
 
-    --hover-color: #2d364e;
-    
-    --tab-color: #132936;
+    --primary-border-color: #3c4675;
+    --primary-border-shadow-color: #111836;
+    --background-border-color: #262355;
+    --background-border-shadow-color: #09071e;
+
+    --hover-color: #232c57;
+    --focus-outline-color: #929ccc;
 
     font-size: 1em;
 }
 
 s {
     text-decoration: line-through;
-    text-decoration-thickness: 2px;
+    text-decoration-thickness: .13rem;
 }
 
 *{
     user-select: none;
     
+    text-shadow: .0625rem .0625rem .13rem rgb(0, 0, 0);
     text-align: center;
     box-sizing: border-box;
 
@@ -52,17 +58,27 @@ button, input, select, option, textarea, summary {
     border-style: solid;
     border-width: .13rem;
     color: white;
-    font-size: 1rem;
+    font-size: 1em;
     padding: 0.13rem 0.25rem;
 }
 
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-option:focus-visible,
-textarea:focus-visible,
-summary:focus-visible {
-    outline: white solid .13rem;
+*:focus-visible {
+    outline: var(--focus-outline-color) solid .13rem;
+    background-color: var(--hover-color);
+}
+
+a {
+    text-decoration: none .13rem;
+}
+
+a:hover {
+    background-color: var(--hover-color);
+}
+
+a:focus-visible {
+    outline: unset;
+    text-decoration-line: underline;
+    text-decoration-color: var(--focus-outline-color);
 }
 
 button, summary {
@@ -71,13 +87,13 @@ button, summary {
     white-space: nowrap;
 }
 button, select, summary {
-    border-bottom-color: black;
-    border-right-color: black;
+    border-bottom-color: var(--primary-border-shadow-color);
+    border-right-color: var(--primary-border-shadow-color);
     user-select: none;
 }
 input, option, textarea {
-    border-top-color: black;
-    border-left-color: black;
+    border-top-color: var(--background-border-shadow-color);
+    border-left-color: var(--background-border-shadow-color);
 }
 
 :has(input):focus-within > button.clear {
@@ -90,7 +106,7 @@ input, option, textarea {
 
 button.clear {
     display: none;
-    font-size: 0.8rem;
+    font-size: 0.8em;
     position: absolute;
     right: 0.5rem;
     top: 0.4rem;
@@ -100,7 +116,7 @@ button.clear {
 }
 
 button.close {
-    font-size: 1rem;
+    font-size: 1em;
     padding: 0;
 }
 
@@ -119,7 +135,7 @@ option {
     background-color: var(--background-color);
 }
 
-button:hover:not([disabled]), input:hover:not([disabled]), select:hover:not([disabled]), option:hover:not([disabled]), summary:hover:not([disabled]) {
+button:hover:not([disabled]):not(:active), input:hover:not([disabled]):not(:active), select:hover:not([disabled]):not(:active), option:hover:not([disabled]):not(:active), summary:hover:not([disabled]):not(:active) {
     background-color: var(--hover-color);
 }
 
@@ -162,52 +178,79 @@ code, .code {
 }
 
 .chat-menu-colors {
-    --background-color: #151f2e;
+    --background-color: #151a41;
+    --background-border-color: #2b3162;
+    --background-border-shadow-color: #0e1024;
 }
 
 .player-list-menu-colors {
-    --background-color: #14271e;
-    --primary-color: #0c1a0c;
-    --primary-border-color: #3b5738;
-    --secondary-color: #1a2d24;
-    --hover-color: #2d4e37;
-    --tab-color: #254230;
+    --background-color: #182c28;
+    --fade-color: #0b1511;
+    --primary-color: #1a3531;
+    --secondary-color: #1f3a35;
+    --text-color: #ffffff;
+    --primary-border-color: #2e5952;
+    --primary-border-shadow-color: #142523;
+    --background-border-color: #2c4d46;
+    --background-border-shadow-color: #121f1c;
+    --hover-color: #1f403b;
+    --focus-outline-color: #84a997;
 }
 
 .will-menu-colors {
-    --background-color: #201932;
-    --primary-color: #170c21;
-    --primary-border-color: #3d3966;
-    --secondary-color: #261f38;
-    --hover-color: #3b2d4e;
-    --tab-color: #382138;
+    --background-color: #251737;
+    --fade-color: #100b15;
+    --primary-color: #2c1c40;
+    --secondary-color: #332142;
+    --text-color: #ffffff;
+    --primary-border-color: #4c3558;
+    --primary-border-shadow-color: #250d2b;
+    --background-border-color: #352d56;
+    --background-border-shadow-color: #110d18;
+    --hover-color: #38254e;
+    --focus-outline-color: #9c84a9;
 }
 
 .role-specific-colors {
-    --background-color: #2a181d;
-    --primary-color: #1c0d0f;
-    --primary-border-color: #633e46;
-    --secondary-color: #362429;
-    --hover-color: #3d2328;
-    --tab-color: #392a2d;
+    --background-color: #331c26;
+    --fade-color: #150b12;
+    --primary-color: #422031;
+    --secondary-color: #422137;
+    --text-color: #ffffff;
+    --primary-border-color: #5a3246;
+    --primary-border-shadow-color: #25141d;
+    --background-border-color: #50303e;
+    --background-border-shadow-color: #25131c;
+    --hover-color: #4c2337;
+    --focus-outline-color: #a9849c;
 }
 
 .graveyard-menu-colors {
-    --background-color: #2e2e2e;
-    --primary-color: #212121;
-    --primary-border-color: #575757;
-    --secondary-color: #343434;
-    --hover-color: #3d3d3d;
-    --tab-color: #424242;
+    --background-color: #2c2b3b;
+    --fade-color: #1d1b29;
+    --primary-color: #323142;
+    --secondary-color: #373647;
+    --text-color: #ffffff;
+    --primary-border-color: #49485b;
+    --primary-border-shadow-color: #202027;
+    --background-border-color: #3d3c4d;
+    --background-border-shadow-color: #19181f;
+    --hover-color: #3c3b4d;
+    --focus-outline-color: #9896ae;
 }
 
 .wiki-menu-colors {
-    --background-color: #282317;
-    --primary-color: #1c160d;
-    --primary-border-color: #52402e;
-    --secondary-color: #362c24;
-    --hover-color: #3d3023;
-    --tab-color: #39352a;
+    --background-color: #301f1b;
+    --fade-color: #150e0b;
+    --primary-color: #412720;
+    --secondary-color: #422821;
+    --text-color: #ffffff;
+    --primary-border-color: #5a3b32;
+    --primary-border-shadow-color: #2b1b16;
+    --background-border-color: #503830;
+    --background-border-shadow-color: #251813;
+    --hover-color: #4c2d23;
+    --focus-outline-color: #a98e84;
 }
 
 

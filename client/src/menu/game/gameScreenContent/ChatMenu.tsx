@@ -1,20 +1,19 @@
 import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER, { replaceMentions } from "../../../index";
+import GAME_MANAGER from "../../../index";
 import "../gameScreen.css";
 import "./chatMenu.css"
 import { PlayerIndex } from "../../../game/gameState.d";
-import { ChatMessage, translateChatMessage } from "../../../components/ChatMessage";
-import ChatElement from "../../../components/ChatMessage";
+import ChatElement, { ChatMessage, translateChatMessage } from "../../../components/ChatMessage";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import { HistoryPoller, HistoryQueue } from "../../../history";
 import { StateListener } from "../../../game/gameManager.d";
 import { Button } from "../../../components/Button";
 import Icon from "../../../components/Icon";
+import StyledText from "../../../components/StyledText";
 
 
 export default function ChatMenu(): ReactElement {
-
     const [filter, setFilter] = useState<PlayerIndex | null>(null);
     useEffect(() => {
         const stateListener: StateListener = (type) => {
@@ -27,7 +26,6 @@ export default function ChatMenu(): ReactElement {
         GAME_MANAGER.addStateListener(stateListener);
         return () => GAME_MANAGER.removeStateListener(stateListener);
     }, [setFilter]);
-    
 
     const [sendChatGroups, setSendChatGroups] = useState<string[]>([]);
     useEffect(() => {
@@ -44,33 +42,38 @@ export default function ChatMenu(): ReactElement {
 
     return <div className="chat-menu chat-menu-colors">
         <ContentTab close={ContentMenu.ChatMenu} helpMenu={"standard/chat"}>{translate("menu.chat.title")}</ContentTab>
+        {!GAME_MANAGER.getMySpectator() && (filter !== null) && <div className="chat-filter-zone highlighted">
+            <StyledText>{translate("menu.chat.playerFilter", GAME_MANAGER.getPlayerNames()[filter])}</StyledText>
+            <Button 
+                onClick={()=>{
+                    if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                        GAME_MANAGER.state.clientState.chatFilter = null;
+                        GAME_MANAGER.invokeStateListeners("filterUpdate");
+                    }
+                }}
+                highlighted={true}
+                aria-label={translate("menu.chat.clearFilter")}
+            >
+                <Icon>filter_alt_off</Icon>
+            </Button>
+        </div>}
         <ChatMessageSection filter={filter}/>
-        {filter !== null && <Button 
-            onClick={()=>{
-                if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
-                    GAME_MANAGER.state.clientState.chatFilter = null;
-                    GAME_MANAGER.invokeStateListeners("filterUpdate");
-                }
-            }}
-            highlighted={true}
-            aria-label={translate("menu.chat.clearFilter")}
-        >
-            <Icon>filter_alt_off</Icon>
-        </Button>}
-        <div className="chat-menu-icons">
-            {!sendChatGroups.includes("all") && translate("noAll.icon")}
-            {sendChatGroups.map((group) => {
-                return translate("chatGroup."+group+".icon");
-            })}
-        </div>
-        <ChatTextInput disabled={sendChatGroups.length === 0}/>
+        {GAME_MANAGER.getMySpectator() || <>
+            <div className="chat-menu-icons">
+                {!sendChatGroups.includes("all") && translate("noAll.icon")}
+                {sendChatGroups.map((group) => {
+                    return translate("chatGroup."+group+".icon");
+                })}
+            </div>
+            <ChatTextInput disabled={sendChatGroups.length === 0}/>
+        </>}
     </div>
 }
 
 
-export function ChatMessageSection(props:{
+export function ChatMessageSection(props: Readonly<{
     filter?: PlayerIndex | null
-}): ReactElement {
+}>): ReactElement {
     const filter = useMemo(() => props.filter ?? null, [props.filter]);
     const [messages, setMessages] = useState<ChatMessage []>(() => {
         if (GAME_MANAGER.state.stateType === "game" || GAME_MANAGER.state.stateType === "lobby")
@@ -161,17 +164,49 @@ export function ChatMessageSection(props:{
     </div>
 }
 
-export function ChatTextInput(props: {disabled?: boolean}): ReactElement {
+export function ChatTextInput(props: Readonly<{ disabled?: boolean }>): ReactElement {
     const [chatBoxText, setChatBoxText] = useState<string>("");
+    const [drawAttentionSeconds, setDrawAttentionSeconds] = useState<number>(0);
+    const ref = useRef<HTMLTextAreaElement>(null);
+    const [whispering, setWhispering] = useState<PlayerIndex | null>(null);
+
+    const whisperingPlayer = useMemo(() => {
+        if (GAME_MANAGER.state.stateType === "game" && whispering !== null) {
+            return GAME_MANAGER.state.players[whispering].toString();
+        } else {
+            return `${whispering}`
+        }
+    }, [whispering])
     
-    const setWhisper = useCallback((index: PlayerIndex) => {
-        setChatBoxText("/w" + (index + 1) + " " + chatBoxText)
-    }, [chatBoxText, setChatBoxText]);
+    const prependWhisper = useCallback((index: PlayerIndex) => {
+        if (
+            GAME_MANAGER.state.stateType === "game" 
+            && index < GAME_MANAGER.state.players.length 
+            && GAME_MANAGER.state.clientState.type === "player" 
+            && index !== GAME_MANAGER.state.clientState.myIndex
+        ) {
+            setWhispering(index);
+            setDrawAttentionSeconds(1.5);
+            ref.current?.focus()
+        }
+    }, []);
 
     useEffect(() => {
-        GAME_MANAGER.setPrependWhisperFunction(setWhisper);
+        if (drawAttentionSeconds === 0) {
+            return;
+        } else if (drawAttentionSeconds < 0) {
+            setDrawAttentionSeconds(0);
+        } else {
+            setTimeout(() => {
+                setDrawAttentionSeconds(drawAttentionSeconds - 0.5);
+            }, 500)
+        }
+    }, [drawAttentionSeconds])
+
+    useEffect(() => {
+        GAME_MANAGER.setPrependWhisperFunction(prependWhisper);
         return () => GAME_MANAGER.setPrependWhisperFunction(() => {});
-    }, [setWhisper]);
+    }, [prependWhisper]);
 
 
     const history: HistoryQueue<string> = useMemo(() => new HistoryQueue(40), []);
@@ -180,35 +215,49 @@ export function ChatTextInput(props: {disabled?: boolean}): ReactElement {
 
     const sendChatField = useCallback(() => {
         let text = chatBoxText.replace("\n", "").replace("\r", "").trim();
+        setWhispering(null);
+        setChatBoxText("");
         if (text === "") return;
         history.push(text);
         historyPoller.reset();
-        if (text.startsWith("/w") && GAME_MANAGER.state.stateType === "game") {
-            //needs to work with multi digit numbers
-            const match = text.match(/\/w(\d+) /);
-            if (match === null || match.length < 2) return;
-            const index = parseInt(match[1]) - 1;
-            GAME_MANAGER.sendSendWhisperPacket(index, text.slice(match[0].length));
-
-        } else {
-            text = replaceMentions(text, GAME_MANAGER.getPlayerNames());
-            if(GAME_MANAGER.state.stateType === "game") {
+        if (GAME_MANAGER.state.stateType === "game") {
+            if (whispering !== null) {
+                GAME_MANAGER.sendSendWhisperPacket(whispering, text);
+            } else {
                 GAME_MANAGER.sendSendMessagePacket(text);
-            } else if (GAME_MANAGER.state.stateType === "lobby") {
-                GAME_MANAGER.sendSendLobbyMessagePacket(text);
             }
+        } else if (GAME_MANAGER.state.stateType === "lobby") {
+            GAME_MANAGER.sendSendLobbyMessagePacket(text);
         }
-        setChatBoxText("");
-    }, [history, historyPoller, chatBoxText]);
+    }, [chatBoxText, history, historyPoller, whispering]);
 
     const handleInputChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setChatBoxText(
-            event.target.value
-                .replace(/  +/g, ' ')
-                .replace(/\t/g, ' ')
-                .replace(/\n/g, ' ')
-        );
-    }, [setChatBoxText]);
+        const text = event.target.value;
+        const whisperCommandMatch = RegExp(/\/w(\d+) /).exec(text);
+        if (whispering === null && whisperCommandMatch !== null) {
+            const index = parseInt(whisperCommandMatch[1]) - 1;
+            if (
+                GAME_MANAGER.state.stateType === "game" 
+                && index < GAME_MANAGER.state.players.length 
+                && index >= 0
+                && GAME_MANAGER.state.clientState.type === "player" 
+                && index !== GAME_MANAGER.state.clientState.myIndex
+            ) {
+                setWhispering(index);
+                setChatBoxText(text.slice(whisperCommandMatch[0].length));
+            } else {
+                setWhispering(null);
+                setChatBoxText(text);
+            }
+        } else {
+            setChatBoxText(
+                text
+                    .replace(/  +/g, ' ')
+                    .replace(/\t/g, ' ')
+                    .replace(/\n/g, ' ')
+            );
+        }
+    }, [whispering]);
 
     const handleInputKeyDown = useCallback((event: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (event.key === "Enter") {
@@ -223,21 +272,37 @@ export function ChatTextInput(props: {disabled?: boolean}): ReactElement {
             event.preventDefault();
             const text = historyPoller.pollPrevious(history);
             setChatBoxText(text ?? "");
+        } else if (event.key === "Escape") {
+            event.preventDefault();
+            setWhispering(null);
         }
     }, [sendChatField, history, historyPoller]);
 
-    return <div className="chat-send-section">
-        <textarea
-            value={chatBoxText}
-            onChange={handleInputChange}
-            onKeyDown={handleInputKeyDown}
-        />
-        <Button 
-            disabled={props.disabled}
-            onClick={sendChatField}
-            aria-label={translate("menu.chat.button.send")}
-        >
-            <Icon>send</Icon>
-        </Button>
-    </div>
+    return <>
+        {whispering !== null && <div className="chat-whisper-notification">
+            <StyledText className="discreet">{translate("youAreWhispering", whisperingPlayer)}</StyledText>
+            <Button
+                highlighted={true}
+                onClick={() => setWhispering(null)}
+            >
+                {translate("cancelWhisper")}
+            </Button>
+        </div>}
+        <div className="chat-send-section">
+            <textarea
+                className={drawAttentionSeconds * 2 % 2 === 1 ? "highlighted" : undefined}
+                ref={ref}
+                value={chatBoxText}
+                onChange={handleInputChange}
+                onKeyDown={handleInputKeyDown}
+            />
+            <Button 
+                disabled={props.disabled}
+                onClick={sendChatField}
+                aria-label={translate("menu.chat.button.send")}
+            >
+                <Icon>send</Icon>
+            </Button>
+        </div>
+    </>
 }

@@ -2,7 +2,8 @@ import React, { JSXElementConstructor, MouseEventHandler, ReactElement, useRef }
 import "../index.css";
 import "./anchor.css";
 import { switchLanguage } from "../game/lang";
-import SettingsMenu, { DEFAULT_SETTINGS } from "./Settings";
+import GlobalMenu from "./GlobalMenu";
+import SettingsMenu from './Settings';
 import { loadSettings } from "../game/localStorage";
 import LoadingScreen from "./LoadingScreen";
 import { Theme } from "..";
@@ -23,7 +24,7 @@ type AnchorState = {
     coverCardTheme: Theme | null,
     errorCard: JSX.Element | null,
 
-    settings_menu: boolean,
+    globalMenuOpen: boolean,
 
     audio: HTMLAudioElement,
 
@@ -50,7 +51,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             coverCardTheme: null,
             errorCard: null,
 
-            settings_menu: false,
+            globalMenuOpen: false,
 
             audio: new Audio(),
 
@@ -62,8 +63,8 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         Anchor.instance = this;
 
         const settings = loadSettings();
-        Anchor.instance.state.audio.volume = settings.volume ?? DEFAULT_SETTINGS.volume;
-        switchLanguage(settings.language ?? "en_us")
+        Anchor.instance.state.audio.volume = settings.volume;
+        switchLanguage(settings.language)
 
         window.addEventListener("resize", Anchor.onResize);
         Anchor.onResize();
@@ -170,12 +171,18 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     }
 
 
-
-    static closeSettings() {
-        Anchor.instance.setState({settings_menu: false});
+    static updateAnchorVolume(volume: number) {
+        Anchor.instance.state.audio.volume = volume;
+        Anchor.instance.setState({
+            audio: Anchor.instance.state.audio
+        });
     }
-    static openSettings() {
-        Anchor.instance.setState({settings_menu: true});
+
+    static closeGlobalMenu() {
+        Anchor.instance.setState({globalMenuOpen: false});
+    }
+    static openGlobalMenu() {
+        Anchor.instance.setState({globalMenuOpen: true});
     }
 
     static addSwipeEventListener(listener: (right: boolean) => void) {
@@ -224,19 +231,13 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             onTouchMove={(e) => {this.onTouchMove(e)}}
             onTouchEnd={(e) => {this.onTouchEnd(e)}}
         >
-            <Button className="settings-button" 
-                onClick={() => this.setState({settings_menu: !this.state.settings_menu})}
+            <Button className="global-menu-button" 
+                onClick={() => this.setState({globalMenuOpen: !this.state.globalMenuOpen})}
             >
                 <Icon>menu</Icon>
             </Button>
-            {this.state.settings_menu && <SettingsMenu 
-                onVolumeChange={(volume) => {
-                    Anchor.instance.state.audio.volume = volume;
-                    this.setState({
-                        audio: this.state.audio
-                    });
-                }}
-                onClickOutside={() => this.setState({settings_menu: false})}
+            {this.state.globalMenuOpen && <GlobalMenu 
+                onClickOutside={() => this.setState({globalMenuOpen: false})}
             />}
             {this.state.content}
             {this.state.coverCard && <CoverCard 
@@ -257,6 +258,8 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         let coverCardTheme: Theme | null = null;
         if (coverCard.type === WikiCoverCard || coverCard.type === WikiArticle) {
             coverCardTheme = "wiki-menu-colors"
+        } else if (coverCard.type === SettingsMenu) {
+            coverCardTheme = "graveyard-menu-colors"
         }
 
         Anchor.instance.setState({ coverCard, coverCardTheme }, callback);

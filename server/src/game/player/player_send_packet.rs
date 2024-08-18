@@ -55,7 +55,7 @@ impl PlayerReference{
             ToClientPacket::GamePlayers{ 
                 players: PlayerReference::all_players(game).map(|p|p.name(game).clone()).collect()
             },
-            ToClientPacket::ExcludedRoles { roles: game.settings.excluded_roles.clone().into_iter().collect() },
+            ToClientPacket::EnabledRoles { roles: game.settings.enabled_roles.clone().into_iter().collect() },
             ToClientPacket::RoleList {role_list: game.settings.role_list.clone()},
             ToClientPacket::PlayerAlive{
                 alive: PlayerReference::all_players(game).map(|p|p.alive(game)).collect()
@@ -122,7 +122,8 @@ impl PlayerReference{
                 phase: game.current_phase().clone(),
                 day_number: game.phase_machine.day_number 
             },
-            ToClientPacket::PhaseTimeLeft { seconds_left: game.phase_machine.time_remaining.as_secs() }
+            ToClientPacket::PhaseTimeLeft { seconds_left: game.phase_machine.time_remaining.as_secs() },
+            ToClientPacket::GameInitializationComplete
         ]);
     }
 

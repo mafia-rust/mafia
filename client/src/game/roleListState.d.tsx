@@ -1,6 +1,6 @@
 
 import translate from "./lang";
-import { Role, getFactionFromRole } from "./roleState.d";
+import { Role } from "./roleState.d";
 import ROLES from "../resources/roles.json";
 
 export const FACTIONS = ["town", "mafia", "cult", "neutral", "fiends"] as const;
@@ -27,52 +27,7 @@ export function getRolesFromRoleList(roleList: RoleList): Role[] {
 
     return Array.from(set);
 }
-export function getRolesFromRoleListRemoveExclusionsAddConversions(roleList: RoleList, excludedRoles: Role[]): Role[] {
-    let out = [];
 
-    let roles = getRolesFromRoleList(roleList);
-    roles = roles.filter((role) => {
-        return !excludedRoles.includes(role);
-    });
-
-    
-    for(let role of roles){
-        switch (role) {
-            case "wildcard":
-            case "trueWildcard":
-                getRolesComplement(excludedRoles).forEach((role) => {
-                    out.push(role);
-                });
-                break;
-            case "mafiaSupportWildcard":
-                getRolesComplement(excludedRoles)
-                    .filter((role)=>getFactionFromRole(role)==="mafia")
-                    .filter((role)=>role!=="godfather" && role!=="mafioso")
-                    .forEach((role) => {
-                        out.push(role);
-                    }
-                );
-                break;
-            case "fiendsWildcard":
-                getRolesComplement(excludedRoles)
-                    .filter((role)=>getFactionFromRole(role)==="fiends")
-                    .forEach((role) => {
-                        out.push(role);
-                    }
-                );
-                break;
-        }
-    }
-
-    for(let role of roles){
-        out.push(role);
-        for(let converted of ROLES[role].canBeConvertedTo){
-            out.push(converted);
-        }
-    }
-
-    return out as Role[];
-}
 export function getRolesComplement(roleList: Role[]): Role[] {
     let roles = Object.keys(ROLES) as Role[];
     return roles.filter((role) => {

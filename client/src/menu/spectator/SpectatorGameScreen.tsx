@@ -1,138 +1,136 @@
-import { ReactElement, useEffect } from "react";
+import React, { ReactElement, useCallback, useEffect, useState } from "react";
 import "./spectatorGameScreen.css";
-import React from "react";
 import PhaseStartedScreen from "./PhaseStartedScreen";
-import GAME_MANAGER from "../..";
-import { StateEventType, StateListener } from "../../game/gameManager.d";
-import SpectatorHeader from "./SpectatorHeader";
-import SpectatorBody from "./SpectatorBody";
-import translate from "../../game/lang";
+import { useGameState } from "../../components/useHooks";
+import "../game/gameScreen.css"
+import ChatMenu from "../game/gameScreenContent/ChatMenu";
+import PlayerListMenu from "../game/gameScreenContent/PlayerListMenu";
+import GraveyardMenu from "../game/gameScreenContent/GraveyardMenu";
+import HeaderMenu from "../game/HeaderMenu";
+import { ContentController, ContentMenu } from "../game/GameScreen";
 
-
-
-/*
-    briefing - Click the fast forward button to vote to start the game
-    dusk (grave as subtitle if possible from final words)
-        (Chat, rolelist, playerlist (if possible, sorted by verdict) )
-    night - use your ability
-        (Playerlist)
-    obituary
-        (Shows graves)
-    discussion
-        (Shows chat, playerlist, rolelist)
-    nomination - 7 votes required, 3 trials remain
-        (Shows chat, rolelist, and playerlist (with vote bars))
-    testimony - Sammy is on trial
-        (shows chat, rolelist, and playerlist (says if they voted))
-    judgement - Sammy is on trial
-        (shows chat, rolelist, and playerlist (says if they voted))
-    final words - Sammy will be executed 
-        (shows chat, rolelist, and playerlist (sorted by verdict))
-*/
 
 const DEFAULT_START_PHASE_SCREEN_TIME = 3;
 
-export default function SpectatorGameScreen (props: {}): ReactElement {
+let CONTENT_CONTROLLER: ContentController | undefined;
 
+export function getSpectatorScreenContentController(): ContentController | undefined {
+    return CONTENT_CONTROLLER;
+}
 
-    const [phase, setPhase] = React.useState(()=>{
-        return GAME_MANAGER.state.stateType==="game" ? GAME_MANAGER.state.phaseState : {type:"briefing" as "briefing"}
+type SpectatorContentMenus = {
+    chatMenu: boolean,
+    playerListMenu: boolean,
+    graveyardMenu: boolean
+}
+
+export default function SpectatorGameScreen(props: Readonly<{ maxContent?: number }>): ReactElement {
+    const showStartedScreen = useGameState(
+        gameState => {
+            if (
+                gameState.phaseState.type === "briefing"
+                || gameState.phaseState.type === "obituary"
+            ) return true;
+
+            const maxTime = gameState.phaseTimes[gameState.phaseState.type];
+            const timePassed = Math.floor(maxTime - gameState.timeLeftMs/1000);
+            return timePassed < DEFAULT_START_PHASE_SCREEN_TIME;
+        },
+        ["phase", "phaseTimeLeft", "tick"],
+        true
+    )!
+
+    const [contentMenus, setContentMenus] = useState<SpectatorContentMenus>({
+        chatMenu: true,
+        playerListMenu: true,
+        graveyardMenu: (props.maxContent ?? Infinity) > 2
     });
-    const [timeLeftMs, setTimeLeftMs] = React.useState(()=>{
-        return GAME_MANAGER.state.stateType==="game" ? GAME_MANAGER.state.timeLeftMs : 0
-    });
-    const [fastForward, setFastForward] = React.useState(()=>{
-        return GAME_MANAGER.state.stateType==="game" ? GAME_MANAGER.state.fastForward : false
-    });
 
-    useEffect(() => {
-        const listener: StateListener = (type?: StateEventType) => {
+    const initializeContentController = useCallback(() => {
+        function setContentMenu(menu: ContentMenu, open: boolean) {
+            const newMenus = {...contentMenus};
 
-            if(GAME_MANAGER.state.stateType !== "game") return;
-
-            switch (type) {
-                case "yourVoteFastForwardPhase":
-                    setFastForward(GAME_MANAGER.state.fastForward);
+            switch (menu) {
+                case ContentMenu.ChatMenu:
+                    newMenus.chatMenu = open;
                     break;
-                case "phase":
-                    setPhase(GAME_MANAGER.state.phaseState);
+                case ContentMenu.PlayerListMenu:
+                    newMenus.playerListMenu = open;
                     break;
-                case "phaseTimeLeft":
-                case "tick":
-                    setTimeLeftMs(GAME_MANAGER.state.timeLeftMs);
+                case ContentMenu.GraveyardMenu:
+                    newMenus.graveyardMenu = open;
                     break;
+                default:
+                    console.log(`Spectator game screen does not have a ${menu} menu.`);
+                    return;
             }
-        };
-        GAME_MANAGER.addStateListener(listener);
-        return () => GAME_MANAGER.removeStateListener(listener);
-    }, [
-        setPhase,
-        setTimeLeftMs
-    ]);
 
-    let showStartedScreen = true;
-    let maxTime = 0;
-    if(GAME_MANAGER.state.stateType === "game"){
-        maxTime = GAME_MANAGER.state.phaseTimes[phase.type];
-        let timePassed = Math.floor(maxTime - timeLeftMs/1000);
-        showStartedScreen = timePassed < DEFAULT_START_PHASE_SCREEN_TIME;
-    }
-    if(phase.type === "briefing") showStartedScreen = true;
+            // Obey props.maxContent
+            // This is a bit hard-coded, but since there's only three menus it's fine.
+            if (open === true && CONTENT_CONTROLLER!.menusOpen().length >= (props.maxContent ?? Infinity)) {
+                if (menu === ContentMenu.ChatMenu || menu === ContentMenu.PlayerListMenu) {
+                    newMenus.graveyardMenu = false;
+                } else if (menu === ContentMenu.GraveyardMenu) {
+                    newMenus.playerListMenu = false;
+                }
+            }
+
+            // Keep one menu open
+            if (open === false && CONTENT_CONTROLLER!.menusOpen().length === 1) {
+                newMenus.chatMenu = true;
+            }
+
+            setContentMenus(newMenus);
+        }
+
+        CONTENT_CONTROLLER = {
+            closeMenu(menu) {
+                setContentMenu(menu, false)
+            },
+            closeOrOpenMenu(menu) {
+                if (CONTENT_CONTROLLER?.menusOpen().includes(menu)) {
+                    CONTENT_CONTROLLER?.closeMenu(menu)
+                } else {
+                    CONTENT_CONTROLLER?.openMenu(menu, () => {});
+                }
+            },
+            openMenu(menu, callback) {
+                setContentMenu(menu, true);
+                
+                // This isn't correct but it probably works.
+                callback();
+            },
+            menusOpen(): ContentMenu[] {
+                const openMenus = [];
+                if (contentMenus.chatMenu) openMenus.push(ContentMenu.ChatMenu);
+                if (contentMenus.playerListMenu) openMenus.push(ContentMenu.PlayerListMenu);
+                if (contentMenus.graveyardMenu) openMenus.push(ContentMenu.GraveyardMenu);
+                return openMenus
+            },
+        }
+    }, [contentMenus, props.maxContent]);
+
+    // Initialize on component load so MenuButtons component doesn't freak out
+    initializeContentController();
+    useEffect(() => {
+        initializeContentController();
+        return () => CONTENT_CONTROLLER = undefined;
+    }, [initializeContentController])
+
 
     return (
-        <div className="spectator-game-screen">
-            <button 
-                onClick={()=>{
-                    GAME_MANAGER.sendVoteFastForwardPhase(true);
-                }}
-                className={"material-icons-round fast-forward-button" + (fastForward ? " highlighted" : "")}
-            >
-                double_arrow
-            </button>
-            {showStartedScreen ? 
-                <PhaseStartedScreen/>
-            : 
-                <>
-                    <SpectatorHeader phase={phase} timeLeftMs={timeLeftMs} timeBarPercentage={timeLeftMs/(maxTime*1000)}/>
-                    <SpectatorBody/>
-                </>
-            }
+        <div className="game-screen spectator-game-screen">
+            <div className="header">
+                <HeaderMenu chatMenuNotification={false}/>
+            </div>
+            {showStartedScreen 
+                ? <PhaseStartedScreen/>
+                : <div className="content">
+                    {contentMenus.chatMenu && <ChatMenu/>}
+                    {contentMenus.playerListMenu && <PlayerListMenu/>}
+                    {contentMenus.graveyardMenu && <GraveyardMenu/>}
+                </div>}
         </div>
     );
     
-}
-
-
-export function getTranslatedSubtitle(): string {
-    if(GAME_MANAGER.state.stateType !== "game") return "";
-    let subtitleText = "";
-
-    switch (GAME_MANAGER.state.phaseState.type) {
-        case "briefing":
-        case "night":
-        case "discussion":
-            subtitleText = translate("phase."+GAME_MANAGER.state.phaseState.type+".subtitle");
-            break;
-        case "nomination":
-            if(GAME_MANAGER.state.stateType === "game"){
-                let votesRequired = GAME_MANAGER.getVotesRequired();
-
-                if(votesRequired !== null){
-                    subtitleText += votesRequired === 1 ? translate("votesRequired.1") : translate("votesRequired", votesRequired);
-                }
-
-                subtitleText += " "+translate("trialsRemaining", GAME_MANAGER.state.phaseState.trialsLeft);
-            }
-            break;
-        case "testimony":
-        case "judgement":
-        case "finalWords":
-            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.phaseState.playerOnTrial !== null){
-                subtitleText = translate("phase."+GAME_MANAGER.state.phaseState.type+".subtitle", GAME_MANAGER.getPlayerNames()[GAME_MANAGER.state.phaseState.playerOnTrial].toString());
-            }
-            break;
-        default:
-            break;
-    }
-    return subtitleText;
 }

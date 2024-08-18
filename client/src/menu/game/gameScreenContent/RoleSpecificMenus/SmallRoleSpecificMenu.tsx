@@ -135,7 +135,7 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
             case "trueWildcard":
                 return <><StyledText>{translate("role.wildcard.smallRoleMenu")}</StyledText><div><RoleDropdown 
                     value={this.state.gameState.clientState.roleState.role ?? "wildcard"}
-                    disabledRoles={this.state.gameState.excludedRoles} 
+                    enabledRoles={this.state.gameState.enabledRoles} 
                     onChange={(rle)=>{
                         GAME_MANAGER.sendSetWildcardRoleOutline(rle);
                     }}
@@ -145,12 +145,12 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
                     ROLES[rle as keyof typeof ROLES].faction === "mafia" &&
                     rle !== "godfather" &&
                     rle !== "mafioso" &&
-                    !this.state.gameState.excludedRoles.includes(rle as Role)
+                    !this.state.gameState.enabledRoles.includes(rle as Role)
                 ).map((r)=>r as Role);
 
                 return <><StyledText>{translate("role.mafiaSupportWildcard.smallRoleMenu")}</StyledText><div><RoleDropdown 
                     value={this.state.gameState.clientState.roleState.role ?? "mafiaSupportWildcard"} 
-                    disabledRoles={getRolesComplement(all_choosable_mafia)}
+                    enabledRoles={getRolesComplement(all_choosable_mafia)}
                     onChange={(rle)=>{
                         GAME_MANAGER.sendSetWildcardRoleOutline(rle);
                     }}
@@ -158,12 +158,12 @@ export default class SmallRoleSpecificMenu extends React.Component<SmallRoleSpec
             case "fiendsWildcard":
                 const all_choosable_fiends: Role[] = Object.keys(ROLES).filter((rle)=>
                     ROLES[rle as keyof typeof ROLES].faction === "fiends" &&
-                    !this.state.gameState.excludedRoles.includes(rle as Role)
+                    !this.state.gameState.enabledRoles.includes(rle as Role)
                 ).map((r)=>r as Role);
 
                 return <><StyledText>{translate("role.fiendsWildcard.smallRoleMenu")}</StyledText><div><RoleDropdown 
                     value={this.state.gameState.clientState.roleState.role ?? "fiendsWildcard"} 
-                    disabledRoles={getRolesComplement(all_choosable_fiends)}
+                    enabledRoles={getRolesComplement(all_choosable_fiends)}
                     onChange={(rle)=>{
                         GAME_MANAGER.sendSetWildcardRoleOutline(rle);
                     }}

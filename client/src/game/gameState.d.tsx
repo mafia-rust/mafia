@@ -28,7 +28,7 @@ export type LobbyState = {
     myId: number | null,
 
     roleList: RoleList,
-    excludedRoles: Role[],
+    enabledRoles: Role[],
     phaseTimes: PhaseTimes,
 
     players: Map<LobbyClientID, LobbyClient>,
@@ -62,7 +62,7 @@ type GameState = {
     fastForward: boolean,
     
     roleList: RoleList,
-    excludedRoles: Role[],
+    enabledRoles: Role[],
     phaseTimes: PhaseTimes
 
     ticking: boolean,
@@ -76,9 +76,9 @@ export default GameState;
 export type PlayerGameState = {
     type: "player",
 
-    myIndex: PlayerIndex | null,
+    myIndex: PlayerIndex,
     
-    roleState: RoleState | null,
+    roleState: RoleState,
 
     will: string,
     notes: string,

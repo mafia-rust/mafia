@@ -1,167 +1,95 @@
-import React, { JSXElementConstructor } from 'react';
+import React, { ReactElement, useEffect, useState } from "react";
 import "./settings.css";
-import translate, { LANGUAGES, Language, languageName, switchLanguage } from '../game/lang';
-import GAME_MANAGER from '..';
-import Anchor from './Anchor';
-import StartMenu from './main/StartMenu';
-import LoadingScreen from './LoadingScreen';
-import { loadSettings, saveSettings } from '../game/localStorage';
-import GameModesEditor from '../components/gameModeSettings/GameModesEditor';
-import { CopyButton } from '../components/ClipboardButtons';
-import ReactDOM from 'react-dom';
-import WikiCoverCard from '../components/WikiCoverCard';
-import Icon from '../components/Icon';
-import { StateListener } from '../game/gameManager.d';
+import translate, { Language, languageName, LANGUAGES, switchLanguage } from "../game/lang";
+import StyledText from "../components/StyledText";
+import Icon from "../components/Icon";
+import { loadSettings, RoleSpecificMenuType, saveSettings } from "../game/localStorage";
+import Anchor from "./Anchor";
+import { Role } from "../game/roleState.d";
+import ROLES from "../resources/roles.json";
 
-export type Settings = {
-    volume: number,
-    language: Language,
+export function roleSpecificMenuType(role: Role): RoleSpecificMenuType | null {
+    return ROLES[role].roleSpecificMenu === false ? null : loadSettings().roleSpecificMenus[role]
 }
 
-type SettingsProps = {
-    onVolumeChange: (volume: number) => void,
-    onClickOutside: (event: MouseEvent) => void,
-}
-type SettingsState = {
-    volume: number, // 0-1
-    language: Language,
-    lobbyName: string,
-    host: boolean,
-    lobbyState: "lobby" | "game" | "disconnected" | "outsideLobby",
-}
+export default function SettingsMenu(): ReactElement {
+    const [volume, setVolume] = useState<number>(loadSettings().volume);
+    const [roleSpecificMenuSettings, setRoleSpecificMenuSettings] = useState(loadSettings().roleSpecificMenus);
 
-//default settings
-export const DEFAULT_SETTINGS: Settings = {
-    volume: 0.5,
-    language: "en_us"
-}
-
-export default class SettingsMenu extends React.Component<SettingsProps, SettingsState> {
-    handleClickOutside: (event: MouseEvent) => void;
-    listener: StateListener;
-
-    constructor(props: SettingsProps) {
-        super(props);
-
-        this.state = {
-            ...DEFAULT_SETTINGS,
-            ...loadSettings(),
-            lobbyName: (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") ? GAME_MANAGER.state.lobbyName : "",
-            host: GAME_MANAGER.getMyHost() ?? false,
-            lobbyState: GAME_MANAGER.state.stateType,
-        };
-
-        this.handleClickOutside = (event: MouseEvent) => {
-            // https://stackoverflow.com/a/45323523
-            const domNode = ReactDOM.findDOMNode(this);
+    useEffect(() => {
+        Anchor.updateAnchorVolume(volume);
+    }, [volume]);
     
-            if (!domNode || !domNode.contains(event.target as Node)) {
-                setTimeout(() => {
-                    this.props.onClickOutside(event);
-                })
-            }
-        };
-
-        this.listener = type => {
-            if (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") {
-                this.setState({
-                    lobbyName: GAME_MANAGER.state.lobbyName,
-                    host: GAME_MANAGER.getMyHost() ?? false,
-                    lobbyState: GAME_MANAGER.state.stateType,
-                });
-            }
-        }
-    }
-    componentDidMount(): void {
-        setTimeout(() => {
-            document.addEventListener("click", this.handleClickOutside);
-        });
-        GAME_MANAGER.addStateListener(this.listener);
-    }
-    componentWillUnmount(): void {
-        document.removeEventListener("click", this.handleClickOutside);
-        GAME_MANAGER.removeStateListener(this.listener);
-    }
-    async quitToMainMenu() {
-        if (GAME_MANAGER.state.stateType === "game") {
-            GAME_MANAGER.leaveGame();
-        }
-        Anchor.closeSettings();
-        Anchor.clearCoverCard();
-        Anchor.setContent(<LoadingScreen type="disconnect"/>)
-        await GAME_MANAGER.setDisconnectedState();
-        Anchor.setContent(<StartMenu/>)
-    }
-    goToRolelistEditor() {
-        Anchor.setCoverCard(<GameModesEditor/>);
-        Anchor.closeSettings();
-    }
-    render(): React.ReactNode {
-        const quitButtonBlacklist: (string | JSXElementConstructor<any>)[] = [StartMenu, LoadingScreen];
-
-        return (
-            <div className="chat-menu-colors settings slide-in">
-                <section className="standout">
-                    <h2><Icon>volume_up</Icon> {translate("menu.settings.volume")}</h2>
-                    <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
-                        value={this.state.volume} 
-                        onChange={(e) => {
-                            const volume = parseFloat(e.target.value);
-                            saveSettings({volume});
-                            this.setState({volume}, () => this.props.onVolumeChange(volume));
-                        }
-                    }/>
-                </section>
-                <section className="standout">
-                    <h2><Icon>language</Icon> {translate("menu.settings.language")}</h2>
-                    <select 
-                        name="lang-select" 
-                        defaultValue={loadSettings().language ?? "en_us"}
-                        onChange={e => {
-                            const language = e.target.options[e.target.selectedIndex].value as Language;
-                            switchLanguage(language);
-                            saveSettings({language});
-                            Anchor.reload();
-                        }}
-                    >
-                        {LANGUAGES.map(lang => <option key={lang} value={lang}>{languageName(lang)}</option>)}
-                    </select>
-                </section>
-                {(this.state.lobbyState === "lobby" || this.state.lobbyState === "game") && 
+    return <div className="settings-menu-card">
+        <header>
+            <h1>{translate("menu.settings.title")}</h1>
+        </header>
+        
+        <main className="settings-menu">
+            <div>
+                <section className="horizontal">
                     <section className="standout">
-                        <h2>{this.state.lobbyName}</h2>
-                        <RoomLinkButton/>
-                        {(this.state.lobbyState === "game" && this.state.host) && <button onClick={()=>GAME_MANAGER.sendBackToLobbyPacket()}>
-                            {translate("backToLobby")}
-                        </button>}
+                        <h2><Icon size="small">volume_up</Icon> {translate("menu.settings.volume")}</h2>
+                        <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
+                            value={volume} 
+                            onChange={(e) => {
+                                const volume = parseFloat(e.target.value);
+                                saveSettings({volume});
+                                setVolume(volume);
+                            }
+                        }/>
                     </section>
-                }
+                    <section className="standout">
+                        <h2><Icon size="small">language</Icon> {translate("menu.settings.language")}</h2>
+                        <select 
+                            name="lang-select" 
+                            defaultValue={loadSettings().language}
+                            onChange={e => {
+                                const language = e.target.options[e.target.selectedIndex].value as Language;
+                                switchLanguage(language);
+                                saveSettings({language});
+                                Anchor.reload();
+                            }}
+                        >
+                            {LANGUAGES.map(lang => <option key={lang} value={lang}>{languageName(lang)}</option>)}
+                        </select>
+                    </section>
+                </section>
                 <section>
-                    { quitButtonBlacklist.includes(Anchor.contentType()) ||
-                        <button onClick={(e)=>{this.quitToMainMenu()}}><Icon>not_interested</Icon> {translate("menu.settings.quitToMenu")}</button>
-                    }
-                    <button onClick={() => {this.goToRolelistEditor()}}><Icon>edit</Icon> {translate("menu.settings.gameSettingsEditor")}</button>
-                    <button onClick={() => {
-                        Anchor.setCoverCard(<WikiCoverCard />);
-                        Anchor.closeSettings();
-                    }}><Icon>menu_book</Icon> {translate("menu.wiki.title")}</button>
+                    <h2><StyledText className="keyword-evil">{translate("menu.settings.dangerZone")}</StyledText></h2>
                     <button onClick={()=>{
                         if(!window.confirm(translate("confirmDelete"))) return;
                         localStorage.clear();
+                        Anchor.clearCoverCard();
                     }}><Icon>delete_forever</Icon> {translate('menu.settings.eraseSaveData')}</button>
                 </section>
             </div>
-        );
-    }
-}
+            <div>
+                {Anchor.isMobile() && <h2>{translate("menu.settings.advanced")}</h2>}
+                <details className="standout role-specific-menu-settings">
+                    <summary>
+                        {translate("menu.settings.roleSpecificMenus")}
+                    </summary>
 
-export function RoomLinkButton(): JSX.Element {
-    let code = new URL(window.location.href);
-    
-    if (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
-        code.searchParams.set("code", GAME_MANAGER.state.roomCode.toString(18));
-    
-    return <CopyButton text={code.toString()}>
-        <Icon>link</Icon> {translate("menu.play.field.roomCode")}
-    </CopyButton>
+                    {Object.entries(roleSpecificMenuSettings).map(([key, type]) => {
+                        return <div className="role-specific-menu-settings-selector" key={key} >
+                            <StyledText>{translate(`role.${key}.name`)}</StyledText>
+                            <select defaultValue={type} onChange={e => {
+                                const newRoleSpecificMenuSettings = {
+                                    ...roleSpecificMenuSettings, 
+                                    [key]: e.target.options[e.target.selectedIndex].value as RoleSpecificMenuType
+                                };
+
+                                setRoleSpecificMenuSettings(newRoleSpecificMenuSettings);
+                                saveSettings({ roleSpecificMenus: newRoleSpecificMenuSettings })
+                            }}>
+                                <option value="playerList">{translate("menu.settings.roleSpecificMenus.playerList")}</option>
+                                <option value="standalone">{translate("menu.settings.roleSpecificMenus.standalone")}</option>
+                            </select>
+                        </div>
+                    })}
+                </details>
+            </div>
+        </main>
+    </div>
 }

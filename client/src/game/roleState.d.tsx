@@ -110,6 +110,8 @@ export type RoleState = {
     forgesRemaining: number,
     // forgedRef
 } | {
+    type: "framer"
+} | {
     type: "witch"
 } | {
     type: "mafiaSupportWildcard"

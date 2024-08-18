@@ -1,18 +1,18 @@
 import { VersionConverter } from ".";
 import { GameMode, GameModeData, GameModeStorage, ShareableGameMode } from "..";
-import { getRolesComplement } from "../../../../game/roleListState.d";
+import { Role } from "../../../../game/roleState.d";
 import { Failure, ParseResult, ParseSuccess, Success, isFailure } from "../parse";
-import { parseDisabledRoles, parseName, parsePhaseTimes, parseRoleList } from "./initial";
+import { parseName, parsePhaseTimes, parseRoleList, parseRole } from "./initial";
 
-const v0: VersionConverter = {
-    convertShareableGameMode: convertShareableGameMode,
-    convertGameModeStorage: convertGameModeStorage
+const v1: VersionConverter = {
+    convertShareableGameMode: parseShareableGameModeData,
+    convertGameModeStorage: parseGameModeStorage
 }
 
-export default v0;
+export default v1;
 
 
-function convertGameModeStorage(json: NonNullable<any>): ParseResult<GameModeStorage> {
+function parseGameModeStorage(json: NonNullable<any>): ParseResult<GameModeStorage> {
     if (typeof json !== "object" || Array.isArray(json)) {
         return Failure("gameModeStorageNotObject", json);
     }
@@ -53,7 +53,7 @@ function parseGameMode(json: NonNullable<any>): ParseResult<GameMode> {
     })
 }
 
-function convertShareableGameMode(json: NonNullable<any>): ParseResult<ShareableGameMode> {
+function parseShareableGameModeData(json: NonNullable<any>): ParseResult<ShareableGameMode> {
     const gameMode = parseGameModeData(json);
     if (isFailure(gameMode)) {
         return gameMode;
@@ -104,7 +104,7 @@ function parseGameModeData(json: NonNullable<any>): ParseResult<GameModeData> {
         return Failure("gameModeDataNotObject", json);
     }
 
-    for (const key of ['roleList', 'phaseTimes', 'disabledRoles']) {
+    for (const key of ['roleList', 'phaseTimes', 'enabledRoles']) {
         if (!Object.keys(json).includes(key)) {
             return Failure(`${key as keyof GameModeData}KeyMissingFromGameModeData`, json)
         }
@@ -116,13 +116,29 @@ function parseGameModeData(json: NonNullable<any>): ParseResult<GameModeData> {
     const phaseTimes = parsePhaseTimes(json.phaseTimes);
     if (isFailure(phaseTimes)) return phaseTimes;
 
-    const disabledRoles = parseDisabledRoles(json.disabledRoles);
-    if (isFailure(disabledRoles)) return disabledRoles;
-    const enabledRoles = getRolesComplement(disabledRoles.value);
+    const enabledRoles = parseEnabledRoles(json.enabledRoles);
+    if (isFailure(enabledRoles)) return enabledRoles;
 
     return Success({
         roleList: roleList.value, 
         phaseTimes: phaseTimes.value, 
-        enabledRoles: enabledRoles 
+        enabledRoles: enabledRoles.value 
     });
+}
+
+
+
+
+
+export function parseEnabledRoles(json: NonNullable<any>): ParseResult<Role[]> {
+    if (!Array.isArray(json)) {
+        return Failure("enabledRolesIsNotArray", json);
+    }
+
+    const listOfRoles = json.map(parseRole);
+    for (const role of listOfRoles) {
+        if (isFailure(role)) return role;
+    }
+
+    return Success(listOfRoles.map(role => (role as ParseSuccess<Role>).value) as Role[]);
 }

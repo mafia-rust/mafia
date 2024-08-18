@@ -1,12 +1,12 @@
 import { ReactElement, createContext, useCallback, useState } from "react";
 import React from "react";
 import { OutlineListSelector } from "./OutlineSelector";
-import { RoleList, RoleOutline } from "../../game/roleListState.d";
+import { getAllRoles, RoleList, RoleOutline } from "../../game/roleListState.d";
 import translate from "../../game/lang";
 import "./gameModesEditor.css";
 import PhaseTimesSelector from "./PhaseTimeSelector";
 import { PhaseTimes } from "../../game/gameState.d";
-import DisabledRoleSelector from "./DisabledRoleSelector";
+import EnabledRoleSelector from "./EnabledRoleSelector";
 import { Role } from "../../game/roleState.d";
 import "./selectorSection.css";
 import { defaultPhaseTimes } from "../../game/gameState";
@@ -15,7 +15,7 @@ import { GameModeSelector } from "./GameModeSelector";
 const GameModeContext = createContext({
     roleList: [] as RoleList,
     phaseTimes: defaultPhaseTimes(),
-    disabledRoles: [] as Role[]
+    enabledRoles: [] as Role[]
 });
 export {GameModeContext};
 
@@ -23,7 +23,7 @@ export {GameModeContext};
 export default function GameModesEditor(): ReactElement {
     const [roleList, setRoleList] = useState<RoleList>([]);
     const [phaseTimes, setPhaseTimes] = useState<PhaseTimes>(defaultPhaseTimes());
-    const [disabledRoles, setDisabledRoles] = useState<Role[]>([]);
+    const [enabledRoles, setEnabledRoles] = useState<Role[]>([]);
 
 
     const onChangeRolePicker = useCallback((value: RoleOutline, index: number) => {
@@ -42,34 +42,34 @@ export default function GameModesEditor(): ReactElement {
     }
 
 
-    const onDisableRoles = (roles: Role[]) => {
-        const newDisabledRoles = [...disabledRoles];
+    const onEnableRoles = (roles: Role[]) => {
+        const newEnabledRoles = [...enabledRoles];
         for(const role of roles){
-            if(!newDisabledRoles.includes(role)){
-                newDisabledRoles.push(role);
+            if(!newEnabledRoles.includes(role)){
+                newEnabledRoles.push(role);
             }
         }
-        setDisabledRoles(newDisabledRoles);
+        setEnabledRoles(newEnabledRoles);
     }
-    const onEnableRoles = (roles: Role[]) => {
-        setDisabledRoles(disabledRoles.filter((role) => !roles.includes(role)));
+    const onDisableRoles = (roles: Role[]) => {
+        setEnabledRoles(enabledRoles.filter((role) => !roles.includes(role)));
     }
-    const onIncludeAll = () => {
-        setDisabledRoles([]);
+    const onEnableAll = () => {
+        setEnabledRoles(getAllRoles());
     }
     
     return <div className="game-modes-editor">
         <header>
-            <h1>{translate("menu.settings.gameSettingsEditor")}</h1>
+            <h1>{translate("menu.globalMenu.gameSettingsEditor")}</h1>
         </header>
-        <GameModeContext.Provider value={{roleList, phaseTimes, disabledRoles}}>
+        <GameModeContext.Provider value={{roleList, phaseTimes, enabledRoles}}>
             <main>
                 <div>
                     <GameModeSelector 
                         canModifySavedGameModes={true}
                         loadGameMode={gameMode => {
                             setRoleList(gameMode.roleList);
-                            setDisabledRoles(gameMode.disabledRoles);
+                            setEnabledRoles(gameMode.enabledRoles);
                             setPhaseTimes(gameMode.phaseTimes);
                         }}
                     />
@@ -86,10 +86,10 @@ export default function GameModesEditor(): ReactElement {
                         onRemoveOutline={removeOutline}
                         setRoleList={setRoleList}
                     />
-                    <DisabledRoleSelector
+                    <EnabledRoleSelector
                         onDisableRoles={onDisableRoles}
                         onEnableRoles={onEnableRoles}
-                        onIncludeAll={onIncludeAll}         
+                        onIncludeAll={onEnableAll}         
                     />
                 </div>
             </main>

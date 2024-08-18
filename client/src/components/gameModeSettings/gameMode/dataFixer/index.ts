@@ -2,6 +2,7 @@ import { GameModeStorage, ShareableGameMode } from "..";
 import { Failure, ParseResult, Success, isFailure } from "../parse"
 import initial from "./initial"
 import v0 from "./v0"
+import v1 from "./v1"
 
 /// A version converter from a specified version to the next version
 export type VersionConverter = {
@@ -17,10 +18,10 @@ type ConverterMap = {
     "ShareableGameMode": ShareableGameMode
 }
 
-const VERSION_CONVERTERS: Record<string, VersionConverter> = { initial, v0 }
+const VERSION_CONVERTERS: Record<string, VersionConverter> = { initial, v0, v1 }
 
 /// This converter is the latest version, and acts as a verification step.
-const LATEST_VERSION: VersionConverter = v0;
+const LATEST_VERSION: VersionConverter = v1;
 
 export default function parseFromJson<T extends keyof ConverterMap>(type: T, json: NonNullable<any>): ParseResult<ConverterMap[T]> {
     function isCorrectConverter(json: NonNullable<any>, converter: VersionConverter, version: string) {
