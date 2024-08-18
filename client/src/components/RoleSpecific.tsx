@@ -150,26 +150,31 @@ export default function RoleSpecificSection(){
             />;
         case "wildcard":
         case "trueWildcard":
-            return <><StyledText>{translate("role.wildcard.smallRoleMenu")}</StyledText><div><RoleDropdown 
-                value={roleState.role ?? "wildcard"}
-                disabledRoles={GAME_MANAGER.state.excludedRoles} 
-                onChange={(rle)=>{
-                    GAME_MANAGER.sendSetWildcardRoleOutline(rle);
-                }}
-            /></div></>;
+            return <>
+                <StyledText>{translate("role.wildcard.smallRoleMenu")}</StyledText>
+                <div>
+                    <RoleDropdown
+                        value={roleState.role ?? "wildcard"}
+                        enabledRoles={GAME_MANAGER.state.enabledRoles} 
+                        onChange={(rle)=>{
+                            GAME_MANAGER.sendSetWildcardRoleOutline(rle);
+                        }}
+                    />
+                </div>
+            </>;
         case "mafiaSupportWildcard":
             const all_choosable_mafia: Role[] = Object.keys(ROLES).filter((rle)=>
                 rle === "mafiaSupportWildcard" ||
                 (
                     ROLES[rle as keyof typeof ROLES].roleSet === "mafiaSupport" &&
                     GAME_MANAGER.state.stateType === "game" &&
-                    !GAME_MANAGER.state.excludedRoles.includes(rle as Role)
+                    GAME_MANAGER.state.enabledRoles.includes(rle as Role)
                 )
             ).map((r)=>r as Role);
 
             return <><StyledText>{translate("role.mafiaSupportWildcard.smallRoleMenu")}</StyledText><div><RoleDropdown 
                 value={roleState.role ?? "mafiaSupportWildcard"} 
-                disabledRoles={getRolesComplement(all_choosable_mafia)}
+                enabledRoles={getRolesComplement(all_choosable_mafia)}
                 onChange={(rle)=>{
                     GAME_MANAGER.sendSetWildcardRoleOutline(rle);
                 }}
@@ -178,12 +183,12 @@ export default function RoleSpecificSection(){
             const all_choosable_fiends: Role[] = Object.keys(ROLES).filter((rle)=>
                 ROLES[rle as keyof typeof ROLES].faction === "fiends" &&
                 GAME_MANAGER.state.stateType === "game" &&
-                !GAME_MANAGER.state.excludedRoles.includes(rle as Role)
+                GAME_MANAGER.state.enabledRoles.includes(rle as Role)
             ).map((r)=>r as Role);
 
             return <><StyledText>{translate("role.fiendsWildcard.smallRoleMenu")}</StyledText><div><RoleDropdown 
                 value={roleState.role ?? "fiendsWildcard"} 
-                disabledRoles={getRolesComplement(all_choosable_fiends)}
+                enabledRoles={getRolesComplement(all_choosable_fiends)}
                 onChange={(rle)=>{
                     GAME_MANAGER.sendSetWildcardRoleOutline(rle);
                 }}

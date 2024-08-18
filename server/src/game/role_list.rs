@@ -32,10 +32,10 @@ make_faction_enum!{
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RoleList(pub Vec<RoleOutline>);
 impl RoleList {
-    pub fn create_random_roles(&self, excluded_roles: &HashSet<Role>) -> Option<Vec<Role>> {
+    pub fn create_random_roles(&self, enabled_roles: &HashSet<Role>) -> Option<Vec<Role>> {
         let mut taken_roles = Vec::new();
         for entry in self.0.iter(){
-            if let Some(role) = entry.get_random_role(excluded_roles, &taken_roles){
+            if let Some(role) = entry.get_random_role(enabled_roles, &taken_roles){
                 taken_roles.push(role);
             }else{
                 return None;
@@ -76,8 +76,8 @@ impl RoleOutline{
                 Role::values(),
         }
     }
-    pub fn get_random_role(&self, excluded_roles: &HashSet<Role>, taken_roles: &[Role]) -> Option<Role> {
-        let options = self.get_roles().into_iter().filter(|r|role_can_generate(*r, excluded_roles, taken_roles)).collect::<Vec<_>>();
+    pub fn get_random_role(&self, enabled_roles: &HashSet<Role>, taken_roles: &[Role]) -> Option<Role> {
+        let options = self.get_roles().into_iter().filter(|r|role_can_generate(*r, enabled_roles, taken_roles)).collect::<Vec<_>>();
         options.choose(&mut rand::thread_rng()).cloned()
     }
     pub fn simplify(&mut self){
@@ -194,8 +194,8 @@ impl RoleSet{
 
 
 
-pub fn role_can_generate(role: Role, excluded_roles: &HashSet<Role>, taken_roles: &[Role]) -> bool {
-    if excluded_roles.contains(&role) {
+pub fn role_can_generate(role: Role, enabled_roles: &HashSet<Role>, taken_roles: &[Role]) -> bool {
+    if !enabled_roles.contains(&role) {
         return false;
     }
 

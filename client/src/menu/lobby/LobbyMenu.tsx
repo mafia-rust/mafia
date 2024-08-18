@@ -13,7 +13,7 @@ import { defaultPhaseTimes } from "../../game/gameState";
 import { GameModeContext } from "../../components/gameModeSettings/GameModesEditor";
 import PhaseTimesSelector from "../../components/gameModeSettings/PhaseTimeSelector";
 import { OutlineListSelector } from "../../components/gameModeSettings/OutlineSelector";
-import DisabledRoleSelector from "../../components/gameModeSettings/DisabledRoleSelector";
+import EnabledRoleSelector from "../../components/gameModeSettings/DisabledRoleSelector";
 import Icon from "../../components/Icon";
 import { GameModeSelector } from "../../components/gameModeSettings/GameModeSelector";
 import LobbyChatMenu from "./LobbyChatMenu";
@@ -22,8 +22,8 @@ export default function LobbyMenu(): ReactElement {
     const [roleList, setRoleList] = useState(
         GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.roleList : []
     );
-    const [disabledRoles, setDisabledRoles] = useState(
-        GAME_MANAGER.state.stateType === "lobby"  || GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.excludedRoles : []
+    const [enabledRoles, setEnabledRoles] = useState(
+        GAME_MANAGER.state.stateType === "lobby"  || GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.enabledRoles : []
     );
     const [phaseTimes, setPhaseTimes] = useState(
         GAME_MANAGER.state.stateType === "lobby"  || GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.phaseTimes : defaultPhaseTimes()
@@ -41,8 +41,8 @@ export default function LobbyMenu(): ReactElement {
                     case "roleOutline":
                         setRoleList([...GAME_MANAGER.state.roleList]);
                         break;
-                    case "excludedRoles":
-                        setDisabledRoles([...GAME_MANAGER.state.excludedRoles]);
+                    case "enabledRoles":
+                        setEnabledRoles([...GAME_MANAGER.state.enabledRoles]);
                         break;
                     case "phaseTimes":
                     case "phaseTime":
@@ -65,13 +65,13 @@ export default function LobbyMenu(): ReactElement {
 
         if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
             setRoleList([...GAME_MANAGER.state.roleList]);
-            setDisabledRoles([...GAME_MANAGER.state.excludedRoles]);
+            setEnabledRoles([...GAME_MANAGER.state.enabledRoles]);
             setPhaseTimes({...GAME_MANAGER.state.phaseTimes})
             setHost(GAME_MANAGER.getMyHost() ?? false)
         }
         GAME_MANAGER.addStateListener(listener);
         return ()=>{GAME_MANAGER.removeStateListener(listener);}
-    }, [setRoleList, setDisabledRoles]);
+    }, [setRoleList, setEnabledRoles]);
     
     let onChangeRolePicker = (value: RoleOutline, index: number) => {
         let newRoleList = [...roleList];
@@ -90,7 +90,7 @@ export default function LobbyMenu(): ReactElement {
 
     return <div className="lm">
         <LobbyMenuHeader/>
-        <GameModeContext.Provider value={{roleList, disabledRoles, phaseTimes}}>
+        <GameModeContext.Provider value={{roleList, enabledRoles, phaseTimes}}>
             <main>
                 <div>
                     <LobbyPlayerList/>
@@ -102,7 +102,7 @@ export default function LobbyMenu(): ReactElement {
                         canModifySavedGameModes={false}
                         loadGameMode={gameMode => {
                             GAME_MANAGER.sendSetPhaseTimesPacket(gameMode.phaseTimes);
-                            GAME_MANAGER.sendExcludedRolesPacket(gameMode.disabledRoles);
+                            GAME_MANAGER.sendEnabledRolesPacket(gameMode.enabledRoles);
                             GAME_MANAGER.sendSetRoleListPacket(gameMode.roleList);
                         }}
                     />}
@@ -117,10 +117,10 @@ export default function LobbyMenu(): ReactElement {
                         onRemoveOutline={undefined}
                         setRoleList={sendRoleList}
                     />
-                    <DisabledRoleSelector
-                        onDisableRoles={roles => GAME_MANAGER.sendExcludedRolesPacket([...disabledRoles, ...roles])}
-                        onEnableRoles={roles => GAME_MANAGER.sendExcludedRolesPacket(disabledRoles.filter(role => !roles.includes(role)))}
-                        onIncludeAll={() => GAME_MANAGER.sendExcludedRolesPacket([])}
+                    <EnabledRoleSelector
+                        onDisableRoles={roles => GAME_MANAGER.sendEnabledRolesPacket([...enabledRoles, ...roles])}
+                        onEnableRoles={roles => GAME_MANAGER.sendEnabledRolesPacket(enabledRoles.filter(role => !roles.includes(role)))}
+                        onIncludeAll={() => GAME_MANAGER.sendEnabledRolesPacket([])}
                         disabled={!isHost}
                     />
                 </div>

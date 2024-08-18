@@ -3,7 +3,7 @@ import { RoleList } from "../../../game/roleListState.d";
 import { Role } from "../../../game/roleState.d";
 
 export type GameModeStorage = {
-    format: "v0",
+    format: "v1",
     gameModes: GameMode[]
 };
 
@@ -16,7 +16,7 @@ export type GameMode = {
 export type GameModeData = {
     roleList: RoleList,
     phaseTimes: PhaseTimes,
-    disabledRoles: Role[],
+    enabledRoles: Role[],
 }
 
-export type ShareableGameMode = GameModeData & { format: "v0", name: string }
+export type ShareableGameMode = GameModeData & { format: "v1", name: string }

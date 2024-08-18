@@ -9,7 +9,7 @@ use super::{phase::PhaseType, role::Role, role_list::RoleList};
 pub struct Settings{
     pub role_list: RoleList,
     pub phase_times: PhaseTimeSettings,
-    pub excluded_roles: HashSet<Role>,
+    pub enabled_roles: HashSet<Role>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

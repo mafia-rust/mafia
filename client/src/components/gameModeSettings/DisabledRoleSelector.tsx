@@ -13,13 +13,13 @@ import { GameModeContext } from "./GameModesEditor";
 
 
 
-export default function DisabledRoleSelector(props: {
+export default function EnabledRoleSelector(props: {
     disabled?: boolean,
     onDisableRoles: (role: Role[]) => void,
     onEnableRoles: (role: Role[]) => void,
     onIncludeAll: () => void
 }): ReactElement {
-    const {disabledRoles} = useContext(GameModeContext);
+    const {enabledRoles} = useContext(GameModeContext);
 
     const [roleOutlineOption, setRoleOutlineOption] = useState<RoleOutlineOption>({ type: "faction", faction: "town" });
 
@@ -36,26 +36,26 @@ export default function DisabledRoleSelector(props: {
     }
 
     return <div className="role-specific-colors selector-section">
-        <h2>{translate("menu.lobby.excludedRoles")}</h2>
+        <h2>{translate("menu.lobby.enabledRoles")}</h2>
         <div>
-            <Button
-                onClick={props.onIncludeAll}
-                disabled={props.disabled}
-            ><Icon>deselect</Icon> {translate("menu.excludedRoles.includeAll")}</Button>
             <Button
                 onClick={disableAll}
                 disabled={props.disabled}
-            ><Icon>select_all</Icon> {translate("menu.excludedRoles.excludeAll")}</Button>
+            ><Icon>deselect</Icon> {translate("menu.enabledRoles.includeAll")}</Button>
+            <Button
+                onClick={props.onIncludeAll}
+                disabled={props.disabled}
+            ><Icon>select_all</Icon> {translate("menu.enabledRoles.excludeAll")}</Button>
 
             <div className="disabled-role-selector-area">
                 <Button
                     onClick={()=>{enableOutlineOption(roleOutlineOption)}}
                     disabled={props.disabled}
-                >{translate("menu.excludedRoles.include")}</Button>
+                >{translate("menu.enabledRoles.include")}</Button>
                 <Button
                     onClick={()=>{disableOutlineOption(roleOutlineOption)}}
                     disabled={props.disabled}
-                >{translate("menu.excludedRoles.exclude")}</Button>
+                >{translate("menu.enabledRoles.exclude")}</Button>
                 <RoleOutlineOptionSelector
                     excludeAny={true}
                     disabled={props.disabled}
@@ -65,8 +65,8 @@ export default function DisabledRoleSelector(props: {
             </div>
         </div>
 
-        <DisabledRolesDisplay 
-            disabledRoles={disabledRoles}
+        <EnabledRolesDisplay 
+            enabledRoles={enabledRoles}
             modifiable={true}
             onDisableRoles={props.onDisableRoles}
             onEnableRoles={props.onEnableRoles}
@@ -75,8 +75,8 @@ export default function DisabledRoleSelector(props: {
     </div>
 }
 
-type DisabledRoleDisplayProps = {
-    disabledRoles: Role[],
+type EnabledRolesDisplayProps = {
+    enabledRoles: Role[],
 } & (
     {
         modifiable: true,
@@ -89,13 +89,13 @@ type DisabledRoleDisplayProps = {
     }
 )
 
-export function DisabledRolesDisplay(props: DisabledRoleDisplayProps): ReactElement {
-    const isDisabled = useCallback((role: Role) => props.disabledRoles.includes(role), [props.disabledRoles]);
+export function EnabledRolesDisplay(props: EnabledRolesDisplayProps): ReactElement {
+    const isEnabled = useCallback((role: Role) => props.enabledRoles.includes(role), [props.enabledRoles]);
 
     const roleTextElement = (role: Role) => {
         return <StyledText 
             noLinks={props.modifiable}
-            className={isDisabled(role) ? "keyword-disabled" : undefined}
+            className={!isEnabled(role) ? "keyword-disabled" : undefined}
         >
             {translate("role."+role+".name")}
         </StyledText>
@@ -106,11 +106,11 @@ export function DisabledRolesDisplay(props: DisabledRoleDisplayProps): ReactElem
             props.modifiable 
                 ? <Button key={i}
                     disabled={props.disabled}
-                    onClick={() => (isDisabled(role) ? props.onEnableRoles : props.onDisableRoles)([role])}
+                    onClick={() => (!isEnabled(role) ? props.onEnableRoles : props.onDisableRoles)([role])}
                 >
                     {roleTextElement(role)}
                 </Button> 
-                : <div key={i} className={"disabled-role-element" + (isDisabled(role) ? " disabled" : "")}>
+                : <div key={i} className={"disabled-role-element" + (!isEnabled(role) ? " disabled" : "")}>
                     {roleTextElement(role)}
                 </div>
             

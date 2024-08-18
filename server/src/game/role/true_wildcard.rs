@@ -79,7 +79,7 @@ impl TrueWildcard {
         if 
             role_can_generate(
                 self.role, 
-                &game.settings.excluded_roles, 
+                &game.settings.enabled_roles, 
                 &[]
             )
         {
