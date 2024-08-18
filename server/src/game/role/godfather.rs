@@ -111,23 +111,26 @@ impl RoleStateImpl for Godfather {
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
-        if actor_ref != dead_player_ref {return;}
 
-        let Some(backup) = self.backup else {return};
+        if actor_ref == dead_player_ref {
+            let Some(backup) = self.backup else {return};
 
-        actor_ref.set_role_state(game, RoleState::Godfather(Godfather{backup: None}));
-        for player_ref in PlayerReference::all_players(game){
-            if player_ref.role(game).faction() != Faction::Mafia{
-                continue;
+            actor_ref.set_role_state(game, RoleState::Godfather(Godfather{backup: None}));
+            for player_ref in PlayerReference::all_players(game){
+                if player_ref.role(game).faction() != Faction::Mafia{
+                    continue;
+                }
+                player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
             }
-            player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
-        }
-        
-        if !backup.alive(game){return}
+            
+            if !backup.alive(game){return}
 
-        //convert backup to godfather
-        backup.set_role(game, RoleState::Godfather(Godfather{backup: None}));
-        
+            //convert backup to godfather
+            backup.set_role(game, RoleState::Godfather(Godfather{backup: None}));
+        }
+        else if self.backup.is_some_and(|p|p == dead_player_ref) {
+            actor_ref.set_role_state(game, RoleState::Godfather(Godfather{backup: None}));
+        }
     }
     fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave_ref: GraveReference){
     }
