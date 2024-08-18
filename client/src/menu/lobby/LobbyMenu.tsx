@@ -13,7 +13,7 @@ import { defaultPhaseTimes } from "../../game/gameState";
 import { GameModeContext } from "../../components/gameModeSettings/GameModesEditor";
 import PhaseTimesSelector from "../../components/gameModeSettings/PhaseTimeSelector";
 import { OutlineListSelector } from "../../components/gameModeSettings/OutlineSelector";
-import EnabledRoleSelector from "../../components/gameModeSettings/DisabledRoleSelector";
+import EnabledRoleSelector from "../../components/gameModeSettings/EnabledRoleSelector";
 import Icon from "../../components/Icon";
 import { GameModeSelector } from "../../components/gameModeSettings/GameModeSelector";
 import LobbyChatMenu from "./LobbyChatMenu";
@@ -118,8 +118,8 @@ export default function LobbyMenu(): ReactElement {
                         setRoleList={sendRoleList}
                     />
                     <EnabledRoleSelector
-                        onDisableRoles={roles => GAME_MANAGER.sendEnabledRolesPacket([...enabledRoles, ...roles])}
-                        onEnableRoles={roles => GAME_MANAGER.sendEnabledRolesPacket(enabledRoles.filter(role => !roles.includes(role)))}
+                        onEnableRoles={roles => GAME_MANAGER.sendEnabledRolesPacket([...enabledRoles, ...roles])}
+                        onDisableRoles={roles => GAME_MANAGER.sendEnabledRolesPacket(enabledRoles.filter(role => !roles.includes(role)))}
                         onIncludeAll={() => GAME_MANAGER.sendEnabledRolesPacket([])}
                         disabled={!isHost}
                     />

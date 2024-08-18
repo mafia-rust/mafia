@@ -6,7 +6,7 @@ import translate from "../../game/lang";
 import "./gameModesEditor.css";
 import PhaseTimesSelector from "./PhaseTimeSelector";
 import { PhaseTimes } from "../../game/gameState.d";
-import EnabledRoleSelector from "./DisabledRoleSelector";
+import EnabledRoleSelector from "./EnabledRoleSelector";
 import { Role } from "../../game/roleState.d";
 import "./selectorSection.css";
 import { defaultPhaseTimes } from "../../game/gameState";
