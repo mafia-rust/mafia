@@ -13,7 +13,6 @@ import { StateListener } from "../game/gameManager.d";
 import SmallOjoMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
 import SmallPuppeteerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 import RoleDropdown from "./RoleDropdown";
-import { getRolesComplement } from "../game/roleListState.d";
 import ROLES from "../resources/roles.json";
 import "../menu/game/gameScreenContent/RoleSpecificMenus/smallRoleSpecificMenu.css";
 import LargeKiraMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
