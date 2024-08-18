@@ -12,7 +12,6 @@ import RoleSpecificMenu from "./gameScreenContent/RoleSpecificMenu";
 import Anchor from "../Anchor";
 import StyledText from "../../components/StyledText";
 import { Role } from "../../game/roleState.d";
-import ROLES from "../../resources/roles.json";
 import { StateEventType } from "../../game/gameManager.d";
 import { WikiArticleLink } from "../../components/WikiArticleLink";
 import Icon from "../../components/Icon";
