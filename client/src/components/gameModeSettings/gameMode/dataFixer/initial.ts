@@ -1,5 +1,4 @@
 import { VersionConverter } from ".";
-import { GameModeStorage, ShareableGameMode } from "..";
 import { PHASES, PhaseTimes } from "../../../../game/gameState.d";
 import { FACTIONS, Faction, ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, RoleSet, getAllRoles } from "../../../../game/roleListState.d";
 import { Role } from "../../../../game/roleState.d";
