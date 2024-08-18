@@ -122,7 +122,7 @@ impl Game {
             let role_list = settings.role_list.clone();
 
 
-            let roles_to_players = Self::assign_players_to_roles(match role_list.create_random_roles(&settings.excluded_roles){
+            let roles_to_players = Self::assign_players_to_roles(match role_list.create_random_roles(&settings.enabled_roles){
                 Some(roles) => {roles},
                 None => {return Err(RejectStartReason::RoleListCannotCreateRoles);}
             });
@@ -407,7 +407,7 @@ pub mod test {
         let settings = settings.clone();
         let role_list = settings.role_list.clone();
         
-        let roles_to_players = assign_players_to_roles(match role_list.create_random_roles(&settings.excluded_roles){
+        let roles_to_players = assign_players_to_roles(match role_list.create_random_roles(&settings.enabled_roles){
             Some(roles) => {roles},
             None => {return Err(RejectStartReason::RoleListCannotCreateRoles);}
         });

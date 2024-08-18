@@ -59,7 +59,7 @@ export function createGameManager(): GameManager {
                 GAME_MANAGER.state.lobbyName = gameState.lobbyName;
                 GAME_MANAGER.state.roleList = gameState.roleList;
                 GAME_MANAGER.state.phaseTimes = gameState.phaseTimes;
-                GAME_MANAGER.state.excludedRoles = gameState.excludedRoles;
+                GAME_MANAGER.state.enabledRoles = gameState.enabledRoles;
             }
         },
         setGameState() {
@@ -77,7 +77,7 @@ export function createGameManager(): GameManager {
                 GAME_MANAGER.state.lobbyName = lobbyState.lobbyName;
                 GAME_MANAGER.state.roleList = lobbyState.roleList;
                 GAME_MANAGER.state.phaseTimes = lobbyState.phaseTimes;
-                GAME_MANAGER.state.excludedRoles = lobbyState.excludedRoles;
+                GAME_MANAGER.state.enabledRoles = lobbyState.enabledRoles;
                 GAME_MANAGER.state.host = lobbyState.players.get(lobbyState.myId!)?.host ?? false;
             }
         },
@@ -431,9 +431,9 @@ export function createGameManager(): GameManager {
                 text: text
             });
         },
-        sendExcludedRolesPacket(roles) {
+        sendEnabledRolesPacket(roles) {
             this.server.sendPacket({
-                type: "setExcludedRoles",
+                type: "setEnabledRoles",
                 roles: roles
             });
         },

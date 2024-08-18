@@ -24,7 +24,7 @@ export function createLobbyState(): LobbyState {
         myId: null,
 
         roleList: [],
-        excludedRoles: [],
+        enabledRoles: [],
         phaseTimes: defaultPhaseTimes(),
 
         players: new Map<LobbyClientID, LobbyClient>(),
@@ -49,7 +49,7 @@ export function createGameState(): GameState {
         fastForward: false,
         
         roleList: [],
-        excludedRoles: [],
+        enabledRoles: [],
         phaseTimes: defaultPhaseTimes(),
 
         ticking: true,

@@ -7,7 +7,7 @@ import StyledText from "../../../components/StyledText";
 import GraveComponent from "../../../components/grave";
 import { Grave } from "../../../game/graveState";
 import Icon from "../../../components/Icon";
-import { DisabledRolesDisplay } from "../../../components/gameModeSettings/DisabledRoleSelector";
+import { EnabledRolesDisplay } from "../../../components/gameModeSettings/EnabledRoleSelector";
 import { useGameState, usePlayerState } from "../../../components/useHooks";
 import { translateRoleOutline } from "../../../game/roleListState.d";
 
@@ -165,15 +165,15 @@ function GraveExtended(props: Readonly<{
 }
 
 function ExcludedRoles(): ReactElement {
-    const excludedRoles = useGameState(
-        gameState => gameState.excludedRoles,
-        ["excludedRoles"]
+    const enabledRoles = useGameState(
+        gameState => gameState.enabledRoles,
+        ["enabledRoles"]
     )!
 
     return <details className="graveyard-menu-excludedRoles">
         <summary>
             {translate("menu.excludedRoles.excludedRoles")}
         </summary>
-        <DisabledRolesDisplay disabledRoles={excludedRoles}/>
+        <EnabledRolesDisplay enabledRoles={enabledRoles}/>
     </details>
 }

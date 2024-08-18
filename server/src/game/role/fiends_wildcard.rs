@@ -81,7 +81,7 @@ impl FiendsWildcard {
             self.role.faction() == Faction::Fiends &&
             role_can_generate(
                 self.role, 
-                &game.settings.excluded_roles, 
+                &game.settings.enabled_roles, 
                 &PlayerReference::all_players(game)
                     .map(|player_ref| player_ref.role(game))
                     .collect::<Vec<Role>>()

@@ -303,16 +303,16 @@ impl Lobby {
                 
                 self.send_to_all(ToClientPacket::RoleList { role_list });
             }
-            ToServerPacket::SetExcludedRoles {roles } => {
+            ToServerPacket::SetEnabledRoles {roles } => {
                 let LobbyState::Lobby{ settings, .. } = &mut self.lobby_state else {
                     log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", lobby_client_id);
                     return;
                 };
 
 
-                settings.excluded_roles = roles.into_iter().collect();
-                let roles = settings.excluded_roles.clone().into_iter().collect();
-                self.send_to_all(ToClientPacket::ExcludedRoles { roles });
+                settings.enabled_roles = roles.into_iter().collect();
+                let roles = settings.enabled_roles.clone().into_iter().collect();
+                self.send_to_all(ToClientPacket::EnabledRoles { roles });
             }
             ToServerPacket::Leave => {
                 self.remove_player(lobby_client_id);

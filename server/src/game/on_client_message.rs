@@ -229,7 +229,7 @@ impl Game {
             },
             ToServerPacket::SetWildcardRole { role } => {
 
-                if self.settings.excluded_roles.contains(&role) {
+                if !self.settings.enabled_roles.contains(&role) {
                     break 'packet_match;
                 }
                 

@@ -74,7 +74,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     PhaseTimes{phase_time_settings: PhaseTimeSettings},
     #[serde(rename_all = "camelCase")]
-    ExcludedRoles{roles: Vec<Role>},
+    EnabledRoles{roles: Vec<Role>},
 
     // Game
     
@@ -193,7 +193,7 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SetPhaseTimes{phase_time_settings: PhaseTimeSettings},
     #[serde(rename_all = "camelCase")]
-    SetExcludedRoles{roles: Vec<Role>},
+    SetEnabledRoles{roles: Vec<Role>},
     BackToLobby,
 
     // Game

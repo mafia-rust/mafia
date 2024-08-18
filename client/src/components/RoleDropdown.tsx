@@ -7,14 +7,14 @@ import translate from "../game/lang"
 export default function RoleDropdown(props: {
     value: Role,
     onChange: (role: Role) => void,
-    disabledRoles?: Role[]
+    enabledRoles?: Role[]
 }): ReactElement {
     return <select
         value={props.value}
         onChange={e => props.onChange(e.target.value as Role)}
     >{
         Object.keys(ROLES)
-            .filter((role)=>!props.disabledRoles?.includes(role as Role))
+            .filter((role)=>props.enabledRoles?.includes(role as Role))
             .map((role)=>{
                 return <option value={role} key={role}>{translate("role."+role+".name")}</option>
             })

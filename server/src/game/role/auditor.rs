@@ -56,7 +56,7 @@ impl RoleStateImpl for Auditor {
             let fake_role = outline
                 .get_roles()
                 .into_iter()
-                .filter(|x|!game.settings.excluded_roles.contains(x))
+                .filter(|x|game.settings.enabled_roles.contains(x))
                 .filter(|x|*x != role)
                 .collect::<Vec<Role>>()
                 .choose(&mut rand::thread_rng())
