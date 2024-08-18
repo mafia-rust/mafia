@@ -6,7 +6,7 @@ import translate from "../../game/lang";
 import { StateListener } from "../../game/gameManager.d";
 import Anchor from "../Anchor";
 import { RoomLinkButton } from "../GlobalMenu";
-import { RoleOutline, RoleList } from "../../game/roleListState.d";
+import { RoleOutline, RoleList, getAllRoles } from "../../game/roleListState.d";
 import LoadingScreen from "../LoadingScreen";
 import StartMenu from "../main/StartMenu";
 import { defaultPhaseTimes } from "../../game/gameState";
@@ -119,7 +119,7 @@ export default function LobbyMenu(): ReactElement {
                     <EnabledRoleSelector
                         onEnableRoles={roles => GAME_MANAGER.sendEnabledRolesPacket([...enabledRoles, ...roles])}
                         onDisableRoles={roles => GAME_MANAGER.sendEnabledRolesPacket(enabledRoles.filter(role => !roles.includes(role)))}
-                        onIncludeAll={() => GAME_MANAGER.sendEnabledRolesPacket([])}
+                        onIncludeAll={() => GAME_MANAGER.sendEnabledRolesPacket(getAllRoles())}
                         disabled={!isHost}
                     />
                 </div>
