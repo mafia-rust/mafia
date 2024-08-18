@@ -17,6 +17,8 @@ import { getRolesComplement } from "../game/roleListState.d";
 import ROLES from "../resources/roles.json";
 import "../menu/game/gameScreenContent/RoleSpecificMenus/smallRoleSpecificMenu.css";
 import LargeKiraMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
+import Counter from "./Counter";
+import "./roleSpecific.css";
 import ErosMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/ErosMenu";
 
 export default function RoleSpecificSection(){
@@ -68,76 +70,158 @@ export default function RoleSpecificSection(){
 
 
 
-        case "jailor":
+        case "jailor": {
+            const counter = <Counter 
+                max={3} 
+                current={roleState.executionsRemaining}
+            >
+                <StyledText>{translate("role.jailor.roleDataText.executionsRemaining", roleState.executionsRemaining)}</StyledText>
+            </Counter>;
             if(phaseState.type==="night") {
-                return <StyledText>{translate("role.jailor.roleDataText.night", roleState.executionsRemaining)}</StyledText>;
+                return counter;
             } else if (roleState.jailedTargetRef === null) {
-                return <StyledText>{translate("role.jailor.roleDataText.nobody", roleState.executionsRemaining)}</StyledText>;
+                return <>
+                    {counter}
+                    <div className="role-information">
+                        <StyledText>{translate("role.jailor.roleDataText.nobody")}</StyledText>
+                    </div>
+                </>
             } else {
-                return <StyledText>{translate("role.jailor.roleDataText", 
-                    GAME_MANAGER.state.players[roleState.jailedTargetRef].toString(), 
-                    roleState.executionsRemaining
-                )}</StyledText>;;
+                return <>
+                    {counter}
+                    <div className="role-information">
+                        <StyledText>{translate("role.jailor.roleDataText", 
+                            GAME_MANAGER.state.players[roleState.jailedTargetRef].toString(), 
+                        )}</StyledText>
+                    </div>
+                </>
             }
-        case "medium":
+        }
+        case "medium": {
+            const counter = <Counter
+                max={2}
+                current={roleState.seancesRemaining}
+            >
+                <StyledText>{translate("role.medium.roleDataText.hauntsRemaining", roleState.seancesRemaining)}</StyledText>
+            </Counter>
             if (roleState.seancedTarget === null) {
-                return <StyledText>{translate("role.medium.roleDataText.nobody", roleState.seancesRemaining)}</StyledText>;
+                return <>
+                    {counter}
+                    <div className="role-information">
+                        <StyledText>{translate("role.medium.roleDataText.nobody")}</StyledText>
+                    </div>
+                </>
             } else {
-                return <StyledText>{translate("role.medium.roleDataText", 
-                    GAME_MANAGER.state.players[roleState.seancedTarget].toString(),
-                    roleState.seancesRemaining
-                )}</StyledText>;
+                return <>
+                    {counter}
+                    <div className="role-information">
+                        <StyledText>{translate("role.medium.roleDataText", 
+                            GAME_MANAGER.state.players[roleState.seancedTarget].toString(),
+                        )}</StyledText>
+                    </div>
+                </>;
             }
-        case "doctor":
-            return <StyledText>{translate("role.doctor.roleDataText", roleState.selfHealsRemaining)}</StyledText>;
+        }
+        case "doctor": {
+            return <Counter
+                max={1}
+                current={roleState.selfHealsRemaining}
+            >
+                <StyledText>{translate("role.doctor.roleDataText", roleState.selfHealsRemaining)}</StyledText>
+            </Counter>
+        }
         case "bodyguard":
-            return <StyledText>{translate("role.bodyguard.roleDataText", roleState.selfShieldsRemaining)}</StyledText>;
+            return <Counter
+                max={1}
+                current={roleState.selfShieldsRemaining}
+            >
+                <StyledText>{translate("role.bodyguard.roleDataText", roleState.selfShieldsRemaining)}</StyledText>
+            </Counter>
         case "engineer":
-            return <>
+            return <div className="role-information">
                 <StyledText>{translate("role.engineer.roleDataText." + roleState.trap.type)}</StyledText>
-            </>;
+            </div>;
         case "vigilante":
             switch(roleState.state.type){
                 case "willSuicide":
-                    return <StyledText>{translate("role.vigilante.roleDataText.suicide")}</StyledText>;
+                    return <div className="role-information">
+                        <StyledText>{translate("role.vigilante.roleDataText.suicide")}</StyledText>
+                    </div>
                 case "notLoaded":
-                    return <StyledText>{translate("role.vigilante.roleDataText.notLoaded")}</StyledText>;
+                    return <div className="role-information">
+                        <StyledText>{translate("role.vigilante.roleDataText.notLoaded")}</StyledText>
+                    </div>
                 case "loaded":
-                    return <StyledText>{translate("role.vigilante.roleDataText", roleState.state.bullets)}</StyledText>;
+                    return <Counter 
+                        max={3} 
+                        current={roleState.state.bullets}
+                    >
+                        <StyledText>{translate("role.vigilante.roleDataText", roleState.state.bullets)}</StyledText>
+                    </Counter>
                 default:
                     return null
             }
         case "veteran":
-            return <StyledText>{translate("role.veteran.roleDataText", roleState.alertsRemaining)}</StyledText>;
+            return <Counter
+                max={3}
+                current={roleState.alertsRemaining}
+            >
+                <StyledText>{translate("role.veteran.roleDataText", roleState.alertsRemaining)}</StyledText>
+            </Counter>
         case "armorsmith":
-            return <StyledText>{translate("role.armorsmith.roleDataText", roleState.openShopsRemaining)}</StyledText>;
-        case "marksman":
+            return <Counter
+                max={2}
+                current={roleState.openShopsRemaining}
+            >
+                <StyledText>{translate("role.armorsmith.roleDataText", roleState.openShopsRemaining)}</StyledText>
+            </Counter>
+        case "marksman": {
+            let stateText;
+
             switch(roleState.state.type){
                 case "notLoaded":
                 case "shotTownie":
-                    return <StyledText>{translate("role.marksman.roleDataText."+roleState.state.type)}</StyledText>
+                    stateText = translate("role.marksman.roleDataText."+roleState.state.type)
+                    break;
                 case "marks":
                     switch(roleState.state.marks.type){
                         case "none":
-                            return <StyledText>{translate("role.marksman.roleDataText.marks.none")}</StyledText>
+                            stateText = translate("role.marksman.roleDataText.marks.none")
+                            break;
                         case "one":
-                            return <StyledText>{translate("role.marksman.roleDataText.marks.one", 
+                            stateText = translate("role.marksman.roleDataText.marks.one", 
                                 GAME_MANAGER.state.players[roleState.state.marks.a].toString()
-                            )}</StyledText>
+                            )
+                            break;
                         case "two":
-                            return <StyledText>{translate("role.marksman.roleDataText.marks.two", 
+                            stateText = translate("role.marksman.roleDataText.marks.two", 
                                 GAME_MANAGER.state.players[roleState.state.marks.a].toString(), 
                                 GAME_MANAGER.state.players[roleState.state.marks.b].toString()
-                            )}</StyledText>
+                            )
+                            break;
                     }
             }
-            return null;
+            
+            return <div className="role-information">
+                <StyledText>{stateText}</StyledText>
+            </div>
+        }
         case "eros":
             return <ErosMenu/>;
         case "mortician":
-            return <StyledText>{translate("role.mortician.roleDataText", (3-roleState.obscuredPlayers.length))}</StyledText>;
+            return <Counter
+                max={3}
+                current={3-roleState.obscuredPlayers.length}
+            >
+                <StyledText>{translate("role.mortician.roleDataText", (3-roleState.obscuredPlayers.length))}</StyledText>
+            </Counter>
         case "death":
-            return <StyledText>{translate("role.death.roleDataText", roleState.souls)}</StyledText>;
+            return <Counter
+                max={6}
+                current={roleState.souls}
+            >
+                <StyledText>{translate("role.death.roleDataText", roleState.souls)}</StyledText>
+            </Counter>
         case "ojo":
             if(phaseState.type === "night" && GAME_MANAGER.state.clientState.myIndex!==null && GAME_MANAGER.state.players[GAME_MANAGER.state.clientState.myIndex].alive)
                 return <SmallOjoMenu action={roleState.chosenAction}/>;
@@ -150,10 +234,10 @@ export default function RoleSpecificSection(){
             />;
         case "wildcard":
         case "trueWildcard":
-            return <>
+            return <div className="role-information">
                 <StyledText>{translate("role.wildcard.smallRoleMenu")}</StyledText>
                 <div>
-                    <RoleDropdown
+                    <RoleDropdown 
                         value={roleState.role ?? "wildcard"}
                         enabledRoles={GAME_MANAGER.state.enabledRoles} 
                         onChange={(rle)=>{
@@ -161,8 +245,8 @@ export default function RoleSpecificSection(){
                         }}
                     />
                 </div>
-            </>;
-        case "mafiaSupportWildcard":
+            </div>;
+        case "mafiaSupportWildcard": {
             const all_choosable_mafia: Role[] = Object.keys(ROLES).filter((rle)=>
                 rle === "mafiaSupportWildcard" ||
                 (
@@ -172,30 +256,52 @@ export default function RoleSpecificSection(){
                 )
             ).map((r)=>r as Role);
 
-            return <><StyledText>{translate("role.mafiaSupportWildcard.smallRoleMenu")}</StyledText><div><RoleDropdown 
-                value={roleState.role ?? "mafiaSupportWildcard"} 
-                enabledRoles={getRolesComplement(all_choosable_mafia)}
-                onChange={(rle)=>{
-                    GAME_MANAGER.sendSetWildcardRoleOutline(rle);
-                }}
-            /></div></>;
-        case "fiendsWildcard":
+            return <div className="role-information">
+                <StyledText>{translate("role.mafiaSupportWildcard.smallRoleMenu")}</StyledText>
+                <div>
+                    <RoleDropdown 
+                        value={roleState.role ?? "mafiaSupportWildcard"} 
+                        enabledRoles={getRolesComplement(all_choosable_mafia)}
+                        onChange={(rle)=>{
+                            GAME_MANAGER.sendSetWildcardRoleOutline(rle);
+                        }}
+                    />
+                </div>
+            </div>;
+        }
+        case "fiendsWildcard": {
             const all_choosable_fiends: Role[] = Object.keys(ROLES).filter((rle)=>
                 ROLES[rle as keyof typeof ROLES].faction === "fiends" &&
                 GAME_MANAGER.state.stateType === "game" &&
                 GAME_MANAGER.state.enabledRoles.includes(rle as Role)
             ).map((r)=>r as Role);
 
-            return <><StyledText>{translate("role.fiendsWildcard.smallRoleMenu")}</StyledText><div><RoleDropdown 
-                value={roleState.role ?? "fiendsWildcard"} 
-                enabledRoles={getRolesComplement(all_choosable_fiends)}
-                onChange={(rle)=>{
-                    GAME_MANAGER.sendSetWildcardRoleOutline(rle);
-                }}
-            /></div></>;
+            return <div className="role-information">
+                <StyledText>{translate("role.fiendsWildcard.smallRoleMenu")}</StyledText>
+                <div>
+                    <RoleDropdown 
+                        value={roleState.role ?? "fiendsWildcard"} 
+                        enabledRoles={getRolesComplement(all_choosable_fiends)}
+                        onChange={(rle)=>{
+                            GAME_MANAGER.sendSetWildcardRoleOutline(rle);
+                        }}
+                    />
+                </div>
+            </div>;
+        }
         case "martyr":
             if (roleState.state.type === "stillPlaying") {
-                return <StyledText>{translate("role.martyr.roleDataText", roleState.state.bullets)}</StyledText>;
+                return <>
+                    <div className="role-information">
+                        <StyledText>{translate("role.martyr.roleDataText.eccentric")}</StyledText>
+                    </div>
+                    <Counter
+                        max={2}
+                        current={roleState.state.bullets}
+                    >
+                        <StyledText>{translate("role.martyr.roleDataText", roleState.state.bullets)}</StyledText>
+                    </Counter>
+                </>
             } else {
                 return null;
             }

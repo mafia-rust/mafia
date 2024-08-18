@@ -14,6 +14,7 @@ import React from "react";
 import WikiArticle from "../components/WikiArticle";
 import SpectatorGameScreen from "../menu/spectator/SpectatorGameScreen";
 import LobbyMenu from "../menu/lobby/LobbyMenu";
+import LoadingScreen from "../menu/LoadingScreen";
 
 export default function messageListener(packet: ToClientPacket){
 
@@ -39,10 +40,10 @@ export default function messageListener(packet: ToClientPacket){
         case "acceptJoin":
             if(packet.inGame && packet.spectator){
                 GAME_MANAGER.setSpectatorGameState();
-                Anchor.setContent(<SpectatorGameScreen/>);
+                Anchor.setContent(<LoadingScreen type="join" />)
             }else if(packet.inGame && !packet.spectator){
                 GAME_MANAGER.setGameState();
-                Anchor.setContent(GameScreen.createDefault());
+                Anchor.setContent(<LoadingScreen type="join" />)
             }else{
                 GAME_MANAGER.setLobbyState();
                 Anchor.setContent(<LobbyMenu/>);
@@ -161,15 +162,29 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.lobbyName = packet.name;
             }
         break;
-        case "startGame":
+        case "startGame": {
             const isSpectator = GAME_MANAGER.getMySpectator();
             if(isSpectator){
                 GAME_MANAGER.setSpectatorGameState();
-                Anchor.setContent(<SpectatorGameScreen/>);
+                Anchor.setContent(<LoadingScreen type="join" />)
             }else{
                 GAME_MANAGER.setGameState();
+                Anchor.setContent(<LoadingScreen type="join" />)
+            }
+        }
+        break;
+        case "gameInitializationComplete": {
+            const isSpectator = GAME_MANAGER.getMySpectator();
+            if(isSpectator){
+                if (Anchor.isMobile()) {
+                    Anchor.setContent(<SpectatorGameScreen maxContent={2}/>);
+                } else {
+                    Anchor.setContent(<SpectatorGameScreen/>);
+                }
+            }else{
                 Anchor.setContent(GameScreen.createDefault());
             }
+        }
         break;
         case "backToLobby":
             GAME_MANAGER.setLobbyState();
@@ -338,7 +353,7 @@ export default function messageListener(packet: ToClientPacket){
         case "yourRoleState":
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 if(GAME_MANAGER.state.clientState.roleState?.type!== packet.roleState.type){
-                    GameScreen.instance?.closeMenu(ContentMenu.RoleSpecificMenu);
+                    GameScreen.getContentController()?.closeMenu(ContentMenu.RoleSpecificMenu);
                 }
                 GAME_MANAGER.state.clientState.roleState = packet.roleState;
             }
@@ -396,7 +411,7 @@ export default function messageListener(packet: ToClientPacket){
         break;
     }
 
-    GAME_MANAGER.invokeStateListeners(packet.type);
+    GAME_MANAGER.invokeStateListeners(packet.type)
 }
 
 

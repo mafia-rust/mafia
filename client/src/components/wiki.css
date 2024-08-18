@@ -38,6 +38,7 @@
 }
 /* Markdown */
 .wiki-article > div {
+    margin: .25rem;
     margin-bottom: 1rem;
     margin-top: 1rem;
 }
@@ -46,14 +47,15 @@
 }
 .wiki-article summary {
     padding: 0.5rem;
-    border: 2px solid var(--primary-border-color);
+    margin: .25rem;
+    border: .13rem solid var(--primary-border-color);
     border-radius: 0.5rem;
     text-align: center;
 }
 .wiki-article details > div{
     margin-top: 0;
     padding: 0.5rem;
-    border: 2px solid var(--primary-border-color);
+    border: .13rem solid var(--primary-border-color);
     border-radius: 0.5rem;
     
 }
@@ -95,7 +97,7 @@
     margin: 0.5rem;
     padding: 0.3rem;
     border-radius: 1rem;
-    background-color: var(--primary-color);
+    background-color: var(--secondary-color);
 }
 .wiki-article-standard {
     text-align: left;

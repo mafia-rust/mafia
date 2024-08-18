@@ -38,8 +38,9 @@ type Token = {
 
 (window as any).setWikiSearchPage = (page: WikiArticleLink) => {
     if (GAME_MANAGER.wikiArticleCallbacks.length === 0) {
-        if (GameScreen.instance) {
-            GameScreen.instance.openMenu(ContentMenu.WikiMenu, () => {
+        const gameScreenContentController = GameScreen.getContentController();
+        if (gameScreenContentController) {
+            gameScreenContentController.openMenu(ContentMenu.WikiMenu, () => {
                 GAME_MANAGER.setWikiArticle(page);
             });
         } else {
@@ -68,7 +69,7 @@ export type StyledTextProps = {
  * @param props.playerKeywordData  If omitted, defaults to {@link PLAYER_KEYWORD_DATA} 
  * @see sanitizePlayerMessage in ChatMessage.tsx
  */
-export default function StyledText(props: StyledTextProps): ReactElement {
+export default function StyledText(props: Readonly<StyledTextProps>): ReactElement {
     const playerKeywordData = props.playerKeywordData ?? PLAYER_KEYWORD_DATA;
 
     let tokens: Token[] = [{
@@ -184,7 +185,7 @@ export function computePlayerKeywordData(players: Player[]) {
     }
 
     for(const player of players) {
-        PLAYER_SENDER_KEYWORD_DATA["sender-"+player.toString()] = [
+        PLAYER_SENDER_KEYWORD_DATA[player.toString()] = [
             { style: "keyword-player-number", replacement: (player.index + 1).toString() },
             { replacement: " " },
             { style: "keyword-player-sender", replacement: player.name }
@@ -208,11 +209,12 @@ export function computePlayerKeywordDataForLobby(playerNames: string[]) {
     }
 
     for(const name of playerNames) {
-        PLAYER_SENDER_KEYWORD_DATA["sender-"+name] = [{ style: "keyword-player-sender", replacement: name }];
+        PLAYER_SENDER_KEYWORD_DATA[name] = [{ style: "keyword-player-sender", replacement: name }];
         PLAYER_KEYWORD_DATA[name] = [{ style: "keyword-player", replacement: name }];
     }
 }
 
+export const DUMMY_NAMES_SENDER_KEYWORD_DATA: KeywordDataMap = {};
 export const DUMMY_NAMES_KEYWORD_DATA: KeywordDataMap = {};
 computeDummyNamesKeywordData();
 
@@ -222,7 +224,7 @@ function computeDummyNamesKeywordData() {
     }
     for(let i = 0; i < DUMMY_NAMES.length; i++) {
         const name = DUMMY_NAMES[i];
-        DUMMY_NAMES_KEYWORD_DATA["sender-"+name] = [
+        DUMMY_NAMES_SENDER_KEYWORD_DATA[name] = [
             { style: "keyword-player-number", replacement: (i + 1).toString() },
             { replacement: " " },
             { style: "keyword-player-sender", replacement: name }

@@ -18,6 +18,7 @@ import { WikiArticleLink } from "../../components/WikiArticleLink";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import translate from "../../game/lang";
+import { roleSpecificMenuType } from "../Settings";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",
@@ -30,7 +31,7 @@ export enum ContentMenu {
 
 type GameScreenProps = {
     contentMenus: ContentMenu[],
-    maxContent?: number | undefined
+    maxContent?: number
 }
 type GameScreenState = {
     maxContent: number,
@@ -47,7 +48,14 @@ type GameScreenState = {
     roleSpecificMenu: boolean,
 }
 
-export default class GameScreen extends React.Component<GameScreenProps, GameScreenState> {
+export interface ContentController {
+    closeOrOpenMenu(menu: ContentMenu): void;
+    closeMenu(menu: ContentMenu): void;
+    openMenu(menu: ContentMenu, callback: ()=>void): void;
+    menusOpen(): ContentMenu[];
+}
+
+export default class GameScreen extends React.Component<GameScreenProps, GameScreenState> implements ContentController {
     static createDefault(): JSX.Element{
         if (Anchor.isMobile()) {
             return <GameScreen contentMenus={[
@@ -63,7 +71,10 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
             ]}/>
         }
     }
-    static instance: GameScreen;
+    static getContentController(): ContentController | undefined {
+        return this.instance;
+    }
+    private static instance: GameScreen | undefined;
     listener: (type: StateEventType | undefined) => void;
     swipeEventListener: (right: boolean) => void;
 
@@ -71,11 +82,13 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         super(props);
         GameScreen.instance = this;
 
-        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player") {
+            const role = GAME_MANAGER.state.clientState.roleState.type;
+
             this.state = {
                 maxContent: props.maxContent?props.maxContent:Infinity,
 
-                role: GAME_MANAGER.state.clientState.roleState?.type as Role,
+                role: role,
 
                 chatMenuNotification: false,
 
@@ -84,10 +97,9 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                 playerListMenu: props.contentMenus.includes(ContentMenu.PlayerListMenu),
                 willMenu: props.contentMenus.includes(ContentMenu.WillMenu),
                 wikiMenu: props.contentMenus.includes(ContentMenu.WikiMenu),
-                roleSpecificMenu : ROLES[GAME_MANAGER.state.clientState.roleState?.type as Role] !== undefined && 
-                    ROLES[GAME_MANAGER.state.clientState.roleState?.type as Role].largeRoleSpecificMenu,
+                roleSpecificMenu : roleSpecificMenuType(role) === "standalone"
             }
-        
+        }
 
         this.listener = (type)=>{
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
@@ -96,7 +108,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                         role: GAME_MANAGER.state.clientState.roleState?.type as Role,
                     });
                 }
-                if(type === "addChatMessages" && !GameScreen.instance.menusOpen().includes(ContentMenu.ChatMenu)){
+                if(type === "addChatMessages" && !this.menusOpen().includes(ContentMenu.ChatMenu)){
                     this.setState({
                         chatMenuNotification: true,
                     });
@@ -105,9 +117,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         }
         this.swipeEventListener = (right)=>{
 
-            let allowedToOpenRoleSpecific = 
-                ROLES[this.state.role as Role] !== undefined && 
-                ROLES[this.state.role as Role].largeRoleSpecificMenu
+            let allowedToOpenRoleSpecific = ROLES[this.state.role].roleSpecificMenu
 
             //close this menu and open the next one
             let menusOpen = this.menusOpen();
@@ -191,7 +201,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
                 this.setState({graveyardMenu: true}, callback);
                 break;
             case ContentMenu.RoleSpecificMenu:
-                if(ROLES[this.state.role as Role] !== undefined && ROLES[this.state.role as Role].largeRoleSpecificMenu)
+                if(roleSpecificMenuType(this.state.role) === "standalone")
                     this.setState({roleSpecificMenu: true}, callback);
                 break;
             case ContentMenu.WikiMenu:
@@ -249,7 +259,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         return (
             <div className="game-screen">
                 <div className="header">
-                    <HeaderMenu phase={GAME_MANAGER.state.phaseState.type} chatMenuNotification={this.state.chatMenuNotification}/>
+                    <HeaderMenu chatMenuNotification={this.state.chatMenuNotification}/>
                 </div>
                 <div className="content">
                     {this.state.chatMenu && <ChatMenu/>}
@@ -267,11 +277,11 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
     }
 }
 
-export function ContentTab(props: {
+export function ContentTab(props: Readonly<{
     helpMenu: WikiArticleLink | null
     close: ContentMenu | false, 
     children: string 
-}): ReactElement {
+}>): ReactElement {
 
     return <div className="content-tab">
         <div>
@@ -280,19 +290,19 @@ export function ContentTab(props: {
             </StyledText>
         </div>
 
-        {props.close && <Button className="close"
-            onClick={()=>GameScreen.instance.closeMenu(props.close as ContentMenu)}
+        {props.close && (!GAME_MANAGER.getMySpectator() || Anchor.isMobile()) && <Button className="close"
+            onClick={()=>GAME_MANAGER.getContentController()!.closeMenu(props.close as ContentMenu)}
         >
             <Icon size="small">close</Icon>
         </Button>}
-        {props.helpMenu ? <Button className="help"
+        {props.helpMenu && !GAME_MANAGER.getMySpectator() && <Button className="help"
             onClick={()=>{
-                GameScreen.instance.openMenu(ContentMenu.WikiMenu, ()=>{
+                GAME_MANAGER.getContentController()!.openMenu(ContentMenu.WikiMenu, ()=>{
                     props.helpMenu && GAME_MANAGER.setWikiArticle(props.helpMenu);
                 });
             }}
         >
             <Icon size="small">question_mark</Icon>
-        </Button>:null}
+        </Button>}
     </div>
 }

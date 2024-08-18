@@ -5,7 +5,7 @@ import "./lobbyMenu.css";
 import translate from "../../game/lang";
 import { StateListener } from "../../game/gameManager.d";
 import Anchor from "../Anchor";
-import { RoomLinkButton } from "../Settings";
+import { RoomLinkButton } from "../GlobalMenu";
 import { RoleOutline, RoleList, getAllRoles } from "../../game/roleListState.d";
 import LoadingScreen from "../LoadingScreen";
 import StartMenu from "../main/StartMenu";
@@ -38,7 +38,6 @@ export default function LobbyMenu(): ReactElement {
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
                 switch (type) {
                     case "roleList":
-                    case "roleOutline":
                         setRoleList([...GAME_MANAGER.state.roleList]);
                         break;
                     case "enabledRoles":

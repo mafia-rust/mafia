@@ -1,137 +1,68 @@
-import React from "react";
+import React, { ReactElement, useState } from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import "./graveyardMenu.css";
-import { Player } from "../../../game/gameState.d";
-import { RoleList, translateRoleOutline } from "../../../game/roleListState.d";
 import StyledText from "../../../components/StyledText";
 import GraveComponent from "../../../components/grave";
 import { Grave } from "../../../game/graveState";
-import { StateListener } from "../../../game/gameManager.d";
-import { Role } from "../../../game/roleState.d";
 import Icon from "../../../components/Icon";
 import { EnabledRolesDisplay } from "../../../components/gameModeSettings/EnabledRoleSelector";
+import { useGameState, usePlayerState } from "../../../components/useHooks";
+import { translateRoleOutline } from "../../../game/roleListState.d";
 
-type GraveyardMenuProps = {
-}
-type GraveyardMenuState = {
-    graves: Grave[],
-    players: Player[],
-    roleList: RoleList,
-    enabledRoles: Role[],
-    extendedGraveIndex: number | null,
-    strickenRoleListIndex: number[]
-}
-
-export default class GraveyardMenu extends React.Component<GraveyardMenuProps, GraveyardMenuState> {
-    listener: StateListener;
-    constructor(props: GraveyardMenuProps) {
-        super(props);
-
-        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
-            this.state = {
-                graves: GAME_MANAGER.state.graves,
-                players: GAME_MANAGER.state.players,
-                roleList: GAME_MANAGER.state.roleList,
-                enabledRoles: GAME_MANAGER.state.enabledRoles,
-                extendedGraveIndex: null,
-                strickenRoleListIndex: GAME_MANAGER.state.clientState.crossedOutOutlines
-            };
-        this.listener = (type)=>{
-            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
-                switch (type) {
-                    case "addGrave":
-                        this.setState({graves: GAME_MANAGER.state.graves})
-                    break;
-                    case "gamePlayers":
-                        this.setState({players: GAME_MANAGER.state.players})
-                    break;
-                    case "roleList":
-                        this.setState({roleList: GAME_MANAGER.state.roleList})
-                    break;
-                    case "enabledRoles":
-                        this.setState({enabledRoles: GAME_MANAGER.state.enabledRoles})
-                    break;
-                    case "yourCrossedOutOutlines":
-                        this.setState({strickenRoleListIndex: GAME_MANAGER.state.clientState.crossedOutOutlines})
-                    break;
-                }
-            }
-        };  
-    }
-    componentDidMount() {
-        GAME_MANAGER.addStateListener(this.listener);
-    }
-    componentWillUnmount() {
-        GAME_MANAGER.removeStateListener(this.listener);
-    }
-
-    renderGraves(){
-        return <>
-            {this.state.graves.map((grave, graveIndex)=>{
-                return this.renderGrave(grave, graveIndex);
-            }, this)}
-        </>
-    }
-    renderGrave(grave: Grave, graveIndex: number){
-        let graveRoleString: string;
-        if (grave.information.type === "normal") {
-            graveRoleString = translate(`role.${grave.information.role}.name`);
-        } else {
-            graveRoleString = translate("obscured");
+export default function GraveyardMenu(): ReactElement {
+    const graves = useGameState(
+        gameState => gameState.graves,
+        ["addGrave"]
+    )!
+    const [extendedGraveIndex, setExtendedGraveIndex] = useState<number | null>(null);
+    
+    return <div className="graveyard-menu graveyard-menu-colors">
+        <ContentTab close={ContentMenu.GraveyardMenu} helpMenu={"standard/graveyard"}>{translate("menu.graveyard.title")}</ContentTab>
+            
+        <div className="grid">
+            <RoleListElement />
+            <GraveList graves={graves} extendedGraveIndex={extendedGraveIndex} setExtendedGraveIndex={setExtendedGraveIndex}/>
+        </div>
+        {extendedGraveIndex !== null && 
+            <GraveExtended 
+                grave={graves[extendedGraveIndex]} 
+                setExtendedGraveIndex={setExtendedGraveIndex}
+            />
         }
+        <ExcludedRoles />
+    </div>
+}
 
-        return(<button
-            className="grave-list-button"
-            style={{ gridRow: graveIndex + 1 }} 
-            key={graveIndex}
-            onClick={()=>{
-                let extendedGraveIndex = this.state.extendedGraveIndex;
-                if(extendedGraveIndex === graveIndex)
-                    extendedGraveIndex = null;
-                else
-                    extendedGraveIndex = graveIndex;
-                this.setState({extendedGraveIndex:extendedGraveIndex})
-            }}
-        >
-            <span>
-                {
-                    this.state.extendedGraveIndex === graveIndex ? 
-                        <Icon>menu</Icon> :
-                        <Icon>menu_open</Icon>
-                }
-                <StyledText noLinks={true}>{this.state.players[grave.player]?.toString()}</StyledText>
-                <StyledText noLinks={true}>
-                    {` (${graveRoleString})`}
-                </StyledText>
-            </span>
-        </button>);
-    }
-    renderGraveExtended(grave: Grave){
-        return(<div className="grave-label">
-            <button onClick={()=>this.setState({extendedGraveIndex:null})}>
-                <Icon>close</Icon>
-            </button>
-            <GraveComponent grave={grave} playerNames={this.state.players.map(p => p.toString())}/>
-        </div>);
-    }
+function RoleListElement(): ReactElement {
+    const roleList = useGameState(
+        gameState => gameState.roleList,
+        ["roleList"]
+    )!
+    const crossedOutOutlines = usePlayerState(
+        clientState => clientState.crossedOutOutlines,
+        ["yourCrossedOutOutlines"]
+    )
 
-    renderRoleList(){return<>
-        {this.state.roleList.map((entry, index)=>{
+    return <>
+        { roleList.map((entry, index)=>{
+            const roleOutlineName = translateRoleOutline(entry);
+
             return <button 
                 className="role-list-button"
                 style={{ gridRow: index + 1 }} 
-                key={index}
+                key={roleOutlineName + crossedOutOutlines?.includes(index) + index}
                 onClick={()=>{
-                    let strickenRoleListIndex = this.state.strickenRoleListIndex;
-                    if(strickenRoleListIndex.includes(index))
-                        strickenRoleListIndex = strickenRoleListIndex.filter(x=>x!==index);
-                    else
-                        strickenRoleListIndex.push(index);
+                    if (GAME_MANAGER.getMySpectator()) return;
 
-                    this.setState({strickenRoleListIndex:strickenRoleListIndex})
-                    GAME_MANAGER.sendSaveCrossedOutOutlinesPacket(strickenRoleListIndex);
+                    let newCrossedOutOutlines = crossedOutOutlines!;
+                    if(newCrossedOutOutlines.includes(index))
+                        newCrossedOutOutlines = newCrossedOutOutlines.filter(x=>x!==index);
+                    else
+                        newCrossedOutOutlines.push(index);
+
+                    GAME_MANAGER.sendSaveCrossedOutOutlinesPacket(newCrossedOutOutlines);
                 }}
                 onMouseDown={(e)=>{
                     // on right click, show a list of all roles that can be in this bucket
@@ -141,36 +72,108 @@ export default class GraveyardMenu extends React.Component<GraveyardMenuProps, G
                 }}
             >
                 {
-                    this.state.strickenRoleListIndex.includes(index) ? 
+                    crossedOutOutlines?.includes(index) ? 
                     <s><StyledText>
-                        {translateRoleOutline(entry) ?? ""}
+                        {translateRoleOutline(entry)}
                     </StyledText></s> : 
                     <StyledText>
-                        {translateRoleOutline(entry) ?? ""}
+                        {translateRoleOutline(entry)}
                     </StyledText>
                 }
             </button>
-        }, this)}
-    </>}
+        })}
+    </>
+}
 
-    renderEnabledRoles(){
-        return<details className="graveyard-menu-enabledRoles">
-            <summary>
-                {translate("menu.enabledRoles.enabledRoles")}
-            </summary>
-            <EnabledRolesDisplay enabledRoles={this.state.enabledRoles}/>
-        </details>
+function GraveList(props: Readonly<{ 
+    graves: Grave[],
+    extendedGraveIndex: number | null,
+    setExtendedGraveIndex: (index: number | null) => void
+}>): ReactElement {
+    const playerNames = useGameState(
+        gameState => gameState.players.map(player => player.toString()),
+        ["gamePlayers"]
+    )!
+
+    return <>
+        {props.graves.map((grave, graveIndex)=>{
+            return <GraveButton
+                key={playerNames[graveIndex]} 
+                grave={grave} 
+                graveIndex={graveIndex}
+                extended={props.extendedGraveIndex === graveIndex}
+                playerName={playerNames[graveIndex]}
+                setExtendedGraveIndex={props.setExtendedGraveIndex}
+            />;
+        })}
+    </>
+}
+
+function GraveButton(props: Readonly<{ 
+    grave: Grave,
+    graveIndex: number,
+    extended: boolean,
+    playerName: string,
+    setExtendedGraveIndex: (index: number | null) => void
+}>): ReactElement {
+    let graveRoleString: string;
+    if (props.grave.information.type === "normal") {
+        graveRoleString = translate(`role.${props.grave.information.role}.name`);
+    } else {
+        graveRoleString = translate("obscured");
     }
 
+    return(<button
+        className="grave-list-button"
+        style={{ gridRow: props.graveIndex + 1 }} 
+        onClick={()=>{
+            if(props.extended)
+                props.setExtendedGraveIndex(null);
+            else
+                props.setExtendedGraveIndex(props.graveIndex);
+        }}
+    >
+        <span>
+            {
+                props.extended ? 
+                    <Icon>menu</Icon> :
+                    <Icon>menu_open</Icon>
+            }
+            <StyledText noLinks={true}>{props.playerName}</StyledText>
+            <StyledText noLinks={true}>
+                {` (${graveRoleString})`}
+            </StyledText>
+        </span>
+    </button>);
+}
 
-    render(){return(<div className="graveyard-menu graveyard-menu-colors">
-        <ContentTab close={ContentMenu.GraveyardMenu} helpMenu={"standard/graveyard"}>{translate("menu.graveyard.title")}</ContentTab>
-            
-        <div className="grid">
-            {this.renderRoleList()}
-            {this.renderGraves()}
-        </div>
-        {this.state.extendedGraveIndex!==null?this.renderGraveExtended(this.state.graves[this.state.extendedGraveIndex]):null}
-        {this.renderEnabledRoles()}
-    </div>)}
+function GraveExtended(props: Readonly<{
+    grave: Grave, 
+    setExtendedGraveIndex: (index: number | null) => void
+}>): ReactElement {
+    const playerNames = useGameState(
+        gameState => gameState.players.map(player => player.toString()),
+        ["gamePlayers"]
+    )!
+
+    return <div className="grave-label">
+        <button onClick={() => props.setExtendedGraveIndex(null)}>
+            <Icon>close</Icon>
+        </button>
+        <GraveComponent grave={props.grave} playerNames={playerNames}/>
+    </div>;
+}
+
+function ExcludedRoles(): ReactElement {
+    const enabledRoles = useGameState(
+        gameState => gameState.enabledRoles,
+        ["enabledRoles"]
+    )!
+
+    return <details className="graveyard-menu-excludedRoles">
+        <summary>
+            {translate("menu.enabledRoles.enabledRoles")}
+        </summary>
+        <EnabledRolesDisplay enabledRoles={enabledRoles}/>
+    </details>
 }

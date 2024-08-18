@@ -3,7 +3,7 @@ import { Role } from "../game/roleState.d";
 import ROLES from "../resources/roles.json";
 import React from "react";
 import translate, { langText, translateChecked } from "../game/lang";
-import StyledText, { DUMMY_NAMES_KEYWORD_DATA, StyledTextProps } from "./StyledText";
+import StyledText, { DUMMY_NAMES_KEYWORD_DATA, DUMMY_NAMES_SENDER_KEYWORD_DATA, StyledTextProps } from "./StyledText";
 import { ROLE_SETS, RoleSet, getRolesFromRoleSet } from "../game/roleListState.d";
 import ChatElement, { ChatMessageVariant } from "./ChatMessage";
 import DUMMY_NAMES from "../resources/dummyNames.json";
@@ -71,7 +71,7 @@ export default function WikiArticle(props: {
                             } 
                             playerNames={DUMMY_NAMES} 
                             playerKeywordData={DUMMY_NAMES_KEYWORD_DATA}
-                            playerSenderKeywordData={DUMMY_NAMES_KEYWORD_DATA}
+                            playerSenderKeywordData={DUMMY_NAMES_SENDER_KEYWORD_DATA}
                         />
                     )}
                 </div>}

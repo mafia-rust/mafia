@@ -18,7 +18,7 @@
 }
 
 .lm > header input {
-    font-size: 1.5rem;
+    font-size: 1.5em;
     
 }
 
@@ -35,15 +35,11 @@
 }
 
 .lm > header button{
-    font-size: 1.5rem;
+    font-size: 1.5em;
     display: flex;
     flex-direction: row;
     gap: .25rem;
     padding: .25rem .5rem;
-}
-
-.lm > header button .icon {
-    font-size: 1.8rem;
 }
 
 .lm > main ol {
@@ -87,9 +83,9 @@
 }
 
 .lm .player-list > div {
-    border: .13rem solid var(--primary-border-color);
-    border-top-color: black;
-    border-left-color: black;
+    border: .13rem solid var(--background-border-color);
+    border-top-color: var(--background-border-shadow-color);
+    border-left-color: var(--background-border-shadow-color);
     border-radius: .5rem;
 }
 
@@ -100,11 +96,11 @@
     padding: .13rem .25rem;
     gap: .5rem;
     align-items: center;
-    min-height: 2rem;
+    min-height: 2em;
 }
 
 .lm .player-list ol li:nth-of-type(even) {
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
 }
 
 .lm .player-list ol li > div {

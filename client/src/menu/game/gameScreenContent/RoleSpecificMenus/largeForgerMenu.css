@@ -3,7 +3,7 @@
 }
 .large-forger-menu textarea {
     text-align: left;
-    height: 19rem;
+    height: 19em;
     resize: none;
     width: 100%;
     margin: 0;
@@ -16,13 +16,3 @@
     align-items: center;
     flex-wrap: wrap;
 }
-/* .large-mayor-menu label {
-    display: inline-block;
-    height: 100%;
-    padding: .2rem;
-    border-radius: .2rem;
-    background-color: var(--primary-color);
-    border: 1px solid var(--primary-border-color);
-    cursor: pointer;
-    margin-right: .24rem;
-} */

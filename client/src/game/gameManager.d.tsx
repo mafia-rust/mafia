@@ -1,4 +1,5 @@
 import { WikiArticleLink } from "../components/WikiArticleLink";
+import { ContentController } from "../menu/game/GameScreen";
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
@@ -35,6 +36,7 @@ export type GameManager = {
     getPlayerNames(): string[],
     getLivingPlayers(): Player[] | null,
     getVotesRequired(): number | null,
+    getContentController(): ContentController | undefined,
 
     server: Server,
     listeners: StateListener[],

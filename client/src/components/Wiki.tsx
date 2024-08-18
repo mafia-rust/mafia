@@ -171,7 +171,7 @@ function WikiSearchResults(props: {
 
     
 
-    return <div className="wiki-results">
+    return <div className="wiki-results" tabIndex={-1}>
         {searchResultsHtml}
     </div>
 }

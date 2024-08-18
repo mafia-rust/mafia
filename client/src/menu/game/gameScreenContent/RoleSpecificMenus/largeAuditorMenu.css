@@ -23,7 +23,7 @@
     overflow-x: auto;
     overflow-y: hidden;
     background-color: var(--primary-color);
-    border: 1px solid var(--primary-border-color);
+    border: .13rem solid var(--primary-border-color);
 }
 /* .large-auditor-menu > .grid button.role-list-button {
     grid-column: role-list-start / role-list-end;

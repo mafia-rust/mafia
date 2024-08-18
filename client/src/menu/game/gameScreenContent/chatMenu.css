@@ -2,12 +2,23 @@
 .game-screen .content > .chat-menu {
     display: flex;
     flex-direction: column;
-    width: 55%;
+    width: 60%;
 }
 @media only screen and (max-width: 600px) {
     .game-screen .content > .chat-menu {
         width: 100%;
     }
+}
+.chat-filter-zone {
+    display: flex;
+    flex-direction: row;
+    gap: .25rem;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--secondary-color);
+    padding: 0 .25rem;
+    border-radius: .13rem;
+    border-style: solid;
 }
 .chat-message-section {
     height: 100%;
@@ -24,7 +35,17 @@
     flex-direction: row;
     justify-content: left;
     align-items: center;
-    padding: 0 10px;
+    padding: 0 .5rem;
+    border-top: .13rem solid var(--primary-border-color);
+    background-color: var(--secondary-color);
+}
+.chat-whisper-notification {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0 .25rem;
+    gap: .25rem;
+    text-align: left;
     border-top: .13rem solid var(--primary-border-color);
     background-color: var(--secondary-color);
 }

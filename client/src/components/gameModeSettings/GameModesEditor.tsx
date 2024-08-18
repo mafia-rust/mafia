@@ -60,7 +60,7 @@ export default function GameModesEditor(): ReactElement {
     
     return <div className="game-modes-editor">
         <header>
-            <h1>{translate("menu.settings.gameSettingsEditor")}</h1>
+            <h1>{translate("menu.globalMenu.gameSettingsEditor")}</h1>
         </header>
         <GameModeContext.Provider value={{roleList, phaseTimes, enabledRoles}}>
             <main>
