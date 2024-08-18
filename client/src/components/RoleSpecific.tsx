@@ -261,7 +261,7 @@ export default function RoleSpecificSection(){
                 <div>
                     <RoleDropdown 
                         value={roleState.role ?? "mafiaSupportWildcard"} 
-                        enabledRoles={getRolesComplement(all_choosable_mafia)}
+                        enabledRoles={all_choosable_mafia}
                         onChange={(rle)=>{
                             GAME_MANAGER.sendSetWildcardRoleOutline(rle);
                         }}
@@ -281,7 +281,7 @@ export default function RoleSpecificSection(){
                 <div>
                     <RoleDropdown 
                         value={roleState.role ?? "fiendsWildcard"} 
-                        enabledRoles={getRolesComplement(all_choosable_fiends)}
+                        enabledRoles={all_choosable_fiends}
                         onChange={(rle)=>{
                             GAME_MANAGER.sendSetWildcardRoleOutline(rle);
                         }}
