@@ -141,7 +141,10 @@ function WikiSearchResults(props: {
             }
 
             let className = undefined;
-            if(props.enabledRoles === undefined || !props.enabledRoles.map(role => `role/${role}`).includes(page)) {
+            if(
+                page.includes("role/") &&
+                props.enabledRoles !== undefined && props.enabledRoles.length !== 0 && !props.enabledRoles.map(role => `role/${role}`).includes(page)
+            ) {
                 className = "keyword-disabled";
             }
 
@@ -153,7 +156,10 @@ function WikiSearchResults(props: {
         for(let page of results){
 
             let className = undefined;
-            if(props.enabledRoles === undefined || !props.enabledRoles.map(role => `role/${role}`).includes(page)) {
+            if(
+                page.includes("role/") &&
+                props.enabledRoles !== undefined && props.enabledRoles.length !== 0 && !props.enabledRoles.map(role => `role/${role}`).includes(page)
+            ) {
                 className = "keyword-disabled";
             }
 
