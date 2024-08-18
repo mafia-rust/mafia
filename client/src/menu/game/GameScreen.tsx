@@ -117,7 +117,7 @@ export default class GameScreen extends React.Component<GameScreenProps, GameScr
         }
         this.swipeEventListener = (right)=>{
 
-            let allowedToOpenRoleSpecific = ROLES[this.state.role].roleSpecificMenu
+            let allowedToOpenRoleSpecific = roleSpecificMenuType(this.state.role) === "standalone"
 
             //close this menu and open the next one
             let menusOpen = this.menusOpen();

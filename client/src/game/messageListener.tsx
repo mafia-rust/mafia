@@ -118,6 +118,7 @@ export default function messageListener(packet: ToClientPacket){
                 for(let [playerId, player] of GAME_MANAGER.state.players){
                     player.host = packet.hosts.includes(playerId);
                 }
+                GAME_MANAGER.state.players = new Map(GAME_MANAGER.state.players.entries());
             }
         break;
         case "playersLostConnection":
@@ -126,6 +127,7 @@ export default function messageListener(packet: ToClientPacket){
                     if(packet.lostConnection.includes(playerId))
                         player.connection = "couldReconnect";
                 }
+                GAME_MANAGER.state.players = new Map(GAME_MANAGER.state.players.entries());
             }
         break;
         /*
@@ -222,12 +224,16 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "roleOutline":
             //role list entriy
-            if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
+            if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") {
                 GAME_MANAGER.state.roleList[packet.index] = packet.roleOutline;
+                GAME_MANAGER.state.roleList = [...GAME_MANAGER.state.roleList];
+            }
         break;
         case "phaseTime":
-            if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
-                GAME_MANAGER.state.phaseTimes[packet.phase.type as keyof typeof GAME_MANAGER.state.phaseTimes] = packet.time;
+            if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") {
+                GAME_MANAGER.state.phaseTimes[packet.phase.type] = packet.time;
+                GAME_MANAGER.state.phaseTimes = {...GAME_MANAGER.state.phaseTimes};
+            }
         break;
         case "phaseTimes":
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
@@ -267,6 +273,7 @@ export default function messageListener(packet: ToClientPacket){
                 for(let i = 0; i < GAME_MANAGER.state.players.length && i < packet.alive.length; i++){
                     GAME_MANAGER.state.players[i].alive = packet.alive[i];
                 }
+                GAME_MANAGER.state.players = [...GAME_MANAGER.state.players];
             }
         break;
         case "playerVotes":
@@ -279,6 +286,7 @@ export default function messageListener(packet: ToClientPacket){
                         GAME_MANAGER.state.players[i].numVoted = numVoted;
                     }
                 }
+                GAME_MANAGER.state.players = [...GAME_MANAGER.state.players];
             }
         break;
         case "yourSendChatGroups":
@@ -290,6 +298,7 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game"){
                 for(let i = 0; i < GAME_MANAGER.state.players.length && i < packet.buttons.length; i++){
                     GAME_MANAGER.state.players[i].buttons = packet.buttons[i];
+                    GAME_MANAGER.state.players = [...GAME_MANAGER.state.players];
                 }
             }
         break;
@@ -305,6 +314,7 @@ export default function messageListener(packet: ToClientPacket){
                     )
                         GAME_MANAGER.state.players[Number.parseInt(key)].roleLabel = value as Role;
                 }
+                GAME_MANAGER.state.players = [...GAME_MANAGER.state.players];
             }
         break;
         case "yourPlayerTags":
@@ -320,6 +330,7 @@ export default function messageListener(packet: ToClientPacket){
                     )
                         GAME_MANAGER.state.players[Number.parseInt(key)].playerTags = value as Tag[];
                 }
+                GAME_MANAGER.state.players = [...GAME_MANAGER.state.players];
             }
         break;
         case "yourWill":
@@ -387,7 +398,7 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "addGrave":
             if(GAME_MANAGER.state.stateType === "game")
-                GAME_MANAGER.state.graves.push(packet.grave);
+                GAME_MANAGER.state.graves = [...GAME_MANAGER.state.graves, packet.grave];
         break;
         case "gameOver":
             if(GAME_MANAGER.state.stateType === "game"){
