@@ -183,21 +183,18 @@ export default function RoleSpecificSection(){
                     stateText = translate("role.marksman.roleDataText."+roleState.state.type)
                     break;
                 case "marks":
-                    switch(roleState.state.marks.type){
-                        case "none":
-                            stateText = translate("role.marksman.roleDataText.marks.none")
-                            break;
-                        case "one":
-                            stateText = translate("role.marksman.roleDataText.marks.one", 
-                                GAME_MANAGER.state.players[roleState.state.marks.a].toString()
-                            )
-                            break;
-                        case "two":
-                            stateText = translate("role.marksman.roleDataText.marks.two", 
-                                GAME_MANAGER.state.players[roleState.state.marks.a].toString(), 
-                                GAME_MANAGER.state.players[roleState.state.marks.b].toString()
-                            )
-                            break;
+                    if(roleState.state.marks.length === 0){
+                        stateText = translate("role.marksman.roleDataText.marks.none")
+                    }else{
+                        stateText = translate("role.marksman.roleDataText.marks",
+                            roleState.state.marks.map((index)=>{
+                                if(GAME_MANAGER.state.stateType === "game")
+                                    return GAME_MANAGER.state.players[index].toString();
+                                else
+                                    return "";
+                            }).join(", ")
+                            
+                        )
                     }
             }
             

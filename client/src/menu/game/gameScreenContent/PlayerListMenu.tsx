@@ -75,13 +75,7 @@ function dayTargetedPlayer(player: Player) {
             (
                 roleState?.type === "marksman" && 
                 roleState.state.type === "marks" &&
-                (
-                    (roleState.state.marks.type === "one" && roleState.state.marks.a === player.index) ||
-                    (roleState.state.marks.type === "two" && (
-                        roleState.state.marks.a === player.index || 
-                        roleState.state.marks.b === player.index
-                    ))
-                )
+                roleState.state.marks.includes(player.index)
             )
         )
 }
