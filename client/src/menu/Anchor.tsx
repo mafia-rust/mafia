@@ -1,7 +1,7 @@
 import React, { JSXElementConstructor, MouseEventHandler, ReactElement, useRef } from "react";
 import "../index.css";
 import "./anchor.css";
-import { switchLanguage } from "../game/lang";
+import translate, { switchLanguage } from "../game/lang";
 import GlobalMenu from "./GlobalMenu";
 import SettingsMenu from './Settings';
 import { loadSettings } from "../game/localStorage";
@@ -231,6 +231,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             onTouchMove={(e) => {this.onTouchMove(e)}}
             onTouchEnd={(e) => {this.onTouchEnd(e)}}
         >
+            <title>🌹{translate("menu.start.title")}🔪</title>
             <Button className="global-menu-button" 
                 onClick={() => this.setState({globalMenuOpen: !this.state.globalMenuOpen})}
             >

@@ -33,6 +33,11 @@
     padding: 0;
     margin: 0;
 }
+.sm > main > section#main > h2 {
+    font-size: 3em;
+    padding: 0;
+    margin: 0;
+}
 .sm > main > section#main > div > button {
     display: flex;
     flex-direction: row;

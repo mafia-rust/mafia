@@ -27,7 +27,11 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
     render(){return(<div className="sm">
         <main>
             <section id="main">
-                <h1>{translate("menu.start.title")}</h1>
+                {
+                    Anchor.isMobile() ? 
+                    <h2>{translate("menu.start.title")}</h2> :
+                    <h1>{translate("menu.start.title")}</h1>
+                }
                 <div>
                     <button onClick={() => this.connectButton()}>
                         <Icon>play_arrow</Icon> {translate("menu.start.button.play")}
@@ -44,10 +48,6 @@ export default class StartMenu extends React.Component<StartMenuProps, StartMenu
                 </div>
                 
             </section>
-            {/* <section id="wiki">
-                <h2>{translate("menu.wiki.title")}</h2>
-                <WikiSearch/>
-            </section> */}
         </main>
         <footer>
             <nav>
