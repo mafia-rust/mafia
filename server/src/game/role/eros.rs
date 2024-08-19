@@ -29,8 +29,8 @@ pub(super) const DEFENSE: u8 = 1;
 
 impl RoleStateImpl for Eros {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        match priority {
-            Priority::Kill => {
+        match (priority, self.action) {
+            (Priority::Kill, ErosAction::Kill) => {
                 if game.day_number() == 1 {return}
                 if let Some(visit) = actor_ref.night_visits(game).first(){
                     let target_ref = visit.target;
@@ -40,7 +40,7 @@ impl RoleStateImpl for Eros {
                     );
                 }
             }
-            Priority::Cupid => {
+            (Priority::Cupid, ErosAction::LoveLink) => {
                 let visits = actor_ref.night_visits(game);
 
                 let Some(first_visit) = visits.get(0) else {return};
