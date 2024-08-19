@@ -231,7 +231,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
             onTouchMove={(e) => {this.onTouchMove(e)}}
             onTouchEnd={(e) => {this.onTouchEnd(e)}}
         >
-            <title>{translate("menu.start.title")}🔪</title>
+            <title>🌹{translate("menu.start.title")}🔪</title>
             <Button className="global-menu-button" 
                 onClick={() => this.setState({globalMenuOpen: !this.state.globalMenuOpen})}
             >
