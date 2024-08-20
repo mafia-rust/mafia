@@ -2,7 +2,7 @@ use rand::seq::SliceRandom;
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::components::cult::Cult;
+use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -69,14 +69,13 @@ impl RoleStateImpl for Spy {
                 ).count() as u8;
 
                 if count > 0 {
-                    if Cult::can_convert_tonight(game) {
-                        actor_ref.push_night_message(game,
-                            ChatMessageVariant::ApostleCanConvertTonight
-                        )
-                    }else{
-                        actor_ref.push_night_message(game,
-                            ChatMessageVariant::ApostleCantConvertTonight
-                        )
+                    match Cult::next_ability(game) {
+                        CultAbility::Convert => {
+                            actor_ref.push_night_message(game, ChatMessageVariant::CultConvertsNext);
+                        }
+                        CultAbility::Kill => {
+                            actor_ref.push_night_message(game, ChatMessageVariant::CultKillsNext);
+                        }
                     }
 
                     actor_ref.push_night_message(game, ChatMessageVariant::SpyCultistCount { count });

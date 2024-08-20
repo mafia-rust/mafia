@@ -3,7 +3,7 @@ use std::vec;
 use serde::Serialize;
 
 use crate::game::chat::ChatMessageVariant;
-use crate::game::components::cult::Cult;
+use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::grave::{GraveKiller, GraveReference};
 use crate::game::chat::ChatGroup;
 use crate::game::phase::PhaseType;
@@ -24,20 +24,20 @@ pub(super) const DEFENSE: u8 = 0;
 
 impl RoleStateImpl for Apostle {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if game.day_number() == 1 {return}
 
-        let mut cult = game.cult().clone();
-        match priority {
-            Priority::Kill if !Cult::can_convert_tonight(game) && cult.ordered_cultists.len() == 1 => {
+        match (priority, Cult::next_ability(game)) {
+            (Priority::Kill, CultAbility::Kill) if game.cult().ordered_cultists.len() == 1 => {
 
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
                 let target_ref = visit.target;
                 
-                target_ref.try_night_kill(
+                if target_ref.try_night_kill(
                     actor_ref, game, GraveKiller::Faction(Faction::Cult), 1, false
-                );
+                ) {
+                    Cult::set_ability_used_last_night(game, Some(CultAbility::Kill));
+                }
             }
-            Priority::Convert if Cult::can_convert_tonight(game) => {
+            (Priority::Convert, CultAbility::Convert) => {
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
                 let target_ref = visit.target;
 
@@ -47,9 +47,7 @@ impl RoleStateImpl for Apostle {
                 }
 
                 target_ref.set_role(game, RoleState::Zealot(Zealot));
-
-                cult.sacrifices_required = Some(Cult::SACRIFICES_NEEDED);
-                game.set_cult(cult);
+                Cult::set_ability_used_last_night(game, Some(CultAbility::Convert));
             }
             _ => {}
         }
@@ -57,11 +55,10 @@ impl RoleStateImpl for Apostle {
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
 
         let cult = game.cult().clone();
-        let can_kill = cult.ordered_cultists.len() == 1 && !Cult::can_convert_tonight(game);
-        let can_convert = Cult::can_convert_tonight(game);
+        let can_kill = cult.ordered_cultists.len() == 1 && Cult::next_ability(game) == CultAbility::Kill;
+        let can_convert = Cult::next_ability(game) == CultAbility::Convert;
 
-        if !can_convert && !can_kill{return false}
-        if game.day_number() == 1 {return false}
+        if !can_convert && !can_kill {return false}
 
         crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
     }
@@ -71,7 +68,7 @@ impl RoleStateImpl for Apostle {
         false
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, !Cult::can_convert_tonight(game))
+        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, Cult::next_ability(game) == CultAbility::Kill)
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Cult])

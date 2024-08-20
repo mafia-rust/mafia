@@ -134,9 +134,8 @@ pub enum ChatMessageVariant {
     PuppeteerYouArePoisoned,
 
     YourConvertFailed,
-    ApostleCanConvertTonight,
-    ApostleCantConvertTonight,
-    CultSacrificesRequired{required: u8},
+    CultConvertsNext,
+    CultKillsNext,
 
     SomeoneSurvivedYourAttack,
     YouSurvivedAttack,

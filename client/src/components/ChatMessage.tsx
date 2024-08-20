@@ -567,15 +567,6 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                     playerListToString(message.players, playerNames)
                 );
             }
-        case "cultSacrificesRequired":
-            switch (message.required) {
-                case 0:
-                    return translate("chatMessage.cultSacrificesRequired.0");
-                case 1:
-                    return translate("chatMessage.cultSacrificesRequired.1");
-                default:
-                    return translate("chatMessage.cultSacrificesRequired", message.required);
-            }
         case "wildcardConvertFailed":
             return translate("chatMessage.wildcardConvertFailed", translate("role."+message.role+".name"));
         case "youAreLoveLinked":
@@ -591,8 +582,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "jesterWon":
         case "wardblocked":
         case "yourConvertFailed":
-        case "apostleCanConvertTonight":
-        case "apostleCantConvertTonight":
+        case "cultConvertsNext":
+        case "cultKillsNext":
         case "someoneSurvivedYourAttack":
         case "transported":
         case "veteranAttackedVisitor":
@@ -738,12 +729,9 @@ export type ChatMessageVariant = {
 } | {
     type: "yourConvertFailed"
 } | {
-    type: "apostleCanConvertTonight"
+    type: "cultConvertsNext"
 } | {
-    type: "apostleCantConvertTonight"
-} | {
-    type: "cultSacrificesRequired"
-    required: number
+    type: "cultKillsNext"
 } | {
     type: "mediumHauntStarted",
     medium: PlayerIndex,

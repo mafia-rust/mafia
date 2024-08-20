@@ -3,6 +3,7 @@ use std::vec;
 use serde::Serialize;
 
 use crate::game::chat::ChatGroup;
+use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::grave::{GraveKiller, GraveReference};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -22,16 +23,20 @@ pub(super) const DEFENSE: u8 = 0;
 
 impl RoleStateImpl for Zealot {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Kill {return}
+        if priority != Priority::Kill || Cult::next_ability(game) != CultAbility::Kill {return}
 
         let Some(visit) = actor_ref.night_visits(game).first() else {return};
         let target_ref = visit.target;
-
-        target_ref.try_night_kill(
+        
+        if target_ref.try_night_kill(
             actor_ref, game, GraveKiller::Faction(Faction::Cult), 1, false
-        );
+        ) {
+            Cult::set_ability_used_last_night(game, Some(CultAbility::Kill));
+        }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+        if Cult::next_ability(game) != CultAbility::Kill {return false}
+
         crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
     }
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
