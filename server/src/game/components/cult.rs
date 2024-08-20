@@ -1,6 +1,5 @@
 use crate::game::{chat::{ChatGroup, ChatMessageVariant}, phase::PhaseType, player::PlayerReference, role::{apostle::Apostle, disciple::Disciple, zealot::Zealot, Role, RoleState}, role_list::Faction, Game};
 
-
 impl Game {
     pub fn cult(&self)->&Cult{
         &self.cult
@@ -9,38 +8,52 @@ impl Game {
         self.cult = cult;
     }
 }
-#[derive(Default, Clone)]
+#[derive(Default, Debug, Clone)]
 pub struct Cult {
     pub ordered_cultists: Vec<PlayerReference>,
-    pub sacrifices_required: Option<u8>
+    pub next_ability: CultAbility,
+    pub ability_used_last_night: Option<CultAbility>,
+}
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
+pub enum CultAbility{
+    Kill,
+    #[default] Convert,
 }
 impl Cult{
     pub fn on_phase_start(game: &mut Game, phase: PhaseType){
         Cult::set_ordered_cultists(game);
         
-        if phase == PhaseType::Night {
-            if Cult::can_convert_tonight(game){
-                game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::ApostleCanConvertTonight);
-            }else{
-                game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::ApostleCantConvertTonight);
-            }
+        match phase {
+            PhaseType::Night => {
+                if let Some(ability) = Cult::ability_used_last_night(game) {
+                    match ability {
+                        CultAbility::Kill => {
+                            Cult::set_next_ability(game, CultAbility::Convert);
+                        },
+                        CultAbility::Convert => {
+                            Cult::set_next_ability(game, CultAbility::Kill);
+                        }
+                    }
+                    Cult::set_ability_used_last_night(game, None);
+                }
+
+
+                match Cult::next_ability(game) {
+                    CultAbility::Kill => {
+                        game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::CultKillsNext);
+                    },
+                    CultAbility::Convert => {
+                        game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::CultConvertsNext);
+                    }
+                }
+            },
+            _ => {}
         }
     }
     pub fn on_game_start(game: &mut Game) {
         Cult::set_ordered_cultists(game);
     }
-    pub fn on_any_death(game: &mut Game, player: PlayerReference) {
-        let mut cult = game.cult().clone();
-
-        if player.role(game).faction() != Faction::Cult {
-            cult.sacrifices_required = cult.sacrifices_required.map(|s| s.saturating_sub(1));
-        }
-        if let Some(required) = cult.sacrifices_required{
-            game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::CultSacrificesRequired { required });
-        }
-        game.set_cult(cult);
-        
-
+    pub fn on_any_death(game: &mut Game, _player: PlayerReference) {
         Cult::set_ordered_cultists(game);
     }
     pub fn on_role_switch(game: &mut Game, old: Role, new: Role) {
@@ -61,9 +74,6 @@ impl Cult{
             |p| p.role(game).faction() == Faction::Cult
         ).collect()
     }
-
-
-    pub const SACRIFICES_NEEDED: u8 = 2;
 
     pub fn set_ordered_cultists(game: &mut Game){
 
@@ -101,14 +111,25 @@ impl Cult{
 
         game.set_cult(cult);
     }
-    pub fn can_convert_tonight(game: &Game)->bool {
-        let cult = game.cult();
-        if cult.ordered_cultists.len() >= 4 {return false}
-        if game.day_number() == 1 {return false}
 
-        match cult.sacrifices_required {
-            None | Some(0) => true,
-            _ => false
-        }
+    pub fn next_ability(game: &Game)->CultAbility{
+        game.cult().next_ability.clone()
+    }
+    pub fn set_next_ability(game: &mut Game, ability: CultAbility){
+        let mut cult = game.cult().clone();
+        
+        cult.next_ability = ability;
+
+        game.set_cult(cult);
+    }
+    pub fn ability_used_last_night(game: &Game)->Option<CultAbility>{
+        game.cult().ability_used_last_night.clone()
+    }
+    pub fn set_ability_used_last_night(game: &mut Game, ability: Option<CultAbility>){
+        let mut cult = game.cult().clone();
+        
+        cult.ability_used_last_night = ability;
+
+        game.set_cult(cult);
     }
 }

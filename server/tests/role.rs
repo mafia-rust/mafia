@@ -3,7 +3,7 @@ use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::role::{armorsmith::Armorsmith, scarecrow::Scarecrow};
+use mafia_server::game::{components::cult::CultAbility, role::{armorsmith::Armorsmith, scarecrow::Scarecrow}};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
@@ -1439,29 +1439,29 @@ fn godfather_wardblock_still_kills() {
 }
 
 #[test]
-fn cult_wait_for_two_deaths() {
-    kit::scenario!(game in Night 2 where
+fn cult_alternates() {
+    kit::scenario!(game in Night 1 where
         apostle: Apostle,
         b: Detective,
         c: Detective,
         d: Detective,
         e: Detective,
         f: Detective,
-        g: Detective,
-        h: Detective,
-        i: Detective,
-        j: Detective
+        g: Detective
     );
 
 
     //apostle converts
+    assert!(game.cult().next_ability == CultAbility::Convert);
     assert!(apostle.set_night_selection_single(b));
     game.next_phase();
     assert!(b.alive());
     assert!(b.role_state().role().faction() == Faction::Cult);
 
     //zealot kills, apostle waits
-    game.skip_to(Night, 3);
+    game.skip_to(Night, 2);
+    assert!(game.cult().next_ability == CultAbility::Kill);
+    assert!(game.cult().ordered_cultists.len() == 2);
     assert!(!apostle.set_night_selection_single(d));
     assert!(b.set_night_selection_single(c));
     game.next_phase();
@@ -1469,40 +1469,24 @@ fn cult_wait_for_two_deaths() {
     assert!(d.alive());
     assert!(d.role_state().role().faction() != Faction::Cult);
 
+    //zealot waits, apostle converts
+    game.skip_to(Night, 3);
+    assert!(game.cult().ordered_cultists.len() == 2);
+    assert!(apostle.set_night_selection_single(d));
+    assert!(!b.set_night_selection_single(e));
+    game.next_phase();
+    assert!(e.alive());
+    assert!(d.alive());
+    assert!(d.role_state().role().faction() == Faction::Cult);
+
     //zealot kills, apostle waits
     game.skip_to(Night, 4);
-    assert!(!apostle.set_night_selection_single(d));
-    assert!(b.set_night_selection_single(e));
-    game.next_phase();
-    assert!(!e.alive());
-    assert!(d.alive());
-    assert!(d.role_state().role().faction() != Faction::Cult);
-
-    //zealot kills, apostle converts
-    game.skip_to(Night, 5);
-    assert!(apostle.set_night_selection_single(f));
-    assert!(b.set_night_selection_single(g));
+    assert!(game.cult().ordered_cultists.len() == 3);
+    assert!(!apostle.set_night_selection_single(f));
+    assert!(d.set_night_selection_single(g));
     game.next_phase();
     assert!(f.alive());
-    assert!(f.role_state().role().faction() == Faction::Cult);
     assert!(!g.alive());
-
-    //zealot kills, apostle waits
-    game.skip_to(Night, 6);
-    assert!(!apostle.set_night_selection_single(h));
-    assert!(f.set_night_selection_single(i));
-    game.next_phase();
-    assert!(!i.alive());
-    assert!(h.alive());
-    assert!(h.role_state().role().faction() != Faction::Cult);
-
-    //zealot kills, apostle converts, same person
-    game.skip_to(Night, 7);
-    assert!(apostle.set_night_selection_single(j));
-    assert!(f.set_night_selection_single(j));
-    game.next_phase();
-    assert!(!j.alive());
-    assert!(j.role_state().role().faction() == Faction::Cult);
 }
 
 #[test]

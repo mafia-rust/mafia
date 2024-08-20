@@ -31,7 +31,9 @@ export default function SelectionInformation(): ReactElement | null {
                     [`role.${role}.youAreSelecting.2`, "youAreSelecting"],
                     ...targetNames
                 )
-            } else {
+            } else if (role === "marksman") {
+                selectionText = translate("role.marksman.youAreSelecting", targetNames.join(", "));
+            }else {
                 selectionText = translateAny(
                     [`role.${role}.youAreSelecting`, "youAreSelecting"],
                     ...targetNames,
