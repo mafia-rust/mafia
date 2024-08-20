@@ -77,6 +77,8 @@ export function createPlayerGameState(): PlayerGameState {
         voted: null,
         judgement: "abstain",
 
+        forfeitVote: false,
+
         sendChatGroups: [],
     }
 }

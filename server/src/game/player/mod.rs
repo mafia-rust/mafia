@@ -53,6 +53,7 @@ pub struct Player {
 
 
     fast_forward_vote: bool,
+    forfeit_vote: bool,
 
     voting_variables: PlayerVotingVariables,
     night_variables: PlayerNightVariables,
@@ -106,6 +107,7 @@ impl Player {
             last_sent_buttons: Vec::new(),
 
             fast_forward_vote: false,
+            forfeit_vote: false,
 
             voting_variables: PlayerVotingVariables{
                 chosen_vote : None,
@@ -166,6 +168,7 @@ pub mod test {
             last_sent_buttons: Vec::new(),
 
             fast_forward_vote: false,
+            forfeit_vote: false,
 
             voting_variables: PlayerVotingVariables{
                 chosen_vote : None,

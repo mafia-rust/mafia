@@ -94,6 +94,10 @@ export default function PlayerListMenu(): ReactElement {
         ["phase", "playerOnTrial"]
     )!
 
+    const forfeitVote = usePlayerState(
+        gameState => gameState.forfeitVote,
+        ["yourForfeitVote"]
+    )
     const roleState = usePlayerState(
         gameState => gameState.roleState,
         ["yourRoleState"]
@@ -177,7 +181,21 @@ export default function PlayerListMenu(): ReactElement {
                 <RoleSpecificSection/>
             </details>
         }
-        
+
+        {phaseState.type === "discussion" ? <Button
+            className={forfeitVote ? "highlighted" : ""}
+            onClick={()=>{
+                if(
+                    GAME_MANAGER.state.stateType === "game" &&
+                    GAME_MANAGER.state.clientState.type === "player" &&
+                    GAME_MANAGER.state.phaseState.type === "discussion"
+                )
+                    GAME_MANAGER.sendForfeitVotePacket(!forfeitVote);
+            }}
+        >
+            {translate("forfeitVote")}
+        </Button> : null}
+
         {GAME_MANAGER.getMySpectator() || <div>
             {(["all", "living", "usable"] as const)
                 .map(filter => 

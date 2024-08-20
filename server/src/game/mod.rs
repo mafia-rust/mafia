@@ -20,6 +20,7 @@ use std::collections::HashMap;
 use std::time::Duration;
 use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
+use event::before_phase_end::BeforePhaseEnd;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::Serialize;
@@ -230,13 +231,10 @@ impl Game {
 
         let &PhaseState::Nomination { trials_left } = self.current_phase() else {return};
 
-        let mut living_players_count = 0;
         let mut voted_player_votes: HashMap<PlayerReference, u8> = HashMap::new();
 
         for player in PlayerReference::all_players(self){
             if !player.alive(self) { continue }
-            living_players_count += 1;
-
 
             let Some(voted_player) = player.chosen_vote(self) else { continue };
 
@@ -263,7 +261,7 @@ impl Game {
 
         let mut next_player_on_trial = None;
         for (player, votes) in voted_player_votes.iter(){
-            if *votes > (living_players_count / 2){
+            if self.nomination_votes_is_enough(*votes){
                 next_player_on_trial = Some(*player);
                 break;
             }
@@ -273,6 +271,16 @@ impl Game {
             self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
             self.start_phase(PhaseState::Testimony { trials_left: trials_left-1, player_on_trial });
         }        
+    }
+    pub fn nomination_votes_is_enough(&self, votes: u8)->bool{
+        votes >= self.nomination_votes_required()
+    }
+    pub fn nomination_votes_required(&self)->u8{
+        1 + (
+            PlayerReference::all_players(self)
+                .filter(|p| p.alive(self) && !p.forfeit_vote(self))
+                .count() / 2
+        ) as u8
     }
 
     pub fn game_is_over(&self) -> bool {
@@ -307,6 +315,7 @@ impl Game {
         }
 
         while self.phase_machine.time_remaining <= Duration::ZERO {
+            BeforePhaseEnd::new(self.current_phase().phase()).invoke(self);
             let new_phase = PhaseState::end(self);
 
             self.start_phase(new_phase);

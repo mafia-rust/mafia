@@ -11,4 +11,5 @@ pub enum Tag{
     MorticianTagged,
     PuppeteerMarionette,
     LoveLinked,
+    ForfeitVote,
 }

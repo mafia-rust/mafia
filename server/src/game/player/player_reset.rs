@@ -2,7 +2,7 @@
 
 use std::time::Duration;
 
-use crate::{client_connection::ClientConnection, game::{grave::GraveKiller, phase::PhaseType, verdict::Verdict, Game}};
+use crate::{client_connection::ClientConnection, game::{grave::GraveKiller, phase::PhaseType, tag::Tag, verdict::Verdict, Game}};
 use super::PlayerReference;
 
 
@@ -32,6 +32,16 @@ impl PlayerReference{
             },
             PhaseType::Discussion => {},
             PhaseType::Nomination => {
+
+                //tell players someone forfeited
+                if self.forfeit_vote(game){
+                    for player in PlayerReference::all_players(game){
+                        player.push_player_tag(game, *self, Tag::ForfeitVote);
+                    }
+        
+                    self.set_chosen_vote(game, None, false);
+                }
+
                 self.set_chosen_vote(game, None, false);
                 self.set_verdict(game, Verdict::Abstain);
             },
@@ -57,6 +67,8 @@ impl PlayerReference{
                 self.set_night_grave_will(game, self.will(game).clone());
                 self.set_night_grave_death_notes(game, vec![]);
 
+                self.set_forfeit_vote(game, false);
+
                 if self.is_disconnected(game) && self.alive(game){
                     self.set_night_died(game, true);
                     
@@ -67,6 +79,23 @@ impl PlayerReference{
 
         self.set_fast_forward_vote(game, false);
         self.role_state(game).clone().on_phase_start(game, *self, phase)
+    }
+
+    pub fn before_phase_end(&self, game: &mut Game, phase: PhaseType){
+        
+        for player in PlayerReference::all_players(game){
+            player.remove_player_tag(game, *self, Tag::ForfeitVote);
+        }
+
+        match phase {
+            PhaseType::Discussion => {
+                if self.night_silenced(game) {
+                    self.set_forfeit_vote(game, true);
+                }
+            },
+            _ => {}
+        }
+
     }
 }
 
