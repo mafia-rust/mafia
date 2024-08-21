@@ -23,6 +23,11 @@
     font-style: italic; 
     font-weight: bold;
 }
+.keyword-player-important {
+    border-bottom-color: darkgoldenrod;
+    border-right-color: darkgoldenrod;
+    color: yellow;
+}
 .keyword-player {
     color: whitesmoke;
     font-style: italic; 

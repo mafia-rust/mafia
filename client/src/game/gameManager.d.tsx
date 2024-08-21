@@ -121,6 +121,7 @@ export type GameManager = {
     sendSetErosAction(action: "loveLink" | "kill"): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;
+    sendForfeitVotePacket(forfeit: boolean): void;
 
     messageListener(serverMessage: ToClientPacket): void;
 

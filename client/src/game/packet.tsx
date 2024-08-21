@@ -148,6 +148,9 @@ export type ToClientPacket = {
 } | {
     type: "gameOver",
     reason: string
+} | {
+    type: "yourForfeitVote",
+    forfeit: boolean
 }
 
 export type ToServerPacket = {
@@ -290,4 +293,7 @@ export type ToServerPacket = {
 } | {
     type: "voteFastForwardPhase",
     fastForward: boolean
+} | {
+    type: "forfeitVote",
+    forfeit: boolean
 }

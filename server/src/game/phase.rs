@@ -102,8 +102,7 @@ impl PhaseState {
                 game.phase_machine.day_number += 1;
             },
             PhaseState::Nomination { trials_left } => {
-                let required_votes = 1+
-                    (PlayerReference::all_players(game).filter(|p| p.alive(game)).count()/2);
+                let required_votes = game.nomination_votes_required();
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::TrialInformation { required_votes, trials_left });
                 
 

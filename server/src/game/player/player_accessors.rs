@@ -185,6 +185,15 @@ impl PlayerReference{
         self.deref(game).fast_forward_vote
     }
 
+    pub fn set_forfeit_vote(&self, game: &mut Game, forfeit: bool) {
+        self.deref_mut(game).forfeit_vote = forfeit;
+
+        self.send_packet(game, ToClientPacket::YourForfeitVote { forfeit });
+    }
+    pub fn forfeit_vote(&self, game: &Game) -> bool{
+        self.deref(game).forfeit_vote
+    }
+
     /* 
     Voting
     */
@@ -196,7 +205,7 @@ impl PlayerReference{
     pub fn set_chosen_vote(&self, game: &mut Game, chosen_vote: Option<PlayerReference>, send_chat_message: bool) -> bool{
 
         if chosen_vote == self.deref(game).voting_variables.chosen_vote ||
-            !self.deref(game).alive || self.night_silenced(game) {
+            !self.deref(game).alive || self.forfeit_vote(game) {
             self.deref_mut(game).voting_variables.chosen_vote = None;
             self.send_packet(game, ToClientPacket::YourVoting { 
                 player_index: None

@@ -115,6 +115,7 @@ pub enum ToClientPacket{
     YourJudgement{verdict: Verdict},
     #[serde(rename_all = "camelCase")]
     YourVoteFastForwardPhase{fast_forward: bool},
+    YourForfeitVote{forfeit: bool},
 
     #[serde(rename_all = "camelCase")]
     AddChatMessages{chat_messages: Vec<ChatMessage>},
@@ -247,4 +248,6 @@ pub enum ToServerPacket{
 
     #[serde(rename_all = "camelCase")]
     VoteFastForwardPhase{fast_forward: bool},
+    #[serde(rename_all = "camelCase")]
+    ForfeitVote{forfeit: bool},
 }

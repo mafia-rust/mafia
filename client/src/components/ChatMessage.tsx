@@ -95,7 +95,7 @@ const ChatElement = React.memo((
                     >
                         {chatGroupIcon ?? ""} {messageSender}: </StyledText>
                     <StyledText
-                        playerKeywordData={props.playerSenderKeywordData}
+                        playerKeywordData={props.playerKeywordData}
                     >
                         {translateChatMessage(message.variant, playerNames)}
                     </StyledText>

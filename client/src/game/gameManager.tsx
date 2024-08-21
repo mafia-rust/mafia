@@ -145,10 +145,18 @@ export function createGameManager(): GameManager {
             if(GAME_MANAGER.state.stateType !== "game") return null;
             return GAME_MANAGER.state.players.filter(player => player.alive)
         },
-        getVotesRequired(): number | null{
+        getVotesRequired(): number | null{            
+            let count = 1;
             let livingPlayers = GAME_MANAGER.getLivingPlayers();
             if(livingPlayers === null) return null;
-            return Math.ceil((livingPlayers.length + 1)/ 2);
+            for (let player of livingPlayers) {
+                if (player.alive && !player.playerTags.includes("forfeitVote")) {
+                    count += 1;
+                }
+            }
+
+
+            return Math.ceil(count / 2);
         },
         getContentController(): ContentController | undefined {
             return GAME_MANAGER.getMySpectator() 
@@ -531,6 +539,12 @@ export function createGameManager(): GameManager {
             this.server.sendPacket({
                 type: "voteFastForwardPhase",
                 fastForward: fastForward
+            });
+        },
+        sendForfeitVotePacket(forfeit: boolean) {
+            this.server.sendPacket({
+                type: "forfeitVote",
+                forfeit
             });
         },
 

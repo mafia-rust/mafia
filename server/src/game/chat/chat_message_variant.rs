@@ -69,7 +69,7 @@ pub enum ChatMessageVariant {
     /* Trial */
     #[serde(rename_all = "camelCase")]
     TrialInformation{
-        required_votes: usize, 
+        required_votes: u8, 
         trials_left: u8
     },
 
