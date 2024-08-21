@@ -18,7 +18,10 @@ pub struct Spy;
 #[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum SpyBug{
-    Silenced, Roleblocked, Protected, Transported, Possessed
+    Silenced, 
+    Roleblocked, Wardblocked,
+    Protected, 
+    Transported, Possessed
 }
 
 pub(super) const FACTION: Faction = Faction::Town;
@@ -55,6 +58,7 @@ impl RoleStateImpl for Spy {
                         ChatMessageVariant::YouWereProtected => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Protected }),
                         ChatMessageVariant::Transported => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Transported }),
                         ChatMessageVariant::YouWerePossessed { immune: _ } => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Possessed }),
+                        ChatMessageVariant::Wardblocked => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Wardblocked }),
                         _ => None
                     }{
                         actor_ref.push_night_message(game, message);
