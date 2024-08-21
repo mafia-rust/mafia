@@ -9,7 +9,7 @@ import ChatElement, { ChatMessageVariant } from "./ChatMessage";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { GeneratedArticle, WikiArticleLink } from "./WikiArticleLink";
 import "./wiki.css";
-import { replaceMentions } from "..";
+import GAME_MANAGER, { replaceMentions } from "..";
 
 function WikiStyledText(props: Omit<StyledTextProps, 'markdown' | 'playerKeywordData'>): ReactElement {
     return <StyledText {...props} markdown={true} playerKeywordData={DUMMY_NAMES_KEYWORD_DATA} />
@@ -113,6 +113,10 @@ export default function WikiArticle(props: {
 function getGeneratedArticle(article: GeneratedArticle){
     switch(article){
         case "role_set":
+
+
+            const enabledRoles = GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game" ? GAME_MANAGER.state.enabledRoles : null;
+
             let mainElements = [
                 <section key="title"><WikiStyledText>
                     {"# "+translate("wiki.article.generated.role_set.title")}
@@ -125,7 +129,13 @@ function getGeneratedArticle(article: GeneratedArticle){
                 </WikiStyledText></section>);
                 
                 let elements = getRolesFromRoleSet(set as RoleSet).map((role)=>{
-                    return <button key={role}>
+
+                    let className = "";
+                    if(enabledRoles !== null && !enabledRoles.includes(role)) {
+                        className = "keyword-disabled";
+                    }
+
+                    return <button key={role} className={className}>
                         <StyledText>
                             {translate("role."+role+".name")}
                         </StyledText>

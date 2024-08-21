@@ -67,7 +67,7 @@ export default function EnabledRoleSelector(props: {
 
         <EnabledRolesDisplay 
             enabledRoles={enabledRoles}
-            modifiable={true}
+            modifiable={!props.disabled}
             onDisableRoles={props.onDisableRoles}
             onEnableRoles={props.onEnableRoles}
             disabled={props.disabled}
@@ -93,8 +93,9 @@ export function EnabledRolesDisplay(props: EnabledRolesDisplayProps): ReactEleme
     const isEnabled = useCallback((role: Role) => props.enabledRoles.includes(role), [props.enabledRoles]);
 
     const roleTextElement = (role: Role) => {
+
         return <StyledText 
-            noLinks={props.modifiable}
+            noLinks={props.modifiable ?? false}
             className={!isEnabled(role) ? "keyword-disabled" : undefined}
         >
             {translate("role."+role+".name")}
