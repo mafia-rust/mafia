@@ -112,10 +112,13 @@
             {"type": "spyBug", "bug": "protected"},
             {"type": "spyBug", "bug": "transported"},
             {"type": "spyBug", "bug": "possessed"},
-            {"type": "spyMafiaVisit", "players": [16,17,18]},
+            {"type": "spyBug", "bug": "wardblocked"},
+            {"type": "spyMafiaVisit", "players": [16,17,18,16]},
             {"type": "spyMafiaVisit", "players": []},
             {"type": "spyCultistCount", "count": 1},
-            {"type": "spyCultistCount", "count": 2}
+            {"type": "spyCultistCount", "count": 2},
+            {"type": "cultConvertsNext"},
+            {"type": "cultKillsNext"}
         ]
     },
     "auditor": {
