@@ -193,7 +193,7 @@ export default function PlayerListMenu(): ReactElement {
                     GAME_MANAGER.sendForfeitVotePacket(!forfeitVote);
             }}
         >
-            {translate("forfeitVote")}
+            <StyledText>{translate("forfeitVote")}</StyledText>
         </Button> : null}
 
         {GAME_MANAGER.getMySpectator() || <div>

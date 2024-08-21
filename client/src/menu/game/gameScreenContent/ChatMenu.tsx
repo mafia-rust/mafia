@@ -10,7 +10,8 @@ import { HistoryPoller, HistoryQueue } from "../../../history";
 import { StateListener } from "../../../game/gameManager.d";
 import { Button } from "../../../components/Button";
 import Icon from "../../../components/Icon";
-import StyledText from "../../../components/StyledText";
+import StyledText, { KeywordDataMap, PLAYER_KEYWORD_DATA, PLAYER_SENDER_KEYWORD_DATA } from "../../../components/StyledText";
+import { useGameState } from "../../../components/useHooks";
 
 
 export default function ChatMenu(): ReactElement {
@@ -74,6 +75,7 @@ export default function ChatMenu(): ReactElement {
 export function ChatMessageSection(props: Readonly<{
     filter?: PlayerIndex | null
 }>): ReactElement {
+    const players = useGameState((gameState)=>{return gameState.players}, ["gamePlayers"])!;
     const filter = useMemo(() => props.filter ?? null, [props.filter]);
     const [messages, setMessages] = useState<ChatMessage []>(() => {
         if (GAME_MANAGER.state.stateType === "game" || GAME_MANAGER.state.stateType === "lobby")
@@ -158,7 +160,36 @@ export function ChatMessageSection(props: Readonly<{
                 
                 return msgTxt.includes(GAME_MANAGER.getPlayerNames()[filter]);
             }).map((msg, index) => {
-                return <ChatElement key={index} message={msg}/>;
+                return <ChatElement
+                    key={index}
+                    message={msg}
+                    playerKeywordData={(() => {
+                        if (filter===null) {return undefined}
+
+                        const newKeywordData: KeywordDataMap = {...PLAYER_KEYWORD_DATA};
+
+                        newKeywordData[players[filter].toString()] = [
+                            { style: "keyword-player-important keyword-player-number", replacement: (filter + 1).toString() },
+                            { replacement: " " },
+                            { style: "keyword-player-important keyword-player-sender", replacement: players[filter].name }
+                        ];
+                        
+                        return newKeywordData;
+                    })()}
+                    playerSenderKeywordData={(() => {
+                        if (filter===null) {return undefined}
+
+                        const newKeywordData: KeywordDataMap = {...PLAYER_SENDER_KEYWORD_DATA};
+
+                        newKeywordData[players[filter].toString()] = [
+                            { style: "keyword-player-important keyword-player-number", replacement: (filter + 1).toString() },
+                            { replacement: " " },
+                            { style: "keyword-player-important keyword-player-sender", replacement: players[filter].name }
+                        ];
+                        
+                        return newKeywordData;
+                    })()}
+                />;
             })}
         </div>
     </div>
