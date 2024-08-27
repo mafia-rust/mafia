@@ -6,10 +6,9 @@ import translate from "../../game/lang";
 import { StateListener } from "../../game/gameManager.d";
 import Anchor, { AnchorContext } from "../Anchor";
 import { RoomLinkButton } from "../GlobalMenu";
-import { RoleOutline, RoleList, getAllRoles } from "../../game/roleListState.d";
+import { RoleList, getAllRoles } from "../../game/roleListState.d";
 import LoadingScreen from "../LoadingScreen";
 import StartMenu from "../main/StartMenu";
-import { defaultPhaseTimes } from "../../game/gameState";
 import { GameModeContext } from "../../components/gameModeSettings/GameModesEditor";
 import PhaseTimesSelector from "../../components/gameModeSettings/PhaseTimeSelector";
 import { OutlineListSelector } from "../../components/gameModeSettings/OutlineSelector";
@@ -17,7 +16,7 @@ import EnabledRoleSelector from "../../components/gameModeSettings/EnabledRoleSe
 import Icon from "../../components/Icon";
 import { GameModeSelector } from "../../components/gameModeSettings/GameModeSelector";
 import LobbyChatMenu from "./LobbyChatMenu";
-import { useGameState, useLobbyState } from "../../components/useHooks";
+import { useLobbyState } from "../../components/useHooks";
 import { Button } from "../../components/Button";
 
 export default function LobbyMenu(): ReactElement {
