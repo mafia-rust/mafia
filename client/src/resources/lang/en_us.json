@@ -18,6 +18,8 @@
     "menu.play.field.playerId": "Player Id",
 
     "menu.lobby.button.start": "Start",
+    "menu.lobby.button.advanced.true": "Simple view",
+    "menu.lobby.button.advanced.false": "Advanced view",
     "menu.lobby.field.namePlaceholder": "Enter name",
     "menu.lobby.button.setName": "Set Name",
     "menu.lobby.players": "Players",
