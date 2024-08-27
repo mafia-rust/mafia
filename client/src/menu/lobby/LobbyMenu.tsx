@@ -174,7 +174,7 @@ function LobbyMenuHeader(props: Readonly<{
                 <Icon>play_arrow</Icon>{translate("menu.lobby.button.start")}
             </button>
             <RoomLinkButton/>
-            {mobile || <Button
+            {mobile || host || <Button
                 onClick={() => props.setAdvancedView(!props.advancedView)}
             >
                 <Icon>settings</Icon>{translate(`menu.lobby.button.advanced.${props.advancedView}`)}
