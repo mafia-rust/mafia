@@ -41,7 +41,8 @@ export type LobbyClient = {
 }
 export type LobbyClientType = {
     type: "spectator"
-} | {
+} | PlayerClientType;
+export type PlayerClientType = {
     type: "player",
     name: string,
 }
