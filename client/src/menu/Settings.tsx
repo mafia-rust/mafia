@@ -1,10 +1,10 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useContext, useEffect, useState } from "react";
 import "./settings.css";
 import translate, { Language, languageName, LANGUAGES, switchLanguage } from "../game/lang";
 import StyledText from "../components/StyledText";
 import Icon from "../components/Icon";
 import { loadSettings, RoleSpecificMenuType, saveSettings } from "../game/localStorage";
-import Anchor from "./Anchor";
+import Anchor, { AnchorContext } from "./Anchor";
 import { Role } from "../game/roleState.d";
 import ROLES from "../resources/roles.json";
 
@@ -15,6 +15,7 @@ export function roleSpecificMenuType(role: Role): RoleSpecificMenuType | null {
 export default function SettingsMenu(): ReactElement {
     const [volume, setVolume] = useState<number>(loadSettings().volume);
     const [roleSpecificMenuSettings, setRoleSpecificMenuSettings] = useState(loadSettings().roleSpecificMenus);
+    const { mobile } = useContext(AnchorContext);
 
     useEffect(() => {
         Anchor.updateAnchorVolume(volume);
@@ -65,7 +66,7 @@ export default function SettingsMenu(): ReactElement {
                 </section>
             </div>
             <div>
-                {Anchor.isMobile() && <h2>{translate("menu.settings.advanced")}</h2>}
+                {mobile && <h2>{translate("menu.settings.advanced")}</h2>}
                 <details className="standout role-specific-menu-settings">
                     <summary>
                         {translate("menu.settings.roleSpecificMenus")}

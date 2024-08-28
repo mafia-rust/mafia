@@ -1,4 +1,4 @@
-import React, { ReactElement, useMemo } from "react";
+import React, { ReactElement, useContext, useMemo } from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import { PhaseState, Player, Verdict } from "../../game/gameState.d";
@@ -8,17 +8,19 @@ import StyledText from "../../components/StyledText";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import { useGameState, usePlayerState } from "../../components/useHooks";
-import Anchor from "../Anchor";
+import Anchor, { AnchorContext } from "../Anchor";
 import { roleSpecificMenuType } from "../Settings";
 
 
 export default function HeaderMenu(props: Readonly<{
     chatMenuNotification: boolean
 }>): ReactElement {
+    const { mobile } = useContext(AnchorContext);
+
     return <div className="header-menu">
         {!(GAME_MANAGER.getMySpectator() && !GAME_MANAGER.getMyHost()) && <FastForwardButton />}
         <Information />
-        {!(GAME_MANAGER.getMySpectator() && !Anchor.isMobile()) && <MenuButtons chatMenuNotification={props.chatMenuNotification}/>}
+        {!(GAME_MANAGER.getMySpectator() && !mobile) && <MenuButtons chatMenuNotification={props.chatMenuNotification}/>}
         <Timer />
     </div>
 }

@@ -178,11 +178,7 @@ export default function messageListener(packet: ToClientPacket){
         case "gameInitializationComplete": {
             const isSpectator = GAME_MANAGER.getMySpectator();
             if(isSpectator){
-                if (Anchor.isMobile()) {
-                    Anchor.setContent(<SpectatorGameScreen maxContent={2}/>);
-                } else {
-                    Anchor.setContent(<SpectatorGameScreen/>);
-                }
+                Anchor.setContent(<SpectatorGameScreen/>);
             }else{
                 Anchor.setContent(GameScreen.createDefault());
             }

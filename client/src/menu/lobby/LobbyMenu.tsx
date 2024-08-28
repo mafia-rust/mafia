@@ -76,6 +76,8 @@ function LobbyMenuSettings(props: Readonly<{
         ["phaseTimes"]
     )!;
 
+    const { mobile } = useContext(AnchorContext);
+
     useEffect(() => {
         const listener: StateListener = (type) => {
             if(type === "rejectJoin"){
@@ -103,7 +105,7 @@ function LobbyMenuSettings(props: Readonly<{
     }, [enabledRoles, phaseTimes, roleList]);
 
     return <GameModeContext.Provider value={context}>
-        {Anchor.isMobile() && <h1>{translate("menu.lobby.settings")}</h1>}
+        {mobile && <h1>{translate("menu.lobby.settings")}</h1>}
         {props.isHost && <GameModeSelector 
             canModifySavedGameModes={false}
             loadGameMode={gameMode => {

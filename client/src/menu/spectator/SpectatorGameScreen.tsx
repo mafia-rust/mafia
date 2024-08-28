@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useEffect, useState } from "react";
+import React, { ReactElement, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import "./spectatorGameScreen.css";
 import PhaseStartedScreen from "./PhaseStartedScreen";
 import { useGameState } from "../../components/useHooks";
@@ -8,6 +8,7 @@ import PlayerListMenu from "../game/gameScreenContent/PlayerListMenu";
 import GraveyardMenu from "../game/gameScreenContent/GraveyardMenu";
 import HeaderMenu from "../game/HeaderMenu";
 import { ContentController, ContentMenu } from "../game/GameScreen";
+import { AnchorContext } from "../Anchor";
 
 
 const DEFAULT_START_PHASE_SCREEN_TIME = 3;
@@ -24,7 +25,7 @@ type SpectatorContentMenus = {
     graveyardMenu: boolean
 }
 
-export default function SpectatorGameScreen(props: Readonly<{ maxContent?: number }>): ReactElement {
+export default function SpectatorGameScreen(): ReactElement {
     const showStartedScreen = useGameState(
         gameState => {
             if (
@@ -40,10 +41,16 @@ export default function SpectatorGameScreen(props: Readonly<{ maxContent?: numbe
         true
     )!
 
+    const { mobile } = useContext(AnchorContext);
+
+    const maxContent = useMemo(() => {
+        return mobile ? 2 : undefined
+    }, [mobile]);
+
     const [contentMenus, setContentMenus] = useState<SpectatorContentMenus>({
         chatMenu: true,
         playerListMenu: true,
-        graveyardMenu: (props.maxContent ?? Infinity) > 2
+        graveyardMenu: (maxContent ?? Infinity) > 2
     });
 
     const initializeContentController = useCallback(() => {
@@ -67,7 +74,7 @@ export default function SpectatorGameScreen(props: Readonly<{ maxContent?: numbe
 
             // Obey props.maxContent
             // This is a bit hard-coded, but since there's only three menus it's fine.
-            if (open === true && CONTENT_CONTROLLER!.menusOpen().length >= (props.maxContent ?? Infinity)) {
+            if (open === true && CONTENT_CONTROLLER!.menusOpen().length >= (maxContent ?? Infinity)) {
                 if (menu === ContentMenu.ChatMenu || menu === ContentMenu.PlayerListMenu) {
                     newMenus.graveyardMenu = false;
                 } else if (menu === ContentMenu.GraveyardMenu) {
@@ -108,7 +115,7 @@ export default function SpectatorGameScreen(props: Readonly<{ maxContent?: numbe
                 return openMenus
             },
         }
-    }, [contentMenus, props.maxContent]);
+    }, [contentMenus, maxContent]);
 
     // Initialize on component load so MenuButtons component doesn't freak out
     initializeContentController();
