@@ -1,5 +1,5 @@
 import { marked } from "marked";
-import React, { ReactElement } from "react";
+import React, { ReactElement, useContext, useEffect } from "react";
 import ReactDOMServer from "react-dom/server";
 import GAME_MANAGER, { find } from "..";
 import translate, { translateChecked } from "../game/lang";
@@ -8,7 +8,7 @@ import ROLES from "../resources/roles.json";
 import "./styledText.css";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { ARTICLES, WikiArticleLink, getArticleLangKey } from "./WikiArticleLink";
-import GameScreen, { ContentMenu } from "../menu/game/GameScreen";
+import { ContentControllerContext, ContentMenu } from "../menu/game/GameScreen";
 import { Player } from "../game/gameState.d";
 import Anchor from "../menu/Anchor";
 import WikiCoverCard from "./WikiCoverCard";
@@ -36,23 +36,6 @@ type Token = {
     string: string
 } & KeywordData[number])
 
-(window as any).setWikiSearchPage = (page: WikiArticleLink) => {
-    if (GAME_MANAGER.wikiArticleCallbacks.length === 0) {
-        const gameScreenContentController = GameScreen.getContentController();
-        if (gameScreenContentController) {
-            gameScreenContentController.openMenu(ContentMenu.WikiMenu, () => {
-                GAME_MANAGER.setWikiArticle(page);
-            });
-        } else {
-            Anchor.setCoverCard(<WikiCoverCard />, () => {
-                GAME_MANAGER.setWikiArticle(page);
-            })
-        }
-    } else {
-        GAME_MANAGER.setWikiArticle(page);
-    }
-};
-
 export type StyledTextProps = {
     children: string[] | string,
     className?: string,
@@ -71,6 +54,25 @@ export type StyledTextProps = {
  */
 export default function StyledText(props: Readonly<StyledTextProps>): ReactElement {
     const playerKeywordData = props.playerKeywordData ?? PLAYER_KEYWORD_DATA;
+    const contentController = useContext(ContentControllerContext);
+
+    useEffect(() => {
+        (window as any).setWikiSearchPage = (page: WikiArticleLink) => {
+            if (GAME_MANAGER.wikiArticleCallbacks.length === 0) {
+                if (contentController?.canOpen(ContentMenu.WikiMenu)) {
+                    contentController.openMenu(ContentMenu.WikiMenu, () => {
+                        GAME_MANAGER.setWikiArticle(page);
+                    });
+                } else {
+                    Anchor.setCoverCard(<WikiCoverCard />, () => {
+                        GAME_MANAGER.setWikiArticle(page);
+                    })
+                }
+            } else {
+                GAME_MANAGER.setWikiArticle(page);
+            }
+        };
+    })
 
     let tokens: Token[] = [{
         type: "raw",

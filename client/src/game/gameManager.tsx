@@ -15,8 +15,6 @@ import { Role } from "./roleState.d";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
-import GameScreen, { ContentController } from "../menu/game/GameScreen";
-import { getSpectatorScreenContentController } from "../menu/spectator/SpectatorGameScreen";
 export function createGameManager(): GameManager {
 
     console.log("Game manager created.");
@@ -157,11 +155,6 @@ export function createGameManager(): GameManager {
 
 
             return Math.ceil(count / 2);
-        },
-        getContentController(): ContentController | undefined {
-            return GAME_MANAGER.getMySpectator() 
-                ? getSpectatorScreenContentController()
-                : GameScreen.getContentController();
         },
 
 

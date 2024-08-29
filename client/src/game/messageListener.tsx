@@ -2,7 +2,7 @@
 import { createPlayer } from "./gameState";
 import Anchor, { chatMessageToAudio } from "./../menu/Anchor";
 import GAME_MANAGER from "./../index";
-import GameScreen, { ContentMenu } from "./../menu/game/GameScreen";
+import GameScreen from "./../menu/game/GameScreen";
 import { ToClientPacket } from "./packet";
 import { Tag } from "./gameState.d";
 import { Role } from "./roleState.d";
@@ -180,7 +180,7 @@ export default function messageListener(packet: ToClientPacket){
             if(isSpectator){
                 Anchor.setContent(<SpectatorGameScreen/>);
             }else{
-                Anchor.setContent(GameScreen.createDefault());
+                Anchor.setContent(<GameScreen/>);
             }
         }
         break;
@@ -359,9 +359,6 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "yourRoleState":
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
-                if(GAME_MANAGER.state.clientState.roleState?.type!== packet.roleState.type){
-                    GameScreen.getContentController()?.closeMenu(ContentMenu.RoleSpecificMenu);
-                }
                 GAME_MANAGER.state.clientState.roleState = packet.roleState;
             }
         break;

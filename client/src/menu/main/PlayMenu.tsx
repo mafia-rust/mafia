@@ -43,7 +43,7 @@ export default function PlayMenu(): ReactElement {
 
 function PlayMenuFooter(): ReactElement {
     const [roomCode, setRoomCode] = useState<number | undefined>(undefined);
-    const [playerId, setPlayerID] = useState<number | undefined>(undefined);
+    const [playerID, setPlayerID] = useState<number | undefined>(undefined);
 
     return <footer>
         <div>
@@ -70,7 +70,7 @@ function PlayMenuFooter(): ReactElement {
         </div>
         <div>
             <label>{translate("menu.play.field.playerId")}</label>
-            <input type="text" value={playerId} 
+            <input type="text" value={playerID} 
                 onChange={(e)=>{
                     const value = e.target.value;
                     if (value === "") {
@@ -86,13 +86,13 @@ function PlayMenuFooter(): ReactElement {
                 }}
                 onKeyUp={(e)=>{
                     if(e.key === 'Enter') {
-                        joinGame(roomCode, playerId);
+                        joinGame(roomCode, playerID);
                     }
                 }}
             />
         </div>
         <button onClick={()=>{
-            joinGame(roomCode, playerId)
+            joinGame(roomCode, playerID)
         }}>
             {translate("menu.play.button.join")}
         </button>
@@ -171,8 +171,8 @@ function PlayMenuTable(): ReactElement {
                     <td>{lobby.name}</td>
                     <td>
                         <div className="play-menu-lobby-player-list">
-                            {lobby.players.map((player, j)=>{
-                                return <button key={j} onClick={()=>{
+                            {lobby.players.map((player)=>{
+                                return <button key={player[1]} onClick={()=>{
                                     joinGame(roomCode, player[0]);
                                 }}>{player[1]}</button>
                             })}

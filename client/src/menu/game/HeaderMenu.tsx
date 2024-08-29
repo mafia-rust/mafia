@@ -2,13 +2,13 @@ import React, { ReactElement, useContext, useMemo } from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import { PhaseState, Player, Verdict } from "../../game/gameState.d";
-import { ContentController, ContentMenu } from "./GameScreen";
+import { ContentControllerContext, ContentMenu } from "./GameScreen";
 import "./headerMenu.css";
 import StyledText from "../../components/StyledText";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import { useGameState, usePlayerState } from "../../components/useHooks";
-import Anchor, { AnchorContext } from "../Anchor";
+import { AnchorContext } from "../Anchor";
 import { roleSpecificMenuType } from "../Settings";
 
 
@@ -152,7 +152,7 @@ function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactE
         ["yourRoleState"]
     )
 
-    const contentController: ContentController = GAME_MANAGER.getContentController()!;
+    const contentController = useContext(ContentControllerContext)!;
 
     return <div className="menu-buttons">
         <Button className="chat-menu-colors"

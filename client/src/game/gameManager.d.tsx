@@ -26,7 +26,7 @@ export type GameManager = {
     setLobbyState(): void;
     setGameState(): void;
     setSpectatorGameState(): void;
-    setOutsideLobbyState(): void;
+    setOutsideLobbyState(): Promise<void>;
     
 
     state: State,
@@ -36,7 +36,6 @@ export type GameManager = {
     getPlayerNames(): string[],
     getLivingPlayers(): Player[] | null,
     getVotesRequired(): number | null,
-    getContentController(): ContentController | undefined,
 
     server: Server,
     listeners: StateListener[],

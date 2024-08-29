@@ -14,7 +14,7 @@ export default function LobbyPlayerList(): ReactElement {
     )!;
     const host = useLobbyState(
         lobbyState => lobbyState.players.get(lobbyState.myId!)?.host,
-        ["playersHost", "lobbyClients"]
+        ["playersHost", "lobbyClients", "yourId"]
     )!;
 
     return <>

@@ -140,29 +140,25 @@ function LobbyMenuHeader(props: Readonly<{
     setAdvancedView: (advancedView: boolean) => void
 }>): JSX.Element {
     const [lobbyName, setLobbyName] = useState<string>(GAME_MANAGER.state.stateType === "lobby" ? GAME_MANAGER.state.lobbyName : "Mafia Lobby");
-    const [host, setHost] = useState(GAME_MANAGER.getMyHost() ?? false);
+    const host = useLobbyState(
+        lobbyState => lobbyState.players.get(lobbyState.myId!)?.host,
+        ["lobbyClients", "yourId", "playersHost"]
+    )!;
     const { mobile } = useContext(AnchorContext);
 
     useEffect(() => {
         const listener: StateListener = (type) => {
-            switch (type) {
-                case "playersHost":
-                    setHost(GAME_MANAGER.getMyHost() ?? false);
-                    break;
-                case "lobbyName":
-                    if(GAME_MANAGER.state.stateType === "lobby")
-                        setLobbyName(GAME_MANAGER.state.lobbyName);
-                    break;
+            if (type === "lobbyName" && GAME_MANAGER.state.stateType === "lobby") {
+                setLobbyName(GAME_MANAGER.state.lobbyName);
             }
-        }
+        };
 
-        setHost(GAME_MANAGER.getMyHost() ?? false);
         if(GAME_MANAGER.state.stateType === "lobby")
             setLobbyName(GAME_MANAGER.state.lobbyName);
 
         GAME_MANAGER.addStateListener(listener)
         return ()=>{GAME_MANAGER.removeStateListener(listener);}
-    }, [setHost, setLobbyName]);
+    }, [setLobbyName]);
 
     return <header>
         <div>
