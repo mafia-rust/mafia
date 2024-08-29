@@ -20,7 +20,6 @@ use std::collections::HashMap;
 use std::time::Duration;
 use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
-use event::before_phase_end::BeforePhaseEnd;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::Serialize;
@@ -43,7 +42,6 @@ use self::components::{
 use self::resolution_state::ResolutionState;
 use self::event::on_game_ending::OnGameEnding;
 use self::event::on_grave_added::OnGraveAdded;
-use self::event::on_phase_start::OnPhaseStart;
 use self::grave::GraveReference;
 use self::phase::PhaseState;
 use self::player::PlayerInitializeParameters;
@@ -269,8 +267,8 @@ impl Game {
         
         if let Some(player_on_trial) = next_player_on_trial {
             self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
-            self.start_phase(PhaseState::Testimony { trials_left: trials_left-1, player_on_trial });
-        }        
+            PhaseStateMachine::next_phase(self, Some(PhaseState::Testimony { trials_left: trials_left-1, player_on_trial }));
+        }
     }
     pub fn nomination_votes_is_enough(&self, votes: u8)->bool{
         votes >= self.nomination_votes_required()
@@ -315,28 +313,12 @@ impl Game {
         }
 
         while self.phase_machine.time_remaining <= Duration::ZERO {
-            BeforePhaseEnd::new(self.current_phase().phase()).invoke(self);
-            let new_phase = PhaseState::end(self);
-
-            self.start_phase(new_phase);
+            PhaseStateMachine::next_phase(self, None);
         }
         PlayerReference::all_players(self).for_each(|p|p.tick(self, time_passed));
         SpectatorPointer::all_spectators(self).for_each(|s|s.tick(self, time_passed));
 
         self.phase_machine.time_remaining = self.phase_machine.time_remaining.saturating_sub(time_passed);
-    }
-
-    pub fn start_phase(&mut self, phase: PhaseState){
-        self.phase_machine.current_state = phase;
-        self.phase_machine.time_remaining = self.settings.phase_times.get_time_for(self.current_phase().phase());
-
-        //if there are less than 3 players alive then the game is sped up by 2x
-        if PlayerReference::all_players(self).filter(|p|p.alive(self)).count() <= 3{
-            self.phase_machine.time_remaining /= 2;
-        }
-
-        PhaseState::start(self);
-        OnPhaseStart::new(self.current_phase().phase()).invoke(self);
     }
 
     pub fn add_grave(&mut self, grave: Grave){

@@ -182,18 +182,13 @@ export default function PlayerListMenu(): ReactElement {
             </details>
         }
 
-        {phaseState.type === "discussion" ? <Button
+        {(phaseState.type === "discussion" && players[myIndex!].alive) ? <Button
             className={forfeitVote ? "highlighted" : ""}
             onClick={()=>{
-                if(
-                    GAME_MANAGER.state.stateType === "game" &&
-                    GAME_MANAGER.state.clientState.type === "player" &&
-                    GAME_MANAGER.state.phaseState.type === "discussion"
-                )
-                    GAME_MANAGER.sendForfeitVotePacket(!forfeitVote);
+                GAME_MANAGER.sendForfeitVotePacket(!forfeitVote);
             }}
         >
-            <StyledText>{translate("forfeitVote")}</StyledText>
+            <StyledText noLinks={true}>{translate("forfeitVote")}</StyledText>
         </Button> : null}
 
         {GAME_MANAGER.getMySpectator() || <div>

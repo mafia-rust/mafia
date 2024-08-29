@@ -353,7 +353,10 @@ impl Game {
                 sender_player_ref.set_fast_forward_vote(self, fast_forward);
             },
             ToServerPacket::ForfeitVote { forfeit } => {
-                if self.current_phase().phase() == PhaseType::Discussion {
+                if 
+                    self.current_phase().phase() == PhaseType::Discussion &&
+                    sender_player_ref.alive(self)
+                {
                     sender_player_ref.set_forfeit_vote(self, forfeit);
                 }
             }
