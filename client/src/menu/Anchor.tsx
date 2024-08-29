@@ -245,7 +245,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
                     <Icon>menu</Icon>
                 </Button>
                 {this.state.globalMenuOpen && <GlobalMenu 
-                    onClickOutside={() => this.setState({globalMenuOpen: false})}
+                    closeGlobalMenu={() => this.setState({globalMenuOpen: false})}
                 />}
                 {this.state.content}
                 {this.state.coverCard && <CoverCard 
