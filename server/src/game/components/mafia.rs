@@ -57,10 +57,10 @@ impl Mafia{
         game: &mut Game,
         role: RoleState
     ){
-        let any_killing = Mafia::get_living_members(game).iter().any(|p|
+        //if they already have a mafia killing then return
+        if Mafia::get_living_members(game).iter().any(|p|
             RoleSet::MafiaKilling.get_roles().contains(&p.role(game))
-        );
-        if any_killing {return;}
+        ) {return;}
 
         //choose random mafia to be mafia killing
         let all_living_mafia = Mafia::get_living_members(game);
