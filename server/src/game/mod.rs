@@ -159,7 +159,7 @@ impl Game {
                 settings,
 
                 cult: Cult::default(),
-                mafia: Mafia::default(),
+                mafia: Mafia,
                 arsonist_doused: ArsonistDoused::default(),
                 puppeteer_marionette: PuppeteerMarionette::default(),
                 love_linked: LoveLinked::default()
@@ -432,7 +432,7 @@ pub mod test {
             settings,
 
             cult: Cult::default(),
-            mafia: Mafia::default(),
+            mafia: Mafia,
             arsonist_doused: ArsonistDoused::default(),
             puppeteer_marionette: PuppeteerMarionette::default(),
             love_linked: LoveLinked::default()

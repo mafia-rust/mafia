@@ -19,6 +19,7 @@ import LargeKiraMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/Larg
 import Counter from "./Counter";
 import "./roleSpecific.css";
 import ErosMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/ErosMenu";
+import CounterfeiterMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/CounterfeiterMenu";
 
 export default function RoleSpecificSection(){
     
@@ -204,6 +205,8 @@ export default function RoleSpecificSection(){
         }
         case "eros":
             return <ErosMenu/>;
+        case "counterfeiter":
+            return <CounterfeiterMenu/>;
         case "mortician":
             return <Counter
                 max={3}

@@ -17,7 +17,7 @@ use super::{Priority, RoleState, RoleStateImpl};
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Forger {
-    pub fake_role: Option<Role>,
+    pub fake_role: Role,
     pub fake_will: String,
     pub forges_remaining: u8,
     pub forged_ref: Option<PlayerReference>
@@ -26,9 +26,9 @@ pub struct Forger {
 impl Default for Forger {
     fn default() -> Self {
         Forger {
-            forges_remaining: 2,
+            forges_remaining: 3,
             forged_ref: None,
-            fake_role: None,
+            fake_role: Role::Jester,
             fake_will: "".to_owned(),
         }
     }
@@ -50,10 +50,8 @@ impl RoleStateImpl for Forger {
 
                 let target_ref = visit.target;
 
-                target_ref.set_night_grave_role(game, Some(
-                    if let Some(role) = self.fake_role {role} else {target_ref.role(game)}
-                ));
-                target_ref.set_night_grave_will(game, if !self.fake_will.is_empty() {self.fake_will.clone()} else {target_ref.will(game).to_owned()});
+                target_ref.set_night_grave_role(game, Some(self.fake_role));
+                target_ref.set_night_grave_will(game, self.fake_will.clone());
                 actor_ref.set_role_state(game, RoleState::Forger(Forger { 
                     forges_remaining: self.forges_remaining - 1, 
                     forged_ref: Some(target_ref), 
