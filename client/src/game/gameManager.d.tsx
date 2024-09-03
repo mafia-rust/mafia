@@ -120,6 +120,7 @@ export type GameManager = {
     sendSetOjoAction(action: OjoAction): void;
     sendSetPuppeteerAction(action: PuppeteerAction): void;
     sendSetErosAction(action: "loveLink" | "kill"): void;
+    sendRetrainerRetrain(role: Role): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;
     sendForfeitVotePacket(forfeit: boolean): void;

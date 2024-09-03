@@ -69,6 +69,7 @@ macros::roles! {
     Godfather : godfather,
     Eros: eros,
     Counterfeiter : counterfeiter,
+    Retrainer : retrainer,
     Mafioso : mafioso,
 
     Consort : consort,

@@ -20,6 +20,7 @@ import Counter from "./Counter";
 import "./roleSpecific.css";
 import ErosMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/ErosMenu";
 import CounterfeiterMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/CounterfeiterMenu";
+import RetrainerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/RetrainerMenu";
 
 export default function RoleSpecificSection(){
     
@@ -66,6 +67,8 @@ export default function RoleSpecificSection(){
             return <LargeDoomsayerMenu/>;
         case "kira":
             return <LargeKiraMenu/>;
+        case "retrainer":
+            return <RetrainerMenu/>
             
 
 
@@ -246,7 +249,7 @@ export default function RoleSpecificSection(){
                 </div>
             </div>;
         case "mafiaSupportWildcard": {
-            const all_choosable_mafia: Role[] = Object.keys(ROLES).filter((rle)=>
+            const allChoosableMafia : Role[] = Object.keys(ROLES).filter((rle)=>
                 rle === "mafiaSupportWildcard" ||
                 (
                     ROLES[rle as keyof typeof ROLES].roleSet === "mafiaSupport" &&
@@ -260,7 +263,7 @@ export default function RoleSpecificSection(){
                 <div>
                     <RoleDropdown 
                         value={roleState.role ?? "mafiaSupportWildcard"} 
-                        enabledRoles={all_choosable_mafia}
+                        enabledRoles={allChoosableMafia }
                         onChange={(rle)=>{
                             GAME_MANAGER.sendSetWildcardRoleOutline(rle);
                         }}
@@ -269,7 +272,7 @@ export default function RoleSpecificSection(){
             </div>;
         }
         case "fiendsWildcard": {
-            const all_choosable_fiends: Role[] = Object.keys(ROLES).filter((rle)=>
+            const allChoosableFiends: Role[] = Object.keys(ROLES).filter((rle)=>
                 ROLES[rle as keyof typeof ROLES].faction === "fiends" &&
                 GAME_MANAGER.state.stateType === "game" &&
                 GAME_MANAGER.state.enabledRoles.includes(rle as Role)
@@ -280,7 +283,7 @@ export default function RoleSpecificSection(){
                 <div>
                     <RoleDropdown 
                         value={roleState.role ?? "fiendsWildcard"} 
-                        enabledRoles={all_choosable_fiends}
+                        enabledRoles={allChoosableFiends}
                         onChange={(rle)=>{
                             GAME_MANAGER.sendSetWildcardRoleOutline(rle);
                         }}

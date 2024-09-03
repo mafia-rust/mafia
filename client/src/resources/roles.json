@@ -449,6 +449,22 @@
             {"type": "youSurvivedAttack"}
         ]
     },
+    "retrainer": {
+        "faction": "mafia",
+        "roleSet": "mafiaKilling",
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "godfatherBackup", "backup": null},
+            {"type": "godfatherBackup", "backup": 26},
+            {"type": "godfatherBackupKilled", "backup": 26},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+        ]
+    },
     "eros": {
         "faction": "mafia",
         "roleSet": "mafiaKilling",

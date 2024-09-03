@@ -66,7 +66,7 @@ impl KiraGuess{
             Role::Transporter => Some(Self::Transporter),
 
             //Mafia
-            Role::Godfather | Role::Mafioso | Role::Eros | Role::Counterfeiter |
+            Role::Godfather | Role::Mafioso | Role::Eros | Role::Counterfeiter |  Role::Retrainer |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::Witch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 
@@ -200,6 +200,7 @@ impl RoleStateImpl for Kira {
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
         Kira::set_guesses(actor_ref, game);
     }
+    
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
         Kira::set_guesses(actor_ref, game);
     }

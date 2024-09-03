@@ -245,6 +245,7 @@ pub enum ToServerPacket{
     SetOjoAction{action: OjoAction},
     SetPuppeteerAction{action: PuppeteerAction},
     SetErosAction{action: ErosAction},
+    RetrainerRetrain{role: Role},
 
 
     #[serde(rename_all = "camelCase")]
