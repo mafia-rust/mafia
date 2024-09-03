@@ -212,7 +212,10 @@ const ChatElement = React.memo((
             mouseHovering &&
             GAME_MANAGER.state.stateType === "game" && 
             GAME_MANAGER.state.clientState.type === "player" && 
-            GAME_MANAGER.state.clientState.roleState?.type === "forger" &&
+            (
+                GAME_MANAGER.state.clientState.roleState?.type === "forger" || 
+                GAME_MANAGER.state.clientState.roleState?.type === "counterfeiter"
+            ) &&
             <CopyButton
                 className="chat-message-div-copy-button"
                 text={translateChatMessage(message.variant, playerNames)}

@@ -87,6 +87,13 @@ export type RoleState = {
     type: "eros"
     action: "loveLink" | "kill"
 } | {
+    type: "counterfeiter",
+    action: "forge" | "noForge",
+    fakeRole: Role,
+    fakeWill: string
+    forgesRemaining: number,
+    // forgedRef
+} | {
     type: "mafioso"
 } | 
 (Hypnotist & {type: "hypnotist"})

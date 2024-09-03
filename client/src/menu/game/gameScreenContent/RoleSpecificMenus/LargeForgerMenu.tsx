@@ -10,8 +10,8 @@ import Icon from "../../../../components/Icon";
 type LargeForgerMenuProps = {
 }
 type LargeForgerMenuState = {
-    localRole: Role | null,
-    savedRole: Role | null,
+    localRole: Role,
+    savedRole: Role,
     localWill: string,
     savedWill: string,
     forgesRemaining: number,
@@ -74,9 +74,6 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
     render(){
 
         let forgerRoleOptions: JSX.Element[] = [];
-        forgerRoleOptions.push(
-            <option key={"none"} value={"none"}>{translate("none")}</option>
-        );
         for(let role of Object.keys(ROLES)){
             forgerRoleOptions.push(
                 <option key={role} value={role}>{translate("role."+role+".name")}</option>
@@ -86,7 +83,7 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
         return <div className="large-forger-menu">
             <div>
                 <select
-                    value={this.state.localRole?this.state.localRole:"none"} 
+                    value={this.state.localRole?this.state.localRole:"jester"} 
                     onChange={(e)=>{
                         this.setState({localRole: e.target.value as Role});
                     }}>

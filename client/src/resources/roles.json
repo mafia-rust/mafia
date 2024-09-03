@@ -464,6 +464,19 @@
             {"type": "youSurvivedAttack"}
         ]
     },
+    "counterfeiter": {
+        "faction": "mafia",
+        "roleSet": "mafiaKilling",
+        "armor": true,
+        "aura": null,
+        "maxCount": 1,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+        ]
+    },
     "mafioso": {
         "faction": "mafia",
         "roleSet": "mafiaKilling",

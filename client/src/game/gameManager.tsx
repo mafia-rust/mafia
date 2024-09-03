@@ -503,6 +503,12 @@ export function createGameManager(): GameManager {
                 will: will
             });
         },
+        sendSetCounterfeiterAction(action: "forge" | "noForge") {
+            this.server.sendPacket({
+                type: "setCounterfeiterAction",
+                action: action
+            });
+        },
         sendSetAuditorChosenOutline(index) {
             this.server.sendPacket({
                 type: "setAuditorChosenOutline",
