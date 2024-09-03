@@ -1,9 +1,9 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useContext } from "react";
 import GAME_MANAGER from "../../index";
 import "../../index.css"
 import "./startMenu.css"
 import translate from "../../game/lang";
-import Anchor from "../Anchor";
+import { AnchorContext } from "../Anchor";
 import PlayMenu from "./PlayMenu";
 import LoadingScreen from "../LoadingScreen";
 import GameModesEditor from "../../components/gameModeSettings/GameModesEditor";
@@ -12,29 +12,30 @@ import WikiCoverCard from "../../components/WikiCoverCard";
 import SettingsMenu from "../Settings";
 
 export default function StartMenu(): ReactElement {
+    const { mobile, setContent: setAnchorContent, setCoverCard } = useContext(AnchorContext)!;
     return <div className="sm">
         <main>
             <section id="main">
                 {
-                    Anchor.isMobile() ? 
+                    mobile ? 
                     <h2>{translate("menu.start.title")}</h2> :
                     <h1>{translate("menu.start.title")}</h1>
                 }
                 <div>
                     <button onClick={async () => {
-                        Anchor.setContent(<LoadingScreen type="default"/>);
+                        setAnchorContent(<LoadingScreen type="default"/>);
                         await GAME_MANAGER.setOutsideLobbyState();
-                        Anchor.setContent(<PlayMenu/>);
+                        setAnchorContent(<PlayMenu/>);
                     }}>
                         <Icon>play_arrow</Icon> {translate("menu.start.button.play")}
                     </button>
-                    <button onClick={() => Anchor.setCoverCard(<SettingsMenu />)}>
+                    <button onClick={() => setCoverCard(<SettingsMenu />)}>
                         <Icon>settings</Icon> {translate("menu.settings.title")}
                     </button>
-                    <button onClick={() => Anchor.setCoverCard(<GameModesEditor/>)}>
+                    <button onClick={() => setCoverCard(<GameModesEditor/>)}>
                         <Icon>edit</Icon> {translate("menu.globalMenu.gameSettingsEditor")}
                     </button>
-                    <button onClick={() => Anchor.setCoverCard(<WikiCoverCard />)}>
+                    <button onClick={() => setCoverCard(<WikiCoverCard />)}>
                         <Icon>menu_book</Icon> {translate("menu.wiki.title")}
                     </button>
                 </div>

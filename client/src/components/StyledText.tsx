@@ -10,7 +10,7 @@ import DUMMY_NAMES from "../resources/dummyNames.json";
 import { ARTICLES, WikiArticleLink, getArticleLangKey } from "./WikiArticleLink";
 import { ContentControllerContext, ContentMenu } from "../menu/game/GameScreen";
 import { Player } from "../game/gameState.d";
-import Anchor from "../menu/Anchor";
+import { AnchorContext } from "../menu/Anchor";
 import WikiCoverCard from "./WikiCoverCard";
 
 export type TokenData = {
@@ -55,6 +55,7 @@ export type StyledTextProps = {
 export default function StyledText(props: Readonly<StyledTextProps>): ReactElement {
     const playerKeywordData = props.playerKeywordData ?? PLAYER_KEYWORD_DATA;
     const contentController = useContext(ContentControllerContext);
+    const { setCoverCard } = useContext(AnchorContext)!;
 
     useEffect(() => {
         (window as any).setWikiSearchPage = (page: WikiArticleLink) => {
@@ -64,9 +65,7 @@ export default function StyledText(props: Readonly<StyledTextProps>): ReactEleme
                         GAME_MANAGER.setWikiArticle(page);
                     });
                 } else {
-                    Anchor.setCoverCard(<WikiCoverCard />, () => {
-                        GAME_MANAGER.setWikiArticle(page);
-                    })
+                    setCoverCard(<WikiCoverCard initialWikiPage={page}/>)
                 }
             } else {
                 GAME_MANAGER.setWikiArticle(page);

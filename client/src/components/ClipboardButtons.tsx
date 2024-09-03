@@ -1,5 +1,4 @@
-import React, { isValidElement } from "react";
-import { ReactElement } from "react";
+import React, { isValidElement, ReactElement } from "react";
 import Anchor from "../menu/Anchor";
 import translate from "../game/lang";
 import { Button, ButtonProps } from "./Button";

@@ -5,8 +5,11 @@ import Wiki from '../components/Wiki';
 import { Role } from '../game/roleState.d';
 import { StateListener } from '../game/gameManager.d';
 import "./wiki.css";
+import { WikiArticleLink } from './WikiArticleLink';
 
-export default function WikiCoverCard(): ReactElement {
+export default function WikiCoverCard(props: Readonly<{
+    initialWikiPage?: WikiArticleLink
+}>): ReactElement {
     let defaultEnabledRoles: Role[];
     switch (GAME_MANAGER.state.stateType) {
         case "disconnected":
@@ -32,6 +35,6 @@ export default function WikiCoverCard(): ReactElement {
 
     return <div className='wiki-cover-card'>
         <h1>{translate("menu.wiki.title")}</h1>
-        <Wiki enabledRoles={enabledRoles} />
+        <Wiki enabledRoles={enabledRoles} initialWikiPage={props.initialWikiPage}/>
     </div>;
 }

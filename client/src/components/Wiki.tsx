@@ -12,11 +12,12 @@ import Icon from "./Icon";
 
 
 export default function Wiki(props: {
-    enabledRoles?: Role[]
+    enabledRoles?: Role[],
+    initialWikiPage?: WikiArticleLink
 }): ReactElement {
 
     const [searchQuery, setSearchQuery] = useState("");
-    const [article, setArticle] = useState<WikiArticleLink | null>(null);
+    const [article, setArticle] = useState<WikiArticleLink | null>(props.initialWikiPage ?? null);
     const [history, setHistory] = useState<WikiArticleLink[]>([]);
 
     const chooseArticle = useCallback((page: WikiArticleLink | null) => {

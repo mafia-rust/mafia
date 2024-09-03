@@ -15,7 +15,7 @@ export function roleSpecificMenuType(role: Role): RoleSpecificMenuType | null {
 export default function SettingsMenu(): ReactElement {
     const [volume, setVolume] = useState<number>(loadSettings().volume);
     const [roleSpecificMenuSettings, setRoleSpecificMenuSettings] = useState(loadSettings().roleSpecificMenus);
-    const { mobile } = useContext(AnchorContext);
+    const { mobile, clearCoverCard } = useContext(AnchorContext)!;
 
     useEffect(() => {
         Anchor.updateAnchorVolume(volume);
@@ -61,7 +61,7 @@ export default function SettingsMenu(): ReactElement {
                     <button onClick={()=>{
                         if(!window.confirm(translate("confirmDelete"))) return;
                         localStorage.clear();
-                        Anchor.clearCoverCard();
+                        clearCoverCard();
                     }}><Icon>delete_forever</Icon> {translate('menu.settings.eraseSaveData')}</button>
                 </section>
             </div>

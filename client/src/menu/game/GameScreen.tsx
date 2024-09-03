@@ -123,7 +123,7 @@ export default function GameScreen(): ReactElement {
         playerState => playerState.roleState,
         ["yourRoleState"]
     )!;
-    const { mobile } = useContext(AnchorContext);
+    const { mobile } = useContext(AnchorContext)!;
 
     const contentController = useContentController(
         mobile ? 2 : Infinity, 
@@ -226,6 +226,11 @@ export function ContentTab(props: Readonly<{
     children: string 
 }>): ReactElement {
     const contentController = useContext(ContentControllerContext)!;
+    const spectator = useGameState(
+        gameState => gameState.clientState.type === "spectator",
+        ["gamePlayers"]
+    )!;
+    const { mobile } = useContext(AnchorContext)!;
 
     return <div className="content-tab">
         <div>
@@ -234,12 +239,12 @@ export function ContentTab(props: Readonly<{
             </StyledText>
         </div>
 
-        {props.close && (!GAME_MANAGER.getMySpectator() || Anchor.isMobile()) && <Button className="close"
+        {props.close && (!spectator || mobile) && <Button className="close"
             onClick={()=>contentController.closeMenu(props.close as ContentMenu)}
         >
             <Icon size="small">close</Icon>
         </Button>}
-        {props.helpMenu && !GAME_MANAGER.getMySpectator() && <Button className="help"
+        {props.helpMenu && !spectator && <Button className="help"
             onClick={()=>{
                 contentController.openMenu(ContentMenu.WikiMenu, ()=>{
                     props.helpMenu && GAME_MANAGER.setWikiArticle(props.helpMenu);

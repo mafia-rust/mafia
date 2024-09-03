@@ -1,8 +1,8 @@
-import React, { JSXElementConstructor, ReactElement, useEffect, useRef } from 'react';
+import React, { JSXElementConstructor, ReactElement, useContext, useEffect, useRef } from 'react';
 import "./globalMenu.css";
 import translate from '../game/lang';
 import GAME_MANAGER from '..';
-import Anchor from './Anchor';
+import Anchor, { AnchorContext } from './Anchor';
 import StartMenu from './main/StartMenu';
 import LoadingScreen from './LoadingScreen';
 import GameModesEditor from '../components/gameModeSettings/GameModesEditor';
@@ -34,6 +34,7 @@ export default function GlobalMenu( props: Readonly<{
         ["acceptJoin", "rejectJoin", "rejectStart", "gameInitializationComplete", "startGame"]
     )!;
     const ref = useRef<HTMLDivElement>(null);
+    const { setCoverCard, clearCoverCard, setContent: setAnchorContent, closeGlobalMenu, contentType: anchorContentType } = useContext(AnchorContext)!;
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -53,15 +54,15 @@ export default function GlobalMenu( props: Readonly<{
         if (GAME_MANAGER.state.stateType === "game") {
             GAME_MANAGER.leaveGame();
         }
-        Anchor.closeGlobalMenu();
-        Anchor.clearCoverCard();
-        Anchor.setContent(<LoadingScreen type="disconnect"/>)
+        closeGlobalMenu();
+        clearCoverCard();
+        setAnchorContent(<LoadingScreen type="disconnect"/>)
         await GAME_MANAGER.setDisconnectedState();
-        Anchor.setContent(<StartMenu/>)
+        setAnchorContent(<StartMenu/>)
     }
     function goToRolelistEditor() {
-        Anchor.setCoverCard(<GameModesEditor/>);
-        Anchor.closeGlobalMenu();
+        setCoverCard(<GameModesEditor/>);
+        closeGlobalMenu();
     }
     const quitButtonBlacklist: (string | JSXElementConstructor<any>)[] = [StartMenu, LoadingScreen];
 
@@ -77,16 +78,16 @@ export default function GlobalMenu( props: Readonly<{
                 </section>
             }
             <section>
-                { quitButtonBlacklist.includes(Anchor.contentType()) ||
+                { quitButtonBlacklist.includes(anchorContentType) ||
                     <button onClick={() => quitToMainMenu()}><Icon>not_interested</Icon> {translate("menu.globalMenu.quitToMenu")}</button>
                 }
                 <button onClick={() => {
-                    Anchor.setCoverCard(<SettingsMenu />)
+                    setCoverCard(<SettingsMenu />)
                     Anchor.closeGlobalMenu();
                 }}><Icon>settings</Icon> {translate("menu.globalMenu.settings")}</button>
                 <button onClick={() => goToRolelistEditor()}><Icon>edit</Icon> {translate("menu.globalMenu.gameSettingsEditor")}</button>
                 <button onClick={() => {
-                    Anchor.setCoverCard(<WikiCoverCard />);
+                    setCoverCard(<WikiCoverCard />);
                     Anchor.closeGlobalMenu();
                 }}><Icon>menu_book</Icon> {translate("menu.wiki.title")}</button>
             </section>

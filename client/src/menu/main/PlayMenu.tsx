@@ -1,6 +1,6 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useCallback, useContext, useEffect, useState } from "react";
 import translate from "../../game/lang";
-import Anchor from "../Anchor";
+import { AnchorContext } from "../Anchor";
 import GAME_MANAGER from "../..";
 import LoadingScreen from "../LoadingScreen";
 import "./playMenu.css";
@@ -10,6 +10,7 @@ import LobbyMenu from "../lobby/LobbyMenu";
 import PlayMenuJoinPopup from "./PlayMenuJoinPopup";
 
 export default function PlayMenu(): ReactElement {
+    const { setContent: setAnchorContent } = useContext(AnchorContext)!;
     
     useEffect(() => {
         GAME_MANAGER.sendLobbyListRequest();
@@ -18,6 +19,29 @@ export default function PlayMenu(): ReactElement {
         return () => clearInterval(autoRefresh);
     })
 
+    const joinGame = useCallback(
+        async (roomCode?: number, playerId?: number): Promise<boolean> => {
+            if (roomCode === undefined) return false;
+        
+            setAnchorContent(<LoadingScreen type="join"/>);
+        
+            let success: boolean;
+            if (playerId === undefined) {
+                success = await GAME_MANAGER.sendJoinPacket(roomCode);
+            } else {
+                success = await GAME_MANAGER.sendRejoinPacket(roomCode, playerId);
+            }
+        
+            if (!success) {
+                setAnchorContent(<PlayMenu/>);
+            }
+        
+            return success;
+        },
+        [setAnchorContent]
+    );
+    
+
     return <div className="play-menu">
         <div className="play-menu-browser graveyard-menu-colors">
             <header>
@@ -25,7 +49,14 @@ export default function PlayMenu(): ReactElement {
                     {translate("menu.play.title")}
                 </h1>
                 <div>
-                    <button onClick={()=>{hostGame()}}>
+                    <button onClick={async () => {
+                        setAnchorContent(<LoadingScreen type="host"/>);
+                        if (await GAME_MANAGER.sendHostPacket()) {
+                            setAnchorContent(<LobbyMenu/>)
+                        } else {
+                            setAnchorContent(<PlayMenu/>)
+                        }
+                    }}>
                         {translate("menu.play.button.host")}
                     </button>
                     <button onClick={()=>{GAME_MANAGER.sendLobbyListRequest()}}>
@@ -34,14 +65,16 @@ export default function PlayMenu(): ReactElement {
                 </div>
             </header>
             <div className="play-menu-center">
-                <PlayMenuTable />
+                <PlayMenuTable joinGame={joinGame}/>
             </div>
-            <PlayMenuFooter />
+            <PlayMenuFooter joinGame={joinGame}/>
         </div>
     </div>
 }
 
-function PlayMenuFooter(): ReactElement {
+function PlayMenuFooter(props: Readonly<{
+    joinGame: (roomCode?: number, playerId?: number) => Promise<boolean>
+}>): ReactElement {
     const [roomCode, setRoomCode] = useState<number | undefined>(undefined);
     const [playerID, setPlayerID] = useState<number | undefined>(undefined);
 
@@ -63,7 +96,7 @@ function PlayMenuFooter(): ReactElement {
                     }}}
                 onKeyUp={(e)=>{
                     if(e.key === 'Enter') {
-                        joinGame(roomCode);
+                        props.joinGame(roomCode);
                     }
                 }}
             />
@@ -86,51 +119,26 @@ function PlayMenuFooter(): ReactElement {
                 }}
                 onKeyUp={(e)=>{
                     if(e.key === 'Enter') {
-                        joinGame(roomCode, playerID);
+                        props.joinGame(roomCode, playerID);
                     }
                 }}
             />
         </div>
         <button onClick={()=>{
-            joinGame(roomCode, playerID)
+            props.joinGame(roomCode, playerID)
         }}>
             {translate("menu.play.button.join")}
         </button>
     </footer>
 }
 
-export async function joinGame(roomCode?: number, playerId?: number): Promise<boolean> {
-    if (roomCode === undefined) return false;
-
-    Anchor.setContent(<LoadingScreen type="join"/>);
-
-    let success: boolean;
-    if (playerId === undefined) {
-        success = await GAME_MANAGER.sendJoinPacket(roomCode);
-    } else {
-        success = await GAME_MANAGER.sendRejoinPacket(roomCode, playerId);
-    }
-
-    if (!success) {
-        Anchor.setContent(<PlayMenu/>);
-    }
-
-    return success;
-}
-
-async function hostGame() {
-    Anchor.setContent(<LoadingScreen type="host"/>);
-    if (await GAME_MANAGER.sendHostPacket()) {
-        Anchor.setContent(<LobbyMenu/>)
-    } else {
-        Anchor.setContent(<PlayMenu/>)
-    }
-}
-
 type LobbyMap = Map<number, LobbyPreviewData>;
 
-function PlayMenuTable(): ReactElement {
+function PlayMenuTable(props: Readonly<{
+    joinGame: (roomCode?: number, playerId?: number) => Promise<boolean>
+}>): ReactElement {
     const [lobbies, setLobbies] = useState<LobbyMap>(new Map());
+    const { setCoverCard } = useContext(AnchorContext)!;
 
     useEffect(() => {
         const listener: StateListener = (type) => {
@@ -159,12 +167,13 @@ function PlayMenuTable(): ReactElement {
                     <td>
                         <button onClick={() => {
                             if(lobby.inGame){
-                                Anchor.setCoverCard(<PlayMenuJoinPopup 
+                                setCoverCard(<PlayMenuJoinPopup 
                                     roomCode={roomCode}
                                     lobbyData={lobby}
+                                    joinGame={props.joinGame}
                                 />);
                             }else{
-                                joinGame(roomCode);
+                                props.joinGame(roomCode);
                             }
                         }}>{translate("menu.play.button.join")}</button>
                     </td>
@@ -173,7 +182,7 @@ function PlayMenuTable(): ReactElement {
                         <div className="play-menu-lobby-player-list">
                             {lobby.players.map((player)=>{
                                 return <button key={player[1]} onClick={()=>{
-                                    joinGame(roomCode, player[0]);
+                                    props.joinGame(roomCode, player[0]);
                                 }}>{player[1]}</button>
                             })}
                         </div>

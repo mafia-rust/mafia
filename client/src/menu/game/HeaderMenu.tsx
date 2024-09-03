@@ -15,7 +15,7 @@ import { roleSpecificMenuType } from "../Settings";
 export default function HeaderMenu(props: Readonly<{
     chatMenuNotification: boolean
 }>): ReactElement {
-    const { mobile } = useContext(AnchorContext);
+    const { mobile } = useContext(AnchorContext)!;
 
     return <div className="header-menu">
         {!(GAME_MANAGER.getMySpectator() && !GAME_MANAGER.getMyHost()) && <FastForwardButton />}

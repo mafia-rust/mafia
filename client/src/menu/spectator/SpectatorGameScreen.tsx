@@ -41,7 +41,7 @@ export default function SpectatorGameScreen(): ReactElement {
         true
     )!
 
-    const { mobile } = useContext(AnchorContext);
+    const { mobile } = useContext(AnchorContext)!;
 
     const contentController = useContentController<SpectatorContentMenus>(
         mobile ? 2 : Infinity,

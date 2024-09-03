@@ -1,4 +1,4 @@
-import React, { JSXElementConstructor, MouseEventHandler, ReactElement, useRef, createContext } from "react";
+import React, { JSXElementConstructor, MouseEventHandler, ReactElement, useRef, createContext, useContext } from "react";
 import "../index.css";
 import "./anchor.css";
 import translate, { switchLanguage } from "../game/lang";
@@ -32,9 +32,20 @@ type AnchorState = {
     touchCurrentX: number | null,
 }
 
-const AnchorContext = createContext({
-    mobile: false as boolean,
-});
+export type ErrorMessage = {
+    title: string,
+    body: string,
+}
+
+const AnchorContext = createContext<{
+    mobile: boolean,
+    setContent: (content: JSX.Element) => void,
+    contentType: string | JSXElementConstructor<any>,
+    setCoverCard: (content: JSX.Element) => void,
+    clearCoverCard: () => void,
+    pushError: (error: ErrorMessage) => void,
+    closeGlobalMenu: () => void,
+} | undefined>(undefined);
 
 export { AnchorContext };
 
@@ -185,7 +196,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     }
 
     static closeGlobalMenu() {
-        Anchor.instance.setState({globalMenuOpen: false});
+        ;
     }
     static openGlobalMenu() {
         Anchor.instance.setState({globalMenuOpen: true});
@@ -231,7 +242,17 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     
 
     render(){
-        return <AnchorContext.Provider value={{mobile: this.state.mobile}}>
+        return <AnchorContext.Provider value={{
+            mobile: this.state.mobile,
+            setContent: Anchor.setContent,
+            contentType: this.state.content.type,
+            setCoverCard: Anchor.setCoverCard,
+            pushError: ({title, body}) => {
+                Anchor.pushError(title, body)
+            },
+            clearCoverCard: Anchor.clearCoverCard,
+            closeGlobalMenu: () => this.setState({globalMenuOpen: false}),
+        }}>
             <div
                 className="anchor"
                 onTouchStart={(e) => {this.onTouchStart(e)}}
@@ -250,20 +271,33 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
                 {this.state.content}
                 {this.state.coverCard && <CoverCard 
                     theme={this.state.coverCardTheme}
-                    onClickOutside={() => this.setState({coverCard: null})}
                 >{this.state.coverCard}</CoverCard>}
                 {this.state.errorCard}
             </div>
         </AnchorContext.Provider>
     }
 
-    public static setContent(content: JSX.Element){
-        Anchor.instance.setState({content : content});
+    /**
+     * @deprecated Please use AnchorContext instead
+     */
+    public static setContent(content: JSX.Element) {
+        Anchor.instance.setState({content})
     }
-    public static contentType(): string | JSXElementConstructor<any> {
-        return Anchor.instance.state.content.type;
+
+    /**
+     * @deprecated Please use AnchorContext instead
+     */
+    public static pushError(title: string, body: string) {
+        Anchor.instance.setState({errorCard: <ErrorCard
+            onClose={() => Anchor.instance.setState({ errorCard: null })}
+            error={{title, body}}
+        />});
     }
-    public static setCoverCard(coverCard: JSX.Element, callback?: () => void){
+
+    /**
+     * @deprecated Please use AnchorContext instead
+     */
+    public static setCoverCard(coverCard: JSX.Element, callback?: () => void) {
         let coverCardTheme: Theme | null = null;
         if (coverCard.type === WikiCoverCard || coverCard.type === WikiArticle) {
             coverCardTheme = "wiki-menu-colors"
@@ -273,32 +307,31 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
 
         Anchor.instance.setState({ coverCard, coverCardTheme }, callback);
     }
-    public static pushError(title: string, body: string) {
-        Anchor.instance.setState({errorCard: <ErrorCard
-            onClose={() => Anchor.instance.setState({ errorCard: null })}
-            error={{title, body}}
-        />});
-    }
-    public static clearCoverCard() {
-        Anchor.instance.setState({coverCard: null, coverCardTheme: null});
-    }
 
-    public static isMobile(): boolean {
-        return Anchor.instance.state.mobile;
+    /**
+     * @deprecated Please use AnchorContext instead
+     */
+    public static clearCoverCard() {
+        Anchor.instance.setState({coverCard: null, coverCardTheme: null})
     }
 }
 
-function CoverCard(props: { children: React.ReactNode, theme: Theme | null, onClickOutside: MouseEventHandler<HTMLDivElement> }): ReactElement {
+function CoverCard(props: Readonly<{
+    children: React.ReactNode,
+    theme: Theme | null
+}>): ReactElement {
     const ref = useRef<HTMLDivElement>(null);
+    const { clearCoverCard } = useContext(AnchorContext)!;
+
     return <div 
         className={`anchor-cover-card-background-cover ${props.theme ?? ""}`} 
         onClick={e => {
-            if (e.target === ref.current) props.onClickOutside(e)
+            if (e.target === ref.current) clearCoverCard()
         }}
         ref={ref}
     >
         <div className="anchor-cover-card">
-            <Button className="close-button" onClick={Anchor.clearCoverCard}>
+            <Button className="close-button" onClick={clearCoverCard}>
                 <Icon>close</Icon>
             </Button>
             <div className="anchor-cover-card-content">
@@ -313,7 +346,10 @@ type Error = {
     body: string
 }
 
-function ErrorCard(props: { error: Error, onClose: () => void }) {
+function ErrorCard(props: Readonly<{
+    error: Error,
+    onClose: () => void
+}>) {
     return <div className="error-card" onClick={() => props.onClose()}>
         <header>
             {props.error.title}
