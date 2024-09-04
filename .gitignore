@@ -36,4 +36,4 @@ client/yarn-debug.log*
 client/yarn-error.log*
 
 # Py cache
-dev/__pycache__
+generate/**/__pycache__
