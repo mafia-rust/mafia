@@ -1,4 +1,4 @@
-import React, { JSXElementConstructor, MouseEventHandler, ReactElement, useRef, createContext, useContext } from "react";
+import React, { JSXElementConstructor, ReactElement, useRef, createContext, useContext } from "react";
 import "../index.css";
 import "./anchor.css";
 import translate, { switchLanguage } from "../game/lang";
