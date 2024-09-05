@@ -1,8 +1,7 @@
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::grave::{GraveKiller, GraveReference};
-use crate::game::phase::PhaseType;
+use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::{Faction, RoleSet};
 use crate::game::tag::Tag;
@@ -107,20 +106,6 @@ impl RoleStateImpl for Retrainer {
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
     }
-    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Mafia])
-    }
-    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
-    }
-    fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::get_won_game(game, actor_ref)
-    }
-    fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType){
-    }
-    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
-    }
-    
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
 
         if actor_ref == dead_player_ref {
@@ -142,10 +127,6 @@ impl RoleStateImpl for Retrainer {
         else if self.backup.is_some_and(|p|p == dead_player_ref) {
             actor_ref.set_role_state(game, RoleState::Retrainer(Retrainer{backup: None, ..self}));
         }
-    }
-    fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave_ref: GraveReference){
-    }
-    fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
 }
 

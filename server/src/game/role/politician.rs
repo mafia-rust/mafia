@@ -1,16 +1,15 @@
 use serde::Serialize;
 
-use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::chat::ChatMessageVariant;
 use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
-use crate::game::visit::Visit;
 
 use crate::game::Game;
 use super::jester::Jester;
-use super::{Priority, RoleStateImpl, Role, RoleState};
+use super::{RoleStateImpl, Role, RoleState};
 
 
 #[derive(Debug, Clone, Serialize, Default)]
@@ -23,27 +22,6 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: u8 = 1;
 
 impl RoleStateImpl for Politician {
-    fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {
-
-    }
-    fn can_select(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
-        false
-    }
-    fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
-    
-    }
-    fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
-        false
-    }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        vec![]
-    }
-    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
-    }
-    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
-    }
     fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
         self.won
     }
@@ -61,9 +39,6 @@ impl RoleStateImpl for Politician {
         if self.should_suicide(game, actor_ref){
             actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
         }
-    }
-    fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave: crate::game::grave::GraveReference) {
-        
     }
     fn on_game_ending(self, game: &mut Game, actor_ref: PlayerReference){
         if !actor_ref.alive(game) {return}

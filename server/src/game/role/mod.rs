@@ -1,6 +1,8 @@
 #![allow(clippy::single_match)]
 #![allow(clippy::get_first)]
 
+use std::collections::HashSet;
+
 use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 use crate::game::Game;
@@ -9,27 +11,39 @@ use crate::game::phase::PhaseType;
 
 use serde::{Serialize, Deserialize};
 
-use super::grave::GraveReference;
+use super::{event::before_role_switch::BeforeRoleSwitch, grave::GraveReference};
 
 trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority);
-    fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference);
+    fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {}
+    fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
 
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool;
-    fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool;
+    fn can_select(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
+        false
+    }
+    fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
+        false
+    }
 
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit>;
+    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        vec![]
+    }
 
-    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
-    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>;
+    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
+        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
+    }
+    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
+        crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
+    }
+    fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
+        crate::game::role::common_role::get_won_game(game, actor_ref)
+    }
 
-    fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool;
-
-    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType);
-    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference);
-    fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference);
-    fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: GraveReference);
-    fn on_game_ending(self, game: &mut Game, actor_ref: PlayerReference);
+    fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType) {}
+    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {}
+    fn before_role_switch(self, _game: &mut Game, _actor_ref: PlayerReference, _event: BeforeRoleSwitch) {}
+    fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference) {}
+    fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave: GraveReference) {}
+    fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference) {}
 }
 
 // Creates the Role enum
@@ -220,12 +234,12 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.convert_selection_to_visits(game, actor_ref, target_refs)),*
                     }
                 }
-                pub fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>{
+                pub fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup>{
                     match self {
                         $(Self::$name(role_struct) => role_struct.get_current_send_chat_groups(game, actor_ref)),*
                     }
                 }
-                pub fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup>{
+                pub fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup>{
                     match self {
                         $(Self::$name(role_struct) => role_struct.get_current_receive_chat_groups(game, actor_ref)),*
                     }
@@ -243,6 +257,11 @@ mod macros {
                 pub fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
                     match self {
                         $(Self::$name(role_struct) => role_struct.on_role_creation(game, actor_ref)),*
+                    }
+                }
+                pub fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, event: BeforeRoleSwitch){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.before_role_switch(game, actor_ref, event)),*
                     }
                 }
                 pub fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){

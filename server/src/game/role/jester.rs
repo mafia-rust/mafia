@@ -8,7 +8,6 @@ use crate::game::player::PlayerReference;
 use crate::game::role::RoleState;
 use crate::game::role_list::Faction;
 use crate::game::verdict::Verdict;
-use crate::game::visit::Visit;
 
 use crate::game::Game;
 use super::{Priority, RoleStateImpl};
@@ -40,7 +39,7 @@ impl RoleStateImpl for Jester {
             .filter(|player_ref|{
                 player_ref.alive(game) &&
                 *player_ref != actor_ref &&
-                player_ref.verdict(game) == Verdict::Guilty
+                player_ref.verdict(game) != Verdict::Innocent
             }).collect();
     
         let player = match actor_ref.selection(game).first() {
@@ -61,21 +60,6 @@ impl RoleStateImpl for Jester {
         target_ref.alive(game) &&
         target_ref.verdict(game) != Verdict::Innocent &&
         self.lynched_yesterday
-    }
-    fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
-        
-    }
-    fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
-        false
-    }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        vec![]
-    }
-    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
-    }
-    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
     fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
         self.won
@@ -99,9 +83,6 @@ impl RoleStateImpl for Jester {
             _ => {}
         }
     }
-    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
-        
-    }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
         if 
             actor_ref == dead_player_ref && 
@@ -109,9 +90,5 @@ impl RoleStateImpl for Jester {
         {
             game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::JesterWon);
         }
-    }
-    fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave: crate::game::grave::GraveReference) {
-    }
-    fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
 }
