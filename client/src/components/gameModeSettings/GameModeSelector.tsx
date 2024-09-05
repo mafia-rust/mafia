@@ -1,6 +1,6 @@
 import React, { ReactElement, useCallback, useContext, useEffect, useState } from "react";
 import { deleteGameModes, loadGameModes, saveGameModes } from "../../game/localStorage";
-import { AnchorContext } from "../../menu/Anchor";
+import { AnchorControllerContext } from "../../menu/Anchor";
 import { CopyButton, PasteButton } from "../../components/ClipboardButtons";
 import Icon from "../Icon";
 import { Button } from "../Button";
@@ -55,7 +55,7 @@ function GameModeSelectorPanel(props: {
 }): ReactElement {
     const [gameModeNameField, setGameModeNameField] = useState<string>("");
     const {roleList, phaseTimes, enabledRoles} = useContext(GameModeContext);
-    const pushErrorCard = useContext(AnchorContext)!.pushError;
+    const anchorController = useContext(AnchorControllerContext)!;
 
     const validateName = (name: string) => {
         return name.length < 100 && name.length !== 0
@@ -102,7 +102,7 @@ function GameModeSelectorPanel(props: {
                 const result = saveGameMode(gameModeNameField);
 
                 if (result !== "success") {
-                    pushErrorCard({
+                    anchorController.pushErrorCard({
                         title: translate("notification.saveGameMode.failure"), 
                         body: translate("notification.saveGameMode.failure." + result)
                     });
@@ -111,7 +111,7 @@ function GameModeSelectorPanel(props: {
         }
         document.addEventListener('keydown', listener);
         return () => document.removeEventListener('keydown', listener);
-    }, [gameModeNameField, pushErrorCard, saveGameMode]);
+    }, [gameModeNameField, anchorController, saveGameMode]);
 
     // Caller must ensure location is valid
     const loadGameMode = (location: GameModeLocation) => {
@@ -194,7 +194,7 @@ function GameModeSelectorPanel(props: {
                                 enabledRoles: parsedGameMode.value.enabledRoles
                             })
                         } else {
-                            pushErrorCard({
+                            anchorController.pushErrorCard({
                                 title: translate("outdatedGameModeSaveData"), 
                                 body: translate("outdatedGameModeSaveData.details") + parsedGameMode.toString()
                             })

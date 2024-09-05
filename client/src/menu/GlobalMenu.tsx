@@ -2,7 +2,7 @@ import React, { JSXElementConstructor, ReactElement, useContext, useEffect, useR
 import "./globalMenu.css";
 import translate from '../game/lang';
 import GAME_MANAGER from '..';
-import Anchor, { AnchorContext } from './Anchor';
+import { AnchorControllerContext } from './Anchor';
 import StartMenu from './main/StartMenu';
 import LoadingScreen from './LoadingScreen';
 import GameModesEditor from '../components/gameModeSettings/GameModesEditor';
@@ -12,9 +12,7 @@ import Icon from '../components/Icon';
 import SettingsMenu from './Settings';
 import { useLobbyOrGameState } from '../components/useHooks';
 
-export default function GlobalMenu( props: Readonly<{
-    closeGlobalMenu: (event: MouseEvent) => void
-}> ): ReactElement {
+export default function GlobalMenu(): ReactElement {
     const lobbyName = useLobbyOrGameState(
         state => state.lobbyName,
         ["lobbyName"]
@@ -34,35 +32,34 @@ export default function GlobalMenu( props: Readonly<{
         ["acceptJoin", "rejectJoin", "rejectStart", "gameInitializationComplete", "startGame"]
     )!;
     const ref = useRef<HTMLDivElement>(null);
-    const { setCoverCard, clearCoverCard, setContent: setAnchorContent, closeGlobalMenu, contentType: anchorContentType } = useContext(AnchorContext)!;
+    const anchorController = useContext(AnchorControllerContext)!;
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (!ref.current?.contains(event.target as Node)) {
-                setTimeout(() => {
-                    props.closeGlobalMenu(event);
-                })
+                anchorController.closeGlobalMenu();
             }
         };
+
         setTimeout(() => {
             document.addEventListener("click", handleClickOutside);
-        });
+        })
         return () => document.removeEventListener("click", handleClickOutside);
-    });
+    }, [anchorController]);
     
     async function quitToMainMenu() {
         if (GAME_MANAGER.state.stateType === "game") {
             GAME_MANAGER.leaveGame();
         }
-        closeGlobalMenu();
-        clearCoverCard();
-        setAnchorContent(<LoadingScreen type="disconnect"/>)
+        anchorController.closeGlobalMenu();
+        anchorController.clearCoverCard();
+        anchorController.setContent(<LoadingScreen type="disconnect"/>)
         await GAME_MANAGER.setDisconnectedState();
-        setAnchorContent(<StartMenu/>)
+        anchorController.setContent(<StartMenu/>)
     }
     function goToRolelistEditor() {
-        setCoverCard(<GameModesEditor/>);
-        closeGlobalMenu();
+        anchorController.setCoverCard(<GameModesEditor/>);
+        anchorController.closeGlobalMenu();
     }
     const quitButtonBlacklist: (string | JSXElementConstructor<any>)[] = [StartMenu, LoadingScreen];
 
@@ -78,17 +75,17 @@ export default function GlobalMenu( props: Readonly<{
                 </section>
             }
             <section>
-                { quitButtonBlacklist.includes(anchorContentType) ||
+                { quitButtonBlacklist.includes(anchorController.contentType) ||
                     <button onClick={() => quitToMainMenu()}><Icon>not_interested</Icon> {translate("menu.globalMenu.quitToMenu")}</button>
                 }
                 <button onClick={() => {
-                    setCoverCard(<SettingsMenu />)
-                    Anchor.closeGlobalMenu();
+                    anchorController.setCoverCard(<SettingsMenu />)
+                    anchorController.closeGlobalMenu();
                 }}><Icon>settings</Icon> {translate("menu.globalMenu.settings")}</button>
                 <button onClick={() => goToRolelistEditor()}><Icon>edit</Icon> {translate("menu.globalMenu.gameSettingsEditor")}</button>
                 <button onClick={() => {
-                    setCoverCard(<WikiCoverCard />);
-                    Anchor.closeGlobalMenu();
+                    anchorController.setCoverCard(<WikiCoverCard />);
+                    anchorController.closeGlobalMenu();
                 }}><Icon>menu_book</Icon> {translate("menu.wiki.title")}</button>
             </section>
         </div>

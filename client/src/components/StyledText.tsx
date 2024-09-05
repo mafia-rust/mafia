@@ -8,9 +8,9 @@ import ROLES from "../resources/roles.json";
 import "./styledText.css";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { ARTICLES, WikiArticleLink, getArticleLangKey } from "./WikiArticleLink";
-import { ContentControllerContext, ContentMenu } from "../menu/game/GameScreen";
+import { MenuControllerContext, ContentMenu } from "../menu/game/GameScreen";
 import { Player } from "../game/gameState.d";
-import { AnchorContext } from "../menu/Anchor";
+import { AnchorControllerContext } from "../menu/Anchor";
 import WikiCoverCard from "./WikiCoverCard";
 
 export type TokenData = {
@@ -54,18 +54,18 @@ export type StyledTextProps = {
  */
 export default function StyledText(props: Readonly<StyledTextProps>): ReactElement {
     const playerKeywordData = props.playerKeywordData ?? PLAYER_KEYWORD_DATA;
-    const contentController = useContext(ContentControllerContext);
-    const { setCoverCard } = useContext(AnchorContext)!;
+    const menuController = useContext(MenuControllerContext);
+    const anchorController = useContext(AnchorControllerContext)!;
 
     useEffect(() => {
         (window as any).setWikiSearchPage = (page: WikiArticleLink) => {
             if (GAME_MANAGER.wikiArticleCallbacks.length === 0) {
-                if (contentController?.canOpen(ContentMenu.WikiMenu)) {
-                    contentController.openMenu(ContentMenu.WikiMenu, () => {
+                if (menuController?.canOpen(ContentMenu.WikiMenu)) {
+                    menuController.openMenu(ContentMenu.WikiMenu, () => {
                         GAME_MANAGER.setWikiArticle(page);
                     });
                 } else {
-                    setCoverCard(<WikiCoverCard initialWikiPage={page}/>)
+                    anchorController.setCoverCard(<WikiCoverCard initialWikiPage={page}/>)
                 }
             } else {
                 GAME_MANAGER.setWikiArticle(page);

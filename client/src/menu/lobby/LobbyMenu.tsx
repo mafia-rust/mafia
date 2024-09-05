@@ -4,7 +4,7 @@ import LobbyPlayerList from "./LobbyPlayerList";
 import "./lobbyMenu.css";
 import translate from "../../game/lang";
 import { StateListener } from "../../game/gameManager.d";
-import { AnchorContext } from "../Anchor";
+import { AnchorControllerContext, MobileContext } from "../Anchor";
 import { RoomLinkButton } from "../GlobalMenu";
 import { RoleList, getAllRoles } from "../../game/roleListState.d";
 import LoadingScreen from "../LoadingScreen";
@@ -28,7 +28,7 @@ export default function LobbyMenu(): ReactElement {
         lobbyState => lobbyState.players.get(lobbyState.myId!)?.host,
         ["playersHost", "lobbyClients"]
     )!;
-    const { mobile } = useContext(AnchorContext)!;
+    const mobile = useContext(MobileContext)!;
 
     const [advancedView, setAdvancedView] = useState<boolean>(isHost || mobile);
 
@@ -76,7 +76,8 @@ function LobbyMenuSettings(props: Readonly<{
         ["phaseTimes"]
     )!;
 
-    const { mobile, setContent: setAnchorContent } = useContext(AnchorContext)!;
+    const mobile = useContext(MobileContext)!;
+    const { setContent: setAnchorContent } = useContext(AnchorControllerContext)!;
 
     useEffect(() => {
         const listener: StateListener = (type) => {
@@ -144,7 +145,8 @@ function LobbyMenuHeader(props: Readonly<{
         lobbyState => lobbyState.players.get(lobbyState.myId!)?.host,
         ["lobbyClients", "yourId", "playersHost"]
     )!;
-    const { mobile, setContent: setAnchorContent } = useContext(AnchorContext)!;
+    const mobile = useContext(MobileContext)!;
+    const { setContent: setAnchorContent } = useContext(AnchorControllerContext)!;
 
     useEffect(() => {
         const listener: StateListener = (type) => {

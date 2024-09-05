@@ -1,6 +1,6 @@
 import React, { ReactElement, useCallback, useContext, useEffect, useState } from "react";
 import translate from "../../game/lang";
-import { AnchorContext } from "../Anchor";
+import { AnchorControllerContext } from "../Anchor";
 import GAME_MANAGER from "../..";
 import LoadingScreen from "../LoadingScreen";
 import "./playMenu.css";
@@ -10,7 +10,7 @@ import LobbyMenu from "../lobby/LobbyMenu";
 import PlayMenuJoinPopup from "./PlayMenuJoinPopup";
 
 export default function PlayMenu(): ReactElement {
-    const { setContent: setAnchorContent } = useContext(AnchorContext)!;
+    const { setContent: setAnchorContent } = useContext(AnchorControllerContext)!;
     
     useEffect(() => {
         GAME_MANAGER.sendLobbyListRequest();
@@ -138,7 +138,7 @@ function PlayMenuTable(props: Readonly<{
     joinGame: (roomCode?: number, playerId?: number) => Promise<boolean>
 }>): ReactElement {
     const [lobbies, setLobbies] = useState<LobbyMap>(new Map());
-    const { setCoverCard } = useContext(AnchorContext)!;
+    const { setCoverCard } = useContext(AnchorControllerContext)!;
 
     useEffect(() => {
         const listener: StateListener = (type) => {

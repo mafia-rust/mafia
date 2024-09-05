@@ -1,5 +1,5 @@
 import { WikiArticleLink } from "../components/WikiArticleLink";
-import { ContentController } from "../menu/game/GameScreen";
+import { MenuController } from "../menu/game/GameScreen";
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";

@@ -7,15 +7,15 @@ import ChatMenu from "../game/gameScreenContent/ChatMenu";
 import PlayerListMenu from "../game/gameScreenContent/PlayerListMenu";
 import GraveyardMenu from "../game/gameScreenContent/GraveyardMenu";
 import HeaderMenu from "../game/HeaderMenu";
-import { ContentController, ContentMenu, useContentController } from "../game/GameScreen";
-import { AnchorContext } from "../Anchor";
+import { MenuController, ContentMenu, useMenuController } from "../game/GameScreen";
+import { MobileContext } from "../Anchor";
 
 
 const DEFAULT_START_PHASE_SCREEN_TIME = 3;
 
-let CONTENT_CONTROLLER: ContentController | undefined;
+let CONTENT_CONTROLLER: MenuController | undefined;
 
-export function getSpectatorScreenContentController(): ContentController | undefined {
+export function getSpectatorScreenContentController(): MenuController | undefined {
     return CONTENT_CONTROLLER;
 }
 
@@ -41,9 +41,9 @@ export default function SpectatorGameScreen(): ReactElement {
         true
     )!
 
-    const { mobile } = useContext(AnchorContext)!;
+    const mobile = useContext(MobileContext)!;
 
-    const contentController = useContentController<SpectatorContentMenus>(
+    const contentController = useMenuController<SpectatorContentMenus>(
         mobile ? 2 : Infinity,
         {
             ChatMenu: true,

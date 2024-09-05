@@ -9,7 +9,7 @@ import WikiMenu from "./gameScreenContent/WikiMenu";
 import "../../index.css";
 import "./gameScreen.css";
 import RoleSpecificMenu from "./gameScreenContent/RoleSpecificMenu";
-import Anchor, { AnchorContext } from "../Anchor";
+import Anchor, { addSwipeEventListener, MobileContext, removeSwipeEventListener } from "../Anchor";
 import StyledText from "../../components/StyledText";
 import { WikiArticleLink } from "../../components/WikiArticleLink";
 import Icon from "../../components/Icon";
@@ -27,7 +27,7 @@ export enum ContentMenu {
     RoleSpecificMenu = "RoleSpecificMenu"
 }
 
-export interface ContentController {
+export interface MenuController {
     closeOrOpenMenu(menu: ContentMenu): void;
     closeMenu(menu: ContentMenu): void;
     openMenu(menu: ContentMenu, callback?: ()=>void): void;
@@ -36,15 +36,15 @@ export interface ContentController {
     canOpen(menu: ContentMenu): boolean;
 }
 
-export function useContentController<C extends Partial<Record<ContentMenu, boolean>>>(
+export function useMenuController<C extends Partial<Record<ContentMenu, boolean>>>(
     maxContent: number, 
     initial: C,
-    getContentController: () => ContentController,
-    setContentController: (contentController: ContentController | undefined) => void,
-): ContentController {
+    getMenuController: () => MenuController,
+    setMenuController: (menuController: MenuController | undefined) => void,
+): MenuController {
     const [contentMenus, setContentMenus] = useState<C>(initial);
 
-    const initializeContentController = useCallback(() => {
+    const initializeMenuController = useCallback(() => {
         function setAndGetContentMenus(menu: ContentMenu, open: boolean): C {
             const newMenus = {...contentMenus};
 
@@ -61,7 +61,7 @@ export function useContentController<C extends Partial<Record<ContentMenu, boole
         function setContentMenu(menu: ContentMenu, open: boolean) {
             const newMenus = setAndGetContentMenus(menu, open)
 
-            const menusOpen = getContentController().menusOpen();
+            const menusOpen = getMenuController().menusOpen();
             if(menusOpen.length + 1 > maxContent && menusOpen.length > 0){
                 const menuToClose = menusOpen[menusOpen.length - 1];
                 newMenus[menuToClose] = false;
@@ -70,15 +70,15 @@ export function useContentController<C extends Partial<Record<ContentMenu, boole
             setContentMenus(newMenus);
         }
 
-        setContentController({
+        setMenuController({
             closeMenu(menu) {
                 setContentMenu(menu, false)
             },
             closeOrOpenMenu(menu) {
-                if (getContentController().menusOpen().includes(menu)) {
-                    getContentController().closeMenu(menu)
+                if (getMenuController().menusOpen().includes(menu)) {
+                    getMenuController().closeMenu(menu)
                 } else {
-                    getContentController().openMenu(menu, () => {});
+                    getMenuController().openMenu(menu, () => {});
                 }
             },
             openMenu(menu, callback) {
@@ -99,33 +99,33 @@ export function useContentController<C extends Partial<Record<ContentMenu, boole
                 return contentMenus[menu] !== undefined
             }
         })
-    }, [contentMenus, getContentController, maxContent, setContentController]);
+    }, [contentMenus, getMenuController, maxContent, setMenuController]);
 
     // Initialize on component load so MenuButtons component doesn't freak out
-    initializeContentController();
+    initializeMenuController();
     useEffect(() => {
-        initializeContentController();
-        return () => setContentController(undefined);
-    }, [initializeContentController, setContentController])
+        initializeMenuController();
+        return () => setMenuController(undefined);
+    }, [initializeMenuController, setMenuController])
 
-    return getContentController();
+    return getMenuController();
 }
 
-const CONTENT_CONTROLLER_HOLDER: { controller: ContentController | undefined } = {
+const MENU_CONTROLLER_HOLDER: { controller: MenuController | undefined } = {
     controller: undefined
 }
 
-const ContentControllerContext = createContext<ContentController | undefined>(undefined)
-export { ContentControllerContext }
+const MenuControllerContext = createContext<MenuController | undefined>(undefined)
+export { MenuControllerContext }
 
 export default function GameScreen(): ReactElement {
     const roleState = usePlayerState(
         playerState => playerState.roleState,
         ["yourRoleState"]
     )!;
-    const { mobile } = useContext(AnchorContext)!;
+    const mobile = useContext(MobileContext)!;
 
-    const contentController = useContentController(
+    const menuController = useMenuController(
         mobile ? 2 : Infinity, 
         {
             ChatMenu: true,
@@ -135,24 +135,24 @@ export default function GameScreen(): ReactElement {
             WikiMenu: false,
             RoleSpecificMenu: !mobile && roleSpecificMenuType(roleState.type) === "standalone"
         },
-        () => CONTENT_CONTROLLER_HOLDER.controller!,
-        contentController => CONTENT_CONTROLLER_HOLDER.controller = contentController
+        () => MENU_CONTROLLER_HOLDER.controller!,
+        menuController => MENU_CONTROLLER_HOLDER.controller = menuController
     );
     
     usePlayerState(
         playerState => {
             if (
                 roleSpecificMenuType(playerState.roleState.type) !== "standalone" 
-                && contentController.menuOpen(ContentMenu.RoleSpecificMenu)
+                && menuController.menuOpen(ContentMenu.RoleSpecificMenu)
             ) {
-                contentController.closeMenu(ContentMenu.RoleSpecificMenu)
+                menuController.closeMenu(ContentMenu.RoleSpecificMenu)
             }
         },
         ["yourRoleState"]
     );
 
     const chatMenuNotification = useGameState(
-        () => !contentController.menusOpen().includes(ContentMenu.ChatMenu),
+        () => !menuController.menusOpen().includes(ContentMenu.ChatMenu),
         ["addChatMessages"]
     )!;
 
@@ -161,7 +161,7 @@ export default function GameScreen(): ReactElement {
             const allowedToOpenRoleSpecific = roleSpecificMenuType(roleState.type) === "standalone"
     
             //close this menu and open the next one
-            const menusOpen = contentController.menusOpen();
+            const menusOpen = menuController.menusOpen();
             const lastOpenMenu = menusOpen[menusOpen.length - 1];
 
             const ALL_MENUS: Readonly<ContentMenu[]> = [
@@ -182,7 +182,7 @@ export default function GameScreen(): ReactElement {
     
             if(
                 (nextIndex === ALL_MENUS.indexOf(ContentMenu.RoleSpecificMenu) && !allowedToOpenRoleSpecific) ||
-                (contentController.menusOpen().includes(ALL_MENUS[nextIndex]))
+                (menuController.menusOpen().includes(ALL_MENUS[nextIndex]))
             ){
                 nextIndex = modulus(
                     nextIndex + (right?-1:1),
@@ -190,34 +190,34 @@ export default function GameScreen(): ReactElement {
                 );
             }
             
-            contentController.closeMenu(lastOpenMenu);
-            contentController.openMenu(ALL_MENUS[nextIndex]);
+            menuController.closeMenu(lastOpenMenu);
+            menuController.openMenu(ALL_MENUS[nextIndex]);
         }
 
-        Anchor.addSwipeEventListener(swipeEventListener);
-        return () => Anchor.removeSwipeEventListener(swipeEventListener);
+        addSwipeEventListener(swipeEventListener);
+        return () => removeSwipeEventListener(swipeEventListener);
     })
 
-    const allMenusClosed = contentController.menusOpen().length === 0;
+    const allMenusClosed = menuController.menusOpen().length === 0;
 
-    return <ContentControllerContext.Provider value={contentController}>
+    return <MenuControllerContext.Provider value={menuController}>
         <div className="game-screen">
             <div className="header">
                 <HeaderMenu chatMenuNotification={chatMenuNotification}/>
             </div>
             <div className="content">
-                {contentController.menuOpen(ContentMenu.ChatMenu) && <ChatMenu/>}
-                {contentController.menuOpen(ContentMenu.PlayerListMenu) && <PlayerListMenu/>}
-                {contentController.menuOpen(ContentMenu.WillMenu) && <WillMenu/>}
-                {contentController.menuOpen(ContentMenu.RoleSpecificMenu) && <RoleSpecificMenu/>}
-                {contentController.menuOpen(ContentMenu.GraveyardMenu) && <GraveyardMenu/>}
-                {contentController.menuOpen(ContentMenu.WikiMenu) && <WikiMenu/>}
+                {menuController.menuOpen(ContentMenu.ChatMenu) && <ChatMenu/>}
+                {menuController.menuOpen(ContentMenu.PlayerListMenu) && <PlayerListMenu/>}
+                {menuController.menuOpen(ContentMenu.WillMenu) && <WillMenu/>}
+                {menuController.menuOpen(ContentMenu.RoleSpecificMenu) && <RoleSpecificMenu/>}
+                {menuController.menuOpen(ContentMenu.GraveyardMenu) && <GraveyardMenu/>}
+                {menuController.menuOpen(ContentMenu.WikiMenu) && <WikiMenu/>}
                 {allMenusClosed && <div className="no-content">
                     {translate("menu.gameScreen.noContent")}
                 </div>}
             </div>
         </div>
-    </ContentControllerContext.Provider>
+    </MenuControllerContext.Provider>
 }
 
 export function ContentTab(props: Readonly<{
@@ -225,12 +225,12 @@ export function ContentTab(props: Readonly<{
     close: ContentMenu | false, 
     children: string 
 }>): ReactElement {
-    const contentController = useContext(ContentControllerContext)!;
+    const menuController = useContext(MenuControllerContext)!;
     const spectator = useGameState(
         gameState => gameState.clientState.type === "spectator",
         ["gamePlayers"]
     )!;
-    const { mobile } = useContext(AnchorContext)!;
+    const mobile = useContext(MobileContext)!;
 
     return <div className="content-tab">
         <div>
@@ -240,13 +240,13 @@ export function ContentTab(props: Readonly<{
         </div>
 
         {props.close && (!spectator || mobile) && <Button className="close"
-            onClick={()=>contentController.closeMenu(props.close as ContentMenu)}
+            onClick={()=>menuController.closeMenu(props.close as ContentMenu)}
         >
             <Icon size="small">close</Icon>
         </Button>}
         {props.helpMenu && !spectator && <Button className="help"
             onClick={()=>{
-                contentController.openMenu(ContentMenu.WikiMenu, ()=>{
+                menuController.openMenu(ContentMenu.WikiMenu, ()=>{
                     props.helpMenu && GAME_MANAGER.setWikiArticle(props.helpMenu);
                 });
             }}

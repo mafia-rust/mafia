@@ -2,20 +2,20 @@ import React, { ReactElement, useContext, useMemo } from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import { PhaseState, Player, Verdict } from "../../game/gameState.d";
-import { ContentControllerContext, ContentMenu } from "./GameScreen";
+import { MenuControllerContext, ContentMenu } from "./GameScreen";
 import "./headerMenu.css";
 import StyledText from "../../components/StyledText";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import { useGameState, usePlayerState } from "../../components/useHooks";
-import { AnchorContext } from "../Anchor";
+import { MobileContext } from "../Anchor";
 import { roleSpecificMenuType } from "../Settings";
 
 
 export default function HeaderMenu(props: Readonly<{
     chatMenuNotification: boolean
 }>): ReactElement {
-    const { mobile } = useContext(AnchorContext)!;
+    const mobile = useContext(MobileContext)!;
 
     return <div className="header-menu">
         {!(GAME_MANAGER.getMySpectator() && !GAME_MANAGER.getMyHost()) && <FastForwardButton />}
@@ -152,50 +152,50 @@ function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactE
         ["yourRoleState"]
     )
 
-    const contentController = useContext(ContentControllerContext)!;
+    const menuController = useContext(MenuControllerContext)!;
 
     return <div className="menu-buttons">
         <Button className="chat-menu-colors"
-            highlighted={contentController.menusOpen().includes(ContentMenu.ChatMenu)}
-            onClick={()=>contentController.closeOrOpenMenu(ContentMenu.ChatMenu)}
+            highlighted={menuController.menusOpen().includes(ContentMenu.ChatMenu)}
+            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.ChatMenu)}
         >
             {props.chatMenuNotification && <div className="chat-notification highlighted">!</div>}
             {translate("menu.chat.icon")}
             <span className="mobile-hidden">{translate("menu.chat.title")}</span>
         </Button>
         <Button className="player-list-menu-colors"
-            highlighted={contentController.menusOpen().includes(ContentMenu.PlayerListMenu)}
-            onClick={()=>contentController.closeOrOpenMenu(ContentMenu.PlayerListMenu)}
+            highlighted={menuController.menusOpen().includes(ContentMenu.PlayerListMenu)}
+            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.PlayerListMenu)}
         >
             {translate("menu.playerList.icon")}
             <span className="mobile-hidden">{translate("menu.playerList.title")}</span>
         </Button>
         {GAME_MANAGER.getMySpectator() || <Button className="will-menu-colors" 
-            highlighted={contentController.menusOpen().includes(ContentMenu.WillMenu)}
-            onClick={()=>contentController.closeOrOpenMenu(ContentMenu.WillMenu)}
+            highlighted={menuController.menusOpen().includes(ContentMenu.WillMenu)}
+            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.WillMenu)}
         >
             {translate("menu.will.icon")}
             <span className="mobile-hidden">{translate("menu.will.title")}</span>
         </Button>}
         {!GAME_MANAGER.getMySpectator() && roleSpecificMenuType(roleState!.type) === "standalone"
             && <Button className="role-specific-colors" 
-                highlighted={contentController.menusOpen().includes(ContentMenu.RoleSpecificMenu)}
-                onClick={()=>contentController.closeOrOpenMenu(ContentMenu.RoleSpecificMenu)}
+                highlighted={menuController.menusOpen().includes(ContentMenu.RoleSpecificMenu)}
+                onClick={()=>menuController.closeOrOpenMenu(ContentMenu.RoleSpecificMenu)}
             >
                 <StyledText noLinks={true}>
                     {translate("role."+roleState?.type+".name")}
                 </StyledText>
             </Button>}
         <Button className="graveyard-menu-colors" 
-            highlighted={contentController.menusOpen().includes(ContentMenu.GraveyardMenu)}
-            onClick={()=>contentController.closeOrOpenMenu(ContentMenu.GraveyardMenu)}
+            highlighted={menuController.menusOpen().includes(ContentMenu.GraveyardMenu)}
+            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.GraveyardMenu)}
         >
             {translate("menu.graveyard.icon")}
             <span className="mobile-hidden">{translate("menu.graveyard.title")}</span>
         </Button>
         {GAME_MANAGER.getMySpectator() || <Button className="wiki-menu-colors"
-            highlighted={contentController.menusOpen().includes(ContentMenu.WikiMenu)} 
-            onClick={()=>contentController.closeOrOpenMenu(ContentMenu.WikiMenu)}
+            highlighted={menuController.menusOpen().includes(ContentMenu.WikiMenu)} 
+            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.WikiMenu)}
         >
             {translate("menu.wiki.icon")}
             <span className="mobile-hidden">{translate("menu.wiki.title")}</span>

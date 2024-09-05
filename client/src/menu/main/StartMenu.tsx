@@ -3,7 +3,7 @@ import GAME_MANAGER from "../../index";
 import "../../index.css"
 import "./startMenu.css"
 import translate from "../../game/lang";
-import { AnchorContext } from "../Anchor";
+import { AnchorControllerContext, MobileContext } from "../Anchor";
 import PlayMenu from "./PlayMenu";
 import LoadingScreen from "../LoadingScreen";
 import GameModesEditor from "../../components/gameModeSettings/GameModesEditor";
@@ -12,7 +12,8 @@ import WikiCoverCard from "../../components/WikiCoverCard";
 import SettingsMenu from "../Settings";
 
 export default function StartMenu(): ReactElement {
-    const { mobile, setContent: setAnchorContent, setCoverCard } = useContext(AnchorContext)!;
+    const mobile = useContext(MobileContext)!;
+    const { setContent: setAnchorContent, setCoverCard } = useContext(AnchorControllerContext)!;
     return <div className="sm">
         <main>
             <section id="main">
