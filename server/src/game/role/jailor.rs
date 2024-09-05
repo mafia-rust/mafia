@@ -1,8 +1,10 @@
+use std::collections::HashSet;
+
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::resolution_state::ResolutionState;
-use crate::game::grave::{GraveKiller, GraveReference};
+use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -96,28 +98,25 @@ impl RoleStateImpl for Jailor {
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
     }
-    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, 
             if PlayerReference::all_players(game).any(|p|p.night_jailed(game)) {
-                vec![ChatGroup::Jail]
+                vec![ChatGroup::Jail].into_iter().collect()
             }else{
                 vec![]
             }
         )
     }
-    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         let mut out = crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref);
         if 
             game.current_phase().is_night() &&
             actor_ref.alive(game) &&
             PlayerReference::all_players(game).any(|p|p.night_jailed(game))
         {
-            out.push(ChatGroup::Jail);
+            out.insert(ChatGroup::Jail);
         }
         out
-    }
-    fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::get_won_game(game, actor_ref)
     }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
     
@@ -134,13 +133,5 @@ impl RoleStateImpl for Jailor {
         }
         self.jailed_target_ref = None;
         actor_ref.set_role_state(game, RoleState::Jailor(self));
-    }
-    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference){
-    }
-    fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
-    }
-    fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave_ref: GraveReference){
-    }
-    fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
 }

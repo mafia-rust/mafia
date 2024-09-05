@@ -6,7 +6,7 @@ use serde::{Serialize, Deserialize};
 use crate::packet::ToClientPacket;
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant}, event::{on_any_death::OnAnyDeath, on_night_priority::OnNightPriority}, grave::Grave, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
+    chat::{ChatGroup, ChatMessageVariant}, event::{on_any_death::OnAnyDeath, on_night_priority::OnNightPriority, on_phase_start::OnPhaseStart}, grave::Grave, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
 };
 
 
@@ -58,6 +58,25 @@ impl PhaseStateMachine {
             current_state,
         }
     }
+
+    pub fn next_phase(game: &mut Game, force_next_phase: Option<PhaseState>) {
+        let mut new_phase = PhaseState::end(game);
+
+        if let Some(forced_new_phase) = force_next_phase {
+            new_phase = forced_new_phase;
+        }
+
+        game.phase_machine.current_state = new_phase;
+        game.phase_machine.time_remaining = game.settings.phase_times.get_time_for(game.current_phase().phase());
+
+        //if there are less than 3 players alive then the game is sped up by 2x
+        if PlayerReference::all_players(game).filter(|p|p.alive(game)).count() <= 3{
+            game.phase_machine.time_remaining /= 2;
+        }
+
+        PhaseState::start(game);
+        OnPhaseStart::new(game.current_phase().phase()).invoke(game);
+    }
 }
 
 impl PhaseState {
@@ -74,7 +93,7 @@ impl PhaseState {
             PhaseState::Night => PhaseType::Night,
         }
     }
-    
+
     pub fn start(game: &mut Game) {
 
         

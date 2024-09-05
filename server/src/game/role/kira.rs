@@ -1,14 +1,12 @@
 use std::collections::HashMap;
-use std::vec;
 
 use serde::{Serialize, Deserialize};
 
-use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::grave::{GraveKiller, GraveReference};
+use crate::game::chat::ChatMessageVariant;
+use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
-use crate::game::visit::Visit;
 use crate::game::Game;
 
 use super::{Priority, Role, RoleState, RoleStateImpl};
@@ -66,7 +64,7 @@ impl KiraGuess{
             Role::Transporter => Some(Self::Transporter),
 
             //Mafia
-            Role::Godfather | Role::Mafioso | Role::Eros | 
+            Role::Godfather | Role::Mafioso | Role::Eros | Role::Counterfeiter |  Role::Retrainer |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::Witch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 
@@ -174,26 +172,6 @@ impl RoleStateImpl for Kira {
             _ => return,
         }    
     }
-    fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
-    }
-    fn can_select(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
-        false
-    }
-    fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
-        false
-    }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        vec![]
-    }
-    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
-    }
-    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
-    }
-    fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::get_won_game(game, actor_ref)
-    }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType) {
         Kira::set_guesses(actor_ref, game);
     }
@@ -202,10 +180,6 @@ impl RoleStateImpl for Kira {
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
         Kira::set_guesses(actor_ref, game);
-    }
-    fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave_ref: GraveReference){
-    }
-    fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
 }
 

@@ -1,4 +1,4 @@
-import React, { JSXElementConstructor, MouseEventHandler, ReactElement, useRef } from "react";
+import React, { JSXElementConstructor, MouseEventHandler, ReactElement, useRef, createContext } from "react";
 import "../index.css";
 import "./anchor.css";
 import translate, { switchLanguage } from "../game/lang";
@@ -31,6 +31,12 @@ type AnchorState = {
     touchStartX: number | null,
     touchCurrentX: number | null,
 }
+
+const AnchorContext = createContext({
+    mobile: false as boolean,
+});
+
+export { AnchorContext };
 
 const MIN_SWIPE_DISTANCE = 40;
 
@@ -225,28 +231,30 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     
 
     render(){
-        return <div
-            className="anchor"
-            onTouchStart={(e) => {this.onTouchStart(e)}}
-            onTouchMove={(e) => {this.onTouchMove(e)}}
-            onTouchEnd={(e) => {this.onTouchEnd(e)}}
-        >
-            <title>🌹{translate("menu.start.title")}🔪</title>
-            <Button className="global-menu-button" 
-                onClick={() => this.setState({globalMenuOpen: !this.state.globalMenuOpen})}
+        return <AnchorContext.Provider value={{mobile: this.state.mobile}}>
+            <div
+                className="anchor"
+                onTouchStart={(e) => {this.onTouchStart(e)}}
+                onTouchMove={(e) => {this.onTouchMove(e)}}
+                onTouchEnd={(e) => {this.onTouchEnd(e)}}
             >
-                <Icon>menu</Icon>
-            </Button>
-            {this.state.globalMenuOpen && <GlobalMenu 
-                onClickOutside={() => this.setState({globalMenuOpen: false})}
-            />}
-            {this.state.content}
-            {this.state.coverCard && <CoverCard 
-                theme={this.state.coverCardTheme}
-                onClickOutside={() => this.setState({coverCard: null})}
-            >{this.state.coverCard}</CoverCard>}
-            {this.state.errorCard}
-        </div>
+                <title>🌹{translate("menu.start.title")}🔪</title>
+                <Button className="global-menu-button" 
+                    onClick={() => this.setState({globalMenuOpen: !this.state.globalMenuOpen})}
+                >
+                    <Icon>menu</Icon>
+                </Button>
+                {this.state.globalMenuOpen && <GlobalMenu 
+                    onClickOutside={() => this.setState({globalMenuOpen: false})}
+                />}
+                {this.state.content}
+                {this.state.coverCard && <CoverCard 
+                    theme={this.state.coverCardTheme}
+                    onClickOutside={() => this.setState({coverCard: null})}
+                >{this.state.coverCard}</CoverCard>}
+                {this.state.errorCard}
+            </div>
+        </AnchorContext.Provider>
     }
 
     public static setContent(content: JSX.Element){

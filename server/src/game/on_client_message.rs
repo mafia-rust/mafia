@@ -7,7 +7,7 @@ use super::{
     event::on_fast_forward::OnFastForward,
     phase::{PhaseState, PhaseType},
     player::{PlayerIndex, PlayerReference},
-    role::{kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, Role, RoleState}, role_list::{Faction, RoleSet}, 
+    role::{kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, retrainer::Retrainer, Role, RoleState}, role_list::{Faction, RoleSet}, 
     spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
     Game
 };
@@ -300,6 +300,17 @@ impl Game {
                     forger.fake_will = will;
                     sender_player_ref.set_role_state(self, RoleState::Forger(forger));
                 }
+                else if let RoleState::Counterfeiter(mut counterfeiter) = sender_player_ref.role_state(self).clone(){
+                    counterfeiter.fake_role = role;
+                    counterfeiter.fake_will = will;
+                    sender_player_ref.set_role_state(self, RoleState::Counterfeiter(counterfeiter));
+                }
+            },
+            ToServerPacket::SetCounterfeiterAction {action} => {
+                if let RoleState::Counterfeiter(mut counterfeiter) = sender_player_ref.role_state(self).clone(){
+                    counterfeiter.action = action;
+                    sender_player_ref.set_role_state(self, RoleState::Counterfeiter(counterfeiter));
+                }
             },
             ToServerPacket::SetAuditorChosenOutline { index } => {
                 if !sender_player_ref.alive(self) {break 'packet_match;}
@@ -349,11 +360,17 @@ impl Game {
                     sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
                 }
             },
+            ToServerPacket::RetrainerRetrain { role } => {
+                Retrainer::retrain(self, sender_player_ref, role);
+            }
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {
                 sender_player_ref.set_fast_forward_vote(self, fast_forward);
             },
             ToServerPacket::ForfeitVote { forfeit } => {
-                if self.current_phase().phase() == PhaseType::Discussion {
+                if 
+                    self.current_phase().phase() == PhaseType::Discussion &&
+                    sender_player_ref.alive(self)
+                {
                     sender_player_ref.set_forfeit_vote(self, forfeit);
                 }
             }

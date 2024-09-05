@@ -510,6 +510,12 @@ export function createGameManager(): GameManager {
                 will: will
             });
         },
+        sendSetCounterfeiterAction(action: "forge" | "noForge") {
+            this.server.sendPacket({
+                type: "setCounterfeiterAction",
+                action: action
+            });
+        },
         sendSetAuditorChosenOutline(index) {
             this.server.sendPacket({
                 type: "setAuditorChosenOutline",
@@ -532,6 +538,12 @@ export function createGameManager(): GameManager {
             this.server.sendPacket({
                 type: "setErosAction",
                 action: action
+            });
+        },
+        sendRetrainerRetrain(role) {
+            this.server.sendPacket({
+                type: "retrainerRetrain",
+                role: role
             });
         },
 

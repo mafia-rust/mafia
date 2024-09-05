@@ -1,4 +1,4 @@
-use mafia_server::game::{phase::{PhaseState, PhaseType}, Game};
+use mafia_server::game::{phase::{PhaseState, PhaseStateMachine, PhaseType}, Game};
 
 pub struct TestGame (*mut Game);
 
@@ -52,7 +52,6 @@ impl TestGame {
         self.current_phase()
     }
     pub fn next_phase(&mut self){
-        let next_phase = PhaseState::end(self);
-        self.start_phase(next_phase);
+        PhaseStateMachine::next_phase(self, None);
     }
 }

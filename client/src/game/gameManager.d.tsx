@@ -115,10 +115,12 @@ export type GameManager = {
         yourTargetWasJailedMessage: boolean
     ): void
     sendSetForgerWill(role: Role | null, will: string): void;
+    sendSetCounterfeiterAction(action: "forge" | "noForge"): void;
     sendSetAuditorChosenOutline(index: number): void;
     sendSetOjoAction(action: OjoAction): void;
     sendSetPuppeteerAction(action: PuppeteerAction): void;
     sendSetErosAction(action: "loveLink" | "kill"): void;
+    sendRetrainerRetrain(role: Role): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;
     sendForfeitVotePacket(forfeit: boolean): void;

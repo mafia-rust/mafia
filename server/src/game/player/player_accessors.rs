@@ -130,6 +130,7 @@ impl PlayerReference{
     pub fn remove_player_tag(&self, game: &mut Game, key: PlayerReference, value: Tag){
         let Some(player_tags) = self.deref_mut(game).player_tags.get_mut(&key) else {return};
 
+        let old_tags = player_tags.clone();
         match Vec1::try_from_vec(
             player_tags.clone()
                 .into_iter()
@@ -143,10 +144,15 @@ impl PlayerReference{
                 self.deref_mut(game).player_tags.remove(&key);
             },
         }
-        self.add_private_chat_message(game, ChatMessageVariant::TagRemoved { player: key.index(), tag: value });
-        self.send_packet(game, ToClientPacket::YourPlayerTags{
-            player_tags: PlayerReference::ref_map_to_index(self.deref(game).player_tags.clone())
-        });
+
+        if Some(old_tags) != self.deref_mut(game).player_tags.get(&key).cloned() {
+            self.add_private_chat_message(game, ChatMessageVariant::TagRemoved { player: key.index(), tag: value });
+            
+            self.send_packet(game, ToClientPacket::YourPlayerTags{
+                player_tags: PlayerReference::ref_map_to_index(self.deref(game).player_tags.clone())
+            });
+        }
+
     }
     pub fn remove_player_tag_on_all(&self, game: &mut Game, value: Tag){
         for player_ref in PlayerReference::all_players(game){
@@ -421,7 +427,7 @@ impl PlayerReference{
         if silenced {
             self.push_night_message(game, ChatMessageVariant::Silenced);
             self.send_packet(game, ToClientPacket::YourSendChatGroups { send_chat_groups: 
-                self.get_current_send_chat_groups(game)
+                self.get_current_send_chat_groups(game).into_iter().collect()
             });
         }
     }

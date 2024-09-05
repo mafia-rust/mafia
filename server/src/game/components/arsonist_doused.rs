@@ -68,4 +68,13 @@ impl ArsonistDoused {
             player_ref.alive(game) && player_ref.role(game) == Role::Arsonist
         )
     }
+    pub fn on_role_switch(game: &mut Game, player: PlayerReference, new: Role, old: Role) {
+        if old == Role::Arsonist {
+            player.remove_player_tag_on_all(game, Tag::Doused);
+        }
+
+        if new == Role::Arsonist {
+            ArsonistDoused::tag_doused_players_for_arsonists(game);
+        }
+    }
 }

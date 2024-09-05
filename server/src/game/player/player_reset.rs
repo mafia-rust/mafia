@@ -32,14 +32,17 @@ impl PlayerReference{
             },
             PhaseType::Discussion => {},
             PhaseType::Nomination => {
+                if self.night_silenced(game) {
+                    self.set_forfeit_vote(game, true);
+                }
 
                 //tell players someone forfeited
                 if self.forfeit_vote(game){
                     for player in PlayerReference::all_players(game){
-                        player.push_player_tag(game, *self, Tag::ForfeitVote);
+                        if player.player_has_tag(game, *self, Tag::ForfeitVote) == 0 {
+                            player.push_player_tag(game, *self, Tag::ForfeitVote);
+                        }
                     }
-        
-                    self.set_chosen_vote(game, None, false);
                 }
 
                 self.set_chosen_vote(game, None, false);
@@ -48,7 +51,9 @@ impl PlayerReference{
             PhaseType::Testimony => {},
             PhaseType::Judgement => {},
             PhaseType::FinalWords => {},
-            PhaseType::Dusk => {},
+            PhaseType::Dusk => {
+                self.remove_player_tag_on_all(game, Tag::ForfeitVote);
+            },
             PhaseType::Night => {
                 self.set_night_died(game, false);
                 self.set_night_attacked(game, false);
@@ -79,23 +84,6 @@ impl PlayerReference{
 
         self.set_fast_forward_vote(game, false);
         self.role_state(game).clone().on_phase_start(game, *self, phase)
-    }
-
-    pub fn before_phase_end(&self, game: &mut Game, phase: PhaseType){
-        
-        for player in PlayerReference::all_players(game){
-            player.remove_player_tag(game, *self, Tag::ForfeitVote);
-        }
-
-        match phase {
-            PhaseType::Discussion => {
-                if self.night_silenced(game) {
-                    self.set_forfeit_vote(game, true);
-                }
-            },
-            _ => {}
-        }
-
     }
 }
 

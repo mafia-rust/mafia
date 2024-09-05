@@ -19,6 +19,7 @@ impl<'a, T> ForceLock for &'a Arc<Mutex<T>> {
         match self.lock() {
             Ok(lobbies) => lobbies,
             Err(err) => {
+                self.clear_poison();
                 err.into_inner()
             }
         }

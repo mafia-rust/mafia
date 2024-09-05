@@ -3,24 +3,34 @@ use serde::Serialize;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+use crate::game::role_list::{Faction, RoleSet};
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, RoleStateImpl, RoleState};
+use super::{Priority, Role, RoleState, RoleStateImpl};
 
 
-#[derive(Debug, Clone, Serialize, Default)]
-pub struct Godfather{
-    backup: Option<PlayerReference>
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Retrainer{
+    pub backup: Option<PlayerReference>,
+    pub retrains_remaining: u8
+}
+impl Default for Retrainer {
+    fn default() -> Self {
+        Self {
+            backup: None,
+            retrains_remaining: 2
+        }
+    }
 }
 
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 1;
+pub(super) const DEFENSE: u8 = 0;
 
-impl RoleStateImpl for Godfather {
+impl RoleStateImpl for Retrainer {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         
         if priority != Priority::Kill {return}
@@ -57,16 +67,16 @@ impl RoleStateImpl for Godfather {
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
         if let Some(old_target_ref) = self.backup {
             if old_target_ref == target_ref {
-                actor_ref.set_role_state(game, RoleState::Godfather(Godfather{backup: None}));
+                actor_ref.set_role_state(game, RoleState::Retrainer(Retrainer{backup: None, ..self}));
             } else {
-                actor_ref.set_role_state(game, RoleState::Godfather(Godfather{backup: Some(target_ref)}));
+                actor_ref.set_role_state(game, RoleState::Retrainer(Retrainer{backup: Some(target_ref), ..self}));
             }
         } else {
-            actor_ref.set_role_state(game, RoleState::Godfather(Godfather{backup: Some(target_ref)}));
+            actor_ref.set_role_state(game, RoleState::Retrainer(Retrainer{backup: Some(target_ref), ..self}));
         }
 
-        let RoleState::Godfather(Godfather { backup }) = *actor_ref.role_state(game) else {
-            unreachable!("Role was just set to Godfather");
+        let RoleState::Retrainer(Retrainer { backup, .. }) = *actor_ref.role_state(game) else {
+            unreachable!("Role was just set to Retrainer");
         };
 
         game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackup { backup: backup.map(|p|p.index()) });
@@ -101,7 +111,7 @@ impl RoleStateImpl for Godfather {
         if actor_ref == dead_player_ref {
             let Some(backup) = self.backup else {return};
 
-            actor_ref.set_role_state(game, RoleState::Godfather(Godfather{backup: None}));
+            actor_ref.set_role_state(game, RoleState::Retrainer(Retrainer{backup: None, ..self}));
             for player_ref in PlayerReference::all_players(game){
                 if player_ref.role(game).faction() != Faction::Mafia{
                     continue;
@@ -112,10 +122,36 @@ impl RoleStateImpl for Godfather {
             if !backup.alive(game){return}
 
             //convert backup to godfather
-            backup.set_role(game, RoleState::Godfather(Godfather{backup: None}));
+            backup.set_role(game, RoleState::Retrainer(Retrainer{backup: None, ..self}));
         }
         else if self.backup.is_some_and(|p|p == dead_player_ref) {
-            actor_ref.set_role_state(game, RoleState::Godfather(Godfather{backup: None}));
+            actor_ref.set_role_state(game, RoleState::Retrainer(Retrainer{backup: None, ..self}));
+        }
+    }
+}
+
+
+impl Retrainer {
+    pub fn retrain(game: &mut Game, actor_ref: PlayerReference, role: Role){
+        if
+            (!RoleSet::MafiaSupport.get_roles().contains(&role) && role != Role::MafiaSupportWildcard) || 
+            !actor_ref.alive(game) ||
+            game.current_phase().is_night()
+        {
+            return;
+        }
+
+
+        if let RoleState::Retrainer(mut retrainer) = actor_ref.role_state(game).clone() {
+
+            if let Some(backup) = retrainer.backup {
+                if retrainer.retrains_remaining > 0 && backup.role(game) != role{
+                    backup.set_role(game, role.default_state());
+                    retrainer.retrains_remaining = retrainer.retrains_remaining.saturating_sub(1);
+                }
+            }
+            
+            actor_ref.set_role_state(game, RoleState::Retrainer(retrainer));
         }
     }
 }

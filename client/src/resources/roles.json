@@ -449,6 +449,22 @@
             {"type": "youSurvivedAttack"}
         ]
     },
+    "retrainer": {
+        "faction": "mafia",
+        "roleSet": "mafiaKilling",
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "godfatherBackup", "backup": null},
+            {"type": "godfatherBackup", "backup": 26},
+            {"type": "godfatherBackupKilled", "backup": 26},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+        ]
+    },
     "eros": {
         "faction": "mafia",
         "roleSet": "mafiaKilling",
@@ -460,6 +476,19 @@
         "chatMessages":[
             {"type": "youAreLoveLinked", "player": 20},
             {"type": "playerDiedOfABrokenHeart", "player": 20, "lover": 25},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+        ]
+    },
+    "counterfeiter": {
+        "faction": "mafia",
+        "roleSet": "mafiaKilling",
+        "armor": true,
+        "aura": null,
+        "maxCount": 1,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
