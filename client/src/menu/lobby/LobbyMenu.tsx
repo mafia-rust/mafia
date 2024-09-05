@@ -26,7 +26,7 @@ export default function LobbyMenu(): ReactElement {
     )!;
     const isHost = useLobbyState(
         lobbyState => lobbyState.players.get(lobbyState.myId!)?.host,
-        ["playersHost", "lobbyClients"]
+        ["playersHost", "lobbyClients", "yourId", "tick", "pong"]
     )!;
     const { mobile } = useContext(AnchorContext);
 

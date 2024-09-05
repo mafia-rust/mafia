@@ -14,14 +14,14 @@ impl Game{
         self.send_packet_to_all(ToClientPacket::PhaseTimeLeft{ seconds_left: self.phase_machine.time_remaining.as_secs() });
         for player in PlayerReference::all_players(self){
             player.send_packet(self, ToClientPacket::YourSendChatGroups { send_chat_groups: 
-                player.get_current_send_chat_groups(self)
+                player.get_current_send_chat_groups(self).into_iter().collect()
             });
         }
     }
     pub fn on_any_death(&mut self, _dead_player: PlayerReference){
         for player in PlayerReference::all_players(self){
             player.send_packet(self, ToClientPacket::YourSendChatGroups { send_chat_groups: 
-                player.get_current_send_chat_groups(self)
+                player.get_current_send_chat_groups(self).into_iter().collect()
             });
         }
     }

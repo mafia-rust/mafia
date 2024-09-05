@@ -427,7 +427,7 @@ impl PlayerReference{
         if silenced {
             self.push_night_message(game, ChatMessageVariant::Silenced);
             self.send_packet(game, ToClientPacket::YourSendChatGroups { send_chat_groups: 
-                self.get_current_send_chat_groups(game)
+                self.get_current_send_chat_groups(game).into_iter().collect()
             });
         }
     }

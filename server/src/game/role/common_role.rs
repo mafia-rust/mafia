@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, role_list::Faction, phase::{PhaseState, PhaseType}, resolution_state::ResolutionState};
 
 use super::{journalist::Journalist, medium::Medium, same_evil_team, RoleState};
@@ -21,27 +23,27 @@ pub(super) fn convert_selection_to_visits(_game: &Game, _actor_ref: PlayerRefere
     }
 }
 
-pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference, night_chat_groups: Vec<ChatGroup>) -> Vec<ChatGroup> {
+pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference, mut night_chat_groups: Vec<ChatGroup>) -> HashSet<ChatGroup> {
     if !actor_ref.alive(game){
-        return vec![ChatGroup::Dead];
+        return vec![ChatGroup::Dead].into_iter().collect();
     }
     if actor_ref.night_silenced(game){
-        return vec![];
+        return HashSet::new();
     }
 
     match game.current_phase() {
         PhaseState::Briefing |
-        PhaseState::Obituary => vec![],
+        PhaseState::Obituary => HashSet::new(),
         PhaseState::Discussion 
         | PhaseState::Nomination {..}
         | PhaseState::Judgement {..} 
         | PhaseState::FinalWords {..}
-        | PhaseState::Dusk => vec![ChatGroup::All],
+        | PhaseState::Dusk => vec![ChatGroup::All].into_iter().collect(),
         &PhaseState::Testimony { player_on_trial, .. } => {
             if player_on_trial == actor_ref {
-                vec![ChatGroup::All]
+                vec![ChatGroup::All].into_iter().collect()
             } else {
-                vec![]
+                HashSet::new()
             }
         },
         PhaseState::Night => {
@@ -74,17 +76,29 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
 
             let mut jail_or_night_chats = if actor_ref.night_jailed(game){
                 vec![ChatGroup::Jail]
-            } else {
-                night_chat_groups
+            }else{
+                match actor_ref.role(game).faction() {
+                    Faction::Mafia => {
+                        night_chat_groups.push(ChatGroup::Mafia);
+                        night_chat_groups
+                    },
+                    Faction::Cult => {
+                        night_chat_groups.push(ChatGroup::Cult);
+                        night_chat_groups
+                    },
+                    _ => {
+                        night_chat_groups
+                    }
+                }
             };
 
 
             out.append(&mut jail_or_night_chats);
-            out
+            out.into_iter().collect()
         },
     }
 }
-pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
     let mut out = Vec::new();
 
     out.push(ChatGroup::All);
@@ -131,7 +145,7 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
         out.push(ChatGroup::Interview);
     }
 
-    out
+    out.into_iter().collect()
 }
 
 ///Only works for roles that win based on end game condition

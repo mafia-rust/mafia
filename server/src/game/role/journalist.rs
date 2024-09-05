@@ -1,12 +1,12 @@
 
+use std::collections::HashSet;
+
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
-use crate::game::visit::Visit;
 
 use crate::game::Game;
 use super::{Priority, RoleState, RoleStateImpl};
@@ -55,18 +55,12 @@ impl RoleStateImpl for Journalist {
             actor_ref.set_role_state(game, RoleState::Journalist(Journalist { interviewed_target: Some(target_ref), ..self }));
         }
     }
-    fn can_select(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
-        false
-    }
     fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         game.current_phase().is_day() &&
         actor_ref != target_ref &&
         actor_ref.alive(game) && target_ref.alive(game)
     }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        vec![]
-    }
-    fn get_current_send_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_send_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, 
             if 
                 game.current_phase().is_night() &&
@@ -79,19 +73,16 @@ impl RoleStateImpl for Journalist {
             }
         )
     }
-    fn get_current_receive_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
+    fn get_current_receive_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         let mut out = crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref);
         if 
             game.current_phase().is_night() &&
             actor_ref.alive(game) &&
             self.interviewed_target.map_or_else(||false, |p|p.alive(game))
         {
-            out.push(ChatGroup::Interview);
+            out.insert(ChatGroup::Interview);
         }
         out
-    }
-    fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::get_won_game(game, actor_ref)
     }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
@@ -134,13 +125,5 @@ impl RoleStateImpl for Journalist {
             _ => {}
         }
         
-    }
-    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {
-    }
-    fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
-    }
-    fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave_ref: GraveReference){
-    }
-    fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
 }

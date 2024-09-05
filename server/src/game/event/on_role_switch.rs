@@ -1,5 +1,5 @@
 use crate::game::{
-    components::{cult::Cult, mafia::Mafia},
+    components::{arsonist_doused::ArsonistDoused, cult::Cult, mafia::Mafia},
     player::PlayerReference, 
     role::RoleState, 
     Game
@@ -21,5 +21,7 @@ impl OnRoleSwitch{
 
         Cult::on_role_switch(game, self.old.role(), self.new.role());
         Mafia::on_role_switch(game, self.old, self.new);
+
+        ArsonistDoused::tag_doused_players_for_arsonists(game);
     }
 }
