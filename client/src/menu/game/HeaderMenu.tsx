@@ -74,7 +74,7 @@ function Information(): ReactElement {
         ["yourRoleState"]
     )
     const myName = useMemo(() => {
-        return myIndex === undefined ? undefined : players[myIndex].toString()
+        return myIndex === undefined ? undefined : players[myIndex]?.toString()
     }, [myIndex, players])
 
     return <div className="information">

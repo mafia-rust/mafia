@@ -170,10 +170,10 @@ export default function messageListener(packet: ToClientPacket){
             const isSpectator = GAME_MANAGER.getMySpectator();
             if(isSpectator){
                 GAME_MANAGER.setSpectatorGameState();
-                ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
+                ANCHOR_CONTROLLER?.setContent(<SpectatorGameScreen/>)
             }else{
                 GAME_MANAGER.setGameState();
-                ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
+                ANCHOR_CONTROLLER?.setContent(<GameScreen />)
             }
         }
         break;

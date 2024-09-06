@@ -3,6 +3,26 @@ import GAME_MANAGER from "..";
 import { StateEventType } from "../game/gameManager.d";
 import GameState, { LobbyState, PlayerGameState } from "../game/gameState.d";
 
+function usePacketListener(listener: (type?: StateEventType) => void) {
+    // Catch all the packets we miss between setState and useEffect
+    const packets: StateEventType[] = [];
+    const packetQueueListener = (type?: StateEventType) => {
+        if (type) packets.push(type);
+    };
+    GAME_MANAGER.addStateListener(packetQueueListener)
+
+    useEffect(() => {
+        GAME_MANAGER.removeStateListener(packetQueueListener);
+
+        for (const packet of packets) {
+            listener(packet);
+        }
+
+        GAME_MANAGER.addStateListener(listener);
+        return () => GAME_MANAGER.removeStateListener(listener);
+    });
+}
+
 export function useGameState<T>(
     getValue: (gameState: GameState) => T, 
     events?: StateEventType[],
@@ -16,16 +36,11 @@ export function useGameState<T>(
         }
     });
 
-    useEffect(() => {
-        const listener = (type?: StateEventType) => {
-            if (GAME_MANAGER.state.stateType === "game" && (events ?? []).includes(type as StateEventType)) {
-                setState(getValue(GAME_MANAGER.state));
-            }
+    usePacketListener((type?: StateEventType) => {
+        if (GAME_MANAGER.state.stateType === "game" && (events ?? []).includes(type as StateEventType)) {
+            setState(getValue(GAME_MANAGER.state));
         }
-
-        GAME_MANAGER.addStateListener(listener);
-        return () => GAME_MANAGER.removeStateListener(listener);
-    });
+    })
 
     return state;
 }
@@ -43,15 +58,10 @@ export function useLobbyState<T>(
         }
     });
 
-    useEffect(() => {
-        const listener = (type?: StateEventType) => {
-            if (GAME_MANAGER.state.stateType === "lobby" && (events ?? []).includes(type as StateEventType)) {
-                setState(getValue(GAME_MANAGER.state));
-            }
+    usePacketListener((type?: StateEventType) => {
+        if (GAME_MANAGER.state.stateType === "lobby" && (events ?? []).includes(type as StateEventType)) {
+            setState(getValue(GAME_MANAGER.state));
         }
-
-        GAME_MANAGER.addStateListener(listener);
-        return () => GAME_MANAGER.removeStateListener(listener);
     });
 
     return state;
@@ -70,18 +80,13 @@ export function useLobbyOrGameState<T>(
         }
     });
 
-    useEffect(() => {
-        const listener = (type?: StateEventType) => {
-            if (
-                (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") 
-                && (events ?? []).includes(type as StateEventType)
-            ) {
-                setState(getValue(GAME_MANAGER.state));
-            }
+    usePacketListener((type?: StateEventType) => {
+        if (
+            (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") 
+            && (events ?? []).includes(type as StateEventType)
+        ) {
+            setState(getValue(GAME_MANAGER.state));
         }
-
-        GAME_MANAGER.addStateListener(listener);
-        return () => GAME_MANAGER.removeStateListener(listener);
     });
 
     return state;
