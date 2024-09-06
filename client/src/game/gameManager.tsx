@@ -160,6 +160,12 @@ export function createGameManager(): GameManager {
 
             return Math.ceil(count / 2);
         },
+        updateChatFilter(filter: PlayerIndex | null) {
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                GAME_MANAGER.state.clientState.chatFilter = null;
+                GAME_MANAGER.invokeStateListeners("filterUpdate");
+            }
+        },
 
 
         server: createServer(),

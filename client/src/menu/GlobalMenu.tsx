@@ -48,7 +48,7 @@ export default function GlobalMenu(): ReactElement {
     }, [anchorController]);
     
     async function quitToMainMenu() {
-        if (GAME_MANAGER.state.stateType === "game") {
+        if (stateType === "game") {
             GAME_MANAGER.leaveGame();
         }
         anchorController.closeGlobalMenu();
@@ -94,9 +94,10 @@ export default function GlobalMenu(): ReactElement {
 
 export function RoomLinkButton(): JSX.Element {
     let code = new URL(window.location.href);
-    
-    if (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
-        code.searchParams.set("code", GAME_MANAGER.state.roomCode.toString(18));
+
+    useLobbyOrGameState(
+        state => code.searchParams.set("code", state.roomCode.toString(18))
+    );
     
     return <CopyButton text={code.toString()}>
         <Icon>link</Icon> {translate("menu.play.field.roomCode")}

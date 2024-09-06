@@ -36,6 +36,7 @@ export type GameManager = {
     getPlayerNames(): string[],
     getLivingPlayers(): Player[] | null,
     getVotesRequired(): number | null,
+    updateChatFilter(filter: PlayerIndex | null): void,
 
     server: Server,
     listeners: StateListener[],

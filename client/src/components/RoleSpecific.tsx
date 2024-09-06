@@ -1,15 +1,13 @@
-import React, { useEffect } from "react";
+import React, { ReactElement, useMemo } from "react";
 import { Role, RoleState } from "../game/roleState.d";
 import LargeAuditorMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
 import LargeHypnotistMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeHypnotistMenu";
 import LargeDoomsayerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import LargeForgerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeForgerMenu";
 import LargeJournalistMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeJournalistMenu";
-import { PhaseState } from "../game/gameState.d";
 import StyledText from "./StyledText";
 import translate from "../game/lang";
 import GAME_MANAGER from "..";
-import { StateListener } from "../game/gameManager.d";
 import SmallOjoMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
 import SmallPuppeteerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 import RoleDropdown from "./RoleDropdown";
@@ -21,39 +19,19 @@ import "./roleSpecific.css";
 import ErosMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/ErosMenu";
 import CounterfeiterMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/CounterfeiterMenu";
 import RetrainerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/RetrainerMenu";
+import { useGameState, usePlayerState } from "./useHooks";
 
 export default function RoleSpecificSection(){
+    const phaseState = useGameState(
+        gameState => gameState.phaseState,
+        ["phase"]
+    )!;
+
+    const roleState = usePlayerState(
+        playerState => playerState.roleState,
+        ["yourRoleState"]
+    )!;
     
-    const [phaseState, setPhaseState] = React.useState<PhaseState | null>(null);
-    const [roleState, setRoleState] = React.useState<RoleState | null>(null);
-
-    useEffect(()=>{
-        const listener: StateListener = (type) => {
-            if (GAME_MANAGER.state.stateType === "game") {
-                switch (type) {
-                    case "phase":
-                        setPhaseState(GAME_MANAGER.state.phaseState);
-                        break;
-                    case "yourRoleState":
-                        if(GAME_MANAGER.state.clientState.type === "player")
-                            setRoleState(GAME_MANAGER.state.clientState.roleState);
-                        break;
-                }
-            }
-        };
-        listener("phase");
-        listener("yourRoleState");
-        GAME_MANAGER.addStateListener(listener);
-        return () => GAME_MANAGER.removeStateListener(listener);
-    },[]);
-
-    if (!roleState) return null;
-    if (!phaseState) return null;
-    if (GAME_MANAGER.state.stateType !== "game") return null;
-    if (GAME_MANAGER.state.clientState.type !== "player") return null;
-
-    
-
     switch(roleState.type){
         case "auditor":
             return <LargeAuditorMenu/>;
@@ -69,62 +47,10 @@ export default function RoleSpecificSection(){
             return <LargeKiraMenu/>;
         case "retrainer":
             return <RetrainerMenu/>
-            
-
-
-
-        case "jailor": {
-            const counter = <Counter 
-                max={3} 
-                current={roleState.executionsRemaining}
-            >
-                <StyledText>{translate("role.jailor.roleDataText.executionsRemaining", roleState.executionsRemaining)}</StyledText>
-            </Counter>;
-            if(phaseState.type==="night") {
-                return counter;
-            } else if (roleState.jailedTargetRef === null) {
-                return <>
-                    {counter}
-                    <div className="role-information">
-                        <StyledText>{translate("role.jailor.roleDataText.nobody")}</StyledText>
-                    </div>
-                </>
-            } else {
-                return <>
-                    {counter}
-                    <div className="role-information">
-                        <StyledText>{translate("role.jailor.roleDataText", 
-                            GAME_MANAGER.state.players[roleState.jailedTargetRef].toString(), 
-                        )}</StyledText>
-                    </div>
-                </>
-            }
-        }
-        case "medium": {
-            const counter = <Counter
-                max={2}
-                current={roleState.seancesRemaining}
-            >
-                <StyledText>{translate("role.medium.roleDataText.hauntsRemaining", roleState.seancesRemaining)}</StyledText>
-            </Counter>
-            if (roleState.seancedTarget === null) {
-                return <>
-                    {counter}
-                    <div className="role-information">
-                        <StyledText>{translate("role.medium.roleDataText.nobody")}</StyledText>
-                    </div>
-                </>
-            } else {
-                return <>
-                    {counter}
-                    <div className="role-information">
-                        <StyledText>{translate("role.medium.roleDataText", 
-                            GAME_MANAGER.state.players[roleState.seancedTarget].toString(),
-                        )}</StyledText>
-                    </div>
-                </>;
-            }
-        }
+        case "jailor": 
+            return <JailorRoleSpecificMenu roleState={roleState}/>;
+        case "medium": 
+            return <MediumRoleSpecificMenu roleState={roleState}/>
         case "doctor": {
             return <Counter
                 max={1}
@@ -178,34 +104,8 @@ export default function RoleSpecificSection(){
             >
                 <StyledText>{translate("role.armorsmith.roleDataText", roleState.openShopsRemaining)}</StyledText>
             </Counter>
-        case "marksman": {
-            let stateText;
-
-            switch(roleState.state.type){
-                case "notLoaded":
-                case "shotTownie":
-                    stateText = translate("role.marksman.roleDataText."+roleState.state.type)
-                    break;
-                case "marks":
-                    if(roleState.state.marks.length === 0){
-                        stateText = translate("role.marksman.roleDataText.marks.none")
-                    }else{
-                        stateText = translate("role.marksman.roleDataText.marks",
-                            roleState.state.marks.map((index)=>{
-                                if(GAME_MANAGER.state.stateType === "game")
-                                    return GAME_MANAGER.state.players[index].toString();
-                                else
-                                    return "";
-                            }).join(", ")
-                            
-                        )
-                    }
-            }
-            
-            return <div className="role-information">
-                <StyledText>{stateText}</StyledText>
-            </div>
-        }
+        case "marksman": 
+            return <MarksmanRoleSpecificMenu roleState={roleState} />
         case "eros":
             return <ErosMenu/>;
         case "counterfeiter":
@@ -225,9 +125,7 @@ export default function RoleSpecificSection(){
                 <StyledText>{translate("role.death.roleDataText", roleState.souls)}</StyledText>
             </Counter>
         case "ojo":
-            if(phaseState.type === "night" && GAME_MANAGER.state.clientState.myIndex!==null && GAME_MANAGER.state.players[GAME_MANAGER.state.clientState.myIndex].alive)
-                return <SmallOjoMenu action={roleState.chosenAction}/>;
-            return null;
+            return <SmallOjoMenu action={roleState.chosenAction}/>
         case "puppeteer":
             return <SmallPuppeteerMenu 
                 action={roleState.action} 
@@ -236,60 +134,9 @@ export default function RoleSpecificSection(){
             />;
         case "wildcard":
         case "trueWildcard":
-            return <div className="role-information">
-                <StyledText>{translate("role.wildcard.smallRoleMenu")}</StyledText>
-                <div>
-                    <RoleDropdown 
-                        value={roleState.role ?? "wildcard"}
-                        enabledRoles={GAME_MANAGER.state.enabledRoles} 
-                        onChange={(rle)=>{
-                            GAME_MANAGER.sendSetWildcardRoleOutline(rle);
-                        }}
-                    />
-                </div>
-            </div>;
-        case "mafiaSupportWildcard": {
-            const allChoosableMafia : Role[] = Object.keys(ROLES).filter((rle)=>
-                rle === "mafiaSupportWildcard" ||
-                (
-                    ROLES[rle as keyof typeof ROLES].roleSet === "mafiaSupport" &&
-                    GAME_MANAGER.state.stateType === "game" &&
-                    GAME_MANAGER.state.enabledRoles.includes(rle as Role)
-                )
-            ).map((r)=>r as Role);
-
-            return <div className="role-information">
-                <StyledText>{translate("role.mafiaSupportWildcard.smallRoleMenu")}</StyledText>
-                <div>
-                    <RoleDropdown 
-                        value={roleState.role ?? "mafiaSupportWildcard"} 
-                        enabledRoles={allChoosableMafia }
-                        onChange={(rle)=>{
-                            GAME_MANAGER.sendSetWildcardRoleOutline(rle);
-                        }}
-                    />
-                </div>
-            </div>;
-        }
+        case "mafiaSupportWildcard":
         case "fiendsWildcard": {
-            const allChoosableFiends: Role[] = Object.keys(ROLES).filter((rle)=>
-                ROLES[rle as keyof typeof ROLES].faction === "fiends" &&
-                GAME_MANAGER.state.stateType === "game" &&
-                GAME_MANAGER.state.enabledRoles.includes(rle as Role)
-            ).map((r)=>r as Role);
-
-            return <div className="role-information">
-                <StyledText>{translate("role.fiendsWildcard.smallRoleMenu")}</StyledText>
-                <div>
-                    <RoleDropdown 
-                        value={roleState.role ?? "fiendsWildcard"} 
-                        enabledRoles={allChoosableFiends}
-                        onChange={(rle)=>{
-                            GAME_MANAGER.sendSetWildcardRoleOutline(rle);
-                        }}
-                    />
-                </div>
-            </div>;
+            return <WildcardRoleSpecificMenu type={roleState.type} />
         }
         case "martyr":
             if (roleState.state.type === "stillPlaying") {
@@ -310,4 +157,145 @@ export default function RoleSpecificSection(){
         default:
             return null;
     }
+}
+
+function MarksmanRoleSpecificMenu(props: Readonly<{
+    roleState: RoleState & { type: "marksman" }
+}>): ReactElement {
+    let stateText;
+    const players = useGameState(
+        gameState => gameState.players,
+        ["gamePlayers"]
+    )!;
+
+    switch(props.roleState.state.type){
+        case "notLoaded":
+        case "shotTownie":
+            stateText = translate("role.marksman.roleDataText."+props.roleState.state.type)
+            break;
+        case "marks":
+            if(props.roleState.state.marks.length === 0){
+                stateText = translate("role.marksman.roleDataText.marks.none")
+            }else{
+                stateText = translate("role.marksman.roleDataText.marks",
+                    props.roleState.state.marks.map(index => players[index].toString()).join(", ")
+                )
+            }
+    }
+    
+    return <div className="role-information">
+        <StyledText>{stateText}</StyledText>
+    </div>
+}
+
+function JailorRoleSpecificMenu(props: Readonly<{
+    roleState: RoleState & { type: "jailor" }
+}>): ReactElement {
+    const players = useGameState(
+        gameState => gameState.players,
+        ["gamePlayers"]
+    )!;
+    const phaseState = useGameState(
+        gameState => gameState.phaseState
+    )!;
+
+    const counter = <Counter 
+        max={3} 
+        current={props.roleState.executionsRemaining}
+    >
+        <StyledText>{translate("role.jailor.roleDataText.executionsRemaining", props.roleState.executionsRemaining)}</StyledText>
+    </Counter>;
+    if(phaseState.type==="night") {
+        return counter;
+    } else if (props.roleState.jailedTargetRef === null) {
+        return <>
+            {counter}
+            <div className="role-information">
+                <StyledText>{translate("role.jailor.roleDataText.nobody")}</StyledText>
+            </div>
+        </>
+    } else {
+        return <>
+            {counter}
+            <div className="role-information">
+                <StyledText>{translate("role.jailor.roleDataText", 
+                    players[props.roleState.jailedTargetRef].toString(), 
+                )}</StyledText>
+            </div>
+        </>
+    }
+}
+
+function MediumRoleSpecificMenu(props: Readonly<{
+    roleState: RoleState & { type: "medium" }
+}>): ReactElement {
+    const players = useGameState(
+        gameState => gameState.players,
+        ["gamePlayers"]
+    )!;
+
+    const counter = <Counter
+        max={2}
+        current={props.roleState.seancesRemaining}
+    >
+        <StyledText>{translate("role.medium.roleDataText.hauntsRemaining", props.roleState.seancesRemaining)}</StyledText>
+    </Counter>
+    if (props.roleState.seancedTarget === null) {
+        return <>
+            {counter}
+            <div className="role-information">
+                <StyledText>{translate("role.medium.roleDataText.nobody")}</StyledText>
+            </div>
+        </>
+    } else {
+        return <>
+            {counter}
+            <div className="role-information">
+                <StyledText>{translate("role.medium.roleDataText", 
+                    players[props.roleState.seancedTarget].toString(),
+                )}</StyledText>
+            </div>
+        </>;
+    }
+}
+
+function WildcardRoleSpecificMenu(props: Readonly<{ type: Role }>): ReactElement {
+    const enabledRoles = useGameState(
+        gameState => gameState.enabledRoles,
+        ["enabledRoles"]
+    )!;
+
+    const choosable = useMemo(() => {
+        switch (props.type) {
+            case "wildcard":
+            case "trueWildcard":
+                return enabledRoles
+            case "mafiaSupportWildcard":
+                return Object.keys(ROLES).filter((rle)=>
+                    rle === "mafiaSupportWildcard" ||
+                    (
+                        ROLES[rle as keyof typeof ROLES].roleSet === "mafiaSupport" &&
+                        enabledRoles.includes(rle as Role)
+                    )
+                ).map((r)=>r as Role)
+            case "fiendsWildcard":
+                return Object.keys(ROLES).filter((rle)=>
+                    ROLES[rle as keyof typeof ROLES].faction === "fiends" &&
+                    enabledRoles.includes(rle as Role)
+                ).map((r)=>r as Role)
+        }
+    }, [enabledRoles, props.type])
+
+    return <div className="role-information">
+        <StyledText>{translate(`role.${props.type}.smallRoleMenu`)}</StyledText>
+        <div>
+            <RoleDropdown 
+                value={props.type} 
+                enabledRoles={choosable}
+                onChange={(rle)=>{
+                    GAME_MANAGER.sendSetWildcardRoleOutline(rle);
+                }}
+            />
+        </div>
+    </div>;
 }
