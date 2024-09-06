@@ -44,6 +44,18 @@ export function useMenuController<C extends Partial<Record<ContentMenu, boolean>
 ): MenuController {
     const [contentMenus, setContentMenus] = useState<C>(initial);
 
+    const [callbacks, setCallbacks] = useState<(() => void)[]>([]);
+
+    useEffect(() => {
+        for (const callback of callbacks) {
+            callback();
+        }
+        if (callbacks.length !== 0) {
+            setCallbacks([])
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [contentMenus])
+
     const initializeMenuController = useCallback(() => {
         function setAndGetContentMenus(menu: ContentMenu, open: boolean): C {
             const newMenus = {...contentMenus};
@@ -84,8 +96,9 @@ export function useMenuController<C extends Partial<Record<ContentMenu, boolean>
             openMenu(menu, callback) {
                 setContentMenu(menu, true);
                 
-                // This isn't correct but it probably works.
-                callback && callback();
+                if (callback) {
+                    setCallbacks(callbacks => callbacks.concat(callback))
+                }
             },
             menusOpen(): ContentMenu[] {
                 return Object.entries(contentMenus)
