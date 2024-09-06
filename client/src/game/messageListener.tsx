@@ -1,6 +1,6 @@
 
 import { createPlayer } from "./gameState";
-import Anchor, { ANCHOR_CONTROLLER, chatMessageToAudio } from "./../menu/Anchor";
+import { ANCHOR_CONTROLLER, chatMessageToAudio } from "./../menu/Anchor";
 import GAME_MANAGER from "./../index";
 import GameScreen from "./../menu/game/GameScreen";
 import { ToClientPacket } from "./packet";
@@ -15,7 +15,7 @@ import WikiArticle from "../components/WikiArticle";
 import SpectatorGameScreen from "../menu/spectator/SpectatorGameScreen";
 import LobbyMenu from "../menu/lobby/LobbyMenu";
 import LoadingScreen from "../menu/LoadingScreen";
-import AudioController from "../menu/Audio";
+import AudioController from "../menu/AudioController";
 
 export default function messageListener(packet: ToClientPacket){
 
@@ -144,6 +144,7 @@ export default function messageListener(packet: ToClientPacket){
 
             //TODO jack Im sorry
             AudioController.clearQueue();
+            AudioController.pauseQueue();
         break;
         case "lobbyClients":
             if(GAME_MANAGER.state.stateType === "lobby"){

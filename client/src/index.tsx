@@ -6,7 +6,7 @@ import { GameManager, createGameManager } from './game/gameManager';
 import StartMenu from './menu/main/StartMenu';
 import LoadingScreen from './menu/LoadingScreen';
 import { deleteReconnectData, loadReconnectData } from './game/localStorage';
-import AudioController from './menu/Audio';
+import AudioController from './menu/AudioController';
 
 export type Theme = "player-list-menu-colors" | "will-menu-colors" | "role-specific-colors" | "graveyard-menu-colors" | "wiki-menu-colors"
 
@@ -20,7 +20,8 @@ setInterval(() => {
 }, TIME_PERIOD);
 
 async function route(url: Location) {
-    AudioController.pause();
+    AudioController.clearQueue();
+    AudioController.pauseQueue();
     const roomCode = new URLSearchParams(url.search).get("code");
     let reconnectData = loadReconnectData();
     

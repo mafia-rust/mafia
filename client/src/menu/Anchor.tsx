@@ -12,7 +12,7 @@ import { Button } from "../components/Button";
 import { ChatMessage } from "../components/ChatMessage";
 import WikiCoverCard from "../components/WikiCoverCard";
 import WikiArticle from "../components/WikiArticle";
-import AudioController from "./Audio";
+import AudioController from "./AudioController";
 
 const MobileContext = createContext<boolean | undefined>(undefined);
 

@@ -1,4 +1,4 @@
-import React, { ReactElement, useMemo, useState } from "react";
+import React, { ReactElement, useEffect, useMemo, useState } from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import { ContentMenu, ContentTab } from "../GameScreen";
@@ -44,6 +44,10 @@ function TextDropdownArea(props: Readonly<{ type: FieldType, cantPost: boolean }
     )!;
     const [field, setField] = useState<string>(savedField);
 
+    useEffect(() => {
+        setField(savedField)
+    }, [savedField])
+
     const unsaved = useMemo(() => {
         return savedField !== field
     }, [field, savedField]);
@@ -70,31 +74,33 @@ function TextDropdownArea(props: Readonly<{ type: FieldType, cantPost: boolean }
 
     return (<details open={props.type !== "deathNote"}>
         <summary>
-            {translate("menu.will." + props.type)}
             <div>
-                {unsaved ? "Unsaved" : "Saved"}
-                <Button
-                    highlighted={unsaved}
-                    onClick={() => {
-                        save(field);
-                        return true;
-                    }}
-                    pressedChildren={() => <Icon>done</Icon>}
-                    aria-label={translate("menu.will.save")}
-                >
-                    <Icon>save</Icon>
-                </Button>
-                <Button
-                    disabled={props.cantPost}
-                    onClick={() => {
-                        send(field);
-                        return true;
-                    }}
-                    pressedChildren={() => <Icon>done</Icon>}
-                    aria-label={translate("menu.will.post")}
-                >
-                    <Icon>send</Icon>
-                </Button>
+                {translate("menu.will." + props.type)}
+                <div>
+                    {unsaved ? "Unsaved" : "Saved"}
+                    <Button
+                        highlighted={unsaved}
+                        onClick={() => {
+                            save(field);
+                            return true;
+                        }}
+                        pressedChildren={() => <Icon>done</Icon>}
+                        aria-label={translate("menu.will.save")}
+                    >
+                        <Icon>save</Icon>
+                    </Button>
+                    <Button
+                        disabled={props.cantPost}
+                        onClick={() => {
+                            send(field);
+                            return true;
+                        }}
+                        pressedChildren={() => <Icon>done</Icon>}
+                        aria-label={translate("menu.will.post")}
+                    >
+                        <Icon>send</Icon>
+                    </Button>
+                </div>
             </div>
         </summary>
         

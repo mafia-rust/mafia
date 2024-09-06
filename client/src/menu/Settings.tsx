@@ -4,10 +4,10 @@ import translate, { Language, languageName, LANGUAGES, switchLanguage } from "..
 import StyledText from "../components/StyledText";
 import Icon from "../components/Icon";
 import { loadSettings, RoleSpecificMenuType, saveSettings } from "../game/localStorage";
-import Anchor, { MobileContext, AnchorControllerContext } from "./Anchor";
+import { MobileContext, AnchorControllerContext } from "./Anchor";
 import { Role } from "../game/roleState.d";
 import ROLES from "../resources/roles.json";
-import AudioController from "./Audio";
+import AudioController from "./AudioController";
 
 export function roleSpecificMenuType(role: Role): RoleSpecificMenuType | null {
     return ROLES[role].roleSpecificMenu === false ? null : loadSettings().roleSpecificMenus[role]

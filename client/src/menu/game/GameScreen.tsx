@@ -9,7 +9,7 @@ import WikiMenu from "./gameScreenContent/WikiMenu";
 import "../../index.css";
 import "./gameScreen.css";
 import RoleSpecificMenu from "./gameScreenContent/RoleSpecificMenu";
-import Anchor, { addSwipeEventListener, MobileContext, removeSwipeEventListener } from "../Anchor";
+import { addSwipeEventListener, MobileContext, removeSwipeEventListener } from "../Anchor";
 import StyledText from "../../components/StyledText";
 import { WikiArticleLink } from "../../components/WikiArticleLink";
 import Icon from "../../components/Icon";

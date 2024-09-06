@@ -1,4 +1,4 @@
-import Anchor, { ANCHOR_CONTROLLER } from "./../menu/Anchor";
+import { ANCHOR_CONTROLLER } from "./../menu/Anchor";
 import StartMenu from "./../menu/main/StartMenu";
 import GAME_MANAGER from "./../index";
 import messageListener from "./messageListener";
@@ -15,14 +15,15 @@ import { Role } from "./roleState.d";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
-import AudioController from "../menu/Audio";
+import AudioController from "../menu/AudioController";
 export function createGameManager(): GameManager {
 
     console.log("Game manager created.");
     
     let gameManager: GameManager = {
         async setDisconnectedState(): Promise<void> {
-            AudioController.pause();
+            AudioController.clearQueue();
+            AudioController.pauseQueue();
 
             if (GAME_MANAGER.server.ws) {
                 let completePromise: () => void;
@@ -69,7 +70,8 @@ export function createGameManager(): GameManager {
             }
 
 
-            AudioController.pause();
+            AudioController.clearQueue();
+            AudioController.unpauseQueue();
             GAME_MANAGER.state = createGameState();
             if (lobbyState !== null && GAME_MANAGER.state.stateType === "game") {
                 GAME_MANAGER.state.roomCode = lobbyState.roomCode;
@@ -88,7 +90,8 @@ export function createGameManager(): GameManager {
                 };
         },
         async setOutsideLobbyState() {
-            AudioController.pause();
+            AudioController.clearQueue();
+            AudioController.pauseQueue();
             
             if (!GAME_MANAGER.server.ws?.OPEN) {
                 await GAME_MANAGER.server.open();
