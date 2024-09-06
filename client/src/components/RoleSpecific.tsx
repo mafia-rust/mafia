@@ -136,7 +136,7 @@ export default function RoleSpecificSection(){
         case "trueWildcard":
         case "mafiaSupportWildcard":
         case "fiendsWildcard": {
-            return <WildcardRoleSpecificMenu type={roleState.type} />
+            return <WildcardRoleSpecificMenu roleState={roleState} />
         }
         case "martyr":
             if (roleState.state.type === "stillPlaying") {
@@ -259,14 +259,16 @@ function MediumRoleSpecificMenu(props: Readonly<{
     }
 }
 
-function WildcardRoleSpecificMenu(props: Readonly<{ type: Role }>): ReactElement {
+function WildcardRoleSpecificMenu(props: Readonly<{
+    roleState: RoleState & { type: "wildcard" | "trueWildcard" | "mafiaSupportWildcard" | "fiendsWildcard" }
+}>): ReactElement {
     const enabledRoles = useGameState(
         gameState => gameState.enabledRoles,
         ["enabledRoles"]
     )!;
 
     const choosable = useMemo(() => {
-        switch (props.type) {
+        switch (props.roleState.type) {
             case "wildcard":
             case "trueWildcard":
                 return enabledRoles
@@ -284,13 +286,13 @@ function WildcardRoleSpecificMenu(props: Readonly<{ type: Role }>): ReactElement
                     enabledRoles.includes(rle as Role)
                 ).map((r)=>r as Role)
         }
-    }, [enabledRoles, props.type])
+    }, [enabledRoles, props.roleState.type])
 
     return <div className="role-information">
-        <StyledText>{translate(`role.${props.type}.smallRoleMenu`)}</StyledText>
+        <StyledText>{translate(`role.${props.roleState.type}.smallRoleMenu`)}</StyledText>
         <div>
             <RoleDropdown 
-                value={props.type} 
+                value={props.roleState.role} 
                 enabledRoles={choosable}
                 onChange={(rle)=>{
                     GAME_MANAGER.sendSetWildcardRoleOutline(rle);
