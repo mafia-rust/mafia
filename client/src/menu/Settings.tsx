@@ -1,7 +1,7 @@
 import React, { ReactElement, useContext, useEffect, useState } from "react";
 import "./settings.css";
 import translate, { Language, languageName, LANGUAGES, switchLanguage } from "../game/lang";
-import StyledText from "../components/StyledText";
+import StyledText, { computeKeywordData } from "../components/StyledText";
 import Icon from "../components/Icon";
 import { loadSettings, RoleSpecificMenuType, saveSettings } from "../game/localStorage";
 import { MobileContext, AnchorControllerContext } from "./Anchor";
@@ -51,6 +51,7 @@ export default function SettingsMenu(): ReactElement {
                                 const language = e.target.options[e.target.selectedIndex].value as Language;
                                 switchLanguage(language);
                                 saveSettings({language});
+                                computeKeywordData()
                                 anchorController.reload();
                             }}
                         >

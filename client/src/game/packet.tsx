@@ -294,6 +294,9 @@ export type ToServerPacket = {
     type: "setErosAction",
     action: "loveLink" | "kill"
 } | {
+    type: "retrainerRetrain",
+    role: Role
+} | {
     type: "voteFastForwardPhase",
     fastForward: boolean
 } | {

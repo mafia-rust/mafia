@@ -537,6 +537,12 @@ export function createGameManager(): GameManager {
                 action: action
             });
         },
+        sendRetrainerRetrain(role) {
+            this.server.sendPacket({
+                type: "retrainerRetrain",
+                role: role
+            });
+        },
 
         sendVoteFastForwardPhase(fastForward: boolean) {
             this.server.sendPacket({

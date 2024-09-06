@@ -343,6 +343,15 @@
     "role.godfather.youAreSelecting": "You are organizing an attack on \\0.",
     "role.godfather.youAreSelecting.null": "You aren't attacking anyone.",
 
+    "role.retrainer.name": "Retrainer",
+    "role.retrainer.name:var.0": "Retrainers",
+    "role.retrainer.target": "Attack",
+    "role.retrainer.dayTarget": "Backup",
+    "role.retrainer.youAreSelecting": "You are organizing an attack on \\0.",
+    "role.retrainer.youAreSelecting.null": "You aren't attacking anyone.",
+    "role.retrainer.retrainsRemaining": "\\0 retrains remaining",
+    "role.retrainer.cannotRetrain": "You can't retrain during night, while dead, if you have no backup, or if you have no retrains left.",
+
     "role.eros.name": "Eros",
     "role.eros.name:var.0": "Eroses",
     "role.eros.target": "Visit",
@@ -625,6 +634,7 @@
     "kill": "Kill",
     "forge": "Forge",
     "noForge": "No Forge",
+    "retrain": "Retrain",
     "loveLink": "Love Link",
     "poison": "Poison",
     "string": "String",
@@ -806,9 +816,9 @@
     
     "chatMessage.vigilanteSuicide":"You committed suicide over the guilt of killing a townie.",
     "chatMessage.transported": "You were transported!",
-    "chatMessage.godfatherBackup": "The Godfather has selected \\0 to be their backup.",
-    "chatMessage.godfatherBackup.nobody": "The Godfather has deselected a backup.",
-    "chatMessage.godfatherBackupKilled": "The Godfather was blocked, so \\0 attacked for the Godfather.",
+    "chatMessage.godfatherBackup": "The Mafia has selected \\0 to be their backup.",
+    "chatMessage.godfatherBackup.nobody": "The Mafia has deselected a backup.",
+    "chatMessage.godfatherBackupKilled": "The Mafia was blocked, so \\0 attacked for the Mafia.",
     "chatMessage.silenced": "You are silenced! You must not speak, chat, point, or otherwise communicate until tomorrow!",
     "chatMessage.playerRoleAndAlibi": "\\0 had the role \\1 and their alibi stated this: \\2",
     "chatMessage.informantResult": "\\0. \\1. \\2.",
@@ -1250,8 +1260,13 @@
 
     "wiki.article.role.godfather.guide": "- At night, select a player to attack\n- You can't attack night 1\n- Choose a backup to attack for you if you are blocked\n\n You should try to kill townies who are likely to stop you from winning or have powerful abilities, but be careful about town protective roles.",
     "wiki.article.role.godfather.abilities":"* Visit a player to attack\n* Choose another living mafia member to be your backup at any time\n* While you are blocked, the backup will attack the first player they visit",
-    "wiki.article.role.godfather.attributes":"* You are armored\n* You always have an innocent aura\n* When you are blocked, the mafia is told that the backup attacks for you\n- Neither you or the backup can select or attack night 1",
+    "wiki.article.role.godfather.attributes":"* When you are blocked, the mafia is told that the backup attacks for you\n- Neither you or the backup can select or attack night 1",
     "wiki.article.role.godfather.extra":"* You only have a basic attack\n* When the Godfather dies, their current backup becomes the Godfather\n* You can not select other mafia members",
+    
+    "wiki.article.role.retrainer.guide": "- At night, select a player to attack\n- You can't attack night 1\n- Choose a backup to attack for you if you are blocked\n- 2 times per game, retrain the backup, changing their role to a different mafia support role\n\n You should try to kill townies who are likely to stop you from winning or have powerful abilities, but be careful about town protective roles.",
+    "wiki.article.role.retrainer.abilities":"* Visit a player to attack\n* Choose another living mafia member to be your backup at any time\n* While you are blocked, the backup will attack the first player they visit\n- 2 times per game, you can choose to retrain, changing the role of the backup player to a different mafia support role",
+    "wiki.article.role.retrainer.attributes":"* When you are blocked, the mafia is told that the backup attacks for you\n- Neither you or the backup can select or attack night 1\n- You can only retrain a mafia member when it is not night\n- If you try to retrain the backup to the role that they already are, it doesn't work, and doesn't cost an ability\n- You can only retrain while it is not night",
+    "wiki.article.role.retrainer.extra":"* You only have a basic attack\n* When the Retrainer dies, their current backup becomes the Retrainer\n* You can not select other mafia members",
     
     "wiki.article.role.eros.guide": "- At night, either kill a player, or love link 2 players\n    - You can't attack night 1\n    - Whenever a player who is love linked to another player dies, the other love linked player dies as well\n- You have an innocent aura and armor\n\nIf you are roleblocked by an escort, it might be a good idea to claim that you were love linked to another mafia member that night. Doing that hides the fact that the eros was roleblocked, and might hide that your eros from that escort.",
     "wiki.article.role.eros.abilities": "- If you chose to kill\n    - Visit a player attack\n- If you chose to love link\n    - Visit 2 players to love link them, if one dies tonight, they do not love link",

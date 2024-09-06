@@ -119,7 +119,7 @@ export default function StyledText(props: Readonly<StyledTextProps>): ReactEleme
 const KEYWORD_DATA: KeywordDataMap = {};
 computeKeywordData();
 
-function computeKeywordData() {
+export function computeKeywordData() {
     for (const key in KEYWORD_DATA) {
         delete KEYWORD_DATA[key];
     }

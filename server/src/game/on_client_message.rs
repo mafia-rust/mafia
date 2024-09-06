@@ -7,7 +7,7 @@ use super::{
     event::on_fast_forward::OnFastForward,
     phase::{PhaseState, PhaseType},
     player::{PlayerIndex, PlayerReference},
-    role::{kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, Role, RoleState}, role_list::{Faction, RoleSet}, 
+    role::{kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, retrainer::Retrainer, Role, RoleState}, role_list::{Faction, RoleSet}, 
     spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
     Game
 };
@@ -360,6 +360,9 @@ impl Game {
                     sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
                 }
             },
+            ToServerPacket::RetrainerRetrain { role } => {
+                Retrainer::retrain(self, sender_player_ref, role);
+            }
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {
                 sender_player_ref.set_fast_forward_vote(self, fast_forward);
             },

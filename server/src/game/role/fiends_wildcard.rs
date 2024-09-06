@@ -1,16 +1,12 @@
-use std::vec;
-
 use serde::{Serialize, Deserialize};
 
 use crate::game::chat::ChatMessageVariant;
-use crate::game::grave::GraveReference;
-use crate::game::{chat::ChatGroup, phase::PhaseType};
+use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::{role_can_generate, Faction};
-use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{Priority, RoleStateImpl, Role};
+use super::{RoleStateImpl, Role};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -30,28 +26,6 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: u8 = 0;
 
 impl RoleStateImpl for FiendsWildcard {
-    fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {
-    }
-    fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
-    }
-    fn can_select(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
-        false
-    }
-    fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
-        false
-    }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        vec![]
-    }
-    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Mafia])
-    }
-    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
-    }
-    fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
-        false
-    }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Night => {
@@ -60,14 +34,6 @@ impl RoleStateImpl for FiendsWildcard {
             },
             _ => {}
         }
-    }
-    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {
-    }
-    fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
-    }
-    fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave_ref: GraveReference){
-    }
-    fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
 }
 

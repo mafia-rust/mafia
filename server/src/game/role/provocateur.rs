@@ -3,17 +3,16 @@ use rand::seq::SliceRandom;
 use serde::Serialize;
 
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::grave::{Grave, GraveReference};
+use crate::game::grave::Grave;
 use crate::game::phase::{PhaseState, PhaseType};
 use crate::game::player::PlayerReference;
 use crate::game::role::RoleState;
 use crate::game::role_list::Faction;
 use crate::game::tag::Tag;
-use crate::game::visit::Visit;
 
 use crate::game::Game;
 use super::jester::Jester;
-use super::{Priority, Role, RoleStateImpl};
+use super::{Role, RoleStateImpl};
 
 
 #[derive(Clone, Serialize, Debug, Default)]
@@ -46,26 +45,6 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: u8 = 1;
 
 impl RoleStateImpl for Provocateur {
-    fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {
-    }
-    fn can_select(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
-        false
-    }
-    fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {
-        
-    }
-    fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
-        false
-    }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        vec![]
-    }
-    fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
-    }
-    fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> Vec<ChatGroup> {
-        crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
-    }
     fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
         self.target == ProvocateurTarget::Won
     }
@@ -113,9 +92,5 @@ impl RoleStateImpl for Provocateur {
         if Some(dead_player_ref) == self.target.get_target() && self.target != ProvocateurTarget::Won {
             actor_ref.set_role(game, RoleState::Jester(Jester::default()))
         }
-    }
-    fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave_ref: GraveReference){
-    }
-    fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference){
     }
 }

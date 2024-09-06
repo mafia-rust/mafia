@@ -84,6 +84,10 @@ export type RoleState = {
     type: "godfather"
     backup: PlayerIndex | null
 } | {
+    type: "retrainer"
+    backup: PlayerIndex | null,
+    retrainsRemaining: number
+} | {
     type: "eros"
     action: "loveLink" | "kill"
 } | {

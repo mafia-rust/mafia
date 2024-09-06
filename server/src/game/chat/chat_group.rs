@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::game::{player::PlayerReference, Game};
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[serde(rename_all = "camelCase")]
 pub enum ChatGroup {
     All,

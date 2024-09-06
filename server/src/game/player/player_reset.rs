@@ -85,15 +85,6 @@ impl PlayerReference{
         self.set_fast_forward_vote(game, false);
         self.role_state(game).clone().on_phase_start(game, *self, phase)
     }
-
-    pub fn before_phase_end(&self, _game: &mut Game, phase: PhaseType){
-        match phase {
-            PhaseType::Discussion => {
-            },
-            _ => {}
-        }
-
-    }
 }
 
 
