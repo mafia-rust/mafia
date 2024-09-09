@@ -239,7 +239,7 @@ function CoverCard(props: Readonly<{
         if(event.key === "Enter") {
             anchorController.clearCoverCard();
         }
-    }, []);
+    }, [anchorController]);
     useEffect(() => {
         document.addEventListener("keydown", escFunction, false);
         return () => {
