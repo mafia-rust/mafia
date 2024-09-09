@@ -1,41 +1,16 @@
-import React, { useEffect } from "react";
-import { ReactElement } from "react";
+import React, { ReactElement } from "react";
 import GAME_MANAGER from "../..";
 import translate from "../../game/lang";
-import { StateEventType, StateListener } from "../../game/gameManager.d";
 import Icon from "../../components/Icon";
+import { useLobbyState } from "../../components/useHooks";
 
 
 
 export default function LobbyNamePane(): ReactElement {
-
-
-    let spectatorDependency = 
-        GAME_MANAGER.state.stateType === "lobby" &&
-        GAME_MANAGER.state.myId !== null &&
-        GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId)?.clientType.type === "spectator";
-
-    const [isSpectator, setIsSpectator] = React.useState(spectatorDependency);
-
-    useEffect(()=>{
-        setIsSpectator(GAME_MANAGER.state.stateType === "lobby" &&
-        GAME_MANAGER.state.myId !== null &&
-        GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId)?.clientType.type === "spectator");
-        const listener: StateListener = (type?: StateEventType) => {
-            switch (type) {
-                case "lobbyClients":
-                    if(GAME_MANAGER.state.stateType === "lobby" && GAME_MANAGER.state.myId !== null){
-                        setIsSpectator(GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId)?.clientType.type === "spectator");
-                    }
-                    break;
-            }
-        }
-
-        GAME_MANAGER.addStateListener(listener);
-        return ()=>{GAME_MANAGER.removeStateListener(listener);}
-    }, [setIsSpectator]);
-
-
+    const isSpectator = useLobbyState(
+        lobbyState => lobbyState.players.get(lobbyState.myId!)?.clientType.type === "spectator",
+        ["lobbyClients", "yourId"]
+    )!;
 
     return <section className="player-list-menu-colors selector-section">
         {!isSpectator && <NameSelector/>}
@@ -46,7 +21,6 @@ export default function LobbyNamePane(): ReactElement {
 }
 
 function NameSelector(): ReactElement {
-
     const [enteredName, setEnteredName] = React.useState("");
 
     return <>

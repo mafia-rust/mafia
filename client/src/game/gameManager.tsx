@@ -1,4 +1,4 @@
-import Anchor from "./../menu/Anchor";
+import { ANCHOR_CONTROLLER } from "./../menu/Anchor";
 import StartMenu from "./../menu/main/StartMenu";
 import GAME_MANAGER from "./../index";
 import messageListener from "./messageListener";
@@ -15,15 +15,15 @@ import { Role } from "./roleState.d";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
-import GameScreen, { ContentController } from "../menu/game/GameScreen";
-import { getSpectatorScreenContentController } from "../menu/spectator/SpectatorGameScreen";
+import AudioController from "../menu/AudioController";
 export function createGameManager(): GameManager {
 
     console.log("Game manager created.");
     
     let gameManager: GameManager = {
         async setDisconnectedState(): Promise<void> {
-            Anchor.stopAudio();
+            AudioController.clearQueue();
+            AudioController.pauseQueue();
 
             if (GAME_MANAGER.server.ws) {
                 let completePromise: () => void;
@@ -70,7 +70,8 @@ export function createGameManager(): GameManager {
             }
 
 
-            Anchor.stopAudio();
+            AudioController.clearQueue();
+            AudioController.unpauseQueue();
             GAME_MANAGER.state = createGameState();
             if (lobbyState !== null && GAME_MANAGER.state.stateType === "game") {
                 GAME_MANAGER.state.roomCode = lobbyState.roomCode;
@@ -89,7 +90,8 @@ export function createGameManager(): GameManager {
                 };
         },
         async setOutsideLobbyState() {
-            Anchor.stopAudio();
+            AudioController.clearQueue();
+            AudioController.pauseQueue();
             
             if (!GAME_MANAGER.server.ws?.OPEN) {
                 await GAME_MANAGER.server.open();
@@ -158,10 +160,11 @@ export function createGameManager(): GameManager {
 
             return Math.ceil(count / 2);
         },
-        getContentController(): ContentController | undefined {
-            return GAME_MANAGER.getMySpectator() 
-                ? getSpectatorScreenContentController()
-                : GameScreen.getContentController();
+        updateChatFilter(filter: PlayerIndex | null) {
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                GAME_MANAGER.state.clientState.chatFilter = null;
+                GAME_MANAGER.invokeStateListeners("filterUpdate");
+            }
         },
 
 
@@ -210,7 +213,7 @@ export function createGameManager(): GameManager {
             }
             deleteReconnectData();
             this.setOutsideLobbyState();
-            Anchor.setContent(<PlayMenu/>);
+            ANCHOR_CONTROLLER?.setContent(<PlayMenu/>);
         },
 
         sendLobbyListRequest() {
@@ -613,8 +616,11 @@ function createServer(){
                 console.log("Disconnected from server.");
                 if (Server.ws === null) return; // We closed it ourselves
 
-                Anchor.pushError(translate("notification.connectionFailed"), "");
-                Anchor.setContent(<StartMenu/>);
+                ANCHOR_CONTROLLER?.pushErrorCard({
+                    title: translate("notification.connectionFailed"), 
+                    body: ""
+                });
+                ANCHOR_CONTROLLER?.setContent(<StartMenu/>);
             };
             Server.ws.onmessage = (event: MessageEvent<string>)=>{
                 GAME_MANAGER.messageListener(
@@ -623,7 +629,10 @@ function createServer(){
             };
             Server.ws.onerror = (event: Event) => {
                 Server.close();
-                Anchor.pushError(translate("notification.connectionFailed"), translate("notification.serverNotFound"));
+                ANCHOR_CONTROLLER?.pushErrorCard({
+                    title: translate("notification.connectionFailed"), 
+                    body: translate("notification.serverNotFound")
+                });
             };
             
             return promise;

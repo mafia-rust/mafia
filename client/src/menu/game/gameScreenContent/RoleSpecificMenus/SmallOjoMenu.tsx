@@ -6,6 +6,7 @@ import GAME_MANAGER from "../../../.."
 import translate from "../../../../game/lang"
 import StyledText from "../../../../components/StyledText"
 import { StateListener } from "../../../../game/gameManager.d"
+import { usePlayerState } from "../../../../components/useHooks"
 
 export type OjoAction = {
     type: "none"
@@ -17,7 +18,7 @@ export type OjoAction = {
     role: Role
 }
 
-export default function SmallOjoMenu(props: {action: OjoAction}): ReactElement {
+export default function SmallOjoMenu(props: {action: OjoAction}): ReactElement | null {
 
     const sendAction = (action: OjoAction) => {
         GAME_MANAGER.sendSetOjoAction(action);
@@ -39,6 +40,15 @@ export default function SmallOjoMenu(props: {action: OjoAction}): ReactElement {
         GAME_MANAGER.addStateListener(listener);
         return ()=>GAME_MANAGER.removeStateListener(listener);
     }, [setDayNumber])
+
+    const shouldDisplay = usePlayerState(
+        (playerState, gameState) => gameState.phaseState.type === "night" && gameState.players[playerState.myIndex]?.alive,
+        ["playerAlive", "yourPlayerIndex", "phase", "gamePlayers"]
+    )!;
+
+    if (!shouldDisplay) {
+        return null;
+    }
 
     return <>
         <StyledText>{translate("role.ojo.smallRoleMenu")}</StyledText>
