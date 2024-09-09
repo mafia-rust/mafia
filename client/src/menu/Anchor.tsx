@@ -235,6 +235,17 @@ function CoverCard(props: Readonly<{
     const ref = useRef<HTMLDivElement>(null);
     const anchorController = useContext(AnchorControllerContext)!;
 
+    const escFunction = useCallback((event: KeyboardEvent) =>{
+        if(event.key === "Enter") {
+            anchorController.clearCoverCard();
+        }
+    }, []);
+    useEffect(() => {
+        document.addEventListener("keydown", escFunction, false);
+        return () => {
+            document.removeEventListener("keydown", escFunction, false);
+        };
+    }, [escFunction]);
     return <div 
         className={`anchor-cover-card-background-cover ${props.theme ?? ""}`} 
         onClick={e => {
