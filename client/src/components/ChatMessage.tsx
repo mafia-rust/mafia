@@ -633,7 +633,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "deathCollectedSouls":
         case "targetWasAttacked":
         case "youWereProtected":
-        case "provocateurWon":
+        case "rabbleRouserWon":
         case "gameOver":
         case "jesterWon":
         case "wardblocked":
@@ -948,7 +948,7 @@ export type ChatMessageVariant = {
 } | {
     type: "deathCollectedSouls"
 } | {
-    type: "provocateurWon"
+    type: "rabbleRouserWon"
 } | {
     type: "doomsayerFailed"
 } | {

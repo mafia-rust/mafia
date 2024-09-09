@@ -681,7 +681,7 @@
             {"type": "jesterWon"}
         ]
     },
-    "provocateur": {
+    "rabbleRouser": {
         "faction": "neutral",
         "roleSet": "neutralEvil",
         "armor": true,
@@ -690,7 +690,7 @@
         "roleSpecificMenu": false,
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
-            {"type": "provocateurWon"},
+            {"type": "rabbleRouserWon"},
             {"type": "youSurvivedAttack"}
         ]
     },

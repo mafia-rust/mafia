@@ -210,7 +210,7 @@ pub enum ChatMessageVariant {
     YouAreLoveLinked{player: PlayerIndex},
 
     JesterWon,
-    ProvocateurWon,
+    RabbleRouserWon,
     DeathCollectedSouls,
     DoomsayerWon,
     DoomsayerFailed,

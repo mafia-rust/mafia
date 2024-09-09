@@ -61,7 +61,7 @@
     "mediumHauntStarted": "special",
     "targetWasAttacked": "result",
     "youWereProtected": "result",
-    "provocateurWon": "special",
+    "rabbleRouserWon": "special",
     "gameOver": "important center",
     "godfatherForcedMafioso": "result",
     "godfatherForcedYou": "result",

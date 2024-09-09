@@ -121,7 +121,7 @@ export type ChatGroup = "all" | "dead" | "mafia" | "cult" | "jail" | "interview"
 
 export type PhaseTimes = Record<PhaseType, number>;
 
-export type Tag = | "godfatherBackup" | "werewolfTracked" | "doused" | "provocateurTarget" | "morticianTagged" | "puppeteerMarionette" | "loveLinked" | "forfeitVote";
+export type Tag = | "godfatherBackup" | "werewolfTracked" | "doused" | "rabbleRouserTarget" | "morticianTagged" | "puppeteerMarionette" | "loveLinked" | "forfeitVote";
 
 export type Player = {
     name: string,

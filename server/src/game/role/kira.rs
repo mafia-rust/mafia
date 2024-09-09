@@ -71,7 +71,7 @@ impl KiraGuess{
             Role::Cupid | Role::MafiaSupportWildcard => Some(Self::Mafia),
 
             //Neutral
-            Role::Jester | Role::Provocateur | Role::Politician |
+            Role::Jester | Role::RabbleRouser | Role::Politician |
             Role::Doomsayer | Role::Death | Role::Minion | Role::Scarecrow |
             Role::Wildcard | Role::TrueWildcard => Some(Self::Neutral),
             Role::Martyr => None,
