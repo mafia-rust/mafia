@@ -1,4 +1,4 @@
-import React, { JSXElementConstructor, MouseEventHandler, ReactElement, useRef, createContext } from "react";
+import React, { JSXElementConstructor, MouseEventHandler, ReactElement, useRef, createContext, useCallback, useEffect } from "react";
 import "../index.css";
 import "./anchor.css";
 import translate, { switchLanguage } from "../game/lang";
@@ -91,7 +91,7 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
         Anchor.instance.setState({mobile});
     }
 
-
+    
     static reload() {
         const content = Anchor.instance.state.content;
         Anchor.instance.setState({content: <LoadingScreen type="default"/>}, () => {
@@ -286,10 +286,22 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     public static isMobile(): boolean {
         return Anchor.instance.state.mobile;
     }
+
 }
 
 function CoverCard(props: { children: React.ReactNode, theme: Theme | null, onClickOutside: MouseEventHandler<HTMLDivElement> }): ReactElement {
     const ref = useRef<HTMLDivElement>(null);
+    const escFunction = useCallback((event: { keyCode: number; }) =>{
+        if(event.keyCode === 27) {
+            Anchor.clearCoverCard();
+        }
+    }, []);
+    useEffect(() => {
+        document.addEventListener("keydown", escFunction, false);
+        return () => {
+            document.removeEventListener("keydown", escFunction, false);
+        };
+    });
     return <div 
         className={`anchor-cover-card-background-cover ${props.theme ?? ""}`} 
         onClick={e => {
