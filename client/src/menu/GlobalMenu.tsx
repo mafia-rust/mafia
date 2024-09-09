@@ -93,11 +93,13 @@ export default function GlobalMenu(): ReactElement {
 }
 
 export function RoomLinkButton(): JSX.Element {
-    let code = new URL(window.location.href);
-
-    useLobbyOrGameState(
-        state => code.searchParams.set("code", state.roomCode.toString(18))
-    );
+    const code = useLobbyOrGameState(
+        state => {
+            const code = new URL(window.location.href);
+            code.searchParams.set("code", state.roomCode.toString(18))
+            return code;
+        }, ["acceptJoin", "backToLobby"]
+    )!;
     
     return <CopyButton text={code.toString()}>
         <Icon>link</Icon> {translate("menu.play.field.roomCode")}
