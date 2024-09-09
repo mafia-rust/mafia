@@ -291,8 +291,8 @@ export default class Anchor extends React.Component<AnchorProps, AnchorState> {
 
 function CoverCard(props: { children: React.ReactNode, theme: Theme | null, onClickOutside: MouseEventHandler<HTMLDivElement> }): ReactElement {
     const ref = useRef<HTMLDivElement>(null);
-    const escFunction = useCallback((event: { keyCode: number; }) =>{
-        if(event.keyCode === 27) {
+    const escFunction = useCallback((event: KeyboardEvent) =>{
+        if(event.key === "Enter") {
             Anchor.clearCoverCard();
         }
     }, []);
@@ -301,7 +301,7 @@ function CoverCard(props: { children: React.ReactNode, theme: Theme | null, onCl
         return () => {
             document.removeEventListener("keydown", escFunction, false);
         };
-    });
+    }, [escFunction]);
     return <div 
         className={`anchor-cover-card-background-cover ${props.theme ?? ""}`} 
         onClick={e => {
