@@ -236,7 +236,7 @@ function CoverCard(props: Readonly<{
     const anchorController = useContext(AnchorControllerContext)!;
 
     const escFunction = useCallback((event: KeyboardEvent) =>{
-        if(event.key === "Enter") {
+        if(event.key === "Escape") {
             anchorController.clearCoverCard();
         }
     }, [anchorController]);
