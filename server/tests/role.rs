@@ -57,7 +57,7 @@ pub use mafia_server::game::{
         
 
         jester::Jester,
-        rabbleRouser::RabbleRouser,
+        rabble_rouser::RabbleRouser,
         minion::Minion,
         politician::Politician,
         doomsayer::{Doomsayer, DoomsayerGuess},
@@ -368,7 +368,7 @@ fn jester_basic() {
 }
 
 #[test]
-fn rabbleRouser_dies(){
+fn rabble_rouser_dies(){
     kit::scenario!(game in Night 1 where
         exe: RabbleRouser,
         townie: Detective,
@@ -812,7 +812,7 @@ fn veteran_does_not_kill_framed_player(){
 }
 
 #[test]
-fn rabbleRouser_turns_into_jester(){
+fn rabble_rouser_turns_into_jester(){
     kit::scenario!(game in Night 2 where
         target: Detective,
         mafioso: Mafioso,
@@ -829,7 +829,7 @@ fn rabbleRouser_turns_into_jester(){
     let RoleState::Jester(_) = exe.role_state() else {panic!()};
 }
 #[test]
-fn rabbleRouser_instantly_turns_into_jester(){
+fn rabble_rouser_instantly_turns_into_jester(){
     kit::scenario!(_game where
         exe: RabbleRouser
     );
