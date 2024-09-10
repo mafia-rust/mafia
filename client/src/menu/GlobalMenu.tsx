@@ -54,6 +54,7 @@ export default function GlobalMenu(): ReactElement {
         anchorController.closeGlobalMenu();
         anchorController.clearCoverCard();
         anchorController.setContent(<LoadingScreen type="disconnect"/>)
+        window.history.replaceState({}, '', '/')
         await GAME_MANAGER.setDisconnectedState();
         anchorController.setContent(<StartMenu/>)
     }
