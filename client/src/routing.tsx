@@ -6,15 +6,23 @@ import { deleteReconnectData, loadReconnectData } from "./game/localStorage";
 import GAME_MANAGER from ".";
 import StartMenu from "./menu/main/StartMenu";
 
-async function routeWiki(anchorController: AnchorController, wikiPage: string) {
-    window.history.replaceState({}, "", `/wiki${wikiPage}`)
+function uriAsFileURI(path: string): string {
+    if (path.endsWith('/')) {
+        return path.substring(0, path.length - 1);
+    } else {
+        return path;
+    }
+}
 
-    if (wikiPage === "/") {
+async function routeWiki(anchorController: AnchorController, page: string) {
+    const wikiPage = uriAsFileURI(page);
+
+    if (wikiPage === "") {
         anchorController.setContent(<StandaloneWiki />)
     } else if (ARTICLES.includes(wikiPage.substring(1) as any)) {
         anchorController.setContent(<StandaloneWiki initialWikiPage={wikiPage.substring(1) as WikiArticleLink}/>)
     } else {
-        return await routeMain(anchorController);
+        return await route404(anchorController, `/wiki${page}`);
     }
 }
 
@@ -50,6 +58,15 @@ async function routeLobby(anchorController: AnchorController, roomCode: string) 
     }
 }
 
+async function route404(anchorController: AnchorController, path: string) {
+    anchorController.setContent(
+        <div className="hero" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem" }}>
+            <h1>404</h1>
+            <p>The requested path ({path}) could not be found</p>
+        </div>
+    )
+}
+
 async function routeMain(anchorController: AnchorController) {
     window.history.replaceState({}, "", window.location.pathname);
 
@@ -79,6 +96,10 @@ export default async function route(anchorController: AnchorController, url: Loc
     const roomCode = new URLSearchParams(url.search).get("code");
     if (roomCode !== null) {
         return await routeLobby(anchorController, roomCode);
+    }
+
+    if (url.pathname && url.pathname !== '/') {
+        return await route404(anchorController, url.pathname);
     }
     
     return await routeMain(anchorController);
