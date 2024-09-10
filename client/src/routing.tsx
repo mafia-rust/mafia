@@ -31,7 +31,7 @@ async function routeLobby(anchorController: AnchorController, roomCode: string) 
 
     await GAME_MANAGER.setOutsideLobbyState();
     
-    window.history.replaceState({}, "", window.location.pathname);
+    window.history.replaceState({}, "", '/');
 
     let success: boolean;
     try {
@@ -68,7 +68,7 @@ async function route404(anchorController: AnchorController, path: string) {
 }
 
 async function routeMain(anchorController: AnchorController) {
-    window.history.replaceState({}, "", window.location.pathname);
+    window.history.replaceState({}, "", "/");
 
     const reconnectData = loadReconnectData();
     
