@@ -16,7 +16,7 @@ import AudioController from "./AudioController";
 
 const MobileContext = createContext<boolean | undefined>(undefined);
 
-type AnchorController = {
+export type AnchorController = {
     reload: () => void,
     setContent: (content: JSX.Element) => void,
     contentType: string | JSXElementConstructor<any>,
@@ -43,7 +43,7 @@ export { ANCHOR_CONTROLLER };
 
 export default function Anchor(props: Readonly<{
     children: JSX.Element
-    onMount: () => void,
+    onMount: (anchorController: AnchorController) => void,
 }>): ReactElement {
     const [mobile, setMobile] = useState<boolean>(false);
 
@@ -167,7 +167,8 @@ export default function Anchor(props: Readonly<{
     }, [anchorController])
 
     useEffect(() => {
-        props.onMount();
+        props.onMount(anchorController);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props])
     
     return <MobileContext.Provider value={mobile} >

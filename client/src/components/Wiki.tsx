@@ -7,18 +7,39 @@ import WikiArticle, { getSearchStrings } from "./WikiArticle";
 import { ARTICLES, WikiArticleLink, getArticleTitle } from "./WikiArticleLink";
 import StyledText from "./StyledText";
 import Icon from "./Icon";
+import { ContentMenu, MenuController } from "../menu/game/GameScreen";
+import { AnchorController } from "../menu/Anchor";
+import WikiCoverCard from "./WikiCoverCard";
 
 
+export function setWikiSearchPage(page: WikiArticleLink, anchorController: AnchorController, menuController?: MenuController) {
+    if (GAME_MANAGER.wikiArticleCallbacks.length === 0) {
+        if (menuController?.canOpen(ContentMenu.WikiMenu)) {
+            menuController.openMenu(ContentMenu.WikiMenu, () => {
+                GAME_MANAGER.setWikiArticle(page);
+            });
+        } else {
+            anchorController.setCoverCard(<WikiCoverCard initialWikiPage={page}/>)
+        }
+    } else {
+        GAME_MANAGER.setWikiArticle(page);
+    }
+}
 
 
-export default function Wiki(props: {
+export default function Wiki(props: Readonly<{
     enabledRoles?: Role[],
-    initialWikiPage?: WikiArticleLink
-}): ReactElement {
+    initialWikiPage?: WikiArticleLink,
+    onPageChange?: (page: WikiArticleLink | null) => void,
+}>): ReactElement {
 
     const [searchQuery, setSearchQuery] = useState("");
     const [article, setArticle] = useState<WikiArticleLink | null>(props.initialWikiPage ?? null);
     const [history, setHistory] = useState<WikiArticleLink[]>([]);
+
+    useEffect(() => {
+        props.onPageChange && props.onPageChange(article);
+    }, [article, props])
 
     const chooseArticle = useCallback((page: WikiArticleLink | null) => {
         if (page !== null) {
