@@ -63,3 +63,6 @@ export default class AudioController {
             }); 
     }
 }
+
+AudioController.clearQueue();
+AudioController.pauseQueue();
