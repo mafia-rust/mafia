@@ -8,8 +8,8 @@ import PlayMenu from "./PlayMenu";
 import LoadingScreen from "../LoadingScreen";
 import GameModesEditor from "../../components/gameModeSettings/GameModesEditor";
 import Icon from "../../components/Icon";
-import WikiCoverCard from "../../components/WikiCoverCard";
 import SettingsMenu from "../Settings";
+import StandaloneWiki from "./StandaloneWiki";
 
 export default function StartMenu(): ReactElement {
     const mobile = useContext(MobileContext)!;
@@ -36,7 +36,7 @@ export default function StartMenu(): ReactElement {
                     <button onClick={() => setCoverCard(<GameModesEditor/>)}>
                         <Icon>edit</Icon> {translate("menu.globalMenu.gameSettingsEditor")}
                     </button>
-                    <button onClick={() => setCoverCard(<WikiCoverCard />)}>
+                    <button onClick={() => setAnchorContent(<StandaloneWiki/>)}>
                         <Icon>menu_book</Icon> {translate("menu.wiki.title")}
                     </button>
                 </div>
