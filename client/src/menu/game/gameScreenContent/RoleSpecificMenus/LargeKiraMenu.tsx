@@ -9,7 +9,7 @@ export const KIRA_GUESSES = [
     "none",
     "mafia", "neutral", "fiends", "cult",
     "jailor",  
-    "detective", "lookout", "spy", "tracker", "philosopher", "psychic", "auditor", "snoop", "gossip",
+    "detective", "lookout", "spy", "tracker", "philosopher", "psychic", "auditor", "snoop", "gossip", "flowerGirl",
     "doctor",  "bodyguard",  "cop", "bouncer", "engineer", "armorsmith",
     "vigilante",  "veteran", "marksman", "deputy",
     "escort",  "medium",  "retributionist", "journalist", "mayor",  "transporter", 

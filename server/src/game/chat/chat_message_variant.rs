@@ -166,6 +166,8 @@ pub enum ChatMessageVariant {
     AuditorResult{role_outline: RoleOutline, result: AuditorResult},
     SnoopResult{townie: bool},
     GossipResult{enemies: bool},
+    #[serde(rename_all = "camelCase")]
+    FlowerGirlResult{evil_count: u8},
 
     EngineerVisitorsRole{role: Role},
     TrapState{state: TrapState},

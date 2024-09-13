@@ -171,6 +171,7 @@ impl RoleSet{
                     Role::Detective, Role::Philosopher, Role::Gossip, 
                     Role::Psychic, Role::Auditor, Role::Spy, 
                     Role::Lookout, Role::Tracker, Role::Snoop,
+                    Role::FlowerGirl
                 ],
             RoleSet::MafiaSupport => 
                 vec![

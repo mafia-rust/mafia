@@ -55,7 +55,8 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
             return [
                 "psychic", "lookout", "detective",
                 "spy", "tracker", "philosopher",
-                "snoop", "auditor", "gossip"
+                "snoop", "auditor", "gossip",
+                "flowerGirl"
             ];
         case "mafiaKilling":
             return [

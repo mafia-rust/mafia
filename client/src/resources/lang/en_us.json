@@ -228,6 +228,10 @@
     "role.gossip.youAreSelecting": "You are eavesdropping on \\0.",
     "role.gossip.youAreSelecting.null": "You aren't eavesdropping on anyone.",
 
+    "role.flowerGirl.name": "Flower Girl",
+    "role.flowerGirl.name:var.0": "Flower Girls",
+    "role.flowerGirl.target": "Distribute",
+
     "role.doctor.name": "Doctor",
     "role.doctor.name:var.0": "Doctors",
     "role.doctor.target": "Protect",
@@ -797,6 +801,7 @@
     "chatMessage.snoopResult.inconclusive":"You can't tell what your target is.",
     "chatMessage.gossipResult.none": "Your target didn't visit a player they see as an enemy.",
     "chatMessage.gossipResult.enemies": "Your target visited a player they see as an enemy.",
+    "chatMessage.flowerGirlResult": "\\0 evil players voted guilty at some point today.",
     "chatMessage.targetsMessage":"Your target got the following message:",
     "chatMessage.youWerePossessed":"You were possessed.",
     "chatMessage.youWerePossessed.immune":"Someone tried to possess you but you are immune.",
@@ -1187,6 +1192,11 @@
     "wiki.article.role.gossip.abilities":"- Visit a player to eavesdrop on\n    - If your target visited an enemy to them, you are told so",
     "wiki.article.role.gossip.attributes":"- If any of your targets targets have a suspicious aura, then you are told they visited an enemy",
     "wiki.article.role.gossip.extra":"- Suspicious aura overrides innocent aura\n- If your target visits multiple other players, you learn if at least one of them is an enemy with your target\n- False appeared visits can mess with your results\n- Your target having an aura does not mess with the results, however, their targets having an aura does",
+    
+    "wiki.article.role.flowerGirl.guide": "- At night, you are told how many players are non town from the players who voted guilty\n- If any player has innocent aura, they are counted as town\n- If any player has suspicious aura, they are counted as non town",
+    "wiki.article.role.flowerGirl.abilities":"- If you are blocked, you aren't told anything\n- Your ability doesn't depend on visits",
+    "wiki.article.role.flowerGirl.attributes":"- Your ability still works when dead\n- A suspicious aura makes a player register as non town\n- An innocent aura makes a player register as town\n- A suspicious aura overwrites innocent aura to the Flower Girl",
+    "wiki.article.role.flowerGirl.extra":"- A player is counted as a townie if they exclusively win with town. so a jester is non town, and a marionette is non town",
     
     "wiki.article.role.doctor.guide": "- At night, select a player to protect\n    - Whoever you protect doesn't die if they're attacked\n    - You and the player you protected are both told if they are attacked\n- You can select yourself to protect yourself once per game\n- If your target is attacked by a protection-piercing attack they still die\n- You can't select anyone night 1\n\nYou should try to protect people you think are townies who will be attacked.",
     "wiki.article.role.doctor.abilities":"* Visit a player to protect for the night\n* You can't select a player night 1",

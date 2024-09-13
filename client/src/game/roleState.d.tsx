@@ -38,6 +38,8 @@ export type RoleState = {
 } | {
     type: "gossip",
 } | {
+    type: "flowerGirl"
+} | {
     type: "doctor",
     selfHealsRemaining: number,
 } | {
