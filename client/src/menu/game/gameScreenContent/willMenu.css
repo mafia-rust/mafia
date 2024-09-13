@@ -8,16 +8,20 @@
     width: 100%;
     margin: 0;
 }
-.will-menu summary {
-    text-align: left;
-    position: relative;
-    padding: .4rem;
-}
 .will-menu summary > div {
+    display: inline-flex;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    text-align: left;
+    align-items: baseline;
+    /* This is a little hacky. This whole thing is a little hacky.*/
+    padding-right: .75rem;
+}
+.will-menu summary > div > div {
     display:flex;
+    flex-wrap: wrap;
     gap: 0.25rem;
-    position: absolute;
-    right: 0;
-    top: 0;
     align-items: center;
 }

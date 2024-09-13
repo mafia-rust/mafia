@@ -1,4 +1,4 @@
-import React, { JSXElementConstructor, MouseEventHandler, ReactElement, useRef, createContext } from "react";
+import React, { JSXElementConstructor, ReactElement, useRef, createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 import "../index.css";
 import "./anchor.css";
 import translate, { switchLanguage } from "../game/lang";
@@ -12,293 +12,250 @@ import { Button } from "../components/Button";
 import { ChatMessage } from "../components/ChatMessage";
 import WikiCoverCard from "../components/WikiCoverCard";
 import WikiArticle from "../components/WikiArticle";
+import AudioController from "./AudioController";
 
-type AnchorProps = {
-    content: JSX.Element,
-    onMount: () => void
-}
-type AnchorState = {
-    mobile: boolean,
-    content: JSX.Element,
-    coverCard: JSX.Element | null,
-    coverCardTheme: Theme | null,
-    errorCard: JSX.Element | null,
+const MobileContext = createContext<boolean | undefined>(undefined);
 
-    globalMenuOpen: boolean,
-
-    audio: HTMLAudioElement,
-
-    touchStartX: number | null,
-    touchCurrentX: number | null,
+export type AnchorController = {
+    reload: () => void,
+    setContent: (content: JSX.Element) => void,
+    contentType: string | JSXElementConstructor<any>,
+    setCoverCard: (content: JSX.Element) => void,
+    clearCoverCard: () => void,
+    pushErrorCard: (error: ErrorData) => void,
+    openGlobalMenu: () => void,
+    closeGlobalMenu: () => void,
 }
 
-const AnchorContext = createContext({
-    mobile: false as boolean,
-});
+const AnchorControllerContext = createContext<AnchorController | undefined>(undefined);
 
-export { AnchorContext };
+export { MobileContext, AnchorControllerContext };
 
 const MIN_SWIPE_DISTANCE = 40;
+const MOBILE_MAX_WIDTH_PX = 600;
 
-export default class Anchor extends React.Component<AnchorProps, AnchorState> {
-    private static instance: Anchor;
-    private static queueIsPlaying: boolean = false;
-    private static audioQueue: Array<string> = [];
+/**
+ * @deprecated Use AnchorControllerContext if you can
+ */
+let ANCHOR_CONTROLLER: AnchorController | null = null;
 
-    swipeEventListeners: Array<(right: boolean) => void> = [];
+export { ANCHOR_CONTROLLER };
 
-    constructor(props: AnchorProps) {
-        super(props);
+export default function Anchor(props: Readonly<{
+    children: JSX.Element
+    onMount: (anchorController: AnchorController) => void,
+}>): ReactElement {
+    const [mobile, setMobile] = useState<boolean>(false);
 
-        this.state = {
-            mobile: false,
-            content: this.props.content,
-            coverCard: null,
-            coverCardTheme: null,
-            errorCard: null,
+    useEffect(() => {
+        const onResize = () => setMobile(window.innerWidth <= MOBILE_MAX_WIDTH_PX)
+        onResize();
 
-            globalMenuOpen: false,
+        window.addEventListener("resize", onResize);
+        return () => window.removeEventListener("resize", onResize);
+    }, [])
 
-            audio: new Audio(),
+    const [children, setChildren] = useState<JSX.Element>(props.children);
+    const [setChildrenCallbacks, setSetChildrenCallbacks] = useState<(() => void)[]>([]);
 
-            touchStartX: null,
-            touchCurrentX: null,
+    useEffect(() => {
+        for (const callback of setChildrenCallbacks) {
+            callback()
         }
-    }
-    componentDidMount() {
-        Anchor.instance = this;
+        if (setChildrenCallbacks.length !== 0) {
+            setSetChildrenCallbacks([])
+        }
+    }, [setChildrenCallbacks])
 
+    const [coverCard, setCoverCard] = useState<JSX.Element | null>(null);
+    const [coverCardTheme, setCoverCardTheme] = useState<Theme | null>(null);
+    const [setCoverCardCallbacks, setSetCoverCardCallbacks] = useState<(() => void)[]>([])
+
+    useEffect(() => {
+        for (const callback of setCoverCardCallbacks) {
+            callback()
+        }
+        if (setCoverCardCallbacks.length !== 0) {
+            setSetCoverCardCallbacks([])
+        }
+    }, [setCoverCardCallbacks])
+
+    const [errorCard, setErrorCard] = useState<JSX.Element | null>(null);
+    const [setErrorCardCallbacks, setSetErrorCardCallbacks] = useState<(() => void)[]>([])
+
+    useEffect(() => {
+        for (const callback of setErrorCardCallbacks) {
+            callback()
+        }
+        if (setErrorCardCallbacks.length !== 0) {
+            setSetErrorCardCallbacks([])
+        }
+    }, [setErrorCardCallbacks])
+
+    const [globalMenuOpen, setGlobalMenuOpen] = useState<boolean>(false);
+
+    const [touchStartX, setTouchStartX] = useState<number | null>(null);
+    const [touchCurrentX, setTouchCurrentX] = useState<number | null>(null);
+
+    // Load settings
+    useEffect(() => {
         const settings = loadSettings();
-        Anchor.instance.state.audio.volume = settings.volume;
+
+        AudioController.setVolume(settings.volume);
         switchLanguage(settings.language)
+    }, [])
 
-        window.addEventListener("resize", Anchor.onResize);
-        Anchor.onResize();
+    const reload = useCallback(() => {
+        setSetChildrenCallbacks(setChildrenCallbacks =>
+            setChildrenCallbacks.concat(() => {
+                setChildren(() => children);
+            }
+        ));
+        setChildren(<LoadingScreen type="default"/>);
 
-        this.props.onMount()
-    }
-    componentWillUnmount() {
-        window.removeEventListener("resize", Anchor.onResize);
-    }
-    
-    private static onResize() {
-        const mobile = window.innerWidth <= 600;
-        if (Anchor.instance.state.mobile && !mobile) {
-            console.info("Switching to desktop layout");
-        } else if (mobile && !Anchor.instance.state.mobile) {
-            console.info("Switching to mobile layout");
-        }
-        Anchor.instance.setState({mobile});
-    }
+        setSetCoverCardCallbacks(setCoverCardCallbacks => 
+            setCoverCardCallbacks.concat(() => {
+                setCoverCard(() => coverCard)
+            }
+        ));
+        setCoverCard(null)
 
+        setSetErrorCardCallbacks(setErrorCardCallbacks =>
+            setErrorCardCallbacks.concat(() => {
+                setErrorCard(() => errorCard)
+            })
+        )
+        setErrorCard(null)
+    }, [children, coverCard, errorCard])
 
-    static reload() {
-        const content = Anchor.instance.state.content;
-        Anchor.instance.setState({content: <LoadingScreen type="default"/>}, () => {
-            Anchor.instance.setState({content});
-        });
-
-        const coverCard = Anchor.instance.state.coverCard;
-        Anchor.instance.setState({coverCard: null}, () => {
-            Anchor.instance.setState({coverCard});;
-        });
-
-        const errorCard = Anchor.instance.state.errorCard;
-        Anchor.instance.setState({errorCard: null}, () => {
-            Anchor.instance.setState({errorCard});;
-        });
-    }
-
-    static queueAudioFile(src: string) {
-        Anchor.audioQueue.push(src);
-
-        if(!Anchor.queueIsPlaying) {
-            Anchor.playAudioQueue();
-        }
-    }
-    static playAudioQueue() {
-        if(Anchor.audioQueue.length > 0) {
-
-            Anchor.queueIsPlaying = true;
-            Anchor.playAudioFile(Anchor.audioQueue[0], () => {
-                Anchor.audioQueue = Anchor.audioQueue.slice(1)
-                Anchor.playAudioQueue();
-            });
-        }else{
-            Anchor.queueIsPlaying = false;
-        }
-    }
-    static clearAudioQueue() {
-        Anchor.audioQueue = [];
-        Anchor.stopAudio();
-    }
-    static playAudioFile(src: string | null, onEnd?: () => void){
-        Anchor.instance.state.audio.pause();
-        if(src === null) return;
-        Anchor.instance.state.audio.src = src;
-        Anchor.instance.state.audio.load();
-
-        const setStateCallback = () => {
-            const onEnded = () => {
-                if(onEnd !== undefined) onEnd();
-                Anchor.instance.state.audio.removeEventListener("ended", onEnded);
+    const anchorController = useMemo(() => ({
+        reload,
+        setContent: setChildren,
+        contentType: children.type,
+        setCoverCard: (coverCard: JSX.Element, callback?: () => void) => {
+            let coverCardTheme: Theme | null = null;
+            if (coverCard.type === WikiCoverCard || coverCard.type === WikiArticle) {
+                coverCardTheme = "wiki-menu-colors"
+            } else if (coverCard.type === SettingsMenu) {
+                coverCardTheme = "graveyard-menu-colors"
             }
 
-            Anchor.startAudio();
-            Anchor.instance.state.audio.addEventListener("ended", onEnded);
-        }
-
-        Anchor.instance.setState({
-            audio: Anchor.instance.state.audio
-        }, setStateCallback);
-    }
-    static startAudio() {
-        let playPromise = Anchor.instance.state.audio.play();
-        playPromise.then(() => {
-
-            Anchor.instance.state.audio.currentTime = 0;
-
-            // Anchor.instance.state.audio.duration;
-            // Anchor.instance.state.audio.currentTime = 45;
-            Anchor.instance.state.audio.playbackRate = 1;
-            // if(Anchor.instance.state.audio.duration !== Infinity && !Number.isNaN(Anchor.instance.state.audio.duration)){
-            //     let startTime = Math.ceil(Anchor.instance.state.audio.duration - (timeLeftSeconds ?? 0));
-            //     if (startTime > 0 && startTime < Anchor.instance.state.audio.duration) {
-            //         console.log("Starting audio at " + startTime + " seconds")
-            //         Anchor.instance.state.audio.currentTime = startTime;
-            //     };
-            // }
-        }).catch((error) => {
-            console.log("Audio failed to play: " + error);
-        }); 
-    }
-    static stopAudio() {
-        Anchor.instance.state.audio.pause();
-    }
-
-
-    static updateAnchorVolume(volume: number) {
-        Anchor.instance.state.audio.volume = volume;
-        Anchor.instance.setState({
-            audio: Anchor.instance.state.audio
-        });
-    }
-
-    static closeGlobalMenu() {
-        Anchor.instance.setState({globalMenuOpen: false});
-    }
-    static openGlobalMenu() {
-        Anchor.instance.setState({globalMenuOpen: true});
-    }
-
-    static addSwipeEventListener(listener: (right: boolean) => void) {
-        Anchor.instance.swipeEventListeners = [...Anchor.instance.swipeEventListeners, listener];
-    }
-    static removeSwipeEventListener(listener: (right: boolean) => void) {
-        Anchor.instance.swipeEventListeners = Anchor.instance.swipeEventListeners.filter((l) => l !== listener);
-    }
-
-    onTouchStart(e: React.TouchEvent<HTMLDivElement>) {
-        this.setState({
-            touchStartX: e.targetTouches[0].clientX,
-            touchCurrentX: e.targetTouches[0].clientX
-        });
-    }
-    onTouchMove(e: React.TouchEvent<HTMLDivElement>) {
-        this.setState({
-            touchCurrentX: e.targetTouches[0].clientX
-        });
-    }
-    onTouchEnd(e: React.TouchEvent<HTMLDivElement>) {
-
-        if(this.state.touchStartX !== null && this.state.touchCurrentX !== null){
-            if(this.state.touchStartX - this.state.touchCurrentX > MIN_SWIPE_DISTANCE) {
-                for(let listener of this.swipeEventListeners) {
-                    listener(false);
-                }
-            }else if(this.state.touchStartX - this.state.touchCurrentX < -MIN_SWIPE_DISTANCE) {
-                for(let listener of this.swipeEventListeners) {
-                    listener(true);
-                }
+            if (callback) {
+                setSetCoverCardCallbacks(setCoverCardCallbacks => 
+                    setCoverCardCallbacks.concat(callback)
+                );
             }
-        }
+            setCoverCard(coverCard)
+            setCoverCardTheme(coverCardTheme);
+        },
+        pushErrorCard: (error: ErrorData) => {
+            setErrorCard(<ErrorCard
+                onClose={() => setErrorCard(null)}
+                error={error}
+            />);
+        },
+        clearCoverCard: () => {
+            setCoverCard(null);
+            setCoverCardTheme(null);
+        },
+        openGlobalMenu: () => setGlobalMenuOpen(true),
+        closeGlobalMenu: () => setGlobalMenuOpen(false),
+    }), [reload, children])
 
-        this.setState({
-            touchStartX: null,
-            touchCurrentX: null
-        });
-    }
+    useEffect(() => {
+        ANCHOR_CONTROLLER = anchorController
+    }, [anchorController])
+
+    useEffect(() => {
+        props.onMount(anchorController);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props])
     
-
-    render(){
-        return <AnchorContext.Provider value={{mobile: this.state.mobile}}>
+    return <MobileContext.Provider value={mobile} >
+        <AnchorControllerContext.Provider value={anchorController}>
             <div
                 className="anchor"
-                onTouchStart={(e) => {this.onTouchStart(e)}}
-                onTouchMove={(e) => {this.onTouchMove(e)}}
-                onTouchEnd={(e) => {this.onTouchEnd(e)}}
+                onTouchStart={(e) => {
+                    setTouchStartX(e.targetTouches[0].clientX)
+                    setTouchCurrentX(e.targetTouches[0].clientX)
+                }}
+                onTouchMove={(e) => {
+                    setTouchCurrentX(e.targetTouches[0].clientX)
+                }}
+                onTouchEnd={(e) => {
+                    if(touchStartX !== null && touchCurrentX !== null){
+                        if(touchStartX - touchCurrentX > MIN_SWIPE_DISTANCE) {
+                            for(let listener of swipeEventListeners) {
+                                listener(false);
+                            }
+                        } else if (touchStartX - touchCurrentX < -MIN_SWIPE_DISTANCE) {
+                            for(let listener of swipeEventListeners) {
+                                listener(true);
+                            }
+                        }
+                    }
+            
+                    setTouchStartX(null)
+                    setTouchCurrentX(null)
+                }}
             >
                 <title>🌹{translate("menu.start.title")}🔪</title>
                 <Button className="global-menu-button" 
-                    onClick={() => this.setState({globalMenuOpen: !this.state.globalMenuOpen})}
+                    onClick={() => {
+                        if (!globalMenuOpen) {
+                            setGlobalMenuOpen(true)
+                        }
+                    }}
                 >
                     <Icon>menu</Icon>
                 </Button>
-                {this.state.globalMenuOpen && <GlobalMenu 
-                    onClickOutside={() => this.setState({globalMenuOpen: false})}
-                />}
-                {this.state.content}
-                {this.state.coverCard && <CoverCard 
-                    theme={this.state.coverCardTheme}
-                    onClickOutside={() => this.setState({coverCard: null})}
-                >{this.state.coverCard}</CoverCard>}
-                {this.state.errorCard}
+                {globalMenuOpen && <GlobalMenu />}
+                {children}
+                {coverCard && <CoverCard 
+                    theme={coverCardTheme}
+                >{coverCard}</CoverCard>}
+                {errorCard}
             </div>
-        </AnchorContext.Provider>
-    }
-
-    public static setContent(content: JSX.Element){
-        Anchor.instance.setState({content : content});
-    }
-    public static contentType(): string | JSXElementConstructor<any> {
-        return Anchor.instance.state.content.type;
-    }
-    public static setCoverCard(coverCard: JSX.Element, callback?: () => void){
-        let coverCardTheme: Theme | null = null;
-        if (coverCard.type === WikiCoverCard || coverCard.type === WikiArticle) {
-            coverCardTheme = "wiki-menu-colors"
-        } else if (coverCard.type === SettingsMenu) {
-            coverCardTheme = "graveyard-menu-colors"
-        }
-
-        Anchor.instance.setState({ coverCard, coverCardTheme }, callback);
-    }
-    public static pushError(title: string, body: string) {
-        Anchor.instance.setState({errorCard: <ErrorCard
-            onClose={() => Anchor.instance.setState({ errorCard: null })}
-            error={{title, body}}
-        />});
-    }
-    public static clearCoverCard() {
-        Anchor.instance.setState({coverCard: null, coverCardTheme: null});
-    }
-
-    public static isMobile(): boolean {
-        return Anchor.instance.state.mobile;
-    }
+        </AnchorControllerContext.Provider>
+    </MobileContext.Provider>
 }
 
-function CoverCard(props: { children: React.ReactNode, theme: Theme | null, onClickOutside: MouseEventHandler<HTMLDivElement> }): ReactElement {
+let swipeEventListeners: ((right: boolean) => void)[] = [];
+
+export function addSwipeEventListener(listener: (right: boolean) => void) {
+    swipeEventListeners = [...swipeEventListeners, listener];
+}
+export function removeSwipeEventListener(listener: (right: boolean) => void) {
+    swipeEventListeners = swipeEventListeners.filter((l) => l !== listener);
+}
+
+function CoverCard(props: Readonly<{
+    children: React.ReactNode,
+    theme: Theme | null
+}>): ReactElement {
     const ref = useRef<HTMLDivElement>(null);
+    const anchorController = useContext(AnchorControllerContext)!;
+
+    const escFunction = useCallback((event: KeyboardEvent) =>{
+        if(event.key === "Escape") {
+            anchorController.clearCoverCard();
+        }
+    }, [anchorController]);
+    useEffect(() => {
+        document.addEventListener("keydown", escFunction, false);
+        return () => {
+            document.removeEventListener("keydown", escFunction, false);
+        };
+    }, [escFunction]);
     return <div 
         className={`anchor-cover-card-background-cover ${props.theme ?? ""}`} 
         onClick={e => {
-            if (e.target === ref.current) props.onClickOutside(e)
+            if (e.target === ref.current) anchorController.clearCoverCard()
         }}
         ref={ref}
     >
         <div className="anchor-cover-card">
-            <Button className="close-button" onClick={Anchor.clearCoverCard}>
+            <Button className="close-button" onClick={anchorController.clearCoverCard}>
                 <Icon>close</Icon>
             </Button>
             <div className="anchor-cover-card-content">
@@ -308,12 +265,15 @@ function CoverCard(props: { children: React.ReactNode, theme: Theme | null, onCl
     </div>
 }
 
-type Error = {
+export type ErrorData = {
     title: string,
     body: string
 }
 
-function ErrorCard(props: { error: Error, onClose: () => void }) {
+function ErrorCard(props: Readonly<{
+    error: ErrorData,
+    onClose: () => void
+}>) {
     return <div className="error-card" onClick={() => props.onClose()}>
         <header>
             {props.error.title}

@@ -1,5 +1,5 @@
 import { WikiArticleLink } from "../components/WikiArticleLink";
-import { ContentController } from "../menu/game/GameScreen";
+import { MenuController } from "../menu/game/GameScreen";
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
@@ -22,11 +22,11 @@ export type StateListener = (type?: StateEventType) => void;
 
 export type GameManager = {
 
-    setDisconnectedState(): void;
+    setDisconnectedState(): Promise<void>;
     setLobbyState(): void;
     setGameState(): void;
     setSpectatorGameState(): void;
-    setOutsideLobbyState(): void;
+    setOutsideLobbyState(): Promise<void>;
     
 
     state: State,
@@ -36,7 +36,7 @@ export type GameManager = {
     getPlayerNames(): string[],
     getLivingPlayers(): Player[] | null,
     getVotesRequired(): number | null,
-    getContentController(): ContentController | undefined,
+    updateChatFilter(filter: PlayerIndex | null): void,
 
     server: Server,
     listeners: StateListener[],

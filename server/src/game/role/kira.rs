@@ -24,7 +24,7 @@ pub enum KiraGuess{
     Mafia, #[default] Neutral, Fiends, Cult,
 
     Jailor, 
-    Detective, Lookout, Tracker, Psychic, Philosopher, Gossip, Auditor, Snoop, Spy,
+    Detective, Lookout, Tracker, Psychic, Philosopher, Gossip, Auditor, Snoop, Spy, FlowerGirl,
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith,
     Vigilante, Veteran, Marksman, Deputy,
     Escort, Medium, Retributionist, Journalist, Mayor, Transporter
@@ -43,6 +43,7 @@ impl KiraGuess{
             Role::Snoop => Some(Self::Snoop),
             Role::Gossip => Some(Self::Gossip),
             Role::Spy => Some(Self::Spy),
+            Role::FlowerGirl => Some(Self::FlowerGirl),
 
             Role::Doctor => Some(Self::Doctor),
             Role::Bodyguard => Some(Self::Bodyguard),
@@ -71,7 +72,7 @@ impl KiraGuess{
             Role::Cupid | Role::MafiaSupportWildcard => Some(Self::Mafia),
 
             //Neutral
-            Role::Jester | Role::Provocateur | Role::Politician |
+            Role::Jester | Role::RabbleRouser | Role::Politician |
             Role::Doomsayer | Role::Death | Role::Minion | Role::Scarecrow |
             Role::Wildcard | Role::TrueWildcard => Some(Self::Neutral),
             Role::Martyr => None,

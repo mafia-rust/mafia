@@ -162,6 +162,19 @@
             {"type": "gossipResult", "enemies":false}
         ]
     },
+    "flowerGirl": {
+        "faction": "town",
+        "roleSet": "townInvestigative",
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "flowerGirlResult", "evilCount": 2},
+            {"type": "flowerGirlResult", "evilCount": 0}
+        ]
+    },
     "doctor": {
         "faction": "town",
         "roleSet": "townProtective",
@@ -681,7 +694,7 @@
             {"type": "jesterWon"}
         ]
     },
-    "provocateur": {
+    "rabbleRouser": {
         "faction": "neutral",
         "roleSet": "neutralEvil",
         "armor": true,
@@ -690,7 +703,7 @@
         "roleSpecificMenu": false,
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
-            {"type": "provocateurWon"},
+            {"type": "rabbleRouserWon"},
             {"type": "youSurvivedAttack"}
         ]
     },

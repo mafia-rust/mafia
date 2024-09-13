@@ -17,15 +17,15 @@ use super::{Role, RoleStateImpl};
 
 #[derive(Clone, Serialize, Debug, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct Provocateur {
-    target: ProvocateurTarget,
+pub struct RabbleRouser {
+    target: RabbleRouserTarget,
 }
 #[derive(Clone, Serialize, Debug, PartialEq, Eq)]
-pub enum ProvocateurTarget{
+pub enum RabbleRouserTarget{
     Target(PlayerReference),
     Won,
 }
-impl ProvocateurTarget {
+impl RabbleRouserTarget {
     fn get_target(&self)->Option<PlayerReference>{
         if let Self::Target(p) = self {
             Some(*p)
@@ -34,7 +34,7 @@ impl ProvocateurTarget {
         }
     }
 }
-impl Default for ProvocateurTarget {
+impl Default for RabbleRouserTarget {
     fn default() -> Self {
         Self::Won
     }
@@ -44,21 +44,21 @@ pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: u8 = 1;
 
-impl RoleStateImpl for Provocateur {
+impl RoleStateImpl for RabbleRouser {
     fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
-        self.target == ProvocateurTarget::Won
+        self.target == RabbleRouserTarget::Won
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
 
-        if self.target == ProvocateurTarget::Won || !actor_ref.alive(game){
+        if self.target == RabbleRouserTarget::Won || !actor_ref.alive(game){
             return;
         }
 
         match *game.current_phase() {
             PhaseState::FinalWords { player_on_trial } => {
                 if Some(player_on_trial) == self.target.get_target() {
-                    game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::ProvocateurWon);
-                    actor_ref.set_role_state(game, RoleState::Provocateur(Provocateur { target: ProvocateurTarget::Won }));
+                    game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::RabbleRouserWon);
+                    actor_ref.set_role_state(game, RoleState::RabbleRouser(RabbleRouser { target: RabbleRouserTarget::Won }));
                     actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
                 }
             }
@@ -82,14 +82,15 @@ impl RoleStateImpl for Provocateur {
             ).collect::<Vec<PlayerReference>>()
             .choose(&mut rand::thread_rng())
         {
-            actor_ref.push_player_tag(game, *target, Tag::ProvocateurTarget);
-            actor_ref.set_role_state(game, RoleState::Provocateur(Provocateur{target: ProvocateurTarget::Target(*target)}));
+            actor_ref.push_player_tag(game, *target, Tag::RabbleRouserTarget);
+            actor_ref.set_role_state(game, RoleState::RabbleRouser(RabbleRouser{target: RabbleRouserTarget::Target(*target)}));
+            actor_ref.insert_role_label(game, *target);
         }else{
             actor_ref.set_role(game, RoleState::Jester(Jester::default()))
         };
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
-        if Some(dead_player_ref) == self.target.get_target() && self.target != ProvocateurTarget::Won {
+        if Some(dead_player_ref) == self.target.get_target() && self.target != RabbleRouserTarget::Won {
             actor_ref.set_role(game, RoleState::Jester(Jester::default()))
         }
     }

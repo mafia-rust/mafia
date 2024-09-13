@@ -55,7 +55,8 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
             return [
                 "psychic", "lookout", "detective",
                 "spy", "tracker", "philosopher",
-                "snoop", "auditor", "gossip"
+                "snoop", "auditor", "gossip",
+                "flowerGirl"
             ];
         case "mafiaKilling":
             return [
@@ -68,7 +69,7 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
                 "witch", "necromancer", "cupid"
             ];
         case "neutralEvil":
-            return ["jester", "provocateur", "politician", "doomsayer", "minion", "scarecrow"];
+            return ["jester", "rabbleRouser", "politician", "doomsayer", "minion", "scarecrow"];
     }
 }
 

@@ -5,7 +5,7 @@
     height: 100%;
     width: 100vw;
     padding: 1rem;
-    font-size: 110%;
+    background-color: var(--background-color);
 }
 .standalone-wiki > header > h2 {
     font-size: 300%;

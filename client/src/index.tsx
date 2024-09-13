@@ -3,9 +3,8 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import Anchor from './menu/Anchor';
 import { GameManager, createGameManager } from './game/gameManager';
-import StartMenu from './menu/main/StartMenu';
 import LoadingScreen from './menu/LoadingScreen';
-import { deleteReconnectData, loadReconnectData } from './game/localStorage';
+import route from './routing';
 
 export type Theme = "player-list-menu-colors" | "will-menu-colors" | "role-specific-colors" | "graveyard-menu-colors" | "wiki-menu-colors"
 
@@ -18,69 +17,10 @@ setInterval(() => {
     GAME_MANAGER.tick(TIME_PERIOD);
 }, TIME_PERIOD);
 
-async function route(url: Location) {
-    Anchor.stopAudio();
-    const roomCode = new URLSearchParams(url.search).get("code");
-    let reconnectData = loadReconnectData();
-    
-    const HOUR_IN_SECONDS = 3_600_000;
-    if (reconnectData && reconnectData.lastSaveTime < Date.now() - HOUR_IN_SECONDS) {
-        reconnectData = null;
-        deleteReconnectData();
-    }
-
-    if (roomCode !== null) {
-
-        
-        await GAME_MANAGER.setOutsideLobbyState();
-        
-        window.history.replaceState({}, document.title, window.location.pathname);
-
-        let success: boolean;
-        try {
-            const code = parseInt(roomCode, 18)
-            if (reconnectData) {
-                success = await GAME_MANAGER.sendRejoinPacket(code, reconnectData.playerId);
-                
-
-                if(!success) {
-                    reconnectData = null;
-                    deleteReconnectData();
-                    success = await GAME_MANAGER.sendJoinPacket(code);
-                }
-            }else{
-                success = await GAME_MANAGER.sendJoinPacket(code);
-            }
-        } catch {
-            success = false;
-        }
-        
-        if (!success) {
-            await GAME_MANAGER.setDisconnectedState();
-            Anchor.clearCoverCard();
-            Anchor.setContent(<StartMenu/>)
-        }
-    } else if (reconnectData) {
-        await GAME_MANAGER.setOutsideLobbyState();
-
-        const success = await GAME_MANAGER.sendRejoinPacket(reconnectData.roomCode, reconnectData.playerId);
-        if (!success) {
-            // Don't show an error message for an auto-rejoin. The user didn't prompt it - they will be confused.
-            // Reconnect data is deleted in messageListener
-            await GAME_MANAGER.setDisconnectedState();
-            Anchor.clearCoverCard();
-            Anchor.setContent(<StartMenu/>);
-        }
-    } else {
-        Anchor.setContent(<StartMenu/>)
-    }
-}
-
 ROOT.render(
-    <Anchor 
-        content={<LoadingScreen type="default"/>} 
-        onMount={() => route(window.location)}
-    />
+    <Anchor onMount={anchorController => route(anchorController, window.location)}>
+        <LoadingScreen type="default"/>
+    </Anchor>
 );
 
 export function find(text: string): RegExp {

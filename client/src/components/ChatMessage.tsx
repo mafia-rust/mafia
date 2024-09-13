@@ -1,10 +1,10 @@
 import translate, { translateChecked } from "../game/lang";
-import React from "react";
+import React, { ReactElement } from "react";
 import GAME_MANAGER, { find, replaceMentions } from "..";
 import StyledText, { KeywordDataMap, PLAYER_SENDER_KEYWORD_DATA } from "./StyledText";
 import "./chatMessage.css"
 import { ChatGroup, PhaseState, PlayerIndex, Tag, Verdict } from "../game/gameState.d";
-import { Role } from "../game/roleState.d";
+import { Role, RoleState } from "../game/roleState.d";
 import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
 import GraveComponent from "./grave";
@@ -14,6 +14,7 @@ import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/Smal
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 import { KiraGuess, KiraGuessResult, kiraGuessTranslate } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import { CopyButton } from "./ClipboardButtons";
+import { useLobbyOrGameState, usePlayerState } from "./useHooks";
 
 const ChatElement = React.memo((
     props: {
@@ -23,6 +24,11 @@ const ChatElement = React.memo((
         playerSenderKeywordData?: KeywordDataMap
     }, 
 ) => {
+    const roleState = usePlayerState(
+        playerState => playerState.roleState,
+        ["yourRoleState"]
+    );
+
     const [mouseHovering, setMouseHovering] = React.useState(false); 
 
     const message = props.message;
@@ -48,69 +54,26 @@ const ChatElement = React.memo((
     // Special chat messages that don't play by the rules
     switch (message.variant.type) {
         case "lobbyMessage":
-            if (containsMention(message.variant, playerNames)) {
-                style += " mention";
-            }
-
-            return <div className={"chat-message-div"}><span className={`chat-message ${style}`}>
-                <StyledText
-                    playerKeywordData={props.playerSenderKeywordData ?? PLAYER_SENDER_KEYWORD_DATA}
-                >{chatGroupIcon ?? ""} {message.variant.sender}: </StyledText>
-                <StyledText
-                    playerKeywordData={props.playerKeywordData}
-                >{translateChatMessage(message.variant, playerNames)}</StyledText>
-            </span></div>;
+            return <LobbyChatMessage 
+                message={message as any}
+                style={style}
+                chatGroupIcon={chatGroupIcon!}
+                playerNames={playerNames}
+                playerKeywordData={props.playerKeywordData}
+                playerSenderKeywordData={props.playerSenderKeywordData}
+            />
         case "normal":
-            if(message.variant.messageSender.type !== "player" && message.variant.messageSender.type !== "livingToDead"){
-                style += " discreet";
-            } else if (message.chatGroup === "dead") {
-                style += " dead player";
-            } else {
-                style += " player"
-            }
-            
-            if (message.variant.messageSender.type === "livingToDead") {
-                chatGroupIcon += translate("messageSender.livingToDead.icon")
-            }
-
-            let messageSender = "";
-            if (message.variant.messageSender.type === "player"||message.variant.messageSender.type === "livingToDead") {
-                messageSender = playerNames[message.variant.messageSender.player];
-            }else if(message.variant.messageSender.type === "jailor" || message.variant.messageSender.type === "journalist"){
-                messageSender = translate("role."+message.variant.messageSender.type+".name");
-            }
-            
-            if (containsMention(message.variant, playerNames)) {
-                style += " mention";
-            }
-
-            return <div
-                className={"chat-message-div"}
-                onMouseOver={() => setMouseHovering(true)}
-                onMouseOut={() => setMouseHovering(false)}
-            >
-                <span className={`chat-message ${style}`}>
-                    <StyledText
-                        playerKeywordData={props.playerSenderKeywordData ?? PLAYER_SENDER_KEYWORD_DATA}
-                    >
-                        {chatGroupIcon ?? ""} {messageSender}: </StyledText>
-                    <StyledText
-                        playerKeywordData={props.playerKeywordData}
-                    >
-                        {translateChatMessage(message.variant, playerNames)}
-                    </StyledText>
-                </span>
-                {
-                    mouseHovering &&
-                    GAME_MANAGER.state.stateType === "game" && 
-                    GAME_MANAGER.state.clientState.type === "player" && 
-                    GAME_MANAGER.state.clientState.roleState?.type === "forger" &&
-                    <CopyButton
-                        className="chat-message-div-copy-button"
-                        text={translateChatMessage(message.variant, playerNames)}
-                    />
-                }
-            </div>;
+            return <NormalChatMessage 
+                message={message as any}
+                style={style}
+                chatGroupIcon={chatGroupIcon!}
+                playerNames={playerNames}
+                roleState={roleState}
+                playerKeywordData={props.playerKeywordData}
+                playerSenderKeywordData={props.playerSenderKeywordData}
+                mouseHovering={mouseHovering}
+                setMouseHovering={setMouseHovering}
+            />
         case "targetsMessage":
             return <div className={"chat-message-div"}><span className="chat-message result">
                 <StyledText className={"chat-message " + style}
@@ -209,14 +172,8 @@ const ChatElement = React.memo((
             {(chatGroupIcon??"")} {translateChatMessage(message.variant, playerNames)}
         </StyledText>
         {
-            mouseHovering &&
-            GAME_MANAGER.state.stateType === "game" && 
-            GAME_MANAGER.state.clientState.type === "player" && 
-            (
-                GAME_MANAGER.state.clientState.roleState?.type === "forger" || 
-                GAME_MANAGER.state.clientState.roleState?.type === "counterfeiter"
-            ) &&
-            <CopyButton
+            mouseHovering && ( roleState?.type === "forger" || roleState?.type === "counterfeiter")
+            && <CopyButton
                 className="chat-message-div-copy-button"
                 text={translateChatMessage(message.variant, playerNames)}
             />
@@ -224,27 +181,123 @@ const ChatElement = React.memo((
     </div>;
 });
 
-function containsMention(message: ChatMessageVariant & { text: string }, playerNames: string[]): boolean {
-    let myNumber: number | null = null;
-    let myName: string | null = null;
-    if (GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.myIndex !== null) {
-        myName = GAME_MANAGER.state.players[GAME_MANAGER.state.clientState.myIndex].name ?? ""
-        myNumber = GAME_MANAGER.state.clientState.myIndex;
-    } else if (GAME_MANAGER.state.stateType === "lobby") {
-        const myPlayer = GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId!);
-        if (myPlayer !== null && myPlayer?.clientType.type === "player") {
-            myName = myPlayer.clientType.name;
-        } else {
-            return false
-        }
+function LobbyChatMessage(props: Readonly<{
+    message: ChatMessage & { variant: { type: "lobbyMessage" } }
+    playerNames: string[],
+    style: string,
+    playerKeywordData: KeywordDataMap | undefined,
+    playerSenderKeywordData: KeywordDataMap | undefined
+    chatGroupIcon: string
+}>): ReactElement {
+    let style = props.style;
+
+    if (useContainsMention(props.message.variant, props.playerNames)) {
+        style += " mention";
     }
-    if (myName === null) {
+
+    return <div className={"chat-message-div"}><span className={`chat-message ${style}`}>
+        <StyledText
+            playerKeywordData={props.playerSenderKeywordData ?? PLAYER_SENDER_KEYWORD_DATA}
+        >{props.chatGroupIcon ?? ""} {props.message.variant.sender}: </StyledText>
+        <StyledText
+            playerKeywordData={props.playerKeywordData}
+        >{translateChatMessage(props.message.variant, props.playerNames)}</StyledText>
+    </span></div>;
+}
+
+function NormalChatMessage(props: Readonly<{
+    message: ChatMessage & { variant: { type: "normal" } }
+    style: string,
+    chatGroupIcon: string,
+    playerNames: string[],
+    roleState: RoleState | undefined,
+    playerKeywordData: KeywordDataMap | undefined,
+    playerSenderKeywordData: KeywordDataMap | undefined,
+    mouseHovering: boolean,
+    setMouseHovering: (hovering: boolean) => void,
+}>): ReactElement {
+    let style = props.style;
+    let chatGroupIcon = props.chatGroupIcon;
+
+    if(props.message.variant.messageSender.type !== "player" && props.message.variant.messageSender.type !== "livingToDead"){
+        style += " discreet";
+    } else if (props.message.chatGroup === "dead") {
+        style += " dead player";
+    } else {
+        style += " player"
+    }
+    
+    if (props.message.variant.messageSender.type === "livingToDead") {
+        chatGroupIcon += translate("messageSender.livingToDead.icon")
+    }
+
+    let messageSender = "";
+    if (props.message.variant.messageSender.type === "player" || props.message.variant.messageSender.type === "livingToDead") {
+        messageSender = props.playerNames[props.message.variant.messageSender.player];
+    }else if(props.message.variant.messageSender.type === "jailor" || props.message.variant.messageSender.type === "journalist"){
+        messageSender = translate("role."+props.message.variant.messageSender.type+".name");
+    }
+    
+    if (useContainsMention(props.message.variant, props.playerNames)) {
+        style += " mention";
+    }
+
+    return <div
+        className={"chat-message-div"}
+        onMouseOver={() => props.setMouseHovering(true)}
+        onMouseOut={() => props.setMouseHovering(false)}
+    >
+        <span className={`chat-message ${style}`}>
+            <StyledText
+                playerKeywordData={props.playerSenderKeywordData ?? PLAYER_SENDER_KEYWORD_DATA}
+            >
+                {chatGroupIcon ?? ""} {messageSender}: </StyledText>
+            <StyledText
+                playerKeywordData={props.playerKeywordData}
+            >
+                {translateChatMessage(props.message.variant, props.playerNames)}
+            </StyledText>
+        </span>
+        {
+            props.mouseHovering &&
+            props.roleState?.type === "forger" &&
+            <CopyButton
+                className="chat-message-div-copy-button"
+                text={translateChatMessage(props.message.variant, props.playerNames)}
+            />
+        }
+    </div>;
+}
+
+function useContainsMention(message: ChatMessageVariant & { text: string }, playerNames: string[]): boolean {
+    const myNumber = usePlayerState(
+        gameState => gameState.myIndex,
+        ["yourPlayerIndex"]
+    );
+
+    const myName = useLobbyOrGameState(
+        state => {
+            if (state.stateType === "game" && state.clientState.type === "player")
+                return state.players[state.clientState.myIndex].name
+            else if (state.stateType === "lobby" && state.myId) {
+                const me = state.players.get(state.myId)
+                if (me?.clientType.type === "player") {
+                    return me.clientType.name
+                }
+            } else {
+                return undefined;
+            }
+        },
+        ["lobbyClients", "yourId", "yourPlayerIndex", "gamePlayers"]
+    );
+
+    if (myName === undefined) {
         return false;
     }
     return (
         find(myName).test(sanitizePlayerMessage(replaceMentions(message.text, playerNames))) ||
         (
-            myNumber !== null && 
+            myNumber !== undefined && 
             find("" + (myNumber + 1)).test(sanitizePlayerMessage(replaceMentions(message.text, playerNames)))
         )
     )
@@ -453,6 +506,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.snoopResult." + (message.townie ? "townie" : "inconclusive"));
         case "gossipResult":
             return translate("chatMessage.gossipResult." + (message.enemies ? "enemies" : "none"));
+        case "flowerGirlResult":
+            return translate("chatMessage.flowerGirlResult", message.evilCount);
         case "lookoutResult":
             if (message.players.length === 0) {
                 return translate("chatMessage.lookoutResult.nobody");
@@ -580,7 +635,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "deathCollectedSouls":
         case "targetWasAttacked":
         case "youWereProtected":
-        case "provocateurWon":
+        case "rabbleRouserWon":
         case "gameOver":
         case "jesterWon":
         case "wardblocked":
@@ -774,6 +829,9 @@ export type ChatMessageVariant = {
     type: "gossipResult",
     enemies: boolean
 } | {
+    type: "flowerGirlResult",
+    evilCount: number
+} | {
     type: "lookoutResult", 
     players: PlayerIndex[]
 } | {
@@ -895,7 +953,7 @@ export type ChatMessageVariant = {
 } | {
     type: "deathCollectedSouls"
 } | {
-    type: "provocateurWon"
+    type: "rabbleRouserWon"
 } | {
     type: "doomsayerFailed"
 } | {

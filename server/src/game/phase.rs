@@ -6,7 +6,7 @@ use serde::{Serialize, Deserialize};
 use crate::packet::ToClientPacket;
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant}, event::{on_any_death::OnAnyDeath, on_night_priority::OnNightPriority, on_phase_start::OnPhaseStart}, grave::Grave, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
+    chat::{ChatGroup, ChatMessageVariant}, event::{before_phase_end::BeforePhaseEnd, on_any_death::OnAnyDeath, on_night_priority::OnNightPriority, on_phase_start::OnPhaseStart}, grave::Grave, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
 };
 
 
@@ -60,6 +60,7 @@ impl PhaseStateMachine {
     }
 
     pub fn next_phase(game: &mut Game, force_next_phase: Option<PhaseState>) {
+        BeforePhaseEnd::new(game.current_phase().phase()).invoke(game);
         let mut new_phase = PhaseState::end(game);
 
         if let Some(forced_new_phase) = force_next_phase {

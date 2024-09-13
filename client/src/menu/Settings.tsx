@@ -1,12 +1,13 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useContext, useEffect, useState } from "react";
 import "./settings.css";
 import translate, { Language, languageName, LANGUAGES, switchLanguage } from "../game/lang";
 import StyledText, { computeKeywordData } from "../components/StyledText";
 import Icon from "../components/Icon";
 import { loadSettings, RoleSpecificMenuType, saveSettings } from "../game/localStorage";
-import Anchor from "./Anchor";
+import { MobileContext, AnchorControllerContext } from "./Anchor";
 import { Role } from "../game/roleState.d";
 import ROLES from "../resources/roles.json";
+import AudioController from "./AudioController";
 
 export function roleSpecificMenuType(role: Role): RoleSpecificMenuType | null {
     return ROLES[role].roleSpecificMenu === false ? null : loadSettings().roleSpecificMenus[role]
@@ -15,9 +16,11 @@ export function roleSpecificMenuType(role: Role): RoleSpecificMenuType | null {
 export default function SettingsMenu(): ReactElement {
     const [volume, setVolume] = useState<number>(loadSettings().volume);
     const [roleSpecificMenuSettings, setRoleSpecificMenuSettings] = useState(loadSettings().roleSpecificMenus);
+    const mobile = useContext(MobileContext)!;
+    const anchorController = useContext(AnchorControllerContext)!;
 
     useEffect(() => {
-        Anchor.updateAnchorVolume(volume);
+        AudioController.setVolume(volume);
     }, [volume]);
     
     return <div className="settings-menu-card">
@@ -49,7 +52,7 @@ export default function SettingsMenu(): ReactElement {
                                 switchLanguage(language);
                                 saveSettings({language});
                                 computeKeywordData()
-                                Anchor.reload();
+                                anchorController.reload();
                             }}
                         >
                             {LANGUAGES.map(lang => <option key={lang} value={lang}>{languageName(lang)}</option>)}
@@ -61,12 +64,12 @@ export default function SettingsMenu(): ReactElement {
                     <button onClick={()=>{
                         if(!window.confirm(translate("confirmDelete"))) return;
                         localStorage.clear();
-                        Anchor.clearCoverCard();
+                        anchorController.clearCoverCard();
                     }}><Icon>delete_forever</Icon> {translate('menu.settings.eraseSaveData')}</button>
                 </section>
             </div>
             <div>
-                {Anchor.isMobile() && <h2>{translate("menu.settings.advanced")}</h2>}
+                {mobile && <h2>{translate("menu.settings.advanced")}</h2>}
                 <details className="standout role-specific-menu-settings">
                     <summary>
                         {translate("menu.settings.roleSpecificMenus")}

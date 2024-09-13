@@ -59,6 +59,7 @@ macros::roles! {
     Auditor : auditor,
     Snoop : snoop,
     Gossip : gossip,
+    FlowerGirl : flower_girl,
 
     Doctor : doctor,
     Bodyguard : bodyguard,
@@ -101,7 +102,7 @@ macros::roles! {
 
     // Neutral
     Jester : jester,
-    Provocateur : provocateur,
+    RabbleRouser : rabble_rouser,
     Politician : politician,
 
     Minion : minion,
@@ -306,7 +307,8 @@ mod macros {
 impl Role{
     pub fn possession_immune(&self)->bool{
         match self {
-            Role::Bouncer
+            Role::FlowerGirl
+            | Role::Bouncer
             | Role::Veteran
             | Role::Transporter | Role::Retributionist
             | Role::Minion | Role::Doomsayer | Role::Scarecrow

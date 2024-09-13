@@ -38,6 +38,8 @@ export type RoleState = {
 } | {
     type: "gossip",
 } | {
+    type: "flowerGirl"
+} | {
     type: "doctor",
     selfHealsRemaining: number,
 } | {
@@ -126,7 +128,7 @@ export type RoleState = {
 } | {
     type: "jester"
 } | {
-    type: "provocateur"
+    type: "rabbleRouser"
 } | 
 Doomsayer 
 | {

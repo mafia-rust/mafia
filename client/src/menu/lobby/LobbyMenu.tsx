@@ -4,7 +4,7 @@ import LobbyPlayerList from "./LobbyPlayerList";
 import "./lobbyMenu.css";
 import translate from "../../game/lang";
 import { StateListener } from "../../game/gameManager.d";
-import Anchor, { AnchorContext } from "../Anchor";
+import { AnchorControllerContext, MobileContext } from "../Anchor";
 import { RoomLinkButton } from "../GlobalMenu";
 import { RoleList, getAllRoles } from "../../game/roleListState.d";
 import LoadingScreen from "../LoadingScreen";
@@ -26,9 +26,9 @@ export default function LobbyMenu(): ReactElement {
     )!;
     const isHost = useLobbyState(
         lobbyState => lobbyState.players.get(lobbyState.myId!)?.host,
-        ["playersHost", "lobbyClients", "yourId", "tick", "pong"]
+        ["playersHost", "lobbyClients", "yourId"]
     )!;
-    const { mobile } = useContext(AnchorContext);
+    const mobile = useContext(MobileContext)!;
 
     const [advancedView, setAdvancedView] = useState<boolean>(isHost || mobile);
 
@@ -76,19 +76,22 @@ function LobbyMenuSettings(props: Readonly<{
         ["phaseTimes"]
     )!;
 
+    const mobile = useContext(MobileContext)!;
+    const { setContent: setAnchorContent } = useContext(AnchorControllerContext)!;
+
     useEffect(() => {
         const listener: StateListener = (type) => {
             if(type === "rejectJoin"){
                 // Kicked, probably
-                Anchor.setContent(<LoadingScreen type="disconnect"/>);
+                setAnchorContent(<LoadingScreen type="disconnect"/>);
                 GAME_MANAGER.setDisconnectedState();
-                Anchor.setContent(<StartMenu />);
+                setAnchorContent(<StartMenu />);
             }
         }
 
         GAME_MANAGER.addStateListener(listener);
         return ()=>{GAME_MANAGER.removeStateListener(listener);}
-    }, []);
+    }, [setAnchorContent]);
 
     const sendRoleList = (newRoleList: RoleList) => {
         const combinedRoleList = [...roleList];
@@ -103,7 +106,7 @@ function LobbyMenuSettings(props: Readonly<{
     }, [enabledRoles, phaseTimes, roleList]);
 
     return <GameModeContext.Provider value={context}>
-        {Anchor.isMobile() && <h1>{translate("menu.lobby.settings")}</h1>}
+        {mobile && <h1>{translate("menu.lobby.settings")}</h1>}
         {props.isHost && <GameModeSelector 
             canModifySavedGameModes={false}
             loadGameMode={gameMode => {
@@ -138,36 +141,33 @@ function LobbyMenuHeader(props: Readonly<{
     setAdvancedView: (advancedView: boolean) => void
 }>): JSX.Element {
     const [lobbyName, setLobbyName] = useState<string>(GAME_MANAGER.state.stateType === "lobby" ? GAME_MANAGER.state.lobbyName : "Mafia Lobby");
-    const [host, setHost] = useState(GAME_MANAGER.getMyHost() ?? false);
-    const { mobile } = useContext(AnchorContext);
+    const host = useLobbyState(
+        lobbyState => lobbyState.players.get(lobbyState.myId!)?.host,
+        ["lobbyClients", "yourId", "playersHost"]
+    )!;
+    const mobile = useContext(MobileContext)!;
+    const { setContent: setAnchorContent } = useContext(AnchorControllerContext)!;
 
     useEffect(() => {
         const listener: StateListener = (type) => {
-            switch (type) {
-                case "playersHost":
-                    setHost(GAME_MANAGER.getMyHost() ?? false);
-                    break;
-                case "lobbyName":
-                    if(GAME_MANAGER.state.stateType === "lobby")
-                        setLobbyName(GAME_MANAGER.state.lobbyName);
-                    break;
+            if (type === "lobbyName" && GAME_MANAGER.state.stateType === "lobby") {
+                setLobbyName(GAME_MANAGER.state.lobbyName);
             }
-        }
+        };
 
-        setHost(GAME_MANAGER.getMyHost() ?? false);
         if(GAME_MANAGER.state.stateType === "lobby")
             setLobbyName(GAME_MANAGER.state.lobbyName);
 
         GAME_MANAGER.addStateListener(listener)
         return ()=>{GAME_MANAGER.removeStateListener(listener);}
-    }, [setHost, setLobbyName]);
+    }, [setLobbyName]);
 
     return <header>
         <div>
             <button disabled={!host} className="start" onClick={async ()=>{
-                Anchor.setContent(<LoadingScreen type="default"/>);
+                setAnchorContent(<LoadingScreen type="default"/>);
                 if (!await GAME_MANAGER.sendStartGamePacket()) {
-                    Anchor.setContent(<LobbyMenu/>)
+                    setAnchorContent(<LobbyMenu/>)
                 }
             }}>
                 <Icon>play_arrow</Icon>{translate("menu.lobby.button.start")}
