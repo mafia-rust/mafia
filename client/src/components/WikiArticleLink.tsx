@@ -13,7 +13,7 @@ const STANDARD_ARTICLES =
 
 export type StandardArticle = typeof STANDARD_ARTICLES[number];
 
-const GENERATED_ARTICLES = ["role_set", "all_text"] as const;
+const GENERATED_ARTICLES = ["roleSet", "all_text"] as const;
 export type GeneratedArticle = typeof GENERATED_ARTICLES[number];
 
 export const ARTICLES: WikiArticleLink[] = 

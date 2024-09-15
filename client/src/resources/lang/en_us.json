@@ -1119,7 +1119,7 @@
     "wiki.article.standard.shwompt.text":"Shwompt \nPronunciation: ʃwɒmpt \nA sudden whooshing sound that contains a siblant conclusion. This describes the sound that is made when objects phase through a solid wall. \nOther forms: Shwompter, Shwompting, Shwompted, Shwomptee",
 
 
-    "wiki.article.generated.role_set.title":"Role Set",
+    "wiki.article.generated.roleSet.title":"Role Set",
     "wiki.article.generated.all_text.title":"All text",
 
     "wiki.article.role": "# \\0\n### \\1\n<br/>\n\n### Guide\n\\2\n### Abilities\n\\3\n### Attributes\n\\4\n### Extra\n\\5\n<br/>\n\n### Role Limit: \\6\n### Defense: \\7\n\n<br>\n\n### Keywords\n\\8",

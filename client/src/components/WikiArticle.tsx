@@ -115,7 +115,7 @@ export default function WikiArticle(props: {
 
 function GeneratedArticleElement(props: Readonly<{ article: GeneratedArticle }>): ReactElement {
     switch(props.article){
-        case "role_set":
+        case "roleSet":
             return <RoleSetArticle />
         case "all_text":
             return <pre>
@@ -133,7 +133,7 @@ function RoleSetArticle(): ReactElement {
     
     let mainElements = [
         <section key="title"><WikiStyledText>
-            {"# "+translate("wiki.article.generated.role_set.title")}
+            {"# "+translate("wiki.article.generated.roleSet.title")}
         </WikiStyledText></section>
     ];
     
@@ -200,8 +200,8 @@ function RoleSetArticle(): ReactElement {
 
 function getSearchStringsGenerated(article: GeneratedArticle): string[]{
     switch(article){
-        case "role_set":
-            let out = [translate("wiki.article.generated.role_set.title")];
+        case "roleSet":
+            let out = [translate("wiki.article.generated.roleSet.title")];
             for(let set of ROLE_SETS){
                 out.push(translate(set));
             }
