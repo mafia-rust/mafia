@@ -4,7 +4,7 @@ import ROLES from "../resources/roles.json";
 import React from "react";
 import translate, { langText, translateChecked } from "../game/lang";
 import StyledText, { DUMMY_NAMES_KEYWORD_DATA, DUMMY_NAMES_SENDER_KEYWORD_DATA, StyledTextProps } from "./StyledText";
-import { ROLE_SETS, getRolesFromRoleSet } from "../game/roleListState.d";
+import { FACTIONS, ROLE_SETS, getRolesFromOutlineOption, getRolesFromRoleSet } from "../game/roleListState.d";
 import ChatElement, { ChatMessageVariant } from "./ChatMessage";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { GeneratedArticle, WikiArticleLink } from "./WikiArticleLink";
@@ -138,10 +138,6 @@ function RoleSetArticle(): ReactElement {
     ];
     
     for(let set of ROLE_SETS){
-        mainElements.push(<section key={set+"title"}><WikiStyledText>
-            {"### "+translate(set)}
-        </WikiStyledText></section>);
-        
         let elements = getRolesFromRoleSet(set).map((role)=>{
 
             let className = "";
@@ -155,10 +151,50 @@ function RoleSetArticle(): ReactElement {
                 </StyledText>
             </button>
         });
+
+        mainElements.push(<section key={set+"title"}><WikiStyledText>
+            {"### "+translate(set)}
+        </WikiStyledText></section>);
         mainElements.push(<blockquote key={set}>
             {elements}
         </blockquote>);
     }
+    mainElements.push(
+        <section key="title"><WikiStyledText>
+            {"# "+translate("other")}
+        </WikiStyledText></section>
+    );
+    for(let faction of FACTIONS){
+        
+        let elements = getRolesFromOutlineOption({
+            type: "faction",
+            faction: faction,
+        })
+        .filter((role)=>ROLES[role].roleSet === null)
+        .map((role)=>{
+
+            let className = "";
+            if(enabledRoles !== undefined && !enabledRoles.includes(role)) {
+                className = "keyword-disabled";
+            }
+
+            return <button key={role} className={className}>
+                <StyledText>
+                    {translate("role."+role+".name")}
+                </StyledText>
+            </button>
+        });
+        
+        if(elements.length !== 0){
+            mainElements.push(<section key={faction+"title"}><WikiStyledText>
+                {"### "+translate(faction)}
+            </WikiStyledText></section>);
+            mainElements.push(<blockquote key={faction}>
+                {elements}
+            </blockquote>);
+        }
+    }
+
     return <div>{mainElements}</div>;
 }
 
