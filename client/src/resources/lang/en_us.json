@@ -634,6 +634,7 @@
     "any": "Any",
     "attack": "Attack",
     "none": "None",
+    "other": "Other",
     "see": "See",
     "kill": "Kill",
     "forge": "Forge",
@@ -1193,8 +1194,8 @@
     "wiki.article.role.gossip.attributes":"- If any of your targets targets have a suspicious aura, then you are told they visited an enemy",
     "wiki.article.role.gossip.extra":"- Suspicious aura overrides innocent aura\n- If your target visits multiple other players, you learn if at least one of them is an enemy with your target\n- False appeared visits can mess with your results\n- Your target having an aura does not mess with the results, however, their targets having an aura does",
     
-    "wiki.article.role.flowerGirl.guide": "- At night, you are told how many players are non town from the players who voted guilty\n- If any player has innocent aura, they are counted as town\n- If any player has suspicious aura, they are counted as non town",
-    "wiki.article.role.flowerGirl.abilities":"- If you are blocked, you aren't told anything\n- Your ability doesn't depend on visits",
+    "wiki.article.role.flowerGirl.guide": "- At night, you are told how many players are non town from the players who voted guilty during any of the trials today\n- If any player has innocent aura, they are counted as town\n- If any player has suspicious aura, they are counted as non town",
+    "wiki.article.role.flowerGirl.abilities":"- At night, you are told how many players are non town from the players who voted guilty today\n- If you are blocked, you aren't told anything\n- Your ability doesn't depend on visits",
     "wiki.article.role.flowerGirl.attributes":"- Your ability still works when dead\n- A suspicious aura makes a player register as non town\n- An innocent aura makes a player register as town\n- A suspicious aura overwrites innocent aura to the Flower Girl",
     "wiki.article.role.flowerGirl.extra":"- A player is counted as a townie if they exclusively win with town. so a jester is non town, and a marionette is non town",
     
