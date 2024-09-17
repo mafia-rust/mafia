@@ -13,6 +13,7 @@ import { ChatMessage } from "../components/ChatMessage";
 import WikiCoverCard from "../components/WikiCoverCard";
 import WikiArticle from "../components/WikiArticle";
 import AudioController from "./AudioController";
+import { computeKeywordData } from "../components/StyledText";
 
 const MobileContext = createContext<boolean | undefined>(undefined);
 
@@ -168,6 +169,7 @@ export default function Anchor(props: Readonly<{
 
     useEffect(() => {
         props.onMount(anchorController);
+        computeKeywordData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props])
     
