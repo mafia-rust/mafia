@@ -8,7 +8,7 @@ import "./largeKiraMenu.css";
 export const KIRA_GUESSES = [
     "none",
     "mafia", "neutral", "fiends", "cult",
-    "jailor",  
+    "jailor", "villager",  
     "detective", "lookout", "spy", "tracker", "philosopher", "psychic", "auditor", "snoop", "gossip", "flowerGirl",
     "doctor",  "bodyguard",  "cop", "bouncer", "engineer", "armorsmith",
     "vigilante",  "veteran", "marksman", "deputy",

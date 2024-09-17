@@ -21,7 +21,7 @@ pub struct Doomsayer {
 pub enum DoomsayerGuess{
     Mafia, #[default] Neutral, Fiends, Cult,
 
-    Jailor, 
+    Jailor, Villager,
     // No TI
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith,
     Vigilante, Veteran, Marksman, Deputy,
@@ -31,6 +31,7 @@ impl DoomsayerGuess{
     fn convert_to_guess(role: Role)->Option<DoomsayerGuess>{
         match role {
             Role::Jailor => Some(DoomsayerGuess::Jailor),
+            Role::Villager => Some(DoomsayerGuess::Villager),
 
             Role::Detective | Role::Lookout | Role::Spy | 
             Role::Tracker | Role::Philosopher | Role::Psychic | 

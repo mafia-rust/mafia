@@ -49,6 +49,7 @@ trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
 // Creates the Role enum
 macros::roles! {
     Jailor : jailor,
+    Villager : villager,
 
     Detective : detective,
     Lookout : lookout,

@@ -23,7 +23,7 @@ pub enum KiraGuess{
 
     Mafia, #[default] Neutral, Fiends, Cult,
 
-    Jailor, 
+    Jailor, Villager,
     Detective, Lookout, Tracker, Psychic, Philosopher, Gossip, Auditor, Snoop, Spy, FlowerGirl,
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith,
     Vigilante, Veteran, Marksman, Deputy,
@@ -33,6 +33,7 @@ impl KiraGuess{
     fn convert_to_guess(role: Role)->Option<KiraGuess>{
         match role {
             Role::Jailor => Some(Self::Jailor),
+            Role::Villager => Some(Self::Villager),
 
             Role::Detective => Some(Self::Detective),
             Role::Lookout => Some(Self::Lookout),

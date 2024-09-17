@@ -178,6 +178,9 @@
     "role.jailor.youAreSelecting": "You chose to execute \\0.",
     "role.jailor.youAreSelecting.null": "You haven't chosen to execute anyone",
 
+    "role.villager.name":"Villager",
+    "role.villager.name:var.0":"Villagers",
+
     "role.detective.name":"Detective",
     "role.detective.name:var.0":"Detectives",
     "role.detective.target": "Interrogate",
@@ -1138,6 +1141,11 @@
     "wiki.article.role.jailor.abilities":"* Choose one player to jail during the day\n* Visit your prisoner to attack them",
     "wiki.article.role.jailor.attributes":"* You may talk with your prisoner at night in jail chat\n* If you kill a player who exclusively wins with town, you forfeit the ability to execute prisoners\n* Players in jail are warded and roleblocked, they also can't select anybody",
     "wiki.article.role.jailor.extra":"* The Jailor can not kill someone on night one\n* If you kill a townie, or run out of kills, you can not select to kill anymore\n* You invisibly roleblock the player you put in jail, they aren't told their roleblocked\n* Players in jail don't see your name on your messages. The messages you send appear to be from the jailor\n* If you jail a cult or mafia member, their teammates know that that player is in jail",
+
+    "wiki.article.role.villager.guide": "You have no nighttime ability, but you can still speak and vote. Try to help find out who is evil and vote them. Your only ability is your own critical thinking.",
+    "wiki.article.role.villager.abilities":"None",
+    "wiki.article.role.villager.attributes":"None",
+    "wiki.article.role.villager.extra":"None",
 
     "wiki.article.role.mayor.guide": "Choose to enfranchise during the day to make your vote count as three votes for the rest of the game.\n- When you enfranchise\n    - Everyone is told you are the mayor\n    - You can't whisper or be whispered to\n    - You have triple voting power every day",
     "wiki.article.role.mayor.abilities":"* Enfranchise during the day to triple your voting power, revealing to everyone that you are the Mayor",

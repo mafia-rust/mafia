@@ -45,12 +45,6 @@ export const ROLE_SETS = [
 export type RoleSet = typeof ROLE_SETS[number];
 export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
     switch(roleSet){
-        case "townSupport":
-            return ["medium", "retributionist", "transporter", "escort", "mayor", "journalist"];
-        case "townKilling":
-            return ["vigilante", "veteran", "deputy", "marksman"];
-        case "townProtective":
-            return ["bodyguard", "cop", "doctor", "bouncer", "engineer", "armorsmith"];
         case "townInvestigative":
             return [
                 "psychic", "lookout", "detective",
@@ -58,6 +52,12 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
                 "snoop", "auditor", "gossip",
                 "flowerGirl"
             ];
+        case "townProtective":
+            return ["bodyguard", "cop", "doctor", "bouncer", "engineer", "armorsmith"];
+        case "townKilling":
+            return ["vigilante", "veteran", "deputy", "marksman"];
+        case "townSupport":
+            return ["medium", "retributionist", "transporter", "escort", "mayor", "journalist"];
         case "mafiaKilling":
             return [
                 "godfather", "eros", "counterfeiter", "retrainer", "mafioso"
