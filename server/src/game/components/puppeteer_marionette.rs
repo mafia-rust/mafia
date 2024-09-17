@@ -56,7 +56,7 @@ impl PuppeteerMarionette{
                 .map(|p|p.clone())
                 .collect::<Vec<_>>();
 
-        PuppeteerMarionette::attack_players(game, marionettes);
+        PuppeteerMarionette::attack_players(game, marionettes, 3);
     }
     pub fn kill_poisoned(game: &mut Game){
         let mut puppeteer_marionette = game.puppeteer_marionette().clone();
@@ -68,13 +68,13 @@ impl PuppeteerMarionette{
             .map(|p|p.clone())
             .collect::<Vec<_>>();
 
-        PuppeteerMarionette::attack_players(game, poisoned);
+        PuppeteerMarionette::attack_players(game, poisoned, 2);
 
         puppeteer_marionette.poisoned = HashSet::new();
 
         game.set_puppeteer_marionette(puppeteer_marionette)
     }
-    fn attack_players(game: &mut Game, players: Vec<PlayerReference>){
+    fn attack_players(game: &mut Game, players: Vec<PlayerReference>, attack_power: u8){
         
         let puppeteers: Vec<_> = PlayerReference::all_players(game)
             .filter(|p|p.role(game)==Role::Puppeteer)
@@ -83,12 +83,12 @@ impl PuppeteerMarionette{
 
         if puppeteers.is_empty() {
             for player in players{
-                player.try_night_kill_anonymous(game, crate::game::grave::GraveKiller::Role(Role::Puppeteer), 2);
+                player.try_night_kill_anonymous(game, crate::game::grave::GraveKiller::Role(Role::Puppeteer), attack_power);
             }
         }else{
             for player in players{
                 for puppeteer in puppeteers.iter(){
-                    player.try_night_kill(*puppeteer, game, crate::game::grave::GraveKiller::Role(Role::Puppeteer), 2, true);
+                    player.try_night_kill(*puppeteer, game, crate::game::grave::GraveKiller::Role(Role::Puppeteer), attack_power, true);
                 }
             }
         }

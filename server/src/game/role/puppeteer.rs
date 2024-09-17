@@ -43,9 +43,13 @@ impl RoleStateImpl for Puppeteer {
             
             match self.action {
                 PuppeteerAction::String => {
-                    PuppeteerMarionette::string(game, target);
-                    self.marionettes_remaining -= 1;
-                    actor_ref.set_role_state(game, RoleState::Puppeteer(self));
+                    if target.defense(game) < 2 {
+                        PuppeteerMarionette::string(game, target);
+                        self.marionettes_remaining -= 1;
+                        actor_ref.set_role_state(game, RoleState::Puppeteer(self));
+                    }else{
+                        PuppeteerMarionette::poison(game, target);
+                    }
                 }
                 PuppeteerAction::Poison => {
                     PuppeteerMarionette::poison(game, target);
