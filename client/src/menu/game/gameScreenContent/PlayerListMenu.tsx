@@ -51,7 +51,8 @@ function usePlayerVotedFor(): PlayerIndex | null {
 function useSelectedPlayers(): PlayerIndex[] {
     return usePlayerState(
         (playerState, gameState) => gameState.phaseState.type === "night" ? playerState.targets : [],
-        ["phase", "yourSelection"]
+        ["phase", "yourSelection"],
+        []
     )!;
 }
 
@@ -59,10 +60,12 @@ function useDayTargetedPlayers(): PlayerIndex[] {
     const roleState = usePlayerState(
         playerState => playerState.roleState,
         ["yourRoleState"],
-    )!;
+    );
 
-    switch (roleState.type){
+    switch (roleState?.type){
         case "godfather":
+        case "retrainer":
+        case "counterfeiter":
             if (roleState.backup !== null) return [roleState.backup]
             break;
         case "jailor":
@@ -185,7 +188,7 @@ export default function PlayerListMenu(): ReactElement {
             </details>
         }
 
-        {(phaseState.type === "discussion" && players[myIndex!].alive) ? <Button
+        {(myIndex !== undefined && phaseState.type === "discussion" && players[myIndex!].alive) ? <Button
             className={forfeitVote ? "highlighted" : ""}
             onClick={()=>{
                 GAME_MANAGER.sendForfeitVotePacket(!forfeitVote);
@@ -256,11 +259,11 @@ function PlayerCard(props: Readonly<{
             return ("("+translate("role."+roleState?.type+".name")+")");
         }
 
-        if(player.alive && player.roleLabel != null){
+        if(player.alive && player.roleLabel !== null){
             return ("("+translate("role."+player.roleLabel+".name")+")");
         }
         
-        if (!player.alive && graveRolesStrings[player.index] != null){
+        if (!player.alive && graveRolesStrings[player.index] !== null){
             return graveRolesStrings[player.index];
         }
 
@@ -288,7 +291,7 @@ function PlayerCard(props: Readonly<{
             })()}
             <StyledText>{(player.alive?"":translate("dead.icon"))} </StyledText>
             <StyledText>{player.toString()}</StyledText>
-            {roleString!==null&&<StyledText> {roleString}</StyledText>}
+            {roleString !== null && <StyledText> {roleString}</StyledText>}
             <StyledText>{player.playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
         </div>
         

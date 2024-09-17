@@ -13,6 +13,8 @@ export type RoleState = {
     executionsRemaining: number,
     jailedTargetRef: number | null
 } | {
+    type: "villager"
+} | {
     type: "mayor",
     revealed: boolean
 } | {
@@ -98,7 +100,7 @@ export type RoleState = {
     fakeRole: Role,
     fakeWill: string
     forgesRemaining: number,
-    // forgedRef
+    backup: PlayerIndex | null
 } | {
     type: "mafioso"
 } | 

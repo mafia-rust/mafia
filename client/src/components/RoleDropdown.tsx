@@ -14,7 +14,10 @@ export default function RoleDropdown(props: {
         onChange={e => props.onChange(e.target.value as Role)}
     >{
         Object.keys(ROLES)
-            .filter((role)=>props.enabledRoles?.includes(role as Role))
+            .filter((role)=>
+                props.enabledRoles === undefined ||
+                props.enabledRoles.includes(role as Role)
+            )
             .map((role)=>{
                 return <option value={role} key={role}>{translate("role."+role+".name")}</option>
             })

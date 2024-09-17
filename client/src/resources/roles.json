@@ -33,6 +33,16 @@
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
+    "villager": {
+        "faction": "town",
+        "roleSet": null,
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[]
+    },
     "detective": {
         "faction": "town",
         "roleSet": "townInvestigative",

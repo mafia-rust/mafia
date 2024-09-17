@@ -180,7 +180,7 @@ export function ChatTextInput(props: Readonly<{ disabled?: boolean }>): ReactEle
     )!;
 
     const whisperingPlayer = useMemo(() => {
-        return whispering ? playerStrings[whispering] : null
+        return whispering!==null ? playerStrings[whispering] : null
     }, [playerStrings, whispering])
     
     const prependWhisper = useCallback((index: PlayerIndex) => {

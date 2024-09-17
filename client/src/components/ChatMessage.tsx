@@ -260,7 +260,7 @@ function NormalChatMessage(props: Readonly<{
         </span>
         {
             props.mouseHovering &&
-            props.roleState?.type === "forger" &&
+            (props.roleState?.type === "forger" || props.roleState?.type === "counterfeiter") &&
             <CopyButton
                 className="chat-message-div-copy-button"
                 text={translateChatMessage(props.message.variant, props.playerNames)}
