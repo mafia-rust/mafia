@@ -67,7 +67,8 @@ impl KiraGuess{
             Role::Transporter => Some(Self::Transporter),
 
             //Mafia
-            Role::Godfather | Role::Mafioso | Role::Eros | Role::Counterfeiter |  Role::Retrainer |
+            Role::Godfather | Role::Mafioso | Role::Eros | Role::Counterfeiter | Role::Retrainer |
+            Role::MadeMan |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::Witch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 

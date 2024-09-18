@@ -103,7 +103,9 @@ export type RoleState = {
     backup: PlayerIndex | null
 } | {
     type: "mafioso"
-} | 
+} | {
+    type: "madeMan"
+} |
 (Hypnotist & {type: "hypnotist"})
  | {
     type: "consort"

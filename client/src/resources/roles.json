@@ -528,6 +528,16 @@
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
+    "madeMan": {
+        "faction": "mafia",
+        "roleSet": null,
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": false,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[]
+    },
     "hypnotist": {
         "faction": "mafia",
         "roleSet": "mafiaSupport",

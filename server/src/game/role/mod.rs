@@ -89,6 +89,7 @@ macros::roles! {
     Retrainer : retrainer,
     Mafioso : mafioso,
 
+    MadeMan : made_man,
     Consort : consort,
     
     Hypnotist : hypnotist,
