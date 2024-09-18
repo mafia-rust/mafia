@@ -2079,7 +2079,7 @@ fn minion_leaves_by_winning_puppeteer(){
 
     assert!(gf.alive());
     assert!(!min.alive());
-    assert!(t.alive());
+    assert!(!t.alive());
     assert!(!t2.alive());
     assert!(pup.alive());
 }

@@ -2,6 +2,7 @@
 use rand::seq::SliceRandom;
 use serde::Serialize;
 
+use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::Grave;
 use crate::game::phase::{PhaseState, PhaseType};
@@ -42,7 +43,7 @@ impl Default for RabbleRouserTarget {
 
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 1;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for RabbleRouser {
     fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {

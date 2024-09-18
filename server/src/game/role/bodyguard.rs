@@ -1,7 +1,8 @@
 
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::attack_power::AttackPower;
+use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -31,7 +32,7 @@ impl Default for Bodyguard {
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Bodyguard {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -76,12 +77,12 @@ impl RoleStateImpl for Bodyguard {
                     }));
                     
                     
-                    target_ref.increase_defense_to(game, 2);
+                    target_ref.increase_defense_to(game, DefensePower::Protection);
                 }
             },
             Priority::Kill => {
                 for redirected_player_ref in self.redirected_player_refs {
-                    redirected_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Bodyguard), 2, false);
+                    redirected_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Bodyguard), AttackPower::ArmorPiercing, false);
                 }
             }
             Priority::Investigative => {

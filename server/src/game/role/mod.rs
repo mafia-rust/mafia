@@ -8,6 +8,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::chat::ChatGroup;
 use crate::game::phase::PhaseType;
+use crate::game::attack_power::DefensePower;
 
 use serde::{Serialize, Deserialize};
 
@@ -190,7 +191,7 @@ mod macros {
                         $(Self::$name => $file::FACTION),*
                     }
                 }
-                pub fn defense(&self) -> u8 {
+                pub fn defense(&self) -> DefensePower {
                     match self {
                         $(Self::$name => $file::DEFENSE),*
                     }

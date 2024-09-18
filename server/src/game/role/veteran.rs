@@ -1,6 +1,7 @@
 use serde::Serialize;
 
-use crate::game::grave::GraveKiller;
+use crate::game::attack_power::AttackPower;
+use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -26,7 +27,7 @@ impl Default for Veteran {
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Veteran {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -45,7 +46,7 @@ impl RoleStateImpl for Veteran {
             }
             Priority::Heal=>{
                 if !self.alerting_tonight {return}
-                actor_ref.increase_defense_to(game, 2);
+                actor_ref.increase_defense_to(game, DefensePower::Protection);
             }
             Priority::Kill => {
                 if !self.alerting_tonight {return}
@@ -56,7 +57,7 @@ impl RoleStateImpl for Veteran {
                         *other_player_ref != actor_ref
                     ).collect::<Vec<PlayerReference>>()
                 {
-                    other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Veteran), 2, false);
+                    other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Veteran), AttackPower::ArmorPiercing, false);
                 }
             }
             _=>{}

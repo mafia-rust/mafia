@@ -1,6 +1,8 @@
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::attack_power::AttackPower;
+use crate::game::grave::GraveKiller;
+use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -51,7 +53,7 @@ pub enum TrapState {
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Engineer {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -77,7 +79,7 @@ impl RoleStateImpl for Engineer {
                 }
     
                 if let RoleState::Engineer(Engineer{trap: Trap::Set{target, ..}}) = actor_ref.role_state(game).clone(){
-                    target.increase_defense_to(game, 2);
+                    target.increase_defense_to(game, DefensePower::Protection);
                 }
             }
             Priority::Kill => {
@@ -87,7 +89,7 @@ impl RoleStateImpl for Engineer {
                             attacker.night_visits(game).iter().any(|visit| visit.target == target && visit.attack) &&
                             attacker != actor_ref
                         {
-                            attacker.try_night_kill(actor_ref, game, crate::game::grave::GraveKiller::Role(Role::Engineer), 2, false);
+                            attacker.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Engineer), AttackPower::ArmorPiercing, false);
                         }
                     }
                 }

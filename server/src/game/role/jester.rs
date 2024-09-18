@@ -2,6 +2,7 @@
 use rand::seq::SliceRandom;
 use serde::Serialize;
 
+use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::{PhaseType, PhaseState};
 use crate::game::player::PlayerReference;
@@ -21,18 +22,12 @@ pub struct Jester {
 
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Jester {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::TopPriority {return;}
-
-        if game.day_number() == 1 {
-            actor_ref.increase_defense_to(game, 2);
-        }
-
         if actor_ref.alive(game) {return;}
-    
         if !self.lynched_yesterday {return}
         
         let all_killable_players: Vec<PlayerReference> = PlayerReference::all_players(game)
@@ -50,7 +45,7 @@ impl RoleStateImpl for Jester {
             },
         };
         player.try_night_kill(actor_ref, game, 
-            crate::game::grave::GraveKiller::Role(super::Role::Jester), 3, true
+            crate::game::grave::GraveKiller::Role(super::Role::Jester), AttackPower::ProtectionPiercing, true
         );
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {

@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
@@ -18,7 +19,7 @@ pub struct Godfather{
 
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 1;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Godfather {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -36,7 +37,7 @@ impl RoleStateImpl for Godfather {
             
                     game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackupKilled { backup: backup.index() });
                     target_ref.try_night_kill(
-                        backup, game, GraveKiller::Faction(Faction::Mafia), 1, false
+                        backup, game, GraveKiller::Faction(Faction::Mafia), AttackPower::Basic, false
                     );
                 }
                 backup.set_night_visits(game, visits);
@@ -46,7 +47,7 @@ impl RoleStateImpl for Godfather {
             let target_ref = visit.target;
     
             target_ref.try_night_kill(
-                actor_ref, game, GraveKiller::Faction(Faction::Mafia), 1, false
+                actor_ref, game, GraveKiller::Faction(Faction::Mafia), AttackPower::Basic, false
             );
         }        
     }

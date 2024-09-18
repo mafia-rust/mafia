@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -47,7 +48,7 @@ impl Default for Counterfeiter {
 
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Counterfeiter {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -70,7 +71,7 @@ impl RoleStateImpl for Counterfeiter {
                         if let Some(visit) = backup.night_visits(game).first(){
                             let target_ref = visit.target;
                             target_ref.try_night_kill(
-                                backup, game, GraveKiller::Faction(Faction::Mafia), 1, false
+                                backup, game, GraveKiller::Faction(Faction::Mafia), AttackPower::Basic, false
                             );
                         }
                     },
@@ -98,7 +99,7 @@ impl RoleStateImpl for Counterfeiter {
                         let target_ref = visit.target;
                 
                         target_ref.try_night_kill(
-                            actor_ref, game, GraveKiller::Faction(Faction::Mafia), 1, false
+                            actor_ref, game, GraveKiller::Faction(Faction::Mafia), AttackPower::Basic, false
                         );
                     }
                 },

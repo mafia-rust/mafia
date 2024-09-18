@@ -4,15 +4,9 @@ use vec1::Vec1;
 
 use crate::{
     game::{
-        chat::{
+        attack_power::DefensePower, chat::{
             ChatGroup, ChatMessage, ChatMessageVariant
-        }, event::on_fast_forward::OnFastForward,
-        grave::GraveKiller,
-        role::{Role, RoleState},
-        tag::Tag,
-        verdict::Verdict,
-        visit::Visit,
-        Game
+        }, event::on_fast_forward::OnFastForward, grave::GraveKiller, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, Game
     }, 
     packet::ToClientPacket, 
 };
@@ -287,14 +281,14 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.roleblocked = roleblocked;
     }
 
-    pub fn night_defense(&self, game: &Game) -> u8 {
+    pub fn night_defense(&self, game: &Game) -> DefensePower {
         if let Some(defense) = self.deref(game).night_variables.upgraded_defense {
             defense
         }else{
             self.role(game).defense()
         }
     }
-    pub fn set_night_upgraded_defense(&self, game: &mut Game, defense: Option<u8>){
+    pub fn set_night_upgraded_defense(&self, game: &mut Game, defense: Option<DefensePower>){
         self.deref_mut(game).night_variables.upgraded_defense = defense;
     }
 

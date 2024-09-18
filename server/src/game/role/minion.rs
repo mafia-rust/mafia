@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::grave::Grave;
+use crate::game::{attack_power::DefensePower, grave::Grave};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -17,7 +17,7 @@ pub struct Minion{
 
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Minion {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {

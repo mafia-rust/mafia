@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
@@ -15,7 +16,7 @@ pub struct Zealot;
 
 pub(super) const FACTION: Faction = Faction::Cult;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Zealot {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -25,7 +26,7 @@ impl RoleStateImpl for Zealot {
         let target_ref = visit.target;
         
         if target_ref.try_night_kill(
-            actor_ref, game, GraveKiller::Faction(Faction::Cult), 1, false
+            actor_ref, game, GraveKiller::Faction(Faction::Cult), AttackPower::Basic, false
         ) {
             Cult::set_ability_used_last_night(game, Some(CultAbility::Kill));
         }

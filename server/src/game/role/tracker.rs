@@ -2,7 +2,7 @@ use rand::thread_rng;
 use rand::prelude::SliceRandom;
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
@@ -15,7 +15,7 @@ pub struct Tracker;
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Tracker {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {

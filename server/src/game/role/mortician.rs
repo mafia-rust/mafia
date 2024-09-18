@@ -1,6 +1,7 @@
 
 use serde::Serialize;
 
+use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::event::before_role_switch::BeforeRoleSwitch;
 use crate::game::grave::GraveInformation;
@@ -23,7 +24,7 @@ pub struct Mortician {
 
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 const MAX_CREMATIONS: u8 = 3;
 

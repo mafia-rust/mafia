@@ -2,7 +2,8 @@
 use rand::seq::SliceRandom;
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::attack_power::AttackPower;
+use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -23,7 +24,7 @@ pub struct Cop {
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Cop {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -34,7 +35,7 @@ impl RoleStateImpl for Cop {
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
                 let target_ref = visit.target;
 
-                target_ref.increase_defense_to(game, 2);
+                target_ref.increase_defense_to(game, DefensePower::Protection);
                 actor_ref.set_role_state(game, RoleState::Cop(Cop {target_protected_ref: Some(target_ref)}));
             }
             Priority::Kill => {
@@ -70,7 +71,7 @@ impl RoleStateImpl for Cop {
                 }
 
                 if let Some(player_to_attack) = player_to_attack{
-                    player_to_attack.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Cop), 1, false);
+                    player_to_attack.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Cop), AttackPower::Basic, false);
                 }
             }
             Priority::Investigative => {

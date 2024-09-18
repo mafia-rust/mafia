@@ -23,6 +23,7 @@ use crate::{
     websocket_connections::connection::ClientSender,
 };
 
+use super::attack_power::DefensePower;
 use super::chat::ChatMessage;
 use super::tag::Tag;
 
@@ -67,7 +68,7 @@ struct PlayerNightVariables{
     attacked: bool,
     jailed: bool,
     roleblocked: bool,
-    upgraded_defense: Option<u8>,
+    upgraded_defense: Option<DefensePower>,
 
     appeared_visits: Option<Vec<Visit>>,
     framed: bool,

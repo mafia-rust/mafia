@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::components::arsonist_doused::ArsonistDoused;
+use crate::game::{attack_power::DefensePower, components::arsonist_doused::ArsonistDoused};
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
@@ -14,7 +14,7 @@ pub struct Arsonist;
 
 pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 1;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Arsonist {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {

@@ -1,5 +1,6 @@
 use serde::{Serialize, Deserialize};
 
+use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -89,7 +90,7 @@ impl DoomsayerGuess{
 
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Doomsayer {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -116,10 +117,10 @@ impl RoleStateImpl for Doomsayer {
 
         if won{
             actor_ref.add_private_chat_message(game, ChatMessageVariant::DoomsayerWon);
-            self.guesses[0].0.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), 3, true);
-            self.guesses[1].0.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), 3, true);
-            self.guesses[2].0.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), 3, true);
-            actor_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, 3, false);
+            self.guesses[0].0.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), AttackPower::ProtectionPiercing, true);
+            self.guesses[1].0.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), AttackPower::ProtectionPiercing, true);
+            self.guesses[2].0.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), AttackPower::ProtectionPiercing, true);
+            actor_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, AttackPower::ProtectionPiercing, false);
             actor_ref.set_role_state(game, RoleState::Doomsayer(Doomsayer { guesses: self.guesses, won: true }));
         }else{
             actor_ref.add_private_chat_message(game, ChatMessageVariant::DoomsayerFailed);

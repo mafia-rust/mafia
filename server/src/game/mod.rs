@@ -15,6 +15,7 @@ pub mod tag;
 pub mod event;
 pub mod spectator;
 pub mod game_listeners;
+pub mod attack_power;
 
 use std::collections::HashMap;
 use std::time::Duration;

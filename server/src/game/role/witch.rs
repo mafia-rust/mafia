@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::phase::PhaseType;
+use crate::game::{attack_power::DefensePower, phase::PhaseType};
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
@@ -10,7 +10,7 @@ use super::{same_evil_team, Priority, RoleState, RoleStateImpl};
 
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Witch{

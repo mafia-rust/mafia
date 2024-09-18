@@ -1,6 +1,7 @@
 use rand::seq::SliceRandom;
 use serde::Serialize;
 
+use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::player::PlayerReference;
@@ -24,7 +25,7 @@ pub enum SpyBug{
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Spy {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {

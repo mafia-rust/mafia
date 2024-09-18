@@ -5,6 +5,7 @@ use rand::seq::SliceRandom;
 
 use serde::Serialize;
 
+use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::grave::GraveKiller;
 use crate::game::player::{PlayerIndex, PlayerReference};
@@ -24,7 +25,7 @@ pub struct Werewolf{
 
 pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 1;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Werewolf {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -44,9 +45,9 @@ impl RoleStateImpl for Werewolf {
                             target_ref.all_visitors(game).into_iter().filter(|p|actor_ref!=*p)
                             .collect::<Vec<PlayerReference>>()
                         {
-                            other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
+                            other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
                         }
-                        target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
+                        target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
                     },
 
 
@@ -61,7 +62,7 @@ impl RoleStateImpl for Werewolf {
                                     jailor_ref.role(game) == Role::Jailor &&
                                     jailor_ref.night_visits(game).iter().all(|visit|visit.target!=actor_ref)
                                 {
-                                    jailor_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
+                                    jailor_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
                                 }
                             }
                         }else{
@@ -69,7 +70,7 @@ impl RoleStateImpl for Werewolf {
                                 actor_ref.all_visitors(game).into_iter().filter(|p|actor_ref!=*p)
                                 .collect::<Vec<PlayerReference>>()
                             {
-                                other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
+                                other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
                             }
                         }
                     },

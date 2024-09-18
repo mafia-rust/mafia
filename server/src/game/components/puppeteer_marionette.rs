@@ -1,13 +1,9 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    chat::ChatMessageVariant, 
-    player::PlayerReference,
-    role::{
+    attack_power::AttackPower, chat::ChatMessageVariant, player::PlayerReference, role::{
         Priority, Role
-    }, 
-    tag::Tag,
-    Game
+    }, tag::Tag, Game
 };
 
 impl Game{
@@ -56,7 +52,7 @@ impl PuppeteerMarionette{
                 .map(|p|p.clone())
                 .collect::<Vec<_>>();
 
-        PuppeteerMarionette::attack_players(game, marionettes, 3);
+        PuppeteerMarionette::attack_players(game, marionettes, AttackPower::ProtectionPiercing);
     }
     pub fn kill_poisoned(game: &mut Game){
         let mut puppeteer_marionette = game.puppeteer_marionette().clone();
@@ -68,13 +64,13 @@ impl PuppeteerMarionette{
             .map(|p|p.clone())
             .collect::<Vec<_>>();
 
-        PuppeteerMarionette::attack_players(game, poisoned, 2);
+        PuppeteerMarionette::attack_players(game, poisoned, AttackPower::ArmorPiercing);
 
         puppeteer_marionette.poisoned = HashSet::new();
 
         game.set_puppeteer_marionette(puppeteer_marionette)
     }
-    fn attack_players(game: &mut Game, players: Vec<PlayerReference>, attack_power: u8){
+    fn attack_players(game: &mut Game, players: Vec<PlayerReference>, attack_power: AttackPower){
         
         let puppeteers: Vec<_> = PlayerReference::all_players(game)
             .filter(|p|p.role(game)==Role::Puppeteer)

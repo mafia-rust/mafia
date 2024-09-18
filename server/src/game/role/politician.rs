@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
@@ -19,7 +20,7 @@ pub struct Politician{
 
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 1;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Politician {
     fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
@@ -52,7 +53,7 @@ impl RoleStateImpl for Politician {
                 player_ref.get_won_game(game)
             {
                 
-                if player_ref.defense(game) < 3 {
+                if !player_ref.defense(game).can_block(AttackPower::ProtectionPiercing) {
 
                     let mut grave = Grave::from_player_lynch(game, player_ref);
                     if let GraveInformation::Normal {death_cause, ..} = &mut grave.information {

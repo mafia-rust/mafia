@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
@@ -37,7 +38,7 @@ impl Default for Martyr {
 
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Martyr {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -51,11 +52,11 @@ impl RoleStateImpl for Martyr {
             self.state = MartyrState::StillPlaying { bullets: bullets.saturating_sub(1) };
 
             if target_ref == actor_ref {
-                if target_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, 1, true) {
+                if target_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, AttackPower::Basic, true) {
                     self.state = MartyrState::Won;
                 }
             } else {
-                target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Martyr), 1, true);
+                target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Martyr), AttackPower::Basic, true);
             }
         };
 
@@ -106,7 +107,7 @@ impl RoleStateImpl for Martyr {
             for player in PlayerReference::all_players(game) {
                 if player == actor_ref {continue}
                 if !player.alive(game) {continue}
-                if player.defense(game) >= 3 {continue}
+                if player.defense(game).can_block(AttackPower::ProtectionPiercing) {continue}
                 player.die(game, Grave::from_player_suicide(game, player));
             }
     

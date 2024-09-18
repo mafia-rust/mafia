@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use crate::game::
 {
-    chat::{ChatGroup, ChatMessageVariant}, components::{arsonist_doused::ArsonistDoused, puppeteer_marionette::PuppeteerMarionette}, event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, grave::{Grave, GraveKiller, GraveReference}, resolution_state::ResolutionState, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
+    attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessageVariant}, components::{arsonist_doused::ArsonistDoused, puppeteer_marionette::PuppeteerMarionette}, event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, grave::{Grave, GraveKiller, GraveReference}, resolution_state::ResolutionState, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
 };
 
 use super::PlayerReference;
@@ -39,10 +39,10 @@ impl PlayerReference{
     }
 
     /// Returns true if attack overpowered defense
-    pub fn try_night_kill(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: u8, should_leave_death_note: bool) -> bool {
+    pub fn try_night_kill(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
         self.set_night_attacked(game, true);
 
-        if self.night_defense(game) >= attack {
+        if self.night_defense(game).can_block(attack){
             self.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
             attacker_ref.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
             return false;
@@ -65,10 +65,10 @@ impl PlayerReference{
 
         true
     }
-    pub fn try_night_kill_anonymous(&self, game: &mut Game, grave_killer: GraveKiller, attack: u8) -> bool {
+    pub fn try_night_kill_anonymous(&self, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower) -> bool {
         self.set_night_attacked(game, true);
 
-        if self.night_defense(game) >= attack {
+        if self.night_defense(game).can_block(attack) {
             self.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
             return false;
         }
@@ -182,8 +182,8 @@ impl PlayerReference{
 
         OnRoleSwitch::new(*self, old, self.role_state(game).clone()).invoke(game);
     }
-    pub fn increase_defense_to(&self, game: &mut Game, defense: u8){
-        if self.night_defense(game) < defense {
+    pub fn increase_defense_to(&self, game: &mut Game, defense: DefensePower){
+        if defense.is_stronger(self.night_defense(game)) {
             self.set_night_upgraded_defense(game, Some(defense));
         }
     }
@@ -233,7 +233,7 @@ impl PlayerReference{
         map
     }
 
-    pub fn defense(&self, game: &Game) -> u8 {
+    pub fn defense(&self, game: &Game) -> DefensePower {
         if game.current_phase().is_night() {
             self.night_defense(game)
         }else{
