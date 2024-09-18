@@ -231,7 +231,7 @@ impl Game {
     }
     pub fn count_votes_and_start_trial(&mut self){
 
-        let &PhaseState::Nomination { trials_left } = self.current_phase() else {return};
+        let &PhaseState::Nomination { trials_left, .. } = self.current_phase() else {return};
 
         let mut voted_player_votes: HashMap<PlayerReference, u8> = HashMap::new();
 
@@ -271,7 +271,12 @@ impl Game {
         
         if let Some(player_on_trial) = next_player_on_trial {
             self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
-            PhaseStateMachine::next_phase(self, Some(PhaseState::Testimony { trials_left: trials_left-1, player_on_trial }));
+            
+            PhaseStateMachine::next_phase(self, Some(PhaseState::Testimony {
+                trials_left: trials_left-1, 
+                player_on_trial, 
+                nomination_time_remaining: self.phase_machine.get_time_remaining()
+            }));
         }
     }
     pub fn nomination_votes_is_enough(&self, votes: u8)->bool{

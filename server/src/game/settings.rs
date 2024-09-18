@@ -48,7 +48,7 @@ impl Default for PhaseTimeSettings{
             briefing: 20,
             obituary: 10,
             discussion: 100,
-            nomination: 60,
+            nomination: 120,
             testimony: 30,
             judgement: 30,
             final_words: 7,

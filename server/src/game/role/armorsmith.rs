@@ -56,7 +56,7 @@ impl RoleStateImpl for Armorsmith {
             }
             Priority::Heal => {
                 for player in self.players_armor.iter(){
-                    player.increase_defense_to(game, DefensePower::Armor);
+                    player.increase_defense_to(game, DefensePower::Protection);
                 }
 
                 if self.night_open_shop {
