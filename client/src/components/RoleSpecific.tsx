@@ -14,6 +14,7 @@ import RoleDropdown from "./RoleDropdown";
 import ROLES from "../resources/roles.json";
 import "../menu/game/gameScreenContent/RoleSpecificMenus/smallRoleSpecificMenu.css";
 import LargeKiraMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
+import SmallWizardMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallWizardMenu";
 import Counter from "./Counter";
 import "./roleSpecific.css";
 import ErosMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/ErosMenu";
@@ -45,6 +46,8 @@ export default function RoleSpecificSection(){
             return <LargeDoomsayerMenu/>;
         case "kira":
             return <LargeKiraMenu/>;
+        case "wizard":
+            return <SmallWizardMenu phase={phaseState.type} roleState={roleState} />;
         case "retrainer":
             return <RetrainerMenu/>
         case "jailor": 

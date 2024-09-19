@@ -352,17 +352,28 @@ impl Game {
             },
             ToServerPacket::SetErosAction { action } => {
                 if let RoleState::Eros(mut eros) = sender_player_ref.role_state(self).clone(){
-                    eros.action = action.clone();
-                    sender_player_ref.set_role_state(self, RoleState::Eros(eros));
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::ErosActionChosen{ action });
-
-                    //Updates selection if it was invalid
-                    sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
+                    if eros.action != action {
+                        eros.action = action.clone();
+                        sender_player_ref.set_role_state(self, RoleState::Eros(eros));
+                        sender_player_ref.add_private_chat_message(self, ChatMessageVariant::ErosActionChosen{ action });
+    
+                        //Updates selection if it was invalid
+                        sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
+                    }
                 }
             },
             ToServerPacket::RetrainerRetrain { role } => {
                 Retrainer::retrain(self, sender_player_ref, role);
-            }
+            },
+            ToServerPacket::SetWizardAction { action } => {
+                if let RoleState::Wizard(mut wizard) = sender_player_ref.role_state(self).clone(){
+                    if wizard.action != action {
+                        wizard.action = action;
+                        sender_player_ref.set_role_state(self, RoleState::Wizard(wizard));
+                        sender_player_ref.set_selection(self, vec![]);
+                    }
+                }
+            },
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {
                 sender_player_ref.set_fast_forward_vote(self, fast_forward);
             },
