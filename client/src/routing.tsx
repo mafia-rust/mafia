@@ -5,6 +5,10 @@ import StandaloneWiki from "./menu/main/StandaloneWiki";
 import { deleteReconnectData, loadReconnectData } from "./game/localStorage";
 import GAME_MANAGER from ".";
 import StartMenu from "./menu/main/StartMenu";
+import { ShareableGameMode } from "./components/gameModeSettings/gameMode";
+import GameModesEditor from "./components/gameModeSettings/GameModesEditor";
+import parseFromJson from "./components/gameModeSettings/gameMode/dataFixer";
+import { isFailure } from "./components/gameModeSettings/gameMode/parse";
 
 function uriAsFileURI(path: string): string {
     if (path.endsWith('/')) {
@@ -58,6 +62,28 @@ async function routeLobby(anchorController: AnchorController, roomCode: string) 
     }
 }
 
+async function routeGameMode(anchorController: AnchorController, gameModeString: string) {
+    window.history.replaceState({}, "", "/");
+    
+    let gameMode: any;
+    try {
+        gameMode = JSON.parse(gameModeString);
+    } catch {
+        return await route404(anchorController, `/gameMode/?mode=${gameModeString}`);
+    }
+
+    const verifiedGameMode = parseFromJson("ShareableGameMode", gameMode);
+
+    if (isFailure(verifiedGameMode)) {
+        console.log(verifiedGameMode.reason);
+        console.log(verifiedGameMode.snippet);
+        return await route404(anchorController, `/gameMode/?mode=${gameModeString}`);
+    } else {
+        anchorController.setContent(<StartMenu/>)
+        anchorController.setCoverCard(<GameModesEditor initialGameMode={verifiedGameMode.value}/>)
+    }
+}
+
 async function route404(anchorController: AnchorController, path: string) {
     anchorController.setContent(
         <div className="hero" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem" }}>
@@ -89,14 +115,22 @@ async function routeMain(anchorController: AnchorController) {
 }
 
 export default async function route(anchorController: AnchorController, url: Location) {
+
     if (url.pathname.startsWith("/wiki")) {
         return await routeWiki(anchorController, url.pathname.substring(5));
+    } else if (url.pathname.startsWith("/connect")) {
+        const roomCode = new URLSearchParams(url.search).get("code");
+        if (roomCode !== null) {
+            return await routeLobby(anchorController, roomCode);
+        }
+    } else if (url.pathname.startsWith("/gameMode")) {
+        const gameMode = new URLSearchParams(url.search).get("mode");
+        if (gameMode !== null) {
+            return await routeGameMode(anchorController, gameMode);
+        }
     }
 
-    const roomCode = new URLSearchParams(url.search).get("code");
-    if (roomCode !== null) {
-        return await routeLobby(anchorController, roomCode);
-    }
+    
 
     if (url.pathname && url.pathname !== '/') {
         return await route404(anchorController, url.pathname);

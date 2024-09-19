@@ -12,6 +12,8 @@ import "./selectorSection.css";
 import { defaultPhaseTimes } from "../../game/gameState";
 import { GameModeSelector } from "./GameModeSelector";
 import { Helmet } from "react-helmet";
+import { ShareableGameMode } from "./gameMode";
+import parseFromJson from "./gameMode/dataFixer";
 
 const GameModeContext = createContext({
     roleList: [] as RoleList,
@@ -21,10 +23,28 @@ const GameModeContext = createContext({
 export {GameModeContext};
 
 
-export default function GameModesEditor(): ReactElement {
-    const [roleList, setRoleList] = useState<RoleList>([]);
-    const [phaseTimes, setPhaseTimes] = useState<PhaseTimes>(defaultPhaseTimes());
-    const [enabledRoles, setEnabledRoles] = useState<Role[]>([]);
+export default function GameModesEditor(props: Readonly<{
+    initialGameMode?: ShareableGameMode
+}>): ReactElement {
+
+    const [roleList, setRoleList] = useState<RoleList>(()=>{
+        if(props.initialGameMode){
+            return props.initialGameMode.roleList;
+        }
+        return [];
+    });
+    const [phaseTimes, setPhaseTimes] = useState<PhaseTimes>(()=>{
+        if(props.initialGameMode){
+            return props.initialGameMode.phaseTimes;
+        }
+        return defaultPhaseTimes()
+    });
+    const [enabledRoles, setEnabledRoles] = useState<Role[]>(()=>{
+        if(props.initialGameMode){
+            return props.initialGameMode.enabledRoles;
+        }
+        return [];
+    });
 
 
     const onChangeRolePicker = useCallback((value: RoleOutline, index: number) => {
