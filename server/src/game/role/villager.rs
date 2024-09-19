@@ -12,5 +12,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Villager;
 
-impl RoleStateImpl for Villager {}
+pub type ClientRoleState = Villager;
+
+impl RoleStateImpl<ClientRoleState> for Villager {}
 

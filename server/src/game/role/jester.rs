@@ -11,20 +11,22 @@ use crate::game::role_list::Faction;
 use crate::game::verdict::Verdict;
 
 use crate::game::Game;
-use super::{Priority, RoleStateImpl};
+use super::{CustomClientRoleState, Priority, RoleStateImpl};
 
-#[derive(Clone, Serialize, Debug, Default)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug, Default)]
 pub struct Jester {
     lynched_yesterday: bool,
     won: bool,
 }
 
+#[derive(Clone, Serialize, Debug)]
+pub struct ClientRoleState;
+
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Jester {
+impl RoleStateImpl<ClientRoleState> for Jester {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::TopPriority {return;}
         if actor_ref.alive(game) {return;}
@@ -85,5 +87,11 @@ impl RoleStateImpl for Jester {
         {
             game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::JesterWon);
         }
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Jester {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState
     }
 }

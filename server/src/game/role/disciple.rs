@@ -6,8 +6,10 @@ use super::RoleStateImpl;
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Disciple;
 
+pub type ClientRoleState = Disciple;
+
 pub(super) const FACTION: Faction = Faction::Cult;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Disciple {}
+impl RoleStateImpl<ClientRoleState> for Disciple {}

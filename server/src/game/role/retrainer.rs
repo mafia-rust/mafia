@@ -18,6 +18,9 @@ pub struct Retrainer{
     pub backup: Option<PlayerReference>,
     pub retrains_remaining: u8
 }
+
+pub type ClientRoleState = Retrainer;
+
 impl Default for Retrainer {
     fn default() -> Self {
         Self {
@@ -31,7 +34,7 @@ pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Retrainer {
+impl RoleStateImpl<ClientRoleState> for Retrainer {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         
         if priority != Priority::Kill {return}

@@ -11,11 +11,13 @@ use super::{Priority, RoleStateImpl};
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Bouncer;
 
+pub type ClientRoleState = Bouncer;
+
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Bouncer {
+impl RoleStateImpl<ClientRoleState> for Bouncer {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Ward {return;}
         

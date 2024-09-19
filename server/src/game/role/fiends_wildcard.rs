@@ -14,6 +14,9 @@ use super::{RoleStateImpl, Role};
 pub struct FiendsWildcard{
     pub role: Role
 }
+
+pub type ClientRoleState = FiendsWildcard;
+
 impl Default for FiendsWildcard {
     fn default() -> Self {
         Self {
@@ -26,7 +29,7 @@ pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for FiendsWildcard {
+impl RoleStateImpl<ClientRoleState> for FiendsWildcard {
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Night => {

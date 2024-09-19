@@ -9,20 +9,26 @@ use crate::game::role_list::Faction;
 
 use crate::game::visit::Visit;
 use crate::game::Game;
-use super::{Priority, RoleStateImpl, RoleState, Role};
+use super::{CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 
-#[derive(Debug, Clone, Default, Serialize)]
+#[derive(Debug, Clone, Default)]
 pub struct Death{
     souls: u8,
     won: bool,
 }
+
+#[derive(Clone, Debug, Serialize)]
+pub struct ClientRoleState {
+    souls: u8
+}
+
 const NEEDED_SOULS: u8 = 6;
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Death {
+impl RoleStateImpl<ClientRoleState> for Death {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority == Priority::Heal && self.souls >= NEEDED_SOULS{
             actor_ref.set_night_upgraded_defense(game, Some(DefensePower::Invincible))
@@ -81,5 +87,13 @@ impl RoleStateImpl for Death {
             _=>{}
         }
         
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Death {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState {
+            souls: self.souls
+        }
     }
 }

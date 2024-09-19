@@ -22,7 +22,7 @@ use serde::{Deserialize, Serialize};
 use vec1::Vec1;
 
 use crate::{game::{
-    available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess, eros::ErosAction, kira::KiraGuess, ojo::OjoAction, puppeteer::PuppeteerAction, Role, RoleState}, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
+    available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess, eros::ErosAction, kira::KiraGuess, ojo::OjoAction, puppeteer::PuppeteerAction, ClientRoleStatePacket, Role, RoleState}, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
 }, listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log};
 
 #[derive(Serialize, Debug, Clone)]
@@ -106,7 +106,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     YourDeathNote{death_note: Option<String>},
     #[serde(rename_all = "camelCase")]
-    YourRoleState{role_state: RoleState},
+    YourRoleState{role_state: ClientRoleStatePacket},
     #[serde(rename_all = "camelCase")]
     YourSelection{player_indices: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]

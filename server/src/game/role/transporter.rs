@@ -11,11 +11,13 @@ use super::{Priority, RoleStateImpl, Role};
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Transporter;
 
+pub type ClientRoleState = Transporter;
+
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Transporter {
+impl RoleStateImpl<ClientRoleState> for Transporter {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Transporter {return;}
     

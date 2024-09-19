@@ -22,6 +22,8 @@ pub struct Forger {
     pub forged_ref: Option<PlayerReference>
 }
 
+pub type ClientRoleState = Forger;
+
 impl Default for Forger {
     fn default() -> Self {
         Forger {
@@ -37,7 +39,7 @@ pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Forger {
+impl RoleStateImpl<ClientRoleState> for Forger {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return}
 

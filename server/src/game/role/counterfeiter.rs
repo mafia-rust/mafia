@@ -25,6 +25,9 @@ pub struct Counterfeiter{
 
     pub action: CounterfeiterAction
 }
+
+pub type ClientRoleState = Counterfeiter;
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub enum CounterfeiterAction{
@@ -50,7 +53,7 @@ pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Counterfeiter {
+impl RoleStateImpl<ClientRoleState> for Counterfeiter {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
         

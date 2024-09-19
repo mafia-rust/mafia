@@ -17,6 +17,9 @@ pub struct Medium{
     pub seances_remaining: u8,
     pub seanced_target: Option<PlayerReference>
 }
+
+pub type ClientRoleState = Medium;
+
 impl Default for Medium{
     fn default() -> Self {
         Self { seances_remaining: 2, seanced_target: None}
@@ -27,7 +30,7 @@ pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Medium {
+impl RoleStateImpl<ClientRoleState> for Medium {
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
         if let Some(old_target_ref) = self.seanced_target {
             if old_target_ref == target_ref {

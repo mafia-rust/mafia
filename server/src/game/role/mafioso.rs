@@ -13,11 +13,13 @@ use super::{Priority, RoleStateImpl};
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct Mafioso;
 
+pub type ClientRoleState = Mafioso;
+
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Mafioso {
+impl RoleStateImpl<ClientRoleState> for Mafioso {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return}
         if game.day_number() == 1 {return}

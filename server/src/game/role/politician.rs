@@ -10,19 +10,22 @@ use crate::game::role_list::Faction;
 
 use crate::game::Game;
 use super::jester::Jester;
-use super::{RoleStateImpl, Role, RoleState};
+use super::{CustomClientRoleState, Role, RoleState, RoleStateImpl};
 
 
-#[derive(Debug, Clone, Serialize, Default)]
+#[derive(Debug, Clone, Default)]
 pub struct Politician{
     won: bool,
 }
+
+#[derive(Debug, Clone, Serialize)]
+pub struct ClientRoleState;
 
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-impl RoleStateImpl for Politician {
+impl RoleStateImpl<ClientRoleState> for Politician {
     fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
         self.won
     }
@@ -84,6 +87,12 @@ impl RoleStateImpl for Politician {
                 }
             }
         }
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Politician {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState
     }
 }
 

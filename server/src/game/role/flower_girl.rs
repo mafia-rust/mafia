@@ -16,7 +16,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct FlowerGirl;
 
-impl RoleStateImpl for FlowerGirl {
+pub type ClientRoleState = FlowerGirl;
+
+impl RoleStateImpl<ClientRoleState> for FlowerGirl {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_blocked(game) {return}
         if priority != Priority::Investigative {return;}

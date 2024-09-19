@@ -14,7 +14,11 @@ use serde::{Serialize, Deserialize};
 
 use super::{event::before_role_switch::BeforeRoleSwitch, grave::GraveReference};
 
-trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
+trait CustomClientRoleState<CRSP> {
+    fn get_client_role_state(self, game: &Game, actor_ref: PlayerReference) -> CRSP;
+}
+
+trait RoleStateImpl<CRSP>: Clone + std::fmt::Debug + Default + CustomClientRoleState<CRSP> {
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {}
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
 
@@ -45,6 +49,12 @@ trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference) {}
     fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave: GraveReference) {}
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference) {}
+}
+
+impl<T> CustomClientRoleState<T> for T {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> T {
+        self
+    }
 }
 
 // Creates the Role enum
@@ -199,10 +209,15 @@ mod macros {
                 }
             }
 
-            // This does not need to implement Deserialize or PartialEq!
-            // Use Role for those things!
             #[derive(Clone, Debug, Serialize)]
             #[serde(tag = "type", rename_all = "camelCase")]
+            pub enum ClientRoleStatePacket {
+                $($name($file::ClientRoleState)),*
+            }
+
+            // This does not need to implement Deserialize or PartialEq!
+            // Use Role for those things!
+            #[derive(Clone, Debug)]
             pub enum RoleState {
                 $($name($file::$name)),*
             }
@@ -281,6 +296,11 @@ mod macros {
                 pub fn on_game_ending(self, game: &mut Game, actor_ref: PlayerReference){
                     match self {
                         $(Self::$name(role_struct) => role_struct.on_game_ending(game, actor_ref)),*
+                    }
+                }
+                pub fn get_client_role_state(self, game: &Game, actor_ref: PlayerReference) -> ClientRoleStatePacket {
+                    match self {
+                        $(Self::$name(role_struct) => ClientRoleStatePacket::$name(role_struct.get_client_role_state(game, actor_ref))),*
                     }
                 }
             }

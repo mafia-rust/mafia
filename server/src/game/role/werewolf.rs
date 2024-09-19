@@ -14,20 +14,22 @@ use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, RoleStateImpl, Role, RoleState};
+use super::{CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 
-#[derive(Clone, Debug, Serialize, Default)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug, Default)]
 pub struct Werewolf{
     pub tracked_players: Vec<PlayerReference>,
 }
+
+#[derive(Clone, Debug, Serialize)]
+pub struct ClientRoleState;
 
 pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-impl RoleStateImpl for Werewolf {
+impl RoleStateImpl<ClientRoleState> for Werewolf {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Kill => {
@@ -136,5 +138,11 @@ impl RoleStateImpl for Werewolf {
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Werewolf {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState
     }
 }

@@ -13,11 +13,13 @@ use super::{Priority, RoleStateImpl};
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct Psychic;
 
+pub type ClientRoleState = Psychic;
+
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Psychic {
+impl RoleStateImpl<ClientRoleState> for Psychic {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_blocked(game) {return}
 
