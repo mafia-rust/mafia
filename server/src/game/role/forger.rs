@@ -9,7 +9,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::Role;
+use super::{CustomClientRoleState, Role};
 use super::{Priority, RoleState, RoleStateImpl};
 
 
@@ -22,7 +22,13 @@ pub struct Forger {
     pub forged_ref: Option<PlayerReference>
 }
 
-pub type ClientRoleState = Forger;
+#[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ClientRoleState{
+    fake_role: Role,
+    fake_will: String,
+    forges_remaining: u8
+}
 
 impl Default for Forger {
     fn default() -> Self {
@@ -84,5 +90,15 @@ impl RoleStateImpl<ClientRoleState> for Forger {
             forged_ref: None,
             ..self
         }));
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Forger {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState {
+            fake_role: self.fake_role,
+            fake_will: self.fake_will.clone(),
+            forges_remaining: self.forges_remaining,
+        }
     }
 }

@@ -22,8 +22,6 @@ pub struct Mortician {
     obscured_players: Vec<PlayerReference>
 }
 
-// More information is being sent than needed by the client.
-// This should be fixed later
 pub type ClientRoleState = Mortician;
 
 pub(super) const FACTION: Faction = Faction::Mafia;

@@ -112,14 +112,13 @@ export type RoleState = {
 } | {
     type: "informant",
 } | {
-    type: "mortician"
+    type: "mortician",
     obscuredPlayers: PlayerIndex[]
 } | {
     type: "forger",
     fakeRole: Role,
     fakeWill: string,
     forgesRemaining: number,
-    // forgedRef
 } | {
     type: "framer"
 } | {
