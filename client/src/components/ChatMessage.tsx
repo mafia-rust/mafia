@@ -12,6 +12,7 @@ import { RoleOutline, translateRoleOutline } from "../game/roleListState.d";
 import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
+import { WizardAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallWizardMenu";
 import { KiraGuess, KiraGuessResult, kiraGuessTranslate } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import { CopyButton } from "./ClipboardButtons";
 import { useLobbyOrGameState, usePlayerState } from "./useHooks";
@@ -963,6 +964,11 @@ export type ChatMessageVariant = {
     result: {
         guesses: Record<PlayerIndex, [KiraGuess, KiraGuessResult]>
     }
+} | {
+    type: "wizardSpell",
+
+    action: WizardAction
+
 } | {
     type: "martyrFailed"
 } | {

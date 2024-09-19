@@ -119,6 +119,7 @@ macros::roles! {
     Puppeteer: puppeteer,
     Pyrolisk : pyrolisk,
     Kira : kira,
+    Wizard : wizard,
     FiendsWildcard : fiends_wildcard,
 
     Wildcard : wild_card,

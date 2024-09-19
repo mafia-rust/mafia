@@ -15,6 +15,7 @@ import { Role } from "./roleState.d";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
+
 import AudioController from "../menu/AudioController";
 export function createGameManager(): GameManager {
 
@@ -534,6 +535,12 @@ export function createGameManager(): GameManager {
         sendSetPuppeteerAction(action) {
             this.server.sendPacket({
                 type: "setPuppeteerAction",
+                action: action
+            });
+        },
+        sendSetWizardAction(action) {
+            this.server.sendPacket({
+                type: "setWizardAction",
                 action: action
             });
         },

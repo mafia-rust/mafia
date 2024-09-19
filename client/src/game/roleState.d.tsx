@@ -7,6 +7,7 @@ import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/Smal
 import { Hypnotist } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeHypnotistMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
+import { WizardAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallWizardMenu";
 
 export type RoleState = {
     type: "jailor",
@@ -175,6 +176,10 @@ Doomsayer
 } | {
     type: "kira"
     guesses: Record<PlayerIndex, KiraGuess>
+} | {
+    type: "wizard"
+    level: number
+    action: WizardAction
 } | {
     type: "fiendsWildcard"
     role: Role

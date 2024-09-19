@@ -964,6 +964,22 @@
             {"type": "youSurvivedAttack"}
         ]
     },
+    "wizard": {
+        "faction": "fiends",
+        "roleSet": null,
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "wizardSpell"},
+            {"type": "youAttackedSomeone"},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+
+        ]
+    },
     "fiendsWildcard": {
         "faction": "fiends",
         "roleSet": null,

@@ -846,6 +846,7 @@
     "chatMessage.ojoActionChosen.kill": "You choose to kill \\0.",
     "chatMessage.ojoActionChosen.none": "You choose nothing.",
     "chatMessage.kiraResult": "Kira result",
+    "chatMessage.wizardSpell": "You cast \\0 on your target!",
     "chatMessage.puppeteerActionChosen.string": "You choose to string up a marionette.",
     "chatMessage.puppeteerActionChosen.poison": "You choose to poison.",
     "chatMessage.erosActionChosen.loveLink": "You choose to love link.",

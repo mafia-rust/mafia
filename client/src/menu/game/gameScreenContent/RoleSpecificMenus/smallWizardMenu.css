@@ -1,0 +1,5 @@
+.small-role-specific-menu {
+    background-color: var(--background-color);
+    border-top: .13rem solid var(--background-border-color);
+    border-bottom: .13rem solid var(--background-border-shadow-color);
+}
