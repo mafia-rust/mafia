@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 
-use crate::game::phase::PhaseType;
+use crate::game::{attack_power::DefensePower, phase::PhaseType};
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
@@ -9,6 +9,9 @@ use crate::game::Game;
 
 use super::{Priority, RoleState, RoleStateImpl};
 
+pub(super) const FACTION: Faction = Faction::Fiends;
+pub(super) const MAXIMUM_COUNT: Option<u8> = None;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Wizard{
@@ -92,9 +95,6 @@ pub enum WizardAction{
     Ascend,
 }
 
-pub(super) const FACTION: Faction = Faction::Fiends;
-pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
 
 impl RoleStateImpl for Wizard {
     
