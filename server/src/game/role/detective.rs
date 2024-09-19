@@ -16,7 +16,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Detective;
 
-impl RoleStateImpl for Detective {
+pub type ClientRoleState = Detective;
+
+impl RoleStateImpl<ClientRoleState> for Detective {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
 

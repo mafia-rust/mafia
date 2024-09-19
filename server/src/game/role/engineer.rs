@@ -9,23 +9,36 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, Role, RoleState, RoleStateImpl};
+use super::{CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
-#[derive(Default, Clone, Serialize, Debug)]
-#[serde(rename_all = "camelCase")]
+#[derive(Default, Clone, Debug)]
 pub struct Engineer {
     pub trap: Trap
 }
-#[derive(Default, Clone, Serialize, Debug)]
+
+#[derive(Clone, Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct ClientRoleState {
+    trap: ClientTrapState
+}
+
+#[derive(Clone, Serialize, Debug)]
 #[serde(tag = "type")]
 #[serde(rename_all = "camelCase")]
+enum ClientTrapState {
+    Dismantled,
+    Ready,
+    Set
+}
+
+#[derive(Default, Clone, Debug)]
 pub enum Trap {
     #[default]
     Dismantled,
     Ready,
-    #[serde(rename_all = "camelCase")]
     Set{target: PlayerReference}
 }
+
 impl Trap {
     fn state(&self) -> TrapState {
         match self {
@@ -55,7 +68,7 @@ pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Engineer {
+impl RoleStateImpl<ClientRoleState> for Engineer {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Heal => {
@@ -144,6 +157,18 @@ impl RoleStateImpl for Engineer {
                 actor_ref.add_private_chat_message(game, ChatMessageVariant::TrapState { state: self.trap.state() });
             }
             _ => {}
+        }
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Engineer {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState {
+            trap: match self.trap {
+                Trap::Dismantled => ClientTrapState::Dismantled,
+                Trap::Ready => ClientTrapState::Ready,
+                Trap::Set {..} => ClientTrapState::Set,
+            }
         }
     }
 }

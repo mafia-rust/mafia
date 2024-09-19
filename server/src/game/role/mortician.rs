@@ -22,13 +22,15 @@ pub struct Mortician {
     obscured_players: Vec<PlayerReference>
 }
 
+pub type ClientRoleState = Mortician;
+
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 const MAX_CREMATIONS: u8 = 3;
 
-impl RoleStateImpl for Mortician {
+impl RoleStateImpl<ClientRoleState> for Mortician {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return}
 

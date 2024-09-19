@@ -18,6 +18,8 @@ pub struct Auditor{
     pub previously_given_results: Vec<(u8, AuditorResult)>,
 }
 
+pub type ClientRoleState = Auditor;
+
 #[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
@@ -31,7 +33,7 @@ pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Auditor {
+impl RoleStateImpl<ClientRoleState> for Auditor {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
         if priority != Priority::Investigative {return;}

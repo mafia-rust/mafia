@@ -15,8 +15,7 @@ export type RoleState = {
 } | {
     type: "villager"
 } | {
-    type: "mayor",
-    revealed: boolean
+    type: "mayor"
 } | {
     type: "transporter"
 } | {
@@ -25,6 +24,8 @@ export type RoleState = {
     type: "lookout"
 } | {
     type: "spy"
+} | {
+    type: "pyrolisk"
 } | {
     type: "tracker"
 } | {
@@ -53,13 +54,10 @@ export type RoleState = {
     type: "bouncer"
 } | {
     type: "engineer",
-    trap: {type: "dismantled"} | {type: "ready"} | {type: "set", target: PlayerIndex, shouldUnset: boolean}
+    trap: {type: "dismantled"} | {type: "ready"} | {type: "set"}
 } | {
     type: "armorsmith",
     openShopsRemaining: number,
-    // nightOpenShop: boolean,
-    // nightProtectedPlayers: Vec<PlayerReference>,
-    // playersArmor: Vec<PlayerReference>
 } | {
     type: "vigilante",
     state: {type:"notLoaded"} | {type:"willSuicide"} | {type:"loaded",bullets:number} | {type:"suicided"}
@@ -114,18 +112,19 @@ export type RoleState = {
 } | {
     type: "informant",
 } | {
-    type: "mortician"
+    type: "mortician",
     obscuredPlayers: PlayerIndex[]
 } | {
     type: "forger",
     fakeRole: Role,
     fakeWill: string,
     forgesRemaining: number,
-    // forgedRef
 } | {
     type: "framer"
 } | {
     type: "witch"
+} | {
+    type: "necromancer"
 } | {
     type: "mafiaSupportWildcard"
     role: Role
@@ -164,7 +163,6 @@ Doomsayer
     type: "arsonist"
 } | {
     type: "werewolf",
-    trackedPlayers: PlayerIndex[]
 } | {
     type: "ojo"
     chosenAction: OjoAction

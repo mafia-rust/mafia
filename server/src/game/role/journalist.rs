@@ -19,6 +19,9 @@ pub struct Journalist {
     pub journal: String,
     pub interviewed_target: Option<PlayerReference>, 
 }
+
+pub type ClientRoleState = Journalist;
+
 impl Default for Journalist {
     fn default() -> Self {
         Journalist {
@@ -33,7 +36,7 @@ pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Journalist {
+impl RoleStateImpl<ClientRoleState> for Journalist {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if 
             priority == Priority::Investigative &&

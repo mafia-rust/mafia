@@ -153,6 +153,11 @@ function GameModeSelectorPanel(props: {
         enabledRoles
     });
 
+    const shareableGameModeURL = new URL(window.location.href);
+    shareableGameModeURL.pathname = "/gameMode"
+    shareableGameModeURL.searchParams.set("mode", shareableGameModeJsonString)
+    
+
     return <>
         <div className="save-menu">
             {props.canModifySavedGameModes && <>
@@ -179,7 +184,7 @@ function GameModeSelectorPanel(props: {
                         <Icon>save</Icon>
                     </Button>
                 </>}
-                <CopyButton text={window.location.href + "gameMode/?mode=" +shareableGameModeJsonString}>
+                <CopyButton text={shareableGameModeURL.toString()}>
                     <Icon>link</Icon>{verbose ? <> {translate("copyToClipboard")}</> : undefined}
                 </CopyButton>
                 <CopyButton text={shareableGameModeJsonString}>

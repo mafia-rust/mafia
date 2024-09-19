@@ -16,6 +16,9 @@ pub struct Puppeteer{
     pub marionettes_remaining: u8,
     pub action: PuppeteerAction,
 }
+
+pub type ClientRoleState = Puppeteer;
+
 impl Default for Puppeteer{
     fn default() -> Self {
         Self {
@@ -35,7 +38,7 @@ pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-impl RoleStateImpl for Puppeteer {
+impl RoleStateImpl<ClientRoleState> for Puppeteer {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return;}
 

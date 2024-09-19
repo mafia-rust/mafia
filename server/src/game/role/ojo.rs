@@ -15,6 +15,8 @@ pub struct Ojo{
     pub chosen_action: OjoAction,
 }
 
+pub type ClientRoleState = Ojo;
+
 #[derive(Default, Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
@@ -29,7 +31,7 @@ pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-impl RoleStateImpl for Ojo {
+impl RoleStateImpl<ClientRoleState> for Ojo {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         
         match priority {

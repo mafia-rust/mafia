@@ -13,14 +13,17 @@ use crate::game::tag::Tag;
 
 use crate::game::Game;
 use super::jester::Jester;
-use super::{Role, RoleStateImpl};
+use super::{CustomClientRoleState, Role, RoleStateImpl};
 
 
-#[derive(Clone, Serialize, Debug, Default)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug, Default)]
 pub struct RabbleRouser {
     target: RabbleRouserTarget,
 }
+
+#[derive(Clone, Serialize, Debug)]
+pub struct ClientRoleState;
+
 #[derive(Clone, Serialize, Debug, PartialEq, Eq)]
 pub enum RabbleRouserTarget{
     Target(PlayerReference),
@@ -45,7 +48,7 @@ pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-impl RoleStateImpl for RabbleRouser {
+impl RoleStateImpl<ClientRoleState> for RabbleRouser {
     fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
         self.target == RabbleRouserTarget::Won
     }
@@ -94,5 +97,11 @@ impl RoleStateImpl for RabbleRouser {
         if Some(dead_player_ref) == self.target.get_target() && self.target != RabbleRouserTarget::Won {
             actor_ref.set_role(game, RoleState::Jester(Jester::default()))
         }
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for RabbleRouser {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState
     }
 }

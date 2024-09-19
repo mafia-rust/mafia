@@ -10,7 +10,7 @@ use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, Role, RoleState, RoleStateImpl};
+use super::{CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 
 #[derive(Debug, Clone, Serialize)]
@@ -25,6 +25,19 @@ pub struct Counterfeiter{
 
     pub action: CounterfeiterAction
 }
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ClientRoleState{
+    backup: Option<PlayerReference>,
+    
+    pub fake_role: Role,
+    pub fake_will: String,
+    pub forges_remaining: u8,
+
+    pub action: CounterfeiterAction
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub enum CounterfeiterAction{
@@ -50,7 +63,7 @@ pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Counterfeiter {
+impl RoleStateImpl<ClientRoleState> for Counterfeiter {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
         
@@ -189,6 +202,18 @@ impl RoleStateImpl for Counterfeiter {
         }
         else if self.backup.is_some_and(|p|p == dead_player_ref) {
             actor_ref.set_role_state(game, RoleState::Counterfeiter(Counterfeiter{backup: None, ..self}));
+        }
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Counterfeiter{
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState{
+            backup: self.backup,
+            fake_role: self.fake_role,
+            fake_will: self.fake_will,
+            forges_remaining: self.forges_remaining,
+            action: self.action,
         }
     }
 }

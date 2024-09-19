@@ -16,11 +16,13 @@ use rand::prelude::SliceRandom;
 #[serde(rename_all = "camelCase")]
 pub struct Scarecrow;
 
+pub type ClientRoleState = Scarecrow;
+
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Scarecrow {
+impl RoleStateImpl<ClientRoleState> for Scarecrow {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Ward {return;}
         

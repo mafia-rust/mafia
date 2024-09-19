@@ -17,6 +17,10 @@ pub struct Martyr {
     pub state: MartyrState
 }
 
+// More information is being sent than needed by the client.
+// This should be fixed later
+pub type ClientRoleState = Martyr;
+
 #[derive(PartialEq, Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
@@ -40,7 +44,7 @@ pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Martyr {
+impl RoleStateImpl<ClientRoleState> for Martyr {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return}
         let MartyrState::StillPlaying { bullets } = self.state else {return};

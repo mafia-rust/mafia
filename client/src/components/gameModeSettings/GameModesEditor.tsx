@@ -12,7 +12,6 @@ import "./selectorSection.css";
 import { defaultPhaseTimes } from "../../game/gameState";
 import { GameModeSelector } from "./GameModeSelector";
 import { ShareableGameMode } from "./gameMode";
-import parseFromJson from "./gameMode/dataFixer";
 
 const GameModeContext = createContext({
     roleList: [] as RoleList,

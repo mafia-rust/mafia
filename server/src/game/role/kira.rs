@@ -17,6 +17,8 @@ pub struct Kira {
     pub guesses: HashMap<PlayerReference, KiraGuess>,
 }
 
+pub type ClientRoleState = Kira;
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub enum KiraGuess{
@@ -153,7 +155,7 @@ pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-impl RoleStateImpl for Kira {
+impl RoleStateImpl<ClientRoleState> for Kira {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_blocked(game) {return;}
         if !actor_ref.alive(game) {return;}

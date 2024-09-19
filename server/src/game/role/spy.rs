@@ -14,6 +14,8 @@ use super::{Priority, RoleStateImpl};
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Spy;
 
+pub type ClientRoleState = Spy;
+
 #[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum SpyBug{
@@ -27,7 +29,7 @@ pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Spy {
+impl RoleStateImpl<ClientRoleState> for Spy {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Investigative => {

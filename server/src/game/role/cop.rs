@@ -12,21 +12,23 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, RoleState, RoleStateImpl, common_role, Role};
+use super::{common_role, CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 
 
-#[derive(Clone, Serialize, Debug, Default)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug, Default)]
 pub struct Cop {
     target_protected_ref: Option<PlayerReference>
 }
+
+#[derive(Clone, Debug, Serialize)]
+pub struct ClientRoleState;
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Cop {
+impl RoleStateImpl<ClientRoleState> for Cop {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if game.day_number() == 1 {return}
 
@@ -95,5 +97,11 @@ impl RoleStateImpl for Cop {
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         if phase != PhaseType::Night {return;}
         actor_ref.set_role_state(game, RoleState::Cop(Cop {target_protected_ref: None}));
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Cop {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState
     }
 }
