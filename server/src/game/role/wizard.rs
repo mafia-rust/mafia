@@ -39,21 +39,15 @@ pub enum WizardAction{
 impl RoleStateImpl for Wizard {
     
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if let Some(visit) = actor_ref.night_visits(game).first(){
-            let target = visit.target;
+        
             
             if priority == Priority::FinalPriority {
-                actor_ref.set_role_state(game, 
-                    RoleState::Wizard(Wizard{
-                        level: self.level + 1,                        
-                        ..self.clone()
-                    })
-                );
+                self.level += 1;
             }
 
-            match self.action {
+            let wizard_state = match self.action {
                 WizardAction::Meditate => Wizard::spell_meditate(self, game, priority, actor_ref),
-                WizardAction::Poison => Wizard::spell_poison(self, game, priority, actor_ref, target),
+                WizardAction::Poison => Wizard::spell_poison(self, game, priority, actor_ref),
                 WizardAction::Shield => Wizard::spell_shield(self, game, priority, actor_ref),
                 WizardAction::Illusion => Wizard::spell_illusion(self, game, priority, actor_ref),
                 WizardAction::Illuminate => Wizard::spell_illuminate(self, game, priority, actor_ref),
@@ -62,10 +56,12 @@ impl RoleStateImpl for Wizard {
                 WizardAction::Pyrolyze => Wizard::spell_pyrolyze(self, game, priority, actor_ref),
                 WizardAction::Polymorph => Wizard::spell_polymorph(self, game, priority, actor_ref),
                 WizardAction::Smite => Wizard::spell_smite(self, game, priority, actor_ref),
-                WizardAction::Ascend => Wizard::spell_ascend(self, game, priority, actor_ref),
-                _ => {}
-            }
-        }
+                WizardAction::Ascend => Wizard::spell_ascend(self, game, priority, actor_ref)
+                
+            };
+
+            actor_ref.set_role_state(game, RoleState::Wizard(wizard_state));
+
 
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -97,57 +93,58 @@ impl RoleStateImpl for Wizard {
 
 
 impl Wizard {
-    fn spell_meditate(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) {
+    fn spell_meditate(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) -> Wizard{
         if priority == Priority::FinalPriority {
-            actor_ref.set_role_state(game, RoleState::Wizard(Wizard{
+            return Wizard{
                 level: self.level + 1,
                 last_used_action: Some(WizardAction::Meditate),
                 ..self
-            }));
-
-            
+            };
         }
+        self
     }
 
-    fn spell_poison(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference, target_ref: PlayerReference) {
+    fn spell_poison(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) -> Wizard{
         println!("Poisoning");
+        self
     }
 
-    fn spell_shield(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) {
-        println!("Shielding");
+    fn spell_shield(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) -> Wizard{
+        self
     }
 
-    fn spell_illusion(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) {
-        println!("Illusioning");
+    fn spell_illusion(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) -> Wizard{
+        self
     }
 
-    fn spell_illuminate(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) {
-        println!("Illuminating");
+    fn spell_illuminate(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) -> Wizard{
+        self
     }
 
-    fn spell_absorb(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) {
-        println!("Absorbing");
+    fn spell_absorb(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) -> Wizard{
+        self
     }
 
-    fn spell_reflect(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) {
-        println!("Reflecting");
+    fn spell_reflect(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) -> Wizard{
+        self
     }
 
-    fn spell_pyrolyze(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) {
-        println!("Pyrolyzing");
+    fn spell_pyrolyze(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) -> Wizard{
+        self
     }
 
-    fn spell_polymorph(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) {
-        println!("Polymorphing");
+    fn spell_polymorph(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) -> Wizard{
+        self
     }
 
-    fn spell_smite(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) {
-        println!("Smiting");
+    fn spell_smite(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) -> Wizard{
+        self
     }
 
-    fn spell_ascend(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) {
-        println!("Ascending");
+    fn spell_ascend(self, game: &mut Game, priority: Priority, actor_ref: PlayerReference) -> Wizard{
+        self
     }
+
 
     
 }
