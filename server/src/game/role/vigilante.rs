@@ -44,7 +44,7 @@ impl RoleStateImpl<ClientRoleState> for Vigilante {
         match priority{
             Priority::TopPriority => {
                 if VigilanteState::WillSuicide == self.state {
-                    actor_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, AttackPower::ProtectionPiercing, false);
+                    actor_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Suicide, AttackPower::ProtectionPiercing, false);
                     self.state = VigilanteState::Suicided;
                 }
             },
@@ -57,7 +57,7 @@ impl RoleStateImpl<ClientRoleState> for Vigilante {
 
                             let target_ref = visit.target;
 
-                            let killed = target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Vigilante), AttackPower::Basic, false);
+                            let killed = target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Vigilante), AttackPower::Basic, false);
                             self.state = VigilanteState::Loaded { bullets: bullets.saturating_sub(1) };
 
                             if killed && ResolutionState::requires_only_this_resolution_state(game, target_ref, ResolutionState::Town) {

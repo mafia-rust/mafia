@@ -83,7 +83,7 @@ impl RoleStateImpl<ClientRoleState> for Counterfeiter {
                     Priority::Kill => {
                         if let Some(visit) = backup.night_visits(game).first(){
                             let target_ref = visit.target;
-                            target_ref.try_night_kill(
+                            target_ref.try_night_kill_single_attacker(
                                 backup, game, GraveKiller::Faction(Faction::Mafia), AttackPower::Basic, false
                             );
                         }
@@ -111,7 +111,7 @@ impl RoleStateImpl<ClientRoleState> for Counterfeiter {
                     if let Some(visit) = actor_ref.night_visits(game).first(){
                         let target_ref = visit.target;
                 
-                        target_ref.try_night_kill(
+                        target_ref.try_night_kill_single_attacker(
                             actor_ref, game, GraveKiller::Faction(Faction::Mafia), AttackPower::Basic, false
                         );
                     }

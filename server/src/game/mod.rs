@@ -21,6 +21,7 @@ use std::collections::HashMap;
 use std::time::Duration;
 use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
+use components::pitchfork::Pitchfork;
 use components::verdicts_today::VerdictsToday;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
@@ -81,7 +82,8 @@ pub struct Game {
     pub arsonist_doused: ArsonistDoused,
     pub puppeteer_marionette: PuppeteerMarionette,
     pub love_linked: LoveLinked,
-    pub verdicts_today: VerdictsToday
+    pub verdicts_today: VerdictsToday,
+    pub pitchfork: Pitchfork
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -166,7 +168,8 @@ impl Game {
                 arsonist_doused: ArsonistDoused::default(),
                 puppeteer_marionette: PuppeteerMarionette::default(),
                 love_linked: LoveLinked::default(),
-                verdicts_today: VerdictsToday::default()
+                verdicts_today: VerdictsToday::default(),
+                pitchfork: Pitchfork::default()
             };
 
             if !game.game_is_over() {
@@ -386,7 +389,7 @@ impl Game {
 pub mod test {
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, puppeteer_marionette::PuppeteerMarionette, verdicts_today::VerdictsToday},
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, pitchfork::Pitchfork, puppeteer_marionette::PuppeteerMarionette, verdicts_today::VerdictsToday},
         event::on_game_start::OnGameStart,
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
@@ -445,7 +448,8 @@ pub mod test {
             arsonist_doused: ArsonistDoused::default(),
             puppeteer_marionette: PuppeteerMarionette::default(),
             love_linked: LoveLinked::default(),
-            verdicts_today: VerdictsToday::default()
+            verdicts_today: VerdictsToday::default(),
+            pitchfork: Pitchfork::default()
         };
 
         //on role creation needs to be called after all players roles are known

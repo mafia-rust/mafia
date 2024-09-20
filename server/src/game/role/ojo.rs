@@ -73,7 +73,7 @@ impl RoleStateImpl<ClientRoleState> for Ojo {
                             .map(|visit| visit.target)
                             .collect::<Vec<PlayerReference>>()
                     {
-                        player.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Ojo), AttackPower::ArmorPiercing, true);
+                        player.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Ojo), AttackPower::ArmorPiercing, true);
                     }
                 }
             },

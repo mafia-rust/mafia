@@ -39,22 +39,38 @@ impl PlayerReference{
     }
 
     /// Returns true if attack overpowered defense
-    pub fn try_night_kill(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
+    pub fn try_night_kill_single_attacker(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
+        self.try_night_kill(
+            vec![attacker_ref].into_iter().collect(),
+            game,
+            grave_killer,
+            attack,
+            should_leave_death_note
+        )
+    }
+    pub fn try_night_kill(&self, attacker_refs: HashSet<PlayerReference>, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
         self.set_night_attacked(game, true);
 
         if self.night_defense(game).can_block(attack){
             self.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
-            attacker_ref.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
+            for attacker in attacker_refs.iter() {
+                attacker.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
+            }
             return false;
         }
         
         self.push_night_message(game, ChatMessageVariant::YouWereAttacked);
-        attacker_ref.push_night_message(game,ChatMessageVariant::YouAttackedSomeone);
+        for attacker in attacker_refs.iter() {
+            attacker.push_night_message(game,ChatMessageVariant::YouAttackedSomeone);
+        }
 
         self.push_night_grave_killers(game, grave_killer);
+            
         if should_leave_death_note {
-            if let Some(note) = attacker_ref.death_note(game) {
-                self.push_night_grave_death_notes(game, note.clone());
+            for attacker in attacker_refs {
+                if let Some(note) = attacker.death_note(game) {
+                    self.push_night_grave_death_notes(game, note.clone());
+                }
             }
         }
         
@@ -65,23 +81,14 @@ impl PlayerReference{
 
         true
     }
-    pub fn try_night_kill_anonymous(&self, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower) -> bool {
-        self.set_night_attacked(game, true);
-
-        if self.night_defense(game).can_block(attack) {
-            self.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
-            return false;
-        }
-        
-        self.push_night_message(game, ChatMessageVariant::YouWereAttacked);
-
-        self.push_night_grave_killers(game, grave_killer);        
-
-        if !self.alive(game) { return true }
-
-        self.set_night_died(game, true);
-
-        true
+    pub fn try_night_kill_no_attacker(&self, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower) -> bool {
+        self.try_night_kill(
+            HashSet::new(),
+            game,
+            grave_killer,
+            attack,
+            false
+        )
     }
 
     /**

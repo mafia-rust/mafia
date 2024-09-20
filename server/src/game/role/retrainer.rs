@@ -49,7 +49,7 @@ impl RoleStateImpl<ClientRoleState> for Retrainer {
                     let target_ref = visit.target;
             
                     game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackupKilled { backup: backup.index() });
-                    target_ref.try_night_kill(
+                    target_ref.try_night_kill_single_attacker(
                         backup, game, GraveKiller::Faction(Faction::Mafia), AttackPower::Basic, false
                     );
                 }
@@ -59,7 +59,7 @@ impl RoleStateImpl<ClientRoleState> for Retrainer {
         } else if let Some(visit) = actor_ref.night_visits(game).first(){
             let target_ref = visit.target;
     
-            target_ref.try_night_kill(
+            target_ref.try_night_kill_single_attacker(
                 actor_ref, game, GraveKiller::Faction(Faction::Mafia), AttackPower::Basic, false
             );
         }        

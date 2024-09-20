@@ -79,7 +79,7 @@ impl RoleStateImpl<ClientRoleState> for Marksman {
                     
                     if !visiting_players.contains(&mark) {continue};
                     
-                    let killed = mark.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Marksman), AttackPower::Basic, false);
+                    let killed = mark.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Marksman), AttackPower::Basic, false);
 
                     if killed && ResolutionState::requires_only_this_resolution_state(game, mark, ResolutionState::Town) {
                         self.state = MarksmanState::ShotTownie;
