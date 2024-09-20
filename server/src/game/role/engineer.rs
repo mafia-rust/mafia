@@ -102,7 +102,7 @@ impl RoleStateImpl<ClientRoleState> for Engineer {
                             attacker.night_visits(game).iter().any(|visit| visit.target == target && visit.attack) &&
                             attacker != actor_ref
                         {
-                            attacker.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Engineer), AttackPower::ArmorPiercing, false);
+                            attacker.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Engineer), AttackPower::ArmorPiercing, false);
                         }
                     }
                 }

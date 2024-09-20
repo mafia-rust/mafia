@@ -46,7 +46,7 @@ impl RoleStateImpl<ClientRoleState> for Jester {
                 *target_ref
             },
         };
-        player.try_night_kill(actor_ref, game, 
+        player.try_night_kill_single_attacker(actor_ref, game, 
             crate::game::grave::GraveKiller::Role(super::Role::Jester), AttackPower::ProtectionPiercing, true
         );
     }
