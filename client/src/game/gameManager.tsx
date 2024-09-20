@@ -562,6 +562,12 @@ export function createGameManager(): GameManager {
                 forfeit
             });
         },
+        sendPitchforkVotePacket(player: PlayerIndex | null) {
+            this.server.sendPacket({
+                type: "pitchforkVote",
+                player: player
+            });
+        },
 
         messageListener(serverMessage) {
             messageListener(serverMessage);

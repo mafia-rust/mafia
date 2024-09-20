@@ -660,6 +660,8 @@
     "defense.2:var.3": "Protection",
     "defense.3": "Invincible",
     "vision": "Vision",
+    "pitchfork": "Pitchfork",
+    "pitchfork.description": "Vote for a player to kill. If 2 3rds of town aligned players votes for the same player, that player is attacked.",
     "nobodyDiedLastNight": "Nobody died last night.",
     "nobody": "nobody",
     

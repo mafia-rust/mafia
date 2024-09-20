@@ -3,13 +3,7 @@ use std::collections::HashMap;
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender},
-    event::on_fast_forward::OnFastForward,
-    phase::{PhaseState, PhaseType},
-    player::{PlayerIndex, PlayerReference},
-    role::{kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, retrainer::Retrainer, Role, RoleState}, role_list::{Faction, RoleSet}, 
-    spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
-    Game
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, retrainer::Retrainer, Role, RoleState}, role_list::{Faction, RoleSet}, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
 
@@ -373,6 +367,9 @@ impl Game {
                 {
                     sender_player_ref.set_forfeit_vote(self, forfeit);
                 }
+            },
+            ToServerPacket::PitchforkVote { player } => {
+                Pitchfork::player_votes_for_angry_mob_action(self, sender_player_ref, player);
             }
             _ => {
                 log!(fatal "Game"; "Unimplemented ToServerPacket: {incoming_packet:?}");
