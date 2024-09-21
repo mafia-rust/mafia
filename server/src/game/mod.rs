@@ -16,6 +16,7 @@ pub mod event;
 pub mod spectator;
 pub mod game_listeners;
 pub mod attack_power;
+pub mod modifiers;
 
 use std::collections::HashMap;
 use std::time::Duration;
@@ -23,6 +24,7 @@ use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
 use components::pitchfork::Pitchfork;
 use components::verdicts_today::VerdictsToday;
+use modifiers::Modifiers;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::Serialize;
@@ -83,7 +85,10 @@ pub struct Game {
     pub puppeteer_marionette: PuppeteerMarionette,
     pub love_linked: LoveLinked,
     pub verdicts_today: VerdictsToday,
-    pub pitchfork: Pitchfork
+    pub pitchfork: Pitchfork,
+
+    //Game modifiers
+    pub modifiers: Modifiers
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -161,6 +166,7 @@ impl Game {
                 players: new_players.into_boxed_slice(),
                 graves: Vec::new(),
                 phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
+                modifiers: Modifiers::from_settings(settings.enabled_modifiers.clone()),
                 settings,
 
                 cult: Cult::default(),
@@ -169,7 +175,8 @@ impl Game {
                 puppeteer_marionette: PuppeteerMarionette::default(),
                 love_linked: LoveLinked::default(),
                 verdicts_today: VerdictsToday::default(),
-                pitchfork: Pitchfork::default()
+                pitchfork: Pitchfork::default(),
+
             };
 
             if !game.game_is_over() {
@@ -449,7 +456,9 @@ pub mod test {
             puppeteer_marionette: PuppeteerMarionette::default(),
             love_linked: LoveLinked::default(),
             verdicts_today: VerdictsToday::default(),
-            pitchfork: Pitchfork::default()
+            pitchfork: Pitchfork::default(),
+
+            modifiers: Default::default(),
         };
 
         //on role creation needs to be called after all players roles are known
