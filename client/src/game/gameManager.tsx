@@ -448,6 +448,12 @@ export function createGameManager(): GameManager {
                 roles: roles
             });
         },
+        sendEnabledModifiersPacket(modifiers) {
+            this.server.sendPacket({
+                type: "setEnabledModifiers",
+                modifiers: modifiers
+            });
+        },
 
         sendSetDoomsayerGuess(guesses) {
             this.server.sendPacket({

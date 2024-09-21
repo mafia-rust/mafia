@@ -23,17 +23,10 @@ use vec1::Vec1;
 
 use crate::{
     game::{
-        available_buttons::AvailableButtons,
-        chat::{ChatGroup, ChatMessage},
-        grave::Grave,
-        phase::{PhaseState, PhaseType},
-        player::{PlayerIndex, PlayerReference},
-        role::{
+        available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
             counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess, eros::ErosAction,
             kira::KiraGuess, ojo::OjoAction, puppeteer::PuppeteerAction, ClientRoleStatePacket, Role
-        }, 
-        role_list::{RoleList, RoleOutline}, 
-        settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
+        }, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
     }, 
     listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log
 };
@@ -88,6 +81,8 @@ pub enum ToClientPacket{
     PhaseTimes{phase_time_settings: PhaseTimeSettings},
     #[serde(rename_all = "camelCase")]
     EnabledRoles{roles: Vec<Role>},
+    #[serde(rename_all = "camelCase")]
+    EnabledModifiers{modifiers: Vec<ModifierType>},
 
     // Game
     
@@ -208,6 +203,9 @@ pub enum ToServerPacket{
     SetPhaseTimes{phase_time_settings: PhaseTimeSettings},
     #[serde(rename_all = "camelCase")]
     SetEnabledRoles{roles: Vec<Role>},
+    #[serde(rename_all = "camelCase")]
+    SetEnabledModifiers{modifiers: Vec<ModifierType>},
+
     BackToLobby,
 
     // Game

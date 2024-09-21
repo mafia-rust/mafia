@@ -21,7 +21,6 @@ pub enum ModifierState{
 }
 #[derive(Clone, Serialize, Deserialize, PartialEq, Eq, Debug, Hash)]
 #[serde(rename_all = "camelCase")]
-#[serde(tag = "type")]
 pub enum ModifierType{
     ObscuredGraves,
 }
