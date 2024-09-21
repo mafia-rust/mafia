@@ -647,9 +647,6 @@
     "noForge": "No Forge",
     "retrain": "Retrain",
     "loveLink": "Love Link",
-    "modifiers": "Modifiers",
-    "obscuredGraves": "Obscured Graves",
-    "randomLoveLinks": "Random Love Links",
     "poison": "Poison",
     "string": "String",
     "defense": "Defense",
@@ -665,6 +662,9 @@
     "vision": "Vision",
     "nobodyDiedLastNight": "Nobody died last night.",
     "nobody": "nobody",
+    "modifiers": "Modifiers",
+    "obscuredGraves": "Obscured Graves",
+    "randomLoveLinks": "Random Love Links",
     
     "simplify":"Simplify",
     "backToLobby": "Back To Lobby",
@@ -1077,7 +1077,7 @@
     "wiki.article.standard.loveLinked.title:var.2": "Love Links",
     "wiki.article.standard.loveLinked.title:var.3": "Broken Hearts",
     "wiki.article.standard.loveLinked.title:var.4": "Love Linking",
-    "wiki.article.standard.loveLinked.text": "2 players who are love linked are told who each other are. If one dies, the other dies of a broken heart. Cupid love link players.",
+    "wiki.article.standard.loveLinked.text": "2 players who are love linked are told who each other are. If one dies, the other dies of a broken heart. Cupid and Eros can love link players. So can the love link game modifier.",
 
     "wiki.article.standard.howToPlay.title":"How To Play",
     "wiki.article.standard.howToPlay.title:var.0":"Phase",
@@ -1103,6 +1103,18 @@
     "wiki.article.standard.graveyard.title:var.0":"Grave yard",
     "wiki.article.standard.graveyard.text":"The graveyard can help keep track of what roles are in the game and who has them\n- The outline list on the left shows what roles can be in the game\n    - Click on an outline to cross it out to help keep track of what roles people are.\n- The graves on the right show who is dead\n   - If you click on a grave, you can see what their alibi and role was, as well as other related information",
     
+
+    "wiki.article.standard.modifiers.title":"Modifiers",
+    "wiki.article.standard.modifiers.title:var.0":"Modifier",
+    "wiki.article.standard.modifiers.text":"A game modifier is a setting set before the game that changes the game somehow. Some examples are the obscured graves modifier and the random love links modifier.",
+
+    "wiki.article.standard.obscuredGraves.title":"Obscured Graves",
+    "wiki.article.standard.obscuredGraves.text":"Obscured Graves is a game modifier that makes it so all graves are obscured.",
+
+    "wiki.article.standard.randomLoveLinks.title":"Random Love Links",
+    "wiki.article.standard.randomLoveLinks.text":"Random Love Links is a game modifier that makes it so all players are love linked to a random player. The game is set up such that all players are love linked to at least 1 other player, and at most 1 player is love linked to more than 1 other player.",
+
+
     "wiki.article.standard.nobody.title":"Nobody",
     "wiki.article.standard.nobody.title:var.0":"No body",
     "wiki.article.standard.nobody.title:var.1":"No one",
