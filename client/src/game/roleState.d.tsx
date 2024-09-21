@@ -70,6 +70,8 @@ export type RoleState = {
 } | {
     type: "deputy"
 } | {
+    type: "farmer"
+} | {
     type: "escort"
 } | {
     type: "medium",

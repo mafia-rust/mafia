@@ -29,7 +29,7 @@ pub enum KiraGuess{
     Jailor, Villager,
     Detective, Lookout, Tracker, Psychic, Philosopher, Gossip, Auditor, Snoop, Spy, FlowerGirl,
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith,
-    Vigilante, Veteran, Marksman, Deputy,
+    Vigilante, Veteran, Marksman, Deputy, Farmer,
     Escort, Medium, Retributionist, Journalist, Mayor, Transporter
 }
 impl KiraGuess{
@@ -60,6 +60,7 @@ impl KiraGuess{
             Role::Veteran => Some(Self::Veteran),
             Role::Marksman => Some(Self::Marksman),
             Role::Deputy => Some(Self::Deputy),
+            Role::Farmer => Some(Self::Farmer),
 
             Role::Escort => Some(Self::Escort),
             Role::Medium => Some(Self::Medium),

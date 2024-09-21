@@ -84,6 +84,7 @@ macros::roles! {
     Veteran : veteran,
     Marksman: marksman,
     Deputy : deputy,
+    Farmer : farmer,
 
     Escort : escort,
     Medium : medium,

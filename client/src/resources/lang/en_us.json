@@ -342,6 +342,9 @@
     "role.deputy.name": "Deputy",
     "role.deputy.name:var.0": "Deputies",
     "role.deputy.dayTarget": "Shoot",
+    
+    "role.farmer.name": "Farmer",
+    "role.farmer.name:var.0": "Farmers",
 
     "role.godfather.name": "Godfather",
     "role.godfather.name:var.0": "Godfathers",
@@ -1266,6 +1269,11 @@
     "wiki.article.role.vigilante.abilities":"* Visit a player to attack and spend a bullet\n* If you kill a townie you will commit suicide on the following night\n* You have three bullets",
     "wiki.article.role.vigilante.attributes":"* If your attack overpowers a player who exclusively wins with towns defense and they die, you commit suicide on the following night\n* When it is night one, when you have 0 bullets left, when you are going to commit suicide, or when you have already committed suicide, you can not select or attack anyone",
     "wiki.article.role.vigilante.extra": "* You only have a basic attack\n* Even while dead, killing someone requires and spends a bullet (such as when you get possessed)",
+
+    "wiki.article.role.farmer.guide":"- If a Farmer is alive in the game, everyone can vote using the pitchfork menu\n- If 2/3rds of town aligned players vote the same player, that player is killed\n- This ability can be used up to 3 times\n- The pitchfork menu stays open at all times, regardless of weather or not it can be used",
+    "wiki.article.role.farmer.abilities":"- You and all other farmers are told when the pitchfork attacks someone, or if the attacked player has defense and survive\n- You don't visit due to your ability\n- The pitchfork can only be used to kill someone up to 3 times",
+    "wiki.article.role.farmer.attributes":"- Anyone who doesn't exclusively win with town is not counted as a voter for the pitchfork\n- The attack is indirect and protection piercing",
+    "wiki.article.role.farmer.extra":"\n- The pitchfork menu stays available at all times\n   - Even if all farmers are dead\n    - Even if there is no farmer\n    - Even if all three uses are consumed\n- Multiple farmers does not mean multiple attacks or more uses. There is a maximum of 3 uses and a maximum of 1 attack per night",
 
     "wiki.article.role.veteran.guide": "- At night, you can select yourself to gain protected defense for the night and rampage yourself, attacking everyone who visits you\n- You can only use your ability three times\n- You can't use your ability on night 1\n* You should try to trick evil players into visiting you, so you can block the attack and kill them. Try to avoid killing unnecessary townies.\n* There can only be one veteran in a game.",
     "wiki.article.role.veteran.abilities":"* Select yourself\n    - rampage yourself\n    - gain protected defense for the night",
