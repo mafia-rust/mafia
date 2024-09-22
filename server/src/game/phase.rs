@@ -31,11 +31,11 @@ pub enum PhaseState {
     Obituary,
     Discussion,
     #[serde(rename_all = "camelCase")]
-    Nomination { trials_left: u8 },
+    Nomination { trials_left: u8, nomination_time_remaining: Duration },
     #[serde(rename_all = "camelCase")]
-    Testimony { trials_left: u8, player_on_trial: PlayerReference },
+    Testimony { trials_left: u8, player_on_trial: PlayerReference, nomination_time_remaining: Duration },
     #[serde(rename_all = "camelCase")]
-    Judgement { trials_left: u8, player_on_trial: PlayerReference },
+    Judgement { trials_left: u8, player_on_trial: PlayerReference, nomination_time_remaining: Duration },
     #[serde(rename_all = "camelCase")]
     FinalWords { player_on_trial: PlayerReference },
     Dusk,
@@ -59,6 +59,14 @@ impl PhaseStateMachine {
         }
     }
 
+    pub fn get_time_remaining(&self) -> Duration {
+        self.time_remaining
+    }
+
+    pub fn set_time_remaining(&mut self, time: Duration) {
+        self.time_remaining = time;
+    }
+
     pub fn next_phase(game: &mut Game, force_next_phase: Option<PhaseState>) {
         BeforePhaseEnd::new(game.current_phase().phase()).invoke(game);
         let mut new_phase = PhaseState::end(game);
@@ -68,15 +76,19 @@ impl PhaseStateMachine {
         }
 
         game.phase_machine.current_state = new_phase;
-        game.phase_machine.time_remaining = game.settings.phase_times.get_time_for(game.current_phase().phase());
-
-        //if there are less than 3 players alive then the game is sped up by 2x
-        if PlayerReference::all_players(game).filter(|p|p.alive(game)).count() <= 3{
-            game.phase_machine.time_remaining /= 2;
-        }
+        game.phase_machine.time_remaining = PhaseStateMachine::get_start_time(game, game.current_phase().phase());
 
         PhaseState::start(game);
         OnPhaseStart::new(game.current_phase().phase()).invoke(game);
+    }
+
+    pub fn get_start_time(game: &Game, phase: PhaseType) -> Duration {
+        let mut time = game.settings.phase_times.get_time_for(phase);
+        //if there are less than 3 players alive then the game is sped up by 2x
+        if PlayerReference::all_players(game).filter(|p|p.alive(game)).count() <= 3{
+            time /= 2;
+        }
+        time
     }
 }
 
@@ -121,7 +133,9 @@ impl PhaseState {
 
                 game.phase_machine.day_number += 1;
             },
-            PhaseState::Nomination { trials_left } => {
+            PhaseState::Nomination { trials_left, nomination_time_remaining } => {
+                game.phase_machine.set_time_remaining(nomination_time_remaining);
+
                 let required_votes = game.nomination_votes_required();
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::TrialInformation { required_votes, trials_left });
                 
@@ -161,15 +175,18 @@ impl PhaseState {
                 Self::Discussion
             },
             PhaseState::Discussion => {
-                Self::Nomination { trials_left: 3 }
+                Self::Nomination {
+                    trials_left: 3,
+                    nomination_time_remaining: PhaseStateMachine::get_start_time(game, PhaseType::Nomination)
+                }
             },
             PhaseState::Nomination {..} => {                
                 Self::Dusk
             },
-            &PhaseState::Testimony { trials_left, player_on_trial } => {
-                Self::Judgement { trials_left, player_on_trial }
+            &PhaseState::Testimony { trials_left, player_on_trial, nomination_time_remaining } => {
+                Self::Judgement { trials_left, player_on_trial, nomination_time_remaining }
             },
-            &PhaseState::Judgement { trials_left, player_on_trial } => {
+            &PhaseState::Judgement { trials_left, player_on_trial, nomination_time_remaining } => {
 
                 game.add_messages_to_chat_group(ChatGroup::All, 
                 PlayerReference::all_players(game)
@@ -196,7 +213,7 @@ impl PhaseState {
                 } else if trials_left == 0 {
                     Self::Dusk
                 }else{
-                    Self::Nomination { trials_left }
+                    Self::Nomination { trials_left, nomination_time_remaining }
                 }
             },
             &PhaseState::FinalWords { player_on_trial } => {

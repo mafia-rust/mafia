@@ -1,7 +1,5 @@
 use crate::game::{
-    grave::GraveReference,
-    player::PlayerReference,
-    Game
+    grave::GraveReference, modifiers::Modifiers, player::PlayerReference, Game
 };
 
 
@@ -17,6 +15,8 @@ impl OnGraveAdded{
         for player in PlayerReference::all_players(game){
             player.on_grave_added(game, self.grave)
         }
+
+        Modifiers::on_grave_added(game, self.grave);
 
         game.on_grave_added(self.grave);
     }

@@ -7,6 +7,7 @@ import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/Smal
 import { Hypnotist } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeHypnotistMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
+import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
 
 export type RoleState = {
     type: "jailor",
@@ -15,8 +16,7 @@ export type RoleState = {
 } | {
     type: "villager"
 } | {
-    type: "mayor",
-    revealed: boolean
+    type: "mayor"
 } | {
     type: "transporter"
 } | {
@@ -25,6 +25,8 @@ export type RoleState = {
     type: "lookout"
 } | {
     type: "spy"
+} | {
+    type: "pyrolisk"
 } | {
     type: "tracker"
 } | {
@@ -53,13 +55,10 @@ export type RoleState = {
     type: "bouncer"
 } | {
     type: "engineer",
-    trap: {type: "dismantled"} | {type: "ready"} | {type: "set", target: PlayerIndex, shouldUnset: boolean}
+    trap: {type: "dismantled"} | {type: "ready"} | {type: "set"}
 } | {
     type: "armorsmith",
     openShopsRemaining: number,
-    // nightOpenShop: boolean,
-    // nightProtectedPlayers: Vec<PlayerReference>,
-    // playersArmor: Vec<PlayerReference>
 } | {
     type: "vigilante",
     state: {type:"notLoaded"} | {type:"willSuicide"} | {type:"loaded",bullets:number} | {type:"suicided"}
@@ -71,6 +70,8 @@ export type RoleState = {
     state: {type:"notLoaded"} | {type:"shotTownie"} | {type: "marks", marks: PlayerIndex[]}
 } | {
     type: "deputy"
+} | {
+    type: "rabbleRouser"
 } | {
     type: "escort"
 } | {
@@ -102,8 +103,18 @@ export type RoleState = {
     forgesRemaining: number,
     backup: PlayerIndex | null
 } | {
+    type: "recruiter",
+    action: RecruiterAction,
+    recruitsRemaining: number
+    backup: PlayerIndex | null
+} | {
     type: "mafioso"
-} | 
+} | {
+    type: "mafiaKillingWildcard"
+    role: Role
+} | {
+    type: "madeMan"
+} |
 (Hypnotist & {type: "hypnotist"})
  | {
     type: "consort"
@@ -112,25 +123,26 @@ export type RoleState = {
 } | {
     type: "informant",
 } | {
-    type: "mortician"
+    type: "mortician",
     obscuredPlayers: PlayerIndex[]
 } | {
     type: "forger",
     fakeRole: Role,
     fakeWill: string,
     forgesRemaining: number,
-    // forgedRef
 } | {
     type: "framer"
 } | {
     type: "witch"
+} | {
+    type: "necromancer"
 } | {
     type: "mafiaSupportWildcard"
     role: Role
 } | {
     type: "jester"
 } | {
-    type: "rabbleRouser"
+    type: "revolutionary"
 } | 
 Doomsayer 
 | {
@@ -162,7 +174,6 @@ Doomsayer
     type: "arsonist"
 } | {
     type: "werewolf",
-    trackedPlayers: PlayerIndex[]
 } | {
     type: "ojo"
     chosenAction: OjoAction

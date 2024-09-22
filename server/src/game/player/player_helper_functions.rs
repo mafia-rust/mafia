@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use crate::game::
 {
-    chat::{ChatGroup, ChatMessageVariant}, components::{arsonist_doused::ArsonistDoused, puppeteer_marionette::PuppeteerMarionette}, event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, grave::{Grave, GraveKiller, GraveReference}, resolution_state::ResolutionState, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
+    attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessageVariant}, components::{arsonist_doused::ArsonistDoused, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette}, event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, grave::{Grave, GraveKiller, GraveReference}, resolution_state::ResolutionState, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
 };
 
 use super::PlayerReference;
@@ -39,22 +39,38 @@ impl PlayerReference{
     }
 
     /// Returns true if attack overpowered defense
-    pub fn try_night_kill(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: u8, should_leave_death_note: bool) -> bool {
+    pub fn try_night_kill_single_attacker(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
+        self.try_night_kill(
+            &vec![attacker_ref].into_iter().collect(),
+            game,
+            grave_killer,
+            attack,
+            should_leave_death_note
+        )
+    }
+    pub fn try_night_kill(&self, attacker_refs: &HashSet<PlayerReference>, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
         self.set_night_attacked(game, true);
 
-        if self.night_defense(game) >= attack {
+        if self.night_defense(game).can_block(attack){
             self.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
-            attacker_ref.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
+            for attacker in attacker_refs.iter() {
+                attacker.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
+            }
             return false;
         }
         
         self.push_night_message(game, ChatMessageVariant::YouWereAttacked);
-        attacker_ref.push_night_message(game,ChatMessageVariant::YouAttackedSomeone);
+        for attacker in attacker_refs.iter() {
+            attacker.push_night_message(game,ChatMessageVariant::YouAttackedSomeone);
+        }
 
         self.push_night_grave_killers(game, grave_killer);
+            
         if should_leave_death_note {
-            if let Some(note) = attacker_ref.death_note(game) {
-                self.push_night_grave_death_notes(game, note.clone());
+            for attacker in attacker_refs {
+                if let Some(note) = attacker.death_note(game) {
+                    self.push_night_grave_death_notes(game, note.clone());
+                }
             }
         }
         
@@ -65,23 +81,14 @@ impl PlayerReference{
 
         true
     }
-    pub fn try_night_kill_anonymous(&self, game: &mut Game, grave_killer: GraveKiller, attack: u8) -> bool {
-        self.set_night_attacked(game, true);
-
-        if self.night_defense(game) >= attack {
-            self.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
-            return false;
-        }
-        
-        self.push_night_message(game, ChatMessageVariant::YouWereAttacked);
-
-        self.push_night_grave_killers(game, grave_killer);        
-
-        if !self.alive(game) { return true }
-
-        self.set_night_died(game, true);
-
-        true
+    pub fn try_night_kill_no_attacker(&self, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower) -> bool {
+        self.try_night_kill(
+            &HashSet::new(),
+            game,
+            grave_killer,
+            attack,
+            false
+        )
     }
 
     /**
@@ -182,8 +189,8 @@ impl PlayerReference{
 
         OnRoleSwitch::new(*self, old, self.role_state(game).clone()).invoke(game);
     }
-    pub fn increase_defense_to(&self, game: &mut Game, defense: u8){
-        if self.night_defense(game) < defense {
+    pub fn increase_defense_to(&self, game: &mut Game, defense: DefensePower){
+        if defense.is_stronger(self.night_defense(game)) {
             self.set_night_upgraded_defense(game, Some(defense));
         }
     }
@@ -233,7 +240,7 @@ impl PlayerReference{
         map
     }
 
-    pub fn defense(&self, game: &Game) -> u8 {
+    pub fn defense(&self, game: &Game) -> DefensePower {
         if game.current_phase().is_night() {
             self.night_defense(game)
         }else{
@@ -252,6 +259,7 @@ impl PlayerReference{
         ArsonistDoused::has_suspicious_aura_douse(game, *self)
     }
     pub fn required_resolution_states_for_win(&self, game: &Game) -> Option<HashSet<ResolutionState>> {
+        if MafiaRecruits::is_recruited(game, *self) {return Some(vec![ResolutionState::Mafia].into_iter().collect());}
         if PuppeteerMarionette::is_marionette(game, *self) {return Some(vec![ResolutionState::Fiends].into_iter().collect());}
         ResolutionState::required_resolution_states_for_win(self.role(game))
     }
@@ -302,6 +310,12 @@ impl PlayerReference{
     }
     pub fn on_game_ending(&self, game: &mut Game){
         self.role_state(game).clone().on_game_ending(game, *self)
+    }
+    pub fn on_game_start(&self, game: &mut Game){
+        self.role_state(game).clone().on_game_start(game, *self)
+    }
+    pub fn before_initial_role_creation(&self, game: &mut Game){
+        self.role_state(game).clone().before_initial_role_creation(game, *self)
     }
 }
 

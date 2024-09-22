@@ -1,5 +1,6 @@
 use serde::{Serialize, Deserialize};
 
+use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -13,6 +14,9 @@ use super::{RoleStateImpl, Role};
 pub struct FiendsWildcard{
     pub role: Role
 }
+
+pub type ClientRoleState = FiendsWildcard;
+
 impl Default for FiendsWildcard {
     fn default() -> Self {
         Self {
@@ -23,9 +27,9 @@ impl Default for FiendsWildcard {
 
 pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for FiendsWildcard {
+impl RoleStateImpl<ClientRoleState> for FiendsWildcard {
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Night => {

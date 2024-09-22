@@ -1,25 +1,27 @@
 use serde::Serialize;
 
-use crate::game::grave::Grave;
+use crate::game::{attack_power::DefensePower, grave::Grave};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
-use super::{Priority, RoleState, RoleStateImpl};
+use super::{CustomClientRoleState, Priority, RoleState, RoleStateImpl};
 
 
-#[derive(Clone, Debug, Serialize, Default)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug, Default)]
 pub struct Minion{
     currently_used_player: Option<PlayerReference> 
 }
 
+#[derive(Clone, Debug, Serialize)]
+pub struct ClientRoleState;
+
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Minion {
+impl RoleStateImpl<ClientRoleState> for Minion {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
             actor_ref.set_role_state(game, RoleState::Minion(Minion{
@@ -66,5 +68,11 @@ impl RoleStateImpl for Minion {
         if phase == PhaseType::Night {
             actor_ref.set_role_state(game, RoleState::Minion(Minion { currently_used_player: None }));
         }
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Minion {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState
     }
 }

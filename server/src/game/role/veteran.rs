@@ -1,18 +1,24 @@
 use serde::Serialize;
 
-use crate::game::grave::GraveKiller;
+use crate::game::attack_power::AttackPower;
+use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::Game;
 
-use super::{Priority, RoleState, Role, RoleStateImpl};
+use super::{CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
-#[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
+#[derive(Debug, Clone)]
 pub struct Veteran { 
     alerts_remaining: u8, 
     alerting_tonight: bool 
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ClientRoleState {
+    alerts_remaining: u8
 }
 
 impl Default for Veteran {
@@ -26,9 +32,9 @@ impl Default for Veteran {
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Veteran {
+impl RoleStateImpl<ClientRoleState> for Veteran {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::TopPriority => {
@@ -45,7 +51,7 @@ impl RoleStateImpl for Veteran {
             }
             Priority::Heal=>{
                 if !self.alerting_tonight {return}
-                actor_ref.increase_defense_to(game, 2);
+                actor_ref.increase_defense_to(game, DefensePower::Protection);
             }
             Priority::Kill => {
                 if !self.alerting_tonight {return}
@@ -56,7 +62,7 @@ impl RoleStateImpl for Veteran {
                         *other_player_ref != actor_ref
                     ).collect::<Vec<PlayerReference>>()
                 {
-                    other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Veteran), 2, false);
+                    other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Veteran), AttackPower::ArmorPiercing, false);
                 }
             }
             _=>{}
@@ -72,5 +78,13 @@ impl RoleStateImpl for Veteran {
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         actor_ref.set_role_state(game, RoleState::Veteran(Veteran { alerts_remaining: self.alerts_remaining, alerting_tonight: false }));   
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Veteran {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState {
+            alerts_remaining: self.alerts_remaining
+        }
     }
 }

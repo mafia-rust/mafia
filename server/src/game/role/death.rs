@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
@@ -8,23 +9,29 @@ use crate::game::role_list::Faction;
 
 use crate::game::visit::Visit;
 use crate::game::Game;
-use super::{Priority, RoleStateImpl, RoleState, Role};
+use super::{CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 
-#[derive(Debug, Clone, Default, Serialize)]
+#[derive(Debug, Clone, Default)]
 pub struct Death{
     souls: u8,
     won: bool,
 }
+
+#[derive(Clone, Debug, Serialize)]
+pub struct ClientRoleState {
+    souls: u8
+}
+
 const NEEDED_SOULS: u8 = 6;
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Death {
+impl RoleStateImpl<ClientRoleState> for Death {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority == Priority::Heal && self.souls >= NEEDED_SOULS{
-            actor_ref.set_night_upgraded_defense(game, Some(3))
+            actor_ref.set_night_upgraded_defense(game, Some(DefensePower::Invincible))
         }
 
         if priority != Priority::Investigative {return;}
@@ -62,7 +69,7 @@ impl RoleStateImpl for Death {
                 if self.souls >= NEEDED_SOULS {
                     for player in PlayerReference::all_players(game){
                         if !player.alive(game){continue;}
-                        if player.defense(game) >= 3 {
+                        if player.defense(game).can_block(AttackPower::ProtectionPiercing) {
                             player.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
                             actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
                 
@@ -80,5 +87,13 @@ impl RoleStateImpl for Death {
             _=>{}
         }
         
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Death {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState {
+            souls: self.souls
+        }
     }
 }

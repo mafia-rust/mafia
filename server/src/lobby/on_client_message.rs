@@ -4,8 +4,8 @@ use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, pl
 
 use super::{lobby_client::{LobbyClient, LobbyClientID, LobbyClientType}, name_validation::{self, sanitize_server_name}, Lobby, LobbyState};
 
-pub const MESSAGE_PER_SECOND_LIMIT: u64 = 2;
-pub const MESSAGE_PER_SECOND_LIMIT_TIME: Duration = Duration::from_secs(2);
+pub const MESSAGE_PER_SECOND_LIMIT: u64 = 1;
+pub const MESSAGE_PER_SECOND_LIMIT_TIME: Duration = Duration::from_secs(10);
 
 impl Lobby {
     pub fn on_client_message(&mut self, send: &ClientSender, lobby_client_id: LobbyClientID, incoming_packet: ToServerPacket){
@@ -17,6 +17,7 @@ impl Lobby {
             ToServerPacket::Target { .. } |
             ToServerPacket::DayTarget { .. } |
             ToServerPacket::SendMessage { .. } |
+            ToServerPacket::SendLobbyMessage { .. } |
             ToServerPacket::SendWhisper { .. } => {
                 let LobbyState::Game { clients, .. } = &mut self.lobby_state else {
                     return;
@@ -313,6 +314,16 @@ impl Lobby {
                 settings.enabled_roles = roles.into_iter().collect();
                 let roles = settings.enabled_roles.clone().into_iter().collect();
                 self.send_to_all(ToClientPacket::EnabledRoles { roles });
+            }
+            ToServerPacket::SetEnabledModifiers {modifiers } => {
+                let LobbyState::Lobby{ settings, .. } = &mut self.lobby_state else {
+                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", lobby_client_id);
+                    return;
+                };
+
+                settings.enabled_modifiers = modifiers.into_iter().collect();
+                let modifiers = settings.enabled_modifiers.clone().into_iter().collect();
+                self.send_to_all(ToClientPacket::EnabledModifiers { modifiers });
             }
             ToServerPacket::Leave => {
                 self.remove_player(lobby_client_id);

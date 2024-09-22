@@ -5,6 +5,7 @@ use rand::seq::SliceRandom;
 
 use serde::Serialize;
 
+use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::grave::GraveKiller;
 use crate::game::player::{PlayerIndex, PlayerReference};
@@ -13,20 +14,22 @@ use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, RoleStateImpl, Role, RoleState};
+use super::{CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 
-#[derive(Clone, Debug, Serialize, Default)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug, Default)]
 pub struct Werewolf{
     pub tracked_players: Vec<PlayerReference>,
 }
 
+#[derive(Clone, Debug, Serialize)]
+pub struct ClientRoleState;
+
 pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 1;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-impl RoleStateImpl for Werewolf {
+impl RoleStateImpl<ClientRoleState> for Werewolf {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Kill => {
@@ -44,9 +47,9 @@ impl RoleStateImpl for Werewolf {
                             target_ref.all_visitors(game).into_iter().filter(|p|actor_ref!=*p)
                             .collect::<Vec<PlayerReference>>()
                         {
-                            other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
+                            other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
                         }
-                        target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
+                        target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
                     },
 
 
@@ -61,7 +64,7 @@ impl RoleStateImpl for Werewolf {
                                     jailor_ref.role(game) == Role::Jailor &&
                                     jailor_ref.night_visits(game).iter().all(|visit|visit.target!=actor_ref)
                                 {
-                                    jailor_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
+                                    jailor_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
                                 }
                             }
                         }else{
@@ -69,7 +72,7 @@ impl RoleStateImpl for Werewolf {
                                 actor_ref.all_visitors(game).into_iter().filter(|p|actor_ref!=*p)
                                 .collect::<Vec<PlayerReference>>()
                             {
-                                other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Werewolf), 2, true);
+                                other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
                             }
                         }
                     },
@@ -135,5 +138,11 @@ impl RoleStateImpl for Werewolf {
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Werewolf {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState
     }
 }

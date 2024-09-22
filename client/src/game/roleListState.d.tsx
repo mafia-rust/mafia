@@ -55,12 +55,12 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
         case "townProtective":
             return ["bodyguard", "cop", "doctor", "bouncer", "engineer", "armorsmith"];
         case "townKilling":
-            return ["vigilante", "veteran", "deputy", "marksman"];
+            return ["vigilante", "veteran", "deputy", "marksman", "rabbleRouser"];
         case "townSupport":
             return ["medium", "retributionist", "transporter", "escort", "mayor", "journalist"];
         case "mafiaKilling":
             return [
-                "godfather", "eros", "counterfeiter", "retrainer", "mafioso"
+                "godfather", "eros", "counterfeiter", "retrainer", "recruiter", "mafioso"
             ];
         case "mafiaSupport":
             return [
@@ -69,7 +69,7 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
                 "witch", "necromancer", "cupid"
             ];
         case "neutralEvil":
-            return ["jester", "rabbleRouser", "politician", "doomsayer", "minion", "scarecrow"];
+            return ["jester", "revolutionary", "politician", "doomsayer", "minion", "scarecrow"];
     }
 }
 

@@ -2,7 +2,8 @@
 use rand::seq::SliceRandom;
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::attack_power::AttackPower;
+use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -11,21 +12,23 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, RoleState, RoleStateImpl, common_role, Role};
+use super::{common_role, CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 
 
-#[derive(Clone, Serialize, Debug, Default)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug, Default)]
 pub struct Cop {
     target_protected_ref: Option<PlayerReference>
 }
 
+#[derive(Clone, Debug, Serialize)]
+pub struct ClientRoleState;
+
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Cop {
+impl RoleStateImpl<ClientRoleState> for Cop {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if game.day_number() == 1 {return}
 
@@ -34,7 +37,7 @@ impl RoleStateImpl for Cop {
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
                 let target_ref = visit.target;
 
-                target_ref.increase_defense_to(game, 2);
+                target_ref.increase_defense_to(game, DefensePower::Protection);
                 actor_ref.set_role_state(game, RoleState::Cop(Cop {target_protected_ref: Some(target_ref)}));
             }
             Priority::Kill => {
@@ -70,7 +73,7 @@ impl RoleStateImpl for Cop {
                 }
 
                 if let Some(player_to_attack) = player_to_attack{
-                    player_to_attack.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Cop), 1, false);
+                    player_to_attack.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Cop), AttackPower::Basic, false);
                 }
             }
             Priority::Investigative => {
@@ -94,5 +97,11 @@ impl RoleStateImpl for Cop {
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         if phase != PhaseType::Night {return;}
         actor_ref.set_role_state(game, RoleState::Cop(Cop {target_protected_ref: None}));
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Cop {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState
     }
 }

@@ -3,13 +3,7 @@ use std::collections::HashMap;
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender},
-    event::on_fast_forward::OnFastForward,
-    phase::{PhaseState, PhaseType},
-    player::{PlayerIndex, PlayerReference},
-    role::{kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, retrainer::Retrainer, Role, RoleState}, role_list::{Faction, RoleSet}, 
-    spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
-    Game
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, recruiter::RecruiterAction, retrainer::Retrainer, Role, RoleState}, role_list::{Faction, RoleSet}, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
 
@@ -248,6 +242,12 @@ impl Game {
                         }
                         sender_player_ref.set_role_state(self, RoleState::MafiaSupportWildcard(mafia_wild_card));
                     }
+                    RoleState::MafiaKillingWildcard(mut mafia_wild_card) => {
+                        if RoleSet::MafiaKilling.get_roles().contains(&role) {
+                            mafia_wild_card.role = role;
+                        }
+                        sender_player_ref.set_role_state(self, RoleState::MafiaKillingWildcard(mafia_wild_card));
+                    }
                     RoleState::FiendsWildcard(mut fiends_wild_card) => {
                         if role.faction() == Faction::Fiends {
                             fiends_wild_card.role = role;
@@ -321,7 +321,7 @@ impl Game {
                         auditor.chosen_outline = None;
                     }
 
-                    if  self.roles_to_players.get(index as usize).is_some() && 
+                    if  self.roles_originally_generated.get(index as usize).is_some() && 
                         !auditor.previously_given_results.iter().any(|(i, _)| *i == index)
                     {
                         auditor.chosen_outline = Some(index);
@@ -350,6 +350,19 @@ impl Game {
                     sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
                 }
             },
+            ToServerPacket::SetRecruiterAction { action } => {
+                if let RoleState::Recruiter(mut pup) = sender_player_ref.role_state(self).clone(){
+                    pup.action = action.clone();
+                    if pup.recruits_remaining == 0 {
+                        pup.action = RecruiterAction::Kill;
+                    }
+                    sender_player_ref.set_role_state(self, RoleState::Recruiter(pup));
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::RecruiterActionChosen { action });
+                    
+                    //Updates selection if it was invalid
+                    sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
+                }
+            },
             ToServerPacket::SetErosAction { action } => {
                 if let RoleState::Eros(mut eros) = sender_player_ref.role_state(self).clone(){
                     eros.action = action.clone();
@@ -373,6 +386,9 @@ impl Game {
                 {
                     sender_player_ref.set_forfeit_vote(self, forfeit);
                 }
+            },
+            ToServerPacket::PitchforkVote { player } => {
+                Pitchfork::player_votes_for_angry_mob_action(self, sender_player_ref, player);
             }
             _ => {
                 log!(fatal "Game"; "Unimplemented ToServerPacket: {incoming_packet:?}");

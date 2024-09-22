@@ -20,10 +20,16 @@ import ErosMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/ErosMenu"
 import CounterfeiterMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/CounterfeiterMenu";
 import RetrainerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/RetrainerMenu";
 import { useGameState, usePlayerState } from "./useHooks";
+import RecruiterMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
 
 export default function RoleSpecificSection(){
     const phaseState = useGameState(
         gameState => gameState.phaseState,
+        ["phase"]
+    )!;
+
+    const dayNumber = useGameState(
+        gameState => gameState.dayNumber,
         ["phase"]
     )!;
 
@@ -132,9 +138,17 @@ export default function RoleSpecificSection(){
                 marionettesRemaining={roleState.marionettesRemaining}
                 phase={phaseState.type}
             />;
+        case "recruiter":
+            return <RecruiterMenu 
+                action={roleState.action} 
+                remaining={roleState.recruitsRemaining}
+                dayNumber={dayNumber}
+                phase={phaseState.type}
+            />;
         case "wildcard":
         case "trueWildcard":
         case "mafiaSupportWildcard":
+        case "mafiaKillingWildcard":
         case "fiendsWildcard": {
             return <WildcardRoleSpecificMenu roleState={roleState} />
         }
@@ -260,7 +274,7 @@ function MediumRoleSpecificMenu(props: Readonly<{
 }
 
 function WildcardRoleSpecificMenu(props: Readonly<{
-    roleState: RoleState & { type: "wildcard" | "trueWildcard" | "mafiaSupportWildcard" | "fiendsWildcard" }
+    roleState: RoleState & { type: "wildcard" | "trueWildcard" | "mafiaSupportWildcard" | "mafiaKillingWildcard" | "fiendsWildcard" }
 }>): ReactElement {
     const enabledRoles = useGameState(
         gameState => gameState.enabledRoles,
@@ -277,6 +291,14 @@ function WildcardRoleSpecificMenu(props: Readonly<{
                     rle === "mafiaSupportWildcard" ||
                     (
                         ROLES[rle as keyof typeof ROLES].roleSet === "mafiaSupport" &&
+                        enabledRoles.includes(rle as Role)
+                    )
+                ).map((r)=>r as Role)
+            case "mafiaKillingWildcard":
+                return Object.keys(ROLES).filter((rle)=>
+                    rle === "mafiaKillingWildcard" ||
+                    (
+                        ROLES[rle as keyof typeof ROLES].roleSet === "mafiaKilling" &&
                         enabledRoles.includes(rle as Role)
                     )
                 ).map((r)=>r as Role)

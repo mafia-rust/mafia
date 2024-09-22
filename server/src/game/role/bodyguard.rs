@@ -1,7 +1,8 @@
 
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::attack_power::AttackPower;
+use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -9,7 +10,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, RoleState, Role, RoleStateImpl};
+use super::{CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -17,6 +18,12 @@ pub struct Bodyguard {
     self_shields_remaining: u8,
     target_protected_ref: Option<PlayerReference>,
     redirected_player_refs: Vec<PlayerReference>
+}
+
+#[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ClientRoleState {
+    self_shields_remaining: u8
 }
 
 impl Default for Bodyguard {
@@ -31,9 +38,9 @@ impl Default for Bodyguard {
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Bodyguard {
+impl RoleStateImpl<ClientRoleState> for Bodyguard {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Bodyguard => {
@@ -76,12 +83,12 @@ impl RoleStateImpl for Bodyguard {
                     }));
                     
                     
-                    target_ref.increase_defense_to(game, 2);
+                    target_ref.increase_defense_to(game, DefensePower::Protection);
                 }
             },
             Priority::Kill => {
                 for redirected_player_ref in self.redirected_player_refs {
-                    redirected_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Bodyguard), 2, false);
+                    redirected_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Bodyguard), AttackPower::ArmorPiercing, false);
                 }
             }
             Priority::Investigative => {
@@ -108,5 +115,13 @@ impl RoleStateImpl for Bodyguard {
         let redirected_player_refs = Vec::new();
         let target_protected_ref = None;
         actor_ref.set_role_state(game, RoleState::Bodyguard(Bodyguard { self_shields_remaining: self.self_shields_remaining, redirected_player_refs, target_protected_ref }));
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Bodyguard {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState {
+            self_shields_remaining: self.self_shields_remaining
+        }
     }
 }

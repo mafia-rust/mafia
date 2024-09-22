@@ -3,6 +3,7 @@ use std::collections::HashSet;
 
 use serde::Serialize;
 
+use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -18,6 +19,9 @@ pub struct Journalist {
     pub journal: String,
     pub interviewed_target: Option<PlayerReference>, 
 }
+
+pub type ClientRoleState = Journalist;
+
 impl Default for Journalist {
     fn default() -> Self {
         Journalist {
@@ -30,9 +34,9 @@ impl Default for Journalist {
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Journalist {
+impl RoleStateImpl<ClientRoleState> for Journalist {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if 
             priority == Priority::Investigative &&
@@ -126,4 +130,5 @@ impl RoleStateImpl for Journalist {
         }
         
     }
+    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {}
 }

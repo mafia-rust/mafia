@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -18,6 +18,8 @@ pub struct Auditor{
     pub previously_given_results: Vec<(u8, AuditorResult)>,
 }
 
+pub type ClientRoleState = Auditor;
+
 #[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
@@ -29,9 +31,9 @@ pub enum AuditorResult{
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Auditor {
+impl RoleStateImpl<ClientRoleState> for Auditor {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
         if priority != Priority::Investigative {return;}
@@ -39,7 +41,7 @@ impl RoleStateImpl for Auditor {
 
         let Some(chosen_outline) = self.chosen_outline else {return;};
 
-        let (role, _) = match game.roles_to_players.get(chosen_outline as usize) {
+        let (role, _) = match game.roles_originally_generated.get(chosen_outline as usize) {
             Some(map) => *map,
             None => unreachable!("Auditor role outline not found")
         };
@@ -83,7 +85,7 @@ impl RoleStateImpl for Auditor {
     fn convert_selection_to_visits(self, game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         let Some(chosen_outline) = self.chosen_outline else {return vec![]};
 
-        let (_, player) = match game.roles_to_players.get(chosen_outline as usize) {
+        let (_, player) = match game.roles_originally_generated.get(chosen_outline as usize) {
             Some(map) => *map,
             None => unreachable!("Auditor role outline not found")
         };

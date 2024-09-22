@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 
@@ -20,6 +20,9 @@ pub struct Hypnotist{
     pub you_were_possessed_message: bool,
     pub your_target_was_jailed_message: bool,
 }
+
+pub type ClientRoleState = Hypnotist;
+
 impl Default for Hypnotist {
     fn default() -> Self {
         Self {
@@ -35,9 +38,9 @@ impl Default for Hypnotist {
 }
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Hypnotist {
+impl RoleStateImpl<ClientRoleState> for Hypnotist {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         let Some(visit) = actor_ref.night_visits(game).first() else {
             return;

@@ -1,24 +1,27 @@
 use serde::Serialize;
 
-use crate::game::phase::PhaseType;
+use crate::game::{attack_power::DefensePower, phase::PhaseType};
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{Priority, RoleState, RoleStateImpl};
+use super::{CustomClientRoleState, Priority, RoleState, RoleStateImpl};
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-#[derive(Clone, Debug, Default, Serialize)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug, Default)]
 pub struct Retributionist { 
     used_bodies: Vec<PlayerReference>, 
     currently_used_player: Option<PlayerReference> 
 }
-impl RoleStateImpl for Retributionist {
+
+#[derive(Clone, Debug, Serialize)]
+pub struct ClientRoleState;
+
+impl RoleStateImpl<ClientRoleState> for Retributionist {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
             let mut used_bodies = self.used_bodies;
@@ -63,5 +66,11 @@ impl RoleStateImpl for Retributionist {
         if phase == PhaseType::Night {
             actor_ref.set_role_state(game, RoleState::Retributionist(Retributionist { used_bodies: self.used_bodies, currently_used_player: None }));
         }
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Retributionist {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState
     }
 }

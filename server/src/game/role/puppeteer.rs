@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::game::components::puppeteer_marionette::PuppeteerMarionette;
+use crate::game::attack_power::AttackPower;
+use crate::game::{attack_power::DefensePower, components::puppeteer_marionette::PuppeteerMarionette};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -15,6 +16,9 @@ pub struct Puppeteer{
     pub marionettes_remaining: u8,
     pub action: PuppeteerAction,
 }
+
+pub type ClientRoleState = Puppeteer;
+
 impl Default for Puppeteer{
     fn default() -> Self {
         Self {
@@ -32,9 +36,9 @@ pub enum PuppeteerAction{
 
 pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 1;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-impl RoleStateImpl for Puppeteer {
+impl RoleStateImpl<ClientRoleState> for Puppeteer {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return;}
 
@@ -43,9 +47,14 @@ impl RoleStateImpl for Puppeteer {
             
             match self.action {
                 PuppeteerAction::String => {
-                    PuppeteerMarionette::string(game, target);
-                    self.marionettes_remaining -= 1;
-                    actor_ref.set_role_state(game, RoleState::Puppeteer(self));
+                    if AttackPower::ArmorPiercing.can_pierce(target.defense(game)) {
+                        if PuppeteerMarionette::string(game, target){
+                            self.marionettes_remaining -= 1;
+                        }
+                        actor_ref.set_role_state(game, RoleState::Puppeteer(self));
+                    }else{
+                        PuppeteerMarionette::poison(game, target);
+                    }
                 }
                 PuppeteerAction::Poison => {
                     PuppeteerMarionette::poison(game, target);

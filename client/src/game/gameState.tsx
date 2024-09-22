@@ -6,7 +6,7 @@ export function defaultPhaseTimes(): PhaseTimes {
         briefing: 20,
         obituary: 10,
         discussion: 100,
-        nomination: 60,
+        nomination: 120,
         testimony: 30,
         judgement: 30,
         finalWords: 7,
@@ -24,8 +24,9 @@ export function createLobbyState(): LobbyState {
         myId: null,
 
         roleList: [],
-        enabledRoles: [],
         phaseTimes: defaultPhaseTimes(),
+        enabledRoles: [],
+        enabledModifiers: [],
 
         players: new Map<LobbyClientID, LobbyClient>(),
         chatMessages: [],
@@ -51,6 +52,7 @@ export function createGameState(): GameState {
         roleList: [],
         enabledRoles: [],
         phaseTimes: defaultPhaseTimes(),
+        enabledModifiers: [],
 
         ticking: true,
 
@@ -78,6 +80,7 @@ export function createPlayerGameState(): PlayerGameState {
         judgement: "abstain",
 
         forfeitVote: false,
+        pitchforkVote: null,
 
         sendChatGroups: [],
     }

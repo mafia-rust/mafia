@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::attack_power::DefensePower;
 use crate::game::{chat::ChatMessageVariant, components::verdicts_today::VerdictsToday};
 use crate::game::resolution_state::ResolutionState;
 use crate::game::player::PlayerReference;
@@ -10,12 +11,14 @@ use super::{Priority, RoleStateImpl};
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct FlowerGirl;
 
-impl RoleStateImpl for FlowerGirl {
+pub type ClientRoleState = FlowerGirl;
+
+impl RoleStateImpl<ClientRoleState> for FlowerGirl {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_blocked(game) {return}
         if priority != Priority::Investigative {return;}

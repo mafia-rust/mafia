@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::components::love_linked::LoveLinked;
+use crate::game::{attack_power::DefensePower, components::love_linked::LoveLinked};
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
@@ -12,11 +12,13 @@ use super::{same_evil_team, Priority, RoleStateImpl};
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Cupid;
 
+pub type ClientRoleState = Cupid;
+
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Cupid {
+impl RoleStateImpl<ClientRoleState> for Cupid {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Cupid => {

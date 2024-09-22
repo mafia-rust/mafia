@@ -337,6 +337,19 @@
             {"type": "youAttackedSomeone"}
         ]
     },
+    "rabbleRouser": {
+        "faction": "town",
+        "roleSet": "townKilling",
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youAttackedSomeone"}
+        ]
+    },
     "escort": {
         "faction": "town",
         "roleSet": "townSupport",
@@ -512,8 +525,27 @@
         "roleSpecificMenu": true,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
+            {"type": "godfatherBackup", "backup": null},
+            {"type": "godfatherBackup", "backup": 26},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
+        ]
+    },
+    "recruiter": {
+        "faction": "mafia",
+        "roleSet": "mafiaKilling",
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[
+            {"type": "godfatherBackup", "backup": null},
+            {"type": "godfatherBackup", "backup": 26},
+            {"type": "recruiterPlayerIsNowRecruit","player": 40},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "recruiterActionChosen", "action": "kill"},
+            {"type": "recruiterActionChosen", "action": "recruit"}
         ]
     },
     "mafioso": {
@@ -527,6 +559,29 @@
         "chatMessages":[
             {"type": "someoneSurvivedYourAttack"}
         ]
+    },
+    "mafiaKillingWildcard": {
+        "faction": "mafia",
+        "roleSet": null,
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "roleAssignment", "role":"mafiaKillingWildcard"},
+            {"type": "wildcardConvertFailed", "role": "godfather"}
+        ]
+    },
+    "madeMan": {
+        "faction": "mafia",
+        "roleSet": null,
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": false,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[]
     },
     "hypnotist": {
         "faction": "mafia",
@@ -704,7 +759,7 @@
             {"type": "jesterWon"}
         ]
     },
-    "rabbleRouser": {
+    "revolutionary": {
         "faction": "neutral",
         "roleSet": "neutralEvil",
         "armor": true,
@@ -713,7 +768,7 @@
         "roleSpecificMenu": false,
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
-            {"type": "rabbleRouserWon"},
+            {"type": "revolutionaryWon"},
             {"type": "youSurvivedAttack"}
         ]
     },

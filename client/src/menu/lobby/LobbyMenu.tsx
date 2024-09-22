@@ -18,6 +18,7 @@ import { GameModeSelector } from "../../components/gameModeSettings/GameModeSele
 import LobbyChatMenu from "./LobbyChatMenu";
 import { useLobbyState } from "../../components/useHooks";
 import { Button } from "../../components/Button";
+import { EnabledModifiersDisplay } from "../../components/gameModeSettings/EnabledModifiersDisplay";
 
 export default function LobbyMenu(): ReactElement {
     const isSpectator = useLobbyState(
@@ -115,6 +116,14 @@ function LobbyMenuSettings(props: Readonly<{
                 GAME_MANAGER.sendSetRoleListPacket(gameMode.roleList);
             }}
         />}
+        <EnabledModifiersDisplay
+            disabled={!props.isHost}
+            enabledModifiers={useLobbyState(
+                lobbyState => lobbyState.enabledModifiers,
+                ["enabledModifiers"]
+            )!}
+            onChange={modifiers => GAME_MANAGER.sendEnabledModifiersPacket(modifiers)}
+        />
         <PhaseTimesSelector 
             disabled={!props.isHost}
             onChange={pts => GAME_MANAGER.sendSetPhaseTimesPacket(pts)}

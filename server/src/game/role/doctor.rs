@@ -1,20 +1,25 @@
 
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, RoleState, RoleStateImpl};
+use super::{CustomClientRoleState, Priority, RoleState, RoleStateImpl};
 
-#[derive(Clone, Serialize, Debug)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug)]
 pub struct Doctor {
     self_heals_remaining: u8,
     target_healed_ref: Option<PlayerReference>
+}
+
+#[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ClientRoleState {
+    self_heals_remaining: u8
 }
 
 impl Default for Doctor {
@@ -28,9 +33,9 @@ impl Default for Doctor {
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Doctor {
+impl RoleStateImpl<ClientRoleState> for Doctor {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::TopPriority => {
@@ -45,7 +50,7 @@ impl RoleStateImpl for Doctor {
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
                 let target_ref = visit.target;
 
-                target_ref.increase_defense_to(game, 2);
+                target_ref.increase_defense_to(game, DefensePower::Protection);
 
                 if actor_ref == target_ref{
                     actor_ref.set_role_state(game, RoleState::Doctor(Doctor{
@@ -85,5 +90,13 @@ impl RoleStateImpl for Doctor {
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         actor_ref.set_role_state(game, RoleState::Doctor(Doctor {self_heals_remaining: self.self_heals_remaining, target_healed_ref: None}));
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Doctor {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState {
+            self_heals_remaining: self.self_heals_remaining
+        }
     }
 }

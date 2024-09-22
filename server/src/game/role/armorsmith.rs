@@ -2,22 +2,27 @@ use rand::thread_rng;
 use rand::seq::SliceRandom;
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, RoleState, RoleStateImpl};
+use super::{CustomClientRoleState, Priority, RoleState, RoleStateImpl};
 
-#[derive(Clone, Serialize, Debug)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug)]
 pub struct Armorsmith {
     open_shops_remaining: u8,
     night_open_shop: bool,
     night_protected_players: Vec<PlayerReference>,
     players_armor: Vec<PlayerReference>
+}
+
+#[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ClientRoleState {
+    open_shops_remaining: u8
 }
 
 impl Default for Armorsmith {
@@ -33,9 +38,9 @@ impl Default for Armorsmith {
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Armorsmith {
+impl RoleStateImpl<ClientRoleState> for Armorsmith {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Armorsmith => {
@@ -56,16 +61,16 @@ impl RoleStateImpl for Armorsmith {
             }
             Priority::Heal => {
                 for player in self.players_armor.iter(){
-                    player.increase_defense_to(game, 2);
+                    player.increase_defense_to(game, DefensePower::Protection);
                 }
 
                 if self.night_open_shop {
-                    actor_ref.increase_defense_to(game, 2);
+                    actor_ref.increase_defense_to(game, DefensePower::Protection);
 
                     let visitors = actor_ref.all_visitors(game);
 
                     for visitor in visitors.iter(){
-                        visitor.increase_defense_to(game, 2);
+                        visitor.increase_defense_to(game, DefensePower::Protection);
                     }
 
                     if let Some(random_visitor) = visitors.choose(&mut thread_rng()) {
@@ -124,5 +129,13 @@ impl RoleStateImpl for Armorsmith {
                 night_protected_players: Vec::new(),
                 ..self
             }));
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Armorsmith {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState {
+            open_shops_remaining: self.open_shops_remaining
+        }
     }
 }

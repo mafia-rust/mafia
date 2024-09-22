@@ -97,6 +97,7 @@ export function RoomLinkButton(): JSX.Element {
     const code = useLobbyOrGameState(
         state => {
             const code = new URL(window.location.href);
+            code.pathname = "/connect"
             code.searchParams.set("code", state.roomCode.toString(18))
             return code;
         }, ["acceptJoin", "backToLobby"]

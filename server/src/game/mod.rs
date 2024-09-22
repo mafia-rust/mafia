@@ -15,12 +15,18 @@ pub mod tag;
 pub mod event;
 pub mod spectator;
 pub mod game_listeners;
+pub mod attack_power;
+pub mod modifiers;
 
 use std::collections::HashMap;
 use std::time::Duration;
 use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
+use components::pitchfork::Pitchfork;
+use components::mafia_recruits::MafiaRecruits;
 use components::verdicts_today::VerdictsToday;
+use modifiers::Modifiers;
+use event::before_initial_role_creation::BeforeInitialRoleCreation;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::Serialize;
@@ -63,7 +69,7 @@ pub struct Game {
     pub spectators: Vec<Spectator>,
     pub spectator_chat_messages: Vec<ChatMessageVariant>,
 
-    pub roles_to_players: Vec<(Role, PlayerReference)>,
+    pub roles_originally_generated: Vec<(Role, PlayerReference)>,
 
     pub players: Box<[Player]>,
     pub graves: Vec<Grave>,
@@ -79,8 +85,13 @@ pub struct Game {
     pub mafia: Mafia,
     pub arsonist_doused: ArsonistDoused,
     pub puppeteer_marionette: PuppeteerMarionette,
+    pub mafia_recruits: MafiaRecruits,
     pub love_linked: LoveLinked,
-    pub verdicts_today: VerdictsToday
+    pub verdicts_today: VerdictsToday,
+    pub pitchfork: Pitchfork,
+
+    //Game modifiers
+    pub modifiers: Modifiers
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -151,21 +162,25 @@ impl Game {
             drop(shuffled_roles); // Ensure we don't use the order of roles anywhere
 
             let game = Self{
-                roles_to_players: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
+                roles_originally_generated: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
                 ticking: true,
                 spectators: spectators.clone().into_iter().map(Spectator::new).collect(),
                 spectator_chat_messages: Vec::new(),
                 players: new_players.into_boxed_slice(),
                 graves: Vec::new(),
                 phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
+                modifiers: Modifiers::from_settings(settings.enabled_modifiers.clone()),
                 settings,
 
                 cult: Cult::default(),
                 mafia: Mafia,
                 arsonist_doused: ArsonistDoused::default(),
                 puppeteer_marionette: PuppeteerMarionette::default(),
+                mafia_recruits: MafiaRecruits::default(),
                 love_linked: LoveLinked::default(),
-                verdicts_today: VerdictsToday::default()
+                verdicts_today: VerdictsToday::default(),
+                pitchfork: Pitchfork::default(),
+
             };
 
             if !game.game_is_over() {
@@ -177,9 +192,10 @@ impl Game {
         if game.game_is_over() {
             return Err(RejectStartReason::RoleListCannotCreateRoles);
         }
-
         
         game.send_packet_to_all(ToClientPacket::StartGame);
+
+        BeforeInitialRoleCreation::invoke(&mut game);
         
         //on role creation needs to be called after all players roles are known
         for player_ref in PlayerReference::all_players(&game){
@@ -194,6 +210,7 @@ impl Game {
             spectator.send_join_game_data(&mut game);
         }
 
+        //on game start needs to be called after all players have joined
         OnGameStart::invoke(&mut game);
 
         Ok(game)
@@ -230,7 +247,7 @@ impl Game {
     }
     pub fn count_votes_and_start_trial(&mut self){
 
-        let &PhaseState::Nomination { trials_left } = self.current_phase() else {return};
+        let &PhaseState::Nomination { trials_left, .. } = self.current_phase() else {return};
 
         let mut voted_player_votes: HashMap<PlayerReference, u8> = HashMap::new();
 
@@ -270,7 +287,12 @@ impl Game {
         
         if let Some(player_on_trial) = next_player_on_trial {
             self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
-            PhaseStateMachine::next_phase(self, Some(PhaseState::Testimony { trials_left: trials_left-1, player_on_trial }));
+            
+            PhaseStateMachine::next_phase(self, Some(PhaseState::Testimony {
+                trials_left: trials_left-1, 
+                player_on_trial, 
+                nomination_time_remaining: self.phase_machine.get_time_remaining()
+            }));
         }
     }
     pub fn nomination_votes_is_enough(&self, votes: u8)->bool{
@@ -380,8 +402,8 @@ impl Game {
 pub mod test {
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, puppeteer_marionette::PuppeteerMarionette, verdicts_today::VerdictsToday},
-        event::on_game_start::OnGameStart,
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, puppeteer_marionette::PuppeteerMarionette, verdicts_today::VerdictsToday},
+        event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
         role::Role,
@@ -425,7 +447,7 @@ pub mod test {
         drop(shuffled_roles); // Ensure we don't use the order of roles anywhere
 
         let mut game = Game{
-            roles_to_players: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
+            roles_originally_generated: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
             ticking: true,
             spectators: Vec::new(),
             spectator_chat_messages: Vec::new(),
@@ -438,9 +460,15 @@ pub mod test {
             mafia: Mafia,
             arsonist_doused: ArsonistDoused::default(),
             puppeteer_marionette: PuppeteerMarionette::default(),
+            mafia_recruits: MafiaRecruits::default(),
             love_linked: LoveLinked::default(),
-            verdicts_today: VerdictsToday::default()
+            verdicts_today: VerdictsToday::default(),
+            pitchfork: Pitchfork::default(),
+
+            modifiers: Default::default(),
         };
+
+        BeforeInitialRoleCreation::invoke(&mut game);
 
         //on role creation needs to be called after all players roles are known
         for player_ref in PlayerReference::all_players(&game){

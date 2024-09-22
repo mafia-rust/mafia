@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::player::PlayerReference;
+use crate::game::{attack_power::DefensePower, player::PlayerReference};
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
@@ -11,11 +11,13 @@ use super::{same_evil_team, Priority, RoleStateImpl};
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Framer;
 
+pub type ClientRoleState = Framer;
+
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Framer {
+impl RoleStateImpl<ClientRoleState> for Framer {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Deception {return;}
     

@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
@@ -9,19 +10,22 @@ use crate::game::role_list::Faction;
 
 use crate::game::Game;
 use super::jester::Jester;
-use super::{RoleStateImpl, Role, RoleState};
+use super::{CustomClientRoleState, Role, RoleState, RoleStateImpl};
 
 
-#[derive(Debug, Clone, Serialize, Default)]
+#[derive(Debug, Clone, Default)]
 pub struct Politician{
     won: bool,
 }
 
+#[derive(Debug, Clone, Serialize)]
+pub struct ClientRoleState;
+
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 1;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-impl RoleStateImpl for Politician {
+impl RoleStateImpl<ClientRoleState> for Politician {
     fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
         self.won
     }
@@ -52,7 +56,7 @@ impl RoleStateImpl for Politician {
                 player_ref.get_won_game(game)
             {
                 
-                if player_ref.defense(game) < 3 {
+                if !player_ref.defense(game).can_block(AttackPower::ProtectionPiercing) {
 
                     let mut grave = Grave::from_player_lynch(game, player_ref);
                     if let GraveInformation::Normal {death_cause, ..} = &mut grave.information {
@@ -83,6 +87,12 @@ impl RoleStateImpl for Politician {
                 }
             }
         }
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Politician {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState
     }
 }
 

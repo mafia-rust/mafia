@@ -1,6 +1,7 @@
 
 use serde::Serialize;
 
+use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -8,7 +9,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::Role;
+use super::{CustomClientRoleState, Role};
 use super::{Priority, RoleState, RoleStateImpl};
 
 
@@ -19,6 +20,14 @@ pub struct Forger {
     pub fake_will: String,
     pub forges_remaining: u8,
     pub forged_ref: Option<PlayerReference>
+}
+
+#[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ClientRoleState{
+    fake_role: Role,
+    fake_will: String,
+    forges_remaining: u8
 }
 
 impl Default for Forger {
@@ -34,9 +43,9 @@ impl Default for Forger {
 
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Forger {
+impl RoleStateImpl<ClientRoleState> for Forger {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return}
 
@@ -81,5 +90,15 @@ impl RoleStateImpl for Forger {
             forged_ref: None,
             ..self
         }));
+    }
+}
+
+impl CustomClientRoleState<ClientRoleState> for Forger {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState {
+            fake_role: self.fake_role,
+            fake_will: self.fake_will.clone(),
+            forges_remaining: self.forges_remaining,
+        }
     }
 }

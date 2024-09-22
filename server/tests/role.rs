@@ -35,7 +35,8 @@ pub use mafia_server::game::{
         vigilante::Vigilante,
         veteran::Veteran,
         deputy::Deputy,
-        marksman::Marksman, 
+        marksman::Marksman,
+        rabble_rouser::RabbleRouser,
         
         transporter::Transporter,
         escort::Escort,
@@ -57,7 +58,7 @@ pub use mafia_server::game::{
         
 
         jester::Jester,
-        rabble_rouser::RabbleRouser,
+        revolutionary::Revolutionary,
         minion::Minion,
         politician::Politician,
         doomsayer::{Doomsayer, DoomsayerGuess},
@@ -370,7 +371,7 @@ fn jester_basic() {
 #[test]
 fn rabble_rouser_dies(){
     kit::scenario!(game in Night 1 where
-        exe: RabbleRouser,
+        exe: Revolutionary,
         townie: Detective,
         mafioso: Mafioso
     );
@@ -838,7 +839,7 @@ fn rabble_rouser_turns_into_jester(){
     kit::scenario!(game in Night 2 where
         target: Detective,
         mafioso: Mafioso,
-        exe: RabbleRouser
+        exe: Revolutionary
     );
 
     assert!(mafioso.set_night_selection(vec![target]));
@@ -853,7 +854,7 @@ fn rabble_rouser_turns_into_jester(){
 #[test]
 fn rabble_rouser_instantly_turns_into_jester(){
     kit::scenario!(_game where
-        exe: RabbleRouser
+        exe: Revolutionary
     );
     let RoleState::Jester(_) = exe.role_state() else {panic!()};
 }
@@ -2079,7 +2080,7 @@ fn minion_leaves_by_winning_puppeteer(){
 
     assert!(gf.alive());
     assert!(!min.alive());
-    assert!(t.alive());
+    assert!(!t.alive());
     assert!(!t2.alive());
     assert!(pup.alive());
 }

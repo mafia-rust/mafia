@@ -2,7 +2,8 @@ use std::collections::HashMap;
 
 use serde::{Serialize, Deserialize};
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::attack_power::AttackPower;
+use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -16,6 +17,8 @@ pub struct Kira {
     pub guesses: HashMap<PlayerReference, KiraGuess>,
 }
 
+pub type ClientRoleState = Kira;
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub enum KiraGuess{
@@ -26,7 +29,7 @@ pub enum KiraGuess{
     Jailor, Villager,
     Detective, Lookout, Tracker, Psychic, Philosopher, Gossip, Auditor, Snoop, Spy, FlowerGirl,
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith,
-    Vigilante, Veteran, Marksman, Deputy,
+    Vigilante, Veteran, Marksman, Deputy, RabbleRouser,
     Escort, Medium, Retributionist, Journalist, Mayor, Transporter
 }
 impl KiraGuess{
@@ -57,6 +60,7 @@ impl KiraGuess{
             Role::Veteran => Some(Self::Veteran),
             Role::Marksman => Some(Self::Marksman),
             Role::Deputy => Some(Self::Deputy),
+            Role::RabbleRouser => Some(Self::RabbleRouser),
 
             Role::Escort => Some(Self::Escort),
             Role::Medium => Some(Self::Medium),
@@ -66,14 +70,16 @@ impl KiraGuess{
             Role::Transporter => Some(Self::Transporter),
 
             //Mafia
-            Role::Godfather | Role::Mafioso | Role::Eros | Role::Counterfeiter |  Role::Retrainer |
+            Role::Godfather | Role::Mafioso | Role::Eros |
+            Role::Counterfeiter | Role::Retrainer | Role::Recruiter | Role::MafiaKillingWildcard |
+            Role::MadeMan |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::Witch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 
             Role::Cupid | Role::MafiaSupportWildcard => Some(Self::Mafia),
 
             //Neutral
-            Role::Jester | Role::RabbleRouser | Role::Politician |
+            Role::Jester | Role::Revolutionary | Role::Politician |
             Role::Doomsayer | Role::Death | Role::Minion | Role::Scarecrow |
             Role::Wildcard | Role::TrueWildcard => Some(Self::Neutral),
             Role::Martyr => None,
@@ -149,9 +155,9 @@ pub enum KiraGuessResult {
 
 pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 1;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-impl RoleStateImpl for Kira {
+impl RoleStateImpl<ClientRoleState> for Kira {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_blocked(game) {return;}
         if !actor_ref.alive(game) {return;}
@@ -164,7 +170,7 @@ impl RoleStateImpl for Kira {
                 
                 for (player, (guess, result)) in result.guesses.iter(){
                     if player.alive(game) && *result == KiraGuessResult::Correct && *guess != KiraGuess::None {
-                        player.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Kira), 2, true);
+                        player.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(super::Role::Kira), AttackPower::ArmorPiercing, true);
                     }
                 }
             },

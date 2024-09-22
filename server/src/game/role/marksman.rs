@@ -1,6 +1,7 @@
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::attack_power::AttackPower;
+use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -16,6 +17,8 @@ use super::{Priority, RoleStateImpl, Role, RoleState};
 pub struct Marksman {
     state: MarksmanState
 }
+
+pub type ClientRoleState = Marksman;
 
 #[derive(Clone, Debug, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
@@ -58,9 +61,9 @@ impl Default for Marksman {
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Marksman {
+impl RoleStateImpl<ClientRoleState> for Marksman {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         
     
@@ -76,7 +79,7 @@ impl RoleStateImpl for Marksman {
                     
                     if !visiting_players.contains(&mark) {continue};
                     
-                    let killed = mark.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Marksman), 1, false);
+                    let killed = mark.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Marksman), AttackPower::Basic, false);
 
                     if killed && ResolutionState::requires_only_this_resolution_state(game, mark, ResolutionState::Town) {
                         self.state = MarksmanState::ShotTownie;

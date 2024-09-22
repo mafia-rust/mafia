@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::game::{chat::ChatGroup, player::PlayerReference, Game, visit::Visit, role_list::Faction, phase::{PhaseState, PhaseType}, resolution_state::ResolutionState};
+use crate::game::{chat::ChatGroup, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, resolution_state::ResolutionState, role_list::Faction, visit::Visit, Game};
 
 use super::{journalist::Journalist, medium::Medium, same_evil_team, RoleState};
 
@@ -24,7 +24,10 @@ pub(super) fn convert_selection_to_visits(_game: &Game, _actor_ref: PlayerRefere
 }
 
 pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference, mut night_chat_groups: Vec<ChatGroup>) -> HashSet<ChatGroup> {
-    if !actor_ref.alive(game){
+    if 
+        !actor_ref.alive(game) && 
+        !Modifiers::modifier_is_enabled(game, ModifierType::DeadCanChat)
+    {
         return vec![ChatGroup::Dead].into_iter().collect();
     }
     if actor_ref.night_silenced(game){

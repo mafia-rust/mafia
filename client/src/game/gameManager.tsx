@@ -448,6 +448,12 @@ export function createGameManager(): GameManager {
                 roles: roles
             });
         },
+        sendEnabledModifiersPacket(modifiers) {
+            this.server.sendPacket({
+                type: "setEnabledModifiers",
+                modifiers: modifiers
+            });
+        },
 
         sendSetDoomsayerGuess(guesses) {
             this.server.sendPacket({
@@ -537,6 +543,12 @@ export function createGameManager(): GameManager {
                 action: action
             });
         },
+        sendSetRecruiterAction(action) {
+            this.server.sendPacket({
+                type: "setRecruiterAction",
+                action: action
+            });
+        },
         sendSetErosAction(action) {
             this.server.sendPacket({
                 type: "setErosAction",
@@ -560,6 +572,12 @@ export function createGameManager(): GameManager {
             this.server.sendPacket({
                 type: "forfeitVote",
                 forfeit
+            });
+        },
+        sendPitchforkVotePacket(player: PlayerIndex | null) {
+            this.server.sendPacket({
+                type: "pitchforkVote",
+                player: player
             });
         },
 

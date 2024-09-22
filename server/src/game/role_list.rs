@@ -163,7 +163,9 @@ impl RoleSet{
             RoleSet::TownSupport => 
                 vec![Role::Medium, Role::Retributionist, Role::Transporter, Role::Escort, Role::Mayor, Role::Journalist],
             RoleSet::TownKilling => 
-                vec![Role::Vigilante, Role::Veteran, Role::Deputy, Role::Marksman],
+                vec![
+                    Role::Vigilante, Role::Veteran, Role::Deputy, Role::Marksman, Role::RabbleRouser
+                ],
             RoleSet::TownProtective => 
                 vec![Role::Bodyguard, Role::Cop, Role::Doctor, Role::Bouncer, Role::Engineer, Role::Armorsmith],
             RoleSet::TownInvestigative => 
@@ -181,11 +183,12 @@ impl RoleSet{
                 ],
             RoleSet::MafiaKilling => 
                 vec![
-                    Role::Godfather, Role::Eros, Role::Counterfeiter, Role::Retrainer, Role::Mafioso
+                    Role::Godfather, Role::Eros, Role::Counterfeiter,
+                    Role::Retrainer, Role::Recruiter, Role::Mafioso
                 ],
             RoleSet::NeutralEvil => 
                 vec![
-                    Role::Jester, Role::RabbleRouser, 
+                    Role::Jester, Role::Revolutionary, 
                     Role::Politician, Role::Doomsayer, 
                     Role::Minion, Role::Scarecrow
                 ],

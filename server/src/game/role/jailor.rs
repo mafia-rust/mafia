@@ -2,6 +2,7 @@ use std::collections::HashSet;
 
 use serde::Serialize;
 
+use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::GraveKiller;
@@ -21,6 +22,8 @@ pub struct Jailor {
     executions_remaining: u8
 }
 
+pub type ClientRoleState = Jailor;
+
 impl Default for Jailor {
     fn default() -> Self {
         Self { 
@@ -32,9 +35,9 @@ impl Default for Jailor {
 
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Jailor {
+impl RoleStateImpl<ClientRoleState> for Jailor {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
 
@@ -58,7 +61,7 @@ impl RoleStateImpl for Jailor {
     
                     let target_ref = visit.target;
                     if target_ref.night_jailed(game){
-                        target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Jailor), 3, false);
+                        target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Jailor), AttackPower::ProtectionPiercing, false);
         
                         self.executions_remaining = 
                             if ResolutionState::requires_only_this_resolution_state(game, target_ref, ResolutionState::Town) {0} else {self.executions_remaining - 1};

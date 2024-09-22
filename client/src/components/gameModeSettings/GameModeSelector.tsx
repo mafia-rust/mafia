@@ -8,7 +8,7 @@ import { DragAndDrop } from "../DragAndDrop";
 import { GameModeContext } from "./GameModesEditor";
 import translate from "../../game/lang";
 import "./gameModeSelector.css"
-import parseFromJson from "./gameMode/dataFixer";
+import parseFromJson, { LATEST_VERSION_STRING } from "./gameMode/dataFixer";
 import { GameMode, GameModeData, GameModeStorage } from "./gameMode";
 import { isFailure, parseJsonObject } from "./gameMode/parse";
 
@@ -145,6 +145,19 @@ function GameModeSelectorPanel(props: {
 
     const verbose = !props.canModifySavedGameModes;
 
+    const shareableGameModeJsonString = JSON.stringify({
+        format: LATEST_VERSION_STRING,
+        name: gameModeNameField === "" ? "Unnamed Game Mode" : gameModeNameField,
+        roleList,
+        phaseTimes,
+        enabledRoles
+    });
+
+    const shareableGameModeURL = new URL(window.location.href);
+    shareableGameModeURL.pathname = "/gameMode"
+    shareableGameModeURL.searchParams.set("mode", shareableGameModeJsonString)
+    
+
     return <>
         <div className="save-menu">
             {props.canModifySavedGameModes && <>
@@ -171,12 +184,12 @@ function GameModeSelectorPanel(props: {
                         <Icon>save</Icon>
                     </Button>
                 </>}
-                <CopyButton text={JSON.stringify({
-                    name: gameModeNameField === "" ? "Unnamed Game Mode" : gameModeNameField,
-                    roleList,
-                    phaseTimes,
-                    enabledRoles
-                })}>{verbose ? <><Icon>content_copy</Icon> {translate("copyToClipboard")}</> : undefined}</CopyButton>
+                <CopyButton text={shareableGameModeURL.toString()}>
+                    <Icon>link</Icon>{verbose ? <> {translate("copyToClipboard")}</> : undefined}
+                </CopyButton>
+                <CopyButton text={shareableGameModeJsonString}>
+                    {verbose ? <><Icon>content_copy</Icon> {translate("copyToClipboard")}</> : undefined}
+                    </CopyButton>
                 <PasteButton 
                     onClipboardRead={text => {
                         const json = parseJsonObject(text);

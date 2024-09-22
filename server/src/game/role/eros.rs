@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::game::components::love_linked::LoveLinked;
+use crate::game::attack_power::AttackPower;
+use crate::game::{attack_power::DefensePower, components::love_linked::LoveLinked};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -14,6 +15,9 @@ use super::{same_evil_team, Priority, RoleStateImpl};
 pub struct Eros{
     pub action: ErosAction,
 }
+
+pub type ClientRoleState = Eros;
+
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, PartialOrd, Eq, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum ErosAction{
@@ -23,9 +27,9 @@ pub enum ErosAction{
 
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 1;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-impl RoleStateImpl for Eros {
+impl RoleStateImpl<ClientRoleState> for Eros {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match (priority, self.action) {
             (Priority::Kill, ErosAction::Kill) => {
@@ -33,8 +37,8 @@ impl RoleStateImpl for Eros {
                 if let Some(visit) = actor_ref.night_visits(game).first(){
                     let target_ref = visit.target;
             
-                    target_ref.try_night_kill(
-                        actor_ref, game, GraveKiller::Faction(Faction::Mafia), 1, false
+                    target_ref.try_night_kill_single_attacker(
+                        actor_ref, game, GraveKiller::Faction(Faction::Mafia), AttackPower::Basic, false
                     );
                 }
             }

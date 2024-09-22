@@ -8,12 +8,17 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::game::chat::ChatGroup;
 use crate::game::phase::PhaseType;
+use crate::game::attack_power::DefensePower;
 
 use serde::{Serialize, Deserialize};
 
 use super::{event::before_role_switch::BeforeRoleSwitch, grave::GraveReference};
 
-trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
+trait CustomClientRoleState<CRSP> {
+    fn get_client_role_state(self, game: &Game, actor_ref: PlayerReference) -> CRSP;
+}
+
+trait RoleStateImpl<CRSP>: Clone + std::fmt::Debug + Default + CustomClientRoleState<CRSP> {
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {}
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
 
@@ -44,6 +49,14 @@ trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference) {}
     fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave: GraveReference) {}
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference) {}
+    fn on_game_start(self, _game: &mut Game, _actor_ref: PlayerReference) {}
+    fn before_initial_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {}
+}
+
+impl<T> CustomClientRoleState<T> for T {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> T {
+        self
+    }
 }
 
 // Creates the Role enum
@@ -73,6 +86,7 @@ macros::roles! {
     Veteran : veteran,
     Marksman: marksman,
     Deputy : deputy,
+    RabbleRouser : rabble_rouser,
 
     Escort : escort,
     Medium : medium,
@@ -86,8 +100,11 @@ macros::roles! {
     Eros: eros,
     Counterfeiter : counterfeiter,
     Retrainer : retrainer,
+    Recruiter : recruiter,
     Mafioso : mafioso,
+    MafiaKillingWildcard : mafia_killing_wildcard,
 
+    MadeMan : made_man,
     Consort : consort,
     
     Hypnotist : hypnotist,
@@ -103,7 +120,7 @@ macros::roles! {
 
     // Neutral
     Jester : jester,
-    RabbleRouser : rabble_rouser,
+    Revolutionary : revolutionary,
     Politician : politician,
 
     Minion : minion,
@@ -190,17 +207,22 @@ mod macros {
                         $(Self::$name => $file::FACTION),*
                     }
                 }
-                pub fn defense(&self) -> u8 {
+                pub fn defense(&self) -> DefensePower {
                     match self {
                         $(Self::$name => $file::DEFENSE),*
                     }
                 }
             }
 
-            // This does not need to implement Deserialize or PartialEq!
-            // Use Role for those things!
             #[derive(Clone, Debug, Serialize)]
             #[serde(tag = "type", rename_all = "camelCase")]
+            pub enum ClientRoleStatePacket {
+                $($name($file::ClientRoleState)),*
+            }
+
+            // This does not need to implement Deserialize or PartialEq!
+            // Use Role for those things!
+            #[derive(Clone, Debug)]
             pub enum RoleState {
                 $($name($file::$name)),*
             }
@@ -276,9 +298,24 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.on_grave_added(game, actor_ref, grave)),*
                     }
                 }
+                pub fn on_game_start(self, game: &mut Game, actor_ref: PlayerReference){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_game_start(game, actor_ref)),*
+                    }
+                }
                 pub fn on_game_ending(self, game: &mut Game, actor_ref: PlayerReference){
                     match self {
                         $(Self::$name(role_struct) => role_struct.on_game_ending(game, actor_ref)),*
+                    }
+                }
+                pub fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.before_initial_role_creation(game, actor_ref)),*
+                    }
+                }
+                pub fn get_client_role_state(self, game: &Game, actor_ref: PlayerReference) -> ClientRoleStatePacket {
+                    match self {
+                        $(Self::$name(role_struct) => ClientRoleStatePacket::$name(role_struct.get_client_role_state(game, actor_ref))),*
                     }
                 }
             }

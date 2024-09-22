@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::game::grave::GraveKiller;
+use crate::game::attack_power::DefensePower;
+use crate::game::{attack_power::AttackPower, grave::GraveKiller};
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
@@ -14,6 +15,8 @@ pub struct Ojo{
     pub chosen_action: OjoAction,
 }
 
+pub type ClientRoleState = Ojo;
+
 #[derive(Default, Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
@@ -26,9 +29,9 @@ pub enum OjoAction {
 
 pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 1;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-impl RoleStateImpl for Ojo {
+impl RoleStateImpl<ClientRoleState> for Ojo {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         
         match priority {
@@ -70,7 +73,7 @@ impl RoleStateImpl for Ojo {
                             .map(|visit| visit.target)
                             .collect::<Vec<PlayerReference>>()
                     {
-                        player.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Ojo), 2, true);
+                        player.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Ojo), AttackPower::ArmorPiercing, true);
                     }
                 }
             },

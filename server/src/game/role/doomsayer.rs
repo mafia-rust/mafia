@@ -1,5 +1,6 @@
 use serde::{Serialize, Deserialize};
 
+use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -8,12 +9,17 @@ use crate::game::role_list::Faction;
 use crate::game::Game;
 
 use super::jester::Jester;
-use super::{Priority, RoleStateImpl, Role, RoleState};
+use super::{CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Doomsayer {
     pub guesses: [(PlayerReference, DoomsayerGuess); 3],
     pub won: bool,
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub struct ClientRoleState {
+    guesses: [(PlayerReference, DoomsayerGuess); 3],
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
@@ -24,7 +30,7 @@ pub enum DoomsayerGuess{
     Jailor, Villager,
     // No TI
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith,
-    Vigilante, Veteran, Marksman, Deputy,
+    Vigilante, Veteran, Marksman, Deputy, RabbleRouser,
     Escort, Medium, Retributionist, Journalist, Mayor, Transporter
 }
 impl DoomsayerGuess{
@@ -48,6 +54,7 @@ impl DoomsayerGuess{
             Role::Veteran => Some(DoomsayerGuess::Veteran),
             Role::Marksman => Some(DoomsayerGuess::Marksman),
             Role::Deputy => Some(DoomsayerGuess::Deputy),
+            Role::RabbleRouser => Some(DoomsayerGuess::RabbleRouser),
 
             Role::Escort => Some(DoomsayerGuess::Escort),
             Role::Medium => Some(DoomsayerGuess::Medium),
@@ -57,14 +64,16 @@ impl DoomsayerGuess{
             Role::Transporter => Some(DoomsayerGuess::Transporter),
 
             //Mafia
-            Role::Godfather | Role::Mafioso | Role::Eros | Role::Counterfeiter | Role::Retrainer |
+            Role::Godfather | Role::Mafioso | Role::Eros |
+            Role::Counterfeiter | Role::Retrainer | Role::Recruiter | Role::MafiaKillingWildcard |
+            Role::MadeMan |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::Witch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 
             Role::Cupid | Role::MafiaSupportWildcard => Some(DoomsayerGuess::Mafia),
 
             //Neutral
-            Role::Jester | Role::RabbleRouser | Role::Politician |
+            Role::Jester | Role::Revolutionary | Role::Politician |
             Role::Doomsayer | Role::Death | Role::Minion | Role::Scarecrow |
             Role::Wildcard | Role::TrueWildcard => Some(DoomsayerGuess::Neutral),
             Role::Martyr => None,
@@ -89,9 +98,9 @@ impl DoomsayerGuess{
 
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Doomsayer {
+impl RoleStateImpl<ClientRoleState> for Doomsayer {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::TopPriority {return;}
 
@@ -116,10 +125,10 @@ impl RoleStateImpl for Doomsayer {
 
         if won{
             actor_ref.add_private_chat_message(game, ChatMessageVariant::DoomsayerWon);
-            self.guesses[0].0.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), 3, true);
-            self.guesses[1].0.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), 3, true);
-            self.guesses[2].0.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), 3, true);
-            actor_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, 3, false);
+            self.guesses[0].0.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), AttackPower::ProtectionPiercing, true);
+            self.guesses[1].0.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), AttackPower::ProtectionPiercing, true);
+            self.guesses[2].0.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), AttackPower::ProtectionPiercing, true);
+            actor_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Suicide, AttackPower::ProtectionPiercing, false);
             actor_ref.set_role_state(game, RoleState::Doomsayer(Doomsayer { guesses: self.guesses, won: true }));
         }else{
             actor_ref.add_private_chat_message(game, ChatMessageVariant::DoomsayerFailed);
@@ -148,6 +157,13 @@ impl Doomsayer{
             ).count() < 3
         {
             actor_ref.set_role(game, RoleState::Jester(Jester::default()));
+        }
+    }
+}
+impl CustomClientRoleState<ClientRoleState> for Doomsayer {
+    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+        ClientRoleState {
+            guesses: self.guesses
         }
     }
 }
