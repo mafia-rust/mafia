@@ -14,11 +14,11 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 #[derive(Clone, Debug, Serialize, Default)]
-pub struct Farmer;
+pub struct RabbleRouser;
 
-pub type ClientRoleState = Farmer;
+pub type ClientRoleState = RabbleRouser;
 
-impl RoleStateImpl<ClientRoleState> for Farmer {
+impl RoleStateImpl<ClientRoleState> for RabbleRouser {
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
         Pitchfork::add_pitchfork(game, actor_ref);
     }

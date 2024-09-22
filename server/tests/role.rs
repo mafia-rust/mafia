@@ -35,7 +35,8 @@ pub use mafia_server::game::{
         vigilante::Vigilante,
         veteran::Veteran,
         deputy::Deputy,
-        marksman::Marksman, 
+        marksman::Marksman,
+        rabble_rouser::RabbleRouser,
         
         transporter::Transporter,
         escort::Escort,
@@ -57,7 +58,7 @@ pub use mafia_server::game::{
         
 
         jester::Jester,
-        rabble_rouser::Revolutionary,
+        revolutionary::Revolutionary,
         minion::Minion,
         politician::Politician,
         doomsayer::{Doomsayer, DoomsayerGuess},
