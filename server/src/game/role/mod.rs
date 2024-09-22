@@ -86,6 +86,7 @@ macros::roles! {
     Veteran : veteran,
     Marksman: marksman,
     Deputy : deputy,
+    RabbleRouser : rabble_rouser,
 
     Escort : escort,
     Medium : medium,
