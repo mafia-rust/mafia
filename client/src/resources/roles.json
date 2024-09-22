@@ -337,6 +337,19 @@
             {"type": "youAttackedSomeone"}
         ]
     },
+    "rabbleRouser": {
+        "faction": "town",
+        "roleSet": "townKilling",
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youAttackedSomeone"}
+        ]
+    },
     "escort": {
         "faction": "town",
         "roleSet": "townSupport",

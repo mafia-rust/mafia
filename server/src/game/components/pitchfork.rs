@@ -1,10 +1,13 @@
 use std::{collections::{HashMap, HashSet}, ops::Mul};
 
-use crate::game::{
-    attack_power::AttackPower, grave::GraveKiller, phase::PhaseState, player::PlayerReference, resolution_state::ResolutionState, role::Priority, role_list::Faction, Game
-};
+use crate::{game::{
+    attack_power::AttackPower, grave::GraveKiller, 
+    phase::PhaseType, player::PlayerReference,
+    resolution_state::ResolutionState, role::Priority,
+    role_list::Faction, Game
+}, packet::ToClientPacket};
 
-#[derive(Default, Clone)]
+#[derive(Clone)]
 pub struct Pitchfork{
     pitchfork_owners: HashSet<PlayerReference>,
 
@@ -23,23 +26,35 @@ impl Game{
     }
 }
 
+impl Default for Pitchfork{
+    fn default() -> Self {
+        Self {
+            pitchfork_owners: Default::default(),
+            pitchfork_uses_remaining: 3,
+            angry_mob_vote: Default::default(),
+            angry_mobbed_player: Default::default()
+        }
+    }
+}
+
 impl Pitchfork{
-    pub fn on_phase_start(game: &mut Game, phase: PhaseState){
+    pub fn on_phase_start(game: &mut Game, phase: PhaseType){
         match phase{
-            PhaseState::Dusk => Pitchfork::clear_votes_for_angry_mob(game),
-            PhaseState::Night => {
+            PhaseType::Night => {
                 Pitchfork::set_angry_mobbed_player(game, None);
-                if let Some(target) = Pitchfork::player_is_voted(game){
-                    if Pitchfork::pitchfork_uses_remaining(game) != 0 {
+                if Pitchfork::pitchfork_uses_remaining(game) > 0 {
+                    if let Some(target) = Pitchfork::player_is_voted(game){
                         Pitchfork::set_angry_mobbed_player(game, Some(target));
                     }
                 }
+                Pitchfork::clear_votes_for_angry_mob(game);
             },
             _ => {}
         }
     }
     pub fn on_night_priority(game: &mut Game, priority: Priority){
         if priority != Priority::Kill {return;}
+        if game.day_number() <= 1 {return;}
         if !Pitchfork::pitchfork_owners(game).iter().any(|p|p.alive(game)) {return;}
         
         if let Some(target) = Pitchfork::angry_mobbed_player(game) {
@@ -50,17 +65,15 @@ impl Pitchfork{
                 AttackPower::ProtectionPiercing, 
                 false
             );
+            Pitchfork::set_pitchfork_uses_remaining(game, 
+                Pitchfork::pitchfork_uses_remaining(game).saturating_sub(1)
+            );
         }
-
-        Pitchfork::set_pitchfork_uses_remaining(game, 
-            Pitchfork::pitchfork_uses_remaining(game).saturating_sub(1)
-        );
     }
 
     
     pub fn player_is_voted(game: &Game) -> Option<PlayerReference> {
         let pitchfork = game.pitchfork().clone();
-        let votes_needed = Pitchfork::number_of_votes_needed(game);
         let mut votes: HashMap<PlayerReference, u8> = HashMap::new();
 
         for (voter, target) in pitchfork.angry_mob_vote.iter(){
@@ -72,12 +85,25 @@ impl Pitchfork{
 
             let count = votes.entry(*target).or_insert(0);
             *count += 1;
-            if *count >= votes_needed {return Some(*target);}
+            if *count >= Pitchfork::number_of_votes_needed(game) {return Some(*target);}
         }
         None
     }
 
-    pub fn vote_for_angry_mob(game: &mut Game, player_ref: PlayerReference, target_ref: Option<PlayerReference>){
+    pub fn player_votes_for_angry_mob_action(game: &mut Game, player: PlayerReference, target: Option<PlayerReference>) {
+        Pitchfork::set_vote_for_angry_mob(game, player, 
+            if let Some(target_player) = target {
+                if player.alive(game) && target_player.alive(game){
+                    target
+                }else{
+                    None
+                }
+            }else{
+                None
+            }
+        );
+    }
+    pub fn set_vote_for_angry_mob(game: &mut Game, player_ref: PlayerReference, target_ref: Option<PlayerReference>){
         let mut pitchfork = game.pitchfork().clone();
 
         if let Some(target_ref) = target_ref{
@@ -86,11 +112,19 @@ impl Pitchfork{
             pitchfork.angry_mob_vote.remove(&player_ref);
         }
 
+        player_ref.send_packet(game, ToClientPacket::YourPitchforkVote { player: target_ref });
+        
+
         game.set_pitchfork(pitchfork);
     }
     pub fn clear_votes_for_angry_mob(game: &mut Game){
         let mut pitchfork = game.pitchfork().clone();
         pitchfork.angry_mob_vote.clear();
+
+        for player in PlayerReference::all_players(game){
+            player.send_packet(game, ToClientPacket::YourPitchforkVote { player: None });
+        }
+
         game.set_pitchfork(pitchfork);
     }
     pub fn number_of_votes_needed(game: &Game) -> u8 {

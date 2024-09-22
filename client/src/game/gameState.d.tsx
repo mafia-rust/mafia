@@ -91,6 +91,7 @@ export type PlayerGameState = {
     judgement: Verdict,
     
     forfeitVote: boolean,
+    pitchforkVote: PlayerIndex | null,
 
     sendChatGroups: ChatGroup[],
 }
