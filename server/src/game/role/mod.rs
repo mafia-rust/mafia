@@ -118,7 +118,7 @@ macros::roles! {
 
     // Neutral
     Jester : jester,
-    RabbleRouser : rabble_rouser,
+    Revolutionary : rabble_rouser,
     Politician : politician,
 
     Minion : minion,

@@ -64,7 +64,7 @@
     "mediumHauntStarted": "special",
     "targetWasAttacked": "result",
     "youWereProtected": "result",
-    "rabbleRouserWon": "special",
+    "revolutionaryWon": "special",
     "gameOver": "important center",
     "jesterWon": "special",
     "youAreLoveLinked": "result",

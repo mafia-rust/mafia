@@ -137,7 +137,7 @@ export type RoleState = {
 } | {
     type: "jester"
 } | {
-    type: "rabbleRouser"
+    type: "revolutionary"
 } | 
 Doomsayer 
 | {

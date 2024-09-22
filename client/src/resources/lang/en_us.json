@@ -456,8 +456,8 @@
     "role.jester.youAreSelecting": "You are getting your revenge on \\0.",
     "role.jester.youAreSelecting.null": "You aren't getting your revenge on anyone.",
 
-    "role.rabbleRouser.name": "Rabble Rouser",
-    "role.rabbleRouser.name:var.0": "Rabble Rousers",
+    "role.revolutionary.name": "Rabble Rouser",
+    "role.revolutionary.name:var.0": "Rabble Rousers",
     
     "role.doomsayer.name": "Doomsayer",
     "role.doomsayer.name:var.0": "Doomsayers",
@@ -588,8 +588,8 @@
 
     "tag.godfatherBackup":"🌹",
     "tag.godfatherBackup.name":"Killing backup",
-    "tag.rabbleRouserTarget":"🎯",
-    "tag.rabbleRouserTarget.name":"Rabble Rouser target",
+    "tag.revolutionaryTarget":"🎯",
+    "tag.revolutionaryTarget.name":"Rabble Rouser target",
     "tag.werewolfTracked": "🐾",
     "tag.werewolfTracked.name": "Werewolf tracked",
     "tag.morticianTagged":"🏺",
@@ -765,7 +765,7 @@
     "chatMessage.jailorDecideNotExecute":"The Jailor decided not to execute.",
     "chatMessage.mediumHauntStarted":"\\0 has brought the dead to haunt \\1!",
     "chatMessage.jesterWon":"The Jester will get their revenge from the grave!",
-    "chatMessage.rabbleRouserWon":"The Rabble Rouser got their target executed and won!",
+    "chatMessage.revolutionaryWon":"The Rabble Rouser got their target executed and won!",
     "chatMessage.deathCollectedSouls":"The apocalypse begins, everyone will die tonight if Death is alive at nightfall!",
     "chatMessage.deputyKilled":"The Deputy killed \\0!",
     "chatMessage.deputyShotYou":"A Deputy shot you!",
@@ -1385,10 +1385,10 @@
     "wiki.article.role.jester.attributes":"* You always have an innocent aura\n* If you select nobody on the night after you are executed, you will attack a random living player who did not vote you innocent\n* You have a protection-piercing, indirect attack",
     "wiki.article.role.jester.extra":"* Your attack is indirect, so nothing can effect it",
 
-    "wiki.article.role.rabbleRouser.guide":"- Get your execution target executed to win\n When you win, you leave town at the start of night\n\nYou should try to claim something that makes people think your target is evil.",
-    "wiki.article.role.rabbleRouser.abilities":"* At the beginning of the game, you are assigned an execution target. It is a random townie, but never a Mayor, Journalist, Jailor, Deputy, Veteran, or Transporter\n* Your execution targets role is revealed to you when you are assigned that target",
-    "wiki.article.role.rabbleRouser.attributes":"* When your execution target is executed, you win\n* After you win, you leave town at the start of final words\n* You are armored",
-    "wiki.article.role.rabbleRouser.extra":"* If your target dies by something other than execution, you convert to a jester immediately, even while dead\n* If there are no valid targets in the game when you become the Rabble Rouser, you convert to a Jester",
+    "wiki.article.role.revolutionary.guide":"- Get your execution target executed to win\n When you win, you leave town at the start of night\n\nYou should try to claim something that makes people think your target is evil.",
+    "wiki.article.role.revolutionary.abilities":"* At the beginning of the game, you are assigned an execution target. It is a random townie, but never a Mayor, Journalist, Jailor, Deputy, Veteran, or Transporter\n* Your execution targets role is revealed to you when you are assigned that target",
+    "wiki.article.role.revolutionary.attributes":"* When your execution target is executed, you win\n* After you win, you leave town at the start of final words\n* You are armored",
+    "wiki.article.role.revolutionary.extra":"* If your target dies by something other than execution, you convert to a jester immediately, even while dead\n* If there are no valid targets in the game when you become the Rabble Rouser, you convert to a Jester",
 
     "wiki.article.role.doomsayer.guide": "- Guess the role of three different players correctly to win\n- If you get all your guesses correct and win, you attack all three players, and then leave town\n- You can't guess town investigative roles\n- You don't need to guess the exact mafia, fiends, cult, or neutral role someone is\n\n In order to counter a doomsayer, players often claimswap",
     "wiki.article.role.doomsayer.abilities":"* Use the Doomsayer menu to guess the role of three different living players in one night, attacking them and winning",

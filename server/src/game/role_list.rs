@@ -185,7 +185,7 @@ impl RoleSet{
                 ],
             RoleSet::NeutralEvil => 
                 vec![
-                    Role::Jester, Role::RabbleRouser, 
+                    Role::Jester, Role::Revolutionary, 
                     Role::Politician, Role::Doomsayer, 
                     Role::Minion, Role::Scarecrow
                 ],

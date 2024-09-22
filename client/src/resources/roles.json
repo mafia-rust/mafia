@@ -733,7 +733,7 @@
             {"type": "jesterWon"}
         ]
     },
-    "rabbleRouser": {
+    "revolutionary": {
         "faction": "neutral",
         "roleSet": "neutralEvil",
         "armor": true,
@@ -742,7 +742,7 @@
         "roleSpecificMenu": false,
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
-            {"type": "rabbleRouserWon"},
+            {"type": "revolutionaryWon"},
             {"type": "youSurvivedAttack"}
         ]
     },
