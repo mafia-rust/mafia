@@ -102,6 +102,7 @@ macros::roles! {
     Retrainer : retrainer,
     Recruiter : recruiter,
     Mafioso : mafioso,
+    MafiaKillingWildcard : mafia_killing_wildcard,
 
     MadeMan : made_man,
     Consort : consort,

@@ -148,6 +148,7 @@ export default function RoleSpecificSection(){
         case "wildcard":
         case "trueWildcard":
         case "mafiaSupportWildcard":
+        case "mafiaKillingWildcard":
         case "fiendsWildcard": {
             return <WildcardRoleSpecificMenu roleState={roleState} />
         }
@@ -273,7 +274,7 @@ function MediumRoleSpecificMenu(props: Readonly<{
 }
 
 function WildcardRoleSpecificMenu(props: Readonly<{
-    roleState: RoleState & { type: "wildcard" | "trueWildcard" | "mafiaSupportWildcard" | "fiendsWildcard" }
+    roleState: RoleState & { type: "wildcard" | "trueWildcard" | "mafiaSupportWildcard" | "mafiaKillingWildcard" | "fiendsWildcard" }
 }>): ReactElement {
     const enabledRoles = useGameState(
         gameState => gameState.enabledRoles,
@@ -290,6 +291,14 @@ function WildcardRoleSpecificMenu(props: Readonly<{
                     rle === "mafiaSupportWildcard" ||
                     (
                         ROLES[rle as keyof typeof ROLES].roleSet === "mafiaSupport" &&
+                        enabledRoles.includes(rle as Role)
+                    )
+                ).map((r)=>r as Role)
+            case "mafiaKillingWildcard":
+                return Object.keys(ROLES).filter((rle)=>
+                    rle === "mafiaKillingWildcard" ||
+                    (
+                        ROLES[rle as keyof typeof ROLES].roleSet === "mafiaKilling" &&
                         enabledRoles.includes(rle as Role)
                     )
                 ).map((r)=>r as Role)
