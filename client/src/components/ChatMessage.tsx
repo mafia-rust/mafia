@@ -15,6 +15,7 @@ import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenu
 import { KiraGuess, KiraGuessResult, kiraGuessTranslate } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import { CopyButton } from "./ClipboardButtons";
 import { useLobbyOrGameState, usePlayerState } from "./useHooks";
+import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
 
 const ChatElement = React.memo((
     props: {
@@ -483,6 +484,10 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.puppeteerPlayerIsNowMarionette",
                 playerNames[message.player]
             );
+        case "recruiterPlayerIsNowRecruit":
+            return translate("chatMessage.recruiterPlayerIsNowRecruit",
+                playerNames[message.player]
+            );
         case "jailorDecideExecute":
             if (message.target !== null) {
                 return translate("chatMessage.jailorDecideExecute", playerNames[message.target]);
@@ -598,6 +603,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             break;
         case "puppeteerActionChosen":
             return translate("chatMessage.puppeteerActionChosen."+message.action);
+        case "recruiterActionChosen":
+            return translate("chatMessage.recruiterActionChosen."+message.action);
         case "erosActionChosen":
             return translate("chatMessage.erosActionChosen."+message.action);
         case "marksmanChosenMarks":
@@ -803,6 +810,9 @@ export type ChatMessageVariant = {
     type: "puppeteerPlayerIsNowMarionette",
     player: PlayerIndex
 } | {
+    type: "recruiterPlayerIsNowRecruit",
+    player: PlayerIndex
+} | {
     type: "puppeteerYouArePoisoned"
 } | {
     type: "roleBlocked", 
@@ -924,6 +934,9 @@ export type ChatMessageVariant = {
 } | {
     type: "puppeteerActionChosen",
     action: PuppeteerAction,
+} | {
+    type: "recruiterActionChosen",
+    action: RecruiterAction,
 } | {
     type: "erosActionChosen",
     action: "loveLink" | "kill",

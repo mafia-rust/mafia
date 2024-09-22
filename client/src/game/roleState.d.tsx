@@ -7,6 +7,7 @@ import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/Smal
 import { Hypnotist } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeHypnotistMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
+import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
 
 export type RoleState = {
     type: "jailor",
@@ -98,6 +99,11 @@ export type RoleState = {
     fakeRole: Role,
     fakeWill: string
     forgesRemaining: number,
+    backup: PlayerIndex | null
+} | {
+    type: "recruiter",
+    action: RecruiterAction,
+    recruitsRemaining: number
     backup: PlayerIndex | null
 } | {
     type: "mafioso"
