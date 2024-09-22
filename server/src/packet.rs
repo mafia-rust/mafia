@@ -123,6 +123,8 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     YourVoteFastForwardPhase{fast_forward: bool},
     YourForfeitVote{forfeit: bool},
+    #[serde(rename_all = "camelCase")]
+    YourPitchforkVote{player: Option<PlayerReference>},
 
     #[serde(rename_all = "camelCase")]
     AddChatMessages{chat_messages: Vec<ChatMessage>},
@@ -263,4 +265,5 @@ pub enum ToServerPacket{
     VoteFastForwardPhase{fast_forward: bool},
     #[serde(rename_all = "camelCase")]
     ForfeitVote{forfeit: bool},
+    PitchforkVote{player: Option<PlayerReference>},
 }

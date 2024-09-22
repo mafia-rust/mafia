@@ -1,4 +1,4 @@
-use crate::game::{components::{cult::Cult, mafia::Mafia, verdicts_today::VerdictsToday}, phase::PhaseType, player::PlayerReference, Game};
+use crate::game::{components::{cult::Cult, mafia::Mafia, pitchfork::Pitchfork, verdicts_today::VerdictsToday}, phase::PhaseType, player::PlayerReference, Game};
 
 #[must_use = "Event must be invoked"]
 pub struct OnPhaseStart{
@@ -16,6 +16,7 @@ impl OnPhaseStart{
         VerdictsToday::on_phase_start(game, self.phase);
         Mafia::on_phase_start(game, self.phase);
         Cult::on_phase_start(game, self.phase);
+        Pitchfork::on_phase_start(game, self.phase);
 
         game.on_phase_start(self.phase);
     }

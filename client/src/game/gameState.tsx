@@ -80,6 +80,7 @@ export function createPlayerGameState(): PlayerGameState {
         judgement: "abstain",
 
         forfeitVote: false,
+        pitchforkVote: null,
 
         sendChatGroups: [],
     }

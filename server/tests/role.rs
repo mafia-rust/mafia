@@ -35,7 +35,8 @@ pub use mafia_server::game::{
         vigilante::Vigilante,
         veteran::Veteran,
         deputy::Deputy,
-        marksman::Marksman, 
+        marksman::Marksman,
+        rabble_rouser::RabbleRouser,
         
         transporter::Transporter,
         escort::Escort,

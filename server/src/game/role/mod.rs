@@ -86,6 +86,7 @@ macros::roles! {
     Veteran : veteran,
     Marksman: marksman,
     Deputy : deputy,
+    RabbleRouser : rabble_rouser,
 
     Escort : escort,
     Medium : medium,
@@ -118,7 +119,7 @@ macros::roles! {
 
     // Neutral
     Jester : jester,
-    Revolutionary : rabble_rouser,
+    Revolutionary : revolutionary,
     Politician : politician,
 
     Minion : minion,

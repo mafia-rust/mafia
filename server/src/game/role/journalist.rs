@@ -5,7 +5,6 @@ use serde::Serialize;
 
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::components::pitchfork::Pitchfork;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -131,7 +130,5 @@ impl RoleStateImpl<ClientRoleState> for Journalist {
         }
         
     }
-    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
-        Pitchfork::add_pitchfork(game, actor_ref);
-    }
+    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {}
 }

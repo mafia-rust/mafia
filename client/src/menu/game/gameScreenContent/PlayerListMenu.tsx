@@ -16,6 +16,7 @@ import Counter from "../../../components/Counter";
 import SelectionInformation from "../../../components/SelectionInformation";
 import { useGameState, usePlayerState } from "../../../components/useHooks";
 import { roleSpecificMenuType } from "../../Settings";
+import PlayerDropdown from "../../../components/PlayerDropdown";
 
 type PlayerFilter = "all"|"living"|"usable";
 
@@ -103,6 +104,10 @@ export default function PlayerListMenu(): ReactElement {
         gameState => gameState.forfeitVote,
         ["yourForfeitVote"]
     )
+    const pitchforkVote = usePlayerState(
+        gameState => gameState.pitchforkVote,
+        ["yourPitchforkVote"]
+    )
     const roleState = usePlayerState(
         gameState => gameState.roleState,
         ["yourRoleState"]
@@ -170,6 +175,7 @@ export default function PlayerListMenu(): ReactElement {
     }
 
     const [roleSpecificOpen, setRoleSpecificOpen] = useState<boolean>(true);
+    const [pitchforkVoteOpen, setPitchforkVoteOpen] = useState<boolean>(true);
 
 
     return <div className="player-list-menu player-list-menu-colors">
@@ -187,6 +193,23 @@ export default function PlayerListMenu(): ReactElement {
                 <RoleSpecificSection/>
             </details>
         }
+        {!GAME_MANAGER.getMySpectator() && <details className="role-specific-colors small-role-specific-menu" open={pitchforkVoteOpen}>
+            <summary
+                onClick={(e)=>{
+                    e.preventDefault();
+                    setPitchforkVoteOpen(!pitchforkVoteOpen);
+                }}
+            >{translate("pitchfork")}</summary>
+            <div>
+                <StyledText>{translate("pitchfork.description")}</StyledText>
+                <PlayerDropdown 
+                    value={pitchforkVote===undefined?null:pitchforkVote}
+                    onChange={(player)=>{GAME_MANAGER.sendPitchforkVotePacket(player)}}
+                    choosablePlayers={players.filter((player)=>player.alive).map((player)=>player.index)}
+                    canChooseNone={true}
+                />
+            </div>
+        </details>}
 
         {(myIndex !== undefined && phaseState.type === "discussion" && players[myIndex!].alive) ? <Button
             className={forfeitVote ? "highlighted" : ""}
