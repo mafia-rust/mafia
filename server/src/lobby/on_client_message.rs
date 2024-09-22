@@ -4,8 +4,8 @@ use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, pl
 
 use super::{lobby_client::{LobbyClient, LobbyClientID, LobbyClientType}, name_validation::{self, sanitize_server_name}, Lobby, LobbyState};
 
-pub const MESSAGE_PER_SECOND_LIMIT: u64 = 2;
-pub const MESSAGE_PER_SECOND_LIMIT_TIME: Duration = Duration::from_secs(2);
+pub const MESSAGE_PER_SECOND_LIMIT: u64 = 1;
+pub const MESSAGE_PER_SECOND_LIMIT_TIME: Duration = Duration::from_secs(10);
 
 impl Lobby {
     pub fn on_client_message(&mut self, send: &ClientSender, lobby_client_id: LobbyClientID, incoming_packet: ToServerPacket){
@@ -17,6 +17,7 @@ impl Lobby {
             ToServerPacket::Target { .. } |
             ToServerPacket::DayTarget { .. } |
             ToServerPacket::SendMessage { .. } |
+            ToServerPacket::SendLobbyMessage { .. } |
             ToServerPacket::SendWhisper { .. } => {
                 let LobbyState::Game { clients, .. } = &mut self.lobby_state else {
                     return;

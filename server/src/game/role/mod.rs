@@ -49,6 +49,8 @@ trait RoleStateImpl<CRSP>: Clone + std::fmt::Debug + Default + CustomClientRoleS
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference) {}
     fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave: GraveReference) {}
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference) {}
+    fn on_game_start(self, _game: &mut Game, _actor_ref: PlayerReference) {}
+    fn before_initial_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {}
 }
 
 impl<T> CustomClientRoleState<T> for T {
@@ -98,6 +100,7 @@ macros::roles! {
     Eros: eros,
     Counterfeiter : counterfeiter,
     Retrainer : retrainer,
+    Recruiter : recruiter,
     Mafioso : mafioso,
 
     MadeMan : made_man,
@@ -116,7 +119,7 @@ macros::roles! {
 
     // Neutral
     Jester : jester,
-    RabbleRouser : rabble_rouser,
+    Revolutionary : rabble_rouser,
     Politician : politician,
 
     Minion : minion,
@@ -294,9 +297,19 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.on_grave_added(game, actor_ref, grave)),*
                     }
                 }
+                pub fn on_game_start(self, game: &mut Game, actor_ref: PlayerReference){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_game_start(game, actor_ref)),*
+                    }
+                }
                 pub fn on_game_ending(self, game: &mut Game, actor_ref: PlayerReference){
                     match self {
                         $(Self::$name(role_struct) => role_struct.on_game_ending(game, actor_ref)),*
+                    }
+                }
+                pub fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.before_initial_role_creation(game, actor_ref)),*
                     }
                 }
                 pub fn get_client_role_state(self, game: &Game, actor_ref: PlayerReference) -> ClientRoleStatePacket {

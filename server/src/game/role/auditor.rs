@@ -41,7 +41,7 @@ impl RoleStateImpl<ClientRoleState> for Auditor {
 
         let Some(chosen_outline) = self.chosen_outline else {return;};
 
-        let (role, _) = match game.roles_to_players.get(chosen_outline as usize) {
+        let (role, _) = match game.roles_originally_generated.get(chosen_outline as usize) {
             Some(map) => *map,
             None => unreachable!("Auditor role outline not found")
         };
@@ -85,7 +85,7 @@ impl RoleStateImpl<ClientRoleState> for Auditor {
     fn convert_selection_to_visits(self, game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         let Some(chosen_outline) = self.chosen_outline else {return vec![]};
 
-        let (_, player) = match game.roles_to_players.get(chosen_outline as usize) {
+        let (_, player) = match game.roles_originally_generated.get(chosen_outline as usize) {
             Some(map) => *map,
             None => unreachable!("Auditor role outline not found")
         };

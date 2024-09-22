@@ -48,8 +48,9 @@ impl RoleStateImpl<ClientRoleState> for Puppeteer {
             match self.action {
                 PuppeteerAction::String => {
                     if AttackPower::ArmorPiercing.can_pierce(target.defense(game)) {
-                        PuppeteerMarionette::string(game, target);
-                        self.marionettes_remaining -= 1;
+                        if PuppeteerMarionette::string(game, target){
+                            self.marionettes_remaining -= 1;
+                        }
                         actor_ref.set_role_state(game, RoleState::Puppeteer(self));
                     }else{
                         PuppeteerMarionette::poison(game, target);

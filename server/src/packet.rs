@@ -29,8 +29,7 @@ use crate::{
         phase::{PhaseState, PhaseType},
         player::{PlayerIndex, PlayerReference},
         role::{
-            counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess, eros::ErosAction,
-            kira::KiraGuess, ojo::OjoAction, puppeteer::PuppeteerAction, ClientRoleStatePacket, Role
+            counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess, eros::ErosAction, kira::KiraGuess, ojo::OjoAction, puppeteer::PuppeteerAction, recruiter::RecruiterAction, ClientRoleStatePacket, Role
         }, 
         role_list::{RoleList, RoleOutline}, 
         settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
@@ -259,6 +258,7 @@ pub enum ToServerPacket{
     SetAuditorChosenOutline{index: u8},
     SetOjoAction{action: OjoAction},
     SetPuppeteerAction{action: PuppeteerAction},
+    SetRecruiterAction{action: RecruiterAction},
     SetErosAction{action: ErosAction},
     RetrainerRetrain{role: Role},
 

@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender}, components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, retrainer::Retrainer, Role, RoleState}, role_list::{Faction, RoleSet}, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, recruiter::RecruiterAction, retrainer::Retrainer, Role, RoleState}, role_list::{Faction, RoleSet}, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
 
@@ -315,7 +315,7 @@ impl Game {
                         auditor.chosen_outline = None;
                     }
 
-                    if  self.roles_to_players.get(index as usize).is_some() && 
+                    if  self.roles_originally_generated.get(index as usize).is_some() && 
                         !auditor.previously_given_results.iter().any(|(i, _)| *i == index)
                     {
                         auditor.chosen_outline = Some(index);
@@ -339,6 +339,19 @@ impl Game {
                     }
                     sender_player_ref.set_role_state(self, RoleState::Puppeteer(pup));
                     sender_player_ref.add_private_chat_message(self, ChatMessageVariant::PuppeteerActionChosen { action });
+                    
+                    //Updates selection if it was invalid
+                    sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
+                }
+            },
+            ToServerPacket::SetRecruiterAction { action } => {
+                if let RoleState::Recruiter(mut pup) = sender_player_ref.role_state(self).clone(){
+                    pup.action = action.clone();
+                    if pup.recruits_remaining == 0 {
+                        pup.action = RecruiterAction::Kill;
+                    }
+                    sender_player_ref.set_role_state(self, RoleState::Recruiter(pup));
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::RecruiterActionChosen { action });
                     
                     //Updates selection if it was invalid
                     sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
