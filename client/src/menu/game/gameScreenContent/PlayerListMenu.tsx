@@ -7,7 +7,7 @@ import { ChatGroup, PhaseState, Player, PlayerIndex } from "../../../game/gameSt
 import { ContentMenu, ContentTab } from "../GameScreen";
 import { StateEventType } from "../../../game/gameManager.d";
 import StyledText from "../../../components/StyledText";
-import { RoleState } from "../../../game/roleState.d";
+import { getFactionFromRole, RoleState } from "../../../game/roleState.d";
 import Icon from "../../../components/Icon";
 import { Button } from "../../../components/Button";
 import { Grave } from "../../../game/graveState";
@@ -175,7 +175,7 @@ export default function PlayerListMenu(): ReactElement {
     }
 
     const [roleSpecificOpen, setRoleSpecificOpen] = useState<boolean>(true);
-    const [pitchforkVoteOpen, setPitchforkVoteOpen] = useState<boolean>(true);
+    const [pitchforkVoteOpen, setPitchforkVoteOpen] = useState<boolean>(false);
 
 
     return <div className="player-list-menu player-list-menu-colors">
@@ -193,7 +193,7 @@ export default function PlayerListMenu(): ReactElement {
                 <RoleSpecificSection/>
             </details>
         }
-        {!GAME_MANAGER.getMySpectator() && <details className="role-specific-colors small-role-specific-menu" open={pitchforkVoteOpen}>
+        {!GAME_MANAGER.getMySpectator() && getFactionFromRole(roleState!.type)==="town" && <details className="role-specific-colors small-role-specific-menu" open={pitchforkVoteOpen}>
             <summary
                 onClick={(e)=>{
                     e.preventDefault();
@@ -202,12 +202,13 @@ export default function PlayerListMenu(): ReactElement {
             >{translate("pitchfork")}</summary>
             <div>
                 <StyledText>{translate("pitchfork.description")}</StyledText>
+                <div>
                 <PlayerDropdown 
                     value={pitchforkVote===undefined?null:pitchforkVote}
                     onChange={(player)=>{GAME_MANAGER.sendPitchforkVotePacket(player)}}
                     choosablePlayers={players.filter((player)=>player.alive).map((player)=>player.index)}
                     canChooseNone={true}
-                />
+                /></div>
             </div>
         </details>}
 
