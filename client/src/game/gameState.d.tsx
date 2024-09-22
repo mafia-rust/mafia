@@ -123,7 +123,7 @@ export type ChatGroup = "all" | "dead" | "mafia" | "cult" | "jail" | "interview"
 
 export type PhaseTimes = Record<PhaseType, number>;
 
-export type Tag = | "godfatherBackup" | "werewolfTracked" | "doused" | "rabbleRouserTarget" | "morticianTagged" | "puppeteerMarionette" | "loveLinked" | "forfeitVote";
+export type Tag = | "godfatherBackup" | "werewolfTracked" | "doused" | "revolutionaryTarget" | "morticianTagged" | "puppeteerMarionette" | "loveLinked" | "forfeitVote";
 
 export const MODIFIERS = ["obscuredGraves", "randomLoveLinks", "deadCanChat"] as const;
 export type ModifierType = (typeof MODIFIERS)[number];

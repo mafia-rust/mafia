@@ -7,7 +7,7 @@ pub enum Tag{
     GodfatherBackup,
     Doused,
     WerewolfTracked,
-    RabbleRouserTarget,
+    RevolutionaryTarget,
     MorticianTagged,
     PuppeteerMarionette,
     LoveLinked,

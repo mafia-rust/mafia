@@ -20,10 +20,16 @@ import ErosMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/ErosMenu"
 import CounterfeiterMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/CounterfeiterMenu";
 import RetrainerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/RetrainerMenu";
 import { useGameState, usePlayerState } from "./useHooks";
+import RecruiterMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
 
 export default function RoleSpecificSection(){
     const phaseState = useGameState(
         gameState => gameState.phaseState,
+        ["phase"]
+    )!;
+
+    const dayNumber = useGameState(
+        gameState => gameState.dayNumber,
         ["phase"]
     )!;
 
@@ -130,6 +136,13 @@ export default function RoleSpecificSection(){
             return <SmallPuppeteerMenu 
                 action={roleState.action} 
                 marionettesRemaining={roleState.marionettesRemaining}
+                phase={phaseState.type}
+            />;
+        case "recruiter":
+            return <RecruiterMenu 
+                action={roleState.action} 
+                remaining={roleState.recruitsRemaining}
+                dayNumber={dayNumber}
                 phase={phaseState.type}
             />;
         case "wildcard":

@@ -543,6 +543,12 @@ export function createGameManager(): GameManager {
                 action: action
             });
         },
+        sendSetRecruiterAction(action) {
+            this.server.sendPacket({
+                type: "setRecruiterAction",
+                action: action
+            });
+        },
         sendSetErosAction(action) {
             this.server.sendPacket({
                 type: "setErosAction",

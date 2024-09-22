@@ -6,6 +6,7 @@ import { Role, RoleState } from "./roleState.d"
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu"
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu"
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu"
+import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu"
 
 export type LobbyPreviewData = {
     name: string,
@@ -296,6 +297,9 @@ export type ToServerPacket = {
 } | {
     type: "setPuppeteerAction",
     action: PuppeteerAction
+} | {
+    type: "setRecruiterAction",
+    action: RecruiterAction
 } | {
     type: "setErosAction",
     action: "loveLink" | "kill"

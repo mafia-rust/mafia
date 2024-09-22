@@ -44,7 +44,7 @@ impl Pitchfork{
         
         if let Some(target) = Pitchfork::angry_mobbed_player(game) {
             target.try_night_kill(
-                Pitchfork::pitchfork_owners(game).iter().filter(|p|p.alive(game)).map(|p|*p).collect(), 
+                &Pitchfork::pitchfork_owners(game).iter().filter(|p|p.alive(game)).map(|p|*p).collect(), 
                 game, 
                 GraveKiller::Faction(Faction::Town), 
                 AttackPower::ProtectionPiercing, 

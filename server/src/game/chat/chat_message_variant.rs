@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::game::{
     grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
-        auditor::AuditorResult, engineer::TrapState, eros::ErosAction, kira::KiraResult, ojo::OjoAction, puppeteer::PuppeteerAction, spy::SpyBug, Role
+        auditor::AuditorResult, engineer::TrapState, eros::ErosAction, kira::KiraResult, ojo::OjoAction, puppeteer::PuppeteerAction, recruiter::RecruiterAction, spy::SpyBug, Role
     }, role_list::RoleOutline, tag::Tag, verdict::Verdict
 };
 
@@ -131,6 +131,7 @@ pub enum ChatMessageVariant {
     PlayerDiedOfABrokenHeart{player: PlayerIndex, lover: PlayerIndex},
 
     PuppeteerPlayerIsNowMarionette{player: PlayerIndex},
+    RecruiterPlayerIsNowRecruit{player: PlayerIndex},
     PuppeteerYouArePoisoned,
 
     YourConvertFailed,
@@ -196,6 +197,8 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     PuppeteerActionChosen{action: PuppeteerAction},
     #[serde(rename_all = "camelCase")]
+    RecruiterActionChosen{action: RecruiterAction},
+    #[serde(rename_all = "camelCase")]
     ErosActionChosen{action: ErosAction},
     #[serde(rename_all = "camelCase")]
     MarksmanChosenMarks{marks: Vec<PlayerIndex>},
@@ -212,7 +215,7 @@ pub enum ChatMessageVariant {
     YouAreLoveLinked{player: PlayerIndex},
 
     JesterWon,
-    RabbleRouserWon,
+    RevolutionaryWon,
     DeathCollectedSouls,
     DoomsayerWon,
     DoomsayerFailed,
