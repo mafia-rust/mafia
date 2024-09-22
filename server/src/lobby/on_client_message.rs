@@ -315,6 +315,16 @@ impl Lobby {
                 let roles = settings.enabled_roles.clone().into_iter().collect();
                 self.send_to_all(ToClientPacket::EnabledRoles { roles });
             }
+            ToServerPacket::SetEnabledModifiers {modifiers } => {
+                let LobbyState::Lobby{ settings, .. } = &mut self.lobby_state else {
+                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", lobby_client_id);
+                    return;
+                };
+
+                settings.enabled_modifiers = modifiers.into_iter().collect();
+                let modifiers = settings.enabled_modifiers.clone().into_iter().collect();
+                self.send_to_all(ToClientPacket::EnabledModifiers { modifiers });
+            }
             ToServerPacket::Leave => {
                 self.remove_player(lobby_client_id);
             }

@@ -4,7 +4,7 @@ import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/Larg
 import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
-import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player } from "./gameState.d";
+import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player, ModifierType } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleList, RoleOutline } from "./roleListState.d";
 import { Role } from "./roleState.d";
@@ -95,6 +95,7 @@ export type GameManager = {
     sendSendMessagePacket(text: string): void;
     sendSendWhisperPacket(playerIndex: number, text: string): void;
     sendEnabledRolesPacket(roles: Role[]): void;
+    sendEnabledModifiersPacket(modifiers: ModifierType[]): void;
 
     sendSetDoomsayerGuess(guesses: [
         [number, DoomsayerGuess],

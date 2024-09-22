@@ -1,4 +1,4 @@
-import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, LobbyClientID, ChatGroup, PhaseState, LobbyClient } from "./gameState.d"
+import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, LobbyClientID, ChatGroup, PhaseState, LobbyClient, ModifierType } from "./gameState.d"
 import { Grave } from "./graveState"
 import { ChatMessage } from "../components/ChatMessage"
 import { RoleList, RoleOutline } from "./roleListState.d"
@@ -79,7 +79,10 @@ export type ToClientPacket = {
 } | {
     type: "enabledRoles",
     roles: Role[]
-} | 
+} | {
+    type: "enabledModifiers",
+    modifiers: ModifierType[]
+} |
 // Game
 {
     type: "phase",
@@ -208,6 +211,9 @@ export type ToServerPacket = {
 } | {
     type: "setEnabledRoles", 
     roles: Role[], 
+} | {
+    type: "setEnabledModifiers",
+    modifiers: ModifierType[]
 } | {
     type: "backToLobby",
 } |

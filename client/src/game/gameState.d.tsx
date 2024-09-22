@@ -28,8 +28,9 @@ export type LobbyState = {
     myId: number | null,
 
     roleList: RoleList,
-    enabledRoles: Role[],
     phaseTimes: PhaseTimes,
+    enabledRoles: Role[],
+    enabledModifiers: ModifierType[],
 
     players: Map<LobbyClientID, LobbyClient>,
     chatMessages: ChatMessage[],
@@ -64,7 +65,8 @@ type GameState = {
     
     roleList: RoleList,
     enabledRoles: Role[],
-    phaseTimes: PhaseTimes
+    phaseTimes: PhaseTimes,
+    enabledModifiers: ModifierType[],
 
     ticking: boolean,
 
@@ -123,6 +125,9 @@ export type ChatGroup = "all" | "dead" | "mafia" | "cult" | "jail" | "interview"
 export type PhaseTimes = Record<PhaseType, number>;
 
 export type Tag = | "godfatherBackup" | "werewolfTracked" | "doused" | "revolutionaryTarget" | "morticianTagged" | "puppeteerMarionette" | "loveLinked" | "forfeitVote";
+
+export const MODIFIERS = ["obscuredGraves", "randomLoveLinks", "deadCanChat"] as const;
+export type ModifierType = (typeof MODIFIERS)[number];
 
 export type Player = {
     name: string,

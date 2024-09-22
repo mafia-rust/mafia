@@ -2,7 +2,7 @@ use std::{collections::HashSet, time::Duration};
 
 use serde::{Serialize, Deserialize};
 
-use super::{phase::PhaseType, role::Role, role_list::RoleList};
+use super::{modifiers::ModifierType, phase::PhaseType, role::Role, role_list::RoleList};
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -10,6 +10,7 @@ pub struct Settings{
     pub role_list: RoleList,
     pub phase_times: PhaseTimeSettings,
     pub enabled_roles: HashSet<Role>,
+    pub enabled_modifiers: HashSet<ModifierType>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

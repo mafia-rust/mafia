@@ -72,7 +72,7 @@ impl Lobby {
                 let name = name_validation::sanitize_name("".to_string(), clients);
                 
                 let mut new_player = LobbyClient::new(name.clone(), send.clone(), clients.is_empty());
-                let lobby_client_id: LobbyClientID = 
+                let lobby_client_id: LobbyClientID =
                     clients
                         .iter()
                         .map(|(i,_)|*i)
@@ -340,6 +340,7 @@ impl Lobby {
         client.send(ToClientPacket::PhaseTimes { phase_time_settings: settings.phase_times.clone() });
         client.send(ToClientPacket::RoleList { role_list: settings.role_list.clone() });
         client.send(ToClientPacket::EnabledRoles { roles: settings.enabled_roles.clone().into_iter().collect() });
+        client.send(ToClientPacket::EnabledModifiers { modifiers: settings.enabled_modifiers.clone().into_iter().collect() });
     }
 
     //send the list of players to all players while in the lobby
