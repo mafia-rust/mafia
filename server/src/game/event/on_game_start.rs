@@ -1,4 +1,4 @@
-use crate::game::{components::{cult::Cult, mafia::Mafia, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette}, player::PlayerReference, Game};
+use crate::game::{components::{cult::Cult, mafia::Mafia, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette}, modifiers::Modifiers, player::PlayerReference, Game};
 
 #[must_use = "Event must be invoked"]
 pub struct OnGameStart;
