@@ -386,6 +386,10 @@
     "role.mafioso.target": "Attack",
     "role.mafioso.youAreSelecting": "You are attacking \\0.",
     "role.mafioso.youAreSelecting.null": "You aren't attacking anyone.",
+
+    "role.mafiaKillingWildcard.name": "Mafia Killing Wildcard",
+    "role.mafiaKillingWildcard.name:var.0": "Mafia Killing Wildcards",
+    "role.mafiaKillingWildcard.smallRoleMenu": "Choose a mafia killing role to become",
     
     "role.madeMan.name": "Made Man",
     "role.madeMan.name:var.0": "Made Men",
@@ -451,7 +455,7 @@
 
     "role.mafiaSupportWildcard.name": "Mafia Support Wildcard",
     "role.mafiaSupportWildcard.name:var.0": "Mafia Support Wildcards",
-    "role.mafiaSupportWildcard.smallRoleMenu": "Choose a mafia role to become",
+    "role.mafiaSupportWildcard.smallRoleMenu": "Choose a mafia support role to become",
 
     "role.jester.name": "Jester",
     "role.jester.name:var.0": "Jesters",
@@ -1329,6 +1333,11 @@
     "wiki.article.role.mafioso.abilities":"* Visit a player to attack",
     "wiki.article.role.mafioso.attributes":"* None",
     "wiki.article.role.mafioso.extra":"* You can't target other mafia members",
+    
+    "wiki.article.role.mafiaKillingWildcard.guide": "* Choose a mafia killing role to become that role\n    * You become that role when night starts\n* You likely can't become a role if someone already has that role (You can't become a role that has exceeded its role limit)",
+    "wiki.article.role.mafiaKillingWildcard.abilities":"* Become a role you choose at the start of night",
+    "wiki.article.role.mafiaKillingWildcard.attributes":"* You can not become a role that is disabled\n* You can not become a role that is taken by too many players",
+    "wiki.article.role.mafiaKillingWildcard.extra":"* If you choose a role that was disabled you stay as the Mafia Killing Wildcard\n* You can choose Mafia Killing Wildcard to stay as Mafia Killing Wildcard\n* You can't become a role that is at its role limit, for example, you can't become a godfather even if there is already one in the game, even if that godfather is dead",
 
     "wiki.article.role.madeMan.guide": "You have no night time ability besides chatting with the mafia. Try to help the mafia come up with lies and come up with a fake claim.",
     "wiki.article.role.madeMan.abilities":"None",

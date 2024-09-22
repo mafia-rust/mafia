@@ -560,6 +560,19 @@
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
+    "mafiaKillingWildcard": {
+        "faction": "mafia",
+        "roleSet": null,
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "roleAssignment", "role":"mafiaKillingWildcard"},
+            {"type": "wildcardConvertFailed", "role": "godfather"}
+        ]
+    },
     "madeMan": {
         "faction": "mafia",
         "roleSet": null,

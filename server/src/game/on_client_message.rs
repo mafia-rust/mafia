@@ -242,6 +242,12 @@ impl Game {
                         }
                         sender_player_ref.set_role_state(self, RoleState::MafiaSupportWildcard(mafia_wild_card));
                     }
+                    RoleState::MafiaKillingWildcard(mut mafia_wild_card) => {
+                        if RoleSet::MafiaKilling.get_roles().contains(&role) {
+                            mafia_wild_card.role = role;
+                        }
+                        sender_player_ref.set_role_state(self, RoleState::MafiaKillingWildcard(mafia_wild_card));
+                    }
                     RoleState::FiendsWildcard(mut fiends_wild_card) => {
                         if role.faction() == Faction::Fiends {
                             fiends_wild_card.role = role;
