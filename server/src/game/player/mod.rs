@@ -47,8 +47,8 @@ pub struct Player {
     player_tags: HashMap<PlayerReference, Vec1<Tag>>,
 
 
-    pub chat_messages: Vec<ChatMessage>,
-    queued_chat_messages: Vec<ChatMessage>, // Not yet sent to the client
+    chat_messages: Vec<ChatMessage>,
+    queued_chat_messages: Vec<ChatMessage>, // Not yet sent to the client    
 
     last_sent_buttons: Vec<AvailableButtons>,
 
