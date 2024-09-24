@@ -26,7 +26,7 @@ impl RoleStateImpl<ClientRoleState> for Snoop {
 
             actor_ref.push_night_message(game, 
                 ChatMessageVariant::SnoopResult { townie: 
-                    ResolutionState::requires_only_this_resolution_state(game, visit.target, ResolutionState::Town) &&
+                    visit.target.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town) &&
                     actor_ref.all_visitors(game).len() == 0 &&
                     !visit.target.has_suspicious_aura(game)
                 }

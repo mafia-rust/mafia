@@ -98,7 +98,7 @@ impl CustomClientRoleState<ClientRoleState> for Politician {
 
 pub fn is_town_remaining(game: &Game) -> bool {
     PlayerReference::all_players(game).any(|player|
-        player.alive(game) && ResolutionState::requires_only_this_resolution_state(game, player, ResolutionState::Town)
+        player.alive(game) && player.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town)
     )
 }
 

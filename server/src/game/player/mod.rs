@@ -26,6 +26,7 @@ use crate::{
 use super::attack_power::DefensePower;
 use super::chat::ChatMessage;
 use super::tag::Tag;
+use super::win_condition::WinCondition;
 
 pub struct PlayerInitializeParameters {
     pub connection: ClientConnection,
@@ -49,6 +50,8 @@ pub struct Player {
 
     chat_messages: Vec<ChatMessage>,
     queued_chat_messages: Vec<ChatMessage>, // Not yet sent to the client
+
+    win_condition: WinCondition,
 
     last_sent_buttons: Vec<AvailableButtons>,
 
@@ -101,6 +104,7 @@ impl Player {
             role_labels: HashSet::new(),
             player_tags: HashMap::new(),
 
+            win_condition: role.default_state().default_win_condition(),
 
             chat_messages: Vec::new(),
             queued_chat_messages: Vec::new(),
@@ -162,6 +166,7 @@ pub mod test {
             role_labels: HashSet::new(),
             player_tags: HashMap::new(),
 
+            win_condition: role.default_state().default_win_condition(),
 
             chat_messages: Vec::new(),
             queued_chat_messages: Vec::new(),

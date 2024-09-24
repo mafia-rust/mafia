@@ -6,7 +6,7 @@ use crate::{
     game::{
         attack_power::DefensePower, chat::{
             ChatGroup, ChatMessage, ChatMessageVariant
-        }, event::on_fast_forward::OnFastForward, grave::GraveKiller, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, Game
+        }, event::on_fast_forward::OnFastForward, grave::GraveKiller, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, win_condition::WinCondition, Game
     }, 
     packet::ToClientPacket, 
 };
@@ -154,6 +154,13 @@ impl PlayerReference{
         }
     }
 
+    pub fn win_condition<'a>(&self, game: &'a Game) -> &'a WinCondition {
+        &self.deref(game).win_condition
+    }
+    pub fn set_win_condition(&self, game: &mut Game, win_condition: WinCondition){
+        self.deref_mut(game).win_condition = win_condition;
+    }
+
     pub fn add_private_chat_message(&self, game: &mut Game, message: ChatMessageVariant) {
         let message = ChatMessage::new_private(message);
 
@@ -167,6 +174,9 @@ impl PlayerReference{
     pub fn add_chat_message(&self, game: &mut Game, message: ChatMessage) {
         self.deref_mut(game).chat_messages.push(message.clone());
         self.deref_mut(game).queued_chat_messages.push(message);
+    }
+    pub fn chat_messages<'a>(&self, game: &'a Game) -> &'a Vec<ChatMessage> {
+        &self.deref(game).chat_messages
     }
 
     pub fn set_fast_forward_vote(&self, game: &mut Game, fast_forward_vote: bool) {

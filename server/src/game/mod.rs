@@ -17,6 +17,7 @@ pub mod spectator;
 pub mod game_listeners;
 pub mod attack_power;
 pub mod modifiers;
+pub mod win_condition;
 
 use std::collections::HashMap;
 use std::time::Duration;

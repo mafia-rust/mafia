@@ -1,9 +1,9 @@
 use serde::Serialize;
 
+use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
-use crate::game::resolution_state::ResolutionState;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
@@ -59,7 +59,7 @@ impl Philosopher{
         }else if a.has_innocent_aura(game) || b.has_innocent_aura(game){
             false
         }else{
-            !ResolutionState::can_win_together(game, a, b)
+            !WinCondition::can_win_together(a.win_condition(game), b.win_condition(game))
         }
     }
 }

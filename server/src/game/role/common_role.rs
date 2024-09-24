@@ -1,8 +1,13 @@
 use std::collections::HashSet;
 
-use crate::game::{chat::ChatGroup, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, resolution_state::ResolutionState, role_list::Faction, visit::Visit, Game};
+use crate::game::{
+    chat::ChatGroup, modifiers::{ModifierType, Modifiers},
+    phase::{PhaseState, PhaseType}, player::PlayerReference,
+    resolution_state::ResolutionState, role_list::Faction,
+    visit::Visit, win_condition::WinCondition, Game
+};
 
-use super::{journalist::Journalist, medium::Medium, same_evil_team, RoleState};
+use super::{journalist::Journalist, medium::Medium, same_evil_team, Role, RoleState};
 
 
 pub(super) fn can_night_select(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -153,9 +158,33 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
 
 ///Only works for roles that win based on end game condition
 pub(super) fn get_won_game(game: &Game, actor_ref: PlayerReference) -> bool {
-    if let Some(end_game_condition) = ResolutionState::game_is_over(game) {
-        ResolutionState::can_win_with(game, actor_ref, end_game_condition)
+    if let Some(resolution) = ResolutionState::game_is_over(game) {
+        actor_ref.win_condition(game).can_win_when_resolution_state_reached(resolution)
     } else {
         false
+    }
+}
+
+///Only works for roles that win based on end game condition
+pub(super) fn default_win_condition(role: Role) -> WinCondition {
+    WinCondition::ResolutionStateReached{win_if_any: 
+        match role.faction(){
+            Faction::Mafia => vec![ResolutionState::Mafia],
+            Faction::Cult => vec![ResolutionState::Cult],
+            Faction::Town => vec![ResolutionState::Town],
+            Faction::Fiends => vec![ResolutionState::Fiends],
+            Faction::Neutral => match role {
+                Role::Minion | Role::Scarecrow => {
+                    ResolutionState::all().into_iter().filter(|end_game_condition|
+                        match end_game_condition {
+                            ResolutionState::Town | ResolutionState::Draw => false,
+                            _ => true
+                        }
+                    ).collect()
+                },
+                Role::Politician => vec![ResolutionState::Politician],
+                _ => {return WinCondition::RoleStateWon;}
+            },
+        }.into_iter().collect()
     }
 }

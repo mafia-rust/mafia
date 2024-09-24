@@ -60,7 +60,7 @@ impl RoleStateImpl<ClientRoleState> for Vigilante {
                             let killed = target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Vigilante), AttackPower::Basic, false);
                             self.state = VigilanteState::Loaded { bullets: bullets.saturating_sub(1) };
 
-                            if killed && ResolutionState::requires_only_this_resolution_state(game, target_ref, ResolutionState::Town) {
+                            if killed && target_ref.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town) {
                                 self.state = VigilanteState::WillSuicide;
                             }                            
                         }

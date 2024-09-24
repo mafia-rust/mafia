@@ -1,9 +1,9 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    attack_power::AttackPower, chat::ChatMessageVariant, player::PlayerReference, role::{
+    attack_power::AttackPower, chat::ChatMessageVariant, player::PlayerReference, resolution_state::ResolutionState, role::{
         Priority, Role
-    }, role_list::Faction, tag::Tag, Game
+    }, role_list::Faction, tag::Tag, win_condition::WinCondition, Game
 };
 
 impl Game{
@@ -27,6 +27,8 @@ impl MafiaRecruits{
         if !recruiter_recruits.recruits.insert(player){return false;}
 
         game.set_recruiter_recruits(recruiter_recruits);
+        player.set_win_condition(game, WinCondition::ResolutionStateReached { win_if_any: vec![ResolutionState::Mafia].into_iter().collect() });
+
 
         for mafia in MafiaRecruits::mafia_and_recruits(game){
             mafia.push_night_message(game, ChatMessageVariant::RecruiterPlayerIsNowRecruit{player: player.index()});

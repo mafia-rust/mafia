@@ -1,9 +1,9 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    attack_power::AttackPower, chat::ChatMessageVariant, player::PlayerReference, role::{
+    attack_power::AttackPower, chat::ChatMessageVariant, player::PlayerReference, resolution_state::ResolutionState, role::{
         Priority, Role
-    }, tag::Tag, Game
+    }, tag::Tag, win_condition::WinCondition, Game
 };
 
 impl Game{
@@ -28,6 +28,7 @@ impl PuppeteerMarionette{
         if !puppeteer_marionette.to_be_converted.insert(player){return false;}
 
         game.set_puppeteer_marionette(puppeteer_marionette);
+        player.set_win_condition(game, WinCondition::ResolutionStateReached { win_if_any: vec![ResolutionState::Fiends].into_iter().collect() });
 
         for fiend in PuppeteerMarionette::marionettes_and_puppeteer(game){
             fiend.push_night_message(game, ChatMessageVariant::PuppeteerPlayerIsNowMarionette{player: player.index()});

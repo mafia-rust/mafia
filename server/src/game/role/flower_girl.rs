@@ -46,7 +46,7 @@ impl FlowerGirl {
         }else if player_ref.has_innocent_aura(game){
             false
         }else{
-            !ResolutionState::requires_only_this_resolution_state(game, player_ref, ResolutionState::Town)
+            !player_ref.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town)
         }
     }
 }

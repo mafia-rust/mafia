@@ -12,7 +12,7 @@ use crate::game::attack_power::DefensePower;
 
 use serde::{Serialize, Deserialize};
 
-use super::{event::before_role_switch::BeforeRoleSwitch, grave::GraveReference};
+use super::{event::before_role_switch::BeforeRoleSwitch, grave::GraveReference, win_condition::WinCondition};
 
 trait CustomClientRoleState<CRSP> {
     fn get_client_role_state(self, game: &Game, actor_ref: PlayerReference) -> CRSP;
@@ -41,6 +41,10 @@ trait RoleStateImpl<CRSP>: Clone + std::fmt::Debug + Default + CustomClientRoleS
     }
     fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
         crate::game::role::common_role::get_won_game(game, actor_ref)
+    }
+    fn default_win_condition(self) -> WinCondition where RoleState: From<Self>{
+        let role_state: RoleState = self.into();
+        crate::game::role::common_role::default_win_condition(role_state.role())
     }
 
     fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType) {}
@@ -182,6 +186,7 @@ mod macros {
             $($name:ident : $file:ident),*
         ) => {
             $(pub mod $file;)*
+            $(use crate::game::role::$file::$name;)*
 
             #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, Serialize, Deserialize, PartialOrd, Ord)]
             #[serde(rename_all = "camelCase")]
@@ -273,6 +278,11 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.get_won_game(game, actor_ref)),*
                     }
                 }
+                pub fn default_win_condition(self) -> WinCondition{
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.default_win_condition()),*
+                    }
+                }
                 pub fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
                     match self {
                         $(Self::$name(role_struct) => role_struct.on_phase_start(game, actor_ref, phase)),*
@@ -319,6 +329,13 @@ mod macros {
                     }
                 }
             }
+            $(
+                impl From<$file::$name> for RoleState where $name: RoleStateImpl<$file::ClientRoleState> {
+                    fn from(role_struct: $file::$name) -> Self {
+                        RoleState::$name(role_struct)
+                    }
+                }
+            )*
         }
     }
 
