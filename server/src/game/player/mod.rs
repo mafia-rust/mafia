@@ -48,7 +48,7 @@ pub struct Player {
 
 
     chat_messages: Vec<ChatMessage>,
-    queued_chat_messages: Vec<ChatMessage>, // Not yet sent to the client    
+    queued_chat_messages: Vec<ChatMessage>, // Not yet sent to the client
 
     last_sent_buttons: Vec<AvailableButtons>,
 
