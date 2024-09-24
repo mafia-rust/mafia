@@ -82,11 +82,11 @@ export function ChatMessageSection(props: Readonly<{
         if (self.current === null) return;
         self.current.scrollTop = self.current.scrollHeight;
     }, [filter])
+    
 
     return <div className="chat-message-section" ref={self} onScroll={handleScroll}>
         <div className="chat-message-list">
             {messages.filter((msg)=>{
-
                 if(filter === null)
                     return true;
                 
@@ -96,7 +96,7 @@ export function ChatMessageSection(props: Readonly<{
                     //translateChatMessage errors for playerDied type.
                     case "playerDied":
                     case "phaseChange":
-                        return true;
+                        return true
                     case "normal":
                         switch(msg.variant.messageSender.type) {
                             case "player":
@@ -114,6 +114,13 @@ export function ChatMessageSection(props: Readonly<{
                 msgTxt += translateChatMessage(msg.variant, GAME_MANAGER.getPlayerNames());
                 
                 return msgTxt.includes(GAME_MANAGER.getPlayerNames()[filter]);
+            }).filter((msg, index, array)=>{
+                //if there is a filter, remove repeat phaseChange message
+                if(filter === null){return true}
+                if(msg.variant.type !== "phaseChange"){return true}
+                if(index+1===array.length){return true}
+                if(array[index+1].variant.type !== "phaseChange"){return true}
+                return false;
             }).map((msg, index) => {
                 return <ChatElement
                     key={index}
