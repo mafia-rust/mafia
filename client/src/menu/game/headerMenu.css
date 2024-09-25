@@ -19,7 +19,10 @@
 }
 .header-menu {
     position: relative;
-    background-color: var(--background-color);
+    /* background-color: var(--background-color); */
+
+    background-image: url('../../../public/images/day.png');
+    background-size:auto;
 }
 .header-menu > .information {
     padding: .25rem;
