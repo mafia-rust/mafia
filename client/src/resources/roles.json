@@ -949,6 +949,15 @@
         "chatMessages":[
             {"type": "puppeteerPlayerIsNowMarionette","player": 32},
             {"type": "youArePoisoned"},
+            {
+                "type": "normal", 
+                "messageSender": {
+                    "type": "player",
+                    "player": 32
+                },
+                "text": "Erm... Guys? What do i do, they're gonna catch me!", 
+                "chatGroup": "puppeteer"
+            },
             {"type": "puppeteerActionChosen", "action": "poison"},
             {"type": "puppeteerActionChosen", "action": "string"}
         ]

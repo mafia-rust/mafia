@@ -1,10 +1,7 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    chat::ChatGroup, modifiers::{ModifierType, Modifiers},
-    phase::{PhaseState, PhaseType}, player::PlayerReference,
-    resolution_state::ResolutionState, role_list::Faction,
-    visit::Visit, win_condition::WinCondition, Game
+    chat::ChatGroup, components::puppeteer_marionette::PuppeteerMarionette, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, resolution_state::ResolutionState, role_list::Faction, visit::Visit, win_condition::WinCondition, Game
 };
 
 use super::{journalist::Journalist, medium::Medium, same_evil_team, Role, RoleState};
@@ -33,6 +30,9 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         !actor_ref.alive(game) && 
         !Modifiers::modifier_is_enabled(game, ModifierType::DeadCanChat)
     {
+        if PuppeteerMarionette::marionettes_and_puppeteer(game).contains(&actor_ref){
+            return vec![ChatGroup::Dead, ChatGroup::Puppeteer].into_iter().collect();
+        }
         return vec![ChatGroup::Dead].into_iter().collect();
     }
     if actor_ref.night_silenced(game){
@@ -85,6 +85,11 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
             let mut jail_or_night_chats = if actor_ref.night_jailed(game){
                 vec![ChatGroup::Jail]
             }else{
+                
+                if PuppeteerMarionette::marionettes_and_puppeteer(game).contains(&actor_ref) && PhaseType::Night == game.current_phase().phase(){
+                    night_chat_groups.push(ChatGroup::Puppeteer);
+                }
+
                 match actor_ref.role(game).faction() {
                     Faction::Mafia => {
                         night_chat_groups.push(ChatGroup::Mafia);
@@ -120,6 +125,9 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
     }
     if actor_ref.role(game).faction() == Faction::Cult {
         out.push(ChatGroup::Cult);
+    }
+    if PuppeteerMarionette::marionettes_and_puppeteer(game).contains(&actor_ref){
+        out.push(ChatGroup::Puppeteer);
     }
     if actor_ref.night_jailed(game){
         out.push(ChatGroup::Jail);
