@@ -44,7 +44,7 @@ pub enum GraveDeathCause {
     BrokenHeart,
     Killers(Vec<GraveKiller>)
 }
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type", content = "value")]
 pub enum GraveKiller {

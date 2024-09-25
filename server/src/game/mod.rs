@@ -25,6 +25,7 @@ use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
 use components::pitchfork::Pitchfork;
 use components::mafia_recruits::MafiaRecruits;
+use components::poison::Poison;
 use components::verdicts_today::VerdictsToday;
 use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
@@ -90,6 +91,7 @@ pub struct Game {
     pub love_linked: LoveLinked,
     pub verdicts_today: VerdictsToday,
     pub pitchfork: Pitchfork,
+    pub poison: Poison,
 
     //Game modifiers
     pub modifiers: Modifiers
@@ -181,6 +183,7 @@ impl Game {
                 love_linked: LoveLinked::default(),
                 verdicts_today: VerdictsToday::default(),
                 pitchfork: Pitchfork::default(),
+                poison: Poison::default(),
 
             };
 
@@ -403,7 +406,7 @@ impl Game {
 pub mod test {
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, puppeteer_marionette::PuppeteerMarionette, verdicts_today::VerdictsToday},
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, verdicts_today::VerdictsToday},
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
@@ -465,6 +468,7 @@ pub mod test {
             love_linked: LoveLinked::default(),
             verdicts_today: VerdictsToday::default(),
             pitchfork: Pitchfork::default(),
+            poison: Poison::default(),
 
             modifiers: Default::default(),
         };

@@ -166,6 +166,7 @@ macros::priorities! {
 
     Heal,
     Kill,
+    Poison,
     Investigative,
 
     Cupid,
