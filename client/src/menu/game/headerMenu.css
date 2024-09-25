@@ -23,9 +23,13 @@
     background-size:auto;
 }
 .header-menu.background-day{
+    background-position: center;
+    background-repeat: repeat;
     background-image: url('../../../public/images/day.png');
 }
 .header-menu.background-night{
+    background-position: center;
+    background-repeat: repeat;
     background-image: url('../../../public/images/night.png');
 }
 .header-menu.background-none{
