@@ -1,7 +1,7 @@
 use serde::Serialize;
 
+use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
-use crate::game::resolution_state::ResolutionState;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
@@ -53,7 +53,7 @@ impl Gossip {
                 }else if visited_player.has_innocent_aura(game){
                     false
                 }else{
-                    !ResolutionState::can_win_together(game, player_ref, visited_player)
+                    !WinCondition::can_win_together(player_ref.win_condition(game), visited_player.win_condition(game))
                 }
             )
     }

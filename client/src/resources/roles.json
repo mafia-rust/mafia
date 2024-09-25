@@ -948,7 +948,7 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "puppeteerPlayerIsNowMarionette","player": 32},
-            {"type": "puppeteerYouArePoisoned"},
+            {"type": "youArePoisoned"},
             {"type": "puppeteerActionChosen", "action": "poison"},
             {"type": "puppeteerActionChosen", "action": "string"}
         ]

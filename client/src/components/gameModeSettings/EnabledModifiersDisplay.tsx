@@ -15,33 +15,33 @@ export function EnabledModifiersDisplay(props: {
     return <div className="chat-menu-colors selector-section">
             <h2><StyledText>{translate("modifiers")}</StyledText></h2>
             {dropdownsSelected.map((modifier, index) => {
-                return <>
-                    <EnabledModifierDisplay
-                        key={index}
-                        modifier={modifier}
-                        disabled={props.disabled}
-                        choosableModifiers={
-                            Object.values(MODIFIERS).filter((m) => !props.enabledModifiers.includes(m)||m===modifier)
+                return <EnabledModifierDisplay
+                    key={index}
+                    modifier={modifier}
+                    disabled={props.disabled}
+                    choosableModifiers={
+                        Object.values(MODIFIERS).filter((m) => !props.enabledModifiers.includes(m)||m===modifier)
+                    }
+                    onChange={modifier => {
+                        if (props.onChange === undefined)
+                            return;
+                        
+                        let currentModifiers = props.enabledModifiers;
+
+                        if (modifier === null) {
+                            currentModifiers.splice(index, 1);
+                        } else {
+                            currentModifiers.push(modifier);
                         }
-                        onChange={modifier => {
-                            if (props.onChange === undefined)
-                                return;
-                            
-                            let currentModifiers = props.enabledModifiers;
 
-                            if (modifier === null) {
-                                currentModifiers.splice(index, 1);
-                            } else {
-                                currentModifiers.push(modifier);
-                            }
+                        //make sure to remove duplicates
+                        currentModifiers = currentModifiers.filter((value, index, self) => self.indexOf(value) === index);
+                        currentModifiers = currentModifiers.filter(modifier => modifier !== null);
 
-                            //make sure to remove duplicates
-                            currentModifiers = currentModifiers.filter((value, index, self) => self.indexOf(value) === index);
-                            currentModifiers = currentModifiers.filter(modifier => modifier !== null);
-
-                            props.onChange(currentModifiers);
-                        }}/>
-                </>
+                        props.onChange(currentModifiers);
+                    }}
+                />
+                
             })}
     </div>
 }

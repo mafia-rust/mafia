@@ -631,7 +631,6 @@
     "chatMessage.deputyKilled": "Th Dpty klld \\0!",
     "chatMessage.deputyShotYou": " Dpty sht y!",
     "chatMessage.puppeteerPlayerIsNowMarionette": "\\0 s bng strng p nt  mrntt. Thy nw wn wth fnds, nd wll b ttckd vry nght.",
-    "chatMessage.puppeteerYouArePoisoned": "Y hv bn psnd by th ppptr, y wll b ndrctly ttckd th nxt nght.",
     "chatMessage.jailorDecidedToExecute": "Th Jlr dcdd t xct \\0",
     "chatMessage.jailorDecideExecute.nobody": "Th Jlr dcdd nt t xct!",
     "chatMessage.yourConvertFailed": "Y fld t cnvrt yr trgt.",

@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::AttackPower;
+use crate::game::components::poison::Poison;
 use crate::game::{attack_power::DefensePower, components::puppeteer_marionette::PuppeteerMarionette};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -8,7 +9,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{Priority, RoleState, RoleStateImpl};
+use super::{Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -40,7 +41,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl<ClientRoleState> for Puppeteer {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Kill {return;}
+        if priority != Priority::Poison {return;}
 
         if let Some(visit) = actor_ref.night_visits(game).first(){
             let target = visit.target;
@@ -53,11 +54,19 @@ impl RoleStateImpl<ClientRoleState> for Puppeteer {
                         }
                         actor_ref.set_role_state(game, RoleState::Puppeteer(self));
                     }else{
-                        PuppeteerMarionette::poison(game, target);
+                        Poison::poison_player(game, 
+                            target, AttackPower::ArmorPiercing, 
+                            crate::game::grave::GraveKiller::Role(Role::Puppeteer), 
+                            vec![actor_ref].into_iter().collect(), true
+                        );
                     }
                 }
                 PuppeteerAction::Poison => {
-                    PuppeteerMarionette::poison(game, target);
+                    Poison::poison_player(game, 
+                        target, AttackPower::ArmorPiercing, 
+                        crate::game::grave::GraveKiller::Role(Role::Puppeteer), 
+                        vec![actor_ref].into_iter().collect(), true
+                    );
                 },
             }
         }

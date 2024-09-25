@@ -83,7 +83,7 @@ impl TestPlayer {
     }
 
     pub fn get_messages(&self) -> Vec<ChatMessageVariant> {
-        self.0.deref(game!(self)).chat_messages.iter().map(|m|{
+        self.0.chat_messages(game!(self)).iter().map(|m|{
             m.get_variant().clone()
         }).collect()
     }

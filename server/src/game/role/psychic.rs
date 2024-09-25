@@ -93,6 +93,6 @@ impl Psychic {
     }
 
     fn player_is_evil(game: &Game, player_ref: PlayerReference)-> bool {
-        !ResolutionState::requires_only_this_resolution_state(game, player_ref, ResolutionState::Town)
+        !player_ref.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town)
     }
 }

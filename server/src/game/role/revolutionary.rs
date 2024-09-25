@@ -49,9 +49,6 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl<ClientRoleState> for Revolutionary {
-    fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
-        self.target == RevolutionaryTarget::Won
-    }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
 
         if self.target == RevolutionaryTarget::Won || !actor_ref.alive(game){
@@ -97,6 +94,12 @@ impl RoleStateImpl<ClientRoleState> for Revolutionary {
         if Some(dead_player_ref) == self.target.get_target() && self.target != RevolutionaryTarget::Won {
             actor_ref.set_role(game, RoleState::Jester(Jester::default()))
         }
+    }
+}
+
+impl Revolutionary {
+    pub fn won(&self)->bool{
+        self.target == RevolutionaryTarget::Won
     }
 }
 

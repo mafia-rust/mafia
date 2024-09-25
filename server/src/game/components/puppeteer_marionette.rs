@@ -1,9 +1,9 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    attack_power::AttackPower, chat::ChatMessageVariant, player::PlayerReference, role::{
+    attack_power::AttackPower, chat::ChatMessageVariant, player::PlayerReference, resolution_state::ResolutionState, role::{
         Priority, Role
-    }, tag::Tag, Game
+    }, tag::Tag, win_condition::WinCondition, Game
 };
 
 impl Game{
@@ -18,7 +18,6 @@ impl Game{
 #[derive(Default, Clone)]
 pub struct PuppeteerMarionette{
     to_be_converted: HashSet<PlayerReference>,
-    poisoned: HashSet<PlayerReference>,
 }
 impl PuppeteerMarionette{
     pub fn string(game: &mut Game, player: PlayerReference)->bool{
@@ -28,6 +27,7 @@ impl PuppeteerMarionette{
         if !puppeteer_marionette.to_be_converted.insert(player){return false;}
 
         game.set_puppeteer_marionette(puppeteer_marionette);
+        player.set_win_condition(game, WinCondition::ResolutionStateReached { win_if_any: vec![ResolutionState::Fiends].into_iter().collect() });
 
         for fiend in PuppeteerMarionette::marionettes_and_puppeteer(game){
             fiend.push_night_message(game, ChatMessageVariant::PuppeteerPlayerIsNowMarionette{player: player.index()});
@@ -35,13 +35,6 @@ impl PuppeteerMarionette{
 
         PuppeteerMarionette::give_tags_and_labels(game);
         true
-    }
-    pub fn poison(game: &mut Game, player: PlayerReference){
-        let mut p = game.puppeteer_marionette().clone();
-        player.push_night_message(game, ChatMessageVariant::PuppeteerYouArePoisoned);
-        if p.poisoned.insert(player){
-            game.set_puppeteer_marionette(p);
-        }
     }
 
     pub fn kill_marionettes(game: &mut Game){
@@ -54,22 +47,6 @@ impl PuppeteerMarionette{
                 .collect::<Vec<_>>();
 
         PuppeteerMarionette::attack_players(game, marionettes, AttackPower::ProtectionPiercing);
-    }
-    pub fn kill_poisoned(game: &mut Game){
-        let mut puppeteer_marionette = game.puppeteer_marionette().clone();
-
-        let poisoned = game.puppeteer_marionette()
-            .poisoned
-            .iter()
-            .filter(|p|p.alive(game))
-            .map(|p|p.clone())
-            .collect::<Vec<_>>();
-
-        PuppeteerMarionette::attack_players(game, poisoned, AttackPower::ArmorPiercing);
-
-        puppeteer_marionette.poisoned = HashSet::new();
-
-        game.set_puppeteer_marionette(puppeteer_marionette)
     }
     fn attack_players(game: &mut Game, players: Vec<PlayerReference>, attack_power: AttackPower){
         
@@ -133,7 +110,6 @@ impl PuppeteerMarionette{
     pub fn on_night_priority(game: &mut Game, priority: Priority){
         if priority == Priority::Kill{
             PuppeteerMarionette::kill_marionettes(game);
-            PuppeteerMarionette::kill_poisoned(game);
         }
     }
 }

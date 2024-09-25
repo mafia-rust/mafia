@@ -132,7 +132,6 @@ pub enum ChatMessageVariant {
 
     PuppeteerPlayerIsNowMarionette{player: PlayerIndex},
     RecruiterPlayerIsNowRecruit{player: PlayerIndex},
-    PuppeteerYouArePoisoned,
 
     YourConvertFailed,
     CultConvertsNext,
@@ -145,6 +144,8 @@ pub enum ChatMessageVariant {
     YouDied,
     YouWereAttacked,
     YouAttackedSomeone,
+
+    YouArePoisoned,
 
     /*
     Night Information

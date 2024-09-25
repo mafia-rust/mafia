@@ -52,7 +52,7 @@ impl RoleStateImpl<ClientRoleState> for Deputy {
             target_ref.die(game, grave);
             
 
-            if ResolutionState::requires_only_this_resolution_state(game, target_ref, ResolutionState::Town) {
+            if target_ref.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town) {
                 actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
             }
         }

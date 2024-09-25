@@ -51,7 +51,7 @@ impl RoleStateImpl<ClientRoleState> for Cop {
                     .filter(|other_player_ref|
                         other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref &&
-                        !ResolutionState::requires_only_this_resolution_state(game, *other_player_ref, ResolutionState::Town) &&
+                        !other_player_ref.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town) &&
                         other_player_ref.night_visits(game)
                             .iter()
                             .any(|v|v.target==target_ref)

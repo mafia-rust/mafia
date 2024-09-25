@@ -99,6 +99,10 @@ export default function PlayerListMenu(): ReactElement {
         gameState => gameState.phaseState,
         ["phase", "playerOnTrial"]
     )!
+    const enabledRoles = useGameState(
+        gameState => gameState.enabledRoles,
+        ["enabledRoles"]
+    )!
 
     const forfeitVote = usePlayerState(
         gameState => gameState.forfeitVote,
@@ -193,7 +197,7 @@ export default function PlayerListMenu(): ReactElement {
                 <RoleSpecificSection/>
             </details>
         }
-        {!GAME_MANAGER.getMySpectator() && getFactionFromRole(roleState!.type)==="town" && <details className="role-specific-colors small-role-specific-menu" open={pitchforkVoteOpen}>
+        {!GAME_MANAGER.getMySpectator() && enabledRoles.includes("rabbleRouser") && getFactionFromRole(roleState!.type)==="town" && <details className="role-specific-colors small-role-specific-menu" open={pitchforkVoteOpen}>
             <summary
                 onClick={(e)=>{
                     e.preventDefault();

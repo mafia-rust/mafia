@@ -144,7 +144,6 @@ export default function messageListener(packet: ToClientPacket){
 
             //TODO jack Im sorry
             AudioController.clearQueue();
-            AudioController.pauseQueue();
         break;
         case "lobbyClients":
             if(GAME_MANAGER.state.stateType === "lobby"){

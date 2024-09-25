@@ -656,6 +656,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "vigilanteSuicide":
         case "targetIsPossessionImmune":
         case "youSurvivedAttack":
+        case "youArePoisoned":
         case "doomsayerFailed":
         case "doomsayerWon":
         case "martyrFailed":
@@ -666,7 +667,6 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "mayorCantWhisper":
         case "youAttackedSomeone":
         case "youWereAttacked":
-        case "puppeteerYouArePoisoned":
         case "armorsmithArmorBroke":
             return translate("chatMessage."+message.type);
         case "playerDied":
@@ -813,8 +813,6 @@ export type ChatMessageVariant = {
     type: "recruiterPlayerIsNowRecruit",
     player: PlayerIndex
 } | {
-    type: "puppeteerYouArePoisoned"
-} | {
     type: "roleBlocked", 
     immune : boolean
 } | {
@@ -825,6 +823,8 @@ export type ChatMessageVariant = {
     type: "youWereAttacked"
 } | {
     type: "youAttackedSomeone"
+} | {
+    type: "youArePoisoned"
 } |
 /* Role-specific */
 {

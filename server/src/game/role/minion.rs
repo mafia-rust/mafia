@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, grave::Grave};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -53,14 +54,12 @@ impl RoleStateImpl<ClientRoleState> for Minion {
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         if
             actor_ref.alive(game) &&
-            !PlayerReference::all_players(game)
+            PlayerReference::all_players(game)
                 .filter(|p|p.alive(game))
                 .filter(|p|p.keeps_game_running(game))
-                .any(|p|
-                    p.required_resolution_states_for_win(game).is_some_and(|s1|
-                        actor_ref.required_resolution_states_for_win(game).is_some_and(|s2|
-                            s1.is_disjoint(&s2)
-                )))
+                .all(|p|
+                    WinCondition::can_win_together(&p.win_condition(game), actor_ref.win_condition(game))
+                )
 
         {
             actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));

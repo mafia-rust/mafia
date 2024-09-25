@@ -58,9 +58,6 @@ impl RoleStateImpl<ClientRoleState> for Jester {
         target_ref.verdict(game) != Verdict::Innocent &&
         self.lynched_yesterday
     }
-    fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
-        self.won
-    }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         match game.current_phase() {
             &PhaseState::FinalWords { player_on_trial } => {
@@ -87,6 +84,12 @@ impl RoleStateImpl<ClientRoleState> for Jester {
         {
             game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::JesterWon);
         }
+    }
+}
+
+impl Jester {
+    pub fn won(&self) -> bool {
+        self.won
     }
 }
 
