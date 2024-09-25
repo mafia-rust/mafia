@@ -67,7 +67,7 @@ impl Game {
                 for chat_group in sender_player_ref.get_current_send_chat_groups(self){
                     match chat_group {
                         ChatGroup::All | ChatGroup::Interview | ChatGroup::Dead => {},
-                        ChatGroup::Mafia | ChatGroup::Cult => {
+                        ChatGroup::Mafia | ChatGroup::Cult | ChatGroup::Puppeteer => {
                             self.add_message_to_chat_group( chat_group,
                                 ChatMessageVariant::Targeted { 
                                     targeter: sender_player_ref.index(), 
