@@ -135,9 +135,6 @@ impl RoleStateImpl<ClientRoleState> for Doomsayer {
         }
     
     }
-    fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
-        self.won
-    }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType) {
         Doomsayer::check_and_convert_to_jester(game, self, actor_ref);
     }
@@ -158,6 +155,9 @@ impl Doomsayer{
         {
             actor_ref.set_role(game, RoleState::Jester(Jester::default()));
         }
+    }
+    pub fn won(&self) -> bool {
+        self.won
     }
 }
 impl CustomClientRoleState<ClientRoleState> for Doomsayer {

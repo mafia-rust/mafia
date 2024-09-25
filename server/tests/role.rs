@@ -1826,7 +1826,7 @@ fn martyr_suicide_ends_game() {
     game.next_phase();
 
     assert!(!martyr.alive());
-    assert!(martyr.role_state().clone().get_won_game(&game, martyr.player_ref()));
+    assert!(martyr.get_won_game());
     assert!(!player1.alive());
     assert!(!player2.alive());
     assert!(!player3.alive());
@@ -1861,7 +1861,7 @@ fn martyr_roleblocked() {
     game.next_phase();
 
     assert!(martyr.alive());
-    assert!(!martyr.role_state().clone().get_won_game(&game, martyr.player_ref()));
+    assert!(!martyr.get_won_game());
     assert!(player1.alive());
     assert!(player2.alive());
     assert!(hypnotist.alive());
@@ -1894,7 +1894,7 @@ fn martyr_healed() {
     game.next_phase();
 
     assert!(martyr.alive());
-    assert!(!martyr.role_state().clone().get_won_game(&game, martyr.player_ref()));
+    assert!(!martyr.get_won_game());
     assert!(player1.alive());
     assert!(player2.alive());
     assert!(doctor.alive());

@@ -39,9 +39,6 @@ trait RoleStateImpl<CRSP>: Clone + std::fmt::Debug + Default + CustomClientRoleS
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
-    fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::get_won_game(game, actor_ref)
-    }
     fn default_win_condition(self) -> WinCondition where RoleState: From<Self>{
         let role_state: RoleState = self.into();
         crate::game::role::common_role::default_win_condition(role_state.role())
@@ -272,11 +269,6 @@ mod macros {
                 pub fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup>{
                     match self {
                         $(Self::$name(role_struct) => role_struct.get_current_receive_chat_groups(game, actor_ref)),*
-                    }
-                }
-                pub fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool{
-                    match self {
-                        $(Self::$name(role_struct) => role_struct.get_won_game(game, actor_ref)),*
                     }
                 }
                 pub fn default_win_condition(self) -> WinCondition{

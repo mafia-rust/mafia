@@ -1,8 +1,12 @@
 use std::collections::{HashMap, HashSet};
 
-use crate::game::
-{
-    attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessageVariant}, components::{arsonist_doused::ArsonistDoused, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette}, event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, grave::{Grave, GraveKiller, GraveReference}, resolution_state::ResolutionState, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
+use crate::game::{
+    attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessageVariant},
+    components::{arsonist_doused::ArsonistDoused, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette},
+    event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch},
+    grave::{Grave, GraveKiller, GraveReference}, resolution_state::ResolutionState,
+    role::{same_evil_team, Priority, Role, RoleState},
+    visit::Visit, win_condition::WinCondition, Game
 };
 
 use super::PlayerReference;
@@ -258,6 +262,28 @@ impl PlayerReference{
         self.night_framed(game) ||
         ArsonistDoused::has_suspicious_aura_douse(game, *self)
     }
+    pub fn get_won_game(&self, game: &Game) -> bool {
+        match self.win_condition(game){
+            WinCondition::ResolutionStateReached { win_if_any } => {
+                if let Some(resolution) = ResolutionState::game_is_over(game) {
+                    win_if_any.contains(&resolution)
+                } else {
+                    false
+                }
+            },
+            WinCondition::RoleStateWon => {
+                match self.role_state(game) {
+                    RoleState::Jester(r) => r.won(),
+                    RoleState::Doomsayer(r) => r.won(),
+                    RoleState::Revolutionary(r) => r.won(),
+                    RoleState::Politician(r) => r.won(),
+                    RoleState::Martyr(r) => r.won(),
+                    RoleState::Death(r) => r.won(),
+                    _ => false
+                }
+            },
+        }
+    }
     pub fn keeps_game_running(&self, game: &Game) -> bool {
         if MafiaRecruits::is_recruited(game, *self) {return false;}
         if PuppeteerMarionette::is_marionette(game, *self) {return false;}
@@ -291,9 +317,6 @@ impl PlayerReference{
     }
     pub fn get_current_receive_chat_groups(&self, game: &Game) -> HashSet<ChatGroup> {
         self.role_state(game).clone().get_current_receive_chat_groups(game, *self)
-    }
-    pub fn get_won_game(&self, game: &Game) -> bool {
-        self.role_state(game).clone().get_won_game(game, *self)
     }
     pub fn convert_selection_to_visits(&self, game: &Game, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         self.role_state(game).clone().convert_selection_to_visits(game, *self, target_refs)

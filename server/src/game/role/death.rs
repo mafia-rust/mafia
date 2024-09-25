@@ -60,9 +60,6 @@ impl RoleStateImpl<ClientRoleState> for Death {
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
     }
-    fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
-        self.won
-    }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {
             PhaseType::Night => {
@@ -87,6 +84,12 @@ impl RoleStateImpl<ClientRoleState> for Death {
             _=>{}
         }
         
+    }
+}
+
+impl Death {
+    pub fn won(&self) -> bool {
+        self.won
     }
 }
 

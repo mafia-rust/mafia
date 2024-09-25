@@ -26,9 +26,6 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl<ClientRoleState> for Politician {
-    fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
-        self.won
-    }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         if self.should_suicide(game, actor_ref) {
             actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
@@ -105,5 +102,8 @@ pub fn is_town_remaining(game: &Game) -> bool {
 impl Politician {
     pub fn should_suicide(&self, game: &Game, actor_ref: PlayerReference) -> bool {
         !self.won && actor_ref.alive(game) && !is_town_remaining(game)
+    }
+    pub fn won(&self)->bool{
+        self.won
     }
 }

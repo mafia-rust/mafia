@@ -157,15 +157,6 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
 }
 
 ///Only works for roles that win based on end game condition
-pub(super) fn get_won_game(game: &Game, actor_ref: PlayerReference) -> bool {
-    if let Some(resolution) = ResolutionState::game_is_over(game) {
-        actor_ref.win_condition(game).can_win_when_resolution_state_reached(resolution)
-    } else {
-        false
-    }
-}
-
-///Only works for roles that win based on end game condition
 pub(super) fn default_win_condition(role: Role) -> WinCondition {
     WinCondition::ResolutionStateReached{win_if_any: 
         match role.faction(){
