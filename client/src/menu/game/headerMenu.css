@@ -19,10 +19,17 @@
 }
 .header-menu {
     position: relative;
-    /* background-color: var(--background-color); */
-
-    background-image: url('../../../public/images/day.png');
+    background-color: var(--background-color);
     background-size:auto;
+}
+.header-menu.background-day{
+    background-image: url('../../../public/images/day.png');
+}
+.header-menu.background-night{
+    background-image: url('../../../public/images/night.png');
+}
+.header-menu.background-none{
+    background-color: var(--background-color);
 }
 .header-menu > .information {
     padding: .25rem;
@@ -30,6 +37,20 @@
     flex-direction: column;
     gap: .25rem;
 }
+.header-menu > .information > .my-information {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}.header-menu > .information > .my-information > div {
+    width: fit-content;
+    background-color: var(--background-color);
+    border-color: var(--primary-border-color);
+    border-width: .13rem;
+    border-style: solid;
+    border-radius: .5rem;
+    padding: .13rem .25rem;
+}
+
 .header-menu .phase-specific {
     display: flex;
     flex-direction: row;
