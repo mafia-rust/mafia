@@ -310,6 +310,9 @@ export type ToServerPacket = {
     type: "retrainerRetrain",
     role: Role
 } | {
+    type: "setStewardRoleChosen",
+    role: Role | null
+} | {
     type: "voteFastForwardPhase",
     fastForward: boolean
 } | {

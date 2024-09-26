@@ -274,9 +274,14 @@
     "role.armorsmith.name": "Armorsmith",
     "role.armorsmith.name:var.0": "Armorsmiths",
     "role.armorsmith.target": "Open",
-    "role.armorsmith.roleDataText": "\\0 uses remaining",
+    "role.armorsmith.roleDataText": "\\0 uses remaining.",
     "role.armorsmith.youAreSelecting": "You are opening shop tonight.",
     "role.armorsmith.youAreSelecting.null": "You aren't opening shop tonight.",
+
+    "role.steward.name": "Steward",
+    "role.steward.name:var.0": "Stewards",
+    "role.steward.roleDataText": "\\0 steward protects remaining.",
+    "role.steward.youAreSelecting": "Choose a role to protect.",
 
     "role.mayor.name": "Mayor",
     "role.mayor.name:var.0": "Mayors",
@@ -868,6 +873,8 @@
     "chatMessage.ojoActionChosen.see": "You choose to see \\0.",
     "chatMessage.ojoActionChosen.kill": "You choose to kill \\0.",
     "chatMessage.ojoActionChosen.none": "You choose nothing.",
+    "chatMessage.stewardRoleChosen.role": "You choose to protect all players with the role \\0.",
+    "chatMessage.stewardRoleChosen.none": "You choose to protect nobody.",
     "chatMessage.kiraResult": "Kira result",
     "chatMessage.puppeteerActionChosen.string": "You choose to string up a marionette.",
     "chatMessage.puppeteerActionChosen.poison": "You choose to poison.",
@@ -1277,6 +1284,11 @@
     "wiki.article.role.armorsmith.abilities":"* Visit anyone to open shop\n    * You and all visitors to you are protected\n    * One random visitor to you is given temporary armor, which gives them protected defense until they are attacked, in which case it breaks",
     "wiki.article.role.armorsmith.attributes":"* You have only 2 uses of your ability\n* Players with temporary armor are told when their armor breaks, but not when they gain it\n* You are not told who has temporary armor\n* You open shop if you visit anyone, so possession can force you to open shop, but blocking can stop you from opening shop",
     "wiki.article.role.armorsmith.extra":"* Your target is told they are protected if they get attacked\n* You can't select anyone other than yourself",
+
+    "wiki.article.role.steward.guide":"- At night, choose a role to protect\n    - Everyone with this role is protected from attacks\n    - You are told if anyone with this role is attacked\n    - You can't protect the same role twice in a row\n    - You can't protect Steward more than once per game", 
+    "wiki.article.role.steward.abilities":"* Choose a role to protect\n    * Everyone with this role is protected\n    * You are told if anyone with this role is attacked, and they are told they are protected",
+    "wiki.article.role.steward.attributes":"* You can't protect the same role two nights in a row\n* You can't protect your own role more than once",
+    "wiki.article.role.steward.extra":"You do not visit the roles you protect",
 
     "wiki.article.role.escort.guide": "- At night, select a player to roleblock them, stopping them from using their ability\n- Your target is told they were roleblocked\n\n_For example_\n- An escort selects the godfather, so the godfather can't kill anyone, and nobody dies\n\nYou should try to choose evil players, especially the ones with powerful abilities",
     "wiki.article.role.escort.abilities":"* Visit a player to roleblock them",

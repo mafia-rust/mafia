@@ -196,6 +196,8 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     OjoActionChosen{action: OjoAction},
     #[serde(rename_all = "camelCase")]
+    StewardRoleChosen{role: Option<Role>},
+    #[serde(rename_all = "camelCase")]
     PuppeteerActionChosen{action: PuppeteerAction},
     #[serde(rename_all = "camelCase")]
     RecruiterActionChosen{action: RecruiterAction},

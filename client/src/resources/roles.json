@@ -281,6 +281,21 @@
             {"type": "youSurvivedAttack"}
         ]
     },
+    "steward":{
+        "faction": "town",
+        "roleSet": "townProtective",
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "targetWasAttacked"},
+            {"type": "youWereProtected"},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+        ]
+    },
     "vigilante": {
         "faction": "town",
         "roleSet": "townKilling",

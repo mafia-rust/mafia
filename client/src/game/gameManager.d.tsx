@@ -123,6 +123,7 @@ export type GameManager = {
     sendSetRecruiterAction(action: RecruiterAction): void;
     sendSetErosAction(action: "loveLink" | "kill"): void;
     sendRetrainerRetrain(role: Role): void;
+    sendSetStewardRoleChosen(role: Role | null): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;
     sendForfeitVotePacket(forfeit: boolean): void;
