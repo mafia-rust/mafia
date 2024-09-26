@@ -60,6 +60,11 @@ export type RoleState = {
     type: "armorsmith",
     openShopsRemaining: number,
 } | {
+    type: "steward",
+    stewardProtectsRemaining: number,
+    roleChosen: Role | null,
+    previousRoleChosen: Role | null
+} | {
     type: "vigilante",
     state: {type:"notLoaded"} | {type:"willSuicide"} | {type:"loaded",bullets:number} | {type:"suicided"}
 } | {

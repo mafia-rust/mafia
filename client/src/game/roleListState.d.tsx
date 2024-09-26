@@ -53,7 +53,7 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
                 "flowerGirl"
             ];
         case "townProtective":
-            return ["bodyguard", "cop", "doctor", "bouncer", "engineer", "armorsmith"];
+            return ["bodyguard", "cop", "doctor", "bouncer", "engineer", "armorsmith", "steward"];
         case "townKilling":
             return ["vigilante", "veteran", "deputy", "marksman", "rabbleRouser"];
         case "townSupport":

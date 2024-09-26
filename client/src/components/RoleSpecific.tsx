@@ -21,6 +21,7 @@ import CounterfeiterMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/
 import RetrainerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/RetrainerMenu";
 import { useGameState, usePlayerState } from "./useHooks";
 import RecruiterMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
+import StewardMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/StewardMenu";
 
 export default function RoleSpecificSection(){
     const phaseState = useGameState(
@@ -132,6 +133,10 @@ export default function RoleSpecificSection(){
             </Counter>
         case "ojo":
             return <SmallOjoMenu action={roleState.chosenAction}/>
+        case "steward":
+            return <StewardMenu
+                roleState={roleState}
+            />;
         case "puppeteer":
             return <SmallPuppeteerMenu 
                 action={roleState.action} 

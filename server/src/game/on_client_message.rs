@@ -375,7 +375,14 @@ impl Game {
             },
             ToServerPacket::RetrainerRetrain { role } => {
                 Retrainer::retrain(self, sender_player_ref, role);
-            }
+            },
+            ToServerPacket::SetStewardRoleChosen { role } => {
+                if let RoleState::Steward(mut steward) = sender_player_ref.role_state(self).clone(){
+                    steward.role_chosen = role;
+                    sender_player_ref.set_role_state(self, RoleState::Steward(steward));
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::StewardRoleChosen { role });
+                }
+            },
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {
                 sender_player_ref.set_fast_forward_vote(self, fast_forward);
             },

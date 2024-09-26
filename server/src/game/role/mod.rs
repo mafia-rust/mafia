@@ -82,6 +82,7 @@ macros::roles! {
     Bouncer : bouncer,
     Engineer : engineer,
     Armorsmith : armorsmith,
+    Steward : steward,
 
     Vigilante : vigilante,
     Veteran : veteran,

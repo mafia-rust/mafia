@@ -259,6 +259,7 @@ pub enum ToServerPacket{
     SetRecruiterAction{action: RecruiterAction},
     SetErosAction{action: ErosAction},
     RetrainerRetrain{role: Role},
+    SetStewardRoleChosen{role: Option<Role>},
 
 
     #[serde(rename_all = "camelCase")]
