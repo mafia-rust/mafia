@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
@@ -17,6 +17,10 @@ pub struct Godfather{
     backup: Option<PlayerReference>
 }
 
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice{
+    target: Option<PlayerReference>
+}
 pub type ClientRoleState = Godfather;
 
 pub(super) const FACTION: Faction = Faction::Mafia;
@@ -24,6 +28,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl<ClientRoleState> for Godfather {
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         
         if priority != Priority::Kill {return}

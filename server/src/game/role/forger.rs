@@ -1,5 +1,5 @@
 
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
@@ -30,6 +30,13 @@ pub struct ClientRoleState{
     forges_remaining: u8
 }
 
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice {
+    target: Option<PlayerReference>,
+    pub fake_role: Role,
+    pub fake_will: String,
+}
+
 impl Default for Forger {
     fn default() -> Self {
         Forger {
@@ -46,6 +53,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl<ClientRoleState> for Forger {
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return}
 

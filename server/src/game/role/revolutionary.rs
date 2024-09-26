@@ -1,6 +1,6 @@
 
 use rand::seq::SliceRandom;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
@@ -43,12 +43,15 @@ impl Default for RevolutionaryTarget {
         Self::Won
     }
 }
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice;
 
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl<ClientRoleState> for Revolutionary {
+    type RoleActionChoice = RoleActionChoice;
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
 
         if self.target == RevolutionaryTarget::Won || !actor_ref.alive(game){

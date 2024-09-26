@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::{attack_power::DefensePower, phase::PhaseType};
 use crate::game::player::PlayerReference;
@@ -17,11 +17,16 @@ pub struct Necromancer {
     used_bodies: Vec<PlayerReference>, 
     currently_used_player: Option<PlayerReference> 
 }
-
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice{
+    //first player is the possessed player, second player is the target
+    possess: Option<(PlayerReference, PlayerReference)>
+}
 #[derive(Clone, Debug, Serialize)]
 pub struct ClientRoleState;
 
 impl RoleStateImpl<ClientRoleState> for Necromancer {
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
             let mut used_bodies = self.used_bodies;

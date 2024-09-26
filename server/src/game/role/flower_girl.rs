@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
 use crate::game::attack_power::DefensePower;
 use crate::game::{chat::ChatMessageVariant, components::verdicts_today::VerdictsToday};
@@ -16,9 +16,12 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct FlowerGirl;
 
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice{}
 pub type ClientRoleState = FlowerGirl;
 
 impl RoleStateImpl<ClientRoleState> for FlowerGirl {
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_blocked(game) {return}
         if priority != Priority::Investigative {return;}

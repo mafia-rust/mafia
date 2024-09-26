@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
@@ -19,6 +19,10 @@ pub struct Martyr {
 
 // More information is being sent than needed by the client.
 // This should be fixed later
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice{
+    target: Option<PlayerReference>
+}
 pub type ClientRoleState = Martyr;
 
 #[derive(PartialEq, Clone, Debug, Serialize)]
@@ -45,6 +49,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl<ClientRoleState> for Martyr {
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return}
         let MartyrState::StillPlaying { bullets } = self.state else {return};

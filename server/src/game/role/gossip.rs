@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
@@ -17,8 +17,13 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 pub struct Gossip;
 
 pub type ClientRoleState = Gossip;
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice{
+    target: Option<PlayerReference>
+}
 
 impl RoleStateImpl<ClientRoleState> for Gossip {
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
 

@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
@@ -22,6 +22,10 @@ pub struct Death{
 pub struct ClientRoleState {
     souls: u8
 }
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice{
+    target: Option<PlayerReference>
+}
 
 const NEEDED_SOULS: u8 = 6;
 pub(super) const FACTION: Faction = Faction::Neutral;
@@ -29,6 +33,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl<ClientRoleState> for Death {
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority == Priority::Heal && self.souls >= NEEDED_SOULS{
             actor_ref.set_night_upgraded_defense(game, Some(DefensePower::Invincible))

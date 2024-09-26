@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
 use crate::game::attack_power::AttackPower;
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
@@ -13,6 +13,10 @@ use super::{Priority, RoleStateImpl};
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct Mafioso;
 
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice{
+    target: Option<PlayerReference>
+}
 pub type ClientRoleState = Mafioso;
 
 pub(super) const FACTION: Faction = Faction::Mafia;
@@ -20,6 +24,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl<ClientRoleState> for Mafioso {
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return}
         if game.day_number() == 1 {return}

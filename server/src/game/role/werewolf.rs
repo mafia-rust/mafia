@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use rand::thread_rng;
 use rand::seq::SliceRandom;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
@@ -21,6 +21,10 @@ use super::{CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 pub struct Werewolf{
     pub tracked_players: Vec<PlayerReference>,
 }
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice{
+    target: Option<PlayerReference>
+}
 
 #[derive(Clone, Debug, Serialize)]
 pub struct ClientRoleState;
@@ -30,6 +34,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl<ClientRoleState> for Werewolf {
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Kill => {

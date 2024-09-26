@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::AttackPower;
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
@@ -20,6 +20,10 @@ pub struct Veteran {
 pub struct ClientRoleState {
     alerts_remaining: u8
 }
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice{
+    alert: bool
+}
 
 impl Default for Veteran {
     fn default() -> Self {
@@ -35,6 +39,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl<ClientRoleState> for Veteran {
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::TopPriority => {

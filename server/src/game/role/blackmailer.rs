@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
 use crate::game::role_list::Faction;
@@ -11,6 +11,10 @@ use super::{Priority, RoleStateImpl};
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Blackmailer;
 
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice{
+    target: Option<PlayerReference>
+}
 pub type ClientRoleState = Blackmailer;
 
 pub(super) const FACTION: Faction = Faction::Mafia;
@@ -18,6 +22,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl<ClientRoleState> for Blackmailer {
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Deception {return}
         

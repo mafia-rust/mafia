@@ -1,5 +1,5 @@
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
@@ -14,6 +14,8 @@ use super::{CustomClientRoleState, RoleState, RoleStateImpl};
 pub struct Mayor {
     pub revealed: bool
 }
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice;
 
 #[derive(Clone, Debug, Serialize)]
 pub struct ClientRoleState;
@@ -23,6 +25,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl<ClientRoleState> for Mayor {
+    type RoleActionChoice = RoleActionChoice;
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, _target_ref: PlayerReference) {
 
         if !actor_ref.alive(game) || !game.current_phase().is_day() {

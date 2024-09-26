@@ -1,6 +1,6 @@
 
 use rand::seq::SliceRandom;
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
@@ -21,12 +21,17 @@ pub struct Jester {
 
 #[derive(Clone, Serialize, Debug)]
 pub struct ClientRoleState;
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice{
+    target: PlayerReference
+}
 
 pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl<ClientRoleState> for Jester {
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::TopPriority {return;}
         if actor_ref.alive(game) {return;}

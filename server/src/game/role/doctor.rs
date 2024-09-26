@@ -1,5 +1,8 @@
 
-use serde::Serialize;
+use serde::{
+    Serialize,
+    Deserialize
+};
 
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
@@ -21,6 +24,11 @@ pub struct Doctor {
 pub struct ClientRoleState {
     self_heals_remaining: u8
 }
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice{
+    target: Option<PlayerReference>
+}
+
 
 impl Default for Doctor {
     fn default() -> Self {
@@ -35,7 +43,9 @@ pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
+
 impl RoleStateImpl<ClientRoleState> for Doctor {
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::TopPriority => {

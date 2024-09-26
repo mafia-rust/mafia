@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
 use crate::game::attack_power::AttackPower;
 use crate::game::grave::GraveKiller;
@@ -20,6 +20,11 @@ pub struct Engineer {
 #[serde(rename_all = "camelCase")]
 pub struct ClientRoleState {
     trap: ClientTrapState
+}
+
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice {
+    target: Option<PlayerReference>
 }
 
 #[derive(Clone, Serialize, Debug)]
@@ -69,6 +74,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl<ClientRoleState> for Engineer {
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Heal => {

@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::{
     attack_power::DefensePower,
@@ -16,9 +16,14 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct RabbleRouser;
 
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice{
+    target: Option<PlayerReference>
+}
 pub type ClientRoleState = RabbleRouser;
 
 impl RoleStateImpl<ClientRoleState> for RabbleRouser {
+    type RoleActionChoice = RoleActionChoice;
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
         Pitchfork::add_pitchfork(game, actor_ref);
     }

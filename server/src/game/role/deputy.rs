@@ -1,5 +1,4 @@
-
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
@@ -21,6 +20,10 @@ pub struct Deputy {
     bullets_remaining: u8,
 }
 
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice{
+    target: Option<PlayerReference>
+}
 pub type ClientRoleState = Deputy;
 
 impl Default for Deputy {
@@ -34,6 +37,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl<ClientRoleState> for Deputy {
+    type RoleActionChoice = RoleActionChoice;
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
 
         target_ref.add_private_chat_message(game, ChatMessageVariant::DeputyShotYou);

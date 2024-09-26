@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
@@ -22,6 +22,11 @@ pub struct Jailor {
     executions_remaining: u8
 }
 
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub enum RoleActionChoice{
+    Kill,
+    Jail{ target: Option<PlayerReference> }
+}
 pub type ClientRoleState = Jailor;
 
 impl Default for Jailor {
@@ -38,9 +43,8 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl<ClientRoleState> for Jailor {
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-
-
         match priority {
             Priority::Ward => {
                 for player in PlayerReference::all_players(game){

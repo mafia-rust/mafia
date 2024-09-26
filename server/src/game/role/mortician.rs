@@ -1,5 +1,5 @@
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
@@ -22,6 +22,10 @@ pub struct Mortician {
     obscured_players: Vec<PlayerReference>
 }
 
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice{
+    target: Option<PlayerReference>
+}
 pub type ClientRoleState = Mortician;
 
 pub(super) const FACTION: Faction = Faction::Mafia;
@@ -31,6 +35,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 const MAX_CREMATIONS: u8 = 3;
 
 impl RoleStateImpl<ClientRoleState> for Mortician {
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return}
 

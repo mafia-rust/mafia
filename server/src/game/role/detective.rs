@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::resolution_state::ResolutionState;
@@ -17,8 +17,13 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 pub struct Detective;
 
 pub type ClientRoleState = Detective;
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoleActionChoice{
+    target: Option<PlayerReference>
+}
 
 impl RoleStateImpl<ClientRoleState> for Detective {
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
 
@@ -33,6 +38,19 @@ impl RoleStateImpl<ClientRoleState> for Detective {
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
+    }
+    fn action_choice_is_valid(self, game: &Game, actor_ref: PlayerReference, action_choice: RoleActionChoice)->bool {
+        if let Some(target_ref) = action_choice.target{
+            crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
+        }else{true}
+        
+    }
+    fn convert_action_choice_to_visits(self, _game: &Game, _actor_ref: PlayerReference, action_choice: RoleActionChoice) -> Vec<Visit> {
+        if let Some(target) = action_choice.target{
+            vec![Visit::new(target, false)]
+        }else{
+            vec![]
+        }
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)

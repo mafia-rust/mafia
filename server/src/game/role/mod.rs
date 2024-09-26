@@ -1,7 +1,7 @@
 #![allow(clippy::single_match)]
 #![allow(clippy::get_first)]
 
-use std::collections::HashSet;
+use std::{collections::HashSet, hash::Hash};
 
 use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
@@ -18,7 +18,10 @@ trait CustomClientRoleState<CRSP> {
     fn get_client_role_state(self, game: &Game, actor_ref: PlayerReference) -> CRSP;
 }
 
-trait RoleStateImpl<CRSP>: Clone + std::fmt::Debug + Default + CustomClientRoleState<CRSP> {
+trait RoleStateImpl<CRSP>: Clone + std::fmt::Debug + Default + CustomClientRoleState<CRSP>{
+    type RoleActionChoice: Hash + PartialEq + Eq + Serialize + Deserialize<'static>;
+
+
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {}
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
 
@@ -27,6 +30,12 @@ trait RoleStateImpl<CRSP>: Clone + std::fmt::Debug + Default + CustomClientRoleS
     }
     fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false
+    }
+    fn action_choice_is_valid(self, _game: &Game, _actor_ref: PlayerReference, _action_choice: Self::RoleActionChoice)->bool {
+        false
+    }
+    fn convert_action_choice_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _action_choice: Self::RoleActionChoice) -> Vec<Visit> {
+        vec![]
     }
 
     fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
@@ -220,8 +229,14 @@ mod macros {
 
             #[derive(Clone, Debug, Serialize)]
             #[serde(tag = "type", rename_all = "camelCase")]
-            pub enum ClientRoleStatePacket {
+            pub enum ClientRoleStateEnum {
                 $($name($file::ClientRoleState)),*
+            }
+
+            #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+            #[serde(tag = "type", rename_all = "camelCase")]
+            pub enum RoleActionChoiceEnum {
+                $($name($file::RoleActionChoice)),*
             }
 
             // This does not need to implement Deserialize or PartialEq!
@@ -260,6 +275,22 @@ mod macros {
                 pub fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit>{
                     match self {
                         $(Self::$name(role_struct) => role_struct.convert_selection_to_visits(game, actor_ref, target_refs)),*
+                    }
+                }
+                pub fn action_choice_is_valid(self, game: &Game, actor_ref: PlayerReference, action_choice: RoleActionChoiceEnum)->bool{
+                    match (self, action_choice) {
+                        $(
+                            (Self::$name(role_struct), RoleActionChoiceEnum::$name(action_choice)) => role_struct.action_choice_is_valid(game, actor_ref, action_choice),
+                        )*
+                        _ => false
+                    }
+                }
+                fn convert_action_choice_to_visits(self, game: &Game, actor_ref: PlayerReference, action_choice: RoleActionChoiceEnum) -> Vec<Visit> {
+                    match (self, action_choice) {
+                        $(
+                            (Self::$name(role_struct), RoleActionChoiceEnum::$name(action_choice)) => role_struct.convert_action_choice_to_visits(game, actor_ref, action_choice),
+                        )*
+                        _ => vec![]
                     }
                 }
                 pub fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup>{
@@ -317,14 +348,14 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.before_initial_role_creation(game, actor_ref)),*
                     }
                 }
-                pub fn get_client_role_state(self, game: &Game, actor_ref: PlayerReference) -> ClientRoleStatePacket {
+                pub fn get_client_role_state(self, game: &Game, actor_ref: PlayerReference) -> ClientRoleStateEnum {
                     match self {
-                        $(Self::$name(role_struct) => ClientRoleStatePacket::$name(role_struct.get_client_role_state(game, actor_ref))),*
+                        $(Self::$name(role_struct) => ClientRoleStateEnum::$name(role_struct.get_client_role_state(game, actor_ref))),*
                     }
                 }
             }
             $(
-                impl From<$file::$name> for RoleState where $name: RoleStateImpl<$file::ClientRoleState> {
+                impl From<$file::$name> for RoleState where $name: RoleStateImpl<$file::ClientRoleState, RoleActionChoice=$file::RoleActionChoice> {
                     fn from(role_struct: $file::$name) -> Self {
                         RoleState::$name(role_struct)
                     }

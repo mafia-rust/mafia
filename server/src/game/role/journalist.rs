@@ -1,7 +1,7 @@
 
 use std::collections::HashSet;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
@@ -20,6 +20,11 @@ pub struct Journalist {
     pub interviewed_target: Option<PlayerReference>, 
 }
 
+#[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub enum RoleActionChoice{
+    Interview{ target: Option<PlayerReference> },
+    SetJournal{ journal: String, public: bool },
+}
 pub type ClientRoleState = Journalist;
 
 impl Default for Journalist {
@@ -37,6 +42,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl<ClientRoleState> for Journalist {
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if 
             priority == Priority::Investigative &&
