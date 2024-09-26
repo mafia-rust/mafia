@@ -10,7 +10,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -40,7 +40,8 @@ pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Bodyguard {
+impl RoleStateImpl for Bodyguard {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Bodyguard => {
@@ -117,9 +118,8 @@ impl RoleStateImpl<ClientRoleState> for Bodyguard {
         actor_ref.set_role_state(game, RoleState::Bodyguard(Bodyguard { self_shields_remaining: self.self_shields_remaining, redirected_player_refs, target_protected_ref }));
     }
 }
-
-impl CustomClientRoleState<ClientRoleState> for Bodyguard {
-    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+impl GetClientRoleState<ClientRoleState> for Bodyguard {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState {
             self_shields_remaining: self.self_shields_remaining
         }

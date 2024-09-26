@@ -15,13 +15,12 @@ use super::{Priority, RoleState, RoleStateImpl};
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Apostle;
 
-pub type ClientRoleState = Apostle;
-
 pub(super) const FACTION: Faction = Faction::Cult;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Apostle {
+impl RoleStateImpl for Apostle {
+    type ClientRoleState = Apostle;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
         match (priority, Cult::next_ability(game)) {

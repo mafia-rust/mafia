@@ -9,7 +9,7 @@ use crate::game::role_list::Faction;
 use crate::game::Game;
 
 use super::jester::Jester;
-use super::{CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Doomsayer {
@@ -101,7 +101,8 @@ pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Doomsayer {
+impl RoleStateImpl for Doomsayer {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::TopPriority {return;}
 
@@ -146,6 +147,13 @@ impl RoleStateImpl<ClientRoleState> for Doomsayer {
         Doomsayer::check_and_convert_to_jester(game, self, actor_ref);
     }
 }
+impl GetClientRoleState<ClientRoleState> for Doomsayer {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
+        ClientRoleState{
+            guesses: self.guesses
+        }
+    }
+}
 impl Doomsayer{
     pub fn check_and_convert_to_jester(game: &mut Game, doomsayer: Doomsayer, actor_ref: PlayerReference){
         if
@@ -159,12 +167,5 @@ impl Doomsayer{
     }
     pub fn won(&self) -> bool {
         self.won
-    }
-}
-impl CustomClientRoleState<ClientRoleState> for Doomsayer {
-    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
-        ClientRoleState {
-            guesses: self.guesses
-        }
     }
 }

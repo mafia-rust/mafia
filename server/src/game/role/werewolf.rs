@@ -14,7 +14,7 @@ use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default)]
@@ -29,7 +29,8 @@ pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-impl RoleStateImpl<ClientRoleState> for Werewolf {
+impl RoleStateImpl for Werewolf {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Kill => {
@@ -140,9 +141,8 @@ impl RoleStateImpl<ClientRoleState> for Werewolf {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
     }
 }
-
-impl CustomClientRoleState<ClientRoleState> for Werewolf {
-    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+impl GetClientRoleState<ClientRoleState> for Werewolf {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState
     }
 }

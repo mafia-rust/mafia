@@ -8,7 +8,6 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use super::{Priority, RoleState, RoleStateImpl};
 
-
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Hypnotist{
@@ -21,7 +20,6 @@ pub struct Hypnotist{
     pub your_target_was_jailed_message: bool,
 }
 
-pub type ClientRoleState = Hypnotist;
 
 impl Default for Hypnotist {
     fn default() -> Self {
@@ -40,7 +38,8 @@ pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Hypnotist {
+impl RoleStateImpl for Hypnotist {
+    type ClientRoleState = Hypnotist;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         let Some(visit) = actor_ref.night_visits(game).first() else {
             return;

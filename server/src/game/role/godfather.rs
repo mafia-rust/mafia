@@ -17,13 +17,12 @@ pub struct Godfather{
     backup: Option<PlayerReference>
 }
 
-pub type ClientRoleState = Godfather;
-
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-impl RoleStateImpl<ClientRoleState> for Godfather {
+impl RoleStateImpl for Godfather {
+    type ClientRoleState = Godfather;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         
         if priority != Priority::Kill {return}

@@ -14,11 +14,18 @@ use serde::{Serialize, Deserialize};
 
 use super::{event::before_role_switch::BeforeRoleSwitch, grave::GraveReference, win_condition::WinCondition};
 
-trait CustomClientRoleState<CRSP> {
-    fn get_client_role_state(self, game: &Game, actor_ref: PlayerReference) -> CRSP;
+pub trait GetClientRoleState<CRS> {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> CRS;
+}
+//Automatically implement this for the case where RoleState = ClientRoleState
+impl<T> GetClientRoleState<T> for T {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> T {
+        self
+    }
 }
 
-trait RoleStateImpl<CRSP>: Clone + std::fmt::Debug + Default + CustomClientRoleState<CRSP> {
+pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<<Self as RoleStateImpl>::ClientRoleState> {
+    type ClientRoleState: Clone + std::fmt::Debug + Serialize;
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {}
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
 
@@ -52,12 +59,6 @@ trait RoleStateImpl<CRSP>: Clone + std::fmt::Debug + Default + CustomClientRoleS
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference) {}
     fn on_game_start(self, _game: &mut Game, _actor_ref: PlayerReference) {}
     fn before_initial_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {}
-}
-
-impl<T> CustomClientRoleState<T> for T {
-    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> T {
-        self
-    }
 }
 
 // Creates the Role enum
@@ -220,8 +221,8 @@ mod macros {
 
             #[derive(Clone, Debug, Serialize)]
             #[serde(tag = "type", rename_all = "camelCase")]
-            pub enum ClientRoleStatePacket {
-                $($name($file::ClientRoleState)),*
+            pub enum ClientRoleStateEnum {
+                $($name(<$name as RoleStateImpl>::ClientRoleState)),*
             }
 
             // This does not need to implement Deserialize or PartialEq!
@@ -317,14 +318,14 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.before_initial_role_creation(game, actor_ref)),*
                     }
                 }
-                pub fn get_client_role_state(self, game: &Game, actor_ref: PlayerReference) -> ClientRoleStatePacket {
+                pub fn get_client_role_state(self, game: &Game, actor_ref: PlayerReference) -> ClientRoleStateEnum {
                     match self {
-                        $(Self::$name(role_struct) => ClientRoleStatePacket::$name(role_struct.get_client_role_state(game, actor_ref))),*
+                        $(Self::$name(role_struct) => ClientRoleStateEnum::$name(role_struct.get_client_role_state(game, actor_ref))),*
                     }
                 }
             }
             $(
-                impl From<$file::$name> for RoleState where $name: RoleStateImpl<$file::ClientRoleState> {
+                impl From<$file::$name> for RoleState where $name: RoleStateImpl {
                     fn from(role_struct: $file::$name) -> Self {
                         RoleState::$name(role_struct)
                     }

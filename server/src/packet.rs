@@ -24,7 +24,7 @@ use vec1::Vec1;
 use crate::{
     game::{
         available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
-            counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess, eros::ErosAction, kira::KiraGuess, ojo::OjoAction, puppeteer::PuppeteerAction, recruiter::RecruiterAction, ClientRoleStatePacket, Role
+            counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess, eros::ErosAction, kira::KiraGuess, ojo::OjoAction, puppeteer::PuppeteerAction, recruiter::RecruiterAction, ClientRoleStateEnum, Role
         }, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
     }, 
     listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log
@@ -113,7 +113,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     YourDeathNote{death_note: Option<String>},
     #[serde(rename_all = "camelCase")]
-    YourRoleState{role_state: ClientRoleStatePacket},
+    YourRoleState{role_state: ClientRoleStateEnum},
     #[serde(rename_all = "camelCase")]
     YourSelection{player_indices: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]

@@ -9,7 +9,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{CustomClientRoleState, Role};
+use super::{GetClientRoleState, Role};
 use super::{Priority, RoleState, RoleStateImpl};
 
 
@@ -45,7 +45,8 @@ pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Forger {
+impl RoleStateImpl for Forger {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return}
 
@@ -92,9 +93,8 @@ impl RoleStateImpl<ClientRoleState> for Forger {
         }));
     }
 }
-
-impl CustomClientRoleState<ClientRoleState> for Forger {
-    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+impl GetClientRoleState<ClientRoleState> for Forger {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState {
             fake_role: self.fake_role,
             fake_will: self.fake_will.clone(),

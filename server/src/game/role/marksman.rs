@@ -18,8 +18,6 @@ pub struct Marksman {
     state: MarksmanState
 }
 
-pub type ClientRoleState = Marksman;
-
 #[derive(Clone, Debug, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
@@ -63,7 +61,8 @@ pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Marksman {
+impl RoleStateImpl for Marksman {
+    type ClientRoleState = Marksman;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         
     

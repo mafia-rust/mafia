@@ -11,13 +11,12 @@ use super::{Priority, RoleStateImpl};
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Blackmailer;
 
-pub type ClientRoleState = Blackmailer;
-
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Blackmailer {
+impl RoleStateImpl for Blackmailer {
+    type ClientRoleState = Blackmailer;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Deception {return}
         

@@ -11,13 +11,12 @@ use super::{Priority, RoleStateImpl};
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Consort;
 
-pub type ClientRoleState = Consort;
-
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Consort {
+impl RoleStateImpl for Consort {
+    type ClientRoleState = Consort;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Roleblock {return;}
         

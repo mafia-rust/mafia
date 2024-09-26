@@ -12,7 +12,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{common_role, CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
+use super::{common_role, GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 
 
@@ -28,7 +28,8 @@ pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Cop {
+impl RoleStateImpl for Cop {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if game.day_number() == 1 {return}
 
@@ -99,9 +100,8 @@ impl RoleStateImpl<ClientRoleState> for Cop {
         actor_ref.set_role_state(game, RoleState::Cop(Cop {target_protected_ref: None}));
     }
 }
-
-impl CustomClientRoleState<ClientRoleState> for Cop {
-    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+impl GetClientRoleState<ClientRoleState> for Cop {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState
     }
 }

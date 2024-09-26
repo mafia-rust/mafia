@@ -7,7 +7,7 @@ use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::Game;
 
-use super::{CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Debug, Clone)]
 pub struct Veteran { 
@@ -34,7 +34,8 @@ pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Veteran {
+impl RoleStateImpl for Veteran {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::TopPriority => {
@@ -80,9 +81,8 @@ impl RoleStateImpl<ClientRoleState> for Veteran {
         actor_ref.set_role_state(game, RoleState::Veteran(Veteran { alerts_remaining: self.alerts_remaining, alerting_tonight: false }));   
     }
 }
-
-impl CustomClientRoleState<ClientRoleState> for Veteran {
-    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+impl GetClientRoleState<ClientRoleState> for Veteran {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState {
             alerts_remaining: self.alerts_remaining
         }
