@@ -601,6 +601,12 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                     return translate("chatMessage.ojoActionChosen.none");
             }
             break;
+        case "stewardRoleChosen":
+            if(message.role === null){
+                return translate("chatMessage.stewardRoleChosen.none");
+            }else{
+                return translate("chatMessage.stewardRoleChosen.role", translate("role."+message.role+".name"));
+            }
         case "puppeteerActionChosen":
             return translate("chatMessage.puppeteerActionChosen."+message.action);
         case "recruiterActionChosen":
@@ -931,6 +937,9 @@ export type ChatMessageVariant = {
 } | {
     type: "ojoActionChosen",
     action: OjoAction,
+} | {
+    type: "stewardRoleChosen",
+    role: Role | null,
 } | {
     type: "puppeteerActionChosen",
     action: PuppeteerAction,

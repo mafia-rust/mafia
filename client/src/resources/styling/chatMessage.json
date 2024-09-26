@@ -58,6 +58,7 @@
     "kiraResult": "result",
     "wildcardConvertFailed": "special",
     "ojoActionChosen": "special",
+    "stewardRoleChosen": "special",
     "marksmanChosenMarks": "special",
     "silenced": "warning",
     "mediumHauntStarted": "special",
