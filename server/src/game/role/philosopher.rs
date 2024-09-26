@@ -18,6 +18,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Philosopher {
     type ClientRoleState = Philosopher;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
 

@@ -26,6 +26,7 @@ impl<T> GetClientRoleState<T> for T {
 
 pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<<Self as RoleStateImpl>::ClientRoleState> {
     type ClientRoleState: Clone + std::fmt::Debug + Serialize;
+    type RoleActionChoice: Clone + std::fmt::Debug + Serialize + Deserialize<'static>;
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {}
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
 
@@ -223,6 +224,12 @@ mod macros {
             #[serde(tag = "type", rename_all = "camelCase")]
             pub enum ClientRoleStateEnum {
                 $($name(<$name as RoleStateImpl>::ClientRoleState)),*
+            }
+
+            #[derive(Clone, Debug, Serialize, Deserialize)]
+            #[serde(tag = "type", rename_all = "camelCase")]
+            pub enum RoleActionChoiceEnum {
+                $($name(<$name as RoleStateImpl>::RoleActionChoice)),*
             }
 
             // This does not need to implement Deserialize or PartialEq!

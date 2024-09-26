@@ -158,6 +158,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Kira {
     type ClientRoleState = Kira;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_blocked(game) {return;}
         if !actor_ref.alive(game) {return;}

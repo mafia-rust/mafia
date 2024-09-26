@@ -30,6 +30,7 @@ const MAX_CREMATIONS: u8 = 3;
 
 impl RoleStateImpl for Mortician {
     type ClientRoleState = Mortician;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_jailed(game) {return}
 

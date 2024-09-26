@@ -39,6 +39,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Puppeteer {
     type ClientRoleState = Puppeteer;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Poison {return;}
 

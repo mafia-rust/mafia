@@ -19,6 +19,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Mafioso {
     type ClientRoleState = Mafioso;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return}
         if game.day_number() == 1 {return}

@@ -27,6 +27,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Politician {
     type ClientRoleState = ClientRoleState;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         if self.should_suicide(game, actor_ref) {
             actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));

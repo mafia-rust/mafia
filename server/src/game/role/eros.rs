@@ -29,6 +29,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Eros {
     type ClientRoleState = Eros;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match (priority, self.action) {
             (Priority::Kill, ErosAction::Kill) => {

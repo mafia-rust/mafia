@@ -40,6 +40,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Hypnotist {
     type ClientRoleState = Hypnotist;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         let Some(visit) = actor_ref.night_visits(game).first() else {
             return;

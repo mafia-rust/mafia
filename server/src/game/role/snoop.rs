@@ -18,6 +18,7 @@ pub struct Snoop;
 
 impl RoleStateImpl for Snoop {
     type ClientRoleState = Snoop;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
 

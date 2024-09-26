@@ -29,6 +29,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for MafiaSupportWildcard {
     type ClientRoleState = MafiaSupportWildcard;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Night => {

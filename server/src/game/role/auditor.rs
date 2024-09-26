@@ -33,6 +33,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Auditor {
     type ClientRoleState = Auditor;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
         if priority != Priority::Investigative {return;}

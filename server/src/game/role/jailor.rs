@@ -37,6 +37,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Jailor {
     type ClientRoleState = Jailor;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
 

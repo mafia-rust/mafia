@@ -16,5 +16,6 @@ pub type ClientRoleState = Villager;
 
 impl RoleStateImpl for Villager {
     type ClientRoleState = Villager;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
 }
 

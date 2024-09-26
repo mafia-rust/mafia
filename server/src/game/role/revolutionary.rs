@@ -50,6 +50,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Revolutionary {
     type ClientRoleState = ClientRoleState;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
 
         if self.target == RevolutionaryTarget::Won || !actor_ref.alive(game){

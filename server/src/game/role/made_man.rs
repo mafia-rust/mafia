@@ -17,4 +17,5 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for MadeMan {
     type ClientRoleState = MadeMan;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
 }

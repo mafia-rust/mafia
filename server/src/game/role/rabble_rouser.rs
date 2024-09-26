@@ -18,6 +18,7 @@ pub struct RabbleRouser;
 
 impl RoleStateImpl for RabbleRouser {
     type ClientRoleState = RabbleRouser;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
         Pitchfork::add_pitchfork(game, actor_ref);
     }

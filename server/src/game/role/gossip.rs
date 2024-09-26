@@ -18,6 +18,7 @@ pub struct Gossip;
 
 impl RoleStateImpl for Gossip {
     type ClientRoleState = Gossip;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
 

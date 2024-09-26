@@ -22,6 +22,7 @@ pub struct ClientRoleState;
 
 impl RoleStateImpl for Witch {
     type ClientRoleState = ClientRoleState;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
             actor_ref.set_role_state(game, RoleState::Witch(Witch{

@@ -1,5 +1,7 @@
 use std::collections::HashSet;
 
+use serde::{Deserialize, Serialize};
+
 use crate::game::{
     chat::ChatGroup, components::puppeteer_marionette::PuppeteerMarionette, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, resolution_state::ResolutionState, role_list::Faction, visit::Visit, win_condition::WinCondition, Game
 };
@@ -186,4 +188,8 @@ pub(super) fn default_win_condition(role: Role) -> WinCondition {
             },
         }.into_iter().collect()
     }
+}
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+pub struct CommonRoleActionChoice{
+    player: Option<PlayerReference>,
 }

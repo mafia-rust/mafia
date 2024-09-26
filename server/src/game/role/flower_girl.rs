@@ -19,6 +19,7 @@ pub struct FlowerGirl;
 
 impl RoleStateImpl for FlowerGirl {
     type ClientRoleState = FlowerGirl;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_blocked(game) {return}
         if priority != Priority::Investigative {return;}

@@ -18,6 +18,7 @@ pub struct Detective;
 
 impl RoleStateImpl for Detective {
     type ClientRoleState = Detective;
+    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
 
