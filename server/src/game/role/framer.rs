@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
 use crate::game::role_list::Faction;
@@ -11,6 +11,26 @@ use super::{same_evil_team, Priority, RoleStateImpl};
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Framer;
 
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RoleActionChoice{
+    frame: FrameTarget
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[serde(tag = "type")]
+pub enum FrameTarget{
+    Aura{
+        target: PlayerReference
+    },
+    AuraAndVisit{
+        target: PlayerReference,
+        visit: PlayerReference
+    },
+    None
+}
+
 
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
@@ -18,7 +38,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Framer {
     type ClientRoleState = Framer;
-    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Deception {return;}
     

@@ -40,13 +40,27 @@ pub enum RecruiterAction{
     Kill
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RoleActionChoice{
+    action: RecruiterAction
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[serde(tag = "type")]
+pub enum RecruiterActionChoice{
+    SetAction{action: RecruiterAction},
+    SetAttack{target: Option<PlayerReference>},
+    SetBackup{backup: Option<PlayerReference>}
+}
+
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Recruiter {
     type ClientRoleState = Recruiter;
-    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
         let mut ability_successful = false;

@@ -21,7 +21,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Apostle {
     type ClientRoleState = Apostle;
-    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
+    type RoleActionChoice = super::common_role::RoleActionChoiceOnePlayer;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
         match (priority, Cult::next_ability(game)) {

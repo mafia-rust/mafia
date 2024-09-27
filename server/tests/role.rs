@@ -72,7 +72,7 @@ pub use mafia_server::game::{
         arsonist::Arsonist,
         ojo::{Ojo, OjoAction},
         pyrolisk::Pyrolisk,
-        puppeteer::{Puppeteer, PuppeteerAction},
+        puppeteer::{Puppeteer, PuppeteerActionType},
         fiends_wildcard::FiendsWildcard, 
     }, 
     phase::{
@@ -1523,7 +1523,7 @@ fn puppeteer_marionettes_philosopher(){
 
     puppeteer.set_role_state(RoleState::Puppeteer(Puppeteer{
         marionettes_remaining: 3,
-        action: PuppeteerAction::String
+        action: PuppeteerActionType::String
     }));
 
     assert!(puppeteer.set_night_selection_single(townie));
@@ -1557,7 +1557,7 @@ fn puppeteer_marionettes_die(){
 
     puppeteer.set_role_state(RoleState::Puppeteer(Puppeteer{
         marionettes_remaining: 3,
-        action: PuppeteerAction::String
+        action: PuppeteerActionType::String
     }));
 
     assert!(puppeteer.set_night_selection_single(townie));
@@ -1591,7 +1591,7 @@ fn puppeteer_marionettes_win(){
 
     puppeteer.set_role_state(RoleState::Puppeteer(Puppeteer{
         marionettes_remaining: 3,
-        action: PuppeteerAction::String
+        action: PuppeteerActionType::String
     }));
 
     assert!(puppeteer.set_night_selection_single(townie));
@@ -1626,7 +1626,7 @@ fn deputy_shoots_marionette(){
 
     puppeteer.set_role_state(RoleState::Puppeteer(Puppeteer{
         marionettes_remaining: 3,
-        action: PuppeteerAction::String
+        action: PuppeteerActionType::String
     }));
     assert!(puppeteer.set_night_selection_single(townie));
 
@@ -1649,7 +1649,7 @@ fn vigilante_shoots_marionette(){
 
     puppeteer.set_role_state(RoleState::Puppeteer(Puppeteer{
         marionettes_remaining: 3,
-        action: PuppeteerAction::String
+        action: PuppeteerActionType::String
     }));
     assert!(puppeteer.set_night_selection_single(townie));
     assert!(vigilante.set_night_selection_single(townie));
@@ -2067,7 +2067,7 @@ fn minion_leaves_by_winning_puppeteer(){
 
     pup.set_role_state(RoleState::Puppeteer(Puppeteer{
         marionettes_remaining: 3,
-        action: PuppeteerAction::String
+        action: PuppeteerActionType::String
     }));
     assert!(pup.set_night_selection_single(t));
 
@@ -2120,7 +2120,7 @@ fn fiends_wildcard_defense_upgrade(){
 
     fiend.set_role_state(RoleState::Puppeteer(Puppeteer{
         marionettes_remaining: 3,
-        action: PuppeteerAction::String
+        action: PuppeteerActionType::String
     }));
 
     assert!(fiend.role() == Role::Puppeteer);

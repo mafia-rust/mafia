@@ -30,7 +30,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Death {
     type ClientRoleState = ClientRoleState;
-    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
+    type RoleActionChoice = super::common_role::RoleActionChoiceRole;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority == Priority::Heal && self.souls >= NEEDED_SOULS{
             actor_ref.set_night_upgraded_defense(game, Some(DefensePower::Invincible))

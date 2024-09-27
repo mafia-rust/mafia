@@ -15,22 +15,38 @@ use super::{Priority, Role, RoleState, RoleStateImpl};
 #[serde(rename_all = "camelCase")]
 pub struct Puppeteer{
     pub marionettes_remaining: u8,
-    pub action: PuppeteerAction,
+    pub action: PuppeteerActionType,
 }
 
 impl Default for Puppeteer{
     fn default() -> Self {
         Self {
             marionettes_remaining: 3,
-            action: PuppeteerAction::Poison
+            action: PuppeteerActionType::Poison
         }
     }
 }
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
-pub enum PuppeteerAction{
+pub enum PuppeteerActionType{
     String,
-    Poison
+    Poison,
+}
+
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RoleActionChoice{
+    action: PuppeteerActionType
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[serde(tag = "type")]
+pub enum PuppeteerAction{
+    String{target: PlayerReference},
+    Poison{target: PlayerReference},
+    None
 }
 
 pub(super) const FACTION: Faction = Faction::Fiends;
@@ -39,7 +55,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Puppeteer {
     type ClientRoleState = Puppeteer;
-    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Poison {return;}
 
@@ -47,7 +63,7 @@ impl RoleStateImpl for Puppeteer {
             let target = visit.target;
             
             match self.action {
-                PuppeteerAction::String => {
+                PuppeteerActionType::String => {
                     if AttackPower::ArmorPiercing.can_pierce(target.defense(game)) {
                         if PuppeteerMarionette::string(game, target){
                             self.marionettes_remaining -= 1;
@@ -61,7 +77,7 @@ impl RoleStateImpl for Puppeteer {
                         );
                     }
                 }
-                PuppeteerAction::Poison => {
+                PuppeteerActionType::Poison => {
                     Poison::poison_player(game, 
                         target, AttackPower::ArmorPiercing, 
                         crate::game::grave::GraveKiller::Role(Role::Puppeteer), 
@@ -86,7 +102,7 @@ impl RoleStateImpl for Puppeteer {
     }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         if phase == PhaseType::Night && self.marionettes_remaining == 0{
-            self.action = PuppeteerAction::Poison;
+            self.action = PuppeteerActionType::Poison;
             actor_ref.set_role_state(game, RoleState::Puppeteer(self))
         }
     }

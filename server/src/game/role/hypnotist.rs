@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
@@ -38,9 +38,21 @@ pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RoleActionChoice{
+    pub roleblock: bool,
+    pub you_were_roleblocked_message: bool,
+    pub you_survived_attack_message: bool,
+    pub you_were_protected_message: bool,
+    pub you_were_transported_message: bool,
+    pub you_were_possessed_message: bool,
+    pub your_target_was_jailed_message: bool,
+}
+
 impl RoleStateImpl for Hypnotist {
     type ClientRoleState = Hypnotist;
-    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         let Some(visit) = actor_ref.night_visits(game).first() else {
             return;

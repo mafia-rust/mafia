@@ -5,7 +5,7 @@ use crate::game::{
     components::{arsonist_doused::ArsonistDoused, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette},
     event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch},
     grave::{Grave, GraveKiller, GraveReference}, resolution_state::ResolutionState,
-    role::{same_evil_team, Priority, Role, RoleState},
+    role::{same_evil_team, Priority, Role, RoleActionChoiceEnum, RoleState},
     visit::Visit, win_condition::WinCondition, Game
 };
 
@@ -305,6 +305,9 @@ impl PlayerReference{
     }
     pub fn do_day_action(&self, game: &mut Game, target_ref: PlayerReference) {
         self.role_state(game).clone().do_day_action(game, *self, target_ref)
+    }
+    pub fn do_role_action(self, game: &mut Game, action_choice: RoleActionChoiceEnum){
+        self.role_state(game).clone().do_role_action(game, self, action_choice)
     }
     pub fn on_role_creation(&self, game: &mut Game) {
         self.role_state(game).clone().on_role_creation(game, *self)

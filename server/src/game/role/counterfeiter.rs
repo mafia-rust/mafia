@@ -59,13 +59,35 @@ impl Default for Counterfeiter {
     }
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RoleActionChoice{
+    action: CounterfeiterActionChoice
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[serde(tag = "type")]
+pub enum CounterfeiterActionChoice{
+    SetForge{
+        role: Role,
+        alibi: String,
+        should_forge: CounterfeiterAction
+    },
+    SetAttack{
+        target: Option<PlayerReference>
+    },
+    SetBackup{
+        backup: Option<PlayerReference>
+    }
+}
+
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Counterfeiter {
     type ClientRoleState = ClientRoleState;
-    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
         

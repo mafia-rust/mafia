@@ -23,13 +23,27 @@ pub enum ErosAction{
     Kill,
 }
 
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RoleActionChoice{
+    action: ErosActionChoice
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[serde(tag = "type")]
+pub enum ErosActionChoice{
+    SetAttack{target: Option<PlayerReference>},
+    SetLoveLink{targets: Option<(PlayerReference, PlayerReference)>},
+}
+
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Eros {
     type ClientRoleState = Eros;
-    type RoleActionChoice = super::common_role::CommonRoleActionChoice;
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match (priority, self.action) {
             (Priority::Kill, ErosAction::Kill) => {

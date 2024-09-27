@@ -24,7 +24,7 @@ use vec1::Vec1;
 use crate::{
     game::{
         available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
-            counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess, eros::ErosAction, kira::KiraGuess, ojo::OjoAction, puppeteer::PuppeteerAction, recruiter::RecruiterAction, ClientRoleStateEnum, Role, RoleActionChoiceEnum
+            counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess, eros::ErosAction, kira::KiraGuess, ojo::OjoAction, puppeteer::PuppeteerActionType, recruiter::RecruiterAction, ClientRoleStateEnum, Role, RoleActionChoiceEnum
         }, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
     }, 
     listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log
@@ -255,7 +255,7 @@ pub enum ToServerPacket{
     SetCounterfeiterAction{action: CounterfeiterAction},
     SetAuditorChosenOutline{index: u8},
     SetOjoAction{action: OjoAction},
-    SetPuppeteerAction{action: PuppeteerAction},
+    SetPuppeteerAction{action: PuppeteerActionType},
     SetRecruiterAction{action: RecruiterAction},
     SetErosAction{action: ErosAction},
     RetrainerRetrain{role: Role},

@@ -40,6 +40,7 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         vec![]
     }
+    fn do_role_action(self, _game: &mut Game, _actor_ref: PlayerReference, _action_choice: Self::RoleActionChoice) {}
 
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![])
@@ -263,6 +264,15 @@ mod macros {
                 pub fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool{
                     match self {
                         $(Self::$name(role_struct) => role_struct.can_day_target(game, actor_ref, target_ref)),*
+                    }
+                }
+                pub fn do_role_action(self, game: &mut Game, actor_ref: PlayerReference, action_choice: RoleActionChoiceEnum){
+                    match (self, action_choice) {
+                        $(
+                            (Self::$name(role_struct), RoleActionChoiceEnum::$name(action_choice)) =>
+                                role_struct.do_role_action(game, actor_ref, action_choice),
+                        )*
+                        _ => {}
                     }
                 }
                 pub fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit>{

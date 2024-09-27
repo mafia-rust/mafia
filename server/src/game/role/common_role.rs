@@ -190,6 +190,22 @@ pub(super) fn default_win_condition(role: Role) -> WinCondition {
     }
 }
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
-pub struct CommonRoleActionChoice{
+#[serde(rename_all = "camelCase")]
+pub struct RoleActionChoiceOnePlayer{
     player: Option<PlayerReference>,
+}
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RoleActionChoiceTwoPlayers{
+    two_players: Option<(PlayerReference, PlayerReference)>,
+}
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RoleActionChoiceRole{
+    role: Option<Role>,
+}
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RoleActionChoiceBool{
+    boolean: bool,
 }
