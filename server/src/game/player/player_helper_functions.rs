@@ -306,8 +306,8 @@ impl PlayerReference{
     pub fn do_day_action(&self, game: &mut Game, target_ref: PlayerReference) {
         self.role_state(game).clone().do_day_action(game, *self, target_ref)
     }
-    pub fn do_role_action(self, game: &mut Game, action_choice: RoleActionChoiceEnum){
-        self.role_state(game).clone().do_role_action(game, self, action_choice)
+    pub fn on_role_action(self, game: &mut Game, action_choice: RoleActionChoiceEnum){
+        self.role_state(game).clone().on_role_action(game, self, action_choice)
     }
     pub fn on_role_creation(&self, game: &mut Game) {
         self.role_state(game).clone().on_role_creation(game, *self)

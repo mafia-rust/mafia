@@ -13,7 +13,9 @@ use super::{Priority, RoleState, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
-pub struct Apostle;
+pub struct Apostle{
+    selection: <Apostle as RoleStateImpl>::RoleActionChoice,
+}
 
 pub(super) const FACTION: Faction = Faction::Cult;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
@@ -60,6 +62,10 @@ impl RoleStateImpl for Apostle {
         if !can_convert && !can_kill {return false}
 
         crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
+    }
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        self.selection = action_choice;
+        actor_ref.set_role_state(game, RoleState::Apostle(self));
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, Cult::next_ability(game) == CultAbility::Kill)

@@ -119,20 +119,20 @@ impl Player {
                 verdict : Verdict::Abstain,
             },
             night_variables: PlayerNightVariables{
-                died:               false,
-                attacked:           false,
-                jailed:             false,
-                roleblocked:        false,
-                upgraded_defense:   None,
-                appeared_visits:    None,
+                died: false,
+                attacked: false,
+                jailed: false,
+                roleblocked: false,
+                upgraded_defense: None,
+                appeared_visits: None,
                 framed: false,
 
-                silenced:           false,
+                silenced: false,
 
-                selection:     vec![],
-                visits:             vec![],
+                selection: vec![],
+                visits: vec![],
 
-                messages:           vec![],
+                messages: vec![],
 
                 grave_role: None,
                 grave_killers: vec![],
@@ -181,20 +181,20 @@ pub mod test {
                 verdict : Verdict::Abstain,
             },
             night_variables: PlayerNightVariables{
-                died:               false,
-                attacked:           false,
-                jailed:             false,
-                roleblocked:        false,
-                upgraded_defense:   None,
-                appeared_visits:    None,
+                died: false,
+                attacked: false,
+                jailed: false,
+                roleblocked: false,
+                upgraded_defense: None,
+                appeared_visits: None,
                 framed:      false,
 
-                silenced:           false,
+                silenced: false,
 
-                selection:     vec![],
-                visits:             vec![],
+                selection: vec![],
+                visits: vec![],
 
-                messages:           vec![],
+                messages: vec![],
 
                 grave_role: None,
                 grave_killers: vec![],

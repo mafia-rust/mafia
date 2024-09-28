@@ -6,8 +6,10 @@ use crate::{
     game::{
         attack_power::DefensePower, chat::{
             ChatGroup, ChatMessage, ChatMessageVariant
-        }, event::on_fast_forward::OnFastForward, grave::GraveKiller, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, win_condition::WinCondition, Game
-    }, 
+        }, event::on_fast_forward::OnFastForward, grave::GraveKiller,
+        role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit,
+        win_condition::WinCondition, Game
+    },
     packet::ToClientPacket, 
 };
 use super::PlayerReference;

@@ -384,7 +384,7 @@ impl Game {
                 }
             },
             ToServerPacket::RoleActionChoice { action } => {
-                sender_player_ref.do_role_action(self, action);
+                sender_player_ref.on_role_action(self, action);
             },
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {
                 sender_player_ref.set_fast_forward_vote(self, fast_forward);

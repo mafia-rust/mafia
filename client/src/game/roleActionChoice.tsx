@@ -1,12 +1,9 @@
-import { PlayerIndex } from "./gameState.d"
-import { Faction } from "./roleListState.d"
-import ROLES from "./../resources/roles.json";
-import { Doomsayer, DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
+import { PlayerIndex } from "./gameState.d";
+import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
-import { Hypnotist } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeHypnotistMenu";
-import { PuppeteerAction as PuppeteerActionType } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
+import { Role } from "./roleState.d";
 
 export type RoleActionChoice = 
 (
@@ -195,10 +192,4 @@ export type RoleActionChoice =
 } | {
     type: "kira"
     guesses: Record<PlayerIndex, KiraGuess>
-}
-
-
-export type Role = keyof typeof ROLES;
-export function getFactionFromRole(role: Role): Faction {
-    return ROLES[role].faction as Faction;
 }

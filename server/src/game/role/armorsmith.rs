@@ -16,13 +16,16 @@ pub struct Armorsmith {
     open_shops_remaining: u8,
     night_open_shop: bool,
     night_protected_players: Vec<PlayerReference>,
-    players_armor: Vec<PlayerReference>
+    players_armor: Vec<PlayerReference>,
+    
+    selection: <Self as RoleStateImpl>::RoleActionChoice,
 }
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ClientRoleState {
-    open_shops_remaining: u8
+    open_shops_remaining: u8,
+    selection: <Armorsmith as RoleStateImpl>::RoleActionChoice,
 }
 
 impl Default for Armorsmith {
@@ -31,7 +34,8 @@ impl Default for Armorsmith {
             open_shops_remaining: 2,
             night_open_shop: false,
             night_protected_players: Vec::new(),
-            players_armor: Vec::new()
+            players_armor: Vec::new(),
+            selection: <Self as RoleStateImpl>::RoleActionChoice::None,
         }
     }
 }
@@ -136,7 +140,8 @@ impl RoleStateImpl for Armorsmith {
 impl GetClientRoleState<ClientRoleState> for Armorsmith {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState {
-            open_shops_remaining: self.open_shops_remaining
+            open_shops_remaining: self.open_shops_remaining,
+            selection: self.selection,
         }
     }
 }
