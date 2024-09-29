@@ -688,6 +688,7 @@
     "obscuredGraves": "Obscured Graves",
     "randomLoveLinks": "Random Love Links",
     "deadCanChat": "Dead Can Chat",
+    "noAbstaining": "No Abstaining",
     
     "simplify":"Simplify",
     "backToLobby": "Back To Lobby",
@@ -1143,7 +1144,8 @@
     "wiki.article.standard.randomLoveLinks.text":"Random Love Links is a game modifier that makes it so all players are love linked to a random player. The game is set up such that all players are love linked to at least 1 other player, and at most 1 player is love linked to more than 1 other player.",
     "wiki.article.standard.deadCanChat.title":"Dead Can Chat",
     "wiki.article.standard.deadCanChat.text":"Dead Can Chat is a game modifier that changes the game such that dead players can still use chats as if they were alive. Dead players can not whisper or be whispered to.",
-
+    "wiki.article.standard.noAbstaining.title":"No Abstaining",
+    "wiki.article.standard.noAbstaining.text":"No Abstaining is a game modifier that changes the game such that no players can abstain during judgement. It will default to voting innocent instead of defaulting to abstaining.",
 
     "wiki.article.standard.nobody.title":"Nobody",
     "wiki.article.standard.nobody.title:var.0":"No body",

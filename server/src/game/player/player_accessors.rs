@@ -6,7 +6,7 @@ use crate::{
     game::{
         attack_power::DefensePower, chat::{
             ChatGroup, ChatMessage, ChatMessageVariant
-        }, event::on_fast_forward::OnFastForward, grave::GraveKiller, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, win_condition::WinCondition, Game
+        }, event::on_fast_forward::OnFastForward, grave::GraveKiller, modifiers::{ModifierType, Modifiers}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, win_condition::WinCondition, Game
     }, 
     packet::ToClientPacket, 
 };
@@ -254,7 +254,10 @@ impl PlayerReference{
     pub fn verdict(&self, game: &Game) -> Verdict{
         self.deref(game).voting_variables.verdict
     }
-    pub fn set_verdict(&self, game: &mut Game, verdict: Verdict){
+    pub fn set_verdict(&self, game: &mut Game, mut verdict: Verdict){
+        if Modifiers::modifier_is_enabled(game, ModifierType::NoAbstaining) && verdict == Verdict::Abstain {
+            verdict = Verdict::Innocent;
+        }
         self.send_packet(game, ToClientPacket::YourJudgement { verdict });
         self.deref_mut(game).voting_variables.verdict = verdict;
     }
