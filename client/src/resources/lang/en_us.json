@@ -681,7 +681,7 @@
     "defense.3": "Invincible",
     "vision": "Vision",
     "pitchfork": "Pitchfork",
-    "pitchfork.description": "If 2 3rds of town aligned players votes for the same player, that player is attacked during night.",
+    "pitchfork.description": "Vote for a player before night starts. If 2/3rds of town aligned players vote for a player, that player dies.",
     "nobodyDiedLastNight": "Nobody died last night.",
     "nobody": "nobody",
     "modifiers": "Modifiers",
