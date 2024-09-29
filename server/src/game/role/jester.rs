@@ -11,7 +11,7 @@ use crate::game::role_list::Faction;
 use crate::game::verdict::Verdict;
 
 use crate::game::Game;
-use super::{CustomClientRoleState, Priority, RoleStateImpl};
+use super::{GetClientRoleState, Priority, RoleStateImpl};
 
 #[derive(Clone, Debug, Default)]
 pub struct Jester {
@@ -26,7 +26,8 @@ pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Jester {
+impl RoleStateImpl for Jester {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::TopPriority {return;}
         if actor_ref.alive(game) {return;}
@@ -86,15 +87,14 @@ impl RoleStateImpl<ClientRoleState> for Jester {
         }
     }
 }
+impl GetClientRoleState<ClientRoleState> for Jester {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
+        ClientRoleState
+    }
+}
 
 impl Jester {
     pub fn won(&self) -> bool {
         self.won
-    }
-}
-
-impl CustomClientRoleState<ClientRoleState> for Jester {
-    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
-        ClientRoleState
     }
 }

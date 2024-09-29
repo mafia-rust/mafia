@@ -13,7 +13,7 @@ use crate::game::tag::Tag;
 
 use crate::game::Game;
 use super::jester::Jester;
-use super::{CustomClientRoleState, Role, RoleStateImpl};
+use super::{GetClientRoleState, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default)]
@@ -48,7 +48,8 @@ pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-impl RoleStateImpl<ClientRoleState> for Revolutionary {
+impl RoleStateImpl for Revolutionary {
+    type ClientRoleState = ClientRoleState;
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
 
         if self.target == RevolutionaryTarget::Won || !actor_ref.alive(game){
@@ -96,15 +97,14 @@ impl RoleStateImpl<ClientRoleState> for Revolutionary {
         }
     }
 }
+impl GetClientRoleState<ClientRoleState> for Revolutionary {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
+        ClientRoleState
+    }
+}
 
 impl Revolutionary {
     pub fn won(&self)->bool{
         self.target == RevolutionaryTarget::Won
-    }
-}
-
-impl CustomClientRoleState<ClientRoleState> for Revolutionary {
-    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
-        ClientRoleState
     }
 }

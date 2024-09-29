@@ -7,7 +7,7 @@ use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
-use super::{CustomClientRoleState, Priority, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, Priority, RoleState, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default)]
@@ -22,7 +22,8 @@ pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Minion {
+impl RoleStateImpl for Minion {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
             actor_ref.set_role_state(game, RoleState::Minion(Minion{
@@ -69,9 +70,8 @@ impl RoleStateImpl<ClientRoleState> for Minion {
         }
     }
 }
-
-impl CustomClientRoleState<ClientRoleState> for Minion {
-    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+impl GetClientRoleState<ClientRoleState> for Minion {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState
     }
 }

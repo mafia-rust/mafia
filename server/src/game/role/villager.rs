@@ -14,5 +14,7 @@ pub struct Villager;
 
 pub type ClientRoleState = Villager;
 
-impl RoleStateImpl<ClientRoleState> for Villager {}
+impl RoleStateImpl for Villager {
+    type ClientRoleState = Villager;
+}
 

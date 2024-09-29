@@ -8,7 +8,7 @@ use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 
 use crate::game::Game;
-use super::{CustomClientRoleState, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, RoleState, RoleStateImpl};
 
 #[derive(Clone, Debug, Default)]
 pub struct Mayor {
@@ -22,7 +22,8 @@ pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Mayor {
+impl RoleStateImpl for Mayor {
+    type ClientRoleState = ClientRoleState;
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, _target_ref: PlayerReference) {
 
         if !actor_ref.alive(game) || !game.current_phase().is_day() {
@@ -47,9 +48,8 @@ impl RoleStateImpl<ClientRoleState> for Mayor {
         PhaseType::Night != game.current_phase().phase()
     }
 }
-
-impl CustomClientRoleState<ClientRoleState> for Mayor {
-    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+impl GetClientRoleState<ClientRoleState> for Mayor {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState
     }
 }

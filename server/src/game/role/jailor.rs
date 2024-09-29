@@ -22,8 +22,6 @@ pub struct Jailor {
     executions_remaining: u8
 }
 
-pub type ClientRoleState = Jailor;
-
 impl Default for Jailor {
     fn default() -> Self {
         Self { 
@@ -37,7 +35,8 @@ pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Jailor {
+impl RoleStateImpl for Jailor {
+    type ClientRoleState = Jailor;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
 

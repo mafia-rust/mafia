@@ -73,8 +73,8 @@ export function defaultGameModes(): GameModeStorage {
     return DEFAULT_GAME_MODES as unknown as GameModeStorage;
 }
 
-export function saveGameModes(roleList: GameModeStorage) {
-    localStorage.setItem("savedGameModes", JSON.stringify(roleList));
+export function saveGameModes(gameModes: GameModeStorage) {
+    localStorage.setItem("savedGameModes", JSON.stringify(gameModes));
 }
 export function loadGameModes(): NonNullable<unknown> | null {
     const data = localStorage.getItem("savedGameModes");

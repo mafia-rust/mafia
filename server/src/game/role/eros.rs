@@ -16,8 +16,6 @@ pub struct Eros{
     pub action: ErosAction,
 }
 
-pub type ClientRoleState = Eros;
-
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, PartialOrd, Eq, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum ErosAction{
@@ -29,7 +27,8 @@ pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-impl RoleStateImpl<ClientRoleState> for Eros {
+impl RoleStateImpl for Eros {
+    type ClientRoleState = Eros;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match (priority, self.action) {
             (Priority::Kill, ErosAction::Kill) => {

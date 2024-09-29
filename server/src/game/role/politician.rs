@@ -10,7 +10,7 @@ use crate::game::role_list::Faction;
 
 use crate::game::Game;
 use super::jester::Jester;
-use super::{CustomClientRoleState, Role, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, Role, RoleState, RoleStateImpl};
 
 
 #[derive(Debug, Clone, Default)]
@@ -25,7 +25,8 @@ pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-impl RoleStateImpl<ClientRoleState> for Politician {
+impl RoleStateImpl for Politician {
+    type ClientRoleState = ClientRoleState;
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         if self.should_suicide(game, actor_ref) {
             actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
@@ -86,9 +87,8 @@ impl RoleStateImpl<ClientRoleState> for Politician {
         }
     }
 }
-
-impl CustomClientRoleState<ClientRoleState> for Politician {
-    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+impl GetClientRoleState<ClientRoleState> for Politician {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState
     }
 }

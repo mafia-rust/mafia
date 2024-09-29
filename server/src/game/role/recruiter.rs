@@ -24,8 +24,6 @@ pub struct Recruiter{
     pub action: RecruiterAction,
 }
 
-pub type ClientRoleState = Recruiter;
-
 impl Default for Recruiter {
     fn default() -> Self {
         Self {
@@ -46,7 +44,8 @@ pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Recruiter {
+impl RoleStateImpl for Recruiter {
+    type ClientRoleState = Recruiter;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
         let mut ability_successful = false;

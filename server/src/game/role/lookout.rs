@@ -13,13 +13,12 @@ use super::{Priority, RoleStateImpl};
 #[derive(Clone, Serialize, Debug, Default)]
 pub struct Lookout;
 
-pub type ClientRoleState = Lookout;
-
 pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Lookout {
+impl RoleStateImpl for Lookout {
+    type ClientRoleState = Lookout;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
 

@@ -16,9 +16,8 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct RabbleRouser;
 
-pub type ClientRoleState = RabbleRouser;
-
-impl RoleStateImpl<ClientRoleState> for RabbleRouser {
+impl RoleStateImpl for RabbleRouser {
+    type ClientRoleState = RabbleRouser;
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
         Pitchfork::add_pitchfork(game, actor_ref);
     }

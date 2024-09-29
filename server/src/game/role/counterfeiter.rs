@@ -10,7 +10,7 @@ use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 
 #[derive(Debug, Clone, Serialize)]
@@ -63,7 +63,8 @@ pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Counterfeiter {
+impl RoleStateImpl for Counterfeiter {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
         
@@ -205,9 +206,8 @@ impl RoleStateImpl<ClientRoleState> for Counterfeiter {
         }
     }
 }
-
-impl CustomClientRoleState<ClientRoleState> for Counterfeiter{
-    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+impl GetClientRoleState<ClientRoleState> for Counterfeiter {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState{
             backup: self.backup,
             fake_role: self.fake_role,

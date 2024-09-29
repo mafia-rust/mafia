@@ -1,16 +1,20 @@
-import { ReactElement } from "react";
+import { ReactElement, useContext } from "react";
 import { MODIFIERS, ModifierType } from "../../game/gameState.d";
 import React from "react";
 import translate from "../../game/lang";
 import StyledText from "../StyledText";
+import { GameModeContext } from "./GameModesEditor";
 
 export function EnabledModifiersDisplay(props: {
     disabled: boolean,
-    enabledModifiers: ModifierType[],
+    enabledModifiers?: ModifierType[],
     onChange?: (modifiers: ModifierType[]) => void,
 }): ReactElement {
+    let {enabledModifiers} = useContext(GameModeContext);
 
-    const dropdownsSelected = props.disabled === true ? props.enabledModifiers : (props.enabledModifiers as (ModifierType | null)[]).concat([null])
+    enabledModifiers = props.enabledModifiers ?? (enabledModifiers as ModifierType[]);
+
+    const dropdownsSelected = props.disabled === true ? enabledModifiers : (enabledModifiers as (ModifierType | null)[]).concat([null])
 
     return <div className="chat-menu-colors selector-section">
             <h2><StyledText>{translate("modifiers")}</StyledText></h2>
@@ -20,13 +24,13 @@ export function EnabledModifiersDisplay(props: {
                     modifier={modifier}
                     disabled={props.disabled}
                     choosableModifiers={
-                        Object.values(MODIFIERS).filter((m) => !props.enabledModifiers.includes(m)||m===modifier)
+                        Object.values(MODIFIERS).filter((m) => !enabledModifiers.includes(m)||m===modifier)
                     }
                     onChange={modifier => {
                         if (props.onChange === undefined)
                             return;
                         
-                        let currentModifiers = props.enabledModifiers;
+                        let currentModifiers = enabledModifiers;
 
                         if (modifier === null) {
                             currentModifiers.splice(index, 1);

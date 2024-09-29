@@ -8,7 +8,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{CustomClientRoleState, Priority, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, Priority, RoleState, RoleStateImpl};
 
 #[derive(Clone, Debug)]
 pub struct Doctor {
@@ -35,7 +35,8 @@ pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Doctor {
+impl RoleStateImpl for Doctor {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::TopPriority => {
@@ -91,11 +92,9 @@ impl RoleStateImpl<ClientRoleState> for Doctor {
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         actor_ref.set_role_state(game, RoleState::Doctor(Doctor {self_heals_remaining: self.self_heals_remaining, target_healed_ref: None}));
     }
-}
-
-impl CustomClientRoleState<ClientRoleState> for Doctor {
-    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
-        ClientRoleState {
+}impl GetClientRoleState<ClientRoleState> for Doctor {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
+        ClientRoleState{
             self_heals_remaining: self.self_heals_remaining
         }
     }

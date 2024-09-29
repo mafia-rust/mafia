@@ -1,10 +1,12 @@
 pub mod obscured_graves;
 pub mod random_love_links;
 pub mod dead_can_chat;
+pub mod no_abstaining;
 
 use std::collections::HashSet;
 
 use dead_can_chat::DeadCanChat;
+use no_abstaining::NoAbstaining;
 use obscured_graves::ObscuredGraves;
 use random_love_links::RandomLoveLinks;
 use serde::{Deserialize, Serialize};
@@ -25,6 +27,7 @@ pub enum ModifierState{
     ObscuredGraves(ObscuredGraves),
     RandomLoveLinks(RandomLoveLinks),
     DeadCanChat(DeadCanChat),
+    NoAbstaining(NoAbstaining),
 }
 #[derive(Clone, Serialize, Deserialize, PartialEq, Eq, Debug, Hash)]
 #[serde(rename_all = "camelCase")]
@@ -32,6 +35,7 @@ pub enum ModifierType{
     ObscuredGraves,
     RandomLoveLinks,
     DeadCanChat,
+    NoAbstaining,
 }
 impl ModifierType{
     pub fn default_state(&self)->ModifierState{
@@ -39,6 +43,7 @@ impl ModifierType{
             Self::ObscuredGraves => ModifierState::ObscuredGraves(ObscuredGraves::default()),
             Self::RandomLoveLinks => ModifierState::RandomLoveLinks(RandomLoveLinks::default()),
             Self::DeadCanChat => ModifierState::DeadCanChat(DeadCanChat::default()),
+            Self::NoAbstaining => ModifierState::NoAbstaining(NoAbstaining::default()),
         }
     }
 }

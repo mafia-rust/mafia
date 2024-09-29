@@ -6,7 +6,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{CustomClientRoleState, Priority, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, Priority, RoleState, RoleStateImpl};
 
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
@@ -21,7 +21,8 @@ pub struct Necromancer {
 #[derive(Clone, Debug, Serialize)]
 pub struct ClientRoleState;
 
-impl RoleStateImpl<ClientRoleState> for Necromancer {
+impl RoleStateImpl for Necromancer {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
             let mut used_bodies = self.used_bodies;
@@ -62,9 +63,8 @@ impl RoleStateImpl<ClientRoleState> for Necromancer {
         }
     }
 }
-
-impl CustomClientRoleState<ClientRoleState> for Necromancer {
-    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+impl GetClientRoleState<ClientRoleState> for Necromancer {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState
     }
 }

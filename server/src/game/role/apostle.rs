@@ -5,8 +5,10 @@ use crate::game::chat::ChatMessageVariant;
 use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
+use crate::game::resolution_state::ResolutionState;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
+use crate::game::win_condition::WinCondition;
 use crate::game::Game;
 use super::zealot::Zealot;
 use super::{Priority, RoleState, RoleStateImpl};
@@ -15,13 +17,12 @@ use super::{Priority, RoleState, RoleStateImpl};
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Apostle;
 
-pub type ClientRoleState = Apostle;
-
 pub(super) const FACTION: Faction = Faction::Cult;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Apostle {
+impl RoleStateImpl for Apostle {
+    type ClientRoleState = Apostle;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
         match (priority, Cult::next_ability(game)) {
@@ -46,6 +47,7 @@ impl RoleStateImpl<ClientRoleState> for Apostle {
                 }
 
                 target_ref.set_role(game, RoleState::Zealot(Zealot));
+                target_ref.set_win_condition(game, WinCondition::new_single_resolution_state(ResolutionState::Cult));
                 Cult::set_ability_used_last_night(game, Some(CultAbility::Convert));
             }
             _ => {}

@@ -21,8 +21,6 @@ pub struct Deputy {
     bullets_remaining: u8,
 }
 
-pub type ClientRoleState = Deputy;
-
 impl Default for Deputy {
     fn default() -> Self {
         Self { bullets_remaining: 1 }
@@ -33,7 +31,8 @@ pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Deputy {
+impl RoleStateImpl for Deputy {
+    type ClientRoleState = Deputy;
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
 
         target_ref.add_private_chat_message(game, ChatMessageVariant::DeputyShotYou);

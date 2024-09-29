@@ -15,8 +15,6 @@ pub struct MafiaKillingWildcard{
     pub role: Role
 }
 
-pub type ClientRoleState = MafiaKillingWildcard;
-
 impl Default for MafiaKillingWildcard {
     fn default() -> Self {
         Self {
@@ -29,7 +27,8 @@ pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for MafiaKillingWildcard {
+impl RoleStateImpl for MafiaKillingWildcard {
+    type ClientRoleState = MafiaKillingWildcard;
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Night => {

@@ -9,7 +9,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{CustomClientRoleState, Priority, Role, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Default, Clone, Debug)]
 pub struct Engineer {
@@ -68,7 +68,8 @@ pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl<ClientRoleState> for Engineer {
+impl RoleStateImpl for Engineer {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Heal => {
@@ -159,10 +160,10 @@ impl RoleStateImpl<ClientRoleState> for Engineer {
             _ => {}
         }
     }
-}
 
-impl CustomClientRoleState<ClientRoleState> for Engineer {
-    fn get_client_role_state(self, _: &Game, _: PlayerReference) -> ClientRoleState {
+}
+impl GetClientRoleState<ClientRoleState> for Engineer {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState {
             trap: match self.trap {
                 Trap::Dismantled => ClientTrapState::Dismantled,
