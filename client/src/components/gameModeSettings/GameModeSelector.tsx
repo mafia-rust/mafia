@@ -54,7 +54,7 @@ function GameModeSelectorPanel(props: {
     loadGameMode: (gameMode: GameModeData) => void,
 }): ReactElement {
     const [gameModeNameField, setGameModeNameField] = useState<string>("");
-    const {roleList, phaseTimes, enabledRoles} = useContext(GameModeContext);
+    const {roleList, phaseTimes, enabledRoles, enabledModifiers} = useContext(GameModeContext);
     const anchorController = useContext(AnchorControllerContext)!;
 
     const validateName = (name: string) => {
@@ -72,7 +72,7 @@ function GameModeSelectorPanel(props: {
             if (validateName(name)) {
                 newGameModeStorage.gameModes.push({
                     name,
-                    data: { [roleList.length]: { enabledRoles, phaseTimes, roleList } }
+                    data: { [roleList.length]: { enabledRoles, phaseTimes, roleList, enabledModifiers } }
                 })
             } else {
                 return "invalidName";
@@ -85,14 +85,15 @@ function GameModeSelectorPanel(props: {
             gameMode.data[roleList.length] = {
                 roleList,
                 phaseTimes,
-                enabledRoles
+                enabledRoles,
+                enabledModifiers
             }
         }
 
         saveGameModes(newGameModeStorage);
         props.reloadGameModeStorage();
         return "success";
-    }, [enabledRoles, props, phaseTimes, roleList]);
+    }, [enabledRoles, props, phaseTimes, roleList, enabledModifiers]);
 
     useEffect(() => {
         const listener = (e: KeyboardEvent) => {
@@ -204,7 +205,8 @@ function GameModeSelectorPanel(props: {
                             props.loadGameMode({
                                 roleList: parsedGameMode.value.roleList,
                                 phaseTimes: parsedGameMode.value.phaseTimes,
-                                enabledRoles: parsedGameMode.value.enabledRoles
+                                enabledRoles: parsedGameMode.value.enabledRoles,
+                                enabledModifiers: parsedGameMode.value.enabledModifiers
                             })
                         } else {
                             anchorController.pushErrorCard({
@@ -224,7 +226,7 @@ function GameModeSelectorPanel(props: {
                 ? <DragAndDrop
                     items={props.gameModeStorage.gameModes}
                     onDragEnd={newItems => {
-                        const newGameModeStorage: GameModeStorage = {format: "v1", gameModes: [...props.gameModeStorage.gameModes]};
+                        const newGameModeStorage: GameModeStorage = {format: "v2", gameModes: [...props.gameModeStorage.gameModes]};
                         
                         newGameModeStorage.gameModes.sort((a, b) => newItems.indexOf(a) - newItems.indexOf(b))
                         
