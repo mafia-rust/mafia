@@ -1,13 +1,15 @@
 use std::collections::{HashMap, HashSet};
 
-use crate::game::{
-    attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessageVariant},
+use rand::seq::SliceRandom;
+
+use crate::{game::{
+    attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant},
     components::{arsonist_doused::ArsonistDoused, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette},
     event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch},
     grave::{Grave, GraveKiller, GraveReference}, resolution_state::ResolutionState,
     role::{same_evil_team, Priority, Role, RoleState},
     visit::Visit, win_condition::WinCondition, Game
-};
+}, packet::ToClientPacket};
 
 use super::PlayerReference;
 
@@ -222,7 +224,15 @@ impl PlayerReference{
         }).collect()
     }
 
-
+    pub fn push_night_messages_to_player(&self, game: &mut Game){
+        let mut messages = self.night_messages(game).to_vec();
+        messages.shuffle(&mut rand::thread_rng());
+        messages.sort();
+        self.send_packet(game, ToClientPacket::NightMessages { chat_messages: 
+            messages.iter().map(|msg|ChatMessage::new_private(msg.clone())).collect()
+        });
+        self.add_private_chat_messages(game, messages);
+    }
 
     pub fn insert_role_label_for_teammates(&self, game: &mut Game){
         for other in PlayerReference::all_players(game){

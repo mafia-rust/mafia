@@ -130,6 +130,9 @@ pub enum ToClientPacket{
     AddChatMessages{chat_messages: Vec<ChatMessage>},
     AddGrave{grave: Grave},
 
+    #[serde(rename_all = "camelCase")]
+    NightMessages{chat_messages: Vec<ChatMessage>},
+
     GameOver{reason: GameOverReason},
 }
 impl ToClientPacket {
