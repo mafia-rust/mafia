@@ -40,4 +40,10 @@ impl WinCondition{
             WinCondition::RoleStateWon => false,
         }
     }
+    
+    pub fn new_single_resolution_state(resolution_state: ResolutionState) -> WinCondition {
+        let mut win_if_any = HashSet::new();
+        win_if_any.insert(resolution_state);
+        WinCondition::ResolutionStateReached { win_if_any }
+    }
 }
