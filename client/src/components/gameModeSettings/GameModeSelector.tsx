@@ -151,7 +151,8 @@ function GameModeSelectorPanel(props: {
         name: gameModeNameField === "" ? "Unnamed Game Mode" : gameModeNameField,
         roleList,
         phaseTimes,
-        enabledRoles
+        enabledRoles,
+        enabledModifiers
     });
 
     const shareableGameModeURL = new URL(window.location.href);
