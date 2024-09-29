@@ -1,3 +1,6 @@
+use std::collections::VecDeque;
+use std::time::Instant;
+
 use serde::Serialize;
 
 use crate::game::player::PlayerReference;
@@ -15,7 +18,11 @@ pub struct LobbyClient{
     pub connection: ClientConnection,
     pub host: bool,
     pub client_type: LobbyClientType,
+    
+    #[serde(skip)]
+    pub last_message_times: VecDeque<Instant>,
 }
+
 #[derive(Clone, Debug, Serialize)]
 #[serde(tag = "type")]
 #[serde(rename_all = "camelCase")]
@@ -29,7 +36,7 @@ pub enum LobbyClientType{
 impl LobbyClient {
     pub fn new(name: String, connection: ClientSender, host: bool)->Self{
         LobbyClient{
-           connection: ClientConnection::Connected(connection), host, client_type: LobbyClientType::Player{name}
+           connection: ClientConnection::Connected(connection), host, client_type: LobbyClientType::Player{name}, last_message_times: VecDeque::new()
         }
     }
     pub fn new_from_game_client(game: &Game, game_client: GameClient)->Self{
@@ -40,7 +47,8 @@ impl LobbyClient {
                 LobbyClient{
                     connection: player_ref.connection(game).clone(),
                     host: game_client.host,
-                    client_type: LobbyClientType::Player{name: player_ref.name(game).to_string()}
+                    client_type: LobbyClientType::Player{name: player_ref.name(game).to_string()},
+                    last_message_times: VecDeque::new()
                 }
             },
             GameClientLocation::Spectator(index) => {
@@ -48,7 +56,8 @@ impl LobbyClient {
                 LobbyClient{
                     connection:spectator_pointer.connection(game),
                     host: game_client.host,
-                    client_type: LobbyClientType::Spectator
+                    client_type: LobbyClientType::Spectator,
+                    last_message_times: VecDeque::new()
                 }
             }
         }
