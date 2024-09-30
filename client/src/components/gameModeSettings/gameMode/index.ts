@@ -1,9 +1,9 @@
-import { PhaseTimes } from "../../../game/gameState.d";
+import { ModifierType, PhaseTimes } from "../../../game/gameState.d";
 import { RoleList } from "../../../game/roleListState.d";
 import { Role } from "../../../game/roleState.d";
 
 export type GameModeStorage = {
-    format: "v1",
+    format: "v2",
     gameModes: GameMode[]
 };
 
@@ -17,6 +17,7 @@ export type GameModeData = {
     roleList: RoleList,
     phaseTimes: PhaseTimes,
     enabledRoles: Role[],
+    enabledModifiers: ModifierType[]
 }
 
-export type ShareableGameMode = GameModeData & { format: "v1", name: string }
+export type ShareableGameMode = GameModeData & { format: "v2", name: string }

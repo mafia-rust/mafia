@@ -8,7 +8,7 @@ use std::{collections::HashMap, time::Duration,};
 
 use crate::{
     client_connection::ClientConnection, game::{
-        player::PlayerReference, role_list::RoleOutline, settings::Settings, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game
+        player::PlayerReference, role_list::RoleOutline, settings::Settings, spectator::{spectator_pointer::{SpectatorIndex, SpectatorPointer}, SpectatorInitializeParameters}, Game
     }, listener::RoomCode, lobby::game_client::GameClientLocation, packet::{
         RejectJoinReason,
         ToClientPacket,
@@ -63,6 +63,31 @@ impl Lobby {
             .count();
 
         settings.role_list.0.resize(length, RoleOutline::Any);
+    }
+
+    pub fn send_to_client_by_id(&self, lobby_client_id: LobbyClientID, packet: ToClientPacket) {
+        match &self.lobby_state {
+            LobbyState::Lobby { clients, .. } => {
+                if let Some(player) = clients.get(&lobby_client_id) {
+                    player.send(packet);
+                }
+            },
+            LobbyState::Game { game, clients, .. } => {
+                if let Some(player) = clients.get(&lobby_client_id) {
+                    match player.client_location {
+                        GameClientLocation::Player(player_index) => {
+                            if let Ok(player_ref) = PlayerReference::new(game, player_index) {
+                                player_ref.send_packet(game, packet);
+                            }
+                        },
+                        GameClientLocation::Spectator(index) => {
+                            SpectatorPointer::new(index).send_packet(game, packet);
+                        }
+                    }
+                }
+            },
+            LobbyState::Closed => {}
+        }
     }
 
     pub fn join_player(&mut self, send: &ClientSender) -> Result<LobbyClientID, RejectJoinReason>{

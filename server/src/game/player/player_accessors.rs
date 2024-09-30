@@ -256,7 +256,10 @@ impl PlayerReference{
     pub fn verdict(&self, game: &Game) -> Verdict{
         self.deref(game).voting_variables.verdict
     }
-    pub fn set_verdict(&self, game: &mut Game, verdict: Verdict){
+    pub fn set_verdict(&self, game: &mut Game, mut verdict: Verdict){
+        if Modifiers::modifier_is_enabled(game, ModifierType::NoAbstaining) && verdict == Verdict::Abstain {
+            verdict = Verdict::Innocent;
+        }
         self.send_packet(game, ToClientPacket::YourJudgement { verdict });
         self.deref_mut(game).voting_variables.verdict = verdict;
     }

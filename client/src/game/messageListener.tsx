@@ -16,6 +16,7 @@ import SpectatorGameScreen from "../menu/spectator/SpectatorGameScreen";
 import LobbyMenu from "../menu/lobby/LobbyMenu";
 import LoadingScreen from "../menu/LoadingScreen";
 import AudioController from "../menu/AudioController";
+import NightMessagePopup from "../components/NightMessagePopup";
 
 export default function messageListener(packet: ToClientPacket){
 
@@ -399,6 +400,14 @@ export default function messageListener(packet: ToClientPacket){
                     let audioSrc = chatMessageToAudio(chatMessage);
                     if(audioSrc)
                         AudioController.queueFile(audioSrc);
+                }
+            }
+        break;
+        case "nightMessages":
+            if(GAME_MANAGER.state.stateType === "game" || GAME_MANAGER.state.stateType === "lobby"){
+
+                if(ANCHOR_CONTROLLER?.getCoverCard()===null && packet.chatMessages.length!==0){
+                    ANCHOR_CONTROLLER?.setCoverCard(<NightMessagePopup messages={packet.chatMessages}/>)
                 }
             }
         break;

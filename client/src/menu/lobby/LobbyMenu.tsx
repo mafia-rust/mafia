@@ -76,6 +76,10 @@ function LobbyMenuSettings(props: Readonly<{
         lobbyState => lobbyState.phaseTimes,
         ["phaseTimes"]
     )!;
+    const enabledModifiers = useLobbyState(
+        lobbyState => lobbyState.enabledModifiers,
+        ["enabledModifiers"]
+    )!;
 
     const mobile = useContext(MobileContext)!;
     const { setContent: setAnchorContent } = useContext(AnchorControllerContext)!;
@@ -103,8 +107,8 @@ function LobbyMenuSettings(props: Readonly<{
     };
 
     const context = useMemo(() => {
-        return {roleList, enabledRoles, phaseTimes};
-    }, [enabledRoles, phaseTimes, roleList]);
+        return {roleList, enabledRoles, phaseTimes, enabledModifiers};
+    }, [enabledRoles, phaseTimes, roleList, enabledModifiers]);
 
     return <GameModeContext.Provider value={context}>
         {mobile && <h1>{translate("menu.lobby.settings")}</h1>}
@@ -114,14 +118,11 @@ function LobbyMenuSettings(props: Readonly<{
                 GAME_MANAGER.sendSetPhaseTimesPacket(gameMode.phaseTimes);
                 GAME_MANAGER.sendEnabledRolesPacket(gameMode.enabledRoles);
                 GAME_MANAGER.sendSetRoleListPacket(gameMode.roleList);
+                GAME_MANAGER.sendEnabledModifiersPacket(gameMode.enabledModifiers);
             }}
         />}
         <EnabledModifiersDisplay
             disabled={!props.isHost}
-            enabledModifiers={useLobbyState(
-                lobbyState => lobbyState.enabledModifiers,
-                ["enabledModifiers"]
-            )!}
             onChange={modifiers => GAME_MANAGER.sendEnabledModifiersPacket(modifiers)}
         />
         <PhaseTimesSelector 

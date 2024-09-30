@@ -20,6 +20,7 @@ export type AnchorController = {
     reload: () => void,
     setContent: (content: JSX.Element) => void,
     contentType: string | JSXElementConstructor<any>,
+    getCoverCard: () => JSX.Element | null,
     setCoverCard: (content: JSX.Element) => void,
     clearCoverCard: () => void,
     pushErrorCard: (error: ErrorData) => void,
@@ -132,6 +133,9 @@ export default function Anchor(props: Readonly<{
         reload,
         setContent: setChildren,
         contentType: children.type,
+        getCoverCard: ()=>{
+            return coverCard
+        },
         setCoverCard: (coverCard: JSX.Element, callback?: () => void) => {
             let coverCardTheme: Theme | null = null;
             if (coverCard.type === WikiCoverCard || coverCard.type === WikiArticle) {
@@ -160,7 +164,7 @@ export default function Anchor(props: Readonly<{
         },
         openGlobalMenu: () => setGlobalMenuOpen(true),
         closeGlobalMenu: () => setGlobalMenuOpen(false),
-    }), [reload, children])
+    }), [reload, children, coverCard])
 
     useEffect(() => {
         ANCHOR_CONTROLLER = anchorController

@@ -19,28 +19,43 @@ impl Lobby {
             ToServerPacket::SendMessage { .. } |
             ToServerPacket::SendLobbyMessage { .. } |
             ToServerPacket::SendWhisper { .. } => {
-                let LobbyState::Game { clients, .. } = &mut self.lobby_state else {
-                    return;
-                };
 
-                let Some(game_player) = clients.get_mut(&lobby_client_id) else {
-                    log!(error "LobbyState::Game"; "{} {:?}", "Message recieved from player not in game", incoming_packet);
-                    return;
+                let last_message_times = match &mut self.lobby_state {
+                    LobbyState::Game { clients, .. } => {
+                        if let Some(game_player) = clients.get_mut(&lobby_client_id) {
+                            &mut game_player.last_message_times
+                        } else {
+                            log!(error "LobbyState::Game"; "{} {:?}", "Message recieved from player not in game", incoming_packet);
+                            return;
+                        }
+                    },
+                    LobbyState::Lobby { clients, .. } => {
+                        if let Some(lobby_client) = clients.get_mut(&lobby_client_id) {
+                            &mut lobby_client.last_message_times
+                        } else {
+                            log!(error "LobbyState::Lobby"; "{} {:?}", "Message recieved from player not in lobby", incoming_packet);
+                            return;
+                        }
+                    }
+                    LobbyState::Closed => {
+                        log!(error "LobbyState::Closed"; "{} {:?}", "Message recieved from player in closed lobby", incoming_packet);
+                        return;
+                    }
                 };
 
                 let now = Instant::now();
-                while let Some(time) = game_player.last_message_times.front() {
+                while let Some(time) = last_message_times.front() {
                     if now.duration_since(*time) > MESSAGE_PER_SECOND_LIMIT_TIME {
-                        game_player.last_message_times.pop_front();
+                        last_message_times.pop_front();
                     } else {
                         break;
                     }
                 }
-                if game_player.last_message_times.len() >= (MESSAGE_PER_SECOND_LIMIT_TIME.as_secs() * MESSAGE_PER_SECOND_LIMIT) as usize {
+                if last_message_times.len() >= (MESSAGE_PER_SECOND_LIMIT_TIME.as_secs() * MESSAGE_PER_SECOND_LIMIT) as usize {
                     send.send(ToClientPacket::RateLimitExceeded);
                     return;
                 }
-                game_player.last_message_times.push_back(now);
+                last_message_times.push_back(now);
                 
             },
             _ => {}

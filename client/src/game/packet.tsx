@@ -147,6 +147,9 @@ export type ToClientPacket = {
     type: "addChatMessages",
     chatMessages: ChatMessage[]
 } | {
+    type: "nightMessages",
+    chatMessages: ChatMessage[]
+} | {
     type: "addGrave",
     grave: Grave
 } | {
