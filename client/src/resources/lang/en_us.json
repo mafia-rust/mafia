@@ -1235,8 +1235,8 @@
 
     "wiki.article.role.psychic.guide": "- You receive a vision every night\n    - On even nights, the vision lists 2 players. At least one of them is a townie\n    - On odd nights, the vision will list three players. At least one of them is not a townie\n\nYou should tell the town the information you get daily.",
     "wiki.article.role.psychic.abilities":"* Get an evil vision on odd nights\n* Get a good vision on even nights",
-    "wiki.article.role.psychic.attributes":"* Evil visions list three players, at least one of them does not exclusively win with town\n* Good visions list 2 players, at least one of them exclusively wins with town\n- You don't get a vision if you are blocked",
-    "wiki.article.role.psychic.extra": "* If there aren't enough evil or good players to have a vision, the ability fails\n* You can not be listed in your own vision\n* You still get visions after you are dead\n* You do not visit the players in your vision\n* Players with a suspicious aura can't be listed in your good vision\n* Players with an innocent aura can't be listed in your evil vision\n- Your visions don't depend on visits, you still get visions while dead",
+    "wiki.article.role.psychic.attributes":"* Evil visions list three players, at least one of them does not exclusively win with town\n* Good visions list 2 players, at least one of them exclusively wins with town\n- You don't get a vision if you are blocked or dead",
+    "wiki.article.role.psychic.extra": "* If there aren't enough evil or good players to have a vision, the ability fails\n* You can not be listed in your own vision\n* You do not visit the players in your vision\n* Players with a suspicious aura can't be listed in your good vision\n* Players with an innocent aura can't be listed in your evil vision\n- Your visions don't depend on visits, you still get visions while dead",
 
     "wiki.article.role.auditor.guide": "- At night, choose an outline from the list\n    - You are told 2 roles, one of those roles were assigned to a player from that outline\n    - You visit the player who was assigned that role, but you are not told who that player is\n\n_For Example_\n- You choose the outline \"Town Killing\" and are told that a vigilante or a veteran generated from that outline, and you are attacked by the veteran",
     "wiki.article.role.auditor.abilities":"- Choose an outline\n    - You are told what role was generated from that outline and one other random role\n    - You visit the player who was assigned the role from the outline",
@@ -1290,7 +1290,7 @@
 
     "wiki.article.role.steward.guide":"- At night, choose a role to protect\n    - Everyone with this role is protected from attacks\n    - You are told if anyone with this role is attacked\n    - You can't protect the same role twice in a row\n    - You can't protect Steward more than once per game", 
     "wiki.article.role.steward.abilities":"* Choose a role to protect\n    * Everyone with this role is protected\n    * You are told if anyone with this role is attacked, and they are told they are protected",
-    "wiki.article.role.steward.attributes":"* You can't protect the same role two nights in a row\n* You can't protect your own role more than once",
+    "wiki.article.role.steward.attributes":"* You can't protect the same role two nights in a row\n* You can't protect your own role more than once\n* Your ability does nothing if you are blocked, or dead",
     "wiki.article.role.steward.extra":"You do not visit the roles you protect",
 
     "wiki.article.role.escort.guide": "- At night, select a player to roleblock them, stopping them from using their ability\n- Your target is told they were roleblocked\n\n_For example_\n- An escort selects the godfather, so the godfather can't kill anyone, and nobody dies\n\nYou should try to choose evil players, especially the ones with powerful abilities",
