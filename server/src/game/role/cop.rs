@@ -12,7 +12,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{common_role, GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
+use super::{common_role, GetClientRoleState, Priority, Role, RoleStateImpl};
 
 
 
@@ -40,7 +40,7 @@ impl RoleStateImpl for Cop {
                 let target_ref = visit.target;
 
                 target_ref.increase_defense_to(game, DefensePower::Protection);
-                actor_ref.set_role_state(game, RoleState::Cop(Cop {target_protected_ref: Some(target_ref)}));
+                actor_ref.set_role_state(game, Cop {target_protected_ref: Some(target_ref)});
             }
             Priority::Kill => {
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
@@ -98,7 +98,7 @@ impl RoleStateImpl for Cop {
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         if phase != PhaseType::Night {return;}
-        actor_ref.set_role_state(game, RoleState::Cop(Cop {target_protected_ref: None}));
+        actor_ref.set_role_state(game, Cop {target_protected_ref: None});
     }
 }
 impl GetClientRoleState<ClientRoleState> for Cop {

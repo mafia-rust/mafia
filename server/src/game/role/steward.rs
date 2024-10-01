@@ -44,17 +44,11 @@ impl RoleStateImpl for Steward {
     type ClientRoleState = ClientRoleState;
     type RoleActionChoice = super::common_role::RoleActionChoiceRole;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+
+        if actor_ref.night_blocked(game) {return}
+        if !actor_ref.alive(game) {return}
+
         match priority {
-            Priority::TopPriority => {
-                actor_ref.set_role_state(game, RoleState::Steward(
-                    Steward {
-                        self_heals_remaining: self.self_heals_remaining, 
-                        target_healed_refs: vec![],
-                        role_chosen: self.role_chosen,
-                        previous_role_chosen: self.previous_role_chosen
-                    }
-                ));
-            }
             Priority::Heal => {
                 let mut healed_players = vec![];
                 let mut healed_role = self.role_chosen;

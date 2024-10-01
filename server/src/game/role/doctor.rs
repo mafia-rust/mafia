@@ -40,14 +40,6 @@ impl RoleStateImpl for Doctor {
     type RoleActionChoice = super::common_role::RoleActionChoiceRole;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
-            Priority::TopPriority => {
-                actor_ref.set_role_state(game, RoleState::Doctor(
-                    Doctor {
-                        self_heals_remaining: self.self_heals_remaining, 
-                        target_healed_ref: None
-                    }
-                ));
-            }
             Priority::Heal => {
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
                 let target_ref = visit.target;
@@ -91,7 +83,10 @@ impl RoleStateImpl for Doctor {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
-        actor_ref.set_role_state(game, RoleState::Doctor(Doctor {self_heals_remaining: self.self_heals_remaining, target_healed_ref: None}));
+        actor_ref.set_role_state(game, RoleState::Doctor(Doctor{
+            self_heals_remaining: self.self_heals_remaining,
+            target_healed_ref: None
+        }));
     }
 }impl GetClientRoleState<ClientRoleState> for Doctor {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

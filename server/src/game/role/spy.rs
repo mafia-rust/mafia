@@ -31,6 +31,9 @@ impl RoleStateImpl for Spy {
     type ClientRoleState = Spy;
     type RoleActionChoice = super::common_role::RoleActionChoiceOnePlayer;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+        
+        if !actor_ref.alive(game) {return;}
+
         match priority {
             Priority::Investigative => {
                 if actor_ref.night_blocked(game) {return;}

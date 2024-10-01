@@ -24,9 +24,11 @@ impl PlayerReference{
     pub fn role_state<'a>(&self, game: &'a Game) -> &'a RoleState {
         &self.deref(game).role_state
     }
-    pub fn set_role_state(&self, game: &mut Game, new_role_data: RoleState){
-        self.deref_mut(game).role_state = new_role_data;
-        self.send_packet(game, ToClientPacket::YourRoleState { role_state: self.deref(game).role_state.clone().get_client_role_state(game, *self) } );
+    pub fn set_role_state(&self, game: &mut Game, new_role_data: impl Into<RoleState>){
+        self.deref_mut(game).role_state = new_role_data.into();
+        self.send_packet(game, ToClientPacket::YourRoleState {
+            role_state: self.deref(game).role_state.clone().get_client_role_state(game, *self)
+        });
     }
 
     pub fn alive(&self, game: &Game) -> bool{

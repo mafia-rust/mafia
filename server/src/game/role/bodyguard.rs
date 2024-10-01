@@ -66,11 +66,11 @@ impl RoleStateImpl for Bodyguard {
                     attacker_ref.set_night_visits(game, new_visits);
                 }
 
-                actor_ref.set_role_state(game, RoleState::Bodyguard(Bodyguard {
+                actor_ref.set_role_state(game, Bodyguard {
                     self_shields_remaining: self.self_shields_remaining, 
                     target_protected_ref, 
                     redirected_player_refs
-                }));
+                });
                 
             },
             Priority::Heal => {
@@ -79,10 +79,10 @@ impl RoleStateImpl for Bodyguard {
     
                 if actor_ref == target_ref {
                     let self_shields_remaining = self.self_shields_remaining - 1;
-                    actor_ref.set_role_state(game, RoleState::Bodyguard(Bodyguard{
+                    actor_ref.set_role_state(game, Bodyguard{
                         self_shields_remaining, 
                         ..self
-                    }));
+                    });
                     
                     
                     target_ref.increase_defense_to(game, DefensePower::Protection);

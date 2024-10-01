@@ -11,7 +11,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{GetClientRoleState, Priority, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, Priority, RoleStateImpl};
 
 #[derive(Clone, Debug)]
 pub struct Armorsmith {
@@ -54,15 +54,14 @@ impl RoleStateImpl for Armorsmith {
             Priority::Armorsmith => {
 
                 if self.open_shops_remaining > 0 && self.night_selection.boolean{
-                    actor_ref.set_role_state(game, RoleState::Armorsmith(
+                    actor_ref.set_role_state(game, 
                         Armorsmith {
                             open_shops_remaining: self.open_shops_remaining.saturating_sub(1),
                             night_open_shop: true,
                             night_protected_players: Vec::new(),
                             ..self
                         }
-                    ));
-                    actor_ref.set_night_visits(game, vec![]);
+                    );
                 }
             
             }
@@ -84,10 +83,10 @@ impl RoleStateImpl for Armorsmith {
                         self.players_armor.push(random_visitor.clone());
                     }
 
-                    actor_ref.set_role_state(game, RoleState::Armorsmith(Armorsmith{
+                    actor_ref.set_role_state(game, Armorsmith{
                         night_protected_players: visitors,
                         ..self
-                    }));
+                    });
                 }
             }
             Priority::Investigative => {
@@ -109,9 +108,9 @@ impl RoleStateImpl for Armorsmith {
                     }
                 }
 
-                actor_ref.set_role_state(game, RoleState::Armorsmith(Armorsmith{
+                actor_ref.set_role_state(game, Armorsmith{
                     ..self
-                }));
+                });
             }
             _ => {}
         }
@@ -127,11 +126,11 @@ impl RoleStateImpl for Armorsmith {
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         actor_ref.set_role_state(game, 
-            RoleState::Armorsmith(Armorsmith{
+            Armorsmith{
                 night_open_shop: false,
                 night_protected_players: Vec::new(),
                 ..self
-            }));
+            });
     }
 }
 impl GetClientRoleState<ClientRoleState> for Armorsmith {
