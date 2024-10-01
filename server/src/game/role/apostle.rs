@@ -11,7 +11,7 @@ use crate::game::visit::Visit;
 use crate::game::win_condition::WinCondition;
 use crate::game::Game;
 use super::zealot::Zealot;
-use super::{Priority, RoleState, RoleStateImpl};
+use super::{Priority, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
@@ -46,7 +46,7 @@ impl RoleStateImpl for Apostle {
                     return
                 }
 
-                target_ref.set_role(game, RoleState::Zealot(Zealot));
+                target_ref.set_role(game, Zealot);
                 target_ref.set_win_condition(game, WinCondition::new_single_resolution_state(ResolutionState::Cult));
                 Cult::set_ability_used_last_night(game, Some(CultAbility::Convert));
             }
