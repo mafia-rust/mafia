@@ -7,6 +7,7 @@ import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus
 import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu"
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu"
 import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu"
+import { RoleActionChoice } from "./roleActionChoice"
 
 export type LobbyPreviewData = {
     name: string,
@@ -292,9 +293,6 @@ export type ToServerPacket = {
     role: Role | null,
     will: string
 } | {
-    type: "setAuditorChosenOutline",
-    index: number
-} | {
     type: "setOjoAction",
     action: OjoAction
 } | {
@@ -312,6 +310,9 @@ export type ToServerPacket = {
 } | {
     type: "setStewardRoleChosen",
     role: Role | null
+} | {
+    type: "roleActionChoice",
+    action: RoleActionChoice,
 } | {
     type: "voteFastForwardPhase",
     fastForward: boolean

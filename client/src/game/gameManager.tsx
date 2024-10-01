@@ -525,12 +525,6 @@ export function createGameManager(): GameManager {
                 action: action
             });
         },
-        sendSetAuditorChosenOutline(index) {
-            this.server.sendPacket({
-                type: "setAuditorChosenOutline",
-                index: index
-            });
-        },
         sendSetOjoAction(action) {
             this.server.sendPacket({
                 type: "setOjoAction",
@@ -565,6 +559,12 @@ export function createGameManager(): GameManager {
             this.server.sendPacket({
                 type: "setStewardRoleChosen",
                 role: role
+            });
+        },
+        sendRoleActionChoice(action) {
+            this.server.sendPacket({
+                type: "roleActionChoice",
+                action: action
             });
         },
 

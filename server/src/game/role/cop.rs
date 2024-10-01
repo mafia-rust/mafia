@@ -12,13 +12,14 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{common_role, GetClientRoleState, Priority, Role, RoleStateImpl};
+use super::{GetClientRoleState, Priority, Role, RoleStateImpl};
 
 
 
 #[derive(Clone, Debug, Default)]
 pub struct Cop {
-    target_protected_ref: Option<PlayerReference>
+    target_protected_ref: Option<PlayerReference>,
+    night_selection: <Cop as RoleStateImpl>::RoleActionChoice,
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -40,7 +41,7 @@ impl RoleStateImpl for Cop {
                 let target_ref = visit.target;
 
                 target_ref.increase_defense_to(game, DefensePower::Protection);
-                actor_ref.set_role_state(game, Cop {target_protected_ref: Some(target_ref)});
+                actor_ref.set_role_state(game, Cop {target_protected_ref: Some(target_ref), ..self});
             }
             Priority::Kill => {
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
@@ -90,15 +91,21 @@ impl RoleStateImpl for Cop {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        common_role::default_action_choice_one_player_is_valid(game, actor_ref, target_ref) && game.day_number() > 1
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, &action_choice, false){
+            return
+        }
+        if game.day_number() == 1 {return}
+
+        self.night_selection = action_choice;
+        actor_ref.set_role_state(game, self);
     }
-    fn create_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_action_choice_to_visits(&self.night_selection, false)
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         if phase != PhaseType::Night {return;}
-        actor_ref.set_role_state(game, Cop {target_protected_ref: None});
+        actor_ref.set_role_state(game, Cop {target_protected_ref: None, night_selection: <Cop as RoleStateImpl>::RoleActionChoice::default()});
     }
 }
 impl GetClientRoleState<ClientRoleState> for Cop {

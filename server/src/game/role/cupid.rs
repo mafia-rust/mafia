@@ -6,18 +6,21 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{same_evil_team, Priority, RoleStateImpl};
+use super::common_role::default_action_choice_two_players_is_valid;
+use super::{Priority, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
-pub struct Cupid;
+pub struct Cupid{
+    night_selection: <Self as RoleStateImpl>::RoleActionChoice
+}
 
 pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Cupid {
-    type ClientRoleState = Cupid;
+    type ClientRoleState = Self;
     type RoleActionChoice = super::common_role::RoleActionChoiceTwoPlayers;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
@@ -35,29 +38,22 @@ impl RoleStateImpl for Cupid {
             _ => ()
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        let selection = actor_ref.selection(game);
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        let Some(..) = action_choice.two_players else {
+            self = Cupid{ night_selection: action_choice };
+            actor_ref.set_role_state(game, self);
+            return
+        };
 
-        !actor_ref.night_jailed(game) &&
-        actor_ref != target_ref &&
-        ((
-            selection.is_empty()
-        ) || (
-            selection.len() == 1 &&
-            Some(target_ref) != selection.first().copied()
-        )) &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game) &&
-        !same_evil_team(game, actor_ref, target_ref)
+        if !default_action_choice_two_players_is_valid(game, actor_ref, &action_choice, false) {return}
+
+        self.night_selection = action_choice;
+        actor_ref.set_role_state(game, self);    
     }
-    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        if target_refs.len() == 2 {
-            vec![
-                Visit{ target: target_refs[0], attack: false },
-                Visit{ target: target_refs[1], attack: false }
-            ]
-        } else {
-            Vec::new()
-        }
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_action_choice_to_visits_two_players(&self.night_selection, false)
+    }
+    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: crate::game::phase::PhaseType) {
+        crate::on_phase_start_reset_night_selection!(self, game, actor_ref, phase);
     }
 }

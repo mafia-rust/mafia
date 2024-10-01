@@ -37,7 +37,7 @@ export default function LargeAuditorMenu(props: {}): ReactElement {
                 if(found){
                     new_buttons.push({type:"used" as "used", result: found[1]});
                 }else{
-                    new_buttons.push({type:"notUsed"  as "notUsed", chosen: GAME_MANAGER.state.clientState.roleState.chosenOutline === i});
+                    new_buttons.push({type:"notUsed"  as "notUsed", chosen: GAME_MANAGER.state.clientState.roleState.nightSelection.chosenOutline === i});
                 }
             }
             setButtons(new_buttons);
@@ -105,7 +105,10 @@ function ChooseButtons(props: {
                     className={"choose-button" + (button.chosen ? " highlighted" : "")}
                     key={index}
                     onClick={()=>{
-                        GAME_MANAGER.sendSetAuditorChosenOutline(index)
+                        GAME_MANAGER.sendRoleActionChoice({
+                            type: "auditor",
+                            chosenOutline: index
+                        })
                     }}
                 >
                     <StyledText>

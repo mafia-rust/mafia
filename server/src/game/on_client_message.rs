@@ -312,24 +312,6 @@ impl Game {
                     sender_player_ref.set_role_state(self, RoleState::Counterfeiter(counterfeiter));
                 }
             },
-            ToServerPacket::SetAuditorChosenOutline { index } => {
-                if !sender_player_ref.alive(self) {break 'packet_match;}
-
-                if let RoleState::Auditor(mut auditor) = sender_player_ref.role_state(self).clone(){
-
-                    if auditor.chosen_outline.is_some_and(|f|f == index) {
-                        auditor.chosen_outline = None;
-                    }
-
-                    if  self.roles_originally_generated.get(index as usize).is_some() && 
-                        !auditor.previously_given_results.iter().any(|(i, _)| *i == index)
-                    {
-                        auditor.chosen_outline = Some(index);
-                    }
-
-                    sender_player_ref.set_role_state(self, RoleState::Auditor(auditor));
-                }
-            },
             ToServerPacket::SetOjoAction { action } => {
                 if let RoleState::Ojo(mut ojo) = sender_player_ref.role_state(self).clone(){
                     ojo.chosen_action = action.clone();

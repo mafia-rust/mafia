@@ -10,14 +10,16 @@ use super::{Priority, RoleStateImpl, Role};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
-pub struct Arsonist;
+pub struct Arsonist{
+    night_selection: <Self as RoleStateImpl>::RoleActionChoice,
+}
 
 pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Arsonist {
-    type ClientRoleState = Arsonist;
+    type ClientRoleState = Self;
     type RoleActionChoice = super::common_role::RoleActionChoiceOnePlayer;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         
@@ -66,14 +68,17 @@ impl RoleStateImpl for Arsonist {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        !actor_ref.night_jailed(game) &&
-        actor_ref.selection(game).is_empty() &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game)
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, &action_choice, true) {return}
+        
+        self.night_selection = action_choice;
+        actor_ref.set_role_state(game, self);
     }
-    fn create_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_action_choice_to_visits(&self.night_selection,false)
+    }
+    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: crate::game::phase::PhaseType) {
+        crate::on_phase_start_reset_night_selection!(self, game, actor_ref, phase);
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
         ArsonistDoused::clean_doused(game, actor_ref);

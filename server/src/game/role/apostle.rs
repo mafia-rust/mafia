@@ -16,7 +16,7 @@ use super::{Priority, RoleStateImpl};
 
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Apostle{
-    night_selection: <Apostle as RoleStateImpl>::RoleActionChoice,
+    night_selection: <Self as RoleStateImpl>::RoleActionChoice,
 }
 
 pub(super) const FACTION: Faction = Faction::Cult;
@@ -24,7 +24,7 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Apostle {
-    type ClientRoleState = Apostle;
+    type ClientRoleState = Self;
     type RoleActionChoice = super::common_role::RoleActionChoiceOnePlayer;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
@@ -57,7 +57,7 @@ impl RoleStateImpl for Apostle {
         }
     }
     fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
-        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, &action_choice){
+        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, &action_choice, false){
             return
         }
 
@@ -68,13 +68,12 @@ impl RoleStateImpl for Apostle {
         if !can_convert && !can_kill {return}
 
         self.night_selection = action_choice;
-        actor_ref.set_role_state(game, self.into());
+        actor_ref.set_role_state(game, self);
     }
-    fn create_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
-        crate::game::role::common_role::convert_action_choice_to_visits(game,
-            actor_ref,
-            &self.night_selection,
-            Cult::next_ability(game) == CultAbility::Kill
-        )
+    fn create_visits(self, game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_action_choice_to_visits(&self.night_selection,Cult::next_ability(game) == CultAbility::Kill)
+    }
+    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: crate::game::phase::PhaseType) {
+        crate::on_phase_start_reset_night_selection!(self, game, actor_ref, phase);
     }
 }

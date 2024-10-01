@@ -65,7 +65,7 @@ export type RoleActionChoice =
     }
 } | {
     type: "auditor",
-    chosenOutline: number,
+    chosenOutline: number | null,
 } | {
     type: "marksman"
     marks: PlayerIndex[]

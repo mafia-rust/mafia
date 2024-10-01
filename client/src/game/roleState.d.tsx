@@ -35,7 +35,9 @@ export type RoleState = ({
     type: "psychic"
 } | {
     type: "auditor",
-    chosenOutline: number,
+    nightSelection: {
+        chosenOutline: number | null,
+    }
     previouslyGivenResults: [number, AuditorResult][]
 } | {
     type: "snoop",

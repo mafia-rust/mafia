@@ -9,7 +9,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, RoleStateImpl, Role, RoleState};
+use super::{Priority, RoleStateImpl, Role};
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -22,7 +22,7 @@ pub struct Vigilante {
 #[serde(tag = "type")]
 pub enum VigilanteState{
     NotLoaded,
-    Loaded{bullets: u8},
+    Loaded{bullets: u8, night_selection: <Vigilante as RoleStateImpl>::RoleActionChoice},
     WillSuicide,
     Suicided,
 }
@@ -50,15 +50,18 @@ impl RoleStateImpl for Vigilante {
             },
             Priority::Kill => {
             
-                match self.state {
-                    VigilanteState::Loaded { bullets } if bullets > 0 => {
+                match &self.state {
+                    VigilanteState::Loaded { bullets, night_selection } if *bullets > 0 => {
 
                         if let Some(visit) = actor_ref.night_visits(game).first(){
 
                             let target_ref = visit.target;
 
-                            let killed = target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Vigilante), AttackPower::Basic, false);
-                            self.state = VigilanteState::Loaded { bullets: bullets.saturating_sub(1) };
+                            let killed = target_ref.try_night_kill_single_attacker(
+                                actor_ref, game,
+                                GraveKiller::Role(Role::Vigilante), AttackPower::Basic, false
+                            );
+                            self.state = VigilanteState::Loaded { bullets: bullets.saturating_sub(1), night_selection: night_selection.clone() };
 
                             if killed && target_ref.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town) {
                                 self.state = VigilanteState::WillSuicide;
@@ -67,7 +70,9 @@ impl RoleStateImpl for Vigilante {
                     }       
 
                     VigilanteState::NotLoaded => {
-                        self.state = VigilanteState::Loaded { bullets:3 };
+                        self.state = VigilanteState::Loaded {
+                            bullets:3, night_selection: super::common_role::RoleActionChoiceOnePlayer::default()
+                        };
                     }
 
                     _ => {},
@@ -76,17 +81,37 @@ impl RoleStateImpl for Vigilante {
             },
             _ => {}
         }
-    actor_ref.set_role_state(game, RoleState::Vigilante(self));
+        actor_ref.set_role_state(game, self);
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, target_ref) && 
-        if let VigilanteState::Loaded { bullets } = &self.state {
-            *bullets >=1
-        } else {
-            false
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if let VigilanteState::Loaded { bullets, .. } = self.state.clone() {
+            if 
+                bullets > 0 &&
+                crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, &action_choice, false)
+            {
+                self.state = VigilanteState::Loaded { bullets, night_selection: action_choice };
+                actor_ref.set_role_state(game, self);
+            }
         }
     }
-    fn create_visits(self,  game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        match self.state {
+            VigilanteState::Loaded { bullets, night_selection } if bullets > 0 => {
+                crate::game::role::common_role::convert_action_choice_to_visits(&night_selection, true)
+            }
+            _ => Vec::new()
+        }
+    }
+    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: crate::game::phase::PhaseType) {
+        match phase {
+            crate::game::phase::PhaseType::Night => {
+                if let VigilanteState::Loaded { bullets, .. } = self.state {
+                    actor_ref.set_role_state(game, Vigilante{
+                        state: VigilanteState::Loaded { bullets, night_selection: <Self as RoleStateImpl>::RoleActionChoice::default() }
+                    });
+                }
+            }
+            _ => {}
+        }
     }
 }

@@ -16,11 +16,13 @@ use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 pub struct Death{
     souls: u8,
     won: bool,
+    night_selection: <Self as RoleStateImpl>::RoleActionChoice
 }
 
 #[derive(Clone, Debug, Serialize)]
 pub struct ClientRoleState {
-    souls: u8
+    souls: u8,
+    night_selection: <Death as RoleStateImpl>::RoleActionChoice
 }
 
 const NEEDED_SOULS: u8 = 6;
@@ -30,7 +32,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Death {
     type ClientRoleState = ClientRoleState;
-    type RoleActionChoice = super::common_role::RoleActionChoiceRole;
+    type RoleActionChoice = super::common_role::RoleActionChoiceOnePlayer;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority == Priority::Heal && self.souls >= NEEDED_SOULS{
             actor_ref.set_night_upgraded_defense(game, Some(DefensePower::Invincible))
@@ -56,11 +58,16 @@ impl RoleStateImpl for Death {
         }
         actor_ref.set_role_state(game, RoleState::Death(self));
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, target_ref)
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, &action_choice, false){
+            return
+        }
+
+        self.night_selection = action_choice;
+        actor_ref.set_role_state(game, self);
     }
-    fn create_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_action_choice_to_visits(&self.night_selection, false)
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {
@@ -78,10 +85,13 @@ impl RoleStateImpl for Death {
                                 *death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Death)]);
                             }
                             player.die(game, grave);
-                            actor_ref.set_role_state(game, RoleState::Death(Death{won: true, souls: self.souls}));
+                            actor_ref.set_role_state(game, Death{won: true, souls: self.souls, night_selection: <Self as RoleStateImpl>::RoleActionChoice::default()});
                         }
                     }
                 }
+            },
+            PhaseType::Obituary => {
+                actor_ref.set_role_state(game, Death{night_selection: <Self as RoleStateImpl>::RoleActionChoice::default(), ..self});
             },
             _=>{}
         }
@@ -90,7 +100,8 @@ impl RoleStateImpl for Death {
 impl GetClientRoleState<ClientRoleState> for Death {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState{
-            souls: self.souls
+            souls: self.souls,
+            night_selection: self.night_selection
         }
     }
 }

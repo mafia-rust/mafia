@@ -6,6 +6,7 @@ import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/Smal
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player, ModifierType } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
+import { RoleActionChoice } from "./roleActionChoice";
 import { RoleList, RoleOutline } from "./roleListState.d";
 import { Role } from "./roleState.d";
 
@@ -117,13 +118,13 @@ export type GameManager = {
     ): void
     sendSetForgerWill(role: Role | null, will: string): void;
     sendSetCounterfeiterAction(action: "forge" | "noForge"): void;
-    sendSetAuditorChosenOutline(index: number): void;
     sendSetOjoAction(action: OjoAction): void;
     sendSetPuppeteerAction(action: PuppeteerAction): void;
     sendSetRecruiterAction(action: RecruiterAction): void;
     sendSetErosAction(action: "loveLink" | "kill"): void;
     sendRetrainerRetrain(role: Role): void;
     sendSetStewardRoleChosen(role: Role | null): void;
+    sendRoleActionChoice(action: RoleActionChoice): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;
     sendForfeitVotePacket(forfeit: boolean): void;

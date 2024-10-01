@@ -9,24 +9,46 @@ use crate::game::{
 use super::{journalist::Journalist, medium::Medium, same_evil_team, Role, RoleState};
 
 
-pub(super) fn default_action_choice_one_player_is_valid(game: &Game, actor_ref: PlayerReference, choice: &RoleActionChoiceOnePlayer) -> bool {
+pub(super) fn default_action_choice_one_player_is_valid(game: &Game, actor_ref: PlayerReference, choice: &RoleActionChoiceOnePlayer, can_choose_self: bool) -> bool {
     let Some(target) = choice.player else {return true};
 
-    actor_ref != target &&
-    !actor_ref.night_jailed(game) &&
-    actor_ref.alive(game) &&
+    (can_choose_self || actor_ref != target) &&
     target.alive(game) &&
+    !default_action_choice_boolean_is_valid(game, actor_ref) &&
     !same_evil_team(game, actor_ref, target)
 }
-pub(super) fn default_action_choice_boolean_is_valid(game: &Game, actor_ref: PlayerReference, choice: &RoleActionChoiceBool) -> bool {
+pub(super) fn default_action_choice_boolean_is_valid(game: &Game, actor_ref: PlayerReference) -> bool {
     !actor_ref.night_jailed(game) &&
     actor_ref.alive(game)
 }
+pub(super) fn default_action_choice_two_players_is_valid(game: &Game, actor_ref: PlayerReference, choice: &RoleActionChoiceTwoPlayers, can_choose_self: bool) -> bool {
+    let Some((target_a, target_b)) = choice.two_players else {return true};
 
+    !default_action_choice_boolean_is_valid(game, actor_ref) &&
+    target_a.alive(game) && 
+    target_b.alive(game) &&
+    !same_evil_team(game, actor_ref, target_a) &&
+    !same_evil_team(game, actor_ref, target_b) &&
+    target_a != target_b &&
+    (
+        can_choose_self || 
+        (actor_ref != target_a && actor_ref != target_b)
+    )
+}
 
-pub(super) fn convert_action_choice_to_visits(_game: &Game, _actor_ref: PlayerReference, choice: &RoleActionChoiceOnePlayer, attack: bool) -> Vec<Visit> {
+pub(super) fn convert_action_choice_to_visits(choice: &RoleActionChoiceOnePlayer, attack: bool) -> Vec<Visit> {
     if let Some(target) = choice.player {
         vec![Visit{ target: target, attack }]
+    } else {
+        Vec::new()
+    }
+}
+pub(super) fn convert_action_choice_to_visits_two_players(choice: &RoleActionChoiceTwoPlayers, attack: bool) -> Vec<Visit> {
+    if let Some((a,b)) = choice.two_players {
+        vec![
+            Visit{ target: a, attack },
+            Visit{ target: b, attack }
+        ]
     } else {
         Vec::new()
     }
@@ -194,23 +216,45 @@ pub(super) fn default_win_condition(role: Role) -> WinCondition {
         }.into_iter().collect()
     }
 }
-#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct RoleActionChoiceOnePlayer{
     pub player: Option<PlayerReference>,
 }
-#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct RoleActionChoiceTwoPlayers{
     pub two_players: Option<(PlayerReference, PlayerReference)>,
 }
-#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct RoleActionChoiceRole{
     pub role: Option<Role>,
 }
-#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct RoleActionChoiceBool{
     pub boolean: bool,
+}
+
+
+
+pub mod macros {
+    #[macro_export]
+    macro_rules! on_phase_start_reset_night_selection {
+        (
+            $self:ident,
+            $game:ident,
+            $actor_ref:ident,
+            $phase:ident
+        ) => {
+            match $phase {
+                crate::game::phase::PhaseType::Obituary => {
+                    $self.night_selection = <Self as RoleStateImpl>::RoleActionChoice::default();
+                    $actor_ref.set_role_state($game, $self);
+                }
+                _ => {}
+            }
+        }
+    }
 }

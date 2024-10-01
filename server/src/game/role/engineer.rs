@@ -13,7 +13,8 @@ use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Default, Clone, Debug)]
 pub struct Engineer {
-    pub trap: Trap
+    pub trap: Trap,
+    pub night_selection: <Self as RoleStateImpl>::RoleActionChoice,
 }
 
 #[derive(Clone, Serialize, Debug)]
@@ -79,21 +80,21 @@ impl RoleStateImpl for Engineer {
                 if !actor_ref.night_blocked(game) {
                     match self.trap {
                         Trap::Dismantled => {
-                            actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Ready}));
+                            actor_ref.set_role_state(game, Engineer {trap: Trap::Ready, ..self});
                         },
                         Trap::Ready => {
                             if let Some(visit) = actor_ref.night_visits(game).first(){
-                                actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Set{target: visit.target}}));
+                                actor_ref.set_role_state(game, Engineer {trap: Trap::Set{target: visit.target}, ..self});
                             }
                         },
                         Trap::Set { .. } if actor_ref.night_visits(game).first().is_some() => {
-                            actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Ready}));
+                            actor_ref.set_role_state(game, Engineer {trap: Trap::Ready, ..self});
                         },
                         _ => {}
                     }
                 }
     
-                if let RoleState::Engineer(Engineer{trap: Trap::Set{target, ..}}) = actor_ref.role_state(game).clone(){
+                if let RoleState::Engineer(Engineer{trap: Trap::Set{target, ..}, ..}) = actor_ref.role_state(game).clone(){
                     target.increase_defense_to(game, DefensePower::Protection);
                 }
             }
@@ -130,7 +131,7 @@ impl RoleStateImpl for Engineer {
                     }
 
                     if should_dismantle {
-                        actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Dismantled}));
+                        actor_ref.set_role_state(game, Engineer {trap: Trap::Dismantled, ..self});
                     }
                 }
 
@@ -139,27 +140,39 @@ impl RoleStateImpl for Engineer {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        (match self.trap {
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+
+        let Some(target_ref) = action_choice.player else {
+            self.night_selection = action_choice;
+            return actor_ref.set_role_state(game, self) 
+        };
+
+        if !(
+            (match self.trap {
             Trap::Dismantled => false,
             Trap::Ready => actor_ref != target_ref,
             Trap::Set { .. } => actor_ref == target_ref,
-        }) &&
-        !actor_ref.night_jailed(game) &&
-        actor_ref.selection(game).is_empty() &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game)
+            }) &&
+            crate::game::role::common_role::default_action_choice_boolean_is_valid(game, actor_ref)
+        ){
+            return;
+        }
+
+        self.night_selection = action_choice;
+        actor_ref.set_role_state(game, self);
     }
-    fn create_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_action_choice_to_visits(&self.night_selection, false)
     }
-    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
+    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {
             PhaseType::Night => {
-                actor_ref.add_private_chat_message(game, ChatMessageVariant::TrapState { state: self.trap.state() });
+                actor_ref.add_private_chat_message(game, ChatMessageVariant::TrapState { state: self.trap.state().clone() });
             }
             _ => {}
         }
+
+        crate::on_phase_start_reset_night_selection!(self, game, actor_ref, phase);
     }
 
 }

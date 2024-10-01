@@ -3,7 +3,6 @@ use serde::Serialize;
 
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 
@@ -22,12 +21,15 @@ pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Mayor {
+impl RoleStateImpl for Mayor { 
     type ClientRoleState = ClientRoleState;
     type RoleActionChoice = ();
-    fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, _target_ref: PlayerReference) {
-
-        if !actor_ref.alive(game) || !game.current_phase().is_day() {
+    fn on_role_action(self, game: &mut Game, actor_ref: PlayerReference, _action_choice: Self::RoleActionChoice) {
+        if !(
+            game.current_phase().is_day() &&
+            actor_ref.alive(game) &&
+            !self.revealed
+        ){
             return;
         }
 
@@ -40,13 +42,6 @@ impl RoleStateImpl for Mayor {
             player.insert_role_label(game, actor_ref);
         }
         game.count_votes_and_start_trial();
-    }
-    fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool{
-        game.current_phase().is_day() &&
-        !self.revealed &&
-        actor_ref == target_ref &&
-        actor_ref.alive(game) &&
-        PhaseType::Night != game.current_phase().phase()
     }
 }
 impl GetClientRoleState<ClientRoleState> for Mayor {

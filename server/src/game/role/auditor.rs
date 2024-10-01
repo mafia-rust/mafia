@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
-use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
@@ -14,7 +13,7 @@ use super::{Priority, Role, RoleStateImpl};
 #[derive(Clone, Debug, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Auditor{
-    pub chosen_outline: Option<u8>,
+    pub night_selection: <Self as RoleStateImpl>::RoleActionChoice,
     pub previously_given_results: Vec<(u8, AuditorResult)>,
 }
 
@@ -26,7 +25,7 @@ pub enum AuditorResult{
     One{role: Role}
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct RoleActionChoice{
     pub chosen_outline: Option<u8>
@@ -38,14 +37,14 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Auditor {
-    type ClientRoleState = Auditor;
+    type ClientRoleState = Self;
     type RoleActionChoice = RoleActionChoice;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
         if priority != Priority::Investigative {return;}
         if actor_ref.night_blocked(game) {return;}
 
-        let Some(chosen_outline) = self.chosen_outline else {return;};
+        let Some(chosen_outline) = self.night_selection.chosen_outline else {return;};
 
         let (role, _) = match game.roles_originally_generated.get(chosen_outline as usize) {
             Some(map) => *map,
@@ -88,8 +87,27 @@ impl RoleStateImpl for Auditor {
         actor_ref.set_role_state(game, self);
             
     }
-    fn create_visits(self, game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        let Some(chosen_outline) = self.chosen_outline else {return vec![]};
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if !actor_ref.alive(game) {return}
+
+        self.night_selection.chosen_outline = match action_choice.chosen_outline {
+            Some(chosen_outline) => {
+                if
+                    game.roles_originally_generated.get(chosen_outline as usize).is_some() &&
+                    !self.previously_given_results.iter().any(|(i, _)| *i == chosen_outline)
+                {
+                    Some(chosen_outline)
+                }else{
+                    None
+                }
+            },
+            None => None
+        };
+
+        actor_ref.set_role_state(game, self);
+    }
+    fn create_visits(self, game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        let Some(chosen_outline) = self.night_selection.chosen_outline else {return vec![]};
 
         let (_, player) = match game.roles_originally_generated.get(chosen_outline as usize) {
             Some(map) => *map,
@@ -98,13 +116,8 @@ impl RoleStateImpl for Auditor {
 
         vec![Visit{ target: player, attack: false }]
     }
-    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
-        match phase {
-            PhaseType::Obituary => {
-                self.chosen_outline = None;
-                actor_ref.set_role_state(game, self);
-            },
-            _ => {}
-        }
+    
+    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: crate::game::phase::PhaseType) {
+        crate::on_phase_start_reset_night_selection!(self, game, actor_ref, phase);
     }
 }

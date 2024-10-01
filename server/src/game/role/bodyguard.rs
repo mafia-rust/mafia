@@ -10,20 +10,22 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, Priority, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Bodyguard {
     self_shields_remaining: u8,
     target_protected_ref: Option<PlayerReference>,
-    redirected_player_refs: Vec<PlayerReference>
+    redirected_player_refs: Vec<PlayerReference>,
+    night_selection: <Self as RoleStateImpl>::RoleActionChoice
 }
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ClientRoleState {
-    self_shields_remaining: u8
+    self_shields_remaining: u8,
+    night_selection: <Bodyguard as RoleStateImpl>::RoleActionChoice
 }
 
 impl Default for Bodyguard {
@@ -31,7 +33,8 @@ impl Default for Bodyguard {
         Self { 
             self_shields_remaining: 1, 
             target_protected_ref: None, 
-            redirected_player_refs: Vec::new()
+            redirected_player_refs: Vec::new(),
+            night_selection: <Self as RoleStateImpl>::RoleActionChoice::default()
         }
     }
 }
@@ -69,7 +72,8 @@ impl RoleStateImpl for Bodyguard {
                 actor_ref.set_role_state(game, Bodyguard {
                     self_shields_remaining: self.self_shields_remaining, 
                     target_protected_ref, 
-                    redirected_player_refs
+                    redirected_player_refs,
+                    ..self
                 });
                 
             },
@@ -102,27 +106,34 @@ impl RoleStateImpl for Bodyguard {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        game.day_number() > 1 &&
-        (actor_ref != target_ref || self.self_shields_remaining > 0) &&
-        !actor_ref.night_jailed(game) &&
-        actor_ref.selection(game).is_empty() &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game)
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, &action_choice, self.self_shields_remaining > 0){
+            return
+        }
+        if game.day_number() == 1 {return}
+
+        self.night_selection = action_choice;
+        actor_ref.set_role_state(game, self);
     }
-    fn create_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_action_choice_to_visits(&self.night_selection, false)
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         let redirected_player_refs = Vec::new();
         let target_protected_ref = None;
-        actor_ref.set_role_state(game, RoleState::Bodyguard(Bodyguard { self_shields_remaining: self.self_shields_remaining, redirected_player_refs, target_protected_ref }));
+        actor_ref.set_role_state(game, Bodyguard {
+            self_shields_remaining: self.self_shields_remaining,
+            redirected_player_refs,
+            target_protected_ref,
+            night_selection: <Self as RoleStateImpl>::RoleActionChoice::default()
+        });
     }
 }
 impl GetClientRoleState<ClientRoleState> for Bodyguard {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState {
-            self_shields_remaining: self.self_shields_remaining
+            self_shields_remaining: self.self_shields_remaining,
+            night_selection: self.night_selection
         }
     }
 }

@@ -8,25 +8,28 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{GetClientRoleState, Priority, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, Priority, RoleStateImpl};
 
 #[derive(Clone, Debug)]
 pub struct Doctor {
     self_heals_remaining: u8,
-    target_healed_ref: Option<PlayerReference>
+    target_healed_ref: Option<PlayerReference>,
+    night_selection: <Self as RoleStateImpl>::RoleActionChoice
 }
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ClientRoleState {
-    self_heals_remaining: u8
+    self_heals_remaining: u8,
+    night_selection: <Doctor as RoleStateImpl>::RoleActionChoice
 }
 
 impl Default for Doctor {
     fn default() -> Self {
         Self { 
             self_heals_remaining: 1,
-            target_healed_ref: None
+            target_healed_ref: None,
+            night_selection: <Self as RoleStateImpl>::RoleActionChoice::default()
         }
     }
 }
@@ -37,7 +40,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Doctor {
     type ClientRoleState = ClientRoleState;
-    type RoleActionChoice = super::common_role::RoleActionChoiceRole;
+    type RoleActionChoice = super::common_role::RoleActionChoiceOnePlayer;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Heal => {
@@ -47,15 +50,16 @@ impl RoleStateImpl for Doctor {
                 target_ref.increase_defense_to(game, DefensePower::Protection);
 
                 if actor_ref == target_ref{
-                    actor_ref.set_role_state(game, RoleState::Doctor(Doctor{
+                    actor_ref.set_role_state(game, Doctor{
                         self_heals_remaining: self.self_heals_remaining.saturating_sub(1), 
-                        target_healed_ref: Some(target_ref)
-                    }));
-                }else{
-                    actor_ref.set_role_state(game, RoleState::Doctor(Doctor{
                         target_healed_ref: Some(target_ref),
                         ..self
-                    }));
+                    });
+                }else{
+                    actor_ref.set_role_state(game, Doctor{
+                        target_healed_ref: Some(target_ref),
+                        ..self
+                    });
                 }
 
             }
@@ -71,27 +75,30 @@ impl RoleStateImpl for Doctor {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        game.day_number() > 1 &&
-        (actor_ref != target_ref || self.self_heals_remaining > 0) &&
-        !actor_ref.night_jailed(game) &&
-        actor_ref.selection(game).is_empty() &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game)
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, &action_choice, self.self_heals_remaining > 0){
+            return
+        }
+        if game.day_number() == 1 {return}
+
+        self.night_selection = action_choice;
+        actor_ref.set_role_state(game, self);
     }
-    fn create_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_action_choice_to_visits(&self.night_selection, false)
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
-        actor_ref.set_role_state(game, RoleState::Doctor(Doctor{
+        actor_ref.set_role_state(game, Doctor{
             self_heals_remaining: self.self_heals_remaining,
-            target_healed_ref: None
-        }));
+            target_healed_ref: None,
+            night_selection: <Self as RoleStateImpl>::RoleActionChoice::default()
+        });
     }
 }impl GetClientRoleState<ClientRoleState> for Doctor {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState{
-            self_heals_remaining: self.self_heals_remaining
+            self_heals_remaining: self.self_heals_remaining,
+            night_selection: self.night_selection
         }
     }
 }

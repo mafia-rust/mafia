@@ -27,7 +27,7 @@ pub struct Armorsmith {
 #[serde(rename_all = "camelCase")]
 pub struct ClientRoleState {
     open_shops_remaining: u8,
-    selection: <Armorsmith as RoleStateImpl>::RoleActionChoice,
+    night_selection: <Armorsmith as RoleStateImpl>::RoleActionChoice,
 }
 
 impl Default for Armorsmith {
@@ -52,7 +52,6 @@ impl RoleStateImpl for Armorsmith {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Armorsmith => {
-
                 if self.open_shops_remaining > 0 && self.night_selection.boolean{
                     actor_ref.set_role_state(game, 
                         Armorsmith {
@@ -63,7 +62,6 @@ impl RoleStateImpl for Armorsmith {
                         }
                     );
                 }
-            
             }
             Priority::Heal => {
                 for player in self.players_armor.iter(){
@@ -116,28 +114,34 @@ impl RoleStateImpl for Armorsmith {
         }
     }
     fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
-        if !crate::game::role::common_role::default_action_choice_boolean_is_valid(game, actor_ref, &action_choice) {return}
+        if !crate::game::role::common_role::default_action_choice_boolean_is_valid(game, actor_ref) {return}
         if self.open_shops_remaining == 0 {return}
         self.night_selection = action_choice;
-        actor_ref.set_role_state(game, self.into());
+        actor_ref.set_role_state(game, self);
     }
     fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
         vec![]
     }
-    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
-        actor_ref.set_role_state(game, 
-            Armorsmith{
-                night_open_shop: false,
-                night_protected_players: Vec::new(),
-                ..self
-            });
+    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
+        match phase {
+            PhaseType::Night => {
+                actor_ref.set_role_state(game, Armorsmith{
+                    night_open_shop: false,
+                    night_protected_players: Vec::new(),
+                    night_selection: <Self as RoleStateImpl>::RoleActionChoice::default(),
+                    ..self
+                });
+            }
+            _ => {}
+        }
+            
     }
 }
 impl GetClientRoleState<ClientRoleState> for Armorsmith {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState {
             open_shops_remaining: self.open_shops_remaining,
-            selection: self.selection,
+            night_selection: self.night_selection,
         }
     }
 }

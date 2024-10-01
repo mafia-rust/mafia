@@ -16,7 +16,8 @@ use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Debug, Clone, Default)]
 pub struct Pyrolisk{
-    pub tagged_for_obscure: HashSet<PlayerReference>
+    pub tagged_for_obscure: HashSet<PlayerReference>,
+    pub night_selection: super::common_role::RoleActionChoiceOnePlayer,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -76,26 +77,33 @@ impl RoleStateImpl for Pyrolisk {
             _=>{}
         }
 
-        actor_ref.set_role_state(game, RoleState::Pyrolisk(Pyrolisk{tagged_for_obscure}));
+        actor_ref.set_role_state(game, RoleState::Pyrolisk(Pyrolisk{tagged_for_obscure, ..self}));
     }
-    
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, target_ref)
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, &action_choice, false){
+            return
+        }
+
+        self.night_selection = action_choice;
+        actor_ref.set_role_state(game, self);
     }
-    fn create_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
+    fn create_visits(self, game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_action_choice_to_visits(&self.night_selection, game.day_number() != 1)
+    }
+    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: crate::game::phase::PhaseType) {
+        crate::on_phase_start_reset_night_selection!(self, game, actor_ref, phase);
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
         let mut tagged_for_obscure = self.tagged_for_obscure.clone();
         tagged_for_obscure.insert(actor_ref);
         actor_ref.push_player_tag(game, actor_ref, Tag::MorticianTagged);
-        actor_ref.set_role_state(game, RoleState::Pyrolisk(Pyrolisk{tagged_for_obscure}));
+        actor_ref.set_role_state(game, Pyrolisk{tagged_for_obscure, ..self});
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave_ref: GraveReference){
 
         let should_obscure = 
         //if they are tagged for obscure
-        if let RoleState::Pyrolisk(Pyrolisk{tagged_for_obscure}) = actor_ref.role_state(game) {
+        if let RoleState::Pyrolisk(Pyrolisk{tagged_for_obscure, ..}) = actor_ref.role_state(game) {
             tagged_for_obscure.contains(&grave_ref.deref(game).player)
         }else{false};
 
