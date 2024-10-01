@@ -47,14 +47,24 @@ export default class LargeJournalistMenu extends React.Component<LargeJournalist
         GAME_MANAGER.removeStateListener(this.listener);
     }
     handlePublicToggle(){
-        GAME_MANAGER.sendSetJournalistJournalPublic(
-            !this.state.syncedPublic
-        );
+        GAME_MANAGER.sendRoleActionChoice({
+            type: "journalist",
+            action: {
+                type: "setJournal",
+                journal: this.state.syncedJournal,
+                public: !this.state.syncedPublic
+            }
+        });
     }
     handleSave(){
-        GAME_MANAGER.sendSetJournalistJournal(
-            this.state.localJournal,
-        );
+        GAME_MANAGER.sendRoleActionChoice({
+            type: "journalist",
+            action: {
+                type: "setJournal",
+                journal: this.state.localJournal,
+                public: !this.state.syncedPublic
+            }
+        });
     }
     handleSend(){
         GAME_MANAGER.sendSendMessagePacket('\n' + this.state.syncedJournal);

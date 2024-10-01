@@ -66,21 +66,27 @@ impl RoleStateImpl for Journalist {
             game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::JournalistJournal { journal: self.journal.clone()});    
         }
     }
-    fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
-        if let Some(old_target_ref) = self.interviewed_target {
-            if old_target_ref == target_ref {
-                actor_ref.set_role_state(game, RoleState::Journalist(Journalist { interviewed_target: None, ..self}));
-            } else {
-                actor_ref.set_role_state(game, RoleState::Journalist(Journalist { interviewed_target: Some(target_ref), ..self }));
-            }
-        } else {
-            actor_ref.set_role_state(game, RoleState::Journalist(Journalist { interviewed_target: Some(target_ref), ..self }));
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        match action_choice.action {
+            JournalistAction::SetJournal { journal, public } => {
+                self.journal = journal;
+                self.public = public;
+                actor_ref.set_role_state(game, self);
+            },
+            JournalistAction::InterviewPlayer { player } => {
+                let Some(target_ref) = player else {
+                    actor_ref.set_role_state(game, Journalist{interviewed_target: None, ..self});
+                    return;
+                };
+                if 
+                    game.current_phase().is_day() &&
+                    actor_ref != target_ref &&
+                    actor_ref.alive(game) && target_ref.alive(game)
+                {
+                    actor_ref.set_role_state(game, RoleState::Journalist(Journalist { interviewed_target: Some(target_ref), ..self }));
+                }
+            },
         }
-    }
-    fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        game.current_phase().is_day() &&
-        actor_ref != target_ref &&
-        actor_ref.alive(game) && target_ref.alive(game)
     }
     fn get_current_send_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, 
@@ -148,5 +154,4 @@ impl RoleStateImpl for Journalist {
         }
         
     }
-    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {}
 }

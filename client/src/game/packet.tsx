@@ -273,12 +273,6 @@ export type ToServerPacket = {
     type: "setWildcardRole",
     role: Role
 } | {
-    type: "setJournalistJournal",
-    journal: string
-} | {
-    type: "setJournalistJournalPublic",
-    public: boolean
-} | {
     type: "setConsortOptions",
     roleblock: boolean,
     

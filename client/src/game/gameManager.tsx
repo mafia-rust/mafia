@@ -479,18 +479,6 @@ export function createGameManager(): GameManager {
                 role: role
             });
         },
-        sendSetJournalistJournal(journal: string) {
-            this.server.sendPacket({
-                type: "setJournalistJournal",
-                journal: journal,
-            });
-        },
-        sendSetJournalistJournalPublic(isPublic: boolean) {
-            this.server.sendPacket({
-                type: "setJournalistJournalPublic",
-                public: isPublic,
-            });
-        },
         sendSetConsortOptions(
             roleblock: boolean,
             youWereRoleblockedMessage: boolean,

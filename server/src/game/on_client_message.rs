@@ -257,18 +257,6 @@ impl Game {
                     _ => {}
                 }
             }
-            ToServerPacket::SetJournalistJournal { journal } => {
-                if let RoleState::Journalist(mut journalist) = sender_player_ref.role_state(self).clone(){
-                    journalist.journal = journal;
-                    sender_player_ref.set_role_state(self, RoleState::Journalist(journalist));
-                }
-            }
-            ToServerPacket::SetJournalistJournalPublic { public } => {
-                if let RoleState::Journalist(mut journalist) = sender_player_ref.role_state(self).clone(){
-                    journalist.public = public;
-                    sender_player_ref.set_role_state(self, RoleState::Journalist(journalist));
-                }
-            }
             ToServerPacket::SetConsortOptions { 
                 roleblock, 
                 you_were_roleblocked_message, 

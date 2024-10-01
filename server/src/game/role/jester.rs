@@ -6,7 +6,6 @@ use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::{PhaseType, PhaseState};
 use crate::game::player::PlayerReference;
-use crate::game::role::RoleState;
 use crate::game::role_list::Faction;
 use crate::game::verdict::Verdict;
 
@@ -17,6 +16,7 @@ use super::{GetClientRoleState, Priority, RoleStateImpl};
 pub struct Jester {
     lynched_yesterday: bool,
     won: bool,
+    night_selection: <Self as RoleStateImpl>::RoleActionChoice
 }
 
 #[derive(Clone, Serialize, Debug)]
@@ -41,8 +41,8 @@ impl RoleStateImpl for Jester {
                 player_ref.verdict(game) != Verdict::Innocent
             }).collect();
     
-        let player = match actor_ref.selection(game).first() {
-            Some(v) => *v,
+        let player = match self.night_selection.player {
+            Some(v) => v,
             None => {
                 let Some(target_ref) = all_killable_players.choose(&mut rand::thread_rng()) else {return};
                 *target_ref
@@ -52,29 +52,44 @@ impl RoleStateImpl for Jester {
             crate::game::grave::GraveKiller::Role(super::Role::Jester), AttackPower::ProtectionPiercing, true
         );
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        actor_ref != target_ref &&
-        actor_ref.selection(game).is_empty() &&
-        !actor_ref.alive(game) &&
-        target_ref.alive(game) &&
-        target_ref.verdict(game) != Verdict::Innocent &&
-        self.lynched_yesterday
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+
+        let Some(target_ref) = action_choice.player else {
+            self.night_selection = action_choice;
+            actor_ref.set_role_state(game, self);
+            return;
+        };
+
+        if !(
+            actor_ref != target_ref &&
+            !actor_ref.alive(game) &&
+            target_ref.alive(game) &&
+            target_ref.verdict(game) != Verdict::Innocent &&
+            self.lynched_yesterday
+        ){
+            return;
+        }
+
+        self.night_selection = action_choice;
+        actor_ref.set_role_state(game, self);
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         match game.current_phase() {
             &PhaseState::FinalWords { player_on_trial } => {
                 if player_on_trial == actor_ref {
-                    actor_ref.set_role_state(game, RoleState::Jester(Jester { 
+                    actor_ref.set_role_state(game, Jester { 
                         lynched_yesterday: true,
-                        won: true
-                    }));
+                        won: true,
+                        night_selection: <Self as RoleStateImpl>::RoleActionChoice::default()
+                    });
                 }
             }
             PhaseState::Obituary => {
-                actor_ref.set_role_state(game, RoleState::Jester(Jester { 
+                actor_ref.set_role_state(game, Jester { 
                     lynched_yesterday: false,
-                    won: self.won
-                }));
+                    won: self.won,
+                    night_selection: <Self as RoleStateImpl>::RoleActionChoice::default()
+                });
             }
             _ => {}
         }

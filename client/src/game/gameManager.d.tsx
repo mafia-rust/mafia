@@ -105,8 +105,6 @@ export type GameManager = {
     ]): void;
     sendSetKiraGuess(guesses: Record<PlayerIndex, KiraGuess>): void;
     sendSetWildcardRoleOutline(roleOutline: Role): void;
-    sendSetJournalistJournal(journal: string): void;
-    sendSetJournalistJournalPublic(isPublic: boolean): void;
     sendSetConsortOptions(
         roleblock: boolean, 
         youWereRoleblockedMessage: boolean, 
