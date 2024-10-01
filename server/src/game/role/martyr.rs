@@ -77,7 +77,7 @@ impl RoleStateImpl for Martyr {
             _ => false
         }
     }
-    fn convert_selection_to_visits(self,  game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn create_visits(self,  game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
     }
     fn on_phase_start(self,  game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {

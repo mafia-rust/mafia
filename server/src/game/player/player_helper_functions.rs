@@ -137,9 +137,10 @@ impl PlayerReference{
                     new_selection = vec![possessed_into_visit.target];
                 }
 
-                possessed_visit.target.set_night_visits(game,
-                    possessed_visit.target.convert_selection_to_visits(game, new_selection)
-                );
+                possessed_visit.target.set_night_visits(game, vec![Visit{
+                    target: possessed_into_visit.target,
+                    attack: todo!() //this should be special cases for every roleactionchoice
+                }]);
 
                 self.set_night_visits(game, vec![possessed_visit.clone()]);
                 return Some(possessed_visit.target);
@@ -304,17 +305,8 @@ impl PlayerReference{
         Role functions
     */
 
-    pub fn can_select(&self, game: &Game, target_ref: PlayerReference) -> bool {
-        self.role_state(game).clone().can_select(game, *self, target_ref)
-    }
-    pub fn can_day_target(&self, game: &Game, target_ref: PlayerReference) -> bool {
-        self.role_state(game).clone().can_day_target(game, *self, target_ref)
-    }
     pub fn do_night_action(&self, game: &mut Game, priority: Priority) {
         self.role_state(game).clone().do_night_action(game, *self, priority)
-    }
-    pub fn do_day_action(&self, game: &mut Game, target_ref: PlayerReference) {
-        self.role_state(game).clone().do_day_action(game, *self, target_ref)
     }
     pub fn on_role_action(self, game: &mut Game, action_choice: RoleActionChoiceEnum){
         self.role_state(game).clone().on_role_action(game, self, action_choice)
@@ -331,8 +323,8 @@ impl PlayerReference{
     pub fn get_current_receive_chat_groups(&self, game: &Game) -> HashSet<ChatGroup> {
         self.role_state(game).clone().get_current_receive_chat_groups(game, *self)
     }
-    pub fn convert_selection_to_visits(&self, game: &Game, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        self.role_state(game).clone().convert_selection_to_visits(game, *self, target_refs)
+    pub fn create_visits(&self, game: &Game) -> Vec<Visit> {
+        self.role_state(game).clone().create_visits(game, *self)
     }
     pub fn on_any_death(&self, game: &mut Game, dead_player_ref: PlayerReference){
         self.role_state(game).clone().on_any_death(game, *self, dead_player_ref)

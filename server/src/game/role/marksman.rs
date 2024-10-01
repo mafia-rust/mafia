@@ -135,7 +135,7 @@ impl RoleStateImpl for Marksman {
             self.state.marks().len() < 3
         ))
     }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() <= 3 {
             target_refs.into_iter().map(|p|
                 Visit{ target: p, attack: false }

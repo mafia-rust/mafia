@@ -7,7 +7,7 @@ import { ChatGroup, PhaseState, Player, PlayerIndex } from "../../../game/gameSt
 import { ContentMenu, ContentTab } from "../GameScreen";
 import { StateEventType } from "../../../game/gameManager.d";
 import StyledText from "../../../components/StyledText";
-import { RoleState } from "../../../game/roleState.d";
+import { RoleState, roleStateSelectedPlayers as roleStateHighlightedPlayers } from "../../../game/roleState.d";
 import Icon from "../../../components/Icon";
 import { Button } from "../../../components/Button";
 import { Grave } from "../../../game/graveState";
@@ -51,8 +51,8 @@ function usePlayerVotedFor(): PlayerIndex | null {
 
 function useSelectedPlayers(): PlayerIndex[] {
     return usePlayerState(
-        (playerState, gameState) => gameState.phaseState.type === "night" ? playerState.targets : [],
-        ["phase", "yourSelection"],
+        (playerState, gameState) => gameState.phaseState.type === "night" ? roleStateHighlightedPlayers(playerState.roleState) : [],
+        ["phase", "yourRoleState"],
         []
     )!;
 }
@@ -129,7 +129,7 @@ export default function PlayerListMenu(): ReactElement {
 
     useEffect(() => {
         const listener = (type?: StateEventType) => {
-            if (type !== "phase" && type !== "gamePlayers" && type !== "yourVoting" && type !== "yourSelection" && type !== "yourRoleState") {
+            if (type !== "phase" && type !== "gamePlayers" && type !== "yourVoting" && type !== "yourRoleState") {
                 return;
             }
 
@@ -414,8 +414,8 @@ function TargetButton(props: Readonly<{
     roleState: RoleState | undefined
 }>): ReactElement | null {
     const targets = usePlayerState(
-        playerState => playerState.targets,
-        ["yourSelection"]
+        playerState => roleStateHighlightedPlayers(playerState.roleState),
+        ["yourRoleState"]
     )!;
 
     const selectedPlayers = useSelectedPlayers();

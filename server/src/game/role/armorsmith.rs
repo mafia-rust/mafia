@@ -1,3 +1,5 @@
+use std::vec;
+
 use rand::thread_rng;
 use rand::seq::SliceRandom;
 use serde::Serialize;
@@ -18,7 +20,7 @@ pub struct Armorsmith {
     night_protected_players: Vec<PlayerReference>,
     players_armor: Vec<PlayerReference>,
     
-    selection: <Self as RoleStateImpl>::RoleActionChoice,
+    night_selection: <Self as RoleStateImpl>::RoleActionChoice,
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -35,7 +37,7 @@ impl Default for Armorsmith {
             night_open_shop: false,
             night_protected_players: Vec::new(),
             players_armor: Vec::new(),
-            selection: <Self as RoleStateImpl>::RoleActionChoice::None,
+            night_selection: <Self as RoleStateImpl>::RoleActionChoice::default(),
         }
     }
 }
@@ -51,19 +53,18 @@ impl RoleStateImpl for Armorsmith {
         match priority {
             Priority::Armorsmith => {
 
-                if let Some(_) = actor_ref.night_visits(game).first(){
-                    if self.open_shops_remaining > 0 {
-                        actor_ref.set_role_state(game, RoleState::Armorsmith(
-                            Armorsmith {
-                                open_shops_remaining: self.open_shops_remaining.saturating_sub(1),
-                                night_open_shop: true,
-                                night_protected_players: Vec::new(),
-                                ..self
-                            }
-                        ));
-                        actor_ref.set_night_visits(game, vec![]);
-                    }
+                if self.open_shops_remaining > 0 && self.night_selection.boolean{
+                    actor_ref.set_role_state(game, RoleState::Armorsmith(
+                        Armorsmith {
+                            open_shops_remaining: self.open_shops_remaining.saturating_sub(1),
+                            night_open_shop: true,
+                            night_protected_players: Vec::new(),
+                            ..self
+                        }
+                    ));
+                    actor_ref.set_night_visits(game, vec![]);
                 }
+            
             }
             Priority::Heal => {
                 for player in self.players_armor.iter(){
@@ -115,18 +116,14 @@ impl RoleStateImpl for Armorsmith {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        actor_ref == target_ref &&
-        self.open_shops_remaining > 0 &&
-        !actor_ref.night_jailed(game) &&
-        actor_ref.selection(game).is_empty() &&
-        actor_ref.alive(game)
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if !crate::game::role::common_role::default_action_choice_boolean_is_valid(game, actor_ref, &action_choice) {return}
+        if self.open_shops_remaining == 0 {return}
+        self.night_selection = action_choice;
+        actor_ref.set_role_state(game, self.into());
     }
-    fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
-        false
-    }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        vec![]
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         actor_ref.set_role_state(game, 

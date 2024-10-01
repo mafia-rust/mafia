@@ -4,10 +4,11 @@ import translate, { translateAny } from "../game/lang";
 import StyledText from "./StyledText";
 import "./roleSpecific.css";
 import { useGameState, usePlayerState } from "./useHooks";
+import { roleStateSelectedPlayers } from "../game/roleState.d";
 
 export default function SelectionInformation(): ReactElement | null {
     const phaseType = useGameState(gameState => gameState.phaseState.type, ["phase"])!;
-    const targets = usePlayerState(playerState => playerState.targets, ["yourSelection"])!;
+    const targets = usePlayerState(playerState => roleStateSelectedPlayers(playerState.roleState), ["yourRoleState"])!;
     const players = useGameState(gameState => gameState.players, ["yourButtons", "gamePlayers"])!;
     const role = usePlayerState(playerState => playerState.roleState?.type, ["yourRoleState"])!;
 

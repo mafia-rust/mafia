@@ -63,7 +63,6 @@ impl PlayerReference{
                 self.set_night_appeared_visits(game, None);
                 self.set_night_framed(game, false);
                 self.set_night_silenced(game, false);
-                self.set_selection(game, vec![]);
                 self.set_night_visits(game, vec![]);
                 self.set_night_messages(game, vec![]);
                 

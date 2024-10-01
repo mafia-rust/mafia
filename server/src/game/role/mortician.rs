@@ -60,7 +60,7 @@ impl RoleStateImpl for Mortician {
         (self.obscured_players.len() as u8) < MAX_CREMATIONS && 
         !self.obscured_players.contains(&target_ref)
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn create_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
     }
     fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, event: BeforeRoleSwitch) {

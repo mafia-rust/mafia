@@ -9,19 +9,24 @@ use crate::game::{
 use super::{journalist::Journalist, medium::Medium, same_evil_team, Role, RoleState};
 
 
-pub(super) fn can_night_select(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    
-    actor_ref != target_ref &&
+pub(super) fn default_action_choice_one_player_is_valid(game: &Game, actor_ref: PlayerReference, choice: &RoleActionChoiceOnePlayer) -> bool {
+    let Some(target) = choice.player else {return true};
+
+    actor_ref != target &&
     !actor_ref.night_jailed(game) &&
-    actor_ref.selection(game).is_empty() &&
     actor_ref.alive(game) &&
-    target_ref.alive(game) &&
-    !same_evil_team(game, actor_ref, target_ref)
+    target.alive(game) &&
+    !same_evil_team(game, actor_ref, target)
+}
+pub(super) fn default_action_choice_boolean_is_valid(game: &Game, actor_ref: PlayerReference, choice: &RoleActionChoiceBool) -> bool {
+    !actor_ref.night_jailed(game) &&
+    actor_ref.alive(game)
 }
 
-pub(super) fn convert_selection_to_visits(_game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, attack: bool) -> Vec<Visit> {
-    if !target_refs.is_empty() {
-        vec![Visit{ target: target_refs[0], attack }]
+
+pub(super) fn convert_action_choice_to_visits(_game: &Game, _actor_ref: PlayerReference, choice: &RoleActionChoiceOnePlayer, attack: bool) -> Vec<Visit> {
+    if let Some(target) = choice.player {
+        vec![Visit{ target: target, attack }]
     } else {
         Vec::new()
     }
@@ -192,20 +197,20 @@ pub(super) fn default_win_condition(role: Role) -> WinCondition {
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RoleActionChoiceOnePlayer{
-    player: Option<PlayerReference>,
+    pub player: Option<PlayerReference>,
 }
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RoleActionChoiceTwoPlayers{
-    two_players: Option<(PlayerReference, PlayerReference)>,
+    pub two_players: Option<(PlayerReference, PlayerReference)>,
 }
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RoleActionChoiceRole{
-    role: Option<Role>,
+    pub role: Option<Role>,
 }
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RoleActionChoiceBool{
-    boolean: bool,
+    pub boolean: bool,
 }

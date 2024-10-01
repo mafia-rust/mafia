@@ -54,7 +54,7 @@ impl RoleStateImpl for Retributionist {
             target_ref.alive(game)
         ))
     }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() == 2 {
             vec![
                 Visit{target: target_refs[0], attack: false}, 

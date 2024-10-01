@@ -88,7 +88,7 @@ impl RoleStateImpl for Auditor {
         actor_ref.set_role_state(game, super::RoleState::Auditor(self));
             
     }
-    fn convert_selection_to_visits(self, game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn create_visits(self, game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         let Some(chosen_outline) = self.chosen_outline else {return vec![]};
 
         let (_, player) = match game.roles_originally_generated.get(chosen_outline as usize) {

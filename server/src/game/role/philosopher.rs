@@ -41,7 +41,7 @@ impl RoleStateImpl for Philosopher {
             actor_ref.selection(game).len() == 1 && *actor_ref.selection(game).get(0).unwrap() != target_ref
         )
     }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() == 2 {
             vec![
                 Visit{ target: target_refs[0], attack:false },

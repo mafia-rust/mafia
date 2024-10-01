@@ -28,16 +28,8 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     type ClientRoleState: Clone + std::fmt::Debug + Serialize;
     type RoleActionChoice: Clone + std::fmt::Debug + Serialize + Deserialize<'static>;
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {}
-    fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
 
-    fn can_select(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
-        false
-    }
-    fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
-        false
-    }
-
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
         vec![]
     }
     fn on_role_action(self, _game: &mut Game, _actor_ref: PlayerReference, _action_choice: Self::RoleActionChoice) {}
@@ -251,21 +243,6 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.do_night_action(game, actor_ref, priority)),*
                     }
                 }
-                pub fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference){
-                    match self {
-                        $(Self::$name(role_struct) => role_struct.do_day_action(game, actor_ref, target_ref)),*
-                    }
-                }
-                pub fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool{
-                    match self {
-                        $(Self::$name(role_struct) => role_struct.can_select(game, actor_ref, target_ref)),*
-                    }
-                }
-                pub fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool{
-                    match self {
-                        $(Self::$name(role_struct) => role_struct.can_day_target(game, actor_ref, target_ref)),*
-                    }
-                }
                 pub fn on_role_action(self, game: &mut Game, actor_ref: PlayerReference, action_choice: RoleActionChoiceEnum){
                     match (self, action_choice) {
                         $(
@@ -275,9 +252,9 @@ mod macros {
                         _ => {}
                     }
                 }
-                pub fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit>{
+                pub fn create_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit>{
                     match self {
-                        $(Self::$name(role_struct) => role_struct.convert_selection_to_visits(game, actor_ref, target_refs)),*
+                        $(Self::$name(role_struct) => role_struct.create_visits(game, actor_ref)),*
                     }
                 }
                 pub fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup>{

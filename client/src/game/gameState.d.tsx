@@ -88,7 +88,6 @@ export type PlayerGameState = {
     crossedOutOutlines: number[],
     chatFilter: PlayerIndex | null,
     deathNote: string,
-    targets: PlayerIndex[],
     voted: PlayerIndex | null,
     judgement: Verdict,
     

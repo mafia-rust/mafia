@@ -89,7 +89,7 @@ impl RoleStateImpl for Eros {
             },
         }
     }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         match self.action {
             ErosAction::LoveLink => {
                 if target_refs.len() == 2 {

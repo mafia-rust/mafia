@@ -16,7 +16,7 @@ use super::{Priority, RoleState, RoleStateImpl};
 
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Apostle{
-    selection: <Apostle as RoleStateImpl>::RoleActionChoice,
+    night_selection: <Apostle as RoleStateImpl>::RoleActionChoice,
 }
 
 pub(super) const FACTION: Faction = Faction::Cult;
@@ -56,21 +56,25 @@ impl RoleStateImpl for Apostle {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, &action_choice){
+            return
+        }
 
         let cult = game.cult().clone();
         let can_kill = cult.ordered_cultists.len() == 1 && Cult::next_ability(game) == CultAbility::Kill;
         let can_convert = Cult::next_ability(game) == CultAbility::Convert;
 
-        if !can_convert && !can_kill {return false}
+        if !can_convert && !can_kill {return}
 
-        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
+        self.night_selection = action_choice;
+        actor_ref.set_role_state(game, self.into());
     }
-    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
-        self.selection = action_choice;
-        actor_ref.set_role_state(game, RoleState::Apostle(self));
-    }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, Cult::next_ability(game) == CultAbility::Kill)
+    fn create_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_action_choice_to_visits(game,
+            actor_ref,
+            &self.night_selection,
+            Cult::next_ability(game) == CultAbility::Kill
+        )
     }
 }

@@ -9,7 +9,7 @@ import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenu
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
 
-export type RoleState = {
+export type RoleState = ({
     type: "jailor",
     executionsRemaining: number,
     jailedTargetRef: number | null
@@ -198,10 +198,14 @@ Doomsayer
     type: "disciple"
 } | {
     type: "zealot"
-}
+})
 
 
 export type Role = keyof typeof ROLES;
 export function getFactionFromRole(role: Role): Faction {
     return ROLES[role].faction as Faction;
+}
+
+export function roleStateSelectedPlayers(roleState: RoleState): PlayerIndex[] {
+    return [];
 }

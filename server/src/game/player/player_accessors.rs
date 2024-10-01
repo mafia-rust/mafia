@@ -6,9 +6,7 @@ use crate::{
     game::{
         attack_power::DefensePower, chat::{
             ChatGroup, ChatMessage, ChatMessageVariant
-        }, event::on_fast_forward::OnFastForward, grave::GraveKiller,
-        role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit,
-        win_condition::WinCondition, Game
+        }, event::on_fast_forward::OnFastForward, grave::GraveKiller, modifiers::{ModifierType, Modifiers}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, win_condition::WinCondition, Game
     },
     packet::ToClientPacket, 
 };
@@ -321,33 +319,6 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.appeared_visits = appeared_visits;
     }
     
-    pub fn selection<'a>(&self, game: &'a Game) -> &'a Vec<PlayerReference>{
-        &self.deref(game).night_variables.selection
-    }
-    ///returns true if all selections were valid
-    pub fn set_selection(&self, game: &mut Game, selection: Vec<PlayerReference>)->bool{
-        let mut all_selections_valid = true;
-
-        self.deref_mut(game).night_variables.selection = vec![];
-
-        for target_ref in selection {
-            if self.can_select(game, target_ref){
-                self.deref_mut(game).night_variables.selection.push(target_ref);
-            }else{
-                all_selections_valid = false;
-                break;
-            }
-        }
-
-        let packet = ToClientPacket::YourSelection { 
-            player_indices: PlayerReference::ref_vec_to_index(
-                &self.deref(game).night_variables.selection
-            )
-        };
-        self.send_packet(game, packet);
-        all_selections_valid
-    }
-
     pub fn night_visits<'a>(&self, game: &'a Game) -> &'a Vec<Visit>{
         &self.deref(game).night_variables.visits
     }
