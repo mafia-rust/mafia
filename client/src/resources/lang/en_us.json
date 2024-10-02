@@ -689,6 +689,7 @@
     "randomLoveLinks": "Random Love Links",
     "deadCanChat": "Dead Can Chat",
     "noAbstaining": "No Abstaining",
+    "noDeathCause": "No Death Cause",
     "nightMessages": "Night Messages",
     
     "simplify":"Simplify",
@@ -1147,6 +1148,8 @@
     "wiki.article.standard.deadCanChat.text":"Dead Can Chat is a game modifier that changes the game such that dead players can still use chats as if they were alive. Dead players can not whisper or be whispered to.",
     "wiki.article.standard.noAbstaining.title":"No Abstaining",
     "wiki.article.standard.noAbstaining.text":"No Abstaining is a game modifier that changes the game such that no players can abstain during judgement. It will default to voting innocent instead of defaulting to abstaining.",
+    "wiki.article.standard.noDeathCause.title":"No Death Cause",
+    "wiki.article.standard.noDeathCause.text":"No Death Cause is a game modifier that changes the game such that every grave says that the cause of death is execution.",
 
     "wiki.article.standard.nobody.title":"Nobody",
     "wiki.article.standard.nobody.title:var.0":"No body",
