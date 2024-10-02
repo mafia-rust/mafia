@@ -253,13 +253,6 @@ export type ToServerPacket = {
 } | {
     type: "leave",
 } | {
-    type: "setForgerWill",
-    role: Role,
-    will: string
-} | {
-    type: "setCounterfeiterAction",
-    action: "forge" | "noForge"
-} | {
     type: "setKiraGuess",
     guesses: [PlayerIndex, DoomsayerGuess][]
 } | {
@@ -270,9 +263,6 @@ export type ToServerPacket = {
         [number, DoomsayerGuess]
     ]
 } | {
-    type: "setWildcardRole",
-    role: Role
-} | {
     type: "setConsortOptions",
     roleblock: boolean,
     
@@ -282,13 +272,6 @@ export type ToServerPacket = {
     youWereTransportedMessage: boolean,
     youWerePossessedMessage: boolean,
     yourTargetWasJailedMessage: boolean
-} | {
-    type: "setForgerWill",
-    role: Role | null,
-    will: string
-} | {
-    type: "setOjoAction",
-    action: OjoAction
 } | {
     type: "setPuppeteerAction",
     action: PuppeteerAction
@@ -301,9 +284,6 @@ export type ToServerPacket = {
 } | {
     type: "retrainerRetrain",
     role: Role
-} | {
-    type: "setStewardRoleChosen",
-    role: Role | null
 } | {
     type: "roleActionChoice",
     action: RoleActionChoice,

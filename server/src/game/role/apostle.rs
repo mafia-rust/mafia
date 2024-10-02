@@ -4,6 +4,7 @@ use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::grave::GraveKiller;
+use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::resolution_state::ResolutionState;
 use crate::game::role_list::Faction;
@@ -49,7 +50,7 @@ impl RoleStateImpl for Apostle {
                     return
                 }
 
-                target_ref.set_role(game, Zealot);
+                target_ref.set_role(game, Zealot::default());
                 target_ref.set_win_condition(game, WinCondition::new_single_resolution_state(ResolutionState::Cult));
                 Cult::set_ability_used_last_night(game, Some(CultAbility::Convert));
             }
@@ -57,7 +58,8 @@ impl RoleStateImpl for Apostle {
         }
     }
     fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
-        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, &action_choice, false){
+        if game.current_phase().phase() != PhaseType::Night {return};
+        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, action_choice.player, false){
             return
         }
 

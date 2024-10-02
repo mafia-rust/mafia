@@ -48,6 +48,7 @@ impl RoleStateImpl for Transporter {
         }
     }
     fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if game.current_phase().phase() != crate::game::phase::PhaseType::Night {return};
         let Some(..) = action_choice.two_players else {
             self = Transporter{ night_selection: action_choice };
             actor_ref.set_role_state(game, self);

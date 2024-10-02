@@ -51,10 +51,7 @@ impl RoleStateImpl for Steward {
         match priority {
             Priority::Heal => {
                 let mut healed_players = vec![];
-                let mut healed_role = self.role_chosen;
-
-                if healed_role == Some(Role::Steward) && self.self_heals_remaining == 0 {healed_role=None}
-                if healed_role == self.previous_role_chosen {healed_role=None}
+                let healed_role = if self.role_chosen == Some(Role::Steward) && self.self_heals_remaining == 0 || self.role_chosen == self.previous_role_chosen {None}else{self.role_chosen};
 
                 if let Some(role) = healed_role {
                     for player in PlayerReference::all_players(game){
@@ -83,6 +80,24 @@ impl RoleStateImpl for Steward {
             }
             _ => {}
         }
+    }
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if game.current_phase().phase() != crate::game::phase::PhaseType::Night {return};
+
+        self.role_chosen = match action_choice.role {
+            Some(role) => {
+                if (role == Role::Steward && self.self_heals_remaining == 0) || self.previous_role_chosen.is_some_and(|r|r==role) {
+                    None
+                } else  {
+                    Some(role)
+                }
+            },
+            None => {
+                None
+            },
+        };
+
+        actor_ref.set_role_state(game, self);
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         actor_ref.set_role_state(game, RoleState::Steward(Steward{

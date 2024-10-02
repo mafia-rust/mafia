@@ -86,8 +86,6 @@ impl RoleStateImpl for Puppeteer {
                 },
             }
         }
-
-        
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         actor_ref != target_ref &&

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::AttackPower;
-use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
+use crate::game::attack_power::DefensePower;
 use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -10,7 +10,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, RoleStateImpl, Role, RoleState};
+use super::{Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -30,7 +30,8 @@ pub struct RoleActionChoice{
 pub(self) enum MarksmanState{
     NotLoaded,
     Marks{
-        marks: Vec<PlayerReference>
+        marks: Vec<PlayerReference>,
+        camps: Vec<PlayerReference>
     },
     ShotTownie
 }
@@ -39,20 +40,17 @@ impl MarksmanState{
         self.marks().is_empty()
     }
     fn marks(&self)->Vec<PlayerReference> {
-        if let Self::Marks{marks} = self {
+        if let Self::Marks{marks, ..} = self {
             marks.clone()
         }else{
             Vec::new()
         }
     }
-    /// This function will mark an unmarked player or un-mark a marked player
-    /// if the action is invalid, then it will do nothing
-    fn toggle_mark(&mut self, p: PlayerReference){
-        let Self::Marks { marks } = self else {return};
-        if marks.contains(&p) {
-            marks.retain(|x| x != &p);
-        } else if marks.len() < 3 {
-            marks.push(p);
+    fn camps(&self)->Vec<PlayerReference> {
+        if let Self::Marks{camps, ..} = self {
+            camps.clone()
+        }else{
+            Vec::new()
         }
     }
 }
@@ -98,46 +96,26 @@ impl RoleStateImpl for Marksman {
         }
 
     }
-    fn do_day_action(mut self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
-        self.state.toggle_mark(target_ref);
-        if self.state.marks().len() == 0 {
-            actor_ref.set_selection(game, vec![]);
-        }
-        actor_ref.add_private_chat_message(game, 
-            ChatMessageVariant::MarksmanChosenMarks { marks: PlayerReference::ref_vec_to_index(&self.state.marks()) }
-        );
-        actor_ref.set_role_state(game, RoleState::Marksman(self));
-    }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        let selection = actor_ref.selection(game);
+    fn on_role_action(self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if game.current_phase().phase() != PhaseType::Night {return};
+        let MarksmanState::Marks { marks, camps } = self.state else {return};
         
-        !self.state.no_marks() &&
-        actor_ref != target_ref &&
-        !actor_ref.night_jailed(game) &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game) && 
-        (
-            selection.len() < 3 &&
-            !selection.contains(&target_ref)
-        )
+        let (marks, camps) = if 
+            super::common_role::default_action_choice_boolean_is_valid(game, actor_ref) &&
+            validate_marks(game, actor_ref, &action_choice.marks) && 
+            validate_camps(game, actor_ref, &action_choice.camps)
+        {
+            (marks, camps)
+        }else{
+            (Vec::new(), Vec::new())
+        };
+        actor_ref.set_role_state(game, RoleState::Marksman(Marksman{
+            state: MarksmanState::Marks { marks, camps }
+        }));
     }
-    fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        game.current_phase().is_night() &&
-        actor_ref != target_ref &&
-        actor_ref.alive(game) &&
-        !actor_ref.night_jailed(game) &&
-        target_ref.alive(game) &&
-        matches!(self.state, MarksmanState::Marks { .. }) &&
-        ((
-            self.state.marks().len() == 3 &&
-            self.state.marks().contains(&target_ref)
-        ) || (
-            self.state.marks().len() < 3
-        ))
-    }
-    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        if target_refs.len() <= 3 {
-            target_refs.into_iter().map(|p|
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        if self.state.camps().len() <= 3 && !self.state.no_marks(){
+            self.state.camps().into_iter().map(|p|
                 Visit{ target: p, attack: false }
             ).collect()
         }else{
@@ -148,9 +126,18 @@ impl RoleStateImpl for Marksman {
         if matches!(phase, PhaseType::Night|PhaseType::Obituary) && game.day_number() != 1 {
             actor_ref.set_role_state(game, 
                 RoleState::Marksman(Marksman{
-                    state:MarksmanState::Marks { marks: Vec::new() }
+                    state:MarksmanState::Marks { marks: Vec::new(), camps: Vec::new() }
                 })
             )
         }
     }
+}
+
+fn validate_marks(game: &Game, actor: PlayerReference, marks: &Vec<PlayerReference>)->bool{
+    marks.len() <= 3 &&
+    marks.iter().all(|p|p.alive(game) && *p != actor)
+}
+fn validate_camps(game: &Game, actor: PlayerReference, camps: &Vec<PlayerReference>)->bool{
+    camps.len() <= 3 &&
+    camps.iter().all(|p|p.alive(game) && *p != actor)
 }

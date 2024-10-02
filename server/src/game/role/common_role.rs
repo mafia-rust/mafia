@@ -9,8 +9,8 @@ use crate::game::{
 use super::{journalist::Journalist, medium::Medium, same_evil_team, Role, RoleState};
 
 
-pub(super) fn default_action_choice_one_player_is_valid(game: &Game, actor_ref: PlayerReference, choice: &RoleActionChoiceOnePlayer, can_choose_self: bool) -> bool {
-    let Some(target) = choice.player else {return true};
+pub(super) fn default_action_choice_one_player_is_valid(game: &Game, actor_ref: PlayerReference, target: Option<PlayerReference>, can_choose_self: bool) -> bool {
+    let Some(target) = target else {return true};
 
     (can_choose_self || actor_ref != target) &&
     target.alive(game) &&
@@ -88,7 +88,7 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
             if PlayerReference::all_players(game)
                 .any(|med|{
                     match med.role_state(game) {
-                        RoleState::Medium(Medium{ seanced_target: Some(seanced_target), .. }) => {
+                        RoleState::Medium(Medium{ seance_selection: RoleActionChoiceOnePlayer{player: Some(seanced_target)}, .. }) => {
                             actor_ref == *seanced_target
                         },
                         _ => false
@@ -166,7 +166,7 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
         PlayerReference::all_players(game)
             .any(|med|{
                 match med.role_state(game) {
-                    RoleState::Medium(Medium{ seanced_target: Some(seanced_target), .. }) => {
+                    RoleState::Medium(Medium{ seance_selection: RoleActionChoiceOnePlayer{player: Some(seanced_target)}, .. }) => {
                         actor_ref == *seanced_target
                     },
                     _ => false

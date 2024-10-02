@@ -17,7 +17,10 @@ export default function StewardMenu(
 ): ReactElement | null {
 
     const sendAction = (roleChosen: Role | null) => {
-        GAME_MANAGER.sendSetStewardRoleChosen(roleChosen);
+        GAME_MANAGER.sendRoleActionChoice({
+            type: "steward",
+            role: roleChosen
+        })
     }
 
     const shouldDisplay = usePlayerState(

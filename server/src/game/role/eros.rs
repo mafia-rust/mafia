@@ -70,6 +70,14 @@ impl RoleStateImpl for Eros {
             _ => ()
         }
     }
+    fn on_role_action(self, _game: &mut Game, _actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        match action_choice.action{
+            ErosActionChoice::SetAttack { target } => {
+                if game.current_phase().phase() != crate::game::phase::PhaseType::Night {return};
+            },
+            ErosActionChoice::SetLoveLink { targets } => todo!(),
+        }
+    }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         let selected = actor_ref.selection(game);
 

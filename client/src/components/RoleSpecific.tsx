@@ -322,7 +322,10 @@ function WildcardRoleSpecificMenu(props: Readonly<{
                 value={props.roleState.role} 
                 enabledRoles={choosable}
                 onChange={(rle)=>{
-                    GAME_MANAGER.sendSetWildcardRoleOutline(rle);
+                    GAME_MANAGER.sendRoleActionChoice({
+                        type: props.roleState.type,
+                        role: rle
+                    })
                 }}
             />
         </div>

@@ -473,12 +473,6 @@ export function createGameManager(): GameManager {
                 guesses: guesses
             });
         },
-        sendSetWildcardRoleOutline(role) {
-            this.server.sendPacket({
-                type: "setWildcardRole",
-                role: role
-            });
-        },
         sendSetConsortOptions(
             roleblock: boolean,
             youWereRoleblockedMessage: boolean,
@@ -498,25 +492,6 @@ export function createGameManager(): GameManager {
                 youWereTransportedMessage: youWereTransportedMessage ?? false,
                 youWerePossessedMessage: youWerePossessedMessage ?? false,
                 yourTargetWasJailedMessage: yourTargetWasJailedMessage ?? false
-            });
-        },
-        sendSetForgerWill(role: Role | null, will: string) {
-            this.server.sendPacket({
-                type: "setForgerWill",
-                role: role,
-                will: will
-            });
-        },
-        sendSetCounterfeiterAction(action: "forge" | "noForge") {
-            this.server.sendPacket({
-                type: "setCounterfeiterAction",
-                action: action
-            });
-        },
-        sendSetOjoAction(action) {
-            this.server.sendPacket({
-                type: "setOjoAction",
-                action: action
             });
         },
         sendSetPuppeteerAction(action) {
@@ -540,12 +515,6 @@ export function createGameManager(): GameManager {
         sendRetrainerRetrain(role) {
             this.server.sendPacket({
                 type: "retrainerRetrain",
-                role: role
-            });
-        },
-        sendSetStewardRoleChosen(role: Role | null) {
-            this.server.sendPacket({
-                type: "setStewardRoleChosen",
                 role: role
             });
         },

@@ -100,9 +100,9 @@ impl Cult{
             let role = if i == 0 {
                 RoleState::Apostle(Apostle::default())
             }else if i == cult.ordered_cultists.len() - 1 {
-                RoleState::Zealot(Zealot)
+                RoleState::Zealot(Zealot::default())
             }else{
-                RoleState::Disciple(Disciple)
+                RoleState::Disciple(Disciple::default())
             };
             
             if player_ref.role(game) == role.role() {continue}

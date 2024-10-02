@@ -53,6 +53,7 @@ impl RoleStateImpl for Jester {
         );
     }
     fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if game.current_phase().phase() != crate::game::phase::PhaseType::Night {return};
 
         let Some(target_ref) = action_choice.player else {
             self.night_selection = action_choice;

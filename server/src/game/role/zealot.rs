@@ -12,7 +12,9 @@ use super::{Priority, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
-pub struct Zealot;
+pub struct Zealot{
+    pub night_selection: super::common_role::RoleActionChoiceOnePlayer
+}
 
 pub(super) const FACTION: Faction = Faction::Cult;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
@@ -33,12 +35,21 @@ impl RoleStateImpl for Zealot {
             Cult::set_ability_used_last_night(game, Some(CultAbility::Kill));
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        if Cult::next_ability(game) != CultAbility::Kill {return false}
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if game.current_phase().phase() != crate::game::phase::PhaseType::Night {return};
+        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, action_choice.player, false){
+            return
+        }
 
-        crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, target_ref)
+        if Cult::next_ability(game) != CultAbility::Kill {return}
+
+        self.night_selection = action_choice;
+        actor_ref.set_role_state(game, self);
     }
-    fn create_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_action_choice_to_visits(&self.night_selection, true)
+    }
+    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: crate::game::phase::PhaseType) {
+        crate::on_phase_start_reset_night_selection!(self, game, actor_ref, phase);
     }
 }

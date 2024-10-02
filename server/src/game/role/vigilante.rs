@@ -84,10 +84,11 @@ impl RoleStateImpl for Vigilante {
         actor_ref.set_role_state(game, self);
     }
     fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if game.current_phase().phase() != crate::game::phase::PhaseType::Night {return};
         if let VigilanteState::Loaded { bullets, .. } = self.state.clone() {
             if 
                 bullets > 0 &&
-                crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, &action_choice, false)
+                crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, action_choice.player, false)
             {
                 self.state = VigilanteState::Loaded { bullets, night_selection: action_choice };
                 actor_ref.set_role_state(game, self);

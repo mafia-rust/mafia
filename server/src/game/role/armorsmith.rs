@@ -114,6 +114,7 @@ impl RoleStateImpl for Armorsmith {
         }
     }
     fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if game.current_phase().phase() != PhaseType::Night {return};
         if !crate::game::role::common_role::default_action_choice_boolean_is_valid(game, actor_ref) {return}
         if self.open_shops_remaining == 0 {return}
         self.night_selection = action_choice;

@@ -23,9 +23,13 @@ use vec1::Vec1;
 
 use crate::{
     game::{
-        available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
-            counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess, eros::ErosAction, kira::KiraGuess, ojo::OjoAction, puppeteer::PuppeteerActionType, recruiter::RecruiterAction, ClientRoleStateEnum, Role, RoleActionChoiceEnum
-        }, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
+        available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType},
+        player::{PlayerIndex, PlayerReference}, 
+        role::{
+            doomsayer::DoomsayerGuess, eros::ErosAction, kira::KiraGuess, puppeteer::PuppeteerActionType,
+            recruiter::RecruiterAction, ClientRoleStateEnum, Role, RoleActionChoiceEnum
+        }, 
+        role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
     }, 
     listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log
 };
@@ -235,8 +239,6 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SetKiraGuess{ guesses: Vec<(PlayerReference, KiraGuess)> },
     #[serde(rename_all = "camelCase")]
-    SetWildcardRole{ role: Role },
-    #[serde(rename_all = "camelCase")]
     SetConsortOptions{
         roleblock: bool,
         
@@ -247,22 +249,16 @@ pub enum ToServerPacket{
         you_were_possessed_message: bool,
         your_target_was_jailed_message: bool,
     },
-    #[serde(rename_all = "camelCase")]
-    SetForgerWill{ role: Role, will: String },
-    SetCounterfeiterAction{action: CounterfeiterAction},
-    SetOjoAction{action: OjoAction},
     SetPuppeteerAction{action: PuppeteerActionType},
     SetRecruiterAction{action: RecruiterAction},
     SetErosAction{action: ErosAction},
     RetrainerRetrain{role: Role},
-    SetStewardRoleChosen{role: Option<Role>},
 
     RoleActionChoice{action: RoleActionChoiceEnum},
 
 
     #[serde(rename_all = "camelCase")]
     VoteFastForwardPhase{fast_forward: bool},
-    #[serde(rename_all = "camelCase")]
     ForfeitVote{forfeit: bool},
     PitchforkVote{player: Option<PlayerReference>},
 }

@@ -20,10 +20,13 @@ use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 #[derive(Clone, Debug, Default)]
 pub struct Werewolf{
     pub tracked_players: Vec<PlayerReference>,
+    pub night_selection: super::common_role::RoleActionChoiceOnePlayer
 }
 
 #[derive(Clone, Debug, Serialize)]
-pub struct ClientRoleState;
+pub struct ClientRoleState{
+    pub night_selection: super::common_role::RoleActionChoiceOnePlayer
+}
 
 pub(super) const FACTION: Faction = Faction::Fiends;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -108,9 +111,10 @@ impl RoleStateImpl for Werewolf {
                         }
                     }
 
-                    actor_ref.set_role_state(game, RoleState::Werewolf(Werewolf {
-                        tracked_players
-                    }));
+                    actor_ref.set_role_state(game, Werewolf {
+                        tracked_players,
+                        night_selection: self.night_selection
+                    });
 
                 }
 
@@ -135,15 +139,26 @@ impl RoleStateImpl for Werewolf {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, target_ref)
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if game.current_phase().phase() != crate::game::phase::PhaseType::Night {return};
+        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, action_choice.player, false){
+            return
+        }
+
+        self.night_selection = action_choice;
+        actor_ref.set_role_state(game, self);
     }
-    fn create_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_action_choice_to_visits(&self.night_selection, true)
+    }
+    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: crate::game::phase::PhaseType) {
+        crate::on_phase_start_reset_night_selection!(self, game, actor_ref, phase);
     }
 }
 impl GetClientRoleState<ClientRoleState> for Werewolf {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
-        ClientRoleState
+        ClientRoleState{
+            night_selection: self.night_selection
+        }
     }
 }

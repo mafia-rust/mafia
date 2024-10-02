@@ -62,6 +62,7 @@ impl RoleStateImpl for Veteran {
         }
     }
     fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if game.current_phase().phase() != crate::game::phase::PhaseType::Night {return};
         if !crate::game::role::common_role::default_action_choice_boolean_is_valid(game, actor_ref) {return}
         if self.alerts_remaining <= 0 || game.day_number() <= 1 {return}
         self.night_selection = action_choice;

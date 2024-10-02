@@ -80,7 +80,8 @@ impl RoleStateImpl for Pyrolisk {
         actor_ref.set_role_state(game, RoleState::Pyrolisk(Pyrolisk{tagged_for_obscure, ..self}));
     }
     fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
-        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, &action_choice, false){
+        if game.current_phase().phase() != crate::game::phase::PhaseType::Night {return};
+        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, action_choice.player, false){
             return
         }
 

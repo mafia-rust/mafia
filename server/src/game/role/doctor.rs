@@ -76,7 +76,8 @@ impl RoleStateImpl for Doctor {
         }
     }
     fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
-        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, &action_choice, self.self_heals_remaining > 0){
+        if game.current_phase().phase() != crate::game::phase::PhaseType::Night {return};
+        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, action_choice.player, self.self_heals_remaining > 0){
             return
         }
         if game.day_number() == 1 {return}

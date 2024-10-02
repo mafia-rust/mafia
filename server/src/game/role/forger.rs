@@ -19,7 +19,9 @@ pub struct Forger {
     pub fake_role: Role,
     pub fake_will: String,
     pub forges_remaining: u8,
-    pub forged_ref: Option<PlayerReference>
+    pub forged_ref: Option<PlayerReference>,
+
+    pub night_selection: Option<PlayerReference>
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -27,7 +29,9 @@ pub struct Forger {
 pub struct ClientRoleState{
     fake_role: Role,
     fake_will: String,
-    forges_remaining: u8
+    forges_remaining: u8,
+
+    night_selection: Option<PlayerReference>
 }
 
 impl Default for Forger {
@@ -37,6 +41,8 @@ impl Default for Forger {
             forged_ref: None,
             fake_role: Role::Jester,
             fake_will: "".to_owned(),
+
+            night_selection: None
         }
     }
 }
@@ -99,17 +105,41 @@ impl RoleStateImpl for Forger {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, target_ref) && self.forges_remaining > 0
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        match action_choice.action {
+            ForgerActionChoice::SetForge { role, alibi } => {
+                self.fake_role = role;
+                self.fake_will = alibi;
+                actor_ref.set_role_state(game, self);
+            },
+            ForgerActionChoice::SetTarget { target } => {
+                if game.current_phase().phase() != crate::game::phase::PhaseType::Night {return};
+                self.night_selection = match target {
+                    Some(target) => {
+                        if !(
+                            crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, Some(target), false)
+                        ){
+                            return;
+                        }
+                        Some(target)
+                    },
+                    None => {
+                        None
+                    },
+                };
+                actor_ref.set_role_state(game, self);
+            },
+        }
     }
-    fn create_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_action_choice_to_visits(&super::common_role::RoleActionChoiceOnePlayer{player: self.night_selection}, false)
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
-        actor_ref.set_role_state(game, RoleState::Forger(Forger{
+        actor_ref.set_role_state(game, Forger{
             forged_ref: None,
+            night_selection: None,
             ..self
-        }));
+        });
     }
 }
 impl GetClientRoleState<ClientRoleState> for Forger {
@@ -118,6 +148,8 @@ impl GetClientRoleState<ClientRoleState> for Forger {
             fake_role: self.fake_role,
             fake_will: self.fake_will.clone(),
             forges_remaining: self.forges_remaining,
+
+            night_selection: self.night_selection
         }
     }
 }

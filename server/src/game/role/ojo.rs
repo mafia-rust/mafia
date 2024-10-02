@@ -102,4 +102,17 @@ impl RoleStateImpl for Ojo {
             _ => {}
         }
     }
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if game.current_phase().phase() != crate::game::phase::PhaseType::Night {return};
+
+        self.chosen_action = match action_choice.action {
+            OjoAction::Kill { .. } => {
+                if game.day_number() == 1 {return;}
+                action_choice.action
+            },
+            _ => action_choice.action
+        };
+        
+        actor_ref.set_role_state(game, self);
+    }
 }

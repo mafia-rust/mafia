@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::phase::PhaseType;
 use crate::game::{attack_power::DefensePower, components::arsonist_doused::ArsonistDoused};
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -69,7 +70,8 @@ impl RoleStateImpl for Arsonist {
         }
     }
     fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
-        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, &action_choice, true) {return}
+        if game.current_phase().phase() != PhaseType::Night {return};
+        if !crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, action_choice.player, true) {return}
         
         self.night_selection = action_choice;
         actor_ref.set_role_state(game, self);

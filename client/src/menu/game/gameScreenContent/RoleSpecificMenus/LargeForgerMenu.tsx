@@ -65,7 +65,14 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
             localWill: will,
         });
 
-        GAME_MANAGER.sendSetForgerWill(role, will);
+        GAME_MANAGER.sendRoleActionChoice({
+            type: "forger",
+            action: {
+                type: "setForge",
+                role: this.state.localRole,
+                alibi: this.state.localWill,
+            }
+        });
     }
     handleSend(){
         GAME_MANAGER.sendSendMessagePacket('\n' + this.state.savedWill);

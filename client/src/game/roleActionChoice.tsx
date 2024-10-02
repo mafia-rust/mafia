@@ -61,7 +61,8 @@ export type RoleActionChoice =
         type: "jail",
         target: PlayerIndex | null
     } | {
-        type: "attack"
+        type: "attack",
+        shouldAttack: boolean
     }
 } | {
     type: "auditor",

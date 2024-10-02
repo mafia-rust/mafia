@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+use crate::game::phase::PhaseType;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -88,6 +89,7 @@ impl RoleStateImpl for Auditor {
             
     }
     fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if game.current_phase().phase() != PhaseType::Night {return};
         if !actor_ref.alive(game) {return}
 
         self.night_selection.chosen_outline = match action_choice.chosen_outline {

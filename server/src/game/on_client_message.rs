@@ -3,7 +3,11 @@ use std::collections::HashMap;
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender}, components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerActionType, recruiter::RecruiterAction, retrainer::Retrainer, Role, RoleState}, role_list::{Faction, RoleSet}, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
+    chat::{ChatGroup, ChatMessageVariant, MessageSender},
+    components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, phase::{PhaseState, PhaseType},
+    player::{PlayerIndex, PlayerReference}, role::{kira::{Kira, KiraGuess}, mayor::Mayor,
+    puppeteer::PuppeteerActionType, recruiter::RecruiterAction, retrainer::Retrainer, Role, RoleState},
+    spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
 
@@ -221,42 +225,6 @@ impl Game {
                     Kira::set_guesses(sender_player_ref, self);
                 }
             },
-            ToServerPacket::SetWildcardRole { role } => {
-
-                if !self.settings.enabled_roles.contains(&role) {
-                    break 'packet_match;
-                }
-                
-                match sender_player_ref.role_state(self).clone() {
-                    RoleState::Wildcard(mut wild_card) => {
-                        wild_card.role = role;
-                        sender_player_ref.set_role_state(self, RoleState::Wildcard(wild_card));
-                    }
-                    RoleState::TrueWildcard(mut true_wildcard) => {
-                        true_wildcard.role = role;
-                        sender_player_ref.set_role_state(self, RoleState::TrueWildcard(true_wildcard));
-                    }
-                    RoleState::MafiaSupportWildcard(mut mafia_wild_card) => {
-                        if RoleSet::MafiaSupport.get_roles().contains(&role) {
-                            mafia_wild_card.role = role;
-                        }
-                        sender_player_ref.set_role_state(self, RoleState::MafiaSupportWildcard(mafia_wild_card));
-                    }
-                    RoleState::MafiaKillingWildcard(mut mafia_wild_card) => {
-                        if RoleSet::MafiaKilling.get_roles().contains(&role) {
-                            mafia_wild_card.role = role;
-                        }
-                        sender_player_ref.set_role_state(self, RoleState::MafiaKillingWildcard(mafia_wild_card));
-                    }
-                    RoleState::FiendsWildcard(mut fiends_wild_card) => {
-                        if role.faction() == Faction::Fiends {
-                            fiends_wild_card.role = role;
-                        }
-                        sender_player_ref.set_role_state(self, RoleState::FiendsWildcard(fiends_wild_card));
-                    }
-                    _ => {}
-                }
-            }
             ToServerPacket::SetConsortOptions { 
                 roleblock, 
                 you_were_roleblocked_message, 
@@ -280,31 +248,6 @@ impl Game {
                     hypnotist.ensure_at_least_one_message();
 
                     sender_player_ref.set_role_state(self, RoleState::Hypnotist(hypnotist));
-                }
-            },
-            ToServerPacket::SetForgerWill { role, will } => {
-                if let RoleState::Forger(mut forger) = sender_player_ref.role_state(self).clone(){
-                    forger.fake_role = role;
-                    forger.fake_will = will;
-                    sender_player_ref.set_role_state(self, RoleState::Forger(forger));
-                }
-                else if let RoleState::Counterfeiter(mut counterfeiter) = sender_player_ref.role_state(self).clone(){
-                    counterfeiter.fake_role = role;
-                    counterfeiter.fake_will = will;
-                    sender_player_ref.set_role_state(self, RoleState::Counterfeiter(counterfeiter));
-                }
-            },
-            ToServerPacket::SetCounterfeiterAction {action} => {
-                if let RoleState::Counterfeiter(mut counterfeiter) = sender_player_ref.role_state(self).clone(){
-                    counterfeiter.action = action;
-                    sender_player_ref.set_role_state(self, RoleState::Counterfeiter(counterfeiter));
-                }
-            },
-            ToServerPacket::SetOjoAction { action } => {
-                if let RoleState::Ojo(mut ojo) = sender_player_ref.role_state(self).clone(){
-                    ojo.chosen_action = action.clone();
-                    sender_player_ref.set_role_state(self, RoleState::Ojo(ojo));
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::OjoActionChosen { action });
                 }
             },
             ToServerPacket::SetPuppeteerAction { action } => {
@@ -345,13 +288,6 @@ impl Game {
             },
             ToServerPacket::RetrainerRetrain { role } => {
                 Retrainer::retrain(self, sender_player_ref, role);
-            },
-            ToServerPacket::SetStewardRoleChosen { role } => {
-                if let RoleState::Steward(mut steward) = sender_player_ref.role_state(self).clone(){
-                    steward.role_chosen = role;
-                    sender_player_ref.set_role_state(self, RoleState::Steward(steward));
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::StewardRoleChosen { role });
-                }
             },
             ToServerPacket::RoleActionChoice { action } => {
                 sender_player_ref.on_role_action(self, action);

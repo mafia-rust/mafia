@@ -3,18 +3,21 @@ use serde::{Deserialize, Serialize};
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::GraveKiller;
+use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
+use super::common_role::RoleActionChoiceOnePlayer;
 use super::{Priority, RoleStateImpl, RoleState};
 
 
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct Godfather{
-    backup: Option<PlayerReference>
+    backup: Option<PlayerReference>,
+    attack_target: Option<PlayerReference>
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -66,58 +69,72 @@ impl RoleStateImpl for Godfather {
             );
         }        
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, target_ref) &&
-        game.day_number() > 1
-    }
-    fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
-        if let Some(old_target_ref) = self.backup {
-            if old_target_ref == target_ref {
-                actor_ref.set_role_state(game, RoleState::Godfather(Godfather{backup: None}));
-            } else {
-                actor_ref.set_role_state(game, RoleState::Godfather(Godfather{backup: Some(target_ref)}));
-            }
-        } else {
-            actor_ref.set_role_state(game, RoleState::Godfather(Godfather{backup: Some(target_ref)}));
-        }
-
-        let RoleState::Godfather(Godfather { backup }) = *actor_ref.role_state(game) else {
-            unreachable!("Role was just set to Godfather");
-        };
-
-        game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackup { backup: backup.map(|p|p.index()) });
-
-        for player_ref in PlayerReference::all_players(game){
-            if player_ref.role(game).faction() != Faction::Mafia{
-                continue;
-            }
-            player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
-        }
-
-        if let Some(backup) = backup {
-            for player_ref in PlayerReference::all_players(game){
-                if player_ref.role(game).faction() != Faction::Mafia {
-                    continue;
-                }
-                player_ref.push_player_tag(game, backup, Tag::GodfatherBackup);
-            }
-        }
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        match action_choice.action {
+            GodfatherAction::SetBackup { backup } => {
+                self.backup = match backup {
+                    Some(backup) => {
+                        if !(
+                            actor_ref != backup &&
+                            actor_ref.alive(game) &&
+                            backup.alive(game) &&
+                            backup.role(game).faction() == Faction::Mafia
+                        ){
+                            return;
+                        }
         
+                        Some(backup)
+                    },
+                    None => {
+                        None
+                    }
+                };
+                
+                game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackup{
+                    backup: self.backup.clone().map(|p|p.index())
+                });
+                actor_ref.set_role_state(game, self);
+
+                for player_ref in PlayerReference::all_players(game){
+                    if player_ref.role(game).faction() != Faction::Mafia{
+                        continue;
+                    }
+                    player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
+                }
+
+                if let Some(backup) = backup {
+                    for player_ref in PlayerReference::all_players(game){
+                        if player_ref.role(game).faction() != Faction::Mafia {
+                            continue;
+                        }
+                        player_ref.push_player_tag(game, backup, Tag::GodfatherBackup);
+                    }
+                }
+            },
+            GodfatherAction::SetAttack { target } => {
+                if game.current_phase().phase() != crate::game::phase::PhaseType::Night {return};
+                if !(
+                    crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, target, false) &&
+                    game.day_number() > 1
+                ) {
+                    return;
+                }
+
+                self.attack_target = target;
+                actor_ref.set_role_state(game, self);
+                return;
+            },
+        }
     }
-    fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        actor_ref != target_ref &&
-        actor_ref.alive(game) && target_ref.alive(game) &&
-        target_ref.role(game).faction() == Faction::Mafia
-    }
-    fn create_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_action_choice_to_visits(&RoleActionChoiceOnePlayer{player: self.attack_target}, true)
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
 
         if actor_ref == dead_player_ref {
             let Some(backup) = self.backup else {return};
 
-            actor_ref.set_role_state(game, RoleState::Godfather(Godfather{backup: None}));
+            actor_ref.set_role_state(game, Godfather{backup: None, ..self});
             for player_ref in PlayerReference::all_players(game){
                 if player_ref.role(game).faction() != Faction::Mafia{
                     continue;
@@ -128,10 +145,19 @@ impl RoleStateImpl for Godfather {
             if !backup.alive(game){return}
 
             //convert backup to godfather
-            backup.set_role(game, RoleState::Godfather(Godfather{backup: None}));
+            backup.set_role(game, RoleState::Godfather(Godfather{backup: None, attack_target: None}));
         }
         else if self.backup.is_some_and(|p|p == dead_player_ref) {
-            actor_ref.set_role_state(game, RoleState::Godfather(Godfather{backup: None}));
+            actor_ref.set_role_state(game, RoleState::Godfather(Godfather{backup: None, ..self}));
+        }
+    }
+    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: crate::game::phase::PhaseType) {
+        match phase {
+            PhaseType::Obituary => {
+                self.attack_target = None;
+                actor_ref.set_role_state(game, self);
+            }
+            _ => {}
         }
     }
 }

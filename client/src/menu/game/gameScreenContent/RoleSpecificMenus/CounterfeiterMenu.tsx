@@ -43,7 +43,15 @@ export default function CounterfeiterMenu (props: {}): ReactElement {
         }
 
 
-        GAME_MANAGER.sendSetForgerWill(role, will);
+        GAME_MANAGER.sendRoleActionChoice({
+            type: "counterfeiter",
+            action: {
+                type: "setForge",
+                role: localRole,
+                alibi: localWill,
+                action: action
+            }
+        });
     }
     const handleSend = () => {
         GAME_MANAGER.sendSendMessagePacket('\n' + savedWill);
@@ -110,7 +118,15 @@ export default function CounterfeiterMenu (props: {}): ReactElement {
             <select
                 value={action}
                 onChange={e => {
-                    GAME_MANAGER.sendSetCounterfeiterAction(e.target.value as "forge" | "noForge");
+                    GAME_MANAGER.sendRoleActionChoice({
+                        type: "counterfeiter",
+                        action: {
+                            type: "setForge",
+                            role: savedRole,
+                            alibi: savedWill,
+                            action: e.target.value as "forge"|"noForge"
+                        }
+                    });
                 }}
                 >
                 <option value={"noForge"} key={"noForge"}>{translate("noForge")}</option>

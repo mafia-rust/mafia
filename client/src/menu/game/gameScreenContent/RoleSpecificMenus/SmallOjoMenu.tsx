@@ -21,7 +21,10 @@ export type OjoAction = {
 export default function SmallOjoMenu(props: {action: OjoAction}): ReactElement | null {
 
     const sendAction = (action: OjoAction) => {
-        GAME_MANAGER.sendSetOjoAction(action);
+        GAME_MANAGER.sendRoleActionChoice({
+            type: "ojo",
+            action: action
+        });
     }
     const [dayNumber, setDayNumber] = React.useState(()=>{
         if(GAME_MANAGER.state.stateType === "game"){

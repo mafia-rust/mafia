@@ -104,7 +104,6 @@ export type GameManager = {
         [number, DoomsayerGuess]
     ]): void;
     sendSetKiraGuess(guesses: Record<PlayerIndex, KiraGuess>): void;
-    sendSetWildcardRoleOutline(roleOutline: Role): void;
     sendSetConsortOptions(
         roleblock: boolean, 
         youWereRoleblockedMessage: boolean, 
@@ -114,14 +113,10 @@ export type GameManager = {
         youWerePossessedMessage: boolean, 
         yourTargetWasJailedMessage: boolean
     ): void
-    sendSetForgerWill(role: Role | null, will: string): void;
-    sendSetCounterfeiterAction(action: "forge" | "noForge"): void;
-    sendSetOjoAction(action: OjoAction): void;
     sendSetPuppeteerAction(action: PuppeteerAction): void;
     sendSetRecruiterAction(action: RecruiterAction): void;
     sendSetErosAction(action: "loveLink" | "kill"): void;
     sendRetrainerRetrain(role: Role): void;
-    sendSetStewardRoleChosen(role: Role | null): void;
     sendRoleActionChoice(action: RoleActionChoice): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;

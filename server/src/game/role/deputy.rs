@@ -53,8 +53,6 @@ impl RoleStateImpl for Deputy {
         }
 
 
-
-
         action_choice.player.add_private_chat_message(game, ChatMessageVariant::DeputyShotYou);
         if action_choice.player.defense(game).can_block(AttackPower::Basic) {
             action_choice.player.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);

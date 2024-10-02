@@ -12,6 +12,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
+use super::common_role::RoleActionChoiceOnePlayer;
 use super::{Priority, RoleState, Role, RoleStateImpl};
 
 
@@ -19,6 +20,7 @@ use super::{Priority, RoleState, Role, RoleStateImpl};
 #[serde(rename_all = "camelCase")]
 pub struct Jailor { 
     jailed_target_ref: Option<PlayerReference>, 
+    should_attack: bool,
     executions_remaining: u8
 }
 
@@ -26,6 +28,7 @@ impl Default for Jailor {
     fn default() -> Self {
         Self { 
             jailed_target_ref: None, 
+            should_attack: false,
             executions_remaining: 3
         }
     }
@@ -40,7 +43,8 @@ pub struct RoleActionChoice{
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum JailorAction {
-    Attack,
+    #[serde(rename_all = "camelCase")]
+    Attack{should_attack: bool},
     Jail{player: PlayerReference}
 }
 
@@ -86,33 +90,40 @@ impl RoleStateImpl for Jailor {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        target_ref.night_jailed(game) &&
-        actor_ref.selection(game).is_empty() &&
-        actor_ref != target_ref &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game) &&
-        game.phase_machine.day_number > 1 &&
-        self.executions_remaining > 0
-    }
-    fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
-        if let Some(old_target_ref) = self.jailed_target_ref {
-            if old_target_ref == target_ref {
-                actor_ref.set_role_state(game, RoleState::Jailor(Jailor { jailed_target_ref: None, ..self}));
-            } else {
-                actor_ref.set_role_state(game, RoleState::Jailor(Jailor { jailed_target_ref: Some(target_ref), ..self }));
-            }
-        } else {
-            actor_ref.set_role_state(game, RoleState::Jailor(Jailor { jailed_target_ref: Some(target_ref), ..self }));
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        match action_choice.action {
+            JailorAction::Attack { should_attack } => {
+                self.should_attack = if !(
+                    actor_ref.alive(game) &&
+                    self.jailed_target_ref.is_some() &&
+                    game.day_number() > 1 &&
+                    self.executions_remaining > 0 &&
+                    game.current_phase().phase() == crate::game::phase::PhaseType::Night
+                ){
+                    false
+                }else{
+                    should_attack
+                };
+
+                actor_ref.set_role_state(game, self);
+            },
+            JailorAction::Jail { player } => {
+                self.jailed_target_ref = if !(
+                    game.current_phase().is_day() &&
+                    actor_ref != player &&
+                    actor_ref.alive(game) &&
+                    player.alive(game)
+                ) {
+                    None
+                }else{
+                    Some(player)
+                };
+                actor_ref.set_role_state(game, self);
+            },
         }
     }
-    fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {        
-        game.current_phase().is_day() &&
-        actor_ref != target_ref &&
-        actor_ref.alive(game) && target_ref.alive(game)
-    }
-    fn create_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_action_choice_to_visits(&RoleActionChoiceOnePlayer{player: self.jailed_target_ref}, true)
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, 
@@ -148,6 +159,7 @@ impl RoleStateImpl for Jailor {
             }
         }
         self.jailed_target_ref = None;
+        self.should_attack = false;
         actor_ref.set_role_state(game, RoleState::Jailor(self));
     }
 }
