@@ -5,8 +5,12 @@ use crate::{packet::ToServerPacket, strings::TidyableString, log};
 use super::{
     chat::{ChatGroup, ChatMessageVariant, MessageSender},
     components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, phase::{PhaseState, PhaseType},
-    player::{PlayerIndex, PlayerReference}, role::{kira::{Kira, KiraGuess}, mayor::Mayor,
-    puppeteer::PuppeteerActionType, recruiter::RecruiterAction, retrainer::Retrainer, Role, RoleState},
+    player::{PlayerIndex, PlayerReference}, 
+    role::{
+        kira::{Kira, KiraGuess}, mayor::Mayor,
+        puppeteer::PuppeteerActionType, recruiter::RecruiterAction,
+        Role, RoleState
+    },
     spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
@@ -285,9 +289,6 @@ impl Game {
                     //Updates selection if it was invalid
                     sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
                 }
-            },
-            ToServerPacket::RetrainerRetrain { role } => {
-                Retrainer::retrain(self, sender_player_ref, role);
             },
             ToServerPacket::RoleActionChoice { action } => {
                 sender_player_ref.on_role_action(self, action);

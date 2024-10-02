@@ -60,7 +60,13 @@ export default function RetrainerMenu(): ReactElement {
         {canRetrain && <>
             <Button
                 onClick={()=>{
-                    GAME_MANAGER.sendRetrainerRetrain(role);
+                    GAME_MANAGER.sendRoleActionChoice({
+                        type: "retrainer",
+                        action: {
+                            type: "retrain",
+                            role: role
+                        }
+                    });
                 }}
             >
                 <StyledText>{translate("retrain")}{backupName?(" "+backupName):""}</StyledText>

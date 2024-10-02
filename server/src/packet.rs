@@ -252,7 +252,6 @@ pub enum ToServerPacket{
     SetPuppeteerAction{action: PuppeteerActionType},
     SetRecruiterAction{action: RecruiterAction},
     SetErosAction{action: ErosAction},
-    RetrainerRetrain{role: Role},
 
     RoleActionChoice{action: RoleActionChoiceEnum},
 
