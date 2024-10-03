@@ -22,6 +22,7 @@ import RetrainerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/Retr
 import { useGameState, usePlayerState } from "./useHooks";
 import RecruiterMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
 import StewardMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/StewardMenu";
+import ImposterMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/ImposterMenu";
 
 export default function RoleSpecificSection(){
     const phaseState = useGameState(
@@ -54,6 +55,8 @@ export default function RoleSpecificSection(){
             return <LargeKiraMenu/>;
         case "retrainer":
             return <RetrainerMenu/>
+        case "imposter":
+            return <ImposterMenu/>
         case "jailor": 
             return <JailorRoleSpecificMenu roleState={roleState}/>;
         case "medium": 
