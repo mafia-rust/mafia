@@ -10,7 +10,6 @@ use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::common_role::RoleActionChoiceOnePlayer;
 use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 
@@ -222,7 +221,7 @@ impl RoleStateImpl for Counterfeiter {
         }
     }
     fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
-        crate::game::role::common_role::convert_action_choice_to_visits(&RoleActionChoiceOnePlayer{player: self.attack_target}, true)
+        crate::game::role::common_role::convert_action_choice_to_visits(self.attack_target, true)
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         actor_ref.set_role_state(game, RoleState::Counterfeiter(Counterfeiter{

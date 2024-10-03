@@ -9,7 +9,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::common_role::{default_action_choice_one_player_is_valid, default_action_choice_two_players_is_valid, RoleActionChoiceOnePlayer, RoleActionChoiceTwoPlayers};
+use super::common_role::{default_action_choice_one_player_is_valid, default_action_choice_two_players_is_valid};
 use super::{Priority, RoleStateImpl};
 
 
@@ -82,7 +82,7 @@ impl RoleStateImpl for Eros {
 
             },
             ErosActionChoice::SetLoveLink { targets } => {
-                if default_action_choice_two_players_is_valid(game, actor_ref, &RoleActionChoiceTwoPlayers { two_players: Some(targets) }, (true, true), false) {
+                if default_action_choice_two_players_is_valid(game, actor_ref, Some(targets), (true, true), false) {
                     actor_ref.set_role_state(game, Eros{
                         action: action_choice.action,
                     });
@@ -103,10 +103,10 @@ impl RoleStateImpl for Eros {
     fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
         match self.action {
             ErosActionChoice::SetAttack { target } => {
-                crate::game::role::common_role::convert_action_choice_to_visits(&RoleActionChoiceOnePlayer{player: Some(target)}, true)
+                crate::game::role::common_role::convert_action_choice_to_visits(Some(target), true)
             },
             ErosActionChoice::SetLoveLink { targets } => {
-                crate::game::role::common_role::convert_action_choice_to_visits_two_players(&RoleActionChoiceTwoPlayers{two_players: Some(targets)}, true)
+                crate::game::role::common_role::convert_action_choice_to_visits_two_players(Some(targets), true)
             },
             ErosActionChoice::None => {
                 vec![]

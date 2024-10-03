@@ -12,7 +12,6 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::common_role::RoleActionChoiceOnePlayer;
 use super::{Priority, RoleState, Role, RoleStateImpl};
 
 
@@ -123,7 +122,7 @@ impl RoleStateImpl for Jailor {
         }
     }
     fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
-        crate::game::role::common_role::convert_action_choice_to_visits(&RoleActionChoiceOnePlayer{player: self.jailed_target_ref}, true)
+        crate::game::role::common_role::convert_action_choice_to_visits(self.jailed_target_ref, true)
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, 

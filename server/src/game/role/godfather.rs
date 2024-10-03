@@ -10,7 +10,6 @@ use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::common_role::RoleActionChoiceOnePlayer;
 use super::{Priority, RoleStateImpl, RoleState};
 
 
@@ -127,7 +126,7 @@ impl RoleStateImpl for Godfather {
         }
     }
     fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
-        crate::game::role::common_role::convert_action_choice_to_visits(&RoleActionChoiceOnePlayer{player: self.attack_target}, true)
+        crate::game::role::common_role::convert_action_choice_to_visits(self.attack_target, true)
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
 

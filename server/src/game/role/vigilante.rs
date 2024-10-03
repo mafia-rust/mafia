@@ -98,7 +98,7 @@ impl RoleStateImpl for Vigilante {
     fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
         match self.state {
             VigilanteState::Loaded { bullets, night_selection } if bullets > 0 => {
-                crate::game::role::common_role::convert_action_choice_to_visits(&night_selection, true)
+                crate::game::role::common_role::convert_action_choice_to_visits(night_selection.player, true)
             }
             _ => Vec::new()
         }

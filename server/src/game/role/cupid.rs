@@ -46,13 +46,13 @@ impl RoleStateImpl for Cupid {
             return
         };
 
-        if !default_action_choice_two_players_is_valid(game, actor_ref, &action_choice, (false, false), false) {return}
+        if !default_action_choice_two_players_is_valid(game, actor_ref, action_choice.two_players, (false, false), false) {return}
 
         self.night_selection = action_choice;
         actor_ref.set_role_state(game, self);    
     }
     fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
-        crate::game::role::common_role::convert_action_choice_to_visits_two_players(&self.night_selection, false)
+        crate::game::role::common_role::convert_action_choice_to_visits_two_players(self.night_selection.two_players, false)
     }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: crate::game::phase::PhaseType) {
         crate::on_phase_start_reset_night_selection!(self, game, actor_ref, phase);

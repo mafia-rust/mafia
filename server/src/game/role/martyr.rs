@@ -9,7 +9,6 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::common_role::RoleActionChoiceOnePlayer;
 use super::{Priority, RoleStateImpl, Role, RoleState};
 
 #[derive(PartialEq, Clone, Debug, Serialize)]
@@ -99,10 +98,10 @@ impl RoleStateImpl for Martyr {
     fn create_visits(self, _game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         let action = match self.state.should_shoot() {
             true => {
-                &RoleActionChoiceOnePlayer{player: Some(actor_ref)}
+                Some(actor_ref)
             },
             false => {
-                &RoleActionChoiceOnePlayer{player: None}
+                None
             },
         };
         crate::game::role::common_role::convert_action_choice_to_visits(action, true)

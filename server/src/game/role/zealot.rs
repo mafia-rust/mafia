@@ -47,7 +47,7 @@ impl RoleStateImpl for Zealot {
         actor_ref.set_role_state(game, self);
     }
     fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
-        crate::game::role::common_role::convert_action_choice_to_visits(&self.night_selection, true)
+        crate::game::role::common_role::convert_action_choice_to_visits(self.night_selection.player, true)
     }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: crate::game::phase::PhaseType) {
         crate::on_phase_start_reset_night_selection!(self, game, actor_ref, phase);

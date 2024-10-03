@@ -69,7 +69,7 @@ impl RoleStateImpl for Retributionist {
         actor_ref.set_role_state(game, self)
     }
     fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
-        super::common_role::convert_action_choice_to_visits_two_players(&self.night_selection, false)
+        super::common_role::convert_action_choice_to_visits_two_players(self.night_selection.two_players, false)
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         if phase == PhaseType::Obituary {

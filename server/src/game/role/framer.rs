@@ -5,11 +5,19 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{same_evil_team, Priority, RoleStateImpl};
+use super::common_role::{
+    convert_action_choice_to_visits,
+    convert_action_choice_to_visits_two_players,
+    default_action_choice_one_player_is_valid,
+    default_action_choice_two_players_is_valid
+};
+use super::{Priority, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
-pub struct Framer;
+pub struct Framer{
+    pub target: FrameTarget
+}
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -17,10 +25,12 @@ pub struct RoleActionChoice{
     frame: FrameTarget
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum FrameTarget{
+    #[default]
+    None,
     Aura{
         target: PlayerReference
     },
@@ -28,7 +38,6 @@ pub enum FrameTarget{
         target: PlayerReference,
         visit: PlayerReference
     },
-    None
 }
 
 
@@ -59,33 +68,39 @@ impl RoleStateImpl for Framer {
 
         actor_ref.set_night_visits(game, vec![first_visit.clone()]);
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if game.current_phase().phase() != crate::game::phase::PhaseType::Night {return};
+
+        match action_choice.frame {
+            FrameTarget::Aura{ target } => {
+                if default_action_choice_one_player_is_valid(game, actor_ref, Some(target), false){
+                    self.target = action_choice.frame;
+                }
+            },
+            FrameTarget::AuraAndVisit{ target, visit } => {
+                if default_action_choice_two_players_is_valid(game, actor_ref, Some((target,visit)), (false, true), true) {
+                    self.target = action_choice.frame;
+                }
         
-        !actor_ref.night_jailed(game) &&
-        actor_ref.alive(game) &&
-        (
-            actor_ref.selection(game).is_empty() &&
-            actor_ref != target_ref &&
-            target_ref.alive(game) &&
-            !same_evil_team(game, actor_ref, target_ref)
-        ) || 
-        (
-            actor_ref.selection(game).len() == 1
-        )
-        
+            },
+            FrameTarget::None => {
+                self.target = action_choice.frame;
+            }
+        }
+        actor_ref.set_role_state(game, self);    
     }
-    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        if target_refs.len() == 2 {
-            vec![
-                Visit{ target: target_refs[0], attack: false }, 
-                Visit{ target: target_refs[1], attack: false }
-            ]
-        } else if target_refs.len() == 1 {
-            vec![
-                Visit{ target: target_refs[0], attack: false }
-            ]
-        } else {
-            Vec::new()
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        match self.target {
+            FrameTarget::Aura { target } => {
+                convert_action_choice_to_visits(Some(target), false)
+                
+            },
+            FrameTarget::AuraAndVisit { target, visit } => {
+                convert_action_choice_to_visits_two_players(Some((target, visit)), true)
+            },
+            FrameTarget::None => {
+                vec![]
+            },
         }
     }
 }

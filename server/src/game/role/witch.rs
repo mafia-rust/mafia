@@ -38,7 +38,7 @@ impl RoleStateImpl for Witch {
         if game.current_phase().phase() != crate::game::phase::PhaseType::Night {return};
 
         self.night_selection = if 
-            super::common_role::default_action_choice_two_players_is_valid(game, actor_ref, &action_choice, (false, true), true) && 
+            super::common_role::default_action_choice_two_players_is_valid(game, actor_ref, action_choice.two_players, (false, true), true) && 
             (action_choice.two_players.is_none() || action_choice.two_players.is_some_and(|(a,_)| a != actor_ref))
         {
             action_choice
@@ -49,7 +49,7 @@ impl RoleStateImpl for Witch {
         actor_ref.set_role_state(game, self)
     }
     fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
-        super::common_role::convert_action_choice_to_visits_two_players(&self.night_selection, false)
+        super::common_role::convert_action_choice_to_visits_two_players(self.night_selection.two_players, false)
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         if phase == PhaseType::Obituary {

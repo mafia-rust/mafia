@@ -18,6 +18,8 @@ pub struct Hypnotist{
     pub you_were_transported_message: bool,
     pub you_were_possessed_message: bool,
     pub your_target_was_jailed_message: bool,
+
+    pub target: Option<PlayerReference>,
 }
 
 
@@ -31,6 +33,8 @@ impl Default for Hypnotist {
             you_were_transported_message: false,
             you_were_possessed_message: false,
             your_target_was_jailed_message: false,
+            
+            target: None,
         }
     }
 }
@@ -48,6 +52,8 @@ pub struct RoleActionChoice{
     pub you_were_transported_message: bool,
     pub you_were_possessed_message: bool,
     pub your_target_was_jailed_message: bool,
+
+    pub target: Option<PlayerReference>,
 }
 
 impl RoleStateImpl for Hypnotist {
@@ -102,14 +108,29 @@ impl RoleStateImpl for Hypnotist {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, target_ref)
+    fn on_role_action(self, game: &mut Game, actor_ref: PlayerReference, mut action_choice: Self::RoleActionChoice) {
+        RoleActionChoice::ensure_at_least_one_message(&mut action_choice);
+        crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, action_choice.target, false);
     }
-    fn create_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_action_choice_to_visits(self.target, false)
     }
 }
 impl Hypnotist {
+    pub fn ensure_at_least_one_message(&mut self){
+        if
+            !self.you_were_roleblocked_message && 
+            !self.you_survived_attack_message && 
+            !self.you_were_protected_message && 
+            !self.you_were_transported_message && 
+            !self.you_were_possessed_message && 
+            !self.your_target_was_jailed_message
+        {
+            self.you_were_roleblocked_message = true;
+        }
+    }
+}
+impl RoleActionChoice{
     pub fn ensure_at_least_one_message(&mut self){
         if
             !self.you_were_roleblocked_message && 

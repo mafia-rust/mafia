@@ -9,7 +9,6 @@ use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::common_role::RoleActionChoiceOnePlayer;
 use super::{Priority, Role, RoleState, RoleStateImpl};
 
 
@@ -142,7 +141,7 @@ impl RoleStateImpl for Imposter {
         }
     }
     fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
-        crate::game::role::common_role::convert_action_choice_to_visits(&RoleActionChoiceOnePlayer{player: self.attack_target}, true)
+        crate::game::role::common_role::convert_action_choice_to_visits(self.attack_target, true)
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: crate::game::grave::GraveReference) {
         if grave.deref(game).player == actor_ref {

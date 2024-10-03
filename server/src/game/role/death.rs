@@ -68,7 +68,7 @@ impl RoleStateImpl for Death {
         actor_ref.set_role_state(game, self);
     }
     fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
-        crate::game::role::common_role::convert_action_choice_to_visits(&self.night_selection, false)
+        crate::game::role::common_role::convert_action_choice_to_visits(self.night_selection.player, false)
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {

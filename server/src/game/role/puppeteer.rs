@@ -15,14 +15,14 @@ use super::{Priority, Role, RoleState, RoleStateImpl};
 #[serde(rename_all = "camelCase")]
 pub struct Puppeteer{
     pub marionettes_remaining: u8,
-    pub action: PuppeteerActionType,
+    pub action: PuppeteerAction,
 }
 
 impl Default for Puppeteer{
     fn default() -> Self {
         Self {
             marionettes_remaining: 3,
-            action: PuppeteerActionType::Poison
+            action: PuppeteerAction::None
         }
     }
 }
@@ -38,7 +38,7 @@ pub enum PuppeteerActionType{
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RoleActionChoice{
-    action: PuppeteerActionType
+    action: PuppeteerAction
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -85,6 +85,17 @@ impl RoleStateImpl for Puppeteer {
                     );
                 },
             }
+        }
+    }
+    fn on_role_action(self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        match action_choice.action {
+            PuppeteerAction::String{..} => {
+                
+            },
+            PuppeteerAction::Poison{..} => {
+                
+            },
+            PuppeteerAction::None => {}
         }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {

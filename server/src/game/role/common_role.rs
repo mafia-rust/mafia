@@ -24,11 +24,11 @@ pub(super) fn default_action_choice_boolean_is_valid(game: &Game, actor_ref: Pla
 pub(super) fn default_action_choice_two_players_is_valid(
     game: &Game,
     actor_ref: PlayerReference, 
-    choice: &RoleActionChoiceTwoPlayers, 
+    two_players: Option<(PlayerReference, PlayerReference)>, 
     can_choose_self: (bool, bool),
     can_double_choose: bool
 ) -> bool {
-    let Some((target_a, target_b)) = choice.two_players else {return true};
+    let Some((target_a, target_b)) = two_players else {return true};
 
     !default_action_choice_boolean_is_valid(game, actor_ref) &&
     target_a.alive(game) && 
@@ -39,15 +39,15 @@ pub(super) fn default_action_choice_two_players_is_valid(
     
 }
 
-pub(super) fn convert_action_choice_to_visits(choice: &RoleActionChoiceOnePlayer, attack: bool) -> Vec<Visit> {
-    if let Some(target) = choice.player {
+pub(super) fn convert_action_choice_to_visits(target: Option<PlayerReference>, attack: bool) -> Vec<Visit> {
+    if let Some(target) = target {
         vec![Visit{ target: target, attack }]
     } else {
         Vec::new()
     }
 }
-pub(super) fn convert_action_choice_to_visits_two_players(choice: &RoleActionChoiceTwoPlayers, attack: bool) -> Vec<Visit> {
-    if let Some((a,b)) = choice.two_players {
+pub(super) fn convert_action_choice_to_visits_two_players(two_players: Option<(PlayerReference, PlayerReference)>, attack: bool) -> Vec<Visit> {
+    if let Some((a,b)) = two_players {
         vec![
             Visit{ target: a, attack },
             Visit{ target: b, attack }

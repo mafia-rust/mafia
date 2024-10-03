@@ -89,7 +89,7 @@ impl RoleStateImpl for Pyrolisk {
         actor_ref.set_role_state(game, self);
     }
     fn create_visits(self, game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
-        crate::game::role::common_role::convert_action_choice_to_visits(&self.night_selection, game.day_number() != 1)
+        crate::game::role::common_role::convert_action_choice_to_visits(self.night_selection.player, game.day_number() != 1)
     }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: crate::game::phase::PhaseType) {
         crate::on_phase_start_reset_night_selection!(self, game, actor_ref, phase);
