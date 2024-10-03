@@ -181,7 +181,8 @@ impl PlayerReference{
         OnAnyDeath::new(*self)
     }
     /// Swaps this persons role, sends them the role chat message, and makes associated changes
-    pub fn set_role(&self, game: &mut Game, new_role_data: RoleState){
+    pub fn set_role(&self, game: &mut Game, new_role_data: impl Into<RoleState>){
+        let new_role_data = new_role_data.into();
 
         let old = self.role_state(game).clone();
 

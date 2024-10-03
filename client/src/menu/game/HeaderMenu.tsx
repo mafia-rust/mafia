@@ -88,6 +88,8 @@ function Information(): ReactElement {
         return myIndex === undefined ? undefined : players[myIndex]?.toString()
     }, [myIndex, players])
 
+    
+
     return <div className="information"> 
         <div className="my-information">
             <div>
@@ -112,6 +114,10 @@ export function PhaseSpecificInformation(props: Readonly<{
     players: Player[],
     myIndex: number | undefined
 }>): ReactElement | null {
+    const enabledModifiers = useGameState(
+        gameState => gameState.enabledModifiers,
+        ["enabledModifiers"]
+    )!
     if (
         props.phaseState.type === "testimony"
         || props.phaseState.type === "finalWords"
@@ -129,7 +135,13 @@ export function PhaseSpecificInformation(props: Readonly<{
                         } else if (!props.players[props.myIndex!].alive) {
                             return translate("judgement.cannotVote.dead");
                         } else {
-                            return (["guilty", "abstain", "innocent"] as const).filter((verdict)=>{return verdict!=="abstain"}).map((verdict) => {
+                            return (["guilty", "abstain", "innocent"] as const)
+                                    .filter((verdict)=>{
+                                        if(enabledModifiers.includes("noAbstaining") && verdict === "abstain"){
+                                            return false;
+                                        }
+                                        return true
+                                    }).map((verdict) => {
                                 return <VerdictButton key={verdict} verdict={verdict}/>
                             })
                         }

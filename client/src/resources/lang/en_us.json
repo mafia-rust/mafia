@@ -366,6 +366,14 @@
     "role.retrainer.youAreSelecting.null": "You aren't attacking anyone.",
     "role.retrainer.retrainsRemaining": "\\0 retrains remaining",
     "role.retrainer.cannotRetrain": "You can't retrain during night, while dead, if you have no backup, or if you have no retrains left.",
+    
+    "role.imposter.name": "Imposter",
+    "role.imposter.name:var.0": "Imposters",
+    "role.imposter.target": "Attack",
+    "role.imposter.dayTarget": "Backup",
+    "role.imposter.youAreSelecting": "You are organizing an attack on \\0.",
+    "role.imposter.youAreSelecting.null": "You aren't attacking anyone.",
+    "role.imposter.roleMenu": "Choose what role you want to appear on your grave.",
 
     "role.eros.name": "Eros",
     "role.eros.name:var.0": "Eroses",
@@ -689,6 +697,7 @@
     "randomLoveLinks": "Random Love Links",
     "deadCanChat": "Dead Can Chat",
     "noAbstaining": "No Abstaining",
+    "noDeathCause": "No Death Cause",
     "nightMessages": "Night Messages",
     
     "simplify":"Simplify",
@@ -1147,6 +1156,8 @@
     "wiki.article.standard.deadCanChat.text":"Dead Can Chat is a game modifier that changes the game such that dead players can still use chats as if they were alive. Dead players can not whisper or be whispered to.",
     "wiki.article.standard.noAbstaining.title":"No Abstaining",
     "wiki.article.standard.noAbstaining.text":"No Abstaining is a game modifier that changes the game such that no players can abstain during judgement. It will default to voting innocent instead of defaulting to abstaining.",
+    "wiki.article.standard.noDeathCause.title":"No Death Cause",
+    "wiki.article.standard.noDeathCause.text":"No Death Cause is a game modifier that changes the game such that every grave says that the cause of death is execution.",
 
     "wiki.article.standard.nobody.title":"Nobody",
     "wiki.article.standard.nobody.title:var.0":"No body",
@@ -1235,8 +1246,8 @@
 
     "wiki.article.role.psychic.guide": "- You receive a vision every night\n    - On even nights, the vision lists 2 players. At least one of them is a townie\n    - On odd nights, the vision will list three players. At least one of them is not a townie\n\nYou should tell the town the information you get daily.",
     "wiki.article.role.psychic.abilities":"* Get an evil vision on odd nights\n* Get a good vision on even nights",
-    "wiki.article.role.psychic.attributes":"* Evil visions list three players, at least one of them does not exclusively win with town\n* Good visions list 2 players, at least one of them exclusively wins with town\n- You don't get a vision if you are blocked",
-    "wiki.article.role.psychic.extra": "* If there aren't enough evil or good players to have a vision, the ability fails\n* You can not be listed in your own vision\n* You still get visions after you are dead\n* You do not visit the players in your vision\n* Players with a suspicious aura can't be listed in your good vision\n* Players with an innocent aura can't be listed in your evil vision\n- Your visions don't depend on visits, you still get visions while dead",
+    "wiki.article.role.psychic.attributes":"* Evil visions list three players, at least one of them does not exclusively win with town\n* Good visions list 2 players, at least one of them exclusively wins with town\n- You don't get a vision if you are blocked or dead",
+    "wiki.article.role.psychic.extra": "* If there aren't enough evil or good players to have a vision, the ability fails\n* You can not be listed in your own vision\n* You do not visit the players in your vision\n* Players with a suspicious aura can't be listed in your good vision\n* Players with an innocent aura can't be listed in your evil vision\n- Your visions don't depend on visits, you still get visions while dead",
 
     "wiki.article.role.auditor.guide": "- At night, choose an outline from the list\n    - You are told 2 roles, one of those roles were assigned to a player from that outline\n    - You visit the player who was assigned that role, but you are not told who that player is\n\n_For Example_\n- You choose the outline \"Town Killing\" and are told that a vigilante or a veteran generated from that outline, and you are attacked by the veteran",
     "wiki.article.role.auditor.abilities":"- Choose an outline\n    - You are told what role was generated from that outline and one other random role\n    - You visit the player who was assigned the role from the outline",
@@ -1290,7 +1301,7 @@
 
     "wiki.article.role.steward.guide":"- At night, choose a role to protect\n    - Everyone with this role is protected from attacks\n    - You are told if anyone with this role is attacked\n    - You can't protect the same role twice in a row\n    - You can't protect Steward more than once per game", 
     "wiki.article.role.steward.abilities":"* Choose a role to protect\n    * Everyone with this role is protected\n    * You are told if anyone with this role is attacked, and they are told they are protected",
-    "wiki.article.role.steward.attributes":"* You can't protect the same role two nights in a row\n* You can't protect your own role more than once",
+    "wiki.article.role.steward.attributes":"* You can't protect the same role two nights in a row\n* You can't protect your own role more than once\n* Your ability does nothing if you are blocked, or dead",
     "wiki.article.role.steward.extra":"You do not visit the roles you protect",
 
     "wiki.article.role.escort.guide": "- At night, select a player to roleblock them, stopping them from using their ability\n- Your target is told they were roleblocked\n\n_For example_\n- An escort selects the godfather, so the godfather can't kill anyone, and nobody dies\n\nYou should try to choose evil players, especially the ones with powerful abilities",
@@ -1347,6 +1358,11 @@
     "wiki.article.role.retrainer.abilities":"* Visit a player to attack\n* Choose another living mafia member to be your backup at any time\n* While you are blocked, the backup will attack the first player they visit\n- 2 times per game, you can choose to retrain, changing the role of the backup player to a different mafia support role",
     "wiki.article.role.retrainer.attributes":"* When you are blocked, the mafia is told that the backup attacks for you\n- Neither you or the backup can select or attack night 1\n- You can only retrain a mafia member when it is not night\n- If you try to retrain the backup to the role that they already are, it doesn't work, and doesn't cost an ability\n- You can only retrain while it is not night",
     "wiki.article.role.retrainer.extra":"* You only have a basic attack\n* When the Retrainer dies, their current backup becomes the Retrainer\n* You can not select other mafia members",
+    
+    "wiki.article.role.imposter.guide": "- At night, select a player to attack\n- You can't attack night 1\n- Choose a backup to attack for you if you are blocked\n- You can choose what role appears on your grave, giving false information to the town when you die\n\n You should try to kill townies who are likely to stop you from winning or have powerful abilities, but be careful about town protective roles.",
+    "wiki.article.role.imposter.abilities":"* Visit a player to attack\n* Choose another living mafia member to be your backup at any time\n* While you are blocked, the backup will attack the first player they visit\n- At any time while you are alive, choose a role, that role appears on your grave when you die instead of imposter",
+    "wiki.article.role.imposter.attributes":"* When you are blocked, the mafia is told that the backup attacks for you\n- Neither you or the backup can select or attack night 1\n- You have armor defense at all times by default",
+    "wiki.article.role.imposter.extra":"* You only have a basic attack\n* When the Imposter dies, their current backup becomes the Imposter\n* You can not select other mafia members",
     
     "wiki.article.role.eros.guide": "- At night, either kill a player, or love link 2 players\n    - You can't attack night 1\n    - Whenever a player who is love linked to another player dies, the other love linked player dies as well\n- You have an innocent aura and armor\n\nIf you are roleblocked by an escort, it might be a good idea to claim that you were love linked to another mafia member that night. Doing that hides the fact that the eros was roleblocked, and might hide that your eros from that escort.",
     "wiki.article.role.eros.abilities": "- If you chose to kill\n    - Visit a player attack\n- If you chose to love link\n    - Visit 2 players to love link them, if one dies tonight, they do not love link",

@@ -78,7 +78,7 @@ impl RoleStateImpl for Auditor {
         self.previously_given_results.push((chosen_outline, result));
         
         actor_ref.push_night_message(game, message);
-        actor_ref.set_role_state(game, super::RoleState::Auditor(self));
+        actor_ref.set_role_state(game, self);
             
     }
     fn convert_selection_to_visits(self, game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
@@ -95,7 +95,7 @@ impl RoleStateImpl for Auditor {
         match phase {
             PhaseType::Obituary => {
                 self.chosen_outline = None;
-                actor_ref.set_role_state(game, super::RoleState::Auditor(self));
+                actor_ref.set_role_state(game, self);
             },
             _ => {}
         }

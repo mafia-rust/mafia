@@ -102,6 +102,7 @@ macros::roles! {
     Godfather : godfather,
     Eros: eros,
     Counterfeiter : counterfeiter,
+    Imposter : imposter,
     Retrainer : retrainer,
     Recruiter : recruiter,
     Mafioso : mafioso,

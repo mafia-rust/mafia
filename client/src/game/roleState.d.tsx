@@ -98,6 +98,10 @@ export type RoleState = {
     backup: PlayerIndex | null,
     retrainsRemaining: number
 } | {
+    type: "imposter"
+    backup: PlayerIndex | null,
+    fakeRole: Role
+} | {
     type: "eros"
     action: "loveLink" | "kill"
 } | {
