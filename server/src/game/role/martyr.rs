@@ -83,6 +83,7 @@ impl RoleStateImpl for Martyr {
 
         actor_ref.set_role_state(game, self);
     }
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
         if game.current_phase().phase() != PhaseType::Night {return};
         if !crate::game::role::common_role::default_action_choice_boolean_is_valid(game, actor_ref) {return}
         if self.state.bullets() == 0 {return}
