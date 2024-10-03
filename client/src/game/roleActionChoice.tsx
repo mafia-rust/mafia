@@ -104,6 +104,18 @@ export type RoleActionChoice =
         role: Role
     }
 } | {
+    type: "imposter"
+    action: {
+        type: "setBackup",
+        backup: PlayerIndex | null
+    } | {
+        type: "setAttack"
+        target: PlayerIndex | null
+    } | {
+        type: "setFakeRole"
+        role: Role
+    }
+} | {
     type: "eros"
     action: {
         type: "setAttack"

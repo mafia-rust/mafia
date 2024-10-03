@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::AttackPower;
+use crate::game::phase::PhaseType;
 use crate::game::{attack_power::DefensePower, components::love_linked::LoveLinked};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
@@ -8,33 +9,28 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{same_evil_team, Priority, RoleStateImpl};
+use super::common_role::{default_action_choice_one_player_is_valid, default_action_choice_two_players_is_valid, RoleActionChoiceOnePlayer, RoleActionChoiceTwoPlayers};
+use super::{Priority, RoleStateImpl};
 
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Eros{
-    pub action: ErosAction,
+    pub action: ErosActionChoice,
 }
-
-#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, PartialOrd, Eq, Ord)]
-#[serde(rename_all = "camelCase")]
-pub enum ErosAction{
-    #[default] LoveLink,
-    Kill,
-}
-
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RoleActionChoice{
     action: ErosActionChoice
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum ErosActionChoice{
-    SetAttack{target: Option<PlayerReference>},
-    SetLoveLink{targets: Option<(PlayerReference, PlayerReference)>},
+    #[default]
+    None,
+    SetAttack{target: PlayerReference},
+    SetLoveLink{targets: (PlayerReference, PlayerReference)},
 }
 
 pub(super) const FACTION: Faction = Faction::Mafia;
@@ -46,7 +42,7 @@ impl RoleStateImpl for Eros {
     type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match (priority, self.action) {
-            (Priority::Kill, ErosAction::Kill) => {
+            (Priority::Kill, ErosActionChoice::SetAttack{..}) => {
                 if game.day_number() == 1 {return}
                 if let Some(visit) = actor_ref.night_visits(game).first(){
                     let target_ref = visit.target;
@@ -56,7 +52,7 @@ impl RoleStateImpl for Eros {
                     );
                 }
             }
-            (Priority::Cupid, ErosAction::LoveLink) => {
+            (Priority::Cupid, ErosActionChoice::SetLoveLink{..}) => {
                 let visits = actor_ref.night_visits(game);
 
                 let Some(first_visit) = visits.get(0) else {return};
@@ -70,54 +66,56 @@ impl RoleStateImpl for Eros {
             _ => ()
         }
     }
-    fn on_role_action(self, _game: &mut Game, _actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+    fn on_role_action(self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        if game.current_phase().phase() != PhaseType::Night {return};
         match action_choice.action{
             ErosActionChoice::SetAttack { target } => {
-                if game.current_phase().phase() != crate::game::phase::PhaseType::Night {return};
-            },
-            ErosActionChoice::SetLoveLink { targets } => todo!(),
-        }
-    }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        let selected = actor_ref.selection(game);
+                if game.day_number() > 1 && default_action_choice_one_player_is_valid(game, actor_ref, Some(target), false){
+                    actor_ref.set_role_state(game, Eros{
+                        action: action_choice.action,
+                    });
+                }else{
+                    actor_ref.set_role_state(game, Eros{
+                        action: ErosActionChoice::None,
+                    });
+                }
 
-        actor_ref != target_ref &&
-        !actor_ref.night_jailed(game) &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game) &&
-        match self.action {
-            ErosAction::LoveLink => {
-                selected.len() < 2 &&
-                selected.iter().all(|&p| p != target_ref)
             },
-            ErosAction::Kill => {
-                game.day_number() > 1 &&
-                !same_evil_team(game, actor_ref, target_ref) &&
-                selected.is_empty()
+            ErosActionChoice::SetLoveLink { targets } => {
+                if default_action_choice_two_players_is_valid(game, actor_ref, &RoleActionChoiceTwoPlayers { two_players: Some(targets) }, (true, true), false) {
+                    actor_ref.set_role_state(game, Eros{
+                        action: action_choice.action,
+                    });
+                }else{
+                    actor_ref.set_role_state(game, Eros{
+                        action: ErosActionChoice::None,
+                    });
+                }
+                
+            },
+            ErosActionChoice::None => {
+                actor_ref.set_role_state(game, Eros{
+                    action: action_choice.action,
+                });
             },
         }
     }
-    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
         match self.action {
-            ErosAction::LoveLink => {
-                if target_refs.len() == 2 {
-                    vec![
-                        Visit{ target: target_refs[0], attack: false },
-                        Visit{ target: target_refs[1], attack: false }
-                    ]
-                } else {
-                    Vec::new()
-                }
+            ErosActionChoice::SetAttack { target } => {
+                crate::game::role::common_role::convert_action_choice_to_visits(&RoleActionChoiceOnePlayer{player: Some(target)}, true)
             },
-            ErosAction::Kill => {
-                if !target_refs.is_empty() {
-                    vec![
-                        Visit{ target: target_refs[0], attack: true }
-                    ]
-                } else {
-                    Vec::new()
-                }
-            }
+            ErosActionChoice::SetLoveLink { targets } => {
+                crate::game::role::common_role::convert_action_choice_to_visits_two_players(&RoleActionChoiceTwoPlayers{two_players: Some(targets)}, true)
+            },
+            ErosActionChoice::None => {
+                vec![]
+            },
         }
+    }
+    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: crate::game::phase::PhaseType) {
+        actor_ref.set_role_state(game, Eros{
+            action: ErosActionChoice::None,
+        });
     }
 }

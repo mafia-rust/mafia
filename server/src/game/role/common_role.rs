@@ -21,19 +21,22 @@ pub(super) fn default_action_choice_boolean_is_valid(game: &Game, actor_ref: Pla
     !actor_ref.night_jailed(game) &&
     actor_ref.alive(game)
 }
-pub(super) fn default_action_choice_two_players_is_valid(game: &Game, actor_ref: PlayerReference, choice: &RoleActionChoiceTwoPlayers, can_choose_self: bool) -> bool {
+pub(super) fn default_action_choice_two_players_is_valid(
+    game: &Game,
+    actor_ref: PlayerReference, 
+    choice: &RoleActionChoiceTwoPlayers, 
+    can_choose_self: (bool, bool),
+    can_double_choose: bool
+) -> bool {
     let Some((target_a, target_b)) = choice.two_players else {return true};
 
     !default_action_choice_boolean_is_valid(game, actor_ref) &&
     target_a.alive(game) && 
     target_b.alive(game) &&
-    !same_evil_team(game, actor_ref, target_a) &&
-    !same_evil_team(game, actor_ref, target_b) &&
-    target_a != target_b &&
-    (
-        can_choose_self || 
-        (actor_ref != target_a && actor_ref != target_b)
-    )
+    (can_double_choose || target_a != target_b) &&
+    (can_choose_self.0 || (actor_ref != target_a && !same_evil_team(game, actor_ref, target_a))) &&
+    (can_choose_self.1 || (actor_ref != target_b && !same_evil_team(game, actor_ref, target_b)))
+    
 }
 
 pub(super) fn convert_action_choice_to_visits(choice: &RoleActionChoiceOnePlayer, attack: bool) -> Vec<Visit> {

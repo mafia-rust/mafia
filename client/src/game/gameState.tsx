@@ -75,7 +75,6 @@ export function createPlayerGameState(): PlayerGameState {
         crossedOutOutlines: [],
         chatFilter: null,
         deathNote: "",
-        targets: [],
         voted: null,
         judgement: "abstain",
 

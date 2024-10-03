@@ -40,8 +40,7 @@ impl RoleStateImpl for Minion {
         if game.current_phase().phase() != crate::game::phase::PhaseType::Night {return};
 
         self.night_selection = if 
-            super::common_role::default_action_choice_two_players_is_valid(game, actor_ref, &action_choice, true) && 
-            (action_choice.two_players.is_none() || action_choice.two_players.is_some_and(|(a,_)| a != actor_ref))
+            super::common_role::default_action_choice_two_players_is_valid(game, actor_ref, &action_choice, (false, true), true)
         {
             action_choice
         }else{

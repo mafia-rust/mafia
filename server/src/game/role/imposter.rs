@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
@@ -9,6 +9,7 @@ use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
+use super::common_role::RoleActionChoiceOnePlayer;
 use super::{Priority, Role, RoleState, RoleStateImpl};
 
 
@@ -17,13 +18,27 @@ use super::{Priority, Role, RoleState, RoleStateImpl};
 pub struct Imposter{
     pub backup: Option<PlayerReference>,
     pub fake_role: Role,
+    attack_target: Option<PlayerReference>
 }
-
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RoleActionChoice{
+    action: ImposterAction
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[serde(tag = "type")]
+pub enum ImposterAction{
+    SetBackup{backup: Option<PlayerReference>},
+    SetAttack{target: Option<PlayerReference>},
+    SetFakeRole{role: Role}
+}
 impl Default for Imposter {
     fn default() -> Self {
         Self {
             backup: None,
             fake_role: Role::Jester,
+            attack_target: None
         }
     }
 }
@@ -34,6 +49,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Imposter {
     type ClientRoleState = Imposter;
+    type RoleActionChoice = RoleActionChoice;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         
         if priority != Priority::Kill {return}
@@ -63,51 +79,70 @@ impl RoleStateImpl for Imposter {
             );
         }        
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref) &&
-        game.day_number() > 1
-    }
-    fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
-        if let Some(old_target_ref) = self.backup {
-            if old_target_ref == target_ref {
-                actor_ref.set_role_state(game, RoleState::Imposter(Imposter{backup: None, ..self}));
-            } else {
-                actor_ref.set_role_state(game, RoleState::Imposter(Imposter{backup: Some(target_ref), ..self}));
-            }
-        } else {
-            actor_ref.set_role_state(game, RoleState::Imposter(Imposter{backup: Some(target_ref), ..self}));
-        }
+    fn on_role_action(mut self, game: &mut Game, actor_ref: PlayerReference, action_choice: Self::RoleActionChoice) {
+        match action_choice.action {
+            ImposterAction::SetBackup { backup } => {
+                self.backup = match backup {
+                    Some(backup) => {
+                        if !(
+                            actor_ref != backup &&
+                            actor_ref.alive(game) &&
+                            backup.alive(game) &&
+                            backup.role(game).faction() == Faction::Mafia
+                        ){
+                            return;
+                        }
+                        Some(backup)
+                    },
+                    None => {
+                        None
+                    }
+                };
+                game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackup { backup: self.backup.clone().map(|p|p.index()) });
+                actor_ref.set_role_state(game, self);
 
-        let RoleState::Imposter(Imposter { backup, .. }) = *actor_ref.role_state(game) else {
-            unreachable!("Role was just set to Imposter");
-        };
-
-        game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackup { backup: backup.map(|p|p.index()) });
-
-        for player_ref in PlayerReference::all_players(game){
-            if player_ref.role(game).faction() != Faction::Mafia{
-                continue;
-            }
-            player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
-        }
-
-        if let Some(backup) = backup {
-            for player_ref in PlayerReference::all_players(game){
-                if player_ref.role(game).faction() != Faction::Mafia {
-                    continue;
+                for player_ref in PlayerReference::all_players(game){
+                    if player_ref.role(game).faction() != Faction::Mafia{
+                        continue;
+                    }
+                    player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
                 }
-                player_ref.push_player_tag(game, backup, Tag::GodfatherBackup);
-            }
+
+                if let Some(backup) = backup {
+                    for player_ref in PlayerReference::all_players(game){
+                        if player_ref.role(game).faction() != Faction::Mafia {
+                            continue;
+                        }
+                        player_ref.push_player_tag(game, backup, Tag::GodfatherBackup);
+                    }
+                }
+            },
+            ImposterAction::SetAttack { target } => {
+                if game.current_phase().phase() != crate::game::phase::PhaseType::Night {return};
+                self.attack_target = match target {
+                    Some(target) => {
+                        if 
+                            crate::game::role::common_role::default_action_choice_one_player_is_valid(game, actor_ref, Some(target), false) &&
+                            game.day_number() > 1
+                        {
+                            Some(target)
+                        }else{
+                            None
+                        }
+                    },
+                    None => {
+                        None
+                    },
+                };
+                actor_ref.set_role_state(game, self);
+            },
+            ImposterAction::SetFakeRole { role } => {
+                Imposter::set_role(game, actor_ref, role);
+            },
         }
-        
     }
-    fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        actor_ref != target_ref &&
-        actor_ref.alive(game) && target_ref.alive(game) &&
-        target_ref.role(game).faction() == Faction::Mafia
-    }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
+    fn create_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_action_choice_to_visits(&RoleActionChoiceOnePlayer{player: self.attack_target}, true)
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: crate::game::grave::GraveReference) {
         if grave.deref(game).player == actor_ref {
@@ -142,6 +177,13 @@ impl RoleStateImpl for Imposter {
         else if self.backup.is_some_and(|p|p == dead_player_ref) {
             actor_ref.set_role_state(game, RoleState::Imposter(Imposter{backup: None, ..self}));
         }
+    }
+    
+    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: crate::game::phase::PhaseType) {
+        actor_ref.set_role_state(game, Imposter{
+            attack_target: None,
+            ..self
+        });
     }
 }
 

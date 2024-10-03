@@ -40,7 +40,13 @@ export default function ImposterMenu(): ReactElement {
                 value={savedFakeRole??"jester"} 
                 enabledRoles={allChoosableRoles}
                 onChange={(role)=>{
-                    GAME_MANAGER.sendRetrainerRetrain(role);
+                    GAME_MANAGER.sendRoleActionChoice({
+                        type: "imposter", 
+                        action: {
+                            type: "setFakeRole",
+                            role: role
+                        }
+                    })
                 }}
             />
         </>}
