@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender}, components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, recruiter::RecruiterAction, retrainer::Retrainer, Role, RoleState}, role_list::{Faction, RoleSet}, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{imposter::Imposter, kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, recruiter::RecruiterAction, retrainer::Retrainer, Role, RoleState}, role_list::{Faction, RoleSet}, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
 
@@ -374,7 +374,15 @@ impl Game {
                 }
             },
             ToServerPacket::RetrainerRetrain { role } => {
-                Retrainer::retrain(self, sender_player_ref, role);
+                match sender_player_ref.role_state(self) {
+                    RoleState::Retrainer(..) => {
+                        Retrainer::retrain(self, sender_player_ref, role);
+                    },
+                    RoleState::Imposter(..) => {
+                        Imposter::set_role(self, sender_player_ref, role);
+                    },
+                    _ => {}
+                }
             },
             ToServerPacket::SetStewardRoleChosen { role } => {
                 if let RoleState::Steward(mut steward) = sender_player_ref.role_state(self).clone(){
