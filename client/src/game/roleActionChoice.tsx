@@ -20,7 +20,8 @@ export type RoleActionChoice =
 ) |
 ({boolean: boolean} & (
     {type: "armorsmith"}|
-    {type: "veteran"}
+    {type: "veteran"}|
+    {type: "martyr"}
 )) |
 ({player: PlayerIndex | null} & (
         {type: "detective"}|{type: "tracker"}|{type: "lookout"}|{type: "spy"}|{type: "snoop"}|{type: "gossip"}|
@@ -33,7 +34,7 @@ export type RoleActionChoice =
 
         {type: "pyrolisk"}|{type: "werewolf"}|{type: "arsonist"}|
 
-        {type: "apostle"}|{type: "zealot"}|{type: "martyr"}|
+        {type: "apostle"}|{type: "zealot"}|
 
         {type: "scarecrow"}|{type: "death"}|{type: "jester"}
 )) | 
