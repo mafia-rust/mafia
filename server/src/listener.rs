@@ -18,7 +18,7 @@ struct ListenerClient {
     last_ping: tokio::time::Instant,
 }
 impl ListenerClient{
-    const PING_INTERVAL: Duration = Duration::from_secs(5);
+    const PONG_INTERVAL: Duration = Duration::from_secs(5);
 
     fn new(connection: Connection) -> Self {
         Self {
@@ -28,11 +28,15 @@ impl ListenerClient{
         }
     }
     fn on_ping(&mut self) {
-        self.connection.send(ToClientPacket::Pong);
         self.last_ping = tokio::time::Instant::now();
     }
     fn ping_timed_out(&self) -> bool {
-        self.last_ping.elapsed() > Self::PING_INTERVAL.mul(2)
+        self.last_ping.elapsed() > Self::PONG_INTERVAL.mul(2)
+    }
+    fn tick(&mut self) {
+        if self.last_ping + Self::PONG_INTERVAL < tokio::time::Instant::now() {
+            self.connection.send(ToClientPacket::Pong);
+        }
     }
 }
 
@@ -59,7 +63,7 @@ impl Listener{
     }
 
     pub fn start(listener: Arc<Mutex<Self>>) {
-        const DESIRED_FRAME_TIME: Duration = Duration::from_millis(1000);
+        const DESIRED_FRAME_TIME: Duration = Duration::from_secs(1);
 
         tokio::spawn(async move {
             let mut frame_start_time = tokio::time::Instant::now();
@@ -81,7 +85,7 @@ impl Listener{
         let mut closed_lobbies = Vec::new();
         let mut closed_clients = Vec::new();
                     
-        let Listener { ref mut lobbies, ref clients} = *self;
+        let Listener { ref mut lobbies, ref mut clients} = *self;
 
         // log!(info "Listener"; "lobbies: {:?} players: {:?}", lobbies.keys(), _players.len());
 
@@ -93,19 +97,20 @@ impl Listener{
             }
         }
 
-        for (client_address, listener_client) in clients{
+        for (client_address, listener_client) in clients.iter_mut(){
+            listener_client.tick();
             if listener_client.ping_timed_out() {
                 closed_clients.push(*client_address);
             }
         }
 
         for key in closed_lobbies {
-            log!(important "Lobby"; "Closed {key}");
+            log!(important "Lobby"; "Closed {key} due to lobby closed");
             self.delete_lobby(key);
         }
         for key in closed_clients {
-            log!(important "Connection"; "Closed {key}");
-            let _ = self.delete_player(&key);
+            log!(important "Connection"; "Closed {key} due to ping timed out");
+            let _ = self.delete_player(&key, true);
         }
     }
 
@@ -121,16 +126,19 @@ impl Listener{
         Some(room_code)
     }
     fn delete_lobby(&mut self, room_code: RoomCode){
-        let players_to_remove: Vec<_> = self.clients.iter().filter(|p| 
-            if let ListenerClientLocation::InLobby{room_code: player_room_code, ..} = p.1.location {
-                player_room_code == room_code 
-            }else{
-                false
-            }
-        ).map(|f|*f.0).collect();
+        let clients_to_remove: Vec<_> = self.clients.iter()
+            .filter(|p| 
+                if let ListenerClientLocation::InLobby{room_code: player_room_code, ..} = p.1.location {
+                    player_room_code == room_code 
+                }else{
+                    false
+                }
+            )
+            .map(|f|*f.0)
+            .collect();
 
-        for player in players_to_remove{
-            self.set_player_outside_lobby(&player, false);
+        for client_address in clients_to_remove{
+            self.set_player_outside_lobby(&client_address, false);
         }
         self.lobbies.remove(&room_code);
     }
@@ -181,10 +189,8 @@ impl Listener{
     }
     //returns if player was in the lobby
     fn set_player_outside_lobby(&mut self, address: &SocketAddr, rejoinable: bool) -> bool {
-        let Some(listener_client) = self.clients
-            .get_mut(address)
-        else{
-            log!(error "Listener"; "{} {}", "Attempted leave a non player that isn't in the map", address);
+        let Some(listener_client) = self.clients.get_mut(address) else {
+            log!(error "Listener"; "{} {}", "Attempted set_player_outside_lobby with address that isn't in the map", address);
             return false;
         };
         listener_client.connection.send(ToClientPacket::ForcedOutsideLobby);
@@ -201,11 +207,11 @@ impl Listener{
     }
     
     pub fn create_player(&mut self, connection: &Connection) {
-        let _ = self.delete_player(connection.get_address());
+        let _ = self.delete_player(connection.get_address(), true);
         self.clients.insert(*connection.get_address(), ListenerClient::new(connection.clone()));
     }
 
-    pub fn delete_player(&mut self, address: &SocketAddr) -> Result<(), &'static str> {
+    pub fn delete_player(&mut self, address: &SocketAddr, rejoinable: bool) -> Result<(), &'static str> {
         let Some(listener_client) = self.clients
             .remove(address)
         else{
@@ -213,11 +219,16 @@ impl Listener{
         };
 
         //This produces a warning in the logs because sometimes the player is already disconnected
-        //This ToClientPacket is still useful in the *rare* (i think impossible but not sure) case that the player is still connected when they're being forced to disconnect
+        //This ToClientPacket is still useful in the *rare* case that the player is still connected when they're being forced to disconnect
+        //A player can be forced to disconnect if a seperate connection is made with the same ip and port address
         listener_client.connection.send(ToClientPacket::ForcedDisconnect);
         if let ListenerClientLocation::InLobby { room_code, lobby_client_id } = listener_client.location {
             if let Some(lobby) = self.lobbies.get_mut(&room_code) {
-                lobby.remove_player(lobby_client_id)
+                if rejoinable {
+                    lobby.remove_player_rejoinable(lobby_client_id);
+                }else{
+                    lobby.remove_player(lobby_client_id)
+                }
             }
         }
 

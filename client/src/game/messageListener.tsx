@@ -27,8 +27,11 @@ export default function messageListener(packet: ToClientPacket){
 
     switch(packet.type) {
         case "pong":
-            GAME_MANAGER.pingCalculation = Date.now() - GAME_MANAGER.lastPingTime;
-            console.log("Ping: "+GAME_MANAGER.pingCalculation);
+            if (GAME_MANAGER.state.stateType !== "disconnected") {
+                GAME_MANAGER.server.sendPacket({
+                    type: "ping"
+                });
+            }
         break;
         case "rateLimitExceeded":
             ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rateLimitExceeded"), body: "" });
