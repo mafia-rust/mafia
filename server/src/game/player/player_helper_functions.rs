@@ -210,7 +210,7 @@ impl PlayerReference{
             self.night_visits(game).clone()
         }
     }
-    pub fn appeared_visitors(self, game: &Game) -> Vec<PlayerReference> {
+    pub fn all_appeared_visitors(self, game: &Game) -> Vec<PlayerReference> {
         PlayerReference::all_players(game).filter(|player_ref|{
             player_ref.tracker_seen_visits(game).iter().any(|other_visit| 
                 other_visit.target == self

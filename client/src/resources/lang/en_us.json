@@ -878,6 +878,8 @@
     "chatMessage.informantResult.visited.nobody": "Your target didn't visit anybody",
     "chatMessage.informantResult.visitedBy": "Your target was visited by \\0",
     "chatMessage.informantResult.visitedBy.nobody": "Your target was not visited by anybody.",
+    "chatMessage.framerResult": "\\0 was visited by townies with these roles: \\1.",
+    "chatMessage.framerResult.nobody": "\\0 was not visited by any townies.",
     "chatMessage.scarecrowResult": "You wardblocked these players: \\0.",
     "chatMessage.scarecrowResult.nobody": "You didn't wardblock anybody.",
     "chatMessage.wildcardConvertFailed": "You failed to convert to the role \\0. The role might have been disabled or taken.",
@@ -911,7 +913,7 @@
 
     "wiki.article.standard.town.title": "Town",
     "wiki.article.standard.town.title:var.0":"Good",
-    "wiki.article.standard.town.text": "Town is the main good faction. Usually, the majority of the players in each game are townies. They don't start knowing who each other are, unlike the mafia or the cult. Town wins by eliminating all opposing teams (mafia, cult, arsonist, werewolf, etc). Town needs to work together to find out who the evils are. Their main power is in communication and voting, so if you are a townie who does not communicate, you are not helping your team win.",
+    "wiki.article.standard.town.text": "Town is the main good faction. Usually, the majority of the players in each game are townies. They don't start knowing who each other are, unlike the mafia or the cult. Town wins by eliminating all opposing teams (mafia, cult, arsonist, werewolf, etc). The townies need to work together to find out who the evils are. Their main power is in communication and voting, so if you are a townie who does not communicate, you are not helping your team win.",
     "wiki.article.standard.mafia.title": "Mafia",
     "wiki.article.standard.mafia.text": "The Mafia is the main evil faction. There are fewer mafia members than townies, but they know who each other are. The mafia wins by eliminating all opposing teams. The mafia kills and lies to get people to execute innocent townies in order to get rid of the town. The mafia can communicate at night to create strategies and help each other lie. Most mafia roles can't select each other to use their ability. The mafia always has a godfather who attacks someone each night. If the godfather dies, a new mafia member becomes the godfather.",
     "wiki.article.standard.neutral.title": "Neutral",
@@ -1434,10 +1436,10 @@
     "wiki.article.role.forger.attributes":"* You only have 3 uses of your ability\n- You can copy paste chat messages",
     "wiki.article.role.forger.extra":"* If you visit a player to attempt to forge them, it costs an ability use, even if they don't die\n* If you are blocked, it doesn't cost an ability use\n* You can't target other mafia members",
 
-    "wiki.article.role.framer.guide": "- At night, select a player to frame\n    - The player you visit will have a suspicious aura (appears to be evil to investigative roles)\n- If you select 2 players\n    - The first one is given a suspicious aura\n    -  Investigative roles (Like tracker and lookout) see that the first player visited second one\n\n_For example_\n- You select @15 and @12. The godfather selects @12. A separate tracker selects @15 and sees that @15 visits @12. Since @12 dies, the tracker might think that @15 was the killer\n\nTry to frame players who already look a little suspicious so town investigative players might choose them.",
-    "wiki.article.role.framer.abilities":"* Visit a player to give them a suspicious aura for the night\n* Visit 2 players to\n  * give the first player you visit a suspicious aura for the night\n  * make the first player appear to visit the second player you visit",
-    "wiki.article.role.framer.attributes":"",
-    "wiki.article.role.framer.extra":"-A suspicious aura will make the player with it look suspicious to a Detective, they can appear as the evil player to a Psychic, and they will be enemies with everyone to a Philosopher\n* You can't select other mafia members for your first target, but you can select any player for your second target, including dead players and other mafia members\n* For more information, see appeared visits",
+    "wiki.article.role.framer.guide": "- At night, select a player to frame\n    - The player you visit will have a suspicious aura (appears to be evil to investigative roles)\n- If you select 2 players\n    - The first one is given a suspicious aura\n    -  Investigative roles (Like tracker and lookout) see that the first player visited second one\n- If there is an alive framer who is not blocked then each mafia member is told the roles of all townies that visited them, and all other mafia members.\n\n_For example_\n- You select @15 and @12. The godfather selects @12. A separate tracker selects @15 and sees that @15 visits @12. Since @12 dies, the tracker might think that @15 was the killer\n\nTry to frame players who already look a little suspicious so town investigative players might choose them.",
+    "wiki.article.role.framer.abilities":"* Visit a player to give them a suspicious aura for the night\n* Visit 2 players to\n  * give the first player you visit a suspicious aura for the night\n  * make the first player appear to visit the second player you visit\n - If there is an alive framer who is not blocked then each mafia member is told the roles of all townies that visited each mafia member.",
+    "wiki.article.role.framer.attributes":"- You can't frame other mafia members\n - Your ability to see roles of townies may be messed with by appeared visits",
+    "wiki.article.role.framer.extra":" - A suspicious aura will make the player with it look suspicious to a Detective, they can appear as the evil player to a Psychic, and they will be enemies with everyone to a Philosopher\n * You can't select other mafia members for your first target, but you can select any player for your second target, including dead players and other mafia members\n* For more information, see appeared visits",
 
     "wiki.article.role.cupid.guide": "- At night, select 2 players to love link\n* The players are told they are love linked, if one of them dies, the other dies of a broken heart",
     "wiki.article.role.cupid.abilities":"- Visit 2 players to love link them\n    - If one of them dies, the other dies of a broken heart immediately\n    - If one of the players you visit dies on the night you try to love link them, they don't link.",
