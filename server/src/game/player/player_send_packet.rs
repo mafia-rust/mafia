@@ -88,6 +88,9 @@ impl PlayerReference{
         self.send_available_buttons(game);
 
         self.send_packets(game, vec![
+            ToClientPacket::YourSendChatGroups {
+                send_chat_groups: self.get_current_send_chat_groups(game).into_iter().collect()
+            },
             ToClientPacket::YourPlayerIndex { 
                 player_index: self.index() 
             },
