@@ -46,6 +46,9 @@ pub enum ToClientPacket{
     
     #[serde(rename_all = "camelCase")]
     RateLimitExceeded,
+    
+    ForcedDisconnect,
+    ForcedOutsideLobby,
 
     // Pre lobby
     #[serde(rename_all = "camelCase")]

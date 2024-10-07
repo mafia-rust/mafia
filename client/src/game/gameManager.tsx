@@ -16,6 +16,13 @@ import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import AudioController from "../menu/AudioController";
+
+
+//The server checks to make sure that pings are being sent every 2 * PING_INTERVAL_MS.
+//So if this value is changed, the server should be updated as well.
+const PING_INTERVAL_MS = 5 * 1000;
+
+
 export function createGameManager(): GameManager {
 
     console.log("Game manager created.");
@@ -212,7 +219,7 @@ export function createGameManager(): GameManager {
                 this.server.sendPacket({ type: "leave" });
             }
             deleteReconnectData();
-            this.setOutsideLobbyState();
+            this.setDisconnectedState();
             ANCHOR_CONTROLLER?.setContent(<PlayMenu/>);
         },
 
@@ -595,7 +602,7 @@ export function createGameManager(): GameManager {
         pingCalculation: 0,
         tick(timePassedMs) {
             if (gameManager.state.stateType !== "disconnected") {
-                if(gameManager.lastPingTime + (30 * 1000) < Date.now()){
+                if(gameManager.lastPingTime + PING_INTERVAL_MS < Date.now()){
                     gameManager.lastPingTime = Date.now();
                     this.server.sendPacket({
                         type: "ping"
