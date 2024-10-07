@@ -24,7 +24,7 @@ impl RoleStateImpl for Lookout {
 
         if let Some(visit) = actor_ref.night_visits(game).first(){
             
-            let mut seen_players: Vec<PlayerReference> = visit.target.appeared_visitors(game).into_iter().filter(|p|actor_ref!=*p).collect();
+            let mut seen_players: Vec<PlayerReference> = visit.target.all_appeared_visitors(game).into_iter().filter(|p|actor_ref!=*p).collect();
             seen_players.shuffle(&mut thread_rng());
 
             let message = ChatMessageVariant::LookoutResult { players:
