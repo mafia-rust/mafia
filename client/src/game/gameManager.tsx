@@ -16,6 +16,7 @@ import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import AudioController from "../menu/AudioController";
+
 export function createGameManager(): GameManager {
 
     console.log("Game manager created.");
@@ -212,7 +213,7 @@ export function createGameManager(): GameManager {
                 this.server.sendPacket({ type: "leave" });
             }
             deleteReconnectData();
-            this.setOutsideLobbyState();
+            this.setDisconnectedState();
             ANCHOR_CONTROLLER?.setContent(<PlayMenu/>);
         },
 
@@ -591,17 +592,7 @@ export function createGameManager(): GameManager {
             messageListener(serverMessage);
         },
 
-        lastPingTime: 0,
-        pingCalculation: 0,
         tick(timePassedMs) {
-            if (gameManager.state.stateType !== "disconnected") {
-                if(gameManager.lastPingTime + (30 * 1000) < Date.now()){
-                    gameManager.lastPingTime = Date.now();
-                    this.server.sendPacket({
-                        type: "ping"
-                    });
-                }
-            }
             if (gameManager.state.stateType === "game") {
                 if (!gameManager.state.ticking) return;
 
