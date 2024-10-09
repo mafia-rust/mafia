@@ -28,7 +28,7 @@ impl RoleStateImpl for Informant {
         if let Some(visit) = actor_ref.night_visits(game).first(){
             let target_ref = visit.target;
 
-            let mut visited_by: Vec<PlayerReference> =  visit.target.appeared_visitors(game).into_iter().filter(|p|actor_ref!=*p).collect();
+            let mut visited_by: Vec<PlayerReference> =  visit.target.all_appeared_visitors(game).into_iter().filter(|p|actor_ref!=*p).collect();
             visited_by.shuffle(&mut thread_rng());
 
             let mut visited: Vec<PlayerReference> = target_ref.tracker_seen_visits(game).iter().map(|v|v.target).collect();

@@ -17,6 +17,8 @@ import LobbyMenu from "../menu/lobby/LobbyMenu";
 import LoadingScreen from "../menu/LoadingScreen";
 import AudioController from "../menu/AudioController";
 import NightMessagePopup from "../components/NightMessagePopup";
+import PlayMenu from "../menu/main/PlayMenu";
+import StartMenu from "../menu/main/StartMenu";
 
 export default function messageListener(packet: ToClientPacket){
 
@@ -25,12 +27,23 @@ export default function messageListener(packet: ToClientPacket){
 
     switch(packet.type) {
         case "pong":
-            GAME_MANAGER.pingCalculation = Date.now() - GAME_MANAGER.lastPingTime;
-            console.log("Ping: "+GAME_MANAGER.pingCalculation);
+            if (GAME_MANAGER.state.stateType !== "disconnected") {
+                GAME_MANAGER.server.sendPacket({
+                    type: "ping"
+                });
+            }
         break;
         case "rateLimitExceeded":
             ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rateLimitExceeded"), body: "" });
         break;
+        case "forcedOutsideLobby":
+            GAME_MANAGER.setOutsideLobbyState();
+            ANCHOR_CONTROLLER?.setContent(<PlayMenu/>);
+        break;
+        case "forcedDisconnect":
+            GAME_MANAGER.setDisconnectedState();
+            ANCHOR_CONTROLLER?.setContent(<StartMenu/>);
+        break
         case "lobbyList":
             if(GAME_MANAGER.state.stateType === "outsideLobby"){
                 GAME_MANAGER.state.lobbies = new Map();

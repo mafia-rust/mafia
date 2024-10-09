@@ -72,8 +72,26 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
     }
 
     match game.current_phase() {
-        PhaseState::Briefing |
-        PhaseState::Obituary => HashSet::new(),
+        PhaseState::Briefing => HashSet::new(),
+        PhaseState::Obituary => {
+            let mut evil_chat_groups = HashSet::new();
+
+            if PuppeteerMarionette::marionettes_and_puppeteer(game).contains(&actor_ref) {
+                evil_chat_groups.insert(ChatGroup::Puppeteer);
+            }
+
+            match actor_ref.role(game).faction() {
+                Faction::Mafia => {
+                    evil_chat_groups.insert(ChatGroup::Mafia);
+                },
+                Faction::Cult => {
+                    evil_chat_groups.insert(ChatGroup::Cult);
+                },
+                _ => {}
+            }
+
+            evil_chat_groups
+        },
         PhaseState::Discussion 
         | PhaseState::Nomination {..}
         | PhaseState::Judgement {..} 
@@ -118,7 +136,7 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
                 vec![ChatGroup::Jail]
             }else{
                 
-                if PuppeteerMarionette::marionettes_and_puppeteer(game).contains(&actor_ref) && PhaseType::Night == game.current_phase().phase(){
+                if PuppeteerMarionette::marionettes_and_puppeteer(game).contains(&actor_ref){
                     night_chat_groups.push(ChatGroup::Puppeteer);
                 }
 

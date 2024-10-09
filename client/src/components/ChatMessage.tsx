@@ -583,6 +583,17 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                     ? translate("chatMessage.informantResult.visitedBy.nobody") 
                     : translate("chatMessage.informantResult.visitedBy", playerListToString(message.visitedBy, playerNames))
             );
+        case "framerResult":
+            const mafiaMemberName = playerNames[message.mafiaMember];
+            const visitorRoles = message.visitors.map((role) => translate("role."+role+".name"));
+
+            if(message.visitors.length === 0){
+                return translate("chatMessage.framerResult.nobody", mafiaMemberName);
+            }
+            return translate("chatMessage.framerResult",
+                mafiaMemberName,
+                visitorRoles.join(", ")
+            );
         case "scarecrowResult":
             if(message.players.length === 0){
                 return translate("chatMessage.scarecrowResult.nobody");
@@ -931,6 +942,10 @@ export type ChatMessageVariant = {
     role: Role,
     visitedBy: PlayerIndex[],
     visited: PlayerIndex[]
+} | {
+    type: "framerResult", 
+    mafiaMember: PlayerIndex,
+    visitors: Role[]
 } | {
     type: "scarecrowResult",
     players: PlayerIndex[]

@@ -20,6 +20,10 @@ export type ToClientPacket = {
 } | {
     type: "rateLimitExceeded",
 } | {
+    type: "forcedOutsideLobby"
+} | {
+    type: "forcedDisconnect"
+} | {
     type: "lobbyList",
     lobbies: Record<number, LobbyPreviewData>,
 } | {
