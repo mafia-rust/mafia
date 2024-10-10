@@ -171,7 +171,7 @@ function VerdictButton(props: Readonly<{ verdict: Verdict }>) {
     </Button>
 }
 
-function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactElement {
+function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactElement | null {
     const roleState = usePlayerState(
         clientState => clientState.roleState,
         ["yourRoleState"]

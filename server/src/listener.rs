@@ -249,7 +249,7 @@ impl Listener{
     }
 
     pub fn on_disconnect(&mut self, connection: Connection) -> Result<(), &'static str> {
-        self.set_player_outside_lobby(connection.get_address(), true);
+        let _ = self.delete_player(connection.get_address(), true);
         Ok(())
     }
 
