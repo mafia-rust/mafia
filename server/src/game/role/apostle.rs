@@ -46,7 +46,7 @@ impl RoleStateImpl for Apostle {
                     return
                 }
 
-                target_ref.set_role(game, Zealot);
+                target_ref.set_role_and_wincon(game, Zealot);
                 target_ref.set_win_condition(game, WinCondition::new_single_resolution_state(ResolutionState::Cult));
                 Cult::set_ability_used_last_night(game, Some(CultAbility::Convert));
             }

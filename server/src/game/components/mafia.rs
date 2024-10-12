@@ -67,7 +67,7 @@ impl Mafia{
         let random_mafia = all_living_mafia.choose(&mut rand::thread_rng());
         
         if let Some(random_mafia) = random_mafia {
-            random_mafia.set_role(game, role);
+            random_mafia.set_role_and_wincon(game, role);
         }
     }
 }

@@ -204,7 +204,7 @@ impl Game {
         //on role creation needs to be called after all players roles are known
         for player_ref in PlayerReference::all_players(&game){
             let role_data_copy = player_ref.role_state(&game).clone();
-            player_ref.set_role(&mut game, role_data_copy);
+            player_ref.set_role_and_wincon(&mut game, role_data_copy);
         }
 
         for player_ref in PlayerReference::all_players(&game){
@@ -478,7 +478,7 @@ pub mod test {
         //on role creation needs to be called after all players roles are known
         for player_ref in PlayerReference::all_players(&game){
             let role_data_copy = player_ref.role_state(&game).clone();
-            player_ref.set_role(&mut game, role_data_copy);
+            player_ref.set_role_and_wincon(&mut game, role_data_copy);
         }
 
         OnGameStart::invoke(&mut game);
