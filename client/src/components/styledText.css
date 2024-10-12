@@ -42,6 +42,9 @@
 .keyword-neutral {
     color: rgb(255, 200, 252);
 }
+.keyword-minions {
+    color: rgb(157, 85, 224);
+}
 .keyword-fiends {
     color: orange;
 }

@@ -142,7 +142,7 @@ export type RoleState = {
 } | {
     type: "framer"
 } | {
-    type: "witch"
+    type: "mafiaWitch"
 } | {
     type: "necromancer"
 } | {
@@ -157,7 +157,7 @@ Doomsayer
 | {
     type: "politician"
 } | {
-    type: "minion"
+    type: "witch"
 } | {
     type: "scarecrow"
 } | {

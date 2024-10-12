@@ -69,13 +69,13 @@ impl DoomsayerGuess{
             Role::Counterfeiter | Role::Retrainer | Role::Recruiter | Role::Imposter | Role::MafiaKillingWildcard |
             Role::MadeMan |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
-            Role::Witch | Role::Necromancer | Role::Consort |
+            Role::MafiaWitch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 
             Role::Cupid | Role::MafiaSupportWildcard => Some(DoomsayerGuess::Mafia),
 
             //Neutral
             Role::Jester | Role::Revolutionary | Role::Politician |
-            Role::Doomsayer | Role::Death | Role::Minion | Role::Scarecrow |
+            Role::Doomsayer | Role::Death | Role::Witch | Role::Scarecrow |
             Role::Wildcard | Role::TrueWildcard => Some(DoomsayerGuess::Neutral),
             Role::Martyr => None,
 

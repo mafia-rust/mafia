@@ -114,7 +114,7 @@ macros::roles! {
     Hypnotist : hypnotist,
     Blackmailer : blackmailer,
     Informant: informant,
-    Witch : witch,
+    MafiaWitch : mafia_witch,
     Necromancer : necromancer,
     Mortician : mortician,
     Framer : framer,
@@ -127,7 +127,7 @@ macros::roles! {
     Revolutionary : revolutionary,
     Politician : politician,
 
-    Minion : minion,
+    Witch : witch,
     Scarecrow : scarecrow,
     Doomsayer : doomsayer,
     Death : death,
@@ -362,8 +362,8 @@ impl Role{
             | Role::Bouncer
             | Role::Veteran
             | Role::Transporter | Role::Retributionist
-            | Role::Minion | Role::Doomsayer | Role::Scarecrow
-            | Role::Witch | Role::Necromancer
+            | Role::Witch | Role::Doomsayer | Role::Scarecrow
+            | Role::MafiaWitch | Role::Necromancer
             | Role::Ojo => true,
             _ => false,
         }
@@ -373,8 +373,8 @@ impl Role{
             Role::Bouncer |
             Role::Veteran | 
             Role::Transporter | Role::Escort | Role::Retributionist | 
-            Role::Jester | Role::Minion | Role::Scarecrow |
-            Role::Hypnotist | Role::Consort | Role::Witch | Role::Necromancer => true,
+            Role::Jester | Role::Witch | Role::Scarecrow |
+            Role::Hypnotist | Role::Consort | Role::MafiaWitch | Role::Necromancer => true,
             _ => false,
         }
     }

@@ -724,7 +724,7 @@
             }
         ]
     },
-    "witch": {
+    "mafiaWitch": {
         "faction": "mafia",
         "roleSet": "mafiaSupport",
         "armor": false,
@@ -787,7 +787,7 @@
     },
     "jester": {
         "faction": "neutral",
-        "roleSet": "neutralEvil",
+        "roleSet": null,
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -799,7 +799,7 @@
     },
     "revolutionary": {
         "faction": "neutral",
-        "roleSet": "neutralEvil",
+        "roleSet": null,
         "armor": true,
         "aura": null,
         "maxCount": null,
@@ -812,7 +812,7 @@
     },
     "politician":{
         "faction": "neutral",
-        "roleSet": "neutralEvil",
+        "roleSet": null,
         "armor": true,
         "aura": null,
         "maxCount": null,
@@ -824,7 +824,7 @@
     },
     "doomsayer":{
         "faction": "neutral",
-        "roleSet": "neutralEvil",
+        "roleSet": null,
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -835,9 +835,9 @@
             {"type": "doomsayerFailed"}
         ]
     },
-    "minion":{
+    "witch":{
         "faction": "neutral",
-        "roleSet": "neutralEvil",
+        "roleSet": "minions",
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -855,7 +855,7 @@
     },
     "scarecrow":{
         "faction": "neutral",
-        "roleSet": "neutralEvil",
+        "roleSet": "minions",
         "armor": false,
         "aura": null,
         "maxCount": null,
