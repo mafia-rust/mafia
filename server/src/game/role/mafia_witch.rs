@@ -1,32 +1,30 @@
 use serde::Serialize;
 
-use crate::game::win_condition::WinCondition;
-use crate::game::{attack_power::DefensePower, grave::Grave};
-use crate::game::phase::PhaseType;
+use crate::game::{attack_power::DefensePower, phase::PhaseType};
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
-use crate::game::Game;
-use super::{GetClientRoleState, Priority, RoleState, RoleStateImpl};
 
+use crate::game::Game;
+use super::{same_evil_team, GetClientRoleState, Priority, RoleState, RoleStateImpl};
+
+pub(super) const FACTION: Faction = Faction::Mafia;
+pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 #[derive(Clone, Debug, Default)]
-pub struct Minion{
+pub struct MafiaWitch{
     currently_used_player: Option<PlayerReference> 
 }
 
 #[derive(Clone, Debug, Serialize)]
 pub struct ClientRoleState;
 
-pub(super) const FACTION: Faction = Faction::Neutral;
-pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::None;
-
-impl RoleStateImpl for Minion {
+impl RoleStateImpl for MafiaWitch {
     type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
-            actor_ref.set_role_state(game, RoleState::Minion(Minion{
+            actor_ref.set_role_state(game, RoleState::MafiaWitch(MafiaWitch{
                 currently_used_player: Some(currently_used_player)
             }))
         }
@@ -36,8 +34,8 @@ impl RoleStateImpl for Minion {
         actor_ref.alive(game) &&
         target_ref.alive(game) &&
         ((
-            actor_ref != target_ref &&
-            actor_ref.selection(game).is_empty()
+            actor_ref.selection(game).is_empty() &&
+            !same_evil_team(game, actor_ref, target_ref)
         ) || (
             actor_ref.selection(game).len() == 1
         ))
@@ -53,24 +51,12 @@ impl RoleStateImpl for Minion {
         }
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
-        if
-            actor_ref.alive(game) &&
-            PlayerReference::all_players(game)
-                .filter(|p|p.alive(game))
-                .filter(|p|p.keeps_game_running(game))
-                .all(|p|
-                    WinCondition::can_win_together(&p.win_condition(game), actor_ref.win_condition(game))
-                )
-
-        {
-            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
-        }
         if phase == PhaseType::Night {
-            actor_ref.set_role_state(game, RoleState::Minion(Minion { currently_used_player: None }));
+            actor_ref.set_role_state(game, RoleState::MafiaWitch(MafiaWitch { currently_used_player: None }));
         }
     }
 }
-impl GetClientRoleState<ClientRoleState> for Minion {
+impl GetClientRoleState<ClientRoleState> for MafiaWitch {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState
     }

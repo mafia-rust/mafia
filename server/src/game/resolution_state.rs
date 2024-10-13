@@ -71,7 +71,7 @@ impl ResolutionState {
     ///Town, Mafia, Cult, NK
     /// Is either town, or has the ability to consistently kill till the end of the game
     /// *has the ability to change what the set of living players win conditions are until game over (convert, marionette, kill)*
-    /// A detective and a minion game never ends
+    /// A detective and a witch game never ends
     pub fn keeps_game_running(role: Role)->bool{
         if role.faction() == Faction::Neutral{
             false
