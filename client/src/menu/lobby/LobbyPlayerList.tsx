@@ -21,7 +21,7 @@ export default function LobbyPlayerList(): ReactElement {
         <LobbyNamePane/>
         <section className="player-list player-list-menu-colors selector-section">
             <h2>{translate("menu.lobby.players")}</h2>
-            <div>
+            <div className="list">
                 <ol>
                     {[...players.entries()]
                         .filter(([_, player]) => player.clientType.type !== "spectator")
@@ -40,6 +40,12 @@ export default function LobbyPlayerList(): ReactElement {
                         )
                     }
                 </ol>
+            </div>
+            <div className="spectators-ready">
+                {translate("menu.lobby.spectatorsReady", 
+                    [...players.values()].filter(p => p.clientType.type === "spectator" && p.ready !== "notReady").length,
+                    [...players.values()].filter(p => p.clientType.type === "spectator").length
+                )}
             </div>
         </section>
     </>
