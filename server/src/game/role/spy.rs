@@ -5,7 +5,7 @@ use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 use crate::game::Game;
 
@@ -23,7 +23,7 @@ pub enum SpyBug{
     Transported, Possessed
 }
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

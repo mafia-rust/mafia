@@ -8,7 +8,7 @@ use crate::game::grave::Grave;
 use crate::game::phase::{PhaseState, PhaseType};
 use crate::game::player::PlayerReference;
 use crate::game::role::RoleState;
-use crate::game::role_list::Faction;
+
 use crate::game::tag::Tag;
 
 use crate::game::Game;
@@ -44,7 +44,7 @@ impl Default for RevolutionaryTarget {
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 

@@ -8,7 +8,7 @@ pub struct Disciple;
 
 pub type ClientRoleState = Disciple;
 
-pub(super) const FACTION: Faction = Faction::Cult;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

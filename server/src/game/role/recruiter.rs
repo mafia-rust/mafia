@@ -40,7 +40,7 @@ pub enum RecruiterAction{
     Kill
 }
 
-pub(super) const FACTION: Faction = Faction::Mafia;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

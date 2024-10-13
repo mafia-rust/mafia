@@ -4,7 +4,7 @@ use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 
 use crate::game::visit::Visit;
 use crate::game::Game;
@@ -14,7 +14,7 @@ use super::{Priority, RoleStateImpl};
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Zealot;
 
-pub(super) const FACTION: Faction = Faction::Cult;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

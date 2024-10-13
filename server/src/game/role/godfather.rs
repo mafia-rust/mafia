@@ -4,7 +4,7 @@ use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
@@ -17,7 +17,7 @@ pub struct Godfather{
     backup: Option<PlayerReference>
 }
 
-pub(super) const FACTION: Faction = Faction::Mafia;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 

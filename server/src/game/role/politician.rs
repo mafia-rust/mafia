@@ -6,7 +6,7 @@ use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 
 use crate::game::Game;
 use super::jester::Jester;
@@ -21,7 +21,7 @@ pub struct Politician{
 #[derive(Debug, Clone, Serialize)]
 pub struct ClientRoleState;
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 

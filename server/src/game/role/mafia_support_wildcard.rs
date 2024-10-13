@@ -23,7 +23,7 @@ impl Default for MafiaSupportWildcard {
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Mafia;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

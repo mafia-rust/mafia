@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::game::attack_power::DefensePower;
 use crate::game::{attack_power::AttackPower, grave::GraveKiller};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 use crate::game::Game;
 use super::{Priority, RoleStateImpl, Role};

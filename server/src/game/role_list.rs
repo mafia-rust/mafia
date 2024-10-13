@@ -144,17 +144,23 @@ impl Ord for RoleOutlineOption {
 }
 
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum RoleSet {
+    Town,
     TownSupport,
     TownKilling,
     TownProtective,
     TownInvestigative,
 
+    Mafia,
     MafiaSupport,
     MafiaKilling,
+
+    Cult,
+    Fiends,
     
+
     Minions
 }
 impl RoleSet{

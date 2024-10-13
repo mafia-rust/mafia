@@ -5,7 +5,7 @@ use crate::game::chat::ChatMessageVariant;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::Game;
 
 use super::jester::Jester;
@@ -97,7 +97,7 @@ impl DoomsayerGuess{
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

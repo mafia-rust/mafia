@@ -208,11 +208,6 @@ mod macros {
                         $(Self::$name => $file::MAXIMUM_COUNT),*
                     }
                 }
-                pub fn faction(&self) -> crate::game::role_list::Faction {
-                    match self {
-                        $(Self::$name => $file::FACTION),*
-                    }
-                }
                 pub fn defense(&self) -> DefensePower {
                     match self {
                         $(Self::$name => $file::DEFENSE),*

@@ -7,7 +7,7 @@ use crate::game::event::before_role_switch::BeforeRoleSwitch;
 use crate::game::grave::GraveInformation;
 use crate::game::grave::GraveReference;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
@@ -22,7 +22,7 @@ pub struct Mortician {
     obscured_players: Vec<PlayerReference>
 }
 
-pub(super) const FACTION: Faction = Faction::Mafia;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

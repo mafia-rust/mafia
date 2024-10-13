@@ -7,7 +7,7 @@ use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::Game;
 
 use super::{Priority, Role, RoleState, RoleStateImpl};

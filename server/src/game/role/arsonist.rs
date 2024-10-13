@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::game::{attack_power::DefensePower, components::arsonist_doused::ArsonistDoused};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 
 use crate::game::Game;

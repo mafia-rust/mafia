@@ -7,7 +7,7 @@ use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 
 use crate::game::Game;
 use super::{RoleStateImpl, Role, RoleState};
@@ -27,7 +27,7 @@ impl Default for Deputy {
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

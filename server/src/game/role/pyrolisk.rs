@@ -7,7 +7,7 @@ use crate::game::chat::ChatMessageVariant;
 use crate::game::event::before_role_switch::BeforeRoleSwitch;
 use crate::game::grave::{GraveInformation, GraveKiller, GraveReference};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 use crate::game::Game;
