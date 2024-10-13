@@ -22,6 +22,8 @@
     "menu.lobby.button.advanced.false": "Advanced view",
     "menu.lobby.field.namePlaceholder": "Enter name",
     "menu.lobby.button.setName": "Set Name",
+    "menu.lobby.button.readyUp": "Ready Up",
+    "menu.lobby.button.unready": "Unready",
     "menu.lobby.players": "Players",
     "menu.lobby.roleList": "Outline List",
     "menu.lobby.enabledRoles": "Enabled Roles",

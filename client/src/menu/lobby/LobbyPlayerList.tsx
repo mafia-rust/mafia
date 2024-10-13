@@ -13,7 +13,7 @@ export default function LobbyPlayerList(): ReactElement {
         ["playersHost", "playersLostConnection", "lobbyClients"]
     )!;
     const host = useLobbyState(
-        lobbyState => lobbyState.players.get(lobbyState.myId!)?.host,
+        lobbyState => lobbyState.players.get(lobbyState.myId!)?.ready === "host",
         ["playersHost", "lobbyClients", "yourId"]
     )!;
 
@@ -29,7 +29,8 @@ export default function LobbyPlayerList(): ReactElement {
                             <li key={id} className={player.connection==="couldReconnect" ? "keyword-dead" : ""}>
                                 <div>
                                     {player.connection === "couldReconnect" && <Icon>signal_cellular_connected_no_internet_4_bar</Icon>}
-                                    {player.host && <Icon>shield</Icon>}
+                                    {player.ready === "host" && <Icon>shield</Icon>}
+                                    {player.ready === "ready" && <Icon>check</Icon>}
                                     {(player.clientType as PlayerClientType).name}
                                 </div>
                                 {host && <button 

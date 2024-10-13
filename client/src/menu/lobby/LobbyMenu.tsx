@@ -26,7 +26,7 @@ export default function LobbyMenu(): ReactElement {
         ["playersHost", "lobbyClients"]
     )!;
     const isHost = useLobbyState(
-        lobbyState => lobbyState.players.get(lobbyState.myId!)?.host,
+        lobbyState => lobbyState.players.get(lobbyState.myId!)?.ready === "host",
         ["playersHost", "lobbyClients", "yourId"]
     )!;
     const mobile = useContext(MobileContext)!;
@@ -152,7 +152,7 @@ function LobbyMenuHeader(props: Readonly<{
 }>): JSX.Element {
     const [lobbyName, setLobbyName] = useState<string>(GAME_MANAGER.state.stateType === "lobby" ? GAME_MANAGER.state.lobbyName : "Mafia Lobby");
     const host = useLobbyState(
-        lobbyState => lobbyState.players.get(lobbyState.myId!)?.host,
+        lobbyState => lobbyState.players.get(lobbyState.myId!)?.ready === "host",
         ["lobbyClients", "yourId", "playersHost"]
     )!;
     const mobile = useContext(MobileContext)!;
