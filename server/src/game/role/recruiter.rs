@@ -217,7 +217,7 @@ impl Recruiter {
                 target_ref.try_night_kill_single_attacker(
                     actor_ref,
                     game,
-                    GraveKiller::Faction(Faction::Mafia),
+                    GraveKiller::RoleSet(RoleSet::Mafia),
                     AttackPower::Basic,
                     false
                 )

@@ -37,7 +37,7 @@ impl RoleStateImpl for Eros {
                     let target_ref = visit.target;
             
                     target_ref.try_night_kill_single_attacker(
-                        actor_ref, game, GraveKiller::Faction(Faction::Mafia), AttackPower::Basic, false
+                        actor_ref, game, GraveKiller::RoleSet(RoleSet::Mafia), AttackPower::Basic, false
                     );
                 }
             }

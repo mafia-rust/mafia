@@ -1043,7 +1043,7 @@ fn grave_contains_multiple_killers() {
             day_number: 2,
             information: GraveInformation::Normal{
                 role: Role::Detective,
-                death_cause: GraveDeathCause::Killers(vec![GraveKiller::Faction(Faction::Mafia), GraveKiller::Role(Role::Vigilante)]),
+                death_cause: GraveDeathCause::Killers(vec![GraveKiller::RoleSet(RoleSet::Mafia), GraveKiller::Role(Role::Vigilante)]),
                 will: "".to_string(),
                 death_notes: vec![],
             }
@@ -1082,7 +1082,7 @@ fn grave_contains_multiple_killers_roles() {
             day_number: 2,
             information: GraveInformation::Normal{
                 role: Role::Doctor,
-                death_cause: GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Doomsayer), GraveKiller::Faction(Faction::Mafia), GraveKiller::Role(Role::Vigilante)]),
+                death_cause: GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Doomsayer), GraveKiller::RoleSet(RoleSet::Mafia), GraveKiller::Role(Role::Vigilante)]),
                 will: "".to_string(),
                 death_notes: vec![],
             }

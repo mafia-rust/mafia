@@ -85,7 +85,7 @@ impl RoleStateImpl for Counterfeiter {
                         if let Some(visit) = backup.night_visits(game).first(){
                             let target_ref = visit.target;
                             target_ref.try_night_kill_single_attacker(
-                                backup, game, GraveKiller::Faction(Faction::Mafia), AttackPower::Basic, false
+                                backup, game, GraveKiller::RoleSet(RoleSet::Mafia), AttackPower::Basic, false
                             );
                         }
                     },
@@ -113,7 +113,7 @@ impl RoleStateImpl for Counterfeiter {
                         let target_ref = visit.target;
                 
                         target_ref.try_night_kill_single_attacker(
-                            actor_ref, game, GraveKiller::Faction(Faction::Mafia), AttackPower::Basic, false
+                            actor_ref, game, GraveKiller::RoleSet(RoleSet::Mafia), AttackPower::Basic, false
                         );
                     }
                 },

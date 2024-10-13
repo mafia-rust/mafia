@@ -113,8 +113,6 @@ pub enum RoleOutlineOption {
     RoleSet{role_set: RoleSet},
     #[serde(rename_all = "camelCase")]
     Role{role: Role},
-    #[serde(rename_all = "camelCase")]
-    Faction{faction: Faction}
 }
 impl RoleOutlineOption{
     pub fn get_roles(&self) -> Vec<Role> {
@@ -123,9 +121,7 @@ impl RoleOutlineOption{
                 role_set.get_roles()
             }
             RoleOutlineOption::Role { role } => 
-                vec![*role],
-            RoleOutlineOption::Faction { faction } => 
-                Role::values().into_iter().filter(|r|r.faction() == *faction).collect()
+                vec![*role]
         }
     }
     pub fn is_subset(&self, other: &RoleOutlineOption) -> bool {
@@ -160,24 +156,24 @@ pub enum RoleSet {
     Cult,
     Fiends,
     
-
+    Neutral,
     Minions
 }
 impl RoleSet{
     pub fn get_roles(&self) -> Vec<Role> {
         match self {
-            RoleSet::TownSupport => 
-                vec![Role::Medium, Role::Retributionist, Role::Transporter, Role::Escort, Role::Mayor, Role::Journalist],
-            RoleSet::TownKilling => 
+            RoleSet::Town => 
                 vec![
-                    Role::Vigilante, Role::Veteran, Role::Deputy, Role::Marksman, Role::RabbleRouser
-                ],
-            RoleSet::TownProtective => 
-                vec![
-                    Role::Bodyguard, Role::Cop, Role::Doctor,
-                    Role::Bouncer, Role::Engineer, Role::Armorsmith,
-                    Role::Steward
-                ],
+                    Role::Jailor, Role::Vigilante
+                ].into_iter().chain(
+                    RoleSet::TownSupport.get_roles().into_iter()
+                ).chain(
+                    RoleSet::TownKilling.get_roles().into_iter()
+                ).chain(
+                    RoleSet::TownProtective.get_roles().into_iter()
+                ).chain(
+                    RoleSet::TownInvestigative.get_roles().into_iter()
+                ).collect(),
             RoleSet::TownInvestigative => 
                 vec![
                     Role::Detective, Role::Philosopher, Role::Gossip, 
@@ -185,20 +181,51 @@ impl RoleSet{
                     Role::Lookout, Role::Tracker, Role::Snoop,
                     Role::FlowerGirl
                 ],
-            RoleSet::MafiaSupport => 
+            RoleSet::TownProtective => 
                 vec![
-                    Role::Blackmailer, Role::Informant, Role::Hypnotist, Role::Consort,
-                    Role::Forger, Role::Framer, Role::Mortician, 
-                    Role::MafiaWitch, Role::Necromancer, Role::Cupid
+                    Role::Bodyguard, Role::Cop, Role::Doctor,
+                    Role::Bouncer, Role::Engineer, Role::Armorsmith,
+                    Role::Steward
+                ],
+            RoleSet::TownKilling => 
+                vec![
+                    Role::Vigilante, Role::Veteran, Role::Deputy, Role::Marksman, Role::RabbleRouser
+                ],
+            RoleSet::TownSupport => 
+                vec![Role::Medium, Role::Retributionist, Role::Transporter, Role::Escort, Role::Mayor, Role::Journalist],
+            RoleSet::Mafia =>
+                vec![
+                    Role::MadeMan, Role::MafiaSupportWildcard, Role::MafiaKillingWildcard
                 ],
             RoleSet::MafiaKilling => 
                 vec![
                     Role::Godfather, Role::Eros, Role::Counterfeiter,
                     Role::Retrainer, Role::Imposter, Role::Recruiter, Role::Mafioso
                 ],
+            RoleSet::MafiaSupport => 
+                vec![
+                    Role::Blackmailer, Role::Informant, Role::Hypnotist, Role::Consort,
+                    Role::Forger, Role::Framer, Role::Mortician, 
+                    Role::MafiaWitch, Role::Necromancer, Role::Cupid
+                ],
             RoleSet::Minions => 
                 vec![
                     Role::Witch, Role::Scarecrow
+                ],
+            RoleSet::Neutral =>
+                vec![
+                    Role::Jester, Role::Revolutionary, Role::Politician,
+                    Role::Doomsayer, Role::Martyr, Role::Death
+                ],
+            RoleSet::Fiends =>
+                vec![
+                    Role::Arsonist, Role::Werewolf, Role::Ojo,
+                    Role::Puppeteer, Role::Pyrolisk, Role::Kira,
+                    Role::FiendsWildcard
+                ],
+            RoleSet::Cult =>
+                vec![
+                    Role::Apostle, Role::Disciple, Role::Zealot
                 ],
         }
     }

@@ -50,7 +50,7 @@ impl RoleStateImpl for Politician {
         for player_ref in PlayerReference::all_players(game) {
             if
                 player_ref.alive(game) && 
-                player_ref.role(game).faction() == Faction::Town &&
+                player_ref.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town) &&
                 player_ref.get_won_game(game)
             {
                 
