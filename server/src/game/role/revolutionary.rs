@@ -89,12 +89,12 @@ impl RoleStateImpl for Revolutionary {
             actor_ref.set_role_state(game, RoleState::Revolutionary(Revolutionary{target: RevolutionaryTarget::Target(*target)}));
             actor_ref.insert_role_label(game, *target);
         }else{
-            actor_ref.set_role(game, RoleState::Jester(Jester::default()))
+            actor_ref.set_role_and_wincon(game, RoleState::Jester(Jester::default()))
         };
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
         if Some(dead_player_ref) == self.target.get_target() && self.target != RevolutionaryTarget::Won {
-            actor_ref.set_role(game, RoleState::Jester(Jester::default()))
+            actor_ref.set_role_and_wincon(game, RoleState::Jester(Jester::default()))
         }
     }
 }

@@ -51,7 +51,7 @@ pub use mafia_server::game::{
         hypnotist::Hypnotist,
         blackmailer::Blackmailer,
         informant::Informant,
-        witch::Witch,
+        mafia_witch::MafiaWitch,
         necromancer::Necromancer,
         mortician::Mortician,
         mafia_support_wildcard::MafiaSupportWildcard, 
@@ -59,7 +59,7 @@ pub use mafia_server::game::{
 
         jester::Jester,
         revolutionary::Revolutionary,
-        minion::Minion,
+        witch::Witch,
         politician::Politician,
         doomsayer::{Doomsayer, DoomsayerGuess},
         death::Death,
@@ -136,12 +136,12 @@ fn detective_neutrals(){
     kit::scenario!(game in Night 1 where
         sher: Detective,
         _mafia: Godfather,
-        minion: Minion,
+        witch: Witch,
         jester: Jester,
         politician: Politician
     );
 
-    sher.set_night_selection(vec![minion]);
+    sher.set_night_selection(vec![witch]);
     game.next_phase();
     assert_contains!(
         sher.get_messages_after_night(1),
@@ -272,7 +272,7 @@ fn philosopher_neutrals() {
         mafia1: Mafioso,
         townie1: Vigilante,
         jester: Jester,
-        minion: Minion
+        witch: Witch
     );
 
     game.skip_to(Night, 3);
@@ -294,7 +294,7 @@ fn philosopher_neutrals() {
     );
 
     game.skip_to(Night, 6);
-    philosopher.set_night_selection(vec![townie1, minion]);
+    philosopher.set_night_selection(vec![townie1, witch]);
     
     game.next_phase();
     assert_contains!(
@@ -303,7 +303,7 @@ fn philosopher_neutrals() {
     );
 
     game.skip_to(Night, 7);
-    philosopher.set_night_selection(vec![jester, minion]);
+    philosopher.set_night_selection(vec![jester, witch]);
     
     game.next_phase();
     assert_contains!(
@@ -312,7 +312,7 @@ fn philosopher_neutrals() {
     );
 
     game.skip_to(Night, 8);
-    philosopher.set_night_selection(vec![mafia1, minion]);
+    philosopher.set_night_selection(vec![mafia1, witch]);
     
     game.next_phase();
     assert_contains!(
@@ -473,7 +473,7 @@ fn spy_basic_transported() {
         transp: Transporter,
         bugged: Detective,
         jester: Jester,
-        witch: Witch
+        witch: MafiaWitch
     );
     spy.set_night_selection_single(jester);
     transp.set_night_selection(vec![jester, bugged]);
@@ -687,7 +687,7 @@ fn necromancer_basic(){
 #[test]
 fn witch_basic(){
     kit::scenario!(game in Night 1 where
-        witch: Witch,
+        witch: MafiaWitch,
         sher: Detective,
         informant: Informant,
         mafioso: Mafioso,
@@ -2020,12 +2020,12 @@ fn godfather_dies_to_veteran(){
 }
 
 #[test]
-fn minion_leaves_by_winning(){
+fn witch_leaves_by_winning(){
     kit::scenario!(game in Night 2 where
         t: Veteran,
         gf: Godfather,
         arso: Arsonist,
-        min: Minion
+        min: Witch
     );
 
     assert!(gf.set_night_selection_single(t));
@@ -2056,13 +2056,13 @@ fn scarecrow_leaves_by_winning(){
     assert!(!t.alive());
 }
 #[test]
-fn minion_leaves_by_winning_puppeteer(){
+fn witch_leaves_by_winning_puppeteer(){
     kit::scenario!(game in Night 2 where
         pup: Puppeteer,
         t: Armorsmith,
         t2: Detective,
         gf: Godfather,
-        min: Minion
+        min: Witch
     );
 
     pup.set_role_state(RoleState::Puppeteer(Puppeteer{
@@ -2092,7 +2092,7 @@ fn godfather_dies_to_veteran_after_possessed(){
         vet: Veteran,
         gf: Godfather,
         _maf: Mortician,
-        min: Minion
+        min: Witch
     );
 
     assert!(min.set_night_selection(vec![gf, vet]));

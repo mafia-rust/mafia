@@ -1,16 +1,13 @@
 use serde::Serialize;
 
-use crate::game::{attack_power::DefensePower, phase::PhaseType};
+use crate::game::attack_power::DefensePower;
+use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
-
 use crate::game::Game;
 use super::{GetClientRoleState, Priority, RoleStateImpl};
 
-pub(super) const FACTION: Faction = Faction::Mafia;
-pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 #[derive(Clone, Debug, Default)]
 pub struct Witch{
@@ -22,6 +19,10 @@ pub struct Witch{
 pub struct ClientRoleState{
     night_selection: super::common_role::RoleActionChoiceTwoPlayers
 }
+
+pub(super) const FACTION: Faction = Faction::Neutral;
+pub(super) const MAXIMUM_COUNT: Option<u8> = None;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Witch {
     type ClientRoleState = ClientRoleState;

@@ -223,7 +223,7 @@ pub(super) fn default_win_condition(role: Role) -> WinCondition {
             Faction::Town => vec![ResolutionState::Town],
             Faction::Fiends => vec![ResolutionState::Fiends],
             Faction::Neutral => match role {
-                Role::Minion | Role::Scarecrow => {
+                Role::Witch | Role::Scarecrow => {
                     ResolutionState::all().into_iter().filter(|end_game_condition|
                         match end_game_condition {
                             ResolutionState::Town | ResolutionState::Draw => false,

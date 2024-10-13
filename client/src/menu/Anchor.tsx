@@ -49,7 +49,7 @@ export default function Anchor(props: Readonly<{
     const [mobile, setMobile] = useState<boolean>(false);
 
     useEffect(() => {
-        const onResize = () => setMobile(window.innerWidth <= MOBILE_MAX_WIDTH_PX)
+        const onResize = () => {setMobile(window.innerWidth <= MOBILE_MAX_WIDTH_PX)}
         onResize();
 
         window.addEventListener("resize", onResize);

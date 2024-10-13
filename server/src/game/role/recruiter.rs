@@ -172,7 +172,7 @@ impl RoleStateImpl for Recruiter {
             if !backup.alive(game){return}
 
             //convert backup to godfather
-            backup.set_role(game, RoleState::Recruiter(Recruiter{backup: None, ..self}));
+            backup.set_role_and_wincon(game, RoleState::Recruiter(Recruiter{backup: None, ..self}));
         }
         else if self.backup.is_some_and(|p|p == dead_player_ref) {
             actor_ref.set_role_state(game, RoleState::Recruiter(Recruiter{backup: None, ..self}));

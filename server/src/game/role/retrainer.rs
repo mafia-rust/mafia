@@ -160,7 +160,7 @@ impl RoleStateImpl for Retrainer {
             if !backup.alive(game){return}
 
             //convert backup to godfather
-            backup.set_role(game, RoleState::Retrainer(Retrainer{backup: None, ..self}));
+            backup.set_role_and_wincon(game, RoleState::Retrainer(Retrainer{backup: None, ..self}));
         }
         else if self.backup.is_some_and(|p|p == dead_player_ref) {
             actor_ref.set_role_state(game, RoleState::Retrainer(Retrainer{backup: None, ..self}));
@@ -190,7 +190,7 @@ impl Retrainer {
 
             if let Some(backup) = retrainer.backup {
                 if retrainer.retrains_remaining > 0 && backup.role(game) != role{
-                    backup.set_role(game, role.default_state());
+                    backup.set_role_and_wincon(game, role.default_state());
                     retrainer.retrains_remaining = retrainer.retrains_remaining.saturating_sub(1);
                 }
             }

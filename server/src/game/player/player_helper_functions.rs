@@ -98,11 +98,11 @@ impl PlayerReference{
     }
 
     /**
-    ### Example use in minion case
+    ### Example use in witch case
         
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
-            actor_ref.set_role_state(game, RoleState::Minion(Minion{
+            actor_ref.set_role_state(game, RoleState::Witch(Witch{
                 currently_used_player: Some(currently_used_player)
             }))
         }
@@ -182,11 +182,13 @@ impl PlayerReference{
         OnAnyDeath::new(*self)
     }
     /// Swaps this persons role, sends them the role chat message, and makes associated changes
-    pub fn set_role(&self, game: &mut Game, new_role_data: impl Into<RoleState>){
+    pub fn set_role_and_wincon(&self, game: &mut Game, new_role_data: impl Into<RoleState>){
         let new_role_data = new_role_data.into();
 
         let old = self.role_state(game).clone();
 
+        self.set_win_condition(game, new_role_data.clone().default_win_condition());
+        
         BeforeRoleSwitch::new(*self, old.clone(), new_role_data.clone()).invoke(game);
 
         self.set_role_state(game, new_role_data.clone());

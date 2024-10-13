@@ -106,7 +106,7 @@ impl Cult{
             };
             
             if player_ref.role(game) == role.role() {continue}
-            player_ref.set_role(game, role);
+            player_ref.set_role_and_wincon(game, role);
         }
 
         game.set_cult(cult);
