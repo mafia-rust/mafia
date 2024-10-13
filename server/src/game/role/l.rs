@@ -94,7 +94,8 @@ impl RoleStateImpl for L {
         !actor_ref.night_jailed(game) &&
         actor_ref.selection(game).is_empty() &&
         actor_ref.alive(game) &&
-        !self.won()
+        !self.won() &&
+        game.day_number() > 1
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
         let target = if let Some(player) = find_player_assigned_role(game, Role::Kira) {
