@@ -920,6 +920,40 @@
             {"type": "scarecrowResult", "players": [9,15,4]}
         ]
     },
+    "kidnapper":{
+        "faction": "neutral",
+        "roleSet": "minions",
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "jailedTarget","playerIndex": 7},
+            {"type": "jailedSomeone","playerIndex": 7},
+            {
+                "type": "normal", 
+                "messageSender": {
+                    "type": "jailor"
+                },
+                "text": "Claim right now or else!", 
+                "chatGroup": "jail"
+            },
+            {
+                "type": "normal", 
+                "messageSender": {
+                    "type": "player",
+                    "player": 7
+                },
+                "text": "I'm jester", 
+                "chatGroup": "jail"
+            },
+            {"type": "jailorDecideExecute","target": 7},
+            {"type": "jailorDecideExecute","target": null},
+            {"type": "wardblocked"},
+            {"type": "someoneSurvivedYourAttack"}
+        ]
+    },
     "arsonist": {
         "faction": "fiends",
         "roleSet": null,

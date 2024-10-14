@@ -493,6 +493,11 @@
     "role.scarecrow.youAreSelecting": "You are warding \\0.",
     "role.scarecrow.youAreSelecting.null": "You aren't warding anyone.",
 
+    "role.kidnapper.name": "Kidnapper",
+    "role.kidnapper.name:var.0": "Kidnappers",
+    "role.kidnapper.target": "Execute",
+    "role.kidnapper.dayTarget": "Jail",
+
     "role.politician.name": "Politician",
     "role.politician.name:var.0": "Politicians",
 
