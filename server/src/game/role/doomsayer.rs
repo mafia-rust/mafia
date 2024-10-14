@@ -162,7 +162,7 @@ impl Doomsayer{
                 player.alive(game) && DoomsayerGuess::convert_to_guess(player.role(game)).is_some() && *player != actor_ref
             ).count() < 3
         {
-            actor_ref.set_role_and_wincon(game, RoleState::Jester(Jester::default()));
+            actor_ref.set_role_and_win_condition_and_revealed_group(game, RoleState::Jester(Jester::default()));
         }
     }
     pub fn won(&self) -> bool {

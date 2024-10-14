@@ -6,7 +6,7 @@ use crate::{
     game::{
         attack_power::DefensePower, chat::{
             ChatGroup, ChatMessage, ChatMessageVariant
-        }, event::on_fast_forward::OnFastForward, grave::GraveKiller, modifiers::{ModifierType, Modifiers}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, win_condition::WinCondition, Game
+        }, event::{on_fast_forward::OnFastForward, on_remove_role_label::OnRemoveRoleLabel}, grave::GraveKiller, modifiers::{ModifierType, Modifiers}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, win_condition::WinCondition, Game
     }, 
     packet::ToClientPacket, 
 };
@@ -102,6 +102,8 @@ impl PlayerReference{
         self.send_packet(game, ToClientPacket::YourRoleLabels{
             role_labels: PlayerReference::ref_map_to_index(self.role_label_map(game)) 
         });
+
+        OnRemoveRoleLabel::new(*self, concealed_player).invoke(game);
     }
 
     pub fn player_tags<'a>(&self, game: &'a Game) -> &'a HashMap<PlayerReference, Vec1<Tag>>{

@@ -103,4 +103,9 @@ impl RoleStateImpl for Framer {
             Vec::new()
         }
     }
+    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+        vec![
+            crate::game::components::revealed_group::RevealedGroupID::Mafia
+        ].into_iter().collect()
+    }
 }
