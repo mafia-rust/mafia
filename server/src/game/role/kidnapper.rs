@@ -4,7 +4,6 @@ use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::{Grave, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -63,9 +62,7 @@ impl RoleStateImpl for Kidnapper {
                     if target_ref.night_jailed(game){
                         target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Jailor), AttackPower::ProtectionPiercing, false);
         
-                        self.executions_remaining = 
-                            if target_ref.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town) {0} else {self.executions_remaining - 1};
-                        self.jailed_target_ref = None;
+                        self.executions_remaining = self.executions_remaining - 1;
                         actor_ref.set_role_state(game, self);
                     }
                 }

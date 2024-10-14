@@ -928,6 +928,8 @@
     "wiki.article.standard.fiends.text": "Fiends win by eliminating all opposing teams. Fiends are on the same team, but they can't communicate at night. Fiends are usually very powerful and can kill multiple players in one night. Unlike mafia and cult, most games should have at most one fiend, in addition to the town and mafia.",
     "wiki.article.standard.cult.title": "Cult",
     "wiki.article.standard.cult.text": "Cult is an evil faction. They win by eliminating all opposing teams, they can communicate at night, and they know who each other are. The cult as a whole has 2 abilities, kill and convert. They alternate, converting first, and killing after.\n- The cult can only kill after they have successfully converted someone, after that, they can only convert after successfully killing someone. If for some reason the ability doesn't work (Protection or Roleblock), then it is tried again the next night. It is not inherently every other night.\n\n- Apostle. If there is a cult, there is always an apostle. The apostle uses their ability to convert players. If there is no zealot, then the apostle kills.\n- Disciple. The disciple has no ability.\n- Zealot. The zealot is always be the role of the newest created cultist member. The zealot will do the kills instead of the apostle if a zealot exits.", 
+    "wiki.article.standard.minions.title": "Minions",
+    "wiki.article.standard.minions.text": "Minions is a Role Set that contains roles which win only if town loses. They leave the game if all townies are gone. Unlike Mafia, they don't communicate at night with any evil players.\n\nSome Minions include:\n* Witch\n* Scarecrow\n* Kidnapper ",
     "wiki.article.standard.tag.title": "Tag",
     "wiki.article.standard.tag.title:var.0": "Tags",
     "wiki.article.standard.tag.title:var.1": "Tagged",
@@ -1211,6 +1213,11 @@
     "wiki.article.role.jailor.abilities":"* Choose one player to jail during the day\n* Visit your prisoner to attack them",
     "wiki.article.role.jailor.attributes":"* You may talk with your prisoner at night in jail chat\n* If you kill a player who exclusively wins with town, you forfeit the ability to execute prisoners\n* Players in jail are warded and roleblocked, they also can't select anybody",
     "wiki.article.role.jailor.extra":"* The Jailor can not kill someone on night one\n* If you kill a townie, or run out of kills, you can not select to kill anymore\n* You invisibly roleblock the player you put in jail, they aren't told their roleblocked\n* Players in jail don't see your name on your messages. The messages you send appear to be from the jailor\n* If you jail a cult or mafia member, their teammates know that that player is in jail",
+
+    "wiki.article.role.kidnapper.guide": "- Each day, choose a player to jail. At night, you interrogate them in text chat\n- You can choose to kill your prisoner one time\n- You can talk to your prisoner during the night, and they are told you are the Jailor\n- The players you jail are warded and roleblocked.",
+    "wiki.article.role.kidnapper.abilities":"* Choose one player to jail during the day\n* Visit your prisoner to attack them",
+    "wiki.article.role.kidnapper.attributes":"* You may talk with your prisoner at night in jail chat\n* Players in jail are warded and roleblocked, they also can't select anybody\n* You appear as the Jailor to your prisoner and on the graves of attacked players\n* If you are can win with everyone else left alive, you leave town and win",
+    "wiki.article.role.kidnapper.extra":"* The Kidnapper can not kill someone on night one\n* You invisibly roleblock the player you put in jail, they aren't told their roleblocked\n* Players in jail don't see your name on your messages. The messages you send appear to be from the jailor\n* If you jail a cult or mafia member, their teammates know that that player is in jail",
 
     "wiki.article.role.villager.guide": "You have no nighttime ability, but you can still speak and vote. Try to help find out who is evil and vote them. Your only ability is your own critical thinking.",
     "wiki.article.role.villager.abilities":"None",

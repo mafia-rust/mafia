@@ -64,8 +64,7 @@ impl RoleStateImpl for Jailor {
         
                         self.executions_remaining = 
                             if target_ref.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town) {0} else {self.executions_remaining - 1};
-                        self.jailed_target_ref = None;
-                        actor_ref.set_role_state(game, RoleState::Jailor(self));
+                        actor_ref.set_role_state(game, self);
                     }
                 }
             },
