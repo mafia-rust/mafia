@@ -4,10 +4,15 @@ use rand::seq::SliceRandom;
 
 use crate::{game::{
     attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant},
-    components::{arsonist_doused::ArsonistDoused, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette},
+    components::{
+        arsonist_doused::ArsonistDoused,
+        mafia_recruits::MafiaRecruits,
+        puppeteer_marionette::PuppeteerMarionette,
+        revealed_group::RevealedGroupID
+    },
     event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch},
     grave::{Grave, GraveKiller, GraveReference}, resolution_state::ResolutionState,
-    role::{same_evil_team, Priority, Role, RoleState},
+    role::{Priority, Role, RoleState},
     visit::Visit, win_condition::WinCondition, Game
 }, packet::ToClientPacket};
 
@@ -181,12 +186,11 @@ impl PlayerReference{
         OnAnyDeath::new(*self)
     }
     /// Swaps this persons role, sends them the role chat message, and makes associated changes
-    pub fn set_role_and_wincon(&self, game: &mut Game, new_role_data: impl Into<RoleState>){
+    pub fn set_role_and_win_condition_and_revealed_group(&self, game: &mut Game, new_role_data: impl Into<RoleState>){
         let new_role_data = new_role_data.into();
 
         let old = self.role_state(game).clone();
 
-        self.set_win_condition(game, new_role_data.clone().default_win_condition());
         
         BeforeRoleSwitch::new(*self, old.clone(), new_role_data.clone()).invoke(game);
 
@@ -197,6 +201,14 @@ impl PlayerReference{
         }
 
         OnRoleSwitch::new(*self, old, self.role_state(game).clone()).invoke(game);
+    
+        self.set_win_condition(game, new_role_data.clone().default_win_condition());
+        
+        RevealedGroupID::set_player_revealed_groups(
+            new_role_data.clone().default_revealed_groups(),
+            game,
+            *self
+        );
     }
     pub fn increase_defense_to(&self, game: &mut Game, defense: DefensePower){
         if defense.is_stronger(self.night_defense(game)) {
@@ -235,18 +247,6 @@ impl PlayerReference{
             messages.iter().map(|msg|ChatMessage::new_private(msg.clone())).collect()
         });
         self.add_private_chat_messages(game, messages);
-    }
-
-    pub fn insert_role_label_for_teammates(&self, game: &mut Game){
-        for other in PlayerReference::all_players(game){
-            if *self == other { continue }
-            
-
-            if same_evil_team(game, *self, other) {
-                other.insert_role_label(game, *self);
-                self.insert_role_label(game, other);
-            }
-        }
     }
 
     pub fn role_label_map(&self, game: &Game) -> HashMap<PlayerReference, Role> {

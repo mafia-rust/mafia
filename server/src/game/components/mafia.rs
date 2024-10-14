@@ -34,12 +34,6 @@ impl Mafia{
         if RoleSet::MafiaKilling.get_roles().contains(&old.role()) {
             Mafia::give_mafia_killing_role(game, old);
         }
-
-        for a in Mafia::get_members(game) {
-            for b in Mafia::get_members(game) {
-                a.insert_role_label(game, b);
-            }
-        }
     }
     pub fn get_members(game: &Game)->Vec<PlayerReference>{
         PlayerReference::all_players(game).filter(
@@ -67,7 +61,7 @@ impl Mafia{
         let random_mafia = all_living_mafia.choose(&mut rand::thread_rng());
         
         if let Some(random_mafia) = random_mafia {
-            random_mafia.set_role_and_wincon(game, role);
+            random_mafia.set_role_and_win_condition_and_revealed_group(game, role);
         }
     }
 }
