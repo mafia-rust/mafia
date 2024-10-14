@@ -98,11 +98,11 @@ impl PlayerReference{
     }
 
     /**
-    ### Example use in minion case
+    ### Example use in witch case
         
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
-            actor_ref.set_role_state(game, RoleState::Minion(Minion{
+            actor_ref.set_role_state(game, RoleState::Witch(Witch{
                 currently_used_player: Some(currently_used_player)
             }))
         }

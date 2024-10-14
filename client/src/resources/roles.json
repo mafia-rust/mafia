@@ -724,7 +724,7 @@
             }
         ]
     },
-    "witch": {
+    "mafiaWitch": {
         "faction": "mafia",
         "roleSet": "mafiaSupport",
         "armor": false,
@@ -787,7 +787,7 @@
     },
     "jester": {
         "faction": "neutral",
-        "roleSet": "neutralEvil",
+        "roleSet": null,
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -799,7 +799,7 @@
     },
     "revolutionary": {
         "faction": "neutral",
-        "roleSet": "neutralEvil",
+        "roleSet": null,
         "armor": true,
         "aura": null,
         "maxCount": null,
@@ -812,7 +812,7 @@
     },
     "politician":{
         "faction": "neutral",
-        "roleSet": "neutralEvil",
+        "roleSet": null,
         "armor": true,
         "aura": null,
         "maxCount": null,
@@ -824,7 +824,7 @@
     },
     "doomsayer":{
         "faction": "neutral",
-        "roleSet": "neutralEvil",
+        "roleSet": null,
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -833,37 +833,6 @@
         "chatMessages":[
             {"type": "doomsayerWon"},
             {"type": "doomsayerFailed"}
-        ]
-    },
-    "minion":{
-        "faction": "neutral",
-        "roleSet": "neutralEvil",
-        "armor": false,
-        "aura": null,
-        "maxCount": null,
-        "roleSpecificMenu": true,
-        "canBeConvertedTo": [],
-        "chatMessages":[
-            {"type": "targetsMessage", "message": 
-                {"type": "sheriffResult","suspicious":true}
-            },
-            {"type": "possessionTargetsRole", "role":"detective"},
-            {"type": "targetIsPossessionImmune"},
-            {"type": "youWerePossessed", "immune": false},
-            {"type": "youWerePossessed", "immune": true}
-        ]
-    },
-    "scarecrow":{
-        "faction": "neutral",
-        "roleSet": "neutralEvil",
-        "armor": false,
-        "aura": null,
-        "maxCount": null,
-        "roleSpecificMenu": true,
-        "canBeConvertedTo": [],
-        "chatMessages":[
-            {"type": "wardblocked"},
-            {"type": "scarecrowResult", "players": [9,15,4]}
         ]
     },
     "martyr": {
@@ -918,6 +887,37 @@
         "chatMessages":[
             {"type": "roleAssignment", "role":"trueWildcard"},
             {"type": "wildcardConvertFailed", "role": "apostle"}
+        ]
+    },
+    "witch":{
+        "faction": "neutral",
+        "roleSet": "minions",
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "targetsMessage", "message": 
+                {"type": "sheriffResult","suspicious":true}
+            },
+            {"type": "possessionTargetsRole", "role":"detective"},
+            {"type": "targetIsPossessionImmune"},
+            {"type": "youWerePossessed", "immune": false},
+            {"type": "youWerePossessed", "immune": true}
+        ]
+    },
+    "scarecrow":{
+        "faction": "neutral",
+        "roleSet": "minions",
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "wardblocked"},
+            {"type": "scarecrowResult", "players": [9,15,4]}
         ]
     },
     "arsonist": {

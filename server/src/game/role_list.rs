@@ -154,8 +154,8 @@ pub enum RoleSet {
 
     MafiaSupport,
     MafiaKilling,
-
-    NeutralEvil,
+    
+    Minions
 }
 impl RoleSet{
     pub fn get_roles(&self) -> Vec<Role> {
@@ -183,18 +183,16 @@ impl RoleSet{
                 vec![
                     Role::Blackmailer, Role::Informant, Role::Hypnotist, Role::Consort,
                     Role::Forger, Role::Framer, Role::Mortician, 
-                    Role::Witch, Role::Necromancer, Role::Cupid
+                    Role::MafiaWitch, Role::Necromancer, Role::Cupid
                 ],
             RoleSet::MafiaKilling => 
                 vec![
                     Role::Godfather, Role::Eros, Role::Counterfeiter,
                     Role::Retrainer, Role::Imposter, Role::Recruiter, Role::Mafioso
                 ],
-            RoleSet::NeutralEvil => 
+            RoleSet::Minions => 
                 vec![
-                    Role::Jester, Role::Revolutionary, 
-                    Role::Politician, Role::Doomsayer, 
-                    Role::Minion, Role::Scarecrow
+                    Role::Witch, Role::Scarecrow
                 ],
         }
     }
