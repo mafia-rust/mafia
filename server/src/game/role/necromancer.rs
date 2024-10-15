@@ -62,6 +62,11 @@ impl RoleStateImpl for Necromancer {
             actor_ref.set_role_state(game, RoleState::Necromancer(Necromancer { used_bodies: self.used_bodies, currently_used_player: None }));
         }
     }
+    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+        vec![
+            crate::game::components::revealed_group::RevealedGroupID::Mafia
+        ].into_iter().collect()
+    }
 }
 impl GetClientRoleState<ClientRoleState> for Necromancer {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
