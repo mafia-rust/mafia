@@ -4,7 +4,7 @@ use crate::game::{
     chat::ChatGroup, components::puppeteer_marionette::PuppeteerMarionette, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, resolution_state::ResolutionState, role_list::Faction, visit::Visit, win_condition::WinCondition, Game
 };
 
-use super::{journalist::Journalist, medium::Medium, same_evil_team, Role, RoleState};
+use super::{journalist::Journalist, medium::Medium, RevealedGroupID, Role, RoleState};
 
 
 pub(super) fn can_night_select(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -14,7 +14,7 @@ pub(super) fn can_night_select(game: &Game, actor_ref: PlayerReference, target_r
     actor_ref.selection(game).is_empty() &&
     actor_ref.alive(game) &&
     target_ref.alive(game) &&
-    !same_evil_team(game, actor_ref, target_ref)
+    !RevealedGroupID::players_in_same_revealed_group(game, actor_ref, target_ref)
 }
 
 pub(super) fn convert_selection_to_visits(_game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, attack: bool) -> Vec<Visit> {
