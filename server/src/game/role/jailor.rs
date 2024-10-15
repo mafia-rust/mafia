@@ -118,6 +118,9 @@ impl RoleStateImpl for Jailor {
                         actor_ref.add_private_chat_message(game, 
                             ChatMessageVariant::JailedTarget{ player_index: jailed_ref.index() }
                         );
+                    }else{
+                        self.jailed_target_ref = None;
+                        actor_ref.set_role_state(game, self);
                     }
                 }
             },
