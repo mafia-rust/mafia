@@ -132,6 +132,7 @@ macros::roles! {
 
     Witch : witch,
     Scarecrow : scarecrow,
+    Kidnapper : kidnapper,
     Doomsayer : doomsayer,
     Death : death,
 
@@ -388,9 +389,8 @@ impl Role{
     }
     pub fn wardblock_immune(&self)->bool{
         match self {
-            Role::Jailor
-            | Role::Bouncer
-            | Role::Scarecrow => true,
+            Role::Jailor | Role::Kidnapper |
+            Role::Bouncer | Role::Scarecrow => true,
             _ => false
         }
     }

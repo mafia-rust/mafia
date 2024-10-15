@@ -70,6 +70,7 @@ function useDayTargetedPlayers(): PlayerIndex[] {
             if (roleState.backup !== null) return [roleState.backup]
             break;
         case "jailor":
+        case "kidnapper":
             if (roleState.jailedTargetRef !== null) return [roleState.jailedTargetRef]
             break;
         case "medium":

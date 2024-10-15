@@ -59,6 +59,8 @@ export default function RoleSpecificSection(){
             return <ImposterMenu/>
         case "jailor": 
             return <JailorRoleSpecificMenu roleState={roleState}/>;
+        case "kidnapper": 
+            return <JailorRoleSpecificMenu roleState={roleState}/>;
         case "medium": 
             return <MediumRoleSpecificMenu roleState={roleState}/>
         case "doctor": {
@@ -211,7 +213,7 @@ function MarksmanRoleSpecificMenu(props: Readonly<{
 }
 
 function JailorRoleSpecificMenu(props: Readonly<{
-    roleState: RoleState & { type: "jailor" }
+    roleState: RoleState & { type: "jailor" | "kidnapper" } 
 }>): ReactElement {
     const players = useGameState(
         gameState => gameState.players,
@@ -222,7 +224,7 @@ function JailorRoleSpecificMenu(props: Readonly<{
     )!;
 
     const counter = <Counter 
-        max={3} 
+        max={props.roleState.type === "jailor" ? 3 : 1} 
         current={props.roleState.executionsRemaining}
     >
         <StyledText>{translate("role.jailor.roleDataText.executionsRemaining", props.roleState.executionsRemaining)}</StyledText>

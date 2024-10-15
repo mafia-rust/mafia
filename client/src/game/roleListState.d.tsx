@@ -69,7 +69,7 @@ export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
                 "mafiaWitch", "necromancer", "cupid"
             ];
         case "minions":
-            return ["witch", "scarecrow"];
+            return ["witch", "scarecrow", "kidnapper"];
     }
 }
 export function getRoleSetsFromRole(role: Role): RoleSet[] {

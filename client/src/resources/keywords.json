@@ -17,7 +17,7 @@
     "townKilling": { "style": "keyword-good","link": "generated/roleSet"},
     "mafiaKilling": { "style": "keyword-evil","link": "generated/roleSet"},
     "mafiaSupport": { "style": "keyword-evil","link": "generated/roleSet"},
-    "minions": { "style": "keyword-minions","link": "generated/roleSet"},
+    "minions": { "style": "keyword-minions","link": "standard/minions"},
     "town": { "style": "keyword-good", "link": "standard/town"},
     "mafia": { "style": "keyword-evil", "link": "standard/mafia"},
     "neutral": { "style": "keyword-neutral", "link": "standard/neutral"},

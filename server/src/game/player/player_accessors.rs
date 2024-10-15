@@ -401,35 +401,6 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.grave_death_notes = grave_death_notes;
     }
 
-    pub fn night_jailed(&self, game: &Game) -> bool {
-        self.deref(game).night_variables.jailed
-    }
-    /// Adds chat message saying that they were jailed, and sends packet
-    pub fn set_night_jailed(&self, game: &mut Game, jailed: bool){
-        if jailed {
-
-            let mut message_sent = false;
-            for chat_group in self.get_current_send_chat_groups(game){
-                match chat_group {
-                    ChatGroup::All | ChatGroup::Jail | ChatGroup::Interview | ChatGroup::Dead => {},
-                    ChatGroup::Mafia | ChatGroup::Cult | ChatGroup::Puppeteer => {
-                        game.add_message_to_chat_group(
-                            chat_group,
-                            ChatMessageVariant::JailedSomeone { player_index: self.index() }
-                        );
-                        message_sent = true;
-                    },
-                }
-            }
-            if !message_sent {
-                self.add_private_chat_message(game,
-                    ChatMessageVariant::JailedSomeone { player_index: self.index() }
-                );
-            }
-        }
-        self.deref_mut(game).night_variables.jailed = jailed;
-    }
-
     pub fn night_silenced(&self, game: &Game) -> bool {
         self.deref(game).night_variables.silenced
     }
