@@ -404,12 +404,6 @@ impl Role{
         }
     }
     pub fn has_suspicious_aura(&self, _game: &Game)->bool{
-        match self {
-            _ => false,
-        }
+        false
     }
-}
-pub fn same_evil_team(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    (actor_ref.role(game).faction() == super::role_list::Faction::Mafia && target_ref.role(game).faction() == super::role_list::Faction::Mafia) ||
-    (actor_ref.role(game).faction() == super::role_list::Faction::Cult && target_ref.role(game).faction() == super::role_list::Faction::Cult)
 }

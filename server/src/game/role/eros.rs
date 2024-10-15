@@ -8,7 +8,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{same_evil_team, Priority, RoleStateImpl};
+use super::{RevealedGroupID, Priority, RoleStateImpl};
 
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -69,7 +69,7 @@ impl RoleStateImpl for Eros {
             },
             ErosAction::Kill => {
                 game.day_number() > 1 &&
-                !same_evil_team(game, actor_ref, target_ref) &&
+                !RevealedGroupID::players_in_same_revealed_group(game, actor_ref, target_ref) &&
                 selected.is_empty()
             },
         }
