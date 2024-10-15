@@ -47,7 +47,12 @@ impl RoleStateImpl for Warper {
         let chosen_targets = actor_ref.selection(game);
 
         !actor_ref.night_jailed(game) &&
-        !(target_ref == actor_ref) &&
+        ((
+            actor_ref != target_ref &&
+            actor_ref.selection(game).is_empty()
+        ) || (
+            actor_ref.selection(game).len() == 1
+        )) &&
         actor_ref.alive(game) &&
         target_ref.alive(game) && 
         ((
