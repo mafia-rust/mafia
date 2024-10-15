@@ -132,6 +132,7 @@ macros::roles! {
 
     Witch : witch,
     Scarecrow : scarecrow,
+    Warper : warper,
     Doomsayer : doomsayer,
     Death : death,
 
@@ -370,7 +371,7 @@ impl Role{
             | Role::Bouncer
             | Role::Veteran
             | Role::Transporter | Role::Retributionist
-            | Role::Witch | Role::Doomsayer | Role::Scarecrow
+            | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper
             | Role::MafiaWitch | Role::Necromancer
             | Role::Ojo => true,
             _ => false,

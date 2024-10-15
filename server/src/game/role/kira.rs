@@ -79,7 +79,7 @@ impl KiraGuess{
 
             //Neutral
             Role::Jester | Role::Revolutionary | Role::Politician |
-            Role::Doomsayer | Role::Death | Role::Witch | Role::Scarecrow |
+            Role::Doomsayer | Role::Death | Role::Witch | Role::Scarecrow | Role::Warper|
             Role::Wildcard | Role::TrueWildcard => Some(Self::Neutral),
             Role::Martyr => None,
 

@@ -161,6 +161,8 @@ Doomsayer
 } | {
     type: "scarecrow"
 } | {
+    type: "warper"
+} | {
     type: "death",
     souls: number
 } | {
