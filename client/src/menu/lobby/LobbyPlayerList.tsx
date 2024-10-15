@@ -10,11 +10,11 @@ import { useLobbyState } from "../../components/useHooks";
 export default function LobbyPlayerList(): ReactElement {
     const players = useLobbyState(
         lobbyState => lobbyState.players,
-        ["playersHost", "playersLostConnection", "lobbyClients"]
+        ["playersHost", "playersLostConnection", "lobbyClients", "playersReady"]
     )!;
     const host = useLobbyState(
         lobbyState => lobbyState.players.get(lobbyState.myId!)?.ready === "host",
-        ["playersHost", "lobbyClients", "yourId"]
+        ["playersHost", "lobbyClients", "yourId", "playersReady"]
     )!;
 
     return <>

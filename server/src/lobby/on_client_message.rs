@@ -145,7 +145,14 @@ impl Lobby {
                     }
                 }
 
-                Self::send_players_lobby(clients);
+
+                let mut ready = Vec::new();
+                for client in clients {
+                    if client.1.ready == Ready::Ready {
+                        ready.push(client.0.clone());
+                    }
+                }
+                Self::send_to_all(&self, ToClientPacket::PlayersReady { ready });
             },
             ToServerPacket::SetLobbyName{ name } => {
                 let LobbyState::Lobby { .. } = self.lobby_state else {
