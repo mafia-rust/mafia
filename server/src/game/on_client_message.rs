@@ -76,7 +76,7 @@ impl Game {
                             );
                             target_message_sent = true;
                         },
-                        ChatGroup::Jail => {
+                        ChatGroup::Jail | ChatGroup::Kidnapped => {
                             if sender_player_ref.role(self) == Role::Jailor || sender_player_ref.role(self) == Role::Kidnapper {
                                 self.add_message_to_chat_group(chat_group,
                                     ChatMessageVariant::JailorDecideExecute {
@@ -115,7 +115,12 @@ impl Game {
                 for chat_group in sender_player_ref.get_current_send_chat_groups(self){
                     let message_sender = match chat_group {
                         ChatGroup::Jail => {
-                            if sender_player_ref.role(self) == Role::Jailor || sender_player_ref.role(self) == Role::Kidnapper {
+                            if sender_player_ref.role(self) == Role::Jailor {
+                                Some(MessageSender::Jailor)
+                            }else{None}
+                        },
+                        ChatGroup::Kidnapped => {
+                            if sender_player_ref.role(self) == Role::Kidnapper {
                                 Some(MessageSender::Jailor)
                             }else{None}
                         },

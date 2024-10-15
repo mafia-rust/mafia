@@ -496,7 +496,7 @@
     "role.kidnapper.name": "Kidnapper",
     "role.kidnapper.name:var.0": "Kidnappers",
     "role.kidnapper.target": "Execute",
-    "role.kidnapper.dayTarget": "Jail",
+    "role.kidnapper.dayTarget": "Kidnap",
 
     "role.politician.name": "Politician",
     "role.politician.name:var.0": "Politicians",
@@ -638,6 +638,7 @@
     "chatGroup.mafia.icon": "🌹",
     "chatGroup.cult.icon": "🕯️",
     "chatGroup.jail.icon": "🔒",
+    "chatGroup.kidnapped.icon": "🔒",
     "chatGroup.interview.icon": "📝",
     "chatGroup.dead.icon": "💀",
     "chatGroup.puppeteer.icon": "🧵",
@@ -1214,11 +1215,6 @@
     "wiki.article.role.jailor.attributes":"* You may talk with your prisoner at night in jail chat\n* If you kill a player who exclusively wins with town, you forfeit the ability to execute prisoners\n* Players in jail are warded and roleblocked, they also can't select anybody",
     "wiki.article.role.jailor.extra":"* The Jailor can not kill someone on night one\n* If you kill a townie, or run out of kills, you can not select to kill anymore\n* You invisibly roleblock the player you put in jail, they aren't told their roleblocked\n* Players in jail don't see your name on your messages. The messages you send appear to be from the jailor\n* If you jail a cult or mafia member, their teammates know that that player is in jail",
 
-    "wiki.article.role.kidnapper.guide": "- Each day, choose a player to jail. At night, you interrogate them in text chat\n- You can choose to kill your prisoner one time\n- You can talk to your prisoner during the night, and they are told you are the Jailor\n- The players you jail are warded and roleblocked.",
-    "wiki.article.role.kidnapper.abilities":"* Choose one player to jail during the day\n* Visit your prisoner to attack them",
-    "wiki.article.role.kidnapper.attributes":"* You may talk with your prisoner at night in jail chat\n* Players in jail are warded and roleblocked, they also can't select anybody\n* You appear as the Jailor to your prisoner and on the graves of attacked players\n* If you are can win with everyone else left alive, you leave town and win",
-    "wiki.article.role.kidnapper.extra":"* The Kidnapper can not kill someone on night one\n* You invisibly roleblock the player you put in jail, they aren't told their roleblocked\n* Players in jail don't see your name on your messages. The messages you send appear to be from the jailor\n* If you jail a cult or mafia member, their teammates know that that player is in jail",
-
     "wiki.article.role.villager.guide": "You have no nighttime ability, but you can still speak and vote. Try to help find out who is evil and vote them. Your only ability is your own critical thinking.",
     "wiki.article.role.villager.abilities":"None",
     "wiki.article.role.villager.attributes":"None",
@@ -1488,6 +1484,11 @@
     "wiki.article.role.scarecrow.abilities":"* Visit a player to ward them\n    - Everyone visitor to your target has their visits erased, and receives a chat message informing them they are wardblocked\n- You are told who you wardblocked, and they are revealed\n- If there are no living townies, you win, and leave town at the start of the next phase",
     "wiki.article.role.scarecrow.attributes":"* Your target isn't told they are warded",
     "wiki.article.role.scarecrow.extra":"* You can't select yourself\n* You are immune to roleblocks, wardblocks, and possession\n- You aren't told the names of players who aren't wardblocked, even if they still somehow visit your target, for example, a bouncer is wardblock immune",
+    
+    "wiki.article.role.kidnapper.guide": "- Each day, choose a player to kidnap. At night, you interrogate them in text chat\n- You can kill your prisoner one time\n- You can talk to your prisoner during the night, and they are not told who you are\n- The players you kidnap are warded and roleblocked.",
+    "wiki.article.role.kidnapper.abilities":"* Choose one player to kidnap during the day\n* Visit your prisoner to attack them\n- If you kill your prisoner, their grave shows that they were killed by a jailor",
+    "wiki.article.role.kidnapper.attributes":"* You may talk with your prisoner at night in kidnapped chat\n* Players you kidnap are warded and roleblocked, they also can't select anybody",
+    "wiki.article.role.kidnapper.extra":"* The Kidnapper can not kill someone on night one\n* You invisibly roleblock the player you detain, they aren't told their roleblocked\n* Players you kidnap don't see your name on your messages. The messages you send appear to be from the jailor\n* If you kidnap a cult or mafia member, their teammates are told that player is in jail",
 
     "wiki.article.role.politician.guide":"* If the town would win, instead you win and they all die. Try to help to the town to win while staying alive.",
     "wiki.article.role.politician.abilities": "* When town would win, you win, instantly attack ever townie, and all politicians leave town",

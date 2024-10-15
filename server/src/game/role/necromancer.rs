@@ -35,7 +35,7 @@ impl RoleStateImpl for Necromancer {
         }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        !actor_ref.night_jailed(game) &&
+        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
         actor_ref.alive(game) &&
         ((
             actor_ref.selection(game).is_empty() &&
