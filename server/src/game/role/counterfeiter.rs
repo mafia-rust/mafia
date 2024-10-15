@@ -199,11 +199,16 @@ impl RoleStateImpl for Counterfeiter {
             if !backup.alive(game){return}
 
             //convert backup to Counterfeiter
-            backup.set_role_and_wincon(game, RoleState::Counterfeiter(Counterfeiter{backup: None, ..self}));
+            backup.set_role_and_win_condition_and_revealed_group(game, RoleState::Counterfeiter(Counterfeiter{backup: None, ..self}));
         }
         else if self.backup.is_some_and(|p|p == dead_player_ref) {
             actor_ref.set_role_state(game, RoleState::Counterfeiter(Counterfeiter{backup: None, ..self}));
         }
+    }
+    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+        vec![
+            crate::game::components::revealed_group::RevealedGroupID::Mafia
+        ].into_iter().collect()
     }
 }
 impl GetClientRoleState<ClientRoleState> for Counterfeiter {

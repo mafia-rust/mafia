@@ -12,7 +12,7 @@ use crate::game::attack_power::DefensePower;
 
 use serde::{Serialize, Deserialize};
 
-use super::{event::before_role_switch::BeforeRoleSwitch, grave::GraveReference, win_condition::WinCondition};
+use super::{components::revealed_group::RevealedGroupID, event::before_role_switch::BeforeRoleSwitch, grave::GraveReference, win_condition::WinCondition};
 
 pub trait GetClientRoleState<CRS> {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> CRS;
@@ -45,6 +45,9 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     }
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
+    }
+    fn default_revealed_groups(self) -> HashSet<RevealedGroupID> {
+        HashSet::new()
     }
     fn default_win_condition(self) -> WinCondition where RoleState: From<Self>{
         let role_state: RoleState = self.into();
@@ -275,6 +278,11 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.get_current_receive_chat_groups(game, actor_ref)),*
                     }
                 }
+                pub fn default_revealed_groups(self) -> HashSet<RevealedGroupID>{
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.default_revealed_groups()),*
+                    }
+                }
                 pub fn default_win_condition(self) -> WinCondition{
                     match self {
                         $(Self::$name(role_struct) => role_struct.default_win_condition()),*
@@ -396,12 +404,6 @@ impl Role{
         }
     }
     pub fn has_suspicious_aura(&self, _game: &Game)->bool{
-        match self {
-            _ => false,
-        }
+        false
     }
-}
-pub fn same_evil_team(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    (actor_ref.role(game).faction() == super::role_list::Faction::Mafia && target_ref.role(game).faction() == super::role_list::Faction::Mafia) ||
-    (actor_ref.role(game).faction() == super::role_list::Faction::Cult && target_ref.role(game).faction() == super::role_list::Faction::Cult)
 }

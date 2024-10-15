@@ -6,7 +6,7 @@ use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{same_evil_team, Priority, Role, RoleStateImpl};
+use super::{RevealedGroupID, Priority, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
@@ -82,7 +82,7 @@ impl RoleStateImpl for Framer {
             actor_ref.selection(game).is_empty() &&
             actor_ref != target_ref &&
             target_ref.alive(game) &&
-            !same_evil_team(game, actor_ref, target_ref)
+            !RevealedGroupID::players_in_same_revealed_group(game, actor_ref, target_ref)
         ) || 
         (
             actor_ref.selection(game).len() == 1
@@ -102,5 +102,10 @@ impl RoleStateImpl for Framer {
         } else {
             Vec::new()
         }
+    }
+    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+        vec![
+            crate::game::components::revealed_group::RevealedGroupID::Mafia
+        ].into_iter().collect()
     }
 }

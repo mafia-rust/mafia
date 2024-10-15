@@ -26,6 +26,7 @@ use components::mafia::Mafia;
 use components::pitchfork::Pitchfork;
 use components::mafia_recruits::MafiaRecruits;
 use components::poison::Poison;
+use components::revealed_group::RevealedGroups;
 use components::verdicts_today::VerdictsToday;
 use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
@@ -92,9 +93,8 @@ pub struct Game {
     pub verdicts_today: VerdictsToday,
     pub pitchfork: Pitchfork,
     pub poison: Poison,
-
-    //Game modifiers
-    pub modifiers: Modifiers
+    pub modifiers: Modifiers,
+    pub revealed_groups: RevealedGroups
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -185,6 +185,8 @@ impl Game {
                 pitchfork: Pitchfork::default(),
                 poison: Poison::default(),
 
+                revealed_groups: RevealedGroups::default(),
+
             };
 
             if !game.game_is_over() {
@@ -204,7 +206,7 @@ impl Game {
         //on role creation needs to be called after all players roles are known
         for player_ref in PlayerReference::all_players(&game){
             let role_data_copy = player_ref.role_state(&game).clone();
-            player_ref.set_role_and_wincon(&mut game, role_data_copy);
+            player_ref.set_role_and_win_condition_and_revealed_group(&mut game, role_data_copy);
         }
 
         for player_ref in PlayerReference::all_players(&game){
@@ -471,6 +473,7 @@ pub mod test {
             poison: Poison::default(),
 
             modifiers: Default::default(),
+            revealed_groups: Default::default(),
         };
 
         BeforeInitialRoleCreation::invoke(&mut game);
@@ -478,7 +481,7 @@ pub mod test {
         //on role creation needs to be called after all players roles are known
         for player_ref in PlayerReference::all_players(&game){
             let role_data_copy = player_ref.role_state(&game).clone();
-            player_ref.set_role_and_wincon(&mut game, role_data_copy);
+            player_ref.set_role_and_win_condition_and_revealed_group(&mut game, role_data_copy);
         }
 
         OnGameStart::invoke(&mut game);

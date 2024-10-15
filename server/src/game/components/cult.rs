@@ -60,12 +60,6 @@ impl Cult{
         if old.faction() == Faction::Cult || new.faction() == Faction::Cult {
             Cult::set_ordered_cultists(game);
         }
-
-        for a in Cult::get_members(game) {
-            for b in Cult::get_members(game) {
-                a.insert_role_label(game, b);
-            }
-        }
     }
     
     
@@ -106,7 +100,7 @@ impl Cult{
             };
             
             if player_ref.role(game) == role.role() {continue}
-            player_ref.set_role_and_wincon(game, role);
+            player_ref.set_role_and_win_condition_and_revealed_group(game, role);
         }
 
         game.set_cult(cult);
