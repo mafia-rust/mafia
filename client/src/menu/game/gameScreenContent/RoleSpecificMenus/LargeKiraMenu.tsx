@@ -12,7 +12,7 @@ export const KIRA_GUESSES = [
     "detective", "lookout", "spy", "tracker", "philosopher", "psychic", "auditor", "snoop", "gossip", "flowerGirl",
     "doctor",  "bodyguard",  "cop", "bouncer", "engineer", "armorsmith", "steward",
     "vigilante",  "veteran", "marksman", "deputy", "rabbleRouser",
-    "escort",  "medium",  "retributionist", "journalist", "mayor",  "transporter", 
+    "escort",  "medium",  "retributionist", "journalist", "mayor",  "transporter", "warper",
 ];
 
 export type KiraGuess = typeof KIRA_GUESSES[number];
