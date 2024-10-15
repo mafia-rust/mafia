@@ -6,6 +6,8 @@ use crate::game::{
     }, tag::Tag, win_condition::WinCondition, Game
 };
 
+use super::revealed_group::RevealedGroupID;
+
 impl Game{
     pub fn puppeteer_marionette<'a>(&'a self)->&'a PuppeteerMarionette{
         &self.puppeteer_marionette
@@ -27,6 +29,7 @@ impl PuppeteerMarionette{
         if !puppeteer_marionette.to_be_converted.insert(player){return false;}
 
         game.set_puppeteer_marionette(puppeteer_marionette);
+        RevealedGroupID::Puppeteer.add_player_to_revealed_group(game, player);
         player.set_win_condition(game, WinCondition::ResolutionStateReached { win_if_any: vec![ResolutionState::Fiends].into_iter().collect() });
 
         for fiend in PuppeteerMarionette::marionettes_and_puppeteer(game){
@@ -65,9 +68,6 @@ impl PuppeteerMarionette{
 
         for player_a in marionettes_and_puppeteer.clone() {
             for player_b in marionettes_and_puppeteer.clone() {
-
-                player_a.insert_role_label(game, player_b);
-                
                 if 
                     player_a.player_has_tag(game, player_b, Tag::PuppeteerMarionette) == 0 &&
                     player_b.role(game) != Role::Puppeteer

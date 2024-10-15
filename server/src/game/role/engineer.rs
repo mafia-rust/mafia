@@ -144,7 +144,7 @@ impl RoleStateImpl for Engineer {
             Trap::Ready => actor_ref != target_ref,
             Trap::Set { .. } => actor_ref == target_ref,
         }) &&
-        !actor_ref.night_jailed(game) &&
+        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
         actor_ref.selection(game).is_empty() &&
         actor_ref.alive(game) &&
         target_ref.alive(game)

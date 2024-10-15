@@ -12,6 +12,7 @@ import { MenuControllerContext } from "../menu/game/GameScreen";
 import { Player } from "../game/gameState.d";
 import { AnchorControllerContext } from "../menu/Anchor";
 import { setWikiSearchPage } from "./Wiki";
+import { getRoleSetsFromRole } from "../game/roleListState.d";
 
 export type TokenData = {
     style?: string, 
@@ -140,14 +141,23 @@ export function computeKeywordData() {
     const KEYWORD_DATA_JSON = require("../resources/keywords.json");
     //add role keywords
     for(const role of Object.keys(ROLES)){
-        const data = KEYWORD_DATA_JSON[getFactionFromRole(role as Role)];
+
+        let data: KeywordData | undefined = undefined;
+
+        const roleSets = getRoleSetsFromRole(role as Role);
+        if (roleSets.length === 1) {
+            data = KEYWORD_DATA_JSON[roleSets[0]];
+        }else if (data === undefined) {
+            data = KEYWORD_DATA_JSON[getFactionFromRole(role as Role)];
+        }
+
         if (data === undefined || Array.isArray(data)) {
             console.error(`faction.${getFactionFromRole(role as Role)} has malformed keyword data!`);
             continue;
         }
 
         addTranslatableKeywordData(`role.${role}.name`, [{
-            ...data,
+            ...(data as KeywordData),
             link: `role/${role}` as WikiArticleLink,
             replacement: translate(`role.${role}.name`)   // Capitalize roles
         }]);

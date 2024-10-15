@@ -231,9 +231,9 @@
     "role.gossip.youAreSelecting": "You are eavesdropping on \\0.",
     "role.gossip.youAreSelecting.null": "You aren't eavesdropping on anyone.",
 
-    "role.flowerGirl.name": "Flower Girl",
-    "role.flowerGirl.name:var.0": "Flower Girls",
-    "role.flowerGirl.target": "Distribute",
+    "role.tallyClerk.name": "Tally Clerk",
+    "role.tallyClerk.name:var.0": "Tally Clerks",
+    "role.tallyClerk.target": "Distribute",
 
     "role.doctor.name": "Doctor",
     "role.doctor.name:var.0": "Doctors",
@@ -348,8 +348,8 @@
     "role.deputy.name:var.0": "Deputies",
     "role.deputy.dayTarget": "Shoot",
     
-    "role.rabbleRouser.name": "RabbleRouser",
-    "role.rabbleRouser.name:var.0": "RabbleRousers",
+    "role.rabblerouser.name": "Rabblerouser",
+    "role.rabblerouser.name:var.0": "Rabblerousers",
 
     "role.godfather.name": "Godfather",
     "role.godfather.name:var.0": "Godfathers",
@@ -436,10 +436,10 @@
     "role.necromancer.youAreSelecting": "You are possessing \\0 into \\1.",
     "role.necromancer.youAreSelecting.null": "You aren't possessing anyone.",
 
-    "role.witch.name": "Witch",
-    "role.witch.name:var.0": "Witches",
-    "role.witch.youAreSelecting": "You are possessing \\0 into \\1.",
-    "role.witch.youAreSelecting.null": "You aren't possessing anyone.",
+    "role.mafiaWitch.name": "Mafia Witch",
+    "role.mafiaWitch.name:var.0": "Mafia Witches",
+    "role.mafiaWitch.youAreSelecting": "You are possessing \\0 into \\1.",
+    "role.mafiaWitch.youAreSelecting.null": "You aren't possessing anyone.",
     
     "role.mortician.name": "Mortician",
     "role.mortician.name:var.0": "Morticians",
@@ -482,16 +482,27 @@
     "role.doomsayer.name": "Doomsayer",
     "role.doomsayer.name:var.0": "Doomsayers",
     
-    "role.minion.name": "Minion",
-    "role.minion.name:var.0": "Minions",
-    "role.minion.youAreSelecting": "You are possessing \\0 into \\1.",
-    "role.minion.youAreSelecting.null": "You aren't possessing anyone.",
+    "role.witch.name": "Witch",
+    "role.witch.name:var.0": "Witchs",
+    "role.witch.youAreSelecting": "You are possessing \\0 into \\1.",
+    "role.witch.youAreSelecting.null": "You aren't possessing anyone.",
     
     "role.scarecrow.name": "Scarecrow",
     "role.scarecrow.name:var.0": "Scarecrows",
     "role.scarecrow.target": "Ward",
     "role.scarecrow.youAreSelecting": "You are warding \\0.",
     "role.scarecrow.youAreSelecting.null": "You aren't warding anyone.",
+
+    "role.warper.name": "Warper",
+    "role.warper.name:var.0": "Warpers",
+    "role.warper.target": "Warp",
+    "role.warper.youAreSelecting": "You are warping visits to \\0 to \\1 instead.",
+    "role.warper.youAreSelecting.null": "You aren't warping anyone.",
+
+    "role.kidnapper.name": "Kidnapper",
+    "role.kidnapper.name:var.0": "Kidnappers",
+    "role.kidnapper.target": "Execute",
+    "role.kidnapper.dayTarget": "Kidnap",
 
     "role.politician.name": "Politician",
     "role.politician.name:var.0": "Politicians",
@@ -586,6 +597,7 @@
     "cult:var.0": "Cultist",
     "cult:var.1": "Cultists",
     "neutral": "Neutral",
+    "minions": "Minions",
     "fiends": "Fiends",
     "fiends:var.0": "Fiend",
 
@@ -632,6 +644,7 @@
     "chatGroup.mafia.icon": "🌹",
     "chatGroup.cult.icon": "🕯️",
     "chatGroup.jail.icon": "🔒",
+    "chatGroup.kidnapped.icon": "🔒",
     "chatGroup.interview.icon": "📝",
     "chatGroup.dead.icon": "💀",
     "chatGroup.puppeteer.icon": "🧵",
@@ -847,7 +860,7 @@
     "chatMessage.snoopResult.inconclusive":"You can't tell what your target is.",
     "chatMessage.gossipResult.none": "Your target didn't visit a player they see as an enemy.",
     "chatMessage.gossipResult.enemies": "Your target visited a player they see as an enemy.",
-    "chatMessage.flowerGirlResult": "\\0 evil players voted guilty at some point today.",
+    "chatMessage.tallyClerkResult": "\\0 evil players voted guilty at some point today.",
     "chatMessage.targetsMessage":"Your target got the following message:",
     "chatMessage.youWerePossessed":"You were possessed.",
     "chatMessage.youWerePossessed.immune":"Someone tried to possess you but you are immune.",
@@ -922,6 +935,8 @@
     "wiki.article.standard.fiends.text": "Fiends win by eliminating all opposing teams. Fiends are on the same team, but they can't communicate at night. Fiends are usually very powerful and can kill multiple players in one night. Unlike mafia and cult, most games should have at most one fiend, in addition to the town and mafia.",
     "wiki.article.standard.cult.title": "Cult",
     "wiki.article.standard.cult.text": "Cult is an evil faction. They win by eliminating all opposing teams, they can communicate at night, and they know who each other are. The cult as a whole has 2 abilities, kill and convert. They alternate, converting first, and killing after.\n- The cult can only kill after they have successfully converted someone, after that, they can only convert after successfully killing someone. If for some reason the ability doesn't work (Protection or Roleblock), then it is tried again the next night. It is not inherently every other night.\n\n- Apostle. If there is a cult, there is always an apostle. The apostle uses their ability to convert players. If there is no zealot, then the apostle kills.\n- Disciple. The disciple has no ability.\n- Zealot. The zealot is always be the role of the newest created cultist member. The zealot will do the kills instead of the apostle if a zealot exits.", 
+    "wiki.article.standard.minions.title": "Minions",
+    "wiki.article.standard.minions.text": "Minions is a Role Set that contains roles which win only if town loses. They leave the game if all townies are gone. Unlike Mafia, they don't communicate at night with any evil players.\n\nSome Minions include:\n* Witch\n* Scarecrow\n* Kidnapper ",
     "wiki.article.standard.tag.title": "Tag",
     "wiki.article.standard.tag.title:var.0": "Tags",
     "wiki.article.standard.tag.title:var.1": "Tagged",
@@ -1018,7 +1033,7 @@
     "wiki.article.standard.possess.title:var.4": "Possessions",
     "wiki.article.standard.possess.title:var.5": "Possessor",
     "wiki.article.standard.possess.title:var.6": "Possessee",
-    "wiki.article.standard.possess.text": "A player who is possessed was forced into visiting someone.\n- Roles like Minion, and Retributionist, have the ability to possess players\n- Some roles are immune to being possessed, like minion, and retributionist\n- If a role visits multiple people, only the first visit is changed when possessed\n- You can't be possessed into someone if your role doesn't allow you to select them. If a medium is possessed, they still don't visit anyone\n\n__For Example__:\n\n@1 the vigilante selects @7 in hopes of shooting them.\nWhen night ends @1 gets a message saying they were possessed.\nThe next obituary, they see that @2 was shot instead.\nThis is because @4 is the minion, who possessed @1 into shooting @2.\n\n__For Example__:\n\nThe philosopher selects @8 and @12, but they are possessed into @15\nThe philosopher actually visited @15 and @12, only the first visit was changed",
+    "wiki.article.standard.possess.text": "A player who is possessed was forced into visiting someone.\n- Roles like Witch, and Retributionist, have the ability to possess players\n- Some roles are immune to being possessed, like witch, and retributionist\n- If a role visits multiple people, only the first visit is changed when possessed\n- You can't be possessed into someone if your role doesn't allow you to select them. If a medium is possessed, they still don't visit anyone\n\n__For Example__:\n\n@1 the vigilante selects @7 in hopes of shooting them.\nWhen night ends @1 gets a message saying they were possessed.\nThe next obituary, they see that @2 was shot instead.\nThis is because @4 is the witch, who possessed @1 into shooting @2.\n\n__For Example__:\n\nThe philosopher selects @8 and @12, but they are possessed into @15\nThe philosopher actually visited @15 and @12, only the first visit was changed",
     "wiki.article.standard.defense.title": "Defense",
     "wiki.article.standard.defense.title:var.0": "Protection-piercing",
     "wiki.article.standard.defense.text": "Attacks and defense have 3 tiers each. An attack can either be basic, armor-piercing, or protection-piercing.\n\nA defense can either be armored, protected, or invincible.\n\nA basic attack can not kill a player who is armored, and an armor-piercing attack can not kill a player who is protected. A protection-piercing attack can overpower armor as well as protection.\n\n Some roles have armor by default, usually evil ones. Protection can be granted to players through abilities like the Doctor's ability to protect their target. A player with invincible defense can only die by getting executed or leaving the game.\n\nUnless otherwise indicated, attacks are basic by default and will not be able to kill players who are armored or protected. Indirect is not a tier of attack.",
@@ -1129,7 +1144,7 @@
     
     "wiki.article.standard.priority.title":"Priority",
     "wiki.article.standard.priority.title:var.0":"Priorities",
-    "wiki.article.standard.priority.text":"***Some information in this article may be old, or incorrect***\n\nAbilities are used in a specific order called priority order. If 2 players have abilities that go on the same priority, the player with the lower player number will go first. It is recommended that you read a roles encyclopedia page before this page. Some abilities go before night starts. Attacking someone doesn't kill them until the end of the night. Here are all the priorities and the abilities that happen in them.\n\n**Before Night (Not a priority)**\n\n- Jailor chooses who to jail\n- Journalist chooses who to interview\n- Spy finds if an apostle can convert\n- Death kills everyone\n- Create Visits\n  - All visits are decided by who is selected by each players. During each priority, each associated ability is activated using who is being visited by who, which is not necessarily who the player selected (in the case of a transporter, witch, etc...).\n\n**1: Top Priority**\n\n- Ojo (Visit every player with certain role)\n- Doomsayer (Kill)\n- Revolutionary (Suicide)\n- Jester (Haunt)\n- Veteran (Decide to Rampage)\n- Vigilante (Suicide)\n\n**2: Transporter**\n\n- Transporter (Swap Visits)\n\n**3: Possess**\n\n- Witch (Possess)\n\n**4: Necromancy**\n\n- Retributionist (Possess/Change Visits)\n- Necromancer (Possess/Change Visits)\n\n**5: roleblock**\n\n- Bouncer (roleblock)\n- Hypnotist (roleblock)\n- Escort (roleblock)\n- Jailor (Invisible roleblock)\n\n**6: Deception**\n\n- Hypnotist (Hypnotize)\n- Framer (Frame)\n- Blackmailer (Silence)\n- Mortician (Tag)\n- Arsonist (Douse)\n\n**7: Bodyguard**\n\n- Bodyguard (Change visits)\n\n**8: Heal**\n\n- Engineer (Intentionally dismantle, set, or use trap)\n- Bodyguard (Defend themselves)\n- Sentinel (Protect target)\n- Guardian (Defend)\n- Veteran (Defend themselves)\n\n**9: Kill**\n\n- Ojo (Kill)\n- Apostle (Kill)\n- Zealot (Kill)\n- Martyr (Kill)\n- Engineer (Indirect Kill)\n- Arsonist (Ignite)\n- Bodyguard (Attack attacker)\n- Sentinel (Attack Visitor)\n- Godfather (Attack or Make Backup Attack)\n- Jailor (Attack)\n- Mafioso (Attack)\n- Veteran (Rampage)\n- Vigilante (Attack)\n- Werewolf (Rampage and attacks)\n\n**10: Investigative**\n\n- Ojo (See)\n- Journalist (Add Journal Message)\n- Psychic (Vision)\n- Engineer (Traps report info)\n- Engineer (Dismantle if triggered) \n- Arsonist (Find who is doused)\n- Bodyguard (Find if protected)\n- Informant (Investigate)\n- Sentinel (Find if protected)\n- Death (Collect souls)\n- Guardian (Find if protected)\n- Mortician (Find role and alibi)\n- Forger (Find role and alibi)\n- Lookout (Investigate)\n- Philosopher (Investigate)\n- Detective (Investigate)\n- Spy (Find who the Mafia Visits)\n- Tracker (Investigate)\n- Werewolf (Track players scent)\n\n**11: Spy Bug**\n\n- Spy (Bug)\n\n**12: Steal Messages**\n\n- Witch (Get target messages)\n- Necromancer (Get target messages)\n- Retributionist (Get target messages)\n\n**13: Convert**\n\n- Apostle (Convert)\n\n**14: SpyCultistCount**\n\n- Spy (Get Cult Count)",
+    "wiki.article.standard.priority.text":"***Some information in this article may be old, or incorrect***\n\nAbilities are used in a specific order called priority order. If 2 players have abilities that go on the same priority, the player with the lower player number will go first. It is recommended that you read a roles encyclopedia page before this page. Some abilities go before night starts. Attacking someone doesn't kill them until the end of the night. Here are all the priorities and the abilities that happen in them.\n\n**Before Night (Not a priority)**\n\n- Jailor chooses who to jail\n- Journalist chooses who to interview\n- Spy finds if an apostle can convert\n- Death kills everyone\n- Create Visits\n  - All visits are decided by who is selected by each players. During each priority, each associated ability is activated using who is being visited by who, which is not necessarily who the player selected (in the case of a transporter, witch, etc...).\n\n**1: Top Priority**\n\n- Ojo (Visit every player with certain role)\n- Doomsayer (Kill)\n- Revolutionary (Suicide)\n- Jester (Haunt)\n- Veteran (Decide to Rampage)\n- Vigilante (Suicide)\n\n**2: Transporter**\n\n- Transporter (Swap Visits)\n\n**3: Possess**\n\n- Mafia Witch (Possess)\n\n**4: Necromancy**\n\n- Retributionist (Possess/Change Visits)\n- Necromancer (Possess/Change Visits)\n\n**5: roleblock**\n\n- Bouncer (roleblock)\n- Hypnotist (roleblock)\n- Escort (roleblock)\n- Jailor (Invisible roleblock)\n\n**6: Deception**\n\n- Hypnotist (Hypnotize)\n- Framer (Frame)\n- Blackmailer (Silence)\n- Mortician (Tag)\n- Arsonist (Douse)\n\n**7: Bodyguard**\n\n- Bodyguard (Change visits)\n\n**8: Heal**\n\n- Engineer (Intentionally dismantle, set, or use trap)\n- Bodyguard (Defend themselves)\n- Sentinel (Protect target)\n- Guardian (Defend)\n- Veteran (Defend themselves)\n\n**9: Kill**\n\n- Ojo (Kill)\n- Apostle (Kill)\n- Zealot (Kill)\n- Martyr (Kill)\n- Engineer (Indirect Kill)\n- Arsonist (Ignite)\n- Bodyguard (Attack attacker)\n- Sentinel (Attack Visitor)\n- Godfather (Attack or Make Backup Attack)\n- Jailor (Attack)\n- Mafioso (Attack)\n- Veteran (Rampage)\n- Vigilante (Attack)\n- Werewolf (Rampage and attacks)\n\n**10: Investigative**\n\n- Ojo (See)\n- Journalist (Add Journal Message)\n- Psychic (Vision)\n- Engineer (Traps report info)\n- Engineer (Dismantle if triggered) \n- Arsonist (Find who is doused)\n- Bodyguard (Find if protected)\n- Informant (Investigate)\n- Sentinel (Find if protected)\n- Death (Collect souls)\n- Guardian (Find if protected)\n- Mortician (Find role and alibi)\n- Forger (Find role and alibi)\n- Lookout (Investigate)\n- Philosopher (Investigate)\n- Detective (Investigate)\n- Spy (Find who the Mafia Visits)\n- Tracker (Investigate)\n- Werewolf (Track players scent)\n\n**11: Spy Bug**\n\n- Spy (Bug)\n\n**12: Steal Messages**\n\n- Mafia Witch (Get target messages)\n- Necromancer (Get target messages)\n- Retributionist (Get target messages)\n\n**13: Convert**\n\n- Apostle (Convert)\n\n**14: SpyCultistCount**\n\n- Spy (Get Cult Count)",
 
     "wiki.article.standard.chat.title:var.0":"Chat Messages",
     "wiki.article.standard.chat.title":"Chat",
@@ -1266,10 +1281,10 @@
     "wiki.article.role.gossip.attributes":"- If any of your targets targets have a suspicious aura, then you are told they visited an enemy",
     "wiki.article.role.gossip.extra":"- Suspicious aura overrides innocent aura\n- If your target visits multiple other players, you learn if at least one of them is an enemy with your target\n- False appeared visits can mess with your results\n- Your target having an aura does not mess with the results, however, their targets having an aura does",
     
-    "wiki.article.role.flowerGirl.guide": "- At night, you are told how many players are non town from the players who voted guilty during any of the trials today\n- If any player has innocent aura, they are counted as town\n- If any player has suspicious aura, they are counted as non town",
-    "wiki.article.role.flowerGirl.abilities":"- At night, you are told how many players are non town from the players who voted guilty today\n- If you are blocked, you aren't told anything\n- Your ability doesn't depend on visits",
-    "wiki.article.role.flowerGirl.attributes":"- Your ability still works when dead\n- A suspicious aura makes a player register as non town\n- An innocent aura makes a player register as town\n- A suspicious aura overwrites innocent aura to the Flower Girl",
-    "wiki.article.role.flowerGirl.extra":"- A player is counted as a townie if they exclusively win with town. so a jester is non town, and a marionette is non town",
+    "wiki.article.role.tallyClerk.guide": "- At night, you are told how many players are non town from the players who voted guilty during any of the trials today\n- If any player has innocent aura, they are counted as town\n- If any player has suspicious aura, they are counted as non town",
+    "wiki.article.role.tallyClerk.abilities":"- At night, you are told how many players are non town from the players who voted guilty today\n- If you are blocked, you aren't told anything\n- Your ability doesn't depend on visits",
+    "wiki.article.role.tallyClerk.attributes":"- Your ability still works when dead\n- A suspicious aura makes a player register as non town\n- An innocent aura makes a player register as town\n- A suspicious aura overwrites innocent aura to the Tally Clerk",
+    "wiki.article.role.tallyClerk.extra":"- A player is counted as a townie if they exclusively win with town. so a jester is non town, and a marionette is non town",
     
     "wiki.article.role.doctor.guide": "- At night, select a player to protect\n    - Whoever you protect doesn't die if they're attacked\n    - You and the player you protected are both told if they are attacked\n- You can select yourself to protect yourself once per game\n- If your target is attacked by a protection-piercing attack they still die\n- You can't select anyone night 1\n\nYou should try to protect people you think are townies who will be attacked.",
     "wiki.article.role.doctor.abilities":"* Visit a player to protect for the night\n* You can't select a player night 1",
@@ -1331,10 +1346,10 @@
     "wiki.article.role.vigilante.attributes":"* If your attack overpowers a player who exclusively wins with towns defense and they die, you commit suicide on the following night\n* When it is night one, when you have 0 bullets left, when you are going to commit suicide, or when you have already committed suicide, you can not select or attack anyone",
     "wiki.article.role.vigilante.extra": "* You only have a basic attack\n* Even while dead, killing someone requires and spends a bullet (such as when you get possessed)",
 
-    "wiki.article.role.rabbleRouser.guide":"- If a RabbleRouser is alive in the game, everyone can vote using the pitchfork menu\n- If 2/3rds of town aligned players vote the same player, that player is killed\n- This ability can be used up to 3 times\n- The pitchfork menu stays open at all times, regardless of weather or not it can be used",
-    "wiki.article.role.rabbleRouser.abilities":"- You and all other RabbleRousers are told when the pitchfork attacks someone, or if the attacked player has defense and survive\n- You don't visit due to your ability\n- The pitchfork can only be used to kill someone up to 3 times",
-    "wiki.article.role.rabbleRouser.attributes":"- Anyone who doesn't exclusively win with town is not counted as a voter for the pitchfork\n- The attack is indirect and protection piercing",
-    "wiki.article.role.rabbleRouser.extra":"\n- The pitchfork menu stays available at all times\n   - Even if all RabbleRousers are dead\n    - Even if there is no rabbleRouser\n    - Even if all three uses are consumed\n- Multiple rabbleRousers does not mean multiple attacks or more uses. There is a maximum of 3 uses and a maximum of 1 attack per night",
+    "wiki.article.role.rabblerouser.guide":"- If a Rabblerouser is alive in the game, everyone can vote using the pitchfork menu\n- If 2/3rds of town aligned players vote the same player, that player is killed\n- This ability can be used up to 3 times\n- The pitchfork menu stays open at all times, regardless of weather or not it can be used",
+    "wiki.article.role.rabblerouser.abilities":"- You and all other Rabblerousers are told when the pitchfork attacks someone, or if the attacked player has defense and survive\n- You don't visit due to your ability\n- The pitchfork can only be used to kill someone up to 3 times",
+    "wiki.article.role.rabblerouser.attributes":"- Anyone who doesn't exclusively win with town is not counted as a voter for the pitchfork\n- The attack is indirect and protection piercing",
+    "wiki.article.role.rabblerouser.extra":"\n- The pitchfork menu stays available at all times\n   - Even if all Rabblerousers are dead\n    - Even if there is no Rabblerouser\n    - Even if all three uses are consumed\n- Multiple Rabblerousers does not mean multiple attacks or more uses. There is a maximum of 3 uses and a maximum of 1 attack per night",
 
     "wiki.article.role.veteran.guide": "- At night, you can select yourself to gain protected defense for the night and rampage yourself, attacking everyone who visits you\n- You can only use your ability three times\n- You can't use your ability on night 1\n* You should try to trick evil players into visiting you, so you can block the attack and kill them. Try to avoid killing unnecessary townies.\n* There can only be one veteran in a game.",
     "wiki.article.role.veteran.abilities":"* Select yourself\n    - rampage yourself\n    - gain protected defense for the night",
@@ -1421,10 +1436,10 @@
     "wiki.article.role.necromancer.attributes":"* The first player you visit is told that they were possessed or immune to possession\n* You are told all night information messages that the player you possess gets told\n* You can't select a dead player who you have previously possessed",
     "wiki.article.role.necromancer.extra":"* You are immune to getting roleblocked or possessed\n* You can force your target to visit any living player\n* If you don't successfully possess the player you select, you can select them again\n* All your visits except the first are cleared after you change your targets visits\n    * A tracker will only see you visit your first target",
 
-    "wiki.article.role.witch.guide": "- At night, possess a player by selecting 2 players\n    - The first player you select will be forced to visit the second player you select\n\n_For example_\n- You can posses a vigilante to attack another townie by selecting the vigilante first and the townie second",
-    "wiki.article.role.witch.abilities":"* Visit 2 players to make the first player visit the second player",
-    "wiki.article.role.witch.attributes":"* The first player you visit is told that they were possessed or immune to possession\n* You are told all night information messages that the player you possess gets told",
-    "wiki.article.role.witch.extra":"* You are immune to getting roleblocked and possession\n* You can't select other mafia members for your first target, but you can select any living player for your second target\n* Your second target gets erased after you change your targets visit, so no other roles can interact with it\n    * A tracker will only see you visit your first target",
+    "wiki.article.role.mafiaWitch.guide": "- At night, possess a player by selecting 2 players\n    - The first player you select will be forced to visit the second player you select\n\n_For example_\n- You can posses a vigilante to attack another townie by selecting the vigilante first and the townie second",
+    "wiki.article.role.mafiaWitch.abilities":"* Visit 2 players to make the first player visit the second player",
+    "wiki.article.role.mafiaWitch.attributes":"* The first player you visit is told that they were possessed or immune to possession\n* You are told all night information messages that the player you possess gets told",
+    "wiki.article.role.mafiaWitch.extra":"* You are immune to getting roleblocked and possession\n* You can't select other mafia members for your first target, but you can select any living player for your second target\n* Your second target gets erased after you change your targets visit, so no other roles can interact with it\n    * A tracker will only see you visit your first target",
 
     "wiki.article.role.mortician.guide": "- At night, select a player to tag them for obscuring\n    - A player who is tagged for obscuring gets obscured when they die, erasing their role and alibi from their grave so nobody knows who they are\n    - You are told the obscured players role and alibi when they die\n- You can only tag three players",
     "wiki.article.role.mortician.abilities":"* Visit a player to tag them for obscuring\n* If a player is obscured, that player's role and alibi do not appear in the graveyard\n* You are told the role and alibi of the player you obscured when they die.",
@@ -1466,15 +1481,25 @@
     "wiki.article.role.doomsayer.attributes":"* When you win, you leave town at the start of the next obituary\n* You have to guess the exact role of townies, but you only need to guess the faction of all other roles\n* You can't try to guess town investigative roles\n* When there are not enough players left for you to guess, you convert to a jester\n* You have an indirect, protection-piercing attack",
     "wiki.article.role.doomsayer.extra":"* Your three guesses must be three different players\n* If the players you guessed correctly don't die, you still win\n* You do not visit when you attack\n* You can't try to guess a martyr\n* If you are blocked, your ability does nothing",
 
-    "wiki.article.role.minion.guide": "- You win if town loses, when town loses you leave town\n- At night, possess a player by selecting 2 players\n    - The first player you select will be forced to visit the second player you select\n\n_For example_\n- You can posses a vigilante to attack another townie by selecting the vigilante first and the townie second",
-    "wiki.article.role.minion.abilities":"* Visit 2 players to make the first player visit the second player\n* If there are no living townies, you win, and leave town at the start of the next phase",
-    "wiki.article.role.minion.attributes":"* The first player you visit is told that they were possessed or immune to possession\n* You are told all night information messages that the player you possess gets told",
-    "wiki.article.role.minion.extra":"* You are immune to getting roleblocked and possession\n* Your second target gets erased after you change your targets visit, so no other roles can interact with it\n    * A tracker will only see you visit your first target",
+    "wiki.article.role.witch.guide": "- You win if town loses, when town loses you leave town\n- At night, possess a player by selecting 2 players\n    - The first player you select will be forced to visit the second player you select\n\n_For example_\n- You can posses a vigilante to attack another townie by selecting the vigilante first and the townie second",
+    "wiki.article.role.witch.abilities":"* Visit 2 players to make the first player visit the second player\n* If there are no living townies, you win, and leave town at the start of the next phase",
+    "wiki.article.role.witch.attributes":"* The first player you visit is told that they were possessed or immune to possession\n* You are told all night information messages that the player you possess gets told",
+    "wiki.article.role.witch.extra":"* You are immune to getting roleblocked and possession\n* Your second target gets erased after you change your targets visit, so no other roles can interact with it\n    * A tracker will only see you visit your first target",
     
     "wiki.article.role.scarecrow.guide": "- You win if town loses, when town loses you leave town\n- At night, select a player to ward them, stopping almost all abilities from working on them.\n    - You are told who you wardblocked, and their roles are revealed to you\n\n_For Example_\n- A detective attempts to investigate @11 but you warded @11, so the detective gets wardblocked and doesn't learn anything, but you learn that you stopped the @11\n\nYou aren't told players who are wardblock immune because you can't wardblock them",
     "wiki.article.role.scarecrow.abilities":"* Visit a player to ward them\n    - Everyone visitor to your target has their visits erased, and receives a chat message informing them they are wardblocked\n- You are told who you wardblocked, and they are revealed\n- If there are no living townies, you win, and leave town at the start of the next phase",
     "wiki.article.role.scarecrow.attributes":"* Your target isn't told they are warded",
     "wiki.article.role.scarecrow.extra":"* You can't select yourself\n* You are immune to roleblocks, wardblocks, and possession\n- You aren't told the names of players who aren't wardblocked, even if they still somehow visit your target, for example, a bouncer is wardblock immune",
+    
+    "wiki.article.role.kidnapper.guide": "- Each day, choose a player to kidnap. At night, you interrogate them in text chat\n- You can kill your prisoner one time\n- You can talk to your prisoner during the night, and they are not told who you are\n- The players you kidnap are warded and roleblocked.",
+    "wiki.article.role.kidnapper.abilities":"* Choose one player to kidnap during the day\n* Visit your prisoner to attack them\n- If you kill your prisoner, their grave shows that they were killed by a jailor",
+    "wiki.article.role.kidnapper.attributes":"* You may talk with your prisoner at night in kidnapped chat\n* Players you kidnap are warded and roleblocked, they also can't select anybody",
+    "wiki.article.role.kidnapper.extra":"* The Kidnapper can not kill someone on night one\n* You invisibly roleblock the player you detain, they aren't told their roleblocked\n* Players you kidnap don't see your name on your messages. The messages you send appear to be from the jailor\n* If you kidnap a cult or mafia member, their teammates are told that player is in jail",
+
+    "wiki.article.role.warper.guide": "- At night, select 2 players\n    - If somebody else tries to visit the first player, they instead visit the second player\n    - The first player is told they are transported, but the second is not\n    - You can't choose yourself as your first target, you can't warp yourself\n\n _For example_\n- If a godfather tries to attack @1, but you warped @1 to @4, then @4 will die instead, and @1 is told they are transported\n\nYou are a minion, so you should try to harm the town as much as possible while looking to benefit non-town players.\n\n",
+    "wiki.article.role.warper.abilities":" - Visit 2 players to warp visits from the first player to the second player\n - You can't select yourself as the first target, you cannot warp yourself",
+    "wiki.article.role.warper.attributes":" -  All visits to first player instead visit the second player\n - The first player you visit is told they were transported",
+    "wiki.article.role.warper.extra": " - Some abilities are not affected by yours due to the priority system. _For example_ You can't stop a jester from haunting their target using a transport, this depends on priorities and whether or not an ability is indirect\n* Warpers act after transporters\n* Warpers do not warp the visits of a transporter",
 
     "wiki.article.role.politician.guide":"* If the town would win, instead you win and they all die. Try to help to the town to win while staying alive.",
     "wiki.article.role.politician.abilities": "* When town would win, you win, instantly attack ever townie, and all politicians leave town",

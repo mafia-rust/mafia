@@ -35,7 +35,7 @@ impl RoleStateImpl for Necromancer {
         }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        !actor_ref.night_jailed(game) &&
+        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
         actor_ref.alive(game) &&
         ((
             actor_ref.selection(game).is_empty() &&
@@ -61,6 +61,11 @@ impl RoleStateImpl for Necromancer {
         if phase == PhaseType::Night {
             actor_ref.set_role_state(game, RoleState::Necromancer(Necromancer { used_bodies: self.used_bodies, currently_used_player: None }));
         }
+    }
+    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+        vec![
+            crate::game::components::revealed_group::RevealedGroupID::Mafia
+        ].into_iter().collect()
     }
 }
 impl GetClientRoleState<ClientRoleState> for Necromancer {

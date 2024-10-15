@@ -8,6 +8,7 @@ pub mod on_role_switch;
 pub mod before_role_switch;
 pub mod before_phase_end;
 pub mod on_night_priority;
+pub mod on_remove_role_label;
 pub mod before_initial_role_creation;
 
 

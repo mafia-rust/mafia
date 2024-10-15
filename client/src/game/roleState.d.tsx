@@ -42,7 +42,7 @@ export type RoleState = {
 } | {
     type: "gossip",
 } | {
-    type: "flowerGirl"
+    type: "tallyClerk"
 } | {
     type: "doctor",
     selfHealsRemaining: number,
@@ -76,7 +76,7 @@ export type RoleState = {
 } | {
     type: "deputy"
 } | {
-    type: "rabbleRouser"
+    type: "rabblerouser"
 } | {
     type: "escort"
 } | {
@@ -142,7 +142,7 @@ export type RoleState = {
 } | {
     type: "framer"
 } | {
-    type: "witch"
+    type: "mafiaWitch"
 } | {
     type: "necromancer"
 } | {
@@ -157,9 +157,15 @@ Doomsayer
 | {
     type: "politician"
 } | {
-    type: "minion"
+    type: "witch"
 } | {
     type: "scarecrow"
+} | {
+    type: "warper"
+} | {
+    type: "kidnapper"
+    executionsRemaining: number,
+    jailedTargetRef: number | null
 } | {
     type: "death",
     souls: number

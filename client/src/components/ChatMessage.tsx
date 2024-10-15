@@ -511,8 +511,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.snoopResult." + (message.townie ? "townie" : "inconclusive"));
         case "gossipResult":
             return translate("chatMessage.gossipResult." + (message.enemies ? "enemies" : "none"));
-        case "flowerGirlResult":
-            return translate("chatMessage.flowerGirlResult", message.evilCount);
+        case "tallyClerkResult":
+            return translate("chatMessage.tallyClerkResult", message.evilCount);
         case "lookoutResult":
             if (message.players.length === 0) {
                 return translate("chatMessage.lookoutResult.nobody");
@@ -856,7 +856,7 @@ export type ChatMessageVariant = {
     type: "gossipResult",
     enemies: boolean
 } | {
-    type: "flowerGirlResult",
+    type: "tallyClerkResult",
     evilCount: number
 } | {
     type: "lookoutResult", 

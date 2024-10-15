@@ -6,6 +6,8 @@ use crate::game::{
     }, role_list::Faction, tag::Tag, win_condition::WinCondition, Game
 };
 
+use super::revealed_group::RevealedGroupID;
+
 impl Game{
     pub fn mafia_recruits<'a>(&'a self)->&'a MafiaRecruits{
         &self.mafia_recruits
@@ -27,6 +29,7 @@ impl MafiaRecruits{
         if !recruiter_recruits.recruits.insert(player){return false;}
 
         game.set_recruiter_recruits(recruiter_recruits);
+        RevealedGroupID::Mafia.add_player_to_revealed_group(game, player);
         player.set_win_condition(game, WinCondition::ResolutionStateReached { win_if_any: vec![ResolutionState::Mafia].into_iter().collect() });
 
 
@@ -66,9 +69,6 @@ impl MafiaRecruits{
 
         for player_a in mafia_and_recruits.clone() {
             for player_b in mafia_and_recruits.clone() {
-
-                player_a.insert_role_label(game, player_b);
-                
                 if 
                     player_a.player_has_tag(game, player_b, Tag::PuppeteerMarionette) == 0 &&
                     player_b.role(game).faction() != Faction::Mafia

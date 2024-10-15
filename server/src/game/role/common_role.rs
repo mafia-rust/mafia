@@ -1,20 +1,20 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    chat::ChatGroup, components::puppeteer_marionette::PuppeteerMarionette, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, resolution_state::ResolutionState, role_list::Faction, visit::Visit, win_condition::WinCondition, Game
+    chat::ChatGroup, components::{detained::Detained, puppeteer_marionette::PuppeteerMarionette}, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, resolution_state::ResolutionState, role_list::Faction, visit::Visit, win_condition::WinCondition, Game
 };
 
-use super::{journalist::Journalist, medium::Medium, same_evil_team, Role, RoleState};
+use super::{journalist::Journalist, medium::Medium, RevealedGroupID, Role, RoleState};
 
 
 pub(super) fn can_night_select(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
     
     actor_ref != target_ref &&
-    !actor_ref.night_jailed(game) &&
+    !Detained::is_detained(game, actor_ref) &&
     actor_ref.selection(game).is_empty() &&
     actor_ref.alive(game) &&
     target_ref.alive(game) &&
-    !same_evil_team(game, actor_ref, target_ref)
+    !RevealedGroupID::players_in_same_revealed_group(game, actor_ref, target_ref)
 }
 
 pub(super) fn convert_selection_to_visits(_game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, attack: bool) -> Vec<Visit> {
@@ -100,8 +100,25 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
             }
 
 
-            let mut jail_or_night_chats = if actor_ref.night_jailed(game){
+            let mut jail_or_night_chats = 
+            if Detained::is_detained(game, actor_ref) && PlayerReference::all_players(game).any(|detainer|
+                match detainer.role_state(game) {
+                    RoleState::Jailor(jailor) => {
+                        jailor.jailed_target_ref == Some(actor_ref)
+                    },
+                    _ => false
+                }
+            ) {
                 vec![ChatGroup::Jail]
+            }else if Detained::is_detained(game, actor_ref) && PlayerReference::all_players(game).any(|detainer|
+                match detainer.role_state(game) {
+                    RoleState::Kidnapper(kidnapper) => {
+                        kidnapper.jailed_target_ref == Some(actor_ref)
+                    },
+                    _ => false
+                }
+            ) {
+                vec![ChatGroup::Kidnapped]
             }else{
                 
                 if PuppeteerMarionette::marionettes_and_puppeteer(game).contains(&actor_ref){
@@ -147,9 +164,31 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
     if PuppeteerMarionette::marionettes_and_puppeteer(game).contains(&actor_ref){
         out.push(ChatGroup::Puppeteer);
     }
-    if actor_ref.night_jailed(game){
-        out.push(ChatGroup::Jail);
+
+
+    if Detained::is_detained(game, actor_ref) {
+        if PlayerReference::all_players(game).any(|detainer|
+            match detainer.role_state(game) {
+                RoleState::Jailor(jailor) => {
+                    jailor.jailed_target_ref == Some(actor_ref)
+                },
+                _ => false
+            }
+        ) {
+            out.push(ChatGroup::Jail);
+        }
+        if PlayerReference::all_players(game).any(|detainer|
+            match detainer.role_state(game) {
+                RoleState::Kidnapper(kidnapper) => {
+                    kidnapper.jailed_target_ref == Some(actor_ref)
+                },
+                _ => false
+            }
+        ) {
+            out.push(ChatGroup::Kidnapped);
+        }
     }
+    
     if 
         game.current_phase().phase() == PhaseType::Night && 
         PlayerReference::all_players(game)
@@ -191,7 +230,7 @@ pub(super) fn default_win_condition(role: Role) -> WinCondition {
             Faction::Town => vec![ResolutionState::Town],
             Faction::Fiends => vec![ResolutionState::Fiends],
             Faction::Neutral => match role {
-                Role::Minion | Role::Scarecrow => {
+                Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper => {
                     ResolutionState::all().into_iter().filter(|end_game_condition|
                         match end_game_condition {
                             ResolutionState::Town | ResolutionState::Draw => false,

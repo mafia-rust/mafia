@@ -74,7 +74,7 @@ impl RoleStateImpl for Puppeteer {
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         actor_ref != target_ref &&
-        !actor_ref.night_jailed(game) &&
+        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
         actor_ref.selection(game).is_empty() &&
         actor_ref.alive(game) &&
         target_ref.alive(game) &&
@@ -88,5 +88,10 @@ impl RoleStateImpl for Puppeteer {
             self.action = PuppeteerAction::Poison;
             actor_ref.set_role_state(game, RoleState::Puppeteer(self))
         }
+    }
+    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+        vec![
+            crate::game::components::revealed_group::RevealedGroupID::Puppeteer
+        ].into_iter().collect()
     }
 }
