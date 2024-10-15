@@ -158,6 +158,7 @@ macros::priorities! {
     Ward,
 
     Transporter,
+    Warper,
 
     Possess,
     Roleblock,

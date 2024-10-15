@@ -1486,7 +1486,7 @@
     "wiki.article.role.warper.guide": "- At night, select 2 players\n    - If somebody else tries to visit the first player, they will instead visit the second player. The first player will be told they were transported, but the second will not.\n\n _For example_\n- If a godfather tries to attack @1, but you warped @1 to @4, then @4 will die instead\n\nYou are a minion, so you should try to harm the town as much as possible while looking to benefit non-town players.\n\n",
     "wiki.article.role.warper.abilities":"* Visit 2 players to warp visits from the first player to the second player.",
     "wiki.article.role.warper.attributes":"* All visits to first player instead visit the second player\n* The first player you visit is told they were transported\n",
-    "wiki.article.role.warper.extra": "* Some abilities are not affected by yours due to the priority system. _For example_ You can't stop a jester from haunting their target using a transport, this depends on priorities and whether or not an ability is indirect\n* A Warpers visits can not be changed by another Warper or a Transporter",
+    "wiki.article.role.warper.extra": "* Some abilities are not affected by yours due to the priority system. _For example_ You can't stop a jester from haunting their target using a transport, this depends on priorities and whether or not an ability is indirect\n* Warpers act after transporters.",
 
     "wiki.article.role.politician.guide":"* If the town would win, instead you win and they all die. Try to help to the town to win while staying alive.",
     "wiki.article.role.politician.abilities": "* When town would win, you win, instantly attack ever townie, and all politicians leave town",

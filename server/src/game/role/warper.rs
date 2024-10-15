@@ -21,7 +21,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 impl RoleStateImpl for Warper {
     type ClientRoleState = Warper;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Transporter {return;}
+        if priority != Priority::Warper {return;}
     
         let transporter_visits = actor_ref.night_visits(game).clone();
         let Some(first_visit) = transporter_visits.get(0) else {return};
@@ -33,7 +33,7 @@ impl RoleStateImpl for Warper {
         for player_ref in PlayerReference::all_players(game){
             if player_ref == actor_ref {continue;}
             if player_ref.role(game) == Role::Warper {continue;}
-            if player_ref.role(game) == Role::Transporter {continue;}
+
             let new_visits = player_ref.night_visits(game).clone().into_iter().map(|mut v|{
                 if v.target == first_visit.target {
                     v.target = second_visit.target;
@@ -47,6 +47,7 @@ impl RoleStateImpl for Warper {
         let chosen_targets = actor_ref.selection(game);
 
         !actor_ref.night_jailed(game) &&
+        !(target_ref == actor_ref) &&
         actor_ref.alive(game) &&
         target_ref.alive(game) && 
         ((

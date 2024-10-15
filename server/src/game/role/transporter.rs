@@ -31,7 +31,7 @@ impl RoleStateImpl for Transporter {
         for player_ref in PlayerReference::all_players(game){
             if player_ref == actor_ref {continue;}
             if player_ref.role(game) == Role::Transporter {continue;}
-            if player_ref.role(game) == Role::Warper {continue;}
+
 
             let new_visits = player_ref.night_visits(game).clone().into_iter().map(|mut v|{
                 if v.target == first_visit.target {
