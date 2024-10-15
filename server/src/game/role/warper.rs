@@ -33,6 +33,7 @@ impl RoleStateImpl for Warper {
         for player_ref in PlayerReference::all_players(game){
             if player_ref == actor_ref {continue;}
             if player_ref.role(game) == Role::Warper {continue;}
+            if player_ref.role(game) == Role::Transporter {continue;}
 
             let new_visits = player_ref.night_visits(game).clone().into_iter().map(|mut v|{
                 if v.target == first_visit.target {
@@ -44,22 +45,14 @@ impl RoleStateImpl for Warper {
         }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        let chosen_targets = actor_ref.selection(game);
-
-        !actor_ref.night_jailed(game) &&
+        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
+        actor_ref.alive(game) &&
+        target_ref.alive(game) &&
         ((
             actor_ref != target_ref &&
             actor_ref.selection(game).is_empty()
         ) || (
             actor_ref.selection(game).len() == 1
-        )) &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game) && 
-        ((
-            chosen_targets.is_empty()
-        ) || (
-            chosen_targets.len() == 1 &&
-            Some(target_ref) != chosen_targets.first().copied()
         ))
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
