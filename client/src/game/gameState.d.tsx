@@ -120,7 +120,7 @@ export type PhaseState = {type: "briefing"} | {type: "dusk"} | {type: "night"} |
     playerOnTrial: PlayerIndex
 }
 
-export type ChatGroup = "all" | "dead" | "mafia" | "cult" | "jail" | "interview" | "puppeteer";
+export type ChatGroup = "all" | "dead" | "mafia" | "cult" | "jail" | "kidnapper" | "interview" | "puppeteer";
 
 export type PhaseTimes = Record<PhaseType, number>;
 

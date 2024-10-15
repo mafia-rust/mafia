@@ -78,7 +78,7 @@ macros::roles! {
     Auditor : auditor,
     Snoop : snoop,
     Gossip : gossip,
-    FlowerGirl : flower_girl,
+    TallyClerk : tally_clerk,
 
     Doctor : doctor,
     Bodyguard : bodyguard,
@@ -92,7 +92,7 @@ macros::roles! {
     Veteran : veteran,
     Marksman: marksman,
     Deputy : deputy,
-    RabbleRouser : rabble_rouser,
+    Rabblerouser : rabblerouser,
 
     Escort : escort,
     Medium : medium,
@@ -129,11 +129,13 @@ macros::roles! {
     Jester : jester,
     Revolutionary : revolutionary,
     Politician : politician,
+    Doomsayer : doomsayer,
+    Death : death,
 
     Witch : witch,
     Scarecrow : scarecrow,
-    Doomsayer : doomsayer,
-    Death : death,
+    Warper : warper,
+    Kidnapper : kidnapper,
 
     Arsonist : arsonist,
     Werewolf : werewolf,
@@ -157,6 +159,7 @@ macros::priorities! {
     Ward,
 
     Transporter,
+    Warper,
 
     Possess,
     Roleblock,
@@ -366,11 +369,11 @@ mod macros {
 impl Role{
     pub fn possession_immune(&self)->bool{
         match self {
-            Role::FlowerGirl
+            Role::TallyClerk
             | Role::Bouncer
             | Role::Veteran
             | Role::Transporter | Role::Retributionist
-            | Role::Witch | Role::Doomsayer | Role::Scarecrow
+            | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper
             | Role::MafiaWitch | Role::Necromancer
             | Role::Ojo => true,
             _ => false,
@@ -381,16 +384,15 @@ impl Role{
             Role::Bouncer |
             Role::Veteran | 
             Role::Transporter | Role::Escort | Role::Retributionist | 
-            Role::Jester | Role::Witch | Role::Scarecrow |
+            Role::Jester | Role::Witch | Role::Scarecrow | Role::Warper |
             Role::Hypnotist | Role::Consort | Role::MafiaWitch | Role::Necromancer => true,
             _ => false,
         }
     }
     pub fn wardblock_immune(&self)->bool{
         match self {
-            Role::Jailor
-            | Role::Bouncer
-            | Role::Scarecrow => true,
+            Role::Jailor | Role::Kidnapper |
+            Role::Bouncer | Role::Scarecrow => true,
             _ => false
         }
     }
@@ -404,12 +406,6 @@ impl Role{
         }
     }
     pub fn has_suspicious_aura(&self, _game: &Game)->bool{
-        match self {
-            _ => false,
-        }
+        false
     }
-}
-pub fn same_evil_team(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    (actor_ref.role(game).faction() == super::role_list::Faction::Mafia && target_ref.role(game).faction() == super::role_list::Faction::Mafia) ||
-    (actor_ref.role(game).faction() == super::role_list::Faction::Cult && target_ref.role(game).faction() == super::role_list::Faction::Cult)
 }

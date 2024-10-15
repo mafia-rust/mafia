@@ -12,6 +12,7 @@ pub enum ChatGroup {
     Cult,
 
     Jail,
+    Kidnapped,
     Interview,
     Puppeteer,
 }

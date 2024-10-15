@@ -101,4 +101,15 @@ impl RevealedGroupID{
             self.reveal_group_players(game);
         }
     }
+    pub fn is_player_in_revealed_group(&self, game: &Game, player: PlayerReference)->bool{
+        let players: &HashSet<PlayerReference> = self.revealed_group(game).into();
+        players.contains(&player)
+    }
+    pub fn players_both_in_revealed_group(&self, game: &Game, a: PlayerReference, b: PlayerReference)->bool{
+        let players: &HashSet<PlayerReference> = self.revealed_group(game).into();
+        players.contains(&a) && players.contains(&b)
+    }
+    pub fn players_in_same_revealed_group(game: &Game, a: PlayerReference, b: PlayerReference)->bool{
+        RevealedGroupID::all().iter().any(|group| group.players_both_in_revealed_group(game, a, b))
+    }
 }
