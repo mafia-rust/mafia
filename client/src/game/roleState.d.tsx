@@ -161,6 +161,8 @@ Doomsayer
 } | {
     type: "scarecrow"
 } | {
+    type: "warper"
+} | {
     type: "kidnapper"
     executionsRemaining: number,
     jailedTargetRef: number | null

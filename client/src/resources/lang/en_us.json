@@ -493,6 +493,12 @@
     "role.scarecrow.youAreSelecting": "You are warding \\0.",
     "role.scarecrow.youAreSelecting.null": "You aren't warding anyone.",
 
+    "role.warper.name": "Warper",
+    "role.warper.name:var.0": "Warpers",
+    "role.warper.target": "Warp",
+    "role.warper.youAreSelecting": "You are warping visits to \\0 to \\1 instead.",
+    "role.warper.youAreSelecting.null": "You aren't warping anyone.",
+
     "role.kidnapper.name": "Kidnapper",
     "role.kidnapper.name:var.0": "Kidnappers",
     "role.kidnapper.target": "Execute",
@@ -1489,6 +1495,11 @@
     "wiki.article.role.kidnapper.abilities":"* Choose one player to kidnap during the day\n* Visit your prisoner to attack them\n- If you kill your prisoner, their grave shows that they were killed by a jailor",
     "wiki.article.role.kidnapper.attributes":"* You may talk with your prisoner at night in kidnapped chat\n* Players you kidnap are warded and roleblocked, they also can't select anybody",
     "wiki.article.role.kidnapper.extra":"* The Kidnapper can not kill someone on night one\n* You invisibly roleblock the player you detain, they aren't told their roleblocked\n* Players you kidnap don't see your name on your messages. The messages you send appear to be from the jailor\n* If you kidnap a cult or mafia member, their teammates are told that player is in jail",
+
+    "wiki.article.role.warper.guide": "- At night, select 2 players\n    - If somebody else tries to visit the first player, they instead visit the second player\n    - The first player is told they are transported, but the second is not\n    - You can't choose yourself as your first target, you can't warp yourself\n\n _For example_\n- If a godfather tries to attack @1, but you warped @1 to @4, then @4 will die instead, and @1 is told they are transported\n\nYou are a minion, so you should try to harm the town as much as possible while looking to benefit non-town players.\n\n",
+    "wiki.article.role.warper.abilities":" - Visit 2 players to warp visits from the first player to the second player\n - You can't select yourself as the first target, you cannot warp yourself",
+    "wiki.article.role.warper.attributes":" -  All visits to first player instead visit the second player\n - The first player you visit is told they were transported",
+    "wiki.article.role.warper.extra": " - Some abilities are not affected by yours due to the priority system. _For example_ You can't stop a jester from haunting their target using a transport, this depends on priorities and whether or not an ability is indirect\n* Warpers act after transporters\n* Warpers do not warp the visits of a transporter",
 
     "wiki.article.role.politician.guide":"* If the town would win, instead you win and they all die. Try to help to the town to win while staying alive.",
     "wiki.article.role.politician.abilities": "* When town would win, you win, instantly attack ever townie, and all politicians leave town",

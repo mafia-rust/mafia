@@ -920,6 +920,18 @@
             {"type": "scarecrowResult", "players": [9,15,4]}
         ]
     },
+    "warper":{
+        "faction": "neutral",
+        "roleSet": "minions",
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "transported"}
+        ]
+    },
     "kidnapper":{
         "faction": "neutral",
         "roleSet": "minions",

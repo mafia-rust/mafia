@@ -129,12 +129,13 @@ macros::roles! {
     Jester : jester,
     Revolutionary : revolutionary,
     Politician : politician,
+    Doomsayer : doomsayer,
+    Death : death,
 
     Witch : witch,
     Scarecrow : scarecrow,
+    Warper : warper,
     Kidnapper : kidnapper,
-    Doomsayer : doomsayer,
-    Death : death,
 
     Arsonist : arsonist,
     Werewolf : werewolf,
@@ -158,6 +159,7 @@ macros::priorities! {
     Ward,
 
     Transporter,
+    Warper,
 
     Possess,
     Roleblock,
@@ -371,7 +373,7 @@ impl Role{
             | Role::Bouncer
             | Role::Veteran
             | Role::Transporter | Role::Retributionist
-            | Role::Witch | Role::Doomsayer | Role::Scarecrow
+            | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper
             | Role::MafiaWitch | Role::Necromancer
             | Role::Ojo => true,
             _ => false,
@@ -382,7 +384,7 @@ impl Role{
             Role::Bouncer |
             Role::Veteran | 
             Role::Transporter | Role::Escort | Role::Retributionist | 
-            Role::Jester | Role::Witch | Role::Scarecrow |
+            Role::Jester | Role::Witch | Role::Scarecrow | Role::Warper |
             Role::Hypnotist | Role::Consort | Role::MafiaWitch | Role::Necromancer => true,
             _ => false,
         }
