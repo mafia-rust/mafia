@@ -231,9 +231,9 @@
     "role.gossip.youAreSelecting": "You are eavesdropping on \\0.",
     "role.gossip.youAreSelecting.null": "You aren't eavesdropping on anyone.",
 
-    "role.flowerGirl.name": "Flower Girl",
-    "role.flowerGirl.name:var.0": "Flower Girls",
-    "role.flowerGirl.target": "Distribute",
+    "role.tallyClerk.name": "Tally Clerk",
+    "role.tallyClerk.name:var.0": "Tally Clerks",
+    "role.tallyClerk.target": "Distribute",
 
     "role.doctor.name": "Doctor",
     "role.doctor.name:var.0": "Doctors",
@@ -348,8 +348,8 @@
     "role.deputy.name:var.0": "Deputies",
     "role.deputy.dayTarget": "Shoot",
     
-    "role.rabbleRouser.name": "RabbleRouser",
-    "role.rabbleRouser.name:var.0": "RabbleRousers",
+    "role.rabblerouser.name": "Rabblerouser",
+    "role.rabblerouser.name:var.0": "Rabblerousers",
 
     "role.godfather.name": "Godfather",
     "role.godfather.name:var.0": "Godfathers",
@@ -860,7 +860,7 @@
     "chatMessage.snoopResult.inconclusive":"You can't tell what your target is.",
     "chatMessage.gossipResult.none": "Your target didn't visit a player they see as an enemy.",
     "chatMessage.gossipResult.enemies": "Your target visited a player they see as an enemy.",
-    "chatMessage.flowerGirlResult": "\\0 evil players voted guilty at some point today.",
+    "chatMessage.tallyClerkResult": "\\0 evil players voted guilty at some point today.",
     "chatMessage.targetsMessage":"Your target got the following message:",
     "chatMessage.youWerePossessed":"You were possessed.",
     "chatMessage.youWerePossessed.immune":"Someone tried to possess you but you are immune.",
@@ -1281,10 +1281,10 @@
     "wiki.article.role.gossip.attributes":"- If any of your targets targets have a suspicious aura, then you are told they visited an enemy",
     "wiki.article.role.gossip.extra":"- Suspicious aura overrides innocent aura\n- If your target visits multiple other players, you learn if at least one of them is an enemy with your target\n- False appeared visits can mess with your results\n- Your target having an aura does not mess with the results, however, their targets having an aura does",
     
-    "wiki.article.role.flowerGirl.guide": "- At night, you are told how many players are non town from the players who voted guilty during any of the trials today\n- If any player has innocent aura, they are counted as town\n- If any player has suspicious aura, they are counted as non town",
-    "wiki.article.role.flowerGirl.abilities":"- At night, you are told how many players are non town from the players who voted guilty today\n- If you are blocked, you aren't told anything\n- Your ability doesn't depend on visits",
-    "wiki.article.role.flowerGirl.attributes":"- Your ability still works when dead\n- A suspicious aura makes a player register as non town\n- An innocent aura makes a player register as town\n- A suspicious aura overwrites innocent aura to the Flower Girl",
-    "wiki.article.role.flowerGirl.extra":"- A player is counted as a townie if they exclusively win with town. so a jester is non town, and a marionette is non town",
+    "wiki.article.role.tallyClerk.guide": "- At night, you are told how many players are non town from the players who voted guilty during any of the trials today\n- If any player has innocent aura, they are counted as town\n- If any player has suspicious aura, they are counted as non town",
+    "wiki.article.role.tallyClerk.abilities":"- At night, you are told how many players are non town from the players who voted guilty today\n- If you are blocked, you aren't told anything\n- Your ability doesn't depend on visits",
+    "wiki.article.role.tallyClerk.attributes":"- Your ability still works when dead\n- A suspicious aura makes a player register as non town\n- An innocent aura makes a player register as town\n- A suspicious aura overwrites innocent aura to the Tally Clerk",
+    "wiki.article.role.tallyClerk.extra":"- A player is counted as a townie if they exclusively win with town. so a jester is non town, and a marionette is non town",
     
     "wiki.article.role.doctor.guide": "- At night, select a player to protect\n    - Whoever you protect doesn't die if they're attacked\n    - You and the player you protected are both told if they are attacked\n- You can select yourself to protect yourself once per game\n- If your target is attacked by a protection-piercing attack they still die\n- You can't select anyone night 1\n\nYou should try to protect people you think are townies who will be attacked.",
     "wiki.article.role.doctor.abilities":"* Visit a player to protect for the night\n* You can't select a player night 1",
@@ -1346,10 +1346,10 @@
     "wiki.article.role.vigilante.attributes":"* If your attack overpowers a player who exclusively wins with towns defense and they die, you commit suicide on the following night\n* When it is night one, when you have 0 bullets left, when you are going to commit suicide, or when you have already committed suicide, you can not select or attack anyone",
     "wiki.article.role.vigilante.extra": "* You only have a basic attack\n* Even while dead, killing someone requires and spends a bullet (such as when you get possessed)",
 
-    "wiki.article.role.rabbleRouser.guide":"- If a RabbleRouser is alive in the game, everyone can vote using the pitchfork menu\n- If 2/3rds of town aligned players vote the same player, that player is killed\n- This ability can be used up to 3 times\n- The pitchfork menu stays open at all times, regardless of weather or not it can be used",
-    "wiki.article.role.rabbleRouser.abilities":"- You and all other RabbleRousers are told when the pitchfork attacks someone, or if the attacked player has defense and survive\n- You don't visit due to your ability\n- The pitchfork can only be used to kill someone up to 3 times",
-    "wiki.article.role.rabbleRouser.attributes":"- Anyone who doesn't exclusively win with town is not counted as a voter for the pitchfork\n- The attack is indirect and protection piercing",
-    "wiki.article.role.rabbleRouser.extra":"\n- The pitchfork menu stays available at all times\n   - Even if all RabbleRousers are dead\n    - Even if there is no rabbleRouser\n    - Even if all three uses are consumed\n- Multiple rabbleRousers does not mean multiple attacks or more uses. There is a maximum of 3 uses and a maximum of 1 attack per night",
+    "wiki.article.role.rabblerouser.guide":"- If a Rabblerouser is alive in the game, everyone can vote using the pitchfork menu\n- If 2/3rds of town aligned players vote the same player, that player is killed\n- This ability can be used up to 3 times\n- The pitchfork menu stays open at all times, regardless of weather or not it can be used",
+    "wiki.article.role.rabblerouser.abilities":"- You and all other Rabblerousers are told when the pitchfork attacks someone, or if the attacked player has defense and survive\n- You don't visit due to your ability\n- The pitchfork can only be used to kill someone up to 3 times",
+    "wiki.article.role.rabblerouser.attributes":"- Anyone who doesn't exclusively win with town is not counted as a voter for the pitchfork\n- The attack is indirect and protection piercing",
+    "wiki.article.role.rabblerouser.extra":"\n- The pitchfork menu stays available at all times\n   - Even if all Rabblerousers are dead\n    - Even if there is no Rabblerouser\n    - Even if all three uses are consumed\n- Multiple Rabblerousers does not mean multiple attacks or more uses. There is a maximum of 3 uses and a maximum of 1 attack per night",
 
     "wiki.article.role.veteran.guide": "- At night, you can select yourself to gain protected defense for the night and rampage yourself, attacking everyone who visits you\n- You can only use your ability three times\n- You can't use your ability on night 1\n* You should try to trick evil players into visiting you, so you can block the attack and kill them. Try to avoid killing unnecessary townies.\n* There can only be one veteran in a game.",
     "wiki.article.role.veteran.abilities":"* Select yourself\n    - rampage yourself\n    - gain protected defense for the night",

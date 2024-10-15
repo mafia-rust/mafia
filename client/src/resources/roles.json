@@ -172,7 +172,7 @@
             {"type": "gossipResult", "enemies":false}
         ]
     },
-    "flowerGirl": {
+    "tallyClerk": {
         "faction": "town",
         "roleSet": "townInvestigative",
         "armor": false,
@@ -181,8 +181,8 @@
         "roleSpecificMenu": true,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "flowerGirlResult", "evilCount": 2},
-            {"type": "flowerGirlResult", "evilCount": 0}
+            {"type": "tallyClerkResult", "evilCount": 2},
+            {"type": "tallyClerkResult", "evilCount": 0}
         ]
     },
     "doctor": {
@@ -352,7 +352,7 @@
             {"type": "youAttackedSomeone"}
         ]
     },
-    "rabbleRouser": {
+    "rabblerouser": {
         "faction": "town",
         "roleSet": "townKilling",
         "armor": false,

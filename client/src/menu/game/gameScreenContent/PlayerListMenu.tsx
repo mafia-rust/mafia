@@ -200,7 +200,7 @@ export default function PlayerListMenu(): ReactElement {
         }
         {
             !GAME_MANAGER.getMySpectator() && 
-            enabledRoles.includes("rabbleRouser") && 
+            enabledRoles.includes("rabblerouser") && 
             phaseState.type !== "night" &&
             phaseState.type !== "obituary" &&
             <details className="role-specific-colors small-role-specific-menu" open={pitchforkVoteOpen}>

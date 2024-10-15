@@ -78,7 +78,7 @@ macros::roles! {
     Auditor : auditor,
     Snoop : snoop,
     Gossip : gossip,
-    FlowerGirl : flower_girl,
+    TallyClerk : tally_clerk,
 
     Doctor : doctor,
     Bodyguard : bodyguard,
@@ -92,7 +92,7 @@ macros::roles! {
     Veteran : veteran,
     Marksman: marksman,
     Deputy : deputy,
-    RabbleRouser : rabble_rouser,
+    Rabblerouser : rabblerouser,
 
     Escort : escort,
     Medium : medium,
@@ -369,7 +369,7 @@ mod macros {
 impl Role{
     pub fn possession_immune(&self)->bool{
         match self {
-            Role::FlowerGirl
+            Role::TallyClerk
             | Role::Bouncer
             | Role::Veteran
             | Role::Transporter | Role::Retributionist

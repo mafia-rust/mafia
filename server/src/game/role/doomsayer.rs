@@ -30,7 +30,7 @@ pub enum DoomsayerGuess{
     Jailor, Villager,
     // No TI
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith, Steward,
-    Vigilante, Veteran, Marksman, Deputy, RabbleRouser,
+    Vigilante, Veteran, Marksman, Deputy, Rabblerouser,
     Escort, Medium, Retributionist, Journalist, Mayor, Transporter
 }
 impl DoomsayerGuess{
@@ -41,7 +41,7 @@ impl DoomsayerGuess{
 
             Role::Detective | Role::Lookout | Role::Spy | 
             Role::Tracker | Role::Philosopher | Role::Psychic | 
-            Role::Auditor | Role::Snoop | Role::Gossip | Role::FlowerGirl => None, 
+            Role::Auditor | Role::Snoop | Role::Gossip | Role::TallyClerk => None, 
 
             Role::Doctor => Some(DoomsayerGuess::Doctor),
             Role::Bodyguard => Some(DoomsayerGuess::Bodyguard),
@@ -55,7 +55,7 @@ impl DoomsayerGuess{
             Role::Veteran => Some(DoomsayerGuess::Veteran),
             Role::Marksman => Some(DoomsayerGuess::Marksman),
             Role::Deputy => Some(DoomsayerGuess::Deputy),
-            Role::RabbleRouser => Some(DoomsayerGuess::RabbleRouser),
+            Role::Rabblerouser => Some(DoomsayerGuess::Rabblerouser),
 
             Role::Escort => Some(DoomsayerGuess::Escort),
             Role::Medium => Some(DoomsayerGuess::Medium),

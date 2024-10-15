@@ -14,11 +14,11 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 #[derive(Clone, Debug, Serialize, Default)]
-pub struct FlowerGirl;
+pub struct TallyClerk;
 
 
-impl RoleStateImpl for FlowerGirl {
-    type ClientRoleState = FlowerGirl;
+impl RoleStateImpl for TallyClerk {
+    type ClientRoleState = TallyClerk;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_blocked(game) {return}
         if priority != Priority::Investigative {return;}
@@ -28,17 +28,17 @@ impl RoleStateImpl for FlowerGirl {
             .filter(|player|player.alive(game))
             .filter(|player|VerdictsToday::player_guiltied_today(game, player))
         {
-            if FlowerGirl::player_is_suspicious(game, player){
+            if TallyClerk::player_is_suspicious(game, player){
                 evil_count += 1;
             }
         }
         
-        let message = ChatMessageVariant::FlowerGirlResult{ evil_count };
+        let message = ChatMessageVariant::TallyClerkResult{ evil_count };
         actor_ref.push_night_message(game, message);
     }
 }
 
-impl FlowerGirl {
+impl TallyClerk {
     pub fn player_is_suspicious(game: &Game, player_ref: PlayerReference) -> bool {
 
         if player_ref.has_suspicious_aura(game){
