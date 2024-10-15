@@ -66,6 +66,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     RejectStart{reason: RejectStartReason},
     PlayersHost{hosts: Vec<LobbyClientID>},
+    PlayersReady{ready: Vec<LobbyClientID>},
     #[serde(rename_all = "camelCase")]
     PlayersLostConnection{lost_connection: Vec<LobbyClientID>},
     StartGame,
@@ -196,6 +197,7 @@ pub enum ToServerPacket{
     SendLobbyMessage{text: String},
     SetSpectator{spectator: bool},
     SetName{name: String},
+    ReadyUp{ready: bool},
     SetLobbyName{name: String},
     StartGame,
     #[serde(rename_all = "camelCase")]

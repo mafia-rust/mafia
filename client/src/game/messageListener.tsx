@@ -135,7 +135,23 @@ export default function messageListener(packet: ToClientPacket){
         case "playersHost":
             if(GAME_MANAGER.state.stateType === "lobby"){
                 for(let [playerId, player] of GAME_MANAGER.state.players){
-                    player.host = packet.hosts.includes(playerId);
+                    if (packet.hosts.includes(playerId)) {
+                        player.ready = "host";
+                    } else {
+                        player.ready = player.ready === "host" ? "ready" : player.ready
+                    }
+                }
+                GAME_MANAGER.state.players = new Map(GAME_MANAGER.state.players.entries());
+            }
+        break;
+        case "playersReady":
+            if(GAME_MANAGER.state.stateType === "lobby"){
+                for(let [playerId, player] of GAME_MANAGER.state.players){
+                    if (packet.ready.includes(playerId)) {
+                        player.ready = "ready";
+                    } else {
+                        player.ready = player.ready === "host" ? "host" : "notReady"
+                    }
                 }
                 GAME_MANAGER.state.players = new Map(GAME_MANAGER.state.players.entries());
             }
