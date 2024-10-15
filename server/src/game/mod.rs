@@ -26,6 +26,7 @@ use components::mafia::Mafia;
 use components::pitchfork::Pitchfork;
 use components::mafia_recruits::MafiaRecruits;
 use components::poison::Poison;
+use components::detained::Detained;
 use components::revealed_group::RevealedGroups;
 use components::verdicts_today::VerdictsToday;
 use modifiers::Modifiers;
@@ -94,7 +95,8 @@ pub struct Game {
     pub pitchfork: Pitchfork,
     pub poison: Poison,
     pub modifiers: Modifiers,
-    pub revealed_groups: RevealedGroups
+    pub revealed_groups: RevealedGroups,
+    pub restricted: Detained,
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -186,6 +188,7 @@ impl Game {
                 poison: Poison::default(),
 
                 revealed_groups: RevealedGroups::default(),
+                restricted: Detained::default(),
 
             };
 
@@ -474,6 +477,7 @@ pub mod test {
 
             modifiers: Default::default(),
             revealed_groups: Default::default(),
+            restricted: Default::default(),
         };
 
         BeforeInitialRoleCreation::invoke(&mut game);

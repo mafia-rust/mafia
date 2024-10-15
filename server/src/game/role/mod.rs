@@ -129,12 +129,13 @@ macros::roles! {
     Jester : jester,
     Revolutionary : revolutionary,
     Politician : politician,
+    Doomsayer : doomsayer,
+    Death : death,
 
     Witch : witch,
     Scarecrow : scarecrow,
     Warper : warper,
-    Doomsayer : doomsayer,
-    Death : death,
+    Kidnapper : kidnapper,
 
     Arsonist : arsonist,
     Werewolf : werewolf,
@@ -383,16 +384,15 @@ impl Role{
             Role::Bouncer |
             Role::Veteran | 
             Role::Transporter | Role::Escort | Role::Retributionist | 
-            Role::Jester | Role::Witch | Role::Scarecrow |
+            Role::Jester | Role::Witch | Role::Scarecrow | Role::Warper |
             Role::Hypnotist | Role::Consort | Role::MafiaWitch | Role::Necromancer => true,
             _ => false,
         }
     }
     pub fn wardblock_immune(&self)->bool{
         match self {
-            Role::Jailor
-            | Role::Bouncer
-            | Role::Scarecrow => true,
+            Role::Jailor | Role::Kidnapper |
+            Role::Bouncer | Role::Scarecrow => true,
             _ => false
         }
     }

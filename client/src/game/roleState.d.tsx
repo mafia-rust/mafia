@@ -163,6 +163,10 @@ Doomsayer
 } | {
     type: "warper"
 } | {
+    type: "kidnapper"
+    executionsRemaining: number,
+    jailedTargetRef: number | null
+} | {
     type: "death",
     souls: number
 } | {

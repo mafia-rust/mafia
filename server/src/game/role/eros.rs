@@ -59,7 +59,7 @@ impl RoleStateImpl for Eros {
         let selected = actor_ref.selection(game);
 
         actor_ref != target_ref &&
-        !actor_ref.night_jailed(game) &&
+        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
         actor_ref.alive(game) &&
         target_ref.alive(game) &&
         match self.action {

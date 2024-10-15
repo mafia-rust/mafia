@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::components::detained::Detained;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -47,7 +48,7 @@ impl RoleStateImpl for Transporter {
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         let chosen_targets = actor_ref.selection(game);
 
-        !actor_ref.night_jailed(game) &&
+        !Detained::is_detained(game, actor_ref) &&
         actor_ref.alive(game) &&
         target_ref.alive(game) && 
         ((

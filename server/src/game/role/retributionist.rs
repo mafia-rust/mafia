@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::components::detained::Detained;
 use crate::game::{attack_power::DefensePower, phase::PhaseType};
 use crate::game::player::PlayerReference;
 use crate::game::role_list::Faction;
@@ -35,7 +36,7 @@ impl RoleStateImpl for Retributionist {
         }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        !actor_ref.night_jailed(game) &&
+        !Detained::is_detained(game, actor_ref) &&
         actor_ref.alive(game) &&
         ((
             actor_ref.selection(game).is_empty() &&

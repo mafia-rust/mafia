@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::chat::ChatMessageVariant;
+use crate::game::components::detained::Detained;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
 use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
@@ -31,7 +32,7 @@ impl RoleStateImpl for Framer {
 
                 let Some(second_visit) = framer_visits.get(1) else {return};
             
-                if !first_visit.target.night_jailed(game) {
+                if !Detained::is_detained(game, first_visit.target) {
                     first_visit.target.set_night_appeared_visits(game, Some(vec![
                         Visit{ target: second_visit.target, attack: false }
                     ]));
@@ -76,7 +77,7 @@ impl RoleStateImpl for Framer {
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         
-        !actor_ref.night_jailed(game) &&
+        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
         actor_ref.alive(game) &&
         (
             actor_ref.selection(game).is_empty() &&

@@ -37,7 +37,7 @@ impl RoleStateImpl for Cupid {
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         let selection = actor_ref.selection(game);
 
-        !actor_ref.night_jailed(game) &&
+        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
         actor_ref != target_ref &&
         ((
             selection.is_empty()

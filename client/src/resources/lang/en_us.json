@@ -499,6 +499,11 @@
     "role.warper.youAreSelecting": "You are warping visits to \\0 to \\1 instead.",
     "role.warper.youAreSelecting.null": "You aren't warping anyone.",
 
+    "role.kidnapper.name": "Kidnapper",
+    "role.kidnapper.name:var.0": "Kidnappers",
+    "role.kidnapper.target": "Execute",
+    "role.kidnapper.dayTarget": "Kidnap",
+
     "role.politician.name": "Politician",
     "role.politician.name:var.0": "Politicians",
 
@@ -639,6 +644,7 @@
     "chatGroup.mafia.icon": "🌹",
     "chatGroup.cult.icon": "🕯️",
     "chatGroup.jail.icon": "🔒",
+    "chatGroup.kidnapped.icon": "🔒",
     "chatGroup.interview.icon": "📝",
     "chatGroup.dead.icon": "💀",
     "chatGroup.puppeteer.icon": "🧵",
@@ -929,6 +935,8 @@
     "wiki.article.standard.fiends.text": "Fiends win by eliminating all opposing teams. Fiends are on the same team, but they can't communicate at night. Fiends are usually very powerful and can kill multiple players in one night. Unlike mafia and cult, most games should have at most one fiend, in addition to the town and mafia.",
     "wiki.article.standard.cult.title": "Cult",
     "wiki.article.standard.cult.text": "Cult is an evil faction. They win by eliminating all opposing teams, they can communicate at night, and they know who each other are. The cult as a whole has 2 abilities, kill and convert. They alternate, converting first, and killing after.\n- The cult can only kill after they have successfully converted someone, after that, they can only convert after successfully killing someone. If for some reason the ability doesn't work (Protection or Roleblock), then it is tried again the next night. It is not inherently every other night.\n\n- Apostle. If there is a cult, there is always an apostle. The apostle uses their ability to convert players. If there is no zealot, then the apostle kills.\n- Disciple. The disciple has no ability.\n- Zealot. The zealot is always be the role of the newest created cultist member. The zealot will do the kills instead of the apostle if a zealot exits.", 
+    "wiki.article.standard.minions.title": "Minions",
+    "wiki.article.standard.minions.text": "Minions is a Role Set that contains roles which win only if town loses. They leave the game if all townies are gone. Unlike Mafia, they don't communicate at night with any evil players.\n\nSome Minions include:\n* Witch\n* Scarecrow\n* Kidnapper ",
     "wiki.article.standard.tag.title": "Tag",
     "wiki.article.standard.tag.title:var.0": "Tags",
     "wiki.article.standard.tag.title:var.1": "Tagged",
@@ -1482,6 +1490,11 @@
     "wiki.article.role.scarecrow.abilities":"* Visit a player to ward them\n    - Everyone visitor to your target has their visits erased, and receives a chat message informing them they are wardblocked\n- You are told who you wardblocked, and they are revealed\n- If there are no living townies, you win, and leave town at the start of the next phase",
     "wiki.article.role.scarecrow.attributes":"* Your target isn't told they are warded",
     "wiki.article.role.scarecrow.extra":"* You can't select yourself\n* You are immune to roleblocks, wardblocks, and possession\n- You aren't told the names of players who aren't wardblocked, even if they still somehow visit your target, for example, a bouncer is wardblock immune",
+    
+    "wiki.article.role.kidnapper.guide": "- Each day, choose a player to kidnap. At night, you interrogate them in text chat\n- You can kill your prisoner one time\n- You can talk to your prisoner during the night, and they are not told who you are\n- The players you kidnap are warded and roleblocked.",
+    "wiki.article.role.kidnapper.abilities":"* Choose one player to kidnap during the day\n* Visit your prisoner to attack them\n- If you kill your prisoner, their grave shows that they were killed by a jailor",
+    "wiki.article.role.kidnapper.attributes":"* You may talk with your prisoner at night in kidnapped chat\n* Players you kidnap are warded and roleblocked, they also can't select anybody",
+    "wiki.article.role.kidnapper.extra":"* The Kidnapper can not kill someone on night one\n* You invisibly roleblock the player you detain, they aren't told their roleblocked\n* Players you kidnap don't see your name on your messages. The messages you send appear to be from the jailor\n* If you kidnap a cult or mafia member, their teammates are told that player is in jail",
 
     "wiki.article.role.warper.guide": "- At night, select 2 players\n    - If somebody else tries to visit the first player, they will instead visit the second player. The first player will be told they were transported, but the second will not.\n\n _For example_\n- If a godfather tries to attack @1, but you warped @1 to @4, then @4 will die instead\n\nYou are a minion, so you should try to harm the town as much as possible while looking to benefit non-town players.\n\n",
     "wiki.article.role.warper.abilities":"* Visit 2 players to warp visits from the first player to the second player.",
