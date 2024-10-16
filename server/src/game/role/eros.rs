@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::AttackPower;
+use crate::game::role_list::RoleSet;
 use crate::game::{attack_power::DefensePower, components::love_linked::LoveLinked};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;

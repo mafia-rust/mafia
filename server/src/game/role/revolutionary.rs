@@ -9,6 +9,7 @@ use crate::game::phase::{PhaseState, PhaseType};
 use crate::game::player::PlayerReference;
 use crate::game::role::RoleState;
 
+use crate::game::role_list::RoleSet;
 use crate::game::tag::Tag;
 
 use crate::game::Game;
@@ -71,7 +72,7 @@ impl RoleStateImpl for Revolutionary {
         
         if let Some(target) = PlayerReference::all_players(game)
             .filter(|p|
-                p.role(game).faction() == Faction::Town &&
+                RoleSet::Town.get_roles().contains(&p.role(game)) &&
                 
                 p.role(game) != Role::Jailor &&
 

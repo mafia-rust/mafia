@@ -6,6 +6,7 @@ use crate::game::chat::ChatMessageVariant;
 use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::player::PlayerReference;
 
+use crate::game::role_list::RoleSet;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
@@ -39,7 +40,7 @@ impl RoleStateImpl for Spy {
 
                 let mut mafia_visits = vec![];
                 for other_player in PlayerReference::all_players(game){
-                    if other_player.role(game).faction() == Faction::Mafia{
+                    if RoleSet::Mafia.get_roles().contains(&other_player.role(game)){
                         mafia_visits.append(&mut other_player.night_visits(game).iter().map(|v|v.target.index()).collect());
                     }
                 }
@@ -68,7 +69,7 @@ impl RoleStateImpl for Spy {
                 if actor_ref.night_blocked(game) {return;}
 
                 let count = PlayerReference::all_players(game).filter(|p|
-                    p.role(game).faction() == Faction::Cult && p.alive(game)
+                    p.alive(game) && RoleSet::Cult.get_roles().contains(&p.role(game))
                 ).count() as u8;
 
                 if count > 0 {

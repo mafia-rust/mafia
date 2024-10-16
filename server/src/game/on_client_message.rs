@@ -3,7 +3,17 @@ use std::collections::HashMap;
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender}, components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{imposter::Imposter, kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, recruiter::RecruiterAction, retrainer::Retrainer, Role, RoleState}, role_list::{Faction, RoleSet}, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
+    chat::{ChatGroup, ChatMessageVariant, MessageSender},
+    components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward,
+    phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference},
+    role::{
+        imposter::Imposter, kira::{Kira, KiraGuess},
+        mayor::Mayor, puppeteer::PuppeteerAction,
+        recruiter::RecruiterAction, retrainer::Retrainer,
+        Role, RoleState
+    }, 
+    role_list::RoleSet, 
+    spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
 
@@ -254,7 +264,7 @@ impl Game {
                         sender_player_ref.set_role_state(self, RoleState::MafiaKillingWildcard(mafia_wild_card));
                     }
                     RoleState::FiendsWildcard(mut fiends_wild_card) => {
-                        if role.faction() == Faction::Fiends {
+                        if RoleSet::Fiends.get_roles().contains(&role) {
                             fiends_wild_card.role = role;
                         }
                         sender_player_ref.set_role_state(self, RoleState::FiendsWildcard(fiends_wild_card));

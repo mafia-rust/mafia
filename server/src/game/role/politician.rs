@@ -8,6 +8,7 @@ use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 
+use crate::game::win_condition::WinCondition;
 use crate::game::Game;
 use super::jester::Jester;
 use super::{GetClientRoleState, Role, RoleState, RoleStateImpl};
@@ -85,6 +86,9 @@ impl RoleStateImpl for Politician {
                 }
             }
         }
+    }
+    fn default_win_condition(self) -> crate::game::win_condition::WinCondition where RoleState: From<Self> {
+        WinCondition::ResolutionStateReached{win_if_any: vec![ResolutionState::Politician].into_iter().collect()}
     }
 }
 impl GetClientRoleState<ClientRoleState> for Politician {

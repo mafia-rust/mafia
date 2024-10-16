@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::{attack_power::DefensePower, role_list::Faction};
+use crate::game::attack_power::DefensePower;
 
 
 use super::RoleStateImpl;

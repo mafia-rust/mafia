@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::components::detained::Detained;
+use crate::game::role_list::RoleSet;
 use crate::game::{attack_power::DefensePower, phase::PhaseType};
 use crate::game::player::PlayerReference;
 
@@ -44,7 +45,7 @@ impl RoleStateImpl for Retributionist {
             game.graves.iter().any(|grave|
                 grave.player == target_ref && 
                 if let Some(role) = grave.role(){
-                    role.faction() == Faction::Town
+                    RoleSet::Town.get_roles().contains(&role)
                 }else{false}
             ) &&
             (self.used_bodies.iter().filter(|p| **p == target_ref).count() < 2)

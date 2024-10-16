@@ -1,9 +1,7 @@
 use std::{collections::{HashMap, HashSet}, ops::Mul};
 
 use crate::{game::{
-    attack_power::AttackPower, grave::GraveKiller, phase::PhaseType,
-    player::PlayerReference, resolution_state::ResolutionState,
-    role::Priority, role_list::Faction, Game
+    attack_power::AttackPower, grave::GraveKiller, phase::PhaseType, player::PlayerReference, resolution_state::ResolutionState, role::Priority, role_list::RoleSet, Game
 }, packet::ToClientPacket};
 
 #[derive(Clone)]

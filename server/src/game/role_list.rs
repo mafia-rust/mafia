@@ -9,26 +9,6 @@ use vec1::{
 
 use super::role::Role;
 
-macro_rules! make_faction_enum {
-    ($($name:ident),*)=>{
-        #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord)]
-        #[serde(rename_all = "camelCase")]
-        pub enum Faction { $($name,)*}
-        impl Faction {
-            pub fn values() -> Vec<Self> {
-                return vec![$(Self::$name),*];
-            }
-        }
-    }
-}
-make_faction_enum!{
-    Mafia,
-    Cult,
-    Town,
-    Neutral,
-    Fiends
-}
-
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RoleList(pub Vec<RoleOutline>);
 impl RoleList {
@@ -204,7 +184,8 @@ impl RoleSet{
             RoleSet::MafiaKilling => 
                 vec![
                     Role::Godfather, Role::Eros, Role::Counterfeiter,
-                    Role::Retrainer, Role::Imposter, Role::Recruiter, Role::Mafioso
+                    Role::Retrainer, Role::Imposter, Role::Recruiter,
+                    Role::Mafioso
                 ],
             RoleSet::MafiaSupport => 
                 vec![

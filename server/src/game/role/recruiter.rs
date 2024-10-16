@@ -4,10 +4,12 @@ use serde::{Deserialize, Serialize};
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::mafia_recruits::MafiaRecruits;
+use crate::game::components::revealed_group::RevealedGroupID;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::{Faction, RoleOutline, RoleOutlineOption};
+use crate::game::resolution_state::ResolutionState;
+use crate::game::role_list::{RoleOutline, RoleOutlineOption, RoleSet};
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
@@ -102,7 +104,7 @@ impl RoleStateImpl for Recruiter {
         game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackup { backup: backup.map(|p|p.index()) });
 
         for player_ref in PlayerReference::all_players(game){
-            if player_ref.role(game).faction() != Faction::Mafia{
+            if !RevealedGroupID::Mafia.is_player_in_revealed_group(game, player_ref){
                 continue;
             }
             player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
@@ -110,7 +112,7 @@ impl RoleStateImpl for Recruiter {
 
         if let Some(backup) = backup {
             for player_ref in PlayerReference::all_players(game){
-                if player_ref.role(game).faction() != Faction::Mafia {
+                if !RevealedGroupID::Mafia.is_player_in_revealed_group(game, player_ref) {
                     continue;
                 }
                 player_ref.push_player_tag(game, backup, Tag::GodfatherBackup);
@@ -121,7 +123,8 @@ impl RoleStateImpl for Recruiter {
     fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         actor_ref != target_ref &&
         actor_ref.alive(game) && target_ref.alive(game) &&
-        target_ref.role(game).faction() == Faction::Mafia
+        RoleSet::Mafia.get_roles().contains(&target_ref.role(game)) &&
+        RevealedGroupID::Mafia.is_player_in_revealed_group(game, target_ref)
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         crate::game::role::common_role::can_night_select(game, actor_ref, target_ref) &&
@@ -146,9 +149,9 @@ impl RoleStateImpl for Recruiter {
         if actor_ref == dead_player_ref {
             let Some(backup) = self.backup else {return};
 
-            actor_ref.set_role_state(game, RoleState::Recruiter(Recruiter{backup: None, ..self.clone()}));
+            actor_ref.set_role_state(game, Recruiter{backup: None, ..self.clone()});
             for player_ref in PlayerReference::all_players(game){
-                if player_ref.role(game).faction() != Faction::Mafia{
+                if RevealedGroupID::Mafia.is_player_in_revealed_group(game, player_ref){
                     continue;
                 }
                 player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
@@ -157,10 +160,10 @@ impl RoleStateImpl for Recruiter {
             if !backup.alive(game){return}
 
             //convert backup to godfather
-            backup.set_role_and_win_condition_and_revealed_group(game, RoleState::Recruiter(Recruiter{backup: None, ..self}));
+            backup.set_role_and_win_condition_and_revealed_group(game, Recruiter{backup: None, ..self});
         }
         else if self.backup.is_some_and(|p|p == dead_player_ref) {
-            actor_ref.set_role_state(game, RoleState::Recruiter(Recruiter{backup: None, ..self}));
+            actor_ref.set_role_state(game, Recruiter{backup: None, ..self});
         }
     }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: crate::game::phase::PhaseType) {
@@ -178,13 +181,13 @@ impl RoleStateImpl for Recruiter {
         //get random mafia player and turn them info a random town role
 
         let random_mafia_player = PlayerReference::all_players(game)
-            .filter(|p|p.role(game).faction() == Faction::Mafia)
+            .filter(|p|RoleSet::Mafia.get_roles().contains(&p.role(game)))
             .filter(|p|*p!=actor_ref)
             .choose(&mut rand::thread_rng());
 
         if let Some(random_mafia_player) = random_mafia_player {
 
-            let random_town_role = RoleOutline::RoleOutlineOptions { options: vec1![RoleOutlineOption::Faction{ faction: Faction::Town }] }
+            let random_town_role = RoleOutline::RoleOutlineOptions { options: vec1![RoleOutlineOption::RoleSet { role_set: RoleSet::Town }] }
                 .get_random_role(
                     &game.settings.enabled_roles,
                     PlayerReference::all_players(game).map(|p|p.role(game)).collect::<Vec<_>>().as_slice()
@@ -194,7 +197,12 @@ impl RoleStateImpl for Recruiter {
                 //special case here. I don't want to use set_role because it alerts the player their role changed
                 //NOTE: It will still send a packet to the player that their role state updated,
                 //so it might be deducable that there is a recruiter
+                RevealedGroupID::Mafia.remove_player_from_revealed_group(game, random_mafia_player);
+                random_mafia_player.set_win_condition(game, crate::game::win_condition::WinCondition::ResolutionStateReached{
+                    win_if_any: vec![ResolutionState::Town].into_iter().collect()
+                });
                 random_mafia_player.set_role_state(game, random_town_role.default_state());
+                
             }
         }
         

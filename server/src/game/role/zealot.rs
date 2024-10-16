@@ -6,6 +6,7 @@ use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 
 
+use crate::game::role_list::RoleSet;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use super::{Priority, RoleStateImpl};
