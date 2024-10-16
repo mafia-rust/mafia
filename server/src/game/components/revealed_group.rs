@@ -73,6 +73,9 @@ impl RevealedGroupID{
             }
         }
     }
+    pub fn players<'a>(&self, game: &'a Game)->&'a HashSet<PlayerReference>{
+        self.revealed_group(game).into()
+    }
     pub fn add_player_to_revealed_group(&self, game: &mut Game, player: PlayerReference){
         let players: &mut HashSet<PlayerReference> = self.revealed_group_mut(game).into();
         if players.insert(player) {

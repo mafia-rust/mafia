@@ -194,6 +194,8 @@ impl PlayerReference{
         
         BeforeRoleSwitch::new(*self, old.clone(), new_role_data.clone()).invoke(game);
 
+        
+
         self.set_role_state(game, new_role_data.clone());
         self.on_role_creation(game);
         if new_role_data.role() == self.role(game) {
@@ -205,10 +207,10 @@ impl PlayerReference{
         self.set_win_condition(game, new_role_data.clone().default_win_condition());
         
         RevealedGroupID::set_player_revealed_groups(
-            new_role_data.clone().default_revealed_groups(),
-            game,
-            *self
+            new_role_data.clone().default_revealed_groups(), 
+            game, *self
         );
+        
     }
     pub fn increase_defense_to(&self, game: &mut Game, defense: DefensePower){
         if defense.is_stronger(self.night_defense(game)) {
