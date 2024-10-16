@@ -44,6 +44,7 @@ export function loadReconnectData(): {
 
 export type Settings = {
     volume: number;
+    defaultName: string | null;
     language: Language;
     roleSpecificMenus: Record<Role, RoleSpecificMenuType>
 };
@@ -95,5 +96,6 @@ export function deleteGameModes() {
 export const DEFAULT_SETTINGS: Readonly<Settings> = {
     volume: 0.5,
     language: "en_us",
+    defaultName: null,
     roleSpecificMenus: Object.fromEntries(getAllRoles().map(role => [role, "playerList"])) as Record<Role, "playerList">
 };

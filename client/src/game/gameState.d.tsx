@@ -36,7 +36,7 @@ export type LobbyState = {
     chatMessages: ChatMessage[],
 }
 export type LobbyClient = {
-    host: boolean,
+    ready: "host" | "ready" | "notReady",
     connection: "connected" | "disconnected" | "couldReconnect",
     clientType: LobbyClientType
 }

@@ -136,6 +136,7 @@ macros::roles! {
     Scarecrow : scarecrow,
     Warper : warper,
     Kidnapper : kidnapper,
+    Chronokaiser : chronokaiser,
 
     Arsonist : arsonist,
     Werewolf : werewolf,

@@ -74,6 +74,7 @@ export type GameManager = {
     sendKickPlayerPacket(playerId: number): void;
     sendSetSpectatorPacket(spectator: boolean): void;
     sendSetNamePacket(name: string): void;
+    sendReadyUpPacket(ready: boolean): void;
     sendSendLobbyMessagePacket(text: string): void;
     sendSetLobbyNamePacket(name: string): void;
     sendStartGamePacket(): Promise<boolean>;
