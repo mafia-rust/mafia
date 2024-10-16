@@ -24,7 +24,7 @@ impl RoleStateImpl for Chronokaiser {
             return;
         }
 
-        if phase == PhaseType::Discussion {
+        if phase == PhaseType::Discussion && Self::get_speed_up_percent(game) != 0{
             game.add_message_to_chat_group(ChatGroup::All, 
                 ChatMessageVariant::ChronokaiserSpeedUp { percent: Self::get_speed_up_percent(game)}
             );
@@ -36,13 +36,13 @@ impl RoleStateImpl for Chronokaiser {
 }
 
 impl Chronokaiser {
-    const SPEED_UP_PERCENT_PER_DAY: u32 = 35;
+    const SPEED_UP_PERCENT_PER_DAY: u32 = 40;
     pub fn get_speed_up_percent(game: &Game)->u32{
         /*
             Dusk 1 = 0%
             Discussion 2 = 20%
          */
-        game.day_number().saturating_sub(1) as u32 * Self::SPEED_UP_PERCENT_PER_DAY
+        game.day_number().saturating_sub(2) as u32 * Self::SPEED_UP_PERCENT_PER_DAY
     }
     pub fn won(game: &Game, actor_ref: PlayerReference)->bool{
         actor_ref.alive(game)
