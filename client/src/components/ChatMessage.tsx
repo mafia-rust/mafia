@@ -655,6 +655,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.youAreLoveLinked", playerNames[message.player]);
         case "playerDiedOfABrokenHeart":
             return translate("chatMessage.playerDiedOfBrokenHeart", playerNames[message.player], playerNames[message.lover]);
+        case "chronokaiserSpeedUp":
+            return translate("chatMessage.chronokaiserSpeedUp", message.percent);
         case "deputyShotYou":
         case "deathCollectedSouls":
         case "targetWasAttacked":
@@ -991,6 +993,9 @@ export type ChatMessageVariant = {
     type: "deathCollectedSouls"
 } | {
     type: "revolutionaryWon"
+} | {
+    type: "chronokaiserSpeedUp"
+    percent: number
 } | {
     type: "doomsayerFailed"
 } | {

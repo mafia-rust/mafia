@@ -835,6 +835,19 @@
             {"type": "doomsayerFailed"}
         ]
     },
+    "chronokaiser": {
+        "faction": "neutral",
+        "roleSet": null,
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "chronokaiserSpeedUp", "percent": "35"},
+            {"type": "chronokaiserSpeedUp", "percent": "70"}
+        ]
+    },
     "martyr": {
         "faction": "neutral",
         "roleSet": null,

@@ -66,6 +66,7 @@
     "targetWasAttacked": "result",
     "youWereProtected": "result",
     "revolutionaryWon": "special",
+    "chronokaiserSpeedUp": "special",
     "gameOver": "important center",
     "jesterWon": "special",
     "youAreLoveLinked": "result",
