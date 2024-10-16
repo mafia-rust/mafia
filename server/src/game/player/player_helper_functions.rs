@@ -12,7 +12,7 @@ use crate::{game::{
     },
     event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch},
     grave::{Grave, GraveKiller, GraveReference}, resolution_state::ResolutionState,
-    role::{Priority, Role, RoleState},
+    role::{chronokaiser::Chronokaiser, Priority, Role, RoleState},
     visit::Visit, win_condition::WinCondition, Game
 }, packet::ToClientPacket};
 
@@ -290,6 +290,7 @@ impl PlayerReference{
                     RoleState::Doomsayer(r) => r.won(),
                     RoleState::Revolutionary(r) => r.won(),
                     RoleState::Politician(r) => r.won(),
+                    RoleState::Chronokaiser(_) => Chronokaiser::won(game, *self),
                     RoleState::Martyr(r) => r.won(),
                     RoleState::Death(r) => r.won(),
                     _ => false
