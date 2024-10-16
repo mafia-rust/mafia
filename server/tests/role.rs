@@ -3,7 +3,7 @@ use std::{ops::Deref, vec};
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::{components::{cult::CultAbility, revealed_group::RevealedGroupID}, role::{armorsmith::Armorsmith, scarecrow::Scarecrow, tally_clerk::TallyClerk}, role_list::RoleSet};
+use mafia_server::game::{components::{cult::CultAbility, revealed_group::RevealedGroupID}, role::{armorsmith::Armorsmith, recruiter::Recruiter, scarecrow::Scarecrow, tally_clerk::TallyClerk, warper::Warper}, role_list::RoleSet};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
@@ -106,6 +106,39 @@ fn medium_receives_dead_messages_from_jail() {
             message_sender: MessageSender::Player { player: townie.index() }
         }
     );
+}
+
+#[test]
+fn no_unwanted_tags() {
+    kit::scenario!(game in Dusk 1 where
+        jester: Jester,
+        townie: Detective,
+        mafioso: Godfather,
+        mortician: Mortician,
+        politician: Politician,
+        spy: Spy,
+        lookout: Lookout,
+        detective: Detective,
+        arsonist: Arsonist,
+        vigilante: Vigilante,
+        puppeteer: Puppeteer,
+        warper: Warper,
+        witch: Witch
+    );
+
+    assert!(jester.get_player_tags().is_empty());
+    assert!(townie.get_player_tags().is_empty());
+    assert!(mafioso.get_player_tags().is_empty());
+    assert!(mortician.get_player_tags().is_empty());
+    assert!(politician.get_player_tags().is_empty());
+    assert!(spy.get_player_tags().is_empty());
+    assert!(lookout.get_player_tags().is_empty());
+    assert!(detective.get_player_tags().is_empty());
+    assert!(arsonist.get_player_tags().is_empty());
+    assert!(vigilante.get_player_tags().is_empty());
+    assert!(puppeteer.get_player_tags().is_empty());
+    assert!(warper.get_player_tags().is_empty());
+    assert!(witch.get_player_tags().is_empty());
 }
 
 #[test]
@@ -1661,6 +1694,53 @@ fn vigilante_shoots_marionette(){
     assert!(vigilante.alive());
 }
 
+#[test]
+fn recruits_dont_get_converted_to_mk(){
+    kit::scenario!(game in Night 2 where
+        recruiter: Recruiter,
+        mortician: Mortician,
+        vigi: Vigilante,
+        a: Detective,
+        b: Detective,
+        c: Detective,
+        d: Detective
+    );
+
+    assert!(vigi.set_night_selection_single(recruiter));
+
+    game.skip_to(Night, 3);
+
+    assert!(!recruiter.alive());
+    assert!(mortician.role() == Role::Recruiter);
+    assert!(vigi.role() == Role::Vigilante);
+
+    assert!(mortician.set_night_selection_single(a));
+    assert!(vigi.set_night_selection_single(mortician));
+
+    game.next_phase();
+
+    //tag checks
+    assert!(mortician.get_player_tags().get(&a.player_ref()).unwrap().contains(&Tag::PuppeteerMarionette));
+    assert!(mortician.get_player_tags().get(&recruiter.player_ref()).is_none());
+    assert!(recruiter.get_player_tags().get(&a.player_ref()).unwrap().contains(&Tag::PuppeteerMarionette));
+    assert!(recruiter.get_player_tags().get(&mortician.player_ref()).is_none());
+    assert!(a.get_player_tags().get(&recruiter.player_ref()).is_none());
+    assert!(a.get_player_tags().get(&mortician.player_ref()).is_none());
+
+    assert!(!mortician.alive());
+    assert!(a.alive());
+    assert!(a.role() == Role::Detective);
+    assert!(mortician.role() == Role::Recruiter);
+    assert!(vigi.role() == Role::Vigilante);
+
+    //make sure recruiter lost
+    assert!(!recruiter.get_won_game());
+    assert!(!mortician.get_won_game());
+    assert!(!a.get_won_game());
+    assert!(b.get_won_game());
+    assert!(c.get_won_game());
+    assert!(d.get_won_game());
+}
 
 #[test]
 fn arsonist_ignites_and_aura(){
