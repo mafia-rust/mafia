@@ -816,7 +816,7 @@
     "chatMessage.mediumHauntStarted":"\\0 has brought the dead to haunt \\1!",
     "chatMessage.jesterWon":"The Jester will get their revenge from the grave!",
     "chatMessage.revolutionaryWon":"The Revolutionary got their target executed and won!",
-    "chatMessage.chronokaiserSpeedUp":"The Chronokaiser speeds up time. Each phase is \\0% shorter.",
+    "chatMessage.chronokaiserSpeedUp":"The Chronokaiser speeds up time. Each phase is \\0% faster.",
     "chatMessage.deathCollectedSouls":"The apocalypse begins, everyone will die tonight if Death is alive at nightfall!",
     "chatMessage.deputyKilled":"The Deputy killed \\0!",
     "chatMessage.deputyShotYou":"A Deputy shot you!",
