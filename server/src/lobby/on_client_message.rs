@@ -2,7 +2,7 @@ use std::{collections::{HashMap, VecDeque}, time::{Duration, Instant}};
 
 use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, strings::TidyableString, websocket_connections::connection::ClientSender};
 
-use super::{lobby_client::{LobbyClient, LobbyClientID, LobbyClientType}, name_validation::{self, sanitize_server_name}, Lobby, LobbyState};
+use super::{lobby_client::{LobbyClient, LobbyClientID, LobbyClientType, Ready}, name_validation::{self, sanitize_server_name}, Lobby, LobbyState};
 
 pub const MESSAGE_PER_SECOND_LIMIT: u64 = 1;
 pub const MESSAGE_PER_SECOND_LIMIT_TIME: Duration = Duration::from_secs(10);
@@ -133,6 +133,27 @@ impl Lobby {
 
                 Self::send_players_lobby(clients);
             },
+            ToServerPacket::ReadyUp{ ready } => {
+                let LobbyState::Lobby { clients, .. } = &mut self.lobby_state else {
+                    log!(error "Lobby"; "{} {}", "ToServerPacket::ReadyUp can not be used outside of LobbyState::Lobby", lobby_client_id);
+                    return
+                };
+
+                if let Some(player) = clients.get_mut(&lobby_client_id){
+                    if player.ready != Ready::Host {
+                        player.ready = if ready { Ready::Ready } else { Ready::NotReady }
+                    }
+                }
+
+
+                let mut ready = Vec::new();
+                for client in clients {
+                    if client.1.ready == Ready::Ready {
+                        ready.push(client.0.clone());
+                    }
+                }
+                Self::send_to_all(&self, ToClientPacket::PlayersReady { ready });
+            },
             ToServerPacket::SetLobbyName{ name } => {
                 let LobbyState::Lobby { .. } = self.lobby_state else {
                     log!(error "Lobby"; "{} {}", "ToServerPacket::SetLobbyName can not be used outside of LobbyState::Lobby", lobby_client_id);
@@ -158,7 +179,7 @@ impl Lobby {
                     return
                 };
                 if let Some(player) = clients.get(&lobby_client_id){
-                    if !player.host {return}
+                    if !player.is_host() {return}
                 }
 
                 settings.role_list.simplify();
@@ -184,31 +205,31 @@ impl Lobby {
                         if let LobbyClientType::Spectator = lobby_client.client_type {
                             GameClient {
                                 client_location: GameClientLocation::Spectator(next_spectator_index),
-                                host: lobby_client.host,
+                                host: lobby_client.is_host(),
                                 last_message_times: VecDeque::new(),
                             }
                         } else {
                             GameClient {
                                 client_location: GameClientLocation::Player(next_player_index),
-                                host: lobby_client.host,
+                                host: lobby_client.is_host(),
                                 last_message_times: VecDeque::new(),
                             }
                         }
                     );
                     
                     match lobby_client.client_type {
-                        LobbyClientType::Player { name } => {
+                        LobbyClientType::Player { ref name } => {
                             game_player_params.push(PlayerInitializeParameters{
+                                host: lobby_client.is_host(),
                                 connection: lobby_client.connection,
-                                name,
-                                host: lobby_client.host,
+                                name: name.clone(),
                             });
                             next_player_index += 1;
                         },
                         LobbyClientType::Spectator => {
                             game_spectator_params.push(SpectatorInitializeParameters{
+                                host: lobby_client.is_host(),
                                 connection: lobby_client.connection,
-                                host: lobby_client.host,
                             });
                             next_spectator_index += 1;
                         }
@@ -244,7 +265,7 @@ impl Lobby {
                     return;
                 };
                 if let Some(player) = clients.get(&lobby_client_id){
-                    if !player.host {return}
+                    if !player.is_host() {return}
                 }
 
                 match phase {
@@ -267,7 +288,7 @@ impl Lobby {
                     return;
                 };
                 if let Some(player) = clients.get(&lobby_client_id){
-                    if !player.host {return}
+                    if !player.is_host() {return}
                 }
 
                 settings.phase_times = phase_time_settings.clone();
@@ -280,7 +301,7 @@ impl Lobby {
                     return;
                 };
                 if let Some(player) = clients.get(&lobby_client_id){
-                    if !player.host {return}
+                    if !player.is_host() {return}
                 }
 
                 settings.role_list = role_list;
@@ -296,7 +317,7 @@ impl Lobby {
                     return;
                 };
                 if let Some(player) = clients.get(&lobby_client_id){
-                    if !player.host {return}
+                    if !player.is_host() {return}
                 }
 
                 if settings.role_list.0.len() <= index as usize {return}
@@ -311,7 +332,7 @@ impl Lobby {
                     return;
                 };
                 if let Some(player) = clients.get(&lobby_client_id){
-                    if !player.host {return}
+                    if !player.is_host() {return}
                 }
 
                 settings.role_list.simplify();

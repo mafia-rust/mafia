@@ -172,7 +172,7 @@
             {"type": "gossipResult", "enemies":false}
         ]
     },
-    "flowerGirl": {
+    "tallyClerk": {
         "faction": "town",
         "roleSet": "townInvestigative",
         "armor": false,
@@ -181,8 +181,8 @@
         "roleSpecificMenu": true,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "flowerGirlResult", "evilCount": 2},
-            {"type": "flowerGirlResult", "evilCount": 0}
+            {"type": "tallyClerkResult", "evilCount": 2},
+            {"type": "tallyClerkResult", "evilCount": 0}
         ]
     },
     "doctor": {
@@ -352,7 +352,7 @@
             {"type": "youAttackedSomeone"}
         ]
     },
-    "rabbleRouser": {
+    "rabblerouser": {
         "faction": "town",
         "roleSet": "townKilling",
         "armor": false,
@@ -835,6 +835,20 @@
             {"type": "doomsayerFailed"}
         ]
     },
+    "chronokaiser": {
+        "faction": "neutral",
+        "roleSet": null,
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "chronokaiserSpeedUp", "percent": "40"},
+            {"type": "chronokaiserSpeedUp", "percent": "80"},
+            {"type": "chronokaiserSpeedUp", "percent": "160"}
+        ]
+    },
     "martyr": {
         "faction": "neutral",
         "roleSet": null,
@@ -918,6 +932,52 @@
         "chatMessages":[
             {"type": "wardblocked"},
             {"type": "scarecrowResult", "players": [9,15,4]}
+        ]
+    },
+    "warper":{
+        "faction": "neutral",
+        "roleSet": "minions",
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "transported"}
+        ]
+    },
+    "kidnapper":{
+        "faction": "neutral",
+        "roleSet": "minions",
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "jailedTarget","playerIndex": 7},
+            {"type": "jailedSomeone","playerIndex": 7},
+            {
+                "type": "normal", 
+                "messageSender": {
+                    "type": "jailor"
+                },
+                "text": "Claim right now or else!", 
+                "chatGroup": "jail"
+            },
+            {
+                "type": "normal", 
+                "messageSender": {
+                    "type": "player",
+                    "player": 7
+                },
+                "text": "I'm jester", 
+                "chatGroup": "jail"
+            },
+            {"type": "jailorDecideExecute","target": 7},
+            {"type": "jailorDecideExecute","target": null},
+            {"type": "wardblocked"},
+            {"type": "someoneSurvivedYourAttack"}
         ]
     },
     "arsonist": {

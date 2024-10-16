@@ -73,7 +73,7 @@ impl RoleStateImpl for Doctor {
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         game.day_number() > 1 &&
         (actor_ref != target_ref || self.self_heals_remaining > 0) &&
-        !actor_ref.night_jailed(game) &&
+        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
         actor_ref.selection(game).is_empty() &&
         actor_ref.alive(game) &&
         target_ref.alive(game)

@@ -57,7 +57,7 @@ impl RoleStateImpl for Werewolf {
 
                     //rampage at home
                     None => {
-                        if actor_ref.night_jailed(game){
+                        if crate::game::components::detained::Detained::is_detained(game, actor_ref){
                             //kill all jailors NOT trying to execute me
                             for jailor_ref in PlayerReference::all_players(game){
                                 if 

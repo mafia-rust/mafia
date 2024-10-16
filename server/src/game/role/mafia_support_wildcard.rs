@@ -38,6 +38,11 @@ impl RoleStateImpl for MafiaSupportWildcard {
             _ => {}
         }
     }
+    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+        vec![
+            crate::game::components::revealed_group::RevealedGroupID::Mafia
+        ].into_iter().collect()
+    }
 }
 
 impl MafiaSupportWildcard {
@@ -55,7 +60,7 @@ impl MafiaSupportWildcard {
                     .collect::<Vec<Role>>()
             )
         {
-            actor_ref.set_role_and_wincon(game, self.role.default_state());
+            actor_ref.set_role_and_win_condition_and_revealed_group(game, self.role.default_state());
         }else{
             actor_ref.add_private_chat_message(game, ChatMessageVariant::WildcardConvertFailed{role: self.role.clone()})
         }

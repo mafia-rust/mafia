@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::components::detained::Detained;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::GraveKiller;
@@ -106,7 +107,7 @@ impl RoleStateImpl for Marksman {
         
         !self.state.no_marks() &&
         actor_ref != target_ref &&
-        !actor_ref.night_jailed(game) &&
+        !Detained::is_detained(game, actor_ref) &&
         actor_ref.alive(game) &&
         target_ref.alive(game) && 
         (
@@ -118,7 +119,7 @@ impl RoleStateImpl for Marksman {
         game.current_phase().is_night() &&
         actor_ref != target_ref &&
         actor_ref.alive(game) &&
-        !actor_ref.night_jailed(game) &&
+        !Detained::is_detained(game, actor_ref) &&
         target_ref.alive(game) &&
         matches!(self.state, MarksmanState::Marks { .. }) &&
         ((

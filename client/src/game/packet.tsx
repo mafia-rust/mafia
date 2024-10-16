@@ -55,6 +55,9 @@ export type ToClientPacket = {
     type: "playersHost",
     hosts: LobbyClientID[],
 } | {
+    type: "playersReady",
+    ready: LobbyClientID[],
+} | {
     type: "playersLostConnection",
     lostConnection: LobbyClientID[],
 } | {
@@ -191,6 +194,9 @@ export type ToServerPacket = {
 } | {
     type: "setName", 
     name: string
+} | {
+    type: "readyUp", 
+    ready: boolean
 } | {
     type: "sendLobbyMessage",
     text: string

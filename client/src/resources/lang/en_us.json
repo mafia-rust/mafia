@@ -22,7 +22,10 @@
     "menu.lobby.button.advanced.false": "Advanced view",
     "menu.lobby.field.namePlaceholder": "Enter name",
     "menu.lobby.button.setName": "Set Name",
+    "menu.lobby.button.readyUp": "Ready Up",
+    "menu.lobby.button.unready": "Unready",
     "menu.lobby.players": "Players",
+    "menu.lobby.spectatorsReady": "\\0 out of \\1 spectators are ready.",
     "menu.lobby.roleList": "Outline List",
     "menu.lobby.enabledRoles": "Enabled Roles",
     "menu.lobby.gameModes": "Game Modes",
@@ -43,6 +46,7 @@
     "menu.settings.dangerZone": "Danger zone",
     "menu.settings.volume": "Volume",
     "menu.settings.language": "Language",
+    "menu.settings.defaultName": "Default Name",
     "menu.settings.eraseSaveData": "Erase Save Data",
     "menu.settings.roleSpecificMenus": "Role Specific Menus",
     "menu.settings.roleSpecificMenus.playerList": "Player list",
@@ -231,9 +235,9 @@
     "role.gossip.youAreSelecting": "You are eavesdropping on \\0.",
     "role.gossip.youAreSelecting.null": "You aren't eavesdropping on anyone.",
 
-    "role.flowerGirl.name": "Flower Girl",
-    "role.flowerGirl.name:var.0": "Flower Girls",
-    "role.flowerGirl.target": "Distribute",
+    "role.tallyClerk.name": "Tally Clerk",
+    "role.tallyClerk.name:var.0": "Tally Clerks",
+    "role.tallyClerk.target": "Distribute",
 
     "role.doctor.name": "Doctor",
     "role.doctor.name:var.0": "Doctors",
@@ -348,8 +352,8 @@
     "role.deputy.name:var.0": "Deputies",
     "role.deputy.dayTarget": "Shoot",
     
-    "role.rabbleRouser.name": "RabbleRouser",
-    "role.rabbleRouser.name:var.0": "RabbleRousers",
+    "role.rabblerouser.name": "Rabblerouser",
+    "role.rabblerouser.name:var.0": "Rabblerousers",
 
     "role.godfather.name": "Godfather",
     "role.godfather.name:var.0": "Godfathers",
@@ -481,6 +485,9 @@
     
     "role.doomsayer.name": "Doomsayer",
     "role.doomsayer.name:var.0": "Doomsayers",
+
+    "role.chronokaiser.name": "Chronokaiser",
+    "role.chronokaiser.name:var.0": "Chronokaisers",
     
     "role.witch.name": "Witch",
     "role.witch.name:var.0": "Witchs",
@@ -492,6 +499,17 @@
     "role.scarecrow.target": "Ward",
     "role.scarecrow.youAreSelecting": "You are warding \\0.",
     "role.scarecrow.youAreSelecting.null": "You aren't warding anyone.",
+
+    "role.warper.name": "Warper",
+    "role.warper.name:var.0": "Warpers",
+    "role.warper.target": "Warp",
+    "role.warper.youAreSelecting": "You are warping visits to \\0 to \\1 instead.",
+    "role.warper.youAreSelecting.null": "You aren't warping anyone.",
+
+    "role.kidnapper.name": "Kidnapper",
+    "role.kidnapper.name:var.0": "Kidnappers",
+    "role.kidnapper.target": "Execute",
+    "role.kidnapper.dayTarget": "Kidnap",
 
     "role.politician.name": "Politician",
     "role.politician.name:var.0": "Politicians",
@@ -633,6 +651,7 @@
     "chatGroup.mafia.icon": "🌹",
     "chatGroup.cult.icon": "🕯️",
     "chatGroup.jail.icon": "🔒",
+    "chatGroup.kidnapped.icon": "🔒",
     "chatGroup.interview.icon": "📝",
     "chatGroup.dead.icon": "💀",
     "chatGroup.puppeteer.icon": "🧵",
@@ -797,6 +816,7 @@
     "chatMessage.mediumHauntStarted":"\\0 has brought the dead to haunt \\1!",
     "chatMessage.jesterWon":"The Jester will get their revenge from the grave!",
     "chatMessage.revolutionaryWon":"The Revolutionary got their target executed and won!",
+    "chatMessage.chronokaiserSpeedUp":"The Chronokaiser speeds up time. Each phase is \\0% faster.",
     "chatMessage.deathCollectedSouls":"The apocalypse begins, everyone will die tonight if Death is alive at nightfall!",
     "chatMessage.deputyKilled":"The Deputy killed \\0!",
     "chatMessage.deputyShotYou":"A Deputy shot you!",
@@ -848,7 +868,7 @@
     "chatMessage.snoopResult.inconclusive":"You can't tell what your target is.",
     "chatMessage.gossipResult.none": "Your target didn't visit a player they see as an enemy.",
     "chatMessage.gossipResult.enemies": "Your target visited a player they see as an enemy.",
-    "chatMessage.flowerGirlResult": "\\0 evil players voted guilty at some point today.",
+    "chatMessage.tallyClerkResult": "\\0 evil players voted guilty at some point today.",
     "chatMessage.targetsMessage":"Your target got the following message:",
     "chatMessage.youWerePossessed":"You were possessed.",
     "chatMessage.youWerePossessed.immune":"Someone tried to possess you but you are immune.",
@@ -923,6 +943,8 @@
     "wiki.article.standard.fiends.text": "Fiends win by eliminating all opposing teams. Fiends are on the same team, but they can't communicate at night. Fiends are usually very powerful and can kill multiple players in one night. Unlike mafia and cult, most games should have at most one fiend, in addition to the town and mafia.",
     "wiki.article.standard.cult.title": "Cult",
     "wiki.article.standard.cult.text": "Cult is an evil faction. They win by eliminating all opposing teams, they can communicate at night, and they know who each other are. The cult as a whole has 2 abilities, kill and convert. They alternate, converting first, and killing after.\n- The cult can only kill after they have successfully converted someone, after that, they can only convert after successfully killing someone. If for some reason the ability doesn't work (Protection or Roleblock), then it is tried again the next night. It is not inherently every other night.\n\n- Apostle. If there is a cult, there is always an apostle. The apostle uses their ability to convert players. If there is no zealot, then the apostle kills.\n- Disciple. The disciple has no ability.\n- Zealot. The zealot is always be the role of the newest created cultist member. The zealot will do the kills instead of the apostle if a zealot exits.", 
+    "wiki.article.standard.minions.title": "Minions",
+    "wiki.article.standard.minions.text": "Minions is a Role Set that contains roles which win only if town loses. They leave the game if all townies are gone. Unlike Mafia, they don't communicate at night with any evil players.\n\nSome Minions include:\n* Witch\n* Scarecrow\n* Kidnapper ",
     "wiki.article.standard.tag.title": "Tag",
     "wiki.article.standard.tag.title:var.0": "Tags",
     "wiki.article.standard.tag.title:var.1": "Tagged",
@@ -1267,10 +1289,10 @@
     "wiki.article.role.gossip.attributes":"- If any of your targets targets have a suspicious aura, then you are told they visited an enemy",
     "wiki.article.role.gossip.extra":"- Suspicious aura overrides innocent aura\n- If your target visits multiple other players, you learn if at least one of them is an enemy with your target\n- False appeared visits can mess with your results\n- Your target having an aura does not mess with the results, however, their targets having an aura does",
     
-    "wiki.article.role.flowerGirl.guide": "- At night, you are told how many players are non town from the players who voted guilty during any of the trials today\n- If any player has innocent aura, they are counted as town\n- If any player has suspicious aura, they are counted as non town",
-    "wiki.article.role.flowerGirl.abilities":"- At night, you are told how many players are non town from the players who voted guilty today\n- If you are blocked, you aren't told anything\n- Your ability doesn't depend on visits",
-    "wiki.article.role.flowerGirl.attributes":"- Your ability still works when dead\n- A suspicious aura makes a player register as non town\n- An innocent aura makes a player register as town\n- A suspicious aura overwrites innocent aura to the Flower Girl",
-    "wiki.article.role.flowerGirl.extra":"- A player is counted as a townie if they exclusively win with town. so a jester is non town, and a marionette is non town",
+    "wiki.article.role.tallyClerk.guide": "- At night, you are told how many players are non town from the players who voted guilty during any of the trials today\n- If any player has innocent aura, they are counted as town\n- If any player has suspicious aura, they are counted as non town",
+    "wiki.article.role.tallyClerk.abilities":"- At night, you are told how many players are non town from the players who voted guilty today\n- If you are blocked, you aren't told anything\n- Your ability doesn't depend on visits",
+    "wiki.article.role.tallyClerk.attributes":"- Your ability still works when dead\n- A suspicious aura makes a player register as non town\n- An innocent aura makes a player register as town\n- A suspicious aura overwrites innocent aura to the Tally Clerk",
+    "wiki.article.role.tallyClerk.extra":"- A player is counted as a townie if they exclusively win with town. so a jester is non town, and a marionette is non town",
     
     "wiki.article.role.doctor.guide": "- At night, select a player to protect\n    - Whoever you protect doesn't die if they're attacked\n    - You and the player you protected are both told if they are attacked\n- You can select yourself to protect yourself once per game\n- If your target is attacked by a protection-piercing attack they still die\n- You can't select anyone night 1\n\nYou should try to protect people you think are townies who will be attacked.",
     "wiki.article.role.doctor.abilities":"* Visit a player to protect for the night\n* You can't select a player night 1",
@@ -1332,10 +1354,10 @@
     "wiki.article.role.vigilante.attributes":"* If your attack overpowers a player who exclusively wins with towns defense and they die, you commit suicide on the following night\n* When it is night one, when you have 0 bullets left, when you are going to commit suicide, or when you have already committed suicide, you can not select or attack anyone",
     "wiki.article.role.vigilante.extra": "* You only have a basic attack\n* Even while dead, killing someone requires and spends a bullet (such as when you get possessed)",
 
-    "wiki.article.role.rabbleRouser.guide":"- If a RabbleRouser is alive in the game, everyone can vote using the pitchfork menu\n- If 2/3rds of town aligned players vote the same player, that player is killed\n- This ability can be used up to 3 times\n- The pitchfork menu stays open at all times, regardless of weather or not it can be used",
-    "wiki.article.role.rabbleRouser.abilities":"- You and all other RabbleRousers are told when the pitchfork attacks someone, or if the attacked player has defense and survive\n- You don't visit due to your ability\n- The pitchfork can only be used to kill someone up to 3 times",
-    "wiki.article.role.rabbleRouser.attributes":"- Anyone who doesn't exclusively win with town is not counted as a voter for the pitchfork\n- The attack is indirect and protection piercing",
-    "wiki.article.role.rabbleRouser.extra":"\n- The pitchfork menu stays available at all times\n   - Even if all RabbleRousers are dead\n    - Even if there is no rabbleRouser\n    - Even if all three uses are consumed\n- Multiple rabbleRousers does not mean multiple attacks or more uses. There is a maximum of 3 uses and a maximum of 1 attack per night",
+    "wiki.article.role.rabblerouser.guide":"- If a Rabblerouser is alive in the game, everyone can vote using the pitchfork menu\n- If 2/3rds of town aligned players vote the same player, that player is killed\n- This ability can be used up to 3 times\n- The pitchfork menu stays open at all times, regardless of weather or not it can be used",
+    "wiki.article.role.rabblerouser.abilities":"- You and all other Rabblerousers are told when the pitchfork attacks someone, or if the attacked player has defense and survive\n- You don't visit due to your ability\n- The pitchfork can only be used to kill someone up to 3 times",
+    "wiki.article.role.rabblerouser.attributes":"- Anyone who doesn't exclusively win with town is not counted as a voter for the pitchfork\n- The attack is indirect and protection piercing",
+    "wiki.article.role.rabblerouser.extra":"\n- The pitchfork menu stays available at all times\n   - Even if all Rabblerousers are dead\n    - Even if there is no Rabblerouser\n    - Even if all three uses are consumed\n- Multiple Rabblerousers does not mean multiple attacks or more uses. There is a maximum of 3 uses and a maximum of 1 attack per night",
 
     "wiki.article.role.veteran.guide": "- At night, you can select yourself to gain protected defense for the night and rampage yourself, attacking everyone who visits you\n- You can only use your ability three times\n- You can't use your ability on night 1\n* You should try to trick evil players into visiting you, so you can block the attack and kill them. Try to avoid killing unnecessary townies.\n* There can only be one veteran in a game.",
     "wiki.article.role.veteran.abilities":"* Select yourself\n    - rampage yourself\n    - gain protected defense for the night",
@@ -1466,6 +1488,32 @@
     "wiki.article.role.doomsayer.abilities":"* Use the Doomsayer menu to guess the role of three different living players in one night, attacking them and winning",
     "wiki.article.role.doomsayer.attributes":"* When you win, you leave town at the start of the next obituary\n* You have to guess the exact role of townies, but you only need to guess the faction of all other roles\n* You can't try to guess town investigative roles\n* When there are not enough players left for you to guess, you convert to a jester\n* You have an indirect, protection-piercing attack",
     "wiki.article.role.doomsayer.extra":"* Your three guesses must be three different players\n* If the players you guessed correctly don't die, you still win\n* You do not visit when you attack\n* You can't try to guess a martyr\n* If you are blocked, your ability does nothing",
+    
+    "wiki.article.role.chronokaiser.guide": "- Each day (starting on day 3) while you are alive, time speeds up by 40%\n - Every discussion phase (starting with discussion 3), the amount that you sped up the game is announced in chat\n - If you are alive at the end of the game, you win",
+    "wiki.article.role.chronokaiser.abilities":"* You passively speed up the game by 40% each day starting with day 3\n- If you are alive at the end of the game, you win",
+    "wiki.article.role.chronokaiser.attributes":"* You have no night time ability\n* Everyone is told how much you sped up the game each day",
+    "wiki.article.role.chronokaiser.extra":"* Roleblocking doesn't effect your ability\n If there are multiple Chronokaisers, the message is sent twice during discussion, and the game is sped up twice",
+
+    "wiki.article.role.death.guide": "Guess what player will die during night by selecting them, If you guess correctly you will collect a soul, you will also collect a soul passively each night. Once you collect six souls, everyone will be told that death collected six souls at the start of the day, if you survive that day, you will attack everyone and win the game at the start of night.",
+    "wiki.article.role.death.abilities":"* If the player you visit dies tonight, you collect a soul\n* You gain an additional soul each night",
+    "wiki.article.role.death.attributes":"* Once you've collected six souls, you curse the town. At the start of the next night you win and attack everyone.\n* You have invincible defense once you have six souls\n* You have a protection-piercing attack",
+    "wiki.article.role.death.extra":"* You will still passively gain souls in jail",
+
+    "wiki.article.role.martyr.guide": "If you die, you win, and everyone commits suicide in an attempt to follow you to the afterlife. The entire town knows that you're the martyr. Good Luck!",
+    "wiki.article.role.martyr.abilities":"* Visit yourself to attack yourself and spend one bullet\n* You start with 2 bullets\n* When you die, everyone else commits suicide and you win.",
+    "wiki.article.role.martyr.attributes":"* When you have zero bullets left, you leave town and lose\n* You have a basic attack",
+    "wiki.article.role.martyr.extra":"* When you visit a player while you have zero bullets left you will not attack them\n* You're an ex-cultist, they rejected you because you told the truth",
+
+    "wiki.article.role.wildcard.guide": "* Choose a role to become that role\n    * You become that role when night starts\n* You can't become a role that is disabled or taken by too many players",
+    "wiki.article.role.wildcard.abilities":"* Become a role you choose at the start of night",
+    "wiki.article.role.wildcard.attributes":"* You can not become a role that is disabled\n* You can not become a role that is taken by too many players",
+    "wiki.article.role.wildcard.extra":"* If you choose a role that was disabled you stay as the Wildcard\n* You can choose wildcard to stay as wildcard\n* You can't become a role that is at its role limit, if there is a veteran in the game, you can't become one, even if the veteran is dead",
+    
+    "wiki.article.role.trueWildcard.guide": "* Choose a role to become that role\n    * You become that role when night starts\n* You can't become a role that is disabled, but you can become a role that is taken, so there can be 2 veterans",
+    "wiki.article.role.trueWildcard.abilities":"* Become a role you choose at the start of night",
+    "wiki.article.role.trueWildcard.attributes":"* You can not become a role that is disabled\n* You can become a role that is taken by too many players",
+    "wiki.article.role.trueWildcard.extra":"* If you choose a role that was disabled you stay as the True Wildcard\n* You can choose true wildcard to stay as true wildcard\n* You can become a role that is at its role limit, if there is a veteran in the game, you still can become one",
+
 
     "wiki.article.role.witch.guide": "- You win if town loses, when town loses you leave town\n- At night, possess a player by selecting 2 players\n    - The first player you select will be forced to visit the second player you select\n\n_For example_\n- You can posses a vigilante to attack another townie by selecting the vigilante first and the townie second",
     "wiki.article.role.witch.abilities":"* Visit 2 players to make the first player visit the second player\n* If there are no living townies, you win, and leave town at the start of the next phase",
@@ -1476,6 +1524,16 @@
     "wiki.article.role.scarecrow.abilities":"* Visit a player to ward them\n    - Everyone visitor to your target has their visits erased, and receives a chat message informing them they are wardblocked\n- You are told who you wardblocked, and they are revealed\n- If there are no living townies, you win, and leave town at the start of the next phase",
     "wiki.article.role.scarecrow.attributes":"* Your target isn't told they are warded",
     "wiki.article.role.scarecrow.extra":"* You can't select yourself\n* You are immune to roleblocks, wardblocks, and possession\n- You aren't told the names of players who aren't wardblocked, even if they still somehow visit your target, for example, a bouncer is wardblock immune",
+    
+    "wiki.article.role.kidnapper.guide": "- Each day, choose a player to kidnap. At night, you interrogate them in text chat\n- You can kill your prisoner one time\n- You can talk to your prisoner during the night, and they are not told who you are\n- The players you kidnap are warded and roleblocked.",
+    "wiki.article.role.kidnapper.abilities":"* Choose one player to kidnap during the day\n* Visit your prisoner to attack them\n- If you kill your prisoner, their grave shows that they were killed by a jailor",
+    "wiki.article.role.kidnapper.attributes":"* You may talk with your prisoner at night in kidnapped chat\n* Players you kidnap are warded and roleblocked, they also can't select anybody",
+    "wiki.article.role.kidnapper.extra":"* The Kidnapper can not kill someone on night one\n* You invisibly roleblock the player you detain, they aren't told their roleblocked\n* Players you kidnap don't see your name on your messages. The messages you send appear to be from the jailor\n* If you kidnap a cult or mafia member, their teammates are told that player is in jail",
+
+    "wiki.article.role.warper.guide": "- At night, select 2 players\n    - If somebody else tries to visit the first player, they instead visit the second player\n    - The first player is told they are transported, but the second is not\n    - You can't choose yourself as your first target, you can't warp yourself\n\n _For example_\n- If a godfather tries to attack @1, but you warped @1 to @4, then @4 will die instead, and @1 is told they are transported\n\nYou are a minion, so you should try to harm the town as much as possible while looking to benefit non-town players.\n\n",
+    "wiki.article.role.warper.abilities":" - Visit 2 players to warp visits from the first player to the second player\n - You can't select yourself as the first target, you cannot warp yourself",
+    "wiki.article.role.warper.attributes":" -  All visits to first player instead visit the second player\n - The first player you visit is told they were transported",
+    "wiki.article.role.warper.extra": " - Some abilities are not affected by yours due to the priority system. _For example_ You can't stop a jester from haunting their target using a transport, this depends on priorities and whether or not an ability is indirect\n* Warpers act after transporters\n* Warpers do not warp the visits of a transporter",
 
     "wiki.article.role.politician.guide":"* If the town would win, instead you win and they all die. Try to help to the town to win while staying alive.",
     "wiki.article.role.politician.abilities": "* When town would win, you win, instantly attack ever townie, and all politicians leave town",
@@ -1516,26 +1574,6 @@
     "wiki.article.role.fiendsWildcard.abilities":"* Become a role you choose at the start of night",
     "wiki.article.role.fiendsWildcard.attributes":"* You can not become a role that is disabled\n* You can not become a role that is taken by too many players",
     "wiki.article.role.fiendsWildcard.extra":"* If you choose a role that was disabled you stay as the Fiends Wildcard\n* You can choose Fiends Wildcard to stay as Fiends Wildcard\n* You can't become a role that is at its role limit",
-
-    "wiki.article.role.death.guide": "Guess what player will die during night by selecting them, If you guess correctly you will collect a soul, you will also collect a soul passively each night. Once you collect six souls, everyone will be told that death collected six souls at the start of the day, if you survive that day, you will attack everyone and win the game at the start of night.",
-    "wiki.article.role.death.abilities":"* If the player you visit dies tonight, you collect a soul\n* You gain an additional soul each night",
-    "wiki.article.role.death.attributes":"* Once you've collected six souls, you curse the town. At the start of the next night you win and attack everyone.\n* You have invincible defense once you have six souls\n* You have a protection-piercing attack",
-    "wiki.article.role.death.extra":"* You will still passively gain souls in jail",
-
-    "wiki.article.role.wildcard.guide": "* Choose a role to become that role\n    * You become that role when night starts\n* You can't become a role that is disabled or taken by too many players",
-    "wiki.article.role.wildcard.abilities":"* Become a role you choose at the start of night",
-    "wiki.article.role.wildcard.attributes":"* You can not become a role that is disabled\n* You can not become a role that is taken by too many players",
-    "wiki.article.role.wildcard.extra":"* If you choose a role that was disabled you stay as the Wildcard\n* You can choose wildcard to stay as wildcard\n* You can't become a role that is at its role limit, if there is a veteran in the game, you can't become one, even if the veteran is dead",
-    
-    "wiki.article.role.trueWildcard.guide": "* Choose a role to become that role\n    * You become that role when night starts\n* You can't become a role that is disabled, but you can become a role that is taken, so there can be 2 veterans",
-    "wiki.article.role.trueWildcard.abilities":"* Become a role you choose at the start of night",
-    "wiki.article.role.trueWildcard.attributes":"* You can not become a role that is disabled\n* You can become a role that is taken by too many players",
-    "wiki.article.role.trueWildcard.extra":"* If you choose a role that was disabled you stay as the True Wildcard\n* You can choose true wildcard to stay as true wildcard\n* You can become a role that is at its role limit, if there is a veteran in the game, you still can become one",
-
-    "wiki.article.role.martyr.guide": "If you die, you win, and everyone commits suicide in an attempt to follow you to the afterlife. The entire town knows that you're the martyr. Good Luck!",
-    "wiki.article.role.martyr.abilities":"* Visit yourself to attack yourself and spend one bullet\n* You start with 2 bullets\n* When you die, everyone else commits suicide and you win.",
-    "wiki.article.role.martyr.attributes":"* When you have zero bullets left, you leave town and lose\n* You have a basic attack",
-    "wiki.article.role.martyr.extra":"* When you visit a player while you have zero bullets left you will not attack them\n* You're an ex-cultist, they rejected you because you told the truth",
 
     "wiki.article.role.apostle.guide": "- At night, either kill or convert\n    - If the cult can convert tonight, select a player to convert\n    - If the cult can kill tonight and there is no zealot, select a player to kill",
     "wiki.article.role.apostle.abilities":"* On nights the cult kills\n    * If you are the only cultist, visit a player to attack\n* On nights the cult convert\n    * Visit a player to convert them to a Zealot on the cultist team",

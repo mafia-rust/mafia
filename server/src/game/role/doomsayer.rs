@@ -30,7 +30,7 @@ pub enum DoomsayerGuess{
     Jailor, Villager,
     // No TI
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith, Steward,
-    Vigilante, Veteran, Marksman, Deputy, RabbleRouser,
+    Vigilante, Veteran, Marksman, Deputy, Rabblerouser,
     Escort, Medium, Retributionist, Journalist, Mayor, Transporter
 }
 impl DoomsayerGuess{
@@ -41,7 +41,7 @@ impl DoomsayerGuess{
 
             Role::Detective | Role::Lookout | Role::Spy | 
             Role::Tracker | Role::Philosopher | Role::Psychic | 
-            Role::Auditor | Role::Snoop | Role::Gossip | Role::FlowerGirl => None, 
+            Role::Auditor | Role::Snoop | Role::Gossip | Role::TallyClerk => None, 
 
             Role::Doctor => Some(DoomsayerGuess::Doctor),
             Role::Bodyguard => Some(DoomsayerGuess::Bodyguard),
@@ -55,7 +55,7 @@ impl DoomsayerGuess{
             Role::Veteran => Some(DoomsayerGuess::Veteran),
             Role::Marksman => Some(DoomsayerGuess::Marksman),
             Role::Deputy => Some(DoomsayerGuess::Deputy),
-            Role::RabbleRouser => Some(DoomsayerGuess::RabbleRouser),
+            Role::Rabblerouser => Some(DoomsayerGuess::Rabblerouser),
 
             Role::Escort => Some(DoomsayerGuess::Escort),
             Role::Medium => Some(DoomsayerGuess::Medium),
@@ -75,9 +75,11 @@ impl DoomsayerGuess{
 
             //Neutral
             Role::Jester | Role::Revolutionary | Role::Politician |
-            Role::Doomsayer | Role::Death | Role::Witch | Role::Scarecrow |
+            Role::Doomsayer | Role::Death | 
+            Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper | Role::Chronokaiser |
             Role::Wildcard | Role::TrueWildcard => Some(DoomsayerGuess::Neutral),
             Role::Martyr => None,
+           
 
             //Fiends
             Role::Arsonist | Role::Werewolf | 
@@ -162,7 +164,7 @@ impl Doomsayer{
                 player.alive(game) && DoomsayerGuess::convert_to_guess(player.role(game)).is_some() && *player != actor_ref
             ).count() < 3
         {
-            actor_ref.set_role_and_wincon(game, RoleState::Jester(Jester::default()));
+            actor_ref.set_role_and_win_condition_and_revealed_group(game, RoleState::Jester(Jester::default()));
         }
     }
     pub fn won(&self) -> bool {

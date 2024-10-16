@@ -6,7 +6,7 @@ use crate::{
     game::{
         attack_power::DefensePower, chat::{
             ChatGroup, ChatMessage, ChatMessageVariant
-        }, event::on_fast_forward::OnFastForward, grave::GraveKiller, modifiers::{ModifierType, Modifiers}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, win_condition::WinCondition, Game
+        }, event::{on_fast_forward::OnFastForward, on_remove_role_label::OnRemoveRoleLabel}, grave::GraveKiller, modifiers::{ModifierType, Modifiers}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, win_condition::WinCondition, Game
     }, 
     packet::ToClientPacket, 
 };
@@ -102,6 +102,8 @@ impl PlayerReference{
         self.send_packet(game, ToClientPacket::YourRoleLabels{
             role_labels: PlayerReference::ref_map_to_index(self.role_label_map(game)) 
         });
+
+        OnRemoveRoleLabel::new(*self, concealed_player).invoke(game);
     }
 
     pub fn player_tags<'a>(&self, game: &'a Game) -> &'a HashMap<PlayerReference, Vec1<Tag>>{
@@ -397,35 +399,6 @@ impl PlayerReference{
     }
     pub fn set_night_grave_death_notes(&self, game: &mut Game, grave_death_notes: Vec<String>){
         self.deref_mut(game).night_variables.grave_death_notes = grave_death_notes;
-    }
-
-    pub fn night_jailed(&self, game: &Game) -> bool {
-        self.deref(game).night_variables.jailed
-    }
-    /// Adds chat message saying that they were jailed, and sends packet
-    pub fn set_night_jailed(&self, game: &mut Game, jailed: bool){
-        if jailed {
-
-            let mut message_sent = false;
-            for chat_group in self.get_current_send_chat_groups(game){
-                match chat_group {
-                    ChatGroup::All | ChatGroup::Jail | ChatGroup::Interview | ChatGroup::Dead => {},
-                    ChatGroup::Mafia | ChatGroup::Cult | ChatGroup::Puppeteer => {
-                        game.add_message_to_chat_group(
-                            chat_group,
-                            ChatMessageVariant::JailedSomeone { player_index: self.index() }
-                        );
-                        message_sent = true;
-                    },
-                }
-            }
-            if !message_sent {
-                self.add_private_chat_message(game,
-                    ChatMessageVariant::JailedSomeone { player_index: self.index() }
-                );
-            }
-        }
-        self.deref_mut(game).night_variables.jailed = jailed;
     }
 
     pub fn night_silenced(&self, game: &Game) -> bool {

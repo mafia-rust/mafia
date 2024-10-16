@@ -3,7 +3,7 @@ use std::vec;
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::{components::cult::CultAbility, role::{armorsmith::Armorsmith, flower_girl::FlowerGirl, scarecrow::Scarecrow}};
+use mafia_server::game::{components::cult::CultAbility, role::{armorsmith::Armorsmith, tally_clerk::TallyClerk, scarecrow::Scarecrow}};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
@@ -36,7 +36,7 @@ pub use mafia_server::game::{
         veteran::Veteran,
         deputy::Deputy,
         marksman::Marksman,
-        rabble_rouser::RabbleRouser,
+        rabblerouser::Rabblerouser,
         
         transporter::Transporter,
         escort::Escort,
@@ -440,9 +440,9 @@ fn psychic_auras(){
 }
 
 #[test]
-fn flower_girl_basic(){
+fn tally_clerk_basic(){
     kit::scenario!(game in Nomination 2 where
-        fg: FlowerGirl,
+        fg: TallyClerk,
         townie: Detective,
         mafioso: Mafioso
     );
@@ -458,7 +458,7 @@ fn flower_girl_basic(){
     game.skip_to(Obituary, 3);
     assert_contains!(
         fg.get_messages_after_night(1),
-        ChatMessageVariant::FlowerGirlResult { evil_count: 1 }
+        ChatMessageVariant::TallyClerkResult { evil_count: 1 }
     );
 }
 

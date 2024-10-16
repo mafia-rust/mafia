@@ -25,9 +25,9 @@ pub enum KiraGuess{
     Mafia, #[default] Neutral, Fiends, Cult,
 
     Jailor, Villager,
-    Detective, Lookout, Tracker, Psychic, Philosopher, Gossip, Auditor, Snoop, Spy, FlowerGirl,
+    Detective, Lookout, Tracker, Psychic, Philosopher, Gossip, Auditor, Snoop, Spy, TallyClerk,
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith, Steward,
-    Vigilante, Veteran, Marksman, Deputy, RabbleRouser,
+    Vigilante, Veteran, Marksman, Deputy, Rabblerouser,
     Escort, Medium, Retributionist, Journalist, Mayor, Transporter
 }
 impl KiraGuess{
@@ -45,7 +45,7 @@ impl KiraGuess{
             Role::Snoop => Some(Self::Snoop),
             Role::Gossip => Some(Self::Gossip),
             Role::Spy => Some(Self::Spy),
-            Role::FlowerGirl => Some(Self::FlowerGirl),
+            Role::TallyClerk => Some(Self::TallyClerk),
 
             Role::Doctor => Some(Self::Doctor),
             Role::Bodyguard => Some(Self::Bodyguard),
@@ -59,7 +59,7 @@ impl KiraGuess{
             Role::Veteran => Some(Self::Veteran),
             Role::Marksman => Some(Self::Marksman),
             Role::Deputy => Some(Self::Deputy),
-            Role::RabbleRouser => Some(Self::RabbleRouser),
+            Role::Rabblerouser => Some(Self::Rabblerouser),
 
             Role::Escort => Some(Self::Escort),
             Role::Medium => Some(Self::Medium),
@@ -79,7 +79,8 @@ impl KiraGuess{
 
             //Neutral
             Role::Jester | Role::Revolutionary | Role::Politician |
-            Role::Doomsayer | Role::Death | Role::Witch | Role::Scarecrow |
+            Role::Doomsayer | Role::Death |
+            Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper | Role::Chronokaiser |
             Role::Wildcard | Role::TrueWildcard => Some(Self::Neutral),
             Role::Martyr => None,
 

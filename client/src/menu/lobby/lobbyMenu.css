@@ -79,6 +79,24 @@
     width: 100%;
 }
 
+.lobby-name-pane {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.lobby-name-pane > .name-pane-selector {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.lobby-name-pane > .name-pane-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-end;
+}
+
 .lobby-name {
     display: flex;
     width: 100%;
@@ -91,11 +109,16 @@
     flex-grow: 1;
 }
 
-.lm .player-list > div {
+.lm .player-list > .list {
     border: .13rem solid var(--background-border-color);
     border-top-color: var(--background-border-shadow-color);
     border-left-color: var(--background-border-shadow-color);
     border-radius: .5rem;
+}
+
+.lm .player-list > .spectators-ready {
+    text-align: left;
+    margin-top: .5rem;
 }
 
 .lm .player-list ol li {

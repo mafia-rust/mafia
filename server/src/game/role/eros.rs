@@ -8,7 +8,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{same_evil_team, Priority, RoleStateImpl};
+use super::{RevealedGroupID, Priority, RoleStateImpl};
 
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -59,7 +59,7 @@ impl RoleStateImpl for Eros {
         let selected = actor_ref.selection(game);
 
         actor_ref != target_ref &&
-        !actor_ref.night_jailed(game) &&
+        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
         actor_ref.alive(game) &&
         target_ref.alive(game) &&
         match self.action {
@@ -69,7 +69,7 @@ impl RoleStateImpl for Eros {
             },
             ErosAction::Kill => {
                 game.day_number() > 1 &&
-                !same_evil_team(game, actor_ref, target_ref) &&
+                !RevealedGroupID::players_in_same_revealed_group(game, actor_ref, target_ref) &&
                 selected.is_empty()
             },
         }
@@ -96,5 +96,10 @@ impl RoleStateImpl for Eros {
                 }
             }
         }
+    }
+    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+        vec![
+            crate::game::components::revealed_group::RevealedGroupID::Mafia
+        ].into_iter().collect()
     }
 }

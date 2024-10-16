@@ -10,18 +10,18 @@ import { useLobbyState } from "../../components/useHooks";
 export default function LobbyPlayerList(): ReactElement {
     const players = useLobbyState(
         lobbyState => lobbyState.players,
-        ["playersHost", "playersLostConnection", "lobbyClients"]
+        ["playersHost", "playersLostConnection", "lobbyClients", "playersReady"]
     )!;
     const host = useLobbyState(
-        lobbyState => lobbyState.players.get(lobbyState.myId!)?.host,
-        ["playersHost", "lobbyClients", "yourId"]
+        lobbyState => lobbyState.players.get(lobbyState.myId!)?.ready === "host",
+        ["playersHost", "lobbyClients", "yourId", "playersReady"]
     )!;
 
     return <>
         <LobbyNamePane/>
         <section className="player-list player-list-menu-colors selector-section">
             <h2>{translate("menu.lobby.players")}</h2>
-            <div>
+            <div className="list">
                 <ol>
                     {[...players.entries()]
                         .filter(([_, player]) => player.clientType.type !== "spectator")
@@ -29,7 +29,8 @@ export default function LobbyPlayerList(): ReactElement {
                             <li key={id} className={player.connection==="couldReconnect" ? "keyword-dead" : ""}>
                                 <div>
                                     {player.connection === "couldReconnect" && <Icon>signal_cellular_connected_no_internet_4_bar</Icon>}
-                                    {player.host && <Icon>shield</Icon>}
+                                    {player.ready === "host" && <Icon>shield</Icon>}
+                                    {player.ready === "ready" && <Icon>check</Icon>}
                                     {(player.clientType as PlayerClientType).name}
                                 </div>
                                 {host && <button 
@@ -39,6 +40,12 @@ export default function LobbyPlayerList(): ReactElement {
                         )
                     }
                 </ol>
+            </div>
+            <div className="spectators-ready">
+                {translate("menu.lobby.spectatorsReady", 
+                    [...players.values()].filter(p => p.clientType.type === "spectator" && p.ready !== "notReady").length,
+                    [...players.values()].filter(p => p.clientType.type === "spectator").length
+                )}
             </div>
         </section>
     </>

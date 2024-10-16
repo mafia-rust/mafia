@@ -169,7 +169,7 @@ pub enum ChatMessageVariant {
     SnoopResult{townie: bool},
     GossipResult{enemies: bool},
     #[serde(rename_all = "camelCase")]
-    FlowerGirlResult{evil_count: u8},
+    TallyClerkResult{evil_count: u8},
 
     EngineerVisitorsRole{role: Role},
     TrapState{state: TrapState},
@@ -221,6 +221,7 @@ pub enum ChatMessageVariant {
 
     JesterWon,
     RevolutionaryWon,
+    ChronokaiserSpeedUp{percent: u32},
     DeathCollectedSouls,
     DoomsayerWon,
     DoomsayerFailed,

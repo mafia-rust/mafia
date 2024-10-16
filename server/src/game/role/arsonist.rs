@@ -23,7 +23,7 @@ impl RoleStateImpl for Arsonist {
 
         match priority {
             Priority::Deception => {
-                if !actor_ref.night_jailed(game) {
+                if !crate::game::components::detained::Detained::is_detained(game, actor_ref) {
                     //douse target
                     if let Some(visit) = actor_ref.night_visits(game).first(){
                         let target_ref = visit.target;
@@ -53,7 +53,7 @@ impl RoleStateImpl for Arsonist {
                 }
             },
             Priority::Kill => {
-                if actor_ref.night_jailed(game) {return}
+                if crate::game::components::detained::Detained::is_detained(game, actor_ref) {return}
                 
                 if let Some(visit) = actor_ref.night_visits(game).first(){
                     if actor_ref == visit.target{
@@ -66,7 +66,7 @@ impl RoleStateImpl for Arsonist {
         }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        !actor_ref.night_jailed(game) &&
+        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
         actor_ref.selection(game).is_empty() &&
         actor_ref.alive(game) &&
         target_ref.alive(game)

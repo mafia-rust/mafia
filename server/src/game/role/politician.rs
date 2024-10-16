@@ -34,7 +34,7 @@ impl RoleStateImpl for Politician {
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
         if self.should_suicide(game, actor_ref) {
-            actor_ref.set_role_and_wincon(game, RoleState::Jester(Jester::default()));
+            actor_ref.set_role_and_win_condition_and_revealed_group(game, RoleState::Jester(Jester::default()));
         }
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, _dead_player_ref: PlayerReference){

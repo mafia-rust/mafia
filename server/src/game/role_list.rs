@@ -164,22 +164,22 @@ impl RoleSet{
         match self {
             RoleSet::Town => 
                 vec![
-                    Role::Jailor, Role::Vigilante
+                    Role::Jailor, Role::Villager
                 ].into_iter().chain(
-                    RoleSet::TownSupport.get_roles().into_iter()
-                ).chain(
-                    RoleSet::TownKilling.get_roles().into_iter()
+                    RoleSet::TownInvestigative.get_roles().into_iter()
                 ).chain(
                     RoleSet::TownProtective.get_roles().into_iter()
                 ).chain(
-                    RoleSet::TownInvestigative.get_roles().into_iter()
+                    RoleSet::TownKilling.get_roles().into_iter()
+                ).chain(
+                    RoleSet::TownSupport.get_roles().into_iter()
                 ).collect(),
             RoleSet::TownInvestigative => 
                 vec![
                     Role::Detective, Role::Philosopher, Role::Gossip, 
                     Role::Psychic, Role::Auditor, Role::Spy, 
                     Role::Lookout, Role::Tracker, Role::Snoop,
-                    Role::FlowerGirl
+                    Role::TallyClerk
                 ],
             RoleSet::TownProtective => 
                 vec![
@@ -189,14 +189,18 @@ impl RoleSet{
                 ],
             RoleSet::TownKilling => 
                 vec![
-                    Role::Vigilante, Role::Veteran, Role::Deputy, Role::Marksman, Role::RabbleRouser
+                    Role::Vigilante, Role::Veteran, Role::Deputy, Role::Marksman, Role::Rabblerouser
                 ],
             RoleSet::TownSupport => 
                 vec![Role::Medium, Role::Retributionist, Role::Transporter, Role::Escort, Role::Mayor, Role::Journalist],
             RoleSet::Mafia =>
                 vec![
                     Role::MadeMan, Role::MafiaSupportWildcard, Role::MafiaKillingWildcard
-                ],
+                ].into_iter().chain(
+                    RoleSet::MafiaKilling.get_roles().into_iter()
+                ).chain(
+                    RoleSet::MafiaSupport.get_roles().into_iter()
+                ).collect(),
             RoleSet::MafiaKilling => 
                 vec![
                     Role::Godfather, Role::Eros, Role::Counterfeiter,
@@ -210,12 +214,12 @@ impl RoleSet{
                 ],
             RoleSet::Minions => 
                 vec![
-                    Role::Witch, Role::Scarecrow
+                    Role::Witch, Role::Scarecrow, Role::Warper, Role::Kidnapper
                 ],
             RoleSet::Neutral =>
                 vec![
-                    Role::Jester, Role::Revolutionary, Role::Politician,
-                    Role::Doomsayer, Role::Martyr, Role::Death
+                    Role::Jester, Role::Revolutionary, Role::Politician, Role::Doomsayer,
+                    Role::Martyr, Role::Death, Role::Chronokaiser
                 ],
             RoleSet::Fiends =>
                 vec![

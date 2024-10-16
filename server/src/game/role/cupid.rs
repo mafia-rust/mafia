@@ -6,7 +6,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{same_evil_team, Priority, RoleStateImpl};
+use super::{RevealedGroupID, Priority, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -37,7 +37,7 @@ impl RoleStateImpl for Cupid {
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         let selection = actor_ref.selection(game);
 
-        !actor_ref.night_jailed(game) &&
+        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
         actor_ref != target_ref &&
         ((
             selection.is_empty()
@@ -47,7 +47,7 @@ impl RoleStateImpl for Cupid {
         )) &&
         actor_ref.alive(game) &&
         target_ref.alive(game) &&
-        !same_evil_team(game, actor_ref, target_ref)
+        !RevealedGroupID::players_in_same_revealed_group(game, actor_ref, target_ref)
     }
     fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() == 2 {
@@ -58,5 +58,10 @@ impl RoleStateImpl for Cupid {
         } else {
             Vec::new()
         }
+    }
+    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+        vec![
+            crate::game::components::revealed_group::RevealedGroupID::Mafia
+        ].into_iter().collect()
     }
 }

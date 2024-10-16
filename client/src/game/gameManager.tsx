@@ -80,7 +80,7 @@ export function createGameManager(): GameManager {
                 GAME_MANAGER.state.roleList = lobbyState.roleList;
                 GAME_MANAGER.state.phaseTimes = lobbyState.phaseTimes;
                 GAME_MANAGER.state.enabledRoles = lobbyState.enabledRoles;
-                GAME_MANAGER.state.host = lobbyState.players.get(lobbyState.myId!)?.host ?? false;
+                GAME_MANAGER.state.host = lobbyState.players.get(lobbyState.myId!)?.ready === "host";
             }
         },
         setSpectatorGameState() {
@@ -122,7 +122,7 @@ export function createGameManager(): GameManager {
         },
         getMyHost() {
             if (gameManager.state.stateType === "lobby")
-                return gameManager.state.players.get(gameManager.state.myId!)?.host;
+                return gameManager.state.players.get(gameManager.state.myId!)?.ready === "host";
             if (gameManager.state.stateType === "game")
                 return gameManager.state.host;
             return undefined;
@@ -305,6 +305,13 @@ export function createGameManager(): GameManager {
             this.server.sendPacket({
                 type: "setName",
                 name: name
+            });
+        },
+
+        sendReadyUpPacket(ready) {
+            this.server.sendPacket({
+                type: "readyUp",
+                ready: ready
             });
         },
         sendSendLobbyMessagePacket(text) {

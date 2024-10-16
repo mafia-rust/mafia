@@ -47,7 +47,7 @@ impl RoleStateImpl for Apostle {
                     return
                 }
 
-                target_ref.set_role_and_wincon(game, Zealot);
+                target_ref.set_role_and_win_condition_and_revealed_group(game, Zealot);
                 target_ref.set_win_condition(game, WinCondition::new_single_resolution_state(ResolutionState::Cult));
                 Cult::set_ability_used_last_night(game, Some(CultAbility::Convert));
             }
@@ -66,5 +66,10 @@ impl RoleStateImpl for Apostle {
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, Cult::next_ability(game) == CultAbility::Kill)
+    }
+    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+        vec![
+            crate::game::components::revealed_group::RevealedGroupID::Cult
+        ].into_iter().collect()
     }
 }
