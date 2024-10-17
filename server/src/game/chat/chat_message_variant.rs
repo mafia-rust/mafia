@@ -13,7 +13,7 @@ use crate::game::{
 pub enum MessageSender {
     Player{player: PlayerIndex},
     Jailor,
-    Journalist,
+    Reporter,
     LivingToDead{player: PlayerIndex},
 }
 
@@ -110,7 +110,7 @@ pub enum ChatMessageVariant {
     MayorRevealed{player_index: PlayerIndex},
     MayorCantWhisper,
     #[serde(rename_all = "camelCase")]
-    JournalistJournal{journal: String},
+    ReporterReport{report: String},
     #[serde(rename_all = "camelCase")]
     YouAreInterviewingPlayer{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]

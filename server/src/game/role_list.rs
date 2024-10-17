@@ -172,7 +172,7 @@ impl RoleSet{
                     Role::Vigilante, Role::Veteran, Role::Deputy, Role::Marksman, Role::Rabblerouser
                 ],
             RoleSet::TownSupport => 
-                vec![Role::Medium, Role::Retributionist, Role::Transporter, Role::Escort, Role::Mayor, Role::Journalist],
+                vec![Role::Medium, Role::Retributionist, Role::Transporter, Role::Escort, Role::Mayor, Role::Reporter],
             RoleSet::Mafia =>
                 vec![
                     Role::MadeMan, Role::MafiaSupportWildcard, Role::MafiaKillingWildcard
@@ -184,7 +184,7 @@ impl RoleSet{
             RoleSet::MafiaKilling => 
                 vec![
                     Role::Godfather, Role::Eros, Role::Counterfeiter,
-                    Role::Retrainer, Role::Imposter, Role::Recruiter,
+                    Role::Retrainer, Role::Impostor, Role::Recruiter,
                     Role::Mafioso
                 ],
             RoleSet::MafiaSupport => 

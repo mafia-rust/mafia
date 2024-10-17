@@ -421,7 +421,7 @@
             {"type": "mayorCantWhisper"}
         ]
     },
-    "journalist": {
+    "reporter": {
         "mainRoleSet": "town",
         "roleSets": ["town", "townSupport"],
         "armor": false,
@@ -435,7 +435,7 @@
             {
                 "type": "normal", 
                 "messageSender": {
-                    "type": "journalist"
+                    "type": "reporter"
                 },
                 "text": "Alright! Who wants to throw me around like a football?", 
                 "chatGroup": "interview"
@@ -450,8 +450,8 @@
                 "chatGroup": "interview"
             },
             {
-                "type": "journalistJournal",
-                "journal": "I interviewed @2 last night. He gets it."
+                "type": "reporterReport",
+                "report": "I interviewed @2 last night. He gets it."
             }
         ]
     },
@@ -516,7 +516,7 @@
             {"type": "youSurvivedAttack"}
         ]
     },
-    "imposter": {
+    "impostor": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaKilling"],
         "armor": true,

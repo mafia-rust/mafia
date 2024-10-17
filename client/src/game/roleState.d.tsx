@@ -87,9 +87,9 @@ export type RoleState = {
 } | {
     type: "retributionist"
 } | {
-    type: "journalist",
+    type: "reporter",
     public: boolean,
-    journal: string,
+    report: string,
     interviewedTarget: PlayerIndex | null
 } | {
     type: "godfather"
@@ -99,7 +99,7 @@ export type RoleState = {
     backup: PlayerIndex | null,
     retrainsRemaining: number
 } | {
-    type: "imposter"
+    type: "impostor"
     backup: PlayerIndex | null,
     fakeRole: Role
 } | {

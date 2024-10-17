@@ -81,7 +81,7 @@ impl RoleStateImpl for Revolutionary {
 
                 p.role(game) != Role::Transporter &&
                 p.role(game) != Role::Mayor &&
-                p.role(game) != Role::Journalist
+                p.role(game) != Role::Reporter
             ).collect::<Vec<PlayerReference>>()
             .choose(&mut rand::thread_rng())
         {

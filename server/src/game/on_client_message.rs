@@ -7,7 +7,7 @@ use super::{
     components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward,
     phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference},
     role::{
-        imposter::Imposter, kira::{Kira, KiraGuess},
+        impostor::Impostor, kira::{Kira, KiraGuess},
         mayor::Mayor, puppeteer::PuppeteerAction,
         recruiter::RecruiterAction, retrainer::Retrainer,
         Role, RoleState
@@ -140,8 +140,8 @@ impl Game {
                             }else{None}
                         },
                         ChatGroup::Interview => {
-                            if sender_player_ref.role(self) == Role::Journalist {
-                                Some(MessageSender::Journalist)
+                            if sender_player_ref.role(self) == Role::Reporter {
+                                Some(MessageSender::Reporter)
                             }else{None}
                         },
                         _ => {None}
@@ -272,16 +272,16 @@ impl Game {
                     _ => {}
                 }
             }
-            ToServerPacket::SetJournalistJournal { journal } => {
-                if let RoleState::Journalist(mut journalist) = sender_player_ref.role_state(self).clone(){
-                    journalist.journal = journal;
-                    sender_player_ref.set_role_state(self, RoleState::Journalist(journalist));
+            ToServerPacket::SetReporterReport { report } => {
+                if let RoleState::Reporter(mut reporter) = sender_player_ref.role_state(self).clone(){
+                    reporter.report = report;
+                    sender_player_ref.set_role_state(self, RoleState::Reporter(reporter));
                 }
             }
-            ToServerPacket::SetJournalistJournalPublic { public } => {
-                if let RoleState::Journalist(mut journalist) = sender_player_ref.role_state(self).clone(){
-                    journalist.public = public;
-                    sender_player_ref.set_role_state(self, RoleState::Journalist(journalist));
+            ToServerPacket::SetReporterReportPublic { public } => {
+                if let RoleState::Reporter(mut reporter) = sender_player_ref.role_state(self).clone(){
+                    reporter.public = public;
+                    sender_player_ref.set_role_state(self, RoleState::Reporter(reporter));
                 }
             }
             ToServerPacket::SetConsortOptions { 
@@ -393,8 +393,8 @@ impl Game {
                     RoleState::Retrainer(..) => {
                         Retrainer::retrain(self, sender_player_ref, role);
                     },
-                    RoleState::Imposter(..) => {
-                        Imposter::set_role(self, sender_player_ref, role);
+                    RoleState::Impostor(..) => {
+                        Impostor::set_role(self, sender_player_ref, role);
                     },
                     _ => {}
                 }

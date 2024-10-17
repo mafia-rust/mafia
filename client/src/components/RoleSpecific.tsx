@@ -4,7 +4,7 @@ import LargeAuditorMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/L
 import LargeHypnotistMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeHypnotistMenu";
 import LargeDoomsayerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import LargeForgerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeForgerMenu";
-import LargeJournalistMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeJournalistMenu";
+import LargeReporterMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeReporterMenu";
 import StyledText from "./StyledText";
 import translate from "../game/lang";
 import GAME_MANAGER from "..";
@@ -21,7 +21,7 @@ import RetrainerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/Retr
 import { useGameState, usePlayerState } from "./useHooks";
 import RecruiterMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
 import StewardMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/StewardMenu";
-import ImposterMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/ImposterMenu";
+import ImpostorMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/ImpostorMenu";
 
 export default function RoleSpecificSection(){
     const phaseState = useGameState(
@@ -42,8 +42,8 @@ export default function RoleSpecificSection(){
     switch(roleState.type){
         case "auditor":
             return <LargeAuditorMenu/>;
-        case "journalist":
-            return <LargeJournalistMenu/>;
+        case "reporter":
+            return <LargeReporterMenu/>;
         case "hypnotist":
             return <LargeHypnotistMenu/>;
         case "forger":
@@ -54,8 +54,8 @@ export default function RoleSpecificSection(){
             return <LargeKiraMenu/>;
         case "retrainer":
             return <RetrainerMenu/>
-        case "imposter":
-            return <ImposterMenu/>
+        case "impostor":
+            return <ImpostorMenu/>
         case "jailor": 
             return <JailorRoleSpecificMenu roleState={roleState}/>;
         case "kidnapper": 

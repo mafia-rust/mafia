@@ -7,11 +7,11 @@ import { Role, roleJsonData } from "../../../../game/roleState.d";
 import GAME_MANAGER from "../../../..";
 import { usePlayerState } from "../../../../components/useHooks";
 
-export default function ImposterMenu(): ReactElement {
+export default function ImpostorMenu(): ReactElement {
 
     const savedFakeRole = usePlayerState<Role | null>(
         (playerState, gameState) => {
-            if(playerState.roleState.type === "imposter"){
+            if(playerState.roleState.type === "impostor"){
                 return playerState.roleState.fakeRole;
             }
             return null
@@ -34,7 +34,7 @@ export default function ImposterMenu(): ReactElement {
 
     return <>
         {alive && <>
-            <StyledText>{translate("role.imposter.roleMenu")}</StyledText>
+            <StyledText>{translate("role.impostor.roleMenu")}</StyledText>
             <RoleDropdown
                 value={savedFakeRole??"jester"} 
                 enabledRoles={allChoosableRoles}

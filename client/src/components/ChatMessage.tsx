@@ -235,7 +235,7 @@ function NormalChatMessage(props: Readonly<{
     let messageSender = "";
     if (props.message.variant.messageSender.type === "player" || props.message.variant.messageSender.type === "livingToDead") {
         messageSender = props.playerNames[props.message.variant.messageSender.player];
-    }else if(props.message.variant.messageSender.type === "jailor" || props.message.variant.messageSender.type === "journalist"){
+    }else if(props.message.variant.messageSender.type === "jailor" || props.message.variant.messageSender.type === "reporter"){
         messageSender = translate("role."+props.message.variant.messageSender.type+".name");
     }
     
@@ -456,9 +456,9 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.martyrRevealed",
                 playerNames[message.martyr],
             );
-        case "journalistJournal":
-            return translate("chatMessage.journalistJournal",
-                sanitizePlayerMessage(replaceMentions(message.journal, playerNames))
+        case "reporterReport":
+            return translate("chatMessage.reporterReport",
+                sanitizePlayerMessage(replaceMentions(message.report, playerNames))
             );
         case "youAreInterviewingPlayer":
             return translate("chatMessage.youAreInterviewingPlayer",
@@ -793,8 +793,8 @@ export type ChatMessageVariant = {
 } | {
     type: "mayorCantWhisper"
 } | {
-    type: "journalistJournal",
-    journal: string
+    type: "reporterReport",
+    report: string
 } | {
     type: "youAreInterviewingPlayer",
     playerIndex: PlayerIndex
@@ -1021,5 +1021,5 @@ export type MessageSender = {
     type: "livingToDead",
     player: PlayerIndex,
 } | {
-    type: "jailor" | "journalist"
+    type: "jailor" | "reporter"
 }

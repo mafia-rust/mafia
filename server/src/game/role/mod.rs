@@ -97,7 +97,7 @@ macros::roles! {
     Escort : escort,
     Medium : medium,
     Retributionist : retributionist,
-    Journalist : journalist,
+    Reporter : reporter,
     Mayor : mayor,
     Transporter : transporter,
 
@@ -105,7 +105,7 @@ macros::roles! {
     Godfather : godfather,
     Eros: eros,
     Counterfeiter : counterfeiter,
-    Imposter : imposter,
+    Impostor : impostor,
     Retrainer : retrainer,
     Recruiter : recruiter,
     Mafioso : mafioso,

@@ -31,7 +31,7 @@ pub enum DoomsayerGuess{
     // No TI
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith, Steward,
     Vigilante, Veteran, Marksman, Deputy, Rabblerouser,
-    Escort, Medium, Retributionist, Journalist, Mayor, Transporter
+    Escort, Medium, Retributionist, Reporter, Mayor, Transporter
 }
 impl DoomsayerGuess{
     fn convert_to_guess(role: Role)->Option<DoomsayerGuess>{
@@ -60,13 +60,13 @@ impl DoomsayerGuess{
             Role::Escort => Some(DoomsayerGuess::Escort),
             Role::Medium => Some(DoomsayerGuess::Medium),
             Role::Retributionist => Some(DoomsayerGuess::Retributionist),
-            Role::Journalist => Some(DoomsayerGuess::Journalist),
+            Role::Reporter => Some(DoomsayerGuess::Reporter),
             Role::Mayor => Some(DoomsayerGuess::Mayor),
             Role::Transporter => Some(DoomsayerGuess::Transporter),
 
             //Mafia
             Role::Godfather | Role::Mafioso | Role::Eros |
-            Role::Counterfeiter | Role::Retrainer | Role::Recruiter | Role::Imposter | Role::MafiaKillingWildcard |
+            Role::Counterfeiter | Role::Retrainer | Role::Recruiter | Role::Impostor | Role::MafiaKillingWildcard |
             Role::MadeMan |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::MafiaWitch | Role::Necromancer | Role::Consort |

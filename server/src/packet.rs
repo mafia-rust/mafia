@@ -244,9 +244,9 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SetWildcardRole{ role: Role },
     #[serde(rename_all = "camelCase")]
-    SetJournalistJournal{ journal: String},
+    SetReporterReport{ report: String},
     #[serde(rename_all = "camelCase")]
-    SetJournalistJournalPublic{ public: bool},
+    SetReporterReportPublic{ public: bool},
     #[serde(rename_all = "camelCase")]
     SetConsortOptions{
         roleblock: bool,
