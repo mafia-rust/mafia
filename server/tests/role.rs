@@ -3,7 +3,7 @@ use std::{ops::Deref, vec};
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::{components::{cult::CultAbility, revealed_group::RevealedGroupID}, role::{armorsmith::Armorsmith, recruiter::Recruiter, scarecrow::Scarecrow, tally_clerk::TallyClerk, warper::Warper}, role_list::RoleSet};
+use mafia_server::game::{components::{cult::CultAbility, revealed_group::RevealedGroupID}, role::{armorsmith::Armorsmith, ojo::Ojo, recruiter::Recruiter, scarecrow::Scarecrow, tally_clerk::TallyClerk, warper::Warper}, role_list::RoleSet};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
@@ -70,7 +70,6 @@ pub use mafia_server::game::{
         zealot::Zealot,
         
         arsonist::Arsonist,
-        ojo::{Ojo, OjoAction},
         pyrolisk::Pyrolisk,
         puppeteer::{Puppeteer, PuppeteerAction},
         fiends_wildcard::FiendsWildcard, 
@@ -1421,7 +1420,9 @@ fn bouncer_ojo_block() {
     );
 
     ojo.set_role_state(RoleState::Ojo(Ojo{
-        chosen_action: OjoAction::Kill { role: Role::Detective }
+        role_chosen: Some(Role::Detective),
+        chosen_outline: None,
+        previously_given_results: Vec::new(),
     }));
     b.set_night_selection_single(det1);
 
@@ -1431,6 +1432,11 @@ fn bouncer_ojo_block() {
     assert!(det2.alive());
     assert!(det3.alive());
     assert!(det4.alive());
+
+    assert_contains!(
+        ojo.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 1 }),
+        ChatMessageVariant::Wardblocked
+    );
 }
 
 #[test]
@@ -2014,28 +2020,22 @@ fn ojo_transporter(){
     );
 
     ojo.set_role_state(
-        RoleState::Ojo(Ojo{chosen_action:OjoAction::See{role:Role::Philosopher} })
+        RoleState::Ojo(Ojo{
+            role_chosen: Some(Role::Philosopher),
+            chosen_outline: None,
+            previously_given_results: Vec::new(),
+        })
     );
 
     transporter.set_night_selection(vec![player1, player2]);
     gf.set_night_selection_single(ojo);
 
-    game.next_phase();
+    game.next_phase(); 
 
     assert!(player1.alive());
-    assert!(player2.alive());
-    assert!(player3.alive());
+    assert!(!player2.alive());
+    assert!(!player3.alive());
     assert!(gf.alive());
-
-    assert_contains!(
-        ojo.get_messages(), ChatMessageVariant::PlayersRoleRevealed{player: player2.index(), role: Role::Detective}
-    );
-    assert_contains!(
-        ojo.get_messages(), ChatMessageVariant::PlayersRoleRevealed{player: player3.index(), role: Role::Philosopher}
-    );
-    assert_contains!(
-        ojo.get_messages(), ChatMessageVariant::PlayersRoleRevealed{player: gf.index(), role: Role::Godfather}
-    );
 }
 
 #[test]

@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::game::{
     grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
-        auditor::AuditorResult, engineer::TrapState, eros::ErosAction, kira::KiraResult, ojo::OjoAction, puppeteer::PuppeteerAction, recruiter::RecruiterAction, spy::SpyBug, Role
+        auditor::AuditorResult, engineer::TrapState, eros::ErosAction, kira::KiraResult, puppeteer::PuppeteerAction, recruiter::RecruiterAction, spy::SpyBug, Role
     }, role_list::RoleOutline, tag::Tag, verdict::Verdict
 };
 
@@ -196,9 +196,7 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     ScarecrowResult{players: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
-    OjoActionChosen{action: OjoAction},
-    #[serde(rename_all = "camelCase")]
-    StewardRoleChosen{role: Option<Role>},
+    RoleChosen{role: Option<Role>},
     #[serde(rename_all = "camelCase")]
     PuppeteerActionChosen{action: PuppeteerAction},
     #[serde(rename_all = "camelCase")]

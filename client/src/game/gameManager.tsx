@@ -539,12 +539,6 @@ export function createGameManager(): GameManager {
                 index: index
             });
         },
-        sendSetOjoAction(action) {
-            this.server.sendPacket({
-                type: "setOjoAction",
-                action: action
-            });
-        },
         sendSetPuppeteerAction(action) {
             this.server.sendPacket({
                 type: "setPuppeteerAction",
@@ -569,9 +563,9 @@ export function createGameManager(): GameManager {
                 role: role
             });
         },
-        sendSetStewardRoleChosen(role: Role | null) {
+        sendSetRoleChosen(role: Role | null) {
             this.server.sendPacket({
-                type: "setStewardRoleChosen",
+                type: "setRoleChosen",
                 role: role
             });
         },

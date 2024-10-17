@@ -4,7 +4,6 @@ import { ChatMessage } from "../components/ChatMessage"
 import { RoleList, RoleOutline } from "./roleListState.d"
 import { Role, RoleState } from "./roleState.d"
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu"
-import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu"
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu"
 import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu"
 
@@ -308,9 +307,6 @@ export type ToServerPacket = {
     type: "setAuditorChosenOutline",
     index: number
 } | {
-    type: "setOjoAction",
-    action: OjoAction
-} | {
     type: "setPuppeteerAction",
     action: PuppeteerAction
 } | {
@@ -323,7 +319,7 @@ export type ToServerPacket = {
     type: "retrainerRetrain",
     role: Role
 } | {
-    type: "setStewardRoleChosen",
+    type: "setRoleChosen",
     role: Role | null
 } | {
     type: "voteFastForwardPhase",
