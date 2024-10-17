@@ -1032,6 +1032,7 @@
         "chatMessages":[
             {"type": "playersRoleRevealed","role": "veteran","player": 7},
             {"type": "playersRoleConcealed","player": 7},
+            {"type": "auditorResult", "roleOutline":{"type":"any"},"result": {"type":"one","role":["jester"]}},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
