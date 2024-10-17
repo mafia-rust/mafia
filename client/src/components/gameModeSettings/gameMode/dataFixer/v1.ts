@@ -1,5 +1,5 @@
 import { VersionConverter } from ".";
-import { GameMode, GameModeData, GameModeStorage, ShareableGameMode } from "..";
+import { GameMode } from "..";
 import { ModifierType, PhaseTimes } from "../../../../game/gameState.d";
 import { Role } from "../../../../game/roleState.d";
 import { Failure, ParseResult, ParseSuccess, Success, isFailure } from "../parse";

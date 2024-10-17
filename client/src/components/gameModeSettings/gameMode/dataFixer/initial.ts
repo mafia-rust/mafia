@@ -1,6 +1,6 @@
 import { VersionConverter } from ".";
 import { PHASES, PhaseTimes } from "../../../../game/gameState.d";
-import { ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, RoleSet, getAllRoles } from "../../../../game/roleListState.d";
+import { ROLE_SETS, RoleOutline, RoleOutlineOption, RoleSet, getAllRoles } from "../../../../game/roleListState.d";
 import { Role } from "../../../../game/roleState.d";
 import { Failure, ParseResult, ParseSuccess, Success, isFailure } from "../parse";
 

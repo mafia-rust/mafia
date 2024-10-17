@@ -319,7 +319,7 @@ function WildcardRoleSpecificMenu(props: Readonly<{
                     enabledRoles.includes(rle as Role)
                 ).map((r)=>r as Role)
         }
-    }, [enabledRoles, props.roleState.type])
+    }, [enabledRoles, props.roleState.type, ROLES])
 
     return <div className="role-information">
         <StyledText>{translate(`role.${props.roleState.type}.smallRoleMenu`)}</StyledText>
