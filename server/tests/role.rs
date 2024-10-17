@@ -2165,6 +2165,38 @@ fn witch_leaves_by_winning_puppeteer(){
     assert!(pup.alive());
 }
 
+#[test]
+fn armorsmith_doesnt_get_wardblocked_when_warded(){
+    kit::scenario!(game in Night 2 where
+        gf: Godfather,
+        armor: Armorsmith,
+        bouncer: Bouncer
+    );
+
+    assert!(gf.set_night_selection_single(bouncer));
+    assert!(bouncer.set_night_selection_single(armor));
+    assert!(armor.set_night_selection_single(armor));
+
+    game.next_phase();
+
+    assert!(gf.alive());
+    assert!(armor.alive());
+    assert!(bouncer.alive());
+
+    assert_not_contains!(
+        armor.get_messages_after_last_message(
+            ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 2 }
+        ),
+        ChatMessageVariant::Wardblocked
+    );
+    
+    assert_contains!(
+        bouncer.get_messages_after_last_message(
+            ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 2 }
+        ),
+        ChatMessageVariant::YouWereProtected
+    );
+}
 
 #[test]
 fn godfather_dies_to_veteran_after_possessed(){
