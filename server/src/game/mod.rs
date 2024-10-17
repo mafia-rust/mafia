@@ -27,6 +27,7 @@ use components::pitchfork::Pitchfork;
 use components::mafia_recruits::MafiaRecruits;
 use components::poison::Poison;
 use components::detained::Detained;
+use components::revealed_group::RevealedGroupID;
 use components::revealed_group::RevealedGroups;
 use components::verdicts_today::VerdictsToday;
 use modifiers::Modifiers;
@@ -204,9 +205,23 @@ impl Game {
         
         game.send_packet_to_all(ToClientPacket::StartGame);
 
+        //set wincons and revealed groups
+        for player in PlayerReference::all_players(&game){
+            let role_data = player.role_state(&game).clone();
+
+            player.set_win_condition(&mut game, role_data.clone().default_win_condition());
+        
+            RevealedGroupID::start_game_set_player_revealed_groups(
+                role_data.clone().default_revealed_groups(),
+                &mut game,
+                player
+            );
+        }
+
         BeforeInitialRoleCreation::invoke(&mut game);
         
         //on role creation needs to be called after all players roles are known
+        //trigger role event listeners
         for player_ref in PlayerReference::all_players(&game){
             let role_data_copy = player_ref.role_state(&game).clone();
             player_ref.set_role_and_win_condition_and_revealed_group(&mut game, role_data_copy);
@@ -217,6 +232,11 @@ impl Game {
         }
         for spectator in SpectatorPointer::all_spectators(&game){
             spectator.send_join_game_data(&mut game);
+        }
+
+        //reveal groups
+        for group in RevealedGroupID::all() {
+            group.reveal_group_players(&mut game);
         }
 
         //on game start needs to be called after all players have joined
@@ -411,7 +431,7 @@ impl Game {
 pub mod test {
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, verdicts_today::VerdictsToday},
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, revealed_group::RevealedGroupID, verdicts_today::VerdictsToday},
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
@@ -480,6 +500,19 @@ pub mod test {
             restricted: Default::default(),
         };
 
+        //set wincons and revealed groups
+        for player in PlayerReference::all_players(&game){
+            let role_data = player.role_state(&game).clone();
+
+            player.set_win_condition(&mut game, role_data.clone().default_win_condition());
+        
+            RevealedGroupID::start_game_set_player_revealed_groups(
+                role_data.clone().default_revealed_groups(),
+                &mut game,
+                player
+            );
+        }
+        
         BeforeInitialRoleCreation::invoke(&mut game);
 
         //on role creation needs to be called after all players roles are known

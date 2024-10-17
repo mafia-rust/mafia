@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::detained::Detained;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 
 use crate::game::Game;
@@ -14,7 +14,7 @@ use super::{RevealedGroupID, Priority, Role, RoleStateImpl};
 pub struct Framer;
 
 
-pub(super) const FACTION: Faction = Faction::Mafia;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
@@ -47,7 +47,7 @@ impl RoleStateImpl for Framer {
                 let mut chat_messages = Vec::new();
 
                 for player in PlayerReference::all_players(game){
-                    if player.role(game).faction() != Faction::Mafia {continue;}
+                    if !RevealedGroupID::players_in_same_revealed_group(game, actor_ref, player) {continue;}
 
                     let visitors_roles: Vec<Role> = PlayerReference::all_appeared_visitors(player, game)
                         .iter()
@@ -63,7 +63,7 @@ impl RoleStateImpl for Framer {
                 }
 
                 for player in PlayerReference::all_players(game){
-                    if player.role(game).faction() != Faction::Mafia {continue;}
+                    if !RevealedGroupID::players_in_same_revealed_group(game, actor_ref, player) {continue;}
                     for msg in chat_messages.iter(){
                         player.push_night_message(game, msg.clone());
                     }

@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::game::{attack_power::DefensePower, components::love_linked::LoveLinked};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 
 use crate::game::Game;
@@ -12,7 +12,7 @@ use super::{RevealedGroupID, Priority, RoleStateImpl};
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Cupid;
 
-pub(super) const FACTION: Faction = Faction::Mafia;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

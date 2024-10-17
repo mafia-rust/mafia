@@ -7,7 +7,7 @@ use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::{PhaseType, PhaseState};
 use crate::game::player::PlayerReference;
 use crate::game::role::RoleState;
-use crate::game::role_list::Faction;
+
 use crate::game::verdict::Verdict;
 
 use crate::game::Game;
@@ -22,7 +22,7 @@ pub struct Jester {
 #[derive(Clone, Serialize, Debug)]
 pub struct ClientRoleState;
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

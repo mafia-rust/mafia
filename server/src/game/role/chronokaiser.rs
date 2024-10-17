@@ -2,17 +2,15 @@ use serde::Serialize;
 
 use crate::game::chat::ChatGroup;
 use crate::game::phase::PhaseType;
+use crate::game::Game;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
-use crate::game::Game;
 
 use super::RoleStateImpl;
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Chronokaiser;
 
-pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

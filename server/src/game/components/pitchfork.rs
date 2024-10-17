@@ -1,9 +1,7 @@
 use std::{collections::{HashMap, HashSet}, ops::Mul};
 
 use crate::{game::{
-    attack_power::AttackPower, grave::GraveKiller, phase::PhaseType,
-    player::PlayerReference, resolution_state::ResolutionState,
-    role::Priority, role_list::Faction, Game
+    attack_power::AttackPower, grave::GraveKiller, phase::PhaseType, player::PlayerReference, resolution_state::ResolutionState, role::Priority, role_list::RoleSet, Game
 }, packet::ToClientPacket};
 
 #[derive(Clone)]
@@ -60,7 +58,7 @@ impl Pitchfork{
             target.try_night_kill(
                 &Pitchfork::pitchfork_owners(game).iter().filter(|p|p.alive(game)).map(|p|*p).collect(), 
                 game, 
-                GraveKiller::Faction(Faction::Town), 
+                GraveKiller::RoleSet(RoleSet::Town), 
                 AttackPower::ProtectionPiercing, 
                 false
             );

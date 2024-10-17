@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::game::{attack_power::DefensePower, components::arsonist_doused::ArsonistDoused};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 
 use crate::game::Game;
@@ -12,7 +12,7 @@ use super::{Priority, RoleStateImpl, Role};
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Arsonist;
 
-pub(super) const FACTION: Faction = Faction::Fiends;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 

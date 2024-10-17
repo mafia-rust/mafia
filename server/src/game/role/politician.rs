@@ -6,8 +6,9 @@ use crate::game::resolution_state::ResolutionState;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
 
+
+use crate::game::win_condition::WinCondition;
 use crate::game::Game;
 use super::jester::Jester;
 use super::{GetClientRoleState, Role, RoleState, RoleStateImpl};
@@ -21,7 +22,7 @@ pub struct Politician{
 #[derive(Debug, Clone, Serialize)]
 pub struct ClientRoleState;
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
@@ -50,7 +51,7 @@ impl RoleStateImpl for Politician {
         for player_ref in PlayerReference::all_players(game) {
             if
                 player_ref.alive(game) && 
-                player_ref.role(game).faction() == Faction::Town &&
+                player_ref.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town) &&
                 player_ref.get_won_game(game)
             {
                 
@@ -85,6 +86,9 @@ impl RoleStateImpl for Politician {
                 }
             }
         }
+    }
+    fn default_win_condition(self) -> crate::game::win_condition::WinCondition where RoleState: From<Self> {
+        WinCondition::ResolutionStateReached{win_if_any: vec![ResolutionState::Politician].into_iter().collect()}
     }
 }
 impl GetClientRoleState<ClientRoleState> for Politician {

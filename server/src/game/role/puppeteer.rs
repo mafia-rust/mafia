@@ -5,7 +5,7 @@ use crate::game::components::poison::Poison;
 use crate::game::{attack_power::DefensePower, components::puppeteer_marionette::PuppeteerMarionette};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 use crate::game::Game;
 
@@ -33,7 +33,7 @@ pub enum PuppeteerAction{
     Poison
 }
 
-pub(super) const FACTION: Faction = Faction::Fiends;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 

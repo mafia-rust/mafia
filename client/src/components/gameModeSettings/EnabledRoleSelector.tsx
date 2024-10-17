@@ -21,7 +21,7 @@ export default function EnabledRoleSelector(props: {
 }): ReactElement {
     const {enabledRoles} = useContext(GameModeContext);
 
-    const [roleOutlineOption, setRoleOutlineOption] = useState<RoleOutlineOption>({ type: "faction", faction: "town" });
+    const [roleOutlineOption, setRoleOutlineOption] = useState<RoleOutlineOption>({ type: "roleSet", roleSet: "town" });
 
     const disableOutlineOption = (outline: RoleOutlineOption) => {
         props.onDisableRoles(getRolesFromOutlineOption(outline));

@@ -64,13 +64,10 @@ impl PuppeteerMarionette{
     }
 
     pub fn give_tags_and_labels(game: &mut Game){
-        let marionettes_and_puppeteer = PuppeteerMarionette::marionettes_and_puppeteer(game);
-
-        for player_a in marionettes_and_puppeteer.clone() {
-            for player_b in marionettes_and_puppeteer.clone() {
+        for player_a in RevealedGroupID::Puppeteer.players(game).clone() {
+            for player_b in PuppeteerMarionette::marionettes(game).clone() {
                 if 
-                    player_a.player_has_tag(game, player_b, Tag::PuppeteerMarionette) == 0 &&
-                    player_b.role(game) != Role::Puppeteer
+                    player_a.player_has_tag(game, player_b, Tag::PuppeteerMarionette) == 0
                 {
                     player_a.push_player_tag(game, player_b, Tag::PuppeteerMarionette);
                 }

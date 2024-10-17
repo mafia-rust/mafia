@@ -8,7 +8,6 @@ use crate::game::components::detained::Detained;
 use crate::game::grave::{Grave, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::win_condition::WinCondition;
 use crate::game::Game;
@@ -32,7 +31,6 @@ impl Default for Kidnapper {
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

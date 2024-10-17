@@ -4,12 +4,14 @@ use crate::game::{
     attack_power::DefensePower,
     components::pitchfork::Pitchfork,
     event::before_role_switch::BeforeRoleSwitch,
-    player::PlayerReference, role_list::Faction, Game};
+    player::PlayerReference, 
+    Game
+};
 
 
 use super::RoleStateImpl;
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
