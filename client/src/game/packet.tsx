@@ -285,10 +285,10 @@ export type ToServerPacket = {
     type: "setWildcardRole",
     role: Role
 } | {
-    type: "setJournalistJournal",
-    journal: string
+    type: "setReporterReport",
+    report: string
 } | {
-    type: "setJournalistJournalPublic",
+    type: "setReporterReportPublic",
     public: boolean
 } | {
     type: "setConsortOptions",

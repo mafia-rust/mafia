@@ -1,40 +1,40 @@
 import React from "react"
 import GAME_MANAGER from "../../../.."
 import translate from "../../../../game/lang"
-import "./largeJournalistMenu.css"
+import "./largeReporterMenu.css"
 import { Button } from "../../../../components/Button"
 import Icon from "../../../../components/Icon"
 
-type LargeJournalistMenuProps = {
+type LargeReporterMenuProps = {
 }
-type LargeJournalistMenuState = {
+type LargeReporterMenuState = {
     syncedPublic: boolean,
-    localJournal: string,
-    syncedJournal: string,
+    localReport: string,
+    syncedReport: string,
 }
-export default class LargeJournalistMenu extends React.Component<LargeJournalistMenuProps, LargeJournalistMenuState> {
+export default class LargeReporterMenu extends React.Component<LargeReporterMenuProps, LargeReporterMenuState> {
     listener: () => void;
-    constructor(props: LargeJournalistMenuState) {
+    constructor(props: LargeReporterMenuState) {
         super(props);
 
         if(
             GAME_MANAGER.state.stateType === "game" && 
             GAME_MANAGER.state.clientState.type === "player" &&
-            GAME_MANAGER.state.clientState.roleState?.type === "journalist"
+            GAME_MANAGER.state.clientState.roleState?.type === "reporter"
         )
             this.state = {
                 syncedPublic: GAME_MANAGER.state.clientState.roleState?.public,
-                localJournal: GAME_MANAGER.state.clientState.roleState?.journal,
-                syncedJournal: GAME_MANAGER.state.clientState.roleState?.journal,
+                localReport: GAME_MANAGER.state.clientState.roleState?.report,
+                syncedReport: GAME_MANAGER.state.clientState.roleState?.report,
             };
         this.listener = ()=>{
             if(
                 GAME_MANAGER.state.stateType === "game" &&
                 GAME_MANAGER.state.clientState.type === "player" &&
-                GAME_MANAGER.state.clientState.roleState?.type === "journalist"
+                GAME_MANAGER.state.clientState.roleState?.type === "reporter"
             ){
                 this.setState({
-                    syncedJournal: GAME_MANAGER.state.clientState.roleState.journal,
+                    syncedReport: GAME_MANAGER.state.clientState.roleState.report,
                     syncedPublic: GAME_MANAGER.state.clientState.roleState.public,
                 })
             }
@@ -47,26 +47,26 @@ export default class LargeJournalistMenu extends React.Component<LargeJournalist
         GAME_MANAGER.removeStateListener(this.listener);
     }
     handlePublicToggle(){
-        GAME_MANAGER.sendSetJournalistJournalPublic(
+        GAME_MANAGER.sendSetReporterReportPublic(
             !this.state.syncedPublic
         );
     }
     handleSave(){
-        GAME_MANAGER.sendSetJournalistJournal(
-            this.state.localJournal,
+        GAME_MANAGER.sendSetReporterReport(
+            this.state.localReport,
         );
     }
     handleSend(){
-        GAME_MANAGER.sendSendMessagePacket('\n' + this.state.syncedJournal);
+        GAME_MANAGER.sendSendMessagePacket('\n' + this.state.syncedReport);
     }
 
     render(){
-        return <div className="large-journalist-menu">
+        return <div className="large-reporter-menu">
             <div>
-                {translate("role.journalist.menu.journal")}
+                {translate("role.reporter.menu.report")}
                 <div>
                     <Button
-                        highlighted={this.state.syncedJournal !== this.state.localJournal}
+                        highlighted={this.state.syncedReport !== this.state.localReport}
                         onClick={() => {
                             this.handleSave();
                             return true;
@@ -87,15 +87,15 @@ export default class LargeJournalistMenu extends React.Component<LargeJournalist
                 </div>
             </div>
             <div>
-                {translate("role.journalist.menu.public")}
+                {translate("role.reporter.menu.public")}
                 <label onClick={()=>this.handlePublicToggle()}>
                     <Icon>{this.state.syncedPublic ? "check" : "close"}</Icon>
                 </label>
             </div>
             <textarea
-                value={this.state.localJournal}
+                value={this.state.localReport}
                 onChange={(e) => {
-                    this.setState({ localJournal: e.target.value });
+                    this.setState({ localReport: e.target.value });
                 }}
                 onKeyDown={(e) => {
                     if (e.ctrlKey) {

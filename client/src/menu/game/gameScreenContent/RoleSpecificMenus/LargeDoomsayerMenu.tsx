@@ -20,7 +20,7 @@ export const DOOMSAYER_GUESSES = [
     "jailor", "villager",  
     "doctor",  "bodyguard",  "cop", "bouncer", "engineer", "armorsmith", "steward",
     "vigilante",  "veteran", "marksman", "deputy", "rabblerouser",
-    "escort",  "medium",  "retributionist", "journalist", "mayor",  "transporter", 
+    "escort",  "medium",  "retributionist", "reporter", "mayor",  "transporter", 
 ];
 
 export type DoomsayerGuess = typeof DOOMSAYER_GUESSES[number];
