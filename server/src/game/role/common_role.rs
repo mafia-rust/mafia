@@ -4,7 +4,7 @@ use crate::game::{
     chat::ChatGroup, components::{detained::Detained, puppeteer_marionette::PuppeteerMarionette}, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, resolution_state::ResolutionState, role_list::RoleSet, visit::Visit, win_condition::WinCondition, Game
 };
 
-use super::{journalist::Journalist, medium::Medium, RevealedGroupID, Role, RoleState};
+use super::{reporter::Reporter, medium::Medium, RevealedGroupID, Role, RoleState};
 
 
 pub(super) fn can_night_select(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -85,7 +85,7 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
             if PlayerReference::all_players(game)
                 .any(|p|
                     match p.role_state(game) {
-                        RoleState::Journalist(Journalist{interviewed_target: Some(interviewed_target_ref), ..}) => {
+                        RoleState::Reporter(Reporter{interviewed_target: Some(interviewed_target_ref), ..}) => {
                             *interviewed_target_ref == actor_ref
                         },
                         _ => false
@@ -196,7 +196,7 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
         PlayerReference::all_players(game)
             .any(|p|
                 match p.role_state(game) {
-                    RoleState::Journalist(Journalist{interviewed_target: Some(interviewed_target_ref), ..}) => {
+                    RoleState::Reporter(Reporter{interviewed_target: Some(interviewed_target_ref), ..}) => {
                         *interviewed_target_ref == actor_ref
                     },
                     _ => false

@@ -76,7 +76,7 @@ function useDayTargetedPlayers(): PlayerIndex[] {
         case "medium":
             if (roleState.seancedTarget !== null) return [roleState.seancedTarget]
             break;
-        case "journalist":
+        case "reporter":
             if (roleState.interviewedTarget !== null) return [roleState.interviewedTarget]
             break;
         case "marksman":

@@ -20,7 +20,7 @@
     "mayorRevealed": "special",
     "mayorCantWhisper": "special",
     "martyrRevealed": "special",
-    "journalistJournal": "result",
+    "reporterReport": "result",
     "playerIsBeingInterviewed": "special",
     "youAreInterviewingPlayer": "special",
     "jailedTarget": "special",

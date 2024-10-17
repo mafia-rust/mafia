@@ -28,7 +28,7 @@ pub enum KiraGuess{
     Detective, Lookout, Tracker, Psychic, Philosopher, Gossip, Auditor, Snoop, Spy, TallyClerk,
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith, Steward,
     Vigilante, Veteran, Marksman, Deputy, Rabblerouser,
-    Escort, Medium, Retributionist, Journalist, Mayor, Transporter
+    Escort, Medium, Retributionist, Reporter, Mayor, Transporter
 }
 impl KiraGuess{
     fn convert_to_guess(role: Role)->Option<KiraGuess>{
@@ -64,13 +64,13 @@ impl KiraGuess{
             Role::Escort => Some(Self::Escort),
             Role::Medium => Some(Self::Medium),
             Role::Retributionist => Some(Self::Retributionist),
-            Role::Journalist => Some(Self::Journalist),
+            Role::Reporter => Some(Self::Reporter),
             Role::Mayor => Some(Self::Mayor),
             Role::Transporter => Some(Self::Transporter),
 
             //Mafia
             Role::Godfather | Role::Mafioso | Role::Eros |
-            Role::Counterfeiter | Role::Retrainer | Role::Recruiter | Role::Imposter | Role::MafiaKillingWildcard |
+            Role::Counterfeiter | Role::Retrainer | Role::Recruiter | Role::Impostor | Role::MafiaKillingWildcard |
             Role::MadeMan |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::MafiaWitch | Role::Necromancer | Role::Consort |
