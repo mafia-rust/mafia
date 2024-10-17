@@ -8,8 +8,8 @@ use super::{
     phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference},
     role::{
         impostor::Impostor, kira::{Kira, KiraGuess},
-        mayor::Mayor, puppeteer::PuppeteerAction,
-        recruiter::RecruiterAction, retrainer::Retrainer,
+        mayor::Mayor, puppeteer::PuppeteerAction, recruiter::RecruiterAction,
+        retrainer::Retrainer,
         Role, RoleState
     }, 
     role_list::RoleSet, 
@@ -330,26 +330,34 @@ impl Game {
             ToServerPacket::SetAuditorChosenOutline { index } => {
                 if !sender_player_ref.alive(self) {break 'packet_match;}
 
-                if let RoleState::Auditor(mut auditor) = sender_player_ref.role_state(self).clone(){
-
-                    if auditor.chosen_outline.is_some_and(|f|f == index) {
-                        auditor.chosen_outline = None;
+                match sender_player_ref.role_state(self).clone() {
+                    RoleState::Auditor(mut auditor)=>{
+                        if auditor.chosen_outline.is_some_and(|f|f == index) {
+                            auditor.chosen_outline = None;
+                        }
+    
+                        if  self.roles_originally_generated.get(index as usize).is_some() && 
+                            !auditor.previously_given_results.iter().any(|(i, _)| *i == index)
+                        {
+                            auditor.chosen_outline = Some(index);
+                        }
+    
+                        sender_player_ref.set_role_state(self, auditor);
+                    }
+                    RoleState::Ojo(mut ojo) => {
+                    if ojo.chosen_outline.is_some_and(|f|f == index) {
+                        ojo.chosen_outline = None;
                     }
 
                     if  self.roles_originally_generated.get(index as usize).is_some() && 
-                        !auditor.previously_given_results.iter().any(|(i, _)| *i == index)
+                        !ojo.previously_given_results.iter().any(|(i, _)| *i == index)
                     {
-                        auditor.chosen_outline = Some(index);
+                        ojo.chosen_outline = Some(index);
                     }
 
-                    sender_player_ref.set_role_state(self, RoleState::Auditor(auditor));
-                }
-            },
-            ToServerPacket::SetOjoAction { action } => {
-                if let RoleState::Ojo(mut ojo) = sender_player_ref.role_state(self).clone(){
-                    ojo.chosen_action = action.clone();
-                    sender_player_ref.set_role_state(self, RoleState::Ojo(ojo));
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::OjoActionChosen { action });
+                    sender_player_ref.set_role_state(self, ojo);
+                    }
+                    _ => {}
                 }
             },
             ToServerPacket::SetPuppeteerAction { action } => {
@@ -399,11 +407,19 @@ impl Game {
                     _ => {}
                 }
             },
-            ToServerPacket::SetStewardRoleChosen { role } => {
-                if let RoleState::Steward(mut steward) = sender_player_ref.role_state(self).clone(){
-                    steward.role_chosen = role;
-                    sender_player_ref.set_role_state(self, RoleState::Steward(steward));
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::StewardRoleChosen { role });
+            ToServerPacket::SetRoleChosen { role } => {
+                match sender_player_ref.role_state(self).clone() {
+                    RoleState::Steward(mut steward) => {
+                        steward.role_chosen = role;
+                        sender_player_ref.set_role_state(self, steward);
+                        sender_player_ref.add_private_chat_message(self, ChatMessageVariant::RoleChosen { role });
+                    },
+                    RoleState::Ojo(mut ojo) => {
+                        ojo.role_chosen = role;
+                        sender_player_ref.set_role_state(self, ojo);
+                        sender_player_ref.add_private_chat_message(self, ChatMessageVariant::RoleChosen { role });
+                    },
+                    _ => {}
                 }
             },
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {

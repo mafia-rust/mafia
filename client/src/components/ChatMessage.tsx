@@ -10,7 +10,6 @@ import DOMPurify from "dompurify";
 import GraveComponent from "./grave";
 import { RoleOutline, translateRoleOutline } from "../game/roleListState.d";
 import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
-import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 import { KiraGuess, KiraGuessResult, kiraGuessTranslate } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import { CopyButton } from "./ClipboardButtons";
@@ -602,21 +601,11 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.scarecrowResult",
                 playerListToString(message.players, playerNames)
             );
-        case "ojoActionChosen":
-            switch (message.action.type) {
-                case "kill":
-                    return translate("chatMessage.ojoActionChosen.kill", translate("role."+message.action.role+".name"));
-                case "see":
-                    return translate("chatMessage.ojoActionChosen.see", translate("role."+message.action.role+".name"));
-                case "none":
-                    return translate("chatMessage.ojoActionChosen.none");
-            }
-            break;
-        case "stewardRoleChosen":
+        case "roleChosen":
             if(message.role === null){
-                return translate("chatMessage.stewardRoleChosen.none");
+                return translate("chatMessage.rRoleChosen.none");
             }else{
-                return translate("chatMessage.stewardRoleChosen.role", translate("role."+message.role+".name"));
+                return translate("chatMessage.roleChosen.role", translate("role."+message.role+".name"));
             }
         case "puppeteerActionChosen":
             return translate("chatMessage.puppeteerActionChosen."+message.action);
@@ -952,10 +941,7 @@ export type ChatMessageVariant = {
     type: "scarecrowResult",
     players: PlayerIndex[]
 } | {
-    type: "ojoActionChosen",
-    action: OjoAction,
-} | {
-    type: "stewardRoleChosen",
+    type: "roleChosen",
     role: Role | null,
 } | {
     type: "puppeteerActionChosen",

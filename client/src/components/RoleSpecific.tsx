@@ -8,7 +8,7 @@ import LargeReporterMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/
 import StyledText from "./StyledText";
 import translate from "../game/lang";
 import GAME_MANAGER from "..";
-import SmallOjoMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
+import OjoMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/OjoMenu";
 import SmallPuppeteerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 import RoleDropdown from "./RoleDropdown";
 import "../menu/game/gameScreenContent/RoleSpecificMenus/smallRoleSpecificMenu.css";
@@ -136,7 +136,7 @@ export default function RoleSpecificSection(){
                 <StyledText>{translate("role.death.roleDataText", roleState.souls)}</StyledText>
             </Counter>
         case "ojo":
-            return <SmallOjoMenu action={roleState.chosenAction}/>
+            return <OjoMenu roleState={roleState}/>
         case "steward":
             return <StewardMenu
                 roleState={roleState}

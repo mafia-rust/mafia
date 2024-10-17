@@ -71,15 +71,13 @@ impl RoleStateImpl for Auditor {
             }
         };
 
-        let message = ChatMessageVariant::AuditorResult {
+        actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
             role_outline: outline.clone(),
             result: result.clone()
-        };
+        });
+
         self.previously_given_results.push((chosen_outline, result));
-        
-        actor_ref.push_night_message(game, message);
         actor_ref.set_role_state(game, self);
-            
     }
     fn convert_selection_to_visits(self, game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         let Some(chosen_outline) = self.chosen_outline else {return vec![]};

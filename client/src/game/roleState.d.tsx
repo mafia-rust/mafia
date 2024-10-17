@@ -3,7 +3,6 @@ import { RoleSet } from "./roleListState.d"
 import ROLES from "./../resources/roles.json";
 import { Doomsayer } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
-import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
 import { Hypnotist } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeHypnotistMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
@@ -36,7 +35,7 @@ export type RoleState = {
     type: "psychic"
 } | {
     type: "auditor",
-    chosenOutline: number,
+    chosenOutline: number | null,
     previouslyGivenResults: [number, AuditorResult][]
 } | {
     type: "snoop",
@@ -192,7 +191,9 @@ Doomsayer
     type: "werewolf",
 } | {
     type: "ojo"
-    chosenAction: OjoAction
+    roleChosen: Role | null,
+    chosenOutline: number | null,
+    previouslyGivenResults: [number, AuditorResult][]
 } | {
     type: "puppeteer"
     action: PuppeteerAction,
