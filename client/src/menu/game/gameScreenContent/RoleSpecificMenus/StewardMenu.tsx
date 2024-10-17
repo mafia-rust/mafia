@@ -1,12 +1,11 @@
 import { ReactElement } from "react"
-import { Role, RoleState } from "../../../../game/roleState.d"
+import { Role, roleJsonData, RoleState } from "../../../../game/roleState.d"
 import React from "react"
 import RoleDropdown from "../../../../components/RoleDropdown"
 import GAME_MANAGER from "../../../.."
 import translate from "../../../../game/lang"
 import StyledText from "../../../../components/StyledText"
 import { usePlayerState } from "../../../../components/useHooks"
-import ROLES from "../../../../resources/roles.json"
 import Counter from "../../../../components/Counter"
 
 
@@ -33,7 +32,7 @@ export default function StewardMenu(
         <Counter max={1} current={props.roleState.stewardProtectsRemaining}><StyledText>{translate("role.steward.roleDataText", props.roleState.stewardProtectsRemaining)}</StyledText></Counter>
         <div>
             <RoleDropdown
-                enabledRoles={(Object.keys(ROLES) as Role[])
+                enabledRoles={(Object.keys(roleJsonData()) as Role[])
                     .filter(role=>role!=="steward"||props.roleState.stewardProtectsRemaining!==0)
                     .filter(role=>role!==props.roleState.previousRoleChosen)
                 }

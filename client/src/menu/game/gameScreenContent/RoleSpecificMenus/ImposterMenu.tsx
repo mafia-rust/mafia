@@ -3,8 +3,7 @@ import RoleDropdown from "../../../../components/RoleDropdown";
 import StyledText from "../../../../components/StyledText";
 import translate from "../../../../game/lang";
 import React from "react";
-import { Role } from "../../../../game/roleState.d";
-import ROLES from "../../../../resources/roles.json";
+import { Role, roleJsonData } from "../../../../game/roleState.d";
 import GAME_MANAGER from "../../../..";
 import { usePlayerState } from "../../../../components/useHooks";
 
@@ -26,7 +25,7 @@ export default function ImposterMenu(): ReactElement {
         ["playerAlive", "gamePlayers", "yourPlayerIndex"]
     )
 
-    const allChoosableRoles : Role[] = Object.keys(ROLES).filter((rle)=>
+    const allChoosableRoles : Role[] = Object.keys(roleJsonData()).filter((rle)=>
         (
             GAME_MANAGER.state.stateType === "game" &&
             GAME_MANAGER.state.enabledRoles.includes(rle as Role)

@@ -1,6 +1,6 @@
 import { VersionConverter } from ".";
 import { PHASES, PhaseTimes } from "../../../../game/gameState.d";
-import { FACTIONS, Faction, ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, RoleSet, getAllRoles } from "../../../../game/roleListState.d";
+import { ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, RoleSet, getAllRoles } from "../../../../game/roleListState.d";
 import { Role } from "../../../../game/roleState.d";
 import { Failure, ParseResult, ParseSuccess, Success, isFailure } from "../parse";
 
@@ -10,6 +10,13 @@ const initial: VersionConverter = {
     convertGameModeStorage,
     convertShareableGameMode
 }
+
+type InitialGameMode = { name: string, roleList: InitialRoleOutline[], phaseTimes: PhaseTimes, disabledRoles: Role[] }
+type InitialGameModeStorage = Record<string, InitialGameMode>;
+
+const FACTIONS = ["mafia", "town", "neutral", "cult", "fiends"]
+export type InitialRoleOutlineOption = RoleOutlineOption | { type: "faction", faction: typeof FACTIONS[number] }
+export type InitialRoleOutline = { type: "any" } | { type: "roleOutlineOptions", options: InitialRoleOutlineOption[] }
 
 function convertGameModeStorage(json: NonNullable<any>): ParseResult<any> {
     const storage = parseGameModeStorage(json);
@@ -65,9 +72,6 @@ export function convertShareableGameMode(json: NonNullable<any>): ParseResult<an
 }
 
 export default initial;
-
-type InitialGameMode = { name: string, roleList: RoleList, phaseTimes: PhaseTimes, disabledRoles: Role[] }
-type InitialGameModeStorage = Record<string, InitialGameMode>;
 
 function parseGameModeStorage(json: NonNullable<any>): ParseResult<InitialGameModeStorage> {
     if (typeof json !== "object" || Array.isArray(json)) {
@@ -130,7 +134,7 @@ export function parseName(json: NonNullable<any>): ParseResult<string> {
     }
 }
 
-export function parseRoleList(json: NonNullable<any>): ParseResult<RoleList> {
+export function parseRoleList(json: NonNullable<any>): ParseResult<InitialRoleOutline[]> {
     if (!Array.isArray(json)) {
         return Failure("roleListIsNotArray", json);
     }
@@ -148,7 +152,7 @@ export function parseRoleList(json: NonNullable<any>): ParseResult<RoleList> {
     return Success(roleList.map(success => (success as ParseSuccess<RoleOutline>).value));
 }
 
-function parseRoleOutline(json: NonNullable<any>): ParseResult<RoleOutline> {
+function parseRoleOutline(json: NonNullable<any>): ParseResult<InitialRoleOutline> {
     if (!Object.keys(json).includes('type')) {
         return Failure("roleOutlineMissingTypeKey", json);
     }
@@ -173,7 +177,7 @@ function parseRoleOutline(json: NonNullable<any>): ParseResult<RoleOutline> {
     }
 }
 
-function parseRoleOutlineOptionList(json: NonNullable<any>): ParseResult<RoleOutlineOption[]> {
+function parseRoleOutlineOptionList(json: NonNullable<any>): ParseResult<InitialRoleOutlineOption[]> {
     if (!Array.isArray(json)) {
         return Failure("roleOutlineOptionListIsNotArray", json);
     }
@@ -186,7 +190,7 @@ function parseRoleOutlineOptionList(json: NonNullable<any>): ParseResult<RoleOut
     return Success(outlineOptionList.map(success => (success as ParseSuccess<RoleOutlineOption>).value) as RoleOutlineOption[]);
 }
 
-function parseRoleOutlineOption(json: NonNullable<any>): ParseResult<RoleOutlineOption> {
+function parseRoleOutlineOption(json: NonNullable<any>): ParseResult<InitialRoleOutlineOption> {
     if (!Object.keys(json).includes('type')) {
         return Failure("roleOutlineOptionMissingTypeKey", json);
     }
@@ -282,7 +286,7 @@ export function parseRole(json: NonNullable<any>): ParseResult<Role> {
     return Success(json as Role);
 }
 
-function parseRoleSet(json: NonNullable<any>): ParseResult<RoleSet> {
+export function parseRoleSet(json: NonNullable<any>): ParseResult<RoleSet> {
     if (typeof json !== "string") {
         return Failure("roleSetIsNotString", json);
     }
@@ -292,12 +296,12 @@ function parseRoleSet(json: NonNullable<any>): ParseResult<RoleSet> {
     return Success(json as RoleSet);
 }
 
-function parseFaction(json: NonNullable<any>): ParseResult<Faction> {
+function parseFaction(json: NonNullable<any>): ParseResult<typeof FACTIONS[number]> {
     if (typeof json !== "string") {
         return Failure("factionIsNotString", json);
     }
-    if (!FACTIONS.includes(json as Faction)) {
+    if (!FACTIONS.includes(json as any)) {
         return Failure("invalidFaction", json)
     }
-    return Success(json as Faction);
+    return Success(json as any);
 }

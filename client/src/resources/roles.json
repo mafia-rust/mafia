@@ -1,7 +1,7 @@
 {
     "jailor":{
-        "faction": "town",
-        "roleSet": null,
+        "mainRoleSet": "town",
+        "roleSets": ["town"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -34,8 +34,8 @@
         ]
     },
     "villager": {
-        "faction": "town",
-        "roleSet": null,
+        "mainRoleSet": "town",
+        "roleSets": ["town"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -44,8 +44,8 @@
         "chatMessages":[]
     },
     "detective": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -57,8 +57,8 @@
         ]
     },
     "lookout": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -70,8 +70,8 @@
         ]
     },
     "philosopher": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -83,8 +83,8 @@
         ]
     },
     "tracker": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -96,8 +96,8 @@
         ]
     },
     "psychic": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -109,8 +109,8 @@
         ]
     },
     "spy": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -132,8 +132,8 @@
         ]
     },
     "auditor": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -147,8 +147,8 @@
         ]
     },
     "snoop": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -160,8 +160,8 @@
         ]
     },
     "gossip": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -173,8 +173,8 @@
         ]
     },
     "tallyClerk": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -186,8 +186,8 @@
         ]
     },
     "doctor": {
-        "faction": "town",
-        "roleSet": "townProtective",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -200,8 +200,8 @@
         ]
     },
     "cop": {
-        "faction": "town",
-        "roleSet": "townProtective",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -216,8 +216,8 @@
         ]
     },
     "bouncer": {
-        "faction": "town",
-        "roleSet": "townProtective",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -228,8 +228,8 @@
         ]
     },
     "engineer": {
-        "faction": "town",
-        "roleSet": "townProtective",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -251,8 +251,8 @@
         ]
     },
     "bodyguard": {
-        "faction": "town",
-        "roleSet": "townProtective",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -266,8 +266,8 @@
         ]
     },
     "armorsmith": {
-        "faction": "town",
-        "roleSet": "townProtective",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -282,8 +282,8 @@
         ]
     },
     "steward":{
-        "faction": "town",
-        "roleSet": "townProtective",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -297,8 +297,8 @@
         ]
     },
     "vigilante": {
-        "faction": "town",
-        "roleSet": "townKilling",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townKilling"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -311,8 +311,8 @@
         ]
     },
     "veteran": {
-        "faction": "town",
-        "roleSet": "townKilling",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townKilling"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -325,8 +325,8 @@
         ]
     },
     "marksman":{
-        "faction": "town",
-        "roleSet": "townKilling",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townKilling"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -338,8 +338,8 @@
         ]
     },
     "deputy": {
-        "faction": "town",
-        "roleSet": "townKilling",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townKilling"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -353,8 +353,8 @@
         ]
     },
     "rabblerouser": {
-        "faction": "town",
-        "roleSet": "townKilling",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townKilling"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -366,8 +366,8 @@
         ]
     },
     "escort": {
-        "faction": "town",
-        "roleSet": "townSupport",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townSupport"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -379,8 +379,8 @@
         ]
     },
     "medium": {
-        "faction": "town",
-        "roleSet": "townSupport",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townSupport"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -409,8 +409,8 @@
         ]
     },
     "mayor":{
-        "faction": "town",
-        "roleSet": "townSupport",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -422,8 +422,8 @@
         ]
     },
     "journalist": {
-        "faction": "town",
-        "roleSet": "townSupport",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -456,8 +456,8 @@
         ]
     },
     "transporter":{
-        "faction": "town",
-        "roleSet": "townSupport",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townSupport"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -468,8 +468,8 @@
         ]
     },
     "retributionist": {
-        "faction": "town",
-        "roleSet": "townSupport",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -485,8 +485,8 @@
         ]
     },
     "godfather": {
-        "faction": "mafia",
-        "roleSet": "mafiaKilling",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaKilling"],
         "armor": true,
         "aura": "innocent",
         "maxCount": 1,
@@ -501,8 +501,8 @@
         ]
     },
     "retrainer": {
-        "faction": "mafia",
-        "roleSet": "mafiaKilling",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaKilling"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -517,8 +517,8 @@
         ]
     },
     "imposter": {
-        "faction": "mafia",
-        "roleSet": "mafiaKilling",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaKilling"],
         "armor": true,
         "aura": null,
         "maxCount": 1,
@@ -533,8 +533,8 @@
         ]
     },
     "eros": {
-        "faction": "mafia",
-        "roleSet": "mafiaKilling",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaKilling"],
         "armor": true,
         "aura": "innocent",
         "maxCount": 1,
@@ -548,8 +548,8 @@
         ]
     },
     "counterfeiter": {
-        "faction": "mafia",
-        "roleSet": "mafiaKilling",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaKilling"],
         "armor": true,
         "aura": null,
         "maxCount": 1,
@@ -563,8 +563,8 @@
         ]
     },
     "recruiter": {
-        "faction": "mafia",
-        "roleSet": "mafiaKilling",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaKilling"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -580,8 +580,8 @@
         ]
     },
     "mafioso": {
-        "faction": "mafia",
-        "roleSet": "mafiaKilling",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaKilling"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -592,8 +592,8 @@
         ]
     },
     "mafiaKillingWildcard": {
-        "faction": "mafia",
-        "roleSet": null,
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -605,8 +605,8 @@
         ]
     },
     "madeMan": {
-        "faction": "mafia",
-        "roleSet": null,
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -615,8 +615,8 @@
         "chatMessages":[]
     },
     "hypnotist": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -634,8 +634,8 @@
         ]
     },
     "consort": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -647,8 +647,8 @@
         ]
     },
     "blackmailer": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -659,8 +659,8 @@
         ]
     },
     "informant": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -672,8 +672,8 @@
         ]
     },
     "mortician": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -689,8 +689,8 @@
         ]
     },
     "framer": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -708,8 +708,8 @@
         ]
     },
     "forger": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -725,8 +725,8 @@
         ]
     },
     "mafiaWitch": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -743,8 +743,8 @@
         ]
     },
     "necromancer": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -760,8 +760,8 @@
         ]
     },
     "cupid": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -773,8 +773,8 @@
         ]
     },
     "mafiaSupportWildcard": {
-        "faction": "mafia",
-        "roleSet": null,
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -786,8 +786,8 @@
         ]
     },
     "jester": {
-        "faction": "neutral",
-        "roleSet": null,
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -798,8 +798,8 @@
         ]
     },
     "revolutionary": {
-        "faction": "neutral",
-        "roleSet": null,
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
         "armor": true,
         "aura": null,
         "maxCount": null,
@@ -811,8 +811,8 @@
         ]
     },
     "politician":{
-        "faction": "neutral",
-        "roleSet": null,
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
         "armor": true,
         "aura": null,
         "maxCount": null,
@@ -823,8 +823,8 @@
         ]
     },
     "doomsayer":{
-        "faction": "neutral",
-        "roleSet": null,
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -836,8 +836,8 @@
         ]
     },
     "chronokaiser": {
-        "faction": "neutral",
-        "roleSet": null,
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -850,8 +850,8 @@
         ]
     },
     "martyr": {
-        "faction": "neutral",
-        "roleSet": null,
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -864,8 +864,8 @@
         ]
     },
     "death":{
-        "faction": "neutral",
-        "roleSet": null,
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -878,8 +878,8 @@
         ]
     },
     "wildcard": {
-        "faction": "neutral",
-        "roleSet": null,
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -891,8 +891,8 @@
         ]
     },
     "trueWildcard": {
-        "faction": "neutral",
-        "roleSet": null,
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -904,8 +904,8 @@
         ]
     },
     "witch":{
-        "faction": "neutral",
-        "roleSet": "minions",
+        "mainRoleSet": "minions",
+        "roleSets": ["minions"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -922,8 +922,8 @@
         ]
     },
     "scarecrow":{
-        "faction": "neutral",
-        "roleSet": "minions",
+        "mainRoleSet": "minions",
+        "roleSets": ["minions"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -935,8 +935,8 @@
         ]
     },
     "warper":{
-        "faction": "neutral",
-        "roleSet": "minions",
+        "mainRoleSet": "minions",
+        "roleSets": ["minions"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -947,8 +947,8 @@
         ]
     },
     "kidnapper":{
-        "faction": "neutral",
-        "roleSet": "minions",
+        "mainRoleSet": "minions",
+        "roleSets": ["minions"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -981,8 +981,8 @@
         ]
     },
     "arsonist": {
-        "faction": "fiends",
-        "roleSet": null,
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
         "armor": true,
         "aura": null,
         "maxCount": null,
@@ -994,8 +994,8 @@
         ]
     },
     "werewolf": {
-        "faction": "fiends",
-        "roleSet": null,
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
         "armor": true,
         "aura": null,
         "maxCount": null,
@@ -1022,8 +1022,8 @@
         ]
     },
     "ojo": {
-        "faction": "fiends",
-        "roleSet": null,
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
         "armor": true,
         "aura": null,
         "maxCount": null,
@@ -1037,8 +1037,8 @@
         ]
     },
     "puppeteer": {
-        "faction": "fiends",
-        "roleSet": null,
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
         "armor": true,
         "aura": null,
         "maxCount": null,
@@ -1061,8 +1061,8 @@
         ]
     },
     "pyrolisk": {
-        "faction": "fiends",
-        "roleSet": null,
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
         "armor": true,
         "aura": null,
         "maxCount": null,
@@ -1081,8 +1081,8 @@
         ]
     },
     "kira": {
-        "faction": "fiends",
-        "roleSet": null,
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
         "armor": true,
         "aura": null,
         "maxCount": null,
@@ -1117,8 +1117,8 @@
         ]
     },
     "fiendsWildcard": {
-        "faction": "fiends",
-        "roleSet": null,
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -1130,8 +1130,8 @@
         ]
     },
     "apostle": {
-        "faction": "cult",
-        "roleSet": null,
+        "mainRoleSet": "cult",
+        "roleSets": ["cult"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -1145,8 +1145,8 @@
         ]
     },
     "disciple": {
-        "faction": "cult",
-        "roleSet": null,
+        "mainRoleSet": "cult",
+        "roleSets": ["cult"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -1158,8 +1158,8 @@
         ]
     },
     "zealot": {
-        "faction": "cult",
-        "roleSet": null,
+        "mainRoleSet": "cult",
+        "roleSets": ["cult"],
         "armor": false,
         "aura": null,
         "maxCount": 1,

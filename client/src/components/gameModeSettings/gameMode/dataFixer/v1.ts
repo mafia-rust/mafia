@@ -1,8 +1,9 @@
 import { VersionConverter } from ".";
 import { GameMode, GameModeData, GameModeStorage, ShareableGameMode } from "..";
+import { ModifierType, PhaseTimes } from "../../../../game/gameState.d";
 import { Role } from "../../../../game/roleState.d";
 import { Failure, ParseResult, ParseSuccess, Success, isFailure } from "../parse";
-import { parseName, parsePhaseTimes, parseRoleList, parseRole } from "./initial";
+import { parseName, parsePhaseTimes, parseRoleList, parseRole, InitialRoleOutline } from "./initial";
 
 const v1: VersionConverter = {
     convertShareableGameMode: parseShareableGameModeData,
@@ -11,15 +12,24 @@ const v1: VersionConverter = {
 
 export default v1;
 
+type v2GameModeData = {
+    roleList: InitialRoleOutline[],
+    phaseTimes: PhaseTimes,
+    enabledRoles: Role[],
+    enabledModifiers: ModifierType[]
+}
+type v2ShareableGameMode = v2GameModeData & { format: "v2", name: string }
+type v2GameMode = { name: string, data: Record<number, v2GameModeData> }
+type v2GameModeStorage = { format: "v2", gameModes: v2GameMode[] }
 
-function parseGameModeStorage(json: NonNullable<any>): ParseResult<GameModeStorage> {
+function parseGameModeStorage(json: NonNullable<any>): ParseResult<v2GameModeStorage> {
     if (typeof json !== "object" || Array.isArray(json)) {
         return Failure("gameModeStorageNotObject", json);
     }
 
     for (const key of ['format', 'gameModes']) {
         if (!Object.keys(json).includes(key)) {
-            return Failure(`${key as keyof GameModeStorage}KeyMissingFromGameModeStorage`, json)
+            return Failure(`${key as keyof v2GameModeStorage}KeyMissingFromGameModeStorage`, json)
         }
     }
 
@@ -30,14 +40,14 @@ function parseGameModeStorage(json: NonNullable<any>): ParseResult<GameModeStora
 
     return Success({
         format: "v2",
-        gameModes: gameModeList.map(gameMode => (gameMode as ParseSuccess<GameMode>).value)
+        gameModes: gameModeList.map(gameMode => (gameMode as ParseSuccess<v2GameMode>).value)
     })
 }
 
-function parseGameMode(json: NonNullable<any>): ParseResult<GameMode> {
+function parseGameMode(json: NonNullable<any>): ParseResult<v2GameMode> {
     for (const key of ['name', 'data']) {
         if (!Object.keys(json).includes(key)) {
-            return Failure(`${key as keyof GameMode}KeyMissingFromGameMode`, json)
+            return Failure(`${key as keyof v2GameMode}KeyMissingFromGameMode`, json)
         }
     }
 
@@ -53,7 +63,7 @@ function parseGameMode(json: NonNullable<any>): ParseResult<GameMode> {
     })
 }
 
-function parseShareableGameModeData(json: NonNullable<any>): ParseResult<ShareableGameMode> {
+function parseShareableGameModeData(json: NonNullable<any>): ParseResult<v2ShareableGameMode> {
     const gameMode = parseGameModeData(json);
     if (isFailure(gameMode)) {
         return gameMode;
@@ -69,12 +79,12 @@ function parseShareableGameModeData(json: NonNullable<any>): ParseResult<Shareab
     }
 }
 
-function parseGameModeDataRecord(json: NonNullable<any>): ParseResult<Record<number, GameModeData>> {
+function parseGameModeDataRecord(json: NonNullable<any>): ParseResult<Record<number, v2GameModeData>> {
     if (typeof json !== "object" || Array.isArray(json)) {
         return Failure("gameModeDataRecordNotObject", json);
     }
     
-    const parsedEntries: Record<number, GameModeData> = {};
+    const parsedEntries: Record<number, v2GameModeData> = {};
     for (const [key, value] of Object.entries(json)) {
         let players;
         try {
@@ -99,14 +109,14 @@ function parseGameModeDataRecord(json: NonNullable<any>): ParseResult<Record<num
     return Success(parsedEntries);
 }
 
-function parseGameModeData(json: NonNullable<any>): ParseResult<GameModeData> {
+function parseGameModeData(json: NonNullable<any>): ParseResult<v2GameModeData> {
     if (typeof json !== "object" || Array.isArray(json)) {
         return Failure("gameModeDataNotObject", json);
     }
 
     for (const key of ['roleList', 'phaseTimes', 'enabledRoles']) {
         if (!Object.keys(json).includes(key)) {
-            return Failure(`${key as keyof GameModeData}KeyMissingFromGameModeData`, json)
+            return Failure(`${key as keyof v2GameModeData}KeyMissingFromGameModeData`, json)
         }
     }
 

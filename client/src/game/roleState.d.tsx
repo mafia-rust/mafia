@@ -1,5 +1,5 @@
 import { PlayerIndex } from "./gameState.d"
-import { Faction } from "./roleListState.d"
+import { RoleSet } from "./roleListState.d"
 import ROLES from "./../resources/roles.json";
 import { Doomsayer } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
@@ -8,6 +8,7 @@ import { Hypnotist } from "../menu/game/gameScreenContent/RoleSpecificMenus/Larg
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
+import { ChatMessageVariant } from "../components/ChatMessage";
 
 export type RoleState = {
     type: "jailor",
@@ -212,6 +213,22 @@ Doomsayer
 
 
 export type Role = keyof typeof ROLES;
-export function getFactionFromRole(role: Role): Faction {
-    return ROLES[role].faction as Faction;
+export type SingleRoleJsonData = {
+    mainRoleSet: RoleSet,
+    roleSets: RoleSet[],
+    armor: boolean,
+    aura: null | "innocent" | "suspicious",
+    maxCount: null | number,
+    roleSpecificMenu: boolean,
+    canBeConvertedTo: Role[],
+    chatMessages: ChatMessageVariant[] 
+}
+export type RoleJsonData = Record<Role, SingleRoleJsonData>
+
+export function getMainRoleSetFromRole(role: Role): RoleSet {
+    return roleJsonData()[role].mainRoleSet as RoleSet;
+}
+
+export function roleJsonData(): RoleJsonData {
+    return ROLES as RoleJsonData;
 }

@@ -58,10 +58,8 @@ impl Cult{
     pub fn on_any_death(game: &mut Game, _player: PlayerReference) {
         Cult::set_ordered_cultists(game);
     }
-    pub fn on_role_switch(game: &mut Game, old: Role, new: Role) {
-        if RoleSet::Cult.get_roles().contains(&old) || RoleSet::Cult.get_roles().contains(&new) {
-            Cult::set_ordered_cultists(game);
-        }
+    pub fn on_role_switch(game: &mut Game, _old: Role, _new: Role) {
+        Cult::set_ordered_cultists(game);
     }
     
     
@@ -87,6 +85,7 @@ impl Cult{
         for player in PlayerReference::all_players(game){
             if 
                 RoleSet::Cult.get_roles().contains(&player.role(game)) &&
+                RevealedGroupID::Cult.is_player_in_revealed_group(game, player) &&
                 player.alive(game) &&
                 !cult.ordered_cultists.contains(&player)
             {

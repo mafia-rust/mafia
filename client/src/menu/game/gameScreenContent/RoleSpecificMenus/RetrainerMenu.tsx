@@ -3,8 +3,7 @@ import RoleDropdown from "../../../../components/RoleDropdown";
 import StyledText from "../../../../components/StyledText";
 import translate from "../../../../game/lang";
 import React from "react";
-import { Role } from "../../../../game/roleState.d";
-import ROLES from "../../../../resources/roles.json";
+import { Role, roleJsonData } from "../../../../game/roleState.d";
 import GAME_MANAGER from "../../../..";
 import { Button } from "../../../../components/Button";
 import Counter from "../../../../components/Counter";
@@ -45,10 +44,11 @@ export default function RetrainerMenu(): ReactElement {
         ["yourRoleState"]
     );
 
+    const ROLES = roleJsonData();
     const allChoosableMafia : Role[] = Object.keys(ROLES).filter((rle)=>
         rle === "mafiaSupportWildcard" ||
         (
-            ROLES[rle as keyof typeof ROLES].roleSet === "mafiaSupport" &&
+            ROLES[rle as keyof typeof ROLES].roleSets.includes("mafiaSupport") &&
             GAME_MANAGER.state.stateType === "game" &&
             GAME_MANAGER.state.enabledRoles.includes(rle as Role)
         )

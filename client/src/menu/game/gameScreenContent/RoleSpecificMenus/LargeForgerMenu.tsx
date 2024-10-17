@@ -1,9 +1,8 @@
-import React from "react"
-import GAME_MANAGER from "../../../.."
-import { Role } from "../../../../game/roleState.d"
-import translate from "../../../../game/lang"
-import ROLES from "../../../../resources/roles.json";
-import "./largeForgerMenu.css"
+import React from "react";
+import GAME_MANAGER from "../../../..";
+import { Role, roleJsonData } from "../../../../game/roleState.d";
+import translate from "../../../../game/lang";
+import "./largeForgerMenu.css";
 import { Button } from "../../../../components/Button";
 import Icon from "../../../../components/Icon";
 
@@ -74,7 +73,7 @@ export default class LargeForgerMenu extends React.Component<LargeForgerMenuProp
     render(){
 
         let forgerRoleOptions: JSX.Element[] = [];
-        for(let role of Object.keys(ROLES)){
+        for(let role of Object.keys(roleJsonData()) as Role[]){
             forgerRoleOptions.push(
                 <option key={role} value={role}>{translate("role."+role+".name")}</option>
             );
