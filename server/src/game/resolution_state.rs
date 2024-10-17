@@ -1,4 +1,4 @@
-use super::{player::PlayerReference, role::Role, role_list::Faction, win_condition::WinCondition, Game};
+use super::{player::PlayerReference, role::Role, role_list::RoleSet, win_condition::WinCondition, Game};
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash)]
 pub enum ResolutionState {
@@ -73,7 +73,7 @@ impl ResolutionState {
     /// *has the ability to change what the set of living players win conditions are until game over (convert, marionette, kill)*
     /// A detective and a witch game never ends
     pub fn keeps_game_running(role: Role)->bool{
-        if role.faction() == Faction::Neutral{
+        if RoleSet::Neutral.get_roles().contains(&role){
             false
         }else{
             true  

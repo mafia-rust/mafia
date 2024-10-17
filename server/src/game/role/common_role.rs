@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    chat::ChatGroup, components::{detained::Detained, puppeteer_marionette::PuppeteerMarionette}, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, resolution_state::ResolutionState, role_list::Faction, visit::Visit, win_condition::WinCondition, Game
+    chat::ChatGroup, components::{detained::Detained, puppeteer_marionette::PuppeteerMarionette}, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, resolution_state::ResolutionState, role_list::RoleSet, visit::Visit, win_condition::WinCondition, Game
 };
 
 use super::{journalist::Journalist, medium::Medium, RevealedGroupID, Role, RoleState};
@@ -44,18 +44,14 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         PhaseState::Obituary => {
             let mut evil_chat_groups = HashSet::new();
 
-            if PuppeteerMarionette::marionettes_and_puppeteer(game).contains(&actor_ref) {
+            if RevealedGroupID::Puppeteer.is_player_in_revealed_group(game, actor_ref) {
                 evil_chat_groups.insert(ChatGroup::Puppeteer);
             }
-
-            match actor_ref.role(game).faction() {
-                Faction::Mafia => {
-                    evil_chat_groups.insert(ChatGroup::Mafia);
-                },
-                Faction::Cult => {
-                    evil_chat_groups.insert(ChatGroup::Cult);
-                },
-                _ => {}
+            if RevealedGroupID::Cult.is_player_in_revealed_group(game, actor_ref) {
+                evil_chat_groups.insert(ChatGroup::Cult);
+            }
+            if RevealedGroupID::Mafia.is_player_in_revealed_group(game, actor_ref) {
+                evil_chat_groups.insert(ChatGroup::Mafia);
             }
 
             evil_chat_groups
@@ -120,24 +116,16 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
             ) {
                 vec![ChatGroup::Kidnapped]
             }else{
-                
-                if PuppeteerMarionette::marionettes_and_puppeteer(game).contains(&actor_ref){
+                if RevealedGroupID::Puppeteer.is_player_in_revealed_group(game, actor_ref){
                     night_chat_groups.push(ChatGroup::Puppeteer);
                 }
-
-                match actor_ref.role(game).faction() {
-                    Faction::Mafia => {
-                        night_chat_groups.push(ChatGroup::Mafia);
-                        night_chat_groups
-                    },
-                    Faction::Cult => {
-                        night_chat_groups.push(ChatGroup::Cult);
-                        night_chat_groups
-                    },
-                    _ => {
-                        night_chat_groups
-                    }
+                if RevealedGroupID::Mafia.is_player_in_revealed_group(game, actor_ref){
+                    night_chat_groups.push(ChatGroup::Mafia);
                 }
+                if RevealedGroupID::Cult.is_player_in_revealed_group(game, actor_ref){
+                    night_chat_groups.push(ChatGroup::Cult);
+                }
+                night_chat_groups
             };
 
 
@@ -155,13 +143,13 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
         out.push(ChatGroup::Dead);
     }
 
-    if actor_ref.role(game).faction() == Faction::Mafia {
+    if RevealedGroupID::Mafia.is_player_in_revealed_group(game, actor_ref) {
         out.push(ChatGroup::Mafia);
     }
-    if actor_ref.role(game).faction() == Faction::Cult {
+    if RevealedGroupID::Cult.is_player_in_revealed_group(game, actor_ref) {
         out.push(ChatGroup::Cult);
     }
-    if PuppeteerMarionette::marionettes_and_puppeteer(game).contains(&actor_ref){
+    if RevealedGroupID::Puppeteer.is_player_in_revealed_group(game, actor_ref){
         out.push(ChatGroup::Puppeteer);
     }
 
@@ -223,24 +211,28 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
 
 ///Only works for roles that win based on end game condition
 pub(super) fn default_win_condition(role: Role) -> WinCondition {
-    WinCondition::ResolutionStateReached{win_if_any: 
-        match role.faction(){
-            Faction::Mafia => vec![ResolutionState::Mafia],
-            Faction::Cult => vec![ResolutionState::Cult],
-            Faction::Town => vec![ResolutionState::Town],
-            Faction::Fiends => vec![ResolutionState::Fiends],
-            Faction::Neutral => match role {
-                Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper => {
-                    ResolutionState::all().into_iter().filter(|end_game_condition|
-                        match end_game_condition {
-                            ResolutionState::Town | ResolutionState::Draw => false,
-                            _ => true
-                        }
-                    ).collect()
-                },
-                Role::Politician => vec![ResolutionState::Politician],
-                _ => {return WinCondition::RoleStateWon;}
-            },
-        }.into_iter().collect()
+
+    if RoleSet::Mafia.get_roles().contains(&role) {
+        WinCondition::ResolutionStateReached{win_if_any: vec![ResolutionState::Mafia].into_iter().collect()}
+
+    }else if RoleSet::Cult.get_roles().contains(&role) {
+        WinCondition::ResolutionStateReached{win_if_any: vec![ResolutionState::Cult].into_iter().collect()}
+
+    }else if RoleSet::Town.get_roles().contains(&role) {
+        WinCondition::ResolutionStateReached{win_if_any: vec![ResolutionState::Town].into_iter().collect()}
+
+    }else if RoleSet::Fiends.get_roles().contains(&role) {
+        WinCondition::ResolutionStateReached{win_if_any: vec![ResolutionState::Fiends].into_iter().collect()}
+
+    }else if RoleSet::Minions.get_roles().contains(&role) {
+        WinCondition::ResolutionStateReached{win_if_any: ResolutionState::all().into_iter().filter(|end_game_condition|
+            match end_game_condition {
+                ResolutionState::Town | ResolutionState::Draw => false,
+                _ => true
+            }
+        ).collect()}
+
+    }else{
+        WinCondition::RoleStateWon
     }
 }

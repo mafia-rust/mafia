@@ -1,6 +1,8 @@
 use rand::seq::SliceRandom;
 
-use crate::game::{phase::PhaseType, player::PlayerReference, role::{Role, RoleState}, role_list::{Faction, RoleSet}, Game};
+use crate::game::{phase::PhaseType, player::PlayerReference, role::{Role, RoleState}, role_list::RoleSet, Game};
+
+use super::revealed_group::RevealedGroupID;
 
 
 const DEFAULT_MAFIA_KILLING_ROLE: Role = Role::Godfather;
@@ -35,30 +37,26 @@ impl Mafia{
             Mafia::give_mafia_killing_role(game, old);
         }
     }
-    pub fn get_members(game: &Game)->Vec<PlayerReference>{
-        PlayerReference::all_players(game).filter(
-            |p| p.role(game).faction() == Faction::Mafia
-        ).collect()
-    }
-    pub fn get_living_members(game: &Game)->Vec<PlayerReference>{
-        PlayerReference::all_players(game).filter(
-            |p| p.role(game).faction() == Faction::Mafia && p.alive(game)
-        ).collect()
-    }
 
 
     pub fn give_mafia_killing_role(
         game: &mut Game,
         role: RoleState
     ){
+        let living_players_to_convert = PlayerReference::all_players(game).into_iter().filter(
+            |p|
+            RevealedGroupID::Mafia.is_player_in_revealed_group(game, *p) &&
+            RoleSet::Mafia.get_roles().contains(&p.role(game)) &&
+            p.alive(game)
+        ).collect::<Vec<_>>();
+
         //if they already have a mafia killing then return
-        if Mafia::get_living_members(game).iter().any(|p|
+        if living_players_to_convert.iter().any(|p|
             RoleSet::MafiaKilling.get_roles().contains(&p.role(game))
         ) {return;}
-
+        
         //choose random mafia to be mafia killing
-        let all_living_mafia = Mafia::get_living_members(game);
-        let random_mafia = all_living_mafia.choose(&mut rand::thread_rng());
+        let random_mafia = living_players_to_convert.choose(&mut rand::thread_rng());
         
         if let Some(random_mafia) = random_mafia {
             random_mafia.set_role_and_win_condition_and_revealed_group(game, role);

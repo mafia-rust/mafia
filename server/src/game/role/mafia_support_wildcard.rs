@@ -4,7 +4,7 @@ use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::{role_can_generate, Faction, RoleSet};
+use crate::game::role_list::{role_can_generate, RoleSet};
 use crate::game::Game;
 
 use super::{RoleStateImpl, Role};
@@ -23,7 +23,6 @@ impl Default for MafiaSupportWildcard {
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

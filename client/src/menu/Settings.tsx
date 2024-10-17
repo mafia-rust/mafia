@@ -5,12 +5,11 @@ import StyledText, { computeKeywordData } from "../components/StyledText";
 import Icon from "../components/Icon";
 import { loadSettings, RoleSpecificMenuType, saveSettings } from "../game/localStorage";
 import { MobileContext, AnchorControllerContext } from "./Anchor";
-import { Role } from "../game/roleState.d";
-import ROLES from "../resources/roles.json";
+import { Role, roleJsonData } from "../game/roleState.d";
 import AudioController from "./AudioController";
 
 export function roleSpecificMenuType(role: Role): RoleSpecificMenuType | null {
-    return ROLES[role].roleSpecificMenu === false ? null : loadSettings().roleSpecificMenus[role]
+    return roleJsonData()[role].roleSpecificMenu === false ? null : loadSettings().roleSpecificMenus[role]
 }
 
 export default function SettingsMenu(): ReactElement {

@@ -3,11 +3,10 @@ import StyledText from "../../../../components/StyledText";
 import React from "react";
 import translate from "../../../../game/lang";
 import GAME_MANAGER from "../../../..";
-import { Role } from "../../../../game/roleState.d";
+import { Role, roleJsonData } from "../../../../game/roleState.d";
 import { usePlayerState } from "../../../../components/useHooks";
 import Icon from "../../../../components/Icon";
 import { Button } from "../../../../components/Button";
-import ROLES from "../../../../resources/roles.json";
 import Counter from "../../../../components/Counter";
 
 export default function CounterfeiterMenu (props: {}): ReactElement {
@@ -50,7 +49,7 @@ export default function CounterfeiterMenu (props: {}): ReactElement {
     }
 
     let forgerRoleOptions: JSX.Element[] = [];
-    for(let role of Object.keys(ROLES)){
+    for(let role of Object.keys(roleJsonData()) as Role[]){
         forgerRoleOptions.push(
             <option key={role} value={role}>{translate("role."+role+".name")}</option>
         );

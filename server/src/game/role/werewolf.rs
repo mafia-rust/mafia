@@ -9,7 +9,7 @@ use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::grave::GraveKiller;
 use crate::game::player::{PlayerIndex, PlayerReference};
-use crate::game::role_list::Faction;
+
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
@@ -25,7 +25,7 @@ pub struct Werewolf{
 #[derive(Clone, Debug, Serialize)]
 pub struct ClientRoleState;
 
-pub(super) const FACTION: Faction = Faction::Fiends;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 

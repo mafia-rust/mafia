@@ -1,5 +1,5 @@
 import React, { ReactElement, useMemo } from "react";
-import { Role, RoleState } from "../game/roleState.d";
+import { Role, roleJsonData, RoleState } from "../game/roleState.d";
 import LargeAuditorMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
 import LargeHypnotistMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeHypnotistMenu";
 import LargeDoomsayerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
@@ -11,7 +11,6 @@ import GAME_MANAGER from "..";
 import SmallOjoMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
 import SmallPuppeteerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 import RoleDropdown from "./RoleDropdown";
-import ROLES from "../resources/roles.json";
 import "../menu/game/gameScreenContent/RoleSpecificMenus/smallRoleSpecificMenu.css";
 import LargeKiraMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import Counter from "./Counter";
@@ -291,6 +290,8 @@ function WildcardRoleSpecificMenu(props: Readonly<{
         ["enabledRoles"]
     )!;
 
+    const ROLES = roleJsonData();
+
     const choosable = useMemo(() => {
         switch (props.roleState.type) {
             case "wildcard":
@@ -300,7 +301,7 @@ function WildcardRoleSpecificMenu(props: Readonly<{
                 return Object.keys(ROLES).filter((rle)=>
                     rle === "mafiaSupportWildcard" ||
                     (
-                        ROLES[rle as keyof typeof ROLES].roleSet === "mafiaSupport" &&
+                        ROLES[rle as keyof typeof ROLES].roleSets.includes("mafiaSupport") &&
                         enabledRoles.includes(rle as Role)
                     )
                 ).map((r)=>r as Role)
@@ -308,17 +309,17 @@ function WildcardRoleSpecificMenu(props: Readonly<{
                 return Object.keys(ROLES).filter((rle)=>
                     rle === "mafiaKillingWildcard" ||
                     (
-                        ROLES[rle as keyof typeof ROLES].roleSet === "mafiaKilling" &&
+                        ROLES[rle as keyof typeof ROLES].roleSets.includes("mafiaKilling") &&
                         enabledRoles.includes(rle as Role)
                     )
                 ).map((r)=>r as Role)
             case "fiendsWildcard":
                 return Object.keys(ROLES).filter((rle)=>
-                    ROLES[rle as keyof typeof ROLES].faction === "fiends" &&
+                    ROLES[rle as keyof typeof ROLES].roleSets.includes("fiends") &&
                     enabledRoles.includes(rle as Role)
                 ).map((r)=>r as Role)
         }
-    }, [enabledRoles, props.roleState.type])
+    }, [enabledRoles, props.roleState.type, ROLES])
 
     return <div className="role-information">
         <StyledText>{translate(`role.${props.roleState.type}.smallRoleMenu`)}</StyledText>

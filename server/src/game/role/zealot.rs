@@ -4,8 +4,9 @@ use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
 
+
+use crate::game::role_list::RoleSet;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use super::{Priority, RoleStateImpl};
@@ -14,7 +15,7 @@ use super::{Priority, RoleStateImpl};
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Zealot;
 
-pub(super) const FACTION: Faction = Faction::Cult;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
@@ -27,7 +28,7 @@ impl RoleStateImpl for Zealot {
         let target_ref = visit.target;
         
         if target_ref.try_night_kill_single_attacker(
-            actor_ref, game, GraveKiller::Faction(Faction::Cult), AttackPower::Basic, false
+            actor_ref, game, GraveKiller::RoleSet(RoleSet::Cult), AttackPower::Basic, false
         ) {
             Cult::set_ability_used_last_night(game, Some(CultAbility::Kill));
         }

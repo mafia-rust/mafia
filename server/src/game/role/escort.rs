@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
-use crate::game::role_list::Faction;
+
 
 use crate::game::visit::Visit;
 use crate::game::Game;
@@ -12,7 +12,7 @@ use super::{Priority, RoleStateImpl};
 pub struct Escort;
 
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

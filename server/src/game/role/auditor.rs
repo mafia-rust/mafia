@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 use crate::game::Game;
 
@@ -27,7 +27,7 @@ pub enum AuditorResult{
 }
 
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

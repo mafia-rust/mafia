@@ -1,10 +1,11 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::AttackPower;
+use crate::game::role_list::RoleSet;
 use crate::game::{attack_power::DefensePower, components::love_linked::LoveLinked};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 
 use crate::game::Game;
@@ -23,7 +24,7 @@ pub enum ErosAction{
     Kill,
 }
 
-pub(super) const FACTION: Faction = Faction::Mafia;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
@@ -37,7 +38,7 @@ impl RoleStateImpl for Eros {
                     let target_ref = visit.target;
             
                     target_ref.try_night_kill_single_attacker(
-                        actor_ref, game, GraveKiller::Faction(Faction::Mafia), AttackPower::Basic, false
+                        actor_ref, game, GraveKiller::RoleSet(RoleSet::Mafia), AttackPower::Basic, false
                     );
                 }
             }

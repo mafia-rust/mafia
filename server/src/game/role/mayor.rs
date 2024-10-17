@@ -5,7 +5,7 @@ use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 
 use crate::game::Game;
 use super::{GetClientRoleState, RoleState, RoleStateImpl};
@@ -18,7 +18,7 @@ pub struct Mayor {
 #[derive(Clone, Debug, Serialize)]
 pub struct ClientRoleState;
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

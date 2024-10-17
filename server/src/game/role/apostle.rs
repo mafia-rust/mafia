@@ -6,7 +6,8 @@ use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 use crate::game::resolution_state::ResolutionState;
-use crate::game::role_list::Faction;
+
+use crate::game::role_list::RoleSet;
 use crate::game::visit::Visit;
 use crate::game::win_condition::WinCondition;
 use crate::game::Game;
@@ -17,7 +18,7 @@ use super::{Priority, RoleStateImpl};
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Apostle;
 
-pub(super) const FACTION: Faction = Faction::Cult;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
@@ -32,7 +33,7 @@ impl RoleStateImpl for Apostle {
                 let target_ref = visit.target;
                 
                 if target_ref.try_night_kill_single_attacker(
-                    actor_ref, game, GraveKiller::Faction(Faction::Cult), AttackPower::Basic, false
+                    actor_ref, game, GraveKiller::RoleSet(RoleSet::Cult), AttackPower::Basic, false
                 ) {
                     Cult::set_ability_used_last_night(game, Some(CultAbility::Kill));
                 }

@@ -227,7 +227,9 @@ function GameModeSelectorPanel(props: {
                 ? <DragAndDrop
                     items={props.gameModeStorage.gameModes}
                     onDragEnd={newItems => {
-                        const newGameModeStorage: GameModeStorage = {format: "v2", gameModes: [...props.gameModeStorage.gameModes]};
+                        const newGameModeStorage: GameModeStorage = {
+                            format: props.gameModeStorage.format, gameModes: [...props.gameModeStorage.gameModes]
+                        };
                         
                         newGameModeStorage.gameModes.sort((a, b) => newItems.indexOf(a) - newItems.indexOf(b))
                         
