@@ -63,7 +63,7 @@ impl RevealedGroupID{
             RevealedGroupID::Puppeteer=>&mut game.revealed_groups.puppeteer
         }
     }
-    fn reveal_group_players(&self, game: &mut Game){
+    pub fn reveal_group_players(&self, game: &mut Game){
         let players: HashSet<PlayerReference> = <&RevealedGroup as Into<&HashSet<PlayerReference>>>::
             into(self.revealed_group(game)).clone();
 
@@ -94,6 +94,14 @@ impl RevealedGroupID{
                 group.add_player_to_revealed_group(game, player);
             }else{
                 group.remove_player_from_revealed_group(game, player);
+            }
+        }
+    }
+    pub fn start_game_set_player_revealed_groups(set: HashSet<RevealedGroupID>, game: &mut Game, player: PlayerReference){
+        for group in RevealedGroupID::all(){
+            if set.contains(&group){
+                let players: &mut HashSet<PlayerReference> = group.revealed_group_mut(game).into();
+                players.insert(player);
             }
         }
     }

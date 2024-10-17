@@ -31,10 +31,7 @@ export default function WikiArticle(props: {
                 <div>
                     <WikiStyledText>
                         {"# "+translate("role."+role+".name")+"\n"}
-                        {roleData.mainRoleSet!==null?
-                            ("### "+translateChecked(roleData.mainRoleSet)+"\n"):
-                            "### "+translate(roleData.roleSets[0])+"\n"
-                        }
+                        {"### "+roleData.roleSets.map((roleSet)=>{return translate(roleSet)}).join(" | ")+"\n"}
                     </WikiStyledText>
                 </div>
                 <div>

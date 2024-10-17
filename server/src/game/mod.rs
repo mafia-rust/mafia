@@ -211,7 +211,7 @@ impl Game {
 
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
         
-            RevealedGroupID::set_player_revealed_groups(
+            RevealedGroupID::start_game_set_player_revealed_groups(
                 role_data.clone().default_revealed_groups(),
                 &mut game,
                 player
@@ -232,6 +232,11 @@ impl Game {
         }
         for spectator in SpectatorPointer::all_spectators(&game){
             spectator.send_join_game_data(&mut game);
+        }
+
+        //reveal groups
+        for group in RevealedGroupID::all() {
+            group.reveal_group_players(&mut game);
         }
 
         //on game start needs to be called after all players have joined
@@ -501,7 +506,7 @@ pub mod test {
 
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
         
-            RevealedGroupID::set_player_revealed_groups(
+            RevealedGroupID::start_game_set_player_revealed_groups(
                 role_data.clone().default_revealed_groups(),
                 &mut game,
                 player
