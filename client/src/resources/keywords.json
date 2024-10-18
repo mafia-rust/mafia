@@ -25,6 +25,7 @@
     "fiends": { "style": "keyword-fiends", "link": "standard/fiends"},
     "any": { "style": "keyword-info"},
     "none": { "style": "keyword-info"},
+    "nonTown": { "style": "keyword-info"},
     "defense.0": { "style": "keyword-info", "link": "standard/defense"},
     "defense.1": { "style": "keyword-info", "link": "standard/defense"},
     "defense.2": { "style": "keyword-info", "link": "standard/defense"},
