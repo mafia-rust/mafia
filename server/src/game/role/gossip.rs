@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::components::confused::Confused;
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
@@ -23,9 +24,13 @@ impl RoleStateImpl for Gossip {
 
         if let Some(visit) = actor_ref.night_visits(game).first(){
             
-            let message = ChatMessageVariant::GossipResult {
-                enemies: Gossip::enemies(game, visit.target)
+            let enemies = if Confused::is_intoxicated(game, actor_ref){
+                false
+            }else{
+                Gossip::enemies(game, visit.target)
             };
+
+            let message = ChatMessageVariant::GossipResult{ enemies };
             
             actor_ref.push_night_message(game, message);
         }

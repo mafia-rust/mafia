@@ -835,6 +835,16 @@
             {"type": "doomsayerFailed"}
         ]
     },
+    "drunk": {
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[]
+    },
     "chronokaiser": {
         "mainRoleSet": "neutral",
         "roleSets": ["neutral"],

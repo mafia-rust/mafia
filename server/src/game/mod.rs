@@ -21,6 +21,7 @@ pub mod win_condition;
 
 use std::collections::HashMap;
 use std::time::Duration;
+use components::confused::Confused;
 use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
 use components::pitchfork::Pitchfork;
@@ -97,7 +98,8 @@ pub struct Game {
     pub poison: Poison,
     pub modifiers: Modifiers,
     pub revealed_groups: RevealedGroups,
-    pub restricted: Detained,
+    pub detained: Detained,
+    pub confused: Confused,
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -189,8 +191,8 @@ impl Game {
                 poison: Poison::default(),
 
                 revealed_groups: RevealedGroups::default(),
-                restricted: Detained::default(),
-
+                detained: Detained::default(),
+                confused: Confused::default(),
             };
 
             if !game.game_is_over() {
@@ -497,7 +499,8 @@ pub mod test {
 
             modifiers: Default::default(),
             revealed_groups: Default::default(),
-            restricted: Default::default(),
+            detained: Default::default(),
+            confused: Default::default(),
         };
 
         //set wincons and revealed groups

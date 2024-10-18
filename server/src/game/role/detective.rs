@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::components::confused::Confused;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::resolution_state::ResolutionState;
 use crate::game::player::PlayerReference;
@@ -23,8 +24,14 @@ impl RoleStateImpl for Detective {
 
         if let Some(visit) = actor_ref.night_visits(game).first(){
             
+            let suspicious = if Confused::is_intoxicated(game, actor_ref) {
+                false
+            }else{
+                Detective::player_is_suspicious(game, visit.target)
+            };
+
             let message = ChatMessageVariant::SheriffResult {
-                suspicious: Detective::player_is_suspicious(game, visit.target)
+                suspicious
             };
             
             actor_ref.push_night_message(game, message);
