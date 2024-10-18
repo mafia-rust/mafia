@@ -34,13 +34,9 @@ impl RoleStateImpl for Chronokaiser {
 }
 
 impl Chronokaiser {
-    const SPEED_UP_PERCENT_PER_DAY: u32 = 40;
+    const SPEED_UP_PERCENT_PER_DAY: u32 = 60;
     pub fn get_speed_up_percent(game: &Game)->u32{
-        /*
-            Dusk 1 = 0%
-            Discussion 2 = 20%
-         */
-        game.day_number().saturating_sub(2) as u32 * Self::SPEED_UP_PERCENT_PER_DAY
+        game.day_number().saturating_sub(1) as u32 * Self::SPEED_UP_PERCENT_PER_DAY
     }
     pub fn won(game: &Game, actor_ref: PlayerReference)->bool{
         actor_ref.alive(game)

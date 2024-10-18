@@ -25,7 +25,7 @@ pub struct ClientRoleState {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub enum DoomsayerGuess{
-    Mafia, #[default] Neutral, Fiends, Cult,
+    #[default] NonTown,
 
     Jailor, Villager,
     // No TI
@@ -71,23 +71,23 @@ impl DoomsayerGuess{
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::MafiaWitch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 
-            Role::Cupid | Role::MafiaSupportWildcard => Some(DoomsayerGuess::Mafia),
+            Role::Cupid | Role::MafiaSupportWildcard => Some(DoomsayerGuess::NonTown),
 
             //Neutral
             Role::Jester | Role::Revolutionary | Role::Politician |
             Role::Doomsayer | Role::Death | 
             Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper | Role::Chronokaiser |
-            Role::Wildcard | Role::TrueWildcard => Some(DoomsayerGuess::Neutral),
+            Role::Wildcard | Role::TrueWildcard | Role::Drunk => Some(DoomsayerGuess::NonTown),
             Role::Martyr => None,
            
 
             //Fiends
             Role::Arsonist | Role::Werewolf | 
             Role::Ojo | Role::Puppeteer | Role::Pyrolisk | Role::Kira |
-            Role::FiendsWildcard => Some(DoomsayerGuess::Fiends),
+            Role::FiendsWildcard => Some(DoomsayerGuess::NonTown),
             
             //Cult
-            Role::Apostle | Role::Disciple | Role::Zealot => Some(DoomsayerGuess::Cult),
+            Role::Apostle | Role::Disciple | Role::Zealot => Some(DoomsayerGuess::NonTown),
         }
     }
     fn guess_matches_role(&self, role: Role)->bool{

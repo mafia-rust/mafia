@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    attack_power::AttackPower, chat::ChatMessageVariant, player::PlayerReference, resolution_state::ResolutionState, role::{
+    attack_power::AttackPower, chat::ChatMessageVariant, player::PlayerReference, game_conclusion::GameConclusion, role::{
         Priority, Role
     }, tag::Tag, win_condition::WinCondition, Game
 };
@@ -30,7 +30,7 @@ impl PuppeteerMarionette{
 
         game.set_puppeteer_marionette(puppeteer_marionette);
         RevealedGroupID::Puppeteer.add_player_to_revealed_group(game, player);
-        player.set_win_condition(game, WinCondition::ResolutionStateReached { win_if_any: vec![ResolutionState::Fiends].into_iter().collect() });
+        player.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any: vec![GameConclusion::Fiends].into_iter().collect() });
 
         for fiend in PuppeteerMarionette::marionettes_and_puppeteer(game){
             fiend.push_night_message(game, ChatMessageVariant::PuppeteerPlayerIsNowMarionette{player: player.index()});

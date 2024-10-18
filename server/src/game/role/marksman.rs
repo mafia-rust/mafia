@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::game::attack_power::AttackPower;
 use crate::game::components::detained::Detained;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
-use crate::game::resolution_state::ResolutionState;
+use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -81,7 +81,7 @@ impl RoleStateImpl for Marksman {
                     
                     let killed = mark.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Marksman), AttackPower::Basic, false);
 
-                    if killed && mark.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town) {
+                    if killed && mark.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) {
                         self.state = MarksmanState::ShotTownie;
                     }
                 }

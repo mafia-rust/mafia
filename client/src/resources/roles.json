@@ -835,6 +835,16 @@
             {"type": "doomsayerFailed"}
         ]
     },
+    "drunk": {
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[]
+    },
     "chronokaiser": {
         "mainRoleSet": "neutral",
         "roleSets": ["neutral"],
@@ -844,9 +854,9 @@
         "roleSpecificMenu": true,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "chronokaiserSpeedUp", "percent": "40"},
-            {"type": "chronokaiserSpeedUp", "percent": "80"},
-            {"type": "chronokaiserSpeedUp", "percent": "160"}
+            {"type": "chronokaiserSpeedUp", "percent": "60"},
+            {"type": "chronokaiserSpeedUp", "percent": "120"},
+            {"type": "chronokaiserSpeedUp", "percent": "180"}
         ]
     },
     "martyr": {
@@ -1095,20 +1105,9 @@
                 "result": {
                     "guesses": {
                         "0": ["veteran","correct"],
-                        "1": ["cult","notInGame"],
-                        "2": ["mafia","wrongSpot"],
-                        "3": ["mafia","correct"]
-                    }
-                }
-            },
-            {
-                "type": "kiraResult",
-                "result": {
-                    "guesses": {
-                        "0": ["veteran","correct"],
-                        "1": ["none","notInGame"],
-                        "2": ["neutral","correct"],
-                        "3": ["mafia","correct"]
+                        "1": ["auditor","notInGame"],
+                        "2": ["nonTown","wrongSpot"],
+                        "3": ["nonTown","correct"]
                     }
                 }
             },

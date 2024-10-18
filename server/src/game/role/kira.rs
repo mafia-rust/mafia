@@ -21,8 +21,7 @@ pub struct Kira {
 #[serde(rename_all = "camelCase")]
 pub enum KiraGuess{
     None,
-
-    Mafia, #[default] Neutral, Fiends, Cult,
+    #[default] NonTown,
 
     Jailor, Villager,
     Detective, Lookout, Tracker, Psychic, Philosopher, Gossip, Auditor, Snoop, Spy, TallyClerk,
@@ -75,22 +74,22 @@ impl KiraGuess{
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::MafiaWitch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 
-            Role::Cupid | Role::MafiaSupportWildcard => Some(Self::Mafia),
+            Role::Cupid | Role::MafiaSupportWildcard => Some(Self::NonTown),
 
             //Neutral
             Role::Jester | Role::Revolutionary | Role::Politician |
             Role::Doomsayer | Role::Death |
             Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper | Role::Chronokaiser |
-            Role::Wildcard | Role::TrueWildcard => Some(Self::Neutral),
+            Role::Wildcard | Role::TrueWildcard | Role::Drunk => Some(Self::NonTown),
             Role::Martyr => None,
 
             //Fiends
             Role::Arsonist | Role::Werewolf | 
             Role::Ojo | Role::Puppeteer | Role::Pyrolisk | Role::Kira |
-            Role::FiendsWildcard => Some(Self::Fiends),
+            Role::FiendsWildcard => Some(Self::NonTown),
             
             //Cult
-            Role::Apostle | Role::Disciple | Role::Zealot => Some(Self::Cult),
+            Role::Apostle | Role::Disciple | Role::Zealot => Some(Self::NonTown),
         }
     }
     fn guess_matches_role(&self, role: Role)->bool{

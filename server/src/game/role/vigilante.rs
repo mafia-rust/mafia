@@ -2,7 +2,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
-use crate::game::{attack_power::DefensePower, resolution_state::ResolutionState};
+use crate::game::{attack_power::DefensePower, game_conclusion::GameConclusion};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 
@@ -59,7 +59,7 @@ impl RoleStateImpl for Vigilante {
                             let killed = target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Vigilante), AttackPower::Basic, false);
                             self.state = VigilanteState::Loaded { bullets: bullets.saturating_sub(1) };
 
-                            if killed && target_ref.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town) {
+                            if killed && target_ref.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) {
                                 self.state = VigilanteState::WillSuicide;
                             }                            
                         }

@@ -2,7 +2,7 @@ use rand::seq::SliceRandom;
 use serde::Serialize;
 
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
-use crate::game::resolution_state::ResolutionState;
+use crate::game::game_conclusion::GameConclusion;
 use crate::game::player::PlayerReference;
 
 
@@ -93,6 +93,6 @@ impl Psychic {
     }
 
     fn player_is_evil(game: &Game, player_ref: PlayerReference)-> bool {
-        !player_ref.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town)
+        !player_ref.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town)
     }
 }

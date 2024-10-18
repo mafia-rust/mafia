@@ -7,7 +7,7 @@ pub mod visit;
 pub mod verdict;
 pub mod role_list;
 pub mod settings;
-pub mod resolution_state;
+pub mod game_conclusion;
 pub mod components;
 pub mod available_buttons;
 pub mod on_client_message;
@@ -21,6 +21,7 @@ pub mod win_condition;
 
 use std::collections::HashMap;
 use std::time::Duration;
+use components::confused::Confused;
 use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
 use components::pitchfork::Pitchfork;
@@ -51,7 +52,7 @@ use self::components::{
     cult::Cult,
     puppeteer_marionette::PuppeteerMarionette
 };
-use self::resolution_state::ResolutionState;
+use self::game_conclusion::GameConclusion;
 use self::event::on_game_ending::OnGameEnding;
 use self::event::on_grave_added::OnGraveAdded;
 use self::grave::GraveReference;
@@ -97,7 +98,8 @@ pub struct Game {
     pub poison: Poison,
     pub modifiers: Modifiers,
     pub revealed_groups: RevealedGroups,
-    pub restricted: Detained,
+    pub detained: Detained,
+    pub confused: Confused,
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -189,8 +191,8 @@ impl Game {
                 poison: Poison::default(),
 
                 revealed_groups: RevealedGroups::default(),
-                restricted: Detained::default(),
-
+                detained: Detained::default(),
+                confused: Confused::default(),
             };
 
             if !game.game_is_over() {
@@ -336,7 +338,7 @@ impl Game {
     }
 
     pub fn game_is_over(&self) -> bool {
-        if let Some(_) = ResolutionState::game_is_over(self){
+        if let Some(_) = GameConclusion::game_is_over(self){
             true
         }else{
             false
@@ -497,7 +499,8 @@ pub mod test {
 
             modifiers: Default::default(),
             revealed_groups: Default::default(),
-            restricted: Default::default(),
+            detained: Default::default(),
+            confused: Default::default(),
         };
 
         //set wincons and revealed groups

@@ -36,10 +36,10 @@ impl Detained{
         }
     }
     pub fn detained<'a>(game: &'a Game)->&'a Detained{
-        &game.restricted
+        &game.detained
     }
     pub fn detained_mut<'a>(game: &'a mut Game)->&'a mut Detained{
-        &mut game.restricted
+        &mut game.detained
     }
 
     pub fn add_detain(game: &mut Game, player: PlayerReference){
@@ -62,16 +62,16 @@ impl Detained{
             );
         }
     
-        game.restricted.players.insert(player);
+        game.detained.players.insert(player);
     }
     pub fn remove_detain(game: &mut Game, player: PlayerReference){
-        game.restricted.players.remove(&player);
+        game.detained.players.remove(&player);
     }
     pub fn clear_detain(game: &mut Game){
-        game.restricted.players.clear();
+        game.detained.players.clear();
     }
     
     pub fn is_detained(game: &Game, player: PlayerReference)->bool{
-        game.restricted.players.contains(&player)
+        game.detained.players.contains(&player)
     }
 }

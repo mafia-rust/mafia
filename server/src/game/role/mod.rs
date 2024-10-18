@@ -131,6 +131,7 @@ macros::roles! {
     Politician : politician,
     Doomsayer : doomsayer,
     Death : death,
+    Drunk : drunk,
 
     Witch : witch,
     Scarecrow : scarecrow,

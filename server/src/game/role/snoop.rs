@@ -1,7 +1,8 @@
 use serde::Serialize;
 
+use crate::game::components::confused::Confused;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
-use crate::game::resolution_state::ResolutionState;
+use crate::game::game_conclusion::GameConclusion;
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
@@ -23,12 +24,16 @@ impl RoleStateImpl for Snoop {
 
         if let Some(visit) = actor_ref.night_visits(game).first(){
 
-            actor_ref.push_night_message(game, 
-                ChatMessageVariant::SnoopResult { townie: 
-                    visit.target.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town) &&
+            let townie = if Confused::is_intoxicated(game, actor_ref) {
+                false
+            }else{
+                visit.target.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) &&
                     actor_ref.all_visitors(game).len() == 0 &&
                     !visit.target.has_suspicious_aura(game)
-                }
+            };
+
+            actor_ref.push_night_message(game, 
+                ChatMessageVariant::SnoopResult { townie }
             );
         }
     }
