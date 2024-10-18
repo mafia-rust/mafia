@@ -73,11 +73,20 @@ impl ResolutionState {
     /// *has the ability to change what the set of living players win conditions are until game over (convert, marionette, kill)*
     /// A detective and a witch game never ends
     pub fn keeps_game_running(role: Role)->bool{
-        if RoleSet::Neutral.get_roles().contains(&role) || RoleSet::Minions.get_roles().contains(&role){
-            false
-        }else{
-            true  
+
+        match role {
+            Role::Drunk => true,
+            _ => if 
+                RoleSet::Neutral.get_roles().contains(&role) || 
+                RoleSet::Minions.get_roles().contains(&role){
+                false
+            }else{
+                true  
+            }
         }
+
+
+        
     }
 }
 
