@@ -1487,8 +1487,8 @@
     "wiki.article.role.doomsayer.attributes":"* When you win, you leave town at the start of the next obituary\n* You have to guess the exact role of townies, but you only need to guess the faction of all other roles\n* You can't try to guess town investigative roles\n* When there are not enough players left for you to guess, you convert to a jester\n* You have an indirect, protection-piercing attack",
     "wiki.article.role.doomsayer.extra":"* Your three guesses must be three different players\n* If the players you guessed correctly don't die, you still win\n* You do not visit when you attack\n* You can't try to guess a martyr\n* If you are blocked, your ability does nothing",
     
-    "wiki.article.role.chronokaiser.guide": "- Each day (starting on day 3) while you are alive, time speeds up by 40%\n - Every discussion phase (starting with discussion 3), the amount that you sped up the game is announced in chat\n - If you are alive at the end of the game, you win",
-    "wiki.article.role.chronokaiser.abilities":"* You passively speed up the game by 40% each day starting with day 3\n- If you are alive at the end of the game, you win",
+    "wiki.article.role.chronokaiser.guide": "- Each day while you are alive, time speeds up by 60%\n - Every discussion phase, the amount that you sped up the game is announced in chat\n - If you are alive at the end of the game, you win",
+    "wiki.article.role.chronokaiser.abilities":"* You passively speed up the game by 60%\n- If you are alive at the end of the game, you win",
     "wiki.article.role.chronokaiser.attributes":"* You have no night time ability\n* Everyone is told how much you sped up the game each day",
     "wiki.article.role.chronokaiser.extra":"* Roleblocking doesn't effect your ability\n If there are multiple Chronokaisers, the message is sent twice during discussion, and the game is sped up twice",
 

@@ -844,9 +844,9 @@
         "roleSpecificMenu": true,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "chronokaiserSpeedUp", "percent": "40"},
-            {"type": "chronokaiserSpeedUp", "percent": "80"},
-            {"type": "chronokaiserSpeedUp", "percent": "160"}
+            {"type": "chronokaiserSpeedUp", "percent": "60"},
+            {"type": "chronokaiserSpeedUp", "percent": "120"},
+            {"type": "chronokaiserSpeedUp", "percent": "180"}
         ]
     },
     "martyr": {
