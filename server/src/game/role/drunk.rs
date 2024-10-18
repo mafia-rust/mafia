@@ -19,7 +19,7 @@ pub struct Drunk;
 impl RoleStateImpl for Drunk {
     type ClientRoleState = Drunk;
     fn default_win_condition(self) -> crate::game::win_condition::WinCondition where super::RoleState: From<Self> {
-        WinCondition::new_single_resolution_state(crate::game::resolution_state::ResolutionState::Town)
+        WinCondition::new_single_resolution_state(crate::game::game_conclusion::GameConclusion::Town)
     }
     fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
 

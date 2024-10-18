@@ -1,7 +1,7 @@
 use std::{collections::{HashMap, HashSet}, ops::Mul};
 
 use crate::{game::{
-    attack_power::AttackPower, grave::GraveKiller, phase::PhaseType, player::PlayerReference, resolution_state::ResolutionState, role::Priority, role_list::RoleSet, Game
+    attack_power::AttackPower, grave::GraveKiller, phase::PhaseType, player::PlayerReference, game_conclusion::GameConclusion, role::Priority, role_list::RoleSet, Game
 }, packet::ToClientPacket};
 
 #[derive(Clone)]
@@ -77,7 +77,7 @@ impl Pitchfork{
             if 
                 !voter.alive(game) || 
                 !target.alive(game) || 
-                !voter.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town) 
+                !voter.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) 
             {continue;}
 
             let count = votes.entry(*target).or_insert(0);
@@ -126,7 +126,7 @@ impl Pitchfork{
     }
     pub fn number_of_votes_needed(game: &Game) -> u8 {
         let x = PlayerReference::all_players(game).filter(|p|
-            p.alive(game) && p.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town)
+            p.alive(game) && p.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town)
         ).count().mul(2).div_ceil(3) as u8;
         if x == 0 {1} else {x}
     }

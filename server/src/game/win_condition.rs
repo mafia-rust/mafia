@@ -1,21 +1,21 @@
 use std::collections::HashSet;
 
-use super::resolution_state::ResolutionState;
+use super::game_conclusion::GameConclusion;
 
-/// Related functions require RoleStateWon to be independent of ResolutionState. 
-/// RoleStateWon needs to be able to win with any ResolutionState.
+/// Related functions require RoleStateWon to be independent of GameConclusion. 
+/// RoleStateWon needs to be able to win with any GameConclusion.
 #[derive(Debug, Clone)]
 pub enum WinCondition{
-    ResolutionStateReached{win_if_any: HashSet<ResolutionState>},
+    GameConclusionReached{win_if_any: HashSet<GameConclusion>},
     RoleStateWon,
 }
 
 
 
 impl WinCondition{
-    pub fn required_resolution_states_for_win(&self)->Option<HashSet<ResolutionState>>{
+    pub fn required_resolution_states_for_win(&self)->Option<HashSet<GameConclusion>>{
         match self{
-            WinCondition::ResolutionStateReached{win_if_any} => Some(win_if_any.clone()),
+            WinCondition::GameConclusionReached{win_if_any} => Some(win_if_any.clone()),
             WinCondition::RoleStateWon => None,
         }
     }
@@ -28,22 +28,22 @@ impl WinCondition{
             _ => true
         }
     }
-    pub fn can_win_when_resolution_state_reached(&self, resolution_state: ResolutionState)->bool{
+    pub fn can_win_when_resolution_state_reached(&self, resolution_state: GameConclusion)->bool{
         match self{
-            WinCondition::ResolutionStateReached{win_if_any} => win_if_any.contains(&resolution_state),
+            WinCondition::GameConclusionReached{win_if_any} => win_if_any.contains(&resolution_state),
             WinCondition::RoleStateWon => true,
         }
     }
-    pub fn requires_only_this_resolution_state(&self, resolution_state: ResolutionState)->bool{
+    pub fn requires_only_this_resolution_state(&self, resolution_state: GameConclusion)->bool{
         match self{
-            WinCondition::ResolutionStateReached{win_if_any} => win_if_any.len() == 1 && win_if_any.contains(&resolution_state),
+            WinCondition::GameConclusionReached{win_if_any} => win_if_any.len() == 1 && win_if_any.contains(&resolution_state),
             WinCondition::RoleStateWon => false,
         }
     }
     
-    pub fn new_single_resolution_state(resolution_state: ResolutionState) -> WinCondition {
+    pub fn new_single_resolution_state(resolution_state: GameConclusion) -> WinCondition {
         let mut win_if_any = HashSet::new();
         win_if_any.insert(resolution_state);
-        WinCondition::ResolutionStateReached { win_if_any }
+        WinCondition::GameConclusionReached { win_if_any }
     }
 }

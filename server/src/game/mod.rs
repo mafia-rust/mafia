@@ -7,7 +7,7 @@ pub mod visit;
 pub mod verdict;
 pub mod role_list;
 pub mod settings;
-pub mod resolution_state;
+pub mod game_conclusion;
 pub mod components;
 pub mod available_buttons;
 pub mod on_client_message;
@@ -52,7 +52,7 @@ use self::components::{
     cult::Cult,
     puppeteer_marionette::PuppeteerMarionette
 };
-use self::resolution_state::ResolutionState;
+use self::game_conclusion::GameConclusion;
 use self::event::on_game_ending::OnGameEnding;
 use self::event::on_grave_added::OnGraveAdded;
 use self::grave::GraveReference;
@@ -338,7 +338,7 @@ impl Game {
     }
 
     pub fn game_is_over(&self) -> bool {
-        if let Some(_) = ResolutionState::game_is_over(self){
+        if let Some(_) = GameConclusion::game_is_over(self){
             true
         }else{
             false

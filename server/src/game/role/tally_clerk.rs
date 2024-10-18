@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::DefensePower;
 use crate::game::{chat::ChatMessageVariant, components::verdicts_today::VerdictsToday};
-use crate::game::resolution_state::ResolutionState;
+use crate::game::game_conclusion::GameConclusion;
 use crate::game::player::PlayerReference;
 
 use crate::game::Game;
@@ -47,7 +47,7 @@ impl TallyClerk {
         }else if player_ref.has_innocent_aura(game){
             false
         }else{
-            !player_ref.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town)
+            !player_ref.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town)
         }
     }
 }

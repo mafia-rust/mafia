@@ -8,7 +8,7 @@ use crate::game::components::revealed_group::RevealedGroupID;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::resolution_state::ResolutionState;
+use crate::game::game_conclusion::GameConclusion;
 use crate::game::role_list::{RoleOutline, RoleOutlineOption, RoleSet};
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
@@ -198,8 +198,8 @@ impl RoleStateImpl for Recruiter {
                 //NOTE: It will still send a packet to the player that their role state updated,
                 //so it might be deducable that there is a recruiter
                 RevealedGroupID::Mafia.remove_player_from_revealed_group(game, random_mafia_player);
-                random_mafia_player.set_win_condition(game, crate::game::win_condition::WinCondition::ResolutionStateReached{
-                    win_if_any: vec![ResolutionState::Town].into_iter().collect()
+                random_mafia_player.set_win_condition(game, crate::game::win_condition::WinCondition::GameConclusionReached{
+                    win_if_any: vec![GameConclusion::Town].into_iter().collect()
                 });
                 random_mafia_player.set_role_state(game, random_town_role.default_state());
                 

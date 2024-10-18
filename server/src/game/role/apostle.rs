@@ -5,7 +5,7 @@ use crate::game::chat::ChatMessageVariant;
 use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
-use crate::game::resolution_state::ResolutionState;
+use crate::game::game_conclusion::GameConclusion;
 
 use crate::game::role_list::RoleSet;
 use crate::game::visit::Visit;
@@ -48,7 +48,7 @@ impl RoleStateImpl for Apostle {
                 }
 
                 target_ref.set_role_and_win_condition_and_revealed_group(game, Zealot);
-                target_ref.set_win_condition(game, WinCondition::new_single_resolution_state(ResolutionState::Cult));
+                target_ref.set_win_condition(game, WinCondition::new_single_resolution_state(GameConclusion::Cult));
                 Cult::set_ability_used_last_night(game, Some(CultAbility::Convert));
             }
             _ => {}

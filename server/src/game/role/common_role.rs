@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    chat::ChatGroup, components::{detained::Detained, puppeteer_marionette::PuppeteerMarionette}, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, resolution_state::ResolutionState, role_list::RoleSet, visit::Visit, win_condition::WinCondition, Game
+    chat::ChatGroup, components::{detained::Detained, puppeteer_marionette::PuppeteerMarionette}, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, game_conclusion::GameConclusion, role_list::RoleSet, visit::Visit, win_condition::WinCondition, Game
 };
 
 use super::{reporter::Reporter, medium::Medium, RevealedGroupID, Role, RoleState};
@@ -213,21 +213,21 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
 pub(super) fn default_win_condition(role: Role) -> WinCondition {
 
     if RoleSet::Mafia.get_roles().contains(&role) {
-        WinCondition::ResolutionStateReached{win_if_any: vec![ResolutionState::Mafia].into_iter().collect()}
+        WinCondition::GameConclusionReached{win_if_any: vec![GameConclusion::Mafia].into_iter().collect()}
 
     }else if RoleSet::Cult.get_roles().contains(&role) {
-        WinCondition::ResolutionStateReached{win_if_any: vec![ResolutionState::Cult].into_iter().collect()}
+        WinCondition::GameConclusionReached{win_if_any: vec![GameConclusion::Cult].into_iter().collect()}
 
     }else if RoleSet::Town.get_roles().contains(&role) {
-        WinCondition::ResolutionStateReached{win_if_any: vec![ResolutionState::Town].into_iter().collect()}
+        WinCondition::GameConclusionReached{win_if_any: vec![GameConclusion::Town].into_iter().collect()}
 
     }else if RoleSet::Fiends.get_roles().contains(&role) {
-        WinCondition::ResolutionStateReached{win_if_any: vec![ResolutionState::Fiends].into_iter().collect()}
+        WinCondition::GameConclusionReached{win_if_any: vec![GameConclusion::Fiends].into_iter().collect()}
 
     }else if RoleSet::Minions.get_roles().contains(&role) {
-        WinCondition::ResolutionStateReached{win_if_any: ResolutionState::all().into_iter().filter(|end_game_condition|
+        WinCondition::GameConclusionReached{win_if_any: GameConclusion::all().into_iter().filter(|end_game_condition|
             match end_game_condition {
-                ResolutionState::Town | ResolutionState::Draw => false,
+                GameConclusion::Town | GameConclusion::Draw => false,
                 _ => true
             }
         ).collect()}

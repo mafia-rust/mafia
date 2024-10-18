@@ -11,7 +11,7 @@ use crate::{game::{
         revealed_group::RevealedGroupID
     },
     event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch},
-    grave::{Grave, GraveKiller, GraveReference}, resolution_state::ResolutionState,
+    grave::{Grave, GraveKiller, GraveReference}, game_conclusion::GameConclusion,
     role::{chronokaiser::Chronokaiser, Priority, Role, RoleState},
     visit::Visit, win_condition::WinCondition, Game
 }, packet::ToClientPacket};
@@ -279,8 +279,8 @@ impl PlayerReference{
     }
     pub fn get_won_game(&self, game: &Game) -> bool {
         match self.win_condition(game){
-            WinCondition::ResolutionStateReached { win_if_any } => {
-                if let Some(resolution) = ResolutionState::game_is_over(game) {
+            WinCondition::GameConclusionReached { win_if_any } => {
+                if let Some(resolution) = GameConclusion::game_is_over(game) {
                     win_if_any.contains(&resolution)
                 } else {
                     false
@@ -303,7 +303,7 @@ impl PlayerReference{
     pub fn keeps_game_running(&self, game: &Game) -> bool {
         if MafiaRecruits::is_recruited(game, *self) {return false;}
         if PuppeteerMarionette::is_marionette(game, *self) {return false;}
-        ResolutionState::keeps_game_running(self.role(game))
+        GameConclusion::keeps_game_running(self.role(game))
     }
 
     /*
