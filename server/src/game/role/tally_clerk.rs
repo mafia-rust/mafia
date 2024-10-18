@@ -21,6 +21,7 @@ impl RoleStateImpl for TallyClerk {
     type ClientRoleState = TallyClerk;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_blocked(game) {return}
+        if !actor_ref.alive(game) {return}
         if priority != Priority::Investigative {return;}
 
         let mut evil_count = 0;
