@@ -44,6 +44,7 @@ export function loadReconnectData(): {
 
 export type Settings = {
     volume: number;
+    defaultName: string | null;
     language: Language;
     roleSpecificMenus: Record<Role, RoleSpecificMenuType>
 };
@@ -70,7 +71,7 @@ export function loadSettings(): Settings {
 
 export function defaultGameModes(): GameModeStorage {
     // Typescript is a Division One tweaker
-    return DEFAULT_GAME_MODES as unknown as GameModeStorage;
+    return DEFAULT_GAME_MODES as GameModeStorage;
 }
 
 export function saveGameModes(gameModes: GameModeStorage) {
@@ -95,5 +96,6 @@ export function deleteGameModes() {
 export const DEFAULT_SETTINGS: Readonly<Settings> = {
     volume: 0.5,
     language: "en_us",
+    defaultName: null,
     roleSpecificMenus: Object.fromEntries(getAllRoles().map(role => [role, "playerList"])) as Record<Role, "playerList">
 };

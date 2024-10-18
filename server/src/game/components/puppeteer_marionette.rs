@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    attack_power::AttackPower, chat::ChatMessageVariant, player::PlayerReference, resolution_state::ResolutionState, role::{
+    attack_power::AttackPower, chat::ChatMessageVariant, player::PlayerReference, game_conclusion::GameConclusion, role::{
         Priority, Role
     }, tag::Tag, win_condition::WinCondition, Game
 };
@@ -30,7 +30,7 @@ impl PuppeteerMarionette{
 
         game.set_puppeteer_marionette(puppeteer_marionette);
         RevealedGroupID::Puppeteer.add_player_to_revealed_group(game, player);
-        player.set_win_condition(game, WinCondition::ResolutionStateReached { win_if_any: vec![ResolutionState::Fiends].into_iter().collect() });
+        player.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any: vec![GameConclusion::Fiends].into_iter().collect() });
 
         for fiend in PuppeteerMarionette::marionettes_and_puppeteer(game){
             fiend.push_night_message(game, ChatMessageVariant::PuppeteerPlayerIsNowMarionette{player: player.index()});
@@ -64,13 +64,10 @@ impl PuppeteerMarionette{
     }
 
     pub fn give_tags_and_labels(game: &mut Game){
-        let marionettes_and_puppeteer = PuppeteerMarionette::marionettes_and_puppeteer(game);
-
-        for player_a in marionettes_and_puppeteer.clone() {
-            for player_b in marionettes_and_puppeteer.clone() {
+        for player_a in RevealedGroupID::Puppeteer.players(game).clone() {
+            for player_b in PuppeteerMarionette::marionettes(game).clone() {
                 if 
-                    player_a.player_has_tag(game, player_b, Tag::PuppeteerMarionette) == 0 &&
-                    player_b.role(game) != Role::Puppeteer
+                    player_a.player_has_tag(game, player_b, Tag::PuppeteerMarionette) == 0
                 {
                     player_a.push_player_tag(game, player_b, Tag::PuppeteerMarionette);
                 }

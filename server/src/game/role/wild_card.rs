@@ -4,7 +4,7 @@ use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::{role_can_generate, Faction};
+use crate::game::role_list::role_can_generate;
 use crate::game::Game;
 
 use super::{RoleStateImpl, Role};
@@ -23,7 +23,7 @@ impl Default for Wildcard {
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

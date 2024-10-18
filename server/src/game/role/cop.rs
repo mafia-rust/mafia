@@ -4,11 +4,11 @@ use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
-use crate::game::resolution_state::ResolutionState;
+use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 
 use crate::game::Game;
@@ -24,7 +24,7 @@ pub struct Cop {
 #[derive(Clone, Debug, Serialize)]
 pub struct ClientRoleState;
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
@@ -52,7 +52,7 @@ impl RoleStateImpl for Cop {
                     .filter(|other_player_ref|
                         other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref &&
-                        !other_player_ref.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town) &&
+                        !other_player_ref.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) &&
                         other_player_ref.night_visits(game)
                             .iter()
                             .any(|v|v.target==target_ref)

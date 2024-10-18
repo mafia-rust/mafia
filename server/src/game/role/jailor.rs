@@ -4,11 +4,12 @@ use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::resolution_state::ResolutionState;
+use crate::game::components::detained::Detained;
+use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 use crate::game::Game;
 
@@ -18,7 +19,7 @@ use super::{Priority, RoleState, Role, RoleStateImpl};
 #[derive(Serialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Jailor { 
-    jailed_target_ref: Option<PlayerReference>, 
+    pub jailed_target_ref: Option<PlayerReference>, 
     executions_remaining: u8
 }
 
@@ -31,7 +32,7 @@ impl Default for Jailor {
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
@@ -41,31 +42,16 @@ impl RoleStateImpl for Jailor {
 
 
         match priority {
-            Priority::Ward => {
-                for player in PlayerReference::all_players(game){
-                    if player.night_jailed(game){
-                        player.ward(game);
-                    }
-                }
-            }
-            Priority::Roleblock => {
-                for player in PlayerReference::all_players(game){
-                    if player.night_jailed(game){
-                        player.roleblock(game, false);
-                    }
-                }
-            },
             Priority::Kill => {
                 if let Some(visit) = actor_ref.night_visits(game).first() {
     
                     let target_ref = visit.target;
-                    if target_ref.night_jailed(game){
+                    if Detained::is_detained(game, target_ref){
                         target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Jailor), AttackPower::ProtectionPiercing, false);
         
                         self.executions_remaining = 
-                            if target_ref.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town) {0} else {self.executions_remaining - 1};
-                        self.jailed_target_ref = None;
-                        actor_ref.set_role_state(game, RoleState::Jailor(self));
+                            if target_ref.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) {0} else {self.executions_remaining - 1};
+                        actor_ref.set_role_state(game, self);
                     }
                 }
             },
@@ -73,7 +59,9 @@ impl RoleStateImpl for Jailor {
         }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        target_ref.night_jailed(game) &&
+        !Detained::is_detained(game, actor_ref) &&
+        Detained::is_detained(game, target_ref) &&
+        self.jailed_target_ref.is_some_and(|p|p==target_ref) &&
         actor_ref.selection(game).is_empty() &&
         actor_ref != target_ref &&
         actor_ref.alive(game) &&
@@ -102,7 +90,7 @@ impl RoleStateImpl for Jailor {
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, 
-            if PlayerReference::all_players(game).any(|p|p.night_jailed(game)) {
+            if PlayerReference::all_players(game).any(|p|Detained::is_detained(game, p)) {
                 vec![ChatGroup::Jail].into_iter().collect()
             }else{
                 vec![]
@@ -114,26 +102,33 @@ impl RoleStateImpl for Jailor {
         if 
             game.current_phase().is_night() &&
             actor_ref.alive(game) &&
-            PlayerReference::all_players(game).any(|p|p.night_jailed(game))
+            PlayerReference::all_players(game).any(|p|Detained::is_detained(game, p))
         {
             out.insert(ChatGroup::Jail);
         }
         out
     }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
-    
-        if phase != PhaseType::Night{return;}
-        
-        if let Some(jailed_ref) = self.jailed_target_ref {
-            if jailed_ref.alive(game) && actor_ref.alive(game){
-        
-                jailed_ref.set_night_jailed(game, true);
-                actor_ref.add_private_chat_message(game, 
-                    ChatMessageVariant::JailedTarget{ player_index: jailed_ref.index() }
-                );
-            }
-        }
-        self.jailed_target_ref = None;
-        actor_ref.set_role_state(game, RoleState::Jailor(self));
+        match phase {
+            PhaseType::Night => {
+                if let Some(jailed_ref) = self.jailed_target_ref {
+                    if jailed_ref.alive(game) && actor_ref.alive(game){
+                
+                        Detained::add_detain(game, jailed_ref);
+                        actor_ref.add_private_chat_message(game, 
+                            ChatMessageVariant::JailedTarget{ player_index: jailed_ref.index() }
+                        );
+                    }else{
+                        self.jailed_target_ref = None;
+                        actor_ref.set_role_state(game, self);
+                    }
+                }
+            },
+            PhaseType::Obituary => {
+                self.jailed_target_ref = None;
+                actor_ref.set_role_state(game, self);
+            },
+            _ => {}
+        }    
     }
 }

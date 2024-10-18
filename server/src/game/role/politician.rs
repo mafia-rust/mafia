@@ -2,12 +2,13 @@ use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
-use crate::game::resolution_state::ResolutionState;
+use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
 
+
+use crate::game::win_condition::WinCondition;
 use crate::game::Game;
 use super::jester::Jester;
 use super::{GetClientRoleState, Role, RoleState, RoleStateImpl};
@@ -21,7 +22,7 @@ pub struct Politician{
 #[derive(Debug, Clone, Serialize)]
 pub struct ClientRoleState;
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
@@ -50,7 +51,7 @@ impl RoleStateImpl for Politician {
         for player_ref in PlayerReference::all_players(game) {
             if
                 player_ref.alive(game) && 
-                player_ref.role(game).faction() == Faction::Town &&
+                player_ref.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) &&
                 player_ref.get_won_game(game)
             {
                 
@@ -86,6 +87,9 @@ impl RoleStateImpl for Politician {
             }
         }
     }
+    fn default_win_condition(self) -> crate::game::win_condition::WinCondition where RoleState: From<Self> {
+        WinCondition::GameConclusionReached{win_if_any: vec![GameConclusion::Politician].into_iter().collect()}
+    }
 }
 impl GetClientRoleState<ClientRoleState> for Politician {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
@@ -95,7 +99,7 @@ impl GetClientRoleState<ClientRoleState> for Politician {
 
 pub fn is_town_remaining(game: &Game) -> bool {
     PlayerReference::all_players(game).any(|player|
-        player.alive(game) && player.win_condition(game).requires_only_this_resolution_state(ResolutionState::Town)
+        player.alive(game) && player.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town)
     )
 }
 

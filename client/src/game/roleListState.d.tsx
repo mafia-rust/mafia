@@ -1,19 +1,6 @@
 
 import translate from "./lang";
-import { Role } from "./roleState.d";
-import ROLES from "../resources/roles.json";
-
-export const FACTIONS = ["town", "mafia", "cult", "neutral", "fiends"] as const;
-export type Faction = typeof FACTIONS[number]
-export function getRoleOutlineFromFaction(faction: Faction): RoleOutline {
-    return {
-        type: "roleOutlineOptions",
-        options: [{
-            type: "faction",
-            faction: faction
-        }]
-    }
-}
+import { Role, roleJsonData } from "./roleState.d";
 
 export type RoleList = RoleOutline[];
 export function getRolesFromRoleList(roleList: RoleList): Role[] {
@@ -29,7 +16,7 @@ export function getRolesFromRoleList(roleList: RoleList): Role[] {
 }
 
 export function getRolesComplement(roleList: Role[]): Role[] {
-    let roles = Object.keys(ROLES) as Role[];
+    let roles = Object.keys(roleJsonData()) as Role[];
     return roles.filter((role) => {
         return !roleList.includes(role);
     });
@@ -38,39 +25,18 @@ export function getRolesComplement(roleList: Role[]): Role[] {
 
 
 export const ROLE_SETS = [
-    "townInvestigative", "townProtective","townKilling","townSupport", 
-    "mafiaKilling", "mafiaSupport",
-    "minions"
+    "town", "townInvestigative", "townProtective","townKilling","townSupport", 
+    "mafia", "mafiaKilling", "mafiaSupport",
+    "neutral", "minions",
+    "fiends",
+    "cult"
 ] as const;
 export type RoleSet = typeof ROLE_SETS[number];
 export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
-    switch(roleSet){
-        case "townInvestigative":
-            return [
-                "psychic", "lookout", "detective",
-                "spy", "tracker", "philosopher",
-                "snoop", "auditor", "gossip",
-                "flowerGirl"
-            ];
-        case "townProtective":
-            return ["bodyguard", "cop", "doctor", "bouncer", "engineer", "armorsmith", "steward"];
-        case "townKilling":
-            return ["vigilante", "veteran", "deputy", "marksman", "rabbleRouser"];
-        case "townSupport":
-            return ["medium", "retributionist", "transporter", "escort", "mayor", "journalist"];
-        case "mafiaKilling":
-            return [
-                "godfather", "eros", "counterfeiter", "retrainer", "imposter", "recruiter", "mafioso"
-            ];
-        case "mafiaSupport":
-            return [
-                "blackmailer", "informant", "hypnotist", "consort",
-                "forger", "framer", "mortician", 
-                "mafiaWitch", "necromancer", "cupid"
-            ];
-        case "minions":
-            return ["witch", "scarecrow", "warper"];
-    }
+    const ROLES = roleJsonData();
+    return getAllRoles().filter((role) => {
+        return ROLES[role].roleSets.includes(roleSet);
+    });
 }
 export function getRoleSetsFromRole(role: Role): RoleSet[] {
     return ROLE_SETS.filter((roleSet) => {
@@ -95,9 +61,6 @@ export type RoleOutlineOption = ({
 } | {
     type: "role",
     role: Role,
-} | {
-    type: "faction",
-    faction: Faction,
 });
 
 
@@ -117,14 +80,12 @@ export function translateRoleOutlineOption(roleOutlineOption: RoleOutlineOption)
             return translate(roleOutlineOption.roleSet);
         case "role":
             return translate("role."+roleOutlineOption.role+".name");
-        case "faction":
-            return translate(roleOutlineOption.faction);
     }
 }
 export function getRolesFromOutline(roleOutline: RoleOutline): Role[] {
     switch(roleOutline.type){
         case "any":
-            return Object.keys(ROLES) as Role[];
+            return Object.keys(roleJsonData()) as Role[];
         case "roleOutlineOptions":
             return roleOutline.options.flatMap((option) => getRolesFromOutlineOption(option));
     }
@@ -135,10 +96,6 @@ export function getRolesFromOutlineOption(roleOutlineOption: RoleOutlineOption):
             return getRolesFromRoleSet(roleOutlineOption.roleSet);
         case "role":
             return [roleOutlineOption.role];
-        case "faction":
-            return Object.keys(ROLES).filter((role) => {
-                return ROLES[role as Role].faction === roleOutlineOption.faction;
-            }) as Role[];
     }
 }
 
@@ -173,5 +130,5 @@ function outlineOptionCompare(optionA: RoleOutlineOption, optionB: RoleOutlineOp
 }
 
 export function getAllRoles(): Role[] {
-    return Object.keys(ROLES) as Role[];
+    return Object.keys(roleJsonData()) as Role[];
 }

@@ -5,7 +5,6 @@ use crate::game::phase::PhaseType;
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
@@ -14,14 +13,13 @@ use super::{Priority, Role, RoleStateImpl};
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Warper;
 
-pub(super) const FACTION: Faction = Faction::Neutral;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Warper {
     type ClientRoleState = Warper;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Transporter {return;}
+        if priority != Priority::Warper {return;}
     
         let transporter_visits = actor_ref.night_visits(game).clone();
         let Some(first_visit) = transporter_visits.get(0) else {return};
@@ -34,6 +32,7 @@ impl RoleStateImpl for Warper {
             if player_ref == actor_ref {continue;}
             if player_ref.role(game) == Role::Warper {continue;}
             if player_ref.role(game) == Role::Transporter {continue;}
+
             let new_visits = player_ref.night_visits(game).clone().into_iter().map(|mut v|{
                 if v.target == first_visit.target {
                     v.target = second_visit.target;
@@ -44,16 +43,14 @@ impl RoleStateImpl for Warper {
         }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        let chosen_targets = actor_ref.selection(game);
-
-        !actor_ref.night_jailed(game) &&
+        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
         actor_ref.alive(game) &&
-        target_ref.alive(game) && 
+        target_ref.alive(game) &&
         ((
-            chosen_targets.is_empty()
+            actor_ref != target_ref &&
+            actor_ref.selection(game).is_empty()
         ) || (
-            chosen_targets.len() == 1 &&
-            Some(target_ref) != chosen_targets.first().copied()
+            actor_ref.selection(game).len() == 1
         ))
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){

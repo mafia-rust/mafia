@@ -4,7 +4,7 @@ use crate::game::attack_power::AttackPower;
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::Game;
 
 use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
@@ -30,7 +30,7 @@ impl Default for Veteran {
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
@@ -71,7 +71,7 @@ impl RoleStateImpl for Veteran {
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         actor_ref == target_ref &&
-        !actor_ref.night_jailed(game) &&
+        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
         self.alerts_remaining > 0 &&
         actor_ref.selection(game).is_empty() &&
         actor_ref.alive(game) &&

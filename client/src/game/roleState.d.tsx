@@ -1,13 +1,13 @@
 import { PlayerIndex } from "./gameState.d"
-import { Faction } from "./roleListState.d"
+import { RoleSet } from "./roleListState.d"
 import ROLES from "./../resources/roles.json";
 import { Doomsayer } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
-import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
 import { Hypnotist } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeHypnotistMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
+import { ChatMessageVariant } from "../components/ChatMessage";
 
 export type RoleState = {
     type: "jailor",
@@ -35,14 +35,14 @@ export type RoleState = {
     type: "psychic"
 } | {
     type: "auditor",
-    chosenOutline: number,
+    chosenOutline: number | null,
     previouslyGivenResults: [number, AuditorResult][]
 } | {
     type: "snoop",
 } | {
     type: "gossip",
 } | {
-    type: "flowerGirl"
+    type: "tallyClerk"
 } | {
     type: "doctor",
     selfHealsRemaining: number,
@@ -76,7 +76,7 @@ export type RoleState = {
 } | {
     type: "deputy"
 } | {
-    type: "rabbleRouser"
+    type: "rabblerouser"
 } | {
     type: "escort"
 } | {
@@ -86,9 +86,9 @@ export type RoleState = {
 } | {
     type: "retributionist"
 } | {
-    type: "journalist",
+    type: "reporter",
     public: boolean,
-    journal: string,
+    report: string,
     interviewedTarget: PlayerIndex | null
 } | {
     type: "godfather"
@@ -98,7 +98,7 @@ export type RoleState = {
     backup: PlayerIndex | null,
     retrainsRemaining: number
 } | {
-    type: "imposter"
+    type: "impostor"
     backup: PlayerIndex | null,
     fakeRole: Role
 } | {
@@ -163,6 +163,10 @@ Doomsayer
 } | {
     type: "warper"
 } | {
+    type: "kidnapper"
+    executionsRemaining: number,
+    jailedTargetRef: number | null
+} | {
     type: "death",
     souls: number
 } | {
@@ -187,7 +191,9 @@ Doomsayer
     type: "werewolf",
 } | {
     type: "ojo"
-    chosenAction: OjoAction
+    roleChosen: Role | null,
+    chosenOutline: number | null,
+    previouslyGivenResults: [number, AuditorResult][]
 } | {
     type: "puppeteer"
     action: PuppeteerAction,
@@ -208,6 +214,22 @@ Doomsayer
 
 
 export type Role = keyof typeof ROLES;
-export function getFactionFromRole(role: Role): Faction {
-    return ROLES[role].faction as Faction;
+export type SingleRoleJsonData = {
+    mainRoleSet: RoleSet,
+    roleSets: RoleSet[],
+    armor: boolean,
+    aura: null | "innocent" | "suspicious",
+    maxCount: null | number,
+    roleSpecificMenu: boolean,
+    canBeConvertedTo: Role[],
+    chatMessages: ChatMessageVariant[] 
+}
+export type RoleJsonData = Record<Role, SingleRoleJsonData>
+
+export function getMainRoleSetFromRole(role: Role): RoleSet {
+    return roleJsonData()[role].mainRoleSet as RoleSet;
+}
+
+export function roleJsonData(): RoleJsonData {
+    return ROLES as RoleJsonData;
 }

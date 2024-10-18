@@ -1,7 +1,7 @@
-use super::{player::PlayerReference, role::Role, role_list::Faction, win_condition::WinCondition, Game};
+use super::{player::PlayerReference, role::Role, role_list::RoleSet, win_condition::WinCondition, Game};
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash)]
-pub enum ResolutionState {
+pub enum GameConclusion {
     Town,
     Mafia,
     Cult,
@@ -13,20 +13,20 @@ pub enum ResolutionState {
 
     Draw
 }
-impl ResolutionState {
-    pub fn all()->Vec<ResolutionState>{
+impl GameConclusion {
+    pub fn all()->Vec<GameConclusion>{
         vec![
-            ResolutionState::Town,
-            ResolutionState::Mafia,
-            ResolutionState::Cult,
-            ResolutionState::Fiends,
-            ResolutionState::Death,
-            ResolutionState::Politician,
-            ResolutionState::Draw
+            GameConclusion::Town,
+            GameConclusion::Mafia,
+            GameConclusion::Cult,
+            GameConclusion::Fiends,
+            GameConclusion::Death,
+            GameConclusion::Politician,
+            GameConclusion::Draw
         ]
     }
     ///either return Some(EndGameCondition) or None (if the game is not over yet)
-    pub fn game_is_over(game: &Game)->Option<ResolutionState> {
+    pub fn game_is_over(game: &Game)->Option<GameConclusion> {
 
         //Special wildcard case
         let living_roles = PlayerReference::all_players(game).filter_map(|player|{
@@ -43,11 +43,11 @@ impl ResolutionState {
         
         //if nobody is left to hold game hostage
         if !PlayerReference::all_players(game).any(|player|player.keeps_game_running(game)){
-            return Some(ResolutionState::Draw);
+            return Some(GameConclusion::Draw);
         }
 
         //find one end game condition that everyone agrees on
-        for resolution in ResolutionState::all() {
+        for resolution in GameConclusion::all() {
             //if everyone who keeps the game running agrees on this end game condition, return it
             if
                 PlayerReference::all_players(game)
@@ -55,7 +55,7 @@ impl ResolutionState {
                     .filter(|p|p.keeps_game_running(game))
                     .all(|p|
                         match p.win_condition(game){
-                            WinCondition::ResolutionStateReached{win_if_any} => win_if_any.contains(&resolution),
+                            WinCondition::GameConclusionReached{win_if_any} => win_if_any.contains(&resolution),
                             WinCondition::RoleStateWon => true,
                         }
                     )
@@ -73,11 +73,20 @@ impl ResolutionState {
     /// *has the ability to change what the set of living players win conditions are until game over (convert, marionette, kill)*
     /// A detective and a witch game never ends
     pub fn keeps_game_running(role: Role)->bool{
-        if role.faction() == Faction::Neutral{
-            false
-        }else{
-            true  
+
+        match role {
+            Role::Drunk => true,
+            _ => if 
+                RoleSet::Neutral.get_roles().contains(&role) || 
+                RoleSet::Minions.get_roles().contains(&role){
+                false
+            }else{
+                true  
+            }
         }
+
+
+        
     }
 }
 

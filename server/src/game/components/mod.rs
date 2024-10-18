@@ -8,5 +8,6 @@ pub mod mafia_recruits;
 pub mod pitchfork;
 pub mod poison;
 pub mod revealed_group;
-
+pub mod detained;
+pub mod confused;
 

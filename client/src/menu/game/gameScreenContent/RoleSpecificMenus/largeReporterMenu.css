@@ -1,20 +1,20 @@
-.large-journalist-menu {
+.large-reporter-menu {
     padding-top: .2rem;
 }
-.large-journalist-menu textarea {
+.large-reporter-menu textarea {
     text-align: left;
     height: 19em;
     resize: none;
     width: 100%;
     margin: 0;
 }
-.large-journalist-menu div {
+.large-reporter-menu div {
     margin: .2rem;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 }
-.large-journalist-menu label {
+.large-reporter-menu label {
     display: inline-block;
     height: 100%;
     padding: .2rem;

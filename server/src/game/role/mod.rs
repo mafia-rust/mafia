@@ -78,7 +78,7 @@ macros::roles! {
     Auditor : auditor,
     Snoop : snoop,
     Gossip : gossip,
-    FlowerGirl : flower_girl,
+    TallyClerk : tally_clerk,
 
     Doctor : doctor,
     Bodyguard : bodyguard,
@@ -92,12 +92,12 @@ macros::roles! {
     Veteran : veteran,
     Marksman: marksman,
     Deputy : deputy,
-    RabbleRouser : rabble_rouser,
+    Rabblerouser : rabblerouser,
 
     Escort : escort,
     Medium : medium,
     Retributionist : retributionist,
-    Journalist : journalist,
+    Reporter : reporter,
     Mayor : mayor,
     Transporter : transporter,
 
@@ -105,7 +105,7 @@ macros::roles! {
     Godfather : godfather,
     Eros: eros,
     Counterfeiter : counterfeiter,
-    Imposter : imposter,
+    Impostor : impostor,
     Retrainer : retrainer,
     Recruiter : recruiter,
     Mafioso : mafioso,
@@ -129,12 +129,15 @@ macros::roles! {
     Jester : jester,
     Revolutionary : revolutionary,
     Politician : politician,
+    Doomsayer : doomsayer,
+    Death : death,
+    Drunk : drunk,
 
     Witch : witch,
     Scarecrow : scarecrow,
     Warper : warper,
-    Doomsayer : doomsayer,
-    Death : death,
+    Kidnapper : kidnapper,
+    Chronokaiser : chronokaiser,
 
     Arsonist : arsonist,
     Werewolf : werewolf,
@@ -158,6 +161,7 @@ macros::priorities! {
     Ward,
 
     Transporter,
+    Warper,
 
     Possess,
     Roleblock,
@@ -210,11 +214,6 @@ mod macros {
                 pub fn maximum_count(&self) -> Option<u8> {
                     match self {
                         $(Self::$name => $file::MAXIMUM_COUNT),*
-                    }
-                }
-                pub fn faction(&self) -> crate::game::role_list::Faction {
-                    match self {
-                        $(Self::$name => $file::FACTION),*
                     }
                 }
                 pub fn defense(&self) -> DefensePower {
@@ -367,7 +366,7 @@ mod macros {
 impl Role{
     pub fn possession_immune(&self)->bool{
         match self {
-            Role::FlowerGirl
+            Role::TallyClerk
             | Role::Bouncer
             | Role::Veteran
             | Role::Transporter | Role::Retributionist
@@ -382,16 +381,15 @@ impl Role{
             Role::Bouncer |
             Role::Veteran | 
             Role::Transporter | Role::Escort | Role::Retributionist | 
-            Role::Jester | Role::Witch | Role::Scarecrow |
+            Role::Jester | Role::Witch | Role::Scarecrow | Role::Warper |
             Role::Hypnotist | Role::Consort | Role::MafiaWitch | Role::Necromancer => true,
             _ => false,
         }
     }
     pub fn wardblock_immune(&self)->bool{
         match self {
-            Role::Jailor
-            | Role::Bouncer
-            | Role::Scarecrow => true,
+            Role::Jailor | Role::Kidnapper |
+            Role::Bouncer | Role::Scarecrow => true,
             _ => false
         }
     }

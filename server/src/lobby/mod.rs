@@ -6,6 +6,8 @@ mod name_validation;
 
 use std::{collections::HashMap, time::Duration,};
 
+use lobby_client::Ready;
+
 use crate::{
     client_connection::ClientConnection, game::{
         player::PlayerReference, role_list::RoleOutline, settings::Settings, spectator::{spectator_pointer::{SpectatorIndex, SpectatorPointer}, SpectatorInitializeParameters}, Game
@@ -104,7 +106,7 @@ impl Lobby {
                         .fold(0u32, u32::max) as LobbyClientID + 1u32;
 
                 //if there are no hosts, make this player the host
-                if !clients.iter().any(|p|p.1.host) {
+                if !clients.iter().any(|p|p.1.is_host()) {
                     new_player.set_host();
                 }
 
@@ -166,7 +168,7 @@ impl Lobby {
                     self.lobby_state = LobbyState::Closed;
                     return;
                 }
-                if !clients.iter().any(|p|p.1.host) {
+                if !clients.iter().any(|p|p.1.is_host()) {
                     if let Some(new_host) = clients.values_mut().next(){
                         new_host.set_host();
                     }
@@ -343,7 +345,7 @@ impl Lobby {
         match &self.lobby_state {
             LobbyState::Lobby { clients: players, .. } => {
                 if let Some(player) = players.get(&lobby_client_id){
-                    player.host
+                    player.is_host()
                 }else{
                     false
                 }
@@ -378,14 +380,17 @@ impl Lobby {
         }
 
         //send hosts
-        let hosts: Vec<LobbyClientID> = clients.iter().filter(|p|p.1.host).map(|p|*p.0).collect();
+        let hosts: Vec<LobbyClientID> = clients.iter().filter(|p|p.1.is_host()).map(|p|*p.0).collect();
+        let ready: Vec<LobbyClientID> = clients.iter().filter(|p|p.1.ready == Ready::Ready).map(|p|*p.0).collect();
         let host_packet = ToClientPacket::PlayersHost { hosts };
+        let ready_packet = ToClientPacket::PlayersReady { ready };
         // Send Players that have lost connection
         let lost_connection: Vec<LobbyClientID> = clients.iter().filter(|p| matches!(p.1.connection, ClientConnection::CouldReconnect { .. })).map(|p|*p.0).collect();
         let lost_connection_packet = ToClientPacket::PlayersLostConnection { lost_connection };
         
         for client in clients.iter() {
             client.1.send(host_packet.clone());
+            client.1.send(ready_packet.clone());
             client.1.send(lost_connection_packet.clone());
         }
     }

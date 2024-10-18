@@ -1,9 +1,8 @@
 import React, { useContext } from "react";
 import "./outlineSelector.css";
 import translate from "../../game/lang";
-import ROLES from "../../resources/roles.json";
-import { FACTIONS, ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, simplifyRoleOutline, translateRoleOutlineOption} from "../../game/roleListState.d";
-import { Role } from "../../game/roleState.d";
+import { ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, simplifyRoleOutline, translateRoleOutlineOption} from "../../game/roleListState.d";
+import { Role, roleJsonData } from "../../game/roleState.d";
 import Icon from "../Icon";
 import { DragAndDrop } from "../DragAndDrop";
 import { GameModeContext } from "./GameModesEditor";
@@ -149,17 +148,12 @@ export class RoleOutlineOptionSelector extends React.Component<RoleOutlineOption
             {this.props.excludeAny || <option key={"any"} value="any">
                 {this.translateRoleOutlineOptionOrAny("any")}
             </option>}
-            {FACTIONS.map((faction) => {
-                return <option key={faction} value={JSON.stringify({type: "faction", faction: faction})}>
-                    {this.translateRoleOutlineOptionOrAny({type: "faction", faction: faction})}
-                </option>
-            })}
             {ROLE_SETS.map((roleSet) => {
                 return <option key={roleSet} value={JSON.stringify({type: "roleSet", roleSet: roleSet})}>
                         {this.translateRoleOutlineOptionOrAny({type: "roleSet", roleSet: roleSet})}
                 </option>
             })}
-            {Object.keys(ROLES).map((role) => {
+            {Object.keys(roleJsonData()).map((role) => {
                 return <option key={role} value={JSON.stringify({type: "role", role: role})}>
                         {this.translateRoleOutlineOptionOrAny({type: "role", role: role as Role})}
                 </option>

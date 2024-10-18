@@ -80,7 +80,7 @@ export function createGameManager(): GameManager {
                 GAME_MANAGER.state.roleList = lobbyState.roleList;
                 GAME_MANAGER.state.phaseTimes = lobbyState.phaseTimes;
                 GAME_MANAGER.state.enabledRoles = lobbyState.enabledRoles;
-                GAME_MANAGER.state.host = lobbyState.players.get(lobbyState.myId!)?.host ?? false;
+                GAME_MANAGER.state.host = lobbyState.players.get(lobbyState.myId!)?.ready === "host";
             }
         },
         setSpectatorGameState() {
@@ -122,7 +122,7 @@ export function createGameManager(): GameManager {
         },
         getMyHost() {
             if (gameManager.state.stateType === "lobby")
-                return gameManager.state.players.get(gameManager.state.myId!)?.host;
+                return gameManager.state.players.get(gameManager.state.myId!)?.ready === "host";
             if (gameManager.state.stateType === "game")
                 return gameManager.state.host;
             return undefined;
@@ -307,6 +307,13 @@ export function createGameManager(): GameManager {
                 name: name
             });
         },
+
+        sendReadyUpPacket(ready) {
+            this.server.sendPacket({
+                type: "readyUp",
+                ready: ready
+            });
+        },
         sendSendLobbyMessagePacket(text) {
             this.server.sendPacket({
                 type: "sendLobbyMessage",
@@ -480,15 +487,15 @@ export function createGameManager(): GameManager {
                 role: role
             });
         },
-        sendSetJournalistJournal(journal: string) {
+        sendSetReporterReport(report: string) {
             this.server.sendPacket({
-                type: "setJournalistJournal",
-                journal: journal,
+                type: "setReporterReport",
+                report: report,
             });
         },
-        sendSetJournalistJournalPublic(isPublic: boolean) {
+        sendSetReporterReportPublic(isPublic: boolean) {
             this.server.sendPacket({
-                type: "setJournalistJournalPublic",
+                type: "setReporterReportPublic",
                 public: isPublic,
             });
         },
@@ -532,12 +539,6 @@ export function createGameManager(): GameManager {
                 index: index
             });
         },
-        sendSetOjoAction(action) {
-            this.server.sendPacket({
-                type: "setOjoAction",
-                action: action
-            });
-        },
         sendSetPuppeteerAction(action) {
             this.server.sendPacket({
                 type: "setPuppeteerAction",
@@ -562,9 +563,9 @@ export function createGameManager(): GameManager {
                 role: role
             });
         },
-        sendSetStewardRoleChosen(role: Role | null) {
+        sendSetRoleChosen(role: Role | null) {
             this.server.sendPacket({
-                type: "setStewardRoleChosen",
+                type: "setRoleChosen",
                 role: role
             });
         },

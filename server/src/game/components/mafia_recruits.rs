@@ -1,9 +1,9 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    attack_power::AttackPower, chat::ChatMessageVariant, player::PlayerReference, resolution_state::ResolutionState, role::{
+    attack_power::AttackPower, chat::ChatMessageVariant, player::PlayerReference, game_conclusion::GameConclusion, role::{
         Priority, Role
-    }, role_list::Faction, tag::Tag, win_condition::WinCondition, Game
+    }, role_list::RoleSet, tag::Tag, win_condition::WinCondition, Game
 };
 
 use super::revealed_group::RevealedGroupID;
@@ -25,12 +25,12 @@ impl MafiaRecruits{
     pub fn recruit(game: &mut Game, player: PlayerReference)->bool{
         let mut recruiter_recruits = game.mafia_recruits().clone();
 
-        if player.role(game).faction() == Faction::Mafia {return false;}
+        if RevealedGroupID::Mafia.is_player_in_revealed_group(game, player) {return false;}
         if !recruiter_recruits.recruits.insert(player){return false;}
 
         game.set_recruiter_recruits(recruiter_recruits);
         RevealedGroupID::Mafia.add_player_to_revealed_group(game, player);
-        player.set_win_condition(game, WinCondition::ResolutionStateReached { win_if_any: vec![ResolutionState::Mafia].into_iter().collect() });
+        player.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any: vec![GameConclusion::Mafia].into_iter().collect() });
 
 
         for mafia in MafiaRecruits::mafia_and_recruits(game){
@@ -60,18 +60,15 @@ impl MafiaRecruits{
             .collect();
 
         for player in players{
-            player.try_night_kill(&recruiters, game, crate::game::grave::GraveKiller::Faction(Faction::Mafia), attack_power, false);
+            player.try_night_kill(&recruiters, game, crate::game::grave::GraveKiller::RoleSet(RoleSet::Mafia), attack_power, false);
         }
     }
 
     pub fn give_tags_and_labels(game: &mut Game){
-        let mafia_and_recruits = MafiaRecruits::mafia_and_recruits(game);
-
-        for player_a in mafia_and_recruits.clone() {
-            for player_b in mafia_and_recruits.clone() {
+        for player_a in RevealedGroupID::Mafia.players(game).clone() {
+            for player_b in Self::recruits(game) {
                 if 
-                    player_a.player_has_tag(game, player_b, Tag::PuppeteerMarionette) == 0 &&
-                    player_b.role(game).faction() != Faction::Mafia
+                    player_a.player_has_tag(game, player_b, Tag::PuppeteerMarionette) == 0
                 {
                     player_a.push_player_tag(game, player_b, Tag::PuppeteerMarionette);
                 }
@@ -91,7 +88,7 @@ impl MafiaRecruits{
     }
     pub fn mafia_members(game: &Game)->HashSet<PlayerReference>{
         PlayerReference::all_players(game)
-            .filter(|p|p.role(game).faction()==Faction::Mafia)
+            .filter(|p|RevealedGroupID::Mafia.is_player_in_revealed_group(game, *p))
             .map(|p|p.clone())
             .collect()
     }

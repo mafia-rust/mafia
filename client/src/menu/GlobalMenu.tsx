@@ -22,7 +22,7 @@ export default function GlobalMenu(): ReactElement {
             if (state.stateType === "game") {
                 return state.host
             } else {
-                return state.players.get(state.myId!)?.host
+                return state.players.get(state.myId!)?.ready === "host"
             }
         },
         ["lobbyClients", "playersHost", "gamePlayers"]

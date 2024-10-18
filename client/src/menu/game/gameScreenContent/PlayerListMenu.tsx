@@ -70,12 +70,13 @@ function useDayTargetedPlayers(): PlayerIndex[] {
             if (roleState.backup !== null) return [roleState.backup]
             break;
         case "jailor":
+        case "kidnapper":
             if (roleState.jailedTargetRef !== null) return [roleState.jailedTargetRef]
             break;
         case "medium":
             if (roleState.seancedTarget !== null) return [roleState.seancedTarget]
             break;
-        case "journalist":
+        case "reporter":
             if (roleState.interviewedTarget !== null) return [roleState.interviewedTarget]
             break;
         case "marksman":
@@ -199,7 +200,7 @@ export default function PlayerListMenu(): ReactElement {
         }
         {
             !GAME_MANAGER.getMySpectator() && 
-            enabledRoles.includes("rabbleRouser") && 
+            enabledRoles.includes("rabblerouser") && 
             phaseState.type !== "night" &&
             phaseState.type !== "obituary" &&
             <details className="role-specific-colors small-role-specific-menu" open={pitchforkVoteOpen}>

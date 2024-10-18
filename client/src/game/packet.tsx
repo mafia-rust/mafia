@@ -4,7 +4,6 @@ import { ChatMessage } from "../components/ChatMessage"
 import { RoleList, RoleOutline } from "./roleListState.d"
 import { Role, RoleState } from "./roleState.d"
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu"
-import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu"
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu"
 import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu"
 
@@ -54,6 +53,9 @@ export type ToClientPacket = {
 } | {
     type: "playersHost",
     hosts: LobbyClientID[],
+} | {
+    type: "playersReady",
+    ready: LobbyClientID[],
 } | {
     type: "playersLostConnection",
     lostConnection: LobbyClientID[],
@@ -192,6 +194,9 @@ export type ToServerPacket = {
     type: "setName", 
     name: string
 } | {
+    type: "readyUp", 
+    ready: boolean
+} | {
     type: "sendLobbyMessage",
     text: string
 } | {
@@ -279,10 +284,10 @@ export type ToServerPacket = {
     type: "setWildcardRole",
     role: Role
 } | {
-    type: "setJournalistJournal",
-    journal: string
+    type: "setReporterReport",
+    report: string
 } | {
-    type: "setJournalistJournalPublic",
+    type: "setReporterReportPublic",
     public: boolean
 } | {
     type: "setConsortOptions",
@@ -302,9 +307,6 @@ export type ToServerPacket = {
     type: "setAuditorChosenOutline",
     index: number
 } | {
-    type: "setOjoAction",
-    action: OjoAction
-} | {
     type: "setPuppeteerAction",
     action: PuppeteerAction
 } | {
@@ -317,7 +319,7 @@ export type ToServerPacket = {
     type: "retrainerRetrain",
     role: Role
 } | {
-    type: "setStewardRoleChosen",
+    type: "setRoleChosen",
     role: Role | null
 } | {
     type: "voteFastForwardPhase",

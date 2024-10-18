@@ -1,13 +1,13 @@
 mod kit;
-use std::vec;
+use std::{ops::Deref, vec};
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::{components::cult::CultAbility, role::{armorsmith::Armorsmith, flower_girl::FlowerGirl, scarecrow::Scarecrow}};
+use mafia_server::game::{components::{cult::CultAbility, revealed_group::RevealedGroupID}, role::{armorsmith::Armorsmith, ojo::Ojo, recruiter::Recruiter, scarecrow::Scarecrow, tally_clerk::TallyClerk, warper::Warper}, role_list::RoleSet};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
-    role_list::Faction,
+     
     player::PlayerReference,
     tag::Tag,
     verdict::Verdict,
@@ -36,7 +36,7 @@ pub use mafia_server::game::{
         veteran::Veteran,
         deputy::Deputy,
         marksman::Marksman,
-        rabble_rouser::RabbleRouser,
+        rabblerouser::Rabblerouser,
         
         transporter::Transporter,
         escort::Escort,
@@ -70,7 +70,6 @@ pub use mafia_server::game::{
         zealot::Zealot,
         
         arsonist::Arsonist,
-        ojo::{Ojo, OjoAction},
         pyrolisk::Pyrolisk,
         puppeteer::{Puppeteer, PuppeteerAction},
         fiends_wildcard::FiendsWildcard, 
@@ -106,6 +105,39 @@ fn medium_receives_dead_messages_from_jail() {
             message_sender: MessageSender::Player { player: townie.index() }
         }
     );
+}
+
+#[test]
+fn no_unwanted_tags() {
+    kit::scenario!(game in Dusk 1 where
+        jester: Jester,
+        townie: Detective,
+        mafioso: Godfather,
+        mortician: Mortician,
+        politician: Politician,
+        spy: Spy,
+        lookout: Lookout,
+        detective: Detective,
+        arsonist: Arsonist,
+        vigilante: Vigilante,
+        puppeteer: Puppeteer,
+        warper: Warper,
+        witch: Witch
+    );
+
+    assert!(jester.get_player_tags().is_empty());
+    assert!(townie.get_player_tags().is_empty());
+    assert!(mafioso.get_player_tags().is_empty());
+    assert!(mortician.get_player_tags().is_empty());
+    assert!(politician.get_player_tags().is_empty());
+    assert!(spy.get_player_tags().is_empty());
+    assert!(lookout.get_player_tags().is_empty());
+    assert!(detective.get_player_tags().is_empty());
+    assert!(arsonist.get_player_tags().is_empty());
+    assert!(vigilante.get_player_tags().is_empty());
+    assert!(puppeteer.get_player_tags().is_empty());
+    assert!(warper.get_player_tags().is_empty());
+    assert!(witch.get_player_tags().is_empty());
 }
 
 #[test]
@@ -440,9 +472,9 @@ fn psychic_auras(){
 }
 
 #[test]
-fn flower_girl_basic(){
+fn tally_clerk_basic(){
     kit::scenario!(game in Nomination 2 where
-        fg: FlowerGirl,
+        fg: TallyClerk,
         townie: Detective,
         mafioso: Mafioso
     );
@@ -458,7 +490,7 @@ fn flower_girl_basic(){
     game.skip_to(Obituary, 3);
     assert_contains!(
         fg.get_messages_after_night(1),
-        ChatMessageVariant::FlowerGirlResult { evil_count: 1 }
+        ChatMessageVariant::TallyClerkResult { evil_count: 1 }
     );
 }
 
@@ -1043,7 +1075,7 @@ fn grave_contains_multiple_killers() {
             day_number: 2,
             information: GraveInformation::Normal{
                 role: Role::Detective,
-                death_cause: GraveDeathCause::Killers(vec![GraveKiller::Faction(Faction::Mafia), GraveKiller::Role(Role::Vigilante)]),
+                death_cause: GraveDeathCause::Killers(vec![GraveKiller::RoleSet(RoleSet::Mafia), GraveKiller::Role(Role::Vigilante)]),
                 will: "".to_string(),
                 death_notes: vec![],
             }
@@ -1067,7 +1099,7 @@ fn grave_contains_multiple_killers_roles() {
         Doomsayer { guesses: [
             (PlayerReference::new(&game, 0).expect("that player doesnt exist"), DoomsayerGuess::Doctor),
             (PlayerReference::new(&game, 1).expect("that player doesnt exist"), DoomsayerGuess::Doctor),
-            (PlayerReference::new(&game, 2).expect("that player doesnt exist"), DoomsayerGuess::Mafia)
+            (PlayerReference::new(&game, 2).expect("that player doesnt exist"), DoomsayerGuess::NonTown)
         ],
         won: doom.get_won_game()
     }));
@@ -1082,7 +1114,7 @@ fn grave_contains_multiple_killers_roles() {
             day_number: 2,
             information: GraveInformation::Normal{
                 role: Role::Doctor,
-                death_cause: GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Doomsayer), GraveKiller::Faction(Faction::Mafia), GraveKiller::Role(Role::Vigilante)]),
+                death_cause: GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Doomsayer), GraveKiller::RoleSet(RoleSet::Mafia), GraveKiller::Role(Role::Vigilante)]),
                 will: "".to_string(),
                 death_notes: vec![],
             }
@@ -1388,7 +1420,9 @@ fn bouncer_ojo_block() {
     );
 
     ojo.set_role_state(RoleState::Ojo(Ojo{
-        chosen_action: OjoAction::Kill { role: Role::Detective }
+        role_chosen: Some(Role::Detective),
+        chosen_outline: None,
+        previously_given_results: Vec::new(),
     }));
     b.set_night_selection_single(det1);
 
@@ -1398,6 +1432,11 @@ fn bouncer_ojo_block() {
     assert!(det2.alive());
     assert!(det3.alive());
     assert!(det4.alive());
+
+    assert_contains!(
+        ojo.get_messages_after_last_message(ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 1 }),
+        ChatMessageVariant::Wardblocked
+    );
 }
 
 #[test]
@@ -1479,7 +1518,7 @@ fn cult_alternates() {
     assert!(apostle.set_night_selection_single(b));
     game.next_phase();
     assert!(b.alive());
-    assert!(b.role_state().role().faction() == Faction::Cult);
+    assert!(RevealedGroupID::Cult.is_player_in_revealed_group(game.deref(), b.player_ref()));
 
     //zealot kills, apostle waits
     game.skip_to(Night, 2);
@@ -1490,7 +1529,7 @@ fn cult_alternates() {
     game.next_phase();
     assert!(!c.alive());
     assert!(d.alive());
-    assert!(d.role_state().role().faction() != Faction::Cult);
+    assert!(!RevealedGroupID::Cult.is_player_in_revealed_group(game.deref(), d.player_ref()));
 
     //zealot waits, apostle converts
     game.skip_to(Night, 3);
@@ -1500,7 +1539,7 @@ fn cult_alternates() {
     game.next_phase();
     assert!(e.alive());
     assert!(d.alive());
-    assert!(d.role_state().role().faction() == Faction::Cult);
+    assert!(RevealedGroupID::Cult.is_player_in_revealed_group(game.deref(), d.player_ref()));
 
     //zealot kills, apostle waits
     game.skip_to(Night, 4);
@@ -1661,6 +1700,53 @@ fn vigilante_shoots_marionette(){
     assert!(vigilante.alive());
 }
 
+#[test]
+fn recruits_dont_get_converted_to_mk(){
+    kit::scenario!(game in Night 2 where
+        recruiter: Recruiter,
+        mortician: Mortician,
+        vigi: Vigilante,
+        a: Detective,
+        b: Detective,
+        c: Detective,
+        d: Detective
+    );
+
+    assert!(vigi.set_night_selection_single(recruiter));
+
+    game.skip_to(Night, 3);
+
+    assert!(!recruiter.alive());
+    assert!(mortician.role() == Role::Recruiter);
+    assert!(vigi.role() == Role::Vigilante);
+
+    assert!(mortician.set_night_selection_single(a));
+    assert!(vigi.set_night_selection_single(mortician));
+
+    game.next_phase();
+
+    //tag checks
+    assert!(mortician.get_player_tags().get(&a.player_ref()).unwrap().contains(&Tag::PuppeteerMarionette));
+    assert!(mortician.get_player_tags().get(&recruiter.player_ref()).is_none());
+    assert!(recruiter.get_player_tags().get(&a.player_ref()).unwrap().contains(&Tag::PuppeteerMarionette));
+    assert!(recruiter.get_player_tags().get(&mortician.player_ref()).is_none());
+    assert!(a.get_player_tags().get(&recruiter.player_ref()).is_none());
+    assert!(a.get_player_tags().get(&mortician.player_ref()).is_none());
+
+    assert!(!mortician.alive());
+    assert!(a.alive());
+    assert!(a.role() == Role::Detective);
+    assert!(mortician.role() == Role::Recruiter);
+    assert!(vigi.role() == Role::Vigilante);
+
+    //make sure recruiter lost
+    assert!(!recruiter.get_won_game());
+    assert!(!mortician.get_won_game());
+    assert!(!a.get_won_game());
+    assert!(b.get_won_game());
+    assert!(c.get_won_game());
+    assert!(d.get_won_game());
+}
 
 #[test]
 fn arsonist_ignites_and_aura(){
@@ -1934,28 +2020,22 @@ fn ojo_transporter(){
     );
 
     ojo.set_role_state(
-        RoleState::Ojo(Ojo{chosen_action:OjoAction::See{role:Role::Philosopher} })
+        RoleState::Ojo(Ojo{
+            role_chosen: Some(Role::Philosopher),
+            chosen_outline: None,
+            previously_given_results: Vec::new(),
+        })
     );
 
     transporter.set_night_selection(vec![player1, player2]);
     gf.set_night_selection_single(ojo);
 
-    game.next_phase();
+    game.next_phase(); 
 
     assert!(player1.alive());
-    assert!(player2.alive());
-    assert!(player3.alive());
+    assert!(!player2.alive());
+    assert!(!player3.alive());
     assert!(gf.alive());
-
-    assert_contains!(
-        ojo.get_messages(), ChatMessageVariant::PlayersRoleRevealed{player: player2.index(), role: Role::Detective}
-    );
-    assert_contains!(
-        ojo.get_messages(), ChatMessageVariant::PlayersRoleRevealed{player: player3.index(), role: Role::Philosopher}
-    );
-    assert_contains!(
-        ojo.get_messages(), ChatMessageVariant::PlayersRoleRevealed{player: gf.index(), role: Role::Godfather}
-    );
 }
 
 #[test]
@@ -2085,6 +2165,38 @@ fn witch_leaves_by_winning_puppeteer(){
     assert!(pup.alive());
 }
 
+#[test]
+fn armorsmith_doesnt_get_wardblocked_when_warded(){
+    kit::scenario!(game in Night 2 where
+        gf: Godfather,
+        armor: Armorsmith,
+        bouncer: Bouncer
+    );
+
+    assert!(gf.set_night_selection_single(bouncer));
+    assert!(bouncer.set_night_selection_single(armor));
+    assert!(armor.set_night_selection_single(armor));
+
+    game.next_phase();
+
+    assert!(gf.alive());
+    assert!(armor.alive());
+    assert!(bouncer.alive());
+
+    assert_not_contains!(
+        armor.get_messages_after_last_message(
+            ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 2 }
+        ),
+        ChatMessageVariant::Wardblocked
+    );
+    
+    assert_contains!(
+        bouncer.get_messages_after_last_message(
+            ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 2 }
+        ),
+        ChatMessageVariant::YouWereProtected
+    );
+}
 
 #[test]
 fn godfather_dies_to_veteran_after_possessed(){

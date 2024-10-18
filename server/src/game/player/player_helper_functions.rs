@@ -11,8 +11,8 @@ use crate::{game::{
         revealed_group::RevealedGroupID
     },
     event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch},
-    grave::{Grave, GraveKiller, GraveReference}, resolution_state::ResolutionState,
-    role::{Priority, Role, RoleState},
+    grave::{Grave, GraveKiller, GraveReference}, game_conclusion::GameConclusion,
+    role::{chronokaiser::Chronokaiser, Priority, Role, RoleState},
     visit::Visit, win_condition::WinCondition, Game
 }, packet::ToClientPacket};
 
@@ -194,6 +194,8 @@ impl PlayerReference{
         
         BeforeRoleSwitch::new(*self, old.clone(), new_role_data.clone()).invoke(game);
 
+        
+
         self.set_role_state(game, new_role_data.clone());
         self.on_role_creation(game);
         if new_role_data.role() == self.role(game) {
@@ -205,10 +207,10 @@ impl PlayerReference{
         self.set_win_condition(game, new_role_data.clone().default_win_condition());
         
         RevealedGroupID::set_player_revealed_groups(
-            new_role_data.clone().default_revealed_groups(),
-            game,
-            *self
+            new_role_data.clone().default_revealed_groups(), 
+            game, *self
         );
+        
     }
     pub fn increase_defense_to(&self, game: &mut Game, defense: DefensePower){
         if defense.is_stronger(self.night_defense(game)) {
@@ -277,8 +279,8 @@ impl PlayerReference{
     }
     pub fn get_won_game(&self, game: &Game) -> bool {
         match self.win_condition(game){
-            WinCondition::ResolutionStateReached { win_if_any } => {
-                if let Some(resolution) = ResolutionState::game_is_over(game) {
+            WinCondition::GameConclusionReached { win_if_any } => {
+                if let Some(resolution) = GameConclusion::game_is_over(game) {
                     win_if_any.contains(&resolution)
                 } else {
                     false
@@ -290,6 +292,7 @@ impl PlayerReference{
                     RoleState::Doomsayer(r) => r.won(),
                     RoleState::Revolutionary(r) => r.won(),
                     RoleState::Politician(r) => r.won(),
+                    RoleState::Chronokaiser(_) => Chronokaiser::won(game, *self),
                     RoleState::Martyr(r) => r.won(),
                     RoleState::Death(r) => r.won(),
                     _ => false
@@ -300,7 +303,7 @@ impl PlayerReference{
     pub fn keeps_game_running(&self, game: &Game) -> bool {
         if MafiaRecruits::is_recruited(game, *self) {return false;}
         if PuppeteerMarionette::is_marionette(game, *self) {return false;}
-        ResolutionState::keeps_game_running(self.role(game))
+        GameConclusion::keeps_game_running(self.role(game))
     }
 
     /*

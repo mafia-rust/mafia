@@ -2,7 +2,6 @@ import { WikiArticleLink } from "../components/WikiArticleLink";
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
-import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
 import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player, ModifierType } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
@@ -74,6 +73,7 @@ export type GameManager = {
     sendKickPlayerPacket(playerId: number): void;
     sendSetSpectatorPacket(spectator: boolean): void;
     sendSetNamePacket(name: string): void;
+    sendReadyUpPacket(ready: boolean): void;
     sendSendLobbyMessagePacket(text: string): void;
     sendSetLobbyNamePacket(name: string): void;
     sendStartGamePacket(): Promise<boolean>;
@@ -104,8 +104,8 @@ export type GameManager = {
     ]): void;
     sendSetKiraGuess(guesses: Record<PlayerIndex, KiraGuess>): void;
     sendSetWildcardRoleOutline(roleOutline: Role): void;
-    sendSetJournalistJournal(journal: string): void;
-    sendSetJournalistJournalPublic(isPublic: boolean): void;
+    sendSetReporterReport(report: string): void;
+    sendSetReporterReportPublic(isPublic: boolean): void;
     sendSetConsortOptions(
         roleblock: boolean, 
         youWereRoleblockedMessage: boolean, 
@@ -118,12 +118,11 @@ export type GameManager = {
     sendSetForgerWill(role: Role | null, will: string): void;
     sendSetCounterfeiterAction(action: "forge" | "noForge"): void;
     sendSetAuditorChosenOutline(index: number): void;
-    sendSetOjoAction(action: OjoAction): void;
     sendSetPuppeteerAction(action: PuppeteerAction): void;
     sendSetRecruiterAction(action: RecruiterAction): void;
     sendSetErosAction(action: "loveLink" | "kill"): void;
     sendRetrainerRetrain(role: Role): void;
-    sendSetStewardRoleChosen(role: Role | null): void;
+    sendSetRoleChosen(role: Role | null): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;
     sendForfeitVotePacket(forfeit: boolean): void;

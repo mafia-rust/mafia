@@ -1,7 +1,7 @@
 import React, { ReactElement, useCallback, useEffect, useState } from "react";
 import translate from "../game/lang";
 import "./wiki.css";
-import { Role, getFactionFromRole } from "../game/roleState.d";
+import { Role, getMainRoleSetFromRole } from "../game/roleState.d";
 import GAME_MANAGER, { regEscape } from "..";
 import WikiArticle, { getSearchStrings } from "./WikiArticle";
 import { ARTICLES, WikiArticleLink, getArticleTitle } from "./WikiArticleLink";
@@ -154,7 +154,7 @@ function WikiSearchResults(props: {
 
             if(articleType === "role"){
                 const role = page.split("/")[1] as Role;
-                const faction = getFactionFromRole(role);
+                const faction = getMainRoleSetFromRole(role);
 
                 if(faction !== lastArticleRoleFaction){
                     searchResultsHtml.push(<h3 key={faction} className="wiki-search-divider"><StyledText>{translate(faction)}</StyledText></h3>);

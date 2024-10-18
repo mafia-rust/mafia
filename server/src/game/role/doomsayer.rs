@@ -5,7 +5,7 @@ use crate::game::chat::ChatMessageVariant;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::Game;
 
 use super::jester::Jester;
@@ -25,13 +25,13 @@ pub struct ClientRoleState {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub enum DoomsayerGuess{
-    Mafia, #[default] Neutral, Fiends, Cult,
+    #[default] NonTown,
 
     Jailor, Villager,
     // No TI
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith, Steward,
-    Vigilante, Veteran, Marksman, Deputy, RabbleRouser,
-    Escort, Medium, Retributionist, Journalist, Mayor, Transporter
+    Vigilante, Veteran, Marksman, Deputy, Rabblerouser,
+    Escort, Medium, Retributionist, Reporter, Mayor, Transporter
 }
 impl DoomsayerGuess{
     fn convert_to_guess(role: Role)->Option<DoomsayerGuess>{
@@ -41,7 +41,7 @@ impl DoomsayerGuess{
 
             Role::Detective | Role::Lookout | Role::Spy | 
             Role::Tracker | Role::Philosopher | Role::Psychic | 
-            Role::Auditor | Role::Snoop | Role::Gossip | Role::FlowerGirl => None, 
+            Role::Auditor | Role::Snoop | Role::Gossip | Role::TallyClerk => None, 
 
             Role::Doctor => Some(DoomsayerGuess::Doctor),
             Role::Bodyguard => Some(DoomsayerGuess::Bodyguard),
@@ -55,37 +55,39 @@ impl DoomsayerGuess{
             Role::Veteran => Some(DoomsayerGuess::Veteran),
             Role::Marksman => Some(DoomsayerGuess::Marksman),
             Role::Deputy => Some(DoomsayerGuess::Deputy),
-            Role::RabbleRouser => Some(DoomsayerGuess::RabbleRouser),
+            Role::Rabblerouser => Some(DoomsayerGuess::Rabblerouser),
 
             Role::Escort => Some(DoomsayerGuess::Escort),
             Role::Medium => Some(DoomsayerGuess::Medium),
             Role::Retributionist => Some(DoomsayerGuess::Retributionist),
-            Role::Journalist => Some(DoomsayerGuess::Journalist),
+            Role::Reporter => Some(DoomsayerGuess::Reporter),
             Role::Mayor => Some(DoomsayerGuess::Mayor),
             Role::Transporter => Some(DoomsayerGuess::Transporter),
 
             //Mafia
             Role::Godfather | Role::Mafioso | Role::Eros |
-            Role::Counterfeiter | Role::Retrainer | Role::Recruiter | Role::Imposter | Role::MafiaKillingWildcard |
+            Role::Counterfeiter | Role::Retrainer | Role::Recruiter | Role::Impostor | Role::MafiaKillingWildcard |
             Role::MadeMan |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::MafiaWitch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 
-            Role::Cupid | Role::MafiaSupportWildcard => Some(DoomsayerGuess::Mafia),
+            Role::Cupid | Role::MafiaSupportWildcard => Some(DoomsayerGuess::NonTown),
 
             //Neutral
             Role::Jester | Role::Revolutionary | Role::Politician |
-            Role::Doomsayer | Role::Death | Role::Witch | Role::Scarecrow | Role::Warper |
-            Role::Wildcard | Role::TrueWildcard => Some(DoomsayerGuess::Neutral),
+            Role::Doomsayer | Role::Death | 
+            Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper | Role::Chronokaiser |
+            Role::Wildcard | Role::TrueWildcard | Role::Drunk => Some(DoomsayerGuess::NonTown),
             Role::Martyr => None,
+           
 
             //Fiends
             Role::Arsonist | Role::Werewolf | 
             Role::Ojo | Role::Puppeteer | Role::Pyrolisk | Role::Kira |
-            Role::FiendsWildcard => Some(DoomsayerGuess::Fiends),
+            Role::FiendsWildcard => Some(DoomsayerGuess::NonTown),
             
             //Cult
-            Role::Apostle | Role::Disciple | Role::Zealot => Some(DoomsayerGuess::Cult),
+            Role::Apostle | Role::Disciple | Role::Zealot => Some(DoomsayerGuess::NonTown),
         }
     }
     fn guess_matches_role(&self, role: Role)->bool{
@@ -97,7 +99,7 @@ impl DoomsayerGuess{
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

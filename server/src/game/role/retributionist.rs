@@ -1,14 +1,16 @@
 use serde::Serialize;
 
+use crate::game::components::detained::Detained;
+use crate::game::role_list::RoleSet;
 use crate::game::{attack_power::DefensePower, phase::PhaseType};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 use crate::game::Game;
 
 use super::{GetClientRoleState, Priority, RoleState, RoleStateImpl};
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
@@ -35,7 +37,7 @@ impl RoleStateImpl for Retributionist {
         }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        !actor_ref.night_jailed(game) &&
+        !Detained::is_detained(game, actor_ref) &&
         actor_ref.alive(game) &&
         ((
             actor_ref.selection(game).is_empty() &&
@@ -43,7 +45,7 @@ impl RoleStateImpl for Retributionist {
             game.graves.iter().any(|grave|
                 grave.player == target_ref && 
                 if let Some(role) = grave.role(){
-                    role.faction() == Faction::Town
+                    RoleSet::Town.get_roles().contains(&role)
                 }else{false}
             ) &&
             (self.used_bodies.iter().filter(|p| **p == target_ref).count() < 2)

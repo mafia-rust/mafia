@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::{attack_power::DefensePower, role_list::Faction};
+use crate::game::attack_power::DefensePower;
 use super::RoleStateImpl;
 
 #[derive(Clone, Debug, Default, Serialize)]
@@ -8,7 +8,7 @@ pub struct Disciple;
 
 pub type ClientRoleState = Disciple;
 
-pub(super) const FACTION: Faction = Faction::Cult;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 

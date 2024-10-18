@@ -3,7 +3,17 @@ use std::collections::HashMap;
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender}, components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{imposter::Imposter, kira::{Kira, KiraGuess}, mayor::Mayor, puppeteer::PuppeteerAction, recruiter::RecruiterAction, retrainer::Retrainer, Role, RoleState}, role_list::{Faction, RoleSet}, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
+    chat::{ChatGroup, ChatMessageVariant, MessageSender},
+    components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward,
+    phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference},
+    role::{
+        impostor::Impostor, kira::{Kira, KiraGuess},
+        mayor::Mayor, puppeteer::PuppeteerAction, recruiter::RecruiterAction,
+        retrainer::Retrainer,
+        Role, RoleState
+    }, 
+    role_list::RoleSet, 
+    spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
 
@@ -76,8 +86,8 @@ impl Game {
                             );
                             target_message_sent = true;
                         },
-                        ChatGroup::Jail => {
-                            if sender_player_ref.role(self) == Role::Jailor {
+                        ChatGroup::Jail | ChatGroup::Kidnapped => {
+                            if sender_player_ref.role(self) == Role::Jailor || sender_player_ref.role(self) == Role::Kidnapper {
                                 self.add_message_to_chat_group(chat_group,
                                     ChatMessageVariant::JailorDecideExecute {
                                         target: target_ref_list.first().map(|p|p.index())
@@ -119,14 +129,19 @@ impl Game {
                                 Some(MessageSender::Jailor)
                             }else{None}
                         },
+                        ChatGroup::Kidnapped => {
+                            if sender_player_ref.role(self) == Role::Kidnapper {
+                                Some(MessageSender::Jailor)
+                            }else{None}
+                        },
                         ChatGroup::Dead => {
                             if sender_player_ref.alive(self) {
                                 Some(MessageSender::LivingToDead{ player: sender_player_index })
                             }else{None}
                         },
                         ChatGroup::Interview => {
-                            if sender_player_ref.role(self) == Role::Journalist {
-                                Some(MessageSender::Journalist)
+                            if sender_player_ref.role(self) == Role::Reporter {
+                                Some(MessageSender::Reporter)
                             }else{None}
                         },
                         _ => {None}
@@ -249,7 +264,7 @@ impl Game {
                         sender_player_ref.set_role_state(self, RoleState::MafiaKillingWildcard(mafia_wild_card));
                     }
                     RoleState::FiendsWildcard(mut fiends_wild_card) => {
-                        if role.faction() == Faction::Fiends {
+                        if RoleSet::Fiends.get_roles().contains(&role) {
                             fiends_wild_card.role = role;
                         }
                         sender_player_ref.set_role_state(self, RoleState::FiendsWildcard(fiends_wild_card));
@@ -257,16 +272,16 @@ impl Game {
                     _ => {}
                 }
             }
-            ToServerPacket::SetJournalistJournal { journal } => {
-                if let RoleState::Journalist(mut journalist) = sender_player_ref.role_state(self).clone(){
-                    journalist.journal = journal;
-                    sender_player_ref.set_role_state(self, RoleState::Journalist(journalist));
+            ToServerPacket::SetReporterReport { report } => {
+                if let RoleState::Reporter(mut reporter) = sender_player_ref.role_state(self).clone(){
+                    reporter.report = report;
+                    sender_player_ref.set_role_state(self, RoleState::Reporter(reporter));
                 }
             }
-            ToServerPacket::SetJournalistJournalPublic { public } => {
-                if let RoleState::Journalist(mut journalist) = sender_player_ref.role_state(self).clone(){
-                    journalist.public = public;
-                    sender_player_ref.set_role_state(self, RoleState::Journalist(journalist));
+            ToServerPacket::SetReporterReportPublic { public } => {
+                if let RoleState::Reporter(mut reporter) = sender_player_ref.role_state(self).clone(){
+                    reporter.public = public;
+                    sender_player_ref.set_role_state(self, RoleState::Reporter(reporter));
                 }
             }
             ToServerPacket::SetConsortOptions { 
@@ -315,26 +330,34 @@ impl Game {
             ToServerPacket::SetAuditorChosenOutline { index } => {
                 if !sender_player_ref.alive(self) {break 'packet_match;}
 
-                if let RoleState::Auditor(mut auditor) = sender_player_ref.role_state(self).clone(){
-
-                    if auditor.chosen_outline.is_some_and(|f|f == index) {
-                        auditor.chosen_outline = None;
+                match sender_player_ref.role_state(self).clone() {
+                    RoleState::Auditor(mut auditor)=>{
+                        if auditor.chosen_outline.is_some_and(|f|f == index) {
+                            auditor.chosen_outline = None;
+                        }
+    
+                        if  self.roles_originally_generated.get(index as usize).is_some() && 
+                            !auditor.previously_given_results.iter().any(|(i, _)| *i == index)
+                        {
+                            auditor.chosen_outline = Some(index);
+                        }
+    
+                        sender_player_ref.set_role_state(self, auditor);
+                    }
+                    RoleState::Ojo(mut ojo) => {
+                    if ojo.chosen_outline.is_some_and(|f|f == index) {
+                        ojo.chosen_outline = None;
                     }
 
                     if  self.roles_originally_generated.get(index as usize).is_some() && 
-                        !auditor.previously_given_results.iter().any(|(i, _)| *i == index)
+                        !ojo.previously_given_results.iter().any(|(i, _)| *i == index)
                     {
-                        auditor.chosen_outline = Some(index);
+                        ojo.chosen_outline = Some(index);
                     }
 
-                    sender_player_ref.set_role_state(self, RoleState::Auditor(auditor));
-                }
-            },
-            ToServerPacket::SetOjoAction { action } => {
-                if let RoleState::Ojo(mut ojo) = sender_player_ref.role_state(self).clone(){
-                    ojo.chosen_action = action.clone();
-                    sender_player_ref.set_role_state(self, RoleState::Ojo(ojo));
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::OjoActionChosen { action });
+                    sender_player_ref.set_role_state(self, ojo);
+                    }
+                    _ => {}
                 }
             },
             ToServerPacket::SetPuppeteerAction { action } => {
@@ -378,17 +401,25 @@ impl Game {
                     RoleState::Retrainer(..) => {
                         Retrainer::retrain(self, sender_player_ref, role);
                     },
-                    RoleState::Imposter(..) => {
-                        Imposter::set_role(self, sender_player_ref, role);
+                    RoleState::Impostor(..) => {
+                        Impostor::set_role(self, sender_player_ref, role);
                     },
                     _ => {}
                 }
             },
-            ToServerPacket::SetStewardRoleChosen { role } => {
-                if let RoleState::Steward(mut steward) = sender_player_ref.role_state(self).clone(){
-                    steward.role_chosen = role;
-                    sender_player_ref.set_role_state(self, RoleState::Steward(steward));
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::StewardRoleChosen { role });
+            ToServerPacket::SetRoleChosen { role } => {
+                match sender_player_ref.role_state(self).clone() {
+                    RoleState::Steward(mut steward) => {
+                        steward.role_chosen = role;
+                        sender_player_ref.set_role_state(self, steward);
+                        sender_player_ref.add_private_chat_message(self, ChatMessageVariant::RoleChosen { role });
+                    },
+                    RoleState::Ojo(mut ojo) => {
+                        ojo.role_chosen = role;
+                        sender_player_ref.set_role_state(self, ojo);
+                        sender_player_ref.add_private_chat_message(self, ChatMessageVariant::RoleChosen { role });
+                    },
+                    _ => {}
                 }
             },
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {

@@ -1,15 +1,16 @@
 use serde::Serialize;
 
+use crate::game::components::confused::Confused;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
-use crate::game::resolution_state::ResolutionState;
+use crate::game::game_conclusion::GameConclusion;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 use crate::game::Game;
 
 use super::{Priority, RoleStateImpl};
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
@@ -23,8 +24,14 @@ impl RoleStateImpl for Detective {
 
         if let Some(visit) = actor_ref.night_visits(game).first(){
             
+            let suspicious = if Confused::is_intoxicated(game, actor_ref) {
+                false
+            }else{
+                Detective::player_is_suspicious(game, visit.target)
+            };
+
             let message = ChatMessageVariant::SheriffResult {
-                suspicious: Detective::player_is_suspicious(game, visit.target)
+                suspicious
             };
             
             actor_ref.push_night_message(game, message);
@@ -46,7 +53,7 @@ impl Detective {
         }else if player_ref.has_innocent_aura(game){
             false
         }else{
-            !player_ref.win_condition(game).can_win_when_resolution_state_reached(ResolutionState::Town)
+            !player_ref.win_condition(game).can_win_when_resolution_state_reached(GameConclusion::Town)
         }
     }
 }

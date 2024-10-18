@@ -1,7 +1,6 @@
 import { ReactElement } from "react"
-import { Role } from "../game/roleState.d"
+import { Role, roleJsonData } from "../game/roleState.d"
 import React from "react"
-import ROLES from "../resources/roles.json"
 import translate from "../game/lang"
 
 
@@ -26,7 +25,7 @@ export default function RoleDropdown(props: RoleDropdownProps): ReactElement {
         }
     >{
         (props.canChooseNone ? [<option value={"none"} key="none">{translate("none")}</option>] : []).concat(
-            Object.keys(ROLES)
+            Object.keys(roleJsonData())
                 .filter((role)=>
                     props.enabledRoles === undefined ||
                     props.enabledRoles.includes(role as Role)
