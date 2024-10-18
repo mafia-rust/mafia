@@ -125,10 +125,7 @@ impl RoleStateImpl for Kidnapper {
                             RoleState::Jailor(jailor_ref) => jailor_ref.jailed_target_ref == Some(jailed_ref),
                             _ => false
                         }
-                    ) &&
-                    //you cant jail a jailor
-                    jailed_ref.role(game) != Role::Jailor &&
-                    jailed_ref.role(game) != Role::Kidnapper
+                    )
                     {
                 
                         Detained::add_detain(game, jailed_ref);
