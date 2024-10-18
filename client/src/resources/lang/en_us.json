@@ -1120,7 +1120,7 @@
     "wiki.article.standard.confused.title:var.0": "Confuses",
     "wiki.article.standard.confused.title:var.1": "Confusing",
     "wiki.article.standard.confused.title:var.2": "Confuse",
-    "wiki.article.standard.confused.text": "The role of a player who is confused might not function correctly. Confused affects each role differently. You might not be told that you are confused.\n How this affects every role:\n   - Snoop: You are always told that you can't tell\n   - Detective: You are always told innocent\n   - Philosopher: You are always told friends\n   - Gossip: You are always told that your target didn't visit an enemy",
+    "wiki.article.standard.confused.text": "The role of a player who is confused might not function correctly. Confused affects each role differently. You might not be told that you are confused.\n How this affects every role:\n   - Snoop: You are always told that you can't tell\n   - Detective: You are always told innocent\n   - Philosopher: You are always told friends\n   - Gossip: You are always told that your target didn't visit an enemy\n   - Psychic: You are told a random list of 3 players for your evil vision, You are told a random list of 2 players for your good vision.",
     "wiki.article.standard.marionette.title": "Marionette",
     "wiki.article.standard.marionette.title:var.0": "Marionettes",
     "wiki.article.standard.marionette.title:var.1": "Puppet",
@@ -1524,7 +1524,7 @@
     "wiki.article.role.martyr.attributes":"* When you have zero bullets left, you leave town and lose\n* You have a basic attack",
     "wiki.article.role.martyr.extra":"* When you visit a player while you have zero bullets left you will not attack them\n* You're an ex-cultist, they rejected you because you told the truth",
 
-    "wiki.article.role.drunk.guide": "Before the game starts, whoever gets this role switches roles without being told, and they become confused until the end of the game. Their role switches to either Detective, Philosopher, Snoop, or Gossip\n This means that if you got one of those roles, you could be confused and not even know it.\n The drunk is a town loyalist, so you still win with town.",
+    "wiki.article.role.drunk.guide": "Before the game starts, whoever gets this role switches roles without being told, and they become confused until the end of the game. Their role switches to either Detective, Philosopher, Snoop, Gossip, or Psychic\n This means that if you got one of those roles, you could be confused and not even know it.\n The drunk is a town loyalist, so you still win with town.",
     "wiki.article.role.drunk.abilities": "",
     "wiki.article.role.drunk.attributes": "",
     "wiki.article.role.drunk.extra": "",
