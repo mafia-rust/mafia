@@ -1524,7 +1524,7 @@
     "wiki.article.role.martyr.attributes":"* When you have zero bullets left, you leave town and lose\n* You have a basic attack",
     "wiki.article.role.martyr.extra":"* When you visit a player while you have zero bullets left you will not attack them\n* You're an ex-cultist, they rejected you because you told the truth",
 
-    "wiki.article.role.drunk.guide": "Before the game starts, whoever gets this role switches roles without being told, and they become confused until the end of the game. Their role switches to either Detective, Philosopher, Snoop, or Gossip\n This means that if you got one of those roles, you could be confused and not even know it",
+    "wiki.article.role.drunk.guide": "Before the game starts, whoever gets this role switches roles without being told, and they become confused until the end of the game. Their role switches to either Detective, Philosopher, Snoop, or Gossip\n This means that if you got one of those roles, you could be confused and not even know it.\n The drunk is a town loyalist, so you still win with town.",
     "wiki.article.role.drunk.abilities": "",
     "wiki.article.role.drunk.attributes": "",
     "wiki.article.role.drunk.extra": "",
