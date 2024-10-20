@@ -7,9 +7,11 @@ import { loadSettings, RoleSpecificMenuType, saveSettings } from "../game/localS
 import { MobileContext, AnchorControllerContext } from "./Anchor";
 import { Role, roleJsonData } from "../game/roleState.d";
 import AudioController from "./AudioController";
+import { getAllRoles } from "../game/roleListState.d";
 
 export function roleSpecificMenuType(role: Role): RoleSpecificMenuType | null {
-    return roleJsonData()[role].roleSpecificMenu === false ? null : loadSettings().roleSpecificMenus[role]
+    return roleJsonData()[role].roleSpecificMenu === false ? null :
+        loadSettings().roleSpecificMenus.includes(role) ? "standalone" : "playerList";
 }
 
 export default function SettingsMenu(): ReactElement {
@@ -87,8 +89,34 @@ export default function SettingsMenu(): ReactElement {
                         <summary>
                             {translate("menu.settings.roleSpecificMenus")}
                         </summary>
+                        {
+                            Object.entries(roleJsonData()).map(([role, roleJsonData]) => {
+                                // const roleSpecificMenuExists = type.roleSpecificMenu;
+                                const menuType: RoleSpecificMenuType = roleSpecificMenuSettings.includes(role as Role) ? "standalone" : "playerList";
 
-                        {Object.entries(roleSpecificMenuSettings).map(([key, type]) => {
+
+                                return <div className="role-specific-menu-settings-selector" key={role} >
+                                    <StyledText>{translate(`role.${role}.name`)}</StyledText>
+                                    <select defaultValue={menuType} onChange={e => {
+                                        let newRoleSpecificMenuSettings = [...roleSpecificMenuSettings].filter(x => 
+                                            getAllRoles().includes(x)
+                                        );
+
+                                        if(e.target.options[e.target.selectedIndex].value === "playerList") {
+                                            newRoleSpecificMenuSettings = [...newRoleSpecificMenuSettings].filter(x => x !== role);
+                                        } else {
+                                            newRoleSpecificMenuSettings = [...newRoleSpecificMenuSettings, role as Role];
+                                        }
+                                        setRoleSpecificMenuSettings(newRoleSpecificMenuSettings);
+                                        saveSettings({ roleSpecificMenus: newRoleSpecificMenuSettings });
+                                    }}>
+                                        <option value="playerList">{translate("menu.settings.roleSpecificMenus.playerList")}</option>
+                                        <option value="standalone">{translate("menu.settings.roleSpecificMenus.standalone")}</option>
+                                    </select>
+                                </div>
+                            })
+                        }
+                        {/* {Object.entries(roleSpecificMenuSettings).map(([key, type]) => {
                             return <div className="role-specific-menu-settings-selector" key={key} >
                                 <StyledText>{translate(`role.${key}.name`)}</StyledText>
                                 <select defaultValue={type} onChange={e => {
@@ -104,7 +132,7 @@ export default function SettingsMenu(): ReactElement {
                                     <option value="standalone">{translate("menu.settings.roleSpecificMenus.standalone")}</option>
                                 </select>
                             </div>
-                        })}
+                        })} */}
                     </details>
                 </section>
             </div>
