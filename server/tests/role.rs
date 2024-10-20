@@ -3,7 +3,7 @@ use std::{ops::Deref, vec};
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::{components::{cult::CultAbility, revealed_group::RevealedGroupID}, role::{armorsmith::Armorsmith, ojo::Ojo, recruiter::Recruiter, scarecrow::Scarecrow, tally_clerk::TallyClerk, warper::Warper}, role_list::RoleSet};
+use mafia_server::game::{components::{cult::CultAbility, revealed_group::RevealedGroupID}, role::{armorsmith::Armorsmith, drunk::Drunk, ojo::Ojo, recruiter::Recruiter, scarecrow::Scarecrow, tally_clerk::TallyClerk, warper::Warper}, role_list::RoleSet};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
@@ -1121,6 +1121,109 @@ fn grave_contains_multiple_killers_roles() {
         }
     );
 }
+
+#[test]
+fn drunk_appeared_visits() {
+    kit::scenario!(game in Night 2 where
+        drunk: Drunk,
+        lookout: Lookout,
+        mafioso: Mafioso,
+        townie: Doctor
+    );
+
+    assert!(mafioso.set_night_selection_single(townie));
+    assert!(lookout.set_night_selection_single(townie));
+
+    game.next_phase();
+
+    let messages = lookout.get_messages();
+    if !(
+        messages.contains(&ChatMessageVariant::LookoutResult { players: vec![drunk.index(), mafioso.index()] }) ||
+        messages.contains(&ChatMessageVariant::LookoutResult { players: vec![mafioso.index(), drunk.index()] })
+    ){
+        panic!("{:?}", messages);
+    }
+}
+
+#[test]
+fn drunk_suspicious_aura() {
+    kit::scenario!(game in Night 1 where
+        drunk: Drunk,
+        detective: Detective,
+        _mafioso: Mafioso
+    );
+
+    assert!(detective.set_night_selection_single(drunk));
+
+    game.next_phase();
+
+    assert_contains!(
+        detective.get_messages(),
+        ChatMessageVariant::SheriffResult { suspicious: true }
+    );
+}
+
+#[test]
+fn drunk_framer() {
+    kit::scenario!(game in Night 2 where
+        drunk: Drunk,
+        lookout: Lookout,
+        lookout2: Lookout,
+        mafioso: Mafioso,
+        townie: Doctor,
+        framer: Framer
+    );
+
+    assert!(mafioso.set_night_selection_single(townie));
+    assert!(lookout.set_night_selection_single(townie));
+    assert!(lookout2.set_night_selection_single(mafioso));
+    assert!(framer.set_night_selection(vec![drunk, mafioso]));
+
+    game.next_phase();
+
+    let messages2 = lookout2.get_messages();
+    if !(
+        messages2.contains(&ChatMessageVariant::LookoutResult { players: vec![drunk.index()] })
+    ){
+        panic!("{:?}", messages2);
+    }
+
+    let messages = lookout.get_messages();
+    if !(
+        messages.contains(&ChatMessageVariant::LookoutResult { players: vec![mafioso.index()] })
+    ){
+        panic!("{:?}", messages);
+    }
+}
+
+#[test]
+fn drunk_role_change() {
+    kit::scenario!(game in Night 1 where
+        drunk: Drunk,
+        lo: Lookout,
+        apostle: Apostle,
+        mafioso: Mafioso
+    );
+
+    assert!(apostle.set_night_selection_single(drunk));
+
+    game.skip_to(Night, 2);
+
+    assert!(mafioso.set_night_selection_single(apostle));
+    assert!(lo.set_night_selection_single(apostle));
+
+    game.next_phase();
+
+    let messages = lo.get_messages();
+    assert!(
+        !messages.contains(&ChatMessageVariant::LookoutResult { players: vec![mafioso.index(), drunk.index()] }) &&
+        !messages.contains(&ChatMessageVariant::LookoutResult { players: vec![drunk.index(), mafioso.index()] })
+    );
+    assert!(
+        messages.contains(&ChatMessageVariant::LookoutResult { players: vec![mafioso.index()] })
+    );
+}
+
 #[test]
 fn vigilante_cant_select_night_one() {
     kit::scenario!(game in Night 1 where

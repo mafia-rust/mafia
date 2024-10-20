@@ -10,4 +10,4 @@ pub mod poison;
 pub mod revealed_group;
 pub mod detained;
 pub mod confused;
-
+pub mod drunk_aura;

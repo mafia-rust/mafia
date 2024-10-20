@@ -3,17 +3,9 @@ use std::collections::{HashMap, HashSet};
 use rand::seq::SliceRandom;
 
 use crate::{game::{
-    attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant},
-    components::{
-        arsonist_doused::ArsonistDoused,
-        mafia_recruits::MafiaRecruits,
-        puppeteer_marionette::PuppeteerMarionette,
-        revealed_group::RevealedGroupID
-    },
-    event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch},
-    grave::{Grave, GraveKiller, GraveReference}, game_conclusion::GameConclusion,
-    role::{chronokaiser::Chronokaiser, Priority, Role, RoleState},
-    visit::Visit, win_condition::WinCondition, Game
+    attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
+        arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette, revealed_group::RevealedGroupID
+    }, event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, game_conclusion::GameConclusion, grave::{Grave, GraveKiller, GraveReference}, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, win_condition::WinCondition, Game
 }, packet::ToClientPacket};
 
 use super::PlayerReference;
@@ -185,6 +177,19 @@ impl PlayerReference{
 
         OnAnyDeath::new(*self)
     }
+    pub fn initial_role_creation(&self, game: &mut Game){
+        let new_role_data = self.role_state(game).clone();
+        self.set_role_state(game, new_role_data.clone());
+        self.on_role_creation(game);    //this function can change role state
+        if new_role_data.role() == self.role(game) {
+            self.add_private_chat_message(game, ChatMessageVariant::RoleAssignment{role: self.role(game)});
+        }
+        self.set_win_condition(game, self.role_state(game).clone().default_win_condition());
+        RevealedGroupID::set_player_revealed_groups(
+            self.role_state(game).clone().default_revealed_groups(), 
+            game, *self
+        );
+    }
     /// Swaps this persons role, sends them the role chat message, and makes associated changes
     pub fn set_role_and_win_condition_and_revealed_group(&self, game: &mut Game, new_role_data: impl Into<RoleState>){
         let new_role_data = new_role_data.into();
@@ -197,17 +202,17 @@ impl PlayerReference{
         
 
         self.set_role_state(game, new_role_data.clone());
-        self.on_role_creation(game);
+        self.on_role_creation(game);    //this function can change role state
         if new_role_data.role() == self.role(game) {
             self.add_private_chat_message(game, ChatMessageVariant::RoleAssignment{role: self.role(game)});
         }
 
         OnRoleSwitch::new(*self, old, self.role_state(game).clone()).invoke(game);
     
-        self.set_win_condition(game, new_role_data.clone().default_win_condition());
+        self.set_win_condition(game, self.role_state(game).clone().default_win_condition());
         
         RevealedGroupID::set_player_revealed_groups(
-            new_role_data.clone().default_revealed_groups(), 
+            self.role_state(game).clone().default_revealed_groups(), 
             game, *self
         );
         
@@ -275,6 +280,7 @@ impl PlayerReference{
     pub fn has_suspicious_aura(&self, game: &Game) -> bool {
         self.role(game).has_suspicious_aura(game) || 
         self.night_framed(game) ||
+        DrunkAura::has_drunk_aura(game, *self) ||
         ArsonistDoused::has_suspicious_aura_douse(game, *self)
     }
     pub fn get_won_game(&self, game: &Game) -> bool {

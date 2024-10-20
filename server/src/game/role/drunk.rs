@@ -2,6 +2,7 @@ use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::Serialize;
 
+use crate::game::components::drunk_aura::DrunkAura;
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, components::confused::Confused};
 use crate::game::player::PlayerReference;
@@ -35,6 +36,7 @@ impl RoleStateImpl for Drunk {
         }
 
         Confused::add_player(game, actor_ref);
+        DrunkAura::add_player(game, actor_ref);
     }
 }
 impl Drunk{
