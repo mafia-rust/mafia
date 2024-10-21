@@ -74,18 +74,19 @@ export function loadSettings(): unknown {
     }
     return DEFAULT_SETTINGS;
 }
-export function saveSettings(settings: Partial<Settings>) {
+export function saveSettings(newSettings: Partial<Settings>) {
     const currentSettings = parseFromJson("Settings", loadSettings());
+
 
     if(currentSettings.type === "failure") {
         localStorage.setItem("settings", JSON.stringify({
             ...DEFAULT_SETTINGS,
-            ...settings,
+            ...newSettings,
         }));
     }else{
         localStorage.setItem("settings", JSON.stringify({
-            ...currentSettings,
-            ...settings,
+            ...currentSettings.value,
+            ...newSettings,
         }));
     }
 }

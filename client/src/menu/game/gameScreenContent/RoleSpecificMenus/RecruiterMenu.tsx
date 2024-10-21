@@ -16,18 +16,18 @@ export default function RecruiterMenu(props: {action: RecruiterAction, remaining
 
     return <>
         <StyledText>{translate("role.recruiter.smallRoleMenu", translate(props.action))}</StyledText>
+        {props.remaining > 0 && props.dayNumber !== 1 ? <div>
+            <ActionTypeDropdown
+                action={props.action}
+                onChange={(a)=>{sendAction(a)}}
+            />
+        </div> : null}
         <Counter
             max={Math.max(5, props.remaining)}
             current={props.remaining}
         >
             <StyledText>{translate("role.recruiter.smallRoleMenu.recruitsRemaining", props.remaining)}</StyledText>
         </Counter>
-        {props.remaining > 0 && props.dayNumber!==1 && props.phase === "night" ? <div>
-            <ActionTypeDropdown
-                action={props.action}
-                onChange={(a)=>{sendAction(a)}}
-            />
-        </div> : null}
     </>
 }
 
@@ -40,7 +40,7 @@ function ActionTypeDropdown(props: {
         onChange={(e)=>{
             props.onChange(e.target.value as RecruiterAction)
         }}>
-            {<option value="kill">{translate("kill")}</option>}
+            <option value="kill">{translate("kill")}</option>
             <option value="recruit">{translate("recruit")}</option>
     </select>
 }
