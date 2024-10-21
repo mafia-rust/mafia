@@ -42,8 +42,9 @@ export default function parseFromJson<T extends keyof ConverterMap>(type: T, jso
         return convertFunction(json);
     }
 
+    const MAX_ITERATIONS = 1000;
     let currentJson = json;
-    while (true) {
+    for(let i = 0; i < MAX_ITERATIONS; i++) {
         const converterEntry = Object.entries(VERSION_CONVERTERS)
             // eslint-disable-next-line no-loop-func
             .find(([version, converter]) => isCorrectConverter(currentJson, converter, version));
@@ -64,4 +65,5 @@ export default function parseFromJson<T extends keyof ConverterMap>(type: T, jso
             return Success(currentJson);
         }
     }
+    return Failure("failedToParse", json);
 }

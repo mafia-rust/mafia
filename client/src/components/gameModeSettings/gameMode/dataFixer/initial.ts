@@ -39,7 +39,10 @@ function convertSettings(json: NonNullable<any>): ParseResult<Settings> {
     const roleSpecificMenus = parseRoleSpecificMenus(json.roleSpecificMenus);
     if (isFailure(roleSpecificMenus)) return roleSpecificMenus;
 
-    return Success(json);
+    return Success({
+        format: "v3",
+        ...json
+    });
 }
 
 function parseRoleSpecificMenus(json: NonNullable<any>): ParseResult<Role[]> {
