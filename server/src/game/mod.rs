@@ -22,6 +22,7 @@ pub mod win_condition;
 use std::collections::HashMap;
 use std::time::Duration;
 use components::confused::Confused;
+use components::drunk_aura::DrunkAura;
 use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
 use components::pitchfork::Pitchfork;
@@ -100,6 +101,7 @@ pub struct Game {
     pub revealed_groups: RevealedGroups,
     pub detained: Detained,
     pub confused: Confused,
+    pub drunk_aura: DrunkAura,
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -193,6 +195,7 @@ impl Game {
                 revealed_groups: RevealedGroups::default(),
                 detained: Detained::default(),
                 confused: Confused::default(),
+                drunk_aura: DrunkAura::default(),
             };
 
             if !game.game_is_over() {
@@ -225,8 +228,7 @@ impl Game {
         //on role creation needs to be called after all players roles are known
         //trigger role event listeners
         for player_ref in PlayerReference::all_players(&game){
-            let role_data_copy = player_ref.role_state(&game).clone();
-            player_ref.set_role_and_win_condition_and_revealed_group(&mut game, role_data_copy);
+            player_ref.initial_role_creation(&mut game);
         }
 
         for player_ref in PlayerReference::all_players(&game){
@@ -496,11 +498,11 @@ pub mod test {
             verdicts_today: VerdictsToday::default(),
             pitchfork: Pitchfork::default(),
             poison: Poison::default(),
-
             modifiers: Default::default(),
             revealed_groups: Default::default(),
             detained: Default::default(),
             confused: Default::default(),
+            drunk_aura: Default::default(),
         };
 
         //set wincons and revealed groups
@@ -520,8 +522,7 @@ pub mod test {
 
         //on role creation needs to be called after all players roles are known
         for player_ref in PlayerReference::all_players(&game){
-            let role_data_copy = player_ref.role_state(&game).clone();
-            player_ref.set_role_and_win_condition_and_revealed_group(&mut game, role_data_copy);
+            player_ref.initial_role_creation(&mut game);
         }
 
         OnGameStart::invoke(&mut game);

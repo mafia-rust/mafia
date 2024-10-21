@@ -47,7 +47,7 @@ impl Default for PhaseTimeSettings{
     fn default() -> Self {
         Self{
             briefing: 45,
-            obituary: 10,
+            obituary: 60,
             discussion: 120,
             nomination: 120,
             testimony: 30,

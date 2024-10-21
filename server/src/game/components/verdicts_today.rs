@@ -25,6 +25,9 @@ impl VerdictsToday{
     pub fn player_guiltied_today(game: &Game, player: &PlayerReference)->bool{
         game.verdicts_today().guilties.contains(player)
     }
+    pub fn guilties(game: &Game)->&HashSet<PlayerReference>{
+        &game.verdicts_today().guilties
+    }
     pub fn on_phase_start(game: &mut Game, phase: PhaseType){
         match phase {
             PhaseType::Obituary=>{

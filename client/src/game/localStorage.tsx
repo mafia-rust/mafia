@@ -1,7 +1,8 @@
 import DEFAULT_GAME_MODES from "../resources/defaultGameModes.json";
-import { GameModeStorage } from "../components/gameModeSettings/gameMode";
+import { CurrentFormat, GameModeStorage } from "../components/gameModeSettings/gameMode";
 import { Language } from "./lang";
 import { Role } from "./roleState.d";
+import parseFromJson from "../components/gameModeSettings/gameMode/dataFixer";
 
 export function saveReconnectData(roomCode: number, playerId: number) {
     localStorage.setItem(
@@ -42,6 +43,7 @@ export function loadReconnectData(): {
 
 
 export type Settings = {
+    format: CurrentFormat;
     volume: number;
     defaultName: string | null;
     language: Language;
@@ -51,32 +53,54 @@ export type Settings = {
 export type RoleSpecificMenuType = "playerList" | "standalone";
 
 
-export function saveSettings(settings: Partial<Settings>) {
-    localStorage.setItem("settings", JSON.stringify({
-        ...loadSettings(),
-        ...settings,
-    }));
+
+export function loadSettingsParsed(): Settings {
+    const result = parseFromJson("Settings", loadSettings());
+    if(result.type === "failure") {
+        return DEFAULT_SETTINGS;
+    }else{
+        return result.value;
+    }
 }
 
-export function loadSettings(): Settings {
+export function loadSettings(): unknown {
     const data = localStorage.getItem("settings");
     if (data !== null) {
-        return {...DEFAULT_SETTINGS, ...JSON.parse(data)};
+        try {
+            return JSON.parse(data);
+        } catch {
+            return null;
+        }
     }
     return DEFAULT_SETTINGS;
 }
+export function saveSettings(newSettings: Partial<Settings>) {
+    const currentSettings = parseFromJson("Settings", loadSettings());
 
 
+    if(currentSettings.type === "failure") {
+        localStorage.setItem("settings", JSON.stringify({
+            ...DEFAULT_SETTINGS,
+            ...newSettings,
+        }));
+    }else{
+        localStorage.setItem("settings", JSON.stringify({
+            ...currentSettings.value,
+            ...newSettings,
+        }));
+    }
+}
 
-export function defaultGameModes(): GameModeStorage {
+
+export function defaultGameModes(): unknown {
     // Typescript is a Division One tweaker
-    return DEFAULT_GAME_MODES as GameModeStorage;
+    return DEFAULT_GAME_MODES;
 }
 
 export function saveGameModes(gameModes: GameModeStorage) {
     localStorage.setItem("savedGameModes", JSON.stringify(gameModes));
 }
-export function loadGameModes(): NonNullable<unknown> | null {
+export function loadGameModes(): unknown {
     const data = localStorage.getItem("savedGameModes");
     if (data !== null) {
         try {
@@ -93,6 +117,7 @@ export function deleteGameModes() {
 
 
 export const DEFAULT_SETTINGS: Readonly<Settings> = {
+    format: "v3",
     volume: 0.5,
     language: "en_us",
     defaultName: null,
