@@ -7,6 +7,7 @@ import { Failure, ParseResult, ParseSuccess, Success, isFailure } from "../parse
 const initial: VersionConverter = {
     matchGameModeStorage: (json: NonNullable<any>) => typeof json === "object" && !Array.isArray(json) && json.format === undefined,
     matchShareableGameMode: (json: NonNullable<any>) => typeof json === "object" && !Array.isArray(json) && json.format === undefined,
+
     convertGameModeStorage,
     convertShareableGameMode
 }
