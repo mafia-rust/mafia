@@ -71,7 +71,7 @@ function parseShareableGameModeData(json: NonNullable<any>): ParseResult<v3Share
         const name = parseName(json.name);
         if (isFailure(name)) return name;
 
-        return Success({ format: "v2", name: name.value, ...gameMode.value });
+        return Success({ format: "v3", name: name.value, ...gameMode.value });
     }
 }
 

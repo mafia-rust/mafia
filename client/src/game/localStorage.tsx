@@ -68,15 +68,15 @@ export function loadSettings(): Settings {
 
 
 
-export function defaultGameModes(): GameModeStorage {
+export function defaultGameModes(): unknown {
     // Typescript is a Division One tweaker
-    return DEFAULT_GAME_MODES as GameModeStorage;
+    return DEFAULT_GAME_MODES;
 }
 
 export function saveGameModes(gameModes: GameModeStorage) {
     localStorage.setItem("savedGameModes", JSON.stringify(gameModes));
 }
-export function loadGameModes(): NonNullable<unknown> | null {
+export function loadGameModes(): unknown {
     const data = localStorage.getItem("savedGameModes");
     if (data !== null) {
         try {
