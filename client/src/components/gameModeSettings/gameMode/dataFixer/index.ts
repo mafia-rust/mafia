@@ -1,4 +1,5 @@
 import { GameModeStorage, ShareableGameMode } from "..";
+import { Settings } from "../../../../game/localStorage";
 import { Failure, ParseResult, Success, isFailure } from "../parse"
 import initial from "./initial"
 import v0 from "./v0"
@@ -8,6 +9,9 @@ import v3 from "./v3"
 
 /// A version converter from a specified version to the next version
 export type VersionConverter = {
+    matchSettings?: (json: NonNullable<any>) => boolean,
+    convertSettings?: (json: NonNullable<any>) => ParseResult<NonNullable<any>>,
+
     matchGameModeStorage?: (json: NonNullable<any>) => boolean,
     convertGameModeStorage: (json: NonNullable<any>) => ParseResult<NonNullable<any>>,
 
@@ -17,7 +21,8 @@ export type VersionConverter = {
 
 type ConverterMap = {
     "GameModeStorage": GameModeStorage,
-    "ShareableGameMode": ShareableGameMode
+    "ShareableGameMode": ShareableGameMode,
+    "Settings": Settings,
 }
 
 const VERSION_CONVERTERS: Record<string, VersionConverter> = { initial, v0, v1, v2, v3 }
@@ -32,6 +37,11 @@ export default function parseFromJson<T extends keyof ConverterMap>(type: T, jso
             (converter[`match${type}`] !== undefined && converter[`match${type}`]!(json))
     }
 
+    function convert(converter: VersionConverter, json: NonNullable<any>) {
+        const convertFunction = converter[`convert${type}`] ?? (j => Success(j))
+        return convertFunction(json);
+    }
+
     let currentJson = json;
     while (true) {
         const converterEntry = Object.entries(VERSION_CONVERTERS)
@@ -44,7 +54,7 @@ export default function parseFromJson<T extends keyof ConverterMap>(type: T, jso
 
         const converter = converterEntry[1];
 
-        const result = converter[`convert${type}`](currentJson);
+        const result = convert(converter, currentJson);
         if (isFailure(result))
             return result;
 

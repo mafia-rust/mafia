@@ -1,6 +1,7 @@
 import { VersionConverter } from ".";
 import { GameMode, GameModeData, GameModeStorage, ShareableGameMode } from "..";
 import { MODIFIERS, ModifierType } from "../../../../game/gameState.d";
+import { Settings } from "../../../../game/localStorage";
 import { RoleOutline, RoleSet } from "../../../../game/roleListState.d";
 import { Role } from "../../../../game/roleState.d";
 import { Failure, ParseFailure, ParseResult, ParseSuccess, Success, isFailure } from "../parse";
@@ -17,6 +18,7 @@ type v3GameModeData = GameModeData
 type v3ShareableGameMode = ShareableGameMode
 type v3GameMode = GameMode
 type v3GameModeStorage = GameModeStorage
+
 
 function parseGameModeStorage(json: NonNullable<any>): ParseResult<v3GameModeStorage> {
     if (typeof json !== "object" || Array.isArray(json)) {

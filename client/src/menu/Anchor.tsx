@@ -4,7 +4,7 @@ import "./anchor.css";
 import translate, { switchLanguage } from "../game/lang";
 import GlobalMenu from "./GlobalMenu";
 import SettingsMenu from './Settings';
-import { loadSettings } from "../game/localStorage";
+import { loadSettingsParsed } from "../game/localStorage";
 import LoadingScreen from "./LoadingScreen";
 import { Theme } from "..";
 import Icon from "../components/Icon";
@@ -100,7 +100,7 @@ export default function Anchor(props: Readonly<{
 
     // Load settings
     useEffect(() => {
-        const settings = loadSettings();
+        const settings = loadSettingsParsed();
 
         AudioController.setVolume(settings.volume);
         switchLanguage(settings.language)

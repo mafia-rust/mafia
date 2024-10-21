@@ -1,7 +1,8 @@
 import DEFAULT_GAME_MODES from "../resources/defaultGameModes.json";
-import { GameModeStorage } from "../components/gameModeSettings/gameMode";
+import { CurrentFormat, GameModeStorage } from "../components/gameModeSettings/gameMode";
 import { Language } from "./lang";
 import { Role } from "./roleState.d";
+import parseFromJson from "../components/gameModeSettings/gameMode/dataFixer";
 
 export function saveReconnectData(roomCode: number, playerId: number) {
     localStorage.setItem(
@@ -42,6 +43,7 @@ export function loadReconnectData(): {
 
 
 export type Settings = {
+    format: CurrentFormat;
     volume: number;
     defaultName: string | null;
     language: Language;
@@ -51,21 +53,42 @@ export type Settings = {
 export type RoleSpecificMenuType = "playerList" | "standalone";
 
 
-export function saveSettings(settings: Partial<Settings>) {
-    localStorage.setItem("settings", JSON.stringify({
-        ...loadSettings(),
-        ...settings,
-    }));
+
+export function loadSettingsParsed(): Settings {
+    const result = parseFromJson("Settings", loadSettings());
+    if(result.type === "failure") {
+        return DEFAULT_SETTINGS;
+    }else{
+        return result.value;
+    }
 }
 
-export function loadSettings(): Settings {
+export function loadSettings(): unknown {
     const data = localStorage.getItem("settings");
     if (data !== null) {
-        return {...DEFAULT_SETTINGS, ...JSON.parse(data)};
+        try {
+            return JSON.parse(data);
+        } catch {
+            return null;
+        }
     }
     return DEFAULT_SETTINGS;
 }
+export function saveSettings(settings: Partial<Settings>) {
+    const currentSettings = parseFromJson("Settings", loadSettings());
 
+    if(currentSettings.type === "failure") {
+        localStorage.setItem("settings", JSON.stringify({
+            ...DEFAULT_SETTINGS,
+            ...settings,
+        }));
+    }else{
+        localStorage.setItem("settings", JSON.stringify({
+            ...currentSettings,
+            ...settings,
+        }));
+    }
+}
 
 
 export function defaultGameModes(): unknown {
@@ -93,6 +116,7 @@ export function deleteGameModes() {
 
 
 export const DEFAULT_SETTINGS: Readonly<Settings> = {
+    format: "v3",
     volume: 0.5,
     language: "en_us",
     defaultName: null,

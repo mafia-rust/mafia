@@ -8,7 +8,7 @@ import { Tag } from "./gameState.d";
 import { Role } from "./roleState.d";
 import translate from "./lang";
 import { computePlayerKeywordData, computePlayerKeywordDataForLobby } from "../components/StyledText";
-import { deleteReconnectData, loadSettings, saveReconnectData } from "./localStorage";
+import { deleteReconnectData, loadSettingsParsed, saveReconnectData } from "./localStorage";
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import React from "react";
 import WikiArticle from "../components/WikiArticle";
@@ -73,7 +73,7 @@ export default function messageListener(packet: ToClientPacket){
         
 
             saveReconnectData(packet.roomCode, packet.playerId);
-            const defaultName = loadSettings().defaultName;
+            const defaultName = loadSettingsParsed().defaultName;
             if(defaultName !== null && defaultName !== undefined && defaultName !== ""){
                 GAME_MANAGER.sendSetNamePacket(defaultName)
             }

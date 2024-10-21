@@ -1,12 +1,17 @@
 import { VersionConverter } from ".";
 import { PHASES, PhaseTimes } from "../../../../game/gameState.d";
+import { Settings } from "../../../../game/localStorage";
 import { ROLE_SETS, RoleOutline, RoleOutlineOption, RoleSet, getAllRoles } from "../../../../game/roleListState.d";
 import { Role } from "../../../../game/roleState.d";
 import { Failure, ParseResult, ParseSuccess, Success, isFailure } from "../parse";
 
 const initial: VersionConverter = {
+    matchSettings: (json: NonNullable<any>) => typeof json === "object" && !Array.isArray(json) && json.format === undefined,
+    convertSettings: convertSettings,
+
     matchGameModeStorage: (json: NonNullable<any>) => typeof json === "object" && !Array.isArray(json) && json.format === undefined,
     matchShareableGameMode: (json: NonNullable<any>) => typeof json === "object" && !Array.isArray(json) && json.format === undefined,
+
     convertGameModeStorage,
     convertShareableGameMode
 }
@@ -17,6 +22,29 @@ type InitialGameModeStorage = Record<string, InitialGameMode>;
 const FACTIONS = ["mafia", "town", "neutral", "cult", "fiends"]
 export type InitialRoleOutlineOption = RoleOutlineOption | { type: "faction", faction: typeof FACTIONS[number] }
 export type InitialRoleOutline = { type: "any" } | { type: "roleOutlineOptions", options: InitialRoleOutlineOption[] }
+
+
+
+function convertSettings(json: NonNullable<any>): ParseResult<Settings> {
+    if (typeof json !== "object" || Array.isArray(json)) {
+        return Failure("settingsNotObject", json);
+    }
+
+    for(const key of ['volume', 'defaultName', 'language', 'roleSpecificMenus']) {
+        if (!Object.keys(json).includes(key)) {
+            return Failure(`${key}KeyMissingFromSettings`, json);
+        }
+    }
+    
+    const roleSpecificMenus = parseRoleSpecificMenus(json.roleSpecificMenus);
+    if (isFailure(roleSpecificMenus)) return roleSpecificMenus;
+
+    return Success(json);
+}
+
+function parseRoleSpecificMenus(json: NonNullable<any>): ParseResult<Role[]> {
+    return Success([]);
+}
 
 function convertGameModeStorage(json: NonNullable<any>): ParseResult<any> {
     const storage = parseGameModeStorage(json);

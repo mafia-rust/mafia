@@ -3,7 +3,7 @@ import "./settings.css";
 import translate, { Language, languageName, LANGUAGES, switchLanguage } from "../game/lang";
 import StyledText, { computeKeywordData } from "../components/StyledText";
 import Icon from "../components/Icon";
-import { loadSettings, RoleSpecificMenuType, saveSettings } from "../game/localStorage";
+import { loadSettingsParsed, RoleSpecificMenuType, saveSettings } from "../game/localStorage";
 import { MobileContext, AnchorControllerContext } from "./Anchor";
 import { Role, roleJsonData } from "../game/roleState.d";
 import AudioController from "./AudioController";
@@ -11,13 +11,13 @@ import { getAllRoles } from "../game/roleListState.d";
 
 export function roleSpecificMenuType(role: Role): RoleSpecificMenuType | null {
     return roleJsonData()[role].roleSpecificMenu === false ? null :
-        loadSettings().roleSpecificMenus.includes(role) ? "standalone" : "playerList";
+        loadSettingsParsed().roleSpecificMenus.includes(role) ? "standalone" : "playerList";
 }
 
 export default function SettingsMenu(): ReactElement {
-    const [volume, setVolume] = useState<number>(loadSettings().volume);
-    const [defaultName, setDefaultName] = useState<string | null>(loadSettings().defaultName);
-    const [roleSpecificMenuSettings, setRoleSpecificMenuSettings] = useState(loadSettings().roleSpecificMenus);
+    const [volume, setVolume] = useState<number>(loadSettingsParsed().volume);
+    const [defaultName, setDefaultName] = useState<string | null>(loadSettingsParsed().defaultName);
+    const [roleSpecificMenuSettings, setRoleSpecificMenuSettings] = useState(loadSettingsParsed().roleSpecificMenus);
     const mobile = useContext(MobileContext)!;
     const anchorController = useContext(AnchorControllerContext)!;
 
@@ -48,7 +48,7 @@ export default function SettingsMenu(): ReactElement {
                         <h2><Icon size="small">language</Icon> {translate("menu.settings.language")}</h2>
                         <select 
                             name="lang-select" 
-                            defaultValue={loadSettings().language}
+                            defaultValue={loadSettingsParsed().language}
                             onChange={e => {
                                 const language = e.target.options[e.target.selectedIndex].value as Language;
                                 switchLanguage(language);
@@ -116,23 +116,6 @@ export default function SettingsMenu(): ReactElement {
                                 </div>
                             })
                         }
-                        {/* {Object.entries(roleSpecificMenuSettings).map(([key, type]) => {
-                            return <div className="role-specific-menu-settings-selector" key={key} >
-                                <StyledText>{translate(`role.${key}.name`)}</StyledText>
-                                <select defaultValue={type} onChange={e => {
-                                    const newRoleSpecificMenuSettings = {
-                                        ...roleSpecificMenuSettings, 
-                                        [key]: e.target.options[e.target.selectedIndex].value as RoleSpecificMenuType
-                                    };
-
-                                    setRoleSpecificMenuSettings(newRoleSpecificMenuSettings);
-                                    saveSettings({ roleSpecificMenus: newRoleSpecificMenuSettings })
-                                }}>
-                                    <option value="playerList">{translate("menu.settings.roleSpecificMenus.playerList")}</option>
-                                    <option value="standalone">{translate("menu.settings.roleSpecificMenus.standalone")}</option>
-                                </select>
-                            </div>
-                        })} */}
                     </details>
                 </section>
             </div>
