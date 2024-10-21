@@ -2,7 +2,6 @@ import DEFAULT_GAME_MODES from "../resources/defaultGameModes.json";
 import { GameModeStorage } from "../components/gameModeSettings/gameMode";
 import { Language } from "./lang";
 import { Role } from "./roleState.d";
-import { getAllRoles } from "./roleListState.d";
 
 export function saveReconnectData(roomCode: number, playerId: number) {
     localStorage.setItem(
@@ -46,7 +45,7 @@ export type Settings = {
     volume: number;
     defaultName: string | null;
     language: Language;
-    roleSpecificMenus: Record<Role, RoleSpecificMenuType>
+    roleSpecificMenus: Role[] // RoleSpecificMenuType=standalone for all listed roles, otherwise it should be playerlist
 };
 
 export type RoleSpecificMenuType = "playerList" | "standalone";
@@ -97,5 +96,5 @@ export const DEFAULT_SETTINGS: Readonly<Settings> = {
     volume: 0.5,
     language: "en_us",
     defaultName: null,
-    roleSpecificMenus: Object.fromEntries(getAllRoles().map(role => [role, "playerList"])) as Record<Role, "playerList">
+    roleSpecificMenus: []
 };

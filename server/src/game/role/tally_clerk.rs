@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::DefensePower;
+use crate::game::components::confused::Confused;
 use crate::game::{chat::ChatMessageVariant, components::verdicts_today::VerdictsToday};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::player::PlayerReference;
@@ -24,7 +25,7 @@ impl RoleStateImpl for TallyClerk {
         if !actor_ref.alive(game) {return}
         if priority != Priority::Investigative {return;}
 
-        let mut evil_count = 0;
+        let mut evil_count: u8 = 0;
         for player in PlayerReference::all_players(game).into_iter()
             .filter(|player|player.alive(game))
             .filter(|player|VerdictsToday::player_guiltied_today(game, player))
@@ -33,6 +34,17 @@ impl RoleStateImpl for TallyClerk {
                 evil_count += 1;
             }
         }
+
+        if Confused::is_intoxicated(game, actor_ref){
+            let total_guilties = VerdictsToday::guilties(game).len();
+            //add or subtract 1 randomly from the count
+            if rand::random::<bool>(){
+                evil_count = (evil_count.saturating_add(1u8)).min(total_guilties as u8);
+            }else{
+                evil_count = (evil_count.saturating_sub(1u8)).max(0);
+            }
+        }
+
         
         let message = ChatMessageVariant::TallyClerkResult{ evil_count };
         actor_ref.push_night_message(game, message);

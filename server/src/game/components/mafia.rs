@@ -1,6 +1,6 @@
 use rand::seq::SliceRandom;
 
-use crate::game::{phase::PhaseType, player::PlayerReference, role::{Role, RoleState}, role_list::RoleSet, Game};
+use crate::game::{phase::PhaseType, player::PlayerReference, role::{Role, RoleState}, role_list::RoleSet, visit::Visit, Game};
 
 use super::revealed_group::RevealedGroupID;
 
@@ -60,6 +60,17 @@ impl Mafia{
         
         if let Some(random_mafia) = random_mafia {
             random_mafia.set_role_and_win_condition_and_revealed_group(game, role);
+        }
+    }
+
+    pub fn mafia_killing_visits(game: &Game) -> Vec<Visit> {
+        if let Some(mafia_killing_player) = 
+            PlayerReference::all_players(game).into_iter()
+            .find(|p| RoleSet::MafiaKilling.get_roles().contains(&p.role(game)))
+        {
+            mafia_killing_player.night_visits(game).clone()
+        }else{
+            vec![]
         }
     }
 }
