@@ -21,10 +21,14 @@ function parseSettings(json: NonNullable<any>): ParseResult<Settings> {
         return Failure("settingsNotObject", json);
     }
 
-    for(const key of ['volume', 'defaultName', 'language', 'roleSpecificMenus']) {
+    for(const key of ['format', 'volume', 'defaultName', 'language', 'roleSpecificMenus']) {
         if (!Object.keys(json).includes(key)) {
             return Failure(`${key as keyof Settings}KeyMissingFromSettings`, json);
         }
+    }
+
+    if (json.format !== "v3") {
+        return Failure("settingsFormatNotV3", json);
     }
     
     const roleSpecificMenus = parseRoleSpecificMenus(json.roleSpecificMenus);
