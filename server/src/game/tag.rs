@@ -12,4 +12,7 @@ pub enum Tag{
     PuppeteerMarionette,
     LoveLinked,
     ForfeitVote,
+    Elector,
+    PresidentialCandidate,
+    President
 }

@@ -24,7 +24,7 @@ use vec1::Vec1;
 use crate::{
     game::{
         available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, 
-        modifiers::ModifierType, phase::{PhaseState, PhaseType}, 
+        modifiers::{elector_and_president::policy::PolicyKind, ModifierType}, phase::{PhaseState, PhaseType}, 
         player::{PlayerIndex, PlayerReference}, 
         role::{
             counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess,
@@ -147,6 +147,12 @@ pub enum ToClientPacket{
     NightMessages{chat_messages: Vec<ChatMessage>},
 
     GameOver{reason: GameOverReason},
+
+    // Modifier-specific things
+    ElectorCanElect { players: Vec<bool> },
+    ElectorYouElected { nominee: PlayerIndex },
+    ElectorChoosePolicies { policy_options: [PolicyKind; 3] },
+    PresidentChoosePolicies { policy_options: [PolicyKind; 2]},
 }
 impl ToClientPacket {
     pub fn to_json_string(&self) -> Result<String, serde_json::Error> {
@@ -283,4 +289,11 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     ForfeitVote{forfeit: bool},
     PitchforkVote{player: Option<PlayerReference>},
+
+    // Modifier-specific
+    ElectorElect { nominee: PlayerIndex },
+    ElectorCanElect { players: Vec<bool> },
+    ElectorFinalizeVote,
+    ElectorChoosePolicies { policies: [PolicyKind; 2] },
+    PresidentChoosePolicies { policy: PolicyKind },
 }

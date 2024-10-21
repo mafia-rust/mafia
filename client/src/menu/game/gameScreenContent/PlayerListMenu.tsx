@@ -289,6 +289,11 @@ function PlayerCard(props: Readonly<{
 }>): ReactElement{
     const { player, myIndex, roleState, graveRolesStrings, chatFilter, phaseState, chatGroups } = props;
 
+    const trialsEnabled = useGameState(
+        state => !state.enabledModifiers.includes("noTrials"),
+        ["enabledModifiers"]
+    )!;
+
     let roleString = (()=>{
         if(player.index === myIndex){
             return ("("+translate("role."+roleState?.type+".name")+")");
@@ -330,7 +335,7 @@ function PlayerCard(props: Readonly<{
             <StyledText>{player.playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
         </div>
         
-        {phaseState.type === "nomination" && player.alive && 
+        {phaseState.type === "nomination" && player.alive && trialsEnabled &&
             <Counter 
                 max={GAME_MANAGER.getVotesRequired()!} 
                 current={player.numVoted}

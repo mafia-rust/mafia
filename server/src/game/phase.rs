@@ -5,7 +5,7 @@ use serde::{Serialize, Deserialize};
 use crate::packet::ToClientPacket;
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant}, event::{before_phase_end::BeforePhaseEnd, on_any_death::OnAnyDeath, on_night_priority::OnNightPriority, on_phase_start::OnPhaseStart}, grave::Grave, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
+    chat::{ChatGroup, ChatMessageVariant}, event::{before_phase_end::BeforePhaseEnd, on_any_death::OnAnyDeath, on_night_priority::OnNightPriority, on_phase_start::OnPhaseStart}, grave::Grave, modifiers::{ModifierType, Modifiers}, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
 };
 
 
@@ -135,8 +135,10 @@ impl PhaseState {
             PhaseState::Nomination { trials_left, nomination_time_remaining } => {
                 game.phase_machine.set_time_remaining(nomination_time_remaining);
 
-                let required_votes = game.nomination_votes_required();
-                game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::TrialInformation { required_votes, trials_left });
+                if !Modifiers::modifier_is_enabled(game, ModifierType::NoTrials) {
+                    let required_votes = game.nomination_votes_required();
+                    game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::TrialInformation { required_votes, trials_left });
+                }
                 
 
                 let packet = ToClientPacket::new_player_votes(game);

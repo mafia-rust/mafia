@@ -3,17 +3,12 @@ use std::collections::HashMap;
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender},
-    components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward,
-    phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference},
-    role::{
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
         impostor::Impostor, kira::{Kira, KiraGuess},
         mayor::Mayor, puppeteer::PuppeteerAction, recruiter::RecruiterAction,
         retrainer::Retrainer,
         Role, RoleState
-    }, 
-    role_list::RoleSet, 
-    spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
+    }, role_list::RoleSet, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
 
@@ -47,6 +42,7 @@ impl Game {
         'packet_match: {match incoming_packet {
             ToServerPacket::Vote { player_index: player_voted_index } => {
                 let &PhaseState::Nomination { .. } = self.current_phase() else {break 'packet_match};
+                if Modifiers::modifier_is_enabled(self, ModifierType::NoTrials) {break 'packet_match}
 
                 let player_voted_ref = match PlayerReference::index_option_to_ref(self, &player_voted_index){
                     Ok(player_voted_ref) => player_voted_ref,

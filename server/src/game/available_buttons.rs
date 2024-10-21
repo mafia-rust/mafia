@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use super::{player::PlayerReference, phase::PhaseType, Game};
+use super::{modifiers::{ModifierType, Modifiers}, phase::PhaseType, player::PlayerReference, Game};
 
 
 #[derive(Debug, Clone, Serialize, Default, PartialEq)]
@@ -14,6 +14,7 @@ impl AvailableButtons{
     pub fn from_player_target(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference)->Self{
         Self{
             vote: 
+                !Modifiers::modifier_is_enabled(game, ModifierType::NoTrials) &&
                 actor_ref != target_ref &&
                 game.current_phase().phase() == PhaseType::Nomination &&
                 actor_ref.chosen_vote(game).is_none() && 

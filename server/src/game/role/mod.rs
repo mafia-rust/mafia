@@ -68,6 +68,7 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
 macros::roles! {
     Jailor : jailor,
     Villager : villager,
+    Elector : elector,
 
     Detective : detective,
     Lookout : lookout,
