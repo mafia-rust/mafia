@@ -3,17 +3,12 @@ use std::collections::HashMap;
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender},
-    components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward,
-    phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference},
-    role::{
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
         impostor::Impostor, kira::{Kira, KiraGuess},
         mayor::Mayor, puppeteer::PuppeteerAction, recruiter::RecruiterAction,
         retrainer::Retrainer,
         Role, RoleState
-    }, 
-    role_list::RoleSet, 
-    spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
+    }, role_list::RoleSet, role_outline_reference::RoleOutlineReference, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
 
@@ -330,32 +325,34 @@ impl Game {
             ToServerPacket::SetAuditorChosenOutline { index } => {
                 if !sender_player_ref.alive(self) {break 'packet_match;}
 
+                let outline_ref = RoleOutlineReference::new(self, index);
+
                 match sender_player_ref.role_state(self).clone() {
                     RoleState::Auditor(mut auditor)=>{
-                        if auditor.chosen_outline.is_some_and(|f|f == index) {
+                        if auditor.chosen_outline.is_some_and(|f|f.index() == index) {
                             auditor.chosen_outline = None;
                         }
     
                         if  self.roles_originally_generated.get(index as usize).is_some() && 
-                            !auditor.previously_given_results.iter().any(|(i, _)| *i == index)
+                            !auditor.previously_given_results.iter().any(|(i, _)| i.index() == index)
                         {
-                            auditor.chosen_outline = Some(index);
+                            auditor.chosen_outline = outline_ref;
                         }
     
                         sender_player_ref.set_role_state(self, auditor);
                     }
                     RoleState::Ojo(mut ojo) => {
-                    if ojo.chosen_outline.is_some_and(|f|f == index) {
-                        ojo.chosen_outline = None;
-                    }
+                        if ojo.chosen_outline.is_some_and(|f|f.index() == index) {
+                            ojo.chosen_outline = None;
+                        }
 
-                    if  self.roles_originally_generated.get(index as usize).is_some() && 
-                        !ojo.previously_given_results.iter().any(|(i, _)| *i == index)
-                    {
-                        ojo.chosen_outline = Some(index);
-                    }
+                        if  self.roles_originally_generated.get(index as usize).is_some() && 
+                            !ojo.previously_given_results.iter().any(|(i, _)| i.index() == index)
+                        {
+                            ojo.chosen_outline = outline_ref;
+                        }
 
-                    sender_player_ref.set_role_state(self, ojo);
+                        sender_player_ref.set_role_state(self, ojo);
                     }
                     _ => {}
                 }

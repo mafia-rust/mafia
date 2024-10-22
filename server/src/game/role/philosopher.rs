@@ -25,7 +25,7 @@ impl RoleStateImpl for Philosopher {
         let Some(first_visit) = actor_ref.night_visits(game).get(0) else {return;};
         let Some(second_visit) = actor_ref.night_visits(game).get(1) else {return;};
 
-        let enemies = if Confused::is_intoxicated(game, actor_ref) {
+        let enemies = if Confused::is_confused(game, actor_ref) {
             false
         } else {
             Philosopher::players_are_enemies(game, first_visit.target, second_visit.target)
