@@ -32,12 +32,12 @@ export default function WikiArticle(props: {
                     <WikiStyledText>
                         {"# "+translate("role."+role+".name")+"\n"}
                         {"### "+roleData.roleSets.map((roleSet)=>{return translate(roleSet)}).join(" | ")+"\n"}
-                    </WikiStyledText>
-                </div>
-                <div>
-                    <WikiStyledText>
+
+                        {"### "+translate("wiki.article.role.reminder")+"\n"}
+                        {replaceMentions(translateChecked("wiki.article.role."+role+".reminder") ?? translate("wiki.article.role.noReminder"), DUMMY_NAMES)+"\n"}
+
                         {"### "+translate("wiki.article.role.guide")+"\n"}
-                        {replaceMentions(translateChecked("wiki.article.role."+role+".guide") ?? translate("wiki.article.role.noGuide"), DUMMY_NAMES)}
+                        {replaceMentions(translateChecked("wiki.article.role."+role+".guide") ?? translate("wiki.article.role.noGuide"), DUMMY_NAMES)+"\n"}
                     </WikiStyledText>
                 </div>
                 <div>
