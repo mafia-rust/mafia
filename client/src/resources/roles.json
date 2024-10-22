@@ -529,7 +529,7 @@
     "impostor": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaKilling"],
-        "armor": true,
+        "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
@@ -560,7 +560,7 @@
     "counterfeiter": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaKilling"],
-        "armor": true,
+        "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
