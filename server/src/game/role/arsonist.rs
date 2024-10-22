@@ -41,15 +41,12 @@ impl RoleStateImpl for Arsonist {
                     ArsonistDoused::douse(game, other_player_ref);
                 }
             },
-            Priority::Kill => {
-                if crate::game::components::detained::Detained::is_detained(game, actor_ref) {return}
-                
+            Priority::Kill => {                
                 if let Some(visit) = actor_ref.night_visits(game).first(){
                     if actor_ref == visit.target{
                         ArsonistDoused::ignite(game, actor_ref);
                     }
                 }
-                
             }
             _ => {}
         }
