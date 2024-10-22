@@ -395,9 +395,14 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.clientState.notes = packet.notes;
                 
                 if(GAME_MANAGER.state.clientState.notes === ""){
-                    GAME_MANAGER.sendSaveNotesPacket(GAME_MANAGER.state.players.map((player) => {
-                        return player.toString();
-                    }).join(" - \n") + " - \n");
+                    const myIndex = GAME_MANAGER.state.clientState.myIndex;
+                    const myRoleKey = `role.${GAME_MANAGER.state.clientState.roleState.type}.name`;
+
+                    GAME_MANAGER.sendSaveNotesPacket(
+                        GAME_MANAGER.state.players
+                            .map(player => `@${player.index + 1} - ${player.index === myIndex ? translate(myRoleKey) : ''}\n`)
+                            .join('')
+                    );
                 }
             }
         break;
