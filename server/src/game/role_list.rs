@@ -124,10 +124,11 @@ impl Ord for RoleOutlineOption {
 #[serde(rename_all = "camelCase")]
 pub enum RoleSet {
     Town,
-    TownSupport,
-    TownKilling,
-    TownProtective,
+    TownCommon,
     TownInvestigative,
+    TownProtective,
+    TownKilling,
+    TownSupport,
 
     Mafia,
     MafiaSupport,
@@ -144,16 +145,20 @@ impl RoleSet{
         match self {
             RoleSet::Town => 
                 vec![
-                    Role::Jailor, Role::Villager
+                    Role::Jailor, Role::Villager, Role::Drunk
                 ].into_iter().chain(
-                    RoleSet::TownInvestigative.get_roles().into_iter()
-                ).chain(
+                    RoleSet::TownCommon.get_roles().into_iter()
+                ).collect(),
+            RoleSet::TownCommon => {
+                RoleSet::TownInvestigative.get_roles().into_iter()
+                .chain(
                     RoleSet::TownProtective.get_roles().into_iter()
                 ).chain(
                     RoleSet::TownKilling.get_roles().into_iter()
                 ).chain(
                     RoleSet::TownSupport.get_roles().into_iter()
-                ).collect(),
+                ).collect()
+            },
             RoleSet::TownInvestigative => 
                 vec![
                     Role::Detective, Role::Philosopher, Role::Gossip, 
@@ -199,7 +204,7 @@ impl RoleSet{
                 ],
             RoleSet::Neutral =>
                 vec![
-                    Role::Jester, Role::Revolutionary, Role::Politician, Role::Doomsayer, Role::Drunk,
+                    Role::Jester, Role::Revolutionary, Role::Politician, Role::Doomsayer,
                     Role::Martyr, Role::Death, Role::Chronokaiser
                 ],
             RoleSet::Fiends =>

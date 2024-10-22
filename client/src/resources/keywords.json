@@ -10,7 +10,7 @@
     "enemies": { "style": "keyword-evil", "link": "standard/enemies"},
     "vision": {"style": "keyword-info","link": "role/psychic"},
     "good": {"style": "keyword-info", "link": "role/psychic"},
-    "faction": { "style": "keyword-info"},
+    "townCommon": { "style": "keyword-good","link": "generated/roleSet"},
     "townInvestigative": { "style": "keyword-good","link": "generated/roleSet"},
     "townProtective": { "style": "keyword-good","link": "generated/roleSet"},
     "townSupport": { "style": "keyword-good","link": "generated/roleSet"},

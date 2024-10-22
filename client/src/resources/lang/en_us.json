@@ -601,7 +601,6 @@
 
     "alibi": "Alibi",
 
-    "faction":"Faction",
     "town": "Town",
     "mafia": "Mafia",
     "cult": "Cult",
@@ -609,9 +608,12 @@
     "cult:var.1": "Cultists",
     "neutral": "Neutral",
     "minions": "Minions",
+    "minions:var.0": "Minion",
     "fiends": "Fiends",
     "fiends:var.0": "Fiend",
 
+    "townCommon":"Town Common",
+    "townCommon:var.0":"TC",
     "townInvestigative":"Town Investigative",
     "townInvestigative:var.0":"TI",
     "townProtective":"Town Protective",
@@ -625,9 +627,6 @@
     "mafiaSupport:var.0":"MS",
     "mafiaKilling":"Mafia Killing",
     "mafiaKilling:var.0":"MK",
-
-    "neutralEvil":"Neutral Evil",
-    "neutralEvil:var.0":"NE",
 
     "tag.godfatherBackup":"🌹",
     "tag.godfatherBackup.name":"Killing backup",
