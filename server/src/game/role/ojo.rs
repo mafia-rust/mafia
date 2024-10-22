@@ -3,6 +3,7 @@ use serde::Serialize;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::phase::PhaseType;
+use crate::game::role_outline_reference::RoleOutlineReference;
 use crate::game::visit::Visit;
 use crate::game::{attack_power::AttackPower, grave::GraveKiller};
 use crate::game::player::PlayerReference;
@@ -16,8 +17,8 @@ use super::{Priority, RoleStateImpl, Role};
 #[serde(rename_all = "camelCase")]
 pub struct Ojo{
     pub role_chosen: Option<Role>,
-    pub chosen_outline: Option<u8>,
-    pub previously_given_results: Vec<(u8, AuditorResult)>,
+    pub chosen_outline: Option<RoleOutlineReference>,
+    pub previously_given_results: Vec<(RoleOutlineReference, AuditorResult)>,
 }
 
 
@@ -55,20 +56,14 @@ impl RoleStateImpl for Ojo {
 
                 let Some(chosen_outline) = self.chosen_outline else {return;};
 
-                let (role, _) = match game.roles_originally_generated.get(chosen_outline as usize) {
-                    Some(map) => *map,
-                    None => unreachable!("Auditor role outline not found")
-                };
+                let (role, _) = chosen_outline.deref_as_role_and_player_originally_generated(game);
                 
-                let outline = match game.settings.role_list.0.get(chosen_outline as usize){
-                    Some(outline) => outline,
-                    None => unreachable!("Auditor role outline not found")
-                };
+                let outline = chosen_outline.deref(&game).clone();
 
                 let result =  AuditorResult::One{role};
                 
                 actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-                    role_outline: outline.clone(),
+                    role_outline: outline,
                     result: result.clone()
                 });
                 
@@ -82,10 +77,7 @@ impl RoleStateImpl for Ojo {
         let mut all_visits = Vec::new();
 
         if let Some(chosen_outline) = self.chosen_outline {
-            let (_, audited_player) = match game.roles_originally_generated.get(chosen_outline as usize) {
-                Some(map) => *map,
-                None => unreachable!("Auditor role outline not found")
-            };
+            let (_, audited_player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
             all_visits.push(Visit{ target: audited_player, attack: false });
         }
 

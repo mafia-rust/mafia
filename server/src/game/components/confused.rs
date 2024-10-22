@@ -17,16 +17,16 @@ impl Confused{
 
 
     pub fn add_player(game: &mut Game, player: PlayerReference){
-        let intoxicated = Self::confused_mut(game);
-        intoxicated.players.insert(player);
+        let confused = Self::confused_mut(game);
+        confused.players.insert(player);
     }
     pub fn remove_player(game: &mut Game, player: PlayerReference){
-        let intoxicated = Self::confused_mut(game);
-        intoxicated.players.remove(&player);
+        let confused = Self::confused_mut(game);
+        confused.players.remove(&player);
     }
 
-    pub fn is_intoxicated(game: &Game, player: PlayerReference)->bool{
-        let intoxicated = Self::confused(game);
-        intoxicated.players.contains(&player)
+    pub fn is_confused(game: &Game, player: PlayerReference)->bool{
+        let confused = Self::confused(game);
+        confused.players.contains(&player)
     }
 }

@@ -18,6 +18,7 @@ pub mod game_listeners;
 pub mod attack_power;
 pub mod modifiers;
 pub mod win_condition;
+pub mod role_outline_reference;
 
 use std::collections::HashMap;
 use std::time::Duration;
@@ -36,6 +37,7 @@ use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
+use role_outline_reference::OriginallyGeneratedRoleAndPlayer;
 use serde::Serialize;
 
 use crate::client_connection::ClientConnection;
@@ -76,7 +78,7 @@ pub struct Game {
     pub spectators: Vec<Spectator>,
     pub spectator_chat_messages: Vec<ChatMessageVariant>,
 
-    pub roles_originally_generated: Vec<(Role, PlayerReference)>,
+    pub roles_originally_generated: Vec<OriginallyGeneratedRoleAndPlayer>,
 
     pub players: Box<[Player]>,
     pub graves: Vec<Grave>,

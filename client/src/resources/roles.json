@@ -43,9 +43,19 @@
         "canBeConvertedTo": [],
         "chatMessages":[]
     },
+    "drunk": {
+        "mainRoleSet": "town",
+        "roleSets": ["town"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[]
+    },
     "detective": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townInvestigative"],
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -58,7 +68,7 @@
     },
     "lookout": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townInvestigative"],
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -71,7 +81,7 @@
     },
     "philosopher": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townInvestigative"],
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -84,7 +94,7 @@
     },
     "tracker": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townInvestigative"],
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -97,7 +107,7 @@
     },
     "psychic": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townInvestigative"],
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -110,7 +120,7 @@
     },
     "spy": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townInvestigative"],
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -133,7 +143,7 @@
     },
     "auditor": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townInvestigative"],
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -148,7 +158,7 @@
     },
     "snoop": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townInvestigative"],
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -161,7 +171,7 @@
     },
     "gossip": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townInvestigative"],
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -174,7 +184,7 @@
     },
     "tallyClerk": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townInvestigative"],
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -187,7 +197,7 @@
     },
     "doctor": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townProtective"],
+        "roleSets": ["town", "townCommon", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -201,7 +211,7 @@
     },
     "cop": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townProtective"],
+        "roleSets": ["town", "townCommon", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -217,7 +227,7 @@
     },
     "bouncer": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townProtective"],
+        "roleSets": ["town", "townCommon", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -229,7 +239,7 @@
     },
     "engineer": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townProtective"],
+        "roleSets": ["town", "townCommon", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -252,7 +262,7 @@
     },
     "bodyguard": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townProtective"],
+        "roleSets": ["town", "townCommon", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -267,7 +277,7 @@
     },
     "armorsmith": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townProtective"],
+        "roleSets": ["town", "townCommon", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -283,7 +293,7 @@
     },
     "steward":{
         "mainRoleSet": "town",
-        "roleSets": ["town", "townProtective"],
+        "roleSets": ["town", "townCommon", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -298,7 +308,7 @@
     },
     "vigilante": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townKilling"],
+        "roleSets": ["town", "townCommon", "townKilling"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -312,7 +322,7 @@
     },
     "veteran": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townKilling"],
+        "roleSets": ["town", "townCommon", "townKilling"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -326,7 +336,7 @@
     },
     "marksman":{
         "mainRoleSet": "town",
-        "roleSets": ["town", "townKilling"],
+        "roleSets": ["town", "townCommon", "townKilling"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -339,7 +349,7 @@
     },
     "deputy": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townKilling"],
+        "roleSets": ["town", "townCommon", "townKilling"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -354,7 +364,7 @@
     },
     "rabblerouser": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townKilling"],
+        "roleSets": ["town", "townCommon", "townKilling"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -367,7 +377,7 @@
     },
     "escort": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townSupport"],
+        "roleSets": ["town", "townCommon", "townSupport"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -380,7 +390,7 @@
     },
     "medium": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townSupport"],
+        "roleSets": ["town", "townCommon", "townSupport"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -410,7 +420,7 @@
     },
     "mayor":{
         "mainRoleSet": "town",
-        "roleSets": ["town", "townSupport"],
+        "roleSets": ["town", "townCommon", "townSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -423,7 +433,7 @@
     },
     "reporter": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townSupport"],
+        "roleSets": ["town", "townCommon", "townSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -457,7 +467,7 @@
     },
     "transporter":{
         "mainRoleSet": "town",
-        "roleSets": ["town", "townSupport"],
+        "roleSets": ["town", "townCommon", "townSupport"],
         "armor": false,
         "aura": null,
         "maxCount": null,
@@ -469,7 +479,7 @@
     },
     "retributionist": {
         "mainRoleSet": "town",
-        "roleSets": ["town", "townSupport"],
+        "roleSets": ["town", "townCommon", "townSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
@@ -519,7 +529,7 @@
     "impostor": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaKilling"],
-        "armor": true,
+        "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
@@ -550,7 +560,7 @@
     "counterfeiter": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaKilling"],
-        "armor": true,
+        "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
@@ -834,16 +844,6 @@
             {"type": "doomsayerWon"},
             {"type": "doomsayerFailed"}
         ]
-    },
-    "drunk": {
-        "mainRoleSet": "neutral",
-        "roleSets": ["neutral"],
-        "armor": false,
-        "aura": null,
-        "maxCount": null,
-        "roleSpecificMenu": true,
-        "canBeConvertedTo": [],
-        "chatMessages":[]
     },
     "chronokaiser": {
         "mainRoleSet": "neutral",

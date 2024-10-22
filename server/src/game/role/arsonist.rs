@@ -6,7 +6,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, RoleStateImpl, Role};
+use super::{Priority, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -23,21 +23,10 @@ impl RoleStateImpl for Arsonist {
 
         match priority {
             Priority::Deception => {
-                if !crate::game::components::detained::Detained::is_detained(game, actor_ref) {
-                    //douse target
-                    if let Some(visit) = actor_ref.night_visits(game).first(){
-                        let target_ref = visit.target;
-                        ArsonistDoused::douse(game, target_ref);
-                    }
-
-                    
-                }else{
-                    //douse the jailor if jailed
-                    for player_ref in PlayerReference::all_players(game){
-                        if player_ref.alive(game) && player_ref.role(game) == Role::Jailor {
-                            ArsonistDoused::douse(game, player_ref);
-                        }
-                    }
+                //douse target
+                if let Some(visit) = actor_ref.night_visits(game).first(){
+                    let target_ref = visit.target;
+                    ArsonistDoused::douse(game, target_ref);
                 }
                 
                 //douse all visitors
@@ -52,15 +41,12 @@ impl RoleStateImpl for Arsonist {
                     ArsonistDoused::douse(game, other_player_ref);
                 }
             },
-            Priority::Kill => {
-                if crate::game::components::detained::Detained::is_detained(game, actor_ref) {return}
-                
+            Priority::Kill => {                
                 if let Some(visit) = actor_ref.night_visits(game).first(){
                     if actor_ref == visit.target{
                         ArsonistDoused::ignite(game, actor_ref);
                     }
                 }
-                
             }
             _ => {}
         }

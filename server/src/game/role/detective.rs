@@ -24,7 +24,7 @@ impl RoleStateImpl for Detective {
 
         if let Some(visit) = actor_ref.night_visits(game).first(){
             
-            let suspicious = if Confused::is_intoxicated(game, actor_ref) {
+            let suspicious = if Confused::is_confused(game, actor_ref) {
                 false
             }else{
                 Detective::player_is_suspicious(game, visit.target)

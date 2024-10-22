@@ -20,6 +20,14 @@ import NightMessagePopup from "../components/NightMessagePopup";
 import PlayMenu from "../menu/main/PlayMenu";
 import StartMenu from "../menu/main/StartMenu";
 
+
+function sendDefaultName() {
+    const defaultName = loadSettingsParsed().defaultName;
+    if(defaultName !== null && defaultName !== undefined && defaultName !== ""){
+        GAME_MANAGER.sendSetNamePacket(defaultName)
+    }
+} 
+
 export default function messageListener(packet: ToClientPacket){
 
     console.log(JSON.stringify(packet, null, 2));
@@ -73,10 +81,7 @@ export default function messageListener(packet: ToClientPacket){
         
 
             saveReconnectData(packet.roomCode, packet.playerId);
-            const defaultName = loadSettingsParsed().defaultName;
-            if(defaultName !== null && defaultName !== undefined && defaultName !== ""){
-                GAME_MANAGER.sendSetNamePacket(defaultName)
-            }
+            sendDefaultName();
             ANCHOR_CONTROLLER?.clearCoverCard();
         break;
         case "rejectJoin":
@@ -181,9 +186,17 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "lobbyClients":
             if(GAME_MANAGER.state.stateType === "lobby"){
+
+                let oldMySpectator = GAME_MANAGER.getMySpectator();
                 GAME_MANAGER.state.players = new Map();
                 for(let [clientId, lobbyClient] of Object.entries(packet.clients)){
                     GAME_MANAGER.state.players.set(Number.parseInt(clientId), lobbyClient);
+                }
+                let newMySpectator = GAME_MANAGER.getMySpectator();
+
+                
+                if (oldMySpectator && !newMySpectator){
+                    sendDefaultName();
                 }
 
                 // Recompute keyword data, since player names are keywords.

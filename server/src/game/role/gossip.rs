@@ -24,7 +24,7 @@ impl RoleStateImpl for Gossip {
 
         if let Some(visit) = actor_ref.night_visits(game).first(){
             
-            let enemies = if Confused::is_intoxicated(game, actor_ref){
+            let enemies = if Confused::is_confused(game, actor_ref){
                 false
             }else{
                 Gossip::enemies(game, visit.target)

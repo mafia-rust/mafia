@@ -601,7 +601,6 @@
 
     "alibi": "Alibi",
 
-    "faction":"Faction",
     "town": "Town",
     "mafia": "Mafia",
     "cult": "Cult",
@@ -609,9 +608,12 @@
     "cult:var.1": "Cultists",
     "neutral": "Neutral",
     "minions": "Minions",
+    "minions:var.0": "Minion",
     "fiends": "Fiends",
     "fiends:var.0": "Fiend",
 
+    "townCommon":"Town Common",
+    "townCommon:var.0":"TC",
     "townInvestigative":"Town Investigative",
     "townInvestigative:var.0":"TI",
     "townProtective":"Town Protective",
@@ -625,9 +627,6 @@
     "mafiaSupport:var.0":"MS",
     "mafiaKilling":"Mafia Killing",
     "mafiaKilling:var.0":"MK",
-
-    "neutralEvil":"Neutral Evil",
-    "neutralEvil:var.0":"NE",
 
     "tag.godfatherBackup":"🌹",
     "tag.godfatherBackup.name":"Killing backup",
@@ -1120,7 +1119,7 @@
     "wiki.article.standard.confused.title:var.0": "Confuses",
     "wiki.article.standard.confused.title:var.1": "Confusing",
     "wiki.article.standard.confused.title:var.2": "Confuse",
-    "wiki.article.standard.confused.text": "The role of a player who is confused might not function correctly. Confused affects each role differently. You might not be told that you are confused.\n How this affects every role:\n   - Snoop: You are always told that you can't tell\n   - Detective: You are always told innocent\n   - Philosopher: You are always told friends\n   - Gossip: You are always told that your target didn't visit an enemy\n   - Psychic: You are told a random list of 3 players for your evil vision, You are told a random list of 2 players for your good vision.\n - Tally Clerk: You are told either 1 more or 1 less than the correct number you should be told. If it would exceed the number of players who voted guilty, it is that number instead. If it were to go under 0, it is 0 instead.",
+    "wiki.article.standard.confused.text": "The role of a player who is confused might not function correctly. Confused affects each role differently. You might not be told that you are confused.\n How this affects every role:\n   - Snoop: You are always told that you can't tell\n   - Detective: You are always told innocent\n   - Philosopher: You are always told friends\n   - Gossip: You are always told that your target didn't visit an enemy\n   - Psychic: You are told a random list of 3 players for your evil vision, You are told a random list of 2 players for your good vision.\n - Tally Clerk: You are told either 1 more or 1 less than the correct number you should be told. If it would exceed the number of players who voted guilty, it is that number instead. If it were to go under 0, it is 0 instead.\n - Auditor: You get random roles, they might be correct or incorrect. You are only told roles that could have come from that slot.",
     "wiki.article.standard.marionette.title": "Marionette",
     "wiki.article.standard.marionette.title:var.0": "Marionettes",
     "wiki.article.standard.marionette.title:var.1": "Puppet",
@@ -1230,6 +1229,7 @@
 
 
     "wiki.article.generated.roleSet.title":"Role Set",
+    "wiki.article.generated.roleSet.extra":"There are a total of \\0 roles.",
     "wiki.article.generated.all_text.title":"All text",
 
     "wiki.article.role": "# \\0\n### \\1\n<br/>\n\n### Guide\n\\2\n### Abilities\n\\3\n### Attributes\n\\4\n### Extra\n\\5\n<br/>\n\n### Role Limit: \\6\n### Defense: \\7\n\n<br>\n\n### Keywords\n\\8",
@@ -1294,7 +1294,7 @@
     "wiki.article.role.psychic.attributes":"* Evil visions list three players, at least one of them isn't a town loyalist\n* Good visions list 2 players, at least one of them is a town loyalist\n- You don't get a vision if you are blocked or dead",
     "wiki.article.role.psychic.extra": "* If there aren't enough evil or good players to have a vision, the ability fails\n* You can not be listed in your own vision\n* You do not visit the players in your vision\n* Players with a suspicious aura can't be listed in your good vision\n* Players with an innocent aura can't be listed in your evil vision\n- Your visions don't depend on visits, you still get visions while dead",
 
-    "wiki.article.role.auditor.guide": "- At night, choose an outline from the list\n    - You are told 2 roles, one of those roles were assigned to a player from that outline\n    - You visit the player who was assigned that role, but you are not told who that player is\n\n_For Example_\n- You choose the outline \"Town Killing\" and are told that a vigilante or a veteran generated from that outline, and you are attacked by the veteran",
+    "wiki.article.role.auditor.guide": "- At night, choose an outline from the list\n    - You are told 2 roles, one of those roles were assigned to a player from that outline\n    - You visit the player who was assigned that role, but you are not told who that player is\n    - If you choose an outline that could only possibly generate 2 roles, you are only told 1 role. If you choose an outline that could only generate 1 role, you are told that one role.\n\n_For Example_\n- You choose the outline \"Town Killing\" and are told that a vigilante or a veteran generated from that outline, and you are attacked by the veteran",
     "wiki.article.role.auditor.abilities":"- Choose an outline\n    - You are told what role was generated from that outline and one other random role\n    - You visit the player who was assigned the role from the outline",
     "wiki.article.role.auditor.attributes":"- You are not told who the player with the role is\n- The random role you are told is from the outline you chose\n- If the outline you choose could only generate either 1 or 2 roles, then you are only told 1 role, otherwise you are told 2 roles",
     "wiki.article.role.auditor.extra":"- Your ability works independently of your visits, Your visit getting transported or getting possessed doesn't usually impact your ability\n    - If you are blocked, you don't get results, but you can select that outline again\n- It is possible for you to visit dead players",
@@ -1567,12 +1567,12 @@
     "wiki.article.role.arsonist.guide":"- Select a player to douse them in gasoline\n- Select yourself to ignite and attack every player who is doused\n- You know who is doused\n\nTry not to douse players you think the mafia will kill, because then you waste your night dousing someone who is going to die anyway.",
     "wiki.article.role.arsonist.abilities":"* Visit a player to douse them\n* Visit yourself to ignite to all doused players\n* If a player visits you, you will douse them",
     "wiki.article.role.arsonist.attributes":"* You can't be doused\n* You are shown who is doused\n* All doused players have a suspicious aura while you are alive",
-    "wiki.article.role.arsonist.extra":"* If you are roleblocked, you still douse visitors\n* If you are in jail, you douse the jailor, and you will still douse players who visit you\n* Igniting a doused player is an indirect, protection-piercing attack\n* When you ignite, you don't attack dead players\n* When you become an arsonist, you clean the gas off yourself\n* An arsonist can not be attacked by an arsonist igniting",
+    "wiki.article.role.arsonist.extra":"* If you are roleblocked, you still douse visitors\n* Igniting a is an indirect, protection-piercing attack\n* When you ignite, you don't attack dead players\n* When you become an arsonist, you clean the gas off yourself\n* An arsonist can not be attacked by an arsonist igniting",
 
     "wiki.article.role.werewolf.guide": "You have a different ability depending on whether or not it is a full moon tonight. It is a full moon every night except night 1 and 3.\n- On full moon nights\n    - Select someone to attack them and rampage, attacking everyone else who visits that player\n    - Select nobody to rampage yourself, attacking everyone who visits you\n- On non full moon nights\n    - Select someone to gain their scent\n    - Passively gain the scent of everyone who visits you\n    - You have an innocent aura\n- Every night\n    - If you have someones scent, you are told who they visit\n\n Try to attack players who will get visited by many people in order to kill more players. The information you receive can help you claim town investigative roles such as the Tracker",
     "wiki.article.role.werewolf.abilities":"* On full moon nights\n    * Visit a player to attack and rampage\n    * If you visit nobody, you rampage yourself\n* On non-full moon nights\n    * Visit a player to gain their scent\n    * You passively gain the scent of every player that visits you\n    * You have an innocent aura",
-    "wiki.article.role.werewolf.attributes":"* You track each player you have the scent of. You are told who each player you are tracking visits.\n* You still track the scent of players after you die\n* While you are in jail, you attack all Jailors who do not choose to execute you\n* You have an armor-piercing attack\n",
-    "wiki.article.role.werewolf.extra":"* You will attack yourself if you visit yourself\n* You will not rampage the jailor while in jail\n* You will still attack or gain the scent of visits to you when you are in jail\n* You will still track the players you have the scent of while you are in jail\n* A roleblock has no effect on you besides erasing your visits. If you are roleblocked, it is as if you visited nobody\n* Players attacked by a rampage are indirectly attacked",
+    "wiki.article.role.werewolf.attributes":"* You track each player you have the scent of. You are told who each player you are tracking visits.\n* You still track the scent of players after you die\n* Your attack is armor-piercing",
+    "wiki.article.role.werewolf.extra":"* You attack yourself if you visit yourself\n* A roleblock has no effect on you besides erasing your visits. If you are roleblocked, it is as if you visited nobody\n* You don't visit players attacked by a rampage",
 
     "wiki.article.role.ojo.guide":"- You have multiple night abilities\n - Each night, select an outline, you are told what role generated from that outline\n - Each night except the first, select a role, you attack all players with that role\n - You see the role of all players who visit you, their role is revealed to you, this is a passive ability",
     "wiki.article.role.ojo.abilities":"- You have multiple night abilities\n - Each night, select an outline, you are told what role generated from that outline\n - Each night except the first, select a role, you attack all players with that role\n - You see the role of all players who visit you, their role is revealed to you, this is a passive ability",
