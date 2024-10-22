@@ -57,25 +57,13 @@ impl RoleStateImpl for Werewolf {
 
                     //rampage at home
                     None => {
-                        if crate::game::components::detained::Detained::is_detained(game, actor_ref){
-                            //kill all jailors NOT trying to execute me
-                            for jailor_ref in PlayerReference::all_players(game){
-                                if 
-                                    jailor_ref.alive(game) && 
-                                    jailor_ref.role(game) == Role::Jailor &&
-                                    jailor_ref.night_visits(game).iter().all(|visit|visit.target!=actor_ref)
-                                {
-                                    jailor_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
-                                }
-                            }
-                        }else{
-                            for other_player_ref in 
-                                actor_ref.all_visitors(game).into_iter().filter(|p|actor_ref!=*p)
-                                .collect::<Vec<PlayerReference>>()
-                            {
-                                other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
-                            }
+                        for other_player_ref in 
+                            actor_ref.all_visitors(game).into_iter().filter(|p|actor_ref!=*p)
+                            .collect::<Vec<PlayerReference>>()
+                        {
+                            other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
                         }
+                        
                     },
                 }
             },
