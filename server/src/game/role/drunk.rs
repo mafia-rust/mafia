@@ -40,7 +40,9 @@ impl RoleStateImpl for Drunk {
     }
 }
 impl Drunk{
-    const POSSIBLE_ROLES: [Role; 6] = [
-        Role::Detective, Role::Snoop, Role::Gossip, Role::Philosopher, Role::Psychic, Role::TallyClerk
+    const POSSIBLE_ROLES: [Role; 7] = [
+        Role::Detective, Role::Snoop, Role::Gossip,
+        Role::Philosopher, Role::Psychic, Role::TallyClerk,
+        Role::Auditor
     ];
 }
