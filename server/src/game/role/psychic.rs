@@ -28,14 +28,14 @@ impl RoleStateImpl for Psychic {
 
         actor_ref.push_night_message(game, match game.day_number() % 2 {
             1=>{
-                if Confused::is_intoxicated(game, actor_ref){
+                if Confused::is_confused(game, actor_ref){
                     Psychic::get_confused_result_evil(game, actor_ref)
                 }else{
                     Psychic::get_psychic_result_evil(game, actor_ref)
                 }
             },
             _=>{
-                if Confused::is_intoxicated(game, actor_ref){
+                if Confused::is_confused(game, actor_ref){
                     Psychic::get_confused_result_good(game, actor_ref)
                 }else{
                     Psychic::get_psychic_result_good(game, actor_ref)

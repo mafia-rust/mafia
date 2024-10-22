@@ -24,7 +24,7 @@ impl RoleStateImpl for Snoop {
 
         if let Some(visit) = actor_ref.night_visits(game).first(){
 
-            let townie = if Confused::is_intoxicated(game, actor_ref) {
+            let townie = if Confused::is_confused(game, actor_ref) {
                 false
             }else{
                 visit.target.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) &&
