@@ -32,7 +32,7 @@ impl Default for Impostor {
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Impostor {
     type ClientRoleState = Impostor;
