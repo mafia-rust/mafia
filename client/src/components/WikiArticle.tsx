@@ -158,6 +158,11 @@ function RoleSetArticle(): ReactElement {
             {elements}
         </blockquote>);
     }
+    mainElements.push(
+        <WikiStyledText key={"extra"}>
+            {translate("wiki.article.generated.roleSet.extra", Object.keys(roleJsonData()).length)}
+        </WikiStyledText>
+    );
 
     return <div>{mainElements}</div>;
 }
