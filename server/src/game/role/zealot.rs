@@ -4,8 +4,9 @@ use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
 
+
+use crate::game::role_list::RoleSet;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use super::{Priority, RoleStateImpl};
@@ -14,19 +15,20 @@ use super::{Priority, RoleStateImpl};
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Zealot;
 
-pub(super) const FACTION: Faction = Faction::Cult;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Zealot {
+    type ClientRoleState = Zealot;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill || Cult::next_ability(game) != CultAbility::Kill {return}
 
         let Some(visit) = actor_ref.night_visits(game).first() else {return};
         let target_ref = visit.target;
         
-        if target_ref.try_night_kill(
-            actor_ref, game, GraveKiller::Faction(Faction::Cult), AttackPower::Basic, false
+        if target_ref.try_night_kill_single_attacker(
+            actor_ref, game, GraveKiller::RoleSet(RoleSet::Cult), AttackPower::Basic, false
         ) {
             Cult::set_ability_used_last_night(game, Some(CultAbility::Kill));
         }
@@ -38,5 +40,10 @@ impl RoleStateImpl for Zealot {
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
+    }
+    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+        vec![
+            crate::game::components::revealed_group::RevealedGroupID::Cult
+        ].into_iter().collect()
     }
 }

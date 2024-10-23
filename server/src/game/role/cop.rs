@@ -4,29 +4,32 @@ use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
-use crate::game::resolution_state::ResolutionState;
+use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, RoleState, RoleStateImpl, common_role, Role};
+use super::{common_role, GetClientRoleState, Priority, Role, RoleStateImpl};
 
 
 
-#[derive(Clone, Serialize, Debug, Default)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug, Default)]
 pub struct Cop {
     target_protected_ref: Option<PlayerReference>
 }
 
-pub(super) const FACTION: Faction = Faction::Town;
+#[derive(Clone, Debug, Serialize)]
+pub struct ClientRoleState;
+
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Cop {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if game.day_number() == 1 {return}
 
@@ -36,7 +39,7 @@ impl RoleStateImpl for Cop {
                 let target_ref = visit.target;
 
                 target_ref.increase_defense_to(game, DefensePower::Protection);
-                actor_ref.set_role_state(game, RoleState::Cop(Cop {target_protected_ref: Some(target_ref)}));
+                actor_ref.set_role_state(game, Cop {target_protected_ref: Some(target_ref)});
             }
             Priority::Kill => {
                 let Some(visit) = actor_ref.night_visits(game).first() else {return};
@@ -49,7 +52,7 @@ impl RoleStateImpl for Cop {
                     .filter(|other_player_ref|
                         other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref &&
-                        !ResolutionState::requires_only_this_resolution_state(game, *other_player_ref, ResolutionState::Town) &&
+                        !other_player_ref.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) &&
                         other_player_ref.night_visits(game)
                             .iter()
                             .any(|v|v.target==target_ref)
@@ -71,7 +74,7 @@ impl RoleStateImpl for Cop {
                 }
 
                 if let Some(player_to_attack) = player_to_attack{
-                    player_to_attack.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Cop), AttackPower::Basic, false);
+                    player_to_attack.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Cop), AttackPower::Basic, false);
                 }
             }
             Priority::Investigative => {
@@ -94,6 +97,11 @@ impl RoleStateImpl for Cop {
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         if phase != PhaseType::Night {return;}
-        actor_ref.set_role_state(game, RoleState::Cop(Cop {target_protected_ref: None}));
+        actor_ref.set_role_state(game, Cop {target_protected_ref: None});
+    }
+}
+impl GetClientRoleState<ClientRoleState> for Cop {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
+        ClientRoleState
     }
 }

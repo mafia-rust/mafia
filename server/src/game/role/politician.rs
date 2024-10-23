@@ -2,30 +2,32 @@ use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
-use crate::game::resolution_state::ResolutionState;
+use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
 
+
+use crate::game::win_condition::WinCondition;
 use crate::game::Game;
 use super::jester::Jester;
-use super::{RoleStateImpl, Role, RoleState};
+use super::{GetClientRoleState, Role, RoleState, RoleStateImpl};
 
 
-#[derive(Debug, Clone, Serialize, Default)]
+#[derive(Debug, Clone, Default)]
 pub struct Politician{
     won: bool,
 }
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+#[derive(Debug, Clone, Serialize)]
+pub struct ClientRoleState;
+
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Politician {
-    fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
-        self.won
-    }
+    type ClientRoleState = ClientRoleState;
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         if self.should_suicide(game, actor_ref) {
             actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
@@ -33,7 +35,7 @@ impl RoleStateImpl for Politician {
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
         if self.should_suicide(game, actor_ref) {
-            actor_ref.set_role(game, RoleState::Jester(Jester::default()));
+            actor_ref.set_role_and_win_condition_and_revealed_group(game, RoleState::Jester(Jester::default()));
         }
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
@@ -49,7 +51,7 @@ impl RoleStateImpl for Politician {
         for player_ref in PlayerReference::all_players(game) {
             if
                 player_ref.alive(game) && 
-                player_ref.role(game).faction() == Faction::Town &&
+                player_ref.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) &&
                 player_ref.get_won_game(game)
             {
                 
@@ -85,16 +87,27 @@ impl RoleStateImpl for Politician {
             }
         }
     }
+    fn default_win_condition(self) -> crate::game::win_condition::WinCondition where RoleState: From<Self> {
+        WinCondition::GameConclusionReached{win_if_any: vec![GameConclusion::Politician].into_iter().collect()}
+    }
+}
+impl GetClientRoleState<ClientRoleState> for Politician {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
+        ClientRoleState
+    }
 }
 
 pub fn is_town_remaining(game: &Game) -> bool {
     PlayerReference::all_players(game).any(|player|
-        player.alive(game) && ResolutionState::requires_only_this_resolution_state(game, player, ResolutionState::Town)
+        player.alive(game) && player.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town)
     )
 }
 
 impl Politician {
     pub fn should_suicide(&self, game: &Game, actor_ref: PlayerReference) -> bool {
         !self.won && actor_ref.alive(game) && !is_town_remaining(game)
+    }
+    pub fn won(&self)->bool{
+        self.won
     }
 }

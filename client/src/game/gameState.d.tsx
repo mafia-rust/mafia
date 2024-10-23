@@ -28,14 +28,15 @@ export type LobbyState = {
     myId: number | null,
 
     roleList: RoleList,
-    enabledRoles: Role[],
     phaseTimes: PhaseTimes,
+    enabledRoles: Role[],
+    enabledModifiers: ModifierType[],
 
     players: Map<LobbyClientID, LobbyClient>,
     chatMessages: ChatMessage[],
 }
 export type LobbyClient = {
-    host: boolean,
+    ready: "host" | "ready" | "notReady",
     connection: "connected" | "disconnected" | "couldReconnect",
     clientType: LobbyClientType
 }
@@ -64,7 +65,8 @@ type GameState = {
     
     roleList: RoleList,
     enabledRoles: Role[],
-    phaseTimes: PhaseTimes
+    phaseTimes: PhaseTimes,
+    enabledModifiers: ModifierType[],
 
     ticking: boolean,
 
@@ -82,7 +84,7 @@ export type PlayerGameState = {
     roleState: RoleState,
 
     will: string,
-    notes: string,
+    notes: string[],
     crossedOutOutlines: number[],
     chatFilter: PlayerIndex | null,
     deathNote: string,
@@ -91,6 +93,7 @@ export type PlayerGameState = {
     judgement: Verdict,
     
     forfeitVote: boolean,
+    pitchforkVote: PlayerIndex | null,
 
     sendChatGroups: ChatGroup[],
 }
@@ -117,11 +120,14 @@ export type PhaseState = {type: "briefing"} | {type: "dusk"} | {type: "night"} |
     playerOnTrial: PlayerIndex
 }
 
-export type ChatGroup = "all" | "dead" | "mafia" | "cult" | "jail" | "interview";
+export type ChatGroup = "all" | "dead" | "mafia" | "cult" | "jail" | "kidnapper" | "interview" | "puppeteer";
 
 export type PhaseTimes = Record<PhaseType, number>;
 
-export type Tag = | "godfatherBackup" | "werewolfTracked" | "doused" | "rabbleRouserTarget" | "morticianTagged" | "puppeteerMarionette" | "loveLinked" | "forfeitVote";
+export type Tag = | "godfatherBackup" | "werewolfTracked" | "doused" | "revolutionaryTarget" | "morticianTagged" | "puppeteerMarionette" | "loveLinked" | "forfeitVote";
+
+export const MODIFIERS = ["obscuredGraves", "randomLoveLinks", "deadCanChat", "noAbstaining", "noDeathCause"] as const;
+export type ModifierType = (typeof MODIFIERS)[number];
 
 export type Player = {
     name: string,

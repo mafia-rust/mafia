@@ -1,12 +1,13 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::components::detained::Detained;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
-use crate::game::resolution_state::ResolutionState;
+use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 
 use crate::game::Game;
@@ -57,11 +58,12 @@ impl Default for Marksman {
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Marksman {
+    type ClientRoleState = Marksman;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         
     
@@ -77,9 +79,9 @@ impl RoleStateImpl for Marksman {
                     
                     if !visiting_players.contains(&mark) {continue};
                     
-                    let killed = mark.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Marksman), AttackPower::Basic, false);
+                    let killed = mark.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Marksman), AttackPower::Basic, false);
 
-                    if killed && ResolutionState::requires_only_this_resolution_state(game, mark, ResolutionState::Town) {
+                    if killed && mark.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) {
                         self.state = MarksmanState::ShotTownie;
                     }
                 }
@@ -105,7 +107,7 @@ impl RoleStateImpl for Marksman {
         
         !self.state.no_marks() &&
         actor_ref != target_ref &&
-        !actor_ref.night_jailed(game) &&
+        !Detained::is_detained(game, actor_ref) &&
         actor_ref.alive(game) &&
         target_ref.alive(game) && 
         (
@@ -117,7 +119,7 @@ impl RoleStateImpl for Marksman {
         game.current_phase().is_night() &&
         actor_ref != target_ref &&
         actor_ref.alive(game) &&
-        !actor_ref.night_jailed(game) &&
+        !Detained::is_detained(game, actor_ref) &&
         target_ref.alive(game) &&
         matches!(self.state, MarksmanState::Marks { .. }) &&
         ((

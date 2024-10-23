@@ -3,11 +3,12 @@ use serde::Serialize;
 
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
+use crate::game::components::detained::Detained;
 use crate::game::event::before_role_switch::BeforeRoleSwitch;
 use crate::game::grave::GraveInformation;
 use crate::game::grave::GraveReference;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
@@ -22,15 +23,16 @@ pub struct Mortician {
     obscured_players: Vec<PlayerReference>
 }
 
-pub(super) const FACTION: Faction = Faction::Mafia;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 const MAX_CREMATIONS: u8 = 3;
 
 impl RoleStateImpl for Mortician {
+    type ClientRoleState = Mortician;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if actor_ref.night_jailed(game) {return}
+        if Detained::is_detained(game, actor_ref) {return}
 
         if self.obscured_players.len() as u8 >= MAX_CREMATIONS {return}
 
@@ -51,7 +53,7 @@ impl RoleStateImpl for Mortician {
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         actor_ref != target_ref &&
-        !actor_ref.night_jailed(game) &&
+        !Detained::is_detained(game, actor_ref) &&
         actor_ref.selection(game).is_empty() &&
         actor_ref.alive(game) &&
         target_ref.alive(game) &&
@@ -76,5 +78,10 @@ impl RoleStateImpl for Mortician {
 
             grave_ref.deref_mut(game).information = GraveInformation::Obscured;
         }
+    }
+    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+        vec![
+            crate::game::components::revealed_group::RevealedGroupID::Mafia
+        ].into_iter().collect()
     }
 }

@@ -1,11 +1,12 @@
 {
     "jailor":{
-        "faction": "town",
-        "roleSet": null,
+        "mainRoleSet": "town",
+        "roleSets": ["town"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "jailedTarget","playerIndex": 7},
@@ -34,22 +35,35 @@
         ]
     },
     "villager": {
-        "faction": "town",
-        "roleSet": null,
+        "mainRoleSet": "town",
+        "roleSets": ["town"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": false,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[]
     },
-    "detective": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+    "drunk": {
+        "mainRoleSet": "town",
+        "roleSets": ["town"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[]
+    },
+    "detective": {
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townInvestigative"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type":"sheriffResult","suspicious":true},
@@ -57,12 +71,13 @@
         ]
     },
     "lookout": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "lookoutResult", "players": [9,15,4]},
@@ -70,12 +85,13 @@
         ]
     },
     "philosopher": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "seerResult", "enemies": true},
@@ -83,12 +99,13 @@
         ]
     },
     "tracker": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "trackerResult", "players": [20]},
@@ -96,12 +113,13 @@
         ]
     },
     "psychic": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": false,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "psychicEvil", "players": [19,27,3]},
@@ -109,12 +127,13 @@
         ]
     },
     "spy": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "spyBug", "bug": "silenced"},
@@ -132,12 +151,13 @@
         ]
     },
     "auditor": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "auditorResult", "roleOutline":{"type":"any"},"result": {"type":"two","roles":["godfather","jester"]}},
@@ -147,12 +167,13 @@
         ]
     },
     "snoop": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "snoopResult", "townie":true},
@@ -160,38 +181,41 @@
         ]
     },
     "gossip": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "gossipResult", "enemies":true},
             {"type": "gossipResult", "enemies":false}
         ]
     },
-    "flowerGirl": {
-        "faction": "town",
-        "roleSet": "townInvestigative",
+    "tallyClerk": {
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townInvestigative"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "flowerGirlResult", "evilCount": 2},
-            {"type": "flowerGirlResult", "evilCount": 0}
+            {"type": "tallyClerkResult", "evilCount": 2},
+            {"type": "tallyClerkResult", "evilCount": 0}
         ]
     },
     "doctor": {
-        "faction": "town",
-        "roleSet": "townProtective",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "targetWasAttacked"},
@@ -200,12 +224,13 @@
         ]
     },
     "cop": {
-        "faction": "town",
-        "roleSet": "townProtective",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "youAttackedSomeone"},
@@ -216,24 +241,26 @@
         ]
     },
     "bouncer": {
-        "faction": "town",
-        "roleSet": "townProtective",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "wardblocked"}
         ]
     },
     "engineer": {
-        "faction": "town",
-        "roleSet": "townProtective",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "trapState", "state":{"type":"dismantled"}},
@@ -251,12 +278,13 @@
         ]
     },
     "bodyguard": {
-        "faction": "town",
-        "roleSet": "townProtective",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "targetWasAttacked"},
@@ -266,12 +294,13 @@
         ]
     },
     "armorsmith": {
-        "faction": "town",
-        "roleSet": "townProtective",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "armorsmithArmorBroke"},
@@ -281,13 +310,30 @@
             {"type": "youSurvivedAttack"}
         ]
     },
-    "vigilante": {
-        "faction": "town",
-        "roleSet": "townKilling",
+    "steward":{
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townProtective"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "targetWasAttacked"},
+            {"type": "youWereProtected"},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+        ]
+    },
+    "vigilante": {
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townKilling"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "vigilanteSuicide"},
@@ -296,12 +342,13 @@
         ]
     },
     "veteran": {
-        "faction": "town",
-        "roleSet": "townKilling",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townKilling"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "youAttackedSomeone"},
@@ -310,12 +357,13 @@
         ]
     },
     "marksman":{
-        "faction": "town",
-        "roleSet": "townKilling",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townKilling"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "youAttackedSomeone"},
@@ -323,12 +371,13 @@
         ]
     },
     "deputy": {
-        "faction": "town",
-        "roleSet": "townKilling",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townKilling"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": false,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "deputyKilled", "shotIndex": 11},
@@ -337,13 +386,28 @@
             {"type": "youAttackedSomeone"}
         ]
     },
-    "escort": {
-        "faction": "town",
-        "roleSet": "townSupport",
+    "rabblerouser": {
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townKilling"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youAttackedSomeone"}
+        ]
+    },
+    "escort": {
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townSupport"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "roleBlocked", "immune": true},
@@ -351,12 +415,13 @@
         ]
     },
     "medium": {
-        "faction": "town",
-        "roleSet": "townSupport",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townSupport"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "mediumHauntStarted", "medium":32, "player":10},
@@ -381,25 +446,27 @@
         ]
     },
     "mayor":{
-        "faction": "town",
-        "roleSet": "townSupport",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": false,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "mayorRevealed","playerIndex": 3},
             {"type": "mayorCantWhisper"}
         ]
     },
-    "journalist": {
-        "faction": "town",
-        "roleSet": "townSupport",
+    "reporter": {
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "youAreInterviewingPlayer","playerIndex": 1},
@@ -407,7 +474,7 @@
             {
                 "type": "normal", 
                 "messageSender": {
-                    "type": "journalist"
+                    "type": "reporter"
                 },
                 "text": "Alright! Who wants to throw me around like a football?", 
                 "chatGroup": "interview"
@@ -422,30 +489,32 @@
                 "chatGroup": "interview"
             },
             {
-                "type": "journalistJournal",
-                "journal": "I interviewed @2 last night. He gets it."
+                "type": "reporterReport",
+                "report": "I interviewed @2 last night. He gets it."
             }
         ]
     },
     "transporter":{
-        "faction": "town",
-        "roleSet": "townSupport",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townSupport"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "transported"}
         ]
     },
     "retributionist": {
-        "faction": "town",
-        "roleSet": "townSupport",
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "targetsMessage", "message": 
@@ -457,12 +526,13 @@
         ]
     },
     "godfather": {
-        "faction": "mafia",
-        "roleSet": "mafiaKilling",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaKilling"],
         "armor": true,
         "aura": "innocent",
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "godfatherBackup", "backup": null},
@@ -473,12 +543,30 @@
         ]
     },
     "retrainer": {
-        "faction": "mafia",
-        "roleSet": "mafiaKilling",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaKilling"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "godfatherBackup", "backup": null},
+            {"type": "godfatherBackup", "backup": 26},
+            {"type": "godfatherBackupKilled", "backup": 26},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+        ]
+    },
+    "impostor": {
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaKilling"],
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "godfatherBackup", "backup": null},
@@ -489,12 +577,13 @@
         ]
     },
     "eros": {
-        "faction": "mafia",
-        "roleSet": "mafiaKilling",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaKilling"],
         "armor": true,
         "aura": "innocent",
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type": "youAreLoveLinked", "player": 20},
@@ -504,47 +593,85 @@
         ]
     },
     "counterfeiter": {
-        "faction": "mafia",
-        "roleSet": "mafiaKilling",
-        "armor": true,
-        "aura": null,
-        "maxCount": 1,
-        "roleSpecificMenu": true,
-        "canBeConvertedTo": ["godfather"],
-        "chatMessages":[
-            {"type": "someoneSurvivedYourAttack"},
-            {"type": "youSurvivedAttack"}
-        ]
-    },
-    "mafioso": {
-        "faction": "mafia",
-        "roleSet": "mafiaKilling",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaKilling"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[
+            {"type": "godfatherBackup", "backup": null},
+            {"type": "godfatherBackup", "backup": 26},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+        ]
+    },
+    "recruiter": {
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaKilling"],
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[
+            {"type": "godfatherBackup", "backup": null},
+            {"type": "godfatherBackup", "backup": 26},
+            {"type": "recruiterPlayerIsNowRecruit","player": 40},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "recruiterActionChosen", "action": "kill"},
+            {"type": "recruiterActionChosen", "action": "recruit"}
+        ]
+    },
+    "mafioso": {
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaKilling"],
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
+    "mafiaKillingWildcard": {
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "roleAssignment", "role":"mafiaKillingWildcard"},
+            {"type": "wildcardConvertFailed", "role": "godfather"}
+        ]
+    },
     "madeMan": {
-        "faction": "mafia",
-        "roleSet": null,
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": false,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[]
     },
     "hypnotist": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type": "roleBlocked","immune": true},
@@ -558,12 +685,13 @@
         ]
     },
     "consort": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type": "roleBlocked", "immune": true},
@@ -571,24 +699,26 @@
         ]
     },
     "blackmailer": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type":"silenced"}
         ]
     },
     "informant": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type": "informantResult", "role": "arsonist", "visitedBy":[31,32], "visited":[33]},
@@ -596,12 +726,13 @@
         ]
     },
     "mortician": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {
@@ -613,24 +744,33 @@
         ]
     },
     "framer": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
-            {"type": "sheriffResult","suspicious":true}
+            {"type": "framerResult", "mafiaMember": 1, "visitors": ["gossip", "detective"]},
+            {"type": "framerResult", "mafiaMember": 4, "visitors": ["doctor"]},
+            {"type": "framerResult", "mafiaMember": 20, "visitors": []},
+            {"type": "sheriffResult","suspicious":true},
+            {"type": "snoopResult", "townie":false},
+            {"type": "snoopResult", "townie":false},
+            {"type": "seerResult", "enemies": true}
+            
         ]
     },
     "forger": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {
@@ -641,13 +781,14 @@
             }
         ]
     },
-    "witch": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+    "mafiaWitch": {
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type": "targetsMessage", "message": 
@@ -660,12 +801,13 @@
         ]
     },
     "necromancer": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type": "targetsMessage", "message": 
@@ -677,12 +819,13 @@
         ]
     },
     "cupid": {
-        "faction": "mafia",
-        "roleSet": "mafiaSupport",
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type": "youAreLoveLinked", "player": 20},
@@ -690,12 +833,13 @@
         ]
     },
     "mafiaSupportWildcard": {
-        "faction": "mafia",
-        "roleSet": null,
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "roleAssignment", "role":"mafiaSupportWildcard"},
@@ -703,62 +847,140 @@
         ]
     },
     "jester": {
-        "faction": "neutral",
-        "roleSet": "neutralEvil",
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "jesterWon"}
         ]
     },
-    "rabbleRouser": {
-        "faction": "neutral",
-        "roleSet": "neutralEvil",
+    "revolutionary": {
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
         "armor": true,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": false,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
-            {"type": "rabbleRouserWon"},
+            {"type": "revolutionaryWon"},
             {"type": "youSurvivedAttack"}
         ]
     },
     "politician":{
-        "faction": "neutral",
-        "roleSet": "neutralEvil",
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
         "armor": true,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": false,
+        "canWriteDeathNote": true,
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
             {"type": "youSurvivedAttack"}
         ]
     },
     "doomsayer":{
-        "faction": "neutral",
-        "roleSet": "neutralEvil",
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
             {"type": "doomsayerWon"},
             {"type": "doomsayerFailed"}
         ]
     },
-    "minion":{
-        "faction": "neutral",
-        "roleSet": "neutralEvil",
+    "chronokaiser": {
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "chronokaiserSpeedUp", "percent": "60"},
+            {"type": "chronokaiserSpeedUp", "percent": "120"},
+            {"type": "chronokaiserSpeedUp", "percent": "180"}
+        ]
+    },
+    "martyr": {
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "martyrRevealed", "martyr": 30},
+            {"type": "martyrWon"},
+            {"type": "martyrFailed"}
+        ]
+    },
+    "death":{
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "deathCollectedSouls"},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"}
+        ]
+    },
+    "wildcard": {
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "roleAssignment", "role":"wildcard"},
+            {"type": "wildcardConvertFailed", "role": "veteran"}
+        ]
+    },
+    "trueWildcard": {
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "roleAssignment", "role":"trueWildcard"},
+            {"type": "wildcardConvertFailed", "role": "apostle"}
+        ]
+    },
+    "witch":{
+        "mainRoleSet": "minions",
+        "roleSets": ["minions"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "targetsMessage", "message": 
@@ -771,79 +993,75 @@
         ]
     },
     "scarecrow":{
-        "faction": "neutral",
-        "roleSet": "neutralEvil",
+        "mainRoleSet": "minions",
+        "roleSets": ["minions"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "wardblocked"},
             {"type": "scarecrowResult", "players": [9,15,4]}
         ]
     },
-    "martyr": {
-        "faction": "neutral",
-        "roleSet": null,
-        "armor": false,
-        "aura": null,
-        "maxCount": 1,
-        "roleSpecificMenu": true,
-        "canBeConvertedTo": [],
-        "chatMessages":[
-            {"type": "martyrRevealed", "martyr": 30},
-            {"type": "martyrWon"},
-            {"type": "martyrFailed"}
-        ]
-    },
-    "death":{
-        "faction": "neutral",
-        "roleSet": null,
-        "armor": false,
-        "aura": null,
-        "maxCount": 1,
-        "roleSpecificMenu": true,
-        "canBeConvertedTo": [],
-        "chatMessages":[
-            {"type": "deathCollectedSouls"},
-            {"type": "someoneSurvivedYourAttack"},
-            {"type": "youSurvivedAttack"}
-        ]
-    },
-    "wildcard": {
-        "faction": "neutral",
-        "roleSet": null,
+    "warper":{
+        "mainRoleSet": "minions",
+        "roleSets": ["minions"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "roleAssignment", "role":"wildcard"},
-            {"type": "wildcardConvertFailed", "role": "veteran"}
+            {"type": "transported"}
         ]
     },
-    "trueWildcard": {
-        "faction": "neutral",
-        "roleSet": null,
+    "kidnapper":{
+        "mainRoleSet": "minions",
+        "roleSets": ["minions"],
         "armor": false,
         "aura": null,
-        "maxCount": null,
+        "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "roleAssignment", "role":"trueWildcard"},
-            {"type": "wildcardConvertFailed", "role": "apostle"}
+            {"type": "jailedTarget","playerIndex": 7},
+            {"type": "jailedSomeone","playerIndex": 7},
+            {
+                "type": "normal", 
+                "messageSender": {
+                    "type": "jailor"
+                },
+                "text": "Claim right now or else!", 
+                "chatGroup": "jail"
+            },
+            {
+                "type": "normal", 
+                "messageSender": {
+                    "type": "player",
+                    "player": 7
+                },
+                "text": "I'm jester", 
+                "chatGroup": "jail"
+            },
+            {"type": "jailorDecideExecute","target": 7},
+            {"type": "jailorDecideExecute","target": null},
+            {"type": "wardblocked"},
+            {"type": "someoneSurvivedYourAttack"}
         ]
     },
     "arsonist": {
-        "faction": "fiends",
-        "roleSet": null,
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
         "armor": true,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "someoneSurvivedYourAttack"},
@@ -851,12 +1069,13 @@
         ]
     },
     "werewolf": {
-        "faction": "fiends",
-        "roleSet": null,
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
         "armor": true,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
         "canBeConvertedTo": [],
         "chatMessages":[
             {
@@ -879,42 +1098,55 @@
         ]
     },
     "ojo": {
-        "faction": "fiends",
-        "roleSet": null,
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
         "armor": true,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "playersRoleRevealed","role": "veteran","player": 7},
             {"type": "playersRoleConcealed","player": 7},
+            {"type": "auditorResult", "roleOutline":{"type":"any"},"result": {"type":"one","role":["jester"]}},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
     },
     "puppeteer": {
-        "faction": "fiends",
-        "roleSet": null,
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
         "armor": true,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "puppeteerPlayerIsNowMarionette","player": 32},
-            {"type": "puppeteerYouArePoisoned"},
+            {"type": "youArePoisoned"},
+            {
+                "type": "normal", 
+                "messageSender": {
+                    "type": "player",
+                    "player": 32
+                },
+                "text": "Erm... Guys? What do i do, they're gonna catch me!", 
+                "chatGroup": "puppeteer"
+            },
             {"type": "puppeteerActionChosen", "action": "poison"},
             {"type": "puppeteerActionChosen", "action": "string"}
         ]
     },
     "pyrolisk": {
-        "faction": "fiends",
-        "roleSet": null,
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
         "armor": true,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
         "canBeConvertedTo": [],
         "chatMessages":[
             {
@@ -929,12 +1161,13 @@
         ]
     },
     "kira": {
-        "faction": "fiends",
-        "roleSet": null,
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
         "armor": true,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
         "canBeConvertedTo": [],
         "chatMessages":[
             {
@@ -942,20 +1175,9 @@
                 "result": {
                     "guesses": {
                         "0": ["veteran","correct"],
-                        "1": ["cult","notInGame"],
-                        "2": ["mafia","wrongSpot"],
-                        "3": ["mafia","correct"]
-                    }
-                }
-            },
-            {
-                "type": "kiraResult",
-                "result": {
-                    "guesses": {
-                        "0": ["veteran","correct"],
-                        "1": ["none","notInGame"],
-                        "2": ["neutral","correct"],
-                        "3": ["mafia","correct"]
+                        "1": ["auditor","notInGame"],
+                        "2": ["nonTown","wrongSpot"],
+                        "3": ["nonTown","correct"]
                     }
                 }
             },
@@ -965,12 +1187,13 @@
         ]
     },
     "fiendsWildcard": {
-        "faction": "fiends",
-        "roleSet": null,
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "roleAssignment", "role":"fiendsWildcard"},
@@ -978,12 +1201,13 @@
         ]
     },
     "apostle": {
-        "faction": "cult",
-        "roleSet": null,
+        "mainRoleSet": "cult",
+        "roleSets": ["cult"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
         "canBeConvertedTo": ["zealot","disciple"],
         "chatMessages":[
             {"type": "cultConvertsNext"},
@@ -993,12 +1217,13 @@
         ]
     },
     "disciple": {
-        "faction": "cult",
-        "roleSet": null,
+        "mainRoleSet": "cult",
+        "roleSets": ["cult"],
         "armor": false,
         "aura": null,
         "maxCount": null,
         "roleSpecificMenu": false,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": ["zealot","apostle"],
         "chatMessages":[
             {"type": "cultConvertsNext"},
@@ -1006,12 +1231,13 @@
         ]
     },
     "zealot": {
-        "faction": "cult",
-        "roleSet": null,
+        "mainRoleSet": "cult",
+        "roleSets": ["cult"],
         "armor": false,
         "aura": null,
         "maxCount": 1,
         "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
         "canBeConvertedTo": ["disciple","apostle"],
         "chatMessages":[
             {"type": "someoneSurvivedYourAttack"},

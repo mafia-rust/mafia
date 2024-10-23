@@ -4,7 +4,7 @@ use serde::Serialize;
 
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 use crate::game::Game;
 
@@ -13,17 +13,18 @@ use super::{Priority, RoleStateImpl};
 #[derive(Clone, Serialize, Debug, Default)]
 pub struct Lookout;
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Lookout {
+    type ClientRoleState = Lookout;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
 
         if let Some(visit) = actor_ref.night_visits(game).first(){
             
-            let mut seen_players: Vec<PlayerReference> = visit.target.appeared_visitors(game).into_iter().filter(|p|actor_ref!=*p).collect();
+            let mut seen_players: Vec<PlayerReference> = visit.target.all_appeared_visitors(game).into_iter().filter(|p|actor_ref!=*p).collect();
             seen_players.shuffle(&mut thread_rng());
 
             let message = ChatMessageVariant::LookoutResult { players:

@@ -1,11 +1,12 @@
 use rand::thread_rng;
 use serde::Serialize;
 
+use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::Grave;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 use crate::game::Game;
 use super::{Priority, RoleStateImpl};
@@ -16,11 +17,13 @@ use rand::prelude::SliceRandom;
 #[serde(rename_all = "camelCase")]
 pub struct Scarecrow;
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Scarecrow {
+    type ClientRoleState = Scarecrow;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Ward {return;}
         
@@ -50,14 +53,12 @@ impl RoleStateImpl for Scarecrow {
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         if
             actor_ref.alive(game) &&
-            !PlayerReference::all_players(game)
+            PlayerReference::all_players(game)
                 .filter(|p|p.alive(game))
                 .filter(|p|p.keeps_game_running(game))
-                .any(|p|
-                    p.required_resolution_states_for_win(game).is_some_and(|s1|
-                        actor_ref.required_resolution_states_for_win(game).is_some_and(|s2|
-                            s1.is_disjoint(&s2)
-                )))
+                .all(|p|
+                    WinCondition::can_win_together(&p.win_condition(game), actor_ref.win_condition(game))
+                )
 
         {
             actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));

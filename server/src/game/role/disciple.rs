@@ -1,13 +1,22 @@
 use serde::Serialize;
 
-use crate::game::{attack_power::DefensePower, role_list::Faction};
+use crate::game::attack_power::DefensePower;
 use super::RoleStateImpl;
 
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Disciple;
 
-pub(super) const FACTION: Faction = Faction::Cult;
+pub type ClientRoleState = Disciple;
+
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Disciple {}
+impl RoleStateImpl for Disciple {
+    type ClientRoleState = Disciple;
+    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+        vec![
+            crate::game::components::revealed_group::RevealedGroupID::Cult
+        ].into_iter().collect()
+    }
+}

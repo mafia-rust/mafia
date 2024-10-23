@@ -7,7 +7,7 @@ pub mod visit;
 pub mod verdict;
 pub mod role_list;
 pub mod settings;
-pub mod resolution_state;
+pub mod game_conclusion;
 pub mod components;
 pub mod available_buttons;
 pub mod on_client_message;
@@ -16,14 +16,28 @@ pub mod event;
 pub mod spectator;
 pub mod game_listeners;
 pub mod attack_power;
+pub mod modifiers;
+pub mod win_condition;
+pub mod role_outline_reference;
 
 use std::collections::HashMap;
 use std::time::Duration;
+use components::confused::Confused;
+use components::drunk_aura::DrunkAura;
 use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
+use components::pitchfork::Pitchfork;
+use components::mafia_recruits::MafiaRecruits;
+use components::poison::Poison;
+use components::detained::Detained;
+use components::revealed_group::RevealedGroupID;
+use components::revealed_group::RevealedGroups;
 use components::verdicts_today::VerdictsToday;
+use modifiers::Modifiers;
+use event::before_initial_role_creation::BeforeInitialRoleCreation;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
+use role_outline_reference::OriginallyGeneratedRoleAndPlayer;
 use serde::Serialize;
 
 use crate::client_connection::ClientConnection;
@@ -41,7 +55,7 @@ use self::components::{
     cult::Cult,
     puppeteer_marionette::PuppeteerMarionette
 };
-use self::resolution_state::ResolutionState;
+use self::game_conclusion::GameConclusion;
 use self::event::on_game_ending::OnGameEnding;
 use self::event::on_grave_added::OnGraveAdded;
 use self::grave::GraveReference;
@@ -64,7 +78,7 @@ pub struct Game {
     pub spectators: Vec<Spectator>,
     pub spectator_chat_messages: Vec<ChatMessageVariant>,
 
-    pub roles_to_players: Vec<(Role, PlayerReference)>,
+    pub roles_originally_generated: Vec<OriginallyGeneratedRoleAndPlayer>,
 
     pub players: Box<[Player]>,
     pub graves: Vec<Grave>,
@@ -80,8 +94,16 @@ pub struct Game {
     pub mafia: Mafia,
     pub arsonist_doused: ArsonistDoused,
     pub puppeteer_marionette: PuppeteerMarionette,
+    pub mafia_recruits: MafiaRecruits,
     pub love_linked: LoveLinked,
-    pub verdicts_today: VerdictsToday
+    pub verdicts_today: VerdictsToday,
+    pub pitchfork: Pitchfork,
+    pub poison: Poison,
+    pub modifiers: Modifiers,
+    pub revealed_groups: RevealedGroups,
+    pub detained: Detained,
+    pub confused: Confused,
+    pub drunk_aura: DrunkAura,
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -152,21 +174,30 @@ impl Game {
             drop(shuffled_roles); // Ensure we don't use the order of roles anywhere
 
             let game = Self{
-                roles_to_players: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
+                roles_originally_generated: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
                 ticking: true,
                 spectators: spectators.clone().into_iter().map(Spectator::new).collect(),
                 spectator_chat_messages: Vec::new(),
                 players: new_players.into_boxed_slice(),
                 graves: Vec::new(),
                 phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
+                modifiers: Modifiers::from_settings(settings.enabled_modifiers.clone()),
                 settings,
 
                 cult: Cult::default(),
                 mafia: Mafia,
                 arsonist_doused: ArsonistDoused::default(),
                 puppeteer_marionette: PuppeteerMarionette::default(),
+                mafia_recruits: MafiaRecruits::default(),
                 love_linked: LoveLinked::default(),
-                verdicts_today: VerdictsToday::default()
+                verdicts_today: VerdictsToday::default(),
+                pitchfork: Pitchfork::default(),
+                poison: Poison::default(),
+
+                revealed_groups: RevealedGroups::default(),
+                detained: Detained::default(),
+                confused: Confused::default(),
+                drunk_aura: DrunkAura::default(),
             };
 
             if !game.game_is_over() {
@@ -178,14 +209,28 @@ impl Game {
         if game.game_is_over() {
             return Err(RejectStartReason::RoleListCannotCreateRoles);
         }
-
         
         game.send_packet_to_all(ToClientPacket::StartGame);
+
+        //set wincons and revealed groups
+        for player in PlayerReference::all_players(&game){
+            let role_data = player.role_state(&game).clone();
+
+            player.set_win_condition(&mut game, role_data.clone().default_win_condition());
+        
+            RevealedGroupID::start_game_set_player_revealed_groups(
+                role_data.clone().default_revealed_groups(),
+                &mut game,
+                player
+            );
+        }
+
+        BeforeInitialRoleCreation::invoke(&mut game);
         
         //on role creation needs to be called after all players roles are known
+        //trigger role event listeners
         for player_ref in PlayerReference::all_players(&game){
-            let role_data_copy = player_ref.role_state(&game).clone();
-            player_ref.set_role(&mut game, role_data_copy);
+            player_ref.initial_role_creation(&mut game);
         }
 
         for player_ref in PlayerReference::all_players(&game){
@@ -195,6 +240,12 @@ impl Game {
             spectator.send_join_game_data(&mut game);
         }
 
+        //reveal groups
+        for group in RevealedGroupID::all() {
+            group.reveal_group_players(&mut game);
+        }
+
+        //on game start needs to be called after all players have joined
         OnGameStart::invoke(&mut game);
 
         Ok(game)
@@ -291,7 +342,7 @@ impl Game {
     }
 
     pub fn game_is_over(&self) -> bool {
-        if let Some(_) = ResolutionState::game_is_over(self){
+        if let Some(_) = GameConclusion::game_is_over(self){
             true
         }else{
             false
@@ -386,8 +437,8 @@ impl Game {
 pub mod test {
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, puppeteer_marionette::PuppeteerMarionette, verdicts_today::VerdictsToday},
-        event::on_game_start::OnGameStart,
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, revealed_group::RevealedGroupID, verdicts_today::VerdictsToday},
+        event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
         role::Role,
@@ -431,7 +482,7 @@ pub mod test {
         drop(shuffled_roles); // Ensure we don't use the order of roles anywhere
 
         let mut game = Game{
-            roles_to_players: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
+            roles_originally_generated: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
             ticking: true,
             spectators: Vec::new(),
             spectator_chat_messages: Vec::new(),
@@ -444,14 +495,36 @@ pub mod test {
             mafia: Mafia,
             arsonist_doused: ArsonistDoused::default(),
             puppeteer_marionette: PuppeteerMarionette::default(),
+            mafia_recruits: MafiaRecruits::default(),
             love_linked: LoveLinked::default(),
-            verdicts_today: VerdictsToday::default()
+            verdicts_today: VerdictsToday::default(),
+            pitchfork: Pitchfork::default(),
+            poison: Poison::default(),
+            modifiers: Default::default(),
+            revealed_groups: Default::default(),
+            detained: Default::default(),
+            confused: Default::default(),
+            drunk_aura: Default::default(),
         };
+
+        //set wincons and revealed groups
+        for player in PlayerReference::all_players(&game){
+            let role_data = player.role_state(&game).clone();
+
+            player.set_win_condition(&mut game, role_data.clone().default_win_condition());
+        
+            RevealedGroupID::start_game_set_player_revealed_groups(
+                role_data.clone().default_revealed_groups(),
+                &mut game,
+                player
+            );
+        }
+        
+        BeforeInitialRoleCreation::invoke(&mut game);
 
         //on role creation needs to be called after all players roles are known
         for player_ref in PlayerReference::all_players(&game){
-            let role_data_copy = player_ref.role_state(&game).clone();
-            player_ref.set_role(&mut game, role_data_copy);
+            player_ref.initial_role_creation(&mut game);
         }
 
         OnGameStart::invoke(&mut game);

@@ -12,7 +12,9 @@ pub enum ChatGroup {
     Cult,
 
     Jail,
-    Interview
+    Kidnapped,
+    Interview,
+    Puppeteer,
 }
 impl ChatGroup{
     pub fn player_receive_from_chat_group(&self, game: &Game, player_ref: PlayerReference)->bool{

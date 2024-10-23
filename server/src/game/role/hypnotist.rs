@@ -2,12 +2,11 @@ use serde::Serialize;
 
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 
 use crate::game::visit::Visit;
 use crate::game::Game;
 use super::{Priority, RoleState, RoleStateImpl};
-
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -20,6 +19,8 @@ pub struct Hypnotist{
     pub you_were_possessed_message: bool,
     pub your_target_was_jailed_message: bool,
 }
+
+
 impl Default for Hypnotist {
     fn default() -> Self {
         Self {
@@ -33,11 +34,12 @@ impl Default for Hypnotist {
         }
     }
 }
-pub(super) const FACTION: Faction = Faction::Mafia;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Hypnotist {
+    type ClientRoleState = Hypnotist;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         let Some(visit) = actor_ref.night_visits(game).first() else {
             return;
@@ -92,6 +94,11 @@ impl RoleStateImpl for Hypnotist {
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    }
+    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+        vec![
+            crate::game::components::revealed_group::RevealedGroupID::Mafia
+        ].into_iter().collect()
     }
 }
 impl Hypnotist {

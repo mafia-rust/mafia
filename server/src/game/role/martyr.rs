@@ -5,7 +5,7 @@ use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 use crate::game::Game;
 
@@ -16,6 +16,7 @@ use super::{Priority, RoleStateImpl, Role, RoleState};
 pub struct Martyr {
     pub state: MartyrState
 }
+
 
 #[derive(PartialEq, Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -36,11 +37,14 @@ impl Default for Martyr {
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Martyr {
+    // More information is being sent than needed by the client.
+    // This should be fixed later
+    type ClientRoleState = Martyr;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return}
         let MartyrState::StillPlaying { bullets } = self.state else {return};
@@ -52,11 +56,11 @@ impl RoleStateImpl for Martyr {
             self.state = MartyrState::StillPlaying { bullets: bullets.saturating_sub(1) };
 
             if target_ref == actor_ref {
-                if target_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, AttackPower::Basic, true) {
+                if target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Suicide, AttackPower::Basic, true) {
                     self.state = MartyrState::Won;
                 }
             } else {
-                target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Martyr), AttackPower::Basic, true);
+                target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Martyr), AttackPower::Basic, true);
             }
         };
 
@@ -64,7 +68,7 @@ impl RoleStateImpl for Martyr {
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         actor_ref == target_ref &&
-        !actor_ref.night_jailed(game) &&
+        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
         actor_ref.selection(game).is_empty() &&
         actor_ref.alive(game) && 
         match self.state {
@@ -74,9 +78,6 @@ impl RoleStateImpl for Martyr {
     }
     fn convert_selection_to_visits(self,  game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
-    }
-    fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
-        self.state == MartyrState::Won
     }
     fn on_phase_start(self,  game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         if phase == PhaseType::Obituary && matches!(self.state, MartyrState::StillPlaying {..}) {
@@ -115,5 +116,11 @@ impl RoleStateImpl for Martyr {
                 state: MartyrState::Won
             }));
         }
+    }
+}
+
+impl Martyr{
+    pub fn won(&self)->bool{
+        self.state == MartyrState::Won
     }
 }

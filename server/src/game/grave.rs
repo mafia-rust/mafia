@@ -6,7 +6,7 @@ use super::phase::PhaseType;
 use super::Game;
 use super::player::PlayerReference;
 use super::role::Role;
-use super::role_list::Faction;
+use super::role_list::RoleSet;
 
 
 
@@ -44,11 +44,11 @@ pub enum GraveDeathCause {
     BrokenHeart,
     Killers(Vec<GraveKiller>)
 }
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type", content = "value")]
 pub enum GraveKiller {
-    Faction(Faction),
+    RoleSet(RoleSet),
     Role(Role),
     Suicide,
     Quit,

@@ -1,4 +1,6 @@
-use crate::game::{chat::{ChatGroup, ChatMessageVariant}, phase::PhaseType, player::PlayerReference, role::{apostle::Apostle, disciple::Disciple, zealot::Zealot, Role, RoleState}, role_list::Faction, Game};
+use crate::game::{chat::{ChatGroup, ChatMessageVariant}, phase::PhaseType, player::PlayerReference, role::{apostle::Apostle, disciple::Disciple, zealot::Zealot, Role, RoleState}, role_list::RoleSet, Game};
+
+use super::revealed_group::RevealedGroupID;
 
 impl Game {
     pub fn cult(&self)->&Cult{
@@ -56,22 +58,15 @@ impl Cult{
     pub fn on_any_death(game: &mut Game, _player: PlayerReference) {
         Cult::set_ordered_cultists(game);
     }
-    pub fn on_role_switch(game: &mut Game, old: Role, new: Role) {
-        if old.faction() == Faction::Cult || new.faction() == Faction::Cult {
-            Cult::set_ordered_cultists(game);
-        }
-
-        for a in Cult::get_members(game) {
-            for b in Cult::get_members(game) {
-                a.insert_role_label(game, b);
-            }
-        }
+    pub fn on_role_switch(game: &mut Game, _old: Role, _new: Role) {
+        Cult::set_ordered_cultists(game);
     }
     
     
     pub fn get_members(game: &Game)->Vec<PlayerReference>{
-        PlayerReference::all_players(game).filter(
-            |p| p.role(game).faction() == Faction::Cult
+        PlayerReference::all_players(game).filter(|p| 
+            RoleSet::Cult.get_roles().contains(&p.role(game)) &&
+            RevealedGroupID::Cult.is_player_in_revealed_group(game, *p)
         ).collect()
     }
 
@@ -81,14 +76,16 @@ impl Cult{
 
         // Remove dead
         cult.ordered_cultists = cult.ordered_cultists.iter().cloned().filter(|p|
-            p.role(game).faction() == Faction::Cult &&
+            RoleSet::Cult.get_roles().contains(&p.role(game)) &&
+            RevealedGroupID::Cult.is_player_in_revealed_group(game, *p) &&
             p.alive(game)
         ).collect();
 
         // Add new
         for player in PlayerReference::all_players(game){
             if 
-                player.role(game).faction() == Faction::Cult &&
+                RoleSet::Cult.get_roles().contains(&player.role(game)) &&
+                RevealedGroupID::Cult.is_player_in_revealed_group(game, player) &&
                 player.alive(game) &&
                 !cult.ordered_cultists.contains(&player)
             {
@@ -106,7 +103,7 @@ impl Cult{
             };
             
             if player_ref.role(game) == role.role() {continue}
-            player_ref.set_role(game, role);
+            player_ref.set_role_and_win_condition_and_revealed_group(game, role);
         }
 
         game.set_cult(cult);

@@ -1,6 +1,5 @@
 import translate, { langJson } from "../game/lang";
-import { Role } from "../game/roleState.d";
-import ROLES from "../resources/roles.json";
+import { Role, roleJsonData } from "../game/roleState.d";
 import "./wiki.css";
 
 export type WikiArticleLink = 
@@ -17,7 +16,7 @@ const GENERATED_ARTICLES = ["roleSet", "all_text"] as const;
 export type GeneratedArticle = typeof GENERATED_ARTICLES[number];
 
 export const ARTICLES: WikiArticleLink[] = 
-    Object.keys(ROLES).map(role => `role/${role}`)
+    Object.keys(roleJsonData()).map(role => `role/${role}`)
     .concat(STANDARD_ARTICLES.map(article => `standard/${article}`))
     .concat(GENERATED_ARTICLES.map(article => `generated/${article}`)) as WikiArticleLink[];
 

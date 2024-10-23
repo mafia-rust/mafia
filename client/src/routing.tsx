@@ -5,7 +5,6 @@ import StandaloneWiki from "./menu/main/StandaloneWiki";
 import { deleteReconnectData, loadReconnectData } from "./game/localStorage";
 import GAME_MANAGER from ".";
 import StartMenu from "./menu/main/StartMenu";
-import { ShareableGameMode } from "./components/gameModeSettings/gameMode";
 import GameModesEditor from "./components/gameModeSettings/GameModesEditor";
 import parseFromJson from "./components/gameModeSettings/gameMode/dataFixer";
 import { isFailure } from "./components/gameModeSettings/gameMode/parse";

@@ -26,6 +26,7 @@ use crate::{
 use super::attack_power::DefensePower;
 use super::chat::ChatMessage;
 use super::tag::Tag;
+use super::win_condition::WinCondition;
 
 pub struct PlayerInitializeParameters {
     pub connection: ClientConnection,
@@ -39,7 +40,7 @@ pub struct Player {
     role_state: RoleState,
     alive: bool,
     will: String,
-    notes: String,
+    notes: Vec<String>,
     crossed_out_outlines: Vec<u8>,
     death_note: Option<String>,
 
@@ -47,8 +48,10 @@ pub struct Player {
     player_tags: HashMap<PlayerReference, Vec1<Tag>>,
 
 
-    pub chat_messages: Vec<ChatMessage>,
+    chat_messages: Vec<ChatMessage>,
     queued_chat_messages: Vec<ChatMessage>, // Not yet sent to the client
+
+    win_condition: WinCondition,
 
     last_sent_buttons: Vec<AvailableButtons>,
 
@@ -66,7 +69,6 @@ struct PlayerVotingVariables{
 struct PlayerNightVariables{
     died: bool,
     attacked: bool,
-    jailed: bool,
     roleblocked: bool,
     upgraded_defense: Option<DefensePower>,
 
@@ -94,13 +96,14 @@ impl Player {
             role_state: role.default_state(),
             alive: true,
             will: "".to_string(),
-            notes: "".to_string(),
+            notes: vec![],
             crossed_out_outlines: vec![],
             death_note: None,
 
             role_labels: HashSet::new(),
             player_tags: HashMap::new(),
 
+            win_condition: role.default_state().default_win_condition(),
 
             chat_messages: Vec::new(),
             queued_chat_messages: Vec::new(),
@@ -117,7 +120,6 @@ impl Player {
             night_variables: PlayerNightVariables{
                 died:               false,
                 attacked:           false,
-                jailed:             false,
                 roleblocked:        false,
                 upgraded_defense:   None,
                 appeared_visits:    None,
@@ -155,13 +157,14 @@ pub mod test {
             role_state: role.default_state(),
             alive: true,
             will: "".to_string(),
-            notes: "".to_string(),
+            notes: vec![],
             crossed_out_outlines: vec![],
             death_note: None,
 
             role_labels: HashSet::new(),
             player_tags: HashMap::new(),
 
+            win_condition: role.default_state().default_win_condition(),
 
             chat_messages: Vec::new(),
             queued_chat_messages: Vec::new(),
@@ -178,7 +181,6 @@ pub mod test {
             night_variables: PlayerNightVariables{
                 died:               false,
                 attacked:           false,
-                jailed:             false,
                 roleblocked:        false,
                 upgraded_defense:   None,
                 appeared_visits:    None,

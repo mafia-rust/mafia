@@ -4,7 +4,7 @@ use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::{role_can_generate, Faction, RoleSet};
+use crate::game::role_list::{role_can_generate, RoleSet};
 use crate::game::Game;
 
 use super::{RoleStateImpl, Role};
@@ -14,6 +14,7 @@ use super::{RoleStateImpl, Role};
 pub struct MafiaSupportWildcard{
     pub role: Role
 }
+
 impl Default for MafiaSupportWildcard {
     fn default() -> Self {
         Self {
@@ -22,11 +23,11 @@ impl Default for MafiaSupportWildcard {
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Mafia;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for MafiaSupportWildcard {
+    type ClientRoleState = MafiaSupportWildcard;
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Night => {
@@ -35,6 +36,11 @@ impl RoleStateImpl for MafiaSupportWildcard {
             },
             _ => {}
         }
+    }
+    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+        vec![
+            crate::game::components::revealed_group::RevealedGroupID::Mafia
+        ].into_iter().collect()
     }
 }
 
@@ -53,7 +59,7 @@ impl MafiaSupportWildcard {
                     .collect::<Vec<Role>>()
             )
         {
-            actor_ref.set_role(game, self.role.default_state());
+            actor_ref.set_role_and_win_condition_and_revealed_group(game, self.role.default_state());
         }else{
             actor_ref.add_private_chat_message(game, ChatMessageVariant::WildcardConvertFailed{role: self.role.clone()})
         }

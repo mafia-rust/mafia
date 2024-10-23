@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::game::{
     grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
-        auditor::AuditorResult, engineer::TrapState, eros::ErosAction, kira::KiraResult, ojo::OjoAction, puppeteer::PuppeteerAction, spy::SpyBug, Role
+        auditor::AuditorResult, engineer::TrapState, eros::ErosAction, kira::KiraResult, puppeteer::PuppeteerAction, recruiter::RecruiterAction, spy::SpyBug, Role
     }, role_list::RoleOutline, tag::Tag, verdict::Verdict
 };
 
@@ -13,7 +13,7 @@ use crate::game::{
 pub enum MessageSender {
     Player{player: PlayerIndex},
     Jailor,
-    Journalist,
+    Reporter,
     LivingToDead{player: PlayerIndex},
 }
 
@@ -110,7 +110,7 @@ pub enum ChatMessageVariant {
     MayorRevealed{player_index: PlayerIndex},
     MayorCantWhisper,
     #[serde(rename_all = "camelCase")]
-    JournalistJournal{journal: String},
+    ReporterReport{report: String},
     #[serde(rename_all = "camelCase")]
     YouAreInterviewingPlayer{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
@@ -131,7 +131,7 @@ pub enum ChatMessageVariant {
     PlayerDiedOfABrokenHeart{player: PlayerIndex, lover: PlayerIndex},
 
     PuppeteerPlayerIsNowMarionette{player: PlayerIndex},
-    PuppeteerYouArePoisoned,
+    RecruiterPlayerIsNowRecruit{player: PlayerIndex},
 
     YourConvertFailed,
     CultConvertsNext,
@@ -144,6 +144,8 @@ pub enum ChatMessageVariant {
     YouDied,
     YouWereAttacked,
     YouAttackedSomeone,
+
+    YouArePoisoned,
 
     /*
     Night Information
@@ -167,7 +169,7 @@ pub enum ChatMessageVariant {
     SnoopResult{townie: bool},
     GossipResult{enemies: bool},
     #[serde(rename_all = "camelCase")]
-    FlowerGirlResult{evil_count: u8},
+    TallyClerkResult{evil_count: u8},
 
     EngineerVisitorsRole{role: Role},
     TrapState{state: TrapState},
@@ -190,11 +192,15 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     InformantResult{ role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
+    FramerResult{ mafia_member: PlayerIndex, visitors: Vec<Role>},
+    #[serde(rename_all = "camelCase")]
     ScarecrowResult{players: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
-    OjoActionChosen{action: OjoAction},
+    RoleChosen{role: Option<Role>},
     #[serde(rename_all = "camelCase")]
     PuppeteerActionChosen{action: PuppeteerAction},
+    #[serde(rename_all = "camelCase")]
+    RecruiterActionChosen{action: RecruiterAction},
     #[serde(rename_all = "camelCase")]
     ErosActionChosen{action: ErosAction},
     #[serde(rename_all = "camelCase")]
@@ -212,7 +218,8 @@ pub enum ChatMessageVariant {
     YouAreLoveLinked{player: PlayerIndex},
 
     JesterWon,
-    RabbleRouserWon,
+    RevolutionaryWon,
+    ChronokaiserSpeedUp{percent: u32},
     DeathCollectedSouls,
     DoomsayerWon,
     DoomsayerFailed,

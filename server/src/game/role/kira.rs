@@ -7,7 +7,7 @@ use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::Game;
 
 use super::{Priority, Role, RoleState, RoleStateImpl};
@@ -21,14 +21,13 @@ pub struct Kira {
 #[serde(rename_all = "camelCase")]
 pub enum KiraGuess{
     None,
-
-    Mafia, #[default] Neutral, Fiends, Cult,
+    #[default] NonTown,
 
     Jailor, Villager,
-    Detective, Lookout, Tracker, Psychic, Philosopher, Gossip, Auditor, Snoop, Spy, FlowerGirl,
-    Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith,
-    Vigilante, Veteran, Marksman, Deputy,
-    Escort, Medium, Retributionist, Journalist, Mayor, Transporter
+    Detective, Lookout, Tracker, Psychic, Philosopher, Gossip, Auditor, Snoop, Spy, TallyClerk,
+    Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith, Steward,
+    Vigilante, Veteran, Marksman, Deputy, Rabblerouser,
+    Escort, Medium, Retributionist, Reporter, Mayor, Transporter
 }
 impl KiraGuess{
     fn convert_to_guess(role: Role)->Option<KiraGuess>{
@@ -45,7 +44,7 @@ impl KiraGuess{
             Role::Snoop => Some(Self::Snoop),
             Role::Gossip => Some(Self::Gossip),
             Role::Spy => Some(Self::Spy),
-            Role::FlowerGirl => Some(Self::FlowerGirl),
+            Role::TallyClerk => Some(Self::TallyClerk),
 
             Role::Doctor => Some(Self::Doctor),
             Role::Bodyguard => Some(Self::Bodyguard),
@@ -53,40 +52,44 @@ impl KiraGuess{
             Role::Bouncer => Some(Self::Bouncer),
             Role::Engineer => Some(Self::Engineer),
             Role::Armorsmith => Some(Self::Armorsmith),
+            Role::Steward => Some(Self::Steward),
 
             Role::Vigilante => Some(Self::Vigilante),
             Role::Veteran => Some(Self::Veteran),
             Role::Marksman => Some(Self::Marksman),
             Role::Deputy => Some(Self::Deputy),
+            Role::Rabblerouser => Some(Self::Rabblerouser),
 
             Role::Escort => Some(Self::Escort),
             Role::Medium => Some(Self::Medium),
             Role::Retributionist => Some(Self::Retributionist),
-            Role::Journalist => Some(Self::Journalist),
+            Role::Reporter => Some(Self::Reporter),
             Role::Mayor => Some(Self::Mayor),
             Role::Transporter => Some(Self::Transporter),
 
             //Mafia
-            Role::Godfather | Role::Mafioso | Role::Eros | Role::Counterfeiter | Role::Retrainer |
+            Role::Godfather | Role::Mafioso | Role::Eros |
+            Role::Counterfeiter | Role::Retrainer | Role::Recruiter | Role::Impostor | Role::MafiaKillingWildcard |
             Role::MadeMan |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
-            Role::Witch | Role::Necromancer | Role::Consort |
+            Role::MafiaWitch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 
-            Role::Cupid | Role::MafiaSupportWildcard => Some(Self::Mafia),
+            Role::Cupid | Role::MafiaSupportWildcard => Some(Self::NonTown),
 
             //Neutral
-            Role::Jester | Role::RabbleRouser | Role::Politician |
-            Role::Doomsayer | Role::Death | Role::Minion | Role::Scarecrow |
-            Role::Wildcard | Role::TrueWildcard => Some(Self::Neutral),
+            Role::Jester | Role::Revolutionary | Role::Politician |
+            Role::Doomsayer | Role::Death |
+            Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper | Role::Chronokaiser |
+            Role::Wildcard | Role::TrueWildcard | Role::Drunk => Some(Self::NonTown),
             Role::Martyr => None,
 
             //Fiends
             Role::Arsonist | Role::Werewolf | 
             Role::Ojo | Role::Puppeteer | Role::Pyrolisk | Role::Kira |
-            Role::FiendsWildcard => Some(Self::Fiends),
+            Role::FiendsWildcard => Some(Self::NonTown),
             
             //Cult
-            Role::Apostle | Role::Disciple | Role::Zealot => Some(Self::Cult),
+            Role::Apostle | Role::Disciple | Role::Zealot => Some(Self::NonTown),
         }
     }
     fn guess_matches_role(&self, role: Role)->bool{
@@ -149,11 +152,12 @@ pub enum KiraGuessResult {
 }
 
 
-pub(super) const FACTION: Faction = Faction::Fiends;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Kira {
+    type ClientRoleState = Kira;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_blocked(game) {return;}
         if !actor_ref.alive(game) {return;}
@@ -166,7 +170,7 @@ impl RoleStateImpl for Kira {
                 
                 for (player, (guess, result)) in result.guesses.iter(){
                     if player.alive(game) && *result == KiraGuessResult::Correct && *guess != KiraGuess::None {
-                        player.try_night_kill(actor_ref, game, GraveKiller::Role(super::Role::Kira), AttackPower::ArmorPiercing, true);
+                        player.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(super::Role::Kira), AttackPower::ArmorPiercing, true);
                     }
                 }
             },

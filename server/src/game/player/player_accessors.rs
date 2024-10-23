@@ -6,7 +6,7 @@ use crate::{
     game::{
         attack_power::DefensePower, chat::{
             ChatGroup, ChatMessage, ChatMessageVariant
-        }, event::on_fast_forward::OnFastForward, grave::GraveKiller, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, Game
+        }, event::{on_fast_forward::OnFastForward, on_remove_role_label::OnRemoveRoleLabel}, grave::GraveKiller, modifiers::{ModifierType, Modifiers}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, win_condition::WinCondition, Game
     }, 
     packet::ToClientPacket, 
 };
@@ -24,9 +24,11 @@ impl PlayerReference{
     pub fn role_state<'a>(&self, game: &'a Game) -> &'a RoleState {
         &self.deref(game).role_state
     }
-    pub fn set_role_state(&self, game: &mut Game, new_role_data: RoleState){
-        self.deref_mut(game).role_state = new_role_data;
-        self.send_packet(game, ToClientPacket::YourRoleState { role_state: self.deref(game).role_state.clone() } );
+    pub fn set_role_state(&self, game: &mut Game, new_role_data: impl Into<RoleState>){
+        self.deref_mut(game).role_state = new_role_data.into();
+        self.send_packet(game, ToClientPacket::YourRoleState {
+            role_state: self.deref(game).role_state.clone().get_client_role_state(game, *self)
+        });
     }
 
     pub fn alive(&self, game: &Game) -> bool{
@@ -51,10 +53,10 @@ impl PlayerReference{
         self.send_packet(game, ToClientPacket::YourWill { will: self.deref(game).will.clone() });
     }
     
-    pub fn notes<'a>(&self, game: &'a Game) -> &'a String {
+    pub fn notes<'a>(&self, game: &'a Game) -> &'a Vec<String> {
         &self.deref(game).notes
     }
-    pub fn set_notes(&self, game: &mut Game, notes: String){
+    pub fn set_notes(&self, game: &mut Game, notes: Vec<String>){
         self.deref_mut(game).notes = notes;
         self.send_packet(game, ToClientPacket::YourNotes { notes: self.deref(game).notes.clone() })
     }
@@ -100,6 +102,8 @@ impl PlayerReference{
         self.send_packet(game, ToClientPacket::YourRoleLabels{
             role_labels: PlayerReference::ref_map_to_index(self.role_label_map(game)) 
         });
+
+        OnRemoveRoleLabel::new(*self, concealed_player).invoke(game);
     }
 
     pub fn player_tags<'a>(&self, game: &'a Game) -> &'a HashMap<PlayerReference, Vec1<Tag>>{
@@ -154,6 +158,13 @@ impl PlayerReference{
         }
     }
 
+    pub fn win_condition<'a>(&self, game: &'a Game) -> &'a WinCondition {
+        &self.deref(game).win_condition
+    }
+    pub fn set_win_condition(&self, game: &mut Game, win_condition: WinCondition){
+        self.deref_mut(game).win_condition = win_condition;
+    }
+
     pub fn add_private_chat_message(&self, game: &mut Game, message: ChatMessageVariant) {
         let message = ChatMessage::new_private(message);
 
@@ -167,6 +178,9 @@ impl PlayerReference{
     pub fn add_chat_message(&self, game: &mut Game, message: ChatMessage) {
         self.deref_mut(game).chat_messages.push(message.clone());
         self.deref_mut(game).queued_chat_messages.push(message);
+    }
+    pub fn chat_messages<'a>(&self, game: &'a Game) -> &'a Vec<ChatMessage> {
+        &self.deref(game).chat_messages
     }
 
     pub fn set_fast_forward_vote(&self, game: &mut Game, fast_forward_vote: bool) {
@@ -244,7 +258,10 @@ impl PlayerReference{
     pub fn verdict(&self, game: &Game) -> Verdict{
         self.deref(game).voting_variables.verdict
     }
-    pub fn set_verdict(&self, game: &mut Game, verdict: Verdict){
+    pub fn set_verdict(&self, game: &mut Game, mut verdict: Verdict){
+        if Modifiers::modifier_is_enabled(game, ModifierType::NoAbstaining) && verdict == Verdict::Abstain {
+            verdict = Verdict::Innocent;
+        }
         self.send_packet(game, ToClientPacket::YourJudgement { verdict });
         self.deref_mut(game).voting_variables.verdict = verdict;
     }
@@ -382,35 +399,6 @@ impl PlayerReference{
     }
     pub fn set_night_grave_death_notes(&self, game: &mut Game, grave_death_notes: Vec<String>){
         self.deref_mut(game).night_variables.grave_death_notes = grave_death_notes;
-    }
-
-    pub fn night_jailed(&self, game: &Game) -> bool {
-        self.deref(game).night_variables.jailed
-    }
-    /// Adds chat message saying that they were jailed, and sends packet
-    pub fn set_night_jailed(&self, game: &mut Game, jailed: bool){
-        if jailed {
-
-            let mut message_sent = false;
-            for chat_group in self.get_current_send_chat_groups(game){
-                match chat_group {
-                    ChatGroup::All | ChatGroup::Jail | ChatGroup::Interview | ChatGroup::Dead => {},
-                    ChatGroup::Mafia | ChatGroup::Cult  => {
-                        game.add_message_to_chat_group(
-                            chat_group,
-                            ChatMessageVariant::JailedSomeone { player_index: self.index() }
-                        );
-                        message_sent = true;
-                    },
-                }
-            }
-            if !message_sent {
-                self.add_private_chat_message(game,
-                    ChatMessageVariant::JailedSomeone { player_index: self.index() }
-                );
-            }
-        }
-        self.deref_mut(game).night_variables.jailed = jailed;
     }
 
     pub fn night_silenced(&self, game: &Game) -> bool {

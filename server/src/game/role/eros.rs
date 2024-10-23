@@ -1,20 +1,22 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::AttackPower;
+use crate::game::role_list::RoleSet;
 use crate::game::{attack_power::DefensePower, components::love_linked::LoveLinked};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{same_evil_team, Priority, RoleStateImpl};
+use super::{RevealedGroupID, Priority, RoleStateImpl};
 
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Eros{
     pub action: ErosAction,
 }
+
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, PartialOrd, Eq, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum ErosAction{
@@ -22,11 +24,12 @@ pub enum ErosAction{
     Kill,
 }
 
-pub(super) const FACTION: Faction = Faction::Mafia;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Eros {
+    type ClientRoleState = Eros;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match (priority, self.action) {
             (Priority::Kill, ErosAction::Kill) => {
@@ -34,8 +37,8 @@ impl RoleStateImpl for Eros {
                 if let Some(visit) = actor_ref.night_visits(game).first(){
                     let target_ref = visit.target;
             
-                    target_ref.try_night_kill(
-                        actor_ref, game, GraveKiller::Faction(Faction::Mafia), AttackPower::Basic, false
+                    target_ref.try_night_kill_single_attacker(
+                        actor_ref, game, GraveKiller::RoleSet(RoleSet::Mafia), AttackPower::Basic, false
                     );
                 }
             }
@@ -57,7 +60,7 @@ impl RoleStateImpl for Eros {
         let selected = actor_ref.selection(game);
 
         actor_ref != target_ref &&
-        !actor_ref.night_jailed(game) &&
+        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
         actor_ref.alive(game) &&
         target_ref.alive(game) &&
         match self.action {
@@ -67,7 +70,7 @@ impl RoleStateImpl for Eros {
             },
             ErosAction::Kill => {
                 game.day_number() > 1 &&
-                !same_evil_team(game, actor_ref, target_ref) &&
+                !RevealedGroupID::players_in_same_revealed_group(game, actor_ref, target_ref) &&
                 selected.is_empty()
             },
         }
@@ -94,5 +97,10 @@ impl RoleStateImpl for Eros {
                 }
             }
         }
+    }
+    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+        vec![
+            crate::game::components::revealed_group::RevealedGroupID::Mafia
+        ].into_iter().collect()
     }
 }

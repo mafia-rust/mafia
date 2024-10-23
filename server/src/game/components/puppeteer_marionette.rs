@@ -1,10 +1,12 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    attack_power::AttackPower, chat::ChatMessageVariant, player::PlayerReference, role::{
+    attack_power::AttackPower, chat::ChatMessageVariant, player::PlayerReference, game_conclusion::GameConclusion, role::{
         Priority, Role
-    }, tag::Tag, Game
+    }, tag::Tag, win_condition::WinCondition, Game
 };
+
+use super::revealed_group::RevealedGroupID;
 
 impl Game{
     pub fn puppeteer_marionette<'a>(&'a self)->&'a PuppeteerMarionette{
@@ -18,29 +20,24 @@ impl Game{
 #[derive(Default, Clone)]
 pub struct PuppeteerMarionette{
     to_be_converted: HashSet<PlayerReference>,
-    poisoned: HashSet<PlayerReference>,
 }
 impl PuppeteerMarionette{
-    pub fn string(game: &mut Game, player: PlayerReference){
+    pub fn string(game: &mut Game, player: PlayerReference)->bool{
         let mut puppeteer_marionette = game.puppeteer_marionette().clone();
 
-        if player.role(game) == Role::Puppeteer {return;}
-        if !puppeteer_marionette.to_be_converted.insert(player){return;}
+        if player.role(game) == Role::Puppeteer {return false;}
+        if !puppeteer_marionette.to_be_converted.insert(player){return false;}
 
         game.set_puppeteer_marionette(puppeteer_marionette);
+        RevealedGroupID::Puppeteer.add_player_to_revealed_group(game, player);
+        player.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any: vec![GameConclusion::Fiends].into_iter().collect() });
 
         for fiend in PuppeteerMarionette::marionettes_and_puppeteer(game){
             fiend.push_night_message(game, ChatMessageVariant::PuppeteerPlayerIsNowMarionette{player: player.index()});
         }
 
         PuppeteerMarionette::give_tags_and_labels(game);
-    }
-    pub fn poison(game: &mut Game, player: PlayerReference){
-        let mut p = game.puppeteer_marionette().clone();
-        player.push_night_message(game, ChatMessageVariant::PuppeteerYouArePoisoned);
-        if p.poisoned.insert(player){
-            game.set_puppeteer_marionette(p);
-        }
+        true
     }
 
     pub fn kill_marionettes(game: &mut Game){
@@ -54,53 +51,23 @@ impl PuppeteerMarionette{
 
         PuppeteerMarionette::attack_players(game, marionettes, AttackPower::ProtectionPiercing);
     }
-    pub fn kill_poisoned(game: &mut Game){
-        let mut puppeteer_marionette = game.puppeteer_marionette().clone();
-
-        let poisoned = game.puppeteer_marionette()
-            .poisoned
-            .iter()
-            .filter(|p|p.alive(game))
-            .map(|p|p.clone())
-            .collect::<Vec<_>>();
-
-        PuppeteerMarionette::attack_players(game, poisoned, AttackPower::ArmorPiercing);
-
-        puppeteer_marionette.poisoned = HashSet::new();
-
-        game.set_puppeteer_marionette(puppeteer_marionette)
-    }
     fn attack_players(game: &mut Game, players: Vec<PlayerReference>, attack_power: AttackPower){
         
-        let puppeteers: Vec<_> = PlayerReference::all_players(game)
+        let puppeteers: HashSet<_> = PlayerReference::all_players(game)
             .filter(|p|p.role(game)==Role::Puppeteer)
             .map(|p|p.clone())
             .collect();
 
-        if puppeteers.is_empty() {
-            for player in players{
-                player.try_night_kill_anonymous(game, crate::game::grave::GraveKiller::Role(Role::Puppeteer), attack_power);
-            }
-        }else{
-            for player in players{
-                for puppeteer in puppeteers.iter(){
-                    player.try_night_kill(*puppeteer, game, crate::game::grave::GraveKiller::Role(Role::Puppeteer), attack_power, true);
-                }
-            }
+        for player in players{
+            player.try_night_kill(&puppeteers, game, crate::game::grave::GraveKiller::Role(Role::Puppeteer), attack_power, true);
         }
     }
 
     pub fn give_tags_and_labels(game: &mut Game){
-        let marionettes_and_puppeteer = PuppeteerMarionette::marionettes_and_puppeteer(game);
-
-        for player_a in marionettes_and_puppeteer.clone() {
-            for player_b in marionettes_and_puppeteer.clone() {
-
-                player_a.insert_role_label(game, player_b);
-                
+        for player_a in RevealedGroupID::Puppeteer.players(game).clone() {
+            for player_b in PuppeteerMarionette::marionettes(game).clone() {
                 if 
-                    player_a.player_has_tag(game, player_b, Tag::PuppeteerMarionette) == 0 &&
-                    player_b.role(game) != Role::Puppeteer
+                    player_a.player_has_tag(game, player_b, Tag::PuppeteerMarionette) == 0
                 {
                     player_a.push_player_tag(game, player_b, Tag::PuppeteerMarionette);
                 }
@@ -140,7 +107,6 @@ impl PuppeteerMarionette{
     pub fn on_night_priority(game: &mut Game, priority: Priority){
         if priority == Priority::Kill{
             PuppeteerMarionette::kill_marionettes(game);
-            PuppeteerMarionette::kill_poisoned(game);
         }
     }
 }

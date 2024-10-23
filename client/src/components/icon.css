@@ -9,7 +9,7 @@ button .icon {
 
 .icon-small {
     font-size: 1em;
-    vertical-align:auto;
+    vertical-align: middle;
 }
 
 .icon-tiny {

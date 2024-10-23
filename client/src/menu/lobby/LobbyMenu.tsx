@@ -18,6 +18,7 @@ import { GameModeSelector } from "../../components/gameModeSettings/GameModeSele
 import LobbyChatMenu from "./LobbyChatMenu";
 import { useLobbyState } from "../../components/useHooks";
 import { Button } from "../../components/Button";
+import { EnabledModifiersDisplay } from "../../components/gameModeSettings/EnabledModifiersDisplay";
 
 export default function LobbyMenu(): ReactElement {
     const isSpectator = useLobbyState(
@@ -25,7 +26,7 @@ export default function LobbyMenu(): ReactElement {
         ["playersHost", "lobbyClients"]
     )!;
     const isHost = useLobbyState(
-        lobbyState => lobbyState.players.get(lobbyState.myId!)?.host,
+        lobbyState => lobbyState.players.get(lobbyState.myId!)?.ready === "host",
         ["playersHost", "lobbyClients", "yourId"]
     )!;
     const mobile = useContext(MobileContext)!;
@@ -75,6 +76,10 @@ function LobbyMenuSettings(props: Readonly<{
         lobbyState => lobbyState.phaseTimes,
         ["phaseTimes"]
     )!;
+    const enabledModifiers = useLobbyState(
+        lobbyState => lobbyState.enabledModifiers,
+        ["enabledModifiers"]
+    )!;
 
     const mobile = useContext(MobileContext)!;
     const { setContent: setAnchorContent } = useContext(AnchorControllerContext)!;
@@ -102,8 +107,8 @@ function LobbyMenuSettings(props: Readonly<{
     };
 
     const context = useMemo(() => {
-        return {roleList, enabledRoles, phaseTimes};
-    }, [enabledRoles, phaseTimes, roleList]);
+        return {roleList, enabledRoles, phaseTimes, enabledModifiers};
+    }, [enabledRoles, phaseTimes, roleList, enabledModifiers]);
 
     return <GameModeContext.Provider value={context}>
         {mobile && <h1>{translate("menu.lobby.settings")}</h1>}
@@ -113,8 +118,13 @@ function LobbyMenuSettings(props: Readonly<{
                 GAME_MANAGER.sendSetPhaseTimesPacket(gameMode.phaseTimes);
                 GAME_MANAGER.sendEnabledRolesPacket(gameMode.enabledRoles);
                 GAME_MANAGER.sendSetRoleListPacket(gameMode.roleList);
+                GAME_MANAGER.sendEnabledModifiersPacket(gameMode.enabledModifiers);
             }}
         />}
+        <EnabledModifiersDisplay
+            disabled={!props.isHost}
+            onChange={modifiers => GAME_MANAGER.sendEnabledModifiersPacket(modifiers)}
+        />
         <PhaseTimesSelector 
             disabled={!props.isHost}
             onChange={pts => GAME_MANAGER.sendSetPhaseTimesPacket(pts)}
@@ -142,7 +152,7 @@ function LobbyMenuHeader(props: Readonly<{
 }>): JSX.Element {
     const [lobbyName, setLobbyName] = useState<string>(GAME_MANAGER.state.stateType === "lobby" ? GAME_MANAGER.state.lobbyName : "Mafia Lobby");
     const host = useLobbyState(
-        lobbyState => lobbyState.players.get(lobbyState.myId!)?.host,
+        lobbyState => lobbyState.players.get(lobbyState.myId!)?.ready === "host",
         ["lobbyClients", "yourId", "playersHost"]
     )!;
     const mobile = useContext(MobileContext)!;

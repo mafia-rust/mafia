@@ -1,9 +1,12 @@
 use std::collections::{HashMap, HashSet};
 
-use crate::game::
-{
-    attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessageVariant}, components::{arsonist_doused::ArsonistDoused, puppeteer_marionette::PuppeteerMarionette}, event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, grave::{Grave, GraveKiller, GraveReference}, resolution_state::ResolutionState, role::{same_evil_team, Priority, Role, RoleState}, visit::Visit, Game
-};
+use rand::seq::SliceRandom;
+
+use crate::{game::{
+    attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
+        arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette, revealed_group::RevealedGroupID
+    }, event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, game_conclusion::GameConclusion, grave::{Grave, GraveKiller, GraveReference}, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, win_condition::WinCondition, Game
+}, packet::ToClientPacket};
 
 use super::PlayerReference;
 
@@ -39,22 +42,38 @@ impl PlayerReference{
     }
 
     /// Returns true if attack overpowered defense
-    pub fn try_night_kill(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
+    pub fn try_night_kill_single_attacker(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
+        self.try_night_kill(
+            &vec![attacker_ref].into_iter().collect(),
+            game,
+            grave_killer,
+            attack,
+            should_leave_death_note
+        )
+    }
+    pub fn try_night_kill(&self, attacker_refs: &HashSet<PlayerReference>, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
         self.set_night_attacked(game, true);
 
         if self.night_defense(game).can_block(attack){
             self.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
-            attacker_ref.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
+            for attacker in attacker_refs.iter() {
+                attacker.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
+            }
             return false;
         }
         
         self.push_night_message(game, ChatMessageVariant::YouWereAttacked);
-        attacker_ref.push_night_message(game,ChatMessageVariant::YouAttackedSomeone);
+        for attacker in attacker_refs.iter() {
+            attacker.push_night_message(game,ChatMessageVariant::YouAttackedSomeone);
+        }
 
         self.push_night_grave_killers(game, grave_killer);
+            
         if should_leave_death_note {
-            if let Some(note) = attacker_ref.death_note(game) {
-                self.push_night_grave_death_notes(game, note.clone());
+            for attacker in attacker_refs {
+                if let Some(note) = attacker.death_note(game) {
+                    self.push_night_grave_death_notes(game, note.clone());
+                }
             }
         }
         
@@ -65,31 +84,22 @@ impl PlayerReference{
 
         true
     }
-    pub fn try_night_kill_anonymous(&self, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower) -> bool {
-        self.set_night_attacked(game, true);
-
-        if self.night_defense(game).can_block(attack) {
-            self.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
-            return false;
-        }
-        
-        self.push_night_message(game, ChatMessageVariant::YouWereAttacked);
-
-        self.push_night_grave_killers(game, grave_killer);        
-
-        if !self.alive(game) { return true }
-
-        self.set_night_died(game, true);
-
-        true
+    pub fn try_night_kill_no_attacker(&self, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower) -> bool {
+        self.try_night_kill(
+            &HashSet::new(),
+            game,
+            grave_killer,
+            attack,
+            false
+        )
     }
 
     /**
-    ### Example use in minion case
+    ### Example use in witch case
         
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
-            actor_ref.set_role_state(game, RoleState::Minion(Minion{
+            actor_ref.set_role_state(game, RoleState::Witch(Witch{
                 currently_used_player: Some(currently_used_player)
             }))
         }
@@ -167,20 +177,45 @@ impl PlayerReference{
 
         OnAnyDeath::new(*self)
     }
+    pub fn initial_role_creation(&self, game: &mut Game){
+        let new_role_data = self.role_state(game).clone();
+        self.set_role_state(game, new_role_data.clone());
+        self.on_role_creation(game);    //this function can change role state
+        if new_role_data.role() == self.role(game) {
+            self.add_private_chat_message(game, ChatMessageVariant::RoleAssignment{role: self.role(game)});
+        }
+        self.set_win_condition(game, self.role_state(game).clone().default_win_condition());
+        RevealedGroupID::set_player_revealed_groups(
+            self.role_state(game).clone().default_revealed_groups(), 
+            game, *self
+        );
+    }
     /// Swaps this persons role, sends them the role chat message, and makes associated changes
-    pub fn set_role(&self, game: &mut Game, new_role_data: RoleState){
+    pub fn set_role_and_win_condition_and_revealed_group(&self, game: &mut Game, new_role_data: impl Into<RoleState>){
+        let new_role_data = new_role_data.into();
 
         let old = self.role_state(game).clone();
 
+        
         BeforeRoleSwitch::new(*self, old.clone(), new_role_data.clone()).invoke(game);
 
+        
+
         self.set_role_state(game, new_role_data.clone());
-        self.on_role_creation(game);
+        self.on_role_creation(game);    //this function can change role state
         if new_role_data.role() == self.role(game) {
             self.add_private_chat_message(game, ChatMessageVariant::RoleAssignment{role: self.role(game)});
         }
 
         OnRoleSwitch::new(*self, old, self.role_state(game).clone()).invoke(game);
+    
+        self.set_win_condition(game, self.role_state(game).clone().default_win_condition());
+        
+        RevealedGroupID::set_player_revealed_groups(
+            self.role_state(game).clone().default_revealed_groups(), 
+            game, *self
+        );
+        
     }
     pub fn increase_defense_to(&self, game: &mut Game, defense: DefensePower){
         if defense.is_stronger(self.night_defense(game)) {
@@ -196,7 +231,7 @@ impl PlayerReference{
             self.night_visits(game).clone()
         }
     }
-    pub fn appeared_visitors(self, game: &Game) -> Vec<PlayerReference> {
+    pub fn all_appeared_visitors(self, game: &Game) -> Vec<PlayerReference> {
         PlayerReference::all_players(game).filter(|player_ref|{
             player_ref.tracker_seen_visits(game).iter().any(|other_visit| 
                 other_visit.target == self
@@ -211,18 +246,14 @@ impl PlayerReference{
         }).collect()
     }
 
-
-
-    pub fn insert_role_label_for_teammates(&self, game: &mut Game){
-        for other in PlayerReference::all_players(game){
-            if *self == other { continue }
-            
-
-            if same_evil_team(game, *self, other) {
-                other.insert_role_label(game, *self);
-                self.insert_role_label(game, other);
-            }
-        }
+    pub fn push_night_messages_to_player(&self, game: &mut Game){
+        let mut messages = self.night_messages(game).to_vec();
+        messages.shuffle(&mut rand::thread_rng());
+        messages.sort();
+        self.send_packet(game, ToClientPacket::NightMessages { chat_messages: 
+            messages.iter().map(|msg|ChatMessage::new_private(msg.clone())).collect()
+        });
+        self.add_private_chat_messages(game, messages);
     }
 
     pub fn role_label_map(&self, game: &Game) -> HashMap<PlayerReference, Role> {
@@ -249,15 +280,36 @@ impl PlayerReference{
     pub fn has_suspicious_aura(&self, game: &Game) -> bool {
         self.role(game).has_suspicious_aura(game) || 
         self.night_framed(game) ||
+        DrunkAura::has_drunk_aura(game, *self) ||
         ArsonistDoused::has_suspicious_aura_douse(game, *self)
     }
-    pub fn required_resolution_states_for_win(&self, game: &Game) -> Option<HashSet<ResolutionState>> {
-        if PuppeteerMarionette::is_marionette(game, *self) {return Some(vec![ResolutionState::Fiends].into_iter().collect());}
-        ResolutionState::required_resolution_states_for_win(self.role(game))
+    pub fn get_won_game(&self, game: &Game) -> bool {
+        match self.win_condition(game){
+            WinCondition::GameConclusionReached { win_if_any } => {
+                if let Some(resolution) = GameConclusion::game_is_over(game) {
+                    win_if_any.contains(&resolution)
+                } else {
+                    false
+                }
+            },
+            WinCondition::RoleStateWon => {
+                match self.role_state(game) {
+                    RoleState::Jester(r) => r.won(),
+                    RoleState::Doomsayer(r) => r.won(),
+                    RoleState::Revolutionary(r) => r.won(),
+                    RoleState::Politician(r) => r.won(),
+                    RoleState::Chronokaiser(_) => Chronokaiser::won(game, *self),
+                    RoleState::Martyr(r) => r.won(),
+                    RoleState::Death(r) => r.won(),
+                    _ => false
+                }
+            },
+        }
     }
     pub fn keeps_game_running(&self, game: &Game) -> bool {
+        if MafiaRecruits::is_recruited(game, *self) {return false;}
         if PuppeteerMarionette::is_marionette(game, *self) {return false;}
-        ResolutionState::keeps_game_running(self.role(game))
+        GameConclusion::keeps_game_running(self.role(game))
     }
 
     /*
@@ -288,9 +340,6 @@ impl PlayerReference{
     pub fn get_current_receive_chat_groups(&self, game: &Game) -> HashSet<ChatGroup> {
         self.role_state(game).clone().get_current_receive_chat_groups(game, *self)
     }
-    pub fn get_won_game(&self, game: &Game) -> bool {
-        self.role_state(game).clone().get_won_game(game, *self)
-    }
     pub fn convert_selection_to_visits(&self, game: &Game, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         self.role_state(game).clone().convert_selection_to_visits(game, *self, target_refs)
     }
@@ -302,6 +351,12 @@ impl PlayerReference{
     }
     pub fn on_game_ending(&self, game: &mut Game){
         self.role_state(game).clone().on_game_ending(game, *self)
+    }
+    pub fn on_game_start(&self, game: &mut Game){
+        self.role_state(game).clone().on_game_start(game, *self)
+    }
+    pub fn before_initial_role_creation(&self, game: &mut Game){
+        self.role_state(game).clone().before_initial_role_creation(game, *self)
     }
 }
 

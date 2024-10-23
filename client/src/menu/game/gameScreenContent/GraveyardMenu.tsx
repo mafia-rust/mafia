@@ -10,6 +10,7 @@ import Icon from "../../../components/Icon";
 import { EnabledRolesDisplay } from "../../../components/gameModeSettings/EnabledRoleSelector";
 import { useGameState, usePlayerState } from "../../../components/useHooks";
 import { translateRoleOutline } from "../../../game/roleListState.d";
+import { EnabledModifiersDisplay } from "../../../components/gameModeSettings/EnabledModifiersDisplay";
 
 export default function GraveyardMenu(): ReactElement {
     const graves = useGameState(
@@ -31,7 +32,8 @@ export default function GraveyardMenu(): ReactElement {
                 setExtendedGraveIndex={setExtendedGraveIndex}
             />
         }
-        <ExcludedRoles />
+        <EnabledRoles/>
+        <EnabledModifiers/>
     </div>
 }
 
@@ -164,7 +166,7 @@ function GraveExtended(props: Readonly<{
     </div>;
 }
 
-function ExcludedRoles(): ReactElement {
+function EnabledRoles(): ReactElement {
     const enabledRoles = useGameState(
         gameState => gameState.enabledRoles,
         ["enabledRoles"]
@@ -175,5 +177,19 @@ function ExcludedRoles(): ReactElement {
             {translate("menu.enabledRoles.enabledRoles")}
         </summary>
         <EnabledRolesDisplay enabledRoles={enabledRoles}/>
+    </details>
+}
+
+function EnabledModifiers(): ReactElement {
+    const enabledModifiers = useGameState(
+        gameState=>gameState.enabledModifiers,
+        ["enabledModifiers"]
+    )!
+
+    return <details className="graveyard-menu-excludedRoles">
+        <summary>
+            {translate("modifiers")}
+        </summary>
+        <EnabledModifiersDisplay disabled={true} enabledModifiers={enabledModifiers}/>
     </details>
 }

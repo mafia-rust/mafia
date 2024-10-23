@@ -5,19 +5,24 @@ use serde::Serialize;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, Priority, RoleStateImpl};
 
-#[derive(Clone, Serialize, Debug)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug)]
 pub struct Armorsmith {
     open_shops_remaining: u8,
     night_open_shop: bool,
     night_protected_players: Vec<PlayerReference>,
     players_armor: Vec<PlayerReference>
+}
+
+#[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ClientRoleState {
+    open_shops_remaining: u8
 }
 
 impl Default for Armorsmith {
@@ -31,27 +36,47 @@ impl Default for Armorsmith {
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Armorsmith {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
-            Priority::Armorsmith => {
-
+            Priority::TopPriority => {
                 if let Some(_) = actor_ref.night_visits(game).first(){
                     if self.open_shops_remaining > 0 {
-                        actor_ref.set_role_state(game, RoleState::Armorsmith(
+                        actor_ref.set_role_state(game, 
                             Armorsmith {
-                                open_shops_remaining: self.open_shops_remaining.saturating_sub(1),
                                 night_open_shop: true,
-                                night_protected_players: Vec::new(),
                                 ..self
                             }
-                        ));
+                        );
                         actor_ref.set_night_visits(game, vec![]);
                     }
+                }
+            }
+            Priority::Armorsmith => {
+                match (self.night_open_shop, actor_ref.night_blocked(game)){
+                    (true, true) => {
+                        actor_ref.set_role_state(game, 
+                            Armorsmith {
+                                night_open_shop: false,
+                                ..self
+                            }
+                        );
+                    },
+                    (true, false) => {
+                        actor_ref.set_role_state(game, 
+                            Armorsmith {
+                                open_shops_remaining: self.open_shops_remaining.saturating_sub(1),
+                                ..self
+                            }
+                        );
+                    },
+                    (false, true) => {},
+                    (false, false) => {},
                 }
             }
             Priority::Heal => {
@@ -72,10 +97,10 @@ impl RoleStateImpl for Armorsmith {
                         self.players_armor.push(random_visitor.clone());
                     }
 
-                    actor_ref.set_role_state(game, RoleState::Armorsmith(Armorsmith{
+                    actor_ref.set_role_state(game, Armorsmith{
                         night_protected_players: visitors,
                         ..self
-                    }));
+                    });
                 }
             }
             Priority::Investigative => {
@@ -97,9 +122,9 @@ impl RoleStateImpl for Armorsmith {
                     }
                 }
 
-                actor_ref.set_role_state(game, RoleState::Armorsmith(Armorsmith{
+                actor_ref.set_role_state(game, Armorsmith{
                     ..self
-                }));
+                });
             }
             _ => {}
         }
@@ -107,7 +132,7 @@ impl RoleStateImpl for Armorsmith {
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         actor_ref == target_ref &&
         self.open_shops_remaining > 0 &&
-        !actor_ref.night_jailed(game) &&
+        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
         actor_ref.selection(game).is_empty() &&
         actor_ref.alive(game)
     }
@@ -119,10 +144,17 @@ impl RoleStateImpl for Armorsmith {
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         actor_ref.set_role_state(game, 
-            RoleState::Armorsmith(Armorsmith{
+            Armorsmith{
                 night_open_shop: false,
                 night_protected_players: Vec::new(),
                 ..self
-            }));
+            });
+    }
+}
+impl GetClientRoleState<ClientRoleState> for Armorsmith {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
+        ClientRoleState {
+            open_shops_remaining: self.open_shops_remaining
+        }
     }
 }

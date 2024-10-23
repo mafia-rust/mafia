@@ -1,24 +1,30 @@
 use serde::Serialize;
 
+use crate::game::components::detained::Detained;
+use crate::game::role_list::RoleSet;
 use crate::game::{attack_power::DefensePower, phase::PhaseType};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{Priority, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, Priority, RoleState, RoleStateImpl};
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-#[derive(Clone, Debug, Default, Serialize)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug, Default)]
 pub struct Retributionist { 
     used_bodies: Vec<PlayerReference>, 
     currently_used_player: Option<PlayerReference> 
 }
+
+#[derive(Clone, Debug, Serialize)]
+pub struct ClientRoleState;
+
 impl RoleStateImpl for Retributionist {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
             let mut used_bodies = self.used_bodies;
@@ -31,7 +37,7 @@ impl RoleStateImpl for Retributionist {
         }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        !actor_ref.night_jailed(game) &&
+        !Detained::is_detained(game, actor_ref) &&
         actor_ref.alive(game) &&
         ((
             actor_ref.selection(game).is_empty() &&
@@ -39,7 +45,7 @@ impl RoleStateImpl for Retributionist {
             game.graves.iter().any(|grave|
                 grave.player == target_ref && 
                 if let Some(role) = grave.role(){
-                    role.faction() == Faction::Town
+                    RoleSet::Town.get_roles().contains(&role)
                 }else{false}
             ) &&
             (self.used_bodies.iter().filter(|p| **p == target_ref).count() < 2)
@@ -63,5 +69,10 @@ impl RoleStateImpl for Retributionist {
         if phase == PhaseType::Night {
             actor_ref.set_role_state(game, RoleState::Retributionist(Retributionist { used_bodies: self.used_bodies, currently_used_player: None }));
         }
+    }
+}
+impl GetClientRoleState<ClientRoleState> for Retributionist {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
+        ClientRoleState
     }
 }
