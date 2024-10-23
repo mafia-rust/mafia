@@ -399,6 +399,7 @@ export default function messageListener(packet: ToClientPacket){
                     const myRoleKey = `role.${GAME_MANAGER.state.clientState.roleState.type}.name`;
 
                     GAME_MANAGER.sendSaveNotesPacket([
+                        "Claims\n" + 
                         GAME_MANAGER.state.players
                             .map(player => 
                                 `@${player.index + 1} - ${player.index === myIndex ? translate(myRoleKey) : ''}\n`

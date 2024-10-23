@@ -52,11 +52,12 @@ export default function WillMenu(): ReactElement {
                     GAME_MANAGER.sendSaveWillPacket(text);
                 }}
             />
-            {Array.from({ length: notes.length }, (_, i) => i).map(i => {
+            {notes.map((note, i) => {
+                const title = note.trim().split('\n')[0] || translate("menu.will.notes");
                 return <TextDropdownArea
-                    key={i}
-                    titleString={translate("menu.will.notes")}
-                    savedText={notes[i]}
+                    key={title + i}
+                    titleString={title}
+                    savedText={note}
                     cantPost={cantPost}
                     onAdd={() => {
                         if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
@@ -124,31 +125,30 @@ function TextDropdownArea(props: Readonly<{
         props.onSave(field);
     }
 
-    return (<details open={props.open===undefined?false:props.open}>
+    return (<details open={props.open ?? false}>
         <summary>
             <div>
                 {props.titleString}
-                <div>
-                    {unsaved ? "Unsaved" : "Saved"}
+                <span>
                     {props.onSubtract ? <Button
                         onClick={() => {
                             if(props.onSubtract)
                                 props.onSubtract();
                         }}
-                        pressedChildren={() => <Icon>done</Icon>}
+                        pressedChildren={() => <Icon size="small">done</Icon>}
                         aria-label={translate("menu.will.subtract")}
                     >
-                        <Icon>remove</Icon>
+                        <Icon size="small">remove</Icon>
                     </Button> : null}
                     {props.onAdd ? <Button
                         onClick={() => {
                             if(props.onAdd)
                                 props.onAdd();
                         }}
-                        pressedChildren={() => <Icon>done</Icon>}
+                        pressedChildren={() => <Icon size="small">done</Icon>}
                         aria-label={translate("menu.will.add")}
                     >
-                        <Icon>add</Icon>
+                        <Icon size="small">add</Icon>
                     </Button> : null}
                     <Button
                         highlighted={unsaved}
@@ -156,10 +156,10 @@ function TextDropdownArea(props: Readonly<{
                             save(field);
                             return true;
                         }}
-                        pressedChildren={() => <Icon>done</Icon>}
+                        pressedChildren={() => <Icon size="small">done</Icon>}
                         aria-label={translate("menu.will.save")}
                     >
-                        <Icon>save</Icon>
+                        <Icon size="small">save</Icon>
                     </Button>
                     <Button
                         disabled={props.cantPost}
@@ -167,14 +167,15 @@ function TextDropdownArea(props: Readonly<{
                             send(field);
                             return true;
                         }}
-                        pressedChildren={() => <Icon>done</Icon>}
+                        pressedChildren={() => <Icon size="small">done</Icon>}
                         aria-label={translate("menu.will.post")}
                     >
-                        <Icon>send</Icon>
+                        <Icon size="small">send</Icon>
                     </Button>
-                </div>
+                </span>
             </div>
         </summary>
+        {unsaved ? "Unsaved" : ""}
         <PrettyTextArea
             field={field}
             setField={setField}
