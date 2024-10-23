@@ -50,7 +50,7 @@ s {
     background-color: #220000;
 }
 
-button, input, select, option, textarea, summary {
+button, input, select, option, textarea, .textarea, summary {
     border-radius: 0.4rem;
     margin: .13rem;
     background-color: var(--secondary-color);
@@ -60,6 +60,22 @@ button, input, select, option, textarea, summary {
     color: white;
     font-size: 1em;
     padding: 0.13rem 0.25rem;
+}
+
+/*
+Ensure the CSS is EXACTLY the same (FUCK YOU CHROME)
+*/
+textarea, .textarea {
+    display: inline-block;
+    unicode-bidi: normal;
+    overflow-wrap: normal;
+    cursor: text;
+    white-space-collapse: preserve;
+    text-rendering: optimizeLegibility;
+    vertical-align: text-bottom;
+    white-space: pre;
+    overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 *:focus-visible {
@@ -91,7 +107,7 @@ button, select, summary {
     border-right-color: var(--primary-border-shadow-color);
     user-select: none;
 }
-input, option, textarea {
+input, option, textarea, .textarea {
     border-top-color: var(--background-border-shadow-color);
     border-left-color: var(--background-border-shadow-color);
 }
@@ -120,7 +136,7 @@ button.close {
     padding: 0;
 }
 
-button:disabled, input:disabled, select:disabled, option:disabled, textarea:disabled, summary:disabled {
+button:disabled, input:disabled, select:disabled, option:disabled, textarea:disabled, .textarea:disabled, summary:disabled {
     opacity: 0.5;
     box-shadow: 0 0 100vmax #55555555 inset;
 }

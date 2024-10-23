@@ -1,12 +1,14 @@
 import React, { ReactElement, useEffect, useMemo, useState } from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER from "../../../index";
+import GAME_MANAGER, { replaceMentions } from "../../../index";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import "./willMenu.css"
 import { StateEventType } from "../../../game/gameManager.d";
 import { Button } from "../../../components/Button";
 import Icon from "../../../components/Icon";
 import { usePlayerState } from "../../../components/useHooks";
+import StyledText from "../../../components/StyledText";
+import { sanitizePlayerMessage } from "../../../components/ChatMessage";
 
 
 type FieldType = "will" | "notes" | "deathNote";
@@ -103,22 +105,47 @@ function TextDropdownArea(props: Readonly<{ type: FieldType, cantPost: boolean }
                 </div>
             </div>
         </summary>
-        
-        <div>
-            <textarea
-                value={field}
-                onChange={e => setField(e.target.value)}
+        <PrettyTextArea
+            field={field}
+            setField={setField}
+            save={save}
+            send={send}
+        />
+    </details>)
+}
+
+function PrettyTextArea(props: Readonly<{
+    field: string,
+    setField: (field: string) => void,
+    save: (field: string) => void,
+    send: (field: string) => void,
+}>): ReactElement {
+    const [writing, setWriting] = useState<boolean>(false);
+    const [hover, setHover] = useState<boolean>(false);
+
+    return <div
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        onFocus={() => setWriting(true)}
+        onBlur={() => setWriting(false)}
+    >
+        {(!writing && !hover)
+            ? <div className="textarea">
+                <StyledText noLinks={true}>{sanitizePlayerMessage(replaceMentions(props.field))}</StyledText>
+            </div>
+            : <textarea
+                value={props.field}
+                onChange={e => props.setField(e.target.value)}
                 onKeyDown={(e) => {
                     if (e.ctrlKey) {
                         if (e.key === 's') {
                             e.preventDefault();
-                            save(field);
+                            props.save(props.field);
                         } else if (e.key === "Enter") {
-                            send(field);
+                            props.send(props.field);
                         }
                     }
                 }}>
-            </textarea>
+            </textarea>}
         </div>
-    </details>)
 }
