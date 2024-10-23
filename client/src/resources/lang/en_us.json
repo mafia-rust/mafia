@@ -88,6 +88,8 @@
     "menu.will.deathNote:var.2": "Death Notes",
     "menu.will.save": "Save",
     "menu.will.post": "Post",
+    "menu.will.add": "Add",
+    "menu.will.subtract": "Subtract",
 
     "menu.wiki.title": "Encyclopedia",
     "menu.wiki.icon": "🔎",

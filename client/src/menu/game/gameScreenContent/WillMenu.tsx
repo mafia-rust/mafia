@@ -131,7 +131,7 @@ function TextDropdownArea(props: Readonly<{
                                 props.onSubtract();
                         }}
                         pressedChildren={() => <Icon>done</Icon>}
-                        aria-label={translate("menu.will.onSubtract")}
+                        aria-label={translate("menu.will.subtract")}
                     >
                         <Icon>remove</Icon>
                     </Button> : null}
