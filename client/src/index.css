@@ -62,6 +62,19 @@ button, input, select, option, textarea, .textarea, summary {
     padding: 0.13rem 0.25rem;
 }
 
+/*
+Ensure the CSS is EXACTLY the same (FUCK YOU CHROME)
+*/
+textarea, .textarea {
+    display: inline-block;
+    unicode-bidi: normal;
+    overflow-wrap: normal;
+    cursor: text;
+    white-space-collapse: preserve;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
 *:focus-visible {
     outline: var(--focus-outline-color) solid .13rem;
     background-color: var(--hover-color);
