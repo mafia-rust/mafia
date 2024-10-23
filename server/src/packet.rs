@@ -120,7 +120,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     YourPlayerTags{player_tags: HashMap<PlayerIndex, Vec1<Tag>>},
     YourWill{will: String},
-    YourNotes{notes: String},
+    YourNotes{notes: Vec<String>},
     #[serde(rename_all = "camelCase")]
     YourCrossedOutOutlines{crossed_out_outlines: Vec<u8>},
     #[serde(rename_all = "camelCase")]
@@ -239,7 +239,7 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SendWhisper{player_index: PlayerIndex, text: String},
     SaveWill{will: String},
-    SaveNotes{notes: String},
+    SaveNotes{notes: Vec<String>},
     #[serde(rename_all = "camelCase")]
     SaveCrossedOutOutlines{crossed_out_outlines: Vec<u8>},
     #[serde(rename_all = "camelCase")]

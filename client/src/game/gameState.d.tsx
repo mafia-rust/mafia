@@ -84,7 +84,7 @@ export type PlayerGameState = {
     roleState: RoleState,
 
     will: string,
-    notes: string,
+    notes: string[],
     crossedOutOutlines: number[],
     chatFilter: PlayerIndex | null,
     deathNote: string,
