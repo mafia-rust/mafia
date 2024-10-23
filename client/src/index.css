@@ -71,6 +71,9 @@ textarea, .textarea {
     overflow-wrap: normal;
     cursor: text;
     white-space-collapse: preserve;
+    text-rendering: optimizeLegibility;
+    vertical-align: text-bottom;
+    white-space: pre;
     overflow-x: hidden;
     overflow-y: hidden;
 }
