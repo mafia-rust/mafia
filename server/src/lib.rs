@@ -4,6 +4,7 @@ pub mod listener;
 pub mod lobby;
 pub mod packet;
 pub mod client_connection;
+pub mod vec_set;
 
 pub mod log {
     #[macro_export]
